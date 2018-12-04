@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 08/19] clk: tegra: dfll: round down voltages based on alignment
-Date: Tue, 4 Dec 2018 17:25:37 +0800
-Message-ID: <20181204092548.3038-9-josephl@nvidia.com>
+Subject: [PATCH 11/19] cpufreq: tegra124: do not handle the CPU rail
+Date: Tue, 4 Dec 2018 17:25:40 +0800
+Message-ID: <20181204092548.3038-12-josephl@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,88 +18,124 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-When generating the OPP table, the voltages are round down with the
-alignment from the regulator. The alignment should be applied for
-voltages look up as well.
+The Tegra124 cpufreq driver has no information to handle the Vdd-CPU
+rail. So the driver shouldn't handle for the CPU clock switching from
+DFLL to other PLL clocks. It was designed to work on DFLL clock only,
+which handle the frequency/voltage scaling in the background. This
+patch removes the driver dependency of the CPU rail.
 
-Based on the work of Penny Chiu <pchiu@nvidia.com>.
-
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/cpufreq/Kconfig.arm        |  2 +-
+ drivers/cpufreq/tegra124-cpufreq.c | 26 ++------------------------
+ 2 files changed, 3 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index c294a2989f31..4a943c136d4d 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -804,17 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
- static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 4e1131ef85ae..a609f8820c47 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -262,7 +262,7 @@ config ARM_TEGRA20_CPUFREQ
+ 
+ config ARM_TEGRA124_CPUFREQ
+ 	tristate "Tegra124 CPUFreq support"
+-	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
++	depends on ARCH_TEGRA && CPUFREQ_DT
+ 	default y
+ 	help
+ 	  This adds the CPUFreq driver support for Tegra124 SOCs.
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 43530254201a..448d00763d00 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -22,11 +22,9 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_opp.h>
+-#include <linux/regulator/consumer.h>
+ #include <linux/types.h>
+ 
+ struct tegra124_cpufreq_priv {
+-	struct regulator *vdd_cpu_reg;
+ 	struct clk *cpu_clk;
+ 	struct clk *pllp_clk;
+ 	struct clk *pllx_clk;
+@@ -60,14 +58,6 @@ static int tegra124_cpu_switch_to_dfll(struct tegra124_cpufreq_priv *priv)
+ 	return ret;
+ }
+ 
+-static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+-{
+-	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+-	clk_disable_unprepare(priv->dfll_clk);
+-	regulator_sync_voltage(priv->vdd_cpu_reg);
+-	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+-}
+-
+ static int tegra124_cpufreq_probe(struct platform_device *pdev)
  {
- 	struct dev_pm_opp *opp;
--	int i, uv;
-+	int i, align_volt;
+ 	struct tegra124_cpufreq_priv *priv;
+@@ -88,16 +78,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 	if (!np)
+ 		return -ENODEV;
  
- 	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
- 	if (IS_ERR(opp))
- 		return PTR_ERR(opp);
- 
--	uv = dev_pm_opp_get_voltage(opp);
-+	align_volt = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
- 	dev_pm_opp_put(opp);
- 
- 	for (i = td->lut_bottom; i < td->lut_size; i++) {
--		if (regulator_list_voltage(td->vdd_reg, td->lut[i]) == uv)
-+		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= align_volt)
- 			return i;
+-	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+-	if (IS_ERR(priv->vdd_cpu_reg)) {
+-		ret = PTR_ERR(priv->vdd_cpu_reg);
+-		goto out_put_np;
+-	}
+-
+ 	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
+ 	if (IS_ERR(priv->cpu_clk)) {
+ 		ret = PTR_ERR(priv->cpu_clk);
+-		goto out_put_vdd_cpu_reg;
++		goto out_put_np;
  	}
  
-@@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
-  */
- static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
- {
--	int i, n_voltages, reg_uV;
-+	int i, n_voltages, reg_volt, align_volt;
- 
-+	align_volt = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
--		reg_uV = regulator_list_voltage(td->vdd_reg, i);
--		if (reg_uV < 0)
-+		reg_volt = regulator_list_voltage(td->vdd_reg, i) /
-+				td->soc->alignment.step_uv;
-+		if (reg_volt < 0)
- 			break;
- 
--		if (uV == reg_uV)
-+		if (align_volt == reg_volt)
- 			return i;
+ 	priv->dfll_clk = of_clk_get_by_name(np, "dfll");
+@@ -129,15 +113,13 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 		platform_device_register_full(&cpufreq_dt_devinfo);
+ 	if (IS_ERR(priv->cpufreq_dt_pdev)) {
+ 		ret = PTR_ERR(priv->cpufreq_dt_pdev);
+-		goto out_switch_to_pllx;
++		goto out_put_pllp_clk;
  	}
  
-@@ -1554,15 +1556,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
-  * */
- static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
- {
--	int i, n_voltages, reg_uV;
-+	int i, n_voltages, reg_volt, align_volt;
+ 	platform_set_drvdata(pdev, priv);
  
-+	align_volt = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
--		reg_uV = regulator_list_voltage(td->vdd_reg, i);
--		if (reg_uV < 0)
-+		reg_volt = regulator_list_voltage(td->vdd_reg, i) /
-+				td->soc->alignment.step_uv;
-+		if (reg_volt < 0)
- 			break;
+ 	return 0;
  
--		if (uV <= reg_uV)
-+		if (align_volt <= reg_volt)
- 			return i;
- 	}
+-out_switch_to_pllx:
+-	tegra124_cpu_switch_to_pllx(priv);
+ out_put_pllp_clk:
+ 	clk_put(priv->pllp_clk);
+ out_put_pllx_clk:
+@@ -146,8 +128,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 	clk_put(priv->dfll_clk);
+ out_put_cpu_clk:
+ 	clk_put(priv->cpu_clk);
+-out_put_vdd_cpu_reg:
+-	regulator_put(priv->vdd_cpu_reg);
+ out_put_np:
+ 	of_node_put(np);
  
+@@ -159,13 +139,11 @@ static int tegra124_cpufreq_remove(struct platform_device *pdev)
+ 	struct tegra124_cpufreq_priv *priv = platform_get_drvdata(pdev);
+ 
+ 	platform_device_unregister(priv->cpufreq_dt_pdev);
+-	tegra124_cpu_switch_to_pllx(priv);
+ 
+ 	clk_put(priv->pllp_clk);
+ 	clk_put(priv->pllx_clk);
+ 	clk_put(priv->dfll_clk);
+ 	clk_put(priv->cpu_clk);
+-	regulator_put(priv->vdd_cpu_reg);
+ 
+ 	return 0;
+ }
 -- 
 2.19.2
