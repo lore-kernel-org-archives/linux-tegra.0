@@ -1,36 +1,115 @@
-From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH v3 5/6] arm64: defconfig: Enable ARM_SMMU_TEGRA
-Date: Mon, 3 Dec 2018 17:36:53 -0800
-Message-ID: <1543887414-18209-6-git-send-email-vdumpa@nvidia.com>
-References: <1543887414-18209-1-git-send-email-vdumpa@nvidia.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
+Date: Tue, 4 Dec 2018 08:03:53 +0100
+Message-ID: <aee2cad8-ef93-72d5-986f-b33aabd2c3d2@samsung.com>
+References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+ <87muq2ek04.fsf@intel.com>
+ <CGME20181121115239epcas3p17343b2796d87af83b0eddbc40d646ed9@epcas3p1.samsung.com>
+ <20181121115139.GC9144@intel.com>
+ <d0e34bab-de8b-1005-b9e8-72afe66576ac@samsung.com>
+ <20181203214844.GK9144@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543887414-18209-1-git-send-email-vdumpa@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, thomasz@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20181203214844.GK9144-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enabling CONFIG_ARM_SMMU_TEGRA that is used
-by Tegra194 SOC.
-
-Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5c2b1f6..e5ea13b 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -625,6 +625,7 @@ CONFIG_QCOM_APCS_IPC=y
- CONFIG_ROCKCHIP_IOMMU=y
- CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_ARM_SMMU=y
-+CONFIG_ARM_SMMU_TEGRA=y
- CONFIG_ARM_SMMU_V3=y
- CONFIG_QCOM_IOMMU=y
- CONFIG_REMOTEPROC=m
--- 
-2.1.4
+T24gMDMuMTIuMjAxOCAyMjo0OCwgVmlsbGUgU3lyasOkbMOkIHdyb3RlOgo+IE9uIFRodSwgTm92
+IDI5LCAyMDE4IGF0IDA5OjQ2OjE2QU0gKzAxMDAsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IFF1
+aXRlIGxhdGUsIGhvcGVmdWxseSBub3QgdG9vIGxhdGUuCj4+Cj4+Cj4+IE9uIDIxLjExLjIwMTgg
+MTI6NTEsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPj4+IE9uIFdlZCwgTm92IDIxLCAyMDE4IGF0
+IDAxOjQwOjQzUE0gKzAyMDAsIEphbmkgTmlrdWxhIHdyb3RlOgo+Pj4+PiAgCQlyZXR1cm47Cj4+
+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIwLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIwLmMKPj4+Pj4gaW5kZXggYTZlOGY0NTkx
+ZTYzLi4wY2MyOTNhNmFjMjQgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlk
+Z2Uvc2lsLXNpaTg2MjAuYwo+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1z
+aWk4NjIwLmMKPj4+Pj4gQEAgLTExMDQsOCArMTEwNCw3IEBAIHN0YXRpYyB2b2lkIHNpaTg2MjBf
+c2V0X2luZm9mcmFtZXMoc3RydWN0IHNpaTg2MjAgKmN0eCwKPj4+Pj4gIAlpbnQgcmV0Owo+Pj4+
+PiAgCj4+Pj4+ICAJcmV0ID0gZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9k
+ZSgmZnJtLmF2aSwKPj4+Pj4gLQkJCQkJCSAgICAgICBtb2RlLAo+Pj4+PiAtCQkJCQkJICAgICAg
+IHRydWUpOwo+Pj4+PiArCQkJCQkJICAgICAgIE5VTEwsIG1vZGUpOwo+Pj4+PiAgCWlmIChjdHgt
+PnVzZV9wYWNrZWRfcGl4ZWwpCj4+Pj4+ICAJCWZybS5hdmkuY29sb3JzcGFjZSA9IEhETUlfQ09M
+T1JTUEFDRV9ZVVY0MjI7Cj4+Pj4+ICAKPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5v
+cHN5cy9kdy1oZG1pLmMKPj4+Pj4gaW5kZXggNjRjM2NmMDI3NTE4Li44OGI3MjBiNjMxMjYgMTAw
+NjQ0Cj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5j
+Cj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5jCj4+
+Pj4+IEBAIC0xMzQ0LDcgKzEzNDQsOCBAQCBzdGF0aWMgdm9pZCBoZG1pX2NvbmZpZ19BVkkoc3Ry
+dWN0IGR3X2hkbWkgKmhkbWksIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlKQo+Pj4+PiAg
+CXU4IHZhbDsKPj4+Pj4gIAo+Pj4+PiAgCS8qIEluaXRpYWxpc2UgaW5mbyBmcmFtZSBmcm9tIERS
+TSBtb2RlICovCj4+Pj4+IC0JZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9k
+ZSgmZnJhbWUsIG1vZGUsIGZhbHNlKTsKPj4+Pj4gKwlkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zy
+b21fZGlzcGxheV9tb2RlKCZmcmFtZSwKPj4+Pj4gKwkJCQkJCSAmaGRtaS0+Y29ubmVjdG9yLCBt
+b2RlKTsKPj4+Pj4gIAo+Pj4+PiAgCWlmIChoZG1pX2J1c19mbXRfaXNfeXV2NDQ0KGhkbWktPmhk
+bWlfZGF0YS5lbmNfb3V0X2J1c19mb3JtYXQpKQo+Pj4+PiAgCQlmcmFtZS5jb2xvcnNwYWNlID0g
+SERNSV9DT0xPUlNQQUNFX1lVVjQ0NDsKPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9kcm1fZWRpZC5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMKPj4+Pj4gaW5kZXggYjUw
+NmUzNjIyYjA4Li41MDFhYzA1YmE3ZGEgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9kcm1fZWRpZC5jCj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jCj4+Pj4+
+IEBAIC00ODMwLDE5ICs0ODMwLDMyIEBAIHZvaWQgZHJtX3NldF9wcmVmZXJyZWRfbW9kZShzdHJ1
+Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yLAo+Pj4+PiAgfQo+Pj4+PiAgRVhQT1JUX1NZTUJP
+TChkcm1fc2V0X3ByZWZlcnJlZF9tb2RlKTsKPj4+Pj4gIAo+Pj4+PiArc3RhdGljIGJvb2wgaXNf
+aGRtaTJfc2luayhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+Pj4+IFlvdSdyZSB1
+c3VhbGx5IGtub3duIGZvciBhZGRpbmcgY29uc3QgYWxsIGFyb3VuZCwgd2h5IG5vdCBjb25zdCBw
+b2ludGVyCj4+Pj4gaGVyZSBhbmQgaW4gYWxsIHRoZSBvdGhlciBkcm1fKiBmdW5jdGlvbnMgdGhh
+dCBjYWxsIHRoaXM/Cj4+PiBNeSBjdXJyZW50IGFwcHJvYWNoIGlzIHRvIGNvbnN0aWZ5IHN0YXRl
+cy9mYnMvZXRjLiBidXQgbm90IHNvIG11Y2gKPj4+IGNydGNzL2Nvbm5lY3RvcnMvZXRjLiBUb28g
+bXVjaCBjb25zdCBjYW4gc29tZXRpbWVzIGdldCBpbiB0aGUgd2F5Cj4+PiBvZiB0aGluZ3MgcmVx
+dWlyaW5nIHRoYXQgeW91IHJlbW92ZSB0aGUgY29uc3QgbGF0ZXIuIEJ1dCBJIGd1ZXNzCj4+PiBp
+biB0aGlzIGNhc2UgdGhlIGNvbnN0IHNob3VsZG4ndCByZWFsbHkgZ2V0IGluIHRoZSB3YXkgb2Yg
+YW55dGhpbmcKPj4+IGJlY2F1c2UgdGhlc2UgYXJlIHByZXR0eSBtdWNoIHN1cHBvc2VkIHRvIGJl
+IHB1cmUgZnVuY3Rpb25zLgo+Pj4KPj4+Pj4gK3sKPj4+Pj4gKwkvKgo+Pj4+PiArCSAqIEZJWE1F
+OiBzaWwtc2lpODYyMCBkb2Vzbid0IGhhdmUgYSBjb25uZWN0b3IgYXJvdW5kIHdoZW4KPj4+Pj4g
+KwkgKiB3ZSBuZWVkIG9uZSwgc28gd2UgaGF2ZSB0byBiZSBwcmVwYXJlZCBmb3IgYSBOVUxMIGNv
+bm5lY3Rvci4KPj4+Pj4gKwkgKi8KPj4+Pj4gKwlpZiAoIWNvbm5lY3RvcikKPj4+Pj4gKwkJcmV0
+dXJuIGZhbHNlOwo+Pj4+IFRoaXMgYWN0dWFsbHkgY2hhbmdlcyB0aGUgaXNfaGRtaTJfc2luayB2
+YWx1ZSBmb3Igc2lsLXNpaTg2MjAuCj4+PiBIbW0uIE5vIGlkZWEgd2h5IHRoZXkgd291bGQgaGF2
+ZSBzZXQgdGhhdCB0byB0cnVlIHdoZW4gZXZlcnlvbmUgZWxzZSBpcwo+Pj4gcGFzc2luZyBmYWxz
+ZS4gCj4+Cj4+IEJlY2F1c2UgZmFsc2UgZG9lcyBub3Qgd29yayA6KSBNb3JlIHByZWNpc2VseSBN
+SEx2MyAodXNlZCBpbiBTaWk4NjIwKQo+PiB1c2VzIENUQS04NjEtRiBzdGFuZGFyZCBmb3IgaW5m
+b2ZyYW1lcywgd2hpY2ggaXMgc3BlY2lmaWMgdG8gSERNSTIuMC4KPj4KPj4gVW5mb3J0dW5hdGVs
+eSBJIGhhdmUgbm8gYWNjZXNzIHRvIE1ITCBzcGVjcywgYnV0IG15IGV4cGVyaW1lbnRzIGFuZAo+
+PiB2ZW5kb3IgZHJpdmVycyBzdHJvbmdseSBzdWdnZXN0cyBpdCBpcyBkb25lIHRoaXMgd2F5Lgo+
+Pgo+PiBUaGlzIGlzIGltcG9ydGFudCBpbiBjYXNlIG9mIDRLIG1vZGVzIHdoaWNoIGFyZSBoYW5k
+bGVkIGRpZmZlcmVudGx5IGJ5Cj4+IEhETUkgMS40IGFuZCBIRE1JMi4wLgo+IEhETUkgMi4wIGhh
+bmRsZXMgNGsganVzdCBsaWtlIDEuNCBoYW5kbGVkIGl0IHdoZW4geW91IHVzZSBvbmUgb2YKPiB0
+aGUgNGsgbW9kZXMgZGVmaW5lZCBpbiAxLjQuIE9ubHkgaWYgeW91IHVzZSBmZWF0dXJlcyBiZXlv
+bmQgMS40IGRvIHdlCj4gc3dpdGNoIG92ZXIgdG8gdGhlIEhETUkgMi4wIHNwZWNpZmljIHNpZ25h
+bGxpbmcuCgoKVGhlIGRpZmZlcmVuY2UgaXMgaW4gaW5mb2ZyYW1lczoKCkhETUkgMS40IHNldHMg
+QVZJIGluZm9mcmFtZSBWSUMgdG8gMCwgYW5kIHNlbmRzIEhETUlfVklDIGluIFZTSS4KCkhETUkg
+Mi4wIHNldHMgQVZJIGluZm9mcmFtZSB0byBub24gemVybyBWSUNzIGludHJvZHVjZWQgYnkKSERN
+STIuMC9DRUEtODYxLUYsIFZTSSBjYW4gYmUgb21pdHRlZCBpZiBJIHJlbWVtYmVyIGNvcnJlY3Rs
+eSwgdW5sZXNzIDNkCmlzIGluIHVzZS4KCgpTbyBzZXR0aW5nIFZJQ3MgdG8gbm9uLXplcm8gaW4g
+Y2FzZSBvZiBIRE1JMS40IHNpbmtzIGFuZCA0ayBtb2RlcyBzZWVtcwpyaXNreS4KCgpSZWdhcmRz
+CgpBbmRyemVqCgoKPgo+PiBUaGUgcGlwZWxpbmUgbG9va3MgbGlrZSAoaW4gcGFyZW50aGVzaXMg
+SERNSSB2ZXJzaW9uIG9uIHRoZSBzdHJlYW0pOgo+Pgo+PiBleHlub3NfaGRtaSAtLSgxLjQpLS0+
+IFNJSTg2MjAgLS0oMi4wKS0tPiBNSExfZG9uZ2xlIC0tKDEuNCktLT4gVFYKPj4KPj4KPj4+IEkg
+Z3Vlc3MgSSBjYW4gY2hhbmdlIHRoaXMgdG8gdHJ1ZSB0byBub3QgY2hhbmdlIGl0LiBJSVJDCj4+
+PiB0aGF0IHdhcyB0aGUgb25seSBkcml2ZXIgdGhhdCBkaWRuJ3QgaGF2ZSBhIGNvbm5lY3RvciBh
+cm91bmQuCj4+Pgo+Pj4gVGhhdCBzYWlkLCBJIHdhcyBhY3R1YWxseSB0aGlua2luZyBvZiByZW1v
+dmluZyB0aGlzIGhkbWkyIHZzLiBub3QKPj4+IHN0dWZmIGZyb20gZHJtX2hkbWlfYXZpX2luZm9m
+cmFtZV9mcm9tX2Rpc3BsYXlfbW9kZSgpLiBXZSBhZGRlZCBpdAo+Pj4gImp1c3QgaW4gY2FzZSIs
+IGJ1dCB3ZSBhbHJlYWR5IGhhdmUgYSBzaW1pbGFyIGlzc3VlIHdpdGggZWFybGllcgo+Pj4gY2Vh
+LTg2MSByZXZpc2lvbnMgYW5kIGhhdmVuJ3Qgc2VlbiBhbnkgYnVncyB3aGVyZSBhbiBvbGRlciBt
+b25pdG9yCj4+PiB3b3VsZCBnZXQgY29uZnVzZWQgYnkgYSBWSUMgbm90IHlldCBkZWZpbmVkIHdo
+ZW4gdGhlIG1vbml0b3Igd2FzCj4+PiBwcm9kdWNlZC4KPj4+Cj4+IEFyZSB5b3Ugc3VyZSB0aGlz
+IGlzIGEgZ29vZCBpZGVhPyBBcyBJIHNhaWQgZWFybGllciA0SyBtb2RlcyBhcmUgcHJlc2VudAo+
+PiBpbiBIRE1JIDEuNCBhbmQgMi4wIGJ1dCB0aGV5IGFyZSBoYW5kbGVkIGRpZmZlcmVudGx5LCBz
+byB0aGlzIGlzIG5vdAo+PiBvbmx5IG1hdHRlciBvZiB1bmtub3duIFZJQyBpbiBBVklGLgo+Pgo+
+Pgo+PiBSZWdhcmRzCj4+Cj4+IEFuZHJ6ZWoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwphbWQtZ2Z4IG1haWxpbmcgbGlzdAphbWQtZ2Z4QGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2FtZC1nZngK
