@@ -1,72 +1,55 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH] drm/tegra: sor: Support for audio over HDMI
-Date: Tue, 04 Dec 2018 11:33:48 +0200
-Message-ID: <8736rd8wlf.fsf@intel.com>
-References: <20181203153642.13562-1-thierry.reding@gmail.com>
- <875zwa8uks.fsf@intel.com> <20181204084240.GA25962@ulmo>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH 18/19] arm64: dts: tegra210-smaug: enable DFLL clock
+Date: Tue, 4 Dec 2018 17:25:47 +0800
+Message-ID: <20181204092548.3038-19-josephl@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181204084240.GA25962@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181204092548.3038-1-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAwNCBEZWMgMjAxOCwgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
-LmNvbT4gd3JvdGU6Cj4gT24gTW9uLCBEZWMgMDMsIDIwMTggYXQgMDY6MDU6MDdQTSArMDIwMCwg
-SmFuaSBOaWt1bGEgd3JvdGU6Cj4+IE9uIE1vbiwgMDMgRGVjIDIwMTgsIFRoaWVycnkgUmVkaW5n
-IDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+PiA+IEZyb206IFRoaWVycnkgUmVk
-aW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4+ID4KPj4gPiBUaGlzIGNvZGUgaXMgdmVyeSBzaW1p
-bGFyIHRvIHRoZSBhdWRpbyBvdmVyIEhETUkgc3VwcG9ydCBvbiBvbGRlciBjaGlwcy4KPj4gPiBJ
-bnRlcm9wZXJhdGlvbiB3aXRoIHRoZSBhdWRpbyBjb2RlYyBpcyBkb25lIHZpYSBhIHBhaXIgb2Yg
-Y29kZWMgc2NyYXRjaAo+PiA+IHJlZ2lzdGVycyBhbmQgYW4gaW50ZXJydXB0IHRoYXQgaXMgcmFp
-c2VkIGF0IHRoZSBTT1Igd2hlbiB0aGUgY29kZWMgaGFzCj4+ID4gd3JpdHRlbiB0aG9zZSByZWdp
-c3RlcnMuCj4+ID4KPj4gPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Bu
-dmlkaWEuY29tPgo+PiA+IC0tLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgfCAy
-MjkgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+ID4gIGRyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9zb3IuaCB8ICA2OCArKysrKysrKysrKwo+PiA+ICAyIGZpbGVzIGNoYW5nZWQs
-IDI5NyBpbnNlcnRpb25zKCspCj4+ID4KPj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL3Nvci5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jCj4+ID4gaW5kZXggYjEy
-OWRhMmU1YWZkLi4yMmE1NDQzNGE3NTcgMTAwNjQ0Cj4+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL3Nvci5jCj4+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jCj4+ID4g
-QEAgLTE5LDYgKzE5LDggQEAKPj4gPiAgCj4+ID4gICNpbmNsdWRlIDxzb2MvdGVncmEvcG1jLmg+
-Cj4+ID4gIAo+PiA+ICsjaW5jbHVkZSA8c291bmQvaGRhX3ZlcmJzLmg+Cj4+ID4gKwo+PiA+ICAj
-aW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+Cj4+ID4gICNpbmNsdWRlIDxkcm0vZHJt
-X2RwX2hlbHBlci5oPgo+PiA+ICAjaW5jbHVkZSA8ZHJtL2RybV9wYW5lbC5oPgo+PiA+IEBAIC00
-MDcsNiArNDA5LDcgQEAgc3RydWN0IHRlZ3JhX3NvciB7Cj4+ID4gIAljb25zdCBzdHJ1Y3QgdGVn
-cmFfc29yX3NvYyAqc29jOwo+PiA+ICAJdm9pZCBfX2lvbWVtICpyZWdzOwo+PiA+ICAJdW5zaWdu
-ZWQgaW50IGluZGV4Owo+PiA+ICsJdW5zaWduZWQgaW50IGlycTsKPj4gPiAgCj4+ID4gIAlzdHJ1
-Y3QgcmVzZXRfY29udHJvbCAqcnN0Owo+PiA+ICAJc3RydWN0IGNsayAqY2xrX3BhcmVudDsKPj4g
-PiBAQCAtNDMzLDYgKzQzNiwxMSBAQCBzdHJ1Y3QgdGVncmFfc29yIHsKPj4gPiAgCj4+ID4gIAlz
-dHJ1Y3QgZGVsYXllZF93b3JrIHNjZGM7Cj4+ID4gIAlib29sIHNjZGNfZW5hYmxlZDsKPj4gPiAr
-Cj4+ID4gKwlzdHJ1Y3Qgewo+PiA+ICsJCXVuc2lnbmVkIGludCBzYW1wbGVfcmF0ZTsKPj4gPiAr
-CQl1bnNpZ25lZCBpbnQgY2hhbm5lbHM7Cj4+ID4gKwl9IGF1ZGlvOwo+PiA+ICB9Owo+PiA+ICAK
-Pj4gPiAgc3RydWN0IHRlZ3JhX3Nvcl9zdGF0ZSB7Cj4+ID4gQEAgLTIxMzksNiArMjE0NywxNDQg
-QEAgdGVncmFfc29yX2hkbWlfc2V0dXBfYXZpX2luZm9mcmFtZShzdHJ1Y3QgdGVncmFfc29yICpz
-b3IsCj4+ID4gIAlyZXR1cm4gMDsKPj4gPiAgfQo+PiA+ICAKPj4gPiArc3RhdGljIHZvaWQgdGVn
-cmFfc29yX3dyaXRlX2VsZChzdHJ1Y3QgdGVncmFfc29yICpzb3IpCj4+ID4gK3sKPj4gPiArCXNp
-emVfdCBsZW5ndGggPSBkcm1fZWxkX3NpemUoc29yLT5vdXRwdXQuY29ubmVjdG9yLmVsZCksIGk7
-Cj4+IAo+PiBUaGlzIGNhdWdodCBteSBleWUsIGNhbid0IGJlIHJpZ2h0Pwo+Cj4gV2h5IGRvIHlv
-dSB0aGluayBpdCdzIHdyb25nPyBUaGUgbGVuZ3RoIGlzIHRoZSBudW1iZXIgb2YgYnl0ZXMgdGhh
-dCBhcmUKPiB0byBiZSB3cml0dGVuIHRvIHRoZSBIREEgRUxEIGJ1ZmZlci4gVGhpcyBpcyBwcmV0
-dHkgbXVjaCB0aGUgc2FtZSBhY3Jvc3MKPiBhbGwgZHJpdmVycyB0aGF0IHN1cHBvcnQgSERNSSBh
-dWRpbyAoaTkxNSBhbmQgbm91dmVhdSkuCj4KPiBBbHNvLCBhdWRpbyBpcyBkZWZpbml0ZWx5IHdv
-cmtpbmcgd2l0aCB0aGlzIHBhdGNoLCBhbmQgdGhlIEhETUkgY29kZWNzCj4gYXJlIHNob3dpbmcg
-dGhlIGNvcnJlY3QgaW5mb3JtYXRpb24gaW4gcHJvY2ZzLgo+Cj4gQ2FuIHlvdSBlbGFib3JhdGU/
-CgpVZ2gsIGFwb2xvZ2llcyBmb3IgYmVpbmcgdG9vIHRlcnNlIGluIG15IHJlcGx5LCBhcyB3ZWxs
-IGFzIHV0dGVybHkKd3JvbmcsIGFuZCBhbHNvIHRvbyBhc2hhbWVkIHRvIGFkbWl0IGFmdGVyIHRo
-ZSBmYWN0IHdoZXJlIG15IGZhbGxhY3kKd2FzIQoKQlIsCkphbmkuCgotLSAKSmFuaSBOaWt1bGEs
-IEludGVsIE9wZW4gU291cmNlIEdyYXBoaWNzIENlbnRlcgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Enable DFLL clock for Smaug board.
+
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index b3930a9dd139..beac7b0bf436 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1698,6 +1698,18 @@
+ 		status = "okay";
+ 	};
+ 
++	clock@70110000 {
++		status = "okay";
++		nvidia,sample-rate = <12500>;
++		nvidia,droop-ctrl = <0x00000f00>;
++		nvidia,force-mode = <1>;
++		nvidia,cf = <6>;
++		nvidia,ci = <0>;
++		nvidia,cg = <2>;
++		nvidia,i2c-fs-rate = <400000>;
++		vdd-cpu-supply = <&max77621_cpu>;
++	};
++
+ 	aconnect@702c0000 {
+ 		status = "okay";
+ 
+-- 
+2.19.2
