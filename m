@@ -1,220 +1,126 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
-Date: Tue, 4 Dec 2018 17:53:51 +0200
-Message-ID: <20181204155351.GD26056@pdeschrijver-desktop.Nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-8-josephl@nvidia.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI
+ inforframe functions
+Date: Tue, 4 Dec 2018 21:02:34 +0200
+Message-ID: <20181204190234.GL9144@intel.com>
+References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+ <87muq2ek04.fsf@intel.com>
+ <CGME20181121115239epcas3p17343b2796d87af83b0eddbc40d646ed9@epcas3p1.samsung.com>
+ <20181121115139.GC9144@intel.com>
+ <d0e34bab-de8b-1005-b9e8-72afe66576ac@samsung.com>
+ <20181203214844.GK9144@intel.com>
+ <aee2cad8-ef93-72d5-986f-b33aabd2c3d2@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20181204092548.3038-8-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
+In-Reply-To: <aee2cad8-ef93-72d5-986f-b33aabd2c3d2-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 05:25:36PM +0800, Joseph Lo wrote:
-> The DFLL hardware supports two modes (I2C and PWM) for voltage control
-> when requesting a frequency. In this patch, we introduce PWM mode support.
-> 
-> To support that, we re-organize the LUT for unifying the table for both
-> cases of I2C and PWM mode. And generate that based on regulator info.
-> For the PWM-based regulator, we get this info from DT. And do the same as
-> the case of I2C LUT, which can help to map the PMIC voltage ID and voltages
-> that the regulator supported.
-> 
-> The other parts are the support code for initializing the DFLL hardware
-> to support PWM mode. Also, the register debugfs file is slightly
-> reworked to only show the i2c registers when I2C mode is in use.
-> 
-> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-dfll.c | 431 ++++++++++++++++++++++++++++++-----
->  1 file changed, 368 insertions(+), 63 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 609e363dabf8..c294a2989f31 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1,7 +1,7 @@
->  /*
->   * clk-dfll.c - Tegra DFLL clock source common code
->   *
-> - * Copyright (C) 2012-2014 NVIDIA Corporation. All rights reserved.
-> + * Copyright (C) 2012-2018 NVIDIA Corporation. All rights reserved.
->   *
->   * Aleksandr Frid <afrid@nvidia.com>
->   * Paul Walmsley <pwalmsley@nvidia.com>
-> @@ -47,6 +47,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/pm_opp.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
-> @@ -243,6 +244,12 @@ enum dfll_tune_range {
->  	DFLL_TUNE_LOW = 1,
->  };
->  
-> +
-> +enum tegra_dfll_pmu_if {
-> +	TEGRA_DFLL_PMU_I2C = 0,
-> +	TEGRA_DFLL_PMU_PWM = 1,
-> +};
-> +
->  /**
->   * struct dfll_rate_req - target DFLL rate request data
->   * @rate: target frequency, after the postscaling
-> @@ -294,16 +301,25 @@ struct tegra_dfll {
->  	u32				ci;
->  	u32				cg;
->  	bool				cg_scale;
-> +	u32				reg_init_uV;
->  
->  	/* I2C interface parameters */
->  	u32				i2c_fs_rate;
->  	u32				i2c_reg;
->  	u32				i2c_slave_addr;
->  
-> -	/* i2c_lut array entries are regulator framework selectors */
-> -	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
-> -	int				i2c_lut_size;
-> -	u8				lut_min, lut_max, lut_safe;
-> +	/* lut array entries are regulator framework selectors or PWM values*/
-> +	unsigned			lut[MAX_DFLL_VOLTAGES];
-> +	unsigned			lut_uv[MAX_DFLL_VOLTAGES];
-> +	int				lut_size;
-> +	u8				lut_bottom, lut_min, lut_max, lut_safe;
-> +
-> +	/* PWM interface */
-> +	enum tegra_dfll_pmu_if		pmu_if;
-> +	unsigned long			pwm_rate;
-> +	struct pinctrl			*pwm_pin;
-> +	struct pinctrl_state		*pwm_enable_state;
-> +	struct pinctrl_state		*pwm_disable_state;
->  };
->  
->  #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
-> @@ -489,6 +505,34 @@ static void dfll_set_mode(struct tegra_dfll *td,
->  	dfll_wmb(td);
->  }
->  
-...
-
-> +
-> +/**
-> + * dfll_force_output - force output a fixed value
-> + * @td: DFLL instance
-> + * @out_sel: value to force output
-> + *
-> + * Set the fixed value for force output, DFLL will output this value.
-> + */
-> +static int dfll_force_output(struct tegra_dfll *td, unsigned int out_sel)
-> +{
-> +	u32 val;
-> +
-> +	if (out_sel > OUT_MASK)
-> +		return -EINVAL;
-> +
-> +	val = dfll_set_force_output_value(td, out_sel);
-> +	if ((td->mode < DFLL_CLOSED_LOOP) &&
-> +	    !(val & DFLL_OUTPUT_FORCE_ENABLE)) {
-> +		dfll_set_force_output_enabled(td, true);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * dfll_load_lut - load the voltage lookup table
->   * @td: struct tegra_dfll *
-> @@ -539,7 +695,7 @@ static void dfll_load_i2c_lut(struct tegra_dfll *td)
->  			lut_index = i;
->  
->  		val = regulator_list_hardware_vsel(td->vdd_reg,
-> -						     td->i2c_lut[lut_index]);
-> +						     td->lut[lut_index]);
->  		__raw_writel(val, td->lut_base + i * 4);
->  	}
->  
-> @@ -594,24 +750,41 @@ static void dfll_init_out_if(struct tegra_dfll *td)
->  {
->  	u32 val;
->  
-> -	td->lut_min = 0;
-> -	td->lut_max = td->i2c_lut_size - 1;
-> -	td->lut_safe = td->lut_min + 1;
-> +	td->lut_min = td->lut_bottom;
-> +	td->lut_max = td->lut_size - 1;
-> +	td->lut_safe = td->lut_min + (td->lut_min < td->lut_max ? 1 : 0);
-> +
-> +	/* clear DFLL_OUTPUT_CFG before setting new value */
-> +	dfll_writel(td, 0, DFLL_OUTPUT_CFG);
-> +	dfll_wmb(td);
->  
-> -	dfll_i2c_writel(td, 0, DFLL_OUTPUT_CFG);
->  	val = (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
-> -		(td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
-> -		(td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
-> -	dfll_i2c_writel(td, val, DFLL_OUTPUT_CFG);
-> -	dfll_i2c_wmb(td);
-> +	      (td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
-> +	      (td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
-> +	dfll_writel(td, val, DFLL_OUTPUT_CFG);
-> +	dfll_wmb(td);
->  
->  	dfll_writel(td, 0, DFLL_OUTPUT_FORCE);
->  	dfll_i2c_writel(td, 0, DFLL_INTR_EN);
->  	dfll_i2c_writel(td, DFLL_INTR_MAX_MASK | DFLL_INTR_MIN_MASK,
->  			DFLL_INTR_STS);
->  
-> -	dfll_load_i2c_lut(td);
-> -	dfll_init_i2c_if(td);
-> +	if (td->pmu_if == TEGRA_DFLL_PMU_PWM) {
-> +		int vinit = td->reg_init_uV;
-> +		int vstep = td->soc->alignment.step_uv;
-> +		int vmin = td->lut_uv[0];
-> +
-> +		/* set initial voltage */
-> +		if ((vinit >= vmin) && vstep) {
-> +			unsigned int vsel;
-> +
-> +			vsel = DIV_ROUND_UP((vinit - vmin), vstep);
-> +			dfll_force_output(td, vsel);
-> +		}
-> +	} else {
-> +		dfll_load_i2c_lut(td);
-> +		dfll_init_i2c_if(td);
-> +	}
->  }
->  
->  /*
-> @@ -640,8 +813,8 @@ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
->  	uv = dev_pm_opp_get_voltage(opp);
->  	dev_pm_opp_put(opp);
->  
-> -	for (i = 0; i < td->i2c_lut_size; i++) {
-> -		if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) == uv)
-> +	for (i = td->lut_bottom; i < td->lut_size; i++) {
-> +		if (regulator_list_voltage(td->vdd_reg, td->lut[i]) == uv)
-
-Use td->lut_uv[] here, so it will also work for PWM regulators. Also
-change == to >= because the exact OPP voltage may not be available. In
-the next patch the rounding can then be fixed.
-
-Cheers,
-
-Peter.
+T24gVHVlLCBEZWMgMDQsIDIwMTggYXQgMDg6MDM6NTNBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBPbiAwMy4xMi4yMDE4IDIyOjQ4LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gPiBP
+biBUaHUsIE5vdiAyOSwgMjAxOCBhdCAwOTo0NjoxNkFNICswMTAwLCBBbmRyemVqIEhhamRhIHdy
+b3RlOgo+ID4+IFF1aXRlIGxhdGUsIGhvcGVmdWxseSBub3QgdG9vIGxhdGUuCj4gPj4KPiA+Pgo+
+ID4+IE9uIDIxLjExLjIwMTggMTI6NTEsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+Pj4gT24g
+V2VkLCBOb3YgMjEsIDIwMTggYXQgMDE6NDA6NDNQTSArMDIwMCwgSmFuaSBOaWt1bGEgd3JvdGU6
+Cj4gPj4+Pj4gIAkJcmV0dXJuOwo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL3NpbC1zaWk4NjIwLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIw
+LmMKPiA+Pj4+PiBpbmRleCBhNmU4ZjQ1OTFlNjMuLjBjYzI5M2E2YWMyNCAxMDA2NDQKPiA+Pj4+
+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIwLmMKPiA+Pj4+PiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIwLmMKPiA+Pj4+PiBAQCAtMTEwNCw4
+ICsxMTA0LDcgQEAgc3RhdGljIHZvaWQgc2lpODYyMF9zZXRfaW5mb2ZyYW1lcyhzdHJ1Y3Qgc2lp
+ODYyMCAqY3R4LAo+ID4+Pj4+ICAJaW50IHJldDsKPiA+Pj4+PiAgCj4gPj4+Pj4gIAlyZXQgPSBk
+cm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21fZGlzcGxheV9tb2RlKCZmcm0uYXZpLAo+ID4+Pj4+
+IC0JCQkJCQkgICAgICAgbW9kZSwKPiA+Pj4+PiAtCQkJCQkJICAgICAgIHRydWUpOwo+ID4+Pj4+
+ICsJCQkJCQkgICAgICAgTlVMTCwgbW9kZSk7Cj4gPj4+Pj4gIAlpZiAoY3R4LT51c2VfcGFja2Vk
+X3BpeGVsKQo+ID4+Pj4+ICAJCWZybS5hdmkuY29sb3JzcGFjZSA9IEhETUlfQ09MT1JTUEFDRV9Z
+VVY0MjI7Cj4gPj4+Pj4gIAo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL3N5bm9wc3lzL2R3LWhkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMv
+ZHctaGRtaS5jCj4gPj4+Pj4gaW5kZXggNjRjM2NmMDI3NTE4Li44OGI3MjBiNjMxMjYgMTAwNjQ0
+Cj4gPj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMK
+PiA+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYwo+
+ID4+Pj4+IEBAIC0xMzQ0LDcgKzEzNDQsOCBAQCBzdGF0aWMgdm9pZCBoZG1pX2NvbmZpZ19BVkko
+c3RydWN0IGR3X2hkbWkgKmhkbWksIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlKQo+ID4+
+Pj4+ICAJdTggdmFsOwo+ID4+Pj4+ICAKPiA+Pj4+PiAgCS8qIEluaXRpYWxpc2UgaW5mbyBmcmFt
+ZSBmcm9tIERSTSBtb2RlICovCj4gPj4+Pj4gLQlkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21f
+ZGlzcGxheV9tb2RlKCZmcmFtZSwgbW9kZSwgZmFsc2UpOwo+ID4+Pj4+ICsJZHJtX2hkbWlfYXZp
+X2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9kZSgmZnJhbWUsCj4gPj4+Pj4gKwkJCQkJCSAmaGRt
+aS0+Y29ubmVjdG9yLCBtb2RlKTsKPiA+Pj4+PiAgCj4gPj4+Pj4gIAlpZiAoaGRtaV9idXNfZm10
+X2lzX3l1djQ0NChoZG1pLT5oZG1pX2RhdGEuZW5jX291dF9idXNfZm9ybWF0KSkKPiA+Pj4+PiAg
+CQlmcmFtZS5jb2xvcnNwYWNlID0gSERNSV9DT0xPUlNQQUNFX1lVVjQ0NDsKPiA+Pj4+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJt
+X2VkaWQuYwo+ID4+Pj4+IGluZGV4IGI1MDZlMzYyMmIwOC4uNTAxYWMwNWJhN2RhIDEwMDY0NAo+
+ID4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jCj4gPj4+Pj4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2RybV9lZGlkLmMKPiA+Pj4+PiBAQCAtNDgzMCwxOSArNDgzMCwzMiBAQCB2
+b2lkIGRybV9zZXRfcHJlZmVycmVkX21vZGUoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3Rv
+ciwKPiA+Pj4+PiAgfQo+ID4+Pj4+ICBFWFBPUlRfU1lNQk9MKGRybV9zZXRfcHJlZmVycmVkX21v
+ZGUpOwo+ID4+Pj4+ICAKPiA+Pj4+PiArc3RhdGljIGJvb2wgaXNfaGRtaTJfc2luayhzdHJ1Y3Qg
+ZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ID4+Pj4gWW91J3JlIHVzdWFsbHkga25vd24gZm9y
+IGFkZGluZyBjb25zdCBhbGwgYXJvdW5kLCB3aHkgbm90IGNvbnN0IHBvaW50ZXIKPiA+Pj4+IGhl
+cmUgYW5kIGluIGFsbCB0aGUgb3RoZXIgZHJtXyogZnVuY3Rpb25zIHRoYXQgY2FsbCB0aGlzPwo+
+ID4+PiBNeSBjdXJyZW50IGFwcHJvYWNoIGlzIHRvIGNvbnN0aWZ5IHN0YXRlcy9mYnMvZXRjLiBi
+dXQgbm90IHNvIG11Y2gKPiA+Pj4gY3J0Y3MvY29ubmVjdG9ycy9ldGMuIFRvbyBtdWNoIGNvbnN0
+IGNhbiBzb21ldGltZXMgZ2V0IGluIHRoZSB3YXkKPiA+Pj4gb2YgdGhpbmdzIHJlcXVpcmluZyB0
+aGF0IHlvdSByZW1vdmUgdGhlIGNvbnN0IGxhdGVyLiBCdXQgSSBndWVzcwo+ID4+PiBpbiB0aGlz
+IGNhc2UgdGhlIGNvbnN0IHNob3VsZG4ndCByZWFsbHkgZ2V0IGluIHRoZSB3YXkgb2YgYW55dGhp
+bmcKPiA+Pj4gYmVjYXVzZSB0aGVzZSBhcmUgcHJldHR5IG11Y2ggc3VwcG9zZWQgdG8gYmUgcHVy
+ZSBmdW5jdGlvbnMuCj4gPj4+Cj4gPj4+Pj4gK3sKPiA+Pj4+PiArCS8qCj4gPj4+Pj4gKwkgKiBG
+SVhNRTogc2lsLXNpaTg2MjAgZG9lc24ndCBoYXZlIGEgY29ubmVjdG9yIGFyb3VuZCB3aGVuCj4g
+Pj4+Pj4gKwkgKiB3ZSBuZWVkIG9uZSwgc28gd2UgaGF2ZSB0byBiZSBwcmVwYXJlZCBmb3IgYSBO
+VUxMIGNvbm5lY3Rvci4KPiA+Pj4+PiArCSAqLwo+ID4+Pj4+ICsJaWYgKCFjb25uZWN0b3IpCj4g
+Pj4+Pj4gKwkJcmV0dXJuIGZhbHNlOwo+ID4+Pj4gVGhpcyBhY3R1YWxseSBjaGFuZ2VzIHRoZSBp
+c19oZG1pMl9zaW5rIHZhbHVlIGZvciBzaWwtc2lpODYyMC4KPiA+Pj4gSG1tLiBObyBpZGVhIHdo
+eSB0aGV5IHdvdWxkIGhhdmUgc2V0IHRoYXQgdG8gdHJ1ZSB3aGVuIGV2ZXJ5b25lIGVsc2UgaXMK
+PiA+Pj4gcGFzc2luZyBmYWxzZS4gCj4gPj4KPiA+PiBCZWNhdXNlIGZhbHNlIGRvZXMgbm90IHdv
+cmsgOikgTW9yZSBwcmVjaXNlbHkgTUhMdjMgKHVzZWQgaW4gU2lpODYyMCkKPiA+PiB1c2VzIENU
+QS04NjEtRiBzdGFuZGFyZCBmb3IgaW5mb2ZyYW1lcywgd2hpY2ggaXMgc3BlY2lmaWMgdG8gSERN
+STIuMC4KPiA+Pgo+ID4+IFVuZm9ydHVuYXRlbHkgSSBoYXZlIG5vIGFjY2VzcyB0byBNSEwgc3Bl
+Y3MsIGJ1dCBteSBleHBlcmltZW50cyBhbmQKPiA+PiB2ZW5kb3IgZHJpdmVycyBzdHJvbmdseSBz
+dWdnZXN0cyBpdCBpcyBkb25lIHRoaXMgd2F5Lgo+ID4+Cj4gPj4gVGhpcyBpcyBpbXBvcnRhbnQg
+aW4gY2FzZSBvZiA0SyBtb2RlcyB3aGljaCBhcmUgaGFuZGxlZCBkaWZmZXJlbnRseSBieQo+ID4+
+IEhETUkgMS40IGFuZCBIRE1JMi4wLgo+ID4gSERNSSAyLjAgaGFuZGxlcyA0ayBqdXN0IGxpa2Ug
+MS40IGhhbmRsZWQgaXQgd2hlbiB5b3UgdXNlIG9uZSBvZgo+ID4gdGhlIDRrIG1vZGVzIGRlZmlu
+ZWQgaW4gMS40LiBPbmx5IGlmIHlvdSB1c2UgZmVhdHVyZXMgYmV5b25kIDEuNCBkbyB3ZQo+ID4g
+c3dpdGNoIG92ZXIgdG8gdGhlIEhETUkgMi4wIHNwZWNpZmljIHNpZ25hbGxpbmcuCj4gCj4gCj4g
+VGhlIGRpZmZlcmVuY2UgaXMgaW4gaW5mb2ZyYW1lczoKPiAKPiBIRE1JIDEuNCBzZXRzIEFWSSBp
+bmZvZnJhbWUgVklDIHRvIDAsIGFuZCBzZW5kcyBIRE1JX1ZJQyBpbiBWU0kuCj4gCj4gSERNSSAy
+LjAgc2V0cyBBVkkgaW5mb2ZyYW1lIHRvIG5vbiB6ZXJvIFZJQ3MgaW50cm9kdWNlZCBieQo+IEhE
+TUkyLjAvQ0VBLTg2MS1GLCBWU0kgY2FuIGJlIG9taXR0ZWQgaWYgSSByZW1lbWJlciBjb3JyZWN0
+bHksIHVubGVzcyAzZAo+IGlzIGluIHVzZS4KCkxpa2UgSSBzYWlkLCBUaGUgSERNSSAxLjQgbWV0
+aG9kIGlzIHVzZWQgZXZlbiB3aXRoIEhETUkgMi4wIHNpbmtzIHVubGVzcwpzb21lIGZlYXR1cmUg
+Z2V0cyB1c2VkIHdoaWNoIGNhbid0IGJlIHNpZ25hbGxlZCB2aWEgdGhlIEhETUkgMS40IHZlbmRv
+cgpzcGVjaWZpYyBpbmZvZnJhbWUuCgo+IAo+IAo+IFNvIHNldHRpbmcgVklDcyB0byBub24temVy
+byBpbiBjYXNlIG9mIEhETUkxLjQgc2lua3MgYW5kIDRrIG1vZGVzIHNlZW1zCj4gcmlza3kuCgpU
+aGF0IGlzIG5vdCB3aGF0IEkgd2FzIHByb3Bvc2luZy4KCj4gCj4gCj4gUmVnYXJkcwo+IAo+IEFu
+ZHJ6ZWoKPiAKPiAKPiA+Cj4gPj4gVGhlIHBpcGVsaW5lIGxvb2tzIGxpa2UgKGluIHBhcmVudGhl
+c2lzIEhETUkgdmVyc2lvbiBvbiB0aGUgc3RyZWFtKToKPiA+Pgo+ID4+IGV4eW5vc19oZG1pIC0t
+KDEuNCktLT4gU0lJODYyMCAtLSgyLjApLS0+IE1ITF9kb25nbGUgLS0oMS40KS0tPiBUVgo+ID4+
+Cj4gPj4KPiA+Pj4gSSBndWVzcyBJIGNhbiBjaGFuZ2UgdGhpcyB0byB0cnVlIHRvIG5vdCBjaGFu
+Z2UgaXQuIElJUkMKPiA+Pj4gdGhhdCB3YXMgdGhlIG9ubHkgZHJpdmVyIHRoYXQgZGlkbid0IGhh
+dmUgYSBjb25uZWN0b3IgYXJvdW5kLgo+ID4+Pgo+ID4+PiBUaGF0IHNhaWQsIEkgd2FzIGFjdHVh
+bGx5IHRoaW5raW5nIG9mIHJlbW92aW5nIHRoaXMgaGRtaTIgdnMuIG5vdAo+ID4+PiBzdHVmZiBm
+cm9tIGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoKS4gV2UgYWRkZWQg
+aXQKPiA+Pj4gImp1c3QgaW4gY2FzZSIsIGJ1dCB3ZSBhbHJlYWR5IGhhdmUgYSBzaW1pbGFyIGlz
+c3VlIHdpdGggZWFybGllcgo+ID4+PiBjZWEtODYxIHJldmlzaW9ucyBhbmQgaGF2ZW4ndCBzZWVu
+IGFueSBidWdzIHdoZXJlIGFuIG9sZGVyIG1vbml0b3IKPiA+Pj4gd291bGQgZ2V0IGNvbmZ1c2Vk
+IGJ5IGEgVklDIG5vdCB5ZXQgZGVmaW5lZCB3aGVuIHRoZSBtb25pdG9yIHdhcwo+ID4+PiBwcm9k
+dWNlZC4KPiA+Pj4KPiA+PiBBcmUgeW91IHN1cmUgdGhpcyBpcyBhIGdvb2QgaWRlYT8gQXMgSSBz
+YWlkIGVhcmxpZXIgNEsgbW9kZXMgYXJlIHByZXNlbnQKPiA+PiBpbiBIRE1JIDEuNCBhbmQgMi4w
+IGJ1dCB0aGV5IGFyZSBoYW5kbGVkIGRpZmZlcmVudGx5LCBzbyB0aGlzIGlzIG5vdAo+ID4+IG9u
+bHkgbWF0dGVyIG9mIHVua25vd24gVklDIGluIEFWSUYuCj4gPj4KPiA+Pgo+ID4+IFJlZ2FyZHMK
+PiA+Pgo+ID4+IEFuZHJ6ZWoKPiAKCi0tIApWaWxsZSBTeXJqw6Rsw6QKSW50ZWwKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcg
+bGlzdApGcmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
