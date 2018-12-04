@@ -1,107 +1,58 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
-Date: Mon, 3 Dec 2018 23:48:44 +0200
-Message-ID: <20181203214844.GK9144@intel.com>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
- <87muq2ek04.fsf@intel.com>
- <CGME20181121115239epcas3p17343b2796d87af83b0eddbc40d646ed9@epcas3p1.samsung.com>
- <20181121115139.GC9144@intel.com>
- <d0e34bab-de8b-1005-b9e8-72afe66576ac@samsung.com>
+From: Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH v3 0/5] Add Tegra194 Dual ARM SMMU driver
+Date: Mon, 3 Dec 2018 17:36:48 -0800
+Message-ID: <1543887414-18209-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <d0e34bab-de8b-1005-b9e8-72afe66576ac-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, thomasz@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBOb3YgMjksIDIwMTggYXQgMDk6NDY6MTZBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBRdWl0ZSBsYXRlLCBob3BlZnVsbHkgbm90IHRvbyBsYXRlLgo+IAo+IAo+IE9uIDIx
-LjExLjIwMTggMTI6NTEsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+IE9uIFdlZCwgTm92IDIx
-LCAyMDE4IGF0IDAxOjQwOjQzUE0gKzAyMDAsIEphbmkgTmlrdWxhIHdyb3RlOgo+ID4+Cj4gPj4+
-ICAJCXJldHVybjsKPiA+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2ls
-LXNpaTg2MjAuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwo+ID4+PiBp
-bmRleCBhNmU4ZjQ1OTFlNjMuLjBjYzI5M2E2YWMyNCAxMDA2NDQKPiA+Pj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4gPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwo+ID4+PiBAQCAtMTEwNCw4ICsxMTA0LDcgQEAgc3RhdGlj
-IHZvaWQgc2lpODYyMF9zZXRfaW5mb2ZyYW1lcyhzdHJ1Y3Qgc2lpODYyMCAqY3R4LAo+ID4+PiAg
-CWludCByZXQ7Cj4gPj4+ICAKPiA+Pj4gIAlyZXQgPSBkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zy
-b21fZGlzcGxheV9tb2RlKCZmcm0uYXZpLAo+ID4+PiAtCQkJCQkJICAgICAgIG1vZGUsCj4gPj4+
-IC0JCQkJCQkgICAgICAgdHJ1ZSk7Cj4gPj4+ICsJCQkJCQkgICAgICAgTlVMTCwgbW9kZSk7Cj4g
-Pj4+ICAJaWYgKGN0eC0+dXNlX3BhY2tlZF9waXhlbCkKPiA+Pj4gIAkJZnJtLmF2aS5jb2xvcnNw
-YWNlID0gSERNSV9DT0xPUlNQQUNFX1lVVjQyMjsKPiA+Pj4gIAo+ID4+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYwo+ID4+PiBpbmRleCA2NGMzY2YwMjc1MTguLjg4
-YjcyMGI2MzEyNiAxMDA2NDQKPiA+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5v
-cHN5cy9kdy1oZG1pLmMKPiA+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5
-cy9kdy1oZG1pLmMKPiA+Pj4gQEAgLTEzNDQsNyArMTM0NCw4IEBAIHN0YXRpYyB2b2lkIGhkbWlf
-Y29uZmlnX0FWSShzdHJ1Y3QgZHdfaGRtaSAqaGRtaSwgc3RydWN0IGRybV9kaXNwbGF5X21vZGUg
-Km1vZGUpCj4gPj4+ICAJdTggdmFsOwo+ID4+PiAgCj4gPj4+ICAJLyogSW5pdGlhbGlzZSBpbmZv
-IGZyYW1lIGZyb20gRFJNIG1vZGUgKi8KPiA+Pj4gLQlkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zy
-b21fZGlzcGxheV9tb2RlKCZmcmFtZSwgbW9kZSwgZmFsc2UpOwo+ID4+PiArCWRybV9oZG1pX2F2
-aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoJmZyYW1lLAo+ID4+PiArCQkJCQkJICZoZG1p
-LT5jb25uZWN0b3IsIG1vZGUpOwo+ID4+PiAgCj4gPj4+ICAJaWYgKGhkbWlfYnVzX2ZtdF9pc195
-dXY0NDQoaGRtaS0+aGRtaV9kYXRhLmVuY19vdXRfYnVzX2Zvcm1hdCkpCj4gPj4+ICAJCWZyYW1l
-LmNvbG9yc3BhY2UgPSBIRE1JX0NPTE9SU1BBQ0VfWVVWNDQ0Owo+ID4+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYwo+
-ID4+PiBpbmRleCBiNTA2ZTM2MjJiMDguLjUwMWFjMDViYTdkYSAxMDA2NDQKPiA+Pj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMKPiA+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2Ry
-bV9lZGlkLmMKPiA+Pj4gQEAgLTQ4MzAsMTkgKzQ4MzAsMzIgQEAgdm9pZCBkcm1fc2V0X3ByZWZl
-cnJlZF9tb2RlKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsCj4gPj4+ICB9Cj4gPj4+
-ICBFWFBPUlRfU1lNQk9MKGRybV9zZXRfcHJlZmVycmVkX21vZGUpOwo+ID4+PiAgCj4gPj4+ICtz
-dGF0aWMgYm9vbCBpc19oZG1pMl9zaW5rKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3Ip
-Cj4gPj4gWW91J3JlIHVzdWFsbHkga25vd24gZm9yIGFkZGluZyBjb25zdCBhbGwgYXJvdW5kLCB3
-aHkgbm90IGNvbnN0IHBvaW50ZXIKPiA+PiBoZXJlIGFuZCBpbiBhbGwgdGhlIG90aGVyIGRybV8q
-IGZ1bmN0aW9ucyB0aGF0IGNhbGwgdGhpcz8KPiA+IE15IGN1cnJlbnQgYXBwcm9hY2ggaXMgdG8g
-Y29uc3RpZnkgc3RhdGVzL2Zicy9ldGMuIGJ1dCBub3Qgc28gbXVjaAo+ID4gY3J0Y3MvY29ubmVj
-dG9ycy9ldGMuIFRvbyBtdWNoIGNvbnN0IGNhbiBzb21ldGltZXMgZ2V0IGluIHRoZSB3YXkKPiA+
-IG9mIHRoaW5ncyByZXF1aXJpbmcgdGhhdCB5b3UgcmVtb3ZlIHRoZSBjb25zdCBsYXRlci4gQnV0
-IEkgZ3Vlc3MKPiA+IGluIHRoaXMgY2FzZSB0aGUgY29uc3Qgc2hvdWxkbid0IHJlYWxseSBnZXQg
-aW4gdGhlIHdheSBvZiBhbnl0aGluZwo+ID4gYmVjYXVzZSB0aGVzZSBhcmUgcHJldHR5IG11Y2gg
-c3VwcG9zZWQgdG8gYmUgcHVyZSBmdW5jdGlvbnMuCj4gPgo+ID4+PiArewo+ID4+PiArCS8qCj4g
-Pj4+ICsJICogRklYTUU6IHNpbC1zaWk4NjIwIGRvZXNuJ3QgaGF2ZSBhIGNvbm5lY3RvciBhcm91
-bmQgd2hlbgo+ID4+PiArCSAqIHdlIG5lZWQgb25lLCBzbyB3ZSBoYXZlIHRvIGJlIHByZXBhcmVk
-IGZvciBhIE5VTEwgY29ubmVjdG9yLgo+ID4+PiArCSAqLwo+ID4+PiArCWlmICghY29ubmVjdG9y
-KQo+ID4+PiArCQlyZXR1cm4gZmFsc2U7Cj4gPj4gVGhpcyBhY3R1YWxseSBjaGFuZ2VzIHRoZSBp
-c19oZG1pMl9zaW5rIHZhbHVlIGZvciBzaWwtc2lpODYyMC4KPiA+IEhtbS4gTm8gaWRlYSB3aHkg
-dGhleSB3b3VsZCBoYXZlIHNldCB0aGF0IHRvIHRydWUgd2hlbiBldmVyeW9uZSBlbHNlIGlzCj4g
-PiBwYXNzaW5nIGZhbHNlLiAKPiAKPiAKPiBCZWNhdXNlIGZhbHNlIGRvZXMgbm90IHdvcmsgOikg
-TW9yZSBwcmVjaXNlbHkgTUhMdjMgKHVzZWQgaW4gU2lpODYyMCkKPiB1c2VzIENUQS04NjEtRiBz
-dGFuZGFyZCBmb3IgaW5mb2ZyYW1lcywgd2hpY2ggaXMgc3BlY2lmaWMgdG8gSERNSTIuMC4KPiAK
-PiBVbmZvcnR1bmF0ZWx5IEkgaGF2ZSBubyBhY2Nlc3MgdG8gTUhMIHNwZWNzLCBidXQgbXkgZXhw
-ZXJpbWVudHMgYW5kCj4gdmVuZG9yIGRyaXZlcnMgc3Ryb25nbHkgc3VnZ2VzdHMgaXQgaXMgZG9u
-ZSB0aGlzIHdheS4KPiAKPiBUaGlzIGlzIGltcG9ydGFudCBpbiBjYXNlIG9mIDRLIG1vZGVzIHdo
-aWNoIGFyZSBoYW5kbGVkIGRpZmZlcmVudGx5IGJ5Cj4gSERNSSAxLjQgYW5kIEhETUkyLjAuCgpI
-RE1JIDIuMCBoYW5kbGVzIDRrIGp1c3QgbGlrZSAxLjQgaGFuZGxlZCBpdCB3aGVuIHlvdSB1c2Ug
-b25lIG9mCnRoZSA0ayBtb2RlcyBkZWZpbmVkIGluIDEuNC4gT25seSBpZiB5b3UgdXNlIGZlYXR1
-cmVzIGJleW9uZCAxLjQgZG8gd2UKc3dpdGNoIG92ZXIgdG8gdGhlIEhETUkgMi4wIHNwZWNpZmlj
-IHNpZ25hbGxpbmcuCgo+IAo+IFRoZSBwaXBlbGluZSBsb29rcyBsaWtlIChpbiBwYXJlbnRoZXNp
-cyBIRE1JIHZlcnNpb24gb24gdGhlIHN0cmVhbSk6Cj4gCj4gZXh5bm9zX2hkbWkgLS0oMS40KS0t
-PiBTSUk4NjIwIC0tKDIuMCktLT4gTUhMX2RvbmdsZSAtLSgxLjQpLS0+IFRWCj4gCj4gCj4gPiBJ
-IGd1ZXNzIEkgY2FuIGNoYW5nZSB0aGlzIHRvIHRydWUgdG8gbm90IGNoYW5nZSBpdC4gSUlSQwo+
-ID4gdGhhdCB3YXMgdGhlIG9ubHkgZHJpdmVyIHRoYXQgZGlkbid0IGhhdmUgYSBjb25uZWN0b3Ig
-YXJvdW5kLgo+ID4KPiA+IFRoYXQgc2FpZCwgSSB3YXMgYWN0dWFsbHkgdGhpbmtpbmcgb2YgcmVt
-b3ZpbmcgdGhpcyBoZG1pMiB2cy4gbm90Cj4gPiBzdHVmZiBmcm9tIGRybV9oZG1pX2F2aV9pbmZv
-ZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoKS4gV2UgYWRkZWQgaXQKPiA+ICJqdXN0IGluIGNhc2Ui
-LCBidXQgd2UgYWxyZWFkeSBoYXZlIGEgc2ltaWxhciBpc3N1ZSB3aXRoIGVhcmxpZXIKPiA+IGNl
-YS04NjEgcmV2aXNpb25zIGFuZCBoYXZlbid0IHNlZW4gYW55IGJ1Z3Mgd2hlcmUgYW4gb2xkZXIg
-bW9uaXRvcgo+ID4gd291bGQgZ2V0IGNvbmZ1c2VkIGJ5IGEgVklDIG5vdCB5ZXQgZGVmaW5lZCB3
-aGVuIHRoZSBtb25pdG9yIHdhcwo+ID4gcHJvZHVjZWQuCj4gPgo+IEFyZSB5b3Ugc3VyZSB0aGlz
-IGlzIGEgZ29vZCBpZGVhPyBBcyBJIHNhaWQgZWFybGllciA0SyBtb2RlcyBhcmUgcHJlc2VudAo+
-IGluIEhETUkgMS40IGFuZCAyLjAgYnV0IHRoZXkgYXJlIGhhbmRsZWQgZGlmZmVyZW50bHksIHNv
-IHRoaXMgaXMgbm90Cj4gb25seSBtYXR0ZXIgb2YgdW5rbm93biBWSUMgaW4gQVZJRi4KPiAKPiAK
-PiBSZWdhcmRzCj4gCj4gQW5kcnplagoKLS0gClZpbGxlIFN5cmrDpGzDpApJbnRlbApfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwphbWQtZ2Z4IG1haWxpbmcg
-bGlzdAphbWQtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2FtZC1nZngK
+NVIDIA's Xavier (Tegra194) SOC has two ARM SMMU(MMU-500) instances, which
+are used as one SMMU device in HW. The IOVA accesses from HW devices are
+interleaved across these two SMMU instances and need to be programmed identical.
+
+The existing ARM SMMU driver can't be used in its current form for programming
+the two SMMU instances identically. But, Most of the code can be shared between
+ARM SMMU driver and Tegra194 SMMU driver. To allow sharing the code, Created
+a libray based on the current ARM SMMU driver and added suppport to program
+multiple ARM SMMU Instances identically. Upated Current ARM SMMU driver and
+Tegra194 SMMU driver to use the library functions.
+
+Please review the patches and provide feedback.
+
+Changes in v2:
+* Added CONFIG_ARM_SMMU_TEGRA to protect Tegra194 SMMU driver compilation
+* Enabled CONFIG_ARM_SMMU_TEGRA in defconfig
+* Added SMMU nodes in Tegra194 device tree
+
+Changes in v3:
+* Created library for ARM SMMU based on arm-smmu.c
+* Added support to program multiple ARM SMMU instances identically
+* Updated arm-smmu.c/tegra194-smmu.c to use ARM SMMU library functions
+
+Krishna Reddy (6):
+  iommu/arm-smmu: create library for ARM SMMU
+  iommu/arm-smmu: Add support to program multiple ARM SMMU's identically
+  iommu/arm-smmu: update arm-smmu.c to use ARM SMMU library
+  iommu/tegra194_smmu: Add Tegra194 SMMU driver
+  arm64: defconfig: Enable ARM_SMMU_TEGRA
+  arm64: tegra: Add SMMU nodes to Tegra194 device tree
+
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi |  148 +++
+ arch/arm64/configs/defconfig             |    1 +
+ drivers/iommu/Kconfig                    |   11 +
+ drivers/iommu/Makefile                   |    2 +
+ drivers/iommu/arm-smmu.c                 | 1709 +----------------------------
+ drivers/iommu/lib-arm-smmu.c             | 1768 ++++++++++++++++++++++++++++++
+ drivers/iommu/lib-arm-smmu.h             |  161 +++
+ drivers/iommu/tegra194-smmu.c            |  394 +++++++
+ 8 files changed, 2496 insertions(+), 1698 deletions(-)
+ create mode 100644 drivers/iommu/lib-arm-smmu.c
+ create mode 100644 drivers/iommu/lib-arm-smmu.h
+ create mode 100644 drivers/iommu/tegra194-smmu.c
+
+-- 
+2.1.4
