@@ -1,8 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 10/19] clk: tegra: dfll: build clk-dfll.c for Tegra124 and
- Tegra210
-Date: Tue, 4 Dec 2018 17:25:39 +0800
-Message-ID: <20181204092548.3038-11-josephl@nvidia.com>
+Subject: [PATCH 15/19] arm64: dts: tegra210-p2597: add pinmux for PWM-based
+ DFLL support
+Date: Tue, 4 Dec 2018 17:25:44 +0800
+Message-ID: <20181204092548.3038-16-josephl@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,43 +22,37 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Add pinmux for PWM-based DFLL support.
 
-Tegra210 has a DFLL as well and can share the majority of the code with
-the Tegra124 implementation. So build the same code for both platforms.
-
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- drivers/clk/tegra/Kconfig  | 5 +++++
- drivers/clk/tegra/Makefile | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
-index 7ddacae5d0b1..57902ab43f4a 100644
---- a/drivers/clk/tegra/Kconfig
-+++ b/drivers/clk/tegra/Kconfig
-@@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
- config CLK_TEGRA_BPMP
- 	def_bool y
- 	depends on TEGRA_BPMP
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index 365726ddd418..db5dc0ad466d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1278,6 +1278,20 @@
+ 				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+ 			};
+ 		};
 +
-+config TEGRA_CLK_DFLL
-+	depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
-+	select PM_OPP
-+	def_bool y
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index 6507acc843c7..4812e45c2214 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -20,7 +20,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
--obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
-+obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
- obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
- obj-y					+= cvb.o
- obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
++		dvfs_pwm_active_state: dvfs_pwm_active {
++			dvfs_pwm_pbb1 {
++				nvidia,pins = "dvfs_pwm_pbb1";
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++			};
++		};
++
++		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
++			dvfs_pwm_pbb1 {
++				nvidia,pins = "dvfs_pwm_pbb1";
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++			};
++		};
+ 	};
+ 
+ 	pwm@7000a000 {
 -- 
 2.19.2
