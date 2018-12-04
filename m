@@ -1,11 +1,13 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 00/19] Tegra210 DFLL support
-Date: Tue, 4 Dec 2018 17:25:29 +0800
-Message-ID: <20181204092548.3038-1-josephl@nvidia.com>
+Subject: [PATCH 02/19] dt-bindings: clock: tegra124-dfll: add Tegra210 support
+Date: Tue, 4 Dec 2018 17:25:31 +0800
+Message-ID: <20181204092548.3038-3-josephl@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181204092548.3038-1-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,80 +18,31 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This series introduces support for the DFLL as a CPU clock source
-on Tegra210. As Jetson TX1 uses a PWM controlled regulator IC which
-is driven directly by the DFLLs PWM output, we also introduce support
-for PWM regulators next to I2C controlled regulators. The DFLL output
-frequency is directly controlled by the regulator voltage. The registers
-for controlling the PWM are part of the DFLL IP block, so there's no
-separate linux regulator object involved because the regulator IC only
-supplies the rail powering the CPUs. It doesn't have any other controls.
+Add Tegra210 support for DFLL clock.
 
-The patch 1~4 are the patches of DT bindings update for DFLL clock and
-Tegra124 cpufreq, which add PWM and Tegra210 support for DFLL clock and
-remove deprecate properties for Tegra124 cpufreq bindings.
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ .../devicetree/bindings/clock/nvidia,tegra124-dfll.txt        | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-The patch 5~10 are the patches for DFLL clock driver update for PWM-mode
-DFLL support.
-
-The patch 11 and 12 are the Tegra124 cpufreq driver update to make it
-work with Tegra210.
-
-The patch 13~18 are the devicetree files update for Tegra210 SoC and
-platforms. Two platforms are updated here for different DFLL mode usage.
-The Tegra210-p2371-2180 (a.k.a. Jetson Tx1) uses DFLL-PWM and the
-Tegra210-smaug (a.k.a. Pixel C) uses DFLL-I2C. So two different modes
-are verified with this series.
-
-The patch 19 is the patch for enabling the CPU regulator for Smaug
-board.
-
-Joseph Lo (16):
-  dt-bindings: clock: tegra124-dfll: add Tegra210 support
-  dt-bindings: cpufreq: tegra124: remove vdd-cpu-supply from required
-    properties
-  dt-bindings: cpufreq: tegra124: remove cpu_lp clock from required
-    properties
-  clk: tegra: dfll: CVB calculation alignment with the regulator
-  clk: tegra: dfll: support PWM regulator control
-  clk: tegra: dfll: round down voltages based on alignment
-  clk: tegra: dfll: add CVB tables for Tegra210
-  cpufreq: tegra124: do not handle the CPU rail
-  cpufreq: tegra124: extend to support Tegra210
-  arm64: dts: tegra210: add DFLL clock
-  arm64: dts: tegra210: add CPU clocks
-  arm64: dts: tegra210-p2597: add pinmux for PWM-based DFLL support
-  arm64: dts: tegra210-p2371-2180: enable DFLL clock
-  arm64: dts: tegra210-smaug: add CPU power rail regulator
-  arm64: dts: tegra210-smaug: enable DFLL clock
-  arm64: defconfig: Enable MAX8973 regulator
-
-Peter De Schrijver (3):
-  dt-bindings: clock: tegra124-dfll: Update DFLL binding for PWM
-    regulator
-  clk: tegra: dfll: registration for multiple SoCs
-  clk: tegra: dfll: build clk-dfll.c for Tegra124 and Tegra210
-
- .../bindings/clock/nvidia,tegra124-dfll.txt   |  77 ++-
- .../cpufreq/nvidia,tegra124-cpufreq.txt       |   6 +-
- .../boot/dts/nvidia/tegra210-p2371-2180.dts   |  20 +
- .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  14 +
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts |  31 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  25 +
- arch/arm64/configs/defconfig                  |   1 +
- drivers/clk/tegra/Kconfig                     |   5 +
- drivers/clk/tegra/Makefile                    |   2 +-
- drivers/clk/tegra/clk-dfll.c                  | 455 ++++++++++++---
- drivers/clk/tegra/clk-dfll.h                  |   6 +-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c    | 536 +++++++++++++++++-
- drivers/clk/tegra/cvb.c                       |  12 +-
- drivers/clk/tegra/cvb.h                       |   7 +-
- drivers/cpufreq/Kconfig.arm                   |   2 +-
- drivers/cpufreq/tegra124-cpufreq.c            |  29 +-
- 16 files changed, 1095 insertions(+), 133 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+index 8c97600d2bad..4bd44dd7ec1e 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+@@ -10,7 +10,9 @@ control module that will automatically adjust the VDD_CPU voltage by
+ communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+ 
+ Required properties:
+-- compatible : should be "nvidia,tegra124-dfll"
++- compatible : should be one of:
++  - "nvidia,tegra124-dfll": for Tegra124
++  - "nvidia,tegra210-dfll": for Tegra210
+ - reg : Defines the following set of registers, in the order listed:
+         - registers for the DFLL control logic.
+         - registers for the I2C output logic.
 -- 
 2.19.2
