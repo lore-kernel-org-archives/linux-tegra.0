@@ -1,138 +1,259 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: sor: Support for audio over HDMI
-Date: Tue, 4 Dec 2018 09:42:40 +0100
-Message-ID: <20181204084240.GA25962@ulmo>
-References: <20181203153642.13562-1-thierry.reding@gmail.com>
- <875zwa8uks.fsf@intel.com>
+Subject: Re: [PATCH v2 30/34] dt-bindings: arm: Convert Tegra board/soc
+ bindings to json-schema
+Date: Tue, 4 Dec 2018 09:50:22 +0100
+Message-ID: <20181204085022.GB25962@ulmo>
+References: <20181203213223.16986-1-robh@kernel.org>
+ <20181203213223.16986-31-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0637243924=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <875zwa8uks.fsf@intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181203213223.16986-31-robh@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Hudson <darknighte@darknighte.com>, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>, Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org, Mark Rutland <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0637243924==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
-Content-Disposition: inline
-
-
---FL5UXtIhxfXey3p5
+--aM3YZ0Iwxop3KEKx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 03, 2018 at 06:05:07PM +0200, Jani Nikula wrote:
-> On Mon, 03 Dec 2018, Thierry Reding <thierry.reding@gmail.com> wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > This code is very similar to the audio over HDMI support on older chips.
-> > Interoperation with the audio codec is done via a pair of codec scratch
-> > registers and an interrupt that is raised at the SOR when the codec has
-> > written those registers.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/gpu/drm/tegra/sor.c | 229 ++++++++++++++++++++++++++++++++++++
-> >  drivers/gpu/drm/tegra/sor.h |  68 +++++++++++
-> >  2 files changed, 297 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-> > index b129da2e5afd..22a54434a757 100644
-> > --- a/drivers/gpu/drm/tegra/sor.c
-> > +++ b/drivers/gpu/drm/tegra/sor.c
-> > @@ -19,6 +19,8 @@
-> > =20
-> >  #include <soc/tegra/pmc.h>
-> > =20
-> > +#include <sound/hda_verbs.h>
-> > +
-> >  #include <drm/drm_atomic_helper.h>
-> >  #include <drm/drm_dp_helper.h>
-> >  #include <drm/drm_panel.h>
-> > @@ -407,6 +409,7 @@ struct tegra_sor {
-> >  	const struct tegra_sor_soc *soc;
-> >  	void __iomem *regs;
-> >  	unsigned int index;
-> > +	unsigned int irq;
-> > =20
-> >  	struct reset_control *rst;
-> >  	struct clk *clk_parent;
-> > @@ -433,6 +436,11 @@ struct tegra_sor {
-> > =20
-> >  	struct delayed_work scdc;
-> >  	bool scdc_enabled;
-> > +
-> > +	struct {
-> > +		unsigned int sample_rate;
-> > +		unsigned int channels;
-> > +	} audio;
-> >  };
-> > =20
-> >  struct tegra_sor_state {
-> > @@ -2139,6 +2147,144 @@ tegra_sor_hdmi_setup_avi_infoframe(struct tegra=
-_sor *sor,
-> >  	return 0;
-> >  }
-> > =20
-> > +static void tegra_sor_write_eld(struct tegra_sor *sor)
-> > +{
-> > +	size_t length =3D drm_eld_size(sor->output.connector.eld), i;
+On Mon, Dec 03, 2018 at 03:32:19PM -0600, Rob Herring wrote:
+> Convert Tegra SoC bindings to DT schema format using json-schema.
 >=20
-> This caught my eye, can't be right?
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/arm/tegra.txt         |  65 -----------
+>  .../devicetree/bindings/arm/tegra.yaml        | 101 ++++++++++++++++++
+>  2 files changed, 101 insertions(+), 65 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentat=
+ion/devicetree/bindings/arm/tegra.txt
+> deleted file mode 100644
+> index c59b15f64346..000000000000
+> --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> +++ /dev/null
+> @@ -1,65 +0,0 @@
+> -NVIDIA Tegra device tree bindings
+> --------------------------------------------
+> -
+> -SoCs
+> --------------------------------------------
+> -
+> -Each device tree must specify which Tegra SoC it uses, using one of the
+> -following compatible values:
+> -
+> -  nvidia,tegra20
+> -  nvidia,tegra30
+> -  nvidia,tegra114
+> -  nvidia,tegra124
+> -  nvidia,tegra132
+> -  nvidia,tegra210
+> -  nvidia,tegra186
+> -  nvidia,tegra194
+> -
+> -Boards
+> --------------------------------------------
+> -
+> -Each device tree must specify which one or more of the following
+> -board-specific compatible values:
+> -
+> -  ad,medcom-wide
+> -  ad,plutux
+> -  ad,tamonten
+> -  ad,tec
+> -  compal,paz00
+> -  compulab,trimslice
+> -  nvidia,beaver
+> -  nvidia,cardhu
+> -  nvidia,cardhu-a02
+> -  nvidia,cardhu-a04
+> -  nvidia,dalmore
+> -  nvidia,harmony
+> -  nvidia,jetson-tk1
+> -  nvidia,norrin
+> -  nvidia,p2371-0000
+> -  nvidia,p2371-2180
+> -  nvidia,p2571
+> -  nvidia,p2771-0000
+> -  nvidia,p2972-0000
+> -  nvidia,roth
+> -  nvidia,seaboard
+> -  nvidia,tn7
+> -  nvidia,ventana
+> -  toradex,apalis_t30
+> -  toradex,apalis_t30-eval
+> -  toradex,apalis_t30-v1.1
+> -  toradex,apalis_t30-v1.1-eval
+> -  toradex,apalis-tk1
+> -  toradex,apalis-tk1-eval
+> -  toradex,apalis-tk1-v1.2
+> -  toradex,apalis-tk1-v1.2-eval
+> -  toradex,colibri_t20
+> -  toradex,colibri_t20-eval-v3
+> -  toradex,colibri_t20-iris
+> -  toradex,colibri_t30
+> -  toradex,colibri_t30-eval-v3
+> -
+> -Trusted Foundations
+> --------------------------------------------
+> -Tegra supports the Trusted Foundation secure monitor. See the
+> -"tlm,trusted-foundations" binding's documentation for more details.
+> diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documenta=
+tion/devicetree/bindings/arm/tegra.yaml
+> new file mode 100644
+> index 000000000000..66493892ffc1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+> @@ -0,0 +1,101 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/tegra.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 
-Why do you think it's wrong? The length is the number of bytes that are
-to be written to the HDA ELD buffer. This is pretty much the same across
-all drivers that support HDMI audio (i915 and nouveau).
+Could you explain what these are? They give 404, so I assume they are
+more like placeholders and not actually used?
 
-Also, audio is definitely working with this patch, and the HDMI codecs
-are showing the correct information in procfs.
+> +
+> +title: NVIDIA Tegra device tree bindings
+> +
+> +maintainers:
+> +  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> +  - Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Can you elaborate?
+Not sure how you got that list, but probably from git history. I think
+it makes sense to replace Marcel and Peter with Jon and myself.
 
-Thierry
+Other than that, looks fine to me. Some of the enumerations below look
+somewhat hard to parse, but I suspect that it will become second nature
+in no time.
 
---FL5UXtIhxfXey3p5
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - compal,paz00
+> +              - compulab,trimslice
+> +              - nvidia,harmony
+> +              - nvidia,seaboard
+> +              - nvidia,ventana
+> +          - const: nvidia,tegra20
+> +      - items:
+> +          - enum:
+> +              - ad,medcom-wide
+> +              - ad,plutux
+> +              - ad,tec
+> +          - const: ad,tamonten
+> +          - const: nvidia,tegra20
+> +      - items:
+> +          - enum:
+> +              - toradex,colibri_t20-eval-v3
+> +              - toradex,colibri_t20-iris
+> +          - const: toradex,colibri_t20
+> +          - const: nvidia,tegra20
+> +      - items:
+> +          - enum:
+> +              - nvidia,beaver
+> +          - const: nvidia,tegra30
+> +      - items:
+> +          - enum:
+> +              - nvidia,cardhu-a02
+> +              - nvidia,cardhu-a04
+> +          - const: nvidia,cardhu
+> +          - const: nvidia,tegra30
+> +      - items:
+> +          - const: toradex,apalis_t30-eval
+> +          - const: toradex,apalis_t30
+> +          - const: nvidia,tegra30
+> +      - items:
+> +          - const: toradex,apalis_t30-eval-v1.1
+> +          - const: toradex,apalis_t30-eval
+> +          - const: toradex,apalis_t30-v1.1
+> +          - const: toradex,apalis_t30
+> +          - const: nvidia,tegra30
+> +      - items:
+> +          - enum:
+> +              - toradex,colibri_t30-eval-v3
+> +          - const: toradex,colibri_t30
+> +          - const: nvidia,tegra30
+> +      - items:
+> +          - enum:
+> +              - nvidia,dalmore
+> +              - nvidia,roth
+> +              - nvidia,tn7
+> +          - const: nvidia,tegra114
+> +      - items:
+> +          - enum:
+> +              - nvidia,jetson-tk1
+> +              - nvidia,venice2
+> +          - const: nvidia,tegra124
+> +      - items:
+> +          - const: toradex,apalis-tk1-eval
+> +          - const: toradex,apalis-tk1
+> +          - const: nvidia,tegra124
+> +      - items:
+> +          - const: toradex,apalis-tk1-v1.2-eval
+> +          - const: toradex,apalis-tk1-eval
+> +          - const: toradex,apalis-tk1-v1.2
+> +          - const: toradex,apalis-tk1
+> +          - const: nvidia,tegra124
+> +      - items:
+> +          - enum:
+> +              - nvidia,norrin
+> +          - const: nvidia,tegra132
+> +          - const: nvidia,tegra124
+> +      - items:
+> +          - enum:
+> +              - nvidia,p2371-0000
+> +              - nvidia,p2371-2180
+> +              - nvidia,p2571
+> +          - const: nvidia,tegra210
+> +      - items:
+> +          - enum:
+> +              - nvidia,p2771-0000
+> +          - const: nvidia,tegra186
+> +      - items:
+> +          - enum:
+> +              - nvidia,p2972-0000
+> +          - const: nvidia,tegra194
+> --=20
+> 2.19.1
+>=20
+
+--aM3YZ0Iwxop3KEKx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwGPf0ACgkQ3SOs138+
-s6GR3Q//XlMugaqQSzooyxuunwQzLzG/wDyJbjHdUrzj/Bp/3hoVZ7zcBMOhxfwG
-c3d+LXPNZTeFkJze2NdR1uvWZcgMDs8R3LlRgWfrTuTot9+L/OUho09H6abGFdEY
-X/MCd5BIDIKKs+cOInGP4/jzPkuL+y01zNUDkz9ejiIxNfEcsf+syWEKTczdSVE8
-wlhU0hkKGsg90r5caHAGifHcRK2Bj1zcMDxuwwCgxIMI//GhMpJ2Vx8Prs/T8MVM
-qG08XE+K8kMP+Bcn3zoDaSrnYUEFRdB0IpZJQrGTlkLvK/dMS+yu3VoLn8VVYt4q
-vZ0tSqifRTFWi96clqNlZlhDdk1/+6lq6DjR561KKHJkifhauYkfF8Jp5x0y+OIz
-2lRMX7BX+WcA13hdCLbkk1fADpkVMGPWcQkB36l6+Lb3VFGbVZMusdj6Yao6ll/r
-zopGUFFm89mHs/bH6ygUUqzEhF5KOTLo5UjKm+YP9/jPj0cdMRLZtAXvzCr+bhdF
-jlYJypJMvLsdeTugWrB4+Sj5z/KVQOp4Hvsq5UqNqZOPd1oucS6eYZe5EGyhUcdU
-0I+zXy726gNVDryo9V2LjlfWN2LRqL0q0Zs1JJU9Sk5/xJ/CHABcncC9G8GkTj7c
-LKDtzyqzRo7RUfOsFmxXF4Yn2EwoYNCJA0pZ58w+mG59EOYsdyM=
-=vhVk
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwGP80ACgkQ3SOs138+
+s6F1lBAAqWmjjJqzXAlRqT/zeIxORQ/tP15oBBfsyT07n9XQ3qEnuR4sq0B24TBl
+l63/fZ+81/lpv8Ile8LcnKIJs0ojIbSqo4RhDks0NkOID8+LhFRBQ6TlMAonqN99
+VvtBXYCQTFWs0tk7qyz7/Nj5rsrJgpkKnKmmlRL+g0+tjz4IgrJWFkt4IJcJ9C8h
+FWXB67whBSkXxeXR2GPY/6tYoAzgJWo2f6YxeRbXKZNaLV+cx3nUSrp60zIvRjgn
+qdd3Hxj9OkIQ2vybA6+QPEz5AVsR+IhK4rcMj99gYswPykQ1xsc0r+L9iBn/9XwF
+pwQZI2Bq/axHmqx6w2xW76tE78Dkb8K/t2N1J00ygr+z+Y4DTYtSkwvp1F18gSbK
+FZQX1ymsc9qbA9MzBJGgLJ63szn5nIOFIb4wuP+fLYjbwj5MFO07oe5ArB0du2H1
+Ciy1BLTTu5aqCXgTRnk24vE4pl1KaZNKdBwaNdhdrNQNAHDK30caNlqxrF5i7HGi
+WFjlJr0M/Hf6duGWU0FBGtNLKaEPtVxHggjMeQV28gLm93Rw0P2yeqOcBquRgCfp
+mEfmzvKLreReUfkH0Z58U9YESrsnM8FHn7HEJg736hTHjrzTmpSlOpWGy5KahXIz
+cikPOjKsTP01LJEJ6/2D31XkAOGD55md3v8n38tI2LxxurUapD4=
+=MF5A
 -----END PGP SIGNATURE-----
 
---FL5UXtIhxfXey3p5--
-
---===============0637243924==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0637243924==--
+--aM3YZ0Iwxop3KEKx--
