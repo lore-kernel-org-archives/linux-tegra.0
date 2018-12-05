@@ -1,131 +1,78 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
-Date: Tue, 4 Dec 2018 21:13:20 +0200
-Message-ID: <20181204191320.GM9144@intel.com>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
- <CGME20181121182023epcas1p1c86d6be2849038018ae535b7718e7753@epcas1p1.samsung.com>
- <1697503.tFhaoOeOnK@avalon>
- <6147ea2d-8044-45d5-7a64-9d632ff41b95@samsung.com>
- <20181203213845.GJ9144@intel.com>
- <64018e44-9a5e-5b28-63db-f35b97dafb26@samsung.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 03/19] dt-bindings: cpufreq: tegra124: remove
+ vdd-cpu-supply from required properties
+Date: Wed, 5 Dec 2018 11:05:58 +0800
+Message-ID: <3a6f4512-db3f-4cba-21da-572edf14c5dc@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-4-josephl@nvidia.com>
+ <20181204153600.GA26056@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <64018e44-9a5e-5b28-63db-f35b97dafb26-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw03>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181204153600.GA26056@pdeschrijver-desktop.Nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBEZWMgMDQsIDIwMTggYXQgMDg6NDY6NTNBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBPbiAwMy4xMi4yMDE4IDIyOjM4LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gPiBP
-biBUaHUsIE5vdiAyOSwgMjAxOCBhdCAxMDowODowN0FNICswMTAwLCBBbmRyemVqIEhhamRhIHdy
-b3RlOgo+ID4+IE9uIDIxLjExLjIwMTggMTk6MTksIExhdXJlbnQgUGluY2hhcnQgd3JvdGU6Cj4g
-Pj4+IEhpIFZpbGxlLAo+ID4+Pgo+ID4+PiBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KPiA+Pj4K
-PiA+Pj4gT24gVHVlc2RheSwgMjAgTm92ZW1iZXIgMjAxOCAxODoxMzo0MiBFRVQgVmlsbGUgU3ly
-amFsYSB3cm90ZToKPiA+Pj4+IEZyb206IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBs
-aW51eC5pbnRlbC5jb20+Cj4gPj4+Pgo+ID4+Pj4gTWFrZSBsaWZlIGVhc2llciBmb3IgZHJpdmVy
-cyBieSBzaW1wbHkgcGFzc2luZyB0aGUgY29ubmVjdG9yCj4gPj4+PiB0byBkcm1faGRtaV9hdmlf
-aW5mb2ZyYW1lX2Zyb21fZGlzcGxheV9tb2RlKCkgYW5kCj4gPj4+PiBkcm1faGRtaV9hdmlfaW5m
-b2ZyYW1lX3F1YW50X3JhbmdlKCkuIFRoYXQgd2F5IGRyaXZlcnMgZG9uJ3QKPiA+Pj4+IG5lZWQg
-dG8gd29ycnkgYWJvdXQgaXNfaGRtaTJfc2luayBtZXNzLgo+ID4+PiBXaGlsZSB0aGlzIGlzIGdv
-b2QgZm9yIGRpc3BsYXkgY29udHJvbGxlciBkcml2ZXJzLCB0aGUgY2hhbmdlIGlzbid0IGdyZWF0
-IGZvciAKPiA+Pj4gYnJpZGdlIGRyaXZlcnMuIERvd24gdGhlIHJvYWQgd2UncmUgbG9va2luZyBh
-dCBtb3ZpbmcgY29ubmVjdG9yIHN1cHBvcnQgb3V0IG9mIAo+ID4+PiB0aGUgYnJpZGdlIGRyaXZl
-cnMuIEFkZGluZyBhbiBhZGRpdGlvbmFsIGRlcGVuZGVuY3kgdG8gY29ubmVjdG9ycyBpbiB0aGUg
-Cj4gPj4+IGJyaWRnZXMgd2lsbCBtYWtlIHRoYXQgbW9yZSBkaWZmaWN1bHQuIElkZWFsbHkgYnJp
-ZGdlcyBzaG91bGQgcmV0cmlldmUgdGhlIAo+ID4+PiBpbmZvcm1hdGlvbiBmcm9tIHRoZWlyIHNp
-bmssIHJlZ2FyZGxlc3Mgb2Ygd2hldGhlciBpdCBpcyBhIGNvbm5lY3RvciBvciAKPiA+Pj4gYW5v
-dGhlciBicmlkZ2UuCj4gPj4KPiA+PiBJIGFncmVlIHdpdGggaXQsIGFuZCBjYXNlIG9mIHNpaTg2
-MjAgc2hvd3MgdGhhdCB0aGVyZSBhcmUgY2FzZXMgd2hlcmUKPiA+PiBicmlkZ2UgaGFzIG5vIGRp
-cmVjdCBhY2Nlc3MgdG8gdGhlIGNvbm5lY3Rvci4KPiA+IEl0J3MganVzdCBhIG1hdHRlciBvZiBw
-bHVtYmluZyBpdCB0aHJvdWdoLgo+IAo+IAo+IFdoYXQgZG8geW91IG1lYW4gZXhhY3RseT8KCnZv
-aWQgYnJpZGdlX2ZvbyguLi4KKyAgICAgICAgICAgICAgICxzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAq
-Y29ubmVjdG9yKTsKCj4gCj4gCj4gPgo+ID4+IE9uIHRoZSBvdGhlciBzaWRlLMKgIHNpbmNlIHlv
-dSBhcmUgcGFzc2luZyBjb25uZWN0b3IgdG8KPiA+PiBkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zy
-b21fZGlzcGxheV9tb2RlKCksIHlvdSBjb3VsZCBkcm9wIG1vZGUKPiA+PiBwYXJhbWV0ZXIgYW5k
-IHJlbmFtZSB0aGUgZnVuY3Rpb24gdG8KPiA+PiBkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21f
-Y29ubmVjdG9yKCkgdGhlbiwgdW5sZXNzIG1vZGUgcGFzc2VkIGFuZAo+ID4+IG1vZGUgc2V0IG9u
-IHRoZSBjb25uZWN0b3IgZGlmZmVycz8KPiA+IENvbm5lY3RvcnMgZG9uJ3QgaGF2ZSBhIG1vZGUu
-Cj4gCj4gCj4gQXMgdGhleSBhcmUgcGFzc2luZyB2aWRlbyBzdHJlYW0gdGhleSBzaG91bGQgaGF2
-ZSBpdCwgZXZlbiBpZiBub3QKPiBkaXJlY3RseSwgZm9yIGV4YW1wbGU6Cj4gCj4gY29ubmVjdG9y
-LT5zdGF0ZS0+Y3J0Yy0+bW9kZQoKVGhhdCdzIG5vdCByZWFsbHkgaG93IGF0b21pYyB3b3Jrcy4g
-T25lIHNob3VsZG4ndCBnbyBkaWdnaW5nCnRocm91Z2ggdGhlIG9iai0+c3RhdGUgcG9pbnRlcnMg
-d2hlbiB3ZSdyZSBub3QgaG9sZGluZyB0aGUKcmVsZXZhbnQgbG9ja3MgYW55bW9yZS4gVGhlIGF0
-b21pYyB3YXkgd291bGQgYmUgdG8gcGFzcyBlaXRoZXIKYm90aCBjcnRjIHN0YXRlIGFuZCBjb25u
-ZWN0b3Igc3RhdGUsIG9yIGRybV9hdG9taWNfc3RhdGUgKwpjcnRjL2Nvbm5lY3Rvci4KCj4gCj4g
-SW4gbW9tZW50IG9mIGNyZWF0aW5nIGluZm9mcmFtZSBpdCBzaG91bGQgYmUgc2V0IHByb3Blcmx5
-Lgo+IAo+IAo+IFJlZ2FyZHMKPiAKPiBBbmRyemVqCj4gCj4gCj4gPgo+ID4+Cj4gPj4gUmVnYXJk
-cwo+ID4+Cj4gPj4gQW5kcnplago+ID4+Cj4gPj4KPiA+Pj4gUGxlYXNlIHNlZSBiZWxvdyBmb3Ig
-YW4gYWRkaXRpb25hbCBjb21tZW50Lgo+ID4+Pgo+ID4+Pj4gQ2M6IEFsZXggRGV1Y2hlciA8YWxl
-eGFuZGVyLmRldWNoZXJAYW1kLmNvbT4KPiA+Pj4+IENjOiAiQ2hyaXN0aWFuIEvDtm5pZyIgPGNo
-cmlzdGlhbi5rb2VuaWdAYW1kLmNvbT4KPiA+Pj4+IENjOiAiRGF2aWQgKENodW5NaW5nKSBaaG91
-IiA8RGF2aWQxLlpob3VAYW1kLmNvbT4KPiA+Pj4+IENjOiBBcmNoaXQgVGFuZWphIDxhcmNoaXR0
-QGNvZGVhdXJvcmEub3JnPgo+ID4+Pj4gQ2M6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3Vu
-Zy5jb20+Cj4gPj4+PiBDYzogTGF1cmVudCBQaW5jaGFydCA8TGF1cmVudC5waW5jaGFydEBpZGVh
-c29uYm9hcmQuY29tPgo+ID4+Pj4gQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4K
-PiA+Pj4+IENjOiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4gPj4+
-PiBDYzogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiA+Pj4+IENjOiBL
-eXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgo+ID4+Pj4gQ2M6IFJ1c3Nl
-bGwgS2luZyA8bGludXhAYXJtbGludXgub3JnLnVrPgo+ID4+Pj4gQ2M6IENLIEh1IDxjay5odUBt
-ZWRpYXRlay5jb20+Cj4gPj4+PiBDYzogUGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25p
-eC5kZT4KPiA+Pj4+IENjOiBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFpbC5jb20+Cj4gPj4+PiBD
-YzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRoYXQuY29tPgo+ID4+Pj4gQ2M6IFRvbWkgVmFsa2Vp
-bmVuIDx0b21pLnZhbGtlaW5lbkB0aS5jb20+Cj4gPj4+PiBDYzogU2FuZHkgSHVhbmcgPGhqY0By
-b2NrLWNoaXBzLmNvbT4KPiA+Pj4+IENjOiAiSGVpa28gU3TDvGJuZXIiIDxoZWlrb0BzbnRlY2gu
-ZGU+Cj4gPj4+PiBDYzogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQGxpbmFy
-by5vcmc+Cj4gPj4+PiBDYzogVmluY2VudCBBYnJpb3UgPHZpbmNlbnQuYWJyaW91QHN0LmNvbT4K
-PiA+Pj4+IENjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgo+ID4+
-Pj4gQ2M6IEVyaWMgQW5ob2x0IDxlcmljQGFuaG9sdC5uZXQ+Cj4gPj4+PiBDYzogU2hhd24gR3Vv
-IDxzaGF3bmd1b0BrZXJuZWwub3JnPgo+ID4+Pj4gQ2M6IElsaWEgTWlya2luIDxpbWlya2luQGFs
-dW0ubWl0LmVkdT4KPiA+Pj4+IENjOiBhbWQtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+ID4+
-Pj4gQ2M6IGxpbnV4LWFybS1tc21Admdlci5rZXJuZWwub3JnCj4gPj4+PiBDYzogZnJlZWRyZW5v
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+ID4+Pj4gQ2M6IG5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCj4gPj4+PiBDYzogbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnCj4gPj4+PiBTaWdu
-ZWQtb2ZmLWJ5OiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29t
-Pgo+ID4+Pj4gLS0tCj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3YxMF8w
-LmMgICAgfCAgMiArLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92MTFf
-MC5jICAgIHwgIDIgKy0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2VfdjZf
-MC5jICAgICB8ICAzICsrLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92
-OF8wLmMgICAgIHwgIDIgKy0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
-LWFueDc4eHguYyB8ICA1ICsrLS0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpaTkw
-MnguYyAgICAgICAgICB8ICAzICsrLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2ls
-LXNpaTg2MjAuYyAgICAgIHwgIDMgKy0tCj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9z
-eW5vcHN5cy9kdy1oZG1pLmMgfCAgMyArKy0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2Vk
-aWQuYyAgICAgICAgICAgICAgICB8IDMzICsrKysrKysrKysrKysrLS0tLS0tLS0tCj4gPj4+PiAg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICAgICAgfCAgMyArKy0KPiA+Pj4+
-ICBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5OHhfZHJ2LmMgICAgICAgICB8ICAzICsrLQo+ID4+
-Pj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2hkbWkuYyAgICAgICAgIHwgMTQgKysrKyst
-LS0tLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2xzcGNvbi5jICAgICAgIHwg
-MTUgKysrKysrLS0tLS0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9zZHZvLmMg
-ICAgICAgICB8IDEwICsrKystLS0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
-X2hkbWkuYyAgICAgICB8ICAzICsrLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9tc20vaGRtaS9o
-ZG1pX2JyaWRnZS5jICAgIHwgIDMgKystCj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUv
-ZGlzcG52NTAvZGlzcC5jICAgfCAgNyArKystLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9vbWFw
-ZHJtL29tYXBfZW5jb2Rlci5jICAgIHwgIDUgKystLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9y
-YWRlb24vcmFkZW9uX2F1ZGlvLmMgICAgIHwgIDIgKy0KPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0v
-cm9ja2NoaXAvaW5ub19oZG1pLmMgICAgICB8ICA0ICsrLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9zdGkvc3RpX2hkbWkuYyAgICAgICAgICAgIHwgIDMgKystCj4gPj4+PiAgZHJpdmVycy9ncHUv
-ZHJtL3N1bjRpL3N1bjRpX2hkbWlfZW5jLmMgICAgfCAgMyArKy0KPiA+Pj4+ICBkcml2ZXJzL2dw
-dS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICB8ICAzICsrLQo+ID4+Pj4gIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9zb3IuYyAgICAgICAgICAgICAgIHwgIDMgKystCj4gPj4+PiAgZHJpdmVy
-cy9ncHUvZHJtL3ZjNC92YzRfaGRtaS5jICAgICAgICAgICAgfCAxMSArKysrKy0tLQo+ID4+Pj4g
-IGRyaXZlcnMvZ3B1L2RybS96dGUvenhfaGRtaS5jICAgICAgICAgICAgIHwgIDQgKystCj4gPj4+
-PiAgaW5jbHVkZS9kcm0vZHJtX2VkaWQuaCAgICAgICAgICAgICAgICAgICAgfCAgOCArKystLS0K
-PiA+Pj4+ICAyNyBmaWxlcyBjaGFuZ2VkLCA5NCBpbnNlcnRpb25zKCspLCA2NiBkZWxldGlvbnMo
-LSkKPiA+Pj4gRm9yIGR3LWhkbWkgYW5kIG9tYXBkcm0sCj4gPj4+Cj4gPj4+IFJldmlld2VkLWJ5
-OiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4g
-Pj4+CgotLSAKVmlsbGUgU3lyasOkbMOkCkludGVsCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmFtZC1nZnggbWFpbGluZyBsaXN0CmFtZC1nZnhAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vYW1kLWdmeAo=
+On 12/4/18 11:36 PM, Peter De Schrijver wrote:
+> On Tue, Dec 04, 2018 at 05:25:32PM +0800, Joseph Lo wrote:
+>> The Tegra124 cpufreq driver works only with DFLL clock, which is a
+>> hardware-based frequency/voltage controller. The driver doesn't need to
+>> control the regulator itself. Hence remove that.
+>>
+> 
+> I think this is required for DFLL controlled I2C regulators because the
+> regulator is queried for voltage selectors and I2C slave ID?
+> 
+
+Hi Peter,
+
+Yes, it's required for DFLL-I2C mode and defined in DFLL node. It's not 
+needed here in the CPU node for CPU freq driver to handle that. Hence 
+remove that.
+
+Thanks,
+Joseph
+
+
+> 
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt     | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+>> index b1669fbfb740..031545a29caf 100644
+>> --- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+>> @@ -13,7 +13,6 @@ Required properties:
+>>     - pll_x: Fast PLL clocksource.
+>>     - pll_p: Auxiliary PLL used during fast PLL rate changes.
+>>     - dfll: Fast DFLL clocksource that also automatically scales CPU voltage.
+>> -- vdd-cpu-supply: Regulator for CPU voltage
+>>   
+>>   Optional properties:
+>>   - clock-latency: Specify the possible maximum transition latency for clock,
+>> @@ -37,7 +36,6 @@ cpus {
+>>   			 <&dfll>;
+>>   		clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
+>>   		clock-latency = <300000>;
+>> -		vdd-cpu-supply: <&vdd_cpu>;
+>>   	};
+>>   
+>>   	<...>
+>> -- 
+>> 2.19.2
+>>
