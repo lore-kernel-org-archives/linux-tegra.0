@@ -1,171 +1,227 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI
- inforframe functions
-Date: Wed, 5 Dec 2018 17:06:28 +0200
-Message-ID: <20181205150628.GS9144@intel.com>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
- <87muq2ek04.fsf@intel.com>
- <CGME20181121115239epcas3p17343b2796d87af83b0eddbc40d646ed9@epcas3p1.samsung.com>
- <20181121115139.GC9144@intel.com>
- <d0e34bab-de8b-1005-b9e8-72afe66576ac@samsung.com>
- <20181203214844.GK9144@intel.com>
- <aee2cad8-ef93-72d5-986f-b33aabd2c3d2@samsung.com>
- <20181204190234.GL9144@intel.com>
- <239ce5d3-3959-7926-7c0e-26997ec4e5ee@samsung.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect
+ API
+Date: Wed, 5 Dec 2018 17:57:19 +0200
+Message-ID: <c2dc1f5c-46ab-b5aa-0069-b5b50e7e2182@linaro.org>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <20181127180349.29997-2-georgi.djakov@linaro.org>
+ <CAE=gft5jWZgzRTNB4m0ES+g=rpjACYWVissmEQ+pgPGKEffgog@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <239ce5d3-3959-7926-7c0e-26997ec4e5ee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAE=gft5jWZgzRTNB4m0ES+g=rpjACYWVissmEQ+pgPGKEffgog@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Evan Green <evgreen@chromium.org>
+Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>, khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>, maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBEZWMgMDUsIDIwMTggYXQgMDg6NDA6MzRBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBPbiAwNC4xMi4yMDE4IDIwOjAyLCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gPiBP
-biBUdWUsIERlYyAwNCwgMjAxOCBhdCAwODowMzo1M0FNICswMTAwLCBBbmRyemVqIEhhamRhIHdy
-b3RlOgo+ID4+IE9uIDAzLjEyLjIwMTggMjI6NDgsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+
-Pj4gT24gVGh1LCBOb3YgMjksIDIwMTggYXQgMDk6NDY6MTZBTSArMDEwMCwgQW5kcnplaiBIYWpk
-YSB3cm90ZToKPiA+Pj4+IFF1aXRlIGxhdGUsIGhvcGVmdWxseSBub3QgdG9vIGxhdGUuCj4gPj4+
-Pgo+ID4+Pj4KPiA+Pj4+IE9uIDIxLjExLjIwMTggMTI6NTEsIFZpbGxlIFN5cmrDpGzDpCB3cm90
-ZToKPiA+Pj4+PiBPbiBXZWQsIE5vdiAyMSwgMjAxOCBhdCAwMTo0MDo0M1BNICswMjAwLCBKYW5p
-IE5pa3VsYSB3cm90ZToKPiA+Pj4+Pj4+ICAJCXJldHVybjsKPiA+Pj4+Pj4+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIwLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-YnJpZGdlL3NpbC1zaWk4NjIwLmMKPiA+Pj4+Pj4+IGluZGV4IGE2ZThmNDU5MWU2My4uMGNjMjkz
-YTZhYzI0IDEwMDY0NAo+ID4+Pj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwt
-c2lpODYyMC5jCj4gPj4+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4
-NjIwLmMKPiA+Pj4+Pj4+IEBAIC0xMTA0LDggKzExMDQsNyBAQCBzdGF0aWMgdm9pZCBzaWk4NjIw
-X3NldF9pbmZvZnJhbWVzKHN0cnVjdCBzaWk4NjIwICpjdHgsCj4gPj4+Pj4+PiAgCWludCByZXQ7
-Cj4gPj4+Pj4+PiAgCj4gPj4+Pj4+PiAgCXJldCA9IGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJv
-bV9kaXNwbGF5X21vZGUoJmZybS5hdmksCj4gPj4+Pj4+PiAtCQkJCQkJICAgICAgIG1vZGUsCj4g
-Pj4+Pj4+PiAtCQkJCQkJICAgICAgIHRydWUpOwo+ID4+Pj4+Pj4gKwkJCQkJCSAgICAgICBOVUxM
-LCBtb2RlKTsKPiA+Pj4+Pj4+ICAJaWYgKGN0eC0+dXNlX3BhY2tlZF9waXhlbCkKPiA+Pj4+Pj4+
-ICAJCWZybS5hdmkuY29sb3JzcGFjZSA9IEhETUlfQ09MT1JTUEFDRV9ZVVY0MjI7Cj4gPj4+Pj4+
-PiAgCj4gPj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5
-cy9kdy1oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYwo+
-ID4+Pj4+Pj4gaW5kZXggNjRjM2NmMDI3NTE4Li44OGI3MjBiNjMxMjYgMTAwNjQ0Cj4gPj4+Pj4+
-PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYwo+ID4+Pj4+
-Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMKPiA+Pj4+
-Pj4+IEBAIC0xMzQ0LDcgKzEzNDQsOCBAQCBzdGF0aWMgdm9pZCBoZG1pX2NvbmZpZ19BVkkoc3Ry
-dWN0IGR3X2hkbWkgKmhkbWksIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlKQo+ID4+Pj4+
-Pj4gIAl1OCB2YWw7Cj4gPj4+Pj4+PiAgCj4gPj4+Pj4+PiAgCS8qIEluaXRpYWxpc2UgaW5mbyBm
-cmFtZSBmcm9tIERSTSBtb2RlICovCj4gPj4+Pj4+PiAtCWRybV9oZG1pX2F2aV9pbmZvZnJhbWVf
-ZnJvbV9kaXNwbGF5X21vZGUoJmZyYW1lLCBtb2RlLCBmYWxzZSk7Cj4gPj4+Pj4+PiArCWRybV9o
-ZG1pX2F2aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoJmZyYW1lLAo+ID4+Pj4+Pj4gKwkJ
-CQkJCSAmaGRtaS0+Y29ubmVjdG9yLCBtb2RlKTsKPiA+Pj4+Pj4+ICAKPiA+Pj4+Pj4+ICAJaWYg
-KGhkbWlfYnVzX2ZtdF9pc195dXY0NDQoaGRtaS0+aGRtaV9kYXRhLmVuY19vdXRfYnVzX2Zvcm1h
-dCkpCj4gPj4+Pj4+PiAgCQlmcmFtZS5jb2xvcnNwYWNlID0gSERNSV9DT0xPUlNQQUNFX1lVVjQ0
-NDsKPiA+Pj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jCj4gPj4+Pj4+PiBpbmRleCBiNTA2ZTM2MjJiMDguLjUw
-MWFjMDViYTdkYSAxMDA2NDQKPiA+Pj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZWRp
-ZC5jCj4gPj4+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYwo+ID4+Pj4+Pj4g
-QEAgLTQ4MzAsMTkgKzQ4MzAsMzIgQEAgdm9pZCBkcm1fc2V0X3ByZWZlcnJlZF9tb2RlKHN0cnVj
-dCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsCj4gPj4+Pj4+PiAgfQo+ID4+Pj4+Pj4gIEVYUE9S
-VF9TWU1CT0woZHJtX3NldF9wcmVmZXJyZWRfbW9kZSk7Cj4gPj4+Pj4+PiAgCj4gPj4+Pj4+PiAr
-c3RhdGljIGJvb2wgaXNfaGRtaTJfc2luayhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9y
-KQo+ID4+Pj4+PiBZb3UncmUgdXN1YWxseSBrbm93biBmb3IgYWRkaW5nIGNvbnN0IGFsbCBhcm91
-bmQsIHdoeSBub3QgY29uc3QgcG9pbnRlcgo+ID4+Pj4+PiBoZXJlIGFuZCBpbiBhbGwgdGhlIG90
-aGVyIGRybV8qIGZ1bmN0aW9ucyB0aGF0IGNhbGwgdGhpcz8KPiA+Pj4+PiBNeSBjdXJyZW50IGFw
-cHJvYWNoIGlzIHRvIGNvbnN0aWZ5IHN0YXRlcy9mYnMvZXRjLiBidXQgbm90IHNvIG11Y2gKPiA+
-Pj4+PiBjcnRjcy9jb25uZWN0b3JzL2V0Yy4gVG9vIG11Y2ggY29uc3QgY2FuIHNvbWV0aW1lcyBn
-ZXQgaW4gdGhlIHdheQo+ID4+Pj4+IG9mIHRoaW5ncyByZXF1aXJpbmcgdGhhdCB5b3UgcmVtb3Zl
-IHRoZSBjb25zdCBsYXRlci4gQnV0IEkgZ3Vlc3MKPiA+Pj4+PiBpbiB0aGlzIGNhc2UgdGhlIGNv
-bnN0IHNob3VsZG4ndCByZWFsbHkgZ2V0IGluIHRoZSB3YXkgb2YgYW55dGhpbmcKPiA+Pj4+PiBi
-ZWNhdXNlIHRoZXNlIGFyZSBwcmV0dHkgbXVjaCBzdXBwb3NlZCB0byBiZSBwdXJlIGZ1bmN0aW9u
-cy4KPiA+Pj4+Pgo+ID4+Pj4+Pj4gK3sKPiA+Pj4+Pj4+ICsJLyoKPiA+Pj4+Pj4+ICsJICogRklY
-TUU6IHNpbC1zaWk4NjIwIGRvZXNuJ3QgaGF2ZSBhIGNvbm5lY3RvciBhcm91bmQgd2hlbgo+ID4+
-Pj4+Pj4gKwkgKiB3ZSBuZWVkIG9uZSwgc28gd2UgaGF2ZSB0byBiZSBwcmVwYXJlZCBmb3IgYSBO
-VUxMIGNvbm5lY3Rvci4KPiA+Pj4+Pj4+ICsJICovCj4gPj4+Pj4+PiArCWlmICghY29ubmVjdG9y
-KQo+ID4+Pj4+Pj4gKwkJcmV0dXJuIGZhbHNlOwo+ID4+Pj4+PiBUaGlzIGFjdHVhbGx5IGNoYW5n
-ZXMgdGhlIGlzX2hkbWkyX3NpbmsgdmFsdWUgZm9yIHNpbC1zaWk4NjIwLgo+ID4+Pj4+IEhtbS4g
-Tm8gaWRlYSB3aHkgdGhleSB3b3VsZCBoYXZlIHNldCB0aGF0IHRvIHRydWUgd2hlbiBldmVyeW9u
-ZSBlbHNlIGlzCj4gPj4+Pj4gcGFzc2luZyBmYWxzZS4gCj4gPj4+PiBCZWNhdXNlIGZhbHNlIGRv
-ZXMgbm90IHdvcmsgOikgTW9yZSBwcmVjaXNlbHkgTUhMdjMgKHVzZWQgaW4gU2lpODYyMCkKPiA+
-Pj4+IHVzZXMgQ1RBLTg2MS1GIHN0YW5kYXJkIGZvciBpbmZvZnJhbWVzLCB3aGljaCBpcyBzcGVj
-aWZpYyB0byBIRE1JMi4wLgo+ID4+Pj4KPiA+Pj4+IFVuZm9ydHVuYXRlbHkgSSBoYXZlIG5vIGFj
-Y2VzcyB0byBNSEwgc3BlY3MsIGJ1dCBteSBleHBlcmltZW50cyBhbmQKPiA+Pj4+IHZlbmRvciBk
-cml2ZXJzIHN0cm9uZ2x5IHN1Z2dlc3RzIGl0IGlzIGRvbmUgdGhpcyB3YXkuCj4gPj4+Pgo+ID4+
-Pj4gVGhpcyBpcyBpbXBvcnRhbnQgaW4gY2FzZSBvZiA0SyBtb2RlcyB3aGljaCBhcmUgaGFuZGxl
-ZCBkaWZmZXJlbnRseSBieQo+ID4+Pj4gSERNSSAxLjQgYW5kIEhETUkyLjAuCj4gPj4+IEhETUkg
-Mi4wIGhhbmRsZXMgNGsganVzdCBsaWtlIDEuNCBoYW5kbGVkIGl0IHdoZW4geW91IHVzZSBvbmUg
-b2YKPiA+Pj4gdGhlIDRrIG1vZGVzIGRlZmluZWQgaW4gMS40LiBPbmx5IGlmIHlvdSB1c2UgZmVh
-dHVyZXMgYmV5b25kIDEuNCBkbyB3ZQo+ID4+PiBzd2l0Y2ggb3ZlciB0byB0aGUgSERNSSAyLjAg
-c3BlY2lmaWMgc2lnbmFsbGluZy4KPiA+Pgo+ID4+IFRoZSBkaWZmZXJlbmNlIGlzIGluIGluZm9m
-cmFtZXM6Cj4gPj4KPiA+PiBIRE1JIDEuNCBzZXRzIEFWSSBpbmZvZnJhbWUgVklDIHRvIDAsIGFu
-ZCBzZW5kcyBIRE1JX1ZJQyBpbiBWU0kuCj4gPj4KPiA+PiBIRE1JIDIuMCBzZXRzIEFWSSBpbmZv
-ZnJhbWUgdG8gbm9uIHplcm8gVklDcyBpbnRyb2R1Y2VkIGJ5Cj4gPj4gSERNSTIuMC9DRUEtODYx
-LUYsIFZTSSBjYW4gYmUgb21pdHRlZCBpZiBJIHJlbWVtYmVyIGNvcnJlY3RseSwgdW5sZXNzIDNk
-Cj4gPj4gaXMgaW4gdXNlLgo+ID4gTGlrZSBJIHNhaWQsIFRoZSBIRE1JIDEuNCBtZXRob2QgaXMg
-dXNlZCBldmVuIHdpdGggSERNSSAyLjAgc2lua3MgdW5sZXNzCj4gPiBzb21lIGZlYXR1cmUgZ2V0
-cyB1c2VkIHdoaWNoIGNhbid0IGJlIHNpZ25hbGxlZCB2aWEgdGhlIEhETUkgMS40IHZlbmRvcgo+
-ID4gc3BlY2lmaWMgaW5mb2ZyYW1lLgo+IAo+IAo+IERvIHlvdSBtZWFuIHRoYXQgNEsgVklDcyA5
-NSwgOTQsIDkzLCA5OCBkZWZpbmVkIGluIENFQS04NjEtRiBhcmUgbm90Cj4gdXNlZCBhdCBhbGwg
-Zm9yIG5vbi0zZCB2aWRlbyBpbiBIRE1JIDIuMD8KPiAKPiBDaGFwdGVyIDEwLjEgb2YgSERNSTIu
-MCBzcGVjIHNheXMgY2xlYXJseToKPiAKPiA+IFdoZW4gdHJhbnNtaXR0aW5nIGFueSBhZGRpdGlv
-bmFsIFZpZGVvIEZvcm1hdCBmb3Igd2hpY2ggYSBWSUMgdmFsdWUKPiA+IGhhcyBiZWVuIGRlZmlu
-ZWQgaW4KPiA+IENFQS04NjEtRiB0YWJsZXMgMSwgMiwgYW5kIDMsIGFuIEhETUkgU291cmNlIHNo
-YWxsIHNldCB0aGUgVklDIGZpZWxkCj4gPiB0byB0aGUgVmlkZW8gQ29kZSBmb3IKPiA+IHRoYXQg
-Zm9ybWF0Lgo+IAo+IAo+IEl0IGNvbnRyYWRpY3RzIHlvdXIgc3RhdGVtZW50LCBvciBhbSBJIG1p
-c3Npbmcgc29tZXRoaW5nPwoKSUlSQyB0aGUgc3BlYyBzYWlkIHlvdSBjYW4gb25seSB1c2UgZWl0
-aGVyIG9uZSBvciB0aGUgb3RoZXIuCgpTZWN0aW9uIDEwLjIgZG9lc24ndCBleHBsaWNpdHkgc2F5
-IHRoYXQgdGhlIEFWSSBWSUMgbXVzdCBiZSB6ZXJvIHdoZW4KSERNSV9WSUMgaXMgbm9uLXplcm8s
-IGJ1dCBpdCBkb2VzIG1vcmUgb3IgbGVzcyBpbXBseSBpdC4gQW5kIGxvb2tzCmxpa2UgYXBwZW5k
-aXggRSBvdXRyaWdodCBmb3JiaWRzIGhhdmluZyBib3RoIGFzIG5vbi16ZXJvLgoKPiAKPiAKPiA+
-Cj4gPj4KPiA+PiBTbyBzZXR0aW5nIFZJQ3MgdG8gbm9uLXplcm8gaW4gY2FzZSBvZiBIRE1JMS40
-IHNpbmtzIGFuZCA0ayBtb2RlcyBzZWVtcwo+ID4+IHJpc2t5Lgo+ID4gVGhhdCBpcyBub3Qgd2hh
-dCBJIHdhcyBwcm9wb3NpbmcuCj4gCj4gCj4gTWF5YmUgSSBoYXZlIG1pc3JlYWQgeW91ciBzdGF0
-ZW1lbnQ6Cj4gCj4gT24gMjEuMTEuMjAxOCAxMjo1MSwgVmlsbGUgU3lyasOkbMOkIHdyb3RlOgo+
-IAo+ID4gVGhhdCBzYWlkLCBJIHdhcyBhY3R1YWxseSB0aGlua2luZyBvZiByZW1vdmluZyB0aGlz
-IGhkbWkyIHZzLiBub3QKPiA+IHN0dWZmIGZyb20gZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9t
-X2Rpc3BsYXlfbW9kZSgpLiBXZSBhZGRlZCBpdAo+ID4gImp1c3QgaW4gY2FzZSIsIGJ1dCB3ZSBh
-bHJlYWR5IGhhdmUgYSBzaW1pbGFyIGlzc3VlIHdpdGggZWFybGllcgo+ID4gY2VhLTg2MSByZXZp
-c2lvbnMgYW5kIGhhdmVuJ3Qgc2VlbiBhbnkgYnVncyB3aGVyZSBhbiBvbGRlciBtb25pdG9yCj4g
-PiB3b3VsZCBnZXQgY29uZnVzZWQgYnkgYSBWSUMgbm90IHlldCBkZWZpbmVkIHdoZW4gdGhlIG1v
-bml0b3Igd2FzCj4gPiBwcm9kdWNlZC4KPiAKPiAKPiBJIGRvIG5vdCBrbm93IHdoYXQgaXQgY291
-bGQgbWVhbiBvdGhlciB0aGF0IGFsbG93aW5nIHNlbmRpbmcgVklDcwo+IHVua25vd24gdG8gc2lu
-az8KClllcyBpdCBtaWdodCBzZW5kIHVua25vd24gVklDcyB0byBzaW5rcy4gQnV0IHRoYXQgaGFw
-cGVucyBhbnl3YXkgYmVjYXN1ZQp3ZSBjYW4ndCB0ZWxsIHdoaWNoIFZJQ3MgdGhlIHNpbmsgc3Vw
-cG9ydHMuIFdlIGNhbiBvbmx5IHRyeSB0byBkZWR1Y2UKdGhlIHNwZWMgdmVyc2lvbiBpbmRpcmVj
-dGx5IHdoaWNoIGlzIG5vdCB2ZXJ5IHJvYnVzdC4gQW5kIHdlIG9ubHkgZG8gdGhhdApmb3IgQ1RB
-LTg2MS1GLCBlYXJsaWVyIHJldmlzaW9ucyBvZiB0aGUgc3BlYyB3ZSBkb24ndCB0cnkgdG8gZGVk
-dWNlIGF0IGFsbC4KQW5kIGFsdGVybmF0aXZlIG1pZ2h0IGJlIHRvIHNlbmQgVklDcyBvbmx5IGZv
-ciB0aG9zZSBtb2RlcyB0aGF0IHRoZSBzaW5rCmFjdHVhbGx5IGRlY2xhcmVkIGluIHRoZSBFRElE
-LCBidXQgdGhhdCBvcGVucyB1cCB0aGUgcXVlc3Rpb24gb2Ygd2hldGhlcgp3ZSBzaG91bGQgb25s
-eSBkbyB0aGF0IGZvciBtb2RlcyB0aGF0IGhhdmUgYW4gU1ZELCBvciB3aGV0aGVyIHdlIHNob3Vs
-ZApkbyBpdCBmb3IgbW9kZXMgd2UgZ2V0IGJ5IG90aGVyIG1lYW5zIChlZy4gZGV0YWlsZWQgdGlt
-aW5nIGRlc2NyaXB0b3JzKS4KCldoYXQgSSB3YXNuJ3Qgc3VnZ2VzdGluZyB3YXMgdG8gc2VuZCBB
-VkkgVklDICE9IDAgKyBIRE1JX1ZJQyAhPSAwCmJlY2F1c2UgdGhhdCBpcyBub3QgbGVnYWwuCgo+
-IAo+IE1heWJlIGJldHRlciB3b3VsZCBiZSBqdXN0IHRvIHdhaXQgZm9yIHRoZSBwYXRjaCB0byBh
-dm9pZCBtaXN1bmRlcnN0YW5kaW5ncy4KPiAKPiAKPiBSZWdhcmRzCj4gCj4gQW5kcnplago+IAo+
-IAo+ID4KPiA+Pgo+ID4+IFJlZ2FyZHMKPiA+Pgo+ID4+IEFuZHJ6ZWoKPiA+Pgo+ID4+Cj4gPj4+
-PiBUaGUgcGlwZWxpbmUgbG9va3MgbGlrZSAoaW4gcGFyZW50aGVzaXMgSERNSSB2ZXJzaW9uIG9u
-IHRoZSBzdHJlYW0pOgo+ID4+Pj4KPiA+Pj4+IGV4eW5vc19oZG1pIC0tKDEuNCktLT4gU0lJODYy
-MCAtLSgyLjApLS0+IE1ITF9kb25nbGUgLS0oMS40KS0tPiBUVgo+ID4+Pj4KPiA+Pj4+Cj4gPj4+
-Pj4gSSBndWVzcyBJIGNhbiBjaGFuZ2UgdGhpcyB0byB0cnVlIHRvIG5vdCBjaGFuZ2UgaXQuIElJ
-UkMKPiA+Pj4+PiB0aGF0IHdhcyB0aGUgb25seSBkcml2ZXIgdGhhdCBkaWRuJ3QgaGF2ZSBhIGNv
-bm5lY3RvciBhcm91bmQuCj4gPj4+Pj4KPiA+Pj4+PiBUaGF0IHNhaWQsIEkgd2FzIGFjdHVhbGx5
-IHRoaW5raW5nIG9mIHJlbW92aW5nIHRoaXMgaGRtaTIgdnMuIG5vdAo+ID4+Pj4+IHN0dWZmIGZy
-b20gZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9kZSgpLiBXZSBhZGRlZCBp
-dAo+ID4+Pj4+ICJqdXN0IGluIGNhc2UiLCBidXQgd2UgYWxyZWFkeSBoYXZlIGEgc2ltaWxhciBp
-c3N1ZSB3aXRoIGVhcmxpZXIKPiA+Pj4+PiBjZWEtODYxIHJldmlzaW9ucyBhbmQgaGF2ZW4ndCBz
-ZWVuIGFueSBidWdzIHdoZXJlIGFuIG9sZGVyIG1vbml0b3IKPiA+Pj4+PiB3b3VsZCBnZXQgY29u
-ZnVzZWQgYnkgYSBWSUMgbm90IHlldCBkZWZpbmVkIHdoZW4gdGhlIG1vbml0b3Igd2FzCj4gPj4+
-Pj4gcHJvZHVjZWQuCj4gPj4+Pj4KPiA+Pj4+IEFyZSB5b3Ugc3VyZSB0aGlzIGlzIGEgZ29vZCBp
-ZGVhPyBBcyBJIHNhaWQgZWFybGllciA0SyBtb2RlcyBhcmUgcHJlc2VudAo+ID4+Pj4gaW4gSERN
-SSAxLjQgYW5kIDIuMCBidXQgdGhleSBhcmUgaGFuZGxlZCBkaWZmZXJlbnRseSwgc28gdGhpcyBp
-cyBub3QKPiA+Pj4+IG9ubHkgbWF0dGVyIG9mIHVua25vd24gVklDIGluIEFWSUYuCj4gPj4+Pgo+
-ID4+Pj4KPiA+Pj4+IFJlZ2FyZHMKPiA+Pj4+Cj4gPj4+PiBBbmRyemVqCj4gCgotLSAKVmlsbGUg
-U3lyasOkbMOkCkludGVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCkZyZWVkcmVubyBtYWlsaW5nIGxpc3QKRnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ZyZWVk
-cmVubwo=
+Hi Evan,
+
+On 12/1/18 02:38, Evan Green wrote:
+> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>
+>> This patch introduces a new API to get requirements and configure the
+>> interconnect buses across the entire chipset to fit with the current
+>> demand.
+>>
+>> The API is using a consumer/provider-based model, where the providers are
+>> the interconnect buses and the consumers could be various drivers.
+>> The consumers request interconnect resources (path) between endpoints and
+>> set the desired constraints on this data flow path. The providers receive
+>> requests from consumers and aggregate these requests for all master-slave
+>> pairs on that path. Then the providers configure each participating in the
+>> topology node according to the requested data flow path, physical links and
+> 
+> Strange word ordering. Consider something like: "Then the providers
+> configure each node participating in the topology"
+> 
+> ...Or a slightly different flavor: "Then the providers configure each
+> node along the path to support a bandwidth that satisfies all
+> bandwidth requests that cross through that node".
+> 
+
+This sounds better!
+
+>> constraints. The topology could be complicated and multi-tiered and is SoC
+>> specific.
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> Reviewed-by: Evan Green <evgreen@chromium.org>
+> 
+> This already has my reviewed by, and I still stand by it, but I
+> couldn't help finding some nits anyway. Sorry :)
+
+Thanks for finding them!
+
+>> ---
+>>  Documentation/interconnect/interconnect.rst |  94 ++++
+>>  drivers/Kconfig                             |   2 +
+>>  drivers/Makefile                            |   1 +
+>>  drivers/interconnect/Kconfig                |  10 +
+>>  drivers/interconnect/Makefile               |   5 +
+>>  drivers/interconnect/core.c                 | 569 ++++++++++++++++++++
+>>  include/linux/interconnect-provider.h       | 125 +++++
+>>  include/linux/interconnect.h                |  51 ++
+>>  8 files changed, 857 insertions(+)
+>>  create mode 100644 Documentation/interconnect/interconnect.rst
+>>  create mode 100644 drivers/interconnect/Kconfig
+>>  create mode 100644 drivers/interconnect/Makefile
+>>  create mode 100644 drivers/interconnect/core.c
+>>  create mode 100644 include/linux/interconnect-provider.h
+>>  create mode 100644 include/linux/interconnect.h
+>>
+[..]
+>> +/*
+>> + * We want the path to honor all bandwidth requests, so the average and peak
+>> + * bandwidth requirements from each consumer are aggregated at each node.
+>> + * The aggregation is platform specific, so each platform can customize it by
+>> + * implementing it's own aggregate() function.
+> 
+> Grammar police: remove the apostrophe in its.
+> 
+
+Oops.
+
+>> + */
+>> +
+>> +static int aggregate_requests(struct icc_node *node)
+>> +{
+>> +       struct icc_provider *p = node->provider;
+>> +       struct icc_req *r;
+>> +
+>> +       node->avg_bw = 0;
+>> +       node->peak_bw = 0;
+>> +
+>> +       hlist_for_each_entry(r, &node->req_list, req_node)
+>> +               p->aggregate(node, r->avg_bw, r->peak_bw,
+>> +                            &node->avg_bw, &node->peak_bw);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int apply_constraints(struct icc_path *path)
+>> +{
+>> +       struct icc_node *next, *prev = NULL;
+>> +       int ret = -EINVAL;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < path->num_nodes; i++, prev = next) {
+>> +               struct icc_provider *p;
+>> +
+>> +               next = path->reqs[i].node;
+>> +               /*
+>> +                * Both endpoints should be valid master-slave pairs of the
+>> +                * same interconnect provider that will be configured.
+>> +                */
+>> +               if (!prev || next->provider != prev->provider)
+>> +                       continue;
+> 
+> I wonder if we should explicitly ban paths where we bounce through an
+> odd number of nodes within one provider. Otherwise, set() won't be
+> called on all nodes in the path. Or, if we wanted to support those
+> kinds of topologies, you could call set with one of the nodes set to
+> NULL to represent either the ingress or egress bandwidth to this NoC.
+> This doesn't necessarily need to be addressed in this series, but is
+> something that other providers might bump into when implementing their
+> topologies.
+> 
+
+Yes, we can do something like this. But i prefer that we first add
+support for more platforms and then according to the requirements we can
+work out something.
+
+[..]
+
+>> +       new = krealloc(src->links,
+>> +                      (src->num_links) * sizeof(*src->links),
+> 
+> These parentheses aren't needed.
+
+Sure!
+
+>> +                      GFP_KERNEL);
+>> +       if (new)
+>> +               src->links = new;
+>> +
+
+[..]
+
+>> +
+>> +MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org");
+> 
+> This is missing the closing >
+
+Thanks!
+
+>> +MODULE_DESCRIPTION("Interconnect Driver Core");
+>> +MODULE_LICENSE("GPL v2");
+> ...
+>> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+>> new file mode 100644
+>> index 000000000000..04b2966ded9f
+>> --- /dev/null
+>> +++ b/include/linux/interconnect.h
+>> @@ -0,0 +1,51 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2018, Linaro Ltd.
+>> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
+>> + */
+>> +
+>> +#ifndef __LINUX_INTERCONNECT_H
+>> +#define __LINUX_INTERCONNECT_H
+>> +
+>> +#include <linux/mutex.h>
+>> +#include <linux/types.h>
+>> +
+>> +/* macros for converting to icc units */
+>> +#define bps_to_icc(x)  (1)
+>> +#define kBps_to_icc(x) (x)
+>> +#define MBps_to_icc(x) (x * 1000)
+>> +#define GBps_to_icc(x) (x * 1000 * 1000)
+>> +#define kbps_to_icc(x) (x / 8 + ((x) % 8 ? 1 : 0))
+>> +#define Mbps_to_icc(x) (x * 1000 / 8 )
+> 
+> Remove extra space before )
+
+Done.
+
+>> +#define Gbps_to_icc(x) (x * 1000 * 1000 / 8)
+>> +
+>> +struct icc_path;
+>> +struct device;
+>> +
+>> +#if IS_ENABLED(CONFIG_INTERCONNECT)
+>> +
+>> +struct icc_path *icc_get(struct device *dev, const int src_id,
+>> +                        const int dst_id);
+>> +void icc_put(struct icc_path *path);
+>> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
+>> +
+>> +#else
+>> +
+>> +static inline struct icc_path *icc_get(struct device *dev, const int src_id,
+>> +                                      const int dst_id)
+>> +{
+>> +       return NULL;
+>> +}
+>> +
+>> +static inline void icc_put(struct icc_path *path)
+>> +{
+>> +}
+>> +
+>> +static inline int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+>> +{
+>> +       return 0;
+> 
+> Should this really succeed?
+
+Yes, it should succeed if the framework is not enabled. The drivers
+should handle the case of whether the framework is enabled or not when
+icc_get() or of_icc_get() returns NULL. Based on that they should decide
+if can continue without interconnect support or not.
+
+BR,
+Georgi
