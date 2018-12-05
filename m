@@ -1,16 +1,15 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 04/19] dt-bindings: cpufreq: tegra124: remove cpu_lp clock
- from required properties
-Date: Wed, 5 Dec 2018 11:10:08 +0800
-Message-ID: <d74b8cf3-a072-a53c-2408-9f479998f5d3@nvidia.com>
+Subject: Re: [PATCH 12/19] cpufreq: tegra124: extend to support Tegra210
+Date: Wed, 5 Dec 2018 11:25:43 +0800
+Message-ID: <58e13709-79e6-66cc-2858-a51b393da05a@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-5-josephl@nvidia.com>
- <20181204153707.GB26056@pdeschrijver-desktop.Nvidia.com>
+ <20181204092548.3038-13-josephl@nvidia.com>
+ <c4f34e85-052b-f3a3-a6ea-715d1971335c@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204153707.GB26056@pdeschrijver-desktop.Nvidia.com>
+In-Reply-To: <c4f34e85-052b-f3a3-a6ea-715d1971335c@gmail.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -21,61 +20,51 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/4/18 11:37 PM, Peter De Schrijver wrote:
-> On Tue, Dec 04, 2018 at 05:25:33PM +0800, Joseph Lo wrote:
->> The cpu_lp clock property is only needed when the CPUfreq driver
->> supports CPU cluster switching. But it was not a design for this driver
->> and it didn't handle that as well. So removing this property.
+On 12/4/18 7:22 PM, Dmitry Osipenko wrote:
+> On 04.12.2018 12:25, Joseph Lo wrote:
+>> Tegra210 uses the same methodology as Tegra124 for CPUFreq controlling
+>> that based on DFLL clock. So extending this driver to support Tegra210.
 >>
-> 
-> I would mark it optional. This means current DTs will still be
-> technically compatible with this binding doc.
-
-Hi Peter,
-
-There is no compatible issue of this property. Because the driver 
-doesn't use this clock at all. Removing this won't cause any 
-backward-compatible issue.
-
-Same as previous patch for removing vdd-cpu-supply property once we fix 
-that in the driver. The old dt binding still works with the new driver.
-
-> 
->> Cc: devicetree@vger.kernel.org
+>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> Cc: linux-pm@vger.kernel.org
 >> Signed-off-by: Joseph Lo <josephl@nvidia.com>
 >> ---
->>   .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt   | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
+>>   drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
->> index 031545a29caf..03196d5ea515 100644
->> --- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
->> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
->> @@ -9,7 +9,6 @@ Required properties:
->>     See ../clocks/clock-bindings.txt for details.
->>   - clock-names: Must include the following entries:
->>     - cpu_g: Clock mux for the fast CPU cluster.
->> -  - cpu_lp: Clock mux for the low-power CPU cluster.
->>     - pll_x: Fast PLL clocksource.
->>     - pll_p: Auxiliary PLL used during fast PLL rate changes.
->>     - dfll: Fast DFLL clocksource that also automatically scales CPU voltage.
->> @@ -30,11 +29,10 @@ cpus {
->>   		reg = <0>;
+>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+>> index 448d00763d00..1af955fb715c 100644
+>> --- a/drivers/cpufreq/tegra124-cpufreq.c
+>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+>> @@ -159,7 +159,8 @@ static int __init tegra_cpufreq_init(void)
+>>   	int ret;
+>>   	struct platform_device *pdev;
 >>   
->>   		clocks = <&tegra_car TEGRA124_CLK_CCLK_G>,
->> -			 <&tegra_car TEGRA124_CLK_CCLK_LP>,
->>   			 <&tegra_car TEGRA124_CLK_PLL_X>,
->>   			 <&tegra_car TEGRA124_CLK_PLL_P>,
->>   			 <&dfll>;
->> -		clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
->> +		clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
->>   		clock-latency = <300000>;
->>   	};
+>> -	if (!of_machine_is_compatible("nvidia,tegra124"))
+>> +	if (!(of_machine_is_compatible("nvidia,tegra124") ||
+>> +		of_machine_is_compatible("nvidia,tegra210")))
+>>   		return -ENODEV;
 >>   
->> -- 
->> 2.19.2
+>>   	/*
 >>
+> 
+> Seems that's not enough, you also need to blacklist "nvidia,tegra210" in the drivers/cpufreq/cpufreq-dt-platdev.c
+
+Hi Dmitry,
+
+Thanks for reviewing. Actually it's "just" enough, I did check that 
+driver for creating device data for cpufreq-dt driver. It needs to have 
+both OPP v2 property and blacklist to create device data.
+
+Because we don't use OPP v2, it will never be true. So it will "just" 
+work in this case.
+
+But you are right, add that to blacklist is more clear. I can add one 
+more patch for that in next series.
+
+Thanks,
+Joseph
