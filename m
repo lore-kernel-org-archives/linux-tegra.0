@@ -1,14 +1,18 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
-Date: Wed, 5 Dec 2018 10:19:29 +0000
-Message-ID: <20181205101929.GP30658@n2100.armlinux.org.uk>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH 7/8] media: sti/bdisp: don't pass GFP_DMA32 to
+ dma_alloc_attrs
+Date: Wed, 5 Dec 2018 08:31:29 -0200
+Message-ID: <20181205083129.20b6b0be@coco.lan>
+References: <20181013151707.32210-1-hch@lst.de>
+ <20181013151707.32210-8-hch@lst.de>
+ <CA+M3ks5KO-Yr_PEczaENhTfirthFz2gW1uv4bwZe5mjy3-jZyg@mail.gmail.com>
+ <20181017072020.GD23407@lst.de>
+ <CA+M3ks5ebGDgFtMS5mSYz38AnyrTMQr8C_JkbFEzp=k+izJjUQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+In-Reply-To: <CA+M3ks5ebGDgFtMS5mSYz38AnyrTMQr8C_JkbFEzp=k+izJjUQ@mail.gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -18,28 +22,24 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Kyungmin Park <kyungmin.park@samsung.com>, amd-gfx@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ben Skeggs <bskeggs@redhat.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org, Vincent Abriou <vincent.abriou@st.com>, freedreno@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Alex Deucher <alexander.deucher@amd.com>, Shawn Guo <shawnguo@kernel.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Linux Fbdev development list <linux-fbdev@vger.kernel.org>, linux-pm@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org, ML dri-devel <dri-devel@lists.freedesktop.org>, linux-spi@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, linux-tegra@vger.kernel.org, Christoph Hellwig <hch@lst.de>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBOb3YgMjAsIDIwMTggYXQgMDY6MTM6NDJQTSArMDIwMCwgVmlsbGUgU3lyamFsYSB3
-cm90ZToKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Rydi5jIGIv
-ZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Rydi5jCj4gaW5kZXggYTdjMzlmMzk3OTNmLi4z
-OGM2NmZiYzgyNzYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Ry
-di5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Rydi5jCj4gQEAgLTg0OSw3
-ICs4NDksOCBAQCB0ZGE5OTh4X3dyaXRlX2F2aShzdHJ1Y3QgdGRhOTk4eF9wcml2ICpwcml2LCBz
-dHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSkKPiAgewo+ICAJdW5pb24gaGRtaV9pbmZvZnJh
-bWUgZnJhbWU7Cj4gIAo+IC0JZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9k
-ZSgmZnJhbWUuYXZpLCBtb2RlLCBmYWxzZSk7Cj4gKwlkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zy
-b21fZGlzcGxheV9tb2RlKCZmcmFtZS5hdmksCj4gKwkJCQkJCSAmcHJpdi0+Y29ubmVjdG9yLCBt
-b2RlKTsKPiAgCWZyYW1lLmF2aS5xdWFudGl6YXRpb25fcmFuZ2UgPSBIRE1JX1FVQU5USVpBVElP
-Tl9SQU5HRV9GVUxMOwo+ICAKPiAgCXRkYTk5OHhfd3JpdGVfaWYocHJpdiwgRElQX0lGX0ZMQUdT
-X0lGMiwgUkVHX0lGMl9IQjAsICZmcmFtZSk7CgpGb3IgdGhpcywKCkFja2VkLWJ5OiBSdXNzZWxs
-IEtpbmcgPHJtaytrZXJuZWxAYXJtbGludXgub3JnLnVrPgoKVGhhbmtzLgoKLS0gClJNSydzIFBh
-dGNoIHN5c3RlbTogaHR0cDovL3d3dy5hcm1saW51eC5vcmcudWsvZGV2ZWxvcGVyL3BhdGNoZXMv
-CkZUVEMgYnJvYWRiYW5kIGZvciAwLjhtaWxlIGxpbmUgaW4gc3VidXJiaWE6IHN5bmMgYXQgMTIu
-MU1icHMgZG93biA2MjJrYnBzIHVwCkFjY29yZGluZyB0byBzcGVlZHRlc3QubmV0OiAxMS45TWJw
-cyBkb3duIDUwMGticHMgdXAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+RW0gVGh1LCAxOCBPY3QgMjAxOCAxNDowMDo0MCArMDIwMApCZW5qYW1pbiBHYWlnbmFyZCA8YmVu
+amFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4gZXNjcmV2ZXU6Cgo+IExlIG1lci4gMTcgb2N0LiAy
+MDE4IMOgIDA5OjIwLCBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4gYSDDqWNyaXQgOgo+
+ID4KPiA+IE9uIE1vbiwgT2N0IDE1LCAyMDE4IGF0IDExOjEyOjU1QU0gKzAyMDAsIEJlbmphbWlu
+IEdhaWduYXJkIHdyb3RlOiAgCj4gPiA+IExlIHNhbS4gMTMgb2N0LiAyMDE4IMOgIDE3OjE4LCBD
+aHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4gYSDDqWNyaXQgOiAgCj4gPiA+ID4KPiA+ID4g
+PiBUaGUgRE1BIEFQSSBkb2VzIGl0cyBvd24gem9uZSBkZWNpc2lvbnMgYmFzZWQgb24gdGhlIGNv
+aGVyZW50X2RtYV9tYXNrLgo+ID4gPiA+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3Bo
+IEhlbGx3aWcgPGhjaEBsc3QuZGU+ICAKPiA+ID4KPiA+ID4gUmV2aWV3ZWQtYnk6IEJlbmphbWlu
+IEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPiAgCj4gPgo+ID4gQ2FuIHlv
+dSBwaWNrIGl0IHVwIHRocm91Z2ggdGhlIG1lZGlhIHRyZWU/ICAKPiAKPiBObyBidXQgTWF1cm9z
+IG9yIEhhbnMgKGluIENDKSBjYW4gYWRkIGl0LgoKSSdtIGFkZGluZyBpdC4gU29ycnkgZm9yIHRo
+ZSBkZWxheS4gQWxsIHRob3NlIHRyaXBzIGZvciBNUy9LUyBtYWRlCmhhcmRlciB0byBoYW5kbGUg
+aXQgZWFybGllci4KClRoYW5rcywKTWF1cm8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
