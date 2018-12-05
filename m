@@ -1,50 +1,55 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect API
-Date: Wed, 5 Dec 2018 10:16:20 -0600
-Message-ID: <CAL_JsqJyPH9WVw2VqGTjUvhxoq3+KGpfqtAMf9iH07N7m3P4yw@mail.gmail.com>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org> <20181127180349.29997-2-georgi.djakov@linaro.org>
+From: Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
+Date: Wed, 5 Dec 2018 12:41:35 -0800
+Message-ID: <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181127180349.29997-2-georgi.djakov@linaro.org>
+In-Reply-To: <20181127180349.29997-1-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: "open list:THERMAL" <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, Evan Green <evgreen@chromium.org>, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Alexandre Bailon <abailon@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidi
+To: georgi.djakov@linaro.org
+Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>, khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>, maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 12:03 PM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
 >
-> This patch introduces a new API to get requirements and configure the
-> interconnect buses across the entire chipset to fit with the current
-> demand.
+> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+> graphics, modem). These cores are talking to each other and can generate a
+> lot of data flowing through the on-chip interconnects. These interconnect
+> buses could form different topologies such as crossbar, point to point buses,
+> hierarchical buses or use the network-on-chip concept.
 >
-> The API is using a consumer/provider-based model, where the providers are
-> the interconnect buses and the consumers could be various drivers.
-> The consumers request interconnect resources (path) between endpoints and
-> set the desired constraints on this data flow path. The providers receive
-> requests from consumers and aggregate these requests for all master-slave
-> pairs on that path. Then the providers configure each participating in the
-> topology node according to the requested data flow path, physical links and
-> constraints. The topology could be complicated and multi-tiered and is SoC
-> specific.
+> These buses have been sized usually to handle use cases with high data
+> throughput but it is not necessary all the time and consume a lot of power.
+> Furthermore, the priority between masters can vary depending on the running
+> use case like video playback or CPU intensive tasks.
 >
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
+> Having an API to control the requirement of the system in terms of bandwidth
+> and QoS, so we can adapt the interconnect configuration to match those by
+> scaling the frequencies, setting link priority and tuning QoS parameters.
+> This configuration can be a static, one-time operation done at boot for some
+> platforms or a dynamic set of operations that happen at run-time.
+>
+> This patchset introduce a new API to get the requirement and configure the
+> interconnect buses across the entire chipset to fit with the current demand.
+> The API is NOT for changing the performance of the endpoint devices, but only
+> the interconnect path in between them.
 
-[...]
+For what it's worth, we are ready to land this in Chrome OS. I think
+this series has been very well discussed and reviewed, hasn't changed
+much in the last few spins, and is in good enough shape to use as a
+base for future patches. Georgi's also done a great job reaching out
+to other SoC vendors, and there appears to be enough consensus that
+this framework will be usable by more than just Qualcomm. There are
+also several drivers out on the list trying to add patches to use this
+framework, with more to come, so it made sense (to us) to get this
+base framework nailed down. In my experiments this is an important
+piece of the overall power management story, especially on systems
+that are mostly idle.
 
-> +struct icc_path *icc_get(struct device *dev, const int src_id,
-> +                        const int dst_id);
-> +void icc_put(struct icc_path *path);
-> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
+I'll continue to track changes to this series and we will ultimately
+reconcile with whatever happens upstream, but I thought it was worth
+sending this note to express our "thumbs up" towards this framework.
 
-icc_set() is very generic, but this function isn't easily extended to
-other parameters than bandwidth. Perhaps icc_set_bandwidth() instead.
-Then when you add some other setting, you just add a new function. Of
-course, if you wind up with a bunch of different parameters, then
-you'll probably need an atomic type interface where you test all the
-settings together and then commit them separately in one call. But
-from a DT perspective, I certainly hope there are not lots of new
-settings folks want to add. :)
-
-Rob
+-Evan
