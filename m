@@ -1,94 +1,161 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
-Date: Wed, 05 Dec 2018 10:55:17 +0200
-Message-ID: <10655979.UrsUjy81GN@avalon>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
- <7360043.6dPZTAhIds@avalon>
- <6da15ecc-d89a-952c-4a70-9d26e02ee58e@samsung.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 08/19] clk: tegra: dfll: round down voltages based on
+ alignment
+Date: Wed, 5 Dec 2018 11:11:14 +0200
+Message-ID: <20181205091114.GF26056@pdeschrijver-desktop.Nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-9-josephl@nvidia.com>
+ <20181204154618.GC26056@pdeschrijver-desktop.Nvidia.com>
+ <1cbe2662-1b5e-8261-f0c1-04a760cb08c1@nvidia.com>
+ <7f90eae3-42fe-e771-b2f0-421c617db11e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <6da15ecc-d89a-952c-4a70-9d26e02ee58e-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <7f90eae3-42fe-e771-b2f0-421c617db11e@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgQW5kcnplaiwKCk9uIFdlZG5lc2RheSwgNSBEZWNlbWJlciAyMDE4IDEwOjQ2OjQwIEVFVCBB
-bmRyemVqIEhhamRhIHdyb3RlOgo+IE9uIDA1LjEyLjIwMTggMDc6MzIsIExhdXJlbnQgUGluY2hh
-cnQgd3JvdGU6Cj4gPiBPbiBUdWVzZGF5LCA0IERlY2VtYmVyIDIwMTggMjE6MTM6MjAgRUVUIFZp
-bGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+PiBPbiBUdWUsIERlYyAwNCwgMjAxOCBhdCAwODo0Njo1
-M0FNICswMTAwLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+ID4+PiBPbiAwMy4xMi4yMDE4IDIyOjM4
-LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gPj4+PiBPbiBUaHUsIE5vdiAyOSwgMjAxOCBhdCAx
-MDowODowN0FNICswMTAwLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+ID4+Pj4+IE9uIDIxLjExLjIw
-MTggMTk6MTksIExhdXJlbnQgUGluY2hhcnQgd3JvdGU6Cj4gPj4+Pj4+IE9uIFR1ZXNkYXksIDIw
-IE5vdmVtYmVyIDIwMTggMTg6MTM6NDIgRUVUIFZpbGxlIFN5cmphbGEgd3JvdGU6Cj4gPj4+Pj4+
-PiBGcm9tOiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29tPgo+
-ID4+Pj4+Pj4gCj4gPj4+Pj4+PiBNYWtlIGxpZmUgZWFzaWVyIGZvciBkcml2ZXJzIGJ5IHNpbXBs
-eSBwYXNzaW5nIHRoZSBjb25uZWN0b3IKPiA+Pj4+Pj4+IHRvIGRybV9oZG1pX2F2aV9pbmZvZnJh
-bWVfZnJvbV9kaXNwbGF5X21vZGUoKSBhbmQKPiA+Pj4+Pj4+IGRybV9oZG1pX2F2aV9pbmZvZnJh
-bWVfcXVhbnRfcmFuZ2UoKS4gVGhhdCB3YXkgZHJpdmVycyBkb24ndAo+ID4+Pj4+Pj4gbmVlZCB0
-byB3b3JyeSBhYm91dCBpc19oZG1pMl9zaW5rIG1lc3MuCj4gPj4+Pj4+IAo+ID4+Pj4+PiBXaGls
-ZSB0aGlzIGlzIGdvb2QgZm9yIGRpc3BsYXkgY29udHJvbGxlciBkcml2ZXJzLCB0aGUgY2hhbmdl
-IGlzbid0Cj4gPj4+Pj4+IGdyZWF0IGZvciBicmlkZ2UgZHJpdmVycy4gRG93biB0aGUgcm9hZCB3
-ZSdyZSBsb29raW5nIGF0IG1vdmluZwo+ID4+Pj4+PiBjb25uZWN0b3Igc3VwcG9ydCBvdXQgb2Yg
-dGhlIGJyaWRnZSBkcml2ZXJzLiBBZGRpbmcgYW4gYWRkaXRpb25hbAo+ID4+Pj4+PiBkZXBlbmRl
-bmN5IHRvIGNvbm5lY3RvcnMgaW4gdGhlIGJyaWRnZXMgd2lsbCBtYWtlIHRoYXQgbW9yZQo+ID4+
-Pj4+PiBkaWZmaWN1bHQuIElkZWFsbHkgYnJpZGdlcyBzaG91bGQgcmV0cmlldmUgdGhlIGluZm9y
-bWF0aW9uIGZyb20gdGhlaXIKPiA+Pj4+Pj4gc2luaywgcmVnYXJkbGVzcyBvZiB3aGV0aGVyIGl0
-IGlzIGEgY29ubmVjdG9yIG9yIGFub3RoZXIgYnJpZGdlLgo+ID4+Pj4+IAo+ID4+Pj4+IEkgYWdy
-ZWUgd2l0aCBpdCwgYW5kIGNhc2Ugb2Ygc2lpODYyMCBzaG93cyB0aGF0IHRoZXJlIGFyZSBjYXNl
-cyB3aGVyZQo+ID4+Pj4+IGJyaWRnZSBoYXMgbm8gZGlyZWN0IGFjY2VzcyB0byB0aGUgY29ubmVj
-dG9yLgo+ID4+Pj4gCj4gPj4+PiBJdCdzIGp1c3QgYSBtYXR0ZXIgb2YgcGx1bWJpbmcgaXQgdGhy
-b3VnaC4KPiA+Pj4gCj4gPj4+IFdoYXQgZG8geW91IG1lYW4gZXhhY3RseT8KPiA+PiAKPiA+PiB2
-b2lkIGJyaWRnZV9mb28oLi4uCj4gPj4gKyAgICAgICAgICAgICAgICxzdHJ1Y3QgZHJtX2Nvbm5l
-Y3RvciAqY29ubmVjdG9yKTsKPiA+PiAKPiA+Pj4+PiBPbiB0aGUgb3RoZXIgc2lkZSwgIHNpbmNl
-IHlvdSBhcmUgcGFzc2luZyBjb25uZWN0b3IgdG8KPiA+Pj4+PiBkcm1faGRtaV9hdmlfaW5mb2Zy
-YW1lX2Zyb21fZGlzcGxheV9tb2RlKCksIHlvdSBjb3VsZCBkcm9wIG1vZGUKPiA+Pj4+PiBwYXJh
-bWV0ZXIgYW5kIHJlbmFtZSB0aGUgZnVuY3Rpb24gdG8KPiA+Pj4+PiBkcm1faGRtaV9hdmlfaW5m
-b2ZyYW1lX2Zyb21fY29ubmVjdG9yKCkgdGhlbiwgdW5sZXNzIG1vZGUgcGFzc2VkIGFuZAo+ID4+
-Pj4+IG1vZGUgc2V0IG9uIHRoZSBjb25uZWN0b3IgZGlmZmVycz8KPiA+Pj4+IAo+ID4+Pj4gQ29u
-bmVjdG9ycyBkb24ndCBoYXZlIGEgbW9kZS4KPiA+Pj4gCj4gPj4+IEFzIHRoZXkgYXJlIHBhc3Np
-bmcgdmlkZW8gc3RyZWFtIHRoZXkgc2hvdWxkIGhhdmUgaXQsIGV2ZW4gaWYgbm90Cj4gPj4+IGRp
-cmVjdGx5LCBmb3IgZXhhbXBsZToKPiA+Pj4gCj4gPj4+IGNvbm5lY3Rvci0+c3RhdGUtPmNydGMt
-Pm1vZGUKPiA+PiAKPiA+PiBUaGF0J3Mgbm90IHJlYWxseSBob3cgYXRvbWljIHdvcmtzLiBPbmUg
-c2hvdWxkbid0IGdvIGRpZ2dpbmcKPiA+PiB0aHJvdWdoIHRoZSBvYmotPnN0YXRlIHBvaW50ZXJz
-IHdoZW4gd2UncmUgbm90IGhvbGRpbmcgdGhlCj4gPj4gcmVsZXZhbnQgbG9ja3MgYW55bW9yZS4g
-VGhlIGF0b21pYyB3YXkgd291bGQgYmUgdG8gcGFzcyBlaXRoZXIKPiA+PiBib3RoIGNydGMgc3Rh
-dGUgYW5kIGNvbm5lY3RvciBzdGF0ZSwgb3IgZHJtX2F0b21pY19zdGF0ZSArCj4gPj4gY3J0Yy9j
-b25uZWN0b3IuCj4gCj4gVXN1YWxseSBpbmZvZnJhbWUgY29udGVudHMgaXMgZ2VuZXJhdGVkIGlu
-IG1vZGVzZXR0aW5nL2VuYWJsZSBjYWxsYmFja3MKPiBzbyB0aGUgbG9ja3Mgc2hvdWxkIGJlIGlu
-IHBsYWNlLgo+IAo+IEFuZCB0aGUgbG9ja3Mgc2hvdWxkIGJlIGhvbGQgZm9yCj4gZHJtX2hkbWlf
-YXZpX2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9kZSBhcyB3ZWxsIC0gaXQgd291bGRuJ3QgYmUg
-Y29ycmVjdCBpZgo+IAo+IGdlbmVyYXRlZCBpbmZvZnJhbWUgaXMgbm90IHJlbGV2YW50IHRvIGFj
-dHVhbCB2aWRlbyBtb2RlLiBJIGd1ZXNzIHRoYXQKPiBpZiBjb25uZWN0b3ItPnN0YXRlLT5jcnRj
-LT5tb2RlCj4gCj4gZGlmZmVycyBmcm9tIG1vZGUgcGFzc2VkIHRvIGRybV9oZG1pX2F2aV9pbmZv
-ZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUgaXQKPiBpcyBhIHNpZ24gb2YgcG9zc2libGUgcHJvYmxl
-bS4KPiAKPiBBbmQgaWYgdGhleSBkbyBub3QgZGlmZmVyIHBhc3NpbmcgbW9kZSBhcyBhbiBleHRy
-YSBhcmd1bWVudCBpcyByZWR1bmRhbnQuCj4gCj4gPiBPciBhIGJyaWRnZSBzdGF0ZSA/IFdpdGgg
-Y2hhaW5lZCBicmlkZ2VzIHRoZSBtb2RlIGNhbiB2YXJ5IGFsb25nIHRoZQo+ID4gcGlwZWxpbmUs
-IHRoZSBDUlRDIGFkanVzdGVkIG1vZGUgd2lsbCBvbmx5IGNvdmVyIHRoZSBsaW5rIGJldHdlZW4g
-dGhlCj4gPiBDUlRDIGFuZCB0aGUgZmlyc3QgYnJpZGdlLiBJdCdzIG9ubHkgYSBtYXR0ZXIgb2Yg
-dGltZSB1bnRpbCB3ZSBuZWVkIHRvCj4gPiBzdG9yZSBvdGhlciBpbnRlcm1lZGlhdGUgbW9kZXMg
-aW4gc3RhdGVzLiBJJ2QgcmF0aGVyIHByZXBhcmUgZm9yIHRoYXQKPiA+IGluc3RlYWQgb2YgcGFz
-c2luZyB0aGUgQ1JUQyBzdGF0ZSB0byBicmlkZ2VzLgo+IAo+IFllcywgb3B0aW9uYWwgYnJpZGdl
-IHN0YXRlcyBzZWVtcyByZWFzb25hYmxlLCB2b2x1bnRlZXJzIG5lZWRlZCA6KQoKSSdsbCBnaXZl
-IGl0IGEgZ28gZXZlbnR1YWxseSwgaWYgbm9ib2R5IGJlYXRzIG1lIHRvIGl0LiBUaGUgZXhhY3Qg
-dGltaW5nIHdpbGwgCmRlcGVuZCBvbiBtYW55IHZhcmlhYmxlcyBzbyBJIGNhbid0IGVzdGltYXRl
-IGl0IEknbSBhZnJhaWQuIEFsbCBJJ20gYXNraW5nIGlzIAp0byBhdm9pZCBleHRlbmRpbmcgdGhl
-IGRybV9icmlkZ2UgQVBJIGluIGEgd2F5IHRoYXQgd291bGQgbWFrZSBpbnRyb2R1Y3Rpb24gb2Yg
-CmJyaWRnZSBzdGF0ZXMgbW9yZSBjb21wbGV4LiBJZiBzb21lb25lIG5lZWRzIGJyaWRnZSBzdGF0
-ZXMsIGZvciBpbnN0YW5jZSB0byAKc29sdmUgdGhlIGFib3ZlIGlzc3VlLCB0aGVuIHRoZXkgc2hv
-dWxkIGJlIGFkZGVkLgoKW3NuaXBdCgotLSAKUmVnYXJkcywKCkxhdXJlbnQgUGluY2hhcnQKCgoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYW1kLWdmeCBt
-YWlsaW5nIGxpc3QKYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbWQtZ2Z4Cg==
+On Wed, Dec 05, 2018 at 02:51:07PM +0800, Joseph Lo wrote:
+> On 12/5/18 2:20 PM, Joseph Lo wrote:
+> > On 12/4/18 11:46 PM, Peter De Schrijver wrote:
+> > > On Tue, Dec 04, 2018 at 05:25:37PM +0800, Joseph Lo wrote:
+> > > > When generating the OPP table, the voltages are round down with the
+> > > > alignment from the regulator. The alignment should be applied for
+> > > > voltages look up as well.
+> > > > =
+
+> > > > Based on the work of Penny Chiu <pchiu@nvidia.com>.
+> > > > =
+
+> > > > Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> > > > ---
+> > > > =A0 drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
+> > > > =A0 1 file changed, 15 insertions(+), 11 deletions(-)
+> > > > =
+
+> > > > diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-d=
+fll.c
+> > > > index c294a2989f31..4a943c136d4d 100644
+> > > > --- a/drivers/clk/tegra/clk-dfll.c
+> > > > +++ b/drivers/clk/tegra/clk-dfll.c
+> > > > @@ -804,17 +804,17 @@ static void dfll_init_out_if(struct
+> > > > tegra_dfll *td)
+> > > > =A0 static int find_lut_index_for_rate(struct tegra_dfll *td,
+> > > > unsigned long rate)
+> > > > =A0 {
+> > > > =A0=A0=A0=A0=A0 struct dev_pm_opp *opp;
+> > > > -=A0=A0=A0 int i, uv;
+> > > > +=A0=A0=A0 int i, align_volt;
+> > > > =A0=A0=A0=A0=A0 opp =3D dev_pm_opp_find_freq_ceil(td->soc->dev, &ra=
+te);
+> > > > =A0=A0=A0=A0=A0 if (IS_ERR(opp))
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0 return PTR_ERR(opp);
+> > > > -=A0=A0=A0 uv =3D dev_pm_opp_get_voltage(opp);
+> > > > +=A0=A0=A0 align_volt =3D dev_pm_opp_get_voltage(opp) /
+> > > > td->soc->alignment.step_uv;
+> > > > =A0=A0=A0=A0=A0 dev_pm_opp_put(opp);
+> > > > =A0=A0=A0=A0=A0 for (i =3D td->lut_bottom; i < td->lut_size; i++) {
+> > > > -=A0=A0=A0=A0=A0=A0=A0 if (regulator_list_voltage(td->vdd_reg, td->=
+lut[i]) =3D=3D uv)
+> > > > +=A0=A0=A0=A0=A0=A0=A0 if ((td->lut_uv[i] / td->soc->alignment.step=
+_uv) >=3D align_volt)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return i;
+> > > > =A0=A0=A0=A0=A0 }
+> > > > @@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
+> > > > =A0=A0 */
+> > > =
+
+> > > These 2 functions are only valid for I2C mode. We should probably add=
+ a
+> > > WARN_ON() in case they are called when PWM mode is used and return
+> > > -EINVAL.
+> > > =
+
+> > =
+
+> > Okay, will add that.
+> > =
+
+> Peter,
+> =
+
+> Sorry, just double check again. These 2 functions are used for generating
+> LUT table for DFLL-I2C mode. They are only used in "dfll_build_i2c_lut"
+> function. So I think it's fine. The WARN_ON for protection from PWM mode =
+is
+> not necessary.
+> =
+
+
+They are indeed not used today, but to prevent them from being used in
+the future I was thinking it makes sense to add some form of protection
+here.
+
+Peter.
+
+> =
+
+> > =
+
+> > > > =A0 static int find_vdd_map_entry_exact(struct tegra_dfll *td, int =
+uV)
+> > > > =A0 {
+> > > > -=A0=A0=A0 int i, n_voltages, reg_uV;
+> > > > +=A0=A0=A0 int i, n_voltages, reg_volt, align_volt;
+> > > > +=A0=A0=A0 align_volt =3D uV / td->soc->alignment.step_uv;
+> > > > =A0=A0=A0=A0=A0 n_voltages =3D regulator_count_voltages(td->vdd_reg=
+);
+> > > > =A0=A0=A0=A0=A0 for (i =3D 0; i < n_voltages; i++) {
+> > > > -=A0=A0=A0=A0=A0=A0=A0 reg_uV =3D regulator_list_voltage(td->vdd_re=
+g, i);
+> > > > -=A0=A0=A0=A0=A0=A0=A0 if (reg_uV < 0)
+> > > > +=A0=A0=A0=A0=A0=A0=A0 reg_volt =3D regulator_list_voltage(td->vdd_=
+reg, i) /
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 td->soc->alignment.s=
+tep_uv;
+> > > > +=A0=A0=A0=A0=A0=A0=A0 if (reg_volt < 0)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 break;
+> > > > -=A0=A0=A0=A0=A0=A0=A0 if (uV =3D=3D reg_uV)
+> > > > +=A0=A0=A0=A0=A0=A0=A0 if (align_volt =3D=3D reg_volt)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return i;
+> > > > =A0=A0=A0=A0=A0 }
+> > > > @@ -1554,15 +1556,17 @@ static int
+> > > > find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+> > > > =A0=A0 * */
+> > > > =A0 static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
+> > > > =A0 {
+> > > > -=A0=A0=A0 int i, n_voltages, reg_uV;
+> > > > +=A0=A0=A0 int i, n_voltages, reg_volt, align_volt;
+> > > > +=A0=A0=A0 align_volt =3D uV / td->soc->alignment.step_uv;
+> > > > =A0=A0=A0=A0=A0 n_voltages =3D regulator_count_voltages(td->vdd_reg=
+);
+> > > > =A0=A0=A0=A0=A0 for (i =3D 0; i < n_voltages; i++) {
+> > > > -=A0=A0=A0=A0=A0=A0=A0 reg_uV =3D regulator_list_voltage(td->vdd_re=
+g, i);
+> > > > -=A0=A0=A0=A0=A0=A0=A0 if (reg_uV < 0)
+> > > > +=A0=A0=A0=A0=A0=A0=A0 reg_volt =3D regulator_list_voltage(td->vdd_=
+reg, i) /
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 td->soc->alignment.s=
+tep_uv;
+> > > > +=A0=A0=A0=A0=A0=A0=A0 if (reg_volt < 0)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 break;
+> > > > -=A0=A0=A0=A0=A0=A0=A0 if (uV <=3D reg_uV)
+> > > > +=A0=A0=A0=A0=A0=A0=A0 if (align_volt <=3D reg_volt)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return i;
+> > > > =A0=A0=A0=A0=A0 }
+> > > > -- =
+
+> > > > 2.19.2
+> > > > =
