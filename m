@@ -1,52 +1,45 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/146] 4.14.86-stable review
-Date: Wed, 5 Dec 2018 10:45:05 +0100
-Message-ID: <20181205094505.GB8980@kroah.com>
-References: <20181204103726.750894136@linuxfoundation.org>
- <e2c49480-12c4-83a9-94ec-a8bfc50728d4@nvidia.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
+Date: Wed, 5 Dec 2018 10:19:29 +0000
+Message-ID: <20181205101929.GP30658@n2100.armlinux.org.uk>
+References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <e2c49480-12c4-83a9-94ec-a8bfc50728d4@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+In-Reply-To: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Kyungmin Park <kyungmin.park@samsung.com>, amd-gfx@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ben Skeggs <bskeggs@redhat.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org, Vincent Abriou <vincent.abriou@st.com>, freedreno@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Alex Deucher <alexander.deucher@amd.com>, Shawn Guo <shawnguo@kernel.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:31:45AM +0000, Jon Hunter wrote:
-> 
-> On 04/12/2018 10:48, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.86 release.
-> > There are 146 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu Dec  6 10:36:52 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.86-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.14:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.14.86-rc2-ga5c883b
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
-
-Great, thanks for testing these and letting me know.
-
-greg k-h
+T24gVHVlLCBOb3YgMjAsIDIwMTggYXQgMDY6MTM6NDJQTSArMDIwMCwgVmlsbGUgU3lyamFsYSB3
+cm90ZToKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Rydi5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Rydi5jCj4gaW5kZXggYTdjMzlmMzk3OTNmLi4z
+OGM2NmZiYzgyNzYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Ry
+di5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Rydi5jCj4gQEAgLTg0OSw3
+ICs4NDksOCBAQCB0ZGE5OTh4X3dyaXRlX2F2aShzdHJ1Y3QgdGRhOTk4eF9wcml2ICpwcml2LCBz
+dHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSkKPiAgewo+ICAJdW5pb24gaGRtaV9pbmZvZnJh
+bWUgZnJhbWU7Cj4gIAo+IC0JZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9k
+ZSgmZnJhbWUuYXZpLCBtb2RlLCBmYWxzZSk7Cj4gKwlkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zy
+b21fZGlzcGxheV9tb2RlKCZmcmFtZS5hdmksCj4gKwkJCQkJCSAmcHJpdi0+Y29ubmVjdG9yLCBt
+b2RlKTsKPiAgCWZyYW1lLmF2aS5xdWFudGl6YXRpb25fcmFuZ2UgPSBIRE1JX1FVQU5USVpBVElP
+Tl9SQU5HRV9GVUxMOwo+ICAKPiAgCXRkYTk5OHhfd3JpdGVfaWYocHJpdiwgRElQX0lGX0ZMQUdT
+X0lGMiwgUkVHX0lGMl9IQjAsICZmcmFtZSk7CgpGb3IgdGhpcywKCkFja2VkLWJ5OiBSdXNzZWxs
+IEtpbmcgPHJtaytrZXJuZWxAYXJtbGludXgub3JnLnVrPgoKVGhhbmtzLgoKLS0gClJNSydzIFBh
+dGNoIHN5c3RlbTogaHR0cDovL3d3dy5hcm1saW51eC5vcmcudWsvZGV2ZWxvcGVyL3BhdGNoZXMv
+CkZUVEMgYnJvYWRiYW5kIGZvciAwLjhtaWxlIGxpbmUgaW4gc3VidXJiaWE6IHN5bmMgYXQgMTIu
+MU1icHMgZG93biA2MjJrYnBzIHVwCkFjY29yZGluZyB0byBzcGVlZHRlc3QubmV0OiAxMS45TWJw
+cyBkb3duIDUwMGticHMgdXAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
