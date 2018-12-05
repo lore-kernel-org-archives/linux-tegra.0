@@ -1,83 +1,52 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 03/19] dt-bindings: cpufreq: tegra124: remove
- vdd-cpu-supply from required properties
-Date: Wed, 5 Dec 2018 11:37:50 +0200
-Message-ID: <20181205093750.GG26056@pdeschrijver-desktop.Nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-4-josephl@nvidia.com>
- <20181204153600.GA26056@pdeschrijver-desktop.Nvidia.com>
- <3a6f4512-db3f-4cba-21da-572edf14c5dc@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/146] 4.14.86-stable review
+Date: Wed, 5 Dec 2018 10:45:05 +0100
+Message-ID: <20181205094505.GB8980@kroah.com>
+References: <20181204103726.750894136@linuxfoundation.org>
+ <e2c49480-12c4-83a9-94ec-a8bfc50728d4@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <3a6f4512-db3f-4cba-21da-572edf14c5dc@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <e2c49480-12c4-83a9-94ec-a8bfc50728d4@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 11:05:58AM +0800, Joseph Lo wrote:
-> On 12/4/18 11:36 PM, Peter De Schrijver wrote:
-> > On Tue, Dec 04, 2018 at 05:25:32PM +0800, Joseph Lo wrote:
-> > > The Tegra124 cpufreq driver works only with DFLL clock, which is a
-> > > hardware-based frequency/voltage controller. The driver doesn't need to
-> > > control the regulator itself. Hence remove that.
-> > > 
-> > 
-> > I think this is required for DFLL controlled I2C regulators because the
-> > regulator is queried for voltage selectors and I2C slave ID?
-> > 
+On Wed, Dec 05, 2018 at 09:31:45AM +0000, Jon Hunter wrote:
 > 
-> Hi Peter,
+> On 04/12/2018 10:48, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.86 release.
+> > There are 146 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu Dec  6 10:36:52 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.86-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Yes, it's required for DFLL-I2C mode and defined in DFLL node. It's not
-> needed here in the CPU node for CPU freq driver to handle that. Hence remove
-> that.
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v4.14:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
+> 
+> Linux version:	4.14.86-rc2-ga5c883b
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 > 
 
-Ah right. So yes, this is fine then.
+Great, thanks for testing these and letting me know.
 
-Peter.
-
-> Thanks,
-> Joseph
-> 
-> 
-> > 
-> > > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> > > ---
-> > >   .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt     | 2 --
-> > >   1 file changed, 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> > > index b1669fbfb740..031545a29caf 100644
-> > > --- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> > > +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> > > @@ -13,7 +13,6 @@ Required properties:
-> > >     - pll_x: Fast PLL clocksource.
-> > >     - pll_p: Auxiliary PLL used during fast PLL rate changes.
-> > >     - dfll: Fast DFLL clocksource that also automatically scales CPU voltage.
-> > > -- vdd-cpu-supply: Regulator for CPU voltage
-> > >   Optional properties:
-> > >   - clock-latency: Specify the possible maximum transition latency for clock,
-> > > @@ -37,7 +36,6 @@ cpus {
-> > >   			 <&dfll>;
-> > >   		clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
-> > >   		clock-latency = <300000>;
-> > > -		vdd-cpu-supply: <&vdd_cpu>;
-> > >   	};
-> > >   	<...>
-> > > -- 
-> > > 2.19.2
-> > > 
+greg k-h
