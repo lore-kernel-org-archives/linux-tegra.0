@@ -1,123 +1,135 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 08/19] clk: tegra: dfll: round down voltages based on
- alignment
-Date: Wed, 5 Dec 2018 14:20:34 +0800
-Message-ID: <1cbe2662-1b5e-8261-f0c1-04a760cb08c1@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-9-josephl@nvidia.com>
- <20181204154618.GC26056@pdeschrijver-desktop.Nvidia.com>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI
+ inforframe functions
+Date: Wed, 05 Dec 2018 08:32:45 +0200
+Message-ID: <7360043.6dPZTAhIds@avalon>
+References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+ <64018e44-9a5e-5b28-63db-f35b97dafb26@samsung.com>
+ <20181204191320.GM9144@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204154618.GC26056@pdeschrijver-desktop.Nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20181204191320.GM9144-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, sts.freedesktop.org-CC+yJ3UmIYqDUpFQwHEjaQ@public.gmane.org, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw0312.kim@sam>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/4/18 11:46 PM, Peter De Schrijver wrote:
-> On Tue, Dec 04, 2018 at 05:25:37PM +0800, Joseph Lo wrote:
->> When generating the OPP table, the voltages are round down with the
->> alignment from the regulator. The alignment should be applied for
->> voltages look up as well.
->>
->> Based on the work of Penny Chiu <pchiu@nvidia.com>.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
->>   1 file changed, 15 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
->> index c294a2989f31..4a943c136d4d 100644
->> --- a/drivers/clk/tegra/clk-dfll.c
->> +++ b/drivers/clk/tegra/clk-dfll.c
->> @@ -804,17 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
->>   static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
->>   {
->>   	struct dev_pm_opp *opp;
->> -	int i, uv;
->> +	int i, align_volt;
->>   
->>   	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
->>   	if (IS_ERR(opp))
->>   		return PTR_ERR(opp);
->>   
->> -	uv = dev_pm_opp_get_voltage(opp);
->> +	align_volt = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
->>   	dev_pm_opp_put(opp);
->>   
->>   	for (i = td->lut_bottom; i < td->lut_size; i++) {
->> -		if (regulator_list_voltage(td->vdd_reg, td->lut[i]) == uv)
->> +		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= align_volt)
->>   			return i;
->>   	}
->>   
->> @@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
->>    */
-> 
-> These 2 functions are only valid for I2C mode. We should probably add a
-> WARN_ON() in case they are called when PWM mode is used and return
-> -EINVAL.
->
-
-Okay, will add that.
-
-Thanks,
-Joseph
-
->>   static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->>   {
->> -	int i, n_voltages, reg_uV;
->> +	int i, n_voltages, reg_volt, align_volt;
->>   
->> +	align_volt = uV / td->soc->alignment.step_uv;
->>   	n_voltages = regulator_count_voltages(td->vdd_reg);
->>   	for (i = 0; i < n_voltages; i++) {
->> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
->> -		if (reg_uV < 0)
->> +		reg_volt = regulator_list_voltage(td->vdd_reg, i) /
->> +				td->soc->alignment.step_uv;
->> +		if (reg_volt < 0)
->>   			break;
->>   
->> -		if (uV == reg_uV)
->> +		if (align_volt == reg_volt)
->>   			return i;
->>   	}
->>   
->> @@ -1554,15 +1556,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->>    * */
->>   static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
->>   {
->> -	int i, n_voltages, reg_uV;
->> +	int i, n_voltages, reg_volt, align_volt;
->>   
->> +	align_volt = uV / td->soc->alignment.step_uv;
->>   	n_voltages = regulator_count_voltages(td->vdd_reg);
->>   	for (i = 0; i < n_voltages; i++) {
->> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
->> -		if (reg_uV < 0)
->> +		reg_volt = regulator_list_voltage(td->vdd_reg, i) /
->> +				td->soc->alignment.step_uv;
->> +		if (reg_volt < 0)
->>   			break;
->>   
->> -		if (uV <= reg_uV)
->> +		if (align_volt <= reg_volt)
->>   			return i;
->>   	}
->>   
->> -- 
->> 2.19.2
->>
+SGkgVmlsbGUsCgpPbiBUdWVzZGF5LCA0IERlY2VtYmVyIDIwMTggMjE6MTM6MjAgRUVUIFZpbGxl
+IFN5cmrDpGzDpCB3cm90ZToKPiBPbiBUdWUsIERlYyAwNCwgMjAxOCBhdCAwODo0Njo1M0FNICsw
+MTAwLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+ID4gT24gMDMuMTIuMjAxOCAyMjozOCwgVmlsbGUg
+U3lyasOkbMOkIHdyb3RlOgo+ID4+IE9uIFRodSwgTm92IDI5LCAyMDE4IGF0IDEwOjA4OjA3QU0g
+KzAxMDAsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4gPj4+IE9uIDIxLjExLjIwMTggMTk6MTksIExh
+dXJlbnQgUGluY2hhcnQgd3JvdGU6Cj4gPj4+PiBPbiBUdWVzZGF5LCAyMCBOb3ZlbWJlciAyMDE4
+IDE4OjEzOjQyIEVFVCBWaWxsZSBTeXJqYWxhIHdyb3RlOgo+ID4+Pj4+IEZyb206IFZpbGxlIFN5
+cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20+Cj4gPj4+Pj4gCj4gPj4+Pj4g
+TWFrZSBsaWZlIGVhc2llciBmb3IgZHJpdmVycyBieSBzaW1wbHkgcGFzc2luZyB0aGUgY29ubmVj
+dG9yCj4gPj4+Pj4gdG8gZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rpc3BsYXlfbW9kZSgp
+IGFuZAo+ID4+Pj4+IGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfcXVhbnRfcmFuZ2UoKS4gVGhhdCB3
+YXkgZHJpdmVycyBkb24ndAo+ID4+Pj4+IG5lZWQgdG8gd29ycnkgYWJvdXQgaXNfaGRtaTJfc2lu
+ayBtZXNzLgo+ID4+Pj4gCj4gPj4+PiBXaGlsZSB0aGlzIGlzIGdvb2QgZm9yIGRpc3BsYXkgY29u
+dHJvbGxlciBkcml2ZXJzLCB0aGUgY2hhbmdlIGlzbid0Cj4gPj4+PiBncmVhdCBmb3IgYnJpZGdl
+IGRyaXZlcnMuIERvd24gdGhlIHJvYWQgd2UncmUgbG9va2luZyBhdCBtb3ZpbmcKPiA+Pj4+IGNv
+bm5lY3RvciBzdXBwb3J0IG91dCBvZiB0aGUgYnJpZGdlIGRyaXZlcnMuIEFkZGluZyBhbiBhZGRp
+dGlvbmFsCj4gPj4+PiBkZXBlbmRlbmN5IHRvIGNvbm5lY3RvcnMgaW4gdGhlIGJyaWRnZXMgd2ls
+bCBtYWtlIHRoYXQgbW9yZQo+ID4+Pj4gZGlmZmljdWx0LiBJZGVhbGx5IGJyaWRnZXMgc2hvdWxk
+IHJldHJpZXZlIHRoZSBpbmZvcm1hdGlvbiBmcm9tIHRoZWlyCj4gPj4+PiBzaW5rLCByZWdhcmRs
+ZXNzIG9mIHdoZXRoZXIgaXQgaXMgYSBjb25uZWN0b3Igb3IgYW5vdGhlciBicmlkZ2UuCj4gPj4+
+IAo+ID4+PiBJIGFncmVlIHdpdGggaXQsIGFuZCBjYXNlIG9mIHNpaTg2MjAgc2hvd3MgdGhhdCB0
+aGVyZSBhcmUgY2FzZXMgd2hlcmUKPiA+Pj4gYnJpZGdlIGhhcyBubyBkaXJlY3QgYWNjZXNzIHRv
+IHRoZSBjb25uZWN0b3IuCj4gPj4gCj4gPj4gSXQncyBqdXN0IGEgbWF0dGVyIG9mIHBsdW1iaW5n
+IGl0IHRocm91Z2guCj4gPiAKPiA+IFdoYXQgZG8geW91IG1lYW4gZXhhY3RseT8KPiAKPiB2b2lk
+IGJyaWRnZV9mb28oLi4uCj4gKyAgICAgICAgICAgICAgICxzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAq
+Y29ubmVjdG9yKTsKPiAKPiA+Pj4gT24gdGhlIG90aGVyIHNpZGUsICBzaW5jZSB5b3UgYXJlIHBh
+c3NpbmcgY29ubmVjdG9yIHRvCj4gPj4+IGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJvbV9kaXNw
+bGF5X21vZGUoKSwgeW91IGNvdWxkIGRyb3AgbW9kZQo+ID4+PiBwYXJhbWV0ZXIgYW5kIHJlbmFt
+ZSB0aGUgZnVuY3Rpb24gdG8KPiA+Pj4gZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Nvbm5l
+Y3RvcigpIHRoZW4sIHVubGVzcyBtb2RlIHBhc3NlZCBhbmQKPiA+Pj4gbW9kZSBzZXQgb24gdGhl
+IGNvbm5lY3RvciBkaWZmZXJzPwo+ID4+IAo+ID4+IENvbm5lY3RvcnMgZG9uJ3QgaGF2ZSBhIG1v
+ZGUuCj4gPiAKPiA+IEFzIHRoZXkgYXJlIHBhc3NpbmcgdmlkZW8gc3RyZWFtIHRoZXkgc2hvdWxk
+IGhhdmUgaXQsIGV2ZW4gaWYgbm90Cj4gPiBkaXJlY3RseSwgZm9yIGV4YW1wbGU6Cj4gPiAKPiA+
+IGNvbm5lY3Rvci0+c3RhdGUtPmNydGMtPm1vZGUKPiAKPiBUaGF0J3Mgbm90IHJlYWxseSBob3cg
+YXRvbWljIHdvcmtzLiBPbmUgc2hvdWxkbid0IGdvIGRpZ2dpbmcKPiB0aHJvdWdoIHRoZSBvYmot
+PnN0YXRlIHBvaW50ZXJzIHdoZW4gd2UncmUgbm90IGhvbGRpbmcgdGhlCj4gcmVsZXZhbnQgbG9j
+a3MgYW55bW9yZS4gVGhlIGF0b21pYyB3YXkgd291bGQgYmUgdG8gcGFzcyBlaXRoZXIKPiBib3Ro
+IGNydGMgc3RhdGUgYW5kIGNvbm5lY3RvciBzdGF0ZSwgb3IgZHJtX2F0b21pY19zdGF0ZSArCj4g
+Y3J0Yy9jb25uZWN0b3IuCgpPciBhIGJyaWRnZSBzdGF0ZSA/IFdpdGggY2hhaW5lZCBicmlkZ2Vz
+IHRoZSBtb2RlIGNhbiB2YXJ5IGFsb25nIHRoZSBwaXBlbGluZSwgCnRoZSBDUlRDIGFkanVzdGVk
+IG1vZGUgd2lsbCBvbmx5IGNvdmVyIHRoZSBsaW5rIGJldHdlZW4gdGhlIENSVEMgYW5kIHRoZSBm
+aXJzdCAKYnJpZGdlLiBJdCdzIG9ubHkgYSBtYXR0ZXIgb2YgdGltZSB1bnRpbCB3ZSBuZWVkIHRv
+IHN0b3JlIG90aGVyIGludGVybWVkaWF0ZSAKbW9kZXMgaW4gc3RhdGVzLiBJJ2QgcmF0aGVyIHBy
+ZXBhcmUgZm9yIHRoYXQgaW5zdGVhZCBvZiBwYXNzaW5nIHRoZSBDUlRDIHN0YXRlIAp0byBicmlk
+Z2VzLgoKPiA+IEluIG1vbWVudCBvZiBjcmVhdGluZyBpbmZvZnJhbWUgaXQgc2hvdWxkIGJlIHNl
+dCBwcm9wZXJseS4KPiA+IAo+ID4+Pj4gUGxlYXNlIHNlZSBiZWxvdyBmb3IgYW4gYWRkaXRpb25h
+bCBjb21tZW50Lgo+ID4+Pj4gCj4gPj4+Pj4gQ2M6IEFsZXggRGV1Y2hlciA8YWxleGFuZGVyLmRl
+dWNoZXJAYW1kLmNvbT4KPiA+Pj4+PiBDYzogIkNocmlzdGlhbiBLw7ZuaWciIDxjaHJpc3RpYW4u
+a29lbmlnQGFtZC5jb20+Cj4gPj4+Pj4gQ2M6ICJEYXZpZCAoQ2h1bk1pbmcpIFpob3UiIDxEYXZp
+ZDEuWmhvdUBhbWQuY29tPgo+ID4+Pj4+IENjOiBBcmNoaXQgVGFuZWphIDxhcmNoaXR0QGNvZGVh
+dXJvcmEub3JnPgo+ID4+Pj4+IENjOiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
+Pgo+ID4+Pj4+IENjOiBMYXVyZW50IFBpbmNoYXJ0IDxMYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25i
+b2FyZC5jb20+Cj4gPj4+Pj4gQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiA+
+Pj4+PiBDYzogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+ID4+Pj4g
+Q2M6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+Cj4gPj4+Pj4gQ2M6IEt5
+dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4gPj4+Pj4gQ2M6IFJ1c3Nl
+bGwgS2luZyA8bGludXhAYXJtbGludXgub3JnLnVrPgo+ID4+Pj4+IENjOiBDSyBIdSA8Y2suaHVA
+bWVkaWF0ZWsuY29tPgo+ID4+Pj4+IENjOiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBlbmd1dHJv
+bml4LmRlPgo+ID4+Pj4+IENjOiBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFpbC5jb20+Cj4gPj4+
+Pj4gQ2M6IEJlbiBTa2VnZ3MgPGJza2VnZ3NAcmVkaGF0LmNvbT4KPiA+Pj4+PiBDYzogVG9taSBW
+YWxrZWluZW4gPHRvbWkudmFsa2VpbmVuQHRpLmNvbT4KPiA+Pj4+PiBDYzogU2FuZHkgSHVhbmcg
+PGhqY0Byb2NrLWNoaXBzLmNvbT4KPiA+Pj4+PiBDYzogIkhlaWtvIFN0w7xibmVyIiA8aGVpa29A
+c250ZWNoLmRlPgo+ID4+Pj4+IENjOiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25h
+cmRAbGluYXJvLm9yZz4KPiA+Pj4+PiBDYzogVmluY2VudCBBYnJpb3UgPHZpbmNlbnQuYWJyaW91
+QHN0LmNvbT4KPiA+Pj4+PiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
+LmNvbT4KPiA+Pj4+PiBDYzogRXJpYyBBbmhvbHQgPGVyaWNAYW5ob2x0Lm5ldD4KPiA+Pj4+PiBD
+YzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPgo+ID4+Pj4+IENjOiBJbGlhIE1pcmtp
+biA8aW1pcmtpbkBhbHVtLm1pdC5lZHU+Cj4gPj4+Pj4gQ2M6IGFtZC1nZnhAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCj4gPj4+Pj4gQ2M6IGxpbnV4LWFybS1tc21Admdlci5rZXJuZWwub3JnCj4gPj4+
+Pj4gQ2M6IGZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiA+Pj4+PiBDYzogbm91dmVh
+dUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiA+Pj4+PiBDYzogbGludXgtdGVncmFAdmdlci5rZXJu
+ZWwub3JnCj4gPj4+Pj4gU2lnbmVkLW9mZi1ieTogVmlsbGUgU3lyasOkbMOkIDx2aWxsZS5zeXJq
+YWxhQGxpbnV4LmludGVsLmNvbT4KPiA+Pj4+PiAtLS0KPiA+Pj4+PiAKPiA+Pj4+PiAgZHJpdmVy
+cy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3YxMF8wLmMgICAgfCAgMiArLQo+ID4+Pj4+ICBkcml2
+ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2VfdjExXzAuYyAgICB8ICAyICstCj4gPj4+Pj4gIGRy
+aXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92Nl8wLmMgICAgIHwgIDMgKystCj4gPj4+Pj4g
+IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92OF8wLmMgICAgIHwgIDIgKy0KPiA+Pj4+
+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC1hbng3OHh4LmMgfCAgNSArKy0tCj4g
+Pj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lpOTAyeC5jICAgICAgICAgIHwgIDMgKyst
+Cj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYyAgICAgIHwgIDMg
+Ky0tCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5jIHwg
+IDMgKystCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jICAgICAgICAgICAgICAg
+IHwgMzMgKysrKysrKysrKysrLS0tLS0tLS0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfaGRtaS5jICAgICAgfCAgMyArKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2ky
+Yy90ZGE5OTh4X2Rydi5jICAgICAgICAgfCAgMyArKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJt
+L2k5MTUvaW50ZWxfaGRtaS5jICAgICAgICAgfCAxNCArKysrKy0tLS0tCj4gPj4+Pj4gIGRyaXZl
+cnMvZ3B1L2RybS9pOTE1L2ludGVsX2xzcGNvbi5jICAgICAgIHwgMTUgKysrKysrLS0tLS0KPiA+
+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfc2R2by5jICAgICAgICAgfCAxMCArKysr
+LS0tCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfaGRtaS5jICAgICAgIHwg
+IDMgKystCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9tc20vaGRtaS9oZG1pX2JyaWRnZS5jICAg
+IHwgIDMgKystCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2Rpc3BudjUwL2Rpc3Au
+YyAgIHwgIDcgKysrLS0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9lbmNv
+ZGVyLmMgICAgfCAgNSArKy0tCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9u
+X2F1ZGlvLmMgICAgIHwgIDIgKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2lu
+bm9faGRtaS5jICAgICAgfCAgNCArKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlf
+aGRtaS5jICAgICAgICAgICAgfCAgMyArKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL3N1bjRp
+L3N1bjRpX2hkbWlfZW5jLmMgICAgfCAgMyArKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2hkbWkuYyAgICAgICAgICAgICAgfCAgMyArKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJt
+L3RlZ3JhL3Nvci5jICAgICAgICAgICAgICAgfCAgMyArKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUv
+ZHJtL3ZjNC92YzRfaGRtaS5jICAgICAgICAgICAgfCAxMSArKysrKy0tLQo+ID4+Pj4+ICBkcml2
+ZXJzL2dwdS9kcm0venRlL3p4X2hkbWkuYyAgICAgICAgICAgICB8ICA0ICsrLQo+ID4+Pj4+ICBp
+bmNsdWRlL2RybS9kcm1fZWRpZC5oICAgICAgICAgICAgICAgICAgICB8ICA4ICsrKy0tLQo+ID4+
+Pj4+ICAyNyBmaWxlcyBjaGFuZ2VkLCA5NCBpbnNlcnRpb25zKCspLCA2NiBkZWxldGlvbnMoLSkK
+PiA+Pj4+IAo+ID4+Pj4gRm9yIGR3LWhkbWkgYW5kIG9tYXBkcm0sCj4gPj4+PiAKPiA+Pj4+IFJl
+dmlld2VkLWJ5OiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2Fy
+ZC5jb20+CgotLSAKUmVnYXJkcywKCkxhdXJlbnQgUGluY2hhcnQKCgoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApG
+cmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
