@@ -1,146 +1,135 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI
- inforframe functions
-Date: Wed, 5 Dec 2018 08:40:34 +0100
-Message-ID: <239ce5d3-3959-7926-7c0e-26997ec4e5ee@samsung.com>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
- <87muq2ek04.fsf@intel.com>
- <CGME20181121115239epcas3p17343b2796d87af83b0eddbc40d646ed9@epcas3p1.samsung.com>
- <20181121115139.GC9144@intel.com>
- <d0e34bab-de8b-1005-b9e8-72afe66576ac@samsung.com>
- <20181203214844.GK9144@intel.com>
- <aee2cad8-ef93-72d5-986f-b33aabd2c3d2@samsung.com>
- <20181204190234.GL9144@intel.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH] thermal: tegra: add get_trend ops
+Date: Wed, 5 Dec 2018 16:30:10 +0800
+Message-ID: <92e4304d-df83-946f-a7d5-a12b77a9d9e8@nvidia.com>
+References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
+ <20181120153833.GB28796@ulmo>
+ <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
+ <20181129170145.GG2688@localhost.localdomain>
+ <f2d10339-4086-7102-9949-719483f545bf@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20181204190234.GL9144@intel.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f2d10339-4086-7102-9949-719483f545bf@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-tegra@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-arm-msm@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, Shawn Guo <shawnguo@kernel.org>, Ben Skeggs <bskeggs@redhat.com>, freedreno@lists.freedesktop.org, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDQuMTIuMjAxOCAyMDowMiwgVmlsbGUgU3lyasOkbMOkIHdyb3RlOgo+IE9uIFR1ZSwgRGVj
-IDA0LCAyMDE4IGF0IDA4OjAzOjUzQU0gKzAxMDAsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IE9u
-IDAzLjEyLjIwMTggMjI6NDgsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPj4+IE9uIFRodSwgTm92
-IDI5LCAyMDE4IGF0IDA5OjQ2OjE2QU0gKzAxMDAsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+Pj4g
-UXVpdGUgbGF0ZSwgaG9wZWZ1bGx5IG5vdCB0b28gbGF0ZS4KPj4+Pgo+Pj4+Cj4+Pj4gT24gMjEu
-MTEuMjAxOCAxMjo1MSwgVmlsbGUgU3lyasOkbMOkIHdyb3RlOgo+Pj4+PiBPbiBXZWQsIE5vdiAy
-MSwgMjAxOCBhdCAwMTo0MDo0M1BNICswMjAwLCBKYW5pIE5pa3VsYSB3cm90ZToKPj4+Pj4+PiAg
-CQlyZXR1cm47Cj4+Pj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2ls
-LXNpaTg2MjAuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwo+Pj4+Pj4+
-IGluZGV4IGE2ZThmNDU5MWU2My4uMGNjMjkzYTZhYzI0IDEwMDY0NAo+Pj4+Pj4+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwo+Pj4+Pj4+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2MjAuYwo+Pj4+Pj4+IEBAIC0xMTA0LDggKzExMDQsNyBA
-QCBzdGF0aWMgdm9pZCBzaWk4NjIwX3NldF9pbmZvZnJhbWVzKHN0cnVjdCBzaWk4NjIwICpjdHgs
-Cj4+Pj4+Pj4gIAlpbnQgcmV0Owo+Pj4+Pj4+ICAKPj4+Pj4+PiAgCXJldCA9IGRybV9oZG1pX2F2
-aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoJmZybS5hdmksCj4+Pj4+Pj4gLQkJCQkJCSAg
-ICAgICBtb2RlLAo+Pj4+Pj4+IC0JCQkJCQkgICAgICAgdHJ1ZSk7Cj4+Pj4+Pj4gKwkJCQkJCSAg
-ICAgICBOVUxMLCBtb2RlKTsKPj4+Pj4+PiAgCWlmIChjdHgtPnVzZV9wYWNrZWRfcGl4ZWwpCj4+
-Pj4+Pj4gIAkJZnJtLmF2aS5jb2xvcnNwYWNlID0gSERNSV9DT0xPUlNQQUNFX1lVVjQyMjsKPj4+
-Pj4+PiAgCj4+Pj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3Bz
-eXMvZHctaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMK
-Pj4+Pj4+PiBpbmRleCA2NGMzY2YwMjc1MTguLjg4YjcyMGI2MzEyNiAxMDA2NDQKPj4+Pj4+PiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYwo+Pj4+Pj4+ICsr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5jCj4+Pj4+Pj4gQEAg
-LTEzNDQsNyArMTM0NCw4IEBAIHN0YXRpYyB2b2lkIGhkbWlfY29uZmlnX0FWSShzdHJ1Y3QgZHdf
-aGRtaSAqaGRtaSwgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUpCj4+Pj4+Pj4gIAl1OCB2
-YWw7Cj4+Pj4+Pj4gIAo+Pj4+Pj4+ICAJLyogSW5pdGlhbGlzZSBpbmZvIGZyYW1lIGZyb20gRFJN
-IG1vZGUgKi8KPj4+Pj4+PiAtCWRybV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21v
-ZGUoJmZyYW1lLCBtb2RlLCBmYWxzZSk7Cj4+Pj4+Pj4gKwlkcm1faGRtaV9hdmlfaW5mb2ZyYW1l
-X2Zyb21fZGlzcGxheV9tb2RlKCZmcmFtZSwKPj4+Pj4+PiArCQkJCQkJICZoZG1pLT5jb25uZWN0
-b3IsIG1vZGUpOwo+Pj4+Pj4+ICAKPj4+Pj4+PiAgCWlmIChoZG1pX2J1c19mbXRfaXNfeXV2NDQ0
-KGhkbWktPmhkbWlfZGF0YS5lbmNfb3V0X2J1c19mb3JtYXQpKQo+Pj4+Pj4+ICAJCWZyYW1lLmNv
-bG9yc3BhY2UgPSBIRE1JX0NPTE9SU1BBQ0VfWVVWNDQ0Owo+Pj4+Pj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jCj4+
-Pj4+Pj4gaW5kZXggYjUwNmUzNjIyYjA4Li41MDFhYzA1YmE3ZGEgMTAwNjQ0Cj4+Pj4+Pj4gLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMKPj4+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9k
-cm0vZHJtX2VkaWQuYwo+Pj4+Pj4+IEBAIC00ODMwLDE5ICs0ODMwLDMyIEBAIHZvaWQgZHJtX3Nl
-dF9wcmVmZXJyZWRfbW9kZShzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yLAo+Pj4+Pj4+
-ICB9Cj4+Pj4+Pj4gIEVYUE9SVF9TWU1CT0woZHJtX3NldF9wcmVmZXJyZWRfbW9kZSk7Cj4+Pj4+
-Pj4gIAo+Pj4+Pj4+ICtzdGF0aWMgYm9vbCBpc19oZG1pMl9zaW5rKHN0cnVjdCBkcm1fY29ubmVj
-dG9yICpjb25uZWN0b3IpCj4+Pj4+PiBZb3UncmUgdXN1YWxseSBrbm93biBmb3IgYWRkaW5nIGNv
-bnN0IGFsbCBhcm91bmQsIHdoeSBub3QgY29uc3QgcG9pbnRlcgo+Pj4+Pj4gaGVyZSBhbmQgaW4g
-YWxsIHRoZSBvdGhlciBkcm1fKiBmdW5jdGlvbnMgdGhhdCBjYWxsIHRoaXM/Cj4+Pj4+IE15IGN1
-cnJlbnQgYXBwcm9hY2ggaXMgdG8gY29uc3RpZnkgc3RhdGVzL2Zicy9ldGMuIGJ1dCBub3Qgc28g
-bXVjaAo+Pj4+PiBjcnRjcy9jb25uZWN0b3JzL2V0Yy4gVG9vIG11Y2ggY29uc3QgY2FuIHNvbWV0
-aW1lcyBnZXQgaW4gdGhlIHdheQo+Pj4+PiBvZiB0aGluZ3MgcmVxdWlyaW5nIHRoYXQgeW91IHJl
-bW92ZSB0aGUgY29uc3QgbGF0ZXIuIEJ1dCBJIGd1ZXNzCj4+Pj4+IGluIHRoaXMgY2FzZSB0aGUg
-Y29uc3Qgc2hvdWxkbid0IHJlYWxseSBnZXQgaW4gdGhlIHdheSBvZiBhbnl0aGluZwo+Pj4+PiBi
-ZWNhdXNlIHRoZXNlIGFyZSBwcmV0dHkgbXVjaCBzdXBwb3NlZCB0byBiZSBwdXJlIGZ1bmN0aW9u
-cy4KPj4+Pj4KPj4+Pj4+PiArewo+Pj4+Pj4+ICsJLyoKPj4+Pj4+PiArCSAqIEZJWE1FOiBzaWwt
-c2lpODYyMCBkb2Vzbid0IGhhdmUgYSBjb25uZWN0b3IgYXJvdW5kIHdoZW4KPj4+Pj4+PiArCSAq
-IHdlIG5lZWQgb25lLCBzbyB3ZSBoYXZlIHRvIGJlIHByZXBhcmVkIGZvciBhIE5VTEwgY29ubmVj
-dG9yLgo+Pj4+Pj4+ICsJICovCj4+Pj4+Pj4gKwlpZiAoIWNvbm5lY3RvcikKPj4+Pj4+PiArCQly
-ZXR1cm4gZmFsc2U7Cj4+Pj4+PiBUaGlzIGFjdHVhbGx5IGNoYW5nZXMgdGhlIGlzX2hkbWkyX3Np
-bmsgdmFsdWUgZm9yIHNpbC1zaWk4NjIwLgo+Pj4+PiBIbW0uIE5vIGlkZWEgd2h5IHRoZXkgd291
-bGQgaGF2ZSBzZXQgdGhhdCB0byB0cnVlIHdoZW4gZXZlcnlvbmUgZWxzZSBpcwo+Pj4+PiBwYXNz
-aW5nIGZhbHNlLiAKPj4+PiBCZWNhdXNlIGZhbHNlIGRvZXMgbm90IHdvcmsgOikgTW9yZSBwcmVj
-aXNlbHkgTUhMdjMgKHVzZWQgaW4gU2lpODYyMCkKPj4+PiB1c2VzIENUQS04NjEtRiBzdGFuZGFy
-ZCBmb3IgaW5mb2ZyYW1lcywgd2hpY2ggaXMgc3BlY2lmaWMgdG8gSERNSTIuMC4KPj4+Pgo+Pj4+
-IFVuZm9ydHVuYXRlbHkgSSBoYXZlIG5vIGFjY2VzcyB0byBNSEwgc3BlY3MsIGJ1dCBteSBleHBl
-cmltZW50cyBhbmQKPj4+PiB2ZW5kb3IgZHJpdmVycyBzdHJvbmdseSBzdWdnZXN0cyBpdCBpcyBk
-b25lIHRoaXMgd2F5Lgo+Pj4+Cj4+Pj4gVGhpcyBpcyBpbXBvcnRhbnQgaW4gY2FzZSBvZiA0SyBt
-b2RlcyB3aGljaCBhcmUgaGFuZGxlZCBkaWZmZXJlbnRseSBieQo+Pj4+IEhETUkgMS40IGFuZCBI
-RE1JMi4wLgo+Pj4gSERNSSAyLjAgaGFuZGxlcyA0ayBqdXN0IGxpa2UgMS40IGhhbmRsZWQgaXQg
-d2hlbiB5b3UgdXNlIG9uZSBvZgo+Pj4gdGhlIDRrIG1vZGVzIGRlZmluZWQgaW4gMS40LiBPbmx5
-IGlmIHlvdSB1c2UgZmVhdHVyZXMgYmV5b25kIDEuNCBkbyB3ZQo+Pj4gc3dpdGNoIG92ZXIgdG8g
-dGhlIEhETUkgMi4wIHNwZWNpZmljIHNpZ25hbGxpbmcuCj4+Cj4+IFRoZSBkaWZmZXJlbmNlIGlz
-IGluIGluZm9mcmFtZXM6Cj4+Cj4+IEhETUkgMS40IHNldHMgQVZJIGluZm9mcmFtZSBWSUMgdG8g
-MCwgYW5kIHNlbmRzIEhETUlfVklDIGluIFZTSS4KPj4KPj4gSERNSSAyLjAgc2V0cyBBVkkgaW5m
-b2ZyYW1lIHRvIG5vbiB6ZXJvIFZJQ3MgaW50cm9kdWNlZCBieQo+PiBIRE1JMi4wL0NFQS04NjEt
-RiwgVlNJIGNhbiBiZSBvbWl0dGVkIGlmIEkgcmVtZW1iZXIgY29ycmVjdGx5LCB1bmxlc3MgM2QK
-Pj4gaXMgaW4gdXNlLgo+IExpa2UgSSBzYWlkLCBUaGUgSERNSSAxLjQgbWV0aG9kIGlzIHVzZWQg
-ZXZlbiB3aXRoIEhETUkgMi4wIHNpbmtzIHVubGVzcwo+IHNvbWUgZmVhdHVyZSBnZXRzIHVzZWQg
-d2hpY2ggY2FuJ3QgYmUgc2lnbmFsbGVkIHZpYSB0aGUgSERNSSAxLjQgdmVuZG9yCj4gc3BlY2lm
-aWMgaW5mb2ZyYW1lLgoKCkRvIHlvdSBtZWFuIHRoYXQgNEsgVklDcyA5NSwgOTQsIDkzLCA5OCBk
-ZWZpbmVkIGluIENFQS04NjEtRiBhcmUgbm90CnVzZWQgYXQgYWxsIGZvciBub24tM2QgdmlkZW8g
-aW4gSERNSSAyLjA/CgpDaGFwdGVyIDEwLjEgb2YgSERNSTIuMCBzcGVjIHNheXMgY2xlYXJseToK
-Cj4gV2hlbiB0cmFuc21pdHRpbmcgYW55IGFkZGl0aW9uYWwgVmlkZW8gRm9ybWF0IGZvciB3aGlj
-aCBhIFZJQyB2YWx1ZQo+IGhhcyBiZWVuIGRlZmluZWQgaW4KPiBDRUEtODYxLUYgdGFibGVzIDEs
-IDIsIGFuZCAzLCBhbiBIRE1JIFNvdXJjZSBzaGFsbCBzZXQgdGhlIFZJQyBmaWVsZAo+IHRvIHRo
-ZSBWaWRlbyBDb2RlIGZvcgo+IHRoYXQgZm9ybWF0LgoKCkl0IGNvbnRyYWRpY3RzIHlvdXIgc3Rh
-dGVtZW50LCBvciBhbSBJIG1pc3Npbmcgc29tZXRoaW5nPwoKCj4KPj4KPj4gU28gc2V0dGluZyBW
-SUNzIHRvIG5vbi16ZXJvIGluIGNhc2Ugb2YgSERNSTEuNCBzaW5rcyBhbmQgNGsgbW9kZXMgc2Vl
-bXMKPj4gcmlza3kuCj4gVGhhdCBpcyBub3Qgd2hhdCBJIHdhcyBwcm9wb3NpbmcuCgoKTWF5YmUg
-SSBoYXZlIG1pc3JlYWQgeW91ciBzdGF0ZW1lbnQ6CgpPbiAyMS4xMS4yMDE4IDEyOjUxLCBWaWxs
-ZSBTeXJqw6Rsw6Qgd3JvdGU6Cgo+IFRoYXQgc2FpZCwgSSB3YXMgYWN0dWFsbHkgdGhpbmtpbmcg
-b2YgcmVtb3ZpbmcgdGhpcyBoZG1pMiB2cy4gbm90Cj4gc3R1ZmYgZnJvbSBkcm1faGRtaV9hdmlf
-aW5mb2ZyYW1lX2Zyb21fZGlzcGxheV9tb2RlKCkuIFdlIGFkZGVkIGl0Cj4gImp1c3QgaW4gY2Fz
-ZSIsIGJ1dCB3ZSBhbHJlYWR5IGhhdmUgYSBzaW1pbGFyIGlzc3VlIHdpdGggZWFybGllcgo+IGNl
-YS04NjEgcmV2aXNpb25zIGFuZCBoYXZlbid0IHNlZW4gYW55IGJ1Z3Mgd2hlcmUgYW4gb2xkZXIg
-bW9uaXRvcgo+IHdvdWxkIGdldCBjb25mdXNlZCBieSBhIFZJQyBub3QgeWV0IGRlZmluZWQgd2hl
-biB0aGUgbW9uaXRvciB3YXMKPiBwcm9kdWNlZC4KCgpJIGRvIG5vdCBrbm93IHdoYXQgaXQgY291
-bGQgbWVhbiBvdGhlciB0aGF0IGFsbG93aW5nIHNlbmRpbmcgVklDcwp1bmtub3duIHRvIHNpbms/
-CgpNYXliZSBiZXR0ZXIgd291bGQgYmUganVzdCB0byB3YWl0IGZvciB0aGUgcGF0Y2ggdG8gYXZv
-aWQgbWlzdW5kZXJzdGFuZGluZ3MuCgoKUmVnYXJkcwoKQW5kcnplagoKCj4KPj4KPj4gUmVnYXJk
-cwo+Pgo+PiBBbmRyemVqCj4+Cj4+Cj4+Pj4gVGhlIHBpcGVsaW5lIGxvb2tzIGxpa2UgKGluIHBh
-cmVudGhlc2lzIEhETUkgdmVyc2lvbiBvbiB0aGUgc3RyZWFtKToKPj4+Pgo+Pj4+IGV4eW5vc19o
-ZG1pIC0tKDEuNCktLT4gU0lJODYyMCAtLSgyLjApLS0+IE1ITF9kb25nbGUgLS0oMS40KS0tPiBU
-Vgo+Pj4+Cj4+Pj4KPj4+Pj4gSSBndWVzcyBJIGNhbiBjaGFuZ2UgdGhpcyB0byB0cnVlIHRvIG5v
-dCBjaGFuZ2UgaXQuIElJUkMKPj4+Pj4gdGhhdCB3YXMgdGhlIG9ubHkgZHJpdmVyIHRoYXQgZGlk
-bid0IGhhdmUgYSBjb25uZWN0b3IgYXJvdW5kLgo+Pj4+Pgo+Pj4+PiBUaGF0IHNhaWQsIEkgd2Fz
-IGFjdHVhbGx5IHRoaW5raW5nIG9mIHJlbW92aW5nIHRoaXMgaGRtaTIgdnMuIG5vdAo+Pj4+PiBz
-dHVmZiBmcm9tIGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoKS4gV2Ug
-YWRkZWQgaXQKPj4+Pj4gImp1c3QgaW4gY2FzZSIsIGJ1dCB3ZSBhbHJlYWR5IGhhdmUgYSBzaW1p
-bGFyIGlzc3VlIHdpdGggZWFybGllcgo+Pj4+PiBjZWEtODYxIHJldmlzaW9ucyBhbmQgaGF2ZW4n
-dCBzZWVuIGFueSBidWdzIHdoZXJlIGFuIG9sZGVyIG1vbml0b3IKPj4+Pj4gd291bGQgZ2V0IGNv
-bmZ1c2VkIGJ5IGEgVklDIG5vdCB5ZXQgZGVmaW5lZCB3aGVuIHRoZSBtb25pdG9yIHdhcwo+Pj4+
-PiBwcm9kdWNlZC4KPj4+Pj4KPj4+PiBBcmUgeW91IHN1cmUgdGhpcyBpcyBhIGdvb2QgaWRlYT8g
-QXMgSSBzYWlkIGVhcmxpZXIgNEsgbW9kZXMgYXJlIHByZXNlbnQKPj4+PiBpbiBIRE1JIDEuNCBh
-bmQgMi4wIGJ1dCB0aGV5IGFyZSBoYW5kbGVkIGRpZmZlcmVudGx5LCBzbyB0aGlzIGlzIG5vdAo+
-Pj4+IG9ubHkgbWF0dGVyIG9mIHVua25vd24gVklDIGluIEFWSUYuCj4+Pj4KPj4+Pgo+Pj4+IFJl
-Z2FyZHMKPj4+Pgo+Pj4+IEFuZHJ6ZWoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9pbnRlbC1nZngK
+Hi Daniel,
+It seems no more comments, could this patch be approved?
+
+Thanks.
+Wei.
+
+On 30/11/2018 11:07 AM, Wei Ni wrote:
+> 
+> 
+> On 30/11/2018 1:01 AM, Eduardo Valentin wrote:
+>> On Wed, Nov 21, 2018 at 02:36:10PM +0800, Wei Ni wrote:
+>>>
+>>>
+>>> On 20/11/2018 11:38 PM, Thierry Reding wrote:
+>>>> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
+>>>>> Add support for get_trend ops that allows soctherm
+>>>>> sensors to be used with the step-wise governor.
+>>>>>
+>>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>>> ---
+>>>>>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
+>>>>>  1 file changed, 34 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>>> index ed28110a3535..d2951fbe2b7c 100644
+>>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>>> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>>>>>  	return 0;
+>>>>>  }
+>>>>>  
+>>>>> +static int tegra_thermctl_get_trend(void *data, int trip,
+>>>>> +				    enum thermal_trend *trend)
+>>>>> +{
+>>>>> +	struct tegra_thermctl_zone *zone = data;
+>>>>> +	struct thermal_zone_device *tz = zone->tz;
+>>>>> +	int trip_temp, temp, last_temp, ret;
+>>>>> +
+>>>>> +	if (!tz)
+>>>>> +		return -EINVAL;
+>>>>> +
+>>>>> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+>>>>> +	if (ret)
+>>>>> +		return ret;
+>>>>> +
+>>>>> +	mutex_lock(&tz->lock);
+>>>>> +	temp = tz->temperature;
+>>>>> +	last_temp = tz->last_temperature;
+>>>>> +	mutex_unlock(&tz->lock);
+>>>>> +
+>>>>> +	if (temp > trip_temp) {
+>>>>> +		if (temp >= last_temp)
+>>>>> +			*trend = THERMAL_TREND_RAISING;
+>>>>> +		else
+>>>>> +			*trend = THERMAL_TREND_STABLE;
+>>>>> +	} else if (temp < trip_temp) {
+>>>>> +		*trend = THERMAL_TREND_DROPPING;
+>>>>> +	} else {
+>>>>> +		*trend = THERMAL_TREND_STABLE;
+>>>>> +	}
+>>>>> +
+>>>>> +	return 0;
+>>>>> +}
+>>>>
+>>>> This looks like a reimplementation of the get_tz_trend() helper. Is
+>>>> seems like that helper already has everything we need. Perhaps this
+>>>> isn't working because of-thermal installs of_thermal_get_trend(), a
+>>>> function that returns -EINVAL if the driver doesn't implement the
+>>>> ->get_trend() callback.
+>>>
+>>> 1. The get_tz_trend() helper can work, because it has:
+>>> if (tz->emul_temperature || !tz->ops->get_trend ||
+>>>             tz->ops->get_trend(tz, trip, &trend)) {
+>>> ...
+>>> }
+>>> the tz->ops->get_trend is of_thermal_get_trend(). If without special
+>>> get_trend(), it will return -EINVAL, so it will implement the if block
+>>> to get the "trend". If we have the special get_trend(), then the
+>>> of_thermal_get_trend() will return 0, so this helper will not implement
+>>> the if block, it will get the "trend" from the special get_trend().
+>>
+>> The idea of the helper is to provide a trend in case drivers dont have
+>> a specific way of doing so. 
+> 
+> Yes, thanks for your explanation.
+> 
+>>
+>>>
+>>> 2. There has a little difference between the helper and our special
+>>> callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
+>>> get_tz_trend() helper didn't.
+>>>
+>>
+>> Yeah, if you are computing trend towards a trip, then yes, that is
+>> different and this patch is needed.
+>>
+>>>>
+>>>> Perhaps a better way would be to do something like this in
+>>>> thermal_zone_of_add_sensor():
+>>>>
+>>>> 	if (ops->get_trend)
+>>>> 		tzd->ops->get_trend = of_thermal_get_trend;
+>>>>
+>>>> That's similar to how ->set_trips() and ->set_emul_temp() are set up
+>>>> and should make sure that get_tz_trend() will do the right thing for
+>>>> all drivers that don't implement a special ->get_trend().
+>>>
+>>> As above description, I think the of_thermal_get_trend() already can
+>>> handle this case, doesn't need to change.
+>>>
+>>> Wei.
+>>>
+>>>>
+>>>> Thierry
+>>>>
