@@ -1,50 +1,70 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/7] arm64: tegra: Enable HDA on Jetson TX2
-Date: Thu,  6 Dec 2018 17:50:17 +0100
-Message-ID: <20181206165022.23845-2-thierry.reding@gmail.com>
-References: <20181206165022.23845-1-thierry.reding@gmail.com>
+Subject: [PATCH] drm/tegra: sor: Reset the SOR if possible
+Date: Thu,  6 Dec 2018 18:56:47 +0100
+Message-ID: <20181206175647.29019-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181206165022.23845-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
-
-Enable the HDA controller on Jetson TX2 so that it can be used for audio
-playback over HDMI.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index bfcc00a65af6..0f3c6cebb049 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -53,6 +53,10 @@
- 		vmmc-supply = <&vdd_sd>;
- 	};
- 
-+	hda@3510000 {
-+		status = "okay";
-+	};
-+
- 	pcie@10003000 {
- 		status = "okay";
- 
--- 
-2.19.1
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCklmIHRoZSBTT1IgaXMg
+YWxyZWFkeSB1cCBhbmQgcnVubmluZyB3aGVuIHRoZSBrZXJuZWwgZHJpdmVyIGlzIHByb2JlZCwK
+c2V0dGluZyBhIG1vZGUgd2lsbCB0eXBpY2FsbHkgZmFpbC4gVGhpcyBjYW4gYmUgc2VlbiBmb3Ig
+ZXhhbXBsZSBvbgpKZXRzb24gVFgyLiBVbmRlciBjZXJ0YWluIGNpcmN1bXN0YW5jZXMgdGhlIGdl
+bmVyaWMgcG93ZXIgZG9tYWluIGNvZGUKd2lsbCBjYXVzZSB0aGUgU09SIHRvIGJlIHJlc2V0LiBI
+b3dldmVyLCBpZiB0aGUgcG93ZXIgZG9tYWluIGlzIG5ldmVyCnBvd2VyZWQgb2ZmICh0aGlzIGNh
+biBoYXBwZW4gaWYgdGhlIEhEQSBjb250cm9sbGVyIGlzIGVuYWJsZWQsIHdoaWNoCmlzIHBhcnQg
+b2YgdGhlIHNhbWUgcG93ZXIgZG9tYWluIGFzIHRoZSBTT1IpLCB0aGVuIHRoZSBTT1Igd2lsbCBl
+bmQgdXAKbm90IGdldHRpbmcgcmVzZXQgYW5kIGZhaWwgdG8gcHJvcGVybHkgc2V0IGEgbW9kZS4K
+ClRvIHdvcmsgYXJvdW5kIHRoaXMsIHRyeSB0byBnZXQgdGhlIHJlc2V0IGNvbnRyb2wgYW5kIGFz
+c2VydC9kZWFzc2VydAppdCwgaXJyZXNwZWN0aXZlIG9mIHdoZXRoZXIgb3Igbm90IGEgZ2VuZXJp
+YyBwb3dlciBkb21haW4gaXMgYXR0YWNoZWQKdG8gdGhlIFNPUi4gT24gcGxhdGZvcm1zIHdoZXJl
+IHRoZSBrZXJuZWwgaW1wbGVtZW50cyBnZW5lcmljIHBvd2VyCmRvbWFpbnMgKHVwIHRvIFRlZ3Jh
+MjEwKSB0aGlzIHdpbGwgZmFpbCwgYmVjYXVzZSB0aGUgcG93ZXIgZG9tYWluIHdpbGwKYWxyZWFk
+eSBoYXZlIGFjcXVpcmVkIGFuIGV4Y2x1c2l2ZSByZWZlcmVuY2UgdG8gdGhlIHJlc2V0IGNvbnRy
+b2wuIEJ1dApvbiByZWNlbnQgcGxhdGZvcm1zIHRoZXJlIHRoZSBCUE1QIHByb3ZpZGVzIGFuIEFC
+SSB0byBjb250cm9sIHBvd2VyCmRvbWFpbnMsIGl0J3MgcG9zc2libGUgdG8gYWNxdWlyZSB0aGUg
+cmVzZXQgY29udHJvbCBmcm9tIFNPUiBhbmQgdXNlCml0IHRvIHB1dCB0aGUgU09SIGludG8gYSBr
+bm93biBnb29kIHN0YXRlIGF0IHByb2JlIHRpbWUuCgpUaGUgcHJvcGVyIHNvbHV0aW9uIGZvciB0
+aGlzIGlzIHRvIG1ha2UgdGhlIFNPUiBkcml2ZXIgY2FwYWJsZSBvZgpkZWFsaW5nIHdpdGggaGFy
+ZHdhcmUgdGhhdCdzIGFscmVhZHkgdXAgYW5kIHJ1bm5pbmcgKGJ5IGZpcnN0IGdyYWNlLQpmdWxs
+eSBzaHV0dGluZyBpdCBkb3duLCBvciBwZXJoYXBzIGJ5IHNlYW1sZXNzbHkgdHJhbnNpdGlvbmlu
+ZyB0byB0aGUKa2VybmVsIGRyaXZlciBhbmQgdGFraW5nIG92ZXIgdGhlIHJ1bm5pbmcgZGlzcGxh
+eSBjb25maWd1cmF0aW9uKS4gVGhhdAppcyBmYWlybHkgaW52b2x2ZWQsIHRob3VnaCwgc28gd2Un
+bGwgZ28gd2l0aCB0aGlzIHF1aWNrZml4IGZvciBub3cuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9z
+b3IuYyB8IDE3ICsrKysrKysrKysrKystLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9u
+cygrKSwgNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+c29yLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKaW5kZXggMDdhMDc3YmQ3M2U0Li5l
+Zjg2OTJiNzA3NWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYworKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKQEAgLTMzNDAsMTQgKzMzNDAsMjMgQEAgc3Rh
+dGljIGludCB0ZWdyYV9zb3JfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJ
+Z290byByZW1vdmU7CiAJfQogCi0JaWYgKCFwZGV2LT5kZXYucG1fZG9tYWluKSB7Ci0JCXNvci0+
+cnN0ID0gZGV2bV9yZXNldF9jb250cm9sX2dldCgmcGRldi0+ZGV2LCAic29yIik7Ci0JCWlmIChJ
+U19FUlIoc29yLT5yc3QpKSB7Ci0JCQllcnIgPSBQVFJfRVJSKHNvci0+cnN0KTsKKwlzb3ItPnJz
+dCA9IGRldm1fcmVzZXRfY29udHJvbF9nZXQoJnBkZXYtPmRldiwgInNvciIpOworCWlmIChJU19F
+UlIoc29yLT5yc3QpKSB7CisJCWVyciA9IFBUUl9FUlIoc29yLT5yc3QpOworCisJCWlmIChlcnIg
+IT0gLUVCVVNZIHx8IFdBUk5fT04oIXBkZXYtPmRldi5wbV9kb21haW4pKSB7CiAJCQlkZXZfZXJy
+KCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gZ2V0IHJlc2V0IGNvbnRyb2w6ICVkXG4iLAogCQkJCWVy
+cik7CiAJCQlnb3RvIHJlbW92ZTsKIAkJfQorCisJCS8qCisJCSAqIEF0IHRoaXMgcG9pbnQsIHRo
+ZSByZXNldCBjb250cm9sIGlzIG1vc3QgbGlrZWx5IGJlaW5nIHVzZWQKKwkJICogYnkgdGhlIGdl
+bmVyaWMgcG93ZXIgZG9tYWluIGltcGxlbWVudGF0aW9uLiBXaXRoIGFueSBsdWNrCisJCSAqIHRo
+ZSBwb3dlciBkb21haW4gd2lsbCBoYXZlIHRha2VuIGNhcmUgb2YgcmVzZXR0aW5nIHRoZSBTT1IK
+KwkJICogYW5kIHdlIGRvbid0IGhhdmUgdG8gZG8gYW55dGhpbmcuCisJCSAqLworCQlzb3ItPnJz
+dCA9IE5VTEw7CiAJfQogCiAJc29yLT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgTlVM
+TCk7Ci0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
