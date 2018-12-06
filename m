@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 5/7] arm64: tegra: Enable HDA on Jetson Xavier
-Date: Thu,  6 Dec 2018 17:50:20 +0100
-Message-ID: <20181206165022.23845-5-thierry.reding@gmail.com>
+Subject: [PATCH 6/7] arm64: tegra: Add CEC controller on Tegra194
+Date: Thu,  6 Dec 2018 17:50:21 +0100
+Message-ID: <20181206165022.23845-6-thierry.reding@gmail.com>
 References: <20181206165022.23845-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,28 +23,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Enable the HDA controller on Jetson Xavier so that it can be used for
-audio playback over HDMI.
+The CEC controller found on Tegra194 can be used to control consumer
+devices using the HDMI CEC pin.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 274937042c4a..adf351010ff5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -24,6 +24,10 @@
- 			status = "okay";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 59baa631b422..31add2e2ac1b 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -357,6 +357,15 @@
+ 			interrupt-parent = <&gic>;
  		};
  
-+		hda@3510000 {
-+			status = "okay";
++		cec@3960000 {
++			compatible = "nvidia,tegra194-cec";
++			reg = <0x03960000 0x10000>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA194_CLK_CEC>;
++			clock-names = "cec";
++			status = "disabled";
 +		};
 +
- 		host1x@13e00000 {
- 			display-hub@15200000 {
- 				status = "okay";
+ 		hsp_top0: hsp@3c00000 {
+ 			compatible = "nvidia,tegra186-hsp";
+ 			reg = <0x03c00000 0xa0000>;
 -- 
 2.19.1
