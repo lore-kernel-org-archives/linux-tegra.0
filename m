@@ -1,41 +1,39 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] drm/tegra: sor: Remove temporary workaround
-Date: Thu,  6 Dec 2018 18:57:41 +0100
-Message-ID: <20181206175741.29248-1-thierry.reding@gmail.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH V3] arm64: Don't flush tlb while clearing the accessed bit
+Date: Thu, 6 Dec 2018 19:18:51 +0000
+Message-ID: <20181206191850.GC20796@arm.com>
+References: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
+ <20181029105515.GD14127@arm.com>
+ <BN7PR12MB2708B742FD3448589AD0F259CFF30@BN7PR12MB2708.namprd12.prod.outlook.com>
+ <BYAPR12MB27129A4EE7BBF57B1CAB5094CFAE0@BYAPR12MB2712.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <BYAPR12MB27129A4EE7BBF57B1CAB5094CFAE0@BYAPR12MB2712.namprd12.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Van Brunt <avanbrunt@nvidia.com>
+Cc: Ashish Mhetre <amhetre@nvidia.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Sachin Nikam <Snikam@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClJlbW92ZSB0aGUgdGVt
-cG9yYXJ5IHdvcmthcm91bmQgb2Ygc3RvcmluZyB0aGUgVGVncmExODYgSERNSS9EUCBJL08gcGFk
-CklEIGluIHRoZSBTT1IgZHJpdmVyLiBUaGUgZGVmaW5pdGlvbiBoYXMgbG9uZyBiZWVuIGF2YWls
-YWJsZSBpbiB0aGUKc29jL3RlZ3JhL3BtYy5oIGhlYWRlciBmaWxlLgoKU2lnbmVkLW9mZi1ieTog
-VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-dGVncmEvc29yLmMgfCA4IC0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgOCBkZWxldGlvbnMoLSkK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvc29yLmMKaW5kZXggMjJhNTQ0MzRhNzU3Li4wN2EwNzdiZDczZTQgMTAwNjQ0Ci0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvc29yLmMKQEAgLTMxLDE0ICszMSw2IEBACiAjaW5jbHVkZSAic29yLmgiCiAjaW5jbHVkZSAi
-dHJhY2UuaCIKIAotLyoKLSAqIFhYWCBSZW1vdmUgdGhpcyBhZnRlciB0aGUgY29tbWl0IGFkZGlu
-ZyBpdCB0byBzb2MvdGVncmEvcG1jLmggaGFzIGJlZW4KLSAqIG1lcmdlZC4gSGF2aW5nIHRoaXMg
-YXJvdW5kIGFmdGVyIHRoZSBjb21taXQgaXMgbWVyZ2VkIHNob3VsZCBiZSBzYWZlIHNpbmNlCi0g
-KiB0aGUgcHJlcHJvY2Vzc29yIHdpbGwgZWZmZWN0aXZlbHkgcmVwbGFjZSBhbGwgb2NjdXJyZW5j
-ZXMgYW5kIHRoZXJlZm9yZSBubwotICogZHVwbGljYXRlIHdpbGwgYmUgZGVmaW5lZC4KLSAqLwot
-I2RlZmluZSBURUdSQV9JT19QQURfSERNSV9EUDAgMjYKLQogI2RlZmluZSBTT1JfUkVLRVkgMHgz
-OAogCiBzdHJ1Y3QgdGVncmFfc29yX2hkbWlfc2V0dGluZ3MgewotLSAKMi4xOS4xCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Alex,
+
+Thanks for running these tests and providing the in-depth analysis.
+
+On Mon, Dec 03, 2018 at 09:20:25PM +0000, Alexander Van Brunt wrote:
+> > If we roll a TLB invalidation routine without the trailing DSB, what sort of
+> > performance does that get you?
+> 
+> It is not as good. In some cases, it is really bad. Skipping the invalidate was
+> the most consistent and fast implementation.
+
+My problem with that is it's not really much different to just skipping the
+page table update entirely. Skipping the DSB is closer to what is done on
+x86, where we bound the stale entry time to the next context-switch.
+
+Given that I already queued the version without the DSB, we have the choice
+to either continue with that or to revert it and go back to the previous
+behaviour. Which would you prefer?
+
+Will
