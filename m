@@ -1,151 +1,146 @@
-From: David Dai <daidavid1@codeaurora.org>
-Subject: Re: [PATCH v10 5/7] interconnect: qcom: Add sdm845 interconnect
- provider driver
-Date: Thu, 6 Dec 2018 13:53:21 -0800
-Message-ID: <266c7bf9-18c1-8255-eca2-814aab3850c6@codeaurora.org>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org>
- <20181127180349.29997-6-georgi.djakov@linaro.org>
- <CAE=gft4tO96n0vAubo1_vvcTO4yarDcTNOTuL6cLpmLDDNxrfA@mail.gmail.com>
- <cfcb39ba-860c-5a3f-911f-ab52b5250390@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 30/34] dt-bindings: arm: Convert Tegra board/soc
+ bindings to json-schema
+Date: Thu, 6 Dec 2018 16:38:44 -0600
+Message-ID: <CAL_Jsq+NWVoFzBCYVwu-YM_90mYUdgmaW4ctJim2LkxfpRbg=Q@mail.gmail.com>
+References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-31-robh@kernel.org>
+ <20181204085022.GB25962@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cfcb39ba-860c-5a3f-911f-ab52b5250390@linaro.org>
-Content-Language: en-US
+In-Reply-To: <20181204085022.GB25962@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Georgi Djakov <georgi.djakov@linaro.org>, Evan Green <evgreen@chromium.org>
-Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>, khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>, maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sean Hudson <darknighte@darknighte.com>, Frank Rowand <frowand.list@gmail.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Grant Likely <grant.likely@arm.com>, Kumar Gala <kumar.gala@linaro.org>, ARM-SoC Maintainers <arm@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 12/5/2018 8:00 AM, Georgi Djakov wrote:
-> Hi Evan,
+On Tue, Dec 4, 2018 at 2:50 AM Thierry Reding <thierry.reding@gmail.com> wrote:
 >
-> On 12/1/18 02:39, Evan Green wrote:
->> On Tue, Nov 27, 2018 at 10:04 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->>> From: David Dai <daidavid1@codeaurora.org>
->>>
->>> Introduce Qualcomm SDM845 specific provider driver using the
->>> interconnect framework.
->>>
->>> Signed-off-by: David Dai <daidavid1@codeaurora.org>
->>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->>> ---
->>>   .../bindings/interconnect/qcom,sdm845.txt     |  24 +
->>>   drivers/interconnect/Kconfig                  |   5 +
->>>   drivers/interconnect/Makefile                 |   1 +
->>>   drivers/interconnect/qcom/Kconfig             |  13 +
->>>   drivers/interconnect/qcom/Makefile            |   5 +
->>>   drivers/interconnect/qcom/sdm845.c            | 836 ++++++++++++++++++
->>>   .../dt-bindings/interconnect/qcom,sdm845.h    | 143 +++
->>>   7 files changed, 1027 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->>>   create mode 100644 drivers/interconnect/qcom/Kconfig
->>>   create mode 100644 drivers/interconnect/qcom/Makefile
->>>   create mode 100644 drivers/interconnect/qcom/sdm845.c
->>>   create mode 100644 include/dt-bindings/interconnect/qcom,sdm845.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->>> new file mode 100644
->>> index 000000000000..d45150e99665
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->>> @@ -0,0 +1,24 @@
->>> +Qualcomm SDM845 Network-On-Chip interconnect driver binding
->>> +-----------------------------------------------------------
->>> +
->>> +SDM845 interconnect providers support system bandwidth requirements through
->>> +RPMh hardware accelerators known as Bus Clock Manager(BCM). The provider is able
->>> +to communicate with the BCM through the Resource State Coordinator(RSC)
->>> +associated with each execution environment. Provider nodes must reside within
->>> +an RPMh device node pertaining to their RSC and each provider maps to
->>> +a single RPMh resource.
->>> +
->>> +Required properties :
->>> +- compatible : shall contain only one of the following:
->>> +                       "qcom,sdm845-rsc-hlos"
->> I wonder if maybe hlos isn't necessary. Unless you somehow imagine
->> secure mode would have a device tree entry in here as well? Probably
->> not.
-> Ok, will remove it. David, please chime in if you have any concerns with
-> this.
-
-No strong preferences in terms of naming, but need to make the 
-distinction between this and potential other rsc types if we're to add 
-additional provider drivers.
-
->>> +- #interconnect-cells : should contain 1
->>> +
->>> +Examples:
->>> +
->>> +apps_rsc: rsc {
->>> +               qnoc: qnoc-rsc-hlos {
->>> +                       compatible = "qcom,sdm845-rsc-hlos";
->>> +                       #interconnect-cells = <1>;
->>> +               };
->>> +};
->>> +
->> ...
->>> diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
->>> new file mode 100644
->>> index 000000000000..1678de91ca52
->>> --- /dev/null
->>> +++ b/drivers/interconnect/qcom/sdm845.c
->>> @@ -0,0 +1,836 @@
->> ...
->>> +
->>> +static void tcs_list_gen(struct list_head *bcm_list,
->>> +                        struct tcs_cmd *tcs_list, int *n)
->> We could make the prototype of this function be:
->>
->> static void tcs_list_gen(struct list_head *bcm_list,
->>          struct tcs_cmd tcs_list[SDM845_MAX_VCD], int n[SDM845_MAX_VCD])
->>
->> which would catch errors if somebody later passed in an array that
->> wasn't the right size, since we blindly memset below.
-> Yes, sounds good. I will try to optimize it.
+> On Mon, Dec 03, 2018 at 03:32:19PM -0600, Rob Herring wrote:
+> > Convert Tegra SoC bindings to DT schema format using json-schema.
+> >
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-tegra@vger.kernel.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../devicetree/bindings/arm/tegra.txt         |  65 -----------
+> >  .../devicetree/bindings/arm/tegra.yaml        | 101 ++++++++++++++++++
+> >  2 files changed, 101 insertions(+), 65 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+> > deleted file mode 100644
+> > index c59b15f64346..000000000000
+> > --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> > +++ /dev/null
+> > @@ -1,65 +0,0 @@
+> > -NVIDIA Tegra device tree bindings
+> > --------------------------------------------
+> > -
+> > -SoCs
+> > --------------------------------------------
+> > -
+> > -Each device tree must specify which Tegra SoC it uses, using one of the
+> > -following compatible values:
+> > -
+> > -  nvidia,tegra20
+> > -  nvidia,tegra30
+> > -  nvidia,tegra114
+> > -  nvidia,tegra124
+> > -  nvidia,tegra132
+> > -  nvidia,tegra210
+> > -  nvidia,tegra186
+> > -  nvidia,tegra194
+> > -
+> > -Boards
+> > --------------------------------------------
+> > -
+> > -Each device tree must specify which one or more of the following
+> > -board-specific compatible values:
+> > -
+> > -  ad,medcom-wide
+> > -  ad,plutux
+> > -  ad,tamonten
+> > -  ad,tec
+> > -  compal,paz00
+> > -  compulab,trimslice
+> > -  nvidia,beaver
+> > -  nvidia,cardhu
+> > -  nvidia,cardhu-a02
+> > -  nvidia,cardhu-a04
+> > -  nvidia,dalmore
+> > -  nvidia,harmony
+> > -  nvidia,jetson-tk1
+> > -  nvidia,norrin
+> > -  nvidia,p2371-0000
+> > -  nvidia,p2371-2180
+> > -  nvidia,p2571
+> > -  nvidia,p2771-0000
+> > -  nvidia,p2972-0000
+> > -  nvidia,roth
+> > -  nvidia,seaboard
+> > -  nvidia,tn7
+> > -  nvidia,ventana
+> > -  toradex,apalis_t30
+> > -  toradex,apalis_t30-eval
+> > -  toradex,apalis_t30-v1.1
+> > -  toradex,apalis_t30-v1.1-eval
+> > -  toradex,apalis-tk1
+> > -  toradex,apalis-tk1-eval
+> > -  toradex,apalis-tk1-v1.2
+> > -  toradex,apalis-tk1-v1.2-eval
+> > -  toradex,colibri_t20
+> > -  toradex,colibri_t20-eval-v3
+> > -  toradex,colibri_t20-iris
+> > -  toradex,colibri_t30
+> > -  toradex,colibri_t30-eval-v3
+> > -
+> > -Trusted Foundations
+> > --------------------------------------------
+> > -Tegra supports the Trusted Foundation secure monitor. See the
+> > -"tlm,trusted-foundations" binding's documentation for more details.
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+> > new file mode 100644
+> > index 000000000000..66493892ffc1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+> > @@ -0,0 +1,101 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/arm/tegra.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >
-> Thanks,
-> Georgi
->
->>> +{
->>> +       struct qcom_icc_bcm *bcm;
->>> +       bool commit;
->>> +       size_t idx = 0, batch = 0, cur_vcd_size = 0;
->>> +
->>> +       memset(n, 0, sizeof(int) * SDM845_MAX_VCD);
->>> +
->>> +       list_for_each_entry(bcm, bcm_list, list) {
->>> +               commit = false;
->>> +               cur_vcd_size++;
->>> +               if ((list_is_last(&bcm->list, bcm_list)) ||
->>> +                   bcm->aux_data.vcd != list_next_entry(bcm, list)->aux_data.vcd) {
->>> +                       commit = true;
->>> +                       cur_vcd_size = 0;
->>> +               }
->>> +               tcs_cmd_gen(&tcs_list[idx], bcm->vote_x, bcm->vote_y,
->>> +                           bcm->addr, commit);
->>> +               idx++;
->>> +               n[batch]++;
->>> +               /*
->>> +                * Batch the BCMs in such a way that we do not split them in
->>> +                * multiple payloads when they are under the same VCD. This is
->>> +                * to ensure that every BCM is committed since we only set the
->>> +                * commit bit on the last BCM request of every VCD.
->>> +                */
->>> +               if (n[batch] >= MAX_RPMH_PAYLOAD) {
->>> +                       if (!commit) {
->>> +                               n[batch] -= cur_vcd_size;
->>> +                               n[batch + 1] = cur_vcd_size;
->>> +                       }
->>> +                       batch++;
->>> +               }
->>> +       }
->>> +}
->>> +
+> Could you explain what these are? They give 404, so I assume they are
+> more like placeholders and not actually used?
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Please read the documentation in patch 2. They are used, but aren't live URLs.
+
+> > +
+> > +title: NVIDIA Tegra device tree bindings
+> > +
+> > +maintainers:
+> > +  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > +  - Peter De Schrijver <pdeschrijver@nvidia.com>
+>
+> Not sure how you got that list, but probably from git history. I think
+> it makes sense to replace Marcel and Peter with Jon and myself.
+
+Will do.
+
+> Other than that, looks fine to me. Some of the enumerations below look
+> somewhat hard to parse, but I suspect that it will become second nature
+> in no time.
+
+We can add descriptions and/or comments if that helps. I didn't add
+them if not already there.
+
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Thanks.
+
+Rob
