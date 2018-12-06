@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 6/7] arm64: tegra: Add CEC controller on Tegra194
-Date: Thu,  6 Dec 2018 17:50:21 +0100
-Message-ID: <20181206165022.23845-6-thierry.reding@gmail.com>
+Subject: [PATCH 7/7] arm64: tegra: Enable HDA controller on Jetson TX1
+Date: Thu,  6 Dec 2018 17:50:22 +0100
+Message-ID: <20181206165022.23845-7-thierry.reding@gmail.com>
 References: <20181206165022.23845-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,33 +23,27 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The CEC controller found on Tegra194 can be used to control consumer
-devices using the HDMI CEC pin.
+The HDA controller can be used for audio playback over HDMI.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 59baa631b422..31add2e2ac1b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -357,6 +357,15 @@
- 			interrupt-parent = <&gic>;
- 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index 365726ddd418..a96e6ee70c21 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1330,6 +1330,10 @@
+ 		phys = <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
+ 	};
  
-+		cec@3960000 {
-+			compatible = "nvidia,tegra194-cec";
-+			reg = <0x03960000 0x10000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&bpmp TEGRA194_CLK_CEC>;
-+			clock-names = "cec";
-+			status = "disabled";
-+		};
++	hda@70030000 {
++		status = "okay";
++	};
 +
- 		hsp_top0: hsp@3c00000 {
- 			compatible = "nvidia,tegra186-hsp";
- 			reg = <0x03c00000 0xa0000>;
+ 	padctl@7009f000 {
+ 		status = "okay";
+ 
 -- 
 2.19.1
