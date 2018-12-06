@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 7/7] arm64: tegra: Enable HDA controller on Jetson TX1
-Date: Thu,  6 Dec 2018 17:50:22 +0100
-Message-ID: <20181206165022.23845-7-thierry.reding@gmail.com>
+Subject: [PATCH 4/7] arm64: tegra: Add HDA controller on Tegra194
+Date: Thu,  6 Dec 2018 17:50:19 +0100
+Message-ID: <20181206165022.23845-4-thierry.reding@gmail.com>
 References: <20181206165022.23845-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,27 +23,40 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The HDA controller can be used for audio playback over HDMI.
+The HDA controller found on Tegra194 can be used for audio playback over
+HDMI.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 365726ddd418..a96e6ee70c21 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1330,6 +1330,10 @@
- 		phys = <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
- 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 439ffe86a823..59baa631b422 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -328,6 +328,22 @@
+ 			status = "disabled";
+ 		};
  
-+	hda@70030000 {
-+		status = "okay";
-+	};
++		hda@3510000 {
++			compatible = "nvidia,tegra194-hda", "nvidia,tegra30-hda";
++			reg = <0x03510000 0x10000>;
++			interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA194_CLK_HDA>,
++				 <&bpmp TEGRA194_CLK_HDA2HDMICODEC>,
++				 <&bpmp TEGRA194_CLK_HDA2CODEC_2X>;
++			clock-names = "hda", "hda2hdmi", "hda2codec_2x";
++			resets = <&bpmp TEGRA194_RESET_HDA>,
++				 <&bpmp TEGRA194_RESET_HDA2HDMICODEC>,
++				 <&bpmp TEGRA194_RESET_HDA2CODEC_2X>;
++			reset-names = "hda", "hda2hdmi", "hda2codec_2x";
++			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
++			status = "disabled";
++		};
 +
- 	padctl@7009f000 {
- 		status = "okay";
- 
+ 		gic: interrupt-controller@3881000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.19.1
