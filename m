@@ -1,63 +1,55 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
-Date: Thu, 6 Dec 2018 15:55:47 +0100
-Message-ID: <20181206145547.GA7884@kroah.com>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org>
- <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 3/7] arm64: tegra: Add CEC controller on Tegra186
+Date: Thu,  6 Dec 2018 17:50:18 +0100
+Message-ID: <20181206165022.23845-3-thierry.reding@gmail.com>
+References: <20181206165022.23845-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Evan Green <evgreen@chromium.org>
-Cc: georgi.djakov@linaro.org, linux-pm@vger.kernel.org, rjw@rjwysocki.net, robh+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>, khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>, maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.orgDoug Anderson <di>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181206165022.23845-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
-> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
-> >
-> > Modern SoCs have multiple processors and various dedicated cores (video, gpu,
-> > graphics, modem). These cores are talking to each other and can generate a
-> > lot of data flowing through the on-chip interconnects. These interconnect
-> > buses could form different topologies such as crossbar, point to point buses,
-> > hierarchical buses or use the network-on-chip concept.
-> >
-> > These buses have been sized usually to handle use cases with high data
-> > throughput but it is not necessary all the time and consume a lot of power.
-> > Furthermore, the priority between masters can vary depending on the running
-> > use case like video playback or CPU intensive tasks.
-> >
-> > Having an API to control the requirement of the system in terms of bandwidth
-> > and QoS, so we can adapt the interconnect configuration to match those by
-> > scaling the frequencies, setting link priority and tuning QoS parameters.
-> > This configuration can be a static, one-time operation done at boot for some
-> > platforms or a dynamic set of operations that happen at run-time.
-> >
-> > This patchset introduce a new API to get the requirement and configure the
-> > interconnect buses across the entire chipset to fit with the current demand.
-> > The API is NOT for changing the performance of the endpoint devices, but only
-> > the interconnect path in between them.
-> 
-> For what it's worth, we are ready to land this in Chrome OS. I think
-> this series has been very well discussed and reviewed, hasn't changed
-> much in the last few spins, and is in good enough shape to use as a
-> base for future patches. Georgi's also done a great job reaching out
-> to other SoC vendors, and there appears to be enough consensus that
-> this framework will be usable by more than just Qualcomm. There are
-> also several drivers out on the list trying to add patches to use this
-> framework, with more to come, so it made sense (to us) to get this
-> base framework nailed down. In my experiments this is an important
-> piece of the overall power management story, especially on systems
-> that are mostly idle.
-> 
-> I'll continue to track changes to this series and we will ultimately
-> reconcile with whatever happens upstream, but I thought it was worth
-> sending this note to express our "thumbs up" towards this framework.
+From: Thierry Reding <treding@nvidia.com>
 
-Looks like a v11 will be forthcoming, so I'll wait for that one to apply
-it to the tree if all looks good.
+The CEC controller found on Tegra186 can be used to control consumer
+devices using the HDMI CEC pin.
 
-thanks,
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-greg k-h
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 6cea54dc9d35..19fb266c0895 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -352,6 +352,15 @@
+ 		interrupt-parent = <&gic>;
+ 	};
+ 
++	cec@3960000 {
++		compatible = "nvidia,tegra186-cec";
++		reg = <0x0 0x03960000 0x0 0x10000>;
++		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&bpmp TEGRA186_CLK_CEC>;
++		clock-names = "cec";
++		status = "disabled";
++	};
++
+ 	hsp_top0: hsp@3c00000 {
+ 		compatible = "nvidia,tegra186-hsp";
+ 		reg = <0x0 0x03c00000 0x0 0xa0000>;
+-- 
+2.19.1
