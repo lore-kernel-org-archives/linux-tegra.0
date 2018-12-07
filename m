@@ -1,140 +1,70 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
-Date: Fri, 7 Dec 2018 15:09:10 +0000
-Message-ID: <3d0f52c6-770e-bae2-2396-87f32455b807@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-8-josephl@nvidia.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect
+ API
+Date: Fri, 7 Dec 2018 17:24:17 +0200
+Message-ID: <b4fdf5eb-2bd1-834d-fb2b-6b86a74dd6fc@linaro.org>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <20181127180349.29997-2-georgi.djakov@linaro.org>
+ <CAL_JsqJyPH9WVw2VqGTjUvhxoq3+KGpfqtAMf9iH07N7m3P4yw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204092548.3038-8-josephl@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqJyPH9WVw2VqGTjUvhxoq3+KGpfqtAMf9iH07N7m3P4yw@mail.gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: "open list:THERMAL" <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, Evan Green <evgreen@chromium.org>, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Alexandre Bailon <abailon@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidi
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Rob,
 
-On 04/12/2018 09:25, Joseph Lo wrote:
-> The DFLL hardware supports two modes (I2C and PWM) for voltage control
-> when requesting a frequency. In this patch, we introduce PWM mode support.
+On 12/5/18 18:16, Rob Herring wrote:
+> On Tue, Nov 27, 2018 at 12:03 PM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>
+>> This patch introduces a new API to get requirements and configure the
+>> interconnect buses across the entire chipset to fit with the current
+>> demand.
+>>
+>> The API is using a consumer/provider-based model, where the providers are
+>> the interconnect buses and the consumers could be various drivers.
+>> The consumers request interconnect resources (path) between endpoints and
+>> set the desired constraints on this data flow path. The providers receive
+>> requests from consumers and aggregate these requests for all master-slave
+>> pairs on that path. Then the providers configure each participating in the
+>> topology node according to the requested data flow path, physical links and
+>> constraints. The topology could be complicated and multi-tiered and is SoC
+>> specific.
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> Reviewed-by: Evan Green <evgreen@chromium.org>
 > 
-> To support that, we re-organize the LUT for unifying the table for both
-> cases of I2C and PWM mode. And generate that based on regulator info.
-> For the PWM-based regulator, we get this info from DT. And do the same as
-> the case of I2C LUT, which can help to map the PMIC voltage ID and voltages
-> that the regulator supported.
+> [...]
 > 
-> The other parts are the support code for initializing the DFLL hardware
-> to support PWM mode. Also, the register debugfs file is slightly
-> reworked to only show the i2c registers when I2C mode is in use.
+>> +struct icc_path *icc_get(struct device *dev, const int src_id,
+>> +                        const int dst_id);
+>> +void icc_put(struct icc_path *path);
+>> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
 > 
-> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-dfll.c | 431 ++++++++++++++++++++++++++++++-----
->  1 file changed, 368 insertions(+), 63 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 609e363dabf8..c294a2989f31 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1,7 +1,7 @@
->  /*
->   * clk-dfll.c - Tegra DFLL clock source common code
->   *
-> - * Copyright (C) 2012-2014 NVIDIA Corporation. All rights reserved.
-> + * Copyright (C) 2012-2018 NVIDIA Corporation. All rights reserved.
->   *
->   * Aleksandr Frid <afrid@nvidia.com>
->   * Paul Walmsley <pwalmsley@nvidia.com>
-> @@ -47,6 +47,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/pm_opp.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
-> @@ -243,6 +244,12 @@ enum dfll_tune_range {
->  	DFLL_TUNE_LOW = 1,
->  };
->  
-> +
-> +enum tegra_dfll_pmu_if {
-> +	TEGRA_DFLL_PMU_I2C = 0,
-> +	TEGRA_DFLL_PMU_PWM = 1,
-> +};
-> +
->  /**
->   * struct dfll_rate_req - target DFLL rate request data
->   * @rate: target frequency, after the postscaling
-> @@ -294,16 +301,25 @@ struct tegra_dfll {
->  	u32				ci;
->  	u32				cg;
->  	bool				cg_scale;
-> +	u32				reg_init_uV;
->  
->  	/* I2C interface parameters */
->  	u32				i2c_fs_rate;
->  	u32				i2c_reg;
->  	u32				i2c_slave_addr;
->  
-> -	/* i2c_lut array entries are regulator framework selectors */
-> -	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
-> -	int				i2c_lut_size;
-> -	u8				lut_min, lut_max, lut_safe;
-> +	/* lut array entries are regulator framework selectors or PWM values*/
-> +	unsigned			lut[MAX_DFLL_VOLTAGES];
-> +	unsigned			lut_uv[MAX_DFLL_VOLTAGES];
-> +	int				lut_size;
-> +	u8				lut_bottom, lut_min, lut_max, lut_safe;
-> +
-> +	/* PWM interface */
-> +	enum tegra_dfll_pmu_if		pmu_if;
-> +	unsigned long			pwm_rate;
-> +	struct pinctrl			*pwm_pin;
-> +	struct pinctrl_state		*pwm_enable_state;
-> +	struct pinctrl_state		*pwm_disable_state;
->  };
->  
->  #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
-> @@ -489,6 +505,34 @@ static void dfll_set_mode(struct tegra_dfll *td,
->  	dfll_wmb(td);
->  }
->  
-> +/*
-> + * DVCO rate control
-> + */
-> +
-> +static unsigned long get_dvco_rate_below(struct tegra_dfll *td, u8 out_min)
-> +{
-> +	struct dev_pm_opp *opp;
-> +	unsigned long rate, prev_rate;
-> +	int uv, min_uv;
-> +
-> +	min_uv = td->lut_uv[out_min];
-> +	for (rate = 0, prev_rate = 0; ; rate++) {
-> +		opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
-> +		if (IS_ERR(opp))
-> +			break;
-> +
-> +		uv = dev_pm_opp_get_voltage(opp);
+> icc_set() is very generic, but this function isn't easily extended to
+> other parameters than bandwidth. Perhaps icc_set_bandwidth() instead.
+> Then when you add some other setting, you just add a new function. Of
+> course, if you wind up with a bunch of different parameters, then
+> you'll probably need an atomic type interface where you test all the
+> settings together and then commit them separately in one call. But
 
-Can you fix the type of 'uv' here? It should be unsigned long.
+Thanks for the comment. We have already started some discussion with the
+Nvidia guys about supporting also latency and priority. We can do a
+structure based approach and pass a struct with all the bandwidth /
+latency / priority stuff to a function like icc_set_extended(); It's
+very early for any conclusions yet and for now we support only
+bandwidth. The function name still can be easy changed with a follow-up
+patch until one is using it yet. Let me think again.
 
-Cheers
-Jon
+> from a DT perspective, I certainly hope there are not lots of new
+> settings folks want to add. 
+Regarding DT, all settings should go into the drivers for now and
+later we can decide if something makes sense to be really in device-tree.
 
--- 
-nvpublic
+Thanks,
+Georgi
