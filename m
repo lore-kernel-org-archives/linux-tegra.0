@@ -1,97 +1,80 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-Date: Fri, 7 Dec 2018 13:41:57 +0000
-Message-ID: <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-2-josephl@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v4.21-rc1
+Date: Fri,  7 Dec 2018 14:47:12 +0100
+Message-ID: <20181207134712.32683-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204092548.3038-2-josephl@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 04/12/2018 09:25, Joseph Lo wrote:
-> From: Peter De Schrijver <pdeschrijver@nvidia.com>
-> 
-> Add new properties to configure the DFLL PWM regulator support. Also
-> add an example and make the I2C clock only required when I2C support is
-> used.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  .../bindings/clock/nvidia,tegra124-dfll.txt   | 73 ++++++++++++++++++-
->  1 file changed, 71 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> index dff236f524a7..8c97600d2bad 100644
-> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
->  oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
->  control module that will automatically adjust the VDD_CPU voltage by
->  communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
-> -Currently only the I2C mode is supported by these bindings.
->  
->  Required properties:
->  - compatible : should be "nvidia,tegra124-dfll"
-> @@ -45,10 +44,28 @@ Required properties for the control loop parameters:
->  Optional properties for the control loop parameters:
->  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
->  
-> +Optional properties for mode selection:
-> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
-> +
->  Required properties for I2C mode:
->  - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
->  
-> -Example:
-> +Required properties for PWM mode:
-> +- nvidia,pwm-period: period of PWM square wave in microseconds.
-> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control is disabled.
-
-Maybe consider 'pwm-inactive-voltage-microvolt'.
-
-> +- nvidia,align-offset-uv: Regulator voltage in micro volts when PWM control is
-> +			  enabled and PWM output is low.
-
-Would this be considered the minimum pwm active voltage?
-
-> +- nvidia,align-step-uv: Voltage increase in micro volts corresponding to a
-> +			1/33th increase in duty cycle. Eg the voltage for 2/33th
-> +			duty cycle would be:
-
-Maybe consider 'pwm-voltage-step-microvolt'.
-
-> +			nvidia,align-offset-uv + nvidia,align-step-uv * 2.
-> +- pinctrl-0: I/O pad configuration when PWM control is enabled.
-> +- pinctrl-1: I/O pad configuration when PWM control is disabled.
-> +- pinctrl-names: must include the following entries:
-> +  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
-> +  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
-
-Please see Rob's feedback on the above [0].
-
-Cheers
-Jon
-
-[0] https://lore.kernel.org/patchwork/patch/885328/
-
--- 
-nvpublic
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNjUxMDIyMzgyYzdm
+OGRhNDZjYjQ4NzJhNTQ1ZWUxZGE2ZDA5N2QyYToKCiAgTGludXggNC4yMC1yYzEgKDIwMTgtMTEt
+MDQgMTU6Mzc6NTIgLTA4MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
+dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
+dGVncmEvZm9yLTQuMjEtcmMxCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMTgwYjQ2
+ZWNkYzlmNzc2MmFiYTY1YzBiMDI5ZjU5YzdhNmIzMTRmZDoKCiAgZHJtL3RlZ3JhOiBzb3I6IFJl
+c2V0IHRoZSBTT1IgaWYgcG9zc2libGUgKDIwMTgtMTItMDYgMTg6NTg6MzIgKzAxMDApCgpUaGFu
+a3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBDaGFuZ2VzIGZvciB2NC4yMS1yYzEKClRo
+ZXNlIGNoYW5nZXMgY29udGFpbiBhIGNvdXBsZSBvZiBtaW5vciBmaXhlcyBmb3IgaG9zdDF4IGFu
+ZCB0aGUgRmFsY29uCmxpYnJhcnkgaW4gVGVncmEgRFJNLiBUaGVyZSBhcmUgYWxzbyBhIGNvdXBs
+ZSBvZiBtaXNzaW5nIHBpZWNlcyB0aGF0CmZpbmFsbHkgZW5hYmxlIHN1cHBvcnQgZm9yIGhvc3Qx
+eCwgVklDIGFuZCBkaXNwbGF5IG9uIFRlZ3JhMTk0LiBJJ3ZlCmFsc28gYWRkZWQgYSBwYXRjaCB0
+aGF0IGVuYWJsZXMgYXVkaW8gb3ZlciBIRE1JIHVzaW5nIHRoZSBTT1Igd2hpY2ggaGFzCmJlZW4g
+dGVzdGVkLCBhbmQgd29ya3MsIG9uIGJvdGggVGVncmExODYgYW5kIFRlZ3JhMTk0LgoKLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQpUaGllcnJ5IFJlZGluZyAoMTIpOgogICAgICBncHU6IGhvc3QxeDogUmVzaXplIGNoYW5uZWwg
+cmVnaXN0ZXIgcmVnaW9uIG9uIFRlZ3JhMTg2IGFuZCBsYXRlcgogICAgICBncHU6IGhvc3QxeDog
+Rml4IHN5bmNwb2ludCBJRCBmaWVsZCBzaXplIG9uIFRlZ3JhMTg2CiAgICAgIGRybS90ZWdyYTog
+dmljOiBJbXBsZW1lbnQgZXhwbGljaXQgcmVzZXQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IGZh
+bGNvbjogRml4IGVycm9yIGhhbmRsaW5nCiAgICAgIGRybS90ZWdyYTogZmFsY29uOiBXYWl0IGZv
+ciBtZW1vcnkgc2NydWJiaW5nIHRvIGNvbXBsZXRlCiAgICAgIGdwdTogaG9zdDF4OiBBZGQgVGVn
+cmExOTQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IHZpYzogQWRkIFRlZ3JhMTk0IHN1cHBvcnQK
+ICAgICAgZHJtL3RlZ3JhOiBodWI6IEVuYWJsZSBhbGwgcmVxdWlyZWQgY2xvY2tzCiAgICAgIGRy
+bS90ZWdyYTogZGM6IERvbid0IGNsZWFuIHVwIHVudXNlZCBkaXNwbGF5IGNvbnRyb2xsZXIKICAg
+ICAgZHJtL3RlZ3JhOiBzb3I6IFN1cHBvcnQgZm9yIGF1ZGlvIG92ZXIgSERNSQogICAgICBkcm0v
+dGVncmE6IHNvcjogUmVtb3ZlIHRlbXBvcmFyeSB3b3JrYXJvdW5kCiAgICAgIGRybS90ZWdyYTog
+c29yOiBSZXNldCB0aGUgU09SIGlmIHBvc3NpYmxlCgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rj
+LmMgICAgICAgICAgICAgICAgICAgICB8ICAzOCArKy0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
+ZHJtLmMgICAgICAgICAgICAgICAgICAgIHwgICAxICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9m
+YWxjb24uYyAgICAgICAgICAgICAgICAgfCAgMTQgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9o
+dWIuYyAgICAgICAgICAgICAgICAgICAgfCAgNDggKysrKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9odWIuaCAgICAgICAgICAgICAgICAgICAgfCAgIDMgKwogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L3Nvci5jICAgICAgICAgICAgICAgICAgICB8IDI1NCArKysrKysrKysrKysrKysrKysrKysrKy0t
+CiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmggICAgICAgICAgICAgICAgICAgIHwgIDY4ICsr
+KysrKysKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYyAgICAgICAgICAgICAgICAgICAgfCAg
+NDYgKysrKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAg
+fCAgIDMgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyAgICAgICAgICAgICAgICAgICAgICAg
+fCAgMTMgKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFubmVsX2h3LmMgICAgICAgICAgICAg
+fCAgIDcgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19od18xeDA2LmMgICAgICAgICAg
+fCAgIDcgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwNy5jICAgICAgICAgICAgICAg
+fCAgNDQgKysrKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwNy5oICAgICAgICAgICAg
+ICAgfCAgMjYgKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDdfaGFyZHdhcmUuaCAg
+ICAgIHwgMTQyICsrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4
+MDZfdWNsYXNzLmggICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4
+MDdfaHlwZXJ2aXNvci5oIHwgIDMyICsrKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9od19ob3N0
+MXgwN191Y2xhc3MuaCAgICAgfCAxODEgKysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9o
+b3N0MXgvaHcvaHdfaG9zdDF4MDdfdm0uaCAgICAgICAgIHwgIDQ2ICsrKysrCiBkcml2ZXJzL2dw
+dS9ob3N0MXgvaHcvc3luY3B0X2h3LmMgICAgICAgICAgICAgIHwgICA0ICsKIDIwIGZpbGVzIGNo
+YW5nZWQsIDk0MCBpbnNlcnRpb25zKCspLCAzOSBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDcuYwogY3JlYXRlIG1vZGUgMTAwNjQ0
+IGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwNy5oCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9ncHUvaG9zdDF4L2h3L2hvc3QxeDA3X2hhcmR3YXJlLmgKIGNyZWF0ZSBtb2RlIDEwMDY0
+NCBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDdfaHlwZXJ2aXNvci5oCiBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA3X3VjbGFzcy5oCiBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA3X3ZtLmgK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
