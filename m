@@ -1,80 +1,59 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Changes for v4.21-rc1
-Date: Fri,  7 Dec 2018 14:47:12 +0100
-Message-ID: <20181207134712.32683-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 02/19] dt-bindings: clock: tegra124-dfll: add Tegra210
+ support
+Date: Fri, 7 Dec 2018 13:50:37 +0000
+Message-ID: <0c3e8844-45af-dc45-f082-8693907dd83b@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-3-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181204092548.3038-3-josephl@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNjUxMDIyMzgyYzdm
-OGRhNDZjYjQ4NzJhNTQ1ZWUxZGE2ZDA5N2QyYToKCiAgTGludXggNC4yMC1yYzEgKDIwMTgtMTEt
-MDQgMTU6Mzc6NTIgLTA4MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
-dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
-dGVncmEvZm9yLTQuMjEtcmMxCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMTgwYjQ2
-ZWNkYzlmNzc2MmFiYTY1YzBiMDI5ZjU5YzdhNmIzMTRmZDoKCiAgZHJtL3RlZ3JhOiBzb3I6IFJl
-c2V0IHRoZSBTT1IgaWYgcG9zc2libGUgKDIwMTgtMTItMDYgMTg6NTg6MzIgKzAxMDApCgpUaGFu
-a3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBDaGFuZ2VzIGZvciB2NC4yMS1yYzEKClRo
-ZXNlIGNoYW5nZXMgY29udGFpbiBhIGNvdXBsZSBvZiBtaW5vciBmaXhlcyBmb3IgaG9zdDF4IGFu
-ZCB0aGUgRmFsY29uCmxpYnJhcnkgaW4gVGVncmEgRFJNLiBUaGVyZSBhcmUgYWxzbyBhIGNvdXBs
-ZSBvZiBtaXNzaW5nIHBpZWNlcyB0aGF0CmZpbmFsbHkgZW5hYmxlIHN1cHBvcnQgZm9yIGhvc3Qx
-eCwgVklDIGFuZCBkaXNwbGF5IG9uIFRlZ3JhMTk0LiBJJ3ZlCmFsc28gYWRkZWQgYSBwYXRjaCB0
-aGF0IGVuYWJsZXMgYXVkaW8gb3ZlciBIRE1JIHVzaW5nIHRoZSBTT1Igd2hpY2ggaGFzCmJlZW4g
-dGVzdGVkLCBhbmQgd29ya3MsIG9uIGJvdGggVGVncmExODYgYW5kIFRlZ3JhMTk0LgoKLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQpUaGllcnJ5IFJlZGluZyAoMTIpOgogICAgICBncHU6IGhvc3QxeDogUmVzaXplIGNoYW5uZWwg
-cmVnaXN0ZXIgcmVnaW9uIG9uIFRlZ3JhMTg2IGFuZCBsYXRlcgogICAgICBncHU6IGhvc3QxeDog
-Rml4IHN5bmNwb2ludCBJRCBmaWVsZCBzaXplIG9uIFRlZ3JhMTg2CiAgICAgIGRybS90ZWdyYTog
-dmljOiBJbXBsZW1lbnQgZXhwbGljaXQgcmVzZXQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IGZh
-bGNvbjogRml4IGVycm9yIGhhbmRsaW5nCiAgICAgIGRybS90ZWdyYTogZmFsY29uOiBXYWl0IGZv
-ciBtZW1vcnkgc2NydWJiaW5nIHRvIGNvbXBsZXRlCiAgICAgIGdwdTogaG9zdDF4OiBBZGQgVGVn
-cmExOTQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IHZpYzogQWRkIFRlZ3JhMTk0IHN1cHBvcnQK
-ICAgICAgZHJtL3RlZ3JhOiBodWI6IEVuYWJsZSBhbGwgcmVxdWlyZWQgY2xvY2tzCiAgICAgIGRy
-bS90ZWdyYTogZGM6IERvbid0IGNsZWFuIHVwIHVudXNlZCBkaXNwbGF5IGNvbnRyb2xsZXIKICAg
-ICAgZHJtL3RlZ3JhOiBzb3I6IFN1cHBvcnQgZm9yIGF1ZGlvIG92ZXIgSERNSQogICAgICBkcm0v
-dGVncmE6IHNvcjogUmVtb3ZlIHRlbXBvcmFyeSB3b3JrYXJvdW5kCiAgICAgIGRybS90ZWdyYTog
-c29yOiBSZXNldCB0aGUgU09SIGlmIHBvc3NpYmxlCgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rj
-LmMgICAgICAgICAgICAgICAgICAgICB8ICAzOCArKy0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
-ZHJtLmMgICAgICAgICAgICAgICAgICAgIHwgICAxICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9m
-YWxjb24uYyAgICAgICAgICAgICAgICAgfCAgMTQgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9o
-dWIuYyAgICAgICAgICAgICAgICAgICAgfCAgNDggKysrKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9odWIuaCAgICAgICAgICAgICAgICAgICAgfCAgIDMgKwogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L3Nvci5jICAgICAgICAgICAgICAgICAgICB8IDI1NCArKysrKysrKysrKysrKysrKysrKysrKy0t
-CiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmggICAgICAgICAgICAgICAgICAgIHwgIDY4ICsr
-KysrKysKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYyAgICAgICAgICAgICAgICAgICAgfCAg
-NDYgKysrKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAg
-fCAgIDMgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyAgICAgICAgICAgICAgICAgICAgICAg
-fCAgMTMgKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFubmVsX2h3LmMgICAgICAgICAgICAg
-fCAgIDcgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19od18xeDA2LmMgICAgICAgICAg
-fCAgIDcgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwNy5jICAgICAgICAgICAgICAg
-fCAgNDQgKysrKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwNy5oICAgICAgICAgICAg
-ICAgfCAgMjYgKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDdfaGFyZHdhcmUuaCAg
-ICAgIHwgMTQyICsrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4
-MDZfdWNsYXNzLmggICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4
-MDdfaHlwZXJ2aXNvci5oIHwgIDMyICsrKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9od19ob3N0
-MXgwN191Y2xhc3MuaCAgICAgfCAxODEgKysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9o
-b3N0MXgvaHcvaHdfaG9zdDF4MDdfdm0uaCAgICAgICAgIHwgIDQ2ICsrKysrCiBkcml2ZXJzL2dw
-dS9ob3N0MXgvaHcvc3luY3B0X2h3LmMgICAgICAgICAgICAgIHwgICA0ICsKIDIwIGZpbGVzIGNo
-YW5nZWQsIDk0MCBpbnNlcnRpb25zKCspLCAzOSBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDcuYwogY3JlYXRlIG1vZGUgMTAwNjQ0
-IGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwNy5oCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
-dmVycy9ncHUvaG9zdDF4L2h3L2hvc3QxeDA3X2hhcmR3YXJlLmgKIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDdfaHlwZXJ2aXNvci5oCiBjcmVhdGUg
-bW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA3X3VjbGFzcy5oCiBj
-cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA3X3ZtLmgK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+On 04/12/2018 09:25, Joseph Lo wrote:
+> Add Tegra210 support for DFLL clock.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  .../devicetree/bindings/clock/nvidia,tegra124-dfll.txt        | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> index 8c97600d2bad..4bd44dd7ec1e 100644
+> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> @@ -10,7 +10,9 @@ control module that will automatically adjust the VDD_CPU voltage by
+>  communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+>  
+>  Required properties:
+> -- compatible : should be "nvidia,tegra124-dfll"
+> +- compatible : should be one of:
+> +  - "nvidia,tegra124-dfll": for Tegra124
+> +  - "nvidia,tegra210-dfll": for Tegra210
+>  - reg : Defines the following set of registers, in the order listed:
+>          - registers for the DFLL control logic.
+>          - registers for the I2C output logic.
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
