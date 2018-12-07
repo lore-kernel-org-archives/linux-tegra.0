@@ -1,58 +1,55 @@
-From: Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH v11 8/8] interconnect: sdm845: Fix build failure after
- cmd_db API change
-Date: Fri, 7 Dec 2018 17:14:40 +0000
-Message-ID: <20181207171437.qmtacurmqg53zzkl@queper01-lin>
-References: <20181207152917.4862-1-georgi.djakov@linaro.org>
- <20181207152917.4862-9-georgi.djakov@linaro.org>
- <20181207162733.pdd62qvqzd6xk4nr@queper01-lin>
- <fb5d11cd-6729-5521-c828-9bfeedba9ce0@linaro.org>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH V3] arm64: Don't flush tlb while clearing the accessed bit
+Date: Fri, 7 Dec 2018 17:53:31 +0000
+Message-ID: <20181207175330.GC11430@edgewater-inn.cambridge.arm.com>
+References: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
+ <20181029105515.GD14127@arm.com>
+ <BN7PR12MB2708B742FD3448589AD0F259CFF30@BN7PR12MB2708.namprd12.prod.outlook.com>
+ <BYAPR12MB27129A4EE7BBF57B1CAB5094CFAE0@BYAPR12MB2712.namprd12.prod.outlook.com>
+ <20181206191850.GC20796@arm.com>
+ <BYAPR12MB271239AAF4A0B79D756850C6CFA90@BYAPR12MB2712.namprd12.prod.outlook.com>
+ <BYAPR12MB27120C304F7B085A0CA36124CFA90@BYAPR12MB2712.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <fb5d11cd-6729-5521-c828-9bfeedba9ce0@linaro.org>
+In-Reply-To: <BYAPR12MB27120C304F7B085A0CA36124CFA90@BYAPR12MB2712.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: gregkh@linuxfoundation.org, linux-pm@vger.kernel.org, rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com, vincent.guittot@linaro.org, skannan@codeaurora.org, bjorn.andersson@linaro.org, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, evgreen@chromium.org, dianders@chromium.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Alexander Van Brunt <avanbrunt@nvidia.com>
+Cc: Ashish Mhetre <amhetre@nvidia.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Sachin Nikam <Snikam@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 07 Dec 2018 at 18:47:22 (+0200), Georgi Djakov wrote:
-> Hi Quentin,
+On Thu, Dec 06, 2018 at 08:42:03PM +0000, Alexander Van Brunt wrote:
+> > > > If we roll a TLB invalidation routine without the trailing DSB, what sort of
+> > > > performance does that get you?
+> > > 
+> > > It is not as good. In some cases, it is really bad. Skipping the invalidate was
+> > > the most consistent and fast implementation.
 > 
-> On 12/7/18 18:27, Quentin Perret wrote:
-> > Hi Georgi,
-> > 
-> > On Friday 07 Dec 2018 at 17:29:17 (+0200), Georgi Djakov wrote:
-> >> Recently the cmd_db_read_aux_data() function was changed to avoid using
-> >> memcpy and return a pointer instead. Update the code to the new API and
-> >> fix the build failure.
-> >>
-> >> Fixes: ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()")
-> >> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> >> ---
-> >>  drivers/interconnect/qcom/sdm845.c | 26 ++++++++++++++------------
-> > 
-> > IIUC this file is introduced by patch 5. Should the fix be squashed
-> > into patch 5 directly ? Just to keep things bisectable.
+> > My problem with that is it's not really much different to just skipping the
+> > page table update entirely. Skipping the DSB is closer to what is done on
+> > x86, where we bound the stale entry time to the next context-switch.
 > 
-> The reason why i have split it as a separate change is because as a
-> separate change it would be easier to review & test for the people who
-> are already familiar with the rest of the series.
-> 
-> Another minor reason is that a separate patch will also make the life a
-> bit easier for some people who are back-porting this to kernels using
-> the older version of the cmd_db API.
-> 
-> The commit that changed the cmd_db API is not yet in mainline, but in
-> linux-next. I am not sure what is preferred in this case?
+> Which of the three implementations is the "that" and "it" in the first sentence?
 
-Not sure either but I guess that will depend who gets merged first ...
-If that's the cmd_db change, then you'll need to squash your fix in
-patch 5. If your series goes first, then the fix needs to be applied to
-the cmb_db change.
+that = it = skipping the whole invalidation + the DSB
 
-I personally don't mind either way as long as we don't break bisection :-)
+> > Given that I already queued the version without the DSB, we have the choice
+> > to either continue with that or to revert it and go back to the previous
+> > behaviour. Which would you prefer?
+> 
+> To me, skipping the DSB is a win over doing the invalidate and the DSB because
+> it is faster on average.
+> 
+> DSBs have a big impact on the performance of other CPUs in the inner shareable
+> domain because of the ordering requirements. For example, we have observed
+> Cortex A57s stalling all CPUs in the cluster until Device accesses complete.
+> 
+> Would you be open to a patch on top of the DSB skipping patch that skips the
+> whole invalidate?
 
-Thanks,
-Quentin
+I don't think so; we don't have an upper bound on how long we'll have a
+stale TLB if remove the invalidation completely.
+
+Will
