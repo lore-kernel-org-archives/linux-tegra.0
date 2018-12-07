@@ -1,74 +1,51 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 10/19] clk: tegra: dfll: build clk-dfll.c for Tegra124 and
- Tegra210
-Date: Fri, 7 Dec 2018 14:40:26 +0000
-Message-ID: <88de4304-7090-77c8-189d-c77de568293a@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-11-josephl@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
+Date: Fri, 7 Dec 2018 15:41:23 +0100
+Message-ID: <20181207144123.GA20201@kroah.com>
+References: <20181206143011.174892052@linuxfoundation.org>
+ <85d7624a-c826-78d8-54a9-2aab10ba9914@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204092548.3038-11-josephl@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <85d7624a-c826-78d8-54a9-2aab10ba9914@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 04/12/2018 09:25, Joseph Lo wrote:
-> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+On Fri, Dec 07, 2018 at 09:03:27AM +0000, Jon Hunter wrote:
 > 
-> Tegra210 has a DFLL as well and can share the majority of the code with
-> the Tegra124 implementation. So build the same code for both platforms.
+> On 06/12/2018 14:37, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.144 release.
+> > There are 101 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> All tests are passing for Tegra ...
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  drivers/clk/tegra/Kconfig  | 5 +++++
->  drivers/clk/tegra/Makefile | 2 +-
->  2 files changed, 6 insertions(+), 1 deletion(-)
+> Test results for stable-v4.9:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
 > 
-> diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
-> index 7ddacae5d0b1..57902ab43f4a 100644
-> --- a/drivers/clk/tegra/Kconfig
-> +++ b/drivers/clk/tegra/Kconfig
-> @@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
->  config CLK_TEGRA_BPMP
->  	def_bool y
->  	depends on TEGRA_BPMP
-> +
-> +config TEGRA_CLK_DFLL
-> +	depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
-> +	select PM_OPP
-> +	def_bool y
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 6507acc843c7..4812e45c2214 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -20,7 +20,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
-> -obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
-> +obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
->  obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
->  obj-y					+= cvb.o
->  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+> Linux version:	4.9.144-rc1-gcf137e4
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Thanks for testing two of these and letting me know.
 
-Cheers
-Jon
-
--- 
-nvpublic
+greg k-h
