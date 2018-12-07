@@ -1,15 +1,14 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 15/19] arm64: dts: tegra210-p2597: add pinmux for
- PWM-based DFLL support
-Date: Fri, 7 Dec 2018 14:55:33 +0000
-Message-ID: <42aa5b73-cd1f-5a2f-249f-589bb1319fc0@nvidia.com>
+Subject: Re: [PATCH 16/19] arm64: dts: tegra210-p2371-2180: enable DFLL clock
+Date: Fri, 7 Dec 2018 14:57:55 +0000
+Message-ID: <827e05c8-13b9-fb5e-7bca-1a34b81763b1@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-16-josephl@nvidia.com>
+ <20181204092548.3038-17-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204092548.3038-16-josephl@nvidia.com>
+In-Reply-To: <20181204092548.3038-17-josephl@nvidia.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -26,43 +25,39 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 04/12/2018 09:25, Joseph Lo wrote:
-> Add pinmux for PWM-based DFLL support.
+> Enable DFLL clock for Jetson TX1 platform.
 > 
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> index 365726ddd418..db5dc0ad466d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> @@ -1278,6 +1278,20 @@
->  				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> index 37e3c46e753f..53f497c2b3ff 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> @@ -78,4 +78,24 @@
 >  			};
 >  		};
-> +
-> +		dvfs_pwm_active_state: dvfs_pwm_active {
-> +			dvfs_pwm_pbb1 {
-> +				nvidia,pins = "dvfs_pwm_pbb1";
-> +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-> +			};
-> +		};
-> +
-> +		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
-> +			dvfs_pwm_pbb1 {
-> +				nvidia,pins = "dvfs_pwm_pbb1";
-> +				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-> +			};
-> +		};
 >  	};
->  
->  	pwm@7000a000 {
-> 
+> +
+> +	clock@70110000 {
+> +		status = "okay";
+> +		nvidia,pwm-to-pmic;
+> +		nvidia,init-uv = <1000000>;
+> +		nvidia,align-offset-uv = <708000>;
+> +		nvidia,align-step-uv = <19200>;
+> +		nvidia,sample-rate = <25000>;
+> +		nvidia,droop-ctrl = <0x00000f00>;
+> +		nvidia,force-mode = <1>;
+> +		nvidia,cf = <6>;
+> +		nvidia,ci = <0>;
+> +		nvidia,cg = <2>;
+> +		nvidia,idle-override;
+> +		nvidia,one-shot-calibrate;
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+I don't see any Documentation for or usage of the above two properties.
 
-Cheers
 Jon
 
 -- 
