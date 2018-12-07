@@ -1,15 +1,14 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 04/19] dt-bindings: cpufreq: tegra124: remove cpu_lp clock
- from required properties
-Date: Fri, 7 Dec 2018 13:53:37 +0000
-Message-ID: <c8934ef1-5ada-ad9a-1b32-9b9860eccdc9@nvidia.com>
+Subject: Re: [PATCH 05/19] clk: tegra: dfll: registration for multiple SoCs
+Date: Fri, 7 Dec 2018 13:55:29 +0000
+Message-ID: <23a72c57-cbb2-5c4e-eebb-1ad4ba7e2dc8@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-5-josephl@nvidia.com>
+ <20181204092548.3038-6-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204092548.3038-5-josephl@nvidia.com>
+In-Reply-To: <20181204092548.3038-6-josephl@nvidia.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -21,46 +20,125 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 On 04/12/2018 09:25, Joseph Lo wrote:
-> The cpu_lp clock property is only needed when the CPUfreq driver
-> supports CPU cluster switching. But it was not a design for this driver
-> and it didn't handle that as well. So removing this property.
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
 > 
-> Cc: devicetree@vger.kernel.org
+> In a future patch, support for the DFLL in Tegra210 will be introduced.
+> This requires support for more than 1 set of CVB and CPU max frequency
+> tables.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt   | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 45 ++++++++++++++++------
+>  1 file changed, 34 insertions(+), 11 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> index 031545a29caf..03196d5ea515 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> @@ -9,7 +9,6 @@ Required properties:
->    See ../clocks/clock-bindings.txt for details.
->  - clock-names: Must include the following entries:
->    - cpu_g: Clock mux for the fast CPU cluster.
-> -  - cpu_lp: Clock mux for the low-power CPU cluster.
->    - pll_x: Fast PLL clocksource.
->    - pll_p: Auxiliary PLL used during fast PLL rate changes.
->    - dfll: Fast DFLL clocksource that also automatically scales CPU voltage.
-> @@ -30,11 +29,10 @@ cpus {
->  		reg = <0>;
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> index 269d3595758b..1a2cc113e5c8 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -1,7 +1,7 @@
+>  /*
+>   * Tegra124 DFLL FCPU clock source driver
+>   *
+> - * Copyright (C) 2012-2014 NVIDIA Corporation.  All rights reserved.
+> + * Copyright (C) 2012-2018 NVIDIA Corporation.  All rights reserved.
+>   *
+>   * Aleksandr Frid <afrid@nvidia.com>
+>   * Paul Walmsley <pwalmsley@nvidia.com>
+> @@ -21,6 +21,7 @@
+>  #include <linux/err.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <soc/tegra/fuse.h>
 >  
->  		clocks = <&tegra_car TEGRA124_CLK_CCLK_G>,
-> -			 <&tegra_car TEGRA124_CLK_CCLK_LP>,
->  			 <&tegra_car TEGRA124_CLK_PLL_X>,
->  			 <&tegra_car TEGRA124_CLK_PLL_P>,
->  			 <&dfll>;
-> -		clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
-> +		clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
->  		clock-latency = <300000>;
->  	};
+> @@ -28,8 +29,15 @@
+>  #include "clk-dfll.h"
+>  #include "cvb.h"
 >  
+> +struct dfll_fcpu_data {
+> +	const unsigned long *cpu_max_freq_table;
+> +	unsigned int cpu_max_freq_table_size;
+> +	const struct cvb_table *cpu_cvb_tables;
+> +	unsigned int cpu_cvb_tables_size;
+> +};
+> +
+>  /* Maximum CPU frequency, indexed by CPU speedo id */
+> -static const unsigned long cpu_max_freq_table[] = {
+> +static const unsigned long tegra124_cpu_max_freq_table[] = {
+>  	[0] = 2014500000UL,
+>  	[1] = 2320500000UL,
+>  	[2] = 2116500000UL,
+> @@ -82,16 +90,36 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
+>  	},
+>  };
+>  
+> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
+> +	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
+> +	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
+> +	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
+> +	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
+> +};
+> +
+> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+> +	{
+> +		.compatible = "nvidia,tegra124-dfll",
+> +		.data = &tegra124_dfll_fcpu_data,
+> +	},
+> +	{ },
+> +};
+> +
+>  static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>  {
+>  	int process_id, speedo_id, speedo_value, err;
+>  	struct tegra_dfll_soc_data *soc;
+> +	const struct dfll_fcpu_data *fcpu_data;
+> +
+> +	fcpu_data = of_device_get_match_data(&pdev->dev);
+> +	if (!fcpu_data)
+> +		return -ENODEV;
+>  
+>  	process_id = tegra_sku_info.cpu_process_id;
+>  	speedo_id = tegra_sku_info.cpu_speedo_id;
+>  	speedo_value = tegra_sku_info.cpu_speedo_value;
+>  
+> -	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
+> +	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
+>  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
+>  			speedo_id);
+>  		return -ENODEV;
+> @@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>  		return -ENODEV;
+>  	}
+>  
+> -	soc->max_freq = cpu_max_freq_table[speedo_id];
+> +	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
+>  
+> -	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
+> -					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
+> +	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
+> +					   fcpu_data->cpu_cvb_tables_size,
+>  					   process_id, speedo_id, speedo_value,
+>  					   soc->max_freq);
+>  	if (IS_ERR(soc->cvb)) {
+> @@ -142,11 +170,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+> -	{ .compatible = "nvidia,tegra124-dfll", },
+> -	{ },
+> -};
+> -
+>  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+>  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+>  			   tegra_dfll_runtime_resume, NULL)
 > 
 
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
