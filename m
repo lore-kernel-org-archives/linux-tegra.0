@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 5/6] ARM: tegra: Device tree changes for v4.21-rc1
-Date: Fri,  7 Dec 2018 15:17:38 +0100
-Message-ID: <20181207141739.9085-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/6] firmware: tegra: Changes for v4.21-rc1
+Date: Fri,  7 Dec 2018 15:17:36 +0100
+Message-ID: <20181207141739.9085-3-thierry.reding@gmail.com>
 References: <20181207141739.9085-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,29 +29,31 @@ The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-firmware
 
-for you to fetch changes up to 3dde5a2342cd204df15b6b0b90ee0ed4542225ca:
+for you to fetch changes up to af51c25fb59d4365c259ab93f388462e0998a2ed:
 
-  ARM: tegra: Add VIC on Tegra124 (2018-11-29 17:07:31 +0100)
+  firmware: tegra: Use in-band messages for firmware version query (2018-11-08 12:49:26 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v4.21-rc1
+firmware: tegra: Changes for v4.21-rc1
 
-These changes add the external memory controller on Tegra20 as well as
-the VIC on Tegra124.
+These changes update the BPMP ABI header and implement a new variant of
+the BPMP firmware version tag query if supported.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (2):
-      ARM: dts: tegra20: Add interrupt entry to External Memory Controller
-      ARM: dts: tegra20: Add clock entry to External Memory Controller
+Timo Alho (5):
+      firmware: tegra: Add helper to check for supported MRQs
+      firmware: tegra: Switch to global mrq_is_supported()
+      firmware: tegra: Print version tag at full
+      soc/tegra: bpmp: Update ABI header
+      firmware: tegra: Use in-band messages for firmware version query
 
-Thierry Reding (1):
-      ARM: tegra: Add VIC on Tegra124
-
- arch/arm/boot/dts/tegra124.dtsi | 12 ++++++++++++
- arch/arm/boot/dts/tegra20.dtsi  |  2 ++
- 2 files changed, 14 insertions(+)
+ drivers/firmware/tegra/bpmp-debugfs.c |   29 +-
+ drivers/firmware/tegra/bpmp.c         |   77 ++-
+ include/soc/tegra/bpmp-abi.h          | 1188 ++++++++++++++++++++++++++-------
+ include/soc/tegra/bpmp.h              |    7 +
+ 4 files changed, 1024 insertions(+), 277 deletions(-)
