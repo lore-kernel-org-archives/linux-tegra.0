@@ -1,14 +1,15 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 14/19] arm64: dts: tegra210: add CPU clocks
-Date: Fri, 7 Dec 2018 14:54:50 +0000
-Message-ID: <5835991a-50aa-1fd2-f9c5-53238a38c993@nvidia.com>
+Subject: Re: [PATCH 15/19] arm64: dts: tegra210-p2597: add pinmux for
+ PWM-based DFLL support
+Date: Fri, 7 Dec 2018 14:55:33 +0000
+Message-ID: <42aa5b73-cd1f-5a2f-249f-589bb1319fc0@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-15-josephl@nvidia.com>
+ <20181204092548.3038-16-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181204092548.3038-15-josephl@nvidia.com>
+In-Reply-To: <20181204092548.3038-16-josephl@nvidia.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -25,30 +26,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 04/12/2018 09:25, Joseph Lo wrote:
-> Add CPU clocks for Tegra210.
+> Add pinmux for PWM-based DFLL support.
 > 
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> index a6db62157442..e2baf52fe1af 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> @@ -1304,6 +1304,12 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a57";
->  			reg = <0>;
-> +			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
-> +				 <&tegra_car TEGRA210_CLK_PLL_X>,
-> +				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
-> +				 <&dfll>;
-> +			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
-> +			clock-latency = <300000>;
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> index 365726ddd418..db5dc0ad466d 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> @@ -1278,6 +1278,20 @@
+>  				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+>  			};
 >  		};
+> +
+> +		dvfs_pwm_active_state: dvfs_pwm_active {
+> +			dvfs_pwm_pbb1 {
+> +				nvidia,pins = "dvfs_pwm_pbb1";
+> +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> +			};
+> +		};
+> +
+> +		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
+> +			dvfs_pwm_pbb1 {
+> +				nvidia,pins = "dvfs_pwm_pbb1";
+> +				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> +			};
+> +		};
+>  	};
 >  
->  		cpu@1 {
+>  	pwm@7000a000 {
 > 
 
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
