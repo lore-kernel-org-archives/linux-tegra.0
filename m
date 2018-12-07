@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 4/6] memory: tegra: Changes for v4.21-rc1
-Date: Fri,  7 Dec 2018 15:17:37 +0100
-Message-ID: <20181207141739.9085-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/6] soc/tegra: Changes for v4.21-rc1
+Date: Fri,  7 Dec 2018 15:17:35 +0100
+Message-ID: <20181207141739.9085-2-thierry.reding@gmail.com>
 References: <20181207141739.9085-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,27 +29,48 @@ The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-memory
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-soc
 
-for you to fetch changes up to 96e5da7c842424bcf64afe1082b960b42b96190b:
+for you to fetch changes up to e3e403c218cd07b497127a29e604fc26a71e8558:
 
-  memory: tegra: Introduce Tegra20 EMC driver (2018-11-08 12:50:34 +0100)
+  soc/tegra: pmc: Add initial Tegra194 wake events (2018-11-28 17:32:28 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-memory: tegra: Changes for v4.21-rc1
+soc/tegra: Changes for v4.21-rc1
 
-This contains a single commit that adds support for the EMC driver on
-Tegra20.
+These changes are mostly cleanups to the PMC driver, but they also add
+support for wake events on Tegra186 and Tegra194, which can be used to
+wake the system from sleep. With this and the corresponding device
+tree additions suspend/resume is finally working on these SoCs.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      memory: tegra: Introduce Tegra20 EMC driver
+Bo Yan (1):
+      soc/tegra: fuse: Remove duplicated function declaration
 
- drivers/memory/tegra/Kconfig       |  10 +
- drivers/memory/tegra/Makefile      |   1 +
- drivers/memory/tegra/tegra20-emc.c | 591 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 602 insertions(+)
- create mode 100644 drivers/memory/tegra/tegra20-emc.c
+Dmitry Osipenko (1):
+      soc/tegra: pmc: Drop locking from tegra_powergate_is_powered()
+
+Jon Hunter (1):
+      soc/tegra: pmc: Don't power-up XUSB power-domains
+
+Sandipan Patra (1):
+      soc/tegra: pmc: Add sysfs entries for reset info
+
+Thierry Reding (4):
+      soc/tegra: pmc: Add Tegra194 support
+      soc/tegra: pmc: Add wake event support
+      soc/tegra: pmc: Add initial Tegra186 wake events
+      soc/tegra: pmc: Add initial Tegra194 wake events
+
+Yangtao Li (2):
+      soc/tegra: Don't leak device tree node reference
+      soc/tegra: pmc: Change to use DEFINE_SHOW_ATTRIBUTE macro
+
+ drivers/soc/tegra/common.c |   6 +-
+ drivers/soc/tegra/pmc.c    | 472 +++++++++++++++++++++++++++++++++++++++++----
+ include/soc/tegra/fuse.h   |   1 -
+ include/soc/tegra/pmc.h    |  21 ++
+ 4 files changed, 462 insertions(+), 38 deletions(-)
