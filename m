@@ -1,13 +1,15 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 3/6] firmware: tegra: Changes for v4.21-rc1
-Date: Fri,  7 Dec 2018 15:17:36 +0100
-Message-ID: <20181207141739.9085-3-thierry.reding@gmail.com>
-References: <20181207141739.9085-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
+Date: Fri, 7 Dec 2018 14:26:45 +0000
+Message-ID: <6cdab503-e463-ddbb-2ce9-035c81da7058@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-8-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181207141739.9085-1-thierry.reding@gmail.com>
+In-Reply-To: <20181204092548.3038-8-josephl@nvidia.com>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,43 +19,79 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+On 04/12/2018 09:25, Joseph Lo wrote:
+> The DFLL hardware supports two modes (I2C and PWM) for voltage control
+> when requesting a frequency. In this patch, we introduce PWM mode support.
+> 
+> To support that, we re-organize the LUT for unifying the table for both
+> cases of I2C and PWM mode. And generate that based on regulator info.
+> For the PWM-based regulator, we get this info from DT. And do the same as
+> the case of I2C LUT, which can help to map the PMIC voltage ID and voltages
+> that the regulator supported.
+> 
+> The other parts are the support code for initializing the DFLL hardware
+> to support PWM mode. Also, the register debugfs file is slightly
+> reworked to only show the i2c registers when I2C mode is in use.
+> 
+> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+> 
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-dfll.c | 431 ++++++++++++++++++++++++++++++-----
+>  1 file changed, 368 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 609e363dabf8..c294a2989f31 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1,7 +1,7 @@
+>  /*
+>   * clk-dfll.c - Tegra DFLL clock source common code
+>   *
+> - * Copyright (C) 2012-2014 NVIDIA Corporation. All rights reserved.
+> + * Copyright (C) 2012-2018 NVIDIA Corporation. All rights reserved.
+>   *
+>   * Aleksandr Frid <afrid@nvidia.com>
+>   * Paul Walmsley <pwalmsley@nvidia.com>
+> @@ -47,6 +47,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/pinctrl/consumer.h>
+>  #include <linux/pm_opp.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+> @@ -243,6 +244,12 @@ enum dfll_tune_range {
+>  	DFLL_TUNE_LOW = 1,
+>  };
+>  
+> +
+> +enum tegra_dfll_pmu_if {
+> +	TEGRA_DFLL_PMU_I2C = 0,
+> +	TEGRA_DFLL_PMU_PWM = 1,
+> +};
+> +
+>  /**
+>   * struct dfll_rate_req - target DFLL rate request data
+>   * @rate: target frequency, after the postscaling
+> @@ -294,16 +301,25 @@ struct tegra_dfll {
+>  	u32				ci;
+>  	u32				cg;
+>  	bool				cg_scale;
+> +	u32				reg_init_uV;
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+Doesn't this belong under PWM interface? Also being picky I dont' find
+init_uV very descriptive.
 
-are available in the Git repository at:
+Otherwise the change looks fine to me.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-firmware
+Cheers
+Jon
 
-for you to fetch changes up to af51c25fb59d4365c259ab93f388462e0998a2ed:
-
-  firmware: tegra: Use in-band messages for firmware version query (2018-11-08 12:49:26 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-firmware: tegra: Changes for v4.21-rc1
-
-These changes update the BPMP ABI header and implement a new variant of
-the BPMP firmware version tag query if supported.
-
-----------------------------------------------------------------
-Timo Alho (5):
-      firmware: tegra: Add helper to check for supported MRQs
-      firmware: tegra: Switch to global mrq_is_supported()
-      firmware: tegra: Print version tag at full
-      soc/tegra: bpmp: Update ABI header
-      firmware: tegra: Use in-band messages for firmware version query
-
- drivers/firmware/tegra/bpmp-debugfs.c |   29 +-
- drivers/firmware/tegra/bpmp.c         |   77 ++-
- include/soc/tegra/bpmp-abi.h          | 1188 ++++++++++++++++++++++++++-------
- include/soc/tegra/bpmp.h              |    7 +
- 4 files changed, 1024 insertions(+), 277 deletions(-)
+-- 
+nvpublic
