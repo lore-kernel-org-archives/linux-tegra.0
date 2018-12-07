@@ -1,51 +1,156 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
-Date: Fri, 7 Dec 2018 15:41:23 +0100
-Message-ID: <20181207144123.GA20201@kroah.com>
-References: <20181206143011.174892052@linuxfoundation.org>
- <85d7624a-c826-78d8-54a9-2aab10ba9914@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 11/19] cpufreq: tegra124: do not handle the CPU rail
+Date: Fri, 7 Dec 2018 14:49:39 +0000
+Message-ID: <71da59ef-fbac-fdce-7348-6a6e23f077e3@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-12-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <85d7624a-c826-78d8-54a9-2aab10ba9914@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181204092548.3038-12-josephl@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 09:03:27AM +0000, Jon Hunter wrote:
-> 
-> On 06/12/2018 14:37, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.9.144 release.
-> > There are 101 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.9:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.9.144-rc1-gcf137e4
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
 
-Thanks for testing two of these and letting me know.
+On 04/12/2018 09:25, Joseph Lo wrote:
+> The Tegra124 cpufreq driver has no information to handle the Vdd-CPU
+> rail. So the driver shouldn't handle for the CPU clock switching from
+> DFLL to other PLL clocks. It was designed to work on DFLL clock only,
+> which handle the frequency/voltage scaling in the background. This
+> patch removes the driver dependency of the CPU rail.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm        |  2 +-
+>  drivers/cpufreq/tegra124-cpufreq.c | 26 ++------------------------
+>  2 files changed, 3 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 4e1131ef85ae..a609f8820c47 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -262,7 +262,7 @@ config ARM_TEGRA20_CPUFREQ
+>  
+>  config ARM_TEGRA124_CPUFREQ
+>  	tristate "Tegra124 CPUFreq support"
+> -	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
+> +	depends on ARCH_TEGRA && CPUFREQ_DT
+>  	default y
+>  	help
+>  	  This adds the CPUFreq driver support for Tegra124 SOCs.
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> index 43530254201a..448d00763d00 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -22,11 +22,9 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_opp.h>
+> -#include <linux/regulator/consumer.h>
+>  #include <linux/types.h>
+>  
+>  struct tegra124_cpufreq_priv {
+> -	struct regulator *vdd_cpu_reg;
+>  	struct clk *cpu_clk;
+>  	struct clk *pllp_clk;
+>  	struct clk *pllx_clk;
+> @@ -60,14 +58,6 @@ static int tegra124_cpu_switch_to_dfll(struct tegra124_cpufreq_priv *priv)
+>  	return ret;
+>  }
+>  
+> -static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> -{
+> -	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> -	clk_disable_unprepare(priv->dfll_clk);
+> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> -	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> -}
+> -
+>  static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  {
+>  	struct tegra124_cpufreq_priv *priv;
+> @@ -88,16 +78,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  	if (!np)
+>  		return -ENODEV;
+>  
+> -	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+> -	if (IS_ERR(priv->vdd_cpu_reg)) {
+> -		ret = PTR_ERR(priv->vdd_cpu_reg);
+> -		goto out_put_np;
+> -	}
+> -
+>  	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
+>  	if (IS_ERR(priv->cpu_clk)) {
+>  		ret = PTR_ERR(priv->cpu_clk);
+> -		goto out_put_vdd_cpu_reg;
+> +		goto out_put_np;
+>  	}
+>  
+>  	priv->dfll_clk = of_clk_get_by_name(np, "dfll");
+> @@ -129,15 +113,13 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  		platform_device_register_full(&cpufreq_dt_devinfo);
+>  	if (IS_ERR(priv->cpufreq_dt_pdev)) {
+>  		ret = PTR_ERR(priv->cpufreq_dt_pdev);
+> -		goto out_switch_to_pllx;
+> +		goto out_put_pllp_clk;
+>  	}
+>  
+>  	platform_set_drvdata(pdev, priv);
+>  
+>  	return 0;
+>  
+> -out_switch_to_pllx:
+> -	tegra124_cpu_switch_to_pllx(priv);
+>  out_put_pllp_clk:
+>  	clk_put(priv->pllp_clk);
+>  out_put_pllx_clk:
+> @@ -146,8 +128,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  	clk_put(priv->dfll_clk);
+>  out_put_cpu_clk:
+>  	clk_put(priv->cpu_clk);
+> -out_put_vdd_cpu_reg:
+> -	regulator_put(priv->vdd_cpu_reg);
+>  out_put_np:
+>  	of_node_put(np);
+>  
+> @@ -159,13 +139,11 @@ static int tegra124_cpufreq_remove(struct platform_device *pdev)
+>  	struct tegra124_cpufreq_priv *priv = platform_get_drvdata(pdev);
+>  
+>  	platform_device_unregister(priv->cpufreq_dt_pdev);
+> -	tegra124_cpu_switch_to_pllx(priv);
+>  
+>  	clk_put(priv->pllp_clk);
+>  	clk_put(priv->pllx_clk);
+>  	clk_put(priv->dfll_clk);
+>  	clk_put(priv->cpu_clk);
+> -	regulator_put(priv->vdd_cpu_reg);
 
-greg k-h
+I see what you are saying and while this does appear to be broken, it
+also does not seem right that if we load and unload this driver the CPU
+clock parent will remain as the DFLL clock. Can't we query the voltage
+of the vdd-cpu regulator before we switch and then restore it before we
+switch back?
+
+I am just trying to understand if there is no way to switch back? If not
+then maybe we should not allow this driver to be built as a module and
+remove the removal function altogether.
+
+Cheers
+Jon
+
+-- 
+nvpublic
