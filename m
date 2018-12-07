@@ -1,188 +1,97 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 30/34] dt-bindings: arm: Convert Tegra board/soc
- bindings to json-schema
-Date: Fri, 7 Dec 2018 12:46:19 +0100
-Message-ID: <20181207114619.GB30719@ulmo>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-31-robh@kernel.org>
- <20181204085022.GB25962@ulmo>
- <CAL_Jsq+NWVoFzBCYVwu-YM_90mYUdgmaW4ctJim2LkxfpRbg=Q@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
+ binding for PWM regulator
+Date: Fri, 7 Dec 2018 13:41:57 +0000
+Message-ID: <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-2-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+NWVoFzBCYVwu-YM_90mYUdgmaW4ctJim2LkxfpRbg=Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sean Hudson <darknighte@darknighte.com>, Frank Rowand <frowand.list@gmail.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Grant Likely <grant.likely@arm.com>, Kumar Gala <kumar.gala@linaro.org>, ARM-SoC Maintainers <arm@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181204092548.3038-2-josephl@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---61jdw2sOBCFtR2d/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/12/2018 09:25, Joseph Lo wrote:
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> Add new properties to configure the DFLL PWM regulator support. Also
+> add an example and make the I2C clock only required when I2C support is
+> used.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  .../bindings/clock/nvidia,tegra124-dfll.txt   | 73 ++++++++++++++++++-
+>  1 file changed, 71 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> index dff236f524a7..8c97600d2bad 100644
+> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
+>  oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
+>  control module that will automatically adjust the VDD_CPU voltage by
+>  communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+> -Currently only the I2C mode is supported by these bindings.
+>  
+>  Required properties:
+>  - compatible : should be "nvidia,tegra124-dfll"
+> @@ -45,10 +44,28 @@ Required properties for the control loop parameters:
+>  Optional properties for the control loop parameters:
+>  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+>  
+> +Optional properties for mode selection:
+> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
+> +
+>  Required properties for I2C mode:
+>  - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
+>  
+> -Example:
+> +Required properties for PWM mode:
+> +- nvidia,pwm-period: period of PWM square wave in microseconds.
+> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control is disabled.
 
-On Thu, Dec 06, 2018 at 04:38:44PM -0600, Rob Herring wrote:
-> On Tue, Dec 4, 2018 at 2:50 AM Thierry Reding <thierry.reding@gmail.com> =
-wrote:
-> >
-> > On Mon, Dec 03, 2018 at 03:32:19PM -0600, Rob Herring wrote:
-> > > Convert Tegra SoC bindings to DT schema format using json-schema.
-> > >
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > > Cc: devicetree@vger.kernel.org
-> > > Cc: linux-tegra@vger.kernel.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >  .../devicetree/bindings/arm/tegra.txt         |  65 -----------
-> > >  .../devicetree/bindings/arm/tegra.yaml        | 101 ++++++++++++++++=
-++
-> > >  2 files changed, 101 insertions(+), 65 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Docume=
-ntation/devicetree/bindings/arm/tegra.txt
-> > > deleted file mode 100644
-> > > index c59b15f64346..000000000000
-> > > --- a/Documentation/devicetree/bindings/arm/tegra.txt
-> > > +++ /dev/null
-> > > @@ -1,65 +0,0 @@
-> > > -NVIDIA Tegra device tree bindings
-> > > --------------------------------------------
-> > > -
-> > > -SoCs
-> > > --------------------------------------------
-> > > -
-> > > -Each device tree must specify which Tegra SoC it uses, using one of =
-the
-> > > -following compatible values:
-> > > -
-> > > -  nvidia,tegra20
-> > > -  nvidia,tegra30
-> > > -  nvidia,tegra114
-> > > -  nvidia,tegra124
-> > > -  nvidia,tegra132
-> > > -  nvidia,tegra210
-> > > -  nvidia,tegra186
-> > > -  nvidia,tegra194
-> > > -
-> > > -Boards
-> > > --------------------------------------------
-> > > -
-> > > -Each device tree must specify which one or more of the following
-> > > -board-specific compatible values:
-> > > -
-> > > -  ad,medcom-wide
-> > > -  ad,plutux
-> > > -  ad,tamonten
-> > > -  ad,tec
-> > > -  compal,paz00
-> > > -  compulab,trimslice
-> > > -  nvidia,beaver
-> > > -  nvidia,cardhu
-> > > -  nvidia,cardhu-a02
-> > > -  nvidia,cardhu-a04
-> > > -  nvidia,dalmore
-> > > -  nvidia,harmony
-> > > -  nvidia,jetson-tk1
-> > > -  nvidia,norrin
-> > > -  nvidia,p2371-0000
-> > > -  nvidia,p2371-2180
-> > > -  nvidia,p2571
-> > > -  nvidia,p2771-0000
-> > > -  nvidia,p2972-0000
-> > > -  nvidia,roth
-> > > -  nvidia,seaboard
-> > > -  nvidia,tn7
-> > > -  nvidia,ventana
-> > > -  toradex,apalis_t30
-> > > -  toradex,apalis_t30-eval
-> > > -  toradex,apalis_t30-v1.1
-> > > -  toradex,apalis_t30-v1.1-eval
-> > > -  toradex,apalis-tk1
-> > > -  toradex,apalis-tk1-eval
-> > > -  toradex,apalis-tk1-v1.2
-> > > -  toradex,apalis-tk1-v1.2-eval
-> > > -  toradex,colibri_t20
-> > > -  toradex,colibri_t20-eval-v3
-> > > -  toradex,colibri_t20-iris
-> > > -  toradex,colibri_t30
-> > > -  toradex,colibri_t30-eval-v3
-> > > -
-> > > -Trusted Foundations
-> > > --------------------------------------------
-> > > -Tegra supports the Trusted Foundation secure monitor. See the
-> > > -"tlm,trusted-foundations" binding's documentation for more details.
-> > > diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Docum=
-entation/devicetree/bindings/arm/tegra.yaml
-> > > new file mode 100644
-> > > index 000000000000..66493892ffc1
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-> > > @@ -0,0 +1,101 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/arm/tegra.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >
-> > Could you explain what these are? They give 404, so I assume they are
-> > more like placeholders and not actually used?
->=20
-> Please read the documentation in patch 2. They are used, but aren't live =
-URLs.
+Maybe consider 'pwm-inactive-voltage-microvolt'.
 
-Okay, thanks for pointing that out. I wasn't Cc'ed on that patch, so it
-took a while to hunt it down.
+> +- nvidia,align-offset-uv: Regulator voltage in micro volts when PWM control is
+> +			  enabled and PWM output is low.
 
-> > > +
-> > > +title: NVIDIA Tegra device tree bindings
-> > > +
-> > > +maintainers:
-> > > +  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > > +  - Peter De Schrijver <pdeschrijver@nvidia.com>
-> >
-> > Not sure how you got that list, but probably from git history. I think
-> > it makes sense to replace Marcel and Peter with Jon and myself.
->=20
-> Will do.
->=20
-> > Other than that, looks fine to me. Some of the enumerations below look
-> > somewhat hard to parse, but I suspect that it will become second nature
-> > in no time.
->=20
-> We can add descriptions and/or comments if that helps. I didn't add
-> them if not already there.
+Would this be considered the minimum pwm active voltage?
 
-My comment was regarding the schema syntax with the oneOf, - items, etc.
-That's all new to me and difficult to read, but I'm sure I'll get used
-to it.
+> +- nvidia,align-step-uv: Voltage increase in micro volts corresponding to a
+> +			1/33th increase in duty cycle. Eg the voltage for 2/33th
+> +			duty cycle would be:
 
-Thierry
+Maybe consider 'pwm-voltage-step-microvolt'.
 
---61jdw2sOBCFtR2d/
-Content-Type: application/pgp-signature; name="signature.asc"
+> +			nvidia,align-offset-uv + nvidia,align-step-uv * 2.
+> +- pinctrl-0: I/O pad configuration when PWM control is enabled.
+> +- pinctrl-1: I/O pad configuration when PWM control is disabled.
+> +- pinctrl-names: must include the following entries:
+> +  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+> +  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
 
------BEGIN PGP SIGNATURE-----
+Please see Rob's feedback on the above [0].
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwKXYgACgkQ3SOs138+
-s6GutQ/8CGUawOVXWa2O3RRFvjPZq9Bl151N7gluvIlFcVkD8TNspGoYaTDxSc9r
-2GnDUorHpU3mroiOnB1mDvCuPvrWwMmLgI+7fPSIkMJ5wCC24qFjSMvEXgzVCeu+
-JaZL4VxICnKxWtrlPRlDfFlLuOP91Zgj+sT2zBK517m3gbjFWN1im+42+lrNsO60
-tNLIJyFAUkGjtzNYPNFKJxuW8+Ubgl33S5pRPNmRpuImb6Pmou0LMRYM5l3R8dvj
-5+yeHXiKgwi25HNXIaa9+Kc9ouBOaR+cqY2+fI4VelaQ07Ip+eURXed7tDZrm2h3
-0wgkBAwuBh9AlIhP0njOTw72b1s6UHZ18o6yFYzaGr3tQej504ZPf49BI9TTa/Ws
-Pp0FRrIuKa3bpOlEL+Z04VYbV0erjIC5bb8eqJrJiKXE9EAKequjVcHBDtuhUGiG
-pTEm1dXpCplN8RJRHazTksM9AygJxqmF+0vlQI5E/utjQEjfm3WYnDsmZNZ5yJQD
-I0vd65LKeMGu32lm1S9vVrlLbwHwcL3/tgly++A2EwjD8OrNCw8rXDNvicK+sJ9E
-sBB/67Jay2JviIHRhPeHyZuCpe9mxXZEKaMi+WpEdOED4miar02/fejWpjDRrYnt
-eU4soLlgiTj/KP+ihgQXtQWGTE7pbuCUPXHYll+v/GcWPuTKiss=
-=/353
------END PGP SIGNATURE-----
+Cheers
+Jon
 
---61jdw2sOBCFtR2d/--
+[0] https://lore.kernel.org/patchwork/patch/885328/
+
+-- 
+nvpublic
