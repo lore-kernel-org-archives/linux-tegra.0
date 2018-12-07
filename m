@@ -1,58 +1,51 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH v2 01/10] mailbox: Support blocking transfers in atomic
- context
-Date: Fri, 7 Dec 2018 11:49:46 +0530
-Message-ID: <4f7a4211-47ee-1114-0974-a3b402178106@kapsi.fi>
-References: <20181112151853.29289-1-thierry.reding@gmail.com>
- <20181112151853.29289-2-thierry.reding@gmail.com>
- <0545f5e1-1740-2129-9d0e-5c950bd9bf74@nvidia.com>
- <CABb+yY1u24JYO68f74qSJ1RpqidJ4H7cnP1Sy=RdqcBHru5XQg@mail.gmail.com>
- <20181129152312.GB23750@ulmo>
- <CABb+yY1G+6MQmrSeZvOXnuREB87+DYHGxNu1tBb9W6apizLtGw@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
+Date: Fri, 7 Dec 2018 09:03:27 +0000
+Message-ID: <85d7624a-c826-78d8-54a9-2aab10ba9914@nvidia.com>
+References: <20181206143011.174892052@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CABb+yY1G+6MQmrSeZvOXnuREB87+DYHGxNu1tBb9W6apizLtGw@mail.gmail.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Devicetree List <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, mliljeberg@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, talho@nvidia.com, linux-serial@vger.kernel.org, jslaby@suse.com, linux-tegra@vger.kernel.org, ppessi@nvidia.com, Jon Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/12/2018 11.26, Jassi Brar wrote:
->> I thought that I could also mitigate 2) by busy looping in the TCU driver,
->> but it turns out that that doesn't work. The reason is that since we are
->> in atomic context with all interrupts disabled, the mailbox won't ever
->> consume any new characters, so the read pointer in the circular buffer
->> won't increment, leaving me with no condition upon which to loop that
->> would work.
->>
-> So you want to be able to rely on an emulated console (running on a
-> totally different subsystem) to dump development-phase early-boot
-> logs? At the cost of legitimizing busy looping in atomic context - one
-> random driver messing up the api for ever. Maybe you could have the
-> ring buffer in some shmem and only pass the number of valid characters
-> in it, to the remote?
+
+On 06/12/2018 14:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.144 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
+> Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-I would like to note that this is the one and only console interface 
-that exists on these systems, for both development phase and production. 
-Other UARTs are not externally accessible on the systems, or they are 
-comparatively difficult to access as they aren't intended to be used as 
-consoles in the system design. The combination of hardware and firmware 
-implementing the console is black box from software's point of view 
-(similarly to any other UART HW). The interface has also been fixed at 
-an early system design phase, as there are many operating systems 
-running on these boards, each with their own drivers.
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-Cheers,
-Mikko
+Linux version:	4.9.144-rc1-gcf137e4
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
