@@ -1,89 +1,64 @@
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v11 5/8] interconnect: qcom: Add sdm845 interconnect
- provider driver
-Date: Sat, 8 Dec 2018 02:24:03 +0200
-Message-ID: <ee392578-2dbc-7e60-be37-483729e922d1@linaro.org>
-References: <20181207152917.4862-1-georgi.djakov@linaro.org>
- <20181207152917.4862-6-georgi.djakov@linaro.org>
- <20181207233010.GE14307@google.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH v2 01/10] mailbox: Support blocking transfers in atomic
+ context
+Date: Sat, 8 Dec 2018 11:21:41 +0530
+Message-ID: <CABb+yY3_uWv1YVxXxjgygPemBZraCTAXNyXT9G4aTMZv1t7d0g@mail.gmail.com>
+References: <20181112151853.29289-1-thierry.reding@gmail.com>
+ <20181112151853.29289-2-thierry.reding@gmail.com>
+ <0545f5e1-1740-2129-9d0e-5c950bd9bf74@nvidia.com>
+ <CABb+yY1u24JYO68f74qSJ1RpqidJ4H7cnP1Sy=RdqcBHru5XQg@mail.gmail.com>
+ <20181129152312.GB23750@ulmo>
+ <CABb+yY1G+6MQmrSeZvOXnuREB87+DYHGxNu1tBb9W6apizLtGw@mail.gmail.com>
+ <4f7a4211-47ee-1114-0974-a3b402178106@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181207233010.GE14307@google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: gregkh@linuxfoundation.org, linux-pm@vger.kernel.org, rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com, vincent.guittot@linaro.org, skannan@codeaurora.org, bjorn.andersson@linaro.org, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, evgreen@chromium.org, dianders@chromium.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4f7a4211-47ee-1114-0974-a3b402178106@kapsi.fi>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Devicetree List <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, mliljeberg@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, talho@nvidia.com, Thierry Reding <thierry.reding@gmail.com>, linux-serial@vger.kernel.org, jslaby@suse.com, linux-tegra@vger.kernel.org, ppessi@nvidia.com, Jon Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Matthias,
+On Fri, Dec 7, 2018 at 11:50 AM Mikko Perttunen <cyndis@kapsi.fi> wrote:
+>
+> On 07/12/2018 11.26, Jassi Brar wrote:
+> >> I thought that I could also mitigate 2) by busy looping in the TCU driver,
+> >> but it turns out that that doesn't work. The reason is that since we are
+> >> in atomic context with all interrupts disabled, the mailbox won't ever
+> >> consume any new characters, so the read pointer in the circular buffer
+> >> won't increment, leaving me with no condition upon which to loop that
+> >> would work.
+> >>
+> > So you want to be able to rely on an emulated console (running on a
+> > totally different subsystem) to dump development-phase early-boot
+> > logs? At the cost of legitimizing busy looping in atomic context - one
+> > random driver messing up the api for ever. Maybe you could have the
+> > ring buffer in some shmem and only pass the number of valid characters
+> > in it, to the remote?
+> >
+>
+> I would like to note that this is the one and only console interface
+> that exists on these systems, for both development phase and production.
+> Other UARTs are not externally accessible on the systems, or they are
+> comparatively difficult to access as they aren't intended to be used as
+> consoles in the system design.
 
-Thanks for looking into this.
-
-On 8.12.18 1:30, Matthias Kaehlcke wrote:
-> Hi Georgi,
-> 
-> not a full review, only one thing I just stumbled across:
-> 
-> On Fri, Dec 07, 2018 at 05:29:14PM +0200, Georgi Djakov wrote:
->> From: David Dai <daidavid1@codeaurora.org>
->>
->> Introduce Qualcomm SDM845 specific provider driver using the
->> interconnect framework.
->>
->> Signed-off-by: David Dai <daidavid1@codeaurora.org>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
->>  .../bindings/interconnect/qcom,sdm845.txt     |  24 +
->>  drivers/interconnect/Kconfig                  |   5 +
->>  drivers/interconnect/Makefile                 |   1 +
->>  drivers/interconnect/qcom/Kconfig             |  13 +
->>  drivers/interconnect/qcom/Makefile            |   5 +
->>  drivers/interconnect/qcom/sdm845.c            | 836 ++++++++++++++++++
->>  .../dt-bindings/interconnect/qcom,sdm845.h    | 143 +++
->>  7 files changed, 1027 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->>  create mode 100644 drivers/interconnect/qcom/Kconfig
->>  create mode 100644 drivers/interconnect/qcom/Makefile
->>  create mode 100644 drivers/interconnect/qcom/sdm845.c
->>  create mode 100644 include/dt-bindings/interconnect/qcom,sdm845.h
->>
->> ...
->>
->> diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
->> new file mode 100644
->> index 000000000000..f594dd6f500f
->> --- /dev/null
->> +++ b/drivers/interconnect/qcom/sdm845.c
->>
->> ...
->>
->> +static int qcom_icc_bcm_init(struct qcom_icc_bcm *bcm, struct device *dev)
->> +{
->> +	struct qcom_icc_node *qn;
->> +	int ret, i;
->> +
->> +	bcm->addr = cmd_db_read_addr(bcm->name);
->> +	if (!bcm->addr) {
->> +		dev_err(dev, "%s could not find RPMh address\n",
->> +			bcm->name);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (cmd_db_read_aux_data_len(bcm->name) < sizeof(struct bcm_db)) {
->> +		dev_err(dev, "%s command db missing or partial aux data\n",
->> +			bcm->name);
->> +		return -EINVAL;
->> +	}
-> 
-> cmd_db_read_aux_data_len() is in the process of being removed, see
-> ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in
-> cmd_db_read_aux_data()") in arm-soc/for-next
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/commit/?h=for-next&id=ed3cafa79ea756be653d22087c017af95ea78a49
-
-Yes, exactly. I have a fix that lives as a separate patch [8/8] and will squash it here.
-
-BR,
-Georgi
+> The combination of hardware and firmware
+> implementing the console is black box from software's point of view
+> (similarly to any other UART HW). The interface has also been fixed at
+> an early system design phase, as there are many operating systems
+> running on these boards, each with their own drivers.
+>
+That is the saddest part - someone, who writes test cases for the h/w
+team and with almost no knowledge of how OSes work, decides how the
+firmware is going to work and calls it done. Then the Linux is left to
+deal with the mess as we "can't do anything about it".
