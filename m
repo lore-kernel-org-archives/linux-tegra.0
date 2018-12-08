@@ -1,59 +1,89 @@
-From: Alexander Van Brunt <avanbrunt@nvidia.com>
-Subject: Re: [PATCH V3] arm64: Don't flush tlb while clearing the accessed bit
-Date: Sat, 8 Dec 2018 00:05:44 +0000
-Message-ID: <BYAPR12MB271295B398729E07F31082A7CFAA0@BYAPR12MB2712.namprd12.prod.outlook.com>
-References: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
- <20181029105515.GD14127@arm.com>
- <BN7PR12MB2708B742FD3448589AD0F259CFF30@BN7PR12MB2708.namprd12.prod.outlook.com>
- <BYAPR12MB27129A4EE7BBF57B1CAB5094CFAE0@BYAPR12MB2712.namprd12.prod.outlook.com>
- <20181206191850.GC20796@arm.com>
- <BYAPR12MB271239AAF4A0B79D756850C6CFA90@BYAPR12MB2712.namprd12.prod.outlook.com>
- <BYAPR12MB27120C304F7B085A0CA36124CFA90@BYAPR12MB2712.namprd12.prod.outlook.com>,<20181207175330.GC11430@edgewater-inn.cambridge.arm.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v11 5/8] interconnect: qcom: Add sdm845 interconnect
+ provider driver
+Date: Sat, 8 Dec 2018 02:24:03 +0200
+Message-ID: <ee392578-2dbc-7e60-be37-483729e922d1@linaro.org>
+References: <20181207152917.4862-1-georgi.djakov@linaro.org>
+ <20181207152917.4862-6-georgi.djakov@linaro.org>
+ <20181207233010.GE14307@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181207175330.GC11430@edgewater-inn.cambridge.arm.com>
+In-Reply-To: <20181207233010.GE14307@google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Ashish Mhetre <amhetre@nvidia.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Sachin Nikam <Snikam@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: gregkh@linuxfoundation.org, linux-pm@vger.kernel.org, rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com, vincent.guittot@linaro.org, skannan@codeaurora.org, bjorn.andersson@linaro.org, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, evgreen@chromium.org, dianders@chromium.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-> > > My problem with that is it's not really much different to just skippi=
-ng the
-> > > page table update entirely. Skipping the DSB is closer to what is don=
-e on
-> > > x86, where we bound the stale entry time to the next context-switch.
-> > =20
-> > Which of the three implementations is the "that" and "it" in the first =
-sentence?
->
-> that =3D it =3D skipping the whole invalidation + the DSB
+Hi Matthias,
 
-The TLB is tiny compared to the size of the inactive list. Somehow a TLB ha=
-s to
-not be evicted during the page's life in the inactive list. That is not an =
-easy
-feat except for the hottest of pages.
+Thanks for looking into this.
 
-If there is a context-switch, most of the original thread's TLBs will be
-evicted because TLBs have a hard time to hold two thread's working sets. So=
-, in
-practice, that is almost the same as the x86 guarantee.
+On 8.12.18 1:30, Matthias Kaehlcke wrote:
+> Hi Georgi,
+> 
+> not a full review, only one thing I just stumbled across:
+> 
+> On Fri, Dec 07, 2018 at 05:29:14PM +0200, Georgi Djakov wrote:
+>> From: David Dai <daidavid1@codeaurora.org>
+>>
+>> Introduce Qualcomm SDM845 specific provider driver using the
+>> interconnect framework.
+>>
+>> Signed-off-by: David Dai <daidavid1@codeaurora.org>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
+>>  .../bindings/interconnect/qcom,sdm845.txt     |  24 +
+>>  drivers/interconnect/Kconfig                  |   5 +
+>>  drivers/interconnect/Makefile                 |   1 +
+>>  drivers/interconnect/qcom/Kconfig             |  13 +
+>>  drivers/interconnect/qcom/Makefile            |   5 +
+>>  drivers/interconnect/qcom/sdm845.c            | 836 ++++++++++++++++++
+>>  .../dt-bindings/interconnect/qcom,sdm845.h    | 143 +++
+>>  7 files changed, 1027 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+>>  create mode 100644 drivers/interconnect/qcom/Kconfig
+>>  create mode 100644 drivers/interconnect/qcom/Makefile
+>>  create mode 100644 drivers/interconnect/qcom/sdm845.c
+>>  create mode 100644 include/dt-bindings/interconnect/qcom,sdm845.h
+>>
+>> ...
+>>
+>> diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
+>> new file mode 100644
+>> index 000000000000..f594dd6f500f
+>> --- /dev/null
+>> +++ b/drivers/interconnect/qcom/sdm845.c
+>>
+>> ...
+>>
+>> +static int qcom_icc_bcm_init(struct qcom_icc_bcm *bcm, struct device *dev)
+>> +{
+>> +	struct qcom_icc_node *qn;
+>> +	int ret, i;
+>> +
+>> +	bcm->addr = cmd_db_read_addr(bcm->name);
+>> +	if (!bcm->addr) {
+>> +		dev_err(dev, "%s could not find RPMh address\n",
+>> +			bcm->name);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (cmd_db_read_aux_data_len(bcm->name) < sizeof(struct bcm_db)) {
+>> +		dev_err(dev, "%s command db missing or partial aux data\n",
+>> +			bcm->name);
+>> +		return -EINVAL;
+>> +	}
+> 
+> cmd_db_read_aux_data_len() is in the process of being removed, see
+> ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in
+> cmd_db_read_aux_data()") in arm-soc/for-next
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/commit/?h=for-next&id=ed3cafa79ea756be653d22087c017af95ea78a49
 
-The worst case cannot have a large impact because the maximum number of pag=
-es
-that will not have the TLB evicted is the number of pages in the TLB. For
-example, a 1024 entry TLB can at worst result in 4 MB of pages erroneously
-reclaimed. That is not bad on a system with 4+ GB of memory.
+Yes, exactly. I have a fix that lives as a separate patch [8/8] and will squash it here.
 
-We did benchmark the extreme case where half the pages accessed where not
-evicted from the TLB. In the read case, skipping the DSB was ~10% faster th=
-an
-skipping the invalidate or doing the invalidate and the DSB.
-
-Compared to the improvement in the average performance and variability in t=
-he
-other cases we tested, the 10% loss in a carefully crafted test is not as
-important.
+BR,
+Georgi
