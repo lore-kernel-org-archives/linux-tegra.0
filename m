@@ -1,20 +1,20 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-Date: Mon, 10 Dec 2018 09:44:21 +0000
-Message-ID: <c5a7360b-3aed-108b-fd77-921626db6797@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-2-josephl@nvidia.com>
- <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
- <46b5eafa-00a0-1d91-1f4d-97ab119fcf21@nvidia.com>
- <e61b1da8-78cd-c3d4-9878-c25fd9c89ba3@nvidia.com>
- <433ed5cf-70ce-1d03-530f-406b2cb16e07@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 01/10] mailbox: Support blocking transfers in atomic
+ context
+Date: Mon, 10 Dec 2018 10:52:29 +0100
+Message-ID: <20181210095229.GA15154@ulmo>
+References: <20181112151853.29289-1-thierry.reding@gmail.com>
+ <20181112151853.29289-2-thierry.reding@gmail.com>
+ <0545f5e1-1740-2129-9d0e-5c950bd9bf74@nvidia.com>
+ <CABb+yY1u24JYO68f74qSJ1RpqidJ4H7cnP1Sy=RdqcBHru5XQg@mail.gmail.com>
+ <20181129152312.GB23750@ulmo>
+ <CABb+yY1G+6MQmrSeZvOXnuREB87+DYHGxNu1tBb9W6apizLtGw@mail.gmail.com>
+ <20181207113245.GA30719@ulmo>
+ <CABb+yY2jVmzxFR7iqSyMMyE+XZtyHrAPAxM_KMEa7c2zzpSwCA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============2923097026040702380=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <433ed5cf-70ce-1d03-530f-406b2cb16e07@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <CABb+yY2jVmzxFR7iqSyMMyE+XZtyHrAPAxM_KMEa7c2zzpSwCA@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,108 +24,280 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Devicetree List <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, mliljeberg@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, talho@nvidia.com, linux-serial@vger.kernel.org, jslaby@suse.com, linux-tegra@vger.kernel.org, ppessi@nvidia.com, Jon Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDEwLzEyLzIwMTggMDk6MzEsIEpvc2VwaCBMbyB3cm90ZToKPiBPbiAxMi8xMC8xOCA0OjU5
-IFBNLCBKb24gSHVudGVyIHdyb3RlOgo+Pgo+PiBPbiAxMC8xMi8yMDE4IDA4OjQ5LCBKb3NlcGgg
-TG8gd3JvdGU6Cj4+PiBIaSBKb24sCj4+Pgo+Pj4gVGhhbmtzIGZvciByZXZpZXdpbmcgdGhpcyBz
-ZXJpZXMuCj4+Pgo+Pj4gT24gMTIvNy8xOCA5OjQxIFBNLCBKb24gSHVudGVyIHdyb3RlOgo+Pj4+
-Cj4+Pj4gT24gMDQvMTIvMjAxOCAwOToyNSwgSm9zZXBoIExvIHdyb3RlOgo+Pj4+PiBGcm9tOiBQ
-ZXRlciBEZSBTY2hyaWp2ZXIgPHBkZXNjaHJpanZlckBudmlkaWEuY29tPgo+Pj4+Pgo+Pj4+PiBB
-ZGQgbmV3IHByb3BlcnRpZXMgdG8gY29uZmlndXJlIHRoZSBERkxMIFBXTSByZWd1bGF0b3Igc3Vw
-cG9ydC4gQWxzbwo+Pj4+PiBhZGQgYW4gZXhhbXBsZSBhbmQgbWFrZSB0aGUgSTJDIGNsb2NrIG9u
-bHkgcmVxdWlyZWQgd2hlbiBJMkMKPj4+Pj4gc3VwcG9ydCBpcwo+Pj4+PiB1c2VkLgo+Pj4+Pgo+
-Pj4+PiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcKPj4+Pj4gU2lnbmVkLW9mZi1ieTog
-UGV0ZXIgRGUgU2NocmlqdmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4KPj4+Pj4gU2lnbmVk
-LW9mZi1ieTogSm9zZXBoIExvIDxqb3NlcGhsQG52aWRpYS5jb20+Cj4+Pj4+IC0tLQo+Pj4+PiDC
-oMKgIC4uLi9iaW5kaW5ncy9jbG9jay9udmlkaWEsdGVncmExMjQtZGZsbC50eHTCoMKgIHwgNzMK
-Pj4+Pj4gKysrKysrKysrKysrKysrKysrLQo+Pj4+PiDCoMKgIDEgZmlsZSBjaGFuZ2VkLCA3MSBp
-bnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pj4+Pgo+Pj4+PiBkaWZmIC0tZ2l0Cj4+Pj4+
-IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL252aWRpYSx0ZWdyYTEy
-NC1kZmxsLnR4dAo+Pj4+PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9j
-ay9udmlkaWEsdGVncmExMjQtZGZsbC50eHQKPj4+Pj4gaW5kZXggZGZmMjM2ZjUyNGE3Li44Yzk3
-NjAwZDJiYWQgMTAwNjQ0Cj4+Pj4+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9jbG9jay9udmlkaWEsdGVncmExMjQtZGZsbC50eHQKPj4+Pj4gKysrIGIvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL252aWRpYSx0ZWdyYTEyNC1kZmxsLnR4dAo+
-Pj4+PiBAQCAtOCw3ICs4LDYgQEAgdGhlIGZhc3QgQ1BVIGNsdXN0ZXIuIEl0IGNvbnNpc3RzIG9m
-IGEgZnJlZS1ydW5uaW5nCj4+Pj4+IHZvbHRhZ2UgY29udHJvbGxlZAo+Pj4+PiDCoMKgIG9zY2ls
-bGF0b3IgY29ubmVjdGVkIHRvIHRoZSBDUFUgdm9sdGFnZSByYWlsIChWRERfQ1BVKSwgYW5kIGEK
-Pj4+Pj4gY2xvc2VkIGxvb3AKPj4+Pj4gwqDCoCBjb250cm9sIG1vZHVsZSB0aGF0IHdpbGwgYXV0
-b21hdGljYWxseSBhZGp1c3QgdGhlIFZERF9DUFUKPj4+Pj4gdm9sdGFnZSBieQo+Pj4+PiDCoMKg
-IGNvbW11bmljYXRpbmcgd2l0aCBhbiBvZmYtY2hpcCBQTUlDIGVpdGhlciB2aWEgYW4gSTJDIGJ1
-cyBvciB2aWEKPj4+Pj4gUFdNIHNpZ25hbHMuCj4+Pj4+IC1DdXJyZW50bHkgb25seSB0aGUgSTJD
-IG1vZGUgaXMgc3VwcG9ydGVkIGJ5IHRoZXNlIGJpbmRpbmdzLgo+Pj4+PiDCoMKgIMKgIFJlcXVp
-cmVkIHByb3BlcnRpZXM6Cj4+Pj4+IMKgwqAgLSBjb21wYXRpYmxlIDogc2hvdWxkIGJlICJudmlk
-aWEsdGVncmExMjQtZGZsbCIKPj4+Pj4gQEAgLTQ1LDEwICs0NCwyOCBAQCBSZXF1aXJlZCBwcm9w
-ZXJ0aWVzIGZvciB0aGUgY29udHJvbCBsb29wCj4+Pj4+IHBhcmFtZXRlcnM6Cj4+Pj4+IMKgwqAg
-T3B0aW9uYWwgcHJvcGVydGllcyBmb3IgdGhlIGNvbnRyb2wgbG9vcCBwYXJhbWV0ZXJzOgo+Pj4+
-PiDCoMKgIC0gbnZpZGlhLGNnLXNjYWxlOiBCb29sZWFuIHZhbHVlLCBzZWUgdGhlIGZpZWxkCj4+
-Pj4+IERGTExfUEFSQU1TX0NHX1NDQUxFIGluIHRoZSBUUk0uCj4+Pj4+IMKgwqAgK09wdGlvbmFs
-IHByb3BlcnRpZXMgZm9yIG1vZGUgc2VsZWN0aW9uOgo+Pj4+PiArLSBudmlkaWEscHdtLXRvLXBt
-aWM6IFVzZSBQV00gdG8gY29udHJvbCByZWd1bGF0b3IgcmF0aGVyIHRoZW4gSTJDLgo+Pj4+PiAr
-Cj4+Pj4+IMKgwqAgUmVxdWlyZWQgcHJvcGVydGllcyBmb3IgSTJDIG1vZGU6Cj4+Pj4+IMKgwqAg
-LSBudmlkaWEsaTJjLWZzLXJhdGU6IEkyQyB0cmFuc2ZlciByYXRlLCBpZiB1c2luZyBmdWxsIHNw
-ZWVkIG1vZGUuCj4+Pj4+IMKgwqAgLUV4YW1wbGU6Cj4+Pj4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVz
-IGZvciBQV00gbW9kZToKPj4+Pj4gKy0gbnZpZGlhLHB3bS1wZXJpb2Q6IHBlcmlvZCBvZiBQV00g
-c3F1YXJlIHdhdmUgaW4gbWljcm9zZWNvbmRzLgo+Pj4+PiArLSBudmlkaWEsaW5pdC11djogUmVn
-dWxhdG9yIHZvbHRhZ2UgaW4gbWljcm8gdm9sdHMgd2hlbiBQV00gY29udHJvbAo+Pj4+PiBpcyBk
-aXNhYmxlZC4KPj4+Pgo+Pj4+IE1heWJlIGNvbnNpZGVyICdwd20taW5hY3RpdmUtdm9sdGFnZS1t
-aWNyb3ZvbHQnLgo+Pj4gQWgsIEkgdGhpbmsgSSBuZWVkIHRvIHJlZmluZSB0aGUgZGVzY3JpcHRp
-b24gaGVyZS4gSXQgc2hvdWxkIGJlCj4+PiBzb21ldGhpbmcgbGlrZSBiZWxvdy4KPj4+IMKgwqAt
-IG52aWRpYSxwd20taW5pdC1taWNyb3ZvbHQgOiBSZWd1bGF0b3Igdm9sdGFnZSBpbiBtaWNybyB2
-b2x0cyB3aGVuCj4+PiBQV00KPj4+IGNvbnRyb2wgaXMgaW5pdGlhbGl6ZWQKPj4+Cj4+PiBUaGlz
-IGlzIHRoZSBpbml0aWFsIHZvbHRhZ2UgdGhhdCB3aGVuIHdlIGp1c3QgaW5pdGlhbGl6ZSB0aGUg
-REZMTAo+Pj4gaGFyZHdhcmUgZm9yIFBXTSBvdXRwdXQuIEFuZCBiZWZvcmUgd2Ugc3dpdGNoIHRo
-ZSBDUFUgY2xvY2sgZnJvbSBQTExYIHRvCj4+PiBERkxMLCB3ZSB3aWxsIGVuYWJsZSBERkxMIGhh
-cmR3YXJlIGluIGNsb3NlZCBsb29wIG1vZGUgd2hpY2ggd2lsbCBhcGxseQo+Pj4gdGhlIERWRlMg
-dGFibGUgdGhhdCB3YXMgY2FsY3VsYXRlZCBmcm9tIENWQiB0YWJsZS4KPj4+Cj4+PiBUaGUgb3Jp
-Z2luYWwgZGVzY3JpcHRpb24gbWF5YmUgbWFrZSB5b3UgdGhpbmsgdGhhdCBpdCdzIHRoZSB3b3Jr
-aW5nCj4+PiB2b2x0YWdlIHdoZW4gaXQncyB1bmRlciBvcGVuLWxvb3AgbW9kZS4gQnV0IGl0J3Mg
-bm90LiBTb3JyeS4KPj4+Cj4+PiBXaGVuIHdlIHdvcmtpbmcgb24gb3Blbi1sb29wIG1vZGUgd2hp
-Y2ggd2lsbCBzd2l0Y2ggdG8gbG93IHZvbHRhZ2UgcmFuZ2UKPj4+IHdoaWNoIGFsc28gZm9sbG93
-cyB0aGUgRFZGUyB0YWJsZS4gTm90IHRoaXMgb25lLgo+Pgo+PiBPSywgYnV0IEkgYW0gc3RpbGwg
-bm90IHN1cmUgd2hhdCB0aGlzIHZvbHRhZ2UgaXMuIEkgbWVhbiB0aGF0IEkKPj4gdW5kZXJzdGFu
-ZCBpdCBpcyB0aGUgaW5pdGlhbCB2b2x0YWdlLCBidXQgaG93IGV4YWN0bHkgZG8gd2UgZGVmaW5l
-IHRoaXMKPj4gbnVtYmVyPyBXaGVyZSBkb2VzIGl0IGNvbWUgZnJvbSwgaG93IGlzIHRoaXMgZGV0
-ZXJtaW5lZD8KPiBJSVJDLCB0aGlzIGlzIHRoZSBzYW1lIG91dHB1dCB2b2x0YWdlIHRoYXQgYm9v
-dGxvYWRlciBjb25maWd1cmVkIHdpdGgKPiBwcm9wZXIgUExMWCByYXRlLiBTbyBiZWZvcmUgREZM
-TCBoYW5kbGluZyB0aGUgQ1BVIGNsb2NrLCB0aGF0IGlzIHRoZQo+IG91dHB1dCB2b2x0YWdlLiBX
-ZSBjb25maWd1cmUgdGhlIHNhbWUgd2hlbiBERkxMIEhXIGlzIGp1c3QgaW5pdGlhbGl6ZWQuCj4g
-Cj4gMSB2b2x0IGhlcmUgaXMgcHJldHR5IHNhZmUgd2hlbiBDUFUgY2xvY2sgc3dpdGNoZWQgZnJv
-bSBib290bG9hZGVyIHRvCj4ga2VybmVsIGF0IDYuOTEyTUh6QHBsbHguCgpPSywgbm93IEkgdW5k
-ZXJzdGFuZC4gU2VlbXMgYSBsaXR0bGUgZnJhZ2lsZSwgYnV0IG1heWJlIHRoZXJlIGlzIG5vCmJl
-dHRlciBhbHRlcm5hdGl2ZSBoZXJlLgoKUGxlYXNlIGRlc2NyaWJlIHdoYXQgdGhpcyB2b2x0YWdl
-IGlzIGluIHRoZSBiaW5kaW5nIGRvYywgc28gaWYgYW55b25lCmhhcHBlbmVkIHRvIG1vZGlmeSB0
-aGVpciBib290bG9hZGVyIHRvIHJ1biBhdCBhIGRpZmZlcmVudCBzcGVlZCB0aGF0IGl0CmlzIHN0
-YXRlZCB0aGF0IHRoaXMgdm9sdGFnZSBzaG91bGQgYmUgaGlnaCBlbm91Z2ggdG8gc3VwcG9ydCBp
-bml0aWFsCmJvb3QgZnJlcXVlbmN5LgoKPj4KPj4+Pgo+Pj4+PiArLSBudmlkaWEsYWxpZ24tb2Zm
-c2V0LXV2OiBSZWd1bGF0b3Igdm9sdGFnZSBpbiBtaWNybyB2b2x0cyB3aGVuIFBXTQo+Pj4+PiBj
-b250cm9sIGlzCj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlbmFibGVkIGFuZCBQ
-V00gb3V0cHV0IGlzIGxvdy4KPj4+Pgo+Pj4+IFdvdWxkIHRoaXMgYmUgY29uc2lkZXJlZCB0aGUg
-bWluaW11bSBwd20gYWN0aXZlIHZvbHRhZ2U/Cj4+PiBUaGlzIHdvdWxkIGJlIHVzZWQgZm9yIG1p
-bmltdW0gdm9sdGFnZSBmb3IgTFVUIHRhYmxlLCB3aGljaCBpcyB0aGUgdGFibGUKPj4+IHRoYXQg
-UE1JQyBjYW4gb3V0cHV0LiBUaGUgcmVhbCBtaW5pbXVtIHZvbHRhZ2UgaW4gUFdNIG1vZGUgc3Rp
-bGwgZGVwZW5kcwo+Pj4gb24gdGhlIENWQiB0YWJsZS4KPj4+Cj4+PiBTbyBtYXliZSBjaGFuZ2Ug
-dGhpcyBvbmUgdG8gJ252aWRpYSxwd20tb2Zmc2V0LXV2Jy4KPj4KPj4gU28gaXMgdGhpcyB0aGUg
-bWluIHN1cHBvcnRlZCBieSB0aGUgUE1JQz8gTWF5YmUgdGhlIG5hbWUgc2hvdWxkIHJlZmxlY3QK
-Pj4gdGhhdCBiZWNhdXNlIHRoZSBhYm92ZSBuYW1lIGRvZXMgbm90IHJlZmxlY3QgdGhpcy4gRnVy
-dGhlcm1vcmUsIGlmIHRoaXMKPj4gaXMgYSBtaW4gdGhlbiBtYXliZSB0aGUgbmFtZSBzaG91bGQg
-dXNlICdtaW4nIGFzIG9wcG9zZWQgdG8gJ29mZnNldCcuCj4+IGZvciBleGFtcGxlLCAnbnZpZGlh
-LHB3bS1wbWljLW1pbi1taWNyb3ZvbHRzJy4KPj4KPj4gRG9lcyB0aGlzIG5lZWQgdG8gYmUgZGVz
-Y3JpYmVkIGluIERULCBjYW4gaXQgbm90IGJlIHF1ZXJpZWQgZnJvbSB0aGUKPj4gUE1JQz8KPj4K
-PiBZZXMsIGVpdGhlciB3YXkgbmVlZHMgdG8gZ28gd2l0aCBEVC4gVGhlIHZlcnkgaW5pdGlhbCBw
-YXRjaHNldCBmb3IKPiBERkxMLVBXTSBzdXBwb3J0LCB3aGljaCBpbnRyb2R1Y2VkIGEgcmVkdW5k
-YW50IHB3bS1kZmxsIGRyaXZlci4gQW5kIHdpdGgKPiB0aGUgZHJpdmVyLCB3ZSBjYW4gZGVzY3Jp
-YmUgdGhlIFBXTSB2ZGQtY3B1IHJlZ3VsYXRvciBpbiBEVCB3aXRoIHRoZQo+IHZvbHRhZ2UgdGFi
-bGUgdGhhdCB0aGUgUE1JQyBjYW4gb3V0cHV0LiBCdXQgTkFLZWQgYnkgcmV2aWV3ZXIuCj4gCj4g
-T2theSwgJ252aWRpYSxwd20tcG1pYy1taW4tbWljcm92b2x0cycgbG9va3MgZmluZS4gVGhhbmtz
-Lgo+IAo+IFsxXTogaHR0cHM6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC82MTM1MjQvCgpU
-aGllcnJ5LCB3aGF0IGFyZSB5b3VyIHRob3VnaHRzIGhlcmU/IEkgZ3Vlc3MgeW91IGhhZCBhc2tl
-ZCBpbml0aWFsbHkKd2h5IHdlIG5lZWRlZCBhIHBoYW5kbGUgdG8gdGhlIFBNSUMuIFNlZW1zIHdl
-IG5lZWQgdG8gY29tcHJlaGVuZCB0aGUgbWluCnZvbHRhZ2Ugc3VwcG9ydGVkIGJ5IHRoZSBQTUlD
-IGZvciBjcmVhdGluZyB0aGUgTFVULgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGljCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVs
-IG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
-L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+
+--===============2923097026040702380==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+Content-Disposition: inline
+
+
+--ZGiS0Q5IWpPtfppv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Dec 08, 2018 at 11:39:05AM +0530, Jassi Brar wrote:
+> On Fri, Dec 7, 2018 at 5:02 PM Thierry Reding <thierry.reding@gmail.com> =
+wrote:
+> >
+> > On Thu, Dec 06, 2018 at 11:56:25PM -0600, Jassi Brar wrote:
+> > > On Thu, Nov 29, 2018 at 9:23 AM Thierry Reding <thierry.reding@gmail.=
+com> wrote:
+> > > >
+> > > > On Wed, Nov 28, 2018 at 11:23:36PM -0600, Jassi Brar wrote:
+> > > > > On Wed, Nov 28, 2018 at 3:43 AM Jon Hunter <jonathanh@nvidia.com>=
+ wrote:
+> > > > > >
+> > > > > >
+> > > > > > On 12/11/2018 15:18, Thierry Reding wrote:
+> > > > > > > From: Thierry Reding <treding@nvidia.com>
+> > > > > > >
+> > > > > > > The mailbox framework supports blocking transfers via complet=
+ions for
+> > > > > > > clients that can sleep. In order to support blocking transfer=
+s in cases
+> > > > > > > where the transmission is not permitted to sleep, add a new -=
+>flush()
+> > > > > > > callback that controller drivers can implement to busy loop u=
+ntil the
+> > > > > > > transmission has been completed. This will automatically be c=
+alled when
+> > > > > > > available and interrupts are disabled for clients that reques=
+t blocking
+> > > > > > > transfers.
+> > > > > > >
+> > > > > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > > > > ---
+> > > > > > >  drivers/mailbox/mailbox.c          | 8 ++++++++
+> > > > > > >  include/linux/mailbox_controller.h | 4 ++++
+> > > > > > >  2 files changed, 12 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mail=
+box.c
+> > > > > > > index 674b35f402f5..0eaf21259874 100644
+> > > > > > > --- a/drivers/mailbox/mailbox.c
+> > > > > > > +++ b/drivers/mailbox/mailbox.c
+> > > > > > > @@ -267,6 +267,14 @@ int mbox_send_message(struct mbox_chan *=
+chan, void *mssg)
+> > > > > > >               unsigned long wait;
+> > > > > > >               int ret;
+> > > > > > >
+> > > > > > > +             if (irqs_disabled() && chan->mbox->ops->flush) {
+> > > > > > > +                     ret =3D chan->mbox->ops->flush(chan, ch=
+an->cl->tx_tout);
+> > > > > > > +                     if (ret < 0)
+> > > > > > > +                             tx_tick(chan, ret);
+> > > > > > > +
+> > > > > > > +                     return ret;
+> > > > > > > +             }
+> > > > > >
+> > > > > > It seems to me that if mbox_send_message() is called from an at=
+omic
+> > > > > > context AND tx_block is true, then if 'flush' is not populated =
+this
+> > > > > > should be an error condition as we do not wish to call
+> > > > > > wait_for_completion from an atomic context.
+> > > > > >
+> > > > > > I understand that there is some debate about adding such flush =
+support,
+> > > > > > but irrespective of the above change, it seems to me that if the
+> > > > > > mbox_send_message() can be called from an atomic context (which=
+ it
+> > > > > > appears to), then it should be detecting if someone is trying t=
+o do so
+> > > > > > with 'tx_block' set as this should be an error.
+> > > > > >
+> > > > > Layers within kernel space have to trust each other. A badly writ=
+ten
+> > > > > client can break the consumer in so many ways, we can not catch e=
+very
+> > > > > possibility.
+> > > > >
+> > > > > > Furthermore, if the underlying mailbox driver can support sendi=
+ng a
+> > > > > > message from an atomic context and busy wait until it is done, =
+surely
+> > > > > > the mailbox framework should provide a means to support this?
+> > > > > >
+> > > > > Being able to put the message on bus in atomic context is a featu=
+re -
+> > > > > which we do support. But busy-waiting in a loop is not a feature,=
+ and
+> > > > > we don't want to encourage that.
+> > > >
+> > > > I agree that in generally busy-waiting is a bad idea and shouldn't =
+be
+> > > > encouraged. However, I also think that an exception proves the rule=
+=2E If
+> > > > you look at the console drivers in drivers/tty/serial, all of them =
+will
+> > > > busy loop prior to or after sending a character. This is pretty much
+> > > > part of the API and as such busy-looping is very much a feature.
+> > > >
+> > > > The reason why this is done is because on one hand we have an atomic
+> > > > context and on the other hand we want to make sure that all charact=
+ers
+> > > > actually make it to the console when we print them.
+> > > >
+> > > > As an example how this can break, I've taken your suggestion to
+> > > > implement a producer/consumer mode in the TCU driver where the cons=
+ole
+> > > > write function will just stash characters into a circular buffer an=
+d a
+> > > > work queue will then use mbox_send_message() to drain the circular
+> > > > buffer. While this does work on the surface, I was able to concern =
+both
+> > > > of the issues that I was concerned about: 1) it is easy to overflow=
+ the
+> > > > circular buffer by just dumping enough data at once to the console =
+and
+> > > > 2) when a crash happens, everything in the kernel stops, including =
+the
+> > > > consumer workqueue that is supposed to drain the circular buffer and
+> > > > flush messages to the TCU. The result is that, in my particular cas=
+e,
+> > > > the boot log will just stop at a random place in the middle of mess=
+ages
+> > > > from much earlier in the boot because the TCU hasn't caught up yet =
+and
+> > > > there's a lot of characters still in the circular buffer.
+> > > >
+> > > > Now, 1) can be mitigated by increasing the circular buffer size. A =
+value
+> > > > that seems to give reliably good results in 2 << CONFIG_LOG_BUF_SHI=
+FT.
+> > > >
+> > > Yes please.
+> >
+> > As I explained elsewhere, I actually went and implemented this. But
+> > given the nature of buffering, this ends up making the TCU completely
+> > useless as a console because in case of a crash, the system will stop
+> > working with a large number of characters still stuck in the buffer.
+> > And that's especially bad in case of a crash because those last
+> > characters that get stuck in the buffer are the most relevant ones
+> > because they contain the stack dump.
+> >
+> I don't question the utility of TCU. I just wonder if mailbox api
+> should provide a backdoor for atomic busy-wait in order to support a
+> sub-optimal hw+fw design.
+>=20
+> > > > I thought that I could also mitigate 2) by busy looping in the TCU =
+driver,
+> > > > but it turns out that that doesn't work. The reason is that since w=
+e are
+> > > > in atomic context with all interrupts disabled, the mailbox won't e=
+ver
+> > > > consume any new characters, so the read pointer in the circular buf=
+fer
+> > > > won't increment, leaving me with no condition upon which to loop th=
+at
+> > > > would work.
+> > > >
+> > > So you want to be able to rely on an emulated console (running on a
+> > > totally different subsystem) to dump development-phase early-boot
+> > > logs? At the cost of legitimizing busy looping in atomic context - one
+> > > random driver messing up the api for ever. Maybe you could have the
+> > > ring buffer in some shmem and only pass the number of valid characters
+> > > in it, to the remote?
+> >
+> > First of all, this is not about development-phase early-boot messages.
+> > We're talking about the system console here. This is what everyone will
+> > want to be using when developing on this device. Sure at some point you
+> > may end up with a system that works and you can have the console on the
+> > network or an attached display or whatever, but even then you may still
+> > want to attach to the console if you ever run into issues where the
+> > system doesn't come up.
+> >
+> > Secondly, I don't understand why you think this is an emulated console.
+> >
+> It is emulated/virtual because Linux doesn't put characters on a
+> physical bus. The data is simply handed forward to a remote entity.
+
+Okay, I understand. However, from a kernel point of view there's no
+difference between the TCU and any physical UART. Once the data is
+handed to the TCU TX mailbox, it's out of control of the TCU driver.
+Whether there's a real UART behind that or some remote processor that
+reads the data isn't really relevant.
+
+> > Lastly, I don't understand why you think we're messing up the API here.
+> > The proposal in this series doesn't even change any of the API, but it
+> > makes it aware of the state of interrupts internally so that it can do
+> > the right thing depending on the call stack. The other proposal, in v3,
+> > is more explicit in that it adds new API to flush the mailbox. The new
+> > API is completely optional and I even offered to document it as being
+> > discouraged because it involves busy looping. At the same time it does
+> > solve a real problem and it doesn't impact any existing mailbox drivers
+> > nor any of their users (because it is completely opt-in).
+> >
+> The 'flush' api is going to have no use other than implement
+> busy-waits. I am afraid people are simply going to take it easy and
+> copy the busy-waits from the test/verification codes.
+> "discouraging" seldom works because the developer comes with the
+> failproof excuse "the h/w doesn't provide any other way". Frankly I
+> would like to push back on such designs.
+
+I certainly approve of that stance.
+
+However, I'd like to reiterate that the TCU design does in fact support
+"another way". If you look at the mailbox driver implementation (in the
+drivers/mailbox/tegra-hsp.c driver), you'll see that it does support an
+interrupt driven mode. After you had reviewed Mikko's earliest proposal
+that was indeed implementing busy looping exclusively we both set out
+to properly implement interrupt support. This took quite a while to do
+because of some gaps in the documentation, but we eventually got it to
+work properly. And then it was discovered that it was all a waste of
+effort because the console driver couldn't make use of it anyway. Well,
+I should say "waste of effort" because I'm still happy that the proper
+implementation exists and we can use it under the right circumstances.
+
+So, at least in this particular case, it is not the hardware or firmware
+design that's flawed or was taking any shortcuts. It's really just the
+particular use-case of the console that doesn't allow us to make use of
+the right implementation, which is why we have to resort to the inferior
+method of busy-looping.
+
+>  Anyways, let us add the new 'flush' api.
+
+Great, thanks!
+
+Thierry
+
+--ZGiS0Q5IWpPtfppv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwON1kACgkQ3SOs138+
+s6GOtxAAnS2OHTZMcpgfVOZJpbp0CQWtB4D/7DwbIQUg5WmCqAnzubVM8HdjtPM6
+cN1tQTIwF9oZJAKAfaX91mkOzSkZrhkDW0x6ImtzYbsrLk8nV31hScUCus3W1Vf4
+iwrlfzztdyz0FPgchbJZ/UpX0TOuVQ0ME4HDnLVW9+uYfc/2jPL+LfN370F644IJ
+xNDaUktGPE08JeKQDta1z0LPTAftlvYzJvaN3XkYZfQLiAWtFpp71Zc0FMQzVDp0
+BBq3/VP7TqLWJxZwt44tXDP1qfu/lFDlrAfPiszMGAtKrFJMLwUBgK1VWWVDkW+3
+EOQ7t3p0bxhwoxgNlzZksIYNMJn7efDwpEBXYcUenIujX0JHTlePJ/P/aqb8LHcJ
+3MTNNoOJawLszZIUak8u9lpHy0KAwcVPHNQ+843WKpVp7EGp0PceqyHHEfZnurDX
+B2K1j7EAYCu7L8jRMiGejQUkVS/kNaVlMavlCKZGgGXiapRaTXtjfyjFv+m+IUQD
+azr6fNGCP060mN6SDWbWj/LZWg/hmqToIS9STcsfo+7WB+jo3qZ7hJNrD2+TDYlB
+BKsjIP1f0L/5AO3RmTIgIZzWGPFg2lRqcI7lQHohLAVBT++v83rgpl8fdEYI01QY
+oJh79IvIJpzNiab0BUbzbfXQv7+ENg/MEwvCCFHnu1DsaNdAgPo=
+=lut4
+-----END PGP SIGNATURE-----
+
+--ZGiS0Q5IWpPtfppv--
+
+
+--===============2923097026040702380==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2923097026040702380==--
