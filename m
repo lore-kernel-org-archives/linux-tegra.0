@@ -1,57 +1,25 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: TK1: DRM, Nouveau and VIC
-Date: Mon, 10 Dec 2018 16:38:26 +0000
-Message-ID: <1cc57f2d95988965bae649a68f020b4a566625aa.camel@toradex.com>
-References: <0c2db0d1c102a4f5a441f8e5a90f6793f329ada7.camel@toradex.com>
- <20181210102147.GF15154@ulmo> <20181210110056.GL15154@ulmo>
- <49ea16ae9b500551a68b001ed7ce064b2591fd04.camel@toradex.com>
- <20181210162317.GA4789@ulmo>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v1 1/3] clk: tegra: get rid of duplicate defines
+Date: Mon, 10 Dec 2018 11:10:11 -0800
+Message-ID: <154446901163.17204.6201169407993786107@swboyd.mtv.corp.google.com>
+References: <20181101015230.27310-1-marcel@ziswiler.com> <20181101015230.27310-2-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181210162317.GA4789@ulmo>
-Content-Language: en-US
-Content-ID: <0C0A1212DDA4B34C812B0DF6136CDE68@eurprd05.prod.outlook.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "bskeggs@redhat.com" <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181101015230.27310-2-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry
+Quoting Marcel Ziswiler (2018-10-31 18:52:28)
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
+> Get rid of 3 duplicate defines.
+>=20
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
+> ---
 
-On Mon, 2018-12-10 at 17:23 +0100, Thierry Reding wrote:
-
-Snip.
-
-> > Looks like with pci_disable_device() it may take a rather strange
-> > path...
-> 
-> Yikes... it has no business at all calling pci_disable_device() on
-> Tegra. Unless if you happen to have a GPU plugged into the PCIe slot.
-> I'm assuming that's not what you're doing?
-
-Nope, I only have a Wi-Fi card behind a PCIe switch though (;-p).
-
-> I'll see if I can reproduce (and fix) that crash on unload.
-> Admittedly
-> it's not something that I regularly test. Perhaps that's something
-> that
-> I should change...
-
-Don't worry. After a couple of years working on this I happen to try
-this the first time myself just now (;-p).
-
-> Thierry
-
-Cheers
-
-Marcel
+Applied to clk-next
