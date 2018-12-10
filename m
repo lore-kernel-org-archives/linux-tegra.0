@@ -1,78 +1,57 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] drm/tegra: Refactor CEC support
-Date: Mon, 10 Dec 2018 17:34:54 +0100
-Message-ID: <20181210163455.13627-1-thierry.reding@gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: TK1: DRM, Nouveau and VIC
+Date: Mon, 10 Dec 2018 16:38:26 +0000
+Message-ID: <1cc57f2d95988965bae649a68f020b4a566625aa.camel@toradex.com>
+References: <0c2db0d1c102a4f5a441f8e5a90f6793f329ada7.camel@toradex.com>
+ <20181210102147.GF15154@ulmo> <20181210110056.GL15154@ulmo>
+ <49ea16ae9b500551a68b001ed7ce064b2591fd04.camel@toradex.com>
+ <20181210162317.GA4789@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181210162317.GA4789@ulmo>
+Content-Language: en-US
+Content-ID: <0C0A1212DDA4B34C812B0DF6136CDE68@eurprd05.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "bskeggs@redhat.com" <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCk1vc3Qgb2YgdGhlIENF
-QyBzdXBwb3J0IGNvZGUgYWxyZWFkeSBsaXZlcyBpbiB0aGUgIm91dHB1dCIgbGlicmFyeSBjb2Rl
-LgpNb3ZlIHJlZ2lzdHJhdGlvbiBhbmQgdW5yZWdpc3RyYXRpb24gdG8gdGhlIGxpYnJhcnkgY29k
-ZSBhcyB3ZWxsIHRvIG1ha2UKdXNlIG9mIHRoZSBzYW1lIGNvZGUgd2l0aCBIRE1JIG9uIFRlZ3Jh
-MjEwIGFuZCBsYXRlciB2aWEgdGhlIFNPUi4KClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5n
-IDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oICAg
-IHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgICB8ICA5IC0tLS0tLS0tLQog
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jIHwgMTEgKysrKysrKysrLS0KIDMgZmlsZXMg
-Y2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5o
-CmluZGV4IDAxOTg2MmE0MWNiNC4uZGJjOWUxMWIwYWVjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvZHJtLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCkBAIC0x
-MzIsNyArMTMyLDcgQEAgc3RydWN0IHRlZ3JhX291dHB1dCB7CiAJc3RydWN0IGRybV9wYW5lbCAq
-cGFuZWw7CiAJc3RydWN0IGkyY19hZGFwdGVyICpkZGM7CiAJY29uc3Qgc3RydWN0IGVkaWQgKmVk
-aWQ7Ci0Jc3RydWN0IGNlY19ub3RpZmllciAqbm90aWZpZXI7CisJc3RydWN0IGNlY19ub3RpZmll
-ciAqY2VjOwogCXVuc2lnbmVkIGludCBocGRfaXJxOwogCWludCBocGRfZ3BpbzsKIAllbnVtIG9m
-X2dwaW9fZmxhZ3MgaHBkX2dwaW9fZmxhZ3M7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwppbmRleCAwMDgyNDY4
-ZjcwM2MuLmQxOTk3Mzk0NTYxNCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hk
-bWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCkBAIC0yMiw4ICsyMiw2IEBA
-CiAKICNpbmNsdWRlIDxzb3VuZC9oZGFfdmVyYnMuaD4KIAotI2luY2x1ZGUgPG1lZGlhL2NlYy1u
-b3RpZmllci5oPgotCiAjaW5jbHVkZSAiaGRtaS5oIgogI2luY2x1ZGUgImRybS5oIgogI2luY2x1
-ZGUgImRjLmgiCkBAIC0xNzA5LDEwICsxNzA3LDYgQEAgc3RhdGljIGludCB0ZWdyYV9oZG1pX3By
-b2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCXJldHVybiBQVFJfRVJSKGhkbWkt
-PnZkZCk7CiAJfQogCi0JaGRtaS0+b3V0cHV0Lm5vdGlmaWVyID0gY2VjX25vdGlmaWVyX2dldCgm
-cGRldi0+ZGV2KTsKLQlpZiAoaGRtaS0+b3V0cHV0Lm5vdGlmaWVyID09IE5VTEwpCi0JCXJldHVy
-biAtRU5PTUVNOwotCiAJaGRtaS0+b3V0cHV0LmRldiA9ICZwZGV2LT5kZXY7CiAKIAllcnIgPSB0
-ZWdyYV9vdXRwdXRfcHJvYmUoJmhkbWktPm91dHB1dCk7CkBAIC0xNzcxLDkgKzE3NjUsNiBAQCBz
-dGF0aWMgaW50IHRlZ3JhX2hkbWlfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
-CiAKIAl0ZWdyYV9vdXRwdXRfcmVtb3ZlKCZoZG1pLT5vdXRwdXQpOwogCi0JaWYgKGhkbWktPm91
-dHB1dC5ub3RpZmllcikKLQkJY2VjX25vdGlmaWVyX3B1dChoZG1pLT5vdXRwdXQubm90aWZpZXIp
-OwotCiAJcmV0dXJuIDA7CiB9CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9v
-dXRwdXQuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRwdXQuYwppbmRleCBjNjYyZWZjN2U0
-MTMuLjljMmI5ZGFkNTVjMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1
-dC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRwdXQuYwpAQCAtMzYsNyArMzYsNyBA
-QCBpbnQgdGVncmFfb3V0cHV0X2Nvbm5lY3Rvcl9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0
-b3IgKmNvbm5lY3RvcikKIAllbHNlIGlmIChvdXRwdXQtPmRkYykKIAkJZWRpZCA9IGRybV9nZXRf
-ZWRpZChjb25uZWN0b3IsIG91dHB1dC0+ZGRjKTsKIAotCWNlY19ub3RpZmllcl9zZXRfcGh5c19h
-ZGRyX2Zyb21fZWRpZChvdXRwdXQtPm5vdGlmaWVyLCBlZGlkKTsKKwljZWNfbm90aWZpZXJfc2V0
-X3BoeXNfYWRkcl9mcm9tX2VkaWQob3V0cHV0LT5jZWMsIGVkaWQpOwogCWRybV9jb25uZWN0b3Jf
-dXBkYXRlX2VkaWRfcHJvcGVydHkoY29ubmVjdG9yLCBlZGlkKTsKIAogCWlmIChlZGlkKSB7CkBA
-IC03Myw3ICs3Myw3IEBAIHRlZ3JhX291dHB1dF9jb25uZWN0b3JfZGV0ZWN0KHN0cnVjdCBkcm1f
-Y29ubmVjdG9yICpjb25uZWN0b3IsIGJvb2wgZm9yY2UpCiAJfQogCiAJaWYgKHN0YXR1cyAhPSBj
-b25uZWN0b3Jfc3RhdHVzX2Nvbm5lY3RlZCkKLQkJY2VjX25vdGlmaWVyX3BoeXNfYWRkcl9pbnZh
-bGlkYXRlKG91dHB1dC0+bm90aWZpZXIpOworCQljZWNfbm90aWZpZXJfcGh5c19hZGRyX2ludmFs
-aWRhdGUob3V0cHV0LT5jZWMpOwogCiAJcmV0dXJuIHN0YXR1czsKIH0KQEAgLTE3NCwxMSArMTc0
-LDE4IEBAIGludCB0ZWdyYV9vdXRwdXRfcHJvYmUoc3RydWN0IHRlZ3JhX291dHB1dCAqb3V0cHV0
-KQogCQlkaXNhYmxlX2lycShvdXRwdXQtPmhwZF9pcnEpOwogCX0KIAorCW91dHB1dC0+Y2VjID0g
-Y2VjX25vdGlmaWVyX2dldChvdXRwdXQtPmRldik7CisJaWYgKCFvdXRwdXQtPmNlYykKKwkJcmV0
-dXJuIC1FTk9NRU07CisKIAlyZXR1cm4gMDsKIH0KIAogdm9pZCB0ZWdyYV9vdXRwdXRfcmVtb3Zl
-KHN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91dHB1dCkKIHsKKwlpZiAob3V0cHV0LT5jZWMpCisJCWNl
-Y19ub3RpZmllcl9wdXQob3V0cHV0LT5jZWMpOworCiAJaWYgKGdwaW9faXNfdmFsaWQob3V0cHV0
-LT5ocGRfZ3BpbykpIHsKIAkJZnJlZV9pcnEob3V0cHV0LT5ocGRfaXJxLCBvdXRwdXQpOwogCQln
-cGlvX2ZyZWUob3V0cHV0LT5ocGRfZ3Bpbyk7Ci0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Thierry
+
+On Mon, 2018-12-10 at 17:23 +0100, Thierry Reding wrote:
+
+Snip.
+
+> > Looks like with pci_disable_device() it may take a rather strange
+> > path...
+> 
+> Yikes... it has no business at all calling pci_disable_device() on
+> Tegra. Unless if you happen to have a GPU plugged into the PCIe slot.
+> I'm assuming that's not what you're doing?
+
+Nope, I only have a Wi-Fi card behind a PCIe switch though (;-p).
+
+> I'll see if I can reproduce (and fix) that crash on unload.
+> Admittedly
+> it's not something that I regularly test. Perhaps that's something
+> that
+> I should change...
+
+Don't worry. After a couple of years working on this I happen to try
+this the first time myself just now (;-p).
+
+> Thierry
+
+Cheers
+
+Marcel
