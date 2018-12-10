@@ -1,148 +1,64 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-Date: Tue, 11 Dec 2018 11:16:41 +0200
-Message-ID: <20181211091641.GB29064@pdeschrijver-desktop.Nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-2-josephl@nvidia.com>
- <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
- <46b5eafa-00a0-1d91-1f4d-97ab119fcf21@nvidia.com>
- <e61b1da8-78cd-c3d4-9878-c25fd9c89ba3@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [RFC PATCH v1] drm/tegra: vic: Defer firmware loading until it is
+ really needed
+Date: Mon, 10 Dec 2018 15:03:38 +0300
+Message-ID: <20181210120338.29288-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <e61b1da8-78cd-c3d4-9878-c25fd9c89ba3@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Mikko Perttunen <cyndis@kapsi.fi>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 08:59:10AM +0000, Jon Hunter wrote:
-> =
-
-> On 10/12/2018 08:49, Joseph Lo wrote:
-> > Hi Jon,
-> > =
-
-> > Thanks for reviewing this series.
-> > =
-
-> > On 12/7/18 9:41 PM, Jon Hunter wrote:
-> >>
-> >> On 04/12/2018 09:25, Joseph Lo wrote:
-> >>> From: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>>
-> >>> Add new properties to configure the DFLL PWM regulator support. Also
-> >>> add an example and make the I2C clock only required when I2C support =
-is
-> >>> used.
-> >>>
-> >>> Cc: devicetree@vger.kernel.org
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> >>> ---
-> >>> =A0 .../bindings/clock/nvidia,tegra124-dfll.txt=A0=A0 | 73 ++++++++++=
-++++++++-
-> >>> =A0 1 file changed, 71 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git
-> >>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> >>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> >>> index dff236f524a7..8c97600d2bad 100644
-> >>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> >>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> >>> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running
-> >>> voltage controlled
-> >>> =A0 oscillator connected to the CPU voltage rail (VDD_CPU), and a
-> >>> closed loop
-> >>> =A0 control module that will automatically adjust the VDD_CPU voltage=
- by
-> >>> =A0 communicating with an off-chip PMIC either via an I2C bus or via
-> >>> PWM signals.
-> >>> -Currently only the I2C mode is supported by these bindings.
-> >>> =A0 =A0 Required properties:
-> >>> =A0 - compatible : should be "nvidia,tegra124-dfll"
-> >>> @@ -45,10 +44,28 @@ Required properties for the control loop paramete=
-rs:
-> >>> =A0 Optional properties for the control loop parameters:
-> >>> =A0 - nvidia,cg-scale: Boolean value, see the field
-> >>> DFLL_PARAMS_CG_SCALE in the TRM.
-> >>> =A0 +Optional properties for mode selection:
-> >>> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
-> >>> +
-> >>> =A0 Required properties for I2C mode:
-> >>> =A0 - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
-> >>> =A0 -Example:
-> >>> +Required properties for PWM mode:
-> >>> +- nvidia,pwm-period: period of PWM square wave in microseconds.
-> >>> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control
-> >>> is disabled.
-> >>
-> >> Maybe consider 'pwm-inactive-voltage-microvolt'.
-> > Ah, I think I need to refine the description here. It should be
-> > something like below.
-> > =A0- nvidia,pwm-init-microvolt : Regulator voltage in micro volts when =
-PWM
-> > control is initialized
-> > =
-
-> > This is the initial voltage that when we just initialize the DFLL
-> > hardware for PWM output. And before we switch the CPU clock from PLLX to
-> > DFLL, we will enable DFLL hardware in closed loop mode which will aplly
-> > the DVFS table that was calculated from CVB table.
-> > =
-
-> > The original description maybe make you think that it's the working
-> > voltage when it's under open-loop mode. But it's not. Sorry.
-> > =
-
-> > When we working on open-loop mode which will switch to low voltage range
-> > which also follows the DVFS table. Not this one.
-> =
-
-> OK, but I am still not sure what this voltage is. I mean that I
-> understand it is the initial voltage, but how exactly do we define this
-> number? Where does it come from, how is this determined?
-> =
-
-
-It is set by a resistive divider on the board iirc.
-
-> >>
-> >>> +- nvidia,align-offset-uv: Regulator voltage in micro volts when PWM
-> >>> control is
-> >>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enabled and PWM output is lo=
-w.
-> >>
-> >> Would this be considered the minimum pwm active voltage?
-> > This would be used for minimum voltage for LUT table, which is the table
-> > that PMIC can output. The real minimum voltage in PWM mode still depends
-> > on the CVB table.
-> > =
-
-> > So maybe change this one to 'nvidia,pwm-offset-uv'.
-> =
-
-> So is this the min supported by the PMIC? Maybe the name should reflect
-> that because the above name does not reflect this. Furthermore, if this
-> is a min then maybe the name should use 'min' as opposed to 'offset'.
-> for example, 'nvidia,pwm-pmic-min-microvolts'.
-> =
-
-> Does this need to be described in DT, can it not be queried from the PMIC?
-> =
-
-
-There is no interface to query anything from the OVR regulator.
-
-Peter.
+RFJNIGRyaXZlciBmYWlscyB0byBsb2FkIGlmIFZJQyBmaXJtd2FyZSBpcyBtaXNzaW5nLCBsZXQn
+cyBkZWZlciB0aGUKZmlybXdhcmUgbG9hZGluZyB1bnRpbCBpdCBpcyByZWFsbHkgbmVlZGVkLiBU
+aGlzIGVsaW1pbmF0ZXMgdGhlIG5lZWQKdG8gaGF2ZSBpbml0cmQgd2l0aCB0aGUgZmlybXdhcmUg
+aWYgRFJNIGRyaXZlciBpcyBjb21waWxlZCBhcyBidWlsdC1pbi4KClNpZ25lZC1vZmYtYnk6IERt
+aXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVn
+cmEvdmljLmMgfCA0MyArKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tCiAxIGZp
+bGUgY2hhbmdlZCwgMzIgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Zp
+Yy5jCmluZGV4IGQ0Nzk4M2RlYjFjZi4uZWZiNzVmMjkwZmYwIDEwMDY0NAotLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vdGVncmEvdmljLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jCkBA
+IC05Niw2ICs5NiwzNCBAQCBzdGF0aWMgaW50IHZpY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRl
+dmljZSAqZGV2KQogCXJldHVybiAwOwogfQogCitzdGF0aWMgaW50IHZpY19sb2FkX2Zpcm13YXJl
+KHN0cnVjdCB2aWMgKnZpYykKK3sKKwlzdHJ1Y3QgaG9zdDF4X2NsaWVudCAqY2xpZW50ID0gJnZp
+Yy0+Y2xpZW50LmJhc2U7CisJc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IGRldl9nZXRfZHJ2ZGF0
+YShjbGllbnQtPnBhcmVudCk7CisJc3RydWN0IHRlZ3JhX2RybSAqdGVncmEgPSBkZXYtPmRldl9w
+cml2YXRlOworCWludCBlcnI7CisKKwlpZiAodmljLT5mYWxjb24uZGF0YSkKKwkJcmV0dXJuIDA7
+CisKKwl2aWMtPmZhbGNvbi5kYXRhID0gdGVncmE7CisKKwllcnIgPSBmYWxjb25fcmVhZF9maXJt
+d2FyZSgmdmljLT5mYWxjb24sIHZpYy0+Y29uZmlnLT5maXJtd2FyZSk7CisJaWYgKGVyciA8IDAp
+CisJCWdvdG8gZXJyX2NsZWFudXA7CisKKwllcnIgPSBmYWxjb25fbG9hZF9maXJtd2FyZSgmdmlj
+LT5mYWxjb24pOworCWlmIChlcnIgPCAwKQorCQlnb3RvIGVycl9jbGVhbnVwOworCisJcmV0dXJu
+IDA7CisKK2Vycl9jbGVhbnVwOgorCXZpYy0+ZmFsY29uLmRhdGEgPSBOVUxMOworCisJcmV0dXJu
+IGVycjsKK30KKwogc3RhdGljIGludCB2aWNfYm9vdChzdHJ1Y3QgdmljICp2aWMpCiB7CiAJdTMy
+IGZjZV91Y29kZV9zaXplLCBmY2VfYmluX2RhdGFfb2Zmc2V0OwpAQCAtMTA1LDYgKzEzMywxMCBA
+QCBzdGF0aWMgaW50IHZpY19ib290KHN0cnVjdCB2aWMgKnZpYykKIAlpZiAodmljLT5ib290ZWQp
+CiAJCXJldHVybiAwOwogCisJZXJyID0gdmljX2xvYWRfZmlybXdhcmUodmljKTsKKwlpZiAoZXJy
+IDwgMCkKKwkJcmV0dXJuIGVycjsKKwogCS8qIHNldHVwIGNsb2NrZ2F0aW5nIHJlZ2lzdGVycyAq
+LwogCXZpY193cml0ZWwodmljLCBDR19JRExFX0NHX0RMWV9DTlQoNCkgfAogCQkJQ0dfSURMRV9D
+R19FTiB8CkBAIC0xODEsMTMgKzIxMyw2IEBAIHN0YXRpYyBpbnQgdmljX2luaXQoc3RydWN0IGhv
+c3QxeF9jbGllbnQgKmNsaWVudCkKIAkJdmljLT5kb21haW4gPSB0ZWdyYS0+ZG9tYWluOwogCX0K
+IAotCWlmICghdmljLT5mYWxjb24uZGF0YSkgewotCQl2aWMtPmZhbGNvbi5kYXRhID0gdGVncmE7
+Ci0JCWVyciA9IGZhbGNvbl9sb2FkX2Zpcm13YXJlKCZ2aWMtPmZhbGNvbik7Ci0JCWlmIChlcnIg
+PCAwKQotCQkJZ290byBkZXRhY2g7Ci0JfQotCiAJdmljLT5jaGFubmVsID0gaG9zdDF4X2NoYW5u
+ZWxfcmVxdWVzdChjbGllbnQtPmRldik7CiAJaWYgKCF2aWMtPmNoYW5uZWwpIHsKIAkJZXJyID0g
+LUVOT01FTTsKQEAgLTM3MiwxMCArMzk3LDYgQEAgc3RhdGljIGludCB2aWNfcHJvYmUoc3RydWN0
+IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlpZiAoZXJyIDwgMCkKIAkJcmV0dXJuIGVycjsKIAot
+CWVyciA9IGZhbGNvbl9yZWFkX2Zpcm13YXJlKCZ2aWMtPmZhbGNvbiwgdmljLT5jb25maWctPmZp
+cm13YXJlKTsKLQlpZiAoZXJyIDwgMCkKLQkJZ290byBleGl0X2ZhbGNvbjsKLQogCXBsYXRmb3Jt
+X3NldF9kcnZkYXRhKHBkZXYsIHZpYyk7CiAKIAlJTklUX0xJU1RfSEVBRCgmdmljLT5jbGllbnQu
+YmFzZS5saXN0KTsKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
