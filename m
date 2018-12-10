@@ -1,77 +1,58 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] host1x: cdma: use completion instead of semaphore
-Date: Mon, 10 Dec 2018 22:51:04 +0100
-Message-ID: <20181210215119.1903413-1-arnd@arndb.de>
+Subject: [PATCH 2/4] ARM: tegra: avoid section mismatch warning
+Date: Mon, 10 Dec 2018 22:58:37 +0100
+Message-ID: <20181210215856.2238253-2-arnd@arndb.de>
+References: <20181210215856.2238253-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mikko Perttunen <cyndis@kapsi.fi>, Dmitry Osipenko <digetx@gmail.com>, Emil Goode <emil.fsw@goode.io>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181210215856.2238253-1-arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-In this usage, the two are completely equivalent, but the
-completion documents better what is going on, and we generally
-try to avoid semaphores these days.
+WARNING: vmlinux.o(.text+0x39ecc): Section mismatch in reference from the function tegra114_gic_cpu_pm_registration() to the (unknown reference) .init.rodata:(unknown)
+The function tegra114_gic_cpu_pm_registration() references
+the (unknown reference) __initconst (unknown).
+This is often because tegra114_gic_cpu_pm_registration lacks a __initconst
+annotation or the annotation of (unknown) is wrong.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/host1x/cdma.c | 6 +++---
- drivers/gpu/host1x/cdma.h | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/mach-tegra/irq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 6bfb3e6f43d7..bdc80a303cec 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -204,7 +204,7 @@ unsigned int host1x_cdma_wait_locked(struct host1x_cdma *cdma,
- 		cdma->event = event;
+diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
+index a69b22d37eed..a186ab663b0b 100644
+--- a/arch/arm/mach-tegra/irq.c
++++ b/arch/arm/mach-tegra/irq.c
+@@ -72,7 +72,7 @@ static const struct of_device_id tegra114_dt_gic_match[] __initconst = {
+ 	{ }
+ };
  
- 		mutex_unlock(&cdma->lock);
--		down(&cdma->sem);
-+		wait_for_completion(&cdma->complete);
- 		mutex_lock(&cdma->lock);
- 	}
+-static void tegra114_gic_cpu_pm_registration(void)
++static void __init tegra114_gic_cpu_pm_registration(void)
+ {
+ 	struct device_node *dn;
  
-@@ -308,7 +308,7 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 
- 	if (signal) {
- 		cdma->event = CDMA_EVENT_NONE;
--		up(&cdma->sem);
-+		complete(&cdma->complete);
- 	}
+@@ -85,7 +85,7 @@ static void tegra114_gic_cpu_pm_registration(void)
+ 	cpu_pm_register_notifier(&tegra_gic_notifier_block);
  }
+ #else
+-static void tegra114_gic_cpu_pm_registration(void) { }
++static void __init tegra114_gic_cpu_pm_registration(void) { }
+ #endif
  
-@@ -410,7 +410,7 @@ int host1x_cdma_init(struct host1x_cdma *cdma)
- 	int err;
- 
- 	mutex_init(&cdma->lock);
--	sema_init(&cdma->sem, 0);
-+	init_completion(&cdma->complete);
- 
- 	INIT_LIST_HEAD(&cdma->sync_queue);
- 
-diff --git a/drivers/gpu/host1x/cdma.h b/drivers/gpu/host1x/cdma.h
-index c628070b94d7..ba790f9bfebc 100644
---- a/drivers/gpu/host1x/cdma.h
-+++ b/drivers/gpu/host1x/cdma.h
-@@ -20,7 +20,7 @@
- #define __HOST1X_CDMA_H
- 
- #include <linux/sched.h>
--#include <linux/semaphore.h>
-+#include <linux/completion.h>
- #include <linux/list.h>
- 
- struct host1x_syncpt;
-@@ -70,7 +70,7 @@ enum cdma_event {
- 
- struct host1x_cdma {
- 	struct mutex lock;		/* controls access to shared state */
--	struct semaphore sem;		/* signalled when event occurs */
-+	struct completion complete;	/* signalled when event occurs */
- 	enum cdma_event event;		/* event that sem is waiting for */
- 	unsigned int slots_used;	/* pb slots used in current submit */
- 	unsigned int slots_free;	/* pb slots free in current submit */
+ static const struct of_device_id tegra_ictlr_match[] __initconst = {
 -- 
 2.20.0
