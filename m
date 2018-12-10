@@ -1,64 +1,131 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for
- PLLs
-Date: Mon, 10 Dec 2018 03:58:36 +0300
-Message-ID: <20181210035836.602757d5@dimatab>
-References: <20180830184210.5369-1-digetx@gmail.com>
-        <20180830184210.5369-2-digetx@gmail.com>
-        <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
-        <1539773948.6233.23.camel@toradex.com>
-        <2a011477-26cb-7e89-a468-54a84465f178@gmail.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
+ binding for PWM regulator
+Date: Mon, 10 Dec 2018 16:49:34 +0800
+Message-ID: <46b5eafa-00a0-1d91-1f4d-97ab119fcf21@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-2-josephl@nvidia.com>
+ <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2a011477-26cb-7e89-a468-54a84465f178@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-=D0=92 Wed, 17 Oct 2018 14:41:35 +0300
-Dmitry Osipenko <digetx@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+Hi Jon,
 
-> On 10/17/18 1:59 PM, Marcel Ziswiler wrote:
-> > On Fri, 2018-08-31 at 12:29 +0300, Peter De Schrijver wrote: =20
-> >> On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote: =20
-> >>> Currently all PLL's on Tegra20 use a hardcoded delay despite of
-> >>> having
-> >>> a lock-status bit. The lock-status polling was disabled ~7 years
-> >>> ago
-> >>> because PLLE was failing to lock and was a suspicion that other
-> >>> PLLs
-> >>> might be faulty too. Other PLLs are okay, hence enable the lock-
-> >>> status
-> >>> polling for them. This reduces delay of any operation that require
-> >>> PLL
-> >>> to lock.
-> >>>
-> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>> ---
-> >>>
-> >>> Changelog:
-> >>>
-> >>> v2:	Don't enable polling for PLLE as it known to not being
-> >>> able to lock.
-> >>> =20
-> >>
-> >> This isn't correct. The lock bit of PLLE can declare lock too
-> >> early, but the
-> >> PLL itself does lock. =20
-> >=20
-> > Is there an errata documenting this? As I could not really find any
-> > mentioning of this anywhere at least up to the v11 from Dec 21,
-> > 2010 I still have access to.
-> >=20
-> > BTW: It looks like also PLLA may not always lock properly with those
-> > changes. Is there anything known about that as well? Here is what I
-> > get on various Colibri T20 modules (while random other ones seem to
-> > work fine): =20
-> Could you please try to increase the timeout value?
+Thanks for reviewing this series.
 
-Hello Marcel,
+On 12/7/18 9:41 PM, Jon Hunter wrote:
+> 
+> On 04/12/2018 09:25, Joseph Lo wrote:
+>> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>
+>> Add new properties to configure the DFLL PWM regulator support. Also
+>> add an example and make the I2C clock only required when I2C support is
+>> used.
+>>
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   .../bindings/clock/nvidia,tegra124-dfll.txt   | 73 ++++++++++++++++++-
+>>   1 file changed, 71 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>> index dff236f524a7..8c97600d2bad 100644
+>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
+>>   oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
+>>   control module that will automatically adjust the VDD_CPU voltage by
+>>   communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+>> -Currently only the I2C mode is supported by these bindings.
+>>   
+>>   Required properties:
+>>   - compatible : should be "nvidia,tegra124-dfll"
+>> @@ -45,10 +44,28 @@ Required properties for the control loop parameters:
+>>   Optional properties for the control loop parameters:
+>>   - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+>>   
+>> +Optional properties for mode selection:
+>> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
+>> +
+>>   Required properties for I2C mode:
+>>   - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
+>>   
+>> -Example:
+>> +Required properties for PWM mode:
+>> +- nvidia,pwm-period: period of PWM square wave in microseconds.
+>> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control is disabled.
+> 
+> Maybe consider 'pwm-inactive-voltage-microvolt'.
+Ah, I think I need to refine the description here. It should be 
+something like below.
+  - nvidia,pwm-init-microvolt : Regulator voltage in micro volts when 
+PWM control is initialized
 
-Do you have any update on the PLL-lock-failure problem?
+This is the initial voltage that when we just initialize the DFLL 
+hardware for PWM output. And before we switch the CPU clock from PLLX to 
+DFLL, we will enable DFLL hardware in closed loop mode which will aplly 
+the DVFS table that was calculated from CVB table.
+
+The original description maybe make you think that it's the working 
+voltage when it's under open-loop mode. But it's not. Sorry.
+
+When we working on open-loop mode which will switch to low voltage range 
+which also follows the DVFS table. Not this one.
+
+> 
+>> +- nvidia,align-offset-uv: Regulator voltage in micro volts when PWM control is
+>> +			  enabled and PWM output is low.
+> 
+> Would this be considered the minimum pwm active voltage?
+This would be used for minimum voltage for LUT table, which is the table 
+that PMIC can output. The real minimum voltage in PWM mode still depends 
+on the CVB table.
+
+So maybe change this one to 'nvidia,pwm-offset-uv'.
+
+> 
+>> +- nvidia,align-step-uv: Voltage increase in micro volts corresponding to a
+>> +			1/33th increase in duty cycle. Eg the voltage for 2/33th
+>> +			duty cycle would be:
+> 
+> Maybe consider 'pwm-voltage-step-microvolt'.
+Okay.
+
+> 
+>> +			nvidia,align-offset-uv + nvidia,align-step-uv * 2.
+>> +- pinctrl-0: I/O pad configuration when PWM control is enabled.
+>> +- pinctrl-1: I/O pad configuration when PWM control is disabled.
+>> +- pinctrl-names: must include the following entries:
+>> +  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+>> +  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
+> 
+> Please see Rob's feedback on the above [0].
+Yes, I did refer that comments in this patch. And fixed that in 
+description but missed for bindings ...
+
+Thanks,
+Joseph
+
+> 
+> Cheers
+> Jon
+> 
+> [0] https://lore.kernel.org/patchwork/patch/885328/
+> 
