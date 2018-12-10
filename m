@@ -1,102 +1,71 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-Date: Mon, 10 Dec 2018 08:59:10 +0000
-Message-ID: <e61b1da8-78cd-c3d4-9878-c25fd9c89ba3@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-2-josephl@nvidia.com>
- <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
- <46b5eafa-00a0-1d91-1f4d-97ab119fcf21@nvidia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
+Date: Mon, 10 Dec 2018 10:04:14 +0100
+Message-ID: <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com> <20181206145547.GA7884@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <46b5eafa-00a0-1d91-1f4d-97ab119fcf21@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181206145547.GA7884@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: evgreen@chromium.org, Georgi Djakov <georgi.djakov@linaro.org>, Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, bjorn.andersson@linaro.org, Amit Kucheria <amit.kucheria@linaro.org>, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, abailon@baylibre.com, maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidia.com, "devicetree@vger.kernel.org" <devicetree@vg>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDEwLzEyLzIwMTggMDg6NDksIEpvc2VwaCBMbyB3cm90ZToKPiBIaSBKb24sCj4gCj4gVGhh
-bmtzIGZvciByZXZpZXdpbmcgdGhpcyBzZXJpZXMuCj4gCj4gT24gMTIvNy8xOCA5OjQxIFBNLCBK
-b24gSHVudGVyIHdyb3RlOgo+Pgo+PiBPbiAwNC8xMi8yMDE4IDA5OjI1LCBKb3NlcGggTG8gd3Jv
-dGU6Cj4+PiBGcm9tOiBQZXRlciBEZSBTY2hyaWp2ZXIgPHBkZXNjaHJpanZlckBudmlkaWEuY29t
-Pgo+Pj4KPj4+IEFkZCBuZXcgcHJvcGVydGllcyB0byBjb25maWd1cmUgdGhlIERGTEwgUFdNIHJl
-Z3VsYXRvciBzdXBwb3J0LiBBbHNvCj4+PiBhZGQgYW4gZXhhbXBsZSBhbmQgbWFrZSB0aGUgSTJD
-IGNsb2NrIG9ubHkgcmVxdWlyZWQgd2hlbiBJMkMgc3VwcG9ydCBpcwo+Pj4gdXNlZC4KPj4+Cj4+
-PiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcKPj4+IFNpZ25lZC1vZmYtYnk6IFBldGVy
-IERlIFNjaHJpanZlciA8cGRlc2NocmlqdmVyQG52aWRpYS5jb20+Cj4+PiBTaWduZWQtb2ZmLWJ5
-OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4KPj4+IC0tLQo+Pj4gwqAgLi4uL2JpbmRp
-bmdzL2Nsb2NrL252aWRpYSx0ZWdyYTEyNC1kZmxsLnR4dMKgwqAgfCA3MyArKysrKysrKysrKysr
-KysrKystCj4+PiDCoCAxIGZpbGUgY2hhbmdlZCwgNzEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
-bnMoLSkKPj4+Cj4+PiBkaWZmIC0tZ2l0Cj4+PiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9jbG9jay9udmlkaWEsdGVncmExMjQtZGZsbC50eHQKPj4+IGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL252aWRpYSx0ZWdyYTEyNC1kZmxsLnR4dAo+Pj4g
-aW5kZXggZGZmMjM2ZjUyNGE3Li44Yzk3NjAwZDJiYWQgMTAwNjQ0Cj4+PiAtLS0gYS9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svbnZpZGlhLHRlZ3JhMTI0LWRmbGwudHh0
-Cj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svbnZpZGlh
-LHRlZ3JhMTI0LWRmbGwudHh0Cj4+PiBAQCAtOCw3ICs4LDYgQEAgdGhlIGZhc3QgQ1BVIGNsdXN0
-ZXIuIEl0IGNvbnNpc3RzIG9mIGEgZnJlZS1ydW5uaW5nCj4+PiB2b2x0YWdlIGNvbnRyb2xsZWQK
-Pj4+IMKgIG9zY2lsbGF0b3IgY29ubmVjdGVkIHRvIHRoZSBDUFUgdm9sdGFnZSByYWlsIChWRERf
-Q1BVKSwgYW5kIGEKPj4+IGNsb3NlZCBsb29wCj4+PiDCoCBjb250cm9sIG1vZHVsZSB0aGF0IHdp
-bGwgYXV0b21hdGljYWxseSBhZGp1c3QgdGhlIFZERF9DUFUgdm9sdGFnZSBieQo+Pj4gwqAgY29t
-bXVuaWNhdGluZyB3aXRoIGFuIG9mZi1jaGlwIFBNSUMgZWl0aGVyIHZpYSBhbiBJMkMgYnVzIG9y
-IHZpYQo+Pj4gUFdNIHNpZ25hbHMuCj4+PiAtQ3VycmVudGx5IG9ubHkgdGhlIEkyQyBtb2RlIGlz
-IHN1cHBvcnRlZCBieSB0aGVzZSBiaW5kaW5ncy4KPj4+IMKgIMKgIFJlcXVpcmVkIHByb3BlcnRp
-ZXM6Cj4+PiDCoCAtIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgIm52aWRpYSx0ZWdyYTEyNC1kZmxs
-Igo+Pj4gQEAgLTQ1LDEwICs0NCwyOCBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciB0aGUgY29u
-dHJvbCBsb29wIHBhcmFtZXRlcnM6Cj4+PiDCoCBPcHRpb25hbCBwcm9wZXJ0aWVzIGZvciB0aGUg
-Y29udHJvbCBsb29wIHBhcmFtZXRlcnM6Cj4+PiDCoCAtIG52aWRpYSxjZy1zY2FsZTogQm9vbGVh
-biB2YWx1ZSwgc2VlIHRoZSBmaWVsZAo+Pj4gREZMTF9QQVJBTVNfQ0dfU0NBTEUgaW4gdGhlIFRS
-TS4KPj4+IMKgICtPcHRpb25hbCBwcm9wZXJ0aWVzIGZvciBtb2RlIHNlbGVjdGlvbjoKPj4+ICst
-IG52aWRpYSxwd20tdG8tcG1pYzogVXNlIFBXTSB0byBjb250cm9sIHJlZ3VsYXRvciByYXRoZXIg
-dGhlbiBJMkMuCj4+PiArCj4+PiDCoCBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciBJMkMgbW9kZToK
-Pj4+IMKgIC0gbnZpZGlhLGkyYy1mcy1yYXRlOiBJMkMgdHJhbnNmZXIgcmF0ZSwgaWYgdXNpbmcg
-ZnVsbCBzcGVlZCBtb2RlLgo+Pj4gwqAgLUV4YW1wbGU6Cj4+PiArUmVxdWlyZWQgcHJvcGVydGll
-cyBmb3IgUFdNIG1vZGU6Cj4+PiArLSBudmlkaWEscHdtLXBlcmlvZDogcGVyaW9kIG9mIFBXTSBz
-cXVhcmUgd2F2ZSBpbiBtaWNyb3NlY29uZHMuCj4+PiArLSBudmlkaWEsaW5pdC11djogUmVndWxh
-dG9yIHZvbHRhZ2UgaW4gbWljcm8gdm9sdHMgd2hlbiBQV00gY29udHJvbAo+Pj4gaXMgZGlzYWJs
-ZWQuCj4+Cj4+IE1heWJlIGNvbnNpZGVyICdwd20taW5hY3RpdmUtdm9sdGFnZS1taWNyb3ZvbHQn
-Lgo+IEFoLCBJIHRoaW5rIEkgbmVlZCB0byByZWZpbmUgdGhlIGRlc2NyaXB0aW9uIGhlcmUuIEl0
-IHNob3VsZCBiZQo+IHNvbWV0aGluZyBsaWtlIGJlbG93Lgo+IMKgLSBudmlkaWEscHdtLWluaXQt
-bWljcm92b2x0IDogUmVndWxhdG9yIHZvbHRhZ2UgaW4gbWljcm8gdm9sdHMgd2hlbiBQV00KPiBj
-b250cm9sIGlzIGluaXRpYWxpemVkCj4gCj4gVGhpcyBpcyB0aGUgaW5pdGlhbCB2b2x0YWdlIHRo
-YXQgd2hlbiB3ZSBqdXN0IGluaXRpYWxpemUgdGhlIERGTEwKPiBoYXJkd2FyZSBmb3IgUFdNIG91
-dHB1dC4gQW5kIGJlZm9yZSB3ZSBzd2l0Y2ggdGhlIENQVSBjbG9jayBmcm9tIFBMTFggdG8KPiBE
-RkxMLCB3ZSB3aWxsIGVuYWJsZSBERkxMIGhhcmR3YXJlIGluIGNsb3NlZCBsb29wIG1vZGUgd2hp
-Y2ggd2lsbCBhcGxseQo+IHRoZSBEVkZTIHRhYmxlIHRoYXQgd2FzIGNhbGN1bGF0ZWQgZnJvbSBD
-VkIgdGFibGUuCj4gCj4gVGhlIG9yaWdpbmFsIGRlc2NyaXB0aW9uIG1heWJlIG1ha2UgeW91IHRo
-aW5rIHRoYXQgaXQncyB0aGUgd29ya2luZwo+IHZvbHRhZ2Ugd2hlbiBpdCdzIHVuZGVyIG9wZW4t
-bG9vcCBtb2RlLiBCdXQgaXQncyBub3QuIFNvcnJ5Lgo+IAo+IFdoZW4gd2Ugd29ya2luZyBvbiBv
-cGVuLWxvb3AgbW9kZSB3aGljaCB3aWxsIHN3aXRjaCB0byBsb3cgdm9sdGFnZSByYW5nZQo+IHdo
-aWNoIGFsc28gZm9sbG93cyB0aGUgRFZGUyB0YWJsZS4gTm90IHRoaXMgb25lLgoKT0ssIGJ1dCBJ
-IGFtIHN0aWxsIG5vdCBzdXJlIHdoYXQgdGhpcyB2b2x0YWdlIGlzLiBJIG1lYW4gdGhhdCBJCnVu
-ZGVyc3RhbmQgaXQgaXMgdGhlIGluaXRpYWwgdm9sdGFnZSwgYnV0IGhvdyBleGFjdGx5IGRvIHdl
-IGRlZmluZSB0aGlzCm51bWJlcj8gV2hlcmUgZG9lcyBpdCBjb21lIGZyb20sIGhvdyBpcyB0aGlz
-IGRldGVybWluZWQ/Cgo+Pgo+Pj4gKy0gbnZpZGlhLGFsaWduLW9mZnNldC11djogUmVndWxhdG9y
-IHZvbHRhZ2UgaW4gbWljcm8gdm9sdHMgd2hlbiBQV00KPj4+IGNvbnRyb2wgaXMKPj4+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlbmFibGVkIGFuZCBQV00gb3V0cHV0IGlzIGxvdy4KPj4K
-Pj4gV291bGQgdGhpcyBiZSBjb25zaWRlcmVkIHRoZSBtaW5pbXVtIHB3bSBhY3RpdmUgdm9sdGFn
-ZT8KPiBUaGlzIHdvdWxkIGJlIHVzZWQgZm9yIG1pbmltdW0gdm9sdGFnZSBmb3IgTFVUIHRhYmxl
-LCB3aGljaCBpcyB0aGUgdGFibGUKPiB0aGF0IFBNSUMgY2FuIG91dHB1dC4gVGhlIHJlYWwgbWlu
-aW11bSB2b2x0YWdlIGluIFBXTSBtb2RlIHN0aWxsIGRlcGVuZHMKPiBvbiB0aGUgQ1ZCIHRhYmxl
-Lgo+IAo+IFNvIG1heWJlIGNoYW5nZSB0aGlzIG9uZSB0byAnbnZpZGlhLHB3bS1vZmZzZXQtdXYn
-LgoKU28gaXMgdGhpcyB0aGUgbWluIHN1cHBvcnRlZCBieSB0aGUgUE1JQz8gTWF5YmUgdGhlIG5h
-bWUgc2hvdWxkIHJlZmxlY3QKdGhhdCBiZWNhdXNlIHRoZSBhYm92ZSBuYW1lIGRvZXMgbm90IHJl
-ZmxlY3QgdGhpcy4gRnVydGhlcm1vcmUsIGlmIHRoaXMKaXMgYSBtaW4gdGhlbiBtYXliZSB0aGUg
-bmFtZSBzaG91bGQgdXNlICdtaW4nIGFzIG9wcG9zZWQgdG8gJ29mZnNldCcuCmZvciBleGFtcGxl
-LCAnbnZpZGlhLHB3bS1wbWljLW1pbi1taWNyb3ZvbHRzJy4KCkRvZXMgdGhpcyBuZWVkIHRvIGJl
-IGRlc2NyaWJlZCBpbiBEVCwgY2FuIGl0IG5vdCBiZSBxdWVyaWVkIGZyb20gdGhlIFBNSUM/CgpD
-aGVlcnMKSm9uCgotLSAKbnZwdWJsaWMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Thu, Dec 6, 2018 at 3:55 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
+> > On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> > >
+> > > Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+> > > graphics, modem). These cores are talking to each other and can generate a
+> > > lot of data flowing through the on-chip interconnects. These interconnect
+> > > buses could form different topologies such as crossbar, point to point buses,
+> > > hierarchical buses or use the network-on-chip concept.
+> > >
+> > > These buses have been sized usually to handle use cases with high data
+> > > throughput but it is not necessary all the time and consume a lot of power.
+> > > Furthermore, the priority between masters can vary depending on the running
+> > > use case like video playback or CPU intensive tasks.
+> > >
+> > > Having an API to control the requirement of the system in terms of bandwidth
+> > > and QoS, so we can adapt the interconnect configuration to match those by
+> > > scaling the frequencies, setting link priority and tuning QoS parameters.
+> > > This configuration can be a static, one-time operation done at boot for some
+> > > platforms or a dynamic set of operations that happen at run-time.
+> > >
+> > > This patchset introduce a new API to get the requirement and configure the
+> > > interconnect buses across the entire chipset to fit with the current demand.
+> > > The API is NOT for changing the performance of the endpoint devices, but only
+> > > the interconnect path in between them.
+> >
+> > For what it's worth, we are ready to land this in Chrome OS. I think
+> > this series has been very well discussed and reviewed, hasn't changed
+> > much in the last few spins, and is in good enough shape to use as a
+> > base for future patches. Georgi's also done a great job reaching out
+> > to other SoC vendors, and there appears to be enough consensus that
+> > this framework will be usable by more than just Qualcomm. There are
+> > also several drivers out on the list trying to add patches to use this
+> > framework, with more to come, so it made sense (to us) to get this
+> > base framework nailed down. In my experiments this is an important
+> > piece of the overall power management story, especially on systems
+> > that are mostly idle.
+> >
+> > I'll continue to track changes to this series and we will ultimately
+> > reconcile with whatever happens upstream, but I thought it was worth
+> > sending this note to express our "thumbs up" towards this framework.
+>
+> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
+> it to the tree if all looks good.
+
+I'm honestly not sure if it is ready yet.
+
+New versions are coming on and on, which may make such an impression,
+but we had some discussion on it at the LPC and some serious questions
+were asked during it, for instance regarding the DT binding introduced
+here.  I'm not sure how this particular issue has been addressed here,
+for example.
+
+Thanks,
+Rafael
