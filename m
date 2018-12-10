@@ -1,70 +1,64 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 11/21] memory: tegra: Use of_device_get_match_data()
-Date: Sun,  9 Dec 2018 23:29:40 +0300
-Message-ID: <20181209202950.31486-12-digetx@gmail.com>
-References: <20181209202950.31486-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for
+ PLLs
+Date: Mon, 10 Dec 2018 03:58:36 +0300
+Message-ID: <20181210035836.602757d5@dimatab>
+References: <20180830184210.5369-1-digetx@gmail.com>
+        <20180830184210.5369-2-digetx@gmail.com>
+        <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+        <1539773948.6233.23.camel@toradex.com>
+        <2a011477-26cb-7e89-a468-54a84465f178@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20181209202950.31486-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2a011477-26cb-7e89-a468-54a84465f178@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need to match device with the DT node since it was already
-matched, use of_device_get_match_data() helper to get the match-data.
+=D0=92 Wed, 17 Oct 2018 14:41:35 +0300
+Dmitry Osipenko <digetx@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/memory/tegra/mc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+> On 10/17/18 1:59 PM, Marcel Ziswiler wrote:
+> > On Fri, 2018-08-31 at 12:29 +0300, Peter De Schrijver wrote: =20
+> >> On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote: =20
+> >>> Currently all PLL's on Tegra20 use a hardcoded delay despite of
+> >>> having
+> >>> a lock-status bit. The lock-status polling was disabled ~7 years
+> >>> ago
+> >>> because PLLE was failing to lock and was a suspicion that other
+> >>> PLLs
+> >>> might be faulty too. Other PLLs are okay, hence enable the lock-
+> >>> status
+> >>> polling for them. This reduces delay of any operation that require
+> >>> PLL
+> >>> to lock.
+> >>>
+> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>> ---
+> >>>
+> >>> Changelog:
+> >>>
+> >>> v2:	Don't enable polling for PLLE as it known to not being
+> >>> able to lock.
+> >>> =20
+> >>
+> >> This isn't correct. The lock bit of PLLE can declare lock too
+> >> early, but the
+> >> PLL itself does lock. =20
+> >=20
+> > Is there an errata documenting this? As I could not really find any
+> > mentioning of this anywhere at least up to the v11 from Dec 21,
+> > 2010 I still have access to.
+> >=20
+> > BTW: It looks like also PLLA may not always lock properly with those
+> > changes. Is there anything known about that as well? Here is what I
+> > get on various Colibri T20 modules (while random other ones seem to
+> > work fine): =20
+> Could you please try to increase the timeout value?
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index ce8cf81b55d7..55ecfb2d8cfd 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -12,6 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/sort.h>
-@@ -619,23 +620,18 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
- 
- static int tegra_mc_probe(struct platform_device *pdev)
- {
--	const struct of_device_id *match;
- 	struct resource *res;
- 	struct tegra_mc *mc;
- 	void *isr;
- 	int err;
- 
--	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
--	if (!match)
--		return -ENODEV;
--
- 	mc = devm_kzalloc(&pdev->dev, sizeof(*mc), GFP_KERNEL);
- 	if (!mc)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, mc);
- 	spin_lock_init(&mc->lock);
--	mc->soc = match->data;
-+	mc->soc = of_device_get_match_data(&pdev->dev);
- 	mc->dev = &pdev->dev;
- 
- 	/* length of MC tick in nanoseconds */
--- 
-2.19.1
+Hello Marcel,
+
+Do you have any update on the PLL-lock-failure problem?
