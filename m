@@ -1,16 +1,15 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 06/19] clk: tegra: dfll: CVB calculation alignment with
- the regulator
-Date: Tue, 11 Dec 2018 14:23:56 +0800
-Message-ID: <bfa8b71d-2736-9982-094e-956bb1dfee7a@nvidia.com>
+Subject: Re: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
+Date: Tue, 11 Dec 2018 14:36:26 +0800
+Message-ID: <f737d9e2-2888-6255-2872-cfc9dc0a6aa1@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-7-josephl@nvidia.com>
- <8496868e-8e11-708a-8233-fefee59a79cd@nvidia.com>
+ <20181204092548.3038-8-josephl@nvidia.com>
+ <6cdab503-e463-ddbb-2ce9-035c81da7058@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <8496868e-8e11-708a-8233-fefee59a79cd@nvidia.com>
+In-Reply-To: <6cdab503-e463-ddbb-2ce9-035c81da7058@nvidia.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -25,162 +24,77 @@ To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/7/18 10:10 PM, Jon Hunter wrote:
+On 12/7/18 10:26 PM, Jon Hunter wrote:
 > 
 > On 04/12/2018 09:25, Joseph Lo wrote:
->> The CVB table contains calibration data for the CPU DFLL based on
->> process charaterization. The regulator step and offset parameters depend
->> on the regulator supplying vdd-cpu , not on the specific Tegra SKU.
+>> The DFLL hardware supports two modes (I2C and PWM) for voltage control
+>> when requesting a frequency. In this patch, we introduce PWM mode support.
 >>
->> When using a PWM controlled regulator, the voltage step and offset are
->> determined by the regulator type in use. This is specified in DT. When
->> using an I2C controlled regulator, we can retrieve them from CPU regulator
->> or DT (if specified). Then pass this information to the CVB table
->> calculation function.
+>> To support that, we re-organize the LUT for unifying the table for both
+>> cases of I2C and PWM mode. And generate that based on regulator info.
+>> For the PWM-based regulator, we get this info from DT. And do the same as
+>> the case of I2C LUT, which can help to map the PMIC voltage ID and voltages
+>> that the regulator supported.
 >>
->> Based on the work done of "Peter De Schrijver <pdeschrijver@nvidia.com>"
->> and "Alex Frid <afrid@nvidia.com>".
+>> The other parts are the support code for initializing the DFLL hardware
+>> to support PWM mode. Also, the register debugfs file is slightly
+>> reworked to only show the i2c registers when I2C mode is in use.
+>>
+>> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
 >>
 >> Signed-off-by: Joseph Lo <josephl@nvidia.com>
 >> ---
->>   drivers/clk/tegra/clk-dfll.h               |  6 +-
->>   drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 65 ++++++++++++++++++++--
->>   drivers/clk/tegra/cvb.c                    | 12 ++--
->>   drivers/clk/tegra/cvb.h                    |  6 +-
->>   4 files changed, 75 insertions(+), 14 deletions(-)
+>>   drivers/clk/tegra/clk-dfll.c | 431 ++++++++++++++++++++++++++++++-----
+>>   1 file changed, 368 insertions(+), 63 deletions(-)
 >>
->> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
->> index 83352c8078f2..ecc43cb9b6f1 100644
->> --- a/drivers/clk/tegra/clk-dfll.h
->> +++ b/drivers/clk/tegra/clk-dfll.h
->> @@ -1,6 +1,6 @@
+>> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+>> index 609e363dabf8..c294a2989f31 100644
+>> --- a/drivers/clk/tegra/clk-dfll.c
+>> +++ b/drivers/clk/tegra/clk-dfll.c
+>> @@ -1,7 +1,7 @@
 >>   /*
->>    * clk-dfll.h - prototypes and macros for the Tegra DFLL clocksource driver
->> - * Copyright (C) 2013 NVIDIA Corporation.  All rights reserved.
->> + * Copyright (C) 2013-2018 NVIDIA Corporation.  All rights reserved.
+>>    * clk-dfll.c - Tegra DFLL clock source common code
+>>    *
+>> - * Copyright (C) 2012-2014 NVIDIA Corporation. All rights reserved.
+>> + * Copyright (C) 2012-2018 NVIDIA Corporation. All rights reserved.
 >>    *
 >>    * Aleksandr Frid <afrid@nvidia.com>
 >>    * Paul Walmsley <pwalmsley@nvidia.com>
->> @@ -22,11 +22,14 @@
->>   #include <linux/reset.h>
->>   #include <linux/types.h>
->>   
->> +#include "cvb.h"
->> +
->>   /**
->>    * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
->>    * @dev: struct device * that holds the OPP table for the DFLL
->>    * @max_freq: maximum frequency supported on this SoC
->>    * @cvb: CPU frequency table for this SoC
->> + * @alignment: parameters of the regulator step and offset
->>    * @init_clock_trimmers: callback to initialize clock trimmers
->>    * @set_clock_trimmers_high: callback to tune clock trimmers for high voltage
->>    * @set_clock_trimmers_low: callback to tune clock trimmers for low voltage
->> @@ -35,6 +38,7 @@ struct tegra_dfll_soc_data {
->>   	struct device *dev;
->>   	unsigned long max_freq;
->>   	const struct cvb_table *cvb;
->> +	struct rail_alignment alignment;
->>   
->>   	void (*init_clock_trimmers)(void);
->>   	void (*set_clock_trimmers_high)(void);
->> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->> index 1a2cc113e5c8..071a5c674832 100644
->> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->> @@ -23,6 +23,7 @@
->>   #include <linux/init.h>
->>   #include <linux/of_device.h>
->>   #include <linux/platform_device.h>
->> +#include <linux/regulator/consumer.h>
->>   #include <soc/tegra/fuse.h>
->>   
->>   #include "clk.h"
->> @@ -50,9 +51,6 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
->>   		.process_id = -1,
->>   		.min_millivolts = 900,
->>   		.max_millivolts = 1260,
->> -		.alignment = {
->> -			.step_uv = 10000, /* 10mV */
->> -		},
-> 
-> What happens for tegra124-jetson-tk1 when we remove this?
-Same as what we what to do with this patch. This data will be queried 
-from regulator or DT. Because Jetson TK1 works on DFLL-I2C with the 
-I2C-based regulator, it will be queried from the regulator.
-
-> 
->>   		.speedo_scale = 100,
->>   		.voltage_scale = 1000,
->>   		.entries = {
->> @@ -105,11 +103,43 @@ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
->>   	{ },
+>> @@ -47,6 +47,7 @@
+>>   #include <linux/kernel.h>
+>>   #include <linux/module.h>
+>>   #include <linux/of.h>
+>> +#include <linux/pinctrl/consumer.h>
+>>   #include <linux/pm_opp.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/regmap.h>
+>> @@ -243,6 +244,12 @@ enum dfll_tune_range {
+>>   	DFLL_TUNE_LOW = 1,
 >>   };
 >>   
->> +static void get_alignment_from_dt(struct device *dev,
->> +				  struct rail_alignment *align)
->> +{
->> +	align->step_uv = 0;
->> +	align->offset_uv = 0;
 >> +
->> +	if (of_property_read_u32(dev->of_node, "nvidia,align-step-uv",
->> +				  &align->step_uv))
->> +		align->step_uv = 0;
+>> +enum tegra_dfll_pmu_if {
+>> +	TEGRA_DFLL_PMU_I2C = 0,
+>> +	TEGRA_DFLL_PMU_PWM = 1,
+>> +};
 >> +
->> +	if (of_property_read_u32(dev->of_node,
->> +				"nvidia,align-offset-uv", &align->offset_uv))
->> +		align->offset_uv = 0;
->> +}
->> +
->> +static int get_alignment_from_regulator(struct device *dev,
->> +					 struct rail_alignment *align)
->> +{
->> +	struct regulator *reg = devm_regulator_get(dev, "vdd-cpu");
->> +
->> +	if (IS_ERR(reg))
->> +		return PTR_ERR(reg);
->> +
->> +	align->offset_uv = regulator_list_voltage(reg, 0);
->> +	align->step_uv = regulator_get_linear_step(reg);
->> +
->> +	devm_regulator_put(reg);
->> +
->> +	return 0;
->> +}
->> +
->>   static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->>   {
->>   	int process_id, speedo_id, speedo_value, err;
->>   	struct tegra_dfll_soc_data *soc;
->>   	const struct dfll_fcpu_data *fcpu_data;
->> +	struct rail_alignment align;
->>   
->>   	fcpu_data = of_device_get_match_data(&pdev->dev);
->>   	if (!fcpu_data)
->> @@ -135,12 +165,37 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->>   		return -ENODEV;
->>   	}
->>   
->> +	get_alignment_from_dt(&pdev->dev, &align);
->> +	if (of_property_read_bool(pdev->dev.of_node, "nvidia,pwm-to-pmic")
->> +		 && (!align.step_uv || !align.offset_uv)) {
->> +		dev_info(&pdev->dev, "Missing required align data in DT");
->> +		return -EINVAL;
->> +	} else {
+>>   /**
+>>    * struct dfll_rate_req - target DFLL rate request data
+>>    * @rate: target frequency, after the postscaling
+>> @@ -294,16 +301,25 @@ struct tegra_dfll {
+>>   	u32				ci;
+>>   	u32				cg;
+>>   	bool				cg_scale;
+>> +	u32				reg_init_uV;
 > 
-> This 'else' clause is not necessary.
+> Doesn't this belong under PWM interface? Also being picky I dont' find
+> init_uV very descriptive.
+
+Yes, will move that to PWM interface section. Thanks.
+
 > 
->> +		if (!align.step_uv) {
->> +			dev_info(&pdev->dev,
->> +				 "no align data in DT, try from vdd-cpu\n");
->> +			err = get_alignment_from_regulator(&pdev->dev, &align);
+> Otherwise the change looks fine to me.
 > 
-> dev_warn
+> Cheers
+> Jon
 > 
->> +			if (err == -EPROBE_DEFER) {
->> +				dev_info(&pdev->dev,
->> +					 "defer probe to get vdd-cpu\n");
-> 
-> This dev_info is not necessary.
-> 
-Will fix these comments above, thanks.
