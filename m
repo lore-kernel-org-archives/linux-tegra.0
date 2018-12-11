@@ -1,138 +1,123 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
-Date: Tue, 11 Dec 2018 14:37:16 +0800
-Message-ID: <c92940a1-23a1-852e-72d5-7b8c7bcb948f@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-8-josephl@nvidia.com>
- <3d0f52c6-770e-bae2-2396-87f32455b807@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
+Date: Tue, 11 Dec 2018 07:58:08 +0100
+Message-ID: <20181211065808.GB5161@kroah.com>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
+ <20181206145547.GA7884@kroah.com>
+ <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
+ <6923d6ed-e357-b083-1830-8396d788efe5@linaro.org>
+ <CAJZ5v0jZMqFwYgnfRz04ELLRk=0U8Uv=acw0t9Azxk_HYL0gSQ@mail.gmail.com>
+ <9a3aae02-c7e0-97e3-2330-af4fccee6c14@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <3d0f52c6-770e-bae2-2396-87f32455b807@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <9a3aae02-c7e0-97e3-2330-af4fccee6c14@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, evgreen@chromium.org, Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, bjorn.andersson@linaro.org, Amit Kucheria <amit.kucheria@linaro.org>, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, abailon@baylibre.com, maxime.ripard@bootlin.com, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/7/18 11:09 PM, Jon Hunter wrote:
+On Mon, Dec 10, 2018 at 04:50:00PM +0200, Georgi Djakov wrote:
+> On 12/10/18 13:00, Rafael J. Wysocki wrote:
+> > On Mon, Dec 10, 2018 at 11:18 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >>
+> >> Hi Rafael,
+> >>
+> >> On 12/10/18 11:04, Rafael J. Wysocki wrote:
+> >>> On Thu, Dec 6, 2018 at 3:55 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >>>>
+> >>>> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
+> >>>>> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >>>>>>
+> >>>>>> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+> >>>>>> graphics, modem). These cores are talking to each other and can generate a
+> >>>>>> lot of data flowing through the on-chip interconnects. These interconnect
+> >>>>>> buses could form different topologies such as crossbar, point to point buses,
+> >>>>>> hierarchical buses or use the network-on-chip concept.
+> >>>>>>
+> >>>>>> These buses have been sized usually to handle use cases with high data
+> >>>>>> throughput but it is not necessary all the time and consume a lot of power.
+> >>>>>> Furthermore, the priority between masters can vary depending on the running
+> >>>>>> use case like video playback or CPU intensive tasks.
+> >>>>>>
+> >>>>>> Having an API to control the requirement of the system in terms of bandwidth
+> >>>>>> and QoS, so we can adapt the interconnect configuration to match those by
+> >>>>>> scaling the frequencies, setting link priority and tuning QoS parameters.
+> >>>>>> This configuration can be a static, one-time operation done at boot for some
+> >>>>>> platforms or a dynamic set of operations that happen at run-time.
+> >>>>>>
+> >>>>>> This patchset introduce a new API to get the requirement and configure the
+> >>>>>> interconnect buses across the entire chipset to fit with the current demand.
+> >>>>>> The API is NOT for changing the performance of the endpoint devices, but only
+> >>>>>> the interconnect path in between them.
+> >>>>>
+> >>>>> For what it's worth, we are ready to land this in Chrome OS. I think
+> >>>>> this series has been very well discussed and reviewed, hasn't changed
+> >>>>> much in the last few spins, and is in good enough shape to use as a
+> >>>>> base for future patches. Georgi's also done a great job reaching out
+> >>>>> to other SoC vendors, and there appears to be enough consensus that
+> >>>>> this framework will be usable by more than just Qualcomm. There are
+> >>>>> also several drivers out on the list trying to add patches to use this
+> >>>>> framework, with more to come, so it made sense (to us) to get this
+> >>>>> base framework nailed down. In my experiments this is an important
+> >>>>> piece of the overall power management story, especially on systems
+> >>>>> that are mostly idle.
+> >>>>>
+> >>>>> I'll continue to track changes to this series and we will ultimately
+> >>>>> reconcile with whatever happens upstream, but I thought it was worth
+> >>>>> sending this note to express our "thumbs up" towards this framework.
+> >>>>
+> >>>> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
+> >>>> it to the tree if all looks good.
+> >>>
+> >>> I'm honestly not sure if it is ready yet.
+> >>>
+> >>> New versions are coming on and on, which may make such an impression,
+> >>> but we had some discussion on it at the LPC and some serious questions
+> >>> were asked during it, for instance regarding the DT binding introduced
+> >>> here.  I'm not sure how this particular issue has been addressed here,
+> >>> for example.
+> >>
+> >> There have been no changes in bindings since v4 (other than squashing
+> >> consumer and provider bindings into a single patch and fixing typos).
+> >>
+> >> The last DT comment was on v9 [1] where Rob wanted confirmation from
+> >> other SoC vendors that this works for them too. And now we have that
+> >> confirmation and there are patches posted on the list [2].
+> > 
+> > OK
+> > 
+> >> The second thing (also discussed at LPC) was about possible cases where
+> >> some consumer drivers can't calculate how much bandwidth they actually
+> >> need and how to address that. The proposal was to extend the OPP
+> >> bindings with one more property, but this is not part of this patchset.
+> >> It is a future step that needs more discussion on the mailing list. If a
+> >> driver really needs some bandwidth data now, it should be put into the
+> >> driver and not in DT. After we have enough consumers, we can discuss
+> >> again if it makes sense to extract something into DT or not.
+> > 
+> > That's fine by me.
+> > 
+> > Admittedly, I have some reservations regarding the extent to which
+> > this approach will turn out to be useful in practice, but I guess as
+> > long as there is enough traction, the best way to find out it to try
+> > and see. :-)
+> > 
+> > From now on I will assume that this series is going to be applied by Greg.
 > 
-> On 04/12/2018 09:25, Joseph Lo wrote:
->> The DFLL hardware supports two modes (I2C and PWM) for voltage control
->> when requesting a frequency. In this patch, we introduce PWM mode support.
->>
->> To support that, we re-organize the LUT for unifying the table for both
->> cases of I2C and PWM mode. And generate that based on regulator info.
->> For the PWM-based regulator, we get this info from DT. And do the same as
->> the case of I2C LUT, which can help to map the PMIC voltage ID and voltages
->> that the regulator supported.
->>
->> The other parts are the support code for initializing the DFLL hardware
->> to support PWM mode. Also, the register debugfs file is slightly
->> reworked to only show the i2c registers when I2C mode is in use.
->>
->> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-dfll.c | 431 ++++++++++++++++++++++++++++++-----
->>   1 file changed, 368 insertions(+), 63 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
->> index 609e363dabf8..c294a2989f31 100644
->> --- a/drivers/clk/tegra/clk-dfll.c
->> +++ b/drivers/clk/tegra/clk-dfll.c
->> @@ -1,7 +1,7 @@
->>   /*
->>    * clk-dfll.c - Tegra DFLL clock source common code
->>    *
->> - * Copyright (C) 2012-2014 NVIDIA Corporation. All rights reserved.
->> + * Copyright (C) 2012-2018 NVIDIA Corporation. All rights reserved.
->>    *
->>    * Aleksandr Frid <afrid@nvidia.com>
->>    * Paul Walmsley <pwalmsley@nvidia.com>
->> @@ -47,6 +47,7 @@
->>   #include <linux/kernel.h>
->>   #include <linux/module.h>
->>   #include <linux/of.h>
->> +#include <linux/pinctrl/consumer.h>
->>   #include <linux/pm_opp.h>
->>   #include <linux/pm_runtime.h>
->>   #include <linux/regmap.h>
->> @@ -243,6 +244,12 @@ enum dfll_tune_range {
->>   	DFLL_TUNE_LOW = 1,
->>   };
->>   
->> +
->> +enum tegra_dfll_pmu_if {
->> +	TEGRA_DFLL_PMU_I2C = 0,
->> +	TEGRA_DFLL_PMU_PWM = 1,
->> +};
->> +
->>   /**
->>    * struct dfll_rate_req - target DFLL rate request data
->>    * @rate: target frequency, after the postscaling
->> @@ -294,16 +301,25 @@ struct tegra_dfll {
->>   	u32				ci;
->>   	u32				cg;
->>   	bool				cg_scale;
->> +	u32				reg_init_uV;
->>   
->>   	/* I2C interface parameters */
->>   	u32				i2c_fs_rate;
->>   	u32				i2c_reg;
->>   	u32				i2c_slave_addr;
->>   
->> -	/* i2c_lut array entries are regulator framework selectors */
->> -	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
->> -	int				i2c_lut_size;
->> -	u8				lut_min, lut_max, lut_safe;
->> +	/* lut array entries are regulator framework selectors or PWM values*/
->> +	unsigned			lut[MAX_DFLL_VOLTAGES];
->> +	unsigned			lut_uv[MAX_DFLL_VOLTAGES];
->> +	int				lut_size;
->> +	u8				lut_bottom, lut_min, lut_max, lut_safe;
->> +
->> +	/* PWM interface */
->> +	enum tegra_dfll_pmu_if		pmu_if;
->> +	unsigned long			pwm_rate;
->> +	struct pinctrl			*pwm_pin;
->> +	struct pinctrl_state		*pwm_enable_state;
->> +	struct pinctrl_state		*pwm_disable_state;
->>   };
->>   
->>   #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
->> @@ -489,6 +505,34 @@ static void dfll_set_mode(struct tegra_dfll *td,
->>   	dfll_wmb(td);
->>   }
->>   
->> +/*
->> + * DVCO rate control
->> + */
->> +
->> +static unsigned long get_dvco_rate_below(struct tegra_dfll *td, u8 out_min)
->> +{
->> +	struct dev_pm_opp *opp;
->> +	unsigned long rate, prev_rate;
->> +	int uv, min_uv;
->> +
->> +	min_uv = td->lut_uv[out_min];
->> +	for (rate = 0, prev_rate = 0; ; rate++) {
->> +		opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
->> +		if (IS_ERR(opp))
->> +			break;
->> +
->> +		uv = dev_pm_opp_get_voltage(opp);
-> 
-> Can you fix the type of 'uv' here? It should be unsigned long.
+> That was the initial idea, but the problem is that there is a recent
+> change in the cmd_db API (needed by the sdm845 provider driver), which
+> is going through arm-soc/qcom/drivers. So either Greg pulls also the
+> qcom-drivers-for-4.21 tag from Andy or the whole series goes via Olof
+> and Arnd. Maybe there are other options. I don't have any preference and
+> don't want to put extra burden on any maintainers, so i am ok with what
+> they prefer.
 
-Okay, will fix it. Thanks.
+Let me take the time later this week to review the code, which I haven't
+done in a while...
+
+thanks,
+
+greg k-h
