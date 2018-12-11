@@ -1,15 +1,14 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 6/6] arm64: tegra: Device tree change for v4.21-rc1
-Date: Tue, 11 Dec 2018 08:11:28 -0800
-Message-ID: <20181211161128.yprdf7w54o5xx7iu@localhost>
+Subject: Re: [GIT PULL 1/6] dt-bindings: Changes for v4.21-rc1
+Date: Tue, 11 Dec 2018 08:06:20 -0800
+Message-ID: <20181211160620.ktqyixx35cjvkzj6@localhost>
 References: <20181207141739.9085-1-thierry.reding@gmail.com>
- <20181207141739.9085-6-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20181207141739.9085-6-thierry.reding@gmail.com>
+In-Reply-To: <20181207141739.9085-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,7 +22,7 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 03:17:39PM +0100, Thierry Reding wrote:
+On Fri, Dec 07, 2018 at 03:17:34PM +0100, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
 > The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
@@ -32,27 +31,37 @@ On Fri, Dec 07, 2018 at 03:17:39PM +0100, Thierry Reding wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-arm64-dt
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-dt-bindings
 > 
-> for you to fetch changes up to 611a1c69f8ca85fc656f09d0cd56f5934e2af5fb:
+> for you to fetch changes up to b4c7bf003cb57220af64b59e887581e74f0ce527:
 > 
->   arm64: tegra: Set reg property for display-hub on Tegra194 (2018-12-07 12:57:26 +0100)
-> 
-> Note that this pulls in a subset of the code that is also part of the
-> first pull request in this series in order to satisfy some build-time
-> dependencies.
+>   dt-bindings: tegra186-pmc: Add interrupt controller properties (2018-11-28 16:42:58 +0100)
 > 
 > Thanks,
 > Thierry
 > 
 > ----------------------------------------------------------------
-> arm64: tegra: Device tree change for v4.21-rc1
+> dt-bindings: Changes for v4.21-rc1
 > 
-> These changes add a bunch of features for Tegra194 and Tegra186, such as
-> wake events, on-die RTC, temperature sensors, HDA for audio over HDMI
-> and fan support on Jetson Xavier to allow cooling of the device.
+> This contains a few cleanups of and additions to existing device tree
+> bindings, such as XUSB, EMC, PMC and thermal.
+> 
+> ----------------------------------------------------------------
+> Dmitry Osipenko (3):
+>       dt: bindings: tegra20-emc: Document interrupt property
+>       dt: bindings: tegra20-emc: Document clock property
+>       dt: bindings: Move tegra20-emc binding to memory-controllers directory
+> 
+> Jon Hunter (1):
+>       dt-bindings: usb: xhci-tegra: Add power-domain details
+> 
+> Thierry Reding (2):
+>       dt-bindings: thermal: tegra-bpmp: Add Tegra194 support
+>       dt-bindings: tegra186-pmc: Add interrupt controller properties
 
-Same feedback as for 32-bit, but merged into next/dt now.
+Small reminder to keep commit messages consistent.
+
+Merged into next/dt.
 
 
 -Olof
