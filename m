@@ -1,78 +1,103 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/4] ARM: tegra: avoid section mismatch warning
-Date: Tue, 11 Dec 2018 11:28:56 +0100
-Message-ID: <20181211102856.GI14426@ulmo>
-References: <20181210215856.2238253-1-arnd@arndb.de>
- <20181210215856.2238253-2-arnd@arndb.de>
- <20181211100550.GD14426@ulmo>
- <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
+ binding for PWM regulator
+Date: Tue, 11 Dec 2018 11:52:04 +0000
+Message-ID: <7c5f6f34-43ba-e696-5cbc-2bd4d5303d91@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-2-josephl@nvidia.com>
+ <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
+ <20181211091514.GA29064@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="byLs0wutDcxFdwtm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: arm-soc <arm@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181211091514.GA29064@pdeschrijver-desktop.Nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---byLs0wutDcxFdwtm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/12/2018 09:15, Peter De Schrijver wrote:
+> On Fri, Dec 07, 2018 at 01:41:57PM +0000, Jon Hunter wrote:
+>>
+>> On 04/12/2018 09:25, Joseph Lo wrote:
+>>> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>
+>>> Add new properties to configure the DFLL PWM regulator support. Also
+>>> add an example and make the I2C clock only required when I2C support is
+>>> used.
+>>>
+>>> Cc: devicetree@vger.kernel.org
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>> ---
+>>>  .../bindings/clock/nvidia,tegra124-dfll.txt   | 73 ++++++++++++++++++-
+>>>  1 file changed, 71 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>>> index dff236f524a7..8c97600d2bad 100644
+>>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>>> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
+>>>  oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
+>>>  control module that will automatically adjust the VDD_CPU voltage by
+>>>  communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+>>> -Currently only the I2C mode is supported by these bindings.
+>>>  
+>>>  Required properties:
+>>>  - compatible : should be "nvidia,tegra124-dfll"
+>>> @@ -45,10 +44,28 @@ Required properties for the control loop parameters:
+>>>  Optional properties for the control loop parameters:
+>>>  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+>>>  
+>>> +Optional properties for mode selection:
+>>> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
+>>> +
+>>>  Required properties for I2C mode:
+>>>  - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
+>>>  
+>>> -Example:
+>>> +Required properties for PWM mode:
+>>> +- nvidia,pwm-period: period of PWM square wave in microseconds.
+>>> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control is disabled.
+>>
+>> Maybe consider 'pwm-inactive-voltage-microvolt'.
+>>
+> 
+> Inactive is not very accurate. The OVR regulator will output
+> nvidia,align-offset-uv when the PWM input is driven low but will output
+> nvidia,init-uv when the PWM input is in tristate mode.
 
-On Tue, Dec 11, 2018 at 11:08:53AM +0100, Arnd Bergmann wrote:
-> On Tue, Dec 11, 2018 at 11:05 AM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> >
-> > On Mon, Dec 10, 2018 at 10:58:37PM +0100, Arnd Bergmann wrote:
-> > > WARNING: vmlinux.o(.text+0x39ecc): Section mismatch in reference from=
- the function tegra114_gic_cpu_pm_registration() to the (unknown reference)=
- .init.rodata:(unknown)
-> > > The function tegra114_gic_cpu_pm_registration() references
-> > > the (unknown reference) __initconst (unknown).
-> > > This is often because tegra114_gic_cpu_pm_registration lacks a __init=
-const
-> > > annotation or the annotation of (unknown) is wrong.
-> > >
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> > >  arch/arm/mach-tegra/irq.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > I'm not seeing these. Do I need to enable any special options to trigger
-> > these? Or are these just so new that I haven't run into them yet?
->=20
-> My guess would be that this is a result of the CONFIG_NO_AUTO_INLINE
-> option that is now available in linux-next.
+Maybe but I really don't find 'nvidia,align-offset-uv' and
+'nvidia,init-uv' very descriptive either. We need to make sure that the
+names and description make it clear what these are and where they come
+from to anyone reading that documentation that has never laid eyes on
+this before.
 
-Okay, that would explain. It's not set in my configurations currently.
+Sounds like the align-offset-uv is the minimum voltage when PWM is
+active/enabled and init-uv is the default voltage the regulator outputs
+when PWM control is disabled. Would the following be any better ...
 
-Do you want to apply this to ARM-SoC directly with my Acked-by, or
-should I queue it up for v4.22?
+- nvidia,pwm-tristate-microvolts: Regulator voltage in micro volts when
+  PWM control is disabled and the PWM output is tristated. Note that
+  this voltage is configured in hardware, typically via a resistor
+  divider.
+- nvidia,pwm-min-microvolts: Regulator voltage in micro volts when PWM
+  control is enabled and PWM output is low. Hence, this is the minimum
+  output voltage that the regulator supports when PWM control is
+  enabled.
 
-Thierry
+Jon
 
---byLs0wutDcxFdwtm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwPkWgACgkQ3SOs138+
-s6HFnRAAi5OjsnSOJjvHFV0izhJIfhiufCH8ED7aqLMBkYuDJK5t5cKaiSNqeZyy
-fpCTBk4mjNBx9MyrDDhZB0YyDs8wDtf6keaBI/7eE+2YOj1Va8o5vMbNWP1EJS3V
-3/8O9dXwjEHOiA0aPQ6Gea854Yi4z14aEeH67OqC9UTJ1jIGzYjrYZloV1qSwIUu
-o1NVD175zaSK6aFFYWUiDwvTwgA0gnJvho7Uj+zmJ3jdg5vyQxcvqRG41bAdyuZ4
-gKksCTnUMT22gyJm0q/w5MHOGekoX4ZmnHJD/H5L47kcjzCqEyjz3kt4ukuRnYIa
-aYSe12zAmEE8zrIDn/csSt/FJGgATFBzg3ab0rrUqLP5tLUgE/DOz8RQTeXlF/xN
-OrJjrc+0JpiwUiDLcoeAFO0MEf+Z7viPWDNae0X3LQ4Vp4qqrUQW9AlvLtjphAx9
-hKMfWbNjEn3w2jXabQ4611nMT8ThIn5P0Mj4y8gTPWFNBb+ruc4t1HBDrZlAKTw3
-pIigbiqPp7idDXCu2ybbDe2VxoVi7QnB65L0zj9spF5GfiwkJXelI3G9IjPuwU12
-2sN6KZcZ8UcHKMbyOZcyVDuYh0cZn+z9LdGc8HyO5gvwewR1XD4yJ4NeGTNSvF+1
-xLcHRPsrRj2AS4g4WYk8P8FKZd8LydwGTbwI4a3uh2tt+IIFFYk=
-=INA3
------END PGP SIGNATURE-----
-
---byLs0wutDcxFdwtm--
+-- 
+nvpublic
