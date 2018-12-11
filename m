@@ -1,37 +1,35 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/4] ARM: tegra: avoid section mismatch warning
-Date: Tue, 11 Dec 2018 11:08:53 +0100
-Message-ID: <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
-References: <20181210215856.2238253-1-arnd@arndb.de> <20181210215856.2238253-2-arnd@arndb.de>
- <20181211100550.GD14426@ulmo>
+Subject: Re: [PATCH] host1x: cdma: use completion instead of semaphore
+Date: Tue, 11 Dec 2018 11:11:38 +0100
+Message-ID: <CAK8P3a08VEReXUZ39f3iQS3wUZSwKYObnn-jQrUiMJ4Gyx6hVQ@mail.gmail.com>
+References: <20181210215119.1903413-1-arnd@arndb.de> <20181211100832.GE14426@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181211100550.GD14426@ulmo>
+In-Reply-To: <20181211100832.GE14426@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: arm-soc <arm@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, Dmitry Osipenko <digetx@gmail.com>, emil.fsw@goode.io, dri-devel <dri-devel@lists.freedesktop.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:05 AM Thierry Reding
+On Tue, Dec 11, 2018 at 11:08 AM Thierry Reding
 <thierry.reding@gmail.com> wrote:
 >
-> On Mon, Dec 10, 2018 at 10:58:37PM +0100, Arnd Bergmann wrote:
-> > WARNING: vmlinux.o(.text+0x39ecc): Section mismatch in reference from the function tegra114_gic_cpu_pm_registration() to the (unknown reference) .init.rodata:(unknown)
-> > The function tegra114_gic_cpu_pm_registration() references
-> > the (unknown reference) __initconst (unknown).
-> > This is often because tegra114_gic_cpu_pm_registration lacks a __initconst
-> > annotation or the annotation of (unknown) is wrong.
+> On Mon, Dec 10, 2018 at 10:51:04PM +0100, Arnd Bergmann wrote:
+> > In this usage, the two are completely equivalent, but the
+> > completion documents better what is going on, and we generally
+> > try to avoid semaphores these days.
 > >
 > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > > ---
-> >  arch/arm/mach-tegra/irq.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >  drivers/gpu/host1x/cdma.c | 6 +++---
+> >  drivers/gpu/host1x/cdma.h | 4 ++--
+> >  2 files changed, 5 insertions(+), 5 deletions(-)
 >
-> I'm not seeing these. Do I need to enable any special options to trigger
-> these? Or are these just so new that I haven't run into them yet?
+> My understanding is that potentially many userspace processes could be
+> blocking on this, which I think is the reason for it being a semaphore.
+> Is the completion going to work for those cases as well?
 
-My guess would be that this is a result of the CONFIG_NO_AUTO_INLINE
-option that is now available in linux-next.
+Yes, it behaves the exact same way here.
 
        Arnd
