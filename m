@@ -1,95 +1,78 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] host1x: cdma: use completion instead of semaphore
-Date: Tue, 11 Dec 2018 11:27:10 +0100
-Message-ID: <20181211102710.GH14426@ulmo>
-References: <20181210215119.1903413-1-arnd@arndb.de>
- <20181211100832.GE14426@ulmo>
- <CAK8P3a08VEReXUZ39f3iQS3wUZSwKYObnn-jQrUiMJ4Gyx6hVQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ARM: tegra: avoid section mismatch warning
+Date: Tue, 11 Dec 2018 11:28:56 +0100
+Message-ID: <20181211102856.GI14426@ulmo>
+References: <20181210215856.2238253-1-arnd@arndb.de>
+ <20181210215856.2238253-2-arnd@arndb.de>
+ <20181211100550.GD14426@ulmo>
+ <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2131341977=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAK8P3a08VEReXUZ39f3iQS3wUZSwKYObnn-jQrUiMJ4Gyx6hVQ@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="byLs0wutDcxFdwtm"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: emil.fsw@goode.io, Mikko Perttunen <cyndis@kapsi.fi>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>
+Cc: arm-soc <arm@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2131341977==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wayzTnRSUXKNfBqd"
-Content-Disposition: inline
-
-
---wayzTnRSUXKNfBqd
+--byLs0wutDcxFdwtm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 11, 2018 at 11:11:38AM +0100, Arnd Bergmann wrote:
-> On Tue, Dec 11, 2018 at 11:08 AM Thierry Reding
+On Tue, Dec 11, 2018 at 11:08:53AM +0100, Arnd Bergmann wrote:
+> On Tue, Dec 11, 2018 at 11:05 AM Thierry Reding
 > <thierry.reding@gmail.com> wrote:
 > >
-> > On Mon, Dec 10, 2018 at 10:51:04PM +0100, Arnd Bergmann wrote:
-> > > In this usage, the two are completely equivalent, but the
-> > > completion documents better what is going on, and we generally
-> > > try to avoid semaphores these days.
+> > On Mon, Dec 10, 2018 at 10:58:37PM +0100, Arnd Bergmann wrote:
+> > > WARNING: vmlinux.o(.text+0x39ecc): Section mismatch in reference from=
+ the function tegra114_gic_cpu_pm_registration() to the (unknown reference)=
+ .init.rodata:(unknown)
+> > > The function tegra114_gic_cpu_pm_registration() references
+> > > the (unknown reference) __initconst (unknown).
+> > > This is often because tegra114_gic_cpu_pm_registration lacks a __init=
+const
+> > > annotation or the annotation of (unknown) is wrong.
 > > >
 > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > > > ---
-> > >  drivers/gpu/host1x/cdma.c | 6 +++---
-> > >  drivers/gpu/host1x/cdma.h | 4 ++--
-> > >  2 files changed, 5 insertions(+), 5 deletions(-)
+> > >  arch/arm/mach-tegra/irq.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
 > >
-> > My understanding is that potentially many userspace processes could be
-> > blocking on this, which I think is the reason for it being a semaphore.
-> > Is the completion going to work for those cases as well?
+> > I'm not seeing these. Do I need to enable any special options to trigger
+> > these? Or are these just so new that I haven't run into them yet?
 >=20
-> Yes, it behaves the exact same way here.
+> My guess would be that this is a result of the CONFIG_NO_AUTO_INLINE
+> option that is now available in linux-next.
 
-Great, I'll queue this for v4.22.
+Okay, that would explain. It's not set in my configurations currently.
 
-Thanks,
+Do you want to apply this to ARM-SoC directly with my Acked-by, or
+should I queue it up for v4.22?
+
 Thierry
 
---wayzTnRSUXKNfBqd
+--byLs0wutDcxFdwtm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwPkP4ACgkQ3SOs138+
-s6HIbA/+JFwP435Ilng50f4ZLkabfeZnPpo3KewBVB3x9kqif203Z/fvqNPtnW61
-bHltheckdQUJitANGYP2sehBL+bfld6jkFrguQVjLkinZ6LIAeNszxaQGS5RQxny
-a8L4IE/TGkpWmVhMFvfE2emcaGXBD5XwyU9eSYKnH+wMKAVqzpNIQW+I0vKVPLF6
-60dPm/KJBZtDXrorAlv8NuZjcYZA66NQIjUS2aLw4zykjFiNdI8gc3DHzTrBYGHF
-OI//UPtbD1Z34jJ+yrMKXC1BMj8TI5jW6Ze6f6Go2t8GJpsELs9L897ti8/8AuDp
-AY3NJ2pNoLtJaurxomJJqXILDCj/uHNQ6dcKMtNxQTEbWjYVslAeo9sp9LSkGHLW
-fy/Oo6GiTw7dlQQ581Efao1L7zADnMxsOjsPN0QIAoFYTWrgyM5MaaVvqSO4ckxk
-cMpe2lLnB8Q0N8XuLVue7fwe9a634mqYgfwRsx3WE/SSkAO8GuHFtJlGquv/MDm7
-q+a/Wlf8Si6j0N/S2psz9e5DAIbjTv3VyGxeEbAV/rR7OHOYTvdOwZI5Z+XWXuxs
-8aQbo9ct8LhlCDB0SpRAc69p+CbdEzPJYw0m2Tce/qLDxY7+G0mb5nYQthARBHF4
-JSY7iOpNm03GOC2/AiBxBJzndN5dTOC58cwDlRSRkfgopB2UCcg=
-=f3WX
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwPkWgACgkQ3SOs138+
+s6HFnRAAi5OjsnSOJjvHFV0izhJIfhiufCH8ED7aqLMBkYuDJK5t5cKaiSNqeZyy
+fpCTBk4mjNBx9MyrDDhZB0YyDs8wDtf6keaBI/7eE+2YOj1Va8o5vMbNWP1EJS3V
+3/8O9dXwjEHOiA0aPQ6Gea854Yi4z14aEeH67OqC9UTJ1jIGzYjrYZloV1qSwIUu
+o1NVD175zaSK6aFFYWUiDwvTwgA0gnJvho7Uj+zmJ3jdg5vyQxcvqRG41bAdyuZ4
+gKksCTnUMT22gyJm0q/w5MHOGekoX4ZmnHJD/H5L47kcjzCqEyjz3kt4ukuRnYIa
+aYSe12zAmEE8zrIDn/csSt/FJGgATFBzg3ab0rrUqLP5tLUgE/DOz8RQTeXlF/xN
+OrJjrc+0JpiwUiDLcoeAFO0MEf+Z7viPWDNae0X3LQ4Vp4qqrUQW9AlvLtjphAx9
+hKMfWbNjEn3w2jXabQ4611nMT8ThIn5P0Mj4y8gTPWFNBb+ruc4t1HBDrZlAKTw3
+pIigbiqPp7idDXCu2ybbDe2VxoVi7QnB65L0zj9spF5GfiwkJXelI3G9IjPuwU12
+2sN6KZcZ8UcHKMbyOZcyVDuYh0cZn+z9LdGc8HyO5gvwewR1XD4yJ4NeGTNSvF+1
+xLcHRPsrRj2AS4g4WYk8P8FKZd8LydwGTbwI4a3uh2tt+IIFFYk=
+=INA3
 -----END PGP SIGNATURE-----
 
---wayzTnRSUXKNfBqd--
-
---===============2131341977==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============2131341977==--
+--byLs0wutDcxFdwtm--
