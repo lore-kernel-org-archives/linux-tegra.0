@@ -1,72 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] clk: tegra: fix SMP build
-Date: Tue, 11 Dec 2018 15:35:07 +0100
-Message-ID: <20181211143528.2024488-1-arnd@arndb.de>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 5/6] ARM: tegra: Device tree changes for v4.21-rc1
+Date: Tue, 11 Dec 2018 08:07:55 -0800
+Message-ID: <20181211160755.ghx5zvunabc6pjad@localhost>
+References: <20181207141739.9085-1-thierry.reding@gmail.com>
+ <20181207141739.9085-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Aapo Vienamo <avienamo@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20181207141739.9085-5-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-When CONFIG_SMP is disabled, the tegra clk driver now fails to build:
+On Fri, Dec 07, 2018 at 03:17:38PM +0100, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+> 
+>   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.21-arm-dt
+> 
+> for you to fetch changes up to 3dde5a2342cd204df15b6b0b90ee0ed4542225ca:
+> 
+>   ARM: tegra: Add VIC on Tegra124 (2018-11-29 17:07:31 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> ARM: tegra: Device tree changes for v4.21-rc1
+> 
+> These changes add the external memory controller on Tegra20 as well as
+> the VIC on Tegra124.
+> 
+> ----------------------------------------------------------------
+> Dmitry Osipenko (2):
+>       ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+>       ARM: dts: tegra20: Add clock entry to External Memory Controller
+> 
+> Thierry Reding (1):
+>       ARM: tegra: Add VIC on Tegra124
 
-drivers/clk/tegra/clk-tegra30.c: In function 'tegra30_cpu_rail_off_ready':
-drivers/clk/tegra/clk-tegra30.c:1151:19: error: implicit declaration of function 'tegra_pmc_cpu_is_powered'; did you mean 'tegra_powergate_is_powered'? [-Werror=implicit-function-declaration]
-  cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
+Another small nit about consistent prefixes (ARM: dts: ...).
 
-I don't know if tegra works without CONFIG_SMP, but we can get it to
-build by making the calls conditional, and removing the pointless
-ifdef around the declaration. The assumption now is that in a
-non-SMP system, the secondary CPUs are always disabled.
+Merged, thanks!
 
-Fixes: 61866523ed6e ("clk: tegra30: Use Tegra CPU powergate helper function")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Not sure if this is the best solution. If you think it's not, please
-submit a different fix.
----
- drivers/clk/tegra/clk-tegra30.c | 10 +++++++---
- include/soc/tegra/pmc.h         |  2 --
- 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index fa8d573ac626..1505185936f4 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1148,9 +1148,13 @@ static bool tegra30_cpu_rail_off_ready(void)
- 
- 	cpu_rst_status = readl(clk_base +
- 				TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
--	cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
--			 tegra_pmc_cpu_is_powered(2) ||
--			 tegra_pmc_cpu_is_powered(3);
-+
-+	if (IS_ENABLED(CONFIG_SMP))
-+		cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
-+				 tegra_pmc_cpu_is_powered(2) ||
-+				 tegra_pmc_cpu_is_powered(3);
-+	else
-+		cpu_pwr_status = 0;
- 
- 	if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
- 		return false;
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index fd816f6aa9cc..a9db1b501de1 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -26,11 +26,9 @@
- struct clk;
- struct reset_control;
- 
--#ifdef CONFIG_SMP
- bool tegra_pmc_cpu_is_powered(unsigned int cpuid);
- int tegra_pmc_cpu_power_on(unsigned int cpuid);
- int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
--#endif /* CONFIG_SMP */
- 
- /*
-  * powergate and I/O rail APIs
--- 
-2.20.0
+-Olof
