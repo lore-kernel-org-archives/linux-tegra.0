@@ -1,58 +1,72 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 00/21] IOMMU: Tegra GART driver clean up and
-	optimization
-Date: Tue, 11 Dec 2018 16:22:31 +0300
-Message-ID: <0eb25577-cd64-11d5-1de6-8efa129b3b7b@gmail.com>
-References: <20181209202950.31486-1-digetx@gmail.com>
-	<20181211095317.tv43aaefnsezmic7@8bytes.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] clk: tegra: fix SMP build
+Date: Tue, 11 Dec 2018 15:35:07 +0100
+Message-ID: <20181211143528.2024488-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20181211095317.tv43aaefnsezmic7-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Aapo Vienamo <avienamo@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11.12.2018 12:53, Joerg Roedel wrote:
-> On Sun, Dec 09, 2018 at 11:29:29PM +0300, Dmitry Osipenko wrote:
->> Dmitry Osipenko (21):
->>   iommu/tegra: gart: Remove pr_fmt and clean up includes
->>   iommu/tegra: gart: Clean up driver probe errors handling
->>   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
->>   iommu: Introduce iotlb_sync_map callback
->>   iommu/tegra: gart: Optimize mapping / unmapping performance
->>   dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
->>   ARM: dts: tegra20: Update Memory Controller node to the new binding
->>   memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
->>     Tegra20
->>   memory: tegra: Adapt to Tegra20 device-tree binding changes
->>   memory: tegra: Read client ID on GART page fault
->>   memory: tegra: Use of_device_get_match_data()
->>   memory: tegra: Use relaxed versions of readl/writel
->>   iommu/tegra: gart: Integrate with Memory Controller driver
->>   iommu/tegra: gart: Fix spinlock recursion
->>   iommu/tegra: gart: Fix NULL pointer dereference
->>   iommu/tegra: gart: Allow only one active domain at a time
->>   iommu/tegra: gart: Don't use managed resources
->>   iommu/tegra: gart: Prepend error/debug messages with "gart:"
->>   iommu/tegra: gart: Don't detach devices from inactive domains
->>   iommu/tegra: gart: Simplify clients-tracking code
->>   iommu/tegra: gart: Perform code refactoring
-> 
-> This is making progress, but some parts have no Ack or Review yet, I'll
-> wait for Thierry before applying these patches into the iommu tree.
+When CONFIG_SMP is disabled, the tegra clk driver now fails to build:
 
-Okay, waiting.. zZZ :) Pretty much all of the patches are actually reviewed, those that are missing review/ack tags just have changes that were requested in a review comments to the previous version of the series. I hope it won't take much time to finalize the review of the patches.
+drivers/clk/tegra/clk-tegra30.c: In function 'tegra30_cpu_rail_off_ready':
+drivers/clk/tegra/clk-tegra30.c:1151:19: error: implicit declaration of function 'tegra_pmc_cpu_is_powered'; did you mean 'tegra_powergate_is_powered'? [-Werror=implicit-function-declaration]
+  cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
 
-Thierry, could you please acknowledge that you'll come back to these patches? More than two months passed since the last time you were replying regarding this series.
+I don't know if tegra works without CONFIG_SMP, but we can get it to
+build by making the calls conditional, and removing the pointless
+ifdef around the declaration. The assumption now is that in a
+non-SMP system, the secondary CPUs are always disabled.
+
+Fixes: 61866523ed6e ("clk: tegra30: Use Tegra CPU powergate helper function")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Not sure if this is the best solution. If you think it's not, please
+submit a different fix.
+---
+ drivers/clk/tegra/clk-tegra30.c | 10 +++++++---
+ include/soc/tegra/pmc.h         |  2 --
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index fa8d573ac626..1505185936f4 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1148,9 +1148,13 @@ static bool tegra30_cpu_rail_off_ready(void)
+ 
+ 	cpu_rst_status = readl(clk_base +
+ 				TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
+-	cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
+-			 tegra_pmc_cpu_is_powered(2) ||
+-			 tegra_pmc_cpu_is_powered(3);
++
++	if (IS_ENABLED(CONFIG_SMP))
++		cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
++				 tegra_pmc_cpu_is_powered(2) ||
++				 tegra_pmc_cpu_is_powered(3);
++	else
++		cpu_pwr_status = 0;
+ 
+ 	if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
+ 		return false;
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index fd816f6aa9cc..a9db1b501de1 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -26,11 +26,9 @@
+ struct clk;
+ struct reset_control;
+ 
+-#ifdef CONFIG_SMP
+ bool tegra_pmc_cpu_is_powered(unsigned int cpuid);
+ int tegra_pmc_cpu_power_on(unsigned int cpuid);
+ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
+-#endif /* CONFIG_SMP */
+ 
+ /*
+  * powergate and I/O rail APIs
+-- 
+2.20.0
