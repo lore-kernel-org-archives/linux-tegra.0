@@ -1,103 +1,58 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-Date: Tue, 11 Dec 2018 11:52:04 +0000
-Message-ID: <7c5f6f34-43ba-e696-5cbc-2bd4d5303d91@nvidia.com>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-2-josephl@nvidia.com>
- <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
- <20181211091514.GA29064@pdeschrijver-desktop.Nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 00/21] IOMMU: Tegra GART driver clean up and
+	optimization
+Date: Tue, 11 Dec 2018 16:22:31 +0300
+Message-ID: <0eb25577-cd64-11d5-1de6-8efa129b3b7b@gmail.com>
+References: <20181209202950.31486-1-digetx@gmail.com>
+	<20181211095317.tv43aaefnsezmic7@8bytes.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181211091514.GA29064@pdeschrijver-desktop.Nvidia.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20181211095317.tv43aaefnsezmic7-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 11/12/2018 09:15, Peter De Schrijver wrote:
-> On Fri, Dec 07, 2018 at 01:41:57PM +0000, Jon Hunter wrote:
->>
->> On 04/12/2018 09:25, Joseph Lo wrote:
->>> From: Peter De Schrijver <pdeschrijver@nvidia.com>
->>>
->>> Add new properties to configure the DFLL PWM regulator support. Also
->>> add an example and make the I2C clock only required when I2C support is
->>> used.
->>>
->>> Cc: devicetree@vger.kernel.org
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>> ---
->>>  .../bindings/clock/nvidia,tegra124-dfll.txt   | 73 ++++++++++++++++++-
->>>  1 file changed, 71 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->>> index dff236f524a7..8c97600d2bad 100644
->>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->>> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
->>>  oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
->>>  control module that will automatically adjust the VDD_CPU voltage by
->>>  communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
->>> -Currently only the I2C mode is supported by these bindings.
->>>  
->>>  Required properties:
->>>  - compatible : should be "nvidia,tegra124-dfll"
->>> @@ -45,10 +44,28 @@ Required properties for the control loop parameters:
->>>  Optional properties for the control loop parameters:
->>>  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
->>>  
->>> +Optional properties for mode selection:
->>> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
->>> +
->>>  Required properties for I2C mode:
->>>  - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
->>>  
->>> -Example:
->>> +Required properties for PWM mode:
->>> +- nvidia,pwm-period: period of PWM square wave in microseconds.
->>> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control is disabled.
->>
->> Maybe consider 'pwm-inactive-voltage-microvolt'.
->>
+On 11.12.2018 12:53, Joerg Roedel wrote:
+> On Sun, Dec 09, 2018 at 11:29:29PM +0300, Dmitry Osipenko wrote:
+>> Dmitry Osipenko (21):
+>>   iommu/tegra: gart: Remove pr_fmt and clean up includes
+>>   iommu/tegra: gart: Clean up driver probe errors handling
+>>   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+>>   iommu: Introduce iotlb_sync_map callback
+>>   iommu/tegra: gart: Optimize mapping / unmapping performance
+>>   dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
+>>   ARM: dts: tegra20: Update Memory Controller node to the new binding
+>>   memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
+>>     Tegra20
+>>   memory: tegra: Adapt to Tegra20 device-tree binding changes
+>>   memory: tegra: Read client ID on GART page fault
+>>   memory: tegra: Use of_device_get_match_data()
+>>   memory: tegra: Use relaxed versions of readl/writel
+>>   iommu/tegra: gart: Integrate with Memory Controller driver
+>>   iommu/tegra: gart: Fix spinlock recursion
+>>   iommu/tegra: gart: Fix NULL pointer dereference
+>>   iommu/tegra: gart: Allow only one active domain at a time
+>>   iommu/tegra: gart: Don't use managed resources
+>>   iommu/tegra: gart: Prepend error/debug messages with "gart:"
+>>   iommu/tegra: gart: Don't detach devices from inactive domains
+>>   iommu/tegra: gart: Simplify clients-tracking code
+>>   iommu/tegra: gart: Perform code refactoring
 > 
-> Inactive is not very accurate. The OVR regulator will output
-> nvidia,align-offset-uv when the PWM input is driven low but will output
-> nvidia,init-uv when the PWM input is in tristate mode.
+> This is making progress, but some parts have no Ack or Review yet, I'll
+> wait for Thierry before applying these patches into the iommu tree.
 
-Maybe but I really don't find 'nvidia,align-offset-uv' and
-'nvidia,init-uv' very descriptive either. We need to make sure that the
-names and description make it clear what these are and where they come
-from to anyone reading that documentation that has never laid eyes on
-this before.
+Okay, waiting.. zZZ :) Pretty much all of the patches are actually reviewed, those that are missing review/ack tags just have changes that were requested in a review comments to the previous version of the series. I hope it won't take much time to finalize the review of the patches.
 
-Sounds like the align-offset-uv is the minimum voltage when PWM is
-active/enabled and init-uv is the default voltage the regulator outputs
-when PWM control is disabled. Would the following be any better ...
-
-- nvidia,pwm-tristate-microvolts: Regulator voltage in micro volts when
-  PWM control is disabled and the PWM output is tristated. Note that
-  this voltage is configured in hardware, typically via a resistor
-  divider.
-- nvidia,pwm-min-microvolts: Regulator voltage in micro volts when PWM
-  control is enabled and PWM output is low. Hence, this is the minimum
-  output voltage that the regulator supports when PWM control is
-  enabled.
-
-Jon
-
--- 
-nvpublic
+Thierry, could you please acknowledge that you'll come back to these patches? More than two months passed since the last time you were replying regarding this series.
