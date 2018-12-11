@@ -1,143 +1,186 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH] thermal: tegra: add get_trend ops
-Date: Tue, 11 Dec 2018 14:20:00 +0800
-Message-ID: <1ab01422-c7c2-cc2a-23fd-6ab52a132f62@nvidia.com>
-References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
- <20181120153833.GB28796@ulmo>
- <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
- <20181129170145.GG2688@localhost.localdomain>
- <f2d10339-4086-7102-9949-719483f545bf@nvidia.com>
- <92e4304d-df83-946f-a7d5-a12b77a9d9e8@nvidia.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 06/19] clk: tegra: dfll: CVB calculation alignment with
+ the regulator
+Date: Tue, 11 Dec 2018 14:23:56 +0800
+Message-ID: <bfa8b71d-2736-9982-094e-956bb1dfee7a@nvidia.com>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-7-josephl@nvidia.com>
+ <8496868e-8e11-708a-8233-fefee59a79cd@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <92e4304d-df83-946f-a7d5-a12b77a9d9e8@nvidia.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <8496868e-8e11-708a-8233-fefee59a79cd@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, daniel.lezcano@linaro.org, rui.zhang@intel.com
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Rui & Eduardo,
-Could you please take this patch?
-
-Thanks.
-Wei.
-
-On 5/12/2018 4:30 PM, Wei Ni wrote:
-> Hi Daniel,
-> It seems no more comments, could this patch be approved?
+On 12/7/18 10:10 PM, Jon Hunter wrote:
 > 
-> Thanks.
-> Wei.
+> On 04/12/2018 09:25, Joseph Lo wrote:
+>> The CVB table contains calibration data for the CPU DFLL based on
+>> process charaterization. The regulator step and offset parameters depend
+>> on the regulator supplying vdd-cpu , not on the specific Tegra SKU.
+>>
+>> When using a PWM controlled regulator, the voltage step and offset are
+>> determined by the regulator type in use. This is specified in DT. When
+>> using an I2C controlled regulator, we can retrieve them from CPU regulator
+>> or DT (if specified). Then pass this information to the CVB table
+>> calculation function.
+>>
+>> Based on the work done of "Peter De Schrijver <pdeschrijver@nvidia.com>"
+>> and "Alex Frid <afrid@nvidia.com>".
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   drivers/clk/tegra/clk-dfll.h               |  6 +-
+>>   drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 65 ++++++++++++++++++++--
+>>   drivers/clk/tegra/cvb.c                    | 12 ++--
+>>   drivers/clk/tegra/cvb.h                    |  6 +-
+>>   4 files changed, 75 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+>> index 83352c8078f2..ecc43cb9b6f1 100644
+>> --- a/drivers/clk/tegra/clk-dfll.h
+>> +++ b/drivers/clk/tegra/clk-dfll.h
+>> @@ -1,6 +1,6 @@
+>>   /*
+>>    * clk-dfll.h - prototypes and macros for the Tegra DFLL clocksource driver
+>> - * Copyright (C) 2013 NVIDIA Corporation.  All rights reserved.
+>> + * Copyright (C) 2013-2018 NVIDIA Corporation.  All rights reserved.
+>>    *
+>>    * Aleksandr Frid <afrid@nvidia.com>
+>>    * Paul Walmsley <pwalmsley@nvidia.com>
+>> @@ -22,11 +22,14 @@
+>>   #include <linux/reset.h>
+>>   #include <linux/types.h>
+>>   
+>> +#include "cvb.h"
+>> +
+>>   /**
+>>    * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
+>>    * @dev: struct device * that holds the OPP table for the DFLL
+>>    * @max_freq: maximum frequency supported on this SoC
+>>    * @cvb: CPU frequency table for this SoC
+>> + * @alignment: parameters of the regulator step and offset
+>>    * @init_clock_trimmers: callback to initialize clock trimmers
+>>    * @set_clock_trimmers_high: callback to tune clock trimmers for high voltage
+>>    * @set_clock_trimmers_low: callback to tune clock trimmers for low voltage
+>> @@ -35,6 +38,7 @@ struct tegra_dfll_soc_data {
+>>   	struct device *dev;
+>>   	unsigned long max_freq;
+>>   	const struct cvb_table *cvb;
+>> +	struct rail_alignment alignment;
+>>   
+>>   	void (*init_clock_trimmers)(void);
+>>   	void (*set_clock_trimmers_high)(void);
+>> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+>> index 1a2cc113e5c8..071a5c674832 100644
+>> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+>> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+>> @@ -23,6 +23,7 @@
+>>   #include <linux/init.h>
+>>   #include <linux/of_device.h>
+>>   #include <linux/platform_device.h>
+>> +#include <linux/regulator/consumer.h>
+>>   #include <soc/tegra/fuse.h>
+>>   
+>>   #include "clk.h"
+>> @@ -50,9 +51,6 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
+>>   		.process_id = -1,
+>>   		.min_millivolts = 900,
+>>   		.max_millivolts = 1260,
+>> -		.alignment = {
+>> -			.step_uv = 10000, /* 10mV */
+>> -		},
 > 
-> On 30/11/2018 11:07 AM, Wei Ni wrote:
->>
->>
->> On 30/11/2018 1:01 AM, Eduardo Valentin wrote:
->>> On Wed, Nov 21, 2018 at 02:36:10PM +0800, Wei Ni wrote:
->>>>
->>>>
->>>> On 20/11/2018 11:38 PM, Thierry Reding wrote:
->>>>> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
->>>>>> Add support for get_trend ops that allows soctherm
->>>>>> sensors to be used with the step-wise governor.
->>>>>>
->>>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
->>>>>> ---
->>>>>>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
->>>>>>  1 file changed, 34 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->>>>>> index ed28110a3535..d2951fbe2b7c 100644
->>>>>> --- a/drivers/thermal/tegra/soctherm.c
->>>>>> +++ b/drivers/thermal/tegra/soctherm.c
->>>>>> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
->>>>>>  	return 0;
->>>>>>  }
->>>>>>  
->>>>>> +static int tegra_thermctl_get_trend(void *data, int trip,
->>>>>> +				    enum thermal_trend *trend)
->>>>>> +{
->>>>>> +	struct tegra_thermctl_zone *zone = data;
->>>>>> +	struct thermal_zone_device *tz = zone->tz;
->>>>>> +	int trip_temp, temp, last_temp, ret;
->>>>>> +
->>>>>> +	if (!tz)
->>>>>> +		return -EINVAL;
->>>>>> +
->>>>>> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
->>>>>> +	if (ret)
->>>>>> +		return ret;
->>>>>> +
->>>>>> +	mutex_lock(&tz->lock);
->>>>>> +	temp = tz->temperature;
->>>>>> +	last_temp = tz->last_temperature;
->>>>>> +	mutex_unlock(&tz->lock);
->>>>>> +
->>>>>> +	if (temp > trip_temp) {
->>>>>> +		if (temp >= last_temp)
->>>>>> +			*trend = THERMAL_TREND_RAISING;
->>>>>> +		else
->>>>>> +			*trend = THERMAL_TREND_STABLE;
->>>>>> +	} else if (temp < trip_temp) {
->>>>>> +		*trend = THERMAL_TREND_DROPPING;
->>>>>> +	} else {
->>>>>> +		*trend = THERMAL_TREND_STABLE;
->>>>>> +	}
->>>>>> +
->>>>>> +	return 0;
->>>>>> +}
->>>>>
->>>>> This looks like a reimplementation of the get_tz_trend() helper. Is
->>>>> seems like that helper already has everything we need. Perhaps this
->>>>> isn't working because of-thermal installs of_thermal_get_trend(), a
->>>>> function that returns -EINVAL if the driver doesn't implement the
->>>>> ->get_trend() callback.
->>>>
->>>> 1. The get_tz_trend() helper can work, because it has:
->>>> if (tz->emul_temperature || !tz->ops->get_trend ||
->>>>             tz->ops->get_trend(tz, trip, &trend)) {
->>>> ...
->>>> }
->>>> the tz->ops->get_trend is of_thermal_get_trend(). If without special
->>>> get_trend(), it will return -EINVAL, so it will implement the if block
->>>> to get the "trend". If we have the special get_trend(), then the
->>>> of_thermal_get_trend() will return 0, so this helper will not implement
->>>> the if block, it will get the "trend" from the special get_trend().
->>>
->>> The idea of the helper is to provide a trend in case drivers dont have
->>> a specific way of doing so. 
->>
->> Yes, thanks for your explanation.
->>
->>>
->>>>
->>>> 2. There has a little difference between the helper and our special
->>>> callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
->>>> get_tz_trend() helper didn't.
->>>>
->>>
->>> Yeah, if you are computing trend towards a trip, then yes, that is
->>> different and this patch is needed.
->>>
->>>>>
->>>>> Perhaps a better way would be to do something like this in
->>>>> thermal_zone_of_add_sensor():
->>>>>
->>>>> 	if (ops->get_trend)
->>>>> 		tzd->ops->get_trend = of_thermal_get_trend;
->>>>>
->>>>> That's similar to how ->set_trips() and ->set_emul_temp() are set up
->>>>> and should make sure that get_tz_trend() will do the right thing for
->>>>> all drivers that don't implement a special ->get_trend().
->>>>
->>>> As above description, I think the of_thermal_get_trend() already can
->>>> handle this case, doesn't need to change.
->>>>
->>>> Wei.
->>>>
->>>>>
->>>>> Thierry
->>>>>
+> What happens for tegra124-jetson-tk1 when we remove this?
+Same as what we what to do with this patch. This data will be queried 
+from regulator or DT. Because Jetson TK1 works on DFLL-I2C with the 
+I2C-based regulator, it will be queried from the regulator.
+
+> 
+>>   		.speedo_scale = 100,
+>>   		.voltage_scale = 1000,
+>>   		.entries = {
+>> @@ -105,11 +103,43 @@ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+>>   	{ },
+>>   };
+>>   
+>> +static void get_alignment_from_dt(struct device *dev,
+>> +				  struct rail_alignment *align)
+>> +{
+>> +	align->step_uv = 0;
+>> +	align->offset_uv = 0;
+>> +
+>> +	if (of_property_read_u32(dev->of_node, "nvidia,align-step-uv",
+>> +				  &align->step_uv))
+>> +		align->step_uv = 0;
+>> +
+>> +	if (of_property_read_u32(dev->of_node,
+>> +				"nvidia,align-offset-uv", &align->offset_uv))
+>> +		align->offset_uv = 0;
+>> +}
+>> +
+>> +static int get_alignment_from_regulator(struct device *dev,
+>> +					 struct rail_alignment *align)
+>> +{
+>> +	struct regulator *reg = devm_regulator_get(dev, "vdd-cpu");
+>> +
+>> +	if (IS_ERR(reg))
+>> +		return PTR_ERR(reg);
+>> +
+>> +	align->offset_uv = regulator_list_voltage(reg, 0);
+>> +	align->step_uv = regulator_get_linear_step(reg);
+>> +
+>> +	devm_regulator_put(reg);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>>   {
+>>   	int process_id, speedo_id, speedo_value, err;
+>>   	struct tegra_dfll_soc_data *soc;
+>>   	const struct dfll_fcpu_data *fcpu_data;
+>> +	struct rail_alignment align;
+>>   
+>>   	fcpu_data = of_device_get_match_data(&pdev->dev);
+>>   	if (!fcpu_data)
+>> @@ -135,12 +165,37 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>>   		return -ENODEV;
+>>   	}
+>>   
+>> +	get_alignment_from_dt(&pdev->dev, &align);
+>> +	if (of_property_read_bool(pdev->dev.of_node, "nvidia,pwm-to-pmic")
+>> +		 && (!align.step_uv || !align.offset_uv)) {
+>> +		dev_info(&pdev->dev, "Missing required align data in DT");
+>> +		return -EINVAL;
+>> +	} else {
+> 
+> This 'else' clause is not necessary.
+> 
+>> +		if (!align.step_uv) {
+>> +			dev_info(&pdev->dev,
+>> +				 "no align data in DT, try from vdd-cpu\n");
+>> +			err = get_alignment_from_regulator(&pdev->dev, &align);
+> 
+> dev_warn
+> 
+>> +			if (err == -EPROBE_DEFER) {
+>> +				dev_info(&pdev->dev,
+>> +					 "defer probe to get vdd-cpu\n");
+> 
+> This dev_info is not necessary.
+> 
+Will fix these comments above, thanks.
