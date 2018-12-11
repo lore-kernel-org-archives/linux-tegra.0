@@ -1,42 +1,52 @@
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: Re: [PATCH] drm/tegra: Refactor CEC support
-Date: Tue, 11 Dec 2018 10:22:14 +0100
-Message-ID: <cae0b43a-c206-531b-927e-a5ec5bf89dea@xs4all.nl>
-References: <20181210163455.13627-1-thierry.reding@gmail.com>
- <1611ab47-9ba6-83dc-6f6d-8add7b0a9751@xs4all.nl>
- <57066560-7c1b-5702-5269-9bc9deffc53e@xs4all.nl>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: i2c-tegra: replace spin_lock_irqsave with spin_lock
+ in ISR
+Date: Tue, 11 Dec 2018 20:38:55 +0100
+Message-ID: <20181211193855.ftzvyz6ilrzujywv@ninjato>
+References: <20180911145446.53621-1-hangdianqj@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <57066560-7c1b-5702-5269-9bc9deffc53e@xs4all.nl>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cywaxr3kdeeyjeyn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180911145446.53621-1-hangdianqj@163.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jun qian <hangdianqj@163.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTIvMTAvMTggNjowNyBQTSwgSGFucyBWZXJrdWlsIHdyb3RlOgo+IE9uIDEyLzEwLzE4IDU6
-MzYgUE0sIEhhbnMgVmVya3VpbCB3cm90ZToKPj4gT24gMTIvMTAvMTggNTozNCBQTSwgVGhpZXJy
-eSBSZWRpbmcgd3JvdGU6Cj4+PiBGcm9tOiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEu
-Y29tPgo+Pj4KPj4+IE1vc3Qgb2YgdGhlIENFQyBzdXBwb3J0IGNvZGUgYWxyZWFkeSBsaXZlcyBp
-biB0aGUgIm91dHB1dCIgbGlicmFyeSBjb2RlLgo+Pj4gTW92ZSByZWdpc3RyYXRpb24gYW5kIHVu
-cmVnaXN0cmF0aW9uIHRvIHRoZSBsaWJyYXJ5IGNvZGUgYXMgd2VsbCB0byBtYWtlCj4+PiB1c2Ug
-b2YgdGhlIHNhbWUgY29kZSB3aXRoIEhETUkgb24gVGVncmEyMTAgYW5kIGxhdGVyIHZpYSB0aGUg
-U09SLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRp
-YS5jb20+Cj4+Cj4+IFJldmlld2VkLWJ5OiBIYW5zIFZlcmt1aWwgPGh2ZXJrdWlsLWNpc2NvQHhz
-NGFsbC5ubD4KPiAKPiBCdXQgcmVhZCBteSByZXBseSB0byAiW1BBVENIIDEvMl0gbWVkaWE6IHRl
-Z3JhLWNlYzogU3VwcG9ydCBUZWdyYTE4NiBhbmQgVGVncmExOTQiLgo+IFlvdSBtYXkgd2FudCB0
-byB0YWtlIGEgZGlmZmVyZW50IGFwcHJvYWNoIGhlcmUuCgpJZ25vcmUgdGhpcyBsYXN0IGNvbW1l
-bnQsIHRoaXMgY29kZSBpcyBmaW5lLgoKUmVnYXJkcywKCglIYW5zCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--cywaxr3kdeeyjeyn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 11, 2018 at 07:54:46AM -0700, jun qian wrote:
+> As you are already in ISR, it is unnecessary to call spin_lock_irqsave.
+>=20
+> Signed-off-by: jun qian <hangdianqj@163.com>
+
+Applied to for-next, thanks!
+
+
+--cywaxr3kdeeyjeyn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQEk8ACgkQFA3kzBSg
+KbYqTBAAkZx0GrhtB1+bO2FIxI5bhr05iDZBwcXCFEF0Qv3XEXHaXT1TLHJ865IB
+1bjhnnLLHzA+79gddaaHais5xsDL2AB93rz8pL6GZOVaDCB2qxJ0TK8zE489NzxD
+cOX2Q3dFEVE6FqKdbawnmt/IAHyoc9m0b8sNHM19Sea1GjaRL12Frg/tGzMFLA5K
+fS5NwXL5c0sPgVYZdCRppz1D9pak0mhABF1ORb+hYQf8Udfii0V+7+d3TNwrdTjB
+GbNcEGQiAHT+YoDGPjw4f8ISTGDOXZyK+BKPnapHWHtQca2XD01VEX0N/UbENaAV
+cru4opSBacYJBKHU4+qVp1cWbn6TK+8s2E7+Vfor4/oheMPWQKaJ995uvEkLF1Ne
+z7Zve83DbWuY+HsNgHKkUFbAsR26bA/yNjmZM+rhtt2Gxy4itkQTKE/jc7DYcC7/
+3Tk3oHIprp1Q5FYP48GAw/tWyu4hpaSn3NEXkGhWeK2PpatWlgx6sD68EXEFT1Gi
+JrQBaRlqBjW6gGq9QFx4d+9xzbuIxdC/PwhDkM4HL2U2PFBztyBdbHi7KrkYfPYB
+g6NSLmZksjTiugR0DogD3ScsjMHQsgmopreYOpVvTEDNnPXcKrwSZw03vdPGX8WT
+tn8yLS2JnhrH+VN+gILR6uo6r4lbsH1d3NhXdcY1VJgxJRNzrK8=
+=8JzN
+-----END PGP SIGNATURE-----
+
+--cywaxr3kdeeyjeyn--
