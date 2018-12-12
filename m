@@ -1,35 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] scatterlist: Update size type to support greater then
- 4GB size.
-Date: Tue, 11 Dec 2018 22:29:50 -0800 (PST)
-Message-ID: <20181211.222950.1995970751331458343.davem@davemloft.net>
-References: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
+From: Prateek Patel <prpatel@nvidia.com>
+Subject: Re: [PATCH V2] kmemleak: Add config to select auto scan
+Date: Wed, 12 Dec 2018 12:14:29 +0530
+Message-ID: <a51a7d4b-6366-ea10-f220-992525ec1d42@nvidia.com>
+References: <1540231723-7087-1-git-send-email-prpatel@nvidia.com>
+ <20181029104320.GC168424@arrakis.emea.arm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
+In-Reply-To: <20181029104320.GC168424@arrakis.emea.arm.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: amhetre@nvidia.com
-Cc: herbert@gondor.apana.org.au, axboe@kernel.dk, adrian.hunter@intel.com, ulf.hansson@linaro.org, linux-crypto@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, vdumpa@nvidia.com, mmaddireddy@nvidia.com, Snikam@nvidia.com, linux-tegra@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-tegra@vger.kernel.org, snikam@nvidia.com, vdumpa@nvidia.com, talho@nvidia.com, swarren@nvidia.com, treding@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-From: Ashish Mhetre <amhetre@nvidia.com>
-Date: Wed, 12 Dec 2018 11:54:13 +0530
+Hi Catalin,
 
-> diff --git a/include/linux/nvme.h b/include/linux/nvme.h
-> index 68e91ef..0a07a29 100644
-> --- a/include/linux/nvme.h
-> +++ b/include/linux/nvme.h
-> @@ -587,7 +587,7 @@ enum {
->  
->  struct nvme_sgl_desc {
->  	__le64	addr;
-> -	__le32	length;
-> +	__le64	length;
->  	__u8	rsvd[3];
->  	__u8	type;
->  };
+Can you mark this patch as acknowledged so that it can be picked up by 
+the maintainer.
 
-Isn't this a device or protocol defined datastructure?  You can't just
-change it like this.
+Adding Andrew.
+
+Thanks,
+
+On 10/29/2018 4:13 PM, Catalin Marinas wrote:
+> On Mon, Oct 22, 2018 at 11:38:43PM +0530, Prateek Patel wrote:
+>> From: Sri Krishna chowdary <schowdary@nvidia.com>
+>>
+>> Kmemleak scan can be cpu intensive and can stall user tasks at times.
+>> To prevent this, add config DEBUG_KMEMLEAK_AUTO_SCAN to enable/disable
+>> auto scan on boot up.
+>> Also protect first_run with DEBUG_KMEMLEAK_AUTO_SCAN as this is meant
+>> for only first automatic scan.
+>>
+>> Signed-off-by: Sri Krishna chowdary <schowdary@nvidia.com>
+>> Signed-off-by: Sachin Nikam <snikam@nvidia.com>
+>> Signed-off-by: Prateek <prpatel@nvidia.com>
+> Looks fine to me.
+>
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
