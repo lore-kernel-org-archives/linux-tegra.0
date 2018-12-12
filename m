@@ -1,127 +1,95 @@
-From: Philippe Schenker <dev@pschenker.ch>
-Subject: [PATCH v4 8/8] ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
-Date: Wed, 12 Dec 2018 14:06:49 +0100
-Message-ID: <20181212130649.15146-8-dev@pschenker.ch>
-References: <20181212130649.15146-1-dev@pschenker.ch>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] clk: tegra: fix SMP build
+Date: Wed, 12 Dec 2018 14:31:27 +0100
+Message-ID: <20181212133127.GB28521@ulmo>
+References: <20181211143528.2024488-1-arnd@arndb.de>
+ <154454887151.17204.5632248748272979028@swboyd.mtv.corp.google.com>
+ <20c5f3a9-fd82-5634-6a1e-6384c0facece@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181212130649.15146-1-dev@pschenker.ch>
+Content-Disposition: inline
+In-Reply-To: <20c5f3a9-fd82-5634-6a1e-6384c0facece@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc: thierry.reding@gmail.com, Philippe Schenker <dev@pschenker.ch>, Philippe Schenker <philippe.schenker@toradex.com>, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Aapo Vienamo <avienamo@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the stmpe-adc DT node as found on Toradex T30 modules
 
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
----
+--dTy3Mrz/UPE2dbVg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v4:
- - New separate commit to hold T30 devicetree changes
+On Wed, Dec 12, 2018 at 11:47:32AM +0000, Jon Hunter wrote:
+>=20
+> On 11/12/2018 17:21, Stephen Boyd wrote:
+> > Quoting Arnd Bergmann (2018-12-11 06:35:07)
+> >> When CONFIG_SMP is disabled, the tegra clk driver now fails to build:
+> >>
+> >> drivers/clk/tegra/clk-tegra30.c: In function 'tegra30_cpu_rail_off_rea=
+dy':
+> >> drivers/clk/tegra/clk-tegra30.c:1151:19: error: implicit declaration o=
+f function 'tegra_pmc_cpu_is_powered'; did you mean 'tegra_powergate_is_pow=
+ered'? [-Werror=3Dimplicit-function-declaration]
+> >>   cpu_pwr_status =3D tegra_pmc_cpu_is_powered(1) ||
+> >>
+> >> I don't know if tegra works without CONFIG_SMP, but we can get it to
+> >> build by making the calls conditional, and removing the pointless
+> >> ifdef around the declaration. The assumption now is that in a
+> >> non-SMP system, the secondary CPUs are always disabled.
+> >>
+> >> Fixes: 61866523ed6e ("clk: tegra30: Use Tegra CPU powergate helper fun=
+ction")
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >> ---
+> >> Not sure if this is the best solution. If you think it's not, please
+> >> submit a different fix.
+> >=20
+> > Hmm.. Is there any reason why the implementation of
+> > tegra_pmc_cpu_is_powered() is under an ifdef CONFIG_SMP? I'd rather not
+> > have to think about SMP or not in this clk code and have the
+> > tegra_pmc_cpu_is_powered() function do the UP vs SMP code optimization.
+>=20
+> Not that I know of. I just think that the function should/would not be
+> used for non-SMP.
+>=20
+> I was actually thinking that we could just leave the clk code as it is
+> and simply drop the CONFIG_SMP from pmc.h. That would be fine with me.
 
-Changes in v3: None
-Changes in v2: None
+Yeah, I'd be fine keeping that code around whether or not we enable SMP.
+Chances are people won't disable it anyway. If they do, then most likely
+only for testing purposes, in which case I'm sure they won't mind the
+extra couple of bytes.
 
- arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
- 2 files changed, 28 insertions(+), 16 deletions(-)
+I think if we remove CONFIG_SMP from pmc.h we also need to remove it
+=66rom drivers/soc/tegra/pmc.c to make sure these functions are available,
+otherwise we'll likely run into linker errors.
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 7f112f192fe9..850b0d13549a 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -976,11 +976,18 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -990,17 +997,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 35af03ca9e90..1f9198bb24ff 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -845,11 +845,18 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -859,17 +866,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
--- 
-2.19.2
+Jon, is that something I can interest you in? If not, I can easily do
+that myself.
+
+Thierry
+
+--dTy3Mrz/UPE2dbVg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwRDa8ACgkQ3SOs138+
+s6ErqQ//QQ8TEeMrDY6UGU+RVWmBAT861+B/UFDH2amF7nWsdc2tNy6KRyt6E69I
+tgyq0i3u9evpjM9AxIQPsFMONTaaGzoe3wPsr4AVI+em7q3Ibf6EjJoaJz2JoKbq
+nY8cjagondItryNeUpPEZ+HHKa2dDvjoe1WQHf8CQwoC+rQ1Zj2VVezSSWm8006o
+aYLTuRwGpJJBaEB5/zioDtRJ5dDDVmC8Sl3nPbMfwmaK8baXuPfbPQY07rLBGrgq
+eoa98WEY1SeitDYkFG+RY3u411A3h71WwoFGrcLhoP7U+lJjd2PDqjYHgTU7fmgY
+tHLjEJ6PdiVSjURbbqj5lfiOL20c6jtkwMWf3XNlFI2+xgC980hjcLomIeYqvCdq
+7Kj/ZGQ5EfzM9saSaTBEnynRJexSXhfz2bOZHREyW83aQnh8X+70hzdOQl/XWc/6
+qdNN5YUHvJO5vfJ7qMOwkx0uRYe3sSgtN8sU76nfs79rI1QhoytDjXfICNuxFQKH
+y5tbuHYBB19ijFG3Rm8JtKt1yFkKE3vuakFaLNGvcf+Xv39Rehd1fQ+kEifldEYd
+y/uolwemubklv4UVgeWq2VgDQdEavu2IA2yjVxGcGLkHA40R8WEmIfBBavFjWVNi
+zxEEql43bUaH7CkGWHDnjkKIbr9lMku2+ExoaNinGeoWhZOomdM=
+=3mGj
+-----END PGP SIGNATURE-----
+
+--dTy3Mrz/UPE2dbVg--
