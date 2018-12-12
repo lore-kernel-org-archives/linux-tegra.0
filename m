@@ -1,72 +1,121 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: fix SMP build
-Date: Wed, 12 Dec 2018 17:20:35 +0000
-Message-ID: <583c04aa-7939-7401-b4e1-99bb6afe1485@nvidia.com>
-References: <20181211143528.2024488-1-arnd@arndb.de>
- <154454887151.17204.5632248748272979028@swboyd.mtv.corp.google.com>
- <20c5f3a9-fd82-5634-6a1e-6384c0facece@nvidia.com>
- <20181212133127.GB28521@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v7 00/24] Tegra GART driver clean up and optimization
+Date: Wed, 12 Dec 2018 23:38:43 +0300
+Message-ID: <20181212203907.23461-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181212133127.GB28521@ulmo>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Aapo Vienamo <avienamo@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
-On 12/12/2018 13:31, Thierry Reding wrote:
-> On Wed, Dec 12, 2018 at 11:47:32AM +0000, Jon Hunter wrote:
->>
->> On 11/12/2018 17:21, Stephen Boyd wrote:
->>> Quoting Arnd Bergmann (2018-12-11 06:35:07)
->>>> When CONFIG_SMP is disabled, the tegra clk driver now fails to build:
->>>>
->>>> drivers/clk/tegra/clk-tegra30.c: In function 'tegra30_cpu_rail_off_ready':
->>>> drivers/clk/tegra/clk-tegra30.c:1151:19: error: implicit declaration of function 'tegra_pmc_cpu_is_powered'; did you mean 'tegra_powergate_is_powered'? [-Werror=implicit-function-declaration]
->>>>   cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
->>>>
->>>> I don't know if tegra works without CONFIG_SMP, but we can get it to
->>>> build by making the calls conditional, and removing the pointless
->>>> ifdef around the declaration. The assumption now is that in a
->>>> non-SMP system, the secondary CPUs are always disabled.
->>>>
->>>> Fixes: 61866523ed6e ("clk: tegra30: Use Tegra CPU powergate helper function")
->>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>>> ---
->>>> Not sure if this is the best solution. If you think it's not, please
->>>> submit a different fix.
->>>
->>> Hmm.. Is there any reason why the implementation of
->>> tegra_pmc_cpu_is_powered() is under an ifdef CONFIG_SMP? I'd rather not
->>> have to think about SMP or not in this clk code and have the
->>> tegra_pmc_cpu_is_powered() function do the UP vs SMP code optimization.
->>
->> Not that I know of. I just think that the function should/would not be
->> used for non-SMP.
->>
->> I was actually thinking that we could just leave the clk code as it is
->> and simply drop the CONFIG_SMP from pmc.h. That would be fine with me.
-> 
-> Yeah, I'd be fine keeping that code around whether or not we enable SMP.
-> Chances are people won't disable it anyway. If they do, then most likely
-> only for testing purposes, in which case I'm sure they won't mind the
-> extra couple of bytes.
-> 
-> I think if we remove CONFIG_SMP from pmc.h we also need to remove it
-> from drivers/soc/tegra/pmc.c to make sure these functions are available,
-> otherwise we'll likely run into linker errors.
-> 
-> Jon, is that something I can interest you in? If not, I can easily do
-> that myself.
+This patch-series integrates the GART (IOMMU) driver with the Memory
+Controller driver, that allows to report the name of a faulty memory
+client on GART page fault. A major code clean up and performance
+optimization is performed in this series as well.
 
-Yes I can do it (tomorrow).
+Changelog:
 
-Cheers
-Jon
+v7: Addressed review comments to v6 from Thierry Reding.
+
+    Added three new (minor) patches that further prettifying the drivers
+    code.
+
+    New patches in v7:
+        1) "memory: tegra: Do not try to probe SMMU on Tegra20"
+        2) "memory: tegra: Do not ask for IRQ sharing"
+        3) "memory: tegra: Clean up error messages"
+
+    Incorporated another "one-line" change into the "perform code refactoring"
+    patch: now GART translation is kept disabled in HW while GART is suspended.
+
+v6: v5 that is re-based on the recent linux-next.
+
+v5: Addressed review comments from Thierry Reding to v4. Added WARN_ON() to
+    make sure that active domain isn't getting released, kept include headers
+    where necessary, etc.. All changes are quite minor.
+
+    Added new patch "memory: tegra: Use relaxed versions of readl/writel".
+
+v4: In the v3 Rob Herring requested to make device-tree binding changes
+    backwards-compatible with the older kernels, that is achieved by
+    changing the 'compatible' value of the DT node.
+
+    The code-refactoring patches got some more (minor) polish.
+
+    Added new patch "memory: tegra: Use of_device_get_match_data()".
+
+v3: Memory Controller integration part has been reworked and now GART's
+    device-tree binding is changed. Adding Rob Herring for the device-tree
+    changes reviewing.
+
+    GART now disallows more than one active domain at a time.
+
+    Fixed "spinlock recursion", "NULL pointer dereference" and "detaching
+    of all devices from inactive domains".
+
+    New code-refactoring patches.
+
+    The previously standalone patch "memory: tegra: Don't invoke Tegra30+
+    specific memory timing setup on Tegra20" is now included into this
+    series because there is a dependency on that patch and it wasn't applied
+    yet.
+
+v2: Addressed review comments from Robin Murphy to v1 by moving devices
+    iommu_fwspec check to gart_iommu_add_device().
+
+    Dropped the "Provide single domain and group for all devices" patch from
+    the series for now because after some more considering it became not
+    exactly apparent whether that is what we need, that was also suggested
+    by Robin Murphy in the review comment. Maybe something like a runtime
+    IOMMU usage for devices would be a better solution, allowing to implement
+    transparent context switching of virtual IOMMU domains.
+
+    Some very minor code cleanups, reworded commit messages.
+
+Dmitry Osipenko (24):
+  iommu/tegra: gart: Remove pr_fmt and clean up includes
+  iommu/tegra: gart: Clean up driver probe errors handling
+  iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+  iommu: Introduce iotlb_sync_map callback
+  iommu/tegra: gart: Optimize mapping / unmapping performance
+  dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
+  ARM: dts: tegra20: Update Memory Controller node to the new binding
+  memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
+    Tegra20
+  memory: tegra: Adapt to Tegra20 device-tree binding changes
+  memory: tegra: Read client ID on GART page fault
+  memory: tegra: Use of_device_get_match_data()
+  memory: tegra: Use relaxed versions of readl/writel
+  iommu/tegra: gart: Integrate with Memory Controller driver
+  memory: tegra: Do not try to probe SMMU on Tegra20
+  memory: tegra: Do not ask for IRQ sharing
+  memory: tegra: Clean up error messages
+  iommu/tegra: gart: Fix spinlock recursion
+  iommu/tegra: gart: Fix NULL pointer dereference
+  iommu/tegra: gart: Allow only one active domain at a time
+  iommu/tegra: gart: Don't use managed resources
+  iommu/tegra: gart: Prepend error/debug messages with "gart:"
+  iommu/tegra: gart: Don't detach devices from inactive domains
+  iommu/tegra: gart: Simplify clients-tracking code
+  iommu/tegra: gart: Perform code refactoring
+
+ .../bindings/iommu/nvidia,tegra20-gart.txt    |  14 -
+ .../memory-controllers/nvidia,tegra20-mc.txt  |  27 +-
+ arch/arm/boot/dts/tegra20.dtsi                |  15 +-
+ drivers/iommu/Kconfig                         |   1 +
+ drivers/iommu/iommu.c                         |   8 +-
+ drivers/iommu/tegra-gart.c                    | 473 +++++++-----------
+ drivers/iommu/tegra-smmu.c                    |   4 -
+ drivers/memory/tegra/mc.c                     | 118 +++--
+ drivers/memory/tegra/mc.h                     |  10 +-
+ include/linux/iommu.h                         |   1 +
+ include/soc/tegra/mc.h                        |  27 +-
+ 11 files changed, 323 insertions(+), 375 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
 
 -- 
-nvpublic
+2.20.0
