@@ -1,8 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 02/21] dt-bindings: clock: tegra124-dfll: add Tegra210
- support
-Date: Thu, 13 Dec 2018 17:34:19 +0800
-Message-ID: <20181213093438.29621-3-josephl@nvidia.com>
+Subject: [PATCH V2 04/21] dt-bindings: cpufreq: tegra124: remove cpu_lp clock
+ from required properties
+Date: Thu, 13 Dec 2018 17:34:21 +0800
+Message-ID: <20181213093438.29621-5-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,7 +22,9 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Tegra210 support for DFLL clock.
+The cpu_lp clock property is only needed when the CPUfreq driver
+supports CPU cluster switching. But it was not a design for this driver
+and it didn't handle that as well. So removing this property.
 
 Cc: devicetree@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
@@ -31,23 +33,33 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- .../devicetree/bindings/clock/nvidia,tegra124-dfll.txt        | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt   | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-index 38e8cc8c70a8..8a38c8e78acf 100644
---- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-@@ -10,7 +10,9 @@ control module that will automatically adjust the VDD_CPU voltage by
- communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+index 031545a29caf..03196d5ea515 100644
+--- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
++++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+@@ -9,7 +9,6 @@ Required properties:
+   See ../clocks/clock-bindings.txt for details.
+ - clock-names: Must include the following entries:
+   - cpu_g: Clock mux for the fast CPU cluster.
+-  - cpu_lp: Clock mux for the low-power CPU cluster.
+   - pll_x: Fast PLL clocksource.
+   - pll_p: Auxiliary PLL used during fast PLL rate changes.
+   - dfll: Fast DFLL clocksource that also automatically scales CPU voltage.
+@@ -30,11 +29,10 @@ cpus {
+ 		reg = <0>;
  
- Required properties:
--- compatible : should be "nvidia,tegra124-dfll"
-+- compatible : should be one of:
-+  - "nvidia,tegra124-dfll": for Tegra124
-+  - "nvidia,tegra210-dfll": for Tegra210
- - reg : Defines the following set of registers, in the order listed:
-         - registers for the DFLL control logic.
-         - registers for the I2C output logic.
+ 		clocks = <&tegra_car TEGRA124_CLK_CCLK_G>,
+-			 <&tegra_car TEGRA124_CLK_CCLK_LP>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_X>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_P>,
+ 			 <&dfll>;
+-		clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
++		clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
+ 		clock-latency = <300000>;
+ 	};
+ 
 -- 
 2.19.2
