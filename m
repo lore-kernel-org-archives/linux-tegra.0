@@ -1,15 +1,15 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 08/21] clk: tegra: dfll: round down voltages based on
- alignment
-Date: Thu, 13 Dec 2018 11:46:27 +0000
-Message-ID: <c1ce50e0-fccf-aa37-361c-4dd9367b092d@nvidia.com>
+Subject: Re: [PATCH V2 09/21] clk: tegra: dfll: add protection for
+ find_vdd_map APIs
+Date: Thu, 13 Dec 2018 12:46:11 +0000
+Message-ID: <a56194ce-ce96-8b3a-99e8-b4348db39f42@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
- <20181213093438.29621-9-josephl@nvidia.com>
+ <20181213093438.29621-10-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181213093438.29621-9-josephl@nvidia.com>
+In-Reply-To: <20181213093438.29621-10-josephl@nvidia.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -26,98 +26,23 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 13/12/2018 09:34, Joseph Lo wrote:
-> When generating the OPP table, the voltages are round down with the
-> alignment from the regulator. The alignment should be applied for
-> voltages look up as well.
-> 
-> Based on the work of Penny Chiu <pchiu@nvidia.com>.
+> The DFLL hardware supports both I2C and PWM based regulator. SW driver
+> only touches I2C regulator when generating LUT. And shouldn't touch it
+> anymore once the DFLL is enabled.
+
+I am not sure that the last two sentences are above are relevant and
+confused me a little at first. I would be tempted to drop them.
+
+> This patch adds the protection for the APIs that only work with I2C mode
+> to avoid they could be called accidentally.
 > 
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
-> *V2:
->  - s/align_volt/align_step/
->  - s/reg_volt/reg_volt_id/
-> ---
->  drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
->  1 file changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 72e02898006c..b3668073d9b4 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -804,17 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
->  static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
->  {
->  	struct dev_pm_opp *opp;
-> -	int i, uv;
-> +	int i, align_step;
->  
->  	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
->  	if (IS_ERR(opp))
->  		return PTR_ERR(opp);
->  
-> -	uv = dev_pm_opp_get_voltage(opp);
-> +	align_step = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
->  	dev_pm_opp_put(opp);
->  
->  	for (i = td->lut_bottom; i < td->lut_size; i++) {
-> -		if (td->lut_uv[i] >= uv)
-> +		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= align_step)
->  			return i;
->  	}
->  
-> @@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
->   */
->  static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->  {
-> -	int i, n_voltages, reg_uV;
-> +	int i, n_voltages, reg_volt_id, align_step;
->  
-> +	align_step = uV / td->soc->alignment.step_uv;
->  	n_voltages = regulator_count_voltages(td->vdd_reg);
->  	for (i = 0; i < n_voltages; i++) {
-> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
-> -		if (reg_uV < 0)
-> +		reg_volt_id = regulator_list_voltage(td->vdd_reg, i) /
-> +			      td->soc->alignment.step_uv;
-> +		if (reg_volt_id < 0)
 
-I don't think that this will work. If the step is say 10000 and we
-return an error code greater than -10000, we will end up with 0.
+Furthermore, I would be tempted to squash this into patch #7. I am not
+sure another patch is warranted here.
 
->  			break;
->  
-> -		if (uV == reg_uV)
-> +		if (align_step == reg_volt_id)
->  			return i;
->  	}
->  
-> @@ -1554,15 +1556,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->   * */
->  static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
->  {
-> -	int i, n_voltages, reg_uV;
-> +	int i, n_voltages, reg_volt_id, align_step;
->  
-> +	align_step = uV / td->soc->alignment.step_uv;
->  	n_voltages = regulator_count_voltages(td->vdd_reg);
->  	for (i = 0; i < n_voltages; i++) {
-> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
-> -		if (reg_uV < 0)
-> +		reg_volt_id = regulator_list_voltage(td->vdd_reg, i) /
-> +			      td->soc->alignment.step_uv;
-> +		if (reg_volt_id < 0)
-
-Same here.
-
->  			break;
->  
-> -		if (uV <= reg_uV)
-> +		if (align_step <= reg_volt_id)
->  			return i;
->  	}
->  
-> 
+Cheers
+Jon
 
 -- 
 nvpublic
