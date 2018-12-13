@@ -1,7 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 20/21] arm64: dts: tegra210-smaug: enable DFLL clock
-Date: Thu, 13 Dec 2018 17:34:37 +0800
-Message-ID: <20181213093438.29621-21-josephl@nvidia.com>
+Subject: [PATCH V2 09/21] clk: tegra: dfll: add protection for find_vdd_map
+ APIs
+Date: Thu, 13 Dec 2018 17:34:26 +0800
+Message-ID: <20181213093438.29621-10-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,39 +22,44 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable DFLL clock for Smaug board.
+The DFLL hardware supports both I2C and PWM based regulator. SW driver
+only touches I2C regulator when generating LUT. And shouldn't touch it
+anymore once the DFLL is enabled.
+
+This patch adds the protection for the APIs that only work with I2C mode
+to avoid they could be called accidentally.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V2:
- - add ack tag
+ - new added patch in V2
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/clk/tegra/clk-dfll.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 79cfcd5b7e62..c08c5471b974 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1698,6 +1698,18 @@
- 		status = "okay";
- 	};
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index b3668073d9b4..93cc86f17f7b 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1534,6 +1534,9 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+ {
+ 	int i, n_voltages, reg_volt_id, align_step;
  
-+	clock@70110000 {
-+		status = "okay";
-+		nvidia,cf = <6>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,i2c-fs-rate = <400000>;
-+		nvidia,sample-rate = <12500>;
-+		vdd-cpu-supply = <&max77621_cpu>;
-+	};
++	if (WARN_ON(td->pmu_if == TEGRA_DFLL_PMU_PWM))
++		return -EINVAL;
 +
- 	aconnect@702c0000 {
- 		status = "okay";
+ 	align_step = uV / td->soc->alignment.step_uv;
+ 	n_voltages = regulator_count_voltages(td->vdd_reg);
+ 	for (i = 0; i < n_voltages; i++) {
+@@ -1558,6 +1561,9 @@ static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
+ {
+ 	int i, n_voltages, reg_volt_id, align_step;
  
++	if (WARN_ON(td->pmu_if == TEGRA_DFLL_PMU_PWM))
++		return -EINVAL;
++
+ 	align_step = uV / td->soc->alignment.step_uv;
+ 	n_voltages = regulator_count_voltages(td->vdd_reg);
+ 	for (i = 0; i < n_voltages; i++) {
 -- 
 2.19.2
