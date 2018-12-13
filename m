@@ -1,8 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 08/21] clk: tegra: dfll: round down voltages based on
- alignment
-Date: Thu, 13 Dec 2018 17:34:25 +0800
-Message-ID: <20181213093438.29621-9-josephl@nvidia.com>
+Subject: [PATCH V2 14/21] cpufreq: dt-platdev: add Tegra210 to blacklist
+Date: Thu, 13 Dec 2018 17:34:31 +0800
+Message-ID: <20181213093438.29621-15-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,92 +18,34 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-When generating the OPP table, the voltages are round down with the
-alignment from the regulator. The alignment should be applied for
-voltages look up as well.
+Tegra210 uses "tegra124-cpufreq" platform driver to register device data
+for "cpufreq-dt" driver. So add it in the blacklist for
+"cpufreq-dt-platdev" driver to drop that.
 
-Based on the work of Penny Chiu <pchiu@nvidia.com>.
-
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 *V2:
- - s/align_volt/align_step/
- - s/reg_volt/reg_volt_id/
+ - new added in V2
 ---
- drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 72e02898006c..b3668073d9b4 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -804,17 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
- static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
- {
- 	struct dev_pm_opp *opp;
--	int i, uv;
-+	int i, align_step;
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index b1c5468dca16..47729a22c159 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -119,6 +119,7 @@ static const struct of_device_id blacklist[] __initconst = {
+ 	{ .compatible = "mediatek,mt8176", },
  
- 	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
- 	if (IS_ERR(opp))
- 		return PTR_ERR(opp);
+ 	{ .compatible = "nvidia,tegra124", },
++	{ .compatible = "nvidia,tegra210", },
  
--	uv = dev_pm_opp_get_voltage(opp);
-+	align_step = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
- 	dev_pm_opp_put(opp);
- 
- 	for (i = td->lut_bottom; i < td->lut_size; i++) {
--		if (td->lut_uv[i] >= uv)
-+		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= align_step)
- 			return i;
- 	}
- 
-@@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
-  */
- static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
- {
--	int i, n_voltages, reg_uV;
-+	int i, n_voltages, reg_volt_id, align_step;
- 
-+	align_step = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
--		reg_uV = regulator_list_voltage(td->vdd_reg, i);
--		if (reg_uV < 0)
-+		reg_volt_id = regulator_list_voltage(td->vdd_reg, i) /
-+			      td->soc->alignment.step_uv;
-+		if (reg_volt_id < 0)
- 			break;
- 
--		if (uV == reg_uV)
-+		if (align_step == reg_volt_id)
- 			return i;
- 	}
- 
-@@ -1554,15 +1556,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
-  * */
- static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
- {
--	int i, n_voltages, reg_uV;
-+	int i, n_voltages, reg_volt_id, align_step;
- 
-+	align_step = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
--		reg_uV = regulator_list_voltage(td->vdd_reg, i);
--		if (reg_uV < 0)
-+		reg_volt_id = regulator_list_voltage(td->vdd_reg, i) /
-+			      td->soc->alignment.step_uv;
-+		if (reg_volt_id < 0)
- 			break;
- 
--		if (uV <= reg_uV)
-+		if (align_step <= reg_volt_id)
- 			return i;
- 	}
- 
+ 	{ .compatible = "qcom,apq8096", },
+ 	{ .compatible = "qcom,msm8996", },
 -- 
 2.19.2
