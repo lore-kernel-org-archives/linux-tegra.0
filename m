@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 21/21] arm64: defconfig: Enable MAX8973 regulator
-Date: Thu, 13 Dec 2018 17:34:38 +0800
-Message-ID: <20181213093438.29621-22-josephl@nvidia.com>
+Subject: [PATCH V2 20/21] arm64: dts: tegra210-smaug: enable DFLL clock
+Date: Thu, 13 Dec 2018 17:34:37 +0800
+Message-ID: <20181213093438.29621-21-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,9 +21,7 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra210 Smaug board uses MAX77621 for both CPU & GPU rail. Note
-that max8973 and max77621 share the same driver. So enable this driver
-for the PMIC.
+Enable DFLL clock for Smaug board.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
@@ -31,20 +29,31 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5c2b1f6842f8..8dab129395a1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -420,6 +420,7 @@ CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_HI6421V530=y
- CONFIG_REGULATOR_HI655X=y
- CONFIG_REGULATOR_MAX77620=y
-+CONFIG_REGULATOR_MAX8973=y
- CONFIG_REGULATOR_PWM=y
- CONFIG_REGULATOR_QCOM_RPMH=y
- CONFIG_REGULATOR_QCOM_SMD_RPM=y
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 79cfcd5b7e62..c08c5471b974 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1698,6 +1698,18 @@
+ 		status = "okay";
+ 	};
+ 
++	clock@70110000 {
++		status = "okay";
++		nvidia,cf = <6>;
++		nvidia,ci = <0>;
++		nvidia,cg = <2>;
++		nvidia,droop-ctrl = <0x00000f00>;
++		nvidia,force-mode = <1>;
++		nvidia,i2c-fs-rate = <400000>;
++		nvidia,sample-rate = <12500>;
++		vdd-cpu-supply = <&max77621_cpu>;
++	};
++
+ 	aconnect@702c0000 {
+ 		status = "okay";
+ 
 -- 
 2.19.2
