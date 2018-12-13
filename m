@@ -1,7 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 14/21] cpufreq: dt-platdev: add Tegra210 to blacklist
-Date: Thu, 13 Dec 2018 17:34:31 +0800
-Message-ID: <20181213093438.29621-15-josephl@nvidia.com>
+Subject: [PATCH V2 17/21] arm64: dts: tegra210-p2597: add pinmux for PWM-based
+ DFLL support
+Date: Thu, 13 Dec 2018 17:34:34 +0800
+Message-ID: <20181213093438.29621-18-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,34 +19,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 uses "tegra124-cpufreq" platform driver to register device data
-for "cpufreq-dt" driver. So add it in the blacklist for
-"cpufreq-dt-platdev" driver to drop that.
+Add pinmux for PWM-based DFLL support.
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V2:
- - new added in V2
+ - add ack tag
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index b1c5468dca16..47729a22c159 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -119,6 +119,7 @@ static const struct of_device_id blacklist[] __initconst = {
- 	{ .compatible = "mediatek,mt8176", },
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index a96e6ee70c21..0ee25a5188f8 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1278,6 +1278,20 @@
+ 				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+ 			};
+ 		};
++
++		dvfs_pwm_active_state: dvfs_pwm_active {
++			dvfs_pwm_pbb1 {
++				nvidia,pins = "dvfs_pwm_pbb1";
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++			};
++		};
++
++		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
++			dvfs_pwm_pbb1 {
++				nvidia,pins = "dvfs_pwm_pbb1";
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++			};
++		};
+ 	};
  
- 	{ .compatible = "nvidia,tegra124", },
-+	{ .compatible = "nvidia,tegra210", },
- 
- 	{ .compatible = "qcom,apq8096", },
- 	{ .compatible = "qcom,msm8996", },
+ 	pwm@7000a000 {
 -- 
 2.19.2
