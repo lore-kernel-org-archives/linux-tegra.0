@@ -1,65 +1,75 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 09/21] clk: tegra: dfll: add protection for find_vdd_map
- APIs
-Date: Thu, 13 Dec 2018 17:34:26 +0800
-Message-ID: <20181213093438.29621-10-josephl@nvidia.com>
-References: <20181213093438.29621-1-josephl@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] soc/tegra: pmc: Drop SMP dependency from CPU APIs
+Date: Thu, 13 Dec 2018 09:46:14 +0000
+Message-ID: <1544694374-21231-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181213093438.29621-1-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The DFLL hardware supports both I2C and PWM based regulator. SW driver
-only touches I2C regulator when generating LUT. And shouldn't touch it
-anymore once the DFLL is enabled.
+When CONFIG_SMP is disabled, the tegra clk driver now fails to build:
 
-This patch adds the protection for the APIs that only work with I2C mode
-to avoid they could be called accidentally.
+drivers/clk/tegra/clk-tegra30.c: In function =E2=80=98tegra30_cpu_rail_off_=
+ready=E2=80=99:
+drivers/clk/tegra/clk-tegra30.c:1151:2: error: implicit declaration of func=
+tion =E2=80=98tegra_pmc_cpu_is_powered=E2=80=99 [-Werror=3Dimplicit-functio=
+n-declaration]
+  cpu_pwr_status =3D tegra_pmc_cpu_is_powered(1) ||
+    ^
+Fix the above error by removing the CONFIG_SMP ifdef around the
+declaration around the PMC CPU APIs because although these are not
+needed for non-SMP configurations, there is no harm in including these
+for non-SMP builds either.
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Fixes: 61866523ed6e ("clk: tegra30: Use Tegra CPU powergate helper function=
+")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
-*V2:
- - new added patch in V2
----
- drivers/clk/tegra/clk-dfll.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/soc/tegra/pmc.c | 2 --
+ include/soc/tegra/pmc.h | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index b3668073d9b4..93cc86f17f7b 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1534,6 +1534,9 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
- {
- 	int i, n_voltages, reg_volt_id, align_step;
- 
-+	if (WARN_ON(td->pmu_if == TEGRA_DFLL_PMU_PWM))
-+		return -EINVAL;
-+
- 	align_step = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
-@@ -1558,6 +1561,9 @@ static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
- {
- 	int i, n_voltages, reg_volt_id, align_step;
- 
-+	if (WARN_ON(td->pmu_if == TEGRA_DFLL_PMU_PWM))
-+		return -EINVAL;
-+
- 	align_step = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
--- 
-2.19.2
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 8c46b0aace0b..7ea3280279ff 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -689,7 +689,6 @@ int tegra_powergate_sequence_power_up(unsigned int id, =
+struct clk *clk,
+ }
+ EXPORT_SYMBOL(tegra_powergate_sequence_power_up);
+=20
+-#ifdef CONFIG_SMP
+ /**
+  * tegra_get_cpu_powergate_id() - convert from CPU ID to partition ID
+  * @cpuid: CPU partition ID
+@@ -749,7 +748,6 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid)
+=20
+ 	return tegra_powergate_remove_clamping(id);
+ }
+-#endif /* CONFIG_SMP */
+=20
+ static int tegra_pmc_restart_notify(struct notifier_block *this,
+ 				    unsigned long action, void *data)
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index fd816f6aa9cc..a9db1b501de1 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -26,11 +26,9 @@
+ struct clk;
+ struct reset_control;
+=20
+-#ifdef CONFIG_SMP
+ bool tegra_pmc_cpu_is_powered(unsigned int cpuid);
+ int tegra_pmc_cpu_power_on(unsigned int cpuid);
+ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
+-#endif /* CONFIG_SMP */
+=20
+ /*
+  * powergate and I/O rail APIs
+--=20
+2.7.4
