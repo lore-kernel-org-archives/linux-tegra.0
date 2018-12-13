@@ -1,7 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 18/21] arm64: dts: tegra210-p2371-2180: enable DFLL clock
-Date: Thu, 13 Dec 2018 17:34:35 +0800
-Message-ID: <20181213093438.29621-19-josephl@nvidia.com>
+Subject: [PATCH V2 11/21] clk: tegra: dfll: build clk-dfll.c for Tegra124 and
+ Tegra210
+Date: Thu, 13 Dec 2018 17:34:28 +0800
+Message-ID: <20181213093438.29621-12-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,46 +22,47 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable DFLL clock for Jetson TX1 platform.
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
+Tegra210 has a DFLL as well and can share the majority of the code with
+the Tegra124 implementation. So build the same code for both platforms.
+
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V2:
- - remove non exist DT bindings
- - update the PWM DT bindings accordingly
+ - add ack tag
 ---
- .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/clk/tegra/Kconfig  | 5 +++++
+ drivers/clk/tegra/Makefile | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 37e3c46e753f..99c016bfc601 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -78,4 +78,25 @@
- 			};
- 		};
- 	};
+diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
+index 7ddacae5d0b1..57902ab43f4a 100644
+--- a/drivers/clk/tegra/Kconfig
++++ b/drivers/clk/tegra/Kconfig
+@@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
+ config CLK_TEGRA_BPMP
+ 	def_bool y
+ 	depends on TEGRA_BPMP
 +
-+	clock@70110000 {
-+		status = "okay";
-+
-+		nvidia,cf = <6>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,sample-rate = <25000>;
-+
-+		nvidia,pwm-min-microvolts = <708000>;
-+		nvidia,pwm-period = <2500>; /* 2.5us */
-+		nvidia,pwm-to-pmic;
-+		nvidia,pwm-tristate-microvolts = <1000000>;
-+		nvidia,pwm-voltage-step-microvolts = <19200>;
-+
-+		pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-+		pinctrl-0 = <&dvfs_pwm_active_state>;
-+		pinctrl-1 = <&dvfs_pwm_inactive_state>;
-+	};
- };
++config TEGRA_CLK_DFLL
++	depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
++	select PM_OPP
++	def_bool y
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index 6507acc843c7..4812e45c2214 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -20,7 +20,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+ obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
+-obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
++obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
+ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+ obj-y					+= cvb.o
+ obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
 -- 
 2.19.2
