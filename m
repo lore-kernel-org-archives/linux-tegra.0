@@ -1,7 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 16/21] arm64: dts: tegra210: add CPU clocks
-Date: Thu, 13 Dec 2018 17:34:33 +0800
-Message-ID: <20181213093438.29621-17-josephl@nvidia.com>
+Subject: [PATCH V2 19/21] arm64: dts: tegra210-smaug: add CPU power rail
+ regulator
+Date: Thu, 13 Dec 2018 17:34:36 +0800
+Message-ID: <20181213093438.29621-20-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,7 +22,7 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add CPU clocks for Tegra210.
+Add CPU power rail regulator for Smaug board.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
@@ -29,25 +30,38 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index a6db62157442..e2baf52fe1af 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1304,6 +1304,12 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a57";
- 			reg = <0>;
-+			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA210_CLK_PLL_X>,
-+				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
-+			clock-latency = <300000>;
- 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 43cae4798870..79cfcd5b7e62 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1340,6 +1340,25 @@
+ 		status = "okay";
+ 		clock-frequency = <1000000>;
  
- 		cpu@1 {
++		max77621_cpu: max77621@1b {
++			compatible = "maxim,max77621";
++			reg = <0x1b>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(Y, 1) IRQ_TYPE_LEVEL_LOW>;
++			regulator-always-on;
++			regulator-boot-on;
++			regulator-min-microvolt = <800000>;
++			regulator-max-microvolt = <1231250>;
++			regulator-name = "PPVAR_CPU";
++			regulator-ramp-delay = <12500>;
++			maxim,dvs-default-state = <1>;
++			maxim,enable-active-discharge;
++			maxim,enable-bias-control;
++			maxim,enable-etr;
++			maxim,enable-gpio = <&max77620 5 0>;
++			maxim,externally-enable;
++		};
++
+ 		max77620: max77620@3c {
+ 			compatible = "maxim,max77620";
+ 			reg = <0x3c>;
 -- 
 2.19.2
