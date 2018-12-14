@@ -1,102 +1,58 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v6 3/4] thermal: tegra: parse sensor id before sensor register
-Date: Fri, 14 Dec 2018 17:49:52 +0800
-Message-ID: <1544780993-20744-4-git-send-email-wni@nvidia.com>
+Subject: Re: [PATCH v6 0/4] Fixes for Tegra soctherm
+Date: Fri, 14 Dec 2018 17:54:49 +0800
+Message-ID: <74e77548-d10c-fd00-48c5-2b611529eaf5@nvidia.com>
 References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1544780993-20744-1-git-send-email-wni@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: rui.zhang@intel.com, edubezval@gmail.com
-Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Since different platforms may not support all 4
-sensors, so the sensor registration may be failed.
-Add codes to parse dt to find sensor id which
-need to be registered. So that the registration
-can be successful on all platform.
+Hi Rui,
+I moved get_trend() patch https://lkml.org/lkml/2018/11/20/643 in this
+serial.
+Since no more comments on these patches, will you take them?
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- drivers/thermal/tegra/soctherm.c | 45 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 2 deletions(-)
+Thanks.
+Wei.
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index fd2703c0cfc5..6bee31cd4621 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1224,6 +1224,41 @@ static void soctherm_init(struct platform_device *pdev)
- 	tegra_soctherm_throttle(&pdev->dev);
- }
- 
-+static bool tegra_soctherm_find_sensor_id(unsigned int sensor_id)
-+{
-+	bool ret = false;
-+	struct of_phandle_args sensor_specs;
-+	struct device_node *np, *sensor_np;
-+
-+	np = of_find_node_by_name(NULL, "thermal-zones");
-+	if (!np)
-+		return ret;
-+
-+	for_each_available_child_of_node(np, sensor_np) {
-+		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
-+						 "#thermal-sensor-cells",
-+						 0, &sensor_specs))
-+			continue;
-+
-+		if (sensor_specs.args_count != 1) {
-+			WARN(sensor_specs.args_count != 1,
-+			     "%s: wrong cells in sensor specifier %d\n",
-+			     sensor_specs.np->name, sensor_specs.args_count);
-+			continue;
-+		}
-+
-+		if (sensor_specs.args[0] == sensor_id) {
-+			of_node_put(sensor_np);
-+			ret = true;
-+			break;
-+		}
-+	}
-+
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+
- static const struct of_device_id tegra_soctherm_of_match[] = {
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- 	{
-@@ -1365,13 +1400,16 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 		zone->sg = soc->ttgs[i];
- 		zone->ts = tegra;
- 
-+		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
-+			continue;
-+
- 		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
- 							 soc->ttgs[i]->id, zone,
- 							 &tegra_of_thermal_ops);
- 		if (IS_ERR(z)) {
- 			err = PTR_ERR(z);
--			dev_err(&pdev->dev, "failed to register sensor: %d\n",
--				err);
-+			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
-+				soc->ttgs[i]->name, err);
- 			goto disable_clocks;
- 		}
- 
-@@ -1434,6 +1472,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
- 		struct thermal_zone_device *tz;
- 
- 		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
-+		if (!tz)
-+			continue;
-+
- 		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
- 		if (err) {
- 			dev_err(&pdev->dev,
--- 
-2.7.4
+On 14/12/2018 5:49 PM, Wei Ni wrote:
+> This series fixed some issues for Tegra soctherm,
+> and add get_trend().
+> 
+> Main changes from v5:
+> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
+> into this serial.
+> 
+> Main changes from v4:
+> 1. fixed for the parsing sensor id.
+> 2. keep warning for missing critical trips.
+> 
+> Main changes from v3:
+> 1. updated codes for parsing sensor id, per Thierry's comments
+> 
+> Main changes from v2:
+> 1. add codes to parse sensor id to avoid registration
+> failure.
+> 
+> Main changes from v1:
+> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+> "thermal: tegra: fix memory allocation".
+> 2. Print out the sensor name when register failed.
+> 2. Remove patch "thermal: tegra: fix coverity defect"
+> 
+> Wei Ni (4):
+>   thermal: tegra: remove unnecessary warnings
+>   thermal: tegra: fix memory allocation
+>   thermal: tegra: parse sensor id before sensor register
+>   thermal: tegra: add get_trend ops
+> 
+>  drivers/thermal/tegra/soctherm.c | 85 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 80 insertions(+), 5 deletions(-)
+> 
