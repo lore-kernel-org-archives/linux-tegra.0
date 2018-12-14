@@ -1,46 +1,47 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v6 1/4] thermal: tegra: remove unnecessary warnings
-Date: Fri, 14 Dec 2018 17:49:50 +0800
-Message-ID: <1544780993-20744-2-git-send-email-wni@nvidia.com>
-References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
+Subject: [PATCH v6 0/4] Fixes for Tegra soctherm
+Date: Fri, 14 Dec 2018 17:49:49 +0800
+Message-ID: <1544780993-20744-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1544780993-20744-1-git-send-email-wni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: rui.zhang@intel.com, edubezval@gmail.com
 Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Convert warnings to info as not all platforms may
-have all the thresholds and sensors enabled.
+This series fixed some issues for Tegra soctherm,
+and add get_trend().
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- drivers/thermal/tegra/soctherm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Main changes from v5:
+1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
+into this serial.
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index ed28110a3535..f07de8258e93 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -569,7 +569,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- set_throttle:
- 	ret = get_hot_temp(tz, &trip, &temperature);
- 	if (ret) {
--		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
-+		dev_info(dev, "throttrip: %s: missing hot temperature\n",
- 			 sg->name);
- 		return 0;
- 	}
-@@ -600,7 +600,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- 	}
- 
- 	if (i == THROTTLE_SIZE)
--		dev_warn(dev, "throttrip: %s: missing throttle cdev\n",
-+		dev_info(dev, "throttrip: %s: missing throttle cdev\n",
- 			 sg->name);
- 
- 	return 0;
+Main changes from v4:
+1. fixed for the parsing sensor id.
+2. keep warning for missing critical trips.
+
+Main changes from v3:
+1. updated codes for parsing sensor id, per Thierry's comments
+
+Main changes from v2:
+1. add codes to parse sensor id to avoid registration
+failure.
+
+Main changes from v1:
+1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+"thermal: tegra: fix memory allocation".
+2. Print out the sensor name when register failed.
+2. Remove patch "thermal: tegra: fix coverity defect"
+
+Wei Ni (4):
+  thermal: tegra: remove unnecessary warnings
+  thermal: tegra: fix memory allocation
+  thermal: tegra: parse sensor id before sensor register
+  thermal: tegra: add get_trend ops
+
+ drivers/thermal/tegra/soctherm.c | 85 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 80 insertions(+), 5 deletions(-)
+
 -- 
 2.7.4
