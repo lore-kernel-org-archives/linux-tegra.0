@@ -1,7 +1,7 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v6 4/4] thermal: tegra: add get_trend ops
-Date: Fri, 14 Dec 2018 17:49:53 +0800
-Message-ID: <1544780993-20744-5-git-send-email-wni@nvidia.com>
+Subject: [PATCH v6 3/4] thermal: tegra: parse sensor id before sensor register
+Date: Fri, 14 Dec 2018 17:49:52 +0800
+Message-ID: <1544780993-20744-4-git-send-email-wni@nvidia.com>
 References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,61 +12,91 @@ To: rui.zhang@intel.com, edubezval@gmail.com
 Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for get_trend ops that allows soctherm
-sensors to be used with the step-wise governor.
+Since different platforms may not support all 4
+sensors, so the sensor registration may be failed.
+Add codes to parse dt to find sensor id which
+need to be registered. So that the registration
+can be successful on all platform.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/thermal/tegra/soctherm.c | 45 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 43 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 6bee31cd4621..330bffd38fdd 100644
+index fd2703c0cfc5..6bee31cd4621 100644
 --- a/drivers/thermal/tegra/soctherm.c
 +++ b/drivers/thermal/tegra/soctherm.c
-@@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
- 	return 0;
+@@ -1224,6 +1224,41 @@ static void soctherm_init(struct platform_device *pdev)
+ 	tegra_soctherm_throttle(&pdev->dev);
  }
  
-+static int tegra_thermctl_get_trend(void *data, int trip,
-+				    enum thermal_trend *trend)
++static bool tegra_soctherm_find_sensor_id(unsigned int sensor_id)
 +{
-+	struct tegra_thermctl_zone *zone = data;
-+	struct thermal_zone_device *tz = zone->tz;
-+	int trip_temp, temp, last_temp, ret;
++	bool ret = false;
++	struct of_phandle_args sensor_specs;
++	struct device_node *np, *sensor_np;
 +
-+	if (!tz)
-+		return -EINVAL;
-+
-+	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
-+	if (ret)
++	np = of_find_node_by_name(NULL, "thermal-zones");
++	if (!np)
 +		return ret;
 +
-+	mutex_lock(&tz->lock);
-+	temp = tz->temperature;
-+	last_temp = tz->last_temperature;
-+	mutex_unlock(&tz->lock);
++	for_each_available_child_of_node(np, sensor_np) {
++		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
++						 "#thermal-sensor-cells",
++						 0, &sensor_specs))
++			continue;
 +
-+	if (temp > trip_temp) {
-+		if (temp >= last_temp)
-+			*trend = THERMAL_TREND_RAISING;
-+		else
-+			*trend = THERMAL_TREND_STABLE;
-+	} else if (temp < trip_temp) {
-+		*trend = THERMAL_TREND_DROPPING;
-+	} else {
-+		*trend = THERMAL_TREND_STABLE;
++		if (sensor_specs.args_count != 1) {
++			WARN(sensor_specs.args_count != 1,
++			     "%s: wrong cells in sensor specifier %d\n",
++			     sensor_specs.np->name, sensor_specs.args_count);
++			continue;
++		}
++
++		if (sensor_specs.args[0] == sensor_id) {
++			of_node_put(sensor_np);
++			ret = true;
++			break;
++		}
 +	}
 +
-+	return 0;
++	of_node_put(np);
++
++	return ret;
 +}
 +
- static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
- 	.get_temp = tegra_thermctl_get_temp,
- 	.set_trip_temp = tegra_thermctl_set_trip_temp,
-+	.get_trend = tegra_thermctl_get_trend,
- };
+ static const struct of_device_id tegra_soctherm_of_match[] = {
+ #ifdef CONFIG_ARCH_TEGRA_124_SOC
+ 	{
+@@ -1365,13 +1400,16 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 		zone->sg = soc->ttgs[i];
+ 		zone->ts = tegra;
  
- static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
++		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
++			continue;
++
+ 		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
+ 							 soc->ttgs[i]->id, zone,
+ 							 &tegra_of_thermal_ops);
+ 		if (IS_ERR(z)) {
+ 			err = PTR_ERR(z);
+-			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+-				err);
++			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
++				soc->ttgs[i]->name, err);
+ 			goto disable_clocks;
+ 		}
+ 
+@@ -1434,6 +1472,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
+ 		struct thermal_zone_device *tz;
+ 
+ 		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
++		if (!tz)
++			continue;
++
+ 		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
+ 		if (err) {
+ 			dev_err(&pdev->dev,
 -- 
 2.7.4
