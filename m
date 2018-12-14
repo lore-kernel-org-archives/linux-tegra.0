@@ -1,44 +1,77 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v12 5/7] interconnect: qcom: Add sdm845 interconnect
- provider driver
-Date: Fri, 14 Dec 2018 09:07:02 -0600
-Message-ID: <CAL_JsqJrCBDegU5CpFfDrZeyfcbAAdhcn2AscrVA=uK7XqkvGw@mail.gmail.com>
-References: <20181208170216.32555-1-georgi.djakov@linaro.org> <20181208170216.32555-6-georgi.djakov@linaro.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V1] mmc: cqhci: DMA Configuration prior to CQE
+Date: Fri, 14 Dec 2018 10:21:55 -0800
+Message-ID: <1544811715-23792-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181208170216.32555-6-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Gross <andy.gross@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "open list:THERMAL" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, Evan Green <evgreen@chromium.org>, Doug Anderson <dianders@chromium.org>, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Alexandre Bailon <abailon@baylibre.com>, Maxime
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Dec 8, 2018 at 11:02 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->
-> From: David Dai <daidavid1@codeaurora.org>
->
-> Introduce Qualcomm SDM845 specific provider driver using the
-> interconnect framework.
->
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  .../bindings/interconnect/qcom,sdm845.txt     |  24 +
+eMMC-5.1 JESD85-B51 Spec (Section 6.6.39), mentions DMA selection
+and DMA Block size configuration on SDHCI Host need to be done
+prior to enabling Command Queue Engine.
 
-This and the binding header should have been a separate patch, but I'm
-not going to tell you that now on v12.
+This patch fixes the sequence to follow the spec.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/cqhci.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
->  drivers/interconnect/Kconfig                  |   5 +
->  drivers/interconnect/Makefile                 |   1 +
->  drivers/interconnect/qcom/Kconfig             |  13 +
->  drivers/interconnect/qcom/Makefile            |   5 +
->  drivers/interconnect/qcom/sdm845.c            | 838 ++++++++++++++++++
->  .../dt-bindings/interconnect/qcom,sdm845.h    | 143 +++
->  7 files changed, 1029 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->  create mode 100644 drivers/interconnect/qcom/Kconfig
->  create mode 100644 drivers/interconnect/qcom/Makefile
->  create mode 100644 drivers/interconnect/qcom/sdm845.c
->  create mode 100644 include/dt-bindings/interconnect/qcom,sdm845.h
+diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
+index 159270e947cf..f701342e7212 100644
+--- a/drivers/mmc/host/cqhci.c
++++ b/drivers/mmc/host/cqhci.c
+@@ -248,6 +248,9 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+ 		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+ 	}
+ 
++	if (cq_host->ops->enable)
++		cq_host->ops->enable(mmc);
++
+ 	cqcfg &= ~(CQHCI_DCMD | CQHCI_TASK_DESC_SZ);
+ 
+ 	if (mmc->caps2 & MMC_CAP2_CQE_DCMD)
+@@ -273,9 +276,6 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+ 
+ 	mmc->cqe_on = true;
+ 
+-	if (cq_host->ops->enable)
+-		cq_host->ops->enable(mmc);
+-
+ 	/* Ensure all writes are done before interrupts are enabled */
+ 	wmb();
+ 
+@@ -561,6 +561,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 	int tag = cqhci_tag(mrq);
+ 	struct cqhci_host *cq_host = mmc->cqe_private;
+ 	unsigned long flags;
++	u32 cqcfg = 0;
+ 
+ 	if (!cq_host->enabled) {
+ 		pr_err("%s: cqhci: not enabled\n", mmc_hostname(mmc));
+@@ -579,8 +580,19 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+ 			       mmc_hostname(mmc));
+ 		}
++		/* Configuration must not be changed while enabled */
++		cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
++		if (cqcfg & CQHCI_ENABLE) {
++			cqcfg &= ~CQHCI_ENABLE;
++			cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
++		}
++
+ 		if (cq_host->ops->enable)
+ 			cq_host->ops->enable(mmc);
++
++		cqcfg |= CQHCI_ENABLE;
++		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
++
+ 	}
+ 
+ 	if (mrq->data) {
+-- 
+2.7.4
