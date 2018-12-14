@@ -1,82 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/5] gpio: Add support for hierarchical IRQ domains
-Date: Fri, 14 Dec 2018 14:41:01 +0100
-Message-ID: <CACRpkdYhgCsr2w-MgwdLDvcZXDhkvn2_sgvGW8VskK1=3kVASw@mail.gmail.com>
-References: <20181129170312.23625-1-thierry.reding@gmail.com> <20181129170312.23625-2-thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 3/5] gpio: tegra186: Rename flow variable to type
+Date: Fri, 14 Dec 2018 14:51:27 +0100
+Message-ID: <CACRpkdb55-U_9rBK0wvcBk-eof3hzDmPc2YSXNuzEhw-cZGrRA@mail.gmail.com>
+References: <20181129170312.23625-1-thierry.reding@gmail.com>
+ <20181129170312.23625-4-thierry.reding@gmail.com> <CACRpkdbuRJ+UAoZkZNtWNzrF2+_0h-ibkTaDXWcPe70yJCx+5w@mail.gmail.com>
+ <20181214133636.GA23379@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181129170312.23625-2-thierry.reding@gmail.com>
+In-Reply-To: <20181214133636.GA23379@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
 To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brian Masney <masneyb@onstation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry!
-
-thanks a lot for the patch! This is really in the right direction
-of how I want things to go with hierarchical IRQs.
-
-Some comments:
-
-On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-
->  config GPIOLIB_IRQCHIP
-> -       select IRQ_DOMAIN
-> +       select IRQ_DOMAIN_HIERARCHY
-
-I understand that IRQ_DOMAIN_HIERARCHY implies
-IRQ_DOMAIN but I kind of like if we anyway select both
-(unless Kconfig dislikes it).
-
-Otherwise it looks like we're just using hierarchies.
-
->  static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
->  {
-> +       struct irq_domain *domain = chip->irq.domain;
-> +
->         if (!gpiochip_irqchip_irq_valid(chip, offset))
->                 return -ENXIO;
+On Fri, Dec 14, 2018 at 2:36 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Fri, Dec 14, 2018 at 02:34:43PM +0100, Linus Walleij wrote:
+> > On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> >
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >
+> > > The IRQ core code refers to the interrupt type by that name, whereas the
+> > > term flow is almost never used. Some GPIO controllers use the term
+> > > flow_type, but it is most consistent to just go with the IRQ core
+> > > terminology.
+> > >
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >
+> > Patch applied.
+> >
+> > No need to wait for genirq or other changes to apply this.
 >
-> +       if (irq_domain_is_hierarchy(domain)) {
-> +               struct irq_fwspec spec;
-> +
-> +               spec.fwnode = domain->fwnode;
-> +               spec.param_count = 2;
-> +               spec.param[0] = offset;
-> +               spec.param[1] = 0;
-> +
-> +               return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
-> +       }
-> +
->         return irq_create_mapping(chip->irq.domain, offset);
->  }
+> The genirq patch was acked by both Thomas and Marc. Were you waiting for
+> anything else on the rest of this series?
 
-This is really nice.
-
-> -       gpiochip->to_irq = gpiochip_to_irq;
-> +       /*
-> +        * Allow GPIO chips to override the ->to_irq() if they really need to.
-> +        * This should only be very rarely needed, the majority should be fine
-> +        * with gpiochip_to_irq().
-> +        */
-> +       if (!gpiochip->to_irq)
-> +               gpiochip->to_irq = gpiochip_to_irq;
-
-And I see this is what your driver does, which leaves the default
-domain hierarchy callback path unused.
-
-It's better if you indirect the pointer like we do with some other
-irqchip stuff (see Hans Verkuils patches), i.e. if ->to_irq
-is defined, we save that function pointer and call that at the
-end of the gpiochip_to_irq() pointer, then we override it
-with our own.
-
-Since the Tegra186 clearly .to_irq() clearly is mostly the
-same plus some extra, this should work fine and give
-lesser lines of code in that driver.
-
-Apart from that I am a big fan of this patch!
+Yeah I had some comments on patch 1 (sorry for slowness ...)
+but it's something I think you can fix up and test in 30 min.
 
 Yours,
 Linus Walleij
