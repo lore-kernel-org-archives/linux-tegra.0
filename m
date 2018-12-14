@@ -1,131 +1,50 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH V2 08/21] clk: tegra: dfll: round down voltages based on
- alignment
-Date: Fri, 14 Dec 2018 15:18:59 +0800
-Message-ID: <b9f473fc-d1e8-6d80-be20-d9884960dc16@nvidia.com>
-References: <20181213093438.29621-1-josephl@nvidia.com>
- <20181213093438.29621-9-josephl@nvidia.com>
- <c1ce50e0-fccf-aa37-361c-4dd9367b092d@nvidia.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH V1] mmc: sdhci: Fix sdhci_do_enable_v4_mode
+Date: Fri, 14 Dec 2018 09:34:27 +0200
+Message-ID: <3c980500-77d8-c8a7-ce7a-31eb8df1b17a@intel.com>
+References: <1544733246-11678-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <c1ce50e0-fccf-aa37-361c-4dd9367b092d@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544733246-11678-1-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/13/18 7:46 PM, Jon Hunter wrote:
+On 13/12/18 10:34 PM, Sowjanya Komatineni wrote:
+> V4_MODE is Bit-15 of SDHCI_HOST_CONTROL2 register.
+> Need to perform word access to this register.
 > 
-> On 13/12/2018 09:34, Joseph Lo wrote:
->> When generating the OPP table, the voltages are round down with the
->> alignment from the regulator. The alignment should be applied for
->> voltages look up as well.
->>
->> Based on the work of Penny Chiu <pchiu@nvidia.com>.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->> *V2:
->>   - s/align_volt/align_step/
->>   - s/reg_volt/reg_volt_id/
->> ---
->>   drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
->>   1 file changed, 15 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
->> index 72e02898006c..b3668073d9b4 100644
->> --- a/drivers/clk/tegra/clk-dfll.c
->> +++ b/drivers/clk/tegra/clk-dfll.c
->> @@ -804,17 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
->>   static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
->>   {
->>   	struct dev_pm_opp *opp;
->> -	int i, uv;
->> +	int i, align_step;
->>   
->>   	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
->>   	if (IS_ERR(opp))
->>   		return PTR_ERR(opp);
->>   
->> -	uv = dev_pm_opp_get_voltage(opp);
->> +	align_step = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
->>   	dev_pm_opp_put(opp);
->>   
->>   	for (i = td->lut_bottom; i < td->lut_size; i++) {
->> -		if (td->lut_uv[i] >= uv)
->> +		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= align_step)
->>   			return i;
->>   	}
->>   
->> @@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
->>    */
->>   static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->>   {
->> -	int i, n_voltages, reg_uV;
->> +	int i, n_voltages, reg_volt_id, align_step;
->>   
->> +	align_step = uV / td->soc->alignment.step_uv;
->>   	n_voltages = regulator_count_voltages(td->vdd_reg);
->>   	for (i = 0; i < n_voltages; i++) {
->> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
->> -		if (reg_uV < 0)
->> +		reg_volt_id = regulator_list_voltage(td->vdd_reg, i) /
->> +			      td->soc->alignment.step_uv;
->> +		if (reg_volt_id < 0)
-> 
-> I don't think that this will work. If the step is say 10000 and we
-> return an error code greater than -10000, we will end up with 0.
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Ah,I think you mean when the error code smaller than step_uv. Yes, it 
-will be 0 in that case. I think I will just remove the 'if' clause, then 
-it will not match anything and leave the for loop. And return error if 
-it couldn't find anything. Same as below.
+Fixes: b3f80b434f726 ("mmc: sdhci: Add sd host v4 mode")
 
-Thanks.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
+> ---
+>  drivers/mmc/host/sdhci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->>   			break;
->>   
->> -		if (uV == reg_uV)
->> +		if (align_step == reg_volt_id)
->>   			return i;
->>   	}
->>   
->> @@ -1554,15 +1556,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->>    * */
->>   static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
->>   {
->> -	int i, n_voltages, reg_uV;
->> +	int i, n_voltages, reg_volt_id, align_step;
->>   
->> +	align_step = uV / td->soc->alignment.step_uv;
->>   	n_voltages = regulator_count_voltages(td->vdd_reg);
->>   	for (i = 0; i < n_voltages; i++) {
->> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
->> -		if (reg_uV < 0)
->> +		reg_volt_id = regulator_list_voltage(td->vdd_reg, i) /
->> +			      td->soc->alignment.step_uv;
->> +		if (reg_volt_id < 0)
-> 
-> Same here.
-> 
->>   			break;
->>   
->> -		if (uV <= reg_uV)
->> +		if (align_step <= reg_volt_id)
->>   			return i;
->>   	}
->>   
->>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae53fa2e..fde984d10619 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -127,12 +127,12 @@ static void sdhci_do_enable_v4_mode(struct sdhci_host *host)
+>  {
+>  	u16 ctrl2;
+>  
+> -	ctrl2 = sdhci_readb(host, SDHCI_HOST_CONTROL2);
+> +	ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>  	if (ctrl2 & SDHCI_CTRL_V4_MODE)
+>  		return;
+>  
+>  	ctrl2 |= SDHCI_CTRL_V4_MODE;
+> -	sdhci_writeb(host, ctrl2, SDHCI_HOST_CONTROL);
+> +	sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
+>  }
+>  
+>  /*
 > 
