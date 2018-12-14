@@ -1,85 +1,31 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 08/21] clk: tegra: dfll: round down voltages based on
- alignment
-Date: Fri, 14 Dec 2018 10:00:11 +0000
-Message-ID: <c2aac384-e892-9c17-a58a-0e0f52ee0901@nvidia.com>
-References: <20181213093438.29621-1-josephl@nvidia.com>
- <20181213093438.29621-9-josephl@nvidia.com>
- <c1ce50e0-fccf-aa37-361c-4dd9367b092d@nvidia.com>
- <b9f473fc-d1e8-6d80-be20-d9884960dc16@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 3/5] gpio: tegra186: Rename flow variable to type
+Date: Fri, 14 Dec 2018 14:34:43 +0100
+Message-ID: <CACRpkdbuRJ+UAoZkZNtWNzrF2+_0h-ibkTaDXWcPe70yJCx+5w@mail.gmail.com>
+References: <20181129170312.23625-1-thierry.reding@gmail.com> <20181129170312.23625-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <b9f473fc-d1e8-6d80-be20-d9884960dc16@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181129170312.23625-4-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE0LzEyLzIwMTggMDc6MTgsIEpvc2VwaCBMbyB3cm90ZToKPiBPbiAxMi8xMy8xOCA3OjQ2
-IFBNLCBKb24gSHVudGVyIHdyb3RlOgo+Pgo+PiBPbiAxMy8xMi8yMDE4IDA5OjM0LCBKb3NlcGgg
-TG8gd3JvdGU6Cj4+PiBXaGVuIGdlbmVyYXRpbmcgdGhlIE9QUCB0YWJsZSwgdGhlIHZvbHRhZ2Vz
-IGFyZSByb3VuZCBkb3duIHdpdGggdGhlCj4+PiBhbGlnbm1lbnQgZnJvbSB0aGUgcmVndWxhdG9y
-LiBUaGUgYWxpZ25tZW50IHNob3VsZCBiZSBhcHBsaWVkIGZvcgo+Pj4gdm9sdGFnZXMgbG9vayB1
-cCBhcyB3ZWxsLgo+Pj4KPj4+IEJhc2VkIG9uIHRoZSB3b3JrIG9mIFBlbm55IENoaXUgPHBjaGl1
-QG52aWRpYS5jb20+Lgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEpvc2VwaCBMbyA8am9zZXBobEBu
-dmlkaWEuY29tPgo+Pj4gLS0tCj4+PiAqVjI6Cj4+PiDCoCAtIHMvYWxpZ25fdm9sdC9hbGlnbl9z
-dGVwLwo+Pj4gwqAgLSBzL3JlZ192b2x0L3JlZ192b2x0X2lkLwo+Pj4gLS0tCj4+PiDCoCBkcml2
-ZXJzL2Nsay90ZWdyYS9jbGstZGZsbC5jIHwgMjYgKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0K
-Pj4+IMKgIDEgZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAxMSBkZWxldGlvbnMoLSkK
-Pj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvdGVncmEvY2xrLWRmbGwuYyBiL2RyaXZl
-cnMvY2xrL3RlZ3JhL2Nsay1kZmxsLmMKPj4+IGluZGV4IDcyZTAyODk4MDA2Yy4uYjM2NjgwNzNk
-OWI0IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9jbGsvdGVncmEvY2xrLWRmbGwuYwo+Pj4gKysr
-IGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLWRmbGwuYwo+Pj4gQEAgLTgwNCwxNyArODA0LDE3IEBA
-IHN0YXRpYyB2b2lkIGRmbGxfaW5pdF9vdXRfaWYoc3RydWN0IHRlZ3JhX2RmbGwKPj4+ICp0ZCkK
-Pj4+IMKgIHN0YXRpYyBpbnQgZmluZF9sdXRfaW5kZXhfZm9yX3JhdGUoc3RydWN0IHRlZ3JhX2Rm
-bGwgKnRkLCB1bnNpZ25lZAo+Pj4gbG9uZyByYXRlKQo+Pj4gwqAgewo+Pj4gwqDCoMKgwqDCoCBz
-dHJ1Y3QgZGV2X3BtX29wcCAqb3BwOwo+Pj4gLcKgwqDCoCBpbnQgaSwgdXY7Cj4+PiArwqDCoMKg
-IGludCBpLCBhbGlnbl9zdGVwOwo+Pj4gwqAgwqDCoMKgwqDCoCBvcHAgPSBkZXZfcG1fb3BwX2Zp
-bmRfZnJlcV9jZWlsKHRkLT5zb2MtPmRldiwgJnJhdGUpOwo+Pj4gwqDCoMKgwqDCoCBpZiAoSVNf
-RVJSKG9wcCkpCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIFBUUl9FUlIob3BwKTsKPj4+
-IMKgIC3CoMKgwqAgdXYgPSBkZXZfcG1fb3BwX2dldF92b2x0YWdlKG9wcCk7Cj4+PiArwqDCoMKg
-IGFsaWduX3N0ZXAgPSBkZXZfcG1fb3BwX2dldF92b2x0YWdlKG9wcCkgLwo+Pj4gdGQtPnNvYy0+
-YWxpZ25tZW50LnN0ZXBfdXY7Cj4+PiDCoMKgwqDCoMKgIGRldl9wbV9vcHBfcHV0KG9wcCk7Cj4+
-PiDCoCDCoMKgwqDCoMKgIGZvciAoaSA9IHRkLT5sdXRfYm90dG9tOyBpIDwgdGQtPmx1dF9zaXpl
-OyBpKyspIHsKPj4+IC3CoMKgwqDCoMKgwqDCoCBpZiAodGQtPmx1dF91dltpXSA+PSB1dikKPj4+
-ICvCoMKgwqDCoMKgwqDCoCBpZiAoKHRkLT5sdXRfdXZbaV0gLyB0ZC0+c29jLT5hbGlnbm1lbnQu
-c3RlcF91dikgPj0gYWxpZ25fc3RlcCkKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJl
-dHVybiBpOwo+Pj4gwqDCoMKgwqDCoCB9Cj4+PiDCoCBAQCAtMTUzMiwxNSArMTUzMiwxNyBAQCBz
-dGF0aWMgaW50IGRmbGxfaW5pdChzdHJ1Y3QgdGVncmFfZGZsbCAqdGQpCj4+PiDCoMKgICovCj4+
-PiDCoCBzdGF0aWMgaW50IGZpbmRfdmRkX21hcF9lbnRyeV9leGFjdChzdHJ1Y3QgdGVncmFfZGZs
-bCAqdGQsIGludCB1VikKPj4+IMKgIHsKPj4+IC3CoMKgwqAgaW50IGksIG5fdm9sdGFnZXMsIHJl
-Z191VjsKPj4+ICvCoMKgwqAgaW50IGksIG5fdm9sdGFnZXMsIHJlZ192b2x0X2lkLCBhbGlnbl9z
-dGVwOwo+Pj4gwqAgK8KgwqDCoCBhbGlnbl9zdGVwID0gdVYgLyB0ZC0+c29jLT5hbGlnbm1lbnQu
-c3RlcF91djsKPj4+IMKgwqDCoMKgwqAgbl92b2x0YWdlcyA9IHJlZ3VsYXRvcl9jb3VudF92b2x0
-YWdlcyh0ZC0+dmRkX3JlZyk7Cj4+PiDCoMKgwqDCoMKgIGZvciAoaSA9IDA7IGkgPCBuX3ZvbHRh
-Z2VzOyBpKyspIHsKPj4+IC3CoMKgwqDCoMKgwqDCoCByZWdfdVYgPSByZWd1bGF0b3JfbGlzdF92
-b2x0YWdlKHRkLT52ZGRfcmVnLCBpKTsKPj4+IC3CoMKgwqDCoMKgwqDCoCBpZiAocmVnX3VWIDwg
-MCkKPj4+ICvCoMKgwqDCoMKgwqDCoCByZWdfdm9sdF9pZCA9IHJlZ3VsYXRvcl9saXN0X3ZvbHRh
-Z2UodGQtPnZkZF9yZWcsIGkpIC8KPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIHRkLT5zb2MtPmFsaWdubWVudC5zdGVwX3V2Owo+Pj4gK8KgwqDCoMKgwqDCoMKgIGlmIChy
-ZWdfdm9sdF9pZCA8IDApCj4+Cj4+IEkgZG9uJ3QgdGhpbmsgdGhhdCB0aGlzIHdpbGwgd29yay4g
-SWYgdGhlIHN0ZXAgaXMgc2F5IDEwMDAwIGFuZCB3ZQo+PiByZXR1cm4gYW4gZXJyb3IgY29kZSBn
-cmVhdGVyIHRoYW4gLTEwMDAwLCB3ZSB3aWxsIGVuZCB1cCB3aXRoIDAuCj4gCj4gQWgsSSB0aGlu
-ayB5b3UgbWVhbiB3aGVuIHRoZSBlcnJvciBjb2RlIHNtYWxsZXIgdGhhbiBzdGVwX3V2LiBZZXMs
-IGl0Cj4gd2lsbCBiZSAwIGluIHRoYXQgY2FzZS4gSSB0aGluayBJIHdpbGwganVzdCByZW1vdmUg
-dGhlICdpZicgY2xhdXNlLCB0aGVuCj4gaXQgd2lsbCBub3QgbWF0Y2ggYW55dGhpbmcgYW5kIGxl
-YXZlIHRoZSBmb3IgbG9vcC4gQW5kIHJldHVybiBlcnJvciBpZgo+IGl0IGNvdWxkbid0IGZpbmQg
-YW55dGhpbmcuIFNhbWUgYXMgYmVsb3cuCgpMb29rcyBsaWtlIGlmIHlvdSByZW1vdmUgdGhlIGlm
-IGNsYXVzZSB0aGVuIGlmIHdpbGwgdHJ5IHRvIGxvb2sgdXAKYW5vdGhlciB2b2x0YWdlLiBTZWVt
-cyB0byBtZSB0aGF0IHdlIHNob3VsZCBqdXN0IGJyZWFrIG91dCB0aGUgbG9vcCBvbgp0aGUgZmly
-c3QgZmFpbHVyZSBhcyBpdCBkb2VzIHRvZGF5LgoKQ2hlZXJzCkpvbgotLSAKbnZwdWJsaWMKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1r
-ZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpo
-dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJu
-ZWwK
+On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+
+> From: Thierry Reding <treding@nvidia.com>
+>
+> The IRQ core code refers to the interrupt type by that name, whereas the
+> term flow is almost never used. Some GPIO controllers use the term
+> flow_type, but it is most consistent to just go with the IRQ core
+> terminology.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Patch applied.
+
+No need to wait for genirq or other changes to apply this.
+
+Yours,
+Linus Walleij
