@@ -1,47 +1,38 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v6 0/4] Fixes for Tegra soctherm
-Date: Fri, 14 Dec 2018 17:49:49 +0800
-Message-ID: <1544780993-20744-1-git-send-email-wni@nvidia.com>
+Subject: [PATCH v6 2/4] thermal: tegra: fix memory allocation
+Date: Fri, 14 Dec 2018 17:49:51 +0800
+Message-ID: <1544780993-20744-3-git-send-email-wni@nvidia.com>
+References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544780993-20744-1-git-send-email-wni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: rui.zhang@intel.com, edubezval@gmail.com
 Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This series fixed some issues for Tegra soctherm,
-and add get_trend().
+Fix memory allocation to store the pointers to
+thermal_zone_device.
 
-Main changes from v5:
-1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
-into this serial.
+Signed-off-by: Wei Ni <wni@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/thermal/tegra/soctherm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Main changes from v4:
-1. fixed for the parsing sensor id.
-2. keep warning for missing critical trips.
-
-Main changes from v3:
-1. updated codes for parsing sensor id, per Thierry's comments
-
-Main changes from v2:
-1. add codes to parse sensor id to avoid registration
-failure.
-
-Main changes from v1:
-1. Acked by Thierry Reding <treding@nvidia.com> for the patch
-"thermal: tegra: fix memory allocation".
-2. Print out the sensor name when register failed.
-2. Remove patch "thermal: tegra: fix coverity defect"
-
-Wei Ni (4):
-  thermal: tegra: remove unnecessary warnings
-  thermal: tegra: fix memory allocation
-  thermal: tegra: parse sensor id before sensor register
-  thermal: tegra: add get_trend ops
-
- drivers/thermal/tegra/soctherm.c | 85 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 80 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index f07de8258e93..fd2703c0cfc5 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -1339,7 +1339,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	tegra->thermctl_tzs = devm_kcalloc(&pdev->dev,
+-					   soc->num_ttgs, sizeof(*z),
++					   soc->num_ttgs, sizeof(z),
+ 					   GFP_KERNEL);
+ 	if (!tegra->thermctl_tzs)
+ 		return -ENOMEM;
 -- 
 2.7.4
