@@ -1,67 +1,82 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 3/5] gpio: tegra186: Rename flow variable to type
-Date: Fri, 14 Dec 2018 14:36:36 +0100
-Message-ID: <20181214133636.GA23379@ulmo>
-References: <20181129170312.23625-1-thierry.reding@gmail.com>
- <20181129170312.23625-4-thierry.reding@gmail.com>
- <CACRpkdbuRJ+UAoZkZNtWNzrF2+_0h-ibkTaDXWcPe70yJCx+5w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/5] gpio: Add support for hierarchical IRQ domains
+Date: Fri, 14 Dec 2018 14:41:01 +0100
+Message-ID: <CACRpkdYhgCsr2w-MgwdLDvcZXDhkvn2_sgvGW8VskK1=3kVASw@mail.gmail.com>
+References: <20181129170312.23625-1-thierry.reding@gmail.com> <20181129170312.23625-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbuRJ+UAoZkZNtWNzrF2+_0h-ibkTaDXWcPe70yJCx+5w@mail.gmail.com>
+In-Reply-To: <20181129170312.23625-2-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brian Masney <masneyb@onstation.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Thierry!
 
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+thanks a lot for the patch! This is really in the right direction
+of how I want things to go with hierarchical IRQs.
 
-On Fri, Dec 14, 2018 at 02:34:43PM +0100, Linus Walleij wrote:
-> On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
->=20
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > The IRQ core code refers to the interrupt type by that name, whereas the
-> > term flow is almost never used. Some GPIO controllers use the term
-> > flow_type, but it is most consistent to just go with the IRQ core
-> > terminology.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Patch applied.
->=20
-> No need to wait for genirq or other changes to apply this.
+Some comments:
 
-The genirq patch was acked by both Thomas and Marc. Were you waiting for
-anything else on the rest of this series?
+On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
-Thierry
+>  config GPIOLIB_IRQCHIP
+> -       select IRQ_DOMAIN
+> +       select IRQ_DOMAIN_HIERARCHY
 
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature; name="signature.asc"
+I understand that IRQ_DOMAIN_HIERARCHY implies
+IRQ_DOMAIN but I kind of like if we anyway select both
+(unless Kconfig dislikes it).
 
------BEGIN PGP SIGNATURE-----
+Otherwise it looks like we're just using hierarchies.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwTseEACgkQ3SOs138+
-s6F0RRAAkBNay38yWFL3Omkl0uK0DU9odZW3Zn2R+bLQd3M1aAl891/gRC9SUOeR
-UGaPR/4s/vmsTj+wQRZbCI/h+Q9B3MWND73H7Myz7Eoa5MbByge0jt8xfTD+7Eii
-8ZzbS3vMq7WvDW4fXr4Zoo27p+Ll5fr3QDpCiT+3A6+XhAbnTws1/+eu8Y4WUSJl
-bD7w2jZ3BZe+ATLeDsz5RowBIYACxms92jrNke2VF2/nnUx270ezYojje1BnDPHx
-R7S9RTkSPKQbOSvwGaFXA35gu48SWjj6xFMFXTCZaabSby9FEx04Ro4j2luTZY1h
-m/3zajkLpxG+/VAbxOyXZrLOm9OSh3C049HIgYRtjLbE2Qsp9rMZnOunfI0wHilB
-hMkZv3Rti3ooofOVeAQBtyFLKjaYlQtd9o/wU8y1T/nxeFf0imcUZsCGNw+KB8kG
-lTrfGz2ML24xA62fiV+CP/goA7WNFH9MfXEEutxLK2WTZwX6wXsoMk3gY+PiahZY
-OMNXS1RI6G+/oSn+BT4a9C+bTQxC5rKROVN5XLHsj18030ZF/ugutEHy/y1m/LD5
-7v9inda5sdLlDeuckW0pighzujO3DDusebkN4rcHb1WGEnTzz+lrC7gU6zrTHTSJ
-tdvwZBQkMvTxzWzRhrg7Va0UhRM8+/EwxHc+t+VI+o/Zoh2FNM8=
-=8+uw
------END PGP SIGNATURE-----
+>  static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+>  {
+> +       struct irq_domain *domain = chip->irq.domain;
+> +
+>         if (!gpiochip_irqchip_irq_valid(chip, offset))
+>                 return -ENXIO;
+>
+> +       if (irq_domain_is_hierarchy(domain)) {
+> +               struct irq_fwspec spec;
+> +
+> +               spec.fwnode = domain->fwnode;
+> +               spec.param_count = 2;
+> +               spec.param[0] = offset;
+> +               spec.param[1] = 0;
+> +
+> +               return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
+> +       }
+> +
+>         return irq_create_mapping(chip->irq.domain, offset);
+>  }
 
---Q68bSM7Ycu6FN28Q--
+This is really nice.
+
+> -       gpiochip->to_irq = gpiochip_to_irq;
+> +       /*
+> +        * Allow GPIO chips to override the ->to_irq() if they really need to.
+> +        * This should only be very rarely needed, the majority should be fine
+> +        * with gpiochip_to_irq().
+> +        */
+> +       if (!gpiochip->to_irq)
+> +               gpiochip->to_irq = gpiochip_to_irq;
+
+And I see this is what your driver does, which leaves the default
+domain hierarchy callback path unused.
+
+It's better if you indirect the pointer like we do with some other
+irqchip stuff (see Hans Verkuils patches), i.e. if ->to_irq
+is defined, we save that function pointer and call that at the
+end of the gpiochip_to_irq() pointer, then we override it
+with our own.
+
+Since the Tegra186 clearly .to_irq() clearly is mostly the
+same plus some extra, this should work fine and give
+lesser lines of code in that driver.
+
+Apart from that I am a big fan of this patch!
+
+Yours,
+Linus Walleij
