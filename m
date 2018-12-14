@@ -1,77 +1,82 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] mmc: cqhci: DMA Configuration prior to CQE
-Date: Fri, 14 Dec 2018 10:21:55 -0800
-Message-ID: <1544811715-23792-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V1] arm64: dtsi: Fix SDMMC address range
+Date: Fri, 14 Dec 2018 15:04:55 -0800
+Message-ID: <1544828695-1462-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, avienamo@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-eMMC-5.1 JESD85-B51 Spec (Section 6.6.39), mentions DMA selection
-and DMA Block size configuration on SDHCI Host need to be done
-prior to enabling Command Queue Engine.
+This patch fixes the SDMMC Controllers address space to be exact
+defined register address range as per the design.
 
-This patch fixes the sequence to follow the spec.
+SDMMC Controller supporting Command Queue has CQHCI registers at
+offset 0xF000.
+
+This fix helps to identify the Tegra SDMMC Controllers supporting
+Command Queue based on the size of address space.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/mmc/host/cqhci.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 6 +++---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-index 159270e947cf..f701342e7212 100644
---- a/drivers/mmc/host/cqhci.c
-+++ b/drivers/mmc/host/cqhci.c
-@@ -248,6 +248,9 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
- 		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
- 	}
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 2f3c8e29520d..6fda3d6a7f3d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -231,7 +231,7 @@
  
-+	if (cq_host->ops->enable)
-+		cq_host->ops->enable(mmc);
-+
- 	cqcfg &= ~(CQHCI_DCMD | CQHCI_TASK_DESC_SZ);
+ 	sdmmc1: sdhci@3400000 {
+ 		compatible = "nvidia,tegra186-sdhci";
+-		reg = <0x0 0x03400000 0x0 0x10000>;
++		reg = <0x0 0x03400000 0x0 0x220>;
+ 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
+ 		clock-names = "sdhci";
+@@ -256,7 +256,7 @@
  
- 	if (mmc->caps2 & MMC_CAP2_CQE_DCMD)
-@@ -273,9 +276,6 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+ 	sdmmc2: sdhci@3420000 {
+ 		compatible = "nvidia,tegra186-sdhci";
+-		reg = <0x0 0x03420000 0x0 0x10000>;
++		reg = <0x0 0x03420000 0x0 0x220>;
+ 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
+ 		clock-names = "sdhci";
+@@ -276,7 +276,7 @@
  
- 	mmc->cqe_on = true;
+ 	sdmmc3: sdhci@3440000 {
+ 		compatible = "nvidia,tegra186-sdhci";
+-		reg = <0x0 0x03440000 0x0 0x10000>;
++		reg = <0x0 0x03440000 0x0 0x220>;
+ 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
+ 		clock-names = "sdhci";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c2091bb16546..6510ef6492b1 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -295,7 +295,7 @@
  
--	if (cq_host->ops->enable)
--		cq_host->ops->enable(mmc);
--
- 	/* Ensure all writes are done before interrupts are enabled */
- 	wmb();
+ 		sdmmc1: sdhci@3400000 {
+ 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
+-			reg = <0x03400000 0x10000>;
++			reg = <0x03400000 0x220>;
+ 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
+ 			clock-names = "sdhci";
+@@ -306,7 +306,7 @@
  
-@@ -561,6 +561,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	int tag = cqhci_tag(mrq);
- 	struct cqhci_host *cq_host = mmc->cqe_private;
- 	unsigned long flags;
-+	u32 cqcfg = 0;
- 
- 	if (!cq_host->enabled) {
- 		pr_err("%s: cqhci: not enabled\n", mmc_hostname(mmc));
-@@ -579,8 +580,19 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 			pr_err("%s: cqhci: CQE failed to exit halt state\n",
- 			       mmc_hostname(mmc));
- 		}
-+		/* Configuration must not be changed while enabled */
-+		cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
-+		if (cqcfg & CQHCI_ENABLE) {
-+			cqcfg &= ~CQHCI_ENABLE;
-+			cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-+		}
-+
- 		if (cq_host->ops->enable)
- 			cq_host->ops->enable(mmc);
-+
-+		cqcfg |= CQHCI_ENABLE;
-+		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-+
- 	}
- 
- 	if (mrq->data) {
+ 		sdmmc3: sdhci@3440000 {
+ 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
+-			reg = <0x03440000 0x10000>;
++			reg = <0x03440000 0x220>;
+ 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
+ 			clock-names = "sdhci";
 -- 
 2.7.4
