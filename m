@@ -1,136 +1,32 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 3/3] arm64: tegra: p2972: Enable the CPU, GPU and AUX
- thermal zones
-Date: Sat, 15 Dec 2018 09:28:54 -0800
-Message-ID: <20181215172853.GA10838@localhost.localdomain>
-References: <20181123121839.18573-1-thierry.reding@gmail.com>
- <20181123121839.18573-3-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+Subject: [PATCH 1/2] Staging: comedi: cb_pcidas: fixed a spelling mistake coding style issue
+Date: Sun, 16 Dec 2018 08:57:25 -0800
+Message-ID: <1544979445-10079-1-git-send-email-indigoomega021@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181123121839.18573-3-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: marvin24@gmx.de
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 01:18:39PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Enable these thermal zones to be able to monitor their temperatures and
-> control the fan to cool down the system if necessary.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Fixed a coding style issue.
 
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+---
+ drivers/staging/comedi/drivers/cb_pcidas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As mentioned, I already added patch 1.
-
-> ---
->  .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 91 ++++++++++++++++++-
->  1 file changed, 90 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> index cbae8e8b1281..e29f8f6117c8 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> @@ -43,8 +43,97 @@
->  		};
->  	};
->  
-> -	fan {
-> +	fan: fan {
->  		compatible = "pwm-fan";
->  		pwms = <&pwm4 0 45334>;
-> +
-> +		cooling-levels = <0 64 128 255>;
-> +		cooling-min-state = <0>;
-> +		cooling-max-state = <3>;
-> +		#cooling-cells = <2>;
-> +	};
-> +
-> +	thermal-zones {
-> +		cpu {
-> +			polling-delay = <0>;
-> +			polling-delay-passive = <500>;
-> +			status = "okay";
-> +
-> +			trips {
-> +				cpu_trip_critical: critical {
-> +					temperature = <96500>;
-> +					hysteresis = <0>;
-> +					type = "critical";
-> +				};
-> +
-> +				cpu_trip_hot: hot {
-> +					temperature = <70000>;
-> +					hysteresis = <2000>;
-> +					type = "hot";
-> +				};
-> +
-> +				cpu_trip_active: active {
-> +					temperature = <50000>;
-> +					hysteresis = <2000>;
-> +					type = "active";
-> +				};
-> +
-> +				cpu_trip_passive: passive {
-> +					temperature = <30000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				cpu-critical {
-> +					cooling-device = <&fan 3 3>;
-> +					trip = <&cpu_trip_critical>;
-> +				};
-> +
-> +				cpu-hot {
-> +					cooling-device = <&fan 2 2>;
-> +					trip = <&cpu_trip_hot>;
-> +				};
-> +
-> +				cpu-active {
-> +					cooling-device = <&fan 1 1>;
-> +					trip = <&cpu_trip_active>;
-> +				};
-> +
-> +				cpu-passive {
-> +					cooling-device = <&fan 0 0>;
-> +					trip = <&cpu_trip_passive>;
-> +				};
-> +			};
-> +		};
-> +
-> +		gpu {
-> +			polling-delay = <0>;
-> +			polling-delay-passive = <500>;
-> +			status = "okay";
-> +
-> +			trips {
-> +				gpu_alert0: critical {
-> +					temperature = <99000>;
-> +					hysteresis = <0>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +
-> +		aux {
-> +			polling-delay = <0>;
-> +			polling-delay-passive = <500>;
-> +			status = "okay";
-> +
-> +			trips {
-> +				aux_alert0: critical {
-> +					temperature = <90000>;
-> +					hysteresis = <0>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
->  	};
->  };
+diff --git a/drivers/staging/comedi/drivers/cb_pcidas.c b/drivers/staging/comedi/drivers/cb_pcidas.c
+index 8429d57..02ae00c 100644
+--- a/drivers/staging/comedi/drivers/cb_pcidas.c
++++ b/drivers/staging/comedi/drivers/cb_pcidas.c
+@@ -116,7 +116,7 @@
+ #define PCIDAS_TRIG_SEL_ANALOG	PCIDAS_TRIG_SEL(3) /* ext. analog trigger */
+ #define PCIDAS_TRIG_SEL_MASK	PCIDAS_TRIG_SEL(3) /* start trigger mask */
+ #define PCIDAS_TRIG_POL		BIT(2)	/* invert trigger (1602 only) */
+-#define PCIDAS_TRIG_MODE	BIT(3)	/* edge/level trigerred (1602 only) */
++#define PCIDAS_TRIG_MODE	BIT(3)	/* edge/level triggered (1602 only) */
+ #define PCIDAS_TRIG_EN		BIT(4)	/* enable external start trigger */
+ #define PCIDAS_TRIG_BURSTE	BIT(5)	/* burst mode enable */
+ #define PCIDAS_TRIG_CLR		BIT(7)	/* clear external trigger */
+-- 
+2.7.4
