@@ -1,104 +1,255 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v1 1/3] of: add nvidia,thermtrips property
-Date: Mon, 17 Dec 2018 10:57:43 +0800
-Message-ID: <172f3d13-fc7f-209c-8fa7-0d859db7dcb2@nvidia.com>
-References: <1544177407-20203-1-git-send-email-wni@nvidia.com>
- <1544177407-20203-2-git-send-email-wni@nvidia.com>
- <20181214142956.GF23379@ulmo>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V1] mmc: tegra: HW Command Queue Support for Tegra SDMMC
+Date: Mon, 17 Dec 2018 08:21:40 +0100
+Message-ID: <CAPDyKFrsuRY5+EvPeGmAvi-qkLFD4nFoa=Tdq-m+iNcF7dB4Bw@mail.gmail.com>
+References: <1544833340-5024-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181214142956.GF23379@ulmo>
-Content-Language: en-US
+In-Reply-To: <1544833340-5024-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, srikars@nvidia.com, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Sat, 15 Dec 2018 at 01:22, Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
+>
+> This patch adds HW Command Queue for supported Tegra SDMMC
+> controllers.
+>
+> Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
+> use of 64_BIT DMA to disable 64-bit addressing mode access to the
+> system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
+> for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
+>
+> CQE need to use ADMA3 as it need to fetch task descriptor along
+> with transfer descriptor, so this patch forces DMA Select to be
+> ADMA3 for CQE.
+>
+> Note that this patch depends on below patches
+> [0] DMA Config prior to CQE
+>     https://lkml.org/lkml/2018/12/14/1062
+> [1] SDMMC address range
+>     https://lkml.org/lkml/2018/12/14/1323
+> [2] Fix sdhci_do_enable_v4_mode
+>     https://lkml.org/lkml/2018/12/14/72
 
+Can you please collect these into a series and while re-posting make
+sure to also have a cover letter.
 
-On 14/12/2018 10:29 PM, Thierry Reding wrote:
-> On Fri, Dec 07, 2018 at 06:10:05PM +0800, Wei Ni wrote:
->> Add optional property "nvidia,thermtrips".
->> If present, these trips will be used as HW shutdown trips,
->> and critical trips will be used as SW shutdown trips.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  .../bindings/thermal/nvidia,tegra124-soctherm.txt    | 20 +++++++++++++++++---
->>  1 file changed, 17 insertions(+), 3 deletions(-)
-> 
-> This seems like an odd exception. Why not extend the list of trip point
-> types with a "shutdown" or "emergency" type that can be used for this?
-> This doesn't seem like NVIDIA specific functionality, so adding an
-> NVIDIA specific property doesn't seem right.
+This makes 0-day builds build to pick up the decency, but also helps
+when reviewing.
 
-The thermal framework only support four types "active", "passive",
-"hot", "critical". Normally if the "critical" trip is triggered, the
-thermal framework will implement a software shutdown. In our soctherm
-driver, we also set this "critical" trips to hardware, so it will cause
-the HW shutdown directly.
-This serial added the "nvidia,thermtrips" to set HW shutdown trips for
-our NVIDIA specific functionality, and keep the "critical" trips to
-implement SW shutdown.
-For example, we will set "critical" trip to 102C, and set
-""nvidia,thermtrips" to 103C, it mean if the temperature hit to 102, the
-system will be software shutdown, if the temperature increase fast and
-up to 103 directly, then it will cause the hardware shutdown.
+Kind regards
+Uffe
 
-Thanks.
-Wei.
-
-> 
-> Also, please always Cc devicetree@vger.kernel.org and the device tree
-> bindings maintainers when sending updates for a binding. They need to
-> ack these kinds of patches and they can't do that if they don't get a
-> copy of the patch.
-> 
-> Cc'ing them now and quoting the full patch for reference.
-> 
-> Thierry
-> 
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> index b6c0ae53d4dc..ab66d6feab4b 100644
->> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> @@ -55,10 +55,21 @@ Required properties :
->>        - #cooling-cells: Should be 1. This cooling device only support on/off state.
->>          See ./thermal.txt for a description of this property.
->>  
->> +Optional properties:
->> +- nvidia,thermtrips : When present, this property specifies the temperature at
->> +  which the soctherm hardware will assert the thermal trigger signal to the
->> +  Power Management IC, which can be configured to reset or shutdown the device.
->> +  It is an array of pairs where each pair represents a tsensor id followed by a
->> +  temperature in milli Celcius. In the absence of this property the critical
->> +  trip point will be used for thermtrip temperature.
->> +
->>  Note:
->> -- the "critical" type trip points will be set to SOC_THERM hardware as the
->> -shut down temperature. Once the temperature of this thermal zone is higher
->> -than it, the system will be shutdown or reset by hardware.
->> +- the "critical" type trip points will be used to set the temperature at which
->> +the SOC_THERM hardware will assert a thermal trigger if the "nvidia,thermtrips"
->> +property is missing. When the thermtrips property is present, the breach of a
->> +critical trip point is reported back to the thermal framework to implement
->> +software shutdown.
->> +
->>  - the "hot" type trip points will be set to SOC_THERM hardware as the throttle
->>  temperature. Once the the temperature of this thermal zone is higher
->>  than it, it will trigger the HW throttle event.
->> @@ -79,6 +90,9 @@ Example :
->>  
->>  		#thermal-sensor-cells = <1>;
->>  
->> +		nvidia,thermtrips = <TEGRA124_SOCTHERM_SENSOR_CPU 102500
->> +				     TEGRA124_SOCTHERM_SENSOR_GPU 103000>;
->> +
->>  		throttle-cfgs {
->>  			/*
->>  			 * When the "heavy" cooling device triggered,
->> -- 
->> 2.7.4
+>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 76 +++++++++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci.c       | 18 +++++++++-
+>  drivers/mmc/host/sdhci.h       |  1 +
+>  3 files changed, 93 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 7b95d088fdef..eaebe5e22183 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/ktime.h>
+>
+>  #include "sdhci-pltfm.h"
+> +#include "cqhci.h"
+>
+>  /* Tegra SDHOST controller vendor register definitions */
+>  #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL                  0x100
+> @@ -89,6 +90,10 @@
+>  #define NVQUIRK_NEEDS_PAD_CONTROL                      BIT(7)
+>  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP                        BIT(8)
+>
+> +/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+> +#define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
+> +
+> +
+>  struct sdhci_tegra_soc_data {
+>         const struct sdhci_pltfm_data *pdata;
+>         u32 nvquirks;
+> @@ -128,6 +133,7 @@ struct sdhci_tegra {
+>         u32 default_tap;
+>         u32 default_trim;
+>         u32 dqs_trim;
+> +       bool enable_hwcq;
+>  };
+>
+>  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> @@ -836,6 +842,17 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+>                 tegra_host->pad_calib_required = true;
+>  }
+>
+> +static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
+> +{
+> +       sdhci_dumpregs(mmc_priv(mmc));
+> +}
+> +
+> +static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+> +       .enable = sdhci_cqe_enable,
+> +       .disable = sdhci_cqe_disable,
+> +       .dumpregs = sdhci_tegra_dumpregs,
+> +};
+> +
+>  static const struct sdhci_ops tegra_sdhci_ops = {
+>         .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+> @@ -989,6 +1006,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>         .voltage_switch = tegra_sdhci_voltage_switch,
+>         .get_max_clock = tegra_sdhci_get_max_clock,
+> +       .irq = sdhci_cqhci_irq,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+> @@ -1030,6 +1048,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
+>
+> +static int sdhci_tegra_add_host(struct sdhci_host *host)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> +       struct cqhci_host *cq_host;
+> +       bool dma64;
+> +       int ret;
+> +
+> +       if (!tegra_host->enable_hwcq)
+> +               return sdhci_add_host(host);
+> +
+> +       host->v4_mode = true;
+> +
+> +       ret = sdhci_setup_host(host);
+> +       if (ret)
+> +               return ret;
+> +
+> +       host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
+> +
+> +       cq_host = devm_kzalloc(host->mmc->parent,
+> +                               sizeof(*cq_host), GFP_KERNEL);
+> +       if (!cq_host) {
+> +               ret = -ENOMEM;
+> +               goto cleanup;
+> +       }
+> +
+> +       cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
+> +       cq_host->ops = &sdhci_tegra_cqhci_ops;
+> +
+> +       dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
+> +       if (dma64)
+> +               cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
+> +
+> +       ret = cqhci_init(cq_host, host->mmc, dma64);
+> +       if (ret)
+> +               goto cleanup;
+> +
+> +       ret = __sdhci_add_host(host);
+> +       if (ret)
+> +               goto cleanup;
+> +
+> +       return 0;
+> +
+> +cleanup:
+> +       sdhci_cleanup_host(host);
+> +       return ret;
+> +
+> +}
+> +
+>  static int sdhci_tegra_probe(struct platform_device *pdev)
+>  {
+>         const struct of_device_id *match;
+> @@ -1039,6 +1106,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         struct sdhci_tegra *tegra_host;
+>         struct clk *clk;
+>         int rc;
+> +       struct resource *iomem;
+>
+>         match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
+>         if (!match)
+> @@ -1056,6 +1124,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         tegra_host->pad_control_available = false;
+>         tegra_host->soc_data = soc_data;
+>
+> +       iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
+> +               tegra_host->enable_hwcq = true;
+> +       else
+> +               tegra_host->enable_hwcq = false;
+> +
+>         if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
+>                 rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
+>                 if (rc == 0)
+> @@ -1117,7 +1191,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>
+>         usleep_range(2000, 4000);
+>
+> -       rc = sdhci_add_host(host);
+> +       rc = sdhci_tegra_add_host(host);
+>         if (rc)
+>                 goto err_add_host;
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae53fa2e..8c03c7a3dab2 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -36,6 +36,7 @@
+>  #include <linux/mmc/slot-gpio.h>
+>
+>  #include "sdhci.h"
+> +#include "cqhci.h"
+>
+>  #define DRIVER_NAME "sdhci"
+>
+> @@ -3308,7 +3309,8 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
+>
+>         ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+>         ctrl &= ~SDHCI_CTRL_DMA_MASK;
+> -       if (host->flags & SDHCI_USE_64_BIT_DMA)
+> +       if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
+> +                       (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
+>                 ctrl |= SDHCI_CTRL_ADMA64;
+>         else
+>                 ctrl |= SDHCI_CTRL_ADMA32;
+> @@ -3361,6 +3363,20 @@ void sdhci_cqe_disable(struct mmc_host *mmc, bool recovery)
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_cqe_disable);
+>
+> +u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask)
+> +{
+> +       int cmd_error = 0;
+> +       int data_error = 0;
+> +
+> +       if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+> +               return intmask;
+> +
+> +       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(sdhci_cqhci_irq);
+> +
+>  bool sdhci_cqe_irq(struct sdhci_host *host, u32 intmask, int *cmd_error,
+>                    int *data_error)
+>  {
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index b001cf4d3d7e..9ff7a138270e 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -777,6 +777,7 @@ void sdhci_cqe_enable(struct mmc_host *mmc);
+>  void sdhci_cqe_disable(struct mmc_host *mmc, bool recovery);
+>  bool sdhci_cqe_irq(struct sdhci_host *host, u32 intmask, int *cmd_error,
+>                    int *data_error);
+> +u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask);
+>
+>  void sdhci_dumpregs(struct sdhci_host *host);
+>  void sdhci_enable_v4_mode(struct sdhci_host *host);
+> --
+> 2.7.4
+>
