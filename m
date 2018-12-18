@@ -1,8 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 08/20] clk: tegra: dfll: round down voltages based on
- alignment
-Date: Tue, 18 Dec 2018 17:12:20 +0800
-Message-ID: <20181218091232.23532-9-josephl@nvidia.com>
+Subject: [PATCH V3 03/20] dt-bindings: cpufreq: tegra124: remove
+ vdd-cpu-supply from required properties
+Date: Tue, 18 Dec 2018 17:12:15 +0800
+Message-ID: <20181218091232.23532-4-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,99 +19,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-When generating the OPP table, the voltages are round down with the
-alignment from the regulator. The alignment should be applied for
-voltages look up as well.
+The Tegra124 cpufreq driver works only with DFLL clock, which is a
+hardware-based frequency/voltage controller. The driver doesn't need to
+control the regulator itself. Hence remove that.
 
-Based on the work of Penny Chiu <pchiu@nvidia.com>.
-
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
-*v3:
- - fix error handling code when regulator_list_voltage returns error
+*V3:
+ - no change
 *V2:
- - s/align_volt/align_step/
- - s/reg_volt/reg_volt_id/
+ - add ack tag
 ---
- drivers/clk/tegra/clk-dfll.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt     | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 96be522398ed..ca9a4ae0d29e 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -804,18 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
- static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
- {
- 	struct dev_pm_opp *opp;
--	unsigned long uv;
--	int i;
-+	int i, align_step;
+diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+index b1669fbfb740..031545a29caf 100644
+--- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
++++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+@@ -13,7 +13,6 @@ Required properties:
+   - pll_x: Fast PLL clocksource.
+   - pll_p: Auxiliary PLL used during fast PLL rate changes.
+   - dfll: Fast DFLL clocksource that also automatically scales CPU voltage.
+-- vdd-cpu-supply: Regulator for CPU voltage
  
- 	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
- 	if (IS_ERR(opp))
- 		return PTR_ERR(opp);
+ Optional properties:
+ - clock-latency: Specify the possible maximum transition latency for clock,
+@@ -37,7 +36,6 @@ cpus {
+ 			 <&dfll>;
+ 		clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
+ 		clock-latency = <300000>;
+-		vdd-cpu-supply: <&vdd_cpu>;
+ 	};
  
--	uv = dev_pm_opp_get_voltage(opp);
-+	align_step = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
- 	dev_pm_opp_put(opp);
- 
- 	for (i = td->lut_bottom; i < td->lut_size; i++) {
--		if (td->lut_uv[i] >= uv)
-+		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= align_step)
- 			return i;
- 	}
- 
-@@ -1533,18 +1532,21 @@ static int dfll_init(struct tegra_dfll *td)
-  */
- static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
- {
--	int i, n_voltages, reg_uV;
-+	int i, n_voltages, reg_uV,reg_volt_id, align_step;
- 
- 	if (WARN_ON(td->pmu_if == TEGRA_DFLL_PMU_PWM))
- 		return -EINVAL;
- 
-+	align_step = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
- 		reg_uV = regulator_list_voltage(td->vdd_reg, i);
- 		if (reg_uV < 0)
- 			break;
- 
--		if (uV == reg_uV)
-+		reg_volt_id = reg_uV / td->soc->alignment.step_uv;
-+
-+		if (align_step == reg_volt_id)
- 			return i;
- 	}
- 
-@@ -1558,18 +1560,21 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
-  * */
- static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
- {
--	int i, n_voltages, reg_uV;
-+	int i, n_voltages, reg_uV, reg_volt_id, align_step;
- 
- 	if (WARN_ON(td->pmu_if == TEGRA_DFLL_PMU_PWM))
- 		return -EINVAL;
- 
-+	align_step = uV / td->soc->alignment.step_uv;
- 	n_voltages = regulator_count_voltages(td->vdd_reg);
- 	for (i = 0; i < n_voltages; i++) {
- 		reg_uV = regulator_list_voltage(td->vdd_reg, i);
- 		if (reg_uV < 0)
- 			break;
- 
--		if (uV <= reg_uV)
-+		reg_volt_id = reg_uV / td->soc->alignment.step_uv;
-+
-+		if (align_step <= reg_volt_id)
- 			return i;
- 	}
- 
+ 	<...>
 -- 
 2.20.1
