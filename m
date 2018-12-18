@@ -1,7 +1,7 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v1 06/12] arm64: dts: tegra210: set gpu hw throttle level
-Date: Tue, 18 Dec 2018 15:34:38 +0800
-Message-ID: <1545118484-23641-8-git-send-email-wni@nvidia.com>
+Subject: [PATCH v1 11/12] of: Add bindings of OC hw throttle for Tegra soctherm
+Date: Tue, 18 Dec 2018 15:34:43 +0800
+Message-ID: <1545118484-23641-13-git-send-email-wni@nvidia.com>
 References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,25 +12,57 @@ To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, edubezval@gmail.com, li
 Cc: rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Set gpu hw throttle level to TEGRA_SOCTHERM_THROT_LEVEL_HIGH
+Add OC HW throttle configuration for soctherm in DT.
+It is used to describe the OCx throttle events.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 36c7dce7fa69..57dae9cc7b7d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1339,6 +1339,8 @@
- 			throttle_heavy: heavy {
- 				nvidia,priority = <100>;
- 				nvidia,cpu-throt-percent = <85>;
-+				nvidia,gpu-throt-level =
-+					<TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
+diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+index cf6d0be56b7a..d112a8e59ec3 100644
+--- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
++++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+@@ -64,6 +64,21 @@ Required properties :
+       - #cooling-cells: Should be 1. This cooling device only support on/off state.
+         See ./thermal.txt for a description of this property.
  
- 				#cooling-cells = <2>;
- 			};
++      Optional properties: The following properties are T210 specific and
++      valid only for OCx throttle events.
++      - nvidia,count-threshold: Specifies the number of OC events that are
++        required for triggering an interrupt. Interrupts are not triggered if
++        the property is missing. A value of 0 will interrupt on every OC alarm.
++      - nvidia,polarity-active-low: Configures the polarity of the OC alaram
++        signal. Accepted values are 1 for assert low and 0 for assert high.
++        Default value is 0.
++      - nvidia,alarm-filter: Number of clocks to filter event. When the filter
++        expires (which means the OC event has not occurred for a long time),
++        the counter is cleared and filter is rearmed. Default value is 0.
++      - nvidia,throttle-period: Specifies the number of uSec for which
++        throttling is engaged after the OC event is deasserted. Default value
++        is 0.
++
+ Optional properties:
+ - nvidia,thermtrips : When present, this property specifies the temperature at
+   which the soctherm hardware will assert the thermal trigger signal to the
+@@ -134,6 +149,17 @@ Example :
+ 			 * arbiter will select the highest priority as the final throttle
+ 			 * settings to skip cpu pulse.
+ 			 */
++
++			throttle_oc1: oc1 {
++				nvidia,priority = <50>;
++				nvidia,polarity-active-low = <1>;
++				nvidia,count-threshold = <100>;
++				nvidia,alarm-filter = <5100000>;
++				nvidia,throttle-period = <0>;
++				nvidia,cpu-throt-percent = <75>;
++				nvidia,gpu-throt-level =
++						<TEGRA_SOCTHERM_THROT_LEVEL_MED>;
++                        };
+ 		};
+ 	};
+ 
 -- 
 2.7.4
