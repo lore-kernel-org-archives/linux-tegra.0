@@ -1,79 +1,53 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] arm64: dts: tegra210: Device Tree Updates for Tegra210 I2C
-Date: Tue, 18 Dec 2018 14:37:04 -0800
-Message-ID: <1545172624-19287-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V1 1/2] i2c: tegra: Add HW feature structure for Tegra186
+Date: Tue, 18 Dec 2018 14:40:55 -0800
+Message-ID: <1545172856-19509-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, pchandru@nvidia.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, talho@nvidia.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Update I2C device node compatible string to be appropriate.
+Add HW feature structure for Tegra186 and compatible name
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2205d66b0443..a8bd13727330 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -554,7 +554,7 @@
- 	};
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 437294ea2f0a..63e2345a95c5 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -898,6 +898,19 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_mst_fifo = false,
+ };
  
- 	i2c@7000c000 {
--		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c000 0x0 0x100>;
- 		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -569,7 +569,7 @@
- 	};
- 
- 	i2c@7000c400 {
--		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c400 0x0 0x100>;
- 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -584,7 +584,7 @@
- 	};
- 
- 	i2c@7000c500 {
--		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c500 0x0 0x100>;
- 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -599,7 +599,7 @@
- 	};
- 
- 	i2c@7000c700 {
--		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c700 0x0 0x100>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -617,7 +617,7 @@
- 	};
- 
- 	i2c@7000d000 {
--		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000d000 0x0 0x100>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -632,7 +632,7 @@
- 	};
- 
- 	i2c@7000d100 {
--		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000d100 0x0 0x100>;
- 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
++static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
++	.has_continue_xfer_support = true,
++	.has_per_pkt_xfer_complete_irq = true,
++	.has_single_clk_source = true,
++	.clk_divisor_hs_mode = 1,
++	.clk_divisor_std_fast_mode = 0x19,
++	.clk_divisor_fast_plus_mode = 0x10,
++	.has_config_load_reg = true,
++	.has_multi_master_mode = true,
++	.has_slcg_override_reg = true,
++	.has_mst_fifo = false,
++};
++
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_continue_xfer_support = true,
+ 	.has_per_pkt_xfer_complete_irq = true,
+@@ -914,6 +927,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ /* Match table for of_platform binding */
+ static const struct of_device_id tegra_i2c_of_match[] = {
+ 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
++	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
+ 	{ .compatible = "nvidia,tegra210-i2c", .data = &tegra210_i2c_hw, },
+ 	{ .compatible = "nvidia,tegra124-i2c", .data = &tegra124_i2c_hw, },
+ 	{ .compatible = "nvidia,tegra114-i2c", .data = &tegra114_i2c_hw, },
 -- 
 2.7.4
