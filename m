@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 12/20] cpufreq: tegra124: extend to support Tegra210
-Date: Tue, 18 Dec 2018 17:12:24 +0800
-Message-ID: <20181218091232.23532-13-josephl@nvidia.com>
+Subject: [PATCH V3 17/20] arm64: dts: tegra210-p2371-2180: enable DFLL clock
+Date: Tue, 18 Dec 2018 17:12:29 +0800
+Message-ID: <20181218091232.23532-18-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,39 +18,52 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 uses the same methodology as Tegra124 for CPUFreq controlling
-that based on DFLL clock. So extending this driver to support Tegra210.
+Enable DFLL clock for Jetson TX1 platform.
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V3:
- - no change
+ - add ack tag
 *V2:
- - add two ack tags
+ - remove non exist DT bindings
+ - update the PWM DT bindings accordingly
 ---
- drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index a1bfde0a7950..ba3795e13ac6 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -144,7 +144,8 @@ static int __init tegra_cpufreq_init(void)
- 	int ret;
- 	struct platform_device *pdev;
- 
--	if (!of_machine_is_compatible("nvidia,tegra124"))
-+	if (!(of_machine_is_compatible("nvidia,tegra124") ||
-+		of_machine_is_compatible("nvidia,tegra210")))
- 		return -ENODEV;
- 
- 	/*
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+index 37e3c46e753f..99c016bfc601 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+@@ -78,4 +78,25 @@
+ 			};
+ 		};
+ 	};
++
++	clock@70110000 {
++		status = "okay";
++
++		nvidia,cf = <6>;
++		nvidia,ci = <0>;
++		nvidia,cg = <2>;
++		nvidia,droop-ctrl = <0x00000f00>;
++		nvidia,force-mode = <1>;
++		nvidia,sample-rate = <25000>;
++
++		nvidia,pwm-min-microvolts = <708000>;
++		nvidia,pwm-period = <2500>; /* 2.5us */
++		nvidia,pwm-to-pmic;
++		nvidia,pwm-tristate-microvolts = <1000000>;
++		nvidia,pwm-voltage-step-microvolts = <19200>;
++
++		pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
++		pinctrl-0 = <&dvfs_pwm_active_state>;
++		pinctrl-1 = <&dvfs_pwm_inactive_state>;
++	};
+ };
 -- 
 2.20.1
