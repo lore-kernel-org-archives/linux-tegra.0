@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 17/20] arm64: dts: tegra210-p2371-2180: enable DFLL clock
-Date: Tue, 18 Dec 2018 17:12:29 +0800
-Message-ID: <20181218091232.23532-18-josephl@nvidia.com>
+Subject: [PATCH V3 15/20] arm64: dts: tegra210: add CPU clocks
+Date: Tue, 18 Dec 2018 17:12:27 +0800
+Message-ID: <20181218091232.23532-16-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,49 +21,35 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable DFLL clock for Jetson TX1 platform.
+Add CPU clocks for Tegra210.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V3:
- - add ack tag
+ - no change
 *V2:
- - remove non exist DT bindings
- - update the PWM DT bindings accordingly
+ - add ack tag
 ---
- .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 37e3c46e753f..99c016bfc601 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -78,4 +78,25 @@
- 			};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index a6db62157442..e2baf52fe1af 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1304,6 +1304,12 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <0>;
++			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
++				 <&tegra_car TEGRA210_CLK_PLL_X>,
++				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
++				 <&dfll>;
++			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
++			clock-latency = <300000>;
  		};
- 	};
-+
-+	clock@70110000 {
-+		status = "okay";
-+
-+		nvidia,cf = <6>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,sample-rate = <25000>;
-+
-+		nvidia,pwm-min-microvolts = <708000>;
-+		nvidia,pwm-period = <2500>; /* 2.5us */
-+		nvidia,pwm-to-pmic;
-+		nvidia,pwm-tristate-microvolts = <1000000>;
-+		nvidia,pwm-voltage-step-microvolts = <19200>;
-+
-+		pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-+		pinctrl-0 = <&dvfs_pwm_active_state>;
-+		pinctrl-1 = <&dvfs_pwm_inactive_state>;
-+	};
- };
+ 
+ 		cpu@1 {
 -- 
 2.20.1
