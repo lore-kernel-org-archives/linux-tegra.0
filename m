@@ -1,15 +1,15 @@
 From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH V3 10/20] clk: tegra: dfll: build clk-dfll.c for Tegra124
- and Tegra210
-Date: Tue, 18 Dec 2018 10:00:24 -0800
-Message-ID: <154515602466.238328.7202899555618997431@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V3 02/20] dt-bindings: clock: tegra124-dfll: add Tegra210
+ support
+Date: Tue, 18 Dec 2018 10:02:02 -0800
+Message-ID: <154515612274.238328.18319743517874337135@swboyd.mtv.corp.google.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
- <20181218091232.23532-11-josephl@nvidia.com>
+ <20181218091232.23532-3-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181218091232.23532-11-josephl@nvidia.com>
+In-Reply-To: <20181218091232.23532-3-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,23 +20,15 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Joseph Lo (2018-12-18 01:12:22)
-> diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
-> index 7ddacae5d0b1..57902ab43f4a 100644
-> --- a/drivers/clk/tegra/Kconfig
-> +++ b/drivers/clk/tegra/Kconfig
-> @@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
->  config CLK_TEGRA_BPMP
->         def_bool y
->         depends on TEGRA_BPMP
-> +
-> +config TEGRA_CLK_DFLL
-> +       depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
+Quoting Joseph Lo (2018-12-18 01:12:14)
+> Add Tegra210 support for DFLL clock.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
 
-Nitpick: Drop the parenthesis please.
-
-> +       select PM_OPP
-> +       def_bool y
+Acked-by: Stephen Boyd <sboyd@kernel.org>
