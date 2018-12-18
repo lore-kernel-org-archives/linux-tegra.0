@@ -1,10 +1,12 @@
 From: Wei Ni <wni@nvidia.com>
 Subject: [PATCH v1 00/12] Add some functionalities for Tegra soctherm
-Date: Tue, 18 Dec 2018 15:34:31 +0800
-Message-ID: <1545118484-23641-1-git-send-email-wni@nvidia.com>
+Date: Tue, 18 Dec 2018 15:34:32 +0800
+Message-ID: <1545118484-23641-2-git-send-email-wni@nvidia.com>
+References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1545118484-23641-1-git-send-email-wni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, edubezval@gmail.com, linux-tegra@vger.kernel.org
 Cc: rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
@@ -31,13 +33,13 @@ Wei Ni (12):
 
  .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  63 +-
  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
- drivers/thermal/tegra/soctherm.c                   | 955 +++++++++++++++++++--
+ drivers/thermal/tegra/soctherm.c                   | 959 +++++++++++++++++++--
  drivers/thermal/tegra/soctherm.h                   |  16 +
  drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
  drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
  drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
  include/dt-bindings/thermal/tegra124-soctherm.h    |  22 +-
- 8 files changed, 1029 insertions(+), 76 deletions(-)
+ 8 files changed, 1033 insertions(+), 76 deletions(-)
 
 -- 
 2.7.4
