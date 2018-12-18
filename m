@@ -1,64 +1,50 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v1 01/12] of: Add bindings of thermtrip for Tegra soctherm
-Date: Tue, 18 Dec 2018 15:34:33 +0800
-Message-ID: <1545118484-23641-3-git-send-email-wni@nvidia.com>
+Subject: Re: [PATCH v1 00/12] Add some functionalities for Tegra soctherm
+Date: Tue, 18 Dec 2018 15:50:32 +0800
+Message-ID: <42b0cd92-ebf3-4e92-dda9-c9e2e4f88d3c@nvidia.com>
 References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1545118484-23641-1-git-send-email-wni@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, edubezval@gmail.com, linux-tegra@vger.kernel.org
-Cc: rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Cc: rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add optional property "nvidia,thermtrips".
-If present, these trips will be used as HW shutdown trips,
-and critical trips will be used as SW shutdown trips.
+Sorry, please ignore this cover-letter.
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- .../bindings/thermal/nvidia,tegra124-soctherm.txt    | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+Wei.
 
-diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-index b6c0ae53d4dc..ab66d6feab4b 100644
---- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-+++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-@@ -55,10 +55,21 @@ Required properties :
-       - #cooling-cells: Should be 1. This cooling device only support on/off state.
-         See ./thermal.txt for a description of this property.
- 
-+Optional properties:
-+- nvidia,thermtrips : When present, this property specifies the temperature at
-+  which the soctherm hardware will assert the thermal trigger signal to the
-+  Power Management IC, which can be configured to reset or shutdown the device.
-+  It is an array of pairs where each pair represents a tsensor id followed by a
-+  temperature in milli Celcius. In the absence of this property the critical
-+  trip point will be used for thermtrip temperature.
-+
- Note:
--- the "critical" type trip points will be set to SOC_THERM hardware as the
--shut down temperature. Once the temperature of this thermal zone is higher
--than it, the system will be shutdown or reset by hardware.
-+- the "critical" type trip points will be used to set the temperature at which
-+the SOC_THERM hardware will assert a thermal trigger if the "nvidia,thermtrips"
-+property is missing. When the thermtrips property is present, the breach of a
-+critical trip point is reported back to the thermal framework to implement
-+software shutdown.
-+
- - the "hot" type trip points will be set to SOC_THERM hardware as the throttle
- temperature. Once the the temperature of this thermal zone is higher
- than it, it will trigger the HW throttle event.
-@@ -79,6 +90,9 @@ Example :
- 
- 		#thermal-sensor-cells = <1>;
- 
-+		nvidia,thermtrips = <TEGRA124_SOCTHERM_SENSOR_CPU 102500
-+				     TEGRA124_SOCTHERM_SENSOR_GPU 103000>;
-+
- 		throttle-cfgs {
- 			/*
- 			 * When the "heavy" cooling device triggered,
--- 
-2.7.4
+On 18/12/2018 3:34 PM, Wei Ni wrote:
+> Move the hw/sw shutdown patches into this serial. There already have
+> some discussion for it in https://lkml.org/lkml/2018/12/7/225.
+> Support GPU HW throttle, thermal IRQ, set_trips(), EDP IRQ and OC
+> hw throttle.
+> 
+> Wei Ni (12):
+>   of: Add bindings of thermtrip for Tegra soctherm
+>   thermal: tegra: support hw and sw shutdown
+>   arm64: dts: tegra210: set thermtrip
+>   of: Add bindings of gpu hw throttle for Tegra soctherm
+>   thermal: tegra: add support for gpu hw-throttle
+>   arm64: dts: tegra210: set gpu hw throttle level
+>   thermal: tegra: add support for thermal IRQ
+>   thermal: tegra: add set_trips functionality
+>   thermal: tegra: add support for EDP IRQ
+>   arm64: dts: tegra210: set EDP interrupt line
+>   of: Add bindings of OC hw throttle for Tegra soctherm
+>   thermal: tegra: enable OC hw throttle
+> 
+>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  63 +-
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
+>  drivers/thermal/tegra/soctherm.c                   | 955 +++++++++++++++++++--
+>  drivers/thermal/tegra/soctherm.h                   |  16 +
+>  drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
+>  drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
+>  drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
+>  include/dt-bindings/thermal/tegra124-soctherm.h    |  22 +-
+>  8 files changed, 1029 insertions(+), 76 deletions(-)
+> 
