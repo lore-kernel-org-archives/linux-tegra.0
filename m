@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 13/20] cpufreq: dt-platdev: add Tegra210 to blacklist
-Date: Tue, 18 Dec 2018 17:12:25 +0800
-Message-ID: <20181218091232.23532-14-josephl@nvidia.com>
+Subject: [PATCH V3 19/20] arm64: dts: tegra210-smaug: enable DFLL clock
+Date: Tue, 18 Dec 2018 17:12:31 +0800
+Message-ID: <20181218091232.23532-20-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,38 +18,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 uses "tegra124-cpufreq" platform driver to register device data
-for "cpufreq-dt" driver. So add it in the blacklist for
-"cpufreq-dt-platdev" driver to drop that.
+Enable DFLL clock for Smaug board.
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
 *V3:
- - add ack tags
+ - no change
 *V2:
- - new added in V2
+ - add ack tag
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index b1c5468dca16..47729a22c159 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -119,6 +119,7 @@ static const struct of_device_id blacklist[] __initconst = {
- 	{ .compatible = "mediatek,mt8176", },
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 79cfcd5b7e62..c08c5471b974 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1698,6 +1698,18 @@
+ 		status = "okay";
+ 	};
  
- 	{ .compatible = "nvidia,tegra124", },
-+	{ .compatible = "nvidia,tegra210", },
++	clock@70110000 {
++		status = "okay";
++		nvidia,cf = <6>;
++		nvidia,ci = <0>;
++		nvidia,cg = <2>;
++		nvidia,droop-ctrl = <0x00000f00>;
++		nvidia,force-mode = <1>;
++		nvidia,i2c-fs-rate = <400000>;
++		nvidia,sample-rate = <12500>;
++		vdd-cpu-supply = <&max77621_cpu>;
++	};
++
+ 	aconnect@702c0000 {
+ 		status = "okay";
  
- 	{ .compatible = "qcom,apq8096", },
- 	{ .compatible = "qcom,msm8996", },
 -- 
 2.20.1
