@@ -1,7 +1,7 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v1 07/12] thermal: tegra: add support for thermal IRQ
-Date: Tue, 18 Dec 2018 15:34:39 +0800
-Message-ID: <1545118484-23641-9-git-send-email-wni@nvidia.com>
+Subject: [PATCH v1 02/12] thermal: tegra: support hw and sw shutdown
+Date: Tue, 18 Dec 2018 15:34:34 +0800
+Message-ID: <1545118484-23641-4-git-send-email-wni@nvidia.com>
 References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,188 +12,224 @@ To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, edubezval@gmail.com, li
 Cc: rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Support to generate an interrupt when the temperature
-crosses a programmed threshold and notify the thermal framework.
+Currently the critical trip points in thermal framework are the only
+way to specify a temperature at which HW should shutdown. This is
+insufficient for certain platforms which would want an orderly
+software shutdown in addition to HW shutdown.
+
+This change support to parse "nvidia, thermtrips" property,
+it allows soctherm DT to specify thermtrip temperatures so that
+critical trip points framework can be used for doing software
+shutdown.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c | 136 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 136 insertions(+)
+ drivers/thermal/tegra/soctherm.c          | 99 ++++++++++++++++++++++++++-----
+ drivers/thermal/tegra/soctherm.h          |  6 ++
+ drivers/thermal/tegra/tegra210-soctherm.c |  8 +++
+ 3 files changed, 98 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index d3cef88a3f22..c66fdd546ef0 100644
+index ed28110a3535..673c3ffa9001 100644
 --- a/drivers/thermal/tegra/soctherm.c
 +++ b/drivers/thermal/tegra/soctherm.c
-@@ -86,6 +86,20 @@
- #define THERMCTL_LVL0_UP_STATS			0x10
- #define THERMCTL_LVL0_DN_STATS			0x14
- 
-+#define THERMCTL_INTR_STATUS			0x84
-+#define THERMCTL_INTR_ENABLE			0x88
-+#define THERMCTL_INTR_DISABLE			0x8c
-+
-+#define TH_INTR_MD0_MASK			BIT(25)
-+#define TH_INTR_MU0_MASK			BIT(24)
-+#define TH_INTR_GD0_MASK			BIT(17)
-+#define TH_INTR_GU0_MASK			BIT(16)
-+#define TH_INTR_CD0_MASK			BIT(9)
-+#define TH_INTR_CU0_MASK			BIT(8)
-+#define TH_INTR_PD0_MASK			BIT(1)
-+#define TH_INTR_PU0_MASK			BIT(0)
-+#define TH_INTR_IGNORE_MASK			0xFCFCFCFC
-+
- #define THERMCTL_STATS_CTL			0x94
- #define STATS_CTL_CLR_DN			0x8
- #define STATS_CTL_EN_DN				0x4
-@@ -242,6 +256,8 @@ struct tegra_soctherm {
- 	void __iomem *clk_regs;
- 	void __iomem *ccroc_regs;
- 
-+	int thermal_irq;
-+
- 	u32 *calib;
- 	struct thermal_zone_device **thermctl_tzs;
- 	struct tegra_soctherm_soc *soc;
-@@ -640,6 +656,98 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- 	return 0;
+@@ -446,6 +446,24 @@ find_throttle_cfg_by_name(struct tegra_soctherm *ts, const char *name)
+ 	return NULL;
  }
  
-+static irqreturn_t soctherm_thermal_isr(int irq, void *dev_id)
++static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
 +{
-+	struct tegra_soctherm *ts = dev_id;
-+	u32 r;
++	int i, temp = min_low_temp;
++	struct tsensor_group_thermtrips *tt = ts->soc->thermtrips;
 +
-+	r = readl(ts->regs + THERMCTL_INTR_STATUS);
-+	writel(r, ts->regs + THERMCTL_INTR_DISABLE);
++	if (id >= TEGRA124_SOCTHERM_SENSOR_NUM)
++		return temp;
 +
-+	return IRQ_WAKE_THREAD;
-+}
-+
-+/**
-+ * soctherm_thermal_isr_thread() - Handles a thermal interrupt request
-+ * @irq:       The interrupt number being requested; not used
-+ * @dev_id:    Opaque pointer to tegra_soctherm;
-+ *
-+ * Clears the interrupt status register if there are expected
-+ * interrupt bits set.
-+ * The interrupt(s) are then handled by updating the corresponding
-+ * thermal zones.
-+ *
-+ * An error is logged if any unexpected interrupt bits are set.
-+ *
-+ * Disabled interrupts are re-enabled.
-+ *
-+ * Return: %IRQ_HANDLED. Interrupt was handled and no further processing
-+ * is needed.
-+ */
-+static irqreturn_t soctherm_thermal_isr_thread(int irq, void *dev_id)
-+{
-+	struct tegra_soctherm *ts = dev_id;
-+	struct thermal_zone_device *tz;
-+	u32 st, ex = 0, cp = 0, gp = 0, pl = 0, me = 0;
-+
-+	st = readl(ts->regs + THERMCTL_INTR_STATUS);
-+
-+	/* deliberately clear expected interrupts handled in SW */
-+	cp |= st & TH_INTR_CD0_MASK;
-+	cp |= st & TH_INTR_CU0_MASK;
-+
-+	gp |= st & TH_INTR_GD0_MASK;
-+	gp |= st & TH_INTR_GU0_MASK;
-+
-+	pl |= st & TH_INTR_PD0_MASK;
-+	pl |= st & TH_INTR_PU0_MASK;
-+
-+	me |= st & TH_INTR_MD0_MASK;
-+	me |= st & TH_INTR_MU0_MASK;
-+
-+	ex |= cp | gp | pl | me;
-+	if (ex) {
-+		writel(ex, ts->regs + THERMCTL_INTR_STATUS);
-+		st &= ~ex;
-+
-+		if (cp) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_CPU];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
-+		}
-+
-+		if (gp) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_GPU];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
-+		}
-+
-+		if (pl) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_PLLX];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
-+		}
-+
-+		if (me) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_MEM];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
++	if (tt) {
++		for (i = 0; i < ts->soc->num_ttgs; i++) {
++			if (tt[i].id == id)
++				return tt[i].temp;
 +		}
 +	}
 +
-+	/* deliberately ignore expected interrupts NOT handled in SW */
-+	ex |= TH_INTR_IGNORE_MASK;
-+	st &= ~ex;
-+
-+	if (st) {
-+		/* Whine about any other unexpected INTR bits still set */
-+		pr_err("soctherm: Ignored unexpected INTRs 0x%08x\n", st);
-+		writel(st, ts->regs + THERMCTL_INTR_STATUS);
-+	}
-+
-+	return IRQ_HANDLED;
++	return temp;
 +}
 +
- #ifdef CONFIG_DEBUG_FS
- static int regs_show(struct seq_file *s, void *data)
+ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
  {
-@@ -1312,6 +1420,32 @@ static void tegra_soctherm_throttle(struct device *dev)
- 	writel(v, ts->regs + THERMCTL_STATS_CTL);
- }
+ 	struct tegra_thermctl_zone *zone = data;
+@@ -464,7 +482,16 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+ 		return ret;
  
-+static int soctherm_interrupts_init(struct platform_device *pdev,
-+				    struct tegra_soctherm *tegra)
-+{
-+	int ret;
+ 	if (type == THERMAL_TRIP_CRITICAL) {
+-		return thermtrip_program(dev, sg, temp);
++		/*
++		 * If thermtrips property is set in DT,
++		 * doesn't need to program critical type trip to HW,
++		 * if not, program critical trip to HW.
++		 */
++		if (min_low_temp == tsensor_group_thermtrip_get(ts, sg->id))
++			return thermtrip_program(dev, sg, temp);
++		else
++			return 0;
 +
-+	tegra->thermal_irq = platform_get_irq(pdev, 0);
-+	if (tegra->thermal_irq < 0) {
-+		dev_dbg(&pdev->dev, "get 'thermal_irq' failed.\n");
-+		return 0;
+ 	} else if (type == THERMAL_TRIP_HOT) {
+ 		int i;
+ 
+@@ -523,7 +550,8 @@ static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
+  * @dev: struct device * of the SOC_THERM instance
+  *
+  * Configure the SOC_THERM HW trip points, setting "THERMTRIP"
+- * "THROTTLE" trip points , using "critical" or "hot" type trip_temp
++ * "THROTTLE" trip points , using "thermtrips", "critical" or "hot"
++ * type trip_temp
+  * from thermal zone.
+  * After they have been configured, THERMTRIP or THROTTLE will take
+  * action when the configured SoC thermal sensor group reaches a
+@@ -545,28 +573,23 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+ {
+ 	struct tegra_soctherm *ts = dev_get_drvdata(dev);
+ 	struct soctherm_throt_cfg *stc;
+-	int i, trip, temperature;
+-	int ret;
++	int i, trip, temperature, ret;
+ 
+-	ret = tz->ops->get_crit_temp(tz, &temperature);
+-	if (ret) {
+-		dev_warn(dev, "thermtrip: %s: missing critical temperature\n",
+-			 sg->name);
+-		goto set_throttle;
+-	}
++	/* Get thermtrips. If missing, try to get critical trips. */
++	temperature = tsensor_group_thermtrip_get(ts, sg->id);
++	if (min_low_temp == temperature)
++		if (tz->ops->get_crit_temp(tz, &temperature))
++			temperature = max_high_temp;
+ 
+ 	ret = thermtrip_program(dev, sg, temperature);
+ 	if (ret) {
+-		dev_err(dev, "thermtrip: %s: error during enable\n",
+-			sg->name);
++		dev_err(dev, "thermtrip: %s: error during enable\n", sg->name);
+ 		return ret;
+ 	}
+ 
+-	dev_info(dev,
+-		 "thermtrip: will shut down when %s reaches %d mC\n",
++	dev_info(dev, "thermtrip: will shut down when %s reaches %d mC\n",
+ 		 sg->name, temperature);
+ 
+-set_throttle:
+ 	ret = get_hot_temp(tz, &trip, &temperature);
+ 	if (ret) {
+ 		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
+@@ -907,6 +930,50 @@ static const struct thermal_cooling_device_ops throt_cooling_ops = {
+ 	.set_cur_state = throt_set_cdev_state,
+ };
+ 
++static int soctherm_thermtrips_parse(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct tegra_soctherm *ts = dev_get_drvdata(dev);
++	struct tsensor_group_thermtrips *tt = ts->soc->thermtrips;
++	const int max_num_prop = ts->soc->num_ttgs * 2;
++	u32 *tlb;
++	int i, j, n, ret;
++
++	if (!tt)
++		return -ENOMEM;
++
++	n = of_property_count_u32_elems(dev->of_node, "nvidia,thermtrips");
++	if (n <= 0) {
++		dev_info(dev,
++			 "missing thermtrips, will use critical trips as shut down temp\n");
++		return n;
 +	}
 +
-+	ret = devm_request_threaded_irq(&pdev->dev,
-+					tegra->thermal_irq,
-+					soctherm_thermal_isr,
-+					soctherm_thermal_isr_thread,
-+					IRQF_ONESHOT,
-+					dev_name(&pdev->dev),
-+					tegra);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "request_irq 'thermal_irq' failed.\n");
++	n = min(max_num_prop, n);
++
++	tlb = devm_kcalloc(&pdev->dev, max_num_prop, sizeof(u32), GFP_KERNEL);
++	if (!tlb)
++		return -ENOMEM;
++	ret = of_property_read_u32_array(dev->of_node, "nvidia,thermtrips",
++					 tlb, n);
++	if (ret) {
++		dev_err(dev, "invalid num ele: thermtrips:%d\n", ret);
 +		return ret;
++	}
++
++	i = 0;
++	for (j = 0; j < n; j = j + 2) {
++		if (tlb[j] >= TEGRA124_SOCTHERM_SENSOR_NUM)
++			continue;
++
++		tt[i].id = tlb[j];
++		tt[i].temp = tlb[j+1];
++		i++;
 +	}
 +
 +	return 0;
 +}
 +
- static void soctherm_init(struct platform_device *pdev)
- {
- 	struct tegra_soctherm *tegra = platform_get_drvdata(pdev);
-@@ -1505,6 +1639,8 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 			goto disable_clocks;
- 	}
+ /**
+  * soctherm_init_hw_throt_cdev() - Parse the HW throttle configurations
+  * and register them as cooling devices.
+@@ -1348,6 +1415,8 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
  
-+	err = soctherm_interrupts_init(pdev, tegra);
++	soctherm_thermtrips_parse(pdev);
 +
- 	soctherm_debug_init(pdev);
+ 	soctherm_init_hw_throt_cdev(pdev);
  
- 	return 0;
+ 	soctherm_init(pdev);
+diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
+index e96ca73fd780..c05c7e37e968 100644
+--- a/drivers/thermal/tegra/soctherm.h
++++ b/drivers/thermal/tegra/soctherm.h
+@@ -92,6 +92,11 @@ struct tegra_tsensor {
+ 	const struct tegra_tsensor_group *group;
+ };
+ 
++struct tsensor_group_thermtrips {
++	u8 id;
++	u32 temp;
++};
++
+ struct tegra_soctherm_fuse {
+ 	u32 fuse_base_cp_mask, fuse_base_cp_shift;
+ 	u32 fuse_base_ft_mask, fuse_base_ft_shift;
+@@ -113,6 +118,7 @@ struct tegra_soctherm_soc {
+ 	const int thresh_grain;
+ 	const unsigned int bptt;
+ 	const bool use_ccroc;
++	struct tsensor_group_thermtrips *thermtrips;
+ };
+ 
+ int tegra_calc_shared_calib(const struct tegra_soctherm_fuse *tfuse,
+diff --git a/drivers/thermal/tegra/tegra210-soctherm.c b/drivers/thermal/tegra/tegra210-soctherm.c
+index ad53169a8e95..0a0c3cec7134 100644
+--- a/drivers/thermal/tegra/tegra210-soctherm.c
++++ b/drivers/thermal/tegra/tegra210-soctherm.c
+@@ -203,6 +203,13 @@ static const struct tegra_soctherm_fuse tegra210_soctherm_fuse = {
+ 	.fuse_spare_realignment = 0,
+ };
+ 
++struct tsensor_group_thermtrips tegra210_tsensor_thermtrips[] = {
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++};
++
+ const struct tegra_soctherm_soc tegra210_soctherm = {
+ 	.tsensors = tegra210_tsensors,
+ 	.num_tsensors = ARRAY_SIZE(tegra210_tsensors),
+@@ -212,4 +219,5 @@ const struct tegra_soctherm_soc tegra210_soctherm = {
+ 	.thresh_grain = TEGRA210_THRESH_GRAIN,
+ 	.bptt = TEGRA210_BPTT,
+ 	.use_ccroc = false,
++	.thermtrips = tegra210_tsensor_thermtrips,
+ };
 -- 
 2.7.4
