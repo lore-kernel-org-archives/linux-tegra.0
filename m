@@ -1,71 +1,42 @@
-From: Matthias Reichl <hias@horus.com>
-Subject: Re: [PATCH v1 3/3] ASoC: soc-core: fix platform name
- vs. of_node assignement
-Date: Tue, 18 Dec 2018 18:40:40 +0100
-Message-ID: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
-References: <20181018111829.27056-1-marcel@ziswiler.com>
- <20181018111829.27056-4-marcel@ziswiler.com>
- <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
- <20181021112301.GC8554@sirena.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V3 10/20] clk: tegra: dfll: build clk-dfll.c for Tegra124
+ and Tegra210
+Date: Tue, 18 Dec 2018 10:00:24 -0800
+Message-ID: <154515602466.238328.7202899555618997431@swboyd.mtv.corp.google.com>
+References: <20181218091232.23532-1-josephl@nvidia.com>
+ <20181218091232.23532-11-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <20181021112301.GC8554@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181218091232.23532-11-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
+Quoting Joseph Lo (2018-12-18 01:12:22)
+> diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
+> index 7ddacae5d0b1..57902ab43f4a 100644
+> --- a/drivers/clk/tegra/Kconfig
+> +++ b/drivers/clk/tegra/Kconfig
+> @@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
+>  config CLK_TEGRA_BPMP
+>         def_bool y
+>         depends on TEGRA_BPMP
+> +
+> +config TEGRA_CLK_DFLL
+> +       depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
 
-On Sun, Oct 21, 2018 at 12:23:01PM +0100, Mark Brown wrote:
-> On Fri, Oct 19, 2018 at 11:22:46AM +0100, Jon Hunter wrote:
-> 
-> > Looking at snd_soc_init_platform(), it seems that the platform pointer
-> > can be allocated by the machine driver and so if it is not allocated by
-> > the core, then I don't think we should clear it here. Seems we need a
-> > way to determine if this was allocated by the core.
-> 
-> Indeed, this is a bit of a mess.  We probably shouldn't be modifying the
-> data that the drivers passed in, otherwise we get into trouble like
-> this.   That suggests that we should copy the data, probably all of it.
-> I will try to have a proper look at this next week.
+Nitpick: Drop the parenthesis please.
 
-did you find the time to look into this?
-
-The downstream Raspberry Pi kernel contains a bunch of machine drivers
-that are implemented in a similar way as the tegra_sgtl5000 driver
-(static card and dai link structs, dai_link->platform_of_node filled
-in from device tree) which are breaking in 4.20 on deferred probing.
-
-Switching these drivers to dynamically allocated dai link structs,
-like 76836fd35492 "ASoC: omap-abe-twl6040: Fix missing audio card
-caused by deferred probing" would be a possibility, but if there's
-some solution on the horizon that doesn't require changes to the
-driver code it'd be easier to wait for that.
-
-so long,
-
-Hias
-
-> > Furthermore, it seems that it is possible that there is more than one
-> > link that might be to be cleared.
-> 
-> Yes, that's an issue as well.
-
-
-
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> +       select PM_OPP
+> +       def_bool y
