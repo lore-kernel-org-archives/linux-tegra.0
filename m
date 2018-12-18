@@ -1,7 +1,7 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v1 12/12] thermal: tegra: enable OC hw throttle
-Date: Tue, 18 Dec 2018 15:34:44 +0800
-Message-ID: <1545118484-23641-14-git-send-email-wni@nvidia.com>
+Subject: [PATCH v1 08/12] thermal: tegra: add set_trips functionality
+Date: Tue, 18 Dec 2018 15:34:40 +0800
+Message-ID: <1545118484-23641-10-git-send-email-wni@nvidia.com>
 References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,228 +12,286 @@ To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, edubezval@gmail.com, li
 Cc: rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Parse Over Current settings from DT and program them to
-generate interrupts. Also enable hw throttling whenever
-there are OC events. Log the OC events as debug messages.
+Implement set_trips ops to set passive trip points.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c | 128 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 118 insertions(+), 10 deletions(-)
+ drivers/thermal/tegra/soctherm.c          | 64 ++++++++++++++++++++++++++++++-
+ drivers/thermal/tegra/soctherm.h          | 10 +++++
+ drivers/thermal/tegra/tegra124-soctherm.c |  7 +++-
+ drivers/thermal/tegra/tegra132-soctherm.c |  7 +++-
+ drivers/thermal/tegra/tegra210-soctherm.c |  7 +++-
+ 5 files changed, 90 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 37108f2290f9..c2a0b048a085 100644
+index c66fdd546ef0..eefbb29b3b7d 100644
 --- a/drivers/thermal/tegra/soctherm.c
 +++ b/drivers/thermal/tegra/soctherm.c
-@@ -106,9 +106,26 @@
- #define STATS_CTL_CLR_UP			0x2
- #define STATS_CTL_EN_UP				0x1
+@@ -87,8 +87,6 @@
+ #define THERMCTL_LVL0_DN_STATS			0x14
  
-+#define OC1_CFG					0x310
-+#define OC1_CFG_LONG_LATENCY_MASK		BIT(6)
-+#define OC1_CFG_HW_RESTORE_MASK			BIT(5)
-+#define OC1_CFG_PWR_GOOD_MASK_MASK		BIT(4)
-+#define OC1_CFG_THROTTLE_MODE_MASK		(0x3 << 2)
-+#define OC1_CFG_ALARM_POLARITY_MASK		BIT(1)
-+#define OC1_CFG_EN_THROTTLE_MASK		BIT(0)
-+
-+#define OC1_CNT_THRESHOLD			0x314
-+#define OC1_THROTTLE_PERIOD			0x318
-+#define OC1_ALARM_COUNT				0x31c
-+#define OC1_FILTER				0x320
-+#define OC1_STATS				0x3a8
-+
- #define OC_INTR_STATUS				0x39c
- #define OC_INTR_ENABLE				0x3a0
- #define OC_INTR_DISABLE				0x3a4
-+#define OC_STATS_CTL				0x3c4
-+#define OC_STATS_CTL_CLR_ALL			0x2
-+#define OC_STATS_CTL_EN_ALL			0x1
+ #define THERMCTL_INTR_STATUS			0x84
+-#define THERMCTL_INTR_ENABLE			0x88
+-#define THERMCTL_INTR_DISABLE			0x8c
  
- #define OC_INTR_OC1_MASK			BIT(0)
- #define OC_INTR_OC2_MASK			BIT(1)
-@@ -207,6 +224,25 @@
- #define THROT_DELAY_CTRL(throt)		(THROT_DELAY_LITE + \
- 					(THROT_OFFSET * throt))
+ #define TH_INTR_MD0_MASK			BIT(25)
+ #define TH_INTR_MU0_MASK			BIT(24)
+@@ -265,6 +263,8 @@ struct tegra_soctherm {
+ 	struct soctherm_throt_cfg throt_cfgs[THROTTLE_SIZE];
  
-+#define ALARM_OFFSET			0x14
-+#define ALARM_CFG(throt)		(OC1_CFG + \
-+					(ALARM_OFFSET * (throt - THROTTLE_OC1)))
+ 	struct dentry *debugfs_dir;
 +
-+#define ALARM_CNT_THRESHOLD(throt)	(OC1_CNT_THRESHOLD + \
-+					(ALARM_OFFSET * (throt - THROTTLE_OC1)))
-+
-+#define ALARM_THROTTLE_PERIOD(throt)	(OC1_THROTTLE_PERIOD + \
-+					(ALARM_OFFSET * (throt - THROTTLE_OC1)))
-+
-+#define ALARM_ALARM_COUNT(throt)	(OC1_ALARM_COUNT + \
-+					(ALARM_OFFSET * (throt - THROTTLE_OC1)))
-+
-+#define ALARM_FILTER(throt)		(OC1_FILTER + \
-+					(ALARM_OFFSET * (throt - THROTTLE_OC1)))
-+
-+#define ALARM_STATS(throt)		(OC1_STATS + \
-+					(4 * (throt - THROTTLE_OC1)))
-+
- /* get CCROC_THROT_PSKIP_xxx offset per HIGH/MED/LOW vect*/
- #define CCROC_THROT_OFFSET			0x0c
- #define CCROC_THROT_PSKIP_CTRL_CPU_REG(vect)    (CCROC_THROT_PSKIP_CTRL_CPU + \
-@@ -218,6 +254,9 @@
- #define THERMCTL_LVL_REGS_SIZE		0x20
- #define THERMCTL_LVL_REG(rg, lv)	((rg) + ((lv) * THERMCTL_LVL_REGS_SIZE))
- 
-+#define OC_THROTTLE_MODE_DISABLED	0
-+#define OC_THROTTLE_MODE_BRIEF		2
-+
- static const int min_low_temp = -127000;
- static const int max_high_temp = 127000;
- 
-@@ -266,6 +305,15 @@ struct tegra_thermctl_zone {
- 	const struct tegra_tsensor_group *sg;
++	struct mutex thermctl_lock;
  };
  
-+struct soctherm_oc_cfg {
-+	u32 active_low;
-+	u32 throt_period;
-+	u32 alarm_cnt_thresh;
-+	u32 alarm_filter;
-+	u32 mode;
-+	bool intr_en;
-+};
-+
- struct soctherm_throt_cfg {
- 	const char *name;
- 	unsigned int id;
-@@ -273,6 +321,7 @@ struct soctherm_throt_cfg {
- 	u8 cpu_throt_level;
- 	u32 cpu_throt_depth;
- 	u32 gpu_throt_level;
-+	struct soctherm_oc_cfg oc_cfg;
- 	struct thermal_cooling_device *cdev;
- 	bool init;
- };
-@@ -715,7 +764,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- 		return 0;
- 	}
- 
--	for (i = 0; i < THROTTLE_SIZE; i++) {
-+	for (i = 0; i < THROTTLE_OC1; i++) {
- 		struct thermal_cooling_device *cdev;
- 
- 		if (!ts->throt_cfgs[i].init)
-@@ -1547,6 +1596,30 @@ static int soctherm_thermtrips_parse(struct platform_device *pdev)
+ /**
+@@ -542,9 +542,59 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
  	return 0;
  }
  
-+static void soctherm_oc_cfg_parse(struct device *dev,
-+				struct device_node *np_oc,
-+				struct soctherm_throt_cfg *stc)
-+{
-+	u32 val;
-+
-+	if (!of_property_read_u32(np_oc, "nvidia,polarity-active-low", &val))
-+		stc->oc_cfg.active_low = val;
-+
-+	if (!of_property_read_u32(np_oc, "nvidia,count-threshold", &val)) {
-+		stc->oc_cfg.intr_en = 1;
-+		stc->oc_cfg.alarm_cnt_thresh = val;
-+	}
-+
-+	if (!of_property_read_u32(np_oc, "nvidia,throttle-period", &val))
-+		stc->oc_cfg.throt_period = val;
-+
-+	if (!of_property_read_u32(np_oc, "nvidia,alarm-filter", &val))
-+		stc->oc_cfg.alarm_filter = val;
-+
-+	/* BRIEF throttling by default, do not support STICKY */
-+	stc->oc_cfg.mode = OC_THROTTLE_MODE_BRIEF;
-+}
-+
- static int soctherm_throt_cfg_parse(struct device *dev,
- 				    struct device_node *np,
- 				    struct soctherm_throt_cfg *stc)
-@@ -1629,24 +1702,34 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
- 			continue;
- 		}
- 
-+		if (stc->init) {
-+			dev_err(dev, "throttle-cfg: %s: redefined!\n", name);
-+			of_node_put(np_stcc);
-+			break;
-+		}
- 
- 		err = soctherm_throt_cfg_parse(dev, np_stcc, stc);
- 		if (err)
- 			continue;
- 
--		tcd = thermal_of_cooling_device_register(np_stcc,
-+		if (stc->id >= THROTTLE_OC1) {
-+			soctherm_oc_cfg_parse(dev, np_stcc, stc);
-+			stc->init = true;
-+		} else {
-+
-+			tcd = thermal_of_cooling_device_register(np_stcc,
- 							 (char *)name, ts,
- 							 &throt_cooling_ops);
--		of_node_put(np_stcc);
--		if (IS_ERR_OR_NULL(tcd)) {
--			dev_err(dev,
--				"throttle-cfg: %s: failed to register cooling device\n",
--				name);
--			continue;
-+			if (IS_ERR_OR_NULL(tcd)) {
-+				dev_err(dev,
-+					"throttle-cfg: %s: failed to register cooling device\n",
-+					name);
-+				continue;
-+			}
-+			stc->cdev = tcd;
-+			stc->init = true;
- 		}
- 
--		stc->cdev = tcd;
--		stc->init = true;
- 	}
- 
- 	of_node_put(np_stc);
-@@ -1797,6 +1880,28 @@ static void throttlectl_gpu_level_select(struct tegra_soctherm *ts,
- 	writel(r, ts->regs + THROT_PSKIP_CTRL(throt, THROTTLE_DEV_GPU));
- }
- 
-+static int soctherm_oc_cfg_program(struct tegra_soctherm *ts,
-+				      enum soctherm_throttle_id throt)
++static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
 +{
 +	u32 r;
-+	struct soctherm_oc_cfg *oc = &ts->throt_cfgs[throt].oc_cfg;
 +
-+	if (oc->mode == OC_THROTTLE_MODE_DISABLED)
-+		return -EINVAL;
++	/* multiple zones could be handling and setting trips at once */
++	mutex_lock(&zn->ts->thermctl_lock);
++	r = readl(zn->ts->regs + THERMCTL_INTR_ENABLE);
++	r = REG_SET_MASK(r, zn->sg->thermctl_isr_mask, TH_INTR_UP_DN_EN);
++	writel(r, zn->ts->regs + THERMCTL_INTR_ENABLE);
++	mutex_unlock(&zn->ts->thermctl_lock);
++}
 +
-+	r = REG_SET_MASK(0, OC1_CFG_HW_RESTORE_MASK, 1);
-+	r = REG_SET_MASK(r, OC1_CFG_THROTTLE_MODE_MASK, oc->mode);
-+	r = REG_SET_MASK(r, OC1_CFG_ALARM_POLARITY_MASK, oc->active_low);
-+	r = REG_SET_MASK(r, OC1_CFG_EN_THROTTLE_MASK, 1);
-+	writel(r, ts->regs + ALARM_CFG(throt));
-+	writel(oc->throt_period, ts->regs + ALARM_THROTTLE_PERIOD(throt));
-+	writel(oc->alarm_cnt_thresh, ts->regs + ALARM_CNT_THRESHOLD(throt));
-+	writel(oc->alarm_filter, ts->regs + ALARM_FILTER(throt));
-+	soctherm_oc_intr_enable(ts, throt, oc->intr_en);
++static void thermal_irq_disable(struct tegra_thermctl_zone *zn)
++{
++	u32 r;
++
++	/* multiple zones could be handling and setting trips at once */
++	mutex_lock(&zn->ts->thermctl_lock);
++	r = readl(zn->ts->regs + THERMCTL_INTR_DISABLE);
++	r = REG_SET_MASK(r, zn->sg->thermctl_isr_mask, 0);
++	writel(r, zn->ts->regs + THERMCTL_INTR_DISABLE);
++	mutex_unlock(&zn->ts->thermctl_lock);
++}
++
++static int tegra_thermctl_set_trips(void *data, int lo, int hi)
++{
++	struct tegra_thermctl_zone *zone = data;
++	u32 r;
++
++	thermal_irq_disable(zone);
++
++	r = readl(zone->ts->regs + zone->sg->thermctl_lvl0_offset);
++	r = REG_SET_MASK(r, THERMCTL_LVL0_CPU0_EN_MASK, 0);
++	writel(r, zone->ts->regs + zone->sg->thermctl_lvl0_offset);
++
++	lo = enforce_temp_range(zone->dev, lo) / zone->ts->soc->thresh_grain;
++	hi = enforce_temp_range(zone->dev, hi) / zone->ts->soc->thresh_grain;
++	dev_dbg(zone->dev, "%s hi:%d, lo:%d\n", __func__, hi, lo);
++
++	r = REG_SET_MASK(r, zone->sg->thermctl_lvl0_up_thresh_mask, hi);
++	r = REG_SET_MASK(r, zone->sg->thermctl_lvl0_dn_thresh_mask, lo);
++	r = REG_SET_MASK(r, THERMCTL_LVL0_CPU0_EN_MASK, 1);
++	writel(r, zone->ts->regs + zone->sg->thermctl_lvl0_offset);
++
++	thermal_irq_enable(zone);
 +
 +	return 0;
 +}
 +
- /**
-  * soctherm_throttle_program() - programs pulse skippers' configuration
-  * @throt: the LIGHT/HEAVY of the throttle event id.
-@@ -1813,6 +1918,9 @@ static void soctherm_throttle_program(struct tegra_soctherm *ts,
- 	if (!stc.init)
- 		return;
+ static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
+ 	.get_temp = tegra_thermctl_get_temp,
+ 	.set_trip_temp = tegra_thermctl_set_trip_temp,
++	.set_trips = tegra_thermctl_set_trips,
+ };
  
-+	if ((throt >= THROTTLE_OC1) && (soctherm_oc_cfg_program(ts, throt)))
-+		return;
+ static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
+@@ -661,6 +711,15 @@ static irqreturn_t soctherm_thermal_isr(int irq, void *dev_id)
+ 	struct tegra_soctherm *ts = dev_id;
+ 	u32 r;
+ 
++	/* Case for no lock:
++	 * Although interrupts are enabled in set_trips, there is still no need
++	 * to lock here because the interrupts are disabled before programming
++	 * new trip points. Hence there cant be a interrupt on the same sensor.
++	 * An interrupt can however occur on a sensor while trips are being
++	 * programmed on a different one. This beign a LEVEL interrupt won't
++	 * cause a new interrupt but this is taken care of by the re-reading of
++	 * the STATUS register in the thread function.
++	 */
+ 	r = readl(ts->regs + THERMCTL_INTR_STATUS);
+ 	writel(r, ts->regs + THERMCTL_INTR_DISABLE);
+ 
+@@ -1523,6 +1582,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	if (!tegra)
+ 		return -ENOMEM;
+ 
++	mutex_init(&tegra->thermctl_lock);
+ 	dev_set_drvdata(&pdev->dev, tegra);
+ 
+ 	tegra->soc = soc;
+diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
+index c05c7e37e968..70501e73d586 100644
+--- a/drivers/thermal/tegra/soctherm.h
++++ b/drivers/thermal/tegra/soctherm.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
+  *
+@@ -29,6 +30,14 @@
+ #define THERMCTL_THERMTRIP_CTL			0x80
+ /* BITs are defined in device file */
+ 
++#define THERMCTL_INTR_ENABLE			0x88
++#define THERMCTL_INTR_DISABLE			0x8c
++#define TH_INTR_UP_DN_EN			0x3
++#define THERM_IRQ_MEM_MASK			(TH_INTR_UP_DN_EN << 24)
++#define THERM_IRQ_GPU_MASK			(TH_INTR_UP_DN_EN << 16)
++#define THERM_IRQ_CPU_MASK			(TH_INTR_UP_DN_EN << 8)
++#define THERM_IRQ_TSENSE_MASK			(TH_INTR_UP_DN_EN << 0)
 +
- 	/* Setup PSKIP parameters */
- 	if (ts->soc->use_ccroc)
- 		throttlectl_cpu_level_select(ts, throt);
+ #define SENSOR_PDIV				0x1c0
+ #define SENSOR_PDIV_CPU_MASK			(0xf << 12)
+ #define SENSOR_PDIV_GPU_MASK			(0xf << 8)
+@@ -70,6 +79,7 @@ struct tegra_tsensor_group {
+ 	u32 thermtrip_enable_mask;
+ 	u32 thermtrip_any_en_mask;
+ 	u32 thermtrip_threshold_mask;
++	u32 thermctl_isr_mask;
+ 	u16 thermctl_lvl0_offset;
+ 	u32 thermctl_lvl0_up_thresh_mask;
+ 	u32 thermctl_lvl0_dn_thresh_mask;
+diff --git a/drivers/thermal/tegra/tegra124-soctherm.c b/drivers/thermal/tegra/tegra124-soctherm.c
+index 36768630f78c..20ad27f4d1a1 100644
+--- a/drivers/thermal/tegra/tegra124-soctherm.c
++++ b/drivers/thermal/tegra/tegra124-soctherm.c
+@@ -1,5 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -55,6 +56,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_cpu = {
+ 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_CPU_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_CPU_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -73,6 +75,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_gpu = {
+ 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_GPU_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_GPUMEM_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -89,6 +92,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_pll = {
+ 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_TSENSE_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_TSENSE_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -107,6 +111,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_mem = {
+ 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_MEM_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_GPUMEM_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
+diff --git a/drivers/thermal/tegra/tegra132-soctherm.c b/drivers/thermal/tegra/tegra132-soctherm.c
+index 97fa30501eb1..b76308fdad9e 100644
+--- a/drivers/thermal/tegra/tegra132-soctherm.c
++++ b/drivers/thermal/tegra/tegra132-soctherm.c
+@@ -1,5 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -55,6 +56,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_cpu = {
+ 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_CPU_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_CPU_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -73,6 +75,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_gpu = {
+ 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_GPU_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_GPUMEM_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -89,6 +92,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_pll = {
+ 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_TSENSE_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_TSENSE_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -107,6 +111,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_mem = {
+ 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_MEM_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_GPUMEM_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
+diff --git a/drivers/thermal/tegra/tegra210-soctherm.c b/drivers/thermal/tegra/tegra210-soctherm.c
+index 0a0c3cec7134..d31b50050faa 100644
+--- a/drivers/thermal/tegra/tegra210-soctherm.c
++++ b/drivers/thermal/tegra/tegra210-soctherm.c
+@@ -1,5 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -56,6 +57,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_cpu = {
+ 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_CPU_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_CPU_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -74,6 +76,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_gpu = {
+ 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_GPU_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_GPUMEM_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -90,6 +93,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_pll = {
+ 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_TSENSE_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_TSENSE_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
+@@ -108,6 +112,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_mem = {
+ 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
+ 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_MEM_EN_MASK,
+ 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_GPUMEM_THRESH_MASK,
++	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
+ 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
+ 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
+ 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
 -- 
 2.7.4
