@@ -1,7 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 14/20] arm64: dts: tegra210: add DFLL clock
-Date: Tue, 18 Dec 2018 17:12:26 +0800
-Message-ID: <20181218091232.23532-15-josephl@nvidia.com>
+Subject: [PATCH V3 18/20] arm64: dts: tegra210-smaug: add CPU power rail
+ regulator
+Date: Tue, 18 Dec 2018 17:12:30 +0800
+Message-ID: <20181218091232.23532-19-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,7 +22,7 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add essential DFLL clock properties for Tegra210.
+Add CPU power rail regulator for Smaug board.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
@@ -31,45 +32,38 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 19 +++++++++++++++++++
  1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2205d66b0443..a6db62157442 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra210-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
-+#include <dt-bindings/reset/tegra210-car.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/thermal/tegra124-soctherm.h>
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 43cae4798870..79cfcd5b7e62 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1340,6 +1340,25 @@
+ 		status = "okay";
+ 		clock-frequency = <1000000>;
  
-@@ -1131,6 +1132,24 @@
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	dfll: clock@70110000 {
-+		compatible = "nvidia,tegra210-dfll";
-+		reg = <0 0x70110000 0 0x100>, /* DFLL control */
-+		      <0 0x70110000 0 0x100>, /* I2C output control */
-+		      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
-+		      <0 0x70110200 0 0x100>; /* Look-up table RAM */
-+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
-+			 <&tegra_car TEGRA210_CLK_DFLL_REF>,
-+			 <&tegra_car TEGRA210_CLK_I2C5>;
-+		clock-names = "soc", "ref", "i2c";
-+		resets = <&tegra_car TEGRA210_RST_DFLL_DVCO>;
-+		reset-names = "dvco";
-+		#clock-cells = <0>;
-+		clock-output-names = "dfllCPU_out";
-+		status = "disabled";
-+	};
++		max77621_cpu: max77621@1b {
++			compatible = "maxim,max77621";
++			reg = <0x1b>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(Y, 1) IRQ_TYPE_LEVEL_LOW>;
++			regulator-always-on;
++			regulator-boot-on;
++			regulator-min-microvolt = <800000>;
++			regulator-max-microvolt = <1231250>;
++			regulator-name = "PPVAR_CPU";
++			regulator-ramp-delay = <12500>;
++			maxim,dvs-default-state = <1>;
++			maxim,enable-active-discharge;
++			maxim,enable-bias-control;
++			maxim,enable-etr;
++			maxim,enable-gpio = <&max77620 5 0>;
++			maxim,externally-enable;
++		};
 +
- 	aconnect@702c0000 {
- 		compatible = "nvidia,tegra210-aconnect";
- 		clocks = <&tegra_car TEGRA210_CLK_APE>,
+ 		max77620: max77620@3c {
+ 			compatible = "maxim,max77620";
+ 			reg = <0x3c>;
 -- 
 2.20.1
