@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 15/20] arm64: dts: tegra210: add CPU clocks
-Date: Tue, 18 Dec 2018 17:12:27 +0800
-Message-ID: <20181218091232.23532-16-josephl@nvidia.com>
+Subject: [PATCH V3 13/20] cpufreq: dt-platdev: add Tegra210 to blacklist
+Date: Tue, 18 Dec 2018 17:12:25 +0800
+Message-ID: <20181218091232.23532-14-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,38 +18,38 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add CPU clocks for Tegra210.
+Tegra210 uses "tegra124-cpufreq" platform driver to register device data
+for "cpufreq-dt" driver. So add it in the blacklist for
+"cpufreq-dt-platdev" driver to drop that.
 
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
 *V3:
- - no change
+ - add ack tags
 *V2:
- - add ack tag
+ - new added in V2
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index a6db62157442..e2baf52fe1af 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1304,6 +1304,12 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a57";
- 			reg = <0>;
-+			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA210_CLK_PLL_X>,
-+				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
-+			clock-latency = <300000>;
- 		};
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index b1c5468dca16..47729a22c159 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -119,6 +119,7 @@ static const struct of_device_id blacklist[] __initconst = {
+ 	{ .compatible = "mediatek,mt8176", },
  
- 		cpu@1 {
+ 	{ .compatible = "nvidia,tegra124", },
++	{ .compatible = "nvidia,tegra210", },
+ 
+ 	{ .compatible = "qcom,apq8096", },
+ 	{ .compatible = "qcom,msm8996", },
 -- 
 2.20.1
