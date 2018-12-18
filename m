@@ -1,37 +1,198 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH V3 09/20] clk: tegra: dfll: add CVB tables for Tegra210
-Date: Tue, 18 Dec 2018 10:42:02 -0800
-Message-ID: <154515852208.238328.769742330440710710@swboyd.mtv.corp.google.com>
-References: <20181218091232.23532-1-josephl@nvidia.com>
- <20181218091232.23532-10-josephl@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V1 1/2] arm64: dts: tegra210: Add SDMMC Auto-cal settings
+Date: Tue, 18 Dec 2018 11:19:46 -0800
+Message-ID: <1545160787-3157-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181218091232.23532-10-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Joseph Lo (2018-12-18 01:12:21)
-> Add CVB tables with different chip characterization, so that we can
-> generate the customize OPP table that suitable for different chips with
-> different SKUs.
-> 
-> The parameter 'tune_high_min_millivolts' is first time introduced in
-> this patch, which didn't use in the DFLL driver for clock and voltage
-> tuning before. It will be used later when DFLL in high voltage range.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
+Add SDMMC initial pad offsets used by auto calibration process.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Add SDMMC fixed drive strengths used when calibration timeouts.
+Fixed drive strengths are based on Pre SI Analysis of the pads.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi |  2 ++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 57 ++++++++++++++++++++++++++++++--
+ 3 files changed, 91 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 2f3c8e29520d..0631bb9bfcc3 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -311,6 +311,8 @@
+ 		nvidia,pad-autocal-pull-down-offset-hs400 = <0x05>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
++		nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
++		nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
+ 		nvidia,default-tap = <0x5>;
+ 		nvidia,default-trim = <0x9>;
+ 		nvidia,dqs-trim = <63>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c2091bb16546..3fab6802c335 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -301,6 +301,17 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
++			nvidia,default-tap = <0x9>;
++			nvidia,default-trim = <0x5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -312,6 +323,18 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
++			nvidia,default-tap = <0x9>;
++			nvidia,default-trim = <0x5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -323,6 +346,17 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x0a>;
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x0a>;
++			nvidia,default-tap = <0x8>;
++			nvidia,default-trim = <0x14>;
++			nvidia,dqs-trim = <40>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2205d66b0443..41408df9d4e9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -476,6 +476,48 @@
+ 		compatible = "nvidia,tegra210-pinmux";
+ 		reg = <0x0 0x700008d4 0x0 0x29c>, /* Pad control registers */
+ 		      <0x0 0x70003000 0x0 0x294>; /* Mux registers */
++		sdmmc1_3v3_drv: sdmmc1-3v3-drv {
++			sdmmc1 {
++				nvidia,pins = "drive_sdmmc1";
++				nvidia,pull-down-strength = <0x8>;
++				nvidia,pull-up-strength = <0x8>;
++			};
++		};
++		sdmmc1_1v8_drv: sdmmc1-1v8-drv {
++			sdmmc1 {
++				nvidia,pins = "drive_sdmmc1";
++				nvidia,pull-down-strength = <0x4>;
++				nvidia,pull-up-strength = <0x3>;
++			};
++		};
++		sdmmc2_1v8_drv: sdmmc2-1v8-drv {
++			sdmmc2 {
++				nvidia,pins = "drive_sdmmc2";
++				nvidia,pull-down-strength = <0x10>;
++				nvidia,pull-up-strength = <0x10>;
++			};
++		};
++		sdmmc3_3v3_drv: sdmmc3-3v3-drv {
++			sdmmc3 {
++				nvidia,pins = "drive_sdmmc3";
++				nvidia,pull-down-strength = <0x8>;
++				nvidia,pull-up-strength = <0x8>;
++			};
++		};
++		sdmmc3_1v8_drv: sdmmc3-1v8-drv {
++			sdmmc3 {
++				nvidia,pins = "drive_sdmmc3";
++				nvidia,pull-down-strength = <0x4>;
++				nvidia,pull-up-strength = <0x3>;
++			};
++		};
++		sdmmc4_1v8_drv: sdmmc4-1v8-drv {
++			sdmmc4 {
++				nvidia,pins = "drive_sdmmc4";
++				nvidia,pull-down-strength = <0x10>;
++				nvidia,pull-up-strength = <0x10>;
++			};
++		};
+ 	};
+ 
+ 	/*
+@@ -1050,9 +1092,12 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 14>;
+ 		reset-names = "sdhci";
+-		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
++				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
+ 		pinctrl-0 = <&sdmmc1_3v3>;
+ 		pinctrl-1 = <&sdmmc1_1v8>;
++		pinctrl-2 = <&sdmmc1_3v3_drv>;
++		pinctrl-3 = <&sdmmc1_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
+ 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
+@@ -1075,6 +1120,8 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 9>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-1v8-drv";
++		pinctrl-0 = <&sdmmc2_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
+ 		nvidia,default-tap = <0x8>;
+@@ -1090,9 +1137,12 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 69>;
+ 		reset-names = "sdhci";
+-		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
++				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
+ 		pinctrl-0 = <&sdmmc3_3v3>;
+ 		pinctrl-1 = <&sdmmc3_1v8>;
++		pinctrl-2 = <&sdmmc3_3v3_drv>;
++		pinctrl-3 = <&sdmmc3_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
+ 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
+@@ -1110,6 +1160,9 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 15>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-3v3-drv", "sdmmc-1v8-drv";
++		pinctrl-0 = <&sdmmc4_1v8_drv>;
++		pinctrl-1 = <&sdmmc4_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
+ 		nvidia,default-tap = <0x8>;
+-- 
+2.7.4
