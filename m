@@ -1,8 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 18/20] arm64: dts: tegra210-smaug: add CPU power rail
- regulator
-Date: Tue, 18 Dec 2018 17:12:30 +0800
-Message-ID: <20181218091232.23532-19-josephl@nvidia.com>
+Subject: [PATCH V3 12/20] cpufreq: tegra124: extend to support Tegra210
+Date: Tue, 18 Dec 2018 17:12:24 +0800
+Message-ID: <20181218091232.23532-13-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,51 +18,39 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add CPU power rail regulator for Smaug board.
+Tegra210 uses the same methodology as Tegra124 for CPUFreq controlling
+that based on DFLL clock. So extending this driver to support Tegra210.
 
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V3:
  - no change
 *V2:
- - add ack tag
+ - add two ack tags
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 43cae4798870..79cfcd5b7e62 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1340,6 +1340,25 @@
- 		status = "okay";
- 		clock-frequency = <1000000>;
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index a1bfde0a7950..ba3795e13ac6 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -144,7 +144,8 @@ static int __init tegra_cpufreq_init(void)
+ 	int ret;
+ 	struct platform_device *pdev;
  
-+		max77621_cpu: max77621@1b {
-+			compatible = "maxim,max77621";
-+			reg = <0x1b>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(Y, 1) IRQ_TYPE_LEVEL_LOW>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <1231250>;
-+			regulator-name = "PPVAR_CPU";
-+			regulator-ramp-delay = <12500>;
-+			maxim,dvs-default-state = <1>;
-+			maxim,enable-active-discharge;
-+			maxim,enable-bias-control;
-+			maxim,enable-etr;
-+			maxim,enable-gpio = <&max77620 5 0>;
-+			maxim,externally-enable;
-+		};
-+
- 		max77620: max77620@3c {
- 			compatible = "maxim,max77620";
- 			reg = <0x3c>;
+-	if (!of_machine_is_compatible("nvidia,tegra124"))
++	if (!(of_machine_is_compatible("nvidia,tegra124") ||
++		of_machine_is_compatible("nvidia,tegra210")))
+ 		return -ENODEV;
+ 
+ 	/*
 -- 
 2.20.1
