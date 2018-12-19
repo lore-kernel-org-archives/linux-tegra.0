@@ -1,136 +1,86 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v6 3/4] thermal: tegra: parse sensor id before sensor
- register
-Date: Wed, 19 Dec 2018 11:00:10 +0800
-Message-ID: <5c48701f-aafc-2db0-2191-41f169c8f33f@nvidia.com>
+Subject: Re: [PATCH v6 0/4] Fixes for Tegra soctherm
+Date: Wed, 19 Dec 2018 11:14:22 +0800
+Message-ID: <18672c34-86f3-082e-ad2d-278819e0b075@nvidia.com>
 References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
- <1544780993-20744-4-git-send-email-wni@nvidia.com>
- <20181219012450.GA2842@localhost.localdomain>
+ <74e77548-d10c-fd00-48c5-2b611529eaf5@nvidia.com>
+ <1545104154.2052.2.camel@intel.com>
+ <20181218213126.GA8850@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181219012450.GA2842@localhost.localdomain>
+In-Reply-To: <20181218213126.GA8850@localhost.localdomain>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: rui.zhang@intel.com, thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 19/12/2018 9:24 AM, Eduardo Valentin wrote:
-> On Fri, Dec 14, 2018 at 05:49:52PM +0800, Wei Ni wrote:
->> Since different platforms may not support all 4
->> sensors, so the sensor registration may be failed.
->> Add codes to parse dt to find sensor id which
->> need to be registered. So that the registration
->> can be successful on all platform.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 45 ++++++++++++++++++++++++++++++++++++++--
->>  1 file changed, 43 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->> index fd2703c0cfc5..6bee31cd4621 100644
->> --- a/drivers/thermal/tegra/soctherm.c
->> +++ b/drivers/thermal/tegra/soctherm.c
->> @@ -1224,6 +1224,41 @@ static void soctherm_init(struct platform_device *pdev)
->>  	tegra_soctherm_throttle(&pdev->dev);
->>  }
->>  
->> +static bool tegra_soctherm_find_sensor_id(unsigned int sensor_id)
->> +{
->> +	bool ret = false;
->> +	struct of_phandle_args sensor_specs;
->> +	struct device_node *np, *sensor_np;
->> +
->> +	np = of_find_node_by_name(NULL, "thermal-zones");
->> +	if (!np)
->> +		return ret;
->> +
->> +	for_each_available_child_of_node(np, sensor_np) {
->> +		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
->> +						 "#thermal-sensor-cells",
->> +						 0, &sensor_specs))
->> +			continue;
->> +
->> +		if (sensor_specs.args_count != 1) {
->> +			WARN(sensor_specs.args_count != 1,
->> +			     "%s: wrong cells in sensor specifier %d\n",
->> +			     sensor_specs.np->name, sensor_specs.args_count);
->> +			continue;
->> +		}
->> +
->> +		if (sensor_specs.args[0] == sensor_id) {
->> +			of_node_put(sensor_np);
->> +			ret = true;
->> +			break;
->> +		}
->> +	}
->> +
->> +	of_node_put(np);
->> +
->> +	return ret;
->> +}
-> 
-> So, I am still failing to see why this is really needed. 
-> 
-> Why can't you simply resolve this with different compatibles?
-> If the sensor is not present or disabled, the compatible is not, well,
-> compatible anymore.
+On 19/12/2018 5:31 AM, Eduardo Valentin wrote:
+> On Tue, Dec 18, 2018 at 11:35:54AM +0800, Zhang Rui wrote:
+>> On =E4=BA=94, 2018-12-14 at 17:54 +0800, Wei Ni wrote:
+>>> Hi Rui,
+>>> I moved get_trend() patch https://lkml.org/lkml/2018/11/20/643 in
+>>> this
+>>> serial.
+>>> Since no more comments on these patches, will you take them?
+>>>
+>> I think Eduardo will take care of this patch series.
+>=20
+> Yes, I will take a look on this series.
+>=20
+> But, please, next time you send a series of patches on thermal, copy the
+> linux-pm@vger.kernel.org mailing list. This way we can track your
+> patches on patchwork.
 
-This driver can support three Tegra chip t124, t132 and t210. And we
-also support some platforms for every chips. As the description in the
-commit, different platforms may not support all 4 sensors, so I
-upstreamed this patch.
-If we use different compatibles, I think we can't resolve it simply,
-because we also need to add codes to configure which platform support
-which sensors, and may add more in the future. If use this patch, we
-doesn't need to do any more in the future.
-Actually in my original change, I just ignore the registration failure
-to fix this issue, it will not affect loading driver, but as Daniel's
-comment, it's not better to ignore, so I followed his comment to refer
-the QORIQ thermal driver to get the sensor id.
+Sure, will do it.
 
 Thanks.
 Wei.
 
-> 
->> +
->>  static const struct of_device_id tegra_soctherm_of_match[] = {
->>  #ifdef CONFIG_ARCH_TEGRA_124_SOC
->>  	{
->> @@ -1365,13 +1400,16 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
->>  		zone->sg = soc->ttgs[i];
->>  		zone->ts = tegra;
->>  
->> +		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
->> +			continue;
->> +
->>  		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
->>  							 soc->ttgs[i]->id, zone,
->>  							 &tegra_of_thermal_ops);
->>  		if (IS_ERR(z)) {
->>  			err = PTR_ERR(z);
->> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
->> -				err);
->> +			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
->> +				soc->ttgs[i]->name, err);
->>  			goto disable_clocks;
->>  		}
->>  
->> @@ -1434,6 +1472,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
->>  		struct thermal_zone_device *tz;
->>  
->>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
->> +		if (!tz)
->> +			continue;
->> +
->>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
->>  		if (err) {
->>  			dev_err(&pdev->dev,
->> -- 
->> 2.7.4
+>=20
 >>
+>> thanks,
+>> rui
+>>> Thanks.
+>>> Wei.
+>>>
+>>> On 14/12/2018 5:49 PM, Wei Ni wrote:
+>>>>
+>>>> This series fixed some issues for Tegra soctherm,
+>>>> and add get_trend().
+>>>>
+>>>> Main changes from v5:
+>>>> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
+>>>> into this serial.
+>>>>
+>>>> Main changes from v4:
+>>>> 1. fixed for the parsing sensor id.
+>>>> 2. keep warning for missing critical trips.
+>>>>
+>>>> Main changes from v3:
+>>>> 1. updated codes for parsing sensor id, per Thierry's comments
+>>>>
+>>>> Main changes from v2:
+>>>> 1. add codes to parse sensor id to avoid registration
+>>>> failure.
+>>>>
+>>>> Main changes from v1:
+>>>> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+>>>> "thermal: tegra: fix memory allocation".
+>>>> 2. Print out the sensor name when register failed.
+>>>> 2. Remove patch "thermal: tegra: fix coverity defect"
+>>>>
+>>>> Wei Ni (4):
+>>>> =C2=A0 thermal: tegra: remove unnecessary warnings
+>>>> =C2=A0 thermal: tegra: fix memory allocation
+>>>> =C2=A0 thermal: tegra: parse sensor id before sensor register
+>>>> =C2=A0 thermal: tegra: add get_trend ops
+>>>>
+>>>> =C2=A0drivers/thermal/tegra/soctherm.c | 85
+>>>> +++++++++++++++++++++++++++++++++++++---
+>>>> =C2=A01 file changed, 80 insertions(+), 5 deletions(-)
+>>>>
