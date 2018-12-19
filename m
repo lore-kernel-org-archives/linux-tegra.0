@@ -1,81 +1,86 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH V3 01/20] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-Date: Wed, 19 Dec 2018 15:04:49 +0800
-Message-ID: <4e0cc6a8-02cf-0590-ec5c-d11412168219@nvidia.com>
-References: <20181218091232.23532-1-josephl@nvidia.com>
- <20181218091232.23532-2-josephl@nvidia.com> <20181218151934.GA10127@bogus>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH V1] mmc: cqhci: DMA Configuration prior to CQE
+Date: Wed, 19 Dec 2018 11:04:11 +0200
+Message-ID: <15dbfe38-f9fe-fbb1-2c98-a60c0101200a@intel.com>
+References: <1544811715-23792-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181218151934.GA10127@bogus>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544811715-23792-1-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/18/18 11:19 PM, Rob Herring wrote:
-> On Tue, Dec 18, 2018 at 05:12:13PM +0800, Joseph Lo wrote:
->> From: Peter De Schrijver <pdeschrijver@nvidia.com>
->>
->> Add new properties to configure the DFLL PWM regulator support.
->>
->> Cc: devicetree@vger.kernel.org
->> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->> *V3:
->>   - no change
->> *V2:
->>   - update the binding strings and descriptions for
->>   nvidia,pwm-tristate-microvolts
->>   nvidia,pwm-min-microvolts
->>   nvidia,pwm-voltage-step-microvolts
->> ---
->>   .../bindings/clock/nvidia,tegra124-dfll.txt   | 79 ++++++++++++++++++-
->>   1 file changed, 77 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->> index dff236f524a7..38e8cc8c70a8 100644
->> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
->>   oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
->>   control module that will automatically adjust the VDD_CPU voltage by
->>   communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
->> -Currently only the I2C mode is supported by these bindings.
->>   
->>   Required properties:
->>   - compatible : should be "nvidia,tegra124-dfll"
->> @@ -45,10 +44,31 @@ Required properties for the control loop parameters:
->>   Optional properties for the control loop parameters:
->>   - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
->>   
->> +Optional properties for mode selection:
->> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
->> +
->>   Required properties for I2C mode:
->>   - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
->>   
->> -Example:
->> +Required properties for PWM mode:
->> +- nvidia,pwm-period: period of PWM square wave in microseconds.
+On 14/12/18 8:21 PM, Sowjanya Komatineni wrote:
+> eMMC-5.1 JESD85-B51 Spec (Section 6.6.39), mentions DMA selection
+
+There is no JESD85-B51.  I presume you mean JESD84-B51, but I can't find any
+reference to DMA in 6.6.39.  All the host controller relevant material seems
+to be in Annex B.  Can you clarify this reference?
+
+> and DMA Block size configuration on SDHCI Host need to be done
+> prior to enabling Command Queue Engine.
 > 
-> Needs unit suffix.
+> This patch fixes the sequence to follow the spec.
 > 
-
-Hi Rob,
-
-Thanks for reviewing these DT binding patches, will fix it.
-
-Joseph
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/mmc/host/cqhci.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
+> index 159270e947cf..f701342e7212 100644
+> --- a/drivers/mmc/host/cqhci.c
+> +++ b/drivers/mmc/host/cqhci.c
+> @@ -248,6 +248,9 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+>  		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+>  	}
+>  
+> +	if (cq_host->ops->enable)
+> +		cq_host->ops->enable(mmc);
+> +
+>  	cqcfg &= ~(CQHCI_DCMD | CQHCI_TASK_DESC_SZ);
+>  
+>  	if (mmc->caps2 & MMC_CAP2_CQE_DCMD)
+> @@ -273,9 +276,6 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+>  
+>  	mmc->cqe_on = true;
+>  
+> -	if (cq_host->ops->enable)
+> -		cq_host->ops->enable(mmc);
+> -
+>  	/* Ensure all writes are done before interrupts are enabled */
+>  	wmb();
+>  
+> @@ -561,6 +561,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  	int tag = cqhci_tag(mrq);
+>  	struct cqhci_host *cq_host = mmc->cqe_private;
+>  	unsigned long flags;
+> +	u32 cqcfg = 0;
+>  
+>  	if (!cq_host->enabled) {
+>  		pr_err("%s: cqhci: not enabled\n", mmc_hostname(mmc));
+> @@ -579,8 +580,19 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>  			       mmc_hostname(mmc));
+>  		}
+> +		/* Configuration must not be changed while enabled */
+> +		cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
+> +		if (cqcfg & CQHCI_ENABLE) {
+> +			cqcfg &= ~CQHCI_ENABLE;
+> +			cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+> +		}
+> +
+>  		if (cq_host->ops->enable)
+>  			cq_host->ops->enable(mmc);
+> +
+> +		cqcfg |= CQHCI_ENABLE;
+> +		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+> +
+>  	}
+>  
+>  	if (mrq->data) {
+> 
