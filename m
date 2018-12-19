@@ -1,86 +1,58 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v6 0/4] Fixes for Tegra soctherm
-Date: Wed, 19 Dec 2018 11:14:22 +0800
-Message-ID: <18672c34-86f3-082e-ad2d-278819e0b075@nvidia.com>
-References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
- <74e77548-d10c-fd00-48c5-2b611529eaf5@nvidia.com>
- <1545104154.2052.2.camel@intel.com>
- <20181218213126.GA8850@localhost.localdomain>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH V3 11/20] cpufreq: tegra124: do not handle the CPU rail
+Date: Wed, 19 Dec 2018 14:24:09 +0800
+Message-ID: <312ac6e6-0480-b638-a26b-311013929c2c@nvidia.com>
+References: <20181218091232.23532-1-josephl@nvidia.com>
+ <20181218091232.23532-12-josephl@nvidia.com>
+ <CAJZ5v0h0n2AXERvXFX_dQWMUw_89ap_LgB6dUK0ThJgZ+unkkQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181218213126.GA8850@localhost.localdomain>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAJZ5v0h0n2AXERvXFX_dQWMUw_89ap_LgB6dUK0ThJgZ+unkkQ@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 19/12/2018 5:31 AM, Eduardo Valentin wrote:
-> On Tue, Dec 18, 2018 at 11:35:54AM +0800, Zhang Rui wrote:
->> On =E4=BA=94, 2018-12-14 at 17:54 +0800, Wei Ni wrote:
->>> Hi Rui,
->>> I moved get_trend() patch https://lkml.org/lkml/2018/11/20/643 in
->>> this
->>> serial.
->>> Since no more comments on these patches, will you take them?
->>>
->> I think Eduardo will take care of this patch series.
->=20
-> Yes, I will take a look on this series.
->=20
-> But, please, next time you send a series of patches on thermal, copy the
-> linux-pm@vger.kernel.org mailing list. This way we can track your
-> patches on patchwork.
-
-Sure, will do it.
-
-Thanks.
-Wei.
-
->=20
+On 12/18/18 5:37 PM, Rafael J. Wysocki wrote:
+> On Tue, Dec 18, 2018 at 10:13 AM Joseph Lo <josephl@nvidia.com> wrote:
 >>
->> thanks,
->> rui
->>> Thanks.
->>> Wei.
->>>
->>> On 14/12/2018 5:49 PM, Wei Ni wrote:
->>>>
->>>> This series fixed some issues for Tegra soctherm,
->>>> and add get_trend().
->>>>
->>>> Main changes from v5:
->>>> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
->>>> into this serial.
->>>>
->>>> Main changes from v4:
->>>> 1. fixed for the parsing sensor id.
->>>> 2. keep warning for missing critical trips.
->>>>
->>>> Main changes from v3:
->>>> 1. updated codes for parsing sensor id, per Thierry's comments
->>>>
->>>> Main changes from v2:
->>>> 1. add codes to parse sensor id to avoid registration
->>>> failure.
->>>>
->>>> Main changes from v1:
->>>> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
->>>> "thermal: tegra: fix memory allocation".
->>>> 2. Print out the sensor name when register failed.
->>>> 2. Remove patch "thermal: tegra: fix coverity defect"
->>>>
->>>> Wei Ni (4):
->>>> =C2=A0 thermal: tegra: remove unnecessary warnings
->>>> =C2=A0 thermal: tegra: fix memory allocation
->>>> =C2=A0 thermal: tegra: parse sensor id before sensor register
->>>> =C2=A0 thermal: tegra: add get_trend ops
->>>>
->>>> =C2=A0drivers/thermal/tegra/soctherm.c | 85
->>>> +++++++++++++++++++++++++++++++++++++---
->>>> =C2=A01 file changed, 80 insertions(+), 5 deletions(-)
->>>>
+>> The Tegra124 cpufreq driver has no information to handle the Vdd-CPU
+>> rail. So this driver shouldn't handle for the CPU clock switching from
+>> DFLL to other PLL clocks. It was designed to work on DFLL clock only,
+>> which handle the frequency/voltage scaling in the background.
+>>
+>> This patch removes the driver dependency of the CPU rail, as well as not
+>> allow it to be built as a module and remove the removal function. So it
+>> can keep working on DFLL clock.
+>>
+>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> Cc: linux-pm@vger.kernel.org
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> I'm assuming that this entire series will go in via arm-soc, so I
+> won't be picking up the cpufreq patches from it.
+> 
+> Please let me know if that is not what you want.
+> 
+> Thanks,
+> Rafael
+> 
+
+Hi Rafael,
+
+Thanks, will check with Thierry.
+
+Joseph
