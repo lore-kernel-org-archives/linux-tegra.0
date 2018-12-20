@@ -1,136 +1,97 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 8/8] ARM: dts: Add stmpe-adc DT node to Toradex T30
- modules
-Date: Thu, 20 Dec 2018 15:34:16 +0300
-Message-ID: <9c380fe2-2db8-8bc6-15b6-d112f982b70a@gmail.com>
-References: <20181212130649.15146-1-dev@pschenker.ch>
- <20181212130649.15146-8-dev@pschenker.ch>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH V4 2/4] mmc: cqhci: DMA Configuration prior to CQE
+Date: Thu, 20 Dec 2018 14:37:46 +0200
+Message-ID: <b6789159-c4ce-cc28-e7f5-33ab1e95175f@intel.com>
+References: <1545262938-20636-1-git-send-email-skomatineni@nvidia.com>
+ <1545262938-20636-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181212130649.15146-8-dev@pschenker.ch>
+In-Reply-To: <1545262938-20636-3-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Schenker <dev@pschenker.ch>, jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc: thierry.reding@gmail.com, Philippe Schenker <philippe.schenker@toradex.com>, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Philippe,
+On 20/12/18 1:42 AM, Sowjanya Komatineni wrote:
+> eMMC-5.1 JESD84-B51 Spec (Section 6.6.39.1), mentions "Prior to
+> enabling command queuing, the block size shall be set to 512 B.
+> Device may respond with an error to CMD46/CMD47 if block size
+> is not 512 B".
 
-Please CC all the patches in the series to every recipient.
+This doesn't seem to relate to the host controller implementation.  "The
+device" means the eMMC.
 
-On 12.12.2018 16:06, Philippe Schenker wrote:
-> Add the stmpe-adc DT node as found on Toradex T30 modules
+We don't want to disable and re-enable in the request function, so that
+change is not good for controllers that don't have your problem.  Another
+thing to consider is that the block size register may not need to be changed
+- for example when cqhci is halted to allow a manual discard, the block size
+register is not updated, so I would expect its value to be unchanged.
+
+There are ways you can solve this in your driver.  You could look at using
+SDHCI I/O accessors, and/or implement your own ->enable() instead of calling
+sdhci_cqe_enable() directly.  Would that be feasible?
+
 > 
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+> This patch fixes the sequence to follow exact as per the spec.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
+>  drivers/mmc/host/cqhci.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
 > 
-> Changes in v4:
->  - New separate commit to hold T30 devicetree changes
-> 
-> Changes in v3: None
-> Changes in v2: None
-> 
->  arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
->  2 files changed, 28 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> index 7f112f192fe9..850b0d13549a 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> @@ -976,11 +976,18 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
-> +			/* forbid to use ADC channels 3-0 (touch) */>  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -990,17 +997,16 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
-
-Does this change depend on some other patch in the series? Is this a backwards-compatible change? Please explain.
-
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
+> diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
+> index 159270e947cf..f701342e7212 100644
+> --- a/drivers/mmc/host/cqhci.c
+> +++ b/drivers/mmc/host/cqhci.c
+> @@ -248,6 +248,9 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+>  		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+>  	}
+>  
+> +	if (cq_host->ops->enable)
+> +		cq_host->ops->enable(mmc);
 > +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
+>  	cqcfg &= ~(CQHCI_DCMD | CQHCI_TASK_DESC_SZ);
 >  
->  		/*
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index 35af03ca9e90..1f9198bb24ff 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -845,11 +845,18 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
-> +			/* forbid to use ADC channels 3-0 (touch) */
+>  	if (mmc->caps2 & MMC_CAP2_CQE_DCMD)
+> @@ -273,9 +276,6 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
 >  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -859,17 +866,16 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
+>  	mmc->cqe_on = true;
+>  
+> -	if (cq_host->ops->enable)
+> -		cq_host->ops->enable(mmc);
+> -
+>  	/* Ensure all writes are done before interrupts are enabled */
+>  	wmb();
+>  
+> @@ -561,6 +561,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  	int tag = cqhci_tag(mrq);
+>  	struct cqhci_host *cq_host = mmc->cqe_private;
+>  	unsigned long flags;
+> +	u32 cqcfg = 0;
+>  
+>  	if (!cq_host->enabled) {
+>  		pr_err("%s: cqhci: not enabled\n", mmc_hostname(mmc));
+> @@ -579,8 +580,19 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>  			       mmc_hostname(mmc));
+>  		}
+> +		/* Configuration must not be changed while enabled */
+> +		cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
+> +		if (cqcfg & CQHCI_ENABLE) {
+> +			cqcfg &= ~CQHCI_ENABLE;
+> +			cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+> +		}
 > +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
+>  		if (cq_host->ops->enable)
+>  			cq_host->ops->enable(mmc);
+> +
+> +		cqcfg |= CQHCI_ENABLE;
+> +		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+> +
+>  	}
 >  
->  		/*
+>  	if (mrq->data) {
 > 
