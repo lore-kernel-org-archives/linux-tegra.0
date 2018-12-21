@@ -1,209 +1,147 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/5] gpio: Add support for hierarchical IRQ domains
-Date: Fri, 21 Dec 2018 14:20:41 +0100
-Message-ID: <CACRpkdY-mfADtyxhR1LRDSrOidrekRao-M97niBi9cwpf+cstg@mail.gmail.com>
-References: <20181129170312.23625-1-thierry.reding@gmail.com>
- <20181129170312.23625-2-thierry.reding@gmail.com> <CACRpkdYhgCsr2w-MgwdLDvcZXDhkvn2_sgvGW8VskK1=3kVASw@mail.gmail.com>
- <20181218220652.GB4227@mithrandir>
+From: Philippe Schenker <dev@pschenker.ch>
+Subject: [PATCH v5 0/8] Adding support for STMPE811 ADC
+Date: Fri, 21 Dec 2018 14:46:29 +0100
+Message-ID: <20181221134638.20600-1-dev@pschenker.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181218220652.GB4227@mithrandir>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brian Masney <masneyb@onstation.org>, NeilBrown <neil@brown.name>, Marc Zyngier <marc.zyngier@arm.com>
+To: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
+Cc: robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org, dmitry.torokhov@gmail.com, thierry.reding@gmail.com, digetx@gmail.com, lee.jones@linaro.org, coquelin.stm32@gmail.com, Philippe Schenker <philippe.schenker@toradex.com>, Arnd Bergmann <arnd@arndb.de>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-iio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, Fabio Estevam <fabio.estevam@nxp.com>, Randy Dunlap <rdunlap@infradead.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Freeman Liu <freeman.liu@spreadtrum.com>, linux-input@vger
 List-Id: linux-tegra@vger.kernel.org
 
-Cc:ing Neil Brown who might hit me on the fingers for
-some statements here, let's see :)
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
-On Tue, Dec 18, 2018 at 11:06 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Fri, Dec 14, 2018 at 02:41:01PM +0100, Linus Walleij wrote:
+Hello everyone,
 
-> > > -       gpiochip->to_irq = gpiochip_to_irq;
-> > > +       /*
-> > > +        * Allow GPIO chips to override the ->to_irq() if they really need to.
-> > > +        * This should only be very rarely needed, the majority should be fine
-> > > +        * with gpiochip_to_irq().
-> > > +        */
-> > > +       if (!gpiochip->to_irq)
-> > > +               gpiochip->to_irq = gpiochip_to_irq;
-> >
-> > And I see this is what your driver does, which leaves the default
-> > domain hierarchy callback path unused.
->
-> Actually this is only temporary until the patch that uses a sparse
-> number space (with the valid masks). After the last patch in the series
-> the need to override this goes away, so I could follow-up with a patch
-> to revert this. Or alternatively we could squash the two Tegra patches.
-> I think keeping them separate is slightly nicer.
+This patchset is adding an ADC driver for STMPE811. The STMPE811 is a
+Multi-Frontend-Device that supports a touchscreen, ADC, GPIO and a
+temperature sensor.
 
-OK then!
+For Touchscreen and GPIO there are already existing drivers in
+mainline. This patchset will add support, to read out the ADC and
+temperature sensor.
+This patchset is also reformatting device tree bindings, so they are
+easier to read (PATCH 1/1).
+To be able to add this ADC driver it is necessary to move some defines
+from the touchscreen driver to the mfd device (PATCH 2/8) so they are
+also accessible by mfd and adc driver.
+Because the touchscreen driver is also using the internal ADC it makes
+sense to put the common adc settings of stmpe-ts.c and stmpe_adc.c to
+the MFD. In the MFD there is then also an initialisation for the common
+settings of ADC done. The existing initialisation in touchscreen driver
+is kept for backwards-compatibility. All of this MFD related changes
+are in PATCH 3/8.
+In PATCH 4/8 then these settings are removed from stmpe-ts and grabbed
+from MFD.
+PATCH 5/8 is actually adding the ADC driver that also supports the
+built-in temperature sensor.
+PATCH 6/8 is then adding the needed devicetree bindings.
+PATCH 7/8 and 8/8 is lastly adding the stmpe_adc DT-nodes as found on
+Toradex boards.
 
-> Of course, I would even prefer to not move to the sparse number space,
-> but you seemed to feel very strongly about it last time we discussed
-> this.
+Changes in v5:
+ - Made a one column list
+ - Added lee's Acked-for-MFD
+ - Changed author of commit to use correct email.
+ - Changed author of commit to use correct email
+ - Added Lee Jone's Ack
+ - Changed author of commit. Previous patch versions author was wrong
+   by mistake.
+ - Changed author of commit to use correct email.
+ - Removed devm_add_action_or_reset
+ - Changed iio_device_register to devm_iio_device_register
+ - Added Jonathan Cameron's Reviewed-by
+ - Added correct author of commit, as this changed by accident
+ - Made a one column list
+ - Cleared note about precedence
+ - Changed example to a full STMPE811 device with MFD, touchscreen, and the new
+   stmpe_adc driver.
+ - Added Jonathan Cameron's Reviewed-by
 
-Admittedly it is one of those things where I am working on intuition
-and as such it may be wrong.
+Changes in v4:
+ - New separate precursor patch for holding reformatting
+ - Added Lee Jone's Ack
+ - Added Dmitry Torokhov's Ack
+ - New patch: split mfd changes into this precursor patch
+ - Export the added stmpe811_adc_commmon_init function
+ - Disabling adc when mfd is removed
+ - New patch: Split changes in stmpe-ts.c to a separate commit
+ - Remove common adc settings from init and call the
+   stmpe811_adc_common_init function
+ - Moved MFD changes to a precursor patch
+ - Moved stmpe-ts changes to a precursor patch
+ - Created stmpe_read_temp and stmpe_read_voltage functions to make
+   read_raw more readable
+ - Added local lock instead of using indio_dev's mlock
+ - Use be16_to_cpu() macro instead of bitshifting
+ - Added stmpe_enable again to stmpe_adc_init_hw
+ - Use devm_add_action_or_reset to get rid of the remove function
+   (I tested if that actually works)
+ - Put reformatting in a separate precursor patch.
+ - Moved T30 devicetree settings to separate commit
+ - New separate commit to hold T30 devicetree changes
 
-The main reason in this case is to keep interfaces simple.
-Of course "simple" is a bit subjective. But keeping to a
-certain predictable pattern makes things easier to understand
-as long as the pattern is somewhat reasonable.
+Changes in v3:
+ - Undo ADC-settings related code-deletions in stmpe-ts.c that the code
+   is backwards-compatible to older devicetrees.
+ - Removed COMPILE_TEST from dependings in Kconfig
+ - Removed stmpe_adc_get_platform_info() function and integrated the
+   few code lines in the other function
+ - Reformatted documentation for touchscreen to use tabs and have a better
+   overview of the settings.
+ - Added note which adc-settings will take precedence.
+ - changed typo in sample-time setting from 144 clocks to 124 clocks, as stated
+   in the datasheet.
+ - None
 
-This pattern I think it is related to the irqdomains: in the
-irqdomains a linear irqdomain with dynamically allocated
-IRQ descriptors from a sparse number space is clearly
-preferred.
+Changes in v2:
+ - This is a new added commit. Separate commit for moving the defines
+   out of drivers/input/touchscreen/stmpe-ts.c to overlying mfd-device
+   drivers/mfd/stmpe.c
+ - Pre-fix defines with STMPE_
+ - Move code to setup ADC to MFD device, as it is used by both drivers
+   adc and touchscreen
+ - Code formatting
+ - Removed unused includes
+ - Defined the macro STMPE_START_ONE_TEMP_CONV with other macros.
+ - Added new macro that defines the channel of the temperature sensor.
+   Took new name for STMPE_MAX_ADC->STMPE_ADC_LAST_NR and used it
+   throughout the code for better readability.
+ - Added mutex_unlock where missing.
+ - Moved the bindings for ADC to the overlying mfd.
+ - Reformatted for better readability
+ - Put common ADC settings in mfd
 
-By similarity and the fact that we are mapping GPIOs to
-IRQs here, I think it is more intuitive and less confusing
-to use a linear GPIO offset range and dynamically
-allocated GPIO descriptors.
+Philippe Schenker (5):
+  dt-bindings: stmpe: reformatting parameter list and use tabs only
+  mfd: stmpe: Move ADC related defines to header of mfd
+  Input: stmpe-ts: preparations for STMPE ADC driver
+  ARM: dts: Add stmpe-adc DT node to Toradex iMX6 modules
+  ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
 
-Today we do not allocate GPIO descriptors
-dynamically, they are allocated as part of the gpiochip
-struct. But I do see it as an end goal to allocate them
-dynamically or at least not allocate GPIO descriptors for
-the "holes" in the .valid_mask.
+Stefan Agner (3):
+  mfd: stmpe: preparations for STMPE ADC driver
+  iio: adc: add STMPE ADC driver using IIO framework
+  iio: adc: add STMPE ADC devicetree bindings
 
-> > It's better if you indirect the pointer like we do with some other
-> > irqchip stuff (see Hans Verkuils patches), i.e. if ->to_irq
-> > is defined, we save that function pointer and call that at the
-> > end of the gpiochip_to_irq() pointer, then we override it
-> > with our own.
-> >
-> > Since the Tegra186 clearly .to_irq() clearly is mostly the
-> > same plus some extra, this should work fine and give
-> > lesser lines of code in that driver.
->
-> That sounds an awful lot like a midlayer. I'm not a big fan of that at
-> all. There are various reasons for this, but others have described it in
-> much better detail than I could. See here for example:
->
->         https://lwn.net/Articles/336262/
+ .../devicetree/bindings/iio/adc/stmpe-adc.txt |  21 +
+ .../bindings/input/touchscreen/stmpe.txt      | 116 ++++--
+ .../devicetree/bindings/mfd/stmpe.txt         |  28 +-
+ arch/arm/boot/dts/imx6qdl-apalis.dtsi         |  22 +-
+ arch/arm/boot/dts/imx6qdl-colibri.dtsi        |  23 +-
+ arch/arm/boot/dts/tegra30-apalis.dtsi         |  22 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi        |  22 +-
+ drivers/iio/adc/Kconfig                       |   7 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/stmpe-adc.c                   | 363 ++++++++++++++++++
+ drivers/input/touchscreen/stmpe-ts.c          |  66 +---
+ drivers/mfd/Kconfig                           |   3 +-
+ drivers/mfd/stmpe.c                           |  68 ++++
+ include/linux/mfd/stmpe.h                     |  21 +
+ 14 files changed, 667 insertions(+), 116 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
+ create mode 100644 drivers/iio/adc/stmpe-adc.c
 
-Reading that article I do not think gpiolib qualifies as midlayer,
-since it is after all optional and not every driver uses it, so
-it is available on a case-by-case basis. The article even says:
-
-"That common functionality which it is so tempting to put in a
-midlayer should instead be provided as library routines which
-can used, augmented, or ignored by each bottom level
-driver independently."
-
-Contrast that by the SCSI emulation in libata: is it even
-possible to bypass? Not really, no. gpiolib is not like that.
-
-> In this particular case one potential problem is that gpiochip_to_irq()
-> might not always do the right things for everyone, and that it turn may
-> incentivize people to work around it creatively. For example, one driver
-> may want to perform some operation before gpiochip_to_irq() is called,
-> while another driver may have to perform an operation after the call. If
-> you move towards a midlayer there's no way to satisfy both, unless you
-> go and add pre- and post-operations of some sort.
-
-I don't really buy into that.
-
-gpiochip_to_irq() is *ONLY* a translation mechanism. The main
-abstraction is and should be irqchip.
-
-In usecases like device tree the same device exposes a
-gpiochip API and an irqchip API and those two are supposed
-to be orthogonal. The Documentation/driver-api/gpio/driver.rst
-says:
-
---------8<----------8<--------8<--------8<--------
-It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
-if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
-irq_chip are orthogonal, and offering their services independent of each
-other.
-
-gpiod_to_irq() is just a convenience function to figure out the IRQ for a
-certain GPIO line and should not be relied upon to have been called before
-the IRQ is used.
-
-So always prepare the hardware and make it ready for action in respective
-callbacks from the GPIO and irqchip APIs. Do not rely on gpiod_to_irq() having
-been called first.
-
-This orthogonality leads to ambiguities that we need to solve: if there is
-competition inside the subsystem which side is using the resource (a certain
-GPIO line and register for example) it needs to deny certain operations and
-keep track of usage inside of the gpiolib subsystem. This is why the API
-below exists.
---------8<----------8<--------8<--------8<--------
-
-So now indeed it seems that your implementation actually
-has a bug here. I didn't see it before: if we make use of
-the irq off the irqchip without gpiochip_to_irq() having
-been called before, will the (hierarchical) IRQ still work?
-
-Much of the idea and reason behind GPIOLIB_IRQCHIP is
-to make sure this can hold true.
-
-So this hunk of your original patch:
-
-+       if (irq_domain_is_hierarchy(domain)) {
-+               struct irq_fwspec spec;
-+
-+               spec.fwnode = domain->fwnode;
-+               spec.param_count = 2;
-+               spec.param[0] = offset;
-+               spec.param[1] = 0;
-+
-+               return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
-+       }
-
-Is probably misplaced: gpiochip_to_irq() should really
-only contain irq_create_mapping() which is what will
-also be done by the device tree (or ACPI, I hope) core
-when providing an irq as a resource.
-
-The snippet above needs to go somewhere else, if it
-needs to happen before any of the irqchip callbacks
-then just loop over all the IRQs in
-gpiochip_add_irqchip() and allocate IRQs for all valid
-IRQs from the start as a last resort I suppose.
-
-A last alternative would be to assume that all other ways
-an IRQ is mapped (besides using gpiochip_to_irq()) will
-also do the same thing. E.g, you would have to go into
-drivers/of/irq.c and patch irq_of_parse_and_map()
-to do the same thing. This is the site that creates the
-mapping when .to_irq() is not called in the DT case.
-
-Maybe the DT or irqchip maintainers can give a better
-answer to how this should happen. Relying on .to_irq()
-to always be called is certainly not the answer. We already
-did that mistake in the past :(
-
-> I'd like to propose that we instead provide gpiochip_to_irq() as a
-> helper that drivers can call into.
-
->        static int foo_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
->        {
->                /* do something before */
->                ...
->
->               err = gpiochip_to_irq(chip, offset);
->               if (err < 0)
->                       return err;
->
->               /* do something after */
->               ...
->       }
-
-Under your assumptions that is fine, and the same reason as to
-why we control pins and regulators and clock in callbacks from
-say .suspend() instead of enforcing a certain order. It could be
-necessary if the translation gets complicated enough.
-
-But right now I am mostly worried that this implementation does
-not cover for the fact that we have to make sure that hierarchical
-irqchips in gpiolib work even if .to_irq() was not called first.
-
-Yours,
-Linus Walleij
+-- 
+2.19.2
