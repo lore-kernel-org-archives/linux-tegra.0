@@ -1,58 +1,79 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V6 2/2] mmc: tegra: HW Command Queue Support for Tegra
- SDMMC
-Date: Fri, 28 Dec 2018 20:16:15 +0000
-Message-ID: <BN7PR12MB2836645A118593A969ABA5AEC2B70@BN7PR12MB2836.namprd12.prod.outlook.com>
-References: <1545947882-18875-1-git-send-email-skomatineni@nvidia.com>
- <1545947882-18875-3-git-send-email-skomatineni@nvidia.com>
- <317b5abe-894a-097a-cbfa-0cab5e253a0d@intel.com>
+Subject: RE: [PATCH V2 1/3] dt-bindings: mmc: tegra: Add pinctrl for pad drive
+ strength config
+Date: Sat, 29 Dec 2018 00:08:02 +0000
+Message-ID: <BN7PR12MB2836C77E851E7AC4BCD38BF0C2B00@BN7PR12MB2836.namprd12.prod.outlook.com>
+References: <1545260153-11338-1-git-send-email-skomatineni@nvidia.com>
+ <20181227213353.GA8110@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <317b5abe-894a-097a-cbfa-0cab5e253a0d@intel.com>
+In-Reply-To: <20181227213353.GA8110@bogus>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Mikko Perttunen <mperttunen@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "adrian.hunter@intel.com" <adrian.hunter@intel.com>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Preetham Chandru <pchandru@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgQWRyaWFuDQoNCj4+IFRoaXMgcGF0Y2ggYWRkcyBIVyBDb21tYW5kIFF1ZXVlIGZvciBzdXBw
-b3J0ZWQgVGVncmEgU0RNTUMgDQo+PiBjb250cm9sbGVycy4NCj4+IA0KPj4gVGVncmEgU0RIQ0kg
-d2l0aCBRdWlyayBTREhDSV9RVUlSSzJfQlJPS0VOXzY0X0JJVF9ETUEgZGlzYWJsZXMgdGhlIHVz
-ZSANCj4+IG9mIDY0X0JJVCBETUEgdG8gZGlzYWJsZSA2NC1iaXQgYWRkcmVzc2luZyBtb2RlIGFj
-Y2VzcyB0byB0aGUgc3lzdGVtIA0KPj4gbWVtb3J5IGFuZCBzZGhjaV9jcWVfZW5hYmxlIHVzaW5n
-IGZsYWcgU0RIQ0lfVVNFXzY0X0JJVF9ETUEgZm9yIA0KPj4gQURNQTMyL0FETUEyIFZzIEFETUE2
-NC9BRE1BMyBETUEgc2VsZWN0aW9uLg0KPj4gDQo+PiBDUUUgbmVlZCB0byB1c2UgQURNQTMgYXMg
-aXQgbmVlZCB0byBmZXRjaCB0YXNrIGRlc2NyaXB0b3IgYWxvbmcgd2l0aCANCj4+IHRyYW5zZmVy
-IGRlc2NyaXB0b3IsIHNvIHRoaXMgcGF0Y2ggZm9yY2VzIERNQSBTZWxlY3QgdG8gYmUNCj4+IEFE
-TUEzIGZvciBDUUUuDQoNCj4gSSBkb24ndCB1bmRlcnN0YW5kIHdoeSB5b3UgdXNlIHRoZSB0ZXJt
-ICJBRE1BMyIgc2luY2UgaXQgaXMgbm90IENRRSB0ZXJtaW5vbG9neSwgY2FuIGJlIDMyLWJpdCBv
-ciA2NC1iaXQsIGFuZCwgZnJvbSB0aGUgZHJpdmVyIHBvaW50IG9mIHZpZXcsIGhhcyBxdWl0ZSBk
-aWZmZXJlbnQgcmVxdWlyZW1lbnRzIGZyb20gQ1FFLg0KPiANCj4gSXQgc2VlbXMgeW91IGFyZSBz
-YXlpbmcgdGhhdCBUZWdyYSBzdXBwb3J0cyBvbmx5IDMyLWJpdCBETUEgYnV0IG11c3Qgc2VsZWN0
-IDY0LWJpdCBETUEgZm9yIENRRT8gIENhbiB5b3UgY2xhcmlmeSB0aGlzIGEgYml0Pw0KPiANCg0K
-QXMgcGVyIEhvc3QgU3BlYywgV2hlbiBIb3N0IFZlcnNpb24gNCBpcyBlbmFibGVkLCBETUFfU0VM
-RUNUIG9wdGlvbnMgc3VwcG9ydGVkIGFyZQ0KMDA6IFNETUENCjAxOiBOb3QgVXNlZA0KMTA6IEFE
-TUEyDQoxMTogQURNQTIgb3IgQURNQTMNCg0KV2hlbiBIb3N0IFZlcnNpb24gNCBpcyBkaXNhYmxl
-ZCwgRE1BX1NFTEVDVCBvcHRpb25zIHN1cHBvcnRlZCBhcmUNCjAwOiBTRE1BDQowMTogTm90IFVz
-ZWQNCjEwOiAzMi1CaXQgYWRkcmVzc2luZyBBRE1BMg0KMTE6IDY0LUJpdCBhZGRyZXNzaW5nIEFE
-TUEyDQoNClZlcnNpb24gNCBpcyBlbmFibGVkIGZvciBDUUUgYW5kIG5lZWQgdG8gdXNlIEFETUEz
-IERNQSBTZWxlY3QuIEFETUEzIGVuYWJsZXMgaG9zdCB0byBwcm9ncmFtIG11bHRpcGxlIEFETUEy
-IG9wZXJhdGlvbnMuDQpDUUUgbmVlZCB0byBmZXRjaCBib3RoIHRhc2sgZGVzY3JpcHRvciBhbmQg
-dHJhbnNmZXIgZGVzY3JpcHRvciBhbmQgc2hvdWxkIHVzZSBBRE1BMy4NCkFETUEzIGlzIHN1cHBv
-cnRlZCB3aXRoIGJvdGggMzItYml0IGFuZCA2NC1iaXQgYWRkcmVzc2luZyBtb2Rlcy4gDQpTREhD
-SSBkcml2ZXIgaGFzIERNQSBzZWxlY3Qgb3B0aW9ucyBkZWZpbmVkIGFzIHBlciBIb3N0IHZlcnNp
-b25zIGJlbG93IDQgYW5kIHVzaW5nIEFETUEzMiwgQURNQTY0IHdoaWNoIGFyZSBlcXVpdmFsZW50
-IHRvIEFETUEyIGFuZCBBRE1BMyBmb3IgSG9zdCBWNC4NCklmIHVzaW5nIHNhbWUgQURNQTY0IGlz
-IGFkZGluZyBjb25mdXNpb24sIHByb2JhYmx5IEkgY2FuIGFkZCBkZWZpbmUgQURNQTNfQ1FFIHdp
-dGggc2FtZSBiJzExIHRvIGF2b2lkIGNvbmZ1c2lvbi4gUGxlYXNlIGxldCBtZSBrbm93Lg0KDQo+
-PiANCj4+IFRlZ3JhIFNETU1DIEhvc3QgZGVzaWduIHByZXZlbnRzIHdyaXRlIGFjY2VzcyB0byBC
-TE9DS19DT1VOVCByZWdpc3RlcnMgDQo+PiB3aGVuIENRRSBpcyBlbmFibGVkIHRvIHByZXZlbnQg
-U1cgZnJvbSB1cGRhdGluZyBibG9jayBzaXplIGR1cmluZyANCj4+IENvbW1hbmQgUXVldWUgbW9k
-ZS4NCj4+IA0KPj4gU2lnbmVkLW9mZi1ieTogU293amFueWEgS29tYXRpbmVuaSA8c2tvbWF0aW5l
-bmlAbnZpZGlhLmNvbT4NCj4+IC0tLQ0KPj4gIGRyaXZlcnMvbW1jL2hvc3QvS2NvbmZpZyAgICAg
-ICB8ICAgMSArDQo+PiAgZHJpdmVycy9tbWMvaG9zdC9zZGhjaS10ZWdyYS5jIHwgMTA3ICsrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystDQo+PiAgZHJpdmVycy9tbWMvaG9z
-dC9zZGhjaS5jICAgICAgIHwgICA2ICsrLQ0KPj4gIDMgZmlsZXMgY2hhbmdlZCwgMTEyIGluc2Vy
-dGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQoNClRoYW5rcyAmIFJlZ2FyZHMsDQpTb3dqYW55YQ0K
+Hi Rob,
+
+>> Add pinctrl for 3V3 and 1V8 pad drive strength configuration for
+>> Tegra210 sdmmc which has pad configuration registers in the pinmux=20
+>> reigster domain.
+>
+> typo
+>
+>>=20
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 6=20
+>> +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git=20
+>> a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt=20
+>> b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+>> index 32b4b4e41923..2cecdc71d94c 100644
+>> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+>> @@ -39,12 +39,16 @@ sdhci@c8000200 {
+>>  	bus-width =3D <8>;
+>>  };
+>> =20
+>> -Optional properties for Tegra210 and Tegra186:
+>> +Optional properties for Tegra210, Tegra186 and Tegra194:
+>
+>Adding Tegra194, but this patch concerns Tegra210...
+Yes this is mainly part of Tegra210 Patch but pinctrls sdmmc-1v8 and sdmmc-=
+3v3
+also applies for Tegra194 and since it was not mentioned, added Tegra194 as=
+ well.
+Does adding Tegra194 in this should come as separate patch?
+>
+>>  - pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
+>>    configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
+>>    for controllers supporting multiple voltage levels. The order of name=
+s
+>>    should correspond to the pin configuration states in pinctrl-0 and
+>>    pinctrl-1.
+>> +- pinctrl-names : "sdmmc-3v3-drv" and "sdmmc-1v8-drv" are applicable=20
+>> +for
+>
+>These are in addition to the previous values?
+Yes these are additional pinctrl states for pad drive settings which are in=
+ pinmux
+Domain and are applicable during calibration process.
+>
+>> +  Tegra210 where pad config registers are in the pinmux register=20
+>> + domain  for pull-up-strength and pull-down-strength values=20
+>> + configuration when  using pads at 3V3 and 1V8 levels.
+>>  - nvidia,only-1-8-v : The presence of this property indicates that the
+>>    controller operates at a 1.8 V fixed I/O voltage.
+>>  - nvidia,pad-autocal-pull-up-offset-3v3,
+>> --
+>> 2.7.4
+>>=20
+
+Thanks & Regards,
+sowjanya
