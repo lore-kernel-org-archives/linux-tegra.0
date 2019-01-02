@@ -1,201 +1,115 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V3 2/3] arm64: dts: tegra: Add SDMMC Auto-cal settings
-Date: Wed, 2 Jan 2019 12:57:53 -0800
-Message-ID: <1546462674-22856-2-git-send-email-skomatineni@nvidia.com>
-References: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V1] i2c: tegra: Fix Maximum transfer size
+Date: Wed, 2 Jan 2019 13:48:41 -0800
+Message-ID: <1546465721-12108-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add SDMMC initial pad offsets used by auto calibration process.
+Tegra194 supports maximum 64K Bytes transfer per packet.
+Tegra186 and prior supports maximum 4K Bytes transfer per packet.
 
-Add SDMMC fixed drive strengths for Tegra210 and above which are
-used when calibration timeouts.
-Fixed drive strengths are based on Pre SI Analysis of the pads.
+This patch fixes this payload difference between Tegra194 and prior
+tegra chipsets.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi |  2 ++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 57 ++++++++++++++++++++++++++++++--
- 3 files changed, 91 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e29520d..0631bb9bfcc3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -311,6 +311,8 @@
- 		nvidia,pad-autocal-pull-down-offset-hs400 = <0x05>;
- 		nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
- 		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
-+		nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
-+		nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
- 		nvidia,default-tap = <0x5>;
- 		nvidia,default-trim = <0x9>;
- 		nvidia,dqs-trim = <63>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c2091bb16546..3fab6802c335 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -301,6 +301,17 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
-+			nvidia,default-tap = <0x9>;
-+			nvidia,default-trim = <0x5>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 437294ea2f0a..0c08ed8b6c94 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -167,6 +167,7 @@ struct tegra_i2c_hw_feature {
+ 	bool has_multi_master_mode;
+ 	bool has_slcg_override_reg;
+ 	bool has_mst_fifo;
++	struct i2c_adapter_quirks *quirks;
+ };
  
-@@ -312,6 +323,18 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
-+			nvidia,default-tap = <0x9>;
-+			nvidia,default-trim = <0x5>;
- 			status = "disabled";
- 		};
+ /**
+@@ -833,6 +834,12 @@ static const struct i2c_adapter_quirks tegra_i2c_quirks = {
+ 	.max_write_len = 4096,
+ };
  
-@@ -323,6 +346,17 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x0a>;
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x0a>;
-+			nvidia,default-tap = <0x8>;
-+			nvidia,default-trim = <0x14>;
-+			nvidia,dqs-trim = <40>;
- 			status = "disabled";
- 		};
++static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
++	.max_read_len = 65536,
++	.max_write_len = 65536,
++};
++
+ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_continue_xfer_support = false,
+ 	.has_per_pkt_xfer_complete_irq = false,
+@@ -844,6 +851,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
  
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2205d66b0443..41408df9d4e9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -476,6 +476,48 @@
- 		compatible = "nvidia,tegra210-pinmux";
- 		reg = <0x0 0x700008d4 0x0 0x29c>, /* Pad control registers */
- 		      <0x0 0x70003000 0x0 0x294>; /* Mux registers */
-+		sdmmc1_3v3_drv: sdmmc1-3v3-drv {
-+			sdmmc1 {
-+				nvidia,pins = "drive_sdmmc1";
-+				nvidia,pull-down-strength = <0x8>;
-+				nvidia,pull-up-strength = <0x8>;
-+			};
-+		};
-+		sdmmc1_1v8_drv: sdmmc1-1v8-drv {
-+			sdmmc1 {
-+				nvidia,pins = "drive_sdmmc1";
-+				nvidia,pull-down-strength = <0x4>;
-+				nvidia,pull-up-strength = <0x3>;
-+			};
-+		};
-+		sdmmc2_1v8_drv: sdmmc2-1v8-drv {
-+			sdmmc2 {
-+				nvidia,pins = "drive_sdmmc2";
-+				nvidia,pull-down-strength = <0x10>;
-+				nvidia,pull-up-strength = <0x10>;
-+			};
-+		};
-+		sdmmc3_3v3_drv: sdmmc3-3v3-drv {
-+			sdmmc3 {
-+				nvidia,pins = "drive_sdmmc3";
-+				nvidia,pull-down-strength = <0x8>;
-+				nvidia,pull-up-strength = <0x8>;
-+			};
-+		};
-+		sdmmc3_1v8_drv: sdmmc3-1v8-drv {
-+			sdmmc3 {
-+				nvidia,pins = "drive_sdmmc3";
-+				nvidia,pull-down-strength = <0x4>;
-+				nvidia,pull-up-strength = <0x3>;
-+			};
-+		};
-+		sdmmc4_1v8_drv: sdmmc4-1v8-drv {
-+			sdmmc4 {
-+				nvidia,pins = "drive_sdmmc4";
-+				nvidia,pull-down-strength = <0x10>;
-+				nvidia,pull-up-strength = <0x10>;
-+			};
-+		};
- 	};
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -857,6 +865,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
  
- 	/*
-@@ -1050,9 +1092,12 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 14>;
- 		reset-names = "sdhci";
--		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
-+				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
- 		pinctrl-0 = <&sdmmc1_3v3>;
- 		pinctrl-1 = <&sdmmc1_1v8>;
-+		pinctrl-2 = <&sdmmc1_3v3_drv>;
-+		pinctrl-3 = <&sdmmc1_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
- 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
-@@ -1075,6 +1120,8 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 9>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-1v8-drv";
-+		pinctrl-0 = <&sdmmc2_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
-@@ -1090,9 +1137,12 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 69>;
- 		reset-names = "sdhci";
--		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
-+				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
- 		pinctrl-0 = <&sdmmc3_3v3>;
- 		pinctrl-1 = <&sdmmc3_1v8>;
-+		pinctrl-2 = <&sdmmc3_3v3_drv>;
-+		pinctrl-3 = <&sdmmc3_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
- 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
-@@ -1110,6 +1160,9 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 15>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-3v3-drv", "sdmmc-1v8-drv";
-+		pinctrl-0 = <&sdmmc4_1v8_drv>;
-+		pinctrl-1 = <&sdmmc4_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -870,6 +879,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -883,6 +893,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -896,6 +907,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -909,6 +921,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = true,
++	.quirks = &tegra194_i2c_quirks,
+ };
+ 
+ /* Match table for of_platform binding */
+@@ -960,7 +973,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->base = base;
+ 	i2c_dev->div_clk = div_clk;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+-	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
+@@ -976,6 +988,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
+ 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
+ 						  "nvidia,tegra20-i2c-dvc");
++	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
++
+ 	init_completion(&i2c_dev->msg_complete);
+ 	spin_lock_init(&i2c_dev->xfer_lock);
+ 
 -- 
 2.7.4
