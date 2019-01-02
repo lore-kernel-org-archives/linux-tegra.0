@@ -1,115 +1,91 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] i2c: tegra: Fix Maximum transfer size
-Date: Wed, 2 Jan 2019 13:48:41 -0800
-Message-ID: <1546465721-12108-1-git-send-email-skomatineni@nvidia.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH V1] i2c: tegra: Fix Maximum transfer size
+Date: Wed, 2 Jan 2019 22:05:10 +0000
+Message-ID: <e0f6cea5-cd18-1ed1-f8ee-aa9c58198df2@axentia.se>
+References: <1546465721-12108-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1546465721-12108-1-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
+Content-ID: <ED64DC2DC28D8D4B98FF5C80D94D7379@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 supports maximum 64K Bytes transfer per packet.
-Tegra186 and prior supports maximum 4K Bytes transfer per packet.
-
-This patch fixes this payload difference between Tegra194 and prior
-tegra chipsets.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 437294ea2f0a..0c08ed8b6c94 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -167,6 +167,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	struct i2c_adapter_quirks *quirks;
- };
- 
- /**
-@@ -833,6 +834,12 @@ static const struct i2c_adapter_quirks tegra_i2c_quirks = {
- 	.max_write_len = 4096,
- };
- 
-+static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+	.max_read_len = 65536,
-+	.max_write_len = 65536,
-+};
-+
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_continue_xfer_support = false,
- 	.has_per_pkt_xfer_complete_irq = false,
-@@ -844,6 +851,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -857,6 +865,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -870,6 +879,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -883,6 +893,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -896,6 +907,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -909,6 +921,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.quirks = &tegra194_i2c_quirks,
- };
- 
- /* Match table for of_platform binding */
-@@ -960,7 +973,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->base = base;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
--	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
-@@ -976,6 +988,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
- 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
- 						  "nvidia,tegra20-i2c-dvc");
-+	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
-+
- 	init_completion(&i2c_dev->msg_complete);
- 	spin_lock_init(&i2c_dev->xfer_lock);
- 
--- 
-2.7.4
+T24gMjAxOS0wMS0wMiAyMjo0OCwgU293amFueWEgS29tYXRpbmVuaSB3cm90ZToNCj4gVGVncmEx
+OTQgc3VwcG9ydHMgbWF4aW11bSA2NEsgQnl0ZXMgdHJhbnNmZXIgcGVyIHBhY2tldC4NCj4gVGVn
+cmExODYgYW5kIHByaW9yIHN1cHBvcnRzIG1heGltdW0gNEsgQnl0ZXMgdHJhbnNmZXIgcGVyIHBh
+Y2tldC4NCj4gDQo+IFRoaXMgcGF0Y2ggZml4ZXMgdGhpcyBwYXlsb2FkIGRpZmZlcmVuY2UgYmV0
+d2VlbiBUZWdyYTE5NCBhbmQgcHJpb3INCj4gdGVncmEgY2hpcHNldHMuDQo+IA0KPiBTaWduZWQt
+b2ZmLWJ5OiBTb3dqYW55YSBLb21hdGluZW5pIDxza29tYXRpbmVuaUBudmlkaWEuY29tPg0KPiAt
+LS0NCj4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyB8IDE2ICsrKysrKysrKysrKysr
+Ky0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+
+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIGIvZHJpdmVy
+cy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+IGluZGV4IDQzNzI5NGVhMmYwYS4uMGMwOGVkOGI2
+Yzk0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gKysr
+IGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+IEBAIC0xNjcsNiArMTY3LDcgQEAg
+c3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHsNCj4gIAlib29sIGhhc19tdWx0aV9tYXN0ZXJf
+bW9kZTsNCj4gIAlib29sIGhhc19zbGNnX292ZXJyaWRlX3JlZzsNCj4gIAlib29sIGhhc19tc3Rf
+ZmlmbzsNCj4gKwlzdHJ1Y3QgaTJjX2FkYXB0ZXJfcXVpcmtzICpxdWlya3M7DQoNClRoaXMgY291
+bGQgcGVyaGFwcyBiZSBhIHBvaW50ZXIgdG8gY29uc3Q/DQoNCj4gIH07DQo+ICANCj4gIC8qKg0K
+PiBAQCAtODMzLDYgKzgzNCwxMiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGkyY19hZGFwdGVyX3F1
+aXJrcyB0ZWdyYV9pMmNfcXVpcmtzID0gew0KPiAgCS5tYXhfd3JpdGVfbGVuID0gNDA5NiwNCj4g
+IH07DQo+ICANCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgaTJjX2FkYXB0ZXJfcXVpcmtzIHRlZ3Jh
+MTk0X2kyY19xdWlya3MgPSB7DQo+ICsJLmZsYWdzID0gSTJDX0FRX05PX1pFUk9fTEVOLA0KDQpU
+aGlzIGlzIG5vdCBtZW50aW9uZWQgaW4gdGhlIGNvbW1pdCBtZXNzYWdlIGFuZCB0aGUgZmxhZyBp
+cyBub3QgcHJlc2VudCBpbg0KdGhlIG9sZCBzdHJ1Y3QgdGVncmFfaTJjX3F1aXJrcyBhYm92ZS4g
+QXJlIHlvdSB0cnlpbmcgdG8gc25lYWsgY2hhbmdlcyBwYXN0DQp0aGUgbWFpbnRhaW5lcnMsIG9y
+IHdhcyB0aGUgY2hhbmdlIHNpbXBseSBub3QgaW50ZW50aW9uYWw/DQoNCj4gKwkubWF4X3JlYWRf
+bGVuID0gNjU1MzYsDQo+ICsJLm1heF93cml0ZV9sZW4gPSA2NTUzNiwNCg0KVGhvc2UgYXJlIGhp
+Z2hseSBkdWJpb3VzIHdoZW4gLm1heF9yZWFkX2xlbiBhbmQgLm1heF93cml0ZV9sZW4gYXJlIG9m
+IHR5cGUNCnUxNi4gSSBiZXQgeW91IGNvdWxkIGp1c3QgcmVtb3ZlIHRoZW0uDQoNCkNoZWVycywN
+ClBldGVyDQoNCj4gK307DQo+ICsNCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgdGVncmFfaTJjX2h3
+X2ZlYXR1cmUgdGVncmEyMF9pMmNfaHcgPSB7DQo+ICAJLmhhc19jb250aW51ZV94ZmVyX3N1cHBv
+cnQgPSBmYWxzZSwNCj4gIAkuaGFzX3Blcl9wa3RfeGZlcl9jb21wbGV0ZV9pcnEgPSBmYWxzZSwN
+Cj4gQEAgLTg0NCw2ICs4NTEsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX2kyY19od19m
+ZWF0dXJlIHRlZ3JhMjBfaTJjX2h3ID0gew0KPiAgCS5oYXNfbXVsdGlfbWFzdGVyX21vZGUgPSBm
+YWxzZSwNCj4gIAkuaGFzX3NsY2dfb3ZlcnJpZGVfcmVnID0gZmFsc2UsDQo+ICAJLmhhc19tc3Rf
+ZmlmbyA9IGZhbHNlLA0KPiArCS5xdWlya3MgPSAmdGVncmFfaTJjX3F1aXJrcywNCj4gIH07DQo+
+ICANCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgdGVncmFfaTJjX2h3X2ZlYXR1cmUgdGVncmEzMF9p
+MmNfaHcgPSB7DQo+IEBAIC04NTcsNiArODY1LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCB0ZWdy
+YV9pMmNfaHdfZmVhdHVyZSB0ZWdyYTMwX2kyY19odyA9IHsNCj4gIAkuaGFzX211bHRpX21hc3Rl
+cl9tb2RlID0gZmFsc2UsDQo+ICAJLmhhc19zbGNnX292ZXJyaWRlX3JlZyA9IGZhbHNlLA0KPiAg
+CS5oYXNfbXN0X2ZpZm8gPSBmYWxzZSwNCj4gKwkucXVpcmtzID0gJnRlZ3JhX2kyY19xdWlya3Ms
+DQo+ICB9Ow0KPiAgDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJl
+IHRlZ3JhMTE0X2kyY19odyA9IHsNCj4gQEAgLTg3MCw2ICs4NzksNyBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHRlZ3JhMTE0X2kyY19odyA9IHsNCj4gIAkuaGFz
+X211bHRpX21hc3Rlcl9tb2RlID0gZmFsc2UsDQo+ICAJLmhhc19zbGNnX292ZXJyaWRlX3JlZyA9
+IGZhbHNlLA0KPiAgCS5oYXNfbXN0X2ZpZm8gPSBmYWxzZSwNCj4gKwkucXVpcmtzID0gJnRlZ3Jh
+X2kyY19xdWlya3MsDQo+ICB9Ow0KPiAgDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX2ky
+Y19od19mZWF0dXJlIHRlZ3JhMTI0X2kyY19odyA9IHsNCj4gQEAgLTg4Myw2ICs4OTMsNyBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHRlZ3JhMTI0X2kyY19odyA9
+IHsNCj4gIAkuaGFzX211bHRpX21hc3Rlcl9tb2RlID0gZmFsc2UsDQo+ICAJLmhhc19zbGNnX292
+ZXJyaWRlX3JlZyA9IHRydWUsDQo+ICAJLmhhc19tc3RfZmlmbyA9IGZhbHNlLA0KPiArCS5xdWly
+a3MgPSAmdGVncmFfaTJjX3F1aXJrcywNCj4gIH07DQo+ICANCj4gIHN0YXRpYyBjb25zdCBzdHJ1
+Y3QgdGVncmFfaTJjX2h3X2ZlYXR1cmUgdGVncmEyMTBfaTJjX2h3ID0gew0KPiBAQCAtODk2LDYg
+KzkwNyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgdGVncmFfaTJjX2h3X2ZlYXR1cmUgdGVncmEy
+MTBfaTJjX2h3ID0gew0KPiAgCS5oYXNfbXVsdGlfbWFzdGVyX21vZGUgPSB0cnVlLA0KPiAgCS5o
+YXNfc2xjZ19vdmVycmlkZV9yZWcgPSB0cnVlLA0KPiAgCS5oYXNfbXN0X2ZpZm8gPSBmYWxzZSwN
+Cj4gKwkucXVpcmtzID0gJnRlZ3JhX2kyY19xdWlya3MsDQo+ICB9Ow0KPiAgDQo+ICBzdGF0aWMg
+Y29uc3Qgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHRlZ3JhMTk0X2kyY19odyA9IHsNCj4g
+QEAgLTkwOSw2ICs5MjEsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0
+dXJlIHRlZ3JhMTk0X2kyY19odyA9IHsNCj4gIAkuaGFzX211bHRpX21hc3Rlcl9tb2RlID0gdHJ1
+ZSwNCj4gIAkuaGFzX3NsY2dfb3ZlcnJpZGVfcmVnID0gdHJ1ZSwNCj4gIAkuaGFzX21zdF9maWZv
+ID0gdHJ1ZSwNCj4gKwkucXVpcmtzID0gJnRlZ3JhMTk0X2kyY19xdWlya3MsDQo+ICB9Ow0KPiAg
+DQo+ICAvKiBNYXRjaCB0YWJsZSBmb3Igb2ZfcGxhdGZvcm0gYmluZGluZyAqLw0KPiBAQCAtOTYw
+LDcgKzk3Myw2IEBAIHN0YXRpYyBpbnQgdGVncmFfaTJjX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
+ZXZpY2UgKnBkZXYpDQo+ICAJaTJjX2Rldi0+YmFzZSA9IGJhc2U7DQo+ICAJaTJjX2Rldi0+ZGl2
+X2NsayA9IGRpdl9jbGs7DQo+ICAJaTJjX2Rldi0+YWRhcHRlci5hbGdvID0gJnRlZ3JhX2kyY19h
+bGdvOw0KPiAtCWkyY19kZXYtPmFkYXB0ZXIucXVpcmtzID0gJnRlZ3JhX2kyY19xdWlya3M7DQo+
+ICAJaTJjX2Rldi0+aXJxID0gaXJxOw0KPiAgCWkyY19kZXYtPmNvbnRfaWQgPSBwZGV2LT5pZDsN
+Cj4gIAlpMmNfZGV2LT5kZXYgPSAmcGRldi0+ZGV2Ow0KPiBAQCAtOTc2LDYgKzk4OCw4IEBAIHN0
+YXRpYyBpbnQgdGVncmFfaTJjX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
+ICAJaTJjX2Rldi0+aHcgPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoJnBkZXYtPmRldik7DQo+
+ICAJaTJjX2Rldi0+aXNfZHZjID0gb2ZfZGV2aWNlX2lzX2NvbXBhdGlibGUocGRldi0+ZGV2Lm9m
+X25vZGUsDQo+ICAJCQkJCQkgICJudmlkaWEsdGVncmEyMC1pMmMtZHZjIik7DQo+ICsJaTJjX2Rl
+di0+YWRhcHRlci5xdWlya3MgPSBpMmNfZGV2LT5ody0+cXVpcmtzOw0KPiArDQo+ICAJaW5pdF9j
+b21wbGV0aW9uKCZpMmNfZGV2LT5tc2dfY29tcGxldGUpOw0KPiAgCXNwaW5fbG9ja19pbml0KCZp
+MmNfZGV2LT54ZmVyX2xvY2spOw0KPiAgDQo+IA0KDQo=
