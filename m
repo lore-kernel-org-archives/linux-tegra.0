@@ -1,84 +1,212 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V7 1/2] arm64: dtsi: Fix SDMMC address range
-Date: Wed, 2 Jan 2019 11:36:47 -0800
-Message-ID: <1546457808-18270-2-git-send-email-skomatineni@nvidia.com>
-References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V3 3/3] mmc: tegra: SDMMC pads auto-calibration
+Date: Wed, 2 Jan 2019 12:57:54 -0800
+Message-ID: <1546462674-22856-3-git-send-email-skomatineni@nvidia.com>
+References: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch fixes the SDMMC Controllers address space to be exact
-defined register address range as per the design.
+Programs initial drive code offsets which will be used by auto
+calibration process.
 
-SDMMC Controller supporting Command Queue has CQHCI registers at
-offset 0xF000.
-
-This fix helps to identify the Tegra SDMMC Controllers supporting
-Command Queue based on the size of address space.
+Programs fixed drive strengths for SDMMC pads when auto cal
+timeouts. Fixed settings are based on Pre-SI analysis of the
+pad design.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 6 +++---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 107 +++++++++++++++++++++++++++++++----------
+ 1 file changed, 81 insertions(+), 26 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e29520d..6fda3d6a7f3d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -231,7 +231,7 @@
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 7b95d088fdef..f8361249cf57 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -75,6 +75,7 @@
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL	0x7
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD	BIT(31)
++#define SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK		0x07FFF000
  
- 	sdmmc1: sdhci@3400000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03400000 0x0 0x10000>;
-+		reg = <0x0 0x03400000 0x0 0x220>;
- 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
- 		clock-names = "sdhci";
-@@ -256,7 +256,7 @@
+ #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
+ #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
+@@ -121,6 +122,8 @@ struct sdhci_tegra {
+ 	struct pinctrl *pinctrl_sdmmc;
+ 	struct pinctrl_state *pinctrl_state_3v3;
+ 	struct pinctrl_state *pinctrl_state_1v8;
++	struct pinctrl_state *pinctrl_state_3v3_drv;
++	struct pinctrl_state *pinctrl_state_1v8_drv;
  
- 	sdmmc2: sdhci@3420000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03420000 0x0 0x10000>;
-+		reg = <0x0 0x03420000 0x0 0x220>;
- 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
- 		clock-names = "sdhci";
-@@ -276,7 +276,7 @@
+ 	struct sdhci_tegra_autocal_offsets autocal_offsets;
+ 	ktime_t last_calib;
+@@ -130,6 +133,9 @@ struct sdhci_tegra {
+ 	u32 dqs_trim;
+ };
  
- 	sdmmc3: sdhci@3440000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03440000 0x0 0x10000>;
-+		reg = <0x0 0x03440000 0x0 0x220>;
- 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
- 		clock-names = "sdhci";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c2091bb16546..6510ef6492b1 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -295,7 +295,7 @@
++static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
++							bool state_drvupdn);
++
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -437,6 +443,7 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+ 			pdpu = offsets.pull_down_3v3 << 8 | offsets.pull_up_3v3;
+ 	}
  
- 		sdmmc1: sdhci@3400000 {
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
--			reg = <0x03400000 0x10000>;
-+			reg = <0x03400000 0x220>;
- 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
- 			clock-names = "sdhci";
-@@ -306,7 +306,7 @@
++	/* Set initial offset before auto-calibration */
+ 	tegra_sdhci_set_pad_autocal_offset(host, pdpu);
  
- 		sdmmc3: sdhci@3440000 {
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
--			reg = <0x03440000 0x10000>;
-+			reg = <0x03440000 0x220>;
- 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
- 			clock-names = "sdhci";
+ 	card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
+@@ -460,19 +467,15 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+ 	if (ret) {
+ 		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
+ 
+-		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
+-			pdpu = offsets.pull_down_1v8_timeout << 8 |
+-			       offsets.pull_up_1v8_timeout;
+-		else
+-			pdpu = offsets.pull_down_3v3_timeout << 8 |
+-			       offsets.pull_up_3v3_timeout;
+-
+-		/* Disable automatic calibration and use fixed offsets */
++		/* Disable automatic cal and use fixed Drive Strengths */
+ 		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+ 		reg &= ~SDHCI_AUTO_CAL_ENABLE;
+ 		sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+ 
+-		tegra_sdhci_set_pad_autocal_offset(host, pdpu);
++		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, false);
++		if (ret < 0)
++			dev_err(mmc_dev(host->mmc),
++			"Setting drive strengths failed %d\n", PTR_ERR(ret));
+ 	}
+ }
+ 
+@@ -743,27 +746,73 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 	return mmc_send_tuning(host->mmc, opcode, NULL);
+ }
+ 
+-static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
++static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
++							bool state_drvupdn)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+-	int ret;
++	struct sdhci_tegra_autocal_offsets offsets =
++					tegra_host->autocal_offsets;
++	struct pinctrl_state *pinctrl_drvupdn = NULL;
++	int ret = 0;
++	u8 drvup = 0, drvdn = 0;
++	u32 reg;
+ 
+-	if (!tegra_host->pad_control_available)
+-		return 0;
++	if (!state_drvupdn) {
++		/* PADS Drive Strength */
++		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
++			if (!IS_ERR(tegra_host->pinctrl_state_1v8_drv) &&
++				(tegra_host->pinctrl_state_1v8_drv != NULL)) {
++				pinctrl_drvupdn =
++					tegra_host->pinctrl_state_1v8_drv;
++			} else {
++				drvup = offsets.pull_up_1v8_timeout;
++				drvdn = offsets.pull_down_1v8_timeout;
++			}
++		} else {
++			if (!IS_ERR(tegra_host->pinctrl_state_3v3_drv) &&
++				(tegra_host->pinctrl_state_3v3_drv != NULL)) {
++				pinctrl_drvupdn =
++					tegra_host->pinctrl_state_3v3_drv;
++			} else {
++				drvup = offsets.pull_up_3v3_timeout;
++				drvdn = offsets.pull_down_3v3_timeout;
++			}
++		}
++
++		if (pinctrl_drvupdn != NULL) {
++			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
++							pinctrl_drvupdn);
++			if (ret < 0)
++				dev_err(mmc_dev(host->mmc),
++					"failed pads drvupdn, ret: %d\n", ret);
++		} else if ((drvup) || (drvdn)) {
++			reg = sdhci_readl(host,
++					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
++			reg &= ~SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK;
++			reg |= (drvup << 20) | (drvdn << 12);
++			sdhci_writel(host, reg,
++					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
++		}
+ 
+-	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
+-		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+-					   tegra_host->pinctrl_state_1v8);
+-		if (ret < 0)
+-			dev_err(mmc_dev(host->mmc),
+-				"setting 1.8V failed, ret: %d\n", ret);
+ 	} else {
+-		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+-					   tegra_host->pinctrl_state_3v3);
+-		if (ret < 0)
+-			dev_err(mmc_dev(host->mmc),
+-				"setting 3.3V failed, ret: %d\n", ret);
++		/* Dual Voltage PADS Voltage selection */
++		if (!tegra_host->pad_control_available)
++			return 0;
++
++		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
++			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
++						tegra_host->pinctrl_state_1v8);
++			if (ret < 0)
++				dev_err(mmc_dev(host->mmc),
++					"setting 1.8V failed, ret: %d\n", ret);
++		} else {
++			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
++						tegra_host->pinctrl_state_3v3);
++			if (ret < 0)
++				dev_err(mmc_dev(host->mmc),
++					"setting 3.3V failed, ret: %d\n", ret);
++		}
+ 	}
+ 
+ 	return ret;
+@@ -778,7 +827,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+ 	int ret = 0;
+ 
+ 	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+-		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
++		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
+ 		if (ret < 0)
+ 			return ret;
+ 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+@@ -786,7 +835,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+ 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+ 		if (ret < 0)
+ 			return ret;
+-		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
++		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
+ 	}
+ 
+ 	if (tegra_host->pad_calib_required)
+@@ -805,6 +854,12 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
+ 		return -1;
+ 	}
+ 
++	tegra_host->pinctrl_state_1v8_drv = pinctrl_lookup_state(
++				tegra_host->pinctrl_sdmmc, "sdmmc-1v8-drv");
++
++	tegra_host->pinctrl_state_3v3_drv = pinctrl_lookup_state(
++				tegra_host->pinctrl_sdmmc, "sdmmc-3v3-drv");
++
+ 	tegra_host->pinctrl_state_3v3 =
+ 		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
+ 	if (IS_ERR(tegra_host->pinctrl_state_3v3)) {
 -- 
 2.7.4
