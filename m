@@ -1,94 +1,87 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/3] drm/tegra: hdmi: Reuse common HDA format parser
-Date: Thu,  3 Jan 2019 15:23:17 +0100
-Message-ID: <20190103142317.26124-3-thierry.reding@gmail.com>
-References: <20190103142317.26124-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs.
+ of_node assignement
+Date: Thu, 3 Jan 2019 16:42:34 +0000
+Message-ID: <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
+References: <20181018111829.27056-1-marcel@ziswiler.com>
+ <20181018111829.27056-4-marcel@ziswiler.com>
+ <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
+ <20181021112301.GC8554@sirena.org.uk>
+ <20181218174040.k7u26vnnoplllnwb@camel2.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190103142317.26124-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, Mohan Kumar <mkumard@nvidia.com>, Ujwal Patel <ujwalp@nvidia.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org
+Cc: Matthias Reichl <hias@horus.com>, alsa-devel@alsa-project.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkVsaW1pbmF0ZSBzb21l
-IGR1cGxpY2F0ZSBjb2RlIGJ5IHJldXNpbmcgdGhlIEhEQSBmb3JtYXQgcGFyc2VyIGFscmVhZHkK
-dXNlZCBieSB0aGUgU09SLgoKU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdA
-bnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jIHwgNDMgKysrKysr
-Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRp
-b25zKCspLCAzNSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwppbmRleCBkMTk5NzM5NDU2
-MTQuLjhmZGZmODAxYzZmMiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWku
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCkBAIC0yMCw4ICsyMCw3IEBACiAj
-aW5jbHVkZSA8ZHJtL2RybV9jcnRjLmg+CiAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5o
-PgogCi0jaW5jbHVkZSA8c291bmQvaGRhX3ZlcmJzLmg+Ci0KKyNpbmNsdWRlICJoZGEuaCIKICNp
-bmNsdWRlICJoZG1pLmgiCiAjaW5jbHVkZSAiZHJtLmgiCiAjaW5jbHVkZSAiZGMuaCIKQEAgLTY5
-LDggKzY4LDcgQEAgc3RydWN0IHRlZ3JhX2hkbWkgewogCWNvbnN0IHN0cnVjdCB0ZWdyYV9oZG1p
-X2NvbmZpZyAqY29uZmlnOwogCiAJdW5zaWduZWQgaW50IGF1ZGlvX3NvdXJjZTsKLQl1bnNpZ25l
-ZCBpbnQgYXVkaW9fc2FtcGxlX3JhdGU7Ci0JdW5zaWduZWQgaW50IGF1ZGlvX2NoYW5uZWxzOwor
-CXN0cnVjdCB0ZWdyYV9oZGFfZm9ybWF0IGZvcm1hdDsKIAogCXVuc2lnbmVkIGludCBwaXhlbF9j
-bG9jazsKIAlib29sIHN0ZXJlbzsKQEAgLTUwOCw3ICs1MDYsNyBAQCBzdGF0aWMgdm9pZCB0ZWdy
-YV9oZG1pX3dyaXRlX2F2YWwoc3RydWN0IHRlZ3JhX2hkbWkgKmhkbWksIHUzMiB2YWx1ZSkKIAl1
-bnNpZ25lZCBpbnQgaTsKIAogCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHJlZ3MpOyBpKysp
-IHsKLQkJaWYgKHJlZ3NbaV0uc2FtcGxlX3JhdGUgPT0gaGRtaS0+YXVkaW9fc2FtcGxlX3JhdGUp
-IHsKKwkJaWYgKHJlZ3NbaV0uc2FtcGxlX3JhdGUgPT0gaGRtaS0+Zm9ybWF0LnNhbXBsZV9yYXRl
-KSB7CiAJCQl0ZWdyYV9oZG1pX3dyaXRlbChoZG1pLCB2YWx1ZSwgcmVnc1tpXS5vZmZzZXQpOwog
-CQkJYnJlYWs7CiAJCX0KQEAgLTU2Miw3ICs1NjAsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2hkbWlf
-c2V0dXBfYXVkaW8oc3RydWN0IHRlZ3JhX2hkbWkgKmhkbWkpCiAJCSAqIHBsYXkgYmFjayBzeXN0
-ZW0gc3RhcnR1cCBzb3VuZHMgZWFybHkuIEl0IGlzIHBvc3NpYmx5IG5vdAogCQkgKiBuZWVkZWQg
-b24gTGludXggYXQgYWxsLgogCQkgKi8KLQkJaWYgKGhkbWktPmF1ZGlvX2NoYW5uZWxzID09IDIp
-CisJCWlmIChoZG1pLT5mb3JtYXQuY2hhbm5lbHMgPT0gMikKIAkJCXZhbHVlID0gU09SX0FVRElP
-X0NOVFJMMF9JTkpFQ1RfTlVMTFNNUEw7CiAJCWVsc2UKIAkJCXZhbHVlID0gMDsKQEAgLTU5Mywx
-MiArNTkxLDEyIEBAIHN0YXRpYyBpbnQgdGVncmFfaGRtaV9zZXR1cF9hdWRpbyhzdHJ1Y3QgdGVn
-cmFfaGRtaSAqaGRtaSkKIAkJdGVncmFfaGRtaV93cml0ZWwoaGRtaSwgdmFsdWUsIEhETUlfTlZf
-UERJU1BfU09SX0FVRElPX1NQQVJFMCk7CiAJfQogCi0JY29uZmlnID0gdGVncmFfaGRtaV9nZXRf
-YXVkaW9fY29uZmlnKGhkbWktPmF1ZGlvX3NhbXBsZV9yYXRlLAorCWNvbmZpZyA9IHRlZ3JhX2hk
-bWlfZ2V0X2F1ZGlvX2NvbmZpZyhoZG1pLT5mb3JtYXQuc2FtcGxlX3JhdGUsCiAJCQkJCSAgICAg
-aGRtaS0+cGl4ZWxfY2xvY2spOwogCWlmICghY29uZmlnKSB7CiAJCWRldl9lcnIoaGRtaS0+ZGV2
-LAogCQkJImNhbm5vdCBzZXQgYXVkaW8gdG8gJXUgSHogYXQgJXUgSHogcGl4ZWwgY2xvY2tcbiIs
-Ci0JCQloZG1pLT5hdWRpb19zYW1wbGVfcmF0ZSwgaGRtaS0+cGl4ZWxfY2xvY2spOworCQkJaGRt
-aS0+Zm9ybWF0LnNhbXBsZV9yYXRlLCBoZG1pLT5waXhlbF9jbG9jayk7CiAJCXJldHVybiAtRUlO
-VkFMOwogCX0KIApAQCAtNzg1LDcgKzc4Myw3IEBAIHN0YXRpYyB2b2lkIHRlZ3JhX2hkbWlfc2V0
-dXBfYXVkaW9faW5mb2ZyYW1lKHN0cnVjdCB0ZWdyYV9oZG1pICpoZG1pKQogCQlyZXR1cm47CiAJ
-fQogCi0JZnJhbWUuY2hhbm5lbHMgPSBoZG1pLT5hdWRpb19jaGFubmVsczsKKwlmcmFtZS5jaGFu
-bmVscyA9IGhkbWktPmZvcm1hdC5jaGFubmVsczsKIAogCWVyciA9IGhkbWlfYXVkaW9faW5mb2Zy
-YW1lX3BhY2soJmZyYW1lLCBidWZmZXIsIHNpemVvZihidWZmZXIpKTsKIAlpZiAoZXJyIDwgMCkg
-ewpAQCAtMTU4NywyNCArMTU4NSw2IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lk
-IHRlZ3JhX2hkbWlfb2ZfbWF0Y2hbXSA9IHsKIH07CiBNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCB0
-ZWdyYV9oZG1pX29mX21hdGNoKTsKIAotc3RhdGljIHZvaWQgaGRhX2Zvcm1hdF9wYXJzZSh1bnNp
-Z25lZCBpbnQgZm9ybWF0LCB1bnNpZ25lZCBpbnQgKnJhdGUsCi0JCQkgICAgIHVuc2lnbmVkIGlu
-dCAqY2hhbm5lbHMpCi17Ci0JdW5zaWduZWQgaW50IG11bCwgZGl2OwotCi0JaWYgKGZvcm1hdCAm
-IEFDX0ZNVF9CQVNFXzQ0SykKLQkJKnJhdGUgPSA0NDEwMDsKLQllbHNlCi0JCSpyYXRlID0gNDgw
-MDA7Ci0KLQltdWwgPSAoZm9ybWF0ICYgQUNfRk1UX01VTFRfTUFTSykgPj4gQUNfRk1UX01VTFRf
-U0hJRlQ7Ci0JZGl2ID0gKGZvcm1hdCAmIEFDX0ZNVF9ESVZfTUFTSykgPj4gQUNfRk1UX0RJVl9T
-SElGVDsKLQotCSpyYXRlID0gKnJhdGUgKiAobXVsICsgMSkgLyAoZGl2ICsgMSk7Ci0KLQkqY2hh
-bm5lbHMgPSAoZm9ybWF0ICYgQUNfRk1UX0NIQU5fTUFTSykgPj4gQUNfRk1UX0NIQU5fU0hJRlQ7
-Ci19Ci0KIHN0YXRpYyBpcnFyZXR1cm5fdCB0ZWdyYV9oZG1pX2lycShpbnQgaXJxLCB2b2lkICpk
-YXRhKQogewogCXN0cnVjdCB0ZWdyYV9oZG1pICpoZG1pID0gZGF0YTsKQEAgLTE2MjEsMTQgKzE2
-MDEsOSBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgdGVncmFfaGRtaV9pcnEoaW50IGlycSwgdm9pZCAq
-ZGF0YSkKIAkJdmFsdWUgPSB0ZWdyYV9oZG1pX3JlYWRsKGhkbWksIEhETUlfTlZfUERJU1BfU09S
-X0FVRElPX0hEQV9DT0RFQ19TQ1JBVENIMCk7CiAKIAkJaWYgKHZhbHVlICYgU09SX0FVRElPX0hE
-QV9DT0RFQ19TQ1JBVENIMF9WQUxJRCkgewotCQkJdW5zaWduZWQgaW50IHNhbXBsZV9yYXRlLCBj
-aGFubmVsczsKLQogCQkJZm9ybWF0ID0gdmFsdWUgJiBTT1JfQVVESU9fSERBX0NPREVDX1NDUkFU
-Q0gwX0ZNVF9NQVNLOwogCi0JCQloZGFfZm9ybWF0X3BhcnNlKGZvcm1hdCwgJnNhbXBsZV9yYXRl
-LCAmY2hhbm5lbHMpOwotCi0JCQloZG1pLT5hdWRpb19zYW1wbGVfcmF0ZSA9IHNhbXBsZV9yYXRl
-OwotCQkJaGRtaS0+YXVkaW9fY2hhbm5lbHMgPSBjaGFubmVsczsKKwkJCXRlZ3JhX2hkYV9wYXJz
-ZV9mb3JtYXQoZm9ybWF0LCAmaGRtaS0+Zm9ybWF0KTsKIAogCQkJZXJyID0gdGVncmFfaGRtaV9z
-ZXR1cF9hdWRpbyhoZG1pKTsKIAkJCWlmIChlcnIgPCAwKSB7CkBAIC0xNjYyLDggKzE2MzcsNiBA
-QCBzdGF0aWMgaW50IHRlZ3JhX2hkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
-dikKIAloZG1pLT5kZXYgPSAmcGRldi0+ZGV2OwogCiAJaGRtaS0+YXVkaW9fc291cmNlID0gQVVU
-TzsKLQloZG1pLT5hdWRpb19zYW1wbGVfcmF0ZSA9IDQ4MDAwOwotCWhkbWktPmF1ZGlvX2NoYW5u
-ZWxzID0gMjsKIAloZG1pLT5zdGVyZW8gPSBmYWxzZTsKIAloZG1pLT5kdmkgPSBmYWxzZTsKIAot
-LSAKMi4xOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Mark, Kuninori
+
+On 18/12/2018 17:40, Matthias Reichl wrote:
+> Hi Mark,
+> 
+> On Sun, Oct 21, 2018 at 12:23:01PM +0100, Mark Brown wrote:
+>> On Fri, Oct 19, 2018 at 11:22:46AM +0100, Jon Hunter wrote:
+>>
+>>> Looking at snd_soc_init_platform(), it seems that the platform pointer
+>>> can be allocated by the machine driver and so if it is not allocated by
+>>> the core, then I don't think we should clear it here. Seems we need a
+>>> way to determine if this was allocated by the core.
+>>
+>> Indeed, this is a bit of a mess.  We probably shouldn't be modifying the
+>> data that the drivers passed in, otherwise we get into trouble like
+>> this.   That suggests that we should copy the data, probably all of it.
+>> I will try to have a proper look at this next week.
+> 
+> did you find the time to look into this?
+> 
+> The downstream Raspberry Pi kernel contains a bunch of machine drivers
+> that are implemented in a similar way as the tegra_sgtl5000 driver
+> (static card and dai link structs, dai_link->platform_of_node filled
+> in from device tree) which are breaking in 4.20 on deferred probing.
+> 
+> Switching these drivers to dynamically allocated dai link structs,
+> like 76836fd35492 "ASoC: omap-abe-twl6040: Fix missing audio card
+> caused by deferred probing" would be a possibility, but if there's
+> some solution on the horizon that doesn't require changes to the
+> driver code it'd be easier to wait for that.
+> 
+> so long,
+> 
+> Hias
+> 
+>>> Furthermore, it seems that it is possible that there is more than one
+>>> link that might be to be cleared.
+>>
+>> Yes, that's an issue as well.
+
+I have been looking at this again recently. I see this issue occurring
+all the time when the sound drivers are built as kernel modules and
+probing the sound card is deferred until the codec driver has been loaded.
+
+Commit daecf46ee0e5 ("ASoC: soc-core: use snd_soc_dai_link_component for
+platform") appears to introduce the problem because now we allocate the
+'snd_soc_dai_link_component' structure for the platform we attempt to
+register the soundcard but we never clear the freed pointer on failure.
+Therefore, we only actually allocate it the first time. There is no easy
+way to clear this pointer for the memory allocated because this is done
+before the dai-links have been added to the list of dai-links for the
+soundcard.
+
+I don't see an easy solution that will be 100% robust unless you do opt
+for copying all the dai-link info from the platform (but this is
+probably not a trivial fix).
+
+Do you envision a fix any time soon, or should we be updating all the
+machine drivers to populate the platform snd_soc_dai_link_component so
+that it is handled by the machine drivers are not the core?
+
+Cheers
+Jon
+
+-- 
+nvpublic
