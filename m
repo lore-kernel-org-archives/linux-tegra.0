@@ -1,72 +1,83 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v7 3/3] thermal: tegra: add get_trend ops
-Date: Thu, 3 Jan 2019 18:12:49 +0800
-Message-ID: <1546510369-28491-4-git-send-email-wni@nvidia.com>
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/3] drm/tegra: sor: Parse more data from HDA format
+Date: Thu,  3 Jan 2019 15:23:15 +0100
+Message-ID: <20190103142317.26124-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1546510369-28491-1-git-send-email-wni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, edubezval@gmail.com
-Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, Mohan Kumar <mkumard@nvidia.com>, Ujwal Patel <ujwalp@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for get_trend ops that allows soctherm
-sensors to be used with the step-wise governor.
-
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index fd2703c0cfc5..864205af104b 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
- 	return 0;
- }
- 
-+static int tegra_thermctl_get_trend(void *data, int trip,
-+				    enum thermal_trend *trend)
-+{
-+	struct tegra_thermctl_zone *zone = data;
-+	struct thermal_zone_device *tz = zone->tz;
-+	int trip_temp, temp, last_temp, ret;
-+
-+	if (!tz)
-+		return -EINVAL;
-+
-+	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&tz->lock);
-+	temp = tz->temperature;
-+	last_temp = tz->last_temperature;
-+	mutex_unlock(&tz->lock);
-+
-+	if (temp > trip_temp) {
-+		if (temp >= last_temp)
-+			*trend = THERMAL_TREND_RAISING;
-+		else
-+			*trend = THERMAL_TREND_STABLE;
-+	} else if (temp < trip_temp) {
-+		*trend = THERMAL_TREND_DROPPING;
-+	} else {
-+		*trend = THERMAL_TREND_STABLE;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
- 	.get_temp = tegra_thermctl_get_temp,
- 	.set_trip_temp = tegra_thermctl_set_trip_temp,
-+	.get_trend = tegra_thermctl_get_trend,
- };
- 
- static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
--- 
-2.7.4
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBIREEgZm9ybWF0
+IGRhdGEgcGFzc2VkIHRvIHRoZSBTT1IgZnJvbSB0aGUgSERBIGNvZGVjIGNvbnRhaW5zIG1vcmUK
+aW5mb3JtYXRpb24gdGhhbiBqdXN0IHRoZSByYXRlIGFuZCBudW1iZXIgb2YgY2hhbm5lbHMuIFBh
+cnNlIGFsbCB0aGUKZmllbGRzIGFuZCBzdG9yZSB0aGVtIGluIGFuIGludGVybmFsIHN0cnVjdHVy
+ZSBmb3Igc3Vic2VxdWVudCB1c2UuCgpXaGlsZSBhdCBpdCwgYWxzbyBmaXggYW4gb2ZmLWJ5LW9u
+ZSBlcnJvciBpbiB0aGUgbnVtYmVyIG9mIGNoYW5uZWxzLgoKU2lnbmVkLW9mZi1ieTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
+c29yLmMgfCA2OSArKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tCiAxIGZpbGUg
+Y2hhbmdlZCwgNTMgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5j
+CmluZGV4IGVmODY5MmI3MDc1YS4uNzgzOTIyM2FhMDQwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vdGVncmEvc29yLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jCkBAIC0z
+OTMsNiArMzkzLDEzIEBAIHN0cnVjdCB0ZWdyYV9zb3Jfb3BzIHsKIAlpbnQgKCpyZW1vdmUpKHN0
+cnVjdCB0ZWdyYV9zb3IgKnNvcik7CiB9OwogCitzdHJ1Y3QgdGVncmFfc29yX2F1ZGlvIHsKKwl1
+bnNpZ25lZCBpbnQgc2FtcGxlX3JhdGU7CisJdW5zaWduZWQgaW50IGNoYW5uZWxzOworCXVuc2ln
+bmVkIGludCBiaXRzOworCWJvb2wgcGNtOworfTsKKwogc3RydWN0IHRlZ3JhX3NvciB7CiAJc3Ry
+dWN0IGhvc3QxeF9jbGllbnQgY2xpZW50OwogCXN0cnVjdCB0ZWdyYV9vdXRwdXQgb3V0cHV0OwpA
+QCAtNDI5LDEwICs0MzYsNyBAQCBzdHJ1Y3QgdGVncmFfc29yIHsKIAlzdHJ1Y3QgZGVsYXllZF93
+b3JrIHNjZGM7CiAJYm9vbCBzY2RjX2VuYWJsZWQ7CiAKLQlzdHJ1Y3QgewotCQl1bnNpZ25lZCBp
+bnQgc2FtcGxlX3JhdGU7Ci0JCXVuc2lnbmVkIGludCBjaGFubmVsczsKLQl9IGF1ZGlvOworCXN0
+cnVjdCB0ZWdyYV9zb3JfYXVkaW8gYXVkaW87CiB9OwogCiBzdHJ1Y3QgdGVncmFfc29yX3N0YXRl
+IHsKQEAgLTMxOTUsMjIgKzMxOTksNTggQEAgc3RhdGljIGludCB0ZWdyYV9zb3JfcGFyc2VfZHQo
+c3RydWN0IHRlZ3JhX3NvciAqc29yKQogCXJldHVybiAwOwogfQogCi1zdGF0aWMgdm9pZCB0ZWdy
+YV9oZGFfcGFyc2VfZm9ybWF0KHVuc2lnbmVkIGludCBmb3JtYXQsIHVuc2lnbmVkIGludCAqcmF0
+ZSwKLQkJCQkgICB1bnNpZ25lZCBpbnQgKmNoYW5uZWxzKQorc3RhdGljIHZvaWQgdGVncmFfaGRh
+X3BhcnNlX2Zvcm1hdCh1bnNpZ25lZCBpbnQgZm9ybWF0LAorCQkJCSAgIHN0cnVjdCB0ZWdyYV9z
+b3JfYXVkaW8gKmF1ZGlvKQogewotCXVuc2lnbmVkIGludCBtdWwsIGRpdjsKKwl1bnNpZ25lZCBp
+bnQgbXVsLCBkaXYsIGJpdHMsIGNoYW5uZWxzOworCisJaWYgKGZvcm1hdCAmIEFDX0ZNVF9UWVBF
+X05PTl9QQ00pCisJCWF1ZGlvLT5wY20gPSBmYWxzZTsKKwllbHNlCisJCWF1ZGlvLT5wY20gPSB0
+cnVlOwogCiAJaWYgKGZvcm1hdCAmIEFDX0ZNVF9CQVNFXzQ0SykKLQkJKnJhdGUgPSA0NDEwMDsK
+KwkJYXVkaW8tPnNhbXBsZV9yYXRlID0gNDQxMDA7CiAJZWxzZQotCQkqcmF0ZSA9IDQ4MDAwOwor
+CQlhdWRpby0+c2FtcGxlX3JhdGUgPSA0ODAwMDsKIAogCW11bCA9IChmb3JtYXQgJiBBQ19GTVRf
+TVVMVF9NQVNLKSA+PiBBQ19GTVRfTVVMVF9TSElGVDsKIAlkaXYgPSAoZm9ybWF0ICYgQUNfRk1U
+X0RJVl9NQVNLKSA+PiBBQ19GTVRfRElWX1NISUZUOwogCi0JKnJhdGUgPSAqcmF0ZSAqIChtdWwg
+KyAxKSAvIChkaXYgKyAxKTsKKwlhdWRpby0+c2FtcGxlX3JhdGUgPSBhdWRpby0+c2FtcGxlX3Jh
+dGUgKiAobXVsICsgMSkgLyAoZGl2ICsgMSk7CisKKwlzd2l0Y2ggKGZvcm1hdCAmIEFDX0ZNVF9C
+SVRTX01BU0spIHsKKwljYXNlIEFDX0ZNVF9CSVRTXzg6CisJCWF1ZGlvLT5iaXRzID0gODsKKwkJ
+YnJlYWs7CisKKwljYXNlIEFDX0ZNVF9CSVRTXzE2OgorCQlhdWRpby0+Yml0cyA9IDE2OworCQli
+cmVhazsKKworCWNhc2UgQUNfRk1UX0JJVFNfMjA6CisJCWF1ZGlvLT5iaXRzID0gMjA7CisJCWJy
+ZWFrOworCisJY2FzZSBBQ19GTVRfQklUU18yNDoKKwkJYXVkaW8tPmJpdHMgPSAyNDsKKwkJYnJl
+YWs7CisKKwljYXNlIEFDX0ZNVF9CSVRTXzMyOgorCQlhdWRpby0+Yml0cyA9IDMyOworCQlicmVh
+azsKKworCWRlZmF1bHQ6CisJCWJpdHMgPSAoZm9ybWF0ICYgQUNfRk1UX0JJVFNfTUFTSykgPj4g
+QUNfRk1UX0JJVFNfU0hJRlQ7CisJCVdBUk4oMSwgImludmFsaWQgbnVtYmVyIG9mIGJpdHM6ICUj
+eFxuIiwgYml0cyk7CisJCWF1ZGlvLT5iaXRzID0gODsKKwkJYnJlYWs7CisJfQogCi0JKmNoYW5u
+ZWxzID0gKGZvcm1hdCAmIEFDX0ZNVF9DSEFOX01BU0spID4+IEFDX0ZNVF9DSEFOX1NISUZUOwor
+CWNoYW5uZWxzID0gKGZvcm1hdCAmIEFDX0ZNVF9DSEFOX01BU0spID4+IEFDX0ZNVF9DSEFOX1NI
+SUZUOworCisJLyogY2hhbm5lbHMgYXJlIGVuY29kZWQgYXMgbiAtIDEgKi8KKwlhdWRpby0+Y2hh
+bm5lbHMgPSBjaGFubmVscyArIDE7CiB9CiAKIHN0YXRpYyBpcnFyZXR1cm5fdCB0ZWdyYV9zb3Jf
+aXJxKGludCBpcnEsIHZvaWQgKmRhdGEpCkBAIC0zMjI1LDE0ICszMjY1LDExIEBAIHN0YXRpYyBp
+cnFyZXR1cm5fdCB0ZWdyYV9zb3JfaXJxKGludCBpcnEsIHZvaWQgKmRhdGEpCiAJCXZhbHVlID0g
+dGVncmFfc29yX3JlYWRsKHNvciwgU09SX0FVRElPX0hEQV9DT0RFQ19TQ1JBVENIMCk7CiAKIAkJ
+aWYgKHZhbHVlICYgU09SX0FVRElPX0hEQV9DT0RFQ19TQ1JBVENIMF9WQUxJRCkgewotCQkJdW5z
+aWduZWQgaW50IGZvcm1hdCwgc2FtcGxlX3JhdGUsIGNoYW5uZWxzOworCQkJdW5zaWduZWQgaW50
+IGZvcm1hdDsKIAogCQkJZm9ybWF0ID0gdmFsdWUgJiBTT1JfQVVESU9fSERBX0NPREVDX1NDUkFU
+Q0gwX0ZNVF9NQVNLOwogCi0JCQl0ZWdyYV9oZGFfcGFyc2VfZm9ybWF0KGZvcm1hdCwgJnNhbXBs
+ZV9yYXRlLCAmY2hhbm5lbHMpOwotCi0JCQlzb3ItPmF1ZGlvLnNhbXBsZV9yYXRlID0gc2FtcGxl
+X3JhdGU7Ci0JCQlzb3ItPmF1ZGlvLmNoYW5uZWxzID0gY2hhbm5lbHM7CisJCQl0ZWdyYV9oZGFf
+cGFyc2VfZm9ybWF0KGZvcm1hdCwgJnNvci0+YXVkaW8pOwogCiAJCQl0ZWdyYV9zb3JfaGRtaV9h
+dWRpb19lbmFibGUoc29yKTsKIAkJfSBlbHNlIHsKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
