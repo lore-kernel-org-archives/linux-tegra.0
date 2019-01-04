@@ -1,149 +1,271 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/2] mmc: sdhci: tegra: Set DMA mask depending on generation
-Date: Fri,  4 Jan 2019 11:47:53 +0100
-Message-ID: <20190104104753.3383-2-thierry.reding@gmail.com>
-References: <20190104104753.3383-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: hdmi: Fix audio to work with any pixel clock
+ rate
+Date: Fri, 4 Jan 2019 14:13:54 +0100
+Message-ID: <20190104131354.GA9903@ulmo>
+References: <20161214172039.5615-1-alban.bedel@avionic-design.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190104104753.3383-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1832142454=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161214172039.5615-1-alban.bedel@avionic-design.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alban Bedel <alban.bedel@avionic-design.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-The SDHCI controller found in early Tegra SoCs (from Tegra20 through
-Tegra114) used an AHB interface to the memory controller, which allowed
-only 32 bits of memory to be addressed.
+--===============1832142454==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Content-Disposition: inline
 
-Starting with Tegra124, this limitation was removed by making the SDHCI
-controllers native MCCIF clients, which means that they got increased
-bandwidth and better arbitration to the memory controller as well as an
-address range extended to 40 bits, out of which only 34 were actually
-used (bits 34-39 are tied to 0 in the controller).
 
-Starting with Tegra186, all of the 40 bits can be used.
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 35 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
+On Wed, Dec 14, 2016 at 06:20:39PM +0100, Alban Bedel wrote:
+> The audio setting implementation was limited to a few specific pixel
+> clocks. This prevented HDMI audio from working on several test devices
+> as they need a pixel clock that is not supported by this implementation.
+>=20
+> Fix this by implementing the algorithm provided in the TRM using fixed
+> point arithmetic. This allows the driver to cope with any sane pixel
+> clock rate.
+>=20
+> Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
+> ---
+>  drivers/gpu/drm/tegra/hdmi.c | 163 ++++++++++++++-----------------------=
+------
+>  1 file changed, 54 insertions(+), 109 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index e6ace31e2a41..c861e0ee7ef2 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -13,6 +13,7 @@
-  */
- 
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/init.h>
-@@ -92,6 +93,7 @@
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
- 	u32 nvquirks;
-+	u64 dma_mask;
- };
- 
- /* Magic pull up and pull down pad calibration offsets */
-@@ -862,6 +864,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
- 	.pdata = &sdhci_tegra20_pdata,
- 	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
- 		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
-+	.dma_mask = DMA_BIT_MASK(32),
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
-@@ -890,6 +893,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- 		    NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_SDR104 |
- 		    NVQUIRK_HAS_PADCALIB,
-+	.dma_mask = DMA_BIT_MASK(32),
- };
- 
- static const struct sdhci_ops tegra114_sdhci_ops = {
-@@ -919,6 +923,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
- 	.pdata = &sdhci_tegra114_pdata,
-+	.dma_mask = DMA_BIT_MASK(32),
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
-@@ -928,22 +933,13 @@ static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
--		   /*
--		    * The TRM states that the SD/MMC controller found on
--		    * Tegra124 can address 34 bits (the maximum supported by
--		    * the Tegra memory controller), but tests show that DMA
--		    * to or from above 4 GiB doesn't work. This is possibly
--		    * caused by missing programming, though it's not obvious
--		    * what sequence is required. Mark 64-bit DMA broken for
--		    * now to fix this for existing users (e.g. Nyan boards).
--		    */
--		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra114_sdhci_ops,
- };
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
- 	.pdata = &sdhci_tegra124_pdata,
-+	.dma_mask = DMA_BIT_MASK(34),
- };
- 
- static const struct sdhci_ops tegra210_sdhci_ops = {
-@@ -977,6 +973,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
- 		    NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_SDR104,
-+	.dma_mask = DMA_BIT_MASK(34),
- };
- 
- static const struct sdhci_ops tegra186_sdhci_ops = {
-@@ -998,15 +995,7 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
--		   /* SDHCI controllers on Tegra186 support 40-bit addressing.
--		    * IOVA addresses are 48-bit wide on Tegra186.
--		    * With 64-bit dma mask used for SDHCI, accesses can
--		    * be broken. Disable 64-bit dma, which would fall back
--		    * to 32-bit dma mask. Ideally 40-bit dma mask would work,
--		    * But it is not supported as of now.
--		    */
--		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra186_sdhci_ops,
- };
- 
-@@ -1017,6 +1006,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
- 		    NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_SDR104,
-+	.dma_mask = DMA_BIT_MASK(40),
- };
- 
- static const struct of_device_id sdhci_tegra_dt_match[] = {
-@@ -1045,6 +1035,11 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	soc_data = match->data;
- 
-+	rc = dma_set_mask_and_coherent(&pdev->dev, soc_data->dma_mask);
-+	if (rc)
-+		dev_warn(&pdev->dev, "failed to set DMA mask %llx: %d\n",
-+			 soc_data->dma_mask, rc);
-+
- 	host = sdhci_pltfm_init(pdev, soc_data->pdata, sizeof(*tegra_host));
- 	if (IS_ERR(host))
- 		return PTR_ERR(host);
--- 
-2.19.1
+I had completely forgotten about this one, but then ran into this issue
+myself yesterday and only then I started remembering this patch. It did
+apply almost cleanly and still works perfectly. I made a couple of minor
+modifications (see below) and applied this for v4.22.
+
+> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+> index cda0491ed6bf..b6078d6604b1 100644
+> --- a/drivers/gpu/drm/tegra/hdmi.c
+> +++ b/drivers/gpu/drm/tegra/hdmi.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset.h>
+> +#include <asm/div64.h>
+
+Turned this into #include <linux/math64.h> which I think is the more
+canonical way to get at do_div() nowadays.
+
+> =20
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_crtc.h>
+> @@ -112,68 +113,11 @@ static inline void tegra_hdmi_writel(struct tegra_h=
+dmi *hdmi, u32 value,
+>  }
+> =20
+>  struct tegra_hdmi_audio_config {
+> -	unsigned int pclk;
+>  	unsigned int n;
+>  	unsigned int cts;
+>  	unsigned int aval;
+>  };
+> =20
+> -static const struct tegra_hdmi_audio_config tegra_hdmi_audio_32k[] =3D {
+> -	{  25200000, 4096,  25200, 24000 },
+> -	{  27000000, 4096,  27000, 24000 },
+> -	{  74250000, 4096,  74250, 24000 },
+> -	{ 148500000, 4096, 148500, 24000 },
+> -	{         0,    0,      0,     0 },
+> -};
+> -
+> -static const struct tegra_hdmi_audio_config tegra_hdmi_audio_44_1k[] =3D=
+ {
+> -	{  25200000, 5880,  26250, 25000 },
+> -	{  27000000, 5880,  28125, 25000 },
+> -	{  74250000, 4704,  61875, 20000 },
+> -	{ 148500000, 4704, 123750, 20000 },
+> -	{         0,    0,      0,     0 },
+> -};
+> -
+> -static const struct tegra_hdmi_audio_config tegra_hdmi_audio_48k[] =3D {
+> -	{  25200000, 6144,  25200, 24000 },
+> -	{  27000000, 6144,  27000, 24000 },
+> -	{  74250000, 6144,  74250, 24000 },
+> -	{ 148500000, 6144, 148500, 24000 },
+> -	{         0,    0,      0,     0 },
+> -};
+> -
+> -static const struct tegra_hdmi_audio_config tegra_hdmi_audio_88_2k[] =3D=
+ {
+> -	{  25200000, 11760,  26250, 25000 },
+> -	{  27000000, 11760,  28125, 25000 },
+> -	{  74250000,  9408,  61875, 20000 },
+> -	{ 148500000,  9408, 123750, 20000 },
+> -	{         0,     0,      0,     0 },
+> -};
+> -
+> -static const struct tegra_hdmi_audio_config tegra_hdmi_audio_96k[] =3D {
+> -	{  25200000, 12288,  25200, 24000 },
+> -	{  27000000, 12288,  27000, 24000 },
+> -	{  74250000, 12288,  74250, 24000 },
+> -	{ 148500000, 12288, 148500, 24000 },
+> -	{         0,     0,      0,     0 },
+> -};
+> -
+> -static const struct tegra_hdmi_audio_config tegra_hdmi_audio_176_4k[] =
+=3D {
+> -	{  25200000, 23520,  26250, 25000 },
+> -	{  27000000, 23520,  28125, 25000 },
+> -	{  74250000, 18816,  61875, 20000 },
+> -	{ 148500000, 18816, 123750, 20000 },
+> -	{         0,     0,      0,     0 },
+> -};
+> -
+> -static const struct tegra_hdmi_audio_config tegra_hdmi_audio_192k[] =3D {
+> -	{  25200000, 24576,  25200, 24000 },
+> -	{  27000000, 24576,  27000, 24000 },
+> -	{  74250000, 24576,  74250, 24000 },
+> -	{ 148500000, 24576, 148500, 24000 },
+> -	{         0,     0,      0,     0 },
+> -};
+> -
+>  static const struct tmds_config tegra20_tmds_config[] =3D {
+>  	{ /* slow pixel clock modes */
+>  		.pclk =3D 27000000,
+> @@ -411,52 +355,49 @@ static const struct tmds_config tegra124_tmds_confi=
+g[] =3D {
+>  	},
+>  };
+> =20
+> -static const struct tegra_hdmi_audio_config *
+> -tegra_hdmi_get_audio_config(unsigned int sample_rate, unsigned int pclk)
+> +static int
+> +tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pix_cl=
+ock,
+> +			    struct tegra_hdmi_audio_config *config)
+>  {
+> -	const struct tegra_hdmi_audio_config *table;
+> -
+> -	switch (sample_rate) {
+> -	case 32000:
+> -		table =3D tegra_hdmi_audio_32k;
+> -		break;
+> -
+> -	case 44100:
+> -		table =3D tegra_hdmi_audio_44_1k;
+> -		break;
+> -
+> -	case 48000:
+> -		table =3D tegra_hdmi_audio_48k;
+> -		break;
+> -
+> -	case 88200:
+> -		table =3D tegra_hdmi_audio_88_2k;
+> -		break;
+> -
+> -	case 96000:
+> -		table =3D tegra_hdmi_audio_96k;
+> -		break;
+> -
+> -	case 176400:
+> -		table =3D tegra_hdmi_audio_176_4k;
+> -		break;
+> -
+> -	case 192000:
+> -		table =3D tegra_hdmi_audio_192k;
+> -		break;
+> -
+> -	default:
+> -		return NULL;
+> -	}
+> -
+> -	while (table->pclk) {
+> -		if (table->pclk =3D=3D pclk)
+> -			return table;
+> -
+> -		table++;
+> +	const int afreq =3D 128 * audio_freq;
+> +	const int min_n =3D afreq / 1500;
+> +	const int max_n =3D afreq / 300;
+> +	const int ideal_n =3D afreq / 1000;
+
+Made all of these unsigned and added a new min_delta variable to track
+abs(config->n - ideal_n). This is both to avoid recomputing it and also
+=2E..
+
+> +	int64_t min_err =3D (uint64_t)-1 >> 1;
+> +	int n;
+> +
+> +	config->n =3D -1;
+> +
+> +	for (n =3D min_n; n <=3D max_n; n++) {
+> +		uint64_t cts_f, aval_f;
+> +		int64_t cts, err;
+> +
+> +		/* compute aval in 48.16 fixed point */
+> +		aval_f =3D ((int64_t)24000000 << 16) * n;
+> +		do_div(aval_f, afreq);
+> +		/* It should round without any rest */
+> +		if (aval_f & 0xFFFF)
+> +			continue;
+> +
+> +		/* Compute cts in 48.16 fixed point */
+> +		cts_f =3D ((int64_t)pix_clock << 16) * n;
+> +		do_div(cts_f, afreq);
+> +		/* Round it to the nearest integer */
+> +		cts =3D (cts_f & ~0xFFFF) + ((cts_f & BIT(15)) << 1);
+> +
+> +		/* Compute the absolute error */
+> +		err =3D abs((int64_t)cts_f - cts);
+> +		if (err < min_err ||
+> +		    (err =3D=3D min_err &&
+> +		     abs(n - ideal_n) < abs(config->n - ideal_n))) {
+
+=2E.. make this conditional slightly more readable.
+
+Thanks,
+Thierry
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwvXA8ACgkQ3SOs138+
+s6E02g//SVnV7dwtNJePGsBETNV8HaMndDdsttiAPhdpG7Ka8X33Yl4SneMAIQKi
+CKu42Aixrk98P96973y680Yd+KoWr3g9K3hzFP9JV1duR6KQQeXQx6R70MEp5sI8
+G6i69oPmgeewq8BN1VXwdyid9n72YDl+pVLVUOhlDNSP4Q7XQP+CnYS6oUXYpLhD
+1M6NZsYI0OH0Yb/jkfN0ricw5cnaqMpgYuGi/3hlMQN5s8zkwpHayXkeuP1DJ8cq
+O6aLa7/WcYZgu/ULDkxLLlFcIuAcJic2/vnKITK+yHkcscVIvpv5PmYytq1laRyT
+NC9hJpZmZKhvM1VxA7CbJYUS3uwSGtDL8HcNTptZx291ZVvKZshs8ZdnopWRo8AP
+M1S5rQqJ4n8WwiFX8fwg3rI9OUxoKVyZN142GnQfV1X/7wQUMOU2UEyYCJDwdAFs
+E9Vspxd31oIvdnrOYyOAvVeXJMaZB3x/mEUUmPi1fx0bwkfeoZnWQ06nYiwdPeP4
+hHpl5cJSEp8Aez8M6K5dwTOCiEXu3uHvfiULJJ34zz8sXFeJWZyjeg2eGshXxVOA
+RLSCbw8oLg7Y98QIpIuX7K2rBRRaXppEQhK4v8jOQzh5W/zNXrFxw/VY2kYoMTBK
+SqZL/YqC/9ZFDxPERYvY0fWa+n+Qzre36x3b/UafEt730SNXcUM=
+=k/ss
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
+
+--===============1832142454==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1832142454==--
