@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 14/20] arm64: dts: tegra210: add DFLL clock
-Date: Fri, 4 Jan 2019 11:06:56 +0800
-Message-ID: <20190104030702.8684-15-josephl@nvidia.com>
+Subject: [PATCH V4 15/20] arm64: dts: tegra210: add CPU clocks
+Date: Fri, 4 Jan 2019 11:06:57 +0800
+Message-ID: <20190104030702.8684-16-josephl@nvidia.com>
 References: <20190104030702.8684-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,7 +21,7 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add essential DFLL clock properties for Tegra210.
+Add CPU clocks for Tegra210.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
@@ -33,45 +33,25 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2205d66b0443..a6db62157442 100644
+index a6db62157442..e2baf52fe1af 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra210-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
-+#include <dt-bindings/reset/tegra210-car.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/thermal/tegra124-soctherm.h>
+@@ -1304,6 +1304,12 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <0>;
++			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
++				 <&tegra_car TEGRA210_CLK_PLL_X>,
++				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
++				 <&dfll>;
++			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
++			clock-latency = <300000>;
+ 		};
  
-@@ -1131,6 +1132,24 @@
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	dfll: clock@70110000 {
-+		compatible = "nvidia,tegra210-dfll";
-+		reg = <0 0x70110000 0 0x100>, /* DFLL control */
-+		      <0 0x70110000 0 0x100>, /* I2C output control */
-+		      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
-+		      <0 0x70110200 0 0x100>; /* Look-up table RAM */
-+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
-+			 <&tegra_car TEGRA210_CLK_DFLL_REF>,
-+			 <&tegra_car TEGRA210_CLK_I2C5>;
-+		clock-names = "soc", "ref", "i2c";
-+		resets = <&tegra_car TEGRA210_RST_DFLL_DVCO>;
-+		reset-names = "dvco";
-+		#clock-cells = <0>;
-+		clock-output-names = "dfllCPU_out";
-+		status = "disabled";
-+	};
-+
- 	aconnect@702c0000 {
- 		compatible = "nvidia,tegra210-aconnect";
- 		clocks = <&tegra_car TEGRA210_CLK_APE>,
+ 		cpu@1 {
 -- 
 2.20.1
