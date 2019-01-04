@@ -1,65 +1,122 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH V3] i2c: tegra: Fix Maximum transfer size
-Date: Thu, 3 Jan 2019 22:46:32 +0100
-Message-ID: <20190103214632.GA1421@kunai>
-References: <1546472423-31366-1-git-send-email-skomatineni@nvidia.com>
- <20190103190552.tspqarvalqxlz7yu@ninjato>
- <BN7PR12MB28368BFA8C7DB877316960EFC28D0@BN7PR12MB2836.namprd12.prod.outlook.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V4] i2c: tegra: Fix Maximum transfer size
+Date: Thu, 3 Jan 2019 16:12:47 -0800
+Message-ID: <1546560767-9559-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BN7PR12MB28368BFA8C7DB877316960EFC28D0@BN7PR12MB2836.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra194 supports maximum 64K Bytes transfer per packet.
+Tegra186 and prior supports maximum 4K Bytes transfer per packet.
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch fixes this payload difference between Tegra194 and prior
+tegra chipsets using separate i2c_adapter_quirks.
 
-On Thu, Jan 03, 2019 at 07:47:21PM +0000, Sowjanya Komatineni wrote:
->=20
-> >> Tegra194 supports maximum 64K Bytes transfer per packet.
-> >> Tegra186 and prior supports maximum 4K Bytes transfer per packet.
-> >>=20
-> >> This patch fixes this payload difference between Tegra194 and prior=20
-> >> tegra chipsets using separate i2c_adapter_quirks.
-> >>=20
-> >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> >
-> >  CC      drivers/i2c/busses/i2c-tegra.o
-> >drivers/i2c/busses/i2c-tegra.c:171: warning: Function parameter or membe=
-r 'quirks' not described in >'tegra_i2c_hw_feature'
-> >
-> Somehow I don't see this warning. Do I need to document somewhere on quir=
-ks member of tegra_i2c_hw_feature?
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-Yes, the kerneldoc above tegra_i2c_hw_feature.
-
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwugrQACgkQFA3kzBSg
-KbbH1g//fPjvfw/VUoPuMWLpl9d3iJM9BOz6z3jzVyyCALiiDByFc0UbiXkkae4o
-nf+RDEpYtP1Pa6UTIG0mB8TA3bN7suZ+piOmfVah7Y/rgQ2dsP0nY2Vp+u52Vudj
-e4U+N9YsGb+UmVEMGgxhx94JW8q3Szvkq0b2Som78gQnWWkpmyI6NX35HWrLe7Rq
-4Ic0iPb9TGZlys5J984hiRHIrW9Mcm0Ojffv9+YGrdlPiv57C8o0c5Jr+ERsOKo+
-8/5wBAerRwI6oUBvamHKwFowgyrkzyLtnTDPssjQ7MafpUuele/svTloTSPI+WIv
-QSWqMjgIxO87sHOwxQAaSFJzQmjJGWTjNOOsAl5782YNaXz8Y9Njux/TmTK3bcN4
-UrpAwNl7wxNp33A+KOHcgI5UWyZ4eHAQxGkFPfUZPO+fsxbKSdllIsN/hNG5u3S0
-bPC3Agn0kmsqqiTW/g19TgmPqq4QjujHVaMjnTUwKHQykfUtKKpsu72GAAx/MWc8
-9bV3seS6I+hv0Cbu0K1yqLTvu18z3vZVHBqVo8aWkEUH9cQHZZ+/Hv7lm5WnNCEQ
-STMRM4Kfy0tZbFUgJtfM1DZi1J1WR4clf10964mXBBdFK1fPwhC9THwzcZvashab
-sBHNHPhBrbtJ6hr1d4pQXBC6zCnYo8F2Hatpj5F3vW2yRsiuv/Y=
-=7KxF
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 437294ea2f0a..a01834fb2ce6 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -154,6 +154,8 @@ enum msg_end_type {
+  * @clk_divisor_std_fast_mode: Clock divisor in standard/fast mode. It is
+  *		applicable if there is no fast clock source i.e. single clock
+  *		source.
++ * @quirks: i2c adapter quirks for limiting write/read transfer size and not
++ *		allowing 0 length transfers.
+  */
+ 
+ struct tegra_i2c_hw_feature {
+@@ -167,6 +169,7 @@ struct tegra_i2c_hw_feature {
+ 	bool has_multi_master_mode;
+ 	bool has_slcg_override_reg;
+ 	bool has_mst_fifo;
++	const struct i2c_adapter_quirks *quirks;
+ };
+ 
+ /**
+@@ -833,6 +836,10 @@ static const struct i2c_adapter_quirks tegra_i2c_quirks = {
+ 	.max_write_len = 4096,
+ };
+ 
++static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
++};
++
+ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_continue_xfer_support = false,
+ 	.has_per_pkt_xfer_complete_irq = false,
+@@ -844,6 +851,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -857,6 +865,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -870,6 +879,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -883,6 +893,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -896,6 +907,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.quirks = &tegra_i2c_quirks,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -909,6 +921,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = true,
++	.quirks = &tegra194_i2c_quirks,
+ };
+ 
+ /* Match table for of_platform binding */
+@@ -960,7 +973,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->base = base;
+ 	i2c_dev->div_clk = div_clk;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+-	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
+@@ -976,6 +988,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
+ 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
+ 						  "nvidia,tegra20-i2c-dvc");
++	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
++
+ 	init_completion(&i2c_dev->msg_complete);
+ 	spin_lock_init(&i2c_dev->xfer_lock);
+ 
+-- 
+2.7.4
