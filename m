@@ -1,41 +1,52 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
-Date: Fri, 4 Jan 2019 09:43:54 -0800
-Message-ID: <20190104174354.GA18110@infradead.org>
-References: <20190104104753.3383-1-thierry.reding@gmail.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm: Expose lazy vfree pages to control via sysctl
+Date: Fri, 4 Jan 2019 10:03:32 -0800
+Message-ID: <20190104180332.GV6310@bombadil.infradead.org>
+References: <1546616141-486-1-git-send-email-amhetre@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190104104753.3383-1-thierry.reding@gmail.com>
+In-Reply-To: <1546616141-486-1-git-send-email-amhetre@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ashish Mhetre <amhetre@nvidia.com>
+Cc: vdumpa@nvidia.com, mcgrof@kernel.org, keescook@chromium.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Snikam@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-> +	u64 dma_mask = dma_get_mask(dev);
+On Fri, Jan 04, 2019 at 09:05:41PM +0530, Ashish Mhetre wrote:
+> From: Hiroshi Doyu <hdoyu@nvidia.com>
+> 
+> The purpose of lazy_max_pages is to gather virtual address space till it
+> reaches the lazy_max_pages limit and then purge with a TLB flush and hence
+> reduce the number of global TLB flushes.
+> The default value of lazy_max_pages with one CPU is 32MB and with 4 CPUs it
+> is 96MB i.e. for 4 cores, 96MB of vmalloc space will be gathered before it
+> is purged with a TLB flush.
+> This feature has shown random latency issues. For example, we have seen
+> that the kernel thread for some camera application spent 30ms in
+> __purge_vmap_area_lazy() with 4 CPUs.
 
-This is not a driver API.  I think what you want is
-dma_get_required_mask to query the mask.  But in that case
-you still need to always actually set a mask in the driver as well.
+You're not the first to report something like this.  Looking through the
+kernel logs, I see:
 
-Something like this patch:
+commit 763b218ddfaf56761c19923beb7e16656f66ec62
+Author: Joel Fernandes <joelaf@google.com>
+Date:   Mon Dec 12 16:44:26 2016 -0800
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index a22e11a65658..36c61778d8f3 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3500,6 +3500,13 @@ static int sdhci_set_dma_mask(struct sdhci_host *host)
- 	struct device *dev = mmc_dev(mmc);
- 	int ret = -EINVAL;
- 
-+	/*
-+	 * Systems that can't address more than 32-bits do not need to use
-+	 * 64-bit addressing mode, even if the device supports it.
-+	 */
-+	if (dma_get_required_mask(dev) <= DMA_BIT_MASK(32))
-+		host->flags &= ~SDHCI_USE_64_BIT_DMA;
-+
- 	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
- 		host->flags &= ~SDHCI_USE_64_BIT_DMA;
- 
+    mm: add preempt points into __purge_vmap_area_lazy()
+
+commit f9e09977671b618aeb25ddc0d4c9a84d5b5cde9d
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Mon Dec 12 16:44:23 2016 -0800
+
+    mm: turn vmap_purge_lock into a mutex
+
+commit 80c4bd7a5e4368b680e0aeb57050a1b06eb573d8
+Author: Chris Wilson <chris@chris-wilson.co.uk>
+Date:   Fri May 20 16:57:38 2016 -0700
+
+    mm/vmalloc: keep a separate lazy-free list
+
+So the first thing I want to do is to confirm that you see this problem
+on a modern kernel.  We've had trouble with NVidia before reporting
+historical problems as if they were new.
