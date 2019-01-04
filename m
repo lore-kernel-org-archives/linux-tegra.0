@@ -1,87 +1,41 @@
-From: Ashish Mhetre <amhetre@nvidia.com>
-Subject: [PATCH] mm: Expose lazy vfree pages to control via sysctl
-Date: Fri, 4 Jan 2019 21:05:41 +0530
-Message-ID: <1546616141-486-1-git-send-email-amhetre@nvidia.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
+Date: Fri, 4 Jan 2019 09:43:54 -0800
+Message-ID: <20190104174354.GA18110@infradead.org>
+References: <20190104104753.3383-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190104104753.3383-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: vdumpa@nvidia.com, mcgrof@kernel.org, keescook@chromium.org, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Snikam@nvidia.com, Ashish Mhetre <amhetre@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Hiroshi Doyu <hdoyu@nvidia.com>
+> +	u64 dma_mask = dma_get_mask(dev);
 
-The purpose of lazy_max_pages is to gather virtual address space till it
-reaches the lazy_max_pages limit and then purge with a TLB flush and hence
-reduce the number of global TLB flushes.
-The default value of lazy_max_pages with one CPU is 32MB and with 4 CPUs it
-is 96MB i.e. for 4 cores, 96MB of vmalloc space will be gathered before it
-is purged with a TLB flush.
-This feature has shown random latency issues. For example, we have seen
-that the kernel thread for some camera application spent 30ms in
-__purge_vmap_area_lazy() with 4 CPUs.
-So, create "/proc/sys/lazy_vfree_pages" file to control lazy vfree pages.
-With this sysctl, the behaviour of lazy_vfree_pages can be controlled and
-the systems which can't tolerate latency issues can also disable it.
-This is one of the way through which lazy_vfree_pages can be controlled as
-proposed in this patch. The other possible solution would be to configure
-lazy_vfree_pages through kernel cmdline.
+This is not a driver API.  I think what you want is
+dma_get_required_mask to query the mask.  But in that case
+you still need to always actually set a mask in the driver as well.
 
-Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- kernel/sysctl.c | 8 ++++++++
- mm/vmalloc.c    | 5 ++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+Something like this patch:
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 3ae223f..49523efc 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -111,6 +111,7 @@ extern int pid_max;
- extern int pid_max_min, pid_max_max;
- extern int percpu_pagelist_fraction;
- extern int latencytop_enabled;
-+extern int sysctl_lazy_vfree_pages;
- extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
- #ifndef CONFIG_MMU
- extern int sysctl_nr_trim_pages;
-@@ -1251,6 +1252,13 @@ static struct ctl_table kern_table[] = {
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index a22e11a65658..36c61778d8f3 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3500,6 +3500,13 @@ static int sdhci_set_dma_mask(struct sdhci_host *host)
+ 	struct device *dev = mmc_dev(mmc);
+ 	int ret = -EINVAL;
  
- static struct ctl_table vm_table[] = {
- 	{
-+		.procname	= "lazy_vfree_pages",
-+		.data		= &sysctl_lazy_vfree_pages,
-+		.maxlen		= sizeof(sysctl_lazy_vfree_pages),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
- 		.procname	= "overcommit_memory",
- 		.data		= &sysctl_overcommit_memory,
- 		.maxlen		= sizeof(sysctl_overcommit_memory),
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 97d4b25..fa07966 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -619,13 +619,16 @@ static void unmap_vmap_area(struct vmap_area *va)
-  * code, and it will be simple to change the scale factor if we find that it
-  * becomes a problem on bigger systems.
-  */
++	/*
++	 * Systems that can't address more than 32-bits do not need to use
++	 * 64-bit addressing mode, even if the device supports it.
++	 */
++	if (dma_get_required_mask(dev) <= DMA_BIT_MASK(32))
++		host->flags &= ~SDHCI_USE_64_BIT_DMA;
 +
-+int sysctl_lazy_vfree_pages = 32UL * 1024 * 1024 / PAGE_SIZE;
-+
- static unsigned long lazy_max_pages(void)
- {
- 	unsigned int log;
+ 	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
+ 		host->flags &= ~SDHCI_USE_64_BIT_DMA;
  
- 	log = fls(num_online_cpus());
- 
--	return log * (32UL * 1024 * 1024 / PAGE_SIZE);
-+	return log * sysctl_lazy_vfree_pages;
- }
- 
- static atomic_t vmap_lazy_nr = ATOMIC_INIT(0);
--- 
-2.7.4
