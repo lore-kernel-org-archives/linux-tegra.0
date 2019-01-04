@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 13/20] cpufreq: dt-platdev: add Tegra210 to blacklist
-Date: Fri, 4 Jan 2019 11:06:55 +0800
-Message-ID: <20190104030702.8684-14-josephl@nvidia.com>
+Subject: [PATCH V4 14/20] arm64: dts: tegra210: add DFLL clock
+Date: Fri, 4 Jan 2019 11:06:56 +0800
+Message-ID: <20190104030702.8684-15-josephl@nvidia.com>
 References: <20190104030702.8684-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,40 +18,60 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 uses "tegra124-cpufreq" platform driver to register device data
-for "cpufreq-dt" driver. So add it in the blacklist for
-"cpufreq-dt-platdev" driver to drop that.
+Add essential DFLL clock properties for Tegra210.
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
 *V4:
  - no change
 *V3:
- - add ack tags
+ - no change
 *V2:
- - new added in V2
+ - add ack tag
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index b1c5468dca16..47729a22c159 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -119,6 +119,7 @@ static const struct of_device_id blacklist[] __initconst = {
- 	{ .compatible = "mediatek,mt8176", },
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2205d66b0443..a6db62157442 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/memory/tegra210-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
++#include <dt-bindings/reset/tegra210-car.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
  
- 	{ .compatible = "nvidia,tegra124", },
-+	{ .compatible = "nvidia,tegra210", },
+@@ -1131,6 +1132,24 @@
+ 		#nvidia,mipi-calibrate-cells = <1>;
+ 	};
  
- 	{ .compatible = "qcom,apq8096", },
- 	{ .compatible = "qcom,msm8996", },
++	dfll: clock@70110000 {
++		compatible = "nvidia,tegra210-dfll";
++		reg = <0 0x70110000 0 0x100>, /* DFLL control */
++		      <0 0x70110000 0 0x100>, /* I2C output control */
++		      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
++		      <0 0x70110200 0 0x100>; /* Look-up table RAM */
++		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
++			 <&tegra_car TEGRA210_CLK_DFLL_REF>,
++			 <&tegra_car TEGRA210_CLK_I2C5>;
++		clock-names = "soc", "ref", "i2c";
++		resets = <&tegra_car TEGRA210_RST_DFLL_DVCO>;
++		reset-names = "dvco";
++		#clock-cells = <0>;
++		clock-output-names = "dfllCPU_out";
++		status = "disabled";
++	};
++
+ 	aconnect@702c0000 {
+ 		compatible = "nvidia,tegra210-aconnect";
+ 		clocks = <&tegra_car TEGRA210_CLK_APE>,
 -- 
 2.20.1
