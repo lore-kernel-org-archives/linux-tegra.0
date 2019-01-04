@@ -1,11 +1,14 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 00/20] Tegra210 DFLL support
-Date: Fri, 4 Jan 2019 11:06:42 +0800
-Message-ID: <20190104030702.8684-1-josephl@nvidia.com>
+Subject: [PATCH V4 01/20] dt-bindings: clock: tegra124-dfll: Update DFLL
+ binding for PWM regulator
+Date: Fri, 4 Jan 2019 11:06:43 +0800
+Message-ID: <20190104030702.8684-2-josephl@nvidia.com>
+References: <20190104030702.8684-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190104030702.8684-1-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,108 +19,134 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This series introduces support for the DFLL as a CPU clock source
-on Tegra210. As Jetson TX1 uses a PWM controlled regulator IC which
-is driven directly by the DFLLs PWM output, we also introduce support
-for PWM regulators next to I2C controlled regulators. The DFLL output
-frequency is directly controlled by the regulator voltage. The registers
-for controlling the PWM are part of the DFLL IP block, so there's no
-separate linux regulator object involved because the regulator IC only
-supplies the rail powering the CPUs. It doesn't have any other controls.
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-The patch 1~4 are the patches of DT bindings update for DFLL clock and
-Tegra124 cpufreq, which add PWM and Tegra210 support for DFLL clock and
-remove deprecate properties for Tegra124 cpufreq bindings.
+Add new properties to configure the DFLL PWM regulator support.
 
-The patch 5~10 are the patches for DFLL clock driver update for PWM-mode
-DFLL support.
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+---
+*V4:
+ - s/nvidia,pwm-period/nvidia,pwm-period-nanoseconds/
+*V3:
+ - no change
+*V2:
+ - update the binding strings and descriptions for
+ nvidia,pwm-tristate-microvolts
+ nvidia,pwm-min-microvolts
+ nvidia,pwm-voltage-step-microvolts
+---
+ .../bindings/clock/nvidia,tegra124-dfll.txt   | 79 ++++++++++++++++++-
+ 1 file changed, 77 insertions(+), 2 deletions(-)
 
-The patch 11~13 are the Tegra124 cpufreq driver update to make it
-work with Tegra210.
-
-The patch 14~19 are the devicetree files update for Tegra210 SoC and
-platforms. Two platforms are updated here for different DFLL mode usage.
-The Tegra210-p2371-2180 (a.k.a. Jetson Tx1) uses DFLL-PWM and the
-Tegra210-smaug (a.k.a. Pixel C) uses DFLL-I2C. So two different modes
-are verified with this series.
-
-The patch 20 is the patch for enabling the CPU regulator for Smaug
-board.
-
-* Update in V4:
- - s/nvidia,pwm-period/nvidia,pwm-period-nanoseconds/ in patch 1 for
- DFLL DT bindings update.
- - remove parenthesis in Kconfig of DFLL driver
- - add more ack and RB tags
-
-* Update in V3:
- - Squash patch 9 in previous series into patch 7 (ref. [0])
- - minor fixes in patch 6 for geting alignment data
- - more variable type fixes in patch 7
- - fix the error handling in patch 8
- - collect more ack tags
-
-* Update in V2:
- - Add two patches that suggested from comments in V1. See patch 9 and
- 14.
- - Update DT binding for DFLL-PWM mode in patch 1.
- - Update the code for how to get regulator data from DT or regulator
- API in patch 6.
- - Update to use lut_uv table for LUT lookup in patch 7. That makes the
- generic lut table to work with both I2C and PWM mode.
- - not allow Tegra124 cpufreq driver to be built as a module and remove
- the removal function in patch 12.
-
-[0]: http://patchwork.ozlabs.org/project/linux-tegra/list/?series=81595
-
-Joseph Lo (17):
-  dt-bindings: clock: tegra124-dfll: add Tegra210 support
-  dt-bindings: cpufreq: tegra124: remove vdd-cpu-supply from required
-    properties
-  dt-bindings: cpufreq: tegra124: remove cpu_lp clock from required
-    properties
-  clk: tegra: dfll: CVB calculation alignment with the regulator
-  clk: tegra: dfll: support PWM regulator control
-  clk: tegra: dfll: round down voltages based on alignment
-  clk: tegra: dfll: add CVB tables for Tegra210
-  cpufreq: tegra124: do not handle the CPU rail
-  cpufreq: tegra124: extend to support Tegra210
-  cpufreq: dt-platdev: add Tegra210 to blacklist
-  arm64: dts: tegra210: add DFLL clock
-  arm64: dts: tegra210: add CPU clocks
-  arm64: dts: tegra210-p2597: add pinmux for PWM-based DFLL support
-  arm64: dts: tegra210-p2371-2180: enable DFLL clock
-  arm64: dts: tegra210-smaug: add CPU power rail regulator
-  arm64: dts: tegra210-smaug: enable DFLL clock
-  arm64: defconfig: Enable MAX8973 regulator
-
-Peter De Schrijver (3):
-  dt-bindings: clock: tegra124-dfll: Update DFLL binding for PWM
-    regulator
-  clk: tegra: dfll: registration for multiple SoCs
-  clk: tegra: dfll: build clk-dfll.c for Tegra124 and Tegra210
-
- .../bindings/clock/nvidia,tegra124-dfll.txt   |  83 ++-
- .../cpufreq/nvidia,tegra124-cpufreq.txt       |   6 +-
- .../boot/dts/nvidia/tegra210-p2371-2180.dts   |  21 +
- .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  14 +
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts |  31 ++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  25 +
- arch/arm64/configs/defconfig                  |   1 +
- drivers/clk/tegra/Kconfig                     |   5 +
- drivers/clk/tegra/Makefile                    |   2 +-
- drivers/clk/tegra/clk-dfll.c                  | 459 +++++++++++++---
- drivers/clk/tegra/clk-dfll.h                  |   6 +-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c    | 520 +++++++++++++++++-
- drivers/clk/tegra/cvb.c                       |  12 +-
- drivers/clk/tegra/cvb.h                       |   7 +-
- drivers/cpufreq/Kconfig.arm                   |   4 +-
- drivers/cpufreq/cpufreq-dt-platdev.c          |   1 +
- drivers/cpufreq/tegra124-cpufreq.c            |  44 +-
- 17 files changed, 1093 insertions(+), 148 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+index dff236f524a7..5558bb5fcf2c 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+@@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
+ oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
+ control module that will automatically adjust the VDD_CPU voltage by
+ communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+-Currently only the I2C mode is supported by these bindings.
+ 
+ Required properties:
+ - compatible : should be "nvidia,tegra124-dfll"
+@@ -45,10 +44,31 @@ Required properties for the control loop parameters:
+ Optional properties for the control loop parameters:
+ - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+ 
++Optional properties for mode selection:
++- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
++
+ Required properties for I2C mode:
+ - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
+ 
+-Example:
++Required properties for PWM mode:
++- nvidia,pwm-period-nanoseconds: period of PWM square wave in nanoseconds.
++- nvidia,pwm-tristate-microvolts: Regulator voltage in micro volts when PWM
++  control is disabled and the PWM output is tristated. Note that this voltage is
++  configured in hardware, typically via a resistor divider.
++- nvidia,pwm-min-microvolts: Regulator voltage in micro volts when PWM control
++  is enabled and PWM output is low. Hence, this is the minimum output voltage
++  that the regulator supports when PWM control is enabled.
++- nvidia,pwm-voltage-step-microvolts: Voltage increase in micro volts
++  corresponding to a 1/33th increase in duty cycle. Eg the voltage for 2/33th
++  duty cycle would be: nvidia,pwm-min-microvolts +
++  nvidia,pwm-voltage-step-microvolts * 2.
++- pinctrl-0: I/O pad configuration when PWM control is enabled.
++- pinctrl-1: I/O pad configuration when PWM control is disabled.
++- pinctrl-names: must include the following entries:
++  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
++  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
++
++Example for I2C:
+ 
+ clock@70110000 {
+         compatible = "nvidia,tegra124-dfll";
+@@ -76,3 +96,58 @@ clock@70110000 {
+ 
+         nvidia,i2c-fs-rate = <400000>;
+ };
++
++Example for PWM:
++
++clock@70110000 {
++	compatible = "nvidia,tegra124-dfll";
++	reg = <0 0x70110000 0 0x100>, /* DFLL control */
++	      <0 0x70110000 0 0x100>, /* I2C output control */
++	      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
++	      <0 0x70110200 0 0x100>; /* Look-up table RAM */
++	interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
++	         <&tegra_car TEGRA210_CLK_DFLL_REF>,
++		 <&tegra_car TEGRA124_CLK_I2C5>;;
++	clock-names = "soc", "ref", "i2c";
++	resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
++	reset-names = "dvco";
++	#clock-cells = <0>;
++	clock-output-names = "dfllCPU_out";
++
++	nvidia,sample-rate = <25000>;
++	nvidia,droop-ctrl = <0x00000f00>;
++	nvidia,force-mode = <1>;
++	nvidia,cf = <6>;
++	nvidia,ci = <0>;
++	nvidia,cg = <2>;
++
++	nvidia,pwm-min-microvolts = <708000>; /* 708mV */
++	nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
++	nvidia,pwm-to-pmic;
++	nvidia,pwm-tristate-microvolts = <1000000>;
++	nvidia,pwm-voltage-step-microvolts = <19200>; /* 19.2mV */
++
++	pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
++	pinctrl-0 = <&dvfs_pwm_active_state>;
++	pinctrl-1 = <&dvfs_pwm_inactive_state>;
++};
++
++/* pinmux nodes added for completeness. Binding doc can be found in:
++ * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
++ */
++
++pinmux: pinmux@700008d4 {
++	dvfs_pwm_active_state: dvfs_pwm_active {
++		dvfs_pwm_pbb1 {
++			nvidia,pins = "dvfs_pwm_pbb1";
++			nvidia,tristate = <TEGRA_PIN_DISABLE>;
++		};
++	};
++	dvfs_pwm_inactive_state: dvfs_pwm_inactive {
++		dvfs_pwm_pbb1 {
++			nvidia,pins = "dvfs_pwm_pbb1";
++			nvidia,tristate = <TEGRA_PIN_ENABLE>;
++		};
++	};
++};
 -- 
 2.20.1
