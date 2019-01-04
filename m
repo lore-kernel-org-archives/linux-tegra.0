@@ -1,8 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 16/20] arm64: dts: tegra210-p2597: add pinmux for PWM-based
- DFLL support
-Date: Fri, 4 Jan 2019 11:06:58 +0800
-Message-ID: <20190104030702.8684-17-josephl@nvidia.com>
+Subject: [PATCH V4 17/20] arm64: dts: tegra210-p2371-2180: enable DFLL clock
+Date: Fri, 4 Jan 2019 11:06:59 +0800
+Message-ID: <20190104030702.8684-18-josephl@nvidia.com>
 References: <20190104030702.8684-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,45 +21,51 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add pinmux for PWM-based DFLL support.
+Enable DFLL clock for Jetson TX1 platform.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V4:
- - no change
+ - s/nvidia,pwm-period/nvidia,pwm-period-nanoseconds/
 *V3:
- - no change
-*V2:
  - add ack tag
+*V2:
+ - remove non exist DT bindings
+ - update the PWM DT bindings accordingly
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index a96e6ee70c21..0ee25a5188f8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1278,6 +1278,20 @@
- 				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+index 37e3c46e753f..9fad0d27278e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+@@ -78,4 +78,25 @@
  			};
  		};
-+
-+		dvfs_pwm_active_state: dvfs_pwm_active {
-+			dvfs_pwm_pbb1 {
-+				nvidia,pins = "dvfs_pwm_pbb1";
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+		};
-+
-+		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
-+			dvfs_pwm_pbb1 {
-+				nvidia,pins = "dvfs_pwm_pbb1";
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+			};
-+		};
  	};
- 
- 	pwm@7000a000 {
++
++	clock@70110000 {
++		status = "okay";
++
++		nvidia,cf = <6>;
++		nvidia,ci = <0>;
++		nvidia,cg = <2>;
++		nvidia,droop-ctrl = <0x00000f00>;
++		nvidia,force-mode = <1>;
++		nvidia,sample-rate = <25000>;
++
++		nvidia,pwm-min-microvolts = <708000>;
++		nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
++		nvidia,pwm-to-pmic;
++		nvidia,pwm-tristate-microvolts = <1000000>;
++		nvidia,pwm-voltage-step-microvolts = <19200>;
++
++		pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
++		pinctrl-0 = <&dvfs_pwm_active_state>;
++		pinctrl-1 = <&dvfs_pwm_inactive_state>;
++	};
+ };
 -- 
 2.20.1
