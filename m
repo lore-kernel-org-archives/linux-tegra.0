@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 19/20] arm64: dts: tegra210-smaug: enable DFLL clock
-Date: Fri, 4 Jan 2019 11:07:01 +0800
-Message-ID: <20190104030702.8684-20-josephl@nvidia.com>
+Subject: [PATCH V4 20/20] arm64: defconfig: Enable MAX8973 regulator
+Date: Fri, 4 Jan 2019 11:07:02 +0800
+Message-ID: <20190104030702.8684-21-josephl@nvidia.com>
 References: <20190104030702.8684-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,7 +21,9 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable DFLL clock for Smaug board.
+The Tegra210 Smaug board uses MAX77621 for both CPU & GPU rail. Note
+that max8973 and max77621 share the same driver. So enable this driver
+for the PMIC.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
@@ -33,31 +35,20 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 79cfcd5b7e62..c08c5471b974 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1698,6 +1698,18 @@
- 		status = "okay";
- 	};
- 
-+	clock@70110000 {
-+		status = "okay";
-+		nvidia,cf = <6>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,i2c-fs-rate = <400000>;
-+		nvidia,sample-rate = <12500>;
-+		vdd-cpu-supply = <&max77621_cpu>;
-+	};
-+
- 	aconnect@702c0000 {
- 		status = "okay";
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 3ef443cfbab6..74d5273ba20f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -437,6 +437,7 @@ CONFIG_REGULATOR_GPIO=y
+ CONFIG_REGULATOR_HI6421V530=y
+ CONFIG_REGULATOR_HI655X=y
+ CONFIG_REGULATOR_MAX77620=y
++CONFIG_REGULATOR_MAX8973=y
+ CONFIG_REGULATOR_PWM=y
+ CONFIG_REGULATOR_QCOM_RPMH=y
+ CONFIG_REGULATOR_QCOM_SMD_RPM=y
 -- 
 2.20.1
