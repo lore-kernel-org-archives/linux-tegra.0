@@ -1,7 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 17/20] arm64: dts: tegra210-p2371-2180: enable DFLL clock
-Date: Fri, 4 Jan 2019 11:06:59 +0800
-Message-ID: <20190104030702.8684-18-josephl@nvidia.com>
+Subject: [PATCH V4 18/20] arm64: dts: tegra210-smaug: add CPU power rail
+ regulator
+Date: Fri, 4 Jan 2019 11:07:00 +0800
+Message-ID: <20190104030702.8684-19-josephl@nvidia.com>
 References: <20190104030702.8684-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,51 +22,50 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable DFLL clock for Jetson TX1 platform.
+Add CPU power rail regulator for Smaug board.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 *V4:
- - s/nvidia,pwm-period/nvidia,pwm-period-nanoseconds/
+ - no change
 *V3:
- - add ack tag
+ - no change
 *V2:
- - remove non exist DT bindings
- - update the PWM DT bindings accordingly
+ - add ack tag
 ---
- .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 37e3c46e753f..9fad0d27278e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -78,4 +78,25 @@
- 			};
- 		};
- 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 43cae4798870..79cfcd5b7e62 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1340,6 +1340,25 @@
+ 		status = "okay";
+ 		clock-frequency = <1000000>;
+ 
++		max77621_cpu: max77621@1b {
++			compatible = "maxim,max77621";
++			reg = <0x1b>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(Y, 1) IRQ_TYPE_LEVEL_LOW>;
++			regulator-always-on;
++			regulator-boot-on;
++			regulator-min-microvolt = <800000>;
++			regulator-max-microvolt = <1231250>;
++			regulator-name = "PPVAR_CPU";
++			regulator-ramp-delay = <12500>;
++			maxim,dvs-default-state = <1>;
++			maxim,enable-active-discharge;
++			maxim,enable-bias-control;
++			maxim,enable-etr;
++			maxim,enable-gpio = <&max77620 5 0>;
++			maxim,externally-enable;
++		};
 +
-+	clock@70110000 {
-+		status = "okay";
-+
-+		nvidia,cf = <6>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,sample-rate = <25000>;
-+
-+		nvidia,pwm-min-microvolts = <708000>;
-+		nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
-+		nvidia,pwm-to-pmic;
-+		nvidia,pwm-tristate-microvolts = <1000000>;
-+		nvidia,pwm-voltage-step-microvolts = <19200>;
-+
-+		pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-+		pinctrl-0 = <&dvfs_pwm_active_state>;
-+		pinctrl-1 = <&dvfs_pwm_inactive_state>;
-+	};
- };
+ 		max77620: max77620@3c {
+ 			compatible = "maxim,max77620";
+ 			reg = <0x3c>;
 -- 
 2.20.1
