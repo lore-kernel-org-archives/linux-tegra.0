@@ -1,54 +1,62 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] dmaengine: tegra-apb: Use struct_size() in devm_kzalloc()
-Date: Fri, 4 Jan 2019 15:16:12 -0600
-Message-ID: <20190104211612.GA14300@embeddedor>
+From: Ashish Mhetre <amhetre@nvidia.com>
+Subject: Re: [PATCH] mm: Expose lazy vfree pages to control via sysctl
+Date: Sun, 6 Jan 2019 14:12:02 +0530
+Message-ID: <a7bb656a-c815-09a4-69fc-bb9e7427cfa6@nvidia.com>
+References: <1546616141-486-1-git-send-email-amhetre@nvidia.com>
+ <20190104180332.GV6310@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20190104180332.GV6310@bombadil.infradead.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: vdumpa@nvidia.com, mcgrof@kernel.org, keescook@chromium.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Snikam@nvidia.com, avanbrunt@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Matthew, this issue was last reported in September 2018 on K4.9.
+I verified that the optimization patches mentioned by you were not 
+present in our downstream kernel when we faced the issue. I will check 
+whether issue still persist on new kernel with all these patches and 
+come back.
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
-
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/dma/tegra20-apb-dma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 9a558e30c461..697f316055cf 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1319,8 +1319,9 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	tdma = devm_kzalloc(&pdev->dev, sizeof(*tdma) + cdata->nr_channels *
--			sizeof(struct tegra_dma_channel), GFP_KERNEL);
-+	tdma = devm_kzalloc(&pdev->dev,
-+			    struct_size(tdma, channels, cdata->nr_channels),
-+			    GFP_KERNEL);
- 	if (!tdma)
- 		return -ENOMEM;
- 
--- 
-2.20.1
+On 04/01/19 11:33 PM, Matthew Wilcox wrote:
+> On Fri, Jan 04, 2019 at 09:05:41PM +0530, Ashish Mhetre wrote:
+>> From: Hiroshi Doyu <hdoyu@nvidia.com>
+>>
+>> The purpose of lazy_max_pages is to gather virtual address space till it
+>> reaches the lazy_max_pages limit and then purge with a TLB flush and hence
+>> reduce the number of global TLB flushes.
+>> The default value of lazy_max_pages with one CPU is 32MB and with 4 CPUs it
+>> is 96MB i.e. for 4 cores, 96MB of vmalloc space will be gathered before it
+>> is purged with a TLB flush.
+>> This feature has shown random latency issues. For example, we have seen
+>> that the kernel thread for some camera application spent 30ms in
+>> __purge_vmap_area_lazy() with 4 CPUs.
+> 
+> You're not the first to report something like this.  Looking through the
+> kernel logs, I see:
+> 
+> commit 763b218ddfaf56761c19923beb7e16656f66ec62
+> Author: Joel Fernandes <joelaf@google.com>
+> Date:   Mon Dec 12 16:44:26 2016 -0800
+> 
+>      mm: add preempt points into __purge_vmap_area_lazy()
+> 
+> commit f9e09977671b618aeb25ddc0d4c9a84d5b5cde9d
+> Author: Christoph Hellwig <hch@lst.de>
+> Date:   Mon Dec 12 16:44:23 2016 -0800
+> 
+>      mm: turn vmap_purge_lock into a mutex
+> 
+> commit 80c4bd7a5e4368b680e0aeb57050a1b06eb573d8
+> Author: Chris Wilson <chris@chris-wilson.co.uk>
+> Date:   Fri May 20 16:57:38 2016 -0700
+> 
+>      mm/vmalloc: keep a separate lazy-free list
+> 
+> So the first thing I want to do is to confirm that you see this problem
+> on a modern kernel.  We've had trouble with NVidia before reporting
+> historical problems as if they were new.
+> 
