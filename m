@@ -1,11 +1,13 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 0/6] Add CPUidle support for Tegra210
-Date: Mon, 7 Jan 2019 11:28:04 +0800
-Message-ID: <20190107032810.13522-1-josephl@nvidia.com>
+Subject: [PATCH 3/6] arm64: dts: tegra210: fix timer node
+Date: Mon, 7 Jan 2019 11:28:07 +0800
+Message-ID: <20190107032810.13522-4-josephl@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190107032810.13522-1-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,31 +21,37 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series adds CPUidle support for Tegra210, which supports
-power-down state (C7) for CPU cores. And due to arch timer cannot work
-across CPU core power-down and power on reset signal event. We introduce
-Tegra210 timer driver to work as clock event device. So it can be the
-wake-up source of CPU cores when they idled in the power-down state.
+Fix timer node to make it work with Tegra210 timer driver. And backward
+compatible with the Tegra watchdog driver.
 
-Joseph Lo (6):
-  dt-bindings: timer: add Tegra210 timer
-  clocksource: tegra: add Tegra210 timer driver
-  arm64: dts: tegra210: fix timer node
-  arm64: dts: tegra210: add CPU idle states properties
-  arm64: dts: tegra210-p2180: Enable CPU idle support
-  arm64: dts: tegra210-smaug: Enable CPU idle support
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
- .../bindings/timer/nvidia,tegra210-timer.txt  |  25 ++
- .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |   6 +
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts |   7 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  29 ++-
- drivers/clocksource/Kconfig                   |   3 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/timer-tegra210.c          | 240 ++++++++++++++++++
- include/linux/cpuhotplug.h                    |   1 +
- 8 files changed, 305 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
- create mode 100644 drivers/clocksource/timer-tegra210.c
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index b5858b5ea052..143bd103c923 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -384,14 +384,12 @@
+ 	};
+ 
+ 	timer@60005000 {
+-		compatible = "nvidia,tegra210-timer", "nvidia,tegra20-timer";
++		compatible = "nvidia,tegra210-timer", "nvidia,tegra30-timer";
+ 		reg = <0x0 0x60005000 0x0 0x400>;
+-		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA210_CLK_TIMER>;
+ 		clock-names = "timer";
+ 	};
 -- 
 2.20.1
