@@ -1,62 +1,67 @@
-From: Ashish Mhetre <amhetre@nvidia.com>
-Subject: Re: [PATCH] mm: Expose lazy vfree pages to control via sysctl
-Date: Sun, 6 Jan 2019 14:12:02 +0530
-Message-ID: <a7bb656a-c815-09a4-69fc-bb9e7427cfa6@nvidia.com>
-References: <1546616141-486-1-git-send-email-amhetre@nvidia.com>
- <20190104180332.GV6310@bombadil.infradead.org>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+Date: Mon, 7 Jan 2019 11:28:05 +0800
+Message-ID: <20190107032810.13522-2-josephl@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190104180332.GV6310@bombadil.infradead.org>
-Content-Language: en-US
+In-Reply-To: <20190107032810.13522-1-josephl@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: vdumpa@nvidia.com, mcgrof@kernel.org, keescook@chromium.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Snikam@nvidia.com, avanbrunt@nvidia.com
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Matthew, this issue was last reported in September 2018 on K4.9.
-I verified that the optimization patches mentioned by you were not 
-present in our downstream kernel when we faced the issue. I will check 
-whether issue still persist on new kernel with all these patches and 
-come back.
+The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+(TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+or watchdog interrupts.
 
-On 04/01/19 11:33 PM, Matthew Wilcox wrote:
-> On Fri, Jan 04, 2019 at 09:05:41PM +0530, Ashish Mhetre wrote:
->> From: Hiroshi Doyu <hdoyu@nvidia.com>
->>
->> The purpose of lazy_max_pages is to gather virtual address space till it
->> reaches the lazy_max_pages limit and then purge with a TLB flush and hence
->> reduce the number of global TLB flushes.
->> The default value of lazy_max_pages with one CPU is 32MB and with 4 CPUs it
->> is 96MB i.e. for 4 cores, 96MB of vmalloc space will be gathered before it
->> is purged with a TLB flush.
->> This feature has shown random latency issues. For example, we have seen
->> that the kernel thread for some camera application spent 30ms in
->> __purge_vmap_area_lazy() with 4 CPUs.
-> 
-> You're not the first to report something like this.  Looking through the
-> kernel logs, I see:
-> 
-> commit 763b218ddfaf56761c19923beb7e16656f66ec62
-> Author: Joel Fernandes <joelaf@google.com>
-> Date:   Mon Dec 12 16:44:26 2016 -0800
-> 
->      mm: add preempt points into __purge_vmap_area_lazy()
-> 
-> commit f9e09977671b618aeb25ddc0d4c9a84d5b5cde9d
-> Author: Christoph Hellwig <hch@lst.de>
-> Date:   Mon Dec 12 16:44:23 2016 -0800
-> 
->      mm: turn vmap_purge_lock into a mutex
-> 
-> commit 80c4bd7a5e4368b680e0aeb57050a1b06eb573d8
-> Author: Chris Wilson <chris@chris-wilson.co.uk>
-> Date:   Fri May 20 16:57:38 2016 -0700
-> 
->      mm/vmalloc: keep a separate lazy-free list
-> 
-> So the first thing I want to do is to confirm that you see this problem
-> on a modern kernel.  We've had trouble with NVidia before reporting
-> historical problems as if they were new.
-> 
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ .../bindings/timer/nvidia,tegra210-timer.txt  | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210=
+-timer.txt
+
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.=
+txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+new file mode 100644
+index 000000000000..ba511220a669
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+@@ -0,0 +1,25 @@
++NVIDIA Tegra210 timer
++
++The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
++timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
++from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
++(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
++or watchdog interrupts.
++
++Required properties:
++- compatible : "nvidia,tegra210-timer".
++- reg : Specifies base physical address and size of the registers.
++- interrupts : A list of 4 interrupts; one per each of TMR10 through TMR13=
+.
++- clocks : Must contain one entry, for the module clock.
++  See ../clocks/clock-bindings.txt for details.
++
++timer@60005000 {
++	compatible =3D "nvidia,tegra210-timer";
++	reg =3D <0x0 0x60005000 0x0 0x400>;
++	interrupts =3D <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
++	clocks =3D <&tegra_car TEGRA210_CLK_TIMER>;
++	clock-names =3D "timer";
++};
+--=20
+2.20.1
