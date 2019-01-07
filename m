@@ -1,38 +1,54 @@
-From: Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH] dmaengine: tegra-apb: Use struct_size() in devm_kzalloc()
-Date: Mon, 7 Jan 2019 18:10:52 +0530
-Message-ID: <20190107124052.GJ13372@vkoul-mobl.Dlink>
-References: <20190104211612.GA14300@embeddedor>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] dmaengine: tegra210-adma: Use struct_size() in devm_kzalloc()
+Date: Mon, 7 Jan 2019 11:06:31 -0600
+Message-ID: <20190107170631.GA32119@embeddedor>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190104211612.GA14300@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04-01-19, 15:16, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct foo {
->     int stuff;
->     void *entry[];
-> };
-> 
-> instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
-> 
-> This code was detected with the help of Coccinelle.
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Applied, thanks
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
+instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/dma/tegra210-adma.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index b26256f23d67..5ec0dd97b397 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -678,8 +678,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	tdma = devm_kzalloc(&pdev->dev, sizeof(*tdma) + cdata->nr_channels *
+-			    sizeof(struct tegra_adma_chan), GFP_KERNEL);
++	tdma = devm_kzalloc(&pdev->dev,
++			    struct_size(tdma, channels, cdata->nr_channels),
++			    GFP_KERNEL);
+ 	if (!tdma)
+ 		return -ENOMEM;
+ 
 -- 
-~Vinod
+2.20.1
