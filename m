@@ -1,41 +1,82 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] selinux: avc: mark avc node as not a leak
-Date: Wed, 9 Jan 2019 11:31:26 +0000
-Message-ID: <20190109113126.nzpmb7xx4xqtn37w@mbp>
-References: <1547023162-6381-1-git-send-email-prpatel@nvidia.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v5 8/8] ARM: dts: Add stmpe-adc DT node to Toradex T30
+ modules
+Date: Wed, 9 Jan 2019 11:51:37 +0000
+Message-ID: <fb969b4fb6ece5b9674ee47c35534c075e389620.camel@toradex.com>
+References: <20181221134638.20600-1-dev@pschenker.ch>
+         <20181221134638.20600-9-dev@pschenker.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1547023162-6381-1-git-send-email-prpatel@nvidia.com>
+In-Reply-To: <20181221134638.20600-9-dev@pschenker.ch>
+Content-Language: en-US
+Content-ID: <7F833CA3C044474481205527C129A88A@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Prateek Patel <prpatel@nvidia.com>
-Cc: paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, linux-tegra@vger.kernel.org, talho@nvidia.com, swarren@nvidia.com, linux-mm@kvack.org, snikam@nvidia.com, vdumpa@nvidia.com, Sri Krishna chowdary <schowdary@nvidia.com>
+To: "stefan@agner.ch" <stefan@agner.ch>, "dev@pschenker.ch" <dev@pschenker.ch>, "jic23@kernel.org" <jic23@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "digetx@gmail.com" <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "coquelin.stm32@gmail.com" <coquelin.stm32@gmail.com>, Philippe Schenker <philippe.schenker@toradex.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "robh@kernel.org" <robh@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Prateek,
-
-On Wed, Jan 09, 2019 at 02:09:22PM +0530, Prateek Patel wrote:
-> From: Sri Krishna chowdary <schowdary@nvidia.com>
-> 
-> kmemleak detects allocated objects as leaks if not accessed for
-> default scan time. The memory allocated using avc_alloc_node
-> is freed using rcu mechanism when nodes are reclaimed or on
-> avc_flush. So, there is no real leak here and kmemleak_scan
-> detects it as a leak which is false positive. Hence, mark it as
-> kmemleak_not_leak.
-
-In theory, kmemleak should detect the node->rhead in the lists used by
-call_rcu() and not report it as a leak. Which RCU options do you have
-enabled (just to check whether kmemleak tracks the RCU internal lists)?
-
-Also, does this leak eventually disappear without your patch? Does
-
-  echo dump=0xffffffc0dd1a0e60 > /sys/kernel/debug/kmemleak
-
-still display this object?
-
-Thanks.
-
--- 
-Catalin
+T24gRnJpLCAyMDE4LTEyLTIxIGF0IDE0OjQ2ICswMTAwLCBQaGlsaXBwZSBTY2hlbmtlciB3cm90
+ZToNCj4gRnJvbTogUGhpbGlwcGUgU2NoZW5rZXIgPHBoaWxpcHBlLnNjaGVua2VyQHRvcmFkZXgu
+Y29tPg0KPiANCj4gQWRkIHRoZSBzdG1wZS1hZGMgRFQgbm9kZSBhcyBmb3VuZCBvbiBUb3JhZGV4
+IFQzMCBtb2R1bGVzDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBQaGlsaXBwZSBTY2hlbmtlciA8cGhp
+bGlwcGUuc2NoZW5rZXJAdG9yYWRleC5jb20+DQoNCkFja2VkLWJ5OiBNYXJjZWwgWmlzd2lsZXIg
+PG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCg0KPiAtLS0NCj4gDQo+IENoYW5nZXMgaW4g
+djU6IE5vbmUNCj4gQ2hhbmdlcyBpbiB2NDoNCj4gIC0gTmV3IHNlcGFyYXRlIGNvbW1pdCB0byBo
+b2xkIFQzMCBkZXZpY2V0cmVlIGNoYW5nZXMNCj4gDQo+IENoYW5nZXMgaW4gdjM6IE5vbmUNCj4g
+Q2hhbmdlcyBpbiB2MjogTm9uZQ0KPiANCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBh
+bGlzLmR0c2kgIHwgMjIgKysrKysrKysrKysrKystLS0tLS0tLQ0KPiAgYXJjaC9hcm0vYm9vdC9k
+dHMvdGVncmEzMC1jb2xpYnJpLmR0c2kgfCAyMiArKysrKysrKysrKysrKy0tLS0tLS0tDQo+ICAy
+IGZpbGVzIGNoYW5nZWQsIDI4IGluc2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBhbGlzLmR0c2kNCj4gYi9h
+cmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWFwYWxpcy5kdHNpDQo+IGluZGV4IDdmMTEyZjE5MmZl
+OS4uODUwYjBkMTM1NDlhIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMw
+LWFwYWxpcy5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBhbGlzLmR0
+c2kNCj4gQEAgLTk3NiwxMSArOTc2LDE4IEBADQo+ICAJCQlpZCA9IDwwPjsNCj4gIAkJCWJsb2Nr
+cyA9IDwweDU+Ow0KPiAgCQkJaXJxLXRyaWdnZXIgPSA8MHgxPjsNCj4gKwkJCS8qIDMuMjUgTUh6
+IEFEQyBjbG9jayBzcGVlZCAqLw0KPiArCQkJc3QsYWRjLWZyZXEgPSA8MT47DQo+ICsJCQkvKiAx
+Mi1iaXQgQURDICovDQo+ICsJCQlzdCxtb2QtMTJiID0gPDE+Ow0KPiArCQkJLyogaW50ZXJuYWwg
+QURDIHJlZmVyZW5jZSAqLw0KPiArCQkJc3QscmVmLXNlbCA9IDwwPjsNCj4gKwkJCS8qIEFEQyBj
+b252ZXJzdGlvbiB0aW1lOiA4MCBjbG9ja3MgKi8NCj4gKwkJCXN0LHNhbXBsZS10aW1lID0gPDQ+
+Ow0KPiArCQkJLyogZm9yYmlkIHRvIHVzZSBBREMgY2hhbm5lbHMgMy0wICh0b3VjaCkgKi8NCj4g
+IA0KPiAgCQkJc3RtcGVfdG91Y2hzY3JlZW4gew0KPiAgCQkJCWNvbXBhdGlibGUgPSAic3Qsc3Rt
+cGUtdHMiOw0KPiAtCQkJCS8qIDMuMjUgTUh6IEFEQyBjbG9jayBzcGVlZCAqLw0KPiAtCQkJCXN0
+LGFkYy1mcmVxID0gPDE+Ow0KPiAgCQkJCS8qIDggc2FtcGxlIGF2ZXJhZ2UgY29udHJvbCAqLw0K
+PiAgCQkJCXN0LGF2ZS1jdHJsID0gPDM+Ow0KPiAgCQkJCS8qIDcgbGVuZ3RoIGZyYWN0aW9uYWwg
+cGFydCBpbiB6ICovDQo+IEBAIC05OTAsMTcgKzk5NywxNiBAQA0KPiAgCQkJCSAqIGN1cnJlbnQg
+bGltaXQgdmFsdWUNCj4gIAkJCQkgKi8NCj4gIAkJCQlzdCxpLWRyaXZlID0gPDE+Ow0KPiAtCQkJ
+CS8qIDEyLWJpdCBBREMgKi8NCj4gLQkJCQlzdCxtb2QtMTJiID0gPDE+Ow0KPiAtCQkJCS8qIGlu
+dGVybmFsIEFEQyByZWZlcmVuY2UgKi8NCj4gLQkJCQlzdCxyZWYtc2VsID0gPDA+Ow0KPiAtCQkJ
+CS8qIEFEQyBjb252ZXJzdGlvbiB0aW1lOiA4MCBjbG9ja3MgKi8NCj4gLQkJCQlzdCxzYW1wbGUt
+dGltZSA9IDw0PjsNCj4gIAkJCQkvKiAxIG1zIHBhbmVsIGRyaXZlciBzZXR0bGluZyB0aW1lICov
+DQo+ICAJCQkJc3Qsc2V0dGxpbmcgPSA8Mz47DQo+ICAJCQkJLyogNSBtcyB0b3VjaCBkZXRlY3Qg
+aW50ZXJydXB0IGRlbGF5ICovDQo+ICAJCQkJc3QsdG91Y2gtZGV0LWRlbGF5ID0gPDU+Ow0KPiAg
+CQkJfTsNCj4gKw0KPiArCQkJc3RtcGVfYWRjIHsNCj4gKwkJCQljb21wYXRpYmxlID0gInN0LHN0
+bXBlLWFkYyI7DQo+ICsJCQkJc3Qsbm9yZXF1ZXN0LW1hc2sgPSA8MHgwRj47DQo+ICsJCQl9Ow0K
+PiAgCQl9Ow0KPiAgDQo+ICAJCS8qDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90
+ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtY29saWJy
+aS5kdHNpDQo+IGluZGV4IDM1YWYwM2NhOWU5MC4uMWY5MTk4YmIyNGZmIDEwMDY0NA0KPiAtLS0g
+YS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiArKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiBAQCAtODQ1LDExICs4NDUsMTggQEAN
+Cj4gIAkJCWlkID0gPDA+Ow0KPiAgCQkJYmxvY2tzID0gPDB4NT47DQo+ICAJCQlpcnEtdHJpZ2dl
+ciA9IDwweDE+Ow0KPiArCQkJLyogMy4yNSBNSHogQURDIGNsb2NrIHNwZWVkICovDQo+ICsJCQlz
+dCxhZGMtZnJlcSA9IDwxPjsNCj4gKwkJCS8qIDEyLWJpdCBBREMgKi8NCj4gKwkJCXN0LG1vZC0x
+MmIgPSA8MT47DQo+ICsJCQkvKiBpbnRlcm5hbCBBREMgcmVmZXJlbmNlICovDQo+ICsJCQlzdCxy
+ZWYtc2VsID0gPDA+Ow0KPiArCQkJLyogQURDIGNvbnZlcnN0aW9uIHRpbWU6IDgwIGNsb2NrcyAq
+Lw0KPiArCQkJc3Qsc2FtcGxlLXRpbWUgPSA8ND47DQo+ICsJCQkvKiBmb3JiaWQgdG8gdXNlIEFE
+QyBjaGFubmVscyAzLTAgKHRvdWNoKSAqLw0KPiAgDQo+ICAJCQlzdG1wZV90b3VjaHNjcmVlbiB7
+DQo+ICAJCQkJY29tcGF0aWJsZSA9ICJzdCxzdG1wZS10cyI7DQo+IC0JCQkJLyogMy4yNSBNSHog
+QURDIGNsb2NrIHNwZWVkICovDQo+IC0JCQkJc3QsYWRjLWZyZXEgPSA8MT47DQo+ICAJCQkJLyog
+OCBzYW1wbGUgYXZlcmFnZSBjb250cm9sICovDQo+ICAJCQkJc3QsYXZlLWN0cmwgPSA8Mz47DQo+
+ICAJCQkJLyogNyBsZW5ndGggZnJhY3Rpb25hbCBwYXJ0IGluIHogKi8NCj4gQEAgLTg1OSwxNyAr
+ODY2LDE2IEBADQo+ICAJCQkJICogY3VycmVudCBsaW1pdCB2YWx1ZQ0KPiAgCQkJCSAqLw0KPiAg
+CQkJCXN0LGktZHJpdmUgPSA8MT47DQo+IC0JCQkJLyogMTItYml0IEFEQyAqLw0KPiAtCQkJCXN0
+LG1vZC0xMmIgPSA8MT47DQo+IC0JCQkJLyogaW50ZXJuYWwgQURDIHJlZmVyZW5jZSAqLw0KPiAt
+CQkJCXN0LHJlZi1zZWwgPSA8MD47DQo+IC0JCQkJLyogQURDIGNvbnZlcnN0aW9uIHRpbWU6IDgw
+IGNsb2NrcyAqLw0KPiAtCQkJCXN0LHNhbXBsZS10aW1lID0gPDQ+Ow0KPiAgCQkJCS8qIDEgbXMg
+cGFuZWwgZHJpdmVyIHNldHRsaW5nIHRpbWUgKi8NCj4gIAkJCQlzdCxzZXR0bGluZyA9IDwzPjsN
+Cj4gIAkJCQkvKiA1IG1zIHRvdWNoIGRldGVjdCBpbnRlcnJ1cHQgZGVsYXkgKi8NCj4gIAkJCQlz
+dCx0b3VjaC1kZXQtZGVsYXkgPSA8NT47DQo+ICAJCQl9Ow0KPiArDQo+ICsJCQlzdG1wZV9hZGMg
+ew0KPiArCQkJCWNvbXBhdGlibGUgPSAic3Qsc3RtcGUtYWRjIjsNCj4gKwkJCQlzdCxub3JlcXVl
+c3QtbWFzayA9IDwweDBGPjsNCj4gKwkJCX07DQo+ICAJCX07DQo+ICANCj4gIAkJLyoNCg==
