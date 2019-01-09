@@ -1,82 +1,112 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH v5 8/8] ARM: dts: Add stmpe-adc DT node to Toradex T30
- modules
-Date: Wed, 9 Jan 2019 11:51:37 +0000
-Message-ID: <fb969b4fb6ece5b9674ee47c35534c075e389620.camel@toradex.com>
-References: <20181221134638.20600-1-dev@pschenker.ch>
-         <20181221134638.20600-9-dev@pschenker.ch>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v1 3/3] ASoC: soc-core: fix platform name
+ vs. of_node assignement
+Date: Wed, 9 Jan 2019 12:53:40 +0000
+Message-ID: <20190109125340.GD10405@sirena.org.uk>
+References: <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
+ <20181021112301.GC8554@sirena.org.uk>
+ <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+ <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
+ <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
+ <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
+ <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
+ <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
+ <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
+ <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181221134638.20600-9-dev@pschenker.ch>
-Content-Language: en-US
-Content-ID: <7F833CA3C044474481205527C129A88A@eurprd05.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "stefan@agner.ch" <stefan@agner.ch>, "dev@pschenker.ch" <dev@pschenker.ch>, "jic23@kernel.org" <jic23@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "digetx@gmail.com" <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "coquelin.stm32@gmail.com" <coquelin.stm32@gmail.com>, Philippe Schenker <philippe.schenker@toradex.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "robh@kernel.org" <robh@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============7329907036707495693=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Matthias Reichl <hias@horus.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTEyLTIxIGF0IDE0OjQ2ICswMTAwLCBQaGlsaXBwZSBTY2hlbmtlciB3cm90
-ZToNCj4gRnJvbTogUGhpbGlwcGUgU2NoZW5rZXIgPHBoaWxpcHBlLnNjaGVua2VyQHRvcmFkZXgu
-Y29tPg0KPiANCj4gQWRkIHRoZSBzdG1wZS1hZGMgRFQgbm9kZSBhcyBmb3VuZCBvbiBUb3JhZGV4
-IFQzMCBtb2R1bGVzDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBQaGlsaXBwZSBTY2hlbmtlciA8cGhp
-bGlwcGUuc2NoZW5rZXJAdG9yYWRleC5jb20+DQoNCkFja2VkLWJ5OiBNYXJjZWwgWmlzd2lsZXIg
-PG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCg0KPiAtLS0NCj4gDQo+IENoYW5nZXMgaW4g
-djU6IE5vbmUNCj4gQ2hhbmdlcyBpbiB2NDoNCj4gIC0gTmV3IHNlcGFyYXRlIGNvbW1pdCB0byBo
-b2xkIFQzMCBkZXZpY2V0cmVlIGNoYW5nZXMNCj4gDQo+IENoYW5nZXMgaW4gdjM6IE5vbmUNCj4g
-Q2hhbmdlcyBpbiB2MjogTm9uZQ0KPiANCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBh
-bGlzLmR0c2kgIHwgMjIgKysrKysrKysrKysrKystLS0tLS0tLQ0KPiAgYXJjaC9hcm0vYm9vdC9k
-dHMvdGVncmEzMC1jb2xpYnJpLmR0c2kgfCAyMiArKysrKysrKysrKysrKy0tLS0tLS0tDQo+ICAy
-IGZpbGVzIGNoYW5nZWQsIDI4IGluc2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBhbGlzLmR0c2kNCj4gYi9h
-cmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWFwYWxpcy5kdHNpDQo+IGluZGV4IDdmMTEyZjE5MmZl
-OS4uODUwYjBkMTM1NDlhIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMw
-LWFwYWxpcy5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBhbGlzLmR0
-c2kNCj4gQEAgLTk3NiwxMSArOTc2LDE4IEBADQo+ICAJCQlpZCA9IDwwPjsNCj4gIAkJCWJsb2Nr
-cyA9IDwweDU+Ow0KPiAgCQkJaXJxLXRyaWdnZXIgPSA8MHgxPjsNCj4gKwkJCS8qIDMuMjUgTUh6
-IEFEQyBjbG9jayBzcGVlZCAqLw0KPiArCQkJc3QsYWRjLWZyZXEgPSA8MT47DQo+ICsJCQkvKiAx
-Mi1iaXQgQURDICovDQo+ICsJCQlzdCxtb2QtMTJiID0gPDE+Ow0KPiArCQkJLyogaW50ZXJuYWwg
-QURDIHJlZmVyZW5jZSAqLw0KPiArCQkJc3QscmVmLXNlbCA9IDwwPjsNCj4gKwkJCS8qIEFEQyBj
-b252ZXJzdGlvbiB0aW1lOiA4MCBjbG9ja3MgKi8NCj4gKwkJCXN0LHNhbXBsZS10aW1lID0gPDQ+
-Ow0KPiArCQkJLyogZm9yYmlkIHRvIHVzZSBBREMgY2hhbm5lbHMgMy0wICh0b3VjaCkgKi8NCj4g
-IA0KPiAgCQkJc3RtcGVfdG91Y2hzY3JlZW4gew0KPiAgCQkJCWNvbXBhdGlibGUgPSAic3Qsc3Rt
-cGUtdHMiOw0KPiAtCQkJCS8qIDMuMjUgTUh6IEFEQyBjbG9jayBzcGVlZCAqLw0KPiAtCQkJCXN0
-LGFkYy1mcmVxID0gPDE+Ow0KPiAgCQkJCS8qIDggc2FtcGxlIGF2ZXJhZ2UgY29udHJvbCAqLw0K
-PiAgCQkJCXN0LGF2ZS1jdHJsID0gPDM+Ow0KPiAgCQkJCS8qIDcgbGVuZ3RoIGZyYWN0aW9uYWwg
-cGFydCBpbiB6ICovDQo+IEBAIC05OTAsMTcgKzk5NywxNiBAQA0KPiAgCQkJCSAqIGN1cnJlbnQg
-bGltaXQgdmFsdWUNCj4gIAkJCQkgKi8NCj4gIAkJCQlzdCxpLWRyaXZlID0gPDE+Ow0KPiAtCQkJ
-CS8qIDEyLWJpdCBBREMgKi8NCj4gLQkJCQlzdCxtb2QtMTJiID0gPDE+Ow0KPiAtCQkJCS8qIGlu
-dGVybmFsIEFEQyByZWZlcmVuY2UgKi8NCj4gLQkJCQlzdCxyZWYtc2VsID0gPDA+Ow0KPiAtCQkJ
-CS8qIEFEQyBjb252ZXJzdGlvbiB0aW1lOiA4MCBjbG9ja3MgKi8NCj4gLQkJCQlzdCxzYW1wbGUt
-dGltZSA9IDw0PjsNCj4gIAkJCQkvKiAxIG1zIHBhbmVsIGRyaXZlciBzZXR0bGluZyB0aW1lICov
-DQo+ICAJCQkJc3Qsc2V0dGxpbmcgPSA8Mz47DQo+ICAJCQkJLyogNSBtcyB0b3VjaCBkZXRlY3Qg
-aW50ZXJydXB0IGRlbGF5ICovDQo+ICAJCQkJc3QsdG91Y2gtZGV0LWRlbGF5ID0gPDU+Ow0KPiAg
-CQkJfTsNCj4gKw0KPiArCQkJc3RtcGVfYWRjIHsNCj4gKwkJCQljb21wYXRpYmxlID0gInN0LHN0
-bXBlLWFkYyI7DQo+ICsJCQkJc3Qsbm9yZXF1ZXN0LW1hc2sgPSA8MHgwRj47DQo+ICsJCQl9Ow0K
-PiAgCQl9Ow0KPiAgDQo+ICAJCS8qDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90
-ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtY29saWJy
-aS5kdHNpDQo+IGluZGV4IDM1YWYwM2NhOWU5MC4uMWY5MTk4YmIyNGZmIDEwMDY0NA0KPiAtLS0g
-YS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiArKysgYi9hcmNoL2Fy
-bS9ib290L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiBAQCAtODQ1LDExICs4NDUsMTggQEAN
-Cj4gIAkJCWlkID0gPDA+Ow0KPiAgCQkJYmxvY2tzID0gPDB4NT47DQo+ICAJCQlpcnEtdHJpZ2dl
-ciA9IDwweDE+Ow0KPiArCQkJLyogMy4yNSBNSHogQURDIGNsb2NrIHNwZWVkICovDQo+ICsJCQlz
-dCxhZGMtZnJlcSA9IDwxPjsNCj4gKwkJCS8qIDEyLWJpdCBBREMgKi8NCj4gKwkJCXN0LG1vZC0x
-MmIgPSA8MT47DQo+ICsJCQkvKiBpbnRlcm5hbCBBREMgcmVmZXJlbmNlICovDQo+ICsJCQlzdCxy
-ZWYtc2VsID0gPDA+Ow0KPiArCQkJLyogQURDIGNvbnZlcnN0aW9uIHRpbWU6IDgwIGNsb2NrcyAq
-Lw0KPiArCQkJc3Qsc2FtcGxlLXRpbWUgPSA8ND47DQo+ICsJCQkvKiBmb3JiaWQgdG8gdXNlIEFE
-QyBjaGFubmVscyAzLTAgKHRvdWNoKSAqLw0KPiAgDQo+ICAJCQlzdG1wZV90b3VjaHNjcmVlbiB7
-DQo+ICAJCQkJY29tcGF0aWJsZSA9ICJzdCxzdG1wZS10cyI7DQo+IC0JCQkJLyogMy4yNSBNSHog
-QURDIGNsb2NrIHNwZWVkICovDQo+IC0JCQkJc3QsYWRjLWZyZXEgPSA8MT47DQo+ICAJCQkJLyog
-OCBzYW1wbGUgYXZlcmFnZSBjb250cm9sICovDQo+ICAJCQkJc3QsYXZlLWN0cmwgPSA8Mz47DQo+
-ICAJCQkJLyogNyBsZW5ndGggZnJhY3Rpb25hbCBwYXJ0IGluIHogKi8NCj4gQEAgLTg1OSwxNyAr
-ODY2LDE2IEBADQo+ICAJCQkJICogY3VycmVudCBsaW1pdCB2YWx1ZQ0KPiAgCQkJCSAqLw0KPiAg
-CQkJCXN0LGktZHJpdmUgPSA8MT47DQo+IC0JCQkJLyogMTItYml0IEFEQyAqLw0KPiAtCQkJCXN0
-LG1vZC0xMmIgPSA8MT47DQo+IC0JCQkJLyogaW50ZXJuYWwgQURDIHJlZmVyZW5jZSAqLw0KPiAt
-CQkJCXN0LHJlZi1zZWwgPSA8MD47DQo+IC0JCQkJLyogQURDIGNvbnZlcnN0aW9uIHRpbWU6IDgw
-IGNsb2NrcyAqLw0KPiAtCQkJCXN0LHNhbXBsZS10aW1lID0gPDQ+Ow0KPiAgCQkJCS8qIDEgbXMg
-cGFuZWwgZHJpdmVyIHNldHRsaW5nIHRpbWUgKi8NCj4gIAkJCQlzdCxzZXR0bGluZyA9IDwzPjsN
-Cj4gIAkJCQkvKiA1IG1zIHRvdWNoIGRldGVjdCBpbnRlcnJ1cHQgZGVsYXkgKi8NCj4gIAkJCQlz
-dCx0b3VjaC1kZXQtZGVsYXkgPSA8NT47DQo+ICAJCQl9Ow0KPiArDQo+ICsJCQlzdG1wZV9hZGMg
-ew0KPiArCQkJCWNvbXBhdGlibGUgPSAic3Qsc3RtcGUtYWRjIjsNCj4gKwkJCQlzdCxub3JlcXVl
-c3QtbWFzayA9IDwweDBGPjsNCj4gKwkJCX07DQo+ICAJCX07DQo+ICANCj4gIAkJLyoNCg==
+
+--===============7329907036707495693==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3Gf/FFewwPeBMqCJ"
+Content-Disposition: inline
+
+
+--3Gf/FFewwPeBMqCJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Jan 09, 2019 at 11:03:44AM +0000, Jon Hunter wrote:
+> On 09/01/2019 01:51, Kuninori Morimoto wrote:
+
+> > "multi platform" is no plan (?).
+
+> I would like someone to explain what multi-platform means? Even if a
+> soundcard supports multiple platforms, there is only one platform you
+> are using at any time so ...
+
+Platform in this case means DMA driver (for historical reasons I've
+never entirely understood the DMA drivers got called the platform
+drivers).  It is possible that a system might have multiple DMA
+implementations in a single sound card but fortunately we don't seem to
+run into that.
+
+> > I want to which to modern style immediately and remove legacy style.
+> > But as you know, we have too many ALSA SoC drivers now.
+> > So, if I posted "switch legacy style to modern style" patch
+> > for each (= for codec, for platform, for cpu), it will be patch-bomb,
+> > and Lars-Petter/Mark don't like it.
+> > Thus, I'm waiting "multi CPU" support patch.
+
+> Sorry, I still don't understand the dependency on the multi CPU and why
+> we need to wait.
+
+I believe Morimoto-san's concern is to minimize the number of
+refactorings of the drivers as that gets disruptive.  That's definitely
+a valid concern but we can't postpone fixing bugs over releases, we need
+things to work for people.
+
+> > If CPU/Codec/Platform can be snd_soc_init_platform style,
+> > then, we can switch to modern style for all drivers.
+> > Then, all driver will have *static* platform.
+
+> > # So, I guess if your driver can switch to use
+> > # snd_soc_init_platform style directly, your problem can gone ?
+
+> Yes that is an alternative and I can convert all the Tegra machine
+> drivers to use this now. However, that will not solve the problem for
+> non-Tegra devices and everyone will have to do this.
+
+We're going to have to go through another round of conversions that
+touch everything at some point no matter what :/
+
+--3Gf/FFewwPeBMqCJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw17tMACgkQJNaLcl1U
+h9BKZwgAgiM09pC/S8pF3GuNtiVWeTFJvT4K9Ys03qD/pYCXjk4xmwhrfrvB736w
+kvJwQz0WGCYh96IYskAJMAfMKh8jzneCBHswcVCM9IruT0bTDXZll0VpC+6W0N1F
+yavk0QNgg8hWkQ61EMP1XQy3gS++DIoljTsNGT/7B87ikf/O3g+vA8e/tzrrxp9U
+CQt5cQH9lRfkHS6LGKZxGnuFnadmk+pRushWhfWeDRIQZESV4r4Wf8hb73d9SUJA
+B5ffkYQJmR9Ae39eQDVXEw0duXk/z3SChCfyKdh19yEpEKfan+9JATb8XDlVTFpE
+W6BCTdiNcQtc+3gfAjTTD9MOE56JBw==
+=zUC8
+-----END PGP SIGNATURE-----
+
+--3Gf/FFewwPeBMqCJ--
+
+--===============7329907036707495693==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7329907036707495693==--
