@@ -1,112 +1,185 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v1 3/3] ASoC: soc-core: fix platform name
- vs. of_node assignement
-Date: Wed, 9 Jan 2019 12:53:40 +0000
-Message-ID: <20190109125340.GD10405@sirena.org.uk>
-References: <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
- <20181021112301.GC8554@sirena.org.uk>
- <20181218174040.k7u26vnnoplllnwb@camel2.lan>
- <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
- <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
- <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
- <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
- <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
- <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
- <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
+From: Philippe Schenker <dev@pschenker.ch>
+Subject: [PATCH v6 8/8] ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
+Date: Wed,  9 Jan 2019 14:42:07 +0100
+Message-ID: <20190109134208.5660-9-dev@pschenker.ch>
+References: <20190109134208.5660-1-dev@pschenker.ch>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7329907036707495693=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Matthias Reichl <hias@horus.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190109134208.5660-1-dev@pschenker.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
+Cc: robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org, dmitry.torokhov@gmail.com, thierry.reding@gmail.com, mcoquelin.stm32@gmail.com, digetx@gmail.com, lee.jones@linaro.org, Philippe Schenker <philippe.schenker@toradex.com>, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
---===============7329907036707495693==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3Gf/FFewwPeBMqCJ"
-Content-Disposition: inline
+Add the stmpe-adc DT node as found on Toradex T30 modules
 
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 
---3Gf/FFewwPeBMqCJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
 
-On Wed, Jan 09, 2019 at 11:03:44AM +0000, Jon Hunter wrote:
-> On 09/01/2019 01:51, Kuninori Morimoto wrote:
+Changes in v6:
+ - Just realized that the comment for st,norequest-mask was at the wrong
+   place, fixed.
+ - Added also tegra30-apalis-v1.1.dtsi, as I forgot that.
 
-> > "multi platform" is no plan (?).
+Changes in v5: None
+Changes in v4:
+ - New separate commit to hold T30 devicetree changes
 
-> I would like someone to explain what multi-platform means? Even if a
-> soundcard supports multiple platforms, there is only one platform you
-> are using at any time so ...
+Changes in v3: None
+Changes in v2: None
 
-Platform in this case means DMA driver (for historical reasons I've
-never entirely understood the DMA drivers got called the platform
-drivers).  It is possible that a system might have multiple DMA
-implementations in a single sound card but fortunately we don't seem to
-run into that.
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
+ arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
+ arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
+ 3 files changed, 42 insertions(+), 24 deletions(-)
 
-> > I want to which to modern style immediately and remove legacy style.
-> > But as you know, we have too many ALSA SoC drivers now.
-> > So, if I posted "switch legacy style to modern style" patch
-> > for each (= for codec, for platform, for cpu), it will be patch-bomb,
-> > and Lars-Petter/Mark don't like it.
-> > Thus, I'm waiting "multi CPU" support patch.
-
-> Sorry, I still don't understand the dependency on the multi CPU and why
-> we need to wait.
-
-I believe Morimoto-san's concern is to minimize the number of
-refactorings of the drivers as that gets disruptive.  That's definitely
-a valid concern but we can't postpone fixing bugs over releases, we need
-things to work for people.
-
-> > If CPU/Codec/Platform can be snd_soc_init_platform style,
-> > then, we can switch to modern style for all drivers.
-> > Then, all driver will have *static* platform.
-
-> > # So, I guess if your driver can switch to use
-> > # snd_soc_init_platform style directly, your problem can gone ?
-
-> Yes that is an alternative and I can convert all the Tegra machine
-> drivers to use this now. However, that will not solve the problem for
-> non-Tegra devices and everyone will have to do this.
-
-We're going to have to go through another round of conversions that
-touch everything at some point no matter what :/
-
---3Gf/FFewwPeBMqCJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw17tMACgkQJNaLcl1U
-h9BKZwgAgiM09pC/S8pF3GuNtiVWeTFJvT4K9Ys03qD/pYCXjk4xmwhrfrvB736w
-kvJwQz0WGCYh96IYskAJMAfMKh8jzneCBHswcVCM9IruT0bTDXZll0VpC+6W0N1F
-yavk0QNgg8hWkQ61EMP1XQy3gS++DIoljTsNGT/7B87ikf/O3g+vA8e/tzrrxp9U
-CQt5cQH9lRfkHS6LGKZxGnuFnadmk+pRushWhfWeDRIQZESV4r4Wf8hb73d9SUJA
-B5ffkYQJmR9Ae39eQDVXEw0duXk/z3SChCfyKdh19yEpEKfan+9JATb8XDlVTFpE
-W6BCTdiNcQtc+3gfAjTTD9MOE56JBw==
-=zUC8
------END PGP SIGNATURE-----
-
---3Gf/FFewwPeBMqCJ--
-
---===============7329907036707495693==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7329907036707495693==--
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+index 02f8126481a2..8b7a827d604d 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+@@ -994,11 +994,17 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -1008,17 +1014,17 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				/* forbid to use ADC channels 3-0 (touch) */
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 7f112f192fe9..c18f6f61d764 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -976,11 +976,17 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -990,17 +996,17 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				/* forbid to use ADC channels 3-0 (touch) */
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 35af03ca9e90..1f9198bb24ff 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -845,11 +845,18 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
++			/* forbid to use ADC channels 3-0 (touch) */
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -859,17 +866,16 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
+-- 
+2.20.1
