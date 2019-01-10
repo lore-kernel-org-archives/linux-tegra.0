@@ -1,58 +1,76 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V5] i2c: tegra: Fix Maximum transfer size
-Date: Thu, 10 Jan 2019 08:59:26 +0100
-Message-ID: <20190110075926.GA5213@ulmo>
-References: <1546984750-26199-1-git-send-email-skomatineni@nvidia.com>
- <1546984750-26199-2-git-send-email-skomatineni@nvidia.com>
+From: <yamada.masahiro@socionext.com>
+Subject: RE: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Date: Thu, 10 Jan 2019 08:01:52 +0000
+Message-ID: <8e2a312104924025ad4d37afa40d147d@SOC-EX01V.e01.socionext.com>
+References: <20190109202934.29304-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1546984750-26199-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190109202934.29304-1-robh@kernel.org>
+Content-Language: ja-JP
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: robh@kernel.org, arm@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, afaerber@suse.de, manivannan.sadhasivam@linaro.org, tsahee@annapurnalabs.com, antoine.tenart@bootlin.com, maxime.ripard@bootlin.com, wens@csie.org, dinguyen@kernel.org, khilman@baylibre.com, dhdang@apm.com, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, rrichter@cavium.com, jnair@caviumnetworks.com, kgene@kernel.org, krzk@kernel.org, xuwei5@hisilicon.com, chanho.min@lge.com, jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, andy.gross@linaro.o
 List-Id: linux-tegra@vger.kernel.org
 
-
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 08, 2019 at 01:59:10PM -0800, Sowjanya Komatineni wrote:
-> Tegra194 supports maximum 64K Bytes transfer per packet.
-> Tegra186 and prior supports maximum 4K Bytes transfer per packet.
->=20
-> This patch fixes this payload difference between Tegra194 and prior
-> tegra chipsets using separate i2c_adapter_quirks.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw2+1sACgkQ3SOs138+
-s6HGZw/+OgrH0vkohH4q9BiATVC4SuZlLfhPt6G2C+/w2Ziuqh+F9ek1ByxxQRM3
-rcP+YO76giKzcUSOnyglp0OVRAY0JLGetrk2ejlynC6g1thykq68rfflLZzEGNlG
-auYJcAFLUuDpvpB8cynuSJUtX9S8dj/PUYuIGWEYrupYVSpNGqrWfd8AXhcUdO2N
-O0gDtKLvVAtoieFks0xOFqoYxxYIaFndyAw+J/8GsJggKjkF7hPUS8gP9A0dSCVR
-p3wumVhB+znWZEHH1Ya37vKIUbzbKQuFqxOY2JKW+7uNMmQ9MrCPRMidbUqhRB+y
-DGfBl9J0SW4ng/9/Gce8f7GddXYQFH9E3cgUA1v9RjdcRstvqvnrci4HofATo8a3
-TJftImGwgCgAsBzwruYVuotmDYmDX0gz3MWDzaI0ULDx+CR7WVnp+A45WhLefmxv
-nvx6iQFhUwPLzVAbStqaLPF4L4aTgJWGZEaWkhwaHsPUs49SzqWHB+HEzZRh+naU
-QWMsPS4bU3U1aHo87TIixUdoZysLiWLJxxg2mEIRWU+zM0Dw1K6rEPW0qMhYq4EV
-xM+PXBg6zDLPdtGM2w55DfTSYtqBc54kfwY15xbZxkRBtbbs9yQyIsY7e/tvziyn
-GSgi4B4A3CD1TTWvaXHtQM9TaMbbvHTvh6OFJPsJZ1xZr+SoE8Q=
-=x4d3
------END PGP SIGNATURE-----
-
---OXfL5xGRrasGEqWY--
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgW21h
+aWx0bzpyb2JoQGtlcm5lbC5vcmddDQo+IFNlbnQ6IFRodXJzZGF5LCBKYW51YXJ5IDEwLCAyMDE5
+IDU6MzAgQU0NCj4gVG86IGFybUBrZXJuZWwub3JnDQo+IENjOiBkZXZpY2V0cmVlQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgQW5kcmVhcw0KPiBGw6RyYmVy
+IDxhZmFlcmJlckBzdXNlLmRlPjsgTWFuaXZhbm5hbiBTYWRoYXNpdmFtDQo+IDxtYW5pdmFubmFu
+LnNhZGhhc2l2YW1AbGluYXJvLm9yZz47IFRzYWhlZSBaaWRlbmJlcmcNCj4gPHRzYWhlZUBhbm5h
+cHVybmFsYWJzLmNvbT47IEFudG9pbmUgVGVuYXJ0IDxhbnRvaW5lLnRlbmFydEBib290bGluLmNv
+bT47DQo+IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAYm9vdGxpbi5jb20+OyBDaGVuLVl1
+IFRzYWkgPHdlbnNAY3NpZS5vcmc+Ow0KPiBEaW5oIE5ndXllbiA8ZGluZ3V5ZW5Aa2VybmVsLm9y
+Zz47IEtldmluIEhpbG1hbiA8a2hpbG1hbkBiYXlsaWJyZS5jb20+Ow0KPiBEdWMgRGFuZyA8ZGhk
+YW5nQGFwbS5jb20+OyBMaXZpdSBEdWRhdSA8bGl2aXUuZHVkYXVAYXJtLmNvbT47IFN1ZGVlcCBI
+b2xsYQ0KPiA8c3VkZWVwLmhvbGxhQGFybS5jb20+OyBMb3JlbnpvIFBpZXJhbGlzaSA8bG9yZW56
+by5waWVyYWxpc2lAYXJtLmNvbT47DQo+IFJheSBKdWkgPHJqdWlAYnJvYWRjb20uY29tPjsgU2Nv
+dHQgQnJhbmRlbiA8c2JyYW5kZW5AYnJvYWRjb20uY29tPjsNCj4gYmNtLWtlcm5lbC1mZWVkYmFj
+ay1saXN0QGJyb2FkY29tLmNvbTsgUm9iZXJ0IFJpY2h0ZXINCj4gPHJyaWNodGVyQGNhdml1bS5j
+b20+OyBKYXlhY2hhbmRyYW4gQyA8am5haXJAY2F2aXVtbmV0d29ya3MuY29tPjsgS3VramluDQo+
+IEtpbSA8a2dlbmVAa2VybmVsLm9yZz47IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVs
+Lm9yZz47IFdlaSBYdQ0KPiA8eHV3ZWk1QGhpc2lsaWNvbi5jb20+OyBDaGFuaG8gTWluIDxjaGFu
+aG8ubWluQGxnZS5jb20+OyBKYXNvbiBDb29wZXINCj4gPGphc29uQGxha2VkYWVtb24ubmV0Pjsg
+QW5kcmV3IEx1bm4gPGFuZHJld0BsdW5uLmNoPjsgR3JlZ29yeSBDbGVtZW50DQo+IDxncmVnb3J5
+LmNsZW1lbnRAYm9vdGxpbi5jb20+OyBTZWJhc3RpYW4gSGVzc2VsYmFydGgNCj4gPHNlYmFzdGlh
+bi5oZXNzZWxiYXJ0aEBnbWFpbC5jb20+OyBNYXR0aGlhcyBCcnVnZ2VyDQo+IDxtYXR0aGlhcy5i
+Z2dAZ21haWwuY29tPjsgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT47
+DQo+IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+OyBBbmR5IEdyb3NzDQo+
+IDxhbmR5Lmdyb3NzQGxpbmFyby5vcmc+OyBEYXZpZCBCcm93biA8ZGF2aWQuYnJvd25AbGluYXJv
+Lm9yZz47IFNpbW9uDQo+IEhvcm1hbiA8aG9ybXNAdmVyZ2UubmV0LmF1PjsgTWFnbnVzIERhbW0g
+PG1hZ251cy5kYW1tQGdtYWlsLmNvbT47IEhlaWtvDQo+IFN0dWVibmVyIDxoZWlrb0BzbnRlY2gu
+ZGU+OyBZYW1hZGEsIE1hc2FoaXJvL+WxseeUsCDnnJ/lvJgNCj4gPHlhbWFkYS5tYXNhaGlyb0Bz
+b2Npb25leHQuY29tPjsgT3Jzb24gWmhhaSA8b3Jzb256aGFpQGdtYWlsLmNvbT47DQo+IEJhb2xp
+biBXYW5nIDxiYW9saW4ud2FuZ0BsaW5hcm8ub3JnPjsgQ2h1bnlhbiBaaGFuZw0KPiA8emhhbmcu
+bHlyYUBnbWFpbC5jb20+OyBKaXNoZW5nIFpoYW5nIDxKaXNoZW5nLlpoYW5nQHN5bmFwdGljcy5j
+b20+Ow0KPiBUZXJvIEtyaXN0byA8dC1rcmlzdG9AdGkuY29tPjsgTmlzaGFudGggTWVub24gPG5t
+QHRpLmNvbT47IEp1biBOaWUNCj4gPGp1bi5uaWVAbGluYXJvLm9yZz47IFNoYXduIEd1byA8c2hh
+d25ndW9Aa2VybmVsLm9yZz47DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+ZzsNCj4gbGludXgtYW1sb2dpY0BsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zYW1zdW5nLXNv
+Y0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmc7
+IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtcm9ja2No
+aXBAbGlzdHMuaW5mcmFkZWFkLm9yZzsgTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNv
+bT47DQo+IFdpbGwgRGVhY29uIDx3aWxsLmRlYWNvbkBhcm0uY29tPjsgTWljaGFsIFNpbWVrIDxt
+aWNoYWwuc2ltZWtAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogW1BBVENIXSBhcm02NDogZHRzOiBS
+ZW1vdmUgaW5jb25zaXN0ZW50IHVzZSBvZiAnYXJtLGFybXY4Jw0KPiBjb21wYXRpYmxlIHN0cmlu
+Zw0KPiANCj4gVGhlICdhcm0sYXJtdjgnIGNvbXBhdGlibGUgc3RyaW5nIGlzIG9ubHkgZm9yIHNv
+ZnR3YXJlIG1vZGVscy4gSXQgYWRkcw0KPiBsaXR0bGUgdmFsdWUgb3RoZXJ3aXNlIGFuZCBpcyBp
+bmNvbnNpc3RlbnRseSB1c2VkIGFzIGEgZmFsbGJhY2sgb24gc29tZQ0KPiBwbGF0Zm9ybXMuIFJl
+bW92ZSBpdCBmcm9tIHRob3NlIHBsYXRmb3Jtcy4NCj4gDQo+IFRoaXMgZml4ZXMgd2FybmluZ3Mg
+Z2VuZXJhdGVkIGJ5IHRoZSBEVCBzY2hlbWEuDQo+IA0KPiBSZXBvcnRlZC1ieTogTWljaGFsIFNp
+bWVrIDxtaWNoYWwuc2ltZWtAeGlsaW54LmNvbT4NCj4gQ2M6IE1hcmsgUnV0bGFuZCA8bWFyay5y
+dXRsYW5kQGFybS5jb20+DQo+IENjOiBXaWxsIERlYWNvbiA8d2lsbC5kZWFjb25AYXJtLmNvbT4N
+Cj4gU2lnbmVkLW9mZi1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gLS0tDQo+
+IGFybXNvYyBmb2xrcywgUGxlYXNlIGFwcGx5IGRpcmVjdGx5Lg0KPiANCj4gTm90ZSB0aGF0IHRo
+ZXJlJ3Mgc3RpbGwgYSBjYXNlIGxlZnQgaW4gbXNtODk5OCB0aGF0IG5lZWRzIGEgbmV3DQo+IGNv
+bXBhdGlibGUgc3RyaW5nLg0KPiANCj4gUm9iDQoNCls+IF0gDQoNCj4gIC4uLi9ib290L2R0cy9z
+b2Npb25leHQvdW5pcGhpZXItbGQxMS5kdHNpICAgICB8ICAgNCArLQ0KPiAgLi4uL2Jvb3QvZHRz
+L3NvY2lvbmV4dC91bmlwaGllci1sZDIwLmR0c2kgICAgIHwgICA4ICstDQo+ICAuLi4vYm9vdC9k
+dHMvc29jaW9uZXh0L3VuaXBoaWVyLXB4czMuZHRzaSAgICAgfCAgIDggKy0NCg0KDQpGb3IgdW5p
+cGhpZXIsDQoNCkFja2VkLWJ5OiBNYXNhaGlybyBZYW1hZGEgPHlhbWFkYS5tYXNhaGlyb0Bzb2Np
+b25leHQuY29tPg0KDQoNCkJUVywgZG8geW91IGhhdmUgYSBwbGFuIHRvIGZpeCBmaWxlcyB1bmRl
+cg0KRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzLyA/DQoNCg==
