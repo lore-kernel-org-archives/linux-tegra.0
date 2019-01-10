@@ -1,131 +1,58 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
-Date: Thu, 10 Jan 2019 16:11:33 +0200
-Message-ID: <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
-References: <20190104104753.3383-1-thierry.reding@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Date: Thu, 10 Jan 2019 08:16:24 -0600
+Message-ID: <CAL_JsqLkWAFpQckQO9RTKYcA1tQE7WTPuydqm78PU8pAoi7gpw@mail.gmail.com>
+References: <20190109202934.29304-1-robh@kernel.org>
+ <20190110022709.kh5vlave65jn7m4g@kahuna>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190104104753.3383-1-thierry.reding@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20190110022709.kh5vlave65jn7m4g@kahuna>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, ARM-SoC Maintainers <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-sam
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/01/19 12:47 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The implementation of sdhci_set_dma_mask() is conflating two things: on
-> one hand it uses the SDHCI_USE_64_BIT_DMA flag to determine whether or
-> not to use the 64-bit addressing capability of the controller and on the
-> other hand it also uses that flag to set a DMA mask for the controller's
-> parent device.
-> 
-> However, a controller supporting 64-bit addressing doesn't mean that it
-> needs to support addressing 64 bits of address range. It's perfectly
-> acceptable to use 64-bit addressing for a 32-bit address range or even
-> smaller, even if that makes little sense, considering the extra overhead
-> of the 64-bit addressing descriptors.
-> 
-> But it is fairly common for hardware to support somewhere between 32 and
-> 64 bits of address range. Tegra124 and Tegra210, for example, support 34
-> bits and the newer Tegra186 and Tegra194 support 40 bits. The latter can
-> also use an IOMMU for address translation, which has an input address
-> range of 48 bits. This causes problems with the current algorithm in the
-> SDHCI core for choosing the DMA mask. If the DMA mask is set to 64 bits,
-> the DMA memory allocations can (and usually do because the allocator
-> starts from the top) end up beyond the 40 bit boundary addressable by
-> the SDHCI controller, causing IOMMU faults.
-> 
-> For Tegra specifically this problem is currently worked around by
-> setting the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk. This causes the DMA
-> mask to always be set to 32 bits and therefore all allocations will fit
-> within the range addressable by the controller.
-> 
-> This commit reworks the code in sdhci_set_dma_mask() to fix the above
-> issue. The rationale behind this change is that the SDHCI controller
-> driver should be the authoritative source of the DMA mask setting. The
-> SDHCI core has no way of knowing what the individual SDHCI controllers
-> are capable of. So instead of overriding the DMA mask depending on
-> whether or not 64-bit addressing mode is used, the DMA mask is only
-> modified if absolutely necessary. On one hand, if the controller can
-> only address 32 bits of memory or less, we disable use of 64-bit
-> addressing mode because it is not needed. On the other hand, we also
-> want to make sure that if we don't support 64-bit addressing mode, such
-> as in the case where the BROKEN_64_BIT_DMA quirk is set, we do restrict
-> the DMA mask to fit the capabilities. The latter is an inconsistency by
-> the driver, so we warn about it to make sure it will be addressed in the
-> driver.
+On Wed, Jan 9, 2019 at 8:27 PM Nishanth Menon <nm-l0cyMroinI0@public.gmane.org> wrote:
+>
+> On 14:29-20190109, Rob Herring wrote:
+> > The 'arm,armv8' compatible string is only for software models. It adds
+> > little value otherwise and is inconsistently used as a fallback on some
+> > platforms. Remove it from those platforms.
+> >
+> > This fixes warnings generated by the DT schema.
+> >
+> > Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> > Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> > Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > ---
+> [...]
+>
+> ARM SoC maintainers, At least on a quick look (I could be wrong), I
+> think we don't have any explicit processor bindings documentation.
 
-sdhci_set_dma_mask() was added because people did want sdhci to set the DMA
-mask.  Also using 64-bit DMA even with 32-bit systems has the advantage of
-reducing exposure to problems i.e. the same logic is used with the same SoC
-irrespective of whether or not it is in 32-bit compatibility mode.  So the
-policy for sdhci is always to use 64-bit DMA if it is supported.
+bindings/arm/cpus.yaml
 
-I suggest we add a new sdhci op for ->set_dma_mask() and call that instead
-of sdhci_set_dma_mask() if it is not NULL.
+> However, most of SoC folks seem to key off matches else where I
+> guess..
+>
+> Not sure, while at this, you if you are planning on fixing up
+> Documentation/devicetree/bindings/arm/arm-boards:
+> compatible = "arm,cortex-a53","arm,armv8";
+> Documentation/devicetree/bindings/arm/cpu-capacity.txt:
+> compatible = "arm,cortex-a53","arm,armv8";
 
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci.c | 36 ++++++++++++++++++++++--------------
->  1 file changed, 22 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 7c6c93e85b7e..01f81e96be23 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3499,27 +3499,35 @@ static int sdhci_set_dma_mask(struct sdhci_host *host)
->  {
->  	struct mmc_host *mmc = host->mmc;
->  	struct device *dev = mmc_dev(mmc);
-> -	int ret = -EINVAL;
-> +	u64 dma_mask = dma_get_mask(dev);
-> +	u64 dma32 = DMA_BIT_MASK(32);
-> +	int ret = 0;
->  
->  	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
->  		host->flags &= ~SDHCI_USE_64_BIT_DMA;
->  
-> -	/* Try 64-bit mask if hardware is capable  of it */
-> -	if (host->flags & SDHCI_USE_64_BIT_DMA) {
-> -		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-> -		if (ret) {
-> -			pr_warn("%s: Failed to set 64-bit DMA mask.\n",
-> -				mmc_hostname(mmc));
-> -			host->flags &= ~SDHCI_USE_64_BIT_DMA;
-> -		}
-> +	/*
-> +	 * Hardware that can't address more than the 32-bit address range does
-> +	 * not need to use 64-bit addressing mode, even if it supports it.
-> +	 */
-> +	if ((host->flags & SDHCI_USE_64_BIT_DMA) && (dma_mask <= dma32)) {
-> +		pr_debug("%s: controller needs addresses <= 32-bits\n",
-> +			mmc_hostname(mmc));
-> +		host->flags &= ~SDHCI_USE_64_BIT_DMA;
->  	}
->  
-> -	/* 32-bit mask as default & fallback */
-> -	if (ret) {
-> -		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> +	/*
-> +	 * If the hardware doesn't support 64-bit addressing, make sure to
-> +	 * restrict the DMA mask so we don't get buffers allocated beyond the
-> +	 * 32-bit boundary.
-> +	 */
-> +	if (!(host->flags & SDHCI_USE_64_BIT_DMA) && (dma_mask > dma32)) {
-> +		WARN(1, "64-bit DMA not supported, DMA mask %llx\n", dma_mask);
-> +
-> +		ret = dma_set_mask_and_coherent(dev, dma32);
->  		if (ret)
-> -			pr_warn("%s: Failed to set 32-bit DMA mask.\n",
-> -				mmc_hostname(mmc));
-> +			pr_warn("%s: failed to set 32-bit DMA mask: %d\n",
-> +				mmc_hostname(mmc), ret);
->  	}
->  
->  	return ret;
-> 
+I'll handle documentation separately.
+
+Rob
