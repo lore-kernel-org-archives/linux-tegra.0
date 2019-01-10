@@ -1,13 +1,15 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
- compatible string
-Date: Thu, 10 Jan 2019 07:56:24 +0100
-Message-ID: <20190110065624.4j4gkznsdvfz57d7@flea>
+From: "Chanho Min" <chanho.min-Hm3cg6mZ9cc@public.gmane.org>
+Subject: RE: [PATCH] arm64: dts: Remove inconsistent use of 'arm,
+ armv8' compatible string
+Date: Thu, 10 Jan 2019 16:09:39 +0900
+Message-ID: <059a01d4a8b3$74b6dae0$5e2490a0$@lge.com>
 References: <20190109202934.29304-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7515758762029073305=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Language: ko
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
  <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
@@ -17,82 +19,33 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
  <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
 Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Baolin
+To: 'Rob Herring' <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: 'Nishanth Menon' <nm-l0cyMroinI0@public.gmane.org>, 'Andrew Lunn' <andrew-g2DYL2Zd6BY@public.gmane.org>, 'Heiko Stuebner' <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, 'Maxime Ripard' <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Liviu Dudau' <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, 'David Brown' <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Wei Xu' <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, 'Manivannan Sadhasivam' <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Mark Rutland' <mark.rutland-5wv7dgnIgG8@public.gmane.org>, seungho1.park-Hm3cg6mZ9cc@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Lorenzo Pieralisi' <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Kevin Hilman' <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, 'Gregory Clement' <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, 'Magnus Damm' <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Michal Simek' <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, 'Krzysztof Kozlowski' <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Jonathan Hunter' <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Chen-Yu Tsai' <wens@cs>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============7515758762029073305==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fume3wgg3rjtcc4s"
-Content-Disposition: inline
-
-
---fume3wgg3rjtcc4s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 09, 2019 at 02:29:34PM -0600, Rob Herring wrote:
 > The 'arm,armv8' compatible string is only for software models. It adds
 > little value otherwise and is inconsistently used as a fallback on some
 > platforms. Remove it from those platforms.
->=20
+> 
 > This fixes warnings generated by the DT schema.
->=20
+> 
 > Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 > Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 > Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 > ---
 > armsoc folks, Please apply directly.
->=20
-> Note that there's still a case left in msm8998 that needs a new=20
+> 
+> Note that there's still a case left in msm8998 that needs a new
 > compatible string.
->=20
+> 
 > Rob
->=20
->  arch/arm64/boot/dts/actions/s700.dtsi         |   8 +-
->  arch/arm64/boot/dts/actions/s900.dtsi         |   8 +-
->  arch/arm64/boot/dts/al/alpine-v2.dtsi         |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |   8 +-
+>
+>  arch/arm64/boot/dts/lg/lg1312.dtsi            |   8 +-
+>  arch/arm64/boot/dts/lg/lg1313.dtsi            |   8 +-
 
-For allwinner,
+For lg soc,
 
-Acked-by: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Chanho Min <chanho.min-Hm3cg6mZ9cc@public.gmane.org>
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---fume3wgg3rjtcc4s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDbshgAKCRDj7w1vZxhR
-xb2JAP9usSHLB3EKiuJeAJXfke9EJ8oJBC6mlPxRM8EYVO4W9gEAw86G0yzk2GPQ
-LG3m1YjQ67W8bzxcxnP2/ecJ61R/DQk=
-=4PLX
------END PGP SIGNATURE-----
-
---fume3wgg3rjtcc4s--
-
-
---===============7515758762029073305==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-rockchip mailing list
-Linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
---===============7515758762029073305==--
+Chanho,
