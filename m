@@ -1,52 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] regulator: max77620: disable notifier events for FPS
- rails
-Date: Thu, 10 Jan 2019 12:07:07 +0000
-Message-ID: <20190110120707.GD9541@sirena.org.uk>
-References: <20190110041117.8216-1-markz@nvidia.com>
- <20190110041117.8216-2-markz@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] ASoC: core: Fix deferral of machine drivers
+Date: Thu, 10 Jan 2019 12:13:36 +0000
+Message-ID: <44a64e6e-c9ec-8eba-60fe-eda092250d82@nvidia.com>
+References: <1546968494-22993-1-git-send-email-jonathanh@nvidia.com>
+ <20190109183605.GH10405@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nmemrqcdn5VTmUEE"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190110041117.8216-2-markz@nvidia.com>
+In-Reply-To: <20190109183605.GH10405@sirena.org.uk>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Zhang <markz@nvidia.com>
-Cc: lgirdwood@gmail.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Venkat Reddy Talla <vreddytalla@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>, Matthias Reichl <hias@horus.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---nmemrqcdn5VTmUEE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 09/01/2019 18:36, Mark Brown wrote:
+> On Tue, Jan 08, 2019 at 05:28:14PM +0000, Jon Hunter wrote:
+> 
+>> --- a/include/sound/soc.h
+>> +++ b/include/sound/soc.h
+>> @@ -925,7 +925,7 @@ struct snd_soc_dai_link {
+>>  	 */
+>>  	const char *platform_name;
+>>  	struct device_node *platform_of_node;
+>> -	struct snd_soc_dai_link_component *platform;
+>> +	struct snd_soc_dai_link_component platform;
+>>  
+>>  	int id;	/* optional ID for machine driver link identification */
+>>  
+> 
+> This breaks the build for the SCU cards (and we needs a little rebase
+> against another fix I just merged, though I did do that when applying).
 
-On Thu, Jan 10, 2019 at 12:11:17PM +0800, Mark Zhang wrote:
+Sorry I still don't see the build break, can you point me to it?
 
-> +		/* there is no SW control for rails which are part of FPS
-> +		 * set always no contraint to true to avoid regulator
-> +		 * enable/disable notification
-> +		 */
-> +		if (pmic->reg_pdata[id].active_fps_src != MAX77620_FPS_SRC_NONE)
-> +			rdev->constraints->always_on = true;
+> I do think that this is going to be the safest thing to do for v5.0, it
+> can always be reverted later on when it's not needed but it seems clear
+> that a better fix is going to be way too invasive for the -rcs.  Can you
+> respin and retest please?
 
-A driver should never modify the constraints, you should register a
-different set of operations without an enable operation instead and let
-the framework handle this.
+Yes will do. I do wonder if we should be concerned about
+snd_soc_init_multicodec() as well? Looks like it could have a different
+problem if a machine driver already allocated the memory for the codec
+link component.
 
---nmemrqcdn5VTmUEE
-Content-Type: application/pgp-signature; name="signature.asc"
+Cheers
+Jon
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw3NWoACgkQJNaLcl1U
-h9BFxQf6A5L3JMfn39i9h3RNP/+qflBVJSYoaO13ri3YacNgdJxCDwFqGe3vqbLm
-Vz5QIqN640305Wfet7N6mdOx9/K/sp75PgZl40ZQ4/muybAzjwLguNjKvW0sGlaZ
-PsJ4vvDvK4WAQa2KiKTY/vidLEJ5uZ6Mn1RsW4Zhnxfs1gwQYouuRwY6sKooNtFZ
-8DZEIUSecRvkFWgoYPbk39qBcAF99uh65Due0UCUw1PIuMy1BDsUYia701vh8vJf
-Ey31LxCCCcP2fCETPS3ruvRfzPJEvdExSGC/3wpliwP7RBiuGza2eFkWIL/phox0
-q4ESn6HVHluWdBTAbF3xGsqXoquRgw==
-=zGSx
------END PGP SIGNATURE-----
-
---nmemrqcdn5VTmUEE--
+-- 
+nvpublic
