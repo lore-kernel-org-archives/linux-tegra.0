@@ -1,142 +1,66 @@
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
-Date: Thu, 10 Jan 2019 16:19:14 +0200
-Message-ID: <b21d13df-7c0b-4c6d-e3c7-6ab285579ed5@linaro.org>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org>
- <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
- <20181206145547.GA7884@kroah.com>
- <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
- <6923d6ed-e357-b083-1830-8396d788efe5@linaro.org>
- <CAJZ5v0jZMqFwYgnfRz04ELLRk=0U8Uv=acw0t9Azxk_HYL0gSQ@mail.gmail.com>
- <9a3aae02-c7e0-97e3-2330-af4fccee6c14@linaro.org>
- <20181211065808.GB5161@kroah.com>
- <199be960-032a-d72d-4293-820e23a15b7a@linaro.org>
+From: "Richter, Robert" <Robert.Richter-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Date: Thu, 10 Jan 2019 14:45:51 +0000
+Message-ID: <20190110144537.p5setcurwu6bwrtl@rric.localdomain>
+References: <20190109202934.29304-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <199be960-032a-d72d-4293-820e23a15b7a@linaro.org>
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, evgreen@chromium.org, Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, bjorn.andersson@linaro.org, Amit Kucheria <amit.kucheria@linaro.org>, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, abailon@baylibre.com, maxime.ripard@bootlin.com, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree
+Content-ID: <09F322A8707A4F4AB2C73BCBE4014E40-Tk6F3M/euE6cE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Nair, Jayachandran" <Jayachandran.Nair-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>linu
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Greg,
+Rob,
 
-On 12/17/18 13:17, Georgi Djakov wrote:
-> Hi Greg,
+On 09.01.19 14:29:34, Rob Herring wrote:
+> External Email
 > 
-> On 12/11/18 08:58, Greg Kroah-Hartman wrote:
->> On Mon, Dec 10, 2018 at 04:50:00PM +0200, Georgi Djakov wrote:
->>> On 12/10/18 13:00, Rafael J. Wysocki wrote:
->>>> On Mon, Dec 10, 2018 at 11:18 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->>>>>
->>>>> Hi Rafael,
->>>>>
->>>>> On 12/10/18 11:04, Rafael J. Wysocki wrote:
->>>>>> On Thu, Dec 6, 2018 at 3:55 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->>>>>>>
->>>>>>> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
->>>>>>>> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->>>>>>>>>
->>>>>>>>> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
->>>>>>>>> graphics, modem). These cores are talking to each other and can generate a
->>>>>>>>> lot of data flowing through the on-chip interconnects. These interconnect
->>>>>>>>> buses could form different topologies such as crossbar, point to point buses,
->>>>>>>>> hierarchical buses or use the network-on-chip concept.
->>>>>>>>>
->>>>>>>>> These buses have been sized usually to handle use cases with high data
->>>>>>>>> throughput but it is not necessary all the time and consume a lot of power.
->>>>>>>>> Furthermore, the priority between masters can vary depending on the running
->>>>>>>>> use case like video playback or CPU intensive tasks.
->>>>>>>>>
->>>>>>>>> Having an API to control the requirement of the system in terms of bandwidth
->>>>>>>>> and QoS, so we can adapt the interconnect configuration to match those by
->>>>>>>>> scaling the frequencies, setting link priority and tuning QoS parameters.
->>>>>>>>> This configuration can be a static, one-time operation done at boot for some
->>>>>>>>> platforms or a dynamic set of operations that happen at run-time.
->>>>>>>>>
->>>>>>>>> This patchset introduce a new API to get the requirement and configure the
->>>>>>>>> interconnect buses across the entire chipset to fit with the current demand.
->>>>>>>>> The API is NOT for changing the performance of the endpoint devices, but only
->>>>>>>>> the interconnect path in between them.
->>>>>>>>
->>>>>>>> For what it's worth, we are ready to land this in Chrome OS. I think
->>>>>>>> this series has been very well discussed and reviewed, hasn't changed
->>>>>>>> much in the last few spins, and is in good enough shape to use as a
->>>>>>>> base for future patches. Georgi's also done a great job reaching out
->>>>>>>> to other SoC vendors, and there appears to be enough consensus that
->>>>>>>> this framework will be usable by more than just Qualcomm. There are
->>>>>>>> also several drivers out on the list trying to add patches to use this
->>>>>>>> framework, with more to come, so it made sense (to us) to get this
->>>>>>>> base framework nailed down. In my experiments this is an important
->>>>>>>> piece of the overall power management story, especially on systems
->>>>>>>> that are mostly idle.
->>>>>>>>
->>>>>>>> I'll continue to track changes to this series and we will ultimately
->>>>>>>> reconcile with whatever happens upstream, but I thought it was worth
->>>>>>>> sending this note to express our "thumbs up" towards this framework.
->>>>>>>
->>>>>>> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
->>>>>>> it to the tree if all looks good.
->>>>>>
->>>>>> I'm honestly not sure if it is ready yet.
->>>>>>
->>>>>> New versions are coming on and on, which may make such an impression,
->>>>>> but we had some discussion on it at the LPC and some serious questions
->>>>>> were asked during it, for instance regarding the DT binding introduced
->>>>>> here.  I'm not sure how this particular issue has been addressed here,
->>>>>> for example.
->>>>>
->>>>> There have been no changes in bindings since v4 (other than squashing
->>>>> consumer and provider bindings into a single patch and fixing typos).
->>>>>
->>>>> The last DT comment was on v9 [1] where Rob wanted confirmation from
->>>>> other SoC vendors that this works for them too. And now we have that
->>>>> confirmation and there are patches posted on the list [2].
->>>>
->>>> OK
->>>>
->>>>> The second thing (also discussed at LPC) was about possible cases where
->>>>> some consumer drivers can't calculate how much bandwidth they actually
->>>>> need and how to address that. The proposal was to extend the OPP
->>>>> bindings with one more property, but this is not part of this patchset.
->>>>> It is a future step that needs more discussion on the mailing list. If a
->>>>> driver really needs some bandwidth data now, it should be put into the
->>>>> driver and not in DT. After we have enough consumers, we can discuss
->>>>> again if it makes sense to extract something into DT or not.
->>>>
->>>> That's fine by me.
->>>>
->>>> Admittedly, I have some reservations regarding the extent to which
->>>> this approach will turn out to be useful in practice, but I guess as
->>>> long as there is enough traction, the best way to find out it to try
->>>> and see. :-)
->>>>
->>>> From now on I will assume that this series is going to be applied by Greg.
->>>
->>> That was the initial idea, but the problem is that there is a recent
->>> change in the cmd_db API (needed by the sdm845 provider driver), which
->>> is going through arm-soc/qcom/drivers. So either Greg pulls also the
->>> qcom-drivers-for-4.21 tag from Andy or the whole series goes via Olof
->>> and Arnd. Maybe there are other options. I don't have any preference and
->>> don't want to put extra burden on any maintainers, so i am ok with what
->>> they prefer.
->>
->> Let me take the time later this week to review the code, which I haven't
->> done in a while...
->>
+> The 'arm,armv8' compatible string is only for software models. It adds
+> little value otherwise and is inconsistently used as a fallback on some
+> platforms. Remove it from those platforms.
 > 
-> When you get a chance to review, please keep in mind that the latest
-> version is v12 (from 08.Dec). The same is also available in linux-next
-> with no reported issues.
+> This fixes warnings generated by the DT schema.
+> 
+> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> ---
+> armsoc folks, Please apply directly.
 
-The dependencies for this patchset have been already merged in v5.0-rc1,
-so i was wondering if this can still go into -rc2? Various patches that
-use this API are already posted and having it sooner will make dealing
-with dependencies and merge paths a bit easier during the next merge
-window. Or i can just rebase and resend everything targeting v5.1.
+> diff --git a/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi b/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> index ff5c4c47b22b..c616132f7d6d 100644
+> --- a/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> +++ b/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> @@ -27,28 +27,28 @@
+> 
+>                 cpu@0 {
+>                         device_type = "cpu";
+> -                       compatible = "cavium,thunder2", "brcm,vulcan", "arm,armv8";
+> +                       compatible = "cavium,thunder2";
 
-Thanks,
-Georgi
+We are just checking if removing the "brcm,vulcan" string has any
+impact on early silicon revisions we want to support (see also
+BRCM_CPU_PART_VULCAN).
+
+Maybe you make this a separate change?
+
+-Robert
+
+>                         reg = <0x0 0x0>;
+>                         enable-method = "psci";
+>                 };
