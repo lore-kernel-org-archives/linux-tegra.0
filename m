@@ -1,115 +1,148 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
-Date: Thu, 10 Jan 2019 17:01:57 +0100
-Message-ID: <20190110160157.GA27895@ulmo>
-References: <20190104104753.3383-1-thierry.reding@gmail.com>
- <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
+Date: Thu, 10 Jan 2019 17:29:06 +0100
+Message-ID: <20190110162906.GA19693@kroah.com>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
+ <20181206145547.GA7884@kroah.com>
+ <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
+ <6923d6ed-e357-b083-1830-8396d788efe5@linaro.org>
+ <CAJZ5v0jZMqFwYgnfRz04ELLRk=0U8Uv=acw0t9Azxk_HYL0gSQ@mail.gmail.com>
+ <9a3aae02-c7e0-97e3-2330-af4fccee6c14@linaro.org>
+ <20181211065808.GB5161@kroah.com>
+ <199be960-032a-d72d-4293-820e23a15b7a@linaro.org>
+ <b21d13df-7c0b-4c6d-e3c7-6ab285579ed5@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
+In-Reply-To: <b21d13df-7c0b-4c6d-e3c7-6ab285579ed5@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, evgreen@chromium.org, Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, bjorn.andersson@linaro.org, Amit Kucheria <amit.kucheria@linaro.org>, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, abailon@baylibre.com, maxime.ripard@bootlin.com, Thierry Reding <thierry.reding@gmail.com>, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jan 10, 2019 at 04:19:14PM +0200, Georgi Djakov wrote:
+> Hi Greg,
+> 
+> On 12/17/18 13:17, Georgi Djakov wrote:
+> > Hi Greg,
+> > 
+> > On 12/11/18 08:58, Greg Kroah-Hartman wrote:
+> >> On Mon, Dec 10, 2018 at 04:50:00PM +0200, Georgi Djakov wrote:
+> >>> On 12/10/18 13:00, Rafael J. Wysocki wrote:
+> >>>> On Mon, Dec 10, 2018 at 11:18 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >>>>>
+> >>>>> Hi Rafael,
+> >>>>>
+> >>>>> On 12/10/18 11:04, Rafael J. Wysocki wrote:
+> >>>>>> On Thu, Dec 6, 2018 at 3:55 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >>>>>>>
+> >>>>>>> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
+> >>>>>>>> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >>>>>>>>>
+> >>>>>>>>> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+> >>>>>>>>> graphics, modem). These cores are talking to each other and can generate a
+> >>>>>>>>> lot of data flowing through the on-chip interconnects. These interconnect
+> >>>>>>>>> buses could form different topologies such as crossbar, point to point buses,
+> >>>>>>>>> hierarchical buses or use the network-on-chip concept.
+> >>>>>>>>>
+> >>>>>>>>> These buses have been sized usually to handle use cases with high data
+> >>>>>>>>> throughput but it is not necessary all the time and consume a lot of power.
+> >>>>>>>>> Furthermore, the priority between masters can vary depending on the running
+> >>>>>>>>> use case like video playback or CPU intensive tasks.
+> >>>>>>>>>
+> >>>>>>>>> Having an API to control the requirement of the system in terms of bandwidth
+> >>>>>>>>> and QoS, so we can adapt the interconnect configuration to match those by
+> >>>>>>>>> scaling the frequencies, setting link priority and tuning QoS parameters.
+> >>>>>>>>> This configuration can be a static, one-time operation done at boot for some
+> >>>>>>>>> platforms or a dynamic set of operations that happen at run-time.
+> >>>>>>>>>
+> >>>>>>>>> This patchset introduce a new API to get the requirement and configure the
+> >>>>>>>>> interconnect buses across the entire chipset to fit with the current demand.
+> >>>>>>>>> The API is NOT for changing the performance of the endpoint devices, but only
+> >>>>>>>>> the interconnect path in between them.
+> >>>>>>>>
+> >>>>>>>> For what it's worth, we are ready to land this in Chrome OS. I think
+> >>>>>>>> this series has been very well discussed and reviewed, hasn't changed
+> >>>>>>>> much in the last few spins, and is in good enough shape to use as a
+> >>>>>>>> base for future patches. Georgi's also done a great job reaching out
+> >>>>>>>> to other SoC vendors, and there appears to be enough consensus that
+> >>>>>>>> this framework will be usable by more than just Qualcomm. There are
+> >>>>>>>> also several drivers out on the list trying to add patches to use this
+> >>>>>>>> framework, with more to come, so it made sense (to us) to get this
+> >>>>>>>> base framework nailed down. In my experiments this is an important
+> >>>>>>>> piece of the overall power management story, especially on systems
+> >>>>>>>> that are mostly idle.
+> >>>>>>>>
+> >>>>>>>> I'll continue to track changes to this series and we will ultimately
+> >>>>>>>> reconcile with whatever happens upstream, but I thought it was worth
+> >>>>>>>> sending this note to express our "thumbs up" towards this framework.
+> >>>>>>>
+> >>>>>>> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
+> >>>>>>> it to the tree if all looks good.
+> >>>>>>
+> >>>>>> I'm honestly not sure if it is ready yet.
+> >>>>>>
+> >>>>>> New versions are coming on and on, which may make such an impression,
+> >>>>>> but we had some discussion on it at the LPC and some serious questions
+> >>>>>> were asked during it, for instance regarding the DT binding introduced
+> >>>>>> here.  I'm not sure how this particular issue has been addressed here,
+> >>>>>> for example.
+> >>>>>
+> >>>>> There have been no changes in bindings since v4 (other than squashing
+> >>>>> consumer and provider bindings into a single patch and fixing typos).
+> >>>>>
+> >>>>> The last DT comment was on v9 [1] where Rob wanted confirmation from
+> >>>>> other SoC vendors that this works for them too. And now we have that
+> >>>>> confirmation and there are patches posted on the list [2].
+> >>>>
+> >>>> OK
+> >>>>
+> >>>>> The second thing (also discussed at LPC) was about possible cases where
+> >>>>> some consumer drivers can't calculate how much bandwidth they actually
+> >>>>> need and how to address that. The proposal was to extend the OPP
+> >>>>> bindings with one more property, but this is not part of this patchset.
+> >>>>> It is a future step that needs more discussion on the mailing list. If a
+> >>>>> driver really needs some bandwidth data now, it should be put into the
+> >>>>> driver and not in DT. After we have enough consumers, we can discuss
+> >>>>> again if it makes sense to extract something into DT or not.
+> >>>>
+> >>>> That's fine by me.
+> >>>>
+> >>>> Admittedly, I have some reservations regarding the extent to which
+> >>>> this approach will turn out to be useful in practice, but I guess as
+> >>>> long as there is enough traction, the best way to find out it to try
+> >>>> and see. :-)
+> >>>>
+> >>>> From now on I will assume that this series is going to be applied by Greg.
+> >>>
+> >>> That was the initial idea, but the problem is that there is a recent
+> >>> change in the cmd_db API (needed by the sdm845 provider driver), which
+> >>> is going through arm-soc/qcom/drivers. So either Greg pulls also the
+> >>> qcom-drivers-for-4.21 tag from Andy or the whole series goes via Olof
+> >>> and Arnd. Maybe there are other options. I don't have any preference and
+> >>> don't want to put extra burden on any maintainers, so i am ok with what
+> >>> they prefer.
+> >>
+> >> Let me take the time later this week to review the code, which I haven't
+> >> done in a while...
+> >>
+> > 
+> > When you get a chance to review, please keep in mind that the latest
+> > version is v12 (from 08.Dec). The same is also available in linux-next
+> > with no reported issues.
+> 
+> The dependencies for this patchset have been already merged in v5.0-rc1,
+> so i was wondering if this can still go into -rc2? Various patches that
+> use this API are already posted and having it sooner will make dealing
+> with dependencies and merge paths a bit easier during the next merge
+> window. Or i can just rebase and resend everything targeting v5.1.
 
---lrZ03NoBR/3+SXJZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We can't add new features after -rc1, sorry.
 
-On Thu, Jan 10, 2019 at 04:11:33PM +0200, Adrian Hunter wrote:
-> On 4/01/19 12:47 PM, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The implementation of sdhci_set_dma_mask() is conflating two things: on
-> > one hand it uses the SDHCI_USE_64_BIT_DMA flag to determine whether or
-> > not to use the 64-bit addressing capability of the controller and on the
-> > other hand it also uses that flag to set a DMA mask for the controller's
-> > parent device.
-> >=20
-> > However, a controller supporting 64-bit addressing doesn't mean that it
-> > needs to support addressing 64 bits of address range. It's perfectly
-> > acceptable to use 64-bit addressing for a 32-bit address range or even
-> > smaller, even if that makes little sense, considering the extra overhead
-> > of the 64-bit addressing descriptors.
-> >=20
-> > But it is fairly common for hardware to support somewhere between 32 and
-> > 64 bits of address range. Tegra124 and Tegra210, for example, support 34
-> > bits and the newer Tegra186 and Tegra194 support 40 bits. The latter can
-> > also use an IOMMU for address translation, which has an input address
-> > range of 48 bits. This causes problems with the current algorithm in the
-> > SDHCI core for choosing the DMA mask. If the DMA mask is set to 64 bits,
-> > the DMA memory allocations can (and usually do because the allocator
-> > starts from the top) end up beyond the 40 bit boundary addressable by
-> > the SDHCI controller, causing IOMMU faults.
-> >=20
-> > For Tegra specifically this problem is currently worked around by
-> > setting the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk. This causes the DMA
-> > mask to always be set to 32 bits and therefore all allocations will fit
-> > within the range addressable by the controller.
-> >=20
-> > This commit reworks the code in sdhci_set_dma_mask() to fix the above
-> > issue. The rationale behind this change is that the SDHCI controller
-> > driver should be the authoritative source of the DMA mask setting. The
-> > SDHCI core has no way of knowing what the individual SDHCI controllers
-> > are capable of. So instead of overriding the DMA mask depending on
-> > whether or not 64-bit addressing mode is used, the DMA mask is only
-> > modified if absolutely necessary. On one hand, if the controller can
-> > only address 32 bits of memory or less, we disable use of 64-bit
-> > addressing mode because it is not needed. On the other hand, we also
-> > want to make sure that if we don't support 64-bit addressing mode, such
-> > as in the case where the BROKEN_64_BIT_DMA quirk is set, we do restrict
-> > the DMA mask to fit the capabilities. The latter is an inconsistency by
-> > the driver, so we warn about it to make sure it will be addressed in the
-> > driver.
->=20
-> sdhci_set_dma_mask() was added because people did want sdhci to set the D=
-MA
-> mask.  Also using 64-bit DMA even with 32-bit systems has the advantage of
-> reducing exposure to problems i.e. the same logic is used with the same S=
-oC
-> irrespective of whether or not it is in 32-bit compatibility mode.  So the
-> policy for sdhci is always to use 64-bit DMA if it is supported.
->=20
-> I suggest we add a new sdhci op for ->set_dma_mask() and call that instead
-> of sdhci_set_dma_mask() if it is not NULL.
+Please rebase and resend to target 5.1
 
-Some drivers are already doing something similar by overriding the DMA
-mask again in ->enable_dma(). I had briefly considered doing that for
-Tegra, but after thinking about it, it just became clear to me that we
-shouldn't need to override this in every driver. I just don't think it's
-correct for the MMC core to muck with the DMA mask. Just because the
-hardware supports the SDHCI 64-bit addressing mode doesn't mean that all
-64 bits can be addressed by the hardware. The DMA mask defines what the
-valid address range is for the device and it's already conventional for
-drivers to set this early in their ->probe() implementation (or have the
-bus set it up). It seems wasteful to have to redo that in a custom
-callback.
+thanks,
 
-Thierry
-
---lrZ03NoBR/3+SXJZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw3bHEACgkQ3SOs138+
-s6E+6RAAo9MUU0egJn3CJ3V1aQt88FFoh/K8sq/6CWkSiEGgkZ9yl1eHE5KS5a7l
-jZ/UD9Q6mtU2DgdGO/k7as8Up2f2/OhSgJQR3sKGuph6D5shSChThqsO/wT0fODY
-wja5kmbFNhzi+U9Ernu+jj/E7DSnFDZ6q1V9KAyxDagxVsPNSgKItkOZQoLbrVdo
-i3yx81yaSEUV33FYx64dQGj/YGJ655lxo+Y2EMEc212kqeLRurCWlJqoz/iLQGEn
-hS+uwgNo55LvvI1BziNlWXHnMMiD/Xr3n9LAOppKpg5w1ZBIqln5GPLEr58O0SVF
-MFHmi3BRSvv/Fy5YaN7nJDO3UWvP1/airrHnM9dkOL3WVEmQJaz99pEpecd8ENtG
-yQKO71lQ0TdS0f311MZg+78Vp4zysmzTEXB6Ossf7nGNDdiJAKFnVss79qJG7oKk
-sT+Ayha478Eib/NAvWTezkWbUwKqdTX0e/9Vj/7gXZeIUQ/S4LrzapkknqjssDnG
-Mr0jmG/o+/CgLD3x2fOmcHLuGvnxRBfmpqAf9qRTCg+8B0txG12cPvN03oY3mUPF
-Nd+W0D8jllrge/B5/ota0+j+mFWOc7d0PMFoe04KgeBEnJxGRhgTXuWI6+XgJHMI
-/WXWaRaCRxfeFLROwiF+lDs6ZSGbORO1IXDQXuLifU31vDtlJ7U=
-=mm9/
------END PGP SIGNATURE-----
-
---lrZ03NoBR/3+SXJZ--
+greg k-h
