@@ -1,167 +1,115 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1] i2c: tegra: Add Bus Clear Master Support
-Date: Thu, 10 Jan 2019 16:21:48 +0100
-Message-ID: <20190110152148.GE25353@ulmo>
-References: <1546561418-10230-1-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
+Date: Thu, 10 Jan 2019 17:01:57 +0100
+Message-ID: <20190110160157.GA27895@ulmo>
+References: <20190104104753.3383-1-thierry.reding@gmail.com>
+ <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XuV1QlJbYrcVoo+x"
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1546561418-10230-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---XuV1QlJbYrcVoo+x
+--lrZ03NoBR/3+SXJZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 03, 2019 at 04:23:38PM -0800, Sowjanya Komatineni wrote:
-> Bus Clear feature of tegra i2c controller helps to recover from
-> bus hang when i2c master loses the bus arbitration due to the
-> slave device holding SDA LOW continuously for some unknown reasons.
+On Thu, Jan 10, 2019 at 04:11:33PM +0200, Adrian Hunter wrote:
+> On 4/01/19 12:47 PM, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The implementation of sdhci_set_dma_mask() is conflating two things: on
+> > one hand it uses the SDHCI_USE_64_BIT_DMA flag to determine whether or
+> > not to use the 64-bit addressing capability of the controller and on the
+> > other hand it also uses that flag to set a DMA mask for the controller's
+> > parent device.
+> >=20
+> > However, a controller supporting 64-bit addressing doesn't mean that it
+> > needs to support addressing 64 bits of address range. It's perfectly
+> > acceptable to use 64-bit addressing for a 32-bit address range or even
+> > smaller, even if that makes little sense, considering the extra overhead
+> > of the 64-bit addressing descriptors.
+> >=20
+> > But it is fairly common for hardware to support somewhere between 32 and
+> > 64 bits of address range. Tegra124 and Tegra210, for example, support 34
+> > bits and the newer Tegra186 and Tegra194 support 40 bits. The latter can
+> > also use an IOMMU for address translation, which has an input address
+> > range of 48 bits. This causes problems with the current algorithm in the
+> > SDHCI core for choosing the DMA mask. If the DMA mask is set to 64 bits,
+> > the DMA memory allocations can (and usually do because the allocator
+> > starts from the top) end up beyond the 40 bit boundary addressable by
+> > the SDHCI controller, causing IOMMU faults.
+> >=20
+> > For Tegra specifically this problem is currently worked around by
+> > setting the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk. This causes the DMA
+> > mask to always be set to 32 bits and therefore all allocations will fit
+> > within the range addressable by the controller.
+> >=20
+> > This commit reworks the code in sdhci_set_dma_mask() to fix the above
+> > issue. The rationale behind this change is that the SDHCI controller
+> > driver should be the authoritative source of the DMA mask setting. The
+> > SDHCI core has no way of knowing what the individual SDHCI controllers
+> > are capable of. So instead of overriding the DMA mask depending on
+> > whether or not 64-bit addressing mode is used, the DMA mask is only
+> > modified if absolutely necessary. On one hand, if the controller can
+> > only address 32 bits of memory or less, we disable use of 64-bit
+> > addressing mode because it is not needed. On the other hand, we also
+> > want to make sure that if we don't support 64-bit addressing mode, such
+> > as in the case where the BROKEN_64_BIT_DMA quirk is set, we do restrict
+> > the DMA mask to fit the capabilities. The latter is an inconsistency by
+> > the driver, so we warn about it to make sure it will be addressed in the
+> > driver.
 >=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 65 ++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 65 insertions(+)
+> sdhci_set_dma_mask() was added because people did want sdhci to set the D=
+MA
+> mask.  Also using 64-bit DMA even with 32-bit systems has the advantage of
+> reducing exposure to problems i.e. the same logic is used with the same S=
+oC
+> irrespective of whether or not it is in 32-bit compatibility mode.  So the
+> policy for sdhci is always to use 64-bit DMA if it is supported.
 >=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 437294ea2f0a..89a0c9fdc99e 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -63,6 +63,7 @@
->  #define I2C_FIFO_STATUS_RX_SHIFT		0
->  #define I2C_INT_MASK				0x064
->  #define I2C_INT_STATUS				0x068
-> +#define I2C_INT_BUS_CLR_DONE			BIT(11)
->  #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
->  #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
->  #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
-> @@ -105,6 +106,15 @@
->  #define I2C_HEADER_MASTER_ADDR_SHIFT		12
->  #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
-> =20
-> +#define I2C_BUS_CLEAR_CNFG			0x084
-> +#define I2C_BC_SCLK_THRESHOLD			9
-> +#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
-> +#define I2C_BC_STOP_COND			BIT(2)
-> +#define I2C_BC_TERMINATE			BIT(1)
-> +#define I2C_BC_ENABLE				BIT(0)
-> +#define I2C_BUS_CLEAR_STATUS			0x088
-> +#define I2C_BC_STATUS				BIT(0)
-> +
->  #define I2C_CONFIG_LOAD				0x08C
->  #define I2C_MSTR_CONFIG_LOAD			BIT(0)
->  #define I2C_SLV_CONFIG_LOAD			BIT(1)
-> @@ -154,6 +164,8 @@ enum msg_end_type {
->   * @clk_divisor_std_fast_mode: Clock divisor in standard/fast mode. It is
->   *		applicable if there is no fast clock source i.e. single clock
->   *		source.
-> + * @has_bus_clr_support: Bus Clear support to recover from bus hang duri=
-ng
-> + *		SDA stuck low from device for some unknown reasons.
+> I suggest we add a new sdhci op for ->set_dma_mask() and call that instead
+> of sdhci_set_dma_mask() if it is not NULL.
 
-Might as well spell out clr as clear in the name. Or maybe to make it
-shorter, call it supports_bus_clear.
-
->   */
-> =20
->  struct tegra_i2c_hw_feature {
-> @@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
->  	bool has_multi_master_mode;
->  	bool has_slcg_override_reg;
->  	bool has_mst_fifo;
-> +	bool has_bus_clr_support;
->  };
-> =20
->  /**
-> @@ -636,6 +649,9 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_i=
-d)
->  		goto err;
->  	}
-> =20
-> +	if (i2c_dev->hw->has_bus_clr_support && (status & I2C_INT_BUS_CLR_DONE))
-> +		goto err;
-> +
-
-This looks odd. If we support bus clear and the BUS_CLR_DONE interrupt
-is set, shouldn't we still process all other potential interrupts? Or
-was this meant to be inversed:
-
-	if (!i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE)
-
-?
-
->  	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->  		if (i2c_dev->msg_buf_remaining)
->  			tegra_i2c_empty_rx_fifo(i2c_dev);
-> @@ -664,6 +680,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_i=
-d)
->  	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
->  		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
->  		I2C_INT_RX_FIFO_DATA_REQ);
-> +	if (i2c_dev->hw->has_bus_clr_support)
-> +		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
->  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
->  	if (i2c_dev->is_dvc)
->  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-> @@ -674,6 +692,41 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_=
-id)
->  	return IRQ_HANDLED;
->  }
-> =20
-> +static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
-> +{
-> +	int time_left, err;
-> +	u32 reg;
-> +
-> +	if (i2c_dev->hw->has_bus_clr_support) {
-> +		reinit_completion(&i2c_dev->msg_complete);
-> +		reg =3D (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
-> +		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
-> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-> +		if (i2c_dev->hw->has_config_load_reg) {
-> +			err =3D tegra_i2c_wait_for_config_load(i2c_dev);
-> +			if (err)
-> +				return err;
-> +		}
-> +		reg |=3D I2C_BC_ENABLE;
-> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-> +		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-> +
-> +		time_left =3D wait_for_completion_timeout(&i2c_dev->msg_complete,
-> +							TEGRA_I2C_TIMEOUT);
-
-wait_for_completion_timeout() returns an unsigned long, so the type of
-time_left should reflect that.
+Some drivers are already doing something similar by overriding the DMA
+mask again in ->enable_dma(). I had briefly considered doing that for
+Tegra, but after thinking about it, it just became clear to me that we
+shouldn't need to override this in every driver. I just don't think it's
+correct for the MMC core to muck with the DMA mask. Just because the
+hardware supports the SDHCI 64-bit addressing mode doesn't mean that all
+64 bits can be addressed by the hardware. The DMA mask defines what the
+valid address range is for the device and it's already conventional for
+drivers to set this early in their ->probe() implementation (or have the
+bus set it up). It seems wasteful to have to redo that in a custom
+callback.
 
 Thierry
 
---XuV1QlJbYrcVoo+x
+--lrZ03NoBR/3+SXJZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw3YwwACgkQ3SOs138+
-s6FGQxAArl1k+1KmJZK8dpKupCAtKqyLSawEH1u3kt2C9nX26FljY4uSdksWdK6o
-plAjaQ8Lp11EMwxssE+auijlrtO/f7wgPmIHogskJ50UROyyI0elTaaGGBO4xHDv
-zRdpfCol+YDUIZnys1PBJZTFI2jTWWPLZfNd4BnP8guGf6HX1VQCAXuph7NnR7Qm
-DnY6Dy7TLThhfWBSjqlOe5MBIHItdUCJ+azfmcKRQNUxm88SWI9dku85c5N0f4Dz
-7I7stCHPhQOXRZYERgQRF87hy0jOGbMe2R5jNMQCCKl6KyrTFFzNgnSj1DhtSPVN
-KItt8VMtVB227hqXn8e4hdvkWXMUKtIFuwUfoAfpX57r2RmkP9F351Mro1O1tmz8
-QNH1k4T3RYEYvftgtHrf8gzkaNHzTfqVEyvxiZNR583gBQ1ich6M8qEyP/IioYuc
-GQbRtHjQdvpabJWaQ7nrs3UiIWctI4pRhCkb19JKZNXYDTl1/TBcnOdwchG7rOL/
-S8ehcGmNspmOTDtssoHZF8Ys7a6qmrNO8WhK1hjLvbE8TzLb/jbmjQgUWcZv+jFJ
-/ADDd7TgxYCPiployqawQNc0J47W9SLyV28+iIL3JIT+KNLBTlZKb4PAS61b7h6o
-NDUwmB6y2c04ihllazSme/9fays4k8SswE10LjnMXby+HQpEfDU=
-=Quu4
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw3bHEACgkQ3SOs138+
+s6E+6RAAo9MUU0egJn3CJ3V1aQt88FFoh/K8sq/6CWkSiEGgkZ9yl1eHE5KS5a7l
+jZ/UD9Q6mtU2DgdGO/k7as8Up2f2/OhSgJQR3sKGuph6D5shSChThqsO/wT0fODY
+wja5kmbFNhzi+U9Ernu+jj/E7DSnFDZ6q1V9KAyxDagxVsPNSgKItkOZQoLbrVdo
+i3yx81yaSEUV33FYx64dQGj/YGJ655lxo+Y2EMEc212kqeLRurCWlJqoz/iLQGEn
+hS+uwgNo55LvvI1BziNlWXHnMMiD/Xr3n9LAOppKpg5w1ZBIqln5GPLEr58O0SVF
+MFHmi3BRSvv/Fy5YaN7nJDO3UWvP1/airrHnM9dkOL3WVEmQJaz99pEpecd8ENtG
+yQKO71lQ0TdS0f311MZg+78Vp4zysmzTEXB6Ossf7nGNDdiJAKFnVss79qJG7oKk
+sT+Ayha478Eib/NAvWTezkWbUwKqdTX0e/9Vj/7gXZeIUQ/S4LrzapkknqjssDnG
+Mr0jmG/o+/CgLD3x2fOmcHLuGvnxRBfmpqAf9qRTCg+8B0txG12cPvN03oY3mUPF
+Nd+W0D8jllrge/B5/ota0+j+mFWOc7d0PMFoe04KgeBEnJxGRhgTXuWI6+XgJHMI
+/WXWaRaCRxfeFLROwiF+lDs6ZSGbORO1IXDQXuLifU31vDtlJ7U=
+=mm9/
 -----END PGP SIGNATURE-----
 
---XuV1QlJbYrcVoo+x--
+--lrZ03NoBR/3+SXJZ--
