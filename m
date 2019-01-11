@@ -1,134 +1,59 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH V4 01/20] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-Date: Fri, 11 Jan 2019 16:14:31 +0800
-Message-ID: <74087bd9-1cc4-9897-9ded-81eaa9ca434b@nvidia.com>
-References: <20190104030702.8684-1-josephl@nvidia.com>
- <20190104030702.8684-2-josephl@nvidia.com>
- <142f619f-9939-0d87-9fe7-2e72efa027a0@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs.
+ of_node assignement
+Date: Fri, 11 Jan 2019 08:41:09 +0000
+Message-ID: <dfdc497f-9e52-99d7-208c-d8eef31fe61d@nvidia.com>
+References: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+ <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
+ <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
+ <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
+ <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
+ <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
+ <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
+ <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
+ <20190109125340.GD10405@sirena.org.uk>
+ <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
+ <20190109141439.GE10405@sirena.org.uk>
+ <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
+ <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
+ <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <142f619f-9939-0d87-9fe7-2e72efa027a0@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, Matthias Reichl <hias@horus.com>, alsa-devel@alsa-project.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMS84LzE5IDg6MzUgQU0sIEpvc2VwaCBMbyB3cm90ZToKPiBPbiAxLzQvMTkgMTE6MDYgQU0s
-IEpvc2VwaCBMbyB3cm90ZToKPj4gRnJvbTogUGV0ZXIgRGUgU2NocmlqdmVyIDxwZGVzY2hyaWp2
-ZXJAbnZpZGlhLmNvbT4KPj4KPj4gQWRkIG5ldyBwcm9wZXJ0aWVzIHRvIGNvbmZpZ3VyZSB0aGUg
-REZMTCBQV00gcmVndWxhdG9yIHN1cHBvcnQuCj4+Cj4+IENjOiBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZwo+PiBTaWduZWQtb2ZmLWJ5OiBQZXRlciBEZSBTY2hyaWp2ZXIgPHBkZXNjaHJpanZl
-ckBudmlkaWEuY29tPgo+PiBTaWduZWQtb2ZmLWJ5OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlh
-LmNvbT4KPj4gQWNrZWQtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgo+PiAt
-LS0KPj4gKlY0Ogo+PiDCoCAtIHMvbnZpZGlhLHB3bS1wZXJpb2QvbnZpZGlhLHB3bS1wZXJpb2Qt
-bmFub3NlY29uZHMvCj4+ICpWMzoKPj4gwqAgLSBubyBjaGFuZ2UKPj4gKlYyOgo+PiDCoCAtIHVw
-ZGF0ZSB0aGUgYmluZGluZyBzdHJpbmdzIGFuZCBkZXNjcmlwdGlvbnMgZm9yCj4+IMKgIG52aWRp
-YSxwd20tdHJpc3RhdGUtbWljcm92b2x0cwo+PiDCoCBudmlkaWEscHdtLW1pbi1taWNyb3ZvbHRz
-Cj4+IMKgIG52aWRpYSxwd20tdm9sdGFnZS1zdGVwLW1pY3Jvdm9sdHMKPj4gLS0tCj4gCj4gSGkg
-Um9iLAo+IAo+IENvdWxkIHlvdSBoZWxwIG1lIHRvIHJldmlldyB0aGlzIHBhdGNoIGFnYWluPwoK
-R2VudGxlIHBpbmcuCgpUaGFua3MsCkpvc2VwaAoKPiAKPiBUaGFua3MsCj4gSm9zZXBoCj4gCj4+
-IMKgIC4uLi9iaW5kaW5ncy9jbG9jay9udmlkaWEsdGVncmExMjQtZGZsbC50eHTCoMKgIHwgNzkg
-KysrKysrKysrKysrKysrKysrLQo+PiDCoCAxIGZpbGUgY2hhbmdlZCwgNzcgaW5zZXJ0aW9ucygr
-KSwgMiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCAKPj4gYS9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvY2xvY2svbnZpZGlhLHRlZ3JhMTI0LWRmbGwudHh0IAo+PiBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9udmlkaWEsdGVncmExMjQtZGZs
-bC50eHQKPj4gaW5kZXggZGZmMjM2ZjUyNGE3Li41NTU4YmI1ZmNmMmMgMTAwNjQ0Cj4+IC0tLSBh
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9udmlkaWEsdGVncmExMjQt
-ZGZsbC50eHQKPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2Nr
-L252aWRpYSx0ZWdyYTEyNC1kZmxsLnR4dAo+PiBAQCAtOCw3ICs4LDYgQEAgdGhlIGZhc3QgQ1BV
-IGNsdXN0ZXIuIEl0IGNvbnNpc3RzIG9mIGEgZnJlZS1ydW5uaW5nIAo+PiB2b2x0YWdlIGNvbnRy
-b2xsZWQKPj4gwqAgb3NjaWxsYXRvciBjb25uZWN0ZWQgdG8gdGhlIENQVSB2b2x0YWdlIHJhaWwg
-KFZERF9DUFUpLCBhbmQgYSBjbG9zZWQgCj4+IGxvb3AKPj4gwqAgY29udHJvbCBtb2R1bGUgdGhh
-dCB3aWxsIGF1dG9tYXRpY2FsbHkgYWRqdXN0IHRoZSBWRERfQ1BVIHZvbHRhZ2UgYnkKPj4gwqAg
-Y29tbXVuaWNhdGluZyB3aXRoIGFuIG9mZi1jaGlwIFBNSUMgZWl0aGVyIHZpYSBhbiBJMkMgYnVz
-IG9yIHZpYSBQV00gCj4+IHNpZ25hbHMuCj4+IC1DdXJyZW50bHkgb25seSB0aGUgSTJDIG1vZGUg
-aXMgc3VwcG9ydGVkIGJ5IHRoZXNlIGJpbmRpbmdzLgo+PiDCoCBSZXF1aXJlZCBwcm9wZXJ0aWVz
-Ogo+PiDCoCAtIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgIm52aWRpYSx0ZWdyYTEyNC1kZmxsIgo+
-PiBAQCAtNDUsMTAgKzQ0LDMxIEBAIFJlcXVpcmVkIHByb3BlcnRpZXMgZm9yIHRoZSBjb250cm9s
-IGxvb3AgcGFyYW1ldGVyczoKPj4gwqAgT3B0aW9uYWwgcHJvcGVydGllcyBmb3IgdGhlIGNvbnRy
-b2wgbG9vcCBwYXJhbWV0ZXJzOgo+PiDCoCAtIG52aWRpYSxjZy1zY2FsZTogQm9vbGVhbiB2YWx1
-ZSwgc2VlIHRoZSBmaWVsZCBERkxMX1BBUkFNU19DR19TQ0FMRSAKPj4gaW4gdGhlIFRSTS4KPj4g
-K09wdGlvbmFsIHByb3BlcnRpZXMgZm9yIG1vZGUgc2VsZWN0aW9uOgo+PiArLSBudmlkaWEscHdt
-LXRvLXBtaWM6IFVzZSBQV00gdG8gY29udHJvbCByZWd1bGF0b3IgcmF0aGVyIHRoZW4gSTJDLgo+
-PiArCj4+IMKgIFJlcXVpcmVkIHByb3BlcnRpZXMgZm9yIEkyQyBtb2RlOgo+PiDCoCAtIG52aWRp
-YSxpMmMtZnMtcmF0ZTogSTJDIHRyYW5zZmVyIHJhdGUsIGlmIHVzaW5nIGZ1bGwgc3BlZWQgbW9k
-ZS4KPj4gLUV4YW1wbGU6Cj4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciBQV00gbW9kZToKPj4g
-Ky0gbnZpZGlhLHB3bS1wZXJpb2QtbmFub3NlY29uZHM6IHBlcmlvZCBvZiBQV00gc3F1YXJlIHdh
-dmUgaW4gCj4+IG5hbm9zZWNvbmRzLgo+PiArLSBudmlkaWEscHdtLXRyaXN0YXRlLW1pY3Jvdm9s
-dHM6IFJlZ3VsYXRvciB2b2x0YWdlIGluIG1pY3JvIHZvbHRzIAo+PiB3aGVuIFBXTQo+PiArwqAg
-Y29udHJvbCBpcyBkaXNhYmxlZCBhbmQgdGhlIFBXTSBvdXRwdXQgaXMgdHJpc3RhdGVkLiBOb3Rl
-IHRoYXQgdGhpcyAKPj4gdm9sdGFnZSBpcwo+PiArwqAgY29uZmlndXJlZCBpbiBoYXJkd2FyZSwg
-dHlwaWNhbGx5IHZpYSBhIHJlc2lzdG9yIGRpdmlkZXIuCj4+ICstIG52aWRpYSxwd20tbWluLW1p
-Y3Jvdm9sdHM6IFJlZ3VsYXRvciB2b2x0YWdlIGluIG1pY3JvIHZvbHRzIHdoZW4gCj4+IFBXTSBj
-b250cm9sCj4+ICvCoCBpcyBlbmFibGVkIGFuZCBQV00gb3V0cHV0IGlzIGxvdy4gSGVuY2UsIHRo
-aXMgaXMgdGhlIG1pbmltdW0gb3V0cHV0IAo+PiB2b2x0YWdlCj4+ICvCoCB0aGF0IHRoZSByZWd1
-bGF0b3Igc3VwcG9ydHMgd2hlbiBQV00gY29udHJvbCBpcyBlbmFibGVkLgo+PiArLSBudmlkaWEs
-cHdtLXZvbHRhZ2Utc3RlcC1taWNyb3ZvbHRzOiBWb2x0YWdlIGluY3JlYXNlIGluIG1pY3JvIHZv
-bHRzCj4+ICvCoCBjb3JyZXNwb25kaW5nIHRvIGEgMS8zM3RoIGluY3JlYXNlIGluIGR1dHkgY3lj
-bGUuIEVnIHRoZSB2b2x0YWdlIAo+PiBmb3IgMi8zM3RoCj4+ICvCoCBkdXR5IGN5Y2xlIHdvdWxk
-IGJlOiBudmlkaWEscHdtLW1pbi1taWNyb3ZvbHRzICsKPj4gK8KgIG52aWRpYSxwd20tdm9sdGFn
-ZS1zdGVwLW1pY3Jvdm9sdHMgKiAyLgo+PiArLSBwaW5jdHJsLTA6IEkvTyBwYWQgY29uZmlndXJh
-dGlvbiB3aGVuIFBXTSBjb250cm9sIGlzIGVuYWJsZWQuCj4+ICstIHBpbmN0cmwtMTogSS9PIHBh
-ZCBjb25maWd1cmF0aW9uIHdoZW4gUFdNIGNvbnRyb2wgaXMgZGlzYWJsZWQuCj4+ICstIHBpbmN0
-cmwtbmFtZXM6IG11c3QgaW5jbHVkZSB0aGUgZm9sbG93aW5nIGVudHJpZXM6Cj4+ICvCoCAtIGR2
-ZnNfcHdtX2VuYWJsZTogSS9PIHBhZCBjb25maWd1cmF0aW9uIHdoZW4gUFdNIGNvbnRyb2wgaXMg
-ZW5hYmxlZC4KPj4gK8KgIC0gZHZmc19wd21fZGlzYWJsZTogSS9PIHBhZCBjb25maWd1cmF0aW9u
-IHdoZW4gUFdNIGNvbnRyb2wgaXMgCj4+IGRpc2FibGVkLgo+PiArCj4+ICtFeGFtcGxlIGZvciBJ
-MkM6Cj4+IMKgIGNsb2NrQDcwMTEwMDAwIHsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGNvbXBhdGli
-bGUgPSAibnZpZGlhLHRlZ3JhMTI0LWRmbGwiOwo+PiBAQCAtNzYsMyArOTYsNTggQEAgY2xvY2tA
-NzAxMTAwMDAgewo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgbnZpZGlhLGkyYy1mcy1yYXRlID0gPDQw
-MDAwMD47Cj4+IMKgIH07Cj4+ICsKPj4gK0V4YW1wbGUgZm9yIFBXTToKPj4gKwo+PiArY2xvY2tA
-NzAxMTAwMDAgewo+PiArwqDCoMKgIGNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMTI0LWRmbGwi
-Owo+PiArwqDCoMKgIHJlZyA9IDwwIDB4NzAxMTAwMDAgMCAweDEwMD4sIC8qIERGTEwgY29udHJv
-bCAqLwo+PiArwqDCoMKgwqDCoMKgwqDCoMKgIDwwIDB4NzAxMTAwMDAgMCAweDEwMD4sIC8qIEky
-QyBvdXRwdXQgY29udHJvbCAqLwo+PiArwqDCoMKgwqDCoMKgwqDCoMKgIDwwIDB4NzAxMTAxMDAg
-MCAweDEwMD4sIC8qIEludGVncmF0ZWQgSTJDIGNvbnRyb2xsZXIgKi8KPj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoCA8MCAweDcwMTEwMjAwIDAgMHgxMDA+OyAvKiBMb29rLXVwIHRhYmxlIFJBTSAqLwo+
-PiArwqDCoMKgIGludGVycnVwdHMgPSA8R0lDX1NQSSA2MiBJUlFfVFlQRV9MRVZFTF9ISUdIPjsK
-Pj4gK8KgwqDCoCBjbG9ja3MgPSA8JnRlZ3JhX2NhciBURUdSQTIxMF9DTEtfREZMTF9TT0M+LAo+
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmdGVncmFfY2FyIFRFR1JBMjEwX0NMS19ERkxM
-X1JFRj4sCj4+ICvCoMKgwqDCoMKgwqDCoMKgIDwmdGVncmFfY2FyIFRFR1JBMTI0X0NMS19JMkM1
-Pjs7Cj4+ICvCoMKgwqAgY2xvY2stbmFtZXMgPSAic29jIiwgInJlZiIsICJpMmMiOwo+PiArwqDC
-oMKgIHJlc2V0cyA9IDwmdGVncmFfY2FyIFRFR1JBMTI0X1JTVF9ERkxMX0RWQ08+Owo+PiArwqDC
-oMKgIHJlc2V0LW5hbWVzID0gImR2Y28iOwo+PiArwqDCoMKgICNjbG9jay1jZWxscyA9IDwwPjsK
-Pj4gK8KgwqDCoCBjbG9jay1vdXRwdXQtbmFtZXMgPSAiZGZsbENQVV9vdXQiOwo+PiArCj4+ICvC
-oMKgwqAgbnZpZGlhLHNhbXBsZS1yYXRlID0gPDI1MDAwPjsKPj4gK8KgwqDCoCBudmlkaWEsZHJv
-b3AtY3RybCA9IDwweDAwMDAwZjAwPjsKPj4gK8KgwqDCoCBudmlkaWEsZm9yY2UtbW9kZSA9IDwx
-PjsKPj4gK8KgwqDCoCBudmlkaWEsY2YgPSA8Nj47Cj4+ICvCoMKgwqAgbnZpZGlhLGNpID0gPDA+
-Owo+PiArwqDCoMKgIG52aWRpYSxjZyA9IDwyPjsKPj4gKwo+PiArwqDCoMKgIG52aWRpYSxwd20t
-bWluLW1pY3Jvdm9sdHMgPSA8NzA4MDAwPjsgLyogNzA4bVYgKi8KPj4gK8KgwqDCoCBudmlkaWEs
-cHdtLXBlcmlvZC1uYW5vc2Vjb25kcyA9IDwyNTAwPjsgLyogMi41dXMgKi8KPj4gK8KgwqDCoCBu
-dmlkaWEscHdtLXRvLXBtaWM7Cj4+ICvCoMKgwqAgbnZpZGlhLHB3bS10cmlzdGF0ZS1taWNyb3Zv
-bHRzID0gPDEwMDAwMDA+Owo+PiArwqDCoMKgIG52aWRpYSxwd20tdm9sdGFnZS1zdGVwLW1pY3Jv
-dm9sdHMgPSA8MTkyMDA+OyAvKiAxOS4ybVYgKi8KPj4gKwo+PiArwqDCoMKgIHBpbmN0cmwtbmFt
-ZXMgPSAiZHZmc19wd21fZW5hYmxlIiwgImR2ZnNfcHdtX2Rpc2FibGUiOwo+PiArwqDCoMKgIHBp
-bmN0cmwtMCA9IDwmZHZmc19wd21fYWN0aXZlX3N0YXRlPjsKPj4gK8KgwqDCoCBwaW5jdHJsLTEg
-PSA8JmR2ZnNfcHdtX2luYWN0aXZlX3N0YXRlPjsKPj4gK307Cj4+ICsKPj4gKy8qIHBpbm11eCBu
-b2RlcyBhZGRlZCBmb3IgY29tcGxldGVuZXNzLiBCaW5kaW5nIGRvYyBjYW4gYmUgZm91bmQgaW46
-Cj4+ICsgKiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9udmlkaWEs
-dGVncmEyMTAtcGlubXV4LnR4dAo+PiArICovCj4+ICsKPj4gK3Bpbm11eDogcGlubXV4QDcwMDAw
-OGQ0IHsKPj4gK8KgwqDCoCBkdmZzX3B3bV9hY3RpdmVfc3RhdGU6IGR2ZnNfcHdtX2FjdGl2ZSB7
-Cj4+ICvCoMKgwqDCoMKgwqDCoCBkdmZzX3B3bV9wYmIxIHsKPj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgbnZpZGlhLHBpbnMgPSAiZHZmc19wd21fcGJiMSI7Cj4+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIG52aWRpYSx0cmlzdGF0ZSA9IDxURUdSQV9QSU5fRElTQUJMRT47Cj4+ICvCoMKgwqDC
-oMKgwqDCoCB9Owo+PiArwqDCoMKgIH07Cj4+ICvCoMKgwqAgZHZmc19wd21faW5hY3RpdmVfc3Rh
-dGU6IGR2ZnNfcHdtX2luYWN0aXZlIHsKPj4gK8KgwqDCoMKgwqDCoMKgIGR2ZnNfcHdtX3BiYjEg
-ewo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBudmlkaWEscGlucyA9ICJkdmZzX3B3bV9wYmIx
-IjsKPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbnZpZGlhLHRyaXN0YXRlID0gPFRFR1JBX1BJ
-Tl9FTkFCTEU+Owo+PiArwqDCoMKgwqDCoMKgwqAgfTsKPj4gK8KgwqDCoCB9Owo+PiArfTsKPj4K
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFy
-bS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1r
-ZXJuZWwK
+
+On 11/01/2019 00:52, Kuninori Morimoto wrote:
+
+...
+
+>> It is still fragile. Again the machine driver could have incorrectly set
+>> these 'allocated_platform/codecs' members as they are exposed to the
+>> machine driver. You have no way to determine if the machine driver is
+>> doing the correct thing or not. The problem becomes more complex with
+>> probe deferral.
+> 
+> Indeed there is such case so far, but my understanding is that current
+> driver should select "legacy style" or "modern style".
+> If driver setup it as "legacy", but access to "modern" member,
+> it is driver side bug, right ?
+
+Yes absolutely it is a driver bug, but looking at the snd_soc_dai_link
+structure today it is not clear what the driver should be setting and
+what is 'modern' and what is 'legacy'. You need to dig through the git
+history and code to figure this out. So you could say it is not very
+well documented/commented from a soc-core perspective and could be easy
+for a driver writer to get themselves in a pickle/mess. Anyway, that is
+easy to fix and we could add some comments to clear it up.
+
+Cheers
+Jon
+
+-- 
+nvpublic
