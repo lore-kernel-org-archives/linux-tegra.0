@@ -1,59 +1,48 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v7 0/3] Fixes for Tegra soctherm
-Date: Fri, 11 Jan 2019 10:20:46 +0800
-Message-ID: <28d197f9-9b72-78ad-0769-7514d329b3c4@nvidia.com>
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V8 2/3] arm64: dts: tegra: Add CQE Support for SDMMC4
+Date: Thu, 10 Jan 2019 19:08:54 -0800
+Message-ID: <1547176135-2470-2-git-send-email-skomatineni@nvidia.com>
+References: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1546510369-28491-1-git-send-email-wni@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, edubezval@gmail.com
-Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, thierry.reding@gmail.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Eduardo,
-Do you have any more comments, will you take this serial?
+Add CQE Support for Tegra186 and Tegra194 SDMMC4 controller
 
-Thanks.
-Wei.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-On 3/1/2019 6:12 PM, Wei Ni wrote:
-> This series fixed some issues for Tegra soctherm,
-> and add get_trend().
-> 
-> Main changes from v6:
-> 1. Per Eduardo's comment, we can remove the change:
-> "thermal: tegra: parse sensor id before sensor register"
-> 
-> Main changes from v5:
-> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
-> into this serial.
-> 
-> Main changes from v4:
-> 1. fixed for the parsing sensor id.
-> 2. keep warning for missing critical trips.
-> 
-> Main changes from v3:
-> 1. updated codes for parsing sensor id, per Thierry's comments
-> 
-> Main changes from v2:
-> 1. add codes to parse sensor id to avoid registration
-> failure.
-> 
-> Main changes from v1:
-> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
-> "thermal: tegra: fix memory allocation".
-> 2. Print out the sensor name when register failed.
-> 2. Remove patch "thermal: tegra: fix coverity defect"
-> 
-> Wei Ni (3):
->   thermal: tegra: remove unnecessary warnings
->   thermal: tegra: fix memory allocation
->   thermal: tegra: add get_trend ops
-> 
->  drivers/thermal/tegra/soctherm.c | 40 +++++++++++++++++++++++++++++++++++++---
->  1 file changed, 37 insertions(+), 3 deletions(-)
-> 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 22815db4a3ed..3dfdc4701934 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -319,6 +319,7 @@
+ 		nvidia,default-trim = <0x9>;
+ 		nvidia,dqs-trim = <63>;
+ 		mmc-hs400-1_8v;
++		supports-cqe;
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 6dfa1ca0b851..9ce1c91d4596 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -325,6 +325,7 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			supports-cqe;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.7.4
