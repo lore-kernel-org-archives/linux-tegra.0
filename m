@@ -1,58 +1,43 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs.
- of_node assignement
-Date: Fri, 11 Jan 2019 08:41:09 +0000
-Message-ID: <dfdc497f-9e52-99d7-208c-d8eef31fe61d@nvidia.com>
-References: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
- <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
- <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
- <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
- <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
- <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
- <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
- <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
- <20190109125340.GD10405@sirena.org.uk>
- <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
- <20190109141439.GE10405@sirena.org.uk>
- <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
- <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
- <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH] ASoC: core: Fix deferral of machine drivers
+Date: Fri, 11 Jan 2019 08:43:24 +0000
+Message-ID: <96f2e729-8ec2-44ee-448c-255c07c068b9@nvidia.com>
+References: <1546968494-22993-1-git-send-email-jonathanh@nvidia.com>
+ <20190109183605.GH10405@sirena.org.uk>
+ <44a64e6e-c9ec-8eba-60fe-eda092250d82@nvidia.com>
+ <20190110164835.GF9541@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <20190110164835.GF9541@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, Matthias Reichl <hias@horus.com>, alsa-devel@alsa-project.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>, Matthias Reichl <hias@horus.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 11/01/2019 00:52, Kuninori Morimoto wrote:
-
-...
-
->> It is still fragile. Again the machine driver could have incorrectly set
->> these 'allocated_platform/codecs' members as they are exposed to the
->> machine driver. You have no way to determine if the machine driver is
->> doing the correct thing or not. The problem becomes more complex with
->> probe deferral.
+On 10/01/2019 16:48, Mark Brown wrote:
+> On Thu, Jan 10, 2019 at 12:13:36PM +0000, Jon Hunter wrote:
+>> On 09/01/2019 18:36, Mark Brown wrote:
+>>> On Tue, Jan 08, 2019 at 05:28:14PM +0000, Jon Hunter wrote:
 > 
-> Indeed there is such case so far, but my understanding is that current
-> driver should select "legacy style" or "modern style".
-> If driver setup it as "legacy", but access to "modern" member,
-> it is driver side bug, right ?
+>>>> -	struct snd_soc_dai_link_component *platform;
+>>>> +	struct snd_soc_dai_link_component platform;
+> 
+>>> This breaks the build for the SCU cards (and we needs a little rebase
+>>> against another fix I just merged, though I did do that when applying).
+> 
+>> Sorry I still don't see the build break, can you point me to it?
+> 
+> I'd need to find your patch again and fix the rebase issue.  It was
+> assigning a pointer to a platform IIRC.
 
-Yes absolutely it is a driver bug, but looking at the snd_soc_dai_link
-structure today it is not clear what the driver should be setting and
-what is 'modern' and what is 'legacy'. You need to dig through the git
-history and code to figure this out. So you could say it is not very
-well documented/commented from a soc-core perspective and could be easy
-for a driver writer to get themselves in a pickle/mess. Anyway, that is
-easy to fix and we could add some comments to clear it up.
+Sorry I still don't see it. Happen to recall the config you were using
+to build? I tried enabling the various SH soundcards (which I believe
+the SCU card is under).
 
-Cheers
 Jon
 
 -- 
