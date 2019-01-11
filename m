@@ -1,56 +1,31 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH V5] i2c: tegra: Fix Maximum transfer size
-Date: Fri, 11 Jan 2019 00:16:13 +0100
-Message-ID: <20190110231613.GB3628@kunai>
-References: <1546984750-26199-1-git-send-email-skomatineni@nvidia.com>
- <1546984750-26199-2-git-send-email-skomatineni@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V7 2/2] mmc: tegra: HW Command Queue Support for Tegra
+ SDMMC
+Date: Fri, 11 Jan 2019 00:34:57 +0000
+Message-ID: <BN7PR12MB2836750BAFFAEAF8436C7C58C2850@BN7PR12MB2836.namprd12.prod.outlook.com>
+References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
+ <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
+ <5722018a-7654-c6f9-c2aa-2817b39b1a35@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Y7xTucakfITjPcLV"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1546984750-26199-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <5722018a-7654-c6f9-c2aa-2817b39b1a35@intel.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Chunyan Zhang <chunyan.zhang@unisoc.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---Y7xTucakfITjPcLV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 08, 2019 at 01:59:10PM -0800, Sowjanya Komatineni wrote:
-> Tegra194 supports maximum 64K Bytes transfer per packet.
-> Tegra186 and prior supports maximum 4K Bytes transfer per packet.
->=20
-> This patch fixes this payload difference between Tegra194 and prior
-> tegra chipsets using separate i2c_adapter_quirks.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-
-Applied to for-current, thanks!
-
-
---Y7xTucakfITjPcLV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlw30j0ACgkQFA3kzBSg
-KbZUVg/9G5lAXsj4CaV1xLaAGyJuzOCt5aJw2DjO984npBoR8hNWCaBIzB0VDlG6
-efDxcc+blmRuH31HXdQpdLAc+cypVXdhTVWPtaDHYl+veuw5pDuzKtq0DYmX6cfP
-vjqV01k11g8y4GwmgpqXJzgIcNgMh3cv8VP7ID1zQEIt3wHWSkohhfk+Q+dLz5Ux
-M53fix0OLM3pktpijSZS7FT5whVsfuijTCGqa8lpi0Rd655z5+ef4kr/e/5c5iOY
-e/9cNWPsngZPRGiLQhI9KfYthe+XYHXCr4rsYti0D3ptgMGAcyfa876ZnixAEo78
-JN+VUgm4IARs3Fm5zVXHC7Zj87wLvNCUKuNwygbakGwIx77SkunOPr4ph6+vKrjB
-abK7rgmG0udlHGbdMyF9Pq7DYc6xLZcUSo1hYBnIJWeopcNUaIKsPnN67NA4K+rn
-sq7/x61z083hAr2c6By4m623/XnEylN6jCbd0z0XnGW84nRUvm8OjO1AFCF95mxW
-u/+Vm923uUqRvAiBKFHYM/YItrvicO11MRaIyO5cc5OU4qYi3qDQjA8JHjvtfnbN
-ycbQXrQ6GpK4nhVWYLTaJ/PMqvrgCovARz5I6MYpIKVXrXjtksmvtRfSeFlVPeqv
-7v4y8A/MAUIJESx12g+FEMuyhTWXR7Ou/+CHxPp0hVJ6sATvZBk=
-=fJ7V
------END PGP SIGNATURE-----
-
---Y7xTucakfITjPcLV--
+Pj4gK3N0YXRpYyBpbnQgc2RoY2lfdGVncmFfYWRkX2hvc3Qoc3RydWN0IHNkaGNpX2hvc3QgKmhv
+c3QpIHsNCj4+ICsJc3RydWN0IHNkaGNpX3BsdGZtX2hvc3QgKnBsdGZtX2hvc3QgPSBzZGhjaV9w
+cml2KGhvc3QpOw0KPj4gKwlzdHJ1Y3Qgc2RoY2lfdGVncmEgKnRlZ3JhX2hvc3QgPSBzZGhjaV9w
+bHRmbV9wcml2KHBsdGZtX2hvc3QpOw0KPj4gKwlzdHJ1Y3QgY3FoY2lfaG9zdCAqY3FfaG9zdDsN
+Cj4+ICsJYm9vbCBkbWE2NDsNCj4+ICsJaW50IHJldDsNCj4+ICsNCj4+ICsJaWYgKCF0ZWdyYV9o
+b3N0LT5lbmFibGVfaHdjcSkNCj4+ICsJCXJldHVybiBzZGhjaV9hZGRfaG9zdChob3N0KTsNCj4+
+ICsNCj4+ICsJaG9zdC0+djRfbW9kZSA9IHRydWU7DQo+DQo+Q2FuIHlvdSB1c2Ugc2RoY2lfZW5h
+YmxlX3Y0X21vZGUoKSBoZXJlPw0KDQpIaSBBZHJpYW4sDQpzZGhjaV9yZWFkX2NhcHMgc2V0cyB2
+NCBtb2RlIHRocnUgc2RoY2lfZG9fZW5hYmxlX3Y0X21vZGUgaWYgdjRfbW9kZSBpcyB0cnVlDQpz
+ZGhjaV9zZXR1cF9ob3N0IGNhbGxzIHNkaGNpX3JlYWRfY2FwcyBzbyBJIHdhcyBzZXR0aW5nIHY0
+X21vZGUgdG8gdHJ1ZSBzbyB2NCBtb2RlIGdldHMgZW5hYmxlZCBkdXJpbmcgcmVhZCBjYXBzLg0K
+DQpUaGFua3MNCnNvd2phbnlhDQoNCg==
