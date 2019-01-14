@@ -1,34 +1,53 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
-Date: Fri, 11 Jan 2019 16:21:12 -0600
-Message-ID: <20190111222112.GA14252@bogus>
-References: <20190107032810.13522-1-josephl@nvidia.com>
- <20190107032810.13522-2-josephl@nvidia.com>
+From: Mark Zhang <markz@nvidia.com>
+Subject: [PATCH] regmap-irq: do not write mask register if mask_base is zero
+Date: Mon, 14 Jan 2019 17:32:58 +0800
+Message-ID: <20190114093258.28431-1-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190107032810.13522-2-josephl@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jinyoung Park <jinyoungp@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 7 Jan 2019 11:28:05 +0800, Joseph Lo wrote:
-> The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
-> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
-> from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
-> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
-> or watchdog interrupts.
-> 
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  .../bindings/timer/nvidia,tegra210-timer.txt  | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
-> 
+If client have not provided the mask base register then do not
+write into the mask register.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Jinyoung Park <jinyoungp@nvidia.com>
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+Signed-off-by: Mark Zhang <markz@nvidia.com>
+---
+ drivers/base/regmap/regmap-irq.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-=
+irq.c
+index d2d0014b0d23..330c1f7e9665 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -108,6 +108,9 @@ static void regmap_irq_sync_unlock(struct irq_data *dat=
+a)
+ 	 * suppress pointless writes.
+ 	 */
+ 	for (i =3D 0; i < d->chip->num_regs; i++) {
++		if (!d->chip->mask_base)
++			continue;
++
+ 		reg =3D d->chip->mask_base +
+ 			(i * map->reg_stride * d->irq_reg_stride);
+ 		if (d->chip->mask_invert) {
+@@ -588,6 +591,9 @@ int regmap_add_irq_chip(struct regmap *map, int irq, in=
+t irq_flags,
+ 	/* Mask all the interrupts by default */
+ 	for (i =3D 0; i < chip->num_regs; i++) {
+ 		d->mask_buf[i] =3D d->mask_buf_def[i];
++		if (!chip->mask_base)
++			continue;
++
+ 		reg =3D chip->mask_base +
+ 			(i * map->reg_stride * d->irq_reg_stride);
+ 		if (chip->mask_invert)
+--=20
+2.19.2
