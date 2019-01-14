@@ -1,8 +1,8 @@
-From: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
  compatible string
-Date: Mon, 14 Jan 2019 12:27:44 +0100
-Message-ID: <a41e2f08-b533-0d97-06db-24b58f26fc48@gmail.com>
+Date: Mon, 14 Jan 2019 12:34:51 +0100
+Message-ID: <59e0d9a6-afee-c3b5-4591-88a0b4aaca66@xilinx.com>
 References: <20190109202934.29304-1-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,9 +23,7 @@ To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, arm-DgEjT+Ai2ygd
 Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-l
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 09/01/2019 21:29, Rob Herring wrote:
+On 09. 01. 19 21:29, Rob Herring wrote:
 > The 'arm,armv8' compatible string is only for software models. It adds
 > little value otherwise and is inconsistently used as a fallback on some
 > platforms. Remove it from those platforms.
@@ -37,9 +35,19 @@ On 09/01/2019 21:29, Rob Herring wrote:
 > Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 > ---
+> armsoc folks, Please apply directly.
+> 
+> Note that there's still a case left in msm8998 that needs a new 
+> compatible string.
+> 
+> Rob
 
-[...]
->  arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   4 +-
+...
 
-For mediatek...
-Acked-by: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>  arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   8 +-
+
+For ZynqMP.
+Acked-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+
+Thanks,
+Michal
