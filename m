@@ -1,47 +1,84 @@
-From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,
- armv8' compatible string
-Date: Mon, 14 Jan 2019 10:07:34 -0800
-Message-ID: <7hd0ozkt95.fsf@baylibre.com>
-References: <20190109202934.29304-1-robh@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v1 3/3] ASoC: soc-core: fix platform name
+ vs. of_node assignement
+Date: Mon, 14 Jan 2019 23:02:55 +0000
+Message-ID: <20190114230255.GK11073@sirena.org.uk>
+References: <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
+ <20190109125340.GD10405@sirena.org.uk>
+ <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
+ <20190109141439.GE10405@sirena.org.uk>
+ <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
+ <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
+ <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
+ <dfdc497f-9e52-99d7-208c-d8eef31fe61d@nvidia.com>
+ <87h8efpoxh.wl-kuninori.morimoto.gx@renesas.com>
+ <ea6b6a3a-b4eb-1d29-51fd-330b2b170005@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chunyan Zhang <zhang.lyra-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-
+Content-Type: multipart/mixed; boundary="===============7224673882882375101=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <ea6b6a3a-b4eb-1d29-51fd-330b2b170005@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Matthias Reichl <hias@horus.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> writes:
 
-> The 'arm,armv8' compatible string is only for software models. It adds
-> little value otherwise and is inconsistently used as a fallback on some
-> platforms. Remove it from those platforms.
->
-> This fixes warnings generated by the DT schema.
->
-> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--===============7224673882882375101==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SCOJXUq1iwCn05li"
+Content-Disposition: inline
 
-[...]
 
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gxm.dtsi    |   8 +-
+--SCOJXUq1iwCn05li
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>  # for amlogic/meson
+On Fri, Jan 11, 2019 at 09:15:42AM +0000, Jon Hunter wrote:
+> On 11/01/2019 08:51, Kuninori Morimoto wrote:
 
-Kevin
+> > So, can you agree about these ?
+> > 1) Add enough information/documentation about legacy/modern style and its plan.
+> > 2) Add dirty pointer fixup patch as workaround
+> > 3) switch to modern style as much as possible
+
+> I think that Mark needs to decided on whether use your 'dirty pointer'
+> fix or not.
+
+I've gone ahead with Curtis' version of Morimoto-san's patch just now -
+hopefully that's fine for v5.0.  Like we've been saying neither approach
+is ideal, thanks Jon and Morimoto-san for your efforts analyzing this
+and your proposals.
+
+--SCOJXUq1iwCn05li
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw9FR4ACgkQJNaLcl1U
+h9Dbawf/agRz5TjSTBnTWu+KSjrCB+C+lMhRKOffsiss0cyfbgpS+mKvdujG+ZPb
+4ebTzIDaG+LZWS83jkfh9wcIWy7miQrcZ7DY5XwoFaiLp4fbkVA5lW5jId2juf4u
+RTy1Q2RR3WR3LxQ0RTP86a+4L9Gf3jaQm3n2NIw0k9TqKgMB89q1inAMkTNn8F0U
+AozHjzvy1o1P57iHFj+BTeAmfAlpqzfJ2wsadm8dyxauitp5Pa9JWepq+BZJX0g9
+rw3OrFs2VKrpj6FfcVTaeyHgMSITOqcd19B+CoJoYBKP20+ogs58j71e0ndqALxw
+DH40p4DyPx1zi98Q5cyo6gMiJI2xAg==
+=JWgH
+-----END PGP SIGNATURE-----
+
+--SCOJXUq1iwCn05li--
+
+--===============7224673882882375101==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7224673882882375101==--
