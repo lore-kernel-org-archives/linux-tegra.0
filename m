@@ -1,68 +1,52 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: Re: [PATCH] regmap-irq: do not write mask register if mask_base is
- zero
-Date: Mon, 14 Jan 2019 17:42:26 +0800
-Message-ID: <90be2d42-977b-10a9-8c56-0b7a5c61a765@nvidia.com>
-References: <20190114093258.28431-1-markz@nvidia.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
+Date: Mon, 14 Jan 2019 03:09:47 -0800
+Message-ID: <20190114110947.GA30778@infradead.org>
+References: <20190104104753.3383-1-thierry.reding@gmail.com>
+ <20190104174354.GA18110@infradead.org>
+ <20190110105911.GA32301@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190114093258.28431-1-markz@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190110105911.GA32301@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Jinyoung Park <jinyoungp@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some background infos:
-This patch fixes an issue when using max77620 gpio driver.
-The issue is that, max77620 doesn't have a dedicated GPIO interrupt mask register.
-If you want to mask a separate GPIO interrupt on max77620, you need to do that in
-it's type register(starting from register address 0x36 - 0x3D).
-So this means we can't find a proper register for "mask_base" property, while in current
-regmap-irq.c, it updates mask registers assuming "mask_base" is always provided.
-
-Maybe this patch is not the cleanest way to fix the issue, e.g: some chip's mask register
-address is zero, in that case, could you help to suggest what is the right way?
-
-Thanks,
-Mark
-
-On 1/14/2019 5:32 PM, Mark Zhang wrote:
-> If client have not provided the mask base register then do not
-> write into the mask register.
+On Thu, Jan 10, 2019 at 11:59:11AM +0100, Thierry Reding wrote:
+> On Fri, Jan 04, 2019 at 09:43:54AM -0800, Christoph Hellwig wrote:
+> > > +	u64 dma_mask = dma_get_mask(dev);
+> > 
+> > This is not a driver API.  I think what you want is
+> > dma_get_required_mask to query the mask.  But in that case
+> > you still need to always actually set a mask in the driver as well.
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Jinyoung Park <jinyoungp@nvidia.com>
-> Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
-> Signed-off-by: Mark Zhang <markz@nvidia.com>
-> ---
->  drivers/base/regmap/regmap-irq.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> That's slightly different from what I want to do here. The purpose of
+> this part of the patch is that when the SDHCI hardware supports only 32
+> bits of address space, then we want to prevent 64-bit addressing mode
+> from being used because it isn't useful.
 > 
-> diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-> index d2d0014b0d23..330c1f7e9665 100644
-> --- a/drivers/base/regmap/regmap-irq.c
-> +++ b/drivers/base/regmap/regmap-irq.c
-> @@ -108,6 +108,9 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
->  	 * suppress pointless writes.
->  	 */
->  	for (i = 0; i < d->chip->num_regs; i++) {
-> +		if (!d->chip->mask_base)
-> +			continue;
-> +
->  		reg = d->chip->mask_base +
->  			(i * map->reg_stride * d->irq_reg_stride);
->  		if (d->chip->mask_invert) {
-> @@ -588,6 +591,9 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
->  	/* Mask all the interrupts by default */
->  	for (i = 0; i < chip->num_regs; i++) {
->  		d->mask_buf[i] = d->mask_buf_def[i];
-> +		if (!chip->mask_base)
-> +			continue;
-> +
->  		reg = chip->mask_base +
->  			(i * map->reg_stride * d->irq_reg_stride);
->  		if (chip->mask_invert)
+> So what we do want to check here is the DMA mask configured by the
+> driver (or the default set by the bus, or wherever it came from).
+> dma_get_required_mask() returns the DMA mask required to address all of
+> system memory. That would perhaps be a useful additional check, but it's
+> orthogonal to what I'm trying to do here.
 > 
+> Is there something else appropriate that I could use to query the DMA
+> mask set for a device?
+
+I think the problem is that you try to mix up responsibility of who
+needs to set the DMA mask.  Either we want the core sdhci code set
+it as we do, or we move it to the driver, probably optionally.
+
+So instead of trying to read something back you should either:
+
+ - add a set_dma_mask to override it
+ - add a 64bit_mode_dma_mask field to strct mmc_host, initialize
+   that to 64-bit by default and let host drivers override it
+
+While the first one creates a little more boilerplate code it actually
+looks cleaner to me.  The added benefit is that it can also replace the
+usage of SDHCI_QUIRK2_BROKEN_64_BIT_DMA.
