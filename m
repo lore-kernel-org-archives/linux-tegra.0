@@ -1,47 +1,55 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
- instead run teardown delayed
-Date: Tue, 15 Jan 2019 16:09:14 +0000
-Message-ID: <313fc9d6-a142-91c2-8868-188bc70c019f@nvidia.com>
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
- <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org>
- <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
- <20190115151009.GC5522@sirena.org.uk>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 0/3] Introduce support for WP GPIO in the core SDHCI
+Date: Tue, 15 Jan 2019 17:28:34 +0100
+Message-ID: <20190115162837.5399-1-thomas.petazzoni@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190115151009.GC5522@sirena.org.uk>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Martin Sperl <kernel@martin.sperl.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Kishon Vijay Abraham I <kishon@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Gregory Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
-On 15/01/2019 15:10, Mark Brown wrote:
-> On Tue, Jan 15, 2019 at 02:26:02PM +0000, Jon Hunter wrote:
-> 
->> It seems that __spi_pump_messages() is getting called several times
->> during boot when registering the spi-flash, then after the spi-flash has
->> been registered, about a 1 sec later spi_pump_idle_teardown() is called
->> (as expected), but exits because 'ctlr->running' is true. However,
->> spi_pump_idle_teardown() is never called again and when we suspend we
->> are stuck in the busy/running state. In this case should something be
->> scheduling spi_pump_idle_teardown() again? Although even if it does I
->> don't see where the busy flag would be cleared in this path?
-> 
-> Right, I think with the current code we just shouldn't be checking for
-> busy in teardown, since there's now a fairly big delay between idle and
-> actually turning the hardware off the name is just super misleading and
-> the logic confused.  I don't have time to test right now but does
-> something like the below which changes it to a flag for the hardware
-> being powered up work:
+While doing the bring up of a Zynq 7000 platform where the WP signal
+of a SD slot is connected to a regular GPIO rather than through the
+SDHCI WP pin, I realized that the GPIO described by wp-gpios was
+properly requested, but it was in fact not used at all.
 
-I tried your change but the same problem still persists.
+Indeed, the SDHCI core implements sdhci_check_ro() by:
 
-Cheers
-Jon
+ - Calling a controller-specific ->get_ro() callback if it exists. A
+   few controller-specific drivers implement this, but not
+   sdhci-of-arasan, which is used on Zynq 7000.
+
+ - Using the SDHCI_PRESENT_STATE register, which reports the state of
+   the SDHCI interface WP pin, and obvisouly not the state of a
+   separate WP GPIO.
+
+This patch series therefore changes sdhci_check_ro() to behave like
+sdhci_get_cd(): use a GPIO first if available, and if not, fallback to
+using the SDHCI_PRESENT_STATE register. Indeed, if there's a wp-gpios
+described in the DT, it quite certainly indicates that the SDHCI WP
+signal is not used, and the WP GPIO should be used instead.
+
+As part of this series, two SDHCI drivers are modified to no longer
+implement their custom ->get_ro() hook, since the core SDHCI now does
+the right thing with the WP GPIO.
+
+Best regards,
+
+Thomas
+
+Thomas Petazzoni (3):
+  mmc: sdhci: use WP GPIO in sdhci_check_ro()
+  mmc: sdhci-omap: drop ->get_ro() implementation
+  mmc: sdhci-tegra: drop ->get_ro() implementation
+
+ drivers/mmc/host/sdhci-omap.c  | 1 -
+ drivers/mmc/host/sdhci-tegra.c | 9 ---------
+ drivers/mmc/host/sdhci.c       | 9 ++++++---
+ 3 files changed, 6 insertions(+), 13 deletions(-)
 
 -- 
-nvpublic
+2.20.1
