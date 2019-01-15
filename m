@@ -1,103 +1,282 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] ARM: tegra: add "jedec,spi-nor" flash compatible binding
-Date: Tue, 15 Jan 2019 15:09:46 +0000
-Message-ID: <cd7aed36-7a89-e129-9db5-16237f9e40e6@nvidia.com>
-References: <1439705605-9127-1-git-send-email-zajec5@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
+ instead run teardown delayed
+Date: Tue, 15 Jan 2019 15:10:09 +0000
+Message-ID: <20190115151009.GC5522@sirena.org.uk>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
+ <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org>
+ <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1439705605-9127-1-git-send-email-zajec5@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1SQmhf2mF2YjsYvc"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Martin Sperl <kernel@martin.sperl.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE2LzA4LzIwMTUgMDc6MTMsIFJhZmHFgiBNacWCZWNraSB3cm90ZToKPiBTdGFydGluZyB3
-aXRoIGNvbW1pdCA4OTQ3ZTM5NmE4MjkgKCJEb2N1bWVudGF0aW9uOiBkdDogbXRkOiByZXBsYWNl
-Cj4gIm5vci1qZWRlYyIgYmluZGluZyB3aXRoICJqZWRlYywgc3BpLW5vciIiKSB3ZSBoYXZlICJq
-ZWRlYyxzcGktbm9yIgo+IGJpbmRpbmcgaW5kaWNhdGluZyBzdXBwb3J0IGZvciBKRURFQyBpZGVu
-dGlmaWNhdGlvbi4KPiAKPiBVc2UgaXQgZm9yIGFsbCBmbGFzaGVzIHRoYXQgYXJlIHN1cHBvc2Vk
-IHRvIHN1cHBvcnQgUkVBRCBJRCBvcCBhY2NvcmRpbmcKPiB0byB0aGUgZGF0YXNoZWV0cy4KPiAK
-PiBTaWduZWQtb2ZmLWJ5OiBSYWZhxYIgTWnFgmVja2kgPHphamVjNUBnbWFpbC5jb20+Cj4gLS0t
-Cj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTE0LWRhbG1vcmUuZHRzICAgIHwgMiArLQo+ICBh
-cmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1qZXRzb24tdGsxLmR0cyB8IDIgKy0KPiAgYXJjaC9h
-cm0vYm9vdC9kdHMvdGVncmExMjQtbnlhbi5kdHNpICAgICAgfCAyICstCj4gIGFyY2gvYXJtL2Jv
-b3QvZHRzL3RlZ3JhMTI0LXZlbmljZTIuZHRzICAgIHwgMiArLQo+ICBhcmNoL2FybS9ib290L2R0
-cy90ZWdyYTIwLXRyaW1zbGljZS5kdHMgICB8IDIgKy0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVn
-cmEzMC1iZWF2ZXIuZHRzICAgICAgfCAyICstCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAt
-Y2FyZGh1LmR0c2kgICAgIHwgMiArLQo+ICA3IGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygr
-KSwgNyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVn
-cmExMTQtZGFsbW9yZS5kdHMgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTExNC1kYWxtb3JlLmR0
-cwo+IGluZGV4IDhiN2FhMGQuLjVkZTIzZGUgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9k
-dHMvdGVncmExMTQtZGFsbW9yZS5kdHMKPiArKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEx
-NC1kYWxtb3JlLmR0cwo+IEBAIC0xMDgyLDcgKzEwODIsNyBAQAo+ICAJCXN0YXR1cyA9ICJva2F5
-IjsKPiAgCQlzcGktbWF4LWZyZXF1ZW5jeSA9IDwyNTAwMDAwMD47Cj4gIAkJc3BpLWZsYXNoQDAg
-ewo+IC0JCQljb21wYXRpYmxlID0gIndpbmJvbmQsdzI1cTMyZHciOwo+ICsJCQljb21wYXRpYmxl
-ID0gIndpbmJvbmQsdzI1cTMyZHciLCAiamVkZWMsc3BpLW5vciI7Cj4gIAkJCXJlZyA9IDwwPjsK
-PiAgCQkJc3BpLW1heC1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+Owo+ICAJCX07Cj4gZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWpldHNvbi10azEuZHRzIGIvYXJjaC9hcm0v
-Ym9vdC9kdHMvdGVncmExMjQtamV0c29uLXRrMS5kdHMKPiBpbmRleCBiZDQzZWQ2Li40NDA5N2M2
-IDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWpldHNvbi10azEuZHRz
-Cj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtamV0c29uLXRrMS5kdHMKPiBAQCAt
-MTYxMSw3ICsxNjExLDcgQEAKPiAgCQlzdGF0dXMgPSAib2theSI7Cj4gIAkJc3BpLW1heC1mcmVx
-dWVuY3kgPSA8MjUwMDAwMDA+Owo+ICAJCXNwaS1mbGFzaEAwIHsKPiAtCQkJY29tcGF0aWJsZSA9
-ICJ3aW5ib25kLHcyNXEzMmR3IjsKPiArCQkJY29tcGF0aWJsZSA9ICJ3aW5ib25kLHcyNXEzMmR3
-IiwgImplZGVjLHNwaS1ub3IiOwo+ICAJCQlyZWcgPSA8MD47Cj4gIAkJCXNwaS1tYXgtZnJlcXVl
-bmN5ID0gPDIwMDAwMDAwPjsKPiAgCQl9Owo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0
-cy90ZWdyYTEyNC1ueWFuLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFuLmR0
-c2kKPiBpbmRleCBhOWFlYzIzLi43ZDI2ZjQ5IDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL3RlZ3JhMTI0LW55YW4uZHRzaQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0
-LW55YW4uZHRzaQo+IEBAIC0zNDMsNyArMzQzLDcgQEAKPiAgCQlzcGktbWF4LWZyZXF1ZW5jeSA9
-IDwyNTAwMDAwMD47Cj4gIAo+ICAJCWZsYXNoQDAgewo+IC0JCQljb21wYXRpYmxlID0gIndpbmJv
-bmQsdzI1cTMyZHciOwo+ICsJCQljb21wYXRpYmxlID0gIndpbmJvbmQsdzI1cTMyZHciLCAiamVk
-ZWMsc3BpLW5vciI7Cj4gIAkJCXNwaS1tYXgtZnJlcXVlbmN5ID0gPDI1MDAwMDAwPjsKPiAgCQkJ
-cmVnID0gPDA+Owo+ICAJCX07Cj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3Jh
-MTI0LXZlbmljZTIuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtdmVuaWNlMi5kdHMK
-PiBpbmRleCA3OWU3MjRiLi40ZGVjYjNjIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRz
-L3RlZ3JhMTI0LXZlbmljZTIuZHRzCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQt
-dmVuaWNlMi5kdHMKPiBAQCAtODY2LDcgKzg2Niw3IEBACj4gIAkJc3RhdHVzID0gIm9rYXkiOwo+
-ICAJCXNwaS1tYXgtZnJlcXVlbmN5ID0gPDI1MDAwMDAwPjsKPiAgCQlzcGktZmxhc2hAMCB7Cj4g
-LQkJCWNvbXBhdGlibGUgPSAid2luYm9uZCx3MjVxMzJkdyI7Cj4gKwkJCWNvbXBhdGlibGUgPSAi
-d2luYm9uZCx3MjVxMzJkdyIsICJqZWRlYyxzcGktbm9yIjsKPiAgCQkJcmVnID0gPDA+Owo+ICAJ
-CQlzcGktbWF4LWZyZXF1ZW5jeSA9IDwyMDAwMDAwMD47Cj4gIAkJfTsKPiBkaWZmIC0tZ2l0IGEv
-YXJjaC9hcm0vYm9vdC9kdHMvdGVncmEyMC10cmltc2xpY2UuZHRzIGIvYXJjaC9hcm0vYm9vdC9k
-dHMvdGVncmEyMC10cmltc2xpY2UuZHRzCj4gaW5kZXggZDk5YWY0ZS4uYzRjZmY4YiAxMDA2NDQK
-PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTIwLXRyaW1zbGljZS5kdHMKPiArKysgYi9h
-cmNoL2FybS9ib290L2R0cy90ZWdyYTIwLXRyaW1zbGljZS5kdHMKPiBAQCAtMjgyLDcgKzI4Miw3
-IEBACj4gIAkJc3RhdHVzID0gIm9rYXkiOwo+ICAJCXNwaS1tYXgtZnJlcXVlbmN5ID0gPDQ4MDAw
-MDAwPjsKPiAgCQlzcGktZmxhc2hAMCB7Cj4gLQkJCWNvbXBhdGlibGUgPSAid2luYm9uZCx3MjVx
-ODBibCI7Cj4gKwkJCWNvbXBhdGlibGUgPSAid2luYm9uZCx3MjVxODBibCIsICJqZWRlYyxzcGkt
-bm9yIjsKPiAgCQkJcmVnID0gPDA+Owo+ICAJCQlzcGktbWF4LWZyZXF1ZW5jeSA9IDw0ODAwMDAw
-MD47Cj4gIAkJfTsKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1iZWF2
-ZXIuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1iZWF2ZXIuZHRzCj4gaW5kZXggM2Rl
-ZGUzOS4uYzlkMjMwYyAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWJl
-YXZlci5kdHMKPiArKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWJlYXZlci5kdHMKPiBA
-QCAtMTg4NCw3ICsxODg0LDcgQEAKPiAgCQlzdGF0dXMgPSAib2theSI7Cj4gIAkJc3BpLW1heC1m
-cmVxdWVuY3kgPSA8MjUwMDAwMDA+Owo+ICAJCXNwaS1mbGFzaEAxIHsKPiAtCQkJY29tcGF0aWJs
-ZSA9ICJ3aW5ib25kLHcyNXEzMiI7Cj4gKwkJCWNvbXBhdGlibGUgPSAid2luYm9uZCx3MjVxMzIi
-LCAiamVkZWMsc3BpLW5vciI7Cj4gIAkJCXJlZyA9IDwxPjsKPiAgCQkJc3BpLW1heC1mcmVxdWVu
-Y3kgPSA8MjAwMDAwMDA+Owo+ICAJCX07Cj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRz
-L3RlZ3JhMzAtY2FyZGh1LmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWNhcmRodS5k
-dHNpCj4gaW5kZXggYmIxY2ExNS4uZGY3Zjg0NSAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290
-L2R0cy90ZWdyYTMwLWNhcmRodS5kdHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEz
-MC1jYXJkaHUuZHRzaQo+IEBAIC0zNTQsNyArMzU0LDcgQEAKPiAgCQlzdGF0dXMgPSAib2theSI7
-Cj4gIAkJc3BpLW1heC1mcmVxdWVuY3kgPSA8MjUwMDAwMDA+Owo+ICAJCXNwaS1mbGFzaEAxIHsK
-PiAtCQkJY29tcGF0aWJsZSA9ICJ3aW5ib25kLHcyNXEzMiI7Cj4gKwkJCWNvbXBhdGlibGUgPSAi
-d2luYm9uZCx3MjVxMzIiLCAiamVkZWMsc3BpLW5vciI7Cj4gIAkJCXJlZyA9IDwxPjsKPiAgCQkJ
-c3BpLW1heC1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+Owo+ICAJCX07Cj4gCgpMb29rcyBsaWtlIHRo
-aXMgb25lIGdvdCBsb3N0LCBidXQgc3RpbGwgYXBwbGllcyBjbGVhbmx5IHNvIC4uLgoKQWNrZWQt
-Ynk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgoKQ2hlZXJzCkpvbgoKLS0gCm52
-cHVibGljCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwps
-aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
-ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
-eC1hcm0ta2VybmVsCg==
+
+--1SQmhf2mF2YjsYvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jan 15, 2019 at 02:26:02PM +0000, Jon Hunter wrote:
+
+> It seems that __spi_pump_messages() is getting called several times
+> during boot when registering the spi-flash, then after the spi-flash has
+> been registered, about a 1 sec later spi_pump_idle_teardown() is called
+> (as expected), but exits because 'ctlr->running' is true. However,
+> spi_pump_idle_teardown() is never called again and when we suspend we
+> are stuck in the busy/running state. In this case should something be
+> scheduling spi_pump_idle_teardown() again? Although even if it does I
+> don't see where the busy flag would be cleared in this path?
+
+Right, I think with the current code we just shouldn't be checking for
+busy in teardown, since there's now a fairly big delay between idle and
+actually turning the hardware off the name is just super misleading and
+the logic confused.  I don't have time to test right now but does
+something like the below which changes it to a flag for the hardware
+being powered up work:
+
+diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
+index 3b2a9a6b990d..0170b0ef5d37 100644
+--- a/drivers/spi/spi-stm32-qspi.c
++++ b/drivers/spi/spi-stm32-qspi.c
+@@ -358,9 +358,6 @@ static int stm32_qspi_setup(struct spi_device *spi)
+ 	struct stm32_qspi_flash *flash;
+ 	u32 cr, presc;
+=20
+-	if (ctrl->busy)
+-		return -EBUSY;
+-
+ 	if (!spi->max_speed_hz)
+ 		return -EINVAL;
+=20
+diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+index 5f19016bbf10..3d746a0782eb 100644
+--- a/drivers/spi/spi-ti-qspi.c
++++ b/drivers/spi/spi-ti-qspi.c
+@@ -152,11 +152,6 @@ static int ti_qspi_setup(struct spi_device *spi)
+ 	int clk_div =3D 0, ret;
+ 	u32 clk_ctrl_reg, clk_rate, clk_mask;
+=20
+-	if (spi->master->busy) {
+-		dev_dbg(qspi->dev, "master busy doing other transfers\n");
+-		return -EBUSY;
+-	}
+-
+ 	if (!qspi->spi_max_frequency) {
+ 		dev_err(qspi->dev, "spi max frequency not defined\n");
+ 		return -EINVAL;
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 9f83e1b17aa1..a173a3114813 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -487,22 +487,6 @@ static int zynqmp_qspi_setup_transfer(struct spi_devic=
+e *qspi,
+ 	return 0;
+ }
+=20
+-/**
+- * zynqmp_qspi_setup:	Configure the QSPI controller
+- * @qspi:	Pointer to the spi_device structure
+- *
+- * Sets the operational mode of QSPI controller for the next QSPI transfer,
+- * baud rate and divisor value to setup the requested qspi clock.
+- *
+- * Return:	0 on success; error value otherwise.
+- */
+-static int zynqmp_qspi_setup(struct spi_device *qspi)
+-{
+-	if (qspi->master->busy)
+-		return -EBUSY;
+-	return 0;
+-}
+-
+ /**
+  * zynqmp_qspi_filltxfifo:	Fills the TX FIFO as long as there is room in
+  *				the FIFO or the bytes required to be
+@@ -1088,7 +1072,6 @@ static int zynqmp_qspi_probe(struct platform_device *=
+pdev)
+=20
+ 	master->num_chipselect =3D GQSPI_DEFAULT_NUM_CS;
+=20
+-	master->setup =3D zynqmp_qspi_setup;
+ 	master->set_cs =3D zynqmp_qspi_chipselect;
+ 	master->transfer_one =3D zynqmp_qspi_start_transfer;
+ 	master->prepare_transfer_hardware =3D zynqmp_prepare_transfer_hardware;
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 06b9139664a3..6d10ad9d768f 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1234,7 +1234,7 @@ static void __spi_pump_messages(struct spi_controller=
+ *ctlr, bool in_kthread)
+=20
+ 	/* Check if the queue is idle */
+ 	if (list_empty(&ctlr->queue) || !ctlr->running) {
+-		if (!ctlr->busy) {
++		if (!ctlr->hw_active) {
+ 			spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 			return;
+ 		}
+@@ -1252,10 +1252,10 @@ static void __spi_pump_messages(struct spi_controll=
+er *ctlr, bool in_kthread)
+ 		list_first_entry(&ctlr->queue, struct spi_message, queue);
+=20
+ 	list_del_init(&ctlr->cur_msg->queue);
+-	if (ctlr->busy)
++	if (ctlr->hw_active)
+ 		was_busy =3D true;
+ 	else
+-		ctlr->busy =3D true;
++		ctlr->hw_active =3D true;
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+=20
+ 	mutex_lock(&ctlr->io_mutex);
+@@ -1362,10 +1362,6 @@ static void spi_pump_idle_teardown(struct kthread_wo=
+rk *work)
+ 	if (ctlr->running)
+ 		goto out;
+=20
+-	/* if the controller is busy then exit */
+-	if (ctlr->busy)
+-		goto out;
+-
+ 	/* if the controller is idling then exit
+ 	 * this is actually a bit strange and would indicate that
+ 	 * this function is scheduled twice, which should not happen
+@@ -1374,7 +1370,6 @@ static void spi_pump_idle_teardown(struct kthread_wor=
+k *work)
+ 		goto out;
+=20
+ 	/* set up the initial states */
+-	ctlr->busy =3D false;
+ 	ctlr->idling =3D true;
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+=20
+@@ -1384,15 +1379,17 @@ static void spi_pump_idle_teardown(struct kthread_w=
+ork *work)
+ 	kfree(ctlr->dummy_tx);
+ 	ctlr->dummy_tx =3D NULL;
+=20
+-	/* unprepare hardware */
+-	if (ctlr->unprepare_transfer_hardware &&
+-	    ctlr->unprepare_transfer_hardware(ctlr))
+-		dev_err(&ctlr->dev,
+-			"failed to unprepare transfer hardware\n");
+-	/* handle pm */
+-	if (ctlr->auto_runtime_pm) {
+-		pm_runtime_mark_last_busy(ctlr->dev.parent);
+-		pm_runtime_put_autosuspend(ctlr->dev.parent);
++	if (ctlr->hw_active) {
++		/* unprepare hardware */
++		if (ctlr->unprepare_transfer_hardware &&
++		    ctlr->unprepare_transfer_hardware(ctlr))
++			dev_err(&ctlr->dev,
++				"failed to unprepare transfer hardware\n");
++		/* handle pm */
++		if (ctlr->auto_runtime_pm) {
++			pm_runtime_mark_last_busy(ctlr->dev.parent);
++			pm_runtime_put_autosuspend(ctlr->dev.parent);
++		}
+ 	}
+=20
+ 	/* mark controller as idle */
+@@ -1401,6 +1398,7 @@ static void spi_pump_idle_teardown(struct kthread_wor=
+k *work)
+ 	/* finally put us from idling into stopped */
+ 	spin_lock_irqsave(&ctlr->queue_lock, flags);
+ 	ctlr->idling =3D false;
++	ctlr->hw_active =3D false;
+=20
+ out:
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+@@ -1411,7 +1409,7 @@ static int spi_init_queue(struct spi_controller *ctlr)
+ 	struct sched_param param =3D { .sched_priority =3D MAX_RT_PRIO - 1 };
+=20
+ 	ctlr->running =3D false;
+-	ctlr->busy =3D false;
++	ctlr->hw_active =3D false;
+=20
+ 	kthread_init_worker(&ctlr->kworker);
+ 	ctlr->kworker_task =3D kthread_run(kthread_worker_fn, &ctlr->kworker,
+@@ -1520,7 +1518,7 @@ static int spi_start_queue(struct spi_controller *ctl=
+r)
+=20
+ 	spin_lock_irqsave(&ctlr->queue_lock, flags);
+=20
+-	if (ctlr->running || ctlr->busy) {
++	if (ctlr->running || ctlr->hw_active) {
+ 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 		return -EBUSY;
+ 	}
+@@ -1543,18 +1541,19 @@ static int spi_stop_queue(struct spi_controller *ct=
+lr)
+ 	spin_lock_irqsave(&ctlr->queue_lock, flags);
+=20
+ 	/*
+-	 * This is a bit lame, but is optimized for the common execution path.
+-	 * A wait_queue on the ctlr->busy could be used, but then the common
+-	 * execution path (pump_messages) would be required to call wake_up or
+-	 * friends on every SPI message. Do this instead.
++	 * This is a bit sad, but is optimized for the common execution path.
++	 * A wait_queue on the ctlr->hw_active could be used, but then
++	 * the common execution path (pump_messages) would be required
++	 * to call wake_up or friends on every SPI message. Do this
++	 * instead.
+ 	 */
+-	while ((!list_empty(&ctlr->queue) || ctlr->busy) && limit--) {
++	while ((!list_empty(&ctlr->queue) || ctlr->hw_active) && limit--) {
+ 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 		usleep_range(10000, 11000);
+ 		spin_lock_irqsave(&ctlr->queue_lock, flags);
+ 	}
+=20
+-	if (!list_empty(&ctlr->queue) || ctlr->busy)
++	if (!list_empty(&ctlr->queue) || ctlr->hw_active)
+ 		ret =3D -EBUSY;
+ 	else
+ 		ctlr->running =3D false;
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 79ad62e2487c..d9b7be89e50b 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -343,7 +343,7 @@ static inline void spi_unregister_driver(struct spi_dri=
+ver *sdrv)
+  *                    in-flight message
+  * @cur_msg_mapped: message has been mapped for DMA
+  * @xfer_completion: used by core transfer_one_message()
+- * @busy: message pump is busy
++ * @hw_active: message pump has hardware powered up
+  * @running: message pump is running
+  * @rt: whether this queue is set to run as a realtime task
+  * @auto_runtime_pm: the core should ensure a runtime PM reference is held
+@@ -538,7 +538,7 @@ struct spi_controller {
+ 	struct list_head		queue;
+ 	struct spi_message		*cur_msg;
+ 	bool				idling;
+-	bool				busy;
++	bool				hw_active;
+ 	bool				running;
+ 	bool				rt;
+ 	bool				auto_runtime_pm;
+
+--1SQmhf2mF2YjsYvc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw999AACgkQJNaLcl1U
+h9CFZgf/ZgHzpfNolv8wgO1rMfTckSe3KxszLPqo57EQEvboaSJ+fuCDdUe8X4x5
+z10gYX3HCEVaaUSCaO4QZS/JJwDrZfgOJ9gAJYATcsQ39xLo/j2QZCXAG4jrM8xg
+oXakulm6iXMAHnmo1pJUW1mAAwHCfIOBciCAMlWpnLLeD/TeK5vC2nGdeGxpQewg
+QxtBKKZexuokLtxpfx/GTtIsUQfgy83Q7dOZYwiNo/HviernlSEtK0o60eV95nFq
+YSfrf9X6dEcfP5r/l4T32ZQAT1rJ06t1M3smeETve3JnkZduYrSwr0h//EYWbaAu
+up2QjeCXy4UrVzxerhwwzZ/nEQ/Y6w==
+=q6jL
+-----END PGP SIGNATURE-----
+
+--1SQmhf2mF2YjsYvc--
