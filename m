@@ -1,42 +1,76 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V7 2/2] mmc: tegra: HW Command Queue Support for Tegra
- SDMMC
-Date: Tue, 15 Jan 2019 03:26:18 +0000
-Message-ID: <BN7PR12MB2836B186E2AB62D58F6D08B1C2810@BN7PR12MB2836.namprd12.prod.outlook.com>
-References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
- <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
- <5722018a-7654-c6f9-c2aa-2817b39b1a35@intel.com>
- <BN7PR12MB2836750BAFFAEAF8436C7C58C2850@BN7PR12MB2836.namprd12.prod.outlook.com>
- <CABOV4+UkA48Jc9hTSkM=cEoH0zktmjazrcWVZZ1LMqRXSdjVuA@mail.gmail.com>
+From: "Richter, Robert" <Robert.Richter-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Date: Tue, 15 Jan 2019 08:45:53 +0000
+Message-ID: <20190115084537.3hedrtkowg3elzca@rric.localdomain>
+References: <20190109202934.29304-1-robh@kernel.org>
+ <20190110144537.p5setcurwu6bwrtl@rric.localdomain>
+ <CAL_JsqKMYY5RsCjzp4eMnW0YrohcqwmhVj0hfUEVrbGJEFx05w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABOV4+UkA48Jc9hTSkM=cEoH0zktmjazrcWVZZ1LMqRXSdjVuA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <CAL_JsqKMYY5RsCjzp4eMnW0YrohcqwmhVj0hfUEVrbGJEFx05w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Chunyan Zhang <chunyan.zhang@unisoc.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-ID: <A7717CEB01A5B3418666A183E6A72D3A-Tk6F3M/euE6cE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Nair,
+ Jayachandran" <Jayachandran.Nair-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk@kerne>
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+Pg0KPj4gPj4gK3N0YXRpYyBpbnQgc2RoY2lfdGVncmFfYWRkX2hvc3Qoc3RydWN0IHNkaGNp
-X2hvc3QgKmhvc3QpIHsNCj4+ID4+ICsgICAgc3RydWN0IHNkaGNpX3BsdGZtX2hvc3QgKnBsdGZt
-X2hvc3QgPSBzZGhjaV9wcml2KGhvc3QpOw0KPj4gPj4gKyAgICBzdHJ1Y3Qgc2RoY2lfdGVncmEg
-KnRlZ3JhX2hvc3QgPSBzZGhjaV9wbHRmbV9wcml2KHBsdGZtX2hvc3QpOw0KPj4gPj4gKyAgICBz
-dHJ1Y3QgY3FoY2lfaG9zdCAqY3FfaG9zdDsNCj4+ID4+ICsgICAgYm9vbCBkbWE2NDsNCj4+ID4+
-ICsgICAgaW50IHJldDsNCj4+ID4+ICsNCj4+ID4+ICsgICAgaWYgKCF0ZWdyYV9ob3N0LT5lbmFi
-bGVfaHdjcSkNCj4+ID4+ICsgICAgICAgICAgICByZXR1cm4gc2RoY2lfYWRkX2hvc3QoaG9zdCk7
-DQo+PiA+PiArDQo+PiA+PiArICAgIGhvc3QtPnY0X21vZGUgPSB0cnVlOw0KPj4gPg0KPj4gPkNh
-biB5b3UgdXNlIHNkaGNpX2VuYWJsZV92NF9tb2RlKCkgaGVyZT8NCj4+DQo+PiBIaSBBZHJpYW4s
-DQo+PiBzZGhjaV9yZWFkX2NhcHMgc2V0cyB2NCBtb2RlIHRocnUgc2RoY2lfZG9fZW5hYmxlX3Y0
-X21vZGUgaWYgdjRfbW9kZSANCj4+IGlzIHRydWUgc2RoY2lfc2V0dXBfaG9zdCBjYWxscyBzZGhj
-aV9yZWFkX2NhcHMgc28gSSB3YXMgc2V0dGluZyB2NF9tb2RlIHRvIHRydWUgc28gdjQgbW9kZSBn
-ZXRzIGVuYWJsZWQgZHVyaW5nIHJlYWQgY2Fwcy4NCj4+DQo+DQo+SGkgc293amFueWEsIA0KPg0K
-PkkgYWxzbyB3b3VsZCBzdWdnZXN0IHRvIHVzZSBzZGhjaV9lbmFibGVfdjRfbW9kZSgpIGluc3Rl
-YWQgb2Ygc2V0dGluZw0KPmhvc3QtPnY0X21vZGUgZGlyZWN0bHkuDQo+RW5hYmxpbmcgdjRfbW9k
-ZSBpbiByZWFkIGNhcHMgd2FzIGp1c3QgYmVjYXVzZSB0aGF0IEkgd2FzIHdvcnJpZWQgYWJvdXQg
-djQgbW9kZSB3b3VsZCBiZSBjbGVhcmVkIGFmdGVyIHJlc2V0IGFsbCBvbiBzb21lIGNvbnRyb2xs
-ZXJzLiBJZiB0aGF0J3Mgbm90IHRoZSBjYXNlIGZvciBhbGwgc2QgaG9zdCBjb250cm9sbGVycywg
-SSBndWVzcyBpdCBjYW4gYmUgcmVtb3ZlZC4NCj4NCj5UaGFua3MsDQo+Q2h1bnlhbg0KDQpPSywg
-V2lsbCBjaGFuZ2UgaXQgYW5kIHByb3ZpZGUgdXBkYXRlZCB2ZXJzaW9uLiBUaGFua3MgQW5kcmlh
-biBhbmQgQ2h1bnlhbi4NClNvd2phbnlhDQo=
+On 11.01.19 07:57:12, Rob Herring wrote:
+> On Thu, Jan 10, 2019 at 8:18 PM Richter, Robert
+> <Robert.Richter-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org> wrote:
+> >
+> > Rob,
+> >
+> > On 09.01.19 14:29:34, Rob Herring wrote:
+> > > The 'arm,armv8' compatible string is only for software models. It adds
+> > > little value otherwise and is inconsistently used as a fallback on some
+> > > platforms. Remove it from those platforms.
+> > >
+> > > This fixes warnings generated by the DT schema.
+> > >
+> > > Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> > > Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> > > Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> > > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > > ---
+> > > armsoc folks, Please apply directly.
+> >
+> > > diff --git a/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi b/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> > > index ff5c4c47b22b..c616132f7d6d 100644
+> > > --- a/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> > > +++ b/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> > > @@ -27,28 +27,28 @@
+> > >
+> > >                 cpu@0 {
+> > >                         device_type = "cpu";
+> > > -                       compatible = "cavium,thunder2", "brcm,vulcan", "arm,armv8";
+> > > +                       compatible = "cavium,thunder2";
+> >
+> > We are just checking if removing the "brcm,vulcan" string has any
+> > impact on early silicon revisions we want to support (see also
+> > BRCM_CPU_PART_VULCAN).
+> >
+> > Maybe you make this a separate change?
+> 
+> Dropping brcm,vulcan was unintentional (regex fail). Though keeping it
+> means we need a schema change as it was not documented to be a
+> fallback.
+
+We have checked this and brcm,vulcan can be dropped too. Sending an
+ack in a separate mail.
+
+Thanks,
+
+-Robert
