@@ -1,78 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/3] mmc: sdhci: use WP GPIO in sdhci_check_ro()
-Date: Wed, 16 Jan 2019 13:32:16 +0100
-Message-ID: <20190116123216.GC30993@ulmo>
-References: <20190115162837.5399-1-thomas.petazzoni@bootlin.com>
- <20190115162837.5399-2-thomas.petazzoni@bootlin.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [GIT PULL] Immutable branch between MFD, IIO and Input due for the
+ v5.1 merge window
+Date: Wed, 16 Jan 2019 12:44:21 +0000
+Message-ID: <20190116124421.GD23399@dell>
+References: <20181221134638.20600-1-dev@pschenker.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="R+My9LyyhiUvIEro"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190115162837.5399-2-thomas.petazzoni@bootlin.com>
+In-Reply-To: <20181221134638.20600-1-dev@pschenker.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Kishon Vijay Abraham I <kishon@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Gregory Clement <gregory.clement@bootlin.com>
+To: Philippe Schenker <dev@pschenker.ch>
+Cc: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch, robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org, dmitry.torokhov@gmail.com, thierry.reding@gmail.com, digetx@gmail.com, coquelin.stm32@gmail.com, Philippe Schenker <philippe.schenker@toradex.com>, Arnd Bergmann <arnd@arndb.de>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-iio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, Fabio Estevam <fabio.estevam@nxp.com>, Randy Dunlap <rdunlap@infradead.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Freeman Liu <fre>
 List-Id: linux-tegra@vger.kernel.org
 
+Taken all but the ARM patches.
 
---R+My9LyyhiUvIEro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These need to be reviewed and go in via ARM-SoC.
 
-On Tue, Jan 15, 2019 at 05:28:35PM +0100, Thomas Petazzoni wrote:
-> Even though SDHCI controllers may have a dedicated WP pin that can be
-> queried using the SDHCI_PRESENT_STATE register, some platforms may
-> chose to use a separate regular GPIO to route the WP signal. Such a
-> GPIO is typically represented using the wp-gpios property in the
-> Device Tree.
->=20
-> Unfortunately, the current sdhci_check_ro() function does not make use
-> of such GPIO when available: it either uses a host controller specific
-> ->get_ro() operation, or uses the SDHCI_PRESENT_STATE. Several host
-> controller specific ->get_ro() functions are implemented just to use
-> check a WP GPIO state.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-"use check" was probably meant to be just "check"?
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
->=20
-> Instead of pushing this to more controller-specific implementations,
-> let's handle this in the core SDHCI code, just like it is already done
-> for the CD GPIO in sdhci_get_cd().
->=20
-> The below patch simply changes sdhci_check_ro() to use the value of
-> the WP GPIO if available. We need to adjust the prototype of the
-> function to use a mmc_host* as argument instead of sdhci_host*, since
-> the mmc_can_gpio_ro() and mmc_gpio_get_ro() helpers take a mmc_host*.
->=20
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-> ---
->  drivers/mmc/host/sdhci.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+are available in the Git repository at:
 
-Other than the typo in the commit message, this looks fine:
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-iio-input-v5.1
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+for you to fetch changes up to 81cdab79818988d27d8aeb162b7988c9e6dde936:
 
---R+My9LyyhiUvIEro
-Content-Type: application/pgp-signature; name="signature.asc"
+  iio: adc: add STMPE ADC devicetree bindings (2019-01-16 12:37:36 +0000)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+Immutable branch between MFD, IIO and Input due for the v5.1 merge window
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw/JFAACgkQ3SOs138+
-s6GeDhAAwsNmmLpq9tvuMI4JohtkuLt6RUH4Gr+hsYPGSzqqZrIa0GtmelLT6Orf
-omnjgIpNq+dGJIXlH+LmHjGmDdQiMs3Q/TeORrMjXvHryoWGbXFRqNgoCanM+UvT
-TbcDMMGvjkLNTJ4ra0gwJzSB4us+atleiCYn00ed+oz9Hzz3QZ5ncOK6E+JULwKn
-shVzMM2O84za0wt3hTG7vKpA18VJg5zVaJGVsPPNvUOHYtoCDFD0JN/Uf13yU7rA
-jVv+an0THTk0Lz82mBMLl4jZaRV2npKwvznzgnae85iflV61RFnkvQ13uXuEg1C5
-LmNSBSO3YE7kxmfaRaUgQ1G8wB42/nHNxizE8+09ET9bRjUGsy5cybC/05WihEgo
-UPZtqr66dN899Zp1NaBugD1M0NKPj9ZbQIsZ6yjRICPxIAE/2cYIM4Kq8JrpYC0s
-JqC5t0KjRCM7W4IY7ImG8rgT26VwSoXNm2xaan7T7D/t2divLQsNBXK+QiZRPooA
-ggFnnJTz4Sm5h8GD79RWGfnh1jJ+oXIyhOOTWXlVHNhXFiOoKf8fymUPv2mU5cym
-w2M1ZraTqC6Rn3EG0FzIJq2jXmgiEsZod8B7jVJyTFJEJCbkTIRQfy93Hw/KNu6k
-XCfm3V4pXTxWAViZ5/3pmaVKsDduXLRzCKofuKXA9CS0QhYMYZw=
-=i3+o
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Philippe Schenker (3):
+      dt-bindings: stmpe: Reformatting parameter list and use tabs only
+      mfd: stmpe: Move ADC related defines to MFD header
+      Input: stmpe-ts: preparations for STMPE ADC driver
 
---R+My9LyyhiUvIEro--
+Stefan Agner (3):
+      mfd: stmpe: Preparations for STMPE ADC driver
+      iio: adc: add STMPE ADC driver using IIO framework
+      iio: adc: add STMPE ADC devicetree bindings
+
+ .../devicetree/bindings/iio/adc/stmpe-adc.txt      |  21 ++
+ .../bindings/input/touchscreen/stmpe.txt           | 116 +++++--
+ Documentation/devicetree/bindings/mfd/stmpe.txt    |  28 +-
+ drivers/iio/adc/Kconfig                            |   7 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/stmpe-adc.c                        | 363 +++++++++++++++++++++
+ drivers/input/touchscreen/stmpe-ts.c               |  66 +---
+ drivers/mfd/Kconfig                                |   3 +-
+ drivers/mfd/stmpe.c                                |  68 ++++
+ include/linux/mfd/stmpe.h                          |  21 ++
+ 10 files changed, 610 insertions(+), 84 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
+ create mode 100644 drivers/iio/adc/stmpe-adc.c
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
