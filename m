@@ -1,73 +1,47 @@
-From: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-Date: Tue, 15 Jan 2019 22:30:11 -0500
-Message-ID: <CADnq5_Oa0dj1+eOcAF6QxVxy0XRXNggZT+4K=Cm_=G80V-ejGQ@mail.gmail.com>
-References: <20190115104137.25695-1-daniel.vetter@ffwll.ch>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 00/16] 4.9.151-stable review
+Date: Wed, 16 Jan 2019 09:23:56 +0000
+Message-ID: <438d8109-fa21-c8b5-c7b1-3f730d0f5b90@nvidia.com>
+References: <20190115154848.164648613@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20190115104137.25695-1-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-Cc: nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "open list:VIRTIO CORE,
- NET..." <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, spice-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rodrigo Vivi <rodrigo.vivi-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel@li
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgNTo0MSBBTSBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0
-dGVyQGZmd2xsLmNoPiB3cm90ZToKPgo+IEhhdmluZyB0aGUgcHJvYmUgaGVscGVyIHN0dWZmICh3
-aGljaCBwcmV0dHkgbXVjaCBldmVyeW9uZSBuZWVkcykgaW4KPiB0aGUgZHJtX2NydGNfaGVscGVy
-LmggZmlsZSAod2hpY2ggYXRvbWljIGRyaXZlcnMgc2hvdWxkIG5ldmVyIG5lZWQpIGlzCj4gY29u
-ZnVzaW5nLiBTcGxpdCB0aGVtIG91dC4KPgo+IFRvIG1ha2Ugc3VyZSBJIGFjdHVhbGx5IGFjaGll
-dmVkIHRoZSBnb2FsIGhlcmUgSSB3ZW50IHRocm91Z2ggYWxsCj4gZHJpdmVycy4gQW5kIGluZGVl
-ZCwgYWxsIGF0b21pYyBkcml2ZXJzIGFyZSBub3cgZnJlZSBvZgo+IGRybV9jcnRjX2hlbHBlci5o
-IGluY2x1ZGVzLgo+Cj4gdjI6IE1ha2UgaXQgY29tcGlsZS4gVGhlcmUgd2FzIHNvIG11Y2ggY29t
-cGlsZSBmYWlsIG9uIGFybSBkcml2ZXJzCj4gdGhhdCBJIGZpZ3VyZWQgSSdsbCBiZXR0ZXIgbm90
-IGluY2x1ZGUgYW55IG9mIHRoZSBhY2tzIG9uIHYxLgo+Cj4gdjM6IE1hc3NpdmUgcmViYXNlIGJl
-Y2F1c2UgaTkxNSBoYXMgbG9zdCBhIGxvdCBvZiBkcm1QLmggaW5jbHVkZXMsIGJ1dAo+IG5vdCBh
-bGw6IFRocm91Z2ggZHJtX2NydGNfaGVscGVyLmggPiBkcm1fbW9kZXNldF9oZWxwZXIuaCAtPiBk
-cm1QLmgKPiB0aGVyZSB3YXMgc3RpbGwgb25lLCB3aGljaCB0aGlzIHBhdGNoIGxhcmdlbHkgcmVt
-b3Zlcy4gV2hpY2ggbWVhbnMKPiByb2xsaW5nIG91dCBsb3RzIG1vcmUgaW5jbHVkZXMgYWxsIG92
-ZXIuCj4KPiBUaGlzIHdpbGwgYWxzbyBjb25mbGljdCB3aXRoIG9uZ29pbmcgZHJtUC5oIGNsZWFu
-dXAgYnkgb3RoZXJzIEkKPiBleHBlY3QuCj4KPiB2MzogUmViYXNlIG9uIHRvcCBvZiBhdG9taWMg
-Ym9jaHMuCj4KPiBDYzogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJvcmcub3JnPgo+IENjOiBKYW5p
-IE5pa3VsYSA8amFuaS5uaWt1bGFAbGludXguaW50ZWwuY29tPgo+IENjOiBMYXVyZW50IFBpbmNo
-YXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4gQWNrZWQtYnk6IFJvZHJp
-Z28gVml2aSA8cm9kcmlnby52aXZpQGludGVsLmNvbT4gKHYyKQo+IEFja2VkLWJ5OiBCZW5qYW1p
-biBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4gKHYyKQo+IFNpZ25lZC1v
-ZmYtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAaW50ZWwuY29tPgo+IENjOiBsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogdmlydHVhbGl6YXRpb25AbGlz
-dHMubGludXgtZm91bmRhdGlvbi5vcmcKPiBDYzogZXRuYXZpdkBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKPiBDYzogbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnCj4gQ2M6IGludGVsLWdm
-eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBDYzogbGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwo+IENjOiBsaW51eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogbGlu
-dXgtYXJtLW1zbUB2Z2VyLmtlcm5lbC5vcmcKPiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwo+IENjOiBub3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBzcGljZS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBDYzogYW1kLWdmeEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKPiBDYzogbGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3JnCj4gQ2M6IGxpbnV4
-LXJvY2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogbGludXgtc3RtMzJAc3QtbWQtbWFp
-bG1hbi5zdG9ybXJlcGx5LmNvbQo+IENjOiBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKPiBD
-YzogeGVuLWRldmVsQGxpc3RzLnhlbi5vcmcKPiAtLS0KPiBNZXJnaW5nIHRoaXMgaXMgZ29pbmcg
-dG8gYmUgYSBiaXQgYSBtZXNzIGR1ZSB0byBhbGwgdGhlIG9uZ29pbmcgZHJtUC5oCj4gY2xlYW51
-cHMuIEkgdGhpbmsgdGhlIGZvbGxvd2luZyBzaG91bGQgd29yazoKPiAtIEFwcGx5IFNhbSdzIHBy
-ZXAgcGF0Y2hlcyBmb3IgcmVtb3ZpbmcgZHJtUC5oIGZyb20KPiAgIGRybV9tb2Rlc2V0X2hlbHBl
-ci5oCj4gLSBHZXQgdGhlIGk5MTUgZHJtUC5oIGNsZWFudXAgYmFja21lcmdlZCBpbnRvIGRybS1t
-aXNjLW5leHQKPiAtIEFwcGx5IHRoaXMgcGF0Y2guCj4gLSBBcHBseSBTYW0ncyBwYXRjaCB0byBy
-ZW1vdmUgZHJtUC5oIGZyb20gZHJtX21vZGVzZXRfaGVscGVyLmgKPiAtIEFsbCB0aHJvdWdoIGRy
-bS1taXNjLW5leHQsIHdoaWNoIGhhcyBzb21lIHBvdGVudGlhbCBmb3IgdHJpdmlhbAo+ICAgY29u
-ZmxpY3RzIGFyb3VuZCAjaW5jbHVkZXMgd2l0aCBvdGhlciBkcml2ZXJzIHVuZm9ydHVuYXRlbHku
-Cj4KPiBJIGhvcGUgdGhlcmUncyBubyBvdGhlciBkcml2ZXIgd2hvJ2xsIGJsb3cgdXAgYWNjaWRl
-bnRhbGx5IGJlY2F1c2UKPiBzb21lb25lIGVsc2UgaXMgZG9pbmcgYSBkcm1QLmggY2xlYW51cC4g
-TGF1cmVudCBtYXliZT8KPgo+IEphbmksIGFjayBvbiB0aGlzPwo+IC1EYW5pZWwKCmFtZGdwdSBh
-bmQgcmFkZW9uOgpBY2tlZC1ieTogQWxleCBEZXVjaGVyIDxhbGV4YW5kZXIuZGV1Y2hlckBhbWQu
-Y29tPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVl
-ZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8K
+
+On 15/01/2019 16:35, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.151 release.
+> There are 16 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Jan 17 15:48:25 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.151-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+All tests are passing for Tegra ...
+
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
+
+Linux version:	4.9.151-rc1-g1f10ba8
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
