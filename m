@@ -1,13 +1,14 @@
-From: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/5] iommu/tegra-smmu: Add resv_regions ops
-Date: Wed, 16 Jan 2019 12:50:14 -0800
-Message-ID: <1547671814-30088-5-git-send-email-navneetk@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/5] iommu/tegra-smmu: Fix domain_alloc
+Date: Thu, 17 Jan 2019 18:13:49 +0300
+Message-ID: <e55f408d-d518-f12d-4233-1b70263400f4@gmail.com>
 References: <1547671814-30088-1-git-send-email-navneetk@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 In-Reply-To: <1547671814-30088-1-git-send-email-navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
@@ -17,72 +18,65 @@ List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
 Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for get/put reserved regions.
-
-Signed-off-by: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 4b43c63..e848a45 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -22,6 +22,9 @@
- #include <soc/tegra/ahb.h>
- #include <soc/tegra/mc.h>
- 
-+#define MSI_IOVA_BASE	0x8000000
-+#define MSI_IOVA_LENGTH	0x100000
-+
- struct tegra_smmu_group {
- 	struct list_head list;
- 	const struct tegra_smmu_group_soc *soc;
-@@ -882,6 +885,31 @@ static int tegra_smmu_of_xlate(struct device *dev,
- 	return iommu_fwspec_add_ids(dev, &id, 1);
- }
- 
-+static void tegra_smmu_get_resv_regions(struct device *dev,
-+		struct list_head *head)
-+{
-+	struct iommu_resv_region *region;
-+	int prot = IOMMU_WRITE | IOMMU_NOEXEC | IOMMU_MMIO;
-+
-+	region = iommu_alloc_resv_region(MSI_IOVA_BASE, MSI_IOVA_LENGTH,
-+					prot, IOMMU_RESV_SW_MSI);
-+	if (!region)
-+		return;
-+
-+	list_add_tail(&region->list, head);
-+
-+	iommu_dma_get_resv_regions(dev, head);
-+}
-+
-+static void tegra_smmu_put_resv_regions(struct device *dev,
-+		struct list_head *head)
-+{
-+	struct iommu_resv_region *entry, *next;
-+
-+	list_for_each_entry_safe(entry, next, head, list)
-+		kfree(entry);
-+}
-+
- static const struct iommu_ops tegra_smmu_ops = {
- 	.capable = tegra_smmu_capable,
- 	.domain_alloc = tegra_smmu_domain_alloc,
-@@ -896,6 +924,9 @@ static const struct iommu_ops tegra_smmu_ops = {
- 	.iova_to_phys = tegra_smmu_iova_to_phys,
- 	.of_xlate = tegra_smmu_of_xlate,
- 	.pgsize_bitmap = SZ_4K,
-+
-+	.get_resv_regions = tegra_smmu_get_resv_regions,
-+	.put_resv_regions = tegra_smmu_put_resv_regions,
- };
- 
- static void tegra_smmu_ahb_enable(void)
--- 
-2.7.4
+MTYuMDEuMjAxOSAyMzo1MCwgTmF2bmVldCBLdW1hciDQv9C40YjQtdGCOgo+ICogQWxsb2NhdGUg
+ZG1hIGlvdmEgY29va2llIGZvciBhIGRvbWFpbiB3aGlsZSBhZGRpbmcgZG1hIGlvbW11Cj4gZGV2
+aWNlcy4KPiAqIFBlcmZvcm0gYSBzdHJpY3RlciBjaGVjayBmb3IgZG9tYWluIHR5cGUgcGFyYW1l
+dGVyLgo+IAoKQ29tbWl0IG1lc3NhZ2Ugc2hvdWxkIHRlbGwgd2hhdCBleGFjdGx5IGlzIGdldHRp
+bmcgImZpeGVkIi4gQXBwYXJlbnRseSB5b3UncmUgdHJ5aW5nIHRvIHN1cHBvcnQgVDEzMiBBUk02
+NCBoZXJlLgoKPiBTaWduZWQtb2ZmLWJ5OiBOYXZuZWV0IEt1bWFyIDxuYXZuZWV0a0BudmlkaWEu
+Y29tPgo+IC0tLQo+ICBkcml2ZXJzL2lvbW11L3RlZ3JhLXNtbXUuYyB8IDQzICsrKysrKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDI3IGlu
+c2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lv
+bW11L3RlZ3JhLXNtbXUuYyBiL2RyaXZlcnMvaW9tbXUvdGVncmEtc21tdS5jCj4gaW5kZXggNTQz
+ZjdjOS4uZWU0ZDhhOCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2lvbW11L3RlZ3JhLXNtbXUuYwo+
+ICsrKyBiL2RyaXZlcnMvaW9tbXUvdGVncmEtc21tdS5jCj4gQEAgLTE2LDYgKzE2LDcgQEAKPiAg
+I2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+ICAjaW5jbHVkZSA8bGludXgvc2xh
+Yi5oPgo+ICAjaW5jbHVkZSA8bGludXgvZG1hLW1hcHBpbmcuaD4KPiArI2luY2x1ZGUgPGxpbnV4
+L2RtYS1pb21tdS5oPgo+ICAKPiAgI2luY2x1ZGUgPHNvYy90ZWdyYS9haGIuaD4KPiAgI2luY2x1
+ZGUgPHNvYy90ZWdyYS9tYy5oPgo+IEBAIC0yNzEsOCArMjcyLDEwIEBAIHN0YXRpYyBib29sIHRl
+Z3JhX3NtbXVfY2FwYWJsZShlbnVtIGlvbW11X2NhcCBjYXApCj4gIHN0YXRpYyBzdHJ1Y3QgaW9t
+bXVfZG9tYWluICp0ZWdyYV9zbW11X2RvbWFpbl9hbGxvYyh1bnNpZ25lZCB0eXBlKQo+ICB7Cj4g
+IAlzdHJ1Y3QgdGVncmFfc21tdV9hcyAqYXM7Cj4gKwlpbnQgcmV0Owo+ICAKPiAtCWlmICh0eXBl
+ICE9IElPTU1VX0RPTUFJTl9VTk1BTkFHRUQpCj4gKwlpZiAodHlwZSAhPSBJT01NVV9ET01BSU5f
+VU5NQU5BR0VEICYmIHR5cGUgIT0gSU9NTVVfRE9NQUlOX0RNQSAmJgo+ICsJCQl0eXBlICE9IElP
+TU1VX0RPTUFJTl9JREVOVElUWSkKPiAgCQlyZXR1cm4gTlVMTDsKClNob3VsZCBiZSBiZXR0ZXIg
+dG8gd3JpdGUgdGhlc2UgbGluZXMgbGlrZSB0aGlzIGZvciB0aGUgc2FrZSBvZiByZWFkYWJpbGl0
+eToKCglpZiAodHlwZSAhPSBJT01NVV9ET01BSU5fVU5NQU5BR0VEICYmIAoJICAgIHR5cGUgIT0g
+SU9NTVVfRE9NQUlOX0RNQSAmJgoJICAgIHR5cGUgIT0gSU9NTVVfRE9NQUlOX0lERU5USVRZKQoJ
+CXJldHVybiBOVUxMOwoKCj4gIAo+ICAJYXMgPSBremFsbG9jKHNpemVvZigqYXMpLCBHRlBfS0VS
+TkVMKTsKPiBAQCAtMjgxLDI2ICsyODQsMjIgQEAgc3RhdGljIHN0cnVjdCBpb21tdV9kb21haW4g
+KnRlZ3JhX3NtbXVfZG9tYWluX2FsbG9jKHVuc2lnbmVkIHR5cGUpCj4gIAo+ICAJYXMtPmF0dHIg
+PSBTTU1VX1BEX1JFQURBQkxFIHwgU01NVV9QRF9XUklUQUJMRSB8IFNNTVVfUERfTk9OU0VDVVJF
+Owo+ICAKPiArCXJldCA9ICh0eXBlID09IElPTU1VX0RPTUFJTl9ETUEpID8gaW9tbXVfZ2V0X2Rt
+YV9jb29raWUoJmFzLT5kb21haW4pIDoKPiArCQktRU5PREVWOwoKVGhpcyBtYWtlcyB0byBmYWls
+IGFsbG9jYXRpb24gb2YgZG9tYWluIHRoYXQgaGFzIHR5cGUgb3RoZXIgdGhhbiBJT01NVV9ET01B
+SU5fRE1BLgoKU2hvdWxkIGJlOgoKCWlmICh0eXBlID09IElPTU1VX0RPTUFJTl9ETUEpIHsKCQll
+cnIgPSBpb21tdV9nZXRfZG1hX2Nvb2tpZSgmYXMtPmRvbWFpbik7CgkJaWYgKGVycikKCQkJZ290
+byBmcmVlX2FzOwoJfQoKCj4gKwlpZiAocmV0KQo+ICsJCWdvdG8gZnJlZV9hczsKPiArCj4gIAlh
+cy0+cGQgPSBhbGxvY19wYWdlKEdGUF9LRVJORUwgfCBfX0dGUF9ETUEgfCBfX0dGUF9aRVJPKTsK
+PiAtCWlmICghYXMtPnBkKSB7Cj4gLQkJa2ZyZWUoYXMpOwo+IC0JCXJldHVybiBOVUxMOwo+IC0J
+fQo+ICsJaWYgKCFhcy0+cGQpCj4gKwkJZ290byBwdXRfZG1hX2Nvb2tpZTsKPiAgCj4gIAlhcy0+
+Y291bnQgPSBrY2FsbG9jKFNNTVVfTlVNX1BERSwgc2l6ZW9mKHUzMiksIEdGUF9LRVJORUwpOwo+
+IC0JaWYgKCFhcy0+Y291bnQpIHsKPiAtCQlfX2ZyZWVfcGFnZShhcy0+cGQpOwo+IC0JCWtmcmVl
+KGFzKTsKPiAtCQlyZXR1cm4gTlVMTDsKPiAtCX0KPiArCWlmICghYXMtPmNvdW50KQo+ICsJCWdv
+dG8gZnJlZV9wZF9yYW5nZTsKPiAgCj4gIAlhcy0+cHRzID0ga2NhbGxvYyhTTU1VX05VTV9QREUs
+IHNpemVvZigqYXMtPnB0cyksIEdGUF9LRVJORUwpOwo+IC0JaWYgKCFhcy0+cHRzKSB7Cj4gLQkJ
+a2ZyZWUoYXMtPmNvdW50KTsKPiAtCQlfX2ZyZWVfcGFnZShhcy0+cGQpOwo+IC0JCWtmcmVlKGFz
+KTsKPiAtCQlyZXR1cm4gTlVMTDsKPiAtCX0KPiArCWlmICghYXMtPnB0cykKPiArCQlnb3RvIGZy
+ZWVfcHRzOwo+ICAKPiAgCS8qIHNldHVwIGFwZXJ0dXJlICovCj4gIAlhcy0+ZG9tYWluLmdlb21l
+dHJ5LmFwZXJ0dXJlX3N0YXJ0ID0gMDsKPiBAQCAtMzA4LDYgKzMwNywxOCBAQCBzdGF0aWMgc3Ry
+dWN0IGlvbW11X2RvbWFpbiAqdGVncmFfc21tdV9kb21haW5fYWxsb2ModW5zaWduZWQgdHlwZSkK
+PiAgCWFzLT5kb21haW4uZ2VvbWV0cnkuZm9yY2VfYXBlcnR1cmUgPSB0cnVlOwo+ICAKPiAgCXJl
+dHVybiAmYXMtPmRvbWFpbjsKPiArCj4gK2ZyZWVfcHRzOgo+ICsJa2ZyZWUoYXMtPnB0cyk7Cj4g
+K2ZyZWVfcGRfcmFuZ2U6Cj4gKwlfX2ZyZWVfcGFnZShhcy0+cGQpOwo+ICtwdXRfZG1hX2Nvb2tp
+ZToKPiArCWlmICh0eXBlID09IElPTU1VX0RPTUFJTl9ETUEpCj4gKwkJaW9tbXVfcHV0X2RtYV9j
+b29raWUoJmFzLT5kb21haW4pOwo+ICtmcmVlX2FzOgo+ICsJa2ZyZWUoYXMpOwo+ICsKPiArCXJl
+dHVybiBOVUxMOwo+ICB9Cj4gIAo+ICBzdGF0aWMgdm9pZCB0ZWdyYV9zbW11X2RvbWFpbl9mcmVl
+KHN0cnVjdCBpb21tdV9kb21haW4gKmRvbWFpbikKPiAKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmlvbW11IG1haWxpbmcgbGlzdAppb21tdUBsaXN0cy5s
+aW51eC1mb3VuZGF0aW9uLm9yZwpodHRwczovL2xpc3RzLmxpbnV4Zm91bmRhdGlvbi5vcmcvbWFp
+bG1hbi9saXN0aW5mby9pb21tdQ==
