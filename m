@@ -1,107 +1,71 @@
-From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 5/5] iommu/tegra-smmu: Add resv_regions ops
-Date: Thu, 17 Jan 2019 17:06:04 +0000
-Message-ID: <749b1bfa-b2b4-336f-fbc4-2a2bed72ee35@arm.com>
-References: <1547671814-30088-1-git-send-email-navneetk@nvidia.com>
-	<1547671814-30088-5-git-send-email-navneetk@nvidia.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
+Date: Thu, 17 Jan 2019 18:45:31 +0100
+Message-ID: <20190117174531.GA14041@ravnborg.org>
+References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
+ <20190116181018.GA27364@ravnborg.org>
+ <20190117164541.GE3271@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1547671814-30088-5-git-send-email-navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190117164541.GE3271@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel.vetter@intel.com>, linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org, nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.or
 List-Id: linux-tegra@vger.kernel.org
 
-On 16/01/2019 20:50, Navneet Kumar wrote:
-> Add support for get/put reserved regions.
-
-For any particular reason? If you're aiming to get 
-VFIO-passthrough-with-MSIs working on Tegra, this probably won't be 
-correct anyway...
-
-> Signed-off-by: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   drivers/iommu/tegra-smmu.c | 31 +++++++++++++++++++++++++++++++
->   1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 4b43c63..e848a45 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -22,6 +22,9 @@
->   #include <soc/tegra/ahb.h>
->   #include <soc/tegra/mc.h>
->   
-> +#define MSI_IOVA_BASE	0x8000000
-
-...because this arbitrary IOVA relies on writes to the MSI doorbell 
-undergoing address translation at the IOMMU just like any other access. 
-Looking at Tegra 134, that seems to implement an MSI doorbell internal 
-to the PCIe root complex, far upstream of translation, therefore at the 
-very least you'd need to reserve whatever IOVA region is shadowed by 
-that doorbell in PCI memory space...
-
-> +#define MSI_IOVA_LENGTH	0x100000
-> +
->   struct tegra_smmu_group {
->   	struct list_head list;
->   	const struct tegra_smmu_group_soc *soc;
-> @@ -882,6 +885,31 @@ static int tegra_smmu_of_xlate(struct device *dev,
->   	return iommu_fwspec_add_ids(dev, &id, 1);
->   }
->   
-> +static void tegra_smmu_get_resv_regions(struct device *dev,
-> +		struct list_head *head)
-> +{
-> +	struct iommu_resv_region *region;
-> +	int prot = IOMMU_WRITE | IOMMU_NOEXEC | IOMMU_MMIO;
-> +
-> +	region = iommu_alloc_resv_region(MSI_IOVA_BASE, MSI_IOVA_LENGTH,
-> +					prot, IOMMU_RESV_SW_MSI);
-
-...and as an untranslatable hardware MSI region, not a software-managed one.
-
-Robin.
-
-> +	if (!region)
-> +		return;
-> +
-> +	list_add_tail(&region->list, head);
-> +
-> +	iommu_dma_get_resv_regions(dev, head);
-> +}
-> +
-> +static void tegra_smmu_put_resv_regions(struct device *dev,
-> +		struct list_head *head)
-> +{
-> +	struct iommu_resv_region *entry, *next;
-> +
-> +	list_for_each_entry_safe(entry, next, head, list)
-> +		kfree(entry);
-> +}
-> +
->   static const struct iommu_ops tegra_smmu_ops = {
->   	.capable = tegra_smmu_capable,
->   	.domain_alloc = tegra_smmu_domain_alloc,
-> @@ -896,6 +924,9 @@ static const struct iommu_ops tegra_smmu_ops = {
->   	.iova_to_phys = tegra_smmu_iova_to_phys,
->   	.of_xlate = tegra_smmu_of_xlate,
->   	.pgsize_bitmap = SZ_4K,
-> +
-> +	.get_resv_regions = tegra_smmu_get_resv_regions,
-> +	.put_resv_regions = tegra_smmu_put_resv_regions,
->   };
->   
->   static void tegra_smmu_ahb_enable(void)
-> 
+T24gVGh1LCBKYW4gMTcsIDIwMTkgYXQgMDU6NDU6NDFQTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
+cm90ZToKPiBPbiBXZWQsIEphbiAxNiwgMjAxOSBhdCAwNzoxMDoxOFBNICswMTAwLCBTYW0gUmF2
+bmJvcmcgd3JvdGU6Cj4gPiBIaSBEYW5pZWwuCj4gPiAKPiA+ID4gdjU6IEFjdHVhbGx5IHRyeSB0
+byBzb3J0IHRoZW0sIGFuZCB3aGlsZSBhdCBpdCwgc29ydCBhbGwgdGhlIG9uZXMgSQo+ID4gPiB0
+b3VjaC4KPiA+IAo+ID4gQXBwbGllZCB0aGlzIHZhcmlhbnQgb24gdG9wIG9mIGRybS1taXNjIGFu
+ZCBkaWQgYSBidWlsZCB0ZXN0Lgo+ID4gTG9va2VkIGdvb2QgZm9yIGlhNjQsIHg4NiBhbmQgYWxw
+aGEuCj4gPiAKPiA+IFRvb2sgYSBjbG9zZXIgbG9vayBhdCB0aGUgY2hhbmdlcyB0byBhdG1lbF9o
+bGNkIC0gYW5kIHRoZXkgbG9va2VkIE9LLgo+ID4gCj4gPiBCdXQgSSBub3RpY2VkIHRoYXQgYXRt
+ZWxfaGxjZGMgdXNlcyBvbmx5IGRybV9rbXNfaGVscGVyX3BvbGxfaW5pdCgpIGFuZAo+ID4gZHJt
+X2ttc19oZWxwZXJfcG9sbF9maW5pKCkuCj4gPiBCdXQgdGhlcmUgYXJlIG5vIGhpdHMgb24gRFJN
+X0NPTk5FQ1RPUl9QT0xMIC0gc28gSSB0aGluayB3ZSBtYXliZQo+ID4gaGF2ZSBhIGRyaXZlciBo
+ZXJlIHdoZXJlIHdlIGhhdmUgcGx1Z2dlZCB0aGUgZHJtX3BvbGwgaW5mcmFzdHJ1Y3R1cmUsCj4g
+PiBidXQgaXQgaXMgbm90IGluIHVzZS4KPiA+IAo+ID4gPiAgaW5jbHVkZS9kcm0vZHJtX2NydGNf
+aGVscGVyLmggICAgICAgICAgICAgICAgIHwgMTYgLS0tLS0tLS0tLS0KPiA+IAo+ID4gVGhlIGxp
+c3Qgb2YgaW5jbHVkZSBmaWxlcyBpbiB0aGlzIGZpbGUgY291bGQgYmUgZHJvcHBlZCBhbmQgcmVw
+bGFjZWQgYnk6Cj4gPiBzdHJ1Y3QgZHJtX2Nvbm5lY3RvcjsKPiA+IHN0cnVjdCBkcm1fZGV2aWNl
+Owo+ID4gc3RydWN0IGRybV9kaXNwbGF5X21vZGU7Cj4gPiBzdHJ1Y3QgZHJtX2VuY29kZXI7Cj4g
+PiBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyOwo+ID4gc3RydWN0IGRybV9tb2RlX3NldDsKPiA+IHN0
+cnVjdCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eDsKPiA+IAo+ID4gSSB0cmllZCB0byBkbyBzbyBv
+biB0b3Agb2YgeW91ciBwYXRjaC4KPiA+IEJ1dCB0aGVyZSB3ZXJlIHRvbyBtYW55IGJ1aWxkIGVy
+cnJvcyBhbmQgSSBzb21laG93IGxvc3QgdGhlIG1vdGl2YXRpb24uCj4gCj4gWWVhaCB0aGUgZHJt
+X2NydGNfaGVscGVyLmggaGVhZGVyIGlzIGEgYml0IHRoZSBtaW5pYXR1cmUgZHJtUC5oIGZvciBs
+ZWdhY3kKPiBrbXMgZHJpdmVycy4gSnVzdCByZW1vdmluZyBpdCBmcm9tIGFsbCB0aGUgYXRvbWlj
+IGRyaXZlcnMgY2F1c2VkIGxvdHMgb2YKPiBmYWxsb3V0LCBJIGV4cGVjdCBldmVuIG1vcmUgaWYg
+eW91IGVudGlyZWx5IHJlbW92ZSB0aGUgaW5jbHVkZXMgaXQgaGFzLgo+IE1heWJlIGEgdG9kbywg
+Y2FyZSB0byBwbHMgY3JlYXRlIHRoYXQgcGF0Y2ggc2luY2UgaXQncyB5b3VyIGlkZWE/CgpUaGUg
+bWFpbiByZWFzb24gSSBiYWlsZWQgb3V0IGluaXRpYWxseSB3YXMgdGhhdCB0aGlzIHdvdWxkIGNy
+ZWF0ZQpzbWFsbCBjaGFuZ2VzIHRvIHNldmVyYWwgb3RoZXJ3aXNlIHNlbGRvbWx5IHRvdWNoZWQg
+ZmlsZXMuCkFuZCB0aGVuIHdlIHdvdWxkIGxhdGVyIGNvbWUgYW5kIHJlbW92ZSBkcm1QLmggLSBz
+byBsb3RzIG9mCnNtYWxsIGJ1dCBpbmNyZW1lbnRhbCBjaGFuZ2VzIHRvIHRoZSBzYW1lIG90aGVy
+d2lzZSBzZWxkb21seQplZGl0ZWQgZmlsZXMuCkFuZCB0aGUgam9iIHdhcyBvbmx5IHBhcnRpYWxs
+eSBkb25lLgoKSSB3aWxsIHRyeSB0byBleHBlcmltZW50IHdpdGggYW4gYXBwcm9hY2ggd2hlcmUg
+SSBjbGVhbiB1cCB0aGUKaW5jbHVkZS9kcm0vKi5oIGZpbGVzIGEgbGl0dGxlIChsaWtlIHN1Z2dl
+c3RlZCBhYm92ZSwgK2RlbGV0ZSBkcm1QLmgKYW5kIG1heWJlIGEgYml0IG1vcmUpLgoKVGhlbiB0
+byB0cnkgb24gYSBkcml2ZXIgYnkgZHJpdmVyIGJhc2lzIHRvIG1ha2UgaXQgYnVpbGQgd2l0aCBh
+CmNsZWFuZWQgc2V0IG9mIGluY2x1ZGUgZmlsZXMuCkkgaG9wZSB0aGF0IHRoZSBjbGVhbmVkIHVw
+IGRyaXZlciBjYW4gc3RpbGwgYnVpbGQgd2l0aG91dCB0aGUKY2xlYW5lZCBoZWFkZXIgZmlsZXMg
+c28gdGhlIGNoYW5nZXMgY2FuIGJlIHN1Ym1pdHRlZCBwaWVjZW1hbC4KCldpbGwgZG8gc28gd2l0
+aCBhbiBleWUgb24gdGhlIGxlc3NlciBtYWludGFpbmVkIGRyaXZlcnMgdG8gdHJ5IGl0Cm91dCB0
+byBhdm9pZCBjcmVhdGluZyB0b28gbXVjaCBjaHJ1bmNoIGZvciBvdGhlcnMuCgpBbmQgaWYgaXQg
+d29ya3Mgb3V0IEkgZXhwZWN0IHRoZSBhY3RpdmUgZHJpdmVycyB0byBmb2xsb3cgdGhlCmV4YW1w
+bGUuCgp0b2RvLnJzdCBpdGVtIHdpbGwgd2FpdCB1bnRpbCBJIHJ1biBvdXQgb2YgZW5lcmd5LgoK
+CVNhbQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
