@@ -1,53 +1,56 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V1] i2c: tegra: increase transfer timeout
-Date: Fri, 18 Jan 2019 09:20:14 +0000
-Message-ID: <c6ba237c-d271-c9d7-1c30-9901ba6bb1a0@nvidia.com>
-References: <1547757572-29075-1-git-send-email-skomatineni@nvidia.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Subject: Re: [PATCH 2/3] mmc: sdhci-omap: drop ->get_ro() implementation
+Date: Fri, 18 Jan 2019 16:27:11 +0530
+Message-ID: <fab3147f-10e3-51b0-6f58-a1aff751f4be@ti.com>
+References: <20190115162837.5399-1-thomas.petazzoni@bootlin.com>
+ <20190115162837.5399-3-thomas.petazzoni@bootlin.com>
+ <20190116132747.GB11050@ulmo> <20190116154717.GQ5544@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1547757572-29075-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190116154717.GQ5544@atomide.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Adrian Hunter <adrian.hunter@intel.com>, Kishon Vijay Abraham I <kishon@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Gregory Clement <gregory.clement@bootlin.com>, linux-omap@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Tony,
 
-On 17/01/2019 20:39, Sowjanya Komatineni wrote:
-> increase transfer timeout to 10s to allow enough time during max
-> transfer size.
+On 16/01/19 9:17 PM, Tony Lindgren wrote:
+> * Thierry Reding <thierry.reding@gmail.com> [190116 13:28]:
+>> On Tue, Jan 15, 2019 at 05:28:36PM +0100, Thomas Petazzoni wrote:
+>>> The SDHCI core is know properly checking for the state of a WP GPIO,
+>>
+>> "know" -> "now"
+>>
+>>> so there is no longer any need for the sdhci-omap code to implement
+>>> ->get_ro() using mmc_gpio_get_ro().
+>>>
+>>> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+>>> ---
+>>> Note: this patch has only been compiled tested, as I don't have the
+>>> hardware to test it.
+>>> ---
+>>>  drivers/mmc/host/sdhci-omap.c | 1 -
+>>>  1 file changed, 1 deletion(-)
+>>
+>> I can't runtime test this myself, but it certainly looks like this would
+>> do the right thing because it calls the core now call the very same
+>> function as this used to, so:
+>>
+>> Reviewed-by: Thierry Reding <treding@nvidia.com>
+>>
+>> Adding Tony and linux-omap for a slightly wider audience and hopefully
+>> find someone to test this on. For reference, the whole series is here:
+>>
+>> 	https://patchwork.kernel.org/project/linux-mmc/list/?series=66905
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Thanks Kishon can you please review and test?
 > 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index e417ebf7628c..ca7c581fb4c0 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -25,7 +25,7 @@
->  
->  #include <asm/unaligned.h>
->  
-> -#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-> +#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(10000))
->  #define BYTES_PER_FIFO_WORD 4
->  
->  #define I2C_CNFG				0x000
 
-Should the timeout be set depending on the max transfer size? 10s seems
-an age if the max transfer size is 4KB. In other words, we should this
-only be applied for T194+?
+I can help with testing once Thomas posts a v2.
 
-Furthermore, in tegra_i2c_xfer_msg() we know the len of the message and
-so maybe it would be better to dynamically set the timeout depending on
-length?
-
-Cheers
-Jon
-
--- 
-nvpublic
+Thanks,
+Faiz
