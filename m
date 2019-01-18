@@ -1,43 +1,79 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V1] i2c: tegra: increase transfer timeout
-Date: Fri, 18 Jan 2019 17:21:28 +0000
-Message-ID: <BYAPR12MB3398536A1776FE6B3CA1AB34C29C0@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1547757572-29075-1-git-send-email-skomatineni@nvidia.com>
- <c6ba237c-d271-c9d7-1c30-9901ba6bb1a0@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
+ instead run teardown delayed
+Date: Fri, 18 Jan 2019 19:12:03 +0000
+Message-ID: <20190118191202.GG6260@sirena.org.uk>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
+ <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org>
+ <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
+ <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org>
+ <20190115192619.GG5522@sirena.org.uk>
+ <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org>
+ <20190115212539.GK5522@sirena.org.uk>
+ <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XaUbO9McV5wPQijU"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c6ba237c-d271-c9d7-1c30-9901ba6bb1a0@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Hunter <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: kernel@martin.sperl.org
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4+IGluY3JlYXNlIHRyYW5zZmVyIHRpbWVvdXQgdG8gMTBzIHRvIGFsbG93IGVub3VnaCB0
-aW1lIGR1cmluZyBtYXggDQo+PiB0cmFuc2ZlciBzaXplLg0KPj4gDQo+PiBTaWduZWQtb2ZmLWJ5
-OiBTb3dqYW55YSBLb21hdGluZW5pIDxza29tYXRpbmVuaUBudmlkaWEuY29tPg0KPj4gLS0tDQo+
-PiAgZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIHwgMiArLQ0KPj4gIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPj4gDQo+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIA0KPj4gYi9kcml2ZXJzL2kyYy9idXNzZXMv
-aTJjLXRlZ3JhLmMgaW5kZXggZTQxN2ViZjc2MjhjLi5jYTdjNTgxZmI0YzAgDQo+PiAxMDA2NDQN
-Cj4+IC0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYw0KPj4gKysrIGIvZHJpdmVy
-cy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+PiBAQCAtMjUsNyArMjUsNyBAQA0KPj4gIA0KPj4g
-ICNpbmNsdWRlIDxhc20vdW5hbGlnbmVkLmg+DQo+PiAgDQo+PiAtI2RlZmluZSBURUdSQV9JMkNf
-VElNRU9VVCAobXNlY3NfdG9famlmZmllcygxMDAwKSkNCj4+ICsjZGVmaW5lIFRFR1JBX0kyQ19U
-SU1FT1VUIChtc2Vjc190b19qaWZmaWVzKDEwMDAwKSkNCj4+ICAjZGVmaW5lIEJZVEVTX1BFUl9G
-SUZPX1dPUkQgNA0KPj4gIA0KPj4gICNkZWZpbmUgSTJDX0NORkcJCQkJMHgwMDANCj4NCj5TaG91
-bGQgdGhlIHRpbWVvdXQgYmUgc2V0IGRlcGVuZGluZyBvbiB0aGUgbWF4IHRyYW5zZmVyIHNpemU/
-IDEwcyBzZWVtcyBhbiBhZ2UgaWYgdGhlIG1heCB0cmFuc2ZlciBzaXplIGlzIDRLQi4gSW4gb3Ro
-ZXIgd29yZHMsIHdlIHNob3VsZCB0aGlzIG9ubHkgYmUgYXBwbGllZCBmb3IgPlQxOTQrPw0KPg0K
-PkZ1cnRoZXJtb3JlLCBpbiB0ZWdyYV9pMmNfeGZlcl9tc2coKSB3ZSBrbm93IHRoZSBsZW4gb2Yg
-dGhlIG1lc3NhZ2UgYW5kIHNvIG1heWJlIGl0IHdvdWxkIGJlIGJldHRlciB0byBkeW5hbWljYWxs
-eSBzZXQgdGhlIHRpbWVvdXQgZGVwZW5kaW5nIG9uIGxlbmd0aD8NCj4NCj5DaGVlcnMNCj5Kb24N
-Cg0KWWVzLCB0aGF04oCZcyB0aGUgaWRlYWwgd2F5IHRvIGNvbXB1dGUgdGltZW91dCBiYXNlZCBv
-biBtc2cgbGVuIGFuZCBidXMgcmF0ZS4gDQpUbyBkbyB0aGlzIEkgaGFkIHRvIHVwZGF0ZSBURUdS
-QV9JMkNfVElNRU9VVCBtYWNybyB0byB0YWtlIGFyZyBhbmQgdGhlcmUgYXJlIDMgZGlmZmVyZW50
-IHBhdGNoZXMgZm9yIHRlZ3JhIGkyYyB1bmRlciByZXZpZXcgYW5kIGFsbCBvZiB0aG9zZSB3aWxs
-IGVmZmVjdCBhcyB0aGUgcGF0Y2ggY2hhbmdlcyB1c2UgVEVHUkFfSTJDX1RJTUVPVVQuIA0KDQpT
-bywgU2hvdWxkIEkgaG9sZCBvbiB0byB0aGlzIGNoYW5nZSBmb3Igbm93IHRpbGwgdGhvc2UgcGF0
-Y2hlcyBhcmUgbWVyZ2VkPw0KDQpUaGFua3MNClNvd2phbnlhDQo=
+
+--XaUbO9McV5wPQijU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jan 18, 2019 at 06:11:31PM +0100, kernel@martin.sperl.org wrote:
+
+> Does something like this looks acceptable?
+
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index ec210286567c..677fc5025033 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -288,6 +288,21 @@ static inline void spi_unregister_driver(struct spi_=
+driver *sdrv)
+>  	module_driver(__spi_driver, spi_register_driver, \
+>  			spi_unregister_driver)
+>=20
+> +/* define SPI Controller states in the state machine */
+> +enum spi_controller_state {
+> +	SPI_CONTROLLER_STATE_SHUTDOWN		=3D 0,
+> +	SPI_CONTROLLER_STATE_IDLE		=3D 1,
+> +	SPI_CONTROLLER_STATE_IN_PROCESS		=3D 2,
+> +	SPI_CONTROLLER_STATE_IN_TRANSFER	=3D 3,
+> +};
+
+Yes, it does!
+
+> SPI_CONTROLLER_MODE_EXCLUSIVE could replace the bus_lock_flag.
+> I am also not sure of the =E2=80=9Cconvention=E2=80=9D of memory mode (i.e
+> using mem_ops). Is it maybe implicitly spi_bus_locked - i.e
+> typically only a single device?
+
+Yes, it does - we're basically handing over the entire SPI bus to
+another bit of hardware that will do memory mapped flash access so we
+can't really have anything else trying to do SPI operations at the same
+time.
+
+--XaUbO9McV5wPQijU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxCJQIACgkQJNaLcl1U
+h9CDdQf+I7iveblkgIuqYYemfISQk+f97Jh7CYalr7//EB65ABrPeVKbeWdEWNEd
+O3lQckS5I1XBelmk78Kw1keMvy7yev5LKvadKyXMIS/HPOaCaC8GnuVQ039Zk0iX
+tIeK/uCe2Its32BjZ5b0WbDt68JInIEpf7iuqTQs7hVDmvmx2TovvbXdSkoaqkpU
+qx8wkH0+sxeLLqBelfzvsy7J3ETSRd+c6Je3gCH9Jk15qYO8x+XdY6PRL+3Pz5zs
+U3gVWY8cwTD4v7tORNPNi0W8oB01KoXcrk7cvCUteYS3nSVn2h5GKO05IDrDlhAO
++5qJMOnCzhhWFsctQcfxD0kQI+tBCA==
+=0ySs
+-----END PGP SIGNATURE-----
+
+--XaUbO9McV5wPQijU--
