@@ -1,66 +1,53 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v7 0/3] Fixes for Tegra soctherm
-Date: Mon, 21 Jan 2019 17:17:07 +0800
-Message-ID: <1c0af72c-b8d5-9b2d-7bc1-86a2ae85c819@nvidia.com>
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
- <28d197f9-9b72-78ad-0769-7514d329b3c4@nvidia.com>
+Subject: Re: [PATCH v1 00/12] Add some functionalities for Tegra soctherm
+Date: Mon, 21 Jan 2019 17:26:57 +0800
+Message-ID: <ce989feb-e179-98d1-59d4-e7619ceff26a@nvidia.com>
+References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
+ <1545118484-23641-2-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <28d197f9-9b72-78ad-0769-7514d329b3c4@nvidia.com>
+In-Reply-To: <1545118484-23641-2-git-send-email-wni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, edubezval@gmail.com
-Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, edubezval@gmail.com, linux-tegra@vger.kernel.org
+Cc: rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Does there have any comments?
+Hi Eduardo,
+Could you please take a look this serial?
 
 Thanks.
 Wei.
 
-On 11/1/2019 10:20 AM, Wei Ni wrote:
-> Hi Eduardo,
-> Do you have any more comments, will you take this serial?
+On 18/12/2018 3:34 PM, Wei Ni wrote:
+> Move the hw/sw shutdown patches into this serial. There already have
+> some discussion for it in https://lkml.org/lkml/2018/12/7/225.
+> Support GPU HW throttle, thermal IRQ, set_trips(), EDP IRQ and OC
+> hw throttle.
 > 
-> Thanks.
-> Wei.
+> Wei Ni (12):
+>   of: Add bindings of thermtrip for Tegra soctherm
+>   thermal: tegra: support hw and sw shutdown
+>   arm64: dts: tegra210: set thermtrip
+>   of: Add bindings of gpu hw throttle for Tegra soctherm
+>   thermal: tegra: add support for gpu hw-throttle
+>   arm64: dts: tegra210: set gpu hw throttle level
+>   thermal: tegra: add support for thermal IRQ
+>   thermal: tegra: add set_trips functionality
+>   thermal: tegra: add support for EDP IRQ
+>   arm64: dts: tegra210: set EDP interrupt line
+>   of: Add bindings of OC hw throttle for Tegra soctherm
+>   thermal: tegra: enable OC hw throttle
 > 
-> On 3/1/2019 6:12 PM, Wei Ni wrote:
->> This series fixed some issues for Tegra soctherm,
->> and add get_trend().
->>
->> Main changes from v6:
->> 1. Per Eduardo's comment, we can remove the change:
->> "thermal: tegra: parse sensor id before sensor register"
->>
->> Main changes from v5:
->> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
->> into this serial.
->>
->> Main changes from v4:
->> 1. fixed for the parsing sensor id.
->> 2. keep warning for missing critical trips.
->>
->> Main changes from v3:
->> 1. updated codes for parsing sensor id, per Thierry's comments
->>
->> Main changes from v2:
->> 1. add codes to parse sensor id to avoid registration
->> failure.
->>
->> Main changes from v1:
->> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
->> "thermal: tegra: fix memory allocation".
->> 2. Print out the sensor name when register failed.
->> 2. Remove patch "thermal: tegra: fix coverity defect"
->>
->> Wei Ni (3):
->>   thermal: tegra: remove unnecessary warnings
->>   thermal: tegra: fix memory allocation
->>   thermal: tegra: add get_trend ops
->>
->>  drivers/thermal/tegra/soctherm.c | 40 +++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 37 insertions(+), 3 deletions(-)
->>
+>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  63 +-
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
+>  drivers/thermal/tegra/soctherm.c                   | 959 +++++++++++++++++++--
+>  drivers/thermal/tegra/soctherm.h                   |  16 +
+>  drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
+>  drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
+>  drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
+>  include/dt-bindings/thermal/tegra124-soctherm.h    |  22 +-
+>  8 files changed, 1033 insertions(+), 76 deletions(-)
+> 
