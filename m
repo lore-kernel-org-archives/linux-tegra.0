@@ -1,52 +1,89 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V9 1/3] dt-bindings: mmc: tegra: Add supports-cqe property
-Date: Mon, 21 Jan 2019 08:31:34 -0600
-Message-ID: <20190121143134.GA18401@bogus>
-References: <1547579032-18314-1-git-send-email-skomatineni@nvidia.com>
- <20190121104333.GD16756@ulmo>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
+Date: Mon, 21 Jan 2019 23:13:29 +0100
+Message-ID: <20190121221329.GA6512@ravnborg.org>
+References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
+ <20190116181018.GA27364@ravnborg.org>
+ <20190117164541.GE3271@phenom.ffwll.local>
+ <20190117174531.GA14041@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20190121104333.GD16756@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+In-Reply-To: <20190117174531.GA14041@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel.vetter@intel.com>, linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org, nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.or
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:43:33AM +0100, Thierry Reding wrote:
-> On Tue, Jan 15, 2019 at 11:03:50AM -0800, Sowjanya Komatineni wrote:
-> > Add supports-cqe optional property for Tegra SDMMC.
-> > 
-> > Tegra186 and Tegra194 supports HW Command queue only
-> > on SDMMC4 controller. This property is used to identify
-> > command queue support controller in the tegra sdhci driver.
-> > 
-> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > ---
-> >  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> > index 32b4b4e41923..fb14c2c8d7ee 100644
-> > --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> > +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> > @@ -72,6 +72,10 @@ Optional properties for Tegra210 and Tegra186:
-> >  - nvidia,default-trim : Specify the default outbound clock trimmer
-> >    value.
-> >  - nvidia,dqs-trim : Specify DQS trim value for HS400 timing
-> > +- supports-cqe : The presence of this property indicates that the
-> > +  corresponding controller supports HW command queue feature.
-> > +  Tegra186 and Tegra194 has 4 SDMMC Controllers and only SDMMC4
-> > +  controller supports HW Command Queue with eMMC device.
-> 
-> Hi Rob,
-> 
-> are you okay with the property name for this. I'm wondering if it should
-> have a vendor prefix or not, but I suspect that something like this may
-> be needed for other vendors as well, so not having a vendor prefix could
-> be warranted in this case.
-
-Seems likely. Please document with common MMC properties in that case.
-
-Rob
+SGkgRGFuaWVsIGV0IGFsLgoKPiA+IAo+ID4gWWVhaCB0aGUgZHJtX2NydGNfaGVscGVyLmggaGVh
+ZGVyIGlzIGEgYml0IHRoZSBtaW5pYXR1cmUgZHJtUC5oIGZvciBsZWdhY3kKPiA+IGttcyBkcml2
+ZXJzLiBKdXN0IHJlbW92aW5nIGl0IGZyb20gYWxsIHRoZSBhdG9taWMgZHJpdmVycyBjYXVzZWQg
+bG90cyBvZgo+ID4gZmFsbG91dCwgSSBleHBlY3QgZXZlbiBtb3JlIGlmIHlvdSBlbnRpcmVseSBy
+ZW1vdmUgdGhlIGluY2x1ZGVzIGl0IGhhcy4KPiA+IE1heWJlIGEgdG9kbywgY2FyZSB0byBwbHMg
+Y3JlYXRlIHRoYXQgcGF0Y2ggc2luY2UgaXQncyB5b3VyIGlkZWE/Cj4gCj4gVGhlIG1haW4gcmVh
+c29uIEkgYmFpbGVkIG91dCBpbml0aWFsbHkgd2FzIHRoYXQgdGhpcyB3b3VsZCBjcmVhdGUKPiBz
+bWFsbCBjaGFuZ2VzIHRvIHNldmVyYWwgb3RoZXJ3aXNlIHNlbGRvbWx5IHRvdWNoZWQgZmlsZXMu
+Cj4gQW5kIHRoZW4gd2Ugd291bGQgbGF0ZXIgY29tZSBhbmQgcmVtb3ZlIGRybVAuaCAtIHNvIGxv
+dHMgb2YKPiBzbWFsbCBidXQgaW5jcmVtZW50YWwgY2hhbmdlcyB0byB0aGUgc2FtZSBvdGhlcndp
+c2Ugc2VsZG9tbHkKPiBlZGl0ZWQgZmlsZXMuCj4gQW5kIHRoZSBqb2Igd2FzIG9ubHkgcGFydGlh
+bGx5IGRvbmUuCj4gCj4gSSB3aWxsIHRyeSB0byBleHBlcmltZW50IHdpdGggYW4gYXBwcm9hY2gg
+d2hlcmUgSSBjbGVhbiB1cCB0aGUKPiBpbmNsdWRlL2RybS8qLmggZmlsZXMgYSBsaXR0bGUgKGxp
+a2Ugc3VnZ2VzdGVkIGFib3ZlLCArZGVsZXRlIGRybVAuaAo+IGFuZCBtYXliZSBhIGJpdCBtb3Jl
+KS4KPiAKPiBUaGVuIHRvIHRyeSBvbiBhIGRyaXZlciBieSBkcml2ZXIgYmFzaXMgdG8gbWFrZSBp
+dCBidWlsZCB3aXRoIGEKPiBjbGVhbmVkIHNldCBvZiBpbmNsdWRlIGZpbGVzLgo+IEkgaG9wZSB0
+aGF0IHRoZSBjbGVhbmVkIHVwIGRyaXZlciBjYW4gc3RpbGwgYnVpbGQgd2l0aG91dCB0aGUKPiBj
+bGVhbmVkIGhlYWRlciBmaWxlcyBzbyB0aGUgY2hhbmdlcyBjYW4gYmUgc3VibWl0dGVkIHBpZWNl
+bWFsLgo+IAo+IFdpbGwgZG8gc28gd2l0aCBhbiBleWUgb24gdGhlIGxlc3NlciBtYWludGFpbmVk
+IGRyaXZlcnMgdG8gdHJ5IGl0Cj4gb3V0IHRvIGF2b2lkIGNyZWF0aW5nIHRvbyBtdWNoIGNocnVu
+Y2ggZm9yIG90aGVycy4KCkkgaGF2ZSBub3cgYSBmZXcgcGF0Y2hlcyBxdWV1ZWQsIGJ1dCB0aGUg
+cmVzdWx0IGlzIG5vdCB0b28gcHJldHR5LgpJIGRpZCB0aGUgZm9sbG93aW5nOgoKLSBGb3IgYWxs
+IGZpbGVzIGluIGluY2x1ZGUvZHJtLyouaCB0aGUgc2V0IG9mIGluY2x1ZGUgZmlsZXMKICB3ZXJl
+IGFkanVzdGVkIHRvIHRoZSBtaW5pbXVtIG51bWJlciBvZiBmaWxlcyByZXF1aXJlZCB0byBtYWtl
+CiAgdGhlbSBidWlsZCB3aXRob3V0IGFueSBvdGhlciBmaWxlcyBpbmNsdWRlZCBmaXJzdC4KCiAg
+Q3JlYXRlZCBvbmUgLmMgZmlsZSBmb3IgZWFjaCAuaCBmaWxlLiBUaGVuIGluY2x1ZGVkIHRoZSAu
+aAogIGZpbGUgYW5kIGFkanVzdGVkIHRvIHRoZSBtaW5pbWFsIHNldCBvZiBpbmNsdWRlIGZpbGVz
+LgogIEluIHRoZSBwcm9jZXNzIGEgbG90IG9mIGZvcndhcmRzIHdlcmUgYWRkZWQuCgotIERlbGV0
+ZWQgZHJtUC5oCgotIEZpeGVkIGJ1aWxkIG9mIGEgZmV3IGRyaXZlcnM6IHN0aSwgdGlsY2RjLCBn
+bWE1MDAsIHR2ZTIwMCwgdmlhCgpTb21lIG9ic2VydmF0aW9uczoKCi0gS2lsbGluZyBhbGwgdGhl
+IGluY2x1ZGVzIG5vdCBuZWVkZWQgaW4gdGhlIGhlYWRlcnMgZmlsZXMKICByZXN1bHRzIGluIGEg
+YSBsb3Qgb2YgZXh0cmEgY2hhbmdlcy4KICBFeGFtcGxlczoKICAgIGRybV9tb2RzZXNldF9oZWxw
+ZXJfdnRhYmxlcy5oIGlzIG5vIGxvbmdlcgogICAgaW5jbHVkZWQgYnkgYW55b25lLCBzbyBuZWVk
+cyB0byBiZSBhZGRlZCBpbiBtYW55IGZpbGVzCgogICAgZHJtX2F0b21pY19zdGF0ZV9oZWxwZXIu
+aCBpcyBubyBsb25nZXIgaW5jbHVkZWQKICAgIGJ5IGFueW9uZSBzbyBsaWtld2lzZSBuZWVkcyB0
+byBiZSBhZGRlZCBpbiBtYW55IGZpbGVzCgotIEl0IGlzIHZlcnkgdGVkaW91cyB0byBkbyB0aGlz
+IHByb3Blcmx5LgogIFRoZSBwcm9jZXNzIEkgZm9sbG93ZWQgd2FzOgogIC0gZGVsZXRlIC8gY29t
+bWVudCBvdXQgYWxsIGluY2x1ZGUgZmlsZXMKICAtIGFkZCBiYWNrIHRoZSBvYnZpb3VzIGZyb20g
+YSBxdWljayBzY2FuIG9mIHRoZSBjb2RlCiAgLSBidWlsZCAtIGZpeCAtIGJ1aWxkIC0gZml4IC0g
+YnVpbGQgLSBmaXggLi4uCiAgLSAgIG5leHQgZmlsZS4uLgoKLSBUaGUgcmVzdWx0IGlzIGVycm9y
+cHJvbmUgYXMgb25seSB0aGUgYWxseWVzY29uZmlnICsgYWxsbW9kY29uZmlnCiAgdmFyaWFudHMg
+YXJlIHRlc3RlZC4gQnV0IHJlYWxsaWZlIGNvbmZpZ3VyYXRpb25zIGFyZSBtb3JlIGRpdmVyc2Uu
+CgpDdXJyZW50IGRpZmZzdGF0OgogICAxMTEgZmlsZXMgY2hhbmdlZCwgNzcxIGluc2VydGlvbnMo
+KyksIDQwMSBkZWxldGlvbnMoLSkKClRoaXMgaXMgZm9yIHRoZSA1IGRyaXZlcnMgYWxvbmUgYW5k
+IG5vdCB0aGUgaGVhZGVyIGNsZWFudXAuClNvIGxvbmcgc3Rvcnkgc2hvcnQgLSB0aGlzIGlzIG5v
+dCBnb29kIGFuZCBub3QgdGhlIHdheSBmb3J3YXJkLgoKSSB3aWxsIHRyeSB0byBjb21lIHVwIHdp
+dGggYSBmZXcgaW1wcm92ZW1lbnRzIHRvIG1ha2UgdGhlCmhlYWRlcnMgZmlsZXMgc2VsZmNvbnRh
+aW5lZCwgYnV0IHJlc3RyaWN0ZWQgdG8gdGhlIGNoYW5nZXMgdGhhdAphZGQgZm9yd2FyZHMvaW5j
+bHVkZSB0byBhdm9pZCB0aGUgY2hydW5jaCBpbiBhbGwgdGhlIGRyaXZlcnMuCgpBbmQgdGhlbiBw
+b3N0IGZvciByZXZpZXcgYSBmZXcgcGF0Y2hlcyB0byBjbGVhbiB1cCBzb21lIGhlYWRlcnMuCklm
+IHRoZSBjbGVhbnVwIGdldHMgYSBnbyBJIHdpbGwgdHJ5IHRvIHBlcnN1YWRlIHRoZSBpbnRyb2R1
+Y3Rpb24Kb2YgdGhlc2UuClRoaXMgd2lsbCBpbmNsdWRlLCBidXQgd2lsbCBub3QgYmUgbGltaXRl
+ZCB0bywgdGhlIGFib3ZlIG1lbnRpb25lZApkcm1fY3J0Y19oZWxwZXIuaCBoZWFkZXIgZmlsZS4K
+CkZvciBub3cgdG9vIG11Y2ggdGltZSB3YXMgYWxyZWFkeSBzcGVudCBvbiB0aGlzLCBzbyBpdCBp
+cyBhdCB0aGUKbW9tZW50IHB1c2hlZCBiYWNrIG9uIG15IFRPRE8gbGlzdC4KVGhpcyBtYWlsIHNl
+cnZlIGFsc28gYXMgYSBraW5kIG9mICJ3aGVyZSBoYWQgSSBsZWZ0Iiwgd2hlbi9pZiBJCnBpY2sg
+dGhpcyB1cCBhZ2Fpbi4KCklmIHRoZXJlIGFyZSBhbnlvbmUgdGhhdCBrbm93cyBzb21lIHRvb2xp
+bmcgdGhhdCBjYW4gaGVscCBpbiB0aGUKcHJvY2VzcyBvZiBhZGp1c3RpbmcgdGhlIGhlYWRlciBm
+aWxlcyBJIGFtIGFsbCBlYXJzLgoKCVNhbQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
