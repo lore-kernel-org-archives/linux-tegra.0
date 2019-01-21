@@ -1,56 +1,72 @@
-From: kernel@martin.sperl.org
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync instead run teardown delayed
-Date: Sun, 20 Jan 2019 12:24:23 +0100
-Message-ID: <EE52ED32-CBB4-40D4-8615-CA814158C826@martin.sperl.org>
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com> <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org> <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com> <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org> <20190115192619.GG5522@sirena.org.uk> <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org> <20190115212539.GK5522@sirena.org.uk> <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org> <20190118191202.GG6260@sirena.org.uk>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+From: Ashish Mhetre <amhetre@nvidia.com>
+Subject: Re: [PATCH] mm: Expose lazy vfree pages to control via sysctl
+Date: Mon, 21 Jan 2019 13:36:00 +0530
+Message-ID: <27bd8776-87fa-69ad-7b6e-4425251b5e9c@nvidia.com>
+References: <1546616141-486-1-git-send-email-amhetre@nvidia.com>
+ <20190104180332.GV6310@bombadil.infradead.org>
+ <a7bb656a-c815-09a4-69fc-bb9e7427cfa6@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190118191202.GG6260@sirena.org.uk>
+In-Reply-To: <a7bb656a-c815-09a4-69fc-bb9e7427cfa6@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: vdumpa@nvidia.com, mcgrof@kernel.org, keescook@chromium.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Snikam@nvidia.com, avanbrunt@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark!
+The issue is not seen on new kernel. This patch won't be needed. Thanks.
 
-> On 18.01.2019, at 20:12, Mark Brown <broonie@kernel.org> wrote:
-> 
-> On Fri, Jan 18, 2019 at 06:11:31PM +0100, kernel@martin.sperl.org wrote:
-> 
->> Does something like this looks acceptable?
-> 
-> Yes, it does!
-
-> 
->> SPI_CONTROLLER_MODE_EXCLUSIVE could replace the bus_lock_flag.
->> I am also not sure of the “convention” of memory mode (i.e
->> using mem_ops). Is it maybe implicitly spi_bus_locked - i.e
->> typically only a single device?
-> 
-> Yes, it does - we're basically handing over the entire SPI bus to
-> another bit of hardware that will do memory mapped flash access so we
-> can't really have anything else trying to do SPI operations at the same
-> time.
-
-These kind of changes it requires are consuming a bit more time than
-I was hoping for.
-
-So maybe at this very moment the best is reverting the patch.
-
-I have some patches that would move towards that goal in
-baby steps without having to resort to a big rewrite at
-this very moment.
-
-Maybe Jon can check each patch one after another to see if any is 
-producing the unexpected behavior and only then you would include
-them...
-
-As for the root cause of the regression: my guess is that spi-mem is
-just not triggering a shutdown any more because of how message_pump works.
-
-The improvement of the state-machine can then get addressed
-separately.
-
-Martin
+On 06/01/19 2:12 PM, Ashish Mhetre wrote:
+> Matthew, this issue was last reported in September 2018 on K4.9.
+> I verified that the optimization patches mentioned by you were not=20
+> present in our downstream kernel when we faced the issue. I will check=20
+> whether issue still persist on new kernel with all these patches and=20
+> come back.
+>=20
+> On 04/01/19 11:33 PM, Matthew Wilcox wrote:
+>> On Fri, Jan 04, 2019 at 09:05:41PM +0530, Ashish Mhetre wrote:
+>>> From: Hiroshi Doyu <hdoyu@nvidia.com>
+>>>
+>>> The purpose of lazy_max_pages is to gather virtual address space till i=
+t
+>>> reaches the lazy_max_pages limit and then purge with a TLB flush and=20
+>>> hence
+>>> reduce the number of global TLB flushes.
+>>> The default value of lazy_max_pages with one CPU is 32MB and with 4=20
+>>> CPUs it
+>>> is 96MB i.e. for 4 cores, 96MB of vmalloc space will be gathered=20
+>>> before it
+>>> is purged with a TLB flush.
+>>> This feature has shown random latency issues. For example, we have seen
+>>> that the kernel thread for some camera application spent 30ms in
+>>> __purge_vmap_area_lazy() with 4 CPUs.
+>>
+>> You're not the first to report something like this.=C2=A0 Looking throug=
+h the
+>> kernel logs, I see:
+>>
+>> commit 763b218ddfaf56761c19923beb7e16656f66ec62
+>> Author: Joel Fernandes <joelaf@google.com>
+>> Date:=C2=A0=C2=A0 Mon Dec 12 16:44:26 2016 -0800
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0 mm: add preempt points into __purge_vmap_area_l=
+azy()
+>>
+>> commit f9e09977671b618aeb25ddc0d4c9a84d5b5cde9d
+>> Author: Christoph Hellwig <hch@lst.de>
+>> Date:=C2=A0=C2=A0 Mon Dec 12 16:44:23 2016 -0800
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0 mm: turn vmap_purge_lock into a mutex
+>>
+>> commit 80c4bd7a5e4368b680e0aeb57050a1b06eb573d8
+>> Author: Chris Wilson <chris@chris-wilson.co.uk>
+>> Date:=C2=A0=C2=A0 Fri May 20 16:57:38 2016 -0700
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0 mm/vmalloc: keep a separate lazy-free list
+>>
+>> So the first thing I want to do is to confirm that you see this problem
+>> on a modern kernel.=C2=A0 We've had trouble with NVidia before reporting
+>> historical problems as if they were new.
+>>
