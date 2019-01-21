@@ -1,259 +1,512 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] i2c: tegra: Add Bus Clear Master Support
-Date: Mon, 21 Jan 2019 11:48:50 +0100
-Message-ID: <20190121104850.GF16756@ulmo>
-References: <1547177806-23769-1-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH V2] i2c: tegra: Add I2C interface timing support
+Date: Mon, 21 Jan 2019 11:57:28 +0100
+Message-ID: <20190121105728.GG16756@ulmo>
+References: <1547755847-27537-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AH+kv8CCoFf6qPuz"
+        protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1547177806-23769-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1547755847-27537-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc: jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---AH+kv8CCoFf6qPuz
+--gvF4niNJ+uBMJnEh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 10, 2019 at 07:36:46PM -0800, Sowjanya Komatineni wrote:
-> Bus Clear feature of tegra i2c controller helps to recover from
-> bus hang when i2c master loses the bus arbitration due to the
-> slave device holding SDA LOW continuously for some unknown reasons.
+On Thu, Jan 17, 2019 at 12:10:47PM -0800, Sowjanya Komatineni wrote:
+> This patch adds I2C interface timing registers support for
+> proper bus rate configuration along with meeting the i2c spec
+
+s/i2c/I2C/, s/spec/specification/
+
+> setup and hold times based on the tuning performed on Tegra210,
+> Tegra186 and Tegra194 platforms.
+>=20
+> I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
+> and Tegra I2C controller design uses them as a part of internal
+> clock divisor.
+>=20
+> I2C_INTERFACE_TIMING_1 register contains the setup and hold times
+> for start and stop conditions.
 >=20
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 66 ++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 66 insertions(+)
-
-Can you extend the commit message with some of the information that you
-had provided as a reply to my question on v1? There was some really good
-clarifying information in that reply, which I think is really good
-commit message material.
-
+>  [V2]: Updated patch to also configure timings to platform tuned
+>        settings
+>  [V1]: Uses fixed I2C interface timings which could violate bus
+>        timing spec
+>  =20
+>  drivers/i2c/busses/i2c-tegra.c | 227 +++++++++++++++++++++++++++++++++++=
++-----
+>  1 file changed, 201 insertions(+), 26 deletions(-)
 >=20
 > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
 a.c
-> index e417ebf7628c..11bc43ed08e9 100644
+> index e417ebf7628c..4cbf453fbd3b 100644
 > --- a/drivers/i2c/busses/i2c-tegra.c
 > +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -54,6 +54,7 @@
->  #define I2C_FIFO_STATUS_RX_SHIFT		0
->  #define I2C_INT_MASK				0x064
->  #define I2C_INT_STATUS				0x068
-> +#define I2C_INT_BUS_CLR_DONE			BIT(11)
->  #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
->  #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
->  #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
-> @@ -96,6 +97,15 @@
->  #define I2C_HEADER_MASTER_ADDR_SHIFT		12
->  #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
+> @@ -118,6 +118,20 @@
+>  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
+>  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
 > =20
-> +#define I2C_BUS_CLEAR_CNFG			0x084
-> +#define I2C_BC_SCLK_THRESHOLD			9
-> +#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
-> +#define I2C_BC_STOP_COND			BIT(2)
-> +#define I2C_BC_TERMINATE			BIT(1)
-> +#define I2C_BC_ENABLE				BIT(0)
-> +#define I2C_BUS_CLEAR_STATUS			0x088
-> +#define I2C_BC_STATUS				BIT(0)
+> +#define I2C_INTERFACE_TIMING_0                  0x94
+> +#define I2C_TLOW_MASK                           0x3F
+> +#define I2C_THIGH_SHIFT                         8
+> +#define I2C_THIGH_MASK                          (0x3F << I2C_THIGH_SHIFT)
+
+These look inconsistently indented. Use tabs to indent.
+
+> +#define I2C_TLOW_NEW_MASK			0xFF
+> +#define I2C_THIGH_NEW_MASK			(0xFF << I2C_THIGH_SHIFT)
 > +
->  #define I2C_CONFIG_LOAD				0x08C
->  #define I2C_MSTR_CONFIG_LOAD			BIT(0)
->  #define I2C_SLV_CONFIG_LOAD			BIT(1)
-> @@ -155,6 +165,8 @@ enum msg_end_type {
+> +#define I2C_INTERFACE_TIMING_1                  0x98
+
+Same here.
+
+> +
+> +#define I2C_STANDARD_MODE			100000
+> +#define I2C_FAST_MODE				400000
+> +#define I2C_FAST_PLUS_MODE			1000000
+> +#define I2C_HS_MODE				3500000
+> +
+>  /*
+>   * msg_end_type: The bus control which need to be send at end of transfe=
+r.
+>   * @MSG_END_STOP: Send stop pulse at end of transfer.
+> @@ -142,7 +156,10 @@ enum msg_end_type {
+>   * @has_config_load_reg: Has the config load register to load the new
+>   *		configuration.
+>   * @clk_divisor_hs_mode: Clock divisor in HS mode.
+> - * @clk_divisor_std_fast_mode: Clock divisor in standard/fast mode. It is
+> + * @clk_divisor_std_mode: Clock divisor in standard mode. It is
+> + *		applicable if there is no fast clock source i.e. single clock
+> + *		source.
+> + * @clk_divisor_fast_mode: Clock divisor in fast mode. It is
+>   *		applicable if there is no fast clock source i.e. single clock
+>   *		source.
+>   * @clk_divisor_fast_plus_mode: Clock divisor in fast mode plus. It is
+> @@ -155,6 +172,19 @@ enum msg_end_type {
 >   * @has_mst_fifo: The I2C controller contains the new MST FIFO interface=
  that
 >   *		provides additional features and allows for longer messages to
 >   *		be transferred in one go.
-> + * @supports_bus_clear: Bus Clear support to recover from bus hang during
-> + *		SDA stuck low from device for some unknown reasons.
+> + * @interface_timing_enhancement: Interface Timing bit fields increased =
+in
+> + *		Tegra194 compared to Prior Tegra chips for more tuning to meet
+> + *		I2C Timing requirements for various data rates.
+> + * @tlow_std_mode: Low period of the clock in standard mode.
+> + * @thigh_std_mode: High period of the clock in standard mode.
+> + * @tlow_fast_fastplus_mode: Low period of the clock in fast/fast-plus m=
+odes.
+> + * @thigh_fast_fastplus_mode: High period of the clock in fast/fast-plus=
+ modes.
+> + * @setup_hold_time_std_mode: Setup and hold time for start and stop con=
+ditions
+> +		in standard mode.
+
+It looks like you're breaking the block style here. Every line should
+start with a *.
+
+> + * @setup_hold_time_fast_fast_plus_mode: Setup and hold time for start a=
+nd stop
+> +		conditions in fast/fast-plus modes.
+> + * @setup_hold_time_hs_mode: Setup and hold time for start and stop cond=
+itions
+> +		in HS mode.
 >   */
 >  struct tegra_i2c_hw_feature {
 >  	bool has_continue_xfer_support;
-> @@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
+> @@ -162,11 +192,20 @@ struct tegra_i2c_hw_feature {
+>  	bool has_single_clk_source;
+>  	bool has_config_load_reg;
+>  	int clk_divisor_hs_mode;
+> -	int clk_divisor_std_fast_mode;
+> +	int clk_divisor_std_mode;
+> +	int clk_divisor_fast_mode;
+>  	u16 clk_divisor_fast_plus_mode;
 >  	bool has_multi_master_mode;
 >  	bool has_slcg_override_reg;
 >  	bool has_mst_fifo;
-> +	bool supports_bus_clear;
+> +	bool interface_timing_enhancement;
+> +	u8 tlow_std_mode;
+> +	u8 thigh_std_mode;
+> +	u8 tlow_fast_fastplus_mode;
+> +	u8 thigh_fast_fastplus_mode;
+> +	u32 setup_hold_time_std_mode;
+> +	u32 setup_hold_time_fast_fast_plus_mode;
+> +	u32 setup_hold_time_hs_mode;
 >  };
 > =20
 >  /**
-> @@ -640,6 +653,9 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_i=
-d)
->  		goto err;
->  	}
-> =20
-> +	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
-> +		goto err;
-
-Maybe also add a clarifying comment here as to why we're done processing
-interrupts here.
-
-> +
->  	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->  		if (i2c_dev->msg_buf_remaining)
->  			tegra_i2c_empty_rx_fifo(i2c_dev);
-> @@ -668,6 +684,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_i=
-d)
->  	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
->  		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
->  		I2C_INT_RX_FIFO_DATA_REQ);
-> +	if (i2c_dev->hw->supports_bus_clear)
-> +		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
->  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
->  	if (i2c_dev->is_dvc)
->  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-> @@ -678,6 +696,42 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_=
-id)
->  	return IRQ_HANDLED;
+> @@ -515,7 +554,62 @@ static int tegra_i2c_wait_for_config_load(struct teg=
+ra_i2c_dev *i2c_dev)
+>  	return 0;
 >  }
 > =20
-> +static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
+> -static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+> +static void tegra_i2c_set_timing(struct tegra_i2c_dev *i2c_dev)
 > +{
-> +	int err;
-> +	unsigned long time_left;
-> +	u32 reg;
+> +	u32 val;
+> +	u32 tsu_thd =3D 0;
+> +	u8 tlow =3D 0;
+> +	u8 thigh =3D 0;
 > +
-> +	if (i2c_dev->hw->supports_bus_clear) {
-> +		reinit_completion(&i2c_dev->msg_complete);
-> +		reg =3D (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
-> +		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
-> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-> +		if (i2c_dev->hw->has_config_load_reg) {
-> +			err =3D tegra_i2c_wait_for_config_load(i2c_dev);
-> +			if (err)
-> +				return err;
-> +		}
-> +		reg |=3D I2C_BC_ENABLE;
-> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-> +		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-> +
-> +		time_left =3D wait_for_completion_timeout(&i2c_dev->msg_complete,
-> +							TEGRA_I2C_TIMEOUT);
-> +		if (time_left =3D=3D 0) {
-> +			dev_err(i2c_dev->dev, "timed out for bus clear\n");
-> +			return -ETIMEDOUT;
-> +		}
-> +		reg =3D i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-> +		if (!(reg & I2C_BC_STATUS)) {
-> +			dev_err(i2c_dev->dev, "Un-recovered Arb lost\n");
-
-s/Arb/arbitration/
-
-> +			return -EIO;
-> +		}
+> +	if ((i2c_dev->bus_clk_rate > I2C_STANDARD_MODE) &&
+> +			(i2c_dev->bus_clk_rate <=3D I2C_FAST_PLUS_MODE)) {
+> +		tlow =3D i2c_dev->hw->tlow_fast_fastplus_mode;
+> +		thigh =3D i2c_dev->hw->thigh_fast_fastplus_mode;
+> +		tsu_thd =3D i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
+> +	} else {
+> +		tlow =3D i2c_dev->hw->tlow_std_mode;
+> +		thigh =3D i2c_dev->hw->thigh_std_mode;
+> +		tsu_thd =3D i2c_dev->hw->setup_hold_time_std_mode;
 > +	}
 > +
-> +	return -EAGAIN;
+> +	val =3D (thigh << I2C_THIGH_SHIFT) | tlow;
+> +	if (val)
+> +		i2c_writel(i2c_dev, val, I2C_INTERFACE_TIMING_0);
+> +
+> +	if (tsu_thd)
+> +		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
 > +}
 > +
->  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	struct i2c_msg *msg, enum msg_end_type end_state)
+> +static int tegra_i2c_set_clk_rate(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	u32 clk_multiplier =3D I2C_CLK_MULTIPLIER_STD_FAST_MODE;
+> +	u32 val;
+> +	u8 low_clk_period, high_clk_period;
+> +	int ret =3D 0;
+> +
+> +	val =3D i2c_readl(i2c_dev, I2C_INTERFACE_TIMING_0);
+> +
+> +	if (i2c_dev->hw->interface_timing_enhancement) {
+> +		low_clk_period =3D val & I2C_TLOW_NEW_MASK;
+> +		high_clk_period =3D (val & I2C_THIGH_NEW_MASK) >>
+> +							I2C_THIGH_SHIFT;
+> +	} else {
+> +		low_clk_period =3D val & I2C_TLOW_MASK;
+> +		high_clk_period =3D (val & I2C_THIGH_MASK) >> I2C_THIGH_SHIFT;
+> +	}
+> +
+> +	clk_multiplier =3D (low_clk_period + high_clk_period + 2);
+> +	clk_multiplier *=3D (i2c_dev->clk_divisor_non_hs_mode + 1);
+> +
+> +	ret =3D clk_set_rate(i2c_dev->div_clk,
+> +			   i2c_dev->bus_clk_rate * clk_multiplier);
+> +	if (ret)
+> +		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool is_reinit)
 >  {
-> @@ -759,6 +813,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *=
-i2c_dev,
+>  	u32 val;
+>  	int err;
+> @@ -534,6 +628,8 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_d=
+ev)
+>  	if (i2c_dev->is_dvc)
+>  		tegra_dvc_init(i2c_dev);
+> =20
+> +	tegra_i2c_set_timing(i2c_dev);
+> +
+>  	val =3D I2C_CNFG_NEW_MASTER_FSM | I2C_CNFG_PACKET_MODE_EN |
+>  		(0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
+> =20
+> @@ -549,6 +645,12 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_=
+dev)
+>  					I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT;
+>  	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
+> =20
+> +	if (!is_reinit) {
+> +		err =3D tegra_i2c_set_clk_rate(i2c_dev);
+> +		if (err < 0)
+> +			goto err;
+> +	}
+> +
+>  	if (!i2c_dev->is_dvc) {
+>  		u32 sl_cfg =3D i2c_readl(i2c_dev, I2C_SL_CNFG);
+> =20
+> @@ -747,7 +849,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i=
+2c_dev,
+>  	if (time_left =3D=3D 0) {
+>  		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
+> =20
+> -		tegra_i2c_init(i2c_dev);
+> +		tegra_i2c_init(i2c_dev, true);
+>  		return -ETIMEDOUT;
+>  	}
+> =20
+> @@ -758,7 +860,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i=
+2c_dev,
+>  	if (likely(i2c_dev->msg_err =3D=3D I2C_ERR_NONE))
 >  		return 0;
 > =20
->  	tegra_i2c_init(i2c_dev);
-> +	/* Start recovery upon Arbitration loss in Single-Master Mode */
-
-I think this should either say "arbitration loss" or "Arbitration Loss"
-but not mixed case. Same for "Single-Master Mode". I'd personally make
-all of them lower case. But it's fine with me as long as it is
-consistent.
-
-Thierry
-
-> +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
-> +		if (!i2c_dev->is_multimaster_mode)
-> +			return tegra_i2c_issue_bus_clear(i2c_dev);
-> +		return -EAGAIN;
-> +	}
+> -	tegra_i2c_init(i2c_dev);
+> +	tegra_i2c_init(i2c_dev, true);
 >  	if (i2c_dev->msg_err =3D=3D I2C_ERR_NO_ACK) {
 >  		if (msg->flags & I2C_M_IGNORE_NAK)
 >  			return 0;
-> @@ -848,6 +908,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_=
-hw =3D {
+> @@ -842,12 +944,21 @@ static const struct tegra_i2c_hw_feature tegra20_i2=
+c_hw =3D {
+>  	.has_per_pkt_xfer_complete_irq =3D false,
+>  	.has_single_clk_source =3D false,
+>  	.clk_divisor_hs_mode =3D 3,
+> -	.clk_divisor_std_fast_mode =3D 0,
+> +	.clk_divisor_std_mode =3D 0,
+> +	.clk_divisor_fast_mode =3D 0,
+>  	.clk_divisor_fast_plus_mode =3D 0,
+>  	.has_config_load_reg =3D false,
 >  	.has_multi_master_mode =3D false,
 >  	.has_slcg_override_reg =3D false,
 >  	.has_mst_fifo =3D false,
-> +	.supports_bus_clear =3D false,
+> +	.interface_timing_enhancement =3D false,
+> +	.tlow_std_mode =3D 0x4,
+> +	.thigh_std_mode =3D 0x2,
+> +	.tlow_fast_fastplus_mode =3D 0x4,
+> +	.thigh_fast_fastplus_mode =3D 0x2,
+> +	.setup_hold_time_std_mode =3D 0x0,
+> +	.setup_hold_time_fast_fast_plus_mode =3D 0x0,
+> +	.setup_hold_time_hs_mode =3D 0x0,
 >  };
 > =20
 >  static const struct tegra_i2c_hw_feature tegra30_i2c_hw =3D {
-> @@ -861,6 +922,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_=
-hw =3D {
+> @@ -855,12 +966,21 @@ static const struct tegra_i2c_hw_feature tegra30_i2=
+c_hw =3D {
+>  	.has_per_pkt_xfer_complete_irq =3D false,
+>  	.has_single_clk_source =3D false,
+>  	.clk_divisor_hs_mode =3D 3,
+> -	.clk_divisor_std_fast_mode =3D 0,
+> +	.clk_divisor_std_mode =3D 0,
+> +	.clk_divisor_fast_mode =3D 0,
+>  	.clk_divisor_fast_plus_mode =3D 0,
+>  	.has_config_load_reg =3D false,
 >  	.has_multi_master_mode =3D false,
 >  	.has_slcg_override_reg =3D false,
 >  	.has_mst_fifo =3D false,
-> +	.supports_bus_clear =3D false,
+> +	.interface_timing_enhancement =3D false,
+> +	.tlow_std_mode =3D 0x4,
+> +	.thigh_std_mode =3D 0x2,
+> +	.tlow_fast_fastplus_mode =3D 0x4,
+> +	.thigh_fast_fastplus_mode =3D 0x2,
+> +	.setup_hold_time_std_mode =3D 0x0,
+> +	.setup_hold_time_fast_fast_plus_mode =3D 0x0,
+> +	.setup_hold_time_hs_mode =3D 0x0,
 >  };
 > =20
 >  static const struct tegra_i2c_hw_feature tegra114_i2c_hw =3D {
-> @@ -874,6 +936,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c=
-_hw =3D {
+> @@ -868,12 +988,21 @@ static const struct tegra_i2c_hw_feature tegra114_i=
+2c_hw =3D {
+>  	.has_per_pkt_xfer_complete_irq =3D true,
+>  	.has_single_clk_source =3D true,
+>  	.clk_divisor_hs_mode =3D 1,
+> -	.clk_divisor_std_fast_mode =3D 0x19,
+> +	.clk_divisor_std_mode =3D 0x19,
+> +	.clk_divisor_fast_mode =3D 0x19,
+>  	.clk_divisor_fast_plus_mode =3D 0x10,
+>  	.has_config_load_reg =3D false,
 >  	.has_multi_master_mode =3D false,
 >  	.has_slcg_override_reg =3D false,
 >  	.has_mst_fifo =3D false,
-> +	.supports_bus_clear =3D true,
+> +	.interface_timing_enhancement =3D false,
+> +	.tlow_std_mode =3D 0x4,
+> +	.thigh_std_mode =3D 0x2,
+> +	.tlow_fast_fastplus_mode =3D 0x4,
+> +	.thigh_fast_fastplus_mode =3D 0x2,
+> +	.setup_hold_time_std_mode =3D 0x0,
+> +	.setup_hold_time_fast_fast_plus_mode =3D 0x0,
+> +	.setup_hold_time_hs_mode =3D 0x0,
 >  };
 > =20
 >  static const struct tegra_i2c_hw_feature tegra124_i2c_hw =3D {
-> @@ -887,6 +950,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c=
-_hw =3D {
+> @@ -881,12 +1010,21 @@ static const struct tegra_i2c_hw_feature tegra124_=
+i2c_hw =3D {
+>  	.has_per_pkt_xfer_complete_irq =3D true,
+>  	.has_single_clk_source =3D true,
+>  	.clk_divisor_hs_mode =3D 1,
+> -	.clk_divisor_std_fast_mode =3D 0x19,
+> +	.clk_divisor_std_mode =3D 0x19,
+> +	.clk_divisor_fast_mode =3D 0x19,
+>  	.clk_divisor_fast_plus_mode =3D 0x10,
+>  	.has_config_load_reg =3D true,
 >  	.has_multi_master_mode =3D false,
 >  	.has_slcg_override_reg =3D true,
 >  	.has_mst_fifo =3D false,
-> +	.supports_bus_clear =3D true,
+> +	.interface_timing_enhancement =3D false,
+> +	.tlow_std_mode =3D 0x4,
+> +	.thigh_std_mode =3D 0x2,
+> +	.tlow_fast_fastplus_mode =3D 0x4,
+> +	.thigh_fast_fastplus_mode =3D 0x2,
+> +	.setup_hold_time_std_mode =3D 0x0,
+> +	.setup_hold_time_fast_fast_plus_mode =3D 0x0,
+> +	.setup_hold_time_hs_mode =3D 0x0,
 >  };
 > =20
 >  static const struct tegra_i2c_hw_feature tegra210_i2c_hw =3D {
-> @@ -900,6 +964,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c=
-_hw =3D {
+> @@ -894,30 +1032,71 @@ static const struct tegra_i2c_hw_feature tegra210_=
+i2c_hw =3D {
+>  	.has_per_pkt_xfer_complete_irq =3D true,
+>  	.has_single_clk_source =3D true,
+>  	.clk_divisor_hs_mode =3D 1,
+> -	.clk_divisor_std_fast_mode =3D 0x19,
+> +	.clk_divisor_std_mode =3D 0x19,
+> +	.clk_divisor_fast_mode =3D 0x19,
+>  	.clk_divisor_fast_plus_mode =3D 0x10,
+>  	.has_config_load_reg =3D true,
 >  	.has_multi_master_mode =3D true,
 >  	.has_slcg_override_reg =3D true,
 >  	.has_mst_fifo =3D false,
-> +	.supports_bus_clear =3D true,
+> +	.interface_timing_enhancement =3D false,
+> +	.tlow_std_mode =3D 0x4,
+> +	.thigh_std_mode =3D 0x2,
+> +	.tlow_fast_fastplus_mode =3D 0x4,
+> +	.thigh_fast_fastplus_mode =3D 0x2,
+> +	.setup_hold_time_std_mode =3D 0,
+> +	.setup_hold_time_fast_fast_plus_mode =3D 0,
+> +	.setup_hold_time_hs_mode =3D 0,
 >  };
 > =20
->  static const struct tegra_i2c_hw_feature tegra194_i2c_hw =3D {
-> @@ -913,6 +978,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c=
-_hw =3D {
+> -static const struct tegra_i2c_hw_feature tegra194_i2c_hw =3D {
+> +static const struct tegra_i2c_hw_feature tegra186_i2c_hw =3D {
+>  	.has_continue_xfer_support =3D true,
+>  	.has_per_pkt_xfer_complete_irq =3D true,
+>  	.has_single_clk_source =3D true,
+>  	.clk_divisor_hs_mode =3D 1,
+> -	.clk_divisor_std_fast_mode =3D 0x19,
+> +	.clk_divisor_std_mode =3D 0x16,
+> +	.clk_divisor_fast_mode =3D 0x19,
+>  	.clk_divisor_fast_plus_mode =3D 0x10,
+>  	.has_config_load_reg =3D true,
 >  	.has_multi_master_mode =3D true,
 >  	.has_slcg_override_reg =3D true,
+> +	.has_mst_fifo =3D false,
+> +	.interface_timing_enhancement =3D false,
+> +	.tlow_std_mode =3D 0x4,
+> +	.thigh_std_mode =3D 0x3,
+> +	.tlow_fast_fastplus_mode =3D 0x4,
+> +	.thigh_fast_fastplus_mode =3D 0x2,
+> +	.setup_hold_time_std_mode =3D 0,
+> +	.setup_hold_time_fast_fast_plus_mode =3D 0,
+> +	.setup_hold_time_hs_mode =3D 0,
+> +};
+> +
+> +static const struct tegra_i2c_hw_feature tegra194_i2c_hw =3D {
+> +	.has_continue_xfer_support =3D true,
+> +	.has_per_pkt_xfer_complete_irq =3D true,
+> +	.has_single_clk_source =3D true,
+> +	.clk_divisor_hs_mode =3D 2,
+> +	.clk_divisor_std_mode =3D 0x4f,
+> +	.clk_divisor_fast_mode =3D 0x3c,
+> +	.clk_divisor_fast_plus_mode =3D 0x16,
+> +	.has_config_load_reg =3D true,
+> +	.has_multi_master_mode =3D true,
+> +	.has_slcg_override_reg =3D true,
 >  	.has_mst_fifo =3D true,
-> +	.supports_bus_clear =3D true,
+> +	.interface_timing_enhancement =3D true,
+> +	.tlow_std_mode =3D 0x8,
+> +	.thigh_std_mode =3D 0x7,
+> +	.tlow_fast_fastplus_mode =3D 0x2,
+> +	.thigh_fast_fastplus_mode =3D 0x2,
+> +	.setup_hold_time_std_mode =3D 0x08080808,
+> +	.setup_hold_time_fast_fast_plus_mode =3D 0x02020202,
+> +	.setup_hold_time_hs_mode =3D 0x090909,
 >  };
 > =20
 >  /* Match table for of_platform binding */
+>  static const struct of_device_id tegra_i2c_of_match[] =3D {
+>  	{ .compatible =3D "nvidia,tegra194-i2c", .data =3D &tegra194_i2c_hw, },
+> +	{ .compatible =3D "nvidia,tegra186-i2c", .data =3D &tegra186_i2c_hw, },
+>  	{ .compatible =3D "nvidia,tegra210-i2c", .data =3D &tegra210_i2c_hw, },
+>  	{ .compatible =3D "nvidia,tegra124-i2c", .data =3D &tegra124_i2c_hw, },
+>  	{ .compatible =3D "nvidia,tegra114-i2c", .data =3D &tegra114_i2c_hw, },
+> @@ -937,7 +1116,6 @@ static int tegra_i2c_probe(struct platform_device *p=
+dev)
+>  	void __iomem *base;
+>  	int irq;
+>  	int ret =3D 0;
+> -	int clk_multiplier =3D I2C_CLK_MULTIPLIER_STD_FAST_MODE;
+> =20
+>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	base =3D devm_ioremap_resource(&pdev->dev, res);
+> @@ -1002,20 +1180,17 @@ static int tegra_i2c_probe(struct platform_device=
+ *pdev)
+>  		}
+>  	}
+> =20
+> -	i2c_dev->clk_divisor_non_hs_mode =3D
+> -			i2c_dev->hw->clk_divisor_std_fast_mode;
+> -	if (i2c_dev->hw->clk_divisor_fast_plus_mode &&
+> -		(i2c_dev->bus_clk_rate =3D=3D 1000000))
+> +	if ((i2c_dev->bus_clk_rate > I2C_FAST_MODE) &&
+> +			(i2c_dev->bus_clk_rate <=3D I2C_FAST_PLUS_MODE))
+
+This was wrong before, but might as well fix the alignment of the
+conditions while at it.
+
+>  		i2c_dev->clk_divisor_non_hs_mode =3D
+>  			i2c_dev->hw->clk_divisor_fast_plus_mode;
+> -
+> -	clk_multiplier *=3D (i2c_dev->clk_divisor_non_hs_mode + 1);
+> -	ret =3D clk_set_rate(i2c_dev->div_clk,
+> -			   i2c_dev->bus_clk_rate * clk_multiplier);
+> -	if (ret) {
+> -		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
+> -		goto unprepare_fast_clk;
+> -	}
+> +	else if ((i2c_dev->bus_clk_rate > I2C_STANDARD_MODE) &&
+> +			(i2c_dev->bus_clk_rate <=3D I2C_FAST_MODE))
+
+Same here.
+
+Thierry
+
+> +		i2c_dev->clk_divisor_non_hs_mode =3D
+> +			i2c_dev->hw->clk_divisor_fast_mode;
+> +	else
+> +		i2c_dev->clk_divisor_non_hs_mode =3D
+> +			i2c_dev->hw->clk_divisor_std_mode;
+> =20
+>  	ret =3D clk_prepare(i2c_dev->div_clk);
+>  	if (ret < 0) {
+> @@ -1041,7 +1216,7 @@ static int tegra_i2c_probe(struct platform_device *=
+pdev)
+>  		}
+>  	}
+> =20
+> -	ret =3D tegra_i2c_init(i2c_dev);
+> +	ret =3D tegra_i2c_init(i2c_dev, false);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
+>  		goto disable_div_clk;
 > --=20
 > 2.7.4
 >=20
 
---AH+kv8CCoFf6qPuz
+--gvF4niNJ+uBMJnEh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxFo5IACgkQ3SOs138+
-s6G69hAAwjppGuoo3GWNHL3PB3HLWsAxyDV5AVATqhFlfozIqeklBzWtMEnkWLY2
-ryAWiydTaW3D3dAS6TJfUViI8PDxLbm0s0IDwxlULa4ie8mbDWHlVhtugaN2BGxs
-9XB7JnkYySgTggrd+F1AaamYwu6y4gWSVI7Y+auThSMgPrOoLeCwcCJOVgvJyHTo
-3UK//efxbETE/cYTRZGcA8zO2fSaYxjbUAM9LU17kyHcmaviZLmo0CqBzF3xE4OR
-gaMNRLMVR/a96/JRdLp7WdtDg7RTkCdsmku1VaJazOEnLTnaU1bVQcisgmN84MOq
-ud4hATX9JybFoWJspeHNQdd8bKNjGqb5hZC2CxT0H9rnqlXqdSfhjzNLpa1Rhmna
-h/AYuWplY6Nc5ZiBYsY6oLWqPbe7xc0W0kRa86ENCd2QWe9P+44ZBuZMj9Wt9hxy
-2uTAQtDzVB2EgmEsidEuYS2mj3VSbRHTDvweIREC6naui89keP1HUlDd2iGenhQK
-40cMEGl+oilIe1I/R3xjRoWUZuXi3hpX/VM8q6zSWviuky+JYo2Jqhx36hWudvgs
-t89DyMXWWuxvifEGyOcZIctH/flli2kOhGJJk8CQG3ALPCGoB/kRuWdjSgg8eXVh
-c1OP1rhSvG49QODzH8HdsxjvpEYzbpi+FrTwLtpkB/WIoaUe64o=
-=R3/0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxFpZgACgkQ3SOs138+
+s6ERrhAAkYIJaEg1LPbGnbK/VhjMB3XvECwHUZvxpafNdbUfJcg1SuaZzLQYk3IT
+a8eGL1z0PbK8Cq34O+oOQtr/scHXrniigT5+B+z/A1RMPVGQk6FSqjHauT8OX6nq
+Ek5NjVLaa9K0pjEeCFYCKHpIMJIA51dBm2C3TCGDJ81ma3mG6scgDMzKVRg2iYVy
+w7eZ9vDRfkvdPTJZ03cM227R35ZQQR6jTmf8cdYlVsTZ6EtI/uzIy69ibcTjtxds
+V6rSYrzDWS4r7zYNQNlFlajnMYIhUJ0pqEF9Vtor4+bsuYXX6UaCecOOaYn1WUF7
+c+dFk9EkM5ov9JRR5qMh6sMjiNDc6LAhJpn7+Uhs3xz5oi62/MgWW6PVvhkdS38r
+xL1/10DYHjbkWdpL14jFWpaiC9RHX6m+zPeP5vaqj2DrVPw3+jqrBKqu4WT96tVc
+YLhLsU5M4GuHJdbIiZwTzX1A3FQHbi1af31AH7yBcB2xDknmLAebbYjiPjeg+bf2
+iAUwnD6hkiB2JLNUaI4W7Ujx3sFn87y51zkD3DoDO2LtY0y9dgd/8T5JbLJROsuZ
+Xcx+WBiNYvOAgcNEPSrzdT4Is7SkTWTtNX05nRtgxVxjoecSslhmN2CwXfrqfd/G
+7pyAB9g/9dc3jP+Pu/DNu+DHBVsGqdTjCTL3++HrM3tB+/U6k0k=
+=2tkC
 -----END PGP SIGNATURE-----
 
---AH+kv8CCoFf6qPuz--
+--gvF4niNJ+uBMJnEh--
