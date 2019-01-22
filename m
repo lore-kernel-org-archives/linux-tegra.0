@@ -1,50 +1,40 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v13 0/8] Introduce on-chip interconnect API
-Date: Tue, 22 Jan 2019 16:00:49 +0100
-Message-ID: <20190122150048.GA11466@kroah.com>
-References: <20190116161103.6937-1-georgi.djakov@linaro.org>
- <20190122124204.GA26969@kroah.com>
- <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V10 1/4] dt-bindings: mmc: Add supports-cqe property
+Date: Tue, 22 Jan 2019 11:56:30 -0800
+Message-ID: <1548186993-6229-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sanjayc@nvidia.com, maxime.ripard@bootlin.com, mturquette@baylibre.com, daidavid1@codeaurora.org, bjorn.andersson@linaro.org, skannan@codeaurora.org, abailon@baylibre.com, vincent.guittot@linaro.org, seansw@qti.qualcomm.com, khilman@baylibre.com, evgreen@chromium.org, ksitaraman@nvidia.com, devicetree@vger.kernel.org, arnd@arndb.de, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, henryc.chen@mediatek.com, andy.gross@linaro.org, robh+dt@kernel.org, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rjw@rjwysocki.net, dianders@chromium.org, amit.kucheria@linaro.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, olof@lixom.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, thierry.reding@gmail.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:45:20PM +0200, Georgi Djakov wrote:
-> On 1/22/19 14:42, Greg KH wrote:
-> > On Wed, Jan 16, 2019 at 06:10:55PM +0200, Georgi Djakov wrote:
-> [..]
-> > 
-> > All now queued up, thanks.
-> > 
-> > greg k-h
-> 
-> Hi Greg,
-> 
-> Thanks for considering these patches! Actually i have a branch named
-> icc-next [1] which is pulled into linux-next. I will drop these same
-> patches to avoid conflicts.
-> 
-> If all is well, i was wondering how to proceed with follow-up patches.
-> Some consumers of this API are already floating on the lists. How about
-> sending you a pull request before the merge window with the collected
-> patches?
+Add supports-cqe optional property for MMC hosts.
 
-Sure, that works, or you can just send them as patches, either works for
-me.
+This property is used to identify the specific host controller
+supporting command queue.
 
-greg k-h
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V10]: This patch version moves supports-cqe property from vendor
+	specific MMC property to common MMC property.
+
+ Documentation/devicetree/bindings/mmc/mmc.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
+index f5a0923b34ca..cdbcfd3a4ff2 100644
+--- a/Documentation/devicetree/bindings/mmc/mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/mmc.txt
+@@ -62,6 +62,8 @@ Optional properties:
+   be referred to mmc-pwrseq-simple.txt. But now it's reused as a tunable delay
+   waiting for I/O signalling and card power supply to be stable, regardless of
+   whether pwrseq-simple is used. Default to 10ms if no available.
++- supports-cqe : The presence of this property indicates that the corresponding
++  MMC host controller supports HW command queue feature.
+ 
+ *NOTE* on CD and WP polarity. To use common for all SD/MMC host controllers line
+ polarity properties, we have to fix the meaning of the "normal" and "inverted"
+-- 
+2.7.4
