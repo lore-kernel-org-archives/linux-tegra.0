@@ -1,173 +1,62 @@
-From: Philippe Schenker <dev@pschenker.ch>
-Subject: [PATCH 2/2] ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
-Date: Tue, 22 Jan 2019 14:21:35 +0100
-Message-ID: <20190122132135.5012-3-dev@pschenker.ch>
-References: <20190122132135.5012-1-dev@pschenker.ch>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] drm/tegra: Provide fallback IOMMU domain geometry
+Date: Tue, 22 Jan 2019 15:36:13 +0100
+Message-ID: <20190122143613.16881-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190122132135.5012-1-dev@pschenker.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: shawnguo@kernel.org, s.hauer@pengutronix.de, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: marcel.ziswiler@toradex.com, stefan@agner.ch, max.krummenacher@toradex.com, Philippe Schenker <philippe.schenker@toradex.com>, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Philippe Schenker <philippe.schenker@toradex.com>
-
-Add the stmpe-adc DT node as found on Toradex T30 modules
-
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-
----
-
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
- 3 files changed, 42 insertions(+), 24 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-index 02f8126481a2..8b7a827d604d 100644
---- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-@@ -994,11 +994,17 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -1008,17 +1014,17 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				/* forbid to use ADC channels 3-0 (touch) */
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 7f112f192fe9..c18f6f61d764 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -976,11 +976,17 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -990,17 +996,17 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				/* forbid to use ADC channels 3-0 (touch) */
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 35af03ca9e90..3c421a5cfbc2 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -845,11 +845,17 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -859,17 +865,17 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				/* forbid to use ADC channels 3-0 (touch) */
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
--- 
-2.20.1
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRlZ3JhMTg2IGFuZCBs
+YXRlciB1c2UgdGhlIEFSTSBTTU1VIGRyaXZlciB0byBwcm92aWRlIElPTU1VIGRvbWFpbnMuIFRo
+ZQpkcml2ZXIgc2V0cyB0aGUgSU9NTVUgZG9tYWluJ3MgZ2VvbWV0cnkgb25seSBhZnRlciBhIGRl
+dmljZSBoYXMgYXR0YWNoZWQKdG8gdGhlIGRvbWFpbi4gSG93ZXZlciwgaW4gb3JkZXIgdG8gcHJv
+cGVybHkgc2V0IHVwIHRoZSBJT01NVSBkb21haW4Kc2hhcmVkIGFtb25nIGFsbCBUZWdyYSBEUk0g
+Y2xpZW50cywgdGhlIGRvbWFpbidzIGdlb21ldHJ5IGlzIG5lZWRlZApiZWZvcmUgYW55IGRldmlj
+ZXMgYXR0YWNoIHRvIGl0LgoKV29yayBhcm91bmQgdGhpcyBieSBmYWxsaW5nIGJhY2sgdG8gYSAz
+Mi1iaXQgYWRkcmVzcyBzcGFjZSBmb3IgdGhlIElPTU1VCmRvbWFpbiBnZW9tZXRyeS4gVGhpcyBp
+cyBndWFyYW50ZWVkIHRvIGFsd2F5cyB3b3JrIG9uIGFsbCBnZW5lcmF0aW9ucyBvZgpUZWdyYSBh
+bmQgbm8ga25vd24gdXNlLWNhc2VzIHJlcXVpcmUgbW9yZSBJT1ZBIHNwYWNlIHRoYW4gdGhhdC4K
+ClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQog
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgMjAgKysrKysrKysrKysrKysrLS0tLS0KIDEg
+ZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+cm0uYwppbmRleCA0YjcwY2U2NjRjNDEuLjhhZjYxNTU5ZDY2MiAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwpA
+QCAtOTMsNyArOTMsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2
+aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCiAKIAlpZiAoaW9tbXVfcHJlc2VudCgmcGxh
+dGZvcm1fYnVzX3R5cGUpKSB7CiAJCXU2NCBjYXJ2ZW91dF9zdGFydCwgY2FydmVvdXRfZW5kLCBn
+ZW1fc3RhcnQsIGdlbV9lbmQ7Ci0JCXN0cnVjdCBpb21tdV9kb21haW5fZ2VvbWV0cnkgKmdlb21l
+dHJ5OworCQlkbWFfYWRkcl90IHN0YXJ0LCBlbmQ7CiAJCXVuc2lnbmVkIGxvbmcgb3JkZXI7CiAK
+IAkJdGVncmEtPmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxvYygmcGxhdGZvcm1fYnVzX3R5cGUp
+OwpAQCAtMTA2LDExICsxMDYsMjEgQEAgc3RhdGljIGludCB0ZWdyYV9kcm1fbG9hZChzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZHJtLCB1bnNpZ25lZCBsb25nIGZsYWdzKQogCQlpZiAoZXJyIDwgMCkKIAkJ
+CWdvdG8gZG9tYWluOwogCi0JCWdlb21ldHJ5ID0gJnRlZ3JhLT5kb21haW4tPmdlb21ldHJ5Owot
+CQlnZW1fc3RhcnQgPSBnZW9tZXRyeS0+YXBlcnR1cmVfc3RhcnQ7Ci0JCWdlbV9lbmQgPSBnZW9t
+ZXRyeS0+YXBlcnR1cmVfZW5kIC0gQ0FSVkVPVVRfU1o7CisJCXN0YXJ0ID0gdGVncmEtPmRvbWFp
+bi0+Z2VvbWV0cnkuYXBlcnR1cmVfc3RhcnQ7CisJCWVuZCA9IHRlZ3JhLT5kb21haW4tPmdlb21l
+dHJ5LmFwZXJ0dXJlX2VuZDsKKworCQkvKgorCQkgKiBUaGUgQVJNIFNNTVUgZHJpdmVyIG9ubHkg
+c2V0cyB1cCB0aGUgZ2VvbWV0cnkgYWZ0ZXIgdGhlCisJCSAqIGRvbWFpbiBoYXMgYmVlbiBhdHRh
+Y2hlZCB0byBhIGRldmljZS4gSW4gdGhhdCBjYXNlLCBtYWtlCisJCSAqIHN1cmUgdG8gZmFsbGJh
+Y2sgdG8gYSByZWFzb25hYmxlIGRlZmF1bHQuCisJCSAqLworCQlpZiAoc3RhcnQgPT0gMCAmJiBl
+bmQgPT0gMCkKKwkJCWVuZCA9IDB4ZmZmZmZmZmY7CisKKwkJZ2VtX3N0YXJ0ID0gc3RhcnQ7CisJ
+CWdlbV9lbmQgPSBlbmQgLSBDQVJWRU9VVF9TWjsKIAkJY2FydmVvdXRfc3RhcnQgPSBnZW1fZW5k
+ICsgMTsKLQkJY2FydmVvdXRfZW5kID0gZ2VvbWV0cnktPmFwZXJ0dXJlX2VuZDsKKwkJY2FydmVv
+dXRfZW5kID0gZW5kOwogCiAJCW9yZGVyID0gX19mZnModGVncmEtPmRvbWFpbi0+cGdzaXplX2Jp
+dG1hcCk7CiAJCWluaXRfaW92YV9kb21haW4oJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4sIDFVTCA8
+PCBvcmRlciwKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
