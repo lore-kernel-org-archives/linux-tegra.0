@@ -1,127 +1,191 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V3] i2c: tegra: Add Bus Clear Master Support
-Date: Tue, 22 Jan 2019 22:13:53 +0000
-Message-ID: <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V3] i2c: tegra: Add Bus Clear Master Support
+Date: Wed, 23 Jan 2019 01:40:42 +0300
+Message-ID: <20190123014042.6d64ee29@dimatab>
 References: <1548187338-6807-1-git-send-email-skomatineni@nvidia.com>
- <5405e9aa-d974-ca9d-dec1-32f8631a045d@gmail.com>
+        <5405e9aa-d974-ca9d-dec1-32f8631a045d@gmail.com>
+        <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5405e9aa-d974-ca9d-dec1-32f8631a045d@gmail.com>
-Content-Language: en-US
+In-Reply-To: <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4+IEJ1cyBjbGVhciBmZWF0dXJlIG9mIHRlZ3JhIGkyYyBjb250cm9sbGVyIGhlbHBzIHRv
-IHJlY292ZXIgZnJvbSBidXMgDQo+PiBoYW5nIHdoZW4gaTJjIG1hc3RlciBsb3NlcyB0aGUgYnVz
-IGFyYml0cmF0aW9uIGR1ZSB0byB0aGUgc2xhdmUgZGV2aWNlIA0KPj4gaG9sZGluZyBTREEgTE9X
-IGNvbnRpbnVvdXNseSBmb3Igc29tZSB1bmtub3duIHJlYXNvbnMuDQo+PiANCj4+IFBlciBJMkMg
-c3BlY2lmaWNhdGlvbiwgdGhlIGRldmljZSB0aGF0IGhlbGQgdGhlIGJ1cyBMT1cgc2hvdWxkIHJl
-bGVhc2UgDQo+PiBpdCB3aXRoaW4gOSBjbG9jayBwdWxzZXMuDQo+PiANCj4+IER1cmluZyBidXMg
-Y2xlYXIgb3BlcmF0aW9uLCBUZWdyYSBJMkMgY29udHJvbGxlciBzZW5kcyA5IGNsb2NrIHB1bHNl
-cyANCj4+IGFuZCB0ZXJtaW5hdGVzIHRoZSB0cmFuc2FjdGlvbiB3aXRoIFNUT1AgY29uZGl0aW9u
-Lg0KPj4gVXBvbiBzdWNjZXNzZnVsIGJ1cyBjbGVhciBvcGVyYXRpb24sIGJ1cyBnb2VzIHRvIGlk
-bGUgc3RhdGUgYW5kIGRyaXZlciANCj4+IHJldHJpZXMgdGhlIHRyYW5zYWN0aW9uLg0KPj4gDQo+
-PiBTaWduZWQtb2ZmLWJ5OiBTb3dqYW55YSBLb21hdGluZW5pIDxza29tYXRpbmVuaUBudmlkaWEu
-Y29tPg0KPj4gLS0tDQo+PiAgW1YzXTogVXBkYXRlZCBjb21tZW50cyBhbmQgY29tbWl0IG1lc3Nh
-Z2UgdG8gYmUgY2xlYXIgb24gdGhlIGNoYW5nZQ0KPj4gIFtWMl06IFNhbWUgYXMgVjEgcmViYXNl
-ZCB0byA1LjAtcmMxDQo+PiANCj4+ICBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMgfCA3
-MCANCj4+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPj4gIDEg
-ZmlsZSBjaGFuZ2VkLCA3MCBpbnNlcnRpb25zKCspDQo+PiANCj4+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMgDQo+PiBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMt
-dGVncmEuYyBpbmRleCBlNDE3ZWJmNzYyOGMuLmIxYjkyMGI0YTIwMyANCj4+IDEwMDY0NA0KPj4g
-LS0tIGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+PiArKysgYi9kcml2ZXJzL2ky
-Yy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4+IEBAIC01NCw2ICs1NCw3IEBADQo+PiAgI2RlZmluZSBJ
-MkNfRklGT19TVEFUVVNfUlhfU0hJRlQJCTANCj4+ICAjZGVmaW5lIEkyQ19JTlRfTUFTSwkJCQkw
-eDA2NA0KPj4gICNkZWZpbmUgSTJDX0lOVF9TVEFUVVMJCQkJMHgwNjgNCj4+ICsjZGVmaW5lIEky
-Q19JTlRfQlVTX0NMUl9ET05FCQkJQklUKDExKQ0KPj4gICNkZWZpbmUgSTJDX0lOVF9QQUNLRVRf
-WEZFUl9DT01QTEVURQkJQklUKDcpDQo+PiAgI2RlZmluZSBJMkNfSU5UX0FMTF9QQUNLRVRTX1hG
-RVJfQ09NUExFVEUJQklUKDYpDQo+PiAgI2RlZmluZSBJMkNfSU5UX1RYX0ZJRk9fT1ZFUkZMT1cJ
-CUJJVCg1KQ0KPj4gQEAgLTk2LDYgKzk3LDE1IEBADQo+PiAgI2RlZmluZSBJMkNfSEVBREVSX01B
-U1RFUl9BRERSX1NISUZUCQkxMg0KPj4gICNkZWZpbmUgSTJDX0hFQURFUl9TTEFWRV9BRERSX1NI
-SUZUCQkxDQo+PiAgDQo+PiArI2RlZmluZSBJMkNfQlVTX0NMRUFSX0NORkcJCQkweDA4NA0KPj4g
-KyNkZWZpbmUgSTJDX0JDX1NDTEtfVEhSRVNIT0xECQkJOQ0KPj4gKyNkZWZpbmUgSTJDX0JDX1ND
-TEtfVEhSRVNIT0xEX1NISUZUCQkxNg0KPj4gKyNkZWZpbmUgSTJDX0JDX1NUT1BfQ09ORAkJCUJJ
-VCgyKQ0KPj4gKyNkZWZpbmUgSTJDX0JDX1RFUk1JTkFURQkJCUJJVCgxKQ0KPj4gKyNkZWZpbmUg
-STJDX0JDX0VOQUJMRQkJCQlCSVQoMCkNCj4+ICsjZGVmaW5lIEkyQ19CVVNfQ0xFQVJfU1RBVFVT
-CQkJMHgwODgNCj4+ICsjZGVmaW5lIEkyQ19CQ19TVEFUVVMJCQkJQklUKDApDQo+PiArDQo+PiAg
-I2RlZmluZSBJMkNfQ09ORklHX0xPQUQJCQkJMHgwOEMNCj4+ICAjZGVmaW5lIEkyQ19NU1RSX0NP
-TkZJR19MT0FECQkJQklUKDApDQo+PiAgI2RlZmluZSBJMkNfU0xWX0NPTkZJR19MT0FECQkJQklU
-KDEpDQo+PiBAQCAtMTU1LDYgKzE2NSw4IEBAIGVudW0gbXNnX2VuZF90eXBlIHsNCj4+ICAgKiBA
-aGFzX21zdF9maWZvOiBUaGUgSTJDIGNvbnRyb2xsZXIgY29udGFpbnMgdGhlIG5ldyBNU1QgRklG
-TyBpbnRlcmZhY2UgdGhhdA0KPj4gICAqCQlwcm92aWRlcyBhZGRpdGlvbmFsIGZlYXR1cmVzIGFu
-ZCBhbGxvd3MgZm9yIGxvbmdlciBtZXNzYWdlcyB0bw0KPj4gICAqCQliZSB0cmFuc2ZlcnJlZCBp
-biBvbmUgZ28uDQo+PiArICogQHN1cHBvcnRzX2J1c19jbGVhcjogQnVzIENsZWFyIHN1cHBvcnQg
-dG8gcmVjb3ZlciBmcm9tIGJ1cyBoYW5nIGR1cmluZw0KPj4gKyAqCQlTREEgc3R1Y2sgbG93IGZy
-b20gZGV2aWNlIGZvciBzb21lIHVua25vd24gcmVhc29ucy4NCj4+ICAgKi8NCj4+ICBzdHJ1Y3Qg
-dGVncmFfaTJjX2h3X2ZlYXR1cmUgew0KPj4gIAlib29sIGhhc19jb250aW51ZV94ZmVyX3N1cHBv
-cnQ7DQo+PiBAQCAtMTY3LDYgKzE3OSw3IEBAIHN0cnVjdCB0ZWdyYV9pMmNfaHdfZmVhdHVyZSB7
-DQo+PiAgCWJvb2wgaGFzX211bHRpX21hc3Rlcl9tb2RlOw0KPj4gIAlib29sIGhhc19zbGNnX292
-ZXJyaWRlX3JlZzsNCj4+ICAJYm9vbCBoYXNfbXN0X2ZpZm87DQo+PiArCWJvb2wgc3VwcG9ydHNf
-YnVzX2NsZWFyOw0KPj4gIH07DQo+PiAgDQo+PiAgLyoqDQo+PiBAQCAtNjM5LDYgKzY1MiwxMiBA
-QCBzdGF0aWMgaXJxcmV0dXJuX3QgdGVncmFfaTJjX2lzcihpbnQgaXJxLCB2b2lkICpkZXZfaWQp
-DQo+PiAgCQkJaTJjX2Rldi0+bXNnX2VyciB8PSBJMkNfRVJSX0FSQklUUkFUSU9OX0xPU1Q7DQo+
-PiAgCQlnb3RvIGVycjsNCj4+ICAJfQ0KPj4gKwkvKg0KPj4gKwkgKiBJMkMgdHJhbnNmZXIgaXMg
-dGVybWluYXRlZCBkdXJpbmcgdGhlIGJ1cyBjbGVhciBzbyBza2lwDQo+PiArCSAqIHByb2Nlc3Np
-bmcgdGhlIG90aGVyIGludGVycnVwdHMuDQo+PiArCSAqLw0KPj4gKwlpZiAoaTJjX2Rldi0+aHct
-PnN1cHBvcnRzX2J1c19jbGVhciAmJiAoc3RhdHVzICYgSTJDX0lOVF9CVVNfQ0xSX0RPTkUpKQ0K
-Pj4gKwkJZ290byBlcnI7DQo+PiAgDQo+PiAgCWlmIChpMmNfZGV2LT5tc2dfcmVhZCAmJiAoc3Rh
-dHVzICYgSTJDX0lOVF9SWF9GSUZPX0RBVEFfUkVRKSkgew0KPj4gIAkJaWYgKGkyY19kZXYtPm1z
-Z19idWZfcmVtYWluaW5nKQ0KPj4gQEAgLTY2OCw2ICs2ODcsOCBAQCBzdGF0aWMgaXJxcmV0dXJu
-X3QgdGVncmFfaTJjX2lzcihpbnQgaXJxLCB2b2lkICpkZXZfaWQpDQo+PiAgCXRlZ3JhX2kyY19t
-YXNrX2lycShpMmNfZGV2LCBJMkNfSU5UX05PX0FDSyB8IEkyQ19JTlRfQVJCSVRSQVRJT05fTE9T
-VCB8DQo+PiAgCQlJMkNfSU5UX1BBQ0tFVF9YRkVSX0NPTVBMRVRFIHwgSTJDX0lOVF9UWF9GSUZP
-X0RBVEFfUkVRIHwNCj4+ICAJCUkyQ19JTlRfUlhfRklGT19EQVRBX1JFUSk7DQo+PiArCWlmIChp
-MmNfZGV2LT5ody0+c3VwcG9ydHNfYnVzX2NsZWFyKQ0KPj4gKwkJdGVncmFfaTJjX21hc2tfaXJx
-KGkyY19kZXYsIEkyQ19JTlRfQlVTX0NMUl9ET05FKTsNCj4+ICAJaTJjX3dyaXRlbChpMmNfZGV2
-LCBzdGF0dXMsIEkyQ19JTlRfU1RBVFVTKTsNCj4+ICAJaWYgKGkyY19kZXYtPmlzX2R2YykNCj4+
-ICAJCWR2Y193cml0ZWwoaTJjX2RldiwgRFZDX1NUQVRVU19JMkNfRE9ORV9JTlRSLCBEVkNfU1RB
-VFVTKTsgQEAgDQo+PiAtNjc4LDYgKzY5OSw0MyBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgdGVncmFf
-aTJjX2lzcihpbnQgaXJxLCB2b2lkICpkZXZfaWQpDQo+PiAgCXJldHVybiBJUlFfSEFORExFRDsN
-Cj4+ICB9DQo+PiAgDQo+PiArc3RhdGljIGludCB0ZWdyYV9pMmNfaXNzdWVfYnVzX2NsZWFyKHN0
-cnVjdCB0ZWdyYV9pMmNfZGV2ICppMmNfZGV2KSB7DQo+PiArCWludCBlcnI7DQo+PiArCXVuc2ln
-bmVkIGxvbmcgdGltZV9sZWZ0Ow0KPj4gKwl1MzIgcmVnOw0KPj4gKw0KPj4gKwlpZiAoaTJjX2Rl
-di0+aHctPnN1cHBvcnRzX2J1c19jbGVhcikgew0KPj4gKwkJcmVpbml0X2NvbXBsZXRpb24oJmky
-Y19kZXYtPm1zZ19jb21wbGV0ZSk7DQo+PiArCQlyZWcgPSAoSTJDX0JDX1NDTEtfVEhSRVNIT0xE
-IDw8IEkyQ19CQ19TQ0xLX1RIUkVTSE9MRF9TSElGVCkgfA0KPj4gKwkJICAgICAgSTJDX0JDX1NU
-T1BfQ09ORCB8IEkyQ19CQ19URVJNSU5BVEU7DQo+PiArCQlpMmNfd3JpdGVsKGkyY19kZXYsIHJl
-ZywgSTJDX0JVU19DTEVBUl9DTkZHKTsNCj4+ICsJCWlmIChpMmNfZGV2LT5ody0+aGFzX2NvbmZp
-Z19sb2FkX3JlZykgew0KPj4gKwkJCWVyciA9IHRlZ3JhX2kyY193YWl0X2Zvcl9jb25maWdfbG9h
-ZChpMmNfZGV2KTsNCj4+ICsJCQlpZiAoZXJyKQ0KPj4gKwkJCQlyZXR1cm4gZXJyOw0KPj4gKwkJ
-fQ0KPj4gKwkJcmVnIHw9IEkyQ19CQ19FTkFCTEU7DQo+PiArCQlpMmNfd3JpdGVsKGkyY19kZXYs
-IHJlZywgSTJDX0JVU19DTEVBUl9DTkZHKTsNCj4+ICsJCXRlZ3JhX2kyY191bm1hc2tfaXJxKGky
-Y19kZXYsIEkyQ19JTlRfQlVTX0NMUl9ET05FKTsNCj4+ICsNCj4+ICsJCXRpbWVfbGVmdCA9IHdh
-aXRfZm9yX2NvbXBsZXRpb25fdGltZW91dCgmaTJjX2Rldi0+bXNnX2NvbXBsZXRlLA0KPj4gKwkJ
-CQkJCQlURUdSQV9JMkNfVElNRU9VVCk7DQo+PiArCQlpZiAodGltZV9sZWZ0ID09IDApIHsNCj4+
-ICsJCQlkZXZfZXJyKGkyY19kZXYtPmRldiwgInRpbWVkIG91dCBmb3IgYnVzIGNsZWFyXG4iKTsN
-Cj4+ICsJCQlyZXR1cm4gLUVUSU1FRE9VVDsNCj4+ICsJCX0NCj4+ICsJCXJlZyA9IGkyY19yZWFk
-bChpMmNfZGV2LCBJMkNfQlVTX0NMRUFSX1NUQVRVUyk7DQo+PiArCQlpZiAoIShyZWcgJiBJMkNf
-QkNfU1RBVFVTKSkgew0KPj4gKwkJCWRldl9lcnIoaTJjX2Rldi0+ZGV2LA0KPj4gKwkJCQkiVW4t
-cmVjb3ZlcmVkIGFyYml0cmF0aW9uIGxvc3RcbiIpOw0KPj4gKwkJCXJldHVybiAtRUlPOw0KPj4g
-KwkJfQ0KPj4gKwl9DQo+PiArDQo+PiArCXJldHVybiAtRUFHQUlOOw0KPj4gK30NCj4+ICsNCj4+
-ICBzdGF0aWMgaW50IHRlZ3JhX2kyY194ZmVyX21zZyhzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJj
-X2RldiwNCj4+ICAJc3RydWN0IGkyY19tc2cgKm1zZywgZW51bSBtc2dfZW5kX3R5cGUgZW5kX3N0
-YXRlKSAgeyBAQCAtNzU5LDYgDQo+PiArODE3LDEyIEBAIHN0YXRpYyBpbnQgdGVncmFfaTJjX3hm
-ZXJfbXNnKHN0cnVjdCB0ZWdyYV9pMmNfZGV2ICppMmNfZGV2LA0KPj4gIAkJcmV0dXJuIDA7DQo+
-PiAgDQo+PiAgCXRlZ3JhX2kyY19pbml0KGkyY19kZXYpOw0KPj4gKwkvKiBzdGFydCByZWNvdmVy
-eSB1cG9uIGFyYml0cmF0aW9uIGxvc3MgaW4gc2luZ2xlIG1hc3RlciBtb2RlICovDQo+PiArCWlm
-IChpMmNfZGV2LT5tc2dfZXJyID09IEkyQ19FUlJfQVJCSVRSQVRJT05fTE9TVCkgew0KPj4gKwkJ
-aWYgKCFpMmNfZGV2LT5pc19tdWx0aW1hc3Rlcl9tb2RlKQ0KPj4gKwkJCXJldHVybiB0ZWdyYV9p
-MmNfaXNzdWVfYnVzX2NsZWFyKGkyY19kZXYpOw0KPj4gKwkJcmV0dXJuIC1FQUdBSU47DQo+DQo+
-VGhpcyBjaGFuZ2VzIHRoZSByZXR1cm5lZCBlcnJubyBmcm9tIC1FSU8gdG8gLUVBR0FJTiBmb3Ig
-dGhlIHN1cHBvcnRzX2J1c19jbGVhcj1mYWxzZSBjYXNlLCBpcyBpdCBva2F5IGFuZCBpbnRlbnRp
-b25hbD8NCj4NCg0KWWVzIEVBR0FJTiBpcyBpbnRlbnRpb25hbCB0byBhbGxvdyBmb3IgdHJhbnNm
-ZXIgcmV0cnkuDQpEdXJpbmcgc2luZ2xlIG1hc3RlciBtb2RlLCBBUkJJVFJBVElPTiBMT1NUIG5v
-dGlmaWNhdGlvbiBoYXBwZW5zIHdoZW4gDQoxLiBJMkMgTWFzdGVyIHNlZXMgdGhlIGJ1cyBpcyBv
-Y2N1cGllZCBieSBzb21lIG90aGVyIGRldmljZSB3aGVuIGEgdHJhbnNmZXIgaXMgaW5pdGlhdGVk
-IA0KMi4gSTJDIE1hc3RlciBsb3N0IHRoZSBidXMgZHVyaW5nIGFyYml0cmF0aW9uIGluY2FzZSBp
-ZiBzbGF2ZSBkZXZpY2UgcHVsbHMgU0RBIGxpbmUgbG93IGNvbnRpbnVvdXNseSBmb3Igc29tZSB1
-bmtub3duIHJlYXNvbg0KSWYgYXJiaXRyYXRpb24gbG9zdCBpcyBkdWUgdG8gY2F1c2UgMSwgcmV0
-cnkgaGVscHMgdG8gY29udGludWUgd2l0aCB0cmFuc2ZlciBvbmNlIGJ1cyBpcyByZWxlYXNlZCBi
-eSB0aGUgc2xhdmUgYW5kIGl0IGp1c3QgYWRkZWQgZGVsYXkgaW4gY29tbXVuaWNhdGlvbiBkdWUg
-dG8gYnVzIHJlbGVhc2UgZGVsYXkgYnkgc2xhdmUuDQpJbiBjYXNlIG9mIDJuZCBjYXVzZSwgcmV0
-cnkgbmV2ZXIgc3VjY2VlZHMgaW4gY2FzZXMgd2hlcmUgYnVzIGNsZWFyIGlzIG5vdCBzdXBwb3J0
-ZWQuDQoNClRoYW5rcw0KU293amFueWENCg==
+=D0=92 Tue, 22 Jan 2019 22:13:53 +0000
+Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+
+> >> Bus clear feature of tegra i2c controller helps to recover from
+> >> bus hang when i2c master loses the bus arbitration due to the
+> >> slave device holding SDA LOW continuously for some unknown reasons.
+> >>=20
+> >> Per I2C specification, the device that held the bus LOW should
+> >> release it within 9 clock pulses.
+> >>=20
+> >> During bus clear operation, Tegra I2C controller sends 9 clock
+> >> pulses and terminates the transaction with STOP condition.
+> >> Upon successful bus clear operation, bus goes to idle state and
+> >> driver retries the transaction.
+> >>=20
+> >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> >> ---
+> >>  [V3]: Updated comments and commit message to be clear on the
+> >> change [V2]: Same as V1 rebased to 5.0-rc1
+> >>=20
+> >>  drivers/i2c/busses/i2c-tegra.c | 70=20
+> >> ++++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 70 insertions(+)
+> >>=20
+> >> diff --git a/drivers/i2c/busses/i2c-tegra.c=20
+> >> b/drivers/i2c/busses/i2c-tegra.c index e417ebf7628c..b1b920b4a203=20
+> >> 100644
+> >> --- a/drivers/i2c/busses/i2c-tegra.c
+> >> +++ b/drivers/i2c/busses/i2c-tegra.c
+> >> @@ -54,6 +54,7 @@
+> >>  #define I2C_FIFO_STATUS_RX_SHIFT		0
+> >>  #define I2C_INT_MASK				0x064
+> >>  #define I2C_INT_STATUS				0x068
+> >> +#define I2C_INT_BUS_CLR_DONE			BIT(11)
+> >>  #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
+> >>  #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
+> >>  #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
+> >> @@ -96,6 +97,15 @@
+> >>  #define I2C_HEADER_MASTER_ADDR_SHIFT		12
+> >>  #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
+> >> =20
+> >> +#define I2C_BUS_CLEAR_CNFG			0x084
+> >> +#define I2C_BC_SCLK_THRESHOLD			9
+> >> +#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
+> >> +#define I2C_BC_STOP_COND			BIT(2)
+> >> +#define I2C_BC_TERMINATE			BIT(1)
+> >> +#define I2C_BC_ENABLE				BIT(0)
+> >> +#define I2C_BUS_CLEAR_STATUS			0x088
+> >> +#define I2C_BC_STATUS				BIT(0)
+> >> +
+> >>  #define I2C_CONFIG_LOAD				0x08C
+> >>  #define I2C_MSTR_CONFIG_LOAD			BIT(0)
+> >>  #define I2C_SLV_CONFIG_LOAD			BIT(1)
+> >> @@ -155,6 +165,8 @@ enum msg_end_type {
+> >>   * @has_mst_fifo: The I2C controller contains the new MST FIFO
+> >> interface that
+> >>   *		provides additional features and allows for
+> >> longer messages to
+> >>   *		be transferred in one go.
+> >> + * @supports_bus_clear: Bus Clear support to recover from bus
+> >> hang during
+> >> + *		SDA stuck low from device for some unknown
+> >> reasons. */
+> >>  struct tegra_i2c_hw_feature {
+> >>  	bool has_continue_xfer_support;
+> >> @@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
+> >>  	bool has_multi_master_mode;
+> >>  	bool has_slcg_override_reg;
+> >>  	bool has_mst_fifo;
+> >> +	bool supports_bus_clear;
+> >>  };
+> >> =20
+> >>  /**
+> >> @@ -639,6 +652,12 @@ static irqreturn_t tegra_i2c_isr(int irq,
+> >> void *dev_id) i2c_dev->msg_err |=3D I2C_ERR_ARBITRATION_LOST;
+> >>  		goto err;
+> >>  	}
+> >> +	/*
+> >> +	 * I2C transfer is terminated during the bus clear so skip
+> >> +	 * processing the other interrupts.
+> >> +	 */
+> >> +	if (i2c_dev->hw->supports_bus_clear && (status &
+> >> I2C_INT_BUS_CLR_DONE))
+> >> +		goto err;
+> >> =20
+> >>  	if (i2c_dev->msg_read && (status &
+> >> I2C_INT_RX_FIFO_DATA_REQ)) { if (i2c_dev->msg_buf_remaining)
+> >> @@ -668,6 +687,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void
+> >> *dev_id) tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK |
+> >> I2C_INT_ARBITRATION_LOST | I2C_INT_PACKET_XFER_COMPLETE |
+> >> I2C_INT_TX_FIFO_DATA_REQ | I2C_INT_RX_FIFO_DATA_REQ);
+> >> +	if (i2c_dev->hw->supports_bus_clear)
+> >> +		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+> >>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+> >>  	if (i2c_dev->is_dvc)
+> >>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR,
+> >> DVC_STATUS); @@ -678,6 +699,43 @@ static irqreturn_t
+> >> tegra_i2c_isr(int irq, void *dev_id) return IRQ_HANDLED;
+> >>  }
+> >> =20
+> >> +static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev
+> >> *i2c_dev) {
+> >> +	int err;
+> >> +	unsigned long time_left;
+> >> +	u32 reg;
+> >> +
+> >> +	if (i2c_dev->hw->supports_bus_clear) {
+> >> +		reinit_completion(&i2c_dev->msg_complete);
+> >> +		reg =3D (I2C_BC_SCLK_THRESHOLD <<
+> >> I2C_BC_SCLK_THRESHOLD_SHIFT) |
+> >> +		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
+> >> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
+> >> +		if (i2c_dev->hw->has_config_load_reg) {
+> >> +			err =3D
+> >> tegra_i2c_wait_for_config_load(i2c_dev);
+> >> +			if (err)
+> >> +				return err;
+> >> +		}
+> >> +		reg |=3D I2C_BC_ENABLE;
+> >> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
+> >> +		tegra_i2c_unmask_irq(i2c_dev,
+> >> I2C_INT_BUS_CLR_DONE); +
+> >> +		time_left =3D
+> >> wait_for_completion_timeout(&i2c_dev->msg_complete,
+> >> +
+> >> TEGRA_I2C_TIMEOUT);
+> >> +		if (time_left =3D=3D 0) {
+> >> +			dev_err(i2c_dev->dev, "timed out for bus
+> >> clear\n");
+> >> +			return -ETIMEDOUT;
+> >> +		}
+> >> +		reg =3D i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
+> >> +		if (!(reg & I2C_BC_STATUS)) {
+> >> +			dev_err(i2c_dev->dev,
+> >> +				"Un-recovered arbitration
+> >> lost\n");
+> >> +			return -EIO;
+> >> +		}
+> >> +	}
+> >> +
+> >> +	return -EAGAIN;
+> >> +}
+> >> +
+> >>  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+> >>  	struct i2c_msg *msg, enum msg_end_type end_state)  { @@
+> >> -759,6 +817,12 @@ static int tegra_i2c_xfer_msg(struct
+> >> tegra_i2c_dev *i2c_dev, return 0;
+> >> =20
+> >>  	tegra_i2c_init(i2c_dev);
+> >> +	/* start recovery upon arbitration loss in single master
+> >> mode */
+> >> +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
+> >> +		if (!i2c_dev->is_multimaster_mode)
+> >> +			return tegra_i2c_issue_bus_clear(i2c_dev);
+> >> +		return -EAGAIN; =20
+> >
+> >This changes the returned errno from -EIO to -EAGAIN for the
+> >supports_bus_clear=3Dfalse case, is it okay and intentional?
+> > =20
+>=20
+> Yes EAGAIN is intentional to allow for transfer retry.
+> During single master mode, ARBITRATION LOST notification happens when=20
+> 1. I2C Master sees the bus is occupied by some other device when a
+> transfer is initiated 2. I2C Master lost the bus during arbitration
+> incase if slave device pulls SDA line low continuously for some
+> unknown reason If arbitration lost is due to cause 1, retry helps to
+> continue with transfer once bus is released by the slave and it just
+> added delay in communication due to bus release delay by slave. In
+> case of 2nd cause, retry never succeeds in cases where bus clear is
+> not supported.
+
+It's unclear whether the "never succeeds retry" may fail with the
+EAGAIN, causing an endless retry-loop. Could you please clarify this
+moment?
