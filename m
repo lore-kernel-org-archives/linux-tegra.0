@@ -1,62 +1,40 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] drm/tegra: Provide fallback IOMMU domain geometry
-Date: Tue, 22 Jan 2019 15:36:13 +0100
-Message-ID: <20190122143613.16881-1-thierry.reding@gmail.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v13 0/8] Introduce on-chip interconnect API
+Date: Tue, 22 Jan 2019 16:45:20 +0200
+Message-ID: <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
+References: <20190116161103.6937-1-georgi.djakov@linaro.org>
+ <20190122124204.GA26969@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190122124204.GA26969@kroah.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de, rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com, vincent.guittot@linaro.org, skannan@codeaurora.org, bjorn.andersson@linaro.org, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, evgreen@chromium.org, dianders@chromium.org, abailon@baylibre.com, maxime.ripard@bootlin.com, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, henryc.chen@mediatek.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRlZ3JhMTg2IGFuZCBs
-YXRlciB1c2UgdGhlIEFSTSBTTU1VIGRyaXZlciB0byBwcm92aWRlIElPTU1VIGRvbWFpbnMuIFRo
-ZQpkcml2ZXIgc2V0cyB0aGUgSU9NTVUgZG9tYWluJ3MgZ2VvbWV0cnkgb25seSBhZnRlciBhIGRl
-dmljZSBoYXMgYXR0YWNoZWQKdG8gdGhlIGRvbWFpbi4gSG93ZXZlciwgaW4gb3JkZXIgdG8gcHJv
-cGVybHkgc2V0IHVwIHRoZSBJT01NVSBkb21haW4Kc2hhcmVkIGFtb25nIGFsbCBUZWdyYSBEUk0g
-Y2xpZW50cywgdGhlIGRvbWFpbidzIGdlb21ldHJ5IGlzIG5lZWRlZApiZWZvcmUgYW55IGRldmlj
-ZXMgYXR0YWNoIHRvIGl0LgoKV29yayBhcm91bmQgdGhpcyBieSBmYWxsaW5nIGJhY2sgdG8gYSAz
-Mi1iaXQgYWRkcmVzcyBzcGFjZSBmb3IgdGhlIElPTU1VCmRvbWFpbiBnZW9tZXRyeS4gVGhpcyBp
-cyBndWFyYW50ZWVkIHRvIGFsd2F5cyB3b3JrIG9uIGFsbCBnZW5lcmF0aW9ucyBvZgpUZWdyYSBh
-bmQgbm8ga25vd24gdXNlLWNhc2VzIHJlcXVpcmUgbW9yZSBJT1ZBIHNwYWNlIHRoYW4gdGhhdC4K
-ClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQog
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgMjAgKysrKysrKysrKysrKysrLS0tLS0KIDEg
-ZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
-cm0uYwppbmRleCA0YjcwY2U2NjRjNDEuLjhhZjYxNTU5ZDY2MiAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2RybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwpA
-QCAtOTMsNyArOTMsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2
-aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCiAKIAlpZiAoaW9tbXVfcHJlc2VudCgmcGxh
-dGZvcm1fYnVzX3R5cGUpKSB7CiAJCXU2NCBjYXJ2ZW91dF9zdGFydCwgY2FydmVvdXRfZW5kLCBn
-ZW1fc3RhcnQsIGdlbV9lbmQ7Ci0JCXN0cnVjdCBpb21tdV9kb21haW5fZ2VvbWV0cnkgKmdlb21l
-dHJ5OworCQlkbWFfYWRkcl90IHN0YXJ0LCBlbmQ7CiAJCXVuc2lnbmVkIGxvbmcgb3JkZXI7CiAK
-IAkJdGVncmEtPmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxvYygmcGxhdGZvcm1fYnVzX3R5cGUp
-OwpAQCAtMTA2LDExICsxMDYsMjEgQEAgc3RhdGljIGludCB0ZWdyYV9kcm1fbG9hZChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZHJtLCB1bnNpZ25lZCBsb25nIGZsYWdzKQogCQlpZiAoZXJyIDwgMCkKIAkJ
-CWdvdG8gZG9tYWluOwogCi0JCWdlb21ldHJ5ID0gJnRlZ3JhLT5kb21haW4tPmdlb21ldHJ5Owot
-CQlnZW1fc3RhcnQgPSBnZW9tZXRyeS0+YXBlcnR1cmVfc3RhcnQ7Ci0JCWdlbV9lbmQgPSBnZW9t
-ZXRyeS0+YXBlcnR1cmVfZW5kIC0gQ0FSVkVPVVRfU1o7CisJCXN0YXJ0ID0gdGVncmEtPmRvbWFp
-bi0+Z2VvbWV0cnkuYXBlcnR1cmVfc3RhcnQ7CisJCWVuZCA9IHRlZ3JhLT5kb21haW4tPmdlb21l
-dHJ5LmFwZXJ0dXJlX2VuZDsKKworCQkvKgorCQkgKiBUaGUgQVJNIFNNTVUgZHJpdmVyIG9ubHkg
-c2V0cyB1cCB0aGUgZ2VvbWV0cnkgYWZ0ZXIgdGhlCisJCSAqIGRvbWFpbiBoYXMgYmVlbiBhdHRh
-Y2hlZCB0byBhIGRldmljZS4gSW4gdGhhdCBjYXNlLCBtYWtlCisJCSAqIHN1cmUgdG8gZmFsbGJh
-Y2sgdG8gYSByZWFzb25hYmxlIGRlZmF1bHQuCisJCSAqLworCQlpZiAoc3RhcnQgPT0gMCAmJiBl
-bmQgPT0gMCkKKwkJCWVuZCA9IDB4ZmZmZmZmZmY7CisKKwkJZ2VtX3N0YXJ0ID0gc3RhcnQ7CisJ
-CWdlbV9lbmQgPSBlbmQgLSBDQVJWRU9VVF9TWjsKIAkJY2FydmVvdXRfc3RhcnQgPSBnZW1fZW5k
-ICsgMTsKLQkJY2FydmVvdXRfZW5kID0gZ2VvbWV0cnktPmFwZXJ0dXJlX2VuZDsKKwkJY2FydmVv
-dXRfZW5kID0gZW5kOwogCiAJCW9yZGVyID0gX19mZnModGVncmEtPmRvbWFpbi0+cGdzaXplX2Jp
-dG1hcCk7CiAJCWluaXRfaW92YV9kb21haW4oJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4sIDFVTCA8
-PCBvcmRlciwKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+On 1/22/19 14:42, Greg KH wrote:
+> On Wed, Jan 16, 2019 at 06:10:55PM +0200, Georgi Djakov wrote:
+[..]
+> 
+> All now queued up, thanks.
+> 
+> greg k-h
+
+Hi Greg,
+
+Thanks for considering these patches! Actually i have a branch named
+icc-next [1] which is pulled into linux-next. I will drop these same
+patches to avoid conflicts.
+
+If all is well, i was wondering how to proceed with follow-up patches.
+Some consumers of this API are already floating on the lists. How about
+sending you a pull request before the merge window with the collected
+patches?
+
+Thanks,
+Georgi
+
+1. https://git.linaro.org/people/georgi.djakov/linux.git/log/?h=icc-next
