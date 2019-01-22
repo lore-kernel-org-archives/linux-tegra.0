@@ -1,181 +1,50 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 2/2] ARM: dts: Add stmpe-adc DT node to Toradex T30
- modules
-Date: Tue, 22 Jan 2019 15:53:53 +0100
-Message-ID: <34495b73d56dd3dcd7ef9df99d665fb4@agner.ch>
-References: <20190122132135.5012-1-dev@pschenker.ch>
- <20190122132135.5012-3-dev@pschenker.ch>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v13 0/8] Introduce on-chip interconnect API
+Date: Tue, 22 Jan 2019 16:00:49 +0100
+Message-ID: <20190122150048.GA11466@kroah.com>
+References: <20190116161103.6937-1-georgi.djakov@linaro.org>
+ <20190122124204.GA26969@kroah.com>
+ <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190122132135.5012-3-dev@pschenker.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Schenker <dev@pschenker.ch>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, marcel.ziswiler@toradex.com, max.krummenacher@toradex.com, Philippe Schenker <philippe.schenker@toradex.com>, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sanjayc@nvidia.com, maxime.ripard@bootlin.com, mturquette@baylibre.com, daidavid1@codeaurora.org, bjorn.andersson@linaro.org, skannan@codeaurora.org, abailon@baylibre.com, vincent.guittot@linaro.org, seansw@qti.qualcomm.com, khilman@baylibre.com, evgreen@chromium.org, ksitaraman@nvidia.com, devicetree@vger.kernel.org, arnd@arndb.de, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, henryc.chen@mediatek.com, andy.gross@linaro.org, robh+dt@kernel.org, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rjw@rjwysocki.net, dianders@chromium.org, amit.kucheria@linaro.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, olof@lixom.net
 List-Id: linux-tegra@vger.kernel.org
 
-On 22.01.2019 14:21, Philippe Schenker wrote:
-> From: Philippe Schenker <philippe.schenker@toradex.com>
+On Tue, Jan 22, 2019 at 04:45:20PM +0200, Georgi Djakov wrote:
+> On 1/22/19 14:42, Greg KH wrote:
+> > On Wed, Jan 16, 2019 at 06:10:55PM +0200, Georgi Djakov wrote:
+> [..]
+> > 
+> > All now queued up, thanks.
+> > 
+> > greg k-h
 > 
-> Add the stmpe-adc DT node as found on Toradex T30 modules
+> Hi Greg,
 > 
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+> Thanks for considering these patches! Actually i have a branch named
+> icc-next [1] which is pulled into linux-next. I will drop these same
+> patches to avoid conflicts.
+> 
+> If all is well, i was wondering how to proceed with follow-up patches.
+> Some consumers of this API are already floating on the lists. How about
+> sending you a pull request before the merge window with the collected
+> patches?
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+Sure, that works, or you can just send them as patches, either works for
+me.
 
-> 
-> ---
-> 
->  arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
->  3 files changed, 42 insertions(+), 24 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> index 02f8126481a2..8b7a827d604d 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> @@ -994,11 +994,17 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -1008,17 +1014,17 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				/* forbid to use ADC channels 3-0 (touch) */
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> index 7f112f192fe9..c18f6f61d764 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> @@ -976,11 +976,17 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -990,17 +996,17 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				/* forbid to use ADC channels 3-0 (touch) */
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index 35af03ca9e90..3c421a5cfbc2 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -845,11 +845,17 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -859,17 +865,17 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				/* forbid to use ADC channels 3-0 (touch) */
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
+greg k-h
