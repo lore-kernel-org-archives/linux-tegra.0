@@ -1,40 +1,129 @@
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v13 0/8] Introduce on-chip interconnect API
-Date: Tue, 22 Jan 2019 16:45:20 +0200
-Message-ID: <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
-References: <20190116161103.6937-1-georgi.djakov@linaro.org>
- <20190122124204.GA26969@kroah.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 1/2] ARM: dts: Add stmpe-adc DT node to Toradex iMX6
+ modules
+Date: Tue, 22 Jan 2019 15:53:30 +0100
+Message-ID: <959c74d19959e0cf2261df7f3deaf536@agner.ch>
+References: <20190122132135.5012-1-dev@pschenker.ch>
+ <20190122132135.5012-2-dev@pschenker.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190122124204.GA26969@kroah.com>
-Content-Language: en-US
+In-Reply-To: <20190122132135.5012-2-dev@pschenker.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de, rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com, vincent.guittot@linaro.org, skannan@codeaurora.org, bjorn.andersson@linaro.org, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, evgreen@chromium.org, dianders@chromium.org, abailon@baylibre.com, maxime.ripard@bootlin.com, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, henryc.chen@mediatek.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+To: Philippe Schenker <dev@pschenker.ch>
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, marcel.ziswiler@toradex.com, max.krummenacher@toradex.com, Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, NXP Linux Team <linux-imx@nxp.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/22/19 14:42, Greg KH wrote:
-> On Wed, Jan 16, 2019 at 06:10:55PM +0200, Georgi Djakov wrote:
-[..]
+On 22.01.2019 14:21, Philippe Schenker wrote:
+> From: Philippe Schenker <philippe.schenker@toradex.com>
 > 
-> All now queued up, thanks.
+> Add the stmpe-adc DT node as found on Toradex iMX6 modules
 > 
-> greg k-h
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 
-Hi Greg,
+Reviewed-by: Stefan Agner <stefan@agner.ch>
 
-Thanks for considering these patches! Actually i have a branch named
-icc-next [1] which is pulled into linux-next. I will drop these same
-patches to avoid conflicts.
-
-If all is well, i was wondering how to proceed with follow-up patches.
-Some consumers of this API are already floating on the lists. How about
-sending you a pull request before the merge window with the collected
-patches?
-
-Thanks,
-Georgi
-
-1. https://git.linaro.org/people/georgi.djakov/linux.git/log/?h=icc-next
+> ---
+> 
+>  arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 ++++++++++++++--------
+>  arch/arm/boot/dts/imx6qdl-colibri.dtsi | 22 ++++++++++++++--------
+>  2 files changed, 28 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> index 8380f1b26826..e8c7ef7e078a 100644
+> --- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> @@ -332,11 +332,17 @@
+>  		id = <0>;
+>  		blocks = <0x5>;
+>  		irq-trigger = <0x1>;
+> +		/* 3.25 MHz ADC clock speed */
+> +		st,adc-freq = <1>;
+> +		/* 12-bit ADC */
+> +		st,mod-12b = <1>;
+> +		/* internal ADC reference */
+> +		st,ref-sel = <0>;
+> +		/* ADC converstion time: 80 clocks */
+> +		st,sample-time = <4>;
+>  
+>  		stmpe_touchscreen {
+>  			compatible = "st,stmpe-ts";
+> -			/* 3.25 MHz ADC clock speed */
+> -			st,adc-freq = <1>;
+>  			/* 8 sample average control */
+>  			st,ave-ctrl = <3>;
+>  			/* 7 length fractional part in z */
+> @@ -346,17 +352,17 @@
+>  			 * current limit value
+>  			 */
+>  			st,i-drive = <1>;
+> -			/* 12-bit ADC */
+> -			st,mod-12b = <1>;
+> -			/* internal ADC reference */
+> -			st,ref-sel = <0>;
+> -			/* ADC converstion time: 80 clocks */
+> -			st,sample-time = <4>;
+>  			/* 1 ms panel driver settling time */
+>  			st,settling = <3>;
+>  			/* 5 ms touch detect interrupt delay */
+>  			st,touch-det-delay = <5>;
+>  		};
+> +
+> +		stmpe_adc {
+> +			compatible = "st,stmpe-adc";
+> +			/* forbid to use ADC channels 3-0 (touch) */
+> +			st,norequest-mask = <0x0F>;
+> +		};
+>  	};
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> index 87e15e7cb32b..eb8603a2444e 100644
+> --- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> @@ -262,11 +262,17 @@
+>  		id = <0>;
+>  		blocks = <0x5>;
+>  		irq-trigger = <0x1>;
+> +		/* 3.25 MHz ADC clock speed */
+> +		st,adc-freq = <1>;
+> +		/* 12-bit ADC */
+> +		st,mod-12b = <1>;
+> +		/* internal ADC reference */
+> +		st,ref-sel = <0>;
+> +		/* ADC converstion time: 80 clocks */
+> +		st,sample-time = <4>;
+>  
+>  		stmpe_touchscreen {
+>  			compatible = "st,stmpe-ts";
+> -			/* 3.25 MHz ADC clock speed */
+> -			st,adc-freq = <1>;
+>  			/* 8 sample average control */
+>  			st,ave-ctrl = <3>;
+>  			/* 7 length fractional part in z */
+> @@ -276,17 +282,17 @@
+>  			 * current limit value
+>  			 */
+>  			st,i-drive = <1>;
+> -			/* 12-bit ADC */
+> -			st,mod-12b = <1>;
+> -			/* internal ADC reference */
+> -			st,ref-sel = <0>;
+> -			/* ADC converstion time: 80 clocks */
+> -			st,sample-time = <4>;
+>  			/* 1 ms panel driver settling time */
+>  			st,settling = <3>;
+>  			/* 5 ms touch detect interrupt delay */
+>  			st,touch-det-delay = <5>;
+>  		};
+> +
+> +		stmpe_adc {
+> +			compatible = "st,stmpe-adc";
+> +			/* forbid to use ADC channels 3-0 (touch) */
+> +			st,norequest-mask = <0x0F>;
+> +		};
+>  	};
+>  };
