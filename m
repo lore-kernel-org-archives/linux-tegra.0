@@ -1,144 +1,76 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 2/2] mtd: rawnand: use unnamed union in struct
- nand_op_parser_pattern_elem
-Date: Tue, 22 Jan 2019 17:55:40 +0900
-Message-ID: <CAK7LNARAbJ01n9+oh-VNAPP9Tt7NSBX8a-teSbDDhADF-bKAKw@mail.gmail.com>
-References: <1548142975-14219-1-git-send-email-yamada.masahiro@socionext.com>
- <1548142975-14219-3-git-send-email-yamada.masahiro@socionext.com>
- <20190122084944.420fcd4a@xps13>
- <CAK7LNAQvD03By1PQJ8KZG-UqX+NVQcL6JU-5a-2ZVVovdgBpEQ@mail.gmail.com>
- <20190122090830.118eb6be@xps13> <20190122093313.67375948@bbrezillon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
+ instead run teardown delayed
+Date: Tue, 22 Jan 2019 10:36:50 +0100
+Message-ID: <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-In-Reply-To: <20190122093313.67375948@bbrezillon>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: Boris Brezillon <bbrezillon@kernel.org>
-Cc: Lucas Stach <dev@lynxeye.de>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, Linus Walleij <linus.walleij@linaro.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, Jonathan Hunter <jonathanh@nvidia.com>, Marek Vasut <marek.vasut@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, linux-mtd <linux-mtd@lists.infradead.org>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-tegra@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Martin Sperl <kernel@martin.sperl.org>, Mark Brown <broonie@kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 5:33 PM Boris Brezillon <bbrezillon@kernel.org> wrote:
+On Mon, Jan 14, 2019 at 4:36 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> I have noticed that system suspend has started failing consistently on a
+> couple Tegra boards over the last few days with the linux-next branch.
+> The following error is seen on on entering suspend ...
 >
-> On Tue, 22 Jan 2019 09:08:30 +0100
-> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> [   58.222033] spi_master spi1: could not stop message queue
+> [   58.222038] spi_master spi1: queue stop failed
+> [   58.222048] dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
+> [   58.222052] PM: Device 7000da00.spi failed to suspend: error -16
+> [   58.222057] PM: Some devices failed to suspend, or early wake event detected
 >
-> > Hi Masahiro,
-> >
-> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
-> > 2019 17:00:54 +0900:
-> >
-> > > On Tue, Jan 22, 2019 at 4:50 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> > > >
-> > > > Hi Masahiro,
-> > > >
-> > > > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
-> > > > 2019 16:42:55 +0900:
-> > > >
-> > > > > Although drivers do not directly get access to the private data of
-> > > > > instruction patterns, let's use unnamed union field to be consistent
-> > > > > with nand_op_instr.
-> > > > >
-> > > >
-> > > > Actually this is how we wrote it the first time. Then we got robots
-> > > > reporting that anonymous unions where not allowed with older (still
-> > > > supported) GCC versions and I had to do this:
-> > > >
-> > > >
-> > > > commit c1a72e2dbb4abb90bd408480d7c48ba40cb799ce
-> > > > Author: Miquel Raynal <miquel.raynal@free-electrons.com>
-> > > > Date:   Fri Jan 19 19:11:27 2018 +0100
-> > > >
-> > > >     mtd: nand: Fix build issues due to an anonymous union
-> > > >
-> > > >     GCC-4.4.4 raises errors when assigning a parameter in an anonymous
-> > > >     union, leading to this kind of failure:
-> > > >
-> > > >     drivers/mtd/nand/marvell_nand.c:1936:
-> > > >         warning: missing braces around initializer
-> > > >         warning: (near initialization for '(anonymous)[1].<anonymous>')
-> > > >         error: unknown field 'data' specified in initializer
-> > > >         error: unknown field 'addr' specified in initializer
-> > > >
-> > > >     Work around the situation by naming these unions.
-> > > >
-> > > >     Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
-> > > >     Reported-by: Andrew Morton <akpm@linux-foundation.org>
-> > > >     Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
-> > > >     Tested-by: Andrew Morton <akpm@linux-foundation.org>
-> > > >     Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > >
-> > >
-> > >
-> > > Hmm, how come Andrew's compiler was fine with the following?
-> > >
-> > > struct nand_flash_dev {
-> > >         char *name;
-> > >         union {
-> > >                 struct {
-> > >                         uint8_t mfr_id;
-> > >                         uint8_t dev_id;
-> > >                 };
-> > >                 uint8_t id[NAND_MAX_ID_LEN];
-> > >         };
-> > >         unsigned int pagesize;
-> > >         ...
-> > > };
-> > >
-> >
-> > It is probably not :)
->
-> It was compile fine. I don't know all the subtleties, but maybe it's
-> because ->id[] is a base type and not a struct.
->
-> >
-> > >
-> > >
-> > > The current minimum version is GCC 4.6
-> > > (commit cafa0010cd51fb7)
-> > > but I am not sure if this restriction is remaining.
-> > >
-> >
-> > That's right, can you please test if this limitation is still
-> > ongoing wit GCC 4.6?
->
-> I have a more important question: why should we go bad back to unnamed
-> unions? Why is that a problem to have a named union? Sure, we initially
-> started with an unnamed ones because it made lines shorter, but now that
-> we switched to named unions I don't see the point of going back and
-> patching all drivers again (at the risk of seeing this problem appear
-> again when compiled with an old compiler version).
+> Bisecting today's -next points to commit 412e60373245 ("spi: core: avoid
+> waking pump thread from spi_sync instead run teardown delayed") and
+> reverting this on top of -next fixes the problem. I have not had chance
+> to dig any further but wanted to report this issue to see if you have
+> any thoughts.
 
+I can confirm this on r8a7791/koelsch:
 
-I did not know commit c1a72e2dbb4.
+    PM: suspend entry (deep)
+    PM: Syncing filesystems ... done.
+    Freezing user space processes ... (elapsed 0.010 seconds) done.
+    OOM killer disabled.
+    Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
+    spi_master spi0: could not stop message queue
+    spi_master spi0: queue stop failed
+    dpm_run_callback(): rspi_suspend+0x0/0xc returns -16
+    PM: Device e6b10000.spi failed to suspend: error -16
+    PM: Some devices failed to suspend, or early wake event detected
 
-We can drop the union name if and only if we are "100% sure" about the safety.
-I cannot prove it.
+In addition, after boot, when the QSPI device is idle (the only activity
+was the initial probe), the device is no longer runtime-suspended, as
+witnessed by the following change to
+/sys/kernel/debug/pm_genpd/pm_genpd_summary:
 
-Generally, 0day bot helps us.
-Last time, nobody noticed the build error until Andrew reported it.
-So, we cannot count on the 0day bot.
+    -    /devices/platform/soc/e6b10000.spi                  suspended
+    +    /devices/platform/soc/e6b10000.spi                  active
 
+and by the following change to /sys/kernel/debug/clk/clk_summary:
 
-Less praise for this work.
-Lots of criticism once I break it.
+    -             qspi                     0        1        0
+97500000          0     0  50000
+    -                qspi_mod              0        1        0
+97500000          0     0  50000
+    +             qspi                     1        1        0
+97500000          0     0  50000
+    +                qspi_mod              1        1        0
+97500000          0     0  50000
 
-So, I have no reason to take the risk.
+Reverting 412e60373245 also fixes that.
 
+Gr{oetje,eeting}s,
 
+                        Geert
 
---
-Best Regards
-Masahiro Yamada
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
