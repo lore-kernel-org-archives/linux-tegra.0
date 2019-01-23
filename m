@@ -1,59 +1,104 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V3] i2c: tegra: Add Bus Clear Master Support
-Date: Wed, 23 Jan 2019 02:39:02 +0300
-Message-ID: <20190123023902.4bbf5c5c@dimatab>
-References: <1548187338-6807-1-git-send-email-skomatineni@nvidia.com>
-        <5405e9aa-d974-ca9d-dec1-32f8631a045d@gmail.com>
-        <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
-        <20190123014042.6d64ee29@dimatab>
-        <BYAPR12MB33986390C45475180381713FC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Mark Zhang <markz@nvidia.com>
+Subject: [PATCH 2/2] mfd: max77620: Add low battery monitor support
+Date: Wed, 23 Jan 2019 14:56:20 +0800
+Message-ID: <20190123065620.22250-2-markz@nvidia.com>
+References: <20190123065620.22250-1-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB33986390C45475180381713FC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <20190123065620.22250-1-markz@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: lee.jones@linaro.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-=D0=92 Tue, 22 Jan 2019 23:26:08 +0000
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+This patch adds PMIC configurations for low-battery
+monitoring by handling max77620 register CNFGGLBL1.
 
-> >> >> +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
-> >> >> +		if (!i2c_dev->is_multimaster_mode)
-> >> >> +			return
-> >> >> tegra_i2c_issue_bus_clear(i2c_dev);
-> >> >> +		return -EAGAIN; =20
-> >> >
-> >> >This changes the returned errno from -EIO to -EAGAIN for the=20
-> >> >supports_bus_clear=3Dfalse case, is it okay and intentional?
-> >> >   =20
-> >>=20
-> >> Yes EAGAIN is intentional to allow for transfer retry.
-> >> During single master mode, ARBITRATION LOST notification happens
-> >> when 1. I2C Master sees the bus is occupied by some other device
-> >> when a transfer is initiated 2. I2C Master lost the bus during
-> >> arbitration incase if slave device pulls SDA line low continuously
-> >> for some unknown reason If arbitration lost is due to cause 1,
-> >> retry helps to continue with transfer once bus is released by the
-> >> slave and it just added delay in communication due to bus release
-> >> delay by slave. In case of 2nd cause, retry never succeeds in
-> >> cases where bus clear is not supported. =20
-> >
-> >It's unclear whether the "never succeeds retry" may fail with the
-> >EAGAIN, causing an endless retry-loop. Could you please clarify this
-> >moment? =20
->=20
-> during master transmit mode, on arbitration lost and if master
-> doesn=E2=80=99t support bus clear to recover then transfer will return
-> EAGAIN. I2c core base driver performs retries if return code from
-> i2c_transfer is EAGAIN up to specified retries in i2c adapter and
-> returns the ret code from the last retry. Retry is not endless as i2c
-> core base performs retry only up to specified adapter retries.
-> Following return code from documentation
-> https://www.kernel.org/doc/Documentation/i2c/fault-codes
->=20
->=20
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+Signed-off-by: Mark Zhang <markz@nvidia.com>
+---
+ drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 1 deletion(-)
 
-Good, thanks for the clarification.
+diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+index f58143103185..9e50d145afd8 100644
+--- a/drivers/mfd/max77620.c
++++ b/drivers/mfd/max77620.c
+@@ -474,6 +474,57 @@ static int max77620_init_backup_battery_charging(struc=
+t max77620_chip *chip)
+ 	return ret;
+ }
+=20
++static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
++{
++	struct device *dev =3D chip->dev;
++	struct device_node *np;
++	bool pval;
++	u8 mask =3D 0;
++	u8 val =3D 0;
++	int ret;
++
++	np =3D of_get_child_by_name(dev->of_node, "low-battery-monitor");
++	if (!np) {
++		dev_info(dev, "Low battery monitoring support disabled\n");
++		return 0;
++	}
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-enable");
++	if (pval) {
++		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
++		val |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
++	}
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-disable");
++	if (pval)
++		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
++	if (pval) {
++		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
++		val |=3D MAX77620_CNFGGLBL1_MPPLD;
++	}
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
++	if (pval)
++		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-enable");
++	if (pval) {
++		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
++		val |=3D MAX77620_CNFGGLBL1_LBRSTEN;
++	}
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-disable");
++	if (pval)
++		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
++
++	ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val)=
+;
++	if (ret < 0)
++		dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
++	return ret;
++}
++
+ static int max77620_read_es_version(struct max77620_chip *chip)
+ {
+ 	unsigned int val;
+@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
+ 	if (ret < 0)
+ 		return ret;
+=20
+-	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
++	ret =3D max77620_init_low_battery_monitor(chip);
++	if (ret < 0)
++		return ret;
++
++	ret =3D devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+ 				    mfd_cells, n_mfd_cells, NULL, 0,
+ 				    regmap_irq_get_domain(chip->top_irq_data));
+ 	if (ret < 0) {
+--=20
+2.19.2
