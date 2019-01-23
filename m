@@ -1,72 +1,50 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V10 4/4] mmc: tegra: HW Command Queue Support for Tegra
- SDMMC
-Date: Wed, 23 Jan 2019 10:20:12 +0100
-Message-ID: <20190123092012.GC24072@ulmo>
-References: <1548186993-6229-1-git-send-email-skomatineni@nvidia.com>
- <1548186993-6229-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH 1/5] drm/tegra: Store parent pointer in Tegra DRM clients
+Date: Wed, 23 Jan 2019 10:39:47 +0100
+Message-ID: <20190123093951.24908-2-thierry.reding@gmail.com>
+References: <20190123093951.24908-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1548186993-6229-4-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190123093951.24908-1-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---raC6veAxrt5nqIoY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 22, 2019 at 11:56:33AM -0800, Sowjanya Komatineni wrote:
-> This patch adds HW Command Queue for supported Tegra SDMMC
-> controllers.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  [V10]: Changes are same as V9 except this series has SDHCI core changes
-> 	into seperate patch=20
->=20
->  drivers/mmc/host/Kconfig       |   1 +
->  drivers/mmc/host/sdhci-tegra.c | 117 +++++++++++++++++++++++++++++++++++=
-++++--
->  2 files changed, 114 insertions(+), 4 deletions(-)
-
-Sowjanya,
-
-it's good practice to collect the various tags that you've received on
-patches when resending. I had already acked patches 1 and 3 of v9, so
-you should've added the Acked-by for at least this patch 4/4 because it
-is unchanged from v9. The Acked-by on patch 1 was also valid because you
-only moved the documentation, but it is otherwise unchanged.
-
-No worries, though, just something to keep in mind when you send v11
-with the typofix that Adrian pointed out.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---raC6veAxrt5nqIoY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxIMcwACgkQ3SOs138+
-s6HjCg/7BEzZlYzmxabweiblsUj1bl1Cab3v45QDeCgs88YXI1MKXY69Z5BL483E
-2dk680JImRyLxh3elk838WgLAxn/fNRAO284BXKy0kB66bLZBpUXc96lSoWjpPKD
-+hLZmy85NLMuv966QGLxwMbKeIFgsWkPIH3VJ1noixtrKNNFiVjXAUdBqyj4sdXY
-8YigDcSMyL6jp+oourgLPuTUYPkYCb9h+rYrJe/tjhqTXRaXQ9VMv7NE97WYjjXA
-yf9m9Bn4weOnLBClVd2NEQQiy2YAQbNM/EL8I01vOTqZRU+/i4/PwhQo9s+5zAEk
-Mqz+NqkyBnFlhgRLkXG+Xqoip49rraP1h6JgiqUJlDYbI5VAuEK+3D06Nkid8sdK
-rwf7esBXV4z3m9iZ5O/3mEmdRrekCqcOn6QTFF1kR8U6D0sSl4heQyiAYTRBUqyv
-TysZgJ5F3l+s6JPsIL8N2jD+O3z6bL5sPK1ieUHjQ935QFdVyc8iSrpYA7uWSZkA
-gRo/AxlXLQ/xNFeGThZPDouOwwfGlcOv+DqsIOk3Rju8jdKsUil/jqwkI/8UDWsG
-aqE1cY9qZqoJhWRnbJ/JwXkUrhW8ZQUia87xCg9zOXhCVY/Nbe5FpSsqOIelxlib
-IX2UrsQatNWBnMqex421w6wWqbRGLvs12R3is8sZruv3iMDasCo=
-=hvy0
------END PGP SIGNATURE-----
-
---raC6veAxrt5nqIoY--
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRlZ3JhIERSTSBjbGll
+bnRzIG5lZWQgYWNjZXNzIHRvIHRoZWlyIHBhcmVudCwgc28gc3RvcmUgYSBwb2ludGVyIHRvIGl0
+CnVwb24gcmVnaXN0cmF0aW9uLgoKU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRp
+bmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgfCAyICsrCiBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggfCAxICsKIDIgZmlsZXMgY2hhbmdlZCwgMyBpbnNl
+cnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCmluZGV4IDRiNzBjZTY2NGM0MS4uNjFkY2JkMjE4ZmZj
+IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2RybS5jCkBAIC0xMDQxLDYgKzEwNDEsNyBAQCBpbnQgdGVncmFfZHJtX3Jl
+Z2lzdGVyX2NsaWVudChzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSwKIHsKIAltdXRleF9sb2NrKCZ0
+ZWdyYS0+Y2xpZW50c19sb2NrKTsKIAlsaXN0X2FkZF90YWlsKCZjbGllbnQtPmxpc3QsICZ0ZWdy
+YS0+Y2xpZW50cyk7CisJY2xpZW50LT5kcm0gPSB0ZWdyYTsKIAltdXRleF91bmxvY2soJnRlZ3Jh
+LT5jbGllbnRzX2xvY2spOwogCiAJcmV0dXJuIDA7CkBAIC0xMDUxLDYgKzEwNTIsNyBAQCBpbnQg
+dGVncmFfZHJtX3VucmVnaXN0ZXJfY2xpZW50KHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLAogewog
+CW11dGV4X2xvY2soJnRlZ3JhLT5jbGllbnRzX2xvY2spOwogCWxpc3RfZGVsX2luaXQoJmNsaWVu
+dC0+bGlzdCk7CisJY2xpZW50LT5kcm0gPSBOVUxMOwogCW11dGV4X3VubG9jaygmdGVncmEtPmNs
+aWVudHNfbG9jayk7CiAKIAlyZXR1cm4gMDsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kcm0uaCBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaAppbmRleCBmMTc2M2I0ZDVi
+NWYuLjJjODA5NzU1YmNhNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5o
+CisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaApAQCAtODgsNiArODgsNyBAQCBpbnQg
+dGVncmFfZHJtX3N1Ym1pdChzdHJ1Y3QgdGVncmFfZHJtX2NvbnRleHQgKmNvbnRleHQsCiBzdHJ1
+Y3QgdGVncmFfZHJtX2NsaWVudCB7CiAJc3RydWN0IGhvc3QxeF9jbGllbnQgYmFzZTsKIAlzdHJ1
+Y3QgbGlzdF9oZWFkIGxpc3Q7CisJc3RydWN0IHRlZ3JhX2RybSAqZHJtOwogCiAJdW5zaWduZWQg
+aW50IHZlcnNpb247CiAJY29uc3Qgc3RydWN0IHRlZ3JhX2RybV9jbGllbnRfb3BzICpvcHM7Ci0t
+IAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
