@@ -1,92 +1,72 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH V10 3/4] mmc: sdhci: Add ADMA3 DMA support for V4 enabled
- host
-Date: Wed, 23 Jan 2019 09:27:38 +0200
-Message-ID: <459c7d2e-38a6-cfe1-f3d0-a6ecdc2de0a9@intel.com>
-References: <1548186993-6229-1-git-send-email-skomatineni@nvidia.com>
- <1548186993-6229-3-git-send-email-skomatineni@nvidia.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
+ instead run teardown delayed
+Date: Wed, 23 Jan 2019 09:26:48 +0100
+Message-ID: <47b23e55-11b7-3d44-d611-8d6120139d5c@samsung.com>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
+        <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
+        <CGME20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548186993-6229-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, thierry.reding@gmail.com, jonathanh@nvidia.com, ulf.hansson@linaro.org
-Cc: anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Martin Sperl <kernel@martin.sperl.org>, Mark Brown <broonie@kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 22/01/19 9:56 PM, Sowjanya Komatineni wrote:
-> Below are the supported DMA types in Host Control1 Register
-> with Version 4 enable
-> b'00 - SDMA
-> b'01 - Not Used
-> b'10 - ADMA2
-> b'11 - ADMA2 or ADMA3
-> 
-> ADMA3 uses Command Descriptor to issue an SD command.
-> A multi-block data transfer is performed by using a pair of CMD
-> descriptor and ADMA2 descriptor.
-> 
-> ADMA3 performs multiple of multi-block data transfer by using
-> Integrated Descriptor which is more suitable for Command Queuing
-> to fetch both Command and Transfer descriptors.
-> 
-> Host Capabilities register indiactes the supports of ADMA3 DMA.
+Hi All
 
-indiactes -> indicates
+On 2019-01-22 10:36, Geert Uytterhoeven wrote:
+> On Mon, Jan 14, 2019 at 4:36 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>> I have noticed that system suspend has started failing consistently on a
+>> couple Tegra boards over the last few days with the linux-next branch.
+>> The following error is seen on on entering suspend ...
+>>
+>> [   58.222033] spi_master spi1: could not stop message queue
+>> [   58.222038] spi_master spi1: queue stop failed
+>> [   58.222048] dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
+>> [   58.222052] PM: Device 7000da00.spi failed to suspend: error -16
+>> [   58.222057] PM: Some devices failed to suspend, or early wake event detected
+>>
+>> Bisecting today's -next points to commit 412e60373245 ("spi: core: avoid
+>> waking pump thread from spi_sync instead run teardown delayed") and
+>> reverting this on top of -next fixes the problem. I have not had chance
+>> to dig any further but wanted to report this issue to see if you have
+>> any thoughts.
+> I can confirm this on r8a7791/koelsch:
+>
+>     PM: suspend entry (deep)
+>     PM: Syncing filesystems ... done.
+>     Freezing user space processes ... (elapsed 0.010 seconds) done.
+>     OOM killer disabled.
+>     Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
+>     spi_master spi0: could not stop message queue
+>     spi_master spi0: queue stop failed
+>     dpm_run_callback(): rspi_suspend+0x0/0xc returns -16
+>     PM: Device e6b10000.spi failed to suspend: error -16
+>     PM: Some devices failed to suspend, or early wake event detected
 
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+With recent linux-next I've got a similar issue on Samsung Exynos based
+Chromebooks: Peach-Pit and Peach-Pi, both using SPI for communicating
+with regulators via chrome EC bridge:
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+PM: suspend entry (deep)
+PM: Syncing filesystems ... done.
+Freezing user space processes ... (elapsed 0.001 seconds) done.
+OOM killer disabled.
+Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+printk: Suspending console(s) (use no_console_suspend to debug)
+...
+spi_master spi2: could not stop message queue
+spi_master spi2: queue stop failed
+dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
+PM: Device 12d40000.spi failed to suspend: error -16
+PM: Some devices failed to suspend, or early wake event detected
 
-> ---
->  [V10]: Changes are same as V9 except this series has SDHCI core changes
-> 	into seperate patch 
-> 
->  drivers/mmc/host/sdhci.c | 9 ++++++++-
->  drivers/mmc/host/sdhci.h | 2 ++
->  2 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index a22e11a65658..c6afe793399e 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3353,7 +3353,14 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
->  
->  	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
->  	ctrl &= ~SDHCI_CTRL_DMA_MASK;
-> -	if (host->flags & SDHCI_USE_64_BIT_DMA)
-> +	/*
-> +	 * Host from V4.10 supports ADMA3 DMA type.
-> +	 * ADMA3 performs integrated descriptor which is more suitable
-> +	 * for cmd queuing to fetch both command and transfer descriptors.
-> +	 */
-> +	if (host->v4_mode && (host->caps1 & SDHCI_CAN_DO_ADMA3))
-> +		ctrl |= SDHCI_CTRL_ADMA3;
-> +	else if (host->flags & SDHCI_USE_64_BIT_DMA)
->  		ctrl |= SDHCI_CTRL_ADMA64;
->  	else
->  		ctrl |= SDHCI_CTRL_ADMA32;
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 6cc9a3c2ac66..4070be49d947 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -88,6 +88,7 @@
->  #define   SDHCI_CTRL_ADMA1	0x08
->  #define   SDHCI_CTRL_ADMA32	0x10
->  #define   SDHCI_CTRL_ADMA64	0x18
-> +#define   SDHCI_CTRL_ADMA3	0x18
->  #define   SDHCI_CTRL_8BITBUS	0x20
->  #define  SDHCI_CTRL_CDTEST_INS	0x40
->  #define  SDHCI_CTRL_CDTEST_EN	0x80
-> @@ -230,6 +231,7 @@
->  #define  SDHCI_RETUNING_MODE_SHIFT		14
->  #define  SDHCI_CLOCK_MUL_MASK	0x00FF0000
->  #define  SDHCI_CLOCK_MUL_SHIFT	16
-> +#define  SDHCI_CAN_DO_ADMA3	0x08000000
->  #define  SDHCI_SUPPORT_HS400	0x80000000 /* Non-standard */
->  
->  #define SDHCI_CAPABILITIES_1	0x44
-> 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
