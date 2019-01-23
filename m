@@ -1,130 +1,92 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: [PATCH 1/2] mfd: max77620: Add backup battery charger support
-Date: Wed, 23 Jan 2019 14:56:19 +0800
-Message-ID: <20190123065620.22250-1-markz@nvidia.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH V10 3/4] mmc: sdhci: Add ADMA3 DMA support for V4 enabled
+ host
+Date: Wed, 23 Jan 2019 09:27:38 +0200
+Message-ID: <459c7d2e-38a6-cfe1-f3d0-a6ecdc2de0a9@intel.com>
+References: <1548186993-6229-1-git-send-email-skomatineni@nvidia.com>
+ <1548186993-6229-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1548186993-6229-3-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, thierry.reding@gmail.com, jonathanh@nvidia.com, ulf.hansson@linaro.org
+Cc: anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add PMIC configurations for backup battery charger, which
-is a constant voltage and constant current style charger
-with a series output resistance.
+On 22/01/19 9:56 PM, Sowjanya Komatineni wrote:
+> Below are the supported DMA types in Host Control1 Register
+> with Version 4 enable
+> b'00 - SDMA
+> b'01 - Not Used
+> b'10 - ADMA2
+> b'11 - ADMA2 or ADMA3
+> 
+> ADMA3 uses Command Descriptor to issue an SD command.
+> A multi-block data transfer is performed by using a pair of CMD
+> descriptor and ADMA2 descriptor.
+> 
+> ADMA3 performs multiple of multi-block data transfer by using
+> Integrated Descriptor which is more suitable for Command Queuing
+> to fetch both Command and Transfer descriptors.
+> 
+> Host Capabilities register indiactes the supports of ADMA3 DMA.
 
-The max77620 register CNFGBBC(addr: 0x04) defines the
-parameters of backup battery charger. This patch adds
-support for it.
+indiactes -> indicates
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
-Signed-off-by: Mark Zhang <markz@nvidia.com>
----
- drivers/mfd/max77620.c | 80 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index d8ddd1a6f304..f58143103185 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -398,6 +398,82 @@ static int max77620_initialise_fps(struct max77620_chi=
-p *chip)
- 	return 0;
- }
-=20
-+static int max77620_init_backup_battery_charging(struct max77620_chip *chi=
-p)
-+{
-+	struct device *dev =3D chip->dev;
-+	struct device_node *np;
-+	u32 pval;
-+	u8 config;
-+	int charging_current;
-+	int charging_voltage;
-+	int resistor;
-+	int ret;
-+
-+	np =3D of_get_child_by_name(dev->of_node, "backup-battery");
-+	if (!np) {
-+		dev_info(dev, "Backup battery charging support disabled\n");
-+		ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGBBC,
-+					 MAX77620_CNFGBBC_ENABLE, 0);
-+		if (ret < 0)
-+			dev_err(dev, "Failed to update CNFGBBC: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret =3D of_property_read_u32(np,
-+			"maxim,backup-battery-charging-current", &pval);
-+	charging_current =3D (!ret) ? pval : 50;
-+
-+	ret =3D of_property_read_u32(np,
-+			"maxim,backup-battery-charging-voltage", &pval);
-+	charging_voltage =3D (!ret) ? pval : 2500000;
-+	charging_voltage /=3D 1000;
-+
-+	ret =3D of_property_read_u32(np,
-+			"maxim,backup-battery-output-resister", &pval);
-+	resistor =3D (!ret) ? pval : 1000;
-+
-+	config =3D MAX77620_CNFGBBC_ENABLE;
-+	if (charging_current <=3D 50)
-+		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 100)
-+		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 200)
-+		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 400)
-+		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 600)
-+		config |=3D 1 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else
-+		config |=3D 2 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+
-+	if (charging_current > 100)
-+		config |=3D MAX77620_CNFGBBC_LOW_CURRENT_DISABLE;
-+
-+	if (charging_voltage <=3D 2500)
-+		config |=3D 0 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+	else if (charging_voltage <=3D 3000)
-+		config |=3D 1 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+	else if (charging_voltage <=3D 3300)
-+		config |=3D 2 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+	else
-+		config |=3D 3 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+
-+	if (resistor <=3D 100)
-+		config |=3D 0 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+	else if (resistor <=3D 1000)
-+		config |=3D 1 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+	else if (resistor <=3D 3000)
-+		config |=3D 2 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+	else if (resistor <=3D 6000)
-+		config |=3D 3 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+
-+	ret =3D regmap_write(chip->rmap, MAX77620_REG_CNFGBBC, config);
-+	if (ret < 0)
-+		dev_err(dev, "Reg 0x%02x write failed, %d\n",
-+				MAX77620_REG_CNFGBBC, ret);
-+	return ret;
-+}
-+
- static int max77620_read_es_version(struct max77620_chip *chip)
- {
- 	unsigned int val;
-@@ -483,6 +559,10 @@ static int max77620_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		return ret;
-=20
-+	ret =3D max77620_init_backup_battery_charging(chip);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
- 				    mfd_cells, n_mfd_cells, NULL, 0,
- 				    regmap_irq_get_domain(chip->top_irq_data));
---=20
-2.19.2
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  [V10]: Changes are same as V9 except this series has SDHCI core changes
+> 	into seperate patch 
+> 
+>  drivers/mmc/host/sdhci.c | 9 ++++++++-
+>  drivers/mmc/host/sdhci.h | 2 ++
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index a22e11a65658..c6afe793399e 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3353,7 +3353,14 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
+>  
+>  	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+>  	ctrl &= ~SDHCI_CTRL_DMA_MASK;
+> -	if (host->flags & SDHCI_USE_64_BIT_DMA)
+> +	/*
+> +	 * Host from V4.10 supports ADMA3 DMA type.
+> +	 * ADMA3 performs integrated descriptor which is more suitable
+> +	 * for cmd queuing to fetch both command and transfer descriptors.
+> +	 */
+> +	if (host->v4_mode && (host->caps1 & SDHCI_CAN_DO_ADMA3))
+> +		ctrl |= SDHCI_CTRL_ADMA3;
+> +	else if (host->flags & SDHCI_USE_64_BIT_DMA)
+>  		ctrl |= SDHCI_CTRL_ADMA64;
+>  	else
+>  		ctrl |= SDHCI_CTRL_ADMA32;
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 6cc9a3c2ac66..4070be49d947 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -88,6 +88,7 @@
+>  #define   SDHCI_CTRL_ADMA1	0x08
+>  #define   SDHCI_CTRL_ADMA32	0x10
+>  #define   SDHCI_CTRL_ADMA64	0x18
+> +#define   SDHCI_CTRL_ADMA3	0x18
+>  #define   SDHCI_CTRL_8BITBUS	0x20
+>  #define  SDHCI_CTRL_CDTEST_INS	0x40
+>  #define  SDHCI_CTRL_CDTEST_EN	0x80
+> @@ -230,6 +231,7 @@
+>  #define  SDHCI_RETUNING_MODE_SHIFT		14
+>  #define  SDHCI_CLOCK_MUL_MASK	0x00FF0000
+>  #define  SDHCI_CLOCK_MUL_SHIFT	16
+> +#define  SDHCI_CAN_DO_ADMA3	0x08000000
+>  #define  SDHCI_SUPPORT_HS400	0x80000000 /* Non-standard */
+>  
+>  #define SDHCI_CAPABILITIES_1	0x44
+> 
