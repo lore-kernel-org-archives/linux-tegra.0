@@ -1,65 +1,74 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V1] i2c: tegra: Add DMA Support
-Date: Thu, 24 Jan 2019 02:39:54 +0000
-Message-ID: <BYAPR12MB3398E0C5EE66FDE8F0813847C29A0@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1547578806-17923-1-git-send-email-skomatineni@nvidia.com>
- <20190121103932.GB16756@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 2/5] drm/tegra: vic: Load firmware on demand
+Date: Wed, 23 Jan 2019 15:47:45 +0300
+Message-ID: <a9bb39f8-00d8-76e9-04e9-4642684d8161@gmail.com>
+References: <20190123093951.24908-1-thierry.reding@gmail.com>
+ <20190123093951.24908-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190121103932.GB16756@ulmo>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190123093951.24908-3-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-> > This patch adds DMA support for Tegra I2C.
->
-> In the subject: "Support" -> "support". And in the commit description per=
-haps add some more details about why this is useful, maybe accompany with s=
-ome performance numbers (if > you can come up with any) or describe why the=
-re's a threshold for PIO vs. DMA transfers.
->
-> As it is, it's not immediately clear why we need or want these 400+ extra=
- lines of code.
->
-> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > ---
-> >  drivers/i2c/busses/i2c-tegra.c | 494=20
-> > +++++++++++++++++++++++++++++++++++++----
-> >  1 file changed, 456 insertions(+), 38 deletions(-)
-> >=20
->
->
-> > @@ -658,7 +809,16 @@ static irqreturn_t tegra_i2c_isr(int irq, void *de=
-v_id)
-> >  	if (i2c_dev->is_dvc)
-> >  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-> > =20
-> > -	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
-> > +	if (status & I2C_INT_ALL_PACKETS_XFER_COMPLETE) {
-> > +		if (i2c_dev->is_curr_dma_xfer)
-> > +			i2c_dev->msg_buf_remaining =3D 0;
->
-> Why are we forcing msg_buf_remaining to 0 here and below? Doesn't the res=
-t of the code take care of that already? Is it always guaranteed that all b=
-ytes will have been transferred in > DMA mode?
-
-During the write (Memory to TX FIFO thru DMA), DMA completion happens prior=
- to XFER_PACKET_COMPLETE INT from I2C
-During the read (RX_FIFO to Memory thru DMA), XFER_PACKET_COMPLETE I2C INT =
-gets generated prior to DMA Completion
-Receiving XFER_PACKET_COMPLETE interrupts from I2C confirms successful I2C =
-transfer, so In DMA Mode, msg_buf_remaining is forced to 0
-
-DMA callback notification happens only on successful transfer of all bytes.
-In case of incomplete transfer by DMA, call back notification will not be g=
-enerated and DMA timeouts.
-Also, DMA timeout is verified prior to msg_complete timeout.
-=20
-Thanks
-Sowjanya
+MjMuMDEuMjAxOSAxMjozOSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IExvYWRpbmcgdGhlIGZpcm13YXJl
+IHJlcXVpcmVzIGFuIGFsbG9jYXRpb24gb2YgSU9WQSBzcGFjZSB0byBtYWtlIHN1cmUKPiB0aGF0
+IHRoZSBWSUMncyBGYWxjb24gbWljcm9jb250cm9sbGVyIGNhbiByZWFkIHRoZSBmaXJtd2FyZSBp
+ZiBhZGRyZXNzCj4gdHJhbnNsYXRpb24gdmlhIHRoZSBTTU1VIGlzIGVuYWJsZWQuCj4gCj4gSG93
+ZXZlciwgdGhlIGFsbG9jYXRpb24gY3VycmVudGx5IGhhcHBlbnMgYXQgYSB0aW1lIHdoZXJlIHRo
+ZSBnZW9tZXRyeQo+IG9mIGFuIElPTU1VIGRvbWFpbiBtYXkgbm90IGhhdmUgYmVlbiBpbml0aWFs
+aXplZCB5ZXQuIFRoaXMgaGFwcGVucyBmb3IKPiBleGFtcGxlIG9uIFRlZ3JhMTg2IGFuZCBsYXRl
+ciB3aGVyZSBhbiBBUk0gU01NVSBpcyB1c2VkLiBEb21haW5zIHdoaWNoCj4gYXJlIGNyZWF0ZWQg
+YnkgdGhlIEFSTSBTTU1VIGRyaXZlciBwb3N0cG9uZSB0aGUgZ2VvbWV0cnkgc2V0dXAgdW50aWwg
+YQo+IGRldmljZSBpcyBhdHRhY2hlZCB0byB0aGUgZG9tYWluLiBUaGlzIGlzIGJlY2F1c2UgSU9N
+TVUgZG9tYWlucyBhcmVuJ3QKPiBhdHRhY2hlZCB0byBhIHNwZWNpZmljIElPTU1VIGluc3RhbmNl
+IGF0IGFsbG9jYXRpb24gdGltZSBhbmQgaGVuY2UgdGhlCj4gaW5wdXQgYWRkcmVzcyBzcGFjZSwg
+d2hpY2ggZGVmaW5lcyB0aGUgZ2VvbWV0cnksIGlzIG5vdCBrbm93biB5ZXQuCj4gCj4gV29yayBh
+cm91bmQgdGhpcyBieSBwb3N0cG9uaW5nIHRoZSBmaXJtd2FyZSBsb2FkIHVudGlsIGl0IGlzIG5l
+ZWRlZCBhdAo+IHRoZSB0aW1lIHdoZXJlIGEgY2hhbm5lbCBpcyBvcGVuZWQgdG8gdGhlIFZJQy4g
+QXQgdGhpcyB0aW1lIHRoZSBzaGFyZWQKPiBJT01NVSBkb21haW4ncyBnZW9tZXRyeSBoYXMgYmVl
+biBwcm9wZXJseSBpbml0aWFsaXplZC4KPiAKPiBBcyBhIGJ5cHJvZHVjdCB0aGlzIGFsbG93cyB0
+aGUgVGVncmEgRFJNIHRvIGJlIGNyZWF0ZWQgaW4gdGhlIGFic2VuY2UKPiBvZiBWSUMgZmlybXdh
+cmUsIHNpbmNlIHRoZSBWSUMgaW5pdGlhbGl6YXRpb24gbm8gbG9uZ2VyIGZhaWxzIGlmIHRoZQo+
+IGZpcm13YXJlIGNhbid0IGJlIGZvdW5kLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVk
+aW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92
+aWMuYyB8IDE3ICsrKysrKysrKystLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRp
+b25zKCspLCA3IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvdmljLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKPiBpbmRleCBkNDc5ODNk
+ZWIxY2YuLmFmYmRjMzNmNDliYyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+dmljLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKPiBAQCAtMTgxLDEzICsx
+ODEsNiBAQCBzdGF0aWMgaW50IHZpY19pbml0KHN0cnVjdCBob3N0MXhfY2xpZW50ICpjbGllbnQp
+Cj4gIAkJdmljLT5kb21haW4gPSB0ZWdyYS0+ZG9tYWluOwo+ICAJfQo+ICAKPiAtCWlmICghdmlj
+LT5mYWxjb24uZGF0YSkgewo+IC0JCXZpYy0+ZmFsY29uLmRhdGEgPSB0ZWdyYTsKPiAtCQllcnIg
+PSBmYWxjb25fbG9hZF9maXJtd2FyZSgmdmljLT5mYWxjb24pOwo+IC0JCWlmIChlcnIgPCAwKQo+
+IC0JCQlnb3RvIGRldGFjaDsKPiAtCX0KPiAtCj4gIAl2aWMtPmNoYW5uZWwgPSBob3N0MXhfY2hh
+bm5lbF9yZXF1ZXN0KGNsaWVudC0+ZGV2KTsKPiAgCWlmICghdmljLT5jaGFubmVsKSB7Cj4gIAkJ
+ZXJyID0gLUVOT01FTTsKPiBAQCAtMjU2LDYgKzI0OSwxNiBAQCBzdGF0aWMgaW50IHZpY19vcGVu
+X2NoYW5uZWwoc3RydWN0IHRlZ3JhX2RybV9jbGllbnQgKmNsaWVudCwKPiAgCWlmIChlcnIgPCAw
+KQo+ICAJCXJldHVybiBlcnI7Cj4gIAo+ICsJaWYgKCF2aWMtPmZhbGNvbi5kYXRhKSB7Cj4gKwkJ
+dmljLT5mYWxjb24uZGF0YSA9IGNsaWVudC0+ZHJtOwo+ICsKPiArCQllcnIgPSBmYWxjb25fbG9h
+ZF9maXJtd2FyZSgmdmljLT5mYWxjb24pOwo+ICsJCWlmIChlcnIgPCAwKSB7Cj4gKwkJCXBtX3J1
+bnRpbWVfcHV0KHZpYy0+ZGV2KTsKPiArCQkJcmV0dXJuIGVycjsKPiArCQl9Cj4gKwl9Cj4gKwo+
+ICAJZXJyID0gdmljX2Jvb3QodmljKTsKPiAgCWlmIChlcnIgPCAwKSB7Cj4gIAkJcG1fcnVudGlt
+ZV9wdXQodmljLT5kZXYpOwo+IAoKVGhpcyBvbmx5IG1vdmVzIHRoZSBmaXJtd2FyZSBkYXRhLWNv
+cHlpbmcgdG8gYSBsYXRlciBzdGFnZSBhbmQgZG9lc24ndCB0b3VjaCByZWFkaW5nIG91dCBvZiB0
+aGUgZmlybXdhcmUgZmlsZSwgaGVuY2UgdGhlIGNsYWltIGFib3V0IHRoZSAiYnlwcm9kdWN0IiBp
+cyBpbnZhbGlkLiBQbGVhc2UgdGFrZSBhIGxvb2sgYXQgdGhlIHBhdGNoIEkgcG9zdGVkIHNvbWV0
+aW1lIGFnbyBbMF0gYW5kIGZlZWwgZnJlZSB0byB1c2UgaXQgYXMgYSByZWZlcmVuY2UuCgpbMF0g
+aHR0cHM6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC8xMDEwMzg5LwpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
