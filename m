@@ -1,64 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
- instead run teardown delayed
-Date: Wed, 23 Jan 2019 17:56:09 +0000
-Message-ID: <20190123175609.GG7503@sirena.org.uk>
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
- <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org>
- <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
- <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org>
- <20190115192619.GG5522@sirena.org.uk>
- <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org>
- <20190115212539.GK5522@sirena.org.uk>
- <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
- <20190118191202.GG6260@sirena.org.uk>
- <EE52ED32-CBB4-40D4-8615-CA814158C826@martin.sperl.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V11 2/4] arm64: dts: tegra: Add CQE Support for SDMMC4
+Date: Wed, 23 Jan 2019 11:30:52 -0800
+Message-ID: <1548271854-1765-2-git-send-email-skomatineni@nvidia.com>
+References: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="reI/iBAAp9kzkmX4"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <EE52ED32-CBB4-40D4-8615-CA814158C826@martin.sperl.org>
+In-Reply-To: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kernel@martin.sperl.org
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, thierry.reding@gmail.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Add CQE Support for Tegra186 and Tegra194 SDMMC4 controller
 
---reI/iBAAp9kzkmX4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-On Sun, Jan 20, 2019 at 12:24:23PM +0100, kernel@martin.sperl.org wrote:
-
-> These kind of changes it requires are consuming a bit more time than
-> I was hoping for.
-
-Thanks for trying.
-
-> So maybe at this very moment the best is reverting the patch.
-
-Yes, I'm just going to do that for now.
-
-> As for the root cause of the regression: my guess is that spi-mem is
-> just not triggering a shutdown any more because of how message_pump works.
-
-I'm fairly sure that's what's going on but not been able to get my head
-around things enough to figure out what's going wrong yet.
-
---reI/iBAAp9kzkmX4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxIqrgACgkQJNaLcl1U
-h9Bo+Qf/R2oUsHmOVhx2IGtp1A69vFPJrwFZJXXjknp2y8JDfLjNHRs47+iFmpfJ
-82jx8AMcTpYf4r4p3oAixX+huXXWP9sVD3jIx9jg4Wh7Nzjg/hqUhZlv0kPl2C0/
-gdFt6vn5gW02ebILvzT8aHQAovButhjV5KObxCKfVJjLC7MSjrrZ66Nu1rIh7HEP
-943ED4O4MSfCrkvbICr8QFEe+dNmlqnh/g1sfo8VMMuVQvizAi7axq7nm2keOMH5
-owQCS7DkgQGa3q9ra8eYwVGwUCDSAt/gA9ccZ31zXmyX1U4FGkqzndh7t1aC0Ij+
-qSH6CmkqaFC5X/Vl2ft/5RTPYJnOVA==
-=qwRN
------END PGP SIGNATURE-----
-
---reI/iBAAp9kzkmX4--
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 22815db4a3ed..3dfdc4701934 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -319,6 +319,7 @@
+ 		nvidia,default-trim = <0x9>;
+ 		nvidia,dqs-trim = <63>;
+ 		mmc-hs400-1_8v;
++		supports-cqe;
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 6dfa1ca0b851..9ce1c91d4596 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -325,6 +325,7 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			supports-cqe;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.7.4
