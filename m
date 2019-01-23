@@ -1,59 +1,54 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] gpu: host1x: Represent host1x bus devices in debugfs
-Date: Wed, 23 Jan 2019 12:34:05 +0100
-Message-ID: <20190123113405.13839-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V3] i2c: tegra: Add Bus Clear Master Support
+Date: Wed, 23 Jan 2019 16:17:19 +0300
+Message-ID: <783993ec-6d88-9a84-b1bd-cd44d45e2584@gmail.com>
+References: <1548187338-6807-1-git-send-email-skomatineni@nvidia.com>
+ <5405e9aa-d974-ca9d-dec1-32f8631a045d@gmail.com>
+ <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <20190123014042.6d64ee29@dimatab>
+ <BYAPR12MB33986390C45475180381713FC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <BYAPR12MB33986390C45475180381713FC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoaXMgbmV3IGRlYnVn
-ZnMgZmlsZSByZXByZXNlbnRzIHRoZSBzdGF0ZSBvZiBob3N0MXggYnVzIGRldmljZXMsCnNwZWNp
-ZnlpbmcgdGhlIGxpc3Qgb2Ygc3ViZGV2aWNlcyBhbmQgbWFya2luZyB3aGljaCBvbmVzIGhhdmUK
-c3VjY2Vzc2Z1bGx5IHJlZ2lzdGVyZWQuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8
-dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyB8IDM1ICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMzUgaW5z
-ZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyBiL2RyaXZl
-cnMvZ3B1L2hvc3QxeC9idXMuYwppbmRleCBiNGMzODVkNGE2YWYuLjEwM2ZmZmMxOTA0YiAxMDA2
-NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jCisrKyBiL2RyaXZlcnMvZ3B1L2hvc3Qx
-eC9idXMuYwpAQCAtMTUsOCArMTUsMTAgQEAKICAqIGFsb25nIHdpdGggdGhpcyBwcm9ncmFtLiAg
-SWYgbm90LCBzZWUgPGh0dHA6Ly93d3cuZ251Lm9yZy9saWNlbnNlcy8+LgogICovCiAKKyNpbmNs
-dWRlIDxsaW51eC9kZWJ1Z2ZzLmg+CiAjaW5jbHVkZSA8bGludXgvaG9zdDF4Lmg+CiAjaW5jbHVk
-ZSA8bGludXgvb2YuaD4KKyNpbmNsdWRlIDxsaW51eC9zZXFfZmlsZS5oPgogI2luY2x1ZGUgPGxp
-bnV4L3NsYWIuaD4KICNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4KIApAQCAtNTAwLDYgKzUw
-MiwzNiBAQCBzdGF0aWMgdm9pZCBob3N0MXhfZGV0YWNoX2RyaXZlcihzdHJ1Y3QgaG9zdDF4ICpo
-b3N0MXgsCiAJbXV0ZXhfdW5sb2NrKCZob3N0MXgtPmRldmljZXNfbG9jayk7CiB9CiAKK3N0YXRp
-YyBpbnQgaG9zdDF4X2RldmljZXNfc2hvdyhzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZvaWQgKmRhdGEp
-Cit7CisJc3RydWN0IGhvc3QxeCAqaG9zdDF4ID0gcy0+cHJpdmF0ZTsKKwlzdHJ1Y3QgaG9zdDF4
-X2RldmljZSAqZGV2aWNlOworCisJbXV0ZXhfbG9jaygmaG9zdDF4LT5kZXZpY2VzX2xvY2spOwor
-CisJbGlzdF9mb3JfZWFjaF9lbnRyeShkZXZpY2UsICZob3N0MXgtPmRldmljZXMsIGxpc3QpIHsK
-KwkJc3RydWN0IGhvc3QxeF9zdWJkZXYgKnN1YmRldjsKKworCQlzZXFfcHJpbnRmKHMsICIlc1xu
-IiwgZGV2X25hbWUoJmRldmljZS0+ZGV2KSk7CisKKwkJbXV0ZXhfbG9jaygmZGV2aWNlLT5zdWJk
-ZXZzX2xvY2spOworCisJCWxpc3RfZm9yX2VhY2hfZW50cnkoc3ViZGV2LCAmZGV2aWNlLT5hY3Rp
-dmUsIGxpc3QpCisJCQlzZXFfcHJpbnRmKHMsICIgICVwT0ZmOiAlc1xuIiwgc3ViZGV2LT5ucCwK
-KwkJCQkgICBkZXZfbmFtZShzdWJkZXYtPmNsaWVudC0+ZGV2KSk7CisKKwkJbGlzdF9mb3JfZWFj
-aF9lbnRyeShzdWJkZXYsICZkZXZpY2UtPnN1YmRldnMsIGxpc3QpCisJCQlzZXFfcHJpbnRmKHMs
-ICIgICVwT0ZmOlxuIiwgc3ViZGV2LT5ucCk7CisKKwkJbXV0ZXhfdW5sb2NrKCZkZXZpY2UtPnN1
-YmRldnNfbG9jayk7CisJfQorCisJbXV0ZXhfdW5sb2NrKCZob3N0MXgtPmRldmljZXNfbG9jayk7
-CisKKwlyZXR1cm4gMDsKK30KK0RFRklORV9TSE9XX0FUVFJJQlVURShob3N0MXhfZGV2aWNlcyk7
-CisKIC8qKgogICogaG9zdDF4X3JlZ2lzdGVyKCkgLSByZWdpc3RlciBhIGhvc3QxeCBjb250cm9s
-bGVyCiAgKiBAaG9zdDF4OiBob3N0MXggY29udHJvbGxlcgpAQCAtNTIzLDYgKzU1NSw5IEBAIGlu
-dCBob3N0MXhfcmVnaXN0ZXIoc3RydWN0IGhvc3QxeCAqaG9zdDF4KQogCiAJbXV0ZXhfdW5sb2Nr
-KCZkcml2ZXJzX2xvY2spOwogCisJZGVidWdmc19jcmVhdGVfZmlsZSgiZGV2aWNlcyIsIFNfSVJV
-R08sIGhvc3QxeC0+ZGVidWdmcywgaG9zdDF4LAorCQkJICAgICZob3N0MXhfZGV2aWNlc19mb3Bz
-KTsKKwogCXJldHVybiAwOwogfQogCi0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+23.01.2019 2:26, Sowjanya Komatineni пишет:
+> 
+> 
+>>>>> +	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
+>>>>> +		if (!i2c_dev->is_multimaster_mode)
+>>>>> +			return tegra_i2c_issue_bus_clear(i2c_dev);
+>>>>> +		return -EAGAIN;
+>>>>
+>>>> This changes the returned errno from -EIO to -EAGAIN for the 
+>>>> supports_bus_clear=false case, is it okay and intentional?
+>>>>  
+>>>
+>>> Yes EAGAIN is intentional to allow for transfer retry.
+>>> During single master mode, ARBITRATION LOST notification happens when 
+>>> 1. I2C Master sees the bus is occupied by some other device when a 
+>>> transfer is initiated 2. I2C Master lost the bus during arbitration 
+>>> incase if slave device pulls SDA line low continuously for some 
+>>> unknown reason If arbitration lost is due to cause 1, retry helps to 
+>>> continue with transfer once bus is released by the slave and it just 
+>>> added delay in communication due to bus release delay by slave. In 
+>>> case of 2nd cause, retry never succeeds in cases where bus clear is 
+>>> not supported.
+>>
+>> It's unclear whether the "never succeeds retry" may fail with the EAGAIN, causing an endless retry-loop. Could you please clarify this moment?
+> 
+> during master transmit mode, on arbitration lost and if master doesn’t support bus clear to recover then transfer will return EAGAIN.
+> I2c core base driver performs retries if return code from i2c_transfer is EAGAIN up to specified retries in i2c adapter and returns the ret code from the last retry.
+> Retry is not endless as i2c core base performs retry only up to specified adapter retries.
+> Following return code from documentation
+> https://www.kernel.org/doc/Documentation/i2c/fault-codes
+> 
+> 
+
+Could you please point at the code that sets the number of retries for the Tegra's I2C? Looks it is always 0 and hence EAGAIN won't do anything useful.
