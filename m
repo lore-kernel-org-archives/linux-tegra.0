@@ -1,61 +1,96 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
-Date: Thu, 24 Jan 2019 10:30:42 +0000
-Message-ID: <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
-References: <20190107032810.13522-1-josephl@nvidia.com>
- <20190107032810.13522-2-josephl@nvidia.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH 4/5] drm/tegra: Restrict IOVA space to DMA mask
+Date: Thu, 24 Jan 2019 12:24:48 +0200
+Message-ID: <0dcdb45e-5832-80fb-c842-4a32bc3469e3@kapsi.fi>
+References: <20190123093951.24908-1-thierry.reding@gmail.com>
+ <20190123093951.24908-5-thierry.reding@gmail.com>
+ <314d2386-3d1b-dda0-3d5e-b277d8c09045@gmail.com>
+ <20190123140406.GA16034@ulmo>
+ <f395269e-22be-ef2c-1189-b7b28f42f7d8@gmail.com>
+ <c6eed145-35c3-76fe-fe7d-8069686207d7@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190107032810.13522-2-josephl@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <c6eed145-35c3-76fe-fe7d-8069686207d7@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 07/01/2019 03:28, Joseph Lo wrote:
-> The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
-> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
-> from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
-> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
-> or watchdog interrupts.
-> 
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  .../bindings/timer/nvidia,tegra210-timer.txt  | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
-> new file mode 100644
-> index 000000000000..ba511220a669
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
-> @@ -0,0 +1,25 @@
-> +NVIDIA Tegra210 timer
-> +
-> +The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
-> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
-> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
-> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
-> +or watchdog interrupts.
-> +
-> +Required properties:
-> +- compatible : "nvidia,tegra210-timer".
-> +- reg : Specifies base physical address and size of the registers.
-> +- interrupts : A list of 4 interrupts; one per each of TMR10 through TMR13.
-
-Why do we only add the interrupts for TMR10 - TMR13? What about the others?
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gMjMuMS4yMDE5IDIxLjQyLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4gMjMuMDEuMjAxOSAx
+ODo1NSwgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4+IDIzLjAxLjIwMTkgMTc6MDQsIFRo
+aWVycnkgUmVkaW5nINC/0LjRiNC10YI6Cj4+PiBPbiBXZWQsIEphbiAyMywgMjAxOSBhdCAwNDo0
+MTo0NFBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+Pj4gMjMuMDEuMjAxOSAxMjoz
+OSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPj4+Pj4gRnJvbTogVGhpZXJyeSBSZWRpbmcg
+PHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+Pj4KPj4+Pj4gT24gVGVncmExODYgYW5kIGxhdGVyLCB0
+aGUgQVJNIFNNTVUgcHJvdmlkZXMgYW4gaW5wdXQgYWRkcmVzcyBzcGFjZSB0aGF0Cj4+Pj4+IGlz
+IDQ4IGJpdHMgd2lkZS4gSG93ZXZlciwgbWVtb3J5IGNsaWVudHMgY2FuIG9ubHkgYWRkcmVzcyB1
+cCB0byA0MCBiaXRzLgo+Pj4+PiBJZiB0aGUgZ2VvbWV0cnkgaXMgdXNlZCBhcy1pcywgYWxsb2Nh
+dGlvbnMgb2YgSU9WQSBzcGFjZSBjYW4gZW5kIHVwIGluIGEKPj4+Pj4gcmVnaW9uIHRoYXQgY2Fu
+bm90IGJlIGFkZHJlc3NlZCBieSB0aGUgbWVtb3J5IGNsaWVudHMuCj4+Pj4+Cj4+Pj4+IFRvIGZp
+eCB0aGlzLCByZXN0cmljdCB0aGUgSU9WQSBzcGFjZSB0byB0aGUgRE1BIG1hc2sgb2YgdGhlIGhv
+c3QxeAo+Pj4+PiBkZXZpY2UuIE5vdGUgdGhhdCwgdGVjaG5pY2FsbHksIHRoZSBJT1ZBIHNwYWNl
+IG5lZWRzIHRvIGJlIHJlc3RyaWN0ZWQgdG8KPj4+Pj4gdGhlIGludGVyc2VjdGlvbiBvZiB0aGUg
+RE1BIG1hc2tzIGZvciBhbGwgY2xpZW50cyB0aGF0IGFyZSBhdHRhY2hlZCB0bwo+Pj4+PiB0aGUg
+SU9NTVUgZG9tYWluLiBJbiBwcmFjdGljZSB1c2luZyB0aGUgRE1BIG1hc2sgb2YgdGhlIGhvc3Qx
+eCBkZXZpY2UgaXMKPj4+Pj4gc3VmZmljaWVudCBiZWNhdXNlIGFsbCBob3N0MXggY2xpZW50cyBz
+aGFyZSB0aGUgc2FtZSBETUEgbWFzay4KPj4+Pj4KPj4+Pj4gU2lnbmVkLW9mZi1ieTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+Pj4gLS0tCj4+Pj4+ICAgZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2RybS5jIHwgNSArKystLQo+Pj4+PiAgIDEgZmlsZSBjaGFuZ2VkLCAzIGlu
+c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4+Pj4+Cj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPj4+
+Pj4gaW5kZXggMjcxYzdhNWZjOTU0Li4wYzVmMWU2YTA0NDYgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
+cmEvZHJtLmMKPj4+Pj4gQEAgLTEzNiwxMSArMTM2LDEyIEBAIHN0YXRpYyBpbnQgdGVncmFfZHJt
+X2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWduZWQgbG9uZyBmbGFncykKPj4+Pj4g
+ICAKPj4+Pj4gICAJaWYgKHRlZ3JhLT5kb21haW4pIHsKPj4+Pj4gICAJCXU2NCBjYXJ2ZW91dF9z
+dGFydCwgY2FydmVvdXRfZW5kLCBnZW1fc3RhcnQsIGdlbV9lbmQ7Cj4+Pj4+ICsJCXU2NCBkbWFf
+bWFzayA9IGRtYV9nZXRfbWFzaygmZGV2aWNlLT5kZXYpOwo+Pj4+PiAgIAkJZG1hX2FkZHJfdCBz
+dGFydCwgZW5kOwo+Pj4+PiAgIAkJdW5zaWduZWQgbG9uZyBvcmRlcjsKPj4+Pj4gICAKPj4+Pj4g
+LQkJc3RhcnQgPSB0ZWdyYS0+ZG9tYWluLT5nZW9tZXRyeS5hcGVydHVyZV9zdGFydDsKPj4+Pj4g
+LQkJZW5kID0gdGVncmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kOwo+Pj4+PiArCQlz
+dGFydCA9IHRlZ3JhLT5kb21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX3N0YXJ0ICYgZG1hX21hc2s7
+Cj4+Pj4+ICsJCWVuZCA9IHRlZ3JhLT5kb21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX2VuZCAmIGRt
+YV9tYXNrOwo+Pj4+PiAgIAo+Pj4+PiAgIAkJZ2VtX3N0YXJ0ID0gc3RhcnQ7Cj4+Pj4+ICAgCQln
+ZW1fZW5kID0gZW5kIC0gQ0FSVkVPVVRfU1o7Cj4+Pj4+Cj4+Pj4KPj4+PiBXb3csIHNvIElPVkEg
+Y291bGQgYWRkcmVzcyA+MzJiaXRzIG9uIGxhdGVyIFRlZ3JhJ3MuIEFGQUlLLCBjdXJyZW50bHkK
+Pj4+PiB0aGVyZSBpcyBubyBzdXBwb3J0IGZvciBhIHByb3BlciBwcm9ncmFtbWluZyBvZiB0aGUg
+NjRiaXQgYWRkcmVzc2VzIGluCj4+Pj4gdGhlIGRyaXZlcnMgY29kZSwgaGVuY2UuLiB3b24ndCBp
+dCBtYWtlIHNlbnNlIHRvIGZvcmNlIElPVkEgbWFzayB0bwo+Pj4+IDMyYml0IGZvciBub3cgYW5k
+IGhvcGUgdGhhdCB0aGUgc2Vjb25kIGhhbHZlIG9mIGFkZHJlc3MgcmVnaXN0ZXJzCj4+Pj4gaGFw
+cGVuIHRvIGJlIDB4MDAwMDAwMDAgaW4gSFc/Cj4+Pgo+Pj4gSSB0aGluayB0aGlzIHJlc3RyaWN0
+aW9uIG9ubHkgYXBwbGllcyB0byBkaXNwbGF5IGF0IHRoaXMgcG9pbnQuIEluCj4+PiBwcmFjdGlj
+ZSB5b3UnZCBiZSBoYXJkIHB1dCB0byB0cmlnZ2VyIHRoYXQgY2FzZSBiZWNhdXNlIElPVkEgbWVt
+b3J5IGlzCj4+PiBhbGxvY2F0ZWQgZnJvbSB0aGUgYm90dG9tLCBzbyB5b3UnZCBhY3R1YWxseSBu
+ZWVkIHRvIHVzZSB1cCB0byA0IEdpQiBvZgo+Pj4gSU9WQSBzcGFjZSBiZWZvcmUgaGl0dGluZyB0
+aGF0Lgo+Pj4KPj4+IFRoYXQgc2FpZCwgSSB2YWd1ZWx5IHJlbWVtYmVyIHR5cGluZyB1cCB0aGUg
+cGF0Y2ggdG8gc3VwcG9ydCB3cml0aW5nIHRoZQo+Pj4gV0lOQlVGX1NUQVJUX0FERFJfSEkgcmVn
+aXN0ZXIgYW5kIGZyaWVuZHMsIGJ1dCBpdCBsb29rcyBhcyBpZiB0aGF0IHdhcwo+Pj4gbmV2ZXIg
+bWVyZ2VkLgo+Pj4KPj4+IEknbGwgdHJ5IHRvIGRpZyBvdXQgdGhhdCBwYXRjaCAob3IgcmV3cml0
+ZSBpdCwgc2hvdWxkbid0IGJlIHZlcnkKPj4+IGRpZmZpY3VsdCkgYW5kIG1ha2UgaXQgcGFydCBv
+ZiB0aGlzIHNlcmllcy4gSSdkIHJhdGhlciBmaXggdGhhdCBpc3N1ZQo+Pj4gdGhhbiBhcmJpdHJh
+cmlseSByZXN0cmljdCB0aGUgSU9WQSBzcGFjZSwgYmVjYXVzZSB0aGF0J3MgbGlrZWx5IHRvIGNv
+bWUKPj4+IGJhY2sgYW5kIGJpdGUgdXMgYXQgc29tZSBwb2ludC4KPj4KPj4gTG9va2luZyBhdCBm
+YWxjb24uYy4uIGl0IHdyaXRlcyAzMmJpdCBhZGRyZXNzIG9ubHkuIFNvbWV0aGluZyBuZWVkIHRv
+IGJlIGRvbmUgYWJvdXQgaXQgYXMgd2VsbCwgc2VlbXMgdGhlcmUgaXMgRkFMQ09OX0RNQVRSRk1P
+RkZTIHJlZ2lzdGVyIHRvIGZhY2lsaXRhdGUgPjMyYml0cyBhZGRyZXNzaW5nLgo+IAo+IEFsdGhv
+dWdoIHNjcmF0Y2ggYWJvdXQgRkFMQ09OX0RNQVRSRk1PRkZTLCBpdCBzaG91bGQgYmUgYWJvdXQg
+c29tZXRoaW5nIGVsc2UuIE1pa2tvLCBjb3VsZCB5b3UgcGxlYXNlIGNsYXJpZnkgd2hldGhlciBm
+YWxjb24gY291bGQgbG9hZCBmaXJtd2FyZSBvbmx5IGZyb20gYSAzMmJpdCBBUz8KPiAKClRoZSBE
+TUEgYmFzZSBhZGRyZXNzIGlzIHNldCB1c2luZyBETUFUUkZCQVNFLCB3aGljaCByZXF1aXJlcyAy
+NTZCIAphbGlnbm1lbnQsIG1lYW5pbmcgNDAgYml0cyBhcmUgYXZhaWxhYmxlIGZvciB0aGUgYWRk
+cmVzcy4gVGhlIApETUFUUkZGQk9GRlMgSSBiZWxpZXZlIGlzIHRoZW4gdXNlZCBhcyBhIDMyLWJp
+dCBvZmZzZXQgdG8gdGhhdCB2YWx1ZS4KCk1pa2tvCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
