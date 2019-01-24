@@ -1,126 +1,90 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] ALSA: hda/tegra: enable clock during probe
-Date: Thu, 24 Jan 2019 23:06:43 +0530
-Message-ID: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 01/13] gpu: host1x: Set up stream ID table
+Date: Thu, 24 Jan 2019 19:02:42 +0100
+Message-ID: <20190124180254.20080-2-thierry.reding@gmail.com>
+References: <20190124180254.20080-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: perex@perex.cz, tiwai@suse.com, pierre-louis.bossart@linux.intel.com
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, rlokhande@nvidia.com, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190124180254.20080-1-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
-will not be ON. This could cause issue during probe, where hda init
-setup is done. This patch checks whether runtime PM is enabled or not.
-If disabled, clocks are enabled in probe() and disabled in remove()
-
-This patch does following minor changes as cleanup,
-  * return code check for pm_runtime_get_sync() to take care of failure
-    and exit gracefully.
-  * In remove path runtime PM is disabled before calling snd_card_free().
-  * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
-  * runtime PM callbacks moved out of CONFIG_PM check
-
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
- sound/pci/hda/hda_tegra.c | 31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
-
-diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index c8d18dc..155c2f5 100644
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
- 	return rc;
- }
- 
--#ifdef CONFIG_PM_SLEEP
- static void hda_tegra_disable_clocks(struct hda_tegra *data)
- {
- 	clk_disable_unprepare(data->hda2hdmi_clk);
-@@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
- 	clk_disable_unprepare(data->hda_clk);
- }
- 
-+#ifdef CONFIG_PM_SLEEP
- /*
-  * power management
-  */
-@@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
- }
- #endif /* CONFIG_PM_SLEEP */
- 
--#ifdef CONFIG_PM
- static int hda_tegra_runtime_suspend(struct device *dev)
- {
- 	struct snd_card *card = dev_get_drvdata(dev);
-@@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
- 	int rc;
- 
- 	rc = hda_tegra_enable_clocks(hda);
--	if (rc != 0)
-+	if (rc)
- 		return rc;
- 	if (chip && chip->running) {
- 		hda_tegra_init(hda);
-@@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif /* CONFIG_PM */
- 
- static const struct dev_pm_ops hda_tegra_pm = {
- 	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
-@@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
- 	if (!azx_has_pm_runtime(chip))
- 		pm_runtime_forbid(hda->dev);
- 
-+	/* explicit resume if runtime PM is disabled */
-+	if (!pm_runtime_enabled(hda->dev)) {
-+		err = hda_tegra_runtime_resume(hda->dev);
-+		if (err)
-+			goto out_free;
-+	}
-+
- 	schedule_work(&hda->probe_work);
- 
- 	return 0;
-@@ -571,7 +576,14 @@ static void hda_tegra_probe_work(struct work_struct *work)
- 	struct platform_device *pdev = to_platform_device(hda->dev);
- 	int err;
- 
--	pm_runtime_get_sync(hda->dev);
-+	err = pm_runtime_get_sync(hda->dev);
-+	if (err < 0) {
-+		dev_err(hda->dev,
-+			"failed in pm_runtime_get_syc with err = %d\n",
-+			err);
-+		return;
-+	}
-+
- 	err = hda_tegra_first_init(chip, pdev);
- 	if (err < 0)
- 		goto out_free;
-@@ -599,12 +611,13 @@ static void hda_tegra_probe_work(struct work_struct *work)
- 
- static int hda_tegra_remove(struct platform_device *pdev)
- {
--	int ret;
--
--	ret = snd_card_free(dev_get_drvdata(&pdev->dev));
- 	pm_runtime_disable(&pdev->dev);
-+	if (!pm_runtime_status_suspended(&pdev->dev)) {
-+		hda_tegra_runtime_suspend(&pdev->dev);
-+		pm_runtime_set_suspended(&pdev->dev);
-+	}
- 
--	return ret;
-+	return snd_card_free(dev_get_drvdata(&pdev->dev));
- }
- 
- static void hda_tegra_shutdown(struct platform_device *pdev)
--- 
-2.7.4
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkluIG9yZGVyIHRvIGVu
+YWJsZSB0aGUgTU1JTyBwYXRoIHN0cmVhbSBJRCBwcm90ZWN0aW9uIHByb3ZpZGVkIGJ5IHRoZQpp
+bmNhcm5hdGlvbiBvZiBob3N0MXggZm91bmQgaW4gVGVncmExODYgYW5kIGxhdGVyLCB0aGUgaG9z
+dDF4IG11c3QgYmUKcHJvdmlkZWQgd2l0aCB0aGUgbGlzdCBvZiBzdHJlYW0gSUQgcmVnaXN0ZXIg
+b2Zmc2V0cyBmb3IgZWFjaCBvZiBpdHMKY2xpZW50cy4gU29tZSBjbGllbnRzIChzdWNoIGFzIFZJ
+QykgaGF2ZSBtdWx0aXBsZSBzdHJlYW0gSUQgcmVnaXN0ZXJzCnRoYXQgYXJlIGFzc3VtZWQgdG8g
+YmUgY29udGlndW91cy4gVGhlIGhvc3QxeCBpcyBwcm9ncmFtbWVkIHdpdGggdGhlCmJhc2Ugb2Zm
+c2V0IGFuZCBhIGxpbWl0IHdoaWNoIHByb3ZpZGUgdGhlIHJhbmdlIG9mIHJlZ2lzdGVycyB0aGF0
+IHRoZQpob3N0MXggbmVlZHMgdG8gbW9uaXRvciBmb3Igd3JpdGVzLgoKU2lnbmVkLW9mZi1ieTog
+VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9ob3N0
+MXgvZGV2LmMgfCAzOCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogZHJp
+dmVycy9ncHUvaG9zdDF4L2Rldi5oIHwgIDggKysrKysrKysKIDIgZmlsZXMgY2hhbmdlZCwgNDYg
+aW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyBiL2Ry
+aXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwppbmRleCA0MTlkODkyOWE5OGYuLjRjMDQ0ZWU1NGZlNiAx
+MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCisrKyBiL2RyaXZlcnMvZ3B1L2hv
+c3QxeC9kZXYuYwpAQCAtMTIwLDYgKzEyMCwxNSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGhvc3Qx
+eF9pbmZvIGhvc3QxeDA1X2luZm8gPSB7CiAJLmRtYV9tYXNrID0gRE1BX0JJVF9NQVNLKDM0KSwK
+IH07CiAKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgaG9zdDF4X3NpZF9lbnRyeSB0ZWdyYTE4Nl9zaWRf
+dGFibGVbXSA9IHsKKwl7CisJCS8qIFZJQyAqLworCQkuYmFzZSA9IDB4MWFmMCwKKwkJLm9mZnNl
+dCA9IDB4MzAsCisJCS5saW1pdCA9IDB4MzQKKwl9LAorfTsKKwogc3RhdGljIGNvbnN0IHN0cnVj
+dCBob3N0MXhfaW5mbyBob3N0MXgwNl9pbmZvID0gewogCS5uYl9jaGFubmVscyA9IDYzLAogCS5u
+Yl9wdHMgPSA1NzYsCkBAIC0xMjksNiArMTM4LDE3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaG9z
+dDF4X2luZm8gaG9zdDF4MDZfaW5mbyA9IHsKIAkuc3luY19vZmZzZXQgPSAweDAsCiAJLmRtYV9t
+YXNrID0gRE1BX0JJVF9NQVNLKDM0KSwKIAkuaGFzX2h5cGVydmlzb3IgPSB0cnVlLAorCS5udW1f
+c2lkX2VudHJpZXMgPSBBUlJBWV9TSVpFKHRlZ3JhMTg2X3NpZF90YWJsZSksCisJLnNpZF90YWJs
+ZSA9IHRlZ3JhMTg2X3NpZF90YWJsZSwKK307CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgaG9zdDF4
+X3NpZF9lbnRyeSB0ZWdyYTE5NF9zaWRfdGFibGVbXSA9IHsKKwl7CisJCS8qIFZJQyAqLworCQku
+YmFzZSA9IDB4MWFmMCwKKwkJLm9mZnNldCA9IDB4MzAsCisJCS5saW1pdCA9IDB4MzQKKwl9LAog
+fTsKIAogc3RhdGljIGNvbnN0IHN0cnVjdCBob3N0MXhfaW5mbyBob3N0MXgwN19pbmZvID0gewpA
+QCAtMTQwLDYgKzE2MCw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaG9zdDF4X2luZm8gaG9zdDF4
+MDdfaW5mbyA9IHsKIAkuc3luY19vZmZzZXQgPSAweDAsCiAJLmRtYV9tYXNrID0gRE1BX0JJVF9N
+QVNLKDQwKSwKIAkuaGFzX2h5cGVydmlzb3IgPSB0cnVlLAorCS5udW1fc2lkX2VudHJpZXMgPSBB
+UlJBWV9TSVpFKHRlZ3JhMTk0X3NpZF90YWJsZSksCisJLnNpZF90YWJsZSA9IHRlZ3JhMTk0X3Np
+ZF90YWJsZSwKIH07CiAKIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGhvc3QxeF9v
+Zl9tYXRjaFtdID0gewpAQCAtMTU0LDYgKzE3NiwxOSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9m
+X2RldmljZV9pZCBob3N0MXhfb2ZfbWF0Y2hbXSA9IHsKIH07CiBNT0RVTEVfREVWSUNFX1RBQkxF
+KG9mLCBob3N0MXhfb2ZfbWF0Y2gpOwogCitzdGF0aWMgdm9pZCBob3N0MXhfc2V0dXBfc2lkX3Rh
+YmxlKHN0cnVjdCBob3N0MXggKmhvc3QpCit7CisJY29uc3Qgc3RydWN0IGhvc3QxeF9pbmZvICpp
+bmZvID0gaG9zdC0+aW5mbzsKKwl1bnNpZ25lZCBpbnQgaTsKKworCWZvciAoaSA9IDA7IGkgPCBp
+bmZvLT5udW1fc2lkX2VudHJpZXM7IGkrKykgeworCQljb25zdCBzdHJ1Y3QgaG9zdDF4X3NpZF9l
+bnRyeSAqZW50cnkgPSAmaW5mby0+c2lkX3RhYmxlW2ldOworCisJCWhvc3QxeF9oeXBlcnZpc29y
+X3dyaXRlbChob3N0LCBlbnRyeS0+b2Zmc2V0LCBlbnRyeS0+YmFzZSk7CisJCWhvc3QxeF9oeXBl
+cnZpc29yX3dyaXRlbChob3N0LCBlbnRyeS0+bGltaXQsIGVudHJ5LT5iYXNlICsgNCk7CisJfQor
+fQorCiBzdGF0aWMgaW50IGhvc3QxeF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
+KQogewogCXN0cnVjdCBob3N0MXggKmhvc3Q7CkBAIC0zMTYsNiArMzUxLDkgQEAgc3RhdGljIGlu
+dCBob3N0MXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAogCWhvc3QxeF9k
+ZWJ1Z19pbml0KGhvc3QpOwogCisJaWYgKGhvc3QtPmluZm8tPmhhc19oeXBlcnZpc29yKQorCQlo
+b3N0MXhfc2V0dXBfc2lkX3RhYmxlKGhvc3QpOworCiAJZXJyID0gaG9zdDF4X3JlZ2lzdGVyKGhv
+c3QpOwogCWlmIChlcnIgPCAwKQogCQlnb3RvIGZhaWxfZGVpbml0X2ludHI7CmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmggYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmgKaW5k
+ZXggMzZmNDRmZmViZTczLi4wNTIxNmE3ZTQ4MzAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hv
+c3QxeC9kZXYuaAorKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmgKQEAgLTk0LDYgKzk0LDEy
+IEBAIHN0cnVjdCBob3N0MXhfaW50cl9vcHMgewogCWludCAoKmZyZWVfc3luY3B0X2lycSkoc3Ry
+dWN0IGhvc3QxeCAqaG9zdCk7CiB9OwogCitzdHJ1Y3QgaG9zdDF4X3NpZF9lbnRyeSB7CisJdW5z
+aWduZWQgaW50IGJhc2U7CisJdW5zaWduZWQgaW50IG9mZnNldDsKKwl1bnNpZ25lZCBpbnQgbGlt
+aXQ7Cit9OworCiBzdHJ1Y3QgaG9zdDF4X2luZm8gewogCXVuc2lnbmVkIGludCBuYl9jaGFubmVs
+czsgLyogaG9zdDF4OiBudW1iZXIgb2YgY2hhbm5lbHMgc3VwcG9ydGVkICovCiAJdW5zaWduZWQg
+aW50IG5iX3B0czsgLyogaG9zdDF4OiBudW1iZXIgb2Ygc3luY3BvaW50cyBzdXBwb3J0ZWQgKi8K
+QEAgLTEwMyw2ICsxMDksOCBAQCBzdHJ1Y3QgaG9zdDF4X2luZm8gewogCXVuc2lnbmVkIGludCBz
+eW5jX29mZnNldDsgLyogb2Zmc2V0IG9mIHN5bmNwb2ludCByZWdpc3RlcnMgKi8KIAl1NjQgZG1h
+X21hc2s7IC8qIG1hc2sgb2YgYWRkcmVzc2FibGUgbWVtb3J5ICovCiAJYm9vbCBoYXNfaHlwZXJ2
+aXNvcjsgLyogaGFzIGh5cGVydmlzb3IgcmVnaXN0ZXJzICovCisJdW5zaWduZWQgaW50IG51bV9z
+aWRfZW50cmllczsKKwljb25zdCBzdHJ1Y3QgaG9zdDF4X3NpZF9lbnRyeSAqc2lkX3RhYmxlOwog
+fTsKIAogc3RydWN0IGhvc3QxeCB7Ci0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
