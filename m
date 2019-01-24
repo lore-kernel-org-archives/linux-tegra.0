@@ -1,96 +1,319 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 4/5] drm/tegra: Restrict IOVA space to DMA mask
-Date: Thu, 24 Jan 2019 12:24:48 +0200
-Message-ID: <0dcdb45e-5832-80fb-c842-4a32bc3469e3@kapsi.fi>
-References: <20190123093951.24908-1-thierry.reding@gmail.com>
- <20190123093951.24908-5-thierry.reding@gmail.com>
- <314d2386-3d1b-dda0-3d5e-b277d8c09045@gmail.com>
- <20190123140406.GA16034@ulmo>
- <f395269e-22be-ef2c-1189-b7b28f42f7d8@gmail.com>
- <c6eed145-35c3-76fe-fe7d-8069686207d7@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 2/6] clocksource: tegra: add Tegra210 timer driver
+Date: Thu, 24 Jan 2019 11:09:26 +0000
+Message-ID: <cd9a4d3a-91a6-5caf-e194-2c5590406844@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-3-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <c6eed145-35c3-76fe-fe7d-8069686207d7@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190107032810.13522-3-josephl@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjMuMS4yMDE5IDIxLjQyLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4gMjMuMDEuMjAxOSAx
-ODo1NSwgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4+IDIzLjAxLjIwMTkgMTc6MDQsIFRo
-aWVycnkgUmVkaW5nINC/0LjRiNC10YI6Cj4+PiBPbiBXZWQsIEphbiAyMywgMjAxOSBhdCAwNDo0
-MTo0NFBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+Pj4gMjMuMDEuMjAxOSAxMjoz
-OSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPj4+Pj4gRnJvbTogVGhpZXJyeSBSZWRpbmcg
-PHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+Pj4KPj4+Pj4gT24gVGVncmExODYgYW5kIGxhdGVyLCB0
-aGUgQVJNIFNNTVUgcHJvdmlkZXMgYW4gaW5wdXQgYWRkcmVzcyBzcGFjZSB0aGF0Cj4+Pj4+IGlz
-IDQ4IGJpdHMgd2lkZS4gSG93ZXZlciwgbWVtb3J5IGNsaWVudHMgY2FuIG9ubHkgYWRkcmVzcyB1
-cCB0byA0MCBiaXRzLgo+Pj4+PiBJZiB0aGUgZ2VvbWV0cnkgaXMgdXNlZCBhcy1pcywgYWxsb2Nh
-dGlvbnMgb2YgSU9WQSBzcGFjZSBjYW4gZW5kIHVwIGluIGEKPj4+Pj4gcmVnaW9uIHRoYXQgY2Fu
-bm90IGJlIGFkZHJlc3NlZCBieSB0aGUgbWVtb3J5IGNsaWVudHMuCj4+Pj4+Cj4+Pj4+IFRvIGZp
-eCB0aGlzLCByZXN0cmljdCB0aGUgSU9WQSBzcGFjZSB0byB0aGUgRE1BIG1hc2sgb2YgdGhlIGhv
-c3QxeAo+Pj4+PiBkZXZpY2UuIE5vdGUgdGhhdCwgdGVjaG5pY2FsbHksIHRoZSBJT1ZBIHNwYWNl
-IG5lZWRzIHRvIGJlIHJlc3RyaWN0ZWQgdG8KPj4+Pj4gdGhlIGludGVyc2VjdGlvbiBvZiB0aGUg
-RE1BIG1hc2tzIGZvciBhbGwgY2xpZW50cyB0aGF0IGFyZSBhdHRhY2hlZCB0bwo+Pj4+PiB0aGUg
-SU9NTVUgZG9tYWluLiBJbiBwcmFjdGljZSB1c2luZyB0aGUgRE1BIG1hc2sgb2YgdGhlIGhvc3Qx
-eCBkZXZpY2UgaXMKPj4+Pj4gc3VmZmljaWVudCBiZWNhdXNlIGFsbCBob3N0MXggY2xpZW50cyBz
-aGFyZSB0aGUgc2FtZSBETUEgbWFzay4KPj4+Pj4KPj4+Pj4gU2lnbmVkLW9mZi1ieTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+Pj4gLS0tCj4+Pj4+ICAgZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2RybS5jIHwgNSArKystLQo+Pj4+PiAgIDEgZmlsZSBjaGFuZ2VkLCAzIGlu
-c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4+Pj4+Cj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPj4+
-Pj4gaW5kZXggMjcxYzdhNWZjOTU0Li4wYzVmMWU2YTA0NDYgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZHJtLmMKPj4+Pj4gQEAgLTEzNiwxMSArMTM2LDEyIEBAIHN0YXRpYyBpbnQgdGVncmFfZHJt
-X2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWduZWQgbG9uZyBmbGFncykKPj4+Pj4g
-ICAKPj4+Pj4gICAJaWYgKHRlZ3JhLT5kb21haW4pIHsKPj4+Pj4gICAJCXU2NCBjYXJ2ZW91dF9z
-dGFydCwgY2FydmVvdXRfZW5kLCBnZW1fc3RhcnQsIGdlbV9lbmQ7Cj4+Pj4+ICsJCXU2NCBkbWFf
-bWFzayA9IGRtYV9nZXRfbWFzaygmZGV2aWNlLT5kZXYpOwo+Pj4+PiAgIAkJZG1hX2FkZHJfdCBz
-dGFydCwgZW5kOwo+Pj4+PiAgIAkJdW5zaWduZWQgbG9uZyBvcmRlcjsKPj4+Pj4gICAKPj4+Pj4g
-LQkJc3RhcnQgPSB0ZWdyYS0+ZG9tYWluLT5nZW9tZXRyeS5hcGVydHVyZV9zdGFydDsKPj4+Pj4g
-LQkJZW5kID0gdGVncmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kOwo+Pj4+PiArCQlz
-dGFydCA9IHRlZ3JhLT5kb21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX3N0YXJ0ICYgZG1hX21hc2s7
-Cj4+Pj4+ICsJCWVuZCA9IHRlZ3JhLT5kb21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX2VuZCAmIGRt
-YV9tYXNrOwo+Pj4+PiAgIAo+Pj4+PiAgIAkJZ2VtX3N0YXJ0ID0gc3RhcnQ7Cj4+Pj4+ICAgCQln
-ZW1fZW5kID0gZW5kIC0gQ0FSVkVPVVRfU1o7Cj4+Pj4+Cj4+Pj4KPj4+PiBXb3csIHNvIElPVkEg
-Y291bGQgYWRkcmVzcyA+MzJiaXRzIG9uIGxhdGVyIFRlZ3JhJ3MuIEFGQUlLLCBjdXJyZW50bHkK
-Pj4+PiB0aGVyZSBpcyBubyBzdXBwb3J0IGZvciBhIHByb3BlciBwcm9ncmFtbWluZyBvZiB0aGUg
-NjRiaXQgYWRkcmVzc2VzIGluCj4+Pj4gdGhlIGRyaXZlcnMgY29kZSwgaGVuY2UuLiB3b24ndCBp
-dCBtYWtlIHNlbnNlIHRvIGZvcmNlIElPVkEgbWFzayB0bwo+Pj4+IDMyYml0IGZvciBub3cgYW5k
-IGhvcGUgdGhhdCB0aGUgc2Vjb25kIGhhbHZlIG9mIGFkZHJlc3MgcmVnaXN0ZXJzCj4+Pj4gaGFw
-cGVuIHRvIGJlIDB4MDAwMDAwMDAgaW4gSFc/Cj4+Pgo+Pj4gSSB0aGluayB0aGlzIHJlc3RyaWN0
-aW9uIG9ubHkgYXBwbGllcyB0byBkaXNwbGF5IGF0IHRoaXMgcG9pbnQuIEluCj4+PiBwcmFjdGlj
-ZSB5b3UnZCBiZSBoYXJkIHB1dCB0byB0cmlnZ2VyIHRoYXQgY2FzZSBiZWNhdXNlIElPVkEgbWVt
-b3J5IGlzCj4+PiBhbGxvY2F0ZWQgZnJvbSB0aGUgYm90dG9tLCBzbyB5b3UnZCBhY3R1YWxseSBu
-ZWVkIHRvIHVzZSB1cCB0byA0IEdpQiBvZgo+Pj4gSU9WQSBzcGFjZSBiZWZvcmUgaGl0dGluZyB0
-aGF0Lgo+Pj4KPj4+IFRoYXQgc2FpZCwgSSB2YWd1ZWx5IHJlbWVtYmVyIHR5cGluZyB1cCB0aGUg
-cGF0Y2ggdG8gc3VwcG9ydCB3cml0aW5nIHRoZQo+Pj4gV0lOQlVGX1NUQVJUX0FERFJfSEkgcmVn
-aXN0ZXIgYW5kIGZyaWVuZHMsIGJ1dCBpdCBsb29rcyBhcyBpZiB0aGF0IHdhcwo+Pj4gbmV2ZXIg
-bWVyZ2VkLgo+Pj4KPj4+IEknbGwgdHJ5IHRvIGRpZyBvdXQgdGhhdCBwYXRjaCAob3IgcmV3cml0
-ZSBpdCwgc2hvdWxkbid0IGJlIHZlcnkKPj4+IGRpZmZpY3VsdCkgYW5kIG1ha2UgaXQgcGFydCBv
-ZiB0aGlzIHNlcmllcy4gSSdkIHJhdGhlciBmaXggdGhhdCBpc3N1ZQo+Pj4gdGhhbiBhcmJpdHJh
-cmlseSByZXN0cmljdCB0aGUgSU9WQSBzcGFjZSwgYmVjYXVzZSB0aGF0J3MgbGlrZWx5IHRvIGNv
-bWUKPj4+IGJhY2sgYW5kIGJpdGUgdXMgYXQgc29tZSBwb2ludC4KPj4KPj4gTG9va2luZyBhdCBm
-YWxjb24uYy4uIGl0IHdyaXRlcyAzMmJpdCBhZGRyZXNzIG9ubHkuIFNvbWV0aGluZyBuZWVkIHRv
-IGJlIGRvbmUgYWJvdXQgaXQgYXMgd2VsbCwgc2VlbXMgdGhlcmUgaXMgRkFMQ09OX0RNQVRSRk1P
-RkZTIHJlZ2lzdGVyIHRvIGZhY2lsaXRhdGUgPjMyYml0cyBhZGRyZXNzaW5nLgo+IAo+IEFsdGhv
-dWdoIHNjcmF0Y2ggYWJvdXQgRkFMQ09OX0RNQVRSRk1PRkZTLCBpdCBzaG91bGQgYmUgYWJvdXQg
-c29tZXRoaW5nIGVsc2UuIE1pa2tvLCBjb3VsZCB5b3UgcGxlYXNlIGNsYXJpZnkgd2hldGhlciBm
-YWxjb24gY291bGQgbG9hZCBmaXJtd2FyZSBvbmx5IGZyb20gYSAzMmJpdCBBUz8KPiAKClRoZSBE
-TUEgYmFzZSBhZGRyZXNzIGlzIHNldCB1c2luZyBETUFUUkZCQVNFLCB3aGljaCByZXF1aXJlcyAy
-NTZCIAphbGlnbm1lbnQsIG1lYW5pbmcgNDAgYml0cyBhcmUgYXZhaWxhYmxlIGZvciB0aGUgYWRk
-cmVzcy4gVGhlIApETUFUUkZGQk9GRlMgSSBiZWxpZXZlIGlzIHRoZW4gdXNlZCBhcyBhIDMyLWJp
-dCBvZmZzZXQgdG8gdGhhdCB2YWx1ZS4KCk1pa2tvCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+On 07/01/2019 03:28, Joseph Lo wrote:
+> Add support for the Tegra210 timer that runs at oscillator clock
+> (TMR10-TMR13). We need these timers to work as clock event device and to
+> replace the ARMv8 architected timer due to it can't survive across the
+> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
+> source when CPU suspends in power down state.
+> 
+> Based on the work of Antti P Miettinen <amiettinen@nvidia.com>
+> 
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  drivers/clocksource/Kconfig          |   3 +
+>  drivers/clocksource/Makefile         |   1 +
+>  drivers/clocksource/timer-tegra210.c | 240 +++++++++++++++++++++++++++
+>  include/linux/cpuhotplug.h           |   1 +
+>  4 files changed, 245 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-tegra210.c
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index a9e26f6a81a1..e6e3e64b6320 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -135,6 +135,9 @@ config TEGRA_TIMER
+>  	help
+>  	  Enables support for the Tegra driver.
+>  
+> +config TEGRA210_TIMER
+> +	def_bool ARCH_TEGRA_210_SOC
+> +
+>  config VT8500_TIMER
+>  	bool "VT8500 timer driver" if COMPILE_TEST
+>  	depends on HAS_IOMEM
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index cdd210ff89ea..95de59c8a47b 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -36,6 +36,7 @@ obj-$(CONFIG_SUN4I_TIMER)	+= timer-sun4i.o
+>  obj-$(CONFIG_SUN5I_HSTIMER)	+= timer-sun5i.o
+>  obj-$(CONFIG_MESON6_TIMER)	+= timer-meson6.o
+>  obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra20.o
+> +obj-$(CONFIG_TEGRA210_TIMER)	+= timer-tegra210.o
+>  obj-$(CONFIG_VT8500_TIMER)	+= timer-vt8500.o
+>  obj-$(CONFIG_NSPIRE_TIMER)	+= timer-zevio.o
+>  obj-$(CONFIG_BCM_KONA_TIMER)	+= bcm_kona_timer.o
+> diff --git a/drivers/clocksource/timer-tegra210.c b/drivers/clocksource/timer-tegra210.c
+> new file mode 100644
+> index 000000000000..d88c127d3b3b
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-tegra210.c
+> @@ -0,0 +1,240 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/percpu.h>
+> +#include <linux/syscore_ops.h>
+> +
+> +static u32 tegra210_timer_freq;
+> +static void __iomem *tegra210_timer_reg_base;
+> +static u32 usec_config;
+> +
+> +#define TIMER_PTV		0x0
+> +#define TIMER_PTV_EN		BIT(31)
+> +#define TIMER_PTV_PER		BIT(30)
+> +#define TIMER_PCR		0x4
+> +#define TIMER_PCR_INTR_CLR	BIT(30)
+> +#define TIMERUS_CNTR_1US	0x10
+> +#define TIMERUS_USEC_CFG	0x14
+> +
+> +#define TIMER10_OFFSET		0x90
+> +
+> +#define TIMER_FOR_CPU(cpu) (TIMER10_OFFSET + (cpu) * 8)
+> +
+> +struct tegra210_clockevent {
+> +	struct clock_event_device evt;
+> +	char name[20];
+> +	void __iomem *reg_base;
+> +};
+> +#define to_tegra_cevt(p) (container_of(p, struct tegra210_clockevent, evt))
+> +
+> +static struct tegra210_clockevent __percpu *tegra210_evt;
+> +
+> +static int tegra210_timer_set_next_event(unsigned long cycles,
+> +					 struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = to_tegra_cevt(evt);
+> +	writel(TIMER_PTV_EN |
+> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
+> +	       tevt->reg_base + TIMER_PTV);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void timer_shutdown(struct tegra210_clockevent *tevt)
+> +{
+> +	writel(0, tevt->reg_base + TIMER_PTV);
+> +}
+> +
+> +static int tegra210_timer_shutdown(struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = to_tegra_cevt(evt);
+> +	timer_shutdown(tevt);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_timer_set_periodic(struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = to_tegra_cevt(evt);
+> +	writel(TIMER_PTV_EN | TIMER_PTV_PER | ((tegra210_timer_freq / HZ) - 1),
+> +	       tevt->reg_base + TIMER_PTV);
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t tegra210_timer_isr(int irq, void *dev_id)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = dev_id;
+> +	writel(TIMER_PCR_INTR_CLR, tevt->reg_base + TIMER_PCR);
+> +	tevt->evt.event_handler(&tevt->evt);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int tegra210_timer_setup(unsigned int cpu)
+> +{
+> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
+> +
+> +	irq_force_affinity(tevt->evt.irq, cpumask_of(cpu));
+> +	enable_irq(tevt->evt.irq);
+> +
+> +	clockevents_config_and_register(&tevt->evt, tegra210_timer_freq,
+> +					1, /* min */
+> +					0x1fffffff); /* 29 bits */
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_timer_stop(unsigned int cpu)
+> +{
+> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
+> +
+> +	tevt->evt.set_state_shutdown(&tevt->evt);
+> +	disable_irq_nosync(tevt->evt.irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_timer_suspend(void)
+> +{
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		void __iomem *reg_base = tegra210_timer_reg_base +
+> +					 TIMER_FOR_CPU(cpu);
+> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void tegra_timer_resume(void)
+> +{
+> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
+> +}
+> +
+> +static struct syscore_ops tegra_timer_syscore_ops = {
+> +	.suspend = tegra_timer_suspend,
+> +	.resume = tegra_timer_resume,
+> +};
+> +
+> +static int __init tegra210_timer_init(struct device_node *np)
+> +{
+> +	int cpu, ret;
+> +	struct tegra210_clockevent *tevt;
+> +	struct clk *clk;
+> +
+> +	tegra210_evt = alloc_percpu(struct tegra210_clockevent);
+> +	if (!tegra210_evt)
+> +		return -ENOMEM;
+> +
+> +	tegra210_timer_reg_base = of_iomap(np, 0);
+> +	if (!tegra210_timer_reg_base)
+> +		return -ENXIO;
+> +
+> +	clk = of_clk_get(np, 0);
+> +	if (IS_ERR(clk))
+> +		return -EINVAL;
+> +
+> +	clk_prepare_enable(clk);
+> +	tegra210_timer_freq = clk_get_rate(clk);
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		tevt = per_cpu_ptr(tegra210_evt, cpu);
+> +		tevt->reg_base = tegra210_timer_reg_base + TIMER_FOR_CPU(cpu);
+> +		tevt->evt.irq = irq_of_parse_and_map(np, cpu);
+> +		if (!tevt->evt.irq) {
+> +			pr_err("%s: can't map IRQ for CPU%d\n",
+> +			       __func__, cpu);
+> +			return -EINVAL;
+> +		}
+> +
+> +		snprintf(tevt->name, ARRAY_SIZE(tevt->name),
+> +			 "tegra210_timer%d", cpu);
+> +		tevt->evt.name = tevt->name;
+> +		tevt->evt.cpumask = cpumask_of(cpu);
+> +		tevt->evt.set_next_event = tegra210_timer_set_next_event;
+> +		tevt->evt.set_state_shutdown = tegra210_timer_shutdown;
+> +		tevt->evt.set_state_periodic = tegra210_timer_set_periodic;
+> +		tevt->evt.set_state_oneshot = tegra210_timer_shutdown;
+> +		tevt->evt.tick_resume = tegra210_timer_shutdown;
+> +		tevt->evt.features = CLOCK_EVT_FEAT_PERIODIC |
+> +			CLOCK_EVT_FEAT_ONESHOT;
+> +		tevt->evt.rating = 460;
+> +
+> +		irq_set_status_flags(tevt->evt.irq, IRQ_NOAUTOEN);
+> +		ret = request_irq(tevt->evt.irq, tegra210_timer_isr,
+> +				  IRQF_TIMER | IRQF_NOBALANCING,
+> +				  tevt->name, tevt);
+> +		if (ret) {
+> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
+> +				__func__, tevt->evt.irq, cpu);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Configure microsecond timers to have 1MHz clock
+> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
+> +	 * Uses n+1 scheme
+> +	 */
+> +	switch (tegra210_timer_freq) {
+> +	case 12000000:
+> +		usec_config = 0x000b; /* (11+1)/(0+1) */
+> +		break;
+> +	case 12800000:
+> +		usec_config = 0x043f; /* (63+1)/(4+1) */
+> +		break;
+> +	case 13000000:
+> +		usec_config = 0x000c; /* (12+1)/(0+1) */
+> +		break;
+> +	case 16800000:
+> +		usec_config = 0x0453; /* (83+1)/(4+1) */
+> +		break;
+> +	case 19200000:
+> +		usec_config = 0x045f; /* (95+1)/(4+1) */
+> +		break;
+> +	case 26000000:
+> +		usec_config = 0x0019; /* (25+1)/(0+1) */
+> +		break;
+> +	case 38400000:
+> +		usec_config = 0x04bf; /* (191+1)/(4+1) */
+> +		break;
+> +	case 48000000:
+> +		usec_config = 0x002f; /* (47+1)/(0+1) */
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
+> +
+> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
+> +			  "AP_TEGRA_TIMER_STARTING", tegra210_timer_setup,
+> +			  tegra210_timer_stop);
+> +
+> +	register_syscore_ops(&tegra_timer_syscore_ops);
+> +
+> +	return 0;
+> +}
+
+A couple comments with the above init function ...
+1. Does not appear to clean-up after itself on error.
+2. What about the other TMRs? Do we have any use for these?
+
+Cheers
+Jon
+
+-- 
+nvpublic
