@@ -1,93 +1,126 @@
-From: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-Subject: [PATCH 26/26] drm/<drivers>: Don't set FBINFO_(FLAG_)DEFAULT
-Date: Thu, 24 Jan 2019 17:58:31 +0100
-Message-ID: <20190124165831.16427-27-daniel.vetter@ffwll.ch>
-References: <20190124165831.16427-1-daniel.vetter@ffwll.ch>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH] ALSA: hda/tegra: enable clock during probe
+Date: Thu, 24 Jan 2019 23:06:43 +0530
+Message-ID: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190124165831.16427-1-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Cc: =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrik Jakobsson <patrik.r.jakobsson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alexander Kapshuk <alexander.kapshuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Seung-Woo Kim <sw0>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.com, pierre-louis.bossart@linux.intel.com
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, rlokhande@nvidia.com, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-SXQncyAwLgoKU2lnbmVkLW9mZi1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBpbnRl
-bC5jb20+CkNjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+CkNjOiBKb29ueW91bmcg
-U2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+CkNjOiBTZXVuZy1Xb28gS2ltIDxzdzAzMTIu
-a2ltQHNhbXN1bmcuY29tPgpDYzogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5n
-LmNvbT4KQ2M6IEt1a2ppbiBLaW0gPGtnZW5lQGtlcm5lbC5vcmc+CkNjOiBLcnp5c3p0b2YgS296
-bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+CkNjOiBQYXRyaWsgSmFrb2Jzc29uIDxwYXRyaWsuci5q
-YWtvYnNzb25AZ21haWwuY29tPgpDYzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRoYXQuY29tPgpD
-YzogU2FuZHkgSHVhbmcgPGhqY0Byb2NrLWNoaXBzLmNvbT4KQ2M6ICJIZWlrbyBTdMO8Ym5lciIg
-PGhlaWtvQHNudGVjaC5kZT4KQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFp
-bC5jb20+CkNjOiBKb25hdGhhbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgpDYzogSGFu
-cyBkZSBHb2VkZSA8aGRlZ29lZGVAcmVkaGF0LmNvbT4KQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8
-Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+CkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0
-dGVyQGZmd2xsLmNoPgpDYzogQmFydGxvbWllaiBab2xuaWVya2lld2ljeiA8Yi56b2xuaWVya2ll
-QHNhbXN1bmcuY29tPgpDYzogQWxleGFuZGVyIEthcHNodWsgPGFsZXhhbmRlci5rYXBzaHVrQGdt
-YWlsLmNvbT4KQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpDYzogbGlu
-dXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnCkNjOiBub3V2ZWF1QGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpDYzogbGludXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZwpDYzogbGludXgt
-dGVncmFAdmdlci5rZXJuZWwub3JnCi0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZiZGV2LmMgICAgIHwgMSAtCiBkcml2ZXJzL2dwdS9kcm0vZ21hNTAwL2ZyYW1lYnVmZmVy
-LmMgICAgICAgICAgfCAxIC0KIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZmJjb24u
-YyAgICAgICB8IDQgKystLQogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9m
-YmRldi5jIHwgMSAtCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYyAgICAgICAgICAgICAgICAg
-ICAgfCAxIC0KIDUgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygt
-KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMKaW5kZXggYjIwMTg5
-NjFiOWNmLi4wMGJmY2QyOGU1ODkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9mYmRldi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9mYmRldi5jCkBAIC04Nyw3ICs4Nyw2IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9mYmRldl91
-cGRhdGUoc3RydWN0IGRybV9mYl9oZWxwZXIgKmhlbHBlciwKIAkJcmV0dXJuIFBUUl9FUlIoZmJp
-KTsKIAl9CiAKLQlmYmktPmZsYWdzID0gRkJJTkZPX0ZMQUdfREVGQVVMVDsKIAlmYmktPmZib3Bz
-ID0gJmV4eW5vc19kcm1fZmJfb3BzOwogCiAJZHJtX2ZiX2hlbHBlcl9maWxsX2luZm8oZmJpLCBo
-ZWxwZXIpOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9mcmFtZWJ1ZmZlci5j
-IGIvZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9mcmFtZWJ1ZmZlci5jCmluZGV4IGM3YTVjMjlmOWE2
-OS4uM2I1OWRiYWRmYTYzIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZ21hNTAwL2ZyYW1l
-YnVmZmVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9mcmFtZWJ1ZmZlci5jCkBAIC00
-MDEsNyArNDAxLDYgQEAgc3RhdGljIGludCBwc2JmYl9jcmVhdGUoc3RydWN0IHBzYl9mYmRldiAq
-ZmJkZXYsCiAKIAlmYmRldi0+cHNiX2ZiX2hlbHBlci5mYiA9IGZiOwogCi0JaW5mby0+ZmxhZ3Mg
-PSBGQklORk9fREVGQVVMVDsKIAlpZiAoZGV2X3ByaXYtPm9wcy0+YWNjZWxfMmQgJiYgcGl0Y2hf
-bGluZXMgPiA4KQkvKiAyRCBlbmdpbmUgKi8KIAkJaW5mby0+ZmJvcHMgPSAmcHNiZmJfb3BzOwog
-CWVsc2UgaWYgKGd0dF9yb2xsKSB7CS8qIEdUVCByb2xsaW5nIHNlZW1zIGJlc3QgKi8KZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZmJjb24uYyBiL2RyaXZlcnMv
-Z3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZmJjb24uYwppbmRleCAzYTNkNDU0YjY1ZTMuLjExMzZl
-ZTI2MDA1ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9mYmNv
-bi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZmJjb24uYwpAQCAtMzcw
-LDkgKzM3MCw5IEBAIG5vdXZlYXVfZmJjb25fY3JlYXRlKHN0cnVjdCBkcm1fZmJfaGVscGVyICpo
-ZWxwZXIsCiAJZmJjb24tPmhlbHBlci5mYiA9ICZmYi0+YmFzZTsKIAogCWlmICghY2hhbikKLQkJ
-aW5mby0+ZmxhZ3MgPSBGQklORk9fREVGQVVMVCB8IEZCSU5GT19IV0FDQ0VMX0RJU0FCTEVEOwor
-CQlpbmZvLT5mbGFncyA9IEZCSU5GT19IV0FDQ0VMX0RJU0FCTEVEOwogCWVsc2UKLQkJaW5mby0+
-ZmxhZ3MgPSBGQklORk9fREVGQVVMVCB8IEZCSU5GT19IV0FDQ0VMX0NPUFlBUkVBIHwKKwkJaW5m
-by0+ZmxhZ3MgPSBGQklORk9fSFdBQ0NFTF9DT1BZQVJFQSB8CiAJCQkgICAgICBGQklORk9fSFdB
-Q0NFTF9GSUxMUkVDVCB8CiAJCQkgICAgICBGQklORk9fSFdBQ0NFTF9JTUFHRUJMSVQ7CiAJaW5m
-by0+ZmJvcHMgPSAmbm91dmVhdV9mYmNvbl9zd19vcHM7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2ZiZGV2LmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9j
-a2NoaXAvcm9ja2NoaXBfZHJtX2ZiZGV2LmMKaW5kZXggZDEyMTY0ODc4ZTA1Li5mZWQ3ZDc2OTgx
-NjQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZmJk
-ZXYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2ZiZGV2LmMK
-QEAgLTkwLDcgKzkwLDYgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcm1fZmJkZXZfY3JlYXRlKHN0
-cnVjdCBkcm1fZmJfaGVscGVyICpoZWxwZXIsCiAJCWdvdG8gb3V0OwogCX0KIAotCWZiaS0+Zmxh
-Z3MgPSBGQklORk9fRkxBR19ERUZBVUxUOwogCWZiaS0+ZmJvcHMgPSAmcm9ja2NoaXBfZHJtX2Zi
-ZGV2X29wczsKIAogCWZiID0gaGVscGVyLT5mYjsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMKaW5kZXggODIzNDhkZGQw
-YjgzLi5lYTgyMTg0MDczYmQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5j
-CisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jCkBAIC0yNTUsNyArMjU1LDYgQEAgc3Rh
-dGljIGludCB0ZWdyYV9mYmRldl9wcm9iZShzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVyLAog
-CWhlbHBlci0+ZmIgPSBmYjsKIAloZWxwZXItPmZiZGV2ID0gaW5mbzsKIAotCWluZm8tPmZsYWdz
-ID0gRkJJTkZPX0ZMQUdfREVGQVVMVDsKIAlpbmZvLT5mYm9wcyA9ICZ0ZWdyYV9mYl9vcHM7CiAK
-IAlkcm1fZmJfaGVscGVyX2ZpbGxfaW5mbyhpbmZvLCBoZWxwZXIpOwotLSAKMi4yMC4xCgoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtcm9ja2No
-aXAgbWFpbGluZyBsaXN0CkxpbnV4LXJvY2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
-L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1yb2NrY2hpcAo=
+If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+will not be ON. This could cause issue during probe, where hda init
+setup is done. This patch checks whether runtime PM is enabled or not.
+If disabled, clocks are enabled in probe() and disabled in remove()
+
+This patch does following minor changes as cleanup,
+  * return code check for pm_runtime_get_sync() to take care of failure
+    and exit gracefully.
+  * In remove path runtime PM is disabled before calling snd_card_free().
+  * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+  * runtime PM callbacks moved out of CONFIG_PM check
+
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ sound/pci/hda/hda_tegra.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index c8d18dc..155c2f5 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
+ 	return rc;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static void hda_tegra_disable_clocks(struct hda_tegra *data)
+ {
+ 	clk_disable_unprepare(data->hda2hdmi_clk);
+@@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
+ 	clk_disable_unprepare(data->hda_clk);
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
+ /*
+  * power management
+  */
+@@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
+ }
+ #endif /* CONFIG_PM_SLEEP */
+ 
+-#ifdef CONFIG_PM
+ static int hda_tegra_runtime_suspend(struct device *dev)
+ {
+ 	struct snd_card *card = dev_get_drvdata(dev);
+@@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
+ 	int rc;
+ 
+ 	rc = hda_tegra_enable_clocks(hda);
+-	if (rc != 0)
++	if (rc)
+ 		return rc;
+ 	if (chip && chip->running) {
+ 		hda_tegra_init(hda);
+@@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_PM */
+ 
+ static const struct dev_pm_ops hda_tegra_pm = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
+@@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
+ 	if (!azx_has_pm_runtime(chip))
+ 		pm_runtime_forbid(hda->dev);
+ 
++	/* explicit resume if runtime PM is disabled */
++	if (!pm_runtime_enabled(hda->dev)) {
++		err = hda_tegra_runtime_resume(hda->dev);
++		if (err)
++			goto out_free;
++	}
++
+ 	schedule_work(&hda->probe_work);
+ 
+ 	return 0;
+@@ -571,7 +576,14 @@ static void hda_tegra_probe_work(struct work_struct *work)
+ 	struct platform_device *pdev = to_platform_device(hda->dev);
+ 	int err;
+ 
+-	pm_runtime_get_sync(hda->dev);
++	err = pm_runtime_get_sync(hda->dev);
++	if (err < 0) {
++		dev_err(hda->dev,
++			"failed in pm_runtime_get_syc with err = %d\n",
++			err);
++		return;
++	}
++
+ 	err = hda_tegra_first_init(chip, pdev);
+ 	if (err < 0)
+ 		goto out_free;
+@@ -599,12 +611,13 @@ static void hda_tegra_probe_work(struct work_struct *work)
+ 
+ static int hda_tegra_remove(struct platform_device *pdev)
+ {
+-	int ret;
+-
+-	ret = snd_card_free(dev_get_drvdata(&pdev->dev));
+ 	pm_runtime_disable(&pdev->dev);
++	if (!pm_runtime_status_suspended(&pdev->dev)) {
++		hda_tegra_runtime_suspend(&pdev->dev);
++		pm_runtime_set_suspended(&pdev->dev);
++	}
+ 
+-	return ret;
++	return snd_card_free(dev_get_drvdata(&pdev->dev));
+ }
+ 
+ static void hda_tegra_shutdown(struct platform_device *pdev)
+-- 
+2.7.4
