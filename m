@@ -1,215 +1,65 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4] i2c: tegra: Add Bus Clear Master Support
-Date: Wed, 23 Jan 2019 11:48:35 -0800
-Message-ID: <1548272915-20925-1-git-send-email-skomatineni@nvidia.com>
+Subject: RE: [PATCH V1] i2c: tegra: Add DMA Support
+Date: Thu, 24 Jan 2019 02:39:54 +0000
+Message-ID: <BYAPR12MB3398E0C5EE66FDE8F0813847C29A0@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1547578806-17923-1-git-send-email-skomatineni@nvidia.com>
+ <20190121103932.GB16756@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190121103932.GB16756@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Bus clear feature of tegra i2c controller helps to recover from
-bus hang when i2c master loses the bus arbitration due to the
-slave device holding SDA LOW continuously for some unknown reasons.
 
-Per I2C specification, the device that held the bus LOW should
-release it within 9 clock pulses.
 
-During bus clear operation, Tegra I2C controller sends 9 clock
-pulses and terminates the transaction with STOP condition.
-Upon successful bus clear operation, bus goes to idle state and
-driver retries the transaction.
+> > This patch adds DMA support for Tegra I2C.
+>
+> In the subject: "Support" -> "support". And in the commit description per=
+haps add some more details about why this is useful, maybe accompany with s=
+ome performance numbers (if > you can come up with any) or describe why the=
+re's a threshold for PIO vs. DMA transfers.
+>
+> As it is, it's not immediately clear why we need or want these 400+ extra=
+ lines of code.
+>
+> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> > ---
+> >  drivers/i2c/busses/i2c-tegra.c | 494=20
+> > +++++++++++++++++++++++++++++++++++++----
+> >  1 file changed, 456 insertions(+), 38 deletions(-)
+> >=20
+>
+>
+> > @@ -658,7 +809,16 @@ static irqreturn_t tegra_i2c_isr(int irq, void *de=
+v_id)
+> >  	if (i2c_dev->is_dvc)
+> >  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+> > =20
+> > -	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+> > +	if (status & I2C_INT_ALL_PACKETS_XFER_COMPLETE) {
+> > +		if (i2c_dev->is_curr_dma_xfer)
+> > +			i2c_dev->msg_buf_remaining =3D 0;
+>
+> Why are we forcing msg_buf_remaining to 0 here and below? Doesn't the res=
+t of the code take care of that already? Is it always guaranteed that all b=
+ytes will have been transferred in > DMA mode?
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V4]: Sets for one retry on arb lost
- [V3]: Updated comments and commit message to be clear on the change
- [V2]: Same as V1 rebased to 5.0-rc1
+During the write (Memory to TX FIFO thru DMA), DMA completion happens prior=
+ to XFER_PACKET_COMPLETE INT from I2C
+During the read (RX_FIFO to Memory thru DMA), XFER_PACKET_COMPLETE I2C INT =
+gets generated prior to DMA Completion
+Receiving XFER_PACKET_COMPLETE interrupts from I2C confirms successful I2C =
+transfer, so In DMA Mode, msg_buf_remaining is forced to 0
 
- drivers/i2c/busses/i2c-tegra.c | 71 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e417ebf7628c..514f7a51434e 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -54,6 +54,7 @@
- #define I2C_FIFO_STATUS_RX_SHIFT		0
- #define I2C_INT_MASK				0x064
- #define I2C_INT_STATUS				0x068
-+#define I2C_INT_BUS_CLR_DONE			BIT(11)
- #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
- #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
- #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
-@@ -96,6 +97,15 @@
- #define I2C_HEADER_MASTER_ADDR_SHIFT		12
- #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
- 
-+#define I2C_BUS_CLEAR_CNFG			0x084
-+#define I2C_BC_SCLK_THRESHOLD			9
-+#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
-+#define I2C_BC_STOP_COND			BIT(2)
-+#define I2C_BC_TERMINATE			BIT(1)
-+#define I2C_BC_ENABLE				BIT(0)
-+#define I2C_BUS_CLEAR_STATUS			0x088
-+#define I2C_BC_STATUS				BIT(0)
-+
- #define I2C_CONFIG_LOAD				0x08C
- #define I2C_MSTR_CONFIG_LOAD			BIT(0)
- #define I2C_SLV_CONFIG_LOAD			BIT(1)
-@@ -155,6 +165,8 @@ enum msg_end_type {
-  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
-  *		provides additional features and allows for longer messages to
-  *		be transferred in one go.
-+ * @supports_bus_clear: Bus Clear support to recover from bus hang during
-+ *		SDA stuck low from device for some unknown reasons.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	bool supports_bus_clear;
- };
- 
- /**
-@@ -639,6 +652,12 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 			i2c_dev->msg_err |= I2C_ERR_ARBITRATION_LOST;
- 		goto err;
- 	}
-+	/*
-+	 * I2C transfer is terminated during the bus clear so skip
-+	 * processing the other interrupts.
-+	 */
-+	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
-+		goto err;
- 
- 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
- 		if (i2c_dev->msg_buf_remaining)
-@@ -668,6 +687,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
- 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
- 		I2C_INT_RX_FIFO_DATA_REQ);
-+	if (i2c_dev->hw->supports_bus_clear)
-+		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-@@ -678,6 +699,43 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
-+{
-+	int err;
-+	unsigned long time_left;
-+	u32 reg;
-+
-+	if (i2c_dev->hw->supports_bus_clear) {
-+		reinit_completion(&i2c_dev->msg_complete);
-+		reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
-+		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
-+		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+		if (i2c_dev->hw->has_config_load_reg) {
-+			err = tegra_i2c_wait_for_config_load(i2c_dev);
-+			if (err)
-+				return err;
-+		}
-+		reg |= I2C_BC_ENABLE;
-+		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-+
-+		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-+							TEGRA_I2C_TIMEOUT);
-+		if (time_left == 0) {
-+			dev_err(i2c_dev->dev, "timed out for bus clear\n");
-+			return -ETIMEDOUT;
-+		}
-+		reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-+		if (!(reg & I2C_BC_STATUS)) {
-+			dev_err(i2c_dev->dev,
-+				"Un-recovered arbitration lost\n");
-+			return -EIO;
-+		}
-+	}
-+
-+	return -EAGAIN;
-+}
-+
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	struct i2c_msg *msg, enum msg_end_type end_state)
- {
-@@ -759,6 +817,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		return 0;
- 
- 	tegra_i2c_init(i2c_dev);
-+	/* start recovery upon arbitration loss in single master mode */
-+	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
-+		if (!i2c_dev->is_multimaster_mode)
-+			return tegra_i2c_issue_bus_clear(i2c_dev);
-+		return -EAGAIN;
-+	}
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
- 			return 0;
-@@ -848,6 +912,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -861,6 +926,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -874,6 +940,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -887,6 +954,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -900,6 +968,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -913,6 +982,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.supports_bus_clear = true,
- };
- 
- /* Match table for of_platform binding */
-@@ -965,6 +1035,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
- 	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
-+	i2c_dev->adapter.retries = 1;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
--- 
-2.7.4
+DMA callback notification happens only on successful transfer of all bytes.
+In case of incomplete transfer by DMA, call back notification will not be g=
+enerated and DMA timeouts.
+Also, DMA timeout is verified prior to msg_complete timeout.
+=20
+Thanks
+Sowjanya
