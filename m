@@ -1,139 +1,114 @@
-From: Prateek Patel <prpatel@nvidia.com>
-Subject: Re: [PATCH] selinux: avc: mark avc node as not a leak
-Date: Fri, 25 Jan 2019 03:26:54 +0530
-Message-ID: <75b75170-9316-9f7a-13a6-5f2b92b35bb2@nvidia.com>
-References: <1547023162-6381-1-git-send-email-prpatel@nvidia.com>
- <20190109113126.nzpmb7xx4xqtn37w@mbp>
+From: navneet kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/5] iommu/tegra-smmu: Fix domain_alloc
+Date: Thu, 24 Jan 2019 14:15:46 -0800
+Message-ID: <95116928-b245-d92b-a838-6b385725ea63@nvidia.com>
+References: <1547671814-30088-1-git-send-email-navneetk@nvidia.com>
+	<e55f408d-d518-f12d-4233-1b70263400f4@gmail.com>
+	<4f3104b7-120e-d71b-e7ea-9790ed2a3c97@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190109113126.nzpmb7xx4xqtn37w@mbp>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, linux-tegra@vger.kernel.org, talho@nvidia.com, swarren@nvidia.com, linux-mm@kvack.org, snikam@nvidia.com, vdumpa@nvidia.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4f3104b7-120e-d71b-e7ea-9790ed2a3c97-5wv7dgnIgG8@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 1/9/2019 5:01 PM, Catalin Marinas wrote:
-> Hi Prateek,
->
-> On Wed, Jan 09, 2019 at 02:09:22PM +0530, Prateek Patel wrote:
->> From: Sri Krishna chowdary <schowdary@nvidia.com>
->>
->> kmemleak detects allocated objects as leaks if not accessed for
->> default scan time. The memory allocated using avc_alloc_node
->> is freed using rcu mechanism when nodes are reclaimed or on
->> avc_flush. So, there is no real leak here and kmemleak_scan
->> detects it as a leak which is false positive. Hence, mark it as
->> kmemleak_not_leak.
-> In theory, kmemleak should detect the node->rhead in the lists used by
-> call_rcu() and not report it as a leak. Which RCU options do you have
-> enabled (just to check whether kmemleak tracks the RCU internal lists)?
->
-> Also, does this leak eventually disappear without your patch? Does
->
->    echo dump=3D0xffffffc0dd1a0e60 > /sys/kernel/debug/kmemleak
->
-> still display this object?
->
-> Thanks.
-Hi Catalin,
-It was intermittently showing leak and didn't repro on multiple runs. To=20
-repo, I decreased the
-minimum object age for reporting, I found triggering the second scan=20
-just after first is not showing
-any leak. Also, without my patch, on echo dump, obj is not displaying.
-Is increasing minimum object age for reporting a good idea to handle=20
-such type of issues to
-avoid false-positives?
-
-Following is the log:
-
-t186_int:/ # echo scan > /sys/kernel/debug/kmemleak
-t186_int:/ # cat /sys/kernel/debug/kmemleak
-
-unreferenced object 0xffffffc1e06424c8 (size 72):
- =C2=A0 comm "netd", pid 4891, jiffies 4294906431 (age 23.120s)
- =C2=A0 hex dump (first 32 bytes):
- =C2=A0=C2=A0=C2=A0 97 01 00 00 1b 00 00 00 0b 00 00 00 57 06 04 00 .......=
-.....W...
- =C2=A0=C2=A0=C2=A0 00 00 00 00 ff ff ff ff 01 00 00 00 00 00 00 00 .......=
-.........
- =C2=A0 backtrace:
- =C2=A0=C2=A0=C2=A0 [<ffffff8008275214>] kmem_cache_alloc+0x1ac/0x2c0
- =C2=A0=C2=A0=C2=A0 [<ffffff80084dcf90>] avc_alloc_node+0x28/0x240
- =C2=A0=C2=A0=C2=A0 [<ffffff80084dd404>] avc_compute_av+0xa4/0x1d0
- =C2=A0=C2=A0=C2=A0 [<ffffff80084de1b8>] avc_has_perm+0xf8/0x1b8
- =C2=A0=C2=A0=C2=A0 [<ffffff80084e37f8>] file_has_perm+0xb8/0xe8
- =C2=A0=C2=A0=C2=A0 [<ffffff80084e3d64>] match_file+0x44/0x98
- =C2=A0=C2=A0=C2=A0 [<ffffff80082cc9d4>] iterate_fd+0x84/0xd0
- =C2=A0=C2=A0=C2=A0 [<ffffff80084e2b3c>] selinux_bprm_committing_creds+0xec=
-/0x230
- =C2=A0=C2=A0=C2=A0 [<ffffff80084d842c>] security_bprm_committing_creds+0x4=
-4/0x60
- =C2=A0=C2=A0=C2=A0 [<ffffff80082ad020>] install_exec_creds+0x20/0x70
- =C2=A0=C2=A0=C2=A0 [<ffffff800831b9a4>] load_elf_binary+0x31c/0xd10
- =C2=A0=C2=A0=C2=A0 [<ffffff80082ae530>] search_binary_handler+0x98/0x288
- =C2=A0=C2=A0=C2=A0 [<ffffff80082af078>] do_execveat_common.isra.14+0x550/0=
-x6d0
- =C2=A0=C2=A0=C2=A0 [<ffffff80082af4ac>] SyS_execve+0x4c/0x60
- =C2=A0=C2=A0=C2=A0 [<ffffff80080839c0>] el0_svc_naked+0x34/0x38
- =C2=A0=C2=A0=C2=A0 [<ffffffffffffffff>] 0xffffffffffffffff
-unreferenced object 0xffffffc1ab3c61b0 (size 72):
- =C2=A0 comm "crash_dump64", pid 5058, jiffies 4294907834 (age 17.508s)
- =C2=A0 hex dump (first 32 bytes):
- =C2=A0=C2=A0=C2=A0 2f 02 00 00 6b 00 00 00 07 00 00 00 53 04 04 00 /...k..=
-.....S...
- =C2=A0=C2=A0=C2=A0 00 00 00 00 ff ff fd ff 01 00 00 00 00 00 00 00 .......=
-.........
- =C2=A0 backtrace:
- =C2=A0=C2=A0=C2=A0 [<ffffff8008275214>] kmem_cache_alloc+0x1ac/0x2c0
- =C2=A0=C2=A0=C2=A0 [<ffffff80084dcf90>] avc_alloc_node+0x28/0x240
- =C2=A0=C2=A0=C2=A0 [<ffffff80084dd404>] avc_compute_av+0xa4/0x1d0
- =C2=A0=C2=A0=C2=A0 [<ffffff80084de084>] avc_has_perm_noaudit+0xe4/0x120
- =C2=A0=C2=A0=C2=A0 [<ffffff80084e1264>] selinux_inode_permission+0xc4/0x1c=
-8
- =C2=A0=C2=A0=C2=A0 [<ffffff80084d8fe8>] security_inode_permission+0x60/0x8=
-8
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b2cf4>] __inode_permission2+0x54/0x120
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b2e30>] inode_permission2+0x38/0x80
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b4b58>] may_open+0x70/0x128
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b6fd4>] do_last+0x234/0xee8
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b7d30>] path_openat+0xa8/0x310
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b9390>] do_filp_open+0x88/0x108
- =C2=A0=C2=A0=C2=A0 [<ffffff80082a1fec>] do_sys_open+0x1a4/0x290
- =C2=A0=C2=A0=C2=A0 [<ffffff80082a215c>] SyS_openat+0x3c/0x50
- =C2=A0=C2=A0=C2=A0 [<ffffff80080839c0>] el0_svc_naked+0x34/0x38
- =C2=A0=C2=A0=C2=A0 [<ffffffffffffffff>] 0xffffffffffffffff
-unreferenced object 0xffffffc1d3bcf678 (size 72):
- =C2=A0 comm "mediaserver", pid 5156, jiffies 4294909577 (age 10.536s)
- =C2=A0 hex dump (first 32 bytes):
- =C2=A0=C2=A0=C2=A0 0b 02 00 00 e2 01 00 00 07 00 00 00 53 04 04 00 .......=
-.....S...
- =C2=A0=C2=A0=C2=A0 00 00 00 00 f7 ff ff ff 01 00 00 00 00 00 00 00 .......=
-.........
- =C2=A0 backtrace:
- =C2=A0=C2=A0=C2=A0 [<ffffff8008275214>] kmem_cache_alloc+0x1ac/0x2c0
- =C2=A0=C2=A0=C2=A0 [<ffffff80084dcf90>] avc_alloc_node+0x28/0x240
- =C2=A0=C2=A0=C2=A0 [<ffffff80084dd404>] avc_compute_av+0xa4/0x1d0
- =C2=A0=C2=A0=C2=A0 [<ffffff80084de084>] avc_has_perm_noaudit+0xe4/0x120
- =C2=A0=C2=A0=C2=A0 [<ffffff80084e1264>] selinux_inode_permission+0xc4/0x1c=
-8
- =C2=A0=C2=A0=C2=A0 [<ffffff80084d8fe8>] security_inode_permission+0x60/0x8=
-8
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b2cf4>] __inode_permission2+0x54/0x120
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b2e30>] inode_permission2+0x38/0x80
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b4b58>] may_open+0x70/0x128
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b6fd4>] do_last+0x234/0xee8
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b7d30>] path_openat+0xa8/0x310
- =C2=A0=C2=A0=C2=A0 [<ffffff80082b9390>] do_filp_open+0x88/0x108
- =C2=A0=C2=A0=C2=A0 [<ffffff80082a1fec>] do_sys_open+0x1a4/0x290
- =C2=A0=C2=A0=C2=A0 [<ffffff80082a21f4>] compat_SyS_openat+0x3c/0x50
- =C2=A0=C2=A0=C2=A0 [<ffffff80080839c0>] el0_svc_naked+0x34/0x38
- =C2=A0=C2=A0=C2=A0 [<ffffffffffffffff>] 0xffffffffffffffff
-t186_int:/ # echo dump=3D0xffffffc1d3bcf678 > /sys/kernel/debug/kmemleak
-kmemleak: Unknown object at 0xffffffc1d3bcf678
-
-Thanks,
+VGhhbmtzIGZvciB0aGUgZmVlZGJhY2ssIFJvYmluLCBhbmQsIERtaXRyeS4KSSBtb3N0bHkgYWdy
+ZWUgd2l0aCBhbGwgeW91ciBjb21tZW50cywgcGxzIHNlZSBteSByZXNwb25zZXMgaW5saW5lLgpJ
+J2xsIG1ha2UgdGhlc2UgZml4ZXMgaW4gVjIuCgpPbiAxLzE3LzE5IDg6NTAgQU0sIFJvYmluIE11
+cnBoeSB3cm90ZToKPiBPbiAxNy8wMS8yMDE5IDE1OjEzLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
+Cj4+IDE2LjAxLjIwMTkgMjM6NTAsIE5hdm5lZXQgS3VtYXIg0L/QuNGI0LXRgjoKPj4+ICogQWxs
+b2NhdGUgZG1hIGlvdmEgY29va2llIGZvciBhIGRvbWFpbiB3aGlsZSBhZGRpbmcgZG1hIGlvbW11
+Cj4+PiBkZXZpY2VzLgo+Pj4gKiBQZXJmb3JtIGEgc3RyaWN0ZXIgY2hlY2sgZm9yIGRvbWFpbiB0
+eXBlIHBhcmFtZXRlci4KPj4+Cj4+Cj4+IENvbW1pdCBtZXNzYWdlIHNob3VsZCB0ZWxsIHdoYXQg
+ZXhhY3RseSBpcyBnZXR0aW5nICJmaXhlZCIuIEFwcGFyZW50bHkgeW91J3JlIHRyeWluZyB0byBz
+dXBwb3J0IFQxMzIgQVJNNjQgaGVyZS4KCkknbGwgZml4IGl0LgoKPj4KPj4+IFNpZ25lZC1vZmYt
+Ynk6IE5hdm5lZXQgS3VtYXIgPG5hdm5lZXRrQG52aWRpYS5jb20+Cj4+PiAtLS0KPj4+IMKgIGRy
+aXZlcnMvaW9tbXUvdGVncmEtc21tdS5jIHwgNDMgKysrKysrKysrKysrKysrKysrKysrKysrKysr
+LS0tLS0tLS0tLS0tLS0tLQo+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDI3IGluc2VydGlvbnMoKyks
+IDE2IGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L3RlZ3Jh
+LXNtbXUuYyBiL2RyaXZlcnMvaW9tbXUvdGVncmEtc21tdS5jCj4+PiBpbmRleCA1NDNmN2M5Li5l
+ZTRkOGE4IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9pb21tdS90ZWdyYS1zbW11LmMKPj4+ICsr
+KyBiL2RyaXZlcnMvaW9tbXUvdGVncmEtc21tdS5jCj4+PiBAQCAtMTYsNiArMTYsNyBAQAo+Pj4g
+wqAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+Pj4gwqAgI2luY2x1ZGUgPGxp
+bnV4L3NsYWIuaD4KPj4+IMKgICNpbmNsdWRlIDxsaW51eC9kbWEtbWFwcGluZy5oPgo+Pj4gKyNp
+bmNsdWRlIDxsaW51eC9kbWEtaW9tbXUuaD4KPj4+IMKgIMKgICNpbmNsdWRlIDxzb2MvdGVncmEv
+YWhiLmg+Cj4+PiDCoCAjaW5jbHVkZSA8c29jL3RlZ3JhL21jLmg+Cj4+PiBAQCAtMjcxLDggKzI3
+MiwxMCBAQCBzdGF0aWMgYm9vbCB0ZWdyYV9zbW11X2NhcGFibGUoZW51bSBpb21tdV9jYXAgY2Fw
+KQo+Pj4gwqAgc3RhdGljIHN0cnVjdCBpb21tdV9kb21haW4gKnRlZ3JhX3NtbXVfZG9tYWluX2Fs
+bG9jKHVuc2lnbmVkIHR5cGUpCj4+PiDCoCB7Cj4+PiDCoMKgwqDCoMKgIHN0cnVjdCB0ZWdyYV9z
+bW11X2FzICphczsKPj4+ICvCoMKgwqAgaW50IHJldDsKPj4+IMKgIC3CoMKgwqAgaWYgKHR5cGUg
+IT0gSU9NTVVfRE9NQUlOX1VOTUFOQUdFRCkKPj4+ICvCoMKgwqAgaWYgKHR5cGUgIT0gSU9NTVVf
+RE9NQUlOX1VOTUFOQUdFRCAmJiB0eXBlICE9IElPTU1VX0RPTUFJTl9ETUEgJiYKPj4+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHR5cGUgIT0gSU9NTVVfRE9NQUlOX0lERU5USVRZKQo+Pj4gwqDC
+oMKgwqDCoMKgwqDCoMKgIHJldHVybiBOVUxMOwo+Pgo+PiBTaG91bGQgYmUgYmV0dGVyIHRvIHdy
+aXRlIHRoZXNlIGxpbmVzIGxpa2UgdGhpcyBmb3IgdGhlIHNha2Ugb2YgcmVhZGFiaWxpdHk6Cj4+
+Cj4+IMKgwqDCoMKgaWYgKHR5cGUgIT0gSU9NTVVfRE9NQUlOX1VOTUFOQUdFRCAmJgo+PiDCoMKg
+wqDCoMKgwqDCoCB0eXBlICE9IElPTU1VX0RPTUFJTl9ETUEgJiYKPj4gwqDCoMKgwqDCoMKgwqAg
+dHlwZSAhPSBJT01NVV9ET01BSU5fSURFTlRJVFkpCj4+IMKgwqDCoMKgwqDCoMKgIHJldHVybiBO
+VUxMOwo+IAo+IEZ1cnRoZXJtb3JlLCBBRkFJQ1MgdGhlcmUncyBubyBzcGVjaWFsIGhhbmRsaW5n
+IGJlaW5nIGFkZGVkIGZvciBpZGVudGl0eSBkb21haW5zIC0gZG9uJ3QgcHJldGVuZCB0byBzdXBw
+b3J0IHRoZW0gYnkgZ2l2aW5nIGJhY2sgYSByZWd1bGFyIHRyYW5zbGF0aW9uIGRvbWFpbiwgdGhh
+dCdzIGp1c3QgbWlzbGVhZGluZyBhbmQgYnJva2VuLgoKQWdyZWVkLgoKPiAKPj4KPj4KPj4+IMKg
+IMKgwqDCoMKgwqAgYXMgPSBremFsbG9jKHNpemVvZigqYXMpLCBHRlBfS0VSTkVMKTsKPj4+IEBA
+IC0yODEsMjYgKzI4NCwyMiBAQCBzdGF0aWMgc3RydWN0IGlvbW11X2RvbWFpbiAqdGVncmFfc21t
+dV9kb21haW5fYWxsb2ModW5zaWduZWQgdHlwZSkKPj4+IMKgIMKgwqDCoMKgwqAgYXMtPmF0dHIg
+PSBTTU1VX1BEX1JFQURBQkxFIHwgU01NVV9QRF9XUklUQUJMRSB8IFNNTVVfUERfTk9OU0VDVVJF
+Owo+Pj4gwqAgK8KgwqDCoCByZXQgPSAodHlwZSA9PSBJT01NVV9ET01BSU5fRE1BKSA/IGlvbW11
+X2dldF9kbWFfY29va2llKCZhcy0+ZG9tYWluKSA6Cj4+PiArwqDCoMKgwqDCoMKgwqAgLUVOT0RF
+VjsKPj4KPj4gVGhpcyBtYWtlcyB0byBmYWlsIGFsbG9jYXRpb24gb2YgZG9tYWluIHRoYXQgaGFz
+IHR5cGUgb3RoZXIgdGhhbiBJT01NVV9ET01BSU5fRE1BLgo+Pgo+PiBTaG91bGQgYmU6Cj4+Cj4+
+IMKgwqDCoMKgaWYgKHR5cGUgPT0gSU9NTVVfRE9NQUlOX0RNQSkgewo+PiDCoMKgwqDCoMKgwqDC
+oCBlcnIgPSBpb21tdV9nZXRfZG1hX2Nvb2tpZSgmYXMtPmRvbWFpbik7Cj4+IMKgwqDCoMKgwqDC
+oMKgIGlmIChlcnIpCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZ290byBmcmVlX2FzOwo+PiDC
+oMKgwqDCoH0KPj4KCkFncmVlZC4KCj4+Cj4+PiArwqDCoMKgIGlmIChyZXQpCj4+PiArwqDCoMKg
+wqDCoMKgwqAgZ290byBmcmVlX2FzOwo+Pj4gKwo+Pj4gwqDCoMKgwqDCoCBhcy0+cGQgPSBhbGxv
+Y19wYWdlKEdGUF9LRVJORUwgfCBfX0dGUF9ETUEgfCBfX0dGUF9aRVJPKTsKPj4+IC3CoMKgwqAg
+aWYgKCFhcy0+cGQpIHsKPj4+IC3CoMKgwqDCoMKgwqDCoCBrZnJlZShhcyk7Cj4+PiAtwqDCoMKg
+wqDCoMKgwqAgcmV0dXJuIE5VTEw7Cj4+PiAtwqDCoMKgIH0KPj4+ICvCoMKgwqAgaWYgKCFhcy0+
+cGQpCj4+PiArwqDCoMKgwqDCoMKgwqAgZ290byBwdXRfZG1hX2Nvb2tpZTsKPj4+IMKgIMKgwqDC
+oMKgwqAgYXMtPmNvdW50ID0ga2NhbGxvYyhTTU1VX05VTV9QREUsIHNpemVvZih1MzIpLCBHRlBf
+S0VSTkVMKTsKPj4+IC3CoMKgwqAgaWYgKCFhcy0+Y291bnQpIHsKPj4+IC3CoMKgwqDCoMKgwqDC
+oCBfX2ZyZWVfcGFnZShhcy0+cGQpOwo+Pj4gLcKgwqDCoMKgwqDCoMKgIGtmcmVlKGFzKTsKPj4+
+IC3CoMKgwqDCoMKgwqDCoCByZXR1cm4gTlVMTDsKPj4+IC3CoMKgwqAgfQo+Pj4gK8KgwqDCoCBp
+ZiAoIWFzLT5jb3VudCkKPj4+ICvCoMKgwqDCoMKgwqDCoCBnb3RvIGZyZWVfcGRfcmFuZ2U7Cj4+
+PiDCoCDCoMKgwqDCoMKgIGFzLT5wdHMgPSBrY2FsbG9jKFNNTVVfTlVNX1BERSwgc2l6ZW9mKCph
+cy0+cHRzKSwgR0ZQX0tFUk5FTCk7Cj4+PiAtwqDCoMKgIGlmICghYXMtPnB0cykgewo+Pj4gLcKg
+wqDCoMKgwqDCoMKgIGtmcmVlKGFzLT5jb3VudCk7Cj4+PiAtwqDCoMKgwqDCoMKgwqAgX19mcmVl
+X3BhZ2UoYXMtPnBkKTsKPj4+IC3CoMKgwqDCoMKgwqDCoCBrZnJlZShhcyk7Cj4+PiAtwqDCoMKg
+wqDCoMKgwqAgcmV0dXJuIE5VTEw7Cj4+PiAtwqDCoMKgIH0KPj4+ICvCoMKgwqAgaWYgKCFhcy0+
+cHRzKQo+Pj4gK8KgwqDCoMKgwqDCoMKgIGdvdG8gZnJlZV9wdHM7Cj4+PiDCoCDCoMKgwqDCoMKg
+IC8qIHNldHVwIGFwZXJ0dXJlICovCj4+PiDCoMKgwqDCoMKgIGFzLT5kb21haW4uZ2VvbWV0cnku
+YXBlcnR1cmVfc3RhcnQgPSAwOwo+Pj4gQEAgLTMwOCw2ICszMDcsMTggQEAgc3RhdGljIHN0cnVj
+dCBpb21tdV9kb21haW4gKnRlZ3JhX3NtbXVfZG9tYWluX2FsbG9jKHVuc2lnbmVkIHR5cGUpCj4+
+PiDCoMKgwqDCoMKgIGFzLT5kb21haW4uZ2VvbWV0cnkuZm9yY2VfYXBlcnR1cmUgPSB0cnVlOwo+
+Pj4gwqAgwqDCoMKgwqDCoCByZXR1cm4gJmFzLT5kb21haW47Cj4+PiArCj4+PiArZnJlZV9wdHM6
+Cj4+PiArwqDCoMKgIGtmcmVlKGFzLT5wdHMpOwo+Pj4gK2ZyZWVfcGRfcmFuZ2U6Cj4+PiArwqDC
+oMKgIF9fZnJlZV9wYWdlKGFzLT5wZCk7Cj4+PiArcHV0X2RtYV9jb29raWU6Cj4+PiArwqDCoMKg
+IGlmICh0eXBlID09IElPTU1VX0RPTUFJTl9ETUEpCj4gCj4gRldJVyB5b3UgZG9uJ3Qgc3RyaWN0
+bHkgbmVlZCB0aGF0IGNoZWNrIC0gc2luY2UgZG9tYWluLT5pb3ZhX2Nvb2tpZSB3b24ndCBiZSBz
+ZXQgZm9yIG90aGVyIGRvbWFpbiB0eXBlcyBhbnl3YXksIGlvbW11X3B1dF9kbWFfY29va2llKCkg
+d2lsbCBzaW1wbHkgaWdub3JlIHRoZW0uCj4gCgpJJ2xsIHN0aWxsIGtlZXAgdGhhdCBjaGVjayBh
+bmQgbm90IHJlbHkgc29sZWx5IG9uIHRoZSBwdXRfZG1hX2Nvb2tpZSBBUEkgdG8gaGFuZGxlIHRo
+aXMgY2FzZS4KVGhpcyB3aWxsIGtlZXAgdGhlIGNvZGUgcm9idXN0IGV2ZW4gaWYgdGhlIHB1dF9k
+bWFfY29va2llIEFQSSBjaGFuZ2VzIGluIGZ1dHVyZSAoZm9yIHdoYXRldmVyIHJlYXNvbikuCkl0
+IGFsc28gbG9va3MgbGlrZSB0aGUgY2Fub25pY2FsIHVzYWdlIGluIG90aGVyIGRyaXZlcnMuCgo+
+Pj4gK8KgwqDCoMKgwqDCoMKgIGlvbW11X3B1dF9kbWFfY29va2llKCZhcy0+ZG9tYWluKTsKPj4+
+ICtmcmVlX2FzOgo+Pj4gK8KgwqDCoCBrZnJlZShhcyk7Cj4+PiArCj4+PiArwqDCoMKgIHJldHVy
+biBOVUxMOwo+Pj4gwqAgfQo+Pj4gwqAgwqAgc3RhdGljIHZvaWQgdGVncmFfc21tdV9kb21haW5f
+ZnJlZShzdHJ1Y3QgaW9tbXVfZG9tYWluICpkb21haW4pCj4gCj4gSG93IGFib3V0IG5vdCBsZWFr
+aW5nIHRoZSBjb29raWUgd2hlbiB5b3UgZnJlZSBhIERNQSBvcHMgZG9tYWluPwo+IAoKQWdyZWVk
+LgoKPiBSb2Jpbi4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KaW9tbXUgbWFpbGluZyBsaXN0CmlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0
+dHBzOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
