@@ -1,137 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 4/5] drm/tegra: Restrict IOVA space to DMA mask
-Date: Thu, 24 Jan 2019 19:08:40 +0100
-Message-ID: <20190124180840.GA20519@ulmo>
-References: <20190123093951.24908-1-thierry.reding@gmail.com>
- <20190123093951.24908-5-thierry.reding@gmail.com>
- <314d2386-3d1b-dda0-3d5e-b277d8c09045@gmail.com>
+From: navneet kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/5] iommu/tegra-smmu: Use non-secure register for flushing
+Date: Thu, 24 Jan 2019 10:29:16 -0800
+Message-ID: <ece55c12-2a6f-e12f-597c-ef15001e66a3@nvidia.com>
+References: <1547671814-30088-1-git-send-email-navneetk@nvidia.com>
+	<1547671814-30088-2-git-send-email-navneetk@nvidia.com>
+	<340ed36a-297f-f1e6-b863-651454cf39d8@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0627206927=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <314d2386-3d1b-dda0-3d5e-b277d8c09045@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <340ed36a-297f-f1e6-b863-651454cf39d8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0627206927==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-Content-Disposition: inline
-
-
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 23, 2019 at 04:41:44PM +0300, Dmitry Osipenko wrote:
-> 23.01.2019 12:39, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > On Tegra186 and later, the ARM SMMU provides an input address space that
-> > is 48 bits wide. However, memory clients can only address up to 40 bits.
-> > If the geometry is used as-is, allocations of IOVA space can end up in a
-> > region that cannot be addressed by the memory clients.
-> >=20
-> > To fix this, restrict the IOVA space to the DMA mask of the host1x
-> > device. Note that, technically, the IOVA space needs to be restricted to
-> > the intersection of the DMA masks for all clients that are attached to
-> > the IOMMU domain. In practice using the DMA mask of the host1x device is
-> > sufficient because all host1x clients share the same DMA mask.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/gpu/drm/tegra/drm.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> > index 271c7a5fc954..0c5f1e6a0446 100644
-> > --- a/drivers/gpu/drm/tegra/drm.c
-> > +++ b/drivers/gpu/drm/tegra/drm.c
-> > @@ -136,11 +136,12 @@ static int tegra_drm_load(struct drm_device *drm,=
- unsigned long flags)
-> > =20
-> >  	if (tegra->domain) {
-> >  		u64 carveout_start, carveout_end, gem_start, gem_end;
-> > +		u64 dma_mask =3D dma_get_mask(&device->dev);
-> >  		dma_addr_t start, end;
-> >  		unsigned long order;
-> > =20
-> > -		start =3D tegra->domain->geometry.aperture_start;
-> > -		end =3D tegra->domain->geometry.aperture_end;
-> > +		start =3D tegra->domain->geometry.aperture_start & dma_mask;
-> > +		end =3D tegra->domain->geometry.aperture_end & dma_mask;
-> > =20
-> >  		gem_start =3D start;
-> >  		gem_end =3D end - CARVEOUT_SZ;
-> >=20
->=20
-> Wow, so IOVA could address >32bits on later Tegra's. AFAIK, currently
-> there is no support for a proper programming of the 64bit addresses in
-> the drivers code, hence.. won't it make sense to force IOVA mask to
-> 32bit for now and hope that the second halve of address registers
-> happen to be 0x00000000 in HW?
-
-Actually we do have proper programming for 40 bit addresses in the
-display driver code for Tegra186 and later, see:
-
-	drivers/gpu/drm/tegra/hub.c:
-		tegra_shared_plane_atomic_update()
-
-Code to support that on Tegra210 and earlier should be almost identical.
-I'll try to add that as well. It's not actually necessary there because
-with an SMMU enabled on those chips, the address space will be 32 bits.
-I suspect that there could be an issue with running without an SMMU on
-Tegra124 (with > 2 GiB of memory and LPAE enabled) or Tegra210. I'll see
-if I can produce a case where this actually fails and then add the code
-for proper programming there.
-
-In the meantime, I've sent out a v2 of the series that takes care of
-properly programming the various bits in host1x required for full 40-bit
-addresses on Tegra186 and later.
-
-Thierry
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxJ/yUACgkQ3SOs138+
-s6GZ6xAAwWSvhXWLEg9rGZPNbhUjSVlI+WEEWyTQxY3vByueJ98i1U+ZyiJmglh/
-nSwFqnkZqmyfrEp3topid7Zvi3zWdI4iP2FKBtdH5jHTplcb/eRH4fQOwxTarmNG
-wzFDzOg/K4fXRIOFOS9IK9DlL4K8y1Nd00s14rAC0MigTXpXnlw/di0VU1mRHJnk
-l1UmJU6KqYv/dXJw9kPjog4CUBp+NG0T/baf7kD/XnV/Hsu7NokZQagbOCbR/6gy
-As+BXkfzjvLHek0HLY1KQfTPKA8l9YeX5kWA+Zh9T/71dGc2mZHDFd7a6AANoSpB
-7GFTZ4ZG9iTjHiP9d7ZKqB/jE1cgNhEdsgt86e4JjHDXqV9bjKf6efitExGX1GHB
-etgcgZEWtfuSx1UPoPUacCKVl2t3vOtOFcZwzELeqJWUFXSheXFypgPEmIJkBVkP
-Uz35b6UBrZObuXJQ1hSHlGyIGTO+Gn49ouDTCe7Wucal+CFRRMGhs4NdUARaUl9J
-BKTVG4lphspkIJBfLcg3Qfsnl129V2i2sL0e+/+aCO9IumLm5H57mt35TpHaQLes
-zct+pSO+6cdP4rjVxUSRE1pWiaCSvPqjQnwHi7ry+rCukv6mbnqJzkWM8i2OLWKB
-rEoNvBJy4heuaZI77bLjbCzvrLIGt3l3mlCU5KAhVGBNhPksJvU=
-=6XHe
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
-
---===============0627206927==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0627206927==--
+T24gMS8xNy8xOSA3OjI1IEFNLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4gMTYuMDEuMjAxOSAy
+Mzo1MCwgTmF2bmVldCBLdW1hciDQv9C40YjQtdGCOgo+PiBVc2UgUFRCX0FTSUQgaW5zdGVhZCBv
+ZiBTTU1VX0NPTkZJRyB0byBmbHVzaCBzbW11Lgo+PiBQVEJfQVNJRCBjYW4gYmUgYWNjZXNzZWQg
+ZnJvbSBub24tc2VjdXJlIG1vZGUsIFNNTVVfQ09ORklHIGNhbm5vdCBiZS4KPj4gVXNpbmcgU01N
+VV9DT05GSUcgY291bGQgcG9zZSBhIHByb2JsZW0gd2hlbiBrZXJuZWwgZG9lc24ndCBoYXZlIHNl
+Y3VyZQo+PiBtb2RlIGFjY2VzcyBlbmFibGVkIGZyb20gYm9vdC4KPj4KPj4gU2lnbmVkLW9mZi1i
+eTogTmF2bmVldCBLdW1hciA8bmF2bmVldGtAbnZpZGlhLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJz
+L2lvbW11L3RlZ3JhLXNtbXUuYyB8IDIgKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
+bigrKSwgMSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS90ZWdy
+YS1zbW11LmMgYi9kcml2ZXJzL2lvbW11L3RlZ3JhLXNtbXUuYwo+PiBpbmRleCBlZTRkOGE4Li5m
+YTE3NWQ5IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2lvbW11L3RlZ3JhLXNtbXUuYwo+PiArKysg
+Yi9kcml2ZXJzL2lvbW11L3RlZ3JhLXNtbXUuYwo+PiBAQCAtMjM1LDcgKzIzNSw3IEBAIHN0YXRp
+YyBpbmxpbmUgdm9pZCBzbW11X2ZsdXNoX3RsYl9ncm91cChzdHJ1Y3QgdGVncmFfc21tdSAqc21t
+dSwKPj4gIAo+PiAgc3RhdGljIGlubGluZSB2b2lkIHNtbXVfZmx1c2goc3RydWN0IHRlZ3JhX3Nt
+bXUgKnNtbXUpCj4+ICB7Cj4+IC0Jc21tdV9yZWFkbChzbW11LCBTTU1VX0NPTkZJRyk7Cj4+ICsJ
+c21tdV9yZWFkbChzbW11LCBTTU1VX1BUQl9BU0lEKTsKPj4gIH0KPj4gIAo+PiAgc3RhdGljIGlu
+dCB0ZWdyYV9zbW11X2FsbG9jX2FzaWQoc3RydWN0IHRlZ3JhX3NtbXUgKnNtbXUsIHVuc2lnbmVk
+IGludCAqaWRwKQo+Pgo+IAo+IERyaXZlciB3cml0ZXMgdG8gU01NVV9DT05GSUcgZHVyaW5nIG9m
+IHRoZSBwcm9iaW5nLiBMb29rcyBsaWtlIGl0J3MgYmV0dGVyIHRvIGRyb3AgdGhpcyBwYXRjaCBm
+b3Igbm93IGFuZCBtYWtlIGl0IHBhcnQgb2YgYSBjb21wbGV0ZSBzb2x1dGlvbiB0aGF0IHdpbGwg
+YWRkIHByb3BlciBzdXBwb3J0IGZvciBhIHN0cmljdGVyIGluc2VjdXJlLW1vZGUgcGxhdGZvcm1z
+Lgo+IApUaGFua3MgZm9yIHRoZSBjb21tZW50IERtaXRyeS4gT24gc2VjdXJlIHBsYXRmb3Jtcywg
+d3JpdGluZyB0byBTTU1VX0NPTkZJRyB3aWxsIGJlIGEgbm8tb3AgYW5kCndpbGwgcG9zZSBubyBo
+YXJtLiBIYXZpbmcgdGhpcyBwYXRjaCBpcyBpbXBvcnRhbnQgYmVjYXVzZSBpdCBmaXhlcyB0aGUg
+Zmx1c2hpbmcgYmVoYXZpb3Igb24Kc3VjaCBwbGF0Zm9ybXMsIHdoaWNoIGlzIGNyaXRpY2FsLgoK
+SSBwcm9wb3NlIHRvIGtlZXAgdGhpcyBwYXRjaCBhcyBpcywgaG93ZXZlciwgaSBjYW4gYWRkIG1v
+cmUgZXhwbGFuYXRpb24gdG8gdGhlIGNvbW1pdCBtZXNzYWdlLApzdGF0aW5nIHRoZSBjYXNlIG9m
+IHByb2JlIGFuZCBob3cgaXQgd2lsbCBub3QgaGF2ZSBhbnkgaWxsIGVmZmVjdHMuIFBscyBBQ0sv
+TkFDSywgYW5kIGkgc2hhbGwgcG9zdAphIFYyLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KaW9tbXUgbWFpbGluZyBsaXN0CmlvbW11QGxpc3RzLmxpbnV4
+LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2lvbW11
