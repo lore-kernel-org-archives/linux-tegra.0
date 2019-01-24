@@ -1,48 +1,61 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-Date: Thu, 24 Jan 2019 10:46:47 +0100
-Message-ID: <20190124094646.GR3271@phenom.ffwll.local>
-References: <20190116181018.GA27364@ravnborg.org>
- <20190117210334.13234-1-daniel.vetter@ffwll.ch>
- <20190123170015.GA23138@ravnborg.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+Date: Thu, 24 Jan 2019 10:30:42 +0000
+Message-ID: <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-2-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190123170015.GA23138@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel.vetter@intel.com>, linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org, nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.or
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190107032810.13522-2-josephl@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBKYW4gMjMsIDIwMTkgYXQgMDY6MDA6MTVQTSArMDEwMCwgU2FtIFJhdm5ib3JnIHdy
-b3RlOgo+IEhpIERhbmllbC4KPiAKPiBPbiBUaHUsIEphbiAxNywgMjAxOSBhdCAxMDowMzozNFBN
-ICswMTAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+ID4gSGF2aW5nIHRoZSBwcm9iZSBoZWxwZXIg
-c3R1ZmYgKHdoaWNoIHByZXR0eSBtdWNoIGV2ZXJ5b25lIG5lZWRzKSBpbgo+ID4gdGhlIGRybV9j
-cnRjX2hlbHBlci5oIGZpbGUgKHdoaWNoIGF0b21pYyBkcml2ZXJzIHNob3VsZCBuZXZlciBuZWVk
-KSBpcwo+ID4gY29uZnVzaW5nLiBTcGxpdCB0aGVtIG91dC4KPiA+IAo+ID4gVG8gbWFrZSBzdXJl
-IEkgYWN0dWFsbHkgYWNoaWV2ZWQgdGhlIGdvYWwgaGVyZSBJIHdlbnQgdGhyb3VnaCBhbGwKPiA+
-IGRyaXZlcnMuIEFuZCBpbmRlZWQsIGFsbCBhdG9taWMgZHJpdmVycyBhcmUgbm93IGZyZWUgb2YK
-PiA+IGRybV9jcnRjX2hlbHBlci5oIGluY2x1ZGVzLgo+IAo+IEhvdyBhcmUgdGhlIHBsYW5zIHRv
-IGdldCB0aGlzIHBhdGNoc2V0IG1lcmdlZD8KPiBUaGVyZSB3ZXJlIGRlcGVuZGVuY2llcyBvbiBv
-bmdpbmcgZHJtUC5oIHJlbW92YWwgaW4gaTkxNSBJSVJDPwo+IEkgZ3Vlc3MgbXkgIk1pbmltaXpl
-IGRybVAuaCBkZXBlbmRlbmNpZXMiIHBhdGNoLXNldCBhbHNvIGhhdmUgYSByb2xlIGluIHRoaXMu
-CgpXb3JraW5nIG9uIGl0LCBhIHB1bGwgcmVxdWVzdCBnb3QgbG9zdC4gSSBvcmlnaW5hbGx5IHdh
-bnRlZCB0byBnZXQgdGhpcwphbGwgcmVzb2x2ZWQgdGhpcyB3ZWVrLCBwcm9iYWJseSBnb2luZyB0
-byBiZSBuZXh0IHdlZWsgbm93IDotKAotRGFuaWVsCgoKPiBUaGlzIGRvZXMgbm90IGhvbGQgdXAg
-YW55IHdvcmsgb2YgbWluZSwgbWFpbmx5IHdhbnRlZCB0byBtYWtlCj4gc3VyZSB0aGlzIHdhcyBu
-b3QgbG9zdCBiZXR3ZWVuIGFsbCB0aGUgb3RoZXIgcGF0Y2hlcy4KPiAKPiAJU2FtCgotLSAKRGFu
-aWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Js
-b2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+
+On 07/01/2019 03:28, Joseph Lo wrote:
+> The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+> from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+> or watchdog interrupts.
+> 
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  .../bindings/timer/nvidia,tegra210-timer.txt  | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+> new file mode 100644
+> index 000000000000..ba511220a669
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+> @@ -0,0 +1,25 @@
+> +NVIDIA Tegra210 timer
+> +
+> +The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
+> +or watchdog interrupts.
+> +
+> +Required properties:
+> +- compatible : "nvidia,tegra210-timer".
+> +- reg : Specifies base physical address and size of the registers.
+> +- interrupts : A list of 4 interrupts; one per each of TMR10 through TMR13.
+
+Why do we only add the interrupts for TMR10 - TMR13? What about the others?
+
+Cheers
+Jon
+
+-- 
+nvpublic
