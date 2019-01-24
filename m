@@ -1,65 +1,71 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/5] iommu/tegra-smmu: Use non-secure register for flushing
-Date: Fri, 25 Jan 2019 00:27:27 +0300
-Message-ID: <5106e93b-5cd8-89c4-0086-a99d37c7ff95@gmail.com>
-References: <1547671814-30088-1-git-send-email-navneetk@nvidia.com>
-	<1547671814-30088-2-git-send-email-navneetk@nvidia.com>
-	<340ed36a-297f-f1e6-b863-651454cf39d8@gmail.com>
-	<ece55c12-2a6f-e12f-597c-ef15001e66a3@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V2 1/4] i2c: tegra: Sort all the include headers
+ alphabetically
+Date: Fri, 25 Jan 2019 00:31:34 +0300
+Message-ID: <e896f4af-1c20-3188-f1f8-253ce4893a50@gmail.com>
+References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <ece55c12-2a6f-e12f-597c-ef15001e66a3-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: navneet kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MjQuMDEuMjAxOSAyMToyOSwgbmF2bmVldCBrdW1hciDQv9C40YjQtdGCOgo+IE9uIDEvMTcvMTkg
-NzoyNSBBTSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+PiAxNi4wMS4yMDE5IDIzOjUwLCBOYXZu
-ZWV0IEt1bWFyINC/0LjRiNC10YI6Cj4+PiBVc2UgUFRCX0FTSUQgaW5zdGVhZCBvZiBTTU1VX0NP
-TkZJRyB0byBmbHVzaCBzbW11Lgo+Pj4gUFRCX0FTSUQgY2FuIGJlIGFjY2Vzc2VkIGZyb20gbm9u
-LXNlY3VyZSBtb2RlLCBTTU1VX0NPTkZJRyBjYW5ub3QgYmUuCj4+PiBVc2luZyBTTU1VX0NPTkZJ
-RyBjb3VsZCBwb3NlIGEgcHJvYmxlbSB3aGVuIGtlcm5lbCBkb2Vzbid0IGhhdmUgc2VjdXJlCj4+
-PiBtb2RlIGFjY2VzcyBlbmFibGVkIGZyb20gYm9vdC4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBO
-YXZuZWV0IEt1bWFyIDxuYXZuZWV0a0BudmlkaWEuY29tPgo+Pj4gLS0tCj4+PiAgZHJpdmVycy9p
-b21tdS90ZWdyYS1zbW11LmMgfCAyICstCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspLCAxIGRlbGV0aW9uKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW9tbXUvdGVn
-cmEtc21tdS5jIGIvZHJpdmVycy9pb21tdS90ZWdyYS1zbW11LmMKPj4+IGluZGV4IGVlNGQ4YTgu
-LmZhMTc1ZDkgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2lvbW11L3RlZ3JhLXNtbXUuYwo+Pj4g
-KysrIGIvZHJpdmVycy9pb21tdS90ZWdyYS1zbW11LmMKPj4+IEBAIC0yMzUsNyArMjM1LDcgQEAg
-c3RhdGljIGlubGluZSB2b2lkIHNtbXVfZmx1c2hfdGxiX2dyb3VwKHN0cnVjdCB0ZWdyYV9zbW11
-ICpzbW11LAo+Pj4gIAo+Pj4gIHN0YXRpYyBpbmxpbmUgdm9pZCBzbW11X2ZsdXNoKHN0cnVjdCB0
-ZWdyYV9zbW11ICpzbW11KQo+Pj4gIHsKPj4+IC0Jc21tdV9yZWFkbChzbW11LCBTTU1VX0NPTkZJ
-Ryk7Cj4+PiArCXNtbXVfcmVhZGwoc21tdSwgU01NVV9QVEJfQVNJRCk7Cj4+PiAgfQo+Pj4gIAo+
-Pj4gIHN0YXRpYyBpbnQgdGVncmFfc21tdV9hbGxvY19hc2lkKHN0cnVjdCB0ZWdyYV9zbW11ICpz
-bW11LCB1bnNpZ25lZCBpbnQgKmlkcCkKPj4+Cj4+Cj4+IERyaXZlciB3cml0ZXMgdG8gU01NVV9D
-T05GSUcgZHVyaW5nIG9mIHRoZSBwcm9iaW5nLiBMb29rcyBsaWtlIGl0J3MgYmV0dGVyIHRvIGRy
-b3AgdGhpcyBwYXRjaCBmb3Igbm93IGFuZCBtYWtlIGl0IHBhcnQgb2YgYSBjb21wbGV0ZSBzb2x1
-dGlvbiB0aGF0IHdpbGwgYWRkIHByb3BlciBzdXBwb3J0IGZvciBhIHN0cmljdGVyIGluc2VjdXJl
-LW1vZGUgcGxhdGZvcm1zLgo+Pgo+IFRoYW5rcyBmb3IgdGhlIGNvbW1lbnQgRG1pdHJ5LiBPbiBz
-ZWN1cmUgcGxhdGZvcm1zLCB3cml0aW5nIHRvIFNNTVVfQ09ORklHIHdpbGwgYmUgYSBuby1vcCBh
-bmQKPiB3aWxsIHBvc2Ugbm8gaGFybS4gSGF2aW5nIHRoaXMgcGF0Y2ggaXMgaW1wb3J0YW50IGJl
-Y2F1c2UgaXQgZml4ZXMgdGhlIGZsdXNoaW5nIGJlaGF2aW9yIG9uCj4gc3VjaCBwbGF0Zm9ybXMs
-IHdoaWNoIGlzIGNyaXRpY2FsLgo+IAo+IEkgcHJvcG9zZSB0byBrZWVwIHRoaXMgcGF0Y2ggYXMg
-aXMsIGhvd2V2ZXIsIGkgY2FuIGFkZCBtb3JlIGV4cGxhbmF0aW9uIHRvIHRoZSBjb21taXQgbWVz
-c2FnZSwKPiBzdGF0aW5nIHRoZSBjYXNlIG9mIHByb2JlIGFuZCBob3cgaXQgd2lsbCBub3QgaGF2
-ZSBhbnkgaWxsIGVmZmVjdHMuIFBscyBBQ0svTkFDSywgYW5kIGkgc2hhbGwgcG9zdAo+IGEgVjIu
-Cj4gCgpOb3RoaW5nIGJyZWFrcyB3aXRoIHRoaXMgY2hhbmdlIGF0IGxlYXN0IGZvciBUMzAuIFBs
-ZWFzZSBleHRlbmQgdGhlIGNvbW1pdCBtZXNzYWdlIGFuZCBhZGQgYSBjbGFyaWZ5aW5nIGNvbW1l
-bnQgdG8gdGhlIGNvZGUsIHRoYW5rcy4KCldpdGggdGhlIGNsYXJpZnlpbmcgbWVzc2FnZSBiZWlu
-ZyBhZGRyZXNzZWQ6CgpSZXZpZXdlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwu
-Y29tPgpUZXN0ZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KaW9tbXUgbWFpbGluZyBs
-aXN0CmlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8vbGlzdHMubGludXhm
-b3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
+24.01.2019 23:51, Sowjanya Komatineni пишет:
+> This patch sorts all the include headers alphabetically for the
+> I2C tegra driver
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V2] : Added this in V2 to sort the headers in tegra I2C
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index e417ebf7628c..ef854be4c837 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -6,24 +6,23 @@
+>   * Author: Colin Cross <ccross@android.com>
+>   */
+>  
+> -#include <linux/kernel.h>
+> -#include <linux/init.h>
+> -#include <linux/platform_device.h>
+> +#include <asm/unaligned.h>
+
+What about to clean up the includes as well? Seems <asm/unaligned.h> is not needed by the code.
+
+>  #include <linux/clk.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+> -#include <linux/io.h>
+> +#include <linux/init.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/delay.h>
+> -#include <linux/slab.h>
+> -#include <linux/of_device.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/kernel.h>
+>  #include <linux/module.h>
+> -#include <linux/reset.h>
+> +#include <linux/of_device.h>
+>  #include <linux/pinctrl/consumer.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> -#include <linux/iopoll.h>
+> -
+> -#include <asm/unaligned.h>
+> +#include <linux/reset.h>
+> +#include <linux/slab.h>
+>  
+>  #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+>  #define BYTES_PER_FIFO_WORD 4
+> 
