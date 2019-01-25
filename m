@@ -1,117 +1,38 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 4/5] drm/tegra: Restrict IOVA space to DMA mask
-Date: Thu, 24 Jan 2019 16:51:27 +0300
-Message-ID: <b150f205-3a6c-923d-ff25-c62c64337472@gmail.com>
-References: <20190123093951.24908-1-thierry.reding@gmail.com>
- <20190123093951.24908-5-thierry.reding@gmail.com>
- <314d2386-3d1b-dda0-3d5e-b277d8c09045@gmail.com>
- <20190123140406.GA16034@ulmo>
- <f395269e-22be-ef2c-1189-b7b28f42f7d8@gmail.com>
- <c6eed145-35c3-76fe-fe7d-8069686207d7@gmail.com>
- <0dcdb45e-5832-80fb-c842-4a32bc3469e3@kapsi.fi>
- <9e8f02fe-409a-c485-ac5b-a62574ab216e@gmail.com>
- <c61821fe-7504-f499-2b60-e182614cc4cb@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] reset: Don't WARN if trying to get a used reset control
+Date: Fri, 25 Jan 2019 11:15:54 +0100
+Message-ID: <20190125101554.5947-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <c61821fe-7504-f499-2b60-e182614cc4cb@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MjQuMDEuMjAxOSAxNjoyNywgTWlra28gUGVydHR1bmVuINC/0LjRiNC10YI6Cj4gT24gMjQuMS4y
-MDE5IDE1LjE1LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+IDI0LjAxLjIwMTkgMTM6MjQsIE1p
-a2tvIFBlcnR0dW5lbiDQv9C40YjQtdGCOgo+Pj4gT24gMjMuMS4yMDE5IDIxLjQyLCBEbWl0cnkg
-T3NpcGVua28gd3JvdGU6Cj4+Pj4gMjMuMDEuMjAxOSAxODo1NSwgRG1pdHJ5IE9zaXBlbmtvINC/
-0LjRiNC10YI6Cj4+Pj4+IDIzLjAxLjIwMTkgMTc6MDQsIFRoaWVycnkgUmVkaW5nINC/0LjRiNC1
-0YI6Cj4+Pj4+PiBPbiBXZWQsIEphbiAyMywgMjAxOSBhdCAwNDo0MTo0NFBNICswMzAwLCBEbWl0
-cnkgT3NpcGVua28gd3JvdGU6Cj4+Pj4+Pj4gMjMuMDEuMjAxOSAxMjozOSwgVGhpZXJyeSBSZWRp
-bmcg0L/QuNGI0LXRgjoKPj4+Pj4+Pj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
-ZGlhLmNvbT4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gT24gVGVncmExODYgYW5kIGxhdGVyLCB0aGUgQVJN
-IFNNTVUgcHJvdmlkZXMgYW4gaW5wdXQgYWRkcmVzcyBzcGFjZSB0aGF0Cj4+Pj4+Pj4+IGlzIDQ4
-IGJpdHMgd2lkZS4gSG93ZXZlciwgbWVtb3J5IGNsaWVudHMgY2FuIG9ubHkgYWRkcmVzcyB1cCB0
-byA0MCBiaXRzLgo+Pj4+Pj4+PiBJZiB0aGUgZ2VvbWV0cnkgaXMgdXNlZCBhcy1pcywgYWxsb2Nh
-dGlvbnMgb2YgSU9WQSBzcGFjZSBjYW4gZW5kIHVwIGluIGEKPj4+Pj4+Pj4gcmVnaW9uIHRoYXQg
-Y2Fubm90IGJlIGFkZHJlc3NlZCBieSB0aGUgbWVtb3J5IGNsaWVudHMuCj4+Pj4+Pj4+Cj4+Pj4+
-Pj4+IFRvIGZpeCB0aGlzLCByZXN0cmljdCB0aGUgSU9WQSBzcGFjZSB0byB0aGUgRE1BIG1hc2sg
-b2YgdGhlIGhvc3QxeAo+Pj4+Pj4+PiBkZXZpY2UuIE5vdGUgdGhhdCwgdGVjaG5pY2FsbHksIHRo
-ZSBJT1ZBIHNwYWNlIG5lZWRzIHRvIGJlIHJlc3RyaWN0ZWQgdG8KPj4+Pj4+Pj4gdGhlIGludGVy
-c2VjdGlvbiBvZiB0aGUgRE1BIG1hc2tzIGZvciBhbGwgY2xpZW50cyB0aGF0IGFyZSBhdHRhY2hl
-ZCB0bwo+Pj4+Pj4+PiB0aGUgSU9NTVUgZG9tYWluLiBJbiBwcmFjdGljZSB1c2luZyB0aGUgRE1B
-IG1hc2sgb2YgdGhlIGhvc3QxeCBkZXZpY2UgaXMKPj4+Pj4+Pj4gc3VmZmljaWVudCBiZWNhdXNl
-IGFsbCBob3N0MXggY2xpZW50cyBzaGFyZSB0aGUgc2FtZSBETUEgbWFzay4KPj4+Pj4+Pj4KPj4+
-Pj4+Pj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4K
-Pj4+Pj4+Pj4gLS0tCj4+Pj4+Pj4+IMKgwqAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwg
-NSArKystLQo+Pj4+Pj4+PiDCoMKgIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPj4+Pj4+Pj4gaW5k
-ZXggMjcxYzdhNWZjOTU0Li4wYzVmMWU2YTA0NDYgMTAwNjQ0Cj4+Pj4+Pj4+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+Pj4+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZHJtLmMKPj4+Pj4+Pj4gQEAgLTEzNiwxMSArMTM2LDEyIEBAIHN0YXRpYyBpbnQgdGVncmFf
-ZHJtX2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWduZWQgbG9uZyBmbGFncykKPj4+
-Pj4+Pj4gwqDCoCDCoMKgwqDCoMKgIGlmICh0ZWdyYS0+ZG9tYWluKSB7Cj4+Pj4+Pj4+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIHU2NCBjYXJ2ZW91dF9zdGFydCwgY2FydmVvdXRfZW5kLCBnZW1fc3Rh
-cnQsIGdlbV9lbmQ7Cj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCB1NjQgZG1hX21hc2sgPSBkbWFf
-Z2V0X21hc2soJmRldmljZS0+ZGV2KTsKPj4+Pj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqAgZG1h
-X2FkZHJfdCBzdGFydCwgZW5kOwo+Pj4+Pj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25l
-ZCBsb25nIG9yZGVyOwo+Pj4+Pj4+PiDCoMKgIC3CoMKgwqDCoMKgwqDCoCBzdGFydCA9IHRlZ3Jh
-LT5kb21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX3N0YXJ0Owo+Pj4+Pj4+PiAtwqDCoMKgwqDCoMKg
-wqAgZW5kID0gdGVncmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kOwo+Pj4+Pj4+PiAr
-wqDCoMKgwqDCoMKgwqAgc3RhcnQgPSB0ZWdyYS0+ZG9tYWluLT5nZW9tZXRyeS5hcGVydHVyZV9z
-dGFydCAmIGRtYV9tYXNrOwo+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqAgZW5kID0gdGVncmEtPmRv
-bWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kICYgZG1hX21hc2s7Cj4+Pj4+Pj4+IMKgwqAgwqDC
-oMKgwqDCoMKgwqDCoMKgIGdlbV9zdGFydCA9IHN0YXJ0Owo+Pj4+Pj4+PiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBnZW1fZW5kID0gZW5kIC0gQ0FSVkVPVVRfU1o7Cj4+Pj4+Pj4+Cj4+Pj4+Pj4KPj4+
-Pj4+PiBXb3csIHNvIElPVkEgY291bGQgYWRkcmVzcyA+MzJiaXRzIG9uIGxhdGVyIFRlZ3JhJ3Mu
-IEFGQUlLLCBjdXJyZW50bHkKPj4+Pj4+PiB0aGVyZSBpcyBubyBzdXBwb3J0IGZvciBhIHByb3Bl
-ciBwcm9ncmFtbWluZyBvZiB0aGUgNjRiaXQgYWRkcmVzc2VzIGluCj4+Pj4+Pj4gdGhlIGRyaXZl
-cnMgY29kZSwgaGVuY2UuLiB3b24ndCBpdCBtYWtlIHNlbnNlIHRvIGZvcmNlIElPVkEgbWFzayB0
-bwo+Pj4+Pj4+IDMyYml0IGZvciBub3cgYW5kIGhvcGUgdGhhdCB0aGUgc2Vjb25kIGhhbHZlIG9m
-IGFkZHJlc3MgcmVnaXN0ZXJzCj4+Pj4+Pj4gaGFwcGVuIHRvIGJlIDB4MDAwMDAwMDAgaW4gSFc/
-Cj4+Pj4+Pgo+Pj4+Pj4gSSB0aGluayB0aGlzIHJlc3RyaWN0aW9uIG9ubHkgYXBwbGllcyB0byBk
-aXNwbGF5IGF0IHRoaXMgcG9pbnQuIEluCj4+Pj4+PiBwcmFjdGljZSB5b3UnZCBiZSBoYXJkIHB1
-dCB0byB0cmlnZ2VyIHRoYXQgY2FzZSBiZWNhdXNlIElPVkEgbWVtb3J5IGlzCj4+Pj4+PiBhbGxv
-Y2F0ZWQgZnJvbSB0aGUgYm90dG9tLCBzbyB5b3UnZCBhY3R1YWxseSBuZWVkIHRvIHVzZSB1cCB0
-byA0IEdpQiBvZgo+Pj4+Pj4gSU9WQSBzcGFjZSBiZWZvcmUgaGl0dGluZyB0aGF0Lgo+Pj4+Pj4K
-Pj4+Pj4+IFRoYXQgc2FpZCwgSSB2YWd1ZWx5IHJlbWVtYmVyIHR5cGluZyB1cCB0aGUgcGF0Y2gg
-dG8gc3VwcG9ydCB3cml0aW5nIHRoZQo+Pj4+Pj4gV0lOQlVGX1NUQVJUX0FERFJfSEkgcmVnaXN0
-ZXIgYW5kIGZyaWVuZHMsIGJ1dCBpdCBsb29rcyBhcyBpZiB0aGF0IHdhcwo+Pj4+Pj4gbmV2ZXIg
-bWVyZ2VkLgo+Pj4+Pj4KPj4+Pj4+IEknbGwgdHJ5IHRvIGRpZyBvdXQgdGhhdCBwYXRjaCAob3Ig
-cmV3cml0ZSBpdCwgc2hvdWxkbid0IGJlIHZlcnkKPj4+Pj4+IGRpZmZpY3VsdCkgYW5kIG1ha2Ug
-aXQgcGFydCBvZiB0aGlzIHNlcmllcy4gSSdkIHJhdGhlciBmaXggdGhhdCBpc3N1ZQo+Pj4+Pj4g
-dGhhbiBhcmJpdHJhcmlseSByZXN0cmljdCB0aGUgSU9WQSBzcGFjZSwgYmVjYXVzZSB0aGF0J3Mg
-bGlrZWx5IHRvIGNvbWUKPj4+Pj4+IGJhY2sgYW5kIGJpdGUgdXMgYXQgc29tZSBwb2ludC4KPj4+
-Pj4KPj4+Pj4gTG9va2luZyBhdCBmYWxjb24uYy4uIGl0IHdyaXRlcyAzMmJpdCBhZGRyZXNzIG9u
-bHkuIFNvbWV0aGluZyBuZWVkIHRvIGJlIGRvbmUgYWJvdXQgaXQgYXMgd2VsbCwgc2VlbXMgdGhl
-cmUgaXMgRkFMQ09OX0RNQVRSRk1PRkZTIHJlZ2lzdGVyIHRvIGZhY2lsaXRhdGUgPjMyYml0cyBh
-ZGRyZXNzaW5nLgo+Pj4+Cj4+Pj4gQWx0aG91Z2ggc2NyYXRjaCBhYm91dCBGQUxDT05fRE1BVFJG
-TU9GRlMsIGl0IHNob3VsZCBiZSBhYm91dCBzb21ldGhpbmcgZWxzZS4gTWlra28sIGNvdWxkIHlv
-dSBwbGVhc2UgY2xhcmlmeSB3aGV0aGVyIGZhbGNvbiBjb3VsZCBsb2FkIGZpcm13YXJlIG9ubHkg
-ZnJvbSBhIDMyYml0IEFTPwo+Pj4+Cj4+Pgo+Pj4gVGhlIERNQSBiYXNlIGFkZHJlc3MgaXMgc2V0
-IHVzaW5nIERNQVRSRkJBU0UsIHdoaWNoIHJlcXVpcmVzIDI1NkIgYWxpZ25tZW50LCBtZWFuaW5n
-IDQwIGJpdHMgYXJlIGF2YWlsYWJsZSBmb3IgdGhlIGFkZHJlc3MuIFRoZSBETUFUUkZGQk9GRlMg
-SSBiZWxpZXZlIGlzIHRoZW4gdXNlZCBhcyBhIDMyLWJpdCBvZmZzZXQgdG8gdGhhdCB2YWx1ZS4K
-Pj4KPj4gVFJNICh1cCB0byBUMTk2KSBzdWdnZXN0cyB0aGF0IERNQVRSRk1PRkZTIGlzIGEgMTZi
-aXQgb2Zmc2V0LiBJcyBpdCBhIGtpbmQgb2YgVFJNIGJ1ZyBvciBJJ20gbWlzc2luZyBzb21ldGhp
-bmc/Cj4+Cj4+IEkgc3VwcG9zZSBpdCBzaG91bGQgYmUgZmluZSB0byBqdXN0IHJlc2VydmUgY2Fy
-dmVvdXQgZnJvbSB0aGUgYm90dG9tIG9mIElPVkEgc3BhY2UgYW5kIGRvbmUgd2l0aCBpdC4KPj4K
-PiAKPiBETUFUUkZNT0ZGUyBpcyBhbiBvZmZzZXQgdG8gdGhlIEZhbGNvbiBJTUVNLCBzbyAxNiBi
-aXRzIGlzIGVub3VnaCB0byBjb3ZlciB0aGF0LgoKQWgsIHRoZXJlIGFyZSBzb3VyY2UgRE1BVFJG
-TU9GRlMgKDMyYml0IERSQU0gb2Zmc2V0KSBhbmQgZGVzdGluYXRpb24gRE1BVFJGTU9GRlMgKDE2
-Yml0IElNRU0gb2Zmc2V0KS4gU28gb25lIHZhcmlhbnQgaXMgdG8gc2V0dXAgRE1BIGFkZHJlc3Mg
-Y29ycmVjdGx5LCB0aGUgb3RoZXIgdmFyaWFudCBpcyB0byBjaGFuZ2UgdGhlIGNhcnZlb3V0IGxh
-eW91dCBhbmQgbWFrZSBJT01NVSBtYW5kYXRvcnkgZm9yIHRoZSBkcml2ZXIuCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+From: Thierry Reding <treding@nvidia.com>
+
+When requesting a reset control for exclusive use that's already in use,
+an -EBUSY error code is returned. Users can react accordingly when they
+receive that error code, so there is no need to loudly complain.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/reset/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 9582efb70025..6b452f010b66 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -416,7 +416,7 @@ static struct reset_control *__reset_control_get_internal(
+ 
+ 	list_for_each_entry(rstc, &rcdev->reset_control_head, list) {
+ 		if (rstc->id == index) {
+-			if (WARN_ON(!rstc->shared || !shared))
++			if (!rstc->shared || !shared)
+ 				return ERR_PTR(-EBUSY);
+ 
+ 			kref_get(&rstc->refcnt);
+-- 
+2.19.1
