@@ -1,104 +1,62 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH] ALSA: hda/tegra: enable clock during probe
-Date: Fri, 25 Jan 2019 12:38:36 +0530
-Message-ID: <4e4ef149-66b1-ce44-76a1-0221a8a7f5a7@nvidia.com>
-References: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
- <s5h5zudc1qw.wl-tiwai@suse.de>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH v2 00/13] drm/tegra: Fix IOVA space on Tegra186 and later
+Date: Fri, 25 Jan 2019 10:57:36 +0200
+Message-ID: <b62ff60c-6c71-78bb-7ecb-c69d58492e9b@kapsi.fi>
+References: <20190124180254.20080-1-thierry.reding@gmail.com>
+ <ee272d55-9d48-7ab5-0531-363412178176@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <s5h5zudc1qw.wl-tiwai@suse.de>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: pierre-louis.bossart@linux.intel.com, perex@perex.cz, alsa-devel@alsa-project.org, thierry.reding@gmail.com, jonathanh@nvidia.com, rlokhande@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <ee272d55-9d48-7ab5-0531-363412178176@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 1/25/2019 12:38 AM, Takashi Iwai wrote:
-> On Thu, 24 Jan 2019 18:36:43 +0100,
-> Sameer Pujar wrote:
->> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
->> will not be ON. This could cause issue during probe, where hda init
->> setup is done. This patch checks whether runtime PM is enabled or not.
->> If disabled, clocks are enabled in probe() and disabled in remove()
->>
->> This patch does following minor changes as cleanup,
->>    * return code check for pm_runtime_get_sync() to take care of failure
->>      and exit gracefully.
->>    * In remove path runtime PM is disabled before calling snd_card_free().
->>    * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
->>    * runtime PM callbacks moved out of CONFIG_PM check
->>
->> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
->> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> (snip)
->> @@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
->>   	if (!azx_has_pm_runtime(chip))
->>   		pm_runtime_forbid(hda->dev);
->>   
->> +	/* explicit resume if runtime PM is disabled */
->> +	if (!pm_runtime_enabled(hda->dev)) {
->> +		err = hda_tegra_runtime_resume(hda->dev);
->> +		if (err)
->> +			goto out_free;
->> +	}
->> +
->>   	schedule_work(&hda->probe_work);
-> Calling runtime_resume here is really confusing...
->
->
->> @@ -571,7 +576,14 @@ static void hda_tegra_probe_work(struct work_struct *work)
->>   	struct platform_device *pdev = to_platform_device(hda->dev);
->>   	int err;
->>   
->> -	pm_runtime_get_sync(hda->dev);
->> +	err = pm_runtime_get_sync(hda->dev);
->> +	if (err < 0) {
->> +		dev_err(hda->dev,
->> +			"failed in pm_runtime_get_syc with err = %d\n",
->> +			err);
->> +		return;
->> +	}
-> This pm_runtime_get_sync() is needed just because you enabled runtime
-> PM before probe_work.  Why not deferring the runtime PM enablement
-> after probing done?
-I think what you are suggesting can be done and simplify things further.
-I can get rid of pm_runtime_get_sync/pm_runtime_put in probe work.
-> That is what we need is the hda_tegra_enable_clocks() call at probe
-> unconditionally before enabling runtime PM.
->
->>   	err = hda_tegra_first_init(chip, pdev);
->>   	if (err < 0)
->>   		goto out_free;
->> @@ -599,12 +611,13 @@ static void hda_tegra_probe_work(struct work_struct *work)
->>   
->>   static int hda_tegra_remove(struct platform_device *pdev)
->>   {
->> -	int ret;
->> -
->> -	ret = snd_card_free(dev_get_drvdata(&pdev->dev));
->>   	pm_runtime_disable(&pdev->dev);
->> +	if (!pm_runtime_status_suspended(&pdev->dev)) {
->> +		hda_tegra_runtime_suspend(&pdev->dev);
->> +		pm_runtime_set_suspended(&pdev->dev);
->> +	}
->> -	return ret;
->> +	return snd_card_free(dev_get_drvdata(&pdev->dev));
->
-> Forcing the suspend *before* snd_card_free() doesn't sound right.
-> It's the point before the disconnect and release procedure of all the
-> rest.  That is, the other hardware components are still active at this
-> point.
-
-Ok, I will keep the sequence same and publish updated version.
-
-Thanks,
-Sameer.
-
->
-> thanks,
->
-> Takashi
+T24gMjQuMS4yMDE5IDIzLjUzLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4gMjQuMDEuMjAxOSAy
+MTowMiwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPj4gRnJvbTogVGhpZXJyeSBSZWRpbmcg
+PHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4KPj4gVGVncmExODYgYW5kIGxhdGVyIGFyZSBkaWZmZXJl
+bnQgZnJvbSBlYXJsaWVyIGdlbmVyYXRpb25zIGluIHRoYXQgdGhleQo+PiB1c2UgYW4gQVJNIFNN
+TVUgcmF0aGVyIHRoYW4gdGhlIFRlZ3JhIFNNTVUuIFRoZSBBUk0gU01NVSBkcml2ZXIgYmVoYXZl
+cwo+PiBzbGlnaHRseSBkaWZmZXJlbnRseSBpbiB0aGF0IHRoZSBnZW9tZXRyeSBmb3IgSU9NTVUg
+ZG9tYWlucyBpcyBzZXQgb25seQo+PiBhZnRlciBhIGRldmljZSB3YXMgYXR0YWNoZWQgdG8gaXQu
+IFRoaXMgaXMgdG8gbWFrZSBzdXJlIHRoYXQgdGhlIFNNTVUKPj4gaW5zdGFuY2UgdGhhdCB0aGUg
+ZG9tYWluIGJlbG9uZ3MgdG8gaXMga25vd24sIGJlY2F1c2UgZWFjaCBpbnN0YW5jZSBjYW4KPj4g
+aGF2ZSBhIGRpZmZlcmVudCBpbnB1dCBhZGRyZXNzIHNwYWNlIChpLmUuIGdlb21ldHJ5KS4KPj4K
+Pj4gV29yayBhcm91bmQgdGhpcyBieSBtb3ZpbmcgYWxsIElPVkEgYWxsb2NhdGlvbnMgdG8gYSBw
+b2ludCB3aGVyZSB0aGUKPj4gZ2VvbWV0cnkgb2YgdGhlIGRvbWFpbiBpcyBwcm9wZXJseSBpbml0
+aWFsaXplZC4KPj4KPj4gVGhpcyBzZWNvbmQgdmVyc2lvbiBvZiB0aGUgc2VyaWVzIGFkZHJlc3Nl
+cyBhbGwgcmV2aWV3IGNvbW1lbnRzIGFuZCBhZGRzCj4+IGEgbnVtYmVyIG9mIHBhdGNoZXMgdGhh
+dCB3aWxsIGFjdHVhbGx5IGFsbG93IGhvc3QxeCB0byB3b3JrIHdpdGggYW4gU01NVQo+PiBlbmFi
+bGVkIG9uIFRlZ3JhMTg2LiBUaGUgcGF0Y2hlcyBhbHNvIGFkZCBwcm9ncmFtbWluZyByZXF1aXJl
+ZCB0bwo+PiBhZGRyZXNzIHRoZSBmdWxsIDQwIGJpdHMgb2YgYWRkcmVzcyBzcGFjZS4KPj4KPj4g
+VGhpcyBzdXBlcnNlZGVzIHRoZSBmb2xsb3dpbmcgcGF0Y2g6Cj4+Cj4+ICAgICAgaHR0cHM6Ly9w
+YXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDc3NTU3OS8KPiAKPiBTZWNvbmRseSwgc2VlbXMg
+dGhlcmUgYXJlIGFkZGl0aW9uYWwgcmVzdHJpY3Rpb25zIGZvciB0aGUgaG9zdDF4IGpvYnMgb24g
+VDE4NiwgYXQgbGVhc3QgVDE4NiBUUk0gc3VnZ2VzdHMgc28uIEluIHBhcnRpY3VsYXIgbG9va3Mg
+bGlrZSBlYWNoIGNsaWVudCBpcyBoYXJkd2lyZWQgdG8gYSBzcGVjaWZpYyBzeW5jIHBvaW50IGFu
+ZCB0byBhIHNwZWNpZmljIGNoYW5uZWwuIE9yIG1heWJlIHRoZXJlIGlzIGFzc3VtcHRpb24gdGhh
+dCB1cHN0cmVhbSBrZXJuZWwgY291bGQgd29yayBvbmx5IGluIGEgaHlwZXJ2aXNvciBtb2RlIG9y
+IHdpdGggYWxsIHByb3RlY3Rpb25zIGRpc2FibGUuIENvdWxkIHlvdSBwbGVhc2UgY2xhcmlmeT8K
+PiAKClRoZXJlIGFyZSBubyBzdWNoIHN5bmNwb2ludC9jaGFubmVsIHJlc3RyaWN0aW9ucy4gVGhl
+IHVwc3RyZWFtIGRyaXZlciAKaW5kZWVkIGN1cnJlbnRseSBvbmx5IHN1cHBvcnRzIHRoZSBjYXNl
+IHdoZXJlIHRoZXJlIGlzIG5vICJoeXBlcnZpc29yIiAKKHRoYXQgaXMsIHNlcnZlciBwcm9jZXNz
+IHRoYXQgYWxsb2NhdGVzIGhvc3QxeCByZXNvdXJjZXMpIHJ1bm5pbmcgYW5kIAp0aGUga2VybmVs
+IGhhcyBhY2Nlc3MgdG8gdGhlIEhvc3QxeCBDT01NT04vImh5cGVydmlzb3IiIHJlZ2lzdGVyIGFw
+ZXJ0dXJlLgoKQWRkaW5nIHN1cHBvcnQgZm9yIHRoZSBzaXR1YXRpb24gd2hlcmUgdGhpcyBpcyBu
+b3QgdGhlIGNhc2Ugc2hvdWxkbid0IGJlIAp2ZXJ5IGRpZmZpY3VsdCwgYnV0IHdlIGN1cnJlbnRs
+eSBkb24ndCBoYXZlIGFueSB1cHN0cmVhbSBwbGF0Zm9ybXMgd2hlcmUgCnRoZSBIb3N0MXggc2Vy
+dmVyIGV4aXN0cyAoaXQncyBvbmx5IHRoZXJlIG9uIGF1dG9tb3RpdmUgcGxhdGZvcm1zKS4KCk1p
+a2tvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
