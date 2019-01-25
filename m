@@ -1,17 +1,13 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
-Date: Fri, 25 Jan 2019 12:01:51 +0000
-Message-ID: <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
-References: <20190107032810.13522-1-josephl@nvidia.com>
- <20190107032810.13522-2-josephl@nvidia.com>
- <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
- <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] arm64: dts: tegra210-smaug: fix IRQ type of PMIC
+Date: Fri, 25 Jan 2019 13:03:16 +0100
+Message-ID: <20190125120316.GD12353@ulmo>
+References: <20190104071646.15828-1-josephl@nvidia.com>
+ <20190104071646.15828-2-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0889917863182305958=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <20190104071646.15828-2-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,62 +17,78 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDI1LzAxLzIwMTkgMDM6MjMsIEpvc2VwaCBMbyB3cm90ZToKPiBIaSBKb24sCj4gCj4gVGhh
-bmtzIGZvciByZXZpZXdpbmcuCj4gCj4gT24gMS8yNC8xOSA2OjMwIFBNLCBKb24gSHVudGVyIHdy
-b3RlOgo+Pgo+PiBPbiAwNy8wMS8yMDE5IDAzOjI4LCBKb3NlcGggTG8gd3JvdGU6Cj4+PiBUaGUg
-VGVncmEyMTAgdGltZXIgcHJvdmlkZXMgZm91cnRlZW4gMjktYml0IHRpbWVyIGNvdW50ZXJzIGFu
-ZCBvbmUKPj4+IDMyLWJpdAo+Pj4gdGltZXN0YW1wIGNvdW50ZXIuIFRoZSBUTVJzIHJ1biBhdCBl
-aXRoZXIgYSBmaXhlZCAxIE1IeiBjbG9jayByYXRlCj4+PiBkZXJpdmVkCj4+PiBmcm9tIHRoZSBv
-c2NpbGxhdG9yIGNsb2NrIChUTVIwLVRNUjkpIG9yIGRpcmVjdGx5IGF0IHRoZSBvc2NpbGxhdG9y
-Cj4+PiBjbG9jawo+Pj4gKFRNUjEwLVRNUjEzKS4gRWFjaCBUTVIgY2FuIGJlIHByb2dyYW1tZWQg
-dG8gZ2VuZXJhdGUgb25lLXNob3QgcGVyaW9kaWMsCj4+PiBvciB3YXRjaGRvZyBpbnRlcnJ1cHRz
-Lgo+Pj4KPj4+IENjOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4K
-Pj4+IENjOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4KPj4+IENjOiBsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4+PiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5v
-cmcKPj4+IFNpZ25lZC1vZmYtYnk6IEpvc2VwaCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+Pj4g
-LS0tCj4+PiDCoCAuLi4vYmluZGluZ3MvdGltZXIvbnZpZGlhLHRlZ3JhMjEwLXRpbWVyLnR4dMKg
-IHwgMjUgKysrKysrKysrKysrKysrKysrKwo+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDI1IGluc2Vy
-dGlvbnMoKykKPj4+IMKgIGNyZWF0ZSBtb2RlIDEwMDY0NAo+Pj4gRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1lci50eHQKPj4+Cj4+PiBk
-aWZmIC0tZ2l0Cj4+PiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90aW1lci9u
-dmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy90aW1lci9udmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+PiBuZXcgZmlsZSBtb2Rl
-IDEwMDY0NAo+Pj4gaW5kZXggMDAwMDAwMDAwMDAwLi5iYTUxMTIyMGE2NjkKPj4+IC0tLSAvZGV2
-L251bGwKPj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90aW1lci9u
-dmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+PiBAQCAtMCwwICsxLDI1IEBACj4+PiArTlZJRElB
-IFRlZ3JhMjEwIHRpbWVyCj4+PiArCj4+PiArVGhlIFRlZ3JhMjEwIHRpbWVyIHByb3ZpZGVzIGZv
-dXJ0ZWVuIDI5LWJpdCB0aW1lciBjb3VudGVycyBhbmQgb25lCj4+PiAzMi1iaXQKPj4+ICt0aW1l
-c3RhbXAgY291bnRlci4gVGhlIFRNUnMgcnVuIGF0IGVpdGhlciBhIGZpeGVkIDEgTUh6IGNsb2Nr
-IHJhdGUKPj4+IGRlcml2ZWQKPj4+ICtmcm9tIHRoZSBvc2NpbGxhdG9yIGNsb2NrIChUTVIwLVRN
-UjkpIG9yIGRpcmVjdGx5IGF0IHRoZSBvc2NpbGxhdG9yCj4+PiBjbG9jawo+Pj4gKyhUTVIxMC1U
-TVIxMykuIEVhY2ggVE1SIGNhbiBiZSBwcm9ncmFtbWVkIHRvIGdlbmVyYXRlIG9uZS1zaG90LAo+
-Pj4gcGVyaW9kaWMsCj4+PiArb3Igd2F0Y2hkb2cgaW50ZXJydXB0cy4KPj4+ICsKPj4+ICtSZXF1
-aXJlZCBwcm9wZXJ0aWVzOgo+Pj4gKy0gY29tcGF0aWJsZSA6ICJudmlkaWEsdGVncmEyMTAtdGlt
-ZXIiLgo+Pj4gKy0gcmVnIDogU3BlY2lmaWVzIGJhc2UgcGh5c2ljYWwgYWRkcmVzcyBhbmQgc2l6
-ZSBvZiB0aGUgcmVnaXN0ZXJzLgo+Pj4gKy0gaW50ZXJydXB0cyA6IEEgbGlzdCBvZiA0IGludGVy
-cnVwdHM7IG9uZSBwZXIgZWFjaCBvZiBUTVIxMCB0aHJvdWdoCj4+PiBUTVIxMy4KPj4KPj4gV2h5
-IGRvIHdlIG9ubHkgYWRkIHRoZSBpbnRlcnJ1cHRzIGZvciBUTVIxMCAtIFRNUjEzPyBXaGF0IGFi
-b3V0IHRoZQo+PiBvdGhlcnM/Cj4+Cj4gCj4gVGhlIG90aGVycyAoVE1SMC1UTVI5KSBhcmUgb2Nj
-dXBpZWQgZm9yIG90aGVyIHVzYWdlcy4gVE1SNSBpcyBvY2N1cGllZAo+IGZvciB0aGUgd2F0Y2hk
-b2cgdGltZXIgaW4gdGhlIHVwc3RyZWFtIGtlcm5lbC4gQW5kIG90aGVycyAoc3RpbGwgaW4KPiBU
-TVIwLVRNUjkpIGFyZSBvY2N1cGllZCBmb3IgZGlmZmVyZW50IHVzYWdlcyBpbiBvdXIgZG93bnN0
-cmVhbSBrZXJuZWwuCgpXaGVyZSBpcyBUTVI1IHJlc2VydmVkIGZvciB0aGUgd2F0Y2hkb2c/IEkg
-ZG9uJ3Qgc2VlIHRoaXM/Cgo+IEFuZCBub3RpY2UgdGhhdCBvbmx5IFRNUjEwLVRNUjEzIGFyZSBy
-dW5uaW5nIGF0IHRoZSBvc2NpbGxhdG9yIGNsb2NrCj4gKGNsa19tKS4gV2l0aCB0aGUgVGVncmEy
-MTAgdGltZXIgZHJpdmVyLCB3ZSBpbnRyb2R1Y2UgaW4gdGhpcyBzZXJpZXMsCj4gd2hpY2ggb25s
-eSByZXBsYWNlIHRoZSBjbG9jayBldmVudCBkZXZpY2UgZnVuY3Rpb24gdGhhdCB3YXMgb3JpZ2lu
-YWxseQo+IG93bmVkIGJ5IHRoZSBhcmNoIHRpbWVyIChhcm12OCB0aW1lcikgYW5kIGl0IGFsc28g
-cnVubmluZyBhdCB0aGUKPiBvc2NpbGxhdG9yIGNsb2NrLiBUaGUgc2NoZWRfdGltZXIgc3RpbGwg
-b3ducyBieSB0aGUgYXJjaCB0aW1lci4gU28gdGhlCj4gdGltZXIgcmVzb2x1dGlvbiB3aWxsIGJl
-IHRoZSBzYW1lLiBUaGF0J3Mgd2h5IHdlIGNob29zZSBUTVIxMC1UTVIxMyBhcwo+IHRoZSB0aW1l
-ciBmb3IgVGVncmEyMTAuCgpUaGF0IG1heWJlIGZpbmUsIGJ1dCBEVCBzaG91bGQgZGVzY3JpYmUg
-dGhlIGhhcmR3YXJlIGFuZCBzbyBJIGRvbid0IHNlZQp3aHkgd2Ugd291bGQgbm90IGxpc3QgYWxs
-IHRoZSBpbnRlcnJ1cHRzLiBXZSBjYW4gc3RpbGwgb25seSB1c2UgVE1SMTAtMTMKaW4gdGhlIGRy
-aXZlci4KCkNoZWVycwpKb24KCi0tIApudnB1YmxpYwoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGlu
-dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
-b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+
+--===============0889917863182305958==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BI5RvnYi6R4T2M87"
+Content-Disposition: inline
+
+
+--BI5RvnYi6R4T2M87
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jan 04, 2019 at 03:16:45PM +0800, Joseph Lo wrote:
+> Fix IRQ type of PMIC which should be configured as high-level trigger.
+>=20
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/b=
+oot/dts/nvidia/tegra210-smaug.dts
+> index c08c5471b974..5a67890cfb7a 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> @@ -1362,7 +1362,7 @@
+>  		max77620: max77620@3c {
+>  			compatible =3D "maxim,max77620";
+>  			reg =3D <0x3c>;
+> -			interrupts =3D <0 86 IRQ_TYPE_NONE>;
+> +			interrupts =3D <0 86 IRQ_TYPE_LEVEL_HIGH>;
+
+Applied to for-5.1/arm64/dt, thanks.
+
+Thierry
+
+--BI5RvnYi6R4T2M87
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK+wQACgkQ3SOs138+
+s6E5PQ//dAz9UJjbVba6RxO169pcE5EHPckO9PWifyggQSznb7GsS2wNRmt+riKs
+bPSFBbQG+FHETwT6n57vzuWpyxWvJfbtbSujYxvwhd9sV1znAfXViImMMt0zB76K
+q0z8AfYsMnjIjdkxCoIAnmOWo6ofTiiwtCnesCpehKcfmgfQ9VqybR6e26dA+Emo
+kbKusiEprqkJRu7JPplgC22VvNQzEdEJJmY2BvRy7rOHYh19/3reE3ANWGHtJt09
+YXSGbejb6onQC/aQ/jSWyCciX/U7B/wd/6P9XvCVVMr/jpuA5W0BEKg6ADS29jWp
+oDhMVXujt6WgFTpK+YgnDfZFLzXxUftGuJ06WG2G8woTnshCzUho1w+17+dq5Bxv
+csC0aKwb6u1z5kMkxk/Xq+spUv6oYs59cKv+D0D38xeus0tRbnMUGbHETARkkgrh
+nZHX7rdmgA9sU6iebmTiwp7+bNOl2KSOwnGQs4oI6TnjYBkGLwlDNkbpapvEJEeo
+FT5s2YapLJLOz0pqyYoEQm8mEEFxK8/FB8L49LOdU/6AOdpHlrRRs4DU+ZRXE+M1
+2IBRwg7yLkSwMUrvNQctjVJz0vcqMlZcIO4nX4E1EmB/hc0KuQ+gy9GpH7aCQg3n
+kWR08j2w2ocPpKBvzagUDRd0+AWLH5NpHtwY6ZFZ0d+Knb8gIpc=
+=zfze
+-----END PGP SIGNATURE-----
+
+--BI5RvnYi6R4T2M87--
+
+
+--===============0889917863182305958==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0889917863182305958==--
