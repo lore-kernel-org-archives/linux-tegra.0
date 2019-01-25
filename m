@@ -1,14 +1,14 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5/7] soc/tegra: pmc: Make alignment consistent
-Date: Fri, 25 Jan 2019 10:55:56 +0000
-Message-ID: <e57f4663-fafc-510e-40fb-90fc0b350f59@nvidia.com>
+Subject: Re: [PATCH 6/7] soc/tegra: pmc: Explicitly initialize all fields
+Date: Fri, 25 Jan 2019 10:56:22 +0000
+Message-ID: <667930dd-defb-5521-544a-4949a706d1de@nvidia.com>
 References: <20190125102255.6862-1-thierry.reding@gmail.com>
- <20190125102255.6862-5-thierry.reding@gmail.com>
+ <20190125102255.6862-6-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190125102255.6862-5-thierry.reding@gmail.com>
+In-Reply-To: <20190125102255.6862-6-thierry.reding@gmail.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -27,115 +27,79 @@ List-Id: linux-tegra@vger.kernel.org
 On 25/01/2019 10:22, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Some recently added code used weird alignment and indentation. Fix these
-> occurrences to make them consistent with the rest of the code.
+> It's not strictly necessary to initialize the fields in struct
+> tegra_pmc_soc if they are 0/false. However, we already initialize them
+> explicitly even if unnecessary, so keep doing that for consistency.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 29 ++++++++++++++++++-----------
->  1 file changed, 18 insertions(+), 11 deletions(-)
+>  drivers/soc/tegra/pmc.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 32dd619c098e..2a2e6aaae97e 100644
+> index 2a2e6aaae97e..976f93628fff 100644
 > --- a/drivers/soc/tegra/pmc.c
 > +++ b/drivers/soc/tegra/pmc.c
-> @@ -1502,8 +1502,8 @@ static int tegra_io_pad_pinctrl_get_groups_count(struct pinctrl_dev *pctl_dev)
->  	return pmc->soc->num_io_pads;
->  }
->  
-> -static const char *tegra_io_pad_pinctrl_get_group_name(
-> -		struct pinctrl_dev *pctl, unsigned int group)
-> +static const char *tegra_io_pad_pinctrl_get_group_name(struct pinctrl_dev *pctl,
-> +						       unsigned int group)
->  {
->  	struct tegra_pmc *pmc = pinctrl_dev_get_drvdata(pctl);
->  
-> @@ -1519,6 +1519,7 @@ static int tegra_io_pad_pinctrl_get_group_pins(struct pinctrl_dev *pctl_dev,
->  
->  	*pins = &pmc->soc->io_pads[group].id;
->  	*num_pins = 1;
-> +
->  	return 0;
->  }
->  
-> @@ -1548,14 +1549,18 @@ static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctl_dev,
->  		ret = tegra_io_pad_get_voltage(pmc, pad->id);
->  		if (ret < 0)
->  			return ret;
-> +
->  		arg = ret;
->  		break;
-> +
->  	case PIN_CONFIG_LOW_POWER_MODE:
->  		ret = tegra_io_pad_is_powered(pmc, pad->id);
->  		if (ret < 0)
->  			return ret;
-> +
->  		arg = !ret;
->  		break;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -1622,7 +1627,7 @@ static struct pinctrl_desc tegra_pmc_pctl_desc = {
->  
->  static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
->  {
-> -	int err = 0;
-> +	int err;
->  
->  	if (!pmc->soc->num_pin_descs)
->  		return 0;
-> @@ -1635,14 +1640,16 @@ static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
->  					      pmc);
->  	if (IS_ERR(pmc->pctl_dev)) {
->  		err = PTR_ERR(pmc->pctl_dev);
-> -		dev_err(pmc->dev, "unable to register pinctrl, %d\n", err);
-> +		dev_err(pmc->dev, "failed to register pin controller: %d\n",
-> +			err);
-> +		return err;
->  	}
->  
-> -	return err;
-> +	return 0;
->  }
->  
->  static ssize_t reset_reason_show(struct device *dev,
-> -			struct device_attribute *attr, char *buf)
-> +				 struct device_attribute *attr, char *buf)
->  {
->  	u32 value, rst_src;
->  
-> @@ -1656,7 +1663,7 @@ static ssize_t reset_reason_show(struct device *dev,
->  static DEVICE_ATTR_RO(reset_reason);
->  
->  static ssize_t reset_level_show(struct device *dev,
-> -			struct device_attribute *attr, char *buf)
-> +				struct device_attribute *attr, char *buf)
->  {
->  	u32 value, rst_lvl;
->  
-> @@ -1678,16 +1685,16 @@ static void tegra_pmc_reset_sysfs_init(struct tegra_pmc *pmc)
->  		err = device_create_file(dev, &dev_attr_reset_reason);
->  		if (err < 0)
->  			dev_warn(dev,
-> -				"failed to create attr \"reset_reason\": %d\n",
-> -				err);
-> +				 "failed to create attr \"reset_reason\": %d\n",
-> +				 err);
->  	}
->  
->  	if (pmc->soc->reset_levels) {
->  		err = device_create_file(dev, &dev_attr_reset_level);
->  		if (err < 0)
->  			dev_warn(dev,
-> -				"failed to create attr \"reset_level\": %d\n",
-> -				err);
-> +				 "failed to create attr \"reset_level\": %d\n",
-> +				 err);
->  	}
->  }
->  
+> @@ -2069,6 +2069,8 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+>  	.cpu_powergates = NULL,
+>  	.has_tsense_reset = false,
+>  	.has_gpu_clamps = false,
+> +	.needs_mbist_war = false,
+> +	.has_impl_33v_pwr = false,
+>  	.num_io_pads = 0,
+>  	.io_pads = NULL,
+>  	.num_pin_descs = 0,
+> @@ -2113,6 +2115,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+>  	.cpu_powergates = tegra30_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = false,
+> +	.needs_mbist_war = false,
+>  	.has_impl_33v_pwr = false,
+>  	.num_io_pads = 0,
+>  	.io_pads = NULL,
+> @@ -2162,6 +2165,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+>  	.cpu_powergates = tegra114_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = false,
+> +	.needs_mbist_war = false,
+>  	.has_impl_33v_pwr = false,
+>  	.num_io_pads = 0,
+>  	.io_pads = NULL,
+> @@ -2271,6 +2275,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+>  	.cpu_powergates = tegra124_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = true,
+> +	.needs_mbist_war = false,
+>  	.has_impl_33v_pwr = false,
+>  	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
+>  	.io_pads = tegra124_io_pads,
+> @@ -2375,8 +2380,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>  	.cpu_powergates = tegra210_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = true,
+> -	.has_impl_33v_pwr = false,
+>  	.needs_mbist_war = true,
+> +	.has_impl_33v_pwr = false,
+>  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+>  	.io_pads = tegra210_io_pads,
+>  	.num_pin_descs = ARRAY_SIZE(tegra210_pin_descs),
+> @@ -2499,6 +2504,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+>  	.cpu_powergates = NULL,
+>  	.has_tsense_reset = false,
+>  	.has_gpu_clamps = false,
+> +	.needs_mbist_war = false,
+>  	.has_impl_33v_pwr = true,
+>  	.num_io_pads = ARRAY_SIZE(tegra186_io_pads),
+>  	.io_pads = tegra186_io_pads,
+> @@ -2577,6 +2583,8 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+>  	.cpu_powergates = NULL,
+>  	.has_tsense_reset = false,
+>  	.has_gpu_clamps = false,
+> +	.needs_mbist_war = false,
+> +	.has_impl_33v_pwr = false,
+>  	.num_io_pads = ARRAY_SIZE(tegra194_io_pads),
+>  	.io_pads = tegra194_io_pads,
+>  	.regs = &tegra186_pmc_regs,
 > 
 
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
