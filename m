@@ -1,94 +1,98 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] arm64: dts: tegra210-smaug: fix IRQ type of PMIC
-Date: Fri, 25 Jan 2019 13:03:16 +0100
-Message-ID: <20190125120316.GD12353@ulmo>
-References: <20190104071646.15828-1-josephl@nvidia.com>
- <20190104071646.15828-2-josephl@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+Date: Fri, 25 Jan 2019 12:06:47 +0000
+Message-ID: <709e24fa-02e1-96ea-2b20-acf150caff00@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-2-josephl@nvidia.com>
+ <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+ <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+ <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0889917863182305958=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190104071646.15828-2-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0889917863182305958==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BI5RvnYi6R4T2M87"
-Content-Disposition: inline
-
-
---BI5RvnYi6R4T2M87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 04, 2019 at 03:16:45PM +0800, Joseph Lo wrote:
-> Fix IRQ type of PMIC which should be configured as high-level trigger.
+On 25/01/2019 12:01, Jon Hunter wrote:
 >=20
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On 25/01/2019 03:23, Joseph Lo wrote:
+>> Hi Jon,
+>>
+>> Thanks for reviewing.
+>>
+>> On 1/24/19 6:30 PM, Jon Hunter wrote:
+>>>
+>>> On 07/01/2019 03:28, Joseph Lo wrote:
+>>>> The Tegra210 timer provides fourteen 29-bit timer counters and one
+>>>> 32-bit
+>>>> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate
+>>>> derived
+>>>> from the oscillator clock (TMR0-TMR9) or directly at the oscillator
+>>>> clock
+>>>> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodi=
+c,
+>>>> or watchdog interrupts.
+>>>>
+>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> Cc: devicetree@vger.kernel.org
+>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>>> ---
+>>>> =C2=A0 .../bindings/timer/nvidia,tegra210-timer.txt=C2=A0 | 25 +++++++=
+++++++++++++
+>>>> =C2=A0 1 file changed, 25 insertions(+)
+>>>> =C2=A0 create mode 100644
+>>>> Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>>> b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>>> new file mode 100644
+>>>> index 000000000000..ba511220a669
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.tx=
+t
+>>>> @@ -0,0 +1,25 @@
+>>>> +NVIDIA Tegra210 timer
+>>>> +
+>>>> +The Tegra210 timer provides fourteen 29-bit timer counters and one
+>>>> 32-bit
+>>>> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate
+>>>> derived
+>>>> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator
+>>>> clock
+>>>> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot,
+>>>> periodic,
+>>>> +or watchdog interrupts.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible : "nvidia,tegra210-timer".
+>>>> +- reg : Specifies base physical address and size of the registers.
+>>>> +- interrupts : A list of 4 interrupts; one per each of TMR10 through
+>>>> TMR13.
+>>>
+>>> Why do we only add the interrupts for TMR10 - TMR13? What about the
+>>> others?
+>>>
+>>
+>> The others (TMR0-TMR9) are occupied for other usages. TMR5 is occupied
+>> for the watchdog timer in the upstream kernel. And others (still in
+>> TMR0-TMR9) are occupied for different usages in our downstream kernel.
 >=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/b=
-oot/dts/nvidia/tegra210-smaug.dts
-> index c08c5471b974..5a67890cfb7a 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -1362,7 +1362,7 @@
->  		max77620: max77620@3c {
->  			compatible =3D "maxim,max77620";
->  			reg =3D <0x3c>;
-> -			interrupts =3D <0 86 IRQ_TYPE_NONE>;
-> +			interrupts =3D <0 86 IRQ_TYPE_LEVEL_HIGH>;
+> Where is TMR5 reserved for the watchdog? I don't see this?
 
-Applied to for-5.1/arm64/dt, thanks.
+I see it now, it is hard-coded in the driver. I was looking at arm64 to
+see where it is used.
 
-Thierry
+Cheers
+Jon
 
---BI5RvnYi6R4T2M87
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK+wQACgkQ3SOs138+
-s6E5PQ//dAz9UJjbVba6RxO169pcE5EHPckO9PWifyggQSznb7GsS2wNRmt+riKs
-bPSFBbQG+FHETwT6n57vzuWpyxWvJfbtbSujYxvwhd9sV1znAfXViImMMt0zB76K
-q0z8AfYsMnjIjdkxCoIAnmOWo6ofTiiwtCnesCpehKcfmgfQ9VqybR6e26dA+Emo
-kbKusiEprqkJRu7JPplgC22VvNQzEdEJJmY2BvRy7rOHYh19/3reE3ANWGHtJt09
-YXSGbejb6onQC/aQ/jSWyCciX/U7B/wd/6P9XvCVVMr/jpuA5W0BEKg6ADS29jWp
-oDhMVXujt6WgFTpK+YgnDfZFLzXxUftGuJ06WG2G8woTnshCzUho1w+17+dq5Bxv
-csC0aKwb6u1z5kMkxk/Xq+spUv6oYs59cKv+D0D38xeus0tRbnMUGbHETARkkgrh
-nZHX7rdmgA9sU6iebmTiwp7+bNOl2KSOwnGQs4oI6TnjYBkGLwlDNkbpapvEJEeo
-FT5s2YapLJLOz0pqyYoEQm8mEEFxK8/FB8L49LOdU/6AOdpHlrRRs4DU+ZRXE+M1
-2IBRwg7yLkSwMUrvNQctjVJz0vcqMlZcIO4nX4E1EmB/hc0KuQ+gy9GpH7aCQg3n
-kWR08j2w2ocPpKBvzagUDRd0+AWLH5NpHtwY6ZFZ0d+Knb8gIpc=
-=zfze
------END PGP SIGNATURE-----
-
---BI5RvnYi6R4T2M87--
-
-
---===============0889917863182305958==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0889917863182305958==--
+--=20
+nvpublic
