@@ -1,36 +1,57 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-Date: Fri, 25 Jan 2019 23:40:02 +0300
-Message-ID: <ad177c2e-3801-ddad-b359-ac83530ee1d6@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V2 3/4] i2c: tegra: Add DMA Support
+Date: Fri, 25 Jan 2019 21:11:54 +0000
+Message-ID: <BYAPR12MB33982ED3A9EC34819D2490F8C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
  <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
  <dcc1e094-638e-5b04-7a61-bdbc24ee068f@gmail.com>
  <BYAPR12MB339829FC6F2F95F833FE45A1C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <ad177c2e-3801-ddad-b359-ac83530ee1d6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB339829FC6F2F95F833FE45A1C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <ad177c2e-3801-ddad-b359-ac83530ee1d6@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-25.01.2019 23:31, Sowjanya Komatineni пишет:
-> 
->>> +	if (i2c_dev->has_dma) {
->>> +		ret = tegra_i2c_init_dma_param(i2c_dev, true);
->>> +		if (ret == -EPROBE_DEFER)
->>> +			goto disable_div_clk;
->>> +		ret = tegra_i2c_init_dma_param(i2c_dev, false);
->>> +		if (ret == -EPROBE_DEFER)
->>> +			goto disable_div_clk;
->>
->> So tegra_i2c_init_dma_param() could fail, printing a error message, and probe will succeed? If allocation fails during the driver's probe, then just fail the probe. Please give the rationale.
-> 
-> If APB DMA probe doesn’t happen prior to tegra i2c, DMA is not available by the time tegra_init_dma_param tries to request slave channel and in those cases dma_request_slave_channel_reason will return EPROBE_DEFER for tegra I2C probe to retry
-> 
-> In case if DMA is available but DMA buffer allocation fails, then tegra_i2c_init_dma_param returns ENOMEM and probe also fails returning same ENOMEM
-
-Is that what you're going to change in the next version? Your current variant of the code doesn't fail the probe on ENOMEM and there is duplicated attempt to invoke tegra_i2c_init_dma_param() during the transfer.
+DQoNCj4gPj4+ICsJaWYgKGkyY19kZXYtPmhhc19kbWEpIHsNCj4gPj4+ICsJCXJldCA9IHRlZ3Jh
+X2kyY19pbml0X2RtYV9wYXJhbShpMmNfZGV2LCB0cnVlKTsNCj4gPj4+ICsJCWlmIChyZXQgPT0g
+LUVQUk9CRV9ERUZFUikNCj4gPj4+ICsJCQlnb3RvIGRpc2FibGVfZGl2X2NsazsNCj4gPj4+ICsJ
+CXJldCA9IHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbShpMmNfZGV2LCBmYWxzZSk7DQo+ID4+PiAr
+CQlpZiAocmV0ID09IC1FUFJPQkVfREVGRVIpDQo+ID4+PiArCQkJZ290byBkaXNhYmxlX2Rpdl9j
+bGs7DQo+ID4+DQo+ID4+IFNvIHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbSgpIGNvdWxkIGZhaWws
+IHByaW50aW5nIGEgZXJyb3IgbWVzc2FnZSwgYW5kIHByb2JlIHdpbGwgc3VjY2VlZD8gSWYgYWxs
+b2NhdGlvbiBmYWlscyBkdXJpbmcgdGhlIGRyaXZlcidzIHByb2JlLCB0aGVuIGp1c3QgZmFpbCB0
+aGUgcHJvYmUuIFBsZWFzZSBnaXZlIHRoZSByYXRpb25hbGUuDQo+ID4gDQo+ID4gSWYgQVBCIERN
+QSBwcm9iZSBkb2VzbuKAmXQgaGFwcGVuIHByaW9yIHRvIHRlZ3JhIGkyYywgRE1BIGlzIG5vdCBh
+dmFpbGFibGUgYnkgdGhlIHRpbWUgdGVncmFfaW5pdF9kbWFfcGFyYW0gdHJpZXMgdG8gcmVxdWVz
+dCBzbGF2ZSBjaGFubmVsIGFuZCBpbiB0aG9zZSBjYXNlcyBkbWFfcmVxdWVzdF9zbGF2ZV9jaGFu
+bmVsX3JlYXNvbiB3aWxsIHJldHVybiBFUFJPQkVfREVGRVIgZm9yIHRlZ3JhIEkyQyBwcm9iZSB0
+byByZXRyeQ0KPiA+IA0KPiA+IEluIGNhc2UgaWYgRE1BIGlzIGF2YWlsYWJsZSBidXQgRE1BIGJ1
+ZmZlciBhbGxvY2F0aW9uIGZhaWxzLCB0aGVuIHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbSByZXR1
+cm5zIEVOT01FTSBhbmQgcHJvYmUgYWxzbyBmYWlscyByZXR1cm5pbmcgc2FtZSBFTk9NRU0NCj4N
+Cj4gSXMgdGhhdCB3aGF0IHlvdSdyZSBnb2luZyB0byBjaGFuZ2UgaW4gdGhlIG5leHQgdmVyc2lv
+bj8gWW91ciBjdXJyZW50IHZhcmlhbnQgb2YgdGhlIGNvZGUgZG9lc24ndCBmYWlsIHRoZSBwcm9i
+ZSBvbiBFTk9NRU0gYW5kIHRoZXJlIGlzIGR1cGxpY2F0ZWQgYXR0ZW1wdCB0byBpbnZva2UgdGVn
+cmFfaTJjX2luaXRfZG1hX3BhcmFtKCkgZHVyaW5nIHRoZSB0cmFuc2Zlci4NCg0KU29ycnkgY29y
+cmVjdGlvbiB0byBteSBwcmV2aW91cyByZXBseS4gIElmIERNQSBidWZmZXIgYWxsb2NhdGlvbiBm
+YWlscywgdGVncmFfaTJjX2luaXRfZG1hX3BhcmFtIHJldHVybnMgRU5PTUVNIGJ1dCBwcm9iZSB3
+aWxsIHN1Y2NlZWQgYXMgaTJjIHRyYW5zYWN0aW9uIG5lZWQgdG8gaGFwcGVuIGR1cmluZyAgYm9v
+dCBmb3Igc29tZSBwbGF0Zm9ybSBkZXZpY2UgcHJvZ3JhbW1pbmcgZm9yIHN1Y2Nlc3NmdWwgYm9v
+dCBhbmQgdGhleSB1c2UgUElPIG1vZGUgYXMgeGZlciBieXRlcyBpcyBsZXNzIGFuZCBkZWZlcnJp
+bmcgaTJjIHByb2JlIGZvciBFTk9NRU0gY2F1c2VzIGJvb3QgdG8gZmFpbCBzbyBkdXJpbmcgcHJv
+YmUgRVBST0JFX0RFRkVSIGlzIG9ubHkgdGFrZW4gY2FyZS4NCg0KUmUtYXR0ZW1wdCBvZiB0ZWdy
+YV9pMmNfaW5pdF9kbWFfcGFyYW0gaW4geGZlciBoYXBwZW5zIG9ubHkgaWYgbm8gc3VjY2Vzc2Z1
+bCBETUEgY2hhbm5lbCBhbGxvY2F0aW9uIGhhcHBlbnMgcHJpb3IgdG8gdGhhdCAoIGR1cmluZyBw
+cm9iZSBpbiBjYXNlIG9mIEVOT01FTSkuDQpETUEgbW9kZSBpcyBtYWlubHkgZm9yIGxhcmdlIHRy
+YW5zZmVyLCBhbmQgaTJjIHhmZXIgcmV0dXJuaW5nIGZhaWx1cmUgZHVlIHRvIGZhaWxpbmcgRE1B
+IGJ1ZmZlciBhbGxvY2F0aW9uIGNhdXNlcyBib290IHRvIGhhbmcgYXMgcGxhdGZvcm0gZGV2aWNl
+IHByb2dyYW1taW5nIG5lZWQgdG8gaGFwcGVuIHdoaWNoIGRvZXNu4oCZdCBuZWVkIHRvIHVzZSBE
+TUEuDQpXaWxsIGZpeCB0aGlzIGFuZCB3aWxsIHNlbmQgdXBkYXRlZCBwYXRjaCB0byByZWF0dGVt
+cHQgRE1BIHJlcXVlc3QgYW5kIGJ1ZmZlciBhbGxvY2F0aW9uIGR1cmluZyBETUEgbW9kZSB0cmFu
+c2ZlciBhbmQgd2lsbCByZXR1cm4gZmFpbCBmb3IgRE1BIG1vZGUgSTJDIHRyYW5zZmVyLi4uDQoN
+ClRoYW5rcw0KU293amFueWENCg==
