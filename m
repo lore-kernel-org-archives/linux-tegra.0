@@ -1,12 +1,17 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] arm64: dts: tegra210: fix register range of apbmisc
-Date: Fri, 25 Jan 2019 12:59:47 +0100
-Message-ID: <20190125115947.GC12353@ulmo>
-References: <20190104071646.15828-1-josephl@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+Date: Fri, 25 Jan 2019 12:01:51 +0000
+Message-ID: <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-2-josephl@nvidia.com>
+ <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+ <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4413789738620697983=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190104071646.15828-1-josephl@nvidia.com>
+In-Reply-To: <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,68 +21,62 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============4413789738620697983==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
-Content-Disposition: inline
-
-
---Clx92ZfkiYIKRjnr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 04, 2019 at 03:16:44PM +0800, Joseph Lo wrote:
-> Fix the register range of apbmisc, that originally inherited from
-> Tegra124.
->=20
-> Reported-by: Mark Zhang <markz@nvidia.com>
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Applied to for-5.1/arm64/dts, thanks.
-
-Thierry
-
---Clx92ZfkiYIKRjnr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK+jIACgkQ3SOs138+
-s6GouA/8D/bsNHcnYXiE4VfrWvuS3FLtAXgkmHzZ7d97ANdNpcUER67An301oDk8
-2JR3YWhD+a3eH21gSpHH4pDRN8jLtv8SMf+/zKEgahSnG21pFx+vbYxIK99VIFXu
-13IIMcZKcTnrEF9lfE6Qn/3t655YEKUr70rLbK3SZsnVeusebH0NAIXQpqKJBG1p
-OoWk15+7lbSRLOVGLSOXZmyiyTk4dBJYazA+M6YNfpSkL9h342cLc4UMo8evAdqe
-3s5OPfP5m0Pmia+CkFYnhuNAriUyemhrqTP4KMQLQLONZ5dy9yb2tRIXqsrsPRG5
-BeTryt4qMPxUS40HX9grPMHASCOey7+jHytYyIiHGLhyLtNGLLW7ryQAZb05OUuq
-tO+2d7Gx2Xy5XXuhbwz71znG3LkPDRQbY7aYJbEdtV4UiEAFx1NH76DqazXU0SuC
-aHLIERgA4urg/EfFXjpCFNkkMKbBGTAEfaDYHmzl5LJa+FSlt3z496g7m7koRNy7
-MApQ4F/GoRPCR65LNtYwD1vHVgJbg696UxVZi0ZgmNT5Uo70hBZpWTALG2ira864
-4r9pbgQDLnENjNo/i1D/6Wgbo4kOXFrVS6dNuO1Bdugm+x3VfqV/+Yi8AW86F/nM
-+U81t136RVrnoK8g9Ugkq6vA24omPmSShA6zqcHOI8KHSicvGAc=
-=FlW5
------END PGP SIGNATURE-----
-
---Clx92ZfkiYIKRjnr--
-
-
---===============4413789738620697983==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============4413789738620697983==--
+Ck9uIDI1LzAxLzIwMTkgMDM6MjMsIEpvc2VwaCBMbyB3cm90ZToKPiBIaSBKb24sCj4gCj4gVGhh
+bmtzIGZvciByZXZpZXdpbmcuCj4gCj4gT24gMS8yNC8xOSA2OjMwIFBNLCBKb24gSHVudGVyIHdy
+b3RlOgo+Pgo+PiBPbiAwNy8wMS8yMDE5IDAzOjI4LCBKb3NlcGggTG8gd3JvdGU6Cj4+PiBUaGUg
+VGVncmEyMTAgdGltZXIgcHJvdmlkZXMgZm91cnRlZW4gMjktYml0IHRpbWVyIGNvdW50ZXJzIGFu
+ZCBvbmUKPj4+IDMyLWJpdAo+Pj4gdGltZXN0YW1wIGNvdW50ZXIuIFRoZSBUTVJzIHJ1biBhdCBl
+aXRoZXIgYSBmaXhlZCAxIE1IeiBjbG9jayByYXRlCj4+PiBkZXJpdmVkCj4+PiBmcm9tIHRoZSBv
+c2NpbGxhdG9yIGNsb2NrIChUTVIwLVRNUjkpIG9yIGRpcmVjdGx5IGF0IHRoZSBvc2NpbGxhdG9y
+Cj4+PiBjbG9jawo+Pj4gKFRNUjEwLVRNUjEzKS4gRWFjaCBUTVIgY2FuIGJlIHByb2dyYW1tZWQg
+dG8gZ2VuZXJhdGUgb25lLXNob3QgcGVyaW9kaWMsCj4+PiBvciB3YXRjaGRvZyBpbnRlcnJ1cHRz
+Lgo+Pj4KPj4+IENjOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4K
+Pj4+IENjOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4KPj4+IENjOiBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4+PiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5v
+cmcKPj4+IFNpZ25lZC1vZmYtYnk6IEpvc2VwaCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+Pj4g
+LS0tCj4+PiDCoCAuLi4vYmluZGluZ3MvdGltZXIvbnZpZGlhLHRlZ3JhMjEwLXRpbWVyLnR4dMKg
+IHwgMjUgKysrKysrKysrKysrKysrKysrKwo+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDI1IGluc2Vy
+dGlvbnMoKykKPj4+IMKgIGNyZWF0ZSBtb2RlIDEwMDY0NAo+Pj4gRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1lci50eHQKPj4+Cj4+PiBk
+aWZmIC0tZ2l0Cj4+PiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90aW1lci9u
+dmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy90aW1lci9udmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+PiBuZXcgZmlsZSBtb2Rl
+IDEwMDY0NAo+Pj4gaW5kZXggMDAwMDAwMDAwMDAwLi5iYTUxMTIyMGE2NjkKPj4+IC0tLSAvZGV2
+L251bGwKPj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90aW1lci9u
+dmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+PiBAQCAtMCwwICsxLDI1IEBACj4+PiArTlZJRElB
+IFRlZ3JhMjEwIHRpbWVyCj4+PiArCj4+PiArVGhlIFRlZ3JhMjEwIHRpbWVyIHByb3ZpZGVzIGZv
+dXJ0ZWVuIDI5LWJpdCB0aW1lciBjb3VudGVycyBhbmQgb25lCj4+PiAzMi1iaXQKPj4+ICt0aW1l
+c3RhbXAgY291bnRlci4gVGhlIFRNUnMgcnVuIGF0IGVpdGhlciBhIGZpeGVkIDEgTUh6IGNsb2Nr
+IHJhdGUKPj4+IGRlcml2ZWQKPj4+ICtmcm9tIHRoZSBvc2NpbGxhdG9yIGNsb2NrIChUTVIwLVRN
+UjkpIG9yIGRpcmVjdGx5IGF0IHRoZSBvc2NpbGxhdG9yCj4+PiBjbG9jawo+Pj4gKyhUTVIxMC1U
+TVIxMykuIEVhY2ggVE1SIGNhbiBiZSBwcm9ncmFtbWVkIHRvIGdlbmVyYXRlIG9uZS1zaG90LAo+
+Pj4gcGVyaW9kaWMsCj4+PiArb3Igd2F0Y2hkb2cgaW50ZXJydXB0cy4KPj4+ICsKPj4+ICtSZXF1
+aXJlZCBwcm9wZXJ0aWVzOgo+Pj4gKy0gY29tcGF0aWJsZSA6ICJudmlkaWEsdGVncmEyMTAtdGlt
+ZXIiLgo+Pj4gKy0gcmVnIDogU3BlY2lmaWVzIGJhc2UgcGh5c2ljYWwgYWRkcmVzcyBhbmQgc2l6
+ZSBvZiB0aGUgcmVnaXN0ZXJzLgo+Pj4gKy0gaW50ZXJydXB0cyA6IEEgbGlzdCBvZiA0IGludGVy
+cnVwdHM7IG9uZSBwZXIgZWFjaCBvZiBUTVIxMCB0aHJvdWdoCj4+PiBUTVIxMy4KPj4KPj4gV2h5
+IGRvIHdlIG9ubHkgYWRkIHRoZSBpbnRlcnJ1cHRzIGZvciBUTVIxMCAtIFRNUjEzPyBXaGF0IGFi
+b3V0IHRoZQo+PiBvdGhlcnM/Cj4+Cj4gCj4gVGhlIG90aGVycyAoVE1SMC1UTVI5KSBhcmUgb2Nj
+dXBpZWQgZm9yIG90aGVyIHVzYWdlcy4gVE1SNSBpcyBvY2N1cGllZAo+IGZvciB0aGUgd2F0Y2hk
+b2cgdGltZXIgaW4gdGhlIHVwc3RyZWFtIGtlcm5lbC4gQW5kIG90aGVycyAoc3RpbGwgaW4KPiBU
+TVIwLVRNUjkpIGFyZSBvY2N1cGllZCBmb3IgZGlmZmVyZW50IHVzYWdlcyBpbiBvdXIgZG93bnN0
+cmVhbSBrZXJuZWwuCgpXaGVyZSBpcyBUTVI1IHJlc2VydmVkIGZvciB0aGUgd2F0Y2hkb2c/IEkg
+ZG9uJ3Qgc2VlIHRoaXM/Cgo+IEFuZCBub3RpY2UgdGhhdCBvbmx5IFRNUjEwLVRNUjEzIGFyZSBy
+dW5uaW5nIGF0IHRoZSBvc2NpbGxhdG9yIGNsb2NrCj4gKGNsa19tKS4gV2l0aCB0aGUgVGVncmEy
+MTAgdGltZXIgZHJpdmVyLCB3ZSBpbnRyb2R1Y2UgaW4gdGhpcyBzZXJpZXMsCj4gd2hpY2ggb25s
+eSByZXBsYWNlIHRoZSBjbG9jayBldmVudCBkZXZpY2UgZnVuY3Rpb24gdGhhdCB3YXMgb3JpZ2lu
+YWxseQo+IG93bmVkIGJ5IHRoZSBhcmNoIHRpbWVyIChhcm12OCB0aW1lcikgYW5kIGl0IGFsc28g
+cnVubmluZyBhdCB0aGUKPiBvc2NpbGxhdG9yIGNsb2NrLiBUaGUgc2NoZWRfdGltZXIgc3RpbGwg
+b3ducyBieSB0aGUgYXJjaCB0aW1lci4gU28gdGhlCj4gdGltZXIgcmVzb2x1dGlvbiB3aWxsIGJl
+IHRoZSBzYW1lLiBUaGF0J3Mgd2h5IHdlIGNob29zZSBUTVIxMC1UTVIxMyBhcwo+IHRoZSB0aW1l
+ciBmb3IgVGVncmEyMTAuCgpUaGF0IG1heWJlIGZpbmUsIGJ1dCBEVCBzaG91bGQgZGVzY3JpYmUg
+dGhlIGhhcmR3YXJlIGFuZCBzbyBJIGRvbid0IHNlZQp3aHkgd2Ugd291bGQgbm90IGxpc3QgYWxs
+IHRoZSBpbnRlcnJ1cHRzLiBXZSBjYW4gc3RpbGwgb25seSB1c2UgVE1SMTAtMTMKaW4gdGhlIGRy
+aXZlci4KCkNoZWVycwpKb24KCi0tIApudnB1YmxpYwoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGlu
+dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
+b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
