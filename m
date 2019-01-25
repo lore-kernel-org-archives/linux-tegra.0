@@ -1,77 +1,104 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
-Date: Fri, 25 Jan 2019 11:23:11 +0800
-Message-ID: <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+Subject: Re: [PATCH 3/6] arm64: dts: tegra210: fix timer node
+Date: Fri, 25 Jan 2019 11:56:52 +0800
+Message-ID: <60b7e6b5-225b-b873-3aea-f81a2a658c9c@nvidia.com>
 References: <20190107032810.13522-1-josephl@nvidia.com>
- <20190107032810.13522-2-josephl@nvidia.com>
- <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+ <20190107032810.13522-4-josephl@nvidia.com>
+ <867b5168-e3cb-6423-b3d2-c075d1701c88@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <867b5168-e3cb-6423-b3d2-c075d1701c88@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
-
-Thanks for reviewing.
-
-On 1/24/19 6:30 PM, Jon Hunter wrote:
+On 1/24/19 7:16 PM, Jon Hunter wrote:
 > 
 > On 07/01/2019 03:28, Joseph Lo wrote:
->> The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
->> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
->> from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
->> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
->> or watchdog interrupts.
+>> Fix timer node to make it work with Tegra210 timer driver. And backward
+>> compatible with the Tegra watchdog driver.
 >>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: devicetree@vger.kernel.org
 >> Signed-off-by: Joseph Lo <josephl@nvidia.com>
 >> ---
->>   .../bindings/timer/nvidia,tegra210-timer.txt  | 25 +++++++++++++++++++
->>   1 file changed, 25 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 12 +++++-------
+>>   1 file changed, 5 insertions(+), 7 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
->> new file mode 100644
->> index 000000000000..ba511220a669
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
->> @@ -0,0 +1,25 @@
->> +NVIDIA Tegra210 timer
->> +
->> +The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
->> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
->> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
->> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
->> +or watchdog interrupts.
->> +
->> +Required properties:
->> +- compatible : "nvidia,tegra210-timer".
->> +- reg : Specifies base physical address and size of the registers.
->> +- interrupts : A list of 4 interrupts; one per each of TMR10 through TMR13.
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>> index b5858b5ea052..143bd103c923 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>> @@ -384,14 +384,12 @@
+>>   	};
+>>   
+>>   	timer@60005000 {
+>> -		compatible = "nvidia,tegra210-timer", "nvidia,tegra20-timer";
+>> +		compatible = "nvidia,tegra210-timer", "nvidia,tegra30-timer";
+>>   		reg = <0x0 0x60005000 0x0 0x400>;
+>> -		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+>> -			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+>> -			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+>> -			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+>> -			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+>> -			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+>> +		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
+>> +			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
+>> +			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
+>> +			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
+>>   		clocks = <&tegra_car TEGRA210_CLK_TIMER>;
+>>   		clock-names = "timer";
+>>   	};
 > 
-> Why do we only add the interrupts for TMR10 - TMR13? What about the others?
+> Hmmm ... I can't say I understand this. So now the timer devices are
+> compatible with two different drivers?
+
+The tegra210-timer is for clock event device and the tegra30-timer is 
+for watchdog timer, that is the usage for Tegra platform before 
+Tegra210. But... (see below)
+
+> 
+> Begs the question why did we not just extend the existing tegra20-timer
+> rather than adding a new one?
+
+The tegra20-timer was designed for very early stage that the arm-twd 
+driver not ready yet. So it was the clock event device and sched timer 
+for tegra20/30 at that stage. And I believe this driver was replaced and 
+deprecated by arm-twd and armv7 timer for tegra20/30/114/124. So 
+basically, I think we can remove this driver now.
+
+So back to the question above, as we see the similar timer node binding 
+in tegra20/30/114/124/132 dts file. It actually didn't use tegra20 timer 
+driver at all but instead of arm-twd and armv7 timer. The binding only 
+makes it work with the tegra-wdt driver, which is the compatible string 
+of "nvidia,tegra30-timer". Maybe we should fix them all together.
+
+> 
+> Also you did not explain why we make them compatible with the watchdog
+> driver? We have other watchdogs timer and so why do we need to make them
+> compatible?
 > 
 
-The others (TMR0-TMR9) are occupied for other usages. TMR5 is occupied 
-for the watchdog timer in the upstream kernel. And others (still in 
-TMR0-TMR9) are occupied for different usages in our downstream kernel.
+The detail explanation is above. In here, I just follow the legacy 
+binding convention that we used in other tegra dts files. This binding 
+makes it work with TMR5, which is the watchdog timer that we used to use 
+for Tegra.
 
-And notice that only TMR10-TMR13 are running at the oscillator clock 
-(clk_m). With the Tegra210 timer driver, we introduce in this series, 
-which only replace the clock event device function that was originally 
-owned by the arch timer (armv8 timer) and it also running at the 
-oscillator clock. The sched_timer still owns by the arch timer. So the 
-timer resolution will be the same. That's why we choose TMR10-TMR13 as 
-the timer for Tegra210.
+If we don't prefer this way, I can remove that for now. And we need to 
+find a different way to merge watchdog timer driver and timer driver 
+into one driver.
+
+Let me know which one is acceptable for now.
 
 Thanks,
 Joseph
