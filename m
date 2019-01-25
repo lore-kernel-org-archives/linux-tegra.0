@@ -1,8 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/7] soc/tegra: pmc: Make tegra_powergate_is_powered() a local
- function
-Date: Fri, 25 Jan 2019 11:22:51 +0100
-Message-ID: <20190125102255.6862-3-thierry.reding@gmail.com>
+Subject: [PATCH 5/7] soc/tegra: pmc: Make alignment consistent
+Date: Fri, 25 Jan 2019 11:22:53 +0100
+Message-ID: <20190125102255.6862-5-thierry.reding@gmail.com>
 References: <20190125102255.6862-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,54 +21,116 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Now there are no more external users of tegra_powergate_is_powered(),
-make this a local function.
+Some recently added code used weird alignment and indentation. Fix these
+occurrences to make them consistent with the rest of the code.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 2 +-
- include/soc/tegra/pmc.h | 6 ------
- 2 files changed, 1 insertion(+), 7 deletions(-)
+ drivers/soc/tegra/pmc.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 550653302ff2..fa0e1ac6d501 100644
+index 32dd619c098e..2a2e6aaae97e 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -637,7 +637,7 @@ EXPORT_SYMBOL(tegra_powergate_power_off);
-  * tegra_powergate_is_powered() - check if partition is powered
-  * @id: partition ID
-  */
--int tegra_powergate_is_powered(unsigned int id)
-+static int tegra_powergate_is_powered(unsigned int id)
+@@ -1502,8 +1502,8 @@ static int tegra_io_pad_pinctrl_get_groups_count(struct pinctrl_dev *pctl_dev)
+ 	return pmc->soc->num_io_pads;
+ }
+ 
+-static const char *tegra_io_pad_pinctrl_get_group_name(
+-		struct pinctrl_dev *pctl, unsigned int group)
++static const char *tegra_io_pad_pinctrl_get_group_name(struct pinctrl_dev *pctl,
++						       unsigned int group)
  {
- 	if (!tegra_powergate_is_valid(id))
+ 	struct tegra_pmc *pmc = pinctrl_dev_get_drvdata(pctl);
+ 
+@@ -1519,6 +1519,7 @@ static int tegra_io_pad_pinctrl_get_group_pins(struct pinctrl_dev *pctl_dev,
+ 
+ 	*pins = &pmc->soc->io_pads[group].id;
+ 	*num_pins = 1;
++
+ 	return 0;
+ }
+ 
+@@ -1548,14 +1549,18 @@ static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctl_dev,
+ 		ret = tegra_io_pad_get_voltage(pmc, pad->id);
+ 		if (ret < 0)
+ 			return ret;
++
+ 		arg = ret;
+ 		break;
++
+ 	case PIN_CONFIG_LOW_POWER_MODE:
+ 		ret = tegra_io_pad_is_powered(pmc, pad->id);
+ 		if (ret < 0)
+ 			return ret;
++
+ 		arg = !ret;
+ 		break;
++
+ 	default:
  		return -EINVAL;
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index a9db1b501de1..b32ee5d82dd4 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -161,7 +161,6 @@ enum tegra_io_pad {
- #define TEGRA_IO_RAIL_LVDS	TEGRA_IO_PAD_LVDS
+ 	}
+@@ -1622,7 +1627,7 @@ static struct pinctrl_desc tegra_pmc_pctl_desc = {
  
- #ifdef CONFIG_SOC_TEGRA_PMC
--int tegra_powergate_is_powered(unsigned int id);
- int tegra_powergate_power_on(unsigned int id);
- int tegra_powergate_power_off(unsigned int id);
- int tegra_powergate_remove_clamping(unsigned int id);
-@@ -182,11 +181,6 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
- void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
- 
- #else
--static inline int tegra_powergate_is_powered(unsigned int id)
--{
--	return -ENOSYS;
--}
--
- static inline int tegra_powergate_power_on(unsigned int id)
+ static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
  {
- 	return -ENOSYS;
+-	int err = 0;
++	int err;
+ 
+ 	if (!pmc->soc->num_pin_descs)
+ 		return 0;
+@@ -1635,14 +1640,16 @@ static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
+ 					      pmc);
+ 	if (IS_ERR(pmc->pctl_dev)) {
+ 		err = PTR_ERR(pmc->pctl_dev);
+-		dev_err(pmc->dev, "unable to register pinctrl, %d\n", err);
++		dev_err(pmc->dev, "failed to register pin controller: %d\n",
++			err);
++		return err;
+ 	}
+ 
+-	return err;
++	return 0;
+ }
+ 
+ static ssize_t reset_reason_show(struct device *dev,
+-			struct device_attribute *attr, char *buf)
++				 struct device_attribute *attr, char *buf)
+ {
+ 	u32 value, rst_src;
+ 
+@@ -1656,7 +1663,7 @@ static ssize_t reset_reason_show(struct device *dev,
+ static DEVICE_ATTR_RO(reset_reason);
+ 
+ static ssize_t reset_level_show(struct device *dev,
+-			struct device_attribute *attr, char *buf)
++				struct device_attribute *attr, char *buf)
+ {
+ 	u32 value, rst_lvl;
+ 
+@@ -1678,16 +1685,16 @@ static void tegra_pmc_reset_sysfs_init(struct tegra_pmc *pmc)
+ 		err = device_create_file(dev, &dev_attr_reset_reason);
+ 		if (err < 0)
+ 			dev_warn(dev,
+-				"failed to create attr \"reset_reason\": %d\n",
+-				err);
++				 "failed to create attr \"reset_reason\": %d\n",
++				 err);
+ 	}
+ 
+ 	if (pmc->soc->reset_levels) {
+ 		err = device_create_file(dev, &dev_attr_reset_level);
+ 		if (err < 0)
+ 			dev_warn(dev,
+-				"failed to create attr \"reset_level\": %d\n",
+-				err);
++				 "failed to create attr \"reset_level\": %d\n",
++				 err);
+ 	}
+ }
+ 
 -- 
 2.19.1
