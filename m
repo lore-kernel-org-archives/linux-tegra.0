@@ -1,138 +1,83 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
-Date: Fri, 25 Jan 2019 11:42:08 +0000
-Message-ID: <ae87a09f-2922-9a9d-3ad3-e9abe7fb20c2@nvidia.com>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] soc/tegra: fuse: fix typo in tegra210_init_speedo_data
+Date: Fri, 25 Jan 2019 12:45:14 +0100
+Message-ID: <20190125114514.GA12353@ulmo>
+References: <20190104071646.15828-1-josephl@nvidia.com>
+ <20190104071646.15828-3-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>, perex@perex.cz, tiwai@suse.com, pierre-louis.bossart@linux.intel.com
-Cc: thierry.reding@gmail.com, rlokhande@nvidia.com, sharadg@nvidia.com, mkumard@nvidia.com, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============2742746896377470155=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190104071646.15828-3-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 25/01/2019 11:06, Sameer Pujar wrote:
-> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
-> will not be ON. This could cause issue during probe, where hda init
-> setup is done. This patch enables clocks unconditionally during probe.
-> 
-> Along with above, follwoing changes are done.
->   * enable runtime PM before exiting from probe work. This helps to avoid
->     usage of pm_runtime_get_sync/pm_runtime_put() in probe work.
->   * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
->   * runtime PM callbacks moved out of CONFIG_PM check
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+--===============2742746896377470155==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
+
+
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jan 04, 2019 at 03:16:46PM +0800, Joseph Lo wrote:
+> Fix typo when reading SoC speedo value from fuse SoC speedo register.
+>=20
+> Reported-by: Mark Zhang <markz@nvidia.com>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  sound/pci/hda/hda_tegra.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-> index c8d18dc..ba6175f 100644
-> --- a/sound/pci/hda/hda_tegra.c
-> +++ b/sound/pci/hda/hda_tegra.c
-> @@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
->  	return rc;
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
->  static void hda_tegra_disable_clocks(struct hda_tegra *data)
->  {
->  	clk_disable_unprepare(data->hda2hdmi_clk);
-> @@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
->  	clk_disable_unprepare(data->hda_clk);
->  }
->  
-> +#ifdef CONFIG_PM_SLEEP
->  /*
->   * power management
->   */
-> @@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
->  }
->  #endif /* CONFIG_PM_SLEEP */
->  
-> -#ifdef CONFIG_PM
->  static int hda_tegra_runtime_suspend(struct device *dev)
->  {
->  	struct snd_card *card = dev_get_drvdata(dev);
-> @@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
->  	int rc;
->  
->  	rc = hda_tegra_enable_clocks(hda);
-> -	if (rc != 0)
-> +	if (rc)
->  		return rc;
->  	if (chip && chip->running) {
->  		hda_tegra_init(hda);
-> @@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
->  
->  	return 0;
->  }
-> -#endif /* CONFIG_PM */
->  
->  static const struct dev_pm_ops hda_tegra_pm = {
->  	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
-> @@ -551,9 +549,9 @@ static int hda_tegra_probe(struct platform_device *pdev)
->  
->  	dev_set_drvdata(&pdev->dev, card);
->  
-> -	pm_runtime_enable(hda->dev);
-> -	if (!azx_has_pm_runtime(chip))
-> -		pm_runtime_forbid(hda->dev);
-> +	err = hda_tegra_enable_clocks(hda);
-> +	if (err)
-> +		goto out_free;
->  
->  	schedule_work(&hda->probe_work);
->  
-> @@ -571,7 +569,6 @@ static void hda_tegra_probe_work(struct work_struct *work)
->  	struct platform_device *pdev = to_platform_device(hda->dev);
->  	int err;
->  
-> -	pm_runtime_get_sync(hda->dev);
->  	err = hda_tegra_first_init(chip, pdev);
->  	if (err < 0)
->  		goto out_free;
-> @@ -592,8 +589,15 @@ static void hda_tegra_probe_work(struct work_struct *work)
->  	chip->running = 1;
->  	snd_hda_set_power_save(&chip->bus, power_save * 1000);
->  
-> +	/* set device state as active */
-> +	if (pm_runtime_set_active(hda->dev) < 0)
-> +		goto out_free;
-> +	/* enable runtime PM */
-> +	pm_runtime_enable(hda->dev);
-> +	if (!azx_has_pm_runtime(chip))
-> +		pm_runtime_forbid(hda->dev);
-> +
->   out_free:
-> -	pm_runtime_put(hda->dev);
->  	return; /* no error return from async probe */
->  }
->  
-> @@ -603,6 +607,10 @@ static int hda_tegra_remove(struct platform_device *pdev)
->  
->  	ret = snd_card_free(dev_get_drvdata(&pdev->dev));
->  	pm_runtime_disable(&pdev->dev);
-> +	if (!pm_runtime_status_suspended(&pdev->dev)) {
-> +		hda_tegra_runtime_suspend(&pdev->dev);
-> +		pm_runtime_set_suspended(&pdev->dev);
-> +	}
+>  drivers/soc/tegra/fuse/speedo-tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think that we need to be consistent in the above with what is done in
-the probe. If in the probe we call hda_tegra_enable_clocks(), then here
-we should call hda_tegra_disable_clocks(). However, my preference is
-still to all hda_tegra_runtime_resume() in probe and then leave the
-above as-is. Let's see what everyone else thinks.
+Applied to for-5.1/soc, thanks.
 
-Cheers
-Jon
+Thierry
 
--- 
-nvpublic
+--0F1p//8PRICkK4MW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK9sgACgkQ3SOs138+
+s6F/4w/+OOjIwvCIOMFyAIK+rcqXFPPOUo0KtJ/dVNvK56BGhWSNbi21FtbO6MxY
+50xzifCrSqLR1tTDwLof3OXg9Ew0/dg+e8Hh+STyPvjel6u8zkHMBcLTfdAu/+cd
+CEj/pyeSr8yxGrpZJVw10BuTt7/qfKcJWzvGc2HiuBhgi9BfSqIUgo5r9Hyhuhom
+W84g46Bgi9yo5wJi+tkVhtBgHkNOoBxX/m+2Fdej6lZCVkDYaw7J3vxiB+UKP+3W
+RK0gl8V2nrvC26kov/AGzPy912/3AmgPmTqR8xZTSnmBEnq1TAGO3ffG2X076bJ5
+a/ECnD6rorwAPkI2GAW80bAx6Pg9C5ORbRF9+NQa3fqHn1VaplCajJ3+5fkbGwPF
+SsGrFyoi8fmdQSNS7/ao/EMj2HqszOc1usJCoc8fKZVUuiN/NH3SnXPp8p79rePD
+fLuMYW0/8DN0ULoRGZ/aTNWCsLvkvkfx/y9QzJKVgDwnXZyolWXmTgs8FiZ2irvz
+KxGBvWJkRJPSs8vKXTenvl8SHWvv383o9V7AvBdv3ywLbPIlbaLkKtxnEx6a7Ipo
+BFdyivyvrziN8+9mKVweH/cKC/XZSPVtEk5lp5cFmIsokJrMXtbtacWiviWFoUsl
+oT2H55vytZCsizJdqg8x3715yddZvbinvtjknjwAeOg5o44dNuM=
+=Jd6c
+-----END PGP SIGNATURE-----
+
+--0F1p//8PRICkK4MW--
+
+
+--===============2742746896377470155==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2742746896377470155==--
