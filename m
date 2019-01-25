@@ -1,103 +1,35 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] ALSA: hda/tegra: enable clock during probe
-Date: Fri, 25 Jan 2019 14:04:56 +0000
-Message-ID: <1f4c5185-e518-5674-4a8c-4e7db64aa0d3@nvidia.com>
-References: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
- <s5h5zudc1qw.wl-tiwai@suse.de>
- <06c00ce1-32ed-8aa9-0340-d00202a8fa62@nvidia.com>
- <s5hr2d0zz96.wl-tiwai@suse.de>
- <b64f5d05-f352-7b46-d70d-3809aab8ddda@nvidia.com>
- <s5hef90zvo0.wl-tiwai@suse.de>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 26/26] drm/<drivers>: Don't set
+ FBINFO_(FLAG_)DEFAULT
+Date: Fri, 25 Jan 2019 15:02:46 +0000
+Message-ID: <CACvgo52YJ0kSBVJryELvZn70--4rbPr7R=TJdRgbVr1fEVr2yw@mail.gmail.com>
+References: <20190124165831.16427-1-daniel.vetter@ffwll.ch>
+ <20190124165831.16427-27-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <s5hef90zvo0.wl-tiwai@suse.de>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Sameer Pujar <spujar@nvidia.com>, pierre-louis.bossart@linux.intel.com, perex@perex.cz, alsa-devel@alsa-project.org, thierry.reding@gmail.com, rlokhande@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20190124165831.16427-27-daniel.vetter@ffwll.ch>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, ML nouveau <nouveau@lists.freedesktop.org>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sandy Huang <hjc@rock-chips.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Inki Dae <inki.dae@samsung.com>, linux-rockchip <linux-rockchip@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, Alexander Kapshuk <alexander.kapshuk@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Ben Skeggs <bskeggs@redhat.com>, LAKML <linux-arm-kernel@lists.in>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 25/01/2019 13:58, Takashi Iwai wrote:
-> On Fri, 25 Jan 2019 14:26:27 +0100,
-> Jon Hunter wrote:
->>
->>
->> On 25/01/2019 12:40, Takashi Iwai wrote:
->>> On Fri, 25 Jan 2019 12:36:00 +0100,
->>> Jon Hunter wrote:
->>>>
->>>>
->>>> On 24/01/2019 19:08, Takashi Iwai wrote:
->>>>> On Thu, 24 Jan 2019 18:36:43 +0100,
->>>>> Sameer Pujar wrote:
->>>>>>
->>>>>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
->>>>>> will not be ON. This could cause issue during probe, where hda init
->>>>>> setup is done. This patch checks whether runtime PM is enabled or not.
->>>>>> If disabled, clocks are enabled in probe() and disabled in remove()
->>>>>>
->>>>>> This patch does following minor changes as cleanup,
->>>>>>   * return code check for pm_runtime_get_sync() to take care of failure
->>>>>>     and exit gracefully.
->>>>>>   * In remove path runtime PM is disabled before calling snd_card_free().
->>>>>>   * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
->>>>>>   * runtime PM callbacks moved out of CONFIG_PM check
->>>>>>
->>>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>>>>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
->>>>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->>>>> (snip)
->>>>>> @@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
->>>>>>  	if (!azx_has_pm_runtime(chip))
->>>>>>  		pm_runtime_forbid(hda->dev);
->>>>>>  
->>>>>> +	/* explicit resume if runtime PM is disabled */
->>>>>> +	if (!pm_runtime_enabled(hda->dev)) {
->>>>>> +		err = hda_tegra_runtime_resume(hda->dev);
->>>>>> +		if (err)
->>>>>> +			goto out_free;
->>>>>> +	}
->>>>>> +
->>>>>>  	schedule_work(&hda->probe_work);
->>>>>
->>>>> Calling runtime_resume here is really confusing...
->>>>
->>>> Why? IMO it is better to have a single handler for resuming the device
->>>> and so if RPM is not enabled we call the handler directly. This is what
->>>> we have been advised to do in the past and do in other drivers. See ...
->>>
->>> The point is that we're not "resuming" anything there.  It's in the
->>> early probe stage, and the device state is uninitialized, not really
->>> suspended.  It'd end up with just calling the same helper
->>> (hda_tegra_enable_clocks()), though.
->>
->> Yes and you can make the same argument for every driver that calls
->> pm_runtime_get_sync() during probe to turn on clocks, handle resets,
->> etc, because at the end of the day the very first call to
->> pm_runtime_get_sync() invokes the runtime_resume callback, when we have
->> never been suspended.
-> 
-> Although there are some magical pm_runtime_*() in some places, most of
-> such pm_runtime_get_sync() is for the actual runtime PM management (to
-> prevent the runtime suspend), while the code above is for explicitly
-> setting up something for non-PM cases.
-> 
-> And if pm_runtime_get_sync() is obviously superfluous, we should
-> remove such calls.  Really.
-
-Yes agree.
-
->> Yes at the end of the day it is the same and given that we have done
->> this elsewhere I think it is good to be consistent if/where we can.
-> 
-> The code becomes less readable, and that's a good reason against it :)
-
-I don't its less readable. However, I do think it is less error prone :-)
-
-Jon
-
--- 
-nvpublic
+T24gVGh1LCAyNCBKYW4gMjAxOSBhdCAxNzowMCwgRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRl
+ckBmZndsbC5jaD4gd3JvdGU6Cj4KPiBJdCdzIDAuCj4KSSdkIGFkZCBhIGJpdCBtb3JlIGluZm9y
+bWF0aW9uIGhlcmUuIEZlZWwgZnJlZSB0byByZXVzZSBhcyBtdWNoL2xpdHRsZQpvZiB0aGUgZm9s
+bG93aW5nOgoKQm90aCBtYWNyb3MgZXZhbHVhdGUgdG8gMC4gQXQgdGhlIHNhbWUgdGltZSBmbGFn
+IGlzIGFscmVhZHkgc2V0IHRvCnplcm8gc2luY2UgdGhlIHN0cnVjdCBpcyBremFsbG9jJ2QgaW4g
+ZnJhbWVidWZmZXJfYWxsb2MoKS4KQXMgY2FsbGVkIGJ5IGRybV9mYl9oZWxwZXJfYWxsb2NfZmJp
+KCkgaW4gdGhlIERSTSBkcml2ZXJzLgoKCi1FbWlsCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2ludGVsLWdmeAo=
