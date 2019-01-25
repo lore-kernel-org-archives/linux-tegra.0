@@ -1,102 +1,79 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V2 2/4] i2c: tegra: Update I2C transfer using buffer
-Date: Fri, 25 Jan 2019 22:55:07 +0300
-Message-ID: <185da588-1080-1589-46b6-5b63dff681eb@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V2 2/4] i2c: tegra: Update I2C transfer using buffer
+Date: Fri, 25 Jan 2019 20:20:36 +0000
+Message-ID: <BYAPR12MB33982FC612F99AC5CAE29EDBC29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
  <1548363113-25969-2-git-send-email-skomatineni@nvidia.com>
+ <185da588-1080-1589-46b6-5b63dff681eb@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548363113-25969-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <185da588-1080-1589-46b6-5b63dff681eb@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-24.01.2019 23:51, Sowjanya Komatineni пишет:
-> This patch prepares the buffer with the message bytes to be
-> transmitted along with the packet header information and then
-> performs i2c transfer in PIO mode.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  [V2] : DMA support changes include preparing buffer with message bytes and
-> 	and header before sending them through DMA. So splitted the whole
-> 	change into 2 seperate patches in this series.
-> 
->  drivers/i2c/busses/i2c-tegra.c | 97 +++++++++++++++++++++++++++++-------------
->  1 file changed, 68 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index ef854be4c837..13bce1411ddc 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -117,6 +117,9 @@
->  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
->  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
->  
-> +/* Packet header size in bytes */
-> +#define I2C_PACKET_HEADER_SIZE			12
-> +
->  /*
->   * msg_end_type: The bus control which need to be send at end of transfer.
->   * @MSG_END_STOP: Send stop pulse at end of transfer.
-> @@ -677,35 +680,69 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +static int tegra_i2c_start_pio_xfer(struct tegra_i2c_dev *i2c_dev)
-> +{
-> +	u32 *buffer = (u32 *)i2c_dev->msg_buf;
-> +	unsigned long flags;
-> +	u32 int_mask;
-> +
-> +	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-> +
-> +	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
-> +	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-> +
-> +	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-> +	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-> +	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-> +
-> +	i2c_dev->msg_buf = (u8 *) buffer;
-> +
-> +	if (!i2c_dev->msg_read)
-> +		tegra_i2c_fill_tx_fifo(i2c_dev);
-> +
-> +	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
-> +		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
-> +	if (i2c_dev->msg_read)
-> +		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
-> +	else if (i2c_dev->msg_buf_remaining)
-> +		int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
-> +
-> +	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-> +	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
-> +	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
-> +		i2c_readl(i2c_dev, I2C_INT_MASK));
-> +
-> +	return 0;
-> +}
-> +
->  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	struct i2c_msg *msg, enum msg_end_type end_state)
->  {
->  	u32 packet_header;
->  	u32 int_mask;
->  	unsigned long time_left;
-> -	unsigned long flags;
-> +	u32 *buffer;
-> +	int ret = 0;
-> +
-> +	buffer = kmalloc(ALIGN(msg->len, BYTES_PER_FIFO_WORD) +
-> +					I2C_PACKET_HEADER_SIZE, GFP_KERNEL);
-> +	if (!buffer)
-> +		return -ENOMEM;
-
-Isn't it possible to avoid "buffer" allocation / copying overhead and keep code as-is for the PIO mode?
-
-[snip]
+DQoNCj4gPiBUaGlzIHBhdGNoIHByZXBhcmVzIHRoZSBidWZmZXIgd2l0aCB0aGUgbWVzc2FnZSBi
+eXRlcyB0byBiZSANCj4gPiB0cmFuc21pdHRlZCBhbG9uZyB3aXRoIHRoZSBwYWNrZXQgaGVhZGVy
+IGluZm9ybWF0aW9uIGFuZCB0aGVuIHBlcmZvcm1zIA0KPiA+IGkyYyB0cmFuc2ZlciBpbiBQSU8g
+bW9kZS4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBTb3dqYW55YSBLb21hdGluZW5pIDxza29t
+YXRpbmVuaUBudmlkaWEuY29tPg0KPiA+IC0tLQ0KPiA+ICBbVjJdIDogRE1BIHN1cHBvcnQgY2hh
+bmdlcyBpbmNsdWRlIHByZXBhcmluZyBidWZmZXIgd2l0aCBtZXNzYWdlIGJ5dGVzIGFuZA0KPiA+
+IAlhbmQgaGVhZGVyIGJlZm9yZSBzZW5kaW5nIHRoZW0gdGhyb3VnaCBETUEuIFNvIHNwbGl0dGVk
+IHRoZSB3aG9sZQ0KPiA+IAljaGFuZ2UgaW50byAyIHNlcGVyYXRlIHBhdGNoZXMgaW4gdGhpcyBz
+ZXJpZXMuDQo+ID4gDQo+ID4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyB8IDk3IA0K
+PiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQ0KPiA+ICAxIGZp
+bGUgY2hhbmdlZCwgNjggaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyANCj4gPiBiL2RyaXZl
+cnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyBpbmRleCBlZjg1NGJlNGM4MzcuLjEzYmNlMTQxMWRk
+YyANCj4gPiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMN
+Cj4gPiArKysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gPiBAQCAtMTE3LDYg
+KzExNyw5IEBADQo+ID4gICNkZWZpbmUgSTJDX01TVF9GSUZPX1NUQVRVU19UWF9NQVNLCQkweGZm
+MDAwMA0KPiA+ICAjZGVmaW5lIEkyQ19NU1RfRklGT19TVEFUVVNfVFhfU0hJRlQJCTE2DQo+ID4g
+IA0KPiA+ICsvKiBQYWNrZXQgaGVhZGVyIHNpemUgaW4gYnl0ZXMgKi8NCj4gPiArI2RlZmluZSBJ
+MkNfUEFDS0VUX0hFQURFUl9TSVpFCQkJMTINCj4gPiArDQo+ID4gIC8qDQo+ID4gICAqIG1zZ19l
+bmRfdHlwZTogVGhlIGJ1cyBjb250cm9sIHdoaWNoIG5lZWQgdG8gYmUgc2VuZCBhdCBlbmQgb2Yg
+dHJhbnNmZXIuDQo+ID4gICAqIEBNU0dfRU5EX1NUT1A6IFNlbmQgc3RvcCBwdWxzZSBhdCBlbmQg
+b2YgdHJhbnNmZXIuDQo+ID4gQEAgLTY3NywzNSArNjgwLDY5IEBAIHN0YXRpYyBpcnFyZXR1cm5f
+dCB0ZWdyYV9pMmNfaXNyKGludCBpcnEsIHZvaWQgKmRldl9pZCkNCj4gPiAgCXJldHVybiBJUlFf
+SEFORExFRDsNCj4gPiAgfQ0KPiA+ICANCj4gPiArc3RhdGljIGludCB0ZWdyYV9pMmNfc3RhcnRf
+cGlvX3hmZXIoc3RydWN0IHRlZ3JhX2kyY19kZXYgKmkyY19kZXYpIHsNCj4gPiArCXUzMiAqYnVm
+ZmVyID0gKHUzMiAqKWkyY19kZXYtPm1zZ19idWY7DQo+ID4gKwl1bnNpZ25lZCBsb25nIGZsYWdz
+Ow0KPiA+ICsJdTMyIGludF9tYXNrOw0KPiA+ICsNCj4gPiArCXNwaW5fbG9ja19pcnFzYXZlKCZp
+MmNfZGV2LT54ZmVyX2xvY2ssIGZsYWdzKTsNCj4gPiArDQo+ID4gKwlpbnRfbWFzayA9IEkyQ19J
+TlRfTk9fQUNLIHwgSTJDX0lOVF9BUkJJVFJBVElPTl9MT1NUOw0KPiA+ICsJdGVncmFfaTJjX3Vu
+bWFza19pcnEoaTJjX2RldiwgaW50X21hc2spOw0KPiA+ICsNCj4gPiArCWkyY193cml0ZWwoaTJj
+X2RldiwgKihidWZmZXIrKyksIEkyQ19UWF9GSUZPKTsNCj4gPiArCWkyY193cml0ZWwoaTJjX2Rl
+diwgKihidWZmZXIrKyksIEkyQ19UWF9GSUZPKTsNCj4gPiArCWkyY193cml0ZWwoaTJjX2Rldiwg
+KihidWZmZXIrKyksIEkyQ19UWF9GSUZPKTsNCj4gPiArDQo+ID4gKwlpMmNfZGV2LT5tc2dfYnVm
+ID0gKHU4ICopIGJ1ZmZlcjsNCj4gPiArDQo+ID4gKwlpZiAoIWkyY19kZXYtPm1zZ19yZWFkKQ0K
+PiA+ICsJCXRlZ3JhX2kyY19maWxsX3R4X2ZpZm8oaTJjX2Rldik7DQo+ID4gKw0KPiA+ICsJaWYg
+KGkyY19kZXYtPmh3LT5oYXNfcGVyX3BrdF94ZmVyX2NvbXBsZXRlX2lycSkNCj4gPiArCQlpbnRf
+bWFzayB8PSBJMkNfSU5UX1BBQ0tFVF9YRkVSX0NPTVBMRVRFOw0KPiA+ICsJaWYgKGkyY19kZXYt
+Pm1zZ19yZWFkKQ0KPiA+ICsJCWludF9tYXNrIHw9IEkyQ19JTlRfUlhfRklGT19EQVRBX1JFUTsN
+Cj4gPiArCWVsc2UgaWYgKGkyY19kZXYtPm1zZ19idWZfcmVtYWluaW5nKQ0KPiA+ICsJCWludF9t
+YXNrIHw9IEkyQ19JTlRfVFhfRklGT19EQVRBX1JFUTsNCj4gPiArDQo+ID4gKwl0ZWdyYV9pMmNf
+dW5tYXNrX2lycShpMmNfZGV2LCBpbnRfbWFzayk7DQo+ID4gKwlzcGluX3VubG9ja19pcnFyZXN0
+b3JlKCZpMmNfZGV2LT54ZmVyX2xvY2ssIGZsYWdzKTsNCj4gPiArCWRldl9kYmcoaTJjX2Rldi0+
+ZGV2LCAidW5tYXNrZWQgaXJxOiAlMDJ4XG4iLA0KPiA+ICsJCWkyY19yZWFkbChpMmNfZGV2LCBJ
+MkNfSU5UX01BU0spKTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gMDsNCj4gPiArfQ0KPiA+ICsNCj4g
+PiAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2coc3RydWN0IHRlZ3JhX2kyY19kZXYgKmky
+Y19kZXYsDQo+ID4gIAlzdHJ1Y3QgaTJjX21zZyAqbXNnLCBlbnVtIG1zZ19lbmRfdHlwZSBlbmRf
+c3RhdGUpICB7DQo+ID4gIAl1MzIgcGFja2V0X2hlYWRlcjsNCj4gPiAgCXUzMiBpbnRfbWFzazsN
+Cj4gPiAgCXVuc2lnbmVkIGxvbmcgdGltZV9sZWZ0Ow0KPiA+IC0JdW5zaWduZWQgbG9uZyBmbGFn
+czsNCj4gPiArCXUzMiAqYnVmZmVyOw0KPiA+ICsJaW50IHJldCA9IDA7DQo+ID4gKw0KPiA+ICsJ
+YnVmZmVyID0ga21hbGxvYyhBTElHTihtc2ctPmxlbiwgQllURVNfUEVSX0ZJRk9fV09SRCkgKw0K
+PiA+ICsJCQkJCUkyQ19QQUNLRVRfSEVBREVSX1NJWkUsIEdGUF9LRVJORUwpOw0KPiA+ICsJaWYg
+KCFidWZmZXIpDQo+ID4gKwkJcmV0dXJuIC1FTk9NRU07DQo+DQo+IElzbid0IGl0IHBvc3NpYmxl
+IHRvIGF2b2lkICJidWZmZXIiIGFsbG9jYXRpb24gLyBjb3B5aW5nIG92ZXJoZWFkIGFuZCBrZWVw
+IGNvZGUgYXMtaXMgZm9yIHRoZSBQSU8gbW9kZT8NCj4NCg0KS2VlcGluZyBQSU8gbW9kZSBjb2Rl
+IGFzIGlzIGFuZCBhZGRpbmcgRE1BIG1vZGUgd2lsbCBoYXZlIHJlZHVuZGFudCBjb2RlIGZvciBo
+ZWFkZXIgZ2VuZXJhdGlvbiBhbmQgbXNnIGNvbXBsZXRlIHRpbWVvdXQgc2VjdGlvbnMuDQpBbHNv
+IGluIGV4aXN0aW5nIFBJTyBtb2RlIGltcGxlbWVudGF0aW9uLCBUWCBGSUZPIGlzIGZpbGxlZCBh
+cyBzb29uIGFzIHRoZSB3b3JkIGlzIHJlYWR5IGJ1dCBmb3IgRE1BIG1vZGUgbmVlZCB0byBwdXQg
+YWxsIG1zZyBieXRlcyBhbG9uZyB3aXRoIGhlYWRlciB0b2dldGhlciB0byBzZW5kIHRocnUgRE1B
+Lg0KU28gY3JlYXRlZCBjb21tb24gYnVmZmVyIHRvIHBlcmZvcm0gUElPL0RNQSB0byByZWR1Y2Ug
+cmVkdW5kYW5jeS4NCg==
