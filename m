@@ -1,38 +1,67 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] reset: Don't WARN if trying to get a used reset control
-Date: Fri, 25 Jan 2019 11:15:54 +0100
-Message-ID: <20190125101554.5947-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/7] soc/tegra: pmc: Sort includes alphabetically
+Date: Fri, 25 Jan 2019 11:22:49 +0100
+Message-ID: <20190125102255.6862-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-When requesting a reset control for exclusive use that's already in use,
-an -EBUSY error code is returned. Users can react accordingly when they
-receive that error code, so there is no need to loudly complain.
+This will make it easier to insert new includes in the right place in
+subsequent patches.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/reset/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/tegra/pmc.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 9582efb70025..6b452f010b66 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -416,7 +416,7 @@ static struct reset_control *__reset_control_get_internal(
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 7ea3280279ff..cd865be3b195 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -20,7 +20,6 @@
  
- 	list_for_each_entry(rstc, &rcdev->reset_control_head, list) {
- 		if (rstc->id == index) {
--			if (WARN_ON(!rstc->shared || !shared))
-+			if (!rstc->shared || !shared)
- 				return ERR_PTR(-EBUSY);
+ #define pr_fmt(fmt) "tegra-pmc: " fmt
  
- 			kref_get(&rstc->refcnt);
+-#include <linux/kernel.h>
+ #include <linux/clk.h>
+ #include <linux/clk/tegra.h>
+ #include <linux/debugfs.h>
+@@ -30,16 +29,17 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+-#include <linux/irq.h>
+ #include <linux/irqdomain.h>
+-#include <linux/of.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
+ #include <linux/of_address.h>
+ #include <linux/of_clk.h>
++#include <linux/of.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+-#include <linux/pinctrl/pinctrl.h>
+-#include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinconf-generic.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinctrl.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/reboot.h>
 -- 
 2.19.1
