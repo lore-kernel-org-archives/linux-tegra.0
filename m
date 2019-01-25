@@ -1,11 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/7] soc/tegra: pmc: Sort includes alphabetically
-Date: Fri, 25 Jan 2019 11:22:49 +0100
-Message-ID: <20190125102255.6862-1-thierry.reding@gmail.com>
+Subject: [PATCH 2/7] soc/tegra: pmc: Add missing kerneldoc
+Date: Fri, 25 Jan 2019 11:22:50 +0100
+Message-ID: <20190125102255.6862-2-thierry.reding@gmail.com>
+References: <20190125102255.6862-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190125102255.6862-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,47 +23,37 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This will make it easier to insert new includes in the right place in
-subsequent patches.
+Some of the fields in struct tegra_pmc had not been documented when they
+were added. Add the missing kerneldoc.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/soc/tegra/pmc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 7ea3280279ff..cd865be3b195 100644
+index cd865be3b195..550653302ff2 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -20,7 +20,6 @@
- 
- #define pr_fmt(fmt) "tegra-pmc: " fmt
- 
--#include <linux/kernel.h>
- #include <linux/clk.h>
- #include <linux/clk/tegra.h>
- #include <linux/debugfs.h>
-@@ -30,16 +29,17 @@
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
--#include <linux/irq.h>
- #include <linux/irqdomain.h>
--#include <linux/of.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
- #include <linux/of_address.h>
- #include <linux/of_clk.h>
-+#include <linux/of.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
--#include <linux/pinctrl/pinctrl.h>
--#include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinctrl.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/reboot.h>
+@@ -273,6 +273,9 @@ static const char * const tegra30_reset_sources[] = {
+  * struct tegra_pmc - NVIDIA Tegra PMC
+  * @dev: pointer to PMC device structure
+  * @base: pointer to I/O remapped register region
++ * @wake: pointer to I/O remapped region for WAKE registers
++ * @aotag: pointer to I/O remapped region for AOTAG registers
++ * @scratch: pointer to I/O remapped region for scratch registers
+  * @clk: pointer to pclk clock
+  * @soc: pointer to SoC data structure
+  * @debugfs: pointer to debugfs entry
+@@ -291,6 +294,9 @@ static const char * const tegra30_reset_sources[] = {
+  * @lp0_vec_size: size of the LP0 warm boot code
+  * @powergates_available: Bitmap of available power gates
+  * @powergates_lock: mutex for power gate register access
++ * @pctl_dev: pin controller exposed by the PMC
++ * @domain: IRQ domain provided by the PMC
++ * @irq: chip implementation for the IRQ domain
+  */
+ struct tegra_pmc {
+ 	struct device *dev;
 -- 
 2.19.1
