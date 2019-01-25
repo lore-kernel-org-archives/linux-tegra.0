@@ -1,15 +1,14 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH v2 03/13] gpu: host1x: Support 40-bit addressing
-Date: Fri, 25 Jan 2019 11:13:41 +0200
-Message-ID: <aafbdfcc-527a-132e-de12-9fa7eec5e1f0@kapsi.fi>
+Date: Fri, 25 Jan 2019 10:20:55 +0100
+Message-ID: <20190125092055.GA22320@ulmo>
 References: <20190124180254.20080-1-thierry.reding@gmail.com>
  <20190124180254.20080-4-thierry.reding@gmail.com>
+ <aafbdfcc-527a-132e-de12-9fa7eec5e1f0@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0595554697=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190124180254.20080-4-thierry.reding@gmail.com>
-Content-Language: en-US
+In-Reply-To: <aafbdfcc-527a-132e-de12-9fa7eec5e1f0@kapsi.fi>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -19,97 +18,146 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
+To: Mikko Perttunen <cyndis@kapsi.fi>
 Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjQuMS4yMDE5IDIwLjAyLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiBGcm9tOiBUaGllcnJ5
-IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFRlZ3JhMTg2IGFuZCBsYXRlciBzdXBw
-b3J0IDQwIGJpdHMgb2YgYWRkcmVzcyBzcGFjZS4gQWRkaXRpb25hbAo+IHJlZ2lzdGVycyBuZWVk
-IHRvIGJlIHByb2dyYW1tZWQgdG8gc3RvcmUgdGhlIGZ1bGwgNDAgYml0cyBvZiBwdXNoCj4gYnVm
-ZmVyIGFkZHJlc3Nlcy4KPiAKPiBTaW5jZSBjb21tYW5kIHN0cmVhbSBnYXRoZXJzIGNhbiBhbHNv
-IHJlc2lkZSBpbiBidWZmZXJzIGluIGEgNDAtYml0Cj4gYWRkcmVzcyBzcGFjZSwgYSBuZXcgdmFy
-aWFudCBvZiB0aGUgR0FUSEVSIG9wY29kZSBpcyBhbHNvIGludHJvZHVjZWQuCj4gSXQgdGFrZXMg
-dHdvIHBhcmFtZXRlcnM6IHRoZSBmaXJzdCBwYXJhbWV0ZXIgY29udGFpbnMgdGhlIGxvd2VyIDMy
-Cj4gYml0cyBvZiB0aGUgYWRkcmVzcyBhbmQgdGhlIHNlY29uZCBwYXJhbWV0ZXIgY29udGFpbnMg
-Yml0cyAzMiB0byAzOS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGlu
-Z0BudmlkaWEuY29tPgo+IC0tLQo+ICAgZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NkbWFfaHcuYyAg
-ICAgICAgICAgfCAxMyArKysrKysrKy0tLQo+ICAgZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NoYW5u
-ZWxfaHcuYyAgICAgICAgfCAyOCArKysrKysrKysrKysrKysrKysrLS0tLQo+ICAgZHJpdmVycy9n
-cHUvaG9zdDF4L2h3L2hvc3QxeDA2X2hhcmR3YXJlLmggfCAgNSArKysrCj4gICBkcml2ZXJzL2dw
-dS9ob3N0MXgvaHcvaG9zdDF4MDdfaGFyZHdhcmUuaCB8ICA1ICsrKysKPiAgIDQgZmlsZXMgY2hh
-bmdlZCwgNDQgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NkbWFfaHcuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9j
-ZG1hX2h3LmMKPiBpbmRleCBjZTMyMDUzNGNiZWQuLjZkMmI3YWYyYWY4OSAxMDA2NDQKPiAtLS0g
-YS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2RtYV9ody5jCj4gKysrIGIvZHJpdmVycy9ncHUvaG9z
-dDF4L2h3L2NkbWFfaHcuYwo+IEBAIC02OCwyMCArNjgsMjcgQEAgc3RhdGljIHZvaWQgY2RtYV90
-aW1lb3V0X2NwdV9pbmNyKHN0cnVjdCBob3N0MXhfY2RtYSAqY2RtYSwgdTMyIGdldHB0ciwKPiAg
-IHN0YXRpYyB2b2lkIGNkbWFfc3RhcnQoc3RydWN0IGhvc3QxeF9jZG1hICpjZG1hKQo+ICAgewo+
-ICAgCXN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2ggPSBjZG1hX3RvX2NoYW5uZWwoY2RtYSk7Cj4g
-Kwl1NjQgc3RhcnQsIGVuZDsKPiAgIAo+ICAgCWlmIChjZG1hLT5ydW5uaW5nKQo+ICAgCQlyZXR1
-cm47Cj4gICAKPiAgIAljZG1hLT5sYXN0X3BvcyA9IGNkbWEtPnB1c2hfYnVmZmVyLnBvczsKPiAr
-CXN0YXJ0ID0gY2RtYS0+cHVzaF9idWZmZXIuZG1hOwo+ICsJZW5kID0gY2RtYS0+cHVzaF9idWZm
-ZXIuZG1hICsgY2RtYS0+cHVzaF9idWZmZXIuc2l6ZSArIDQ7Cj4gICAKPiAgIAlob3N0MXhfY2hf
-d3JpdGVsKGNoLCBIT1NUMVhfQ0hBTk5FTF9ETUFDVFJMX0RNQVNUT1AsCj4gICAJCQkgSE9TVDFY
-X0NIQU5ORUxfRE1BQ1RSTCk7Cj4gICAKPiAgIAkvKiBzZXQgYmFzZSwgcHV0IGFuZCBlbmQgcG9p
-bnRlciAqLwo+IC0JaG9zdDF4X2NoX3dyaXRlbChjaCwgY2RtYS0+cHVzaF9idWZmZXIuZG1hLCBI
-T1NUMVhfQ0hBTk5FTF9ETUFTVEFSVCk7Cj4gKwlob3N0MXhfY2hfd3JpdGVsKGNoLCBsb3dlcl8z
-Ml9iaXRzKHN0YXJ0KSwgSE9TVDFYX0NIQU5ORUxfRE1BU1RBUlQpOwo+ICAgCWhvc3QxeF9jaF93
-cml0ZWwoY2gsIGNkbWEtPnB1c2hfYnVmZmVyLnBvcywgSE9TVDFYX0NIQU5ORUxfRE1BUFVUKTsK
-PiAtCWhvc3QxeF9jaF93cml0ZWwoY2gsIGNkbWEtPnB1c2hfYnVmZmVyLmRtYSArIGNkbWEtPnB1
-c2hfYnVmZmVyLnNpemUgKyA0LAo+IC0JCQkgSE9TVDFYX0NIQU5ORUxfRE1BRU5EKTsKPiArCWhv
-c3QxeF9jaF93cml0ZWwoY2gsIGxvd2VyXzMyX2JpdHMoZW5kKSwgSE9TVDFYX0NIQU5ORUxfRE1B
-RU5EKTsKPiArCj4gKyNpZiBIT1NUMVhfSFcgPj0gNgo+ICsJaG9zdDF4X2NoX3dyaXRlbChjaCwg
-dXBwZXJfMzJfYml0cyhzdGFydCksIEhPU1QxWF9DSEFOTkVMX0RNQVNUQVJUX0hJKTsKPiArCWhv
-c3QxeF9jaF93cml0ZWwoY2gsIHVwcGVyXzMyX2JpdHMoZW5kKSwgSE9TVDFYX0NIQU5ORUxfRE1B
-RU5EX0hJKTsKPiArI2VuZGlmCj4gICAKPiAgIAkvKiByZXNldCBHRVQgKi8KPiAgIAlob3N0MXhf
-Y2hfd3JpdGVsKGNoLCBIT1NUMVhfQ0hBTk5FTF9ETUFDVFJMX0RNQVNUT1AgfAo+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2hhbm5lbF9ody5jIGIvZHJpdmVycy9ncHUvaG9z
-dDF4L2h3L2NoYW5uZWxfaHcuYwo+IGluZGV4IGZmMTM3ZmU3MmQzNC4uNzhmYjQ5NTM5ZThjIDEw
-MDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFubmVsX2h3LmMKPiArKysgYi9k
-cml2ZXJzL2dwdS9ob3N0MXgvaHcvY2hhbm5lbF9ody5jCj4gQEAgLTY0LDExICs2NCwzMSBAQCBz
-dGF0aWMgdm9pZCBzdWJtaXRfZ2F0aGVycyhzdHJ1Y3QgaG9zdDF4X2pvYiAqam9iKQo+ICAgCj4g
-ICAJZm9yIChpID0gMDsgaSA8IGpvYi0+bnVtX2dhdGhlcnM7IGkrKykgewo+ICAgCQlzdHJ1Y3Qg
-aG9zdDF4X2pvYl9nYXRoZXIgKmcgPSAmam9iLT5nYXRoZXJzW2ldOwo+IC0JCXUzMiBvcDEgPSBo
-b3N0MXhfb3Bjb2RlX2dhdGhlcihnLT53b3Jkcyk7Cj4gLQkJdTMyIG9wMiA9IGctPmJhc2UgKyBn
-LT5vZmZzZXQ7Cj4gKwkJZG1hX2FkZHJfdCBhZGRyID0gZy0+YmFzZSArIGctPm9mZnNldDsKPiAr
-CQl1MzIgb3AyLCBvcDM7Cj4gICAKPiAtCQl0cmFjZV93cml0ZV9nYXRoZXIoY2RtYSwgZy0+Ym8s
-IGctPm9mZnNldCwgb3AxICYgMHhmZmZmKTsKPiAtCQlob3N0MXhfY2RtYV9wdXNoKGNkbWEsIG9w
-MSwgb3AyKTsKPiArCQlvcDIgPSBsb3dlcl8zMl9iaXRzKGFkZHIpOwo+ICsJCW9wMyA9IHVwcGVy
-XzMyX2JpdHMoYWRkcik7Cj4gKwo+ICsJCXRyYWNlX3dyaXRlX2dhdGhlcihjZG1hLCBnLT5ibywg
-Zy0+b2Zmc2V0LCBnLT53b3Jkcyk7Cj4gKwo+ICsJCWlmIChvcDMgIT0gMCkgewo+ICsjaWYgSE9T
-VDFYX0hXID49IDYKPiArCQkJdTMyIG9wMSA9IGhvc3QxeF9vcGNvZGVfZ2F0aGVyX3dpZGUoZy0+
-d29yZHMpOwo+ICsJCQl1MzIgb3A0ID0gSE9TVDFYX09QQ09ERV9OT1A7Cj4gKwo+ICsJCQlob3N0
-MXhfY2RtYV9wdXNoKGNkbWEsIG9wMSwgb3AyKTsKPiArCQkJaG9zdDF4X2NkbWFfcHVzaChjZG1h
-LCBvcDMsIG9wNCk7CgpUaGlzIHdpbGwgYnJlYWsgaWYgdGhlIGZpcnN0IHB1c2ggZ29lcyBhcyB0
-aGUgbGFzdCBzbG90IG9mIHRoZSAKcmluZ2J1ZmZlciBhbmQgdGhlIHNlY29uZCBwdXNoIGdvZXMg
-YXMgdGhlIGZpcnN0IHNsb3Qgb2YgdGhlIHJpbmdidWZmZXIuCgpPdGhlcndpc2UgbG9va3MgZ29v
-ZCB0byBtZS4KCj4gKyNlbHNlCj4gKwkJCWRldl9lcnIoZGV2LCAiaW52YWxpZCBnYXRoZXIgZm9y
-IHB1c2ggYnVmZmVyICVwYWRcbiIsCj4gKwkJCQkmYWRkcik7Cj4gKwkJCWNvbnRpbnVlOwo+ICsj
-ZW5kaWYKPiArCQl9IGVsc2Ugewo+ICsJCQl1MzIgb3AxID0gaG9zdDF4X29wY29kZV9nYXRoZXIo
-Zy0+d29yZHMpOwo+ICsKPiArCQkJaG9zdDF4X2NkbWFfcHVzaChjZG1hLCBvcDEsIG9wMik7Cj4g
-KwkJfQo+ICAgCX0KPiAgIH0KPiAgIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgv
-aHcvaG9zdDF4MDZfaGFyZHdhcmUuaCBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwNl9o
-YXJkd2FyZS5oCj4gaW5kZXggZWFiNzUzYjkxZjI0Li5kZDM3YjEwYzhkMDQgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2hvc3QxeDA2X2hhcmR3YXJlLmgKPiArKysgYi9kcml2
-ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDZfaGFyZHdhcmUuaAo+IEBAIC0xMzgsNiArMTM4LDEx
-IEBAIHN0YXRpYyBpbmxpbmUgdTMyIGhvc3QxeF9vcGNvZGVfZ2F0aGVyX2luY3IodW5zaWduZWQg
-b2Zmc2V0LCB1bnNpZ25lZCBjb3VudCkKPiAgIAlyZXR1cm4gKDYgPDwgMjgpIHwgKG9mZnNldCA8
-PCAxNikgfCBCSVQoMTUpIHwgQklUKDE0KSB8IGNvdW50Owo+ICAgfQo+ICAgCj4gK3N0YXRpYyBp
-bmxpbmUgdTMyIGhvc3QxeF9vcGNvZGVfZ2F0aGVyX3dpZGUodW5zaWduZWQgY291bnQpCj4gK3sK
-PiArCXJldHVybiAoMTIgPDwgMjgpIHwgY291bnQ7Cj4gK30KPiArCj4gICAjZGVmaW5lIEhPU1Qx
-WF9PUENPREVfTk9QIGhvc3QxeF9vcGNvZGVfbm9uaW5jcigwLCAwKQo+ICAgCj4gICAjZW5kaWYK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2hvc3QxeDA3X2hhcmR3YXJlLmgg
-Yi9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDdfaGFyZHdhcmUuaAo+IGluZGV4IGE3OWY1
-N2RjODdiYi4uOWY2ZGE0ZWU1NDQzIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9o
-dy9ob3N0MXgwN19oYXJkd2FyZS5oCj4gKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2hvc3Qx
-eDA3X2hhcmR3YXJlLmgKPiBAQCAtMTM4LDYgKzEzOCwxMSBAQCBzdGF0aWMgaW5saW5lIHUzMiBo
-b3N0MXhfb3Bjb2RlX2dhdGhlcl9pbmNyKHVuc2lnbmVkIG9mZnNldCwgdW5zaWduZWQgY291bnQp
-Cj4gICAJcmV0dXJuICg2IDw8IDI4KSB8IChvZmZzZXQgPDwgMTYpIHwgQklUKDE1KSB8IEJJVCgx
-NCkgfCBjb3VudDsKPiAgIH0KPiAgIAo+ICtzdGF0aWMgaW5saW5lIHUzMiBob3N0MXhfb3Bjb2Rl
-X2dhdGhlcl93aWRlKHVuc2lnbmVkIGNvdW50KQo+ICt7Cj4gKwlyZXR1cm4gKDEyIDw8IDI4KSB8
-IGNvdW50Owo+ICt9Cj4gKwo+ICAgI2RlZmluZSBIT1NUMVhfT1BDT0RFX05PUCBob3N0MXhfb3Bj
-b2RlX25vbmluY3IoMCwgMCkKPiAgIAo+ICAgI2VuZGlmCj4gCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--===============0595554697==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Disposition: inline
+
+
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jan 25, 2019 at 11:13:41AM +0200, Mikko Perttunen wrote:
+> On 24.1.2019 20.02, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Tegra186 and later support 40 bits of address space. Additional
+> > registers need to be programmed to store the full 40 bits of push
+> > buffer addresses.
+> >=20
+> > Since command stream gathers can also reside in buffers in a 40-bit
+> > address space, a new variant of the GATHER opcode is also introduced.
+> > It takes two parameters: the first parameter contains the lower 32
+> > bits of the address and the second parameter contains bits 32 to 39.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >   drivers/gpu/host1x/hw/cdma_hw.c           | 13 ++++++++---
+> >   drivers/gpu/host1x/hw/channel_hw.c        | 28 +++++++++++++++++++----
+> >   drivers/gpu/host1x/hw/host1x06_hardware.h |  5 ++++
+> >   drivers/gpu/host1x/hw/host1x07_hardware.h |  5 ++++
+> >   4 files changed, 44 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cd=
+ma_hw.c
+> > index ce320534cbed..6d2b7af2af89 100644
+> > --- a/drivers/gpu/host1x/hw/cdma_hw.c
+> > +++ b/drivers/gpu/host1x/hw/cdma_hw.c
+> > @@ -68,20 +68,27 @@ static void cdma_timeout_cpu_incr(struct host1x_cdm=
+a *cdma, u32 getptr,
+> >   static void cdma_start(struct host1x_cdma *cdma)
+> >   {
+> >   	struct host1x_channel *ch =3D cdma_to_channel(cdma);
+> > +	u64 start, end;
+> >   	if (cdma->running)
+> >   		return;
+> >   	cdma->last_pos =3D cdma->push_buffer.pos;
+> > +	start =3D cdma->push_buffer.dma;
+> > +	end =3D cdma->push_buffer.dma + cdma->push_buffer.size + 4;
+> >   	host1x_ch_writel(ch, HOST1X_CHANNEL_DMACTRL_DMASTOP,
+> >   			 HOST1X_CHANNEL_DMACTRL);
+> >   	/* set base, put and end pointer */
+> > -	host1x_ch_writel(ch, cdma->push_buffer.dma, HOST1X_CHANNEL_DMASTART);
+> > +	host1x_ch_writel(ch, lower_32_bits(start), HOST1X_CHANNEL_DMASTART);
+> >   	host1x_ch_writel(ch, cdma->push_buffer.pos, HOST1X_CHANNEL_DMAPUT);
+> > -	host1x_ch_writel(ch, cdma->push_buffer.dma + cdma->push_buffer.size +=
+ 4,
+> > -			 HOST1X_CHANNEL_DMAEND);
+> > +	host1x_ch_writel(ch, lower_32_bits(end), HOST1X_CHANNEL_DMAEND);
+> > +
+> > +#if HOST1X_HW >=3D 6
+> > +	host1x_ch_writel(ch, upper_32_bits(start), HOST1X_CHANNEL_DMASTART_HI=
+);
+> > +	host1x_ch_writel(ch, upper_32_bits(end), HOST1X_CHANNEL_DMAEND_HI);
+> > +#endif
+> >   	/* reset GET */
+> >   	host1x_ch_writel(ch, HOST1X_CHANNEL_DMACTRL_DMASTOP |
+> > diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw=
+/channel_hw.c
+> > index ff137fe72d34..78fb49539e8c 100644
+> > --- a/drivers/gpu/host1x/hw/channel_hw.c
+> > +++ b/drivers/gpu/host1x/hw/channel_hw.c
+> > @@ -64,11 +64,31 @@ static void submit_gathers(struct host1x_job *job)
+> >   	for (i =3D 0; i < job->num_gathers; i++) {
+> >   		struct host1x_job_gather *g =3D &job->gathers[i];
+> > -		u32 op1 =3D host1x_opcode_gather(g->words);
+> > -		u32 op2 =3D g->base + g->offset;
+> > +		dma_addr_t addr =3D g->base + g->offset;
+> > +		u32 op2, op3;
+> > -		trace_write_gather(cdma, g->bo, g->offset, op1 & 0xffff);
+> > -		host1x_cdma_push(cdma, op1, op2);
+> > +		op2 =3D lower_32_bits(addr);
+> > +		op3 =3D upper_32_bits(addr);
+> > +
+> > +		trace_write_gather(cdma, g->bo, g->offset, g->words);
+> > +
+> > +		if (op3 !=3D 0) {
+> > +#if HOST1X_HW >=3D 6
+> > +			u32 op1 =3D host1x_opcode_gather_wide(g->words);
+> > +			u32 op4 =3D HOST1X_OPCODE_NOP;
+> > +
+> > +			host1x_cdma_push(cdma, op1, op2);
+> > +			host1x_cdma_push(cdma, op3, op4);
+>=20
+> This will break if the first push goes as the last slot of the ringbuffer
+> and the second push goes as the first slot of the ringbuffer.
+>=20
+> Otherwise looks good to me.
+
+Why would that break? Isn't the purpose of a ringbuffer to behave as if
+it was infinitely sequential? If this really is a problem, how do we fix
+it? Would we have to stash NOPs into the pushbuffer until we wrap
+around?
+
+Thierry
+
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK1PQACgkQ3SOs138+
+s6ERdg//aIEWMEAAiLEFoa7zWq4jZta2UqQlb925HUCWPGWQmtR9F3oMpRwOHyMd
+LKHZ249vCpVvyAcX5+LylcWWtSkRBlFZi6DzbcmTGlfqFI2GIHKR0krAqvHiW4Xz
+ihHqvM/UtUy85b+iPhlQ90D/Rp4u3Ger3qzfmlEvpdQe1JVyGa2KOsTZVIBMAuWU
+ueA1VVwnBumgeE4jp9ZXtbaQJVG1q0gyckpioGurCpgTrRXctLSdnkgKRk5wWURG
+kDc0q7k9WaeUqgqoezGhAn3eOcSwHT/cJlTvE3Ycvh/LpTHZ7FPxrsoeR3X/MFI6
+aqXnfxnvgg3HY32YOAHER2175R2CuZVjYzDmQDYV7KSWUT4PjgAnm/IjxGCdDBrn
+s8PtgrawWOeZA4/L9ewSjfVNEHfGGypYz2THNRCxlyMiUmbnn2MDjPJK31HdjZp1
+yLvNStwCxUCNNN6cTbW7tFa5CU78tgNqveApVHuTsE52ri8vPGqdC98vmxDaanyy
+SSoWrgGw/wG/PO7N71kj7iWOt8VNLCLXjLkP8h3mWdVQTmQNvuOBeJGaVacBsQLN
+rQnmskvwC+tyMYoWi754k98+623L0cYyQ6FbTI9nm10g2V7oZVySMWgLS9ooXlO3
+DjOYjPjGA/T3HD/3iDBhf1Xsmsb0foQrciou1jCEcGPijxJj/fE=
+=PKlj
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
+
+--===============0595554697==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0595554697==--
