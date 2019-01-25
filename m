@@ -1,114 +1,77 @@
-From: navneet kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/5] iommu/tegra-smmu: Fix domain_alloc
-Date: Thu, 24 Jan 2019 14:15:46 -0800
-Message-ID: <95116928-b245-d92b-a838-6b385725ea63@nvidia.com>
-References: <1547671814-30088-1-git-send-email-navneetk@nvidia.com>
-	<e55f408d-d518-f12d-4233-1b70263400f4@gmail.com>
-	<4f3104b7-120e-d71b-e7ea-9790ed2a3c97@arm.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+Date: Fri, 25 Jan 2019 11:23:11 +0800
+Message-ID: <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-2-josephl@nvidia.com>
+ <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4f3104b7-120e-d71b-e7ea-9790ed2a3c97-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhhbmtzIGZvciB0aGUgZmVlZGJhY2ssIFJvYmluLCBhbmQsIERtaXRyeS4KSSBtb3N0bHkgYWdy
-ZWUgd2l0aCBhbGwgeW91ciBjb21tZW50cywgcGxzIHNlZSBteSByZXNwb25zZXMgaW5saW5lLgpJ
-J2xsIG1ha2UgdGhlc2UgZml4ZXMgaW4gVjIuCgpPbiAxLzE3LzE5IDg6NTAgQU0sIFJvYmluIE11
-cnBoeSB3cm90ZToKPiBPbiAxNy8wMS8yMDE5IDE1OjEzLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-Cj4+IDE2LjAxLjIwMTkgMjM6NTAsIE5hdm5lZXQgS3VtYXIg0L/QuNGI0LXRgjoKPj4+ICogQWxs
-b2NhdGUgZG1hIGlvdmEgY29va2llIGZvciBhIGRvbWFpbiB3aGlsZSBhZGRpbmcgZG1hIGlvbW11
-Cj4+PiBkZXZpY2VzLgo+Pj4gKiBQZXJmb3JtIGEgc3RyaWN0ZXIgY2hlY2sgZm9yIGRvbWFpbiB0
-eXBlIHBhcmFtZXRlci4KPj4+Cj4+Cj4+IENvbW1pdCBtZXNzYWdlIHNob3VsZCB0ZWxsIHdoYXQg
-ZXhhY3RseSBpcyBnZXR0aW5nICJmaXhlZCIuIEFwcGFyZW50bHkgeW91J3JlIHRyeWluZyB0byBz
-dXBwb3J0IFQxMzIgQVJNNjQgaGVyZS4KCkknbGwgZml4IGl0LgoKPj4KPj4+IFNpZ25lZC1vZmYt
-Ynk6IE5hdm5lZXQgS3VtYXIgPG5hdm5lZXRrQG52aWRpYS5jb20+Cj4+PiAtLS0KPj4+IMKgIGRy
-aXZlcnMvaW9tbXUvdGVncmEtc21tdS5jIHwgNDMgKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LS0tLS0tLS0tLS0tLS0tLQo+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDI3IGluc2VydGlvbnMoKyks
-IDE2IGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L3RlZ3Jh
-LXNtbXUuYyBiL2RyaXZlcnMvaW9tbXUvdGVncmEtc21tdS5jCj4+PiBpbmRleCA1NDNmN2M5Li5l
-ZTRkOGE4IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9pb21tdS90ZWdyYS1zbW11LmMKPj4+ICsr
-KyBiL2RyaXZlcnMvaW9tbXUvdGVncmEtc21tdS5jCj4+PiBAQCAtMTYsNiArMTYsNyBAQAo+Pj4g
-wqAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+Pj4gwqAgI2luY2x1ZGUgPGxp
-bnV4L3NsYWIuaD4KPj4+IMKgICNpbmNsdWRlIDxsaW51eC9kbWEtbWFwcGluZy5oPgo+Pj4gKyNp
-bmNsdWRlIDxsaW51eC9kbWEtaW9tbXUuaD4KPj4+IMKgIMKgICNpbmNsdWRlIDxzb2MvdGVncmEv
-YWhiLmg+Cj4+PiDCoCAjaW5jbHVkZSA8c29jL3RlZ3JhL21jLmg+Cj4+PiBAQCAtMjcxLDggKzI3
-MiwxMCBAQCBzdGF0aWMgYm9vbCB0ZWdyYV9zbW11X2NhcGFibGUoZW51bSBpb21tdV9jYXAgY2Fw
-KQo+Pj4gwqAgc3RhdGljIHN0cnVjdCBpb21tdV9kb21haW4gKnRlZ3JhX3NtbXVfZG9tYWluX2Fs
-bG9jKHVuc2lnbmVkIHR5cGUpCj4+PiDCoCB7Cj4+PiDCoMKgwqDCoMKgIHN0cnVjdCB0ZWdyYV9z
-bW11X2FzICphczsKPj4+ICvCoMKgwqAgaW50IHJldDsKPj4+IMKgIC3CoMKgwqAgaWYgKHR5cGUg
-IT0gSU9NTVVfRE9NQUlOX1VOTUFOQUdFRCkKPj4+ICvCoMKgwqAgaWYgKHR5cGUgIT0gSU9NTVVf
-RE9NQUlOX1VOTUFOQUdFRCAmJiB0eXBlICE9IElPTU1VX0RPTUFJTl9ETUEgJiYKPj4+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHR5cGUgIT0gSU9NTVVfRE9NQUlOX0lERU5USVRZKQo+Pj4gwqDC
-oMKgwqDCoMKgwqDCoMKgIHJldHVybiBOVUxMOwo+Pgo+PiBTaG91bGQgYmUgYmV0dGVyIHRvIHdy
-aXRlIHRoZXNlIGxpbmVzIGxpa2UgdGhpcyBmb3IgdGhlIHNha2Ugb2YgcmVhZGFiaWxpdHk6Cj4+
-Cj4+IMKgwqDCoMKgaWYgKHR5cGUgIT0gSU9NTVVfRE9NQUlOX1VOTUFOQUdFRCAmJgo+PiDCoMKg
-wqDCoMKgwqDCoCB0eXBlICE9IElPTU1VX0RPTUFJTl9ETUEgJiYKPj4gwqDCoMKgwqDCoMKgwqAg
-dHlwZSAhPSBJT01NVV9ET01BSU5fSURFTlRJVFkpCj4+IMKgwqDCoMKgwqDCoMKgIHJldHVybiBO
-VUxMOwo+IAo+IEZ1cnRoZXJtb3JlLCBBRkFJQ1MgdGhlcmUncyBubyBzcGVjaWFsIGhhbmRsaW5n
-IGJlaW5nIGFkZGVkIGZvciBpZGVudGl0eSBkb21haW5zIC0gZG9uJ3QgcHJldGVuZCB0byBzdXBw
-b3J0IHRoZW0gYnkgZ2l2aW5nIGJhY2sgYSByZWd1bGFyIHRyYW5zbGF0aW9uIGRvbWFpbiwgdGhh
-dCdzIGp1c3QgbWlzbGVhZGluZyBhbmQgYnJva2VuLgoKQWdyZWVkLgoKPiAKPj4KPj4KPj4+IMKg
-IMKgwqDCoMKgwqAgYXMgPSBremFsbG9jKHNpemVvZigqYXMpLCBHRlBfS0VSTkVMKTsKPj4+IEBA
-IC0yODEsMjYgKzI4NCwyMiBAQCBzdGF0aWMgc3RydWN0IGlvbW11X2RvbWFpbiAqdGVncmFfc21t
-dV9kb21haW5fYWxsb2ModW5zaWduZWQgdHlwZSkKPj4+IMKgIMKgwqDCoMKgwqAgYXMtPmF0dHIg
-PSBTTU1VX1BEX1JFQURBQkxFIHwgU01NVV9QRF9XUklUQUJMRSB8IFNNTVVfUERfTk9OU0VDVVJF
-Owo+Pj4gwqAgK8KgwqDCoCByZXQgPSAodHlwZSA9PSBJT01NVV9ET01BSU5fRE1BKSA/IGlvbW11
-X2dldF9kbWFfY29va2llKCZhcy0+ZG9tYWluKSA6Cj4+PiArwqDCoMKgwqDCoMKgwqAgLUVOT0RF
-VjsKPj4KPj4gVGhpcyBtYWtlcyB0byBmYWlsIGFsbG9jYXRpb24gb2YgZG9tYWluIHRoYXQgaGFz
-IHR5cGUgb3RoZXIgdGhhbiBJT01NVV9ET01BSU5fRE1BLgo+Pgo+PiBTaG91bGQgYmU6Cj4+Cj4+
-IMKgwqDCoMKgaWYgKHR5cGUgPT0gSU9NTVVfRE9NQUlOX0RNQSkgewo+PiDCoMKgwqDCoMKgwqDC
-oCBlcnIgPSBpb21tdV9nZXRfZG1hX2Nvb2tpZSgmYXMtPmRvbWFpbik7Cj4+IMKgwqDCoMKgwqDC
-oMKgIGlmIChlcnIpCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZ290byBmcmVlX2FzOwo+PiDC
-oMKgwqDCoH0KPj4KCkFncmVlZC4KCj4+Cj4+PiArwqDCoMKgIGlmIChyZXQpCj4+PiArwqDCoMKg
-wqDCoMKgwqAgZ290byBmcmVlX2FzOwo+Pj4gKwo+Pj4gwqDCoMKgwqDCoCBhcy0+cGQgPSBhbGxv
-Y19wYWdlKEdGUF9LRVJORUwgfCBfX0dGUF9ETUEgfCBfX0dGUF9aRVJPKTsKPj4+IC3CoMKgwqAg
-aWYgKCFhcy0+cGQpIHsKPj4+IC3CoMKgwqDCoMKgwqDCoCBrZnJlZShhcyk7Cj4+PiAtwqDCoMKg
-wqDCoMKgwqAgcmV0dXJuIE5VTEw7Cj4+PiAtwqDCoMKgIH0KPj4+ICvCoMKgwqAgaWYgKCFhcy0+
-cGQpCj4+PiArwqDCoMKgwqDCoMKgwqAgZ290byBwdXRfZG1hX2Nvb2tpZTsKPj4+IMKgIMKgwqDC
-oMKgwqAgYXMtPmNvdW50ID0ga2NhbGxvYyhTTU1VX05VTV9QREUsIHNpemVvZih1MzIpLCBHRlBf
-S0VSTkVMKTsKPj4+IC3CoMKgwqAgaWYgKCFhcy0+Y291bnQpIHsKPj4+IC3CoMKgwqDCoMKgwqDC
-oCBfX2ZyZWVfcGFnZShhcy0+cGQpOwo+Pj4gLcKgwqDCoMKgwqDCoMKgIGtmcmVlKGFzKTsKPj4+
-IC3CoMKgwqDCoMKgwqDCoCByZXR1cm4gTlVMTDsKPj4+IC3CoMKgwqAgfQo+Pj4gK8KgwqDCoCBp
-ZiAoIWFzLT5jb3VudCkKPj4+ICvCoMKgwqDCoMKgwqDCoCBnb3RvIGZyZWVfcGRfcmFuZ2U7Cj4+
-PiDCoCDCoMKgwqDCoMKgIGFzLT5wdHMgPSBrY2FsbG9jKFNNTVVfTlVNX1BERSwgc2l6ZW9mKCph
-cy0+cHRzKSwgR0ZQX0tFUk5FTCk7Cj4+PiAtwqDCoMKgIGlmICghYXMtPnB0cykgewo+Pj4gLcKg
-wqDCoMKgwqDCoMKgIGtmcmVlKGFzLT5jb3VudCk7Cj4+PiAtwqDCoMKgwqDCoMKgwqAgX19mcmVl
-X3BhZ2UoYXMtPnBkKTsKPj4+IC3CoMKgwqDCoMKgwqDCoCBrZnJlZShhcyk7Cj4+PiAtwqDCoMKg
-wqDCoMKgwqAgcmV0dXJuIE5VTEw7Cj4+PiAtwqDCoMKgIH0KPj4+ICvCoMKgwqAgaWYgKCFhcy0+
-cHRzKQo+Pj4gK8KgwqDCoMKgwqDCoMKgIGdvdG8gZnJlZV9wdHM7Cj4+PiDCoCDCoMKgwqDCoMKg
-IC8qIHNldHVwIGFwZXJ0dXJlICovCj4+PiDCoMKgwqDCoMKgIGFzLT5kb21haW4uZ2VvbWV0cnku
-YXBlcnR1cmVfc3RhcnQgPSAwOwo+Pj4gQEAgLTMwOCw2ICszMDcsMTggQEAgc3RhdGljIHN0cnVj
-dCBpb21tdV9kb21haW4gKnRlZ3JhX3NtbXVfZG9tYWluX2FsbG9jKHVuc2lnbmVkIHR5cGUpCj4+
-PiDCoMKgwqDCoMKgIGFzLT5kb21haW4uZ2VvbWV0cnkuZm9yY2VfYXBlcnR1cmUgPSB0cnVlOwo+
-Pj4gwqAgwqDCoMKgwqDCoCByZXR1cm4gJmFzLT5kb21haW47Cj4+PiArCj4+PiArZnJlZV9wdHM6
-Cj4+PiArwqDCoMKgIGtmcmVlKGFzLT5wdHMpOwo+Pj4gK2ZyZWVfcGRfcmFuZ2U6Cj4+PiArwqDC
-oMKgIF9fZnJlZV9wYWdlKGFzLT5wZCk7Cj4+PiArcHV0X2RtYV9jb29raWU6Cj4+PiArwqDCoMKg
-IGlmICh0eXBlID09IElPTU1VX0RPTUFJTl9ETUEpCj4gCj4gRldJVyB5b3UgZG9uJ3Qgc3RyaWN0
-bHkgbmVlZCB0aGF0IGNoZWNrIC0gc2luY2UgZG9tYWluLT5pb3ZhX2Nvb2tpZSB3b24ndCBiZSBz
-ZXQgZm9yIG90aGVyIGRvbWFpbiB0eXBlcyBhbnl3YXksIGlvbW11X3B1dF9kbWFfY29va2llKCkg
-d2lsbCBzaW1wbHkgaWdub3JlIHRoZW0uCj4gCgpJJ2xsIHN0aWxsIGtlZXAgdGhhdCBjaGVjayBh
-bmQgbm90IHJlbHkgc29sZWx5IG9uIHRoZSBwdXRfZG1hX2Nvb2tpZSBBUEkgdG8gaGFuZGxlIHRo
-aXMgY2FzZS4KVGhpcyB3aWxsIGtlZXAgdGhlIGNvZGUgcm9idXN0IGV2ZW4gaWYgdGhlIHB1dF9k
-bWFfY29va2llIEFQSSBjaGFuZ2VzIGluIGZ1dHVyZSAoZm9yIHdoYXRldmVyIHJlYXNvbikuCkl0
-IGFsc28gbG9va3MgbGlrZSB0aGUgY2Fub25pY2FsIHVzYWdlIGluIG90aGVyIGRyaXZlcnMuCgo+
-Pj4gK8KgwqDCoMKgwqDCoMKgIGlvbW11X3B1dF9kbWFfY29va2llKCZhcy0+ZG9tYWluKTsKPj4+
-ICtmcmVlX2FzOgo+Pj4gK8KgwqDCoCBrZnJlZShhcyk7Cj4+PiArCj4+PiArwqDCoMKgIHJldHVy
-biBOVUxMOwo+Pj4gwqAgfQo+Pj4gwqAgwqAgc3RhdGljIHZvaWQgdGVncmFfc21tdV9kb21haW5f
-ZnJlZShzdHJ1Y3QgaW9tbXVfZG9tYWluICpkb21haW4pCj4gCj4gSG93IGFib3V0IG5vdCBsZWFr
-aW5nIHRoZSBjb29raWUgd2hlbiB5b3UgZnJlZSBhIERNQSBvcHMgZG9tYWluPwo+IAoKQWdyZWVk
-LgoKPiBSb2Jpbi4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KaW9tbXUgbWFpbGluZyBsaXN0CmlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0
-dHBzOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
+Hi Jon,
+
+Thanks for reviewing.
+
+On 1/24/19 6:30 PM, Jon Hunter wrote:
+> 
+> On 07/01/2019 03:28, Joseph Lo wrote:
+>> The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+>> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+>> from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+>> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+>> or watchdog interrupts.
+>>
+>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   .../bindings/timer/nvidia,tegra210-timer.txt  | 25 +++++++++++++++++++
+>>   1 file changed, 25 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>> new file mode 100644
+>> index 000000000000..ba511220a669
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>> @@ -0,0 +1,25 @@
+>> +NVIDIA Tegra210 timer
+>> +
+>> +The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+>> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+>> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+>> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
+>> +or watchdog interrupts.
+>> +
+>> +Required properties:
+>> +- compatible : "nvidia,tegra210-timer".
+>> +- reg : Specifies base physical address and size of the registers.
+>> +- interrupts : A list of 4 interrupts; one per each of TMR10 through TMR13.
+> 
+> Why do we only add the interrupts for TMR10 - TMR13? What about the others?
+> 
+
+The others (TMR0-TMR9) are occupied for other usages. TMR5 is occupied 
+for the watchdog timer in the upstream kernel. And others (still in 
+TMR0-TMR9) are occupied for different usages in our downstream kernel.
+
+And notice that only TMR10-TMR13 are running at the oscillator clock 
+(clk_m). With the Tegra210 timer driver, we introduce in this series, 
+which only replace the clock event device function that was originally 
+owned by the arch timer (armv8 timer) and it also running at the 
+oscillator clock. The sched_timer still owns by the arch timer. So the 
+timer resolution will be the same. That's why we choose TMR10-TMR13 as 
+the timer for Tegra210.
+
+Thanks,
+Joseph
