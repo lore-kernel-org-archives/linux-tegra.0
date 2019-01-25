@@ -1,90 +1,52 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/5] phy: tegra: xusb: Parse dual-role mode property
-Date: Fri, 25 Jan 2019 12:25:23 +0100
-Message-ID: <20190125112525.10697-3-thierry.reding@gmail.com>
-References: <20190125112525.10697-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/6] dt-bindings: usb: xhci-tegra: Add Tegra186 support
+Date: Fri, 25 Jan 2019 12:30:08 +0100
+Message-ID: <20190125113013.11447-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190125112525.10697-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The device tree bindings document the "mode" property of "ports"
-subnodes, but the driver was not parsing the property. In preparation
-for adding role switching, parse the property at probe time.
-
-Based on work by JC Kuo <jckuo@nvidia.com>.
+Extend the bindings to cover the set of features found in Tegra186.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/phy/tegra/xusb.c | 21 +++++++++++++++++++++
- drivers/phy/tegra/xusb.h |  3 +++
- 2 files changed, 24 insertions(+)
+ .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index e3bc60cfe6a1..57a2d08ef6da 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -546,13 +546,34 @@ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
- 	device_unregister(&port->dev);
- }
- 
-+static const char *const modes[] = {
-+	[USB_DR_MODE_UNKNOWN] = "",
-+	[USB_DR_MODE_HOST] = "host",
-+	[USB_DR_MODE_PERIPHERAL] = "peripheral",
-+	[USB_DR_MODE_OTG] = "otg",
-+};
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+index 4156c3e181c5..5bfcc0b4d6b9 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+@@ -10,6 +10,7 @@ Required properties:
+   - Tegra124: "nvidia,tegra124-xusb"
+   - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb"
+   - Tegra210: "nvidia,tegra210-xusb"
++  - Tegra186: "nvidia,tegra186-xusb"
+ - reg: Must contain the base and length of the xHCI host registers, XUSB FPCI
+   registers and XUSB IPFS registers.
+ - reg-names: Must contain the following entries:
+@@ -59,6 +60,8 @@ For Tegra210:
+ - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+ - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+ - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
 +
- static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
- {
- 	struct tegra_xusb_port *port = &usb2->base;
- 	struct device_node *np = port->dev.of_node;
-+	const char *mode;
++For Tegra210 and Tegra186:
+ - power-domains: A list of PM domain specifiers that reference each power-domain
+   used by the xHCI controller. This list must comprise of a specifier for the
+   XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
+@@ -78,6 +81,7 @@ Optional properties:
+   - Tegra132: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
+   - Tegra210: usb2-0, usb2-1, usb2-2, usb2-3, hsic-0, usb3-0, usb3-1, usb3-2,
+               usb3-3
++  - Tegra186: usb2-0, usb2-1, usb2-2, hsic-0, usb3-0, usb3-1, usb3-2
  
- 	usb2->internal = of_property_read_bool(np, "nvidia,internal");
- 
-+	if (!of_property_read_string(np, "mode", &mode)) {
-+		int err = match_string(modes, ARRAY_SIZE(modes), mode);
-+		if (err < 0) {
-+			dev_err(&port->dev, "invalid value %s for \"mode\"\n",
-+				mode);
-+			usb2->mode = USB_DR_MODE_UNKNOWN;
-+		} else {
-+			usb2->mode = err;
-+		}
-+	} else {
-+		usb2->mode = USB_DR_MODE_HOST;
-+	}
-+
- 	usb2->supply = devm_regulator_get(&port->dev, "vbus");
- 	return PTR_ERR_OR_ZERO(usb2->supply);
- }
-diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index b49dbc36efa3..bb60fc09c752 100644
---- a/drivers/phy/tegra/xusb.h
-+++ b/drivers/phy/tegra/xusb.h
-@@ -19,6 +19,8 @@
- #include <linux/mutex.h>
- #include <linux/workqueue.h>
- 
-+#include <linux/usb/otg.h>
-+
- /* legacy entry points for backwards-compatibility */
- int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
- int tegra_xusb_padctl_legacy_remove(struct platform_device *pdev);
-@@ -271,6 +273,7 @@ struct tegra_xusb_usb2_port {
- 	struct tegra_xusb_port base;
- 
- 	struct regulator *supply;
-+	enum usb_dr_mode mode;
- 	bool internal;
- };
- 
+ Example:
+ --------
 -- 
 2.19.1
