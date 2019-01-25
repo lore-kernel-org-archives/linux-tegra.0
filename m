@@ -1,52 +1,123 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/5] dt-bindings: phy: tegra: Add Tegra186 support
-Date: Fri, 25 Jan 2019 12:25:21 +0100
-Message-ID: <20190125112525.10697-1-thierry.reding@gmail.com>
+Subject: [PATCH 4/5] phy: tegra: xusb: Add support for power supplies
+Date: Fri, 25 Jan 2019 12:25:24 +0100
+Message-ID: <20190125112525.10697-4-thierry.reding@gmail.com>
+References: <20190125112525.10697-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190125112525.10697-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Extend the bindings to cover the set of features found in Tegra186. Note
-that, technically, there are four more supplies connected to the XUSB
-pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL), but
-the power sequencing requirements of Tegra186 require these to be under
-the control of the PMIC.
+Support enabling various supplies needed to provide power to the PLLs
+and logic used to drive the USB, PCI and SATA pads.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/phy/nvidia,tegra124-xusb-padctl.txt         | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/phy/tegra/xusb.c | 34 +++++++++++++++++++++++++++++++++-
+ drivers/phy/tegra/xusb.h |  5 +++++
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-index 3742c152c467..daedb15f322e 100644
---- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-+++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-@@ -36,11 +36,20 @@ Required properties:
-   - Tegra124: "nvidia,tegra124-xusb-padctl"
-   - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
-   - Tegra210: "nvidia,tegra210-xusb-padctl"
-+  - Tegra186: "nvidia,tegra186-xusb-padctl"
- - reg: Physical base address and length of the controller's registers.
- - resets: Must contain an entry for each entry in reset-names.
- - reset-names: Must include the following entries:
-   - "padctl"
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 57a2d08ef6da..e510629f4f1c 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -864,6 +864,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 	struct tegra_xusb_padctl *padctl;
+ 	const struct of_device_id *match;
+ 	struct resource *res;
++	unsigned int i;
+ 	int err;
  
-+For Tegra186:
-+- avdd-pll-erefeut-supply: UPHY brick and reference clock as well as UTMI PHY
-+  power supply. Must supply 1.8 V.
-+- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
-+  3.3 V.
-+- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
-+- vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
+ 	/* for backwards compatibility with old device trees */
+@@ -901,14 +902,38 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 		goto remove;
+ 	}
+ 
++	padctl->supplies = devm_kcalloc(&pdev->dev, padctl->soc->num_supplies,
++					sizeof(*padctl->supplies), GFP_KERNEL);
++	if (!padctl->supplies) {
++		err = -ENOMEM;
++		goto remove;
++	}
 +
++	for (i = 0; i < padctl->soc->num_supplies; i++)
++		padctl->supplies[i].supply = padctl->soc->supply_names[i];
++
++	err = devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
++				      padctl->supplies);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
++		goto remove;
++	}
++
+ 	err = reset_control_deassert(padctl->rst);
+ 	if (err < 0)
+ 		goto remove;
  
- Pad nodes:
- ==========
++	err = regulator_bulk_enable(padctl->soc->num_supplies,
++				    padctl->supplies);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to enable supplies: %d\n", err);
++		goto reset;
++	}
++
+ 	err = tegra_xusb_setup_pads(padctl);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
+-		goto reset;
++		goto power_down;
+ 	}
+ 
+ 	err = tegra_xusb_setup_ports(padctl);
+@@ -921,6 +946,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 
+ remove_pads:
+ 	tegra_xusb_remove_pads(padctl);
++power_down:
++	regulator_bulk_disable(padctl->soc->num_supplies, padctl->supplies);
+ reset:
+ 	reset_control_assert(padctl->rst);
+ remove:
+@@ -936,6 +963,11 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
+ 	tegra_xusb_remove_ports(padctl);
+ 	tegra_xusb_remove_pads(padctl);
+ 
++	err = regulator_bulk_disable(padctl->soc->num_supplies,
++				     padctl->supplies);
++	if (err < 0)
++		dev_err(&pdev->dev, "failed to disable supplies: %d\n", err);
++
+ 	err = reset_control_assert(padctl->rst);
+ 	if (err < 0)
+ 		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
+diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+index bb60fc09c752..5d5d22f6cb41 100644
+--- a/drivers/phy/tegra/xusb.h
++++ b/drivers/phy/tegra/xusb.h
+@@ -370,6 +370,9 @@ struct tegra_xusb_padctl_soc {
+ 	} ports;
+ 
+ 	const struct tegra_xusb_padctl_ops *ops;
++
++	const char * const *supply_names;
++	unsigned int num_supplies;
+ };
+ 
+ struct tegra_xusb_padctl {
+@@ -393,6 +396,8 @@ struct tegra_xusb_padctl {
+ 	unsigned int enable;
+ 
+ 	struct clk *clk;
++
++	struct regulator_bulk_data *supplies;
+ };
+ 
+ static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 value,
 -- 
 2.19.1
