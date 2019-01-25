@@ -1,13 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] soc/tegra: fuse: fix typo in tegra210_init_speedo_data
-Date: Fri, 25 Jan 2019 12:45:14 +0100
-Message-ID: <20190125114514.GA12353@ulmo>
+Subject: Re: [PATCH] arm64: dts: tegra210: fix register range of apbmisc
+Date: Fri, 25 Jan 2019 12:59:47 +0100
+Message-ID: <20190125115947.GC12353@ulmo>
 References: <20190104071646.15828-1-josephl@nvidia.com>
- <20190104071646.15828-3-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2742746896377470155=="
+Content-Type: multipart/mixed; boundary="===============4413789738620697983=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190104071646.15828-3-josephl@nvidia.com>
+In-Reply-To: <20190104071646.15828-1-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,54 +21,55 @@ Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, linux-arm-kernel
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2742746896377470155==
+--===============4413789738620697983==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+	protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
 Content-Disposition: inline
 
 
---0F1p//8PRICkK4MW
+--Clx92ZfkiYIKRjnr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 04, 2019 at 03:16:46PM +0800, Joseph Lo wrote:
-> Fix typo when reading SoC speedo value from fuse SoC speedo register.
+On Fri, Jan 04, 2019 at 03:16:44PM +0800, Joseph Lo wrote:
+> Fix the register range of apbmisc, that originally inherited from
+> Tegra124.
 >=20
 > Reported-by: Mark Zhang <markz@nvidia.com>
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  drivers/soc/tegra/fuse/speedo-tegra210.c | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to for-5.1/soc, thanks.
+Applied to for-5.1/arm64/dts, thanks.
 
 Thierry
 
---0F1p//8PRICkK4MW
+--Clx92ZfkiYIKRjnr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK9sgACgkQ3SOs138+
-s6F/4w/+OOjIwvCIOMFyAIK+rcqXFPPOUo0KtJ/dVNvK56BGhWSNbi21FtbO6MxY
-50xzifCrSqLR1tTDwLof3OXg9Ew0/dg+e8Hh+STyPvjel6u8zkHMBcLTfdAu/+cd
-CEj/pyeSr8yxGrpZJVw10BuTt7/qfKcJWzvGc2HiuBhgi9BfSqIUgo5r9Hyhuhom
-W84g46Bgi9yo5wJi+tkVhtBgHkNOoBxX/m+2Fdej6lZCVkDYaw7J3vxiB+UKP+3W
-RK0gl8V2nrvC26kov/AGzPy912/3AmgPmTqR8xZTSnmBEnq1TAGO3ffG2X076bJ5
-a/ECnD6rorwAPkI2GAW80bAx6Pg9C5ORbRF9+NQa3fqHn1VaplCajJ3+5fkbGwPF
-SsGrFyoi8fmdQSNS7/ao/EMj2HqszOc1usJCoc8fKZVUuiN/NH3SnXPp8p79rePD
-fLuMYW0/8DN0ULoRGZ/aTNWCsLvkvkfx/y9QzJKVgDwnXZyolWXmTgs8FiZ2irvz
-KxGBvWJkRJPSs8vKXTenvl8SHWvv383o9V7AvBdv3ywLbPIlbaLkKtxnEx6a7Ipo
-BFdyivyvrziN8+9mKVweH/cKC/XZSPVtEk5lp5cFmIsokJrMXtbtacWiviWFoUsl
-oT2H55vytZCsizJdqg8x3715yddZvbinvtjknjwAeOg5o44dNuM=
-=Jd6c
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK+jIACgkQ3SOs138+
+s6GouA/8D/bsNHcnYXiE4VfrWvuS3FLtAXgkmHzZ7d97ANdNpcUER67An301oDk8
+2JR3YWhD+a3eH21gSpHH4pDRN8jLtv8SMf+/zKEgahSnG21pFx+vbYxIK99VIFXu
+13IIMcZKcTnrEF9lfE6Qn/3t655YEKUr70rLbK3SZsnVeusebH0NAIXQpqKJBG1p
+OoWk15+7lbSRLOVGLSOXZmyiyTk4dBJYazA+M6YNfpSkL9h342cLc4UMo8evAdqe
+3s5OPfP5m0Pmia+CkFYnhuNAriUyemhrqTP4KMQLQLONZ5dy9yb2tRIXqsrsPRG5
+BeTryt4qMPxUS40HX9grPMHASCOey7+jHytYyIiHGLhyLtNGLLW7ryQAZb05OUuq
+tO+2d7Gx2Xy5XXuhbwz71znG3LkPDRQbY7aYJbEdtV4UiEAFx1NH76DqazXU0SuC
+aHLIERgA4urg/EfFXjpCFNkkMKbBGTAEfaDYHmzl5LJa+FSlt3z496g7m7koRNy7
+MApQ4F/GoRPCR65LNtYwD1vHVgJbg696UxVZi0ZgmNT5Uo70hBZpWTALG2ira864
+4r9pbgQDLnENjNo/i1D/6Wgbo4kOXFrVS6dNuO1Bdugm+x3VfqV/+Yi8AW86F/nM
++U81t136RVrnoK8g9Ugkq6vA24omPmSShA6zqcHOI8KHSicvGAc=
+=FlW5
 -----END PGP SIGNATURE-----
 
---0F1p//8PRICkK4MW--
+--Clx92ZfkiYIKRjnr--
 
 
---===============2742746896377470155==
+--===============4413789738620697983==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -80,4 +80,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============2742746896377470155==--
+--===============4413789738620697983==--
