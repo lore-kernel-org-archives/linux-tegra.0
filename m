@@ -1,98 +1,160 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
-Date: Fri, 25 Jan 2019 12:06:47 +0000
-Message-ID: <709e24fa-02e1-96ea-2b20-acf150caff00@nvidia.com>
-References: <20190107032810.13522-1-josephl@nvidia.com>
- <20190107032810.13522-2-josephl@nvidia.com>
- <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
- <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
- <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during
+	probe
+Date: Fri, 25 Jan 2019 17:49:07 +0530
+Message-ID: <c18a8c49-8696-318d-50c8-d5c6a0a5a7d2@nvidia.com>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+ <ae87a09f-2922-9a9d-3ad3-e9abe7fb20c2@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <ae87a09f-2922-9a9d-3ad3-e9abe7fb20c2@nvidia.com>
+Content-Language: en-GB
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Jon Hunter <jonathanh@nvidia.com>, perex@perex.cz, tiwai@suse.com, pierre-louis.bossart@linux.intel.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, sharadg@nvidia.com, rlokhande@nvidia.com, mkumard@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 25/01/2019 12:01, Jon Hunter wrote:
->=20
-> On 25/01/2019 03:23, Joseph Lo wrote:
->> Hi Jon,
+On 1/25/2019 5:12 PM, Jon Hunter wrote:
+> On 25/01/2019 11:06, Sameer Pujar wrote:
+>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+>> will not be ON. This could cause issue during probe, where hda init
+>> setup is done. This patch enables clocks unconditionally during probe.
 >>
->> Thanks for reviewing.
+>> Along with above, follwoing changes are done.
+>>    * enable runtime PM before exiting from probe work. This helps to avoid
+>>      usage of pm_runtime_get_sync/pm_runtime_put() in probe work.
+>>    * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+>>    * runtime PM callbacks moved out of CONFIG_PM check
 >>
->> On 1/24/19 6:30 PM, Jon Hunter wrote:
->>>
->>> On 07/01/2019 03:28, Joseph Lo wrote:
->>>> The Tegra210 timer provides fourteen 29-bit timer counters and one
->>>> 32-bit
->>>> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate
->>>> derived
->>>> from the oscillator clock (TMR0-TMR9) or directly at the oscillator
->>>> clock
->>>> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodi=
-c,
->>>> or watchdog interrupts.
->>>>
->>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>>> Cc: linux-kernel@vger.kernel.org
->>>> Cc: devicetree@vger.kernel.org
->>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>>> ---
->>>> =C2=A0 .../bindings/timer/nvidia,tegra210-timer.txt=C2=A0 | 25 +++++++=
-++++++++++++
->>>> =C2=A0 1 file changed, 25 insertions(+)
->>>> =C2=A0 create mode 100644
->>>> Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
->>>>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
->>>> b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
->>>> new file mode 100644
->>>> index 000000000000..ba511220a669
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.tx=
-t
->>>> @@ -0,0 +1,25 @@
->>>> +NVIDIA Tegra210 timer
->>>> +
->>>> +The Tegra210 timer provides fourteen 29-bit timer counters and one
->>>> 32-bit
->>>> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate
->>>> derived
->>>> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator
->>>> clock
->>>> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot,
->>>> periodic,
->>>> +or watchdog interrupts.
->>>> +
->>>> +Required properties:
->>>> +- compatible : "nvidia,tegra210-timer".
->>>> +- reg : Specifies base physical address and size of the registers.
->>>> +- interrupts : A list of 4 interrupts; one per each of TMR10 through
->>>> TMR13.
->>>
->>> Why do we only add the interrupts for TMR10 - TMR13? What about the
->>> others?
->>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>   sound/pci/hda/hda_tegra.c | 26 +++++++++++++++++---------
+>>   1 file changed, 17 insertions(+), 9 deletions(-)
 >>
->> The others (TMR0-TMR9) are occupied for other usages. TMR5 is occupied
->> for the watchdog timer in the upstream kernel. And others (still in
->> TMR0-TMR9) are occupied for different usages in our downstream kernel.
->=20
-> Where is TMR5 reserved for the watchdog? I don't see this?
+>> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+>> index c8d18dc..ba6175f 100644
+>> --- a/sound/pci/hda/hda_tegra.c
+>> +++ b/sound/pci/hda/hda_tegra.c
+>> @@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
+>>   	return rc;
+>>   }
+>>   
+>> -#ifdef CONFIG_PM_SLEEP
+>>   static void hda_tegra_disable_clocks(struct hda_tegra *data)
+>>   {
+>>   	clk_disable_unprepare(data->hda2hdmi_clk);
+>> @@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
+>>   	clk_disable_unprepare(data->hda_clk);
+>>   }
+>>   
+>> +#ifdef CONFIG_PM_SLEEP
+>>   /*
+>>    * power management
+>>    */
+>> @@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
+>>   }
+>>   #endif /* CONFIG_PM_SLEEP */
+>>   
+>> -#ifdef CONFIG_PM
+>>   static int hda_tegra_runtime_suspend(struct device *dev)
+>>   {
+>>   	struct snd_card *card = dev_get_drvdata(dev);
+>> @@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
+>>   	int rc;
+>>   
+>>   	rc = hda_tegra_enable_clocks(hda);
+>> -	if (rc != 0)
+>> +	if (rc)
+>>   		return rc;
+>>   	if (chip && chip->running) {
+>>   		hda_tegra_init(hda);
+>> @@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
+>>   
+>>   	return 0;
+>>   }
+>> -#endif /* CONFIG_PM */
+>>   
+>>   static const struct dev_pm_ops hda_tegra_pm = {
+>>   	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
+>> @@ -551,9 +549,9 @@ static int hda_tegra_probe(struct platform_device *pdev)
+>>   
+>>   	dev_set_drvdata(&pdev->dev, card);
+>>   
+>> -	pm_runtime_enable(hda->dev);
+>> -	if (!azx_has_pm_runtime(chip))
+>> -		pm_runtime_forbid(hda->dev);
+>> +	err = hda_tegra_enable_clocks(hda);
+>> +	if (err)
+>> +		goto out_free;
+>>   
+>>   	schedule_work(&hda->probe_work);
+>>   
+>> @@ -571,7 +569,6 @@ static void hda_tegra_probe_work(struct work_struct *work)
+>>   	struct platform_device *pdev = to_platform_device(hda->dev);
+>>   	int err;
+>>   
+>> -	pm_runtime_get_sync(hda->dev);
+>>   	err = hda_tegra_first_init(chip, pdev);
+>>   	if (err < 0)
+>>   		goto out_free;
+>> @@ -592,8 +589,15 @@ static void hda_tegra_probe_work(struct work_struct *work)
+>>   	chip->running = 1;
+>>   	snd_hda_set_power_save(&chip->bus, power_save * 1000);
+>>   
+>> +	/* set device state as active */
+>> +	if (pm_runtime_set_active(hda->dev) < 0)
+>> +		goto out_free;
+>> +	/* enable runtime PM */
+>> +	pm_runtime_enable(hda->dev);
+>> +	if (!azx_has_pm_runtime(chip))
+>> +		pm_runtime_forbid(hda->dev);
+>> +
+>>    out_free:
+>> -	pm_runtime_put(hda->dev);
+>>   	return; /* no error return from async probe */
+>>   }
+>>   
+>> @@ -603,6 +607,10 @@ static int hda_tegra_remove(struct platform_device *pdev)
+>>   
+>>   	ret = snd_card_free(dev_get_drvdata(&pdev->dev));
+>>   	pm_runtime_disable(&pdev->dev);
+>> +	if (!pm_runtime_status_suspended(&pdev->dev)) {
+>> +		hda_tegra_runtime_suspend(&pdev->dev);
+>> +		pm_runtime_set_suspended(&pdev->dev);
+>> +	}
+> I think that we need to be consistent in the above with what is done in
+> the probe. If in the probe we call hda_tegra_enable_clocks(), then here
+> we should call hda_tegra_disable_clocks(). However, my preference is
+> still to all hda_tegra_runtime_resume() in probe and then leave the
+> above as-is. Let's see what everyone else thinks.
+Though it is good to have the handling at a single place, it is slightly 
+confusing to call
+runtime_resume() in probe. When runtime PM is not yet enabled, why call 
+something that is related
+to it(not logically but intuitively)!
 
-I see it now, it is hard-coded in the driver. I was looking at arm64 to
-see where it is used.
+What we can possibly follow is,
+1. Till probe() completes, handle things explicitly.
+2. Before returning from successful probe, handle control to runtime PM.
 
-Cheers
-Jon
+Nevertheless, shall go with the majority of the opinion.
 
---=20
-nvpublic
+Thanks,
+Sameer.
+
+> Cheers
+> Jon
+>
