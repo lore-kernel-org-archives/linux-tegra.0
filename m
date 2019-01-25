@@ -1,68 +1,93 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/6] usb: host: xhci-tegra: Add Tegra186 XUSB support
-Date: Fri, 25 Jan 2019 12:30:10 +0100
-Message-ID: <20190125113013.11447-3-thierry.reding@gmail.com>
-References: <20190125113013.11447-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] ALSA: hda/tegra: enable clock during probe
+Date: Fri, 25 Jan 2019 11:36:00 +0000
+Message-ID: <06c00ce1-32ed-8aa9-0340-d00202a8fa62@nvidia.com>
+References: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
+ <s5h5zudc1qw.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190125113013.11447-1-thierry.reding@gmail.com>
+In-Reply-To: <s5h5zudc1qw.wl-tiwai@suse.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>, Sameer Pujar <spujar@nvidia.com>
+Cc: pierre-louis.bossart@linux.intel.com, perex@perex.cz, alsa-devel@alsa-project.org, thierry.reding@gmail.com, rlokhande@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
 
-This commit adds Tegra186 XUSB host mode controller support. This is
-very similar to the existing support for Tegra124 and Tegra210, except
-that the number of ports and PHYs differs and the IPFS wrapper being
-gone.
+On 24/01/2019 19:08, Takashi Iwai wrote:
+> On Thu, 24 Jan 2019 18:36:43 +0100,
+> Sameer Pujar wrote:
+>>
+>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+>> will not be ON. This could cause issue during probe, where hda init
+>> setup is done. This patch checks whether runtime PM is enabled or not.
+>> If disabled, clocks are enabled in probe() and disabled in remove()
+>>
+>> This patch does following minor changes as cleanup,
+>>   * return code check for pm_runtime_get_sync() to take care of failure
+>>     and exit gracefully.
+>>   * In remove path runtime PM is disabled before calling snd_card_free().
+>>   * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+>>   * runtime PM callbacks moved out of CONFIG_PM check
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> (snip)
+>> @@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
+>>  	if (!azx_has_pm_runtime(chip))
+>>  		pm_runtime_forbid(hda->dev);
+>>  
+>> +	/* explicit resume if runtime PM is disabled */
+>> +	if (!pm_runtime_enabled(hda->dev)) {
+>> +		err = hda_tegra_runtime_resume(hda->dev);
+>> +		if (err)
+>> +			goto out_free;
+>> +	}
+>> +
+>>  	schedule_work(&hda->probe_work);
+> 
+> Calling runtime_resume here is really confusing...
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Why? IMO it is better to have a single handler for resuming the device
+and so if RPM is not enabled we call the handler directly. This is what
+we have been advised to do in the past and do in other drivers. See ...
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 49e033f953a2..9a07ea0f9c97 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1423,9 +1423,34 @@ static const struct tegra_xusb_soc tegra210_soc = {
- };
- MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
- 
-+static const char * const tegra186_supply_names[] = {
-+};
-+
-+static const struct tegra_xusb_phy_type tegra186_phy_types[] = {
-+	{ .name = "usb3", .num = 3, },
-+	{ .name = "usb2", .num = 3, },
-+	{ .name = "hsic", .num = 1, },
-+};
-+
-+static const struct tegra_xusb_soc tegra186_soc = {
-+	.firmware = "nvidia/tegra186/xusb.bin",
-+	.supply_names = tegra186_supply_names,
-+	.num_supplies = ARRAY_SIZE(tegra186_supply_names),
-+	.phy_types = tegra186_phy_types,
-+	.num_types = ARRAY_SIZE(tegra186_phy_types),
-+	.ports = {
-+		.usb3 = { .offset = 0, .count = 3, },
-+		.usb2 = { .offset = 3, .count = 3, },
-+		.hsic = { .offset = 6, .count = 1, },
-+	},
-+	.scale_ss_clock = false,
-+	.has_ipfs = false,
-+};
-+
- static const struct of_device_id tegra_xusb_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
- 	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
-+	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
+sound/soc/tegra/tegra30_i2s.c
+
+> 
+>> @@ -571,7 +576,14 @@ static void hda_tegra_probe_work(struct work_struct *work)
+>>  	struct platform_device *pdev = to_platform_device(hda->dev);
+>>  	int err;
+>>  
+>> -	pm_runtime_get_sync(hda->dev);
+>> +	err = pm_runtime_get_sync(hda->dev);
+>> +	if (err < 0) {
+>> +		dev_err(hda->dev,
+>> +			"failed in pm_runtime_get_syc with err = %d\n",
+>> +			err);
+>> +		return;
+>> +	}
+> 
+> This pm_runtime_get_sync() is needed just because you enabled runtime
+> PM before probe_work.  Why not deferring the runtime PM enablement
+> after probing done?
+
+That would be fine with me.
+
+> That is what we need is the hda_tegra_enable_clocks() call at probe
+> unconditionally before enabling runtime PM.
+
+I think that calling hda_tegra_runtime_resume as above is sufficient.
+The nice thing about calling the runtime_resume function is that if for
+a future device there is something else in addition to clocks, say a
+reset, that also needs to be handled, we just added to the
+runtime_resume/suspend handlers and we are done.
+
+Cheers
+Jon
+
 -- 
-2.19.1
+nvpublic
