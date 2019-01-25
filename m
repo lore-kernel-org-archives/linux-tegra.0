@@ -1,14 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 03/13] gpu: host1x: Support 40-bit addressing
-Date: Fri, 25 Jan 2019 10:20:55 +0100
-Message-ID: <20190125092055.GA22320@ulmo>
+Subject: Re: [PATCH v2 00/13] drm/tegra: Fix IOVA space on Tegra186 and later
+Date: Fri, 25 Jan 2019 10:23:22 +0100
+Message-ID: <20190125092322.GB22320@ulmo>
 References: <20190124180254.20080-1-thierry.reding@gmail.com>
- <20190124180254.20080-4-thierry.reding@gmail.com>
- <aafbdfcc-527a-132e-de12-9fa7eec5e1f0@kapsi.fi>
+ <2e8e7353-ecdb-a0d4-14ed-bb8f161ff202@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0595554697=="
+Content-Type: multipart/mixed; boundary="===============0735018130=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <aafbdfcc-527a-132e-de12-9fa7eec5e1f0@kapsi.fi>
+In-Reply-To: <2e8e7353-ecdb-a0d4-14ed-bb8f161ff202@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -18,139 +17,81 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0595554697==
+--===============0735018130==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+	protocol="application/pgp-signature"; boundary="uZ3hkaAS1mZxFaxD"
 Content-Disposition: inline
 
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
+--uZ3hkaAS1mZxFaxD
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 25, 2019 at 11:13:41AM +0200, Mikko Perttunen wrote:
-> On 24.1.2019 20.02, Thierry Reding wrote:
+On Fri, Jan 25, 2019 at 12:38:01AM +0300, Dmitry Osipenko wrote:
+> 24.01.2019 21:02, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > Tegra186 and later support 40 bits of address space. Additional
-> > registers need to be programmed to store the full 40 bits of push
-> > buffer addresses.
+> > Tegra186 and later are different from earlier generations in that they
+> > use an ARM SMMU rather than the Tegra SMMU. The ARM SMMU driver behaves
+> > slightly differently in that the geometry for IOMMU domains is set only
+> > after a device was attached to it. This is to make sure that the SMMU
+> > instance that the domain belongs to is known, because each instance can
+> > have a different input address space (i.e. geometry).
 > >=20
-> > Since command stream gathers can also reside in buffers in a 40-bit
-> > address space, a new variant of the GATHER opcode is also introduced.
-> > It takes two parameters: the first parameter contains the lower 32
-> > bits of the address and the second parameter contains bits 32 to 39.
+> > Work around this by moving all IOVA allocations to a point where the
+> > geometry of the domain is properly initialized.
 > >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >   drivers/gpu/host1x/hw/cdma_hw.c           | 13 ++++++++---
-> >   drivers/gpu/host1x/hw/channel_hw.c        | 28 +++++++++++++++++++----
-> >   drivers/gpu/host1x/hw/host1x06_hardware.h |  5 ++++
-> >   drivers/gpu/host1x/hw/host1x07_hardware.h |  5 ++++
-> >   4 files changed, 44 insertions(+), 7 deletions(-)
+> > This second version of the series addresses all review comments and adds
+> > a number of patches that will actually allow host1x to work with an SMMU
+> > enabled on Tegra186. The patches also add programming required to
+> > address the full 40 bits of address space.
 > >=20
-> > diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cd=
-ma_hw.c
-> > index ce320534cbed..6d2b7af2af89 100644
-> > --- a/drivers/gpu/host1x/hw/cdma_hw.c
-> > +++ b/drivers/gpu/host1x/hw/cdma_hw.c
-> > @@ -68,20 +68,27 @@ static void cdma_timeout_cpu_incr(struct host1x_cdm=
-a *cdma, u32 getptr,
-> >   static void cdma_start(struct host1x_cdma *cdma)
-> >   {
-> >   	struct host1x_channel *ch =3D cdma_to_channel(cdma);
-> > +	u64 start, end;
-> >   	if (cdma->running)
-> >   		return;
-> >   	cdma->last_pos =3D cdma->push_buffer.pos;
-> > +	start =3D cdma->push_buffer.dma;
-> > +	end =3D cdma->push_buffer.dma + cdma->push_buffer.size + 4;
-> >   	host1x_ch_writel(ch, HOST1X_CHANNEL_DMACTRL_DMASTOP,
-> >   			 HOST1X_CHANNEL_DMACTRL);
-> >   	/* set base, put and end pointer */
-> > -	host1x_ch_writel(ch, cdma->push_buffer.dma, HOST1X_CHANNEL_DMASTART);
-> > +	host1x_ch_writel(ch, lower_32_bits(start), HOST1X_CHANNEL_DMASTART);
-> >   	host1x_ch_writel(ch, cdma->push_buffer.pos, HOST1X_CHANNEL_DMAPUT);
-> > -	host1x_ch_writel(ch, cdma->push_buffer.dma + cdma->push_buffer.size +=
- 4,
-> > -			 HOST1X_CHANNEL_DMAEND);
-> > +	host1x_ch_writel(ch, lower_32_bits(end), HOST1X_CHANNEL_DMAEND);
-> > +
-> > +#if HOST1X_HW >=3D 6
-> > +	host1x_ch_writel(ch, upper_32_bits(start), HOST1X_CHANNEL_DMASTART_HI=
-);
-> > +	host1x_ch_writel(ch, upper_32_bits(end), HOST1X_CHANNEL_DMAEND_HI);
-> > +#endif
-> >   	/* reset GET */
-> >   	host1x_ch_writel(ch, HOST1X_CHANNEL_DMACTRL_DMASTOP |
-> > diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw=
-/channel_hw.c
-> > index ff137fe72d34..78fb49539e8c 100644
-> > --- a/drivers/gpu/host1x/hw/channel_hw.c
-> > +++ b/drivers/gpu/host1x/hw/channel_hw.c
-> > @@ -64,11 +64,31 @@ static void submit_gathers(struct host1x_job *job)
-> >   	for (i =3D 0; i < job->num_gathers; i++) {
-> >   		struct host1x_job_gather *g =3D &job->gathers[i];
-> > -		u32 op1 =3D host1x_opcode_gather(g->words);
-> > -		u32 op2 =3D g->base + g->offset;
-> > +		dma_addr_t addr =3D g->base + g->offset;
-> > +		u32 op2, op3;
-> > -		trace_write_gather(cdma, g->bo, g->offset, op1 & 0xffff);
-> > -		host1x_cdma_push(cdma, op1, op2);
-> > +		op2 =3D lower_32_bits(addr);
-> > +		op3 =3D upper_32_bits(addr);
-> > +
-> > +		trace_write_gather(cdma, g->bo, g->offset, g->words);
-> > +
-> > +		if (op3 !=3D 0) {
-> > +#if HOST1X_HW >=3D 6
-> > +			u32 op1 =3D host1x_opcode_gather_wide(g->words);
-> > +			u32 op4 =3D HOST1X_OPCODE_NOP;
-> > +
-> > +			host1x_cdma_push(cdma, op1, op2);
-> > +			host1x_cdma_push(cdma, op3, op4);
+> > This supersedes the following patch:
+> >=20
+> >     https://patchwork.kernel.org/patch/10775579/
 >=20
-> This will break if the first push goes as the last slot of the ringbuffer
-> and the second push goes as the first slot of the ringbuffer.
->=20
-> Otherwise looks good to me.
+> My understanding is that falcon won't boot because source DMA address
+> of the firmware isn't set up correctly if the address is >32bit.
+> Please correct me if I'm wrong, otherwise that need to be addressed in
+> this series as well for completeness.
 
-Why would that break? Isn't the purpose of a ringbuffer to behave as if
-it was infinitely sequential? If this really is a problem, how do we fix
-it? Would we have to stash NOPs into the pushbuffer until we wrap
-around?
+What makes you say so? I was runtime testing this series as I was
+developing these patches and this works properly on Tegra186 with a 40
+bit address space. Since the carveout is allocated from the top of the
+IOMMU aperture, the addresses that the Falcon sees are always from the
+top of the 40 bit IOVA space and this works flawlessly.
 
 Thierry
 
---45Z9DzgjV8m4Oswq
+--uZ3hkaAS1mZxFaxD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK1PQACgkQ3SOs138+
-s6ERdg//aIEWMEAAiLEFoa7zWq4jZta2UqQlb925HUCWPGWQmtR9F3oMpRwOHyMd
-LKHZ249vCpVvyAcX5+LylcWWtSkRBlFZi6DzbcmTGlfqFI2GIHKR0krAqvHiW4Xz
-ihHqvM/UtUy85b+iPhlQ90D/Rp4u3Ger3qzfmlEvpdQe1JVyGa2KOsTZVIBMAuWU
-ueA1VVwnBumgeE4jp9ZXtbaQJVG1q0gyckpioGurCpgTrRXctLSdnkgKRk5wWURG
-kDc0q7k9WaeUqgqoezGhAn3eOcSwHT/cJlTvE3Ycvh/LpTHZ7FPxrsoeR3X/MFI6
-aqXnfxnvgg3HY32YOAHER2175R2CuZVjYzDmQDYV7KSWUT4PjgAnm/IjxGCdDBrn
-s8PtgrawWOeZA4/L9ewSjfVNEHfGGypYz2THNRCxlyMiUmbnn2MDjPJK31HdjZp1
-yLvNStwCxUCNNN6cTbW7tFa5CU78tgNqveApVHuTsE52ri8vPGqdC98vmxDaanyy
-SSoWrgGw/wG/PO7N71kj7iWOt8VNLCLXjLkP8h3mWdVQTmQNvuOBeJGaVacBsQLN
-rQnmskvwC+tyMYoWi754k98+623L0cYyQ6FbTI9nm10g2V7oZVySMWgLS9ooXlO3
-DjOYjPjGA/T3HD/3iDBhf1Xsmsb0foQrciou1jCEcGPijxJj/fE=
-=PKlj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK1YoACgkQ3SOs138+
+s6G6nRAAtTR5aODNGJE7kEbO0kZBHKqVhqFAKnVVkpAzvFFcZdfXEpN9v4qUO4mz
+TTaIcwnPcrWT1YfXVMH3eKYcit66UEggXJgZ9KEf7utV118aFsWqzfy1VY/a/7mP
+m2N24MPC7YAFriREBZZzRrhmKnpRkmAAhFGcXk/ZvC2ptRAUj0B9NjSSg0z2Fqcr
+x3as6a83fjXVeIYzNpx2xN9Zm8j3jBDthDsQ8kfT1N+8V117kGkM7lKjNGBKm5Kd
+Tq9r+OM4apxESNeblEW0EO/x3h68jJjIA8HLM1GKaIJg/XallbWyNH87eWsSpqDo
+3oZgHT9NVk6JV8ixcxdDpMyp1+SPRhfLJ+ahEGM+HXT5OhjrnIUda3BSzHVjzWyz
+urUP5T0pGJ+mJkSbYh2z/MnMnrovQhwgDU9BXFKesnqf0scykGdVqk1mFwgoKOOl
+0OnxNyIbdkP58T/UL/scaBqt8Nh9jY0Qhf4RcH0XDTLMTh7tFALyYm7qzmqwbqI2
+nj7W/OKWsojCUjk5nB8In1Mc94LfJcarvjAK9eO4aLmtlwh2UqcmuXm7Lq75W65W
+uOy30rYvtRLTgC5b1GR9lV181p5dz2syTB4kt/OBeEgi5i80en+hH4oyryuQDGJA
+arlKbONYCtl+28V49UUAp7lYVRuOth0U33IlgQRuoWH1Lv105mo=
+=2XbZ
 -----END PGP SIGNATURE-----
 
---45Z9DzgjV8m4Oswq--
+--uZ3hkaAS1mZxFaxD--
 
---===============0595554697==
+--===============0735018130==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -160,4 +101,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============0595554697==--
+--===============0735018130==--
