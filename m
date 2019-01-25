@@ -1,13 +1,16 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 00/13] drm/tegra: Fix IOVA space on Tegra186 and later
-Date: Fri, 25 Jan 2019 10:23:22 +0100
-Message-ID: <20190125092322.GB22320@ulmo>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH v2 03/13] gpu: host1x: Support 40-bit addressing
+Date: Fri, 25 Jan 2019 11:32:54 +0200
+Message-ID: <07f4a869-44d0-4662-6490-16e0863b1d30@kapsi.fi>
 References: <20190124180254.20080-1-thierry.reding@gmail.com>
- <2e8e7353-ecdb-a0d4-14ed-bb8f161ff202@gmail.com>
+ <20190124180254.20080-4-thierry.reding@gmail.com>
+ <aafbdfcc-527a-132e-de12-9fa7eec5e1f0@kapsi.fi> <20190125092055.GA22320@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0735018130=="
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <2e8e7353-ecdb-a0d4-14ed-bb8f161ff202@gmail.com>
+In-Reply-To: <20190125092055.GA22320@ulmo>
+Content-Language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -17,88 +20,84 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0735018130==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uZ3hkaAS1mZxFaxD"
-Content-Disposition: inline
-
-
---uZ3hkaAS1mZxFaxD
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 25, 2019 at 12:38:01AM +0300, Dmitry Osipenko wrote:
-> 24.01.2019 21:02, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Tegra186 and later are different from earlier generations in that they
-> > use an ARM SMMU rather than the Tegra SMMU. The ARM SMMU driver behaves
-> > slightly differently in that the geometry for IOMMU domains is set only
-> > after a device was attached to it. This is to make sure that the SMMU
-> > instance that the domain belongs to is known, because each instance can
-> > have a different input address space (i.e. geometry).
-> >=20
-> > Work around this by moving all IOVA allocations to a point where the
-> > geometry of the domain is properly initialized.
-> >=20
-> > This second version of the series addresses all review comments and adds
-> > a number of patches that will actually allow host1x to work with an SMMU
-> > enabled on Tegra186. The patches also add programming required to
-> > address the full 40 bits of address space.
-> >=20
-> > This supersedes the following patch:
-> >=20
-> >     https://patchwork.kernel.org/patch/10775579/
->=20
-> My understanding is that falcon won't boot because source DMA address
-> of the firmware isn't set up correctly if the address is >32bit.
-> Please correct me if I'm wrong, otherwise that need to be addressed in
-> this series as well for completeness.
-
-What makes you say so? I was runtime testing this series as I was
-developing these patches and this works properly on Tegra186 with a 40
-bit address space. Since the carveout is allocated from the top of the
-IOMMU aperture, the addresses that the Falcon sees are always from the
-top of the 40 bit IOVA space and this works flawlessly.
-
-Thierry
-
---uZ3hkaAS1mZxFaxD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxK1YoACgkQ3SOs138+
-s6G6nRAAtTR5aODNGJE7kEbO0kZBHKqVhqFAKnVVkpAzvFFcZdfXEpN9v4qUO4mz
-TTaIcwnPcrWT1YfXVMH3eKYcit66UEggXJgZ9KEf7utV118aFsWqzfy1VY/a/7mP
-m2N24MPC7YAFriREBZZzRrhmKnpRkmAAhFGcXk/ZvC2ptRAUj0B9NjSSg0z2Fqcr
-x3as6a83fjXVeIYzNpx2xN9Zm8j3jBDthDsQ8kfT1N+8V117kGkM7lKjNGBKm5Kd
-Tq9r+OM4apxESNeblEW0EO/x3h68jJjIA8HLM1GKaIJg/XallbWyNH87eWsSpqDo
-3oZgHT9NVk6JV8ixcxdDpMyp1+SPRhfLJ+ahEGM+HXT5OhjrnIUda3BSzHVjzWyz
-urUP5T0pGJ+mJkSbYh2z/MnMnrovQhwgDU9BXFKesnqf0scykGdVqk1mFwgoKOOl
-0OnxNyIbdkP58T/UL/scaBqt8Nh9jY0Qhf4RcH0XDTLMTh7tFALyYm7qzmqwbqI2
-nj7W/OKWsojCUjk5nB8In1Mc94LfJcarvjAK9eO4aLmtlwh2UqcmuXm7Lq75W65W
-uOy30rYvtRLTgC5b1GR9lV181p5dz2syTB4kt/OBeEgi5i80en+hH4oyryuQDGJA
-arlKbONYCtl+28V49UUAp7lYVRuOth0U33IlgQRuoWH1Lv105mo=
-=2XbZ
------END PGP SIGNATURE-----
-
---uZ3hkaAS1mZxFaxD--
-
---===============0735018130==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0735018130==--
+CgpPbiAyNS4xLjIwMTkgMTEuMjAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+IE9uIEZyaSwgSmFu
+IDI1LCAyMDE5IGF0IDExOjEzOjQxQU0gKzAyMDAsIE1pa2tvIFBlcnR0dW5lbiB3cm90ZToKPj4g
+T24gMjQuMS4yMDE5IDIwLjAyLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4+IEZyb206IFRoaWVy
+cnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4+Pgo+Pj4gVGVncmExODYgYW5kIGxhdGVy
+IHN1cHBvcnQgNDAgYml0cyBvZiBhZGRyZXNzIHNwYWNlLiBBZGRpdGlvbmFsCj4+PiByZWdpc3Rl
+cnMgbmVlZCB0byBiZSBwcm9ncmFtbWVkIHRvIHN0b3JlIHRoZSBmdWxsIDQwIGJpdHMgb2YgcHVz
+aAo+Pj4gYnVmZmVyIGFkZHJlc3Nlcy4KPj4+Cj4+PiBTaW5jZSBjb21tYW5kIHN0cmVhbSBnYXRo
+ZXJzIGNhbiBhbHNvIHJlc2lkZSBpbiBidWZmZXJzIGluIGEgNDAtYml0Cj4+PiBhZGRyZXNzIHNw
+YWNlLCBhIG5ldyB2YXJpYW50IG9mIHRoZSBHQVRIRVIgb3Bjb2RlIGlzIGFsc28gaW50cm9kdWNl
+ZC4KPj4+IEl0IHRha2VzIHR3byBwYXJhbWV0ZXJzOiB0aGUgZmlyc3QgcGFyYW1ldGVyIGNvbnRh
+aW5zIHRoZSBsb3dlciAzMgo+Pj4gYml0cyBvZiB0aGUgYWRkcmVzcyBhbmQgdGhlIHNlY29uZCBw
+YXJhbWV0ZXIgY29udGFpbnMgYml0cyAzMiB0byAzOS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBU
+aGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Pj4gLS0tCj4+PiAgICBkcml2ZXJz
+L2dwdS9ob3N0MXgvaHcvY2RtYV9ody5jICAgICAgICAgICB8IDEzICsrKysrKysrLS0tCj4+PiAg
+ICBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2hhbm5lbF9ody5jICAgICAgICB8IDI4ICsrKysrKysr
+KysrKysrKysrKystLS0tCj4+PiAgICBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDZfaGFy
+ZHdhcmUuaCB8ICA1ICsrKysKPj4+ICAgIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwN19o
+YXJkd2FyZS5oIHwgIDUgKysrKwo+Pj4gICAgNCBmaWxlcyBjaGFuZ2VkLCA0NCBpbnNlcnRpb25z
+KCspLCA3IGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0
+MXgvaHcvY2RtYV9ody5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NkbWFfaHcuYwo+Pj4gaW5k
+ZXggY2UzMjA1MzRjYmVkLi42ZDJiN2FmMmFmODkgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dw
+dS9ob3N0MXgvaHcvY2RtYV9ody5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2Rt
+YV9ody5jCj4+PiBAQCAtNjgsMjAgKzY4LDI3IEBAIHN0YXRpYyB2b2lkIGNkbWFfdGltZW91dF9j
+cHVfaW5jcihzdHJ1Y3QgaG9zdDF4X2NkbWEgKmNkbWEsIHUzMiBnZXRwdHIsCj4+PiAgICBzdGF0
+aWMgdm9pZCBjZG1hX3N0YXJ0KHN0cnVjdCBob3N0MXhfY2RtYSAqY2RtYSkKPj4+ICAgIHsKPj4+
+ICAgIAlzdHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmNoID0gY2RtYV90b19jaGFubmVsKGNkbWEpOwo+
+Pj4gKwl1NjQgc3RhcnQsIGVuZDsKPj4+ICAgIAlpZiAoY2RtYS0+cnVubmluZykKPj4+ICAgIAkJ
+cmV0dXJuOwo+Pj4gICAgCWNkbWEtPmxhc3RfcG9zID0gY2RtYS0+cHVzaF9idWZmZXIucG9zOwo+
+Pj4gKwlzdGFydCA9IGNkbWEtPnB1c2hfYnVmZmVyLmRtYTsKPj4+ICsJZW5kID0gY2RtYS0+cHVz
+aF9idWZmZXIuZG1hICsgY2RtYS0+cHVzaF9idWZmZXIuc2l6ZSArIDQ7Cj4+PiAgICAJaG9zdDF4
+X2NoX3dyaXRlbChjaCwgSE9TVDFYX0NIQU5ORUxfRE1BQ1RSTF9ETUFTVE9QLAo+Pj4gICAgCQkJ
+IEhPU1QxWF9DSEFOTkVMX0RNQUNUUkwpOwo+Pj4gICAgCS8qIHNldCBiYXNlLCBwdXQgYW5kIGVu
+ZCBwb2ludGVyICovCj4+PiAtCWhvc3QxeF9jaF93cml0ZWwoY2gsIGNkbWEtPnB1c2hfYnVmZmVy
+LmRtYSwgSE9TVDFYX0NIQU5ORUxfRE1BU1RBUlQpOwo+Pj4gKwlob3N0MXhfY2hfd3JpdGVsKGNo
+LCBsb3dlcl8zMl9iaXRzKHN0YXJ0KSwgSE9TVDFYX0NIQU5ORUxfRE1BU1RBUlQpOwo+Pj4gICAg
+CWhvc3QxeF9jaF93cml0ZWwoY2gsIGNkbWEtPnB1c2hfYnVmZmVyLnBvcywgSE9TVDFYX0NIQU5O
+RUxfRE1BUFVUKTsKPj4+IC0JaG9zdDF4X2NoX3dyaXRlbChjaCwgY2RtYS0+cHVzaF9idWZmZXIu
+ZG1hICsgY2RtYS0+cHVzaF9idWZmZXIuc2l6ZSArIDQsCj4+PiAtCQkJIEhPU1QxWF9DSEFOTkVM
+X0RNQUVORCk7Cj4+PiArCWhvc3QxeF9jaF93cml0ZWwoY2gsIGxvd2VyXzMyX2JpdHMoZW5kKSwg
+SE9TVDFYX0NIQU5ORUxfRE1BRU5EKTsKPj4+ICsKPj4+ICsjaWYgSE9TVDFYX0hXID49IDYKPj4+
+ICsJaG9zdDF4X2NoX3dyaXRlbChjaCwgdXBwZXJfMzJfYml0cyhzdGFydCksIEhPU1QxWF9DSEFO
+TkVMX0RNQVNUQVJUX0hJKTsKPj4+ICsJaG9zdDF4X2NoX3dyaXRlbChjaCwgdXBwZXJfMzJfYml0
+cyhlbmQpLCBIT1NUMVhfQ0hBTk5FTF9ETUFFTkRfSEkpOwo+Pj4gKyNlbmRpZgo+Pj4gICAgCS8q
+IHJlc2V0IEdFVCAqLwo+Pj4gICAgCWhvc3QxeF9jaF93cml0ZWwoY2gsIEhPU1QxWF9DSEFOTkVM
+X0RNQUNUUkxfRE1BU1RPUCB8Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2h3
+L2NoYW5uZWxfaHcuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFubmVsX2h3LmMKPj4+IGlu
+ZGV4IGZmMTM3ZmU3MmQzNC4uNzhmYjQ5NTM5ZThjIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9n
+cHUvaG9zdDF4L2h3L2NoYW5uZWxfaHcuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2h3
+L2NoYW5uZWxfaHcuYwo+Pj4gQEAgLTY0LDExICs2NCwzMSBAQCBzdGF0aWMgdm9pZCBzdWJtaXRf
+Z2F0aGVycyhzdHJ1Y3QgaG9zdDF4X2pvYiAqam9iKQo+Pj4gICAgCWZvciAoaSA9IDA7IGkgPCBq
+b2ItPm51bV9nYXRoZXJzOyBpKyspIHsKPj4+ICAgIAkJc3RydWN0IGhvc3QxeF9qb2JfZ2F0aGVy
+ICpnID0gJmpvYi0+Z2F0aGVyc1tpXTsKPj4+IC0JCXUzMiBvcDEgPSBob3N0MXhfb3Bjb2RlX2dh
+dGhlcihnLT53b3Jkcyk7Cj4+PiAtCQl1MzIgb3AyID0gZy0+YmFzZSArIGctPm9mZnNldDsKPj4+
+ICsJCWRtYV9hZGRyX3QgYWRkciA9IGctPmJhc2UgKyBnLT5vZmZzZXQ7Cj4+PiArCQl1MzIgb3Ay
+LCBvcDM7Cj4+PiAtCQl0cmFjZV93cml0ZV9nYXRoZXIoY2RtYSwgZy0+Ym8sIGctPm9mZnNldCwg
+b3AxICYgMHhmZmZmKTsKPj4+IC0JCWhvc3QxeF9jZG1hX3B1c2goY2RtYSwgb3AxLCBvcDIpOwo+
+Pj4gKwkJb3AyID0gbG93ZXJfMzJfYml0cyhhZGRyKTsKPj4+ICsJCW9wMyA9IHVwcGVyXzMyX2Jp
+dHMoYWRkcik7Cj4+PiArCj4+PiArCQl0cmFjZV93cml0ZV9nYXRoZXIoY2RtYSwgZy0+Ym8sIGct
+Pm9mZnNldCwgZy0+d29yZHMpOwo+Pj4gKwo+Pj4gKwkJaWYgKG9wMyAhPSAwKSB7Cj4+PiArI2lm
+IEhPU1QxWF9IVyA+PSA2Cj4+PiArCQkJdTMyIG9wMSA9IGhvc3QxeF9vcGNvZGVfZ2F0aGVyX3dp
+ZGUoZy0+d29yZHMpOwo+Pj4gKwkJCXUzMiBvcDQgPSBIT1NUMVhfT1BDT0RFX05PUDsKPj4+ICsK
+Pj4+ICsJCQlob3N0MXhfY2RtYV9wdXNoKGNkbWEsIG9wMSwgb3AyKTsKPj4+ICsJCQlob3N0MXhf
+Y2RtYV9wdXNoKGNkbWEsIG9wMywgb3A0KTsKPj4KPj4gVGhpcyB3aWxsIGJyZWFrIGlmIHRoZSBm
+aXJzdCBwdXNoIGdvZXMgYXMgdGhlIGxhc3Qgc2xvdCBvZiB0aGUgcmluZ2J1ZmZlcgo+PiBhbmQg
+dGhlIHNlY29uZCBwdXNoIGdvZXMgYXMgdGhlIGZpcnN0IHNsb3Qgb2YgdGhlIHJpbmdidWZmZXIu
+Cj4+Cj4+IE90aGVyd2lzZSBsb29rcyBnb29kIHRvIG1lLgo+IAo+IFdoeSB3b3VsZCB0aGF0IGJy
+ZWFrPyBJc24ndCB0aGUgcHVycG9zZSBvZiBhIHJpbmdidWZmZXIgdG8gYmVoYXZlIGFzIGlmCj4g
+aXQgd2FzIGluZmluaXRlbHkgc2VxdWVudGlhbD8gSWYgdGhpcyByZWFsbHkgaXMgYSBwcm9ibGVt
+LCBob3cgZG8gd2UgZml4Cj4gaXQ/IFdvdWxkIHdlIGhhdmUgdG8gc3Rhc2ggTk9QcyBpbnRvIHRo
+ZSBwdXNoYnVmZmVyIHVudGlsIHdlIHdyYXAKPiBhcm91bmQ/CgpUaGF0J3MgYmVjYXVzZSBpdCdz
+IG5vdCBhY3R1YWxseSBhIHJpbmdidWZmZXIuIEl0J3MgYWN0dWFsbHkganVzdCBhIApidWZmZXIg
+d2l0aCBhICdSRVNUQVJUIDAnIG9wY29kZSBpbiB0aGUgbGFzdCBzbG90LiBBcyBzdWNoLCB0aGUg
+R0FUSEVSX1cgCndvdWxkIGluY29ycmVjdGx5IHVzZSB0aGUgJ1JFU1RBUlQgMCcgb3Bjb2RlIGFz
+IGl0cyB0aGlyZCB3b3JkLgoKQ2hlZXJzLApNaWtrbwoKPiAKPiBUaGllcnJ5Cj4gCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
