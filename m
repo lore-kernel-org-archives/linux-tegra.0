@@ -1,7 +1,8 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/7] soc/tegra: pmc: Add missing kerneldoc
-Date: Fri, 25 Jan 2019 11:22:50 +0100
-Message-ID: <20190125102255.6862-2-thierry.reding@gmail.com>
+Subject: [PATCH 3/7] soc/tegra: pmc: Make tegra_powergate_is_powered() a local
+ function
+Date: Fri, 25 Jan 2019 11:22:51 +0100
+Message-ID: <20190125102255.6862-3-thierry.reding@gmail.com>
 References: <20190125102255.6862-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,39 +22,54 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-Some of the fields in struct tegra_pmc had not been documented when they
-were added. Add the missing kerneldoc.
+Now there are no more external users of tegra_powergate_is_powered(),
+make this a local function.
 
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/soc/tegra/pmc.c | 2 +-
+ include/soc/tegra/pmc.h | 6 ------
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index cd865be3b195..550653302ff2 100644
+index 550653302ff2..fa0e1ac6d501 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -273,6 +273,9 @@ static const char * const tegra30_reset_sources[] = {
-  * struct tegra_pmc - NVIDIA Tegra PMC
-  * @dev: pointer to PMC device structure
-  * @base: pointer to I/O remapped register region
-+ * @wake: pointer to I/O remapped region for WAKE registers
-+ * @aotag: pointer to I/O remapped region for AOTAG registers
-+ * @scratch: pointer to I/O remapped region for scratch registers
-  * @clk: pointer to pclk clock
-  * @soc: pointer to SoC data structure
-  * @debugfs: pointer to debugfs entry
-@@ -291,6 +294,9 @@ static const char * const tegra30_reset_sources[] = {
-  * @lp0_vec_size: size of the LP0 warm boot code
-  * @powergates_available: Bitmap of available power gates
-  * @powergates_lock: mutex for power gate register access
-+ * @pctl_dev: pin controller exposed by the PMC
-+ * @domain: IRQ domain provided by the PMC
-+ * @irq: chip implementation for the IRQ domain
+@@ -637,7 +637,7 @@ EXPORT_SYMBOL(tegra_powergate_power_off);
+  * tegra_powergate_is_powered() - check if partition is powered
+  * @id: partition ID
   */
- struct tegra_pmc {
- 	struct device *dev;
+-int tegra_powergate_is_powered(unsigned int id)
++static int tegra_powergate_is_powered(unsigned int id)
+ {
+ 	if (!tegra_powergate_is_valid(id))
+ 		return -EINVAL;
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index a9db1b501de1..b32ee5d82dd4 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -161,7 +161,6 @@ enum tegra_io_pad {
+ #define TEGRA_IO_RAIL_LVDS	TEGRA_IO_PAD_LVDS
+ 
+ #ifdef CONFIG_SOC_TEGRA_PMC
+-int tegra_powergate_is_powered(unsigned int id);
+ int tegra_powergate_power_on(unsigned int id);
+ int tegra_powergate_power_off(unsigned int id);
+ int tegra_powergate_remove_clamping(unsigned int id);
+@@ -182,11 +181,6 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
+ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
+ 
+ #else
+-static inline int tegra_powergate_is_powered(unsigned int id)
+-{
+-	return -ENOSYS;
+-}
+-
+ static inline int tegra_powergate_power_on(unsigned int id)
+ {
+ 	return -ENOSYS;
 -- 
 2.19.1
