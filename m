@@ -1,7 +1,7 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-Date: Sat, 26 Jan 2019 01:09:19 +0300
-Message-ID: <42d20b67-95a7-c4c3-059e-0b990e6f684f@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V2 3/4] i2c: tegra: Add DMA Support
+Date: Fri, 25 Jan 2019 22:22:40 +0000
+Message-ID: <BYAPR12MB33987E81045953368D0113A2C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
  <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
  <dcc1e094-638e-5b04-7a61-bdbc24ee068f@gmail.com>
@@ -10,56 +10,68 @@ References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
  <BYAPR12MB33982ED3A9EC34819D2490F8C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
  <782dcecf-2991-e886-af18-d355a3ea8325@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <782dcecf-2991-e886-af18-d355a3ea8325@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-26.01.2019 0:49, Dmitry Osipenko пишет:
-
-> 3) After applying these patches I2C transfers are failing on Tegra20 with "tegra-i2c 7000c400.i2c: Failed to allocate the DMA buffer". 
-> 
-
-Actually scratch the above, turned out I haven't applied patches correctly. In fact patches are failing to apply with:
-
-# git apply --verbose V2-3-4-i2c-tegra-Add-DMA-Support.patch
-Checking patch drivers/i2c/busses/i2c-tegra.c...
-Hunk #4 succeeded at 198 (offset 3 lines).
-Hunk #5 succeeded at 212 (offset 3 lines).
-Hunk #6 succeeded at 229 (offset 3 lines).
-Hunk #7 succeeded at 243 (offset 3 lines).
-Hunk #8 succeeded at 321 (offset 3 lines).
-Hunk #9 succeeded at 636 (offset 3 lines).
-Hunk #10 succeeded at 751 (offset 3 lines).
-Hunk #11 succeeded at 798 (offset 3 lines).
-Hunk #12 succeeded at 968 (offset 3 lines).
-Hunk #13 succeeded at 996 (offset 3 lines).
-Hunk #14 succeeded at 1050 (offset 3 lines).
-Hunk #15 succeeded at 1075 (offset 3 lines).
-Hunk #16 succeeded at 1125 (offset 3 lines).
-Hunk #17 succeeded at 1180 (offset 3 lines).
-Hunk #18 succeeded at 1304 (offset 13 lines).
-error: while searching for:
-                return -ENOMEM;
-
-        i2c_dev->base = base;
-        i2c_dev->div_clk = div_clk;
-        i2c_dev->adapter.algo = &tegra_i2c_algo;
-        i2c_dev->adapter.quirks = &tegra_i2c_quirks;
-        i2c_dev->irq = irq;
-        i2c_dev->cont_id = pdev->id;
-        i2c_dev->dev = &pdev->dev;
-
-        i2c_dev->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
-        if (IS_ERR(i2c_dev->rst)) {
-
-error: patch failed: drivers/i2c/busses/i2c-tegra.c:1000
-error: drivers/i2c/busses/i2c-tegra.c: patch does not apply
-
-
-Please use "git format-patch -4 xxxx" and do not edit patches manually.
+DQoNCj4gPj4+Pj4gKwlpZiAoaTJjX2Rldi0+aGFzX2RtYSkgew0KPiA+Pj4+PiArCQlyZXQgPSB0
+ZWdyYV9pMmNfaW5pdF9kbWFfcGFyYW0oaTJjX2RldiwgdHJ1ZSk7DQo+ID4+Pj4+ICsJCWlmIChy
+ZXQgPT0gLUVQUk9CRV9ERUZFUikNCj4gPj4+Pj4gKwkJCWdvdG8gZGlzYWJsZV9kaXZfY2xrOw0K
+PiA+Pj4+PiArCQlyZXQgPSB0ZWdyYV9pMmNfaW5pdF9kbWFfcGFyYW0oaTJjX2RldiwgZmFsc2Up
+Ow0KPiA+Pj4+PiArCQlpZiAocmV0ID09IC1FUFJPQkVfREVGRVIpDQo+ID4+Pj4+ICsJCQlnb3Rv
+IGRpc2FibGVfZGl2X2NsazsNCj4gPj4+Pg0KPiA+Pj4+IFNvIHRlZ3JhX2kyY19pbml0X2RtYV9w
+YXJhbSgpIGNvdWxkIGZhaWwsIHByaW50aW5nIGEgZXJyb3IgbWVzc2FnZSwgYW5kIHByb2JlIHdp
+bGwgc3VjY2VlZD8gSWYgYWxsb2NhdGlvbiBmYWlscyBkdXJpbmcgdGhlIGRyaXZlcidzIHByb2Jl
+LCB0aGVuIGp1c3QgZmFpbCB0aGUgcHJvYmUuIFBsZWFzZSBnaXZlIHRoZSByYXRpb25hbGUuDQo+
+ID4+Pg0KPiA+Pj4gSWYgQVBCIERNQSBwcm9iZSBkb2VzbuKAmXQgaGFwcGVuIHByaW9yIHRvIHRl
+Z3JhIGkyYywgRE1BIGlzIG5vdCBhdmFpbGFibGUgYnkgdGhlIHRpbWUgdGVncmFfaW5pdF9kbWFf
+cGFyYW0gdHJpZXMgdG8gcmVxdWVzdCBzbGF2ZSBjaGFubmVsIGFuZCBpbiB0aG9zZSBjYXNlcyBk
+bWFfcmVxdWVzdF9zbGF2ZV9jaGFubmVsX3JlYXNvbiB3aWxsIHJldHVybiBFUFJPQkVfREVGRVIg
+Zm9yIHRlZ3JhIEkyQyBwcm9iZSB0byByZXRyeQ0KPiA+Pj4NCj4gPj4+IEluIGNhc2UgaWYgRE1B
+IGlzIGF2YWlsYWJsZSBidXQgRE1BIGJ1ZmZlciBhbGxvY2F0aW9uIGZhaWxzLCB0aGVuIHRlZ3Jh
+X2kyY19pbml0X2RtYV9wYXJhbSByZXR1cm5zIEVOT01FTSBhbmQgcHJvYmUgYWxzbyBmYWlscyBy
+ZXR1cm5pbmcgc2FtZSBFTk9NRU0NCj4gPj4NCj4gPj4gSXMgdGhhdCB3aGF0IHlvdSdyZSBnb2lu
+ZyB0byBjaGFuZ2UgaW4gdGhlIG5leHQgdmVyc2lvbj8gWW91ciBjdXJyZW50IHZhcmlhbnQgb2Yg
+dGhlIGNvZGUgZG9lc24ndCBmYWlsIHRoZSBwcm9iZSBvbiBFTk9NRU0gYW5kIHRoZXJlIGlzIGR1
+cGxpY2F0ZWQgYXR0ZW1wdCB0byBpbnZva2UgdGVncmFfaTJjX2luaXRfZG1hX3BhcmFtKCkgZHVy
+aW5nIHRoZSB0cmFuc2Zlci4NCj4gPiANCj4gPiBTb3JyeSBjb3JyZWN0aW9uIHRvIG15IHByZXZp
+b3VzIHJlcGx5LiAgSWYgRE1BIGJ1ZmZlciBhbGxvY2F0aW9uIGZhaWxzLCB0ZWdyYV9pMmNfaW5p
+dF9kbWFfcGFyYW0gcmV0dXJucyBFTk9NRU0gYnV0IHByb2JlIHdpbGwgc3VjY2VlZCBhcyBpMmMg
+dHJhbnNhY3Rpb24gbmVlZCB0byBoYXBwZW4gZHVyaW5nICBib290IGZvciBzb21lIHBsYXRmb3Jt
+IGRldmljZSBwcm9ncmFtbWluZyBmb3Igc3VjY2Vzc2Z1bCBib290IGFuZCB0aGV5IHVzZSBQSU8g
+PiBtb2RlIGFzIHhmZXIgYnl0ZXMgaXMgbGVzcyBhbmQgZGVmZXJyaW5nIGkyYyBwcm9iZSBmb3Ig
+RU5PTUVNIGNhdXNlcyBib290IHRvIGZhaWwgc28gZHVyaW5nIHByb2JlIEVQUk9CRV9ERUZFUiBp
+cyBvbmx5IHRha2VuIGNhcmUuDQo+ID4gDQo+ID4gUmUtYXR0ZW1wdCBvZiB0ZWdyYV9pMmNfaW5p
+dF9kbWFfcGFyYW0gaW4geGZlciBoYXBwZW5zIG9ubHkgaWYgbm8gc3VjY2Vzc2Z1bCBETUEgY2hh
+bm5lbCBhbGxvY2F0aW9uIGhhcHBlbnMgcHJpb3IgdG8gdGhhdCAoIGR1cmluZyBwcm9iZSBpbiBj
+YXNlIG9mIEVOT01FTSkuDQo+ID4gRE1BIG1vZGUgaXMgbWFpbmx5IGZvciBsYXJnZSB0cmFuc2Zl
+ciwgYW5kIGkyYyB4ZmVyIHJldHVybmluZyBmYWlsdXJlIGR1ZSB0byBmYWlsaW5nIERNQSBidWZm
+ZXIgYWxsb2NhdGlvbiBjYXVzZXMgYm9vdCB0byBoYW5nIGFzIHBsYXRmb3JtIGRldmljZSBwcm9n
+cmFtbWluZyBuZWVkIHRvIGhhcHBlbiB3aGljaCBkb2VzbuKAmXQgbmVlZCB0byB1c2UgRE1BLg0K
+PiA+IFdpbGwgZml4IHRoaXMgYW5kIHdpbGwgc2VuZCB1cGRhdGVkIHBhdGNoIHRvIHJlYXR0ZW1w
+dCBETUEgcmVxdWVzdCBhbmQgYnVmZmVyIGFsbG9jYXRpb24gZHVyaW5nIERNQSBtb2RlIHRyYW5z
+ZmVyIGFuZCB3aWxsIHJldHVybiBmYWlsIGZvciBETUEgbW9kZSBJMkMgdHJhbnNmZXIuLi4NCj4N
+Cj4gMSkgVGhlIGNoYW5jZSB0byBnZXQgRU5PTUVNIGR1cmluZyBpcyBtaXNlcmFibGUgYW5kIGxp
+a2VseSB0aGF0IHRoZXJlIGFyZSBtdWNoIGJpZ2dlciBwcm9ibGVtcyBpbiB0aGlzIGNhc2UuIEhl
+bmNlIGp1c3QgZmFpbCB0aGUgcHJvYmUgaWYgdGVncmFfaTJjX2luaXRfZG1hX3BhcmFtKCkgZmFp
+bHMgd2l0aCBhbnkgZXJyb3IuDQoNCkFncmVlLiANCg0KPiAyKSBXaGF0IGlzIHRoYXQgc3VwZXIt
+Y3JpdGljYWwgcGxhdGZvcm0gZGV2aWNlPyBJdCBpcyBwb3NzaWJsZSB0byBjb21waWxlIHRlZ3Jh
+LWkyYyBhcyBhIGtlcm5lbCBtb2R1bGUgYW5kIHNlZW1zIG5vdGhpbmcgZW5mb3JjZXMgQ09ORklH
+X0kyQ19URUdSQT15Lg0KU29tZSBvZiB0aGUgaTJjIGRldmljZSAgYWNjZXNzIGhhcHBlbnMgZHVy
+aW5nIGJvb3QgZm9yIHNvbWUgdGVncmEgcGxhdGZvcm1zIGxpa2UgamV0c29uIHR4MSwgdHgyLi4g
+KEVnOiBJMkMgR1BJTyBleHBhbmRlcnMsIFBNSUMgYWNjZXNzLi4uKQ0KDQo+IDMpIEFmdGVyIGFw
+cGx5aW5nIHRoZXNlIHBhdGNoZXMgSTJDIHRyYW5zZmVycyBhcmUgZmFpbGluZyBvbiBUZWdyYTIw
+IHdpdGggInRlZ3JhLWkyYyA3MDAwYzQwMC5pMmM6IEZhaWxlZCB0byBhbGxvY2F0ZSB0aGUgRE1B
+IGJ1ZmZlciIuIA0KVGhpcyBwYXRjaCBzaG91bGQgbm90IGNhdXNlIERNQSBidWZmZXIgYWxsb2Nh
+dGlvbiBmYWlsdXJlIHRvIGhhcHBlbi4gQnV0IGlmIGFsbG9jYXRpb24gZmFpbHMgKGl0IGNvdWxk
+buKAmXQgYWxsb2NhdGUgY29udGlndW91cyBwaHlzaWNhbCBtZW1vcnkgZm9yIHNvbWUgcmVhc29u
+KSwgdGhlbiB0cmFuc2ZlcnMgd2lsbCBkZWZpbml0ZWx5IGZhaWwgd2l0aCB0aGlzIHBhdGNoLg0K
+DQpXaWxsIHNlbmQgdXBkYXRlZCBwYXRjaCB3aXRoIG5vdCByZS1hdHRlbXB0IGFuZCBpbiBwcm9i
+ZSB0byByZXR1cm4gb24gZXJyb3Igc28gaWYgaXQgd2lsbCBlaXRoZXIgZGVmZXIgb3IgZmFpbCBp
+biBjYXNlIG9mIEVOT01FTS4NCg==
