@@ -1,67 +1,63 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-Date: Sat, 26 Jan 2019 01:51:59 +0000
-Message-ID: <BYAPR12MB33981C0EE06C88C9814B431EC2940@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
- <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
- <e782dfd3-4dc4-4f69-e360-f38e4705fdb4@gmail.com>
+Subject: [PATCH V3 1/3] i2c: tegra: Sort all the include headers alphabetically
+Date: Fri, 25 Jan 2019 19:57:51 -0800
+Message-ID: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e782dfd3-4dc4-4f69-e360-f38e4705fdb4@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+ICtzdGF0aWMgaW50IHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbShzdHJ1Y3QgdGVncmFfaTJj
-X2RldiAqaTJjX2RldiwNCj4gPiArCQkJCSAgICBib29sIGRtYV90b19tZW1vcnkpDQo+ID4gK3sN
-Cj4gPiArCXN0cnVjdCBkbWFfY2hhbiAqZG1hX2NoYW47DQo+ID4gKwl1MzIgKmRtYV9idWY7DQo+
-ID4gKwlkbWFfYWRkcl90IGRtYV9waHlzOw0KPiA+ICsJaW50IHJldDsNCj4gPiArCWNvbnN0IGNo
-YXIgKmNoYW5fbmFtZSA9IGRtYV90b19tZW1vcnkgPyAicngiIDogInR4IjsNCj4gPiArDQo+ID4g
-KwlkbWFfY2hhbiA9IGRtYV9yZXF1ZXN0X3NsYXZlX2NoYW5uZWxfcmVhc29uKGkyY19kZXYtPmRl
-diwgY2hhbl9uYW1lKTsNCj4gPiArCWlmIChJU19FUlIoZG1hX2NoYW4pKQ0KPiA+ICsJCXJldHVy
-biBQVFJfRVJSKGRtYV9jaGFuKTsNCj4NCj4gSGVyZSBzaGFsbCBiZSBhIGNoZWNrIG9mIHdoZXRo
-ZXIgZG1hX2J1ZiBpcyBhbHJlYWR5IGFsbG9jYXRlZCwgb3RoZXJ3aXNlIGl0IHdpbGwgYmUgYWxs
-b2NhdGVkIHR3aWNlIGFuZCB0aGUgZmlyc3QgYWxsb2NhdGlvbiB0dXJuZWQgaW50byBtZW1sZWFr
-Og0KPg0KPglpZiAoaTJjX2Rldi0+ZG1hX2J1ZikNCj4JCXJldHVybiAwOw0KDQpJZiBkbWFfYnVm
-IGlzIGFsbG9jYXRlZCBhbHJlYWR5IHRoZW4gZG1hIGNoYW5uZWxzIHdpbGwgYmUgYXNzaWduZWQg
-YW5kIGl0IHdpbGwgbm90IHBlcmZvcm0gaW5pdCBkbWEgYWdhaW4uDQpTbyBpZiBkbWEgYnVmIGFs
-bG9jYXRpb24gaGFwcGVucyBhbHJlYWR5IHRoZW4gaXQgd2lsbCBub3QgY29tZSBoZXJlIGFnYWlu
-Lg0KDQo+ID4gKw0KPiA+ICsJZG1hX2J1ZiA9IGRtYV9hbGxvY19jb2hlcmVudChpMmNfZGV2LT5k
-ZXYsIGkyY19kZXYtPmRtYV9idWZfc2l6ZSwNCj4gPiArCQkJCSAgICAgJmRtYV9waHlzLCBHRlBf
-S0VSTkVMKTsNCj4gPiArDQo+DQo+IEknbSB3b25kZXJpbmcgd2hldGhlciBhIHdyaXRlLWNvbWJp
-bmVkIERNQSBtYXBwaW5nIHdpbGwgYmUgbW9yZSBvcHRpbWFsIHRoYW4gaGF2aW5nIEwyIGZsdXNo
-ZXMgLyBpbnZhbGlkYXRpb24gZm9yIHRoZSAiY29oZXJlbnQiIGFsbG9jYXRpb25zLiANCj4NCj4g
-QW5kIEknbSBub3cgcXVlc3Rpb25pbmcgd2hldGhlciB0aGVyZSBpcyBhbnkgcmVhbCBiZW5lZml0
-IGZyb20gdGhlIERNQSB0cmFuc2ZlcnJpbmcgYXQgYWxsLCBnaXZlbiB0aGUgRE1BIGJvdW5jZS1i
-dWZmZXIgQ1BVIHJlYWQvd3JpdGUgb3ZlcmhlYWQuIEl0IGxvb2tzIHRvIG1lIHRoYXQgdGhlIHdo
-b2xlIHB1cnBvc2Ugb2YgdGhlIEkyQyBETUEgdHJhbnNmZXJyaW5nIGlzIHRvIG1vdmUgZGF0YSBm
-cm9tICh0bykgc29tZSBJMkMgZGV2aWNlIHRvIGEgPiA+IHNvbWUgZGV2aWNlIG9uIHRoZSBBUEIg
-YnVzLCBieXBhc3NpbmcgdGhlIENQVS4gSWYgdGhhdCdzIGlzIHRoZSBjYXNlLCB0aGVuIHRoaXMg
-cGF0Y2ggbWF5IG5vdCByZWFsbHkgd29ydGggdGhlIGVmZm9ydCBhbmQgaW5zdGVhZCBjb3VsZCBv
-bmx5IGh1cnQgdGhlIHRyYW5zZmVycmluZyBwZXJmb3JtYW5jZS4gUGxlYXNlIHByb3ZpZGUgc29t
-ZSBwZXJmb3JtYW5jZSByZXN1bHRzIG9yIGNvcnJlY3QgbWUgaWYgSSdtIHdyb25nLg0KPg0KPiBb
-c25pcF0NCg0KRE1BIHRyYW5zZmVyIGhlbHBzIHRvIHJlZHVjZSBvdmVyaGVhZCBvbmx5IGR1cmlu
-ZyBsYXJnZSB0cmFuc2ZlciB3aGljaCBpcyB2ZXJ5IHJhcmUgb3BlcmF0aW9uLiBXaWxsIGNoZWNr
-IGFuZCBwcm92aWRlIHNvbWUgcGVyZm9ybWFuY2UgZGF0YS4uLg0KDQo+ID4gIA0KPiA+ICAJaWYg
-KCFpMmNfZGV2LT5ody0+aGFzX3NpbmdsZV9jbGtfc291cmNlKSB7DQo+ID4gIAkJZmFzdF9jbGsg
-PSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgImZhc3QtY2xrIik7IEBAIC0xMDc5LDYgDQo+ID4g
-KzE0MDIsMTUgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikNCj4gPiAgCQl9DQo+ID4gIAl9DQo+ID4gIA0KPiA+ICsJaWYgKGkyY19kZXYt
-Pmhhc19kbWEpIHsNCj4gPiArCQlyZXQgPSB0ZWdyYV9pMmNfaW5pdF9kbWFfcGFyYW0oaTJjX2Rl
-diwgdHJ1ZSk7DQo+ID4gKwkJaWYgKHJldCA9PSAtRVBST0JFX0RFRkVSKQ0KPiA+ICsJCQlnb3Rv
-IGRpc2FibGVfZGl2X2NsazsNCj4gPiArCQlyZXQgPSB0ZWdyYV9pMmNfaW5pdF9kbWFfcGFyYW0o
-aTJjX2RldiwgZmFsc2UpOw0KPiA+ICsJCWlmIChyZXQgPT0gLUVQUk9CRV9ERUZFUikNCj4gPiAr
-CQkJZ290byBkaXNhYmxlX2Rpdl9jbGs7DQo+DQo+IE1pc3NpbmcgZG1hX2J1ZiBmcmVlaW5nIGFu
-ZCBjaGFubmVsIHJlbGVhc2luZyBpbiBhIGNhc2Ugb2YgZXJyb3IuDQoNCmRtYSBidWYgZnJlZWlu
-ZyBhbmQgY2hhbm5lbCByZWxlYXNlIGhhcHBlbnMgaW5zaWRlIGluaXRfZG1hIHdoZW4gYnVmZmVy
-IGFsbG9jYXRpb24gZmFpbHMuDQpJZiBkbWFfcmVxdWVzdF9zbGF2ZV9jaGFubmVsX3JlYXNvbiBm
-YWlscyBubyBuZWVkIHRvIHJlbGVhc2UgY2hhbm5lbCBidXQgaWYgY2hhbm5lbCByZXF1ZXN0IHN1
-Y2NlZWRzIGFuZCBidWZmZXIgYWxsb2NhdGlvbiBmYWlscywgdGhlbiBidWZmZXIgZnJlZSBhbmQg
-Y2hhbm5lbCByZWxlYXNlIHdpbGwgaGFwcGVuLg0KDQo+ID4gKwl9DQo+ID4gKw0KPiA+ICAJcmV0
-ID0gdGVncmFfaTJjX2luaXQoaTJjX2Rldik7DQo+ID4gIAlpZiAocmV0KSB7DQo+ID4gIAkJZGV2
-X2VycigmcGRldi0+ZGV2LCAiRmFpbGVkIHRvIGluaXRpYWxpemUgaTJjIGNvbnRyb2xsZXJcbiIp
-Ow0KPiA+IA0KDQo=
+This patch sorts all the include headers alphabetically for the
+I2C tegra driver
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V3] : Removed unsued headers in tegra I2C
+ [V2] : Added this in V2 to sort the headers in tegra I2C
+
+ drivers/i2c/busses/i2c-tegra.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e417ebf7628c..aec500ef9a98 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,22 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
++#include <linux/slab.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
