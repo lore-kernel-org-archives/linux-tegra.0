@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V3 3/3] i2c: tegra: Add DMA Support
-Date: Sat, 26 Jan 2019 20:11:11 +0300
-Message-ID: <fc6f3214-8418-1c4e-90e4-70dd32d253ef@gmail.com>
+Date: Sat, 26 Jan 2019 20:29:06 +0300
+Message-ID: <0301cf3e-0442-9fd0-9165-6cdf752cd1ea@gmail.com>
 References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
  <1548475073-12408-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
@@ -92,9 +92,6 @@ List-Id: linux-tegra@vger.kernel.org
 >   * @is_multimaster_mode: track if I2C controller is in multi-master mode
 >   * @xfer_lock: lock to serialize transfer submission and processing
 > + * @has_dma: indicated if controller supports DMA
-
-AFAIK, all Terga's support DMA. Let's change to "@has_dma: can utilize DMA" for clarity.
-
 > + * @tx_dma_chan: DMA transmit channel
 > + * @rx_dma_chan: DMA receive channel
 > + * @dma_phys: handle to DMA resources
@@ -201,9 +198,6 @@ AFAIK, all Terga's support DMA. Let's change to "@has_dma: can utilize DMA" for 
 > +scrub:
 > +	dma_free_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
 > +			  dma_buf, dma_phys);
-
-Will dma_free_coherent() handle NULL ptr which will happen when dma_buf allocation fails for the RX init'ing?
-
 > +	dma_release_channel(dma_chan);
 > +	return ret;
 > +}
@@ -309,9 +303,6 @@ Will dma_free_coherent() handle NULL ptr which will happen when dma_buf allocati
 > +		dma_burst = 4;
 > +	else
 > +		dma_burst = 8;
-
-I'm still wondering whether dma_burst < 8 negatively affects transfer efficiency. Could you please clarify?
-
 > +
 > +	if (direction == DATA_DMA_DIR_TX) {
 > +		if (i2c_dev->hw->has_mst_fifo)
@@ -358,66 +349,6 @@ I'm still wondering whether dma_burst < 8 negatively affects transfer efficiency
 >  
 > +	dma = ((xfer_size > I2C_PIO_MODE_MAX_LEN) &&
 > +		i2c_dev->tx_dma_chan && i2c_dev->rx_dma_chan);
-
-There is no need to allocate resources for DMA until dma==true, let's postpone channels requesting and dma_buf allocation until they are really needed.
-
-Please factor out DMA resorces allocation into something like this:
-
-int tegra_i2c_init_dma_resorces(struct tegra_i2c_dev *i2c_dev)
-{
-	struct dma_chan *dma_rx, *dma_tx;
-	dma_addr_t dma_phys;
-	u32 *dma_buf;
-	int err;
-
-	if (i2c_dev->dma_buf)
-		return 0;
-
-	if (!i2c_dev->has_dma)
-		return -EINVAL;
-
-	dma_rx = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
-	if (IS_ERR(dma_rx))
-		return PTR_ERR(dma_rx);
-
-	dma_tx = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
-	if (IS_ERR(dma_tx)) {
-		err = PTR_ERR(dma_tx);
-		goto err_release_rx;
-	}
-
-	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
-	if (!dma_buf) {
-		dev_err(i2c_dev->dev, "Failed to allocate the DMA buffer\n");
-		err = -ENOMEM;
-		goto err_release_tx;
-	}
-
-	i2c_dev->dma_buf = dma_buf;
-	i2c_dev->dma_phys = dma_phys;
-	i2c_dev->rx_dma_chan = dma_rx;
-	i2c_dev->tx_dma_chan = dma_tx;
-
-err_release_tx:
-	dma_release_channel(dma_tx);
-err_release_rx:
-	dma_release_channel(dma_rx);
-
-	return err;
-}
-
-...
-
-and then:
-
-	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
-	if (dma) {
-		err = tegra_i2c_init_dma_resorces(i2c_dev);
-		if (err)
-			dma = false;
-	}
-
 > +
 > +	i2c_dev->is_curr_dma_xfer = dma;
 > +
@@ -437,9 +368,6 @@ and then:
 > +			dma_sync_single_for_device(i2c_dev->dev,
 > +						   i2c_dev->dma_phys,
 > +						   i2c_dev->dma_buf_size,
-
-Why not use the size of transfer for the syncing?
-
 > +						   DMA_FROM_DEVICE);
 > +			ret = tegra_i2c_dma_submit(i2c_dev, xfer_size);
 > +			if (ret < 0) {
@@ -455,7 +383,8 @@ Why not use the size of transfer for the syncing?
 > +			/* Make the dma buffer to read by cpu */
 > +			dma_sync_single_for_cpu(i2c_dev->dev,
 > +						i2c_dev->dma_phys,
-> +						i2c_dev->dma_buf_size,> +						DMA_TO_DEVICE);
+> +						i2c_dev->dma_buf_size,
+> +						DMA_TO_DEVICE);
 > +			buffer = (u32 *)i2c_dev->dma_buf;
 > +		}
 > +	}
@@ -629,26 +558,46 @@ Why not use the size of transfer for the syncing?
 > +		ret = tegra_i2c_init_dma_param(i2c_dev, true);
 > +		if (ret == -EPROBE_DEFER)
 > +			goto disable_div_clk;
-
-So now dma_buf has been allocated by initing the RX channel.
-
 > +		ret = tegra_i2c_init_dma_param(i2c_dev, false);
-
-And now dma_buf will be allocated second time for the TX?
-
 > +		if (ret == -EPROBE_DEFER)
 > +			goto disable_div_clk;
-
-Where is RX channel releasing when TX init fails?
-
 > +	}
-
-No channels / dma_buf releasing in tegra_i2c_remove()? 
-
 > +
 >  	ret = tegra_i2c_init(i2c_dev);
 >  	if (ret) {
 >  		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
 > 
 
-Please collect performance stats before posting new version of the patch.
+This patch doesn't apply, same as for the v2.. any clue why this happens?
+
+# git apply --verbose V3-3-3-i2c-tegra-Add-DMA-Support.patch 
+Checking patch drivers/i2c/busses/i2c-tegra.c...
+Hunk #4 succeeded at 197 (offset 3 lines).
+Hunk #5 succeeded at 211 (offset 3 lines).
+Hunk #6 succeeded at 228 (offset 3 lines).
+Hunk #7 succeeded at 242 (offset 3 lines).
+Hunk #8 succeeded at 320 (offset 3 lines).
+Hunk #9 succeeded at 748 (offset 3 lines).
+Hunk #10 succeeded at 795 (offset 3 lines).
+Hunk #11 succeeded at 866 (offset 3 lines).
+Hunk #12 succeeded at 879 (offset 3 lines).
+Hunk #13 succeeded at 897 (offset 3 lines).
+Hunk #14 succeeded at 957 (offset 3 lines).
+Hunk #15 succeeded at 1113 (offset 3 lines).
+Hunk #16 succeeded at 1237 (offset 13 lines).
+error: while searching for:
+                return -ENOMEM;
+
+        i2c_dev->base = base;
+        i2c_dev->div_clk = div_clk;
+        i2c_dev->adapter.algo = &tegra_i2c_algo;
+        i2c_dev->adapter.quirks = &tegra_i2c_quirks;
+        i2c_dev->irq = irq;
+        i2c_dev->cont_id = pdev->id;
+        i2c_dev->dev = &pdev->dev;
+
+        i2c_dev->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
+        if (IS_ERR(i2c_dev->rst)) {
+
+error: patch failed: drivers/i2c/busses/i2c-tegra.c:974
+error: drivers/i2c/busses/i2c-tegra.c: patch does not apply
