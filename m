@@ -1,71 +1,215 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-Date: Fri, 25 Jan 2019 23:29:43 +0000
-Message-ID: <BYAPR12MB33989F7CC9FCB45AE0BFC561C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V2 3/4] i2c: tegra: Add DMA Support
+Date: Sat, 26 Jan 2019 03:28:02 +0300
+Message-ID: <e782dfd3-4dc4-4f69-e360-f38e4705fdb4@gmail.com>
 References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
  <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
- <dcc1e094-638e-5b04-7a61-bdbc24ee068f@gmail.com>
- <BYAPR12MB339829FC6F2F95F833FE45A1C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <ad177c2e-3801-ddad-b359-ac83530ee1d6@gmail.com>
- <BYAPR12MB33982ED3A9EC34819D2490F8C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190125231040.GA2013@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190125231040.GA2013@mithrandir>
+In-Reply-To: <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4gPiA+ID4+PiArCWlmIChpMmNfZGV2LT5oYXNfZG1hKSB7DQo+ID4gPiA+Pj4gKwkJcmV0
-ID0gdGVncmFfaTJjX2luaXRfZG1hX3BhcmFtKGkyY19kZXYsIHRydWUpOw0KPiA+ID4gPj4+ICsJ
-CWlmIChyZXQgPT0gLUVQUk9CRV9ERUZFUikNCj4gPiA+ID4+PiArCQkJZ290byBkaXNhYmxlX2Rp
-dl9jbGs7DQo+ID4gPiA+Pj4gKwkJcmV0ID0gdGVncmFfaTJjX2luaXRfZG1hX3BhcmFtKGkyY19k
-ZXYsIGZhbHNlKTsNCj4gPiA+ID4+PiArCQlpZiAocmV0ID09IC1FUFJPQkVfREVGRVIpDQo+ID4g
-PiA+Pj4gKwkJCWdvdG8gZGlzYWJsZV9kaXZfY2xrOw0KPiA+ID4gPj4NCj4gPiA+ID4+IFNvIHRl
-Z3JhX2kyY19pbml0X2RtYV9wYXJhbSgpIGNvdWxkIGZhaWwsIHByaW50aW5nIGEgZXJyb3IgDQo+
-ID4gPiA+PiBtZXNzYWdlLCBhbmQgcHJvYmUgd2lsbCBzdWNjZWVkPyBJZiBhbGxvY2F0aW9uIGZh
-aWxzIGR1cmluZyB0aGUgDQo+ID4gPiA+PiBkcml2ZXIncyBwcm9iZSwgdGhlbiBqdXN0IGZhaWwg
-dGhlIHByb2JlLiBQbGVhc2UgZ2l2ZSB0aGUgDQo+ID4gPiA+PiByYXRpb25hbGUuDQo+ID4gPiA+
-IA0KPiA+ID4gPiBJZiBBUEIgRE1BIHByb2JlIGRvZXNu4oCZdCBoYXBwZW4gcHJpb3IgdG8gdGVn
-cmEgaTJjLCBETUEgaXMgbm90IA0KPiA+ID4gPiBhdmFpbGFibGUgYnkgdGhlIHRpbWUgdGVncmFf
-aW5pdF9kbWFfcGFyYW0gdHJpZXMgdG8gcmVxdWVzdCBzbGF2ZSANCj4gPiA+ID4gY2hhbm5lbCBh
-bmQgaW4gdGhvc2UgY2FzZXMgZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbF9yZWFzb24gd2lsbCAN
-Cj4gPiA+ID4gcmV0dXJuIEVQUk9CRV9ERUZFUiBmb3IgdGVncmEgSTJDIHByb2JlIHRvIHJldHJ5
-DQo+ID4gPiA+IA0KPiA+ID4gPiBJbiBjYXNlIGlmIERNQSBpcyBhdmFpbGFibGUgYnV0IERNQSBi
-dWZmZXIgYWxsb2NhdGlvbiBmYWlscywgdGhlbiANCj4gPiA+ID4gdGVncmFfaTJjX2luaXRfZG1h
-X3BhcmFtIHJldHVybnMgRU5PTUVNIGFuZCBwcm9iZSBhbHNvIGZhaWxzIA0KPiA+ID4gPiByZXR1
-cm5pbmcgc2FtZSBFTk9NRU0NCj4gPiA+DQo+ID4gPiBJcyB0aGF0IHdoYXQgeW91J3JlIGdvaW5n
-IHRvIGNoYW5nZSBpbiB0aGUgbmV4dCB2ZXJzaW9uPyBZb3VyIA0KPiA+ID4gY3VycmVudCB2YXJp
-YW50IG9mIHRoZSBjb2RlIGRvZXNuJ3QgZmFpbCB0aGUgcHJvYmUgb24gRU5PTUVNIGFuZCANCj4g
-PiA+IHRoZXJlIGlzIGR1cGxpY2F0ZWQgYXR0ZW1wdCB0byBpbnZva2UgdGVncmFfaTJjX2luaXRf
-ZG1hX3BhcmFtKCkgDQo+ID4gPiBkdXJpbmcgdGhlIHRyYW5zZmVyLg0KPiA+IA0KPiA+IFNvcnJ5
-IGNvcnJlY3Rpb24gdG8gbXkgcHJldmlvdXMgcmVwbHkuICBJZiBETUEgYnVmZmVyIGFsbG9jYXRp
-b24gDQo+ID4gZmFpbHMsIHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbSByZXR1cm5zIEVOT01FTSBi
-dXQgcHJvYmUgd2lsbCBzdWNjZWVkIA0KPiA+IGFzIGkyYyB0cmFuc2FjdGlvbiBuZWVkIHRvIGhh
-cHBlbiBkdXJpbmcgIGJvb3QgZm9yIHNvbWUgcGxhdGZvcm0gDQo+ID4gZGV2aWNlIHByb2dyYW1t
-aW5nIGZvciBzdWNjZXNzZnVsIGJvb3QgYW5kIHRoZXkgdXNlIFBJTyBtb2RlIGFzIHhmZXIgDQo+
-ID4gYnl0ZXMgaXMgbGVzcyBhbmQgZGVmZXJyaW5nIGkyYyBwcm9iZSBmb3IgRU5PTUVNIGNhdXNl
-cyBib290IHRvIGZhaWwgDQo+ID4gc28gZHVyaW5nIHByb2JlIEVQUk9CRV9ERUZFUiBpcyBvbmx5
-IHRha2VuIGNhcmUuDQo+ID4gDQo+ID4gUmUtYXR0ZW1wdCBvZiB0ZWdyYV9pMmNfaW5pdF9kbWFf
-cGFyYW0gaW4geGZlciBoYXBwZW5zIG9ubHkgaWYgbm8gDQo+ID4gc3VjY2Vzc2Z1bCBETUEgY2hh
-bm5lbCBhbGxvY2F0aW9uIGhhcHBlbnMgcHJpb3IgdG8gdGhhdCAoIGR1cmluZyBwcm9iZSANCj4g
-PiBpbiBjYXNlIG9mIEVOT01FTSkuDQo+ID4gRE1BIG1vZGUgaXMgbWFpbmx5IGZvciBsYXJnZSB0
-cmFuc2ZlciwgYW5kIGkyYyB4ZmVyIHJldHVybmluZyBmYWlsdXJlIA0KPiA+IGR1ZSB0byBmYWls
-aW5nIERNQSBidWZmZXIgYWxsb2NhdGlvbiBjYXVzZXMgYm9vdCB0byBoYW5nIGFzIHBsYXRmb3Jt
-IA0KPiA+IGRldmljZSBwcm9ncmFtbWluZyBuZWVkIHRvIGhhcHBlbiB3aGljaCBkb2VzbuKAmXQg
-bmVlZCB0byB1c2UgRE1BLg0KPiA+IFdpbGwgZml4IHRoaXMgYW5kIHdpbGwgc2VuZCB1cGRhdGVk
-IHBhdGNoIHRvIHJlYXR0ZW1wdCBETUEgcmVxdWVzdCBhbmQgDQo+ID4gYnVmZmVyIGFsbG9jYXRp
-b24gZHVyaW5nIERNQSBtb2RlIHRyYW5zZmVyIGFuZCB3aWxsIHJldHVybiBmYWlsIGZvciANCj4g
-PiBETUEgbW9kZSBJMkMgdHJhbnNmZXIuLi4NCj4NCj4gSSdtIHdvbmRlcmluZyBpZiB3ZSBzaG91
-bGRuJ3QgZ3JhY2VmdWxseSB0byBQSU8gaWYgd2UgZmFpbCB0byBhbGxvY2F0ZSBETUEgYnVmZmVy
-cy4gRXZlbiBpZiBpdCBpcyB1bmxpa2VseSB0aGF0IGxhcmdlIHRyYW5zZmVycyAoPiB0aGFuIHRo
-ZSB0aHJlc2hvbGQgdGhhdCBhY3RpdmF0ZXMgdGhlIERNQSBwYXRocykgd2lsbCBiZSBuZWVkZWQg
-YnkgY3JpdGljYWwgSTJDIGNsaWVudHMsIHRoZXJlJ3MgcmVhbGx5IG5vIHJlYXNvbiB3aHkgd2Ug
-Y2FuJ3QgZG8gUElPIGlmIERNQSA+IGRvZXNuJ3Qgd29yayBmb3Igc29tZSByZWFzb24uDQo+DQo+
-IFRoaWVycnkNCg0KWWVzIHdlIGNhbiBmYWxsIGJhY2sgdG8gUElPIG1vZGUgaW5jYXNlIG9mIERN
-QSBidWZmZXIgYWxsb2NhdGlvbiBmYWlsdXJlLiBXaWxsIGFkZCB0aGlzIGluIG5leHQgcmV2aXNl
-ZCBwYXRjaA0KDQpTb3dqYW55YQ0K
+24.01.2019 23:51, Sowjanya Komatineni пишет:
+> This patch adds DMA support for Tegra I2C.
+> 
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
+> 
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction adding overhead on CPU for large transfers.
+> 
+> DMA mode is helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V2] : Updated based on V1 review feedback along with code cleanup for
+> 	proper implementation of DMA.
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 366 +++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 349 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 13bce1411ddc..769700d5a7f3 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -9,6 +9,9 @@
+>  #include <asm/unaligned.h>
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/dmapool.h>
+> +#include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/init.h>
+> @@ -46,6 +49,8 @@
+>  #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
+>  #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
+>  #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
+> +#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
+> +#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
+>  #define I2C_FIFO_STATUS				0x060
+>  #define I2C_FIFO_STATUS_TX_MASK			0xF0
+>  #define I2C_FIFO_STATUS_TX_SHIFT		4
+> @@ -120,6 +125,16 @@
+>  /* Packet header size in bytes */
+>  #define I2C_PACKET_HEADER_SIZE			12
+>  
+> +#define DATA_DMA_DIR_TX				(1 << 0)
+> +#define DATA_DMA_DIR_RX				(1 << 1)
+> +
+> +/*
+> + * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
+> + * above this, controller will use DMA to fill FIFO.
+> + * MAX PIO len is 20 bytes excluding packet header.
+> + */
+> +#define I2C_PIO_MODE_MAX_LEN			32
+> +
+>  /*
+>   * msg_end_type: The bus control which need to be send at end of transfer.
+>   * @MSG_END_STOP: Send stop pulse at end of transfer.
+> @@ -180,6 +195,7 @@ struct tegra_i2c_hw_feature {
+>   * @fast_clk: clock reference for fast clock of I2C controller
+>   * @rst: reset control for the I2C controller
+>   * @base: ioremapped registers cookie
+> + * @phys_addr: Physical address of I2C base address to use for DMA configuration
+>   * @cont_id: I2C controller ID, used for packet header
+>   * @irq: IRQ number of transfer complete interrupt
+>   * @irq_disabled: used to track whether or not the interrupt is enabled
+> @@ -193,6 +209,14 @@ struct tegra_i2c_hw_feature {
+>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
+>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
+>   * @xfer_lock: lock to serialize transfer submission and processing
+> + * @has_dma: indicated if controller supports DMA
+> + * @tx_dma_chan: DMA transmit channel
+> + * @rx_dma_chan: DMA receive channel
+> + * @dma_phys: handle to DMA resources
+> + * @dma_buf: pointer to allocated DMA buffer
+> + * @dma_buf_size: DMA buffer size
+> + * @is_curr_dma_xfer: indicates active DMA transfer
+> + * @dma_complete: DMA completion notifier
+>   */
+>  struct tegra_i2c_dev {
+>  	struct device *dev;
+> @@ -202,6 +226,7 @@ struct tegra_i2c_dev {
+>  	struct clk *fast_clk;
+>  	struct reset_control *rst;
+>  	void __iomem *base;
+> +	phys_addr_t phys_addr;
+>  	int cont_id;
+>  	int irq;
+>  	bool irq_disabled;
+> @@ -215,8 +240,18 @@ struct tegra_i2c_dev {
+>  	u16 clk_divisor_non_hs_mode;
+>  	bool is_multimaster_mode;
+>  	spinlock_t xfer_lock;
+> +	bool has_dma;
+> +	struct dma_chan *tx_dma_chan;
+> +	struct dma_chan *rx_dma_chan;
+> +	dma_addr_t dma_phys;
+> +	u32 *dma_buf;
+> +	unsigned int dma_buf_size;
+> +	bool is_curr_dma_xfer;
+> +	struct completion dma_complete;
+>  };
+>  
+> +static struct dma_chan *chan;
+> +
+>  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+>  		       unsigned long reg)
+>  {
+> @@ -283,6 +318,75 @@ static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
+>  	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
+>  }
+>  
+> +static void tegra_i2c_dma_complete(void *args)
+> +{
+> +	struct tegra_i2c_dev *i2c_dev = args;
+> +
+> +	complete(&i2c_dev->dma_complete);
+> +}
+> +
+> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
+> +{
+> +	struct dma_async_tx_descriptor *dma_desc;
+> +	enum dma_transfer_direction dir;
+> +
+> +	dev_dbg(i2c_dev->dev, "Starting DMA for length: %zu\n", len);
+> +	reinit_completion(&i2c_dev->dma_complete);
+> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
+> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
+> +					       len, dir, DMA_PREP_INTERRUPT |
+> +					       DMA_CTRL_ACK);
+> +	if (!dma_desc) {
+> +		dev_err(i2c_dev->dev, "Failed to get DMA descriptor\n");
+> +		return -EIO;
+> +	}
+> +
+> +	dma_desc->callback = tegra_i2c_dma_complete;
+> +	dma_desc->callback_param = i2c_dev;
+> +	dmaengine_submit(dma_desc);
+> +	dma_async_issue_pending(chan);
+> +	return 0;
+> +}
+> +
+> +static int tegra_i2c_init_dma_param(struct tegra_i2c_dev *i2c_dev,
+> +				    bool dma_to_memory)
+> +{
+> +	struct dma_chan *dma_chan;
+> +	u32 *dma_buf;
+> +	dma_addr_t dma_phys;
+> +	int ret;
+> +	const char *chan_name = dma_to_memory ? "rx" : "tx";
+> +
+> +	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, chan_name);
+> +	if (IS_ERR(dma_chan))
+> +		return PTR_ERR(dma_chan);
+
+Here shall be a check of whether dma_buf is already allocated, otherwise it will be allocated twice and the first allocation turned into memleak:
+
+	if (i2c_dev->dma_buf)
+		return 0;
+
+> +
+> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
+> +				     &dma_phys, GFP_KERNEL);
+> +
+
+I'm wondering whether a write-combined DMA mapping will be more optimal than having L2 flushes / invalidation for the "coherent" allocations. 
+
+And I'm now questioning whether there is any real benefit from the DMA transferring at all, given the DMA bounce-buffer CPU read/write overhead. It looks to me that the whole purpose of the I2C DMA transferring is to move data from (to) some I2C device to a some device on the APB bus, bypassing the CPU. If that's is the case, then this patch may not really worth the effort and instead could only hurt the transferring performance. Please provide some performance results or correct me if I'm wrong.
+
+[snip]
+
+>  
+>  	if (!i2c_dev->hw->has_single_clk_source) {
+>  		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
+> @@ -1079,6 +1402,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	if (i2c_dev->has_dma) {
+> +		ret = tegra_i2c_init_dma_param(i2c_dev, true);
+> +		if (ret == -EPROBE_DEFER)
+> +			goto disable_div_clk;
+> +		ret = tegra_i2c_init_dma_param(i2c_dev, false);
+> +		if (ret == -EPROBE_DEFER)
+> +			goto disable_div_clk;
+
+Missing dma_buf freeing and channel releasing in a case of error.
+
+> +	}
+> +
+>  	ret = tegra_i2c_init(i2c_dev);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
+> 
