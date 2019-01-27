@@ -1,36 +1,105 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V3 3/3] i2c: tegra: Add DMA Support
-Date: Sun, 27 Jan 2019 00:24:36 +0300
-Message-ID: <5973707c-555f-a27c-2ff3-e867d4b2cde7@gmail.com>
-References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
- <1548475073-12408-3-git-send-email-skomatineni@nvidia.com>
+From: Billy Laws <blaws05@gmail.com>
+Subject: Re: [2/2] mfd: max77620: Add low battery monitor support
+Date: Sun, 27 Jan 2019 14:54:57 +0000
+Message-ID: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
+Reply-To: 20190123065620.22250-2-markz@nvidia.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548475073-12408-3-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: lee.jones@linaro.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-26.01.2019 6:57, Sowjanya Komatineni пишет:
-> This patch adds DMA support for Tegra I2C.
-> 
-> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
-> transfer size of the max FIFO depth and DMA mode is used for
-> transfer size higher than max FIFO depth to save CPU overhead.
-> 
-> PIO mode needs full intervention of CPU to fill or empty FIFO's
-> and also need to service multiple data requests interrupt for the
-> same transaction adding overhead on CPU for large transfers.
-> 
-> DMA mode is helpful for Large transfers during downloading or
-> uploading FW over I2C to some external devices.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> 
-> ---
+ >This patch adds PMIC configurations for low-battery
+ >monitoring by handling max77620 register CNFGGLBL1.
+ >
+It might be an idea to add lbhyst configuration here and support using
+custom lbdac values to specify a different cutoff point.
 
-Seems there are good news, APB DMA could access IRAM. Quote from TRM: "The source may be DRAM or IRAM, and the destination location could be devices placed on APB Bus; or vice versa". Hence it shall be much more efficient to use IRAM for the DMA buffer, please consider that variant.
+See: https://datasheetspdf.com/pdf-file/924230/Maxim/MAX8698C/1  pg 46
+ >Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+ >Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+ >Signed-off-by: Mark Zhang <markz@nvidia.com>
+ >---
+ > drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
+ > 1 file changed, 56 insertions(+), 1 deletion(-)
+ >
+ >diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+ >index f58143103185..9e50d145afd8 100644
+ >--- a/drivers/mfd/max77620.c
+ >+++ b/drivers/mfd/max77620.c
+ >@@ -474,6 +474,57 @@ static int 
+max77620_init_backup_battery_charging(struct max77620_chip *chip)
+ >  return ret;
+ > }
+ >
+ >+static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
+ >+{
+ >+ struct device *dev = chip->dev;
+ >+ struct device_node *np;
+ >+ bool pval;
+ >+ u8 mask = 0;
+ >+ u8 val = 0;
+ >+ int ret;
+ >+
+ >+ np = of_get_child_by_name(dev->of_node, "low-battery-monitor");
+ >+ if (!np) {
+ >+ dev_info(dev, "Low battery monitoring support disabled\n");
+ >+ return 0;
+ >+ }
+ >+
+ >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-enable");
+ >+ if (pval) {
+ >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
+ >+ val |= MAX77620_CNFGGLBL1_LBDAC_EN;
+ >+ }
+ >+
+ >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-disable");
+ >+ if (pval)
+ >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
+ >+
+ >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
+ >+ if (pval) {
+ >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
+ >+ val |= MAX77620_CNFGGLBL1_MPPLD;
+ >+ }
+ >+
+ >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
+ >+ if (pval)
+ >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
+ >+
+ >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-enable");
+ >+ if (pval) {
+ >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
+ >+ val |= MAX77620_CNFGGLBL1_LBRSTEN;
+ >+ }
+ >+
+ >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-disable");
+ >+ if (pval)
+ >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
+ >+
+ >+ ret = regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val);
+ >+ if (ret < 0)
+ >+ dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
+ >+ return ret;
+ >+}
+ >+
+ > static int max77620_read_es_version(struct max77620_chip *chip)
+ > {
+ >  unsigned int val;
+ >@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
+ >  if (ret < 0)
+ >  return ret;
+ >
+ >- ret =  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+ >+ ret = max77620_init_low_battery_monitor(chip);
+ >+ if (ret < 0)
+ >+ return ret;
+ >+
+ >+ ret = devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+ >      mfd_cells, n_mfd_cells, NULL, 0,
+ >      regmap_irq_get_domain(chip->top_irq_data));
+ >  if (ret < 0) {
