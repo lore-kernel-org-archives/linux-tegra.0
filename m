@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 4/6] arm64: dts: tegra210: add CPU idle states properties
-Date: Mon, 28 Jan 2019 17:18:13 +0800
-Message-ID: <20190128091815.7040-5-josephl@nvidia.com>
+Subject: [PATCH V2 6/6] arm64: dts: tegra210-smaug: Enable CPU idle support
+Date: Mon, 28 Jan 2019 17:18:15 +0800
+Message-ID: <20190128091815.7040-7-josephl@nvidia.com>
 References: <20190128091815.7040-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,68 +21,33 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add idle states properties for generic ARM CPU idle driver. This
-includes a C7 state which is the power down state of CPU cores.
+Enable CPU idle support for Smaug platform.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v2:
- * add entry-latency-us and exit-latency-us properties
-
-Note:
-This dt patch depends on the DT changes in below series.
-http://patchwork.ozlabs.org/project/linux-tegra/list/?series=84380
+ * no change
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2b387364afc3..75534692604c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1318,24 +1318,43 @@
- 				 <&dfll>;
- 			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
- 			clock-latency = <300000>;
-+			cpu-idle-states = <&C7>;
- 		};
- 
- 		cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a57";
- 			reg = <1>;
-+			cpu-idle-states = <&C7>;
- 		};
- 
- 		cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a57";
- 			reg = <2>;
-+			cpu-idle-states = <&C7>;
- 		};
- 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 5a67890cfb7a..da0eb4530acf 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1751,6 +1751,13 @@
  		cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a57";
- 			reg = <3>;
-+			cpu-idle-states = <&C7>;
-+		};
+ 			enable-method = "psci";
+ 		};
 +
 +		idle-states {
-+			entry-method = "psci";
-+
-+			C7: c7 {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x40000007>;
-+				entry-latency-us = <250>;
-+				exit-latency-us = <100>;
-+				min-residency-us = <1000>;
-+				wakeup-latency-us = <130>;
-+				idle-state-name = "c7-cpu-powergated";
-+				status = "disabled";
++			c7 {
++				arm,psci-suspend-param = <0x00010007>;
++				status = "okay";
 +			};
- 		};
++		};
  	};
  
+ 	gpio-keys {
 -- 
 2.20.1
