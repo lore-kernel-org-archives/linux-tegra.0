@@ -1,80 +1,98 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
-Date: Mon, 28 Jan 2019 11:09:25 +0800
-Message-ID: <1d12f949-1a06-fd17-141d-bd04b72cda3c@nvidia.com>
-References: <20190107032810.13522-1-josephl@nvidia.com>
- <20190107032810.13522-2-josephl@nvidia.com>
- <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
- <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
- <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: Re: [PATCH] ALSA: hda/tegra: enable clock during probe
+Date: Mon, 28 Jan 2019 11:36:58 +0530
+Message-ID: <da021878-5d89-c6d3-e5b2-4ab20f9b573b@nvidia.com>
+References: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
+ <s5h5zudc1qw.wl-tiwai@suse.de>
+ <06c00ce1-32ed-8aa9-0340-d00202a8fa62@nvidia.com>
+ <s5hr2d0zz96.wl-tiwai@suse.de>
+ <b64f5d05-f352-7b46-d70d-3809aab8ddda@nvidia.com>
+ <s5hef90zvo0.wl-tiwai@suse.de>
+ <1f4c5185-e518-5674-4a8c-4e7db64aa0d3@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1f4c5185-e518-5674-4a8c-4e7db64aa0d3@nvidia.com>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Takashi Iwai <tiwai@suse.de>
+Cc: pierre-louis.bossart@linux.intel.com, perex@perex.cz, alsa-devel@alsa-project.org, thierry.reding@gmail.com, rlokhande@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMS8yNS8xOSA4OjAxIFBNLCBKb24gSHVudGVyIHdyb3RlOgo+IAo+IE9uIDI1LzAxLzIwMTkg
-MDM6MjMsIEpvc2VwaCBMbyB3cm90ZToKPj4gSGkgSm9uLAo+Pgo+PiBUaGFua3MgZm9yIHJldmll
-d2luZy4KPj4KPj4gT24gMS8yNC8xOSA2OjMwIFBNLCBKb24gSHVudGVyIHdyb3RlOgo+Pj4KPj4+
-IE9uIDA3LzAxLzIwMTkgMDM6MjgsIEpvc2VwaCBMbyB3cm90ZToKPj4+PiBUaGUgVGVncmEyMTAg
-dGltZXIgcHJvdmlkZXMgZm91cnRlZW4gMjktYml0IHRpbWVyIGNvdW50ZXJzIGFuZCBvbmUKPj4+
-PiAzMi1iaXQKPj4+PiB0aW1lc3RhbXAgY291bnRlci4gVGhlIFRNUnMgcnVuIGF0IGVpdGhlciBh
-IGZpeGVkIDEgTUh6IGNsb2NrIHJhdGUKPj4+PiBkZXJpdmVkCj4+Pj4gZnJvbSB0aGUgb3NjaWxs
-YXRvciBjbG9jayAoVE1SMC1UTVI5KSBvciBkaXJlY3RseSBhdCB0aGUgb3NjaWxsYXRvcgo+Pj4+
-IGNsb2NrCj4+Pj4gKFRNUjEwLVRNUjEzKS4gRWFjaCBUTVIgY2FuIGJlIHByb2dyYW1tZWQgdG8g
-Z2VuZXJhdGUgb25lLXNob3QgcGVyaW9kaWMsCj4+Pj4gb3Igd2F0Y2hkb2cgaW50ZXJydXB0cy4K
-Pj4+Pgo+Pj4+IENjOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4K
-Pj4+PiBDYzogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+Cj4+Pj4gQ2M6IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcKPj4+PiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5l
-bC5vcmcKPj4+PiBTaWduZWQtb2ZmLWJ5OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4K
-Pj4+PiAtLS0KPj4+PiAgwqAgLi4uL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1l
-ci50eHTCoCB8IDI1ICsrKysrKysrKysrKysrKysrKysKPj4+PiAgwqAgMSBmaWxlIGNoYW5nZWQs
-IDI1IGluc2VydGlvbnMoKykKPj4+PiAgwqAgY3JlYXRlIG1vZGUgMTAwNjQ0Cj4+Pj4gRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1lci50
-eHQKPj4+Pgo+Pj4+IGRpZmYgLS1naXQKPj4+PiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy90aW1lci9udmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+Pj4gYi9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdGltZXIvbnZpZGlhLHRlZ3JhMjEwLXRpbWVyLnR4dAo+
-Pj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+Pj4gaW5kZXggMDAwMDAwMDAwMDAwLi5iYTUxMTIy
-MGE2NjkKPj4+PiAtLS0gL2Rldi9udWxsCj4+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1lci50eHQKPj4+PiBAQCAtMCww
-ICsxLDI1IEBACj4+Pj4gK05WSURJQSBUZWdyYTIxMCB0aW1lcgo+Pj4+ICsKPj4+PiArVGhlIFRl
-Z3JhMjEwIHRpbWVyIHByb3ZpZGVzIGZvdXJ0ZWVuIDI5LWJpdCB0aW1lciBjb3VudGVycyBhbmQg
-b25lCj4+Pj4gMzItYml0Cj4+Pj4gK3RpbWVzdGFtcCBjb3VudGVyLiBUaGUgVE1ScyBydW4gYXQg
-ZWl0aGVyIGEgZml4ZWQgMSBNSHogY2xvY2sgcmF0ZQo+Pj4+IGRlcml2ZWQKPj4+PiArZnJvbSB0
-aGUgb3NjaWxsYXRvciBjbG9jayAoVE1SMC1UTVI5KSBvciBkaXJlY3RseSBhdCB0aGUgb3NjaWxs
-YXRvcgo+Pj4+IGNsb2NrCj4+Pj4gKyhUTVIxMC1UTVIxMykuIEVhY2ggVE1SIGNhbiBiZSBwcm9n
-cmFtbWVkIHRvIGdlbmVyYXRlIG9uZS1zaG90LAo+Pj4+IHBlcmlvZGljLAo+Pj4+ICtvciB3YXRj
-aGRvZyBpbnRlcnJ1cHRzLgo+Pj4+ICsKPj4+PiArUmVxdWlyZWQgcHJvcGVydGllczoKPj4+PiAr
-LSBjb21wYXRpYmxlIDogIm52aWRpYSx0ZWdyYTIxMC10aW1lciIuCj4+Pj4gKy0gcmVnIDogU3Bl
-Y2lmaWVzIGJhc2UgcGh5c2ljYWwgYWRkcmVzcyBhbmQgc2l6ZSBvZiB0aGUgcmVnaXN0ZXJzLgo+
-Pj4+ICstIGludGVycnVwdHMgOiBBIGxpc3Qgb2YgNCBpbnRlcnJ1cHRzOyBvbmUgcGVyIGVhY2gg
-b2YgVE1SMTAgdGhyb3VnaAo+Pj4+IFRNUjEzLgo+Pj4KW3NuaXBdCj4+IEFuZCBub3RpY2UgdGhh
-dCBvbmx5IFRNUjEwLVRNUjEzIGFyZSBydW5uaW5nIGF0IHRoZSBvc2NpbGxhdG9yIGNsb2NrCj4+
-IChjbGtfbSkuIFdpdGggdGhlIFRlZ3JhMjEwIHRpbWVyIGRyaXZlciwgd2UgaW50cm9kdWNlIGlu
-IHRoaXMgc2VyaWVzLAo+PiB3aGljaCBvbmx5IHJlcGxhY2UgdGhlIGNsb2NrIGV2ZW50IGRldmlj
-ZSBmdW5jdGlvbiB0aGF0IHdhcyBvcmlnaW5hbGx5Cj4+IG93bmVkIGJ5IHRoZSBhcmNoIHRpbWVy
-IChhcm12OCB0aW1lcikgYW5kIGl0IGFsc28gcnVubmluZyBhdCB0aGUKPj4gb3NjaWxsYXRvciBj
-bG9jay4gVGhlIHNjaGVkX3RpbWVyIHN0aWxsIG93bnMgYnkgdGhlIGFyY2ggdGltZXIuIFNvIHRo
-ZQo+PiB0aW1lciByZXNvbHV0aW9uIHdpbGwgYmUgdGhlIHNhbWUuIFRoYXQncyB3aHkgd2UgY2hv
-b3NlIFRNUjEwLVRNUjEzIGFzCj4+IHRoZSB0aW1lciBmb3IgVGVncmEyMTAuCj4gCj4gVGhhdCBt
-YXliZSBmaW5lLCBidXQgRFQgc2hvdWxkIGRlc2NyaWJlIHRoZSBoYXJkd2FyZSBhbmQgc28gSSBk
-b24ndCBzZWUKPiB3aHkgd2Ugd291bGQgbm90IGxpc3QgYWxsIHRoZSBpbnRlcnJ1cHRzLiBXZSBj
-YW4gc3RpbGwgb25seSB1c2UgVE1SMTAtMTMKPiBpbiB0aGUgZHJpdmVyLgo+IAoKT2theSwgd2ls
-bCBsaXN0IGFsbCB0aGUgaW50ZXJydXB0cyBmb3IgZWFjaCB0aW1lciBjaGFubmVsLgoKVGhhbmtz
-LApKb3NlcGgKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
-cmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
-bnV4LWFybS1rZXJuZWwK
+
+On 1/25/2019 7:34 PM, Jon Hunter wrote:
+> On 25/01/2019 13:58, Takashi Iwai wrote:
+>> On Fri, 25 Jan 2019 14:26:27 +0100,
+>> Jon Hunter wrote:
+>>>
+>>> On 25/01/2019 12:40, Takashi Iwai wrote:
+>>>> On Fri, 25 Jan 2019 12:36:00 +0100,
+>>>> Jon Hunter wrote:
+>>>>>
+>>>>> On 24/01/2019 19:08, Takashi Iwai wrote:
+>>>>>> On Thu, 24 Jan 2019 18:36:43 +0100,
+>>>>>> Sameer Pujar wrote:
+>>>>>>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+>>>>>>> will not be ON. This could cause issue during probe, where hda init
+>>>>>>> setup is done. This patch checks whether runtime PM is enabled or not.
+>>>>>>> If disabled, clocks are enabled in probe() and disabled in remove()
+>>>>>>>
+>>>>>>> This patch does following minor changes as cleanup,
+>>>>>>>    * return code check for pm_runtime_get_sync() to take care of failure
+>>>>>>>      and exit gracefully.
+>>>>>>>    * In remove path runtime PM is disabled before calling snd_card_free().
+>>>>>>>    * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+>>>>>>>    * runtime PM callbacks moved out of CONFIG_PM check
+>>>>>>>
+>>>>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>>>>>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+>>>>>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+>>>>>> (snip)
+>>>>>>> @@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
+>>>>>>>   	if (!azx_has_pm_runtime(chip))
+>>>>>>>   		pm_runtime_forbid(hda->dev);
+>>>>>>>   
+>>>>>>> +	/* explicit resume if runtime PM is disabled */
+>>>>>>> +	if (!pm_runtime_enabled(hda->dev)) {
+>>>>>>> +		err = hda_tegra_runtime_resume(hda->dev);
+>>>>>>> +		if (err)
+>>>>>>> +			goto out_free;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>>   	schedule_work(&hda->probe_work);
+>>>>>> Calling runtime_resume here is really confusing...
+>>>>> Why? IMO it is better to have a single handler for resuming the device
+>>>>> and so if RPM is not enabled we call the handler directly. This is what
+>>>>> we have been advised to do in the past and do in other drivers. See ...
+>>>> The point is that we're not "resuming" anything there.  It's in the
+>>>> early probe stage, and the device state is uninitialized, not really
+>>>> suspended.  It'd end up with just calling the same helper
+>>>> (hda_tegra_enable_clocks()), though.
+>>> Yes and you can make the same argument for every driver that calls
+>>> pm_runtime_get_sync() during probe to turn on clocks, handle resets,
+>>> etc, because at the end of the day the very first call to
+>>> pm_runtime_get_sync() invokes the runtime_resume callback, when we have
+>>> never been suspended.
+>> Although there are some magical pm_runtime_*() in some places, most of
+>> such pm_runtime_get_sync() is for the actual runtime PM management (to
+>> prevent the runtime suspend), while the code above is for explicitly
+>> setting up something for non-PM cases.
+>>
+>> And if pm_runtime_get_sync() is obviously superfluous, we should
+>> remove such calls.  Really.
+> Yes agree.
+>
+>>> Yes at the end of the day it is the same and given that we have done
+>>> this elsewhere I think it is good to be consistent if/where we can.
+>> The code becomes less readable, and that's a good reason against it :)
+> I don't its less readable. However, I do think it is less error prone :-)
+
+Do we have a consensus here? Request others to provide opinions to help 
+close on this.
+
+Thanks,
+Sameer.
+
+> Jon
+>
