@@ -1,105 +1,126 @@
-From: Billy Laws <blaws05@gmail.com>
-Subject: Re: [2/2] mfd: max77620: Add low battery monitor support
-Date: Sun, 27 Jan 2019 14:54:57 +0000
-Message-ID: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
-Reply-To: 20190123065620.22250-2-markz@nvidia.com
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH V4 00/20] Tegra210 DFLL support
+Date: Mon, 28 Jan 2019 09:43:00 +0800
+Message-ID: <0a7abeee-1b78-4f90-e94f-43c19eddb9b1@nvidia.com>
+References: <20190104030702.8684-1-josephl@nvidia.com>
+ <20190125134617.GE22565@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190125134617.GE22565@ulmo>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
- >This patch adds PMIC configurations for low-battery
- >monitoring by handling max77620 register CNFGGLBL1.
- >
-It might be an idea to add lbhyst configuration here and support using
-custom lbdac values to specify a different cutoff point.
+On 1/25/19 9:46 PM, Thierry Reding wrote:
+> On Fri, Jan 04, 2019 at 11:06:42AM +0800, Joseph Lo wrote:
+>> This series introduces support for the DFLL as a CPU clock source
+>> on Tegra210. As Jetson TX1 uses a PWM controlled regulator IC which
+>> is driven directly by the DFLLs PWM output, we also introduce support
+>> for PWM regulators next to I2C controlled regulators. The DFLL output
+>> frequency is directly controlled by the regulator voltage. The registers
+>> for controlling the PWM are part of the DFLL IP block, so there's no
+>> separate linux regulator object involved because the regulator IC only
+>> supplies the rail powering the CPUs. It doesn't have any other controls.
+>>
+>> The patch 1~4 are the patches of DT bindings update for DFLL clock and
+>> Tegra124 cpufreq, which add PWM and Tegra210 support for DFLL clock and
+>> remove deprecate properties for Tegra124 cpufreq bindings.
+>>
+>> The patch 5~10 are the patches for DFLL clock driver update for PWM-mode
+>> DFLL support.
+>>
+>> The patch 11~13 are the Tegra124 cpufreq driver update to make it
+>> work with Tegra210.
+>>
+>> The patch 14~19 are the devicetree files update for Tegra210 SoC and
+>> platforms. Two platforms are updated here for different DFLL mode usage.
+>> The Tegra210-p2371-2180 (a.k.a. Jetson Tx1) uses DFLL-PWM and the
+>> Tegra210-smaug (a.k.a. Pixel C) uses DFLL-I2C. So two different modes
+>> are verified with this series.
+>>
+>> The patch 20 is the patch for enabling the CPU regulator for Smaug
+>> board.
+>>
+>> * Update in V4:
+>>   - s/nvidia,pwm-period/nvidia,pwm-period-nanoseconds/ in patch 1 for
+>>   DFLL DT bindings update.
+>>   - remove parenthesis in Kconfig of DFLL driver
+>>   - add more ack and RB tags
+>>
+>> * Update in V3:
+>>   - Squash patch 9 in previous series into patch 7 (ref. [0])
+>>   - minor fixes in patch 6 for geting alignment data
+>>   - more variable type fixes in patch 7
+>>   - fix the error handling in patch 8
+>>   - collect more ack tags
+>>
+>> * Update in V2:
+>>   - Add two patches that suggested from comments in V1. See patch 9 and
+>>   14.
+>>   - Update DT binding for DFLL-PWM mode in patch 1.
+>>   - Update the code for how to get regulator data from DT or regulator
+>>   API in patch 6.
+>>   - Update to use lut_uv table for LUT lookup in patch 7. That makes the
+>>   generic lut table to work with both I2C and PWM mode.
+>>   - not allow Tegra124 cpufreq driver to be built as a module and remove
+>>   the removal function in patch 12.
+>>
+>> [0]: http://patchwork.ozlabs.org/project/linux-tegra/list/?series=81595
+>>
+>> Joseph Lo (17):
+>>    dt-bindings: clock: tegra124-dfll: add Tegra210 support
+>>    dt-bindings: cpufreq: tegra124: remove vdd-cpu-supply from required
+>>      properties
+>>    dt-bindings: cpufreq: tegra124: remove cpu_lp clock from required
+>>      properties
+>>    clk: tegra: dfll: CVB calculation alignment with the regulator
+>>    clk: tegra: dfll: support PWM regulator control
+>>    clk: tegra: dfll: round down voltages based on alignment
+>>    clk: tegra: dfll: add CVB tables for Tegra210
+>>    cpufreq: tegra124: do not handle the CPU rail
+>>    cpufreq: tegra124: extend to support Tegra210
+>>    cpufreq: dt-platdev: add Tegra210 to blacklist
+>>    arm64: dts: tegra210: add DFLL clock
+>>    arm64: dts: tegra210: add CPU clocks
+>>    arm64: dts: tegra210-p2597: add pinmux for PWM-based DFLL support
+>>    arm64: dts: tegra210-p2371-2180: enable DFLL clock
+>>    arm64: dts: tegra210-smaug: add CPU power rail regulator
+>>    arm64: dts: tegra210-smaug: enable DFLL clock
+>>    arm64: defconfig: Enable MAX8973 regulator
+>>
+>> Peter De Schrijver (3):
+>>    dt-bindings: clock: tegra124-dfll: Update DFLL binding for PWM
+>>      regulator
+>>    clk: tegra: dfll: registration for multiple SoCs
+>>    clk: tegra: dfll: build clk-dfll.c for Tegra124 and Tegra210
+> 
+> Joseph,
+> 
+> can you detail the dependencies between the various patches. From a
+> brief look the CPU frequency driver changes are completely separate
+> bits and it should be possible to apply them to the cpufreq tree.
+> 
+> The clock changes also seem independent of the rest.
+> 
+> Are there any dependencies at all that we need to be mindful about?
+> Or can individual maintainers just pick up the subseries directly?
+> 
 
-See: https://datasheetspdf.com/pdf-file/924230/Maxim/MAX8698C/1  pg 46
- >Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
- >Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
- >Signed-off-by: Mark Zhang <markz@nvidia.com>
- >---
- > drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
- > 1 file changed, 56 insertions(+), 1 deletion(-)
- >
- >diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
- >index f58143103185..9e50d145afd8 100644
- >--- a/drivers/mfd/max77620.c
- >+++ b/drivers/mfd/max77620.c
- >@@ -474,6 +474,57 @@ static int 
-max77620_init_backup_battery_charging(struct max77620_chip *chip)
- >  return ret;
- > }
- >
- >+static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
- >+{
- >+ struct device *dev = chip->dev;
- >+ struct device_node *np;
- >+ bool pval;
- >+ u8 mask = 0;
- >+ u8 val = 0;
- >+ int ret;
- >+
- >+ np = of_get_child_by_name(dev->of_node, "low-battery-monitor");
- >+ if (!np) {
- >+ dev_info(dev, "Low battery monitoring support disabled\n");
- >+ return 0;
- >+ }
- >+
- >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-enable");
- >+ if (pval) {
- >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
- >+ val |= MAX77620_CNFGGLBL1_LBDAC_EN;
- >+ }
- >+
- >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-disable");
- >+ if (pval)
- >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
- >+
- >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
- >+ if (pval) {
- >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
- >+ val |= MAX77620_CNFGGLBL1_MPPLD;
- >+ }
- >+
- >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
- >+ if (pval)
- >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
- >+
- >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-enable");
- >+ if (pval) {
- >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
- >+ val |= MAX77620_CNFGGLBL1_LBRSTEN;
- >+ }
- >+
- >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-disable");
- >+ if (pval)
- >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
- >+
- >+ ret = regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val);
- >+ if (ret < 0)
- >+ dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
- >+ return ret;
- >+}
- >+
- > static int max77620_read_es_version(struct max77620_chip *chip)
- > {
- >  unsigned int val;
- >@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
- >  if (ret < 0)
- >  return ret;
- >
- >- ret =  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
- >+ ret = max77620_init_low_battery_monitor(chip);
- >+ if (ret < 0)
- >+ return ret;
- >+
- >+ ret = devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
- >      mfd_cells, n_mfd_cells, NULL, 0,
- >      regmap_irq_get_domain(chip->top_irq_data));
- >  if (ret < 0) {
+Yes, no dependence with each other. We can apply them separately.
+Please let me know if I need to inform cpufreq or clk maintainer to pick 
+them up.
+
+Thanks,
+Joseph
