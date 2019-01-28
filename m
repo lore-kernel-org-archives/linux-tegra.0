@@ -1,190 +1,208 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] reset: Don't WARN if trying to get a used reset control
-Date: Mon, 28 Jan 2019 15:58:36 +0100
-Message-ID: <20190128145836.GA31317@ulmo>
-References: <20190125101554.5947-1-thierry.reding@gmail.com>
- <1548674808.6421.3.camel@pengutronix.de>
+Subject: Re: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
+Date: Mon, 28 Jan 2019 16:09:08 +0100
+Message-ID: <20190128150908.GB31317@ulmo>
+References: <20190128091815.7040-1-josephl@nvidia.com>
+ <20190128091815.7040-3-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
+        protocol="application/pgp-signature"; boundary="MfFXiAuoTsnnDAfZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1548674808.6421.3.camel@pengutronix.de>
+In-Reply-To: <20190128091815.7040-3-josephl@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---W/nzBZO5zC0uMSeA
-Content-Type: text/plain; charset=utf-8
+--MfFXiAuoTsnnDAfZ
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 28, 2019 at 12:26:48PM +0100, Philipp Zabel wrote:
-> Hi Thierry,
+On Mon, Jan 28, 2019 at 05:18:11PM +0800, Joseph Lo wrote:
+> Add support for the Tegra210 timer that runs at oscillator clock
+> (TMR10-TMR13). We need these timers to work as clock event device and to
+> replace the ARMv8 architected timer due to it can't survive across the
+> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
+> source when CPU suspends in power down state.
 >=20
-> On Fri, 2019-01-25 at 11:15 +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > When requesting a reset control for exclusive use that's already in use,
-> > an -EBUSY error code is returned. Users can react accordingly when they
-> > receive that error code, so there is no need to loudly complain.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/reset/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> > index 9582efb70025..6b452f010b66 100644
-> > --- a/drivers/reset/core.c
-> > +++ b/drivers/reset/core.c
-> > @@ -416,7 +416,7 @@ static struct reset_control *__reset_control_get_in=
-ternal(
-> > =20
-> >  	list_for_each_entry(rstc, &rcdev->reset_control_head, list) {
-> >  		if (rstc->id =3D=3D index) {
-> > -			if (WARN_ON(!rstc->shared || !shared))
-> > +			if (!rstc->shared || !shared)
-> >  				return ERR_PTR(-EBUSY);
-> > =20
-> >  			kref_get(&rstc->refcnt);
+> Based on the work of Antti P Miettinen <amiettinen@nvidia.com>
 >=20
-> Are you actually running into this somewhere?
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+> v2:
+>  * add error clean-up code
+> ---
+>  drivers/clocksource/Kconfig          |   3 +
+>  drivers/clocksource/Makefile         |   1 +
+>  drivers/clocksource/timer-tegra210.c | 268 +++++++++++++++++++++++++++
+>  include/linux/cpuhotplug.h           |   1 +
+>  4 files changed, 273 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-tegra210.c
+>=20
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index a9e26f6a81a1..e6e3e64b6320 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -135,6 +135,9 @@ config TEGRA_TIMER
+>  	help
+>  	  Enables support for the Tegra driver.
+> =20
+> +config TEGRA210_TIMER
+> +	def_bool ARCH_TEGRA_210_SOC
+> +
+>  config VT8500_TIMER
+>  	bool "VT8500 timer driver" if COMPILE_TEST
+>  	depends on HAS_IOMEM
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index cdd210ff89ea..95de59c8a47b 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -36,6 +36,7 @@ obj-$(CONFIG_SUN4I_TIMER)	+=3D timer-sun4i.o
+>  obj-$(CONFIG_SUN5I_HSTIMER)	+=3D timer-sun5i.o
+>  obj-$(CONFIG_MESON6_TIMER)	+=3D timer-meson6.o
+>  obj-$(CONFIG_TEGRA_TIMER)	+=3D timer-tegra20.o
+> +obj-$(CONFIG_TEGRA210_TIMER)	+=3D timer-tegra210.o
+>  obj-$(CONFIG_VT8500_TIMER)	+=3D timer-vt8500.o
+>  obj-$(CONFIG_NSPIRE_TIMER)	+=3D timer-zevio.o
+>  obj-$(CONFIG_BCM_KONA_TIMER)	+=3D bcm_kona_timer.o
+> diff --git a/drivers/clocksource/timer-tegra210.c b/drivers/clocksource/t=
+imer-tegra210.c
+> new file mode 100644
+> index 000000000000..477b164e540b
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-tegra210.c
+> @@ -0,0 +1,268 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/percpu.h>
+> +#include <linux/syscore_ops.h>
+> +
+> +static u32 tegra210_timer_freq;
+> +static void __iomem *tegra210_timer_reg_base;
+> +static u32 usec_config;
+> +
+> +#define TIMER_PTV		0x0
+> +#define TIMER_PTV_EN		BIT(31)
+> +#define TIMER_PTV_PER		BIT(30)
+> +#define TIMER_PCR		0x4
+> +#define TIMER_PCR_INTR_CLR	BIT(30)
+> +#define TIMERUS_CNTR_1US	0x10
+> +#define TIMERUS_USEC_CFG	0x14
+> +
+> +#define TIMER10_OFFSET		0x90
+> +#define TIMER10_IRQ_IDX		10
+> +
+> +#define TIMER_FOR_CPU(cpu) (TIMER10_OFFSET + (cpu) * 8)
+> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
+> +
+> +struct tegra210_clockevent {
+> +	struct clock_event_device evt;
+> +	char name[20];
+> +	void __iomem *reg_base;
+> +};
+> +#define to_tegra_cevt(p) (container_of(p, struct tegra210_clockevent, ev=
+t))
+> +
+> +static struct tegra210_clockevent __percpu *tegra210_evt;
+> +
+> +static int tegra210_timer_set_next_event(unsigned long cycles,
+> +					 struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt =3D to_tegra_cevt(evt);
+> +	writel(TIMER_PTV_EN |
+> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
+> +	       tevt->reg_base + TIMER_PTV);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void timer_shutdown(struct tegra210_clockevent *tevt)
+> +{
+> +	writel(0, tevt->reg_base + TIMER_PTV);
+> +}
+> +
+> +static int tegra210_timer_shutdown(struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt =3D to_tegra_cevt(evt);
+> +	timer_shutdown(tevt);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_timer_set_periodic(struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt =3D to_tegra_cevt(evt);
+> +	writel(TIMER_PTV_EN | TIMER_PTV_PER | ((tegra210_timer_freq / HZ) - 1),
+> +	       tevt->reg_base + TIMER_PTV);
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t tegra210_timer_isr(int irq, void *dev_id)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt =3D dev_id;
+> +	writel(TIMER_PCR_INTR_CLR, tevt->reg_base + TIMER_PCR);
+> +	tevt->evt.event_handler(&tevt->evt);
+> +
+> +	return IRQ_HANDLED;
+> +}
 
-Yeah. I'm running into this on Tegra. Let me give you a brief overview
-of how the resets work for better understanding. Most of the modules on
-Tegra have dedicated resets, some may have multiple ones to reset a
-subset of the hardware within a functional block. Typically the drivers
-for these hardware modules will control the reset explicitly, usually to
-make sure the hardware is in a known state at probe time. Some drivers
-also do this as part of runtime suspend/resume.
+Up to here this is a duplicate of timer-tegra20.c. And a lot of
+tegra210_timer_init() is the same as tegra20_timer_init() as well. Can't
+we unify the two drivers instead?
 
-Unfortunately we ran into issues when shared resets were introduced
-because we also have generic power domains implemented on most platforms
-and part of the programming sequence for power domains is to make sure a
-hardware module that is part of the domain has its reset asserted. So on
-one hand we need the reset for explicit control in the driver and on the
-other hand we need the reset control in the power domain driver to make
-sure the sequence requirements can be met.
-
-This causes issues on chips such as Tegra210, where for example we need
-to reset the SOR (which is an output used to driver HDMI) before setting
-a mode to make sure we are in a proper state (the bootloader can have
-initialized the SOR) to make sure the rather complicated sequence for
-getting up the SOR can be completed.
-
-The power domain for the SOR needs to control the reset for the SOR for
-power sequencing reasons and at the same time, the SOR driver needs to
-control the reset to get it into a proper state. In the past we were
-able to make this work by requesting the reset control in the SOR driver
-only if no power domain was attached to the SOR. This would avoid the
-shared usage between power domain and SOR driver. We obviously can't
-share the reset control because it wouldn't allow us to reset at the
-right time.
-
-On Tegra210 this works fine because the SOR power domain will be powered
-off sometime during boot and in the process reset the SOR. This is
-because all devices that are part of the domain are runtime power
-managed and have a zero runtime PM refcount after ->probe(), so the PM
-domain will be allowed to be turned off at that point. This is likely
-only by accident, and break as well if the driver probe order changes
-for some reason.
-
-The problem is more accute on Tegra186 where the SOR is in a much larger
-power domain that includes a bunch of other modules. Unfortunately, one
-side-effect of that is that the power domain will not be turned off
-during boot. I saw this happen when I added support for HDA support. The
-HDA module is also part of the same power domain as SOR and HDA keeps a
-runtime PM reference all the time. This is because it isn't runtime PM
-managed at this point, but even if it was, there are so many modules in
-the power domain that we can't guarantee that the power domain will at
-some point be powered off and the SOR reset at the time.
-
-Fortunately the power domains on Tegra186 (and later) are no longer
-controlled by a Linux driver. Instead, there's now a firmware running on
-a microcontroller (called boot and power management processor, or BPMP)
-that Linux communicates with over an IPC mechanism. BPMP will internally
-control the resets as appropriate, which means that we can exclusively
-reset them again from Linux and explicitly reset the SOR when needed.
-
-In order to support both Tegra210 and Tegra186 in the same driver, we no
-longer just check whether a power domain was attached to the SOR, but we
-just want to get the reset control and if we get -EBUSY we assume that
-we run on Tegra210 and earlier and don't have to use the reset (since
-the power domain will be able to reset the SOR). For later chips we get
-access to the reset control because Linux doesn't know that BPMP also
-has access to it.
-
-So much for the "brief" overview... =3D)
-
-Now, after writing the above, I'm not sure if this is really the best
-approach. Technically we could run into the same problem on Tegra210
-where we can't explicitly control the reset because Linux already has
-it marked as exclusively used by the power domain provider.
-
-But then, I don't know if there's an alternative to just crossing our
-fingers and hoping that things will continue to work "by accident". For
-some devices it may not matter because they are less picky about their
-current state when you start programming them, but the SOR is very
-sensitive and I've never been able to make it work properly without
-involving the help of the reset at some point.
-
-One alternative that could work for Tegra would be to somehow mark the
-resets as being safe to use multiple times. In our use-cases we always
-know that it is safe to reset the SOR because the power domains will be
-on at the time that we want to control it, so there won't be any
-conflicts. However, I suspect that that could set a precedent for other
-drivers.
-
-> My reason for adding these warnings was that these point to either a DT
-> misconfiguration=C2=A0or a driver bug, and the verbose warning helps to
-> quickly identify the actual issue. This is not an error condition that
-> I would expect on a correctly configured system.
-
-I generally agree with this approach, but given the above, I'm out of
-ideas of how to properly achieve what we need on Tegra. Even this patch
-seems like a bad idea in retrospect because we may very well run into a
-similar issue on Tegra210 where we can't hide the fact that we're using
-the reset from two places at the same time. I mean we could probably do
-a really ugly hack and access the reset controller registers directly
-=66rom the power domain provider, but that's really not something I want
-to do. We already have to do something similar to work around a hardware
-bug on Tegra210, but that's about as much as I can endure.
-
-> I don't expect most drivers give a proper error message that contains
-> the -EBUSY return value. Usually it's just along the lines of "failed to
-> get reset control" without any further indication.
-
-I understand your reluctance. And I'm certainly open to any new ideas
-that I haven't tried yet. I haven't tried reintroducing some sort of
-non-shared resets, but I've never seriously considered it because it
-effectively undoes most of the shared reset stuff. If you think that
-some form of this would be acceptable, I will be happy to come up with a
-proposal. Or perhaps there's a really simple solution to this problem
-and I simply can't see the wood for the trees anymore.
+The power cycle restrictions of the architected timer, do they not apply
+to chips earlier than Tegra210 either? So don't we need all of these
+additional features on the timer-tegra20.c driver as well? If so that
+would increase the code duplication even more. I think we should avoid
+that, unless there are any strong arguments that would justify it.
 
 Thierry
 
---W/nzBZO5zC0uMSeA
+--MfFXiAuoTsnnDAfZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxPGJgACgkQ3SOs138+
-s6G4cRAApGDC/mcOlHoAlKGIcJ3rXxZMKIIxrbOftR5z5JKfFsPuBSvrAap5hiC1
-AEkTaYPH2gl5O3NfGF2Qk1LHWlVds0e5rfhvF4AjBWQ4Qec6+9hFNKAluoQf6Wy+
-QwNpXrIQT7LYHO4SM7/KCCJOlXFH1Pus5FLEML5wJ2EqTnqLJiazr+HsHX3ha3zA
-I6A4JXH5qx8JjQI0gVDrnFPIygoYbPFDhlnH929R6wTfn5E1iKnzFwOME3ByKODl
-8kUHagsYI3SdWZ8QhnlxosK06wyZx4hQDljcO9bwIFPp5A6sFAwrpfTDRS1Ukua1
-yshhK8ZfvfUHamuj3CGlo97xgMM+BKk73ZE/fICLZnsa19536S75xGZFfYN7QU9E
-/yACyhX4oMBPOPRD/AVY/aMwXNeRcjFfn4bFpej33rfvIKwEWZg7JpHGZ2HEzlDJ
-VTTDU041DqFUbH8DSCZq9mjL7e71iCmLQRTdgj4h7sjaNEQGGuo2SidOmxh64JNa
-qVEDxh2antOGHniu93iRWoS/v2LjtJWLSymF6ZKXl07M+/3+LFb5B1MdRW2/G7TB
-0lUs8HJ0z/BIRfNXOj0mI3x+0Qkt9c99VSaDMpFPlON21Gtv+cy7PKjIEUf3ynVk
-7n0b87shc4AbpNm7RUwkaTPQrmyxTr+I15vROV3zMQfQjjzk94I=
-=XJ19
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxPGxIACgkQ3SOs138+
+s6GwFg/8DJCWHrWuFSOY6LIcYSKi2FK7juvR23Bw/fRwCJg+CWYhGmBi6+ib3sll
+xgWA6cvQ6OOv5/fXXswPNKSDXWFPlGS7ujVz24EYqzup6bh832as/XcjXkXfPgsN
+pVlhq6CImaxlLEIZscP7N/8FBboIrr6pgXtvw+WjRk+Q5IQ/8IVbFmGtDn6UnA+h
+F1CxEA9XbFkpY+UAWlKW0vwi9l5wjAoAuzSfYBBDTGhbYIjj7z9Yza/1hOy2f7eO
+2kR35GJDzBGPA13G/aQWqoO8xzF/qv6CZryQT3GJXaTCetGgbPGpEY5IvGDA68fZ
+4wvOxOgYAjyrBi4eU43Vq6142hxL2+VQltYpKmwo6VO5FTZoaBT1sLJVlgkglU58
+a5nX9JfzI7//oT8xXGYfJYv7ox6MnLIh89y578sEb5zvuhkby+3O0qDR6XiklzRI
+asTENLzfgJIbKwalzAAqWpgGvU515uLnbbZ2UbCBBZNlGMDxtFDwuH1u+5IRzkkF
+NaY7s8edXJ269UPYiEESP/3cBzhz3zFNJAkK9Por9t4LHceE7C2hnxLaaatdbsUx
+wvpH8rbNDjhmv9tL0yyr1U47cadBpjGMF3jBC1/S8NB7p8F5KI+kzz0uNZzeN7r9
+HZ7oOEDPQIy8as1LsFFDUZnBuXuN20OkJ71gry/gpkYCr8Nq8u4=
+=CZGE
 -----END PGP SIGNATURE-----
 
---W/nzBZO5zC0uMSeA--
+--MfFXiAuoTsnnDAfZ--
