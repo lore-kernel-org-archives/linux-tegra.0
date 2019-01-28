@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 5/6] arm64: dts: tegra210-p2180: Enable CPU idle support
-Date: Mon, 28 Jan 2019 17:18:14 +0800
-Message-ID: <20190128091815.7040-6-josephl@nvidia.com>
+Subject: [PATCH V2 3/6] arm64: dts: tegra210: fix timer node
+Date: Mon, 28 Jan 2019 17:18:12 +0800
+Message-ID: <20190128091815.7040-4-josephl@nvidia.com>
 References: <20190128091815.7040-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,32 +21,46 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable CPU idle support for Jetson TX1 platform.
+Fix timer node to make it work with Tegra210 timer driver.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v2:
- * no change
+ * list all the IRQs per each timer channels 0 through 13
+ * remove compatible string of "nvidia,tegra30-timer"
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index 053458a5db55..d1a492c63e96 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -305,6 +305,12 @@
- 		cpu@3 {
- 			enable-method = "psci";
- 		};
-+
-+		idle-states {
-+			c7 {
-+				status = "okay";
-+			};
-+		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index b5858b5ea052..2b387364afc3 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -384,14 +384,22 @@
  	};
  
- 	psci {
+ 	timer@60005000 {
+-		compatible = "nvidia,tegra210-timer", "nvidia,tegra20-timer";
++		compatible = "nvidia,tegra210-timer";
+ 		reg = <0x0 0x60005000 0x0 0x400>;
+-		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA210_CLK_TIMER>;
+ 		clock-names = "timer";
+ 	};
 -- 
 2.20.1
