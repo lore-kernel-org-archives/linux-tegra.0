@@ -1,14 +1,14 @@
 From: jckuo <jckuo@nvidia.com>
-Subject: Re: [PATCH 3/6] usb: host: xhci-tegra: Add Tegra186 XUSB support
-Date: Mon, 28 Jan 2019 15:57:41 +0800
-Message-ID: <2324b619-5f3a-cb92-2437-d317d0633e62@nvidia.com>
+Subject: Re: [PATCH 4/6] arm64: tegra: Add XUSB and pad controller on Tegra186
+Date: Mon, 28 Jan 2019 15:59:32 +0800
+Message-ID: <1a04128b-3f08-dbe1-97cc-566d7ab94240@nvidia.com>
 References: <20190125113013.11447-1-thierry.reding@gmail.com>
- <20190125113013.11447-3-thierry.reding@gmail.com>
+ <20190125113013.11447-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190125113013.11447-3-thierry.reding@gmail.com>
+In-Reply-To: <20190125113013.11447-4-thierry.reding@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -18,55 +18,158 @@ List-Id: linux-tegra@vger.kernel.org
 Reviewed-by: JC Kuo <jckuo@nvidia.com>
 
 On 1/25/19 7:30 PM, Thierry Reding wrote:
-> From: JC Kuo <jckuo@nvidia.com>
+> From: Thierry Reding <treding@nvidia.com>
 >
-> This commit adds Tegra186 XUSB host mode controller support. This is
-> very similar to the existing support for Tegra124 and Tegra210, except
-> that the number of ports and PHYs differs and the IPFS wrapper being
-> gone.
+> Adds the XUSB pad and XUSB controllers on Tegra186.
 >
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   drivers/usb/host/xhci-tegra.c | 25 +++++++++++++++++++++++++
->   1 file changed, 25 insertions(+)
+>   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 135 +++++++++++++++++++++++
+>   1 file changed, 135 insertions(+)
 >
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 49e033f953a2..9a07ea0f9c97 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -1423,9 +1423,34 @@ static const struct tegra_xusb_soc tegra210_soc = {
->   };
->   MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index 22815db4a3ed..09d3b0d60e41 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -338,6 +338,141 @@
+>   		status = "disabled";
+>   	};
 >   
-> +static const char * const tegra186_supply_names[] = {
-> +};
+> +	padctl: padctl@3520000 {
+> +		compatible = "nvidia,tegra186-xusb-padctl";
+> +		reg = <0x0 0x03520000 0x0 0x1000>,
+> +		      <0x0 0x03540000 0x0 0x1000>;
+> +		reg-names = "padctl", "ao";
 > +
-> +static const struct tegra_xusb_phy_type tegra186_phy_types[] = {
-> +	{ .name = "usb3", .num = 3, },
-> +	{ .name = "usb2", .num = 3, },
-> +	{ .name = "hsic", .num = 1, },
-> +};
+> +		resets = <&bpmp TEGRA186_RESET_XUSB_PADCTL>;
+> +		reset-names = "padctl";
 > +
-> +static const struct tegra_xusb_soc tegra186_soc = {
-> +	.firmware = "nvidia/tegra186/xusb.bin",
-> +	.supply_names = tegra186_supply_names,
-> +	.num_supplies = ARRAY_SIZE(tegra186_supply_names),
-> +	.phy_types = tegra186_phy_types,
-> +	.num_types = ARRAY_SIZE(tegra186_phy_types),
-> +	.ports = {
-> +		.usb3 = { .offset = 0, .count = 3, },
-> +		.usb2 = { .offset = 3, .count = 3, },
-> +		.hsic = { .offset = 6, .count = 1, },
-> +	},
-> +	.scale_ss_clock = false,
-> +	.has_ipfs = false,
-> +};
+> +		status = "disabled";
 > +
->   static const struct of_device_id tegra_xusb_of_match[] = {
->   	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
->   	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
-> +	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
->   	{ },
->   };
->   MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
+> +		pads {
+> +			usb2 {
+> +				clocks = <&bpmp TEGRA186_CLK_USB2_TRK>;
+> +				clock-names = "trk";
+> +				status = "disabled";
+> +
+> +				lanes {
+> +					usb2-0 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb2-1 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb2-2 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			hsic {
+> +				clocks = <&bpmp TEGRA186_CLK_HSIC_TRK>;
+> +				clock-names = "trk";
+> +				status = "disabled";
+> +
+> +				lanes {
+> +					hsic-0 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			usb3 {
+> +				status = "disabled";
+> +
+> +				lanes {
+> +					usb3-0 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb3-1 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb3-2 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		ports {
+> +			usb2-0 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb2-1 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb2-2 {
+> +				status = "disabled";
+> +			};
+> +
+> +			hsic-0 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb3-0 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb3-1 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb3-2 {
+> +				status = "disabled";
+> +			};
+> +		};
+> +	};
+> +
+> +	usb@3530000 {
+> +		compatible = "nvidia,tegra186-xusb";
+> +		reg = <0x0 0x03530000 0x0 0x8000>,
+> +		      <0x0 0x03538000 0x0 0x1000>;
+> +		reg-names = "hcd", "fpci";
+> +
+> +		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +		clocks = <&bpmp TEGRA186_CLK_XUSB_HOST>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_FALCON>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_SS>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
+> +			 <&bpmp TEGRA186_CLK_CLK_M>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_FS>,
+> +			 <&bpmp TEGRA186_CLK_PLLU>,
+> +			 <&bpmp TEGRA186_CLK_CLK_M>,
+> +			 <&bpmp TEGRA186_CLK_PLLE>;
+> +		clock-names = "xusb_host", "xusb_falcon_src", "xusb_ss",
+> +			      "xusb_ss_src", "xusb_hs_src", "xusb_fs_src",
+> +			      "pll_u_480m", "clk_m", "pll_e";
+> +
+> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBC>,
+> +				<&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
+> +		power-domain-names = "xusb_host", "xusb_ss";
+> +		nvidia,xusb-padctl = <&padctl>;
+> +
+> +		status = "disabled";
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+>   	fuse@3820000 {
+>   		compatible = "nvidia,tegra186-efuse";
+>   		reg = <0x0 0x03820000 0x0 0x10000>;
