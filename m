@@ -1,69 +1,33 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
-Date: Mon, 28 Jan 2019 18:28:36 +0000
-Message-ID: <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
+Date: Tue, 29 Jan 2019 01:08:28 +0300
+Message-ID: <c0b36535-6767-7327-5dc5-612e6957a769@gmail.com>
 References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
  <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
  <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
+ <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
+In-Reply-To: <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4gPiBVcGRhdGUgSTJDIHRyYW5zZmVyIHRpbWVvdXQgYmFzZWQgb24gdHJhbnNmZXIgYnl0
-ZXMgYW5kIEkyQyBidXMgcmF0ZSANCj4gPiB0byBhbGxvdyBlbm91Z2ggdGltZSBkdXJpbmcgbWF4
-IHRyYW5zZmVyIHNpemUgYmFzZWQgb24gdGhlIHNwZWVkLg0KPg0KPiBDb3VsZCBpdCBiZSB0aGF0
-IEkyQyBkZXZpY2UgaXMgYnVzeSBhbmQganVzdCBzbG93bHkgaGFuZGxpbmcgdGhlIHRyYW5zZmVy
-IHJlcXVlc3RzPyBNYXliZSBiZXR0ZXIgdG8gbGVhdmUgdGhlIHRpbWVvdXQgYXMtaXMgYW5kIGFz
-c3VtZSB0aGUgd29yc3QgY2FzZSBzY2VuYXJpbz8NCj4NClRoaXMgY2hhbmdlIGluY2x1ZGVzIG1p
-biB0cmFuc2ZlciB0aW1lIG91dCBvZiAxMDBtcyBpbiBhZGRpdGlvbiB0byBjb21wdXRlZCB0aW1l
-b3V0IGJhc2VkIG9uIHRyYW5zZmVyIGJ5dGVzIGFuZCBzcGVlZCB3aGljaCBjYW4gYWNjb3VudCBp
-biBjYXNlcyBvZiBzbGF2ZSBkZXZpY2VzIHJ1bm5pbmcgYXQgc2xvd2VyIHNwZWVkLg0KQWxzbyBU
-ZWdyYSBJMkMgTWFzdGVyIHN1cHBvcnRzIENsb2NrIHN0cmV0Y2hpbmcgYnkgdGhlIHNsYXZlLg0K
-DQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogU293amFueWEgS29tYXRpbmVuaSA8c2tvbWF0aW5l
-bmlAbnZpZGlhLmNvbT4NCj4gPiAtLS0NCj4gPiAgW1YzXSA6IFNhbWUgYXMgVjINCj4gPiAgW1Yy
-XSA6IEFkZGVkIHRoaXMgcGF0Y2ggaW4gVjIgc2VyaWVzIHRvIGFsbG93IGVub3VnaCB0aW1lIGZv
-ciBkYXRhIHRyYW5zZmVyDQo+ID4gCXRvIGhhcHBlbi4NCj4gPiAJVGhpcyBwYXRjaCBoYXMgZGVw
-ZW5kZW5jeSB3aXRoIERNQSBwYXRjaCBhcyBURUdSQV9JMkNfVElNRU9VVCBkZWZpbmUNCj4gPiAJ
-dGFrZXMgYXJndW1lbnQgd2l0aCB0aGlzIHBhdGNoLg0KPiA+IA0KPiA+ICBkcml2ZXJzL2kyYy9i
-dXNzZXMvaTJjLXRlZ3JhLmMgfCAxOCArKysrKysrKysrKysrKysrLS0NCj4gPiAgMSBmaWxlIGNo
-YW5nZWQsIDE2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyANCj4gPiBiL2RyaXZlcnMvaTJj
-L2J1c3Nlcy9pMmMtdGVncmEuYyBpbmRleCBhZWM1MDBlZjlhOTguLjNkY2JjOTk2MGQ5ZCANCj4g
-PiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gPiAr
-KysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gPiBAQCAtMjMsNyArMjMsNyBA
-QA0KPiA+ICAjaW5jbHVkZSA8bGludXgvcmVzZXQuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L3Ns
-YWIuaD4NCj4gPiAgDQo+ID4gLSNkZWZpbmUgVEVHUkFfSTJDX1RJTUVPVVQgKG1zZWNzX3RvX2pp
-ZmZpZXMoMTAwMCkpDQo+ID4gKyNkZWZpbmUgVEVHUkFfSTJDX1RJTUVPVVQobXMpIChtc2Vjc190
-b19qaWZmaWVzKG1zKSkNCj4gPiAgI2RlZmluZSBCWVRFU19QRVJfRklGT19XT1JEIDQNCj4gPiAg
-DQo+ID4gICNkZWZpbmUgSTJDX0NORkcJCQkJMHgwMDANCj4gPiBAQCAtMTE2LDYgKzExNiw5IEBA
-DQo+ID4gICNkZWZpbmUgSTJDX01TVF9GSUZPX1NUQVRVU19UWF9NQVNLCQkweGZmMDAwMA0KPiA+
-ICAjZGVmaW5lIEkyQ19NU1RfRklGT19TVEFUVVNfVFhfU0hJRlQJCTE2DQo+ID4gIA0KPiA+ICsv
-KiBQYWNrZXQgaGVhZGVyIHNpemUgaW4gYnl0ZXMgKi8NCj4gPiArI2RlZmluZSBJMkNfUEFDS0VU
-X0hFQURFUl9TSVpFCQkJMTINCj4gPiArDQo+ID4gIC8qDQo+ID4gICAqIG1zZ19lbmRfdHlwZTog
-VGhlIGJ1cyBjb250cm9sIHdoaWNoIG5lZWQgdG8gYmUgc2VuZCBhdCBlbmQgb2YgdHJhbnNmZXIu
-DQo+ID4gICAqIEBNU0dfRU5EX1NUT1A6IFNlbmQgc3RvcCBwdWxzZSBhdCBlbmQgb2YgdHJhbnNm
-ZXIuDQo+ID4gQEAgLTY4Myw2ICs2ODYsMTcgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9t
-c2coc3RydWN0IHRlZ3JhX2kyY19kZXYgKmkyY19kZXYsDQo+ID4gIAl1MzIgaW50X21hc2s7DQo+
-ID4gIAl1bnNpZ25lZCBsb25nIHRpbWVfbGVmdDsNCj4gPiAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7
-DQo+ID4gKwl1MTYgeGZlcl90aW1lID0gMTAwOw0KPiA+ICsJc2l6ZV90IHhmZXJfc2l6ZSA9IDA7
-DQo+DQo+IE5vIG5lZWQgdG8gaW5pdGlhbGl6ZSB4ZmVyX3NpemUgdG8gMC4NCj4NCj4gPiArDQo+
-ID4gKwlpZiAobXNnLT5mbGFncyAmIEkyQ19NX1JEKQ0KPiA+ICsJCXhmZXJfc2l6ZSA9IEFMSUdO
-KG1zZy0+bGVuLCBCWVRFU19QRVJfRklGT19XT1JEKTsNCj4gPiArCWVsc2UNCj4gPiArCQl4ZmVy
-X3NpemUgPSBBTElHTihtc2ctPmxlbiwgQllURVNfUEVSX0ZJRk9fV09SRCkgKw0KPiA+ICsJCQkg
-ICAgSTJDX1BBQ0tFVF9IRUFERVJfU0laRTsNCj4gPiArDQo+ID4gKwl4ZmVyX3RpbWUgKz0gRElW
-X1JPVU5EX0NMT1NFU1QoKHhmZXJfc2l6ZSAqIDkpICogMTAwMCwNCj4gPiArCQkJCQlpMmNfZGV2
-LT5idXNfY2xrX3JhdGUpOz4NCj4gPiAgCXRlZ3JhX2kyY19mbHVzaF9maWZvcyhpMmNfZGV2KTsN
-Cj4gPiAgDQo+ID4gQEAgLTczOSw3ICs3NTMsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY194ZmVy
-X21zZyhzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2RldiwNCj4gPiAgCQlpMmNfcmVhZGwoaTJj
-X2RldiwgSTJDX0lOVF9NQVNLKSk7DQo+ID4gIA0KPiA+ICAJdGltZV9sZWZ0ID0gd2FpdF9mb3Jf
-Y29tcGxldGlvbl90aW1lb3V0KCZpMmNfZGV2LT5tc2dfY29tcGxldGUsDQo+ID4gLQkJCQkJCVRF
-R1JBX0kyQ19USU1FT1VUKTsNCj4gPiArCQkJCQkJVEVHUkFfSTJDX1RJTUVPVVQoeGZlcl90aW1l
-KSk7DQo+ID4gIAl0ZWdyYV9pMmNfbWFza19pcnEoaTJjX2RldiwgaW50X21hc2spOw0KPiA+ICAN
-Cj4gPiAgCWlmICh0aW1lX2xlZnQgPT0gMCkgew0KPiA+IA0K
+28.01.2019 21:28, Sowjanya Komatineni пишет:
+> 
+> 
+>>> Update I2C transfer timeout based on transfer bytes and I2C bus rate 
+>>> to allow enough time during max transfer size based on the speed.
+>>
+>> Could it be that I2C device is busy and just slowly handling the transfer requests? Maybe better to leave the timeout as-is and assume the worst case scenario?
+>>
+> This change includes min transfer time out of 100ms in addition to computed timeout based on transfer bytes and speed which can account in cases of slave devices running at slower speed.
+> Also Tegra I2C Master supports Clock stretching by the slave.
+
+Okay, I suppose in reality this shouldn't break anything.
+
+Please explain what benefits this change brings. Does it fix or improve anything? The commit message only describes changes done in the patch and has no word on justification of those changes. Transfer timeout is an extreme case that doesn't happen often and when it happens, usually only the fact of timeout matters. If there is no real value in shortening of the timeout, why bother then?
