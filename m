@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 062/304] soc/tegra: Don't leak device tree node reference
-Date: Mon, 28 Jan 2019 10:39:39 -0500
-Message-ID: <20190128154341.47195-62-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 054/258] soc/tegra: Don't leak device tree node reference
+Date: Mon, 28 Jan 2019 10:56:00 -0500
+Message-ID: <20190128155924.51521-54-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Yangtao Li <tiny.windzz@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
