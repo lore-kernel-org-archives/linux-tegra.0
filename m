@@ -1,104 +1,83 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: [PATCH v2 3/4] mfd: max77620: Add low battery monitor support
-Date: Tue, 29 Jan 2019 16:55:30 +0800
-Message-ID: <20190129085531.32364-4-markz@nvidia.com>
-References: <20190129085531.32364-1-markz@nvidia.com>
+From: "Tristan Bastian" <Tristan-C.Bastian@gmx.de>
+Subject: Re: [PATCH v2] i2c: of: Try to find an I2C adapter matching the parent
+Date: Mon, 28 Jan 2019 10:26:46 +0100
+Message-ID: <trinity-b6aa4026-9432-46bd-96d2-7bde598de3ae-1548667606943@3c-app-gmx-bs34>
+References: <20190125131142.26837-1-thierry.reding@gmail.com>
+ <844544bc-10ac-a236-8c7d-17a09288fe5d@gmx.de> <20190128080815.GD18124@ulmo>
+ <20190128081055.GE18124@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129085531.32364-1-markz@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, blaws05@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190128081055.GE18124@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Vlado Plaga <rechner@vlado-do.de>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds PMIC configurations for low-battery
-monitoring by handling max77620 register CNFGGLBL1.
-
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
-Signed-off-by: Mark Zhang <markz@nvidia.com>
----
- drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 56 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index f58143103185..9e50d145afd8 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -474,6 +474,57 @@ static int max77620_init_backup_battery_charging(struc=
-t max77620_chip *chip)
- 	return ret;
- }
-=20
-+static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
-+{
-+	struct device *dev =3D chip->dev;
-+	struct device_node *np;
-+	bool pval;
-+	u8 mask =3D 0;
-+	u8 val =3D 0;
-+	int ret;
-+
-+	np =3D of_get_child_by_name(dev->of_node, "low-battery-monitor");
-+	if (!np) {
-+		dev_info(dev, "Low battery monitoring support disabled\n");
-+		return 0;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-enable");
-+	if (pval) {
-+		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
-+		val |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-disable");
-+	if (pval)
-+		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
-+	if (pval) {
-+		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
-+		val |=3D MAX77620_CNFGGLBL1_MPPLD;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
-+	if (pval)
-+		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-enable");
-+	if (pval) {
-+		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
-+		val |=3D MAX77620_CNFGGLBL1_LBRSTEN;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-disable");
-+	if (pval)
-+		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
-+
-+	ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val)=
-;
-+	if (ret < 0)
-+		dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
-+	return ret;
-+}
-+
- static int max77620_read_es_version(struct max77620_chip *chip)
- {
- 	unsigned int val;
-@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		return ret;
-=20
--	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
-+	ret =3D max77620_init_low_battery_monitor(chip);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret =3D devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
- 				    mfd_cells, n_mfd_cells, NULL, 0,
- 				    regmap_irq_get_domain(chip->top_irq_data));
- 	if (ret < 0) {
---=20
-2.19.2
+Ck9uIE1vbiwgSmFuIDI4LCAyMDE5IGF0IDA5OjA4OjE1QU0gKzAxMDAsIFRoaWVycnkgUmVkaW5n
+IHdyb3RlOgo+IE9uIFNhdCwgSmFuIDI2LCAyMDE5IGF0IDAxOjM3OjM0UE0gKzAxMDAsIFRyaXN0
+YW4gQmFzdGlhbiB3cm90ZToKPiA+IEFtIDI1LjAxLjE5IHVtIDE0OjExIHNjaHJpZWIgVGhpZXJy
+eSBSZWRpbmc6Cj4gPiA+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+
+Cj4gPiA+Cj4gPiA+IElmIGFuIEkyQyBhZGFwdGVyIGRvZXNuJ3QgbWF0Y2ggdGhlIHByb3ZpZGVk
+IGRldmljZSB0cmVlIG5vZGUsIGFsc28gdHJ5Cj4gPiA+IG1hdGNoaW5nIHRoZSBwYXJlbnQncyBk
+ZXZpY2UgdHJlZSBub2RlLiBUaGlzIGFsbG93cyBmaW5kaW5nIGFuIGFkYXB0ZXIKPiA+ID4gYmFz
+ZWQgb24gdGhlIGRldmljZSBub2RlIG9mIHRoZSBwYXJlbnQgZGV2aWNlIHRoYXQgd2FzIHVzZWQg
+dG8gcmVnaXN0ZXIKPiA+ID4gaXQuCj4gPiA+Cj4gPiA+IFRoaXMgZml4ZXMgYSByZWdyZXNzaW9u
+IG9uIFRlZ3JhMTI0LWJhc2VkIENocm9tZWJvb2tzIChOeWFuKSB3aGVyZSB0aGUKPiA+ID4gZURQ
+IGNvbnRyb2xsZXIgcmVnaXN0ZXJzIGFuIEkyQyBhZGFwdGVyIHRoYXQgaXMgdXNlZCB0byByZWFk
+IHRvIEVESUQuCj4gPiA+IEFmdGVyIGNvbW1pdCA5OTNhODE1ZGNiYjIgKCJkdC1iaW5kaW5nczog
+cGFuZWw6IEFkZCBtaXNzaW5nIC50eHQKPiA+ID4gc3VmZml4IikgdGhpcyBzdG9wcGVkIHdvcmtp
+bmcgYmVjYXVzZSB0aGUgSTJDIGFkYXB0ZXIgY291bGQgbm8gbG9uZ2VyCj4gPiA+IGJlIGZvdW5k
+LiBUaGUgYXBwcm9hY2ggaW4gdGhpcyBwYXRjaCBmaXhlcyB0aGUgcmVncmVzc2lvbiB3aXRob3V0
+Cj4gPiA+IGludHJvZHVjaW5nIHRoZSBpc3N1ZXMgdGhhdCB0aGUgYWJvdmUgY29tbWl0IHNvbHZl
+ZC4KPiA+ID4KPiA+ID4gRml4ZXM6IDE3YWI3ODA2ZGUwYyAoImRybTogZG9uJ3QgbGluayBEUCBh
+dXggaTJjIGFkYXB0ZXIgdG8gdGhlIGhhcmR3YXJlIGRldmljZSBub2RlIikKPiA+ID4gU2lnbmVk
+LW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiA+ID4gLS0tCj4g
+PiA+IENoYW5nZXMgaW4gdjI6Cj4gPiA+IC0gY2hlY2sgZm9yIGJvdGggZGV2aWNlIGFuZCBwYXJl
+bnQgZGV2aWNlIHRyZWUgbm9kZXMgZm9yIGVhY2ggZGV2aWNlCj4gPiA+IGluc3RlYWQgb2YgbG9v
+cGluZyB0aHJvdWdoIHRoZSBsaXN0IG9mIGRldmljZXMgdHdpY2UKPiA+ID4KPiA+ID4gZHJpdmVy
+cy9pMmMvaTJjLWNvcmUtb2YuYyB8IDE0ICsrKysrKysrKysrKystCj4gPiA+IDEgZmlsZSBjaGFu
+Z2VkLCAxMyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPiA+Cj4gPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2kyYy9pMmMtY29yZS1vZi5jIGIvZHJpdmVycy9pMmMvaTJjLWNvcmUtb2Yu
+Ywo+ID4gPiBpbmRleCA2Y2I3YWQ2MDhiY2QuLjBmMDFjZGJhOWQyYyAxMDA2NDQKPiA+ID4gLS0t
+IGEvZHJpdmVycy9pMmMvaTJjLWNvcmUtb2YuYwo+ID4gPiArKysgYi9kcml2ZXJzL2kyYy9pMmMt
+Y29yZS1vZi5jCj4gPiA+IEBAIC0xMjEsNiArMTIxLDE3IEBAIHN0YXRpYyBpbnQgb2ZfZGV2X25v
+ZGVfbWF0Y2goc3RydWN0IGRldmljZSAqZGV2LCB2b2lkICpkYXRhKQo+ID4gPiByZXR1cm4gZGV2
+LT5vZl9ub2RlID09IGRhdGE7Cj4gPiA+IH0KPiA+ID4gK3N0YXRpYyBpbnQgb2ZfZGV2X29yX3Bh
+cmVudF9ub2RlX21hdGNoKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSkKPiA+ID4gK3sK
+PiA+ID4gKyBpZiAoZGV2LT5vZl9ub2RlID09IGRhdGEpCj4gPiA+ICsgcmV0dXJuIDE7Cj4gPiA+
+ICsKPiA+ID4gKyBpZiAoZGV2LT5wYXJlbnQpCj4gPiA+ICsgcmV0dXJuIGRldi0+cGFyZW50LT5v
+Zl9ub2RlID09IGRhdGE7Cj4gPiA+ICsKPiA+ID4gKyByZXR1cm4gMDsKPiA+ID4gK30KPiA+ID4g
+Kwo+ID4gPiAvKiBtdXN0IGNhbGwgcHV0X2RldmljZSgpIHdoZW4gZG9uZSB3aXRoIHJldHVybmVk
+IGkyY19jbGllbnQgZGV2aWNlICovCj4gPiA+IHN0cnVjdCBpMmNfY2xpZW50ICpvZl9maW5kX2ky
+Y19kZXZpY2VfYnlfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpCj4gPiA+IHsKPiA+ID4g
+QEAgLTE0NSw3ICsxNTYsOCBAQCBzdHJ1Y3QgaTJjX2FkYXB0ZXIgKm9mX2ZpbmRfaTJjX2FkYXB0
+ZXJfYnlfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpCj4gPiA+IHN0cnVjdCBkZXZpY2Ug
+KmRldjsKPiA+ID4gc3RydWN0IGkyY19hZGFwdGVyICphZGFwdGVyOwo+ID4gPiAtIGRldiA9IGJ1
+c19maW5kX2RldmljZSgmaTJjX2J1c190eXBlLCBOVUxMLCBub2RlLCBvZl9kZXZfbm9kZV9tYXRj
+aCk7Cj4gPiA+ICsgZGV2ID0gYnVzX2ZpbmRfZGV2aWNlKCZpMmNfYnVzX3R5cGUsIE5VTEwsIG5v
+ZGUsCj4gPiA+ICsgb2ZfZGV2X29yX3BhcmVudF9ub2RlX21hdGNoKTsKPiA+ID4gaWYgKCFkZXYp
+Cj4gPiA+IHJldHVybiBOVUxMOwo+ID4KPiA+IEkndmUgdGVzdGVkIHRoaXMgYW5kIGNhbiBjb25m
+aXJtIHRoYXQgdGhpcyBmaXhlcyB0aGUgaXNzdWUgb24gdGhlIG55YW4tYmlnCj4gPiBjaHJvbWVi
+b29rLgo+Cj4gRXhjZWxsZW50LCB0aGFua3MgZm9yIHRlc3RpbmchIFR5cGljYWxseSBpZiB5b3Un
+dmUgdGVzdGVkIGEgcGF0Y2ggYW5kCj4gdmVyaWZpZWQgdGhhdCBpdCBmaXhlcyB0aGUgcHJvYmxl
+bSB0aGF0IHlvdSB3ZXJlIHNlZWluZywgaXQncyBnb29kIHRvCj4gc2VuZCB0aGlzIG9uIGEgbGlu
+ZSBieSBpdHNlbGYgYWxvbmcgd2l0aCB5b3VyIHJlcGx5Ogo+Cj4gVGVzdGVkLWJ5OiBUcmlzdGFu
+IEJhc3RpYW4gPHRyaXN0YW4tYy5iYXN0aWFuQGdteC5kZT4KClJlc2VuZGluZyBiZWNhdXNlIGZp
+cnN0IG1haWwgY29udGFpbmVkIGh0bWwgYW5kIHdhcyBibG9ja2VkIGJ5IHRoZSBtYWlsaW5nIGxp
+c3RzLi4KRGlkbid0IGtuZXcgYWJvdXQgdGhhdCBsaW5lLCBzb3JyeS4uClN1cmUgeW91IGNhbiBp
+bmNsdWRlIHRoYXQuCkknbSBob3BpbmcgcGF0Y2h3b3JrIHdvbid0IHRoaW5nIGl0IGdvdCB0ZXN0
+ZWQgdHdpY2UgYnkgbWUuLgogClRlc3RlZC1ieTogVHJpc3RhbiBCYXN0aWFuIDx0cmlzdGFuLWMu
+YmFzdGlhbkBnbXguZGU+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
