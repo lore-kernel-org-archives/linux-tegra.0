@@ -1,7 +1,7 @@
 From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [2/2] mfd: max77620: Add low battery monitor support
-Date: Mon, 28 Jan 2019 07:15:53 +0000
-Message-ID: <20190128071553.GB4678@dell>
+Date: Mon, 28 Jan 2019 07:16:54 +0000
+Message-ID: <20190128071654.GC4678@dell>
 References: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -10,9 +10,11 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: 20190123065620.22250-2-markz@nvidia.com
+To: Billy Laws <blaws05@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
+
+Re-sending due to dodgy looking 'reply-to'.
 
 On Sun, 27 Jan 2019, Billy Laws wrote:
 
