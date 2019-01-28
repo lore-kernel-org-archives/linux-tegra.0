@@ -1,118 +1,80 @@
-From: Jisheng Zhang <Jisheng.Zhang-Gq53QDLGkWKakBO8gow8eQ@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
- compatible string
-Date: Mon, 28 Jan 2019 02:41:11 +0000
-Message-ID: <20190128103443.2b765f30@xhacker.debian>
-References: <20190109202934.29304-1-robh@kernel.org>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+Date: Mon, 28 Jan 2019 11:09:25 +0800
+Message-ID: <1d12f949-1a06-fd17-141d-bd04b72cda3c@nvidia.com>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-2-josephl@nvidia.com>
+ <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+ <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+ <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
 Content-Language: en-US
-Content-ID: <351B42FC5B54A246AEE6DF57AF45078A-nA3rOoH6FIycE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 9 Jan 2019 14:29:34 -0600
-Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-
-> The 'arm,armv8' compatible string is only for software models. It adds
-> little value otherwise and is inconsistently used as a fallback on some
-> platforms. Remove it from those platforms.
-> 
-> This fixes warnings generated by the DT schema.
-> 
-> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
-> armsoc folks, Please apply directly.
-> 
-> Note that there's still a case left in msm8998 that needs a new 
-> compatible string.
-> 
-> Rob
-> 
->  arch/arm64/boot/dts/actions/s700.dtsi         |   8 +-
->  arch/arm64/boot/dts/actions/s900.dtsi         |   8 +-
->  arch/arm64/boot/dts/al/alpine-v2.dtsi         |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |   8 +-
->  .../boot/dts/altera/socfpga_stratix10.dtsi    |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gxm.dtsi    |   8 +-
->  arch/arm64/boot/dts/apm/apm-shadowcat.dtsi    |  16 +--
->  arch/arm64/boot/dts/apm/apm-storm.dtsi        |  16 +--
->  arch/arm64/boot/dts/arm/juno-r1.dts           |  12 +-
->  arch/arm64/boot/dts/arm/juno-r2.dts           |  12 +-
->  arch/arm64/boot/dts/arm/juno.dts              |  12 +-
->  .../boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts |   4 +-
->  .../boot/dts/broadcom/northstar2/ns2.dtsi     |   8 +-
->  .../boot/dts/broadcom/stingray/stingray.dtsi  |  16 +--
->  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi  |  96 ++++++-------
->  arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi |   8 +-
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  16 +--
->  arch/arm64/boot/dts/exynos/exynos7.dtsi       |   8 +-
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi     |  16 +--
->  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |  16 +--
->  arch/arm64/boot/dts/hisilicon/hi6220.dtsi     |  16 +--
->  arch/arm64/boot/dts/hisilicon/hip05.dtsi      |  32 ++---
->  arch/arm64/boot/dts/hisilicon/hip06.dtsi      |  32 ++---
->  arch/arm64/boot/dts/hisilicon/hip07.dtsi      | 128 +++++++++---------
->  arch/arm64/boot/dts/lg/lg1312.dtsi            |   8 +-
->  arch/arm64/boot/dts/lg/lg1313.dtsi            |   8 +-
->  arch/arm64/boot/dts/marvell/armada-372x.dtsi  |   2 +-
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |   2 +-
->  .../boot/dts/marvell/armada-ap806-dual.dtsi   |   4 +-
->  .../boot/dts/marvell/armada-ap806-quad.dtsi   |   8 +-
->  .../marvell/armada-ap810-ap0-octa-core.dtsi   |  16 +--
->  arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi      |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  12 +-
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  16 +--
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi         |   8 +-
->  arch/arm64/boot/dts/qcom/msm8916.dtsi         |   8 +-
->  arch/arm64/boot/dts/qcom/msm8992.dtsi         |   2 +-
->  arch/arm64/boot/dts/qcom/msm8994.dtsi         |   2 +-
->  arch/arm64/boot/dts/realtek/rtd1295.dtsi      |   8 +-
->  arch/arm64/boot/dts/renesas/r8a774a1.dtsi     |  12 +-
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi      |  16 +--
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  12 +-
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi     |   4 +-
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi     |   4 +-
->  arch/arm64/boot/dts/renesas/r8a77980.dtsi     |   8 +-
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi     |   4 +-
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi     |   2 +-
->  arch/arm64/boot/dts/rockchip/px30.dtsi        |   8 +-
->  arch/arm64/boot/dts/rockchip/rk3328.dtsi      |   8 +-
->  arch/arm64/boot/dts/rockchip/rk3368.dtsi      |  16 +--
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  12 +-
->  .../boot/dts/socionext/uniphier-ld11.dtsi     |   4 +-
->  .../boot/dts/socionext/uniphier-ld20.dtsi     |   8 +-
->  .../boot/dts/socionext/uniphier-pxs3.dtsi     |   8 +-
->  arch/arm64/boot/dts/sprd/sc9836.dtsi          |   8 +-
->  arch/arm64/boot/dts/sprd/sc9860.dtsi          |  16 +--
->  arch/arm64/boot/dts/synaptics/as370.dtsi      |   8 +-
->  arch/arm64/boot/dts/synaptics/berlin4ct.dtsi  |   8 +-
-
-For Synaptics SoC,
-
-Acked-by: Jisheng Zhang <Jisheng.Zhang-Gq53QDLGkWKakBO8gow8eQ@public.gmane.org>
-
-Sorry for being late,
-Jisheng
+T24gMS8yNS8xOSA4OjAxIFBNLCBKb24gSHVudGVyIHdyb3RlOgo+IAo+IE9uIDI1LzAxLzIwMTkg
+MDM6MjMsIEpvc2VwaCBMbyB3cm90ZToKPj4gSGkgSm9uLAo+Pgo+PiBUaGFua3MgZm9yIHJldmll
+d2luZy4KPj4KPj4gT24gMS8yNC8xOSA2OjMwIFBNLCBKb24gSHVudGVyIHdyb3RlOgo+Pj4KPj4+
+IE9uIDA3LzAxLzIwMTkgMDM6MjgsIEpvc2VwaCBMbyB3cm90ZToKPj4+PiBUaGUgVGVncmEyMTAg
+dGltZXIgcHJvdmlkZXMgZm91cnRlZW4gMjktYml0IHRpbWVyIGNvdW50ZXJzIGFuZCBvbmUKPj4+
+PiAzMi1iaXQKPj4+PiB0aW1lc3RhbXAgY291bnRlci4gVGhlIFRNUnMgcnVuIGF0IGVpdGhlciBh
+IGZpeGVkIDEgTUh6IGNsb2NrIHJhdGUKPj4+PiBkZXJpdmVkCj4+Pj4gZnJvbSB0aGUgb3NjaWxs
+YXRvciBjbG9jayAoVE1SMC1UTVI5KSBvciBkaXJlY3RseSBhdCB0aGUgb3NjaWxsYXRvcgo+Pj4+
+IGNsb2NrCj4+Pj4gKFRNUjEwLVRNUjEzKS4gRWFjaCBUTVIgY2FuIGJlIHByb2dyYW1tZWQgdG8g
+Z2VuZXJhdGUgb25lLXNob3QgcGVyaW9kaWMsCj4+Pj4gb3Igd2F0Y2hkb2cgaW50ZXJydXB0cy4K
+Pj4+Pgo+Pj4+IENjOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4K
+Pj4+PiBDYzogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+Cj4+Pj4gQ2M6IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcKPj4+PiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5l
+bC5vcmcKPj4+PiBTaWduZWQtb2ZmLWJ5OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4K
+Pj4+PiAtLS0KPj4+PiAgwqAgLi4uL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1l
+ci50eHTCoCB8IDI1ICsrKysrKysrKysrKysrKysrKysKPj4+PiAgwqAgMSBmaWxlIGNoYW5nZWQs
+IDI1IGluc2VydGlvbnMoKykKPj4+PiAgwqAgY3JlYXRlIG1vZGUgMTAwNjQ0Cj4+Pj4gRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1lci50
+eHQKPj4+Pgo+Pj4+IGRpZmYgLS1naXQKPj4+PiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy90aW1lci9udmlkaWEsdGVncmEyMTAtdGltZXIudHh0Cj4+Pj4gYi9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdGltZXIvbnZpZGlhLHRlZ3JhMjEwLXRpbWVyLnR4dAo+
+Pj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+Pj4gaW5kZXggMDAwMDAwMDAwMDAwLi5iYTUxMTIy
+MGE2NjkKPj4+PiAtLS0gL2Rldi9udWxsCj4+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIxMC10aW1lci50eHQKPj4+PiBAQCAtMCww
+ICsxLDI1IEBACj4+Pj4gK05WSURJQSBUZWdyYTIxMCB0aW1lcgo+Pj4+ICsKPj4+PiArVGhlIFRl
+Z3JhMjEwIHRpbWVyIHByb3ZpZGVzIGZvdXJ0ZWVuIDI5LWJpdCB0aW1lciBjb3VudGVycyBhbmQg
+b25lCj4+Pj4gMzItYml0Cj4+Pj4gK3RpbWVzdGFtcCBjb3VudGVyLiBUaGUgVE1ScyBydW4gYXQg
+ZWl0aGVyIGEgZml4ZWQgMSBNSHogY2xvY2sgcmF0ZQo+Pj4+IGRlcml2ZWQKPj4+PiArZnJvbSB0
+aGUgb3NjaWxsYXRvciBjbG9jayAoVE1SMC1UTVI5KSBvciBkaXJlY3RseSBhdCB0aGUgb3NjaWxs
+YXRvcgo+Pj4+IGNsb2NrCj4+Pj4gKyhUTVIxMC1UTVIxMykuIEVhY2ggVE1SIGNhbiBiZSBwcm9n
+cmFtbWVkIHRvIGdlbmVyYXRlIG9uZS1zaG90LAo+Pj4+IHBlcmlvZGljLAo+Pj4+ICtvciB3YXRj
+aGRvZyBpbnRlcnJ1cHRzLgo+Pj4+ICsKPj4+PiArUmVxdWlyZWQgcHJvcGVydGllczoKPj4+PiAr
+LSBjb21wYXRpYmxlIDogIm52aWRpYSx0ZWdyYTIxMC10aW1lciIuCj4+Pj4gKy0gcmVnIDogU3Bl
+Y2lmaWVzIGJhc2UgcGh5c2ljYWwgYWRkcmVzcyBhbmQgc2l6ZSBvZiB0aGUgcmVnaXN0ZXJzLgo+
+Pj4+ICstIGludGVycnVwdHMgOiBBIGxpc3Qgb2YgNCBpbnRlcnJ1cHRzOyBvbmUgcGVyIGVhY2gg
+b2YgVE1SMTAgdGhyb3VnaAo+Pj4+IFRNUjEzLgo+Pj4KW3NuaXBdCj4+IEFuZCBub3RpY2UgdGhh
+dCBvbmx5IFRNUjEwLVRNUjEzIGFyZSBydW5uaW5nIGF0IHRoZSBvc2NpbGxhdG9yIGNsb2NrCj4+
+IChjbGtfbSkuIFdpdGggdGhlIFRlZ3JhMjEwIHRpbWVyIGRyaXZlciwgd2UgaW50cm9kdWNlIGlu
+IHRoaXMgc2VyaWVzLAo+PiB3aGljaCBvbmx5IHJlcGxhY2UgdGhlIGNsb2NrIGV2ZW50IGRldmlj
+ZSBmdW5jdGlvbiB0aGF0IHdhcyBvcmlnaW5hbGx5Cj4+IG93bmVkIGJ5IHRoZSBhcmNoIHRpbWVy
+IChhcm12OCB0aW1lcikgYW5kIGl0IGFsc28gcnVubmluZyBhdCB0aGUKPj4gb3NjaWxsYXRvciBj
+bG9jay4gVGhlIHNjaGVkX3RpbWVyIHN0aWxsIG93bnMgYnkgdGhlIGFyY2ggdGltZXIuIFNvIHRo
+ZQo+PiB0aW1lciByZXNvbHV0aW9uIHdpbGwgYmUgdGhlIHNhbWUuIFRoYXQncyB3aHkgd2UgY2hv
+b3NlIFRNUjEwLVRNUjEzIGFzCj4+IHRoZSB0aW1lciBmb3IgVGVncmEyMTAuCj4gCj4gVGhhdCBt
+YXliZSBmaW5lLCBidXQgRFQgc2hvdWxkIGRlc2NyaWJlIHRoZSBoYXJkd2FyZSBhbmQgc28gSSBk
+b24ndCBzZWUKPiB3aHkgd2Ugd291bGQgbm90IGxpc3QgYWxsIHRoZSBpbnRlcnJ1cHRzLiBXZSBj
+YW4gc3RpbGwgb25seSB1c2UgVE1SMTAtMTMKPiBpbiB0aGUgZHJpdmVyLgo+IAoKT2theSwgd2ls
+bCBsaXN0IGFsbCB0aGUgaW50ZXJydXB0cyBmb3IgZWFjaCB0aW1lciBjaGFubmVsLgoKVGhhbmtz
+LApKb3NlcGgKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
+cmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
+bnV4LWFybS1rZXJuZWwK
