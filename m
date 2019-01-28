@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 15/61] soc/tegra: Don't leak device tree node reference
-Date: Mon, 28 Jan 2019 11:25:37 -0500
-Message-ID: <20190128162623.59854-15-sashal@kernel.org>
-References: <20190128162623.59854-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 19/80] soc/tegra: Don't leak device tree node reference
+Date: Mon, 28 Jan 2019 11:23:00 -0500
+Message-ID: <20190128162401.58841-19-sashal@kernel.org>
+References: <20190128162401.58841-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
+In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Yangtao Li <tiny.windzz@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
@@ -30,10 +30,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index a71cb74f3674..04323ade15dd 100644
+index cd8f41351add..7bfb154d6fa5 100644
 --- a/drivers/soc/tegra/common.c
 +++ b/drivers/soc/tegra/common.c
-@@ -20,11 +20,15 @@ static const struct of_device_id tegra_machine_match[] = {
+@@ -22,11 +22,15 @@ static const struct of_device_id tegra_machine_match[] = {
  
  bool soc_is_tegra(void)
  {
