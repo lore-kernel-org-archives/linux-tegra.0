@@ -1,57 +1,55 @@
 From: jckuo <jckuo@nvidia.com>
-Subject: Re: [PATCH 1/5] dt-bindings: phy: tegra: Add Tegra186 support
-Date: Mon, 28 Jan 2019 15:04:36 +0800
-Message-ID: <45ab054d-674f-fcdf-85cf-b07c049f0e7d@nvidia.com>
+Subject: Re: [PATCH 2/5] phy: tegra: xusb: Skip single function lane
+ programming
+Date: Mon, 28 Jan 2019 15:06:51 +0800
+Message-ID: <7afb7753-39d2-69b9-3666-e159d3e85ae0@nvidia.com>
 References: <20190125112525.10697-1-thierry.reding@gmail.com>
+ <20190125112525.10697-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190125112525.10697-1-thierry.reding@gmail.com>
+In-Reply-To: <20190125112525.10697-2-thierry.reding@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Reviewed-by: JC Kuo <jckuo@nvidia.com>
 
 On 1/25/19 7:25 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+> From: JC Kuo <jckuo@nvidia.com>
 >
-> Extend the bindings to cover the set of features found in Tegra186. Note
-> that, technically, there are four more supplies connected to the XUSB
-> pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL), but
-> the power sequencing requirements of Tegra186 require these to be under
-> the control of the PMIC.
+> Tegra186 USB2 pads and USB3 pads do not have hardware mux for changing
+> the pad function. For such "lanes", we can skip the lane mux register
+> programming.
 >
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   .../bindings/phy/nvidia,tegra124-xusb-padctl.txt         | 9 +++++++++
->   1 file changed, 9 insertions(+)
+>   drivers/phy/tegra/xusb.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
 >
-> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> index 3742c152c467..daedb15f322e 100644
-> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> @@ -36,11 +36,20 @@ Required properties:
->     - Tegra124: "nvidia,tegra124-xusb-padctl"
->     - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
->     - Tegra210: "nvidia,tegra210-xusb-padctl"
-> +  - Tegra186: "nvidia,tegra186-xusb-padctl"
->   - reg: Physical base address and length of the controller's registers.
->   - resets: Must contain an entry for each entry in reset-names.
->   - reset-names: Must include the following entries:
->     - "padctl"
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index 5b3b8863363e..e3bc60cfe6a1 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -1,5 +1,5 @@
+>   /*
+> - * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
+> + * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
+>    *
+>    * This program is free software; you can redistribute it and/or modify it
+>    * under the terms and conditions of the GNU General Public License,
+> @@ -313,6 +313,10 @@ static void tegra_xusb_lane_program(struct tegra_xusb_lane *lane)
+>   	const struct tegra_xusb_lane_soc *soc = lane->soc;
+>   	u32 value;
 >   
-> +For Tegra186:
-> +- avdd-pll-erefeut-supply: UPHY brick and reference clock as well as UTMI PHY
-> +  power supply. Must supply 1.8 V.
-> +- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
-> +  3.3 V.
-> +- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
-> +- vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
+> +	/* skip single function lanes */
+> +	if (soc->num_funcs < 2)
+> +		return;
 > +
->   
->   Pad nodes:
->   ==========
+>   	/* choose function */
+>   	value = padctl_readl(padctl, soc->offset);
+>   	value &= ~(soc->mask << soc->shift);
