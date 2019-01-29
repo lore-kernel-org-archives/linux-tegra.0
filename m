@@ -1,7 +1,7 @@
 From: Mark Zhang <markz@nvidia.com>
-Subject: [PATCH v2 1/4] mfd: max77620: Add backup battery charger support
-Date: Tue, 29 Jan 2019 16:55:28 +0800
-Message-ID: <20190129085531.32364-2-markz@nvidia.com>
+Subject: [PATCH v2 2/4] mfd: max77620: add documentation for backup battery charging
+Date: Tue, 29 Jan 2019 16:55:29 +0800
+Message-ID: <20190129085531.32364-3-markz@nvidia.com>
 References: <20190129085531.32364-1-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -10,123 +10,53 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190129085531.32364-1-markz@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: lee.jones@linaro.org, blaws05@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add PMIC configurations for backup battery charger, which
-is a constant voltage and constant current style charger
-with a series output resistance.
+Adding documentation for 3 new backup battery charging dts
+properties:
+- maxim,backup-battery-charging-current
+- maxim,backup-battery-charging-voltage
+- maxim,backup-battery-output-resister
 
-The max77620 register CNFGBBC(addr: 0x04) defines the
-parameters of backup battery charger. This patch adds
-support for it.
-
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
 Signed-off-by: Mark Zhang <markz@nvidia.com>
 ---
- drivers/mfd/max77620.c | 80 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+ .../devicetree/bindings/mfd/max77620.txt      | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index d8ddd1a6f304..f58143103185 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -398,6 +398,82 @@ static int max77620_initialise_fps(struct max77620_chi=
-p *chip)
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documenta=
+tion/devicetree/bindings/mfd/max77620.txt
+index 9c16d51cc15b..484b17e4fba5 100644
+--- a/Documentation/devicetree/bindings/mfd/max77620.txt
++++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+@@ -122,6 +122,26 @@ For DT binding details of different sub modules like G=
+PIO, pincontrol,
+ regulator, power, please refer respective device-tree binding document
+ under their respective sub-system directories.
 =20
-+static int max77620_init_backup_battery_charging(struct max77620_chip *chi=
-p)
-+{
-+	struct device *dev =3D chip->dev;
-+	struct device_node *np;
-+	u32 pval;
-+	u8 config;
-+	int charging_current;
-+	int charging_voltage;
-+	int resistor;
-+	int ret;
++Backup Battery:
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++This sub-node configure charging backup battery of the device. Device has
++support of charging the backup battery. The subnode name is "backup-batter=
+y".
++The property for backup-battery child nodes as:
++Presence of this child node will enable the backup battery charging.
 +
-+	np =3D of_get_child_by_name(dev->of_node, "backup-battery");
-+	if (!np) {
-+		dev_info(dev, "Backup battery charging support disabled\n");
-+		ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGBBC,
-+					 MAX77620_CNFGBBC_ENABLE, 0);
-+		if (ret < 0)
-+			dev_err(dev, "Failed to update CNFGBBC: %d\n", ret);
-+		return ret;
-+	}
++Optional properties:
++	-maxim,backup-battery-charging-current: Charging current setting.
++			The device supports 50/100/200/400/600/800uA.
++			If this property is unavailable then it will
++			charge with 50uA.
++	-maxim,backup-battery-charging-voltage: Charging Voltage Limit Setting.
++			Device supports 2500000/3000000/3300000/350000uV.
++			Default will be set to 2500mV. The voltage will be roundoff
++			to nearest lower side if other than above is configured.
++	-maxim,backup-battery-output-resister: Output resistor on Ohm.
++			Device supports 100/1000/3000/6000 Ohms.
++			Default will be set to 1000 Ohm.
 +
-+	ret =3D of_property_read_u32(np,
-+			"maxim,backup-battery-charging-current", &pval);
-+	charging_current =3D (!ret) ? pval : 50;
-+
-+	ret =3D of_property_read_u32(np,
-+			"maxim,backup-battery-charging-voltage", &pval);
-+	charging_voltage =3D (!ret) ? pval : 2500000;
-+	charging_voltage /=3D 1000;
-+
-+	ret =3D of_property_read_u32(np,
-+			"maxim,backup-battery-output-resister", &pval);
-+	resistor =3D (!ret) ? pval : 1000;
-+
-+	config =3D MAX77620_CNFGBBC_ENABLE;
-+	if (charging_current <=3D 50)
-+		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 100)
-+		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 200)
-+		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 400)
-+		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else if (charging_current <=3D 600)
-+		config |=3D 1 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+	else
-+		config |=3D 2 << MAX77620_CNFGBBC_CURRENT_SHIFT;
-+
-+	if (charging_current > 100)
-+		config |=3D MAX77620_CNFGBBC_LOW_CURRENT_DISABLE;
-+
-+	if (charging_voltage <=3D 2500)
-+		config |=3D 0 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+	else if (charging_voltage <=3D 3000)
-+		config |=3D 1 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+	else if (charging_voltage <=3D 3300)
-+		config |=3D 2 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+	else
-+		config |=3D 3 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
-+
-+	if (resistor <=3D 100)
-+		config |=3D 0 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+	else if (resistor <=3D 1000)
-+		config |=3D 1 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+	else if (resistor <=3D 3000)
-+		config |=3D 2 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+	else if (resistor <=3D 6000)
-+		config |=3D 3 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
-+
-+	ret =3D regmap_write(chip->rmap, MAX77620_REG_CNFGBBC, config);
-+	if (ret < 0)
-+		dev_err(dev, "Reg 0x%02x write failed, %d\n",
-+				MAX77620_REG_CNFGBBC, ret);
-+	return ret;
-+}
-+
- static int max77620_read_es_version(struct max77620_chip *chip)
- {
- 	unsigned int val;
-@@ -483,6 +559,10 @@ static int max77620_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		return ret;
-=20
-+	ret =3D max77620_init_backup_battery_charging(chip);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
- 				    mfd_cells, n_mfd_cells, NULL, 0,
- 				    regmap_irq_get_domain(chip->top_irq_data));
+ Example:
+ --------
+ #include <dt-bindings/mfd/max77620.h>
 --=20
 2.19.2
