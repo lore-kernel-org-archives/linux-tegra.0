@@ -1,138 +1,204 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: Re: [2/2] mfd: max77620: Add low battery monitor support
-Date: Tue, 29 Jan 2019 17:03:54 +0800
-Message-ID: <e1ebcd02-2d25-a6b7-081b-578878be15b4@nvidia.com>
-References: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
- <bd942195-4f1c-1a39-283f-610354308f45@nvidia.com>
- <CAFUUQHM88kVh0ov1G30Sz9WQKJRY4p78hBMporL1xU=aY_tNCA@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
+Date: Tue, 29 Jan 2019 09:16:48 +0000
+Message-ID: <8c0bc716-4461-883d-aa75-0ccba8132be5@nvidia.com>
+References: <20190128091815.7040-1-josephl@nvidia.com>
+ <20190128091815.7040-3-josephl@nvidia.com> <20190128150908.GB31317@ulmo>
+ <3607f32b-c20a-e00f-3dc1-630169342392@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFUUQHM88kVh0ov1G30Sz9WQKJRY4p78hBMporL1xU=aY_tNCA@mail.gmail.com>
+In-Reply-To: <3607f32b-c20a-e00f-3dc1-630169342392@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Billy Laws <blaws05@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/29/2019 3:36 PM, Billy Laws wrote:
-> Sure, that's fine with me, will send then this gets accepted. Two
-> other things: you should probably set the reg to 0 if the property
-> isn't specified as regmap_add_irqchip sets it to 0xff (basically all
-> enabled on highest limit), and you haven't updated the dt-bindings.
 
-Billy, v2 is out, dt-bindings patches are added.
-But after a second thought, I don't think regmap_add_irqchip might set
-registers to 0xff. I mean, for 2 registers which this patch set touches,
-they're not IRQ registers(mask/status/...), so regmap_add_irqchip should
-not touch them so I didn't make changes to driver codes in v2.
-
-Mark
-
-> 
-> On Tue, Jan 29, 2019 at 6:52 AM Mark Zhang <markz@nvidia.com> wrote:
->>
->> On 1/27/2019 10:54 PM, Billy Laws wrote:
->>>  >This patch adds PMIC configurations for low-battery
->>>  >monitoring by handling max77620 register CNFGGLBL1.
->>>  >
->>> It might be an idea to add lbhyst configuration here and support using
->>> custom lbdac values to specify a different cutoff point.
->>
->> Yeah this patch doesn't have support to program LBHYST & LBDAC because
->> according to our experiences, we don't have requirement to modify them
->> when low battery monitor support added.
->>
->> I think we can create a new patch to support these 2 fields in the future
->> when we really need them. Or you can create a patch if you have requirement
->> for them, is this OK to you Billy?
->>
->> Mark
->>
+On 29/01/2019 03:35, Joseph Lo wrote:
+> On 1/28/19 11:09 PM, Thierry Reding wrote:
+>> On Mon, Jan 28, 2019 at 05:18:11PM +0800, Joseph Lo wrote:
+>>> Add support for the Tegra210 timer that runs at oscillator clock
+>>> (TMR10-TMR13). We need these timers to work as clock event device and t=
+o
+>>> replace the ARMv8 architected timer due to it can't survive across the
+>>> power cycle of the CPU core or CPUPORESET signal. So it can't be a
+>>> wake-up
+>>> source when CPU suspends in power down state.
 >>>
->>> See: https://datasheetspdf.com/pdf-file/924230/Maxim/MAX8698C/1  pg 46
->>>  >Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>>  >Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
->>>  >Signed-off-by: Mark Zhang <markz@nvidia.com>
->>>  >---
->>>  > drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
->>>  > 1 file changed, 56 insertions(+), 1 deletion(-)
->>>  >
->>>  >diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
->>>  >index f58143103185..9e50d145afd8 100644
->>>  >--- a/drivers/mfd/max77620.c
->>>  >+++ b/drivers/mfd/max77620.c
->>>  >@@ -474,6 +474,57 @@ static int
->>> max77620_init_backup_battery_charging(struct max77620_chip *chip)
->>>  >  return ret;
->>>  > }
->>>  >
->>>  >+static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
->>>  >+{
->>>  >+ struct device *dev = chip->dev;
->>>  >+ struct device_node *np;
->>>  >+ bool pval;
->>>  >+ u8 mask = 0;
->>>  >+ u8 val = 0;
->>>  >+ int ret;
->>>  >+
->>>  >+ np = of_get_child_by_name(dev->of_node, "low-battery-monitor");
->>>  >+ if (!np) {
->>>  >+ dev_info(dev, "Low battery monitoring support disabled\n");
->>>  >+ return 0;
->>>  >+ }
->>>  >+
->>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-enable");
->>>  >+ if (pval) {
->>>  >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
->>>  >+ val |= MAX77620_CNFGGLBL1_LBDAC_EN;
->>>  >+ }
->>>  >+
->>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-disable");
->>>  >+ if (pval)
->>>  >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
->>>  >+
->>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
->>>  >+ if (pval) {
->>>  >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
->>>  >+ val |= MAX77620_CNFGGLBL1_MPPLD;
->>>  >+ }
->>>  >+
->>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
->>>  >+ if (pval)
->>>  >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
->>>  >+
->>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-enable");
->>>  >+ if (pval) {
->>>  >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
->>>  >+ val |= MAX77620_CNFGGLBL1_LBRSTEN;
->>>  >+ }
->>>  >+
->>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-disable");
->>>  >+ if (pval)
->>>  >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
->>>  >+
->>>  >+ ret = regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val);
->>>  >+ if (ret < 0)
->>>  >+ dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
->>>  >+ return ret;
->>>  >+}
->>>  >+
->>>  > static int max77620_read_es_version(struct max77620_chip *chip)
->>>  > {
->>>  >  unsigned int val;
->>>  >@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
->>>  >  if (ret < 0)
->>>  >  return ret;
->>>  >
->>>  >- ret =  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
->>>  >+ ret = max77620_init_low_battery_monitor(chip);
->>>  >+ if (ret < 0)
->>>  >+ return ret;
->>>  >+
->>>  >+ ret = devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
->>>  >      mfd_cells, n_mfd_cells, NULL, 0,
->>>  >      regmap_irq_get_domain(chip->top_irq_data));
->>>  >  if (ret < 0) {
+>>> Based on the work of Antti P Miettinen <amiettinen@nvidia.com>
 >>>
+>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>> ---
+>>> v2:
+>>> =A0 * add error clean-up code
+>>> ---
+>>> =A0 drivers/clocksource/Kconfig=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 3 +
+>>> =A0 drivers/clocksource/Makefile=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 1 +
+>>> =A0 drivers/clocksource/timer-tegra210.c | 268 ++++++++++++++++++++++++=
++++
+>>> =A0 include/linux/cpuhotplug.h=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 1 =
++
+>>> =A0 4 files changed, 273 insertions(+)
+>>> =A0 create mode 100644 drivers/clocksource/timer-tegra210.c
+>>>
+>>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>>> index a9e26f6a81a1..e6e3e64b6320 100644
+>>> --- a/drivers/clocksource/Kconfig
+>>> +++ b/drivers/clocksource/Kconfig
+>>> @@ -135,6 +135,9 @@ config TEGRA_TIMER
+>>> =A0=A0=A0=A0=A0 help
+>>> =A0=A0=A0=A0=A0=A0=A0 Enables support for the Tegra driver.
+>>> =A0 +config TEGRA210_TIMER
+>>> +=A0=A0=A0 def_bool ARCH_TEGRA_210_SOC
+>>> +
+>>> =A0 config VT8500_TIMER
+>>> =A0=A0=A0=A0=A0 bool "VT8500 timer driver" if COMPILE_TEST
+>>> =A0=A0=A0=A0=A0 depends on HAS_IOMEM
+>>> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefil=
+e
+>>> index cdd210ff89ea..95de59c8a47b 100644
+>>> --- a/drivers/clocksource/Makefile
+>>> +++ b/drivers/clocksource/Makefile
+>>> @@ -36,6 +36,7 @@ obj-$(CONFIG_SUN4I_TIMER)=A0=A0=A0 +=3D timer-sun4i.o
+>>> =A0 obj-$(CONFIG_SUN5I_HSTIMER)=A0=A0=A0 +=3D timer-sun5i.o
+>>> =A0 obj-$(CONFIG_MESON6_TIMER)=A0=A0=A0 +=3D timer-meson6.o
+>>> =A0 obj-$(CONFIG_TEGRA_TIMER)=A0=A0=A0 +=3D timer-tegra20.o
+>>> +obj-$(CONFIG_TEGRA210_TIMER)=A0=A0=A0 +=3D timer-tegra210.o
+>>> =A0 obj-$(CONFIG_VT8500_TIMER)=A0=A0=A0 +=3D timer-vt8500.o
+>>> =A0 obj-$(CONFIG_NSPIRE_TIMER)=A0=A0=A0 +=3D timer-zevio.o
+>>> =A0 obj-$(CONFIG_BCM_KONA_TIMER)=A0=A0=A0 +=3D bcm_kona_timer.o
+>>> diff --git a/drivers/clocksource/timer-tegra210.c
+>>> b/drivers/clocksource/timer-tegra210.c
+>>> new file mode 100644
+>>> index 000000000000..477b164e540b
+>>> --- /dev/null
+>>> +++ b/drivers/clocksource/timer-tegra210.c
+>>> @@ -0,0 +1,268 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright (c) 2014-2019, NVIDIA CORPORATION.=A0 All rights reserved=
+.
+>>> + */
+>>> +
+>>> +#include <linux/clk.h>
+>>> +#include <linux/clockchips.h>
+>>> +#include <linux/cpu.h>
+>>> +#include <linux/cpumask.h>
+>>> +#include <linux/err.h>
+>>> +#include <linux/interrupt.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/of_address.h>
+>>> +#include <linux/of_irq.h>
+>>> +#include <linux/percpu.h>
+>>> +#include <linux/syscore_ops.h>
+>>> +
+>>> +static u32 tegra210_timer_freq;
+>>> +static void __iomem *tegra210_timer_reg_base;
+>>> +static u32 usec_config;
+>>> +
+>>> +#define TIMER_PTV=A0=A0=A0=A0=A0=A0=A0 0x0
+>>> +#define TIMER_PTV_EN=A0=A0=A0=A0=A0=A0=A0 BIT(31)
+>>> +#define TIMER_PTV_PER=A0=A0=A0=A0=A0=A0=A0 BIT(30)
+>>> +#define TIMER_PCR=A0=A0=A0=A0=A0=A0=A0 0x4
+>>> +#define TIMER_PCR_INTR_CLR=A0=A0=A0 BIT(30)
+>>> +#define TIMERUS_CNTR_1US=A0=A0=A0 0x10
+>>> +#define TIMERUS_USEC_CFG=A0=A0=A0 0x14
+>>> +
+>>> +#define TIMER10_OFFSET=A0=A0=A0=A0=A0=A0=A0 0x90
+>>> +#define TIMER10_IRQ_IDX=A0=A0=A0=A0=A0=A0=A0 10
+>>> +
+>>> +#define TIMER_FOR_CPU(cpu) (TIMER10_OFFSET + (cpu) * 8)
+>>> +#define IRQ_IDX_FOR_CPU(cpu)=A0=A0=A0 (TIMER10_IRQ_IDX + cpu)
+>>> +
+>>> +struct tegra210_clockevent {
+>>> +=A0=A0=A0 struct clock_event_device evt;
+>>> +=A0=A0=A0 char name[20];
+>>> +=A0=A0=A0 void __iomem *reg_base;
+>>> +};
+>>> +#define to_tegra_cevt(p) (container_of(p, struct
+>>> tegra210_clockevent, evt))
+>>> +
+>>> +static struct tegra210_clockevent __percpu *tegra210_evt;
+>>> +
+>>> +static int tegra210_timer_set_next_event(unsigned long cycles,
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct cl=
+ock_event_device *evt)
+>>> +{
+>>> +=A0=A0=A0 struct tegra210_clockevent *tevt;
+>>> +
+>>> +=A0=A0=A0 tevt =3D to_tegra_cevt(evt);
+>>> +=A0=A0=A0 writel(TIMER_PTV_EN |
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ((cycles > 1) ? (cycles - 1) : 0), /* n=
++1 scheme */
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tevt->reg_base + TIMER_PTV);
+>>> +
+>>> +=A0=A0=A0 return 0;
+>>> +}
+>>> +
+>>> +static inline void timer_shutdown(struct tegra210_clockevent *tevt)
+>>> +{
+>>> +=A0=A0=A0 writel(0, tevt->reg_base + TIMER_PTV);
+>>> +}
+>>> +
+>>> +static int tegra210_timer_shutdown(struct clock_event_device *evt)
+>>> +{
+>>> +=A0=A0=A0 struct tegra210_clockevent *tevt;
+>>> +
+>>> +=A0=A0=A0 tevt =3D to_tegra_cevt(evt);
+>>> +=A0=A0=A0 timer_shutdown(tevt);
+>>> +
+>>> +=A0=A0=A0 return 0;
+>>> +}
+>>> +
+>>> +static int tegra210_timer_set_periodic(struct clock_event_device *evt)
+>>> +{
+>>> +=A0=A0=A0 struct tegra210_clockevent *tevt;
+>>> +
+>>> +=A0=A0=A0 tevt =3D to_tegra_cevt(evt);
+>>> +=A0=A0=A0 writel(TIMER_PTV_EN | TIMER_PTV_PER | ((tegra210_timer_freq =
+/
+>>> HZ) - 1),
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tevt->reg_base + TIMER_PTV);
+>>> +
+>>> +=A0=A0=A0 return 0;
+>>> +}
+>>> +
+>>> +static irqreturn_t tegra210_timer_isr(int irq, void *dev_id)
+>>> +{
+>>> +=A0=A0=A0 struct tegra210_clockevent *tevt;
+>>> +
+>>> +=A0=A0=A0 tevt =3D dev_id;
+>>> +=A0=A0=A0 writel(TIMER_PCR_INTR_CLR, tevt->reg_base + TIMER_PCR);
+>>> +=A0=A0=A0 tevt->evt.event_handler(&tevt->evt);
+>>> +
+>>> +=A0=A0=A0 return IRQ_HANDLED;
+>>> +}
+>>
+>> Up to here this is a duplicate of timer-tegra20.c. And a lot of
+>> tegra210_timer_init() is the same as tegra20_timer_init() as well. Can't
+>> we unify the two drivers instead?
+>=20
+> I still prefer to remove the timer-tegra20 driver, because it didn't
+> been used for Tegra 32 bit chips for quite a long time. So currently it
+> just compiles OK, I also doubt the functionality still can achieve the
+> same what I want to do for Tegra210.
+>=20
+> My personal opinion is to remove the old and unused driver and enhance
+> the new one.
+
+Although it may not be used it is still a valid clocksource and could be
+used. Our preference is to keeping the existing timer driver and enhance
+to support T210 (unless there is some fundamental issue that would
+prevent this that I am overlooking).
+
+Cheers
+Jon
+
+--=20
+nvpublic
