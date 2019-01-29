@@ -1,141 +1,127 @@
-From: jckuo <jckuo@nvidia.com>
-Subject: Re: [PATCH 4/5] phy: tegra: xusb: Add support for power supplies
-Date: Tue, 29 Jan 2019 14:50:26 +0800
-Message-ID: <b4ca21c3-5803-acb6-27e1-44eb5a2f107e@nvidia.com>
-References: <20190125112525.10697-1-thierry.reding@gmail.com>
- <20190125112525.10697-4-thierry.reding@gmail.com>
- <786247a4-81d1-9c2e-21b5-258dc818ccb9@nvidia.com>
- <20190128080054.GB18124@ulmo>
+From: Mark Zhang <markz@nvidia.com>
+Subject: Re: [2/2] mfd: max77620: Add low battery monitor support
+Date: Tue, 29 Jan 2019 14:52:31 +0800
+Message-ID: <bd942195-4f1c-1a39-283f-610354308f45@nvidia.com>
+References: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190128080054.GB18124@ulmo>
+In-Reply-To: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: blaws05@gmail.com, lee.jones@linaro.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks Thierry.
+On 1/27/2019 10:54 PM, Billy Laws wrote:
+>  >This patch adds PMIC configurations for low-battery
+>  >monitoring by handling max77620 register CNFGGLBL1.
+>  >
+> It might be an idea to add lbhyst configuration here and support using
+> custom lbdac values to specify a different cutoff point.
 
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
+Yeah this patch doesn't have support to program LBHYST & LBDAC because
+according to our experiences, we don't have requirement to modify them
+when low battery monitor support added.
 
-On 1/28/19 4:00 PM, Thierry Reding wrote:
-> On Mon, Jan 28, 2019 at 03:22:09PM +0800, jckuo wrote:
->> Hi Thierry,
->>
->> I think any non-zero return value of
->> regulator_bulk_enable()/devm_regulator_bulk_get() means error.
->>
->> Thanks,
->>
->> JC
-> Theoretically I think only regulator_bulk_enable() could return a
-> positive value, but even so it never will in practice because all of the
-> regulator_enable() (see _regulator_enable()) calls will only ever return
-> negative error codes.
->
-> I can change this and resend if you have strong concerns about this
-> possibly missing legitimate error cases.
->
-> Thierry
->
->> On 1/25/19 7:25 PM, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Support enabling various supplies needed to provide power to the PLLs
->>> and logic used to drive the USB, PCI and SATA pads.
->>>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>>    drivers/phy/tegra/xusb.c | 34 +++++++++++++++++++++++++++++++++-
->>>    drivers/phy/tegra/xusb.h |  5 +++++
->>>    2 files changed, 38 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
->>> index 57a2d08ef6da..e510629f4f1c 100644
->>> --- a/drivers/phy/tegra/xusb.c
->>> +++ b/drivers/phy/tegra/xusb.c
->>> @@ -864,6 +864,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
->>>    	struct tegra_xusb_padctl *padctl;
->>>    	const struct of_device_id *match;
->>>    	struct resource *res;
->>> +	unsigned int i;
->>>    	int err;
->>>    	/* for backwards compatibility with old device trees */
->>> @@ -901,14 +902,38 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
->>>    		goto remove;
->>>    	}
->>> +	padctl->supplies = devm_kcalloc(&pdev->dev, padctl->soc->num_supplies,
->>> +					sizeof(*padctl->supplies), GFP_KERNEL);
->>> +	if (!padctl->supplies) {
->>> +		err = -ENOMEM;
->>> +		goto remove;
->>> +	}
->>> +
->>> +	for (i = 0; i < padctl->soc->num_supplies; i++)
->>> +		padctl->supplies[i].supply = padctl->soc->supply_names[i];
->>> +
->>> +	err = devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
->>> +				      padctl->supplies);
->>> +	if (err < 0) {
->>> +		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
->>> +		goto remove;
->>> +	}
->>> +
->>>    	err = reset_control_deassert(padctl->rst);
->>>    	if (err < 0)
->>>    		goto remove;
->>> +	err = regulator_bulk_enable(padctl->soc->num_supplies,
->>> +				    padctl->supplies);
->>> +	if (err < 0) {
->>> +		dev_err(&pdev->dev, "failed to enable supplies: %d\n", err);
->>> +		goto reset;
->>> +	}
->>> +
->>>    	err = tegra_xusb_setup_pads(padctl);
->>>    	if (err < 0) {
->>>    		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
->>> -		goto reset;
->>> +		goto power_down;
->>>    	}
->>>    	err = tegra_xusb_setup_ports(padctl);
->>> @@ -921,6 +946,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
->>>    remove_pads:
->>>    	tegra_xusb_remove_pads(padctl);
->>> +power_down:
->>> +	regulator_bulk_disable(padctl->soc->num_supplies, padctl->supplies);
->>>    reset:
->>>    	reset_control_assert(padctl->rst);
->>>    remove:
->>> @@ -936,6 +963,11 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
->>>    	tegra_xusb_remove_ports(padctl);
->>>    	tegra_xusb_remove_pads(padctl);
->>> +	err = regulator_bulk_disable(padctl->soc->num_supplies,
->>> +				     padctl->supplies);
->>> +	if (err < 0)
->>> +		dev_err(&pdev->dev, "failed to disable supplies: %d\n", err);
->>> +
->>>    	err = reset_control_assert(padctl->rst);
->>>    	if (err < 0)
->>>    		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
->>> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
->>> index bb60fc09c752..5d5d22f6cb41 100644
->>> --- a/drivers/phy/tegra/xusb.h
->>> +++ b/drivers/phy/tegra/xusb.h
->>> @@ -370,6 +370,9 @@ struct tegra_xusb_padctl_soc {
->>>    	} ports;
->>>    	const struct tegra_xusb_padctl_ops *ops;
->>> +
->>> +	const char * const *supply_names;
->>> +	unsigned int num_supplies;
->>>    };
->>>    struct tegra_xusb_padctl {
->>> @@ -393,6 +396,8 @@ struct tegra_xusb_padctl {
->>>    	unsigned int enable;
->>>    	struct clk *clk;
->>> +
->>> +	struct regulator_bulk_data *supplies;
->>>    };
->>>    static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 value,
+I think we can create a new patch to support these 2 fields in the future
+when we really need them. Or you can create a patch if you have requirement
+for them, is this OK to you Billy?
+
+Mark
+
+>=20
+> See: https://datasheetspdf.com/pdf-file/924230/Maxim/MAX8698C/1=C2=A0 pg =
+46
+>  >Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>  >Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+>  >Signed-off-by: Mark Zhang <markz@nvidia.com>
+>  >---
+>  > drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
+>  > 1 file changed, 56 insertions(+), 1 deletion(-)
+>  >
+>  >diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+>  >index f58143103185..9e50d145afd8 100644
+>  >--- a/drivers/mfd/max77620.c
+>  >+++ b/drivers/mfd/max77620.c
+>  >@@ -474,6 +474,57 @@ static int=20
+> max77620_init_backup_battery_charging(struct max77620_chip *chip)
+>  >=C2=A0 return ret;
+>  > }
+>  >
+>  >+static int max77620_init_low_battery_monitor(struct max77620_chip *chi=
+p)
+>  >+{
+>  >+ struct device *dev =3D chip->dev;
+>  >+ struct device_node *np;
+>  >+ bool pval;
+>  >+ u8 mask =3D 0;
+>  >+ u8 val =3D 0;
+>  >+ int ret;
+>  >+
+>  >+ np =3D of_get_child_by_name(dev->of_node, "low-battery-monitor");
+>  >+ if (!np) {
+>  >+ dev_info(dev, "Low battery monitoring support disabled\n");
+>  >+ return 0;
+>  >+ }
+>  >+
+>  >+ pval =3D of_property_read_bool(np, "maxim,low-battery-dac-enable");
+>  >+ if (pval) {
+>  >+ mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
+>  >+ val |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
+>  >+ }
+>  >+
+>  >+ pval =3D of_property_read_bool(np, "maxim,low-battery-dac-disable");
+>  >+ if (pval)
+>  >+ mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
+>  >+
+>  >+ pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-enable=
+");
+>  >+ if (pval) {
+>  >+ mask |=3D MAX77620_CNFGGLBL1_MPPLD;
+>  >+ val |=3D MAX77620_CNFGGLBL1_MPPLD;
+>  >+ }
+>  >+
+>  >+ pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-disabl=
+e");
+>  >+ if (pval)
+>  >+ mask |=3D MAX77620_CNFGGLBL1_MPPLD;
+>  >+
+>  >+ pval =3D of_property_read_bool(np, "maxim,low-battery-reset-enable");
+>  >+ if (pval) {
+>  >+ mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
+>  >+ val |=3D MAX77620_CNFGGLBL1_LBRSTEN;
+>  >+ }
+>  >+
+>  >+ pval =3D of_property_read_bool(np, "maxim,low-battery-reset-disable")=
+;
+>  >+ if (pval)
+>  >+ mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
+>  >+
+>  >+ ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, =
+val);
+>  >+ if (ret < 0)
+>  >+ dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
+>  >+ return ret;
+>  >+}
+>  >+
+>  > static int max77620_read_es_version(struct max77620_chip *chip)
+>  > {
+>  >=C2=A0 unsigned int val;
+>  >@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *clien=
+t,
+>  >=C2=A0 if (ret < 0)
+>  >=C2=A0 return ret;
+>  >
+>  >- ret =3D=C2=A0 devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+>  >+ ret =3D max77620_init_low_battery_monitor(chip);
+>  >+ if (ret < 0)
+>  >+ return ret;
+>  >+
+>  >+ ret =3D devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+>  >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mfd_cells, n_mfd_cells, NULL, 0,
+>  >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap_irq_get_domain(chip->top_irq_data=
+));
+>  >=C2=A0 if (ret < 0) {
+>=20
