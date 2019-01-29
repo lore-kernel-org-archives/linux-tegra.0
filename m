@@ -1,92 +1,142 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
-Date: Tue, 29 Jan 2019 14:21:40 +0300
-Message-ID: <20190129142140.5ebdd9f1@dimatab>
-References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
-        <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
-        <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
-        <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
-        <c0b36535-6767-7327-5dc5-612e6957a769@gmail.com>
-        <BYAPR12MB339837E896774531B0D11A98C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
-        <2f3cab66-7424-1b33-976f-826877623726@gmail.com>
-        <20190129101505.GA28850@ulmo>
-        <20190129101652.GB28850@ulmo>
+From: Billy Laws <blaws05@gmail.com>
+Subject: Re: [2/2] mfd: max77620: Add low battery monitor support
+Date: Tue, 29 Jan 2019 13:33:46 +0000
+Message-ID: <CAFUUQHN=mge+RFWssYJDc9PiVGo5XtcZLwjek-xNbxmFX0tPUA@mail.gmail.com>
+References: <3587c682-e1db-5140-fd8e-13c46d882dd3@gmail.com>
+ <bd942195-4f1c-1a39-283f-610354308f45@nvidia.com> <CAFUUQHM88kVh0ov1G30Sz9WQKJRY4p78hBMporL1xU=aY_tNCA@mail.gmail.com>
+ <e1ebcd02-2d25-a6b7-081b-578878be15b4@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129101652.GB28850@ulmo>
+In-Reply-To: <e1ebcd02-2d25-a6b7-081b-578878be15b4@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Mark Zhang <markz@nvidia.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-=D0=92 Tue, 29 Jan 2019 11:16:52 +0100
-Thierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+It does, see this article
+https://blog.quendi.moe/2018/07/03/en-debugging-nintendo-switch-linux-power-management-battery-desync-edition/
 
-> On Tue, Jan 29, 2019 at 11:15:05AM +0100, Thierry Reding wrote:
-> > On Tue, Jan 29, 2019 at 01:27:09AM +0300, Dmitry Osipenko wrote: =20
-> > > 29.01.2019 1:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82: =
-=20
-> > > >=20
-> > > >  =20
-> > > >>>>> Update I2C transfer timeout based on transfer bytes and I2C
-> > > >>>>> bus rate to allow enough time during max transfer size
-> > > >>>>> based on the speed. =20
-> > > >>>>
-> > > >>>> Could it be that I2C device is busy and just slowly handling
-> > > >>>> the transfer requests? Maybe better to leave the timeout
-> > > >>>> as-is and assume the worst case scenario?=20
-> > > >>> This change includes min transfer time out of 100ms in
-> > > >>> addition to computed timeout based on transfer bytes and
-> > > >>> speed which can account in cases of slave devices running at
-> > > >>> slower speed. Also Tegra I2C Master supports Clock stretching
-> > > >>> by the slave. =20
-> > > >>
-> > > >> Okay, I suppose in reality this shouldn't break anything.
-> > > >>
-> > > >> Please explain what benefits this change brings. Does it fix
-> > > >> or improve anything? The commit message only describes changes
-> > > >> done in the patch and has no word on justification of those
-> > > >> changes. Transfer timeout is an extreme case that doesn't
-> > > >> happen often and > > when it happens, usually only the fact of
-> > > >> timeout matters. If there is no real value in shortening of
-> > > >> the timeout, why bother then? =20
-> > > >=20
-> > > > Original transfer timeout in existing driver is 1Sec and
-> > > > incases of transfer size more than 10Kbytes at STD bus rate,
-> > > > timeout is not sufficient. Also Tegra194 platform supports max
-> > > > of 64K bytes of transfer and to allow full transfer size at
-> > > > lowest bus rate it takes almost ~5.8 Sec. In cases if large
-> > > > transfer at low bus rates 1 Sec timeout is not enough and in
-> > > > those cases transfers will timeout before it waits for complete
-> > > > transfer to happen.
-> > > >=20
-> > > > So this patch uses transfer time based on transfer bytes and
-> > > > bus rate.=20
-> > >=20
-> > > Please add that to the commit message.
-> > >=20
-> > > And then seems you also need to set I2C adapter timeout to a some
-> > > larger value. Currently Tegra's I2C doesn't explicitly specify the
-> > > "adapter.timeout" and I2C core sets it to 1 second if it is 0. =20
-> >=20
-> > I don't think adapter.timeout is the same thing as the timeout that
-> > we're dealing with here. adapter.timeout is only used as a way to
-> > retry on arbitration lost conditions. So, as far as I understand,
-> > if we try to send a message to an I2C slave and we loose
-> > arbitration, we'll keep retrying for one second before finally
-> > failing. I wouldn't expect these arbitration lost conditions to
-> > happen right in the middle of a transfer, but rather at the
-> > beginning already, so I'm not sure arbitration could even be lost
-> > after, say, 2 seconds into a very large transfer.
-> >=20
-> > All of that said, it seems like i2c-tegra doesn't respect the
-> > protocol for making this arbitration loss retry work in the first
-> > place. We should be returning -EAGAIN if we detect arbitration
-> > loss, but I don't see that we ever return that. We should probably
-> > fix that in another patch. =20
->=20
-> Scratch that. Sowjanya's "bus clear" patch already takes care of that.
 
-I'd also suggest to collect those I2C patches into a single patchset.
+On Tue, Jan 29, 2019 at 9:03 AM Mark Zhang <markz@nvidia.com> wrote:
+>
+> On 1/29/2019 3:36 PM, Billy Laws wrote:
+> > Sure, that's fine with me, will send then this gets accepted. Two
+> > other things: you should probably set the reg to 0 if the property
+> > isn't specified as regmap_add_irqchip sets it to 0xff (basically all
+> > enabled on highest limit), and you haven't updated the dt-bindings.
+>
+> Billy, v2 is out, dt-bindings patches are added.
+> But after a second thought, I don't think regmap_add_irqchip might set
+> registers to 0xff. I mean, for 2 registers which this patch set touches,
+> they're not IRQ registers(mask/status/...), so regmap_add_irqchip should
+> not touch them so I didn't make changes to driver codes in v2.
+>
+> Mark
+>
+> >
+> > On Tue, Jan 29, 2019 at 6:52 AM Mark Zhang <markz@nvidia.com> wrote:
+> >>
+> >> On 1/27/2019 10:54 PM, Billy Laws wrote:
+> >>>  >This patch adds PMIC configurations for low-battery
+> >>>  >monitoring by handling max77620 register CNFGGLBL1.
+> >>>  >
+> >>> It might be an idea to add lbhyst configuration here and support using
+> >>> custom lbdac values to specify a different cutoff point.
+> >>
+> >> Yeah this patch doesn't have support to program LBHYST & LBDAC because
+> >> according to our experiences, we don't have requirement to modify them
+> >> when low battery monitor support added.
+> >>
+> >> I think we can create a new patch to support these 2 fields in the future
+> >> when we really need them. Or you can create a patch if you have requirement
+> >> for them, is this OK to you Billy?
+> >>
+> >> Mark
+> >>
+> >>>
+> >>> See: https://datasheetspdf.com/pdf-file/924230/Maxim/MAX8698C/1  pg 46
+> >>>  >Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> >>>  >Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+> >>>  >Signed-off-by: Mark Zhang <markz@nvidia.com>
+> >>>  >---
+> >>>  > drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
+> >>>  > 1 file changed, 56 insertions(+), 1 deletion(-)
+> >>>  >
+> >>>  >diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+> >>>  >index f58143103185..9e50d145afd8 100644
+> >>>  >--- a/drivers/mfd/max77620.c
+> >>>  >+++ b/drivers/mfd/max77620.c
+> >>>  >@@ -474,6 +474,57 @@ static int
+> >>> max77620_init_backup_battery_charging(struct max77620_chip *chip)
+> >>>  >  return ret;
+> >>>  > }
+> >>>  >
+> >>>  >+static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
+> >>>  >+{
+> >>>  >+ struct device *dev = chip->dev;
+> >>>  >+ struct device_node *np;
+> >>>  >+ bool pval;
+> >>>  >+ u8 mask = 0;
+> >>>  >+ u8 val = 0;
+> >>>  >+ int ret;
+> >>>  >+
+> >>>  >+ np = of_get_child_by_name(dev->of_node, "low-battery-monitor");
+> >>>  >+ if (!np) {
+> >>>  >+ dev_info(dev, "Low battery monitoring support disabled\n");
+> >>>  >+ return 0;
+> >>>  >+ }
+> >>>  >+
+> >>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-enable");
+> >>>  >+ if (pval) {
+> >>>  >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
+> >>>  >+ val |= MAX77620_CNFGGLBL1_LBDAC_EN;
+> >>>  >+ }
+> >>>  >+
+> >>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-dac-disable");
+> >>>  >+ if (pval)
+> >>>  >+ mask |= MAX77620_CNFGGLBL1_LBDAC_EN;
+> >>>  >+
+> >>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
+> >>>  >+ if (pval) {
+> >>>  >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
+> >>>  >+ val |= MAX77620_CNFGGLBL1_MPPLD;
+> >>>  >+ }
+> >>>  >+
+> >>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
+> >>>  >+ if (pval)
+> >>>  >+ mask |= MAX77620_CNFGGLBL1_MPPLD;
+> >>>  >+
+> >>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-enable");
+> >>>  >+ if (pval) {
+> >>>  >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
+> >>>  >+ val |= MAX77620_CNFGGLBL1_LBRSTEN;
+> >>>  >+ }
+> >>>  >+
+> >>>  >+ pval = of_property_read_bool(np, "maxim,low-battery-reset-disable");
+> >>>  >+ if (pval)
+> >>>  >+ mask |= MAX77620_CNFGGLBL1_LBRSTEN;
+> >>>  >+
+> >>>  >+ ret = regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val);
+> >>>  >+ if (ret < 0)
+> >>>  >+ dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
+> >>>  >+ return ret;
+> >>>  >+}
+> >>>  >+
+> >>>  > static int max77620_read_es_version(struct max77620_chip *chip)
+> >>>  > {
+> >>>  >  unsigned int val;
+> >>>  >@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
+> >>>  >  if (ret < 0)
+> >>>  >  return ret;
+> >>>  >
+> >>>  >- ret =  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+> >>>  >+ ret = max77620_init_low_battery_monitor(chip);
+> >>>  >+ if (ret < 0)
+> >>>  >+ return ret;
+> >>>  >+
+> >>>  >+ ret = devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+> >>>  >      mfd_cells, n_mfd_cells, NULL, 0,
+> >>>  >      regmap_irq_get_domain(chip->top_irq_data));
+> >>>  >  if (ret < 0) {
+> >>>
