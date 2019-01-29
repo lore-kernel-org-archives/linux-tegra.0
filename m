@@ -1,36 +1,31 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
-Date: Tue, 29 Jan 2019 10:41:55 +0200
-Message-ID: <20190129084155.GX7714@pdeschrijver-desktop.Nvidia.com>
-References: <20190128091815.7040-1-josephl@nvidia.com>
- <20190128091815.7040-3-josephl@nvidia.com>
- <20190128150908.GB31317@ulmo>
+From: Mark Zhang <markz@nvidia.com>
+Subject: [PATCH v2 0/4] Add max77620 charging & low battery support
+Date: Tue, 29 Jan 2019 16:55:27 +0800
+Message-ID: <20190129085531.32364-1-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190128150908.GB31317@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Joseph Lo <josephl@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+To: lee.jones@linaro.org, blaws05@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:09:08PM +0100, Thierry Reding wrote:
+This patch set adds support for max77620 backup battery charging and
+low battery monitoring.
 
-...
+Changes in v2:
+- Add devicetree binding documentation
 
-> 
-> Up to here this is a duplicate of timer-tegra20.c. And a lot of
-> tegra210_timer_init() is the same as tegra20_timer_init() as well. Can't
-> we unify the two drivers instead?
-> 
-> The power cycle restrictions of the architected timer, do they not apply
-> to chips earlier than Tegra210 either? So don't we need all of these
-> additional features on the timer-tegra20.c driver as well? If so that
+Mark Zhang (4):
+  mfd: max77620: Add backup battery charger support
+  mfd: max77620: add documentation for backup battery charging
+  mfd: max77620: Add low battery monitor support
+  mfd: max77620: add documentation for low battery monitoring
 
-No. Chips prior to Tegra114 do not have an arch timer and the arch timer
-does work correctly on Cortex-A15 so Tegra114 and Tegra124 can use it.
-It's broken on Cortex-A57 though, so we can't use it as a wakeup source
-on Tegra210.
+ .../devicetree/bindings/mfd/max77620.txt      |  34 +++++
+ drivers/mfd/max77620.c                        | 137 +++++++++++++++++-
+ 2 files changed, 170 insertions(+), 1 deletion(-)
 
-Peter.
+--=20
+2.19.2
