@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 3/6] arm64: dts: tegra210: fix timer node
-Date: Tue, 29 Jan 2019 17:28:20 +0800
-Message-ID: <20190129092823.24983-4-josephl@nvidia.com>
+Subject: [PATCH V3 4/6] arm64: dts: tegra210: add CPU idle states properties
+Date: Tue, 29 Jan 2019 17:28:21 +0800
+Message-ID: <20190129092823.24983-5-josephl@nvidia.com>
 References: <20190129092823.24983-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,48 +21,70 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix timer node to make it work with Tegra210 timer driver.
+Add idle states properties for generic ARM CPU idle driver. This
+includes a C7 state which is the power down state of CPU cores.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v3:
  * no change
 v2:
- * list all the IRQs per each timer channels 0 through 13
- * remove compatible string of "nvidia,tegra30-timer"
+ * add entry-latency-us and exit-latency-us properties
+
+Note:
+This dt patch depends on the DT changes in below series.
+http://patchwork.ozlabs.org/project/linux-tegra/list/?series=84380
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index b5858b5ea052..2b387364afc3 100644
+index 2b387364afc3..75534692604c 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -384,14 +384,22 @@
+@@ -1318,24 +1318,43 @@
+ 				 <&dfll>;
+ 			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
+ 			clock-latency = <300000>;
++			cpu-idle-states = <&C7>;
+ 		};
+ 
+ 		cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <1>;
++			cpu-idle-states = <&C7>;
+ 		};
+ 
+ 		cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <2>;
++			cpu-idle-states = <&C7>;
+ 		};
+ 
+ 		cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <3>;
++			cpu-idle-states = <&C7>;
++		};
++
++		idle-states {
++			entry-method = "psci";
++
++			C7: c7 {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x40000007>;
++				entry-latency-us = <250>;
++				exit-latency-us = <100>;
++				min-residency-us = <1000>;
++				wakeup-latency-us = <130>;
++				idle-state-name = "c7-cpu-powergated";
++				status = "disabled";
++			};
+ 		};
  	};
  
- 	timer@60005000 {
--		compatible = "nvidia,tegra210-timer", "nvidia,tegra20-timer";
-+		compatible = "nvidia,tegra210-timer";
- 		reg = <0x0 0x60005000 0x0 0x400>;
--		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA210_CLK_TIMER>;
- 		clock-names = "timer";
- 	};
 -- 
 2.20.1
