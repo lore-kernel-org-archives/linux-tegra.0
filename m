@@ -1,52 +1,32 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.9 00/44] 4.9.154-stable review
-Date: Wed, 30 Jan 2019 12:50:09 +0000
-Message-ID: <f2d2a32f-68c9-8bfe-54c7-93b617ee2eb3@nvidia.com>
-References: <20190129113139.826927690@linuxfoundation.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V11 1/4] dt-bindings: mmc: Add supports-cqe property
+Date: Wed, 30 Jan 2019 09:51:56 -0600
+Message-ID: <20190130155156.GA31692@bogus>
+References: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com, chunyan.zhang@unisoc.com, thierry.reding@gmail.com, jonathanh@nvidia.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 29/01/2019 11:35, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.154 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, 23 Jan 2019 11:30:51 -0800, Sowjanya Komatineni wrote:
+> Add supports-cqe optional property for MMC hosts.
 > 
-> Responses should be made by Thu Jan 31 11:31:22 UTC 2019.
-> Anything received after that time might be too late.
+> This property is used to identify the specific host controller
+> supporting command queue.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.154-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  [V11]: Same as V10
+>  [V10]: This patch version moves supports-cqe property from vendor
+> 	specific MMC property to common MMC property.
 > 
-> thanks,
+>  Documentation/devicetree/bindings/mmc/mmc.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> greg k-h
-I see you have posted a rc2, but for rc1 all tests are passing for
-Tegra. Should have results for rc2 tonight.
 
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
-
-Linux version:	4.9.154-rc1-g5c2f707
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+Reviewed-by: Rob Herring <robh@kernel.org>
