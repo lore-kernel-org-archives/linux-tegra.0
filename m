@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V7 4/5] i2c: tegra: Update transfer timeout
-Date: Wed, 30 Jan 2019 08:01:35 -0800
-Message-ID: <1548864096-20974-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V7 2/5] i2c: tegra: Add Bus Clear Master Support
+Date: Wed, 30 Jan 2019 08:01:33 -0800
+Message-ID: <1548864096-20974-2-git-send-email-skomatineni@nvidia.com>
 References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,90 +12,205 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohamm
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-max of 4K bytes of transfer per packet.
+Bus clear feature of tegra i2c controller helps to recover from
+bus hang when i2c master loses the bus arbitration due to the
+slave device holding SDA LOW continuously for some unknown reasons.
 
-one sec timeout is not enough for transfers more than 10K bytes
-at STD bus rate.
+Per I2C specification, the device that held the bus LOW should
+release it within 9 clock pulses.
 
-This patch updates I2C transfer timeout based on the transfer size
-and I2C bus rate to allow enough time during max transfer size at
-lower bus speed.
+During bus clear operation, Tegra I2C controller sends 9 clock
+pulses and terminates the transaction with STOP condition.
+Upon successful bus clear operation, bus goes to idle state and
+driver retries the transaction.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- [V5/V6/V7] : Same as V4
- [V4] : V4 series includes bus clear support and this patch is updated with
-	fixed timeout of 1sec for bus clear operation.
- [V3] : Same as V2
- [V2] : Added this patch in V2 series to allow enough time for data transfer
-	to happen.
-	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-	takes argument with this patch.
+ [V5/V6/V7]: Same as V4
+ [V4]: Added I2C Bus Clear support patch to this version of series.
 
- drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 71 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b30b5da5ce6b..623bf4f275cd 100644
+index 15806c984859..c4892a47a483 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -25,7 +25,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
+@@ -51,6 +51,7 @@
+ #define I2C_FIFO_STATUS_RX_SHIFT		0
+ #define I2C_INT_MASK				0x064
+ #define I2C_INT_STATUS				0x068
++#define I2C_INT_BUS_CLR_DONE			BIT(11)
+ #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
+ #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
+ #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
+@@ -93,6 +94,15 @@
+ #define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
  
--#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-+#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
- #define BYTES_PER_FIFO_WORD 4
- 
- #define I2C_CNFG				0x000
-@@ -901,8 +901,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
- 		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
--		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--							TEGRA_I2C_TIMEOUT);
-+		time_left = wait_for_completion_timeout(
-+						&i2c_dev->msg_complete,
-+						TEGRA_I2C_TIMEOUT(1000));
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "timed out for bus clear\n");
- 			return -ETIMEDOUT;
-@@ -929,6 +930,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 *buffer = 0;
- 	int ret = 0;
- 	bool dma = false;
-+	u16 xfer_time = 100;
- 
- 	if (msg->flags & I2C_M_RD)
- 		xfer_size = msg->len;
-@@ -936,6 +938,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
- 
- 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-+	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
-+					i2c_dev->bus_clk_rate);
++#define I2C_BUS_CLEAR_CNFG			0x084
++#define I2C_BC_SCLK_THRESHOLD			9
++#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
++#define I2C_BC_STOP_COND			BIT(2)
++#define I2C_BC_TERMINATE			BIT(1)
++#define I2C_BC_ENABLE				BIT(0)
++#define I2C_BUS_CLEAR_STATUS			0x088
++#define I2C_BC_STATUS				BIT(0)
 +
- 	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
- 	if (dma) {
- 		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
-@@ -1072,7 +1077,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (dma) {
- 		time_left = wait_for_completion_timeout(
- 						&i2c_dev->dma_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
+ #define I2C_CONFIG_LOAD				0x08C
+ #define I2C_MSTR_CONFIG_LOAD			BIT(0)
+ #define I2C_SLV_CONFIG_LOAD			BIT(1)
+@@ -152,6 +162,8 @@ enum msg_end_type {
+  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
+  *		provides additional features and allows for longer messages to
+  *		be transferred in one go.
++ * @supports_bus_clear: Bus Clear support to recover from bus hang during
++ *		SDA stuck low from device for some unknown reasons.
+  */
+ struct tegra_i2c_hw_feature {
+ 	bool has_continue_xfer_support;
+@@ -164,6 +176,7 @@ struct tegra_i2c_hw_feature {
+ 	bool has_multi_master_mode;
+ 	bool has_slcg_override_reg;
+ 	bool has_mst_fifo;
++	bool supports_bus_clear;
+ };
  
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
-@@ -1095,7 +1100,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ /**
+@@ -636,6 +649,12 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 			i2c_dev->msg_err |= I2C_ERR_ARBITRATION_LOST;
+ 		goto err;
  	}
++	/*
++	 * I2C transfer is terminated during the bus clear so skip
++	 * processing the other interrupts.
++	 */
++	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
++		goto err;
  
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
+ 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+ 		if (i2c_dev->msg_buf_remaining)
+@@ -665,6 +684,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+ 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
+ 		I2C_INT_RX_FIFO_DATA_REQ);
++	if (i2c_dev->hw->supports_bus_clear)
++		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+ 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+ 	if (i2c_dev->is_dvc)
+ 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+@@ -675,6 +696,43 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
  
- 	if (time_left == 0) {
++static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
++{
++	int err;
++	unsigned long time_left;
++	u32 reg;
++
++	if (i2c_dev->hw->supports_bus_clear) {
++		reinit_completion(&i2c_dev->msg_complete);
++		reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
++		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		if (i2c_dev->hw->has_config_load_reg) {
++			err = tegra_i2c_wait_for_config_load(i2c_dev);
++			if (err)
++				return err;
++		}
++		reg |= I2C_BC_ENABLE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
++
++		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
++							TEGRA_I2C_TIMEOUT);
++		if (time_left == 0) {
++			dev_err(i2c_dev->dev, "timed out for bus clear\n");
++			return -ETIMEDOUT;
++		}
++		reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
++		if (!(reg & I2C_BC_STATUS)) {
++			dev_err(i2c_dev->dev,
++				"Un-recovered arbitration lost\n");
++			return -EIO;
++		}
++	}
++
++	return -EAGAIN;
++}
++
+ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	struct i2c_msg *msg, enum msg_end_type end_state)
+ {
+@@ -756,6 +814,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		return 0;
+ 
+ 	tegra_i2c_init(i2c_dev);
++	/* start recovery upon arbitration loss in single master mode */
++	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
++		if (!i2c_dev->is_multimaster_mode)
++			return tegra_i2c_issue_bus_clear(i2c_dev);
++		return -EAGAIN;
++	}
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
+ 			return 0;
+@@ -845,6 +909,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -858,6 +923,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -871,6 +937,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -884,6 +951,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -897,6 +965,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -910,6 +979,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = true,
++	.supports_bus_clear = true,
+ };
+ 
+ /* Match table for of_platform binding */
+@@ -962,6 +1032,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->div_clk = div_clk;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+ 	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
++	i2c_dev->adapter.retries = 1;
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
 -- 
 2.7.4
