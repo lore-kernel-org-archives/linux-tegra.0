@@ -1,101 +1,41 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V6 4/5] i2c: tegra: Update transfer timeout
-Date: Tue, 29 Jan 2019 19:13:32 -0800
-Message-ID: <1548818013-21226-4-git-send-email-skomatineni@nvidia.com>
-References: <1548818013-21226-1-git-send-email-skomatineni@nvidia.com>
+Subject: RE: [PATCH V5 3/5] i2c: tegra: Add DMA Support
+Date: Wed, 30 Jan 2019 04:15:33 +0000
+Message-ID: <BYAPR12MB339812A2E876B76E95828EA1C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
+        <1548803771-13424-3-git-send-email-skomatineni@nvidia.com>
+ <20190130044214.65991195@dimatab>
+ <BYAPR12MB339850895826781B4E6AF028C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548818013-21226-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <BYAPR12MB339850895826781B4E6AF028C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-max of 4K bytes of transfer per packet.
-
-one sec timeout is not enough for transfers more than 10K bytes
-at STD bus rate.
-
-This patch updates I2C transfer timeout based on the transfer size
-and I2C bus rate to allow enough time during max transfer size at
-lower bus speed.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V5/V6] : Same as V4
- [V4] : V4 series includes bus clear support and this patch is updated with
-	fixed timeout of 1sec for bus clear operation.
- [V3] : Same as V2
- [V2] : Added this patch in V2 series to allow enough time for data transfer
-	to happen.
-	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-	takes argument with this patch.
-
- drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b30b5da5ce6b..623bf4f275cd 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -25,7 +25,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- 
--#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-+#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
- #define BYTES_PER_FIFO_WORD 4
- 
- #define I2C_CNFG				0x000
-@@ -901,8 +901,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
- 		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
--		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--							TEGRA_I2C_TIMEOUT);
-+		time_left = wait_for_completion_timeout(
-+						&i2c_dev->msg_complete,
-+						TEGRA_I2C_TIMEOUT(1000));
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "timed out for bus clear\n");
- 			return -ETIMEDOUT;
-@@ -929,6 +930,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 *buffer = 0;
- 	int ret = 0;
- 	bool dma = false;
-+	u16 xfer_time = 100;
- 
- 	if (msg->flags & I2C_M_RD)
- 		xfer_size = msg->len;
-@@ -936,6 +938,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
- 
- 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-+	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
-+					i2c_dev->bus_clk_rate);
-+
- 	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
- 	if (dma) {
- 		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
-@@ -1072,7 +1077,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (dma) {
- 		time_left = wait_for_completion_timeout(
- 						&i2c_dev->dma_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
- 
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
-@@ -1095,7 +1100,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	}
- 
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
- 
- 	if (time_left == 0) {
--- 
-2.7.4
+PiA+IENvdWxkIHlvdSBwbGVhc2UgdGVsbCB3aGV0aGVyIHlvdSBtaXNzZWQgbXkgY29tbWVudHMg
+dG8gVjMgWzBdIG9yIGNob3NlIHRvIGlnbm9yZSB0aGVtPyBJZiB0aGUgZm9ybWVyLCB0aGVuIEkn
+ZCB3YW50IHRvIGdldCBhbnN3ZXJzIHRvIHRob3NlIHF1ZXN0aW9ucyBhbmQgY29tbWVudHMuIEkn
+bGwgc3RvcCBoZXJlIGZvciBub3cuDQo+ID4gDQo+ID4gWzBdIGh0dHBzOi8vcGF0Y2h3b3JrLm96
+bGFicy5vcmcvcGF0Y2gvMTAzMTM3OS8NCj4NCj4gU29tZWhvdyBtaXNzZWQgdGhvc2UgZnJvbSBt
+dWx0aXBsZSBjb21tZW50cy4gV2lsbCBnbyB0aHJ1IGFuZCByZXNwb25kIGJhY2suDQoNClY2IGlu
+Y2x1ZGVzIGZlZWRiYWNrIGNoYW5nZXMuIFdhbnQgdG8gY2xhcmlmeSBvbiBmZXcgZmVlZGJhY2sg
+cG9pbnRzDQoNCi0gQUxJR04gaXMgdXNlZCBmb3IgNCBieXRlIGJvdW5kYXJ5IHRvIHVzZSB3aXRo
+IERNQSBidXQgZXh0cmEgYnl0ZXMgZG9lc27igJl0IGdldCB0cmFuc2ZlcnJlZCBvdmVyIEkyQyBh
+cyBJMkMgY29udHJvbGxlciB0cmFuc2ZlciBieXRlcyBiYXNlZCBvbiBzaXplIHNwZWNpZmllZCBp
+biB0aGUgcGFja2V0IGhlYWRlci4NCiAgRE1BIGxlbmd0aCBhbmQgbWVtb3J5IGFkZHJlc3MgbmVl
+ZCB0byBiZSA0IGJ5dGUgYm91bmRhcnkuDQoNCi0gUlggY2hhbm5lbCByZWxlYXNpbmcgd2hlbiBU
+WCBpbml0IGZhaWxzPw0KICBGb3IgSTJDIGJvdGggVFggYW5kIFJYIGRvZXNu4oCZdCBoYXBwZW4g
+aW4gc2FtZSB0cmFuc2FjdGlvbiBhbmQgbm8gZGVwZW5kZW5jeS4gU28gaWYgY2hhbm5lbCByZXF1
+ZXN0ICYgYnVmZmVyIGFsbG9jYXRpb24gZmFpbHMgb3RoZXIgY2hhbm5lbCBpZiBzdWNjZXNzZnVs
+bHkgY3JlYXRlZCBjYW4gc3RpbGwgYmUgdXNlZCBmb3IgdHJhbnNmZXIuDQoNCi0gZG1hX2J1cnN0
+IDwgOCBuZWdhdGl2ZWx5IGFmZmVjdHMgdHJhbnNmZXIgZWZmaWNpZW5jeT8gUGVyZm9ybWFuY2Ug
+c3RhdHMgZm9yIERNQSBWcyBQSU8gbW9kZS4NClRlc3RlZCB3aXRoIDI1NiBieXRlcyBvZiB0cmFu
+c2ZlciBhbmQgRE1BIFZzIFBJTyBtb2RlIHRyYW5zZmVyIHJhdGUgaXMgYWxtb3N0IHNhbWUuDQpC
+dXQgdGhlIG1haW4gcmVhc29uIGZvciBhZGRpbmcgRE1BIG1vZGUgaXMgdG8gYWRkcmVzcyBjb3Vw
+bGUgb2YgY2FzZXMgbWVudGlvbmVkIGVhcmxpZXIgYW5kIG5vdCBtYWlubHkgZnJvbSB0aGUgdHJh
+bnNmZXIgcGVyZm9ybWFuY2UgcGVyc3BlY3RpdmUuIA0KDQoNCg==
