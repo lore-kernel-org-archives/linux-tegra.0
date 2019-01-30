@@ -1,101 +1,50 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 4/5] i2c: tegra: Update transfer timeout
-Date: Tue, 29 Jan 2019 15:16:10 -0800
-Message-ID: <1548803771-13424-4-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V5 3/5] i2c: tegra: Add DMA Support
+Date: Wed, 30 Jan 2019 04:42:14 +0300
+Message-ID: <20190130044214.65991195@dimatab>
 References: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
+        <1548803771-13424-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1548803771-13424-3-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-max of 4K bytes of transfer per packet.
+=D0=92 Tue, 29 Jan 2019 15:16:09 -0800
+Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-one sec timeout is not enough for transfers more than 10K bytes
-at STD bus rate.
+> This patch adds DMA support for Tegra I2C.
+>=20
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
+>=20
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction. This adds delay between data bytes of the same
+> transfer when CPU is fully loaded and some slave devices has
+> internal timeout for no bus activity and stops transaction to
+> avoid bus hang. DMA mode is helpful in such cases.
+>=20
+> DMA mode is also helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V5] : Same as V4
+>  [V4] : Updated to allocate DMA buffer only when DMA mode.
+> 	Updated to fall back to PIO mode when DMA channel request or
+> 	buffer allocation fails.
+>  [V3] : Updated without additional buffer allocation.
+>  [V2] : Updated based on V1 review feedback along with code cleanup
+> for proper implementation of DMA.
 
-This patch updates I2C transfer timeout based on the transfer size
-and I2C bus rate to allow enough time during max transfer size at
-lower bus speed.
+Could you please tell whether you missed my comments to V3 [0] or chose
+to ignore them? If the former, then I'd want to get answers to those
+questions and comments. I'll stop here for now.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V5] : Same as V4
- [V4] : V4 series includes bus clear support and this patch is updated with
-	fixed timeout of 1sec for bus clear operation.
- [V3] : Same as V2
- [V2] : Added this patch in V2 series to allow enough time for data transfer
-	to happen.
-	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-	takes argument with this patch.
-
- drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 651b55fd9aa5..e33bbc1b2212 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -25,7 +25,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- 
--#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-+#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
- #define BYTES_PER_FIFO_WORD 4
- 
- #define I2C_CNFG				0x000
-@@ -900,8 +900,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
- 		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
--		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--							TEGRA_I2C_TIMEOUT);
-+		time_left = wait_for_completion_timeout(
-+						&i2c_dev->msg_complete,
-+						TEGRA_I2C_TIMEOUT(1000));
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "timed out for bus clear\n");
- 			return -ETIMEDOUT;
-@@ -928,6 +929,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 *buffer = 0;
- 	int ret = 0;
- 	bool dma = false;
-+	u16 xfer_time = 100;
- 
- 	if (msg->flags & I2C_M_RD)
- 		xfer_size = msg->len;
-@@ -935,6 +937,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
- 
- 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-+	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
-+					i2c_dev->bus_clk_rate);
-+
- 	dma = i2c_dev->has_dma && (xfer_size > I2C_PIO_MODE_MAX_LEN);
- 	if (dma) {
- 		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
-@@ -1071,7 +1076,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (dma) {
- 		time_left = wait_for_completion_timeout(
- 						&i2c_dev->dma_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
- 
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
-@@ -1094,7 +1099,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	}
- 
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
- 
- 	if (time_left == 0) {
--- 
-2.7.4
+[0] https://patchwork.ozlabs.org/patch/1031379/
