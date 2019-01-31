@@ -1,69 +1,102 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: Re: [PATCH v2 4/4] mfd: max77620: add documentation for low battery
- monitoring
-Date: Thu, 31 Jan 2019 10:29:25 +0800
-Message-ID: <a6cd5f7c-d8a5-3f93-b1cf-4da3e4760dff@nvidia.com>
-References: <20190129085531.32364-1-markz@nvidia.com>
- <20190129085531.32364-5-markz@nvidia.com> <20190130195355.GA1652@bogus>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
+Date: Thu, 31 Jan 2019 05:53:15 +0300
+Message-ID: <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
+References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
+ <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
+ <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
+ <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
+ <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190130195355.GA1652@bogus>
+In-Reply-To: <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: lee.jones@linaro.org, blaws05@gmail.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/31/2019 3:53 AM, Rob Herring wrote:
-> On Tue, Jan 29, 2019 at 04:55:31PM +0800, Mark Zhang wrote:
->> Adding documentation for low battery monitor properties:
->> - maxim,low-battery-dac-enable
->> - maxim,low-battery-dac-disable
->> - maxim,low-battery-shutdown-enable
->> - maxim,low-battery-shutdown-disable
->> - maxim,low-battery-reset-enable
->> - maxim,low-battery-reset-disable
+31.01.2019 5:24, Sowjanya Komatineni пишет:
+>>>>>  	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+>>>>>  						TEGRA_I2C_TIMEOUT);
+>>>>>  	tegra_i2c_mask_irq(i2c_dev, int_mask);
+>>>>>  
+>>>>>  	if (time_left == 0) {
+>>>>>  		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
+>>>>> +		if (dma) {
+>>>>> +			dmaengine_terminate_all(chan);
+>>>>> +			complete(&i2c_dev->dma_complete);
+>>>>> +		}
+>>>>
+>>>> DMA transfer has been completed at this point, hence this hunk isn't needed. Please remove it.
+>>>
+>>> DMA complete alone doesn’t guarantee the transfer. Packets/All packets xfer interrupt from I2C confirms complete transaction along with dma complete check.
+>>> So still need to check for msg_complete timeout. 
 >>
->> Signed-off-by: Mark Zhang <markz@nvidia.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/max77620.txt | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
+>> You're waiting for DMA completion and then for the I2C message completion.
 >>
->> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
->> index 484b17e4fba5..5fed0a463b80 100644
->> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
->> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
->> @@ -142,6 +142,20 @@ Optional properties:
->>  			Device supports 100/1000/3000/6000 Ohms.
->>  			Default will be set to 1000 Ohm.
->>  
->> +Low-Battery Monitor:
->> +==================
->> +This sub-node configure low battery monitor configuration registers. Device has
->> +support for low-battery monitor configuration through child DT node
->> +"low-battery-monitor".
->> +
->> +Optional properties:
->> +	- maxim,low-battery-dac-enable: Enable low battery DAC.
->> +	- maxim,low-battery-dac-disable: Disable low battery DAC.
->> +	- maxim,low-battery-shutdown-enable: Enable low battery shutdown.
->> +	- maxim,low-battery-shutdown-disable: Disable low battery shutdown.
->> +	- maxim,low-battery-reset-enable: Enable low battery reset.
->> +	- maxim,low-battery-reset-disable: Disable low battery reset.
+>> Hence your code is structured like this:
+>>
+>> 1. Issue DMA transfer
+>> 2. Wait for DMA completion
+>> 3. Wait for message completion
+>>
+>> Why do you need to abort DMA in 3 if it was already completed in 2?
 > 
-> Do you really need 3 states with the 3rd being prop not present.
-
-Yeah, so I think we can just keep 3 of them and shorten the names a little bit
-(lbm stands for "low battery monitoring"):
-- maxim,lbm-dac-enable
-- maxim,lbm-shutdown-enable
-- maxim,lbm-reset-enable
-
-Does this look good to you?
-Mark
-
+> Ok, thought you are referring to msg complete timeout check in dma mode. Yes no need for terminating DMA when msg timeout. Will fix it.
 > 
-> Rob
+>>>>> @@ -740,6 +925,32 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>>>>>  	u32 int_mask;
+>>>>>  	unsigned long time_left;
+>>>>>  	unsigned long flags;
+>>>>> +	size_t xfer_size;
+>>>>> +	u32 *buffer = 0;
+>>>>> +	int ret = 0;
+>>>>> +	bool dma = false;
+>>>>> +
+>>>>> +	if (msg->flags & I2C_M_RD)
+>>>>> +		xfer_size = msg->len;
+>>>>> +	else
+>>>>> +		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
+>>>>> +
+>>>>> +	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
+>>>>> +	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
+>>>>> +	if (dma) {
+>>>>> +		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
+>>>>> +			ret = tegra_i2c_init_dma_param(i2c_dev, true);
+>>>>> +		else if (!i2c_dev->tx_dma_chan)
+>>>>> +			ret = tegra_i2c_init_dma_param(i2c_dev, false);
+>>>>
+>>>> In the comment to V3 I mentioned that it's not a good idea to request channels dynamically because suspend-resume order is based on devices registration order, in this case APB DMA must be probed before I2C. Please move channels allocation into the probe.
+>>>>
+>>>> This also raises the question about the need to register I2C driver from the subsys-init level because APB driver is getting registered from the module-init level and hence I2C probing will be deferred until APB DMA driver is registered. It looks to me that the subsys-init is a relict of the past and it should be fine to move I2C driver registration into the module-init level, of course it's not strictly necessary and could be done later on if desired.
+>>>>
+>>>>> +		if (ret < 0) {
+>>>>> +			dev_dbg(i2c_dev->dev, "Switching to PIO mode\n");
+>>>>> +			dma = false;
+>>>>> +			ret = 0;
+>>>>> +		}
+>>>>> +	}
+>>>>> +
+>>>>> +	i2c_dev->is_curr_dma_xfer = dma;
+>>>>
+>>>>
+>>> Since your previous feedback suggest "let's postpone channels requesting and dma_buf allocation until they are really needed", I thought it make sense to not request channels and allocate till DMA is needed.
+>>> So moved from probe to xfer_msg function. By the time it gets to xfer msg function, devices registration should be done already along with apb dma probe.
+>>>
+>>>
+>>
+>> Yes, I made that comment, but then corrected myself. Seems you missed the correction: https://lkml.org/lkml/2019/1/26/217
+>>
+>> If you're having troubles with the corporate email, maybe you could try to switch to something else like gmail.
+>>
+>> I've tried to apply this series locally, but again it fails to apply. What's the kernel base you're using? You should make your patches on top linux-next (preferably) or mainline.
 > 
+> Yeah somehow missed that. Will move it back to probe..
+> I am using 5.0-rc1
+> 
+
+Managed to apply patches this time, was my bad. Please take a look and reply to the rest of my comments before sending a new version, thanks.
