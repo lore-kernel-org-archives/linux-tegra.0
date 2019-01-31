@@ -1,102 +1,47 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
-Date: Thu, 31 Jan 2019 05:53:15 +0300
-Message-ID: <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V7 3/5] i2c: tegra: Add DMA Support
+Date: Thu, 31 Jan 2019 03:34:59 +0000
+Message-ID: <BYAPR12MB3398C3E7C5842C698B5CA1CCC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
  <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
  <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
  <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
  <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
  <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-31.01.2019 5:24, Sowjanya Komatineni пишет:
->>>>>  	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
->>>>>  						TEGRA_I2C_TIMEOUT);
->>>>>  	tegra_i2c_mask_irq(i2c_dev, int_mask);
->>>>>  
->>>>>  	if (time_left == 0) {
->>>>>  		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
->>>>> +		if (dma) {
->>>>> +			dmaengine_terminate_all(chan);
->>>>> +			complete(&i2c_dev->dma_complete);
->>>>> +		}
->>>>
->>>> DMA transfer has been completed at this point, hence this hunk isn't needed. Please remove it.
->>>
->>> DMA complete alone doesn’t guarantee the transfer. Packets/All packets xfer interrupt from I2C confirms complete transaction along with dma complete check.
->>> So still need to check for msg_complete timeout. 
->>
->> You're waiting for DMA completion and then for the I2C message completion.
->>
->> Hence your code is structured like this:
->>
->> 1. Issue DMA transfer
->> 2. Wait for DMA completion
->> 3. Wait for message completion
->>
->> Why do you need to abort DMA in 3 if it was already completed in 2?
-> 
-> Ok, thought you are referring to msg complete timeout check in dma mode. Yes no need for terminating DMA when msg timeout. Will fix it.
-> 
->>>>> @@ -740,6 +925,32 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>>>>  	u32 int_mask;
->>>>>  	unsigned long time_left;
->>>>>  	unsigned long flags;
->>>>> +	size_t xfer_size;
->>>>> +	u32 *buffer = 0;
->>>>> +	int ret = 0;
->>>>> +	bool dma = false;
->>>>> +
->>>>> +	if (msg->flags & I2C_M_RD)
->>>>> +		xfer_size = msg->len;
->>>>> +	else
->>>>> +		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
->>>>> +
->>>>> +	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
->>>>> +	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
->>>>> +	if (dma) {
->>>>> +		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
->>>>> +			ret = tegra_i2c_init_dma_param(i2c_dev, true);
->>>>> +		else if (!i2c_dev->tx_dma_chan)
->>>>> +			ret = tegra_i2c_init_dma_param(i2c_dev, false);
->>>>
->>>> In the comment to V3 I mentioned that it's not a good idea to request channels dynamically because suspend-resume order is based on devices registration order, in this case APB DMA must be probed before I2C. Please move channels allocation into the probe.
->>>>
->>>> This also raises the question about the need to register I2C driver from the subsys-init level because APB driver is getting registered from the module-init level and hence I2C probing will be deferred until APB DMA driver is registered. It looks to me that the subsys-init is a relict of the past and it should be fine to move I2C driver registration into the module-init level, of course it's not strictly necessary and could be done later on if desired.
->>>>
->>>>> +		if (ret < 0) {
->>>>> +			dev_dbg(i2c_dev->dev, "Switching to PIO mode\n");
->>>>> +			dma = false;
->>>>> +			ret = 0;
->>>>> +		}
->>>>> +	}
->>>>> +
->>>>> +	i2c_dev->is_curr_dma_xfer = dma;
->>>>
->>>>
->>> Since your previous feedback suggest "let's postpone channels requesting and dma_buf allocation until they are really needed", I thought it make sense to not request channels and allocate till DMA is needed.
->>> So moved from probe to xfer_msg function. By the time it gets to xfer msg function, devices registration should be done already along with apb dma probe.
->>>
->>>
->>
->> Yes, I made that comment, but then corrected myself. Seems you missed the correction: https://lkml.org/lkml/2019/1/26/217
->>
->> If you're having troubles with the corporate email, maybe you could try to switch to something else like gmail.
->>
->> I've tried to apply this series locally, but again it fails to apply. What's the kernel base you're using? You should make your patches on top linux-next (preferably) or mainline.
-> 
-> Yeah somehow missed that. Will move it back to probe..
-> I am using 5.0-rc1
-> 
-
-Managed to apply patches this time, was my bad. Please take a look and reply to the rest of my comments before sending a new version, thanks.
+PiBJMkNfSU5UX0FMTF9QQUNLRVRTX1hGRVJfQ09NUExFVEUgc2hhbGwgYmUgbWFza2VkIGZvciB0
+aGUgUElPIG1vZGUNCj4gSTJDX0lOVF9QQUNLRVRfWEZFUl9DT01QTEVURSBzaGFsbCBiZSBtYXNr
+ZWQgZm9yIHRoZSBETUEgbW9kZSwgaWYgSSdtIG5vdCBtaXNzaW5nIHNvbWV0aGluZy4NCj4NCmZv
+ciBwYWNrZXRzIHdpdGggcmVwZWF0ZWQgc3RhcnQgb3IgY29udGludWUgeGZlciwgUEFDS0VUX1hG
+RVJfQ09NUExFVEUgd2lsbCBiZSB0cmlnZ2Vycw0KZm9yIHBhY2tldHMgd2l0aCBzdG9wIGJpdCwg
+Ym90aCBQQUNLRVRfWEZFUl9DT01QTEVURSBhbmQgQUxMX1BBQ0tFVF9YRkVSX0NPTVBMRVRFIHdp
+bGwgYmUgdHJpZ2dlcmVkLg0KVG8gYmUgYWxpZ24gd2l0aCB3aGF0IFBJTyBtb2RlIGlzIGRvaW5n
+LCB3aWxsIG5vdCB1c2UgQUxMX1BBQ0tFVFNfWEZFUl9DT01QTEVURSBmb3IgRE1BIGluIG5leHQg
+dmVyc2lvbi4gDQoNCj4NCj4gSGFuZGxlIHRoZSBlcnJvci1jYXNlIGhlcmU6DQo+DQo+CWlmIChp
+MmNfZGV2LT5tc2dfZXJyICE9IEkyQ19FUlJfTk9ORSkgew0KPgkJZGV2X2VycihpMmNfZGV2LT5k
+ZXYsICJpMmMgZG1hIHRyYW5zZmVyIGZhaWxlZFxuIik7DQo+CQlnb3RvIGkyY19yZWNvdmVyOw0K
+Pgl9DQo+DQo+Li4uDQo+CTwtLS0gZW5kIG9mIHRlZ3JhX2kyY194ZmVyX21zZygpIC0tPg0KPg0K
+PglpZiAobGlrZWx5KGkyY19kZXYtPm1zZ19lcnIgPT0gSTJDX0VSUl9OT05FKSkNCj4JCXJldHVy
+biAwOw0KPg0KPiBpMmNfcmVjb3ZlcjoNCj4JdGVncmFfaTJjX2luaXQoaTJjX2Rldik7DQo+CS8q
+IHN0YXJ0IHJlY292ZXJ5IHVwb24gYXJiaXRyYXRpb24gbG9zcyBpbiBzaW5nbGUgbWFzdGVyIG1v
+ZGUgKi8NCj4JaWYgKGkyY19kZXYtPm1zZ19lcnIgPT0gSTJDX0VSUl9BUkJJVFJBVElPTl9MT1NU
+KSB7DQo+CQlpZiAoIWkyY19kZXYtPmlzX211bHRpbWFzdGVyX21vZGUpDQo+CQkJcmV0dXJuIHRl
+Z3JhX2kyY19pc3N1ZV9idXNfY2xlYXIoaTJjX2Rldik7DQo+CQlyZXR1cm4gLUVBR0FJTjsNCj4J
+fQ0KPglpZiAoaTJjX2Rldi0+bXNnX2VyciA9PSBJMkNfRVJSX05PX0FDSykgew0KPgkJaWYgKG1z
+Zy0+ZmxhZ3MgJiBJMkNfTV9JR05PUkVfTkFLKQ0KPgkJCXJldHVybiAwOw0KPgkJcmV0dXJuIC1F
+UkVNT1RFSU87DQo+CX0NCj4NCj4JcmV0dXJuIC1FSU87DQoNCldoZW4gRE1BIHRyYW5zZmVyIHRp
+bWVvdXQsIG5vIG5lZWQgdG8gY2hlY2sgZm9yIEFSQiBMT1NUIG9yIE5PX0FDSyBhcyBpZiBhbnkg
+b2YgdGhvc2UgaW50ZXJydXB0cyB0cmlnZ2VyIGludGVycnVwdCBoYW5kbGVyIHdpbGwgdGVybWlu
+YXRlIGRtYWVuZ2luZSBhbmQgY29tcGxldGVzIHNvIERNQSB0aW1lb3V0IHdpbGwgbm90IGJlIHNl
+ZW4gaW4gdGhvc2UgY2FzZXMgYW5kIGZhbGxzIHRocnUgbXNnX2VyciBjaGVjaw0KDQo=
