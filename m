@@ -1,55 +1,69 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH] cpuidle: dt: bail out if the idle-state DT node is not
- compatible
-Date: Thu, 31 Jan 2019 10:27:49 +0800
-Message-ID: <20190131022749.19046-1-josephl@nvidia.com>
+From: Mark Zhang <markz@nvidia.com>
+Subject: Re: [PATCH v2 4/4] mfd: max77620: add documentation for low battery
+ monitoring
+Date: Thu, 31 Jan 2019 10:29:25 +0800
+Message-ID: <a6cd5f7c-d8a5-3f93-b1cf-4da3e4760dff@nvidia.com>
+References: <20190129085531.32364-1-markz@nvidia.com>
+ <20190129085531.32364-5-markz@nvidia.com> <20190130195355.GA1652@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190130195355.GA1652@bogus>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: lee.jones@linaro.org, blaws05@gmail.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Currently, the DT of the idle states will be parsed first whether it's
-compatible or not. This could cause a warning message that comes from if
-the CPU doesn't support identical idle states. E.g. Tegra186 can run
-with 2 Cortex-A57 and 2 Denver cores with different idle states on
-different types of these cores.
+On 1/31/2019 3:53 AM, Rob Herring wrote:
+> On Tue, Jan 29, 2019 at 04:55:31PM +0800, Mark Zhang wrote:
+>> Adding documentation for low battery monitor properties:
+>> - maxim,low-battery-dac-enable
+>> - maxim,low-battery-dac-disable
+>> - maxim,low-battery-shutdown-enable
+>> - maxim,low-battery-shutdown-disable
+>> - maxim,low-battery-reset-enable
+>> - maxim,low-battery-reset-disable
+>>
+>> Signed-off-by: Mark Zhang <markz@nvidia.com>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/max77620.txt | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+>> index 484b17e4fba5..5fed0a463b80 100644
+>> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+>> @@ -142,6 +142,20 @@ Optional properties:
+>>  			Device supports 100/1000/3000/6000 Ohms.
+>>  			Default will be set to 1000 Ohm.
+>>  
+>> +Low-Battery Monitor:
+>> +==================
+>> +This sub-node configure low battery monitor configuration registers. Device has
+>> +support for low-battery monitor configuration through child DT node
+>> +"low-battery-monitor".
+>> +
+>> +Optional properties:
+>> +	- maxim,low-battery-dac-enable: Enable low battery DAC.
+>> +	- maxim,low-battery-dac-disable: Disable low battery DAC.
+>> +	- maxim,low-battery-shutdown-enable: Enable low battery shutdown.
+>> +	- maxim,low-battery-shutdown-disable: Disable low battery shutdown.
+>> +	- maxim,low-battery-reset-enable: Enable low battery reset.
+>> +	- maxim,low-battery-reset-disable: Disable low battery reset.
+> 
+> Do you really need 3 states with the 3rd being prop not present.
 
-We fix it to check the compatible string before the parsing procedures.
-So it can make sure it only goes through the idle states that the CPU
-supported.
+Yeah, so I think we can just keep 3 of them and shorten the names a little bit
+(lbm stands for "low battery monitoring"):
+- maxim,lbm-dac-enable
+- maxim,lbm-shutdown-enable
+- maxim,lbm-reset-enable
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
- drivers/cpuidle/dt_idle_states.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Does this look good to you?
+Mark
 
-diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
-index 53342b7f1010..4a528908abb3 100644
---- a/drivers/cpuidle/dt_idle_states.c
-+++ b/drivers/cpuidle/dt_idle_states.c
-@@ -180,6 +180,11 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
- 		if (!state_node)
- 			break;
- 
-+		if (!of_device_is_compatible(state_node, matches->compatible)) {
-+			err = -EINVAL;
-+			break;
-+		}
-+
- 		if (!of_device_is_available(state_node)) {
- 			of_node_put(state_node);
- 			continue;
--- 
-2.20.1
+> 
+> Rob
+> 
