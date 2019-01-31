@@ -1,199 +1,232 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
-Date: Fri, 01 Feb 2019 00:24:31 +0100
-Message-ID: <2034694.JE9CgBysmF@aspire.rjw.lan>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com> <CAJZ5v0hezV7et3VgD7yHa8MLiP0z3YtJ9stwSQL54-tyz_VXkQ@mail.gmail.com> <20190131143024.GO23438@ulmo>
+From: Bo Yan <byan@nvidia.com>
+Subject: Re: [PATCH] arm64: tegra: add topology data for Tegra194 cpu
+Date: Thu, 31 Jan 2019 15:29:34 -0800
+Message-ID: <dc0055ca-b9eb-bcc6-1815-2aa482fa7c1f@nvidia.com>
+References: <1548959754-3941-1-git-send-email-byan@nvidia.com>
+ <20190131222517.GB13156@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190131143024.GO23438@ulmo>
+In-Reply-To: <20190131222517.GB13156@mithrandir>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Takashi Iwai <tiwai@suse.de>, Jon Hunter <jonathanh@nvidia.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Sameer Pujar <spujar@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, mkumard@nvidia.com, rlokhande@nvidia.com, sharadg@nvidia.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, January 31, 2019 3:30:24 PM CET Thierry Reding wrote:
+
+On 1/31/19 2:25 PM, Thierry Reding wrote:
+> On Thu, Jan 31, 2019 at 10:35:54AM -0800, Bo Yan wrote:
+>> The xavier CPU architecture includes 8 CPU cores organized in
+>> 4 clusters. Add cpu-map data for topology initialization, add
+>> cache data for cache node creation in sysfs.
+>>
+>> Signed-off-by: Bo Yan <byan@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 148 +++++++++++++++++++++++++++++--
+>>   1 file changed, 140 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> index 6dfa1ca..7c2a1fb 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> @@ -870,63 +870,195 @@
+>>   		#address-cells = <1>;
+>>   		#size-cells = <0>;
+
+> These don't seem to be well-defined. They are mentioned in a very weird
+> locations (Documentation/devicetree/booting-without-of.txt) but there
+> seem to be examples and other device tree files that use them so maybe
+> those are all valid. It might be worth mentioning these in other places
+> where people can more easily find them.
+
+It might be logical to place a reference to this document 
+(booting-without-of.txt) in architecture specific documents, for 
+example, arm/cpus.txt. I see the need for improved documentation, but 
+this probably should be best done in a separate change.
 > 
-> --Pk/CTwBz1VvfPIDp
-> Content-Type: text/plain; charset=us-ascii
-> Content-Disposition: inline
-> Content-Transfer-Encoding: quoted-printable
+> According to the above document, {i,d}-cache-line-size are deprecated in
+> favour of {i,d}-cache-block-size.
+
+Mostly, this seems to be derived from the oddity of PowerPC, which might 
+have different cache-line-size and cache-block-size. I don't know if 
+there are other examples? It looks like the {i,d}-cache-line-size are 
+being used in dts files for almost all architectures, the only exception 
+is arch/sh/boot/dts/j2_mimas_v2.dts. On ARM and ARM64, cache-line-size 
+is the same as cache-block-size. So I am wondering whether the 
+booting-without-of.txt should be fixed instead? just to keep it 
+consistent among dts files, especially in arm64.
+
 > 
-> On Thu, Jan 31, 2019 at 01:10:01PM +0100, Rafael J. Wysocki wrote:
-> > On Thu, Jan 31, 2019 at 12:59 PM Takashi Iwai <tiwai@suse.de> wrote:
-> > >
-> > > On Thu, 31 Jan 2019 12:46:54 +0100,
-> > > Rafael J. Wysocki wrote:
-> > > >
-> > > > On Thu, Jan 31, 2019 at 12:21 PM Takashi Iwai <tiwai@suse.de> wrote:
-> > > > >
-> > > > > On Thu, 31 Jan 2019 12:05:30 +0100,
-> > > > > Thierry Reding wrote:
-> > > > > >
-> > > > > > On Wed, Jan 30, 2019 at 05:40:42PM +0100, Takashi Iwai wrote:
-> > > >
-> > > > [cut]
-> > > >
-> > > > > > > If I understand correctly the code, the pm domain is already ac=
-> tivated
-> > > > > > > at calling driver's probe callback.
-> > > > > >
-> > > > > > As far as I can tell, the domain will also be powered off again a=
-> fter
-> > > > > > probe finished, unless the device grabs a runtime PM reference. T=
-> his is
-> > > > > > what happens via the dev->pm_domain->sync() call after successful=
->  probe
-> > > > > > of a driver.
-> > > > >
-> > > > > Ah, a good point.  This can be a problem with a probe work like this
-> > > > > case.
-> > > > >
-> > > > > > It seems to me like it's not a very well defined case what to do =
-> when a
-> > > > > > device needs to be powered up but runtime PM is not enabled.
-> > > > > >
-> > > > > > Adding Rafael and linux-pm, maybe they can provide some guidance =
-> on what
-> > > > > > to do in these situations.
-> > > > > >
-> > > > > > To summarize, what we're debating here is how to handle powering =
-> up a
-> > > > > > device if the pm_runtime infrastructure doesn't take care of it. =
-> Jon's
-> > > > > > proposal here was, and we use this elsewhere, to do something lik=
-> e this:
-> > > > > >
-> > > > > >       pm_runtime_enable(dev);
-> > > > > >       if (!pm_runtime_enabled(dev)) {
-> > > > > >               err =3D foo_runtime_resume(dev);
-> > > > > >               if (err < 0)
-> > > > > >                       goto fail;
-> > > > > >       }
-> > > > > >
-> > > > > > So basically when runtime PM is not available, we explicitly "res=
-> ume"
-> > > > > > the device to power it up.
-> > > > > >
-> > > > > > It seems to me like that's a fairly common problem, so I'm wonder=
-> ing if
-> > > > > > there's something that the runtime PM core could do to help with =
-> this.
-> > > > > > Or perhaps there's already a way to achieve this that we're all
-> > > > > > overlooking?
-> > > > > >
-> > > > > > Rafael, any suggestions?
-> > > > >
-> > > > > If any, a common helper would be appreciated, indeed.
-> > > >
-> > > > I'm not sure that I understand the problem correctly, so let me
-> > > > restate it the way I understand it.
-> > > >
-> > > > What we're talking about is a driver ->probe() callback.  Runtime PM
-> > > > is disabled initially and the device is off.  It needs to be powered
-> > > > up, but the way to do that depends on some configuration of the board
-> > > > etc., so ideally
-> > > >
-> > > > pm_runtime_enable(dev);
-> > > > ret =3D pm_runtime_resume(dev);
-> > > >
-> > > > should just work, but the question is what to do if runtime PM doesn't
-> > > > work as expected.  That is, CONFIG_PM_RUNTIME is unset?  Or something
-> > > > else?
-> > >
-> > > Yes, the question is how to write the code for both with and without
-> > > CONFIG_PM (or CONFIG_PM_RUNTIME).
-> >=20
-> > This basically is about setup, because after that point all should
-> > just work in both cases.
-> >=20
-> > Personally, I would do
-> >=20
-> > if (IS_ENABLED(CONFIG_PM)) {
-> >   do setup based on pm-runtime
-> > } else {
-> >   do manual setup
-> > }
-> >=20
-> > > Right now, we have a code like below, pushing the initialization in an
-> > > async work and let the probe returning quickly.
-> > >
-> > >         hda_tegra_probe() {
-> > >                 ....
-> >=20
-> > So why don't you do
-> >=20
-> > if (!IS_ENABLED(CONFIG_PM)) {
-> >   do manual clock setup
-> > }
-> >=20
-> > here?
+> I also don't see any mention of {i,d}-cache_sets in the device tree
+> bindings, though riscv/cpus.txt mentions {i,d}-cache-sets (note the
+> hyphen instead of underscore) in the examples. arm/l2c2x0.txt and
+> arm/uniphier/cache-unifier.txt describe cache-sets, though that's
+> slightly different.
 > 
-> I think that's exactly what Jon and Sameer were proposing, although the
-> discussion started primarily because of the way it was done.
+> Might make sense to document all these in more standard places. Maybe
+> adding them to arm/cpus.txt. For consistency with other properties, I
+> think there should be called {i,d}-cache-sets like for RISC-V.
 > 
-> So basically the idea was to do:
+>> +			l2-cache = <&l2_0>;
 > 
-> 	pm_runtime_enable()
-> 	if (!pm_runtime_enabled())  /* basically !IS_ENABLED(CONFIG_PM) */
+> This seems to be called next-level-cache everywhere else, though it's
+> only formally described in arm/uniphier/cache-uniphier.txt. So might
+> also make sense to add this to arm/cpus.txt.
 
-But why is it any better than checking !IS_ENABLED(CONFIG_PM) directly?
-
-> 		hda_runtime_resume()
+the improved documentation is certainly desired, I agree.
 > 
-> So we're not calling pm_runtime_resume() but rather the driver's
-> implementation of it. This is to avoid duplicating the code, which under
-> some circumstances can be fairly long. Duplicating is also error prone
-> because both instances may not always be in sync.
+>>   		};
+>>   
+>> -		cpu@1 {
+>> +		cl0_1: cpu@1 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x10001>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_0>;
+>>   		};
+>>   
+>> -		cpu@2 {
+>> +		cl1_0: cpu@2 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x100>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_1>;
+>>   		};
+>>   
+>> -		cpu@3 {
+>> +		cl1_1: cpu@3 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x101>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_1>;
+>>   		};
+>>   
+>> -		cpu@4 {
+>> +		cl2_0: cpu@4 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x200>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_2>;
+>>   		};
+>>   
+>> -		cpu@5 {
+>> +		cl2_1: cpu@5 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x201>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_2>;
+>>   		};
+>>   
+>> -		cpu@6 {
+>> +		cl3_0: cpu@6 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x10300>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_3>;
+>>   		};
+>>   
+>> -		cpu@7 {
+>> +		cl3_1: cpu@7 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x10301>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_3>;
+>>   		};
+>>   	};
+>>   
+>> +	l2_0: l2-cache0 {
+>> +		cache-size = <2097152>;
+>> +		cache-line-size = <64>;
+>> +		cache-sets = <2048>;
+>> +		next-level-cache = <&l3>;
+>> +	};
 > 
-> My understanding is that Takashi had reservations about using this kind
-> of construct because, well, frankly, it looks a little weird.
+> Does this need a compatible string? Also, are there controllers behind
+> these caches? I'm just wondering if these also need reg properties and
+> unit-addresses.
 
-Yes, the way it was originally written above was weird, but is checking
-IS_ENABLED(CONFIG_PM) directly really so weird?
-
-> We'd also likely want to have a similar construct again in the ->remove()
-> callback to make sure we properly power off the device when it is no longer
-> needed.
-
-Sure.  Again, why don't you make it conditional on IS_ENABLED(CONFIG_PM)?
-
-> I'm just wondering if perhaps there should be a mechanism in the
-> core to take care of this,
-
-How exactly?  How's the core going to know what to do when CONFIG_PM is
-disabled?
-
-> because this is basically something that we'd need to do for every single
-> driver.
-
-That is not true.  If the device is alwyas "on" to start with, you don't
-need to do anything.  That's the case on many systems.
-
-> For example, if !CONFIG_PM couldn't the pm_runtime_enable() function be
-> modified to do the above?
-
-But you'd need to pass a pointer to your hda_runtime_resume() to it at least
-and how's that simpler than using a simple conditional directly?
-
-> This would be somewhat tricky because drivers
-> usually use SET_RUNTIME_PM_OPS to populate the struct dev_pm_ops and
-> that would result in an empty structure if !CONFIG_PM, but we could
-> probably work around that by adding a __SET_RUNTIME_PM_OPS that would
-> never be compiled out for this kind of case. Or such drivers could even
-> manually set .runtime_suspend and .runtime_resume to make sure they're
-> always populated.
+No need for compatible string. No reg properties and addresses. These 
+will be parsed by drivers/of/base.c and drivers/base/cacheinfo.c, they 
+are generic.
 > 
-> Another way out of this would be to make sure we never run into the case
-> where runtime PM is disabled. If we always "select PM" on Tegra, then PM
-> should always be available. But is it guaranteed that runtime PM for the
-> devices is functional in that case? From a cursory look at the code it
-> would seem that way.
+> arm/l2c2x0.txt and arm/uniphier/cache-uniphier.txt describe an
+> additional property that you don't specify here: cache-level. This
+> sounds useful to have so that we don't have to guess the cache level
+> from the name, which may or may not work depending on what people name
+> the nodes.
 
-If you select PM, then all of the requisite code should be there.
+the cache level property is implied in device tree hierarchy, so after 
+system boots up, I can find cache level in related sysfs nodes:
 
-Alternatively, you can make the driver depend on PM.
+     [root@alarm cache]# cat index*/level
+     1
+     1
+     2
+     3
 
-Cheers,
-Rafael
+
+> 
+> Also, similar to the L1 cache, cache-block-size is preferred over
+> cache-line-size.
+> 
+>> +	l3: l3-cache {
+>> +		cache-size = <4194304>;
+>> +		cache-line-size = <64>;
+>> +		cache-sets = <4096>;
+>> +	};
+> 
+> The same comments apply as for the L2 caches.
+> 
+> Thierry
+> 
