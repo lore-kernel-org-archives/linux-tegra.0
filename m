@@ -1,66 +1,62 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.9 00/44] 4.9.154-stable review
-Date: Thu, 31 Jan 2019 10:15:38 +0000
-Message-ID: <28e5a819-1cce-c255-2db5-229a5bbd5f60@nvidia.com>
-References: <20190129113139.826927690@linuxfoundation.org>
- <f2d2a32f-68c9-8bfe-54c7-93b617ee2eb3@nvidia.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] cpuidle: dt: bail out if the idle-state DT node is not
+ compatible
+Date: Thu, 31 Jan 2019 10:38:23 +0000
+Message-ID: <20190131103823.GA19907@e107155-lin>
+References: <20190131022749.19046-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f2d2a32f-68c9-8bfe-54c7-93b617ee2eb3@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190131022749.19046-1-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Sudeep Holla <sudeep.holla@arm.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jan 31, 2019 at 10:27:49AM +0800, Joseph Lo wrote:
+> Currently, the DT of the idle states will be parsed first whether it's
+> compatible or not. This could cause a warning message that comes from if
+> the CPU doesn't support identical idle states. E.g. Tegra186 can run
+> with 2 Cortex-A57 and 2 Denver cores with different idle states on
+> different types of these cores.
+>
+> We fix it to check the compatible string before the parsing procedures.
+> So it can make sure it only goes through the idle states that the CPU
+> supported.
+>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  drivers/cpuidle/dt_idle_states.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
+> index 53342b7f1010..4a528908abb3 100644
+> --- a/drivers/cpuidle/dt_idle_states.c
+> +++ b/drivers/cpuidle/dt_idle_states.c
+> @@ -180,6 +180,11 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
+>  		if (!state_node)
+>  			break;
+>
+> +		if (!of_device_is_compatible(state_node, matches->compatible)) {
+> +			err = -EINVAL;
+> +			break;
+> +		}
+> +
 
-On 30/01/2019 12:50, Jon Hunter wrote:
-> 
-> On 29/01/2019 11:35, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 4.9.154 release.
->> There are 44 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Thu Jan 31 11:31:22 UTC 2019.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.154-rc1.gz
->> or in the git tree and branch at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
-> I see you have posted a rc2, but for rc1 all tests are passing for
-> Tegra. Should have results for rc2 tonight.
-> 
-> Test results for stable-v4.9:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.9.154-rc1-g5c2f707
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+Does it make sense to use of_match_node to get the matching device id and
+just pass that to init_state_node instead of the complete array to find the
+match.
 
-To confirm, rc2 looks fine as well ...
-
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
-
-Linux version:	4.9.154-rc2-g6674590
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+--
+Regards,
+Sudeep
