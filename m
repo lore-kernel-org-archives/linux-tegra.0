@@ -1,86 +1,41 @@
-From: Billy laws <blaws05@gmail.com>
-Subject: Re: [PATCH v2 4/4] mfd: max77620: add documentation for low battery monitoring
-Date: Thu, 31 Jan 2019 21:37:46 +0000
-Message-ID: <D4E89A2D-2372-4328-92BD-5B1CF923951D@gmail.com>
-References: <20190129085531.32364-1-markz@nvidia.com> <20190129085531.32364-5-markz@nvidia.com> <20190130195355.GA1652@bogus> <a6cd5f7c-d8a5-3f93-b1cf-4da3e4760dff@nvidia.com> <CAL_JsqK6z2NbJeRB48S-kmDrHj5B8H6hciR04+_Tzq4_V2jH_Q@mail.gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V8 3/5] i2c: tegra: Add DMA Support
+Date: Thu, 31 Jan 2019 21:46:48 +0000
+Message-ID: <BYAPR12MB3398D3DCD0DEACD67A58C75FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+ <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
+ <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
+ <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
+ <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
+ <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqK6z2NbJeRB48S-kmDrHj5B8H6hciR04+_Tzq4_V2jH_Q@mail.gmail.com>
+In-Reply-To: <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Mark Zhang <markz@nvidia.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 31 January 2019 21:05:46 GMT, Rob Herring <robh@kernel=2Eorg> wrote:
->On Wed, Jan 30, 2019 at 8:29 PM Mark Zhang <markz@nvidia=2Ecom> wrote:
->>
->> On 1/31/2019 3:53 AM, Rob Herring wrote:
->> > On Tue, Jan 29, 2019 at 04:55:31PM +0800, Mark Zhang wrote:
->> >> Adding documentation for low battery monitor properties:
->> >> - maxim,low-battery-dac-enable
->> >> - maxim,low-battery-dac-disable
->> >> - maxim,low-battery-shutdown-enable
->> >> - maxim,low-battery-shutdown-disable
->> >> - maxim,low-battery-reset-enable
->> >> - maxim,low-battery-reset-disable
->> >>
->> >> Signed-off-by: Mark Zhang <markz@nvidia=2Ecom>
->> >> ---
->> >>  Documentation/devicetree/bindings/mfd/max77620=2Etxt | 14
->++++++++++++++
->> >>  1 file changed, 14 insertions(+)
->> >>
->> >> diff --git a/Documentation/devicetree/bindings/mfd/max77620=2Etxt
->b/Documentation/devicetree/bindings/mfd/max77620=2Etxt
->> >> index 484b17e4fba5=2E=2E5fed0a463b80 100644
->> >> --- a/Documentation/devicetree/bindings/mfd/max77620=2Etxt
->> >> +++ b/Documentation/devicetree/bindings/mfd/max77620=2Etxt
->> >> @@ -142,6 +142,20 @@ Optional properties:
->> >>                      Device supports 100/1000/3000/6000 Ohms=2E
->> >>                      Default will be set to 1000 Ohm=2E
->> >>
->> >> +Low-Battery Monitor:
->> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> >> +This sub-node configure low battery monitor configuration
->registers=2E Device has
->> >> +support for low-battery monitor configuration through child DT
->node
->> >> +"low-battery-monitor"=2E
->
->Missed this the first time, but there's not really any reason for
->these to be in a child node=2E
->
->> >> +
->> >> +Optional properties:
->> >> +    - maxim,low-battery-dac-enable: Enable low battery DAC=2E
->> >> +    - maxim,low-battery-dac-disable: Disable low battery DAC=2E
->> >> +    - maxim,low-battery-shutdown-enable: Enable low battery
->shutdown=2E
->> >> +    - maxim,low-battery-shutdown-disable: Disable low battery
->shutdown=2E
->> >> +    - maxim,low-battery-reset-enable: Enable low battery reset=2E
->> >> +    - maxim,low-battery-reset-disable: Disable low battery reset=2E
->> >
->> > Do you really need 3 states with the 3rd being prop not present=2E
->>
->> Yeah, so I think we can just keep 3 of them and shorten the names a
->little bit
->> (lbm stands for "low battery monitoring"):
->> - maxim,lbm-dac-enable
->> - maxim,lbm-shutdown-enable
->> - maxim,lbm-reset-enable
->>
->> Does this look good to you?
->
->Yes=2E However, are these 3 mutually exclusive? If so, then perhaps
->'maxim,low-battery-mode =3D "<dac|shutdown|reset>"'?
-I agree, would also allow the addition of the voltage cut off point config=
-uration by just adding more defines=2E(current forces 3=2Esomething v cutof=
-f)
->
->Rob
+PiBJdCB3b3JrcyB3aXRoIHRoaXMgY2hhbmdlOg0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9p
+MmMvYnVzc2VzL2kyYy10ZWdyYS5jIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIGlu
+ZGV4IGZlNWI4OWFiYzU3Ni4uOGUwNTllOTRiOTRlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2ky
+Yy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdy
+YS5jDQo+IEBAIC0xMTcwLDEwICsxMTcwLDExIEBAIHN0YXRpYyBpbnQgdGVncmFfaTJjX3hmZXJf
+bXNnKHN0cnVjdCB0ZWdyYV9pMmNfZGV2ICppMmNfZGV2LA0KPiAgICAgICAgICAgICAgICAgdGlt
+ZV9sZWZ0LCBjb21wbGV0aW9uX2RvbmUoJmkyY19kZXYtPm1zZ19jb21wbGV0ZSksDQo+ICAgICAg
+ICAgICAgICAgICBpMmNfZGV2LT5tc2dfZXJyKTsNCj4NCj4gKyAgICAgICB0ZWdyYV9pMmNfaW5p
+dChpMmNfZGV2LCB0cnVlKTsNCj4gKw0KPiAgICAgICAgIGlmIChsaWtlbHkoaTJjX2Rldi0+bXNn
+X2VyciA9PSBJMkNfRVJSX05PTkUpKQ0KPiAgICAgICAgICAgICAgICAgcmV0dXJuIDA7DQo+ICAN
+Cj4gLSAgICAgICB0ZWdyYV9pMmNfaW5pdChpMmNfZGV2LCB0cnVlKTsNCj4gICAgICAgICAvKiBz
+dGFydCByZWNvdmVyeSB1cG9uIGFyYml0cmF0aW9uIGxvc3MgaW4gc2luZ2xlIG1hc3RlciBtb2Rl
+ICovDQo+ICAgICAgICAgaWYgKGkyY19kZXYtPm1zZ19lcnIgPT0gSTJDX0VSUl9BUkJJVFJBVElP
+Tl9MT1NUKSB7DQo+ICAgICAgICAgICAgICAgICBpZiAoIWkyY19kZXYtPmlzX211bHRpbWFzdGVy
+X21vZGUpDQo+DQo+DQo+IFdoaWNoIG1lYW5zIHRoYXQgSFcgc3RhdGUgaXMga2VwdCBkaXJ0eSBh
+ZnRlciBETUEgdHJhbnNmZXIuIFBsZWFzZSBjaGVjayBldmVyeXRoaW5nIGNhcmVmdWxseS4NCg0K
+SWRlbnRpZmllZCBpc3N1ZSwgV2hlbiBJIG1vdmVkIGxvZ2ljIGFyb3VuZCBmb3IgZGlmZiBjaGFu
+Z2VzLCBJTlQgZW5hYmxlIGlzbuKAmXQgY29ycmVjdCBmb3IgRklGTyBEQVRBIFJFUS4gV2lsbCBo
+YXZlIHByb3BlciBmaXggaW4gbmV4dCB2ZXJzaW9uLiANCg0K
