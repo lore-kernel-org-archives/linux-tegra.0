@@ -1,76 +1,95 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V4 2/7] clocksource: tegra: add Tegra210 timer support
-Date: Thu, 31 Jan 2019 12:23:44 +0100
-Message-ID: <20190131112344.GB23438@ulmo>
+Subject: Re: [PATCH V4 3/7] soc/tegra: default select TEGRA_TIMER for Tegra210
+Date: Thu, 31 Jan 2019 12:26:55 +0100
+Message-ID: <20190131112655.GC23438@ulmo>
 References: <20190131092410.28222-1-josephl@nvidia.com>
- <20190131092410.28222-3-josephl@nvidia.com>
+ <20190131092410.28222-4-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TRYliJ5NKNqkz5bu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190131092410.28222-3-josephl@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============3969646089766168489=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190131092410.28222-4-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Joseph Lo <josephl@nvidia.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---TRYliJ5NKNqkz5bu
+--===============3969646089766168489==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
+Content-Disposition: inline
+
+
+--LwW0XdcUbUexiWVK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 31, 2019 at 05:24:05PM +0800, Joseph Lo wrote:
-> Add support for the Tegra210 timer that runs at oscillator clock
-> (TMR10-TMR13). We need these timers to work as clock event device and to
-> replace the ARMv8 architected timer due to it can't survive across the
-> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
-> source when CPU suspends in power down state.
+On Thu, Jan 31, 2019 at 05:24:06PM +0800, Joseph Lo wrote:
+> The tegra timer is necessary for Tegra210 to support CPU idle power-down
+> state. So select it by default.
 >=20
-> Also convert the original driver to use timer-of API.
->=20
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
 > v4:
->  * merge timer-tegra210.c in previous version into timer-tegra20.c
-> v3:
->  * use timer-of API
-> v2:
->  * add error clean-up code
+>  * new added in this version
 > ---
->  drivers/clocksource/Kconfig         |   2 +-
->  drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
->  include/linux/cpuhotplug.h          |   1 +
->  3 files changed, 272 insertions(+), 100 deletions(-)
+>  drivers/soc/tegra/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-Looks good to me:
+So this technically depends on patch 2/7, so it would make sense for
+Daniel or Thomas to pick this up along with 2/7, but you didn't Cc them,
+so they're not aware of this.
+
+I think you need to either resend the series and Cc both Daniel and
+Thomas on all the patches in the series, or we have to make sure that
+this patch is not applied before patch 2/7, otherwise Kconfig will
+complain. If you decide to resend, this patch is:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
 Thierry
 
---TRYliJ5NKNqkz5bu
+--LwW0XdcUbUexiWVK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxS2r4ACgkQ3SOs138+
-s6E4kw/+KIr1/qDOYKPC0vig58FLCc8MiVQkfgBHJc6+1ItsalgY5BQsUbedis6k
-hHROsupsiqkLH4u7KWL/kxeJeG/bxkyqjSw3QKE7ql+UOa/h0HVTaKBqtRFAoq3b
-Dvrve2WDgczk1+4XXaqbwh3s6pprOsH+T85vUDR2OT7yVeiWuXyvIS/mwoxFpOLN
-w8kGBcW6Lo0QDMND50ZJ2gJJyk3CHQhqeUVqQMtVGG/+qG+dbKvwiR9BLA3gekqG
-KUoTSJnpmc02jYxIct8WHBBD6SckJtcBvLi5bBG5Zg/16SLOFxSLVVWPKEXaMnzP
-/Bd6GYCbVu/8CVFH8lLU377YK4Ca14MWS2lXhCgWGenvXPa+DEP5Pq5Hedxauanl
-HQ6Gzc6QHtNQeaLrHasJ8QLDYyUhw2sL2Vwjs+Xn4gWcsy1/T7i+l08bmjEXWLvU
-cvQwO9KP3vg0BWXqB63JhvZZTkfKsPWgdQppon9GMxKwQEmI4smM8d3PGLoY9xl5
-i+GBTffLp45DXlDyXTi2AE+9OMxCh6NGqnUVgysOEi6OLHz+VmsG0IE+yNHRuII3
-BzLnzE2R0eeptzEBy7qaQo6v1CmOhb6Vk3Cez7TUzBVen9hmnazkSfx3t1+1Li2f
-oggvSwpAqz6rlGNd6byY5MuLpQXB97R3WjGbzjZSxOnPNDs/y+I=
-=JPuk
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxS234ACgkQ3SOs138+
+s6Ha+g/+KksMkDLC2hmHrQkoFq3UeuPezAUmE3S5RGAUgg6/YsHdIfe2nyEWa9R9
+CipRPytWvf8LarYPfrGVDLw2/xjPwaG5ksMPmYmbp7JTtFnIMjal4wD+E5gBMYai
+vFqrzwKPyNBEpbuS00N+buJdPy8NbMr6uPmyQNBtYlpkFMEhXv5Nv5eHgECkX2i9
+UY+sNcXRDSf7SaDK4y3ot3T8+K6hGfTPAhw9d0SwTmrxpUYfamOo8Y7qUJC83nac
+705WMAG++oulqEUXuajZmvCuCMQXQ0NANjL/74j6i7hWb1RFCrS1OkgfgO0V1XD0
+AzFYaHhPT0eFB2EkP3XBDhYZ9YtKEU88iNXjlnV+zt/Dup/CkojOM0C/28Z7JE+g
+YYYTmEHXTCdY9ilPiyF4hgxI9EHpxj1PtwZLJSh/BxPGoIf7c7+w4uzmMIXzkcqz
+nCgVsn8VTpEIW/dN749+BVWma40CtNPglJF7AnzV7zAuMfgnue4wknndd2+n7U8a
+KFFUw4EbU4YM7msVtfz57i95X64h/HpVi+dkIR97znr+X+z78tE62c1TFBqRxEzL
+x+Hxc/Zf0XgSxS90sx8nboxgnhVn/KVRgLhMXNv+Zi8PJ2QkfbXM207UafE+WC+e
+dciyOw3hf2U7qHiqXQJ/VUYzFMpwzeZv3CaShkHPM6g6dbUJf4M=
+=Y6zP
 -----END PGP SIGNATURE-----
 
---TRYliJ5NKNqkz5bu--
+--LwW0XdcUbUexiWVK--
+
+
+--===============3969646089766168489==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============3969646089766168489==--
