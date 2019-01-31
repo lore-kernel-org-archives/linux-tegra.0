@@ -1,78 +1,55 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: Re: [PATCH v2 2/4] mfd: max77620: add documentation for backup
- battery charging
-Date: Thu, 31 Jan 2019 10:26:51 +0800
-Message-ID: <068e92a6-716c-8144-d504-3e8236dbf591@nvidia.com>
-References: <20190129085531.32364-1-markz@nvidia.com>
- <20190129085531.32364-3-markz@nvidia.com> <20190130195154.GA30939@bogus>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH] cpuidle: dt: bail out if the idle-state DT node is not
+ compatible
+Date: Thu, 31 Jan 2019 10:27:49 +0800
+Message-ID: <20190131022749.19046-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190130195154.GA30939@bogus>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: lee.jones@linaro.org, blaws05@gmail.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/31/2019 3:51 AM, Rob Herring wrote:
-> On Tue, Jan 29, 2019 at 04:55:29PM +0800, Mark Zhang wrote:
->> Adding documentation for 3 new backup battery charging dts
->> properties:
->> - maxim,backup-battery-charging-current
->> - maxim,backup-battery-charging-voltage
->> - maxim,backup-battery-output-resister
->>
->> Signed-off-by: Mark Zhang <markz@nvidia.com>
->> ---
->>  .../devicetree/bindings/mfd/max77620.txt      | 20 +++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
->> index 9c16d51cc15b..484b17e4fba5 100644
->> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
->> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
->> @@ -122,6 +122,26 @@ For DT binding details of different sub modules like GPIO, pincontrol,
->>  regulator, power, please refer respective device-tree binding document
->>  under their respective sub-system directories.
->>  
->> +Backup Battery:
->> +==============
->> +This sub-node configure charging backup battery of the device. Device has
->> +support of charging the backup battery. The subnode name is "backup-battery".
->> +The property for backup-battery child nodes as:
->> +Presence of this child node will enable the backup battery charging.
->> +
->> +Optional properties:
->> +	-maxim,backup-battery-charging-current: Charging current setting.
->> +			The device supports 50/100/200/400/600/800uA.
->> +			If this property is unavailable then it will
->> +			charge with 50uA.
->> +	-maxim,backup-battery-charging-voltage: Charging Voltage Limit Setting.
->> +			Device supports 2500000/3000000/3300000/350000uV.
->> +			Default will be set to 2500mV. The voltage will be roundoff
->> +			to nearest lower side if other than above is configured.
->> +	-maxim,backup-battery-output-resister: Output resistor on Ohm.
->> +			Device supports 100/1000/3000/6000 Ohms.
->> +			Default will be set to 1000 Ohm.
-> 
-> These need property unit suffixes as defined in property-units.txt. The 
-> names are kind of long, so perhaps shorten them a bit.
-> 
+Currently, the DT of the idle states will be parsed first whether it's
+compatible or not. This could cause a warning message that comes from if
+the CPU doesn't support identical idle states. E.g. Tegra186 can run
+with 2 Cortex-A57 and 2 Denver cores with different idle states on
+different types of these cores.
 
-Thanks Rob. Given these properties will be under "backup-battery" section, so how about
-changing them to:
-- maxim,charging-current-microamp
-- maxim,charging-voltage-microvolt
-- maxim,output-resister-ohms
+We fix it to check the compatible string before the parsing procedures.
+So it can make sure it only goes through the idle states that the CPU
+supported.
 
-Mark
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ drivers/cpuidle/dt_idle_states.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
->> +
->>  Example:
->>  --------
->>  #include <dt-bindings/mfd/max77620.h>
->> -- 
->> 2.19.2
->>
+diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
+index 53342b7f1010..4a528908abb3 100644
+--- a/drivers/cpuidle/dt_idle_states.c
++++ b/drivers/cpuidle/dt_idle_states.c
+@@ -180,6 +180,11 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
+ 		if (!state_node)
+ 			break;
+ 
++		if (!of_device_is_compatible(state_node, matches->compatible)) {
++			err = -EINVAL;
++			break;
++		}
++
+ 		if (!of_device_is_available(state_node)) {
+ 			of_node_put(state_node);
+ 			continue;
+-- 
+2.20.1
