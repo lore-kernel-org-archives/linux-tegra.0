@@ -1,70 +1,109 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V8 5/5] i2c: tegra: Add I2C interface timing support
-Date: Thu, 31 Jan 2019 13:50:15 +0100
-Message-ID: <20190131125015.GK23438@ulmo>
-References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
- <1548915387-28826-5-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH V4 6/7] arm64: dts: tegra210-p2180: Enable CPU idle support
+Date: Thu, 31 Jan 2019 13:57:11 +0100
+Message-ID: <20190131125711.GL23438@ulmo>
+References: <20190131092410.28222-1-josephl@nvidia.com>
+ <20190131092410.28222-7-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UlsYxwg8UDQn+EKZ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1548915387-28826-5-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============6831676933274225653=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190131092410.28222-7-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---UlsYxwg8UDQn+EKZ
+--===============6831676933274225653==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gmhhrsDozM2n+uz5"
+Content-Disposition: inline
+
+
+--gmhhrsDozM2n+uz5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 30, 2019 at 10:16:27PM -0800, Sowjanya Komatineni wrote:
-> This patch adds I2C interface timing registers support for
-> proper bus rate configuration along with meeting the i2c spec
-> setup and hold times based on the tuning performed on Tegra210,
-> Tegra186 and Tegra194 platforms.
+On Thu, Jan 31, 2019 at 05:24:09PM +0800, Joseph Lo wrote:
+> Enable CPU idle support for Jetson TX1 platform.
 >=20
-> I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
-> and Tegra I2C controller design uses them as a part of internal
-> clock divisor.
->=20
-> I2C_INTERFACE_TIMING_1 register contains the setup and hold times
-> for start and stop conditions.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  [V8] : Updated to handle timing implementation within tegra_i2c_init dir=
-ectly
->  [V7] : Minor updates to timing implementation
->  [V5/V6] : Added this Interface timing patch in V5 of the patch series.
+> v4:
+>  * no change
+> v3:
+>  * no change
+> v2:
+>  * no change
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 >=20
->  drivers/i2c/busses/i2c-tegra.c | 187 ++++++++++++++++++++++++++++++++++-=
-------
->  1 file changed, 158 insertions(+), 29 deletions(-)
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/=
+boot/dts/nvidia/tegra210-p2180.dtsi
+> index 053458a5db55..d1a492c63e96 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+> @@ -305,6 +305,12 @@
+>  		cpu@3 {
+>  			enable-method =3D "psci";
+>  		};
+> +
+> +		idle-states {
+> +			c7 {
+> +				status =3D "okay";
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Doesn't seem like the code currently cares, but the bindings are
+specific, so this looks good to me.
 
---UlsYxwg8UDQn+EKZ
+Given that we need the timer in order to get out of this state, I'm
+assuming that I should hold back on these patches until the driver
+changes have been merged to make sure we don't regress. Is that
+correct?
+
+Thierry
+
+--gmhhrsDozM2n+uz5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxS7wcACgkQ3SOs138+
-s6EuAg//R7O3xNYPKqmFBL6WnIleMs2ii8nXNh4msfa3KTIS2p86SUSE36a2zpL2
-2UoflWAc39ZMNpomvrI0NwZrUBoUWFYczEiWHtda6N3CLHzzqvLCOWUJ9Moo43Vq
-LiCsMJUYLonikftcCrr9ADY+9cxdAmSs4+DV4ADtZFEVAeUU+E0cd5Y8aFOUONwc
-yVEflqm11tID7jgwZMgszxMCAgAM5FPStc+/TdZxvUpCd2wCqzsOYYSC8HiHEbX6
-/oxJ+BUTF5qeQaRIgfw0LAL3dleeIkqNIDWBk6/Pi6giNhCaDKxPfUJG/9OC34/j
-Fxwb0qnHSIMKDKH8i0GMPU2G00Wmcva+TgpuGfuyLoA4xEKb3ffPtRgtDQsc/xz+
-kVrNrG1i/6BJKV2TJ8Pv/lmijCjSGPbK0AuPRa5J2remVRwyzkOG2jDD9LW+GZjp
-T5IHTl2zFXGjz+PVQK7BjA6dEbZiZpai7+MI1W0um/SHMfjqWilMkciV2P2uD3xY
-LQdvvZutNMnXwuYjFfM7Get4ozjzuBU/ds+FgK28Lhg4nPrtpnsQq+hKe87ACTm1
-ogq/Dtg+uWgZLbDQHp4IpqbnKfjabj07fqOSKdUIXhRoR7sF2YPT7B3PmwECeS9P
-u/pEWi3YNIrqgqgArG5P8wCzhru7dTsI1Bw5H1FPacLp5I/91CM=
-=fS/Z
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxS8KcACgkQ3SOs138+
+s6F85w//ZZmfY0LXgFe/SNF2zAqb+A8PuEpwhY1vyW3fIlGZih2CcGLC5hqvP0T5
+Mvj1dUpvwuTxWc03OK208/+HTPKlGaV7L2zsZFxETVZqEGNxSicUtdbSM6E0j7t6
+swRUWgpDsG+5IBXFLSqhD7fJoZBlqVUSGs7Qi+nHGg+U9HKZjxGRZlB1SKZXSb79
+4b50pyIQcXlIcxclIeKKWg6JhANqTcZz5biVIcSLRlF98TcMTwwkit7wrwBIFcN6
+SbFo8VOoDD6mFGHbNylLNK4Ze/hTBB4/DrE+oy6FCJ9p5DrDrZZx4JCOTFKfYUYU
+l/JTaxkNvZ7IvP8T3y0DqB8FMTflkdDlHi4jciPkUgiKYyNBhrSGojlO5SMRL5rE
+dIeTTVMpJZi1MDvALazq5ldhe+iZnKWXmKYro+QCTaS5m4zxs3KK4F6ELN/h0AOv
+NJzluQ3c/4QoCJ6aFr+a+hyU0yWn7BjGebGhaqsN2c9CGygX6LdFYuXy7O+jMGEB
+rmFZf4oeyOPDdMt4wijTzpmhNyzQYhRpibktGhqDxpL2nlrAHLhsKDKocZEyeqyS
+w/pNjVpLWlHBFbj6S+DfNN5atlIbQx5wgouEMrnWQgvwW4+Ko+kYzB7WcAsXJoWw
+suhlLUGMS36clexmesvR14idfDLTmqM1r4O3LtTjarL8NCx+Bxc=
+=NAvK
 -----END PGP SIGNATURE-----
 
---UlsYxwg8UDQn+EKZ--
+--gmhhrsDozM2n+uz5--
+
+
+--===============6831676933274225653==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6831676933274225653==--
