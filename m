@@ -1,7 +1,7 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-Date: Thu, 31 Jan 2019 20:38:29 +0300
-Message-ID: <f5b9acd6-3700-9595-9be7-066be1d4d77c@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V8 3/5] i2c: tegra: Add DMA Support
+Date: Thu, 31 Jan 2019 17:38:50 +0000
+Message-ID: <BYAPR12MB339858E4B4E8F1336702AC8EC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
  <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
  <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
@@ -10,69 +10,42 @@ References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
  <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
  <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-31.01.2019 20:25, Dmitry Osipenko пишет:
-> 31.01.2019 20:11, Dmitry Osipenko пишет:
->> 31.01.2019 19:56, Sowjanya Komatineni пишет:
->>>
->>>>>>  drivers/i2c/busses/Kconfig     |   2 +-
->>>>>>  drivers/i2c/busses/i2c-tegra.c | 362 
->>>>>> ++++++++++++++++++++++++++++++++++++++---
->>>>>>  2 files changed, 339 insertions(+), 25 deletions(-)
->>>>>
->>>>> Tegra20 crashes because of this patch:
->>>>>
->>>> [snip]
->>>>> <4>[    3.395915] ------------[ cut here ]------------
->>>>> <2>[    3.395919] kernel BUG at drivers/i2c/busses/i2c-tegra.c:810!
->>>> The BUG line is from:
->>>>
->>>> 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->>>> 		if (i2c_dev->is_curr_dma_xfer)
->>>> 			i2c_dev->msg_buf_remaining = 0;
->>>> 		BUG_ON(i2c_dev->msg_buf_remaining);
->>>> 		complete(&i2c_dev->msg_complete);
->>>> 	}
->>>>
->>> BUG_ON line is not part of this change. It was already there in existing driver.
->>> Based on log, I see DMA transfer is done for 224 bytes followed by 1 successful PIO transfer and then on next PIO transfer it received packet xfer complete interrupt with incomplete transfer bytes and that where it hit BUG_ON condition.
->>>
->>>
->>
->> Yes, that BUG_ON is caused by the DMA transferring. Everything works fine be setting dma=false in the code, hence it's likely not a bug in the code (at least for now it looks fine), but likely that HW is not programmed correctly.
->>
-> 
-> It works with this change:
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index fe5b89abc576..8e059e94b94e 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1170,10 +1170,11 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->                 time_left, completion_done(&i2c_dev->msg_complete),
->                 i2c_dev->msg_err);
->  
-> +       tegra_i2c_init(i2c_dev, true);
-> +
->         if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
->                 return 0;
->  
-> -       tegra_i2c_init(i2c_dev, true);
->         /* start recovery upon arbitration loss in single master mode */
->         if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
->                 if (!i2c_dev->is_multimaster_mode)
-> 
-> 
-> Which means that HW state is kept dirty after DMA transfer. Please check everything carefully.
-> 
-
-Also, enforcing dma=true regardless of transfer size doesn't work as well.
+DQoNCj4+Pg0KPj4gQlVHX09OIGxpbmUgaXMgbm90IHBhcnQgb2YgdGhpcyBjaGFuZ2UuIEl0IHdh
+cyBhbHJlYWR5IHRoZXJlIGluIGV4aXN0aW5nIGRyaXZlci4NCj4+IEJhc2VkIG9uIGxvZywgSSBz
+ZWUgRE1BIHRyYW5zZmVyIGlzIGRvbmUgZm9yIDIyNCBieXRlcyBmb2xsb3dlZCBieSAxIHN1Y2Nl
+c3NmdWwgUElPIHRyYW5zZmVyIGFuZCB0aGVuIG9uIG5leHQgUElPIHRyYW5zZmVyIGl0IHJlY2Vp
+dmVkIHBhY2tldCB4ZmVyIGNvbXBsZXRlIGludGVycnVwdCB3aXRoIGluY29tcGxldGUgdHJhbnNm
+ZXIgYnl0ZXMgYW5kIHRoYXQgd2hlcmUgaXQgaGl0IEJVR19PTiBjb25kaXRpb24uDQo+Pg0KPj4N
+Cj4gDQo+IFllcywgdGhhdCBCVUdfT04gaXMgY2F1c2VkIGJ5IHRoZSBETUEgdHJhbnNmZXJyaW5n
+LiBFdmVyeXRoaW5nIHdvcmtzIGZpbmUgYmUgc2V0dGluZyBkbWE9ZmFsc2UgaW4gdGhlIGNvZGUs
+IGhlbmNlIGl0J3MgbGlrZWx5IG5vdCBhIGJ1ZyBpbiB0aGUgY29kZSAoYXQgbGVhc3QgZm9yIG5v
+dyBpdCBsb29rcyBmaW5lKSwgYnV0IGxpa2VseSB0aGF0IEhXIGlzIG5vdCBwcm9ncmFtbWVkIGNv
+cnJlY3RseS4NCj4gDQoNCj4gSXQgd29ya3Mgd2l0aCB0aGlzIGNoYW5nZToNCj4NCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyBiL2RyaXZlcnMvaTJjL2J1c3Nl
+cy9pMmMtdGVncmEuYyBpbmRleCBmZTViODlhYmM1NzYuLjhlMDU5ZTk0Yjk0ZSAxMDA2NDQNCj4g
+LS0tIGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+ICsrKyBiL2RyaXZlcnMvaTJj
+L2J1c3Nlcy9pMmMtdGVncmEuYw0KPiBAQCAtMTE3MCwxMCArMTE3MCwxMSBAQCBzdGF0aWMgaW50
+IHRlZ3JhX2kyY194ZmVyX21zZyhzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2RldiwNCj4gICAg
+ICAgICAgICAgICAgIHRpbWVfbGVmdCwgY29tcGxldGlvbl9kb25lKCZpMmNfZGV2LT5tc2dfY29t
+cGxldGUpLA0KPiAgICAgICAgICAgICAgICAgaTJjX2Rldi0+bXNnX2Vycik7DQo+DQo+ICsgICAg
+ICAgdGVncmFfaTJjX2luaXQoaTJjX2RldiwgdHJ1ZSk7DQo+ICsNCj4gICAgICAgICBpZiAobGlr
+ZWx5KGkyY19kZXYtPm1zZ19lcnIgPT0gSTJDX0VSUl9OT05FKSkNCj4gICAgICAgICAgICAgICAg
+IHJldHVybiAwOw0KPiAgDQo+IC0gICAgICAgdGVncmFfaTJjX2luaXQoaTJjX2RldiwgdHJ1ZSk7
+DQo+ICAgICAgICAgLyogc3RhcnQgcmVjb3ZlcnkgdXBvbiBhcmJpdHJhdGlvbiBsb3NzIGluIHNp
+bmdsZSBtYXN0ZXIgbW9kZSAqLw0KPiAgICAgICAgIGlmIChpMmNfZGV2LT5tc2dfZXJyID09IEky
+Q19FUlJfQVJCSVRSQVRJT05fTE9TVCkgew0KPiAgICAgICAgICAgICAgICAgaWYgKCFpMmNfZGV2
+LT5pc19tdWx0aW1hc3Rlcl9tb2RlKQ0KPg0KPg0KPiBXaGljaCBtZWFucyB0aGF0IEhXIHN0YXRl
+IGlzIGtlcHQgZGlydHkgYWZ0ZXIgRE1BIHRyYW5zZmVyLiBQbGVhc2UgY2hlY2sgZXZlcnl0aGlu
+ZyBjYXJlZnVsbHkuDQoNCkZJRk8gdHJpZ2dlciBsZXZlbHMgYXJlIGRpZmYgZm9yIFBJTyBWcyBE
+TUEgc28gaXQgbmVlZCB0byBiZSBtb3ZlZCB0byB4ZmVyIGZ1bmN0aW9uLiBXaWxsIGZpeCB0aGF0
+Lg0K
