@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 3/7] soc/tegra: default select TEGRA_TIMER for Tegra210
-Date: Thu, 31 Jan 2019 17:24:06 +0800
-Message-ID: <20190131092410.28222-4-josephl@nvidia.com>
+Subject: [PATCH V4 4/7] arm64: dts: tegra210: fix timer node
+Date: Thu, 31 Jan 2019 17:24:07 +0800
+Message-ID: <20190131092410.28222-5-josephl@nvidia.com>
 References: <20190131092410.28222-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,28 +21,50 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra timer is necessary for Tegra210 to support CPU idle power-down
-state. So select it by default.
+Fix timer node to make it work with Tegra210 timer driver.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v4:
- * new added in this version
+ * no change
+v3:
+ * no change
+v2:
+ * list all the IRQs per each timer channels 0 through 13
+ * remove compatible string of "nvidia,tegra30-timer"
 ---
- drivers/soc/tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index fe4481676da6..a0b03443d8c1 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -76,6 +76,7 @@ config ARCH_TEGRA_210_SOC
- 	select PINCTRL_TEGRA210
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
-+	select TEGRA_TIMER
- 	help
- 	  Enable support for the NVIDIA Tegra210 SoC. Also known as Tegra X1,
- 	  the Tegra210 has four Cortex-A57 cores paired with four Cortex-A53
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index b5858b5ea052..2b387364afc3 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -384,14 +384,22 @@
+ 	};
+ 
+ 	timer@60005000 {
+-		compatible = "nvidia,tegra210-timer", "nvidia,tegra20-timer";
++		compatible = "nvidia,tegra210-timer";
+ 		reg = <0x0 0x60005000 0x0 0x400>;
+-		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA210_CLK_TIMER>;
+ 		clock-names = "timer";
+ 	};
 -- 
 2.20.1
