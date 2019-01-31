@@ -1,97 +1,87 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V7 3/5] i2c: tegra: Add DMA Support
-Date: Thu, 31 Jan 2019 01:19:13 +0000
-Message-ID: <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V7 4/5] i2c: tegra: Update transfer timeout
+Date: Thu, 31 Jan 2019 04:38:01 +0300
+Message-ID: <80d5072c-b8b8-c263-bcda-ad008597469e@gmail.com>
 References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
- <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
- <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
+ <1548864096-20974-4-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
+In-Reply-To: <1548864096-20974-4-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+ICsJCQlkbWFfc3luY19zaW5nbGVfZm9yX2RldmljZShpMmNfZGV2LT5kZXYsDQo+ID4gKwkJ
-CQkJCSAgIGkyY19kZXYtPmRtYV9waHlzLA0KPiA+ICsJCQkJCQkgICB4ZmVyX3NpemUsDQo+ID4g
-KwkJCQkJCSAgIERNQV9GUk9NX0RFVklDRSk7DQo+ID4gKwkJCXJldCA9IHRlZ3JhX2kyY19kbWFf
-c3VibWl0KGkyY19kZXYsIHhmZXJfc2l6ZSk7DQo+ID4gKwkJCWlmIChyZXQgPCAwKSB7DQo+ID4g
-KwkJCQlkZXZfZXJyKGkyY19kZXYtPmRldiwNCj4gPiArCQkJCQkiU3RhcnRpbmcgUlggRE1BIGZh
-aWxlZCwgZXJyICVkXG4iLA0KPiA+ICsJCQkJCXJldCk7DQo+ID4gKwkJCQlnb3RvIGV4aXQ7DQo+
-ID4gKwkJCX0NCj4gPiArCQl9IGVsc2Ugew0KPiA+ICsJCQljaGFuID0gaTJjX2Rldi0+dHhfZG1h
-X2NoYW47DQo+ID4gKwkJCXRlZ3JhX2kyY19jb25maWdfZmlmb190cmlnKGkyY19kZXYsIHhmZXJf
-c2l6ZSwNCj4gPiArCQkJCQkJICAgREFUQV9ETUFfRElSX1RYKTsNCj4gPiArCQkJLyogTWFrZSB0
-aGUgZG1hIGJ1ZmZlciB0byByZWFkIGJ5IGNwdSAqLz4gKwkJCWRtYV9zeW5jX3NpbmdsZV9mb3Jf
-Y3B1KGkyY19kZXYtPmRldiwNCj4gPiArCQkJCQkJaTJjX2Rldi0+ZG1hX3BoeXMsDQo+ID4gKwkJ
-CQkJCXhmZXJfc2l6ZSwNCj4gPiArCQkJCQkJRE1BX1RPX0RFVklDRSk7DQo+DQo+IFRoaXMgaXMg
-bm90IGNvcnJlY3QsIHlvdSBuZWVkIHRvIGNhbGwgZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUoKSBh
-ZnRlciBjb21wbGV0aW9uIG9mIHRoZSB0cmFuc2ZlciB0byBnaXZlIGJhY2sgZG1hIGJ1ZmZlciBv
-d25lcnNoaXAgdG8gQ1BVLCBzZWUgYmVsb3cuIFRoaXMgZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUo
-KSBpbnZvY2F0aW9uIHNob3VsZCBiZSByZW1vdmVkLg0KDQpUcmFuc2ZlciBpcyBub3QgZG9uZSB5
-ZXQuIERtYSBidWZmZXIgb3duZXJzaGlwIGlzIGdpdmVuIHRvIENQVSBoZXJlIGJlZm9yZSBjb3B5
-aW5nIGhlYWRlciBieXRlcyBhbmQgbXNnIGJ5dGVzIGludG8gZG1hIGJ1ZmZlciBiZWZvcmUgYWN0
-dWFsbHkgdHJhbnNtaXR0aW5nDQoNCj4gPiArDQo+ID4gKwkJaWYgKGkyY19kZXYtPm1zZ19yZWFk
-KSB7DQo+ID4gKwkJCWlmIChsaWtlbHkoaTJjX2Rldi0+bXNnX2VyciA9PSBJMkNfRVJSX05PTkUp
-KSB7DQo+ID4gKwkJCQlkbWFfc3luY19zaW5nbGVfZm9yX2NwdShpMmNfZGV2LT5kZXYsDQo+ID4g
-KwkJCQkJCQlpMmNfZGV2LT5kbWFfcGh5cywNCj4gPiArCQkJCQkJCXhmZXJfc2l6ZSwNCj4gPiAr
-CQkJCQkJCURNQV9GUk9NX0RFVklDRSk7DQo+ID4gKw0KPiA+ICsJCQkJbWVtY3B5KGkyY19kZXYt
-Pm1zZ19idWYsIGkyY19kZXYtPmRtYV9idWYsDQo+ID4gKwkJCQkJbXNnLT5sZW4pOw0KPiA+ICsJ
-CQl9DQo+ID4gKwkJfQ0KPg0KPiBIZXJlIHlvdSBzaG91bGQgZ2l2ZSBiYWNrIGRtYSBidWZmZXIg
-b3duZXJzaGlwIHRvIENQVToNCg0KQWZ0ZXIgdHJhbnNmZXIgaXMgZG9uZSwgZm9yIG1zZyByZWFk
-cywgZG1hIGJ1ZmZlciBvd25lcnNoaXAgaXMgZ2l2ZW4gdG8gQ1BVIGFuZCByZWFkIGRhdGEgZnJv
-bSBkbWEgYnVmZmVyIGlzIGNvcGllZCB0byBtc2cgYnVmZmVyDQpGb3IgbXNnIHdyaXRlcywgbm8g
-bmVlZCBvZiBvd25lcnNoaXAgdG8gQ1BVLg0KPiA+DQo+ID4JCWVsc2Ugew0KPiA+CQkJZG1hX3N5
-bmNfc2luZ2xlX2Zvcl9jcHUoaTJjX2Rldi0+ZGV2LA0KPiA+CQkJCQkJaTJjX2Rldi0+ZG1hX3Bo
-eXMsDQo+ID4JCQkJCQl4ZmVyX3NpemUsDQo+ID4JCQkJCQlETUFfVE9fREVWSUNFKTsNCj4gPgkJ
-fQ0KPg0KPiA+ICAJdGltZV9sZWZ0ID0gd2FpdF9mb3JfY29tcGxldGlvbl90aW1lb3V0KCZpMmNf
-ZGV2LT5tc2dfY29tcGxldGUsDQo+ID4gIAkJCQkJCVRFR1JBX0kyQ19USU1FT1VUKTsNCj4gPiAg
-CXRlZ3JhX2kyY19tYXNrX2lycShpMmNfZGV2LCBpbnRfbWFzayk7DQo+ID4gIA0KPiA+ICAJaWYg
-KHRpbWVfbGVmdCA9PSAwKSB7DQo+ID4gIAkJZGV2X2VycihpMmNfZGV2LT5kZXYsICJpMmMgdHJh
-bnNmZXIgdGltZWQgb3V0XG4iKTsNCj4gPiArCQlpZiAoZG1hKSB7DQo+ID4gKwkJCWRtYWVuZ2lu
-ZV90ZXJtaW5hdGVfYWxsKGNoYW4pOw0KPiA+ICsJCQljb21wbGV0ZSgmaTJjX2Rldi0+ZG1hX2Nv
-bXBsZXRlKTsNCj4gPiArCQl9DQo+DQo+IERNQSB0cmFuc2ZlciBoYXMgYmVlbiBjb21wbGV0ZWQg
-YXQgdGhpcyBwb2ludCwgaGVuY2UgdGhpcyBodW5rIGlzbid0IG5lZWRlZC4gUGxlYXNlIHJlbW92
-ZSBpdC4NCg0KRE1BIGNvbXBsZXRlIGFsb25lIGRvZXNu4oCZdCBndWFyYW50ZWUgdGhlIHRyYW5z
-ZmVyLiBQYWNrZXRzL0FsbCBwYWNrZXRzIHhmZXIgaW50ZXJydXB0IGZyb20gSTJDIGNvbmZpcm1z
-IGNvbXBsZXRlIHRyYW5zYWN0aW9uIGFsb25nIHdpdGggZG1hIGNvbXBsZXRlIGNoZWNrLg0KU28g
-c3RpbGwgbmVlZCB0byBjaGVjayBmb3IgbXNnX2NvbXBsZXRlIHRpbWVvdXQuIA0KDQo+ID4gQEAg
-LTc0MCw2ICs5MjUsMzIgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2coc3RydWN0IHRl
-Z3JhX2kyY19kZXYgKmkyY19kZXYsDQo+ID4gIAl1MzIgaW50X21hc2s7DQo+ID4gIAl1bnNpZ25l
-ZCBsb25nIHRpbWVfbGVmdDsNCj4gPiAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ID4gKwlzaXpl
-X3QgeGZlcl9zaXplOw0KPiA+ICsJdTMyICpidWZmZXIgPSAwOw0KPiA+ICsJaW50IHJldCA9IDA7
-DQo+ID4gKwlib29sIGRtYSA9IGZhbHNlOw0KPiA+ICsNCj4gPiArCWlmIChtc2ctPmZsYWdzICYg
-STJDX01fUkQpDQo+ID4gKwkJeGZlcl9zaXplID0gbXNnLT5sZW47DQo+ID4gKwllbHNlDQo+ID4g
-KwkJeGZlcl9zaXplID0gbXNnLT5sZW4gKyBJMkNfUEFDS0VUX0hFQURFUl9TSVpFOw0KPiA+ICsN
-Cj4gPiArCXhmZXJfc2l6ZSA9IEFMSUdOKHhmZXJfc2l6ZSwgQllURVNfUEVSX0ZJRk9fV09SRCk7
-DQo+ID4gKwlkbWEgPSAoeGZlcl9zaXplID4gSTJDX1BJT19NT0RFX01BWF9MRU4pOw0KPiA+ICsJ
-aWYgKGRtYSkgew0KPiA+ICsJCWlmICgobXNnLT5mbGFncyAmIEkyQ19NX1JEKSAmJiAhaTJjX2Rl
-di0+cnhfZG1hX2NoYW4pDQo+ID4gKwkJCXJldCA9IHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbShp
-MmNfZGV2LCB0cnVlKTsNCj4gPiArCQllbHNlIGlmICghaTJjX2Rldi0+dHhfZG1hX2NoYW4pDQo+
-ID4gKwkJCXJldCA9IHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbShpMmNfZGV2LCBmYWxzZSk7DQo+
-DQo+IEluIHRoZSBjb21tZW50IHRvIFYzIEkgbWVudGlvbmVkIHRoYXQgaXQncyBub3QgYSBnb29k
-IGlkZWEgdG8gcmVxdWVzdCBjaGFubmVscyBkeW5hbWljYWxseSBiZWNhdXNlIHN1c3BlbmQtcmVz
-dW1lIG9yZGVyIGlzIGJhc2VkIG9uIGRldmljZXMgcmVnaXN0cmF0aW9uIG9yZGVyLCBpbiB0aGlz
-IGNhc2UgQVBCIERNQSBtdXN0IGJlIHByb2JlZCBiZWZvcmUgSTJDLiBQbGVhc2UgbW92ZSBjaGFu
-bmVscyBhbGxvY2F0aW9uIGludG8gdGhlIHByb2JlLg0KPg0KPiBUaGlzIGFsc28gcmFpc2VzIHRo
-ZSBxdWVzdGlvbiBhYm91dCB0aGUgbmVlZCB0byByZWdpc3RlciBJMkMgZHJpdmVyIGZyb20gdGhl
-IHN1YnN5cy1pbml0IGxldmVsIGJlY2F1c2UgQVBCIGRyaXZlciBpcyBnZXR0aW5nIHJlZ2lzdGVy
-ZWQgZnJvbSB0aGUgbW9kdWxlLWluaXQgbGV2ZWwgYW5kIGhlbmNlIEkyQyBwcm9iaW5nIHdpbGwg
-YmUgZGVmZXJyZWQgdW50aWwgQVBCIERNQSBkcml2ZXIgaXMgcmVnaXN0ZXJlZC4gSXQgbG9va3Mg
-dG8gbWUgdGhhdCB0aGUgc3Vic3lzLWluaXQgaXMgYSByZWxpY3Qgb2YgdGhlIHBhc3QgYW5kIGl0
-IHNob3VsZCBiZSBmaW5lIHRvIG1vdmUgSTJDIGRyaXZlciByZWdpc3RyYXRpb24gaW50byB0aGUg
-bW9kdWxlLWluaXQgbGV2ZWwsIG9mIGNvdXJzZSBpdCdzIG5vdCBzdHJpY3RseSBuZWNlc3Nhcnkg
-YW5kIGNvdWxkIGJlIGRvbmUgbGF0ZXIgb24gaWYgZGVzaXJlZC4NCj4NCj4gPiArCQlpZiAocmV0
-IDwgMCkgew0KPiA+ICsJCQlkZXZfZGJnKGkyY19kZXYtPmRldiwgIlN3aXRjaGluZyB0byBQSU8g
-bW9kZVxuIik7DQo+ID4gKwkJCWRtYSA9IGZhbHNlOw0KPiA+ICsJCQlyZXQgPSAwOw0KPiA+ICsJ
-CX0NCj4gPiArCX0NCj4gPiArDQo+ID4gKwlpMmNfZGV2LT5pc19jdXJyX2RtYV94ZmVyID0gZG1h
-Ow0KPg0KPg0KU2luY2UgeW91ciBwcmV2aW91cyBmZWVkYmFjayBzdWdnZXN0ICJsZXQncyBwb3N0
-cG9uZSBjaGFubmVscyByZXF1ZXN0aW5nIGFuZCBkbWFfYnVmIGFsbG9jYXRpb24gdW50aWwgdGhl
-eSBhcmUgcmVhbGx5IG5lZWRlZCIsIEkgdGhvdWdodCBpdCBtYWtlIHNlbnNlIHRvIG5vdCByZXF1
-ZXN0IGNoYW5uZWxzIGFuZCBhbGxvY2F0ZSB0aWxsIERNQSBpcyBuZWVkZWQuDQpTbyBtb3ZlZCBm
-cm9tIHByb2JlIHRvIHhmZXJfbXNnIGZ1bmN0aW9uLiBCeSB0aGUgdGltZSBpdCBnZXRzIHRvIHhm
-ZXIgbXNnIGZ1bmN0aW9uLCBkZXZpY2VzIHJlZ2lzdHJhdGlvbiBzaG91bGQgYmUgZG9uZSBhbHJl
-YWR5IGFsb25nIHdpdGggYXBiIGRtYSBwcm9iZS4NCg0KDQo=
+30.01.2019 19:01, Sowjanya Komatineni пишет:
+> Tegra194 allows max of 64K bytes and Tegra186 and prior allows
+> max of 4K bytes of transfer per packet.
+> 
+> one sec timeout is not enough for transfers more than 10K bytes
+> at STD bus rate.
+> 
+> This patch updates I2C transfer timeout based on the transfer size
+> and I2C bus rate to allow enough time during max transfer size at
+> lower bus speed.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V5/V6/V7] : Same as V4
+>  [V4] : V4 series includes bus clear support and this patch is updated with
+> 	fixed timeout of 1sec for bus clear operation.
+>  [V3] : Same as V2
+>  [V2] : Added this patch in V2 series to allow enough time for data transfer
+> 	to happen.
+> 	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
+> 	takes argument with this patch.
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index b30b5da5ce6b..623bf4f275cd 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -25,7 +25,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
+>  
+> -#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+> +#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
+>  #define BYTES_PER_FIFO_WORD 4
+>  
+>  #define I2C_CNFG				0x000
+> @@ -901,8 +901,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
+>  		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
+>  		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+>  
+> -		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+> -							TEGRA_I2C_TIMEOUT);
+> +		time_left = wait_for_completion_timeout(
+> +						&i2c_dev->msg_complete,
+> +						TEGRA_I2C_TIMEOUT(1000));
+>  		if (time_left == 0) {
+>  			dev_err(i2c_dev->dev, "timed out for bus clear\n");
+>  			return -ETIMEDOUT;
+> @@ -929,6 +930,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	u32 *buffer = 0;
+>  	int ret = 0;
+>  	bool dma = false;
+> +	u16 xfer_time = 100;
+>  
+>  	if (msg->flags & I2C_M_RD)
+>  		xfer_size = msg->len;
+> @@ -936,6 +938,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
+>  
+>  	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
+> +	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
+> +					i2c_dev->bus_clk_rate);
+
+Could you please add a clarifying comment for the equation?
+
+Shouldn't it be something like this?
+
+xfer_time = (P clocks) * DIV_ROUND_UP(xfer_size, (N bytes per P clocks)) / (bus_clk_rate / 1000)
