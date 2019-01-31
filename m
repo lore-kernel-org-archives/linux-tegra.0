@@ -1,54 +1,231 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
-Date: Thu, 31 Jan 2019 21:15:15 +0300
-Message-ID: <7ddf46a8-ae98-c567-6d3d-8155989effb5@gmail.com>
-References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
- <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
- <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
- <20190131120640.GF23438@ulmo>
- <0e832fa6-f143-7b24-2685-b88a55e77e51@gmail.com>
- <20190131144344.GP23438@ulmo>
- <bdb5ab9f-b047-6b9e-696a-8d6ef4065c77@gmail.com>
- <6c2909cb-f31c-921d-8449-79ec77c02d9b@gmail.com>
- <48135b67-eed7-9a9d-de3e-e400e8ef8176@gmail.com>
+From: Bo Yan <byan@nvidia.com>
+Subject: [PATCH] arm64: tegra: add topology data for Tegra194 cpu
+Date: Thu, 31 Jan 2019 10:35:54 -0800
+Message-ID: <1548959754-3941-1-git-send-email-byan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <48135b67-eed7-9a9d-de3e-e400e8ef8176@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+Cc: mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, Bo Yan <byan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-31.01.2019 21:08, Dmitry Osipenko пишет:
-> 31.01.2019 19:55, Dmitry Osipenko пишет:
-> +config I2C_TEGRA_DMA_SUPPORT
-> +	bool "NVIDIA Tegra internal I2C controller DMA support"
-> +	depends on I2C_TEGRA
-> +	depends on TEGRA20_APB_DMA && ARCH_TEGRA_2x_SOC
-> +	depends on TEGRA20_APB_DMA && ARCH_TEGRA_3x_SOC
-> +	depends on TEGRA20_APB_DMA && ARCH_TEGRA_114_SOC
-> +	depends on TEGRA20_APB_DMA && ARCH_TEGRA_124_SOC
-> +	depends on TEGRA20_APB_DMA && ARCH_TEGRA_210_SOC
-> +	help
-> +	  If you say yes to this option, DMA engine integration support will
-> +	  be included for the I2C controller embedded in NVIDIA Tegra SOCs
-> +
+The xavier CPU architecture includes 8 CPU cores organized in
+4 clusters. Add cpu-map data for topology initialization, add
+cache data for cache node creation in sysfs.
 
-Actually, seems should be like that:
+Signed-off-by: Bo Yan <byan@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 148 +++++++++++++++++++++++++++++--
+ 1 file changed, 140 insertions(+), 8 deletions(-)
 
-config I2C_TEGRA_DMA_SUPPORT
-	bool "NVIDIA Tegra internal I2C controller DMA support"
-	depends on I2C_TEGRA
-	depends on (TEGRA20_APB_DMA && ARCH_TEGRA_2x_SOC) || \
-		   (TEGRA20_APB_DMA && ARCH_TEGRA_3x_SOC) || \
-		   (TEGRA20_APB_DMA && ARCH_TEGRA_114_SOC) || \
-		   (TEGRA20_APB_DMA && ARCH_TEGRA_124_SOC) || \
-		   (TEGRA20_APB_DMA && ARCH_TEGRA_210_SOC)
-	help
-	  If you say yes to this option, DMA engine integration support will
-	  be included for the I2C controller embedded in NVIDIA Tegra SOCs 
-
-But you got the idea.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 6dfa1ca..7c2a1fb 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -870,63 +870,195 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&cl0_0>;
++				};
++
++				core1 {
++					cpu = <&cl0_1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&cl1_0>;
++				};
++
++				core1 {
++					cpu = <&cl1_1>;
++				};
++			};
++
++			cluster2 {
++				core0 {
++					cpu = <&cl2_0>;
++				};
++
++				core1 {
++					cpu = <&cl2_1>;
++				};
++			};
++
++			cluster3 {
++				core0 {
++					cpu = <&cl3_0>;
++				};
++
++				core1 {
++					cpu = <&cl3_1>;
++				};
++			};
++		};
++
++		cl0_0: cpu@0 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x10000>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_0>;
+ 		};
+ 
+-		cpu@1 {
++		cl0_1: cpu@1 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x10001>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_0>;
+ 		};
+ 
+-		cpu@2 {
++		cl1_0: cpu@2 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x100>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_1>;
+ 		};
+ 
+-		cpu@3 {
++		cl1_1: cpu@3 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x101>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_1>;
+ 		};
+ 
+-		cpu@4 {
++		cl2_0: cpu@4 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x200>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_2>;
+ 		};
+ 
+-		cpu@5 {
++		cl2_1: cpu@5 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x201>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_2>;
+ 		};
+ 
+-		cpu@6 {
++		cl3_0: cpu@6 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x10300>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_3>;
+ 		};
+ 
+-		cpu@7 {
++		cl3_1: cpu@7 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
+ 			reg = <0x10301>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache_sets = <256>;
++			l2-cache = <&l2_3>;
+ 		};
+ 	};
+ 
++	l2_0: l2-cache0 {
++		cache-size = <2097152>;
++		cache-line-size = <64>;
++		cache-sets = <2048>;
++		next-level-cache = <&l3>;
++	};
++
++	l2_1: l2-cache1 {
++		cache-size = <2097152>;
++		cache-line-size = <64>;
++		cache-sets = <2048>;
++		next-level-cache = <&l3>;
++	};
++
++	l2_2: l2-cache2 {
++		cache-size = <2097152>;
++		cache-line-size = <64>;
++		cache-sets = <2048>;
++		next-level-cache = <&l3>;
++	};
++
++	l2_3: l2-cache3 {
++		cache-size = <2097152>;
++		cache-line-size = <64>;
++		cache-sets = <2048>;
++		next-level-cache = <&l3>;
++	};
++
++	l3: l3-cache {
++		cache-size = <4194304>;
++		cache-line-size = <64>;
++		cache-sets = <4096>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0";
+ 		status = "okay";
+-- 
+2.7.4
