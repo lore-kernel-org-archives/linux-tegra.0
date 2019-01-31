@@ -1,14 +1,14 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V8 1/5] i2c: tegra: Sort all the include headers
- alphabetically
-Date: Thu, 31 Jan 2019 18:14:09 +0300
-Message-ID: <d0e603e2-6bc5-971d-52e2-44ba8d45c9ad@gmail.com>
+Subject: Re: [PATCH V8 2/5] i2c: tegra: Add Bus Clear Master Support
+Date: Thu, 31 Jan 2019 18:16:36 +0300
+Message-ID: <5aacf5c7-13bb-c8ae-d8f2-259b0c3f3c81@gmail.com>
 References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+ <1548915387-28826-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1548915387-28826-2-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
@@ -16,54 +16,24 @@ Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.ke
 List-Id: linux-tegra@vger.kernel.org
 
 31.01.2019 9:16, Sowjanya Komatineni пишет:
-> This patch sorts all the include headers alphabetically for the
-> I2C tegra driver
+> Bus clear feature of tegra i2c controller helps to recover from
+> bus hang when i2c master loses the bus arbitration due to the
+> slave device holding SDA LOW continuously for some unknown reasons.
+> 
+> Per I2C specification, the device that held the bus LOW should
+> release it within 9 clock pulses.
+> 
+> During bus clear operation, Tegra I2C controller sends 9 clock
+> pulses and terminates the transaction with STOP condition.
+> Upon successful bus clear operation, bus goes to idle state and
+> driver retries the transaction.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
->  [V2] : Added this in V2 to sort the headers in tegra I2C
+>  [V5/V6/V7/V8]: Same as V4
+>  [V4]: Added I2C Bus Clear support patch to this version of series.
 > 
->  drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index e417ebf7628c..15806c984859 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -6,24 +6,21 @@
->   * Author: Colin Cross <ccross@android.com>
->   */
->  
-> -#include <linux/kernel.h>
-> -#include <linux/init.h>
-> -#include <linux/platform_device.h>
->  #include <linux/clk.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/i2c.h>
-> -#include <linux/io.h>
-> +#include <linux/init.h>
->  #include <linux/interrupt.h>
-> -#include <linux/delay.h>
-> -#include <linux/slab.h>
-> -#include <linux/of_device.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
->  #include <linux/module.h>
-> -#include <linux/reset.h>
-> +#include <linux/of_device.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> -#include <linux/iopoll.h>
-> -
-> -#include <asm/unaligned.h>
-> +#include <linux/reset.h>
->  
->  #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
->  #define BYTES_PER_FIFO_WORD 4
-> 
+ 
+I haven't checked all of the bits in this patch, but at least -EAGAIN should work as expected on older Tegra's:
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com> 
