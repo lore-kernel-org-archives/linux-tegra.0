@@ -1,144 +1,87 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
-Date: Thu, 31 Jan 2019 05:13:03 +0300
-Message-ID: <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V7 3/5] i2c: tegra: Add DMA Support
+Date: Thu, 31 Jan 2019 02:24:11 +0000
+Message-ID: <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
  <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
  <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
  <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-31.01.2019 4:19, Sowjanya Komatineni пишет:
->>> +			dma_sync_single_for_device(i2c_dev->dev,
->>> +						   i2c_dev->dma_phys,
->>> +						   xfer_size,
->>> +						   DMA_FROM_DEVICE);
->>> +			ret = tegra_i2c_dma_submit(i2c_dev, xfer_size);
->>> +			if (ret < 0) {
->>> +				dev_err(i2c_dev->dev,
->>> +					"Starting RX DMA failed, err %d\n",
->>> +					ret);
->>> +				goto exit;
->>> +			}
->>> +		} else {
->>> +			chan = i2c_dev->tx_dma_chan;
->>> +			tegra_i2c_config_fifo_trig(i2c_dev, xfer_size,
->>> +						   DATA_DMA_DIR_TX);
->>> +			/* Make the dma buffer to read by cpu */> +			dma_sync_single_for_cpu(i2c_dev->dev,
->>> +						i2c_dev->dma_phys,
->>> +						xfer_size,
->>> +						DMA_TO_DEVICE);
->>
->> This is not correct, you need to call dma_sync_single_for_cpu() after completion of the transfer to give back dma buffer ownership to CPU, see below. This dma_sync_single_for_cpu() invocation should be removed.
-> 
-> Transfer is not done yet. Dma buffer ownership is given to CPU here before copying header bytes and msg bytes into dma buffer before actually transmitting
-> 
-
-In fact dma_sync_single_for_cpu(DMA_TO_DEVICE) is not needed at all because it is a NO-OP on ARM, but technically it is needed to conform to DMA API. I think it is more logical that device owns dma buffer only during of the actual DMA transfer, the rest of the time CPU should be owner of the buffer.
-
->>> +
->>> +		if (i2c_dev->msg_read) {
->>> +			if (likely(i2c_dev->msg_err == I2C_ERR_NONE)) {
->>> +				dma_sync_single_for_cpu(i2c_dev->dev,
->>> +							i2c_dev->dma_phys,
->>> +							xfer_size,
->>> +							DMA_FROM_DEVICE);
->>> +
->>> +				memcpy(i2c_dev->msg_buf, i2c_dev->dma_buf,
->>> +					msg->len);
->>> +			}
->>> +		}
->>
->> Here you should give back dma buffer ownership to CPU:
-> 
-> After transfer is done, for msg reads, dma buffer ownership is given to CPU and read data from dma buffer is copied to msg buffer
-> For msg writes, no need of ownership to CPU.
->>>
->>> 		else {
->>> 			dma_sync_single_for_cpu(i2c_dev->dev,
->>> 						i2c_dev->dma_phys,
->>> 						xfer_size,
->>> 						DMA_TO_DEVICE);
->>> 		}
->>
->>>  	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
->>>  						TEGRA_I2C_TIMEOUT);
->>>  	tegra_i2c_mask_irq(i2c_dev, int_mask);
->>>  
->>>  	if (time_left == 0) {
->>>  		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
->>> +		if (dma) {
->>> +			dmaengine_terminate_all(chan);
->>> +			complete(&i2c_dev->dma_complete);
->>> +		}
->>
->> DMA transfer has been completed at this point, hence this hunk isn't needed. Please remove it.
-> 
-> DMA complete alone doesn’t guarantee the transfer. Packets/All packets xfer interrupt from I2C confirms complete transaction along with dma complete check.
-> So still need to check for msg_complete timeout. 
-
-You're waiting for DMA completion and then for the I2C message completion.
-
-Hence your code is structured like this:
-
-1. Issue DMA transfer
-2. Wait for DMA completion
-3. Wait for message completion
-
-Why do you need to abort DMA in 3 if it was already completed in 2?
-
->>> @@ -740,6 +925,32 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>>  	u32 int_mask;
->>>  	unsigned long time_left;
->>>  	unsigned long flags;
->>> +	size_t xfer_size;
->>> +	u32 *buffer = 0;
->>> +	int ret = 0;
->>> +	bool dma = false;
->>> +
->>> +	if (msg->flags & I2C_M_RD)
->>> +		xfer_size = msg->len;
->>> +	else
->>> +		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
->>> +
->>> +	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
->>> +	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
->>> +	if (dma) {
->>> +		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
->>> +			ret = tegra_i2c_init_dma_param(i2c_dev, true);
->>> +		else if (!i2c_dev->tx_dma_chan)
->>> +			ret = tegra_i2c_init_dma_param(i2c_dev, false);
->>
->> In the comment to V3 I mentioned that it's not a good idea to request channels dynamically because suspend-resume order is based on devices registration order, in this case APB DMA must be probed before I2C. Please move channels allocation into the probe.
->>
->> This also raises the question about the need to register I2C driver from the subsys-init level because APB driver is getting registered from the module-init level and hence I2C probing will be deferred until APB DMA driver is registered. It looks to me that the subsys-init is a relict of the past and it should be fine to move I2C driver registration into the module-init level, of course it's not strictly necessary and could be done later on if desired.
->>
->>> +		if (ret < 0) {
->>> +			dev_dbg(i2c_dev->dev, "Switching to PIO mode\n");
->>> +			dma = false;
->>> +			ret = 0;
->>> +		}
->>> +	}
->>> +
->>> +	i2c_dev->is_curr_dma_xfer = dma;
->>
->>
-> Since your previous feedback suggest "let's postpone channels requesting and dma_buf allocation until they are really needed", I thought it make sense to not request channels and allocate till DMA is needed.
-> So moved from probe to xfer_msg function. By the time it gets to xfer msg function, devices registration should be done already along with apb dma probe.
-> 
-> 
-
-Yes, I made that comment, but then corrected myself. Seems you missed the correction: https://lkml.org/lkml/2019/1/26/217
-
-If you're having troubles with the corporate email, maybe you could try to switch to something else like gmail.
-
-I've tried to apply this series locally, but again it fails to apply. What's the kernel base you're using? You should make your patches on top linux-next (preferably) or mainline.
+PiA+Pj4gIAl0aW1lX2xlZnQgPSB3YWl0X2Zvcl9jb21wbGV0aW9uX3RpbWVvdXQoJmkyY19kZXYt
+Pm1zZ19jb21wbGV0ZSwNCj4gPj4+ICAJCQkJCQlURUdSQV9JMkNfVElNRU9VVCk7DQo+ID4+PiAg
+CXRlZ3JhX2kyY19tYXNrX2lycShpMmNfZGV2LCBpbnRfbWFzayk7DQo+ID4+PiAgDQo+ID4+PiAg
+CWlmICh0aW1lX2xlZnQgPT0gMCkgew0KPiA+Pj4gIAkJZGV2X2VycihpMmNfZGV2LT5kZXYsICJp
+MmMgdHJhbnNmZXIgdGltZWQgb3V0XG4iKTsNCj4gPj4+ICsJCWlmIChkbWEpIHsNCj4gPj4+ICsJ
+CQlkbWFlbmdpbmVfdGVybWluYXRlX2FsbChjaGFuKTsNCj4gPj4+ICsJCQljb21wbGV0ZSgmaTJj
+X2Rldi0+ZG1hX2NvbXBsZXRlKTsNCj4gPj4+ICsJCX0NCj4gPj4NCj4gPj4gRE1BIHRyYW5zZmVy
+IGhhcyBiZWVuIGNvbXBsZXRlZCBhdCB0aGlzIHBvaW50LCBoZW5jZSB0aGlzIGh1bmsgaXNuJ3Qg
+bmVlZGVkLiBQbGVhc2UgcmVtb3ZlIGl0Lg0KPiA+IA0KPiA+IERNQSBjb21wbGV0ZSBhbG9uZSBk
+b2VzbuKAmXQgZ3VhcmFudGVlIHRoZSB0cmFuc2Zlci4gUGFja2V0cy9BbGwgcGFja2V0cyB4ZmVy
+IGludGVycnVwdCBmcm9tIEkyQyBjb25maXJtcyBjb21wbGV0ZSB0cmFuc2FjdGlvbiBhbG9uZyB3
+aXRoIGRtYSBjb21wbGV0ZSBjaGVjay4NCj4gPiBTbyBzdGlsbCBuZWVkIHRvIGNoZWNrIGZvciBt
+c2dfY29tcGxldGUgdGltZW91dC4gDQo+DQo+IFlvdSdyZSB3YWl0aW5nIGZvciBETUEgY29tcGxl
+dGlvbiBhbmQgdGhlbiBmb3IgdGhlIEkyQyBtZXNzYWdlIGNvbXBsZXRpb24uDQo+DQo+IEhlbmNl
+IHlvdXIgY29kZSBpcyBzdHJ1Y3R1cmVkIGxpa2UgdGhpczoNCj4NCj4gMS4gSXNzdWUgRE1BIHRy
+YW5zZmVyDQo+IDIuIFdhaXQgZm9yIERNQSBjb21wbGV0aW9uDQo+IDMuIFdhaXQgZm9yIG1lc3Nh
+Z2UgY29tcGxldGlvbg0KPg0KPiBXaHkgZG8geW91IG5lZWQgdG8gYWJvcnQgRE1BIGluIDMgaWYg
+aXQgd2FzIGFscmVhZHkgY29tcGxldGVkIGluIDI/DQoNCk9rLCB0aG91Z2h0IHlvdSBhcmUgcmVm
+ZXJyaW5nIHRvIG1zZyBjb21wbGV0ZSB0aW1lb3V0IGNoZWNrIGluIGRtYSBtb2RlLiBZZXMgbm8g
+bmVlZCBmb3IgdGVybWluYXRpbmcgRE1BIHdoZW4gbXNnIHRpbWVvdXQuIFdpbGwgZml4IGl0Lg0K
+DQo+ID4+PiBAQCAtNzQwLDYgKzkyNSwzMiBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY194ZmVyX21z
+ZyhzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2RldiwNCj4gPj4+ICAJdTMyIGludF9tYXNrOw0K
+PiA+Pj4gIAl1bnNpZ25lZCBsb25nIHRpbWVfbGVmdDsNCj4gPj4+ICAJdW5zaWduZWQgbG9uZyBm
+bGFnczsNCj4gPj4+ICsJc2l6ZV90IHhmZXJfc2l6ZTsNCj4gPj4+ICsJdTMyICpidWZmZXIgPSAw
+Ow0KPiA+Pj4gKwlpbnQgcmV0ID0gMDsNCj4gPj4+ICsJYm9vbCBkbWEgPSBmYWxzZTsNCj4gPj4+
+ICsNCj4gPj4+ICsJaWYgKG1zZy0+ZmxhZ3MgJiBJMkNfTV9SRCkNCj4gPj4+ICsJCXhmZXJfc2l6
+ZSA9IG1zZy0+bGVuOw0KPiA+Pj4gKwllbHNlDQo+ID4+PiArCQl4ZmVyX3NpemUgPSBtc2ctPmxl
+biArIEkyQ19QQUNLRVRfSEVBREVSX1NJWkU7DQo+ID4+PiArDQo+ID4+PiArCXhmZXJfc2l6ZSA9
+IEFMSUdOKHhmZXJfc2l6ZSwgQllURVNfUEVSX0ZJRk9fV09SRCk7DQo+ID4+PiArCWRtYSA9ICh4
+ZmVyX3NpemUgPiBJMkNfUElPX01PREVfTUFYX0xFTik7DQo+ID4+PiArCWlmIChkbWEpIHsNCj4g
+Pj4+ICsJCWlmICgobXNnLT5mbGFncyAmIEkyQ19NX1JEKSAmJiAhaTJjX2Rldi0+cnhfZG1hX2No
+YW4pDQo+ID4+PiArCQkJcmV0ID0gdGVncmFfaTJjX2luaXRfZG1hX3BhcmFtKGkyY19kZXYsIHRy
+dWUpOw0KPiA+Pj4gKwkJZWxzZSBpZiAoIWkyY19kZXYtPnR4X2RtYV9jaGFuKQ0KPiA+Pj4gKwkJ
+CXJldCA9IHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbShpMmNfZGV2LCBmYWxzZSk7DQo+ID4+DQo+
+ID4+IEluIHRoZSBjb21tZW50IHRvIFYzIEkgbWVudGlvbmVkIHRoYXQgaXQncyBub3QgYSBnb29k
+IGlkZWEgdG8gcmVxdWVzdCBjaGFubmVscyBkeW5hbWljYWxseSBiZWNhdXNlIHN1c3BlbmQtcmVz
+dW1lIG9yZGVyIGlzIGJhc2VkIG9uIGRldmljZXMgcmVnaXN0cmF0aW9uIG9yZGVyLCBpbiB0aGlz
+IGNhc2UgQVBCIERNQSBtdXN0IGJlIHByb2JlZCBiZWZvcmUgSTJDLiBQbGVhc2UgbW92ZSBjaGFu
+bmVscyBhbGxvY2F0aW9uIGludG8gdGhlIHByb2JlLg0KPiA+Pg0KPiA+PiBUaGlzIGFsc28gcmFp
+c2VzIHRoZSBxdWVzdGlvbiBhYm91dCB0aGUgbmVlZCB0byByZWdpc3RlciBJMkMgZHJpdmVyIGZy
+b20gdGhlIHN1YnN5cy1pbml0IGxldmVsIGJlY2F1c2UgQVBCIGRyaXZlciBpcyBnZXR0aW5nIHJl
+Z2lzdGVyZWQgZnJvbSB0aGUgbW9kdWxlLWluaXQgbGV2ZWwgYW5kIGhlbmNlIEkyQyBwcm9iaW5n
+IHdpbGwgYmUgZGVmZXJyZWQgdW50aWwgQVBCIERNQSBkcml2ZXIgaXMgcmVnaXN0ZXJlZC4gSXQg
+bG9va3MgdG8gbWUgdGhhdCB0aGUgc3Vic3lzLWluaXQgaXMgYSByZWxpY3Qgb2YgdGhlIHBhc3Qg
+YW5kIGl0IHNob3VsZCBiZSBmaW5lIHRvIG1vdmUgSTJDIGRyaXZlciByZWdpc3RyYXRpb24gaW50
+byB0aGUgbW9kdWxlLWluaXQgbGV2ZWwsIG9mIGNvdXJzZSBpdCdzIG5vdCBzdHJpY3RseSBuZWNl
+c3NhcnkgYW5kIGNvdWxkIGJlIGRvbmUgbGF0ZXIgb24gaWYgZGVzaXJlZC4NCj4gPj4NCj4gPj4+
+ICsJCWlmIChyZXQgPCAwKSB7DQo+ID4+PiArCQkJZGV2X2RiZyhpMmNfZGV2LT5kZXYsICJTd2l0
+Y2hpbmcgdG8gUElPIG1vZGVcbiIpOw0KPiA+Pj4gKwkJCWRtYSA9IGZhbHNlOw0KPiA+Pj4gKwkJ
+CXJldCA9IDA7DQo+ID4+PiArCQl9DQo+ID4+PiArCX0NCj4gPj4+ICsNCj4gPj4+ICsJaTJjX2Rl
+di0+aXNfY3Vycl9kbWFfeGZlciA9IGRtYTsNCj4gPj4NCj4gPj4NCj4gPiBTaW5jZSB5b3VyIHBy
+ZXZpb3VzIGZlZWRiYWNrIHN1Z2dlc3QgImxldCdzIHBvc3Rwb25lIGNoYW5uZWxzIHJlcXVlc3Rp
+bmcgYW5kIGRtYV9idWYgYWxsb2NhdGlvbiB1bnRpbCB0aGV5IGFyZSByZWFsbHkgbmVlZGVkIiwg
+SSB0aG91Z2h0IGl0IG1ha2Ugc2Vuc2UgdG8gbm90IHJlcXVlc3QgY2hhbm5lbHMgYW5kIGFsbG9j
+YXRlIHRpbGwgRE1BIGlzIG5lZWRlZC4NCj4gPiBTbyBtb3ZlZCBmcm9tIHByb2JlIHRvIHhmZXJf
+bXNnIGZ1bmN0aW9uLiBCeSB0aGUgdGltZSBpdCBnZXRzIHRvIHhmZXIgbXNnIGZ1bmN0aW9uLCBk
+ZXZpY2VzIHJlZ2lzdHJhdGlvbiBzaG91bGQgYmUgZG9uZSBhbHJlYWR5IGFsb25nIHdpdGggYXBi
+IGRtYSBwcm9iZS4NCj4gPiANCj4gPiANCj4NCj4gWWVzLCBJIG1hZGUgdGhhdCBjb21tZW50LCBi
+dXQgdGhlbiBjb3JyZWN0ZWQgbXlzZWxmLiBTZWVtcyB5b3UgbWlzc2VkIHRoZSBjb3JyZWN0aW9u
+OiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOS8xLzI2LzIxNw0KPg0KPiBJZiB5b3UncmUgaGF2
+aW5nIHRyb3VibGVzIHdpdGggdGhlIGNvcnBvcmF0ZSBlbWFpbCwgbWF5YmUgeW91IGNvdWxkIHRy
+eSB0byBzd2l0Y2ggdG8gc29tZXRoaW5nIGVsc2UgbGlrZSBnbWFpbC4NCj4NCj4gSSd2ZSB0cmll
+ZCB0byBhcHBseSB0aGlzIHNlcmllcyBsb2NhbGx5LCBidXQgYWdhaW4gaXQgZmFpbHMgdG8gYXBw
+bHkuIFdoYXQncyB0aGUga2VybmVsIGJhc2UgeW91J3JlIHVzaW5nPyBZb3Ugc2hvdWxkIG1ha2Ug
+eW91ciBwYXRjaGVzIG9uIHRvcCBsaW51eC1uZXh0IChwcmVmZXJhYmx5KSBvciBtYWlubGluZS4N
+Cg0KWWVhaCBzb21laG93IG1pc3NlZCB0aGF0LiBXaWxsIG1vdmUgaXQgYmFjayB0byBwcm9iZS4u
+DQpJIGFtIHVzaW5nIDUuMC1yYzENCg0K
