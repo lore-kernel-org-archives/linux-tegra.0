@@ -1,47 +1,73 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V7 3/5] i2c: tegra: Add DMA Support
-Date: Thu, 31 Jan 2019 03:34:59 +0000
-Message-ID: <BYAPR12MB3398C3E7C5842C698B5CA1CCC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
+Date: Thu, 31 Jan 2019 07:01:20 +0300
+Message-ID: <20190131070120.33127cd8@dimatab>
 References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
- <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
- <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
- <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
- <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
- <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
- <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
+        <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
+        <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
+        <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
+        <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
+        <BYAPR12MB3398C3E7C5842C698B5CA1CCC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
-Content-Language: en-US
+In-Reply-To: <BYAPR12MB3398C3E7C5842C698B5CA1CCC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBJMkNfSU5UX0FMTF9QQUNLRVRTX1hGRVJfQ09NUExFVEUgc2hhbGwgYmUgbWFza2VkIGZvciB0
-aGUgUElPIG1vZGUNCj4gSTJDX0lOVF9QQUNLRVRfWEZFUl9DT01QTEVURSBzaGFsbCBiZSBtYXNr
-ZWQgZm9yIHRoZSBETUEgbW9kZSwgaWYgSSdtIG5vdCBtaXNzaW5nIHNvbWV0aGluZy4NCj4NCmZv
-ciBwYWNrZXRzIHdpdGggcmVwZWF0ZWQgc3RhcnQgb3IgY29udGludWUgeGZlciwgUEFDS0VUX1hG
-RVJfQ09NUExFVEUgd2lsbCBiZSB0cmlnZ2Vycw0KZm9yIHBhY2tldHMgd2l0aCBzdG9wIGJpdCwg
-Ym90aCBQQUNLRVRfWEZFUl9DT01QTEVURSBhbmQgQUxMX1BBQ0tFVF9YRkVSX0NPTVBMRVRFIHdp
-bGwgYmUgdHJpZ2dlcmVkLg0KVG8gYmUgYWxpZ24gd2l0aCB3aGF0IFBJTyBtb2RlIGlzIGRvaW5n
-LCB3aWxsIG5vdCB1c2UgQUxMX1BBQ0tFVFNfWEZFUl9DT01QTEVURSBmb3IgRE1BIGluIG5leHQg
-dmVyc2lvbi4gDQoNCj4NCj4gSGFuZGxlIHRoZSBlcnJvci1jYXNlIGhlcmU6DQo+DQo+CWlmIChp
-MmNfZGV2LT5tc2dfZXJyICE9IEkyQ19FUlJfTk9ORSkgew0KPgkJZGV2X2VycihpMmNfZGV2LT5k
-ZXYsICJpMmMgZG1hIHRyYW5zZmVyIGZhaWxlZFxuIik7DQo+CQlnb3RvIGkyY19yZWNvdmVyOw0K
-Pgl9DQo+DQo+Li4uDQo+CTwtLS0gZW5kIG9mIHRlZ3JhX2kyY194ZmVyX21zZygpIC0tPg0KPg0K
-PglpZiAobGlrZWx5KGkyY19kZXYtPm1zZ19lcnIgPT0gSTJDX0VSUl9OT05FKSkNCj4JCXJldHVy
-biAwOw0KPg0KPiBpMmNfcmVjb3ZlcjoNCj4JdGVncmFfaTJjX2luaXQoaTJjX2Rldik7DQo+CS8q
-IHN0YXJ0IHJlY292ZXJ5IHVwb24gYXJiaXRyYXRpb24gbG9zcyBpbiBzaW5nbGUgbWFzdGVyIG1v
-ZGUgKi8NCj4JaWYgKGkyY19kZXYtPm1zZ19lcnIgPT0gSTJDX0VSUl9BUkJJVFJBVElPTl9MT1NU
-KSB7DQo+CQlpZiAoIWkyY19kZXYtPmlzX211bHRpbWFzdGVyX21vZGUpDQo+CQkJcmV0dXJuIHRl
-Z3JhX2kyY19pc3N1ZV9idXNfY2xlYXIoaTJjX2Rldik7DQo+CQlyZXR1cm4gLUVBR0FJTjsNCj4J
-fQ0KPglpZiAoaTJjX2Rldi0+bXNnX2VyciA9PSBJMkNfRVJSX05PX0FDSykgew0KPgkJaWYgKG1z
-Zy0+ZmxhZ3MgJiBJMkNfTV9JR05PUkVfTkFLKQ0KPgkJCXJldHVybiAwOw0KPgkJcmV0dXJuIC1F
-UkVNT1RFSU87DQo+CX0NCj4NCj4JcmV0dXJuIC1FSU87DQoNCldoZW4gRE1BIHRyYW5zZmVyIHRp
-bWVvdXQsIG5vIG5lZWQgdG8gY2hlY2sgZm9yIEFSQiBMT1NUIG9yIE5PX0FDSyBhcyBpZiBhbnkg
-b2YgdGhvc2UgaW50ZXJydXB0cyB0cmlnZ2VyIGludGVycnVwdCBoYW5kbGVyIHdpbGwgdGVybWlu
-YXRlIGRtYWVuZ2luZSBhbmQgY29tcGxldGVzIHNvIERNQSB0aW1lb3V0IHdpbGwgbm90IGJlIHNl
-ZW4gaW4gdGhvc2UgY2FzZXMgYW5kIGZhbGxzIHRocnUgbXNnX2VyciBjaGVjaw0KDQo=
+=D0=92 Thu, 31 Jan 2019 03:34:59 +0000
+Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+
+> > I2C_INT_ALL_PACKETS_XFER_COMPLETE shall be masked for the PIO mode
+> > I2C_INT_PACKET_XFER_COMPLETE shall be masked for the DMA mode, if
+> > I'm not missing something.=20
+> for packets with repeated start or continue xfer,
+> PACKET_XFER_COMPLETE will be triggers for packets with stop bit, both
+> PACKET_XFER_COMPLETE and ALL_PACKET_XFER_COMPLETE will be triggered.
+> To be align with what PIO mode is doing, will not use
+> ALL_PACKETS_XFER_COMPLETE for DMA in next version.=20
+
+Sounds good.
+
+> >
+> > Handle the error-case here:
+> >
+> >	if (i2c_dev->msg_err !=3D I2C_ERR_NONE) {
+> >		dev_err(i2c_dev->dev, "i2c dma transfer failed\n");
+> >		goto i2c_recover;
+> >	}
+> >
+> >...
+> >	<--- end of tegra_i2c_xfer_msg() -->
+> >
+> >	if (likely(i2c_dev->msg_err =3D=3D I2C_ERR_NONE))
+> >		return 0;
+> >
+> > i2c_recover:
+> >	tegra_i2c_init(i2c_dev);
+> >	/* start recovery upon arbitration loss in single master
+> >	mode */ if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
+> >		if (!i2c_dev->is_multimaster_mode)
+> >			return tegra_i2c_issue_bus_clear(i2c_dev);
+> >		return -EAGAIN;
+> >	}
+> >	if (i2c_dev->msg_err =3D=3D I2C_ERR_NO_ACK) {
+> >		if (msg->flags & I2C_M_IGNORE_NAK)
+> >			return 0;
+> >		return -EREMOTEIO;
+> >	}
+> >
+> >	return -EIO; =20
+>=20
+> When DMA transfer timeout, no need to check for ARB LOST or NO_ACK as
+> if any of those interrupts trigger interrupt handler will terminate
+> dmaengine and completes so DMA timeout will not be seen in those
+> cases and falls thru msg_err check
+>=20
+
+Okay.
