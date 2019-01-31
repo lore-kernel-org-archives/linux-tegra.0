@@ -1,59 +1,87 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
-Date: Thu, 31 Jan 2019 11:01:14 +0200
-Message-ID: <20190131090114.GZ7714@pdeschrijver-desktop.Nvidia.com>
-References: <20190128091815.7040-1-josephl@nvidia.com>
- <20190128091815.7040-3-josephl@nvidia.com>
- <20190128150908.GB31317@ulmo>
- <20190129084155.GX7714@pdeschrijver-desktop.Nvidia.com>
- <20190129102912.GC28850@ulmo>
- <8d5b6a61-8fb8-2f83-5378-9b1a1e5bd03d@nvidia.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH V4 1/7] dt-bindings: timer: add Tegra210 timer
+Date: Thu, 31 Jan 2019 17:24:04 +0800
+Message-ID: <20190131092410.28222-2-josephl@nvidia.com>
+References: <20190131092410.28222-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <8d5b6a61-8fb8-2f83-5378-9b1a1e5bd03d@nvidia.com>
+In-Reply-To: <20190131092410.28222-1-josephl@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 10:40:06AM +0800, Joseph Lo wrote:
-> On 1/29/19 6:29 PM, Thierry Reding wrote:
-> > On Tue, Jan 29, 2019 at 10:41:55AM +0200, Peter De Schrijver wrote:
-> > > On Mon, Jan 28, 2019 at 04:09:08PM +0100, Thierry Reding wrote:
-> > > 
-> > > ...
-> > > 
-> > > > 
-> > > > Up to here this is a duplicate of timer-tegra20.c. And a lot of
-> > > > tegra210_timer_init() is the same as tegra20_timer_init() as well. Can't
-> > > > we unify the two drivers instead?
-> > > > 
-> > > > The power cycle restrictions of the architected timer, do they not apply
-> > > > to chips earlier than Tegra210 either? So don't we need all of these
-> > > > additional features on the timer-tegra20.c driver as well? If so that
-> > > 
-> > > No. Chips prior to Tegra114 do not have an arch timer and the arch timer
-> > > does work correctly on Cortex-A15 so Tegra114 and Tegra124 can use it.
-> > > It's broken on Cortex-A57 though, so we can't use it as a wakeup source
-> > > on Tegra210.
-> > 
-> > If chips prior to Tegra114 don't have an architected timer, then we
-> > can't remove the timer-tegra20 driver, because we still need it on
-> > Tegra20 and Tegra30, right?
-> > 
-> 
-> For Tegra20/30, it's Cortext-A9 with TWD timer. (arch/arm/kernel/smp_twd.c)
-> 
-> Originally, I thought the functionality of timer-tegra20 would be fully
-> replaced by TWD timer driver. But from the log in the kernelci test
-> farm[1][2], it looks to me the timer-tegra20 driver still works as
-> clocksource driver for Tegra20/30. I cannot confirm if the clock event
-> device has been replaced by TWD timer in the log. It could be replaced in
-> the background. And by looking into the driver, it should be.
+The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+(TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+or watchdog interrupts.
 
-The TWD timer runs from the CPU clock so its frequency changes with
-CPU DVFS. That makes it difficult to use.
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+V4:
+ * no change
+v3:
+ * no change
+v2:
+ * list all the interrupts that are supported by tegra210 timers block
+ * add RB tag from Rob.
+---
+ .../bindings/timer/nvidia,tegra210-timer.txt  | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210=
+-timer.txt
 
-Peter.
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.=
+txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+new file mode 100644
+index 000000000000..032cda96fe0d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+@@ -0,0 +1,36 @@
++NVIDIA Tegra210 timer
++
++The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
++timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
++from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
++(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
++or watchdog interrupts.
++
++Required properties:
++- compatible : "nvidia,tegra210-timer".
++- reg : Specifies base physical address and size of the registers.
++- interrupts : A list of 14 interrupts; one per each timer channels 0 thro=
+ugh
++  13.
++- clocks : Must contain one entry, for the module clock.
++  See ../clocks/clock-bindings.txt for details.
++
++timer@60005000 {
++	compatible =3D "nvidia,tegra210-timer";
++	reg =3D <0x0 0x60005000 0x0 0x400>;
++	interrupts =3D <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
++	clocks =3D <&tegra_car TEGRA210_CLK_TIMER>;
++	clock-names =3D "timer";
++};
+--=20
+2.20.1
