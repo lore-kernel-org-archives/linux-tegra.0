@@ -1,89 +1,65 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-Date: Fri, 1 Feb 2019 01:11:06 +0000
-Message-ID: <BYAPR12MB33986DDF4267ED1F499317B0C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
-        <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
-        <20190131124423.GG23438@ulmo> <20190201035249.5b1cdfe2@dimatab>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH] cpuidle: dt: bail out if the idle-state DT node is not
+ compatible
+Date: Fri, 1 Feb 2019 09:42:41 +0800
+Message-ID: <fc49e8b2-cc32-3074-9aa7-04bbc561dfe6@nvidia.com>
+References: <20190131022749.19046-1-josephl@nvidia.com>
+ <20190131103823.GA19907@e107155-lin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190201035249.5b1cdfe2@dimatab>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190131103823.GA19907@e107155-lin>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-tegra@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+ID4gKwlpZiAoZG1hKSB7DQo+ID4gPiArCQlpZiAoaTJjX2Rldi0+bXNnX3JlYWQpIHsNCj4g
-PiA+ICsJCQljaGFuID0gaTJjX2Rldi0+cnhfZG1hX2NoYW47DQo+ID4gPiArCQkJdGVncmFfaTJj
-X2NvbmZpZ19maWZvX3RyaWcoaTJjX2RldiwNCj4gPiA+IHhmZXJfc2l6ZSwNCj4gPiA+ICsNCj4g
-PiA+IERBVEFfRE1BX0RJUl9SWCk7DQo+ID4gPiArCQkJZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZp
-Y2UoaTJjX2Rldi0+ZGV2LA0KPiA+ID4gKw0KPiA+ID4gaTJjX2Rldi0+ZG1hX3BoeXMsDQo+ID4g
-PiArCQkJCQkJICAgeGZlcl9zaXplLA0KPiA+ID4gKw0KPiA+ID4gRE1BX0ZST01fREVWSUNFKTsN
-Cj4gPiANCj4gPiBEbyB3ZSByZWFsbHkgbmVlZCB0aGlzPyBXZSdyZSBub3QgYWN0dWFsbHkgcGFz
-c2luZyB0aGUgZGV2aWNlIGFueSANCj4gPiBkYXRhLCBzbyBubyBjYWNoZXMgdG8gZmx1c2ggaGVy
-ZS4gSSB3ZSdyZSBjYXV0aW91cyBhYm91dCBmbHVzaGluZyANCj4gPiBjYWNoZXMgd2hlbiB3ZSBk
-byB3cml0ZSB0byB0aGUgYnVmZmVyIChhbmQgSSB0aGluayB3ZSBkbyB0aGF0IHByb3Blcmx5IA0K
-PiA+IGFscmVhZHkpLCB0aGVuIHRoZXJlIHNob3VsZCBiZSBubyBuZWVkIHRvIGRvIGl0IGhlcmUg
-YWdhaW4uDQo+ID4gDQo+DQo+IElJVUMsIERNQSBBUEkgaGFzIGEgY29uY2VwdCBvZiBidWZmZXIg
-aGFuZGluZyB3aGljaCB0ZWxscyB0byB1c2UNCmRtYV9zeW5jX3NpbmdsZV9mb3JfZGV2aWNlKCkg
-YmVmb3JlIGlzc3VpbmcgaGFyZHdhcmUgam9iIHRoYXQgdG91Y2hlcyB0aGUgYnVmZmVyIGFuZCB0
-byB1c2UgZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUoKSBhZnRlciBoYXJkd2FyZSBkb25lIHRoZSBl
-eGVjdXRpb24uIEluIGZhY3QgdGhlIENQVSBjYWNoZXMgYXJlIGdldHRpbmcgZmx1c2hlZCBvciBp
-bnZhbGlkYXRlZCBhcyBhcHByb3ByaWF0ZSBpbiBhIHJlc3VsdC4NCj4NCj4gZG1hX3N5bmNfc2lu
-Z2xlX2Zvcl9kZXZpY2UoRE1BX0ZST01fREVWSUNFKSBpbnZhbGlkYXRlcyBidWZmZXIgaW4gdGhl
-IENQVSBjYWNoZSwgcHJvYmFibHkgdG8gYXZvaWQgQ1BVIGV2aWN0aW5nIGRhdGEgZnJvbSBjYWNo
-ZSB0byBEUkFNIHdoaWxlIGhhcmR3YXJlIHdyaXRlcyB0byB0aGUgYnVmZmVyLiBIZW5jZSB0aGlz
-IGh1bmsgaXMgY29ycmVjdC4NCj4NCj4gPiA+ICsJCQllcnIgPSB0ZWdyYV9pMmNfZG1hX3N1Ym1p
-dChpMmNfZGV2LA0KPiA+ID4geGZlcl9zaXplKTsNCj4gPiA+ICsJCQlpZiAoZXJyIDwgMCkgew0K
-PiA+ID4gKwkJCQlkZXZfZXJyKGkyY19kZXYtPmRldiwNCj4gPiA+ICsJCQkJCSJzdGFydGluZyBS
-WCBETUEgZmFpbGVkLA0KPiA+ID4gZXJyICVkXG4iLA0KPiA+ID4gKwkJCQkJZXJyKTsNCj4gPiA+
-ICsJCQkJZ290byB1bmxvY2s7DQo+ID4gPiArCQkJfQ0KPiA+ID4gKwkJfSBlbHNlIHsNCj4gPiA+
-ICsJCQljaGFuID0gaTJjX2Rldi0+dHhfZG1hX2NoYW47DQo+ID4gPiArCQkJdGVncmFfaTJjX2Nv
-bmZpZ19maWZvX3RyaWcoaTJjX2RldiwNCj4gPiA+IHhmZXJfc2l6ZSwNCj4gPiA+ICsNCj4gPiA+
-IERBVEFfRE1BX0RJUl9UWCk7DQo+ID4gPiArCQkJZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUoaTJj
-X2Rldi0+ZGV2LA0KPiA+ID4gKwkJCQkJCWkyY19kZXYtPmRtYV9waHlzLA0KPiA+ID4gKwkJCQkJ
-CXhmZXJfc2l6ZSwNCj4gPiA+ICsJCQkJCQlETUFfVE9fREVWSUNFKTsNCj4gPiANCj4gPiBUaGlz
-LCBvbiB0aGUgb3RoZXIgaGFuZCBzZWVtcyBjb3JyZWN0IGJlY2F1c2Ugd2UgbmVlZCB0byBpbnZh
-bGlkYXRlIA0KPiA+IHRoZSBjYWNoZXMgZm9yIHRoaXMgYnVmZmVyIHRvIG1ha2Ugc3VyZSB0aGUg
-ZGF0YSB0aGF0IHdlIHB1dCB0aGVyZSANCj4gPiBkb2Vzbid0IGdldCBvdmVyd3JpdHRlbi4NCj4N
-Cj4gQXMgSSBzdGF0ZWQgYmVmb3JlIGluIGEgY29tbWVudCB0byB2NiwgdGhpcyBwYXJ0aWN1bGFy
-IGNhc2Ugb2YNCj4gZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUoKSB1c2FnZSBpcyBpbmNvcnJlY3Qg
-YmVjYXVzZSBDUFUgc2hvdWxkIHRha2Ugb3duZXJzaGlwIG9mIHRoZSBidWZmZXIgYWZ0ZXIgY29t
-cGxldGlvbiBvZiBoYXJkd2F0ZSBqb2IuIEJ1dCBpbiBmYWN0DQo+IGRtYV9zeW5jX3NpbmdsZV9m
-b3JfY3B1KERNQV9UT19ERVZJQ0UpIGlzIGEgTk8tT1AgYmVjYXVzZSBDUFUgZG9lc24ndCBuZWVk
-IHRvIGZsdXNoIG9yIGludmFsaWRhdGUgYW55dGhpbmcgdG8gdGFrZSBvd25lcnNoaXAgb2YgdGhl
-IGJ1ZmZlciBpZiBoYXJkd2FyZSBkaWQgYSByZWFkLW9ubHkgYWNjZXNzLg0KPg0KPiA+IA0KPiA+
-ID4gKwlpZiAoIWkyY19kZXYtPm1zZ19yZWFkKSB7DQo+ID4gPiArCQlpZiAoZG1hKSB7DQo+ID4g
-PiArCQkJbWVtY3B5KGJ1ZmZlciwgbXNnLT5idWYsIG1zZy0+bGVuKTsNCj4gPiA+ICsJCQlkbWFf
-c3luY19zaW5nbGVfZm9yX2RldmljZShpMmNfZGV2LT5kZXYsDQo+ID4gPiArDQo+ID4gPiBpMmNf
-ZGV2LT5kbWFfcGh5cywNCj4gPiA+ICsJCQkJCQkgICB4ZmVyX3NpemUsDQo+ID4gPiArDQo+ID4g
-PiBETUFfVE9fREVWSUNFKTsNCj4gPiANCj4gPiBBZ2FpbiwgaGVyZSB3ZSBwcm9wZXJseSBmbHVz
-aCB0aGUgY2FjaGVzIHRvIG1ha2Ugc3VyZSB0aGUgZGF0YSB0aGF0IA0KPiA+IHdlJ3ZlIHdyaXR0
-ZW4gdG8gdGhlIERNQSBidWZmZXIgaXMgdmlzaWJsZSB0byB0aGUgRE1BIGVuZ2luZS4NCj4gPiAN
-Cj4NCj4gKzEgdGhpcyBpcyBjb3JyZWN0DQo+DQo+DQo+DQo+ID4gPiArDQo+ID4gPiArCQlpZiAo
-aTJjX2Rldi0+bXNnX3JlYWQpIHsNCj4gPiA+ICsJCQlpZiAobGlrZWx5KGkyY19kZXYtPm1zZ19l
-cnIgPT0NCj4gPiA+IEkyQ19FUlJfTk9ORSkpIHsNCj4gPiA+ICsNCj4gPiA+IGRtYV9zeW5jX3Np
-bmdsZV9mb3JfY3B1KGkyY19kZXYtPmRldiwNCj4gPiA+ICsNCj4gPiA+IGkyY19kZXYtPmRtYV9w
-aHlzLA0KPiA+ID4gKwkJCQkJCQl4ZmVyX3NpemUsDQo+ID4gPiArDQo+ID4gPiBETUFfRlJPTV9E
-RVZJQ0UpOw0KPiA+IA0KPiA+IEhlcmUgd2UgaW52YWxpZGF0ZSB0aGUgY2FjaGVzIHRvIG1ha2Ug
-c3VyZSB3ZSBkb24ndCBnZXQgc3RhbGUgZGF0YSANCj4gPiB0aGF0IG1heSBiZSBpbiB0aGUgY2Fj
-aGVzIGZvciBkYXRhIHRoYXQgd2UncmUgY29weWluZyBvdXQgb2YgdGhlIERNQSANCj4gPiBidWZm
-ZXIuIEkgdGhpbmsgdGhhdCdzIGFib3V0IGFsbCB0aGUgY2FjaGUgbWFpbnRlbmFuY2UgdGhhdCB3
-ZSByZWFsIA0KPiA+IG5lZWQuDQo+DQo+IENvcnJlY3QuDQo+DQo+IEFuZCB0ZWNobmljYWxseSBo
-ZXJlIHNob3VsZCBiZSBkbWFfc3luY19zaW5nbGVfZm9yX2NwdShETUFfVE9fREVWSUNFKQ0KPiBm
-b3IgdGhlIFRYLiBCdXQgYWdhaW4sIGl0J3MgYSBOTy1PUC4NCg0KSXMgbXkgYmVsb3cgdW5kZXJz
-dGFuZGluZyBjb3JyZWN0PyBDYW4geW91IHBsZWFzZSBjb25maXJtPw0KDQpEdXJpbmcgVHJhbnNt
-aXQgdG8gZGV2aWNlOg0KLSBCZWZvcmUgd3JpdGluZyBtc2cgZGF0YSBpbnRvIGRtYSBidWYgYnkg
-Q1BVLCBnaXZpbmcgRE1BIG93bmVyc2hpcCB0byBDUFUNCglkbWFfc3luY19zaW5nbGVfZm9yX2Nw
-dSB3aXRoIGRpciBETUFfVE9fREVWSUNFDQoNCi0gQWZ0ZXIgd3JpdGluZyB0byBkbWEgYnVmIGJ5
-IENQVSwgZ2l2aW5nIGJhY2sgdGhlIG93bmVyc2hpcCB0byBkZXZpY2UgdG8gYWNjZXNzIGJ1ZmZl
-ciB0byBzZW5kIGR1cmluZyBETUEgdHJhbnNtaXQNCglkbWFfc3luY19zaW5nbGVfZm9yX2Rldmlj
-ZSB3aXRoIGRpciBETUFfVE9fREVWSUNFDQoNCkR1cmluZyBSZWNlaXZpbmcgZnJvbSBEZXZpY2U6
-DQotIGJlZm9yZSBzdWJtaXR0aW5nIFJYIERNQSB0byBnaXZlIGJ1ZmZlciBhY2Nlc3MgdG8gRE1B
-ZW5naW5lDQoJZG1hX3N5bmNfc2luZ2xlX2Zvcl9EZXZpY2UoRE1BX0ZST01fREVWSUNFKSANCi0g
-YWZ0ZXIgRE1BIFJYIGNvbXBsZXRpb24sIGdpdmluZyBkbWEgb3duZXJzaGlwIHRvIENQVSBmb3Ig
-cmVhZGluZyBkbWFidWYgZGF0YSB3cml0dGVuIGJ5IERNQSBmcm9tIGRldmljZQ0KCWRtYV9zeW5j
-X3NpbmdsZV9mb3JfY3B1IHdpdGggZGlyIERNQV9GUk9NX0RFVklDRQ0KDQo=
+On 1/31/19 6:38 PM, Sudeep Holla wrote:
+> On Thu, Jan 31, 2019 at 10:27:49AM +0800, Joseph Lo wrote:
+>> Currently, the DT of the idle states will be parsed first whether it's
+>> compatible or not. This could cause a warning message that comes from if
+>> the CPU doesn't support identical idle states. E.g. Tegra186 can run
+>> with 2 Cortex-A57 and 2 Denver cores with different idle states on
+>> different types of these cores.
+>>
+>> We fix it to check the compatible string before the parsing procedures.
+>> So it can make sure it only goes through the idle states that the CPU
+>> supported.
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   drivers/cpuidle/dt_idle_states.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
+>> index 53342b7f1010..4a528908abb3 100644
+>> --- a/drivers/cpuidle/dt_idle_states.c
+>> +++ b/drivers/cpuidle/dt_idle_states.c
+>> @@ -180,6 +180,11 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
+>>   		if (!state_node)
+>>   			break;
+>>
+>> +		if (!of_device_is_compatible(state_node, matches->compatible)) {
+>> +			err = -EINVAL;
+>> +			break;
+>> +		}
+>> +
+> 
+> Does it make sense to use of_match_node to get the matching device id and
+> just pass that to init_state_node instead of the complete array to find the
+> match.
+
+Yes, that would be even better.
+
+Thanks,
+Joseph
