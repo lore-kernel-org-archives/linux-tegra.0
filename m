@@ -1,169 +1,237 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-Date: Fri, 1 Feb 2019 22:39:46 +0800
-Message-ID: <3c9b86ba-32dd-76b2-9a51-6cd86782cadf@nvidia.com>
-References: <20190201033621.16814-1-josephl@nvidia.com>
- <20190201033621.16814-3-josephl@nvidia.com>
- <5490ad66-7d20-7093-7025-1d0ec8da6dec@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
+Date: Fri, 1 Feb 2019 18:02:24 +0300
+Message-ID: <50def69d-8068-3dec-491e-e3b32ba4f514@gmail.com>
+References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+ <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
+ <20190131124423.GG23438@ulmo> <20190201035249.5b1cdfe2@dimatab>
+ <BYAPR12MB33986DDF4267ED1F499317B0C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <20190201061414.05443ea1@dimatab>
+ <BYAPR12MB3398955CD0EDF40EB61D15B8C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5490ad66-7d20-7093-7025-1d0ec8da6dec@nvidia.com>
+In-Reply-To: <BYAPR12MB3398955CD0EDF40EB61D15B8C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2/1/19 8:44 PM, Jon Hunter wrote:
-> 
-> On 01/02/2019 03:36, Joseph Lo wrote:
->> Add support for the Tegra210 timer that runs at oscillator clock
->> (TMR10-TMR13). We need these timers to work as clock event device and to
->> replace the ARMv8 architected timer due to it can't survive across the
->> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
->> source when CPU suspends in power down state.
+01.02.2019 7:19, Sowjanya Komatineni пишет:
+>>>>>> +	if (dma) {
+>>>>>> +		if (i2c_dev->msg_read) {
+>>>>>> +			chan = i2c_dev->rx_dma_chan;
+>>>>>> +			tegra_i2c_config_fifo_trig(i2c_dev,
+>>>>>> xfer_size,
+>>>>>> +
+>>>>>> DATA_DMA_DIR_RX);
+>>>>>> +
+>>>>>> dma_sync_single_for_device(i2c_dev->dev, + i2c_dev->dma_phys,
+>>>>>> +						   xfer_size,
+>>>>>> +
+>>>>>> DMA_FROM_DEVICE);
+>>>>>
+>>>>> Do we really need this? We're not actually passing the device any 
+>>>>> data, so no caches to flush here. I we're cautious about flushing 
+>>>>> caches when we do write to the buffer (and I think we do that 
+>>>>> properly already), then there should be no need to do it here 
+>>>>> again.
+>>>>
+>>>> IIUC, DMA API has a concept of buffer handing which tells to use
+>>> dma_sync_single_for_device() before issuing hardware job that touches 
+>>> the buffer and to use dma_sync_single_for_cpu() after hardware done 
+>>> the execution. In fact the CPU caches are getting flushed or 
+>>> invalidated as appropriate in a result.
+>>>>
+>>>> dma_sync_single_for_device(DMA_FROM_DEVICE) invalidates buffer in 
+>>>> the CPU cache, probably to avoid CPU evicting data from cache to 
+>>>> DRAM while hardware writes to the buffer. Hence this hunk is 
+>>>> correct.
+>>>>>> +			err = tegra_i2c_dma_submit(i2c_dev,
+>>>>>> xfer_size);
+>>>>>> +			if (err < 0) {
+>>>>>> +				dev_err(i2c_dev->dev,
+>>>>>> +					"starting RX DMA
+>>>>>> failed, err %d\n",
+>>>>>> +					err);
+>>>>>> +				goto unlock;
+>>>>>> +			}
+>>>>>> +		} else {
+>>>>>> +			chan = i2c_dev->tx_dma_chan;
+>>>>>> +			tegra_i2c_config_fifo_trig(i2c_dev,
+>>>>>> xfer_size,
+>>>>>> +
+>>>>>> DATA_DMA_DIR_TX);
+>>>>>> +			dma_sync_single_for_cpu(i2c_dev->dev,
+>>>>>> +
+>>>>>> i2c_dev->dma_phys,
+>>>>>> +						xfer_size,
+>>>>>> +
+>>>>>> DMA_TO_DEVICE);
+>>>>>
+>>>>> This, on the other hand seems correct because we need to 
+>>>>> invalidate the caches for this buffer to make sure the data that 
+>>>>> we put there doesn't get overwritten.
+>>>>
+>>>> As I stated before in a comment to v6, this particular case of
+>>>> dma_sync_single_for_cpu() usage is incorrect because CPU should take 
+>>>> ownership of the buffer after completion of hardwate job. But in 
+>>>> fact dma_sync_single_for_cpu(DMA_TO_DEVICE) is a NO-OP because CPU 
+>>>> doesn't need to flush or invalidate anything to take ownership of 
+>>>> the buffer if hardware did a read-only access.
+>>>>>   
+>>>>>> +	if (!i2c_dev->msg_read) {
+>>>>>> +		if (dma) {
+>>>>>> +			memcpy(buffer, msg->buf, msg->len);
+>>>>>> +
+>>>>>> dma_sync_single_for_device(i2c_dev->dev, + i2c_dev->dma_phys,
+>>>>>> +						   xfer_size,
+>>>>>> +
+>>>>>> DMA_TO_DEVICE);
+>>>>>
+>>>>> Again, here we properly flush the caches to make sure the data 
+>>>>> that we've written to the DMA buffer is visible to the DMA engine.
+>>>>>   
+>>>>
+>>>> +1 this is correct
+>>>>
+>>>>
+>>>>  
+>>>>>> +
+>>>>>> +		if (i2c_dev->msg_read) {
+>>>>>> +			if (likely(i2c_dev->msg_err ==
+>>>>>> I2C_ERR_NONE)) {
+>>>>>> +
+>>>>>> dma_sync_single_for_cpu(i2c_dev->dev,
+>>>>>> +
+>>>>>> i2c_dev->dma_phys,
+>>>>>> +
+>>>>>> xfer_size, +
+>>>>>> DMA_FROM_DEVICE);
+>>>>>
+>>>>> Here we invalidate the caches to make sure we don't get stale data 
+>>>>> that may be in the caches for data that we're copying out of the 
+>>>>> DMA buffer. I think that's about all the cache maintenance that we 
+>>>>> real need.
+>>>>
+>>>> Correct.
+>>>>
+>>>> And technically here should be
+>>>> dma_sync_single_for_cpu(DMA_TO_DEVICE) for the TX. But again, it's a 
+>>>> NO-OP.
+>>>
+>>> Is my below understanding correct? Can you please confirm?
+>>>
+>>> During Transmit to device:
+>>> - Before writing msg data into dma buf by CPU, giving DMA ownership to 
+>>> CPU dma_sync_single_for_cpu with dir DMA_TO_DEVICE
+>>>
 >>
->> Also convert the original driver to use timer-of API.
-> 
-> It may have been nice to split this into 2 patches to make it easier to
-> see what is going on but not a big deal.
-> 
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> ---
->> v5:
->>   * add ack tag from Thierry
->> v4:
->>   * merge timer-tegra210.c in previous version into timer-tegra20.c
->> v3:
->>   * use timer-of API
->> v2:
->>   * add error clean-up code
->> ---
->>   drivers/clocksource/Kconfig         |   2 +-
->>   drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
->>   include/linux/cpuhotplug.h          |   1 +
->>   3 files changed, 272 insertions(+), 100 deletions(-)
+>> I tried to take a look at it again and now thinking that your variant is more correct. Still it's a bit difficult to judge because this case is no-op.
 >>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index a9e26f6a81a1..6af78534a285 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
->>   config TEGRA_TIMER
->>   	bool "Tegra timer driver" if COMPILE_TEST
->>   	select CLKSRC_MMIO
->> -	depends on ARM
->> +	select TIMER_OF
->>   	help
->>   	  Enables support for the Tegra driver.
->>   
->> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
->> index 4293943f4e2b..96a809341c9b 100644
->> --- a/drivers/clocksource/timer-tegra20.c
->> +++ b/drivers/clocksource/timer-tegra20.c
->> @@ -15,21 +15,24 @@
->>    *
->>    */
->>   
->> -#include <linux/init.h>
->> +#include <linux/clk.h>
->> +#include <linux/clockchips.h>
->> +#include <linux/cpu.h>
->> +#include <linux/cpumask.h>
->> +#include <linux/delay.h>
->>   #include <linux/err.h>
->> -#include <linux/time.h>
->>   #include <linux/interrupt.h>
->> -#include <linux/irq.h>
->> -#include <linux/clockchips.h>
->> -#include <linux/clocksource.h>
->> -#include <linux/clk.h>
->> -#include <linux/io.h>
->>   #include <linux/of_address.h>
->>   #include <linux/of_irq.h>
->> -#include <linux/sched_clock.h>
->> -#include <linux/delay.h>
->> +#include <linux/percpu.h>
->> +#include <linux/syscore_ops.h>
->> +#include <linux/time.h>
->> +
->> +#include "timer-of.h"
->>   
->> +#ifdef CONFIG_ARM
->>   #include <asm/mach/time.h>
->> +#endif
->>   
->>   #define RTC_SECONDS            0x08
->>   #define RTC_SHADOW_SECONDS     0x0c
->> @@ -43,70 +46,147 @@
->>   #define TIMER2_BASE 0x8
->>   #define TIMER3_BASE 0x50
->>   #define TIMER4_BASE 0x58
->> -
->> -#define TIMER_PTV 0x0
->> -#define TIMER_PCR 0x4
->> -
->> +#define TIMER10_BASE 0x90
->> +
->> +#define TIMER_PTV		0x0
->> +#define TIMER_PTV_EN		BIT(31)
->> +#define TIMER_PTV_PER		BIT(30)
->> +#define TIMER_PCR		0x4
->> +#define TIMER_PCR_INTR_CLR	BIT(30)
->> +
->> +#ifdef CONFIG_ARM
->> +#define TIMER_BASE TIMER3_BASE
->> +#else
->> +#define TIMER_BASE TIMER10_BASE
->> +#endif
->> +#define TIMER10_IRQ_IDX		10
->> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
->> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
+>>> - After writing to dma buf by CPU, giving back the ownership to device 
+>>> to access buffer to send during DMA transmit 
+>>> dma_sync_single_for_device with dir DMA_TO_DEVICE
+>>
+>> Correct.
+>>
+>>> During Receiving from Device:
+>>> - before submitting RX DMA to give buffer access to DMAengine
+>>> 	dma_sync_single_for_Device(DMA_FROM_DEVICE)
+>>
+>> Correct.
+>>
+>>> - after DMA RX completion, giving dma ownership to CPU for reading 
+>>> dmabuf data written by DMA from device dma_sync_single_for_cpu with 
+>>> dir DMA_FROM_DEVICE
+>>>
+>>
+>> Correct.
 > 
-> TIMER10_IRQ_IDX and IRQ_IDX_FOR_CPU are only applicable to ARM64 and so
-> we should probably not defined for ARM to avoid any confusion.
-Okay, will do.
-> 
-> Furthermore, a lot of these TIMERx_BASE definitions are unused AFAICT.
-> Would be good to get rid of these.
+> Then what I have is exact as mentioned above. So no changes needed related to dma_sync
 
-Okay.
-> 
-> Maybe we could just have ...
-> 
->   +#ifdef CONFIG_ARM
->   +#define TIMER_CPU0 3
->   +#else
->   +#define TIMER_CPU0 10
->   +#endif
->   +#define TIMER_BASE_FOR_CPU(cpu) ((TIMER_CPU0 + cpu) * 8)
->   +#define TIMER_FOR_CPU(cpu) (TIMER_CPU0 + cpu)
-> 
-This can't get the timer base address. I think you mean ...
+Yes
 
-+#ifdef CONFIG_ARM
-+#define TIMER_CPU0 0x50 /* TIMER3 */
-+#else
-+#define TIMER_CPU0 0x90 /* TIMER10 */
-+#endif
-+#define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
+> Pasting again here with clear comment to explain on why I have those corresponding dma_sync
 
-This doesn't need.
-+#define TIMER_FOR_CPU(cpu) (TIMER_CPU0 + cpu)
+If you're going to add these comments to the actual patch, then please add brief explanation of what actually syncing is doing.
 
-Will fix above accordingly and adding your ack tag.
-
-Thanks,
-Joseph
-
-> Otherwise looks good to me.
 > 
-> Cheers
-> Jon
+>         if (i2c_dev->msg_read) {
+>             tegra_i2c_config_fifo_trig(i2c_dev, xfer_size,
+>                            DATA_DMA_DIR_RX);
+>             /* For Reads: giving dma buf ownership to device before submitting RX DMA */
+
+This invalidates buffer in CPU caches to avoid buffer-data eviction from the caches to DRAM while hardware writes to the buffer.
+
+>             dma_sync_single_for_device(i2c_dev->dev,
+>                            i2c_dev->dma_phys,
+>                            xfer_size,
+>                            DMA_FROM_DEVICE);
+>             err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
+>             if (err < 0) {
+>                 dev_err(i2c_dev->dev,
+>                     "starting RX DMA failed, err %d\n",
+>                     err);
+>                 goto unlock;
+>             }
+>         } else {
+>             tegra_i2c_config_fifo_trig(i2c_dev, xfer_size,
+>                            DATA_DMA_DIR_TX);
+>             /* For writes: giving dma buf ownership to CPU to copy transmit data to DMA Buf */
+
+This is a NO-OP because there is no need to flush nor to invalidate CPU caches.
+
+>             dma_sync_single_for_cpu(i2c_dev->dev,
+>                         i2c_dev->dma_phys,
+>                         xfer_size,
+>                         DMA_TO_DEVICE);
+>             buffer = i2c_dev->dma_buf;
+>         }
 > 
+> 
+> 
+>     if (!msg->flags & I2C_M_RD) {
+>         if (dma) {
+>             memcpy(buffer, msg->buf, msg->len);
+>             /* For writes: giving ownership to device after done with copying data to DMA Buf */
+
+This flushes out buffer from CPU caches to DRAM.
+
+>             dma_sync_single_for_device(i2c_dev->dev,
+>                            i2c_dev->dma_phys,
+>                            xfer_size,
+>                            DMA_TO_DEVICE);
+>             err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
+>             if (err < 0) {
+>                 dev_err(i2c_dev->dev,
+>                     "starting TX DMA failed, err %d\n",
+>                     err);
+>                 goto unlock;
+>             }
+>         } else {
+>             tegra_i2c_fill_tx_fifo(i2c_dev);
+>         }
+> 
+>         if (i2c_dev->msg_read) {
+>             if (likely(i2c_dev->msg_err == I2C_ERR_NONE)) {
+>             /* For Reads: giving ownership to CPU after RX DMA completion to access read data */
+>                 dma_sync_single_for_cpu(i2c_dev->dev,
+>                             i2c_dev->dma_phys,
+>                             xfer_size,
+>                             DMA_FROM_DEVICE);
+
+This invalidates buffer in CPU caches again, even though it shall be kept invalidated after dma_sync_single_for_device(DMA_FROM_DEVICE). So it's likely to be a mostly NO-OP in hardware. 
+
+> 
+>                 memcpy(i2c_dev->msg_buf, i2c_dev->dma_buf,
+>                     msg->len);
+>             }
+>         }
+> 
+> 
+> 
+
+Technically we could remove the NO-OP's, but I personally would prefer to keep them for consistency with the DMA API.
