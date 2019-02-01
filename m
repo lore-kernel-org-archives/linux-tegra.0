@@ -1,21 +1,72 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 0/2] Adding DTS to support STMPE811 ADC on Toradex Boards
-Date: Fri, 1 Feb 2019 11:36:34 +0800
-Message-ID: <20190201033633.GE19882@dragon>
-References: <20190122132135.5012-1-dev@pschenker.ch>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH V5 4/7] arm64: dts: tegra210: fix timer node
+Date: Fri, 1 Feb 2019 11:36:18 +0800
+Message-ID: <20190201033621.16814-5-josephl@nvidia.com>
+References: <20190201033621.16814-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190122132135.5012-1-dev@pschenker.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Schenker <dev@pschenker.ch>
-Cc: s.hauer@pengutronix.de, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, marcel.ziswiler@toradex.com, stefan@agner.ch, max.krummenacher@toradex.com, Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190201033621.16814-1-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 02:21:33PM +0100, Philippe Schenker wrote:
-> Philippe Schenker (2):
->   ARM: dts: Add stmpe-adc DT node to Toradex iMX6 modules
->   ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
+Fix timer node to make it work with Tegra210 timer driver.
 
-Applied both, thanks.
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+v5:
+ * no change
+v4:
+ * no change
+v3:
+ * no change
+v2:
+ * list all the IRQs per each timer channels 0 through 13
+ * remove compatible string of "nvidia,tegra30-timer"
+---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index b5858b5ea052..2b387364afc3 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -384,14 +384,22 @@
+ 	};
+ 
+ 	timer@60005000 {
+-		compatible = "nvidia,tegra210-timer", "nvidia,tegra20-timer";
++		compatible = "nvidia,tegra210-timer";
+ 		reg = <0x0 0x60005000 0x0 0x400>;
+-		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA210_CLK_TIMER>;
+ 		clock-names = "timer";
+ 	};
+-- 
+2.20.1
