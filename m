@@ -1,40 +1,47 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V9 4/5] i2c: tegra: update transfer timeout
-Date: Fri, 1 Feb 2019 22:41:59 +0300
-Message-ID: <1f0a6315-8e38-236a-c16c-0b8699bba1b5@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V9 3/5] i2c: tegra: Add DMA support
+Date: Fri, 1 Feb 2019 20:21:39 +0000
+Message-ID: <BYAPR12MB339865C0876E1BF7278DC7C8C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
- <1549040867-18149-4-git-send-email-skomatineni@nvidia.com>
- <53b3f00f-b3a8-e1ef-b04b-1bdd5f5473ce@gmail.com>
- <BYAPR12MB3398D89D631E65C484DC8267C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
+ <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398D89D631E65C484DC8267C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-01.02.2019 22:37, Sowjanya Komatineni пишет:
-> 
->>> BYTES_PER_FIFO_WORD 4
->>>  
->>>  #define I2C_CNFG				0x000
->>> @@ -893,8 +892,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
->>>  		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
->>>  		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
->>>  
->>> -		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
->>> -							TEGRA_I2C_TIMEOUT);
->>> +		time_left = wait_for_completion_timeout(
->>> +						&i2c_dev->msg_complete,
->>> +						msecs_to_jiffies(1000));
->>
->> So potentially tegra_i2c_xfer_msg() could take more than 1 second and then fail with -EAGAIN, correct? In that case we should set adapter.timeout in probe to a larger value:
->>
-> Bus clear pulse threshold we are setting is 9 (default as per spec) so bus clear should happen after finishing sending of 9 pulses.
-> So 1sec is very long time for bus to get released and in case of ARB LOST whole transfer to return EAGAIN will be much less then 1sec
-
-Okay, thank you very much for the clarification. What about to set the timeout to a shorter value then? Maybe 10ms.
+DQo+CXJ4X2NoYW4gPSBkbWFfcmVxdWVzdF9zbGF2ZV9jaGFubmVsX3JlYXNvbihpMmNfZGV2LT5k
+ZXYsICJyeCIpOw0KPglpZiAoSVNfRVJSKHJ4X2NoYW4pKQ0KPgkJcmV0dXJuIFBUUl9FUlIocnhf
+Y2hhbik7DQo+DQo+DQo+ID4gKw0KPiA+ICsJZG1hX2NoYW4gPSBkbWFfcmVxdWVzdF9zbGF2ZV9j
+aGFubmVsX3JlYXNvbihpMmNfZGV2LT5kZXYsICJ0eCIpOw0KPiA+ICsJaWYgKElTX0VSUihkbWFf
+Y2hhbikpIHsNCj4gPiArCQllcnIgPSBQVFJfRVJSKGRtYV9jaGFuKTsNCj4gPiArCQlnb3RvIGVy
+cm9yOw0KPg0KPiBJdCdzIGEgZ29vZCBwcmFjdGljZSB0byByZWxlYXNlIHJlc291cmNlcyBpbiBv
+cHBvc2l0ZSBvcmRlciB0byB0aGUgYWxsb2NhdGlvbi4gSGVuY2UgYmV0dGVyIHRvIHdyaXRlIHRo
+aXMgYXM6DQo+DQo+CQlnb3RvIGVycl9yZWxlYXNlX3J4Ow0KPg0KPiA+ICsJfQ0KPiA+ICsNCj4g
+PiArCWkyY19kZXYtPnR4X2RtYV9jaGFuID0gZG1hX2NoYW47DQo+ID4gKw0KPiA+ICsJZG1hX2J1
+ZiA9IGRtYV9hbGxvY19jb2hlcmVudChpMmNfZGV2LT5kZXYsDQo+ID4gKwkJCQkgICAgIGkyY19k
+ZXYtPmRtYV9idWZfc2l6ZSwgJmRtYV9waHlzLA0KPiA+ICsJCQkJICAgICBHRlBfS0VSTkVMIHwg
+X19HRlBfTk9XQVJOKTsNCj4gPiArDQo+ID4gKwlpZiAoIWRtYV9idWYpIHsNCj4gPiArCQlkZXZf
+ZXJyKGkyY19kZXYtPmRldiwgImZhaWxlZCB0byBhbGxvY2F0ZSB0aGUgRE1BIGJ1ZmZlclxuIik7
+DQo+ID4gKwkJZXJyID0gLUVOT01FTTsNCj4gPiArCQlnb3RvIGVycm9yOw0KPg0KPgkJZ290byBl
+cnJfcmVsZWFzZV90eDsNCj4NCj4gPiArCX0NCj4gPiArDQo+ID4gKwlpMmNfZGV2LT5kbWFfYnVm
+ID0gZG1hX2J1ZjsNCj4gPiArCWkyY19kZXYtPmRtYV9waHlzID0gZG1hX3BoeXM7CWkyY19kZXYt
+PnJ4X2RtYV9jaGFuID0gcnhfY2hhbjsNCj4JaTJjX2Rldi0+dHhfZG1hX2NoYW4gPSB0eF9jaGFu
+Ow0KPg0KPiA+ICsJcmV0dXJuIDA7DQo+ID4gKw0KPiA+ICtlcnJvcjoNCj4gPiArCWlmIChpMmNf
+ZGV2LT50eF9kbWFfY2hhbikNCj4gPiArCQlkbWFfcmVsZWFzZV9jaGFubmVsKGkyY19kZXYtPnR4
+X2RtYV9jaGFuKTsNCj4gPiArDQo+ID4gKwlpZiAoaTJjX2Rldi0+cnhfZG1hX2NoYW4pDQo+ID4g
+KwkJZG1hX3JlbGVhc2VfY2hhbm5lbChpMmNfZGV2LT5yeF9kbWFfY2hhbik7DQo+DQo+IGVycm9y
+X3JlbGVhc2VfdHg6DQo+CWRtYV9yZWxlYXNlX2NoYW5uZWwodHhfY2hhbik7DQo+IGVycm9yX3Jl
+bGVhc2Vfcng6DQo+CWRtYV9yZWxlYXNlX2NoYW5uZWwocnhfY2hhbik7DQo+DQo+ID4gKw0KPiA+
+ICsJcmV0dXJuIGVycjsNCg0KSSBhbSByZWxlYXNpbmcgcmVzb3VyY2VzIGluIHJldmVyc2Ugb3Jk
+ZXIgdG8gYWxsb2NhdGlvbi4NClRyeWluZyBmb3IgcnggYWxsb2NhdGlvbiBmb2xsb3dlZCBieSB0
+eCBhbGxvY2F0aW9uDQpEdXJpbmcgcmVsZWFzZSByZWxlYXNpbmcgdHggYW5kIHRoZW4gcnguDQpJ
+biBjYXNlIGlmIHR4IGFsbG9jYXRpb24gZmFpbHMsIGRvZXNu4oCZdCBnbyB0aHJ1IHJlbGVhc2Uu
+IElmIHJ4IG9yIGJ1ZiBhbGxvY2F0aW9uIGZhaWxzLCByZWxlYXNlcyB0eCBmaXJzdCBhbmQgdGhl
+biByeA0KDQo=
