@@ -1,86 +1,60 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V9 3/5] i2c: tegra: Add DMA support
-Date: Fri, 1 Feb 2019 23:30:55 +0300
-Message-ID: <f0c4cc1b-4e3d-3956-7ac4-de35073fbf94@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V9 3/5] i2c: tegra: Add DMA support
+Date: Fri, 1 Feb 2019 21:36:41 +0000
+Message-ID: <BYAPR12MB339835E59C2D4DCDFC93BEF4C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
  <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
  <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
  <BYAPR12MB339865C0876E1BF7278DC7C8C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <f0c4cc1b-4e3d-3956-7ac4-de35073fbf94@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB339865C0876E1BF7278DC7C8C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <f0c4cc1b-4e3d-3956-7ac4-de35073fbf94@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-01.02.2019 23:21, Sowjanya Komatineni пишет:
-> 
->> 	rx_chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
->> 	if (IS_ERR(rx_chan))
->> 		return PTR_ERR(rx_chan);
->>
->>
->>> +
->>> +	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
->>> +	if (IS_ERR(dma_chan)) {
->>> +		err = PTR_ERR(dma_chan);
->>> +		goto error;
->>
->> It's a good practice to release resources in opposite order to the allocation. Hence better to write this as:
->>
->> 		goto err_release_rx;
->>
->>> +	}
->>> +
->>> +	i2c_dev->tx_dma_chan = dma_chan;
->>> +
->>> +	dma_buf = dma_alloc_coherent(i2c_dev->dev,
->>> +				     i2c_dev->dma_buf_size, &dma_phys,
->>> +				     GFP_KERNEL | __GFP_NOWARN);
->>> +
->>> +	if (!dma_buf) {
->>> +		dev_err(i2c_dev->dev, "failed to allocate the DMA buffer\n");
->>> +		err = -ENOMEM;
->>> +		goto error;
->>
->> 		goto err_release_tx;
->>
->>> +	}
->>> +
->>> +	i2c_dev->dma_buf = dma_buf;
->>> +	i2c_dev->dma_phys = dma_phys;	
-
-	i2c_dev->rx_dma_chan = rx_chan;
->> 	i2c_dev->tx_dma_chan = tx_chan;
->>
->>> +	return 0;
->>> +
->>> +error:
->>> +	if (i2c_dev->tx_dma_chan)
->>> +		dma_release_channel(i2c_dev->tx_dma_chan);
->>> +
->>> +	if (i2c_dev->rx_dma_chan)
->>> +		dma_release_channel(i2c_dev->rx_dma_chan);
->>
->> error_release_tx:
->> 	dma_release_channel(tx_chan);
->> error_release_rx:
->> 	dma_release_channel(rx_chan);
->>
->>> +
->>> +	return err;
-> 
-> I am releasing resources in reverse order to allocation.
-> Trying for rx allocation followed by tx allocation
-> During release releasing tx and then rx.
-> In case if tx allocation fails, doesn’t go thru release. If rx or buf allocation fails, releases tx first and then rx
-> 
-
-
-Okay. Anyway it's a good-n-common practice to write it in the way I'm suggesting.
-
-And please set rx_chan and tx_chan after dma_buf allocation as I'm suggesting because you current variant will crash kernel since if dma_buf allocation fails, both rx and tx channels will be released and you're not setting them to NULL in that case.
+DQo+ID4gDQo+ID4+IAlyeF9jaGFuID0gZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbF9yZWFzb24o
+aTJjX2Rldi0+ZGV2LCAicngiKTsNCj4gPj4gCWlmIChJU19FUlIocnhfY2hhbikpDQo+ID4+IAkJ
+cmV0dXJuIFBUUl9FUlIocnhfY2hhbik7IA0KPiA+Pg0KPiA+Pg0KPiA+Pj4gKw0KPiA+Pj4gKwlk
+bWFfY2hhbiA9IGRtYV9yZXF1ZXN0X3NsYXZlX2NoYW5uZWxfcmVhc29uKGkyY19kZXYtPmRldiwg
+InR4Iik7DQo+ID4+PiArCWlmIChJU19FUlIoZG1hX2NoYW4pKSB7DQo+ID4+PiArCQllcnIgPSBQ
+VFJfRVJSKGRtYV9jaGFuKTsNCj4gPj4+ICsJCWdvdG8gZXJyb3I7DQo+ID4+DQo+ID4+IEl0J3Mg
+YSBnb29kIHByYWN0aWNlIHRvIHJlbGVhc2UgcmVzb3VyY2VzIGluIG9wcG9zaXRlIG9yZGVyIHRv
+IHRoZSBhbGxvY2F0aW9uLiBIZW5jZSBiZXR0ZXIgdG8gd3JpdGUgdGhpcyBhczoNCj4gPj4NCj4g
+Pj4gCQlnb3RvIGVycl9yZWxlYXNlX3J4Ow0KPiA+Pg0KPiA+Pj4gKwl9DQo+ID4+PiArDQo+ID4+
+PiArCWkyY19kZXYtPnR4X2RtYV9jaGFuID0gZG1hX2NoYW47DQo+ID4+PiArDQo+ID4+PiArCWRt
+YV9idWYgPSBkbWFfYWxsb2NfY29oZXJlbnQoaTJjX2Rldi0+ZGV2LA0KPiA+Pj4gKwkJCQkgICAg
+IGkyY19kZXYtPmRtYV9idWZfc2l6ZSwgJmRtYV9waHlzLA0KPiA+Pj4gKwkJCQkgICAgIEdGUF9L
+RVJORUwgfCBfX0dGUF9OT1dBUk4pOw0KPiA+Pj4gKw0KPiA+Pj4gKwlpZiAoIWRtYV9idWYpIHsN
+Cj4gPj4+ICsJCWRldl9lcnIoaTJjX2Rldi0+ZGV2LCAiZmFpbGVkIHRvIGFsbG9jYXRlIHRoZSBE
+TUEgYnVmZmVyXG4iKTsNCj4gPj4+ICsJCWVyciA9IC1FTk9NRU07DQo+ID4+PiArCQlnb3RvIGVy
+cm9yOw0KPiA+Pg0KPiA+PiAJCWdvdG8gZXJyX3JlbGVhc2VfdHg7DQo+ID4+DQo+ID4+PiArCX0N
+Cj4gPj4+ICsNCj4gPj4+ICsJaTJjX2Rldi0+ZG1hX2J1ZiA9IGRtYV9idWY7DQo+ID4+PiArCWky
+Y19kZXYtPmRtYV9waHlzID0gZG1hX3BoeXM7CQ0KPg0KPglpMmNfZGV2LT5yeF9kbWFfY2hhbiA9
+IHJ4X2NoYW47DQo+ID4+IAlpMmNfZGV2LT50eF9kbWFfY2hhbiA9IHR4X2NoYW47DQo+ID4+DQo+
+ID4+PiArCXJldHVybiAwOw0KPiA+Pj4gKw0KPiA+Pj4gK2Vycm9yOg0KPiA+Pj4gKwlpZiAoaTJj
+X2Rldi0+dHhfZG1hX2NoYW4pDQo+ID4+PiArCQlkbWFfcmVsZWFzZV9jaGFubmVsKGkyY19kZXYt
+PnR4X2RtYV9jaGFuKTsNCj4gPj4+ICsNCj4gPj4+ICsJaWYgKGkyY19kZXYtPnJ4X2RtYV9jaGFu
+KQ0KPiA+Pj4gKwkJZG1hX3JlbGVhc2VfY2hhbm5lbChpMmNfZGV2LT5yeF9kbWFfY2hhbik7IA0K
+PiA+Pg0KPiA+PiBlcnJvcl9yZWxlYXNlX3R4Og0KPiA+PiAJZG1hX3JlbGVhc2VfY2hhbm5lbCh0
+eF9jaGFuKTsNCj4gPj4gZXJyb3JfcmVsZWFzZV9yeDoNCj4gPj4gCWRtYV9yZWxlYXNlX2NoYW5u
+ZWwocnhfY2hhbik7DQo+ID4+DQo+ID4+PiArDQo+ID4+PiArCXJldHVybiBlcnI7DQo+ID4gDQo+
+ID4gSSBhbSByZWxlYXNpbmcgcmVzb3VyY2VzIGluIHJldmVyc2Ugb3JkZXIgdG8gYWxsb2NhdGlv
+bi4NCj4gPiBUcnlpbmcgZm9yIHJ4IGFsbG9jYXRpb24gZm9sbG93ZWQgYnkgdHggYWxsb2NhdGlv
+biBEdXJpbmcgcmVsZWFzZSANCj4gPiByZWxlYXNpbmcgdHggYW5kIHRoZW4gcnguDQo+ID4gSW4g
+Y2FzZSBpZiB0eCBhbGxvY2F0aW9uIGZhaWxzLCBkb2VzbuKAmXQgZ28gdGhydSByZWxlYXNlLiBJ
+ZiByeCBvciBidWYgDQo+ID4gYWxsb2NhdGlvbiBmYWlscywgcmVsZWFzZXMgdHggZmlyc3QgYW5k
+IHRoZW4gcngNCj4gPiANCj4NCj4NCj4gT2theS4gQW55d2F5IGl0J3MgYSBnb29kLW4tY29tbW9u
+IHByYWN0aWNlIHRvIHdyaXRlIGl0IGluIHRoZSB3YXkgSSdtIHN1Z2dlc3RpbmcuDQo+DQo+IEFu
+ZCBwbGVhc2Ugc2V0IHJ4X2NoYW4gYW5kIHR4X2NoYW4gYWZ0ZXIgZG1hX2J1ZiBhbGxvY2F0aW9u
+IGFzIEknbSBzdWdnZXN0aW5nIGJlY2F1c2UgeW91IGN1cnJlbnQgdmFyaWFudCB3aWxsIGNyYXNo
+IGtlcm5lbCBzaW5jZSBpZiBkbWFfYnVmIGFsbG9jYXRpb24gZmFpbHMsIGJvdGggcnggYW5kIHR4
+IGNoYW5uZWxzIHdpbGwgYmUgcmVsZWFzZWQgYW5kIHlvdSdyZSBub3Qgc2V0dGluZyB0aGVtIHRv
+IE5VTEwgaW4gdGhhdCBjYXNlLg0KDQpPSywgbXkgd3JvbmcgYXNzdW1wdGlvbi4gVGhvdWdodCBk
+bWFfcmVsZWFzZV9jaGFubmVsIHdpbGwgTlVMTCBjaGFuIGFmdGVyIGl0cyBmcmVlZA0KV2lsbCB1
+cGRhdGUgYW5kIHNlbmQgVjEwDQo=
