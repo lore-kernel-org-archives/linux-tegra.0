@@ -1,15 +1,15 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH V2] cpuidle: dt: bail out if the idle-state DT node is
- not compatible
-Date: Fri, 1 Feb 2019 11:48:38 +0000
-Message-ID: <20190201114838.GA10042@e107155-lin>
-References: <20190201021639.27245-1-josephl@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
+Date: Fri, 1 Feb 2019 12:44:10 +0000
+Message-ID: <5490ad66-7d20-7093-7025-1d0ec8da6dec@nvidia.com>
+References: <20190201033621.16814-1-josephl@nvidia.com>
+ <20190201033621.16814-3-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190201021639.27245-1-josephl@nvidia.com>
+In-Reply-To: <20190201033621.16814-3-josephl@nvidia.com>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,30 +19,139 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: linux-pm@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Sudeep Holla <sudeep.holla@arm.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 10:16:39AM +0800, Joseph Lo wrote:
-> Currently, the DT of the idle states will be parsed first whether it's
-> compatible or not. This could cause a warning message that comes from if
-> the CPU doesn't support identical idle states. E.g. Tegra186 can run
-> with 2 Cortex-A57 and 2 Denver cores with different idle states on
-> different types of these cores.
+
+On 01/02/2019 03:36, Joseph Lo wrote:
+> Add support for the Tegra210 timer that runs at oscillator clock
+> (TMR10-TMR13). We need these timers to work as clock event device and to
+> replace the ARMv8 architected timer due to it can't survive across the
+> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
+> source when CPU suspends in power down state.
 > 
-> So fix it by checking the match node earlier, then it can make sure it
-> only goes through the idle states that the CPU supported.
-> 
+> Also convert the original driver to use timer-of API.
+
+It may have been nice to split this into 2 patches to make it easier to
+see what is going on but not a big deal.
+
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 > ---
+> v5:
+>  * add ack tag from Thierry
+> v4:
+>  * merge timer-tegra210.c in previous version into timer-tegra20.c
+> v3:
+>  * use timer-of API
 > v2:
->  * fix it by moving of_match_node earlier, so we don't need to match the
->    node twice like the v1 did.
+>  * add error clean-up code
+> ---
+>  drivers/clocksource/Kconfig         |   2 +-
+>  drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
+>  include/linux/cpuhotplug.h          |   1 +
+>  3 files changed, 272 insertions(+), 100 deletions(-)
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index a9e26f6a81a1..6af78534a285 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
+>  config TEGRA_TIMER
+>  	bool "Tegra timer driver" if COMPILE_TEST
+>  	select CLKSRC_MMIO
+> -	depends on ARM
+> +	select TIMER_OF
+>  	help
+>  	  Enables support for the Tegra driver.
+>  
+> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
+> index 4293943f4e2b..96a809341c9b 100644
+> --- a/drivers/clocksource/timer-tegra20.c
+> +++ b/drivers/clocksource/timer-tegra20.c
+> @@ -15,21 +15,24 @@
+>   *
+>   */
+>  
+> -#include <linux/init.h>
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+> -#include <linux/time.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/irq.h>
+> -#include <linux/clockchips.h>
+> -#include <linux/clocksource.h>
+> -#include <linux/clk.h>
+> -#include <linux/io.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+> -#include <linux/sched_clock.h>
+> -#include <linux/delay.h>
+> +#include <linux/percpu.h>
+> +#include <linux/syscore_ops.h>
+> +#include <linux/time.h>
+> +
+> +#include "timer-of.h"
+>  
+> +#ifdef CONFIG_ARM
+>  #include <asm/mach/time.h>
+> +#endif
+>  
+>  #define RTC_SECONDS            0x08
+>  #define RTC_SHADOW_SECONDS     0x0c
+> @@ -43,70 +46,147 @@
+>  #define TIMER2_BASE 0x8
+>  #define TIMER3_BASE 0x50
+>  #define TIMER4_BASE 0x58
+> -
+> -#define TIMER_PTV 0x0
+> -#define TIMER_PCR 0x4
+> -
+> +#define TIMER10_BASE 0x90
+> +
+> +#define TIMER_PTV		0x0
+> +#define TIMER_PTV_EN		BIT(31)
+> +#define TIMER_PTV_PER		BIT(30)
+> +#define TIMER_PCR		0x4
+> +#define TIMER_PCR_INTR_CLR	BIT(30)
+> +
+> +#ifdef CONFIG_ARM
+> +#define TIMER_BASE TIMER3_BASE
+> +#else
+> +#define TIMER_BASE TIMER10_BASE
+> +#endif
+> +#define TIMER10_IRQ_IDX		10
+> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
+> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
 
-Neat, thanks for the quick patch. FWIW,
+TIMER10_IRQ_IDX and IRQ_IDX_FOR_CPU are only applicable to ARM64 and so
+we should probably not defined for ARM to avoid any confusion.
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Furthermore, a lot of these TIMERx_BASE definitions are unused AFAICT.
+Would be good to get rid of these.
 
---
-Regards,
-Sudeep
+Maybe we could just have ...
+
+ +#ifdef CONFIG_ARM
+ +#define TIMER_CPU0 3
+ +#else
+ +#define TIMER_CPU0 10
+ +#endif
+ +#define TIMER_BASE_FOR_CPU(cpu) ((TIMER_CPU0 + cpu) * 8)
+ +#define TIMER_FOR_CPU(cpu) (TIMER_CPU0 + cpu)
+
+Otherwise looks good to me.
+
+Cheers
+Jon
+
+-- 
+nvpublic
