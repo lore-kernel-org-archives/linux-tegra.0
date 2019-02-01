@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V6 6/7] arm64: dts: tegra210-p2180: Enable CPU idle support
-Date: Sat, 2 Feb 2019 00:16:53 +0800
-Message-ID: <20190201161654.18315-7-josephl@nvidia.com>
+Subject: [PATCH V6 5/7] arm64: dts: tegra210: add CPU idle states properties
+Date: Sat, 2 Feb 2019 00:16:52 +0800
+Message-ID: <20190201161654.18315-6-josephl@nvidia.com>
 References: <20190201161654.18315-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,7 +21,8 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable CPU idle support for Jetson TX1 platform.
+Add idle states properties for generic ARM CPU idle driver. This
+includes a C7 state which is the power down state of CPU cores.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
@@ -35,27 +36,62 @@ v4:
 v3:
  * no change
 v2:
- * no change
----
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ * add entry-latency-us and exit-latency-us properties
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index 053458a5db55..d1a492c63e96 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -305,6 +305,12 @@
- 		cpu@3 {
- 			enable-method = "psci";
+Note:
+This dt patch depends on the DT changes in below series.
+http://patchwork.ozlabs.org/project/linux-tegra/list/?series=84380
+---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2b387364afc3..75534692604c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1318,24 +1318,43 @@
+ 				 <&dfll>;
+ 			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
+ 			clock-latency = <300000>;
++			cpu-idle-states = <&C7>;
  		};
+ 
+ 		cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <1>;
++			cpu-idle-states = <&C7>;
+ 		};
+ 
+ 		cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <2>;
++			cpu-idle-states = <&C7>;
+ 		};
+ 
+ 		cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57";
+ 			reg = <3>;
++			cpu-idle-states = <&C7>;
++		};
 +
 +		idle-states {
-+			c7 {
-+				status = "okay";
++			entry-method = "psci";
++
++			C7: c7 {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x40000007>;
++				entry-latency-us = <250>;
++				exit-latency-us = <100>;
++				min-residency-us = <1000>;
++				wakeup-latency-us = <130>;
++				idle-state-name = "c7-cpu-powergated";
++				status = "disabled";
 +			};
-+		};
+ 		};
  	};
  
- 	psci {
 -- 
 2.20.1
