@@ -1,14 +1,14 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH V4 3/7] soc/tegra: default select TEGRA_TIMER for Tegra210
-Date: Fri, 1 Feb 2019 10:23:40 +0800
-Message-ID: <75c1b971-849f-de43-9ecd-c67c221ee062@nvidia.com>
+Subject: Re: [PATCH V4 6/7] arm64: dts: tegra210-p2180: Enable CPU idle support
+Date: Fri, 1 Feb 2019 10:26:19 +0800
+Message-ID: <92eaf9ce-a483-5ccd-0894-b72476f2ee86@nvidia.com>
 References: <20190131092410.28222-1-josephl@nvidia.com>
- <20190131092410.28222-4-josephl@nvidia.com> <20190131112655.GC23438@ulmo>
+ <20190131092410.28222-7-josephl@nvidia.com> <20190131125711.GL23438@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190131112655.GC23438@ulmo>
+In-Reply-To: <20190131125711.GL23438@ulmo>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -23,35 +23,45 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/31/19 7:26 PM, Thierry Reding wrote:
-> On Thu, Jan 31, 2019 at 05:24:06PM +0800, Joseph Lo wrote:
->> The tegra timer is necessary for Tegra210 to support CPU idle power-down
->> state. So select it by default.
+On 1/31/19 8:57 PM, Thierry Reding wrote:
+> On Thu, Jan 31, 2019 at 05:24:09PM +0800, Joseph Lo wrote:
+>> Enable CPU idle support for Jetson TX1 platform.
 >>
 >> Signed-off-by: Joseph Lo <josephl@nvidia.com>
 >> ---
 >> v4:
->>   * new added in this version
+>>   * no change
+>> v3:
+>>   * no change
+>> v2:
+>>   * no change
 >> ---
->>   drivers/soc/tegra/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
+>>   arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+>> index 053458a5db55..d1a492c63e96 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+>> @@ -305,6 +305,12 @@
+>>   		cpu@3 {
+>>   			enable-method = "psci";
+>>   		};
+>> +
+>> +		idle-states {
+>> +			c7 {
+>> +				status = "okay";
 > 
-> So this technically depends on patch 2/7, so it would make sense for
-> Daniel or Thomas to pick this up along with 2/7, but you didn't Cc them,
-> so they're not aware of this.
+> Doesn't seem like the code currently cares, but the bindings are
+> specific, so this looks good to me.
 > 
-> I think you need to either resend the series and Cc both Daniel and
-> Thomas on all the patches in the series, or we have to make sure that
-> this patch is not applied before patch 2/7, otherwise Kconfig will
-> complain. If you decide to resend, this patch is:
+> Given that we need the timer in order to get out of this state, I'm
+> assuming that I should hold back on these patches until the driver
+> changes have been merged to make sure we don't regress. Is that
+> correct?
+> 
 
-Okay, will resend this series.
+Yes, correct. Need to make sure all the timer related stuff landed first.
 
-Thanks for your review,
+Thanks,
 Joseph
-
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> 
-> Thierry
-> 
