@@ -1,13 +1,15 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v3 11/16] drm/tegra: vic: Load firmware on demand
-Date: Fri,  1 Feb 2019 14:28:32 +0100
-Message-ID: <20190201132837.12327-12-thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 08/16] gpu: host1x: Use correct semantics for
+ HOST1X_CHANNEL_DMAEND
+Date: Fri, 1 Feb 2019 14:41:34 +0100
+Message-ID: <20190201134134.GA12829@ulmo>
 References: <20190201132837.12327-1-thierry.reding@gmail.com>
+ <20190201132837.12327-9-thierry.reding@gmail.com>
+ <07572051-6189-5fae-f76f-b885d8454fa5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0270998858=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190201132837.12327-1-thierry.reding@gmail.com>
+In-Reply-To: <07572051-6189-5fae-f76f-b885d8454fa5@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -17,70 +19,108 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkxvYWRpbmcgdGhlIGZp
-cm13YXJlIHJlcXVpcmVzIGFuIGFsbG9jYXRpb24gb2YgSU9WQSBzcGFjZSB0byBtYWtlIHN1cmUK
-dGhhdCB0aGUgVklDJ3MgRmFsY29uIG1pY3JvY29udHJvbGxlciBjYW4gcmVhZCB0aGUgZmlybXdh
-cmUgaWYgYWRkcmVzcwp0cmFuc2xhdGlvbiB2aWEgdGhlIFNNTVUgaXMgZW5hYmxlZC4KCkhvd2V2
-ZXIsIHRoZSBhbGxvY2F0aW9uIGN1cnJlbnRseSBoYXBwZW5zIGF0IGEgdGltZSB3aGVyZSB0aGUg
-Z2VvbWV0cnkKb2YgYW4gSU9NTVUgZG9tYWluIG1heSBub3QgaGF2ZSBiZWVuIGluaXRpYWxpemVk
-IHlldC4gVGhpcyBoYXBwZW5zIGZvcgpleGFtcGxlIG9uIFRlZ3JhMTg2IGFuZCBsYXRlciB3aGVy
-ZSBhbiBBUk0gU01NVSBpcyB1c2VkLiBEb21haW5zIHdoaWNoCmFyZSBjcmVhdGVkIGJ5IHRoZSBB
-Uk0gU01NVSBkcml2ZXIgcG9zdHBvbmUgdGhlIGdlb21ldHJ5IHNldHVwIHVudGlsIGEKZGV2aWNl
-IGlzIGF0dGFjaGVkIHRvIHRoZSBkb21haW4uIFRoaXMgaXMgYmVjYXVzZSBJT01NVSBkb21haW5z
-IGFyZW4ndAphdHRhY2hlZCB0byBhIHNwZWNpZmljIElPTU1VIGluc3RhbmNlIGF0IGFsbG9jYXRp
-b24gdGltZSBhbmQgaGVuY2UgdGhlCmlucHV0IGFkZHJlc3Mgc3BhY2UsIHdoaWNoIGRlZmluZXMg
-dGhlIGdlb21ldHJ5LCBpcyBub3Qga25vd24geWV0LgoKV29yayBhcm91bmQgdGhpcyBieSBwb3N0
-cG9uaW5nIHRoZSBmaXJtd2FyZSBsb2FkIHVudGlsIGl0IGlzIG5lZWRlZCBhdAp0aGUgdGltZSB3
-aGVyZSBhIGNoYW5uZWwgaXMgb3BlbmVkIHRvIHRoZSBWSUMuIEF0IHRoaXMgdGltZSB0aGUgc2hh
-cmVkCklPTU1VIGRvbWFpbidzIGdlb21ldHJ5IGhhcyBiZWVuIHByb3Blcmx5IGluaXRpYWxpemVk
-LgoKQXMgYSBieXByb2R1Y3QgdGhpcyBhbGxvd3MgdGhlIFRlZ3JhIERSTSB0byBiZSBjcmVhdGVk
-IGluIHRoZSBhYnNlbmNlCm9mIFZJQyBmaXJtd2FyZSwgc2luY2UgdGhlIFZJQyBpbml0aWFsaXph
-dGlvbiBubyBsb25nZXIgZmFpbHMgaWYgdGhlCmZpcm13YXJlIGNhbid0IGJlIGZvdW5kLgoKQmFz
-ZWQgb24gYW4gZWFybGllciBwYXRjaCBieSBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5j
-b20+LgoKU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4K
-UmV2aWV3ZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KLS0tCiBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMgfCA1MyArKysrKysrKysrKysrKysrKysrKysrKysrLS0t
-LS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25z
-KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL3ZpYy5jCmluZGV4IGQ0Nzk4M2RlYjFjZi4uNzM5Yjg5NDY2MWFiIDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL3ZpYy5jCkBAIC0xODEsMTMgKzE4MSw2IEBAIHN0YXRpYyBpbnQgdmljX2luaXQoc3Ry
-dWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkKIAkJdmljLT5kb21haW4gPSB0ZWdyYS0+ZG9tYWlu
-OwogCX0KIAotCWlmICghdmljLT5mYWxjb24uZGF0YSkgewotCQl2aWMtPmZhbGNvbi5kYXRhID0g
-dGVncmE7Ci0JCWVyciA9IGZhbGNvbl9sb2FkX2Zpcm13YXJlKCZ2aWMtPmZhbGNvbik7Ci0JCWlm
-IChlcnIgPCAwKQotCQkJZ290byBkZXRhY2g7Ci0JfQotCiAJdmljLT5jaGFubmVsID0gaG9zdDF4
-X2NoYW5uZWxfcmVxdWVzdChjbGllbnQtPmRldik7CiAJaWYgKCF2aWMtPmNoYW5uZWwpIHsKIAkJ
-ZXJyID0gLUVOT01FTTsKQEAgLTI0Niw2ICsyMzksMzAgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBo
-b3N0MXhfY2xpZW50X29wcyB2aWNfY2xpZW50X29wcyA9IHsKIAkuZXhpdCA9IHZpY19leGl0LAog
-fTsKIAorc3RhdGljIGludCB2aWNfbG9hZF9maXJtd2FyZShzdHJ1Y3QgdmljICp2aWMpCit7CisJ
-aW50IGVycjsKKworCWlmICh2aWMtPmZhbGNvbi5kYXRhKQorCQlyZXR1cm4gMDsKKworCXZpYy0+
-ZmFsY29uLmRhdGEgPSB2aWMtPmNsaWVudC5kcm07CisKKwllcnIgPSBmYWxjb25fcmVhZF9maXJt
-d2FyZSgmdmljLT5mYWxjb24sIHZpYy0+Y29uZmlnLT5maXJtd2FyZSk7CisJaWYgKGVyciA8IDAp
-CisJCWdvdG8gY2xlYW51cDsKKworCWVyciA9IGZhbGNvbl9sb2FkX2Zpcm13YXJlKCZ2aWMtPmZh
-bGNvbik7CisJaWYgKGVyciA8IDApCisJCWdvdG8gY2xlYW51cDsKKworCXJldHVybiAwOworCitj
-bGVhbnVwOgorCXZpYy0+ZmFsY29uLmRhdGEgPSBOVUxMOworCXJldHVybiBlcnI7Cit9CisKIHN0
-YXRpYyBpbnQgdmljX29wZW5fY2hhbm5lbChzdHJ1Y3QgdGVncmFfZHJtX2NsaWVudCAqY2xpZW50
-LAogCQkJICAgIHN0cnVjdCB0ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dCkKIHsKQEAgLTI1Niwx
-OSArMjczLDI1IEBAIHN0YXRpYyBpbnQgdmljX29wZW5fY2hhbm5lbChzdHJ1Y3QgdGVncmFfZHJt
-X2NsaWVudCAqY2xpZW50LAogCWlmIChlcnIgPCAwKQogCQlyZXR1cm4gZXJyOwogCisJZXJyID0g
-dmljX2xvYWRfZmlybXdhcmUodmljKTsKKwlpZiAoZXJyIDwgMCkKKwkJZ290byBycG1fcHV0Owor
-CiAJZXJyID0gdmljX2Jvb3QodmljKTsKLQlpZiAoZXJyIDwgMCkgewotCQlwbV9ydW50aW1lX3B1
-dCh2aWMtPmRldik7Ci0JCXJldHVybiBlcnI7Ci0JfQorCWlmIChlcnIgPCAwKQorCQlnb3RvIHJw
-bV9wdXQ7CiAKIAljb250ZXh0LT5jaGFubmVsID0gaG9zdDF4X2NoYW5uZWxfZ2V0KHZpYy0+Y2hh
-bm5lbCk7CiAJaWYgKCFjb250ZXh0LT5jaGFubmVsKSB7Ci0JCXBtX3J1bnRpbWVfcHV0KHZpYy0+
-ZGV2KTsKLQkJcmV0dXJuIC1FTk9NRU07CisJCWVyciA9IC1FTk9NRU07CisJCWdvdG8gcnBtX3B1
-dDsKIAl9CiAKIAlyZXR1cm4gMDsKKworcnBtX3B1dDoKKwlwbV9ydW50aW1lX3B1dCh2aWMtPmRl
-dik7CisJcmV0dXJuIGVycjsKIH0KIAogc3RhdGljIHZvaWQgdmljX2Nsb3NlX2NoYW5uZWwoc3Ry
-dWN0IHRlZ3JhX2RybV9jb250ZXh0ICpjb250ZXh0KQpAQCAtMzcyLDEwICszOTUsNiBAQCBzdGF0
-aWMgaW50IHZpY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCWlmIChlcnIg
-PCAwKQogCQlyZXR1cm4gZXJyOwogCi0JZXJyID0gZmFsY29uX3JlYWRfZmlybXdhcmUoJnZpYy0+
-ZmFsY29uLCB2aWMtPmNvbmZpZy0+ZmlybXdhcmUpOwotCWlmIChlcnIgPCAwKQotCQlnb3RvIGV4
-aXRfZmFsY29uOwotCiAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgdmljKTsKIAogCUlOSVRf
-TElTVF9IRUFEKCZ2aWMtPmNsaWVudC5iYXNlLmxpc3QpOwotLSAKMi4xOS4xCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0270998858==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Disposition: inline
+
+
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Feb 01, 2019 at 04:37:59PM +0300, Dmitry Osipenko wrote:
+> 01.02.2019 16:28, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The HOST1X_CHANNEL_DMAEND is an offset relative to the value written to
+> > the HOST1X_CHANNEL_DMASTART register, but it is currently treated as an
+> > absolute address. This can cause SMMU faults if the CDMA fetches past a
+> > pushbuffer's IOMMU mapping.
+> >=20
+> > Properly setting the DMAEND prevents the CDMA from fetching beyond that
+> > address and avoid such issues. This is currently not observed because a
+> > whole (almost) page of essentially scratch space absorbs any excessive
+> > prefetching by CDMA. However, changing the number of slots in the push
+> > buffer can trigger these SMMU faults.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/gpu/host1x/hw/cdma_hw.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cd=
+ma_hw.c
+> > index 485aef5761af..a24c090ac96f 100644
+> > --- a/drivers/gpu/host1x/hw/cdma_hw.c
+> > +++ b/drivers/gpu/host1x/hw/cdma_hw.c
+> > @@ -75,7 +75,7 @@ static void cdma_start(struct host1x_cdma *cdma)
+> > =20
+> >  	cdma->last_pos =3D cdma->push_buffer.pos;
+> >  	start =3D cdma->push_buffer.dma;
+> > -	end =3D start + cdma->push_buffer.size + 4;
+> > +	end =3D cdma->push_buffer.size + 4;
+> > =20
+> >  	host1x_ch_writel(ch, HOST1X_CHANNEL_DMACTRL_DMASTOP,
+> >  			 HOST1X_CHANNEL_DMACTRL);
+> > @@ -126,7 +126,7 @@ static void cdma_timeout_restart(struct host1x_cdma=
+ *cdma, u32 getptr)
+> >  			 HOST1X_CHANNEL_DMACTRL);
+> > =20
+> >  	start =3D cdma->push_buffer.dma;
+> > -	end =3D start + cdma->push_buffer.size + 4;
+> > +	end =3D cdma->push_buffer.size + 4;
+> > =20
+> >  	/* set base, end pointer (all of memory) */
+> >  	host1x_ch_writel(ch, lower_32_bits(start), HOST1X_CHANNEL_DMASTART);
+> >=20
+>=20
+> This seems fixes problem that was added by a previous patch in this
+> series, "gpu: host1x: Support 40-bit addressing". What about to just
+> squash the patches?=20
+
+This actually fixes a bug that's always been there. This just happens to
+touch the same lines as an earlier patch as a result of some refactoring
+that the earlier patch did.
+
+Thierry
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxUTIsACgkQ3SOs138+
+s6Gs2xAAjkx7w1L1G2KUx3qdS3eXKBnMvZ+E04VGwQiXm9v7HAiGd3SQyykJSGTm
+HQjnBNRkoHE5AMOsVv2BilEgje7EzQvqJHyc8cuv/WfUeuLLGuIQBtqqAu+7xRby
+fAyX2jac/PFiY7y43oXBLl6VmPpu4/M6wZfc/SxNI6skkS47RcLf5L8CVSM4lLye
+PDvTWmX9tCAsNBYThAGWL7q3pKodpVie3hDLUyOKerFICwpyxNtKZ2TsXJ40kspM
+B3F+sV/Mc1YqhfTdrdfnuus0PgzaN48Vs3x7cnf75DSkok1Pbf4MuAK8N2YCACXM
+DZ348jgpdlK+cRghDI6/2CFxW7oiZFlS+vPqmeP411MYMOPq9jdNMwRPobTufl1V
+0OThyBbExso5go57N4VbDu0dQzTSNEzr5FRF5c63a0YYgiKfciAo+jgOKr7eJPpg
+jxKCAQrCI1DSQ8R89OGSIk04HXXIKrTAeg2HnSYD18WeX/tqQZQcPsJ5Lb34SyIv
+ccSmXDuVWQ1M38jsCPFtvcbZkYBn2obdPAH9e3nOH3f7bJljDlrOp/LcojcvWrbF
+taCf4xf+cKAYncWC4CQoZyuC3WwWL//9E2GgvUIJj8TJ1EB6ea36ceHRd9Z7OpdZ
+p1B5LUVrQ9fUuUeL5OdMrdui3C22gpsQLz8CSRBDFLjSEyDEiPA=
+=pE1H
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
+
+--===============0270998858==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0270998858==--
