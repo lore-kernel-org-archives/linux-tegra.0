@@ -1,505 +1,371 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-Date: Fri, 1 Feb 2019 13:54:52 +0000
-Message-ID: <85988378-0c88-6b71-00df-0700a7b4cdf7@nvidia.com>
-References: <20190201033621.16814-1-josephl@nvidia.com>
- <20190201033621.16814-3-josephl@nvidia.com>
- <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
- <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] reset: Don't WARN if trying to get a used reset control
+Date: Fri, 1 Feb 2019 15:00:25 +0100
+Message-ID: <20190201140025.GB12829@ulmo>
+References: <20190125101554.5947-1-thierry.reding@gmail.com>
+ <1548674808.6421.3.camel@pengutronix.de>
+ <20190128145836.GA31317@ulmo>
+ <1548849808.3939.7.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1548849808.3939.7.camel@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 01/02/2019 13:11, Dmitry Osipenko wrote:
-> 01.02.2019 16:06, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> 01.02.2019 6:36, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> Add support for the Tegra210 timer that runs at oscillator clock
->>> (TMR10-TMR13). We need these timers to work as clock event device and t=
-o
->>> replace the ARMv8 architected timer due to it can't survive across the
->>> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake=
--up
->>> source when CPU suspends in power down state.
->>>
->>> Also convert the original driver to use timer-of API.
->>>
->>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>> Acked-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>> v5:
->>>  * add ack tag from Thierry
->>> v4:
->>>  * merge timer-tegra210.c in previous version into timer-tegra20.c
->>> v3:
->>>  * use timer-of API
->>> v2:
->>>  * add error clean-up code
->>> ---
->>>  drivers/clocksource/Kconfig         |   2 +-
->>>  drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
->>>  include/linux/cpuhotplug.h          |   1 +
->>>  3 files changed, 272 insertions(+), 100 deletions(-)
->>>
->>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->>> index a9e26f6a81a1..6af78534a285 100644
->>> --- a/drivers/clocksource/Kconfig
->>> +++ b/drivers/clocksource/Kconfig
->>> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
->>>  config TEGRA_TIMER
->>>  	bool "Tegra timer driver" if COMPILE_TEST
->>>  	select CLKSRC_MMIO
->>> -	depends on ARM
->>> +	select TIMER_OF
->>>  	help
->>>  	  Enables support for the Tegra driver.
->>> =20
->>> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/=
-timer-tegra20.c
->>> index 4293943f4e2b..96a809341c9b 100644
->>> --- a/drivers/clocksource/timer-tegra20.c
->>> +++ b/drivers/clocksource/timer-tegra20.c
->>> @@ -15,21 +15,24 @@
->>>   *
->>>   */
->>> =20
->>> -#include <linux/init.h>
->>> +#include <linux/clk.h>
->>> +#include <linux/clockchips.h>
->>> +#include <linux/cpu.h>
->>> +#include <linux/cpumask.h>
->>> +#include <linux/delay.h>
->>>  #include <linux/err.h>
->>> -#include <linux/time.h>
->>>  #include <linux/interrupt.h>
->>> -#include <linux/irq.h>
->>> -#include <linux/clockchips.h>
->>> -#include <linux/clocksource.h>
->>> -#include <linux/clk.h>
->>> -#include <linux/io.h>
->>>  #include <linux/of_address.h>
->>>  #include <linux/of_irq.h>
->>> -#include <linux/sched_clock.h>
->>> -#include <linux/delay.h>
->>> +#include <linux/percpu.h>
->>> +#include <linux/syscore_ops.h>
->>> +#include <linux/time.h>
->>> +
->>> +#include "timer-of.h"
->>> =20
->>> +#ifdef CONFIG_ARM
->>>  #include <asm/mach/time.h>
->>> +#endif
->>> =20
->>>  #define RTC_SECONDS            0x08
->>>  #define RTC_SHADOW_SECONDS     0x0c
->>> @@ -43,70 +46,147 @@
->>>  #define TIMER2_BASE 0x8
->>>  #define TIMER3_BASE 0x50
->>>  #define TIMER4_BASE 0x58
->>> -
->>> -#define TIMER_PTV 0x0
->>> -#define TIMER_PCR 0x4
->>> -
->>> +#define TIMER10_BASE 0x90
->>> +
->>> +#define TIMER_PTV		0x0
->>> +#define TIMER_PTV_EN		BIT(31)
->>> +#define TIMER_PTV_PER		BIT(30)
->>> +#define TIMER_PCR		0x4
->>> +#define TIMER_PCR_INTR_CLR	BIT(30)
->>> +
->>> +#ifdef CONFIG_ARM
->>> +#define TIMER_BASE TIMER3_BASE
->>> +#else
->>> +#define TIMER_BASE TIMER10_BASE
->>> +#endif
->>> +#define TIMER10_IRQ_IDX		10
->>> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
->>> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
->>> +
->>> +static u32 usec_config;
->>>  static void __iomem *timer_reg_base;
->>> +#ifdef CONFIG_ARM
->>>  static void __iomem *rtc_base;
->>> -
->>>  static struct timespec64 persistent_ts;
->>>  static u64 persistent_ms, last_persistent_ms;
->>> -
->>>  static struct delay_timer tegra_delay_timer;
->>> -
->>> -#define timer_writel(value, reg) \
->>> -	writel_relaxed(value, timer_reg_base + (reg))
->>> -#define timer_readl(reg) \
->>> -	readl_relaxed(timer_reg_base + (reg))
->>> +#endif
->>> =20
->>>  static int tegra_timer_set_next_event(unsigned long cycles,
->>>  					 struct clock_event_device *evt)
->>>  {
->>> -	u32 reg;
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> =20
->>> -	reg =3D 0x80000000 | ((cycles > 1) ? (cycles-1) : 0);
->>> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->>> +	writel(TIMER_PTV_EN |
->>> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
->>> +	       reg_base + TIMER_PTV);
->>> =20
->>>  	return 0;
->>>  }
->>> =20
->>> -static inline void timer_shutdown(struct clock_event_device *evt)
->>> +static int tegra_timer_shutdown(struct clock_event_device *evt)
->>>  {
->>> -	timer_writel(0, TIMER3_BASE + TIMER_PTV);
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> +
->>> +	writel(0, reg_base + TIMER_PTV);
->>> +
->>> +	return 0;
->>>  }
->>> =20
->>> -static int tegra_timer_shutdown(struct clock_event_device *evt)
->>> +static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>>  {
->>> -	timer_shutdown(evt);
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> +
->>> +	writel(TIMER_PTV_EN | TIMER_PTV_PER |
->>> +	       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
->>> +	       reg_base + TIMER_PTV);
->>> +
->>>  	return 0;
->>>  }
->>> =20
->>> -static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>> +static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
->>>  {
->>> -	u32 reg =3D 0xC0000000 | ((1000000 / HZ) - 1);
->>> +	struct clock_event_device *evt =3D (struct clock_event_device *)dev_i=
-d;
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> +
->>> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->>> +	evt->event_handler(evt);
->>> +
->>> +	return IRQ_HANDLED;
->>> +}
->>> +
->>> +#ifdef CONFIG_ARM64
->>> +static DEFINE_PER_CPU(struct timer_of, tegra_to) =3D {
->>> +	.flags =3D TIMER_OF_CLOCK | TIMER_OF_BASE,
->>> +
->>> +	.clkevt =3D {
->>> +		.name =3D "tegra_timer",
->>> +		.rating =3D 460,
->>> +		.features =3D CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
->>> +		.set_next_event =3D tegra_timer_set_next_event,
->>> +		.set_state_shutdown =3D tegra_timer_shutdown,
->>> +		.set_state_periodic =3D tegra_timer_set_periodic,
->>> +		.set_state_oneshot =3D tegra_timer_shutdown,
->>> +		.tick_resume =3D tegra_timer_shutdown,
->>> +	},
->>> +};
->>> +
->>> +static int tegra_timer_setup(unsigned int cpu)
->>> +{
->>> +	struct timer_of *to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +
->>> +	irq_force_affinity(to->clkevt.irq, cpumask_of(cpu));
->>> +	enable_irq(to->clkevt.irq);
->>> +
->>> +	clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
->>> +					1, /* min */
->>> +					0x1fffffff); /* 29 bits */
->>> =20
->>> -	timer_shutdown(evt);
->>> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->>>  	return 0;
->>>  }
->>> =20
->>> -static struct clock_event_device tegra_clockevent =3D {
->>> -	.name			=3D "timer0",
->>> -	.rating			=3D 300,
->>> -	.features		=3D CLOCK_EVT_FEAT_ONESHOT |
->>> -				  CLOCK_EVT_FEAT_PERIODIC |
->>> -				  CLOCK_EVT_FEAT_DYNIRQ,
->>> -	.set_next_event		=3D tegra_timer_set_next_event,
->>> -	.set_state_shutdown	=3D tegra_timer_shutdown,
->>> -	.set_state_periodic	=3D tegra_timer_set_periodic,
->>> -	.set_state_oneshot	=3D tegra_timer_shutdown,
->>> -	.tick_resume		=3D tegra_timer_shutdown,
->>> +static int tegra_timer_stop(unsigned int cpu)
->>> +{
->>> +	struct timer_of *to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +
->>> +	to->clkevt.set_state_shutdown(&to->clkevt);
->>> +	disable_irq_nosync(to->clkevt.irq);
->>> +
->>> +	return 0;
->>> +}
->>> +#else /* CONFIG_ARM */
->>> +static struct timer_of tegra_to =3D {
->>> +	.flags =3D TIMER_OF_CLOCK | TIMER_OF_BASE | TIMER_OF_IRQ,
->>> +
->>> +	.clkevt =3D {
->>> +		.name =3D "tegra_timer",
->>> +		.rating	=3D 300,
->>> +		.features =3D CLOCK_EVT_FEAT_ONESHOT |
->>> +			    CLOCK_EVT_FEAT_PERIODIC |
->>> +			    CLOCK_EVT_FEAT_DYNIRQ,
->>> +		.set_next_event	=3D tegra_timer_set_next_event,
->>> +		.set_state_shutdown =3D tegra_timer_shutdown,
->>> +		.set_state_periodic =3D tegra_timer_set_periodic,
->>> +		.set_state_oneshot =3D tegra_timer_shutdown,
->>> +		.tick_resume =3D tegra_timer_shutdown,
->>> +		.cpumask =3D cpu_possible_mask,
->>> +	},
->>> +
->>> +	.of_irq =3D {
->>> +		.index =3D 2,
->>> +		.flags =3D IRQF_TIMER | IRQF_TRIGGER_HIGH,
->>> +		.handler =3D tegra_timer_isr,
->>> +	},
->>>  };
->>> =20
->>>  static u64 notrace tegra_read_sched_clock(void)
->>>  {
->>> -	return timer_readl(TIMERUS_CNTR_1US);
->>> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>> +}
->>> +
->>> +static unsigned long tegra_delay_timer_read_counter_long(void)
->>> +{
->>> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>>  }
->>> =20
->>>  /*
->>> @@ -143,98 +223,188 @@ static void tegra_read_persistent_clock64(struct=
- timespec64 *ts)
->>>  	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
->>>  	*ts =3D persistent_ts;
->>>  }
->>> +#endif
->>> =20
->>> -static unsigned long tegra_delay_timer_read_counter_long(void)
->>> +static int tegra_timer_suspend(void)
->>>  {
->>> -	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>> +#ifdef CONFIG_ARM64
->>> +	int cpu;
->>> +
->>> +	for_each_possible_cpu(cpu) {
->>> +		struct timer_of *to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +		void __iomem *reg_base =3D timer_of_base(to);
->>> +
->>> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->>> +	}
->>> +#else
->>> +	void __iomem *reg_base =3D timer_of_base(&tegra_to);
->>> +
->>> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->>> +#endif
->>> +
->>> +	return 0;
->>>  }
->>> =20
->>> -static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
->>> +static void tegra_timer_resume(void)
->>>  {
->>> -	struct clock_event_device *evt =3D (struct clock_event_device *)dev_i=
-d;
->>> -	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
->>> -	evt->event_handler(evt);
->>> -	return IRQ_HANDLED;
->>> +	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
->>>  }
->>> =20
->>> -static struct irqaction tegra_timer_irq =3D {
->>> -	.name		=3D "timer0",
->>> -	.flags		=3D IRQF_TIMER | IRQF_TRIGGER_HIGH,
->>> -	.handler	=3D tegra_timer_interrupt,
->>> -	.dev_id		=3D &tegra_clockevent,
->>> +static struct syscore_ops tegra_timer_syscore_ops =3D {
->>> +	.suspend =3D tegra_timer_suspend,
->>> +	.resume =3D tegra_timer_resume,
->>>  };
->>> =20
->>> -static int __init tegra20_init_timer(struct device_node *np)
->>> +static int tegra_timer_init(struct device_node *np, struct timer_of *t=
-o)
->>>  {
->>> -	struct clk *clk;
->>> -	unsigned long rate;
->>> -	int ret;
->>> +	int ret =3D 0;
->>> =20
->>> -	timer_reg_base =3D of_iomap(np, 0);
->>> -	if (!timer_reg_base) {
->>> -		pr_err("Can't map timer registers\n");
->>> -		return -ENXIO;
->>> -	}
->>> +	ret =3D timer_of_init(np, to);
->>> +	if (ret < 0)
->>> +		goto out;
->>> =20
->>> -	tegra_timer_irq.irq =3D irq_of_parse_and_map(np, 2);
->>> -	if (tegra_timer_irq.irq <=3D 0) {
->>> -		pr_err("Failed to map timer IRQ\n");
->>> -		return -EINVAL;
->>> -	}
->>> +	timer_reg_base =3D timer_of_base(to);
->>> =20
->>> -	clk =3D of_clk_get(np, 0);
->>> -	if (IS_ERR(clk)) {
->>> -		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
->>> -		rate =3D 12000000;
->>> -	} else {
->>> -		clk_prepare_enable(clk);
->>> -		rate =3D clk_get_rate(clk);
->>> -	}
->>> -
->>> -	switch (rate) {
->>> +	/*
->>> +	 * Configure microsecond timers to have 1MHz clock
->>> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
->>> +	 * Uses n+1 scheme
->>> +	 */
->>> +	switch (timer_of_rate(to)) {
->>>  	case 12000000:
->>> -		timer_writel(0x000b, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x000b; /* (11+1)/(0+1) */
->>> +		break;
->>> +	case 12800000:
->>> +		usec_config =3D 0x043f; /* (63+1)/(4+1) */
->>>  		break;
->>>  	case 13000000:
->>> -		timer_writel(0x000c, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x000c; /* (12+1)/(0+1) */
->>> +		break;
->>> +	case 16800000:
->>> +		usec_config =3D 0x0453; /* (83+1)/(4+1) */
->>>  		break;
->>>  	case 19200000:
->>> -		timer_writel(0x045f, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x045f; /* (95+1)/(4+1) */
->>>  		break;
->>>  	case 26000000:
->>> -		timer_writel(0x0019, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x0019; /* (25+1)/(0+1) */
->>> +		break;
->>> +	case 38400000:
->>> +		usec_config =3D 0x04bf; /* (191+1)/(4+1) */
->>> +		break;
->>> +	case 48000000:
->>> +		usec_config =3D 0x002f; /* (47+1)/(0+1) */
->>>  		break;
->>>  	default:
->>> -		WARN(1, "Unknown clock rate");
->>> +		ret =3D -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->>> +	writel(usec_config, timer_of_base(to) + TIMERUS_USEC_CFG);
->>> +
->>> +	register_syscore_ops(&tegra_timer_syscore_ops);
->>> +out:
->>> +	return ret;
->>> +}
->>> +
->>> +#ifdef CONFIG_ARM64
->>> +static int __init tegra210_timer_init(struct device_node *np)
->>> +{
->>> +	int cpu, ret =3D 0;
->>> +	struct timer_of *to;
->>> +
->>> +	to =3D this_cpu_ptr(&tegra_to);
->>> +	ret =3D tegra_timer_init(np, to);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	for_each_possible_cpu(cpu) {
->>> +		struct timer_of *cpu_to;
->>> +
->>> +		cpu_to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +		cpu_to->of_base.base =3D timer_reg_base + TIMER_FOR_CPU(cpu);
->>> +		cpu_to->of_clk.rate =3D timer_of_rate(to);
->>> +		cpu_to->clkevt.cpumask =3D cpumask_of(cpu);
->>> +
->>> +		cpu_to->clkevt.irq =3D
->>> +			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
->>> +		if (!cpu_to->clkevt.irq) {
->>> +			pr_err("%s: can't map IRQ for CPU%d\n",
->>> +			       __func__, cpu);
->>> +			ret =3D -EINVAL;
->>> +			goto out;
->>> +		}
->>> +
->>> +		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
->>> +		ret =3D request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
->>> +				  IRQF_TIMER | IRQF_NOBALANCING,
->>> +				  cpu_to->clkevt.name, &cpu_to->clkevt);
->>> +		if (ret) {
->>> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
->>> +				__func__, cpu_to->clkevt.irq, cpu);
->>> +			ret =3D -EINVAL;
->>> +			goto out_irq;
->>> +		}
->>> +	}
->>> +
->>> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
->>> +			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
->>> +			  tegra_timer_stop);
->>> +
->>> +	return ret;
->>> +
->>> +out_irq:
->>> +	for_each_possible_cpu(cpu) {
->>> +		struct timer_of *cpu_to;
->>> +
->>> +		cpu_to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +		if (cpu_to->clkevt.irq) {
->>> +			free_irq(cpu_to->clkevt.irq, &cpu_to->clkevt);
->>> +			irq_dispose_mapping(cpu_to->clkevt.irq);
->>> +		}
->>>  	}
->>> +out:
->>> +	timer_of_cleanup(to);
->>> +	return ret;
->>> +}
->>> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_tim=
-er_init);
->>> +#else /* CONFIG_ARM */
->>> +static int __init tegra20_init_timer(struct device_node *np)
->>> +{
->> What about T132? Isn't it ARM64 which uses tegra20-timer IP? At least T1=
-32 DT suggests so and seems this change will break it.
->>
->> [snip]
->>
+--NMuMz9nt05w80d4+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 30, 2019 at 01:03:28PM +0100, Philipp Zabel wrote:
+> Hi Thierry,
 >=20
-> Ah, noticed the "depends on ARM" in Kconfig.. Seems okay then.
+> On Mon, 2019-01-28 at 15:58 +0100, Thierry Reding wrote:
+> > On Mon, Jan 28, 2019 at 12:26:48PM +0100, Philipp Zabel wrote:
+> > > Hi Thierry,
+> > >=20
+> > > On Fri, 2019-01-25 at 11:15 +0100, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > When requesting a reset control for exclusive use that's already in=
+ use,
+> > > > an -EBUSY error code is returned. Users can react accordingly when =
+they
+> > > > receive that error code, so there is no need to loudly complain.
+> > > >=20
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > ---
+> > > >  drivers/reset/core.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >=20
+> > > > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> > > > index 9582efb70025..6b452f010b66 100644
+> > > > --- a/drivers/reset/core.c
+> > > > +++ b/drivers/reset/core.c
+> > > > @@ -416,7 +416,7 @@ static struct reset_control *__reset_control_ge=
+t_internal(
+> > > > =20
+> > > >  	list_for_each_entry(rstc, &rcdev->reset_control_head, list) {
+> > > >  		if (rstc->id =3D=3D index) {
+> > > > -			if (WARN_ON(!rstc->shared || !shared))
+> > > > +			if (!rstc->shared || !shared)
+> > > >  				return ERR_PTR(-EBUSY);
+> > > > =20
+> > > >  			kref_get(&rstc->refcnt);
+> > >=20
+> > > Are you actually running into this somewhere?
+> >=20
+> > Yeah. I'm running into this on Tegra. Let me give you a brief overview
+> > of how the resets work for better understanding. Most of the modules on
+> > Tegra have dedicated resets, some may have multiple ones to reset a
+> > subset of the hardware within a functional block. Typically the drivers
+> > for these hardware modules will control the reset explicitly, usually to
+> > make sure the hardware is in a known state at probe time. Some drivers
+> > also do this as part of runtime suspend/resume.
+> >
+> > Unfortunately we ran into issues when shared resets were introduced
+> > because we also have generic power domains implemented on most platforms
+> > and part of the programming sequence for power domains is to make sure a
+> > hardware module that is part of the domain has its reset asserted. So on
+> > one hand we need the reset for explicit control in the driver and on the
+> > other hand we need the reset control in the power domain driver to make
+> > sure the sequence requirements can be met.
+> >=20
+> > This causes issues on chips such as Tegra210, where for example we need
+> > to reset the SOR (which is an output used to driver HDMI) before setting
+> > a mode to make sure we are in a proper state (the bootloader can have
+> > initialized the SOR) to make sure the rather complicated sequence for
+> > getting up the SOR can be completed.
+> >=20
+> > The power domain for the SOR needs to control the reset for the SOR for
+> > power sequencing reasons and at the same time, the SOR driver needs to
+> > control the reset to get it into a proper state. In the past we were
+> > able to make this work by requesting the reset control in the SOR driver
+> > only if no power domain was attached to the SOR. This would avoid the
+> > shared usage between power domain and SOR driver. We obviously can't
+> > share the reset control because it wouldn't allow us to reset at the
+> > right time.
+> >=20
+> > On Tegra210 this works fine because the SOR power domain will be powered
+> > off sometime during boot and in the process reset the SOR. This is
+> > because all devices that are part of the domain are runtime power
+> > managed and have a zero runtime PM refcount after ->probe(), so the PM
+> > domain will be allowed to be turned off at that point. This is likely
+> > only by accident, and break as well if the driver probe order changes
+> > for some reason.
+> >=20
+> > The problem is more accute on Tegra186 where the SOR is in a much larger
+> > power domain that includes a bunch of other modules. Unfortunately, one
+> > side-effect of that is that the power domain will not be turned off
+> > during boot. I saw this happen when I added support for HDA support. The
+> > HDA module is also part of the same power domain as SOR and HDA keeps a
+> > runtime PM reference all the time. This is because it isn't runtime PM
+> > managed at this point, but even if it was, there are so many modules in
+> > the power domain that we can't guarantee that the power domain will at
+> > some point be powered off and the SOR reset at the time.
+> >=20
+> > Fortunately the power domains on Tegra186 (and later) are no longer
+> > controlled by a Linux driver. Instead, there's now a firmware running on
+> > a microcontroller (called boot and power management processor, or BPMP)
+> > that Linux communicates with over an IPC mechanism. BPMP will internally
+> > control the resets as appropriate, which means that we can exclusively
+> > reset them again from Linux and explicitly reset the SOR when needed.
+> >=20
+> > In order to support both Tegra210 and Tegra186 in the same driver, we no
+> > longer just check whether a power domain was attached to the SOR, but we
+> > just want to get the reset control and if we get -EBUSY we assume that
+> > we run on Tegra210 and earlier and don't have to use the reset (since
+> > the power domain will be able to reset the SOR). For later chips we get
+> > access to the reset control because Linux doesn't know that BPMP also
+> > has access to it.
+> >=20
+> > So much for the "brief" overview... =3D)
 >=20
+> Oh dear :) Thank you for the detailed description, much appreciated.
+> This is a problem that we currently have no good solution for. Let me
+> think about this for a bit.
+>=20
+> First, conceptually these are exclusive (to one module each) reset
+> lines, but the control is temporarily yielded to the power domain.
+>=20
+> I'm not at all saying we should do the following, but hypothetically, if
+> the SOR driver were to reset_control_put the reset line in its suspend
+> function and reset_control_get it again in resume, and the power domain
+> drivers would only reset_control_get the reset line right before a power
+> domain transition and reset_control_put it immediately afterwards, that
+> should work just fine, right?
+>=20
+> If so, maybe this functionality should be added to the reset framework.
+> A possibility would be to have a "yielded" state=C2=A0for exclusive reset
+> controls, allow multiple reset controls to be requested for an exclusive
+> reset line at the same time, but only allow actions on one control at a
+> time.
+>=20
+> > Now, after writing the above, I'm not sure if this is really the best
+> > approach. Technically we could run into the same problem on Tegra210
+> > where we can't explicitly control the reset because Linux already has
+> > it marked as exclusively used by the power domain provider.
+>=20
+> I'm not quite sure either. With the above idea, and a pair of
+> reset_control_release/acquire functions, the SOR suspend/resume
+> functions could look something like this:
+>=20
+> suspend() {
+> 	reset_control_assert(rstc);
+> 	/* ... */
+> 	clk_disable(clk);
+> 	delay();
+> 	reset_control_release(rstc);
+> 	/*
+> 	 * ^ From this point on the SOR driver doesn't care about
+> 	 * the state of the reset line anymore, the PM driver is
+> 	 * free to manipulate it.
+> 	 */
+> }
+>=20
+> resume() {
+> 	reset_control_acquire(rstc);
+> 	/*
+> 	 * ^ This should fail
+> while another exclusive reset control
+> 	 * has acquired the reset
+> line. Alternatively, the acquire
+> 	 * could be implicitly contained
+> in the following assert:
+> 	 */
+> 	reset_control_assert(rstc);
+> =09
+> /*
+> 	 * ^ From this point on the SOR driver again cares about the
+> =09
+>  * state of the reset line.
+> 	 */
+> 	clk_enable(clk);
+> 	de
+> lay();
+> 	reset_control_deassert(rstc);
+> }
+>=20
+> And while the SOR driver has released its reset control, the power
+> domain driver is free to acquire/IPC/release it (BPMP) or to
+> acquire/assert/deassert/release as necessary on Tegra210.
+> That would also mean we'd have to add a way for the power domain drivers
+> to request the reset control in the "released/don't care" state
+> initially.
+>=20
+> > But then, I don't know if there's an alternative to just crossing our
+> > fingers and hoping that things will continue to work "by accident".
+>=20
+> I'd prefer not to rely on that. It would be nice for the power domain
+> drivers to be able to temporarily acquire reset control from the
+> framework during power transitions, to make sure that the SOR driver is
+> in a state that is guaranteed not to be disturbed by activity on the
+> reset line. Or at least to be able to throw sane error messages when
+> this is not the case.
+>=20
+> > For some devices it may not matter because they are less picky about th=
+eir
+> > current state when you start programming them, but the SOR is very
+> > sensitive and I've never been able to make it work properly without
+> > involving the help of the reset at some point.
+> >=20
+> > One alternative that could work for Tegra would be to somehow mark the
+> > resets as being safe to use multiple times. In our use-cases we always
+> > know that it is safe to reset the SOR because the power domains will be
+> > on at the time that we want to control it, so there won't be any
+> > conflicts. However, I suspect that that could set a precedent for other
+> > drivers.
+>=20
+> Do you think the above makes sense? I wouldn't like to mark exclusive
+> reset controls as just "safe to use" from multiple controls generally,
+> but doing this temporarily seems to me to fit the use case quite well.
+>=20
+> > > My reason for adding these warnings was that these point to either a =
+DT
+> > > misconfiguration=C2=A0or a driver bug, and the verbose warning helps =
+to
+> > > quickly identify the actual issue. This is not an error condition that
+> > > I would expect on a correctly configured system.
+> >=20
+> > I generally agree with this approach, but given the above, I'm out of
+> > ideas of how to properly achieve what we need on Tegra. Even this patch
+> > seems like a bad idea in retrospect because we may very well run into a
+> > similar issue on Tegra210 where we can't hide the fact that we're using
+> > the reset from two places at the same time. I mean we could probably do
+> > a really ugly hack and access the reset controller registers directly
+> > from the power domain provider, but that's really not something I want
+> > to do. We already have to do something similar to work around a hardware
+> > bug on Tegra210, but that's about as much as I can endure.
+>=20
+> I agree, and I really think this should be done out in the open, not
+> behind the frameworks' back. I'm sure Tegra is not the only platform
+> where this currently only works by accident. Just most of the time I
+> don't get as thorough an explanation.
+>=20
+> > > I don't expect most drivers give a proper error message that contains
+> > > the -EBUSY return value. Usually it's just along the lines of "failed=
+ to
+> > > get reset control" without any further indication.
+> >=20
+> > I understand your reluctance. And I'm certainly open to any new ideas
+> > that I haven't tried yet. I haven't tried reintroducing some sort of
+> > non-shared resets, but I've never seriously considered it because it
+> > effectively undoes most of the shared reset stuff.
+>=20
+> The shared reset support really is orthognonal to this, it completely
+> changes how the reset_control_assert/deassert functions are interpreted
+> due to the internal refcounting.
+>=20
+> > If you think that=C2=A0some form of this would be acceptable, I will be
+> > happy to come up with a proposal. Or perhaps there's a really simple
+> > solution to this problem and I simply can't see the wood for the trees
+> > anymore.
+>=20
+> What do you think about my suggestion?
 
+It sounds pretty good and elegant actually. Let me try to restate to see
+if I understand correctly:
 
-This is a good point, because even though we had 'depends on ARM', this
-still means that the Tegra132 DT is incorrect.
+So basically what you're saying is that we would be changing the
+definition of exclusive resets to make them exclusive in terms of usage
+rather than rejecting to acquire them multiple times, right? So we would
+reinstate the possibility to request exclusive resets from multiple
+sources, but add an _acquire()/_release() protocol to make sure the
+users don't get in each other's way.
 
-Joseph, can you take a quick look at Tegra132?
+I had initially thought that this would have to be some other type of
+reset (something between exclusive and shared) to avoid suprising the
+current users of exclusive resets. However, on second thought, I don't
+think that would be necessary. Given the WARN_ON, all users of exclusive
+resets should at this point be truly exclusive and would therefore
+continue to work normally.
 
-Cheers
-Jon
+One problematic case that comes to mind is how currently exclusive reset
+controls will know that reset_control_assert() is safe to use if they
+don't use reset_control_acquire() first. Perhaps this is what you meant
+when you said:
 
---=20
-nvpublic
+> That would also mean we'd have to add a way for the power domain drivers
+> to request the reset control in the "released/don't care" state
+> initially.
+
+I don't think we actually need that for power domains, because they will
+typically be enabled over the duration of a device's driver's probe
+anyway. So I think this would work:
+
+	power domains:
+
+		power_off()
+		{
+			reset_control_acquire();
+			reset_control_assert();
+		}
+
+		power_on()
+		{
+			reset_control_deassert();
+			reset_control_release();
+		}
+
+	SOR:
+
+		runtime_suspend()
+		{
+			reset_control_assert();
+			reset_control_release();
+		}
+
+		runtime_resume()
+		{
+			reset_control_acquire();
+			reset_control_deassert();
+		}
+
+Hm... actually this means that power domains would have to request the
+reset controls and call reset_control_acquire() during probe. That way
+when the domain is powered on it will release the reset and free it up
+for the SOR driver to use.
+
+This seems right because it also happens to work from a runtime PM
+sequencing point of view.
+
+I think the problem for single-user exclusive reset controls could be
+solved by making use of the reference counting that's already used by
+shared resets. We should be able to go ahead and use the reference
+counting in general, and the acquire()/release() dance would only have
+to be enforced when the reference count is > 1.
+
+I'd probably have to prototype this to get a clearer picture of this,
+but I think this is very promising.
+
+Does the above sound about right?
+
+Thierry
+
+--NMuMz9nt05w80d4+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxUUPcACgkQ3SOs138+
+s6F7dQ//fYWzgcND/ZQZ+pSqcBErArhoEWqdDJQ7SEQyu0gmmYiDuFU7ex6GooEA
+dXXdtkmWM6hgsRU/bdcKw5z3jlN29EW+ymriLly5yufnxU85UCDZLsRlbD2qCPua
+Y3EKUGckcmd6+nNSxVy8LB0Lr+Pddt3MKdXsWI+7l/ZUF5tj7Rxtcz1OUGuAbThY
+tiQMZVcp8JqgjSQ7RXNKrDtrs4sR1bKzvVLPGlPWoBz1UE5qp9EV0pWZ8npOaq4b
+tiq0FC01vdndgOTDm64UUMqJnwtR4amxrAviGLNGzbAdn2AH48AYLxzFN5GYQoyt
+wRLJw/Gn9OEX9ylRaBe7wp75ctI+9uqGQbfP5bm847q1CmDXDxdlEFsxJdW8GAAE
+40UyuahRCsX/f3NRri66/PSGsn78QU616WGaHd7rzBRXnH/EcJMjBg79aWt4LW/G
+34YDw3J98Im3Uf6hqOVVDmy90+3a9JO+6yiU9u80L54yrUmA03lRVkCx5yx3AJ3X
+iEYnhpQ0X3ua3XvSAbnkMb5X4BzGgRHBiBohGWcgqrYuK1iUxoC6YpZyvoLV7maK
+ejKW2VMy9S1UUF2mEosu7M5BsDI5WRiShko1XncP42+DsAJ9sdMM3RLzv/vELF8I
+F56HYW4UuYBy8FtwH9d/h9ux8MeR+qRBGpodg74UL2YVWbIL03I=
+=ARXp
+-----END PGP SIGNATURE-----
+
+--NMuMz9nt05w80d4+--
