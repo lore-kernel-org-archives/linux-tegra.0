@@ -1,55 +1,89 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-Date: Fri, 1 Feb 2019 03:54:17 +0300
-Message-ID: <20190201035417.737ff65f@dimatab>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V8 3/5] i2c: tegra: Add DMA Support
+Date: Fri, 1 Feb 2019 01:11:06 +0000
+Message-ID: <BYAPR12MB33986DDF4267ED1F499317B0C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
         <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
-        <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
-        <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
-        <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
-        <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
-        <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
-        <BYAPR12MB3398D3DCD0DEACD67A58C75FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <20190131124423.GG23438@ulmo> <20190201035249.5b1cdfe2@dimatab>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398D3DCD0DEACD67A58C75FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <20190201035249.5b1cdfe2@dimatab>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-=D0=92 Thu, 31 Jan 2019 21:46:48 +0000
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-
-> > It works with this change:
-> >
-> > diff --git a/drivers/i2c/busses/i2c-tegra.c
-> > b/drivers/i2c/busses/i2c-tegra.c index fe5b89abc576..8e059e94b94e
-> > 100644 --- a/drivers/i2c/busses/i2c-tegra.c +++
-> > b/drivers/i2c/busses/i2c-tegra.c @@ -1170,10 +1170,11 @@ static int
-> > tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev, time_left,
-> > completion_done(&i2c_dev->msg_complete), i2c_dev->msg_err);
-> >
-> > +       tegra_i2c_init(i2c_dev, true);
-> > +
-> >         if (likely(i2c_dev->msg_err =3D=3D I2C_ERR_NONE))
-> >                 return 0;
-> > =20
-> > -       tegra_i2c_init(i2c_dev, true);
-> >         /* start recovery upon arbitration loss in single master
-> > mode */ if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
-> >                 if (!i2c_dev->is_multimaster_mode)
-> >
-> >
-> > Which means that HW state is kept dirty after DMA transfer. Please
-> > check everything carefully. =20
->=20
-> Identified issue, When I moved logic around for diff changes, INT
-> enable isn=E2=80=99t correct for FIFO DATA REQ. Will have proper fix in n=
-ext
-> version.=20
->=20
-
-Awesome :)
+PiA+ID4gKwlpZiAoZG1hKSB7DQo+ID4gPiArCQlpZiAoaTJjX2Rldi0+bXNnX3JlYWQpIHsNCj4g
+PiA+ICsJCQljaGFuID0gaTJjX2Rldi0+cnhfZG1hX2NoYW47DQo+ID4gPiArCQkJdGVncmFfaTJj
+X2NvbmZpZ19maWZvX3RyaWcoaTJjX2RldiwNCj4gPiA+IHhmZXJfc2l6ZSwNCj4gPiA+ICsNCj4g
+PiA+IERBVEFfRE1BX0RJUl9SWCk7DQo+ID4gPiArCQkJZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZp
+Y2UoaTJjX2Rldi0+ZGV2LA0KPiA+ID4gKw0KPiA+ID4gaTJjX2Rldi0+ZG1hX3BoeXMsDQo+ID4g
+PiArCQkJCQkJICAgeGZlcl9zaXplLA0KPiA+ID4gKw0KPiA+ID4gRE1BX0ZST01fREVWSUNFKTsN
+Cj4gPiANCj4gPiBEbyB3ZSByZWFsbHkgbmVlZCB0aGlzPyBXZSdyZSBub3QgYWN0dWFsbHkgcGFz
+c2luZyB0aGUgZGV2aWNlIGFueSANCj4gPiBkYXRhLCBzbyBubyBjYWNoZXMgdG8gZmx1c2ggaGVy
+ZS4gSSB3ZSdyZSBjYXV0aW91cyBhYm91dCBmbHVzaGluZyANCj4gPiBjYWNoZXMgd2hlbiB3ZSBk
+byB3cml0ZSB0byB0aGUgYnVmZmVyIChhbmQgSSB0aGluayB3ZSBkbyB0aGF0IHByb3Blcmx5IA0K
+PiA+IGFscmVhZHkpLCB0aGVuIHRoZXJlIHNob3VsZCBiZSBubyBuZWVkIHRvIGRvIGl0IGhlcmUg
+YWdhaW4uDQo+ID4gDQo+DQo+IElJVUMsIERNQSBBUEkgaGFzIGEgY29uY2VwdCBvZiBidWZmZXIg
+aGFuZGluZyB3aGljaCB0ZWxscyB0byB1c2UNCmRtYV9zeW5jX3NpbmdsZV9mb3JfZGV2aWNlKCkg
+YmVmb3JlIGlzc3VpbmcgaGFyZHdhcmUgam9iIHRoYXQgdG91Y2hlcyB0aGUgYnVmZmVyIGFuZCB0
+byB1c2UgZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUoKSBhZnRlciBoYXJkd2FyZSBkb25lIHRoZSBl
+eGVjdXRpb24uIEluIGZhY3QgdGhlIENQVSBjYWNoZXMgYXJlIGdldHRpbmcgZmx1c2hlZCBvciBp
+bnZhbGlkYXRlZCBhcyBhcHByb3ByaWF0ZSBpbiBhIHJlc3VsdC4NCj4NCj4gZG1hX3N5bmNfc2lu
+Z2xlX2Zvcl9kZXZpY2UoRE1BX0ZST01fREVWSUNFKSBpbnZhbGlkYXRlcyBidWZmZXIgaW4gdGhl
+IENQVSBjYWNoZSwgcHJvYmFibHkgdG8gYXZvaWQgQ1BVIGV2aWN0aW5nIGRhdGEgZnJvbSBjYWNo
+ZSB0byBEUkFNIHdoaWxlIGhhcmR3YXJlIHdyaXRlcyB0byB0aGUgYnVmZmVyLiBIZW5jZSB0aGlz
+IGh1bmsgaXMgY29ycmVjdC4NCj4NCj4gPiA+ICsJCQllcnIgPSB0ZWdyYV9pMmNfZG1hX3N1Ym1p
+dChpMmNfZGV2LA0KPiA+ID4geGZlcl9zaXplKTsNCj4gPiA+ICsJCQlpZiAoZXJyIDwgMCkgew0K
+PiA+ID4gKwkJCQlkZXZfZXJyKGkyY19kZXYtPmRldiwNCj4gPiA+ICsJCQkJCSJzdGFydGluZyBS
+WCBETUEgZmFpbGVkLA0KPiA+ID4gZXJyICVkXG4iLA0KPiA+ID4gKwkJCQkJZXJyKTsNCj4gPiA+
+ICsJCQkJZ290byB1bmxvY2s7DQo+ID4gPiArCQkJfQ0KPiA+ID4gKwkJfSBlbHNlIHsNCj4gPiA+
+ICsJCQljaGFuID0gaTJjX2Rldi0+dHhfZG1hX2NoYW47DQo+ID4gPiArCQkJdGVncmFfaTJjX2Nv
+bmZpZ19maWZvX3RyaWcoaTJjX2RldiwNCj4gPiA+IHhmZXJfc2l6ZSwNCj4gPiA+ICsNCj4gPiA+
+IERBVEFfRE1BX0RJUl9UWCk7DQo+ID4gPiArCQkJZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUoaTJj
+X2Rldi0+ZGV2LA0KPiA+ID4gKwkJCQkJCWkyY19kZXYtPmRtYV9waHlzLA0KPiA+ID4gKwkJCQkJ
+CXhmZXJfc2l6ZSwNCj4gPiA+ICsJCQkJCQlETUFfVE9fREVWSUNFKTsNCj4gPiANCj4gPiBUaGlz
+LCBvbiB0aGUgb3RoZXIgaGFuZCBzZWVtcyBjb3JyZWN0IGJlY2F1c2Ugd2UgbmVlZCB0byBpbnZh
+bGlkYXRlIA0KPiA+IHRoZSBjYWNoZXMgZm9yIHRoaXMgYnVmZmVyIHRvIG1ha2Ugc3VyZSB0aGUg
+ZGF0YSB0aGF0IHdlIHB1dCB0aGVyZSANCj4gPiBkb2Vzbid0IGdldCBvdmVyd3JpdHRlbi4NCj4N
+Cj4gQXMgSSBzdGF0ZWQgYmVmb3JlIGluIGEgY29tbWVudCB0byB2NiwgdGhpcyBwYXJ0aWN1bGFy
+IGNhc2Ugb2YNCj4gZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHUoKSB1c2FnZSBpcyBpbmNvcnJlY3Qg
+YmVjYXVzZSBDUFUgc2hvdWxkIHRha2Ugb3duZXJzaGlwIG9mIHRoZSBidWZmZXIgYWZ0ZXIgY29t
+cGxldGlvbiBvZiBoYXJkd2F0ZSBqb2IuIEJ1dCBpbiBmYWN0DQo+IGRtYV9zeW5jX3NpbmdsZV9m
+b3JfY3B1KERNQV9UT19ERVZJQ0UpIGlzIGEgTk8tT1AgYmVjYXVzZSBDUFUgZG9lc24ndCBuZWVk
+IHRvIGZsdXNoIG9yIGludmFsaWRhdGUgYW55dGhpbmcgdG8gdGFrZSBvd25lcnNoaXAgb2YgdGhl
+IGJ1ZmZlciBpZiBoYXJkd2FyZSBkaWQgYSByZWFkLW9ubHkgYWNjZXNzLg0KPg0KPiA+IA0KPiA+
+ID4gKwlpZiAoIWkyY19kZXYtPm1zZ19yZWFkKSB7DQo+ID4gPiArCQlpZiAoZG1hKSB7DQo+ID4g
+PiArCQkJbWVtY3B5KGJ1ZmZlciwgbXNnLT5idWYsIG1zZy0+bGVuKTsNCj4gPiA+ICsJCQlkbWFf
+c3luY19zaW5nbGVfZm9yX2RldmljZShpMmNfZGV2LT5kZXYsDQo+ID4gPiArDQo+ID4gPiBpMmNf
+ZGV2LT5kbWFfcGh5cywNCj4gPiA+ICsJCQkJCQkgICB4ZmVyX3NpemUsDQo+ID4gPiArDQo+ID4g
+PiBETUFfVE9fREVWSUNFKTsNCj4gPiANCj4gPiBBZ2FpbiwgaGVyZSB3ZSBwcm9wZXJseSBmbHVz
+aCB0aGUgY2FjaGVzIHRvIG1ha2Ugc3VyZSB0aGUgZGF0YSB0aGF0IA0KPiA+IHdlJ3ZlIHdyaXR0
+ZW4gdG8gdGhlIERNQSBidWZmZXIgaXMgdmlzaWJsZSB0byB0aGUgRE1BIGVuZ2luZS4NCj4gPiAN
+Cj4NCj4gKzEgdGhpcyBpcyBjb3JyZWN0DQo+DQo+DQo+DQo+ID4gPiArDQo+ID4gPiArCQlpZiAo
+aTJjX2Rldi0+bXNnX3JlYWQpIHsNCj4gPiA+ICsJCQlpZiAobGlrZWx5KGkyY19kZXYtPm1zZ19l
+cnIgPT0NCj4gPiA+IEkyQ19FUlJfTk9ORSkpIHsNCj4gPiA+ICsNCj4gPiA+IGRtYV9zeW5jX3Np
+bmdsZV9mb3JfY3B1KGkyY19kZXYtPmRldiwNCj4gPiA+ICsNCj4gPiA+IGkyY19kZXYtPmRtYV9w
+aHlzLA0KPiA+ID4gKwkJCQkJCQl4ZmVyX3NpemUsDQo+ID4gPiArDQo+ID4gPiBETUFfRlJPTV9E
+RVZJQ0UpOw0KPiA+IA0KPiA+IEhlcmUgd2UgaW52YWxpZGF0ZSB0aGUgY2FjaGVzIHRvIG1ha2Ug
+c3VyZSB3ZSBkb24ndCBnZXQgc3RhbGUgZGF0YSANCj4gPiB0aGF0IG1heSBiZSBpbiB0aGUgY2Fj
+aGVzIGZvciBkYXRhIHRoYXQgd2UncmUgY29weWluZyBvdXQgb2YgdGhlIERNQSANCj4gPiBidWZm
+ZXIuIEkgdGhpbmsgdGhhdCdzIGFib3V0IGFsbCB0aGUgY2FjaGUgbWFpbnRlbmFuY2UgdGhhdCB3
+ZSByZWFsIA0KPiA+IG5lZWQuDQo+DQo+IENvcnJlY3QuDQo+DQo+IEFuZCB0ZWNobmljYWxseSBo
+ZXJlIHNob3VsZCBiZSBkbWFfc3luY19zaW5nbGVfZm9yX2NwdShETUFfVE9fREVWSUNFKQ0KPiBm
+b3IgdGhlIFRYLiBCdXQgYWdhaW4sIGl0J3MgYSBOTy1PUC4NCg0KSXMgbXkgYmVsb3cgdW5kZXJz
+dGFuZGluZyBjb3JyZWN0PyBDYW4geW91IHBsZWFzZSBjb25maXJtPw0KDQpEdXJpbmcgVHJhbnNt
+aXQgdG8gZGV2aWNlOg0KLSBCZWZvcmUgd3JpdGluZyBtc2cgZGF0YSBpbnRvIGRtYSBidWYgYnkg
+Q1BVLCBnaXZpbmcgRE1BIG93bmVyc2hpcCB0byBDUFUNCglkbWFfc3luY19zaW5nbGVfZm9yX2Nw
+dSB3aXRoIGRpciBETUFfVE9fREVWSUNFDQoNCi0gQWZ0ZXIgd3JpdGluZyB0byBkbWEgYnVmIGJ5
+IENQVSwgZ2l2aW5nIGJhY2sgdGhlIG93bmVyc2hpcCB0byBkZXZpY2UgdG8gYWNjZXNzIGJ1ZmZl
+ciB0byBzZW5kIGR1cmluZyBETUEgdHJhbnNtaXQNCglkbWFfc3luY19zaW5nbGVfZm9yX2Rldmlj
+ZSB3aXRoIGRpciBETUFfVE9fREVWSUNFDQoNCkR1cmluZyBSZWNlaXZpbmcgZnJvbSBEZXZpY2U6
+DQotIGJlZm9yZSBzdWJtaXR0aW5nIFJYIERNQSB0byBnaXZlIGJ1ZmZlciBhY2Nlc3MgdG8gRE1B
+ZW5naW5lDQoJZG1hX3N5bmNfc2luZ2xlX2Zvcl9EZXZpY2UoRE1BX0ZST01fREVWSUNFKSANCi0g
+YWZ0ZXIgRE1BIFJYIGNvbXBsZXRpb24sIGdpdmluZyBkbWEgb3duZXJzaGlwIHRvIENQVSBmb3Ig
+cmVhZGluZyBkbWFidWYgZGF0YSB3cml0dGVuIGJ5IERNQSBmcm9tIGRldmljZQ0KCWRtYV9zeW5j
+X3NpbmdsZV9mb3JfY3B1IHdpdGggZGlyIERNQV9GUk9NX0RFVklDRQ0KDQo=
