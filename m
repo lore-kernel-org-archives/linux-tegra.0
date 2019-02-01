@@ -1,107 +1,81 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 08/16] gpu: host1x: Use correct semantics for
- HOST1X_CHANNEL_DMAEND
-Date: Fri, 1 Feb 2019 17:40:59 +0300
-Message-ID: <e7cf07fb-b656-2dfd-39c3-d723fb4f480a@gmail.com>
-References: <20190201132837.12327-1-thierry.reding@gmail.com>
- <20190201132837.12327-9-thierry.reding@gmail.com>
- <07572051-6189-5fae-f76f-b885d8454fa5@gmail.com>
- <20190201134134.GA12829@ulmo>
- <b2dee0f2-a159-62bd-272f-bf72cf2355a1@gmail.com>
- <20190201141006.GC12829@ulmo>
+Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
+Date: Fri, 1 Feb 2019 21:08:28 +0300
+Message-ID: <705a0eff-cb1e-0e7d-add7-fb1a993291dc@gmail.com>
+References: <20190201033621.16814-1-josephl@nvidia.com>
+ <20190201033621.16814-3-josephl@nvidia.com>
+ <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
+ <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
+ <85988378-0c88-6b71-00df-0700a7b4cdf7@nvidia.com>
+ <4c89fd38-eacd-4643-52d3-da4760ecb4c5@nvidia.com>
+ <57549882-4d0a-64ac-da04-7e790ac2d80e@gmail.com>
+ <9437d5b5-5af0-9393-169c-2ebaf384c75c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190201141006.GC12829@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9437d5b5-5af0-9393-169c-2ebaf384c75c@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-MDEuMDIuMjAxOSAxNzoxMCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBPbiBGcmksIEZl
-YiAwMSwgMjAxOSBhdCAwNDo0ODo1NlBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+
-IDAxLjAyLjIwMTkgMTY6NDEsIFRoaWVycnkgUmVkaW5nINC/0LjRiNC10YI6Cj4+PiBPbiBGcmks
-IEZlYiAwMSwgMjAxOSBhdCAwNDozNzo1OVBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-Cj4+Pj4gMDEuMDIuMjAxOSAxNjoyOCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPj4+Pj4g
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+Pj4KPj4+Pj4gVGhl
-IEhPU1QxWF9DSEFOTkVMX0RNQUVORCBpcyBhbiBvZmZzZXQgcmVsYXRpdmUgdG8gdGhlIHZhbHVl
-IHdyaXR0ZW4gdG8KPj4+Pj4gdGhlIEhPU1QxWF9DSEFOTkVMX0RNQVNUQVJUIHJlZ2lzdGVyLCBi
-dXQgaXQgaXMgY3VycmVudGx5IHRyZWF0ZWQgYXMgYW4KPj4+Pj4gYWJzb2x1dGUgYWRkcmVzcy4g
-VGhpcyBjYW4gY2F1c2UgU01NVSBmYXVsdHMgaWYgdGhlIENETUEgZmV0Y2hlcyBwYXN0IGEKPj4+
-Pj4gcHVzaGJ1ZmZlcidzIElPTU1VIG1hcHBpbmcuCj4+Pj4+Cj4+Pj4+IFByb3Blcmx5IHNldHRp
-bmcgdGhlIERNQUVORCBwcmV2ZW50cyB0aGUgQ0RNQSBmcm9tIGZldGNoaW5nIGJleW9uZCB0aGF0
-Cj4+Pj4+IGFkZHJlc3MgYW5kIGF2b2lkIHN1Y2ggaXNzdWVzLiBUaGlzIGlzIGN1cnJlbnRseSBu
-b3Qgb2JzZXJ2ZWQgYmVjYXVzZSBhCj4+Pj4+IHdob2xlIChhbG1vc3QpIHBhZ2Ugb2YgZXNzZW50
-aWFsbHkgc2NyYXRjaCBzcGFjZSBhYnNvcmJzIGFueSBleGNlc3NpdmUKPj4+Pj4gcHJlZmV0Y2hp
-bmcgYnkgQ0RNQS4gSG93ZXZlciwgY2hhbmdpbmcgdGhlIG51bWJlciBvZiBzbG90cyBpbiB0aGUg
-cHVzaAo+Pj4+PiBidWZmZXIgY2FuIHRyaWdnZXIgdGhlc2UgU01NVSBmYXVsdHMuCj4+Pj4+Cj4+
-Pj4+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4+
-Pj4+IC0tLQo+Pj4+PiAgZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NkbWFfaHcuYyB8IDQgKystLQo+
-Pj4+PiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPj4+
-Pj4KPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9jZG1hX2h3LmMgYi9k
-cml2ZXJzL2dwdS9ob3N0MXgvaHcvY2RtYV9ody5jCj4+Pj4+IGluZGV4IDQ4NWFlZjU3NjFhZi4u
-YTI0YzA5MGFjOTZmIDEwMDY0NAo+Pj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2Rt
-YV9ody5jCj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9jZG1hX2h3LmMKPj4+Pj4g
-QEAgLTc1LDcgKzc1LDcgQEAgc3RhdGljIHZvaWQgY2RtYV9zdGFydChzdHJ1Y3QgaG9zdDF4X2Nk
-bWEgKmNkbWEpCj4+Pj4+ICAKPj4+Pj4gIAljZG1hLT5sYXN0X3BvcyA9IGNkbWEtPnB1c2hfYnVm
-ZmVyLnBvczsKPj4+Pj4gIAlzdGFydCA9IGNkbWEtPnB1c2hfYnVmZmVyLmRtYTsKPj4+Pj4gLQll
-bmQgPSBzdGFydCArIGNkbWEtPnB1c2hfYnVmZmVyLnNpemUgKyA0Owo+Pj4+PiArCWVuZCA9IGNk
-bWEtPnB1c2hfYnVmZmVyLnNpemUgKyA0Owo+Pj4+PiAgCj4+Pj4+ICAJaG9zdDF4X2NoX3dyaXRl
-bChjaCwgSE9TVDFYX0NIQU5ORUxfRE1BQ1RSTF9ETUFTVE9QLAo+Pj4+PiAgCQkJIEhPU1QxWF9D
-SEFOTkVMX0RNQUNUUkwpOwo+Pj4+PiBAQCAtMTI2LDcgKzEyNiw3IEBAIHN0YXRpYyB2b2lkIGNk
-bWFfdGltZW91dF9yZXN0YXJ0KHN0cnVjdCBob3N0MXhfY2RtYSAqY2RtYSwgdTMyIGdldHB0cikK
-Pj4+Pj4gIAkJCSBIT1NUMVhfQ0hBTk5FTF9ETUFDVFJMKTsKPj4+Pj4gIAo+Pj4+PiAgCXN0YXJ0
-ID0gY2RtYS0+cHVzaF9idWZmZXIuZG1hOwo+Pj4+PiAtCWVuZCA9IHN0YXJ0ICsgY2RtYS0+cHVz
-aF9idWZmZXIuc2l6ZSArIDQ7Cj4+Pj4+ICsJZW5kID0gY2RtYS0+cHVzaF9idWZmZXIuc2l6ZSAr
-IDQ7Cj4+Pj4+ICAKPj4+Pj4gIAkvKiBzZXQgYmFzZSwgZW5kIHBvaW50ZXIgKGFsbCBvZiBtZW1v
-cnkpICovCj4+Pj4+ICAJaG9zdDF4X2NoX3dyaXRlbChjaCwgbG93ZXJfMzJfYml0cyhzdGFydCks
-IEhPU1QxWF9DSEFOTkVMX0RNQVNUQVJUKTsKPj4+Pj4KPj4+Pgo+Pj4+IFRoaXMgc2VlbXMgZml4
-ZXMgcHJvYmxlbSB0aGF0IHdhcyBhZGRlZCBieSBhIHByZXZpb3VzIHBhdGNoIGluIHRoaXMKPj4+
-PiBzZXJpZXMsICJncHU6IGhvc3QxeDogU3VwcG9ydCA0MC1iaXQgYWRkcmVzc2luZyIuIFdoYXQg
-YWJvdXQgdG8ganVzdAo+Pj4+IHNxdWFzaCB0aGUgcGF0Y2hlcz8gCj4+Pgo+Pj4gVGhpcyBhY3R1
-YWxseSBmaXhlcyBhIGJ1ZyB0aGF0J3MgYWx3YXlzIGJlZW4gdGhlcmUuIFRoaXMganVzdCBoYXBw
-ZW5zIHRvCj4+PiB0b3VjaCB0aGUgc2FtZSBsaW5lcyBhcyBhbiBlYXJsaWVyIHBhdGNoIGFzIGEg
-cmVzdWx0IG9mIHNvbWUgcmVmYWN0b3JpbmcKPj4+IHRoYXQgdGhlIGVhcmxpZXIgcGF0Y2ggZGlk
-Lgo+Pgo+PiBPaCwgd293LiBJbmRlZWQhIFRoYXQncyBhIGJpdCB1bmZvcnR1bmF0ZSA6KSBUaG91
-Z2ggaXQncyBxdWl0ZQo+PiBkaWZmaWN1bHQgdG8gc3BvdCB0aGF0IGJ1ZyBieSBsb29raW5nIGF0
-IHRoZSBjb2RlLCBnb29kIHRoYXQgaXQgZ290Cj4+IGNhdWdodC4gV2FzIHRoaXMgYnVnIHRyaWdn
-ZXJlZCBieSB0cnlpbmcgdG8gbW92ZSBJT1ZBIGFsbG9jYXRpb24gdG8KPj4gdGhlIGVuZCBvZiB0
-aGUgQVM/Cj4gCj4gVGhpcyB3YXMgYWN0dWFsbHkgdHJpZ2dlcmVkIGJlY2F1c2UgSSBub3RpY2Vk
-IHRoYXQgd2Ugd2VyZSB1c2luZyA1MTIKPiBzbG90cyBpbiB0aGUgcHVzaCBidWZmZXIsIHdoaWNo
-IG1lYW5zIDQwOTYgYnl0ZXMsIGJ1dCB0aGVuIHdlIG5lZWRlZAo+IHRoYXQgZXh0cmEgNCBieXRl
-cyBmb3IgdGhlIFJFU1RBUlQgb3Bjb2RlLCB3aGljaCBtZWFucyB0aGF0IHdlJ3JlCj4gY3VycmVu
-dGx5IGFsbG9jYXRpbmcgODE5MiBieXRlcyBvZiB3aGljaCBvbmx5IDQwOTIgYXJlIGJlaW5nIHVz
-ZWQuCj4gCj4gU28gSSB0aG91Z2h0OiAiV2VsbCwgd2Ugc2hvdWxkIGJlIGFibGUgdG8gbGl2ZSB3
-aXRoIDUxMSBzbG90cyBwZXIgcHVzaAo+IGJ1ZmZlciBhbmQgc2F2ZSBhIGZ1bGwgbWVtb3J5IHBh
-Z2UuIFRoaXMgaXMgYW4gZWFzeSBvcHRpbWl6YXRpb24hIiBCb3kKPiB3YXMgSSB3cm9uZy4uLiBB
-ZnRlciBtYWtpbmcgdGhhdCBjaGFuZ2UgSSBzdGFydGVkIHRvIHNlZSBTTU1VIGZhdWx0cwo+IGZv
-ciB0aGUgYWRkcmVzcyBpbW1lZGlhdGVseSBhZnRlciB0aGUgcHVzaCBidWZmZXIgbWFwcGluZy4g
-SSB0aGluayB0aGUKPiBzYW1lIGVycm9yIGhhcHBlbnMgcmVnYXJkbGVzcyBvZiB3aGVyZSB0aGUg
-cHVzaCBidWZmZXIgaXMgbG9jYXRlZC4gVGhlCj4gcmVhc29uIGZvciB0aGUgU01NVSBmYXVsdHMg
-c2VlbSB0byBiZSB0aGF0IENETUEgaGFwcGlseSBrZWVwcyBvbiBwcmUtCj4gZmV0Y2hpbmcgKGEg
-bG90IG9mKSBjb21tYW5kcyBiZWZvcmUgaXQgd3JhcHMgYXJvdW5kIGJlY2F1c2Ugb2YgdGhlCj4g
-UkVTVEFSVCBvcGNvZGUuIERNQUVORCBpcyBkZXNpZ25lZCBhcyBhIG1lY2hhbmlzbSB0byBwcmV2
-ZW50IENETUEgZnJvbQo+IGV4Y2Vzc2l2ZWx5IGZldGNoaW5nIGNvbW1hbmRzLCBidXQgaWYgeW91
-IHByb2dyYW0gYSByZWFsbHkgbGFyZ2UgdmFsdWUKPiBpbnRvIGl0LCBpdCdsbCBhZGQgdGhhdCBy
-ZWFsbHkgbGFyZ2UgdmFsdWUgdG8gdGhlIERNQVNUQVJUIGFzIG9mZnNldAo+IGFuZCB0aGUgbWVj
-aGFuaXNtIGRvZXNuJ3Qgd29yayBhbnltb3JlLgo+IAo+IFdlIGRvbid0IGN1cnJlbnRseSBzZWUg
-dGhpcyBiZWNhdXNlIHRoZSA0MDkyIGJ5dGVzIGluIHRoZSAic2NyYXRjaCIKPiBwYWdlIG9mIHRo
-ZSBwdXNoIGJ1ZmZlciBhbGxvY2F0aW9uIGFyZSBlbm91Z2ggdG8gYWJzb3JiIHRoZSBwcmVmZXRj
-aGluZwo+IHRoYXQgQ0RNQSBkb2VzLgo+IAo+IFdlIHdvdWxkIGFsc28gbGlrZWx5IG5ldmVyIHNl
-ZSBpdCBoYXBwZW4gaW4gbm9uLVNNTVUgY2FzZXMgYmVjYXVzZSB0aGUKPiBDRE1BIHdvdWxkIGp1
-c3Qga2VlcCBvbiBwcmVmZXRjaGluZyB3aGF0ZXZlciBtZW1vcnkgaGFwcGVuZWQgdG8gYmUgYWZ0
-ZXIKPiB0aGUgcHVzaCBidWZmZXIuCgpZZWFoLCB0aGF0J3Mgd2hhdCB1c3VhbGx5IGhhcHBlbnMg
-d2hlbiB0aGUgY29kZSBpcyBnZXR0aW5nIGltcHJvdmVkLiBHb29kIGpvYiEgOikKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+01.02.2019 18:37, Joseph Lo пишет:
+> On 2/1/19 11:13 PM, Dmitry Osipenko wrote:
+>> 01.02.2019 17:13, Joseph Lo пишет:
+>>> On 2/1/19 9:54 PM, Jon Hunter wrote:
+>>>>
+>>>> On 01/02/2019 13:11, Dmitry Osipenko wrote:
+>>>>> 01.02.2019 16:06, Dmitry Osipenko пишет:
+>>>>>> 01.02.2019 6:36, Joseph Lo пишет:
+>>>>>>> Add support for the Tegra210 timer that runs at oscillator clock
+>>>>>>> (TMR10-TMR13). We need these timers to work as clock event device and to
+>>>>>>> replace the ARMv8 architected timer due to it can't survive across the
+>>>>>>> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
+>>>>>>> source when CPU suspends in power down state.
+>>>>>>>
+>>>>>>> Also convert the original driver to use timer-of API.
+>>>>>>>
+>>>>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>>>>> Cc: linux-kernel@vger.kernel.org
+>>>>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>>>>> ---
+> snip.
+>>>>>>> +}
+>>>>>>> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_timer_init);
+>>>>>>> +#else /* CONFIG_ARM */
+>>>>>>> +static int __init tegra20_init_timer(struct device_node *np)
+>>>>>>> +{
+>>>>>> What about T132? Isn't it ARM64 which uses tegra20-timer IP? At least T132 DT suggests so and seems this change will break it.
+>>>>>>
+>>>>>> [snip]
+>>>>>>
+>>>>>
+>>>>> Ah, noticed the "depends on ARM" in Kconfig.. Seems okay then.
+>>>>>
+>>>>
+>>>>
+>>>> This is a good point, because even though we had 'depends on ARM', this
+>>>> still means that the Tegra132 DT is incorrect.
+>>>>
+>>>> Joseph, can you take a quick look at Tegra132?
+>>>
+>>> Hi Jon and Dmitry,
+>>>
+>>> No worry about T132, T132 uses arch timer (v7). The tegra20 timer driver has never been used. We should fix the dtsi file later.
+>>
+>> Hi Joseph,
+>>
+>> So is T132 HW actually incompatible with the tegra20-timer? If it's compatible, then I think the driver's code should be made more universal to support T132.
+>>
+> 
+> From HW point of view, the TIMER1 ~ TIMER4 is compatible with "nvidia,tegra20-timer". But Tegra132 actually has 10 timers which are exactly the same as Tegra30. So it should backward compatible with "nvidia,tegra30-timer", which is tegra_wdt driver now. And Tegra132 should never use this driver.
+> 
+> The Tegra timer driver should only be used on Tegra20/30/210, three platforms only. Others use arch timer driver for system timer driver.
+> 
+> So we don't really need to take care the usage on other Tegra platforms.
+
+Doesn't Linux kernel put in use all of available timers? If yes, then we probably would want to expose all available timers. It looks to me that right now tegra20-timer exposes only a single-shared timer to the system [please correct me if I'm wrong]. Wouldn't make sense at least to give a timer per CPU core?
