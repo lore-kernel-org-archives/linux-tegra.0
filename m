@@ -1,77 +1,31 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V9 4/5] i2c: tegra: update transfer timeout
-Date: Fri, 1 Feb 2019 22:16:07 +0300
-Message-ID: <53b3f00f-b3a8-e1ef-b04b-1bdd5f5473ce@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V9 3/5] i2c: tegra: Add DMA support
+Date: Fri, 1 Feb 2019 19:20:01 +0000
+Message-ID: <BYAPR12MB33984FB81B8BB1EC8C0C4908C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
- <1549040867-18149-4-git-send-email-skomatineni@nvidia.com>
+ <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
+ <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549040867-18149-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-01.02.2019 20:07, Sowjanya Komatineni пишет:
-> Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-> max of 4K bytes of transfer per packet.
-> 
-> one sec timeout is not enough for transfers more than 10K bytes
-> at STD bus rate.
-> 
-> This patch updates I2C transfer timeout based on the transfer size
-> and I2C bus rate to allow enough time during max transfer size at
-> lower bus speed.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> ---
->  [V9] : Rebased to 5.0-rc4
-> 	Minor updates for readability of xfer time
->  [V8] : Added comment with explaination of xfer time calculation
->  [V5/V6/V7] : Same as V4
->  [V4] : V4 series includes bus clear support and this patch is updated with
-> 	fixed timeout of 1sec for bus clear operation.
->  [V3] : Same as V2
->  [V2] : Added this patch in V2 series to allow enough time for data transfer
-> 	to happen.
-> 	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-> 	takes argument with this patch.
-> 
->  drivers/i2c/busses/i2c-tegra.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index ac8009c35863..43449495bfaa 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -25,7 +25,6 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  
-> -#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
->  #define BYTES_PER_FIFO_WORD 4
->  
->  #define I2C_CNFG				0x000
-> @@ -893,8 +892,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
->  		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
->  		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
->  
-> -		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-> -							TEGRA_I2C_TIMEOUT);
-> +		time_left = wait_for_completion_timeout(
-> +						&i2c_dev->msg_complete,
-> +						msecs_to_jiffies(1000));
-
-So potentially tegra_i2c_xfer_msg() could take more than 1 second and then fail with -EAGAIN, correct? In that case we should set adapter.timeout in probe to a larger value:
-
-  i2c_dev->adapter.timeout = 3 * HZ;
-
-
-
-Otherwise looks good to me:
-
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+DQo+ID4gK3N0YXRpYyBpbnQgdGVncmFfaTJjX2luaXRfZG1hKHN0cnVjdCB0ZWdyYV9pMmNfZGV2
+ICppMmNfZGV2KSB7DQo+ID4gKwlzdHJ1Y3QgZG1hX2NoYW4gKmRtYV9jaGFuOw0KPiA+ICsJdTMy
+ICpkbWFfYnVmOw0KPiA+ICsJZG1hX2FkZHJfdCBkbWFfcGh5czsNCj4gPiArCWludCBlcnIgPSAw
+Ow0KPiA+ICsNCj4gPiArCWlmICghSVNfRU5BQkxFRChDT05GSUdfVEVHUkEyMF9BUEJfRE1BKSkN
+Cj4gPiArCQlyZXR1cm4gLUVOT0RFVjsNCj4NCj4gRHJpdmVyIHNoYWxsIG5vdCBmYWlsIHRvIHBy
+b2JlIGlmIERNQSBkcml2ZXIgaXMgZGlzYWJsZWQsIGJ1dCB0byBjb250aW51ZSB3aXRoIHRoZSBQ
+SU8tb25seSBtb2RlIGF2YWlsYWJsZS4NCj4NCj4gU2hvdWxkIGJlOg0KPg0KPglpZiAoIUlTX0VO
+QUJMRUQoQ09ORklHX1RFR1JBMjBfQVBCX0RNQSkpDQo+CQlyZXR1cm4gMDsNCj4NCkV4Y2VwdCBF
+UFJPQkVfREVGRVIsIGFueXRoaW5nIGVsc2UgcmV0dXJuZWQgZnJvbSB0ZWdyYV9pMmNfaW5pdF9k
+bWEgKEVOT0RFVi9FTk9NRU0pIGlzIGlnbm9yZWQgaW4gaTJjX3Byb2JlDQpETUEgbW9kZSBkZWNp
+c2lvbiBpcyBiYXNlZCBvbiB4ZmVyIHNpemUgYW5kIGF2YWlsYWJpbGl0eSBvZiBkbWEgY2hhbm5l
+bCBvciBjYW4gYmUgY2hhbmdlZCBiYXNlZCBvbiB2YWxpZCBkbWEgYnVmIHRvIHNob3J0ZW4gdGhl
+IGxpbmUuDQoNCg==
