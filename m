@@ -1,480 +1,81 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-Date: Fri, 1 Feb 2019 16:11:02 +0300
-Message-ID: <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
-References: <20190201033621.16814-1-josephl@nvidia.com>
- <20190201033621.16814-3-josephl@nvidia.com>
- <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v3 00/16] drm/tegra: Fix IOVA space on Tegra186 and later
+Date: Fri,  1 Feb 2019 14:28:21 +0100
+Message-ID: <20190201132837.12327-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-01.02.2019 16:06, Dmitry Osipenko пишет:
-> 01.02.2019 6:36, Joseph Lo пишет:
->> Add support for the Tegra210 timer that runs at oscillator clock
->> (TMR10-TMR13). We need these timers to work as clock event device and to
->> replace the ARMv8 architected timer due to it can't survive across the
->> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
->> source when CPU suspends in power down state.
->>
->> Also convert the original driver to use timer-of API.
->>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> ---
->> v5:
->>  * add ack tag from Thierry
->> v4:
->>  * merge timer-tegra210.c in previous version into timer-tegra20.c
->> v3:
->>  * use timer-of API
->> v2:
->>  * add error clean-up code
->> ---
->>  drivers/clocksource/Kconfig         |   2 +-
->>  drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
->>  include/linux/cpuhotplug.h          |   1 +
->>  3 files changed, 272 insertions(+), 100 deletions(-)
->>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index a9e26f6a81a1..6af78534a285 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
->>  config TEGRA_TIMER
->>  	bool "Tegra timer driver" if COMPILE_TEST
->>  	select CLKSRC_MMIO
->> -	depends on ARM
->> +	select TIMER_OF
->>  	help
->>  	  Enables support for the Tegra driver.
->>  
->> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
->> index 4293943f4e2b..96a809341c9b 100644
->> --- a/drivers/clocksource/timer-tegra20.c
->> +++ b/drivers/clocksource/timer-tegra20.c
->> @@ -15,21 +15,24 @@
->>   *
->>   */
->>  
->> -#include <linux/init.h>
->> +#include <linux/clk.h>
->> +#include <linux/clockchips.h>
->> +#include <linux/cpu.h>
->> +#include <linux/cpumask.h>
->> +#include <linux/delay.h>
->>  #include <linux/err.h>
->> -#include <linux/time.h>
->>  #include <linux/interrupt.h>
->> -#include <linux/irq.h>
->> -#include <linux/clockchips.h>
->> -#include <linux/clocksource.h>
->> -#include <linux/clk.h>
->> -#include <linux/io.h>
->>  #include <linux/of_address.h>
->>  #include <linux/of_irq.h>
->> -#include <linux/sched_clock.h>
->> -#include <linux/delay.h>
->> +#include <linux/percpu.h>
->> +#include <linux/syscore_ops.h>
->> +#include <linux/time.h>
->> +
->> +#include "timer-of.h"
->>  
->> +#ifdef CONFIG_ARM
->>  #include <asm/mach/time.h>
->> +#endif
->>  
->>  #define RTC_SECONDS            0x08
->>  #define RTC_SHADOW_SECONDS     0x0c
->> @@ -43,70 +46,147 @@
->>  #define TIMER2_BASE 0x8
->>  #define TIMER3_BASE 0x50
->>  #define TIMER4_BASE 0x58
->> -
->> -#define TIMER_PTV 0x0
->> -#define TIMER_PCR 0x4
->> -
->> +#define TIMER10_BASE 0x90
->> +
->> +#define TIMER_PTV		0x0
->> +#define TIMER_PTV_EN		BIT(31)
->> +#define TIMER_PTV_PER		BIT(30)
->> +#define TIMER_PCR		0x4
->> +#define TIMER_PCR_INTR_CLR	BIT(30)
->> +
->> +#ifdef CONFIG_ARM
->> +#define TIMER_BASE TIMER3_BASE
->> +#else
->> +#define TIMER_BASE TIMER10_BASE
->> +#endif
->> +#define TIMER10_IRQ_IDX		10
->> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
->> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
->> +
->> +static u32 usec_config;
->>  static void __iomem *timer_reg_base;
->> +#ifdef CONFIG_ARM
->>  static void __iomem *rtc_base;
->> -
->>  static struct timespec64 persistent_ts;
->>  static u64 persistent_ms, last_persistent_ms;
->> -
->>  static struct delay_timer tegra_delay_timer;
->> -
->> -#define timer_writel(value, reg) \
->> -	writel_relaxed(value, timer_reg_base + (reg))
->> -#define timer_readl(reg) \
->> -	readl_relaxed(timer_reg_base + (reg))
->> +#endif
->>  
->>  static int tegra_timer_set_next_event(unsigned long cycles,
->>  					 struct clock_event_device *evt)
->>  {
->> -	u32 reg;
->> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->>  
->> -	reg = 0x80000000 | ((cycles > 1) ? (cycles-1) : 0);
->> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->> +	writel(TIMER_PTV_EN |
->> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
->> +	       reg_base + TIMER_PTV);
->>  
->>  	return 0;
->>  }
->>  
->> -static inline void timer_shutdown(struct clock_event_device *evt)
->> +static int tegra_timer_shutdown(struct clock_event_device *evt)
->>  {
->> -	timer_writel(0, TIMER3_BASE + TIMER_PTV);
->> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->> +
->> +	writel(0, reg_base + TIMER_PTV);
->> +
->> +	return 0;
->>  }
->>  
->> -static int tegra_timer_shutdown(struct clock_event_device *evt)
->> +static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>  {
->> -	timer_shutdown(evt);
->> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->> +
->> +	writel(TIMER_PTV_EN | TIMER_PTV_PER |
->> +	       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
->> +	       reg_base + TIMER_PTV);
->> +
->>  	return 0;
->>  }
->>  
->> -static int tegra_timer_set_periodic(struct clock_event_device *evt)
->> +static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
->>  {
->> -	u32 reg = 0xC0000000 | ((1000000 / HZ) - 1);
->> +	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
->> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->> +
->> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +	evt->event_handler(evt);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +#ifdef CONFIG_ARM64
->> +static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
->> +	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE,
->> +
->> +	.clkevt = {
->> +		.name = "tegra_timer",
->> +		.rating = 460,
->> +		.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
->> +		.set_next_event = tegra_timer_set_next_event,
->> +		.set_state_shutdown = tegra_timer_shutdown,
->> +		.set_state_periodic = tegra_timer_set_periodic,
->> +		.set_state_oneshot = tegra_timer_shutdown,
->> +		.tick_resume = tegra_timer_shutdown,
->> +	},
->> +};
->> +
->> +static int tegra_timer_setup(unsigned int cpu)
->> +{
->> +	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
->> +
->> +	irq_force_affinity(to->clkevt.irq, cpumask_of(cpu));
->> +	enable_irq(to->clkevt.irq);
->> +
->> +	clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
->> +					1, /* min */
->> +					0x1fffffff); /* 29 bits */
->>  
->> -	timer_shutdown(evt);
->> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->>  	return 0;
->>  }
->>  
->> -static struct clock_event_device tegra_clockevent = {
->> -	.name			= "timer0",
->> -	.rating			= 300,
->> -	.features		= CLOCK_EVT_FEAT_ONESHOT |
->> -				  CLOCK_EVT_FEAT_PERIODIC |
->> -				  CLOCK_EVT_FEAT_DYNIRQ,
->> -	.set_next_event		= tegra_timer_set_next_event,
->> -	.set_state_shutdown	= tegra_timer_shutdown,
->> -	.set_state_periodic	= tegra_timer_set_periodic,
->> -	.set_state_oneshot	= tegra_timer_shutdown,
->> -	.tick_resume		= tegra_timer_shutdown,
->> +static int tegra_timer_stop(unsigned int cpu)
->> +{
->> +	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
->> +
->> +	to->clkevt.set_state_shutdown(&to->clkevt);
->> +	disable_irq_nosync(to->clkevt.irq);
->> +
->> +	return 0;
->> +}
->> +#else /* CONFIG_ARM */
->> +static struct timer_of tegra_to = {
->> +	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE | TIMER_OF_IRQ,
->> +
->> +	.clkevt = {
->> +		.name = "tegra_timer",
->> +		.rating	= 300,
->> +		.features = CLOCK_EVT_FEAT_ONESHOT |
->> +			    CLOCK_EVT_FEAT_PERIODIC |
->> +			    CLOCK_EVT_FEAT_DYNIRQ,
->> +		.set_next_event	= tegra_timer_set_next_event,
->> +		.set_state_shutdown = tegra_timer_shutdown,
->> +		.set_state_periodic = tegra_timer_set_periodic,
->> +		.set_state_oneshot = tegra_timer_shutdown,
->> +		.tick_resume = tegra_timer_shutdown,
->> +		.cpumask = cpu_possible_mask,
->> +	},
->> +
->> +	.of_irq = {
->> +		.index = 2,
->> +		.flags = IRQF_TIMER | IRQF_TRIGGER_HIGH,
->> +		.handler = tegra_timer_isr,
->> +	},
->>  };
->>  
->>  static u64 notrace tegra_read_sched_clock(void)
->>  {
->> -	return timer_readl(TIMERUS_CNTR_1US);
->> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->> +}
->> +
->> +static unsigned long tegra_delay_timer_read_counter_long(void)
->> +{
->> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>  }
->>  
->>  /*
->> @@ -143,98 +223,188 @@ static void tegra_read_persistent_clock64(struct timespec64 *ts)
->>  	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
->>  	*ts = persistent_ts;
->>  }
->> +#endif
->>  
->> -static unsigned long tegra_delay_timer_read_counter_long(void)
->> +static int tegra_timer_suspend(void)
->>  {
->> -	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->> +#ifdef CONFIG_ARM64
->> +	int cpu;
->> +
->> +	for_each_possible_cpu(cpu) {
->> +		struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
->> +		void __iomem *reg_base = timer_of_base(to);
->> +
->> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +	}
->> +#else
->> +	void __iomem *reg_base = timer_of_base(&tegra_to);
->> +
->> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +#endif
->> +
->> +	return 0;
->>  }
->>  
->> -static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
->> +static void tegra_timer_resume(void)
->>  {
->> -	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
->> -	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
->> -	evt->event_handler(evt);
->> -	return IRQ_HANDLED;
->> +	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
->>  }
->>  
->> -static struct irqaction tegra_timer_irq = {
->> -	.name		= "timer0",
->> -	.flags		= IRQF_TIMER | IRQF_TRIGGER_HIGH,
->> -	.handler	= tegra_timer_interrupt,
->> -	.dev_id		= &tegra_clockevent,
->> +static struct syscore_ops tegra_timer_syscore_ops = {
->> +	.suspend = tegra_timer_suspend,
->> +	.resume = tegra_timer_resume,
->>  };
->>  
->> -static int __init tegra20_init_timer(struct device_node *np)
->> +static int tegra_timer_init(struct device_node *np, struct timer_of *to)
->>  {
->> -	struct clk *clk;
->> -	unsigned long rate;
->> -	int ret;
->> +	int ret = 0;
->>  
->> -	timer_reg_base = of_iomap(np, 0);
->> -	if (!timer_reg_base) {
->> -		pr_err("Can't map timer registers\n");
->> -		return -ENXIO;
->> -	}
->> +	ret = timer_of_init(np, to);
->> +	if (ret < 0)
->> +		goto out;
->>  
->> -	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
->> -	if (tegra_timer_irq.irq <= 0) {
->> -		pr_err("Failed to map timer IRQ\n");
->> -		return -EINVAL;
->> -	}
->> +	timer_reg_base = timer_of_base(to);
->>  
->> -	clk = of_clk_get(np, 0);
->> -	if (IS_ERR(clk)) {
->> -		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
->> -		rate = 12000000;
->> -	} else {
->> -		clk_prepare_enable(clk);
->> -		rate = clk_get_rate(clk);
->> -	}
->> -
->> -	switch (rate) {
->> +	/*
->> +	 * Configure microsecond timers to have 1MHz clock
->> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
->> +	 * Uses n+1 scheme
->> +	 */
->> +	switch (timer_of_rate(to)) {
->>  	case 12000000:
->> -		timer_writel(0x000b, TIMERUS_USEC_CFG);
->> +		usec_config = 0x000b; /* (11+1)/(0+1) */
->> +		break;
->> +	case 12800000:
->> +		usec_config = 0x043f; /* (63+1)/(4+1) */
->>  		break;
->>  	case 13000000:
->> -		timer_writel(0x000c, TIMERUS_USEC_CFG);
->> +		usec_config = 0x000c; /* (12+1)/(0+1) */
->> +		break;
->> +	case 16800000:
->> +		usec_config = 0x0453; /* (83+1)/(4+1) */
->>  		break;
->>  	case 19200000:
->> -		timer_writel(0x045f, TIMERUS_USEC_CFG);
->> +		usec_config = 0x045f; /* (95+1)/(4+1) */
->>  		break;
->>  	case 26000000:
->> -		timer_writel(0x0019, TIMERUS_USEC_CFG);
->> +		usec_config = 0x0019; /* (25+1)/(0+1) */
->> +		break;
->> +	case 38400000:
->> +		usec_config = 0x04bf; /* (191+1)/(4+1) */
->> +		break;
->> +	case 48000000:
->> +		usec_config = 0x002f; /* (47+1)/(0+1) */
->>  		break;
->>  	default:
->> -		WARN(1, "Unknown clock rate");
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	writel(usec_config, timer_of_base(to) + TIMERUS_USEC_CFG);
->> +
->> +	register_syscore_ops(&tegra_timer_syscore_ops);
->> +out:
->> +	return ret;
->> +}
->> +
->> +#ifdef CONFIG_ARM64
->> +static int __init tegra210_timer_init(struct device_node *np)
->> +{
->> +	int cpu, ret = 0;
->> +	struct timer_of *to;
->> +
->> +	to = this_cpu_ptr(&tegra_to);
->> +	ret = tegra_timer_init(np, to);
->> +	if (ret < 0)
->> +		goto out;
->> +
->> +	for_each_possible_cpu(cpu) {
->> +		struct timer_of *cpu_to;
->> +
->> +		cpu_to = per_cpu_ptr(&tegra_to, cpu);
->> +		cpu_to->of_base.base = timer_reg_base + TIMER_FOR_CPU(cpu);
->> +		cpu_to->of_clk.rate = timer_of_rate(to);
->> +		cpu_to->clkevt.cpumask = cpumask_of(cpu);
->> +
->> +		cpu_to->clkevt.irq =
->> +			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
->> +		if (!cpu_to->clkevt.irq) {
->> +			pr_err("%s: can't map IRQ for CPU%d\n",
->> +			       __func__, cpu);
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
->> +		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
->> +				  IRQF_TIMER | IRQF_NOBALANCING,
->> +				  cpu_to->clkevt.name, &cpu_to->clkevt);
->> +		if (ret) {
->> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
->> +				__func__, cpu_to->clkevt.irq, cpu);
->> +			ret = -EINVAL;
->> +			goto out_irq;
->> +		}
->> +	}
->> +
->> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
->> +			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
->> +			  tegra_timer_stop);
->> +
->> +	return ret;
->> +
->> +out_irq:
->> +	for_each_possible_cpu(cpu) {
->> +		struct timer_of *cpu_to;
->> +
->> +		cpu_to = per_cpu_ptr(&tegra_to, cpu);
->> +		if (cpu_to->clkevt.irq) {
->> +			free_irq(cpu_to->clkevt.irq, &cpu_to->clkevt);
->> +			irq_dispose_mapping(cpu_to->clkevt.irq);
->> +		}
->>  	}
->> +out:
->> +	timer_of_cleanup(to);
->> +	return ret;
->> +}
->> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_timer_init);
->> +#else /* CONFIG_ARM */
->> +static int __init tegra20_init_timer(struct device_node *np)
->> +{
-> What about T132? Isn't it ARM64 which uses tegra20-timer IP? At least T132 DT suggests so and seems this change will break it.
-> 
-> [snip]
-> 
-
-Ah, noticed the "depends on ARM" in Kconfig.. Seems okay then.
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRlZ3JhMTg2IGFuZCBs
+YXRlciBhcmUgZGlmZmVyZW50IGZyb20gZWFybGllciBnZW5lcmF0aW9ucyBpbiB0aGF0IHRoZXkK
+dXNlIGFuIEFSTSBTTU1VIHJhdGhlciB0aGFuIHRoZSBUZWdyYSBTTU1VLiBUaGUgQVJNIFNNTVUg
+ZHJpdmVyIGJlaGF2ZXMKc2xpZ2h0bHkgZGlmZmVyZW50bHkgaW4gdGhhdCB0aGUgZ2VvbWV0cnkg
+Zm9yIElPTU1VIGRvbWFpbnMgaXMgc2V0IG9ubHkKYWZ0ZXIgYSBkZXZpY2Ugd2FzIGF0dGFjaGVk
+IHRvIGl0LiBUaGlzIGlzIHRvIG1ha2Ugc3VyZSB0aGF0IHRoZSBTTU1VCmluc3RhbmNlIHRoYXQg
+dGhlIGRvbWFpbiBiZWxvbmdzIHRvIGlzIGtub3duLCBiZWNhdXNlIGVhY2ggaW5zdGFuY2UgY2Fu
+CmhhdmUgYSBkaWZmZXJlbnQgaW5wdXQgYWRkcmVzcyBzcGFjZSAoaS5lLiBnZW9tZXRyeSkuCgpX
+b3JrIGFyb3VuZCB0aGlzIGJ5IG1vdmluZyBhbGwgSU9WQSBhbGxvY2F0aW9ucyB0byBhIHBvaW50
+IHdoZXJlIHRoZQpnZW9tZXRyeSBvZiB0aGUgZG9tYWluIGlzIHByb3Blcmx5IGluaXRpYWxpemVk
+LgoKVGhpcyBzZWNvbmQgdmVyc2lvbiBvZiB0aGUgc2VyaWVzIGFkZHJlc3NlcyBhbGwgcmV2aWV3
+IGNvbW1lbnRzIGFuZCBhZGRzCmEgbnVtYmVyIG9mIHBhdGNoZXMgdGhhdCB3aWxsIGFjdHVhbGx5
+IGFsbG93IGhvc3QxeCB0byB3b3JrIHdpdGggYW4gU01NVQplbmFibGVkIG9uIFRlZ3JhMTg2LiBU
+aGUgcGF0Y2hlcyBhbHNvIGFkZCBwcm9ncmFtbWluZyByZXF1aXJlZCB0bwphZGRyZXNzIHRoZSBm
+dWxsIDQwIGJpdHMgb2YgYWRkcmVzcyBzcGFjZS4KClRoZSB0aGlyZCB2ZXJzaW9uIG9mIHRoZSBz
+ZXJpZXMgZml4ZXMgdGhlIDQwLWJpdCBhZGRyZXNzaW5nIGNvZGUgYnkKbWFraW5nIHN1cmUgdGhh
+dCB3aWRlIG9wY29kZXMgYXJlIGFsd2F5cyB3cml0dGVuIGF0b21pY2FsbHkgdG8gdGhlIHB1c2gK
+YnVmZmVyLiBBbm90aGVyIHBhaXIgb2YgcGF0Y2hlcyBhcmUgaW50cm9kdWNlZCB0byBmaXggYSBs
+b25nLXN0YW5kaW5nCmJ1ZyB3aGVyZSB0aGUgSE9TVDFYX0NIQU5ORUxfRE1BRU5EIHJlZ2lzdGVy
+IHdhc24ndCBwcm9wZXJseSBwcm9ncmFtbWVkCmFuZCBvbmUgcHVzaCBidWZmZXIgbWVtb3J5IG9w
+dGltaXphdGlvbiB0aGF0IGF2b2lkIHdhc3RpbmcgYWxtb3N0IG9uZQpmdWxsIG1lbW9yeSBwYWdl
+IHBlciBwdXNoIGJ1ZmZlci4KClRoaXMgc3VwZXJzZWRlcyB0aGUgZm9sbG93aW5nIHBhdGNoOgoK
+CWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA3NzU1NzkvCgpUaGllcnJ5CgpU
+aGllcnJ5IFJlZGluZyAoMTYpOgogIGdwdTogaG9zdDF4OiBTZXQgdXAgc3RyZWFtIElEIHRhYmxl
+CiAgZ3B1OiBob3N0MXg6IFByb2dyYW0gdGhlIGNoYW5uZWwgc3RyZWFtIElECiAgZ3B1OiBob3N0
+MXg6IEludHJvZHVjZSBzdXBwb3J0IGZvciB3aWRlIG9wY29kZXMKICBncHU6IGhvc3QxeDogU3Vw
+cG9ydCA0MC1iaXQgYWRkcmVzc2luZwogIGdwdTogaG9zdDF4OiBVc2UgZGlyZWN0IERNQSB3aXRo
+IElPTU1VIEFQSSB1c2FnZQogIGdwdTogaG9zdDF4OiBSZXN0cmljdCBJT1ZBIHNwYWNlIHRvIERN
+QSBtYXNrCiAgZ3B1OiBob3N0MXg6IFN1cHBvcnQgNDAtYml0IGFkZHJlc3Npbmcgb24gVGVncmEx
+ODYKICBncHU6IGhvc3QxeDogVXNlIGNvcnJlY3Qgc2VtYW50aWNzIGZvciBIT1NUMVhfQ0hBTk5F
+TF9ETUFFTkQKICBncHU6IGhvc3QxeDogT3B0aW1pemUgQ0RNQSBwdXNoIGJ1ZmZlciBtZW1vcnkg
+dXNhZ2UKICBkcm0vdGVncmE6IFN0b3JlIHBhcmVudCBwb2ludGVyIGluIFRlZ3JhIERSTSBjbGll
+bnRzCiAgZHJtL3RlZ3JhOiB2aWM6IExvYWQgZmlybXdhcmUgb24gZGVtYW5kCiAgZHJtL3RlZ3Jh
+OiBTZXR1cCBzaGFyZWQgSU9NTVUgZG9tYWluIGFmdGVyIGluaXRpYWxpemF0aW9uCiAgZHJtL3Rl
+Z3JhOiBSZXN0cmljdCBJT1ZBIHNwYWNlIHRvIERNQSBtYXNrCiAgZHJtL3RlZ3JhOiB2aWM6IERv
+IG5vdCBjbGVhciBkcml2ZXIgZGF0YQogIGRybS90ZWdyYTogdmljOiBTdXBwb3J0IHN0cmVhbSBJ
+RCByZWdpc3RlciBwcm9ncmFtbWluZwogIGFybTY0OiB0ZWdyYTogRW5hYmxlIFNNTVUgZm9yIFZJ
+QyBvbiBUZWdyYTE4NgoKIGFyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kg
+ICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAgICAgICB8
+ICA1NyArKysrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgICAgICAgICAgICAg
+ICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jICAgICAgICAgICAgICAgICB8
+ICA3NSArKysrKysrKy0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5oICAgICAgICAgICAg
+ICAgICB8ICAgOSArKwogZHJpdmVycy9ncHUvaG9zdDF4L2NkbWEuYyAgICAgICAgICAgICAgICAg
+ICB8IDEzMiArKysrKysrKysrKysrKysrKystLQogZHJpdmVycy9ncHUvaG9zdDF4L2NkbWEuaCAg
+ICAgICAgICAgICAgICAgICB8ICAgMiArCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgICAgICAg
+ICAgICAgICAgICAgIHwgIDQ5ICsrKysrKystCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmggICAg
+ICAgICAgICAgICAgICAgIHwgICA4ICsrCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2RtYV9ody5j
+ICAgICAgICAgICAgIHwgIDMyICsrKystCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2hhbm5lbF9o
+dy5jICAgICAgICAgIHwgIDQyICsrKysrKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgw
+Nl9oYXJkd2FyZS5oICAgfCAgIDYgKwogZHJpdmVycy9ncHUvaG9zdDF4L2h3L2hvc3QxeDA3X2hh
+cmR3YXJlLmggICB8ICAgNiArCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDZfY2hh
+bm5lbC5oIHwgIDExICsrCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDdfY2hhbm5l
+bC5oIHwgIDExICsrCiBpbmNsdWRlL3RyYWNlL2V2ZW50cy9ob3N0MXguaCAgICAgICAgICAgICAg
+IHwgIDI2ICsrKysKIDE2IGZpbGVzIGNoYW5nZWQsIDQwNCBpbnNlcnRpb25zKCspLCA2NCBkZWxl
+dGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9z
+dDF4MDZfY2hhbm5lbC5oCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvaG9zdDF4L2h3
+L2h3X2hvc3QxeDA3X2NoYW5uZWwuaAoKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
