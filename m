@@ -1,101 +1,155 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH V4 00/20] Tegra210 DFLL support
-Date: Fri, 1 Feb 2019 10:49:38 +0800
-Message-ID: <a2cf3ccd-658a-e004-1e66-d4f9cf1026f1@nvidia.com>
-References: <20190104030702.8684-1-josephl@nvidia.com>
- <20190125134617.GE22565@ulmo>
- <0a7abeee-1b78-4f90-e94f-43c19eddb9b1@nvidia.com>
- <20190128075442.GA18124@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
+Date: Fri, 1 Feb 2019 06:14:14 +0300
+Message-ID: <20190201061414.05443ea1@dimatab>
+References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+        <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
+        <20190131124423.GG23438@ulmo>
+        <20190201035249.5b1cdfe2@dimatab>
+        <BYAPR12MB33986DDF4267ED1F499317B0C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190128075442.GA18124@ulmo>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-pm@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <BYAPR12MB33986DDF4267ED1F499317B0C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/28/19 3:54 PM, Thierry Reding wrote:
-> On Mon, Jan 28, 2019 at 09:43:00AM +0800, Joseph Lo wrote:
->> On 1/25/19 9:46 PM, Thierry Reding wrote:
->>> On Fri, Jan 04, 2019 at 11:06:42AM +0800, Joseph Lo wrote:
->>>> This series introduces support for the DFLL as a CPU clock source
->>>> on Tegra210. As Jetson TX1 uses a PWM controlled regulator IC which
->>>> is driven directly by the DFLLs PWM output, we also introduce support
->>>> for PWM regulators next to I2C controlled regulators. The DFLL output
->>>> frequency is directly controlled by the regulator voltage. The registers
->>>> for controlling the PWM are part of the DFLL IP block, so there's no
->>>> separate linux regulator object involved because the regulator IC only
->>>> supplies the rail powering the CPUs. It doesn't have any other controls.
-[snip]
->>> Joseph,
->>>
->>> can you detail the dependencies between the various patches. From a
->>> brief look the CPU frequency driver changes are completely separate
->>> bits and it should be possible to apply them to the cpufreq tree.
->>>
->>> The clock changes also seem independent of the rest.
->>>
->>> Are there any dependencies at all that we need to be mindful about?
->>> Or can individual maintainers just pick up the subseries directly?
->>>
->>
->> Yes, no dependence with each other. We can apply them separately.
->> Please let me know if I need to inform cpufreq or clk maintainer to pick
->> them up.
-> 
-> Rafael,
-> 
-> the three CPU frequency patches in this series were acked by Viresh
-> already, but unfortunately you don't seem to be Cc'ed on these. Are
-> you okay with me picking these up into the Tegra tree and send you
-> a pull request in a couple of days? That way we can get the whole
-> set tested a bit in linux-next. If you'd prefer to pick these up in
-> the PM tree, here are the corresponding patchwork links:
-> 
-> 	https://patchwork.kernel.org/patch/10747943/
-> 	https://patchwork.kernel.org/patch/10747947/
-> 	https://patchwork.kernel.org/patch/10747953/
-> 
-> I'll go and give my Acked-by on these patches if the latter is the
-> way you prefer.
-> 
-> 
-> Stephen, Mike,
-> 
-> the same applies for clk patches. Stephen's acked all of them and I
-> think all of the series is good to go. How about if I pick up these
-> up in the Tegra tree and let this all cook in linux-next for a week
-> or so and then send you a pull request with these? Stephen already
-> picked up a couple of fixes for clk/tegra, but I don't think any of
-> those would conflict with this series.
-> 
-> All of that said, Joseph confirmed that there are no dependencies
-> between these subsystem subseries, so if you'd prefer to pick up the
-> patches into your respective trees, I have no objections to that.
-> 
-> Thierry
-> 
+=D0=92 Fri, 1 Feb 2019 01:11:06 +0000
+Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-Hi Rafael, Stephen,
+> > > > +	if (dma) {
+> > > > +		if (i2c_dev->msg_read) {
+> > > > +			chan =3D i2c_dev->rx_dma_chan;
+> > > > +			tegra_i2c_config_fifo_trig(i2c_dev,
+> > > > xfer_size,
+> > > > +
+> > > > DATA_DMA_DIR_RX);
+> > > > +
+> > > > dma_sync_single_for_device(i2c_dev->dev, +
+> > > > i2c_dev->dma_phys,
+> > > > +						   xfer_size,
+> > > > +
+> > > > DMA_FROM_DEVICE); =20
+> > >=20
+> > > Do we really need this? We're not actually passing the device any=20
+> > > data, so no caches to flush here. I we're cautious about flushing=20
+> > > caches when we do write to the buffer (and I think we do that
+> > > properly already), then there should be no need to do it here
+> > > again.=20
+> >
+> > IIUC, DMA API has a concept of buffer handing which tells to use =20
+> dma_sync_single_for_device() before issuing hardware job that touches
+> the buffer and to use dma_sync_single_for_cpu() after hardware done
+> the execution. In fact the CPU caches are getting flushed or
+> invalidated as appropriate in a result.
+> >
+> > dma_sync_single_for_device(DMA_FROM_DEVICE) invalidates buffer in
+> > the CPU cache, probably to avoid CPU evicting data from cache to
+> > DRAM while hardware writes to the buffer. Hence this hunk is
+> > correct.=20
+> > > > +			err =3D tegra_i2c_dma_submit(i2c_dev,
+> > > > xfer_size);
+> > > > +			if (err < 0) {
+> > > > +				dev_err(i2c_dev->dev,
+> > > > +					"starting RX DMA
+> > > > failed, err %d\n",
+> > > > +					err);
+> > > > +				goto unlock;
+> > > > +			}
+> > > > +		} else {
+> > > > +			chan =3D i2c_dev->tx_dma_chan;
+> > > > +			tegra_i2c_config_fifo_trig(i2c_dev,
+> > > > xfer_size,
+> > > > +
+> > > > DATA_DMA_DIR_TX);
+> > > > +			dma_sync_single_for_cpu(i2c_dev->dev,
+> > > > +
+> > > > i2c_dev->dma_phys,
+> > > > +						xfer_size,
+> > > > +
+> > > > DMA_TO_DEVICE); =20
+> > >=20
+> > > This, on the other hand seems correct because we need to
+> > > invalidate the caches for this buffer to make sure the data that
+> > > we put there doesn't get overwritten. =20
+> >
+> > As I stated before in a comment to v6, this particular case of
+> > dma_sync_single_for_cpu() usage is incorrect because CPU should
+> > take ownership of the buffer after completion of hardwate job. But
+> > in fact dma_sync_single_for_cpu(DMA_TO_DEVICE) is a NO-OP because
+> > CPU doesn't need to flush or invalidate anything to take ownership
+> > of the buffer if hardware did a read-only access.=20
+> > >  =20
+> > > > +	if (!i2c_dev->msg_read) {
+> > > > +		if (dma) {
+> > > > +			memcpy(buffer, msg->buf, msg->len);
+> > > > +
+> > > > dma_sync_single_for_device(i2c_dev->dev, +
+> > > > i2c_dev->dma_phys,
+> > > > +						   xfer_size,
+> > > > +
+> > > > DMA_TO_DEVICE); =20
+> > >=20
+> > > Again, here we properly flush the caches to make sure the data
+> > > that we've written to the DMA buffer is visible to the DMA engine.
+> > >  =20
+> >
+> > +1 this is correct
+> >
+> >
+> > =20
+> > > > +
+> > > > +		if (i2c_dev->msg_read) {
+> > > > +			if (likely(i2c_dev->msg_err =3D=3D
+> > > > I2C_ERR_NONE)) {
+> > > > +
+> > > > dma_sync_single_for_cpu(i2c_dev->dev,
+> > > > +
+> > > > i2c_dev->dma_phys,
+> > > > +
+> > > > xfer_size, +
+> > > > DMA_FROM_DEVICE); =20
+> > >=20
+> > > Here we invalidate the caches to make sure we don't get stale
+> > > data that may be in the caches for data that we're copying out of
+> > > the DMA buffer. I think that's about all the cache maintenance
+> > > that we real need. =20
+> >
+> > Correct.
+> >
+> > And technically here should be
+> > dma_sync_single_for_cpu(DMA_TO_DEVICE) for the TX. But again, it's
+> > a NO-OP. =20
+>=20
+> Is my below understanding correct? Can you please confirm?
+>=20
+> During Transmit to device:
+> - Before writing msg data into dma buf by CPU, giving DMA ownership
+> to CPU dma_sync_single_for_cpu with dir DMA_TO_DEVICE
+>=20
 
-Gental ping. Please let Thierry know if the cpufreq and DFLL clock 
-related changes can go through Tegra tree.
+I tried to take a look at it again and now thinking that your variant
+is more correct. Still it's a bit difficult to judge because this case
+is no-op.
 
-I know Rafael did say [1] it's okay to go through Tegra tree in earlier 
-comment.
+> - After writing to dma buf by CPU, giving back the ownership to
+> device to access buffer to send during DMA transmit
+> dma_sync_single_for_device with dir DMA_TO_DEVICE
 
-Thanks,
-Joseph
+Correct.
 
-[1]: http://patchwork.ozlabs.org/patch/1015181/
+> During Receiving from Device:
+> - before submitting RX DMA to give buffer access to DMAengine
+> 	dma_sync_single_for_Device(DMA_FROM_DEVICE)=20
+
+Correct.
+
+> - after DMA RX completion, giving dma ownership to CPU for reading
+> dmabuf data written by DMA from device dma_sync_single_for_cpu with
+> dir DMA_FROM_DEVICE
+>=20
+
+Correct.
