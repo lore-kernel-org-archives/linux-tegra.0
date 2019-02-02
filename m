@@ -1,84 +1,74 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V9 3/5] i2c: tegra: Add DMA support
-Date: Sat, 2 Feb 2019 17:13:56 +0300
-Message-ID: <f667ab55-c7c7-4ac1-100a-7f7ade87708d@gmail.com>
-References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
- <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
- <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
- <BYAPR12MB33984FB81B8BB1EC8C0C4908C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
- <6150de70-6ca8-944a-780a-4574ff2b21c7@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20190201 build: 2 failures 19 warnings (next-20190201)
+Date: Sat, 2 Feb 2019 15:23:40 +0000
+Message-ID: <20190202152340.GJ20797@sirena.org.uk>
+References: <E1gpgTf-0002ZN-NF@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6150de70-6ca8-944a-780a-4574ff2b21c7@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============6822374599801915661=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <E1gpgTf-0002ZN-NF@optimist>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <treding@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jassi Brar <jaswinder.singh@linaro.org>
+Cc: linux-tegra@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-01.02.2019 22:22, Dmitry Osipenko пишет:
-> 01.02.2019 22:20, Sowjanya Komatineni пишет:
->>
->>>> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev) {
->>>> +	struct dma_chan *dma_chan;
->>>> +	u32 *dma_buf;
->>>> +	dma_addr_t dma_phys;
->>>> +	int err = 0;
->>>> +
->>>> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
->>>> +		return -ENODEV;
->>>
->>> Driver shall not fail to probe if DMA driver is disabled, but to continue with the PIO-only mode available.
->>>
->>> Should be:
->>>
->>> 	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
->>> 		return 0;
->>>
->> Except EPROBE_DEFER, anything else returned from tegra_i2c_init_dma (ENODEV/ENOMEM) is ignored in i2c_probe
->> DMA mode decision is based on xfer size and availability of dma channel or can be changed based on valid dma buf to shorten the line.
->>
-> 
-> Ah, sorry. I missed that, seems good then.
-> 
 
-BTW, it may be worthwhile to move out the error code handling into tegra_i2c_init_dma() for clarity. It also won't hurt to not ignore errors other than -ENODEV.
+--===============6822374599801915661==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ONvqYzh+7ST5RsLk"
+Content-Disposition: inline
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 32d5744bce45..684a0689ac8d 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -397,7 +397,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 	int err = 0;
- 
- 	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
--		return -ENODEV;
-+		return 0;
- 
- 	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
- 	if (IS_ERR(dma_chan))
-@@ -434,6 +434,13 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->rx_dma_chan)
- 		dma_release_channel(i2c_dev->rx_dma_chan);
- 
-+	/*
-+	 * -ENODEV is likely due to a missing "dmas" property, driver falls
-+	 * back to PIO in this case.
-+	 */
-+	if (err == -ENODEV)
-+		return 0;
-+
- 	return err;
- }
- 
-@@ -1553,7 +1560,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = tegra_i2c_init_dma(i2c_dev);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto disable_div_clk;
- 
- 	ret = tegra_i2c_init(i2c_dev, false);
+
+--ONvqYzh+7ST5RsLk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Feb 01, 2019 at 09:35:59PM +0000, Build bot for Mark Brown wrote:
+
+Friday's -next fails to build an arm64 allmodconfig due to (among other
+things):
+
+> 	arm64-allmodconfig
+> ERROR: "mbox_flush" [drivers/tty/serial/tegra-tcu.ko] undefined!
+
+since that symbol isn't exported by the mailbox API.  Either the driver
+shouldn't be using it or we need an EXPORT_SYMBOL_GPL() adding.
+
+--ONvqYzh+7ST5RsLk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxVtfgACgkQJNaLcl1U
+h9BsKAf/Z6iYF+BgN8DfIusRTt8yh7ByRZhzG/sbm/VGBbavEWTm3aYiYqQxqvAW
+kBBM4m4+bLTtq5YJuDVbc3eycZHYVcVkfz8COH2jtg+Q5PbCmJUrR1o0QAzebBAe
+wuwqPgitfFKY0tbwl3cR+HkW75iZTGiV/S7gyU10qZMbHga/ggMQAWqnnVgcdKkI
+H3oZijOAI734uNepeFgHn4xhI0gn5KQyOFaTe6aE15cWQMPW1b64b99P+rnNwQin
+UfO+2ZRtj40mm/+fnVJSTHAy0k3qRtPdpXDD4KdM8pOAWNl3Tw35Ba103g+phuom
+y6EKFaSlL3YGQD5P/D3W1kdamn3dSw==
+=3mWK
+-----END PGP SIGNATURE-----
+
+--ONvqYzh+7ST5RsLk--
+
+
+--===============6822374599801915661==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6822374599801915661==--
