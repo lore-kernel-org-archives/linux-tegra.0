@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
 Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-Date: Sun, 3 Feb 2019 00:04:44 +0800
-Message-ID: <e2bcf87a-1cf4-c149-9b72-10fe46052f9e@nvidia.com>
+Date: Sun, 3 Feb 2019 00:07:09 +0800
+Message-ID: <0458731d-e245-8362-2b62-92aa5e1b7fe3@nvidia.com>
 References: <20190201033621.16814-1-josephl@nvidia.com>
  <20190201033621.16814-3-josephl@nvidia.com>
  <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
@@ -10,93 +10,120 @@ References: <20190201033621.16814-1-josephl@nvidia.com>
  <4c89fd38-eacd-4643-52d3-da4760ecb4c5@nvidia.com>
  <57549882-4d0a-64ac-da04-7e790ac2d80e@gmail.com>
  <9437d5b5-5af0-9393-169c-2ebaf384c75c@nvidia.com>
- <3d173ddf-46d2-165c-7886-cea685a0737d@gmail.com>
+ <705a0eff-cb1e-0e7d-add7-fb1a993291dc@gmail.com>
+ <a24d9152-2bcd-7276-478c-63ee6923178e@nvidia.com>
+ <0a5721cc-6cbf-9f1f-6282-36b7175ce9a2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <3d173ddf-46d2-165c-7886-cea685a0737d@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0a5721cc-6cbf-9f1f-6282-36b7175ce9a2@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMi8yLzE5IDk6MzAgUE0sIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAwMS4wMi4yMDE5IDE4
-OjM3LCBKb3NlcGggTG8g0L/QuNGI0LXRgjoKPj4gT24gMi8xLzE5IDExOjEzIFBNLCBEbWl0cnkg
-T3NpcGVua28gd3JvdGU6Cj4+PiAwMS4wMi4yMDE5IDE3OjEzLCBKb3NlcGggTG8g0L/QuNGI0LXR
-gjoKPj4+PiBPbiAyLzEvMTkgOTo1NCBQTSwgSm9uIEh1bnRlciB3cm90ZToKPj4+Pj4KPj4+Pj4g
-T24gMDEvMDIvMjAxOSAxMzoxMSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4+Pj4gMDEuMDIu
-MjAxOSAxNjowNiwgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4+Pj4+Pj4gMDEuMDIuMjAx
-OSA2OjM2LCBKb3NlcGggTG8g0L/QuNGI0LXRgjoKPj4+Pj4+Pj4gQWRkIHN1cHBvcnQgZm9yIHRo
-ZSBUZWdyYTIxMCB0aW1lciB0aGF0IHJ1bnMgYXQgb3NjaWxsYXRvciBjbG9jawo+Pj4+Pj4+PiAo
-VE1SMTAtVE1SMTMpLiBXZSBuZWVkIHRoZXNlIHRpbWVycyB0byB3b3JrIGFzIGNsb2NrIGV2ZW50
-IGRldmljZSBhbmQgdG8KPj4+Pj4+Pj4gcmVwbGFjZSB0aGUgQVJNdjggYXJjaGl0ZWN0ZWQgdGlt
-ZXIgZHVlIHRvIGl0IGNhbid0IHN1cnZpdmUgYWNyb3NzIHRoZQo+Pj4+Pj4+PiBwb3dlciBjeWNs
-ZSBvZiB0aGUgQ1BVIGNvcmUgb3IgQ1BVUE9SRVNFVCBzaWduYWwuIFNvIGl0IGNhbid0IGJlIGEg
-d2FrZS11cAo+Pj4+Pj4+PiBzb3VyY2Ugd2hlbiBDUFUgc3VzcGVuZHMgaW4gcG93ZXIgZG93biBz
-dGF0ZS4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gQWxzbyBjb252ZXJ0IHRoZSBvcmlnaW5hbCBkcml2ZXIg
-dG8gdXNlIHRpbWVyLW9mIEFQSS4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gQ2M6IERhbmllbCBMZXpjYW5v
-IDxkYW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnPgo+Pj4+Pj4+PiBDYzogVGhvbWFzIEdsZWl4bmVy
-IDx0Z2x4QGxpbnV0cm9uaXguZGU+Cj4+Pj4+Pj4+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJu
-ZWwub3JnCj4+Pj4+Pj4+IFNpZ25lZC1vZmYtYnk6IEpvc2VwaCBMbyA8am9zZXBobEBudmlkaWEu
-Y29tPgo+Pj4+Pj4+PiBBY2tlZC1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNv
-bT4KPj4+Pj4+Pj4gLS0tCj4+IHNuaXAuCj4+Pj4+Pj4+ICt9Cj4+Pj4+Pj4+ICtUSU1FUl9PRl9E
-RUNMQVJFKHRlZ3JhMjEwX3RpbWVyLCAibnZpZGlhLHRlZ3JhMjEwLXRpbWVyIiwgdGVncmEyMTBf
-dGltZXJfaW5pdCk7Cj4+Pj4+Pj4+ICsjZWxzZSAvKiBDT05GSUdfQVJNICovCj4+Pj4+Pj4+ICtz
-dGF0aWMgaW50IF9faW5pdCB0ZWdyYTIwX2luaXRfdGltZXIoc3RydWN0IGRldmljZV9ub2RlICpu
-cCkKPj4+Pj4+Pj4gK3sKPj4+Pj4+PiBXaGF0IGFib3V0IFQxMzI/IElzbid0IGl0IEFSTTY0IHdo
-aWNoIHVzZXMgdGVncmEyMC10aW1lciBJUD8gQXQgbGVhc3QgVDEzMiBEVCBzdWdnZXN0cyBzbyBh
-bmQgc2VlbXMgdGhpcyBjaGFuZ2Ugd2lsbCBicmVhayBpdC4KPj4+Pj4+Pgo+Pj4+Pj4+IFtzbmlw
-XQo+Pj4+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4gQWgsIG5vdGljZWQgdGhlICJkZXBlbmRzIG9uIEFSTSIg
-aW4gS2NvbmZpZy4uIFNlZW1zIG9rYXkgdGhlbi4KPj4+Pj4+Cj4+Pj4+Cj4+Pj4+Cj4+Pj4+IFRo
-aXMgaXMgYSBnb29kIHBvaW50LCBiZWNhdXNlIGV2ZW4gdGhvdWdoIHdlIGhhZCAnZGVwZW5kcyBv
-biBBUk0nLCB0aGlzCj4+Pj4+IHN0aWxsIG1lYW5zIHRoYXQgdGhlIFRlZ3JhMTMyIERUIGlzIGlu
-Y29ycmVjdC4KPj4+Pj4KPj4+Pj4gSm9zZXBoLCBjYW4geW91IHRha2UgYSBxdWljayBsb29rIGF0
-IFRlZ3JhMTMyPwo+Pj4+Cj4+Pj4gSGkgSm9uIGFuZCBEbWl0cnksCj4+Pj4KPj4+PiBObyB3b3Jy
-eSBhYm91dCBUMTMyLCBUMTMyIHVzZXMgYXJjaCB0aW1lciAodjcpLiBUaGUgdGVncmEyMCB0aW1l
-ciBkcml2ZXIgaGFzIG5ldmVyIGJlZW4gdXNlZC4gV2Ugc2hvdWxkIGZpeCB0aGUgZHRzaSBmaWxl
-IGxhdGVyLgo+Pj4KPj4+IEhpIEpvc2VwaCwKPj4+Cj4+PiBTbyBpcyBUMTMyIEhXIGFjdHVhbGx5
-IGluY29tcGF0aWJsZSB3aXRoIHRoZSB0ZWdyYTIwLXRpbWVyPyBJZiBpdCdzIGNvbXBhdGlibGUs
-IHRoZW4gSSB0aGluayB0aGUgZHJpdmVyJ3MgY29kZSBzaG91bGQgYmUgbWFkZSBtb3JlIHVuaXZl
-cnNhbCB0byBzdXBwb3J0IFQxMzIuCj4+Pgo+Pgo+PiAgRnJvbSBIVyBwb2ludCBvZiB2aWV3LCB0
-aGUgVElNRVIxIH4gVElNRVI0IGlzIGNvbXBhdGlibGUgd2l0aCAibnZpZGlhLHRlZ3JhMjAtdGlt
-ZXIiLiBCdXQgVGVncmExMzIgYWN0dWFsbHkgaGFzIDEwIHRpbWVycyB3aGljaCBhcmUgZXhhY3Rs
-eSB0aGUgc2FtZSBhcyBUZWdyYTMwLiBTbyBpdCBzaG91bGQgYmFja3dhcmQgY29tcGF0aWJsZSB3
-aXRoICJudmlkaWEsdGVncmEzMC10aW1lciIsIHdoaWNoIGlzIHRlZ3JhX3dkdCBkcml2ZXIgbm93
-LiBBbmQgVGVncmExMzIgc2hvdWxkIG5ldmVyIHVzZSB0aGlzIGRyaXZlci4KPiAKPiBUaGVuIHNo
-b3VsZG4ndCBkZXZpY2UgdHJlZSBsb29rIGxpa2UgdGhpcz8gV2h5IFRNUjctVE1SMCBhcmUgbm90
-IGRlZmluZWQgdGhlcmU/ClllYWgsIHRoZXkgbmVlZCB0byByZXZpc2l0IGFuZCBmaXguCj4gCj4g
-CXRpbWVyQDYwMDA1MDAwIHsKPiAJCWNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMTI0LXRpbWVy
-IiwgIm52aWRpYSx0ZWdyYTMwLXRpbWVyIiwgIm52aWRpYSx0ZWdyYTIwLXRpbWVyIjsKPiAJCXJl
-ZyA9IDwweDAgMHg2MDAwNTAwMCAweDAgMHg0MDA+Owo+IAkJaW50ZXJydXB0cyA9IDxHSUNfU1BJ
-IDAgSVJRX1RZUEVfTEVWRUxfSElHSD4sCj4gCQkJICAgICA8R0lDX1NQSSAxIElSUV9UWVBFX0xF
-VkVMX0hJR0g+LAo+IAkJCSAgICAgPEdJQ19TUEkgNDEgSVJRX1RZUEVfTEVWRUxfSElHSD4sCj4g
-CQkJICAgICA8R0lDX1NQSSA0MiBJUlFfVFlQRV9MRVZFTF9ISUdIPiwKPiAJCQkgICAgIDxHSUNf
-U1BJIDEyMSBJUlFfVFlQRV9MRVZFTF9ISUdIPiwKPiAJCQkgICAgIDxHSUNfU1BJIDE1MiBJUlFf
-VFlQRV9MRVZFTF9ISUdIPjsKPiAJCQkgICAgIDxHSUNfU1BJIDE1MyBJUlFfVFlQRV9MRVZFTF9I
-SUdIPjsKPiAJCQkgICAgIDxHSUNfU1BJIDE1NCBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiAJCQkg
-ICAgIDxHSUNfU1BJIDE1NSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiAJCQkgICAgIDxHSUNfU1BJ
-IDE1NiBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiAJCWNsb2NrcyA9IDwmdGVncmFfY2FyIFRFR1JB
-MTI0X0NMS19USU1FUj47Cj4gCQljbG9jay1uYW1lcyA9ICJ0aW1lciI7Cj4gCX07Cj4gCj4gVE1S
-IDAsNiw3LDgsOSBzaG91bGQgZGVmaW5lIGEgc2hhcmVkIGludGVycnVwdCBhcyB3ZWxsLCBidXQg
-c2VlbXMgdGhlIHNoYXJlZCBpbnRlcnJ1cHQgcHJvdmlkZXIgaXMgbm90IHN1cHBvcnRlZCBpbiB1
-cHN0cmVhbS4KPiAKPiBBbHNvIG5vdGUgdGhhdCBzZWVtcyBUMTI0LzEzMiBkZXZpY2UgdHJlZSBo
-YXMgYSB0eXBvIChJJ20gbG9va2luZyBhdCBUSzEgVFJNKSwgVE1SNiBJUlEgaXMgMTUyIGFuZCBu
-b3QgMTIyLgo+IAo+IEFuZCBUMzAgZGV2aWNlIHRyZWUgbG9va3MgaW5jb3JyZWN0LCBUUk0gc2F5
-cyB0aGF0IFRNUjEtVE1SNSBoYXZlIGEgImRlZGljYXRlZCBpbnRlcnJ1cHQgYml0IiwgYnV0IG5v
-dCBUTVI2Lgo+IApZZWFoLCBub3RpY2VkIHRoYXQgYXMgd2VsbC4gQmVjYXVzZSB0aGUgd2R0IGRy
-aXZlciBkb2Vzbid0IG5lZWQgSVJRIApzdXBwb3J0IGFuZCB0aGV5IChUZWdyYTExNC8xMjQvMTMy
-KSB1c2UgYXJjaCB0aW1lci4gU28gZXZlcnl0aGluZyBqdXN0IAp3b3JrcyBmaW5lLgoKVGhhbmtz
-LApKb3NlcGgKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
-cmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
-bnV4LWFybS1rZXJuZWwK
+On 2/2/19 9:38 PM, Dmitry Osipenko wrote:
+> 02.02.2019 2:53, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 2/2/19 2:08 AM, Dmitry Osipenko wrote:
+>>> 01.02.2019 18:37, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> On 2/1/19 11:13 PM, Dmitry Osipenko wrote:
+>>>>> 01.02.2019 17:13, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> On 2/1/19 9:54 PM, Jon Hunter wrote:
+>>>>>>>
+>>>>>>> On 01/02/2019 13:11, Dmitry Osipenko wrote:
+>>>>>>>> 01.02.2019 16:06, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>> 01.02.2019 6:36, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>>> Add support for the Tegra210 timer that runs at oscillator clock
+>>>>>>>>>> (TMR10-TMR13). We need these timers to work as clock event devic=
+e and to
+>>>>>>>>>> replace the ARMv8 architected timer due to it can't survive acro=
+ss the
+>>>>>>>>>> power cycle of the CPU core or CPUPORESET signal. So it can't be=
+ a wake-up
+>>>>>>>>>> source when CPU suspends in power down state.
+>>>>>>>>>>
+>>>>>>>>>> Also convert the original driver to use timer-of API.
+>>>>>>>>>>
+>>>>>>>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>>>>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>>>>>>>> Cc: linux-kernel@vger.kernel.org
+>>>>>>>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>>>>>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>>>>>>>> ---
+>>>> snip.
+>>>>>>>>>> +}
+>>>>>>>>>> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra=
+210_timer_init);
+>>>>>>>>>> +#else /* CONFIG_ARM */
+>>>>>>>>>> +static int __init tegra20_init_timer(struct device_node *np)
+>>>>>>>>>> +{
+>>>>>>>>> What about T132? Isn't it ARM64 which uses tegra20-timer IP? At l=
+east T132 DT suggests so and seems this change will break it.
+>>>>>>>>>
+>>>>>>>>> [snip]
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Ah, noticed the "depends on ARM" in Kconfig.. Seems okay then.
+>>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> This is a good point, because even though we had 'depends on ARM', =
+this
+>>>>>>> still means that the Tegra132 DT is incorrect.
+>>>>>>>
+>>>>>>> Joseph, can you take a quick look at Tegra132?
+>>>>>>
+>>>>>> Hi Jon and Dmitry,
+>>>>>>
+>>>>>> No worry about T132, T132 uses arch timer (v7). The tegra20 timer dr=
+iver has never been used. We should fix the dtsi file later.
+>>>>>
+>>>>> Hi Joseph,
+>>>>>
+>>>>> So is T132 HW actually incompatible with the tegra20-timer? If it's c=
+ompatible, then I think the driver's code should be made more universal to =
+support T132.
+>>>>>
+>>>>
+>>>>  =C2=A0From HW point of view, the TIMER1 ~ TIMER4 is compatible with "=
+nvidia,tegra20-timer". But Tegra132 actually has 10 timers which are exactl=
+y the same as Tegra30. So it should backward compatible with "nvidia,tegra3=
+0-timer", which is tegra_wdt driver now. And Tegra132 should never use this=
+ driver.
+>>>>
+>>>> The Tegra timer driver should only be used on Tegra20/30/210, three pl=
+atforms only. Others use arch timer driver for system timer driver.
+>>>>
+>>>> So we don't really need to take care the usage on other Tegra platform=
+s.
+>>>
+>>> Doesn't Linux kernel put in use all of available timers? If yes, then w=
+e probably would want to expose all available timers. It looks to me that r=
+ight now tegra20-timer exposes only a single-shared timer to the system [pl=
+ease correct me if I'm wrong]. Wouldn't make sense at least to give a timer=
+ per CPU core?
+>>>
+>>
+>> No, only one timer driver works at a time. ( see /proc/timer_list to che=
+ck which timer is working.)
+>=20
+> Okay, thanks for the clarification.
+>=20
+>>> It looks to me that right now tegra20-timer exposes only a single-share=
+d timer to the system [please correct me if I'm wrong]. Wouldn't make sense=
+ at least to give a timer per CPU core?
+>>
+>> Yes, it's correct. the timer-tegra20 only provides a single-shared timer=
+. And yes, ,it should provide a timer per CPU core. But that is another tas=
+k, this patch only introduce the timer support for Tegra210. Others that or=
+iginally from timer-tegra20 driver still remain the same.
+>=20
+> I may take a look at it. Could be better for older Tegra's to use tegra20=
+-timer for the per-CPU timer since TWD timer has some time-jitter due to DV=
+FS.
+>=20
+
+That would be great, thank you.
+Joseph
