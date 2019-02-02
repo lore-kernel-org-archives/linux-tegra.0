@@ -1,96 +1,152 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-Date: Sat, 2 Feb 2019 16:38:42 +0300
-Message-ID: <0a5721cc-6cbf-9f1f-6282-36b7175ce9a2@gmail.com>
-References: <20190201033621.16814-1-josephl@nvidia.com>
- <20190201033621.16814-3-josephl@nvidia.com>
- <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
- <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
- <85988378-0c88-6b71-00df-0700a7b4cdf7@nvidia.com>
- <4c89fd38-eacd-4643-52d3-da4760ecb4c5@nvidia.com>
- <57549882-4d0a-64ac-da04-7e790ac2d80e@gmail.com>
- <9437d5b5-5af0-9393-169c-2ebaf384c75c@nvidia.com>
- <705a0eff-cb1e-0e7d-add7-fb1a993291dc@gmail.com>
- <a24d9152-2bcd-7276-478c-63ee6923178e@nvidia.com>
+Subject: Re: [PATCH V9 3/5] i2c: tegra: Add DMA support
+Date: Sat, 2 Feb 2019 17:01:57 +0300
+Message-ID: <d37e901b-1c26-3d9c-7f68-29e06f4ff993@gmail.com>
+References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
+ <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a24d9152-2bcd-7276-478c-63ee6923178e@nvidia.com>
+In-Reply-To: <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.02.2019 2:53, Joseph Lo пишет:
-> On 2/2/19 2:08 AM, Dmitry Osipenko wrote:
->> 01.02.2019 18:37, Joseph Lo пишет:
->>> On 2/1/19 11:13 PM, Dmitry Osipenko wrote:
->>>> 01.02.2019 17:13, Joseph Lo пишет:
->>>>> On 2/1/19 9:54 PM, Jon Hunter wrote:
->>>>>>
->>>>>> On 01/02/2019 13:11, Dmitry Osipenko wrote:
->>>>>>> 01.02.2019 16:06, Dmitry Osipenko пишет:
->>>>>>>> 01.02.2019 6:36, Joseph Lo пишет:
->>>>>>>>> Add support for the Tegra210 timer that runs at oscillator clock
->>>>>>>>> (TMR10-TMR13). We need these timers to work as clock event device and to
->>>>>>>>> replace the ARMv8 architected timer due to it can't survive across the
->>>>>>>>> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
->>>>>>>>> source when CPU suspends in power down state.
->>>>>>>>>
->>>>>>>>> Also convert the original driver to use timer-of API.
->>>>>>>>>
->>>>>>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>>>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>>>>>>>> Cc: linux-kernel@vger.kernel.org
->>>>>>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>>>>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
->>>>>>>>> ---
->>> snip.
->>>>>>>>> +}
->>>>>>>>> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_timer_init);
->>>>>>>>> +#else /* CONFIG_ARM */
->>>>>>>>> +static int __init tegra20_init_timer(struct device_node *np)
->>>>>>>>> +{
->>>>>>>> What about T132? Isn't it ARM64 which uses tegra20-timer IP? At least T132 DT suggests so and seems this change will break it.
->>>>>>>>
->>>>>>>> [snip]
->>>>>>>>
->>>>>>>
->>>>>>> Ah, noticed the "depends on ARM" in Kconfig.. Seems okay then.
->>>>>>>
->>>>>>
->>>>>>
->>>>>> This is a good point, because even though we had 'depends on ARM', this
->>>>>> still means that the Tegra132 DT is incorrect.
->>>>>>
->>>>>> Joseph, can you take a quick look at Tegra132?
->>>>>
->>>>> Hi Jon and Dmitry,
->>>>>
->>>>> No worry about T132, T132 uses arch timer (v7). The tegra20 timer driver has never been used. We should fix the dtsi file later.
->>>>
->>>> Hi Joseph,
->>>>
->>>> So is T132 HW actually incompatible with the tegra20-timer? If it's compatible, then I think the driver's code should be made more universal to support T132.
->>>>
->>>
->>>  From HW point of view, the TIMER1 ~ TIMER4 is compatible with "nvidia,tegra20-timer". But Tegra132 actually has 10 timers which are exactly the same as Tegra30. So it should backward compatible with "nvidia,tegra30-timer", which is tegra_wdt driver now. And Tegra132 should never use this driver.
->>>
->>> The Tegra timer driver should only be used on Tegra20/30/210, three platforms only. Others use arch timer driver for system timer driver.
->>>
->>> So we don't really need to take care the usage on other Tegra platforms.
->>
->> Doesn't Linux kernel put in use all of available timers? If yes, then we probably would want to expose all available timers. It looks to me that right now tegra20-timer exposes only a single-shared timer to the system [please correct me if I'm wrong]. Wouldn't make sense at least to give a timer per CPU core?
->>
+01.02.2019 20:07, Sowjanya Komatineni пишет:
+> This patch adds DMA support for Tegra I2C.
 > 
-> No, only one timer driver works at a time. ( see /proc/timer_list to check which timer is working.)
-
-Okay, thanks for the clarification.
-
->> It looks to me that right now tegra20-timer exposes only a single-shared timer to the system [please correct me if I'm wrong]. Wouldn't make sense at least to give a timer per CPU core?
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
 > 
-> Yes, it's correct. the timer-tegra20 only provides a single-shared timer. And yes, ,it should provide a timer per CPU core. But that is another task, this patch only introduce the timer support for Tegra210. Others that originally from timer-tegra20 driver still remain the same.
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction. This adds delay between data bytes of the same
+> transfer when CPU is fully loaded and some slave devices has
+> internal timeout for no bus activity and stops transaction to
+> avoid bus hang. DMA mode is helpful in such cases.
+> 
+> DMA mode is also helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V9] : Rebased to 5.0-rc4
+> 	Removed dependency of APB DMA in Kconfig and added conditional check
+> 	in I2C driver to decide on using DMA mode.
+> 	Changed back the allocation of dma buffer during i2c probe.
+> 	Fixed FIFO triggers depending on DMA Vs PIO.
+>  [V8] : Moved back dma init to i2c probe, removed ALL_PACKETS_XFER_COMPLETE
+> 	interrupt and using PACKETS_XFER_COMPLETE interrupt only and some
+> 	other fixes
+> 	Updated Kconfig for APB_DMA dependency
+>  [V7] : Same as V6
+>  [V6] : Updated for proper buffer allocation/freeing, channel release.
+> 	Updated to use exact xfer size for syncing dma buffer.
+>  [V5] : Same as V4
+>  [V4] : Updated to allocate DMA buffer only when DMA mode.
+> 	Updated to fall back to PIO mode when DMA channel request or
+> 	buffer allocation fails.
+>  [V3] : Updated without additional buffer allocation.
+>  [V2] : Updated based on V1 review feedback along with code cleanup for
+> 	proper implementation of DMA.
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 368 +++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 335 insertions(+), 33 deletions(-)
 
-I may take a look at it. Could be better for older Tegra's to use tegra20-timer for the per-CPU timer since TWD timer has some time-jitter due to DVFS.
+
+[snip]
+
+
+> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	struct dma_chan *dma_chan;
+> +	u32 *dma_buf;
+> +	dma_addr_t dma_phys;
+> +	int err = 0;
+> +
+> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
+> +		return -ENODEV;
+
+Another detail is that we need to keep older kernels working on T186+ after its device-tree will get the "dmas" property, device-tree changes shall be backwards-compatible with older kernels. Hence we need to check that platform actually wants the APB DMA driver, otherwise T186+ will be failing with -EPROBE_DEFER.
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 32d5744bce45..822a84013a6d 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -227,6 +227,7 @@ struct tegra_i2c_hw_feature {
+ 	u32 setup_hold_time_std_mode;
+ 	u32 setup_hold_time_fast_fast_plus_mode;
+ 	u32 setup_hold_time_hs_mode;
++	bool has_apb_dma;
+ };
+ 
+ /**
+@@ -396,7 +397,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+ 	dma_addr_t dma_phys;
+ 	int err = 0;
+ 
+-	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
++	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA) || !i2c_dev->hw->has_apb_dma)
+ 		return -ENODEV;
+ 
+ 	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
+@@ -1283,6 +1284,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.setup_hold_time_std_mode = 0x0,
+ 	.setup_hold_time_fast_fast_plus_mode = 0x0,
+ 	.setup_hold_time_hs_mode = 0x0,
++	.has_apb_dma = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -1306,6 +1308,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.setup_hold_time_std_mode = 0x0,
+ 	.setup_hold_time_fast_fast_plus_mode = 0x0,
+ 	.setup_hold_time_hs_mode = 0x0,
++	.has_apb_dma = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -1329,6 +1332,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.setup_hold_time_std_mode = 0x0,
+ 	.setup_hold_time_fast_fast_plus_mode = 0x0,
+ 	.setup_hold_time_hs_mode = 0x0,
++	.has_apb_dma = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -1352,6 +1356,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.setup_hold_time_std_mode = 0x0,
+ 	.setup_hold_time_fast_fast_plus_mode = 0x0,
+ 	.setup_hold_time_hs_mode = 0x0,
++	.has_apb_dma = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -1375,6 +1380,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.setup_hold_time_std_mode = 0,
+ 	.setup_hold_time_fast_fast_plus_mode = 0,
+ 	.setup_hold_time_hs_mode = 0,
++	.has_apb_dma = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
+@@ -1398,6 +1404,7 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
+ 	.setup_hold_time_std_mode = 0,
+ 	.setup_hold_time_fast_fast_plus_mode = 0,
+ 	.setup_hold_time_hs_mode = 0,
++	.has_apb_dma = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -1421,6 +1428,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.setup_hold_time_std_mode = 0x08080808,
+ 	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
+ 	.setup_hold_time_hs_mode = 0x090909,
++	.has_apb_dma = false,
+ };
+ 
+ /* Match table for of_platform binding */
