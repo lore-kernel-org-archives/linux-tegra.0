@@ -1,105 +1,380 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during
-	probe
-Date: Mon, 4 Feb 2019 15:03:49 +0300
-Message-ID: <f0bdcc21-efca-4d04-c7ec-953ec3d87031@gmail.com>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
- <CAJZ5v0hezV7et3VgD7yHa8MLiP0z3YtJ9stwSQL54-tyz_VXkQ@mail.gmail.com>
- <20190131143024.GO23438@ulmo> <2034694.JE9CgBysmF@aspire.rjw.lan>
- <20190204084555.GF19087@ulmo>
- <07d58962-4c49-0575-2f95-4c885998bb52@nvidia.com>
- <20190204110510.GA10412@ulmo>
+Subject: Re: [PATCH V9 3/5] i2c: tegra: Add DMA support
+Date: Mon, 4 Feb 2019 15:57:14 +0300
+Message-ID: <fa8a64fd-87e5-a70c-5ee7-c6c100b712c1@gmail.com>
+References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
+ <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
+ <467a3ac8-5667-66bf-50eb-7d21a103d901@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190204110510.GA10412@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <467a3ac8-5667-66bf-50eb-7d21a103d901@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Takashi Iwai <tiwai@suse.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>, Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, linux-tegra@vger.kernel.org, sharadg@nvidia.com, rlokhande@nvidia.com, mkumard@nvidia.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MDQuMDIuMjAxOSAxNDowNSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBPbiBNb24sIEZl
-YiAwNCwgMjAxOSBhdCAwOTo1MzozMkFNICswMDAwLCBKb24gSHVudGVyIHdyb3RlOgo+Pgo+Pgo+
-PiBPbiAwNC8wMi8yMDE5IDA4OjQ1LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4KPj4gLi4uCj4+
-Cj4+PiBUaGUgaWRlYSB3YXMsIGFzIEkgd2FzIHNheWluZyBiZWxvdywgdG8gcmV1c2UgZGV2X3Bt
-X29wcyBldmVuIGlmCj4+PiAhQ09ORklHX1BNLiBTbyBwbV9ydW50aW1lX2VuYWJsZSgpIGNvdWxk
-IGJlIHNvbWV0aGluZyBsaWtlIHRoaXM6Cj4+Pgo+Pj4gCXBtX3J1bnRpbWVfZW5hYmxlKGRldikK
-Pj4+IAl7Cj4+PiAJCWlmICghQ09ORklHX1BNKQo+Pj4gCQkJaWYgKGRldi0+cG1fb3BzLT5yZXN1
-bWUpCj4+PiAJCQkJZGV2LT5wbV9vcHMtPnJlc3VtZShkZXYpOwo+Pj4KPj4+IAkJLi4uCj4+PiAJ
-fQo+Pj4KPj4+IEJ1dCB0aGF0J3MgYWRtaXR0ZWRseSBzb21ld2hhdCBvZiBhIHN0cmV0Y2guIFRo
-aXMgY291bGQgb2YgY291cnNlIGJlCj4+PiBtYWRlIHNvbWV3aGF0IG5pY2VyIGJ5IGFkZGluZyBh
-biBleHBsaWNpdCB2YXJpYW50LCBzYXk6Cj4+Pgo+Pj4gCXBtX3J1bnRpbWVfZW5hYmxlX2Zvbyhk
-ZXYpCj4+PiAJewo+Pj4gCQlpZiAoIUNPTkZJR19QTSAmJiBkZXYtPnBtX29wcy0+cmVzdW1lKQo+
-Pj4gCQkJcmV0dXJuIGRldi0+cG1fb3BzLT5yZXN1bWUoZGV2KTsKPj4+Cj4+PiAJCXJldHVybiAw
-Owo+Pj4gCX0KPj4+Cj4+PiBNYXliZSB0aGUgZmFjdCB0aGF0IEkgY291bGRuJ3QgY29tZSB1cCB3
-aXRoIGEgZ29vZCBuYW1lIGlzIGEgZ29vZAo+Pj4gaW5kaWNhdGlvbiB0aGF0IHRoaXMgaXMgYSBi
-YWQgaWRlYS4uLgo+Pgo+PiBIb3cgYWJvdXQgc29tZSBuZXcgQVBJcyBjYWxsZWQgLi4uCj4+Cj4+
-IHBtX3J1bnRpbWVfZW5hYmxlX2dldCgpCj4+IHBtX3J1bnRpbWVfZW5hYmxlX2dldF9zeW5jKCkK
-Pj4gcG1fcnVudGltZV9wdXRfZGlzYWJsZSgpIChpbXBsaWVzIGEgcHV0X3N5bmMpCj4+Cj4+IC4u
-LiBhbmQgaW4gdGhlc2UgQVBJcyB3ZSBhZGQgLi4uCj4+Cj4+IHBtX3J1bnRpbWVfZW5hYmxlX2dl
-dChkZXYpCj4+IHsKPj4gCWlmICghQ09ORklHX1BNICYmIGRldi0+cG1fb3BzLT5yZXN1bWUpCj4+
-IAkJcmV0dXJuIGRldi0+cG1fb3BzLT5yZXN1bWUoZGV2KTsKPj4KPj4gCXBtX3J1bnRpbWVfZW5h
-YmxlKGRldik7Cj4+IAlyZXR1cm4gcG1fcnVudGltZV9nZXQoZGV2KTsKPj4gfQo+IAo+IFllYWgs
-IHRob3NlIHNvdW5kIHNlbnNpYmxlLiBJJ20gc3RpbGwgYSBiaXQgdG9ybiBiZXR3ZWVuIHRoaXMg
-YW5kIGp1c3QKPiBlbmZvcmNpbmcgUE0uIEF0IGxlYXN0IG9uIHRoZSBkaXNwbGF5IHNpZGUgSSB0
-aGluayB3ZSBhbHJlYWR5IHJlcXVpcmUgUE0KPiBhbmQgd2l0aCBhbGwgdGhlIHBvd2VyIGRvbWFp
-biB3b3JrIHRoYXQgeW91IGRpZCB3ZSdkIGJlIG11Y2ggYmV0dGVyIG9mZgo+IGlmIHdlIGNvdWxk
-IGp1c3QgZ2V0IHJpZCBvZiB0aGUgIVBNIHdvcmthcm91bmRzLgo+IAo+Pj4+PiBUaGlzIHdvdWxk
-IGJlIHNvbWV3aGF0IHRyaWNreSBiZWNhdXNlIGRyaXZlcnMKPj4+Pj4gdXN1YWxseSB1c2UgU0VU
-X1JVTlRJTUVfUE1fT1BTIHRvIHBvcHVsYXRlIHRoZSBzdHJ1Y3QgZGV2X3BtX29wcyBhbmQKPj4+
-Pj4gdGhhdCB3b3VsZCByZXN1bHQgaW4gYW4gZW1wdHkgc3RydWN0dXJlIGlmICFDT05GSUdfUE0s
-IGJ1dCB3ZSBjb3VsZAo+Pj4+PiBwcm9iYWJseSB3b3JrIGFyb3VuZCB0aGF0IGJ5IGFkZGluZyBh
-IF9fU0VUX1JVTlRJTUVfUE1fT1BTIHRoYXQgd291bGQKPj4+Pj4gbmV2ZXIgYmUgY29tcGlsZWQg
-b3V0IGZvciB0aGlzIGtpbmQgb2YgY2FzZS4gT3Igc3VjaCBkcml2ZXJzIGNvdWxkIGV2ZW4KPj4+
-Pj4gbWFudWFsbHkgc2V0IC5ydW50aW1lX3N1c3BlbmQgYW5kIC5ydW50aW1lX3Jlc3VtZSB0byBt
-YWtlIHN1cmUgdGhleSdyZQo+Pj4+PiBhbHdheXMgcG9wdWxhdGVkLgo+Pj4+Pgo+Pj4+PiBBbm90
-aGVyIHdheSBvdXQgb2YgdGhpcyB3b3VsZCBiZSB0byBtYWtlIHN1cmUgd2UgbmV2ZXIgcnVuIGlu
-dG8gdGhlIGNhc2UKPj4+Pj4gd2hlcmUgcnVudGltZSBQTSBpcyBkaXNhYmxlZC4gSWYgd2UgYWx3
-YXlzICJzZWxlY3QgUE0iIG9uIFRlZ3JhLCB0aGVuIFBNCj4+Pj4+IHNob3VsZCBhbHdheXMgYmUg
-YXZhaWxhYmxlLiBCdXQgaXMgaXQgZ3VhcmFudGVlZCB0aGF0IHJ1bnRpbWUgUE0gZm9yIHRoZQo+
-Pj4+PiBkZXZpY2VzIGlzIGZ1bmN0aW9uYWwgaW4gdGhhdCBjYXNlPyBGcm9tIGEgY3Vyc29yeSBs
-b29rIGF0IHRoZSBjb2RlIGl0Cj4+Pj4+IHdvdWxkIHNlZW0gdGhhdCB3YXkuCj4+Pj4KPj4+PiBJ
-ZiB5b3Ugc2VsZWN0IFBNLCB0aGVuIGFsbCBvZiB0aGUgcmVxdWlzaXRlIGNvZGUgc2hvdWxkIGJl
-IHRoZXJlLgo+Pj4KPj4+IFdlIGRvIHRoaXMgb24gNjQtYml0IEFSTSwgYnV0IHRoZXJlIGhhZCBi
-ZWVuIHNvbWUgcHVzaGJhY2sgd2hlbiB3ZSBoYWQKPj4+IHByb3Bvc2VkIHRvIGRvIHRoZSBzYW1l
-IHRoaW5nIG9uIDMyLWJpdCBBUk0uIEkgdGhpbmsgdGhlcmUgd2VyZSB0d28KPj4+IGNvbmNlcm5z
-Ogo+Pj4KPj4+IAkxKSBzZWxlY3QgUE0gd291bGQgZm9yY2UgdGhlIHNldHRpbmcgZm9yIGFsbCBw
-bGF0Zm9ybXMgb24gbXVsdGktCj4+PiAJICAgcGxhdGZvcm1zIGJ1aWxkcwo+Pj4KPj4+IAkyKSBw
-cmV2ZW50cyBhbnlvbmUgZnJvbSBkaXNhYmxpbmcgUE0gZm9yIGRlYnVnZ2luZyBwdXJwb3Nlcwo+
-Pj4KPj4+IDEpIG5vIGxvbmdlciBzZWVtcyB0byBiZSB2YWxpZCBiZWNhdXNlIFJvY2tjaGlwIGFs
-cmVhZHkgc2VsZWN0cyBQTQo+Pj4gdW5jb25kaXRpb25hbGx5LiBJJ20gbm90IHN1cmUgaWYgMikg
-aXMgdmFsaWQgYW55bW9yZSBlaXRoZXIuIEkgaGF2ZW4ndAo+Pj4gcnVuIGEgYnVpbGQgd2l0aCAh
-UE0gaW4gYSB2ZXJ5IGxvbmcgdGltZSBhbmQgSSB3b3VsZG4ndCBiZSBzdXJwcmlzZWQgaWYKPj4+
-IHRoYXQgd2FzIGNvbXBsZXRlbHkgYnJva2VuLgo+Pj4KPj4+IE1heWJlIHdlIG5lZWQgdG8gdHJ5
-IHRoaXMgYWdhaW4gc2luY2UgYSBjb3VwbGUgb2YgeWVhcnMgaGF2ZSBlbGFwc2VkIGFuZAo+Pj4g
-cnVudGltZSBQTSBzdXBwb3J0IG9uIFRlZ3JhIGlzIG11Y2ggbW9yZSBtYXR1cmUgYXQgdGhpcyBw
-b2ludC4KPj4+Cj4+Pj4gQWx0ZXJuYXRpdmVseSwgeW91IGNhbiBtYWtlIHRoZSBkcml2ZXIgZGVw
-ZW5kIG9uIFBNLgo+Pj4KPj4+IFRoYXQncyBwcm9iYWJseSB0aGUgZWFzaWVzdCB3YXkgb3V0LCBi
-dXQgdG8gYmUgaG9uZXN0IEkgdGhpbmsgSSdkIHByZWZlcgo+Pj4gdG8ganVzdCBlbmZvcmNlIFBN
-IGFuZCBrZWVwIHRoaW5ncyBzaW1wbGUuCj4+Pgo+Pj4gSm9uLCBhbnkgb2JqZWN0aW9ucz8KPj4K
-Pj4gTm9uZSwgYnV0IHNlZW1zIG92ZXJraWxsIGp1c3QgZm9yIHRoaXMgY2FzZS4KPiAKPiBCdXQg
-dGhhdCdzIHByZWNpc2VseSB0aGUgcG9pbnQuIEl0J3Mgbm90IGp1c3QgYWJvdXQgdGhpcyBjYXNl
-LiBXZSd2ZQo+IGFscmVhZHkgZ290IHNvbWUgZHJpdmVycyB3aGVyZSB3ZSBkbyBhIHNpbWlsYXIg
-ZGFuY2UganVzdCB0byBiZSBhYmxlIHRvCj4gc3VwcG9ydCB0aGUsIGxldCdzIGFkbWl0IGl0LCBl
-eG90aWMgY2FzZSB3aGVyZSBzb21lYm9keSB0dXJucyBvZmYgUE0uIEkKPiB0aGluayBzdXBwb3J0
-aW5nICFQTSBtaWdodCBoYXZlIG1hZGUgc2Vuc2UgYXQgYSBwb2ludCB3aGVyZSB3ZSBoYWQgbm8K
-PiBzdXBwb3J0IGZvciBwb3dlciBtYW5hZ2VtZW50IGF0IGFsbC4gQnV0IEkgdGhpbmsgd2UndmUg
-Y29tZSBhIGxvbmcgd2F5Cj4gc2luY2UgdGhlbiwgYW5kIHdoaWxlIHdlIG1heSBzdGlsbCBoYXZl
-IHNvbWUgd2F5cyB0byBnbyBpbiBzb21lIGFyZWFzLAo+IHdlIGRvIGZhaXJseSBkZWNlbnQgcnVu
-dGltZSBQTSBtb3N0IG9mIHRoZSB0aW1lLCB0byB0aGUgcG9pbnQgd2hlcmUgSSBubwo+IGxvbmdl
-ciBzZWUgYW55IGJlbmVmaXRzIGluICFQTS4KCkknbSByZXF1ZXN0aW5nIFBNX0RFQlVHX0FMV0FZ
-U19PTiBvcHRpb24gdGhlbiEgRGlzYWJsaW5nIFBNIGlzIGEgdXNlZnVsIGRlYnVnIGZlYXR1cmUs
-IGl0IGNhbid0IGp1c3QgZ28gYXdheS4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1w
-cm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGlu
-Zm8vYWxzYS1kZXZlbAo=
+03.02.2019 17:47, Dmitry Osipenko пишет:
+> 01.02.2019 20:07, Sowjanya Komatineni пишет:
+>> This patch adds DMA support for Tegra I2C.
+>>
+>> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+>> transfer size of the max FIFO depth and DMA mode is used for
+>> transfer size higher than max FIFO depth to save CPU overhead.
+>>
+>> PIO mode needs full intervention of CPU to fill or empty FIFO's
+>> and also need to service multiple data requests interrupt for the
+>> same transaction. This adds delay between data bytes of the same
+>> transfer when CPU is fully loaded and some slave devices has
+>> internal timeout for no bus activity and stops transaction to
+>> avoid bus hang. DMA mode is helpful in such cases.
+>>
+>> DMA mode is also helpful for Large transfers during downloading or
+>> uploading FW over I2C to some external devices.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  [V9] : Rebased to 5.0-rc4
+>> 	Removed dependency of APB DMA in Kconfig and added conditional check
+>> 	in I2C driver to decide on using DMA mode.
+>> 	Changed back the allocation of dma buffer during i2c probe.
+>> 	Fixed FIFO triggers depending on DMA Vs PIO.
+>>  [V8] : Moved back dma init to i2c probe, removed ALL_PACKETS_XFER_COMPLETE
+>> 	interrupt and using PACKETS_XFER_COMPLETE interrupt only and some
+>> 	other fixes
+>> 	Updated Kconfig for APB_DMA dependency
+>>  [V7] : Same as V6
+>>  [V6] : Updated for proper buffer allocation/freeing, channel release.
+>> 	Updated to use exact xfer size for syncing dma buffer.
+>>  [V5] : Same as V4
+>>  [V4] : Updated to allocate DMA buffer only when DMA mode.
+>> 	Updated to fall back to PIO mode when DMA channel request or
+>> 	buffer allocation fails.
+>>  [V3] : Updated without additional buffer allocation.
+>>  [V2] : Updated based on V1 review feedback along with code cleanup for
+>> 	proper implementation of DMA.
+>>
+>>  drivers/i2c/busses/i2c-tegra.c | 368 +++++++++++++++++++++++++++++++++++++----
+>>  1 file changed, 335 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index 118b7023a0f4..ac8009c35863 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -8,6 +8,9 @@
+>>  
+>>  #include <linux/clk.h>
+>>  #include <linux/delay.h>
+>> +#include <linux/dmaengine.h>
+>> +#include <linux/dmapool.h>
+>> +#include <linux/dma-mapping.h>
+>>  #include <linux/err.h>
+>>  #include <linux/i2c.h>
+>>  #include <linux/init.h>
+>> @@ -44,6 +47,8 @@
+>>  #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
+>>  #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
+>>  #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
+>> +#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
+>> +#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
+>>  #define I2C_FIFO_STATUS				0x060
+>>  #define I2C_FIFO_STATUS_TX_MASK			0xF0
+>>  #define I2C_FIFO_STATUS_TX_SHIFT		4
+>> @@ -125,6 +130,19 @@
+>>  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
+>>  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
+>>  
+>> +/* Packet header size in bytes */
+>> +#define I2C_PACKET_HEADER_SIZE			12
+>> +
+>> +#define DATA_DMA_DIR_TX				(1 << 0)
+>> +#define DATA_DMA_DIR_RX				(1 << 1)
+>> +
+>> +/*
+>> + * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
+>> + * above this, controller will use DMA to fill FIFO.
+>> + * MAX PIO len is 20 bytes excluding packet header.
+>> + */
+>> +#define I2C_PIO_MODE_MAX_LEN			32
+>> +
+>>  /*
+>>   * msg_end_type: The bus control which need to be send at end of transfer.
+>>   * @MSG_END_STOP: Send stop pulse at end of transfer.
+>> @@ -191,6 +209,7 @@ struct tegra_i2c_hw_feature {
+>>   * @fast_clk: clock reference for fast clock of I2C controller
+>>   * @rst: reset control for the I2C controller
+>>   * @base: ioremapped registers cookie
+>> + * @base_phys: Physical base address of the I2C controller
+>>   * @cont_id: I2C controller ID, used for packet header
+>>   * @irq: IRQ number of transfer complete interrupt
+>>   * @irq_disabled: used to track whether or not the interrupt is enabled
+>> @@ -204,6 +223,13 @@ struct tegra_i2c_hw_feature {
+>>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
+>>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
+>>   * @xfer_lock: lock to serialize transfer submission and processing
+>> + * @tx_dma_chan: DMA transmit channel
+>> + * @rx_dma_chan: DMA receive channel
+>> + * @dma_phys: handle to DMA resources
+>> + * @dma_buf: pointer to allocated DMA buffer
+>> + * @dma_buf_size: DMA buffer size
+>> + * @is_curr_dma_xfer: indicates active DMA transfer
+>> + * @dma_complete: DMA completion notifier
+>>   */
+>>  struct tegra_i2c_dev {
+>>  	struct device *dev;
+>> @@ -213,6 +239,7 @@ struct tegra_i2c_dev {
+>>  	struct clk *fast_clk;
+>>  	struct reset_control *rst;
+>>  	void __iomem *base;
+>> +	phys_addr_t base_phys;
+>>  	int cont_id;
+>>  	int irq;
+>>  	bool irq_disabled;
+>> @@ -226,6 +253,13 @@ struct tegra_i2c_dev {
+>>  	u16 clk_divisor_non_hs_mode;
+>>  	bool is_multimaster_mode;
+>>  	spinlock_t xfer_lock;
+>> +	struct dma_chan *tx_dma_chan;
+>> +	struct dma_chan *rx_dma_chan;
+>> +	dma_addr_t dma_phys;
+>> +	u32 *dma_buf;
+>> +	unsigned int dma_buf_size;
+>> +	bool is_curr_dma_xfer;
+>> +	struct completion dma_complete;
+>>  };
+>>  
+>>  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+>> @@ -294,6 +328,86 @@ static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
+>>  	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
+>>  }
+>>  
+>> +static void tegra_i2c_dma_complete(void *args)
+>> +{
+>> +	struct tegra_i2c_dev *i2c_dev = args;
+>> +
+>> +	complete(&i2c_dev->dma_complete);
+>> +}
+>> +
+>> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
+>> +{
+>> +	struct dma_async_tx_descriptor *dma_desc;
+>> +	enum dma_transfer_direction dir;
+>> +	struct dma_chan *chan;
+>> +
+>> +	dev_dbg(i2c_dev->dev, "starting DMA for length: %zu\n", len);
+>> +	reinit_completion(&i2c_dev->dma_complete);
+>> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
+>> +	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
+>> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
+>> +					       len, dir, DMA_PREP_INTERRUPT |
+>> +					       DMA_CTRL_ACK);
+>> +	if (!dma_desc) {
+>> +		dev_err(i2c_dev->dev, "failed to get DMA descriptor\n");
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	dma_desc->callback = tegra_i2c_dma_complete;
+>> +	dma_desc->callback_param = i2c_dev;
+>> +	dmaengine_submit(dma_desc);
+>> +	dma_async_issue_pending(chan);
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+>> +{
+>> +	struct dma_chan *dma_chan;
+>> +	u32 *dma_buf;
+>> +	dma_addr_t dma_phys;
+>> +	int err = 0;
+>> +
+>> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
+>> +		return -ENODEV;
+>> +
+>> +	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
+>> +	if (IS_ERR(dma_chan))
+>> +		return PTR_ERR(dma_chan);
+>> +
+>> +	i2c_dev->rx_dma_chan = dma_chan;
+>> +
+>> +	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
+>> +	if (IS_ERR(dma_chan)) {
+>> +		err = PTR_ERR(dma_chan);
+>> +		goto error;
+>> +	}
+>> +
+>> +	i2c_dev->tx_dma_chan = dma_chan;
+>> +
+>> +	dma_buf = dma_alloc_coherent(i2c_dev->dev,
+>> +				     i2c_dev->dma_buf_size, &dma_phys,
+>> +				     GFP_KERNEL | __GFP_NOWARN);
+>> +
+>> +	if (!dma_buf) {
+>> +		dev_err(i2c_dev->dev, "failed to allocate the DMA buffer\n");
+>> +		err = -ENOMEM;
+>> +		goto error;
+>> +	}
+>> +
+>> +	i2c_dev->dma_buf = dma_buf;
+>> +	i2c_dev->dma_phys = dma_phys;
+>> +	return 0;
+>> +
+>> +error:
+>> +	if (i2c_dev->tx_dma_chan)
+>> +		dma_release_channel(i2c_dev->tx_dma_chan);
+>> +
+>> +	if (i2c_dev->rx_dma_chan)
+>> +		dma_release_channel(i2c_dev->rx_dma_chan);
+>> +
+>> +	return err;
+>> +}
+>> +
+>>  static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+>>  {
+>>  	unsigned long timeout = jiffies + HZ;
+>> @@ -571,16 +685,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+>>  		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
+>>  	}
+>>  
+>> -	if (i2c_dev->hw->has_mst_fifo) {
+>> -		val = I2C_MST_FIFO_CONTROL_TX_TRIG(8) |
+>> -		      I2C_MST_FIFO_CONTROL_RX_TRIG(1);
+>> -		i2c_writel(i2c_dev, val, I2C_MST_FIFO_CONTROL);
+>> -	} else {
+>> -		val = 7 << I2C_FIFO_CONTROL_TX_TRIG_SHIFT |
+>> -			0 << I2C_FIFO_CONTROL_RX_TRIG_SHIFT;
+>> -		i2c_writel(i2c_dev, val, I2C_FIFO_CONTROL);
+>> -	}
+>> -
+>>  	err = tegra_i2c_flush_fifos(i2c_dev);
+>>  	if (err)
+>>  		goto err;
+>> @@ -660,25 +764,37 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>>  	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
+>>  		goto err;
+>>  
+>> -	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+>> -		if (i2c_dev->msg_buf_remaining)
+>> -			tegra_i2c_empty_rx_fifo(i2c_dev);
+>> -		else
+>> -			BUG();
+>> -	}
+>> +	if (!i2c_dev->is_curr_dma_xfer) {
+>> +		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+>> +			if (i2c_dev->msg_buf_remaining)
+>> +				tegra_i2c_empty_rx_fifo(i2c_dev);
+>> +			else
+>> +				BUG();
+>> +		}
+>>  
+>> -	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+>> -		if (i2c_dev->msg_buf_remaining)
+>> -			tegra_i2c_fill_tx_fifo(i2c_dev);
+>> -		else
+>> -			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
+>> +		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+>> +			if (i2c_dev->msg_buf_remaining)
+>> +				tegra_i2c_fill_tx_fifo(i2c_dev);
+>> +			else
+>> +				tegra_i2c_mask_irq(i2c_dev,
+>> +						   I2C_INT_TX_FIFO_DATA_REQ);
+>> +		}
+>>  	}
+>>  
+>>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+>>  	if (i2c_dev->is_dvc)
+>>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+>>  
+>> +	/*
+>> +	 * During message read XFER_COMPLETE interrupt is triggered prior to
+>> +	 * DMA completion and during message write XFER_COMPLETE interrupt is
+>> +	 * triggered after DMA completion.
+>> +	 * PACKETS_XFER_COMPLETE indicates completion of all bytes of transfer.
+>> +	 * so forcing msg_buf_remaining to 0 in DMA mode.
+>> +	 */
+>>  	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+>> +		if (i2c_dev->is_curr_dma_xfer)
+>> +			i2c_dev->msg_buf_remaining = 0;
+>>  		BUG_ON(i2c_dev->msg_buf_remaining);
+>>  		complete(&i2c_dev->msg_complete);
+>>  	}
+>> @@ -694,12 +810,69 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>>  	if (i2c_dev->is_dvc)
+>>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+>>  
+>> +	if (i2c_dev->is_curr_dma_xfer) {
+>> +		if (i2c_dev->msg_read)
+>> +			dmaengine_terminate_all(i2c_dev->rx_dma_chan);
+>> +		else
+>> +			dmaengine_terminate_all(i2c_dev->tx_dma_chan);
+>> +
+>> +		complete(&i2c_dev->dma_complete);
+>> +	}
+>> +
+>>  	complete(&i2c_dev->msg_complete);
+>>  done:
+>>  	spin_unlock(&i2c_dev->xfer_lock);
+>>  	return IRQ_HANDLED;
+>>  }
+>>  
+>> +static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
+>> +				       size_t len, int direction)
+>> +{
+>> +	u32 val, reg;
+>> +	u8 dma_burst = 0;
+>> +	struct dma_slave_config dma_sconfig;
+> 
+> This structure is allocated on stack, please initialize it to 0:
+> 
+> 	struct dma_slave_config dma_sconfig = { 0 };
+> 
+>> +	struct dma_chan *chan;
+>> +
+>> +	if (i2c_dev->hw->has_mst_fifo)
+>> +		reg = I2C_MST_FIFO_CONTROL;
+>> +	else
+>> +		reg = I2C_FIFO_CONTROL;
+>> +	val = i2c_readl(i2c_dev, reg);
+>> +
+>> +	if (len & 0xF)
+>> +		dma_burst = 1;
+>> +	else if (len & 0x10)
+>> +		dma_burst = 4;
+>> +	else
+>> +		dma_burst = 8;
+>> +
+>> +	if (direction == DATA_DMA_DIR_TX) {
+>> +		if (i2c_dev->hw->has_mst_fifo)
+>> +			val |= I2C_MST_FIFO_CONTROL_TX_TRIG(dma_burst);
+>> +		else
+>> +			val |= I2C_FIFO_CONTROL_TX_TRIG(dma_burst);
+>> +	} else {
+>> +		if (i2c_dev->hw->has_mst_fifo)
+>> +			val |= I2C_MST_FIFO_CONTROL_RX_TRIG(dma_burst);
+>> +		else
+>> +			val |= I2C_FIFO_CONTROL_RX_TRIG(dma_burst);
+>> +	}
+>> +	i2c_writel(i2c_dev, val, reg);
+>> +
+>> +	if (direction == DATA_DMA_DIR_TX) {
+>> +		dma_sconfig.dst_addr = i2c_dev->base_phys + I2C_TX_FIFO;
+>> +		dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+>> +		dma_sconfig.dst_maxburst = dma_burst;
+
+I know that APB DMA driver enables flow control based on the channels spec, but still won't hurt to explicitly show that channels are flow-controlled. Ideally APB DMA driver should respect the device_fc field.
+
+		dma_sconfig.device_fc = true;
+
+>> +	} else {
+>> +		dma_sconfig.src_addr = i2c_dev->base_phys + I2C_RX_FIFO;
+>> +		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+>> +		dma_sconfig.src_maxburst = dma_burst;
+
+		dma_sconfig.device_fc = true;
+
+>> +	}
+>> +
+>> +	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
+>> +	dmaengine_slave_config(chan, &dma_sconfig);
+>> +}
