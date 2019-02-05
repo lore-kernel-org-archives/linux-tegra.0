@@ -1,50 +1,41 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 00/46] 4.14.98-stable review
-Date: Tue, 5 Feb 2019 10:20:50 +0000
-Message-ID: <40f772ce-5b57-8ee0-5fc4-5cfab53ca06d@nvidia.com>
-References: <20190204103608.651205056@linuxfoundation.org>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH] ARM: tegra: enforce PM requirement
+Date: Tue, 5 Feb 2019 16:46:58 +0530
+Message-ID: <1549365418-26283-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: linux@armlinux.org.uk, jhogan@kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Drivers need to handle !PM case with work arounds for managing clocks
+and power explicitly, which is not really necessary when PM support on
+tegra is in good shape. In fact ARM 64-bit tegra platforms enforce PM
+support and there is no reason why this cannot be done for 32-bit.
 
-On 04/02/2019 10:36, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.98 release.
-> There are 46 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Feb  6 10:35:31 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.98-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-All tests are passing for Tegra ...
+This patch selects PM unconditionally and drivers can rely on runtime
+PM framework for clock and power management.
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
+---
+ arch/arm/mach-tegra/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Linux version:	4.14.98-rc1-g0576694
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 7f3b83e..51a8fa3 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -10,6 +10,7 @@ menuconfig ARCH_TEGRA
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select PINCTRL
++	select PM
+ 	select PM_OPP
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select RESET_CONTROLLER
 -- 
-nvpublic
+2.7.4
