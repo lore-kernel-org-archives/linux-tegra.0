@@ -1,93 +1,145 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2] i2c: of: Try to find an I2C adapter matching the parent
-Date: Tue, 5 Feb 2019 13:44:44 +0100
-Message-ID: <20190205124443.GF1045@kunai>
-References: <20190125131142.26837-1-thierry.reding@gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 4/5] phy: tegra: xusb: Add support for power supplies
+Date: Tue, 5 Feb 2019 18:25:04 +0530
+Message-ID: <7838bb0d-af30-e2dc-8bfd-e1256590f9d3@ti.com>
+References: <20190125112525.10697-1-thierry.reding@gmail.com>
+ <20190125112525.10697-4-thierry.reding@gmail.com>
+ <786247a4-81d1-9c2e-21b5-258dc818ccb9@nvidia.com>
+ <20190128080054.GB18124@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0221127097=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190125131142.26837-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tristan Bastian <tristan-c.bastian@gmx.de>, Vlado Plaga <rechner@vlado-do.de>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190128080054.GB18124@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, jckuo <jckuo@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
---===============0221127097==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3oCie2+XPXTnK5a5"
-Content-Disposition: inline
+On 28/01/19 1:30 PM, Thierry Reding wrote:
+> On Mon, Jan 28, 2019 at 03:22:09PM +0800, jckuo wrote:
+>> Hi Thierry,
+>>
+>> I think any non-zero return value of
+>> regulator_bulk_enable()/devm_regulator_bulk_get() means error.
+>>
+>> Thanks,
+>>
+>> JC
+> 
+> Theoretically I think only regulator_bulk_enable() could return a
+> positive value, but even so it never will in practice because all of the
+> regulator_enable() (see _regulator_enable()) calls will only ever return
+> negative error codes.
+> 
+> I can change this and resend if you have strong concerns about this
+> possibly missing legitimate error cases.
 
+All error codes are negative, so this is fine IMO.
 
---3oCie2+XPXTnK5a5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 25, 2019 at 02:11:42PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> If an I2C adapter doesn't match the provided device tree node, also try
-> matching the parent's device tree node. This allows finding an adapter
-> based on the device node of the parent device that was used to register
-> it.
->=20
-> This fixes a regression on Tegra124-based Chromebooks (Nyan) where the
-> eDP controller registers an I2C adapter that is used to read to EDID.
-> After commit 993a815dcbb2 ("dt-bindings: panel: Add missing .txt
-> suffix") this stopped working because the I2C adapter could no longer
-> be found. The approach in this patch fixes the regression without
-> introducing the issues that the above commit solved.
->=20
-> Fixes: 17ab7806de0c ("drm: don't link DP aux i2c adapter to the hardware =
-device node")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-Removed the duplicated Tested-by and applied to for-next, thanks!
-
-I applied to -next because I want this core change more regression
-testing in next. If this goes good, I will do a cleanup series to not
-use the of_node of the parent twice.
-
-
---3oCie2+XPXTnK5a5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZhTcACgkQFA3kzBSg
-KbY89Q/+ILjrajrZxtCSiotT7pK4eOQvpj0Xy7qx4oE3boyoZu1wXc2mF/vDCRDs
-yXc4KK2AP1naZryvB/zsMSwa+id7Hvne+VzZY5VIsl4jxw9IZMuF/hEXqnVQ6AnI
-Zs7SfwXwTEmT70a+231k3XsgCTRqtDKHli3mqPfKCBk9MLka+aHTbvNKgMmetLx5
-FipesTS8UEM8YsIWrjh4sgxK/pzZaDWrlq5ZOVSQYcdxON2mmWRYcFIMDX0VckHA
-Bth/8+Y/VoJI6yxyxQ9b3CalrDhvuOFsagQINa3SLld0TJR8Aa8xTnD4T888Ua4h
-39VLJzEvuEGkySbLEJtFUjC3HzfcWB3gCyzSr2eTwMx7dLqz1pB24/FslMgQb3lk
-NdBk445Kf0QC9ZjTuvzjvf0wI0Dm/6Pl74QgNmfeyn0MEuqsBrkcy5VwqgV3Hz0E
-oJwZ0qfdK28nvjYxASL/7QNIfsRBvOVXUqegprABqkC2RGbZvM2aLv1tiCBExQbs
-K5uEV2v6eYUcE4pacQv86fIsHmxuVXCvA4AnyQsBXHBcCtYciZtKEwWSpR/ZG62G
-xVif0FxsxJPl4sP43TW4M5QIwiZpbmPkQDYYcCP05kVDYmu3bk2U06QObGVljuop
-c8jtFnZ+yhV88SL3QblMjqn4eKuM7hUyoGG1LWASRxVe0o1qzA4=
-=J5TL
------END PGP SIGNATURE-----
-
---3oCie2+XPXTnK5a5--
-
---===============0221127097==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0221127097==--
+Thanks
+Kishon
+> 
+> Thierry
+> 
+>> On 1/25/19 7:25 PM, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> Support enabling various supplies needed to provide power to the PLLs
+>>> and logic used to drive the USB, PCI and SATA pads.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>   drivers/phy/tegra/xusb.c | 34 +++++++++++++++++++++++++++++++++-
+>>>   drivers/phy/tegra/xusb.h |  5 +++++
+>>>   2 files changed, 38 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+>>> index 57a2d08ef6da..e510629f4f1c 100644
+>>> --- a/drivers/phy/tegra/xusb.c
+>>> +++ b/drivers/phy/tegra/xusb.c
+>>> @@ -864,6 +864,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+>>>   	struct tegra_xusb_padctl *padctl;
+>>>   	const struct of_device_id *match;
+>>>   	struct resource *res;
+>>> +	unsigned int i;
+>>>   	int err;
+>>>   	/* for backwards compatibility with old device trees */
+>>> @@ -901,14 +902,38 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+>>>   		goto remove;
+>>>   	}
+>>> +	padctl->supplies = devm_kcalloc(&pdev->dev, padctl->soc->num_supplies,
+>>> +					sizeof(*padctl->supplies), GFP_KERNEL);
+>>> +	if (!padctl->supplies) {
+>>> +		err = -ENOMEM;
+>>> +		goto remove;
+>>> +	}
+>>> +
+>>> +	for (i = 0; i < padctl->soc->num_supplies; i++)
+>>> +		padctl->supplies[i].supply = padctl->soc->supply_names[i];
+>>> +
+>>> +	err = devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
+>>> +				      padctl->supplies);
+>>> +	if (err < 0) {
+>>> +		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
+>>> +		goto remove;
+>>> +	}
+>>> +
+>>>   	err = reset_control_deassert(padctl->rst);
+>>>   	if (err < 0)
+>>>   		goto remove;
+>>> +	err = regulator_bulk_enable(padctl->soc->num_supplies,
+>>> +				    padctl->supplies);
+>>> +	if (err < 0) {
+>>> +		dev_err(&pdev->dev, "failed to enable supplies: %d\n", err);
+>>> +		goto reset;
+>>> +	}
+>>> +
+>>>   	err = tegra_xusb_setup_pads(padctl);
+>>>   	if (err < 0) {
+>>>   		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
+>>> -		goto reset;
+>>> +		goto power_down;
+>>>   	}
+>>>   	err = tegra_xusb_setup_ports(padctl);
+>>> @@ -921,6 +946,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+>>>   remove_pads:
+>>>   	tegra_xusb_remove_pads(padctl);
+>>> +power_down:
+>>> +	regulator_bulk_disable(padctl->soc->num_supplies, padctl->supplies);
+>>>   reset:
+>>>   	reset_control_assert(padctl->rst);
+>>>   remove:
+>>> @@ -936,6 +963,11 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
+>>>   	tegra_xusb_remove_ports(padctl);
+>>>   	tegra_xusb_remove_pads(padctl);
+>>> +	err = regulator_bulk_disable(padctl->soc->num_supplies,
+>>> +				     padctl->supplies);
+>>> +	if (err < 0)
+>>> +		dev_err(&pdev->dev, "failed to disable supplies: %d\n", err);
+>>> +
+>>>   	err = reset_control_assert(padctl->rst);
+>>>   	if (err < 0)
+>>>   		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
+>>> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+>>> index bb60fc09c752..5d5d22f6cb41 100644
+>>> --- a/drivers/phy/tegra/xusb.h
+>>> +++ b/drivers/phy/tegra/xusb.h
+>>> @@ -370,6 +370,9 @@ struct tegra_xusb_padctl_soc {
+>>>   	} ports;
+>>>   	const struct tegra_xusb_padctl_ops *ops;
+>>> +
+>>> +	const char * const *supply_names;
+>>> +	unsigned int num_supplies;
+>>>   };
+>>>   struct tegra_xusb_padctl {
+>>> @@ -393,6 +396,8 @@ struct tegra_xusb_padctl {
+>>>   	unsigned int enable;
+>>>   	struct clk *clk;
+>>> +
+>>> +	struct regulator_bulk_data *supplies;
+>>>   };
+>>>   static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 value,
