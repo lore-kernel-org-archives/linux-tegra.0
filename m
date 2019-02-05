@@ -1,86 +1,102 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V11 3/5] i2c: tegra: Add DMA support
-Date: Tue, 5 Feb 2019 16:41:20 +0000
-Message-ID: <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V11 3/5] i2c: tegra: Add DMA support
+Date: Tue, 5 Feb 2019 19:54:15 +0300
+Message-ID: <fe894f51-b8fe-cd31-d0dc-feed8fb106cf@gmail.com>
 References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
  <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
  <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
+ <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
+In-Reply-To: <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBQbGVhc2UgdXNlICIuL3NjcmlwdHMvY2hlY2twYXRjaC5wbCAtLXN0cmljdCAqLnBhdGNoIiBh
-bmQgZml4IGFsbCBpdHMgY29tcGxhaW5zLCBidXQgb25seSB0aG9zZSB0aGF0IHJlYWxseSBtYWtl
-IHNlbnNlLiBGb3IgZXhhbXBsZSBpZ25vcmUgdGhlICJDSEVDSzogTGluZXMgc2hvdWxkIG5vdCBl
-bmQgd2l0aCBhICcoJyIgd2FybmluZ3MuIA0KPg0KPkhlcmUgY2hlY2twYXRjaCByZWNvbW1lbmRz
-IHRvIHVzZSB0aGUgQklUKCkgbWFjcm86DQo+DQo+IENIRUNLOiBQcmVmZXIgdXNpbmcgdGhlIEJJ
-VCBtYWNybw0KPiAjMzk0OiBGSUxFOiBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmM6MTM2
-Og0KPiArI2RlZmluZSBEQVRBX0RNQV9ESVJfVFggICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICgxIDw8IDApDQo+DQo+IENIRUNLOiBQcmVmZXIgdXNpbmcgdGhlIEJJVCBtYWNybw0KPiAj
-Mzk1OiBGSUxFOiBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmM6MTM3Og0KPiArI2RlZmlu
-ZSBEQVRBX0RNQV9ESVJfUlggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDEp
-DQoNCkkgdXNlZCBjaGVja3BhdGNoIHNjcmlwdCwgYW5kIGl0IGRpZG7igJl0IHNob3dlZCB0aGVz
-ZSBlcnJvcnMuIFByb2JhYmx5IGNoZWNrcGF0Y2ggc2NyaXB0IHZlcnNpb25zIGFyZSBkaWZmZXJl
-bnQuIEkgYW0gdXNpbmcgdGhlIG9uZSBmcm9tIDUuMC1yYzQNCg0KPiArc3RhdGljIGludCB0ZWdy
-YV9pMmNfZG1hX3N1Ym1pdChzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2Rldiwgc2l6ZV90IA0K
-PiArbGVuKSB7DQo+ICsJc3RydWN0IGRtYV9hc3luY190eF9kZXNjcmlwdG9yICpkbWFfZGVzYzsN
-Cj4gKwllbnVtIGRtYV90cmFuc2Zlcl9kaXJlY3Rpb24gZGlyOw0KPiArCXN0cnVjdCBkbWFfY2hh
-biAqY2hhbjsNCj4gKw0KPiArCWRldl9kYmcoaTJjX2Rldi0+ZGV2LCAic3RhcnRpbmcgRE1BIGZv
-ciBsZW5ndGg6ICV6dVxuIiwgbGVuKTsNCj4gKwlyZWluaXRfY29tcGxldGlvbigmaTJjX2Rldi0+
-ZG1hX2NvbXBsZXRlKTsNCj4gKwlkaXIgPSBpMmNfZGV2LT5tc2dfcmVhZCA/IERNQV9ERVZfVE9f
-TUVNIDogRE1BX01FTV9UT19ERVY7DQo+ICsJY2hhbiA9IGkyY19kZXYtPm1zZ19yZWFkID8gaTJj
-X2Rldi0+cnhfZG1hX2NoYW4gOiBpMmNfZGV2LT50eF9kbWFfY2hhbjsNCj4gKwlkbWFfZGVzYyA9
-IGRtYWVuZ2luZV9wcmVwX3NsYXZlX3NpbmdsZShjaGFuLCBpMmNfZGV2LT5kbWFfcGh5cywNCj4g
-KwkJCQkJICAgICAgIGxlbiwgZGlyLCBETUFfUFJFUF9JTlRFUlJVUFQgfA0KPiArCQkJCQkgICAg
-ICAgRE1BX0NUUkxfQUNLKTsNCj4gKwlpZiAoIWRtYV9kZXNjKSB7DQo+ICsJCWRldl9lcnIoaTJj
-X2Rldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCBETUEgZGVzY3JpcHRvclxuIik7DQo+ICsJCXJldHVy
-biAtRUlPOw0KPg0KPiBSZXR1cm5pbmcgdGhlIC1FSU8gaXMgdGVjaG5pY2FsbHkgaW5jb3JyZWN0
-IGJlY2F1c2UgdGhlcmUgaXMgbm8gaGFyZHdhcmUgZmFpbHVyZSBoZXJlLiBUaGUgZG1hZW5naW5l
-X3ByZXBfc2xhdmVfc2luZ2xlKCkgbWVyZWx5IGFsbG9jYXRlcyB0aGUgRE1BIGRlc2NyaXB0b3Is
-IGhlbmNlIGl0IHNob3VsZCBiZSBlaXRoZXIgLUVJTlZBTCAocHJlZmVyYWJseSkgb3IgYXQgbGVh
-c3QgLUVOT01FTS4NCj4NCj4gT2gsIGFub3RoZXIgaW1wb3J0YW50IG1vbWVudCBpcyB0aGF0IHBo
-eXNpY2FsbHkgY29udGlndW91cyBkbWFfYnVmIGFsbG9jYXRpb24gaXNuJ3QgZ3VhcmFudGVlZCBi
-eSB0aGUgRE1BIEFQSS4gVGhpcyBtYXkgYmVjb21lIGEgcHJvYmxlbSBmb3IgVDE4NisgdGhhdCBj
-YW4gdHJhbnNmZXIgdXAgdG8gNjRLLiBXZSBuZWVkIHRvIGVuZm9yY2UgdGhlIGNvbnRpZ3VvdXMt
-YWxsb2NhdGlvbiByZXF1aXJlbWVudCBieSB1c2luZyA+IGRtYV9hbGxvY19hdHRycyhETUFfQVRU
-Ul9GT1JDRV9DT05USUdVT1VTKSBpbnN0ZWFkIG9mIHRoZSBkbWFfYWxsb2NfY29oZXJlbnQoKSwg
-cGxlYXNlIHNlZSBteSBvdGhlciBjb21tZW50IGJlbG93Lg0KDQpGYWlsdXJlIHJldHVybmVkIGZy
-b20gZG1hIHN1Ym1pdCB3aWxsIGJlIHJldHVybmVkIGJ5IGkyYyB4ZmVyIG1lc3NhZ2UgYW5kIHVz
-aW5nIEVJTyBoZXJlIGFzIGRtYWVuZ2luZV9wcmVwX3NsYXZlX3NpbmdsZSBjYW4gcmVzdWx0IGlu
-IG11bHRpcGxlIGZhaWx1cmVzIChpbnZhbGlkIHNlZ21lbnQgbGVuZ3RoLCAgZmFpbGluZyBkbWEg
-ZGVzYyBhbGxvY2F0aW9uLCBkbWEgbGVuZ3RoL21lbW9yeSBjaGVjaywgbm8gYXZhaWxhYmxlIGRt
-YSBzZy1yZWcpDQpBcyBwZXIgSTJDIGZhdWx0IGNvZGVzLCBFSU8gY2FuIGJlIHVzZWQgaW5kaWNh
-dGluZyB3aGVuIHNvbWV0aGluZyB3ZW50IHdyb25nIGR1cmluZyBwZXJmb3JtaW5nIElPIG9wZXJh
-dGlvbi4NCg0KVXNpbmcgRUlOVkFMIGRvZXNu4oCZdCBzdWl0IGlmIGZhaWx1cmUgaXMgZnJvbSBh
-bGxvY2F0aW9uIGFuZCB1c2luZyBFTk9NRU0gZG9lc27igJl0IHN1aXQgaWYgZmFpbHVyZSBpcyBk
-dWUgdG8gbGVuZ3RoL21lbW9yeSwgc2VnbWVudCBsZW5ndGggY2hlY2suDQoNCldpbGwgdXNlIEZP
-UkNFX0NPTlRJR1VPVVMuDQoNCg0KDQo+ID4gKwlkbWFfYnVmID0gZG1hX2FsbG9jX2NvaGVyZW50
-KGkyY19kZXYtPmRldiwgaTJjX2Rldi0+ZG1hX2J1Zl9zaXplLA0KPiA+ICsJCQkJICAgICAmZG1h
-X3BoeXMsIEdGUF9LRVJORUwgfCBfX0dGUF9OT1dBUk4pOw0KPiANCj4gUGxlYXNlIHVzZSBkbWFf
-YWxsb2NfYXR0cnMoKSBpbnN0ZWFkIG9mIGRtYV9hbGxvY19jb2hlcmVudCgpIGJlY2F1c2UgaXQg
-Y291bGQgcmV0dXJuIGEgc3BhcnNlIGFsbG9jYXRpb24uIFRoaXMgaXMgZXNwZWNpYWxseSB0cm91
-Ymxlc29tZSA+IGZvciBBUk02NCBwbGF0Zm9ybXMgYmVjYXVzZSBJT01NVV9ET01BSU5fRE1BIGlz
-IHVzZWQgYnkgZGVmYXVsdCB0aGVyZS4gV2UgbmVlZCB0byBleHBsaWNpdGx5IGFzayBmb3IgdGhl
-IGNvbnRpZ3VvdXMgYWxsb2NhdGlvbjoNCj4gDQo+DQo+CWRtYV9idWYgPSBkbWFfYWxsb2NfYXR0
-cnMoaTJjX2Rldi0+ZGV2LCBpMmNfZGV2LT5kbWFfYnVmX3NpemUsDQo+CQkJCSAgJmRtYV9waHlz
-LCBHRlBfS0VSTkVMLA0KPgkJCQkgIERNQV9BVFRSX0ZPUkNFX0NPTlRJR1VPVVMgfA0KPgkJCQkg
-IERNQV9BVFRSX05PX1dBUk4pOw0KPg0KV2lsbCBzd2l0Y2ggdG8gdXNlIGRtYV9hbGxvY19hdHRy
-cyB3aXRoIENPTlRJR1VPVVMNCj4NCj4NCj4NCj4NCj4gQ0hFQ0s6IG11bHRpcGxlIGFzc2lnbm1l
-bnRzIHNob3VsZCBiZSBhdm9pZGVkDQo+ICM3NjM6IEZJTEU6IGRyaXZlcnMvaTJjL2J1c3Nlcy9p
-MmMtdGVncmEuYzo5OTM6DQo+ICsgICAgICAgICAgICAgICBpMmNfZGV2LT5pc19jdXJyX2RtYV94
-ZmVyID0gZG1hID0gZmFsc2UNCj4NCj4gQ0hFQ0s6IFVubmVjZXNzYXJ5IHBhcmVudGhlc2VzIGFy
-b3VuZCAnaTJjX2Rldi0+bXNnX2VyciA9PSBJMkNfRVJSX05PTkUnDQo+ICM4Nzc6IEZJTEU6IGRy
-aXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYzoxMTA1Og0KPiArICAgICAgICAgICAgICAgaWYg
-KGkyY19kZXYtPm1zZ19yZWFkICYmIChpMmNfZGV2LT5tc2dfZXJyID09IA0KPiArIEkyQ19FUlJf
-Tk9ORSkpIHsNCj4gQ0hFQ0s6IEFsaWdubWVudCBzaG91bGQgbWF0Y2ggb3BlbiBwYXJlbnRoZXNp
-cw0KPiAjODgzOiBGSUxFOiBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmM6MTExMToNCj4g
-DQo+DQpTb21laG93IENoZWNrc2NyaXB0IGRpZG7igJl0IHNob3dlZCB0aGlzIGVpdGhlciB3aGVu
-IEkgcmFuLiBQcm9iYWJseSBkdWUgdG8gZGlmZiBzY3JpcHQgdmVyc2lvbnMuIEkgYW0gdXNpbmcg
-dGhlIG9uZSBmcm9tIDUuMC1yYzQuDQoNCg==
+05.02.2019 19:41, Sowjanya Komatineni пишет:
+>> Please use "./scripts/checkpatch.pl --strict *.patch" and fix all its complains, but only those that really make sense. For example ignore the "CHECK: Lines should not end with a '('" warnings. 
+>>
+>> Here checkpatch recommends to use the BIT() macro:
+>>
+>> CHECK: Prefer using the BIT macro
+>> #394: FILE: drivers/i2c/busses/i2c-tegra.c:136:
+>> +#define DATA_DMA_DIR_TX                                (1 << 0)
+>>
+>> CHECK: Prefer using the BIT macro
+>> #395: FILE: drivers/i2c/busses/i2c-tegra.c:137:
+>> +#define DATA_DMA_DIR_RX                                (1 << 1)
+> 
+> I used checkpatch script, and it didn’t showed these errors. Probably checkpatch script versions are different. I am using the one from 5.0-rc4
+
+Please notice the "--strict" flag, it makes checkpatch to report some extra warnings. 
+
+>> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t 
+>> +len) {
+>> +	struct dma_async_tx_descriptor *dma_desc;
+>> +	enum dma_transfer_direction dir;
+>> +	struct dma_chan *chan;
+>> +
+>> +	dev_dbg(i2c_dev->dev, "starting DMA for length: %zu\n", len);
+>> +	reinit_completion(&i2c_dev->dma_complete);
+>> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
+>> +	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
+>> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
+>> +					       len, dir, DMA_PREP_INTERRUPT |
+>> +					       DMA_CTRL_ACK);
+>> +	if (!dma_desc) {
+>> +		dev_err(i2c_dev->dev, "failed to get DMA descriptor\n");
+>> +		return -EIO;
+>>
+>> Returning the -EIO is technically incorrect because there is no hardware failure here. The dmaengine_prep_slave_single() merely allocates the DMA descriptor, hence it should be either -EINVAL (preferably) or at least -ENOMEM.
+>>
+>> Oh, another important moment is that physically contiguous dma_buf allocation isn't guaranteed by the DMA API. This may become a problem for T186+ that can transfer up to 64K. We need to enforce the contiguous-allocation requirement by using > dma_alloc_attrs(DMA_ATTR_FORCE_CONTIGUOUS) instead of the dma_alloc_coherent(), please see my other comment below.
+> 
+> Failure returned from dma submit will be returned by i2c xfer message and using EIO here as dmaengine_prep_slave_single can result in multiple failures (invalid segment length,  failing dma desc allocation, dma length/memory check, no available dma sg-reg)
+> As per I2C fault codes, EIO can be used indicating when something went wrong during performing IO operation.
+
+Sounds wrong, IO failure means that error comes from hardware. In this case it comes from software.
+
+> Using EINVAL doesn’t suit if failure is from allocation and using ENOMEM doesn’t suit if failure is due to length/memory, segment length check.
+
+-EINVAL is the universal error code, suitable for such cases. We are expecting that dma_desc is not NULL, and it is the invalid value from our perspective if dma_desc is NULL. 
+
+> Will use FORCE_CONTIGUOUS.
+> 
+> 
+> 
+>>> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
+>>> +				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
+>>
+>> Please use dma_alloc_attrs() instead of dma_alloc_coherent() because it could return a sparse allocation. This is especially troublesome > for ARM64 platforms because IOMMU_DOMAIN_DMA is used by default there. We need to explicitly ask for the contiguous allocation:
+>>
+>>
+>> 	dma_buf = dma_alloc_attrs(i2c_dev->dev, i2c_dev->dma_buf_size,
+>> 				  &dma_phys, GFP_KERNEL,
+>> 				  DMA_ATTR_FORCE_CONTIGUOUS |
+>> 				  DMA_ATTR_NO_WARN);
+>>
+> Will switch to use dma_alloc_attrs with CONTIGUOUS
+>>
+>>
+>>
+>>
+>> CHECK: multiple assignments should be avoided
+>> #763: FILE: drivers/i2c/busses/i2c-tegra.c:993:
+>> +               i2c_dev->is_curr_dma_xfer = dma = false
+>>
+>> CHECK: Unnecessary parentheses around 'i2c_dev->msg_err == I2C_ERR_NONE'
+>> #877: FILE: drivers/i2c/busses/i2c-tegra.c:1105:
+>> +               if (i2c_dev->msg_read && (i2c_dev->msg_err == 
+>> + I2C_ERR_NONE)) {
+>> CHECK: Alignment should match open parenthesis
+>> #883: FILE: drivers/i2c/busses/i2c-tegra.c:1111:
+>>
+>>
+> Somehow Checkscript didn’t showed this either when I ran. Probably due to diff script versions. I am using the one from 5.0-rc4.
+> 
+
+Please use the "--strict" flag for checkpatch, it will show this warning.
