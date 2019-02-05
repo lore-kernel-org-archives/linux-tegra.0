@@ -1,102 +1,143 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V11 3/5] i2c: tegra: Add DMA support
-Date: Tue, 5 Feb 2019 19:54:15 +0300
-Message-ID: <fe894f51-b8fe-cd31-d0dc-feed8fb106cf@gmail.com>
-References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
- <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
- <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
- <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH] reset: Don't WARN if trying to get a used reset control
+Date: Tue, 05 Feb 2019 19:05:41 +0100
+Message-ID: <1549389941.3929.14.camel@pengutronix.de>
+References: <20190125101554.5947-1-thierry.reding@gmail.com>
+         <1548674808.6421.3.camel@pengutronix.de> <20190128145836.GA31317@ulmo>
+         <1548849808.3939.7.camel@pengutronix.de> <20190201140025.GB12829@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Language: en-US
+In-Reply-To: <20190201140025.GB12829@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-05.02.2019 19:41, Sowjanya Komatineni пишет:
->> Please use "./scripts/checkpatch.pl --strict *.patch" and fix all its complains, but only those that really make sense. For example ignore the "CHECK: Lines should not end with a '('" warnings. 
->>
->> Here checkpatch recommends to use the BIT() macro:
->>
->> CHECK: Prefer using the BIT macro
->> #394: FILE: drivers/i2c/busses/i2c-tegra.c:136:
->> +#define DATA_DMA_DIR_TX                                (1 << 0)
->>
->> CHECK: Prefer using the BIT macro
->> #395: FILE: drivers/i2c/busses/i2c-tegra.c:137:
->> +#define DATA_DMA_DIR_RX                                (1 << 1)
+Hi Thierry,
+
+On Fri, 2019-02-01 at 15:00 +0100, Thierry Reding wrote:
+[...]
+> It sounds pretty good and elegant actually. Let me try to restate to see
+> if I understand correctly:
 > 
-> I used checkpatch script, and it didn’t showed these errors. Probably checkpatch script versions are different. I am using the one from 5.0-rc4
+> So basically what you're saying is that we would be changing the
+> definition of exclusive resets to make them exclusive in terms of usage
+> rather than rejecting to acquire them multiple times, right? So we would
+> reinstate the possibility to request exclusive resets from multiple
+> sources, but add an _acquire()/_release() protocol to make sure the
+> users don't get in each other's way.
 
-Please notice the "--strict" flag, it makes checkpatch to report some extra warnings. 
+Yes. Though drivers currently expect that reset_control_get_exclusive
+returns 'acquired' reset lines, so that has to stay. This method should
+continue to fail if the same reset line is already acquired somewhere
+else.
 
->> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t 
->> +len) {
->> +	struct dma_async_tx_descriptor *dma_desc;
->> +	enum dma_transfer_direction dir;
->> +	struct dma_chan *chan;
->> +
->> +	dev_dbg(i2c_dev->dev, "starting DMA for length: %zu\n", len);
->> +	reinit_completion(&i2c_dev->dma_complete);
->> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
->> +	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
->> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
->> +					       len, dir, DMA_PREP_INTERRUPT |
->> +					       DMA_CTRL_ACK);
->> +	if (!dma_desc) {
->> +		dev_err(i2c_dev->dev, "failed to get DMA descriptor\n");
->> +		return -EIO;
->>
->> Returning the -EIO is technically incorrect because there is no hardware failure here. The dmaengine_prep_slave_single() merely allocates the DMA descriptor, hence it should be either -EINVAL (preferably) or at least -ENOMEM.
->>
->> Oh, another important moment is that physically contiguous dma_buf allocation isn't guaranteed by the DMA API. This may become a problem for T186+ that can transfer up to 64K. We need to enforce the contiguous-allocation requirement by using > dma_alloc_attrs(DMA_ATTR_FORCE_CONTIGUOUS) instead of the dma_alloc_coherent(), please see my other comment below.
+There could be a new request method (for lack of a better idea,
+for example: reset_control_get_exclusive_released) to request an
+initially released reset control. That method would not fail if the same
+reset line is already requested and acquired elsewhere.
+
+> I had initially thought that this would have to be some other type of
+> reset (something between exclusive and shared) to avoid suprising the
+> current users of exclusive resets. However, on second thought, I don't
+> think that would be necessary. Given the WARN_ON, all users of exclusive
+> resets should at this point be truly exclusive and would therefore
+> continue to work normally.
+
+I agree. But there must be no changes in behaviour for drivers that keep
+requesting exclusive resets and never all _acquire()/_release().
+
+> One problematic case that comes to mind is how currently exclusive reset
+> controls will know that reset_control_assert() is safe to use if they
+> don't use reset_control_acquire() first.
+
+Drivers that never call _acquire()/_release() must continue to work as
+they are, so exclusive reset controls have to be acquired by default.
+
+> Perhaps this is what you meant when you said:
+>
+> > That would also mean we'd have to add a way for the power domain drivers
+> > to request the reset control in the "released/don't care" state
+> > initially.
+
+This is a consequence of the above. I thought that if
+reset_control_get_exclusive implicitly acquires the reset, there can't
+be two controls requested for the same reset line without another
+request method that returns its reset control in a 'released' state.
+For the power domain use case this does not seem to be necessary.
+
+> I don't think we actually need that for power domains, because they will
+> typically be enabled over the duration of a device's driver's probe
+> anyway. So I think this would work:
+
+Yes, since the driver that yields its reset line to the power domain
+driver dependsa on the power domain, by definition the power domain
+probes first and thus has the opportunity to request the reset control
+first and then immediately release it so that the other driver can be
+probed.
+
+> 	power domains:
 > 
-> Failure returned from dma submit will be returned by i2c xfer message and using EIO here as dmaengine_prep_slave_single can result in multiple failures (invalid segment length,  failing dma desc allocation, dma length/memory check, no available dma sg-reg)
-> As per I2C fault codes, EIO can be used indicating when something went wrong during performing IO operation.
-
-Sounds wrong, IO failure means that error comes from hardware. In this case it comes from software.
-
-> Using EINVAL doesn’t suit if failure is from allocation and using ENOMEM doesn’t suit if failure is due to length/memory, segment length check.
-
--EINVAL is the universal error code, suitable for such cases. We are expecting that dma_desc is not NULL, and it is the invalid value from our perspective if dma_desc is NULL. 
-
-> Will use FORCE_CONTIGUOUS.
+> 		power_off()
+> 		{
+> 			reset_control_acquire();
+> 			reset_control_assert();
+> 		}
 > 
+> 		power_on()
+> 		{
+> 			reset_control_deassert();
+> 			reset_control_release();
+> 		}
 > 
+> 	SOR:
 > 
->>> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
->>> +				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
->>
->> Please use dma_alloc_attrs() instead of dma_alloc_coherent() because it could return a sparse allocation. This is especially troublesome > for ARM64 platforms because IOMMU_DOMAIN_DMA is used by default there. We need to explicitly ask for the contiguous allocation:
->>
->>
->> 	dma_buf = dma_alloc_attrs(i2c_dev->dev, i2c_dev->dma_buf_size,
->> 				  &dma_phys, GFP_KERNEL,
->> 				  DMA_ATTR_FORCE_CONTIGUOUS |
->> 				  DMA_ATTR_NO_WARN);
->>
-> Will switch to use dma_alloc_attrs with CONTIGUOUS
->>
->>
->>
->>
->> CHECK: multiple assignments should be avoided
->> #763: FILE: drivers/i2c/busses/i2c-tegra.c:993:
->> +               i2c_dev->is_curr_dma_xfer = dma = false
->>
->> CHECK: Unnecessary parentheses around 'i2c_dev->msg_err == I2C_ERR_NONE'
->> #877: FILE: drivers/i2c/busses/i2c-tegra.c:1105:
->> +               if (i2c_dev->msg_read && (i2c_dev->msg_err == 
->> + I2C_ERR_NONE)) {
->> CHECK: Alignment should match open parenthesis
->> #883: FILE: drivers/i2c/busses/i2c-tegra.c:1111:
->>
->>
-> Somehow Checkscript didn’t showed this either when I ran. Probably due to diff script versions. I am using the one from 5.0-rc4.
+> 		runtime_suspend()
+> 		{
+> 			reset_control_assert();
+> 			reset_control_release();
+> 		}
 > 
+> 		runtime_resume()
+> 		{
+> 			reset_control_acquire();
+> 			reset_control_deassert();
+> 		}
 
-Please use the "--strict" flag for checkpatch, it will show this warning.
+If the reset line is kept asserted while the power domain is turned off,
+it could indeed stay acquired by the power domain.
+
+> Hm... actually this means that power domains would have to request the
+> reset controls and call reset_control_acquire() during probe. That way
+> when the domain is powered on it will release the reset and free it up
+> for the SOR driver to use.
+
+If you can guarantee that the power domain is powered up and releases
+the reset control before the SOR driver tries to request the reset line,
+that would work.
+
+> This seems right because it also happens to work from a runtime PM
+> sequencing point of view.
+> 
+> I think the problem for single-user exclusive reset controls could be
+> solved by making use of the reference counting that's already used by
+> shared resets. We should be able to go ahead and use the reference
+> counting in general, and the acquire()/release() dance would only have
+> to be enforced when the reference count is > 1.
+
+I'm not sure I understand what you mean by making use of the shared
+resets' refcounting. I suppose you could check the reset_control's
+refcnt to determine whether there are other users. Or did you want to
+repurpose deassert_count?
+
+> I'd probably have to prototype this to get a clearer picture of this,
+> but I think this is very promising.
+> 
+> Does the above sound about right?
+
+Apart from the last part, yes.
+
+regards
+Philipp
