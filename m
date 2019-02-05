@@ -1,41 +1,77 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] ARM: tegra: enforce PM requirement
-Date: Tue, 5 Feb 2019 16:46:58 +0530
-Message-ID: <1549365418-26283-1-git-send-email-spujar@nvidia.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
+Date: Tue, 05 Feb 2019 12:34:46 +0100
+Message-ID: <4564414.Hi6AUZdI4M@aspire.rjw.lan>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com> <e7597220-2be7-ca29-50b7-c515c06cbed7@nvidia.com> <80a45aa3-8a22-959c-0c73-03ad2d6b1f8c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <80a45aa3-8a22-959c-0c73-03ad2d6b1f8c@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux@armlinux.org.uk, jhogan@kernel.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Sameer Pujar <spujar@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Takashi Iwai <tiwai@suse.de>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, mkumard@nvidia.com, rlokhande@nvidia.com, sharadg@nvidia.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Drivers need to handle !PM case with work arounds for managing clocks
-and power explicitly, which is not really necessary when PM support on
-tegra is in good shape. In fact ARM 64-bit tegra platforms enforce PM
-support and there is no reason why this cannot be done for 32-bit.
+On Monday, February 4, 2019 11:04:50 AM CET Jon Hunter wrote:
+> 
+> On 04/02/2019 08:16, Sameer Pujar wrote:
+> 
+> ...
+> 
+> > Objective is to have things working with or without CONFIG_PM enabled.
+> > From previous comments and discussions it appears that there is mixed
+> > response
+> > for calling hda_tegra_runtime_resume() or runtime PM APIs in probe()
+> > call. Need
+> > to have consensus regarding the best practice to be followed, which
+> > would eventually
+> > can be used in other drivers too.
+> > 
+> > Rafael is suggesting to use CONFIG_PM check to do manual setup or
+> > runtime PM setup in probe,
+> > which would bring back the earlier above mentioned concern.
+> > 
+> > if (IS_ENABLED(CONFIG_PM)) {
+> > do setup based on pm-runtime
+> > } else {
+> >     do manual setup
+> > }
+> > Both if/else might end up doing the same here.
+> > Do we really need CONFIG_PM check here?
+> > 
+> > Instead does below proposal appear fine?
+> > 
+> > probe() {
+> >     hda_tegra_enable_clock();
+> > }
+> > 
+> > probe_work() {
+> >     /* hda setup */
+> >     . . .
+> >     pm_runtime_set_active(); /* initial state as active */
+> >     pm_runtime_enable();
+> >     return;
+> > }
+> 
+> I believe that this still does not work, because if there is a
+> power-domain that needs to be turned on, this does not guarantee this.
+> So I think that you need to call pm_runtime_get ...
+> 
+>  probe() {
+>  	if (!IS_ENABLED(CONFIG_PM))
+>  		hda_tegra_enable_clock();
+>  }
+> 
 
-This patch selects PM unconditionally and drivers can rely on runtime
-PM framework for clock and power management.
+But alas, there are no PM domains with CONFIG_PM unset.
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
----
- arch/arm/mach-tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+CONFIG_PM unset means that the *driver* has to know how to turn on the
+device and that has to be sufficient.
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 7f3b83e..51a8fa3 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -10,6 +10,7 @@ menuconfig ARCH_TEGRA
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select PINCTRL
-+	select PM
- 	select PM_OPP
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
--- 
-2.7.4
+Which basically is my point when I'm saying that this information is
+not available to the core and it cannot do anything to handle this
+case without the extra knowledge.
+
+Thanks,
+Rafael
