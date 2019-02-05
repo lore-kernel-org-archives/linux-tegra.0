@@ -1,185 +1,65 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
-Date: Mon, 4 Feb 2019 21:46:29 +0300
-Message-ID: <081d4eeb-424a-f448-cc06-e16a483e9287@gmail.com>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
- <CAJZ5v0hezV7et3VgD7yHa8MLiP0z3YtJ9stwSQL54-tyz_VXkQ@mail.gmail.com>
- <20190131143024.GO23438@ulmo> <2034694.JE9CgBysmF@aspire.rjw.lan>
- <20190204084555.GF19087@ulmo>
- <07d58962-4c49-0575-2f95-4c885998bb52@nvidia.com>
- <20190204110510.GA10412@ulmo>
- <f0bdcc21-efca-4d04-c7ec-953ec3d87031@gmail.com>
- <20190204140024.GJ10412@ulmo>
- <ef8cef12-12d5-4729-b603-9f0c6c0c0865@gmail.com>
- <20190204161736.GA25476@ulmo>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V10 1/5] i2c: tegra: sort all the include headers alphabetically
+Date: Mon, 4 Feb 2019 17:29:23 -0800
+Message-ID: <1549330167-8690-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190204161736.GA25476@ulmo>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Takashi Iwai <tiwai@suse.de>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Sameer Pujar <spujar@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, mkumard@nvidia.com, rlokhande@nvidia.com, sharadg@nvidia.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-04.02.2019 19:17, Thierry Reding пишет:
-> On Mon, Feb 04, 2019 at 05:28:23PM +0300, Dmitry Osipenko wrote:
->> 04.02.2019 17:00, Thierry Reding пишет:
->>> On Mon, Feb 04, 2019 at 03:03:49PM +0300, Dmitry Osipenko wrote:
->>>> 04.02.2019 14:05, Thierry Reding пишет:
->>>>> On Mon, Feb 04, 2019 at 09:53:32AM +0000, Jon Hunter wrote:
->>>>>>
->>>>>>
->>>>>> On 04/02/2019 08:45, Thierry Reding wrote:
->>>>>>
->>>>>> ...
->>>>>>
->>>>>>> The idea was, as I was saying below, to reuse dev_pm_ops even if
->>>>>>> !CONFIG_PM. So pm_runtime_enable() could be something like this:
->>>>>>>
->>>>>>> 	pm_runtime_enable(dev)
->>>>>>> 	{
->>>>>>> 		if (!CONFIG_PM)
->>>>>>> 			if (dev->pm_ops->resume)
->>>>>>> 				dev->pm_ops->resume(dev);
->>>>>>>
->>>>>>> 		...
->>>>>>> 	}
->>>>>>>
->>>>>>> But that's admittedly somewhat of a stretch. This could of course be
->>>>>>> made somewhat nicer by adding an explicit variant, say:
->>>>>>>
->>>>>>> 	pm_runtime_enable_foo(dev)
->>>>>>> 	{
->>>>>>> 		if (!CONFIG_PM && dev->pm_ops->resume)
->>>>>>> 			return dev->pm_ops->resume(dev);
->>>>>>>
->>>>>>> 		return 0;
->>>>>>> 	}
->>>>>>>
->>>>>>> Maybe the fact that I couldn't come up with a good name is a good
->>>>>>> indication that this is a bad idea...
->>>>>>
->>>>>> How about some new APIs called ...
->>>>>>
->>>>>> pm_runtime_enable_get()
->>>>>> pm_runtime_enable_get_sync()
->>>>>> pm_runtime_put_disable() (implies a put_sync)
->>>>>>
->>>>>> ... and in these APIs we add ...
->>>>>>
->>>>>> pm_runtime_enable_get(dev)
->>>>>> {
->>>>>> 	if (!CONFIG_PM && dev->pm_ops->resume)
->>>>>> 		return dev->pm_ops->resume(dev);
->>>>>>
->>>>>> 	pm_runtime_enable(dev);
->>>>>> 	return pm_runtime_get(dev);
->>>>>> }
->>>>>
->>>>> Yeah, those sound sensible. I'm still a bit torn between this and just
->>>>> enforcing PM. At least on the display side I think we already require PM
->>>>> and with all the power domain work that you did we'd be much better off
->>>>> if we could just get rid of the !PM workarounds.
->>>>>
->>>>>>>>> This would be somewhat tricky because drivers
->>>>>>>>> usually use SET_RUNTIME_PM_OPS to populate the struct dev_pm_ops and
->>>>>>>>> that would result in an empty structure if !CONFIG_PM, but we could
->>>>>>>>> probably work around that by adding a __SET_RUNTIME_PM_OPS that would
->>>>>>>>> never be compiled out for this kind of case. Or such drivers could even
->>>>>>>>> manually set .runtime_suspend and .runtime_resume to make sure they're
->>>>>>>>> always populated.
->>>>>>>>>
->>>>>>>>> Another way out of this would be to make sure we never run into the case
->>>>>>>>> where runtime PM is disabled. If we always "select PM" on Tegra, then PM
->>>>>>>>> should always be available. But is it guaranteed that runtime PM for the
->>>>>>>>> devices is functional in that case? From a cursory look at the code it
->>>>>>>>> would seem that way.
->>>>>>>>
->>>>>>>> If you select PM, then all of the requisite code should be there.
->>>>>>>
->>>>>>> We do this on 64-bit ARM, but there had been some pushback when we had
->>>>>>> proposed to do the same thing on 32-bit ARM. I think there were two
->>>>>>> concerns:
->>>>>>>
->>>>>>> 	1) select PM would force the setting for all platforms on multi-
->>>>>>> 	   platforms builds
->>>>>>>
->>>>>>> 	2) prevents anyone from disabling PM for debugging purposes
->>>>>>>
->>>>>>> 1) no longer seems to be valid because Rockchip already selects PM
->>>>>>> unconditionally. I'm not sure if 2) is valid anymore either. I haven't
->>>>>>> run a build with !PM in a very long time and I wouldn't be surprised if
->>>>>>> that was completely broken.
->>>>>>>
->>>>>>> Maybe we need to try this again since a couple of years have elapsed and
->>>>>>> runtime PM support on Tegra is much more mature at this point.
->>>>>>>
->>>>>>>> Alternatively, you can make the driver depend on PM.
->>>>>>>
->>>>>>> That's probably the easiest way out, but to be honest I think I'd prefer
->>>>>>> to just enforce PM and keep things simple.
->>>>>>>
->>>>>>> Jon, any objections?
->>>>>>
->>>>>> None, but seems overkill just for this case.
->>>>>
->>>>> But that's precisely the point. It's not just about this case. We've
->>>>> already got some drivers where we do a similar dance just to be able to
->>>>> support the, let's admit it, exotic case where somebody turns off PM. I
->>>>> think supporting !PM might have made sense at a point where we had no
->>>>> support for power management at all. But I think we've come a long way
->>>>> since then, and while we may still have some ways to go in some areas,
->>>>> we do fairly decent runtime PM most of the time, to the point where I no
->>>>> longer see any benefits in !PM.
->>>>
->>>> I'm requesting PM_DEBUG_ALWAYS_ON option then! Disabling PM is a
->>>> useful debug feature, it can't just go away. 
->>>
->>> What is it about disabling PM that you consider useful? I can understand
->>> why you'd want that option if power management is broken, but as far as
->>> I can tell, power management on Tegra is in pretty good state, and it's
->>> more likely that !PM would actually be broken (though I haven't built a
->>> configuration like that in a couple of years, so I'm speculating). We
->>> already can't disable PM on 64-bit ARM, so I don't understand why 32-bit
->>> ARM should be treated any differently.
->>
->> Yes, I want an option for debugging of a broken PM. It doesn't matter
->> that there are no known PM-related issues on Tegra today, it could
->> become a problem tomorrow. Probably a kernel boot parameter like
->> pm_debug_always_on would suit even better here. 
->>
->> Or maybe PM API already provides such debug options and I'm just not
->> aware about them?
-> 
-> I'm not sure I understand what you're trying to do. If you want to use
-> !PM as a way to debug broken PM, how would that help? Presumably if you
-> disable !PM then the problem would be gone? In other words, in order to
-> reproduce a PM related issue don't you have to enable PM first?
+This patch sorts all the include headers alphabetically for the
+I2C Tegra driver.
 
-Disabling PM globally is one of first diagnostics steps, at least it gives an idea about source of a problem.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ [V9/V10] : Rebased to 5.0-rc4
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] : Added this in V2 to sort the headers in tegra I2C
 
-> I'm not aware of an alternate mechanism to force PM to off once built
-> into the kernel.
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-I think runtime PM could be disabled per-device. That's probably what tools like powertop use to tune power management.
-
->> Do you know what's the exact reason for ARM64 to not support !PM?
-> 
-> There's no reason per se not to support PM. It's just that at the time
-> we made the decision that we didn't want to. I vaguely remember that we
-> tried to do the same thing for 32-bit ARM, but at the time we would've
-> been the only platform to select PM, and that would've meant enabling
-> PM for all subarchitectures and therefore forcing PM in multi-platform
-> builds. Today if you build multi-platform kernels, at least Rockchip
-> will also forcibly enable PM for everyone.
-> 
-> I think you may also have objected at the time for similar reasons. But
-> this was a long time ago (at least 2 to 3 years I would guess) and much
-> has changed since then. Power management has gotten a lot better on
-> Tegra, to the point where we actually need it in order to properly
-> function. For example, Tegra DRM is not going to work with !PM because
-> we rely on runtime PM while disabling and enabling display pipelines.
-
-I also know that people are disabling PM for performance reasons, sometime it's more important to reduce system's response latency than to care about power savings. But that probably not very relevant to Tegra usages. Okay, I guess in general it should be fine to enforce PM requirement and improve debug-ability later on by as-needed basis.
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c77adbbea0c7..79c6aa87499b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
