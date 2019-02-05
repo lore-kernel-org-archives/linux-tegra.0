@@ -1,132 +1,41 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V10 4/5] i2c: tegra: update transfer timeout
-Date: Tue, 5 Feb 2019 09:08:13 +0300
-Message-ID: <3c51edfb-ca40-b696-db03-bf73677f06fd@gmail.com>
-References: <1549330167-8690-1-git-send-email-skomatineni@nvidia.com>
- <1549330167-8690-4-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH V9 3/5] i2c: tegra: Add DMA support
+Date: Tue, 5 Feb 2019 09:20:50 +0300
+Message-ID: <1d7cdfc7-c625-940a-14d1-5981cf16cb56@gmail.com>
+References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
+ <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
+ <467a3ac8-5667-66bf-50eb-7d21a103d901@gmail.com>
+ <fa8a64fd-87e5-a70c-5ee7-c6c100b712c1@gmail.com>
+ <DM6PR12MB34033CFF789C5115721B5BAEC26E0@DM6PR12MB3403.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549330167-8690-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <DM6PR12MB34033CFF789C5115721B5BAEC26E0@DM6PR12MB3403.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-05.02.2019 4:29, Sowjanya Komatineni пишет:
-> Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-> max of 4K bytes of transfer per packet.
+05.02.2019 4:37, Sowjanya Komatineni пишет:
+>> I know that APB DMA driver enables flow control based on the channels spec, but still won't hurt to explicitly show that channels are flow-controlled. Ideally APB DMA driver should respect the device_fc field.
+>>
+>> 		dma_sconfig.device_fc = true;
 > 
-> one sec timeout is not enough for transfers more than 10K bytes
-> at STD bus rate.
 > 
-> This patch updates I2C transfer timeout based on the transfer size
-> and I2C bus rate to allow enough time during max transfer size at
-> lower bus speed.
+> Dmitry,
+> Thanks for all feedback. Sent updated patch V10 which has all below V9 feedback changes.
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  [V10] : Reduced the timeout for bus clear operation
-> 	Added adapter timeout to cover worst case transfer rate (max transfer
-> 	size at STD speed) incase if ARB LOST happens during middle/end of 
-> 	the transaction.
->  [V9] : Rebased to 5.0-rc4
-> 	Minor updates for readability of xfer time
->  [V8] : Added comment with explaination of xfer time calculation
->  [V5/V6/V7] : Same as V4
->  [V4] : V4 series includes bus clear support and this patch is updated with
-> 	fixed timeout of 1sec for bus clear operation.
->  [V3] : Same as V2
->  [V2] : Added this patch in V2 series to allow enough time for data transfer
-> 	to happen.
-> 	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-> 	takes argument with this patch.
+> - Added explicit flow control settings to dma slave config and error check so need to move releasing of dma resources to separate function as I am using it multiple places (when dma slave config failed, on tegra drive remove, tegra_i2c_init_dma).
+> As a part of this, moved error handling also inside init_dma as you suggested in earlier feedback.
+> - Added apbdma hw support flag to now allow Tegra186 and later use APBDMA driver.
+> - Updated to register tegra_i2c_driver from module level rather than subsys level.
+> - Fixed timeout for bus clear to 50ms (10ms is enough but considering slaves responding slow). Also added adapter timeout to 6s considering worst case transfer rate.
+> - other minor fixes.
 > 
->  drivers/i2c/busses/i2c-tegra.c | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
+> Please review.
+> - Sowjanya
 > 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 658cf01e3f59..341475204cb6 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -25,7 +25,6 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  
-> -#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
->  #define BYTES_PER_FIFO_WORD 4
->  
->  #define I2C_CNFG				0x000
-> @@ -936,8 +935,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
->  		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
->  		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
->  
-> -		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-> -							TEGRA_I2C_TIMEOUT);
-> +		time_left = wait_for_completion_timeout(
-> +						&i2c_dev->msg_complete,
-> +						msecs_to_jiffies(50));
->  		if (time_left == 0) {
->  			dev_err(i2c_dev->dev, "timed out for bus clear\n");
->  			return -ETIMEDOUT;
-> @@ -964,6 +964,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	u32 *buffer = NULL;
->  	int err = 0;
->  	bool dma = false;
-> +	u16 xfer_time = 100;
->  
->  	tegra_i2c_flush_fifos(i2c_dev);
->  
-> @@ -982,6 +983,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN) && i2c_dev->dma_buf;
->  	i2c_dev->is_curr_dma_xfer = dma;
->  
-> +	/*
-> +	 * Transfer time in mSec = Total bits / transfer rate
-> +	 * Total bits = 9 bits per byte (including ACK bit) + Start & stop bits
-> +	 */
-> +	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
-> +					i2c_dev->bus_clk_rate);
-> +
->  	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
->  
->  	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
-> @@ -1089,7 +1097,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  
->  		time_left = wait_for_completion_timeout(
->  						&i2c_dev->dma_complete,
-> -						TEGRA_I2C_TIMEOUT);
-> +						msecs_to_jiffies(xfer_time));
->  
->  		if (time_left == 0) {
->  			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
-> @@ -1110,8 +1118,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  		}
->  	}
->  
-> -	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-> -						TEGRA_I2C_TIMEOUT);
-> +	time_left = wait_for_completion_timeout(
-> +					&i2c_dev->msg_complete,
-> +					msecs_to_jiffies(xfer_time));
->  	tegra_i2c_mask_irq(i2c_dev, int_mask);
->  
->  	if (time_left == 0) {
-> @@ -1367,6 +1376,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
->  	i2c_dev->div_clk = div_clk;
->  	i2c_dev->adapter.algo = &tegra_i2c_algo;
->  	i2c_dev->adapter.retries = 1;
-> +	i2c_dev->adapter.timeout = msecs_to_jiffies(6 * MSEC_PER_SEC);
 
-There is a "HZ" constant in kernel which is equal to a number of jiffies per second. It's a common practice to use it where appropriate, in this case it will be:
-
-	i2c_dev->adapter.timeout = 6 * HZ;
-
->  	i2c_dev->irq = irq;
->  	i2c_dev->cont_id = pdev->id;
->  	i2c_dev->dev = &pdev->dev;
-> 
+Thank you very much for keeping up with the new versions! The v10 is reviewed now. It is very close to final, but there is one new fatal bug there that leaves FIFO control register unconfigured in a case of error. I also pointed at some other minor cases that could be improved, please see my replies.
