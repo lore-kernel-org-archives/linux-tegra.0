@@ -1,51 +1,86 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/46] 4.14.98-stable review
-Date: Tue, 5 Feb 2019 15:42:54 +0100
-Message-ID: <20190205144254.GC17950@kroah.com>
-References: <20190204103608.651205056@linuxfoundation.org>
- <40f772ce-5b57-8ee0-5fc4-5cfab53ca06d@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V11 3/5] i2c: tegra: Add DMA support
+Date: Tue, 5 Feb 2019 16:41:20 +0000
+Message-ID: <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
+ <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
+ <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <40f772ce-5b57-8ee0-5fc4-5cfab53ca06d@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 10:20:50AM +0000, Jon Hunter wrote:
-> 
-> On 04/02/2019 10:36, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.98 release.
-> > There are 46 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Feb  6 10:35:31 UTC 2019.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.98-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.14:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.14.98-rc1-g0576694
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
-
-Thanks for testing 3 of these and letting me know.
-
-greg k-h
+PiBQbGVhc2UgdXNlICIuL3NjcmlwdHMvY2hlY2twYXRjaC5wbCAtLXN0cmljdCAqLnBhdGNoIiBh
+bmQgZml4IGFsbCBpdHMgY29tcGxhaW5zLCBidXQgb25seSB0aG9zZSB0aGF0IHJlYWxseSBtYWtl
+IHNlbnNlLiBGb3IgZXhhbXBsZSBpZ25vcmUgdGhlICJDSEVDSzogTGluZXMgc2hvdWxkIG5vdCBl
+bmQgd2l0aCBhICcoJyIgd2FybmluZ3MuIA0KPg0KPkhlcmUgY2hlY2twYXRjaCByZWNvbW1lbmRz
+IHRvIHVzZSB0aGUgQklUKCkgbWFjcm86DQo+DQo+IENIRUNLOiBQcmVmZXIgdXNpbmcgdGhlIEJJ
+VCBtYWNybw0KPiAjMzk0OiBGSUxFOiBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmM6MTM2
+Og0KPiArI2RlZmluZSBEQVRBX0RNQV9ESVJfVFggICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICgxIDw8IDApDQo+DQo+IENIRUNLOiBQcmVmZXIgdXNpbmcgdGhlIEJJVCBtYWNybw0KPiAj
+Mzk1OiBGSUxFOiBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmM6MTM3Og0KPiArI2RlZmlu
+ZSBEQVRBX0RNQV9ESVJfUlggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDEp
+DQoNCkkgdXNlZCBjaGVja3BhdGNoIHNjcmlwdCwgYW5kIGl0IGRpZG7igJl0IHNob3dlZCB0aGVz
+ZSBlcnJvcnMuIFByb2JhYmx5IGNoZWNrcGF0Y2ggc2NyaXB0IHZlcnNpb25zIGFyZSBkaWZmZXJl
+bnQuIEkgYW0gdXNpbmcgdGhlIG9uZSBmcm9tIDUuMC1yYzQNCg0KPiArc3RhdGljIGludCB0ZWdy
+YV9pMmNfZG1hX3N1Ym1pdChzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2Rldiwgc2l6ZV90IA0K
+PiArbGVuKSB7DQo+ICsJc3RydWN0IGRtYV9hc3luY190eF9kZXNjcmlwdG9yICpkbWFfZGVzYzsN
+Cj4gKwllbnVtIGRtYV90cmFuc2Zlcl9kaXJlY3Rpb24gZGlyOw0KPiArCXN0cnVjdCBkbWFfY2hh
+biAqY2hhbjsNCj4gKw0KPiArCWRldl9kYmcoaTJjX2Rldi0+ZGV2LCAic3RhcnRpbmcgRE1BIGZv
+ciBsZW5ndGg6ICV6dVxuIiwgbGVuKTsNCj4gKwlyZWluaXRfY29tcGxldGlvbigmaTJjX2Rldi0+
+ZG1hX2NvbXBsZXRlKTsNCj4gKwlkaXIgPSBpMmNfZGV2LT5tc2dfcmVhZCA/IERNQV9ERVZfVE9f
+TUVNIDogRE1BX01FTV9UT19ERVY7DQo+ICsJY2hhbiA9IGkyY19kZXYtPm1zZ19yZWFkID8gaTJj
+X2Rldi0+cnhfZG1hX2NoYW4gOiBpMmNfZGV2LT50eF9kbWFfY2hhbjsNCj4gKwlkbWFfZGVzYyA9
+IGRtYWVuZ2luZV9wcmVwX3NsYXZlX3NpbmdsZShjaGFuLCBpMmNfZGV2LT5kbWFfcGh5cywNCj4g
+KwkJCQkJICAgICAgIGxlbiwgZGlyLCBETUFfUFJFUF9JTlRFUlJVUFQgfA0KPiArCQkJCQkgICAg
+ICAgRE1BX0NUUkxfQUNLKTsNCj4gKwlpZiAoIWRtYV9kZXNjKSB7DQo+ICsJCWRldl9lcnIoaTJj
+X2Rldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCBETUEgZGVzY3JpcHRvclxuIik7DQo+ICsJCXJldHVy
+biAtRUlPOw0KPg0KPiBSZXR1cm5pbmcgdGhlIC1FSU8gaXMgdGVjaG5pY2FsbHkgaW5jb3JyZWN0
+IGJlY2F1c2UgdGhlcmUgaXMgbm8gaGFyZHdhcmUgZmFpbHVyZSBoZXJlLiBUaGUgZG1hZW5naW5l
+X3ByZXBfc2xhdmVfc2luZ2xlKCkgbWVyZWx5IGFsbG9jYXRlcyB0aGUgRE1BIGRlc2NyaXB0b3Is
+IGhlbmNlIGl0IHNob3VsZCBiZSBlaXRoZXIgLUVJTlZBTCAocHJlZmVyYWJseSkgb3IgYXQgbGVh
+c3QgLUVOT01FTS4NCj4NCj4gT2gsIGFub3RoZXIgaW1wb3J0YW50IG1vbWVudCBpcyB0aGF0IHBo
+eXNpY2FsbHkgY29udGlndW91cyBkbWFfYnVmIGFsbG9jYXRpb24gaXNuJ3QgZ3VhcmFudGVlZCBi
+eSB0aGUgRE1BIEFQSS4gVGhpcyBtYXkgYmVjb21lIGEgcHJvYmxlbSBmb3IgVDE4NisgdGhhdCBj
+YW4gdHJhbnNmZXIgdXAgdG8gNjRLLiBXZSBuZWVkIHRvIGVuZm9yY2UgdGhlIGNvbnRpZ3VvdXMt
+YWxsb2NhdGlvbiByZXF1aXJlbWVudCBieSB1c2luZyA+IGRtYV9hbGxvY19hdHRycyhETUFfQVRU
+Ul9GT1JDRV9DT05USUdVT1VTKSBpbnN0ZWFkIG9mIHRoZSBkbWFfYWxsb2NfY29oZXJlbnQoKSwg
+cGxlYXNlIHNlZSBteSBvdGhlciBjb21tZW50IGJlbG93Lg0KDQpGYWlsdXJlIHJldHVybmVkIGZy
+b20gZG1hIHN1Ym1pdCB3aWxsIGJlIHJldHVybmVkIGJ5IGkyYyB4ZmVyIG1lc3NhZ2UgYW5kIHVz
+aW5nIEVJTyBoZXJlIGFzIGRtYWVuZ2luZV9wcmVwX3NsYXZlX3NpbmdsZSBjYW4gcmVzdWx0IGlu
+IG11bHRpcGxlIGZhaWx1cmVzIChpbnZhbGlkIHNlZ21lbnQgbGVuZ3RoLCAgZmFpbGluZyBkbWEg
+ZGVzYyBhbGxvY2F0aW9uLCBkbWEgbGVuZ3RoL21lbW9yeSBjaGVjaywgbm8gYXZhaWxhYmxlIGRt
+YSBzZy1yZWcpDQpBcyBwZXIgSTJDIGZhdWx0IGNvZGVzLCBFSU8gY2FuIGJlIHVzZWQgaW5kaWNh
+dGluZyB3aGVuIHNvbWV0aGluZyB3ZW50IHdyb25nIGR1cmluZyBwZXJmb3JtaW5nIElPIG9wZXJh
+dGlvbi4NCg0KVXNpbmcgRUlOVkFMIGRvZXNu4oCZdCBzdWl0IGlmIGZhaWx1cmUgaXMgZnJvbSBh
+bGxvY2F0aW9uIGFuZCB1c2luZyBFTk9NRU0gZG9lc27igJl0IHN1aXQgaWYgZmFpbHVyZSBpcyBk
+dWUgdG8gbGVuZ3RoL21lbW9yeSwgc2VnbWVudCBsZW5ndGggY2hlY2suDQoNCldpbGwgdXNlIEZP
+UkNFX0NPTlRJR1VPVVMuDQoNCg0KDQo+ID4gKwlkbWFfYnVmID0gZG1hX2FsbG9jX2NvaGVyZW50
+KGkyY19kZXYtPmRldiwgaTJjX2Rldi0+ZG1hX2J1Zl9zaXplLA0KPiA+ICsJCQkJICAgICAmZG1h
+X3BoeXMsIEdGUF9LRVJORUwgfCBfX0dGUF9OT1dBUk4pOw0KPiANCj4gUGxlYXNlIHVzZSBkbWFf
+YWxsb2NfYXR0cnMoKSBpbnN0ZWFkIG9mIGRtYV9hbGxvY19jb2hlcmVudCgpIGJlY2F1c2UgaXQg
+Y291bGQgcmV0dXJuIGEgc3BhcnNlIGFsbG9jYXRpb24uIFRoaXMgaXMgZXNwZWNpYWxseSB0cm91
+Ymxlc29tZSA+IGZvciBBUk02NCBwbGF0Zm9ybXMgYmVjYXVzZSBJT01NVV9ET01BSU5fRE1BIGlz
+IHVzZWQgYnkgZGVmYXVsdCB0aGVyZS4gV2UgbmVlZCB0byBleHBsaWNpdGx5IGFzayBmb3IgdGhl
+IGNvbnRpZ3VvdXMgYWxsb2NhdGlvbjoNCj4gDQo+DQo+CWRtYV9idWYgPSBkbWFfYWxsb2NfYXR0
+cnMoaTJjX2Rldi0+ZGV2LCBpMmNfZGV2LT5kbWFfYnVmX3NpemUsDQo+CQkJCSAgJmRtYV9waHlz
+LCBHRlBfS0VSTkVMLA0KPgkJCQkgIERNQV9BVFRSX0ZPUkNFX0NPTlRJR1VPVVMgfA0KPgkJCQkg
+IERNQV9BVFRSX05PX1dBUk4pOw0KPg0KV2lsbCBzd2l0Y2ggdG8gdXNlIGRtYV9hbGxvY19hdHRy
+cyB3aXRoIENPTlRJR1VPVVMNCj4NCj4NCj4NCj4NCj4gQ0hFQ0s6IG11bHRpcGxlIGFzc2lnbm1l
+bnRzIHNob3VsZCBiZSBhdm9pZGVkDQo+ICM3NjM6IEZJTEU6IGRyaXZlcnMvaTJjL2J1c3Nlcy9p
+MmMtdGVncmEuYzo5OTM6DQo+ICsgICAgICAgICAgICAgICBpMmNfZGV2LT5pc19jdXJyX2RtYV94
+ZmVyID0gZG1hID0gZmFsc2UNCj4NCj4gQ0hFQ0s6IFVubmVjZXNzYXJ5IHBhcmVudGhlc2VzIGFy
+b3VuZCAnaTJjX2Rldi0+bXNnX2VyciA9PSBJMkNfRVJSX05PTkUnDQo+ICM4Nzc6IEZJTEU6IGRy
+aXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYzoxMTA1Og0KPiArICAgICAgICAgICAgICAgaWYg
+KGkyY19kZXYtPm1zZ19yZWFkICYmIChpMmNfZGV2LT5tc2dfZXJyID09IA0KPiArIEkyQ19FUlJf
+Tk9ORSkpIHsNCj4gQ0hFQ0s6IEFsaWdubWVudCBzaG91bGQgbWF0Y2ggb3BlbiBwYXJlbnRoZXNp
+cw0KPiAjODgzOiBGSUxFOiBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmM6MTExMToNCj4g
+DQo+DQpTb21laG93IENoZWNrc2NyaXB0IGRpZG7igJl0IHNob3dlZCB0aGlzIGVpdGhlciB3aGVu
+IEkgcmFuLiBQcm9iYWJseSBkdWUgdG8gZGlmZiBzY3JpcHQgdmVyc2lvbnMuIEkgYW0gdXNpbmcg
+dGhlIG9uZSBmcm9tIDUuMC1yYzQuDQoNCg==
