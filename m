@@ -1,77 +1,51 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
-Date: Tue, 05 Feb 2019 12:34:46 +0100
-Message-ID: <4564414.Hi6AUZdI4M@aspire.rjw.lan>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com> <e7597220-2be7-ca29-50b7-c515c06cbed7@nvidia.com> <80a45aa3-8a22-959c-0c73-03ad2d6b1f8c@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 00/30] 4.9.155-stable review
+Date: Tue, 5 Feb 2019 11:38:13 +0000
+Message-ID: <3b4f09d6-3b9f-5bf6-dc87-b8bc000ff537@nvidia.com>
+References: <20190204103605.271746870@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <80a45aa3-8a22-959c-0c73-03ad2d6b1f8c@nvidia.com>
+In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Sameer Pujar <spujar@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Takashi Iwai <tiwai@suse.de>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, mkumard@nvidia.com, rlokhande@nvidia.com, sharadg@nvidia.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, February 4, 2019 11:04:50 AM CET Jon Hunter wrote:
-> 
-> On 04/02/2019 08:16, Sameer Pujar wrote:
-> 
-> ...
-> 
-> > Objective is to have things working with or without CONFIG_PM enabled.
-> > From previous comments and discussions it appears that there is mixed
-> > response
-> > for calling hda_tegra_runtime_resume() or runtime PM APIs in probe()
-> > call. Need
-> > to have consensus regarding the best practice to be followed, which
-> > would eventually
-> > can be used in other drivers too.
-> > 
-> > Rafael is suggesting to use CONFIG_PM check to do manual setup or
-> > runtime PM setup in probe,
-> > which would bring back the earlier above mentioned concern.
-> > 
-> > if (IS_ENABLED(CONFIG_PM)) {
-> > do setup based on pm-runtime
-> > } else {
-> >     do manual setup
-> > }
-> > Both if/else might end up doing the same here.
-> > Do we really need CONFIG_PM check here?
-> > 
-> > Instead does below proposal appear fine?
-> > 
-> > probe() {
-> >     hda_tegra_enable_clock();
-> > }
-> > 
-> > probe_work() {
-> >     /* hda setup */
-> >     . . .
-> >     pm_runtime_set_active(); /* initial state as active */
-> >     pm_runtime_enable();
-> >     return;
-> > }
-> 
-> I believe that this still does not work, because if there is a
-> power-domain that needs to be turned on, this does not guarantee this.
-> So I think that you need to call pm_runtime_get ...
-> 
->  probe() {
->  	if (!IS_ENABLED(CONFIG_PM))
->  		hda_tegra_enable_clock();
->  }
-> 
 
-But alas, there are no PM domains with CONFIG_PM unset.
+On 04/02/2019 10:36, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.155 release.
+> There are 30 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Feb  6 10:35:37 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.155-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-CONFIG_PM unset means that the *driver* has to know how to turn on the
-device and that has to be sufficient.
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-Which basically is my point when I'm saying that this information is
-not available to the core and it cannot do anything to handle this
-case without the extra knowledge.
+Linux version:	4.9.155-rc1-g09c6f7d
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Thanks,
-Rafael
+Cheers
+Jon
+
+-- 
+nvpublic
