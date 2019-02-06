@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 14:10:13 +0000
-Message-ID: <BYAPR12MB339834E29DAC1054F46AB58CC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 17:13:21 +0300
+Message-ID: <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
 References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
  <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
@@ -13,145 +13,155 @@ References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
  <20190206140141.GO21676@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190206140141.GO21676@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+ID4gPiA+Pj4+IFRoYXQncyBvZGQgYmVjYXVzZSBpdCBzdWdnZXN0cyB0aGF0IERNQSBhY3R1
-YWxseSBjb21wbGV0ZWQsIGJ1dCANCj4gPiA+ID4+Pj4gdGhlIG1lc3NhZ2UgZGlkbid0Lg0KPiA+
-ID4gPj4+Pg0KPiA+ID4gPj4+PiBJJ20gbm90IHN1cmUgSSB1bmRlcnN0YW5kIGhvdyB0aGF0IGNv
-dWxkIGhhcHBlbi4NCj4gPiA+ID4+Pj4NCj4gPiA+ID4+Pj4gV2hhdCdzIGFsc28gd2VpcmQgYWJv
-dmUgaXMgdGhhdCB0aGVyZSBkb2Vzbid0IHNlZW0gdG8gYmUgYSBETUEgDQo+ID4gPiA+Pj4+IHRo
-YXQgaXMgc3RhcnRlZCBmb3IgdGhhdCBwYXJ0aWN1bGFyIG1lc3NhZ2UuIE9yIGlzIHRoZSB0aW1l
-b3V0IA0KPiA+ID4gPj4+PiBtZXNzYWdlIGEgcmVzcG9uc2UgdG8gdGhlIHByaW9yIHRyYW5zZmVy
-IChsZW5ndGggMTApPyBTZWVtcyANCj4gPiA+ID4+Pj4gbGlrZSB0aGF0IHNob3VsZCBub3QgYmUg
-cG9zc2libGUgYmVjYXVzZSB3ZSBnZXQgdGhlICJ0cmFuc2ZlciBjb21wbGV0ZSIgbWVzc2FnZS4N
-Cj4gPiA+ID4+Pg0KPiA+ID4gPj4+IFdhaXQsIHRob3NlIGFyZSBhY3R1YWxseSBkaWZmZXJlbnQg
-aW5zdGFuY2VzIG9mIHRoZSBJMkMgDQo+ID4gPiA+Pj4gY29udHJvbGxlciwgc28gdGhlIHJlbGV2
-YW50IGxvZyBlbnRyaWVzIGFyZSB0aGVzZToNCj4gPiA+ID4+Pg0KPiA+ID4gPj4+IAlbICAgIDAu
-OTQ1NDQ1XSB0ZWdyYS1pMmMgNzAwMGQwMDAuaTJjOiBzdGFydGluZyBETUEgZm9yIGxlbmd0aDog
-MTYNCj4gPiA+ID4+PiAJWyAgICAwLjk0NTQ1Nl0gdGVncmEtaTJjIDcwMDBkMDAwLmkyYzogdW5t
-YXNrZWQgaXJxOiAwYw0KPiA+ID4gPj4+IAkuLi4NCj4gPiA+ID4+PiAJWyAgICAxLjA0OTIyNF0g
-dGVncmEtaTJjIDcwMDBkMDAwLmkyYzogaTJjIHRyYW5zZmVyIHRpbWVkIG91dA0KPiA+ID4gPj4+
-DQo+ID4gPiA+Pj4gQW5kIHRoZXNlIGRvbid0IGhhcHBlbiBpZiB5b3UgdXNlIGhpZ2hlciBidXJz
-dCBzaXplcyBvciBiZWZvcmUgDQo+ID4gPiA+Pj4gdGhlIERNQSBzZXJpZXM/DQo+ID4gPiA+Pg0K
-PiA+ID4gPj4gSSB0cmllZCB0byBlbmZvcmNlIERNQSB3aXRob3V0IGNoYW5naW5nIGJ1cnN0czoN
-Cj4gPiA+ID4+DQo+ID4gPiA+PiAtLS0tLS0tLS0tDQo+ID4gPiA+PiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIA0KPiA+ID4gPj4gYi9kcml2ZXJzL2kyYy9idXNz
-ZXMvaTJjLXRlZ3JhLmMgaW5kZXggYzUzOGVkNWY4ZTJjLi41ZDFjNTRjZTc4MDANCj4gPiA+ID4+
-IDEwMDY0NA0KPiA+ID4gPj4gLS0tIGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+
-ID4gPiA+PiArKysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gPiA+ID4+IEBA
-IC02LDYgKzYsOCBAQA0KPiA+ID4gPj4gICAqIEF1dGhvcjogQ29saW4gQ3Jvc3MgPGNjcm9zc0Bh
-bmRyb2lkLmNvbT4NCj4gPiA+ID4+ICAgKi8NCj4gPiA+ID4+ICANCj4gPiA+ID4+ICsjZGVmaW5l
-IERFQlVHDQo+ID4gPiA+PiArDQo+ID4gPiA+PiAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiA+
-ID4gPj4gICNpbmNsdWRlIDxsaW51eC9kZWxheS5oPg0KPiA+ID4gPj4gICNpbmNsdWRlIDxsaW51
-eC9kbWFlbmdpbmUuaD4NCj4gPiA+ID4+IEBAIC0xMDQ2LDggKzEwNDgsNyBAQCBzdGF0aWMgaW50
-IHRlZ3JhX2kyY194ZmVyX21zZyhzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2RldiwNCj4gPiA+
-ID4+ICAgICAgICAgICAgICAgICB4ZmVyX3NpemUgPSBtc2ctPmxlbiArIEkyQ19QQUNLRVRfSEVB
-REVSX1NJWkU7DQo+ID4gPiA+PiAgDQo+ID4gPiA+PiAgICAgICAgIHhmZXJfc2l6ZSA9IEFMSUdO
-KHhmZXJfc2l6ZSwgQllURVNfUEVSX0ZJRk9fV09SRCk7DQo+ID4gPiA+PiAtICAgICAgIGkyY19k
-ZXYtPmlzX2N1cnJfZG1hX3hmZXIgPSAoeGZlcl9zaXplID4gSTJDX1BJT19NT0RFX01BWF9MRU4p
-ICYmDQo+ID4gPiA+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpMmNfZGV2
-LT5kbWFfYnVmOw0KPiA+ID4gPj4gKyAgICAgICBpMmNfZGV2LT5pc19jdXJyX2RtYV94ZmVyID0g
-ISFpMmNfZGV2LT5kbWFfYnVmOw0KPiA+ID4gPj4gICAgICAgICB0ZWdyYV9pMmNfY29uZmlnX2Zp
-Zm9fdHJpZyhpMmNfZGV2LCB4ZmVyX3NpemUpOw0KPiA+ID4gPj4gICAgICAgICBkbWEgPSBpMmNf
-ZGV2LT5pc19jdXJyX2RtYV94ZmVyOw0KPiA+ID4gPj4gLS0tLS0tLS0tLQ0KPiA+ID4gPj4NCj4g
-PiA+ID4+IEhlcmUgaXMgdGhlIGxvZyB3aXRoIHRoaXMgY2hhbmdlOg0KPiA+ID4gPj4NCj4gPiA+
-ID4+IFsgICAgMC43NjA3OTZdIHRlZ3JhX3J0YyA3MDAwZTAwMC5ydGM6IHJlZ2lzdGVyZWQgYXMg
-cnRjMQ0KPiA+ID4gPj4gWyAgICAwLjc2MDg1MF0gdGVncmFfcnRjIDcwMDBlMDAwLnJ0YzogVGVn
-cmEgaW50ZXJuYWwgUmVhbCBUaW1lIENsb2NrDQo+ID4gPiA+PiBbICAgIDAuNzYxMDUwXSBpMmMg
-L2RldiBlbnRyaWVzIGRyaXZlcg0KPiA+ID4gPj4gWyAgICAwLjkxODkyOF0gdGVncmEtaTJjIDcw
-MDBjMDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDE2DQo+ID4gPiA+PiBbICAgIDAu
-OTE4OTQwXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB1bm1hc2tlZCBpcnE6IDBjDQo+ID4gPiA+
-PiBbICAgIDAuOTE5MDQwXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0
-ZTogMTAgMCAwDQo+ID4gPiA+PiBbICAgIDAuOTE5MDUwXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJj
-OiBzdGFydGluZyBETUEgZm9yIGxlbmd0aDogOA0KPiA+ID4gPj4gWyAgICAwLjkxOTA1OV0gdGVn
-cmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiA+ID4gPj4gWyAgICAwLjkx
-OTMyMl0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdHJhbnNmZXIgY29tcGxldGU6IDEwIDAgMA0K
-PiA+ID4gPj4gWyAgICAwLjkxOTMzNV0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogc3RhcnRpbmcg
-RE1BIGZvciBsZW5ndGg6IDE2DQo+ID4gPiA+PiBbICAgIDAuOTE5MzQzXSB0ZWdyYS1pMmMgNzAw
-MGMwMDAuaTJjOiB1bm1hc2tlZCBpcnE6IDBjDQo+ID4gPiA+PiBbICAgIDAuOTE5NDQwXSB0ZWdy
-YS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0ZTogMTAgMCAwDQo+ID4gPiA+PiBb
-ICAgIDAuOTE5NDQ4XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiBzdGFydGluZyBETUEgZm9yIGxl
-bmd0aDogMTEyDQo+ID4gPiA+PiBbICAgIDAuOTE5NDU2XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJj
-OiB1bm1hc2tlZCBpcnE6IDBjDQo+ID4gPiA+PiBbICAgIDAuOTIyODE4XSB0ZWdyYS1pMmMgNzAw
-MGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0ZTogMTEgMCAwDQo+ID4gPiA+PiBbICAgIDAuOTIy
-ODI5XSBhdG1lbF9teHRfdHMgMC0wMDRjOiBGYW1pbHk6IDE2MCBWYXJpYW50OiAwIEZpcm13YXJl
-IFYxLjAuQUEgT2JqZWN0czogMTgNCj4gPiA+ID4+IFsgICAgMC45MjI4ODZdIHRlZ3JhLWkyYyA3
-MDAwYzAwMC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVuZ3RoOiAxNg0KPiA+ID4gPj4gWyAgICAw
-LjkyMjg5NV0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiA+ID4g
-Pj4gWyAgICAwLjkyMjk5M10gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdHJhbnNmZXIgY29tcGxl
-dGU6IDEwIDAgMA0KPiA+ID4gPj4gWyAgICAwLjkyMzAwMl0gdGVncmEtaTJjIDcwMDBjMDAwLmky
-Yzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDIyNA0KPiA+ID4gPj4gWyAgICAwLjkyMzAxMV0g
-dGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiA+ID4gPj4gWyAgICAw
-LjkzMzI1M10gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdHJhbnNmZXIgY29tcGxldGU6IDExIDAg
-MA0KPiA+ID4gPj4gWyAgICAwLjkzMzI4N10gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogc3RhcnRp
-bmcgRE1BIGZvciBsZW5ndGg6IDE2DQo+ID4gPiA+PiBbICAgIDAuOTMzMjk3XSB0ZWdyYS1pMmMg
-NzAwMGMwMDAuaTJjOiB1bm1hc2tlZCBpcnE6IDBjDQo+ID4gPiA+PiBbICAgIDAuOTMzNDc4XSB0
-ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0ZTogMTAgMCAwDQo+ID4gPiA+
-PiBbICAgIDAuOTMzNDg3XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiBzdGFydGluZyBETUEgZm9y
-IGxlbmd0aDogMTINCj4gPiA+ID4+IFsgICAgMC45MzM0OTZdIHRlZ3JhLWkyYyA3MDAwYzAwMC5p
-MmM6IHVubWFza2VkIGlycTogMGMNCj4gPiA+ID4+IFsgICAgMC45NDUxMjBdIHRlZ3JhLWkyYyA3
-MDAwZDAwMC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVuZ3RoOiAxNg0KPiA+ID4gPj4gWyAgICAw
-Ljk0NTEzMF0gdGVncmEtaTJjIDcwMDBkMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiA+ID4g
-Pj4gWyAgICAxLjAzODkxN10gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogRE1BIHRyYW5zZmVyIHRp
-bWVvdXQNCj4gPiA+ID4+IFsgICAgMS4wMzg5ODJdIGF0bWVsX214dF90cyAwLTAwNGM6IF9fbXh0
-X3JlYWRfcmVnOiBpMmMgdHJhbnNmZXIgZmFpbGVkICgtMTEwKQ0KPiA+ID4gPj4gWyAgICAxLjAz
-OTAwMF0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDE2
-DQo+ID4gPiA+PiBbICAgIDEuMDM5MDA2XSBhdG1lbF9teHRfdHMgMC0wMDRjOiBGYWlsZWQgdG8g
-cmVhZCBUNDQgYW5kIFQ1ICgtMTEwKQ0KPiA+IA0KPiA+IA0KPiA+IA0KPiA+ID4gPj4gWyAgICAx
-LjAzOTAwOV0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiA+ID4g
-Pj4gWyAgICAxLjAzOTE0OF0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdHJhbnNmZXIgY29tcGxl
-dGU6IDEwIDAgMA0KPiA+ID4gPj4gWyAgICAxLjAzOTE1N10gdGVncmEtaTJjIDcwMDBjMDAwLmky
-Yzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDQNCj4gPiA+ID4+IFsgICAgMS4wMzkxNjZdIHRl
-Z3JhLWkyYyA3MDAwYzAwMC5pMmM6IHVubWFza2VkIGlycTogMGMNCj4gPiA+ID4+IFsgICAgMS4w
-MzkzMDRdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHRyYW5zZmVyIGNvbXBsZXRlOiAxMCAwIDAN
-Cj4gPiA+ID4+IFsgICAgMS4wMzkzNDBdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHN0YXJ0aW5n
-IERNQSBmb3IgbGVuZ3RoOiAxNg0KPiA+ID4gPj4gWyAgICAxLjAzOTM0OV0gdGVncmEtaTJjIDcw
-MDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiA+ID4gPj4gWyAgICAxLjAzOTUzNV0gdGVn
-cmEtaTJjIDcwMDBjMDAwLmkyYzogdHJhbnNmZXIgY29tcGxldGU6IDEwIDAgMA0KPiA+ID4gPj4g
-WyAgICAxLjAzOTU0NF0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBs
-ZW5ndGg6IDEyDQo+ID4gPiA+PiBbICAgIDEuMDM5NTUyXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJj
-OiB1bm1hc2tlZCBpcnE6IDBjDQo+ID4gPiA+PiBbICAgIDEuMDQwMDU1XSB0ZWdyYS1pMmMgNzAw
-MGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0ZTogMTAgMCAwDQo+ID4gPiA+PiBbICAgIDEuMDQw
-MDgzXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiBzdGFydGluZyBETUEgZm9yIGxlbmd0aDogMTYN
-Cj4gPiA+ID4+IFsgICAgMS4wNDAwOTJdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHVubWFza2Vk
-IGlycTogMGMNCj4gPiA+ID4+IFsgICAgMS4wNDAzMDFdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6
-IHRyYW5zZmVyIGNvbXBsZXRlOiAxMCAwIDANCj4gPiA+ID4+IFsgICAgMS4wNDg5MzRdIHRlZ3Jh
-LWkyYyA3MDAwZDAwMC5pMmM6IGkyYyB0cmFuc2ZlciB0aW1lZCBvdXQNCj4gPiA+ID4gDQo+ID4g
-PiA+IFRoaXMgbG9nIHNob3dzIERNQSB0cmFuc2ZlciB0aW1lb3V0IGZvciBhdG1lbCByZWFkLg0K
-PiA+ID4gPiBEbyB5b3Ugc2VlIGlzc3VlIGlmIHlvdSBkb27igJl0IGVuZm9yY2UgZG1hIGFsbCB0
-aW1lIGFuZCBsZXQgaXQgY2hvb3NlIFBJTyBWcyBETUE/DQo+ID4gPiA+IA0KPiA+ID4gDQo+ID4g
-PiBObywgdGhlcmUgYXJlIG5vIHRpbWVvdXQgZXJyb3JzIGluIFBJTyBtb2RlLiBJIGNvdWxkIHBv
-c3QgZnVsbCBsb2cgd2l0aCB0aGUgUElPLW9ubHkgbW9kZSBpZiB5b3Ugd2FudC4NCj4gPiA+DQo+
-ID4gWWVzIHBsZWFzZSBwb3N0IGZ1bGwgbG9nIG9mIFBJTyBvbmx5IGFuZCBETUEgb25seSBBbHNv
-LCBpbiBhYm92ZSBsb2csIA0KPiA+IGxvdHMgb2YgRE1BIHRyYW5zZmVyIHdlbnQgdGhydSBmaW5l
-IGV4Y2VwdCB0aGlzIG9uZSB0cmFuc2ZlciB3aGVyZSBETUEgDQo+ID4gdGltZWQgb3V0Lg0KPiA+
-IERNQSBjb21wbGV0aW9uIGRvZXNudCBoYXBwZW4gb24gRE1BIHN1Ym1pdCBkdXJpbmcgdGhpcyBw
-YXJ0aWN1bGFyIA0KPiA+IHRyYW5zYWN0aW9uIHRpbWVmcmFtZSBmb3Igc29tZSByZWFzb24uDQo+
-IA0KPiBEbWl0cnksIGNhbiB5b3UgcHJvdmlkZSBzb21lIGJhY2tncm91bmQgaW5mb3JtYXRpb24g
-b24gdGhlIHNldHVwIHRoYXQgeW91J3JlIHVzaW5nPyBJIHZhZ3VlbHkgcmVtZW1iZXIgc29tZXRo
-aW5nIGFib3V0IGkyY0A3MDAwZDAwMCBiZWluZyBzcGVjaWFsIG9uID4gb2xkZXIgVGVncmEgZGV2
-aWNlcy4gUGVyaGFwcyB0aGVyZSdzIHNvbWV0aGluZyBhZGRpdGlvbmFsIHRoYXQgd2UgbmVlZCB0
-byB0YWtlIGludG8gYWNjb3VudD8NCj4gDQo+IEFoYSEgTG9vayBhdCB0ZWdyYV9pMmNfcmVnX2Fk
-ZHIoKSB3aGljaCBzcGVjaWFsLWNhc2VzIEkyQ19UWF9GSUZPIG9uIHRoZSBEVkMgdmFyaWFudCBv
-ZiB0aGUgY29udHJvbGxlciwgd2hpY2ggaXMgZXhhY3RseSB0aGUgb25lIHRoYXQgeW91IGFyZSBz
-ZWVpbmcgPiB0aGUgdGltZW91dHMgb24gYW5kIGl0J3MgZXhhY3RseSB0aGUgcmVnaXN0ZXIgdGhh
-dCB3ZSB1c2UgYXMgZGVzdGluYXRpb24gZm9yIHRoZSBETUEgdHJhbnNmZXIuDQo+IA0KPiBJIHRo
-aW5rIHdlIG5lZWQgdG8gZG8gc29tZXRoaW5nIGxpa2UgdGhpczoNCj4gDQo+IAlzbHZfY29uZmln
-LmRzdF9hZGRyID0gaTJjX2Rldi0+YmFzZV9waHlzICsgdGVncmFfaTJjX3JlZ19hZGRyKGkyY19k
-ZXYsIEkyQ19UWF9GSUZPKTsNCj4gDQo+IHRvIG1ha2Ugc3VyZSB3ZSBwYXNzIHRoZSByaWdodCBG
-SUZPIHJlZ2lzdGVyIGFkZHJlc3MgdG8gRE1BLg0KPiANCj4gVGhpZXJyeQ0KPiANClllYWggRFZD
-IEZJRk8gcmVnaXN0ZXIgb2Zmc2V0IGlzIGRpZmZlcmVudC4gWWVzIHdlIG5lZWQgdG8gdXNlIHRl
-Z3JhX2kyY19yZWdfYWRkciB3aGljaCB0YWtlcyBjYXJlIG9mIERWQyBGSUZPIGFkZHJlc3MuIFdp
-bGwgZml4IGl0Lg0KDQpBdG1lbCB0b3VjaCBpcyBvbiBJMkMxICg3MDAwQzAwMCkuIERNQSBUaW1l
-b3V0IGhhcHBlbmVkIGZvciBvbmx5IDEgdHJhbnNhY3Rpb24gZm9yIHRoaXMgZGV2aWNlIGFuZCBs
-b3RzIG9mIG90aGVyIHRyYW5zZmVycyB0byB0aGlzIGRldmljZSBhcmUgZmluZS4NCmluIG90aGVy
-IGxvZyBkbWl0cnkgc2VudCwgd2Ugc2VlIG9uZSB0cmFuc2ZlciB0aW1lb3V0IGZyb20gNzAwMEQw
-MDAgYW5kIHRoaXMgY291bGQgYmUgZHVlIHRvIEZJRk8gQWRkcmVzc2VzLg0KDQpTb3dqYW55YQ0K
+06.02.2019 17:01, Thierry Reding пишет:
+> On Wed, Feb 06, 2019 at 01:51:12PM +0000, Sowjanya Komatineni wrote:
+>>
+>>>>>>> That's odd because it suggests that DMA actually completed, but 
+>>>>>>> the message didn't.
+>>>>>>>
+>>>>>>> I'm not sure I understand how that could happen.
+>>>>>>>
+>>>>>>> What's also weird above is that there doesn't seem to be a DMA 
+>>>>>>> that is started for that particular message. Or is the timeout 
+>>>>>>> message a response to the prior transfer (length 10)? Seems like 
+>>>>>>> that should not be possible because we get the "transfer complete" message.
+>>>>>>
+>>>>>> Wait, those are actually different instances of the I2C 
+>>>>>> controller, so the relevant log entries are these:
+>>>>>>
+>>>>>> 	[    0.945445] tegra-i2c 7000d000.i2c: starting DMA for length: 16
+>>>>>> 	[    0.945456] tegra-i2c 7000d000.i2c: unmasked irq: 0c
+>>>>>> 	...
+>>>>>> 	[    1.049224] tegra-i2c 7000d000.i2c: i2c transfer timed out
+>>>>>>
+>>>>>> And these don't happen if you use higher burst sizes or before the 
+>>>>>> DMA series?
+>>>>>
+>>>>> I tried to enforce DMA without changing bursts:
+>>>>>
+>>>>> ----------
+>>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c 
+>>>>> b/drivers/i2c/busses/i2c-tegra.c index c538ed5f8e2c..5d1c54ce7800
+>>>>> 100644
+>>>>> --- a/drivers/i2c/busses/i2c-tegra.c
+>>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>>>>> @@ -6,6 +6,8 @@
+>>>>>   * Author: Colin Cross <ccross@android.com>
+>>>>>   */
+>>>>>  
+>>>>> +#define DEBUG
+>>>>> +
+>>>>>  #include <linux/clk.h>
+>>>>>  #include <linux/delay.h>
+>>>>>  #include <linux/dmaengine.h>
+>>>>> @@ -1046,8 +1048,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>>>>>                 xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
+>>>>>  
+>>>>>         xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
+>>>>> -       i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
+>>>>> -                                   i2c_dev->dma_buf;
+>>>>> +       i2c_dev->is_curr_dma_xfer = !!i2c_dev->dma_buf;
+>>>>>         tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
+>>>>>         dma = i2c_dev->is_curr_dma_xfer;
+>>>>> ----------
+>>>>>
+>>>>> Here is the log with this change:
+>>>>>
+>>>>> [    0.760796] tegra_rtc 7000e000.rtc: registered as rtc1
+>>>>> [    0.760850] tegra_rtc 7000e000.rtc: Tegra internal Real Time Clock
+>>>>> [    0.761050] i2c /dev entries driver
+>>>>> [    0.918928] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+>>>>> [    0.918940] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.919040] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    0.919050] tegra-i2c 7000c000.i2c: starting DMA for length: 8
+>>>>> [    0.919059] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.919322] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    0.919335] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+>>>>> [    0.919343] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.919440] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    0.919448] tegra-i2c 7000c000.i2c: starting DMA for length: 112
+>>>>> [    0.919456] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.922818] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
+>>>>> [    0.922829] atmel_mxt_ts 0-004c: Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
+>>>>> [    0.922886] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+>>>>> [    0.922895] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.922993] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    0.923002] tegra-i2c 7000c000.i2c: starting DMA for length: 224
+>>>>> [    0.923011] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.933253] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
+>>>>> [    0.933287] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+>>>>> [    0.933297] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.933478] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    0.933487] tegra-i2c 7000c000.i2c: starting DMA for length: 12
+>>>>> [    0.933496] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    0.945120] tegra-i2c 7000d000.i2c: starting DMA for length: 16
+>>>>> [    0.945130] tegra-i2c 7000d000.i2c: unmasked irq: 0c
+>>>>> [    1.038917] tegra-i2c 7000c000.i2c: DMA transfer timeout
+>>>>> [    1.038982] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-110)
+>>>>> [    1.039000] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+>>>>> [    1.039006] atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
+>>
+>>
+>>
+>>>>> [    1.039009] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    1.039148] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    1.039157] tegra-i2c 7000c000.i2c: starting DMA for length: 4
+>>>>> [    1.039166] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    1.039304] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    1.039340] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+>>>>> [    1.039349] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    1.039535] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    1.039544] tegra-i2c 7000c000.i2c: starting DMA for length: 12
+>>>>> [    1.039552] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    1.040055] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    1.040083] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+>>>>> [    1.040092] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+>>>>> [    1.040301] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+>>>>> [    1.048934] tegra-i2c 7000d000.i2c: i2c transfer timed out
+>>>>
+>>>> This log shows DMA transfer timeout for atmel read.
+>>>> Do you see issue if you don’t enforce dma all time and let it choose PIO Vs DMA?
+>>>>
+>>>
+>>> No, there are no timeout errors in PIO mode. I could post full log with the PIO-only mode if you want.
+>>>
+>> Yes please post full log of PIO only and DMA only
+>> Also, in above log, lots of DMA transfer went thru fine except this
+>> one transfer where DMA timed out.
+>> DMA completion doesnt happen on DMA submit during this particular
+>> transaction timeframe for some reason.
+> 
+> Dmitry, can you provide some background information on the setup that
+> you're using? I vaguely remember something about i2c@7000d000 being
+> special on older Tegra devices. Perhaps there's something additional
+> that we need to take into account?
+> 
+> Aha! Look at tegra_i2c_reg_addr() which special-cases I2C_TX_FIFO on
+> the DVC variant of the controller, which is exactly the one that you
+> are seeing the timeouts on and it's exactly the register that we use
+> as destination for the DMA transfer.
+> 
+> I think we need to do something like this:
+> 
+> 	slv_config.dst_addr = i2c_dev->base_phys + tegra_i2c_reg_addr(i2c_dev, I2C_TX_FIFO);
+> 
+> to make sure we pass the right FIFO register address to DMA.
+
+I'm running it on T20 at the moment. I don't know about the DVC quirks, but sounds plausible. Please let me know if you need any other info.
+
+Here the full logs:
+
+PIO-only: http://dpaste.com/2MX3EAN.txt
+DMA-only: http://dpaste.com/3VXZSSM.txt
+
+Note the "Failed to read T44 and T5 (-110)" error that happens in DMA-only. And it happens on i2c@7000c000, DVC is i2c@7000d000.
