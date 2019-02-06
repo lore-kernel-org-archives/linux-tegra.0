@@ -1,7 +1,7 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 17:13:21 +0300
-Message-ID: <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 14:19:36 +0000
+Message-ID: <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
  <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
@@ -12,156 +12,59 @@ References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <BYAPR12MB339826EB972C5DB7957E8A82C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
  <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
  <20190206140141.GO21676@ulmo>
+ <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190206140141.GO21676@ulmo>
+In-Reply-To: <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-06.02.2019 17:01, Thierry Reding пишет:
-> On Wed, Feb 06, 2019 at 01:51:12PM +0000, Sowjanya Komatineni wrote:
->>
->>>>>>> That's odd because it suggests that DMA actually completed, but 
->>>>>>> the message didn't.
->>>>>>>
->>>>>>> I'm not sure I understand how that could happen.
->>>>>>>
->>>>>>> What's also weird above is that there doesn't seem to be a DMA 
->>>>>>> that is started for that particular message. Or is the timeout 
->>>>>>> message a response to the prior transfer (length 10)? Seems like 
->>>>>>> that should not be possible because we get the "transfer complete" message.
->>>>>>
->>>>>> Wait, those are actually different instances of the I2C 
->>>>>> controller, so the relevant log entries are these:
->>>>>>
->>>>>> 	[    0.945445] tegra-i2c 7000d000.i2c: starting DMA for length: 16
->>>>>> 	[    0.945456] tegra-i2c 7000d000.i2c: unmasked irq: 0c
->>>>>> 	...
->>>>>> 	[    1.049224] tegra-i2c 7000d000.i2c: i2c transfer timed out
->>>>>>
->>>>>> And these don't happen if you use higher burst sizes or before the 
->>>>>> DMA series?
->>>>>
->>>>> I tried to enforce DMA without changing bursts:
->>>>>
->>>>> ----------
->>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c 
->>>>> b/drivers/i2c/busses/i2c-tegra.c index c538ed5f8e2c..5d1c54ce7800
->>>>> 100644
->>>>> --- a/drivers/i2c/busses/i2c-tegra.c
->>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>>>> @@ -6,6 +6,8 @@
->>>>>   * Author: Colin Cross <ccross@android.com>
->>>>>   */
->>>>>  
->>>>> +#define DEBUG
->>>>> +
->>>>>  #include <linux/clk.h>
->>>>>  #include <linux/delay.h>
->>>>>  #include <linux/dmaengine.h>
->>>>> @@ -1046,8 +1048,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>>>>                 xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
->>>>>  
->>>>>         xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
->>>>> -       i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
->>>>> -                                   i2c_dev->dma_buf;
->>>>> +       i2c_dev->is_curr_dma_xfer = !!i2c_dev->dma_buf;
->>>>>         tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
->>>>>         dma = i2c_dev->is_curr_dma_xfer;
->>>>> ----------
->>>>>
->>>>> Here is the log with this change:
->>>>>
->>>>> [    0.760796] tegra_rtc 7000e000.rtc: registered as rtc1
->>>>> [    0.760850] tegra_rtc 7000e000.rtc: Tegra internal Real Time Clock
->>>>> [    0.761050] i2c /dev entries driver
->>>>> [    0.918928] tegra-i2c 7000c000.i2c: starting DMA for length: 16
->>>>> [    0.918940] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.919040] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    0.919050] tegra-i2c 7000c000.i2c: starting DMA for length: 8
->>>>> [    0.919059] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.919322] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    0.919335] tegra-i2c 7000c000.i2c: starting DMA for length: 16
->>>>> [    0.919343] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.919440] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    0.919448] tegra-i2c 7000c000.i2c: starting DMA for length: 112
->>>>> [    0.919456] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.922818] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
->>>>> [    0.922829] atmel_mxt_ts 0-004c: Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
->>>>> [    0.922886] tegra-i2c 7000c000.i2c: starting DMA for length: 16
->>>>> [    0.922895] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.922993] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    0.923002] tegra-i2c 7000c000.i2c: starting DMA for length: 224
->>>>> [    0.923011] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.933253] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
->>>>> [    0.933287] tegra-i2c 7000c000.i2c: starting DMA for length: 16
->>>>> [    0.933297] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.933478] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    0.933487] tegra-i2c 7000c000.i2c: starting DMA for length: 12
->>>>> [    0.933496] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    0.945120] tegra-i2c 7000d000.i2c: starting DMA for length: 16
->>>>> [    0.945130] tegra-i2c 7000d000.i2c: unmasked irq: 0c
->>>>> [    1.038917] tegra-i2c 7000c000.i2c: DMA transfer timeout
->>>>> [    1.038982] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-110)
->>>>> [    1.039000] tegra-i2c 7000c000.i2c: starting DMA for length: 16
->>>>> [    1.039006] atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
->>
->>
->>
->>>>> [    1.039009] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    1.039148] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    1.039157] tegra-i2c 7000c000.i2c: starting DMA for length: 4
->>>>> [    1.039166] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    1.039304] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    1.039340] tegra-i2c 7000c000.i2c: starting DMA for length: 16
->>>>> [    1.039349] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    1.039535] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    1.039544] tegra-i2c 7000c000.i2c: starting DMA for length: 12
->>>>> [    1.039552] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    1.040055] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    1.040083] tegra-i2c 7000c000.i2c: starting DMA for length: 16
->>>>> [    1.040092] tegra-i2c 7000c000.i2c: unmasked irq: 0c
->>>>> [    1.040301] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
->>>>> [    1.048934] tegra-i2c 7000d000.i2c: i2c transfer timed out
->>>>
->>>> This log shows DMA transfer timeout for atmel read.
->>>> Do you see issue if you don’t enforce dma all time and let it choose PIO Vs DMA?
->>>>
->>>
->>> No, there are no timeout errors in PIO mode. I could post full log with the PIO-only mode if you want.
->>>
->> Yes please post full log of PIO only and DMA only
->> Also, in above log, lots of DMA transfer went thru fine except this
->> one transfer where DMA timed out.
->> DMA completion doesnt happen on DMA submit during this particular
->> transaction timeframe for some reason.
-> 
-> Dmitry, can you provide some background information on the setup that
-> you're using? I vaguely remember something about i2c@7000d000 being
-> special on older Tegra devices. Perhaps there's something additional
-> that we need to take into account?
-> 
-> Aha! Look at tegra_i2c_reg_addr() which special-cases I2C_TX_FIFO on
-> the DVC variant of the controller, which is exactly the one that you
-> are seeing the timeouts on and it's exactly the register that we use
-> as destination for the DMA transfer.
-> 
-> I think we need to do something like this:
-> 
-> 	slv_config.dst_addr = i2c_dev->base_phys + tegra_i2c_reg_addr(i2c_dev, I2C_TX_FIFO);
-> 
-> to make sure we pass the right FIFO register address to DMA.
-
-I'm running it on T20 at the moment. I don't know about the DVC quirks, but sounds plausible. Please let me know if you need any other info.
-
-Here the full logs:
-
-PIO-only: http://dpaste.com/2MX3EAN.txt
-DMA-only: http://dpaste.com/3VXZSSM.txt
-
-Note the "Failed to read T44 and T5 (-110)" error that happens in DMA-only. And it happens on i2c@7000c000, DVC is i2c@7000d000.
+PiA+Pj4gTm8sIHRoZXJlIGFyZSBubyB0aW1lb3V0IGVycm9ycyBpbiBQSU8gbW9kZS4gSSBjb3Vs
+ZCBwb3N0IGZ1bGwgbG9nIHdpdGggdGhlIFBJTy1vbmx5IG1vZGUgaWYgeW91IHdhbnQuDQo+ID4+
+Pg0KPiA+PiBZZXMgcGxlYXNlIHBvc3QgZnVsbCBsb2cgb2YgUElPIG9ubHkgYW5kIERNQSBvbmx5
+IEFsc28sIGluIGFib3ZlIGxvZywgDQo+ID4+IGxvdHMgb2YgRE1BIHRyYW5zZmVyIHdlbnQgdGhy
+dSBmaW5lIGV4Y2VwdCB0aGlzIG9uZSB0cmFuc2ZlciB3aGVyZSANCj4gPj4gRE1BIHRpbWVkIG91
+dC4NCj4gPj4gRE1BIGNvbXBsZXRpb24gZG9lc250IGhhcHBlbiBvbiBETUEgc3VibWl0IGR1cmlu
+ZyB0aGlzIHBhcnRpY3VsYXIgDQo+ID4+IHRyYW5zYWN0aW9uIHRpbWVmcmFtZSBmb3Igc29tZSBy
+ZWFzb24uDQo+ID4gDQo+ID4gRG1pdHJ5LCBjYW4geW91IHByb3ZpZGUgc29tZSBiYWNrZ3JvdW5k
+IGluZm9ybWF0aW9uIG9uIHRoZSBzZXR1cCB0aGF0IA0KPiA+IHlvdSdyZSB1c2luZz8gSSB2YWd1
+ZWx5IHJlbWVtYmVyIHNvbWV0aGluZyBhYm91dCBpMmNANzAwMGQwMDAgYmVpbmcgDQo+ID4gc3Bl
+Y2lhbCBvbiBvbGRlciBUZWdyYSBkZXZpY2VzLiBQZXJoYXBzIHRoZXJlJ3Mgc29tZXRoaW5nIGFk
+ZGl0aW9uYWwgDQo+ID4gdGhhdCB3ZSBuZWVkIHRvIHRha2UgaW50byBhY2NvdW50Pw0KPiA+IA0K
+PiA+IEFoYSEgTG9vayBhdCB0ZWdyYV9pMmNfcmVnX2FkZHIoKSB3aGljaCBzcGVjaWFsLWNhc2Vz
+IEkyQ19UWF9GSUZPIG9uIA0KPiA+IHRoZSBEVkMgdmFyaWFudCBvZiB0aGUgY29udHJvbGxlciwg
+d2hpY2ggaXMgZXhhY3RseSB0aGUgb25lIHRoYXQgeW91IA0KPiA+IGFyZSBzZWVpbmcgdGhlIHRp
+bWVvdXRzIG9uIGFuZCBpdCdzIGV4YWN0bHkgdGhlIHJlZ2lzdGVyIHRoYXQgd2UgdXNlIA0KPiA+
+IGFzIGRlc3RpbmF0aW9uIGZvciB0aGUgRE1BIHRyYW5zZmVyLg0KPiA+IA0KPiA+IEkgdGhpbmsg
+d2UgbmVlZCB0byBkbyBzb21ldGhpbmcgbGlrZSB0aGlzOg0KPiA+IA0KPiA+IAlzbHZfY29uZmln
+LmRzdF9hZGRyID0gaTJjX2Rldi0+YmFzZV9waHlzICsgDQo+ID4gdGVncmFfaTJjX3JlZ19hZGRy
+KGkyY19kZXYsIEkyQ19UWF9GSUZPKTsNCj4gPiANCj4gPiB0byBtYWtlIHN1cmUgd2UgcGFzcyB0
+aGUgcmlnaHQgRklGTyByZWdpc3RlciBhZGRyZXNzIHRvIERNQS4NCj4NCj4gSSdtIHJ1bm5pbmcg
+aXQgb24gVDIwIGF0IHRoZSBtb21lbnQuIEkgZG9uJ3Qga25vdyBhYm91dCB0aGUgRFZDIHF1aXJr
+cywgYnV0IHNvdW5kcyBwbGF1c2libGUuIFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgbmVlZCBh
+bnkgb3RoZXIgaW5mby4NCj4NCj4gSGVyZSB0aGUgZnVsbCBsb2dzOg0KPg0KPiBQSU8tb25seTog
+aHR0cDovL2RwYXN0ZS5jb20vMk1YM0VBTi50eHQNCj4gRE1BLW9ubHk6IGh0dHA6Ly9kcGFzdGUu
+Y29tLzNWWFpTU00udHh0DQo+DQo+IE5vdGUgdGhlICJGYWlsZWQgdG8gcmVhZCBUNDQgYW5kIFQ1
+ICgtMTEwKSIgZXJyb3IgdGhhdCBoYXBwZW5zIGluIERNQS1vbmx5LiBBbmQgaXQgaGFwcGVucyBv
+biBpMmNANzAwMGMwMDAsIERWQyBpcyBpMmNANzAwMGQwMDAuDQoNClllcyB0aGlzIGlzIGR1ZSB0
+byBzYW1lIGlzc3VlIHRoZWlycnkgbWVudGlvbmVkLg0KUHJpb3IgdG8gdHJhbnNmZXIgdGltZW91
+dCBmb3IgdG91Y2gsIHRwczY1ODZ4IHJlZ3VsYXRvciBwcm9iZSBmYWlsZWQgZHVlIHRvIGkyYyB0
+aW1lb3V0IHdoaWNoIHVzZXMgRFZDICg3MDAwRDAwMCkgYW5kIHNpbmNlIERNQSBtb2RlIGlzIGVu
+Zm9yY2VkIGFsbCBEVkMvUFdSIEkyQyB0cmFuc2FjdGlvbnMgYWxzbyBnbyB0aHJ1IERNQSBhbmQg
+RklGTyByZWdpc3RlciBmb3IgRFZDIG9mZnNldCBpcyBub3QgYWNjb3VudGVkIHdoZW4gY29uZmln
+dXJlIHRvIGRtYSBzbGF2ZS4NCldpbGwgZml4IGFuZCBzZW5kIHNvIHlvdSBjYW4gc2VlIGZvciBy
+ZXBybyB3aXRoIHVwZGF0ZWQgcGF0Y2guLg0KDQoNClsgICAgMC45MjUxNTVdIHRlZ3JhLWkyYyA3
+MDAwZDAwMC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVuZ3RoOiAxNg0KWyAgICAwLjkyNTE2NV0g
+dGVncmEtaTJjIDcwMDBkMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KWyAgICAxLjAyODk2MV0g
+dGVncmEtaTJjIDcwMDBkMDAwLmkyYzogaTJjIHRyYW5zZmVyIHRpbWVkIG91dA0KWyAgICAxLjAy
+ODk2OF0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogRE1BIHRyYW5zZmVyIHRpbWVvdXQNClsgICAg
+MS4wMjg5OTVdIHRwczY1ODZ4IDMtMDAzNDogQ2hpcCBJRCByZWFkIGZhaWxlZDogLTExMA0KWyAg
+ICAxLjAyOTAyOV0gdHBzNjU4Nng6IHByb2JlIG9mIDMtMDAzNCBmYWlsZWQgd2l0aCBlcnJvciAt
+NQ0KWyAgICAxLjAyOTA0NV0gYXRtZWxfbXh0X3RzIDAtMDA0YzogX19teHRfcmVhZF9yZWc6IGky
+YyB0cmFuc2ZlciBmYWlsZWQgKC0xMTApDQpbICAgIDEuMDI5MDUxXSBhdG1lbF9teHRfdHMgMC0w
+MDRjOiBGYWlsZWQgdG8gcmVhZCBUNDQgYW5kIFQ1ICgtMTEwKQ0K
