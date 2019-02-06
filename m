@@ -1,42 +1,113 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 16:23:21 +0300
-Message-ID: <82f38909-94f1-7984-2b0f-df6231aee58f@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 13:25:17 +0000
+Message-ID: <BYAPR12MB33983A0E93B17808DECFD0F2C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
  <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
- <c4f67e39-df72-cc56-216b-8e6014891b52@gmail.com>
- <BYAPR12MB3398E50ED1C6909D6BCB0DDFC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <304c1916-e836-fa95-5cec-887fef8f3eb2@gmail.com>
- <BYAPR12MB33986680570EB919369000F3C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <20190206130909.GJ21676@ulmo> <20190206131310.GK21676@ulmo>
+ <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB33986680570EB919369000F3C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-06.02.2019 16:17, Sowjanya Komatineni пишет:
-> 
-> 
->>>> BTW, I'm seeing "atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000" whithout making any modifications to the original patch as well and it shall not happen, hence there is bug somewhere. Probably FIFO triggers are still not set up correctly... ?
->>>>
->>>>
->>> In snippet you sent, I see you are forcing dma_burst to 1 always which is what set for fifo trigger levels as well and also you are forcing dma all the time.
->>> So always it will be 1 word dma burst and 1 word trigger level and that should not be an issue.
->>>
->>
->> I reverted that snippet, this log is collected with the yours original patch.
->>
-> From atmel driver, looks like this warning is from maxt_update_cfg and due to CRC mismatch and above values shows read data CRC is 0Xf436dc which is compared against info_crc of all 0's 
-> Info_crc is based on raw config file and somehow its all 0's. this is not based on data read thru i2c. 
-> data->info_crc computed on data read is 0Xf436dc
-> 
-> This warning is not related to I2C transfer
-> 
-
-It doesn't happen with the I2C PIO mode. Seems it means that the I2C reads out the 0xF436DC value instead of 0x000000.. if I'm not missing anything.
+DQoNCj4gPj4gVGhhdCdzIG9kZCBiZWNhdXNlIGl0IHN1Z2dlc3RzIHRoYXQgRE1BIGFjdHVhbGx5
+IGNvbXBsZXRlZCwgYnV0IHRoZSANCj4gPj4gbWVzc2FnZSBkaWRuJ3QuDQo+ID4+DQo+ID4+IEkn
+bSBub3Qgc3VyZSBJIHVuZGVyc3RhbmQgaG93IHRoYXQgY291bGQgaGFwcGVuLg0KPiA+Pg0KPiA+
+PiBXaGF0J3MgYWxzbyB3ZWlyZCBhYm92ZSBpcyB0aGF0IHRoZXJlIGRvZXNuJ3Qgc2VlbSB0byBi
+ZSBhIERNQSB0aGF0IA0KPiA+PiBpcyBzdGFydGVkIGZvciB0aGF0IHBhcnRpY3VsYXIgbWVzc2Fn
+ZS4gT3IgaXMgdGhlIHRpbWVvdXQgbWVzc2FnZSBhIA0KPiA+PiByZXNwb25zZSB0byB0aGUgcHJp
+b3IgdHJhbnNmZXIgKGxlbmd0aCAxMCk/IFNlZW1zIGxpa2UgdGhhdCBzaG91bGQgDQo+ID4+IG5v
+dCBiZSBwb3NzaWJsZSBiZWNhdXNlIHdlIGdldCB0aGUgInRyYW5zZmVyIGNvbXBsZXRlIiBtZXNz
+YWdlLg0KPiA+IA0KPiA+IFdhaXQsIHRob3NlIGFyZSBhY3R1YWxseSBkaWZmZXJlbnQgaW5zdGFu
+Y2VzIG9mIHRoZSBJMkMgY29udHJvbGxlciwgc28gDQo+ID4gdGhlIHJlbGV2YW50IGxvZyBlbnRy
+aWVzIGFyZSB0aGVzZToNCj4gPiANCj4gPiAJWyAgICAwLjk0NTQ0NV0gdGVncmEtaTJjIDcwMDBk
+MDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDE2DQo+ID4gCVsgICAgMC45NDU0NTZd
+IHRlZ3JhLWkyYyA3MDAwZDAwMC5pMmM6IHVubWFza2VkIGlycTogMGMNCj4gPiAJLi4uDQo+ID4g
+CVsgICAgMS4wNDkyMjRdIHRlZ3JhLWkyYyA3MDAwZDAwMC5pMmM6IGkyYyB0cmFuc2ZlciB0aW1l
+ZCBvdXQNCj4gPiANCj4gPiBBbmQgdGhlc2UgZG9uJ3QgaGFwcGVuIGlmIHlvdSB1c2UgaGlnaGVy
+IGJ1cnN0IHNpemVzIG9yIGJlZm9yZSB0aGUgRE1BIA0KPiA+IHNlcmllcz8NCj4NCj4gSSB0cmll
+ZCB0byBlbmZvcmNlIERNQSB3aXRob3V0IGNoYW5naW5nIGJ1cnN0czoNCj4NCj4gLS0tLS0tLS0t
+LQ0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIGIvZHJpdmVy
+cy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIGluZGV4IGM1MzhlZDVmOGUyYy4uNWQxYzU0Y2U3ODAw
+IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gKysrIGIv
+ZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+IEBAIC02LDYgKzYsOCBAQA0KPiAgICog
+QXV0aG9yOiBDb2xpbiBDcm9zcyA8Y2Nyb3NzQGFuZHJvaWQuY29tPg0KPiAgICovDQo+ICANCj4g
+KyNkZWZpbmUgREVCVUcNCj4gKw0KPiAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiAgI2luY2x1
+ZGUgPGxpbnV4L2RlbGF5Lmg+DQo+ICAjaW5jbHVkZSA8bGludXgvZG1hZW5naW5lLmg+DQo+IEBA
+IC0xMDQ2LDggKzEwNDgsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY194ZmVyX21zZyhzdHJ1Y3Qg
+dGVncmFfaTJjX2RldiAqaTJjX2RldiwNCj4gICAgICAgICAgICAgICAgIHhmZXJfc2l6ZSA9IG1z
+Zy0+bGVuICsgSTJDX1BBQ0tFVF9IRUFERVJfU0laRTsNCj4gIA0KPiAgICAgICAgIHhmZXJfc2l6
+ZSA9IEFMSUdOKHhmZXJfc2l6ZSwgQllURVNfUEVSX0ZJRk9fV09SRCk7DQo+IC0gICAgICAgaTJj
+X2Rldi0+aXNfY3Vycl9kbWFfeGZlciA9ICh4ZmVyX3NpemUgPiBJMkNfUElPX01PREVfTUFYX0xF
+TikgJiYNCj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaTJjX2Rldi0+ZG1h
+X2J1ZjsNCj4gKyAgICAgICBpMmNfZGV2LT5pc19jdXJyX2RtYV94ZmVyID0gISFpMmNfZGV2LT5k
+bWFfYnVmOw0KPiAgICAgICAgIHRlZ3JhX2kyY19jb25maWdfZmlmb190cmlnKGkyY19kZXYsIHhm
+ZXJfc2l6ZSk7DQo+ICAgICAgICAgZG1hID0gaTJjX2Rldi0+aXNfY3Vycl9kbWFfeGZlcjsNCj4g
+LS0tLS0tLS0tLQ0KPg0KPiBIZXJlIGlzIHRoZSBsb2cgd2l0aCB0aGlzIGNoYW5nZToNCj4NCj4g
+WyAgICAwLjc2MDc5Nl0gdGVncmFfcnRjIDcwMDBlMDAwLnJ0YzogcmVnaXN0ZXJlZCBhcyBydGMx
+DQo+IFsgICAgMC43NjA4NTBdIHRlZ3JhX3J0YyA3MDAwZTAwMC5ydGM6IFRlZ3JhIGludGVybmFs
+IFJlYWwgVGltZSBDbG9jaw0KPiBbICAgIDAuNzYxMDUwXSBpMmMgL2RldiBlbnRyaWVzIGRyaXZl
+cg0KPiBbICAgIDAuOTE4OTI4XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiBzdGFydGluZyBETUEg
+Zm9yIGxlbmd0aDogMTYNCj4gWyAgICAwLjkxODk0MF0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzog
+dW5tYXNrZWQgaXJxOiAwYw0KPiBbICAgIDAuOTE5MDQwXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJj
+OiB0cmFuc2ZlciBjb21wbGV0ZTogMTAgMCAwDQo+IFsgICAgMC45MTkwNTBdIHRlZ3JhLWkyYyA3
+MDAwYzAwMC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVuZ3RoOiA4DQo+IFsgICAgMC45MTkwNTld
+IHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHVubWFza2VkIGlycTogMGMNCj4gWyAgICAwLjkxOTMy
+Ml0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdHJhbnNmZXIgY29tcGxldGU6IDEwIDAgMA0KPiBb
+ICAgIDAuOTE5MzM1XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiBzdGFydGluZyBETUEgZm9yIGxl
+bmd0aDogMTYNCj4gWyAgICAwLjkxOTM0M10gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNr
+ZWQgaXJxOiAwYw0KPiBbICAgIDAuOTE5NDQwXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFu
+c2ZlciBjb21wbGV0ZTogMTAgMCAwDQo+IFsgICAgMC45MTk0NDhdIHRlZ3JhLWkyYyA3MDAwYzAw
+MC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVuZ3RoOiAxMTINCj4gWyAgICAwLjkxOTQ1Nl0gdGVn
+cmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiBbICAgIDAuOTIyODE4XSB0
+ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0ZTogMTEgMCAwDQo+IFsgICAg
+MC45MjI4MjldIGF0bWVsX214dF90cyAwLTAwNGM6IEZhbWlseTogMTYwIFZhcmlhbnQ6IDAgRmly
+bXdhcmUgVjEuMC5BQSBPYmplY3RzOiAxOA0KPiBbICAgIDAuOTIyODg2XSB0ZWdyYS1pMmMgNzAw
+MGMwMDAuaTJjOiBzdGFydGluZyBETUEgZm9yIGxlbmd0aDogMTYNCj4gWyAgICAwLjkyMjg5NV0g
+dGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiBbICAgIDAuOTIyOTkz
+XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0ZTogMTAgMCAwDQo+IFsg
+ICAgMC45MjMwMDJdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVu
+Z3RoOiAyMjQNCj4gWyAgICAwLjkyMzAxMV0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNr
+ZWQgaXJxOiAwYw0KPiBbICAgIDAuOTMzMjUzXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFu
+c2ZlciBjb21wbGV0ZTogMTEgMCAwDQo+IFsgICAgMC45MzMyODddIHRlZ3JhLWkyYyA3MDAwYzAw
+MC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVuZ3RoOiAxNg0KPiBbICAgIDAuOTMzMjk3XSB0ZWdy
+YS1pMmMgNzAwMGMwMDAuaTJjOiB1bm1hc2tlZCBpcnE6IDBjDQo+IFsgICAgMC45MzM0NzhdIHRl
+Z3JhLWkyYyA3MDAwYzAwMC5pMmM6IHRyYW5zZmVyIGNvbXBsZXRlOiAxMCAwIDANCj4gWyAgICAw
+LjkzMzQ4N10gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6
+IDEyDQo+IFsgICAgMC45MzM0OTZdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHVubWFza2VkIGly
+cTogMGMNCj4gWyAgICAwLjk0NTEyMF0gdGVncmEtaTJjIDcwMDBkMDAwLmkyYzogc3RhcnRpbmcg
+RE1BIGZvciBsZW5ndGg6IDE2DQo+IFsgICAgMC45NDUxMzBdIHRlZ3JhLWkyYyA3MDAwZDAwMC5p
+MmM6IHVubWFza2VkIGlycTogMGMNCj4gWyAgICAxLjAzODkxN10gdGVncmEtaTJjIDcwMDBjMDAw
+LmkyYzogRE1BIHRyYW5zZmVyIHRpbWVvdXQNCj4gWyAgICAxLjAzODk4Ml0gYXRtZWxfbXh0X3Rz
+IDAtMDA0YzogX19teHRfcmVhZF9yZWc6IGkyYyB0cmFuc2ZlciBmYWlsZWQgKC0xMTApDQo+IFsg
+ICAgMS4wMzkwMDBdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHN0YXJ0aW5nIERNQSBmb3IgbGVu
+Z3RoOiAxNg0KPiBbICAgIDEuMDM5MDA2XSBhdG1lbF9teHRfdHMgMC0wMDRjOiBGYWlsZWQgdG8g
+cmVhZCBUNDQgYW5kIFQ1ICgtMTEwKQ0KPiBbICAgIDEuMDM5MDA5XSB0ZWdyYS1pMmMgNzAwMGMw
+MDAuaTJjOiB1bm1hc2tlZCBpcnE6IDBjDQo+IFsgICAgMS4wMzkxNDhdIHRlZ3JhLWkyYyA3MDAw
+YzAwMC5pMmM6IHRyYW5zZmVyIGNvbXBsZXRlOiAxMCAwIDANCj4gWyAgICAxLjAzOTE1N10gdGVn
+cmEtaTJjIDcwMDBjMDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDQNCj4gWyAgICAx
+LjAzOTE2Nl0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KPiBbICAg
+IDEuMDM5MzA0XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0cmFuc2ZlciBjb21wbGV0ZTogMTAg
+MCAwDQo+IFsgICAgMS4wMzkzNDBdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHN0YXJ0aW5nIERN
+QSBmb3IgbGVuZ3RoOiAxNg0KPiBbICAgIDEuMDM5MzQ5XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJj
+OiB1bm1hc2tlZCBpcnE6IDBjDQo+IFsgICAgMS4wMzk1MzVdIHRlZ3JhLWkyYyA3MDAwYzAwMC5p
+MmM6IHRyYW5zZmVyIGNvbXBsZXRlOiAxMCAwIDANCj4gWyAgICAxLjAzOTU0NF0gdGVncmEtaTJj
+IDcwMDBjMDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDEyDQo+IFsgICAgMS4wMzk1
+NTJdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHVubWFza2VkIGlycTogMGMNCj4gWyAgICAxLjA0
+MDA1NV0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdHJhbnNmZXIgY29tcGxldGU6IDEwIDAgMA0K
+PiBbICAgIDEuMDQwMDgzXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiBzdGFydGluZyBETUEgZm9y
+IGxlbmd0aDogMTYNCj4gWyAgICAxLjA0MDA5Ml0gdGVncmEtaTJjIDcwMDBjMDAwLmkyYzogdW5t
+YXNrZWQgaXJxOiAwYw0KPiBbICAgIDEuMDQwMzAxXSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB0
+cmFuc2ZlciBjb21wbGV0ZTogMTAgMCAwDQo+IFsgICAgMS4wNDg5MzRdIHRlZ3JhLWkyYyA3MDAw
+ZDAwMC5pMmM6IGkyYyB0cmFuc2ZlciB0aW1lZCBvdXQNCg0KVGhpcyBsb2cgc2hvd3MgRE1BIHRy
+YW5zZmVyIHRpbWVvdXQgZm9yIGF0bWVsIHJlYWQuDQpEbyB5b3Ugc2VlIGlzc3VlIGlmIHlvdSBk
+b27igJl0IGVuZm9yY2UgZG1hIGFsbCB0aW1lIGFuZCBsZXQgaXQgY2hvb3NlIFBJTyBWcyBETUE/
+DQo=
