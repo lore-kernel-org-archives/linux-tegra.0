@@ -1,25 +1,46 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: RE: [PATCH V13 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 15:15:26 +0000
-Message-ID: <BYAPR12MB3398A6C76EC731D259FC3EA4C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+Date: Wed, 6 Feb 2019 15:55:04 +0000
+Message-ID: <BYAPR12MB33988DCC1F4997AAF2112447C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549464441-1836-1-git-send-email-skomatineni@nvidia.com>
  <1549464441-1836-3-git-send-email-skomatineni@nvidia.com>
  <4ecd3894-a1cb-20dd-8675-26e6e84254e7@gmail.com>
+ <BYAPR12MB3398A6C76EC731D259FC3EA4C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4ecd3894-a1cb-20dd-8675-26e6e84254e7@gmail.com>
+In-Reply-To: <BYAPR12MB3398A6C76EC731D259FC3EA4C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+IFR3byAiOzsiIGF0IHRoZSBlbmQuDQo+DQo+DQo+DQo+IEdvb2QgbmV3czogRFZDIEkyQyB3
-b3JrcyBub3cgYW5kIHRwczY1ODZ4IHByb2JlcyBmaW5lISA6KSBCYWQgbmV3czogYXRtZWwtdG91
-Y2ggc3RpbGwgaGFzIHNhbWUgcHJvYmxlbXMgYXMgaW4gVjEyIDooDQo+IA0KPiBETUEtb25seSBW
-MTM6IGh0dHA6Ly9kcGFzdGUuY29tLzBYSjFaOEcudHh0DQoNClN0cmFuZ2VseSwgdGhlcmUgYXJl
-IG1hbnkgdHJhbnNhY3Rpb25zIHRvIHRvdWNoIGFuZCBhbGwgb2YgdGhlbSBhcmUgZ29vZCBleGNl
-cHQgRE1BIHRpbWVvdXQgb25seSB3aGVuIHJlYWRpbmcgVDQ0IGFuZCBUNQ0KYXRtZWxfbXh0X3Rz
-IDAtMDA0YzogRmFpbGVkIHRvIHJlYWQgVDQ0IGFuZCBUNSAoLTExMCkNCg==
+DQoNCj4gPiBUd28gIjs7IiBhdCB0aGUgZW5kLg0KPiA+DQo+ID4NCj4gPg0KPiA+IEdvb2QgbmV3
+czogRFZDIEkyQyB3b3JrcyBub3cgYW5kIHRwczY1ODZ4IHByb2JlcyBmaW5lISA6KSBCYWQgbmV3
+czogDQo+ID4gYXRtZWwtdG91Y2ggc3RpbGwgaGFzIHNhbWUgcHJvYmxlbXMgYXMgaW4gVjEyIDoo
+DQo+ID4gDQo+ID4gRE1BLW9ubHkgVjEzOiBodHRwOi8vZHBhc3RlLmNvbS8wWEoxWjhHLnR4dA0K
+PiANCj4gU3RyYW5nZWx5LCB0aGVyZSBhcmUgbWFueSB0cmFuc2FjdGlvbnMgdG8gdG91Y2ggYW5k
+IGFsbCBvZiB0aGVtIGFyZSBnb29kIGV4Y2VwdCBETUEgdGltZW91dCBvbmx5IHdoZW4gcmVhZGlu
+ZyBUNDQgYW5kIFQ1IGF0bWVsX214dF90cyAwLTAwNGM6IEZhaWxlZCB0byByZWFkIFQ0NCBhbmQg
+VDUgKC0xMTApDQoNClsgICAgMC45MjMxMzhdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IHN0YXJ0
+aW5nIERNQSBmb3IgbGVuZ3RoOiAxNg0KWyAgICAwLjkyMzE0OF0gdGVncmEtaTJjIDcwMDBjMDAw
+LmkyYzogdW5tYXNrZWQgaXJxOiAwYw0KWyAgICAwLjkyMzMzN10gdGVncmEtaTJjIDcwMDBjMDAw
+LmkyYzogdHJhbnNmZXIgY29tcGxldGU6IDEwIDAgMA0KWyAgICAwLjkyMzM0N10gdGVncmEtaTJj
+IDcwMDBjMDAwLmkyYzogc3RhcnRpbmcgRE1BIGZvciBsZW5ndGg6IDEyDQpbICAgIDAuOTIzMzU1
+XSB0ZWdyYS1pMmMgNzAwMGMwMDAuaTJjOiB1bm1hc2tlZCBpcnE6IDBjDQpbICAgIDAuOTM1MDQ4
+XSB0ZWdyYS1pMmMgNzAwMGQwMDAuaTJjOiBzdGFydGluZyBETUEgZm9yIGxlbmd0aDogMTYNClsg
+ICAgMC45MzUwNThdIHRlZ3JhLWkyYyA3MDAwZDAwMC5pMmM6IHVubWFza2VkIGlycTogMGMNClsg
+ICAgMS4wMjg3NTBdIHRlZ3JhLWkyYyA3MDAwYzAwMC5pMmM6IERNQSB0cmFuc2ZlciB0aW1lb3V0
+DQpbICAgIDEuMDI4ODE2XSBhdG1lbF9teHRfdHMgMC0wMDRjOiBfX214dF9yZWFkX3JlZzogaTJj
+IHRyYW5zZmVyIGZhaWxlZCAoLTExMCkNCg0KTG9va2luZyBpbnRvIHRpbWVzdGFtcHMgYW5kIHRy
+YW5zYWN0aW9ucywgRE1BIHRpbWVvdXRzIGFmdGVyIHN0YXJ0IG9mIERNQSBmb3IgSTJDMSB0byB0
+b3VjaCBkdXJpbmcgdGhpcyB0cmFuc2FjdGlvbi4NCldoaWxlIGl0IGlzIHdhaXRpbmcgZm9yIEky
+QzEgRE1BIHRyYW5zZmVyLCBsb3RzIG9mIERWQyB0cmFuc2FjdGlvbnMgaGFwcGVuZWQgdGhydSBE
+TUEgd2hpY2ggYXJlIHN1Y2Nlc3NmdWwNCg0KV2hhdCBpcyB0aGUgSTJDMSBzcGVlZD8NCkFsc28g
+aW5jYXNlIGlmIGRldmljZSBpcyBydW5uaW5nIHNsb3cgZm9yIHNvbWUgcmVhc29uLCBwcm9iYWJs
+eSB0aW1lb3V0IHdhcyBub3QgZW5vdWdoIGFzIHRoaXMgcGF0Y2ggc2VyaWVzIGNoYW5nZXMgdGlt
+ZW91dCB3aXRoIGJhc2UgMTAwbVMgKyBtc2cgdHJhbnNmZXIgdGltZSBiYXNlZCBvbiB0cmFuc2Zl
+ciBzaXplLg0KQ2FuIHlvdSBnaXZlIHF1aWNrIHRyeSB3aXRoIGluY3JlYXNlZCB0aW1lb3V0IGlu
+Y2FzZSBpZiBkZXZpY2UgaXMgcnVubmluZyBzbG93Pw0KDQo=
