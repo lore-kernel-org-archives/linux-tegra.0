@@ -1,13 +1,14 @@
 From: Wolfram Sang <wsa@the-dreams.de>
 Subject: Re: [PATCH v2] i2c: of: Try to find an I2C adapter matching the parent
-Date: Wed, 6 Feb 2019 10:38:51 +0100
-Message-ID: <20190206093851.5sxretbl7ajizi5f@ninjato>
+Date: Wed, 6 Feb 2019 10:49:12 +0100
+Message-ID: <20190206094912.nnfsfzivwbss4yye@ninjato>
 References: <20190125131142.26837-1-thierry.reding@gmail.com>
  <20190205124443.GF1045@kunai>
+ <20190206093851.5sxretbl7ajizi5f@ninjato>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0561211638=="
+Content-Type: multipart/mixed; boundary="===============1443454562=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190205124443.GF1045@kunai>
+In-Reply-To: <20190206093851.5sxretbl7ajizi5f@ninjato>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,74 +23,58 @@ Cc: Tristan Bastian <tristan-c.bastian@gmx.de>, Vlado Plaga <rechner@vlado-do.de
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0561211638==
+--===============1443454562==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="znm33lf5tor7xwnk"
+	protocol="application/pgp-signature"; boundary="do5mluflvbh7kd23"
 Content-Disposition: inline
 
 
---znm33lf5tor7xwnk
+--do5mluflvbh7kd23
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 05, 2019 at 01:44:44PM +0100, Wolfram Sang wrote:
-> On Fri, Jan 25, 2019 at 02:11:42PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > If an I2C adapter doesn't match the provided device tree node, also try
-> > matching the parent's device tree node. This allows finding an adapter
-> > based on the device node of the parent device that was used to register
-> > it.
-> >=20
-> > This fixes a regression on Tegra124-based Chromebooks (Nyan) where the
-> > eDP controller registers an I2C adapter that is used to read to EDID.
-> > After commit 993a815dcbb2 ("dt-bindings: panel: Add missing .txt
-> > suffix") this stopped working because the I2C adapter could no longer
-> > be found. The approach in this patch fixes the regression without
-> > introducing the issues that the above commit solved.
-> >=20
-> > Fixes: 17ab7806de0c ("drm: don't link DP aux i2c adapter to the hardwar=
-e device node")
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Removed the duplicated Tested-by and applied to for-next, thanks!
->=20
-> I applied to -next because I want this core change more regression
-> testing in next. If this goes good, I will do a cleanup series to not
-> use the of_node of the parent twice.
-
-And there is a regression! Good that I didn't push out before
-double-checking. No one noticed that this breaks registering child
-devices because of_i2c_register_devices() doesn't have a pointer to work
-with anymore?
-
-Removing that patch from the queue.
 
 
---znm33lf5tor7xwnk
+> And there is a regression! Good that I didn't push out before
+> double-checking. No one noticed that this breaks registering child
+> devices because of_i2c_register_devices() doesn't have a pointer to work
+> with anymore?
+
+Well, sorry, I forgot an important detail. There is no regression
+because most drivers still populate adap->dev.of_data with the node
+pointer of their parent. I experimentally removed this from my driver
+under test motivated by this comment from the commit in the Fixes: tag:
+
+"Linking it to the device node of the parent device is wrong, as it
+leads to 2 devices sharing the same device node, which is bad practice,"
+
+But removing this bad practice from I2C core is more work. I wonder now
+if we are in some inconsistent in-between state if I apply this patch as
+is?
+
+
+--do5mluflvbh7kd23
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxaqycACgkQFA3kzBSg
-KbZxaw//ZROCkZOBaZ/hRoFWpJMOsboSuVPnrBtNgsGQyLGeu1Q2YB3QnJbcoOI+
-+1VXHBdYA5d7cGVaE69AdjKI8Mido6oo29t5yVQ/8OgMNCHe9vGl81uJuqiP6jIl
-A6GCWacRWTFTzZTLaDjT3q1WBktK6Lm4jRGZsnjdUjSYFi6S+D1dUxbOUBc7+ft3
-XEZUi5olbfOTto51iLRhGKzAsQ+10iyB4KDW/Eqo9up66gEcYbblfpEnJF9rPRhZ
-kiYJddPTcQ8b1METg63sC8h5JulfDF0Zf33IDQ51pEpdnetPWSI845c6kC0MwClU
-uLQyJrj3jMMvi6ub64hsv0Y2kLjGxK16grLVeEPCSnLP1ObrnRg48OGEQd0B3f96
-OvRAjJZigxk58hkzj33OIDMfE4BlXFvGQwSMmqxg0vf4mITCkIG6RygSWOMA4Wbo
-Lztw0YRNehwAHx7Jg2s8XYFsPk4gPaIMi0/FokCxjcsbYQdLhBjSgHH0O5UDCtgS
-n1LQHnY+Waa7Ia8BssUPkF9v7rmxO9Cl8BQnRMtYfrL+NUP+jtSzQ6dO3cTBJA1M
-4bMRK+t9wCjsN5gy1Q6zzuGvqbidIc5vTFyQVN2l4IWPC65u9dVEdN7Ru1CWT+JE
-65VegNWSYh27rSuOwMfT4+ZtMWtkha0cq/t6flIoZUblmWbqlaA=
-=P0RV
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxarZcACgkQFA3kzBSg
+KbYZLQ//ZvsNDAQOXd3mTGX8ECUnrYFFYngHPggUzdRmQ0jwlU1s9CoCypmKWp6h
+NzFNgUHzS3gGiLWWo/c/VUosi+lXXrn89d6A2Drc6wJgtklfIwX1al8+KfuSXwbk
+gtIeOu1nHub+UHo1mZiITgmJ5sltprA+EaBXaHGdogUGoNMpvzBfqAaBQbgVU3k4
+bIAzwMBD1qdApjA4y5zxMCWQdrmV0fD4S/mg/xh5eUW2LYWVGqxroKrEgGQlbwU9
+68oLvaOU/esbaIdZPY7VGd/Ne3cKop1lsCWseHtTxQ9HlMpHfsxY1v3Z7vyfld6n
+eXWhExngA2Nvi80xYna1/GUyo5/hUFlnt2xmHCSguR6hLoHk9/mCmCglfAtXqXYT
+HFPfFwO8haWQUJRm478tgqSVDK4iPVAuPgzBDkpkhS4cgoX3xE4A/KZLv9G9PvBy
+hsdJn5DzgzhWsslvYPt8xMrz89pfRDgtdGhPVKjJALEJmVi/Mh60Ci99CmOH08sE
+IS+wtz9R4UvW4VsiIP9SeZipdg43aqvxyh6kq1SsH/yswB4B9XaU1ngHH26Z/QpM
+G+H638siTsGg+0TWVQ9eZQsFMZ8ks4J7sMMeNS7GctNfDUuJzZJ7W5F0mOUeOz57
+qx0SV1x/6UEsvdU40uYRUhgjHks3oYzy5jLsr8YW1uU+gVJsRDE=
+=6hZL
 -----END PGP SIGNATURE-----
 
---znm33lf5tor7xwnk--
+--do5mluflvbh7kd23--
 
---===============0561211638==
+--===============1443454562==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -99,4 +84,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============0561211638==--
+--===============1443454562==--
