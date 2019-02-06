@@ -1,111 +1,572 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] i2c: of: Try to find an I2C adapter matching the parent
-Date: Wed, 6 Feb 2019 13:07:02 +0100
-Message-ID: <20190206120702.GC21676@ulmo>
-References: <20190125131142.26837-1-thierry.reding@gmail.com>
- <20190205124443.GF1045@kunai>
- <20190206093851.5sxretbl7ajizi5f@ninjato>
- <20190206094912.nnfsfzivwbss4yye@ninjato>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 15:40:52 +0300
+Message-ID: <feb6bb13-644f-0ac8-6c82-3771b5dba584@gmail.com>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+ <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0742852529=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190206094912.nnfsfzivwbss4yye@ninjato>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Tristan Bastian <tristan-c.bastian@gmx.de>, Vlado Plaga <rechner@vlado-do.de>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+06.02.2019 1:46, Sowjanya Komatineni пишет:
+> This patch adds DMA support for Tegra I2C.
+> 
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
+> 
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction. This adds delay between data bytes of the same
+> transfer when CPU is fully loaded and some slave devices has
+> internal timeout for no bus activity and stops transaction to
+> avoid bus hang. DMA mode is helpful in such cases.
+> 
+> DMA mode is also helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V12] : Replaced dma_alloc_coherent with dma_alloc_attrs to force the allocated
+> 	 buffer to be contiguous also in physical memory as Tegra194 supports max
+> 	 64K and dma_alloc_coherent doesnt guarentee contiguous memory.
+> 	 Changed return code from EIO to EINVAL incase of failure to obtain dma
+> 	 descriptor.
+> 	 Fixed coding style check issues.	 
+>  [V11] : Replaced deprecated dmaengine_terminate_all with dmaengine_termine_async
+> 	 from non-atomic context and dmaengine_terminate_sync from atomic context.
+> 	 Fixed to program fifo trigger levels properly when transfer falls back to
+> 	 pio mode in case of dma slave configuration failure and other minor fixes.
+>  [V10] : APBDMA is replaced with GPCDMA on Tegra186 and Tegra194 designs.
+> 	 Added apbdma hw support flag to now allow Tegra186 and later use
+> 	 APBDMA driver.
+> 	 Added explicit flow control enable for DMA slave config and error handling.
+> 	 Moved releasing DMA resources to seperate function to reuse in
+> 	 multiple places.
+> 	 Updated to register tegra_i2c_driver from module level rather than subsys
+> 	 level.
+> 	 Other minor feedback
+>  [V9] :  Rebased to 5.0-rc4
+> 	 Removed dependency of APB DMA in Kconfig and added conditional check
+>  	 in I2C driver to decide on using DMA mode.
+> 	 Changed back the allocation of dma buffer during i2c probe.
+> 	 Fixed FIFO triggers depending on DMA Vs PIO.
+>  [V8] :  Moved back dma init to i2c probe, removed ALL_PACKETS_XFER_COMPLETE
+> 	 interrupt and using PACKETS_XFER_COMPLETE interrupt only and some
+> 	 other fixes
+> 	 Updated Kconfig for APB_DMA dependency
+>  [V7] :  Same as V6
+>  [V6] :  Updated for proper buffer allocation/freeing, channel release.
+> 	 Updated to use exact xfer size for syncing dma buffer.
+>  [V5] :  Same as V4
+>  [V4] :  Updated to allocate DMA buffer only when DMA mode.
+> 	 Updated to fall back to PIO mode when DMA channel request or
+> 	 buffer allocation fails.
+>  [V3] :  Updated without additional buffer allocation.
+>  [V2] :  Updated based on V1 review feedback along with code cleanup for
+> 	 proper implementation of DMA.
+> 
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 413 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 369 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 118b7023a0f4..77277a09e485 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -8,6 +8,9 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/dmapool.h>
+> +#include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/init.h>
+> @@ -44,6 +47,8 @@
+>  #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
+>  #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
+>  #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
+> +#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
+> +#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
+>  #define I2C_FIFO_STATUS				0x060
+>  #define I2C_FIFO_STATUS_TX_MASK			0xF0
+>  #define I2C_FIFO_STATUS_TX_SHIFT		4
+> @@ -125,6 +130,19 @@
+>  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
+>  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
+>  
+> +/* Packet header size in bytes */
+> +#define I2C_PACKET_HEADER_SIZE			12
+> +
+> +#define DATA_DMA_DIR_TX				BIT(0)
+> +#define DATA_DMA_DIR_RX				BIT(1)
+> +
+> +/*
+> + * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
+> + * above this, controller will use DMA to fill FIFO.
+> + * MAX PIO len is 20 bytes excluding packet header.
+> + */
+> +#define I2C_PIO_MODE_MAX_LEN			32
+> +
+>  /*
+>   * msg_end_type: The bus control which need to be send at end of transfer.
+>   * @MSG_END_STOP: Send stop pulse at end of transfer.
+> @@ -166,6 +184,7 @@ enum msg_end_type {
+>   *		allowing 0 length transfers.
+>   * @supports_bus_clear: Bus Clear support to recover from bus hang during
+>   *		SDA stuck low from device for some unknown reasons.
+> + * @has_apb_dma: Support of APBDMA on corresponding Tegra chip.
+>   */
+>  struct tegra_i2c_hw_feature {
+>  	bool has_continue_xfer_support;
+> @@ -180,6 +199,7 @@ struct tegra_i2c_hw_feature {
+>  	bool has_mst_fifo;
+>  	const struct i2c_adapter_quirks *quirks;
+>  	bool supports_bus_clear;
+> +	bool has_apb_dma;
+>  };
+>  
+>  /**
+> @@ -191,6 +211,7 @@ struct tegra_i2c_hw_feature {
+>   * @fast_clk: clock reference for fast clock of I2C controller
+>   * @rst: reset control for the I2C controller
+>   * @base: ioremapped registers cookie
+> + * @base_phys: Physical base address of the I2C controller
+>   * @cont_id: I2C controller ID, used for packet header
+>   * @irq: IRQ number of transfer complete interrupt
+>   * @irq_disabled: used to track whether or not the interrupt is enabled
+> @@ -204,6 +225,13 @@ struct tegra_i2c_hw_feature {
+>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
+>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
+>   * @xfer_lock: lock to serialize transfer submission and processing
+> + * @tx_dma_chan: DMA transmit channel
+> + * @rx_dma_chan: DMA receive channel
+> + * @dma_phys: handle to DMA resources
+> + * @dma_buf: pointer to allocated DMA buffer
+> + * @dma_buf_size: DMA buffer size
+> + * @is_curr_dma_xfer: indicates active DMA transfer
+> + * @dma_complete: DMA completion notifier
+>   */
+>  struct tegra_i2c_dev {
+>  	struct device *dev;
+> @@ -213,6 +241,7 @@ struct tegra_i2c_dev {
+>  	struct clk *fast_clk;
+>  	struct reset_control *rst;
+>  	void __iomem *base;
+> +	phys_addr_t base_phys;
+>  	int cont_id;
+>  	int irq;
+>  	bool irq_disabled;
+> @@ -226,6 +255,13 @@ struct tegra_i2c_dev {
+>  	u16 clk_divisor_non_hs_mode;
+>  	bool is_multimaster_mode;
+>  	spinlock_t xfer_lock;
+> +	struct dma_chan *tx_dma_chan;
+> +	struct dma_chan *rx_dma_chan;
+> +	dma_addr_t dma_phys;
+> +	u32 *dma_buf;
+> +	unsigned int dma_buf_size;
+> +	bool is_curr_dma_xfer;
+> +	struct completion dma_complete;
+>  };
+>  
+>  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+> @@ -294,6 +330,111 @@ static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
+>  	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
+>  }
+>  
+> +static void tegra_i2c_dma_complete(void *args)
+> +{
+> +	struct tegra_i2c_dev *i2c_dev = args;
+> +
+> +	complete(&i2c_dev->dma_complete);
+> +}
+> +
+> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
+> +{
+> +	struct dma_async_tx_descriptor *dma_desc;
+> +	enum dma_transfer_direction dir;
+> +	struct dma_chan *chan;
+> +
+> +	dev_dbg(i2c_dev->dev, "starting DMA for length: %zu\n", len);
+> +	reinit_completion(&i2c_dev->dma_complete);
+> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
+> +	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
+> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
+> +					       len, dir, DMA_PREP_INTERRUPT |
+> +					       DMA_CTRL_ACK);
+> +	if (!dma_desc) {
+> +		dev_err(i2c_dev->dev, "failed to get DMA descriptor\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dma_desc->callback = tegra_i2c_dma_complete;
+> +	dma_desc->callback_param = i2c_dev;
+> +	dmaengine_submit(dma_desc);
+> +	dma_async_issue_pending(chan);
+> +	return 0;
+> +}
+> +
+> +static void tegra_i2c_release_dma(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	if (i2c_dev->dma_buf) {
+> +		dma_free_attrs(i2c_dev->dev, i2c_dev->dma_buf_size,
+> +			       i2c_dev->dma_buf, i2c_dev->dma_phys,
+> +			       DMA_ATTR_FORCE_CONTIGUOUS);
+> +		i2c_dev->dma_buf = NULL;
+> +	}
+> +
+> +	if (i2c_dev->tx_dma_chan) {
+> +		dma_release_channel(i2c_dev->tx_dma_chan);
+> +		i2c_dev->tx_dma_chan = NULL;
+> +	}
+> +
+> +	if (i2c_dev->rx_dma_chan) {
+> +		dma_release_channel(i2c_dev->rx_dma_chan);
+> +		i2c_dev->rx_dma_chan = NULL;
+> +	}
+> +}
+> +
+> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	struct dma_chan *chan;
+> +	u32 *dma_buf;
+> +	dma_addr_t dma_phys;
+> +	int err;
+> +
+> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA) ||
+> +	    !i2c_dev->hw->has_apb_dma) {
+> +		err = -ENODEV;
+> +		goto err_out;
+> +	}
+> +
+> +	chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
+> +	if (IS_ERR(chan)) {
+> +		err = PTR_ERR(chan);
+> +		goto err_out;
+> +	}
+> +
+> +	i2c_dev->rx_dma_chan = chan;
+> +
+> +	chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
+> +	if (IS_ERR(chan)) {
+> +		err = PTR_ERR(chan);
+> +		goto err_out;
+> +	}
+> +
+> +	i2c_dev->tx_dma_chan = chan;
+> +
+> +	dma_buf = dma_alloc_attrs(i2c_dev->dev, i2c_dev->dma_buf_size,
+> +				  &dma_phys, GFP_KERNEL | __GFP_NOWARN,
+> +				  DMA_ATTR_FORCE_CONTIGUOUS);
+> +	if (!dma_buf) {
+> +		dev_err(i2c_dev->dev, "failed to allocate the DMA buffer\n");
+> +		err = -ENOMEM;
+> +		goto err_out;
+> +	}
+> +
+> +	i2c_dev->dma_buf = dma_buf;
+> +	i2c_dev->dma_phys = dma_phys;
+> +	return 0;
+> +
+> +err_out:
+> +	tegra_i2c_release_dma(i2c_dev);
+> +	if (err != -EPROBE_DEFER) {
+> +		dev_err(i2c_dev->dev, "can't use DMA, err: %d, using PIO\n",
+> +			err);
+> +		return 0;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>  static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+>  {
+>  	unsigned long timeout = jiffies + HZ;
+> @@ -571,16 +712,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+>  		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
+>  	}
+>  
+> -	if (i2c_dev->hw->has_mst_fifo) {
+> -		val = I2C_MST_FIFO_CONTROL_TX_TRIG(8) |
+> -		      I2C_MST_FIFO_CONTROL_RX_TRIG(1);
+> -		i2c_writel(i2c_dev, val, I2C_MST_FIFO_CONTROL);
+> -	} else {
+> -		val = 7 << I2C_FIFO_CONTROL_TX_TRIG_SHIFT |
+> -			0 << I2C_FIFO_CONTROL_RX_TRIG_SHIFT;
+> -		i2c_writel(i2c_dev, val, I2C_FIFO_CONTROL);
+> -	}
+> -
+>  	err = tegra_i2c_flush_fifos(i2c_dev);
+>  	if (err)
+>  		goto err;
+> @@ -660,25 +791,37 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
+>  		goto err;
+>  
+> -	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+> -		if (i2c_dev->msg_buf_remaining)
+> -			tegra_i2c_empty_rx_fifo(i2c_dev);
+> -		else
+> -			BUG();
+> -	}
+> +	if (!i2c_dev->is_curr_dma_xfer) {
+> +		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+> +			if (i2c_dev->msg_buf_remaining)
+> +				tegra_i2c_empty_rx_fifo(i2c_dev);
+> +			else
+> +				BUG();
+> +		}
+>  
+> -	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+> -		if (i2c_dev->msg_buf_remaining)
+> -			tegra_i2c_fill_tx_fifo(i2c_dev);
+> -		else
+> -			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
+> +		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+> +			if (i2c_dev->msg_buf_remaining)
+> +				tegra_i2c_fill_tx_fifo(i2c_dev);
+> +			else
+> +				tegra_i2c_mask_irq(i2c_dev,
+> +						   I2C_INT_TX_FIFO_DATA_REQ);
+> +		}
+>  	}
+>  
+>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+>  	if (i2c_dev->is_dvc)
+>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+>  
+> +	/*
+> +	 * During message read XFER_COMPLETE interrupt is triggered prior to
+> +	 * DMA completion and during message write XFER_COMPLETE interrupt is
+> +	 * triggered after DMA completion.
+> +	 * PACKETS_XFER_COMPLETE indicates completion of all bytes of transfer.
+> +	 * so forcing msg_buf_remaining to 0 in DMA mode.
+> +	 */
+>  	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+> +		if (i2c_dev->is_curr_dma_xfer)
+> +			i2c_dev->msg_buf_remaining = 0;
+>  		BUG_ON(i2c_dev->msg_buf_remaining);
+>  		complete(&i2c_dev->msg_complete);
+>  	}
+> @@ -694,12 +837,89 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  	if (i2c_dev->is_dvc)
+>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+>  
+> +	if (i2c_dev->is_curr_dma_xfer) {
+> +		if (i2c_dev->msg_read)
+> +			dmaengine_terminate_async(i2c_dev->rx_dma_chan);
+> +		else
+> +			dmaengine_terminate_async(i2c_dev->tx_dma_chan);
+> +
+> +		complete(&i2c_dev->dma_complete);
+> +	}
+> +
+>  	complete(&i2c_dev->msg_complete);
+>  done:
+>  	spin_unlock(&i2c_dev->xfer_lock);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
+> +				       size_t len)
+> +{
+> +	u32 val, reg;
+> +	u8 dma_burst = 0;
+> +	struct dma_slave_config slv_config = {0};
+> +	struct dma_chan *chan;
+> +	int ret;
+> +
+> +	if (i2c_dev->hw->has_mst_fifo)
+> +		reg = I2C_MST_FIFO_CONTROL;
+> +	else
+> +		reg = I2C_FIFO_CONTROL;
+> +	val = i2c_readl(i2c_dev, reg);
+> +
+> +	if (i2c_dev->is_curr_dma_xfer) {
+> +		if (len & 0xF)
+> +			dma_burst = 1;
+> +		else if (len & 0x10)
+> +			dma_burst = 4;
+> +		else
+> +			dma_burst = 8;
+> +
+> +		if (i2c_dev->msg_read) {
+> +			chan = i2c_dev->rx_dma_chan;
+> +			slv_config.src_addr = i2c_dev->base_phys + I2C_RX_FIFO;
+> +			slv_config.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +			slv_config.src_maxburst = dma_burst;
+> +
+> +			if (i2c_dev->hw->has_mst_fifo)
+> +				val |= I2C_MST_FIFO_CONTROL_RX_TRIG(dma_burst);
+> +			else
+> +				val |= I2C_FIFO_CONTROL_RX_TRIG(dma_burst);
+> +		} else {
+> +			chan = i2c_dev->tx_dma_chan;
+> +			slv_config.dst_addr = i2c_dev->base_phys + I2C_TX_FIFO;
+> +			slv_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +			slv_config.dst_maxburst = dma_burst;
+> +
+> +			if (i2c_dev->hw->has_mst_fifo)
+> +				val |= I2C_MST_FIFO_CONTROL_TX_TRIG(dma_burst);
+> +			else
+> +				val |= I2C_FIFO_CONTROL_TX_TRIG(dma_burst);
+> +		}
+> +
+> +		slv_config.device_fc = true;
+> +		ret = dmaengine_slave_config(chan, &slv_config);
+> +		if (ret < 0) {
+> +			dev_err(i2c_dev->dev, "DMA slave config failed: %d\n",
+> +				ret);
+> +			dev_err(i2c_dev->dev, "fallbacking to PIO\n");
+> +			tegra_i2c_release_dma(i2c_dev);
+> +			i2c_dev->is_curr_dma_xfer = false;
+> +		} else {
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (i2c_dev->hw->has_mst_fifo)
+> +		val = I2C_MST_FIFO_CONTROL_TX_TRIG(8) |
+> +		      I2C_MST_FIFO_CONTROL_RX_TRIG(1);
+> +	else
+> +		val = I2C_FIFO_CONTROL_TX_TRIG(8) |
+> +		      I2C_FIFO_CONTROL_RX_TRIG(1);
+> +out:
+> +	i2c_writel(i2c_dev, val, reg);
+> +}
+> +
+>  static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
+>  {
+>  	int err;
+> @@ -744,6 +964,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	u32 int_mask;
+>  	unsigned long time_left;
+>  	unsigned long flags;
+> +	size_t xfer_size;
+> +	u32 *buffer = NULL;
+> +	int err = 0;
+> +	bool dma;
+>  
+>  	tegra_i2c_flush_fifos(i2c_dev);
+>  
+> @@ -753,19 +977,57 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	i2c_dev->msg_read = (msg->flags & I2C_M_RD);
+>  	reinit_completion(&i2c_dev->msg_complete);
+>  
+> +	if (i2c_dev->msg_read)
+> +		xfer_size = msg->len;
+> +	else
+> +		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
+> +
+> +	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
+> +	i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
+> +				    i2c_dev->dma_buf;
+> +	tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
+> +	dma = i2c_dev->is_curr_dma_xfer;
+> +
+>  	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
+>  
+>  	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+>  	tegra_i2c_unmask_irq(i2c_dev, int_mask);
+> +	if (dma) {
+> +		if (i2c_dev->msg_read) {
+> +			dma_sync_single_for_device(i2c_dev->dev,
+> +						   i2c_dev->dma_phys,
+> +						   xfer_size,
+> +						   DMA_FROM_DEVICE);
+> +			err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
+> +			if (err < 0) {
+> +				dev_err(i2c_dev->dev,
+> +					"starting RX DMA failed, err %d\n",
+> +					err);
+> +				goto unlock;
+> +			}
+> +		} else {
+> +			dma_sync_single_for_cpu(i2c_dev->dev,
+> +						i2c_dev->dma_phys,
+> +						xfer_size,
+> +						DMA_TO_DEVICE);
+> +			buffer = i2c_dev->dma_buf;
+> +		}
+> +	}
+>  
+>  	packet_header = (0 << PACKET_HEADER0_HEADER_SIZE_SHIFT) |
+>  			PACKET_HEADER0_PROTOCOL_I2C |
+>  			(i2c_dev->cont_id << PACKET_HEADER0_CONT_ID_SHIFT) |
+>  			(1 << PACKET_HEADER0_PACKET_ID_SHIFT);
+> -	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+> +	if (dma && !i2c_dev->msg_read)
+> +		*buffer++ = packet_header;
+> +	else
+> +		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+>  
+>  	packet_header = msg->len - 1;
+> -	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+> +	if (dma && !i2c_dev->msg_read)
+> +		*buffer++ = packet_header;
+> +	else
+> +		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
 
---===============0742852529==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Md/poaVZ8hnGTzuv"
-Content-Disposition: inline
+I'm now also wondering whether that putting packet_header into the dma_buf is really needed at all.. Isn't possible to push packet_header using PIO regardless of whether the rest of the transfer will be in DMA or PIO modes?
 
+Actually I tried to always push packet_header using PIO and apparently DMA works just fine with that:
 
---Md/poaVZ8hnGTzuv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 06, 2019 at 10:49:12AM +0100, Wolfram Sang wrote:
->=20
-> > And there is a regression! Good that I didn't push out before
-> > double-checking. No one noticed that this breaks registering child
-> > devices because of_i2c_register_devices() doesn't have a pointer to work
-> > with anymore?
->=20
-> Well, sorry, I forgot an important detail. There is no regression
-> because most drivers still populate adap->dev.of_data with the node
-> pointer of their parent. I experimentally removed this from my driver
-> under test motivated by this comment from the commit in the Fixes: tag:
->=20
-> "Linking it to the device node of the parent device is wrong, as it
-> leads to 2 devices sharing the same device node, which is bad practice,"
->=20
-> But removing this bad practice from I2C core is more work. I wonder now
-> if we are in some inconsistent in-between state if I apply this patch as
-> is?
-
-I think this patch would serve as preparatory work to remove the sharing
-of device nodes. There shouldn't be any regressions here because we only
-fall back to the parent's ->of_node if the I2C adapter's ->of_node does
-not match. Since the I2C adapter's ->of_node match is what we currently
-do, the only thing that this patch does is add a fallback for the cases
-where the I2C adapter's ->of_node is not set.
-
-As far as I can tell, the only code where this should matter is the
-drm_dp_aux helpers where the I2C adapter's ->of_node is no longer being
-set because of the commit that introduced the regression for Tegra124
-Nyan (and Venice2) boards.
-
-So I think this patch is safe to apply and as you suggested this can be
-used as the baseline for cleaning up all the cases where we reuse the
-parent's ->of_node for the I2C adapter's ->of_node.
-
-So I guess you could say we're in some in-between state, but I don't
-think it's inconsistent. It just allows us to do this step by step,
-which I think is good.
-
-Thierry
-
---Md/poaVZ8hnGTzuv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxazeMACgkQ3SOs138+
-s6EVQQ/9G7o5iOGs4ymGIuDvzOWKvuWnRsSQUE4MSLHGvyLrh3lyhZE3lGi5YVrR
-vv/UfVSl7B3f9MZMW8yAiYdT0dF1MUvx9CHvu0fyvedPcFu8n+gSjPhNOBquHSsZ
-nchq2V2pRxuh8IimiPyVzQGE8dPZQaxWPvq7XEZzNjEpxXfbxziyjsrxkBl2WuhH
-5O73wbm7QMCKI+/vL3k2r1vcT1Zhv8TNA4kHHna/7uO+k4ccd1ipNF6y5CFNoeNT
-keQuu9kYkR6VjPK6icMrnl20JwNBfzUggl/c+2GYPn7ENQ23TuGbKQLcYm1N32xa
-a/96neF23oSGaMEOIStGSBeQgZ6TeoHvoLBiOvPl791cOebUswcV9+WpFEj5fR4D
-395/MN6zREDaD1n0BjuBHhCUbRnIXEre/UjMjEnjcdyFp8zWSvOf5cxuhNOHId6h
-ugDxoh0CowYGDrbyGPLQ8xozzs/I7E6cMKSWhIvVMp403QrB7ht7tGGBK+EFT9QN
-H+qv5wAUPXjUN1mywNPmJvaryZE8SI71VfZo5tNxVVe7BSgZvIMRVib6+4VHVieY
-SuLwQ0iycekah6SAzWfDh6eMO8W2yWdaL1K3NbsgSHiJLV9KtkFjF3D1J1i0apDY
-cbHulSbtI78g6sXnzH9XZp3qCNJBunUMVGaE8AbieJNwHgtvbBY=
-=+Gmt
------END PGP SIGNATURE-----
-
---Md/poaVZ8hnGTzuv--
-
---===============0742852529==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0742852529==--
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c538ed5f8e2c..a2c4338336d0 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1040,12 +1040,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+        i2c_dev->msg_read = (msg->flags & I2C_M_RD);
+        reinit_completion(&i2c_dev->msg_complete);
+ 
+-       if (i2c_dev->msg_read)
+-               xfer_size = msg->len;
+-       else
+-               xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
+-
+-       xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
++       xfer_size = ALIGN(msg->len, BYTES_PER_FIFO_WORD);
+        i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
+                                    i2c_dev->dma_buf;
+        tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
+@@ -1088,16 +1083,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+                        PACKET_HEADER0_PROTOCOL_I2C |
+                        (i2c_dev->cont_id << PACKET_HEADER0_CONT_ID_SHIFT) |
+                        (1 << PACKET_HEADER0_PACKET_ID_SHIFT);
+-       if (dma && !i2c_dev->msg_read)
+-               *buffer++ = packet_header;
+-       else
+-               i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
++       i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+ 
+        packet_header = msg->len - 1;
+-       if (dma && !i2c_dev->msg_read)
+-               *buffer++ = packet_header;
+-       else
+-               i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
++       i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+ 
+        packet_header = I2C_HEADER_IE_ENABLE;
+        if (end_state == MSG_END_CONTINUE)
+@@ -1114,10 +1103,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+                packet_header |= I2C_HEADER_CONT_ON_NAK;
+        if (msg->flags & I2C_M_RD)
+                packet_header |= I2C_HEADER_READ;
+-       if (dma && !i2c_dev->msg_read)
+-               *buffer++ = packet_header;
+-       else
+-               i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
++       i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+ 
+        if (!msg->flags & I2C_M_RD) {
+                if (dma) {
