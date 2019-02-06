@@ -1,7 +1,7 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 17:24:55 +0300
-Message-ID: <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 14:29:12 +0000
+Message-ID: <BYAPR12MB33988A49F8831BD8CAB575E5C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
  <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
@@ -14,65 +14,63 @@ References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <20190206140141.GO21676@ulmo>
  <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
  <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-06.02.2019 17:19, Sowjanya Komatineni пишет:
->>>>> No, there are no timeout errors in PIO mode. I could post full log with the PIO-only mode if you want.
->>>>>
->>>> Yes please post full log of PIO only and DMA only Also, in above log, 
->>>> lots of DMA transfer went thru fine except this one transfer where 
->>>> DMA timed out.
->>>> DMA completion doesnt happen on DMA submit during this particular 
->>>> transaction timeframe for some reason.
->>>
->>> Dmitry, can you provide some background information on the setup that 
->>> you're using? I vaguely remember something about i2c@7000d000 being 
->>> special on older Tegra devices. Perhaps there's something additional 
->>> that we need to take into account?
->>>
->>> Aha! Look at tegra_i2c_reg_addr() which special-cases I2C_TX_FIFO on 
->>> the DVC variant of the controller, which is exactly the one that you 
->>> are seeing the timeouts on and it's exactly the register that we use 
->>> as destination for the DMA transfer.
->>>
->>> I think we need to do something like this:
->>>
->>> 	slv_config.dst_addr = i2c_dev->base_phys + 
->>> tegra_i2c_reg_addr(i2c_dev, I2C_TX_FIFO);
->>>
->>> to make sure we pass the right FIFO register address to DMA.
->>
->> I'm running it on T20 at the moment. I don't know about the DVC quirks, but sounds plausible. Please let me know if you need any other info.
->>
->> Here the full logs:
->>
->> PIO-only: http://dpaste.com/2MX3EAN.txt
->> DMA-only: http://dpaste.com/3VXZSSM.txt
->>
->> Note the "Failed to read T44 and T5 (-110)" error that happens in DMA-only. And it happens on i2c@7000c000, DVC is i2c@7000d000.
-> 
-> Yes this is due to same issue theirry mentioned.
-> Prior to transfer timeout for touch, tps6586x regulator probe failed due to i2c timeout which uses DVC (7000D000) and since DMA mode is enforced all DVC/PWR I2C transactions also go thru DMA and FIFO register for DVC offset is not accounted when configure to dma slave.
-> Will fix and send so you can see for repro with updated patch..
-> 
-> 
-> [    0.925155] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-> [    0.925165] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-> [    1.028961] tegra-i2c 7000d000.i2c: i2c transfer timed out
-> [    1.028968] tegra-i2c 7000c000.i2c: DMA transfer timeout
-> [    1.028995] tps6586x 3-0034: Chip ID read failed: -110
-> [    1.029029] tps6586x: probe of 3-0034 failed with error -5
-> [    1.029045] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-110)
-> [    1.029051] atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
-> 
-
-I think tps6586x and atmel-touch should be independent issues, but will see. Thanks!
+DQo+ID4+Pj4gWWVzIHBsZWFzZSBwb3N0IGZ1bGwgbG9nIG9mIFBJTyBvbmx5IGFuZCBETUEgb25s
+eSBBbHNvLCBpbiBhYm92ZSANCj4gPj4+PiBsb2csIGxvdHMgb2YgRE1BIHRyYW5zZmVyIHdlbnQg
+dGhydSBmaW5lIGV4Y2VwdCB0aGlzIG9uZSB0cmFuc2ZlciANCj4gPj4+PiB3aGVyZSBETUEgdGlt
+ZWQgb3V0Lg0KPiA+Pj4+IERNQSBjb21wbGV0aW9uIGRvZXNudCBoYXBwZW4gb24gRE1BIHN1Ym1p
+dCBkdXJpbmcgdGhpcyBwYXJ0aWN1bGFyIA0KPiA+Pj4+IHRyYW5zYWN0aW9uIHRpbWVmcmFtZSBm
+b3Igc29tZSByZWFzb24uDQo+ID4+Pg0KPiA+Pj4gRG1pdHJ5LCBjYW4geW91IHByb3ZpZGUgc29t
+ZSBiYWNrZ3JvdW5kIGluZm9ybWF0aW9uIG9uIHRoZSBzZXR1cCANCj4gPj4+IHRoYXQgeW91J3Jl
+IHVzaW5nPyBJIHZhZ3VlbHkgcmVtZW1iZXIgc29tZXRoaW5nIGFib3V0IGkyY0A3MDAwZDAwMCAN
+Cj4gPj4+IGJlaW5nIHNwZWNpYWwgb24gb2xkZXIgVGVncmEgZGV2aWNlcy4gUGVyaGFwcyB0aGVy
+ZSdzIHNvbWV0aGluZyANCj4gPj4+IGFkZGl0aW9uYWwgdGhhdCB3ZSBuZWVkIHRvIHRha2UgaW50
+byBhY2NvdW50Pw0KPiA+Pj4NCj4gPj4+IEFoYSEgTG9vayBhdCB0ZWdyYV9pMmNfcmVnX2FkZHIo
+KSB3aGljaCBzcGVjaWFsLWNhc2VzIEkyQ19UWF9GSUZPIG9uIA0KPiA+Pj4gdGhlIERWQyB2YXJp
+YW50IG9mIHRoZSBjb250cm9sbGVyLCB3aGljaCBpcyBleGFjdGx5IHRoZSBvbmUgdGhhdCB5b3Ug
+DQo+ID4+PiBhcmUgc2VlaW5nIHRoZSB0aW1lb3V0cyBvbiBhbmQgaXQncyBleGFjdGx5IHRoZSBy
+ZWdpc3RlciB0aGF0IHdlIHVzZSANCj4gPj4+IGFzIGRlc3RpbmF0aW9uIGZvciB0aGUgRE1BIHRy
+YW5zZmVyLg0KPiA+Pj4NCj4gPj4+IEkgdGhpbmsgd2UgbmVlZCB0byBkbyBzb21ldGhpbmcgbGlr
+ZSB0aGlzOg0KPiA+Pj4NCj4gPj4+IAlzbHZfY29uZmlnLmRzdF9hZGRyID0gaTJjX2Rldi0+YmFz
+ZV9waHlzICsgDQo+ID4+PiB0ZWdyYV9pMmNfcmVnX2FkZHIoaTJjX2RldiwgSTJDX1RYX0ZJRk8p
+Ow0KPiA+Pj4NCj4gPj4+IHRvIG1ha2Ugc3VyZSB3ZSBwYXNzIHRoZSByaWdodCBGSUZPIHJlZ2lz
+dGVyIGFkZHJlc3MgdG8gRE1BLg0KPiA+Pg0KPiA+PiBJJ20gcnVubmluZyBpdCBvbiBUMjAgYXQg
+dGhlIG1vbWVudC4gSSBkb24ndCBrbm93IGFib3V0IHRoZSBEVkMgcXVpcmtzLCBidXQgc291bmRz
+IHBsYXVzaWJsZS4gUGxlYXNlIGxldCBtZSBrbm93IGlmIHlvdSBuZWVkIGFueSBvdGhlciBpbmZv
+Lg0KPiA+Pg0KPiA+PiBIZXJlIHRoZSBmdWxsIGxvZ3M6DQo+ID4+DQo+ID4+IFBJTy1vbmx5OiBo
+dHRwOi8vZHBhc3RlLmNvbS8yTVgzRUFOLnR4dA0KPiA+PiBETUEtb25seTogaHR0cDovL2RwYXN0
+ZS5jb20vM1ZYWlNTTS50eHQNCj4gPj4NCj4gPj4gTm90ZSB0aGUgIkZhaWxlZCB0byByZWFkIFQ0
+NCBhbmQgVDUgKC0xMTApIiBlcnJvciB0aGF0IGhhcHBlbnMgaW4gRE1BLW9ubHkuIEFuZCBpdCBo
+YXBwZW5zIG9uIGkyY0A3MDAwYzAwMCwgRFZDIGlzIGkyY0A3MDAwZDAwMC4NCj4gPiANCj4gPiBZ
+ZXMgdGhpcyBpcyBkdWUgdG8gc2FtZSBpc3N1ZSB0aGVpcnJ5IG1lbnRpb25lZC4NCj4gPiBQcmlv
+ciB0byB0cmFuc2ZlciB0aW1lb3V0IGZvciB0b3VjaCwgdHBzNjU4NnggcmVndWxhdG9yIHByb2Jl
+IGZhaWxlZCBkdWUgdG8gaTJjIHRpbWVvdXQgd2hpY2ggdXNlcyBEVkMgKDcwMDBEMDAwKSBhbmQg
+c2luY2UgRE1BIG1vZGUgaXMgZW5mb3JjZWQgYWxsIERWQy9QV1IgSTJDIHRyYW5zYWN0aW9ucyBh
+bHNvIGdvIHRocnUgRE1BIGFuZCBGSUZPIHJlZ2lzdGVyIGZvciBEVkMgb2Zmc2V0IGlzIG5vdCBh
+Y2NvdW50ZWQgd2hlbiBjb25maWd1cmUgdG8gZG1hIHNsYXZlLg0KPiA+IFdpbGwgZml4IGFuZCBz
+ZW5kIHNvIHlvdSBjYW4gc2VlIGZvciByZXBybyB3aXRoIHVwZGF0ZWQgcGF0Y2guLg0KPiA+IA0K
+PiA+IA0KPiA+IFsgICAgMC45MjUxNTVdIHRlZ3JhLWkyYyA3MDAwZDAwMC5pMmM6IHN0YXJ0aW5n
+IERNQSBmb3IgbGVuZ3RoOiAxNg0KPiA+IFsgICAgMC45MjUxNjVdIHRlZ3JhLWkyYyA3MDAwZDAw
+MC5pMmM6IHVubWFza2VkIGlycTogMGMNCj4gPiBbICAgIDEuMDI4OTYxXSB0ZWdyYS1pMmMgNzAw
+MGQwMDAuaTJjOiBpMmMgdHJhbnNmZXIgdGltZWQgb3V0DQo+ID4gWyAgICAxLjAyODk2OF0gdGVn
+cmEtaTJjIDcwMDBjMDAwLmkyYzogRE1BIHRyYW5zZmVyIHRpbWVvdXQNCj4gPiBbICAgIDEuMDI4
+OTk1XSB0cHM2NTg2eCAzLTAwMzQ6IENoaXAgSUQgcmVhZCBmYWlsZWQ6IC0xMTANCj4gPiBbICAg
+IDEuMDI5MDI5XSB0cHM2NTg2eDogcHJvYmUgb2YgMy0wMDM0IGZhaWxlZCB3aXRoIGVycm9yIC01
+DQo+ID4gWyAgICAxLjAyOTA0NV0gYXRtZWxfbXh0X3RzIDAtMDA0YzogX19teHRfcmVhZF9yZWc6
+IGkyYyB0cmFuc2ZlciBmYWlsZWQgKC0xMTApDQo+ID4gWyAgICAxLjAyOTA1MV0gYXRtZWxfbXh0
+X3RzIDAtMDA0YzogRmFpbGVkIHRvIHJlYWQgVDQ0IGFuZCBUNSAoLTExMCkNCj4gPiANCj4gDQo+
+IEkgdGhpbmsgdHBzNjU4NnggYW5kIGF0bWVsLXRvdWNoIHNob3VsZCBiZSBpbmRlcGVuZGVudCBp
+c3N1ZXMsIGJ1dCB3aWxsIHNlZS4gVGhhbmtzIQ0KV2hhdHMgeW91ciBwbGF0Zm9ybSBzZXR1cD8g
+SXMgYXRtZWwgdG91Y2ggcG93ZXIgT04gZGVmYXVsdCBvciBpdHMgcHJvZ3JhbW1lZCBkdXJpbmcg
+Ym9vdCBieSBTVyB3aGNpaCBuZWVkIHRvIHVzZSBEVkM/DQo=
