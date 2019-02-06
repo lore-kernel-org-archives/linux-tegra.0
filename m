@@ -1,78 +1,76 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 14:48:23 +0000
-Message-ID: <BYAPR12MB3398ACF7999DFA8F24AB09DEC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
- <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
- <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
- <20190206130909.GJ21676@ulmo> <20190206131310.GK21676@ulmo>
- <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
- <BYAPR12MB33983A0E93B17808DECFD0F2C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <6edef92d-66a7-0f70-e59e-7381b82516eb@gmail.com>
- <BYAPR12MB339826EB972C5DB7957E8A82C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190206140141.GO21676@ulmo>
- <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
- <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
- <BYAPR12MB33988A49F8831BD8CAB575E5C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <2f6ac9c6-bdc8-2a48-8f95-d761d5d56d8d@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V11 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 15:53:43 +0100
+Message-ID: <20190206145343.GA3651@ulmo>
+References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
+ <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
+ <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2f6ac9c6-bdc8-2a48-8f95-d761d5d56d8d@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+Pj4+Pj4gWWVzIHBsZWFzZSBwb3N0IGZ1bGwgbG9nIG9mIFBJTyBvbmx5IGFuZCBETUEgb25s
-eSBBbHNvLCBpbiBhYm92ZSANCj4gPj4+Pj4+IGxvZywgbG90cyBvZiBETUEgdHJhbnNmZXIgd2Vu
-dCB0aHJ1IGZpbmUgZXhjZXB0IHRoaXMgb25lIHRyYW5zZmVyIA0KPiA+Pj4+Pj4gd2hlcmUgRE1B
-IHRpbWVkIG91dC4NCj4gPj4+Pj4+IERNQSBjb21wbGV0aW9uIGRvZXNudCBoYXBwZW4gb24gRE1B
-IHN1Ym1pdCBkdXJpbmcgdGhpcyBwYXJ0aWN1bGFyIA0KPiA+Pj4+Pj4gdHJhbnNhY3Rpb24gdGlt
-ZWZyYW1lIGZvciBzb21lIHJlYXNvbi4NCj4gPj4+Pj4NCj4gPj4+Pj4gRG1pdHJ5LCBjYW4geW91
-IHByb3ZpZGUgc29tZSBiYWNrZ3JvdW5kIGluZm9ybWF0aW9uIG9uIHRoZSBzZXR1cCANCj4gPj4+
-Pj4gdGhhdCB5b3UncmUgdXNpbmc/IEkgdmFndWVseSByZW1lbWJlciBzb21ldGhpbmcgYWJvdXQg
-aTJjQDcwMDBkMDAwIA0KPiA+Pj4+PiBiZWluZyBzcGVjaWFsIG9uIG9sZGVyIFRlZ3JhIGRldmlj
-ZXMuIFBlcmhhcHMgdGhlcmUncyBzb21ldGhpbmcgDQo+ID4+Pj4+IGFkZGl0aW9uYWwgdGhhdCB3
-ZSBuZWVkIHRvIHRha2UgaW50byBhY2NvdW50Pw0KPiA+Pj4+Pg0KPiA+Pj4+PiBBaGEhIExvb2sg
-YXQgdGVncmFfaTJjX3JlZ19hZGRyKCkgd2hpY2ggc3BlY2lhbC1jYXNlcyBJMkNfVFhfRklGTyAN
-Cj4gPj4+Pj4gb24gdGhlIERWQyB2YXJpYW50IG9mIHRoZSBjb250cm9sbGVyLCB3aGljaCBpcyBl
-eGFjdGx5IHRoZSBvbmUgDQo+ID4+Pj4+IHRoYXQgeW91IGFyZSBzZWVpbmcgdGhlIHRpbWVvdXRz
-IG9uIGFuZCBpdCdzIGV4YWN0bHkgdGhlIHJlZ2lzdGVyIA0KPiA+Pj4+PiB0aGF0IHdlIHVzZSBh
-cyBkZXN0aW5hdGlvbiBmb3IgdGhlIERNQSB0cmFuc2Zlci4NCj4gPj4+Pj4NCj4gPj4+Pj4gSSB0
-aGluayB3ZSBuZWVkIHRvIGRvIHNvbWV0aGluZyBsaWtlIHRoaXM6DQo+ID4+Pj4+DQo+ID4+Pj4+
-IAlzbHZfY29uZmlnLmRzdF9hZGRyID0gaTJjX2Rldi0+YmFzZV9waHlzICsgDQo+ID4+Pj4+IHRl
-Z3JhX2kyY19yZWdfYWRkcihpMmNfZGV2LCBJMkNfVFhfRklGTyk7DQo+ID4+Pj4+DQo+ID4+Pj4+
-IHRvIG1ha2Ugc3VyZSB3ZSBwYXNzIHRoZSByaWdodCBGSUZPIHJlZ2lzdGVyIGFkZHJlc3MgdG8g
-RE1BLg0KPiA+Pj4+DQo+ID4+Pj4gSSdtIHJ1bm5pbmcgaXQgb24gVDIwIGF0IHRoZSBtb21lbnQu
-IEkgZG9uJ3Qga25vdyBhYm91dCB0aGUgRFZDIHF1aXJrcywgYnV0IHNvdW5kcyBwbGF1c2libGUu
-IFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgbmVlZCBhbnkgb3RoZXIgaW5mby4NCj4gPj4+Pg0K
-PiA+Pj4+IEhlcmUgdGhlIGZ1bGwgbG9nczoNCj4gPj4+Pg0KPiA+Pj4+IFBJTy1vbmx5OiBodHRw
-Oi8vZHBhc3RlLmNvbS8yTVgzRUFOLnR4dA0KPiA+Pj4+IERNQS1vbmx5OiBodHRwOi8vZHBhc3Rl
-LmNvbS8zVlhaU1NNLnR4dA0KPiA+Pj4+DQo+ID4+Pj4gTm90ZSB0aGUgIkZhaWxlZCB0byByZWFk
-IFQ0NCBhbmQgVDUgKC0xMTApIiBlcnJvciB0aGF0IGhhcHBlbnMgaW4gRE1BLW9ubHkuIEFuZCBp
-dCBoYXBwZW5zIG9uIGkyY0A3MDAwYzAwMCwgRFZDIGlzIGkyY0A3MDAwZDAwMC4NCj4gPj4+DQo+
-ID4+PiBZZXMgdGhpcyBpcyBkdWUgdG8gc2FtZSBpc3N1ZSB0aGVpcnJ5IG1lbnRpb25lZC4NCj4g
-Pj4+IFByaW9yIHRvIHRyYW5zZmVyIHRpbWVvdXQgZm9yIHRvdWNoLCB0cHM2NTg2eCByZWd1bGF0
-b3IgcHJvYmUgZmFpbGVkIGR1ZSB0byBpMmMgdGltZW91dCB3aGljaCB1c2VzIERWQyAoNzAwMEQw
-MDApIGFuZCBzaW5jZSBETUEgbW9kZSBpcyBlbmZvcmNlZCA+IGFsbCBEVkMvUFdSIEkyQyB0cmFu
-c2FjdGlvbnMgYWxzbyBnbyB0aHJ1IERNQSBhbmQgRklGTyByZWdpc3RlciBmb3IgRFZDIG9mZnNl
-dCBpcyBub3QgYWNjb3VudGVkIHdoZW4gY29uZmlndXJlIHRvIGRtYSBzbGF2ZS4NCj4gPj4+IFdp
-bGwgZml4IGFuZCBzZW5kIHNvIHlvdSBjYW4gc2VlIGZvciByZXBybyB3aXRoIHVwZGF0ZWQgcGF0
-Y2guLg0KPiA+Pj4NCg0KPiA+PiBJIHRoaW5rIHRwczY1ODZ4IGFuZCBhdG1lbC10b3VjaCBzaG91
-bGQgYmUgaW5kZXBlbmRlbnQgaXNzdWVzLCBidXQgd2lsbCBzZWUuIFRoYW5rcyENCj4gPiBXaGF0
-cyB5b3VyIHBsYXRmb3JtIHNldHVwPyBJcyBhdG1lbCB0b3VjaCBwb3dlciBPTiBkZWZhdWx0IG9y
-IGl0cyBwcm9ncmFtbWVkIGR1cmluZyBib290IGJ5IFNXIHdoY2loIG5lZWQgdG8gdXNlIERWQz8N
-Cj4gPiANCj4gDQo+IEl0J3MgInBvd2VyIE9OIGRlZmF1bHQiLiBJIHRyaWVkIHRvIGJvb3QgaW4g
-UElPLW9ubHkgbW9kZSB3aXRoIHRwczY1ODZ4IGRpc2FibGVkIGFuZCB0aGVyZSBpcyBubyAiRmFp
-bGVkIHRvIHJlYWQgVDQ0IGFuZCBUNSIgZXJyb3IsIGF0bWVsIHByb2JlZCA+IHN1Y2Nlc3NmdWxs
-eS4NCg0KSSBzZWUgaW4gRE1BIGxvZyBidW5jaCBvZiA3MDAwRDAwMCBpMmMgdHJhbnNmZXJzIGJl
-Zm9yZSBhdG1lbCB0b3VjaCBwcm9iZS4gVkRELVNZUyBmb3IgNVYgaXMgbm90IHNlZW4uDQpTbyBz
-dGlsbCBjb3VsZCBiZSByZWxhdGVkIHRvIHBvd2VyIGR1ZSB0byBEVkMgdHJhbnNhY3Rpb25zIHRp
-bWVkb3V0IGFzIGNoYW5nZSBkb2VzbnQgYWNjb3VudCBmb3IgRFZDIG9mZnNldC4NCg0KUGxlYXNl
-IHRyeSB1cGRhdGVkIHBhdGNoIHdoaWNoIGhhcyBmaXggZm9yIERWQyB0cmFuc2FjdGlvbiBmYWls
-dXJlcy4NCg==
+
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 05, 2019 at 05:26:25PM +0300, Dmitry Osipenko wrote:
+[...]
+> Oh, another important moment is that physically contiguous dma_buf
+> allocation isn't guaranteed by the DMA API. This may become a problem
+> for T186+ that can transfer up to 64K. We need to enforce the
+> contiguous-allocation requirement by using
+> dma_alloc_attrs(DMA_ATTR_FORCE_CONTIGUOUS) instead of the
+> dma_alloc_coherent(), please see my other comment below.
+
+Actually I don't think that's necessary here. DMA_ATTR_FORCE_CONTIGUOUS
+only seems relevant if you've got an IOMMU attached to the device to
+make sure the physical memory is also contiguous.
+
+See this extract from Documentation/DMA-attributes.txt:
+
+| DMA_ATTR_FORCE_CONTIGUOUS
+| -------------------------
+|=20
+| By default DMA-mapping subsystem is allowed to assemble the buffer
+| allocated by dma_alloc_attrs() function from individual pages if it can
+| be mapped as contiguous chunk into device dma address space. By
+| specifying this attribute the allocated buffer is forced to be contiguous
+| also in physical memory.
+
+We don't have an IOMMU attached to I2C or APBDMA, so this can't happen
+and even if we had an IOMMU attached, all we care about is the device's
+DMA address space, which means IOVA space, and that would still be
+guaranteed to be contiguous, according to the above.
+
+Thierry
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxa9PQACgkQ3SOs138+
+s6GXdxAAjiGTq2n2wDf3exYGm44xiRYZamLgBXNrBSkvWArfYxh03oyDAdvc1Jz4
+dNfY7pS4anqMXJ8EN6klhOkKDCZVt1mYqa2HHMOf/RMkJIgg/wC/4EfkJOKA8NdK
+L0YukWOj+6yR3EYU5wcTrH3K2wdfIr7OxSyecEuJPmcvMyCPQNW3M6gts9rXxCTn
+WRBHrFWECGBrcv0D6cUKq5iNVIYPiY0GgTyvL0IB7/xY1UUyn59cO6wIegDThSog
+W29/uu/Lumc4UOrRJFq5VqRJGn+n4XNqFJ/5M4YMTRyThtzpWXui9zcmWroRh6be
+V1lMJMhfXSs66/fM73LXWtELGxJQgl/8Q65/23Wkmy0OnvnNo2UrLG18fip7QTLL
+5agQz+iHYqDzQaRO0Dlh6gMHOBLtA4gqJ7lVYYKfbK4kylVNqXBFjjC45NRnxZTp
+1VWRD1MpHe9oVDj7YrJuMkrCC9AK8zrK/uKerfhvOugTOjsQwyg6RotSsAsSqbuv
+KKLl3gSs8ZqrACXRRzhdQk9sGdznglid5+Qu+YPVqkDt1czXIbXOfphSWq8OHsZH
+NbwBAvx2l4tsFnNNkS5OiPhH8PEA9PIw+W3G1Lvti9K/JYyCGl6Ha3xeTkN0D4hM
+ceUyM3h+LljcfqMiXYW4gGvx4WPe4CmkHJBL4I5zD35ZcNJKI0A=
+=OHcp
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
