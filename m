@@ -1,276 +1,111 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 14:55:01 +0300
-Message-ID: <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
-References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
- <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] i2c: of: Try to find an I2C adapter matching the parent
+Date: Wed, 6 Feb 2019 13:07:02 +0100
+Message-ID: <20190206120702.GC21676@ulmo>
+References: <20190125131142.26837-1-thierry.reding@gmail.com>
+ <20190205124443.GF1045@kunai>
+ <20190206093851.5sxretbl7ajizi5f@ninjato>
+ <20190206094912.nnfsfzivwbss4yye@ninjato>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0742852529=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190206094912.nnfsfzivwbss4yye@ninjato>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Tristan Bastian <tristan-c.bastian@gmx.de>, Vlado Plaga <rechner@vlado-do.de>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-06.02.2019 1:46, Sowjanya Komatineni пишет:
-> This patch adds DMA support for Tegra I2C.
-> 
-> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
-> transfer size of the max FIFO depth and DMA mode is used for
-> transfer size higher than max FIFO depth to save CPU overhead.
-> 
-> PIO mode needs full intervention of CPU to fill or empty FIFO's
-> and also need to service multiple data requests interrupt for the
-> same transaction. This adds delay between data bytes of the same
-> transfer when CPU is fully loaded and some slave devices has
-> internal timeout for no bus activity and stops transaction to
-> avoid bus hang. DMA mode is helpful in such cases.
-> 
-> DMA mode is also helpful for Large transfers during downloading or
-> uploading FW over I2C to some external devices.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  [V12] : Replaced dma_alloc_coherent with dma_alloc_attrs to force the allocated
-> 	 buffer to be contiguous also in physical memory as Tegra194 supports max
-> 	 64K and dma_alloc_coherent doesnt guarentee contiguous memory.
-> 	 Changed return code from EIO to EINVAL incase of failure to obtain dma
-> 	 descriptor.
-> 	 Fixed coding style check issues.	 
->  [V11] : Replaced deprecated dmaengine_terminate_all with dmaengine_termine_async
-> 	 from non-atomic context and dmaengine_terminate_sync from atomic context.
-> 	 Fixed to program fifo trigger levels properly when transfer falls back to
-> 	 pio mode in case of dma slave configuration failure and other minor fixes.
->  [V10] : APBDMA is replaced with GPCDMA on Tegra186 and Tegra194 designs.
-> 	 Added apbdma hw support flag to now allow Tegra186 and later use
-> 	 APBDMA driver.
-> 	 Added explicit flow control enable for DMA slave config and error handling.
-> 	 Moved releasing DMA resources to seperate function to reuse in
-> 	 multiple places.
-> 	 Updated to register tegra_i2c_driver from module level rather than subsys
-> 	 level.
-> 	 Other minor feedback
->  [V9] :  Rebased to 5.0-rc4
-> 	 Removed dependency of APB DMA in Kconfig and added conditional check
->  	 in I2C driver to decide on using DMA mode.
-> 	 Changed back the allocation of dma buffer during i2c probe.
-> 	 Fixed FIFO triggers depending on DMA Vs PIO.
->  [V8] :  Moved back dma init to i2c probe, removed ALL_PACKETS_XFER_COMPLETE
-> 	 interrupt and using PACKETS_XFER_COMPLETE interrupt only and some
-> 	 other fixes
-> 	 Updated Kconfig for APB_DMA dependency
->  [V7] :  Same as V6
->  [V6] :  Updated for proper buffer allocation/freeing, channel release.
-> 	 Updated to use exact xfer size for syncing dma buffer.
->  [V5] :  Same as V4
->  [V4] :  Updated to allocate DMA buffer only when DMA mode.
-> 	 Updated to fall back to PIO mode when DMA channel request or
-> 	 buffer allocation fails.
->  [V3] :  Updated without additional buffer allocation.
->  [V2] :  Updated based on V1 review feedback along with code cleanup for
-> 	 proper implementation of DMA.
-> 
-> 
->  drivers/i2c/busses/i2c-tegra.c | 413 ++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 369 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 118b7023a0f4..77277a09e485 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -8,6 +8,9 @@
->  
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/dmaengine.h>
-> +#include <linux/dmapool.h>
 
-We are not using DMA pools anywhere in the code, <linux/dmapool.h> isn't needed. Let's remove it.
-
-> +#include <linux/dma-mapping.h>
->  #include <linux/err.h>
->  #include <linux/i2c.h>
->  #include <linux/init.h>
-> @@ -44,6 +47,8 @@
->  #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
->  #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
->  #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
-> +#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
-> +#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
->  #define I2C_FIFO_STATUS				0x060
->  #define I2C_FIFO_STATUS_TX_MASK			0xF0
->  #define I2C_FIFO_STATUS_TX_SHIFT		4
-> @@ -125,6 +130,19 @@
->  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
->  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
->  
-> +/* Packet header size in bytes */
-> +#define I2C_PACKET_HEADER_SIZE			12
-> +
-> +#define DATA_DMA_DIR_TX				BIT(0)
-> +#define DATA_DMA_DIR_RX				BIT(1)
-
-The DATA_DMA_DIR_TX/RX are not used anywhere in the code, let's remove them.
-
-[snip]
-
-		TEGRA_I2C_TIMEOUT);
->  	tegra_i2c_mask_irq(i2c_dev, int_mask);
-> @@ -814,6 +1133,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  		time_left, completion_done(&i2c_dev->msg_complete),
->  		i2c_dev->msg_err);
->  
-> +	i2c_dev->is_curr_dma_xfer = false;
-
-This line could be removed because there is no need to clear "is_curr_dma_xfer" at this point.
-
->  	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
->  		return 0;
-[snip]
+--===============0742852529==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Md/poaVZ8hnGTzuv"
+Content-Disposition: inline
 
 
-Sowjanya, I tried to enforce DMA transferring + setting DMA burst to a one word and this combination doesn't work well while it should, if I'm not missing something. Could you please take a look at the problem or explain why that happens?
+--Md/poaVZ8hnGTzuv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Here is the change I made:
+On Wed, Feb 06, 2019 at 10:49:12AM +0100, Wolfram Sang wrote:
+>=20
+> > And there is a regression! Good that I didn't push out before
+> > double-checking. No one noticed that this breaks registering child
+> > devices because of_i2c_register_devices() doesn't have a pointer to work
+> > with anymore?
+>=20
+> Well, sorry, I forgot an important detail. There is no regression
+> because most drivers still populate adap->dev.of_data with the node
+> pointer of their parent. I experimentally removed this from my driver
+> under test motivated by this comment from the commit in the Fixes: tag:
+>=20
+> "Linking it to the device node of the parent device is wrong, as it
+> leads to 2 devices sharing the same device node, which is bad practice,"
+>=20
+> But removing this bad practice from I2C core is more work. I wonder now
+> if we are in some inconsistent in-between state if I apply this patch as
+> is?
 
------------------
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index c538ed5f8e2c..59e245d4417d 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -6,6 +6,8 @@
-  * Author: Colin Cross <ccross@android.com>
-  */
- 
-+#define DEBUG
-+
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/dmaengine.h>
-@@ -929,12 +931,7 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
-        val = i2c_readl(i2c_dev, reg);
- 
-        if (i2c_dev->is_curr_dma_xfer) {
--               if (len & 0xF)
-                        dma_burst = 1;
--               else if (len & 0x10)
--                       dma_burst = 4;
--               else
--                       dma_burst = 8;
- 
-                if (i2c_dev->msg_read) {
-                        chan = i2c_dev->rx_dma_chan;
-@@ -1046,8 +1043,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
-                xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
- 
-        xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
--       i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
--                                   i2c_dev->dma_buf;
-+       i2c_dev->is_curr_dma_xfer = !!i2c_dev->dma_buf;
-        tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
-        dma = i2c_dev->is_curr_dma_xfer
------------------
+I think this patch would serve as preparatory work to remove the sharing
+of device nodes. There shouldn't be any regressions here because we only
+fall back to the parent's ->of_node if the I2C adapter's ->of_node does
+not match. Since the I2C adapter's ->of_node match is what we currently
+do, the only thing that this patch does is add a fallback for the cases
+where the I2C adapter's ->of_node is not set.
 
-And here what happens:
+As far as I can tell, the only code where this should matter is the
+drm_dp_aux helpers where the I2C adapter's ->of_node is no longer being
+set because of the commit that introduced the regression for Tegra124
+Nyan (and Venice2) boards.
 
------------------
-...
-[    0.761144] tegra_rtc 7000e000.rtc: registered as rtc1
-[    0.761199] tegra_rtc 7000e000.rtc: Tegra internal Real Time Clock
-[    0.761406] i2c /dev entries driver
-[    0.919233] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.919246] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.919345] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.919355] tegra-i2c 7000c000.i2c: starting DMA for length: 8
-[    0.919363] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.919628] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.919641] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.919649] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.919746] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.919755] tegra-i2c 7000c000.i2c: starting DMA for length: 112
-[    0.919763] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.923140] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-[    0.923150] atmel_mxt_ts 0-004c: Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
-[    0.923208] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.923217] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.923314] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.923323] tegra-i2c 7000c000.i2c: starting DMA for length: 224
-[    0.923331] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.933564] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-[    0.933599] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.933609] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.933760] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.933770] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-[    0.933779] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.934284] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.934309] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.934317] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.934500] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.934509] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-[    0.934518] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.935023] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.935081] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.935091] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.935240] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.935249] tegra-i2c 7000c000.i2c: starting DMA for length: 4
-[    0.935258] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.935399] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.935416] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.935424] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.935655] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.945445] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-[    0.945456] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-[    0.969236] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.969245] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.969361] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.969370] tegra-i2c 7000c000.i2c: starting DMA for length: 4
-[    0.969379] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.969462] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.982587] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.982596] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.982722] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.982731] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-[    0.982740] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.983071] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.983090] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.983098] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.983252] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.983261] tegra-i2c 7000c000.i2c: starting DMA for length: 136
-[    0.983269] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.987605] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-[    0.987623] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.987631] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.987800] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.987809] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-[    0.987817] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.988324] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.009227] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    1.009236] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.009374] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.009383] tegra-i2c 7000c000.i2c: starting DMA for length: 4
-[    1.009391] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.009479] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.009497] atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000
-[    1.009588] tegra-i2c 7000c000.i2c: starting DMA for length: 272
-[    1.009597] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.017483] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-[    1.017496] tegra-i2c 7000c000.i2c: starting DMA for length: 120
-[    1.017504] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.020896] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-[    1.020909] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    1.020918] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.021055] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.032230] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    1.032239] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.032359] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.032368] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-[    1.032376] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.032704] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.049224] tegra-i2c 7000d000.i2c: i2c transfer timed out
-[    1.049253] tps6586x 3-0034: Chip ID read failed: -110
-[    1.049281] tps6586x: probe of 3-0034 failed with error -5
-...
------------------
+So I think this patch is safe to apply and as you suggested this can be
+used as the baseline for cleaning up all the cases where we reuse the
+parent's ->of_node for the I2C adapter's ->of_node.
+
+So I guess you could say we're in some in-between state, but I don't
+think it's inconsistent. It just allows us to do this step by step,
+which I think is good.
+
+Thierry
+
+--Md/poaVZ8hnGTzuv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxazeMACgkQ3SOs138+
+s6EVQQ/9G7o5iOGs4ymGIuDvzOWKvuWnRsSQUE4MSLHGvyLrh3lyhZE3lGi5YVrR
+vv/UfVSl7B3f9MZMW8yAiYdT0dF1MUvx9CHvu0fyvedPcFu8n+gSjPhNOBquHSsZ
+nchq2V2pRxuh8IimiPyVzQGE8dPZQaxWPvq7XEZzNjEpxXfbxziyjsrxkBl2WuhH
+5O73wbm7QMCKI+/vL3k2r1vcT1Zhv8TNA4kHHna/7uO+k4ccd1ipNF6y5CFNoeNT
+keQuu9kYkR6VjPK6icMrnl20JwNBfzUggl/c+2GYPn7ENQ23TuGbKQLcYm1N32xa
+a/96neF23oSGaMEOIStGSBeQgZ6TeoHvoLBiOvPl791cOebUswcV9+WpFEj5fR4D
+395/MN6zREDaD1n0BjuBHhCUbRnIXEre/UjMjEnjcdyFp8zWSvOf5cxuhNOHId6h
+ugDxoh0CowYGDrbyGPLQ8xozzs/I7E6cMKSWhIvVMp403QrB7ht7tGGBK+EFT9QN
+H+qv5wAUPXjUN1mywNPmJvaryZE8SI71VfZo5tNxVVe7BSgZvIMRVib6+4VHVieY
+SuLwQ0iycekah6SAzWfDh6eMO8W2yWdaL1K3NbsgSHiJLV9KtkFjF3D1J1i0apDY
+cbHulSbtI78g6sXnzH9XZp3qCNJBunUMVGaE8AbieJNwHgtvbBY=
+=+Gmt
+-----END PGP SIGNATURE-----
+
+--Md/poaVZ8hnGTzuv--
+
+--===============0742852529==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0742852529==--
