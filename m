@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V13 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 16:38:55 +0000
-Message-ID: <BYAPR12MB33980C126166D851B91AB187C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V13 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 19:41:20 +0300
+Message-ID: <f88b75c9-83e7-578a-0419-0146702d4112@gmail.com>
 References: <1549464441-1836-1-git-send-email-skomatineni@nvidia.com>
  <1549464441-1836-3-git-send-email-skomatineni@nvidia.com>
  <4ecd3894-a1cb-20dd-8675-26e6e84254e7@gmail.com>
@@ -9,52 +9,61 @@ References: <1549464441-1836-1-git-send-email-skomatineni@nvidia.com>
  <BYAPR12MB33988DCC1F4997AAF2112447C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
  <9c6524ec-b40b-5b0f-eb70-f9ce2c426fd9@gmail.com>
  <8eccb125-b771-fe10-492f-41dcda00c3b0@gmail.com>
+ <BYAPR12MB33980C126166D851B91AB187C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8eccb125-b771-fe10-492f-41dcda00c3b0@gmail.com>
+In-Reply-To: <BYAPR12MB33980C126166D851B91AB187C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+PiBMb29raW5nIGludG8gdGltZXN0YW1wcyBhbmQgdHJhbnNhY3Rpb25zLCBETUEgdGltZW91
-dHMgYWZ0ZXIgc3RhcnQgb2YgRE1BIGZvciBJMkMxIHRvIHRvdWNoIGR1cmluZyB0aGlzIHRyYW5z
-YWN0aW9uLg0KPiA+PiBXaGlsZSBpdCBpcyB3YWl0aW5nIGZvciBJMkMxIERNQSB0cmFuc2Zlciwg
-bG90cyBvZiBEVkMgdHJhbnNhY3Rpb25zIA0KPiA+PiBoYXBwZW5lZCB0aHJ1IERNQSB3aGljaCBh
-cmUgc3VjY2Vzc2Z1bA0KPiA+Pg0KPiA+PiBXaGF0IGlzIHRoZSBJMkMxIHNwZWVkPw0KPiA+IA0K
-PiA+IDQwMEtIeg0KPiA+IA0KPiA+PiBBbHNvIGluY2FzZSBpZiBkZXZpY2UgaXMgcnVubmluZyBz
-bG93IGZvciBzb21lIHJlYXNvbiwgcHJvYmFibHkgdGltZW91dCB3YXMgbm90IGVub3VnaCBhcyB0
-aGlzIHBhdGNoIHNlcmllcyBjaGFuZ2VzIHRpbWVvdXQgd2l0aCBiYXNlIDEwMG1TICsgbXNnIHRy
-YW5zZmVyIHRpbWUgYmFzZWQgb24gdHJhbnNmZXIgc2l6ZS4NCj4gPj4gQ2FuIHlvdSBnaXZlIHF1
-aWNrIHRyeSB3aXRoIGluY3JlYXNlZCB0aW1lb3V0IGluY2FzZSBpZiBkZXZpY2UgaXMgcnVubmlu
-ZyBzbG93Pw0KPiA+Pg0KPiA+IA0KPiA+IFRyaWVkIHRvIGluY3JlYXNlIHRoZSB0aW1lb3V0IHRv
-IDEgc2Vjb25kLCBkb2Vzbid0IGhlbHAuDQo+ID4gDQo+ID4gV2hhdCBoZWxwZWQgYWdhaW4gaXMg
-dGhlIEkyQyBIVyByZXNldHRpbmcgYWZ0ZXIgZWFjaCB0cmFuc2Zlci4gTGlrZWx5IHRoYXQgbWVh
-bnMgdGhhdCBIVyBpc24ndCBwcm9ncmFtbWVkIGNvcnJlY3RseSwgcGxlYXNlIGNhcmVmdWxseSBj
-aGVjayBldmVyeSBiaXQuDQo+ID4gDQo+ID4gRE1BLW9ubHkgKyBJMkMgSFcgcmVzZXQ6IGh0dHA6
-Ly9kcGFzdGUuY29tLzI2QVFYRk0udHh0DQo+DQo+IFNlZW1zIEkgZm91bmQgd2hhdCdzIHRoZSBw
-cm9ibGVtLiBIZXJlIGlzIHRoZSBmaXgsIHBsZWFzZSBpbmNsdWRlIGl0IHRvIHYxNCBpZiBpdCBp
-cyBjb3JyZWN0Lg0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdy
-YS5jIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIGluZGV4IGE5MzkxYzM2NDZiNi4u
-NWFkNTRkYTcwMzA0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3Jh
-LmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+IEBAIC05MTIsNyAr
-OTEyLDcgQEAgc3RhdGljIGlycXJldHVybl90IHRlZ3JhX2kyY19pc3IoaW50IGlycSwgdm9pZCAq
-ZGV2X2lkKSAgc3RhdGljIHZvaWQgdGVncmFfaTJjX2NvbmZpZ19maWZvX3RyaWcoc3RydWN0IHRl
-Z3JhX2kyY19kZXYgKmkyY19kZXYsDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHNpemVfdCBsZW4pICB7DQo+IC0gICAgICAgdTMyIHZhbCwgcmVnOw0KPiArICAgICAg
-IHUzMiB2YWwgPSAwLCByZWc7DQo+ICAgICAgICAgdTggZG1hX2J1cnN0ID0gMDsNCj4gICAgICAg
-ICBzdHJ1Y3QgZG1hX3NsYXZlX2NvbmZpZyBzbHZfY29uZmlnID0gezB9Ow0KPiAgICAgICAgIHN0
-cnVjdCBkbWFfY2hhbiAqY2hhbjsNCj4gQEAgLTkyMiw3ICs5MjIsNiBAQCBzdGF0aWMgdm9pZCB0
-ZWdyYV9pMmNfY29uZmlnX2ZpZm9fdHJpZyhzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2RldiwN
-Cj4gICAgICAgICAgICAgICAgIHJlZyA9IEkyQ19NU1RfRklGT19DT05UUk9MOw0KPiAgICAgICAg
-IGVsc2UNCj4gICAgICAgICAgICAgICAgIHJlZyA9IEkyQ19GSUZPX0NPTlRST0w7DQo+IC0gICAg
-ICAgdmFsID0gaTJjX3JlYWRsKGkyY19kZXYsIHJlZyk7DQogPg0KID4gICAgICAgIGlmIChpMmNf
-ZGV2LT5pc19jdXJyX2RtYV94ZmVyKSB7DQogPiAgICAgICAgICAgICAgICBpZiAobGVuICYgMHhG
-KQ0KDQpUaGFua3MgZG1pdHJ5LiBHb29kIGNhdGNoLiBEaWRuJ3QgY2F1Z2h0IHRvIG15IGV5ZXMu
-IFllcyBGSUZPX0NPTlRST0wgaXMgc2V0IGJhc2VkIG9uIHJlYWQgdmFsdWUgd2l0aG91dCBtYXNr
-aW5nIGFuZCBvcmluZyBjYXVzaW5nIGJhY2stYmFjayBETUEgdHJhbnNmZXJzIHJlc3VsdGluZyBp
-biBpbmNvcnJlY3QgdHJpZyBsZXZlbHMNCldlIGNhbiBkaXJlY3RseSBzZXQgdHJpZyBsZXZlbHMu
-DQpXaWxsIGZpeCBpdC4NCg==
+06.02.2019 19:38, Sowjanya Komatineni пишет:
+>>>> Looking into timestamps and transactions, DMA timeouts after start of DMA for I2C1 to touch during this transaction.
+>>>> While it is waiting for I2C1 DMA transfer, lots of DVC transactions 
+>>>> happened thru DMA which are successful
+>>>>
+>>>> What is the I2C1 speed?
+>>>
+>>> 400KHz
+>>>
+>>>> Also incase if device is running slow for some reason, probably timeout was not enough as this patch series changes timeout with base 100mS + msg transfer time based on transfer size.
+>>>> Can you give quick try with increased timeout incase if device is running slow?
+>>>>
+>>>
+>>> Tried to increase the timeout to 1 second, doesn't help.
+>>>
+>>> What helped again is the I2C HW resetting after each transfer. Likely that means that HW isn't programmed correctly, please carefully check every bit.
+>>>
+>>> DMA-only + I2C HW reset: http://dpaste.com/26AQXFM.txt
+>>
+>> Seems I found what's the problem. Here is the fix, please include it to v14 if it is correct.
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c index a9391c3646b6..5ad54da70304 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -912,7 +912,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)  static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
+>>                                        size_t len)  {
+>> -       u32 val, reg;
+>> +       u32 val = 0, reg;
+>>         u8 dma_burst = 0;
+>>         struct dma_slave_config slv_config = {0};
+>>         struct dma_chan *chan;
+>> @@ -922,7 +922,6 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
+>>                 reg = I2C_MST_FIFO_CONTROL;
+>>         else
+>>                 reg = I2C_FIFO_CONTROL;
+>> -       val = i2c_readl(i2c_dev, reg);
+>  >
+>  >        if (i2c_dev->is_curr_dma_xfer) {
+>  >                if (len & 0xF)
+> 
+> Thanks dmitry. Good catch. Didn't caught to my eyes. Yes FIFO_CONTROL is set based on read value without masking and oring causing back-back DMA transfers resulting in incorrect trig levels
+> We can directly set trig levels.
+> Will fix it.
+> 
+
+Awesome!
