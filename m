@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Date: Wed, 6 Feb 2019 13:30:57 +0000
-Message-ID: <BYAPR12MB3398501ACBC54906F677C661C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Date: Wed, 6 Feb 2019 16:34:52 +0300
+Message-ID: <0cec3f47-6c47-b31d-74b5-696bd1f48596@gmail.com>
 References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
  <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
@@ -11,43 +11,52 @@ References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
  <BYAPR12MB33986680570EB919369000F3C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
  <82f38909-94f1-7984-2b0f-df6231aee58f@gmail.com>
  <BYAPR12MB3398B4A862E4BFA5344AE461C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB3398501ACBC54906F677C661C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398B4A862E4BFA5344AE461C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <BYAPR12MB3398501ACBC54906F677C661C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4gPiANCj4gPj4+PiBCVFcsIEknbSBzZWVpbmcgImF0bWVsX214dF90cyAwLTAwNGM6IFdh
-cm5pbmc6IEluZm8gQ1JDIGVycm9yIC0gZGV2aWNlPTB4RjQzNkRDIGZpbGU9MHgwMDAwMDAiIHdo
-aXRob3V0IG1ha2luZyBhbnkgbW9kaWZpY2F0aW9ucyB0byB0aGUgb3JpZ2luYWwgcGF0Y2ggYXMg
-d2VsbCBhbmQgaXQgc2hhbGwgbm90IGhhcHBlbiwgaGVuY2UgdGhlcmUgaXMgYnVnIHNvbWV3aGVy
-ZS4gUHJvYmFibHkgRklGTyB0cmlnZ2VycyBhcmUgc3RpbGwgbm90IHNldCB1cCBjb3JyZWN0bHku
-Li4gPw0KPiA+Pj4+DQo+ID4+Pj4NCj4gPj4+IEluIHNuaXBwZXQgeW91IHNlbnQsIEkgc2VlIHlv
-dSBhcmUgZm9yY2luZyBkbWFfYnVyc3QgdG8gMSBhbHdheXMgd2hpY2ggaXMgd2hhdCBzZXQgZm9y
-IGZpZm8gdHJpZ2dlciBsZXZlbHMgYXMgd2VsbCBhbmQgYWxzbyB5b3UgYXJlIGZvcmNpbmcgZG1h
-IGFsbCB0aGUgdGltZS4NCj4gPj4+IFNvIGFsd2F5cyBpdCB3aWxsIGJlIDEgd29yZCBkbWEgYnVy
-c3QgYW5kIDEgd29yZCB0cmlnZ2VyIGxldmVsIGFuZCB0aGF0IHNob3VsZCBub3QgYmUgYW4gaXNz
-dWUuDQo+ID4+Pg0KPiA+Pg0KPiA+PiBJIHJldmVydGVkIHRoYXQgc25pcHBldCwgdGhpcyBsb2cg
-aXMgY29sbGVjdGVkIHdpdGggdGhlIHlvdXJzIG9yaWdpbmFsIHBhdGNoLg0KPiA+Pg0KPiA+IEZy
-b20gYXRtZWwgZHJpdmVyLCBsb29rcyBsaWtlIHRoaXMgd2FybmluZyBpcyBmcm9tIG1heHRfdXBk
-YXRlX2NmZyANCj4gPiBhbmQgZHVlIHRvIENSQyBtaXNtYXRjaCBhbmQgYWJvdmUgdmFsdWVzIHNo
-b3dzIHJlYWQgZGF0YSBDUkMgaXMgMFhmNDM2ZGMgd2hpY2ggaXMgY29tcGFyZWQgYWdhaW5zdCBp
-bmZvX2NyYyBvZiBhbGwgMCdzIEluZm9fY3JjIGlzIGJhc2VkIG9uIHJhdyBjb25maWcgZmlsZSBh
-bmQgc29tZWhvdyBpdHMgYWxsIDAncy4gdGhpcyBpcyBub3QgYmFzZWQgb24gZGF0YSByZWFkIHRo
-cnUgaTJjLg0KPiA+IGRhdGEtPmluZm9fY3JjIGNvbXB1dGVkIG9uIGRhdGEgcmVhZCBpcyAwWGY0
-MzZkYw0KPiA+IA0KPiA+IFRoaXMgd2FybmluZyBpcyBub3QgcmVsYXRlZCB0byBJMkMgdHJhbnNm
-ZXINCj4gPiANCj4NCj4gSXQgZG9lc24ndCBoYXBwZW4gd2l0aCB0aGUgSTJDIFBJTyBtb2RlLiBT
-ZWVtcyBpdCBtZWFucyB0aGF0IHRoZSBJMkMgcmVhZHMgb3V0IHRoZSAweEY0MzZEQyB2YWx1ZSBp
-bnN0ZWFkIG9mIDB4MDAwMDAwLi4gaWYgSSdtIG5vdCBtaXNzaW5nIGFueXRoaW5nLg0KPg0KTG9n
-IHRoYXQgeW91IHNoYXJlZCB0aGlzIHdhcm5pbmcsIGRvZXNu4oCZdCBzaG93IGFueSBpMmMgZmFp
-bHVyZXMgd2l0aCBhdG1lbCBhbmQgQ1JDIGJhc2VkIG9uIGkyYyByZWFkICBkYXRhIGlzIDBYZjQz
-NmRjLg0KRHVyaW5nIHRoaXMgbG9nLCB0aGVyZSBhcmUgbm90IERNQSB0aW1lb3V0cyBhc3NvY2lh
-dGVkIGR1cmluZyB0aGlzIHdhcm5pbmcgdGltZWZyYW1lLiBTbyBpMmMgcmVhZCBkYXRhIGlzIHRo
-cnUgRE1BIHdoaWNoIGlzIG5vbi16ZXJvLg0KDQpEbyB5b3Ugc2VlIERNQSB0aW1lb3V0cyBhc3Nv
-Y2lhdGVkIHdpdGggdGhpcyB3YXJuaW5nPyBJIG1lYW50IGFueSBETUEgb3IgSTJDIHRpbWVvdXQg
-ZHVyaW5nIHRoYXQgdGltZSBmcmFtZSBvZiB3YXJuaW5nPw0K
+06.02.2019 16:30, Sowjanya Komatineni пишет:
+> 
+> 
+>>>
+>>>>>> BTW, I'm seeing "atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000" whithout making any modifications to the original patch as well and it shall not happen, hence there is bug somewhere. Probably FIFO triggers are still not set up correctly... ?
+>>>>>>
+>>>>>>
+>>>>> In snippet you sent, I see you are forcing dma_burst to 1 always which is what set for fifo trigger levels as well and also you are forcing dma all the time.
+>>>>> So always it will be 1 word dma burst and 1 word trigger level and that should not be an issue.
+>>>>>
+>>>>
+>>>> I reverted that snippet, this log is collected with the yours original patch.
+>>>>
+>>> From atmel driver, looks like this warning is from maxt_update_cfg 
+>>> and due to CRC mismatch and above values shows read data CRC is 0Xf436dc which is compared against info_crc of all 0's Info_crc is based on raw config file and somehow its all 0's. this is not based on data read thru i2c.
+>>> data->info_crc computed on data read is 0Xf436dc
+>>>
+>>> This warning is not related to I2C transfer
+>>>
+>>
+>> It doesn't happen with the I2C PIO mode. Seems it means that the I2C reads out the 0xF436DC value instead of 0x000000.. if I'm not missing anything.
+>>
+> Log that you shared this warning, doesn’t show any i2c failures with atmel and CRC based on i2c read  data is 0Xf436dc.
+> During this log, there are not DMA timeouts associated during this warning timeframe. So i2c read data is thru DMA which is non-zero.
+> 
+> Do you see DMA timeouts associated with this warning? I meant any DMA or I2C timeout during that time frame of warning?
+> 
+
+Actually you're right, my bad. That atmel error and atmel I2C timeout (due to I2C_ERR_NO_ACK) happens in the PIO mode too, hence that part is fine.
+
+PIO log:
+
+[    1.028889] atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000
+[    1.078907] atmel_mxt_ts 0-004c: Resetting device
+[    1.128646] usb 1-1: new full-speed USB device number 2 using tegra-ehci
+[    1.198708] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-121)
+[    1.198732] atmel_mxt_ts 0-004c: Failed to read 28 messages (-121)
