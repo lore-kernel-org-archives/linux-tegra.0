@@ -1,75 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20190206 build: 3 failures 22 warnings (next-20190206)
-Date: Wed, 6 Feb 2019 18:24:31 +0000
-Message-ID: <20190206182431.GH17630@sirena.org.uk>
-References: <E1grRJi-0002vu-FB@optimist>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V14 1/5] i2c: tegra: sort all the include headers alphabetically
+Date: Wed, 6 Feb 2019 11:16:05 -0800
+Message-ID: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3402228840397754213=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1grRJi-0002vu-FB@optimist>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Christoph Hellwig <hch@lst.de>
-Cc: linux-tegra@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+This patch sorts all the include headers alphabetically for the
+I2C Tegra driver.
 
---===============3402228840397754213==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cW+P/jduATWpL925"
-Content-Disposition: inline
-
-
---cW+P/jduATWpL925
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Feb 06, 2019 at 05:48:58PM +0000, Build bot for Mark Brown wrote:
-
-Today's -next fails to build an arm64 defconfig and allmodconfig due to:
-
-> ERROR: "dma_direct_free" [drivers/gpu/host1x/host1x.ko] undefined!
-> ERROR: "dma_direct_alloc" [drivers/gpu/host1x/host1x.ko] undefined!
-
-due to 7a0658caa44d01 (gpu: host1x: Use direct DMA with IOMMU API usage)
-which adds usage of those non-exported functions.  Either the functions
-need exporting, the driver needs to be built in or those functions can't
-be used.
-
---cW+P/jduATWpL925
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxbJl8ACgkQJNaLcl1U
-h9AY5ggAhWZA+Gg7sWeyjCK2NVsA0vfe0NshzyIG8YwPxzB3qnzHEiBPY0QbbnyC
-uU10Eoa0QniVTyn/Ui4X91WTGlR0VuPqzRUmi618FuffvB1J9qVCEaz2nsWMEpnS
-sq/kyGskh0c0aW7rsWvI4CaGZ4eXxAVMdHcQ2R1epIc+8z/VfyaP0+EMtPFmDUxb
-+QvlXWub6BE8eg2hxxo0ZdqPbhPT+mjBiXPv9UwXLRRvjB5bSd5874CBZwcb3crW
-WPmulLtUH7llC4aPGSuNsq6Bkv2bUu1+ZQiR6Gj+oxPxVqeYZoJS5huhvsXlgW7o
-5RXZ4zwm3VWbvNM+RaNFoK3orfyjQQ==
-=ZFJz
------END PGP SIGNATURE-----
-
---cW+P/jduATWpL925--
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V9/V10/V11/V12/V13/V14] : Rebased to 5.0-rc4
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] 		  : Added this in V2 to sort the headers in tegra I2C
 
 
---===============3402228840397754213==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============3402228840397754213==--
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c77adbbea0c7..79c6aa87499b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
