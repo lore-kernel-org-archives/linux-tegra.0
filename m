@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
-Date: Thu, 7 Feb 2019 21:50:10 +0300
-Message-ID: <e09062b7-9c74-6aee-477a-72fb72bbd5d3@gmail.com>
+Date: Thu, 7 Feb 2019 21:55:26 +0300
+Message-ID: <701bf743-c54b-169d-6f82-9611c5eb20e9@gmail.com>
 References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
  <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
@@ -16,52 +16,11 @@ Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.ke
 List-Id: linux-tegra@vger.kernel.org
 
 06.02.2019 22:16, Sowjanya Komatineni пишет:
-> @@ -920,6 +1238,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
->  	.has_mst_fifo = false,
->  	.quirks = &tegra_i2c_quirks,
->  	.supports_bus_clear = false,
-> +	.has_apb_dma = true,
->  };
->  
->  static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-> @@ -935,6 +1254,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
->  	.has_mst_fifo = false,
->  	.quirks = &tegra_i2c_quirks,
->  	.supports_bus_clear = false,
-> +	.has_apb_dma = true,
->  };
->  
->  static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-> @@ -950,6 +1270,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
->  	.has_mst_fifo = false,
->  	.quirks = &tegra_i2c_quirks,
->  	.supports_bus_clear = true,
-> +	.has_apb_dma = true,
->  };
->  
->  static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-> @@ -965,6 +1286,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
->  	.has_mst_fifo = false,
->  	.quirks = &tegra_i2c_quirks,
->  	.supports_bus_clear = true,
-> +	.has_apb_dma = true,
->  };
->  
->  static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-> @@ -980,6 +1302,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
->  	.has_mst_fifo = false,
->  	.quirks = &tegra_i2c_quirks,
->  	.supports_bus_clear = true,
-> +	.has_apb_dma = true,
->  };
+>  /**
+> @@ -191,6 +207,7 @@ struct tegra_i2c_hw_feature {
+>   * @fast_clk: clock reference for fast clock of I2C controller
+>   * @rst: reset control for the I2C controller
+>   * @base: ioremapped registers cookie
+> + * @base_phys: Physical base address of the I2C controller
 
-T186 is missed here.
-
->  
->  static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-> @@ -995,6 +1318,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
->  	.has_mst_fifo = true,
->  	.quirks = &tegra194_i2c_quirks,
->  	.supports_bus_clear = true,
-> +	.has_apb_dma = false,
->  };
+Minor nit: "physical" with lower case for consistency, please
