@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V14 3/5] i2c: tegra: Add DMA support
-Date: Thu, 7 Feb 2019 18:02:27 +0000
-Message-ID: <BYAPR12MB33983F916E6DE23228B4EBD0C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
+Date: Thu, 7 Feb 2019 21:22:02 +0300
+Message-ID: <646d9963-ec2d-5210-d645-2b05da61d8cb@gmail.com>
 References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
  <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
  <32b0b694-f912-044e-1a50-55b9c355d0c3@gmail.com>
@@ -10,48 +10,44 @@ References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
  <20190207160630.GB17445@ulmo>
  <BYAPR12MB3398D9CA36FCFF81BBC8E7B5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
  <0b7963a4-ee9c-7296-1478-38235af7cd40@gmail.com>
+ <BYAPR12MB33983F916E6DE23228B4EBD0C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0b7963a4-ee9c-7296-1478-38235af7cd40@gmail.com>
+In-Reply-To: <BYAPR12MB33983F916E6DE23228B4EBD0C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+ID4+Pj4+IEl0IGJlY2FtZSBhcHBhcmVudCB0byBtZSB0aGF0IHRoZXJlIGlzIGEgcHJvYmxl
-bSBoZXJlLiBUaGUgc2l6ZSBvZiBkbWFfYnVmIGlzIDQwOTYgYnl0ZXMgYW5kIG1heGltdW0gbWVz
-c2FnZSBsZW5ndGggaXMgNDA5NiB0b28sIHdlIGhhdmUgcHVzaGVkIDEyIGJ5dGVzIHBhY2tldF9o
-ZWFkZXIgdG8gdGhlIGJ1ZmZlciA+YW5kIG5vdyB0aGVyZSBhcmUgNDA4NCBieXRlcyBsZWZ0IGZv
-ciB0aGUgbWVzc2FnZSBpbiB0aGUgYnVmZmVyLiBIZW5jZSB0cmFuc2ZlciBvZiA0S0Igd2lsbCBj
-YXVzZSBidWZmZXIgb3ZlcmZsb3cgYW5kIGVpdGhlciBjcmFzaCBrZXJuZWwgb3IgY29ycnVwdCBt
-ZW1vcnkuIE9uZSBzb2x1dGlvbiBpcyB0byBqdXN0IGFsd2F5cyA+cHVzaCBwYWNrZXRfaGVhZGVy
-IHVzaW5nIFBJTywgb3RoZXIgdG8gcmVkdWNlIG1heF93cml0ZV9sZW4gb3IgaW5jcmVhc2UgZG1h
-X2J1ZiBzaXplLg0KPiA+Pj4+DQo+ID4+Pj4gWWVzLCBUaGlzIGlzIGtub3duIHRvIG1lIGFuZCBJ
-IHdpbGwgYWRkIHNlcGFyYXRlIHBhdGNoIGZvciB0aGlzIHRvIA0KPiA+Pj4+IHVwZGF0ZSBxdWly
-a3MgdG8gdGFrZSBjYXJlIGZvciB0MTg2IGFuZCB0MTk0IHRvIGV4Y2x1ZGUgcGFja2V0IGhkciBs
-ZW5ndGhzIFRoZXJlIHdhcyBzZXBhcmF0ZSBwYXRjaCB3aGVuIHF1aXJrcyB3ZXJlIGFkZGVkIGFu
-ZCBpdCBnb3QgbWVyZ2VkIGFscmVhZHkgZnJvbSA1LjAtcmMxIGJ1dCBkb27igJl0IHdhbnQgdG8g
-c25lYWsgdGhhdCBoZXJlLiBXaWxsIHNlbmQgc2VwYXJhdGUgcGF0Y2ggdG8gdGFrZSBjYXJlIG9m
-IHRoaXMuDQo+ID4+Pj4gTmVlZCB0byB1cGRhdGUgcXVpcmsgdG8gZXhjbHVkZSBwYWNrZXQgaGVh
-ZGVyDQo+ID4+Pj4NCj4gPj4+DQo+ID4+PiBOby4gVGhpcyBpcyBhIGJ1ZyBvZiB0aGlzIHBhdGNo
-LCBpdCBtdXN0IGJlIGZpeGVkIGluIHRoaXMgcGF0Y2ggYXMgd2VsbC4gDQo+ID4+Pg0KPiA+Pg0K
-PiA+Pg0KPiA+PiBJJ20gbm90IHN1cmUgd2UgYWN0dWFsbHkgbmVlZCB0aGlzLiBNeSB1bmRlcnN0
-YW5kaW5nIGlzIHRoYXQgaXQncyByZWFsbHkgdGhlIHBheWxvYWQgc2l6ZSB0aGF0J3MgNCBLaUIg
-YW5kIDY0IEtpQiwgcmVzcGVjdGl2ZWx5LiBJIGRvbid0IHRoaW5rIHRoYXQgaW5jbHVkZXMgdGhl
-IGhlYWRlci4NCj4gPj4NCj4gPj4gVGhpZXJyeQ0KPiA+IA0KPiA+IEFzIHBlciB0aGUgZGVzaWdu
-LCBZZXMgdGhhdOKAmXMgaW5jbHVkaW5nIHRoZSBIRUFERVIuIEl0cyB0b3RhbCB0cmFuc2ZlciBw
-ZXIgcGFja2V0IGluY2x1ZGluZyBoZWFkZXIuDQo+ID4gDQo+DQo+IE15IHVuZGVyc3RhbmRpbmcg
-dGhhdCBJMkMncyBtYXggcmVhZC93cml0ZSBzaXplcyBxdWlya3MgYXJlIHRoZSBwYXlsb2FkIGxp
-bWl0cywgYW5kIHNvIGV4Y2x1ZGluZyB0aGUgaGVhZGVyIHNpemUuIEhlbmNlIEknbSBub3Qgc3Vy
-ZSB3aGF0IHlvdSBhcmUgdHJ5aW5nIHRvIHNheSwgVGhpZXJyeS4NCj4NCj4gU293amFueWEsIGFs
-c28uLiBpdCBzaG91bGQgYmUgZmluZSBpZiB5b3UnbGwgaW5jbHVkZSB0aGUgc2VwYXJhdGUgcGF0
-Y2ggaW50byB0aGlzIHNlcmllcywgcGxhY2luZyBpdCBiZWZvcmUgdGhpcyBETUEtcGF0Y2guIEkg
-anVzdCByZWFkIHlvdXIgbWVzc2FnZSBhcyAicGF0Y2ggc2VwYXJhdGVseSBmcm9tIHRoaXMgc2Vy
-aWVzIi4NCg0KT0ssIFdpbGwgYWRkIHRoYXQgcHJpb3IgdG8gRE1BIHBhdGNoLiBWMTUgd2lsbCBp
-bmNsdWRlIG1heCB0cmFuc2ZlciBsaW1pdCB1cGRhdGUsIGRtYSByZXNvdXJjZSByZWxlYXNlcyBv
-biBwcm9iZSBmYWl1cmVzLCBhbmQgb3RoZXIgbWlub3IgZXJyb3JzIGluIFYxNCBmZWVkYmFjay4N
-CldpbGwgd2FpdCBmb3IgYW55IG1vcmUgZmVlZGJhY2tzIGJlZm9yZSByZWxlYXNpbmcgVjE1Li4u
-DQo=
+07.02.2019 21:02, Sowjanya Komatineni пишет:
+> 
+>>>>>>> It became apparent to me that there is a problem here. The size of dma_buf is 4096 bytes and maximum message length is 4096 too, we have pushed 12 bytes packet_header to the buffer >and now there are 4084 bytes left for the message in the buffer. Hence transfer of 4KB will cause buffer overflow and either crash kernel or corrupt memory. One solution is to just always >push packet_header using PIO, other to reduce max_write_len or increase dma_buf size.
+>>>>>>
+>>>>>> Yes, This is known to me and I will add separate patch for this to 
+>>>>>> update quirks to take care for t186 and t194 to exclude packet hdr lengths There was separate patch when quirks were added and it got merged already from 5.0-rc1 but don’t want to sneak that here. Will send separate patch to take care of this.
+>>>>>> Need to update quirk to exclude packet header
+>>>>>>
+>>>>>
+>>>>> No. This is a bug of this patch, it must be fixed in this patch as well. 
+>>>>>
+>>>>
+>>>>
+>>>> I'm not sure we actually need this. My understanding is that it's really the payload size that's 4 KiB and 64 KiB, respectively. I don't think that includes the header.
+>>>>
+>>>> Thierry
+>>>
+>>> As per the design, Yes that’s including the HEADER. Its total transfer per packet including header.
+>>>
+>>
+>> My understanding that I2C's max read/write sizes quirks are the payload limits, and so excluding the header size. Hence I'm not sure what you are trying to say, Thierry.
+>>
+>> Sowjanya, also.. it should be fine if you'll include the separate patch into this series, placing it before this DMA-patch. I just read your message as "patch separately from this series".
+> 
+> OK, Will add that prior to DMA patch. V15 will include max transfer limit update, dma resource releases on probe faiures, and other minor errors in V14 feedback.
+> Will wait for any more feedbacks before releasing V15...
+> 
+
+Thanks, I'll add couple more minor comments then.
