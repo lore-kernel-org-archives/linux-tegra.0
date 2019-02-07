@@ -1,59 +1,65 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
-Date: Thu, 7 Feb 2019 13:47:17 -0800
-Message-ID: <1549576040-15907-3-git-send-email-skomatineni@nvidia.com>
-References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V15 1/6] i2c: tegra: sort all the include headers alphabetically
+Date: Thu, 7 Feb 2019 13:47:15 -0800
+Message-ID: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
 Cc: digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 supports maximum 64K bytes transfer per packet.
-Tegra186 and prior supports maximum 4K bytes transfer per packet.
-This includes 12 bytes of packet header.
+This patch sorts all the include headers alphabetically for the
+I2C Tegra driver.
 
-This patch fixes max write length to account for packet header size
-for transfers.
-
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- [V15]	: This is new patch in this series.
+ [V9/V10/V11/V12/V13/V14/V15] : Rebased to 5.0-rc4
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] 		  : Added this in V2 to sort the headers in tegra I2C
 
- drivers/i2c/busses/i2c-tegra.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 3758c7a2c781..ab474cc86e0a 100644
+index c77adbbea0c7..79c6aa87499b 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -125,6 +125,9 @@
- #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
- #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
  
-+/* Packet header size in bytes */
-+#define I2C_PACKET_HEADER_SIZE			12
-+
- /*
-  * msg_end_type: The bus control which need to be send at end of transfer.
-  * @MSG_END_STOP: Send stop pulse at end of transfer.
-@@ -900,11 +903,13 @@ static const struct i2c_algorithm tegra_i2c_algo = {
- static const struct i2c_adapter_quirks tegra_i2c_quirks = {
- 	.flags = I2C_AQ_NO_ZERO_LEN,
- 	.max_read_len = 4096,
--	.max_write_len = 4096,
-+	.max_write_len = 4096 - I2C_PACKET_HEADER_SIZE,
- };
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
  
- static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
- 	.flags = I2C_AQ_NO_ZERO_LEN,
-+	.max_read_len = 65535,
-+	.max_write_len = 65535 - I2C_PACKET_HEADER_SIZE,
- };
- 
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
 -- 
 2.7.4
