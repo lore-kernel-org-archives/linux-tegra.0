@@ -1,53 +1,35 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
-Date: Thu, 7 Feb 2019 21:22:02 +0300
-Message-ID: <646d9963-ec2d-5210-d645-2b05da61d8cb@gmail.com>
+Date: Thu, 7 Feb 2019 21:24:11 +0300
+Message-ID: <5483b9d5-816f-3969-2d1e-9712d93dd0a6@gmail.com>
 References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
  <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
- <32b0b694-f912-044e-1a50-55b9c355d0c3@gmail.com>
- <BYAPR12MB3398350797241F90AE347FB5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
- <0a7d62c4-9dcd-08dd-4e3f-877184848daa@gmail.com>
- <20190207160630.GB17445@ulmo>
- <BYAPR12MB3398D9CA36FCFF81BBC8E7B5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
- <0b7963a4-ee9c-7296-1478-38235af7cd40@gmail.com>
- <BYAPR12MB33983F916E6DE23228B4EBD0C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB33983F916E6DE23228B4EBD0C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-07.02.2019 21:02, Sowjanya Komatineni пишет:
-> 
->>>>>>> It became apparent to me that there is a problem here. The size of dma_buf is 4096 bytes and maximum message length is 4096 too, we have pushed 12 bytes packet_header to the buffer >and now there are 4084 bytes left for the message in the buffer. Hence transfer of 4KB will cause buffer overflow and either crash kernel or corrupt memory. One solution is to just always >push packet_header using PIO, other to reduce max_write_len or increase dma_buf size.
->>>>>>
->>>>>> Yes, This is known to me and I will add separate patch for this to 
->>>>>> update quirks to take care for t186 and t194 to exclude packet hdr lengths There was separate patch when quirks were added and it got merged already from 5.0-rc1 but don’t want to sneak that here. Will send separate patch to take care of this.
->>>>>> Need to update quirk to exclude packet header
->>>>>>
->>>>>
->>>>> No. This is a bug of this patch, it must be fixed in this patch as well. 
->>>>>
->>>>
->>>>
->>>> I'm not sure we actually need this. My understanding is that it's really the payload size that's 4 KiB and 64 KiB, respectively. I don't think that includes the header.
->>>>
->>>> Thierry
->>>
->>> As per the design, Yes that’s including the HEADER. Its total transfer per packet including header.
->>>
->>
->> My understanding that I2C's max read/write sizes quirks are the payload limits, and so excluding the header size. Hence I'm not sure what you are trying to say, Thierry.
->>
->> Sowjanya, also.. it should be fine if you'll include the separate patch into this series, placing it before this DMA-patch. I just read your message as "patch separately from this series".
-> 
-> OK, Will add that prior to DMA patch. V15 will include max transfer limit update, dma resource releases on probe faiures, and other minor errors in V14 feedback.
-> Will wait for any more feedbacks before releasing V15...
-> 
+06.02.2019 22:16, Sowjanya Komatineni пишет:
 
-Thanks, I'll add couple more minor comments then.
+> +		if (i2c_dev->msg_read && i2c_dev->msg_err == I2C_ERR_NONE) {
+> +			dma_sync_single_for_cpu(i2c_dev->dev,
+> +						i2c_dev->dma_phys,
+> +						xfer_size,
+> +						DMA_FROM_DEVICE);
+> +			memcpy(i2c_dev->msg_buf, i2c_dev->dma_buf,
+> +			       msg->len);
+> +		}
+> +
+> +		if (i2c_dev->msg_err != I2C_ERR_NONE) {
+> +			dmaengine_synchronize(i2c_dev->msg_read ?
+> +					      i2c_dev->rx_dma_chan :
+> +					      i2c_dev->tx_dma_chan);
+> +		}
+
+Minor nit: parentheses are not really around the dmaengine_synchronize()
