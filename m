@@ -1,44 +1,47 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V14 3/5] i2c: tegra: Add DMA support
-Date: Thu, 7 Feb 2019 19:14:33 +0000
-Message-ID: <BYAPR12MB339812565AB1C9973A934522C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
+Date: Thu, 7 Feb 2019 23:22:48 +0300
+Message-ID: <b72f8946-f921-f098-de36-e7f6203d6391@gmail.com>
 References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
  <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
- <e09062b7-9c74-6aee-477a-72fb72bbd5d3@gmail.com>
- <BYAPR12MB33980D6751904EBEFC38BBAAC2680@BYAPR12MB3398.namprd12.prod.outlook.com>
- <da8138fe-ea4b-42be-1065-c7098ac59691@gmail.com>
+ <c6484ae8-65c7-885a-fe37-0666182cff29@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <da8138fe-ea4b-42be-1065-c7098ac59691@gmail.com>
+In-Reply-To: <c6484ae8-65c7-885a-fe37-0666182cff29@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4gPj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHRlZ3Jh
-MjEwX2kyY19odyA9IHsgQEAgDQo+ID4+PiAtOTgwLDYgKzEzMDIsNyBAQCBzdGF0aWMgY29uc3Qg
-c3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHRlZ3JhMjEwX2kyY19odyA9IHsNCj4gPj4+ICAJ
-Lmhhc19tc3RfZmlmbyA9IGZhbHNlLA0KPiA+Pj4gIAkucXVpcmtzID0gJnRlZ3JhX2kyY19xdWly
-a3MsDQo+ID4+PiAgCS5zdXBwb3J0c19idXNfY2xlYXIgPSB0cnVlLA0KPiA+Pj4gKwkuaGFzX2Fw
-Yl9kbWEgPSB0cnVlLA0KPiA+Pj4gIH07DQo+ID4+DQo+ID4+IFQxODYgaXMgbWlzc2VkIGhlcmUu
-DQo+ID4gDQo+ID4gQ3VycmVudGx5IHQxODYgaHcgZmVhdHVyZSBpcyBub3QgcHJlc2VudCBpbiBl
-eGlzdGluZyBsaW51eCBuZXh0IGFuZCBkZXZpY2UgdHJlZXMgdXNlIGJvdGggdDE4NiBhbmQgdDEx
-NCBjb21wYXRpYmxlcywgc28gdDExNCBpcyBiZWluZyBhcHBsaWVzLg0KPiA+IEJ1dCBkbWFzIGFy
-ZSBub3QgdXNlZCBmb3IgdDE4NiB5ZXQuDQo+ID4gDQo+ID4gVDE4NiBodyBmZWF0dXJlIGlzIGFk
-ZGVkIGZvciBmaXJzdCB0aW1lIGFzIHBhcnQgb2YgaW50ZXJmYWNlIHRpbWluZyBhbmQgaXRzIGlu
-IHBhdGNoIG5leHQgdG8gdGhpcyBwYXRjaCBpbiBzYW1lIHNlcmllcy4NCj4gPiBUaGlzIGlzIHRo
-ZSBzYW1lIGZyb20gYmVnaW5uaW5nIG9mIGFsbCB0aGVzZSBzZXJpZXMuDQo+ID4NCj4gPj4NCj4g
-Pj4+ICANCj4gPj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHRl
-Z3JhMTk0X2kyY19odyA9IHsgQEAgDQo+ID4+PiAtOTk1LDYgKzEzMTgsNyBAQCBzdGF0aWMgY29u
-c3Qgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHRlZ3JhMTk0X2kyY19odyA9IHsNCj4gPj4+
-ICAJLmhhc19tc3RfZmlmbyA9IHRydWUsDQo+ID4+PiAgCS5xdWlya3MgPSAmdGVncmExOTRfaTJj
-X3F1aXJrcywNCj4gPj4+ICAJLnN1cHBvcnRzX2J1c19jbGVhciA9IHRydWUsDQo+ID4+PiArCS5o
-YXNfYXBiX2RtYSA9IGZhbHNlLA0KPiA+Pj4gIH07DQo+ID4gDQo+DQo+IFlvdSBhZGRlZCAiaGFz
-X2FwYl9kbWEiIGZvciBUMTk0IGFuZCBub3QgVDE4NiBpbiB0aGlzIHBhdGNoLCBJIGhhcHBlbmVk
-IHRvIG5vdGljZSBpdCBvbmx5IHJpZ2h0IG5vdy4gUGxlYXNlLCBsZXQncyBiZSBjb25zaXN0ZW50
-IGFuZCBzZXQgdGhlIG5ldyBmaWVsZCBmb3IgYWxsIG9mIHRoZSBwbGF0Zm9ybXMgaW4gdGhpcyBw
-YXRjaC4NCg0KT0ssIFdpbGwgbW92ZSB0MTg2IGh3IGZlYXR1cmUgYWRkaXRpb24gdG8gdGhpcyBw
-YXRoIGZyb20gaW50ZXJmYWNlIHRpbWluZyB0byByZWZsZWN0IGFwYiBkbWEgZmxhZy4NCg==
+07.02.2019 22:14, Dmitry Osipenko пишет:
+> 06.02.2019 22:16, Sowjanya Komatineni пишет:
+>> +static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
+>> +				       size_t len)
+>> +{
+>> +	u32 val = 0, reg;
+>> +	u8 dma_burst = 0;
+
+There is no need to set dma_burst to zero as well. In general you only need to initialize variables if code uses the uninitialized variable.
+
+>> +	struct dma_slave_config slv_config = {0};
+>> +	struct dma_chan *chan;
+>> +	int ret;
+>> +	unsigned long reg_offset;
+>> +
+>> +	if (i2c_dev->hw->has_mst_fifo)
+>> +		reg = I2C_MST_FIFO_CONTROL;
+>> +	else
+>> +		reg = I2C_FIFO_CONTROL;
+>> +
+>> +	if (i2c_dev->is_curr_dma_xfer) {
+>> +		if (len & 0xF)
+>> +			dma_burst = 1;
+>> +		else if (len & 0x10)
+>> +			dma_burst = 4;
+>> +		else
+>> +			dma_burst = 8;
+
+In this case compiler just ignores the first initialization because it is explicitly initialized later on in the code path that actually uses the dma_burst variable. Avoiding unnecessary initialization helps to keep code a bit more clean.
