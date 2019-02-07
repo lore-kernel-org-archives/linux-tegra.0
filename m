@@ -1,571 +1,137 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 5/5] phy: tegra: xusb: Add Tegra186 support
-Date: Thu, 7 Feb 2019 13:17:34 +0100
-Message-ID: <20190207121734.GA8274@ulmo>
-References: <20190125112525.10697-1-thierry.reding@gmail.com>
- <20190125112525.10697-5-thierry.reding@gmail.com>
- <f6f3415c-56a7-e361-e9b3-8d86fab3a211@ti.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 5/5] clk: tegra: add tegra20 automotive init
+Date: Thu, 7 Feb 2019 16:23:19 +0300
+Message-ID: <7f300cd5-2b97-17fb-da06-b212a8fae647@gmail.com>
+References: <20190207125408.8776-1-kejia.hu@codethink.co.uk>
+ <20190207125408.8776-6-kejia.hu@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <f6f3415c-56a7-e361-e9b3-8d86fab3a211@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190207125408.8776-6-kejia.hu@codethink.co.uk>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kejia Hu <kejia.hu@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Thomas Preston <thomas.preston@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 07, 2019 at 05:17:59PM +0530, Kishon Vijay Abraham I wrote:
-> Hi,
->=20
-> On 25/01/19 4:55 PM, Thierry Reding wrote:
-> > From: JC Kuo <jckuo@nvidia.com>
-> >=20
-> > Add support for the XUSB pad controller found on Tegra186 SoCs. It is
-> > mostly similar to the same IP found on earlier chips, but the number of
-> > pads exposed differs, as do the programming sequences.
-> >=20
-> > Note that the DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL power
-> > supplies of the XUSB pad controller require strict power sequencing and
-> > are therefore controlled by the PMIC on Tegra186.
-> >=20
-> > Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  MAINTAINERS                       |   5 +
-> >  drivers/phy/tegra/Makefile        |   1 +
-> >  drivers/phy/tegra/xusb-tegra186.c | 908 ++++++++++++++++++++++++++++++
-> >  drivers/phy/tegra/xusb.c          |   6 +
-> >  drivers/phy/tegra/xusb.h          |  27 +
-> >  5 files changed, 947 insertions(+)
-> >  create mode 100644 drivers/phy/tegra/xusb-tegra186.c
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index ddcdc29dfe1f..754f7e757361 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -15099,6 +15099,11 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
-> >  S:	Supported
-> >  F:	drivers/spi/spi-tegra*
-> > =20
-> > +TEGRA XUSB PADCTL DRIVER
-> > +M:	JC Kuo <jckuo@nvidia.com>
-> > +S:	Supported
-> > +F:	drivers/phy/tegra/xusb*
-> > +
-> >  TEHUTI ETHERNET DRIVER
-> >  M:	Andy Gospodarek <andy@greyhouse.net>
-> >  L:	netdev@vger.kernel.org
-> > diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
-> > index 898589238fd9..a93cd9a499b2 100644
-> > --- a/drivers/phy/tegra/Makefile
-> > +++ b/drivers/phy/tegra/Makefile
-> > @@ -4,3 +4,4 @@ phy-tegra-xusb-y +=3D xusb.o
-> >  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) +=3D xusb-tegra124.o
-> >  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) +=3D xusb-tegra124.o
-> >  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_210_SOC) +=3D xusb-tegra210.o
-> > +phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) +=3D xusb-tegra186.o
-> > diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb=
--tegra186.c
-> > new file mode 100644
-> > index 000000000000..0dbcaddade90
-> > --- /dev/null
-> > +++ b/drivers/phy/tegra/xusb-tegra186.c
-> > @@ -0,0 +1,908 @@
-> > +/*
-> > + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modif=
-y it
-> > + * under the terms and conditions of the GNU General Public License,
-> > + * version 2, as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope it will be useful, but WITH=
-OUT
-> > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY =
-or
-> > + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public Licen=
-se for
-> > + * more details.
-> > + */
->=20
-> please use SPDX license format.
-
-Done.
-
-> > +
-> > +#include <linux/delay.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/phy/phy.h>
-> > +#include <linux/regulator/consumer.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#include <soc/tegra/fuse.h>
-> > +
-> > +#include "xusb.h"
-> > +
-> > +/* FUSE USB_CALIB registers */
-> > +#define HS_CURR_LEVEL_PADX_SHIFT(x)	((x) ? (11 + (x - 1) * 6) : 0)
-> > +#define HS_CURR_LEVEL_PAD_MASK		0x3f
-> > +#define HS_TERM_RANGE_ADJ_SHIFT		7
-> > +#define HS_TERM_RANGE_ADJ_MASK		0xf
-> > +#define HS_SQUELCH_SHIFT		29
-> > +#define HS_SQUELCH_MASK			0x7
-> > +
-> > +#define RPD_CTRL_SHIFT			0
-> > +#define RPD_CTRL_MASK			0x1f
-> > +
-> > +/* XUSB PADCTL registers */
-> > +#define XUSB_PADCTL_USB2_PAD_MUX	0x4
-> > +#define  USB2_PORT_SHIFT(x)		((x) * 2)
-> > +#define  USB2_PORT_MASK			0x3
-> > +#define   PORT_XUSB			1
-> > +#define  HSIC_PORT_SHIFT(x)		((x) + 20)
-> > +#define  HSIC_PORT_MASK			0x1
-> > +#define   PORT_HSIC			0
-> > +
-> > +#define XUSB_PADCTL_USB2_PORT_CAP	0x8
-> > +#define XUSB_PADCTL_SS_PORT_CAP		0xc
-> > +#define  PORTX_CAP_SHIFT(x)		((x) * 4)
-> > +#define  PORT_CAP_MASK			0x3
-> > +#define   PORT_CAP_DISABLED		0x0
-> > +#define   PORT_CAP_HOST			0x1
-> > +#define   PORT_CAP_DEVICE		0x2
-> > +#define   PORT_CAP_OTG			0x3
-> > +
-> > +#define XUSB_PADCTL_ELPG_PROGRAM		0x20
-> > +#define  USB2_PORT_WAKE_INTERRUPT_ENABLE(x)		(1 << (x))
->=20
-> Use BIT() macros here and below
-
-Done.
-
-> > +#define  USB2_PORT_WAKEUP_EVENT(x)		(	1 << ((x) + 7))
-> > +#define  SS_PORT_WAKE_INTERRUPT_ENABLE(x)		(1 << ((x) + 14))
-> > +#define  SS_PORT_WAKEUP_EVENT(x)			(1 << ((x) + 21))
-> > +#define  USB2_HSIC_PORT_WAKE_INTERRUPT_ENABLE(x)	(1 << ((x) + 28))
-> > +#define  USB2_HSIC_PORT_WAKEUP_EVENT(x)			(1 << ((x) + 30))
-> > +#define  ALL_WAKE_EVENTS						\
-> > +	(USB2_PORT_WAKEUP_EVENT(0) | USB2_PORT_WAKEUP_EVENT(1) |	\
-> > +	USB2_PORT_WAKEUP_EVENT(2) | SS_PORT_WAKEUP_EVENT(0) |		\
-> > +	SS_PORT_WAKEUP_EVENT(1) | SS_PORT_WAKEUP_EVENT(2) |		\
-> > +	USB2_HSIC_PORT_WAKEUP_EVENT(0))
-> > +
-> > +#define XUSB_PADCTL_ELPG_PROGRAM_1		0x24
-> > +#define  SSPX_ELPG_CLAMP_EN(x)			(1 << (0 + (x) * 3))
-> > +#define  SSPX_ELPG_CLAMP_EN_EARLY(x)		(1 << (1 + (x) * 3))
-> > +#define  SSPX_ELPG_VCORE_DOWN(x)		(1 << (2 + (x) * 3))
-> > +
-> > +#define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x)	(0x88 + (x) * 0x40)
-> > +#define  HS_CURR_LEVEL(x)			((x) & 0x3f)
-> > +#define  TERM_SEL				(1 << 25)
-> > +#define  USB2_OTG_PD				(1 << 26)
-> > +#define  USB2_OTG_PD2				(1 << 27)
-> > +#define  USB2_OTG_PD2_OVRD_EN			(1 << 28)
-> > +#define  USB2_OTG_PD_ZI				(1 << 29)
-> > +
-> > +#define XUSB_PADCTL_USB2_OTG_PADX_CTL1(x)	(0x8c + (x) * 0x40)
-> > +#define  USB2_OTG_PD_DR				(1 << 2)
-> > +#define  TERM_RANGE_ADJ(x)			(((x) & 0xf) << 3)
-> > +#define  RPD_CTRL(x)				(((x) & 0x1f) << 26)
-> > +
-> > +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0		0x284
-> > +#define  BIAS_PAD_PD				(1 << 11)
-> > +#define  HS_SQUELCH_LEVEL(x)			(((x) & 0x7) << 0)
-> > +
-> > +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL1		0x288
-> > +#define  USB2_TRK_START_TIMER(x)		(((x) & 0x7f) << 12)
-> > +#define  USB2_TRK_DONE_RESET_TIMER(x)		(((x) & 0x7f) << 19)
-> > +#define  USB2_PD_TRK				(1 << 26)
-> > +
-> > +#define XUSB_PADCTL_HSIC_PADX_CTL0(x)		(0x300 + (x) * 0x20)
-> > +#define  HSIC_PD_TX_DATA0			(1 << 1)
-> > +#define  HSIC_PD_TX_STROBE			(1 << 3)
-> > +#define  HSIC_PD_RX_DATA0			(1 << 4)
-> > +#define  HSIC_PD_RX_STROBE			(1 << 6)
-> > +#define  HSIC_PD_ZI_DATA0			(1 << 7)
-> > +#define  HSIC_PD_ZI_STROBE			(1 << 9)
-> > +#define  HSIC_RPD_DATA0				(1 << 13)
-> > +#define  HSIC_RPD_STROBE			(1 << 15)
-> > +#define  HSIC_RPU_DATA0				(1 << 16)
-> > +#define  HSIC_RPU_STROBE			(1 << 18)
-> > +
-> > +#define XUSB_PADCTL_HSIC_PAD_TRK_CTL0		(0x340)
->=20
-> unnecessary ().
-
-Done.
-
-> > +#define  HSIC_TRK_START_TIMER(x)		(((x) & 0x7f) << 5)
-> > +#define  HSIC_TRK_DONE_RESET_TIMER(x)		(((x) & 0x7f) << 12)
-> > +#define  HSIC_PD_TRK				(1 << 19)
-> > +
-> > +#define USB2_VBUS_ID				(0x360)
->=20
-> here too..
-
-Done.
-
-> > +#define  VBUS_OVERRIDE				(1 << 14)
-> > +#define  ID_OVERRIDE(x)			(((x) & 0xf) << 18)
-> > +#define  ID_OVERRIDE_FLOATING			ID_OVERRIDE(8)
-> > +#define  ID_OVERRIDE_GROUNDED			ID_OVERRIDE(0)
-> > +
-> > +#define TEGRA186_LANE(_name, _offset, _shift, _mask, _type)		\
-> > +	{								\
-> > +		.name =3D _name,						\
-> > +		.offset =3D _offset,					\
-> > +		.shift =3D _shift,					\
-> > +		.mask =3D _mask,						\
-> > +		.num_funcs =3D ARRAY_SIZE(tegra186_##_type##_functions),	\
-> > +		.funcs =3D tegra186_##_type##_functions,			\
-> > +	}
-> > +
-> > +struct tegra_xusb_fuse_calibration {
-> > +	u32 *hs_curr_level;
-> > +	u32 hs_squelch;
-> > +	u32 hs_term_range_adj;
-> > +	u32 rpd_ctrl;
-> > +};
-> > +
-> > +struct tegra186_xusb_padctl {
-> > +	struct tegra_xusb_padctl base;
-> > +
-> > +	struct tegra_xusb_fuse_calibration calib;
-> > +
-> > +	/* UTMI bias and tracking */
-> > +	struct clk *usb2_trk_clk;
-> > +	unsigned int bias_pad_enable;
-> > +};
-> > +
-> > +static inline struct tegra186_xusb_padctl *
-> > +to_tegra186_xusb_padctl(struct tegra_xusb_padctl *padctl)
-> > +{
-> > +	return container_of(padctl, struct tegra186_xusb_padctl, base);
-> > +}
-> > +
-> > +/* USB 2.0 UTMI PHY support */
-> > +static struct tegra_xusb_lane *
-> > +tegra186_usb2_lane_probe(struct tegra_xusb_pad *pad, struct device_nod=
-e *np,
-> > +			 unsigned int index)
-> > +{
-> > +	struct tegra_xusb_usb2_lane *usb2;
-> > +	int err;
-> > +
-> > +	usb2 =3D kzalloc(sizeof(*usb2), GFP_KERNEL);
-> > +	if (!usb2)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	INIT_LIST_HEAD(&usb2->base.list);
-> > +	usb2->base.soc =3D &pad->soc->lanes[index];
-> > +	usb2->base.index =3D index;
-> > +	usb2->base.pad =3D pad;
-> > +	usb2->base.np =3D np;
-> > +
-> > +	err =3D tegra_xusb_lane_parse_dt(&usb2->base, np);
-> > +	if (err < 0) {
-> > +		kfree(usb2);
-> > +		return ERR_PTR(err);
-> > +	}
-> > +
-> > +	return &usb2->base;
-> > +}
-> > +
-> > +static void tegra186_usb2_lane_remove(struct tegra_xusb_lane *lane)
-> > +{
-> > +	struct tegra_xusb_usb2_lane *usb2 =3D to_usb2_lane(lane);
-> > +
-> > +	kfree(usb2);
-> > +}
-> > +
-> > +static const struct tegra_xusb_lane_ops tegra186_usb2_lane_ops =3D {
-> > +	.probe =3D tegra186_usb2_lane_probe,
-> > +	.remove =3D tegra186_usb2_lane_remove,
-> > +};
-> > +
-> > +static void tegra186_utmi_bias_pad_power_on(struct tegra_xusb_padctl *=
-padctl)
-> > +{
-> > +	struct tegra186_xusb_padctl *priv =3D to_tegra186_xusb_padctl(padctl);
-> > +	struct device *dev =3D padctl->dev;
-> > +	u32 value;
-> > +	int err;
-> > +
-> > +	mutex_lock(&padctl->lock);
-> > +
-> > +	if (priv->bias_pad_enable++ > 0) {
-> > +		mutex_unlock(&padctl->lock);
-> > +		return;
-> > +	}
-> > +
-> > +	err =3D clk_prepare_enable(priv->usb2_trk_clk);
-> > +	if (err < 0)
-> > +		dev_warn(dev, "failed to enable USB2 trk clock: %d\n", err);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
-> > +	value &=3D ~USB2_TRK_START_TIMER(~0);
-> > +	value |=3D USB2_TRK_START_TIMER(0x1e);
-> > +	value &=3D ~USB2_TRK_DONE_RESET_TIMER(~0);
-> > +	value |=3D USB2_TRK_DONE_RESET_TIMER(0xa);
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> > +	value &=3D ~BIAS_PAD_PD;
-> > +	value &=3D ~HS_SQUELCH_LEVEL(~0);
-> > +	value |=3D HS_SQUELCH_LEVEL(priv->calib.hs_squelch);
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> > +
-> > +	udelay(1);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
-> > +	value &=3D ~USB2_PD_TRK;
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
-> > +
-> > +	mutex_unlock(&padctl->lock);
-> > +}
-> > +
-> > +static void tegra186_utmi_bias_pad_power_off(struct tegra_xusb_padctl =
-*padctl)
-> > +{
-> > +	struct tegra186_xusb_padctl *priv =3D to_tegra186_xusb_padctl(padctl);
-> > +	u32 value;
-> > +
-> > +	mutex_lock(&padctl->lock);
-> > +
-> > +	if (WARN_ON(priv->bias_pad_enable =3D=3D 0)) {
-> > +		mutex_unlock(&padctl->lock);
-> > +		return;
-> > +	}
-> > +
-> > +	if (--priv->bias_pad_enable > 0) {
-> > +		mutex_unlock(&padctl->lock);
-> > +		return;
-> > +	}
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
-> > +	value |=3D USB2_PD_TRK;
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
-> > +
-> > +	clk_disable_unprepare(priv->usb2_trk_clk);
-> > +
-> > +	mutex_unlock(&padctl->lock);
-> > +}
-> > +
-> > +void tegra_phy_xusb_utmi_pad_power_on(struct phy *phy)
-> > +{
-> > +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> > +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> > +	struct tegra_xusb_usb2_port *port;
-> > +	struct device *dev =3D padctl->dev;
-> > +	unsigned int index =3D lane->index;
-> > +	u32 value;
-> > +
-> > +	if (!phy)
-> > +		return;
-> > +
-> > +	port =3D tegra_xusb_find_usb2_port(padctl, index);
-> > +	if (!port) {
-> > +		dev_err(dev, "no port found for USB2 lane %u\n", index);
-> > +		return;
-> > +	}
-> > +
-> > +	tegra186_utmi_bias_pad_power_on(padctl);
-> > +
-> > +	udelay(2);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> > +	value &=3D ~USB2_OTG_PD;
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> > +	value &=3D ~USB2_OTG_PD_DR;
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> > +}
-> > +
-> > +void tegra_phy_xusb_utmi_pad_power_down(struct phy *phy)
-> > +{
-> > +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> > +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> > +	unsigned int index =3D lane->index;
-> > +	u32 value;
-> > +
-> > +	if (!phy)
-> > +		return;
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> > +	value |=3D USB2_OTG_PD;
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> > +	value |=3D USB2_OTG_PD_DR;
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> > +
-> > +	udelay(2);
-> > +
-> > +	tegra186_utmi_bias_pad_power_off(padctl);
-> > +}
-> > +
-> > +static int tegra186_utmi_phy_power_on(struct phy *phy)
-> > +{
-> > +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> > +	struct tegra_xusb_usb2_lane *usb2 =3D to_usb2_lane(lane);
-> > +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> > +	struct tegra186_xusb_padctl *priv =3D to_tegra186_xusb_padctl(padctl);
-> > +	struct tegra_xusb_usb2_port *port;
-> > +	unsigned int index =3D lane->index;
-> > +	struct device *dev =3D padctl->dev;
-> > +	u32 value;
-> > +
-> > +	port =3D tegra_xusb_find_usb2_port(padctl, index);
-> > +	if (!port) {
-> > +		dev_err(dev, "no port found for USB2 lane %u\n", index);
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_PAD_MUX);
-> > +	value &=3D ~(USB2_PORT_MASK << USB2_PORT_SHIFT(index));
-> > +	value |=3D (PORT_XUSB << USB2_PORT_SHIFT(index));
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_PAD_MUX);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_PORT_CAP);
-> > +	value &=3D ~(PORT_CAP_MASK << PORTX_CAP_SHIFT(index));
-> > +
-> > +	if (port->mode =3D=3D USB_DR_MODE_UNKNOWN)
-> > +		value |=3D (PORT_CAP_DISABLED << PORTX_CAP_SHIFT(index));
-> > +	else if (port->mode =3D=3D USB_DR_MODE_PERIPHERAL)
-> > +		value |=3D (PORT_CAP_DEVICE << PORTX_CAP_SHIFT(index));
-> > +	else if (port->mode =3D=3D USB_DR_MODE_HOST)
-> > +		value |=3D (PORT_CAP_HOST << PORTX_CAP_SHIFT(index));
-> > +	else if (port->mode =3D=3D USB_DR_MODE_OTG)
-> > +		value |=3D (PORT_CAP_OTG << PORTX_CAP_SHIFT(index));
-> > +
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_PORT_CAP);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> > +	value &=3D ~USB2_OTG_PD_ZI;
-> > +	value |=3D TERM_SEL;
-> > +	value &=3D ~HS_CURR_LEVEL(~0);
-> > +
-> > +	/* TODO hs_curr_level_offset support */
->=20
-> What is TODO here?
-
-Nothing. hs_curr_level_offset support is clearly implemented below, so
-I've removed the stale comment.
-
-> > +	if (usb2->hs_curr_level_offset) {
-> > +		int hs_current_level;
-> > +
-> > +		hs_current_level =3D (int)priv->calib.hs_curr_level[index] +
-> > +						usb2->hs_curr_level_offset;
-> > +
-> > +		if (hs_current_level < 0)
-> > +			hs_current_level =3D 0;
-> > +		if (hs_current_level > 0x3f)
-> > +			hs_current_level =3D 0x3f;
-> > +
-> > +		value |=3D HS_CURR_LEVEL(hs_current_level);
-> > +	} else {
-> > +		value |=3D HS_CURR_LEVEL(priv->calib.hs_curr_level[index]);
-> > +	}
-> > +
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> > +	value &=3D ~TERM_RANGE_ADJ(~0);
-> > +	value |=3D TERM_RANGE_ADJ(priv->calib.hs_term_range_adj);
-> > +	value &=3D ~RPD_CTRL(~0);
-> > +	value |=3D RPD_CTRL(priv->calib.rpd_ctrl);
-> > +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> > +
-> > +	/* TODO: pad power saving */
-> > +	tegra_phy_xusb_utmi_pad_power_on(phy);
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra186_utmi_phy_power_off(struct phy *phy)
-> > +{
-> > +	/* TODO: pad power saving */
-> > +	tegra_phy_xusb_utmi_pad_power_down(phy);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra186_utmi_phy_init(struct phy *phy)
-> > +{
-> > +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> > +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> > +	struct tegra_xusb_usb2_port *port;
-> > +	unsigned int index =3D lane->index;
-> > +	struct device *dev =3D padctl->dev;
-> > +	int err;
-> > +
-> > +	port =3D tegra_xusb_find_usb2_port(padctl, index);
->=20
-> I would prefer if this entire driver is rewritten without using xusb libr=
-ary.
-
-I don't think that would be possible without duplicating most of the
-code in xusb.c into each of xusb-tegra124.c, xusb-tegra210.c and
-xusb-tegra186.c.
-
-> Ideally you shouldn't have to traverse a list to configure the PHY. phy_g=
-et
-> already does that for you. It should be straight forward to get "port" fr=
-om "phy".
-
-There's a subtle difference here between port and PHY. The "phy" that
-we're initializing here is actually the "lane" in Tegra terms. Each pad
-on Tegra (typically USB, PCIe, SATA, ...) can have multiple lanes, each
-of which can be muxed to a specific function.
-
-Ports are a separate abstraction that is used to represent the physical
-connectors on a board. This is different from the lane.
-
-> I think xusb is making it more complicated than it has to be.
-
-I understand that it may seem that way, but a lot of thought went into
-abstracting this in order to cover the various scenarios that we can run
-into, and to be able to unify this across multiple chips.
-
-A lot of this infrastructure is also there to make sure the device tree
-is actually consistent. So the indirections and abstractions not only
-serve to wrap PHYs and ports into objects that are easy to work with but
-also to validate that the device tree adheres to the device tree
-bindings.
-
-Thierry
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxcIdsACgkQ3SOs138+
-s6FXEA//TEP5bwzdBTJn+/WWYXlLthuHWq54F3Q1KFFJtyT4wiMAywRYsyJGcAoW
-gKdG5u7GdBZLE8ckxtW+MP+ZMsD2tBd3+bdDhqsscNVRwR3KLXB384aHvX61xipi
-LpEXLWWpPGnrSWiA1CB4/XJH0FHO8wjn61OCxCndP6UTQUm+UT0J06kFBH9BP7As
-Dl88Qgo+DT+Olk5/cKB9f+snirfLZLFU2xM9i6MJ9I2m4unI4a4wUoQmmratvfp7
-S1BDCgg12YPq+QAeUeGCBkQ8NnuCs2Fo3dSeQU+6OMauTsVQpe/+J7fEsrC/U+o5
-7EVA0f1X8ZZCL24MDjgUkAfDlNj4mOhPDVxpI0D04VFSAHLfNSULJtP+QARyJXri
-UBbJKO9Ccb3Ew9dD/zDK+yIyOLqubHnVjlLGWLIyaY/r11ciJ+WlGa0tnTccQ3CO
-5EcQyfFDjKtwJYivsbzmHaZ7P+CpPTMEtbgcHMwwS/I9fNiBw5piVjWmNgZJRItQ
-tDIpIhd7xYSURJwqXyDeW9wpBHEAnJIYN+1S3d7TXxqnviAeS8EYqHXAv4+UdDGt
-IWn1I1ENj7Tynq8njTYgqGTOdP0PmCPAo2Meff7KC3wcRmp7xCI2Q2DS+NjzVPZr
-4Bsprc+bdgJGdqxlILy7O/VTSCo2maupbrhZ+jfgzCQglON+EDk=
-=WwSt
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+MDcuMDIuMjAxOSAxNTo1NCwgS2VqaWEgSHUg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaG9tYXMgUHJl
+c3RvbiA8dGhvbWFzLnByZXN0b25AY29kZXRoaW5rLmNvLnVrPgo+IAo+IEFkZCBpbnRpYWxpc2F0
+aW9uIGZvciB0aGUgdGVncmEyMCBhdXRvbW90aXZlIHBhcnRzCj4gd2hpY2ggaGF2ZSBkaWZmZXJl
+bnQgaW5pdGlhbGlzYXRpb24gcmVxdWlyZW1lbnRzIHRoYW4KPiB0aGUgdGVncmEyMC4gVGhlc2Ug
+aGF2ZSBiZWVuIGNvcGllZCBmcm9tIHRoZSAyLjYgQlNQCj4gc3VwcGxpZWQgYnkgbnZpZGlhIGZv
+ciB0aGVzZSBwYXJ0cy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMgUHJlc3RvbiA8dGhvbWFz
+LnByZXN0b25AY29kZXRoaW5rLmNvLnVrPgo+IFNpZ25lZC1vZmYtYnk6IEtlamlhIEh1IDxrZWpp
+YS5odUBjb2RldGhpbmsuY28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdy
+YTIwLmMgfCA3OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQo+ICAx
+IGZpbGUgY2hhbmdlZCwgNzYgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAKPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3JhMjAuYyBiL2RyaXZlcnMvY2xrL3Rl
+Z3JhL2Nsay10ZWdyYTIwLmMKPiBpbmRleCBjNzFiNjExNjJhMzIuLjFiOGM3ZDQwZmQ1NSAxMDA2
+NDQKPiAtLS0gYS9kcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEyMC5jCj4gKysrIGIvZHJpdmVy
+cy9jbGsvdGVncmEvY2xrLXRlZ3JhMjAuYwo+IEBAIC0yMiw2ICsyMiw3IEBACj4gICNpbmNsdWRl
+IDxsaW51eC9jbGsvdGVncmEuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2RlbGF5Lmg+Cj4gICNpbmNs
+dWRlIDxkdC1iaW5kaW5ncy9jbG9jay90ZWdyYTIwLWNhci5oPgo+ICsjaW5jbHVkZSA8c29jL3Rl
+Z3JhL2NvbW1vbi5oPgo+ICAKPiAgI2luY2x1ZGUgImNsay5oIgo+ICAjaW5jbHVkZSAiY2xrLWlk
+LmgiCj4gQEAgLTUzNCw3ICs1MzUsNyBAQCBzdGF0aWMgc3RydWN0IHRlZ3JhX2NsayB0ZWdyYTIw
+X2Nsa3NbdGVncmFfY2xrX21heF0gX19pbml0ZGF0YSA9IHsKPiAgCVt0ZWdyYV9jbGtfc2RtbWM0
+XSA9IHsgLmR0X2lkID0gVEVHUkEyMF9DTEtfU0RNTUM0LCAucHJlc2VudCA9IHRydWUgfSwKPiAg
+CVt0ZWdyYV9jbGtfbGFdID0geyAuZHRfaWQgPSBURUdSQTIwX0NMS19MQSwgLnByZXNlbnQgPSB0
+cnVlIH0sCj4gIAlbdGVncmFfY2xrX2NzaXRlXSA9IHsgLmR0X2lkID0gVEVHUkEyMF9DTEtfQ1NJ
+VEUsIC5wcmVzZW50ID0gdHJ1ZSB9LAo+IC0JW3RlZ3JhX2Nsa192ZmlyXSA9IHsgLmR0X2lkID0g
+VEVHUkEyMF9DTEtfVkZJUiwgLnByZXNlbnQgPSB0cnVlIH0sCj4gKwlbdGVncmFfY2xrX3ZmaXJd
+ID0geyAuZHRfaWQgPSBURUdSQTIwX0NMS19WRklSLCAucHJlc2VudCA9IGZhbHNlIH0sCj4gIAlb
+dGVncmFfY2xrX21pcGldID0geyAuZHRfaWQgPSBURUdSQTIwX0NMS19NSVBJLCAucHJlc2VudCA9
+IHRydWUgfSwKPiAgCVt0ZWdyYV9jbGtfbm9yXSA9IHsgLmR0X2lkID0gVEVHUkEyMF9DTEtfTk9S
+LCAucHJlc2VudCA9IHRydWUgfSwKPiAgCVt0ZWdyYV9jbGtfcnRjXSA9IHsgLmR0X2lkID0gVEVH
+UkEyMF9DTEtfUlRDLCAucHJlc2VudCA9IHRydWUgfSwKPiBAQCAtMTA5MSw5ICsxMDkyLDgyIEBA
+IHN0YXRpYyBzdHJ1Y3QgdGVncmFfY2xrX2luaXRfdGFibGUgaW5pdF90YWJsZVtdIF9faW5pdGRh
+dGEgPSB7Cj4gIAl7IFRFR1JBMjBfQ0xLX0NMS19NQVgsIFRFR1JBMjBfQ0xLX0NMS19NQVgsIDAs
+IDAgfSwKPiAgfTsKPiAgCj4gKy8qIFRlZ3JhMjAgYXV0b21vdGl2ZSBwYXJ0IGluaXRpYWxpc2F0
+aW9uIHRhYmxlLgo+ICsgKgo+ICsgKiBUaGVzZSB2YWx1ZXMgaGF2ZSBiZWVuIGRlcml2ZWQgZnJv
+bSB0aGUgTnZpZGlhIHN1cHBsaWVkIEJTUCBmb3IgdGhlaXIKPiArICogYXV0b21vdGl2ZSBwYXJ0
+cy4KPiArICovCj4gKwo+ICtzdGF0aWMgc3RydWN0IHRlZ3JhX2Nsa19pbml0X3RhYmxlIGluaXRf
+dGFibGVfdDIwYVtdIF9faW5pdGRhdGEgPSB7Cj4gKwl7VEVHUkEyMF9DTEtfUExMX1AsIFRFR1JB
+MjBfQ0xLX0NMS19NQVgsIDIxNjAwMDAwMCwgMX0sCj4gKwl7VEVHUkEyMF9DTEtfUExMX1BfT1VU
+MSwgVEVHUkEyMF9DTEtfQ0xLX01BWCwgMjg4MDAwMDAsIDF9LAo+ICsJe1RFR1JBMjBfQ0xLX1BM
+TF9QX09VVDIsIFRFR1JBMjBfQ0xLX0NMS19NQVgsIDQ4MDAwMDAwLCAxfSwKPiArCXtURUdSQTIw
+X0NMS19QTExfUF9PVVQzLCBURUdSQTIwX0NMS19DTEtfTUFYLCA3MjAwMDAwMCwgMX0sCj4gKwl7
+VEVHUkEyMF9DTEtfUExMX1BfT1VUNCwgVEVHUkEyMF9DTEtfQ0xLX01BWCwgMjQwMDAwMDAwLCAx
+fSwKPiArCXtURUdSQTIwX0NMS19QTExfTSwgVEVHUkEyMF9DTEtfQ0xLX01BWCwgNjY2MDAwMDAw
+LCAxIH0sCj4gKwl7VEVHUkEyMF9DTEtfUExMX01fT1VUMSwgVEVHUkEyMF9DTEtfQ0xLX01BWCwg
+MjY2NDAwMDAwLCAxIH0sCj4gKwl7VEVHUkEyMF9DTEtfUExMX0MsIFRFR1JBMjBfQ0xLX0NMS19N
+QVgsIDYwMDAwMDAwMCwgMX0sCj4gKwl7VEVHUkEyMF9DTEtfUExMX0NfT1VUMSwgVEVHUkEyMF9D
+TEtfQ0xLX01BWCwgMjQwMDAwMDAwLCAxfSwKPiArCXtURUdSQTIwX0NMS19TQ0xLLCBURUdSQTIw
+X0NMS19QTExfQ19PVVQxLCAwLCAxfSwKPiArCXtURUdSQTIwX0NMS19IQ0xLLCBURUdSQTIwX0NM
+S19DTEtfTUFYLCAwLCAxfSwKPiArCXtURUdSQTIwX0NMS19QQ0xLLCBURUdSQTIwX0NMS19DTEtf
+TUFYLCAxMjAwMDAwMDAsIDF9LAo+ICsJe1RFR1JBMjBfQ0xLX0NTSVRFLCBURUdSQTIwX0NMS19D
+TEtfTUFYLCAwLCAxfSwKPiArCXtURUdSQTIwX0NMS19FTUMsIFRFR1JBMjBfQ0xLX0NMS19NQVgs
+IDAsIDF9LAo+ICsJe1RFR1JBMjBfQ0xLX1BMTF9ELCBURUdSQTIwX0NMS19DTEtfTUFYLCA1OTQw
+MDAwMDAsIDF9LAo+ICsJe1RFR1JBMjBfQ0xLX1BMTF9EX09VVDAsIFRFR1JBMjBfQ0xLX0NMS19N
+QVgsIDU5NDAwMDAwMC8yLCAxfSwKPiArCXtURUdSQTIwX0NMS19DQ0xLLCBURUdSQTIwX0NMS19D
+TEtfTUFYLCAwLCAxfSwKPiArCXtURUdSQTIwX0NMS19VQVJUQSwgVEVHUkEyMF9DTEtfUExMX1As
+IDAsIDB9LAo+ICsJe1RFR1JBMjBfQ0xLX1VBUlRCLCBURUdSQTIwX0NMS19QTExfUCwgMjE2MDAw
+MDAwLCAxfSwKPiArCXtURUdSQTIwX0NMS19VQVJUQywgVEVHUkEyMF9DTEtfUExMX1AsIDAsIDB9
+LAo+ICsJe1RFR1JBMjBfQ0xLX1VBUlRELCBURUdSQTIwX0NMS19QTExfUCwgMCwgMH0sCj4gKwl7
+VEVHUkEyMF9DTEtfVUFSVEUsIFRFR1JBMjBfQ0xLX1BMTF9QLCAwLCAwfSwKPiArCXtURUdSQTIw
+X0NMS19QTExfQSwgVEVHUkEyMF9DTEtfQ0xLX01BWCwgNTY0NDgwMDAsIDF9LAo+ICsJe1RFR1JB
+MjBfQ0xLX1BMTF9BX09VVDAsIFRFR1JBMjBfQ0xLX0NMS19NQVgsIDExMjg5NjAwLCAxfSwKPiAr
+CXtURUdSQTIwX0NMS19CTElOSywgVEVHUkEyMF9DTEtfQ0xLX01BWCwgMzI3NjgsIDB9LAo+ICsJ
+e1RFR1JBMjBfQ0xLX0kyUzEsIFRFR1JBMjBfQ0xLX1BMTF9BX09VVDAsIDExMjg5NjAwLCAwfSwK
+PiArCXtURUdSQTIwX0NMS19JMlMyLCBURUdSQTIwX0NMS19QTExfQV9PVVQwLCAxMTI4OTYwMCwg
+MH0sCj4gKwl7VEVHUkEyMF9DTEtfU0RNTUMxLCBURUdSQTIwX0NMS19QTExfUCwgNDgwMDAwMDAs
+IDB9LAo+ICsJe1RFR1JBMjBfQ0xLX1NETU1DMywgVEVHUkEyMF9DTEtfUExMX1AsIDQ4MDAwMDAw
+LCAwfSwKPiArCXtURUdSQTIwX0NMS19TRE1NQzQsIFRFR1JBMjBfQ0xLX1BMTF9QLCA0ODAwMDAw
+MCwgMH0sCj4gKwl7VEVHUkEyMF9DTEtfU1BJLCBURUdSQTIwX0NMS19QTExfUCwgMjAwMDAwMDAs
+IDB9LAo+ICsJe1RFR1JBMjBfQ0xLX05PUiwgVEVHUkEyMF9DTEtfUExMX1AsIDg2NTAwMDAwLCAw
+fSwKPiArCXtURUdSQTIwX0NMS19TQkMxLCBURUdSQTIwX0NMS19QTExfQywgMTIwMDAwMDAsIDB9
+LAo+ICsJe1RFR1JBMjBfQ0xLX1NCQzIsIFRFR1JBMjBfQ0xLX1BMTF9DLCAxMjAwMDAwMCwgMH0s
+Cj4gKwl7VEVHUkEyMF9DTEtfU0JDMywgVEVHUkEyMF9DTEtfUExMX0MsIDEyMDAwMDAwLCAwfSwK
+PiArCXtURUdSQTIwX0NMS19TQkM0LCBURUdSQTIwX0NMS19QTExfQywgMTIwMDAwMDAsIDB9LAo+
+ICsJe1RFR1JBMjBfQ0xLX0hPU1QxWCwgVEVHUkEyMF9DTEtfUExMX00sIDI2NjQwMDAwMCwgMX0s
+Cj4gKwl7VEVHUkEyMF9DTEtfQ1NVUywgVEVHUkEyMF9DTEtfQ0xLX01BWCwgMTIwMDAwMDAsIDF9
+LAo+ICsJe1RFR1JBMjBfQ0xLX0RJU1AxLCBURUdSQTIwX0NMS19QTExfRF9PVVQwLCAyOTcwMDAw
+MDAsIDEsIH0sICAgIC8qIGRpc3AxIGZyb20gcGxsX2QgKG5vIGRpdikgKi8KPiArCXtURUdSQTIw
+X0NMS19HUjJELCBURUdSQTIwX0NMS19DTEtfTUFYLCAzMDAwMDAwMDAsIDF9LAo+ICsJe1RFR1JB
+MjBfQ0xLX0dSM0QsIFRFR1JBMjBfQ0xLX0NMS19NQVgsIDMwMDAwMDAwMCwgMX0sCj4gKwl7VEVH
+UkEyMF9DTEtfVkksIFRFR1JBMjBfQ0xLX1BMTF9NLCAxMTEwMDAwMDAsIDEgfSwKPiArCXtURUdS
+QTIwX0NMS19WSV9TRU5TT1IsIFRFR1JBMjBfQ0xLX1BMTF9NLCAxMTEwMDAwMDAsIDEgfSwKPiAr
+CXtURUdSQTIwX0NMS19JMkMxLCBURUdSQTIwX0NMS19QTExfUCwgMzAwMDAwMCwgMCB9LAo+ICsJ
+e1RFR1JBMjBfQ0xLX0kyQzIsIFRFR1JBMjBfQ0xLX1BMTF9QLCAzMDAwMDAwLCAwIH0sCj4gKwl7
+VEVHUkEyMF9DTEtfSTJDMywgVEVHUkEyMF9DTEtfUExMX1AsIDMwMDAwMDAsIDAgfSwKPiArCXtU
+RUdSQTIwX0NMS19EVkMsIFRFR1JBMjBfQ0xLX1BMTF9QLCAzMDAwMDAwLCAwIH0sCj4gKwl7VEVH
+UkEyMF9DTEtfUFdNLCBURUdSQTIwX0NMS19DTEtfMzJLLCAzMjc2OCwgMCB9LAo+ICsJe1RFR1JB
+MjBfQ0xLX0VQUCwgVEVHUkEyMF9DTEtfUExMX00sIDI2NjQwMDAwMCwgMSB9LAo+ICsJe1RFR1JB
+MjBfQ0xLX01QRSwgVEVHUkEyMF9DTEtfUExMX0MsIDMwMDAwMDAwMCwgMX0sCj4gKwl7VEVHUkEy
+MF9DTEtfTkRGTEFTSCwgVEVHUkEyMF9DTEtfUExMX1AsIDg2NTAwMDAwLCAxIH0sCj4gKwl7VEVH
+UkEyMF9DTEtfVkRFLCBURUdSQTIwX0NMS19QTExfQywgMzAwMDAwMDAwLCAwIH0sCj4gKwl7VEVH
+UkEyMF9DTEtfU1BESUZfSU4sIFRFR1JBMjBfQ0xLX1BMTF9NLCAyMjIwMDAwMCwgMCB9LAo+ICsJ
+e1RFR1JBMjBfQ0xLX1NQRElGX09VVCwgVEVHUkEyMF9DTEtfUExMX0FfT1VUMCwgNTY0NDgwMCwg
+MCB9LAo+ICsJe1RFR1JBMjBfQ0xLX1BMTF9FLCBURUdSQTIwX0NMS19DTEtfTUFYLCAxMjAwMDAw
+MDAwLCAwIH0sCj4gKwl7VEVHUkEyMF9DTEtfQ0xLX01BWCwgVEVHUkEyMF9DTEtfQ0xLX01BWCwg
+MCwgMH0sIC8qIFRoaXMgTVVTVCBiZSB0aGUgbGFzdCBlbnRyeSAqLwo+ICt9Owo+ICsKPiArCj4g
+IHN0YXRpYyB2b2lkIF9faW5pdCB0ZWdyYTIwX2Nsb2NrX2FwcGx5X2luaXRfdGFibGUodm9pZCkK
+PiAgewo+IC0JdGVncmFfaW5pdF9mcm9tX3RhYmxlKGluaXRfdGFibGUsIGNsa3MsIFRFR1JBMjBf
+Q0xLX0NMS19NQVgpOwo+ICsJc3RydWN0IHRlZ3JhX2Nsa19pbml0X3RhYmxlICp0YWJsZSA9IGlu
+aXRfdGFibGU7Cj4gKwo+ICsJaWYgKHNvY19pc190ZWdyYV9hdXRvKCkpIHsKPiArCQlwcl9pbmZv
+KCJJbml0aWFsaXNlIFRlZ3JhIEF1dG9tb3RpdmUgY2xvY2tzXG4iKTsKPiArCQl0YWJsZSA9IGlu
+aXRfdGFibGVfdDIwYTsKPiArCX0KPiArCj4gKwl0ZWdyYV9pbml0X2Zyb21fdGFibGUodGFibGUs
+IGNsa3MsIFRFR1JBMjBfQ0xLX0NMS19NQVgpOwo+ICB9Cj4gIAo+ICAvKgo+IAoKSGksIAoKUXVp
+Y2sgY29tbWVudC4uIHRoaXMgYWxsIGxvb2tzIHZlcnkgZ2VuZXJpYyBhbmQgbXVjaCBtb3JlIGJv
+YXJkLXNwZWNpZmljIHRoYW4gYXV0b21vdGl2ZS4gTm93YWRheXMgZGV2aWNlLXRyZWUgaGFzIHN1
+cHBvcnQgZm9yIHNwZWNpZnlpbmcgY2xvY2sgcGFyZW50cyBhbmQgcmF0ZXMgcGVyIGJvYXJkIERU
+LCBzZWUgIkFzc2lnbmVkIGNsb2NrIHBhcmVudHMgYW5kIHJhdGVzIiBvZiBbMF0uIEhlbmNlIGl0
+IGxvb2tzIGxpa2UgdGhlcmUgaXMgbm8gcmVhbCBuZWVkIHRvIGhhcmRjb2RlIHRob3NlIHZhbHVl
+cyBpbiB0aGUgZHJpdmVyLiBQbGVhc2UgdGFrZSBhIGxvb2sgYXQgdGhlIGFzc2lnbmVkLWNsb2Nr
+cy4KClswXSBodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvY2xvY2svY2xvY2stYmluZGluZ3MudHh0CgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlz
+dApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJh
+ZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
