@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
-Date: Fri, 8 Feb 2019 15:25:45 +0000
-Message-ID: <BYAPR12MB339837F9232FBB0767869564C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
+Date: Fri, 8 Feb 2019 18:44:17 +0300
+Message-ID: <9fedf186-0522-d40f-3d8d-88d0462da0b1@gmail.com>
 References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
  <1549576040-15907-3-git-send-email-skomatineni@nvidia.com>
  <1202cc91-cacf-673e-c32b-b4d1c78b71f2@gmail.com>
@@ -9,58 +9,77 @@ References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
  <a57f0374-8468-f24a-1743-b446b8260a46@gmail.com>
  <9e8f26bb-2159-6ca4-783e-91a73dac0823@axentia.se>
  <96a3955f-ef4f-e4df-4907-6ec760fad3fe@gmail.com>
+ <BYAPR12MB339837F9232FBB0767869564C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <96a3955f-ef4f-e4df-4907-6ec760fad3fe@gmail.com>
+In-Reply-To: <BYAPR12MB339837F9232FBB0767869564C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Peter Rosin <peda@axentia.se>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, Peter Rosin <peda@axentia.se>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiAwOC4wMi4yMDE5IDE3OjEyLCBQZXRlciBSb3NpbiDQv9C40YjQtdGCOg0KPiA+IE9uIDIwMTkt
-MDItMDggMTM6NDYsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToNCj4gPj4gMDguMDIuMjAxOSAxOjI1
-LCBEbWl0cnkgT3NpcGVua28g0L/QuNGI0LXRgjoNCj4gPj4+PiAwOC4wMi4yMDE5IDE6MTYsIFNv
-d2phbnlhIEtvbWF0aW5lbmkg0L/QuNGI0LXRgjo+DQo+ID4+Pj4+PiBUaGlzIGlzIHdyb25nLCA2
-NTUzNSA9IDY0ICogMTAyNCAtIDEuDQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gTGV0J3MganVzdCB1c2Ug
-c2l6ZS1jb25zdGFudHMgcHJvdmlkZWQgYnkga2VybmVsOg0KPiA+Pj4+Pj4NCj4gPj4+Pj4+IHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgaTJjX2FkYXB0ZXJfcXVpcmtzIHRlZ3JhX2kyY19xdWlya3MgPSB7
-DQo+ID4+Pj4+PiAJLmZsYWdzID0gSTJDX0FRX05PX1pFUk9fTEVOLA0KPiA+Pj4+Pj4gCS5tYXhf
-cmVhZF9sZW4gPSBTWl80SywNCj4gPj4+Pj4+IAkubWF4X3dyaXRlX2xlbiA9IFNaXzRLIC0gSTJD
-X1BBQ0tFVF9IRUFERVJfU0laRSwgfTsNCj4gPj4+Pj4+DQo+ID4+Pj4+PiBzdGF0aWMgY29uc3Qg
-c3RydWN0IGkyY19hZGFwdGVyX3F1aXJrcyB0ZWdyYTE5NF9pMmNfcXVpcmtzID0gew0KPiA+Pj4+
-Pj4gCS5mbGFncyA9IEkyQ19BUV9OT19aRVJPX0xFTiwNCj4gPj4+Pj4+IAkubWF4X3JlYWRfbGVu
-ID0gU1pfNjRLLA0KPiA+Pj4+Pj4gCS5tYXhfd3JpdGVfbGVuID0gU1pfNjRLIC0gSTJDX1BBQ0tF
-VF9IRUFERVJfU0laRSwgfTsNCj4gPj4+Pj4+DQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gSSdsbCB0YWtl
-IGEgbG9vayBhdCBvdGhlciBwYXRjaGVzIGxhdGVyIHRvZGF5LCBubyBuZWVkIHRvIHNlbmQgb3V0
-IG5ldyB2ZXJzaW9uIHJpZ2h0IG5vdy4NCj4gPj4+Pj4+DQo+ID4+Pj4+Pg0KPiA+Pj4+Pg0KPiA+
-Pj4+PiBTSVpFXzY0SyBpcyAweDAwMDEwMDAwICg2NTUzNikNCj4gPj4+Pj4NCj4gPj4+Pj4gbXNn
-IGxlbiBpcyB1MTYgYW5kIG1heCB0aGF0IGNhbiBiZSBzZXQgdG8gbXNnLmxlbiBpcyA2NTUzNQ0K
-PiA+Pj4NCj4gPj4+IEFoLCBva2F5LiBUaGVuIGl0IGxvb2tzIGFib3V0IHJpZ2h0LCBtYXliZSBp
-dCdzIHRpbWUgdG8gY2hhbmdlIHUxNiB0byB1MzIgaW4gdGhlIEkyQyBjb3JlLg0KPiA+Pj4NCj4g
-Pj4NCj4gPj4gSGVyZSBpcyBteSBzdWdnZXN0aW9uOg0KPiA+Pg0KPiA+PiAxKSBVc2UgU1pfNEsg
-LyBTWl82NEsgdGhhdCBJIHN1Z2dlc3RlZCBhYm92ZS4NCj4gPj4NCj4gPj4gMikgU3F1YXNoIHRo
-aXMgcGF0Y2ggaW50byB0aGUgRE1BLXBhdGNoLg0KPiA+Pg0KPiA+PiAzKSBBZGQgYW5vdGhlciBw
-YXRjaCAoYmVmb3JlIHRoZSBETUEtcGF0Y2gpIHRoYXQgY2hhbmdlcyANCj4gPj4gbWF4X3JlYWRf
-bGVuL21heF93cml0ZV9sZW4gdHlwZXMgdG8gdTMyIGluIHRoZSBpbmNsdWRlL2xpbnV4L2kyYy5o
-DQo+ID4gDQo+ID4gVGhhdCBpcyBhIGJpdCBuYWl2ZSBhbmQgd2lsbCBub3QgZmx5IHNpbmNlIHRo
-ZSBJMkMgY29yZSBoYXMgYSBtYXggDQo+ID4gbWVzc2FnZSBzaXplIG9mIDY1NTM1LiBXaGljaCBp
-cyBleHBvc2VkIHRvIHVzZXIgc3BhY2UuLi4NCj4gPiANCj4gPiBHaXZlbiB0aGUgYWJvdmUsIHNh
-eWluZyAubWF4X3JlYWRfbGVuID0gNjU1MzUgYSBOT1AgKGFuZCBpcyBpbiBmYWN0IA0KPiA+IG9t
-aXR0ZWQgaW4gcGxhY2VzIHdoZXJlIGl0IHdvdWxkIGJlIG5lZWRlZCBpZiB0aGUgdHlwZSBpcyBj
-aGFuZ2VkKS4gSSANCj4gPiBzdWdnZXN0IHRoYXQgaXQgaXMgb21pdHRlZCBoZXJlIGFzIHdlbGwu
-IEJ1dCBTWl82NEsgLSANCj4gPiBJMkNfUEFDS0VUX0hFQURFUl9TSVpFIGlzIHN0aWxsIG5lZWRl
-ZCBvZiBjb3Vyc2UuIEF0IGxlYXN0IGlmIA0KPiA+IEkyQ19QQUNLRVRfSEVBREVSX1NJWkUgaXMg
-Z3VhcmFudGVlZCB0byBiZSBub24temVybz8NCj4NCj4gQWgsIEkgbWlzc2VkIHRoYXQgbWVzc2Fn
-ZSBsZW4gaXMgYWxzbyB1MTYgYW5kIHRoZW4gd2UgaW5kZWVkIGNvdWxkIGp1c3QgZHJvcCB0aGUg
-Im1heF9yZWFkX2xlbiIgZm9yIFQxOTQuIFRoYW5rIHlvdSBQZXRlci4NCj4NCj4gU293amFueWEs
-IGdpdmVuIHRoZSBhYm92ZSwgaXQgcHJvYmFibHkgYmV0dGVyIHRvIGRlZmluZSBkbWFfYnVmIG1h
-eC1zaXplIGluIHRoZSB0ZWdyYV9pMmNfaHdfZmVhdHVyZS4NCj4NCg0KSTJDX1BBQ0tFVF9IRUFE
-RVJfU0laRSBpcyBhbHdheXMgZml4ZWQgMTIuIFNvIGluIHRoYXQgY2FzZSwgd2UgY2FuIGp1c3Qg
-YWRkIG1heF93cml0ZV9sZW4gDQpJZiBubyBtYXhfcmVhZF9sZW4sIG1heCB3aWxsIGJlIDY1NTM1
-IGFueXdheSByaWdodA0KDQpzdGF0aWMgY29uc3Qgc3RydWN0IGkyY19hZGFwdGVyX3F1aXJrcyB0
-ZWdyYTE5NF9pMmNfcXVpcmtzID0gew0KCS5mbGFncyA9IEkyQ19BUV9OT19aRVJPX0xFTiwNCgku
-bWF4X3dyaXRlX2xlbiA9IFNaXzY0SyAtIEkyQ19QQUNLRVRfSEVBREVSX1NJWkUsIH07DQoNCg0K
-c293amFueWENCg==
+08.02.2019 18:25, Sowjanya Komatineni пишет:
+>> 08.02.2019 17:12, Peter Rosin пишет:
+>>> On 2019-02-08 13:46, Dmitry Osipenko wrote:
+>>>> 08.02.2019 1:25, Dmitry Osipenko пишет:
+>>>>>> 08.02.2019 1:16, Sowjanya Komatineni пишет:>
+>>>>>>>> This is wrong, 65535 = 64 * 1024 - 1.
+>>>>>>>>
+>>>>>>>> Let's just use size-constants provided by kernel:
+>>>>>>>>
+>>>>>>>> static const struct i2c_adapter_quirks tegra_i2c_quirks = {
+>>>>>>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
+>>>>>>>> 	.max_read_len = SZ_4K,
+>>>>>>>> 	.max_write_len = SZ_4K - I2C_PACKET_HEADER_SIZE, };
+>>>>>>>>
+>>>>>>>> static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
+>>>>>>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
+>>>>>>>> 	.max_read_len = SZ_64K,
+>>>>>>>> 	.max_write_len = SZ_64K - I2C_PACKET_HEADER_SIZE, };
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> I'll take a look at other patches later today, no need to send out new version right now.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>
+>>>>>>> SIZE_64K is 0x00010000 (65536)
+>>>>>>>
+>>>>>>> msg len is u16 and max that can be set to msg.len is 65535
+>>>>>
+>>>>> Ah, okay. Then it looks about right, maybe it's time to change u16 to u32 in the I2C core.
+>>>>>
+>>>>
+>>>> Here is my suggestion:
+>>>>
+>>>> 1) Use SZ_4K / SZ_64K that I suggested above.
+>>>>
+>>>> 2) Squash this patch into the DMA-patch.
+>>>>
+>>>> 3) Add another patch (before the DMA-patch) that changes 
+>>>> max_read_len/max_write_len types to u32 in the include/linux/i2c.h
+>>>
+>>> That is a bit naive and will not fly since the I2C core has a max 
+>>> message size of 65535. Which is exposed to user space...
+>>>
+>>> Given the above, saying .max_read_len = 65535 a NOP (and is in fact 
+>>> omitted in places where it would be needed if the type is changed). I 
+>>> suggest that it is omitted here as well. But SZ_64K - 
+>>> I2C_PACKET_HEADER_SIZE is still needed of course. At least if 
+>>> I2C_PACKET_HEADER_SIZE is guaranteed to be non-zero?
+>>
+>> Ah, I missed that message len is also u16 and then we indeed could just drop the "max_read_len" for T194. Thank you Peter.
+>>
+>> Sowjanya, given the above, it probably better to define dma_buf max-size in the tegra_i2c_hw_feature.
+>>
+> 
+> I2C_PACKET_HEADER_SIZE is always fixed 12. So in that case, we can just add max_write_len 
+> If no max_read_len, max will be 65535 anyway right
+> 
+> static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
+> 	.flags = I2C_AQ_NO_ZERO_LEN,
+> 	.max_write_len = SZ_64K - I2C_PACKET_HEADER_SIZE, };
+
+Yes, adding header size to the max_write_len for the dma_buf size also will be fine.
