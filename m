@@ -1,11 +1,11 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 5/9] firmware: tegra: Changes for v5.1-rc1
-Date: Fri,  8 Feb 2019 16:09:31 +0100
-Message-ID: <20190208150935.32108-6-thierry.reding@gmail.com>
+Subject: [GIT PULL 7/9] ARM: tegra: Device tree changes for v5.1-rc1
+Date: Fri,  8 Feb 2019 16:09:33 +0100
+Message-ID: <20190208150935.32108-8-thierry.reding@gmail.com>
 References: <20190208150935.32108-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190208150935.32108-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
@@ -21,46 +21,28 @@ To: arm@kernel.org
 Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.1-firmware
-
-for you to fetch changes up to fe45ab552955ee93b492cbf86603eb02b3c77a66:
-
-  firmware/tegra: Enable Tegra186 BPMP support on Tegra194 (2019-02-07 18:52:39 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-firmware: tegra: Changes for v5.1-rc1
-
-These changes add support for BPMP on Tegra210.
-
-----------------------------------------------------------------
-Thierry Reding (3):
-      firmware: tegra: bpmp-tegra186: Remove unused includes
-      firmware: tegra: Conditionally support SoC generations
-      firmware/tegra: Enable Tegra186 BPMP support on Tegra194
-
-Timo Alho (3):
-      firmware: tegra: Reword messaging terminology
-      firmware: tegra: Refactor BPMP driver
-      firmware: tegra: add bpmp driver for Tegra210
-
- drivers/firmware/tegra/Makefile        |   3 +
- drivers/firmware/tegra/bpmp-private.h  |  34 +++
- drivers/firmware/tegra/bpmp-tegra186.c | 305 ++++++++++++++++++++++++++
- drivers/firmware/tegra/bpmp-tegra210.c | 243 +++++++++++++++++++++
- drivers/firmware/tegra/bpmp.c          | 376 +++++++++++++--------------------
- include/soc/tegra/bpmp.h               |  13 +-
- 6 files changed, 742 insertions(+), 232 deletions(-)
- create mode 100644 drivers/firmware/tegra/bpmp-private.h
- create mode 100644 drivers/firmware/tegra/bpmp-tegra186.c
- create mode 100644 drivers/firmware/tegra/bpmp-tegra210.c
+SGkgQVJNIFNvQyBtYWludGFpbmVycywKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21t
+aXQgYmZlZmZkMTU1MjgzNzcyYmJlNzhjNmEwNWRlYzdjMDEyOGVlNTAwYzoKCiAgTGludXggNS4w
+LXJjMSAoMjAxOS0wMS0wNiAxNzowODoyMCAtMDgwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdp
+dCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvdGVncmEvbGludXguZ2l0IHRhZ3MvdGVncmEtZm9yLTUuMS1hcm0tZHQKCmZvciB5
+b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byBkZTQ1Yjc4N2RhYjU2M2Q0ZDYyYjA0NTdlODk1MjVi
+ZTk0NWRhZTk2OgoKICBBUk06IHRlZ3JhOiBhZGQgImplZGVjLHNwaS1ub3IiIGZsYXNoIGNvbXBh
+dGlibGUgYmluZGluZyAoMjAxOS0wMi0wNiAxNDoxNToxOSArMDEwMCkKClRoYW5rcywKVGhpZXJy
+eQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQpBUk06IHRlZ3JhOiBEZXZpY2UgdHJlZSBjaGFuZ2VzIGZvciB2NS4xLXJjMQoK
+Q29udGFpbnMgYSBzaW5nbGUgcGF0Y2ggdGhhdCBhZGRzIHRoZSAiamVkZWMsc3BpLW5vciIgY29t
+cGF0aWJsZSBzdHJpbmcKd2hlcmUgYXBwcm9wcmlhdGUuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClJhZmHFgiBNacWCZWNr
+aSAoMSk6CiAgICAgIEFSTTogdGVncmE6IGFkZCAiamVkZWMsc3BpLW5vciIgZmxhc2ggY29tcGF0
+aWJsZSBiaW5kaW5nCgogYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMTQtZGFsbW9yZS5kdHMgICAg
+fCAyICstCiBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1qZXRzb24tdGsxLmR0cyB8IDIgKy0K
+IGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LW55YW4uZHRzaSAgICAgIHwgMiArLQogYXJjaC9h
+cm0vYm9vdC9kdHMvdGVncmExMjQtdmVuaWNlMi5kdHMgICAgfCAyICstCiBhcmNoL2FybS9ib290
+L2R0cy90ZWdyYTIwLXRyaW1zbGljZS5kdHMgICB8IDIgKy0KIGFyY2gvYXJtL2Jvb3QvZHRzL3Rl
+Z3JhMzAtYmVhdmVyLmR0cyAgICAgIHwgMiArLQogYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1j
+YXJkaHUuZHRzaSAgICAgfCAyICstCiA3IGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwg
+NyBkZWxldGlvbnMoLSkKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlz
+dHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2xpbnV4LWFybS1rZXJuZWwK
