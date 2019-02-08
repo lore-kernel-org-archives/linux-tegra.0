@@ -1,71 +1,101 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
-Date: Fri, 8 Feb 2019 17:32:00 +0300
-Message-ID: <96a3955f-ef4f-e4df-4907-6ec760fad3fe@gmail.com>
-References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
- <1549576040-15907-3-git-send-email-skomatineni@nvidia.com>
- <1202cc91-cacf-673e-c32b-b4d1c78b71f2@gmail.com>
- <515cb722-c345-8dd6-dbe5-557dec0d1384@gmail.com>
- <a57f0374-8468-f24a-1743-b446b8260a46@gmail.com>
- <9e8f26bb-2159-6ca4-783e-91a73dac0823@axentia.se>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v5.1-rc1
+Date: Fri,  8 Feb 2019 15:47:21 +0100
+Message-ID: <20190208144721.25830-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9e8f26bb-2159-6ca4-783e-91a73dac0823@axentia.se>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mkarthik@nvidia.com" <mkarthik@nvidia.com>, "smohammed@nvidia.com" <smohammed@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.02.2019 17:12, Peter Rosin пишет:
-> On 2019-02-08 13:46, Dmitry Osipenko wrote:
->> 08.02.2019 1:25, Dmitry Osipenko пишет:
->>>> 08.02.2019 1:16, Sowjanya Komatineni пишет:> 
->>>>>> This is wrong, 65535 = 64 * 1024 - 1.
->>>>>>
->>>>>> Let's just use size-constants provided by kernel:
->>>>>>
->>>>>> static const struct i2c_adapter_quirks tegra_i2c_quirks = {
->>>>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
->>>>>> 	.max_read_len = SZ_4K,
->>>>>> 	.max_write_len = SZ_4K - I2C_PACKET_HEADER_SIZE, };
->>>>>>
->>>>>> static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
->>>>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
->>>>>> 	.max_read_len = SZ_64K,
->>>>>> 	.max_write_len = SZ_64K - I2C_PACKET_HEADER_SIZE, };
->>>>>>
->>>>>>
->>>>>> I'll take a look at other patches later today, no need to send out new version right now.
->>>>>>
->>>>>>
->>>>>
->>>>> SIZE_64K is 0x00010000 (65536)
->>>>>
->>>>> msg len is u16 and max that can be set to msg.len is 65535
->>>
->>> Ah, okay. Then it looks about right, maybe it's time to change u16 to u32 in the I2C core.
->>>
->>
->> Here is my suggestion:
->>
->> 1) Use SZ_4K / SZ_64K that I suggested above.
->>
->> 2) Squash this patch into the DMA-patch.
->>
->> 3) Add another patch (before the DMA-patch) that changes max_read_len/max_write_len types to u32 in the include/linux/i2c.h
-> 
-> That is a bit naive and will not fly since the I2C core has a max message
-> size of 65535. Which is exposed to user space...
-> 
-> Given the above, saying .max_read_len = 65535 a NOP (and is in fact omitted
-> in places where it would be needed if the type is changed). I suggest that
-> it is omitted here as well. But SZ_64K - I2C_PACKET_HEADER_SIZE is still
-> needed of course. At least if I2C_PACKET_HEADER_SIZE is guaranteed to be
-> non-zero?
-
-Ah, I missed that message len is also u16 and then we indeed could just drop the "max_read_len" for T194. Thank you Peter.
-
-Sowjanya, given the above, it probably better to define dma_buf max-size in the tegra_i2c_hw_feature.
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgYmZlZmZkMTU1Mjgz
+NzcyYmJlNzhjNmEwNWRlYzdjMDEyOGVlNTAwYzoKCiAgTGludXggNS4wLXJjMSAoMjAxOS0wMS0w
+NiAxNzowODoyMCAtMDgwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0
+OgoKICBnaXQ6Ly9hbm9uZ2l0LmZyZWVkZXNrdG9wLm9yZy90ZWdyYS9saW51eCB0YWdzL2RybS90
+ZWdyYS9mb3ItNS4xLXJjMQoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDc5OTMwYmFm
+ZTI4MDJjM2E2N2E3MGFkNDkwNDAzMmQ5MTU0YmYzZmE6CgogIGdwdTogaG9zdDF4OiBDb250aW51
+ZSBDRE1BIGV4ZWN1dGlvbiBzdGFydGluZyB3aXRoIGEgbmV4dCBqb2IgKDIwMTktMDItMDcgMTg6
+MzQ6MjUgKzAxMDApCgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBDaGFuZ2Vz
+IGZvciB2NS4xLXJjMQoKVGhpcyBzZXQgb2YgY2hhbmdlcyBzdGFydHMgb2Ygd2l0aCBzb21lIHJl
+ZmFjdG9yaW5nIG9mIHRoZSBDRUMgc3VwcG9ydAp0byBtYWtlIGl0IHJldXNhYmxlIG9uIFRlZ3Jh
+MjEwIGFuZCBsYXRlci4gRm9sbG93aW5nIGFyZSBhIGNvdXBsZSBvZgpmaXhlcyBmb3IgSERNSSBh
+dWRpbyBzdXBwb3J0ICh2aWEgSERBKS4KClRoZSBidWxrIGhlcmUgaXMgYSBzZXQgb2YgcHJlcGFy
+YXRvcnkgcGF0Y2hlcyB3b3JraW5nIHRvd2FyZHMgZW5hYmxpbmcKVGVncmExODYgc3VwcG9ydCBm
+b3IgaG9zdDF4IGFuZCBWSUMuIEFkZGl0aW9uYWwgcGF0Y2hlcyB3aWxsIGJlIG5lZWRlZAp0byBm
+dWxseSBlbmFibGUgdGhpcywgYnV0IHRoZXkncmUgbm90IHF1aXRlIHJlYWR5IHlldC4KClRvIHJv
+dW5kIHRoaW5ncyBvZmYsIHRoaXMgYWxzbyBhZGRzIHN1cHBvcnQgZm9yIGNvbmZpZ3VyaW5nIHRo
+ZSBTT1IKY3Jvc3NiYXIgdXNpbmcgZGV2aWNlIHRyZWUsIGFuZCBmaXhlcyBhIGNvdXBsZSBvZiBq
+b2ItcmVsYXRlZCBpc3N1ZXMgaW4KdGhlIGhvc3QxeCBjb2RlLgoKLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBbGJhbiBCZWRl
+bCAoMSk6CiAgICAgIGRybS90ZWdyYTogaGRtaTogRml4IGF1ZGlvIHRvIHdvcmsgd2l0aCBhbnkg
+cGl4ZWwgY2xvY2sgcmF0ZQoKQXJuZCBCZXJnbWFubiAoMSk6CiAgICAgIGdwdTogaG9zdDF4OiBV
+c2UgY29tcGxldGlvbiBpbnN0ZWFkIG9mIHNlbWFwaG9yZQoKRG1pdHJ5IE9zaXBlbmtvICgzKToK
+ICAgICAgZ3B1OiBob3N0MXg6IENhbmNlbCBvbmx5IGpvYiB0aGF0IGFjdHVhbGx5IGdvdCBzdHVj
+awogICAgICBncHU6IGhvc3QxeDogRG9uJ3QgY29tcGxldGUgYSBjb21wbGV0ZWQgam9iCiAgICAg
+IGdwdTogaG9zdDF4OiBDb250aW51ZSBDRE1BIGV4ZWN1dGlvbiBzdGFydGluZyB3aXRoIGEgbmV4
+dCBqb2IKClRoaWVycnkgUmVkaW5nICgyMSk6CiAgICAgIGRybS90ZWdyYTogUmVmYWN0b3IgQ0VD
+IHN1cHBvcnQKICAgICAgZHJtL3RlZ3JhOiBzb3I6IFBhcnNlIG1vcmUgZGF0YSBmcm9tIEhEQSBm
+b3JtYXQKICAgICAgZHJtL3RlZ3JhOiBoZGE6IEV4dHJhY3QgSERBIGZvcm1hdCBwYXJzaW5nIGNv
+ZGUKICAgICAgZHJtL3RlZ3JhOiBoZG1pOiBSZXVzZSBjb21tb24gSERBIGZvcm1hdCBwYXJzZXIK
+ICAgICAgZ3B1OiBob3N0MXg6IFJlcHJlc2VudCBob3N0MXggYnVzIGRldmljZXMgaW4gZGVidWdm
+cwogICAgICBncHU6IGhvc3QxeDogU2V0IHVwIHN0cmVhbSBJRCB0YWJsZQogICAgICBncHU6IGhv
+c3QxeDogUHJvZ3JhbSB0aGUgY2hhbm5lbCBzdHJlYW0gSUQKICAgICAgZ3B1OiBob3N0MXg6IElu
+dHJvZHVjZSBzdXBwb3J0IGZvciB3aWRlIG9wY29kZXMKICAgICAgZ3B1OiBob3N0MXg6IFN1cHBv
+cnQgNDAtYml0IGFkZHJlc3NpbmcKICAgICAgZ3B1OiBob3N0MXg6IFJlc3RyaWN0IElPVkEgc3Bh
+Y2UgdG8gRE1BIG1hc2sKICAgICAgZ3B1OiBob3N0MXg6IFN1cHBvcnQgNDAtYml0IGFkZHJlc3Np
+bmcgb24gVGVncmExODYKICAgICAgZ3B1OiBob3N0MXg6IFVzZSBjb3JyZWN0IHNlbWFudGljcyBm
+b3IgSE9TVDFYX0NIQU5ORUxfRE1BRU5ECiAgICAgIGdwdTogaG9zdDF4OiBPcHRpbWl6ZSBDRE1B
+IHB1c2ggYnVmZmVyIG1lbW9yeSB1c2FnZQogICAgICBkcm0vdGVncmE6IFN0b3JlIHBhcmVudCBw
+b2ludGVyIGluIFRlZ3JhIERSTSBjbGllbnRzCiAgICAgIGRybS90ZWdyYTogdmljOiBMb2FkIGZp
+cm13YXJlIG9uIGRlbWFuZAogICAgICBkcm0vdGVncmE6IFNldHVwIHNoYXJlZCBJT01NVSBkb21h
+aW4gYWZ0ZXIgaW5pdGlhbGl6YXRpb24KICAgICAgZHJtL3RlZ3JhOiBSZXN0cmljdCBJT1ZBIHNw
+YWNlIHRvIERNQSBtYXNrCiAgICAgIGRybS90ZWdyYTogdmljOiBEbyBub3QgY2xlYXIgZHJpdmVy
+IGRhdGEKICAgICAgZHJtL3RlZ3JhOiB2aWM6IFN1cHBvcnQgc3RyZWFtIElEIHJlZ2lzdGVyIHBy
+b2dyYW1taW5nCiAgICAgIGR0LWJpbmRpbmdzOiBkaXNwbGF5OiB0ZWdyYTogU3VwcG9ydCBTT1Ig
+Y3Jvc3NiYXIgY29uZmlndXJhdGlvbgogICAgICBkcm0vdGVncmE6IHNvcjogU3VwcG9ydCBkZXZp
+Y2UgdHJlZSBjcm9zc2JhciBjb25maWd1cmF0aW9uCgogLi4uL2Rpc3BsYXkvdGVncmEvbnZpZGlh
+LHRlZ3JhMjAtaG9zdDF4LnR4dCAgICAgICAgfCAgIDMgKwogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2RybS5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgNTcgKysrLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vdGVncmEvZHJtLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAgMyArLQogZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2hkYS5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgNjMgKysrKysr
+CiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRhLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAy
+MCArKwogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYyAgICAgICAgICAgICAgICAgICAgICAg
+fCAyMTcgKysrKysrLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0
+LmMgICAgICAgICAgICAgICAgICAgICB8ICAxMSArLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nv
+ci5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgNjQgKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+dGVncmEvdmljLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICA3NSArKysrKy0tCiBkcml2ZXJz
+L2dwdS9kcm0vdGVncmEvdmljLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAgOSArCiBkcml2
+ZXJzL2dwdS9ob3N0MXgvYnVzLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAzNSArKysr
+CiBkcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5jICAgICAgICAgICAgICAgICAgICAgICAgICB8IDE4
+OSArKysrKysrKysrKysrLS0tLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLmggICAgICAgICAg
+ICAgICAgICAgICAgICAgIHwgICA4ICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgICAgICAg
+ICAgICAgICAgICAgICAgICAgICB8ICA0OSArKysrLQogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5o
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDggKwogZHJpdmVycy9ncHUvaG9zdDF4L2h3
+L2NkbWFfaHcuYyAgICAgICAgICAgICAgICAgICAgfCAgNDYgKysrLS0KIGRyaXZlcnMvZ3B1L2hv
+c3QxeC9ody9jaGFubmVsX2h3LmMgICAgICAgICAgICAgICAgIHwgIDQzICsrKy0KIGRyaXZlcnMv
+Z3B1L2hvc3QxeC9ody9ob3N0MXgwNl9oYXJkd2FyZS5oICAgICAgICAgIHwgICA2ICsKIGRyaXZl
+cnMvZ3B1L2hvc3QxeC9ody9ob3N0MXgwN19oYXJkd2FyZS5oICAgICAgICAgIHwgICA2ICsKIGRy
+aXZlcnMvZ3B1L2hvc3QxeC9ody9od19ob3N0MXgwNl9jaGFubmVsLmggICAgICAgIHwgIDExICsr
+CiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDdfY2hhbm5lbC5oICAgICAgICB8ICAx
+MSArKwogaW5jbHVkZS90cmFjZS9ldmVudHMvaG9zdDF4LmggICAgICAgICAgICAgICAgICAgICAg
+fCAgMjYgKysrCiAyMyBmaWxlcyBjaGFuZ2VkLCA2NTAgaW5zZXJ0aW9ucygrKSwgMzExIGRlbGV0
+aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZGEuYwog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZGEuaAogY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9od19ob3N0MXgwNl9jaGFubmVsLmgKIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDdfY2hhbm5l
+bC5oCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
