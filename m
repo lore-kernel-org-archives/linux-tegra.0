@@ -1,54 +1,82 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
-Date: Fri, 8 Feb 2019 15:46:50 +0300
-Message-ID: <a57f0374-8468-f24a-1743-b446b8260a46@gmail.com>
+Subject: Re: [PATCH V15 4/6] i2c: tegra: Add DMA support
+Date: Fri, 8 Feb 2019 15:47:36 +0300
+Message-ID: <7806f2cd-72b4-6ae3-b75f-0fc74fb62b95@gmail.com>
 References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
- <1549576040-15907-3-git-send-email-skomatineni@nvidia.com>
- <1202cc91-cacf-673e-c32b-b4d1c78b71f2@gmail.com>
- <515cb722-c345-8dd6-dbe5-557dec0d1384@gmail.com>
+ <1549576040-15907-4-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <515cb722-c345-8dd6-dbe5-557dec0d1384@gmail.com>
+In-Reply-To: <1549576040-15907-4-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.02.2019 1:25, Dmitry Osipenko пишет:
->> 08.02.2019 1:16, Sowjanya Komatineni пишет:> 
->>>> This is wrong, 65535 = 64 * 1024 - 1.
->>>>
->>>> Let's just use size-constants provided by kernel:
->>>>
->>>> static const struct i2c_adapter_quirks tegra_i2c_quirks = {
->>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
->>>> 	.max_read_len = SZ_4K,
->>>> 	.max_write_len = SZ_4K - I2C_PACKET_HEADER_SIZE, };
->>>>
->>>> static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
->>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
->>>> 	.max_read_len = SZ_64K,
->>>> 	.max_write_len = SZ_64K - I2C_PACKET_HEADER_SIZE, };
->>>>
->>>>
->>>> I'll take a look at other patches later today, no need to send out new version right now.
->>>>
->>>>
->>>
->>> SIZE_64K is 0x00010000 (65536)
->>>
->>> msg len is u16 and max that can be set to msg.len is 65535
+08.02.2019 0:47, Sowjanya Komatineni пишет:
+> This patch adds DMA support for Tegra I2C.
 > 
-> Ah, okay. Then it looks about right, maybe it's time to change u16 to u32 in the I2C core.
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
 > 
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction. This adds delay between data bytes of the same
+> transfer when CPU is fully loaded and some slave devices has
+> internal timeout for no bus activity and stops transaction to
+> avoid bus hang. DMA mode is helpful in such cases.
+> 
+> DMA mode is also helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
 
-Here is my suggestion:
 
-1) Use SZ_4K / SZ_64K that I suggested above.
+[snip]
 
-2) Squash this patch into the DMA-patch.
+>  	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+>  						TEGRA_I2C_TIMEOUT);
+>  	tegra_i2c_mask_irq(i2c_dev, int_mask);
+> -
 
-3) Add another patch (before the DMA-patch) that changes max_read_len/max_write_len types to u32 in the include/linux/i2c.h
+Let's keep this newline in place.
+
+[snip]
+
+> +	ret = tegra_i2c_init_dma(i2c_dev);
+> +	if (ret < 0)
+> +		goto disable_div_clk;
+> +
+>  	ret = tegra_i2c_init(i2c_dev);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
+> @@ -1160,6 +1500,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  disable_div_clk:
+>  	if (i2c_dev->is_multimaster_mode)
+>  		clk_disable(i2c_dev->div_clk);
+> +	tegra_i2c_release_dma(i2c_dev);
+
+Please use "release_dma:" variant that I suggested in the comment to v14 because:
+
+1) It's just a good (and common-style in kernel) tone to unwind errors handling in the opposite order, it makes code more straight forward and helps to avoid silly mistakes.
+
+2) It keeps the current code consistent in regards to probe error-handling.
+
+>  
+>  disable_rpm:
+>  	pm_runtime_disable(&pdev->dev);
+
+
+[snip]
+
+Please also address my comment to the "fix maximum transfer size" patch. And please add Wolfram Sang to the CC list.
+
+Looks like v16 should be the final, so with everything being addressed:
+
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
