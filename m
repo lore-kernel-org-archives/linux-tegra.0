@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
-Date: Fri, 8 Feb 2019 18:37:15 +0000
-Message-ID: <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
+Date: Fri, 8 Feb 2019 21:38:26 +0300
+Message-ID: <fbf4efd3-bd4d-5a65-d9d7-b4fe9f7ab5dc@gmail.com>
 References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
  <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
  <0c30dfe0-1174-0056-5ef6-432b75de2353@gmail.com>
@@ -10,36 +10,46 @@ References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
  <BYAPR12MB33981B3AD88271597CC4F7F5C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
  <BYAPR12MB3398429D6C403347C149B643C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
  <BYAPR12MB33986FBB8B684F2E56948FBCC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB33986FBB8B684F2E56948FBCC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "peda@axentia.se" <peda@axentia.se>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+ID4+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBpMmNfYWRhcHRlcl9xdWlya3MgdGVncmExOTRf
-aTJjX3F1aXJrcyA9IHsNCj4gPiA+Pj4gIAkuZmxhZ3MgPSBJMkNfQVFfTk9fWkVST19MRU4sDQo+
-ID4gPj4+ICsJLm1heF93cml0ZV9sZW4gPSA2NTUzNSAtIEkyQ19QQUNLRVRfSEVBREVSX1NJWkUs
-DQo+ID4gPj4NCj4gPiA+PiBJZGVhbGx5IGl0IHNob3VsZCBiZSBTWl82NEsgLSBJMkNfUEFDS0VU
-X0hFQURFUl9TSVpFIHRvIG5vdCBtaXNzIHRoZSBvbmUgYnl0ZSwgb3RoZXJ3aXNlIGdvb2QgdG8g
-bWU6DQo+ID4gPj4NCj4gPiA+PiBSZXZpZXdlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhA
-Z21haWwuY29tPg0KPiA+ID4gIA0KPiA+ID4gV2l0aCBTWl82NEsgLSBJMkNfUEFDS0VUX0hFQURS
-X1NpemUsIFdoZW4gd2UgY29tcHV0ZSBkbWFfYnVmX3NpemUgDQo+ID4gPiA9IG1heF93cml0ZV9s
-ZW4gKyBJMkNfUEFDS0VUX0hFQURFUl9TSVpFLCBkbWFfYnVmX3NpemUgd2lsbCBiZSANCj4gPiA+
-IFNaXzY0SyB3aGljaCBpcyAweDEwMDAwIGFwYmRtYSBkbWEgY291bnQgbGltaXQgc2hvdWxkIGJl
-IDwgNjRLIA0KPiA+ID4gbWVhbmluZyA2NTUzNSBtYXggaXMgYWxsb3dlZA0KPiA+ID4gDQo+ID4N
-Cj4gPiBCdXQgaXQncyBmb3IgdGhlIEdQQ0RNQSwgZG9lcyBpdCBoYXZlIHRoZSBzYW1lIDY0SyBs
-aW1pdCBhcyBBUEIgRE1BPw0KPg0KIDY0SyBsaW1pdCBpcyBmb3IgQVBCRE1BLiBUaGlzIHBhdGNo
-IGhhcyBBUEJETUEgc3VwcG9ydCBvbmx5LiBObyBHUENETUEgc3VwcG9ydCBzbyBidWYgc2l6ZSBs
-aW1pdCBpcyBiYXNlZCBvbiBBUEJETUEuDQogR1BDRE1BIHN1cHBvcnRzIHVwdG8gMUdCLiANCg0K
-IEkgdGhpbmsgZG1hX2J1Zl9zaXplIGlzIG9ubHkgZm9yIGJ1ZmZlciBhbGxvY2F0aW9uIHNvIHNo
-b3VsZG7igJl0IGhhcm0gZm9yIGV4YWN0IDY0Sy4NCldpbGwgdGFrZSBhIGxvb2sgYXQgZG1hIGRy
-aXZlci4uLg0KDQpBbGwgbXNnIHJlYWRzLCBtYXggbGVuZ3RoIGlzIDY1NTM1DQpBbGwgbXNnIHdy
-aXRlcywgbWF4IGxlbmd0aCByZXF1ZXN0cyBpcyBhbHNvIGxpbWl0ZWQgdG8gNjU1MzUgZHVlIHRv
-IHUxNiB0eXBlIG9mIG1zZy5sZW4gU28sIEluIGFueSBjYXNlLCB3ZSBkb27igJl0IG5lZWQgNjU1
-MzYgYnl0ZXMuDQpDb25mdXNlZCwgeWVhaCB3aXRoIG1heCB3cml0ZSBxdWlyaywgbWF4IHRyYW5z
-ZmVyIGNhbiBiZSA2NEsuDQoNCldpbGwgY2hhbmdlIHRvIDY0SyBpbnN0ZWFkIG9mIDY1NTM1Lg0K
+08.02.2019 21:37, Sowjanya Komatineni пишет:
+>>>>>>  static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
+>>>>>>  	.flags = I2C_AQ_NO_ZERO_LEN,
+>>>>>> +	.max_write_len = 65535 - I2C_PACKET_HEADER_SIZE,
+>>>>>
+>>>>> Ideally it should be SZ_64K - I2C_PACKET_HEADER_SIZE to not miss the one byte, otherwise good to me:
+>>>>>
+>>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>  
+>>>> With SZ_64K - I2C_PACKET_HEADR_Size, When we compute dma_buf_size 
+>>>> = max_write_len + I2C_PACKET_HEADER_SIZE, dma_buf_size will be 
+>>>> SZ_64K which is 0x10000 apbdma dma count limit should be < 64K 
+>>>> meaning 65535 max is allowed
+>>>>
+>>>
+>>> But it's for the GPCDMA, does it have the same 64K limit as APB DMA?
+>>
+>  64K limit is for APBDMA. This patch has APBDMA support only. No GPCDMA support so buf size limit is based on APBDMA.
+>  GPCDMA supports upto 1GB. 
+> 
+>  I think dma_buf_size is only for buffer allocation so shouldn’t harm for exact 64K.
+> Will take a look at dma driver...
+> 
+> All msg reads, max length is 65535
+> All msg writes, max length requests is also limited to 65535 due to u16 type of msg.len So, In any case, we don’t need 65536 bytes.
+> Confused, yeah with max write quirk, max transfer can be 64K.
+> 
+> Will change to 64K instead of 65535.
+> 
+
+Good, thank you! Everything else looks good to me.
