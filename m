@@ -1,7 +1,8 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 6/9] ARM: tegra: Core changes for v5.1-rc1
-Date: Fri,  8 Feb 2019 16:09:32 +0100
-Message-ID: <20190208150935.32108-7-thierry.reding@gmail.com>
+Subject: [GIT PULL 9/9] arm64: tegra: Default configuration changes for
+ v5.1-rc1
+Date: Fri,  8 Feb 2019 16:09:35 +0100
+Message-ID: <20190208150935.32108-10-thierry.reding@gmail.com>
 References: <20190208150935.32108-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,27 +30,28 @@ The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.1-arm-core
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.1-arm64-defconfig
 
-for you to fetch changes up to 1c6279b49d3ffff38357e93d112512fecf3711a7:
+for you to fetch changes up to bc72bed682a9502f5c8f5adf15107aef6237895e:
 
-  ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+ (2019-01-16 13:22:04 +0100)
+  arm64: defconfig: Enable Tegra TCU (2019-02-06 14:38:35 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Core changes for v5.1-rc1
+arm64: tegra: Default configuration changes for v5.1-rc1
 
-This contains three fixes for resume from LP1 on Tegra30.
+Enables the TCU driver to be built into the kernel, so that the TCU can
+be used as debug serial on Jetson Xavier. This also enables the MAX8973
+regulator driver that is required for CPU frequency scaling on Tegra210.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (3):
-      ARM: tegra: Fix missed EMC registers latching on resume from LP1 on Tegra30+
-      ARM: tegra: Fix DRAM refresh-interval clobbering on resume from LP1 on Tegra30
-      ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+
+Joseph Lo (1):
+      arm64: defconfig: Enable MAX8973 regulator
 
- arch/arm/mach-tegra/iomap.h         |  9 +++++++++
- arch/arm/mach-tegra/sleep-tegra20.S |  2 --
- arch/arm/mach-tegra/sleep-tegra30.S | 25 +++++++++++++++++++++++--
- 3 files changed, 32 insertions(+), 4 deletions(-)
+Thierry Reding (1):
+      arm64: defconfig: Enable Tegra TCU
+
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
