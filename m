@@ -1,52 +1,71 @@
-From: Peter Rosin <peda@axentia.se>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
-Date: Fri, 8 Feb 2019 14:12:31 +0000
-Message-ID: <9e8f26bb-2159-6ca4-783e-91a73dac0823@axentia.se>
+Date: Fri, 8 Feb 2019 17:32:00 +0300
+Message-ID: <96a3955f-ef4f-e4df-4907-6ec760fad3fe@gmail.com>
 References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
  <1549576040-15907-3-git-send-email-skomatineni@nvidia.com>
  <1202cc91-cacf-673e-c32b-b4d1c78b71f2@gmail.com>
  <515cb722-c345-8dd6-dbe5-557dec0d1384@gmail.com>
  <a57f0374-8468-f24a-1743-b446b8260a46@gmail.com>
+ <9e8f26bb-2159-6ca4-783e-91a73dac0823@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a57f0374-8468-f24a-1743-b446b8260a46@gmail.com>
+In-Reply-To: <9e8f26bb-2159-6ca4-783e-91a73dac0823@axentia.se>
 Content-Language: en-US
-Content-ID: <5F24C5B0BABB034F8164F69C66B65F2C@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mkarthik@nvidia.com" <mkarthik@nvidia.com>, "smohammed@nvidia.com" <smohammed@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>
+To: Peter Rosin <peda@axentia.se>, Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mkarthik@nvidia.com" <mkarthik@nvidia.com>, "smohammed@nvidia.com" <smohammed@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjAxOS0wMi0wOCAxMzo0NiwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOg0KPiAwOC4wMi4yMDE5
-IDE6MjUsIERtaXRyeSBPc2lwZW5rbyDQv9C40YjQtdGCOg0KPj4+IDA4LjAyLjIwMTkgMToxNiwg
-U293amFueWEgS29tYXRpbmVuaSDQv9C40YjQtdGCOj4gDQo+Pj4+PiBUaGlzIGlzIHdyb25nLCA2
-NTUzNSA9IDY0ICogMTAyNCAtIDEuDQo+Pj4+Pg0KPj4+Pj4gTGV0J3MganVzdCB1c2Ugc2l6ZS1j
-b25zdGFudHMgcHJvdmlkZWQgYnkga2VybmVsOg0KPj4+Pj4NCj4+Pj4+IHN0YXRpYyBjb25zdCBz
-dHJ1Y3QgaTJjX2FkYXB0ZXJfcXVpcmtzIHRlZ3JhX2kyY19xdWlya3MgPSB7DQo+Pj4+PiAJLmZs
-YWdzID0gSTJDX0FRX05PX1pFUk9fTEVOLA0KPj4+Pj4gCS5tYXhfcmVhZF9sZW4gPSBTWl80SywN
-Cj4+Pj4+IAkubWF4X3dyaXRlX2xlbiA9IFNaXzRLIC0gSTJDX1BBQ0tFVF9IRUFERVJfU0laRSwg
-fTsNCj4+Pj4+DQo+Pj4+PiBzdGF0aWMgY29uc3Qgc3RydWN0IGkyY19hZGFwdGVyX3F1aXJrcyB0
-ZWdyYTE5NF9pMmNfcXVpcmtzID0gew0KPj4+Pj4gCS5mbGFncyA9IEkyQ19BUV9OT19aRVJPX0xF
-TiwNCj4+Pj4+IAkubWF4X3JlYWRfbGVuID0gU1pfNjRLLA0KPj4+Pj4gCS5tYXhfd3JpdGVfbGVu
-ID0gU1pfNjRLIC0gSTJDX1BBQ0tFVF9IRUFERVJfU0laRSwgfTsNCj4+Pj4+DQo+Pj4+Pg0KPj4+
-Pj4gSSdsbCB0YWtlIGEgbG9vayBhdCBvdGhlciBwYXRjaGVzIGxhdGVyIHRvZGF5LCBubyBuZWVk
-IHRvIHNlbmQgb3V0IG5ldyB2ZXJzaW9uIHJpZ2h0IG5vdy4NCj4+Pj4+DQo+Pj4+Pg0KPj4+Pg0K
-Pj4+PiBTSVpFXzY0SyBpcyAweDAwMDEwMDAwICg2NTUzNikNCj4+Pj4NCj4+Pj4gbXNnIGxlbiBp
-cyB1MTYgYW5kIG1heCB0aGF0IGNhbiBiZSBzZXQgdG8gbXNnLmxlbiBpcyA2NTUzNQ0KPj4NCj4+
-IEFoLCBva2F5LiBUaGVuIGl0IGxvb2tzIGFib3V0IHJpZ2h0LCBtYXliZSBpdCdzIHRpbWUgdG8g
-Y2hhbmdlIHUxNiB0byB1MzIgaW4gdGhlIEkyQyBjb3JlLg0KPj4NCj4gDQo+IEhlcmUgaXMgbXkg
-c3VnZ2VzdGlvbjoNCj4gDQo+IDEpIFVzZSBTWl80SyAvIFNaXzY0SyB0aGF0IEkgc3VnZ2VzdGVk
-IGFib3ZlLg0KPiANCj4gMikgU3F1YXNoIHRoaXMgcGF0Y2ggaW50byB0aGUgRE1BLXBhdGNoLg0K
-PiANCj4gMykgQWRkIGFub3RoZXIgcGF0Y2ggKGJlZm9yZSB0aGUgRE1BLXBhdGNoKSB0aGF0IGNo
-YW5nZXMgbWF4X3JlYWRfbGVuL21heF93cml0ZV9sZW4gdHlwZXMgdG8gdTMyIGluIHRoZSBpbmNs
-dWRlL2xpbnV4L2kyYy5oDQoNClRoYXQgaXMgYSBiaXQgbmFpdmUgYW5kIHdpbGwgbm90IGZseSBz
-aW5jZSB0aGUgSTJDIGNvcmUgaGFzIGEgbWF4IG1lc3NhZ2UNCnNpemUgb2YgNjU1MzUuIFdoaWNo
-IGlzIGV4cG9zZWQgdG8gdXNlciBzcGFjZS4uLg0KDQpHaXZlbiB0aGUgYWJvdmUsIHNheWluZyAu
-bWF4X3JlYWRfbGVuID0gNjU1MzUgYSBOT1AgKGFuZCBpcyBpbiBmYWN0IG9taXR0ZWQNCmluIHBs
-YWNlcyB3aGVyZSBpdCB3b3VsZCBiZSBuZWVkZWQgaWYgdGhlIHR5cGUgaXMgY2hhbmdlZCkuIEkg
-c3VnZ2VzdCB0aGF0DQppdCBpcyBvbWl0dGVkIGhlcmUgYXMgd2VsbC4gQnV0IFNaXzY0SyAtIEky
-Q19QQUNLRVRfSEVBREVSX1NJWkUgaXMgc3RpbGwNCm5lZWRlZCBvZiBjb3Vyc2UuIEF0IGxlYXN0
-IGlmIEkyQ19QQUNLRVRfSEVBREVSX1NJWkUgaXMgZ3VhcmFudGVlZCB0byBiZQ0Kbm9uLXplcm8/
-DQoNCkNoZWVycywNClBldGVyDQo=
+08.02.2019 17:12, Peter Rosin пишет:
+> On 2019-02-08 13:46, Dmitry Osipenko wrote:
+>> 08.02.2019 1:25, Dmitry Osipenko пишет:
+>>>> 08.02.2019 1:16, Sowjanya Komatineni пишет:> 
+>>>>>> This is wrong, 65535 = 64 * 1024 - 1.
+>>>>>>
+>>>>>> Let's just use size-constants provided by kernel:
+>>>>>>
+>>>>>> static const struct i2c_adapter_quirks tegra_i2c_quirks = {
+>>>>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
+>>>>>> 	.max_read_len = SZ_4K,
+>>>>>> 	.max_write_len = SZ_4K - I2C_PACKET_HEADER_SIZE, };
+>>>>>>
+>>>>>> static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
+>>>>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
+>>>>>> 	.max_read_len = SZ_64K,
+>>>>>> 	.max_write_len = SZ_64K - I2C_PACKET_HEADER_SIZE, };
+>>>>>>
+>>>>>>
+>>>>>> I'll take a look at other patches later today, no need to send out new version right now.
+>>>>>>
+>>>>>>
+>>>>>
+>>>>> SIZE_64K is 0x00010000 (65536)
+>>>>>
+>>>>> msg len is u16 and max that can be set to msg.len is 65535
+>>>
+>>> Ah, okay. Then it looks about right, maybe it's time to change u16 to u32 in the I2C core.
+>>>
+>>
+>> Here is my suggestion:
+>>
+>> 1) Use SZ_4K / SZ_64K that I suggested above.
+>>
+>> 2) Squash this patch into the DMA-patch.
+>>
+>> 3) Add another patch (before the DMA-patch) that changes max_read_len/max_write_len types to u32 in the include/linux/i2c.h
+> 
+> That is a bit naive and will not fly since the I2C core has a max message
+> size of 65535. Which is exposed to user space...
+> 
+> Given the above, saying .max_read_len = 65535 a NOP (and is in fact omitted
+> in places where it would be needed if the type is changed). I suggest that
+> it is omitted here as well. But SZ_64K - I2C_PACKET_HEADER_SIZE is still
+> needed of course. At least if I2C_PACKET_HEADER_SIZE is guaranteed to be
+> non-zero?
+
+Ah, I missed that message len is also u16 and then we indeed could just drop the "max_read_len" for T194. Thank you Peter.
+
+Sowjanya, given the above, it probably better to define dma_buf max-size in the tegra_i2c_hw_feature.
