@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 4/9] soc/tegra: Changes for v5.1-rc1
-Date: Fri,  8 Feb 2019 16:09:30 +0100
-Message-ID: <20190208150935.32108-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/9] firmware: tegra: Changes for v5.1-rc1
+Date: Fri,  8 Feb 2019 16:09:31 +0100
+Message-ID: <20190208150935.32108-6-thierry.reding@gmail.com>
 References: <20190208150935.32108-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,45 +29,38 @@ The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.1-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.1-firmware
 
-for you to fetch changes up to e247deae1a55089cb04cc25c91faeba083d0c39c:
+for you to fetch changes up to fe45ab552955ee93b492cbf86603eb02b3c77a66:
 
-  soc/tegra: pmc: Support systems where PMC is marked secure (2019-01-25 16:18:24 +0100)
+  firmware/tegra: Enable Tegra186 BPMP support on Tegra194 (2019-02-07 18:52:39 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v5.1-rc1
+firmware: tegra: Changes for v5.1-rc1
 
-This contains a couple of miscellaneous fixes for minor issues and a
-largish rework of the PMC driver to make it work on systems where the
-PMC has been locked down and can only be accessed from secure firmware.
+These changes add support for BPMP on Tegra210.
 
 ----------------------------------------------------------------
-Jon Hunter (1):
-      soc/tegra: pmc: Make tegra_powergate_is_powered() a local function
+Thierry Reding (3):
+      firmware: tegra: bpmp-tegra186: Remove unused includes
+      firmware: tegra: Conditionally support SoC generations
+      firmware/tegra: Enable Tegra186 BPMP support on Tegra194
 
-Joseph Lo (1):
-      soc/tegra: fuse: Fix typo in tegra210_init_speedo_data
+Timo Alho (3):
+      firmware: tegra: Reword messaging terminology
+      firmware: tegra: Refactor BPMP driver
+      firmware: tegra: add bpmp driver for Tegra210
 
-Mikko Perttunen (1):
-      soc/tegra: pmc: Support systems where PMC is marked secure
-
-Thierry Reding (6):
-      soc/tegra: pmc: Use TEGRA186_ prefix for GPIO names
-      soc/tegra: pmc: Sort includes alphabetically
-      soc/tegra: pmc: Add missing kerneldoc
-      soc/tegra: pmc: Pass struct tegra_pmc * where possible
-      soc/tegra: pmc: Make alignment consistent
-      soc/tegra: pmc: Explicitly initialize all fields
-
-Timo Alho (1):
-      soc/tegra: fuse: Fix illegal free of IO base address
-
- drivers/soc/tegra/fuse/fuse-tegra.c      |  12 +-
- drivers/soc/tegra/fuse/speedo-tegra210.c |   2 +-
- drivers/soc/tegra/pmc.c                  | 424 +++++++++++++++++++++----------
- include/soc/tegra/pmc.h                  |   6 -
- 4 files changed, 298 insertions(+), 146 deletions(-)
+ drivers/firmware/tegra/Makefile        |   3 +
+ drivers/firmware/tegra/bpmp-private.h  |  34 +++
+ drivers/firmware/tegra/bpmp-tegra186.c | 305 ++++++++++++++++++++++++++
+ drivers/firmware/tegra/bpmp-tegra210.c | 243 +++++++++++++++++++++
+ drivers/firmware/tegra/bpmp.c          | 376 +++++++++++++--------------------
+ include/soc/tegra/bpmp.h               |  13 +-
+ 6 files changed, 742 insertions(+), 232 deletions(-)
+ create mode 100644 drivers/firmware/tegra/bpmp-private.h
+ create mode 100644 drivers/firmware/tegra/bpmp-tegra186.c
+ create mode 100644 drivers/firmware/tegra/bpmp-tegra210.c
