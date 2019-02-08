@@ -1,54 +1,58 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V16 4/6] i2c: tegra: Add DMA support
-Date: Fri, 8 Feb 2019 17:29:09 +0000
-Message-ID: <BYAPR12MB33984E76B8BE19ED0CB0BE17C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V16 4/6] i2c: tegra: Add DMA support
+Date: Fri, 8 Feb 2019 20:34:06 +0300
+Message-ID: <3ac41d68-976d-4674-9a31-708195d58eeb@gmail.com>
 References: <1549644314-1481-1-git-send-email-skomatineni@nvidia.com>
  <1549644314-1481-4-git-send-email-skomatineni@nvidia.com>
  <dd2899ab-1a5f-834c-ab97-1654845c7de2@gmail.com>
  <BYAPR12MB33980494FB2E5C439210124FC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
  <BYAPR12MB33987BF143F5903AE5DA196AC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
  <4ba38a07-1953-9393-8756-ce555557017a@gmail.com>
+ <BYAPR12MB33984E76B8BE19ED0CB0BE17C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4ba38a07-1953-9393-8756-ce555557017a@gmail.com>
+In-Reply-To: <BYAPR12MB33984E76B8BE19ED0CB0BE17C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+ID4gDQo+ID4+IEknbSBzdGlsbCBhbHNvIHN1Z2dlc3RpbmcgdG8gc3F1YXNoICJmaXggbWF4
-aW11bSB0cmFuc2ZlciBzaXplIiBpbnRvIHRoaXMgcGF0Y2ggYmVjYXVzZSBpdCBpcyByZWFsbHkg
-cGFydCBvZiBETUEtc3VwcG9ydCBlbmFibGluZy4NCj4gPiANCj4gPiBNYXggdHJhbnNmZXIgbGVu
-Z3RoIGxpbWl0cyBhcHBseSB0byBQSU8gYWxzbyBidXQgZm9yIERNQSBpdHMgbW9yZSBuZWVkZWQg
-dG8gcHJldmVudCBjcmFzaC4NCj4gPiBTbyBoYWQgdGhpcyBhcyBwYXRjaCBiZWZvcmUgRE1BIGFz
-IGl0cyBhcHBsaWNhYmxlIGZvciBib3RoIERNQSAmIFBJTy4NCj4NCj4gT2gsIHNvIHRoZSBwYWNr
-ZXRfaGVhZGVyIHNpemUgYWxzbyBzaGFsbCBiZSBleGNsdWRlZCBmb3IgdGhlIFBJTyBhcyB3ZWxs
-LCByZWFsbHk/IEl0IGxvb2tlZCB0byBtZSB0aGF0IFBJTyBkb2Vzbid0IGhhdmUgdGhhdCByZXN0
-cmljdGlvbiBhbmQgd2Ugb25seSBuZWVkIHRvIGV4Y2x1ZGUgdGhlIGhlYWRlciBzaXplIGZvciBE
-TUEuLg0KPg0KPiA+IFdlIGV4Y2hhbmdlZCBvbiB0aGlzIHllc3RlcmRheSwgc28gdGhvdWdodCB0
-aGUgcmVhc29uIHlvdSB3YW50IHRvIHNxdWFzaCBzZXBhcmF0ZSBwYXRjaCBhbmQgaW5jbHVkZSBp
-biB0aGlzIGlzIGR1ZSB0byBtYXggbXNnIGxlbiBsaW1pdCBhbmQgd2hlbiBtb3ZlZCBpbnRvIGh3
-IGZlYXR1cmUuDQo+DQo+IElmIFBJTyBsaW1pdHMgYXJlIGluY29ycmVjdCwgdGhlbiBpdCdzIGFi
-c29sdXRlbHkgZmluZSB0byBkbyBpdCBpbiB0aGUgc2VwYXJhdGUgcGF0Y2guIEkgcHJvYmFibHkg
-anVzdCBtaXN1bmRlcnN0b29kIHlvdXIgcG9pbnQuDQo+DQo+ID4gU29ycnkgc2hvdWxkIGhhdmUg
-dmVyaWZpZWQgYmVmb3JlIHNlbmRpbmcuIFBsZWFzZSBjb25maXJtIGlmIEkgbGVhdmUgbWF4IHRy
-YW5zZmVyIGFzIHNlcGFyYXRlIHBhdGNoIG9yIGFkZCB0byB0aGlzIERNQSBzdXBwb3J0LiBXaWxs
-IHVwZGF0ZSBhbG9uZyB3aXRoIGRtYSBidWYgc2l6ZSBmaXguDQo+ID4gDQo+ID4gQnV0IG1heCB0
-cmFuc2ZlciBsaW1pdCBhcHBsaWVkIHRvIFBJTyBhbHNvIGFuZCB0aGF04oCZcyB3aHkgYWRkZWQg
-aXQgYmVmb3JlIERNQSBwYXRjaCB0byBzaG93IGl0cyBkZXBlbmRlbmN5DQo+ID4gDQo+DQo+IEFu
-ZCB0aGVuIHlvdSBuZWVkIHRvIGV4cGxpY2l0bHkgdGVsbCBpbiB0aGUgY29tbWl0IG1lc3NhZ2Ug
-dGhhdCBQSU8gbGltaXRzIGFyZSBpbmNvcnJlY3QuDQpDb21taXQgbWVzc2FnZSBzYXlzIFRlZ3Jh
-IEkyQyBtYXggbGltaXQgcGVyIHBhY2tldHMgdHJhbnNmZXIgbWVhbmluZyB0aGF04oCZcyBpbnRl
-cmZhY2UgdHJhbnNmZXIgbGltaXQgc28gYXBwbGllcyB0byBib3RoIFBJTyAmIERNQS4NCldpbGwg
-YWRkIGV4cGxpY2l0bHkgaW5kaWNhdGluZyBhcHBsaWNhYmxlIGZvciBib3RoIFBJTyAmIERNQSB0
-byBiZSBtb3JlIGNsZWFyDQoNCj4NCj4gSXQgYWxzbyBwcm9iYWJseSB3b3J0aCB0byBhZGQgYSBz
-dGFibGUtdGFnIHRvIHRoZSBjb21taXQgbWVzc2FnZSB0byByZXF1ZXN0IGJhY2twb3J0aW5nIG9m
-IHRoZSBsaW1pdHMtZml4aW5nIHBhdGNoIHRvIHRoZSBzdGFibGUga2VybmVsczoNCj4NCj4gQ2M6
-IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gDQpTb3JyeSBJIGFtIG5ldyB0byB1cHN0cmVhbSBz
-dWJtaXNzaW9ucy4gQnkgYWRkaW5nIHN0YWJsZS10YWcgdG8gY29tbWl0IG1lc3NhZ2UsIGRvIHlv
-dSBtZWFuIGV4cGxpY2l0bHkgbWVudGlvbmluZyB0aGlzIHBhdGNoIGFwcGxpY2FibGUgdG8gb2xk
-IGtlcm5lbCBhbmQgYWRkaW5nIGluIHBhdGNoIENDIHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc/DQoN
-Cg==
+08.02.2019 20:29, Sowjanya Komatineni пишет:
+> 
+>>>
+>>>> I'm still also suggesting to squash "fix maximum transfer size" into this patch because it is really part of DMA-support enabling.
+>>>
+>>> Max transfer length limits apply to PIO also but for DMA its more needed to prevent crash.
+>>> So had this as patch before DMA as its applicable for both DMA & PIO.
+>>
+>> Oh, so the packet_header size also shall be excluded for the PIO as well, really? It looked to me that PIO doesn't have that restriction and we only need to exclude the header size for DMA..
+>>
+>>> We exchanged on this yesterday, so thought the reason you want to squash separate patch and include in this is due to max msg len limit and when moved into hw feature.
+>>
+>> If PIO limits are incorrect, then it's absolutely fine to do it in the separate patch. I probably just misunderstood your point.
+>>
+>>> Sorry should have verified before sending. Please confirm if I leave max transfer as separate patch or add to this DMA support. Will update along with dma buf size fix.
+>>>
+>>> But max transfer limit applied to PIO also and that’s why added it before DMA patch to show its dependency
+>>>
+>>
+>> And then you need to explicitly tell in the commit message that PIO limits are incorrect.
+> Commit message says Tegra I2C max limit per packets transfer meaning that’s interface transfer limit so applies to both PIO & DMA.
+> Will add explicitly indicating applicable for both PIO & DMA to be more clear
+
+Thank you.
+
+>>
+>> It also probably worth to add a stable-tag to the commit message to request backporting of the limits-fixing patch to the stable kernels:
+>>
+>> Cc: stable@vger.kernel.org
+>>
+> Sorry I am new to upstream submissions. By adding stable-tag to commit message, do you mean explicitly mentioning this patch applicable to old kernel and adding in patch CC stable@vger.kernel.org?
+> 
+
+You just need to add "Cc: stable@vger.kernel.org" to the commit message, like you did for the "Reviewed-by:". Don't add "stable@vger.kernel.org" to the email recipients. See for example [0]. 
+
+[0] https://lore.kernel.org/patchwork/patch/1001991/
