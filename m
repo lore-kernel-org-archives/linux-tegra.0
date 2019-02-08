@@ -1,101 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 8/9] arm64: tegra: Device tree changes for v5.1-rc1
-Date: Fri,  8 Feb 2019 16:09:34 +0100
-Message-ID: <20190208150935.32108-9-thierry.reding@gmail.com>
-References: <20190208150935.32108-1-thierry.reding@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
+Date: Fri, 8 Feb 2019 15:25:45 +0000
+Message-ID: <BYAPR12MB339837F9232FBB0767869564C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
+ <1549576040-15907-3-git-send-email-skomatineni@nvidia.com>
+ <1202cc91-cacf-673e-c32b-b4d1c78b71f2@gmail.com>
+ <515cb722-c345-8dd6-dbe5-557dec0d1384@gmail.com>
+ <a57f0374-8468-f24a-1743-b446b8260a46@gmail.com>
+ <9e8f26bb-2159-6ca4-783e-91a73dac0823@axentia.se>
+ <96a3955f-ef4f-e4df-4907-6ec760fad3fe@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190208150935.32108-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <96a3955f-ef4f-e4df-4907-6ec760fad3fe@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Peter Rosin <peda@axentia.se>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.1-arm64-dt
-
-for you to fetch changes up to 250a36c06f95caaeef0da218f87fd452766eefd6:
-
-  arm64: tegra: Update compatible for Tegra186 I2C (2019-02-07 19:03:58 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.1-rc1
-
-This contains a couple of fixes to existing device trees, enables CPU
-frequency scaling on various Tegra210 boards, enables the TCU as debug
-serial port on Jetson Xavier, adds various improvements for SDMMC on
-Tegra210, Tegra186 and Tegra194 boards and finally adds initial support
-for the NVIDIA Shield TV.
-
-----------------------------------------------------------------
-Joseph Lo (8):
-      arm64: tegra: Fix register range of apbmisc on Tegra210
-      arm64: tegra: Fix IRQ type of PMIC on Smaug
-      arm64: tegra: Add DFLL clock on Tegra210
-      arm64: tegra: Add CPU clocks on Tegra210
-      arm64: tegra: Add pinmux for PWM-based DFLL support on P2597
-      arm64: tegra: Enable DFLL clock on Jetson TX1
-      arm64: tegra: Add CPU power rail regulator on Smaug
-      arm64: tegra: Enable DFLL clock on Smaug
-
-Mark Zhang (5):
-      arm64: tegra: Remove property gpio-keys,name
-      arm64: tegra: Add support for NVIDIA Shield TV
-      arm64: tegra: Add gpio-keys nodes for Darcy
-      arm64: tegra: Add pinmux for Darcy board
-      arm64: tegra: Add regulators for Tegra210 Darcy
-
-Mikko Perttunen (2):
-      arm64: tegra: Add nodes for TCU on Tegra194
-      arm64: tegra: Mark TCU as primary serial port on Tegra194 P2888
-
-Sowjanya Komatineni (5):
-      arm64: tegra: Add SDMMC auto-calibration settings
-      arm64: tegra: Add CQE Support for SDMMC4
-      arm64: tegra: Support 200 MHz for SDMMC on Tegra194
-      arm64: tegra: Update compatible for Tegra210 I2C
-      arm64: tegra: Update compatible for Tegra186 I2C
-
-Thierry Reding (5):
-      arm64: tegra: Use GIC_SPI for PMIC interrupt on Smaug
-      arm64: tegra: p2972: Sort nodes properly
-      arm64: tegra: p2597: Sort nodes by unit-address
-      arm64: tegra: p3310: Use TEGRA186_ prefix for GPIO names
-      arm64: tegra: p2771-0000: Use TEGRA186_ prefix for GPIO names
-
- arch/arm64/boot/dts/nvidia/Makefile                |    1 +
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |   18 +-
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |   10 +-
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   21 +-
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |    2 +-
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |   10 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   77 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |   21 +
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   32 +-
- .../boot/dts/nvidia/tegra210-p2894-0050-a08.dts    |    9 +
- arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi     | 1858 ++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   34 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   96 +-
- 13 files changed, 2140 insertions(+), 49 deletions(-)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-p2894-0050-a08.dts
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+PiAwOC4wMi4yMDE5IDE3OjEyLCBQZXRlciBSb3NpbiDQv9C40YjQtdGCOg0KPiA+IE9uIDIwMTkt
+MDItMDggMTM6NDYsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToNCj4gPj4gMDguMDIuMjAxOSAxOjI1
+LCBEbWl0cnkgT3NpcGVua28g0L/QuNGI0LXRgjoNCj4gPj4+PiAwOC4wMi4yMDE5IDE6MTYsIFNv
+d2phbnlhIEtvbWF0aW5lbmkg0L/QuNGI0LXRgjo+DQo+ID4+Pj4+PiBUaGlzIGlzIHdyb25nLCA2
+NTUzNSA9IDY0ICogMTAyNCAtIDEuDQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gTGV0J3MganVzdCB1c2Ug
+c2l6ZS1jb25zdGFudHMgcHJvdmlkZWQgYnkga2VybmVsOg0KPiA+Pj4+Pj4NCj4gPj4+Pj4+IHN0
+YXRpYyBjb25zdCBzdHJ1Y3QgaTJjX2FkYXB0ZXJfcXVpcmtzIHRlZ3JhX2kyY19xdWlya3MgPSB7
+DQo+ID4+Pj4+PiAJLmZsYWdzID0gSTJDX0FRX05PX1pFUk9fTEVOLA0KPiA+Pj4+Pj4gCS5tYXhf
+cmVhZF9sZW4gPSBTWl80SywNCj4gPj4+Pj4+IAkubWF4X3dyaXRlX2xlbiA9IFNaXzRLIC0gSTJD
+X1BBQ0tFVF9IRUFERVJfU0laRSwgfTsNCj4gPj4+Pj4+DQo+ID4+Pj4+PiBzdGF0aWMgY29uc3Qg
+c3RydWN0IGkyY19hZGFwdGVyX3F1aXJrcyB0ZWdyYTE5NF9pMmNfcXVpcmtzID0gew0KPiA+Pj4+
+Pj4gCS5mbGFncyA9IEkyQ19BUV9OT19aRVJPX0xFTiwNCj4gPj4+Pj4+IAkubWF4X3JlYWRfbGVu
+ID0gU1pfNjRLLA0KPiA+Pj4+Pj4gCS5tYXhfd3JpdGVfbGVuID0gU1pfNjRLIC0gSTJDX1BBQ0tF
+VF9IRUFERVJfU0laRSwgfTsNCj4gPj4+Pj4+DQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gSSdsbCB0YWtl
+IGEgbG9vayBhdCBvdGhlciBwYXRjaGVzIGxhdGVyIHRvZGF5LCBubyBuZWVkIHRvIHNlbmQgb3V0
+IG5ldyB2ZXJzaW9uIHJpZ2h0IG5vdy4NCj4gPj4+Pj4+DQo+ID4+Pj4+Pg0KPiA+Pj4+Pg0KPiA+
+Pj4+PiBTSVpFXzY0SyBpcyAweDAwMDEwMDAwICg2NTUzNikNCj4gPj4+Pj4NCj4gPj4+Pj4gbXNn
+IGxlbiBpcyB1MTYgYW5kIG1heCB0aGF0IGNhbiBiZSBzZXQgdG8gbXNnLmxlbiBpcyA2NTUzNQ0K
+PiA+Pj4NCj4gPj4+IEFoLCBva2F5LiBUaGVuIGl0IGxvb2tzIGFib3V0IHJpZ2h0LCBtYXliZSBp
+dCdzIHRpbWUgdG8gY2hhbmdlIHUxNiB0byB1MzIgaW4gdGhlIEkyQyBjb3JlLg0KPiA+Pj4NCj4g
+Pj4NCj4gPj4gSGVyZSBpcyBteSBzdWdnZXN0aW9uOg0KPiA+Pg0KPiA+PiAxKSBVc2UgU1pfNEsg
+LyBTWl82NEsgdGhhdCBJIHN1Z2dlc3RlZCBhYm92ZS4NCj4gPj4NCj4gPj4gMikgU3F1YXNoIHRo
+aXMgcGF0Y2ggaW50byB0aGUgRE1BLXBhdGNoLg0KPiA+Pg0KPiA+PiAzKSBBZGQgYW5vdGhlciBw
+YXRjaCAoYmVmb3JlIHRoZSBETUEtcGF0Y2gpIHRoYXQgY2hhbmdlcyANCj4gPj4gbWF4X3JlYWRf
+bGVuL21heF93cml0ZV9sZW4gdHlwZXMgdG8gdTMyIGluIHRoZSBpbmNsdWRlL2xpbnV4L2kyYy5o
+DQo+ID4gDQo+ID4gVGhhdCBpcyBhIGJpdCBuYWl2ZSBhbmQgd2lsbCBub3QgZmx5IHNpbmNlIHRo
+ZSBJMkMgY29yZSBoYXMgYSBtYXggDQo+ID4gbWVzc2FnZSBzaXplIG9mIDY1NTM1LiBXaGljaCBp
+cyBleHBvc2VkIHRvIHVzZXIgc3BhY2UuLi4NCj4gPiANCj4gPiBHaXZlbiB0aGUgYWJvdmUsIHNh
+eWluZyAubWF4X3JlYWRfbGVuID0gNjU1MzUgYSBOT1AgKGFuZCBpcyBpbiBmYWN0IA0KPiA+IG9t
+aXR0ZWQgaW4gcGxhY2VzIHdoZXJlIGl0IHdvdWxkIGJlIG5lZWRlZCBpZiB0aGUgdHlwZSBpcyBj
+aGFuZ2VkKS4gSSANCj4gPiBzdWdnZXN0IHRoYXQgaXQgaXMgb21pdHRlZCBoZXJlIGFzIHdlbGwu
+IEJ1dCBTWl82NEsgLSANCj4gPiBJMkNfUEFDS0VUX0hFQURFUl9TSVpFIGlzIHN0aWxsIG5lZWRl
+ZCBvZiBjb3Vyc2UuIEF0IGxlYXN0IGlmIA0KPiA+IEkyQ19QQUNLRVRfSEVBREVSX1NJWkUgaXMg
+Z3VhcmFudGVlZCB0byBiZSBub24temVybz8NCj4NCj4gQWgsIEkgbWlzc2VkIHRoYXQgbWVzc2Fn
+ZSBsZW4gaXMgYWxzbyB1MTYgYW5kIHRoZW4gd2UgaW5kZWVkIGNvdWxkIGp1c3QgZHJvcCB0aGUg
+Im1heF9yZWFkX2xlbiIgZm9yIFQxOTQuIFRoYW5rIHlvdSBQZXRlci4NCj4NCj4gU293amFueWEs
+IGdpdmVuIHRoZSBhYm92ZSwgaXQgcHJvYmFibHkgYmV0dGVyIHRvIGRlZmluZSBkbWFfYnVmIG1h
+eC1zaXplIGluIHRoZSB0ZWdyYV9pMmNfaHdfZmVhdHVyZS4NCj4NCg0KSTJDX1BBQ0tFVF9IRUFE
+RVJfU0laRSBpcyBhbHdheXMgZml4ZWQgMTIuIFNvIGluIHRoYXQgY2FzZSwgd2UgY2FuIGp1c3Qg
+YWRkIG1heF93cml0ZV9sZW4gDQpJZiBubyBtYXhfcmVhZF9sZW4sIG1heCB3aWxsIGJlIDY1NTM1
+IGFueXdheSByaWdodA0KDQpzdGF0aWMgY29uc3Qgc3RydWN0IGkyY19hZGFwdGVyX3F1aXJrcyB0
+ZWdyYTE5NF9pMmNfcXVpcmtzID0gew0KCS5mbGFncyA9IEkyQ19BUV9OT19aRVJPX0xFTiwNCgku
+bWF4X3dyaXRlX2xlbiA9IFNaXzY0SyAtIEkyQ19QQUNLRVRfSEVBREVSX1NJWkUsIH07DQoNCg0K
+c293amFueWENCg==
