@@ -1,55 +1,67 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
-Date: Fri, 8 Feb 2019 21:38:26 +0300
-Message-ID: <fbf4efd3-bd4d-5a65-d9d7-b4fe9f7ab5dc@gmail.com>
-References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
- <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
- <0c30dfe0-1174-0056-5ef6-432b75de2353@gmail.com>
- <BYAPR12MB339810D394AC0A50934DD5EAC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <3e4db3e9-8198-f1bf-f909-492bf1ff8c56@gmail.com>
- <BYAPR12MB33981B3AD88271597CC4F7F5C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB3398429D6C403347C149B643C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB33986FBB8B684F2E56948FBCC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V18 1/6] i2c: tegra: sort all the include headers alphabetically
+Date: Fri, 8 Feb 2019 10:59:37 -0800
+Message-ID: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "peda@axentia.se" <peda@axentia.se>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: wsa@the-dreams.de, peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-08.02.2019 21:37, Sowjanya Komatineni пишет:
->>>>>>  static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
->>>>>>  	.flags = I2C_AQ_NO_ZERO_LEN,
->>>>>> +	.max_write_len = 65535 - I2C_PACKET_HEADER_SIZE,
->>>>>
->>>>> Ideally it should be SZ_64K - I2C_PACKET_HEADER_SIZE to not miss the one byte, otherwise good to me:
->>>>>
->>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>>>  
->>>> With SZ_64K - I2C_PACKET_HEADR_Size, When we compute dma_buf_size 
->>>> = max_write_len + I2C_PACKET_HEADER_SIZE, dma_buf_size will be 
->>>> SZ_64K which is 0x10000 apbdma dma count limit should be < 64K 
->>>> meaning 65535 max is allowed
->>>>
->>>
->>> But it's for the GPCDMA, does it have the same 64K limit as APB DMA?
->>
->  64K limit is for APBDMA. This patch has APBDMA support only. No GPCDMA support so buf size limit is based on APBDMA.
->  GPCDMA supports upto 1GB. 
-> 
->  I think dma_buf_size is only for buffer allocation so shouldn’t harm for exact 64K.
-> Will take a look at dma driver...
-> 
-> All msg reads, max length is 65535
-> All msg writes, max length requests is also limited to 65535 due to u16 type of msg.len So, In any case, we don’t need 65536 bytes.
-> Confused, yeah with max write quirk, max transfer can be 64K.
-> 
-> Will change to 64K instead of 65535.
-> 
+This patch sorts all the include headers alphabetically for the
+I2C Tegra driver.
 
-Good, thank you! Everything else looks good to me.
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V9/V10/V11/V12/V13/V14/V15/V16/V17/V18] : Rebased to 5.0-rc4
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] 		  : Added this in V2 to sort the headers in tegra I2C
+
+
+
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c77adbbea0c7..79c6aa87499b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
