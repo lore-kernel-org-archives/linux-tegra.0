@@ -1,48 +1,51 @@
-From: Kejia Hu <kejia.hu@codethink.co.uk>
-Subject: Re: [PATCH 5/5] clk: tegra: add tegra20 automotive init
-Date: Fri, 08 Feb 2019 10:10:09 +0000
-Message-ID: <1549620609.19850.1.camel@codethink.co.uk>
-References: <20190207125408.8776-1-kejia.hu@codethink.co.uk>
- <20190207125408.8776-6-kejia.hu@codethink.co.uk>
- <7f300cd5-2b97-17fb-da06-b212a8fae647@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.4 00/34] 4.4.174-stable review
+Date: Fri, 8 Feb 2019 11:28:48 +0100
+Message-ID: <20190208102848.GA10341@kroah.com>
+References: <20190207113025.552605181@linuxfoundation.org>
+ <21d81a53-adfd-9d87-17ea-4b7e78b167f3@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <7f300cd5-2b97-17fb-da06-b212a8fae647@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Thomas Preston <thomas.preston@codethink.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <21d81a53-adfd-9d87-17ea-4b7e78b167f3@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTAyLTA3IGF0IDE2OjIzICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-Cj4gdGhpcyBhbGwgbG9va3MgdmVyeSBnZW5lcmljIGFuZCBtdWNoIG1vcmUgYm9hcmQtc3BlY2lm
-aWMgdGhhbiBhdXRvbW90aXZlCgpIaSwKClRoYW5rcyBmb3IgeW91ciByZXBseS4KCldlIGdvdCB0
-aGUgY2xvY2sgZGF0YSBmcm9tIG52aWRpYSBwZGsgZm9yIHRoZSBhdXRvbW90aXZlIHdoaWNoIGRp
-ZG4ndApzZXQgdGhlIGNsb2NrcyB1cCBpbiB0aGUgc2FtZSB3YXkgYXMgY29tbWVyY2lhbCBwYXJ0
-cywgYW5kIHdlIHdlcmUgdG9sZAp0aGF0IHRoZXJlIGFyZSBjZXJ0YWluIGNsb2NrIHJlc3RyaWN0
-aW9ucyBmb3IgdGhlIGF1dG9tb3RpdmUgcGFydHMgdGhhdAp0aGUgY29tbWVyY2lhbCBvbmVzIGRv
-IG5vdCBoYXZlLgoKQXBwbHlpbmcgZGlmZmVyZW50IGNsb2NrIGNvbmZpZ3MgZm9yIGVhY2ggbm9k
-ZXMgZG9lc24ndCBzZWVtcyB0byBiZSBhCmdvb2Qgd2F5LCBhcyB0aGV5IHdpbGwgYmUgdG9vIHNj
-YXR0ZXJlZCBpbiB0aGUgZGV2aWNlIHRyZWUuIFdlIHByb3Bvc2VkCnRvIGFkZCBhIG5ldyByb290
-IG5vZGUgZm9yIHRoZSBjbG9jayBvcmlnaW5hbGx5WzFdLCBhbmQgZnVydGhlcgpkaXNjdXNzaW9u
-IHN1Z2dlc3RlZCB1cyB0byBkaXN0aW5ndWlzaCB0aGUgdmFyaWF0aW9uIGJ5IHJlYWRpbmcgdGhl
-IFNLVQppbmZvLCB0aHVzIGNhbWUgdGhpcyBwYXRjaC4gV2UgY2FuIGRpc2N1c3MgZnVydGhlciB0
-aG91Z2guCgpSZWdhcmRzCgpbMV0gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtl
-cm5lbC9tc2c2NjUzNDQuaHRtbAotLSAKS2VqaWEgSHUKU29mdHdhcmUgRGV2ZWxvcGVyCgpDb2Rl
-dGhpbmsgTHRkCjNyZCBGbG9vciBEYWxlIEhvdXNlCjM1IERhbGUgU3RyZWV0Ck1hbmNoZXN0ZXIK
-TTEgMkhGClVuaXRlZCBLaW5nZG9tCgpDb2RldGhpbmsgZGVsaXZlcnMgY3V0dGluZyBlZGdlIG9w
-ZW4gc291cmNlIGRlc2lnbiwgZGV2ZWxvcG1lbnQgYW5kCmludGVncmF0aW9uIHNlcnZpY2VzLgoK
-aHR0cDovL2NvZGV0aGluay5jby51awpPZmZpY2U6ICs0NCAxNjEgMjM2IDU1NzUKaHR0cHM6Ly93
-d3cuY29kZXRoaW5rLmNvLnVrL3ByaXZhY3kuaHRtbMKgCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
-ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Fri, Feb 08, 2019 at 10:03:33AM +0000, Jon Hunter wrote:
+> 
+> On 07/02/2019 11:41, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.4.174 release.
+> > There are 34 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat Feb  9 11:30:10 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.174-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v4.4:
+>     6 builds:	6 pass, 0 fail
+>     12 boots:	12 pass, 0 fail
+>     10 tests:	10 pass, 0 fail
+> 
+> Linux version:	4.4.174-rc1-g968fa3b
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra30-cardhu-a04
+> 
+
+Great, thanks for testing and letting me know.
+
+greg k-h
