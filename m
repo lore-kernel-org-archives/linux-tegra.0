@@ -1,137 +1,241 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [REGRESSION] tegra124: nyan-big: LPAE not working
-Date: Mon, 11 Feb 2019 15:13:16 -0700
-Message-ID: <bedfddd6-77b5-0754-4e4e-caa33d487f2a@wwwdotorg.org>
-References: <20190211093829.GA3725@ulmo>
- <20190211100437.Horde.N5S1UaNJsgMKD0ev6Zb_ckb@_> <20190211104826.GA4927@ulmo>
+From: Bo Yan <byan@nvidia.com>
+Subject: Re: [PATCH] arm64: tegra: add topology data for Tegra194 cpu
+Date: Mon, 11 Feb 2019 15:34:27 -0800
+Message-ID: <a94ab8ed-e8e7-b239-d9f1-498f6f9348e1@nvidia.com>
+References: <1548959754-3941-1-git-send-email-byan@nvidia.com>
+ <20190131222517.GB13156@mithrandir>
+ <dc0055ca-b9eb-bcc6-1815-2aa482fa7c1f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <20190211104826.GA4927@ulmo>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <dc0055ca-b9eb-bcc6-1815-2aa482fa7c1f@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: Thierry Reding <treding@nvidia.com>, Tristan Bastian <tristan-c.bastian@gmx.de>
-Cc: gnurou@gmail.com, swarren@nvidia.com, jonathanh@nvidia.com, u-boot@lists.denx.de, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMi8xMS8xOSAzOjQ4IEFNLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiBPbiBNb24sIEZlYiAx
-MSwgMjAxOSBhdCAxMDowNDozN0FNICswMDAwLCBUcmlzdGFuIEJhc3RpYW4gd3JvdGU6Cj4+Cj4+
-Cj4+Cj4+IFRoaWVycnkgUmVkaW5nIOKAkyBNb24sIDExLiBGZWJydWFyeSAyMDE5IDEwOjM4Cj4+
-PiBPbiBNb24sIEZlYiAxMSwgMjAxOSBhdCAwOToyMDozM0FNICswMDAwLCBUcmlzdGFuIEJhc3Rp
-YW4gd3JvdGU6Cj4+Pj4KPj4+PiBUaGllcnJ5IFJlZGluZyDigJMgTW9uLCAxMS4gRmVicnVhcnkg
-MjAxOSA5OjUyCj4+Pj4+IE9uIFN1biwgRmViIDEwLCAyMDE5IGF0IDA4OjUzOjExUE0gKzAxMDAs
-IFRyaXN0YW4gQmFzdGlhbiB3cm90ZToKPj4+Pj4+IFRoaWVycnksIGRvIHlvdSBoYXZlIGFueSBu
-ZXdzIG9uIHRoaXM/Cj4+Pj4+Pgo+Pj4+Pj4gSSBkb24ndCB0aGluaywgdGhhdCBnb29nbGUgaXMg
-Z29pbmcgdG8gcHVzaCBhbiB1cGRhdGVkIHZlcnNpb24gb2YKPj4+IGNvcmVib290Cj4+Pj4+PiB0
-byBlYWNoIG55YW4tYmlnIGRldmljZS4uCj4+Pj4+PiBTbyByZXZlcnRpbmcgdGhpcyBwYXRjaCBh
-dCBsZWFzdCBmb3IgdGhlIG55YW4gZGV2aWNlcyB3b3VsZCBiZSB0aGUgYmVzdAo+Pj4gSQo+Pj4+
-Pj4gdGhpbmsuLgo+Pj4+Pgo+Pj4+PiBZZXMsIEkgYWdyZWUuIEkgaGFkIGEgYnJpZWYgY2hhdCB3
-aXRoIFJvYiBIZXJyaW5nIGFib3V0IHRoaXMgYW5kIGhlIHRvbwo+Pj4+PiBhZ3JlZXMgdGhhdCB3
-ZSBzaG91bGQgcmV2ZXJ0IGl0IGZvciBub3cuIEknbGwgbWFrZSBpdCBhIG1hbnVhbCByZXZlcnQK
-Pj4+Pj4gYW5kIGFkZCBhIGNvbW1lbnQgdG8gdGhlIGRldmljZSB0cmVlIG5vZGUgdGhhdCB3aWxs
-IGhvcGVmdWxseSBhdm9pZCBhbnkKPj4+Pj4gZnV0dXJlIGphbml0b3JpYWwgImNsZWFudXBzIiBv
-ZiB0aGlzIHNvcnQuCj4+Pj4KPj4+PiBncmVhdCBuZXdzISA6KQo+Pj4+Cj4+Pj4+PiBCVFc6IEkn
-bSBub3cgcnVubmluZyB1LWJvb3QgbmF0aXZlbHkgYW5kIGl0IHNlZW1zIGxpa2UgdS1ib290IGFs
-d2F5cyBoYXMKPj4+IGEKPj4+Pj4+IHByb2JsZW0gd2l0aCB0aGUgbWVtb3J5Li4KPj4+Pj4+IElm
-IHUtYm9vdCBpcyB1c2VkIGNoYWlubG9hZGVkIHRvIGNvcmVib290IGl0IGlzIG9ubHkgZ2V0dGlu
-ZyAyR0Igb2YKPj4+IG1lbW9yeQo+Pj4+Pj4gYW5kIHJ1bm5pbmcgdS1ib290IG5hdGl2ZWx5IGFs
-c28ganVzdCBnaXZlcyBtZSAyR0IuLgo+Pj4+Pj4gSSd2ZSB0ZXN0ZWQgdGhhdCB3aXRoIGEga2Vy
-bmVsIHdpdGggIkFSTTogdGVncmE6IEZpeCB1bml0X2FkZHJlc3NfdnNfcmVnCj4+PiBEVEMKPj4+
-Pj4+IHdhcm5pbmdzIGZvciAvbWVtb3J5IiByZXZlcnRlZCBhbmQgYWxzbyBvbiBhIGtlcm5lbCwg
-YmVmb3JlIHRoaXMgcGF0Y2gKPj4+IHdhcwo+Pj4+Pj4gYXBwbGllZC4uCj4+Pj4+Cj4+Pj4+IEl0
-J3MgcG9zc2libGUgdGhhdCBVLUJvb3QgZG9lc24ndCBzdXBwb3J0IExQQUUgYW5kIHRoZXJlZm9y
-ZSBtYXkgbm90IGJlCj4+Pj4+IGFibGUgdG8gdXNlIG1vcmUgdGhhbiB0aGUgMiBHaUIgb2YgbWVt
-b3J5Lgo+Pj4+Cj4+Pj4gU28gSSBhdCBsZWFzdCBlbmFibGVkIExQQUUgaW4gdS1ib290IHdpdGgg
-IkNPTkZJR19BUk1WN19MUEFFPXkiIGFuZAo+Pj4+IHRoaXMgd2FzIGZvciBzb21lIHJlYXNvbiBh
-bHNvIG5lZWRlZCB0byBnZXQgc29tZSBvdXRwdXQgb24gdGhlCj4+Pj4gZGlzcGxheS4uCj4+Pj4g
-SSdtIG5vdCBzdXJlIHdoeSBMUEFFIG5lZWRzIHRvIGFjdGl2YXRlZCBpbiB1LWJvb3QgZm9yIGRp
-c3BsYXkgb3V0cHV0Cj4+Pj4gb24gdGhlIG55YW4tYmlnLi4KPj4+PiBXaXRob3V0IExQQUUgZW5h
-YmxlZCB1LWJvb3Qgd2FzIHN0aWxsIHdvcmtpbmcsIGFuZCBib290ZWQgbGludXgsIGJ1dAo+Pj4+
-IHUtYm9vdCBkaWRuJ3QgZGlzcGxheSBhbnl0aGluZyBvbiBzY3JlZW4sIGxpbnV4IHRoZW4gZGlk
-Li4KPj4+Cj4+PiBZZWFoLCB0aGF0J3Mgc3VycHJpc2luZy4gUGVyaGFwcyB3aXRob3V0IExQQUUg
-VS1Cb290IHRoaW5rcyB0aGVyZSdzIG5vdAo+Pj4gZW5vdWdoIG1lbW9yeSBmb3IgdGhlIGZyYW1l
-YnVmZmVyPyBUaGVyZSBzaG91bGQgYmUgcGxlbnR5LCBzbyBtYXliZQo+Pj4gdGhlcmUgaXMgc29t
-ZXRoaW5nIGVsc2UgZ29pbmcgb24gaGVyZS4KPj4+Cj4+Pj4+IEhvd2V2ZXIsIFUtQm9vdCBzaG91
-bGQgYmUKPj4+Pj4gYWJsZSB0byB0ZWxsIHRoZSBrZXJuZWwgZXhhY3RseSBob3cgbXVjaCBtZW1v
-cnkgdGhlIHN5c3RlbSBoYXMgYW5kIHBhc3MKPj4+Pj4gdGhhdCBvbiB2aWEgZGV2aWNlIHRyZWUu
-IFRoYXQgc3RpbGwgZG9lcyB3b3JrLCByaWdodD8KPj4+Pgo+Pj4+IEl0IHNlZW1zIGxpa2UgdGhp
-cyBpcyBub3Qgd29ya2luZy4uCj4+Pj4gQW5kIHRoaXMgc2VlbXMgdG8gYmUgdGhlIGNhc2Ugd2l0
-aCBib3RoLCB1LWJvb3QgY2hhaW5sb2FkZWQgYW5kCj4+Pj4gcnVubmluZyB1LWJvb3QgbmF0aXZl
-bHkuLgo+Pj4+Cj4+Pj4gSSd2ZSB1c2VkIHRoZXNlIHNjcmlwdHMgZm9yIGZsYXNoaW5nOgo+Pj4+
-IGdpdGh1Yi5jb20vTlZJRElBL3RlZ3JhLXVib290LWZsYXNoZXItc2NyaXB0cwo+Pj4+IEFuZCB1
-c2VkIHRoZSBub3JyaW4gZGV2aWNlIHNpbmNlIGl0IHNlZW1zIGxpa2UgaXQgaXMgdGhlIG55YW4t
-YmlnIGRldgo+Pj4+IGJvYXJkPwo+Pj4+IEJ1dCBnb2luZyB3aXRoIHRoZSBub3JyaW4gZGV2aWNl
-IGNvbmZpZyBzaG91bGQgbm90IGJlIHRoZSBpc3N1ZSBoZXJlCj4+Pj4gc2luY2UgdGhlIHByb2Js
-ZW0gYWxzbyBleGlzdHMgd2hlbiBjaGFpbmxvYWRpbmcgdS1ib290LCByaWdodD8KPj4+Cj4+PiBJ
-dCBjb3VsZCBiZSBhIHByb2JsZW0uIFRoZSBtZW1vcnkgYmFuayBjb25maWd1cmF0aW9uIGlzIHN0
-b3JlZCBpbiB3aGF0J3MKPj4+IGNhbGxlZCBhIEJDVCBhbG9uZyB3aXRoIGEgYnVuY2ggb2Ygb3Ro
-ZXIgcGFyYW1ldGVycyB0aGF0IGRlZmluZSB3aGF0IHRoZQo+Pj4gbWVtb3J5IGNvbnRyb2xsZXIg
-bmVlZHMgdG8gYWNjZXNzIHRoZSBnaXZlbiBtZW1vcnkgY2hpcHMuIFNvIGlmIHlvdSd2ZQo+Pj4g
-Zmxhc2hlZCBhIEJDVCB0aGF0J3MgZm9yIGEgYm9hcmQgd2l0aCBvbmx5IDIgR2lCIG9mIG1lbW9y
-eSB5b3Ugd291bGQgZW5kCj4+PiB1cCB3aXRoIGEgc3lzdGVtIHRoYXQgY2FuJ3QgYWRkcmVzcyBh
-bnkgbW9yZSB0aGFuIHRoYXQuIEl0J3Mgc29tZXdoYXQKPj4+IHN1cnByaXNpbmcgdGhhdCBtZW1v
-cnkgYWNjZXNzZXMgd29yayBhdCBhbGwgd2l0aCBhIEJDVCB0aGF0J3MgZm9yCj4+PiBkaWZmZXJl
-bnQgbWVtb3J5IGNoaXBzLCBidXQgc29tZXRpbWVzIHlvdSBjYW4gZ2V0IGx1Y2t5Lgo+Pj4KPj4+
-IFlvdSBtYXkgd2FudCB0byB0cnkgcmVmbGFzaGluZyB3aXRoIHRoZSByaWdodCBCQ1QuIFRoZSBz
-aW1wbGVzdCB3b3VsZAo+Pj4gcHJvYmFibHkgYmUgdG8gZHVwbGljYXRlIHRoZSBjYm9vdGltYWdl
-IGNvbmZpZ3VyYXRpb24gZm9yIE5vcnJpbiBhbmQKPj4+IHN1YnN0aXR1dGUgdGhlIHJlbGV2YW50
-IGJpdHMgYnkgd2hhdCB5b3UgaGF2ZSBmcm9tIHRoZSBDaHJvbWVib29rIGZsYXNoCj4+PiB1dGls
-aXRpZXMuIExvb2tzIGxpa2UgdGhlIEJDVCBpbiByZWFsbHkgdGhlIG9ubHkgdGhpbmcgeW91IGNh
-biByZXBsYWNlCj4+PiB0aGVyZS4gTWFrZSBzdXJlIHRvIHJlcGxhY2UgaXQgd2l0aCB0aGUgb25l
-IHRoYXQgbWF0Y2hlcyB5b3VyIENocm9tZWJvb2sKPj4+IGFuZCBpdCBzaG91bGQgZ2l2ZSB5b3Ug
-dGhlIHJpZ2h0IG1lbW9yeSBiYW5rIGNvbmZpZ3VyYXRpb24uCj4+Cj4+IElzIHRoZXJlIGEgd2F5
-IHRvIGNoZWNrIGlmIHRoZSBjb3JyZWN0IGJjdCBmb3IgbXkgNEdCIG1vZGVsIHdhcyB1c2VkPwo+
-PiBXaGF0IEkgdHJpZWQgd2FzIHRvIGVkaXQgdGhlIGV4aXN0aW5nIGJjdCBjb25maWcgZmlsZSBv
-ZiBub3JyaW4gZnJvbSBoZXJlOgo+PiBodHRwczovL2dpdGh1Yi5jb20vTlZJRElBL2Nib290aW1h
-Z2UtY29uZmlncy9ibG9iL21hc3Rlci90ZWdyYTEyNC9udmlkaWEvbm9ycmluL1BNMzcwX0h5bml4
-XzJHQl9INVRDNEc2M0FGUl9QQkFfOTI0TUh6XzAxMjEyMDE0LmJjdC5jZmcKPj4gYnkgcmVwbGFj
-aW5nIGFsbCBlbnRyaWVzIGZvciBlYWNoIG1lbW9yeSBiYW5rIHdpdGggdGhlIGVudHJpZXMgZnJv
-bSBoZXJlOgo+PiBodHRwczovL2dpdGh1Yi5jb20vY29yZWJvb3QvY29yZWJvb3QvYmxvYi9tYXN0
-ZXIvc3JjL21haW5ib2FyZC9nb29nbGUvbnlhbl9iaWcvYmN0L3NkcmFtLWh5bml4LTRHQi03OTIu
-aW5jCj4+Cj4+IEkgYWxzbyBhZGRlZCB0aGUgU0RSQU1bMF0sIFNEUkFNWzFdLCBTRFJBTVsyXSwg
-U0RSQU1bM10gZWFjaCB0aW1lIGluIGZyb250IG9mIGVhY2ggbGluZS4uCj4+IFRoaXMgYWxzbyBi
-b290ZWQgZm9yIG1lLCBidXQgYWxzbyBqdXN0IGxlYXZlcyBtZSB3aXRoIG9ubHkgMkdiIG9mIG15
-IDRHQi4uCj4+Cj4+IEFuZCBzaW5jZSB0aGlzIHByb2JsZW0gYWxzbyBvY2N1cnMsIHdoZW4gY2hh
-aW5sb2FkaW5nIHUtYm9vdCwgdGhpcyBtdXN0IGJlIGEgcHJvYmxlbSB3aXRoIHUtYm9vdCwgSSB0
-aGluay4uCj4gCj4gTm90IG5lY2Vzc2FyaWx5LiBVLUJvb3QgcmVhZHMgdGhlIG1lbW9yeSBzaXpl
-IGZyb20gRU1DIHJlZ2lzdGVycyBhbmQKPiB0aG9zZSBFTUMgcmVnaXN0ZXJzIGFyZSBwcm9ncmFt
-bWVkIGJhc2VkIG9uIHRoZSBjb250ZW50cyBvZiB0aGUgQkNULiBTbwo+IGlmIHRoZSBCQ1QgaXMg
-d3JvbmcsIHRoZW4gaXQncyBnb2luZyB0byBiZSB3cm9uZyBpcnJlc3BlY3RpdmUgb2Ygd2hhdAo+
-IGJvb3Rsb2FkZXIgeW91IHVzZS4KPiAKPiBUaGF0IHNhaWQsIEkgZG9lcyBpbmRlZWQgbG9vayBh
-cyBpZiBVLUJvb3Qgb25seSBzdXBwb3J0cyAyIEdpQiBvZiBtZW1vcnkKPiBvbiAzMi1iaXQgVGVn
-cmEuIGFyY2gvYXJtL21hY2gtdGVncmEvYm9hcmQuYyBjb250YWlucyB0aGUgcmVsZXZhbnQgY29k
-ZS4KPiBJZiB5b3UgbG9vayBhdCBkcmFtX2luaXQoKSBpdCB1c2VzIHF1ZXJ5X3NkcmFtX3NpemUo
-KSB0byBnZXQgdGhlIHNpemUgb2YKPiBSQU0uIFRoYXQgd2lsbCBhbGxvdyB0byBjb252ZXkgdXAg
-dG8gNCBHaUIgb2YgUkFNLCBidXQgdGhlbiB0aGUgY29kZSBpbgo+IGJvYXJkMi5jIChzZWUgZHJh
-bV9pbml0X2JhbmtzaXplKCkpIG9ubHkgdXNlcyBhIHNpbmdsZSBiYW5rIG9uIDMyLWJpdAo+IFRl
-Z3JhIChDT05GSUdfUEhZU182NEJJVCBpcyBvbmx5IHNldCBmb3IgNjQtYml0IFRlZ3JhKS4KPiAK
-PiBBY2NvcmRpbmcgdG8gdGhlIGNvbW1lbnRzIGZvciBkcmFtX2luaXRfYmFua19zaXplKCkgd2Ug
-Y2FuJ3Qgc3RvcmUgdGhlCj4gc2Vjb25kIGJhbmsgYmVjYXVzZSB0aGUgLnN0YXJ0IGZpZWxkIGlz
-IDMyIGJpdHMgd2lkZSBhbmQgdGhlcmVmb3JlIGNhbid0Cj4gc3RvcmUgdGhlIDB4MTAwMDAwMDAw
-IHN0YXJ0IGFkZHJlc3MgZm9yIHRoZSBiYW5rLgo+IAo+IEl0IHNvdW5kcyB0byBtZSBsaWtlIEFS
-TVY3X0xQQUUgc2hvdWxkIHBlcmhhcHMgc2VsZWN0IFBIWVNfNjRCSVQgdG8gbWFrZQo+IHN1cmUg
-YWxsIHRoZSBhcHByb3ByaWF0ZSB2YXJpYWJsZXMgY2FuIHN0b3JlIGFkZHJlc3NlcyBiZXlvbmQg
-dGhlIDMyLWJpdAo+IGJvdW5kYXJ5LiBJdCdzIG9uZSB0aGluZyB0byBub3Qgc3VwcG9ydCA+IDIg
-R2lCIG9mIG1lbW9yeSBpbiBVLUJvb3QsIGJ1dAo+IGl0J3MgYW4gZW50aXJlbHkgZGlmZmVyZW50
-IHN0b3J5IGlmIHdlIGNhbid0IGV2ZW4gcGFzcyA+IEdpQiBvZiBtZW1vcnkKPiB0byB0aGUga2Vy
-bmVsIGlmIHRoZXkgZXhpc3QuCj4gCj4gU3RlcGhlbiwgZG8geW91IHJlbWVtYmVyIGlmIHRoZXJl
-IHdhcyBhbnl0aGluZyBwcmV2ZW50aW5nIHVzIGZyb20gZ29pbmcKPiA2NC1iaXQgZm9yIHBoeXNf
-YWRkcl90IGFuZCBwaHlzX3NpemVfdCBvbiBMUEFFIGVuYWJsZWQgc3lzdGVtcz8KCldlIHByb2Jh
-Ymx5IGp1c3QgbmV2ZXIgdHJpZWQgc2luY2Ugd2UgbmV2ZXIgbmVlZGVkIGl0IGFuZC9vciBMUEFF
-IHdhc24ndCAKYXZhaWxhYmxlIChpbiBVLUJvb3QgU1cpIHdoZW4gaXQgaW5pdGlhbGx5IG1pZ2h0
-IGhhdmUgYmVlbiB1c2VmdWwuIEkgCndvdWxkIG5vdCBiZSBzdXJwcmlzZWQgaWYgc29tZSBvZiB0
-aGUgbG93LWxldmVsIFRlZ3JhIGNvZGUgaW4gVS1Cb290IApjb25mbGF0ZXMgNjQtYml0IHN1cHBv
-cnQgd2l0aCBTb0MgYmVpbmcgPj0gVDIxMCwgc28gdGhpbmdzIG1pZ2h0IG5vdCBiZSAKYXMgc2lt
-cGxlIGFzIGVuYWJsaW5nIENPTkZJR19QSFlTXzY0QklULCBidXQgeW91IG5ldmVyIGtub3cuLi4K
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KVS1Cb290IG1h
-aWxpbmcgbGlzdApVLUJvb3RAbGlzdHMuZGVueC5kZQpodHRwczovL2xpc3RzLmRlbnguZGUvbGlz
-dGluZm8vdS1ib290Cg==
+To make this simpler, I think it's best to isolate the cache information=20
+in its own patch. So I will amend this patch to include topology=20
+information only.
+
+On 1/31/19 3:29 PM, Bo Yan wrote:
+>=20
+> On 1/31/19 2:25 PM, Thierry Reding wrote:
+>> On Thu, Jan 31, 2019 at 10:35:54AM -0800, Bo Yan wrote:
+>>> The xavier CPU architecture includes 8 CPU cores organized in
+>>> 4 clusters. Add cpu-map data for topology initialization, add
+>>> cache data for cache node creation in sysfs.
+>>>
+>>> Signed-off-by: Bo Yan <byan@nvidia.com>
+>>> ---
+>>> =A0 arch/arm64/boot/dts/nvidia/tegra194.dtsi | 148=20
+>>> +++++++++++++++++++++++++++++--
+>>> =A0 1 file changed, 140 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi=20
+>>> b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>>> index 6dfa1ca..7c2a1fb 100644
+>>> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>>> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>>> @@ -870,63 +870,195 @@
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <1>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <0>;
+>=20
+>> These don't seem to be well-defined. They are mentioned in a very weird
+>> locations (Documentation/devicetree/booting-without-of.txt) but there
+>> seem to be examples and other device tree files that use them so maybe
+>> those are all valid. It might be worth mentioning these in other places
+>> where people can more easily find them.
+>=20
+> It might be logical to place a reference to this document=20
+> (booting-without-of.txt) in architecture specific documents, for=20
+> example, arm/cpus.txt. I see the need for improved documentation, but=20
+> this probably should be best done in a separate change.
+>>
+>> According to the above document, {i,d}-cache-line-size are deprecated in
+>> favour of {i,d}-cache-block-size.
+>=20
+> Mostly, this seems to be derived from the oddity of PowerPC, which might=
+=20
+> have different cache-line-size and cache-block-size. I don't know if=20
+> there are other examples? It looks like the {i,d}-cache-line-size are=20
+> being used in dts files for almost all architectures, the only exception=
+=20
+> is arch/sh/boot/dts/j2_mimas_v2.dts. On ARM and ARM64, cache-line-size=20
+> is the same as cache-block-size. So I am wondering whether the=20
+> booting-without-of.txt should be fixed instead? just to keep it=20
+> consistent among dts files, especially in arm64.
+>=20
+>>
+>> I also don't see any mention of {i,d}-cache_sets in the device tree
+>> bindings, though riscv/cpus.txt mentions {i,d}-cache-sets (note the
+>> hyphen instead of underscore) in the examples. arm/l2c2x0.txt and
+>> arm/uniphier/cache-unifier.txt describe cache-sets, though that's
+>> slightly different.
+>>
+>> Might make sense to document all these in more standard places. Maybe
+>> adding them to arm/cpus.txt. For consistency with other properties, I
+>> think there should be called {i,d}-cache-sets like for RISC-V.
+>>
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_0>;
+>>
+>> This seems to be called next-level-cache everywhere else, though it's
+>> only formally described in arm/uniphier/cache-uniphier.txt. So might
+>> also make sense to add this to arm/cpus.txt.
+>=20
+> the improved documentation is certainly desired, I agree.
+>>
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@1 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl0_1: cpu@1 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x10001>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_0>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@2 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl1_0: cpu@2 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x100>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_1>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@3 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl1_1: cpu@3 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x101>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_1>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@4 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl2_0: cpu@4 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x200>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_2>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@5 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl2_1: cpu@5 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x201>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_2>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@6 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl3_0: cpu@6 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x10300>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_3>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@7 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl3_1: cpu@7 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x10301>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_3>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> =A0=A0=A0=A0=A0 };
+>>> +=A0=A0=A0 l2_0: l2-cache0 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-size =3D <2097152>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-sets =3D <2048>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 next-level-cache =3D <&l3>;
+>>> +=A0=A0=A0 };
+>>
+>> Does this need a compatible string? Also, are there controllers behind
+>> these caches? I'm just wondering if these also need reg properties and
+>> unit-addresses.
+>=20
+> No need for compatible string. No reg properties and addresses. These=20
+> will be parsed by drivers/of/base.c and drivers/base/cacheinfo.c, they=20
+> are generic.
+>>
+>> arm/l2c2x0.txt and arm/uniphier/cache-uniphier.txt describe an
+>> additional property that you don't specify here: cache-level. This
+>> sounds useful to have so that we don't have to guess the cache level
+>> from the name, which may or may not work depending on what people name
+>> the nodes.
+>=20
+> the cache level property is implied in device tree hierarchy, so after=20
+> system boots up, I can find cache level in related sysfs nodes:
+>=20
+>  =A0=A0=A0 [root@alarm cache]# cat index*/level
+>  =A0=A0=A0 1
+>  =A0=A0=A0 1
+>  =A0=A0=A0 2
+>  =A0=A0=A0 3
+>=20
+>=20
+>>
+>> Also, similar to the L1 cache, cache-block-size is preferred over
+>> cache-line-size.
+>>
+>>> +=A0=A0=A0 l3: l3-cache {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-size =3D <4194304>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-sets =3D <4096>;
+>>> +=A0=A0=A0 };
+>>
+>> The same comments apply as for the L2 caches.
+>>
+>> Thierry
+>>
