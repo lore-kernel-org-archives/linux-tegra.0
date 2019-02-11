@@ -1,83 +1,99 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2] ARM: tegra: Restore DT ABI on Tegra124 Chromebooks
-Date: Mon, 11 Feb 2019 12:09:19 +0100
-Message-ID: <20190211110919.10388-1-thierry.reding@gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH V18 2/6] i2c: tegra: add bus clear Master Support
+Date: Mon, 11 Feb 2019 13:44:32 +0100
+Message-ID: <20190211124431.kys66uzp5hwa5ret@ninjato>
+References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
+ <1549652382-5476-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Tristan Bastian <tristan-c.bastian@gmx.de>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yt4liwd2sdc4itsr"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1549652382-5476-2-git-send-email-skomatineni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-Commit 482997699ef0 ("ARM: tegra: Fix unit_address_vs_reg DTC warnings
-for /memory") inadventently broke device tree ABI by adding a unit-
-address to the "/memory" node because the device tree compiler flagged
-the missing unit-address as a warning.
+--yt4liwd2sdc4itsr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tegra124 Chromebooks (a.k.a. Nyan) use a bootloader that relies on the
-full name of the memory node in device tree being exactly "/memory". It
-can be argued whether this was a good decision or not, and some other
-bootloaders (such as U-Boot) do accept a unit-address in the name of the
-node, but the device tree is an ABI and we can't break existing setups
-just because the device tree compiler considers it bad practice to omit
-the unit-address nowadays.
+Hi,
 
-This partially reverts the offending commit and restores device tree ABI
-compatibility.
+On Fri, Feb 08, 2019 at 10:59:38AM -0800, Sowjanya Komatineni wrote:
+> Bus clear feature of Tegra I2C controller helps to recover from
+> bus hang when I2C master loses the bus arbitration due to the
+> slave device holding SDA LOW continuously for some unknown reasons.
+>=20
+> Per I2C specification, the device that held the bus LOW should
+> release it within 9 clock pulses.
+>=20
+> During bus clear operation, Tegra I2C controller sends 9 clock
+> pulses and terminates the transaction with STOP condition.
+> Upon successful bus clear operation, bus goes to idle state and
+> driver retries the transaction.
+>=20
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Fixes: 482997699ef0 ("ARM: tegra: Fix unit_address_vs_reg DTC warnings for /memory")
-Reported-by: Tristan Bastian <tristan-c.bastian@gmx.de>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- remove memory@80000000 node pulled in from tegra124.dtsi
-- add device_type = "memory" property
+We have a bus recovery infrastructure in the core. Tying your code into
+it should be easy. You probably just need a 'struct
+i2c_bus_recovery_info', populate the 'recover_bus' callback with
+'tegra_i2c_issue_bus_clear()', and attach this struct to the 'struct
+adapter' if the IP core supports bus recovery, otherwise leave it empty.
+Then, you can...
 
- arch/arm/boot/dts/tegra124-nyan.dtsi | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+> +static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	int err;
+> +	unsigned long time_left;
+> +	u32 reg;
+> +
+> +	if (i2c_dev->hw->supports_bus_clear) {
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
-index d5f11d6d987e..bc85b6a166c7 100644
---- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-@@ -13,10 +13,25 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
--	memory@80000000 {
-+	/*
-+	 * Note that recent version of the device tree compiler (starting with
-+	 * version 1.4.2) warn about this node containing a reg property, but
-+	 * missing a unit-address. However, the bootloader on these Chromebook
-+	 * devices relies on the full name of this node to be exactly /memory.
-+	 * Adding the unit-address causes the bootloader to create a /memory
-+	 * node and write the memory bank configuration to that node, which in
-+	 * turn leads the kernel to believe that the device has 2 GiB of
-+	 * memory instead of the amount detected by the bootloader.
-+	 *
-+	 * The name of this node is effectively ABI and must not be changed.
-+	 */
-+	memory {
-+		device_type = "memory";
- 		reg = <0x0 0x80000000 0x0 0x80000000>;
- 	};
- 
-+	/delete-node/ memory@80000000;
-+
- 	host1x@50000000 {
- 		hdmi@54280000 {
- 			status = "okay";
--- 
-2.19.1
+=2E.. remove the if here because the core will check for a valid
+i2c_bus_recovery_info...
+
+> @@ -759,6 +818,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *=
+i2c_dev,
+>  		return 0;
+> =20
+>  	tegra_i2c_init(i2c_dev);
+> +	/* start recovery upon arbitration loss in single master mode */
+> +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
+> +		if (!i2c_dev->is_multimaster_mode)
+> +			return tegra_i2c_issue_bus_clear(i2c_dev);
+
+=2E.. and use simply i2c_recover_bus() here.
+
+This will help making bus recovery use consistent across drivers.
+
+Thanks,
+
+   Wolfram
+
+--yt4liwd2sdc4itsr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxhbisACgkQFA3kzBSg
+KbaXfw/8D5oseEP3Y/5D8I63l1EVBNyE3QSoHKp6mPkNltlBc+AS6LlZqo5rbu+R
+nW61wGlOxlIFyCknQu2hcOk1+nqmGCeeHdXTS3qu9VN+Lb3oeMPQigLLrPnE/To+
+2EUJQtX54Tp17YwJLBQjllKwBuCUDue78Sn8BaEV6e7HzuIY/UaeezWVXU4/K7uA
+t1xM8vU+G38Pi1FK68EnFo0rT/OGqrNLLBv3yT/zUj+6SAtE8lbQzboq9HRnWMmD
+9TlsiBlZBV2eDgT2yEOA6e4v2FPEg/wMcY0CBb5FGYVGcOb3PRRg6xAUON0fy9Kn
+qVQePBgOLsX+KooENUsvPsECZLhHtRHWw6BEs7r+rZq8zf3OCb3uk5fkG0fnl1xE
+tTtB0RUSRWrHmZiT40qT7ElxmLHkjbM/sNZ+weCv9/V4NRnzpcPP0HQR14kg/bey
+MM9b+BhxhiGZR112eqP0Fe7HHBWz6s27aCKNUayd6il/Vv+jhYt/WGPj5S1eSVYp
+ASFxOxioRyOgH8nOBNFsy1Xh1C/T7PHlmTuhdUEOD1SDjZ/GeDCbVvt8kU3Pq1j5
++XPH4mCPzl9BSJaJ6RsDRVr5AY4wIR+WJNiWIA7mGQjb7d/1a2ET2vhU85H8otTF
++rk0Sw/R8GFrfN1k3vsCjNAfDLY4FFkJmt+mNJhNhMB5fG67zI0=
+=nRY5
+-----END PGP SIGNATURE-----
+
+--yt4liwd2sdc4itsr--
