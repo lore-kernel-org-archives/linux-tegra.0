@@ -1,16 +1,13 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [REGRESSION] drm/tegra: hdmi: tegra_hdmi_setup_audio: division by
- zero in kernel
-Date: Sun, 10 Feb 2019 19:53:56 +0300
-Message-ID: <36fe3952-c1d8-da39-7996-55240fe15552@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [REGRESSION] drm/tegra: hdmi: tegra_hdmi_setup_audio: division
+ by zero in kernel
+Date: Mon, 11 Feb 2019 09:00:08 +0100
+Message-ID: <20190211080007.GA923@ulmo>
 References: <87f8fd40b25e2842b547059a8d28295533e8c09c.camel@toradex.com>
- <139085a2-014a-b666-2d3f-d1833b6017c5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============8222620694557647825=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <139085a2-014a-b666-2d3f-d1833b6017c5@gmail.com>
-Content-Language: en-US
+In-Reply-To: <87f8fd40b25e2842b547059a8d28295533e8c09c.camel@toradex.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,98 +17,161 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "treding@nvidia.com" <treding@nvidia.com>, "alban.bedel@avionic-design.de" <alban.bedel@avionic-design.de>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alban.bedel@avionic-design.de" <alban.bedel@avionic-design.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-MTAuMDIuMjAxOSAxOTo1MSwgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4gMDguMDIuMjAx
-OSAyMzowMSwgTWFyY2VsIFppc3dpbGVyINC/0LjRiNC10YI6Cj4+IEhpIHRoZXJlCj4+Cj4+IEkg
-anVzdCBzdHVtYmxlZCBvdmVyIHRoaXMgb25lOgo+Pgo+PiBbICAgMzEuMDI2MjIwXSBEaXZpc2lv
-biBieSB6ZXJvIGluIGtlcm5lbC4KPj4gWyAgIDMxLjAyNjIzOF0gQ1BVOiAxIFBJRDogNTI5IENv
-bW06IFggTm90IHRhaW50ZWQgNS4wLjAtcmM1LW5leHQtCj4+IDIwMTkwMjA4LWRpcnR5ICMxNTMK
-Pj4gWyAgIDMxLjAyNjI0NF0gSGFyZHdhcmUgbmFtZTogTlZJRElBIFRlZ3JhIFNvQyAoRmxhdHRl
-bmVkIERldmljZSBUcmVlKQo+PiBbICAgMzEuMDI2MjgxXSBbPGMwMTEyMGNjPl0gKHVud2luZF9i
-YWNrdHJhY2UpIGZyb20gWzxjMDEwYzkyYz5dCj4+IChzaG93X3N0YWNrKzB4MTAvMHgxNCkKPj4g
-WyAgIDMxLjAyNjMwMV0gWzxjMDEwYzkyYz5dIChzaG93X3N0YWNrKSBmcm9tIFs8YzBhN2M1YWM+
-XQo+PiAoZHVtcF9zdGFjaysweGI0LzB4YzgpCj4+IFsgICAzMS4wMjYzMTddIFs8YzBhN2M1YWM+
-XSAoZHVtcF9zdGFjaykgZnJvbSBbPGMwYTdhN2U0Pl0KPj4gKExkaXYwKzB4OC8weDEwKQo+PiBb
-ICAgMzEuMDI2MzM3XSBbPGMwYTdhN2U0Pl0gKExkaXYwKSBmcm9tIFs8YzA1ODg3NTg+XQo+PiAo
-dGVncmFfaGRtaV9zZXR1cF9hdWRpbysweDFhYy8weGVkMCkKPj4gWyAgIDMxLjAyNjM1M10gWzxj
-MDU4ODc1OD5dICh0ZWdyYV9oZG1pX3NldHVwX2F1ZGlvKSBmcm9tIFs8YzA1ODlhNjg+XQo+PiAo
-dGVncmFfaGRtaV9lbmNvZGVyX2VuYWJsZSsweDVlYy8weDJhMjApCj4+IFsgICAzMS4wMjYzNzld
-IFs8YzA1ODlhNjg+XSAodGVncmFfaGRtaV9lbmNvZGVyX2VuYWJsZSkgZnJvbQo+PiBbPGMwNTQ0
-MTVjPl0gKGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2VuYWJsZXMrMHgxMGMvMHgy
-MjApCj4+IFsgICAzMS4wMjYzOTddIFs8YzA1NDQxNWM+XSAoZHJtX2F0b21pY19oZWxwZXJfY29t
-bWl0X21vZGVzZXRfZW5hYmxlcykKPj4gZnJvbSBbPGMwNTQ0NDljPl0gKGRybV9hdG9taWNfaGVs
-cGVyX2NvbW1pdF90YWlsX3JwbSsweDI0LzB4NmMpCj4+IFsgICAzMS4wMjY0MTJdIFs8YzA1NDQ0
-OWM+XSAoZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X3RhaWxfcnBtKSBmcm9tCj4+IFs8YzA1NDQz
-MWM+XSAoY29tbWl0X3RhaWwrMHg0MC8weDZjKQo+PiBbICAgMzEuMDI2NDI3XSBbPGMwNTQ0MzFj
-Pl0gKGNvbW1pdF90YWlsKSBmcm9tIFs8YzA1NDQ0MGM+XQo+PiAoZHJtX2F0b21pY19oZWxwZXJf
-Y29tbWl0KzB4YmMvMHgxMjgpCj4+IFsgICAzMS4wMjY0NDNdIFs8YzA1NDQ0MGM+XSAoZHJtX2F0
-b21pY19oZWxwZXJfY29tbWl0KSBmcm9tCj4+IFs8YzA1NDcyNjA+XSAocmVzdG9yZV9mYmRldl9t
-b2RlX2F0b21pYysweDE2MC8weDFjYykKPj4gWyAgIDMxLjAyNjQ1N10gWzxjMDU0NzI2MD5dIChy
-ZXN0b3JlX2ZiZGV2X21vZGVfYXRvbWljKSBmcm9tCj4+IFs8YzA1NDc0MjA+XSAoZHJtX2ZiX2hl
-bHBlcl9wYW5fZGlzcGxheSsweGM0LzB4MWQwKQo+PiBbICAgMzEuMDI2NDgxXSBbPGMwNTQ3NDIw
-Pl0gKGRybV9mYl9oZWxwZXJfcGFuX2Rpc3BsYXkpIGZyb20KPj4gWzxjMDRiMDI1MD5dIChmYl9w
-YW5fZGlzcGxheSsweDljLzB4MTE4KQo+PiBbICAgMzEuMDI2NDk4XSBbPGMwNGIwMjUwPl0gKGZi
-X3Bhbl9kaXNwbGF5KSBmcm9tIFs8YzA0YjBmZGM+XQo+PiAoZG9fZmJfaW9jdGwrMHg0YjAvMHg3
-Y2MpCj4+IFsgICAzMS4wMjY1MTRdIFs8YzA0YjBmZGM+XSAoZG9fZmJfaW9jdGwpIGZyb20gWzxj
-MDI3ZTY4OD5dCj4+IChkb192ZnNfaW9jdGwrMHhhYy8weDhmOCkKPj4gWyAgIDMxLjAyNjUyN10g
-WzxjMDI3ZTY4OD5dIChkb192ZnNfaW9jdGwpIGZyb20gWzxjMDI3ZWYwOD5dCj4+IChrc3lzX2lv
-Y3RsKzB4MzQvMHg2MCkKPj4gWyAgIDMxLjAyNjU0MF0gWzxjMDI3ZWYwOD5dIChrc3lzX2lvY3Rs
-KSBmcm9tIFs8YzAxMDEwMDA+XQo+PiAocmV0X2Zhc3Rfc3lzY2FsbCsweDAvMHg1NCkKPj4gWyAg
-IDMxLjAyNjU0Nl0gRXhjZXB0aW9uIHN0YWNrKDB4Y2JhNTlmYTggdG8gMHhjYmE1OWZmMCkKPj4g
-WyAgIDMxLjAyNjU1OV0gOWZhMDogICAgICAgICAgICAgICAgICAgMDAxNTI3YTggMDAxNTIyNzgg
-MDAwMDAwMGEKPj4gMDAwMDQ2MDYgMDAxNTI4MDggMDAwMDAwMDAKPj4gWyAgIDMxLjAyNjU3Ml0g
-OWZjMDogMDAxNTI3YTggMDAxNTIyNzggMDAxNWIzNjggMDAwMDAwMzYgYjZmMjA5NjEKPj4gMDAw
-MDAwMGEgYmVkYjVkZDQgMDAwMDAwMDAKPj4gWyAgIDMxLjAyNjU4MV0gOWZlMDogYjZhZjcwOTgg
-YmVkYjViMWMgYjZhZjQ2MDMgYjZjZGI2N2MKPj4gWyAgIDMxLjAyNjU4Nl0gRGl2aXNpb24gYnkg
-emVybyBpbiBrZXJuZWwuCj4+IFsgICAzMS4wMjY1OTVdIENQVTogMSBQSUQ6IDUyOSBDb21tOiBY
-IE5vdCB0YWludGVkIDUuMC4wLXJjNS1uZXh0LQo+PiAyMDE5MDIwOC1kaXJ0eSAjMTUzCj4+IFsg
-ICAzMS4wMjY2MDBdIEhhcmR3YXJlIG5hbWU6IE5WSURJQSBUZWdyYSBTb0MgKEZsYXR0ZW5lZCBE
-ZXZpY2UgVHJlZSkKPj4gWyAgIDMxLjAyNjYxNV0gWzxjMDExMjBjYz5dICh1bndpbmRfYmFja3Ry
-YWNlKSBmcm9tIFs8YzAxMGM5MmM+XQo+PiAoc2hvd19zdGFjaysweDEwLzB4MTQpCj4+IFsgICAz
-MS4wMjY2MjldIFs8YzAxMGM5MmM+XSAoc2hvd19zdGFjaykgZnJvbSBbPGMwYTdjNWFjPl0KPj4g
-KGR1bXBfc3RhY2srMHhiNC8weGM4KQo+PiBbICAgMzEuMDI2NjQwXSBbPGMwYTdjNWFjPl0gKGR1
-bXBfc3RhY2spIGZyb20gWzxjMGE3YTdlND5dCj4+IChMZGl2MCsweDgvMHgxMCkKPj4gWyAgIDMx
-LjAyNjY1NF0gWzxjMGE3YTdlND5dIChMZGl2MCkgZnJvbSBbPGMwNTg4N2FjPl0KPj4gKHRlZ3Jh
-X2hkbWlfc2V0dXBfYXVkaW8rMHgyMDAvMHhlZDApCj4+IFsgICAzMS4wMjY2NjddIFs8YzA1ODg3
-YWM+XSAodGVncmFfaGRtaV9zZXR1cF9hdWRpbykgZnJvbSBbPGMwNTg5YTY4Pl0KPj4gKHRlZ3Jh
-X2hkbWlfZW5jb2Rlcl9lbmFibGUrMHg1ZWMvMHgyYTIwKQo+PiBbICAgMzEuMDI2Njg0XSBbPGMw
-NTg5YTY4Pl0gKHRlZ3JhX2hkbWlfZW5jb2Rlcl9lbmFibGUpIGZyb20KPj4gWzxjMDU0NDE1Yz5d
-IChkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzKzB4MTBjLzB4MjIwKQo+
-PiBbICAgMzEuMDI2NzAwXSBbPGMwNTQ0MTVjPl0gKGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9t
-b2Rlc2V0X2VuYWJsZXMpCj4+IGZyb20gWzxjMDU0NDQ5Yz5dIChkcm1fYXRvbWljX2hlbHBlcl9j
-b21taXRfdGFpbF9ycG0rMHgyNC8weDZjKQo+PiBbICAgMzEuMDI2NzE1XSBbPGMwNTQ0NDljPl0g
-KGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF90YWlsX3JwbSkgZnJvbQo+PiBbPGMwNTQ0MzFjPl0g
-KGNvbW1pdF90YWlsKzB4NDAvMHg2YykKPj4gWyAgIDMxLjAyNjcyOV0gWzxjMDU0NDMxYz5dIChj
-b21taXRfdGFpbCkgZnJvbSBbPGMwNTQ0NDBjPl0KPj4gKGRybV9hdG9taWNfaGVscGVyX2NvbW1p
-dCsweGJjLzB4MTI4KQo+PiBbICAgMzEuMDI2NzQzXSBbPGMwNTQ0NDBjPl0gKGRybV9hdG9taWNf
-aGVscGVyX2NvbW1pdCkgZnJvbQo+PiBbPGMwNTQ3MjYwPl0gKHJlc3RvcmVfZmJkZXZfbW9kZV9h
-dG9taWMrMHgxNjAvMHgxY2MpCj4+IFsgICAzMS4wMjY3NTVdIFs8YzA1NDcyNjA+XSAocmVzdG9y
-ZV9mYmRldl9tb2RlX2F0b21pYykgZnJvbQo+PiBbPGMwNTQ3NDIwPl0gKGRybV9mYl9oZWxwZXJf
-cGFuX2Rpc3BsYXkrMHhjNC8weDFkMCkKPj4gWyAgIDMxLjAyNjc3MF0gWzxjMDU0NzQyMD5dIChk
-cm1fZmJfaGVscGVyX3Bhbl9kaXNwbGF5KSBmcm9tCj4+IFs8YzA0YjAyNTA+XSAoZmJfcGFuX2Rp
-c3BsYXkrMHg5Yy8weDExOCkKPj4gWyAgIDMxLjAyNjc4NV0gWzxjMDRiMDI1MD5dIChmYl9wYW5f
-ZGlzcGxheSkgZnJvbSBbPGMwNGIwZmRjPl0KPj4gKGRvX2ZiX2lvY3RsKzB4NGIwLzB4N2NjKQo+
-PiBbICAgMzEuMDI2Nzk3XSBbPGMwNGIwZmRjPl0gKGRvX2ZiX2lvY3RsKSBmcm9tIFs8YzAyN2U2
-ODg+XQo+PiAoZG9fdmZzX2lvY3RsKzB4YWMvMHg4ZjgpCj4+IFsgICAzMS4wMjY4MDldIFs8YzAy
-N2U2ODg+XSAoZG9fdmZzX2lvY3RsKSBmcm9tIFs8YzAyN2VmMDg+XQo+PiAoa3N5c19pb2N0bCsw
-eDM0LzB4NjApCj4+IFsgICAzMS4wMjY4MjBdIFs8YzAyN2VmMDg+XSAoa3N5c19pb2N0bCkgZnJv
-bSBbPGMwMTAxMDAwPl0KPj4gKHJldF9mYXN0X3N5c2NhbGwrMHgwLzB4NTQpCj4+IFsgICAzMS4w
-MjY4MjZdIEV4Y2VwdGlvbiBzdGFjaygweGNiYTU5ZmE4IHRvIDB4Y2JhNTlmZjApCj4+IFsgICAz
-MS4wMjY4MzddIDlmYTA6ICAgICAgICAgICAgICAgICAgIDAwMTUyN2E4IDAwMTUyMjc4IDAwMDAw
-MDBhCj4+IDAwMDA0NjA2IDAwMTUyODA4IDAwMDAwMDAwCj4+IFsgICAzMS4wMjY4NTBdIDlmYzA6
-IDAwMTUyN2E4IDAwMTUyMjc4IDAwMTViMzY4IDAwMDAwMDM2IGI2ZjIwOTYxCj4+IDAwMDAwMDBh
-IGJlZGI1ZGQ0IDAwMDAwMDAwCj4+IFsgICAzMS4wMjY4NTldIDlmZTA6IGI2YWY3MDk4IGJlZGI1
-YjFjIGI2YWY0NjAzIGI2Y2RiNjdjCj4+Cj4+IFRoaXMgaGFzIGJlZW4gb2JzZXJ2ZWQgb24gYSBB
-cGFsaXMgVDMwIDJHQiBydW5uaW5nIHRvZGF5cyAtbmV4dC4KPj4KPj4gQW55Ym9keSBrbm93aW5n
-IHdoYXQgaXMgZ29pbmcgb24gYmVmb3JlIEkgZGlnIGRlZXBlcj8KPiAKPiBTb3VuZHMgbGlrZSB0
-aGlzIFswXSBjb3VsZCBiZSB0aGUgY2F1c2UuCj4gCj4gWzBdIGh0dHBzOi8vZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L25leHQvbGludXgtbmV4dC5naXQvY29tbWl0L2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYT9pZD1kYjVhZGY0ZDZkY2VkNGUzMzI2Y2UzNjlmZTBjMjEzYzk2
-ODA5NWY0Cj4gCgpBaCwgc2VlbXMgeW91IGFscmVhZHkgZmlndXJlZCB0aGF0IG91dC4uIHNvcnJ5
-IGZvciB0aGUgbm9pc2UuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9saW51eC1hcm0ta2VybmVsCg==
+--===============8222620694557647825==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Disposition: inline
+
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Feb 08, 2019 at 08:01:03PM +0000, Marcel Ziswiler wrote:
+> Hi there
+>=20
+> I just stumbled over this one:
+>=20
+> [   31.026220] Division by zero in kernel.
+> [   31.026238] CPU: 1 PID: 529 Comm: X Not tainted 5.0.0-rc5-next-
+> 20190208-dirty #153
+> [   31.026244] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [   31.026281] [<c01120cc>] (unwind_backtrace) from [<c010c92c>]
+> (show_stack+0x10/0x14)
+> [   31.026301] [<c010c92c>] (show_stack) from [<c0a7c5ac>]
+> (dump_stack+0xb4/0xc8)
+> [   31.026317] [<c0a7c5ac>] (dump_stack) from [<c0a7a7e4>]
+> (Ldiv0+0x8/0x10)
+> [   31.026337] [<c0a7a7e4>] (Ldiv0) from [<c0588758>]
+> (tegra_hdmi_setup_audio+0x1ac/0xed0)
+> [   31.026353] [<c0588758>] (tegra_hdmi_setup_audio) from [<c0589a68>]
+> (tegra_hdmi_encoder_enable+0x5ec/0x2a20)
+> [   31.026379] [<c0589a68>] (tegra_hdmi_encoder_enable) from
+> [<c054415c>] (drm_atomic_helper_commit_modeset_enables+0x10c/0x220)
+> [   31.026397] [<c054415c>] (drm_atomic_helper_commit_modeset_enables)
+> from [<c054449c>] (drm_atomic_helper_commit_tail_rpm+0x24/0x6c)
+> [   31.026412] [<c054449c>] (drm_atomic_helper_commit_tail_rpm) from
+> [<c054431c>] (commit_tail+0x40/0x6c)
+> [   31.026427] [<c054431c>] (commit_tail) from [<c054440c>]
+> (drm_atomic_helper_commit+0xbc/0x128)
+> [   31.026443] [<c054440c>] (drm_atomic_helper_commit) from
+> [<c0547260>] (restore_fbdev_mode_atomic+0x160/0x1cc)
+> [   31.026457] [<c0547260>] (restore_fbdev_mode_atomic) from
+> [<c0547420>] (drm_fb_helper_pan_display+0xc4/0x1d0)
+> [   31.026481] [<c0547420>] (drm_fb_helper_pan_display) from
+> [<c04b0250>] (fb_pan_display+0x9c/0x118)
+> [   31.026498] [<c04b0250>] (fb_pan_display) from [<c04b0fdc>]
+> (do_fb_ioctl+0x4b0/0x7cc)
+> [   31.026514] [<c04b0fdc>] (do_fb_ioctl) from [<c027e688>]
+> (do_vfs_ioctl+0xac/0x8f8)
+> [   31.026527] [<c027e688>] (do_vfs_ioctl) from [<c027ef08>]
+> (ksys_ioctl+0x34/0x60)
+> [   31.026540] [<c027ef08>] (ksys_ioctl) from [<c0101000>]
+> (ret_fast_syscall+0x0/0x54)
+> [   31.026546] Exception stack(0xcba59fa8 to 0xcba59ff0)
+> [   31.026559] 9fa0:                   001527a8 00152278 0000000a
+> 00004606 00152808 00000000
+> [   31.026572] 9fc0: 001527a8 00152278 0015b368 00000036 b6f20961
+> 0000000a bedb5dd4 00000000
+> [   31.026581] 9fe0: b6af7098 bedb5b1c b6af4603 b6cdb67c
+> [   31.026586] Division by zero in kernel.
+> [   31.026595] CPU: 1 PID: 529 Comm: X Not tainted 5.0.0-rc5-next-
+> 20190208-dirty #153
+> [   31.026600] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [   31.026615] [<c01120cc>] (unwind_backtrace) from [<c010c92c>]
+> (show_stack+0x10/0x14)
+> [   31.026629] [<c010c92c>] (show_stack) from [<c0a7c5ac>]
+> (dump_stack+0xb4/0xc8)
+> [   31.026640] [<c0a7c5ac>] (dump_stack) from [<c0a7a7e4>]
+> (Ldiv0+0x8/0x10)
+> [   31.026654] [<c0a7a7e4>] (Ldiv0) from [<c05887ac>]
+> (tegra_hdmi_setup_audio+0x200/0xed0)
+> [   31.026667] [<c05887ac>] (tegra_hdmi_setup_audio) from [<c0589a68>]
+> (tegra_hdmi_encoder_enable+0x5ec/0x2a20)
+> [   31.026684] [<c0589a68>] (tegra_hdmi_encoder_enable) from
+> [<c054415c>] (drm_atomic_helper_commit_modeset_enables+0x10c/0x220)
+> [   31.026700] [<c054415c>] (drm_atomic_helper_commit_modeset_enables)
+> from [<c054449c>] (drm_atomic_helper_commit_tail_rpm+0x24/0x6c)
+> [   31.026715] [<c054449c>] (drm_atomic_helper_commit_tail_rpm) from
+> [<c054431c>] (commit_tail+0x40/0x6c)
+> [   31.026729] [<c054431c>] (commit_tail) from [<c054440c>]
+> (drm_atomic_helper_commit+0xbc/0x128)
+> [   31.026743] [<c054440c>] (drm_atomic_helper_commit) from
+> [<c0547260>] (restore_fbdev_mode_atomic+0x160/0x1cc)
+> [   31.026755] [<c0547260>] (restore_fbdev_mode_atomic) from
+> [<c0547420>] (drm_fb_helper_pan_display+0xc4/0x1d0)
+> [   31.026770] [<c0547420>] (drm_fb_helper_pan_display) from
+> [<c04b0250>] (fb_pan_display+0x9c/0x118)
+> [   31.026785] [<c04b0250>] (fb_pan_display) from [<c04b0fdc>]
+> (do_fb_ioctl+0x4b0/0x7cc)
+> [   31.026797] [<c04b0fdc>] (do_fb_ioctl) from [<c027e688>]
+> (do_vfs_ioctl+0xac/0x8f8)
+> [   31.026809] [<c027e688>] (do_vfs_ioctl) from [<c027ef08>]
+> (ksys_ioctl+0x34/0x60)
+> [   31.026820] [<c027ef08>] (ksys_ioctl) from [<c0101000>]
+> (ret_fast_syscall+0x0/0x54)
+> [   31.026826] Exception stack(0xcba59fa8 to 0xcba59ff0)
+> [   31.026837] 9fa0:                   001527a8 00152278 0000000a
+> 00004606 00152808 00000000
+> [   31.026850] 9fc0: 001527a8 00152278 0015b368 00000036 b6f20961
+> 0000000a bedb5dd4 00000000
+> [   31.026859] 9fe0: b6af7098 bedb5b1c b6af4603 b6cdb67c
+>=20
+> This has been observed on a Apalis T30 2GB running todays -next.
+>=20
+> Anybody knowing what is going on before I dig deeper?
+
+What exactly was your setup like? I think the only way that this could
+happen is if the sample_rate variable was 0, and I'm not sure how that
+could happen. I remember testing this on Beaver without ever seeing a
+crash, so I don't know what I overlooked.
+
+Looking at the code it seems like the only way that it would happen is
+if the format structure was never initialized, and it seems like it
+actually is zeroed out and if nobody ever plays audio over HDMI it will
+remain that way. But that means that HDMI would always crash, and that
+is definitely not something that I've observed.
+
+Can you specify what exactly your test case is and how I can reproduce?
+
+Thierry
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxhK4MACgkQ3SOs138+
+s6FX9Q/+OutA5S721H/nvoBN3mODpLMoFz1mRX6ie8cInENSpgwqYg1RDNrcsfNR
+kePDAYzTdbWIzp8m0zNRqmckeSWlYFxZiNj5CSWMZHMShdGTUJ62CV/V5IZLFqsT
+nKCXKW7l95SUuMznVk771Klv8GPA3RnIE1MlxyGWiaB9fE6bi00GbyEvlXJziC6d
+EUGGupUlk2P+FbD3z+pTt7fGiAtZb7LyyBpzKiyhutJMP7KXZZphbKh0AehW6/wH
+ZJefYU3VjB1Ew9OxjTvspISxQWNDOjrZlWwtpIGhpHm79XNwJUfDD4pk+iY09XFD
+p1qUyVxA6m10DpTOopwK41sbdP/Cs8b3VtTYMUoyvh+8igU8vyBRp/EZeJ5d4dtP
+NDY4Af7YbjHmF38mL/NpbxFDXbGdfszVFtpoM2DczH0S0S+yM+Woor15IHXYmoX8
+SDZ4Xv5ypI+qy97OYb354WVizQg5oGoiMCaVITrr4d9OAmeSx9JcPQOf3p3mEp0I
+4xWwwhGVxhEsFYZZnqW7lzOr/PE9g+Dem2yZz7TKb5+Gqhl7P39dsXlkBuxc11yf
+ALBBSI3pP0E7/MoWM7LUm/NGoN31X33k5Svd1V8OOfS0IfWy/zy5cdXf+Y0h4Yns
+6FZLp4Zxa4cads0O7LhJnPjrY5FLX+q3SqrWM5nZpQiI7IQ9CPA=
+=BxOo
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
+
+
+--===============8222620694557647825==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8222620694557647825==--
