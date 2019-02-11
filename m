@@ -1,72 +1,73 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V18 2/6] i2c: tegra: add bus clear Master Support
-Date: Mon, 11 Feb 2019 20:18:15 +0000
-Message-ID: <BYAPR12MB3398A2CABD430EA15FE15CC3C2640@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
- <1549652382-5476-2-git-send-email-skomatineni@nvidia.com>
- <20190211124431.kys66uzp5hwa5ret@ninjato>
+From: Tristan Bastian <tristan-c.bastian@gmx.de>
+Subject: Re: [PATCH v2] ARM: tegra: Restore DT ABI on Tegra124 Chromebooks
+Date: Mon, 11 Feb 2019 20:44:52 +0000
+Message-ID: <20190211204452.Horde.-B4_UgJoWHc85yxQZVtc9wu@_>
+References: <20190211110919.10388-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190211124431.kys66uzp5hwa5ret@ninjato>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "peda@axentia.se" <peda@axentia.se>, "digetx@gmail.com" <digetx@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190211110919.10388-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-> > Bus clear feature of Tegra I2C controller helps to recover from bus=20
-> > hang when I2C master loses the bus arbitration due to the slave device=
-=20
-> > holding SDA LOW continuously for some unknown reasons.
-> >=20
-> > Per I2C specification, the device that held the bus LOW should release=
-=20
-> > it within 9 clock pulses.
-> >=20
-> > During bus clear operation, Tegra I2C controller sends 9 clock pulses=20
-> > and terminates the transaction with STOP condition.
-> > Upon successful bus clear operation, bus goes to idle state and driver=
-=20
-> > retries the transaction.
-> >=20
-> > Acked-by: Thierry Reding <treding@nvidia.com>
-> > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->
-> We have a bus recovery infrastructure in the core. Tying your code into i=
-t should be easy. You probably just need a 'struct i2c_bus_recovery_info', =
-populate the 'recover_bus' callback with 'tegra_i2c_issue_bus_clear()', and=
- attach this struct to the 'struct adapter' if the IP core supports bus rec=
-overy, otherwise leave it empty.
-> Then, you can...
->
-> > +static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev) {
-> > +	int err;
-> > +	unsigned long time_left;
-> > +	u32 reg;
-> > +
-> > +	if (i2c_dev->hw->supports_bus_clear) {
->
->... remove the if here because the core will check for a valid i2c_bus_rec=
-overy_info...
->
-> > @@ -759,6 +818,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev=
- *i2c_dev,
-> >  		return 0;
-> > =20
-> >  	tegra_i2c_init(i2c_dev);
-> > +	/* start recovery upon arbitration loss in single master mode */
-> > +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
-> > +		if (!i2c_dev->is_multimaster_mode)
-> > +			return tegra_i2c_issue_bus_clear(i2c_dev);
->
->... and use simply i2c_recover_bus() here.
->
-> This will help making bus recovery use consistent across drivers.
->
->
-OK, Will update to use i2c_bus_recovery_info
-
-Sowjanya
+VGhpZXJyeSBSZWRpbmcg4oCTIE1vbiwgMTEuIEZlYnJ1YXJ5IDIwMTkgMTI6MDkKPiBGcm9tOiBU
+aGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IENvbW1pdCA0ODI5OTc2OTll
+ZjAgKCJBUk06IHRlZ3JhOiBGaXggdW5pdF9hZGRyZXNzX3ZzX3JlZyBEVEMgd2FybmluZ3MKPiBm
+b3IgL21lbW9yeSIpIGluYWR2ZW50ZW50bHkgYnJva2UgZGV2aWNlIHRyZWUgQUJJIGJ5IGFkZGlu
+ZyBhIHVuaXQtCj4gYWRkcmVzcyB0byB0aGUgIi9tZW1vcnkiIG5vZGUgYmVjYXVzZSB0aGUgZGV2
+aWNlIHRyZWUgY29tcGlsZXIgZmxhZ2dlZAo+IHRoZSBtaXNzaW5nIHVuaXQtYWRkcmVzcyBhcyBh
+IHdhcm5pbmcuCj4gCj4gVGVncmExMjQgQ2hyb21lYm9va3MgKGEuay5hLiBOeWFuKSB1c2UgYSBi
+b290bG9hZGVyIHRoYXQgcmVsaWVzIG9uIHRoZQo+IGZ1bGwgbmFtZSBvZiB0aGUgbWVtb3J5IG5v
+ZGUgaW4gZGV2aWNlIHRyZWUgYmVpbmcgZXhhY3RseSAiL21lbW9yeSIuIEl0Cj4gY2FuIGJlIGFy
+Z3VlZCB3aGV0aGVyIHRoaXMgd2FzIGEgZ29vZCBkZWNpc2lvbiBvciBub3QsIGFuZCBzb21lIG90
+aGVyCj4gYm9vdGxvYWRlcnMgKHN1Y2ggYXMgVS1Cb290KSBkbyBhY2NlcHQgYSB1bml0LWFkZHJl
+c3MgaW4gdGhlIG5hbWUgb2YgdGhlCj4gbm9kZSwgYnV0IHRoZSBkZXZpY2UgdHJlZSBpcyBhbiBB
+QkkgYW5kIHdlIGNhbid0IGJyZWFrIGV4aXN0aW5nIHNldHVwcwo+IGp1c3QgYmVjYXVzZSB0aGUg
+ZGV2aWNlIHRyZWUgY29tcGlsZXIgY29uc2lkZXJzIGl0IGJhZCBwcmFjdGljZSB0byBvbWl0Cj4g
+dGhlIHVuaXQtYWRkcmVzcyBub3dhZGF5cy4KPiAKPiBUaGlzIHBhcnRpYWxseSByZXZlcnRzIHRo
+ZSBvZmZlbmRpbmcgY29tbWl0IGFuZCByZXN0b3JlcyBkZXZpY2UgdHJlZSBBQkkKPiBjb21wYXRp
+YmlsaXR5Lgo+IAo+IEZpeGVzOiA0ODI5OTc2OTllZjAgKCJBUk06IHRlZ3JhOiBGaXggdW5pdF9h
+ZGRyZXNzX3ZzX3JlZyBEVEMgd2FybmluZ3MgZm9yCj4gL21lbW9yeSIpCj4gUmVwb3J0ZWQtYnk6
+IFRyaXN0YW4gQmFzdGlhbiA8dHJpc3Rhbi1jLmJhc3RpYW5AZ214LmRlPgo+IFNpZ25lZC1vZmYt
+Ynk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0tCj4gQ2hhbmdlcyBp
+biB2MjoKPiAtIHJlbW92ZSBtZW1vcnlAODAwMDAwMDAgbm9kZSBwdWxsZWQgaW4gZnJvbSB0ZWdy
+YTEyNC5kdHNpCj4gLSBhZGQgZGV2aWNlX3R5cGUgPSAibWVtb3J5IiBwcm9wZXJ0eQo+IAo+IGFy
+Y2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LW55YW4uZHRzaSB8IDE3ICsrKysrKysrKysrKysrKyst
+Cj4gMSBmaWxlIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAKPiBk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtbnlhbi5kdHNpCj4gYi9hcmNo
+L2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFuLmR0c2kKPiBpbmRleCBkNWYxMWQ2ZDk4N2UuLmJj
+ODViNmExNjZjNyAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFu
+LmR0c2kKPiArKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFuLmR0c2kKPiBAQCAt
+MTMsMTAgKzEzLDI1IEBACj4gc3Rkb3V0LXBhdGggPSAic2VyaWFsMDoxMTUyMDBuOCI7Cj4gfTsK
+PiAKPiAtIG1lbW9yeUA4MDAwMDAwMCB7Cj4gKyAvKgo+ICsgKiBOb3RlIHRoYXQgcmVjZW50IHZl
+cnNpb24gb2YgdGhlIGRldmljZSB0cmVlIGNvbXBpbGVyIChzdGFydGluZyB3aXRoCj4gKyAqIHZl
+cnNpb24gMS40LjIpIHdhcm4gYWJvdXQgdGhpcyBub2RlIGNvbnRhaW5pbmcgYSByZWcgcHJvcGVy
+dHksIGJ1dAo+ICsgKiBtaXNzaW5nIGEgdW5pdC1hZGRyZXNzLiBIb3dldmVyLCB0aGUgYm9vdGxv
+YWRlciBvbiB0aGVzZSBDaHJvbWVib29rCj4gKyAqIGRldmljZXMgcmVsaWVzIG9uIHRoZSBmdWxs
+IG5hbWUgb2YgdGhpcyBub2RlIHRvIGJlIGV4YWN0bHkgL21lbW9yeS4KPiArICogQWRkaW5nIHRo
+ZSB1bml0LWFkZHJlc3MgY2F1c2VzIHRoZSBib290bG9hZGVyIHRvIGNyZWF0ZSBhIC9tZW1vcnkK
+PiArICogbm9kZSBhbmQgd3JpdGUgdGhlIG1lbW9yeSBiYW5rIGNvbmZpZ3VyYXRpb24gdG8gdGhh
+dCBub2RlLCB3aGljaCBpbgo+ICsgKiB0dXJuIGxlYWRzIHRoZSBrZXJuZWwgdG8gYmVsaWV2ZSB0
+aGF0IHRoZSBkZXZpY2UgaGFzIDIgR2lCIG9mCj4gKyAqIG1lbW9yeSBpbnN0ZWFkIG9mIHRoZSBh
+bW91bnQgZGV0ZWN0ZWQgYnkgdGhlIGJvb3Rsb2FkZXIuCj4gKyAqCj4gKyAqIFRoZSBuYW1lIG9m
+IHRoaXMgbm9kZSBpcyBlZmZlY3RpdmVseSBBQkkgYW5kIG11c3Qgbm90IGJlIGNoYW5nZWQuCj4g
+KyAqLwo+ICsgbWVtb3J5IHsKPiArIGRldmljZV90eXBlID0gIm1lbW9yeSI7Cj4gcmVnID0gPDB4
+MCAweDgwMDAwMDAwIDB4MCAweDgwMDAwMDAwPjsKPiB9Owo+IAo+ICsgL2RlbGV0ZS1ub2RlLyBt
+ZW1vcnlAODAwMDAwMDA7Cj4gKwo+IGhvc3QxeEA1MDAwMDAwMCB7Cj4gaGRtaUA1NDI4MDAwMCB7
+Cj4gc3RhdHVzID0gIm9rYXkiOwo+IC0tIAo+IDIuMTkuMQoKVGhhbmtzIFRoaWVycnkKClRyaXN0
+YW4KClRlc3RlZC1ieTogVHJpc3RhbiBCYXN0aWFuIDx0cmlzdGFuLWMuYmFzdGlhbkBnbXguZGU+
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
+cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
+a2VybmVsCg==
