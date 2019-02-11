@@ -1,66 +1,87 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V18 6/6] i2c: tegra: add i2c interface timing support
-Date: Mon, 11 Feb 2019 16:23:37 +0000
-Message-ID: <BYAPR12MB339842E44F370110CFA582FEC2640@BYAPR12MB3398.namprd12.prod.outlook.com>
+Subject: RE: [PATCH V18 4/6] i2c: tegra: Add DMA support
+Date: Mon, 11 Feb 2019 16:26:04 +0000
+Message-ID: <BYAPR12MB3398E24A9C3AC87F601DA1A2C2640@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
- <1549652382-5476-6-git-send-email-skomatineni@nvidia.com>
- <20190211130322.2kpoky3scnqnxulw@ninjato>
+ <1549652382-5476-4-git-send-email-skomatineni@nvidia.com>
+ <20190211125509.tnsgfl3yoobdpnmj@ninjato>
+ <ed92df42-459e-26fd-ce4e-f4530bf30783@gmail.com>
+ <20190211132851.pxrawigdgggoc32k@ninjato>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190211130322.2kpoky3scnqnxulw@ninjato>
+In-Reply-To: <20190211132851.pxrawigdgggoc32k@ninjato>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "peda@axentia.se" <peda@axentia.se>, "digetx@gmail.com" <digetx@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>, "peda@axentia.se" <peda@axentia.se>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> On Fri, Feb 08, 2019 at 10:59:42AM -0800, Sowjanya Komatineni wrote:
-> > This patch adds I2C interface timing registers support for proper bus=20
-> > rate configuration along with meeting the I2C spec setup and hold=20
-> > times based on the tuning performed on Tegra210,
-> > Tegra186 and Tegra194 platforms.
+> > > I am not sure if you are aware of this document, so I mention it:
+> > >=20
+> > > Documentation/i2c/DMA-considerations
+> > >=20
+> > > I am not pushing you to use the i2c_get_dma_safe_msg_buf() helpers,=20
+> > > just wanted to make sure you know about them. I am also fine with an=
+=20
+> > > incremental patch on top of this if you want to add usage of those=20
+> > > helpers somewhen later.
 > >=20
-> > I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field and=20
-> > Tegra I2C controller design uses them as a part of internal clock=20
-> > divisor.
+> > At least I was not aware of those helpers. It looks to me that the=20
+> > approach of having a statically allocated buffer is more optimal than=20
+> > having to allocate and map the buffer on each transfer.
+>
+> Can be argued, yes.
+>
+> > >>  /* Match table for of_platform binding */  static const struct=20
+> > >> of_device_id tegra_i2c_of_match[] =3D {
+> > >>  	{ .compatible =3D "nvidia,tegra194-i2c", .data =3D &tegra194_i2c_h=
+w,=20
+> > >> },
+> > >> +	{ .compatible =3D "nvidia,tegra186-i2c", .data =3D &tegra186_i2c_h=
+w,=20
+> > >> +},
+> > >>  	{ .compatible =3D "nvidia,tegra210-i2c", .data =3D &tegra210_i2c_h=
+w, },
+> > >>  	{ .compatible =3D "nvidia,tegra124-i2c", .data =3D &tegra124_i2c_h=
+w, },
+> > >>  	{ .compatible =3D "nvidia,tegra114-i2c", .data =3D &tegra114_i2c_h=
+w,=20
+> > >> },
+> > >=20
+> > > Shouldn't this be a seperate patch?
 > >=20
-> > I2C_INTERFACE_TIMING_1 register contains the setup and hold times for=20
-> > start and stop conditions.
+> > I asked for this change and no, it shouldn't be a separate patch as it=
+=20
+> > adds "has_apb_dma =3D false" property for T186 that older Tegra's have=
+=20
+> > as "true". Without this change T186 uses tegra_i2c_hw_feature of T210,=
+=20
+> > see [0]. Hence this change is absolutely correct and appropriate for=20
+> > this patch.
+>
+> Then please update the patch description to contain this information.
+>
+Will update commit message about the reason for adding has_apb_dma
+>
+>
+> > > This should definately be a seperate patch. While I am all for=20
+> > > taking it, are you sure it does not regress on older Tegra platforms?
+> > >=20
 > >=20
-> > Acked-by: Thierry Reding <treding@nvidia.com>
-> > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> > Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> > All the patches are tested on older Tegra's (T20/T30 specifically by
+> > me) and we fixed several bugs that were regressing them over the few=20
+> > versions of the patchset. I specifically asked for this change for=20
+> > older Tegra's because the APBDMA driver (T20-T210) is getting=20
+> > registered from the module-init level and hence I2C driver probe is=20
+> > always getting deferred. I'm not sure that it's worth to factor out=20
+> > this hunk into a separate patch as it's directly related to the DMA=20
+> > support addition, maybe worth to mention why this is needed in the=20
+> > commit message.
 >
-> Are you aware that we also have DT bindings for various I2C timing values=
-? They are usually board dependent and not so much SoC dependent.
-> Please check here:
+> At least, this, yes.
 >
-> Documentation/devicetree/bindings/i2c/i2c.txt
+Will update commit message to reflect this...
 >
-> (Oops, I noticed 'i2c-sda-hold-time-ns' is missing from the docs. Will fi=
-x that ASAP)
 >
-> Just saying. The patch here is fine for me. DT support could be added lat=
-er, if you want that.
->
-Hi Wolfram,
-Yes I looked into those and the reason I added them as part of hw_feature i=
-nside driver are
-1. property is in-terms of ns for fall time but the value we program in int=
-erface timing is not exact ns time
-2. Below are the timing parameters need to be programmed for tegra I2C and =
-I don't see equivalent property for each of those
-     TSU_STA : Setup time for repeated START condition
-     THD_STA : Hold time for (repeated) START condition
-     TSU_STO : Setup time for STOP condition
-     TBUF: Bus free time b/w STOP and START conditions
-3. All above Timing configuration settings are different for different spee=
-d modes (STD/FM & FM+/HS Mode)=20
-4. All tegra platforms of specific Tegra chip has the same timing configura=
-tion at-least for now so added this info as part of hw feature inside the d=
-river.
-
-Sowjanya
