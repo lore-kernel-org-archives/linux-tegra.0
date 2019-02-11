@@ -1,81 +1,107 @@
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 3/3] mmc: sdhci-tegra: drop ->get_ro() implementation
-Date: Mon, 11 Feb 2019 14:23:42 +0100
-Message-ID: <20190211132342.31009-4-thomas.petazzoni@bootlin.com>
-References: <20190211132342.31009-1-thomas.petazzoni@bootlin.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH V18 4/6] i2c: tegra: Add DMA support
+Date: Mon, 11 Feb 2019 14:28:51 +0100
+Message-ID: <20190211132851.pxrawigdgggoc32k@ninjato>
+References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
+ <1549652382-5476-4-git-send-email-skomatineni@nvidia.com>
+ <20190211125509.tnsgfl3yoobdpnmj@ninjato>
+ <ed92df42-459e-26fd-ce4e-f4530bf30783@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zeqgcqe6d7redppc"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190211132342.31009-1-thomas.petazzoni@bootlin.com>
+Content-Disposition: inline
+In-Reply-To: <ed92df42-459e-26fd-ce4e-f4530bf30783@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Kishon Vijay Abraham I <kishon@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Thierry Reding <treding@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, peda@axentia.se, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The SDHCI core is know properly checking for the state of a WP GPIO,
-so there is no longer any need for the sdhci-tegra code to implement
-->get_ro() using mmc_gpio_get_ro().
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Tested-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
-Changes since v1:
- - Added Tested-by/Acked-by from Thierry Reding
+--zeqgcqe6d7redppc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note: this patch has only been compiled tested, as I don't have the
-hardware to test it.
----
- drivers/mmc/host/sdhci-tegra.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Hi Dmitry,
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index e6ace31e2a41..6ed7323bf030 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -237,11 +237,6 @@ static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
- 	}
- }
- 
--static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
--{
--	return mmc_gpio_get_ro(host->mmc);
--}
--
- static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -837,7 +832,6 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
- }
- 
- static const struct sdhci_ops tegra_sdhci_ops = {
--	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-@@ -893,7 +887,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- };
- 
- static const struct sdhci_ops tegra114_sdhci_ops = {
--	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_w    = tegra_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
-@@ -947,7 +940,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
- };
- 
- static const struct sdhci_ops tegra210_sdhci_ops = {
--	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_w    = tegra210_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
-@@ -980,7 +972,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- };
- 
- static const struct sdhci_ops tegra186_sdhci_ops = {
--	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
--- 
-2.20.1
+> > I am not sure if you are aware of this document, so I mention it:
+> >=20
+> > Documentation/i2c/DMA-considerations
+> >=20
+> > I am not pushing you to use the i2c_get_dma_safe_msg_buf() helpers,
+> > just wanted to make sure you know about them. I am also fine with an
+> > incremental patch on top of this if you want to add usage of those
+> > helpers somewhen later.
+>=20
+> At least I was not aware of those helpers. It looks to me that the
+> approach of having a statically allocated buffer is more optimal than
+> having to allocate and map the buffer on each transfer.=20
+
+Can be argued, yes.
+
+> >>  /* Match table for of_platform binding */
+> >>  static const struct of_device_id tegra_i2c_of_match[] =3D {
+> >>  	{ .compatible =3D "nvidia,tegra194-i2c", .data =3D &tegra194_i2c_hw,=
+ },
+> >> +	{ .compatible =3D "nvidia,tegra186-i2c", .data =3D &tegra186_i2c_hw,=
+ },
+> >>  	{ .compatible =3D "nvidia,tegra210-i2c", .data =3D &tegra210_i2c_hw,=
+ },
+> >>  	{ .compatible =3D "nvidia,tegra124-i2c", .data =3D &tegra124_i2c_hw,=
+ },
+> >>  	{ .compatible =3D "nvidia,tegra114-i2c", .data =3D &tegra114_i2c_hw,=
+ },
+> >=20
+> > Shouldn't this be a seperate patch?
+>=20
+> I asked for this change and no, it shouldn't be a separate patch as it
+> adds "has_apb_dma =3D false" property for T186 that older Tegra's have
+> as "true". Without this change T186 uses tegra_i2c_hw_feature of T210,
+> see [0]. Hence this change is absolutely correct and appropriate for
+> this patch.
+
+Then please update the patch description to contain this information.
+
+> > This should definately be a seperate patch. While I am all for taking
+> > it, are you sure it does not regress on older Tegra platforms?
+> >=20
+>=20
+> All the patches are tested on older Tegra's (T20/T30 specifically by
+> me) and we fixed several bugs that were regressing them over the few
+> versions of the patchset. I specifically asked for this change for
+> older Tegra's because the APBDMA driver (T20-T210) is getting
+> registered from the module-init level and hence I2C driver probe is
+> always getting deferred. I'm not sure that it's worth to factor out
+> this hunk into a separate patch as it's directly related to the DMA
+> support addition, maybe worth to mention why this is needed in the
+> commit message.
+
+At least, this, yes.
+
+Thanks,
+
+   Wolfram
+
+
+--zeqgcqe6d7redppc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxheI8ACgkQFA3kzBSg
+Kba4nA/+JPpDKhEe1m4cyv2HP4wvhFQWP2VcdBlTmazt9YSoMVd0GHs6jmzVXKF3
+xcz3FFh+8SNP6xjXW62kTOEzSCexbqSSk/uoFMq8o1svZrHvLJv80iQiaIRCXfw6
+jnm/NGlJ92hXTf7TDcMhp+v3QygQda0srZWHWBkSnvBp42rPWVAqMj5kVDCsa1mR
+pFPnhUXVsRsYxh+yjrSVl8LifP7XdaBI3mROQwnJjjKWMgf7GA40odMQwvvagw7o
+kPrNvVGxNajcAftUZkN0rLzBoJq71t5HpRsSX9XsxS9OBvtXRKA+rokeIgrD8vmw
+sc+LbbH/QKc81oPV4tR0Fgpl2lMiTF2q2lkXbkNNlPvhNAFYeeRqBB9M0IEcNZVu
+QOGMRZjbA7BXuN4p5lmQuE7lOOCBfuD+mE6zL/bbAQ66NmlKhrW5u3STHGv9SK4r
+fMWdkU0uQqTHE27mmiEopCTL/LUp0ZdXzUf+xqx9MBO0sFb3G9czVvh4fRZSgZ4D
+Et1qm/TPjZW6sVJGKIWsS4yBVnFnsJ1aFuW85fHYy9151OQ6+rMQ1r0r2xJLzKzr
+1rGa4folV52oLKFPT4SeE4uguMrvnH1XwXShZqQbuDt+59KshvZIluBRLFpQm+an
+ek/jOQaVOBGWEUuVs0VG4KLq5It0rYMtWCYOrF0jPyGntLV8XGA=
+=91ks
+-----END PGP SIGNATURE-----
+
+--zeqgcqe6d7redppc--
