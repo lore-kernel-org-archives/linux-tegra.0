@@ -1,67 +1,33 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V19 1/7] i2c: tegra: sort all the include headers alphabetically
-Date: Tue, 12 Feb 2019 10:28:10 -0800
-Message-ID: <1549996096-6921-1-git-send-email-skomatineni@nvidia.com>
+Subject: RE: [PATCH V19 1/7] i2c: tegra: sort all the include headers
+ alphabetically
+Date: Tue, 12 Feb 2019 18:32:38 +0000
+Message-ID: <BYAPR12MB3398679040C6ED2E129CEBFBC2650@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: wsa@the-dreams.de, peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "peda@axentia.se" <peda@axentia.se>, "digetx@gmail.com" <digetx@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch sorts all the include headers alphabetically for the
-I2C Tegra driver.
+Please ignore all Patch V19 series. Will resend.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V9/V10/V11/V12/V13/V14/V15/V16/V17/V18/V19] : Rebased to 5.0-rc4
- [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
- [V2] 		  : Added this in V2 to sort the headers in tegra I2C
+Dmitry/Thierry
+I am using below stable tags in commit message based on V18 feedback to get=
+ patch applied to old kernels
+Git send email considers whole text after Cc as email address and reports b=
+adly formatted address.
 
+Is there any format that I should follow to specify kernel versions along w=
+ith stable tag?
 
+Cc: stable@vger.kernel.org # 4.4+
+Cc: stable@vger.kernel.org # 4.20+
 
- drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index c77adbbea0c7..79c6aa87499b 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -6,24 +6,21 @@
-  * Author: Colin Cross <ccross@android.com>
-  */
- 
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/platform_device.h>
- #include <linux/clk.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
--#include <linux/io.h>
-+#include <linux/init.h>
- #include <linux/interrupt.h>
--#include <linux/delay.h>
--#include <linux/slab.h>
--#include <linux/of_device.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/reset.h>
-+#include <linux/of_device.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
--#include <linux/iopoll.h>
--
--#include <asm/unaligned.h>
-+#include <linux/reset.h>
- 
- #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
- #define BYTES_PER_FIFO_WORD 4
--- 
-2.7.4
+Thanks
+Sowjanya
