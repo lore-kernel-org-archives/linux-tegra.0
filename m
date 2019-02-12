@@ -1,29 +1,40 @@
-From: Peter Rosin <peda@axentia.se>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V19 1/7] i2c: tegra: sort all the include headers
  alphabetically
-Date: Tue, 12 Feb 2019 21:00:51 +0000
-Message-ID: <de27b8f8-ba8e-fca7-6bdc-cdd580d959e6@axentia.se>
+Date: Wed, 13 Feb 2019 00:15:13 +0300
+Message-ID: <cdb66da2-4886-e3ba-e78e-264bd4b5b73c@gmail.com>
 References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
+ <de27b8f8-ba8e-fca7-6bdc-cdd580d959e6@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <de27b8f8-ba8e-fca7-6bdc-cdd580d959e6@axentia.se>
 Content-Language: en-US
-Content-ID: <DCDDB3F2B27DCE45B6B60A2DE13E2BFC@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mkarthik@nvidia.com" <mkarthik@nvidia.com>, "smohammed@nvidia.com" <smohammed@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>
-Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "digetx@gmail.com" <digetx@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Peter Rosin <peda@axentia.se>, Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mkarthik@nvidia.com" <mkarthik@nvidia.com>, "smohammed@nvidia.com" <smohammed@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>
+Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjAxOS0wMi0xMiAyMDowNiwgU293amFueWEgS29tYXRpbmVuaSB3cm90ZToNCj4gVGhpcyBw
-YXRjaCBzb3J0cyBhbGwgdGhlIGluY2x1ZGUgaGVhZGVycyBhbHBoYWJldGljYWxseSBmb3IgdGhl
-DQo+IEkyQyBUZWdyYSBkcml2ZXIuDQo+IA0KPiBBY2tlZC1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
-ZWRpbmdAbnZpZGlhLmNvbT4NCj4gUmV2aWV3ZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4
-QGdtYWlsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogU293amFueWEgS29tYXRpbmVuaSA8c2tvbWF0
-aW5lbmlAbnZpZGlhLmNvbT4NCj4gLS0tDQo+ICBbVjkvVjEwL1YxMS9WMTIvVjEzL1YxNC9WMTUv
-VjE2L1YxNy9WMTgvVjE5XSA6IFJlYmFzZWQgdG8gNS4wLXJjNA0KPiAgW1YzL1Y0L1Y1L1Y3L1Y4
-XSA6IFJlbW92ZWQgdW5zdWVkIGhlYWRlcnMgaW4gdGVncmEgSTJDDQoNCiJeIEhlYWRlciByZW1v
-dmFsIHNob3VsZCBiZSBtZW50aW9uZWQgaW4gdGhlIGNvbW1pdCBtZXNzYWdlLCBJIHRoaW5rLiIN
-Ci0gV29sZnJhbSBTYW5nIFswXQ0KDQpDaGVlcnMsDQpQZXRlcg0KDQpbMF0gaHR0cHM6Ly9sa21s
-Lm9yZy9sa21sLzIwMTkvMi8xMS8zNzUNCg==
+13.02.2019 0:00, Peter Rosin пишет:
+> On 2019-02-12 20:06, Sowjanya Komatineni wrote:
+>> This patch sorts all the include headers alphabetically for the
+>> I2C Tegra driver.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  [V9/V10/V11/V12/V13/V14/V15/V16/V17/V18/V19] : Rebased to 5.0-rc4
+>>  [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+> 
+> "^ Header removal should be mentioned in the commit message, I think."
+> - Wolfram Sang [0]
+> 
+> Cheers,
+> Peter
+> 
+> [0] https://lkml.org/lkml/2019/2/11/375
+> 
+
+It could make sense to adjust the comment only if there will be anything else worthwhile a new revision, otherwise it is not-so-important. 
