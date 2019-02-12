@@ -1,35 +1,61 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: [PATCH v3 0/4] Add max77620 charging & low battery support
-Date: Tue, 12 Feb 2019 14:43:49 +0800
-Message-ID: <20190212064353.7451-1-markz@nvidia.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 0/4] Add max77620 charging & low battery support
+Date: Tue, 12 Feb 2019 08:04:57 +0000
+Message-ID: <20190212080457.GL20638@dell>
+References: <20190129085531.32364-1-markz@nvidia.com>
+ <20190207084836.GF4672@dell>
+ <a43eb007-c984-a209-2b4e-6672807029aa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <a43eb007-c984-a209-2b4e-6672807029aa@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>
+To: Mark Zhang <markz@nvidia.com>
+Cc: blaws05@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch set adds support for max77620 backup battery charging and
-low battery monitoring.
+On Tue, 12 Feb 2019, Mark Zhang wrote:
 
-Changes in v3:
-- Add unit suffix to backup battery charging dts properties
-- Reduce/optimize the low battery monitoring dts properties
+> On 2/7/2019 4:48 PM, Lee Jones wrote:
+> > On Tue, 29 Jan 2019, Mark Zhang wrote:
+> > 
+> >> This patch set adds support for max77620 backup battery charging and
+> >> low battery monitoring.
+> >>
+> >> Changes in v2:
+> >> - Add devicetree binding documentation
+> >>
+> >> Mark Zhang (4):
+> >>   mfd: max77620: Add backup battery charger support
+> >>   mfd: max77620: add documentation for backup battery charging
+> >>   mfd: max77620: Add low battery monitor support
+> >>   mfd: max77620: add documentation for low battery monitoring
+> >>
+> >>  .../devicetree/bindings/mfd/max77620.txt      |  34 +++++
+> >>  drivers/mfd/max77620.c                        | 137 +++++++++++++++++-
+> > 
+> > All of this needs moving out to the correct subsystem.
+> > 
+> > drivers/power/supply/max77620-battery.c looks right.
+> 
+> Actually max77620 is not a power supply device. This patch set adds 2
+> features:
+> - Backup battery charger. The RTC in max77620 is supplied from a backup
+> battery and consumes 2.0uA when no other power sources are available. So
+> basically this is not a system battery charger, it's just for RTC.
+> - Low battery monitoring. This is for monitoring the system main battery
+> voltage, so max77620 can shutdown or reset the SoC accordingly. But I
+> think this doesn't conform the idea of "power supply" driver as well.
 
-Changes in v2:
-- Add devicetree binding documentation
+Most other battery handling seems to happen in
+drivers/power/supply/*.battery*.  If that's not the right location,
+then you need to find a place for it to go.  MFDs do not provide
+useful functionality per say - that is the role of the child devices.
 
-Mark Zhang (4):
-  mfd: max77620: Add backup battery charger support
-  mfd: max77620: add documentation for backup battery charging
-  mfd: max77620: Add low battery monitor support
-  mfd: max77620: add documentation for low battery monitoring
-
- .../devicetree/bindings/mfd/max77620.txt      |  34 ++++++
- drivers/mfd/max77620.c                        | 115 +++++++++++++++++-
- 2 files changed, 148 insertions(+), 1 deletion(-)
-
---=20
-2.19.2
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
