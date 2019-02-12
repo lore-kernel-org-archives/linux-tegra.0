@@ -1,29 +1,51 @@
-From: Philippe Schenker <philippe.schenker@toradex.com>
-Subject: Re: [PATCH 0/2] Adding DTS to support STMPE811 ADC on Toradex Boards
-Date: Tue, 12 Feb 2019 09:18:27 +0000
-Message-ID: <f635ea20437d8a716b56e7a579ce90d86dc2c2d0.camel@toradex.com>
-References: <20190122132135.5012-1-dev@pschenker.ch>
-         <20190201033633.GE19882@dragon> <20190212090954.GP22487@dragon>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 000/137] 4.9.156-stable review
+Date: Tue, 12 Feb 2019 10:13:35 +0000
+Message-ID: <1cc961d6-cc8d-070d-26ee-422731c00efc@nvidia.com>
+References: <20190211141811.964925535@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190212090954.GP22487@dragon>
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 Content-Language: en-US
-Content-ID: <2B919EDEC12B004EA2C62F5E8FB69376@eurprd05.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "linux-imx@nxp.com" <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "stefan@agner.ch" <stefan@agner.ch>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>, Max Krummenacher <max.krummenacher@toradex.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTAyLTEyIGF0IDE3OjA5ICswODAwLCBTaGF3biBHdW8gd3JvdGU6DQo+IE9u
-IEZyaSwgRmViIDAxLCAyMDE5IGF0IDExOjM2OjM0QU0gKzA4MDAsIFNoYXduIEd1byB3cm90ZToN
-Cj4gPiBPbiBUdWUsIEphbiAyMiwgMjAxOSBhdCAwMjoyMTozM1BNICswMTAwLCBQaGlsaXBwZSBT
-Y2hlbmtlciB3cm90ZToNCj4gPiA+IFBoaWxpcHBlIFNjaGVua2VyICgyKToNCj4gPiA+ICAgQVJN
-OiBkdHM6IEFkZCBzdG1wZS1hZGMgRFQgbm9kZSB0byBUb3JhZGV4IGlNWDYgbW9kdWxlcw0KPiA+
-ID4gICBBUk06IGR0czogQWRkIHN0bXBlLWFkYyBEVCBub2RlIHRvIFRvcmFkZXggVDMwIG1vZHVs
-ZXMNCj4gPiANCj4gPiBBcHBsaWVkIGJvdGgsIHRoYW5rcy4NCj4gDQo+IFNvcnJ5LCB0aGUgVDMw
-IG9uZSBzaG91bGRuJ3QgYmUgYXBwbGllZCBieSBtZS4gIERyb3BwZWQgZnJvbSBteSB0cmVlLg0K
-PiANCj4gU2hhd24NCg0KQFRoaWVycnkgY291bGQgeW91IHRoZW4gcGxlYXNlIHB1bGwgIkFSTTog
-ZHRzOiBBZGQgc3RtcGUtYWRjIERUIG5vZGUgdG8gVG9yYWRleA0KVDMwIG1vZHVsZXMiID8gVGhh
-bmtzIGEgbG90IQ0KDQpQaGlsaXBwZQ0K
+
+On 11/02/2019 14:18, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.156 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Feb 13 14:17:22 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.156-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
+
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
+
+Linux version:	4.9.156-rc1-g850a7fe
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
