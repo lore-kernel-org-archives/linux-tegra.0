@@ -1,7 +1,7 @@
 From: Mark Zhang <markz@nvidia.com>
-Subject: [PATCH v3 2/4] mfd: max77620: add documentation for backup battery charging
-Date: Tue, 12 Feb 2019 14:43:51 +0800
-Message-ID: <20190212064353.7451-3-markz@nvidia.com>
+Subject: [PATCH v3 3/4] mfd: max77620: Add low battery monitor support
+Date: Tue, 12 Feb 2019 14:43:52 +0800
+Message-ID: <20190212064353.7451-4-markz@nvidia.com>
 References: <20190212064353.7451-1-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -10,53 +10,73 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190212064353.7451-1-markz@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Adding documentation for 3 new backup battery charging dts
-properties:
-- maxim,charging-current-microamp
-- maxim,charging-voltage-microvolt
-- maxim,output-resister-ohms
+This patch adds PMIC configurations for low-battery
+monitoring by handling max77620 register CNFGGLBL1.
 
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
 Signed-off-by: Mark Zhang <markz@nvidia.com>
 ---
- .../devicetree/bindings/mfd/max77620.txt      | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/mfd/max77620.c | 35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documenta=
-tion/devicetree/bindings/mfd/max77620.txt
-index 9c16d51cc15b..88825eaf2567 100644
---- a/Documentation/devicetree/bindings/mfd/max77620.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77620.txt
-@@ -122,6 +122,26 @@ For DT binding details of different sub modules like G=
-PIO, pincontrol,
- regulator, power, please refer respective device-tree binding document
- under their respective sub-system directories.
+diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+index 494d98357f65..6f0c85b2ca26 100644
+--- a/drivers/mfd/max77620.c
++++ b/drivers/mfd/max77620.c
+@@ -474,6 +474,35 @@ static int max77620_init_backup_battery_charging(struc=
+t max77620_chip *chip)
+ 	return ret;
+ }
 =20
-+Backup Battery:
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+This sub-node configure charging backup battery of the device. Device has
-+support of charging the backup battery. The subnode name is "backup-batter=
-y".
-+The property for backup-battery child nodes as:
-+Presence of this child node will enable the backup battery charging.
++static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
++{
++	struct device *dev =3D chip->dev;
++	bool bval;
++	int ival;
++	u8 mask =3D 0;
++	u8 val =3D 0;
++	int ret;
 +
-+Optional properties:
-+	-maxim,charging-current-microamp: Charging current setting.
-+			The device supports 50/100/200/400/600/800uA.
-+			If this property is unavailable then it will
-+			charge with 50uA.
-+	-maxim,charging-voltage-microvolt: Charging Voltage Limit Setting.
-+			Device supports 2500000/3000000/3300000/350000uV.
-+			Default will be set to 2500mV. The voltage will be roundoff
-+			to nearest lower side if other than above is configured.
-+	-maxim,output-resister-ohms: Output resistor on Ohm.
-+			Device supports 100/1000/3000/6000 Ohms.
-+			Default will be set to 1000 Ohm.
++	mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
++	bval =3D of_property_read_bool(dev->of_node,
++			"maxim,low-battery-dac-enable");
++	if (bval)
++		val |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
 +
- Example:
- --------
- #include <dt-bindings/mfd/max77620.h>
++	mask |=3D MAX77620_CNFGGLBL1_LBRSTEN | MAX77620_CNFGGLBL1_MPPLD;
++	ival =3D of_property_match_string(dev->of_node,
++			"maxim,low-battery-mode", "shutdown");
++	if (ival < 0)
++		val |=3D MAX77620_CNFGGLBL1_LBRSTEN;
++	else
++		val |=3D MAX77620_CNFGGLBL1_MPPLD;
++
++	ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val)=
+;
++	if (ret < 0)
++		dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
++	return ret;
++}
++
+ static int max77620_read_es_version(struct max77620_chip *chip)
+ {
+ 	unsigned int val;
+@@ -563,7 +592,11 @@ static int max77620_probe(struct i2c_client *client,
+ 	if (ret < 0)
+ 		return ret;
+=20
+-	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
++	ret =3D max77620_init_low_battery_monitor(chip);
++	if (ret < 0)
++		return ret;
++
++	ret =3D devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+ 				    mfd_cells, n_mfd_cells, NULL, 0,
+ 				    regmap_irq_get_domain(chip->top_irq_data));
+ 	if (ret < 0) {
 --=20
 2.19.2
