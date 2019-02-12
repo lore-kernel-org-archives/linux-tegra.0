@@ -1,75 +1,67 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH v3 1/3] mmc: sdhci: use WP GPIO in sdhci_check_ro()
-Date: Tue, 12 Feb 2019 16:09:51 +0200
-Message-ID: <1d4ce18e-bc43-bd7e-f4a6-5d5d1c408948@intel.com>
-References: <20190212140737.8668-1-thomas.petazzoni@bootlin.com>
- <20190212140737.8668-2-thomas.petazzoni@bootlin.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V19 1/7] i2c: tegra: sort all the include headers alphabetically
+Date: Tue, 12 Feb 2019 10:27:55 -0800
+Message-ID: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190212140737.8668-2-thomas.petazzoni@bootlin.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Kishon Vijay Abraham I <kishon@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Gregory Clement <gregory.clement@bootlin.com>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc: wsa@the-dreams.de, peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/02/19 4:07 PM, Thomas Petazzoni wrote:
-> Even though SDHCI controllers may have a dedicated WP pin that can be
-> queried using the SDHCI_PRESENT_STATE register, some platforms may
-> chose to use a separate regular GPIO to route the WP signal. Such a
-> GPIO is typically represented using the wp-gpios property in the
-> Device Tree.
-> 
-> Unfortunately, the current sdhci_check_ro() function does not make use
-> of such GPIO when available: it either uses a host controller specific
-> ->get_ro() operation, or uses the SDHCI_PRESENT_STATE. Several host
-> controller specific ->get_ro() functions are implemented just to check
-> a WP GPIO state.
-> 
-> Instead of pushing this to more controller-specific implementations,
-> let's handle this in the core SDHCI code, just like it is already done
-> for the CD GPIO in sdhci_get_cd().
-> 
-> The below patch simply changes sdhci_check_ro() to use the value of
-> the WP GPIO if available.
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+This patch sorts all the include headers alphabetically for the
+I2C Tegra driver.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V9/V10/V11/V12/V13/V14/V15/V16/V17/V18/V19] : Rebased to 5.0-rc4
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] 		  : Added this in V2 to sort the headers in tegra I2C
 
-> ---
-> Changes since v2:
-> 
->  - As suggested by Adrian Hunter, keep the argument of
->    sdhci_check_ro() as it is: a "struct sdhci_host*"
-> 
-> Changes since v1:
-> 
->  - As suggested by Adrian Hunter, call the ->get_ro() if it exists
->    before falling back to using mmc_gpio_get_ro(). Indeed, if the
->    controller-specific code has implemented a ->get_ro() callback, it
->    should take precedence over what the SDHCI core does.
-> 
->    Due to this change, I have not added Thierry Redding Reviewed-by.
-> 
->  - Fix typo in the commit log noticed by Thierry Redding.
-> ---
->  drivers/mmc/host/sdhci.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index df05352b6a4a..b3444d12c8c8 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -2033,6 +2033,8 @@ static int sdhci_check_ro(struct sdhci_host *host)
->  		is_readonly = 0;
->  	else if (host->ops->get_ro)
->  		is_readonly = host->ops->get_ro(host);
-> +	else if (mmc_can_gpio_ro(host->mmc))
-> +		is_readonly = mmc_gpio_get_ro(host->mmc);
->  	else
->  		is_readonly = !(sdhci_readl(host, SDHCI_PRESENT_STATE)
->  				& SDHCI_WRITE_PROTECT);
-> 
+
+
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c77adbbea0c7..79c6aa87499b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
