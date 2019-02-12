@@ -1,58 +1,67 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v2 2/3] mmc: sdhci-omap: drop ->get_ro() implementation
-Date: Tue, 12 Feb 2019 13:43:33 +0530
-Message-ID: <2f0ccc6c-9d35-ccf1-7587-7ad0ebfe6e97@ti.com>
-References: <20190211132342.31009-1-thomas.petazzoni@bootlin.com>
- <20190211132342.31009-3-thomas.petazzoni@bootlin.com>
- <0af919d0-3a35-7aa1-bdd1-4d42128809c9@intel.com>
+From: Mark Zhang <markz@nvidia.com>
+Subject: Re: [PATCH v2 0/4] Add max77620 charging & low battery support
+Date: Tue, 12 Feb 2019 16:29:51 +0800
+Message-ID: <4d0a1e3c-becd-70a8-920f-a37ee1ee48cc@nvidia.com>
+References: <20190129085531.32364-1-markz@nvidia.com>
+ <20190207084836.GF4672@dell>
+ <a43eb007-c984-a209-2b4e-6672807029aa@nvidia.com>
+ <20190212080457.GL20638@dell>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0af919d0-3a35-7aa1-bdd1-4d42128809c9@intel.com>
+In-Reply-To: <20190212080457.GL20638@dell>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>, Thierry Reding <treding@nvidia.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: blaws05@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 12/02/19 1:41 PM, Adrian Hunter wrote:
-> On 11/02/19 3:23 PM, Thomas Petazzoni wrote:
->> The SDHCI core is now properly checking for the state of a WP GPIO,
->> so there is no longer any need for the sdhci-omap code to implement
->> ->get_ro() using mmc_gpio_get_ro().
->>
->> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
->> Reviewed-by: Thierry Reding <treding@nvidia.com>
+On 2/12/2019 4:04 PM, Lee Jones wrote:
+> On Tue, 12 Feb 2019, Mark Zhang wrote:
 > 
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+>> On 2/7/2019 4:48 PM, Lee Jones wrote:
+>>> On Tue, 29 Jan 2019, Mark Zhang wrote:
+>>>
+>>>> This patch set adds support for max77620 backup battery charging and
+>>>> low battery monitoring.
+>>>>
+>>>> Changes in v2:
+>>>> - Add devicetree binding documentation
+>>>>
+>>>> Mark Zhang (4):
+>>>>   mfd: max77620: Add backup battery charger support
+>>>>   mfd: max77620: add documentation for backup battery charging
+>>>>   mfd: max77620: Add low battery monitor support
+>>>>   mfd: max77620: add documentation for low battery monitoring
+>>>>
+>>>>  .../devicetree/bindings/mfd/max77620.txt      |  34 +++++
+>>>>  drivers/mfd/max77620.c                        | 137 +++++++++++++++++-
+>>>
+>>> All of this needs moving out to the correct subsystem.
+>>>
+>>> drivers/power/supply/max77620-battery.c looks right.
+>>
+>> Actually max77620 is not a power supply device. This patch set adds 2
+>> features:
+>> - Backup battery charger. The RTC in max77620 is supplied from a backup
+>> battery and consumes 2.0uA when no other power sources are available. So
+>> basically this is not a system battery charger, it's just for RTC.
+>> - Low battery monitoring. This is for monitoring the system main battery
+>> voltage, so max77620 can shutdown or reset the SoC accordingly. But I
+>> think this doesn't conform the idea of "power supply" driver as well.
+> 
+> Most other battery handling seems to happen in
+> drivers/power/supply/*.battery*.  If that's not the right location,
+> then you need to find a place for it to go.  MFDs do not provide
+> useful functionality per say - that is the role of the child devices.
+> 
 
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> 
->> ---
->> Changes since v1:
->> - Added Reviewed-by from Thierry Reding
->> - Fix typo in commit log s/know/now/ noticed by Thierry Reding
->>
->> Note: this patch has only been compiled tested, as I don't have the
->> hardware to test it.
->> ---
->>  drivers/mmc/host/sdhci-omap.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
->> index d264391616f9..c2a28930086f 100644
->> --- a/drivers/mmc/host/sdhci-omap.c
->> +++ b/drivers/mmc/host/sdhci-omap.c
->> @@ -987,7 +987,6 @@ static int sdhci_omap_probe(struct platform_device *pdev)
->>  		goto err_put_sync;
->>  	}
->>  
->> -	host->mmc_host_ops.get_ro = mmc_gpio_get_ro;
->>  	host->mmc_host_ops.start_signal_voltage_switch =
->>  					sdhci_omap_start_signal_voltage_switch;
->>  	host->mmc_host_ops.set_ios = sdhci_omap_set_ios;
->>
-> 
+Understood. Looking at "enum power_supply_property", battery handling
+drivers are able to get battery capacity/current
+voltage/temperature/status/... and etc, which is making sense. But my
+patch set doesn't do this kind of things at all so I think the power
+supply framework doesn't fit here. Let me check other similar device
+drivers... hope to get inspired. Thanks Lee.
+
+Mark
