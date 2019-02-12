@@ -1,57 +1,66 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 000/205] 4.14.99-stable review
-Date: Tue, 12 Feb 2019 10:19:57 +0000
-Message-ID: <d91e568f-643c-1226-2592-6e24baadb01a@nvidia.com>
-References: <20190211141827.214852402@linuxfoundation.org>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v3 0/3] mmc: Introduce support for WP GPIO in the core SDHCI
+Date: Tue, 12 Feb 2019 15:07:34 +0100
+Message-ID: <20190212140737.8668-1-thomas.petazzoni@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Kishon Vijay Abraham I <kishon@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Gregory Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
-On 11/02/2019 14:16, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.99 release.
-> There are 205 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Feb 13 14:17:19 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.99-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-All tests are passing for Tegra ...
+While doing the bring up of a Zynq 7000 platform where the WP signal
+of a SD slot is connected to a regular GPIO rather than through the
+SDHCI WP pin, I realized that the GPIO described by wp-gpios was
+properly requested, but it was in fact not used at all.
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
+Indeed, the SDHCI core implements sdhci_check_ro() by:
 
-Linux version:	4.14.99-rc1-g151d638
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+ - Calling a controller-specific ->get_ro() callback if it exists. A
+   few controller-specific drivers implement this, but not
+   sdhci-of-arasan, which is used on Zynq 7000.
 
-BTW, I did not seem to receive a 'stable review' for v4.4.175-rc1. I am
-not sure if it is just me, but that last one I see in the archive for
-v4.4 [0] is v4.4-174-rc1.
+ - Using the SDHCI_PRESENT_STATE register, which reports the state of
+   the SDHCI interface WP pin, and obvisouly not the state of a
+   separate WP GPIO.
 
-Cheers
-Jon
+This patch series therefore changes sdhci_check_ro() to behave like
+sdhci_get_cd(): use a GPIO first if available, and if not, fallback to
+using the SDHCI_PRESENT_STATE register. Indeed, if there's a wp-gpios
+described in the DT, it quite certainly indicates that the SDHCI WP
+signal is not used, and the WP GPIO should be used instead.
 
-[0] https://www.spinics.net/lists/stable/
+As part of this series, two SDHCI drivers are modified to no longer
+implement their custom ->get_ro() hook, since the core SDHCI now does
+the right thing with the WP GPIO.
+
+Changes since v2:
+- Don't change the argument passed to sdhci_check_ro(), as requested
+  by Adrian Hunter.
+- Collect Acked-by from Adrian Hunter on PATCH 2 and PATCH 3.
+
+Changes since v1:
+- Call the ->get_ro() callback before using the WP GPIO in the core,
+  as suggested by Adrian Hunter.
+- Fix typoes in commit logs.
+- Collect Reviewed-by/Tested-by/Acked-by tags.
+
+Best regards,
+
+Thomas
+
+Thomas Petazzoni (3):
+  mmc: sdhci: use WP GPIO in sdhci_check_ro()
+  mmc: sdhci-omap: drop ->get_ro() implementation
+  mmc: sdhci-tegra: drop ->get_ro() implementation
+
+ drivers/mmc/host/sdhci-omap.c  | 1 -
+ drivers/mmc/host/sdhci-tegra.c | 9 ---------
+ drivers/mmc/host/sdhci.c       | 2 ++
+ 3 files changed, 2 insertions(+), 10 deletions(-)
 
 -- 
-nvpublic
+2.20.1
