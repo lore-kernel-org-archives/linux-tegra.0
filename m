@@ -1,12 +1,12 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: [PATCH V19 2/7] i2c: tegra: add bus clear Master Support
-Date: Tue, 12 Feb 2019 10:27:56 -0800
-Message-ID: <1549996081-6858-2-git-send-email-skomatineni@nvidia.com>
-References: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
+Date: Tue, 12 Feb 2019 10:28:11 -0800
+Message-ID: <1549996096-6921-2-git-send-email-skomatineni@nvidia.com>
+References: <1549996096-6921-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1549996096-6921-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
 Cc: wsa@the-dreams.de, peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
