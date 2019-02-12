@@ -1,33 +1,59 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V19 1/7] i2c: tegra: sort all the include headers
- alphabetically
-Date: Tue, 12 Feb 2019 18:32:38 +0000
-Message-ID: <BYAPR12MB3398679040C6ED2E129CEBFBC2650@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/205] 4.14.99-stable review
+Date: Tue, 12 Feb 2019 19:39:26 +0100
+Message-ID: <20190212183926.GE14892@kroah.com>
+References: <20190211141827.214852402@linuxfoundation.org>
+ <d91e568f-643c-1226-2592-6e24baadb01a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <d91e568f-643c-1226-2592-6e24baadb01a@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
-Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "peda@axentia.se" <peda@axentia.se>, "digetx@gmail.com" <digetx@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Please ignore all Patch V19 series. Will resend.
+On Tue, Feb 12, 2019 at 10:19:57AM +0000, Jon Hunter wrote:
+> 
+> On 11/02/2019 14:16, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.99 release.
+> > There are 205 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Feb 13 14:17:19 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.99-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v4.14:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
+> 
+> Linux version:	4.14.99-rc1-g151d638
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Dmitry/Thierry
-I am using below stable tags in commit message based on V18 feedback to get=
- patch applied to old kernels
-Git send email considers whole text after Cc as email address and reports b=
-adly formatted address.
+Thanks for testing 2 of these.
 
-Is there any format that I should follow to specify kernel versions along w=
-ith stable tag?
+> BTW, I did not seem to receive a 'stable review' for v4.4.175-rc1. I am
+> not sure if it is just me, but that last one I see in the archive for
+> v4.4 [0] is v4.4-174-rc1.
 
-Cc: stable@vger.kernel.org # 4.4+
-Cc: stable@vger.kernel.org # 4.20+
+No, I didn't do a "real" 4.4-rc just yet, I wanted to get these 4
+kernels out first.
 
-Thanks
-Sowjanya
+thanks,
+
+greg k-h
