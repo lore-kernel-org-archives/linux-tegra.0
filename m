@@ -1,40 +1,61 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V19 1/7] i2c: tegra: sort all the include headers
- alphabetically
-Date: Wed, 13 Feb 2019 00:15:13 +0300
-Message-ID: <cdb66da2-4886-e3ba-e78e-264bd4b5b73c@gmail.com>
-References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
- <de27b8f8-ba8e-fca7-6bdc-cdd580d959e6@axentia.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH v2 2/4] media: tegra-cec: fix possible object reference leak
+Date: Wed, 13 Feb 2019 07:45:29 +0800
+Message-ID: <1550015129-41867-1-git-send-email-wen.yang99@zte.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <de27b8f8-ba8e-fca7-6bdc-cdd580d959e6@axentia.se>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mkarthik@nvidia.com" <mkarthik@nvidia.com>, "smohammed@nvidia.com" <smohammed@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>
-Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: hans.verkuil@cisco.com
+Cc: mchehab@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>, "Hans Verkuil (hansverk)" <hansverk@cisco.com>, Wen Yang <yellowriver2010@hotmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-13.02.2019 0:00, Peter Rosin пишет:
-> On 2019-02-12 20:06, Sowjanya Komatineni wrote:
->> This patch sorts all the include headers alphabetically for the
->> I2C Tegra driver.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  [V9/V10/V11/V12/V13/V14/V15/V16/V17/V18/V19] : Rebased to 5.0-rc4
->>  [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
-> 
-> "^ Header removal should be mentioned in the commit message, I think."
-> - Wolfram Sang [0]
-> 
-> Cheers,
-> Peter
-> 
-> [0] https://lkml.org/lkml/2019/2/11/375
-> 
+The call to of_parse_phandle() returns a node pointer with refcount
+incremented thus it must be explicitly decremented here after the last
+usage.
+The of_find_device_by_node() takes a reference to the underlying device
+structure, we also should release that reference.
 
-It could make sense to adjust the comment only if there will be anything else worthwhile a new revision, otherwise it is not-so-important. 
+Hans Verkuil says:
+The cec driver should never take a reference of the hdmi device.
+It never accesses the HDMI device, it only needs the HDMI device pointer as
+a key in the notifier list.
+The real problem is that several CEC drivers take a reference of the HDMI
+device and never release it. So those drivers need to be fixed.
+
+This patch fixes those two issues.
+Fixes: 9d2d60687c9a ("media: tegra-cec: add Tegra HDMI CEC driver")
+Suggested-by: Hans Verkuil (hansverk) <hansverk@cisco.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Hans Verkuil (hansverk) <hansverk@cisco.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Wen Yang <yellowriver2010@hotmail.com>
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+---
+v2->v1: 
+- move of_node_put() to just after the 'hdmi_dev = of_find_device_by_node(np)'.
+- put_device() can be done before the cec = devm_kzalloc line.
+
+ drivers/media/platform/tegra-cec/tegra_cec.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/platform/tegra-cec/tegra_cec.c
+index aba488c..e99991b 100644
+--- a/drivers/media/platform/tegra-cec/tegra_cec.c
++++ b/drivers/media/platform/tegra-cec/tegra_cec.c
+@@ -340,9 +340,11 @@ static int tegra_cec_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 	hdmi_dev = of_find_device_by_node(np);
++	of_node_put(np);
+ 	if (hdmi_dev == NULL)
+ 		return -EPROBE_DEFER;
+ 
++	put_device(&hdmi_dev->dev);
+ 	cec = devm_kzalloc(&pdev->dev, sizeof(struct tegra_cec), GFP_KERNEL);
+ 
+ 	if (!cec)
+-- 
+2.9.5
