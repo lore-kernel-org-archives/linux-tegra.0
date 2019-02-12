@@ -1,35 +1,34 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V19 1/7] i2c: tegra: sort all the include headers
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V19 1/7] i2c: tegra: sort all the include headers
  alphabetically
-Date: Tue, 12 Feb 2019 21:42:19 +0300
-Message-ID: <7143cefd-8c8f-e010-90db-5ac46aa96105@gmail.com>
+Date: Tue, 12 Feb 2019 18:45:19 +0000
+Message-ID: <BYAPR12MB339831225CE6B8196B5F4B52C2650@BYAPR12MB3398.namprd12.prod.outlook.com>
 References: <1549996081-6858-1-git-send-email-skomatineni@nvidia.com>
  <BYAPR12MB3398679040C6ED2E129CEBFBC2650@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <7143cefd-8c8f-e010-90db-5ac46aa96105@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398679040C6ED2E129CEBFBC2650@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <7143cefd-8c8f-e010-90db-5ac46aa96105@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Shardar Mohammed <smohammed@nvidia.com>, Timo Alho <talho@nvidia.com>
 Cc: "wsa@the-dreams.de" <wsa@the-dreams.de>, "peda@axentia.se" <peda@axentia.se>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-12.02.2019 21:32, Sowjanya Komatineni пишет:
-> Please ignore all Patch V19 series. Will resend.
-> 
-> Dmitry/Thierry
-> I am using below stable tags in commit message based on V18 feedback to get patch applied to old kernels
-> Git send email considers whole text after Cc as email address and reports badly formatted address.
-> 
-> Is there any format that I should follow to specify kernel versions along with stable tag?
-> 
-> Cc: stable@vger.kernel.org # 4.4+
-> Cc: stable@vger.kernel.org # 4.20+
-
-You could ask send-email to not auto-include CC's from the commit message: 
-
-git send-email --suppress-cc=all
-
-Also see https://git-scm.com/docs/git-send-email#git-send-email---suppress-ccltcategorygt for more options.
+PiAxMi4wMi4yMDE5IDIxOjMyLCBTb3dqYW55YSBLb21hdGluZW5pINC/0LjRiNC10YI6DQo+ID4g
+UGxlYXNlIGlnbm9yZSBhbGwgUGF0Y2ggVjE5IHNlcmllcy4gV2lsbCByZXNlbmQuDQo+ID4gDQo+
+ID4gRG1pdHJ5L1RoaWVycnkNCj4gPiBJIGFtIHVzaW5nIGJlbG93IHN0YWJsZSB0YWdzIGluIGNv
+bW1pdCBtZXNzYWdlIGJhc2VkIG9uIFYxOCBmZWVkYmFjayANCj4gPiB0byBnZXQgcGF0Y2ggYXBw
+bGllZCB0byBvbGQga2VybmVscyBHaXQgc2VuZCBlbWFpbCBjb25zaWRlcnMgd2hvbGUgdGV4dCBh
+ZnRlciBDYyBhcyBlbWFpbCBhZGRyZXNzIGFuZCByZXBvcnRzIGJhZGx5IGZvcm1hdHRlZCBhZGRy
+ZXNzLg0KPiA+IA0KPiA+IElzIHRoZXJlIGFueSBmb3JtYXQgdGhhdCBJIHNob3VsZCBmb2xsb3cg
+dG8gc3BlY2lmeSBrZXJuZWwgdmVyc2lvbnMgYWxvbmcgd2l0aCBzdGFibGUgdGFnPw0KPiA+IA0K
+PiA+IENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnICMgNC40Kw0KPiA+IENjOiBzdGFibGVAdmdl
+ci5rZXJuZWwub3JnICMgNC4yMCsNCj4NCj4gWW91IGNvdWxkIGFzayBzZW5kLWVtYWlsIHRvIG5v
+dCBhdXRvLWluY2x1ZGUgQ0MncyBmcm9tIHRoZSBjb21taXQgbWVzc2FnZTogDQo+DQo+IGdpdCBz
+ZW5kLWVtYWlsIC0tc3VwcHJlc3MtY2M9YWxsDQo+DQo+IEFsc28gc2VlIGh0dHBzOi8vZ2l0LXNj
+bS5jb20vZG9jcy9naXQtc2VuZC1lbWFpbCNnaXQtc2VuZC1lbWFpbC0tLXN1cHByZXNzLWNjbHRj
+YXRlZ29yeWd0IGZvciBtb3JlIG9wdGlvbnMuDQoNClRoYW5rcyBEbWl0cnkuIFdpbGwgZ28gdGhy
+dS4uLg0K
