@@ -1,115 +1,69 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] arm64: tegra: add topology data for Tegra194 cpu
-Date: Wed, 13 Feb 2019 09:12:52 +0100
-Message-ID: <20190213081252.GA647@ulmo>
-References: <20190131222517.GB13156@mithrandir>
- <1549928827-14006-1-git-send-email-byan@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH V19 1/7] i2c: tegra: sort all the include headers
+ alphabetically
+Date: Wed, 13 Feb 2019 09:35:20 +0100
+Message-ID: <20190213083519.tynjs3ef6tnvvsms@ninjato>
+References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
+ <de27b8f8-ba8e-fca7-6bdc-cdd580d959e6@axentia.se>
+ <cdb66da2-4886-e3ba-e78e-264bd4b5b73c@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
+        protocol="application/pgp-signature"; boundary="mq2ttdhzzwepa5vi"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1549928827-14006-1-git-send-email-byan@nvidia.com>
+In-Reply-To: <cdb66da2-4886-e3ba-e78e-264bd4b5b73c@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bo Yan <byan@nvidia.com>
-Cc: jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Peter Rosin <peda@axentia.se>, Sowjanya Komatineni <skomatineni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mkarthik@nvidia.com" <mkarthik@nvidia.com>, "smohammed@nvidia.com" <smohammed@nvidia.com>, "talho@nvidia.com" <talho@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---X1bOJ3K7DJ5YkBrT
+--mq2ttdhzzwepa5vi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 11, 2019 at 03:47:07PM -0800, Bo Yan wrote:
-> The xavier CPU architecture includes 8 CPU cores organized in
-> 4 clusters. Add cpu-map data for topology initialization, this
-> fixes the topology information in
-> /sys/devices/system/cpu/cpu[n]/topology
+
+> > "^ Header removal should be mentioned in the commit message, I think."
+> > - Wolfram Sang [0]
+> >=20
+> > Cheers,
+> > Peter
+> >=20
+> > [0] https://lkml.org/lkml/2019/2/11/375
+> >=20
 >=20
-> Signed-off-by: Bo Yan <byan@nvidia.com>
-> ---
-> V2: remove cache nodes, add topology data only
->=20
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 58 ++++++++++++++++++++++++++=
-+-----
->  1 file changed, 50 insertions(+), 8 deletions(-)
+> It could make sense to adjust the comment only if there will be
+> anything else worthwhile a new revision, otherwise it is
+> not-so-important.=20
 
-This mostly looks good to me. One minor comment below.
+Not quite. Addressing review comments and proper commit messages are
+both important. So, it needs to be fixed. Yes, I can fix this small
+issue locally here (and I will do this, so no need to resend), but this
+is ultimately my decision (which you can surely ask for but not
+rely on).
 
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra194.dtsi
-> index 6dfa1ca..35e6e76 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -870,56 +870,98 @@
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
-> =20
-> -		cpu@0 {
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu =3D <&cl0_0>;
+I'll apply this series later today.
 
-I wonder if perhaps in this case it would be better to use the full path
-to refer to the phandle here. That way we can avoid the labels, which
-are somewhat cumbersome to write and the hierarchy, in my opinion, is a
-much more natural way to reference these.
 
-What I'm suggesting would look roughly like this:
-
-		cpu-map {
-			cluster0 {
-				core0 {
-					cpu =3D <&{/cpus/cpu@0}>;
-				};
-
-				core1 {
-					cpu =3D <&{/cpus/cpu@1}>;
-				};
-			};
-
-			cluster1 {
-				core0 {
-					cpu =3D <&{/cpus/cpu@2}>;
-				};
-
-				core1 {
-					cpu =3D <&{/cpus/cpu@3}>;
-				};
-			};
-
-			...
-		};
-
-That's slightly more characters, but I think it's much easier to read
-than the labels.
-
-I don't feel very strongly about it, though, so feel free to keep this
-as-is if you prefer.
-
-Thierry
-
---X1bOJ3K7DJ5YkBrT
+--mq2ttdhzzwepa5vi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxj0YEACgkQ3SOs138+
-s6EIjg//bkjxCg3sURndiknYkGF8P4aeDrmQDiRteucN73TGcbWJYCUEB7mZUa33
-0+l0a/zUOapNqSZaHVSgXXiavEAyznJOqQNjpHaaUXieFvsfZRTFPyNenTYwWVq8
-yn+MyGyKO69B32NECuBAbqby7kVU2AOyiN58AEFOVD7LF4H33UBFp7PG8PfJOuzB
-MIDtZ2oW/VIdJft+044ZQ0LnBcWabrT1K3b/DHm9oBLQFLT3R3DiJz06cSsQs3Bo
-ckjxuH0rZ9zql2UV/aivmtwSirw3g6kOrBs0S37nKDna5RQdLLM879k48LeaSXkn
-kvo/FdMUWsafb+HGHeV2fmDhw1FS4ta97qNU5Siak72l21E8imIr/fBMr94j+c3P
-ANMoBD5HZdQwcPnnsW4dVIT0DoZRzrkpJVG46rduOGpLaBzqXtp53KOkUkoH1X4P
-0gJJ0SFw4pF8fzxmGTnqG7cWDViVBacA4Xpo1v1FTFOkbDn7NRzndneoqN+h+TdE
-6+ow1/eDq3zZ6LzKk9K3nlkhtaSWdU83/DSIwP/0lyJJcUIW7vxgs9t1tZKl/JK0
-sIGHMc9MIZC76lGeuplqo/HZMMMmHceJYNXNVTIA8B31Baooz+JhSIRr7lJkIoal
-gd9Z6EEj9/aYPNf1LO4Wz2hONQXdLvakzqnA1TcrMVzM/mKZlKw=
-=FQak
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxj1sQACgkQFA3kzBSg
+KbaxNA//ahfn70SFTuWNC06WH3CmxOELccKUpXziV4mM1i38ljYSbzMGNPKWEtUA
+OhJ+2ZgIVcavuinuw6TlXswfcWe081BZywhSJYylKWID5pIPJf1DuGVSEWdmvlui
+f7TMZzpSLjUztq9y/inRHzPTF8vfiPJPfhGNZSbXNyoXLelQY7kp/ffF5GLqpd8b
+EtTi065Dhb76vsdOJXFgqH96w2os+6mVpeKLpnmvJqTZ7Xu+3qzT5ICehYGdQE3C
+jaux7tbWzy4JJntRN3bNorBvE0vYgO9EVOQ/7Jot0q+qbf+UI8iv48Lg3XUT9w/t
+g/2DwKmL9Hy2hdsfo3yhVc0dUqm218SqQC1JZgsgujjX4XtSBlUa4txjqu6se7qn
+lieRegzRSTGueuJad3dlP1ZyNtGNQxCV7ySjWEXBDHJtW/VF1cKrac8bI6WmPHCC
+q6nniai9Woz65+VMiycZzshVwYB6Rf3HoC9jADhyv2EvjnKZnGePNPw4Lo3GJ2E2
+S14axbfr2i19jXSGoBl/ZAy6pkvr5T8L9fRMELmja+cbKzqxQVLlppsXh9BJ3+HZ
+BHkORi8yry9Vrcbz0seGXtGM0DjymKPAKZZHvZs7o6ZJxOb1IrOEHkfG89nd8awo
+jgyb7fTcTsyJySDAjYyfd1h90Qaf+BtjAmUY3eOWQ+B+tinzcm4=
+=u57D
 -----END PGP SIGNATURE-----
 
---X1bOJ3K7DJ5YkBrT--
+--mq2ttdhzzwepa5vi--
