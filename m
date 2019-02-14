@@ -1,85 +1,52 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH V19 5/7] i2c: tegra: Add DMA support
-Date: Thu, 14 Feb 2019 17:53:15 +0100
-Message-ID: <20190214165314.dczoxwkayras5cdr@ninjato>
-References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
- <1549998408-9137-5-git-send-email-skomatineni@nvidia.com>
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH 1/4] PM / devfreq: Track overall load monitor state
+ instead of 'stop_polling'
+Date: Thu, 14 Feb 2019 08:59:47 -0800
+Message-ID: <20190214165947.GY117604@google.com>
+References: <20190214013042.254790-1-mka@chromium.org>
+ <20190214013042.254790-2-mka@chromium.org>
+ <CAGTfZH3E+RetMzKxzZNEgYw6=kocdfgRcKSbmP5GfZ4k1j0Cuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fvm2hgq32qt7p7oz"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1549998408-9137-5-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <CAGTfZH3E+RetMzKxzZNEgYw6=kocdfgRcKSbmP5GfZ4k1j0Cuw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Chanwoo Choi <cwchoi00@gmail.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Chanwoo,
 
---fvm2hgq32qt7p7oz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 14, 2019 at 11:25:52PM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
+> 
+> 2019년 2월 14일 (목) 오후 7:16, Matthias Kaehlcke <mka@chromium.org>님이 작성:
+> >
+> > The field ->stop_polling indicates whether load monitoring should be/is
+> > stopped, it is set in devfreq_monitor_suspend(). Change the variable to
+> > hold the general state of load monitoring (stopped, running, suspended).
+> > Besides improving readability of conditions involving the field and this
+> > prepares the terrain for moving some duplicated code from the governors
+> > into the devfreq core.
+> >
+> > Hold the devfreq lock in devfreq_monitor_start/stop() to ensure proper
+> > synchronization.
+> 
+> IMHO, I'm not sure that there are any benefits changing
+> from 'stop_polling' to 'monitor_state'. I have no objections
+> if Myungjoo confirms it.
 
-On Tue, Feb 12, 2019 at 11:06:46AM -0800, Sowjanya Komatineni wrote:
-> This patch adds DMA support for Tegra I2C.
->=20
-> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
-> transfer size of the max FIFO depth and DMA mode is used for
-> transfer size higher than max FIFO depth to save CPU overhead.
->=20
-> PIO mode needs full intervention of CPU to fill or empty FIFO's
-> and also need to service multiple data requests interrupt for the
-> same transaction. This adds delay between data bytes of the same
-> transfer when CPU is fully loaded and some slave devices has
-> internal timeout for no bus activity and stops transaction to
-> avoid bus hang. DMA mode is helpful in such cases.
->=20
-> DMA mode is also helpful for Large transfers during downloading or
-> uploading FW over I2C to some external devices.
->=20
-> Tegra210 and prior Tegra chips use APBDMA driver which is replaced
-> with GPCDMA on Tegra186 and Tegra194.
-> This patch uses has_apb_dma flag in hw_feature to differentiate
-> DMA driver change between Tegra chipset.
->=20
-> APBDMA driver is registered from module-init level and this patch
-> also has a change to register I2C driver at module-init level
-> rather than subsys-init to avoid deferring I2C probe till APBDMA
-> driver is registered.
->=20
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+I agree that as an isolated change there isn't a clear benefit.
+However in the context of the series the change is needed to
+avoid resuming a load monitor that wasn't even started.
 
-Not directly related to your code, but maybe someone is interested in
-fixing this rightful checkpatch comment somewhen later:
+In case this series isn't accepted I'd still suggest to change the
+name from 'stop_polling' to 'suspended'. I read 'stop_polling' as a
+call for action, while 'suspended' is a state. IMO at least in some
+contexts conditions using a state is clearer.
 
-WARNING: Avoid crashing the kernel - try using WARN_ON & recovery code rath=
-er than BUG() or BUG_ON()
-#332: FILE: drivers/i2c/busses/i2c-tegra.c:791:
-+				BUG();
+Cheers
 
-
---fvm2hgq32qt7p7oz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxlnPoACgkQFA3kzBSg
-KbbNOA/9EoHlFIaSVQ4ZqkVUQZf6r88V+QclrcLuuiVPC9DoP0faWi8wUN4IDHES
-tXjCRrAndBuqcb6wqOEv2b3cZPYTSg0iBDfSlENIpGjlUProkJ+HcQxAEh5lK1lh
-HwSjlfPfzu28BNvyQeR69c3/6gM56lqVS07EIQg9JCM+ouGVnIQHa1NLg8gf2jJV
-kTqO/MI+byye+ELjKHVHBpAf60zQ6hIfWLqBn9iuRgRGHQNx4Mks2ov17mAC85UN
-Kv8YnL6Sf/Aj6NAg+em/cFL+ReXGMeWJxJY4ENJW5IeCgmCDR/0uEr8iroTLy/3p
-OT2xLBEtF7f15ylTRBmfrdfrdnb3BoNmb7W3VBL9oQWmeJLPG2JFyMBR1GuDDJSg
-Bb9EeIXAPTxCrLYPWAMnpMDaBi4P6ozx8VjYasJRukGoNgg8PA5VCrxbHOq8bigV
-Bf4W8JTmyt1YT0Td9c0cWIE2qrwnTFHfyDPgIdQTkw68ArP0R8kOZjo8TH4sTQ+b
-kq85iZtpPoMA+t+zo3H+3YWv8yvXgGpPfCOVdclFa40b+F/g0Ouxdq0QxW/W4loi
-sFVHIMVe3NqlA2MB6u9DXRuwmeWvmHkVQepqKfFOdXPlqWR51wtZbf0IZVipXyoy
-t9WEOVE6KzBNhmahJ5KxSn+qVsp3d1KCNdmWWS9gDn8XLrik4PU=
-=t5RN
------END PGP SIGNATURE-----
-
---fvm2hgq32qt7p7oz--
+Matthias
