@@ -1,50 +1,98 @@
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
  devfreq core
-Date: Thu, 14 Feb 2019 11:28:55 -0800
-Message-ID: <20190214192855.GD117604@google.com>
+Date: Fri, 15 Feb 2019 08:42:30 +0900
+Message-ID: <b28e763d-c3c9-0673-6216-f67561112b60@samsung.com>
 References: <20190214013042.254790-1-mka@chromium.org>
- <20190214013042.254790-5-mka@chromium.org>
- <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
+        <20190214013042.254790-5-mka@chromium.org>
+        <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
+        <CGME20190214192933epcas5p204c34010accb5e63480abd3ca34991eb@epcas5p2.samsung.com>
+        <20190214192855.GD117604@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
+In-Reply-To: <20190214192855.GD117604@google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cwchoi00@gmail.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
+To: Matthias Kaehlcke <mka@chromium.org>, Chanwoo Choi <cwchoi00@gmail.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Chanwoo,
+Hi Matthias,
 
-On Thu, Feb 14, 2019 at 11:17:36PM +0900, Chanwoo Choi wrote:
-> Hi Matthias,
+On 19. 2. 15. 오전 4:28, Matthias Kaehlcke wrote:
+> Hi Chanwoo,
 > 
-> As I commented on the first patch, it is not possible to call some codes
-> according to the intention of each governor between 'devfreq_moniotr_*()'
-> and some codes which are executed before or after 'devfreq_moniotr_*()'
+> On Thu, Feb 14, 2019 at 11:17:36PM +0900, Chanwoo Choi wrote:
+>> Hi Matthias,
+>>
+>> As I commented on the first patch, it is not possible to call some codes
+>> according to the intention of each governor between 'devfreq_moniotr_*()'
+>> and some codes which are executed before or after 'devfreq_moniotr_*()'
+>>
+>> For example, if some governor requires the following sequence,
+>> after this patch, it is not possible.
+>>
+>> case DEVFREQ_GOV_xxx:
+>>         /* execute some code before devfreq_monitor_xxx() */
+>>         devfreq_monitor_xxx()
+>>         /* execute some code after devfreq_monitor_xxx() */
 > 
-> For example, if some governor requires the following sequence,
-> after this patch, it is not possible.
+> As for the suspend/resume case I agree that the patch introduces this
+> limitation, but I'm not convinced that this is an actual problem.
 > 
-> case DEVFREQ_GOV_xxx:
->         /* execute some code before devfreq_monitor_xxx() */
->         devfreq_monitor_xxx()
->         /* execute some code after devfreq_monitor_xxx() */
+> For governor_start(): why can't the governor execute the code
+> before polling started, does it make any difference to the governor
+> that a work is scheduled?
 
-As for the suspend/resume case I agree that the patch introduces this
-limitation, but I'm not convinced that this is an actual problem.
+The some governors might want to do something before starting
+the work and do something after work started. I think that
+the existing style is more flexible.
 
-For governor_start(): why can't the governor execute the code
-before polling started, does it make any difference to the governor
-that a work is scheduled?
+And,
+It has one more problem when changing the governor on the fly
+from simple_ondemand to other governors like performance,
+powersave and so on.
 
-For governor_stop(): why would the governor require polling to be
-active during stop? If it needs update_devfreq() to run (called by
-devfreq_monitor()) it can call it directly, instead of waiting for the
-monitor to run at some later time.
+Even if other governors don't need to monitor the utilization,
+the work timer will be executed continually because the devfreq
+device has the polling_ms value. It is not necessary
+of the other governors such as performance, powersave.
 
-Cheers
+It means that only specific governor like simple_ondemand
+have to call the devfreq_monitor_start() by itself
+instead of calling it on devfreq core.
 
-Matthias
+> 
+> For governor_stop(): why would the governor require polling to be
+> active during stop? If it needs update_devfreq() to run (called by
+> devfreq_monitor()) it can call it directly, instead of waiting for the
+> monitor to run at some later time.
+
+As I knew, if the current governors are performance/powersave/
+userspace, the monitoring is already stopped and not used.
+Because they don't need to handle the codes related to the work
+like queue_delayed_work(), cancel_delayed_work_sync().
+
+And,
+In case of the existing style for calling devfreq_monitor_*(),
+other governors like performance/powersave/userspace/passice
+don't need to call the devfreq_monitor_stop() because they
+didn't use the work timer.
+
+> 
+> Cheers
+> 
+> Matthias
+> 
+> 
+> 
+> 
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
