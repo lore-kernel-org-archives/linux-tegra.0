@@ -1,152 +1,52 @@
-From: Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 2/4] PM / devfreq: Handle monitor suspend/resume in the devfreq core
-Date: Wed, 13 Feb 2019 17:30:40 -0800
-Message-ID: <20190214013042.254790-3-mka@chromium.org>
-References: <20190214013042.254790-1-mka@chromium.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 00/24] 4.9.157-stable review
+Date: Thu, 14 Feb 2019 10:04:35 +0000
+Message-ID: <b55f7344-27b4-e416-8de9-bf235fa50440@nvidia.com>
+References: <20190213183647.333441569@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214013042.254790-1-mka@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190213183647.333441569@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-devfreq expects governors to call devfreq_monitor_suspend/resume()
-in response to DEVFREQ_GOV_SUSPEND/RESUME events. Since the devfreq
-core itself generates these events and invokes the governor's event
-handler the suspend/resume of the load monitoring can be done in the
-common code.
 
-Call devfreq_monitor_suspend/resume() when the governor reports a
-successful handling of DEVFREQ_GOV_SUSPEND/RESUME and remove these
-calls from the simpleondemand and tegra governors. Make
-devfreq_monitor_suspend/resume() static since these functions are now
-only used by the devfreq core.
+On 13/02/2019 18:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.157 release.
+> There are 24 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri Feb 15 18:36:26 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.157-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/devfreq/devfreq.c                 | 18 ++++++++----------
- drivers/devfreq/governor.h                |  2 --
- drivers/devfreq/governor_simpleondemand.c |  8 --------
- drivers/devfreq/tegra-devfreq.c           |  2 --
- 4 files changed, 8 insertions(+), 22 deletions(-)
+All tests are passing for Tegra ...
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 1d3a43f8b3a10..7fab6c4cf719b 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -447,15 +447,13 @@ EXPORT_SYMBOL(devfreq_monitor_stop);
-  * devfreq_monitor_suspend() - Suspend load monitoring of a devfreq instance
-  * @devfreq:	the devfreq instance.
-  *
-- * Helper function to suspend devfreq device load monitoing. Function
-- * to be called from governor in response to DEVFREQ_GOV_SUSPEND
-- * event or when polling interval is set to zero.
-+ * Helper function to suspend devfreq device load monitoring.
-  *
-  * Note: Though this function is same as devfreq_monitor_stop(),
-  * intentionally kept separate to provide hooks for collecting
-  * transition statistics.
-  */
--void devfreq_monitor_suspend(struct devfreq *devfreq)
-+static void devfreq_monitor_suspend(struct devfreq *devfreq)
- {
- 	mutex_lock(&devfreq->lock);
- 	if (devfreq->monitor_state != DEVFREQ_MONITOR_RUNNING) {
-@@ -468,17 +466,14 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
- 	mutex_unlock(&devfreq->lock);
- 	cancel_delayed_work_sync(&devfreq->work);
- }
--EXPORT_SYMBOL(devfreq_monitor_suspend);
- 
- /**
-  * devfreq_monitor_resume() - Resume load monitoring of a devfreq instance
-  * @devfreq:    the devfreq instance.
-  *
-- * Helper function to resume devfreq device load monitoing. Function
-- * to be called from governor in response to DEVFREQ_GOV_RESUME
-- * event or when polling interval is set to non-zero.
-+ * Helper function to resume devfreq device load monitoring.
-  */
--void devfreq_monitor_resume(struct devfreq *devfreq)
-+static void devfreq_monitor_resume(struct devfreq *devfreq)
- {
- 	unsigned long freq;
- 
-@@ -501,7 +496,6 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
- out:
- 	mutex_unlock(&devfreq->lock);
- }
--EXPORT_SYMBOL(devfreq_monitor_resume);
- 
- /**
-  * devfreq_interval_update() - Update device devfreq monitoring interval
-@@ -903,6 +897,8 @@ int devfreq_suspend_device(struct devfreq *devfreq)
- 					DEVFREQ_GOV_SUSPEND, NULL);
- 		if (ret)
- 			return ret;
-+
-+		devfreq_monitor_suspend(devfreq);
- 	}
- 
- 	if (devfreq->suspend_freq) {
-@@ -944,6 +940,8 @@ int devfreq_resume_device(struct devfreq *devfreq)
- 					DEVFREQ_GOV_RESUME, NULL);
- 		if (ret)
- 			return ret;
-+
-+		devfreq_monitor_resume(devfreq);
- 	}
- 
- 	return 0;
-diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-index f53339ca610fc..d136792c0cc91 100644
---- a/drivers/devfreq/governor.h
-+++ b/drivers/devfreq/governor.h
-@@ -59,8 +59,6 @@ struct devfreq_governor {
- 
- extern void devfreq_monitor_start(struct devfreq *devfreq);
- extern void devfreq_monitor_stop(struct devfreq *devfreq);
--extern void devfreq_monitor_suspend(struct devfreq *devfreq);
--extern void devfreq_monitor_resume(struct devfreq *devfreq);
- extern void devfreq_interval_update(struct devfreq *devfreq,
- 					unsigned int *delay);
- 
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index c0417f0e081e0..52eb0c734b312 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -103,14 +103,6 @@ static int devfreq_simple_ondemand_handler(struct devfreq *devfreq,
- 		devfreq_interval_update(devfreq, (unsigned int *)data);
- 		break;
- 
--	case DEVFREQ_GOV_SUSPEND:
--		devfreq_monitor_suspend(devfreq);
--		break;
--
--	case DEVFREQ_GOV_RESUME:
--		devfreq_monitor_resume(devfreq);
--		break;
--
- 	default:
- 		break;
- 	}
-diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-index c59d2eee5d309..79efa1e51bd06 100644
---- a/drivers/devfreq/tegra-devfreq.c
-+++ b/drivers/devfreq/tegra-devfreq.c
-@@ -591,11 +591,9 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
- 
- 	case DEVFREQ_GOV_SUSPEND:
- 		tegra_actmon_disable_interrupts(tegra);
--		devfreq_monitor_suspend(devfreq);
- 		break;
- 
- 	case DEVFREQ_GOV_RESUME:
--		devfreq_monitor_resume(devfreq);
- 		tegra_actmon_enable_interrupts(tegra);
- 		break;
- 	}
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
+
+Linux version:	4.9.157-rc1-ge9f66e4
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.20.1.791.gb4d0f1c61a-goog
+nvpublic
