@@ -1,105 +1,245 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/5] iommu/tegra-smmu: Fix domain_alloc
-Date: Thu, 14 Feb 2019 12:12:21 +0100
-Message-ID: <20190214111221.GA10927@ulmo>
-References: <1547671814-30088-1-git-send-email-navneetk@nvidia.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 2/4] PM / devfreq: Handle monitor suspend/resume in the
+ devfreq core
+Date: Thu, 14 Feb 2019 23:10:00 +0900
+Message-ID: <CAGTfZH29QQCW4ecXy9VbRd3aTixyjbDgB0EE0YwDcQDZYsSCvg@mail.gmail.com>
+References: <20190214013042.254790-1-mka@chromium.org> <20190214013042.254790-3-mka@chromium.org>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4361933613648371829=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1547671814-30088-1-git-send-email-navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190214013042.254790-3-mka@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Matthias,
 
---===============4361933613648371829==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Content-Disposition: inline
+2019=EB=85=84 2=EC=9B=94 14=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 7:16, M=
+atthias Kaehlcke <mka@chromium.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> devfreq expects governors to call devfreq_monitor_suspend/resume()
+> in response to DEVFREQ_GOV_SUSPEND/RESUME events. Since the devfreq
+> core itself generates these events and invokes the governor's event
+> handler the suspend/resume of the load monitoring can be done in the
+> common code.
+>
+> Call devfreq_monitor_suspend/resume() when the governor reports a
+> successful handling of DEVFREQ_GOV_SUSPEND/RESUME and remove these
+> calls from the simpleondemand and tegra governors. Make
+> devfreq_monitor_suspend/resume() static since these functions are now
+> only used by the devfreq core.
 
+The devfreq core generates the all events including
+DEVFREQ_GOV_START/STOP/INTERVAL.
+It is possible to make 'devfreq_monitor_*()' function as the static
+instead of exported function.
+And call them in devfreq.c as this patch as following:
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -728,6 +728,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
+                goto err_init;
+        }
 
-On Wed, Jan 16, 2019 at 12:50:10PM -0800, Navneet Kumar wrote:
-> * Allocate dma iova cookie for a domain while adding dma iommu
-> devices.
-> * Perform a stricter check for domain type parameter.
->=20
-> Signed-off-by: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++       devfreq_monitor_start(devfreq);
++
+        list_add(&devfreq->node, &devfreq_list);
+
+        mutex_unlock(&devfreq_list_lock);
+@@ -760,6 +762,7 @@ int devfreq_remove_device(struct devfreq *devfreq)
+        if (devfreq->governor)
+                devfreq->governor->event_handler(devfreq,
+                                                 DEVFREQ_GOV_STOP, NULL);
++       devfreq_monitor_stop(devfreq);
+        device_unregister(&devfreq->dev);
+
+        return 0;
+@@ -1259,6 +1262,9 @@ static ssize_t polling_interval_store(struct device *=
+dev,
+        df->governor->event_handler(df, DEVFREQ_GOV_INTERVAL, &value);
+        ret =3D count;
+
++       if (!ret)
++               devfreq_interval_update(devfreq, (unsigned int *)data);
++
+        return ret;
+ }
+ static DEVICE_ATTR_RW(polling_interval);
+diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfre=
+q.c
+index 79efa1e..515fb85 100644
+--- a/drivers/devfreq/tegra-devfreq.c
++++ b/drivers/devfreq/tegra-devfreq.c
+@@ -580,13 +580,11 @@ static int tegra_governor_event_handler(struct
+devfreq *devfreq,
+
+        switch (event) {
+        case DEVFREQ_GOV_START:
+-               devfreq_monitor_start(devfreq);
+                tegra_actmon_enable_interrupts(tegra);
+                break;
+
+        case DEVFREQ_GOV_STOP:
+                tegra_actmon_disable_interrupts(tegra);
+-               devfreq_monitor_stop(devfreq);
+                break;
+
+Instead,
+
+If the governor should execute some codes before and after of
+DEVFREQ_GOV_SUSPEND, DEVFREQ_GOV_RESUME,
+it is impossible to change the order between devfreq_monitor_*() function
+and the specific governor in the event_handler callback function of
+each governor.
+
+For example, if some govenor requires the following sequencue,
+after this patch, it is not possible.
+
+case DEVFREQ_GOV_SUSPEND:
+        /* execute some code before devfreq_monitor_suspend() */
+        devfreq_monitor_suspend()
+        /* execute some code after devfreq_monitor_suspend() */
+
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  drivers/iommu/tegra-smmu.c | 43 +++++++++++++++++++++++++++-------------=
----
->  1 file changed, 27 insertions(+), 16 deletions(-)
+>  drivers/devfreq/devfreq.c                 | 18 ++++++++----------
+>  drivers/devfreq/governor.h                |  2 --
+>  drivers/devfreq/governor_simpleondemand.c |  8 --------
+>  drivers/devfreq/tegra-devfreq.c           |  2 --
+>  4 files changed, 8 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 1d3a43f8b3a10..7fab6c4cf719b 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -447,15 +447,13 @@ EXPORT_SYMBOL(devfreq_monitor_stop);
+>   * devfreq_monitor_suspend() - Suspend load monitoring of a devfreq inst=
+ance
+>   * @devfreq:   the devfreq instance.
+>   *
+> - * Helper function to suspend devfreq device load monitoing. Function
+> - * to be called from governor in response to DEVFREQ_GOV_SUSPEND
+> - * event or when polling interval is set to zero.
+> + * Helper function to suspend devfreq device load monitoring.
+>   *
+>   * Note: Though this function is same as devfreq_monitor_stop(),
+>   * intentionally kept separate to provide hooks for collecting
+>   * transition statistics.
+>   */
+> -void devfreq_monitor_suspend(struct devfreq *devfreq)
+> +static void devfreq_monitor_suspend(struct devfreq *devfreq)
+>  {
+>         mutex_lock(&devfreq->lock);
+>         if (devfreq->monitor_state !=3D DEVFREQ_MONITOR_RUNNING) {
+> @@ -468,17 +466,14 @@ void devfreq_monitor_suspend(struct devfreq *devfre=
+q)
+>         mutex_unlock(&devfreq->lock);
+>         cancel_delayed_work_sync(&devfreq->work);
+>  }
+> -EXPORT_SYMBOL(devfreq_monitor_suspend);
+>
+>  /**
+>   * devfreq_monitor_resume() - Resume load monitoring of a devfreq instan=
+ce
+>   * @devfreq:    the devfreq instance.
+>   *
+> - * Helper function to resume devfreq device load monitoing. Function
+> - * to be called from governor in response to DEVFREQ_GOV_RESUME
+> - * event or when polling interval is set to non-zero.
+> + * Helper function to resume devfreq device load monitoring.
+>   */
+> -void devfreq_monitor_resume(struct devfreq *devfreq)
+> +static void devfreq_monitor_resume(struct devfreq *devfreq)
+>  {
+>         unsigned long freq;
+>
+> @@ -501,7 +496,6 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+>  out:
+>         mutex_unlock(&devfreq->lock);
+>  }
+> -EXPORT_SYMBOL(devfreq_monitor_resume);
+>
+>  /**
+>   * devfreq_interval_update() - Update device devfreq monitoring interval
+> @@ -903,6 +897,8 @@ int devfreq_suspend_device(struct devfreq *devfreq)
+>                                         DEVFREQ_GOV_SUSPEND, NULL);
+>                 if (ret)
+>                         return ret;
+> +
+> +               devfreq_monitor_suspend(devfreq);
+>         }
+>
+>         if (devfreq->suspend_freq) {
+> @@ -944,6 +940,8 @@ int devfreq_resume_device(struct devfreq *devfreq)
+>                                         DEVFREQ_GOV_RESUME, NULL);
+>                 if (ret)
+>                         return ret;
+> +
+> +               devfreq_monitor_resume(devfreq);
+>         }
+>
+>         return 0;
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index f53339ca610fc..d136792c0cc91 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -59,8 +59,6 @@ struct devfreq_governor {
+>
+>  extern void devfreq_monitor_start(struct devfreq *devfreq);
+>  extern void devfreq_monitor_stop(struct devfreq *devfreq);
+> -extern void devfreq_monitor_suspend(struct devfreq *devfreq);
+> -extern void devfreq_monitor_resume(struct devfreq *devfreq);
+>  extern void devfreq_interval_update(struct devfreq *devfreq,
+>                                         unsigned int *delay);
+>
+> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/=
+governor_simpleondemand.c
+> index c0417f0e081e0..52eb0c734b312 100644
+> --- a/drivers/devfreq/governor_simpleondemand.c
+> +++ b/drivers/devfreq/governor_simpleondemand.c
+> @@ -103,14 +103,6 @@ static int devfreq_simple_ondemand_handler(struct de=
+vfreq *devfreq,
+>                 devfreq_interval_update(devfreq, (unsigned int *)data);
+>                 break;
+>
+> -       case DEVFREQ_GOV_SUSPEND:
+> -               devfreq_monitor_suspend(devfreq);
+> -               break;
+> -
+> -       case DEVFREQ_GOV_RESUME:
+> -               devfreq_monitor_resume(devfreq);
+> -               break;
+> -
+>         default:
+>                 break;
+>         }
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devf=
+req.c
+> index c59d2eee5d309..79efa1e51bd06 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -591,11 +591,9 @@ static int tegra_governor_event_handler(struct devfr=
+eq *devfreq,
+>
+>         case DEVFREQ_GOV_SUSPEND:
+>                 tegra_actmon_disable_interrupts(tegra);
+> -               devfreq_monitor_suspend(devfreq);
+>                 break;
+>
+>         case DEVFREQ_GOV_RESUME:
+> -               devfreq_monitor_resume(devfreq);
+>                 tegra_actmon_enable_interrupts(tegra);
+>                 break;
+>         }
+> --
+> 2.20.1.791.gb4d0f1c61a-goog
+>
 
-I just gave this a quick spin because I was investigating how we could
-potentially make use of the DMA API instead of the IOMMU API directly in
-Tegra DRM. We currently rely on the fact that the Tegra SMMU driver only
-supports unmanaged domains. Once we start supporting DMA domains all the
-automatic machinery kicks in and there's lots of SMMU faults. I think at
-least partially those faults point out bugs we currently have in the
-code. From the looks of it, the display controller is running during
-boot and happily fetching from whatever address it was configured with
-in the bootloader, and when we enable the ASID for the display
-controller as part of the DMA/IOMMU setup, the fetches from the display
-controller will be accessing IOV addresses that don't have a mapping.
 
-One one hand that's a good thing because it points out existing
-weaknesses, but then it also means that we can't merge this series
-because it causes bad regressions.
-
-I also see failures from the GPU with this applied, which I think stem
-=66rom the fact that we're now transparently mapping allocations through
-the SMMU without the Nouveau driver knowing that and setting the
-appropriate bit when addressing memory. Or it could come from the SMMU
-code in Nouveau trying to map an already mapped buffer, so effectively
-creating an IOVA mapping to an address that is already a IOV address
-rather than a physical address.
-
-So I think before we can go ahead with this series we have a lot of
-janitorial work to do first so that this won't cause any regressions
-when applied.
-
-Thierry
-
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxlTRMACgkQ3SOs138+
-s6HUMxAAvIGmvJBhDZoAcnBNy4feVd9cYkdK8q3P+VnZaUlkp27o153CvOvacqtS
-kquC+6fJemkKWjYDEyRzw7YQq4qcyFC782eVE52g8UO411YCDtT+KHei+9t4NO1B
-nONmucjJxAMis89euhYHTsoocfbpe1RrCIf6rQKhIi+JD3ylZhSTk/6bWmBC/fwd
-ZPW4lNmZJwJL3fjMXlxvj7zEYYFZdMxSNR6s3fSFNEmynder4+njvBprPzbX9BiI
-UqP2iD2o6DbpdBt6OYANvI6E7VMFHmUV6yMb/FbftcX6apSRjA6Wb8CnRSMloQzB
-w/o1zK6IL0Mr1jdcWhke3cc9ZSREZp1gQQqcn5hYnP8gZVK4raXsrd8UhgRbapfq
-JzSc7X0lBcE6XLy5HabUQ7ywAs8yrtNw1wvlPLP+oDEgJpLk8l/YvZX7lv0t86EG
-Q4YmtAmHKIvawb98BIfkN9PSlP6rTvn6kD460NC5QQv+5kopALhbtcN9r+4N5GF0
-fyxMUYuS+n/DSCTrTsgzbTDzOOj1F1vUMwSaiD7L66bFqQVxSu4xOYmHg7dXCMR4
-vecOjuaNIZjj8Yixg+WOaNh0LZVcSF+HQ+VFMFGdcSyvulgXUH4/WRlcyFhVNM45
-JwdB+k32kmaoioVYda9lYzFF1c6KxPmywCecvptYXKESXdq6e/c=
-=LYi4
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
-
---===============4361933613648371829==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4361933613648371829==--
+--=20
+Best Regards,
+Chanwoo Choi
