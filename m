@@ -1,55 +1,85 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH V19 1/7] i2c: tegra: sort all the include headers
- alphabetically
-Date: Thu, 14 Feb 2019 17:51:32 +0100
-Message-ID: <20190214165131.asr7fedtozy2oi76@ninjato>
+Subject: Re: [PATCH V19 5/7] i2c: tegra: Add DMA support
+Date: Thu, 14 Feb 2019 17:53:15 +0100
+Message-ID: <20190214165314.dczoxwkayras5cdr@ninjato>
 References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
+ <1549998408-9137-5-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kf63lw5a3hbketpm"
+        protocol="application/pgp-signature"; boundary="fvm2hgq32qt7p7oz"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1549998408-9137-5-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com, peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---kf63lw5a3hbketpm
+--fvm2hgq32qt7p7oz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 12, 2019 at 11:06:42AM -0800, Sowjanya Komatineni wrote:
-> This patch sorts all the include headers alphabetically for the
-> I2C Tegra driver.
+On Tue, Feb 12, 2019 at 11:06:46AM -0800, Sowjanya Komatineni wrote:
+> This patch adds DMA support for Tegra I2C.
+>=20
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
+>=20
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction. This adds delay between data bytes of the same
+> transfer when CPU is fully loaded and some slave devices has
+> internal timeout for no bus activity and stops transaction to
+> avoid bus hang. DMA mode is helpful in such cases.
+>=20
+> DMA mode is also helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+>=20
+> Tegra210 and prior Tegra chips use APBDMA driver which is replaced
+> with GPCDMA on Tegra186 and Tegra194.
+> This patch uses has_apb_dma flag in hw_feature to differentiate
+> DMA driver change between Tegra chipset.
+>=20
+> APBDMA driver is registered from module-init level and this patch
+> also has a change to register I2C driver at module-init level
+> rather than subsys-init to avoid deferring I2C probe till APBDMA
+> driver is registered.
 >=20
 > Acked-by: Thierry Reding <treding@nvidia.com>
 > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Whole series applied to for-next, thanks!
+Not directly related to your code, but maybe someone is interested in
+fixing this rightful checkpatch comment somewhen later:
+
+WARNING: Avoid crashing the kernel - try using WARN_ON & recovery code rath=
+er than BUG() or BUG_ON()
+#332: FILE: drivers/i2c/busses/i2c-tegra.c:791:
++				BUG();
 
 
---kf63lw5a3hbketpm
+--fvm2hgq32qt7p7oz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxlnJMACgkQFA3kzBSg
-KbbNVhAAtNxtze5yLEP8pWB/CAzhCigH1gpEkBW3jZZZxV4Gpy9VVZK41BnaHSe0
-VDbftVtuVZSIhHMSLt+qlEvJ9D0sS1ydsxf9JTJ3TAgmV10g7wcuLXr3+vuV78Lz
-6UQsgPDuHZz7qs2KALKaAG/bCfpPMEsSlLQr01WHUo8OX1+SW2sgKZTZJoI8n9nc
-sYjCMuCVFoPK0OnX3EosceWhbATIA22gAd48cH2NLnwGsc/zWIMeJoAOtHbMx7U1
-bqby4dNtJINaSV36j9t1h9ytwZdQ7/iNzj9e7za6uTTdQ39Ogym+oiKqyClEGtbz
-n5UtyNvawnwzR/LkQG9lSzturQTwQ9FmXCrTaApYXCykHO5IJa0927p1qvlnpl0V
-mAnMrII5EEGret1HnYYAAq/ClUz0ee+/txASOFpwk0ivzGHv5rvspwYnsRGbe4Ct
-gb1qu18okD7erlWlWn3jfRi7x+SR4udAd/fLYagvX51G9L5T9AVlSWuTPM2yP36d
-cicxA5kRF5AYCGUlYDfRtTTZ4idbIPUzmhxwAtvyJKo/cW9Gsqr23tgM0DDDQsYJ
-YkRRjxRQa5G9fgnTuUIZZtj0ZbFKpOFytJpEmzOanJcUIgw2SOevbOhl2ZYMxI6j
-gVJCION769hnQGBx6gf3FtwymuyN49PrJ8AypI2SCrSEFM2mm7U=
-=2a3g
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxlnPoACgkQFA3kzBSg
+KbbNOA/9EoHlFIaSVQ4ZqkVUQZf6r88V+QclrcLuuiVPC9DoP0faWi8wUN4IDHES
+tXjCRrAndBuqcb6wqOEv2b3cZPYTSg0iBDfSlENIpGjlUProkJ+HcQxAEh5lK1lh
+HwSjlfPfzu28BNvyQeR69c3/6gM56lqVS07EIQg9JCM+ouGVnIQHa1NLg8gf2jJV
+kTqO/MI+byye+ELjKHVHBpAf60zQ6hIfWLqBn9iuRgRGHQNx4Mks2ov17mAC85UN
+Kv8YnL6Sf/Aj6NAg+em/cFL+ReXGMeWJxJY4ENJW5IeCgmCDR/0uEr8iroTLy/3p
+OT2xLBEtF7f15ylTRBmfrdfrdnb3BoNmb7W3VBL9oQWmeJLPG2JFyMBR1GuDDJSg
+Bb9EeIXAPTxCrLYPWAMnpMDaBi4P6ozx8VjYasJRukGoNgg8PA5VCrxbHOq8bigV
+Bf4W8JTmyt1YT0Td9c0cWIE2qrwnTFHfyDPgIdQTkw68ArP0R8kOZjo8TH4sTQ+b
+kq85iZtpPoMA+t+zo3H+3YWv8yvXgGpPfCOVdclFa40b+F/g0Ouxdq0QxW/W4loi
+sFVHIMVe3NqlA2MB6u9DXRuwmeWvmHkVQepqKfFOdXPlqWR51wtZbf0IZVipXyoy
+t9WEOVE6KzBNhmahJ5KxSn+qVsp3d1KCNdmWWS9gDn8XLrik4PU=
+=t5RN
 -----END PGP SIGNATURE-----
 
---kf63lw5a3hbketpm--
+--fvm2hgq32qt7p7oz--
