@@ -1,14 +1,15 @@
 From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH 3/4] PM / devfreq: Add devfreq_governor_start/stop()
-Date: Thu, 14 Feb 2019 23:12:55 +0900
-Message-ID: <CAGTfZH0cQhBLDx91VArMQ52z+iJAsfb2Zvk5nJSCqSM=aPhK0A@mail.gmail.com>
-References: <20190214013042.254790-1-mka@chromium.org> <20190214013042.254790-4-mka@chromium.org>
+Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
+ devfreq core
+Date: Thu, 14 Feb 2019 23:17:36 +0900
+Message-ID: <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
+References: <20190214013042.254790-1-mka@chromium.org> <20190214013042.254790-5-mka@chromium.org>
 Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214013042.254790-4-mka@chromium.org>
+In-Reply-To: <20190214013042.254790-5-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Matthias Kaehlcke <mka@chromium.org>
 Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
@@ -16,231 +17,218 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hi Matthias,
 
-Looks good to me for making the function to remove the duplicate code.
-But,  When I just tested the kernel build, following warnings occur
-about devfreq_governor_stop().
+As I commented on the first patch, it is not possible to call some codes
+according to the intention of each governor between 'devfreq_moniotr_*()'
+and some codes which are executed before or after 'devfreq_moniotr_*()'
 
-In file included from ./include/linux/devfreq.h:16:0,
-                 from drivers/devfreq/devfreq.c:23:
-drivers/devfreq/devfreq.c: In function =E2=80=98devfreq_governor_stop=E2=80=
-=99:
-drivers/devfreq/devfreq.c:619:17: warning: format =E2=80=98%s=E2=80=99 expe=
-cts
-argument of type =E2=80=98char *=E2=80=99, but argument 4 has type =E2=80=
-=98int=E2=80=99 [-Wformat=3D]
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-                 ^
-./include/linux/device.h:1380:22: note: in definition of macro =E2=80=98dev=
-_fmt=E2=80=99
- #define dev_fmt(fmt) fmt
-                      ^
-drivers/devfreq/devfreq.c:619:3: note: in expansion of macro =E2=80=98dev_w=
-arn=E2=80=99
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-   ^
-drivers/devfreq/devfreq.c:619:17: warning: format =E2=80=98%d=E2=80=99 expe=
-cts a
-matching =E2=80=98int=E2=80=99 argument [-Wformat=3D]
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-                 ^
-./include/linux/device.h:1380:22: note: in definition of macro =E2=80=98dev=
-_fmt=E2=80=99
- #define dev_fmt(fmt) fmt
-                      ^
-drivers/devfreq/devfreq.c:619:3: note: in expansion of macro =E2=80=98dev_w=
-arn=E2=80=99
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
+For example, if some governor requires the following sequence,
+after this patch, it is not possible.
+
+case DEVFREQ_GOV_xxx:
+        /* execute some code before devfreq_monitor_xxx() */
+        devfreq_monitor_xxx()
+        /* execute some code after devfreq_monitor_xxx() */
 
 2019=EB=85=84 2=EC=9B=94 14=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 7:16, M=
 atthias Kaehlcke <mka@chromium.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> The following pattern is repeated multiple times:
+> devfreq expects governors to call devfreq_monitor_start/stop()
+> in response to DEVFREQ_GOV_START/STOP events. Since the devfreq
+> core itself generates these events and invokes the governor's event
+> handler the start/stop of the load monitor can be done in the common
+> code.
 >
-> - call governor event handler with DEVFREQ_GOV_START/STOP
-> - check return value
-> - in case of error log a message
+> Call devfreq_monitor_start/stop() when the governor reports a
+> successful handling of DEVFREQ_GOV_START/STOP and remove these
+> calls from the simpleondemand and tegra governors. Make
+> devfreq_monitor_start/stop() static since these functions are now
+> only used by the devfreq core. For better integration with the
+> callers the functions must now be called with devfreq->lock held.
 >
-> Add devfreq_governor_start/stop() helper functions with this code
-> and call them instead.
+> Also stop manipulating the monitor workqueue directly, use
+> devfreq_monitor_start/stop() instead.
 >
 > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  drivers/devfreq/devfreq.c | 96 +++++++++++++++++++++++----------------
->  1 file changed, 58 insertions(+), 38 deletions(-)
+>  drivers/devfreq/devfreq.c                 | 45 +++++++++++------------
+>  drivers/devfreq/governor.h                |  2 -
+>  drivers/devfreq/governor_simpleondemand.c |  8 ----
+>  drivers/devfreq/tegra-devfreq.c           |  2 -
+>  4 files changed, 22 insertions(+), 35 deletions(-)
 >
 > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 7fab6c4cf719b..eb86461648d74 100644
+> index eb86461648d74..ac553c00f6790 100644
 > --- a/drivers/devfreq/devfreq.c
 > +++ b/drivers/devfreq/devfreq.c
-> @@ -580,6 +580,53 @@ static int devfreq_notifier_call(struct notifier_blo=
-ck *nb, unsigned long type,
->         return ret;
+> @@ -404,14 +404,14 @@ static void devfreq_monitor(struct work_struct *wor=
+k)
+>   * devfreq_monitor_start() - Start load monitoring of devfreq instance
+>   * @devfreq:   the devfreq instance.
+>   *
+> - * Helper function for starting devfreq device load monitoing. By
+> - * default delayed work based monitoring is supported. Function
+> - * to be called from governor in response to DEVFREQ_GOV_START
+> - * event when device is added to devfreq framework.
+> + * Helper function for starting devfreq device load monitoring. By
+> + * default delayed work based monitoring is supported. Must be called
+> + * with devfreq->lock held.
+>   */
+> -void devfreq_monitor_start(struct devfreq *devfreq)
+> +static void devfreq_monitor_start(struct devfreq *devfreq)
+>  {
+> -       mutex_lock(&devfreq->lock);
+> +       WARN(!mutex_is_locked(&devfreq->lock),
+> +            "devfreq->lock must be held by the caller.\n");
+>
+>         if (devfreq->profile->polling_ms) {
+>                 INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+> @@ -420,28 +420,28 @@ void devfreq_monitor_start(struct devfreq *devfreq)
+>
+>                 devfreq->monitor_state =3D DEVFREQ_MONITOR_RUNNING;
+>         }
+> -
+> -       mutex_unlock(&devfreq->lock);
+>  }
+> -EXPORT_SYMBOL(devfreq_monitor_start);
+>
+>  /**
+>   * devfreq_monitor_stop() - Stop load monitoring of a devfreq instance
+>   * @devfreq:   the devfreq instance.
+>   *
+> - * Helper function to stop devfreq device load monitoing. Function
+> - * to be called from governor in response to DEVFREQ_GOV_STOP
+> - * event when device is removed from devfreq framework.
+> + * Helper function to stop devfreq device load monitoring. Must be
+> + * called with devfreq->lock held.
+>   */
+> -void devfreq_monitor_stop(struct devfreq *devfreq)
+> +static void devfreq_monitor_stop(struct devfreq *devfreq)
+>  {
+> +       /* mutex must be held for symmetry with _start() */
+> +       WARN(!mutex_is_locked(&devfreq->lock),
+> +            "devfreq->lock must be held by the caller.\n");
+> +
+> +       mutex_unlock(&devfreq->lock);
+>         cancel_delayed_work_sync(&devfreq->work);
+>
+>         mutex_lock(&devfreq->lock);
+>         devfreq->monitor_state =3D DEVFREQ_MONITOR_STOPPED;
+>         mutex_unlock(&devfreq->lock);
+>  }
+> -EXPORT_SYMBOL(devfreq_monitor_stop);
+>
+>  /**
+>   * devfreq_monitor_suspend() - Suspend load monitoring of a devfreq inst=
+ance
+> @@ -518,27 +518,22 @@ void devfreq_interval_update(struct devfreq *devfre=
+q, unsigned int *delay)
+>
+>         /* if new delay is zero, stop polling */
+>         if (!new_delay) {
+> +               devfreq_monitor_stop(devfreq);
+>                 mutex_unlock(&devfreq->lock);
+> -               cancel_delayed_work_sync(&devfreq->work);
+> -               devfreq->monitor_state =3D=3D DEVFREQ_MONITOR_STOPPED;
+>                 return;
+>         }
+>
+>         /* if current delay is zero, start polling with new delay */
+>         if (!cur_delay) {
+> -               queue_delayed_work(devfreq_wq, &devfreq->work,
+> -                       msecs_to_jiffies(devfreq->profile->polling_ms));
+> +               devfreq_monitor_start(devfreq);
+>                 goto out;
+>         }
+>
+>         /* if current delay is greater than new delay, restart polling */
+>         if (cur_delay > new_delay) {
+> -               mutex_unlock(&devfreq->lock);
+> -               cancel_delayed_work_sync(&devfreq->work);
+> -               mutex_lock(&devfreq->lock);
+> +               devfreq_monitor_stop(devfreq);
+>                 if (devfreq->monitor_state !=3D DEVFREQ_MONITOR_SUSPENDED=
+)
+> -                       queue_delayed_work(devfreq_wq, &devfreq->work,
+> -                             msecs_to_jiffies(devfreq->profile->polling_=
+ms));
+> +                       devfreq_monitor_start(devfreq);
+>         }
+>  out:
+>         mutex_unlock(&devfreq->lock);
+> @@ -601,6 +596,8 @@ static int devfreq_governor_start(struct devfreq *dev=
+freq)
+>                 return err;
+>         }
+>
+> +       devfreq_monitor_start(devfreq);
+> +
+>         return 0;
 >  }
 >
-> +/**
-> + * devfreq_governor_start() - Start the devfreq governor of the device.
-> + * @devfreq:   the devfreq instance
-> + */
-> +static int devfreq_governor_start(struct devfreq *devfreq)
-> +{
-> +       struct device *dev =3D devfreq->dev.parent;
-> +       int err;
-> +
-> +       if (WARN(mutex_is_locked(&devfreq->lock),
-> +                "mutex must *not* be held by the caller\n"))
-> +               return -EINVAL;
-> +
-> +       err =3D devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STA=
-RT,
-> +                                              NULL);
-> +       if (err) {
-> +               dev_err(dev, "Governor %s not started: %d\n",
-> +                       devfreq->governor->name, err);
-> +               return err;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * devfreq_governor_stop() - Stop the devfreq governor of the device.
-> + * @devfreq:   the devfreq instance
-> + */
-> +static int devfreq_governor_stop(struct devfreq *devfreq)
-> +{
-> +       struct device *dev =3D devfreq->dev.parent;
-> +       int err;
-> +
-> +       if (WARN(mutex_is_locked(&devfreq->lock),
-> +                "mutex must *not* be held by the caller\n"))
-> +               return -EINVAL;
-> +
-> +       err =3D devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STO=
-P, NULL);
-> +       if (err) {
-> +               dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-> +                        devfreq->governor->name, err);
-> +               return err;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /**
->   * devfreq_dev_release() - Callback for struct device to release the dev=
-ice.
->   * @dev:       the devfreq device
-> @@ -720,13 +767,9 @@ struct devfreq *devfreq_add_device(struct device *de=
-v,
+> @@ -624,6 +621,8 @@ static int devfreq_governor_stop(struct devfreq *devf=
+req)
+>                 return err;
 >         }
 >
->         devfreq->governor =3D governor;
-> -       err =3D devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STA=
-RT,
-> -                                               NULL);
-> -       if (err) {
-> -               dev_err(dev, "%s: Unable to start governor for the device=
-\n",
-> -                       __func__);
-> +       err =3D devfreq_governor_start(devfreq);
-> +       if (err)
->                 goto err_init;
-> -       }
->
->         list_add(&devfreq->node, &devfreq_list);
->
-> @@ -1029,24 +1072,13 @@ int devfreq_add_governor(struct devfreq_governor =
-*governor)
->                                 dev_warn(dev,
->                                          "%s: Governor %s already present=
-\n",
->                                          __func__, devfreq->governor->nam=
-e);
-> -                               ret =3D devfreq->governor->event_handler(=
-devfreq,
-> -                                                       DEVFREQ_GOV_STOP,=
- NULL);
-> -                               if (ret) {
-> -                                       dev_warn(dev,
-> -                                                "%s: Governor %s stop =
-=3D %d\n",
-> -                                                __func__,
-> -                                                devfreq->governor->name,=
- ret);
-> -                               }
-> +                               ret =3D devfreq_governor_stop(devfreq);
+> +       devfreq_monitor_stop(devfreq);
 > +
->                                 /* Fall through */
->                         }
-> +
->                         devfreq->governor =3D governor;
-> -                       ret =3D devfreq->governor->event_handler(devfreq,
-> -                                               DEVFREQ_GOV_START, NULL);
-> -                       if (ret) {
-> -                               dev_warn(dev, "%s: Governor %s start=3D%d=
-\n",
-> -                                        __func__, devfreq->governor->nam=
-e,
-> -                                        ret);
-> -                       }
-> +                       devfreq_governor_start(devfreq);
->                 }
->         }
+>         return 0;
+>  }
 >
-> @@ -1081,7 +1113,6 @@ int devfreq_remove_governor(struct devfreq_governor=
- *governor)
->                 goto err_out;
->         }
->         list_for_each_entry(devfreq, &devfreq_list, node) {
-> -               int ret;
->                 struct device *dev =3D devfreq->dev.parent;
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index d136792c0cc91..47efe747b6f79 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -57,8 +57,6 @@ struct devfreq_governor {
+>                                 unsigned int event, void *data);
+>  };
 >
->                 if (!strncmp(devfreq->governor_name, governor->name,
-> @@ -1093,13 +1124,8 @@ int devfreq_remove_governor(struct devfreq_governo=
-r *governor)
->                                 continue;
->                                 /* Fall through */
->                         }
-> -                       ret =3D devfreq->governor->event_handler(devfreq,
-> -                                               DEVFREQ_GOV_STOP, NULL);
-> -                       if (ret) {
-> -                               dev_warn(dev, "%s: Governor %s stop=3D%d\=
-n",
-> -                                        __func__, devfreq->governor->nam=
-e,
-> -                                        ret);
-> -                       }
-> +
-> +                       devfreq_governor_stop(devfreq);
->                         devfreq->governor =3D NULL;
->                 }
->         }
-> @@ -1149,19 +1175,13 @@ static ssize_t governor_store(struct device *dev,=
- struct device_attribute *attr,
->         }
+> -extern void devfreq_monitor_start(struct devfreq *devfreq);
+> -extern void devfreq_monitor_stop(struct devfreq *devfreq);
+>  extern void devfreq_interval_update(struct devfreq *devfreq,
+>                                         unsigned int *delay);
 >
->         if (df->governor) {
-> -               ret =3D df->governor->event_handler(df, DEVFREQ_GOV_STOP,=
- NULL);
-> -               if (ret) {
-> -                       dev_warn(dev, "%s: Governor %s not stopped(%d)\n"=
-,
-> -                                __func__, df->governor->name, ret);
-> +               ret =3D devfreq_governor_stop(df);
-> +               if (ret)
->                         goto out;
-> -               }
->         }
->         df->governor =3D governor;
->         strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
-> -       ret =3D df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
-> -       if (ret)
-> -               dev_warn(dev, "%s: Governor %s not started(%d)\n",
-> -                        __func__, df->governor->name, ret);
-> +       ret =3D devfreq_governor_start(df);
->  out:
->         mutex_unlock(&devfreq_list_lock);
+> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/=
+governor_simpleondemand.c
+> index 52eb0c734b312..e0f0944a9c7aa 100644
+> --- a/drivers/devfreq/governor_simpleondemand.c
+> +++ b/drivers/devfreq/governor_simpleondemand.c
+> @@ -91,14 +91,6 @@ static int devfreq_simple_ondemand_handler(struct devf=
+req *devfreq,
+>                                 unsigned int event, void *data)
+>  {
+>         switch (event) {
+> -       case DEVFREQ_GOV_START:
+> -               devfreq_monitor_start(devfreq);
+> -               break;
+> -
+> -       case DEVFREQ_GOV_STOP:
+> -               devfreq_monitor_stop(devfreq);
+> -               break;
+> -
+>         case DEVFREQ_GOV_INTERVAL:
+>                 devfreq_interval_update(devfreq, (unsigned int *)data);
+>                 break;
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devf=
+req.c
+> index 79efa1e51bd06..515fb852dbad6 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -580,13 +580,11 @@ static int tegra_governor_event_handler(struct devf=
+req *devfreq,
 >
+>         switch (event) {
+>         case DEVFREQ_GOV_START:
+> -               devfreq_monitor_start(devfreq);
+>                 tegra_actmon_enable_interrupts(tegra);
+>                 break;
+>
+>         case DEVFREQ_GOV_STOP:
+>                 tegra_actmon_disable_interrupts(tegra);
+> -               devfreq_monitor_stop(devfreq);
+>                 break;
+>
+>         case DEVFREQ_GOV_SUSPEND:
 > --
 > 2.20.1.791.gb4d0f1c61a-goog
 >
