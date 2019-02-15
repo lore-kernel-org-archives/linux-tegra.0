@@ -1,55 +1,114 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to
- "falling back"
-Date: Fri, 15 Feb 2019 22:42:59 +0100
-Message-ID: <20190215214259.lijzlwaelm3najwr@ninjato>
-References: <20190215153126.18575-1-colin.king@canonical.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [GIT PULL 6/9] ARM: tegra: Core changes for v5.1-rc1
+Date: Fri, 15 Feb 2019 22:48:26 +0100
+Message-ID: <20190215214826.GB12838@ulmo>
+References: <20190208150935.32108-1-thierry.reding@gmail.com>
+ <20190208150935.32108-7-thierry.reding@gmail.com>
+ <CAK8P3a2vDG97hP80i6rknqFnDdpoCGMBpmoy2Gp-jUWnGJ5VCg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cydg23admer3cmh5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190215153126.18575-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============5530303226735087983=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAK8P3a2vDG97hP80i6rknqFnDdpoCGMBpmoy2Gp-jUWnGJ5VCg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---cydg23admer3cmh5
+--===============5530303226735087983==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
+Content-Disposition: inline
+
+
+--IrhDeMKUP4DT/M7F
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 15, 2019 at 05:48:25PM +0100, Arnd Bergmann wrote:
+> On Fri, Feb 8, 2019 at 4:09 PM Thierry Reding <thierry.reding@gmail.com> =
+wrote:
+> >
+> > Hi ARM SoC maintainers,
+> >
+> > The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee=
+500c:
+> >
+> >   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
+gra-for-5.1-arm-core
+> >
+> > for you to fetch changes up to 1c6279b49d3ffff38357e93d112512fecf3711a7:
+> >
+> >   ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+=
+ (2019-01-16 13:22:04 +0100)
+> >
+> > Thanks,
+> > Thierry
+> >
+> > ----------------------------------------------------------------
+> > ARM: tegra: Core changes for v5.1-rc1
+> >
+> > This contains three fixes for resume from LP1 on Tegra30.
+> >
 >=20
-> The phrasing in two dev_err messages is using fallbacking which
-> os less understandable than "falling back", so fix this up.
+> Pulled into arm/soc?
 >=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Should these bugfixes have been marked Cc:stable?
 
-Applied to for-next, thanks!
+I don't think that'd be worth it. As far as I can tell these have been
+broken since forever. Backporting this would be fairly involved and I'm
+not sure if this hurts enough to warrant the additional work, given that
+it's not been reported in all this time.
 
+Dmitry, can you clarify whether you want these to be backported?
 
---cydg23admer3cmh5
+Thierry
+
+--IrhDeMKUP4DT/M7F
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxnMl4ACgkQFA3kzBSg
-KbbuyQ/+MbAm4ZxfTLByL3Bler1Blvc9fJOX5r3PFhmKT4oKXhC9i21188LEW7VY
-hXcoZT9xpQtBjzUpo+1M5SyHXBF60gY9CFbrogQ18qbyJxW5KfxIoJbwPHLRZ0kQ
-aawr+Qo3pBm8X/+NwMuSTlNxcUHN4jhNZ1Od1mwvmqln5O1WTVCXzNQYCrE3ifyi
-kLCL4/Y0FHjTZrYksUFMYUA3uYhoaKb8xBNW4qxrETclEJSEvne5MN+K4WIbO/90
-+DDz+83dX1Xnn7Eyy5j1WQ+eRgswoKl8K9iOlCcXVlgejXgOCYthbdLGdQRqZdq8
-89BuXvZygaPNvaAoIhZ5xZmQc5z20g7pUOS3MghwSCwUELK2AweHd7CwSvaxz4YD
-ptm9vdwlvbHBnMT3TXjwLFdgtF/uLhpmcuXLv6VHx4e4LM7OMXvvRu+uOUOvpgX9
-g5pYhZRLT7+Xr6piQDZ1AYDGYrzH0WBM6VDz7uHq38I8JTWDNmrIhgA/QP3eqtqW
-J5wGxFdyz8yX+dTHCOtANTxjYNKgAMe1zCHYtvBSz6/eI6srZ0r/kN94sV9mlYwK
-AkoFzQoMgOFTJGGBkoHsmD+9uYoySbUpIukt+CmUCJo7/9aE8qGq656jz6tlZst+
-+xao2NUDWhENDjEFWQdkxlShUDnd0UT1miMH43vCl6bp772RjtE=
-=3c33
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxnM6oACgkQ3SOs138+
+s6GKghAAvzjv7yHNObjctpQ+geAbVuYXlxI075X1apxWDzKOl8VmtitxcDvX5Jfa
+4xNCfSVrvGGKaPdn/HV93VS2DHNnvjfqwvAbmBIswxfEyVR145hy5nSSoVZo3pC1
+rb+GFgMouNo9K1hvVljo2LwxmS4rD3vDzwkULBb5P3JMarGXlx+LQ81piP0zuZ5R
+C5r/L8sER/wX+Klff9QZIRlLtDPXeCCFHIDG5VIQzUaf3k+DU99F1Zd7x5oNVNmb
+bxEfKMvmhrvWH1ThjGAwRRiYenraLo1isnnMLKH3r/V53Dh5OYdMqB6tFHaXlKbF
+eGf1C2OFbHqL6ohsPPhx8ljIU/CWqxcoIYosMv4VVB3n/v0rPxJ4KmW4nme5J1An
+2Dks/hPr/H7kqRxcLnJ4z+3d65k39PvuS2UkPrfc7VyX+zKatFynOyE9qv2D6IXw
+rMYeRNNZW8bQKul0rN0G/gcFyOyT4T4x6C78lCfJwr1Y1ZLDMTquuRMrunALfyqY
+MvWxBVg/qdqAbHR8dGaqnFBJDRqXeY8VpDN44yXDcjjXazMBsggERB0Ltnpj1tSa
+YAg/aJwT+3z5HzdycbL43xjLpT3TxPPYwk1T8rt+TOiosZ7WNNckwde1TFoJKe1C
+1WnFn/d1GSQJ0w8ZjX+yZ/Pm+9dcx9C2fEkxusKn1qH+1TVez1s=
+=BIii
 -----END PGP SIGNATURE-----
 
---cydg23admer3cmh5--
+--IrhDeMKUP4DT/M7F--
+
+
+--===============5530303226735087983==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5530303226735087983==--
