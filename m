@@ -1,151 +1,48 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
- devfreq core
-Date: Fri, 15 Feb 2019 09:33:05 +0900
-Message-ID: <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
-References: <20190214013042.254790-1-mka@chromium.org>
-        <20190214013042.254790-5-mka@chromium.org>
-        <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
-        <CGME20190214192933epcas5p204c34010accb5e63480abd3ca34991eb@epcas5p2.samsung.com>
-        <20190214192855.GD117604@google.com>
-        <b28e763d-c3c9-0673-6216-f67561112b60@samsung.com>
-        <20190215001947.GF117604@google.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 05/65] clk: tegra: dfll: Fix a potential Oop in remove()
+Date: Thu, 14 Feb 2019 21:10:21 -0500
+Message-ID: <20190215021121.177674-5-sashal@kernel.org>
+References: <20190215021121.177674-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190215001947.GF117604@google.com>
-Content-Language: en-US
+In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Matthias,
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 19. 2. 15. 오전 9:19, Matthias Kaehlcke wrote:
-> Hi Chanwoo,
-> 
-> On Fri, Feb 15, 2019 at 08:42:30AM +0900, Chanwoo Choi wrote:
->> Hi Matthias,
->>
->> On 19. 2. 15. 오전 4:28, Matthias Kaehlcke wrote:
->>> Hi Chanwoo,
->>>
->>> On Thu, Feb 14, 2019 at 11:17:36PM +0900, Chanwoo Choi wrote:
->>>> Hi Matthias,
->>>>
->>>> As I commented on the first patch, it is not possible to call some codes
->>>> according to the intention of each governor between 'devfreq_moniotr_*()'
->>>> and some codes which are executed before or after 'devfreq_moniotr_*()'
->>>>
->>>> For example, if some governor requires the following sequence,
->>>> after this patch, it is not possible.
->>>>
->>>> case DEVFREQ_GOV_xxx:
->>>>         /* execute some code before devfreq_monitor_xxx() */
->>>>         devfreq_monitor_xxx()
->>>>         /* execute some code after devfreq_monitor_xxx() */
->>>
->>> As for the suspend/resume case I agree that the patch introduces this
->>> limitation, but I'm not convinced that this is an actual problem.
->>>
->>> For governor_start(): why can't the governor execute the code
->>> before polling started, does it make any difference to the governor
->>> that a work is scheduled?
->>
->> The some governors might want to do something before starting
->> the work and do something after work started. I think that
->> the existing style is more flexible.
-> 
-> Could you provide a practical example that answers my question above:
-> 
-> "why can't the governor execute the code before polling started, does
-> it make any difference to the governor that a work is scheduled?"
+[ Upstream commit d39eca547f3ec67140a5d765a426eb157b978a59 ]
 
-Actually, as for now, I don't know the correct practice and now.
-I want to say that the existing style is more flexible for the
-new governor in the future. If there are no any special benefits,
-I think we don't need to harm the flexibility.
+If tegra_dfll_unregister() fails then "soc" is an error pointer.  We
+should just return instead of dereferencing it.
 
-> 
->> And,
->> It has one more problem when changing the governor on the fly
->> from simple_ondemand to other governors like performance,
->> powersave and so on.
->>
->> Even if other governors don't need to monitor the utilization,
->> the work timer will be executed continually because the devfreq
->> device has the polling_ms value. It is not necessary
->> of the other governors such as performance, powersave.
->>
->> It means that only specific governor like simple_ondemand
->> have to call the devfreq_monitor_start() by itself
->> instead of calling it on devfreq core.
-> 
-> yes, I noticed that too, it can be easily fixed with a flag in the
-> governor.
+Fixes: 1752c9ee23fb ("clk: tegra: dfll: Fix drvdata overwriting issue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Right, If we add some codes like flag, it is easy.
-Actually, it is just difference how to support them.
-
-I think that the existing style has not any problem and is not
-complicated to develop the new governor. If there are no
-some benefits, IMO, we better to keep the flexibility.
-It can give the flexibility to the developer of governor.
-
-> 
->>> For governor_stop(): why would the governor require polling to be
->>> active during stop? If it needs update_devfreq() to run (called by
->>> devfreq_monitor()) it can call it directly, instead of waiting for the
->>> monitor to run at some later time.
->>
->> As I knew, if the current governors are performance/powersave/
->> userspace, the monitoring is already stopped and not used.
->> Because they don't need to handle the codes related to the work
->> like queue_delayed_work(), cancel_delayed_work_sync().
->>
->> And,
->> In case of the existing style for calling devfreq_monitor_*(),
->> other governors like performance/powersave/userspace/passice
->> don't need to call the devfreq_monitor_stop() because they
->> didn't use the work timer.
-> 
-> As per above, the governor could have a flag indicating that it
-> doesn't need load monitoring.
-
-About this, I commented above. Pleas check it.
-
-> 
-> I think it should be avoided to expect the governors to do the right
-> thing if certain actions are mandatory and common for all governors
-> (unless the feature in question is not used). It should be handled in
-> the core code, unless there are good reasons not to do this.
-
-I agree to distinguish for common code and specific code depends on governor.
-But, it is harm for the flexibility. We know that there are no problem
-after applying this patchset. But, as I commented, I'm not sure that
-it is meaningful to harm the flexibility.
-
-> 
-> With thispatch set the amount of code remains essentially the same,
-> and no new code needs to be added for governors that don't do anything
-> special in start/stop/suspend/resume.
-> 
-> TBH I think probably the entire event handler multiplexing should go
-> away and be changed to a struct devfreq_ops with optional callbacks
-> for start, stop, suspend, resume and update interval. As far as I can
-> tell the multiplexing isn't needed and separate ops would result in
-> cleaner code, in both the devfreq core and the governors.
-> 
-> Cheers
-> 
-> Matthias
-> 
-> 
-
-
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 269d3595758b..edc31bb56674 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -133,9 +133,11 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ 	struct tegra_dfll_soc_data *soc;
+ 
+ 	soc = tegra_dfll_unregister(pdev);
+-	if (IS_ERR(soc))
++	if (IS_ERR(soc)) {
+ 		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
+ 			PTR_ERR(soc));
++		return PTR_ERR(soc);
++	}
+ 
+ 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.19.1
