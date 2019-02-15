@@ -1,114 +1,159 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [GIT PULL 6/9] ARM: tegra: Core changes for v5.1-rc1
-Date: Fri, 15 Feb 2019 22:48:26 +0100
-Message-ID: <20190215214826.GB12838@ulmo>
-References: <20190208150935.32108-1-thierry.reding@gmail.com>
- <20190208150935.32108-7-thierry.reding@gmail.com>
- <CAK8P3a2vDG97hP80i6rknqFnDdpoCGMBpmoy2Gp-jUWnGJ5VCg@mail.gmail.com>
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
+ devfreq core
+Date: Fri, 15 Feb 2019 14:56:21 -0800
+Message-ID: <20190215225621.GG117604@google.com>
+References: <20190214013042.254790-1-mka@chromium.org>
+ <20190214013042.254790-5-mka@chromium.org>
+ <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
+ <CGME20190214192933epcas5p204c34010accb5e63480abd3ca34991eb@epcas5p2.samsung.com>
+ <20190214192855.GD117604@google.com>
+ <b28e763d-c3c9-0673-6216-f67561112b60@samsung.com>
+ <20190215001947.GF117604@google.com>
+ <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5530303226735087983=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAK8P3a2vDG97hP80i6rknqFnDdpoCGMBpmoy2Gp-jUWnGJ5VCg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Chanwoo Choi <cwchoi00@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Chanwoo,
 
---===============5530303226735087983==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
-Content-Disposition: inline
+On Fri, Feb 15, 2019 at 09:33:05AM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
+> 
+> On 19. 2. 15. 오전 9:19, Matthias Kaehlcke wrote:
+> > Hi Chanwoo,
+> > 
+> > On Fri, Feb 15, 2019 at 08:42:30AM +0900, Chanwoo Choi wrote:
+> >> Hi Matthias,
+> >>
+> >> On 19. 2. 15. 오전 4:28, Matthias Kaehlcke wrote:
+> >>> Hi Chanwoo,
+> >>>
+> >>> On Thu, Feb 14, 2019 at 11:17:36PM +0900, Chanwoo Choi wrote:
+> >>>> Hi Matthias,
+> >>>>
+> >>>> As I commented on the first patch, it is not possible to call some codes
+> >>>> according to the intention of each governor between 'devfreq_moniotr_*()'
+> >>>> and some codes which are executed before or after 'devfreq_moniotr_*()'
+> >>>>
+> >>>> For example, if some governor requires the following sequence,
+> >>>> after this patch, it is not possible.
+> >>>>
+> >>>> case DEVFREQ_GOV_xxx:
+> >>>>         /* execute some code before devfreq_monitor_xxx() */
+> >>>>         devfreq_monitor_xxx()
+> >>>>         /* execute some code after devfreq_monitor_xxx() */
+> >>>
+> >>> As for the suspend/resume case I agree that the patch introduces this
+> >>> limitation, but I'm not convinced that this is an actual problem.
+> >>>
+> >>> For governor_start(): why can't the governor execute the code
+> >>> before polling started, does it make any difference to the governor
+> >>> that a work is scheduled?
+> >>
+> >> The some governors might want to do something before starting
+> >> the work and do something after work started. I think that
+> >> the existing style is more flexible.
+> > 
+> > Could you provide a practical example that answers my question above:
+> > 
+> > "why can't the governor execute the code before polling started, does
+> > it make any difference to the governor that a work is scheduled?"
+> 
+> Actually, as for now, I don't know the correct practice and now.
+> I want to say that the existing style is more flexible for the
+> new governor in the future.
 
+If you try submitting 'flexible' code in other parts of the kernel
+without users of this flexibility and no solid arguments why this
+flexibility is needed it would most likely be rejected.
 
---IrhDeMKUP4DT/M7F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Unnecessary flexibility can be a burden, rather than an advantage.
 
-On Fri, Feb 15, 2019 at 05:48:25PM +0100, Arnd Bergmann wrote:
-> On Fri, Feb 8, 2019 at 4:09 PM Thierry Reding <thierry.reding@gmail.com> =
-wrote:
-> >
-> > Hi ARM SoC maintainers,
-> >
-> > The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee=
-500c:
-> >
-> >   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
-gra-for-5.1-arm-core
-> >
-> > for you to fetch changes up to 1c6279b49d3ffff38357e93d112512fecf3711a7:
-> >
-> >   ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+=
- (2019-01-16 13:22:04 +0100)
-> >
-> > Thanks,
-> > Thierry
-> >
-> > ----------------------------------------------------------------
-> > ARM: tegra: Core changes for v5.1-rc1
-> >
-> > This contains three fixes for resume from LP1 on Tegra30.
-> >
->=20
-> Pulled into arm/soc?
->=20
-> Should these bugfixes have been marked Cc:stable?
+> If there are no any special benefits I think we don't need to harm
+> the flexibility.
 
-I don't think that'd be worth it. As far as I can tell these have been
-broken since forever. Backporting this would be fairly involved and I'm
-not sure if this hurts enough to warrant the additional work, given that
-it's not been reported in all this time.
+There are multiple benefits, the following shortcomings of the current
+approach are eliminated:
 
-Dmitry, can you clarify whether you want these to be backported?
+- it is error prone and allows governors to do the wrong thing, e.g.
+  - start monitoring before the governor is fully ready
+  - keep monitoring when the governor is partially 'stopped'
+  - omit mandatory calls
+- delegates tasks to the governors which are responsibility of the
+  core
+- code is harder to read
+  - switch from common code to governor code and back
+- unecessary boilerplate code in governors
+- option to replace ->event_handler() with ->start(), ->stop(), etc,
+  which is cleaner
 
-Thierry
+I'm easily convinced if the flexibility is really needed. I'm not even
+expecting a real world example, just be creative and make something
+up that sounds reasonable.
 
---IrhDeMKUP4DT/M7F
-Content-Type: application/pgp-signature; name="signature.asc"
+start/resume()
+{
+	// prepare governor
 
------BEGIN PGP SIGNATURE-----
+	// start polling
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxnM6oACgkQ3SOs138+
-s6GKghAAvzjv7yHNObjctpQ+geAbVuYXlxI075X1apxWDzKOl8VmtitxcDvX5Jfa
-4xNCfSVrvGGKaPdn/HV93VS2DHNnvjfqwvAbmBIswxfEyVR145hy5nSSoVZo3pC1
-rb+GFgMouNo9K1hvVljo2LwxmS4rD3vDzwkULBb5P3JMarGXlx+LQ81piP0zuZ5R
-C5r/L8sER/wX+Klff9QZIRlLtDPXeCCFHIDG5VIQzUaf3k+DU99F1Zd7x5oNVNmb
-bxEfKMvmhrvWH1ThjGAwRRiYenraLo1isnnMLKH3r/V53Dh5OYdMqB6tFHaXlKbF
-eGf1C2OFbHqL6ohsPPhx8ljIU/CWqxcoIYosMv4VVB3n/v0rPxJ4KmW4nme5J1An
-2Dks/hPr/H7kqRxcLnJ4z+3d65k39PvuS2UkPrfc7VyX+zKatFynOyE9qv2D6IXw
-rMYeRNNZW8bQKul0rN0G/gcFyOyT4T4x6C78lCfJwr1Y1ZLDMTquuRMrunALfyqY
-MvWxBVg/qdqAbHR8dGaqnFBJDRqXeY8VpDN44yXDcjjXazMBsggERB0Ltnpj1tSa
-YAg/aJwT+3z5HzdycbL43xjLpT3TxPPYwk1T8rt+TOiosZ7WNNckwde1TFoJKe1C
-1WnFn/d1GSQJ0w8ZjX+yZ/Pm+9dcx9C2fEkxusKn1qH+1TVez1s=
-=BIii
------END PGP SIGNATURE-----
+=>	what needs to be done here that couldn't have been done
+=>	before polling was started?
+}
 
---IrhDeMKUP4DT/M7F--
+stop/suspend()
+{
+=>	what needs to be done here that couldn't be done after polling
+=>	is stopped?
 
+	// stop polling
 
---===============5530303226735087983==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+	// 'unprepare' governor
+}
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >> And,
+> >> It has one more problem when changing the governor on the fly
+> >> from simple_ondemand to other governors like performance,
+> >> powersave and so on.
+> >>
+> >> Even if other governors don't need to monitor the utilization,
+> >> the work timer will be executed continually because the devfreq
+> >> device has the polling_ms value. It is not necessary
+> >> of the other governors such as performance, powersave.
+> >>
+> >> It means that only specific governor like simple_ondemand
+> >> have to call the devfreq_monitor_start() by itself
+> >> instead of calling it on devfreq core.
+> > 
+> > yes, I noticed that too, it can be easily fixed with a flag in the
+> > governor.
+> 
+> Right, If we add some codes like flag, it is easy.
+> Actually, it is just difference how to support them.
+> 
+> I think that the existing style has not any problem and is not
+> complicated to develop the new governor. If there are no
+> some benefits, IMO, we better to keep the flexibility.
+> It can give the flexibility to the developer of governor.
 
---===============5530303226735087983==--
+I listed several benefits, please comment on the specific items if you
+disagree, instead of just saying there are no benefits.
+
+OTOH so far we haven't seen an even hypothetical example that shows
+that the flexibility *could* be needed.
+
+And even if such a rare case that we currently can't imagine came up,
+it could be easily addressed with notifiers, a standard mechanism in
+the kernel to inform drivers about events they are interested in.
+
+Cheers
+
+Matthias
