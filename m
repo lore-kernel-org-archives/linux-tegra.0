@@ -1,61 +1,72 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to
- "falling back"
-Date: Fri, 15 Feb 2019 16:38:22 +0100
-Message-ID: <20190215153822.oszldcxoxk2mssli@ninjato>
-References: <20190215153126.18575-1-colin.king@canonical.com>
- <20190215153245.GA7374@ulmo>
- <da6cdd39-b021-7834-f3a4-46feceeb66c4@canonical.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V6 5/7] arm64: dts: tegra210: add CPU idle states
+ properties
+Date: Fri, 15 Feb 2019 16:47:28 +0100
+Message-ID: <d98266b3-f0a4-cebe-174a-2ab5c4051fde@linaro.org>
+References: <20190201161654.18315-1-josephl@nvidia.com>
+ <20190201161654.18315-6-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6pztjuawutxj44df"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <da6cdd39-b021-7834-f3a4-46feceeb66c4@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190201161654.18315-6-josephl@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---6pztjuawutxj44df
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Feb 15, 2019 at 03:33:58PM +0000, Colin Ian King wrote:
-> On 15/02/2019 15:32, Thierry Reding wrote:
-> > On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> The phrasing in two dev_err messages is using fallbacking which
-> >> os less understandable than "falling back", so fix this up.
-> >=20
-> > os -> is, otherwise:
->=20
-> Oops, can that be fixed up when it's applied.
-
-Yes.
-
-
---6pztjuawutxj44df
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxm3OoACgkQFA3kzBSg
-KbZ2+A//V8yxCnyJ34e2GPkX+XQ9xnbos8BNwpHpU4ilnMujqO5Kxd5oJRX15PR7
-L7EniEzKHnXpHXO6Sfwl7Rr4K2fOmcobkjsHSISVZhMFcjkoAHkgldsbx2R0PUz2
-LcZcujSMXimHZktW+ypDwDS505WKsUm0fUkmW0+MCiEVCAPs+o4OutipbpQOz2jm
-e0SrlGjeeSWkb0/Sf3aXOKngCkAakRBW3uVZT1ddt2JNZK2+OsSrhxXd/BU8uCzq
-jB33DcO5aR+scdHoC8wB4dec8i96HD9D8yL9X9PDa/U8vhCNGe54dJKdLyDA8vVr
-MAdnZt/AGnYJ0PsINE9QG8NFafWul5Ovi4YOAR6hDP7Gbt1fGJs2QtUYPfsrnkPY
-nlvZUuPsjiwNGTkY52zqHG8wCKG+QMV8NhMlGLBOusGHD0N9Fmt3V0KcarYH9Pxd
-g7Ln1vwQqu8mM6gPPC+tWOEcGnyPD4oHeOIayzLWs3N2tJ4WFxc0OYZeFLABXFST
-TexeX/9BYxX4Z1U+WE/dgAslbAS+mhctaGTGOdifaQBHsxN92b7Nqbet1qoB60cT
-t952/VlgIx0jz2OKNFVHCK+2kUGfkAoXX9RASOhoi/6RFnO+qaSBxC2hZiq+lAkk
-OvZcuA5fLKDODePqq54W9Wzr4CF9iqIA5MpCGfgim2BRzKbRvFo=
-=+6Od
------END PGP SIGNATURE-----
-
---6pztjuawutxj44df--
+T24gMDEvMDIvMjAxOSAxNzoxNiwgSm9zZXBoIExvIHdyb3RlOgo+IEFkZCBpZGxlIHN0YXRlcyBw
+cm9wZXJ0aWVzIGZvciBnZW5lcmljIEFSTSBDUFUgaWRsZSBkcml2ZXIuIFRoaXMKPiBpbmNsdWRl
+cyBhIEM3IHN0YXRlIHdoaWNoIGlzIHRoZSBwb3dlciBkb3duIHN0YXRlIG9mIENQVSBjb3Jlcy4K
+PiAKPiBTaWduZWQtb2ZmLWJ5OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4KPiBBY2tl
+ZC1ieTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4gLS0tCj4gdjY6Cj4gICog
+YWRkIGFjayB0YWcgZnJvbSBKb24uCj4gdjU6Cj4gICogbm8gY2hhbmdlCj4gdjQ6Cj4gICogbm8g
+Y2hhbmdlCj4gdjM6Cj4gICogbm8gY2hhbmdlCj4gdjI6Cj4gICogYWRkIGVudHJ5LWxhdGVuY3kt
+dXMgYW5kIGV4aXQtbGF0ZW5jeS11cyBwcm9wZXJ0aWVzCj4gCj4gTm90ZToKPiBUaGlzIGR0IHBh
+dGNoIGRlcGVuZHMgb24gdGhlIERUIGNoYW5nZXMgaW4gYmVsb3cgc2VyaWVzLgo+IGh0dHA6Ly9w
+YXRjaHdvcmsub3psYWJzLm9yZy9wcm9qZWN0L2xpbnV4LXRlZ3JhL2xpc3QvP3Nlcmllcz04NDM4
+MAo+IC0tLQo+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC5kdHNpIHwgMTkg
+KysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKQo+
+IAo+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC5kdHNp
+IGIvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEyMTAuZHRzaQo+IGluZGV4IDJiMzg3
+MzY0YWZjMy4uNzU1MzQ2OTI2MDRjIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMv
+bnZpZGlhL3RlZ3JhMjEwLmR0c2kKPiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90
+ZWdyYTIxMC5kdHNpCj4gQEAgLTEzMTgsMjQgKzEzMTgsNDMgQEAKPiAgCQkJCSA8JmRmbGw+Owo+
+ICAJCQljbG9jay1uYW1lcyA9ICJjcHVfZyIsICJwbGxfeCIsICJwbGxfcCIsICJkZmxsIjsKPiAg
+CQkJY2xvY2stbGF0ZW5jeSA9IDwzMDAwMDA+Owo+ICsJCQljcHUtaWRsZS1zdGF0ZXMgPSA8JkM3
+PjsKClBsZWFzZSBjaGFuZ2UgdGhlIEM3IG5hbWUsIHRoYXQgd2lsbCBiZSBjb25mdXNpbmcgd2l0
+aCB0aGUgQy1zdGF0ZS4KCkNQVV9TTEVFUCB3b3VsZCBiZSBuaWNlIGFuZCBjb25zaXN0ZW50IHdp
+dGggb3RoZXIgZHJpdmVycy4KCj4gIAkJfTsKPiAgCj4gIAkJY3B1QDEgewo+ICAJCQlkZXZpY2Vf
+dHlwZSA9ICJjcHUiOwo+ICAJCQljb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTU3IjsKPiAgCQkJ
+cmVnID0gPDE+Owo+ICsJCQljcHUtaWRsZS1zdGF0ZXMgPSA8JkM3PjsKPiAgCQl9Owo+ICAKPiAg
+CQljcHVAMiB7Cj4gIAkJCWRldmljZV90eXBlID0gImNwdSI7Cj4gIAkJCWNvbXBhdGlibGUgPSAi
+YXJtLGNvcnRleC1hNTciOwo+ICAJCQlyZWcgPSA8Mj47Cj4gKwkJCWNwdS1pZGxlLXN0YXRlcyA9
+IDwmQzc+Owo+ICAJCX07Cj4gIAo+ICAJCWNwdUAzIHsKPiAgCQkJZGV2aWNlX3R5cGUgPSAiY3B1
+IjsKPiAgCQkJY29tcGF0aWJsZSA9ICJhcm0sY29ydGV4LWE1NyI7Cj4gIAkJCXJlZyA9IDwzPjsK
+PiArCQkJY3B1LWlkbGUtc3RhdGVzID0gPCZDNz47Cj4gKwkJfTsKPiArCj4gKwkJaWRsZS1zdGF0
+ZXMgewo+ICsJCQllbnRyeS1tZXRob2QgPSAicHNjaSI7Cj4gKwo+ICsJCQlDNzogYzcgewo+ICsJ
+CQkJY29tcGF0aWJsZSA9ICJhcm0saWRsZS1zdGF0ZSI7Cj4gKwkJCQlhcm0scHNjaS1zdXNwZW5k
+LXBhcmFtID0gPDB4NDAwMDAwMDc+Owo+ICsJCQkJZW50cnktbGF0ZW5jeS11cyA9IDwyNTA+Owo+
+ICsJCQkJZXhpdC1sYXRlbmN5LXVzID0gPDEwMD47Cj4gKwkJCQltaW4tcmVzaWRlbmN5LXVzID0g
+PDEwMDA+Owo+ICsJCQkJd2FrZXVwLWxhdGVuY3ktdXMgPSA8MTMwPjsKClJlZ2FyZGluZyB0aGUg
+ZW50cnkgYW5kIHRoZSBleGl0IGxhdGVuY3ksIHRoZSB3YWtldXAgbGF0ZW5jeSBzb3VuZHMgYQpi
+aXQgc21hbGwuCgouL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2lkbGUtc3RhdGVzLnR4dAoKPiAr
+CQkJCWlkbGUtc3RhdGUtbmFtZSA9ICJjNy1jcHUtcG93ZXJnYXRlZCI7CgoiY3B1LXNsZWVwIgoK
+PiArCQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cj4gKwkJCX07Cj4gIAkJfTsKPiAgCX07Cj4gIAo+
+IAoKCi0tIAogPGh0dHA6Ly93d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg4pSCIE9wZW4gc291
+cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzogIDxodHRwOi8vd3d3LmZh
+Y2Vib29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90d2l0dGVyLmNvbS8j
+IS9saW5hcm9vcmc+IFR3aXR0ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9n
+Lz4gQmxvZwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
+cmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
+bnV4LWFybS1rZXJuZWwK
