@@ -1,47 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to "falling back"
-Date: Fri, 15 Feb 2019 15:31:26 +0000
-Message-ID: <20190215153126.18575-1-colin.king@canonical.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to
+ "falling back"
+Date: Fri, 15 Feb 2019 16:32:45 +0100
+Message-ID: <20190215153245.GA7374@ulmo>
+References: <20190215153126.18575-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190215153126.18575-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The phrasing in two dev_err messages is using fallbacking which
-os less understandable than "falling back", so fix this up.
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/i2c/busses/i2c-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The phrasing in two dev_err messages is using fallbacking which
+> os less understandable than "falling back", so fix this up.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a4cd79c9f7a7..5a403c3ab66c 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -452,7 +452,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 	tegra_i2c_release_dma(i2c_dev);
- 	if (err != -EPROBE_DEFER) {
- 		dev_err(i2c_dev->dev, "cannot use DMA: %d\n", err);
--		dev_err(i2c_dev->dev, "fallbacking to PIO\n");
-+		dev_err(i2c_dev->dev, "falling back to PIO\n");
- 		return 0;
- 	}
- 
-@@ -965,7 +965,7 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
- 		if (ret < 0) {
- 			dev_err(i2c_dev->dev, "DMA slave config failed: %d\n",
- 				ret);
--			dev_err(i2c_dev->dev, "fallbacking to PIO\n");
-+			dev_err(i2c_dev->dev, "falling back to PIO\n");
- 			tegra_i2c_release_dma(i2c_dev);
- 			i2c_dev->is_curr_dma_xfer = false;
- 		} else {
--- 
-2.20.1
+os -> is, otherwise:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxm25oACgkQ3SOs138+
+s6GO7A/8C0HmG6XENjhczhq9kSHKo0dZ2OKPaUCcxYfzhwnKUzTgYszpwAMP8ghO
+4l/CVYw6H9RP5js1tAzn5kq/+JQXs/RELSIlJO9/Q2keTObJ/UbUu9YbE7E98Gsi
+xQJiRSM1IqbJfjIAzLrsiUrSHN0ULNNLOZ9mE+rAGQJRDQx9Pk1WaE7BK/Xn2r3t
+GcSqwVyphEqkcxs8jVdJy53nALkWHZ5eGzlcoYrMeJNNNoDFvN+83wMxvAz76SI7
+aqRSDxPVbeCThkEmJsgJ6mnEGODnleGmP+sBeWB3ELAWjeX2kJNtjeBzPQC8P6S5
+K+PrFHqj+EnOIeH0SBq3G4U9TPVJtylJwlBOBxrUBQiZ+qswksWQSFfIHvqjTmBb
+75Mr8iID5PqLtlgNlQIRKef6TWENQIS/WxjAe0Yqn/t/6Lul0NoLpYL8qWywMXen
+3LFVYw5eekqrUPRmCOFi3t2keaPie7k65A/UzR+y4fK1SLYQCYHXvj/vBcG2UUHR
+qWMtw8pIFkiQilVIJU6qLgRXRWyd0qhv3g9oUWzEuDT4HmA81EweRgy3Itd4j8Sb
+H0QpT8kTMibqPG1WfkAg457zMYPqDlG4RKMCfQiqPGrBQzU478Sqo+zU8ulUzwEe
+nu44EJz3KAO/NaF7CUpzJ4ddL1sRQCB0TG2LuHKnMsev39wjWFU=
+=0IOU
+-----END PGP SIGNATURE-----
+
+--82I3+IH0IqGh5yIs--
