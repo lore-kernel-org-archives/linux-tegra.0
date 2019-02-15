@@ -1,48 +1,83 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 07/77] clk: tegra: dfll: Fix a potential Oop in remove()
-Date: Thu, 14 Feb 2019 21:07:45 -0500
-Message-ID: <20190215020855.176727-7-sashal@kernel.org>
-References: <20190215020855.176727-1-sashal@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter
+ imbalance
+Date: Fri, 15 Feb 2019 11:00:27 +0000
+Message-ID: <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
+References: <5510642.nRbR3bcduN@aspire.rjw.lan>
+ <9351473.C2nPJoyFsE@aspire.rjw.lan>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
+In-Reply-To: <9351473.C2nPJoyFsE@aspire.rjw.lan>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Daniel Vetter <daniel@ffwll.ch>, Lukas Wunner <lukas@wunner.de>, Andrzej Hajda <a.hajda@samsung.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Lucas Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Hi Rafael,
 
-[ Upstream commit d39eca547f3ec67140a5d765a426eb157b978a59 ]
+On 12/02/2019 12:08, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> If a stateless device link to a certain supplier with
+> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
+> consumer driver's probe callback, the supplier's PM-runtime usage
+> counter will be nonzero after that which effectively causes the
+> supplier to remain "always on" going forward.
+> 
+> Namely, device_link_add() called to add the link invokes
+> device_link_rpm_prepare() which notices that the consumer driver is
+> probing, so it increments the supplier's PM-runtime usage counter
+> with the assumption that the link will stay around until
+> pm_runtime_put_suppliers() is called by driver_probe_device(),
+> but if the link goes away before that point, the supplier's
+> PM-runtime usage counter will remain nonzero.
+> 
+> To prevent that from happening, first rework pm_runtime_get_suppliers()
+> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
+> links and make the latter only drop rpm_active and the supplier's
+> PM-runtime usage counter for each link by one, unless rpm_active is
+> one already for it.  Next, modify device_link_add() to bump up the
+> new link's rpm_active refcount and the suppliers PM-runtime usage
+> counter by two, to prevent pm_runtime_put_suppliers(), if it is
+> called subsequently, from suspending the supplier prematurely (in
+> case its PM-runtime usage counter goes down to 0 in there).
+> 
+> Due to the way rpm_put_suppliers() works, this change does not
+> affect runtime suspend of the consumer ends of new device links (or,
+> generally, device links for which DL_FLAG_PM_RUNTIME has just been
+> set).
+> 
+> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
+> Reported-by: Ulf Hansson <ulf.hansson@linaro.org> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> Note that the issue had been there before commit e2f3cd831a28, but it was
+> overlooked by that commit and this change is a fix on top of it, so make
+> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
+> that the patch will not be applicable to).
+I noticed that yesterday's and today's -next were no longer booting on
+one of our Tegra boards (Tegra210 Jetson TX2) because networking is
+failing. The ethernet chip is a USB device and looking at the bootlogs I
+can see that the Tegra XHCI driver is failing ...
 
-If tegra_dfll_unregister() fails then "soc" is an error pointer.  We
-should just return instead of dereferencing it.
+ tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
+ tegra-xusb 70090000.usb: HC died; cleaning up
 
-Fixes: 1752c9ee23fb ("clk: tegra: dfll: Fix drvdata overwriting issue")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The Tegra XHCI driver uses multiple power-domains and uses
+device_link_add() to attach them. So now I am wondering if there is
+something that we have got wrong in our implementation. However, I don't
+see the device being probed deferred on boot or anything like that.
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 269d3595758b..edc31bb56674 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -133,9 +133,11 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
- 
- 	soc = tegra_dfll_unregister(pdev);
--	if (IS_ERR(soc))
-+	if (IS_ERR(soc)) {
- 		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
- 			PTR_ERR(soc));
-+		return PTR_ERR(soc);
-+	}
- 
- 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
- 
+The driver in question is drivers/usb/host/xhci-tegra.c and we add the
+links in the function tegra_xusb_powerdomain_init() which is before RPM
+is enabled. Let me know if you have any thoughts.
+
+Cheers
+Jon
+
 -- 
-2.19.1
+nvpublic
