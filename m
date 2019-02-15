@@ -1,15 +1,14 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 9/9] arm64: tegra: Default configuration changes for
- v5.1-rc1
-Date: Fri, 15 Feb 2019 16:49:03 +0100
-Message-ID: <CAK8P3a1ze=SfAR7L-CLB--d_ngRXC7HGSxNPmXHThMrKecNqpw@mail.gmail.com>
+Subject: Re: [GIT PULL 5/9] firmware: tegra: Changes for v5.1-rc1
+Date: Fri, 15 Feb 2019 17:23:53 +0100
+Message-ID: <CAK8P3a3r_HyCKo7Jacd7gRxcQ86raPZhDiPQ55+bZofRGdrdUQ@mail.gmail.com>
 References: <20190208150935.32108-1-thierry.reding@gmail.com>
- <20190208150935.32108-10-thierry.reding@gmail.com>
+ <20190208150935.32108-6-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190208150935.32108-10-thierry.reding@gmail.com>
+In-Reply-To: <20190208150935.32108-6-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,13 +23,11 @@ Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, arm-so
 List-Id: linux-tegra@vger.kernel.org
 
 On Fri, Feb 8, 2019 at 4:09 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> arm64: tegra: Default configuration changes for v5.1-rc1
+> firmware: tegra: Changes for v5.1-rc1
 >
-> Enables the TCU driver to be built into the kernel, so that the TCU can
-> be used as debug serial on Jetson Xavier. This also enables the MAX8973
-> regulator driver that is required for CPU frequency scaling on Tegra210.
+> These changes add support for BPMP on Tegra210.
 >
 
-Pulled into arm/defconfig, thanks!
+Pulled into arm/drivers, thanks!
 
-     Arnd
+      Arnd
