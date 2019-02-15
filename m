@@ -1,16 +1,15 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V6 5/7] arm64: dts: tegra210: add CPU idle states
- properties
-Date: Fri, 15 Feb 2019 16:47:28 +0100
-Message-ID: <d98266b3-f0a4-cebe-174a-2ab5c4051fde@linaro.org>
-References: <20190201161654.18315-1-josephl@nvidia.com>
- <20190201161654.18315-6-josephl@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 9/9] arm64: tegra: Default configuration changes for
+ v5.1-rc1
+Date: Fri, 15 Feb 2019 16:49:03 +0100
+Message-ID: <CAK8P3a1ze=SfAR7L-CLB--d_ngRXC7HGSxNPmXHThMrKecNqpw@mail.gmail.com>
+References: <20190208150935.32108-1-thierry.reding@gmail.com>
+ <20190208150935.32108-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190201161654.18315-6-josephl@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <20190208150935.32108-10-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,53 +19,18 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDEvMDIvMjAxOSAxNzoxNiwgSm9zZXBoIExvIHdyb3RlOgo+IEFkZCBpZGxlIHN0YXRlcyBw
-cm9wZXJ0aWVzIGZvciBnZW5lcmljIEFSTSBDUFUgaWRsZSBkcml2ZXIuIFRoaXMKPiBpbmNsdWRl
-cyBhIEM3IHN0YXRlIHdoaWNoIGlzIHRoZSBwb3dlciBkb3duIHN0YXRlIG9mIENQVSBjb3Jlcy4K
-PiAKPiBTaWduZWQtb2ZmLWJ5OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4KPiBBY2tl
-ZC1ieTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4gLS0tCj4gdjY6Cj4gICog
-YWRkIGFjayB0YWcgZnJvbSBKb24uCj4gdjU6Cj4gICogbm8gY2hhbmdlCj4gdjQ6Cj4gICogbm8g
-Y2hhbmdlCj4gdjM6Cj4gICogbm8gY2hhbmdlCj4gdjI6Cj4gICogYWRkIGVudHJ5LWxhdGVuY3kt
-dXMgYW5kIGV4aXQtbGF0ZW5jeS11cyBwcm9wZXJ0aWVzCj4gCj4gTm90ZToKPiBUaGlzIGR0IHBh
-dGNoIGRlcGVuZHMgb24gdGhlIERUIGNoYW5nZXMgaW4gYmVsb3cgc2VyaWVzLgo+IGh0dHA6Ly9w
-YXRjaHdvcmsub3psYWJzLm9yZy9wcm9qZWN0L2xpbnV4LXRlZ3JhL2xpc3QvP3Nlcmllcz04NDM4
-MAo+IC0tLQo+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC5kdHNpIHwgMTkg
-KysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKQo+
-IAo+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC5kdHNp
-IGIvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEyMTAuZHRzaQo+IGluZGV4IDJiMzg3
-MzY0YWZjMy4uNzU1MzQ2OTI2MDRjIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMv
-bnZpZGlhL3RlZ3JhMjEwLmR0c2kKPiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90
-ZWdyYTIxMC5kdHNpCj4gQEAgLTEzMTgsMjQgKzEzMTgsNDMgQEAKPiAgCQkJCSA8JmRmbGw+Owo+
-ICAJCQljbG9jay1uYW1lcyA9ICJjcHVfZyIsICJwbGxfeCIsICJwbGxfcCIsICJkZmxsIjsKPiAg
-CQkJY2xvY2stbGF0ZW5jeSA9IDwzMDAwMDA+Owo+ICsJCQljcHUtaWRsZS1zdGF0ZXMgPSA8JkM3
-PjsKClBsZWFzZSBjaGFuZ2UgdGhlIEM3IG5hbWUsIHRoYXQgd2lsbCBiZSBjb25mdXNpbmcgd2l0
-aCB0aGUgQy1zdGF0ZS4KCkNQVV9TTEVFUCB3b3VsZCBiZSBuaWNlIGFuZCBjb25zaXN0ZW50IHdp
-dGggb3RoZXIgZHJpdmVycy4KCj4gIAkJfTsKPiAgCj4gIAkJY3B1QDEgewo+ICAJCQlkZXZpY2Vf
-dHlwZSA9ICJjcHUiOwo+ICAJCQljb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTU3IjsKPiAgCQkJ
-cmVnID0gPDE+Owo+ICsJCQljcHUtaWRsZS1zdGF0ZXMgPSA8JkM3PjsKPiAgCQl9Owo+ICAKPiAg
-CQljcHVAMiB7Cj4gIAkJCWRldmljZV90eXBlID0gImNwdSI7Cj4gIAkJCWNvbXBhdGlibGUgPSAi
-YXJtLGNvcnRleC1hNTciOwo+ICAJCQlyZWcgPSA8Mj47Cj4gKwkJCWNwdS1pZGxlLXN0YXRlcyA9
-IDwmQzc+Owo+ICAJCX07Cj4gIAo+ICAJCWNwdUAzIHsKPiAgCQkJZGV2aWNlX3R5cGUgPSAiY3B1
-IjsKPiAgCQkJY29tcGF0aWJsZSA9ICJhcm0sY29ydGV4LWE1NyI7Cj4gIAkJCXJlZyA9IDwzPjsK
-PiArCQkJY3B1LWlkbGUtc3RhdGVzID0gPCZDNz47Cj4gKwkJfTsKPiArCj4gKwkJaWRsZS1zdGF0
-ZXMgewo+ICsJCQllbnRyeS1tZXRob2QgPSAicHNjaSI7Cj4gKwo+ICsJCQlDNzogYzcgewo+ICsJ
-CQkJY29tcGF0aWJsZSA9ICJhcm0saWRsZS1zdGF0ZSI7Cj4gKwkJCQlhcm0scHNjaS1zdXNwZW5k
-LXBhcmFtID0gPDB4NDAwMDAwMDc+Owo+ICsJCQkJZW50cnktbGF0ZW5jeS11cyA9IDwyNTA+Owo+
-ICsJCQkJZXhpdC1sYXRlbmN5LXVzID0gPDEwMD47Cj4gKwkJCQltaW4tcmVzaWRlbmN5LXVzID0g
-PDEwMDA+Owo+ICsJCQkJd2FrZXVwLWxhdGVuY3ktdXMgPSA8MTMwPjsKClJlZ2FyZGluZyB0aGUg
-ZW50cnkgYW5kIHRoZSBleGl0IGxhdGVuY3ksIHRoZSB3YWtldXAgbGF0ZW5jeSBzb3VuZHMgYQpi
-aXQgc21hbGwuCgouL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2lkbGUtc3RhdGVzLnR4dAoKPiAr
-CQkJCWlkbGUtc3RhdGUtbmFtZSA9ICJjNy1jcHUtcG93ZXJnYXRlZCI7CgoiY3B1LXNsZWVwIgoK
-PiArCQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cj4gKwkJCX07Cj4gIAkJfTsKPiAgCX07Cj4gIAo+
-IAoKCi0tIAogPGh0dHA6Ly93d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg4pSCIE9wZW4gc291
-cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzogIDxodHRwOi8vd3d3LmZh
-Y2Vib29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90d2l0dGVyLmNvbS8j
-IS9saW5hcm9vcmc+IFR3aXR0ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9n
-Lz4gQmxvZwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
-cmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
-bnV4LWFybS1rZXJuZWwK
+On Fri, Feb 8, 2019 at 4:09 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> arm64: tegra: Default configuration changes for v5.1-rc1
+>
+> Enables the TCU driver to be built into the kernel, so that the TCU can
+> be used as debug serial on Jetson Xavier. This also enables the MAX8973
+> regulator driver that is required for CPU frequency scaling on Tegra210.
+>
+
+Pulled into arm/defconfig, thanks!
+
+     Arnd
