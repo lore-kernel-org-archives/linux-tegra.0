@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 05/65] clk: tegra: dfll: Fix a potential Oop in remove()
-Date: Thu, 14 Feb 2019 21:10:21 -0500
-Message-ID: <20190215021121.177674-5-sashal@kernel.org>
-References: <20190215021121.177674-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 07/77] clk: tegra: dfll: Fix a potential Oop in remove()
+Date: Thu, 14 Feb 2019 21:07:45 -0500
+Message-ID: <20190215020855.176727-7-sashal@kernel.org>
+References: <20190215020855.176727-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
+In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
