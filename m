@@ -1,159 +1,60 @@
-From: Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
- devfreq core
-Date: Fri, 15 Feb 2019 14:56:21 -0800
-Message-ID: <20190215225621.GG117604@google.com>
-References: <20190214013042.254790-1-mka@chromium.org>
- <20190214013042.254790-5-mka@chromium.org>
- <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
- <CGME20190214192933epcas5p204c34010accb5e63480abd3ca34991eb@epcas5p2.samsung.com>
- <20190214192855.GD117604@google.com>
- <b28e763d-c3c9-0673-6216-f67561112b60@samsung.com>
- <20190215001947.GF117604@google.com>
- <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [GIT PULL 6/9] ARM: tegra: Core changes for v5.1-rc1
+Date: Sat, 16 Feb 2019 03:03:15 +0300
+Message-ID: <afa0e109-b24e-7b00-88c1-b3c30e1755fc@gmail.com>
+References: <20190208150935.32108-1-thierry.reding@gmail.com>
+ <20190208150935.32108-7-thierry.reding@gmail.com>
+ <CAK8P3a2vDG97hP80i6rknqFnDdpoCGMBpmoy2Gp-jUWnGJ5VCg@mail.gmail.com>
+ <20190215214826.GB12838@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190215214826.GB12838@ulmo>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Chanwoo,
-
-On Fri, Feb 15, 2019 at 09:33:05AM +0900, Chanwoo Choi wrote:
-> Hi Matthias,
-> 
-> On 19. 2. 15. 오전 9:19, Matthias Kaehlcke wrote:
-> > Hi Chanwoo,
-> > 
-> > On Fri, Feb 15, 2019 at 08:42:30AM +0900, Chanwoo Choi wrote:
-> >> Hi Matthias,
-> >>
-> >> On 19. 2. 15. 오전 4:28, Matthias Kaehlcke wrote:
-> >>> Hi Chanwoo,
-> >>>
-> >>> On Thu, Feb 14, 2019 at 11:17:36PM +0900, Chanwoo Choi wrote:
-> >>>> Hi Matthias,
-> >>>>
-> >>>> As I commented on the first patch, it is not possible to call some codes
-> >>>> according to the intention of each governor between 'devfreq_moniotr_*()'
-> >>>> and some codes which are executed before or after 'devfreq_moniotr_*()'
-> >>>>
-> >>>> For example, if some governor requires the following sequence,
-> >>>> after this patch, it is not possible.
-> >>>>
-> >>>> case DEVFREQ_GOV_xxx:
-> >>>>         /* execute some code before devfreq_monitor_xxx() */
-> >>>>         devfreq_monitor_xxx()
-> >>>>         /* execute some code after devfreq_monitor_xxx() */
-> >>>
-> >>> As for the suspend/resume case I agree that the patch introduces this
-> >>> limitation, but I'm not convinced that this is an actual problem.
-> >>>
-> >>> For governor_start(): why can't the governor execute the code
-> >>> before polling started, does it make any difference to the governor
-> >>> that a work is scheduled?
-> >>
-> >> The some governors might want to do something before starting
-> >> the work and do something after work started. I think that
-> >> the existing style is more flexible.
-> > 
-> > Could you provide a practical example that answers my question above:
-> > 
-> > "why can't the governor execute the code before polling started, does
-> > it make any difference to the governor that a work is scheduled?"
-> 
-> Actually, as for now, I don't know the correct practice and now.
-> I want to say that the existing style is more flexible for the
-> new governor in the future.
-
-If you try submitting 'flexible' code in other parts of the kernel
-without users of this flexibility and no solid arguments why this
-flexibility is needed it would most likely be rejected.
-
-Unnecessary flexibility can be a burden, rather than an advantage.
-
-> If there are no any special benefits I think we don't need to harm
-> the flexibility.
-
-There are multiple benefits, the following shortcomings of the current
-approach are eliminated:
-
-- it is error prone and allows governors to do the wrong thing, e.g.
-  - start monitoring before the governor is fully ready
-  - keep monitoring when the governor is partially 'stopped'
-  - omit mandatory calls
-- delegates tasks to the governors which are responsibility of the
-  core
-- code is harder to read
-  - switch from common code to governor code and back
-- unecessary boilerplate code in governors
-- option to replace ->event_handler() with ->start(), ->stop(), etc,
-  which is cleaner
-
-I'm easily convinced if the flexibility is really needed. I'm not even
-expecting a real world example, just be creative and make something
-up that sounds reasonable.
-
-start/resume()
-{
-	// prepare governor
-
-	// start polling
-
-=>	what needs to be done here that couldn't have been done
-=>	before polling was started?
-}
-
-stop/suspend()
-{
-=>	what needs to be done here that couldn't be done after polling
-=>	is stopped?
-
-	// stop polling
-
-	// 'unprepare' governor
-}
-
-> >> And,
-> >> It has one more problem when changing the governor on the fly
-> >> from simple_ondemand to other governors like performance,
-> >> powersave and so on.
-> >>
-> >> Even if other governors don't need to monitor the utilization,
-> >> the work timer will be executed continually because the devfreq
-> >> device has the polling_ms value. It is not necessary
-> >> of the other governors such as performance, powersave.
-> >>
-> >> It means that only specific governor like simple_ondemand
-> >> have to call the devfreq_monitor_start() by itself
-> >> instead of calling it on devfreq core.
-> > 
-> > yes, I noticed that too, it can be easily fixed with a flag in the
-> > governor.
-> 
-> Right, If we add some codes like flag, it is easy.
-> Actually, it is just difference how to support them.
-> 
-> I think that the existing style has not any problem and is not
-> complicated to develop the new governor. If there are no
-> some benefits, IMO, we better to keep the flexibility.
-> It can give the flexibility to the developer of governor.
-
-I listed several benefits, please comment on the specific items if you
-disagree, instead of just saying there are no benefits.
-
-OTOH so far we haven't seen an even hypothetical example that shows
-that the flexibility *could* be needed.
-
-And even if such a rare case that we currently can't imagine came up,
-it could be easily addressed with notifiers, a standard mechanism in
-the kernel to inform drivers about events they are interested in.
-
-Cheers
-
-Matthias
+MTYuMDIuMjAxOSAwOjQ4LCBUaGllcnJ5IFJlZGluZyDQv9C40YjQtdGCOgo+IE9uIEZyaSwgRmVi
+IDE1LCAyMDE5IGF0IDA1OjQ4OjI1UE0gKzAxMDAsIEFybmQgQmVyZ21hbm4gd3JvdGU6Cj4+IE9u
+IEZyaSwgRmViIDgsIDIwMTkgYXQgNDowOSBQTSBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRp
+bmdAZ21haWwuY29tPiB3cm90ZToKPj4+Cj4+PiBIaSBBUk0gU29DIG1haW50YWluZXJzLAo+Pj4K
+Pj4+IFRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgYmZlZmZkMTU1MjgzNzcyYmJl
+NzhjNmEwNWRlYzdjMDEyOGVlNTAwYzoKPj4+Cj4+PiAgIExpbnV4IDUuMC1yYzEgKDIwMTktMDEt
+MDYgMTc6MDg6MjAgLTA4MDApCj4+Pgo+Pj4gYXJlIGF2YWlsYWJsZSBpbiB0aGUgR2l0IHJlcG9z
+aXRvcnkgYXQ6Cj4+Pgo+Pj4gICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvdGVncmEvbGludXguZ2l0IHRhZ3MvdGVncmEtZm9yLTUuMS1hcm0tY29yZQo+Pj4K
+Pj4+IGZvciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byAxYzYyNzliNDlkM2ZmZmYzODM1N2U5
+M2QxMTI1MTJmZWNmMzcxMWE3Ogo+Pj4KPj4+ICAgQVJNOiB0ZWdyYTogUmVzdG9yZSBtZW1vcnkg
+YXJiaXRyYXRpb24gb24gcmVzdW1lIGZyb20gTFAxIG9uIFRlZ3JhMzArICgyMDE5LTAxLTE2IDEz
+OjIyOjA0ICswMTAwKQo+Pj4KPj4+IFRoYW5rcywKPj4+IFRoaWVycnkKPj4+Cj4+PiAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+Cj4+PiBBUk06IHRlZ3JhOiBDb3JlIGNoYW5nZXMgZm9yIHY1LjEtcmMxCj4+Pgo+Pj4gVGhpcyBj
+b250YWlucyB0aHJlZSBmaXhlcyBmb3IgcmVzdW1lIGZyb20gTFAxIG9uIFRlZ3JhMzAuCj4+Pgo+
+Pgo+PiBQdWxsZWQgaW50byBhcm0vc29jPwo+Pgo+PiBTaG91bGQgdGhlc2UgYnVnZml4ZXMgaGF2
+ZSBiZWVuIG1hcmtlZCBDYzpzdGFibGU/Cj4gCj4gSSBkb24ndCB0aGluayB0aGF0J2QgYmUgd29y
+dGggaXQuIEFzIGZhciBhcyBJIGNhbiB0ZWxsIHRoZXNlIGhhdmUgYmVlbgo+IGJyb2tlbiBzaW5j
+ZSBmb3JldmVyLiBCYWNrcG9ydGluZyB0aGlzIHdvdWxkIGJlIGZhaXJseSBpbnZvbHZlZCBhbmQg
+SSdtCj4gbm90IHN1cmUgaWYgdGhpcyBodXJ0cyBlbm91Z2ggdG8gd2FycmFudCB0aGUgYWRkaXRp
+b25hbCB3b3JrLCBnaXZlbiB0aGF0Cj4gaXQncyBub3QgYmVlbiByZXBvcnRlZCBpbiBhbGwgdGhp
+cyB0aW1lLgo+IAo+IERtaXRyeSwgY2FuIHlvdSBjbGFyaWZ5IHdoZXRoZXIgeW91IHdhbnQgdGhl
+c2UgdG8gYmUgYmFja3BvcnRlZD8KClRlY2huaWNhbGx5IGl0IGZpeGVzIGEgcmVhbCBwcm9ibGVt
+LCBidXQgcmVhbGlzdGljYWxseSB0aGVyZSBpcyBubyByZWFsIG5lZWQgdG8gYmFja3BvcnQgdGhl
+c2UgcGF0Y2hlcyBiZWNhdXNlIG9mIG90aGVyIHN1c3BlbmQtcmVzdW1lIHRyb3VibGVzIHRoYXQg
+YWxzbyBleGlzdGVkIGFsbCB0aGUgdGltZSBhbmQgaGF2ZW4ndCBiZWVuIHJlc29sdmVkIHlldCAo
+bGlrZWx5IGZpeGVzIHdvbid0IGJlIGJhY2twb3J0YWJsZSkuIEluIGdlbmVyYWwgc3VzcGVuZC1y
+ZXN1bWUga2luZGEgd29ya3MgYW5kIGZhaWxzIG1vc3RseSB1bmRlciBzb21lIGxvYWQgKGxpa2Ug
+c3RyZXNzIHRlc3RpbmcpLCBhdCBsZWFzdCB0aGF0J3MgdGhlIGNhc2UgZm9yIFQzMC4KCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJu
+ZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRw
+Oi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
