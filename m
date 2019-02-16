@@ -1,74 +1,29 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [GIT PULL 6/9] ARM: tegra: Core changes for v5.1-rc1
-Date: Sat, 16 Feb 2019 04:00:42 +0300
-Message-ID: <0784c2b1-f30f-0c00-bdac-ab52dbde1d0a@gmail.com>
-References: <20190208150935.32108-1-thierry.reding@gmail.com>
- <20190208150935.32108-7-thierry.reding@gmail.com>
- <CAK8P3a2vDG97hP80i6rknqFnDdpoCGMBpmoy2Gp-jUWnGJ5VCg@mail.gmail.com>
- <20190215214826.GB12838@ulmo>
- <afa0e109-b24e-7b00-88c1-b3c30e1755fc@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <afa0e109-b24e-7b00-88c1-b3c30e1755fc@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 0/3] PM / devfreq: do some cleanup
+Date: Sat, 16 Feb 2019 10:18:23 -0500
+Message-ID: <20190216151826.11584-1-tiny.windzz@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-MTYuMDIuMjAxOSAzOjAzLCBEbWl0cnkgT3NpcGVua28g0L/QuNGI0LXRgjoKPiAxNi4wMi4yMDE5
-IDA6NDgsIFRoaWVycnkgUmVkaW5nINC/0LjRiNC10YI6Cj4+IE9uIEZyaSwgRmViIDE1LCAyMDE5
-IGF0IDA1OjQ4OjI1UE0gKzAxMDAsIEFybmQgQmVyZ21hbm4gd3JvdGU6Cj4+PiBPbiBGcmksIEZl
-YiA4LCAyMDE5IGF0IDQ6MDkgUE0gVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
-LmNvbT4gd3JvdGU6Cj4+Pj4KPj4+PiBIaSBBUk0gU29DIG1haW50YWluZXJzLAo+Pj4+Cj4+Pj4g
-VGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCBiZmVmZmQxNTUyODM3NzJiYmU3OGM2
-YTA1ZGVjN2MwMTI4ZWU1MDBjOgo+Pj4+Cj4+Pj4gICBMaW51eCA1LjAtcmMxICgyMDE5LTAxLTA2
-IDE3OjA4OjIwIC0wODAwKQo+Pj4+Cj4+Pj4gYXJlIGF2YWlsYWJsZSBpbiB0aGUgR2l0IHJlcG9z
-aXRvcnkgYXQ6Cj4+Pj4KPj4+PiAgIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
-a2VybmVsL2dpdC90ZWdyYS9saW51eC5naXQgdGFncy90ZWdyYS1mb3ItNS4xLWFybS1jb3JlCj4+
-Pj4KPj4+PiBmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMWM2Mjc5YjQ5ZDNmZmZmMzgz
-NTdlOTNkMTEyNTEyZmVjZjM3MTFhNzoKPj4+Pgo+Pj4+ICAgQVJNOiB0ZWdyYTogUmVzdG9yZSBt
-ZW1vcnkgYXJiaXRyYXRpb24gb24gcmVzdW1lIGZyb20gTFAxIG9uIFRlZ3JhMzArICgyMDE5LTAx
-LTE2IDEzOjIyOjA0ICswMTAwKQo+Pj4+Cj4+Pj4gVGhhbmtzLAo+Pj4+IFRoaWVycnkKPj4+Pgo+
-Pj4+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KPj4+PiBBUk06IHRlZ3JhOiBDb3JlIGNoYW5nZXMgZm9yIHY1LjEtcmMxCj4+
-Pj4KPj4+PiBUaGlzIGNvbnRhaW5zIHRocmVlIGZpeGVzIGZvciByZXN1bWUgZnJvbSBMUDEgb24g
-VGVncmEzMC4KPj4+Pgo+Pj4KPj4+IFB1bGxlZCBpbnRvIGFybS9zb2M/Cj4+Pgo+Pj4gU2hvdWxk
-IHRoZXNlIGJ1Z2ZpeGVzIGhhdmUgYmVlbiBtYXJrZWQgQ2M6c3RhYmxlPwo+Pgo+PiBJIGRvbid0
-IHRoaW5rIHRoYXQnZCBiZSB3b3J0aCBpdC4gQXMgZmFyIGFzIEkgY2FuIHRlbGwgdGhlc2UgaGF2
-ZSBiZWVuCj4+IGJyb2tlbiBzaW5jZSBmb3JldmVyLiBCYWNrcG9ydGluZyB0aGlzIHdvdWxkIGJl
-IGZhaXJseSBpbnZvbHZlZCBhbmQgSSdtCj4+IG5vdCBzdXJlIGlmIHRoaXMgaHVydHMgZW5vdWdo
-IHRvIHdhcnJhbnQgdGhlIGFkZGl0aW9uYWwgd29yaywgZ2l2ZW4gdGhhdAo+PiBpdCdzIG5vdCBi
-ZWVuIHJlcG9ydGVkIGluIGFsbCB0aGlzIHRpbWUuCj4+Cj4+IERtaXRyeSwgY2FuIHlvdSBjbGFy
-aWZ5IHdoZXRoZXIgeW91IHdhbnQgdGhlc2UgdG8gYmUgYmFja3BvcnRlZD8KPiAKPiBUZWNobmlj
-YWxseSBpdCBmaXhlcyBhIHJlYWwgcHJvYmxlbSwgYnV0IHJlYWxpc3RpY2FsbHkgdGhlcmUgaXMg
-bm8gcmVhbCBuZWVkIHRvIGJhY2twb3J0IHRoZXNlIHBhdGNoZXMgYmVjYXVzZSBvZiBvdGhlciBz
-dXNwZW5kLXJlc3VtZSB0cm91YmxlcyB0aGF0IGFsc28gZXhpc3RlZCBhbGwgdGhlIHRpbWUgYW5k
-IGhhdmVuJ3QgYmVlbiByZXNvbHZlZCB5ZXQgKGxpa2VseSBmaXhlcyB3b24ndCBiZSBiYWNrcG9y
-dGFibGUpLiBJbiBnZW5lcmFsIHN1c3BlbmQtcmVzdW1lIGtpbmRhIHdvcmtzIGFuZCBmYWlscyBt
-b3N0bHkgdW5kZXIgc29tZSBsb2FkIChsaWtlIHN0cmVzcyB0ZXN0aW5nKSwgYXQgbGVhc3QgdGhh
-dCdzIHRoZSBjYXNlIGZvciBUMzAuCgpBY3R1YWxseSBubywgSSBsb29rZWQgdXAgdGhlIG90aGVy
-IFQzMCBmaXhlcyBhbmQgdGhleSBhcmUgcHJldHR5IHRyaXZpYWwuIE1vcmVvdmVyIHR1cm5lZCBv
-dXQgdGhhdCBJIGFscmVhZHkgc2VudCB0aGVtIG91dCBiZWZvcmUgWzBdIGFuZCBmb3Jnb3QgYWJv
-dXQgdGhlbS4uIHByb2JhYmx5IGl0J3MgYSBiaXQgdG9vIGxhdGUgZm9yIHY1LjEgbm93LgoKU3Rp
-bGwgaXQncyBub3QgcmVhbGx5IHdvcnRoIHRvIGJhY2twb3J0IHRoZSBwYXRjaGVzIGdpdmVuIHRo
-YXQgdmFuaWxsYSB1cHN0cmVhbSBrZXJuZWwgY2FuIGJvb3Qgb25seSBvbiBkZXYgYm9hcmRzIGlu
-IGEgY2FzZSBvZiBUZWdyYTMwIGJlY2F1c2UgdGhlcmUgaXMgbm8gc3VwcG9ydCBmb3IgdGhlIFRy
-dXN0ZWQgRm91bmRhdGlvbnMgVDMwIGZpcm13YXJlIHlldC4gSG9wZWZ1bGx5IHdlIHdpbGwgbWFu
-YWdlIHRvIGdldCBhbGwgdGhlIGZpeGVzIGFuZCB0aGUgZmlybXdhcmUgc3VwcG9ydCByZWFkeSBm
-b3IgdjUuMiBhbmQgdGhlbiBldmVyeXRoaW5nIHdpbGwgYmUgaW4gcGxhY2UuCgpbMF0gaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvcGF0Y2h3b3JrL3Byb2plY3QvbGttbC9saXN0Lz9zZXJpZXM9MzY0
-NDQ4CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
-eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
-ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
-cm0ta2VybmVsCg==
+The informations come from the coccinelle tool.
+
+drivers/devfreq/tegra-devfreq.c:577:5-8: Unneeded variable: "ret".
+Return "0" on line 603
+drivers/devfreq/rk3399_dmc.c:325:2-3: Unneeded semicolon
+drivers/devfreq/event/rockchip-dfi.c:214:2-3: Unneeded semicolon
+
+Yangtao Li (3):
+  PM / devfreq: rk3399_dmc: remove unneeded semicolon
+  PM / devfreq: rockchip-dfi: remove unneeded semicolon
+  PM / devfreq: tegra: remove unneeded variable
+
+ drivers/devfreq/event/rockchip-dfi.c | 2 +-
+ drivers/devfreq/rk3399_dmc.c         | 2 +-
+ drivers/devfreq/tegra-devfreq.c      | 7 ++-----
+ 3 files changed, 4 insertions(+), 7 deletions(-)
+
+-- 
+2.17.0
