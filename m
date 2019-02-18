@@ -1,10 +1,9 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 1/8] ARM: trusted_foundations: Implement L2 cache initialization callback
-Date: Mon, 18 Feb 2019 03:17:19 +0300
-Message-ID: <20190218001726.16785-2-digetx@gmail.com>
+Subject: [PATCH v4 3/8] ARM: trusted_foundations: Provide information about whether firmware is registered
+Date: Mon, 18 Feb 2019 03:17:21 +0300
+Message-ID: <20190218001726.16785-4-digetx@gmail.com>
 References: <20190218001726.16785-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190218001726.16785-1-digetx@gmail.com>
@@ -13,87 +12,59 @@ To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.c
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Implement L2 cache initialization firmware callback that should be
-invoked early during boot in order to set up the required outer cache
-driver's callbacks.
-
-Partially based on work done by Michał Mirosław [1].
-
-[1] https://www.spinics.net/lists/arm-kernel/msg594765.html
+Add a helper that provides information about whether Trusted Foundations
+firmware operations have been registered.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/firmware/trusted_foundations.c | 46 +++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/arm/firmware/trusted_foundations.c    | 5 +++++
+ arch/arm/include/asm/trusted_foundations.h | 7 +++++++
+ 2 files changed, 12 insertions(+)
 
 diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-index 689e6565abfc..3bf61a5933b9 100644
+index c496f4cc49cb..d795ed83a3cd 100644
 --- a/arch/arm/firmware/trusted_foundations.c
 +++ b/arch/arm/firmware/trusted_foundations.c
-@@ -18,8 +18,15 @@
- #include <linux/init.h>
- #include <linux/of.h>
- #include <asm/firmware.h>
-+#include <asm/hardware/cache-l2x0.h>
-+#include <asm/outercache.h>
- #include <asm/trusted_foundations.h>
- 
-+#define TF_CACHE_MAINT		0xfffff100
-+
-+#define TF_CACHE_ENABLE		1
-+#define TF_CACHE_DISABLE	2
-+
- #define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
- 
- #define TF_CPU_PM		0xfffffffc
-@@ -67,9 +74,48 @@ static int tf_prepare_idle(void)
- 	return 0;
+@@ -172,3 +172,8 @@ void of_register_trusted_foundations(void)
+ 		panic("Trusted Foundation: missing version-minor property\n");
+ 	register_trusted_foundations(&pdata);
  }
- 
-+#ifdef CONFIG_CACHE_L2X0
-+static void tf_cache_write_sec(unsigned long val, unsigned int reg)
++
++bool trusted_foundations_registered(void)
 +{
-+	static u32 l2x0_way_mask = 0xff;
-+	static u32 l2x0_aux_ctrl = 0;
-+
-+	switch (reg) {
-+	case L2X0_AUX_CTRL:
-+		l2x0_aux_ctrl = val;
-+
-+		if (l2x0_aux_ctrl & BIT(16))
-+			l2x0_way_mask = 0xffff;
-+		break;
-+
-+	case L2X0_CTRL:
-+		if (val == L2X0_CTRL_EN)
-+			tf_generic_smc(TF_CACHE_MAINT, TF_CACHE_ENABLE,
-+				       l2x0_aux_ctrl);
-+		else
-+			tf_generic_smc(TF_CACHE_MAINT, TF_CACHE_DISABLE,
-+				       l2x0_way_mask);
-+		break;
-+
-+	default:
-+		break;
-+	}
++	return firmware_ops == &trusted_foundations_ops;
 +}
-+
-+static int tf_init_cache(void)
-+{
-+	outer_cache.write_sec = tf_cache_write_sec;
-+
-+	return 0;
-+}
-+#endif /* CONFIG_CACHE_L2X0 */
-+
- static const struct firmware_ops trusted_foundations_ops = {
- 	.set_cpu_boot_addr = tf_set_cpu_boot_addr,
- 	.prepare_idle = tf_prepare_idle,
-+#ifdef CONFIG_CACHE_L2X0
-+	.l2x0_init = tf_init_cache,
-+#endif
- };
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index cdd48ab7d191..3f23fa493db6 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -31,6 +31,7 @@
+ #include <linux/of.h>
+ #include <linux/cpu.h>
+ #include <linux/smp.h>
++#include <linux/types.h>
  
- void register_trusted_foundations(struct trusted_foundations_platform_data *pd)
+ #define TF_PM_MODE_LP0			0
+ #define TF_PM_MODE_LP1			1
+@@ -47,6 +48,7 @@ struct trusted_foundations_platform_data {
+ 
+ void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
+ void of_register_trusted_foundations(void);
++bool trusted_foundations_registered(void);
+ 
+ #else /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
+@@ -74,6 +76,11 @@ static inline void of_register_trusted_foundations(void)
+ 	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
+ 		register_trusted_foundations(NULL);
+ }
++
++static inline bool trusted_foundations_registered(void)
++{
++	return false;
++}
+ #endif /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
+ #endif
 -- 
 2.20.1
