@@ -1,157 +1,102 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter
- imbalance
-Date: Mon, 18 Feb 2019 13:02:50 +0000
-Message-ID: <6ee66fc6-cba5-7aea-0e92-3380544c1a94@nvidia.com>
-References: <5510642.nRbR3bcduN@aspire.rjw.lan>
- <9351473.C2nPJoyFsE@aspire.rjw.lan>
- <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
- <CAPDyKFoAtviRYuFxJLNrD_J0bGbMTca3O8EN8THg6+d3BNq3vQ@mail.gmail.com>
- <775fe187-ae04-91ee-44d6-1603e670df06@nvidia.com>
- <CAJZ5v0gywb2jE-FRowxuosucNVqQ4iLLTCFte4hN_CELF9rHRA@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: vic: fix implicit function declaration warning
+Date: Mon, 18 Feb 2019 15:43:37 +0100
+Message-ID: <20190218144337.GB19190@ulmo>
+References: <20190218110050.10589-1-anders.roxell@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJZ5v0gywb2jE-FRowxuosucNVqQ4iLLTCFte4hN_CELF9rHRA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>, Lukas Wunner <lukas@wunner.de>, Andrzej Hajda <a.hajda@samsung.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Lucas Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============0114181820=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190218110050.10589-1-anders.roxell@linaro.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: airlied@linux.ie, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 18/02/2019 12:12, Rafael J. Wysocki wrote:
->  On Fri, Feb 15, 2019 at 5:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->>
->> On 15/02/2019 14:37, Ulf Hansson wrote:
->>> On Fri, 15 Feb 2019 at 12:00, Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>
->>>> Hi Rafael,
->>>>
->>>> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
->>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>>
->>>>> If a stateless device link to a certain supplier with
->>>>> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
->>>>> consumer driver's probe callback, the supplier's PM-runtime usage
->>>>> counter will be nonzero after that which effectively causes the
->>>>> supplier to remain "always on" going forward.
->>>>>
->>>>> Namely, device_link_add() called to add the link invokes
->>>>> device_link_rpm_prepare() which notices that the consumer driver is
->>>>> probing, so it increments the supplier's PM-runtime usage counter
->>>>> with the assumption that the link will stay around until
->>>>> pm_runtime_put_suppliers() is called by driver_probe_device(),
->>>>> but if the link goes away before that point, the supplier's
->>>>> PM-runtime usage counter will remain nonzero.
->>>>>
->>>>> To prevent that from happening, first rework pm_runtime_get_suppliers()
->>>>> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
->>>>> links and make the latter only drop rpm_active and the supplier's
->>>>> PM-runtime usage counter for each link by one, unless rpm_active is
->>>>> one already for it.  Next, modify device_link_add() to bump up the
->>>>> new link's rpm_active refcount and the suppliers PM-runtime usage
->>>>> counter by two, to prevent pm_runtime_put_suppliers(), if it is
->>>>> called subsequently, from suspending the supplier prematurely (in
->>>>> case its PM-runtime usage counter goes down to 0 in there).
->>>>>
->>>>> Due to the way rpm_put_suppliers() works, this change does not
->>>>> affect runtime suspend of the consumer ends of new device links (or,
->>>>> generally, device links for which DL_FLAG_PM_RUNTIME has just been
->>>>> set).
->>>>>
->>>>> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
->>>>> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
->>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>> ---
->>>>>
->>>>> Note that the issue had been there before commit e2f3cd831a28, but it was
->>>>> overlooked by that commit and this change is a fix on top of it, so make
->>>>> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
->>>>> that the patch will not be applicable to).
->>>> I noticed that yesterday's and today's -next were no longer booting on
->>>> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
->>>> failing. The ethernet chip is a USB device and looking at the bootlogs I
->>>> can see that the Tegra XHCI driver is failing ...
->>>>
->>>>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
->>>>  tegra-xusb 70090000.usb: HC died; cleaning up
->>>>
->>>> The Tegra XHCI driver uses multiple power-domains and uses
->>>> device_link_add() to attach them. So now I am wondering if there is
->>>> something that we have got wrong in our implementation. However, I don't
->>>> see the device being probed deferred on boot or anything like that.
->>>>
->>>> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
->>>> links in the function tegra_xusb_powerdomain_init() which is before RPM
->>>> is enabled. Let me know if you have any thoughts.
->>>
->>> If you are willing to help debugging then I am offering my assistance.
->>>
->>> I would start by enabling CONFIG_PM_ADVANCED_DEBUG, which gives you
->>> some more information about the runtime PM state of the device, like
->>> the usage count for example.
->>> I would also add a couple of prints in
->>> tegra_xusb_runtime_suspend|resume() and in the ->power_on|off()
->>> callbacks for the corresponding genpds, to see when those gets called.
->>
->> From the bootlog I see ...
->>
->> [    4.445827] tegra_xusb_runtime_resume-788
->> [    4.508799] tegra-xusb 70090000.usb: Firmware timestamp: 2015-08-10 09:47:54 UTC
-> 
-> This message comes from tegra_xusb_load_firmware() in
-> tegra_xusb_probe() which is after the pm_runtime_get_sync().
-> 
-> If the device was PM-runtime-suspended before, the
-> pm_runtime_get_sync() will runtime-resume and reference-count the
-> suppliers in addition to resuming the device.  In that case
-> pm_runtime_put_suppliers() will suspend the suppliers, so there is a
-> bug in there.
-> 
-> What happens is that the links are new when pm_runtime_get_sync() runs
-> and so their rpm_active refcounts are one.  After the
-> pm_runtime_get_sync() they are two and pm_runtime_put_suppliers() will
-> drop them by one and drop the PM-runtime usage counter of each of them
-> by one, so they will become zero and the suppliers will suspend.
-> 
-> Passing DL_FLAG_RPM_ACTIVE to device_link_add() should help, but IMO
-> things should also work without that.
+--===============0114181820==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
+Content-Disposition: inline
 
-I can confirm that DL_FLAG_RPM_ACTIVE does indeed work. I assume though
-this would prevent the suppliers from ever being suspended, which maybe
-we will want to do eventually.
 
->> [    4.516223] tegra-xusb 70090000.usb: xHCI Host Controller
->> [    4.521622] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 1
-> 
-> This comes from usb_add_hcd()
-> 
->> [    4.530087] tegra-xusb 70090000.usb: hcc params 0x0184f525 hci version 0x100 quirks 0x0000000000010010
->> [    4.539398] tegra-xusb 70090000.usb: irq 69, io mem 0x70090000
->> [    4.553671] tegra-xusb 70090000.usb: xHCI Host Controller
->> [    4.559064] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 2
-> 
-> Like this.
-> 
->> [    4.566622] tegra-xusb 70090000.usb: Host supports USB 3.0  SuperSpeed
-> 
-> And this if from xhci_gen_setup(), so probe returns around this point.
-> 
->> [    4.595393] tegra-pmc: tegra_genpd_power_off-673: xusbc
->> [    4.600672] tegra-pmc: tegra_genpd_power_off-673: xusba
-> 
-> And this appears to be done by pm_runtime_put_suppliers().
-> 
-> Hmm, I need to think how to fix this.  Maybe we'll need to revert
-> $subject patch and do something else, we'll see (later today).
+--wq9mPyueHGvFACwf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, thanks. Let me know if there is anything else I can test.
+On Mon, Feb 18, 2019 at 12:00:50PM +0100, Anders Roxell wrote:
+> When CONFIG_IOMMU_API isn't set the following warnings pops up:
+>=20
+> drivers/gpu/drm/tegra/vic.c: In function =E2=80=98vic_boot=E2=80=99:
+> drivers/gpu/drm/tegra/vic.c:110:31: error: implicit declaration of functi=
+on =E2=80=98dev_iommu_fwspec_get=E2=80=99; did you mean =E2=80=98iommu_fwsp=
+ec_free=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>    struct iommu_fwspec *spec =3D dev_iommu_fwspec_get(vic->dev);
+>                                ^~~~~~~~~~~~~~~~~~~~
+>                                iommu_fwspec_free
+> drivers/gpu/drm/tegra/vic.c:110:31: warning: initialization of =E2=80=98s=
+truct iommu_fwspec *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from=
+ integer without a cast [-Wint-conversion]
+> drivers/gpu/drm/tegra/vic.c:117:19: error: =E2=80=98struct iommu_fwspec=
+=E2=80=99 has no member named =E2=80=98num_ids=E2=80=99
+>    if (spec && spec->num_ids > 0) {
+>                    ^~
+> drivers/gpu/drm/tegra/vic.c:118:16: error: =E2=80=98struct iommu_fwspec=
+=E2=80=99 has no member named =E2=80=98ids=E2=80=99
+>     value =3D spec->ids[0] & 0xffff;
+>                 ^~
+>=20
+> Rework so that its inside a '#ifdef CONFIG_IOMMU_API' block.
+>=20
+> Fixes: f3779cb190a5 ("drm/tegra: vic: Support stream ID register programm=
+ing")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  drivers/gpu/drm/tegra/vic.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Cheers
-Jon
+Applied, thanks.
 
--- 
-nvpublic
+Thierry
+
+--wq9mPyueHGvFACwf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxqxJgACgkQ3SOs138+
+s6FdzxAAqMQwVpAXY7534MRScbODw+x2lR1SKl9F6NuD2JXGRtMUFBPehoy/2Z/P
+pWmBhDczB9oqD7kbLPeyjcmg1UH76F7ozMFpbmuL8+G/UFBBkv5tFnzWGWGremPC
+DdmOUVwb79F10AUFmhb2lzvYD7IqV0FVWcQ9TmTpXnEr41jvXtGrmwbhOvS0Ihfa
+l1fx07dybPZ3M/qmMHxT7Jf8iXPvxOv5KUjSpbIo89JXOguMirXNt1W5PfUkA2j+
+D5ek4bHO2Y83kSUi2lQ99qZ7Yfm2XLkutGrGS1aWaWPkPusz9eAoBPOQhNs28Jjq
+NC7VcuztkJDVMZYa2MR+vtMoGD371/OdHST7lI+4KfM+u5oE/rWx/CzK8gUc6Nlm
+3QyIsLsf2/NAoK77FSffAtrTq2TBUviZFEPKxZ2RcZkAji22DkQtQfv1UgPAGbPK
+RFju4jRiez2QPEj6HzIZllrZSkkD0GTaN6vc2BsJ1ZCkLutB2GyQMJPFJtWlxlvp
+Q4+UumjC3COO5XHZhh5WLfMqYfvI1A0hLk/2C1aILC83xh36ZJUjdNAejtpAPa/6
+O1BLgZRphcNtXfRzr2Kojd7yL2oHchazE7vqEO5qQeHe4V7fkHFp0m/7gn28RuXn
+KkKV2p56dYWnXfDU9mvN2d3kvzqT3wIkM+tx/qDP3pmRgmYYdGA=
+=6gu4
+-----END PGP SIGNATURE-----
+
+--wq9mPyueHGvFACwf--
+
+--===============0114181820==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============0114181820==--
