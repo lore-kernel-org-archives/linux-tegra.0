@@ -1,53 +1,74 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 3/3] PM / devfreq: tegra: remove unneeded variable
-Date: Mon, 18 Feb 2019 09:38:03 +0900
-Message-ID: <7fe8f9ba-ffcc-55ed-38b0-f37538257c1b@samsung.com>
-References: <20190216151826.11584-1-tiny.windzz@gmail.com>
- <CGME20190216151918epcas1p25c2971b063cc66981fda6a67a8276585@epcas1p2.samsung.com>
- <20190216151826.11584-4-tiny.windzz@gmail.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v7 0/3] Fixes for Tegra soctherm
+Date: Mon, 18 Feb 2019 15:59:17 +0800
+Message-ID: <df2493f3-4bbd-65d1-1205-073a30729a89@nvidia.com>
+References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
+ <28d197f9-9b72-78ad-0769-7514d329b3c4@nvidia.com>
+ <1c0af72c-b8d5-9b2d-7bc1-86a2ae85c819@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190216151826.11584-4-tiny.windzz@gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1c0af72c-b8d5-9b2d-7bc1-86a2ae85c819@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Yangtao Li <tiny.windzz@gmail.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, edubezval@gmail.com, rui.zhang@intel.com
+Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTkuIDIuIDE3LiDsmKTsoIQgMTI6MTgsIFlhbmd0YW8gTGkgd3JvdGU6Cj4gVGhpcyB2YXJp
-YWJsZSBpcyBub3QgdXNlZCBhZnRlciBpbml0aWFsaXphdGlvbiwgc28KPiByZW1vdmUgaXQuIEFu
-ZCBpbiBvcmRlciB0byB1bmlmeSB0aGUgY29kZSBzdHlsZSwKPiBtb3ZlIHRoZSBsb2NhdGlvbiB3
-aGVyZSB0aGUgZGV2X2dldF9kcnZkYXRhIGlzIGNhbGxlZAo+IGJ5IHRoZSB3YXkuCj4gCj4gU2ln
-bmVkLW9mZi1ieTogWWFuZ3RhbyBMaSA8dGlueS53aW5kenpAZ21haWwuY29tPgo+IC0tLQo+ICBk
-cml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jIHwgNyArKy0tLS0tCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAyIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVxLmMgYi9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2
-ZnJlcS5jCj4gaW5kZXggYzU5ZDJlZWU1ZDMwLi5jODliYTdiODM0ZmYgMTAwNjQ0Cj4gLS0tIGEv
-ZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYwo+ICsrKyBiL2RyaXZlcnMvZGV2ZnJlcS90
-ZWdyYS1kZXZmcmVxLmMKPiBAQCAtNTczLDEwICs1NzMsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2dv
-dmVybm9yX2dldF90YXJnZXQoc3RydWN0IGRldmZyZXEgKmRldmZyZXEsCj4gIHN0YXRpYyBpbnQg
-dGVncmFfZ292ZXJub3JfZXZlbnRfaGFuZGxlcihzdHJ1Y3QgZGV2ZnJlcSAqZGV2ZnJlcSwKPiAg
-CQkJCQl1bnNpZ25lZCBpbnQgZXZlbnQsIHZvaWQgKmRhdGEpCj4gIHsKPiAtCXN0cnVjdCB0ZWdy
-YV9kZXZmcmVxICp0ZWdyYTsKPiAtCWludCByZXQgPSAwOwo+IC0KPiAtCXRlZ3JhID0gZGV2X2dl
-dF9kcnZkYXRhKGRldmZyZXEtPmRldi5wYXJlbnQpOwo+ICsJc3RydWN0IHRlZ3JhX2RldmZyZXEg
-KnRlZ3JhID0gZGV2X2dldF9kcnZkYXRhKGRldmZyZXEtPmRldi5wYXJlbnQpOwo+ICAKPiAgCXN3
-aXRjaCAoZXZlbnQpIHsKPiAgCWNhc2UgREVWRlJFUV9HT1ZfU1RBUlQ6Cj4gQEAgLTYwMCw3ICs1
-OTcsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2dvdmVybm9yX2V2ZW50X2hhbmRsZXIoc3RydWN0IGRl
-dmZyZXEgKmRldmZyZXEsCj4gIAkJYnJlYWs7Cj4gIAl9Cj4gIAo+IC0JcmV0dXJuIHJldDsKPiAr
-CXJldHVybiAwOwo+ICB9Cj4gIAo+ICBzdGF0aWMgc3RydWN0IGRldmZyZXFfZ292ZXJub3IgdGVn
-cmFfZGV2ZnJlcV9nb3Zlcm5vciA9IHsKPiAKClJldmlld2VkLWJ5OiBDaGFud29vIENob2kgPGN3
-MDAuY2hvaUBzYW1zdW5nLmNvbT4KCi0tIApCZXN0IFJlZ2FyZHMsCkNoYW53b28gQ2hvaQpTYW1z
-dW5nIEVsZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Rui,
+Will you take this serial?
+
+Thanks.
+Wei.
+
+On 21/1/2019 5:17 PM, Wei Ni wrote:
+> Does there have any comments?
+> 
+> Thanks.
+> Wei.
+> 
+> On 11/1/2019 10:20 AM, Wei Ni wrote:
+>> Hi Eduardo,
+>> Do you have any more comments, will you take this serial?
+>>
+>> Thanks.
+>> Wei.
+>>
+>> On 3/1/2019 6:12 PM, Wei Ni wrote:
+>>> This series fixed some issues for Tegra soctherm,
+>>> and add get_trend().
+>>>
+>>> Main changes from v6:
+>>> 1. Per Eduardo's comment, we can remove the change:
+>>> "thermal: tegra: parse sensor id before sensor register"
+>>>
+>>> Main changes from v5:
+>>> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
+>>> into this serial.
+>>>
+>>> Main changes from v4:
+>>> 1. fixed for the parsing sensor id.
+>>> 2. keep warning for missing critical trips.
+>>>
+>>> Main changes from v3:
+>>> 1. updated codes for parsing sensor id, per Thierry's comments
+>>>
+>>> Main changes from v2:
+>>> 1. add codes to parse sensor id to avoid registration
+>>> failure.
+>>>
+>>> Main changes from v1:
+>>> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+>>> "thermal: tegra: fix memory allocation".
+>>> 2. Print out the sensor name when register failed.
+>>> 2. Remove patch "thermal: tegra: fix coverity defect"
+>>>
+>>> Wei Ni (3):
+>>>   thermal: tegra: remove unnecessary warnings
+>>>   thermal: tegra: fix memory allocation
+>>>   thermal: tegra: add get_trend ops
+>>>
+>>>  drivers/thermal/tegra/soctherm.c | 40 +++++++++++++++++++++++++++++++++++++---
+>>>  1 file changed, 37 insertions(+), 3 deletions(-)
+>>>
