@@ -1,115 +1,44 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 8/8] ARM: tegra: Add firmware calls required for suspend-resume
-Date: Mon, 18 Feb 2019 03:17:26 +0300
-Message-ID: <20190218001726.16785-9-digetx@gmail.com>
-References: <20190218001726.16785-1-digetx@gmail.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/3] PM / devfreq: rk3399_dmc: remove unneeded semicolon
+Date: Mon, 18 Feb 2019 09:34:57 +0900
+Message-ID: <9e7f9e6d-3b53-35f2-e945-13895385af31@samsung.com>
+References: <20190216151826.11584-1-tiny.windzz@gmail.com>
+ <CGME20190216152219epcas4p3ec89de91f9e158da7cc7cfeefb6e113e@epcas4p3.samsung.com>
+ <20190216151826.11584-2-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190218001726.16785-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20190216151826.11584-2-tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-In order to resume CPU from suspend via trusted Foundations firmware,
-the LP1/LP2 boot vectors shall be specified using the firmware calls.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/mach-tegra/pm.c            | 14 ++++++++++++++
- arch/arm/mach-tegra/reset-handler.S | 26 ++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
-
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 66c8cd63dd86..97bdfffc244e 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -33,6 +33,7 @@
- #include <soc/tegra/pmc.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/firmware.h>
- #include <asm/idmap.h>
- #include <asm/proc-fns.h>
- #include <asm/smp_plat.h>
-@@ -207,6 +208,8 @@ void tegra_idle_lp2_last(void)
- 	if (trusted_foundations_registered())
- 		outer_disable();
- 
-+	call_firmware_op(prepare_idle, TF_PM_MODE_LP2);
-+
- 	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
- 
- 	/*
-@@ -368,6 +371,17 @@ static int tegra_suspend_enter(suspend_state_t state)
- 	if (trusted_foundations_registered())
- 		outer_disable();
- 
-+	switch (mode) {
-+	case TEGRA_SUSPEND_LP1:
-+		call_firmware_op(prepare_idle, TF_PM_MODE_LP1);
-+		break;
-+	case TEGRA_SUSPEND_LP2:
-+		call_firmware_op(prepare_idle, TF_PM_MODE_LP2);
-+		break;
-+	default:
-+		break;
-+	}
-+
- 	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, tegra_sleep_func);
- 
- 	/*
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index c827b185d281..24fb375e11a9 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -20,6 +20,7 @@
- #include <soc/tegra/flowctrl.h>
- #include <soc/tegra/fuse.h>
- 
-+#include <asm/assembler.h>
- #include <asm/asm-offsets.h>
- #include <asm/cache.h>
- 
-@@ -76,6 +77,7 @@ ENTRY(tegra_resume)
- 	orr	r1, r1, #1
- 	str	r1, [r0]
- #endif
-+	bl	tegra_resume_trusted_foundations
- 
- #ifdef CONFIG_CACHE_L2X0
- 	/* L2 cache resume & re-enable */
-@@ -88,6 +90,30 @@ end_ca9_scu_l2_resume:
- 
- 	b	cpu_resume
- ENDPROC(tegra_resume)
-+
-+/*
-+ *	tegra_resume_trusted_foundations
-+ *
-+ *	  Trusted Foundations firmware initialization.
-+ *
-+ *	Doesn't return if firmware presents.
-+ *	Corrupted registers: r1, r2
-+ */
-+ENTRY(tegra_resume_trusted_foundations)
-+	/* Check whether Trusted Foundations firmware presents. */
-+	mov32	r2, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
-+	ldr	r1, =__tegra_cpu_reset_handler_data_offset + \
-+							RESET_DATA(TF_PRESENT)
-+	ldr	r1, [r2, r1]
-+	cmp	r1, #0
-+	reteq	lr
-+
-+ .arch_extension sec
-+	/* First call after suspend wakes firmware. No arguments required. */
-+	smc	#0
-+
-+	b	cpu_resume
-+ENDPROC(tegra_resume_trusted_foundations)
- #endif
- 
- 	.align L1_CACHE_SHIFT
--- 
-2.20.1
+SGksCgpPbiAxOS4gMi4gMTcuIOyYpOyghCAxMjoxOCwgWWFuZ3RhbyBMaSB3cm90ZToKPiBUaGUg
+c2VtaWNvbG9uIGlzIHVubmVlZGVkLCBzbyByZW1vdmUgaXQuCj4gCj4gU2lnbmVkLW9mZi1ieTog
+WWFuZ3RhbyBMaSA8dGlueS53aW5kenpAZ21haWwuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2RldmZy
+ZXEvcmszMzk5X2RtYy5jIHwgMiArLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL3JrMzM5OV9k
+bWMuYyBiL2RyaXZlcnMvZGV2ZnJlcS9yazMzOTlfZG1jLmMKPiBpbmRleCBlNzk1YWQyYjNmNmIu
+LmEyMjhkYWQyYmVlNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvcmszMzk5X2RtYy5j
+Cj4gKysrIGIvZHJpdmVycy9kZXZmcmVxL3JrMzM5OV9kbWMuYwo+IEBAIC0zMjIsNyArMzIyLDcg
+QEAgc3RhdGljIGludCByazMzOTlfZG1jZnJlcV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
+ICpwZGV2KQo+ICAKPiAgCQlkZXZfZXJyKGRldiwgIkNhbm5vdCBnZXQgdGhlIGNsayBkbWNfY2xr
+XG4iKTsKPiAgCQlyZXR1cm4gUFRSX0VSUihkYXRhLT5kbWNfY2xrKTsKPiAtCX07Cj4gKwl9Cj4g
+IAo+ICAJZGF0YS0+ZWRldiA9IGRldmZyZXFfZXZlbnRfZ2V0X2VkZXZfYnlfcGhhbmRsZShkZXYs
+IDApOwo+ICAJaWYgKElTX0VSUihkYXRhLT5lZGV2KSkKPiAKClJldmlld2VkLWJ5OiBDaGFud29v
+IENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KCi0tIApCZXN0IFJlZ2FyZHMsCkNoYW53b28g
+Q2hvaQpTYW1zdW5nIEVsZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpMaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKTGludXgtcm9ja2No
+aXBAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCg==
