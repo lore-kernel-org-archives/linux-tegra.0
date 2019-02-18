@@ -1,91 +1,58 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v7 3/3] thermal: tegra: add get_trend ops
-Date: Mon, 18 Feb 2019 11:27:34 +0100
-Message-ID: <bae5b0c3-3d7f-0b60-da96-730c7e8c4e5c@linaro.org>
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
- <1546510369-28491-4-git-send-email-wni@nvidia.com>
+From: Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] drm/tegra: vic: fix implicit function declaration warning
+Date: Mon, 18 Feb 2019 12:00:50 +0100
+Message-ID: <20190218110050.10589-1-anders.roxell@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1546510369-28491-4-git-send-email-wni@nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>, edubezval@gmail.com
-Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/01/2019 11:12, Wei Ni wrote:
-> Add support for get_trend ops that allows soctherm
-> sensors to be used with the step-wise governor.
-> 
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> ---
->  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> index fd2703c0cfc5..864205af104b 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
->  	return 0;
->  }
->  
-> +static int tegra_thermctl_get_trend(void *data, int trip,
-> +				    enum thermal_trend *trend)
-> +{
-> +	struct tegra_thermctl_zone *zone = data;
-> +	struct thermal_zone_device *tz = zone->tz;
-> +	int trip_temp, temp, last_temp, ret;
-> +
-> +	if (!tz)
-> +		return -EINVAL;
-> +
-> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mutex_lock(&tz->lock);
+When CONFIG_IOMMU_API isn't set the following warnings pops up:
 
-No need to use the mutex here.
+drivers/gpu/drm/tegra/vic.c: In function ‘vic_boot’:
+drivers/gpu/drm/tegra/vic.c:110:31: error: implicit declaration of function ‘dev_iommu_fwspec_get’; did you mean ‘iommu_fwspec_free’? [-Werror=implicit-function-declaration]
+   struct iommu_fwspec *spec = dev_iommu_fwspec_get(vic->dev);
+                               ^~~~~~~~~~~~~~~~~~~~
+                               iommu_fwspec_free
+drivers/gpu/drm/tegra/vic.c:110:31: warning: initialization of ‘struct iommu_fwspec *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+drivers/gpu/drm/tegra/vic.c:117:19: error: ‘struct iommu_fwspec’ has no member named ‘num_ids’
+   if (spec && spec->num_ids > 0) {
+                   ^~
+drivers/gpu/drm/tegra/vic.c:118:16: error: ‘struct iommu_fwspec’ has no member named ‘ids’
+    value = spec->ids[0] & 0xffff;
+                ^~
 
-Why not ?
+Rework so that its inside a '#ifdef CONFIG_IOMMU_API' block.
 
-temp = READ_ONCE(tz->temperature);
-last_temp = READ_ONCE(tz->last_temperature);
+Fixes: f3779cb190a5 ("drm/tegra: vic: Support stream ID register programming")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/gpu/drm/tegra/vic.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +	temp = tz->temperature;
-> +	last_temp = tz->last_temperature;
-> +	mutex_unlock(&tz->lock);
-> +
-> +	if (temp > trip_temp) {
-> +		if (temp >= last_temp)
-> +			*trend = THERMAL_TREND_RAISING;
-> +		else
-> +			*trend = THERMAL_TREND_STABLE;
-> +	} else if (temp < trip_temp) {
-> +		*trend = THERMAL_TREND_DROPPING;
-> +	} else {
-> +		*trend = THERMAL_TREND_STABLE;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
->  	.get_temp = tegra_thermctl_get_temp,
->  	.set_trip_temp = tegra_thermctl_set_trip_temp,
-> +	.get_trend = tegra_thermctl_get_trend,
->  };
->  
->  static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
-> 
-
-
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index 39bfed9623de..982ce37ecde1 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -106,6 +106,7 @@ static int vic_boot(struct vic *vic)
+ 	if (vic->booted)
+ 		return 0;
+ 
++#ifdef CONFIG_IOMMU_API
+ 	if (vic->config->supports_sid) {
+ 		struct iommu_fwspec *spec = dev_iommu_fwspec_get(vic->dev);
+ 		u32 value;
+@@ -121,6 +122,7 @@ static int vic_boot(struct vic *vic)
+ 			vic_writel(vic, value, VIC_THI_STREAMID1);
+ 		}
+ 	}
++#endif
+ 
+ 	/* setup clockgating registers */
+ 	vic_writel(vic, CG_IDLE_CG_DLY_CNT(4) |
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.19.2
