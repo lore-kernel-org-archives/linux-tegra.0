@@ -1,125 +1,47 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH V6 5/7] arm64: dts: tegra210: add CPU idle states
- properties
-Date: Mon, 18 Feb 2019 17:21:19 +0800
-Message-ID: <b6f7b1d2-5d7e-dbb2-9b43-f9bd727442d3@nvidia.com>
-References: <20190201161654.18315-1-josephl@nvidia.com>
- <20190201161654.18315-6-josephl@nvidia.com>
- <d98266b3-f0a4-cebe-174a-2ab5c4051fde@linaro.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V1] i2c: tegra: fix tegra186 hw supported features
+Date: Mon, 18 Feb 2019 09:34:38 +0000
+Message-ID: <42aa92c1-309e-88c1-1cd6-07592990730b@nvidia.com>
+References: <1550334787-27703-1-git-send-email-skomatineni@nvidia.com>
+ <20190218084227.GB19363@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <d98266b3-f0a4-cebe-174a-2ab5c4051fde@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190218084227.GB19363@ulmo>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thomas
- Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: talho@nvidia.com, wsa@the-dreams.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2/15/19 11:47 PM, Daniel Lezcano wrote:
-> On 01/02/2019 17:16, Joseph Lo wrote:
->> Add idle states properties for generic ARM CPU idle driver. This
->> includes a C7 state which is the power down state of CPU cores.
+
+On 18/02/2019 08:42, Thierry Reding wrote:
+> On Sat, Feb 16, 2019 at 08:33:07AM -0800, Sowjanya Komatineni wrote:
+>> Tegra186 does not support multi-master mode and also there is no
+>> master fifo control register.
 >>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+>> This patch fixes supported features of Tegra186 and prevents
+>> crashing during boot as master fifo control register are not
+>> present on Tegra186 and prior.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 >> ---
->> v6:
->>   * add ack tag from Jon.
->> v5:
->>   * no change
->> v4:
->>   * no change
->> v3:
->>   * no change
->> v2:
->>   * add entry-latency-us and exit-latency-us properties
->>
->> Note:
->> This dt patch depends on the DT changes in below series.
->> http://patchwork.ozlabs.org/project/linux-tegra/list/?series=84380
->> ---
->>   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->> index 2b387364afc3..75534692604c 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->> @@ -1318,24 +1318,43 @@
->>   				 <&dfll>;
->>   			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
->>   			clock-latency = <300000>;
->> +			cpu-idle-states = <&C7>;
+>>  drivers/i2c/busses/i2c-tegra.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Please change the C7 name, that will be confusing with the C-state.
-> 
-> CPU_SLEEP would be nice and consistent with other drivers.
-> 
->>   		};
->>   
->>   		cpu@1 {
->>   			device_type = "cpu";
->>   			compatible = "arm,cortex-a57";
->>   			reg = <1>;
->> +			cpu-idle-states = <&C7>;
->>   		};
->>   
->>   		cpu@2 {
->>   			device_type = "cpu";
->>   			compatible = "arm,cortex-a57";
->>   			reg = <2>;
->> +			cpu-idle-states = <&C7>;
->>   		};
->>   
->>   		cpu@3 {
->>   			device_type = "cpu";
->>   			compatible = "arm,cortex-a57";
->>   			reg = <3>;
->> +			cpu-idle-states = <&C7>;
->> +		};
->> +
->> +		idle-states {
->> +			entry-method = "psci";
->> +
->> +			C7: c7 {
->> +				compatible = "arm,idle-state";
->> +				arm,psci-suspend-param = <0x40000007>;
->> +				entry-latency-us = <250>;
->> +				exit-latency-us = <100>;
->> +				min-residency-us = <1000>;
->> +				wakeup-latency-us = <130>;
-> 
-> Regarding the entry and the exit latency, the wakeup latency sounds a
-> bit small.
-> 
-> ./devicetree/bindings/arm/idle-states.txt
-> 
->> +				idle-state-name = "c7-cpu-powergated";
-> 
-> "cpu-sleep"
-> 
+> We really should've caught this earlier. Jon, let's think about ways to
+> make it easier to catch these things in the future on our test system.
 
-Will fix them.
+Indeed. This has fixed the boot regression I was seeing over the weekend
+on -next for Tegra186. However, I am bit confused here, because when I
+look at the Tegra186 TRM it states that the I2C supports multi-master
+mode which disagrees with this patch. Furthermore, it seems odd that
+Tegra210 and Tegra194 would support multi-master mode but Tegra186 does
+not. So is this really correct?
 
-Thanks for reviewing,
-Joseph
+Cheers
+Jon
 
->> +				status = "disabled";
->> +			};
->>   		};
->>   	};
->>   
->>
-> 
-> 
+-- 
+nvpublic
