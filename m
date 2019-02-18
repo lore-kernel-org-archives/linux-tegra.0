@@ -1,102 +1,85 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: vic: fix implicit function declaration warning
-Date: Mon, 18 Feb 2019 15:43:37 +0100
-Message-ID: <20190218144337.GB19190@ulmo>
-References: <20190218110050.10589-1-anders.roxell@linaro.org>
+Subject: Re: [PATCH V1] i2c: tegra: fix tegra186 hw supported features
+Date: Mon, 18 Feb 2019 15:50:02 +0100
+Message-ID: <20190218145002.GC19190@ulmo>
+References: <1550334787-27703-1-git-send-email-skomatineni@nvidia.com>
+ <20190218084227.GB19363@ulmo>
+ <42aa92c1-309e-88c1-1cd6-07592990730b@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0114181820=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190218110050.10589-1-anders.roxell@linaro.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: airlied@linux.ie, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <42aa92c1-309e-88c1-1cd6-07592990730b@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, talho@nvidia.com, wsa@the-dreams.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0114181820==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
-Content-Disposition: inline
-
-
---wq9mPyueHGvFACwf
-Content-Type: text/plain; charset=utf-8
+--oJ71EGRlYNjSvfq7
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 18, 2019 at 12:00:50PM +0100, Anders Roxell wrote:
-> When CONFIG_IOMMU_API isn't set the following warnings pops up:
+On Mon, Feb 18, 2019 at 09:34:38AM +0000, Jon Hunter wrote:
 >=20
-> drivers/gpu/drm/tegra/vic.c: In function =E2=80=98vic_boot=E2=80=99:
-> drivers/gpu/drm/tegra/vic.c:110:31: error: implicit declaration of functi=
-on =E2=80=98dev_iommu_fwspec_get=E2=80=99; did you mean =E2=80=98iommu_fwsp=
-ec_free=E2=80=99? [-Werror=3Dimplicit-function-declaration]
->    struct iommu_fwspec *spec =3D dev_iommu_fwspec_get(vic->dev);
->                                ^~~~~~~~~~~~~~~~~~~~
->                                iommu_fwspec_free
-> drivers/gpu/drm/tegra/vic.c:110:31: warning: initialization of =E2=80=98s=
-truct iommu_fwspec *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from=
- integer without a cast [-Wint-conversion]
-> drivers/gpu/drm/tegra/vic.c:117:19: error: =E2=80=98struct iommu_fwspec=
-=E2=80=99 has no member named =E2=80=98num_ids=E2=80=99
->    if (spec && spec->num_ids > 0) {
->                    ^~
-> drivers/gpu/drm/tegra/vic.c:118:16: error: =E2=80=98struct iommu_fwspec=
-=E2=80=99 has no member named =E2=80=98ids=E2=80=99
->     value =3D spec->ids[0] & 0xffff;
->                 ^~
+> On 18/02/2019 08:42, Thierry Reding wrote:
+> > On Sat, Feb 16, 2019 at 08:33:07AM -0800, Sowjanya Komatineni wrote:
+> >> Tegra186 does not support multi-master mode and also there is no
+> >> master fifo control register.
+> >>
+> >> This patch fixes supported features of Tegra186 and prevents
+> >> crashing during boot as master fifo control register are not
+> >> present on Tegra186 and prior.
+> >>
+> >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> >> ---
+> >>  drivers/i2c/busses/i2c-tegra.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > We really should've caught this earlier. Jon, let's think about ways to
+> > make it easier to catch these things in the future on our test system.
 >=20
-> Rework so that its inside a '#ifdef CONFIG_IOMMU_API' block.
->=20
-> Fixes: f3779cb190a5 ("drm/tegra: vic: Support stream ID register programm=
-ing")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  drivers/gpu/drm/tegra/vic.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Indeed. This has fixed the boot regression I was seeing over the weekend
+> on -next for Tegra186. However, I am bit confused here, because when I
+> look at the Tegra186 TRM it states that the I2C supports multi-master
+> mode which disagrees with this patch. Furthermore, it seems odd that
+> Tegra210 and Tegra194 would support multi-master mode but Tegra186 does
+> not. So is this really correct?
 
-Applied, thanks.
+I would expect at least the missing master FIFO registers to cause a
+crash on Tegra186. The internal architecture specification also says
+that multi-master is supported.
+
+Sowjanya: do you have other documents that suggest we don't support
+multi-master on Tegra186 specifically? Or is this to work around an
+issue specific to Tegra186?
+
+As it is this contradicts documentation, so we need to either fix the
+commit to remove only master FIFO support or we need to fix the docs
+to reflect reality.
 
 Thierry
 
---wq9mPyueHGvFACwf
+--oJ71EGRlYNjSvfq7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxqxJgACgkQ3SOs138+
-s6FdzxAAqMQwVpAXY7534MRScbODw+x2lR1SKl9F6NuD2JXGRtMUFBPehoy/2Z/P
-pWmBhDczB9oqD7kbLPeyjcmg1UH76F7ozMFpbmuL8+G/UFBBkv5tFnzWGWGremPC
-DdmOUVwb79F10AUFmhb2lzvYD7IqV0FVWcQ9TmTpXnEr41jvXtGrmwbhOvS0Ihfa
-l1fx07dybPZ3M/qmMHxT7Jf8iXPvxOv5KUjSpbIo89JXOguMirXNt1W5PfUkA2j+
-D5ek4bHO2Y83kSUi2lQ99qZ7Yfm2XLkutGrGS1aWaWPkPusz9eAoBPOQhNs28Jjq
-NC7VcuztkJDVMZYa2MR+vtMoGD371/OdHST7lI+4KfM+u5oE/rWx/CzK8gUc6Nlm
-3QyIsLsf2/NAoK77FSffAtrTq2TBUviZFEPKxZ2RcZkAji22DkQtQfv1UgPAGbPK
-RFju4jRiez2QPEj6HzIZllrZSkkD0GTaN6vc2BsJ1ZCkLutB2GyQMJPFJtWlxlvp
-Q4+UumjC3COO5XHZhh5WLfMqYfvI1A0hLk/2C1aILC83xh36ZJUjdNAejtpAPa/6
-O1BLgZRphcNtXfRzr2Kojd7yL2oHchazE7vqEO5qQeHe4V7fkHFp0m/7gn28RuXn
-KkKV2p56dYWnXfDU9mvN2d3kvzqT3wIkM+tx/qDP3pmRgmYYdGA=
-=6gu4
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxqxhoACgkQ3SOs138+
+s6GgIBAAmL08dlZUzeNGEZh/8lLWo+k9vYokFLfALfaeRu+SU35zzCpLBCO54w95
+mLOBVtInTEC5dQ3ouIXuY+Aj0MfEp/n20KON6nGhrlLXnIq4Pp1Is3a2VMSlPiBp
+VpaZOzC9LTbt6VNiMq8Rw7JS9zJdsp5xwGAh6RALMfJzpAAF5d7s3MGGa0y6NFiV
+BL/QZ1stiDQJl+MmhyPKVIycdLUMJAEV7YtWpVN1Cp/qOVYK0JHGjuTDnenu7cSY
+wwNdahj7vfLA/+HpjxhYXlthetroi7e/JXEX9jJvGU5CqwLIzlb2pZFVVb3pnFgu
+BhTvP97ThiSpt1bwGD+caZwubYZBMHR8r4oLSHuR/kTNoElY3kG0ibzUCg0Etqxq
+2elPtIKUhFs77i9MVfn0R7SxnUn+fndAzHn9gbcJJCBqg1eee17Xq/EQ0eDYCnh2
+gfcFSnbcCRtWsIjcUMGiynRwZM2Ay8V4V+wocq9lxG166TmjVOdk0YOJn9MPHfw+
+kkDCsLWga7uQy1EfWGUgo8yprWQ07NwY40vXIji+r9gs8Y91i5lQwcrZOpiKfC0I
+uds648e74TsQgzSfIqSuFr7HmNnPj8GMLzdxXRnoVn/Mw0Zm0c0ewrIcJefTAfCw
+eoRqyd9tq821Aphub7/hick+lbFHAX5xb5gYOoC4mgSG3buk1RY=
+=zXzK
 -----END PGP SIGNATURE-----
 
---wq9mPyueHGvFACwf--
-
---===============0114181820==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============0114181820==--
+--oJ71EGRlYNjSvfq7--
