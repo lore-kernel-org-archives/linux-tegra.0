@@ -1,10 +1,12 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V2] i2c: tegra: fix tegra186 hw feature support for has_mst_fifo_reg
-Date: Mon, 18 Feb 2019 13:07:35 -0800
-Message-ID: <1550524059-28900-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V2] i2c: tegra: fix tegra186 hw feature support
+Date: Mon, 18 Feb 2019 13:07:36 -0800
+Message-ID: <1550524059-28900-2-git-send-email-skomatineni@nvidia.com>
+References: <1550524059-28900-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550524059-28900-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com
 Cc: wsa@the-dreams.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
