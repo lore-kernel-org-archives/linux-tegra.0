@@ -1,62 +1,67 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: next-20190215 build: 2 failures 19 warnings (next-20190215)
-Date: Mon, 18 Feb 2019 11:10:14 -0600
-Message-ID: <CAJe_ZheryjH8EPy+gmBnnXzYWZZO+gXXCYnR7ysQexa9i4rBcQ@mail.gmail.com>
-References: <E1gukSa-0003kX-JD@optimist> <20190218113217.GA10794@sirena.org.uk>
- <20190218120921.GA11524@kroah.com> <20190218150853.GA21119@ulmo>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 2/4] mfd: max77620: add documentation for backup
+ battery charging
+Date: Mon, 18 Feb 2019 12:06:12 -0600
+Message-ID: <CAL_JsqKiL8A+SBwqLzYa9djWBT1S+2kxUUB4iuKWX7EoqXouCw@mail.gmail.com>
+References: <20190212064353.7451-1-markz@nvidia.com> <20190212064353.7451-3-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190218150853.GA21119@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190212064353.7451-3-markz@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Zhang <markz@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 18 Feb 2019 at 09:08, Thierry Reding <treding@nvidia.com> wrote:
+On Tue, Feb 12, 2019 at 12:44 AM Mark Zhang <markz@nvidia.com> wrote:
 >
-> On Mon, Feb 18, 2019 at 01:09:21PM +0100, Greg Kroah-Hartman wrote:
-> > On Mon, Feb 18, 2019 at 11:32:17AM +0000, Mark Brown wrote:
-> > > On Fri, Feb 15, 2019 at 08:51:48PM +0000, Build bot for Mark Brown wrote:
-> > >
-> > > The build failure with mbox_fush() in the tegra-tcu driver that was
-> > > initially reported two weeks ago is still present in -next (this report
-> > > is from Friday but it's also present today):
-> > >
-> > > >   arm64-allmodconfig
-> > > > ERROR: "mbox_flush" [drivers/tty/serial/tegra-tcu.ko] undefined!
-> > > >
-> > > >   arm-allmodconfig
-> > > > ERROR: "mbox_flush" [drivers/tty/serial/tegra-tcu.ko] undefined!
-> > >
-> > > Is there any progress on getting a fix merged?
-> >
-> > I can take the fix in my tty tree if I get an ack from the mbox
-> > maintainer...
->
-Not sure if I was on the CC. Honestly I only look into emails that
-pass my very lenient filter. I will add 'mbox' too to it.
+> Adding documentation for 3 new backup battery charging dts
+> properties:
+> - maxim,charging-current-microamp
+> - maxim,charging-voltage-microvolt
+> - maxim,output-resister-ohms
 
-> Maybe we can do the below until Jassi picks up the proper fix. There is
-> no hardware currently where we'd want to build the TCU driver as a
-> loadable module, so that would be fine for now.
->
-> It's a bit of churn because I'd want to revert that later on, but it's
-> not too bad and would get linux-next back on track.
->
-Maybe it should be indeed bool or rather directly selected by your
-ARCH because iirc you wanted to send critical debugging messages over
-tcu ;)
+What's the difference between the 77620 and 77650 as there's patches
+on the list for the 77650 too. The properties are similar, but seems
+to be main vs. backup battery charger. We should have common
+properties for this.
 
-Anyway, I have sent a pull request with this fix in.
-
-Cheers!
+> Signed-off-by: Mark Zhang <markz@nvidia.com>
+> ---
+>  .../devicetree/bindings/mfd/max77620.txt      | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+> index 9c16d51cc15b..88825eaf2567 100644
+> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+> @@ -122,6 +122,26 @@ For DT binding details of different sub modules like GPIO, pincontrol,
+>  regulator, power, please refer respective device-tree binding document
+>  under their respective sub-system directories.
+>
+> +Backup Battery:
+> +==============
+> +This sub-node configure charging backup battery of the device. Device has
+> +support of charging the backup battery. The subnode name is "backup-battery".
+> +The property for backup-battery child nodes as:
+> +Presence of this child node will enable the backup battery charging.
+> +
+> +Optional properties:
+> +       -maxim,charging-current-microamp: Charging current setting.
+> +                       The device supports 50/100/200/400/600/800uA.
+> +                       If this property is unavailable then it will
+> +                       charge with 50uA.
+> +       -maxim,charging-voltage-microvolt: Charging Voltage Limit Setting.
+> +                       Device supports 2500000/3000000/3300000/350000uV.
+> +                       Default will be set to 2500mV. The voltage will be roundoff
+> +                       to nearest lower side if other than above is configured.
+> +       -maxim,output-resister-ohms: Output resistor on Ohm.
+> +                       Device supports 100/1000/3000/6000 Ohms.
+> +                       Default will be set to 1000 Ohm.
+> +
+>  Example:
+>  --------
+>  #include <dt-bindings/mfd/max77620.h>
+> --
+> 2.19.2
+>
