@@ -1,104 +1,59 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V6 2/7] clocksource: tegra: add Tegra210 timer support
-Date: Tue, 19 Feb 2019 10:33:03 +0100
-Message-ID: <0690a2a2-06e6-62ee-0a5d-dda008fb7fef@linaro.org>
-References: <20190201161654.18315-1-josephl@nvidia.com>
- <20190201161654.18315-3-josephl@nvidia.com>
- <3849a41f-ab36-d7e0-b2ce-1aa5c4e34aec@linaro.org>
- <87731d61-10f6-0842-a90f-0c78ffba9ef7@nvidia.com>
- <d2aff40c-5ec5-ad66-0d69-a76cdd6c0e9c@linaro.org>
- <a9b6e870-258d-492f-1f1d-5d6ceea24795@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFT/RFC][PATCH] driver core: Fix PM-runtime for links added
+ during consumer probe
+Date: Tue, 19 Feb 2019 10:24:29 +0000
+Message-ID: <eeaa7369-31bb-293e-e585-6014e4bcdd14@nvidia.com>
+References: <14371356.imFjPFOrCi@aspire.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <a9b6e870-258d-492f-1f1d-5d6ceea24795@nvidia.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <14371356.imFjPFOrCi@aspire.rjw.lan>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>, Lukas Wunner <lukas@wunner.de>, Andrzej Hajda <a.hajda@samsung.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Lucas Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTkvMDIvMjAxOSAxMDowMCwgSm9zZXBoIExvIHdyb3RlOgo+IE9uIDIvMTgvMTkgNTozOSBQ
-TSwgRGFuaWVsIExlemNhbm8gd3JvdGU6Cj4+IE9uIDE4LzAyLzIwMTkgMTA6MDEsIEpvc2VwaCBM
-byB3cm90ZToKPj4+IE9uIDIvMTUvMTkgMTE6MTQgUE0sIERhbmllbCBMZXpjYW5vIHdyb3RlOgo+
-Pj4+IE9uIDAxLzAyLzIwMTkgMTc6MTYsIEpvc2VwaCBMbyB3cm90ZToKPj4+Pj4gQWRkIHN1cHBv
-cnQgZm9yIHRoZSBUZWdyYTIxMCB0aW1lciB0aGF0IHJ1bnMgYXQgb3NjaWxsYXRvciBjbG9jawo+
-Pj4+PiAoVE1SMTAtVE1SMTMpLiBXZSBuZWVkIHRoZXNlIHRpbWVycyB0byB3b3JrIGFzIGNsb2Nr
-IGV2ZW50IGRldmljZQo+Pj4+PiBhbmQgdG8KPj4+Pj4gcmVwbGFjZSB0aGUgQVJNdjggYXJjaGl0
-ZWN0ZWQgdGltZXIgZHVlIHRvIGl0IGNhbid0IHN1cnZpdmUgYWNyb3NzIHRoZQo+Pj4+PiBwb3dl
-ciBjeWNsZSBvZiB0aGUgQ1BVIGNvcmUgb3IgQ1BVUE9SRVNFVCBzaWduYWwuIFNvIGl0IGNhbid0
-IGJlIGEKPj4+Pj4gd2FrZS11cAo+Pj4+PiBzb3VyY2Ugd2hlbiBDUFUgc3VzcGVuZHMgaW4gcG93
-ZXIgZG93biBzdGF0ZS4KPj4+Pj4KPj4+Pj4gQWxzbyBjb252ZXJ0IHRoZSBvcmlnaW5hbCBkcml2
-ZXIgdG8gdXNlIHRpbWVyLW9mIEFQSS4KPj4+Pj4KPj4+Pj4gQ2M6IERhbmllbCBMZXpjYW5vIDxk
-YW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnPgo+Pj4+PiBDYzogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4
-QGxpbnV0cm9uaXguZGU+Cj4+Pj4+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4+
-Pj4+IFNpZ25lZC1vZmYtYnk6IEpvc2VwaCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+Pj4+PiBB
-Y2tlZC1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+Pj4gQWNrZWQt
-Ynk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgo+Pj4+PiAtLS0KPj4+Pj4gdjY6
-Cj4+Pj4+IMKgwqAgKiByZWZpbmUgdGhlIHRpbWVyIGRlZmluZXMKPj4+Pj4gwqDCoCAqIGFkZCBh
-Y2sgdGFnIGZyb20gSm9uLgo+Pj4+PiB2NToKPj4+Pj4gwqDCoCAqIGFkZCBhY2sgdGFnIGZyb20g
-VGhpZXJyeQo+Pj4+PiB2NDoKPj4+Pj4gwqDCoCAqIG1lcmdlIHRpbWVyLXRlZ3JhMjEwLmMgaW4g
-cHJldmlvdXMgdmVyc2lvbiBpbnRvIHRpbWVyLXRlZ3JhMjAuYwo+Pj4+PiB2MzoKPj4+Pj4gwqDC
-oCAqIHVzZSB0aW1lci1vZiBBUEkKPj4+Pj4gdjI6Cj4+Pj4+IMKgwqAgKiBhZGQgZXJyb3IgY2xl
-YW4tdXAgY29kZQo+Pj4+PiAtLS0KPiBbc25pcF0KPj4+Pj4gK8KgwqDCoCBmb3JfZWFjaF9wb3Nz
-aWJsZV9jcHUoY3B1KSB7Cj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgdGltZXJfb2YgKmNw
-dV90bzsKPj4+Pj4gKwo+Pj4+PiArwqDCoMKgwqDCoMKgwqAgY3B1X3RvID0gcGVyX2NwdV9wdHIo
-JnRlZ3JhX3RvLCBjcHUpOwo+Pj4+PiArwqDCoMKgwqDCoMKgwqAgY3B1X3RvLT5vZl9iYXNlLmJh
-c2UgPSB0aW1lcl9yZWdfYmFzZSArCj4+Pj4+IFRJTUVSX0JBU0VfRk9SX0NQVShjcHUpOwo+Pj4+
-PiArwqDCoMKgwqDCoMKgwqAgY3B1X3RvLT5vZl9jbGsucmF0ZSA9IHRpbWVyX29mX3JhdGUodG8p
-Owo+Pj4+PiArwqDCoMKgwqDCoMKgwqAgY3B1X3RvLT5jbGtldnQuY3B1bWFzayA9IGNwdW1hc2tf
-b2YoY3B1KTsKPj4+Pj4gKwo+Pj4+PiArwqDCoMKgwqDCoMKgwqAgY3B1X3RvLT5jbGtldnQuaXJx
-ID0KPj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaXJxX29mX3BhcnNlX2FuZF9tYXAobnAs
-IElSUV9JRFhfRk9SX0NQVShjcHUpKTsKPj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGlmICghY3B1X3Rv
-LT5jbGtldnQuaXJxKSB7Cj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHByX2VycigiJXM6
-IGNhbid0IG1hcCBJUlEgZm9yIENQVSVkXG4iLAo+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIF9fZnVuY19fLCBjcHUpOwo+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCByZXQgPSAtRUlOVkFMOwo+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBnb3RvIG91
-dDsKPj4+Pj4gK8KgwqDCoMKgwqDCoMKgIH0KPj4+Pj4gKwo+Pj4+PiArwqDCoMKgwqDCoMKgwqAg
-aXJxX3NldF9zdGF0dXNfZmxhZ3MoY3B1X3RvLT5jbGtldnQuaXJxLCBJUlFfTk9BVVRPRU4pOwo+
-Pj4+PiArwqDCoMKgwqDCoMKgwqAgcmV0ID0gcmVxdWVzdF9pcnEoY3B1X3RvLT5jbGtldnQuaXJx
-LCB0ZWdyYV90aW1lcl9pc3IsCj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIElSUUZfVElNRVIgfCBJUlFGX05PQkFMQU5DSU5HLAo+Pj4+PiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBjcHVfdG8tPmNsa2V2dC5uYW1lLCAmY3B1X3RvLT5jbGtldnQp
-Owo+Pj4+PiArwqDCoMKgwqDCoMKgwqAgaWYgKHJldCkgewo+Pj4+PiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBwcl9lcnIoIiVzOiBjYW5ub3Qgc2V0dXAgaXJxICVkIGZvciBDUFUlZFxuIiwKPj4+
-Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBfX2Z1bmNfXywgY3B1X3RvLT5jbGtl
-dnQuaXJxLCBjcHUpOwo+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSAtRUlOVkFM
-Owo+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBnb3RvIG91dF9pcnE7Cj4+Pj4+ICvCoMKg
-wqDCoMKgwqDCoCB9Cj4+Pj4+ICvCoMKgwqAgfQo+Pj4+Cj4+Pj4gWW91IHNob3VsZCBjb25maWd1
-cmUgdGhlIHRpbWVyIGluIHRoZSB0ZWdyYV90aW1lcl9zZXR1cCgpIGZ1bmN0aW9uCj4+Pj4gaW5z
-dGVhZCBvZiB1c2luZyB0aGlzIGNwdSBsb29wLgo+Pj4+Cj4+Pgo+Pj4gSSB0aGluayBJIHN0aWxs
-IG5lZWQgdG8gbGVhdmUgJ2lycV9vZl9wYXJzZV9hbmRfbWFwJyBhbmQgJ3JlcXVlc3RfaXJxJwo+
-Pj4gaGVyZS4gSXMgdGhhdCBvaz8KPj4KPj4gUGVyaGFwcyB5b3UgY2FuIHN0b3JlIHRoZSBucCBw
-b2ludGVyIGluIHRoZSBwcml2YXRlIGRhdGEgc3RydWN0dXJlIG9mCj4+IHRpbWVyLW9mIGFuZCBs
-ZXQgdGhlIHRpbWVyX29mIEFQSSB0byByZXRyaWV2ZSB0aGUgaXJxIGluIHRoZSBjcHVocAo+PiBj
-YWxsYmFja3MuCj4+Cj4+IGlycV9vZl9wYXJzZV9hbmRfbWFwIHdpbGwgYmUgY2FsbGVkIGJ5IHRp
-bWVyLW9mLgo+Pgo+PiBJJ20gbm90IHN1cmUgaXJxX3NldF9zdGF0dXNfZmxhZ3MgcmVhbGx5IG9w
-ZXJhdGVzIG9uIHRoZSBpcnEgYmVjYXVzZSBpdAo+PiBpcyBjYWxsZWQgYWZ0ZXIgcmVxdWVzdF9p
-cnEuCj4+Cj4gCj4gSSBkaWQgc29tZSBleHBlcmltZW50cyB0b2RheS4gVGhlICdpcnFfb2ZfcGFy
-c2VfYW5kX21hcCcsICdyZXF1ZXN0X2lycScKPiBhbmQgJ3NldHVwX2lycScgYXJlIG5vdCBhYmxl
-IHRvIHJ1biBpbiB0aGUgYXRvbWljIHNlY3Rpb24gdGhhdAo+IHRlZ3JhX3RpbWVyX3NldHVwIHdv
-dWxkIGJlIHRyaWdnZXJlZCBpbi4KCk9oIC4uLiByaWdodAoKPiBTbyBJIHRoaW5rIEkgc3RpbGwg
-bmVlZCB0byBsZWF2ZSB0aGUgSVJRIGNvbmZpZ3VyYXRpb24gY29kZSBoZXJlIGluIHRoZQo+IGxv
-b3AuIFNob3VsZCBJIG1vdmUgb3RoZXJzIHRvICd0ZWdyYV90aW1lcl9zZXR1cCcgb3IganVzdCBr
-ZWVwIGFzIHRoZQo+IHNhbWUgaW4gdGhpcyBwYXRjaD8KCkZvciB0aGUgbW9tZW50LCBJIHN1Z2dl
-c3QgeW91IGtlZXAgaXQgYXMgaXQgd2FzIGluaXRpYWxseS4KCkEgc2lkZSBub3RlLCBub3QgcmVs
-YXRlZCB0byB0aGlzIGNvbW1lbnQgYnV0IGFib3V0IHRoZSBEWU5JUlEgZmxhZy4KQWN0dWFsbHkg
-aXQgaXMgbm90IG5lZWRlZCBiZWNhdXNlIHRoZSB0aW1lcnMgYXJlIHBlci1jcHUuCgpUaGFua3MK
-CiAgLS0gRGFuaWVsCgoKLS0gCiA8aHR0cDovL3d3dy5saW5hcm8ub3JnLz4gTGluYXJvLm9yZyDi
-lIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCgpGb2xsb3cgTGluYXJvOiAgPGh0
-dHA6Ly93d3cuZmFjZWJvb2suY29tL3BhZ2VzL0xpbmFybz4gRmFjZWJvb2sgfAo8aHR0cDovL3R3
-aXR0ZXIuY29tLyMhL2xpbmFyb29yZz4gVHdpdHRlciB8CjxodHRwOi8vd3d3LmxpbmFyby5vcmcv
-bGluYXJvLWJsb2cvPiBCbG9nCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4v
-bGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+
+On 18/02/2019 22:08, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Commit 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage
+> counter imbalance") introduced a regression that causes suppliers
+> to be suspended prematurely for device links added during consumer
+> driver probe if the initial PM-runtime status of the consumer is
+> "suspended" and the consumer is resumed after adding the link and
+> before pm_runtime_put_suppliers() is called.  In that case,
+> pm_runtime_put_suppliers() will drop the rpm_active refcount for
+> the link by one and (since rpm_active is equal to two after the
+> preceding consumer resume) the supplier's PM-runtime usage counter
+> will be decremented, which may cause the supplier to suspend even
+> though the consumer's PM-runtime status is "active".
+> 
+> For this reason, partially revert commit 4c06c4e6cf63 as the problem
+> it tried to fix needs to be addressed somewhat differently, and
+> change pm_runtime_get_suppliers() and pm_runtime_put_suppliers() so
+> that the latter only drops rpm_active references acquired by the
+> former.  [This requires adding a new field to struct device_link,
+> but I coulnd't find a cleaner way to address the issue that would
+> work in all cases.]
+> 
+> Fixes: 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage counter imbalance")
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> On top of driver-core/driver-core-next.
+> 
+> Jon, Ulf, please test!
+
+Thanks Rafael this works for me!
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
