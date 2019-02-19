@@ -1,59 +1,51 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFT/RFC][PATCH] driver core: Fix PM-runtime for links added
- during consumer probe
-Date: Tue, 19 Feb 2019 10:24:29 +0000
-Message-ID: <eeaa7369-31bb-293e-e585-6014e4bcdd14@nvidia.com>
-References: <14371356.imFjPFOrCi@aspire.rjw.lan>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/62] 4.14.102-stable review
+Date: Tue, 19 Feb 2019 13:47:35 +0100
+Message-ID: <20190219124735.GB16246@kroah.com>
+References: <20190218133505.801423074@linuxfoundation.org>
+ <fd971c7a-3ac1-b44e-03c0-993888cad053@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <14371356.imFjPFOrCi@aspire.rjw.lan>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>, Lukas Wunner <lukas@wunner.de>, Andrzej Hajda <a.hajda@samsung.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Lucas Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <fd971c7a-3ac1-b44e-03c0-993888cad053@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 18/02/2019 22:08, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Feb 19, 2019 at 09:32:25AM +0000, Jon Hunter wrote:
 > 
-> Commit 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage
-> counter imbalance") introduced a regression that causes suppliers
-> to be suspended prematurely for device links added during consumer
-> driver probe if the initial PM-runtime status of the consumer is
-> "suspended" and the consumer is resumed after adding the link and
-> before pm_runtime_put_suppliers() is called.  In that case,
-> pm_runtime_put_suppliers() will drop the rpm_active refcount for
-> the link by one and (since rpm_active is equal to two after the
-> preceding consumer resume) the supplier's PM-runtime usage counter
-> will be decremented, which may cause the supplier to suspend even
-> though the consumer's PM-runtime status is "active".
+> On 18/02/2019 13:43, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.102 release.
+> > There are 62 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Feb 20 13:34:36 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.102-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> All tests are passing for Tegra ...
 > 
-> For this reason, partially revert commit 4c06c4e6cf63 as the problem
-> it tried to fix needs to be addressed somewhat differently, and
-> change pm_runtime_get_suppliers() and pm_runtime_put_suppliers() so
-> that the latter only drops rpm_active references acquired by the
-> former.  [This requires adding a new field to struct device_link,
-> but I coulnd't find a cleaner way to address the issue that would
-> work in all cases.]
+> Test results for stable-v4.14:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
 > 
-> Fixes: 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage counter imbalance")
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
+> Linux version:	4.14.102-rc1-gfea4e6b
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 > 
-> On top of driver-core/driver-core-next.
-> 
-> Jon, Ulf, please test!
 
-Thanks Rafael this works for me!
+Thanks for testing 3 of these and letting me know.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+greg k-h
