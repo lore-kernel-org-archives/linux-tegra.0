@@ -1,99 +1,60 @@
-From: Mark Zhang <markz@nvidia.com>
-Subject: Re: [PATCH v3 2/4] mfd: max77620: add documentation for backup
- battery charging
-Date: Tue, 19 Feb 2019 10:09:40 +0800
-Message-ID: <b808a706-19d0-4cae-8c99-2163a64d7884@nvidia.com>
-References: <20190212064353.7451-1-markz@nvidia.com>
- <20190212064353.7451-3-markz@nvidia.com>
- <CAL_JsqKiL8A+SBwqLzYa9djWBT1S+2kxUUB4iuKWX7EoqXouCw@mail.gmail.com>
- <91d3d8f8-0b96-c442-5674-3eff8209848b@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v7 1/3] thermal: tegra: remove unnecessary warnings
+Date: Tue, 19 Feb 2019 10:14:15 +0800
+Message-ID: <b47037a2-86de-eacd-e9f7-760744783835@nvidia.com>
+References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
+ <1546510369-28491-2-git-send-email-wni@nvidia.com>
+ <ec484530-0a07-b725-a376-43c65ca4a723@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <91d3d8f8-0b96-c442-5674-3eff8209848b@nvidia.com>
+In-Reply-To: <ec484530-0a07-b725-a376-43c65ca4a723@linaro.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, edubezval@gmail.com
+Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2/19/2019 10:07 AM, Mark Zhang wrote:
-> On 2/19/2019 2:06 AM, Rob Herring wrote:
->> On Tue, Feb 12, 2019 at 12:44 AM Mark Zhang <markz@nvidia.com> wrote:
->>>
->>> Adding documentation for 3 new backup battery charging dts
->>> properties:
->>> - maxim,charging-current-microamp
->>> - maxim,charging-voltage-microvolt
->>> - maxim,output-resister-ohms
+
+
+On 18/2/2019 5:47 PM, Daniel Lezcano wrote:
+> On 03/01/2019 11:12, Wei Ni wrote:
+>> Convert warnings to info as not all platforms may
+>> have all the thresholds and sensors enabled.
 >>
->> What's the difference between the 77620 and 77650 as there's patches
->> on the list for the 77650 too. The properties are similar, but seems
->> to be main vs. backup battery charger. We should have common
->> properties for this.
+>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>> ---
 > 
-> Rob, it's different. The RTC in max77620 is supplied from a backup
-> battery and consumes 2.0uA (IBBATT) when no other power sources are
-> available. So unlike max77620 battery charging, which provides features
+> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Oops... s/unlike max77620/unlike max77650.
-
-Mark
-
-> like:
+Daniel, thank you for your review.
 > 
-> static enum power_supply_property max77650_charger_properties[] = {
-> 	POWER_SUPPLY_PROP_STATUS,
-> 	POWER_SUPPLY_PROP_ONLINE,
-> 	POWER_SUPPLY_PROP_CHARGE_TYPE
-> };
-> 
-> For backup battery charging in max77620, what we can do is just setting
-> those 3 parameters. We don't know whether it's charging, whether the
-> backup battery is online, the percentage of the charging progress, and
-> etc. That's why I mentioned before that it's not appropriate to create
-> it as a power supply driver.
-> 
-> Mark
-> 
+>>  drivers/thermal/tegra/soctherm.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->>> Signed-off-by: Mark Zhang <markz@nvidia.com>
->>> ---
->>>  .../devicetree/bindings/mfd/max77620.txt      | 20 +++++++++++++++++++
->>>  1 file changed, 20 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
->>> index 9c16d51cc15b..88825eaf2567 100644
->>> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
->>> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
->>> @@ -122,6 +122,26 @@ For DT binding details of different sub modules like GPIO, pincontrol,
->>>  regulator, power, please refer respective device-tree binding document
->>>  under their respective sub-system directories.
->>>
->>> +Backup Battery:
->>> +==============
->>> +This sub-node configure charging backup battery of the device. Device has
->>> +support of charging the backup battery. The subnode name is "backup-battery".
->>> +The property for backup-battery child nodes as:
->>> +Presence of this child node will enable the backup battery charging.
->>> +
->>> +Optional properties:
->>> +       -maxim,charging-current-microamp: Charging current setting.
->>> +                       The device supports 50/100/200/400/600/800uA.
->>> +                       If this property is unavailable then it will
->>> +                       charge with 50uA.
->>> +       -maxim,charging-voltage-microvolt: Charging Voltage Limit Setting.
->>> +                       Device supports 2500000/3000000/3300000/350000uV.
->>> +                       Default will be set to 2500mV. The voltage will be roundoff
->>> +                       to nearest lower side if other than above is configured.
->>> +       -maxim,output-resister-ohms: Output resistor on Ohm.
->>> +                       Device supports 100/1000/3000/6000 Ohms.
->>> +                       Default will be set to 1000 Ohm.
->>> +
->>>  Example:
->>>  --------
->>>  #include <dt-bindings/mfd/max77620.h>
->>> --
->>> 2.19.2
->>>
+>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>> index ed28110a3535..f07de8258e93 100644
+>> --- a/drivers/thermal/tegra/soctherm.c
+>> +++ b/drivers/thermal/tegra/soctherm.c
+>> @@ -569,7 +569,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+>>  set_throttle:
+>>  	ret = get_hot_temp(tz, &trip, &temperature);
+>>  	if (ret) {
+>> -		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
+>> +		dev_info(dev, "throttrip: %s: missing hot temperature\n",
+>>  			 sg->name);
+>>  		return 0;
+>>  	}
+>> @@ -600,7 +600,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+>>  	}
+>>  
+>>  	if (i == THROTTLE_SIZE)
+>> -		dev_warn(dev, "throttrip: %s: missing throttle cdev\n",
+>> +		dev_info(dev, "throttrip: %s: missing throttle cdev\n",
+>>  			 sg->name);
+>>  
+>>  	return 0;
+>>
+> 
+> 
