@@ -1,49 +1,128 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 2/2] i2c: tegra: remove multi-master support
-Date: Mon, 18 Feb 2019 20:50:25 -0800
-Message-ID: <1550551825-1245-2-git-send-email-skomatineni@nvidia.com>
-References: <1550551825-1245-1-git-send-email-skomatineni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v1 04/12] of: Add bindings of gpu hw throttle for Tegra
+ soctherm
+Date: Tue, 19 Feb 2019 14:08:26 +0800
+Message-ID: <5ce01da3-cb00-3d35-5164-d837df65c184@nvidia.com>
+References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
+ <1545118484-23641-6-git-send-email-wni@nvidia.com>
+ <20190218202939.GA7473@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550551825-1245-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190218202939.GA7473@bogus>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com
-Cc: wsa@the-dreams.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, edubezval@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-multi-master support is defeatured on Tegra210 and Tegra186 due to
-known bugs.
 
-This patch removes multi-master support for Tegra210 and Tegra186
-i2c hw feature.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 19/2/2019 4:29 AM, Rob Herring wrote:
+> On Tue, Dec 18, 2018 at 03:34:36PM +0800, Wei Ni wrote:
+>> Add "nvidia,gpu-throt-level" property to set gpu hw
+>> throttle level.
+>>
+>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>> ---
+>>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 17 +++++++++++++++--
+>>  include/dt-bindings/thermal/tegra124-soctherm.h    | 22 ++++++++++++++++++----
+>>  2 files changed, 33 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+>> index ab66d6feab4b..cf6d0be56b7a 100644
+>> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+>> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+>> @@ -52,6 +52,15 @@ Required properties :
+>>          Must set as following values:
+>>          TEGRA_SOCTHERM_THROT_LEVEL_LOW, TEGRA_SOCTHERM_THROT_LEVEL_MED
+>>          TEGRA_SOCTHERM_THROT_LEVEL_HIGH, TEGRA_SOCTHERM_THROT_LEVEL_NONE
+>> +      - nvidia,gpu-throt-level: This property is for Tegra124 and Tegra210.
+>> +        It is the level of pulse skippers, which used to throttle clock
+>> +        frequencies. It indicates gpu clock throttling depth and can be
+>> +        programmed to any of the following values which represent a throttling
+>> +        percentage:
+>> +        TEGRA_SOCTHERM_THROT_LEVEL_NONE (0%)
+>> +        TEGRA_SOCTHERM_THROT_LEVEL_LOW (50%),
+>> +        TEGRA_SOCTHERM_THROT_LEVEL_MED (75%),
+>> +        TEGRA_SOCTHERM_THROT_LEVEL_HIGH (85%).
+>>        - #cooling-cells: Should be 1. This cooling device only support on/off state.
+>>          See ./thermal.txt for a description of this property.
+>>  
+>> @@ -96,22 +105,26 @@ Example :
+>>  		throttle-cfgs {
+>>  			/*
+>>  			 * When the "heavy" cooling device triggered,
+>> -			 * the HW will skip cpu clock's pulse in 85% depth
+>> +			 * the HW will skip cpu clock's pulse in 85% depth,
+>> +			 * skip gpu clock's pulse in 85% level
+>>  			 */
+>>  			throttle_heavy: heavy {
+>>  				nvidia,priority = <100>;
+>>  				nvidia,cpu-throt-percent = <85>;
+>> +				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
+>>  
+>>  				#cooling-cells = <1>;
+>>  			};
+>>  
+>>  			/*
+>>  			 * When the "light" cooling device triggered,
+>> -			 * the HW will skip cpu clock's pulse in 50% depth
+>> +			 * the HW will skip cpu clock's pulse in 50% depth,
+>> +			 * skip gpu clock's pulse in 50% level
+>>  			 */
+>>  			throttle_light: light {
+>>  				nvidia,priority = <80>;
+>>  				nvidia,cpu-throt-percent = <50>;
+>> +				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_LOW>;
+>>  
+>>  				#cooling-cells = <1>;
+>>  			};
+>> diff --git a/include/dt-bindings/thermal/tegra124-soctherm.h b/include/dt-bindings/thermal/tegra124-soctherm.h
+>> index c15e8b709a0d..75853df1c609 100644
+>> --- a/include/dt-bindings/thermal/tegra124-soctherm.h
+>> +++ b/include/dt-bindings/thermal/tegra124-soctherm.h
+>> @@ -1,5 +1,19 @@
+>>  /* SPDX-License-Identifier: GPL-2.0 */
+>>  /*
+>> + * Copyright (c) 2014 - 2018, NVIDIA CORPORATION.  All rights reserved.
+>> + *
+>> + * Author:
+>> + *      Mikko Perttunen <mperttunen@nvidia.com>
+>> + *
+>> + * This software is licensed under the terms of the GNU General Public
+>> + * License version 2, as published by the Free Software Foundation, and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+> 
+> Why are you adding this?
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e6851904acc1..26f686bc3491 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1409,7 +1409,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.clk_divisor_fast_mode = 0x19,
- 	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = true,
--	.has_multi_master_mode = true,
-+	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
-@@ -1434,7 +1434,7 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
- 	.clk_divisor_fast_mode = 0x19,
- 	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = true,
--	.has_multi_master_mode = true,
-+	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
--- 
-2.7.4
+We doesn't need it, will remove it.
+
+> 
+>>   * This header provides constants for binding nvidia,tegra124-soctherm.
+>>   */
+>>  
+>> @@ -12,9 +26,9 @@
+>>  #define TEGRA124_SOCTHERM_SENSOR_PLLX 3
+>>  #define TEGRA124_SOCTHERM_SENSOR_NUM 4
+>>  
+>> -#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  0
+>> -#define TEGRA_SOCTHERM_THROT_LEVEL_MED  1
+>> -#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 2
+>> -#define TEGRA_SOCTHERM_THROT_LEVEL_NONE -1
+>> +#define TEGRA_SOCTHERM_THROT_LEVEL_NONE 0
+>> +#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  1
+>> +#define TEGRA_SOCTHERM_THROT_LEVEL_MED  2
+>> +#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 3
+> 
+> You are breaking an ABI.
+> 
+> Rob
+> 
