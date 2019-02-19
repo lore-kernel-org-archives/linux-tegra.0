@@ -1,163 +1,92 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter imbalance
-Date: Mon, 18 Feb 2019 23:14:35 +0100
-Message-ID: <1643324.bcmPelzAHY@aspire.rjw.lan>
-References: <5510642.nRbR3bcduN@aspire.rjw.lan> <CAJZ5v0gywb2jE-FRowxuosucNVqQ4iLLTCFte4hN_CELF9rHRA@mail.gmail.com> <6ee66fc6-cba5-7aea-0e92-3380544c1a94@nvidia.com>
+From: Mark Zhang <markz@nvidia.com>
+Subject: Re: [PATCH v3 2/4] mfd: max77620: add documentation for backup
+ battery charging
+Date: Tue, 19 Feb 2019 10:07:23 +0800
+Message-ID: <91d3d8f8-0b96-c442-5674-3eff8209848b@nvidia.com>
+References: <20190212064353.7451-1-markz@nvidia.com>
+ <20190212064353.7451-3-markz@nvidia.com>
+ <CAL_JsqKiL8A+SBwqLzYa9djWBT1S+2kxUUB4iuKWX7EoqXouCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6ee66fc6-cba5-7aea-0e92-3380544c1a94@nvidia.com>
+In-Reply-To: <CAL_JsqKiL8A+SBwqLzYa9djWBT1S+2kxUUB4iuKWX7EoqXouCw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>, Lukas Wunner <lukas@wunner.de>, Andrzej Hajda <a.hajda@samsung.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Lucas Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, February 18, 2019 2:02:50 PM CET Jon Hunter wrote:
+On 2/19/2019 2:06 AM, Rob Herring wrote:
+> On Tue, Feb 12, 2019 at 12:44 AM Mark Zhang <markz@nvidia.com> wrote:
+>>
+>> Adding documentation for 3 new backup battery charging dts
+>> properties:
+>> - maxim,charging-current-microamp
+>> - maxim,charging-voltage-microvolt
+>> - maxim,output-resister-ohms
 > 
-> On 18/02/2019 12:12, Rafael J. Wysocki wrote:
-> >  On Fri, Feb 15, 2019 at 5:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >>
-> >> On 15/02/2019 14:37, Ulf Hansson wrote:
-> >>> On Fri, 15 Feb 2019 at 12:00, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>>>
-> >>>> Hi Rafael,
-> >>>>
-> >>>> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
-> >>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>>
-> >>>>> If a stateless device link to a certain supplier with
-> >>>>> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
-> >>>>> consumer driver's probe callback, the supplier's PM-runtime usage
-> >>>>> counter will be nonzero after that which effectively causes the
-> >>>>> supplier to remain "always on" going forward.
-> >>>>>
-> >>>>> Namely, device_link_add() called to add the link invokes
-> >>>>> device_link_rpm_prepare() which notices that the consumer driver is
-> >>>>> probing, so it increments the supplier's PM-runtime usage counter
-> >>>>> with the assumption that the link will stay around until
-> >>>>> pm_runtime_put_suppliers() is called by driver_probe_device(),
-> >>>>> but if the link goes away before that point, the supplier's
-> >>>>> PM-runtime usage counter will remain nonzero.
-> >>>>>
-> >>>>> To prevent that from happening, first rework pm_runtime_get_suppliers()
-> >>>>> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
-> >>>>> links and make the latter only drop rpm_active and the supplier's
-> >>>>> PM-runtime usage counter for each link by one, unless rpm_active is
-> >>>>> one already for it.  Next, modify device_link_add() to bump up the
-> >>>>> new link's rpm_active refcount and the suppliers PM-runtime usage
-> >>>>> counter by two, to prevent pm_runtime_put_suppliers(), if it is
-> >>>>> called subsequently, from suspending the supplier prematurely (in
-> >>>>> case its PM-runtime usage counter goes down to 0 in there).
-> >>>>>
-> >>>>> Due to the way rpm_put_suppliers() works, this change does not
-> >>>>> affect runtime suspend of the consumer ends of new device links (or,
-> >>>>> generally, device links for which DL_FLAG_PM_RUNTIME has just been
-> >>>>> set).
-> >>>>>
-> >>>>> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
-> >>>>> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>> ---
-> >>>>>
-> >>>>> Note that the issue had been there before commit e2f3cd831a28, but it was
-> >>>>> overlooked by that commit and this change is a fix on top of it, so make
-> >>>>> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
-> >>>>> that the patch will not be applicable to).
-> >>>> I noticed that yesterday's and today's -next were no longer booting on
-> >>>> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
-> >>>> failing. The ethernet chip is a USB device and looking at the bootlogs I
-> >>>> can see that the Tegra XHCI driver is failing ...
-> >>>>
-> >>>>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
-> >>>>  tegra-xusb 70090000.usb: HC died; cleaning up
-> >>>>
-> >>>> The Tegra XHCI driver uses multiple power-domains and uses
-> >>>> device_link_add() to attach them. So now I am wondering if there is
-> >>>> something that we have got wrong in our implementation. However, I don't
-> >>>> see the device being probed deferred on boot or anything like that.
-> >>>>
-> >>>> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
-> >>>> links in the function tegra_xusb_powerdomain_init() which is before RPM
-> >>>> is enabled. Let me know if you have any thoughts.
-> >>>
-> >>> If you are willing to help debugging then I am offering my assistance.
-> >>>
-> >>> I would start by enabling CONFIG_PM_ADVANCED_DEBUG, which gives you
-> >>> some more information about the runtime PM state of the device, like
-> >>> the usage count for example.
-> >>> I would also add a couple of prints in
-> >>> tegra_xusb_runtime_suspend|resume() and in the ->power_on|off()
-> >>> callbacks for the corresponding genpds, to see when those gets called.
-> >>
-> >> From the bootlog I see ...
-> >>
-> >> [    4.445827] tegra_xusb_runtime_resume-788
-> >> [    4.508799] tegra-xusb 70090000.usb: Firmware timestamp: 2015-08-10 09:47:54 UTC
-> > 
-> > This message comes from tegra_xusb_load_firmware() in
-> > tegra_xusb_probe() which is after the pm_runtime_get_sync().
-> > 
-> > If the device was PM-runtime-suspended before, the
-> > pm_runtime_get_sync() will runtime-resume and reference-count the
-> > suppliers in addition to resuming the device.  In that case
-> > pm_runtime_put_suppliers() will suspend the suppliers, so there is a
-> > bug in there.
-> > 
-> > What happens is that the links are new when pm_runtime_get_sync() runs
-> > and so their rpm_active refcounts are one.  After the
-> > pm_runtime_get_sync() they are two and pm_runtime_put_suppliers() will
-> > drop them by one and drop the PM-runtime usage counter of each of them
-> > by one, so they will become zero and the suppliers will suspend.
-> > 
-> > Passing DL_FLAG_RPM_ACTIVE to device_link_add() should help, but IMO
-> > things should also work without that.
+> What's the difference between the 77620 and 77650 as there's patches
+> on the list for the 77650 too. The properties are similar, but seems
+> to be main vs. backup battery charger. We should have common
+> properties for this.
+
+Rob, it's different. The RTC in max77620 is supplied from a backup
+battery and consumes 2.0uA (IBBATT) when no other power sources are
+available. So unlike max77620 battery charging, which provides features
+like:
+
+static enum power_supply_property max77650_charger_properties[] = {
+	POWER_SUPPLY_PROP_STATUS,
+	POWER_SUPPLY_PROP_ONLINE,
+	POWER_SUPPLY_PROP_CHARGE_TYPE
+};
+
+For backup battery charging in max77620, what we can do is just setting
+those 3 parameters. We don't know whether it's charging, whether the
+backup battery is online, the percentage of the charging progress, and
+etc. That's why I mentioned before that it's not appropriate to create
+it as a power supply driver.
+
+Mark
+
 > 
-> I can confirm that DL_FLAG_RPM_ACTIVE does indeed work. I assume though
-> this would prevent the suppliers from ever being suspended,
-
-No, it wouldn't.  It only prevents the supplier from suspending as long as
-the consumer remains active.
-
-In your case it shouldn't matter (it only matters because of the bug in
-the $subject patch), because the consumer is suspended to start with.
-
-Had it been active initially, though, passing DL_FLAG_RPM_ACTIVE to
-device_link_add() would have been the only way to to force the supplier to
-remain active accross the return from consumer probe until the consumer is
-suspended.
-
-> which maybe
-> we will want to do eventually.
-> 
-> >> [    4.516223] tegra-xusb 70090000.usb: xHCI Host Controller
-> >> [    4.521622] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 1
-> > 
-> > This comes from usb_add_hcd()
-> > 
-> >> [    4.530087] tegra-xusb 70090000.usb: hcc params 0x0184f525 hci version 0x100 quirks 0x0000000000010010
-> >> [    4.539398] tegra-xusb 70090000.usb: irq 69, io mem 0x70090000
-> >> [    4.553671] tegra-xusb 70090000.usb: xHCI Host Controller
-> >> [    4.559064] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 2
-> > 
-> > Like this.
-> > 
-> >> [    4.566622] tegra-xusb 70090000.usb: Host supports USB 3.0  SuperSpeed
-> > 
-> > And this if from xhci_gen_setup(), so probe returns around this point.
-> > 
-> >> [    4.595393] tegra-pmc: tegra_genpd_power_off-673: xusbc
-> >> [    4.600672] tegra-pmc: tegra_genpd_power_off-673: xusba
-> > 
-> > And this appears to be done by pm_runtime_put_suppliers().
-> > 
-> > Hmm, I need to think how to fix this.  Maybe we'll need to revert
-> > $subject patch and do something else, we'll see (later today).
-> 
-> OK, thanks. Let me know if there is anything else I can test.
-
-Please test https://patchwork.kernel.org/patch/10818923/
-
-Cheers,
-Rafael
+>> Signed-off-by: Mark Zhang <markz@nvidia.com>
+>> ---
+>>  .../devicetree/bindings/mfd/max77620.txt      | 20 +++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+>> index 9c16d51cc15b..88825eaf2567 100644
+>> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+>> @@ -122,6 +122,26 @@ For DT binding details of different sub modules like GPIO, pincontrol,
+>>  regulator, power, please refer respective device-tree binding document
+>>  under their respective sub-system directories.
+>>
+>> +Backup Battery:
+>> +==============
+>> +This sub-node configure charging backup battery of the device. Device has
+>> +support of charging the backup battery. The subnode name is "backup-battery".
+>> +The property for backup-battery child nodes as:
+>> +Presence of this child node will enable the backup battery charging.
+>> +
+>> +Optional properties:
+>> +       -maxim,charging-current-microamp: Charging current setting.
+>> +                       The device supports 50/100/200/400/600/800uA.
+>> +                       If this property is unavailable then it will
+>> +                       charge with 50uA.
+>> +       -maxim,charging-voltage-microvolt: Charging Voltage Limit Setting.
+>> +                       Device supports 2500000/3000000/3300000/350000uV.
+>> +                       Default will be set to 2500mV. The voltage will be roundoff
+>> +                       to nearest lower side if other than above is configured.
+>> +       -maxim,output-resister-ohms: Output resistor on Ohm.
+>> +                       Device supports 100/1000/3000/6000 Ohms.
+>> +                       Default will be set to 1000 Ohm.
+>> +
+>>  Example:
+>>  --------
+>>  #include <dt-bindings/mfd/max77620.h>
+>> --
+>> 2.19.2
+>>
