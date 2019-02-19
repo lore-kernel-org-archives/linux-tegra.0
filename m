@@ -1,51 +1,55 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/62] 4.14.102-stable review
-Date: Tue, 19 Feb 2019 13:47:35 +0100
-Message-ID: <20190219124735.GB16246@kroah.com>
-References: <20190218133505.801423074@linuxfoundation.org>
- <fd971c7a-3ac1-b44e-03c0-993888cad053@nvidia.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 2/4] mfd: max77620: add documentation for backup
+ battery charging
+Date: Tue, 19 Feb 2019 09:18:22 -0600
+Message-ID: <CAL_JsqJkw1Ti7Jdz_1oqGHarM1aUs3odQW37SUrKZUJq6hpDsw@mail.gmail.com>
+References: <20190212064353.7451-1-markz@nvidia.com> <20190212064353.7451-3-markz@nvidia.com>
+ <CAL_JsqKiL8A+SBwqLzYa9djWBT1S+2kxUUB4iuKWX7EoqXouCw@mail.gmail.com> <91d3d8f8-0b96-c442-5674-3eff8209848b@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <fd971c7a-3ac1-b44e-03c0-993888cad053@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <91d3d8f8-0b96-c442-5674-3eff8209848b@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Zhang <markz@nvidia.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 09:32:25AM +0000, Jon Hunter wrote:
-> 
-> On 18/02/2019 13:43, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.102 release.
-> > There are 62 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Feb 20 13:34:36 UTC 2019.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.102-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.14:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.14.102-rc1-gfea4e6b
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+On Mon, Feb 18, 2019 at 8:07 PM Mark Zhang <markz@nvidia.com> wrote:
+>
+> On 2/19/2019 2:06 AM, Rob Herring wrote:
+> > On Tue, Feb 12, 2019 at 12:44 AM Mark Zhang <markz@nvidia.com> wrote:
+> >>
+> >> Adding documentation for 3 new backup battery charging dts
+> >> properties:
+> >> - maxim,charging-current-microamp
+> >> - maxim,charging-voltage-microvolt
+> >> - maxim,output-resister-ohms
+> >
+> > What's the difference between the 77620 and 77650 as there's patches
+> > on the list for the 77650 too. The properties are similar, but seems
+> > to be main vs. backup battery charger. We should have common
+> > properties for this.
+>
+> Rob, it's different. The RTC in max77620 is supplied from a backup
+> battery and consumes 2.0uA (IBBATT) when no other power sources are
+> available. So unlike max77620 battery charging, which provides features
+> like:
+>
+> static enum power_supply_property max77650_charger_properties[] = {
+>         POWER_SUPPLY_PROP_STATUS,
+>         POWER_SUPPLY_PROP_ONLINE,
+>         POWER_SUPPLY_PROP_CHARGE_TYPE
+> };
+>
+> For backup battery charging in max77620, what we can do is just setting
+> those 3 parameters. We don't know whether it's charging, whether the
+> backup battery is online, the percentage of the charging progress, and
+> etc. That's why I mentioned before that it's not appropriate to create
+> it as a power supply driver.
 
-Thanks for testing 3 of these and letting me know.
+Maybe so, but that's all outside the scope of the binding. Both
+bindings define charging current and voltage. And other vendor's
+chargers likely need the same parameters, too. So there's no reason to
+have different properties.
 
-greg k-h
+Rob
