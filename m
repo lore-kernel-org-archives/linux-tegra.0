@@ -1,94 +1,56 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v7 3/3] thermal: tegra: add get_trend ops
-Date: Tue, 19 Feb 2019 10:15:05 +0800
-Message-ID: <ecabe3d8-274f-7c0e-f875-6968c65a4425@nvidia.com>
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
- <1546510369-28491-4-git-send-email-wni@nvidia.com>
- <bae5b0c3-3d7f-0b60-da96-730c7e8c4e5c@linaro.org>
+Subject: [PATCH v8 0/3] Fixes for Tegra soctherm
+Date: Tue, 19 Feb 2019 12:27:01 +0800
+Message-ID: <1550550424-7979-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bae5b0c3-3d7f-0b60-da96-730c7e8c4e5c@linaro.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, edubezval@gmail.com
-Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: daniel.lezcano@linaro.org, edubezval@gmail.com, linux-tegra@vger.kernel.org
+Cc: thierry.reding@gmail.com, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+This series fixed some issues for Tegra soctherm,
+and add get_trend().
+
+Main changes from v7:
+1. use READ_ONCE to get temperature in get_trend()
+
+Main changes from v6:
+1. Per Eduardo's comment, we can remove the change:
+"thermal: tegra: parse sensor id before sensor register"
+
+Main changes from v5:
+1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
+into this serial.
+
+Main changes from v4:
+1. fixed for the parsing sensor id.
+2. keep warning for missing critical trips.
+
+Main changes from v3:
+1. updated codes for parsing sensor id, per Thierry's comments
+
+Main changes from v2:
+1. add codes to parse sensor id to avoid registration
+failure.
+
+Main changes from v1:
+1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+"thermal: tegra: fix memory allocation".
+2. Print out the sensor name when register failed.
+2. Remove patch "thermal: tegra: fix coverity defect"
 
 
-On 18/2/2019 6:27 PM, Daniel Lezcano wrote:
-> On 03/01/2019 11:12, Wei Ni wrote:
->> Add support for get_trend ops that allows soctherm
->> sensors to be used with the step-wise governor.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->>
->> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->> index fd2703c0cfc5..864205af104b 100644
->> --- a/drivers/thermal/tegra/soctherm.c
->> +++ b/drivers/thermal/tegra/soctherm.c
->> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
->>  	return 0;
->>  }
->>  
->> +static int tegra_thermctl_get_trend(void *data, int trip,
->> +				    enum thermal_trend *trend)
->> +{
->> +	struct tegra_thermctl_zone *zone = data;
->> +	struct thermal_zone_device *tz = zone->tz;
->> +	int trip_temp, temp, last_temp, ret;
->> +
->> +	if (!tz)
->> +		return -EINVAL;
->> +
->> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
->> +	if (ret)
->> +		return ret;
->> +
->> +	mutex_lock(&tz->lock);
-> 
-> No need to use the mutex here.
-> 
-> Why not ?
-> 
-> temp = READ_ONCE(tz->temperature);
-> last_temp = READ_ONCE(tz->last_temperature);
+*** BLURB HERE ***
 
-Yes, you are right, will change it in next version.
+Wei Ni (3):
+  thermal: tegra: remove unnecessary warnings
+  thermal: tegra: fix memory allocation
+  thermal: tegra: add get_trend ops
 
-Wei.
+ drivers/thermal/tegra/soctherm.c | 38 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 35 insertions(+), 3 deletions(-)
 
-> 
->> +	temp = tz->temperature;
->> +	last_temp = tz->last_temperature;
->> +	mutex_unlock(&tz->lock);
->> +
->> +	if (temp > trip_temp) {
->> +		if (temp >= last_temp)
->> +			*trend = THERMAL_TREND_RAISING;
->> +		else
->> +			*trend = THERMAL_TREND_STABLE;
->> +	} else if (temp < trip_temp) {
->> +		*trend = THERMAL_TREND_DROPPING;
->> +	} else {
->> +		*trend = THERMAL_TREND_STABLE;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
->>  	.get_temp = tegra_thermctl_get_temp,
->>  	.set_trip_temp = tegra_thermctl_set_trip_temp,
->> +	.get_trend = tegra_thermctl_get_trend,
->>  };
->>  
->>  static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
->>
-> 
-> 
+-- 
+2.7.4
