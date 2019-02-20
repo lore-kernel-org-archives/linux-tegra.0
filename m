@@ -1,128 +1,98 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v1 01/12] of: Add bindings of thermtrip for Tegra soctherm
-Date: Wed, 20 Feb 2019 16:39:38 +0800
-Message-ID: <f963a6b9-e25e-6eab-1dfa-da94144c7ab6@nvidia.com>
-References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
- <1545118484-23641-3-git-send-email-wni@nvidia.com>
- <20181227230630.GA3659@bogus>
- <1441d2d1-acfa-7b8d-5ed8-c2ca257df05d@nvidia.com>
- <20190220012212.GE2811@localhost.localdomain>
+Subject: Re: [PATCH v7 0/3] Fixes for Tegra soctherm
+Date: Wed, 20 Feb 2019 16:42:16 +0800
+Message-ID: <99723bba-61f9-ae2e-b3c0-408e021b2a97@nvidia.com>
+References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
+ <28d197f9-9b72-78ad-0769-7514d329b3c4@nvidia.com>
+ <1c0af72c-b8d5-9b2d-7bc1-86a2ae85c819@nvidia.com>
+ <df2493f3-4bbd-65d1-1205-073a30729a89@nvidia.com>
+ <1550628841.3372.1.camel@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190220012212.GE2811@localhost.localdomain>
+In-Reply-To: <1550628841.3372.1.camel@intel.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, daniel.lezcano@linaro.org, edubezval@gmail.com
+Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 20/2/2019 9:22 AM, Eduardo Valentin wrote:
-> On Fri, Dec 28, 2018 at 11:28:42AM +0800, Wei Ni wrote:
+On 20/2/2019 10:14 AM, Zhang Rui wrote:
+> On =E4=B8=80, 2019-02-18 at 15:59 +0800, Wei Ni wrote:
+>> Rui,
+>> Will you take this serial?
 >>
->>
->> On 28/12/2018 7:06 AM, Rob Herring wrote:
->>> On Tue, Dec 18, 2018 at 03:34:33PM +0800, Wei Ni wrote:
->>>> Add optional property "nvidia,thermtrips".
->>>> If present, these trips will be used as HW shutdown trips,
->>>> and critical trips will be used as SW shutdown trips.
->>>>
->>>> Signed-off-by: Wei Ni <wni@nvidia.com>
->>>> ---
->>>>  .../bindings/thermal/nvidia,tegra124-soctherm.txt    | 20 +++++++++++++++++---
->>>>  1 file changed, 17 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->>>> index b6c0ae53d4dc..ab66d6feab4b 100644
->>>> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->>>> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->>>> @@ -55,10 +55,21 @@ Required properties :
->>>>        - #cooling-cells: Should be 1. This cooling device only support on/off state.
->>>>          See ./thermal.txt for a description of this property.
->>>>  
->>>> +Optional properties:
->>>> +- nvidia,thermtrips : When present, this property specifies the temperature at
->>>> +  which the soctherm hardware will assert the thermal trigger signal to the
->>>> +  Power Management IC, which can be configured to reset or shutdown the device.
->>>> +  It is an array of pairs where each pair represents a tsensor id followed by a
->>>> +  temperature in milli Celcius. In the absence of this property the critical
->>>> +  trip point will be used for thermtrip temperature.
->>>> +
->>>>  Note:
->>>> -- the "critical" type trip points will be set to SOC_THERM hardware as the
->>>> -shut down temperature. Once the temperature of this thermal zone is higher
->>>> -than it, the system will be shutdown or reset by hardware.
->>>> +- the "critical" type trip points will be used to set the temperature at which
->>>> +the SOC_THERM hardware will assert a thermal trigger if the "nvidia,thermtrips"
->>>> +property is missing. When the thermtrips property is present, the breach of a
->>>> +critical trip point is reported back to the thermal framework to implement
->>>> +software shutdown.
->>>
->>> This hardly seems like a NVidia specific concept. A h/w shutdown 
->>> temperature... Come up with something common.
->>
->> Hi Rob,
->> In current thermal framework, it doesn't support to set h/w shutdown
->> trips, the "critical" trip is used for s/w shutdown. I noticed that in
->> rockchip-thermal driver, it also used "rockchip,hw-tshut-temp" to set
->> h/w shutdown temperature.
-> 
-> Why a critical trip point cannot be used for your hw shutdown too?
-
-Hi Eduardo,
-The thermal framework handle the critical type trip point in
-handle_critical_trips(), it will call orderly_poweroff to shutdown
-system gracefully.
-"
-        if (trip_type == THERMAL_TRIP_CRITICAL) {
-...
-                if (!power_off_triggered) {
-                        /*
-                         * Queue a backup emergency shutdown in the event of
-                         * orderly_poweroff failure
-                         */
-                        thermal_emergency_poweroff();
-                        orderly_poweroff(true);
-                        power_off_triggered = true;
-                }
-"
-And in this change, we added a new property to handle hw shutdown for
-Tegra. When trigger the hw shutdown trip point, the hw will cut the
-power to poweroff directly. If the temperature is raised very quickly,
-the hardware can shutdown system before s/w shutdown.
+> it is already in my tree.
+> I missed -rc6, thus I will queue them for 5.1-rc1.
 
 Thanks.
+I updated v8 patch per Daniel Lezcano's comment.
+Please check it.
+
 Wei.
 
-> 
->>
->>>
->>> Also, we already have a temperature table. Why do we need temperatures 
->>> in 2 places.
->>
->> Sorry, what do you mean temperature table? Do you mean the trip nodes?
->>
+>=20
+> thanks,
+> rui
+>=20
 >> Thanks.
 >> Wei.
 >>
+>> On 21/1/2019 5:17 PM, Wei Ni wrote:
 >>>
->>>> +
->>>>  - the "hot" type trip points will be set to SOC_THERM hardware as the throttle
->>>>  temperature. Once the the temperature of this thermal zone is higher
->>>>  than it, it will trigger the HW throttle event.
->>>> @@ -79,6 +90,9 @@ Example :
->>>>  
->>>>  		#thermal-sensor-cells = <1>;
->>>>  
->>>> +		nvidia,thermtrips = <TEGRA124_SOCTHERM_SENSOR_CPU 102500
->>>> +				     TEGRA124_SOCTHERM_SENSOR_GPU 103000>;
->>>> +
->>>>  		throttle-cfgs {
->>>>  			/*
->>>>  			 * When the "heavy" cooling device triggered,
->>>> -- 
->>>> 2.7.4
+>>> Does there have any comments?
+>>>
+>>> Thanks.
+>>> Wei.
+>>>
+>>> On 11/1/2019 10:20 AM, Wei Ni wrote:
 >>>>
+>>>> Hi Eduardo,
+>>>> Do you have any more comments, will you take this serial?
+>>>>
+>>>> Thanks.
+>>>> Wei.
+>>>>
+>>>> On 3/1/2019 6:12 PM, Wei Ni wrote:
+>>>>>
+>>>>> This series fixed some issues for Tegra soctherm,
+>>>>> and add get_trend().
+>>>>>
+>>>>> Main changes from v6:
+>>>>> 1. Per Eduardo's comment, we can remove the change:
+>>>>> "thermal: tegra: parse sensor id before sensor register"
+>>>>>
+>>>>> Main changes from v5:
+>>>>> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/
+>>>>> 643
+>>>>> into this serial.
+>>>>>
+>>>>> Main changes from v4:
+>>>>> 1. fixed for the parsing sensor id.
+>>>>> 2. keep warning for missing critical trips.
+>>>>>
+>>>>> Main changes from v3:
+>>>>> 1. updated codes for parsing sensor id, per Thierry's comments
+>>>>>
+>>>>> Main changes from v2:
+>>>>> 1. add codes to parse sensor id to avoid registration
+>>>>> failure.
+>>>>>
+>>>>> Main changes from v1:
+>>>>> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+>>>>> "thermal: tegra: fix memory allocation".
+>>>>> 2. Print out the sensor name when register failed.
+>>>>> 2. Remove patch "thermal: tegra: fix coverity defect"
+>>>>>
+>>>>> Wei Ni (3):
+>>>>> =C2=A0 thermal: tegra: remove unnecessary warnings
+>>>>> =C2=A0 thermal: tegra: fix memory allocation
+>>>>> =C2=A0 thermal: tegra: add get_trend ops
+>>>>>
+>>>>> =C2=A0drivers/thermal/tegra/soctherm.c | 40
+>>>>> +++++++++++++++++++++++++++++++++++++---
+>>>>> =C2=A01 file changed, 37 insertions(+), 3 deletions(-)
+>>>>>
