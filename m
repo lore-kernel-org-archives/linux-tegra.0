@@ -1,42 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] ARM: tegra: Restore DT ABI on Tegra124 Chromebooks
-Date: Wed, 20 Feb 2019 16:09:23 +0100
-Message-ID: <CAK8P3a1YG-R_vUpQm6Dik1Tak_YQKck1jSTkd_7GL63tLw4pRA@mail.gmail.com>
-References: <20190211110919.10388-1-thierry.reding@gmail.com>
- <20190211204452.Horde.-B4_UgJoWHc85yxQZVtc9wu@_> <20190218151357.GA21562@ulmo>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH 1/3] ALSA: hda/tegra: property for card name
+Date: Wed, 20 Feb 2019 20:43:22 +0530
+Message-ID: <1550675604-14788-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190218151357.GA21562@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Tristan Bastian <tristan-c.bastian@gmx.de>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: tiwai@suse.com, perex@perex.cz, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBGZWIgMTgsIDIwMTkgYXQgNDoxNCBQTSBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5y
-ZWRpbmdAZ21haWwuY29tPiB3cm90ZToKPgo+IE9uIE1vbiwgRmViIDExLCAyMDE5IGF0IDA4OjQ0
-OjUyUE0gKzAwMDAsIFRyaXN0YW4gQmFzdGlhbiB3cm90ZToKPiA+IFRoaWVycnkgUmVkaW5nIOKA
-kyBNb24sIDExLiBGZWJydWFyeSAyMDE5IDEyOjA5Cj4gPiA+IEZyb206IFRoaWVycnkgUmVkaW5n
-IDx0cmVkaW5nQG52aWRpYS5jb20+Cgo+ID4gVGVzdGVkLWJ5OiBUcmlzdGFuIEJhc3RpYW4gPHRy
-aXN0YW4tYy5iYXN0aWFuQGdteC5kZT4KPgo+IEhpIEFSTSBTb0MgbWFpbnRhaW5lcnMsCj4KPiBJ
-IGhhZCBhbG1vc3QgZm9yZ290dGVuIGFib3V0IHRoaXMuIElkZWFsbHkgSSdkIGxpa2UgdGhpcyB0
-byBnbyBpbnRvIHY1LjAKPiBzaW5jZSBpdCBmaXhlcyBhIHJlZ3Jlc3Npb24gaW50cm9kdWNlZCBp
-biB2NC4xOSwgc28gd2UnZCBrZWVwIHRoZSBudW1iZXIKPiBvZiB2ZXJzaW9ucyB0aGF0IGl0IG5l
-ZWRzIHRvIGdldCBiYWNrcG9ydGVkIHRvIGZhaXJseSBsb3cuCj4KPiBUaGUgcGF0Y2h3b3JrIGxp
-bmsgaXMgaGVyZToKPgo+ICAgICAgICAgaHR0cDovL3BhdGNod29yay5vemxhYnMub3JnL3BhdGNo
-LzEwMzk3NDMvCj4KPiBJIGRvbid0IGhhdmUgYW55IG90aGVyIGZpeGVzIGZvciB2NS4wLCBzbyBJ
-IGRvbid0IHRoaW5rIHNlbmRpbmcgYSBwdWxsCj4gcmVxdWVzdCB3b3VsZCBoZWxwIHlvdSB2ZXJ5
-IG11Y2gsIGJ1dCBJIGNhbiBwcmVwYXJlIG9uZSBpZiB5b3UgcHJlZmVyLgoKQXBwbGllZCB0byB0
-aGUgZml4ZXMgYnJhbmNoLCB0aGFua3MhCgogICAgIEFybmQKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0
-CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFk
-ZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+An optional property "nvidia,model" is introduced for hda to pass custom
+name for the sound card. The suffix "-hda" in the name passed is useful
+to distinguish between multiple cards available for a platform.
+When the property is not specified, default name("tegra-hda") mentioned
+in hda driver is used. This property can be added in platform specific
+file of the board and card name can relate to the board in use.
+
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
+---
+ Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
+index 44d2745..21cd310 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
+@@ -13,6 +13,10 @@ Required properties:
+   See ../reset/reset.txt for details.
+ - reset-names : Must include the following entries: hda, hda2hdmi, hda2codec_2x
+ 
++Optional properties:
++- nvidia,model : The user-visible name of this sound complex. Since the property
++  is optional, legacy boards can use default name provided in hda driver.
++
+ Example:
+ 
+ hda@70030000 {
+@@ -27,4 +31,5 @@ hda@70030000 {
+ 		 <&tegra_car 128>, /* hda2hdmi */
+ 		 <&tegra_car 111>; /* hda2codec_2x */
+ 	reset-names = "hda", "hda2hdmi", "hda2codec_2x";
++	nvidia,model = "jetson-tk1-hda";
+ };
+-- 
+2.7.4
