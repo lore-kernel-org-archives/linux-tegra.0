@@ -1,7 +1,7 @@
 From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 2/3] arm64: tegra: custom name for hda sound card
-Date: Wed, 20 Feb 2019 20:43:23 +0530
-Message-ID: <1550675604-14788-2-git-send-email-spujar@nvidia.com>
+Subject: [PATCH 3/3] ALSA: hda/tegra: sound card name from device tree
+Date: Wed, 20 Feb 2019 20:43:24 +0530
+Message-ID: <1550675604-14788-3-git-send-email-spujar@nvidia.com>
 References: <1550675604-14788-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,55 +12,62 @@ To: tiwai@suse.com, perex@perex.cz, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-"nvidia,model" property is added to pass custom name for hda sound card.
-This is parsed in hda driver and used for card name. This aligns with the
-way with which sound cards are named in general.
+A platform can have multiple sound cards for different audio paths.
+Following is the print seen duirng device boot for jetson-xavier,
+  ALSA device list:
+    #0: nvidia,p2972-0000 at 0x3518000 irq 17
+By looking at above, it is not very clear if the sound card is for
+HDA. It becomes confusing when platform has registered multiple cards,
+and platform model name is used for card.
 
-This patch populates above for jetson-tx1, jetson-tx2 and jetson-xavier.
+This patch uses "nvidia,model" property mentioned in hda device tree
+to get the card name. Since property is optional, legacy boards will
+continue to use "tegra-hda". Custom name can be passed wherever needed.
+This naming convention is conistent with the way sound cards are named
+in general.
 
 Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 1 +
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 1 +
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 1 +
- 3 files changed, 3 insertions(+)
+ sound/pci/hda/hda_tegra.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 0f3c6ce..31457f3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -54,6 +54,7 @@
- 	};
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index c8d18dc..dbd8da5 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -380,8 +380,8 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+ 	int err;
+ 	unsigned short gcap;
+ 	int irq_id = platform_get_irq(pdev, 0);
+-	const char *sname;
+-	struct device_node *root;
++	const char *sname, *drv_name = "tegra-hda";
++	struct device_node *np = pdev->dev.of_node;
  
- 	hda@3510000 {
-+		nvidia,model = "jetson-tx2-hda";
- 		status = "okay";
- 	};
+ 	err = hda_tegra_init_chip(chip, pdev);
+ 	if (err)
+@@ -440,17 +440,11 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+ 	}
  
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 34a7044..b62e969 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -21,6 +21,7 @@
- 		};
- 
- 		hda@3510000 {
-+			nvidia,model = "jetson-xavier-hda";
- 			status = "okay";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 8780b5b..95e890d8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1323,6 +1323,7 @@
- 	};
- 
- 	hda@70030000 {
-+		nvidia,model = "jetson-tx1-hda";
- 		status = "okay";
- 	};
- 
+ 	/* driver name */
+-	strcpy(card->driver, "tegra-hda");
+-
+-	root = of_find_node_by_path("/");
+-	sname = of_get_property(root, "compatible", NULL);
+-	of_node_put(root);
+-	if (!sname) {
+-		dev_err(card->dev,
+-			"failed to get compatible property from root node\n");
+-		return -ENODEV;
+-	}
++	strncpy(card->driver, drv_name, sizeof(card->driver));
+ 	/* shortname for card */
++	sname = of_get_property(np, "nvidia,model", NULL);
++	if (!sname)
++		sname = drv_name;
+ 	if (strlen(sname) > sizeof(card->shortname))
+ 		dev_info(card->dev, "truncating shortname for card\n");
+ 	strncpy(card->shortname, sname, sizeof(card->shortname));
 -- 
 2.7.4
