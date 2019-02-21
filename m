@@ -1,113 +1,94 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V19 5/7] i2c: tegra: Add DMA support
-Date: Wed, 20 Feb 2019 21:05:18 +0300
-Message-ID: <c3a2c691-c020-5c44-1b89-3fb31724b65f@gmail.com>
-References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
- <1549998408-9137-5-git-send-email-skomatineni@nvidia.com>
- <a98faf49-98f5-7b85-8acd-0fd6a4c8b426@nvidia.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH V7 1/8] dt-bindings: timer: add Tegra210 timer
+Date: Thu, 21 Feb 2019 15:21:43 +0800
+Message-ID: <20190221072150.4395-2-josephl@nvidia.com>
+References: <20190221072150.4395-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a98faf49-98f5-7b85-8acd-0fd6a4c8b426@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <20190221072150.4395-1-josephl@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc: wsa@the-dreams.de, peda@axentia.se, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-20.02.2019 21:02, Jon Hunter пишет:
-> 
-> On 12/02/2019 19:06, Sowjanya Komatineni wrote:
->> This patch adds DMA support for Tegra I2C.
->>
->> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
->> transfer size of the max FIFO depth and DMA mode is used for
->> transfer size higher than max FIFO depth to save CPU overhead.
->>
->> PIO mode needs full intervention of CPU to fill or empty FIFO's
->> and also need to service multiple data requests interrupt for the
->> same transaction. This adds delay between data bytes of the same
->> transfer when CPU is fully loaded and some slave devices has
->> internal timeout for no bus activity and stops transaction to
->> avoid bus hang. DMA mode is helpful in such cases.
->>
->> DMA mode is also helpful for Large transfers during downloading or
->> uploading FW over I2C to some external devices.
->>
->> Tegra210 and prior Tegra chips use APBDMA driver which is replaced
->> with GPCDMA on Tegra186 and Tegra194.
->> This patch uses has_apb_dma flag in hw_feature to differentiate
->> DMA driver change between Tegra chipset.
->>
->> APBDMA driver is registered from module-init level and this patch
->> also has a change to register I2C driver at module-init level
->> rather than subsys-init to avoid deferring I2C probe till APBDMA
->> driver is registered.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->> Tested-by: Dmitry Osipenko <digetx@gmail.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> 
-> ...
-> 
->> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
->> +{
->> +	struct dma_chan *chan;
->> +	u32 *dma_buf;
->> +	dma_addr_t dma_phys;
->> +	int err;
->> +
->> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA) ||
->> +	    !i2c_dev->hw->has_apb_dma) {
->> +		err = -ENODEV;
->> +		goto err_out;
->> +	}
->> +
->> +	chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
->> +	if (IS_ERR(chan)) {
->> +		err = PTR_ERR(chan);
->> +		goto err_out;
->> +	}
->> +
->> +	i2c_dev->rx_dma_chan = chan;
->> +
->> +	chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
->> +	if (IS_ERR(chan)) {
->> +		err = PTR_ERR(chan);
->> +		goto err_out;
->> +	}
->> +
->> +	i2c_dev->tx_dma_chan = chan;
->> +
->> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
->> +				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
->> +	if (!dma_buf) {
->> +		dev_err(i2c_dev->dev, "failed to allocate the DMA buffer\n");
->> +		err = -ENOMEM;
->> +		goto err_out;
->> +	}
->> +
->> +	i2c_dev->dma_buf = dma_buf;
->> +	i2c_dev->dma_phys = dma_phys;
->> +	return 0;
->> +
->> +err_out:
->> +	tegra_i2c_release_dma(i2c_dev);
->> +	if (err != -EPROBE_DEFER) {
->> +		dev_err(i2c_dev->dev, "cannot use DMA: %d\n", err);
->> +		dev_err(i2c_dev->dev, "fallbacking to PIO\n");
->> +		return 0;
->> +	}
-> I think that the above should be a dev_dbg print or re-worked in someway
-> because now for Tegra194 which does not have an APB DMA I see ...
-> 
-> [       6.093234] ERR KERN tegra-i2c 31c0000.i2c: cannot use DMA: -19
-> [       6.096847] ERR KERN tegra-i2c 31c0000.i2c: falling back to PIO
-> 
-> Given that the APB DMA is not supported for Tegra186/Tegra194, there is
-> no point in printing these error messages. Now it looks like something
-> is wrong but really it is not :-(
+The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+(TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+or watchdog interrupts.
 
-Jon, patches are welcome ;)
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+---
+v7:
+ * no change
+v6:
+ * add ack tag from Jon.
+v5:
+ * no change
+v4:
+ * no change
+v3:
+ * no change
+v2:
+ * list all the interrupts that are supported by tegra210 timers block
+ * add RB tag from Rob.
+---
+ .../bindings/timer/nvidia,tegra210-timer.txt  | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210=
+-timer.txt
+
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.=
+txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+new file mode 100644
+index 000000000000..032cda96fe0d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+@@ -0,0 +1,36 @@
++NVIDIA Tegra210 timer
++
++The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
++timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
++from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
++(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
++or watchdog interrupts.
++
++Required properties:
++- compatible : "nvidia,tegra210-timer".
++- reg : Specifies base physical address and size of the registers.
++- interrupts : A list of 14 interrupts; one per each timer channels 0 thro=
+ugh
++  13.
++- clocks : Must contain one entry, for the module clock.
++  See ../clocks/clock-bindings.txt for details.
++
++timer@60005000 {
++	compatible =3D "nvidia,tegra210-timer";
++	reg =3D <0x0 0x60005000 0x0 0x400>;
++	interrupts =3D <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
++	clocks =3D <&tegra_car TEGRA210_CLK_TIMER>;
++	clock-names =3D "timer";
++};
+--=20
+2.20.1
