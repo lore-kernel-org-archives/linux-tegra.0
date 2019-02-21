@@ -1,48 +1,48 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v2 00/12] Add some functionalities for Tegra soctherm
-Date: Thu, 21 Feb 2019 18:18:35 +0800
-Message-ID: <1550744327-4677-1-git-send-email-wni@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: of: Restrict enable-gpio quirk to regulator-gpio
+Date: Thu, 21 Feb 2019 13:09:57 +0100
+Message-ID: <CACRpkdbf4d3MMfZZh39ka9JVX57zNuVoX9xAqE7SKJ-u27QYqA@mail.gmail.com>
+References: <20190220105214.26618-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190220105214.26618-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, edubezval@gmail.com, robh@kernel.org
-Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Marek Vasut <marek.vasut@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Move the hw/sw shutdown patches into this serial. There already have
-some discussion for it in https://lkml.org/lkml/2018/12/7/225.
-Support GPU HW throttle, thermal IRQ, set_trips(), EDP IRQ and OC
-hw throttle.
+On Wed, Feb 20, 2019 at 11:52 AM Thierry Reding
+<thierry.reding@gmail.com> wrote:
 
-Main change from v1:
-1. Use boolean for "nvidia,polarity-active-low".
-2. Add suffix "-us" for "nvidia,throttle-period".
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
+> enable-gpios") breaks the device tree ABI specified in the device tree
+> bindings for fixed regulators (compatible "regulator-fixed"). According
+> to these bindings the polarity of the GPIO is exclusively controlled by
+> the presence or absence of the enable-active-high property. As such the
+> polarity quirk implemented in of_gpio_flags_quirks() must be applied to
+> the GPIO specified for fixed regulators.
+>
+> However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
+> to enable-gpios") restricted the quirk to the enable-gpios property for
+> fixed regulators as well, whereas according to the commit message itself
+> it should only apply to "regulator-gpio" compatible device tree nodes.
+>
+> Fix this by actually implementing what the offending commit intended,
+> which is to ensure that the quirk is applied to the GPIO specified by
+> the "enable-gpio" property for the "regulator-gpio" bindings only.
+>
+> This fixes a regression on Jetson TX1 where the fixed regulator for the
+> HDMI +5V pin relies on the flags quirk for the proper polarity.
+>
+> Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
+Patch applied with Marek's tested-by, thanks for thorough commit
+message and helping out in sorting out this mess we've built
+up over the years.
 
-Wei Ni (12):
-  of: Add bindings of thermtrip for Tegra soctherm
-  thermal: tegra: support hw and sw shutdown
-  arm64: dts: tegra210: set thermtrip
-  of: Add bindings of gpu hw throttle for Tegra soctherm
-  thermal: tegra: add support for gpu hw-throttle
-  arm64: dts: tegra210: set gpu hw throttle level
-  thermal: tegra: add support for thermal IRQ
-  thermal: tegra: add set_trips functionality
-  thermal: tegra: add support for EDP IRQ
-  arm64: dts: tegra210: set EDP interrupt line
-  of: Add bindings of OC hw throttle for Tegra soctherm
-  thermal: tegra: enable OC hw throttle
-
- .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  62 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
- drivers/thermal/tegra/soctherm.c                   | 961 +++++++++++++++++++--
- drivers/thermal/tegra/soctherm.h                   |  16 +
- drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
- drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
- drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
- include/dt-bindings/thermal/tegra124-soctherm.h    |   8 +-
- 8 files changed, 1020 insertions(+), 76 deletions(-)
-
--- 
-2.7.4
+Yours,
+Linus Walleij
