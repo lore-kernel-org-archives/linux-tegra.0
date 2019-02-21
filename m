@@ -1,53 +1,235 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V7 8/8] arm64: tegra: Enable CPU idle support for Shield
-Date: Thu, 21 Feb 2019 15:21:50 +0800
-Message-ID: <20190221072150.4395-9-josephl@nvidia.com>
-References: <20190221072150.4395-1-josephl@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v2 02/12] thermal: tegra: support hw and sw shutdown
+Date: Thu, 21 Feb 2019 18:18:37 +0800
+Message-ID: <1550744327-4677-3-git-send-email-wni@nvidia.com>
+References: <1550744327-4677-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190221072150.4395-1-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
- Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550744327-4677-1-git-send-email-wni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, edubezval@gmail.com, robh@kernel.org
+Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable CPU idle support for Shield platform.
+Currently the critical trip points in thermal framework are the only
+way to specify a temperature at which HW should shutdown. This is
+insufficient for certain platforms which would want an orderly
+software shutdown in addition to HW shutdown.
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
-v7:
- * new added in v7
----
- arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+This change support to parse "nvidia, thermtrips" property,
+it allows soctherm DT to specify thermtrip temperatures so that
+critical trip points framework can be used for doing software
+shutdown.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
-index 3ddf173ccc18..88a4b9333d84 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
-@@ -1629,6 +1629,12 @@
- 		cpu@3 {
- 			enable-method = "psci";
- 		};
-+
-+		idle-states {
-+			cpu-sleep {
-+				status = "okay";
-+			};
-+		};
- 	};
+Signed-off-by: Wei Ni <wni@nvidia.com>
+---
+ drivers/thermal/tegra/soctherm.c          | 99 ++++++++++++++++++++++++++-----
+ drivers/thermal/tegra/soctherm.h          |  6 ++
+ drivers/thermal/tegra/tegra210-soctherm.c |  8 +++
+ 3 files changed, 98 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 45b41b885f49..4bb6c097c028 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -446,6 +446,24 @@ find_throttle_cfg_by_name(struct tegra_soctherm *ts, const char *name)
+ 	return NULL;
+ }
  
- 	psci {
++static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
++{
++	int i, temp = min_low_temp;
++	struct tsensor_group_thermtrips *tt = ts->soc->thermtrips;
++
++	if (id >= TEGRA124_SOCTHERM_SENSOR_NUM)
++		return temp;
++
++	if (tt) {
++		for (i = 0; i < ts->soc->num_ttgs; i++) {
++			if (tt[i].id == id)
++				return tt[i].temp;
++		}
++	}
++
++	return temp;
++}
++
+ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+ {
+ 	struct tegra_thermctl_zone *zone = data;
+@@ -464,7 +482,16 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+ 		return ret;
+ 
+ 	if (type == THERMAL_TRIP_CRITICAL) {
+-		return thermtrip_program(dev, sg, temp);
++		/*
++		 * If thermtrips property is set in DT,
++		 * doesn't need to program critical type trip to HW,
++		 * if not, program critical trip to HW.
++		 */
++		if (min_low_temp == tsensor_group_thermtrip_get(ts, sg->id))
++			return thermtrip_program(dev, sg, temp);
++		else
++			return 0;
++
+ 	} else if (type == THERMAL_TRIP_HOT) {
+ 		int i;
+ 
+@@ -523,7 +550,8 @@ static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
+  * @dev: struct device * of the SOC_THERM instance
+  *
+  * Configure the SOC_THERM HW trip points, setting "THERMTRIP"
+- * "THROTTLE" trip points , using "critical" or "hot" type trip_temp
++ * "THROTTLE" trip points , using "thermtrips", "critical" or "hot"
++ * type trip_temp
+  * from thermal zone.
+  * After they have been configured, THERMTRIP or THROTTLE will take
+  * action when the configured SoC thermal sensor group reaches a
+@@ -545,28 +573,23 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+ {
+ 	struct tegra_soctherm *ts = dev_get_drvdata(dev);
+ 	struct soctherm_throt_cfg *stc;
+-	int i, trip, temperature;
+-	int ret;
++	int i, trip, temperature, ret;
+ 
+-	ret = tz->ops->get_crit_temp(tz, &temperature);
+-	if (ret) {
+-		dev_warn(dev, "thermtrip: %s: missing critical temperature\n",
+-			 sg->name);
+-		goto set_throttle;
+-	}
++	/* Get thermtrips. If missing, try to get critical trips. */
++	temperature = tsensor_group_thermtrip_get(ts, sg->id);
++	if (min_low_temp == temperature)
++		if (tz->ops->get_crit_temp(tz, &temperature))
++			temperature = max_high_temp;
+ 
+ 	ret = thermtrip_program(dev, sg, temperature);
+ 	if (ret) {
+-		dev_err(dev, "thermtrip: %s: error during enable\n",
+-			sg->name);
++		dev_err(dev, "thermtrip: %s: error during enable\n", sg->name);
+ 		return ret;
+ 	}
+ 
+-	dev_info(dev,
+-		 "thermtrip: will shut down when %s reaches %d mC\n",
++	dev_info(dev, "thermtrip: will shut down when %s reaches %d mC\n",
+ 		 sg->name, temperature);
+ 
+-set_throttle:
+ 	ret = get_hot_temp(tz, &trip, &temperature);
+ 	if (ret) {
+ 		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
+@@ -897,6 +920,50 @@ static const struct thermal_cooling_device_ops throt_cooling_ops = {
+ 	.set_cur_state = throt_set_cdev_state,
+ };
+ 
++static int soctherm_thermtrips_parse(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct tegra_soctherm *ts = dev_get_drvdata(dev);
++	struct tsensor_group_thermtrips *tt = ts->soc->thermtrips;
++	const int max_num_prop = ts->soc->num_ttgs * 2;
++	u32 *tlb;
++	int i, j, n, ret;
++
++	if (!tt)
++		return -ENOMEM;
++
++	n = of_property_count_u32_elems(dev->of_node, "nvidia,thermtrips");
++	if (n <= 0) {
++		dev_info(dev,
++			 "missing thermtrips, will use critical trips as shut down temp\n");
++		return n;
++	}
++
++	n = min(max_num_prop, n);
++
++	tlb = devm_kcalloc(&pdev->dev, max_num_prop, sizeof(u32), GFP_KERNEL);
++	if (!tlb)
++		return -ENOMEM;
++	ret = of_property_read_u32_array(dev->of_node, "nvidia,thermtrips",
++					 tlb, n);
++	if (ret) {
++		dev_err(dev, "invalid num ele: thermtrips:%d\n", ret);
++		return ret;
++	}
++
++	i = 0;
++	for (j = 0; j < n; j = j + 2) {
++		if (tlb[j] >= TEGRA124_SOCTHERM_SENSOR_NUM)
++			continue;
++
++		tt[i].id = tlb[j];
++		tt[i].temp = tlb[j+1];
++		i++;
++	}
++
++	return 0;
++}
++
+ /**
+  * soctherm_init_hw_throt_cdev() - Parse the HW throttle configurations
+  * and register them as cooling devices.
+@@ -1338,6 +1405,8 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
++	soctherm_thermtrips_parse(pdev);
++
+ 	soctherm_init_hw_throt_cdev(pdev);
+ 
+ 	soctherm_init(pdev);
+diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
+index e96ca73fd780..c05c7e37e968 100644
+--- a/drivers/thermal/tegra/soctherm.h
++++ b/drivers/thermal/tegra/soctherm.h
+@@ -92,6 +92,11 @@ struct tegra_tsensor {
+ 	const struct tegra_tsensor_group *group;
+ };
+ 
++struct tsensor_group_thermtrips {
++	u8 id;
++	u32 temp;
++};
++
+ struct tegra_soctherm_fuse {
+ 	u32 fuse_base_cp_mask, fuse_base_cp_shift;
+ 	u32 fuse_base_ft_mask, fuse_base_ft_shift;
+@@ -113,6 +118,7 @@ struct tegra_soctherm_soc {
+ 	const int thresh_grain;
+ 	const unsigned int bptt;
+ 	const bool use_ccroc;
++	struct tsensor_group_thermtrips *thermtrips;
+ };
+ 
+ int tegra_calc_shared_calib(const struct tegra_soctherm_fuse *tfuse,
+diff --git a/drivers/thermal/tegra/tegra210-soctherm.c b/drivers/thermal/tegra/tegra210-soctherm.c
+index ad53169a8e95..0a0c3cec7134 100644
+--- a/drivers/thermal/tegra/tegra210-soctherm.c
++++ b/drivers/thermal/tegra/tegra210-soctherm.c
+@@ -203,6 +203,13 @@ static const struct tegra_soctherm_fuse tegra210_soctherm_fuse = {
+ 	.fuse_spare_realignment = 0,
+ };
+ 
++struct tsensor_group_thermtrips tegra210_tsensor_thermtrips[] = {
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
++};
++
+ const struct tegra_soctherm_soc tegra210_soctherm = {
+ 	.tsensors = tegra210_tsensors,
+ 	.num_tsensors = ARRAY_SIZE(tegra210_tsensors),
+@@ -212,4 +219,5 @@ const struct tegra_soctherm_soc tegra210_soctherm = {
+ 	.thresh_grain = TEGRA210_THRESH_GRAIN,
+ 	.bptt = TEGRA210_BPTT,
+ 	.use_ccroc = false,
++	.thermtrips = tegra210_tsensor_thermtrips,
+ };
 -- 
-2.20.1
+2.7.4
