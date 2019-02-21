@@ -1,48 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: of: Restrict enable-gpio quirk to regulator-gpio
-Date: Thu, 21 Feb 2019 13:09:57 +0100
-Message-ID: <CACRpkdbf4d3MMfZZh39ka9JVX57zNuVoX9xAqE7SKJ-u27QYqA@mail.gmail.com>
-References: <20190220105214.26618-1-thierry.reding@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: stable request: 4.4.y: mfd: as3722 fixes
+Date: Thu, 21 Feb 2019 13:25:54 +0100
+Message-ID: <20190221122554.GC12382@kroah.com>
+References: <73c4230f-d9dc-af2d-398c-15cdfaf8628e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190220105214.26618-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Marek Vasut <marek.vasut@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <73c4230f-d9dc-af2d-398c-15cdfaf8628e@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 11:52 AM Thierry Reding
-<thierry.reding@gmail.com> wrote:
+On Mon, Feb 18, 2019 at 03:10:20PM +0000, Jon Hunter wrote:
+> Hi Greg,
+> 
+> During suspend testing with stable v4.4.y on the Tegra124 Jetson TK1
+> board, I was able to reproduce an issue with the as3722 PMIC that is
+> fixed by the following commit ...
+> 
+> commit 35deff7eb212b661b32177b6043f674fde6314d7
+> Author: Jon Hunter <jonathanh@nvidia.com>
+> Date:   Fri Nov 20 10:51:00 2015 +0000
+> 
+>     mfd: as3722: Handle interrupts on suspend
+> 
+> 
+> The above commit also requires the following commit from Arnd to fix a
+> compiler warning (as noted by the fixes tag) ...
+> 
+> commit a7b956fd38dd217dd78e3058110929f5ac914df1
+> Author: Arnd Bergmann <arnd@arndb.de>
+> Date:   Tue Dec 8 16:21:05 2015 +0100
+> 
+>     mfd: as3722: Mark PM functions as __maybe_unused
+> 
+> 
+> I have verified that these apply cleanly to the stable-v4.4 branch.
+> Please can we include for the stable v4.4 branch?
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
-> enable-gpios") breaks the device tree ABI specified in the device tree
-> bindings for fixed regulators (compatible "regulator-fixed"). According
-> to these bindings the polarity of the GPIO is exclusively controlled by
-> the presence or absence of the enable-active-high property. As such the
-> polarity quirk implemented in of_gpio_flags_quirks() must be applied to
-> the GPIO specified for fixed regulators.
->
-> However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
-> to enable-gpios") restricted the quirk to the enable-gpios property for
-> fixed regulators as well, whereas according to the commit message itself
-> it should only apply to "regulator-gpio" compatible device tree nodes.
->
-> Fix this by actually implementing what the offending commit intended,
-> which is to ensure that the quirk is applied to the GPIO specified by
-> the "enable-gpio" property for the "regulator-gpio" bindings only.
->
-> This fixes a regression on Jetson TX1 where the fixed regulator for the
-> HDMI +5V pin relies on the flags quirk for the proper polarity.
->
-> Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Both now applied, thanks.
 
-Patch applied with Marek's tested-by, thanks for thorough commit
-message and helping out in sorting out this mess we've built
-up over the years.
-
-Yours,
-Linus Walleij
+greg k-h
