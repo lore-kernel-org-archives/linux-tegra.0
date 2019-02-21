@@ -1,45 +1,55 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 0/5] phy: tegra: xusb: Add Tegra186 support
-Date: Thu, 21 Feb 2019 16:46:29 +0100
-Message-ID: <20190221154634.10684-1-thierry.reding@gmail.com>
+Subject: [PATCH v2 1/5] dt-bindings: phy: tegra: Add Tegra186 support
+Date: Thu, 21 Feb 2019 16:46:30 +0100
+Message-ID: <20190221154634.10684-2-thierry.reding@gmail.com>
+References: <20190221154634.10684-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190221154634.10684-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This series adds support for Tegra186 to the XUSB pad controller driver.
-Patch 1 extends the device tree bindings with support for Tegra186 while
-patches 2-4 are preparatory work for the final patch 5 that adds the
-Tegra186 specific programming for the UPHY blocks.
+Extend the bindings to cover the set of features found in Tegra186. Note
+that, technically, there are four more supplies connected to the XUSB
+pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL), but
+the power sequencing requirements of Tegra186 require these to be under
+the control of the PMIC.
 
-Changes in v2:
-- address review comments from Kishon
-- added Reviewed-by tags from JC
+Reviewed-by: JC Kuo <jckuo@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ .../bindings/phy/nvidia,tegra124-xusb-padctl.txt         | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Thierry
-
-JC Kuo (2):
-  phy: tegra: xusb: Skip single function lane programming
-  phy: tegra: xusb: Add Tegra186 support
-
-Thierry Reding (3):
-  dt-bindings: phy: tegra: Add Tegra186 support
-  phy: tegra: xusb: Parse dual-role mode property
-  phy: tegra: xusb: Add support for power supplies
-
- .../phy/nvidia,tegra124-xusb-padctl.txt       |   9 +
- MAINTAINERS                                   |   5 +
- drivers/phy/tegra/Makefile                    |   1 +
- drivers/phy/tegra/xusb-tegra186.c             | 899 ++++++++++++++++++
- drivers/phy/tegra/xusb.c                      |  67 +-
- drivers/phy/tegra/xusb.h                      |  35 +
- 6 files changed, 1014 insertions(+), 2 deletions(-)
- create mode 100644 drivers/phy/tegra/xusb-tegra186.c
-
+diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+index 3742c152c467..daedb15f322e 100644
+--- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
++++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+@@ -36,11 +36,20 @@ Required properties:
+   - Tegra124: "nvidia,tegra124-xusb-padctl"
+   - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
+   - Tegra210: "nvidia,tegra210-xusb-padctl"
++  - Tegra186: "nvidia,tegra186-xusb-padctl"
+ - reg: Physical base address and length of the controller's registers.
+ - resets: Must contain an entry for each entry in reset-names.
+ - reset-names: Must include the following entries:
+   - "padctl"
+ 
++For Tegra186:
++- avdd-pll-erefeut-supply: UPHY brick and reference clock as well as UTMI PHY
++  power supply. Must supply 1.8 V.
++- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
++  3.3 V.
++- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
++- vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
++
+ 
+ Pad nodes:
+ ==========
 -- 
 2.20.1
