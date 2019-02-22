@@ -1,88 +1,51 @@
-From: Bo Yan <byan@nvidia.com>
-Subject: Re: [PATCH V3] arm64: tegra: add topology data for Tegra194 cpu
-Date: Thu, 21 Feb 2019 16:52:21 -0800
-Message-ID: <c70c91f6-b719-cb86-2fe1-e6231c089ce9@nvidia.com>
-References: <20190213081252.GA647@ulmo>
- <1550075622-1072-1-git-send-email-byan@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/20] 4.4.176-stable review
+Date: Fri, 22 Feb 2019 08:12:34 +0000
+Message-ID: <b8e390cf-0331-ac32-4ff3-8b2efb303162@nvidia.com>
+References: <20190221141946.772985220@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550075622-1072-1-git-send-email-byan@nvidia.com>
+In-Reply-To: <20190221141946.772985220@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch V3 adopted changes suggested by Thierry.
 
+On 21/02/2019 14:35, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.176 release.
+> There are 20 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Feb 23 14:19:37 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.176-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-On 2/13/19 8:33 AM, Bo Yan wrote:
-> The xavier CPU architecture includes 8 CPU cores organized in
-> 4 clusters. Add cpu-map data for topology initialization, this
-> fixes the topology information in
-> /sys/devices/system/cpu/cpu[n]/topology
-> 
-> Signed-off-by: Bo Yan <byan@nvidia.com>
-> ---
-> V3: Replaced phandles with full path to CPU node
-> V2: remove cache nodes, add topology data only
-> 
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 42 ++++++++++++++++++++++++++++++++
->   1 file changed, 42 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> index 6dfa1ca..708d20c 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -870,6 +870,48 @@
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&{/cpus/cpu@0}>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&{/cpus/cpu@1}>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&{/cpus/cpu@2}>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&{/cpus/cpu@3}>;
-> +				};
-> +			};
-> +
-> +			cluster2 {
-> +				core0 {
-> +					cpu = <&{/cpus/cpu@4}>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&{/cpus/cpu@5}>;
-> +				};
-> +			};
-> +
-> +			cluster3 {
-> +				core0 {
-> +					cpu = <&{/cpus/cpu@6}>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&{/cpus/cpu@7}>;
-> +				};
-> +			};
-> +		};
-> +
->   		cpu@0 {
->   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
->   			device_type = "cpu";
-> 
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    10 tests:	10 pass, 0 fail
+
+Linux version:	4.4.176-rc1-g451afda
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
