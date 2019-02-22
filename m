@@ -1,50 +1,88 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 2/5] phy: tegra: xusb: Skip single function lane programming
-Date: Thu, 21 Feb 2019 16:46:31 +0100
-Message-ID: <20190221154634.10684-3-thierry.reding@gmail.com>
-References: <20190221154634.10684-1-thierry.reding@gmail.com>
+From: Bo Yan <byan@nvidia.com>
+Subject: Re: [PATCH V3] arm64: tegra: add topology data for Tegra194 cpu
+Date: Thu, 21 Feb 2019 16:52:21 -0800
+Message-ID: <c70c91f6-b719-cb86-2fe1-e6231c089ce9@nvidia.com>
+References: <20190213081252.GA647@ulmo>
+ <1550075622-1072-1-git-send-email-byan@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190221154634.10684-1-thierry.reding@gmail.com>
+In-Reply-To: <1550075622-1072-1-git-send-email-byan@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
+The patch V3 adopted changes suggested by Thierry.
 
-Tegra186 USB2 pads and USB3 pads do not have hardware mux for changing
-the pad function. For such "lanes", we can skip the lane mux register
-programming.
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/phy/tegra/xusb.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 5b3b8863363e..e3bc60cfe6a1 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-@@ -313,6 +313,10 @@ static void tegra_xusb_lane_program(struct tegra_xusb_lane *lane)
- 	const struct tegra_xusb_lane_soc *soc = lane->soc;
- 	u32 value;
- 
-+	/* skip single function lanes */
-+	if (soc->num_funcs < 2)
-+		return;
-+
- 	/* choose function */
- 	value = padctl_readl(padctl, soc->offset);
- 	value &= ~(soc->mask << soc->shift);
--- 
-2.20.1
+On 2/13/19 8:33 AM, Bo Yan wrote:
+> The xavier CPU architecture includes 8 CPU cores organized in
+> 4 clusters. Add cpu-map data for topology initialization, this
+> fixes the topology information in
+> /sys/devices/system/cpu/cpu[n]/topology
+> 
+> Signed-off-by: Bo Yan <byan@nvidia.com>
+> ---
+> V3: Replaced phandles with full path to CPU node
+> V2: remove cache nodes, add topology data only
+> 
+>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 42 ++++++++++++++++++++++++++++++++
+>   1 file changed, 42 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> index 6dfa1ca..708d20c 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> @@ -870,6 +870,48 @@
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&{/cpus/cpu@0}>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&{/cpus/cpu@1}>;
+> +				};
+> +			};
+> +
+> +			cluster1 {
+> +				core0 {
+> +					cpu = <&{/cpus/cpu@2}>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&{/cpus/cpu@3}>;
+> +				};
+> +			};
+> +
+> +			cluster2 {
+> +				core0 {
+> +					cpu = <&{/cpus/cpu@4}>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&{/cpus/cpu@5}>;
+> +				};
+> +			};
+> +
+> +			cluster3 {
+> +				core0 {
+> +					cpu = <&{/cpus/cpu@6}>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&{/cpus/cpu@7}>;
+> +				};
+> +			};
+> +		};
+> +
+>   		cpu@0 {
+>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>   			device_type = "cpu";
+> 
