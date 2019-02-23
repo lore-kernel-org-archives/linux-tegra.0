@@ -1,40 +1,62 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 18/18] soc/tegra: default select TEGRA_TIMER for Tegra210
-Date: Sat, 23 Feb 2019 14:07:06 +0100
-Message-ID: <20190223130707.16704-18-daniel.lezcano@linaro.org>
-References: <b5d75b05-b78c-535c-2b35-9a1f5a3a853f@linaro.org>
- <20190223130707.16704-1-daniel.lezcano@linaro.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 02/12] drm/tegra: rgb: add missing of_node_put after of_device_is_available
+Date: Sat, 23 Feb 2019 14:20:33 +0100
+Message-ID: <1550928043-14889-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190223130707.16704-1-daniel.lezcano@linaro.org>
+In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Joseph Lo <josephl@nvidia.com>
+Add an of_node_put when a tested device node is not available.
 
-The tegra timer is necessary for Tegra210 to support CPU idle power-down
-state. So select it by default.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
+
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
+
+Fixes: d8f4a9eda0067 ("drm: Add NVIDIA Tegra20 support")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/soc/tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/tegra/rgb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index fe4481676da6..a0b03443d8c1 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -76,6 +76,7 @@ config ARCH_TEGRA_210_SOC
- 	select PINCTRL_TEGRA210
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
-+	select TEGRA_TIMER
- 	help
- 	  Enable support for the NVIDIA Tegra210 SoC. Also known as Tegra X1,
- 	  the Tegra210 has four Cortex-A57 cores paired with four Cortex-A53
--- 
-2.17.1
+diff -u -p a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -221,8 +221,10 @@ int tegra_dc_rgb_probe(struct tegra_dc *
+ 	int err;
+ 
+ 	np = of_get_child_by_name(dc->dev->of_node, "rgb");
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
+ 
+ 	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+ 	if (!rgb)
