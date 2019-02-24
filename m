@@ -1,28 +1,139 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] ARM: tegra: cpuidle: Handle tick broadcasting within
- cpuidle core on Tegra20/30
-Date: Sun, 24 Feb 2019 18:31:50 +0300
-Message-ID: <7b706843-a2e1-18bf-bad0-987016fc504e@gmail.com>
-References: <20190224152740.7305-1-digetx@gmail.com>
+Subject: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
+Date: Sun, 24 Feb 2019 18:32:22 +0300
+Message-ID: <20190224153222.8142-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190224152740.7305-1-digetx@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.02.2019 18:27, Dmitry Osipenko пишет:
-> Tegra20/30 drivers do not handle the tick_broadcast_enter() error which
-> potentially could happen when CPU timer isn't permitted to be stopped.
-> Let's just move out the broadcasting to the CPUIDLE core by setting the
-> respective flag in the Tegra20/30 drivers. This patch doesn't fix any
-> problem because currently tick_broadcast_enter() could fail only on
-> ARM64, so consider this change as a minor cleanup.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Initially Common Clock Framework isn't aware of the clock-enable status,
+this results in enabling of clocks that were enabled by bootloader. This
+is not a big deal for a regular clock-gates, but for PLL's it may have
+some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+clock) may result in extra long period of PLL re-locking.
 
-Woops, this is not a clk-related patch.. please ignore this email. Will fix it in a moment.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b50b7460014b..ebc8481a2122 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
+ 	unsigned long flags = 0;
+ 	int ret;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+@@ -940,11 +943,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
+ static int clk_plle_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	struct tegra_clk_pll_freq_table sel;
++	unsigned long input_rate;
+ 	u32 val;
+ 	int err;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+ 
+@@ -1355,6 +1363,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
+ 	int ret;
+ 	unsigned long flags = 0;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+@@ -1567,7 +1578,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -1704,6 +1720,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ 		return -EINVAL;
+ 	}
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
+ 
+ 	if (pll->lock)
+@@ -2379,6 +2398,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 	return clk;
+ }
+ 
++static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	u32 val;
++
++	val = pll_readl_base(pll);
++
++	return val & PLLE_BASE_ENABLE ? 1 : 0;
++}
++
+ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+@@ -2386,7 +2415,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret = 0;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_plle_tegra210_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -2497,16 +2531,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+ 
+-static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	u32 val;
+-
+-	val = pll_readl_base(pll);
+-
+-	return val & PLLE_BASE_ENABLE ? 1 : 0;
+-}
+-
+ static const struct clk_ops tegra_clk_plle_tegra210_ops = {
+ 	.is_enabled =  clk_plle_tegra210_is_enabled,
+ 	.enable = clk_plle_tegra210_enable,
+-- 
+2.20.1
