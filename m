@@ -1,35 +1,34 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: stable request: 4.20.y: ASoC: soc-core: fix init platform memory
- handling
-Date: Mon, 25 Feb 2019 15:40:56 +0100
-Message-ID: <20190225144056.GA12943@kroah.com>
-References: <310bdda2-39be-38ce-f0d6-ca011ccac580@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: enforce PM requirement
+Date: Mon, 25 Feb 2019 18:13:23 +0300
+Message-ID: <ac4bd28e-6ba9-2da7-7bdf-8f11bee83bd2@gmail.com>
+References: <1549365418-26283-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <310bdda2-39be-38ce-f0d6-ca011ccac580@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org, Curtis Malainey <cujomalainey@chromium.org>, Mark Brown <broonie@kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1549365418-26283-1-git-send-email-spujar@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>, linux@armlinux.org.uk, jhogan@kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 11:42:06AM +0000, Jon Hunter wrote:
-> Hi Greg,
-> 
-> While testing v4.20.y on Tegra I noticed that the kernel is crashing on
-> boot if certain sound-cards are probe deferred. This issue has been
-> fixed in the mainline by the following commit ...
-> 
-> commit 09ac6a817bd687e7f5dac00470262efdd72f9319
-> Author: Curtis Malainey <cujomalainey@chromium.org>
-> Date:   Thu Jan 10 16:21:04 2019 -0800
-> 
->     ASoC: soc-core: fix init platform memory handling
-> 
-> I have verified that this applies cleanly and resolves the issue on
-> v4.20.y. Please can we include for the v4.20.y stable branch?
+05.02.2019 14:16, Sameer Pujar пишет:
+> Drivers need to handle !PM case with work arounds for managing clocks
+> and power explicitly, which is not really necessary when PM support on
+> tegra is in good shape. In fact ARM 64-bit tegra platforms enforce PM
 
-Now queued up, thanks.
+Tegra
 
-greg k-h
+> support and there is no reason why this cannot be done for 32-bit.
+> 
+> This patch selects PM unconditionally and drivers can rely on runtime
+> PM framework for clock and power management.
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
+> ---
+
+You probably should explain in the commit message what driver need this right now and why.
