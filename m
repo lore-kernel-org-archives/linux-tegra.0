@@ -1,57 +1,45 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] usb: chipidea: tegra: Fix missed
- ci_hdrc_remove_device()
-Date: Mon, 25 Feb 2019 08:07:15 +0300
-Message-ID: <20190225080715.4965810a@dimatab>
-References: <20190224153622.8877-1-digetx@gmail.com>
-        <VI1PR04MB5327FE97DC8C68B4D56DE0A98B7A0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH v6 0/7] Support Trusted Foundations firmware on Tegra30
+Date: Mon, 25 Feb 2019 08:21:55 +0300
+Message-ID: <20190225082155.1163ed85@dimatab>
+References: <20190222193426.10747-1-digetx@gmail.com>
+ <20190225040232.GA2242@qmqm.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <VI1PR04MB5327FE97DC8C68B4D56DE0A98B7A0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Chen <peter.chen@nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190225040232.GA2242@qmqm.qmqm.pl>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Robert Yang <decatf@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-=D0=92 Mon, 25 Feb 2019 02:27:19 +0000
-Peter Chen <peter.chen@nxp.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-
-> =20
-> >=20
-> > Fixes: dfebb5f43a78827a ("usb: chipidea: Add support for
-> > Tegra20/30/114/124") =20
->=20
-> I suppose you need to apply at stable tree too, right?
->=20
-
-It is enough to have the "Fixes" tag to get patch backported into all
-relevant kernel versions.
-
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/usb/chipidea/ci_hdrc_tegra.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > index 772851bee99b..12025358bb3c 100644
-> > --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > @@ -130,6 +130,7 @@ static int tegra_udc_remove(struct
-> > platform_device *pdev) {
-> >  	struct tegra_udc *udc =3D platform_get_drvdata(pdev);
-> >=20
-> > +	ci_hdrc_remove_device(udc->dev);
-> >  	usb_phy_set_suspend(udc->phy, 1);
-> >  	clk_disable_unprepare(udc->clk);
-> >  =20
-> =20
-> Acked-by: Peter Chen <peter.chen@nxp.com>
->=20
-> Hi Greg, would you still accept the bug-fix for this release (v5.0)?
-> Or I send you later?
-
-I just want to point out that the bug existed for a very long time and
-apparently didn't bother anybody, hence it's not an urgent fix.
+0JIgTW9uLCAyNSBGZWIgMjAxOSAwNTowMjozMyArMDEwMApNaWNoYcWCIE1pcm9zxYJhdyA8bWly
+cS1saW51eEByZXJlLnFtcW0ucGw+INC/0LjRiNC10YI6Cgo+IE9uIEZyaSwgRmViIDIyLCAyMDE5
+IGF0IDEwOjM0OjE5UE0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiA+IEhlbGxvLAo+
+ID4gCj4gPiBUaGlzIHBhdGNoc2V0IGFkZHMgc3VwcG9ydCBmb3IgdGhlIFRydXN0ZWQgRm91bmRh
+dGlvbnMgZmlybXdhcmUgb24KPiA+IE5WSURJQSBUZWdyYTMwLiBQcmV0dHkgbXVjaCBhbGwgb2Yg
+VGVncmEzMCBjb25zdW1lciBkZXZpY2VzIGhhdmUKPiA+IHRoYXQgZmlybXdhcmUgYW5kIHVwc3Ry
+ZWFtIGtlcm5lbCBjYW4ndCBib290IG9uIHRob3NlIGRldmljZXMKPiA+IHdpdGhvdXQgdGhlIGZp
+cm13YXJlIHN1cHBvcnQuICAKPiAKPiBIaSBEbWl0cnkKPiAKPiBJJ3ZlIGFwcGxpZWQgYW5kIHRl
+c3RlZCB0aGlzIHBhdGNoc2V0IG9uIG15IFRGMzAwVC4gQm9vdHMgYW5kCj4gc3VzcGVuZHMvd2Fr
+ZXMgdXNpbmcgJ3J0Y3dha2UgLW0gbWVtIC1zIDEgLWQgL2Rldi9ydGMxJyBhcyB0aGUgdGVzdC4K
+PiBkbWVzZyBhdHRhY2hlZC4KPiAKPiBUaGUgZXhhY3QgdHJlZSB1c2VkOgo+IAlnaXQ6Ly9yZXJl
+LnFtcW0ucGwvbGludXggdGYzMDB0Cj4gCj4gRmVlbCBmcmVlIHRvIGFkZCBteSBUZXN0ZWQtYnkg
+YW5kIFNpZ25lZC1vZmYtYnkgb24gdGhlIHBhdGNoZXMgd2hlcmUKPiBhcHJvcHJpYXRlLCBhbmQg
+dGhhbmtzIGZvciB5b3VyIHdvcmshCgpBd2Vzb21lLCB0aGFuayB5b3UgdmVyeSBtdWNoIQoKUm9i
+ZXJ0LCBjb3VsZCB5b3UgcGxlYXNlIGNvbmZpcm0gdGhhdCB2NiB3b3JrcyBmb3IgeW91IHRvbz8K
+CkknbGwgcHJvYmFibHkgbWFrZSBhIHY3IHdpdGggYW4gZXh0cmEgbWlub3IgY2xlYW4gdXAgYW5k
+IHRoZW4gd2lsbCBhZGQKYWxsIHRoZSBhcHByb3ByaWF0ZSB0YWdzIHRvIHRoZSBwYXRjaGVzLgoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJt
+LWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
+Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtl
+cm5lbAo=
