@@ -1,54 +1,41 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.20 000/183] 4.20.13-stable review
-Date: Tue, 26 Feb 2019 14:08:57 +0100
-Message-ID: <20190226130857.GB10343@kroah.com>
-References: <20190225195054.748060397@linuxfoundation.org>
- <1619e5d9-a8a2-ca2a-1550-b77062891530@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] usb: chipidea: tegra: Fix missed
+ ci_hdrc_remove_device()
+Date: Tue, 26 Feb 2019 17:33:05 +0300
+Message-ID: <e7693387-9ac5-b2d8-0a0f-d507dfe05830@gmail.com>
+References: <20190224153622.8877-1-digetx@gmail.com>
+ <VI1PR04MB5327FE97DC8C68B4D56DE0A98B7A0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+ <20190225080715.4965810a@dimatab> <20190226105615.GA12397@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1619e5d9-a8a2-ca2a-1550-b77062891530@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190226105615.GA12397@kroah.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>
+Cc: Peter Chen <peter.chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 12:27:30PM +0000, Jon Hunter wrote:
+26.02.2019 13:56, Greg Kroah-Hartman пишет:
+> On Mon, Feb 25, 2019 at 08:07:15AM +0300, Dmitry Osipenko wrote:
+>> В Mon, 25 Feb 2019 02:27:19 +0000
+>> Peter Chen <peter.chen@nxp.com> пишет:
+>>
+>>>  
+>>>>
+>>>> Fixes: dfebb5f43a78827a ("usb: chipidea: Add support for
+>>>> Tegra20/30/114/124")  
+>>>
+>>> I suppose you need to apply at stable tree too, right?
+>>>
+>>
+>> It is enough to have the "Fixes" tag to get patch backported into all
+>> relevant kernel versions.
 > 
-> On 25/02/2019 21:09, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.20.13 release.
-> > There are 183 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Feb 27 19:49:59 UTC 2019.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.13-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.20:
->     11 builds:	11 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     22 tests:	22 pass, 0 fail
-> 
-> Linux version:	4.20.13-rc1-g6d10f1d
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+> No it is not.  My scripts do NOT trigger off of the fixes: tag, please
+> read:
+>     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> for how to do this properly.
 
-Nice to see a new branch working for you :)
-
-Thanks for testing all of these and letting me know.
-
-greg k-h
+Okay, my bad then. Maybe this is something that could warned by checkpatch.. adding Joe and Andy to the thread.
