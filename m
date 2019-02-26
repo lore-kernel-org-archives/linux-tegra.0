@@ -1,54 +1,67 @@
-From: Trond Myklebust <trondmy@hammerspace.com>
-Subject: Re: Regression: SUNRPC: Use poll() to fix up the socket requeue races
-Date: Mon, 25 Feb 2019 22:41:54 +0000
-Message-ID: <9b9a6c5e34edea13b3ace42d39d97c27fd21c0db.camel@hammerspace.com>
-References: <95702994-6762-e42b-06ee-ae945c2137bd@nvidia.com>
-         <ab485d7ba4f9603850b81e6c2242dc25026eabcb.camel@hammerspace.com>
-         <88677895-7f89-ae1d-3060-819f4b04f530@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1] usb: chipidea: tegra: Fix missed
+ ci_hdrc_remove_device()
+Date: Tue, 26 Feb 2019 11:56:15 +0100
+Message-ID: <20190226105615.GA12397@kroah.com>
+References: <20190224153622.8877-1-digetx@gmail.com>
+ <VI1PR04MB5327FE97DC8C68B4D56DE0A98B7A0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+ <20190225080715.4965810a@dimatab>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <88677895-7f89-ae1d-3060-819f4b04f530@nvidia.com>
-Content-Language: en-US
-Content-ID: <7173E62304E3CB41814930014C5CC14F@namprd13.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <20190225080715.4965810a@dimatab>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Peter Chen <peter.chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTAyLTI1IGF0IDIyOjI3ICswMDAwLCBKb24gSHVudGVyIHdyb3RlOg0KPiBP
-biAyNS8wMi8yMDE5IDIxOjAzLCBUcm9uZCBNeWtsZWJ1c3Qgd3JvdGU6DQo+ID4gT24gTW9uLCAy
-MDE5LTAyLTI1IGF0IDIwOjI1ICswMDAwLCBKb24gSHVudGVyIHdyb3RlOg0KPiA+ID4gSGkgVHJv
-bmQsDQo+ID4gPiANCj4gPiA+IFN0YXJ0aW5nIGluIG5leHQtMjAxOTAyMjIgSSBoYXZlIG9ic2Vy
-dmVkIGEgcmVncmVzc2lvbiB3aXRoIE5GUw0KPiA+ID4gY2F1c2luZw0KPiA+ID4gc29tZSBvZiBv
-dXIgYm9hcmRzIHRvIGZhaWwgdG8gYm9vdC4gQmlzZWN0IHBvaW50cyB0byB5b3VyIGNvbW1pdA0K
-PiA+ID4gLi4uDQo+ID4gPiANCj4gPiA+IGNvbW1pdCAwZmZlODZmNDgwMjZiN2YzNGRiMjJkMTAw
-NGJjOTk5MmYwZGI4YjMzDQo+ID4gPiBBdXRob3I6IFRyb25kIE15a2xlYnVzdCA8dHJvbmQubXlr
-bGVidXN0QGhhbW1lcnNwYWNlLmNvbT4NCj4gPiA+IERhdGU6ICAgV2VkIEphbiAzMCAxNDo1MToy
-NiAyMDE5IC0wNTAwDQo+ID4gPiANCj4gPiA+ICAgICBTVU5SUEM6IFVzZSBwb2xsKCkgdG8gZml4
-IHVwIHRoZSBzb2NrZXQgcmVxdWV1ZSByYWNlcw0KPiA+ID4gDQo+ID4gPiANCj4gPiA+IEFmdGVy
-IHJldmVydGluZyB0aGlzIG9uIHRvcCBvZiAtbmV4dCBJIG5vIGxvbmdlciBzZWUgdGhlIHByb2Js
-ZW0uDQo+ID4gPiBJDQo+ID4gPiBoYXZlDQo+ID4gPiBub3QgaGFkIGNoYW5jZSB0byBsb29rIGFu
-eSBjbG9zZXIsIGJ1dCB3YW50ZWQgdG8gc2VlIGlmIHlvdSBoYWQNCj4gPiA+IGFueQ0KPiA+ID4g
-aWRlYXMgd2hhdCBtaWdodCBiZSB0aGUgcHJvYmxlbS4NCj4gPiA+IA0KPiA+ID4gQ2hlZXJzDQo+
-ID4gPiBKb24NCj4gPiANCj4gPiBXaGF0IGtpbmQgb2YgYm9vdCBpcyB0aGlzPyBVRFAgb3IgVENQ
-PyBuZnNyb290PyBORlN2MyBvciBORlN2ND8gDQo+IA0KPiBUaGlzIGlzIG5mc3Jvb3QuIEkgZG9u
-J3Qgc3BlY2lmeSBhbnkgcGFydGljdWxhciBORlMgdmVyc2lvbiBmcm9tIA0KPiB0aGUga2VybmVs
-IGNtZGxpbmUsIGJ1dCB0aGlzIGlzIHNlZW4gd2l0aCBBUk0ga2VybmVsIGNvbmZpZ3MNCj4gdGVn
-cmFfZGVmY29uZmlnIGFuZCBtdWx0aV92N19kZWZjb25maWcuIA0KPiANCj4gTG9va2luZyBhdCB0
-aGUgbG9ncyBJIGFtIHNlZWluZyB0aGUgZm9sbG93aW5nIGNyYXNoIHdoaWNoIGFwcGVhcnMNCj4g
-dG8gcG9pbnQgdG8gVURQIC4uLg0KPiANCj4gWyAgICA4LjAzMjk1Nl0gVW5hYmxlIHRvIGhhbmRs
-ZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0DQo+IHZpcnR1YWwgYWRkcmVzcyAw
-MDAwMDAyNA0KPiBbICAgIDguMDQxMTM3XSBwZ2QgPSAocHRydmFsKQ0KPiBbICAgIDguMDQzODU4
-XSBbMDAwMDAwMjRdICpwZ2Q9MDAwMDAwMDANCj4gWyAgICA4LjA0NzQzN10gSW50ZXJuYWwgZXJy
-b3I6IE9vcHM6IDUgWyMxXSBTTVAgQVJNDQo+IFsgICAgOC4wNTIwNDldIE1vZHVsZXMgbGlua2Vk
-IGluOg0KPiBbICAgIDguMDU1MTA0XSBDUFU6IDEgUElEOiAxMDAgQ29tbToga3dvcmtlci91OToy
-IE5vdCB0YWludGVkIDUuMC4wLQ0KPiByYzctbmV4dC0yMDE5MDIyMi1nOTRhNDc1MiAjMQ0KPiBb
-ICAgIDguMDYzNjk5XSBIYXJkd2FyZSBuYW1lOiBOVklESUEgVGVncmEgU29DIChGbGF0dGVuZWQg
-RGV2aWNlDQo+IFRyZWUpDQo+IFsgICAgOC4wNjk5NjBdIFdvcmtxdWV1ZTogeHBydGlvZCB4c191
-ZHBfZGF0YV9yZWNlaXZlX3dvcmtmbg0KPiBbICAgIDguMDc1MzUzXSBQQyBpcyBhdCB1ZHBfcG9s
-bCsweDMwLzB4NjQNCj4gWyAgICA4LjA3OTE3OF0gTFIgaXMgYXQgdWRwX3BvbGwrMHgxMC8weDY0
-DQoNClRoYW5rcyEgSSBzZWUgd2hhdCB0aGUgaXNzdWUgaXMgbm93IGFuZCBJJ2xsIGJlIGZpeGlu
-ZyBpdCBBU0FQLg0KDQpDaGVlcnMNCiAgIFRyb25kDQoNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpM
-aW51eCBORlMgY2xpZW50IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RA
-aGFtbWVyc3BhY2UuY29tDQoNCg0K
+On Mon, Feb 25, 2019 at 08:07:15AM +0300, Dmitry Osipenko wrote:
+> В Mon, 25 Feb 2019 02:27:19 +0000
+> Peter Chen <peter.chen@nxp.com> пишет:
+> 
+> >  
+> > > 
+> > > Fixes: dfebb5f43a78827a ("usb: chipidea: Add support for
+> > > Tegra20/30/114/124")  
+> > 
+> > I suppose you need to apply at stable tree too, right?
+> > 
+> 
+> It is enough to have the "Fixes" tag to get patch backported into all
+> relevant kernel versions.
+
+No it is not.  My scripts do NOT trigger off of the fixes: tag, please
+read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
+
+
+> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > ---
+> > >  drivers/usb/chipidea/ci_hdrc_tegra.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > index 772851bee99b..12025358bb3c 100644
+> > > --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > @@ -130,6 +130,7 @@ static int tegra_udc_remove(struct
+> > > platform_device *pdev) {
+> > >  	struct tegra_udc *udc = platform_get_drvdata(pdev);
+> > > 
+> > > +	ci_hdrc_remove_device(udc->dev);
+> > >  	usb_phy_set_suspend(udc->phy, 1);
+> > >  	clk_disable_unprepare(udc->clk);
+> > >   
+> >  
+> > Acked-by: Peter Chen <peter.chen@nxp.com>
+> > 
+> > Hi Greg, would you still accept the bug-fix for this release (v5.0)?
+> > Or I send you later?
+
+I can pick it up now, thanks.
+
+greg k-h
