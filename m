@@ -1,52 +1,54 @@
-From: Tony Lindgren <tony@atomide.com>
+From: Trond Myklebust <trondmy@hammerspace.com>
 Subject: Re: Regression: SUNRPC: Use poll() to fix up the socket requeue races
-Date: Tue, 26 Feb 2019 10:33:40 -0800
-Message-ID: <20190226183340.GD39872@atomide.com>
+Date: Tue, 26 Feb 2019 20:40:20 +0000
+Message-ID: <eeb255aca46e9b1d9d030c5b917c663b83468bcb.camel@hammerspace.com>
 References: <95702994-6762-e42b-06ee-ae945c2137bd@nvidia.com>
- <ab485d7ba4f9603850b81e6c2242dc25026eabcb.camel@hammerspace.com>
- <88677895-7f89-ae1d-3060-819f4b04f530@nvidia.com>
- <9b9a6c5e34edea13b3ace42d39d97c27fd21c0db.camel@hammerspace.com>
+         <ab485d7ba4f9603850b81e6c2242dc25026eabcb.camel@hammerspace.com>
+         <88677895-7f89-ae1d-3060-819f4b04f530@nvidia.com>
+         <9b9a6c5e34edea13b3ace42d39d97c27fd21c0db.camel@hammerspace.com>
+         <20190226183340.GD39872@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9b9a6c5e34edea13b3ace42d39d97c27fd21c0db.camel@hammerspace.com>
+In-Reply-To: <20190226183340.GD39872@atomide.com>
+Content-Language: en-US
+Content-ID: <3130DCFECA879F4686199B76AACCA618@namprd13.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trondmy@hammerspace.com>
+To: "tony@atomide.com" <tony@atomide.com>
 Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-* Trond Myklebust <trondmy@hammerspace.com> [700101 00:00]:
-> On Mon, 2019-02-25 at 22:27 +0000, Jon Hunter wrote:
-> > On 25/02/2019 21:03, Trond Myklebust wrote:
-> > This is nfsroot. I don't specify any particular NFS version from 
-> > the kernel cmdline, but this is seen with ARM kernel configs
-> > tegra_defconfig and multi_v7_defconfig. 
-> > 
-> > Looking at the logs I am seeing the following crash which appears
-> > to point to UDP ...
-> > 
-> > [    8.032956] Unable to handle kernel NULL pointer dereference at
-> > virtual address 00000024
-> > [    8.041137] pgd = (ptrval)
-> > [    8.043858] [00000024] *pgd=00000000
-> > [    8.047437] Internal error: Oops: 5 [#1] SMP ARM
-> > [    8.052049] Modules linked in:
-> > [    8.055104] CPU: 1 PID: 100 Comm: kworker/u9:2 Not tainted 5.0.0-
-> > rc7-next-20190222-g94a4752 #1
-> > [    8.063699] Hardware name: NVIDIA Tegra SoC (Flattened Device
-> > Tree)
-> > [    8.069960] Workqueue: xprtiod xs_udp_data_receive_workfn
-> > [    8.075353] PC is at udp_poll+0x30/0x64
-> > [    8.079178] LR is at udp_poll+0x10/0x64
-> 
-> Thanks! I see what the issue is now and I'll be fixing it ASAP.
-
-I'm seeing this also with NFSroot. I can test the fix when available,
-that is if you can please Cc me on the fix.
-
-Thanks,
-
-Tony
+T24gVHVlLCAyMDE5LTAyLTI2IGF0IDEwOjMzIC0wODAwLCBUb255IExpbmRncmVuIHdyb3RlOg0K
+PiBIaSwNCj4gDQo+ICogVHJvbmQgTXlrbGVidXN0IDx0cm9uZG15QGhhbW1lcnNwYWNlLmNvbT4g
+WzcwMDEwMSAwMDowMF06DQo+ID4gT24gTW9uLCAyMDE5LTAyLTI1IGF0IDIyOjI3ICswMDAwLCBK
+b24gSHVudGVyIHdyb3RlOg0KPiA+ID4gT24gMjUvMDIvMjAxOSAyMTowMywgVHJvbmQgTXlrbGVi
+dXN0IHdyb3RlOg0KPiA+ID4gVGhpcyBpcyBuZnNyb290LiBJIGRvbid0IHNwZWNpZnkgYW55IHBh
+cnRpY3VsYXIgTkZTIHZlcnNpb24gZnJvbSANCj4gPiA+IHRoZSBrZXJuZWwgY21kbGluZSwgYnV0
+IHRoaXMgaXMgc2VlbiB3aXRoIEFSTSBrZXJuZWwgY29uZmlncw0KPiA+ID4gdGVncmFfZGVmY29u
+ZmlnIGFuZCBtdWx0aV92N19kZWZjb25maWcuIA0KPiA+ID4gDQo+ID4gPiBMb29raW5nIGF0IHRo
+ZSBsb2dzIEkgYW0gc2VlaW5nIHRoZSBmb2xsb3dpbmcgY3Jhc2ggd2hpY2ggYXBwZWFycw0KPiA+
+ID4gdG8gcG9pbnQgdG8gVURQIC4uLg0KPiA+ID4gDQo+ID4gPiBbICAgIDguMDMyOTU2XSBVbmFi
+bGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UNCj4gPiA+IGF0DQo+
+ID4gPiB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAwMjQNCj4gPiA+IFsgICAgOC4wNDExMzddIHBnZCA9
+IChwdHJ2YWwpDQo+ID4gPiBbICAgIDguMDQzODU4XSBbMDAwMDAwMjRdICpwZ2Q9MDAwMDAwMDAN
+Cj4gPiA+IFsgICAgOC4wNDc0MzddIEludGVybmFsIGVycm9yOiBPb3BzOiA1IFsjMV0gU01QIEFS
+TQ0KPiA+ID4gWyAgICA4LjA1MjA0OV0gTW9kdWxlcyBsaW5rZWQgaW46DQo+ID4gPiBbICAgIDgu
+MDU1MTA0XSBDUFU6IDEgUElEOiAxMDAgQ29tbToga3dvcmtlci91OToyIE5vdCB0YWludGVkDQo+
+ID4gPiA1LjAuMC0NCj4gPiA+IHJjNy1uZXh0LTIwMTkwMjIyLWc5NGE0NzUyICMxDQo+ID4gPiBb
+ICAgIDguMDYzNjk5XSBIYXJkd2FyZSBuYW1lOiBOVklESUEgVGVncmEgU29DIChGbGF0dGVuZWQg
+RGV2aWNlDQo+ID4gPiBUcmVlKQ0KPiA+ID4gWyAgICA4LjA2OTk2MF0gV29ya3F1ZXVlOiB4cHJ0
+aW9kIHhzX3VkcF9kYXRhX3JlY2VpdmVfd29ya2ZuDQo+ID4gPiBbICAgIDguMDc1MzUzXSBQQyBp
+cyBhdCB1ZHBfcG9sbCsweDMwLzB4NjQNCj4gPiA+IFsgICAgOC4wNzkxNzhdIExSIGlzIGF0IHVk
+cF9wb2xsKzB4MTAvMHg2NA0KPiA+IA0KPiA+IFRoYW5rcyEgSSBzZWUgd2hhdCB0aGUgaXNzdWUg
+aXMgbm93IGFuZCBJJ2xsIGJlIGZpeGluZyBpdCBBU0FQLg0KPiANCj4gSSdtIHNlZWluZyB0aGlz
+IGFsc28gd2l0aCBORlNyb290LiBJIGNhbiB0ZXN0IHRoZSBmaXggd2hlbiBhdmFpbGFibGUsDQo+
+IHRoYXQgaXMgaWYgeW91IGNhbiBwbGVhc2UgQ2MgbWUgb24gdGhlIGZpeC4NCj4gDQo+IFRoYW5r
+cywNCj4gDQo+IFRvbnkNCg0KSSd2ZSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgcGF0Y2ggdG8gbXkg
+J3Rlc3RpbmcnIGJyYW5jaDogDQpodHRwOi8vZ2l0LmxpbnV4LW5mcy5vcmcvP3A9dHJvbmRteS9s
+aW51eC1uZnMuZ2l0O2E9cGF0Y2g7aD1hNzM4ODFjOTZkNzNlZTcyYjdkYmJkMzhhNmVlZWY2NjE4
+MmE4ZWY3DQoNCkl0IGhhcyBzbyBmYXIgc3Rvb2QgdXAgdG8gdGVzdGluZyBvbiBteSBzaWRlLCBz
+byBJJ20gZXhwZWN0aW5nIHRvIHB1c2gNCml0IHRvIGxpbnV4LW5leHQgdGhpcyBldmVuaW5nLg0K
+DQpDaGVlcnMNCiAgVHJvbmQNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50
+IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29t
+DQoNCg0K
