@@ -1,27 +1,45 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
-Date: Wed, 27 Feb 2019 18:15:04 +0300
-Message-ID: <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
-References: <20190224153222.8142-1-digetx@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] arm64: defconfig: Add PWM Fan support
+Date: Wed, 27 Feb 2019 15:53:39 +0000
+Message-ID: <1551282819-27274-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190224153222.8142-1-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <treding@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-24.02.2019 18:32, Dmitry Osipenko пишет:
-> Initially Common Clock Framework isn't aware of the clock-enable status,
-> this results in enabling of clocks that were enabled by bootloader. This
-> is not a big deal for a regular clock-gates, but for PLL's it may have
-> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
-> clock) may result in extra long period of PLL re-locking.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+The Tegra194 Jetson AGX Xavier board includes a PWM based fan. Enable
+PWM fan support in the ARM64 defconfig to support the fan on this board.
+Please note that the device-tree PWM fan node is already present for
+this board.
 
-Peter (and everyone else), yours r-b and ACK will be appreciated since you kinda already took a look at this patch in the past and were okay with it (IIRC, we had some brief discussion on the #tegra IRC a few months ago), thanks. 
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 2d9c39033c1a..1fbbfbb5d9d1 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -408,6 +408,7 @@ CONFIG_BATTERY_SBS=m
+ CONFIG_BATTERY_BQ27XXX=y
+ CONFIG_SENSORS_ARM_SCPI=y
+ CONFIG_SENSORS_LM90=m
++CONFIG_SENSORS_PWM_FAN=m
+ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
+ CONFIG_SENSORS_INA2XX=m
+ CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+-- 
+2.7.4
