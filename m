@@ -1,45 +1,51 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v3] ARM: tegra: enforce PM requirement
-Date: Wed, 27 Feb 2019 13:50:28 +0530
-Message-ID: <1551255628-4794-1-git-send-email-spujar@nvidia.com>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] sched/cputime: Remove unnecessary assignment statement
+Date: Wed, 27 Feb 2019 11:32:30 +0100
+Message-ID: <20190227103230.GM32494@hirez.programming.kicks-ass.net>
+References: <1551248002-27303-1-git-send-email-ketanp@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1551248002-27303-1-git-send-email-ketanp@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux@armlinux.org.uk, digetx@gmail.com, jhogan@kernel.org
-Cc: jonathanh@nvidia.com, treding@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+To: Ketan Patil <ketanp@nvidia.com>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, snikam@nvidia.com, bnihalani@nvidia.com, byan@nvidia.com, sgurrappadi@nvidia.com, treding@nvidia.com, talho@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Currently runtime PM is enabled for Tegra HDA driver. One of the concern
-raised was about handling !PM case in HDA driver. In this case, there is
-a need to manage clocks and power explicitly in the driver and reviewers
-were not really convinced about this. The consensus at the end was to
-enforce PM requirement to keep things simple, rather driver mentioning a
-dependency on PM. This is how it is done for ARM 64-bit Tegra platforms
-and the same can be done for 32-bit Tegra platforms too.
+On Wed, Feb 27, 2019 at 11:43:22AM +0530, Ketan Patil wrote:
+> The original code assigns the value from rtime to utime variable,
+> and then jumps to the update label. And the value of utime is then
+> updated, so the earlier value of utime is not used. Hence remove
+> that unnecessary assignment statement.
+> 
+> This fixes one of the coverity defects.
 
-Finally the objective is to remove dependency on PM availability for all
-Tegra drivers. The detailed discussion can be found in following patch,
-https://patchwork.ozlabs.org/patch/1031007/
+Why does coverity care? I like the way the code is now, it makes
+conceptual sense. Removing that assignment makes the code harder to read
+and less symmetric (see the utime case right below).
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
----
- arch/arm/mach-tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Any sensible compiler will 'fix' this for us anyway.
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 7f3b83e..51a8fa3 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -10,6 +10,7 @@ menuconfig ARCH_TEGRA
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select PINCTRL
-+	select PM
- 	select PM_OPP
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
--- 
-2.7.4
+> Based on work by Ishan Mittal <imittal@nvidia.com>
+> Signed-off-by: Ketan Patil <ketanp@nvidia.com>
+> ---
+>  kernel/sched/cputime.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> index ba4a143..ad64771 100644
+> --- a/kernel/sched/cputime.c
+> +++ b/kernel/sched/cputime.c
+> @@ -616,10 +616,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+>  	 * Once a task gets some ticks, the monotonicy code at 'update:'
+>  	 * will ensure things converge to the observed ratio.
+>  	 */
+> -	if (stime == 0) {
+> -		utime = rtime;
+> +	if (stime == 0)
+>  		goto update;
+> -	}
+>  
+>  	if (utime == 0) {
+>  		stime = rtime;
