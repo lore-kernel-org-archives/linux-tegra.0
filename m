@@ -1,32 +1,44 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: Regression: SUNRPC: Use poll() to fix up the socket requeue races
-Date: Tue, 26 Feb 2019 16:31:02 -0800
-Message-ID: <20190227003102.GF39872@atomide.com>
-References: <95702994-6762-e42b-06ee-ae945c2137bd@nvidia.com>
- <ab485d7ba4f9603850b81e6c2242dc25026eabcb.camel@hammerspace.com>
- <88677895-7f89-ae1d-3060-819f4b04f530@nvidia.com>
- <9b9a6c5e34edea13b3ace42d39d97c27fd21c0db.camel@hammerspace.com>
- <20190226183340.GD39872@atomide.com>
- <eeb255aca46e9b1d9d030c5b917c663b83468bcb.camel@hammerspace.com>
+From: Ketan Patil <ketanp@nvidia.com>
+Subject: [PATCH] sched/cputime: Remove unnecessary assignment statement
+Date: Wed, 27 Feb 2019 11:43:22 +0530
+Message-ID: <1551248002-27303-1-git-send-email-ketanp@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <eeb255aca46e9b1d9d030c5b917c663b83468bcb.camel@hammerspace.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trondmy@hammerspace.com>
-Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, snikam@nvidia.com, bnihalani@nvidia.com, byan@nvidia.com, sgurrappadi@nvidia.com, treding@nvidia.com, talho@nvidia.com, Ketan Patil <ketanp@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-* Trond Myklebust <trondmy@hammerspace.com> [190226 20:40]:
-> I've applied the following patch to my 'testing' branch: 
-> http://git.linux-nfs.org/?p=trondmy/linux-nfs.git;a=patch;h=a73881c96d73ee72b7dbbd38a6eeef66182a8ef7
-> 
-> It has so far stood up to testing on my side, so I'm expecting to push
-> it to linux-next this evening.
+The original code assigns the value from rtime to utime variable,
+and then jumps to the update label. And the value of utime is then
+updated, so the earlier value of utime is not used. Hence remove
+that unnecessary assignment statement.
 
-OK, works for me too based on a quick test of few NFSroot boots.
+This fixes one of the coverity defects.
 
-Thanks,
+Based on work by Ishan Mittal <imittal@nvidia.com>
 
-Tony
+Signed-off-by: Ketan Patil <ketanp@nvidia.com>
+---
+ kernel/sched/cputime.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index ba4a143..ad64771 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -616,10 +616,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+ 	 * Once a task gets some ticks, the monotonicy code at 'update:'
+ 	 * will ensure things converge to the observed ratio.
+ 	 */
+-	if (stime == 0) {
+-		utime = rtime;
++	if (stime == 0)
+ 		goto update;
+-	}
+ 
+ 	if (utime == 0) {
+ 		stime = rtime;
+-- 
+2.7.4
