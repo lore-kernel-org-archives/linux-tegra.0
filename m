@@ -1,29 +1,27 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] drm/tegra: plane: Remove format-modifier checking
-Date: Wed, 27 Feb 2019 18:08:49 +0300
-Message-ID: <46fb6670-59ed-0378-cd7e-aea3fd4ee890@gmail.com>
-References: <20190224153405.8447-1-digetx@gmail.com>
+Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
+Date: Wed, 27 Feb 2019 18:15:04 +0300
+Message-ID: <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
+References: <20190224153222.8142-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190224153405.8447-1-digetx@gmail.com>
+In-Reply-To: <20190224153222.8142-1-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.02.2019 18:34, Dmitry Osipenko пишет:
-> Tiling modifier can't be applied to YV12 video overlay because all tiling
-> modifiers are filtered out for multi-plane formats. AFAIK, all modifiers
-> should work with all of formats, hence the checking is incorrect and
-> simply not needed.
+24.02.2019 18:32, Dmitry Osipenko пишет:
+> Initially Common Clock Framework isn't aware of the clock-enable status,
+> this results in enabling of clocks that were enabled by bootloader. This
+> is not a big deal for a regular clock-gates, but for PLL's it may have
+> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+> clock) may result in extra long period of PLL re-locking.
 > 
-> Fixes: e90124cb46bdb ("drm/tegra: plane: Support format modifiers")
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
 
-For the reference.. this patch needs a stable tag, I did the same mistake in [0]. Thierry, please let me know if you're okay with the change and if you could add the tag while applying the patch, thanks.
-
-[0] https://lkml.org/lkml/2019/2/26/277
+Peter (and everyone else), yours r-b and ACK will be appreciated since you kinda already took a look at this patch in the past and were okay with it (IIRC, we had some brief discussion on the #tegra IRC a few months ago), thanks. 
