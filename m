@@ -1,54 +1,32 @@
-From: Trond Myklebust <trondmy@hammerspace.com>
+From: Tony Lindgren <tony@atomide.com>
 Subject: Re: Regression: SUNRPC: Use poll() to fix up the socket requeue races
-Date: Tue, 26 Feb 2019 20:40:20 +0000
-Message-ID: <eeb255aca46e9b1d9d030c5b917c663b83468bcb.camel@hammerspace.com>
+Date: Tue, 26 Feb 2019 16:31:02 -0800
+Message-ID: <20190227003102.GF39872@atomide.com>
 References: <95702994-6762-e42b-06ee-ae945c2137bd@nvidia.com>
-         <ab485d7ba4f9603850b81e6c2242dc25026eabcb.camel@hammerspace.com>
-         <88677895-7f89-ae1d-3060-819f4b04f530@nvidia.com>
-         <9b9a6c5e34edea13b3ace42d39d97c27fd21c0db.camel@hammerspace.com>
-         <20190226183340.GD39872@atomide.com>
+ <ab485d7ba4f9603850b81e6c2242dc25026eabcb.camel@hammerspace.com>
+ <88677895-7f89-ae1d-3060-819f4b04f530@nvidia.com>
+ <9b9a6c5e34edea13b3ace42d39d97c27fd21c0db.camel@hammerspace.com>
+ <20190226183340.GD39872@atomide.com>
+ <eeb255aca46e9b1d9d030c5b917c663b83468bcb.camel@hammerspace.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190226183340.GD39872@atomide.com>
-Content-Language: en-US
-Content-ID: <3130DCFECA879F4686199B76AACCA618@namprd13.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <eeb255aca46e9b1d9d030c5b917c663b83468bcb.camel@hammerspace.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "tony@atomide.com" <tony@atomide.com>
+To: Trond Myklebust <trondmy@hammerspace.com>
 Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTAyLTI2IGF0IDEwOjMzIC0wODAwLCBUb255IExpbmRncmVuIHdyb3RlOg0K
-PiBIaSwNCj4gDQo+ICogVHJvbmQgTXlrbGVidXN0IDx0cm9uZG15QGhhbW1lcnNwYWNlLmNvbT4g
-WzcwMDEwMSAwMDowMF06DQo+ID4gT24gTW9uLCAyMDE5LTAyLTI1IGF0IDIyOjI3ICswMDAwLCBK
-b24gSHVudGVyIHdyb3RlOg0KPiA+ID4gT24gMjUvMDIvMjAxOSAyMTowMywgVHJvbmQgTXlrbGVi
-dXN0IHdyb3RlOg0KPiA+ID4gVGhpcyBpcyBuZnNyb290LiBJIGRvbid0IHNwZWNpZnkgYW55IHBh
-cnRpY3VsYXIgTkZTIHZlcnNpb24gZnJvbSANCj4gPiA+IHRoZSBrZXJuZWwgY21kbGluZSwgYnV0
-IHRoaXMgaXMgc2VlbiB3aXRoIEFSTSBrZXJuZWwgY29uZmlncw0KPiA+ID4gdGVncmFfZGVmY29u
-ZmlnIGFuZCBtdWx0aV92N19kZWZjb25maWcuIA0KPiA+ID4gDQo+ID4gPiBMb29raW5nIGF0IHRo
-ZSBsb2dzIEkgYW0gc2VlaW5nIHRoZSBmb2xsb3dpbmcgY3Jhc2ggd2hpY2ggYXBwZWFycw0KPiA+
-ID4gdG8gcG9pbnQgdG8gVURQIC4uLg0KPiA+ID4gDQo+ID4gPiBbICAgIDguMDMyOTU2XSBVbmFi
-bGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UNCj4gPiA+IGF0DQo+
-ID4gPiB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAwMjQNCj4gPiA+IFsgICAgOC4wNDExMzddIHBnZCA9
-IChwdHJ2YWwpDQo+ID4gPiBbICAgIDguMDQzODU4XSBbMDAwMDAwMjRdICpwZ2Q9MDAwMDAwMDAN
-Cj4gPiA+IFsgICAgOC4wNDc0MzddIEludGVybmFsIGVycm9yOiBPb3BzOiA1IFsjMV0gU01QIEFS
-TQ0KPiA+ID4gWyAgICA4LjA1MjA0OV0gTW9kdWxlcyBsaW5rZWQgaW46DQo+ID4gPiBbICAgIDgu
-MDU1MTA0XSBDUFU6IDEgUElEOiAxMDAgQ29tbToga3dvcmtlci91OToyIE5vdCB0YWludGVkDQo+
-ID4gPiA1LjAuMC0NCj4gPiA+IHJjNy1uZXh0LTIwMTkwMjIyLWc5NGE0NzUyICMxDQo+ID4gPiBb
-ICAgIDguMDYzNjk5XSBIYXJkd2FyZSBuYW1lOiBOVklESUEgVGVncmEgU29DIChGbGF0dGVuZWQg
-RGV2aWNlDQo+ID4gPiBUcmVlKQ0KPiA+ID4gWyAgICA4LjA2OTk2MF0gV29ya3F1ZXVlOiB4cHJ0
-aW9kIHhzX3VkcF9kYXRhX3JlY2VpdmVfd29ya2ZuDQo+ID4gPiBbICAgIDguMDc1MzUzXSBQQyBp
-cyBhdCB1ZHBfcG9sbCsweDMwLzB4NjQNCj4gPiA+IFsgICAgOC4wNzkxNzhdIExSIGlzIGF0IHVk
-cF9wb2xsKzB4MTAvMHg2NA0KPiA+IA0KPiA+IFRoYW5rcyEgSSBzZWUgd2hhdCB0aGUgaXNzdWUg
-aXMgbm93IGFuZCBJJ2xsIGJlIGZpeGluZyBpdCBBU0FQLg0KPiANCj4gSSdtIHNlZWluZyB0aGlz
-IGFsc28gd2l0aCBORlNyb290LiBJIGNhbiB0ZXN0IHRoZSBmaXggd2hlbiBhdmFpbGFibGUsDQo+
-IHRoYXQgaXMgaWYgeW91IGNhbiBwbGVhc2UgQ2MgbWUgb24gdGhlIGZpeC4NCj4gDQo+IFRoYW5r
-cywNCj4gDQo+IFRvbnkNCg0KSSd2ZSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgcGF0Y2ggdG8gbXkg
-J3Rlc3RpbmcnIGJyYW5jaDogDQpodHRwOi8vZ2l0LmxpbnV4LW5mcy5vcmcvP3A9dHJvbmRteS9s
-aW51eC1uZnMuZ2l0O2E9cGF0Y2g7aD1hNzM4ODFjOTZkNzNlZTcyYjdkYmJkMzhhNmVlZWY2NjE4
-MmE4ZWY3DQoNCkl0IGhhcyBzbyBmYXIgc3Rvb2QgdXAgdG8gdGVzdGluZyBvbiBteSBzaWRlLCBz
-byBJJ20gZXhwZWN0aW5nIHRvIHB1c2gNCml0IHRvIGxpbnV4LW5leHQgdGhpcyBldmVuaW5nLg0K
-DQpDaGVlcnMNCiAgVHJvbmQNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50
-IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29t
-DQoNCg0K
+* Trond Myklebust <trondmy@hammerspace.com> [190226 20:40]:
+> I've applied the following patch to my 'testing' branch: 
+> http://git.linux-nfs.org/?p=trondmy/linux-nfs.git;a=patch;h=a73881c96d73ee72b7dbbd38a6eeef66182a8ef7
+> 
+> It has so far stood up to testing on my side, so I'm expecting to push
+> it to linux-next this evening.
+
+OK, works for me too based on a quick test of few NFSroot boots.
+
+Thanks,
+
+Tony
