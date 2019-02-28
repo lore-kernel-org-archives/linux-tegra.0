@@ -1,35 +1,51 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 1/7] ARM: trusted_foundations: Support L2 cache
- maintenance
-Date: Thu, 28 Feb 2019 16:36:49 +0300
-Message-ID: <ba215d63-ffaa-5be6-c43f-fdb845b1d6b7@gmail.com>
-References: <20190228131707.2592-1-digetx@gmail.com>
- <20190228131707.2592-2-digetx@gmail.com>
- <20190228132748.s2woduoycm7igfub@shell.armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] sched/cputime: Remove unnecessary assignment statement
+Date: Thu, 28 Feb 2019 13:53:31 +0000
+Message-ID: <397917cc-3656-e26c-7715-d4feec97bb4b@nvidia.com>
+References: <1551248002-27303-1-git-send-email-ketanp@nvidia.com>
+ <20190227103230.GM32494@hirez.programming.kicks-ass.net>
+ <9bce6378-2221-f358-dc97-f15ee7ab546b@nvidia.com>
+ <20190228094733.GY32494@hirez.programming.kicks-ass.net>
+ <MN2PR12MB3278E52D04119DC55597A293BB750@MN2PR12MB3278.namprd12.prod.outlook.com>
+ <20190228123120.GA32494@hirez.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190228132748.s2woduoycm7igfub@shell.armlinux.org.uk>
+In-Reply-To: <20190228123120.GA32494@hirez.programming.kicks-ass.net>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Sachin Nikam <Snikam@nvidia.com>
+Cc: Ketan Patil <ketanp@nvidia.com>, "mingo@redhat.com" <mingo@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Bharat Nihalani <bnihalani@nvidia.com>, Bo Yan <byan@nvidia.com>, Sai Gurrappadi <sgurrappadi@nvidia.com>, Thierry Reding <treding@nvidia.com>, Timo Alho <talho@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-28.02.2019 16:27, Russell King - ARM Linux admin пишет:
-> On Thu, Feb 28, 2019 at 04:17:01PM +0300, Dmitry Osipenko wrote:
->> +#ifdef CONFIG_CACHE_L2X0
->> +static void tf_cache_write_sec(unsigned long val, unsigned int reg)
->> +{
->> +	u32 l2x0_way_mask = 0xff;
->> +
->> +	switch (reg) {
->> +	case L2X0_CTRL:
->> +		if (l2x0_saved_regs.aux_ctrl & BIT(16))
-> 
-> And bit 16 is what?  We have definitions in one of the headers you've
-> added above, please use them.  Thanks.
-> 
 
-Good catch, I missed that there is a definition for that bit. I'll make a v8 soon'ish, please let me know if there is anything else to be addressed. Yours r-b and a-b will be appreciated.
+On 28/02/2019 12:31, Peter Zijlstra wrote:
+> 
+> Clearly, because reading comprehension isn't your strong point:
+> 
+> A: Because it messes up the order in which people normally read text.
+> Q: Why is top-posting such a bad thing?
+> A: Top-posting.
+> Q: What is the most annoying thing in e-mail?
+
+Sorry we have a few people helping out cleaning up our kernel branches
+and we need to do a better job here indeed!
+
+> On Thu, Feb 28, 2019 at 12:14:09PM +0000, Sachin Nikam wrote:
+> 
+>> This isn't a security fix.
+>> However, I see this is kind of code cleanup.
+> 
+> As I've explained previously, it makes conceptual sense to have it in
+> the code, and any halfway sane compiler will observe the same double
+> store and eliminate it in its DCE pass.
+
+OK. Thanks for the feedback. We can agree to drop this and we will try
+to do a better job reviewing this type of thing before hand in future.
+
+Cheers
+Jon
+
+-- 
+nvpublic
