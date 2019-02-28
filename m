@@ -1,51 +1,105 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] sched/cputime: Remove unnecessary assignment statement
-Date: Thu, 28 Feb 2019 13:53:31 +0000
-Message-ID: <397917cc-3656-e26c-7715-d4feec97bb4b@nvidia.com>
-References: <1551248002-27303-1-git-send-email-ketanp@nvidia.com>
- <20190227103230.GM32494@hirez.programming.kicks-ass.net>
- <9bce6378-2221-f358-dc97-f15ee7ab546b@nvidia.com>
- <20190228094733.GY32494@hirez.programming.kicks-ass.net>
- <MN2PR12MB3278E52D04119DC55597A293BB750@MN2PR12MB3278.namprd12.prod.outlook.com>
- <20190228123120.GA32494@hirez.programming.kicks-ass.net>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v8 0/7] Support Trusted Foundations firmware on Tegra30
+Date: Thu, 28 Feb 2019 17:59:30 +0300
+Message-ID: <20190228145937.27725-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190228123120.GA32494@hirez.programming.kicks-ass.net>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>, Sachin Nikam <Snikam@nvidia.com>
-Cc: Ketan Patil <ketanp@nvidia.com>, "mingo@redhat.com" <mingo@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Bharat Nihalani <bnihalani@nvidia.com>, Bo Yan <byan@nvidia.com>, Sai Gurrappadi <sgurrappadi@nvidia.com>, Thierry Reding <treding@nvidia.com>, Timo Alho <talho@nvidia.com>
+To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
-On 28/02/2019 12:31, Peter Zijlstra wrote:
-> 
-> Clearly, because reading comprehension isn't your strong point:
-> 
-> A: Because it messes up the order in which people normally read text.
-> Q: Why is top-posting such a bad thing?
-> A: Top-posting.
-> Q: What is the most annoying thing in e-mail?
+This patchset adds support for the Trusted Foundations firmware on
+NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have that
+firmware and upstream kernel can't boot on those devices without the
+firmware support. This series was tested on Nexus 7, TF300T and Ouya
+Tegra30 devices.
 
-Sorry we have a few people helping out cleaning up our kernel branches
-and we need to do a better job here indeed!
+Changelog:
 
-> On Thu, Feb 28, 2019 at 12:14:09PM +0000, Sachin Nikam wrote:
-> 
->> This isn't a security fix.
->> However, I see this is kind of code cleanup.
-> 
-> As I've explained previously, it makes conceptual sense to have it in
-> the code, and any halfway sane compiler will observe the same double
-> store and eliminate it in its DCE pass.
+v8:     - Replaced BIT() macro with a definition provided by cache-l2x0.h
+          in the "Support L2 cache maintenance" patch as was suggested by
+          Russell King in the review comment to v7.
 
-OK. Thanks for the feedback. We can agree to drop this and we will try
-to do a better job reviewing this type of thing before hand in future.
+v7:     - Fixed kernel booting with CONFIG_TRUSTED_FOUNDATIONS=n by
+          providing a dummy L2C write_sec implementation in the
+          "Support L2 cache maintenance" patch.
 
-Cheers
-Jon
+        - Minor clean up: no static variables anymore, replaced
+          white spaces with a tab in one place, etc.
+
+        - Added Michał's and Robert's Tested-by/Signed-off-by to the
+          patches.
+
+v6:     - One patch got messed up accidentally in v5, this is fixed now.
+
+        - Squashed "Support L2 cache maintenance done via firmware" patch
+          into the "Add firmware calls..." patch.
+
+        - The l2x0_init() firmware callback is now invoked unconditionally
+          because it is always a NO-OP on T114+ and is a NO-OP on T20/30
+          if firmware node is missed in device-tree, hence there is no
+          need to check the machine's DT compatible as it was done in the
+          previous versions of the series.
+
+v5:     - Fixed machine hanging on disabling D-cache during suspend,
+          turned out there are slight variations in behaviour between
+          firmware version in regards to cache-management. Thanks to
+          Robert Yang for reporting the problem and helping with the
+          solution.
+
+v4:     - Fixed Thumb2-kernel hanging on Tegra20, turned out it was not a
+          good idea to switch CPU into Thumb2 mode right after jumping into
+          the reset handler.
+
+        - Moved LP2-mode-set firmware call invocation to a later stage to
+          better replicate what downstream kernel does. This change was
+          suggested by Robert Yang and fixes system hang on Ouya game
+          console.
+
+        - Added references to the original work made by Michał Mirosław
+          into commit messages of the relevant patches.
+
+v3:     - Implemented suspend-resume support.
+
+        - Reworked arm/firmware/trusted_foundations.c a tad. Now cache
+          is getting properly initialized, cache enabling / disabling is
+          supported.
+
+v2:
+        - The "Don't apply CPU erratas in insecure mode" patch got some
+          cleanup, in particular resolved the messiness in
+          __tegra_cpu_reset_handler_data.
+
+        - Added a comment to tf_cache_write_sec(), justifying the warning
+          message.
+
+Dmitry Osipenko (7):
+  ARM: trusted_foundations: Support L2 cache maintenance
+  ARM: trusted_foundations: Make prepare_idle call to take mode argument
+  ARM: trusted_foundations: Provide information about whether firmware
+    is registered
+  ARM: tegra: Set up L2 cache using Trusted Foundations firmware
+  ARM: tegra: Don't apply CPU erratas in insecure mode
+  ARM: tegra: Always boot CPU in ARM-mode
+  ARM: tegra: Add firmware calls required for suspend-resume on Tegra30
+
+ arch/arm/firmware/trusted_foundations.c    | 75 +++++++++++++++++++++-
+ arch/arm/include/asm/firmware.h            |  2 +-
+ arch/arm/include/asm/trusted_foundations.h | 25 ++++++++
+ arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
+ arch/arm/mach-tegra/pm.c                   | 49 ++++++++++++++
+ arch/arm/mach-tegra/reset-handler.S        | 50 +++++++++++----
+ arch/arm/mach-tegra/reset.c                |  3 +
+ arch/arm/mach-tegra/reset.h                |  9 ++-
+ arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
+ arch/arm/mach-tegra/sleep.S                | 14 ++--
+ arch/arm/mach-tegra/tegra.c                |  2 +
+ 11 files changed, 214 insertions(+), 22 deletions(-)
 
 -- 
-nvpublic
+2.20.1
