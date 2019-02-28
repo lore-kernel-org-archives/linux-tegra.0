@@ -1,73 +1,88 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 3/7] ARM: trusted_foundations: Provide information about whether firmware is registered
-Date: Thu, 28 Feb 2019 16:17:03 +0300
-Message-ID: <20190228131707.2592-4-digetx@gmail.com>
+Subject: [PATCH v7 2/7] ARM: trusted_foundations: Make prepare_idle call to
+ take mode argument
+Date: Thu, 28 Feb 2019 16:17:02 +0300
+Message-ID: <20190228131707.2592-3-digetx@gmail.com>
 References: <20190228131707.2592-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190228131707.2592-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a helper that provides information about whether Trusted Foundations
-firmware operations have been registered.
-
-Tested-by: Robert Yang <decatf@gmail.com>
-Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/firmware/trusted_foundations.c    | 5 +++++
- arch/arm/include/asm/trusted_foundations.h | 7 +++++++
- 2 files changed, 12 insertions(+)
-
-diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-index 188b9a33f72b..ca2e31aa1a17 100644
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/arch/arm/firmware/trusted_foundations.c
-@@ -167,3 +167,8 @@ void of_register_trusted_foundations(void)
- 		panic("Trusted Foundation: missing version-minor property\n");
- 	register_trusted_foundations(&pdata);
- }
-+
-+bool trusted_foundations_registered(void)
-+{
-+	return firmware_ops == &trusted_foundations_ops;
-+}
-diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-index 650cca7435f4..ff6e4cb4ca9d 100644
---- a/arch/arm/include/asm/trusted_foundations.h
-+++ b/arch/arm/include/asm/trusted_foundations.h
-@@ -31,6 +31,7 @@
- #include <linux/of.h>
- #include <linux/cpu.h>
- #include <linux/smp.h>
-+#include <linux/types.h>
- 
- #include <asm/hardware/cache-l2x0.h>
- #include <asm/outercache.h>
-@@ -50,6 +51,7 @@ struct trusted_foundations_platform_data {
- 
- void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
- void of_register_trusted_foundations(void);
-+bool trusted_foundations_registered(void);
- 
- #else /* CONFIG_TRUSTED_FOUNDATIONS */
- static inline void tf_dummy_write_sec(unsigned long val, unsigned int reg)
-@@ -86,6 +88,11 @@ static inline void of_register_trusted_foundations(void)
- 	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
- 		register_trusted_foundations(NULL);
- }
-+
-+static inline bool trusted_foundations_registered(void)
-+{
-+	return false;
-+}
- #endif /* CONFIG_TRUSTED_FOUNDATIONS */
- 
- #endif
--- 
-2.20.1
+VGhlIFRydXN0ZWQgRm91bmRhdGlvbnMgZmlybXdhcmUgY2FsbCB2YXJpZXMgZGVwZW5kaW5nIG9u
+IHRoZSByZXF1aXJlZApzdXNwZW5kLW1vZGUuIE1ha2UgdGhlIGZpcm13YXJlIEFQSSB0byB0YWtl
+IHRoZSBtb2RlIGFyZ3VtZW50IGluIG9yZGVyCnRvIGV4cG9zZSBhbGwgb2YgdGhlIG1vZGVzIHRv
+IGZpcm13YXJlIHVzZXIuCgpUZXN0ZWQtYnk6IFJvYmVydCBZYW5nIDxkZWNhdGZAZ21haWwuY29t
+PgpUZXN0ZWQtYnk6IE1pY2hhxYIgTWlyb3PFgmF3IDxtaXJxLWxpbnV4QHJlcmUucW1xbS5wbD4K
+U2lnbmVkLW9mZi1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgotLS0KIGFy
+Y2gvYXJtL2Zpcm13YXJlL3RydXN0ZWRfZm91bmRhdGlvbnMuYyAgICB8IDI5ICsrKysrKysrKysr
+KysrKysrKysrLS0KIGFyY2gvYXJtL2luY2x1ZGUvYXNtL2Zpcm13YXJlLmggICAgICAgICAgICB8
+ICAyICstCiBhcmNoL2FybS9pbmNsdWRlL2FzbS90cnVzdGVkX2ZvdW5kYXRpb25zLmggfCAgNiAr
+KysrKwogYXJjaC9hcm0vbWFjaC10ZWdyYS9jcHVpZGxlLXRlZ3JhMTE0LmMgICAgIHwgIDMgKyst
+CiA0IGZpbGVzIGNoYW5nZWQsIDM2IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCgpkaWZm
+IC0tZ2l0IGEvYXJjaC9hcm0vZmlybXdhcmUvdHJ1c3RlZF9mb3VuZGF0aW9ucy5jIGIvYXJjaC9h
+cm0vZmlybXdhcmUvdHJ1c3RlZF9mb3VuZGF0aW9ucy5jCmluZGV4IDQwMjgxMDRjZjdiMi4uMTg4
+YjlhMzNmNzJiIDEwMDY0NAotLS0gYS9hcmNoL2FybS9maXJtd2FyZS90cnVzdGVkX2ZvdW5kYXRp
+b25zLmMKKysrIGIvYXJjaC9hcm0vZmlybXdhcmUvdHJ1c3RlZF9mb3VuZGF0aW9ucy5jCkBAIC02
+Nyw5ICs2NywzNCBAQCBzdGF0aWMgaW50IHRmX3NldF9jcHVfYm9vdF9hZGRyKGludCBjcHUsIHVu
+c2lnbmVkIGxvbmcgYm9vdF9hZGRyKQogCXJldHVybiAwOwogfQogCi1zdGF0aWMgaW50IHRmX3By
+ZXBhcmVfaWRsZSh2b2lkKQorc3RhdGljIGludCB0Zl9wcmVwYXJlX2lkbGUodW5zaWduZWQgbG9u
+ZyBtb2RlKQogewotCXRmX2dlbmVyaWNfc21jKFRGX0NQVV9QTSwgVEZfQ1BVX1BNX1MxX05PRkxV
+U0hfTDIsIGNwdV9ib290X2FkZHIpOworCXN3aXRjaCAobW9kZSkgeworCWNhc2UgVEZfUE1fTU9E
+RV9MUDA6CisJCXRmX2dlbmVyaWNfc21jKFRGX0NQVV9QTSwgVEZfQ1BVX1BNX1MzLCBjcHVfYm9v
+dF9hZGRyKTsKKwkJYnJlYWs7CisKKwljYXNlIFRGX1BNX01PREVfTFAxOgorCQl0Zl9nZW5lcmlj
+X3NtYyhURl9DUFVfUE0sIFRGX0NQVV9QTV9TMiwgY3B1X2Jvb3RfYWRkcik7CisJCWJyZWFrOwor
+CisJY2FzZSBURl9QTV9NT0RFX0xQMV9OT19NQ19DTEs6CisJCXRmX2dlbmVyaWNfc21jKFRGX0NQ
+VV9QTSwgVEZfQ1BVX1BNX1MyX05PX01DX0NMSywKKwkJCSAgICAgICBjcHVfYm9vdF9hZGRyKTsK
+KwkJYnJlYWs7CisKKwljYXNlIFRGX1BNX01PREVfTFAyOgorCQl0Zl9nZW5lcmljX3NtYyhURl9D
+UFVfUE0sIFRGX0NQVV9QTV9TMSwgY3B1X2Jvb3RfYWRkcik7CisJCWJyZWFrOworCisJY2FzZSBU
+Rl9QTV9NT0RFX0xQMl9OT0ZMVVNIX0wyOgorCQl0Zl9nZW5lcmljX3NtYyhURl9DUFVfUE0sIFRG
+X0NQVV9QTV9TMV9OT0ZMVVNIX0wyLAorCQkJICAgICAgIGNwdV9ib290X2FkZHIpOworCQlicmVh
+azsKKworCWRlZmF1bHQ6CisJCXJldHVybiAtRUlOVkFMOworCX0KIAogCXJldHVybiAwOwogfQpk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm0vaW5jbHVkZS9hc20vZmlybXdhcmUuaCBiL2FyY2gvYXJtL2lu
+Y2x1ZGUvYXNtL2Zpcm13YXJlLmgKaW5kZXggMzRjMWQ5NmVmNDZkLi42Njk4MjcyYmJjYmYgMTAw
+NjQ0Ci0tLSBhL2FyY2gvYXJtL2luY2x1ZGUvYXNtL2Zpcm13YXJlLmgKKysrIGIvYXJjaC9hcm0v
+aW5jbHVkZS9hc20vZmlybXdhcmUuaApAQCAtMjQsNyArMjQsNyBAQCBzdHJ1Y3QgZmlybXdhcmVf
+b3BzIHsKIAkvKgogCSAqIEluZm9ybSB0aGUgZmlybXdhcmUgd2UgaW50ZW5kIHRvIGVudGVyIENQ
+VSBpZGxlIG1vZGUKIAkgKi8KLQlpbnQgKCpwcmVwYXJlX2lkbGUpKHZvaWQpOworCWludCAoKnBy
+ZXBhcmVfaWRsZSkodW5zaWduZWQgbG9uZyBtb2RlKTsKIAkvKgogCSAqIEVudGVycyBDUFUgaWRs
+ZSBtb2RlCiAJICovCmRpZmYgLS1naXQgYS9hcmNoL2FybS9pbmNsdWRlL2FzbS90cnVzdGVkX2Zv
+dW5kYXRpb25zLmggYi9hcmNoL2FybS9pbmNsdWRlL2FzbS90cnVzdGVkX2ZvdW5kYXRpb25zLmgK
+aW5kZXggMDcxODNjYTQzYjI1Li42NTBjY2E3NDM1ZjQgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2lu
+Y2x1ZGUvYXNtL3RydXN0ZWRfZm91bmRhdGlvbnMuaAorKysgYi9hcmNoL2FybS9pbmNsdWRlL2Fz
+bS90cnVzdGVkX2ZvdW5kYXRpb25zLmgKQEAgLTM1LDYgKzM1LDEyIEBACiAjaW5jbHVkZSA8YXNt
+L2hhcmR3YXJlL2NhY2hlLWwyeDAuaD4KICNpbmNsdWRlIDxhc20vb3V0ZXJjYWNoZS5oPgogCisj
+ZGVmaW5lIFRGX1BNX01PREVfTFAwCQkJMAorI2RlZmluZSBURl9QTV9NT0RFX0xQMQkJCTEKKyNk
+ZWZpbmUgVEZfUE1fTU9ERV9MUDFfTk9fTUNfQ0xLCTIKKyNkZWZpbmUgVEZfUE1fTU9ERV9MUDIJ
+CQkzCisjZGVmaW5lIFRGX1BNX01PREVfTFAyX05PRkxVU0hfTDIJNAorCiBzdHJ1Y3QgdHJ1c3Rl
+ZF9mb3VuZGF0aW9uc19wbGF0Zm9ybV9kYXRhIHsKIAl1bnNpZ25lZCBpbnQgdmVyc2lvbl9tYWpv
+cjsKIAl1bnNpZ25lZCBpbnQgdmVyc2lvbl9taW5vcjsKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21h
+Y2gtdGVncmEvY3B1aWRsZS10ZWdyYTExNC5jIGIvYXJjaC9hcm0vbWFjaC10ZWdyYS9jcHVpZGxl
+LXRlZ3JhMTE0LmMKaW5kZXggZTNmYmNmZWRmODQ1Li4zYjlhZjQ3NjZjZGYgMTAwNjQ0Ci0tLSBh
+L2FyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTExNC5jCisrKyBiL2FyY2gvYXJtL21h
+Y2gtdGVncmEvY3B1aWRsZS10ZWdyYTExNC5jCkBAIC0yNCw2ICsyNCw3IEBACiAjaW5jbHVkZSA8
+YXNtL2NwdWlkbGUuaD4KICNpbmNsdWRlIDxhc20vc21wX3BsYXQuaD4KICNpbmNsdWRlIDxhc20v
+c3VzcGVuZC5oPgorI2luY2x1ZGUgPGFzbS90cnVzdGVkX2ZvdW5kYXRpb25zLmg+CiAjaW5jbHVk
+ZSA8YXNtL3BzY2kuaD4KIAogI2luY2x1ZGUgImNwdWlkbGUuaCIKQEAgLTQ2LDcgKzQ3LDcgQEAg
+c3RhdGljIGludCB0ZWdyYTExNF9pZGxlX3Bvd2VyX2Rvd24oc3RydWN0IGNwdWlkbGVfZGV2aWNl
+ICpkZXYsCiAJdGVncmFfc2V0X2NwdV9pbl9scDIoKTsKIAljcHVfcG1fZW50ZXIoKTsKIAotCWNh
+bGxfZmlybXdhcmVfb3AocHJlcGFyZV9pZGxlKTsKKwljYWxsX2Zpcm13YXJlX29wKHByZXBhcmVf
+aWRsZSwgVEZfUE1fTU9ERV9MUDJfTk9GTFVTSF9MMik7CiAKIAkvKiBEbyBzdXNwZW5kIGJ5IG91
+cnNlbHZlcyBpZiB0aGUgZmlybXdhcmUgZG9lcyBub3QgaW1wbGVtZW50IGl0ICovCiAJaWYgKGNh
+bGxfZmlybXdhcmVfb3AoZG9faWRsZSwgMCkgPT0gLUVOT1NZUykKLS0gCjIuMjAuMQoKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJu
+ZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRw
+Oi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
