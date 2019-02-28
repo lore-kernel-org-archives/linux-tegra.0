@@ -1,105 +1,123 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 0/7] Support Trusted Foundations firmware on Tegra30
-Date: Thu, 28 Feb 2019 17:59:30 +0300
-Message-ID: <20190228145937.27725-1-digetx@gmail.com>
+Subject: [PATCH v8 2/7] ARM: trusted_foundations: Make prepare_idle call to take mode argument
+Date: Thu, 28 Feb 2019 17:59:32 +0300
+Message-ID: <20190228145937.27725-3-digetx@gmail.com>
+References: <20190228145937.27725-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190228145937.27725-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+The Trusted Foundations firmware call varies depending on the required
+suspend-mode. Make the firmware API to take the mode argument in order
+to expose all of the modes to firmware user.
 
-This patchset adds support for the Trusted Foundations firmware on
-NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have that
-firmware and upstream kernel can't boot on those devices without the
-firmware support. This series was tested on Nexus 7, TF300T and Ouya
-Tegra30 devices.
-
-Changelog:
-
-v8:     - Replaced BIT() macro with a definition provided by cache-l2x0.h
-          in the "Support L2 cache maintenance" patch as was suggested by
-          Russell King in the review comment to v7.
-
-v7:     - Fixed kernel booting with CONFIG_TRUSTED_FOUNDATIONS=n by
-          providing a dummy L2C write_sec implementation in the
-          "Support L2 cache maintenance" patch.
-
-        - Minor clean up: no static variables anymore, replaced
-          white spaces with a tab in one place, etc.
-
-        - Added Michał's and Robert's Tested-by/Signed-off-by to the
-          patches.
-
-v6:     - One patch got messed up accidentally in v5, this is fixed now.
-
-        - Squashed "Support L2 cache maintenance done via firmware" patch
-          into the "Add firmware calls..." patch.
-
-        - The l2x0_init() firmware callback is now invoked unconditionally
-          because it is always a NO-OP on T114+ and is a NO-OP on T20/30
-          if firmware node is missed in device-tree, hence there is no
-          need to check the machine's DT compatible as it was done in the
-          previous versions of the series.
-
-v5:     - Fixed machine hanging on disabling D-cache during suspend,
-          turned out there are slight variations in behaviour between
-          firmware version in regards to cache-management. Thanks to
-          Robert Yang for reporting the problem and helping with the
-          solution.
-
-v4:     - Fixed Thumb2-kernel hanging on Tegra20, turned out it was not a
-          good idea to switch CPU into Thumb2 mode right after jumping into
-          the reset handler.
-
-        - Moved LP2-mode-set firmware call invocation to a later stage to
-          better replicate what downstream kernel does. This change was
-          suggested by Robert Yang and fixes system hang on Ouya game
-          console.
-
-        - Added references to the original work made by Michał Mirosław
-          into commit messages of the relevant patches.
-
-v3:     - Implemented suspend-resume support.
-
-        - Reworked arm/firmware/trusted_foundations.c a tad. Now cache
-          is getting properly initialized, cache enabling / disabling is
-          supported.
-
-v2:
-        - The "Don't apply CPU erratas in insecure mode" patch got some
-          cleanup, in particular resolved the messiness in
-          __tegra_cpu_reset_handler_data.
-
-        - Added a comment to tf_cache_write_sec(), justifying the warning
-          message.
-
-Dmitry Osipenko (7):
-  ARM: trusted_foundations: Support L2 cache maintenance
-  ARM: trusted_foundations: Make prepare_idle call to take mode argument
-  ARM: trusted_foundations: Provide information about whether firmware
-    is registered
-  ARM: tegra: Set up L2 cache using Trusted Foundations firmware
-  ARM: tegra: Don't apply CPU erratas in insecure mode
-  ARM: tegra: Always boot CPU in ARM-mode
-  ARM: tegra: Add firmware calls required for suspend-resume on Tegra30
-
- arch/arm/firmware/trusted_foundations.c    | 75 +++++++++++++++++++++-
+Tested-by: Robert Yang <decatf@gmail.com>
+Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/firmware/trusted_foundations.c    | 29 ++++++++++++++++++++--
  arch/arm/include/asm/firmware.h            |  2 +-
- arch/arm/include/asm/trusted_foundations.h | 25 ++++++++
- arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
- arch/arm/mach-tegra/pm.c                   | 49 ++++++++++++++
- arch/arm/mach-tegra/reset-handler.S        | 50 +++++++++++----
- arch/arm/mach-tegra/reset.c                |  3 +
- arch/arm/mach-tegra/reset.h                |  9 ++-
- arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
- arch/arm/mach-tegra/sleep.S                | 14 ++--
- arch/arm/mach-tegra/tegra.c                |  2 +
- 11 files changed, 214 insertions(+), 22 deletions(-)
+ arch/arm/include/asm/trusted_foundations.h |  6 +++++
+ arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 ++-
+ 4 files changed, 36 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+index d7ac05103a52..720904a43c00 100644
+--- a/arch/arm/firmware/trusted_foundations.c
++++ b/arch/arm/firmware/trusted_foundations.c
+@@ -67,9 +67,34 @@ static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 	return 0;
+ }
+ 
+-static int tf_prepare_idle(void)
++static int tf_prepare_idle(unsigned long mode)
+ {
+-	tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2, cpu_boot_addr);
++	switch (mode) {
++	case TF_PM_MODE_LP0:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S3, cpu_boot_addr);
++		break;
++
++	case TF_PM_MODE_LP1:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2, cpu_boot_addr);
++		break;
++
++	case TF_PM_MODE_LP1_NO_MC_CLK:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2_NO_MC_CLK,
++			       cpu_boot_addr);
++		break;
++
++	case TF_PM_MODE_LP2:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1, cpu_boot_addr);
++		break;
++
++	case TF_PM_MODE_LP2_NOFLUSH_L2:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2,
++			       cpu_boot_addr);
++		break;
++
++	default:
++		return -EINVAL;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+index 34c1d96ef46d..6698272bbcbf 100644
+--- a/arch/arm/include/asm/firmware.h
++++ b/arch/arm/include/asm/firmware.h
+@@ -24,7 +24,7 @@ struct firmware_ops {
+ 	/*
+ 	 * Inform the firmware we intend to enter CPU idle mode
+ 	 */
+-	int (*prepare_idle)(void);
++	int (*prepare_idle)(unsigned long mode);
+ 	/*
+ 	 * Enters CPU idle mode
+ 	 */
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index 07183ca43b25..650cca7435f4 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -35,6 +35,12 @@
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/outercache.h>
+ 
++#define TF_PM_MODE_LP0			0
++#define TF_PM_MODE_LP1			1
++#define TF_PM_MODE_LP1_NO_MC_CLK	2
++#define TF_PM_MODE_LP2			3
++#define TF_PM_MODE_LP2_NOFLUSH_L2	4
++
+ struct trusted_foundations_platform_data {
+ 	unsigned int version_major;
+ 	unsigned int version_minor;
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+index e3fbcfedf845..3b9af4766cdf 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra114.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+@@ -24,6 +24,7 @@
+ #include <asm/cpuidle.h>
+ #include <asm/smp_plat.h>
+ #include <asm/suspend.h>
++#include <asm/trusted_foundations.h>
+ #include <asm/psci.h>
+ 
+ #include "cpuidle.h"
+@@ -46,7 +47,7 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+ 	tegra_set_cpu_in_lp2();
+ 	cpu_pm_enter();
+ 
+-	call_firmware_op(prepare_idle);
++	call_firmware_op(prepare_idle, TF_PM_MODE_LP2_NOFLUSH_L2);
+ 
+ 	/* Do suspend by ourselves if the firmware does not implement it */
+ 	if (call_firmware_op(do_idle, 0) == -ENOSYS)
 -- 
 2.20.1
