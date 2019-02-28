@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 4/7] ARM: tegra: Set up L2 cache using Trusted Foundations firmware
-Date: Thu, 28 Feb 2019 17:59:34 +0300
-Message-ID: <20190228145937.27725-5-digetx@gmail.com>
+Subject: [PATCH v8 1/7] ARM: trusted_foundations: Support L2 cache maintenance
+Date: Thu, 28 Feb 2019 17:59:31 +0300
+Message-ID: <20190228145937.27725-2-digetx@gmail.com>
 References: <20190228145937.27725-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -13,38 +13,123 @@ To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.c
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra30 L2 cache should be initialized using firmware call if CPU
-is running in insecure mode. Set up the required outer-cache write_sec()
-callback early during boot using the firmware API, it is always a NO-OP
-on T114+ and is NO-OP on T20/30 if Trusted Foundations firmware node
-isn't present in device-tree.
+Implement L2 cache initialization firmware callback that should be
+invoked early during boot in order to set up the required outer cache
+driver's callbacks and add the callback required for L2X0 maintenance.
+
+Partially based on work done by Michał Mirosław [1].
+
+[1] https://www.spinics.net/lists/arm-kernel/msg594765.html
 
 Tested-by: Robert Yang <decatf@gmail.com>
 Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/firmware/trusted_foundations.c    | 41 ++++++++++++++++++++++
+ arch/arm/include/asm/trusted_foundations.h | 12 +++++++
+ 2 files changed, 53 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index f9587be48235..1e89cfefbf68 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -38,6 +38,7 @@
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/pmc.h>
+diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+index 689e6565abfc..d7ac05103a52 100644
+--- a/arch/arm/firmware/trusted_foundations.c
++++ b/arch/arm/firmware/trusted_foundations.c
+@@ -18,8 +18,15 @@
+ #include <linux/init.h>
+ #include <linux/of.h>
+ #include <asm/firmware.h>
++#include <asm/hardware/cache-l2x0.h>
++#include <asm/outercache.h>
+ #include <asm/trusted_foundations.h>
  
-+#include <asm/firmware.h>
- #include <asm/hardware/cache-l2x0.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/time.h>
-@@ -74,6 +75,7 @@ static void __init tegra_init_early(void)
- {
- 	of_register_trusted_foundations();
- 	tegra_cpu_reset_handler_init();
-+	call_firmware_op(l2x0_init);
++#define TF_CACHE_MAINT		0xfffff100
++
++#define TF_CACHE_ENABLE		1
++#define TF_CACHE_DISABLE	2
++
+ #define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
+ 
+ #define TF_CPU_PM		0xfffffffc
+@@ -67,9 +74,43 @@ static int tf_prepare_idle(void)
+ 	return 0;
  }
  
- static void __init tegra_dt_init_irq(void)
++#ifdef CONFIG_CACHE_L2X0
++static void tf_cache_write_sec(unsigned long val, unsigned int reg)
++{
++	u32 l2x0_way_mask = 0xff;
++
++	switch (reg) {
++	case L2X0_CTRL:
++		if (l2x0_saved_regs.aux_ctrl & L310_AUX_CTRL_ASSOCIATIVITY_16)
++			l2x0_way_mask = 0xffff;
++
++		if (val == L2X0_CTRL_EN)
++			tf_generic_smc(TF_CACHE_MAINT, TF_CACHE_ENABLE,
++				       l2x0_saved_regs.aux_ctrl);
++		else
++			tf_generic_smc(TF_CACHE_MAINT, TF_CACHE_DISABLE,
++				       l2x0_way_mask);
++		break;
++
++	default:
++		break;
++	}
++}
++
++static int tf_init_cache(void)
++{
++	outer_cache.write_sec = tf_cache_write_sec;
++
++	return 0;
++}
++#endif /* CONFIG_CACHE_L2X0 */
++
+ static const struct firmware_ops trusted_foundations_ops = {
+ 	.set_cpu_boot_addr = tf_set_cpu_boot_addr,
+ 	.prepare_idle = tf_prepare_idle,
++#ifdef CONFIG_CACHE_L2X0
++	.l2x0_init = tf_init_cache,
++#endif
+ };
+ 
+ void register_trusted_foundations(struct trusted_foundations_platform_data *pd)
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index 00748350cf72..07183ca43b25 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -32,6 +32,9 @@
+ #include <linux/cpu.h>
+ #include <linux/smp.h>
+ 
++#include <asm/hardware/cache-l2x0.h>
++#include <asm/outercache.h>
++
+ struct trusted_foundations_platform_data {
+ 	unsigned int version_major;
+ 	unsigned int version_minor;
+@@ -43,6 +46,11 @@ void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
+ void of_register_trusted_foundations(void);
+ 
+ #else /* CONFIG_TRUSTED_FOUNDATIONS */
++static inline void tf_dummy_write_sec(unsigned long val, unsigned int reg)
++{
++	if (reg == L2X0_CTRL && val == L2X0_CTRL_EN)
++		pr_err("Trusted Foundations unavailable, ignoring L2C enable-request\n");
++}
+ 
+ static inline void register_trusted_foundations(
+ 				   struct trusted_foundations_platform_data *pd)
+@@ -53,6 +61,10 @@ static inline void register_trusted_foundations(
+ 	 */
+ 	pr_err("No support for Trusted Foundations, continuing in degraded mode.\n");
+ 	pr_err("Secondary processors as well as CPU PM will be disabled.\n");
++#if IS_ENABLED(CONFIG_CACHE_L2X0)
++	pr_err("L2X0 cache will be disabled.\n");
++	outer_cache.write_sec = tf_dummy_write_sec;
++#endif
+ #if IS_ENABLED(CONFIG_SMP)
+ 	setup_max_cpus = 0;
+ #endif
 -- 
 2.20.1
