@@ -1,64 +1,58 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Regression: ASoC: soc-core: clear platform pointers on error
-Date: Fri, 1 Mar 2019 12:07:02 +0000
-Message-ID: <bbc0d37a-5a08-9ce0-58b6-c89d28c558ce@nvidia.com>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: [PATCH 14/17] drm/tegra: Convert to using
+ __drm_atomic_helper_crtc_reset() for reset.
+Date: Fri,  1 Mar 2019 13:56:24 +0100
+Message-ID: <20190301125627.7285-15-maarten.lankhorst@linux.intel.com>
+References: <20190301125627.7285-1-maarten.lankhorst@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Curtis Malainey <cujomalainey@chromium.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190301125627.7285-1-maarten.lankhorst@linux.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark, Curtis,
-
-I am seeing a regression on -next where the soundcard on one of our
-Tegra boards fails to initialise following a probe deferral. The bisect
-points to the commit 78a24e10cd94420f1b4e2dc5923ae7109e2aaba1 ('ASoC: 
-soc-core: clear platform pointers on error') and reverting this on top
-of -next fixes the problem.
-
-Looking at the bootlog from the failure I see ...
-
- tegra-snd-wm8903 sound: ASoC: failed to init link WM8903
-
- tegra-snd-wm8903 sound: snd_soc_register_card failed (-517)
-
- tegra30-i2s 70080400.i2s: DMA channels sourced from device 70080000.ahub
-
- tegra-snd-wm8903 sound: ASoC: Both platform name/of_node are set for WM8903
-
- tegra-snd-wm8903 sound: ASoC: failed to init link WM8903
-
- tegra-snd-wm8903 sound: snd_soc_register_card failed (-22)
-
- tegra-snd-wm8903: probe of sound failed with error -22
-
-
-With the above change I see soc_cleanup_platform() is ever being called
-when the probe is deferred and hence leads to the failure. Note that the
-initial failure, "ASoC: failed to init link WM8903" occurs very early
-in snd_soc_register_card() when initialising the prelinks. 
-
-The following fixes it, but I have not scrutinised the code to see if
-there are other exit points that we need to handle.
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 93d316d5bf8e..6f66beb0c3ae 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2797,6 +2797,7 @@ int snd_soc_register_card(struct snd_soc_card *card)
- 
-                ret = soc_init_dai_link(card, link);
-                if (ret) {
-+                       soc_cleanup_platform(card);
-                        dev_err(card->dev, "ASoC: failed to init link %s\n",
-                                link->name);
-                        mutex_unlock(&client_mutex);
-
-Cheers
-Jon
-
--- 
-nvpublic
+Q29udmVydCB0ZWdyYSB0byB1c2luZyBfX2RybV9hdG9taWNfaGVscGVyX2NydGNfcmVzZXQoKSwg
+aW5zdGVhZCBvZgp3cml0aW5nIGl0cyBvd24gdmVyc2lvbi4gSW5zdGVhZCBvZiBvcGVuIGNvZGlu
+ZyBkZXN0cm95X3N0YXRlKCksCmNhbGwgaXQgZGlyZWN0bHkgZm9yIGZyZWVpbmcgdGhlIG9sZCBz
+dGF0ZS4KClNpZ25lZC1vZmYtYnk6IE1hYXJ0ZW4gTGFua2hvcnN0IDxtYWFydGVuLmxhbmtob3Jz
+dEBsaW51eC5pbnRlbC5jb20+CkNjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21h
+aWwuY29tPgpDYzogSm9uYXRoYW4gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KQ2M6IGxp
+bnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZwotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5j
+IHwgMzAgKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTEg
+aW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL3RlZ3JhL2RjLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwppbmRleCA2MDdhNmVh
+MTdlY2MuLjU3Yzg4ZDc4Y2RhYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rj
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKQEAgLTExNTMsMjUgKzExNTMsNiBA
+QCBzdGF0aWMgdm9pZCB0ZWdyYV9kY19kZXN0cm95KHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKIAlk
+cm1fY3J0Y19jbGVhbnVwKGNydGMpOwogfQogCi1zdGF0aWMgdm9pZCB0ZWdyYV9jcnRjX3Jlc2V0
+KHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKLXsKLQlzdHJ1Y3QgdGVncmFfZGNfc3RhdGUgKnN0YXRl
+OwotCi0JaWYgKGNydGMtPnN0YXRlKQotCQlfX2RybV9hdG9taWNfaGVscGVyX2NydGNfZGVzdHJv
+eV9zdGF0ZShjcnRjLT5zdGF0ZSk7Ci0KLQlrZnJlZShjcnRjLT5zdGF0ZSk7Ci0JY3J0Yy0+c3Rh
+dGUgPSBOVUxMOwotCi0Jc3RhdGUgPSBremFsbG9jKHNpemVvZigqc3RhdGUpLCBHRlBfS0VSTkVM
+KTsKLQlpZiAoc3RhdGUpIHsKLQkJY3J0Yy0+c3RhdGUgPSAmc3RhdGUtPmJhc2U7Ci0JCWNydGMt
+PnN0YXRlLT5jcnRjID0gY3J0YzsKLQl9Ci0KLQlkcm1fY3J0Y192YmxhbmtfcmVzZXQoY3J0Yyk7
+Ci19Ci0KIHN0YXRpYyBzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKgogdGVncmFfY3J0Y19hdG9taWNf
+ZHVwbGljYXRlX3N0YXRlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKIHsKQEAgLTExOTgsNiArMTE3
+OSwxNyBAQCBzdGF0aWMgdm9pZCB0ZWdyYV9jcnRjX2F0b21pY19kZXN0cm95X3N0YXRlKHN0cnVj
+dCBkcm1fY3J0YyAqY3J0YywKIAlrZnJlZShzdGF0ZSk7CiB9CiAKK3N0YXRpYyB2b2lkIHRlZ3Jh
+X2NydGNfcmVzZXQoc3RydWN0IGRybV9jcnRjICpjcnRjKQoreworCXN0cnVjdCB0ZWdyYV9kY19z
+dGF0ZSAqc3RhdGUgPSBremFsbG9jKHNpemVvZigqc3RhdGUpLCBHRlBfS0VSTkVMKTsKKworCWlm
+IChjcnRjLT5zdGF0ZSkKKwkJdGVncmFfY3J0Y19hdG9taWNfZGVzdHJveV9zdGF0ZShjcnRjLCBj
+cnRjLT5zdGF0ZSk7CisKKwlfX2RybV9hdG9taWNfaGVscGVyX2NydGNfcmVzZXQoY3J0YywgJnN0
+YXRlLT5iYXNlKTsKKwlkcm1fY3J0Y192YmxhbmtfcmVzZXQoY3J0Yyk7Cit9CisKICNkZWZpbmUg
+REVCVUdGU19SRUczMihfbmFtZSkgeyAubmFtZSA9ICNfbmFtZSwgLm9mZnNldCA9IF9uYW1lIH0K
+IAogc3RhdGljIGNvbnN0IHN0cnVjdCBkZWJ1Z2ZzX3JlZzMyIHRlZ3JhX2RjX3JlZ3NbXSA9IHsK
+LS0gCjIuMjAuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
