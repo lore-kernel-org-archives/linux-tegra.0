@@ -1,36 +1,38 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1 09/11] mmc: cqhci: add CQHCI_SSC1 register CBC field mask
-Date: Fri, 1 Mar 2019 21:20:23 -0800
-Message-ID: <1551504025-3541-9-git-send-email-skomatineni@nvidia.com>
-References: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v2 7/7] i2c: algo: bit: HACK! add atomic callback
+Date: Sat,  2 Mar 2019 14:47:35 +0100
+Message-ID: <20190302134735.4393-8-wsa+renesas@sang-engineering.com>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, riteshh@codeaurora.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds define for CBC field mask of the register
-CQHCI_SSC1.
+This is only for testing and will work only for bitbanging which is done
+without generating irqs. Not for upstream!
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/mmc/host/cqhci.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/i2c/algos/i2c-algo-bit.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
-index f96d8565cc07..f1dc48c7436f 100644
---- a/drivers/mmc/host/cqhci.h
-+++ b/drivers/mmc/host/cqhci.h
-@@ -88,6 +88,7 @@
+diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
+index 5e5990a83da5..a9c361947de1 100644
+--- a/drivers/i2c/algos/i2c-algo-bit.c
++++ b/drivers/i2c/algos/i2c-algo-bit.c
+@@ -615,8 +615,9 @@ static u32 bit_func(struct i2c_adapter *adap)
+ /* -----exported algorithm data: -------------------------------------	*/
  
- /* send status config 1 */
- #define CQHCI_SSC1			0x40
-+#define CQHCI_SSC1_CBC_MASK		GENMASK(19, 16)
+ const struct i2c_algorithm i2c_bit_algo = {
+-	.master_xfer	= bit_xfer,
+-	.functionality	= bit_func,
++	.master_xfer = bit_xfer,
++	.master_xfer_atomic = bit_xfer,
++	.functionality = bit_func,
+ };
+ EXPORT_SYMBOL(i2c_bit_algo);
  
- /* send status config 2 */
- #define CQHCI_SSC2			0x44
 -- 
-2.7.4
+2.11.0
