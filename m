@@ -1,75 +1,66 @@
-From: Curtis Malainey <cujomalainey@google.com>
-Subject: Re: Regression: ASoC: soc-core: clear platform pointers on error
-Date: Fri, 1 Mar 2019 09:28:59 -0800
-Message-ID: <CAOReqxhYUASVFdrHzKEr8F_NA0CNnJ1Hx51L4ganvcrK=dSCCA@mail.gmail.com>
-References: <bbc0d37a-5a08-9ce0-58b6-c89d28c558ce@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V1 02/11] mmc: sdhci: allow host to specify maximum tuning loops
+Date: Fri, 1 Mar 2019 21:20:16 -0800
+Message-ID: <1551504025-3541-2-git-send-email-skomatineni@nvidia.com>
+References: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bbc0d37a-5a08-9ce0-58b6-c89d28c558ce@nvidia.com>
+In-Reply-To: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, Curtis Malainey <cujomalainey@chromium.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, riteshh@codeaurora.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 1, 2019 at 4:07 AM Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> Hi Mark, Curtis,
->
-> I am seeing a regression on -next where the soundcard on one of our
-> Tegra boards fails to initialise following a probe deferral. The bisect
-> points to the commit 78a24e10cd94420f1b4e2dc5923ae7109e2aaba1 ('ASoC:
-> soc-core: clear platform pointers on error') and reverting this on top
-> of -next fixes the problem.
->
-> Looking at the bootlog from the failure I see ...
->
->  tegra-snd-wm8903 sound: ASoC: failed to init link WM8903
->
->  tegra-snd-wm8903 sound: snd_soc_register_card failed (-517)
->
->  tegra30-i2s 70080400.i2s: DMA channels sourced from device 70080000.ahub
->
->  tegra-snd-wm8903 sound: ASoC: Both platform name/of_node are set for WM8903
->
->  tegra-snd-wm8903 sound: ASoC: failed to init link WM8903
->
->  tegra-snd-wm8903 sound: snd_soc_register_card failed (-22)
->
->  tegra-snd-wm8903: probe of sound failed with error -22
->
->
-> With the above change I see soc_cleanup_platform() is ever being called
-> when the probe is deferred and hence leads to the failure. Note that the
-> initial failure, "ASoC: failed to init link WM8903" occurs very early
-> in snd_soc_register_card() when initialising the prelinks.
->
-> The following fixes it, but I have not scrutinised the code to see if
-> there are other exit points that we need to handle.
->
-You are indeed correct. That should be there. I think I got confused
-when I was doing my initial debugging on our local 4.19 kernel as the
-cleanup code had changed when I was testing on -next and forgot to add
-this to my upstream patch and it wasn't caught in my testing. Thanks
-for catching this. I went back and looked and it appears that is the
-only call to soc_init_dai_link that is outside soc_instantiate_card
-and therefore not caught by the original patch's cleanup routine. Do
-you want to submit a patch and I'll add my signoff?
-> diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-> index 93d316d5bf8e..6f66beb0c3ae 100644
-> --- a/sound/soc/soc-core.c
-> +++ b/sound/soc/soc-core.c
-> @@ -2797,6 +2797,7 @@ int snd_soc_register_card(struct snd_soc_card *card)
->
->                 ret = soc_init_dai_link(card, link);
->                 if (ret) {
-> +                       soc_cleanup_platform(card);
->                         dev_err(card->dev, "ASoC: failed to init link %s\n",
->                                 link->name);
->                         mutex_unlock(&client_mutex);
->
-> Cheers
-> Jon
->
-> --
-> nvpublic
+As per the Host Controller Standard Specification Version 4.20,
+limitation of tuning iteration count is removed as PLL locking
+time can be longer than UHS-1 tuning due to larger PVT fluctuation
+and it will result in increase of tuning iteration to complete the
+tuning.
+
+This patch creates a hook get_max_tuning_loop_count to allow hosts
+to specify maximum tuning iterations and updates execute_tuning
+to use the specified maximum tuning iteration count.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci.c | 7 +++++--
+ drivers/mmc/host/sdhci.h | 1 +
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index a8141ff9be03..e9e919218006 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2366,12 +2366,15 @@ EXPORT_SYMBOL_GPL(sdhci_send_tuning);
+ static int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+ {
+ 	int i;
++	int tuning_loop_count = MAX_TUNING_LOOP;
+ 
++	if (host->ops->get_max_tuning_loop_count)
++		tuning_loop_count = host->ops->get_max_tuning_loop_count(host);
+ 	/*
+ 	 * Issue opcode repeatedly till Execute Tuning is set to 0 or the number
+-	 * of loops reaches 40 times.
++	 * of loops reaches tuning loop count.
+ 	 */
+-	for (i = 0; i < MAX_TUNING_LOOP; i++) {
++	for (i = 0; i < tuning_loop_count; i++) {
+ 		u16 ctrl;
+ 
+ 		sdhci_send_tuning(host, opcode);
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 01002cba1359..c80e0d6f9b10 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -638,6 +638,7 @@ struct sdhci_ops {
+ 	unsigned int    (*get_ro)(struct sdhci_host *host);
+ 	void		(*reset)(struct sdhci_host *host, u8 mask);
+ 	int	(*platform_execute_tuning)(struct sdhci_host *host, u32 opcode);
++	int	(*get_max_tuning_loop_count)(struct sdhci_host *host);
+ 	void	(*set_uhs_signaling)(struct sdhci_host *host, unsigned int uhs);
+ 	void	(*hw_reset)(struct sdhci_host *host);
+ 	void    (*adma_workaround)(struct sdhci_host *host, u32 intmask);
+-- 
+2.7.4
