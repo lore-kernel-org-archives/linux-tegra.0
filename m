@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 1/7] ARM: trusted_foundations: Support L2 cache maintenance
-Date: Sun,  3 Mar 2019 20:12:08 +0300
-Message-ID: <20190303171214.24821-2-digetx@gmail.com>
+Subject: [PATCH v9 2/7] ARM: trusted_foundations: Make prepare_idle call to take mode argument
+Date: Sun,  3 Mar 2019 20:12:09 +0300
+Message-ID: <20190303171214.24821-3-digetx@gmail.com>
 References: <20190303171214.24821-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -13,123 +13,111 @@ To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.c
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Implement L2 cache initialization firmware callback that should be
-invoked early during boot in order to set up the required outer cache
-driver's callbacks and add the callback required for L2X0 maintenance.
-
-Partially based on work done by Michał Mirosław [1].
-
-[1] https://www.spinics.net/lists/arm-kernel/msg594765.html
+The Trusted Foundations firmware call varies depending on the required
+suspend-mode. Make the firmware API to take the mode argument in order
+to expose all of the modes to firmware user.
 
 Tested-by: Robert Yang <decatf@gmail.com>
 Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/firmware/trusted_foundations.c    | 41 ++++++++++++++++++++++
- arch/arm/include/asm/trusted_foundations.h | 12 +++++++
- 2 files changed, 53 insertions(+)
+ arch/arm/firmware/trusted_foundations.c    | 29 ++++++++++++++++++++--
+ arch/arm/include/asm/firmware.h            |  2 +-
+ arch/arm/include/asm/trusted_foundations.h |  6 +++++
+ arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 ++-
+ 4 files changed, 36 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-index 689e6565abfc..d7ac05103a52 100644
+index d7ac05103a52..720904a43c00 100644
 --- a/arch/arm/firmware/trusted_foundations.c
 +++ b/arch/arm/firmware/trusted_foundations.c
-@@ -18,8 +18,15 @@
- #include <linux/init.h>
- #include <linux/of.h>
- #include <asm/firmware.h>
-+#include <asm/hardware/cache-l2x0.h>
-+#include <asm/outercache.h>
- #include <asm/trusted_foundations.h>
- 
-+#define TF_CACHE_MAINT		0xfffff100
-+
-+#define TF_CACHE_ENABLE		1
-+#define TF_CACHE_DISABLE	2
-+
- #define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
- 
- #define TF_CPU_PM		0xfffffffc
-@@ -67,9 +74,43 @@ static int tf_prepare_idle(void)
+@@ -67,9 +67,34 @@ static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
  	return 0;
  }
  
-+#ifdef CONFIG_CACHE_L2X0
-+static void tf_cache_write_sec(unsigned long val, unsigned int reg)
-+{
-+	u32 l2x0_way_mask = 0xff;
+-static int tf_prepare_idle(void)
++static int tf_prepare_idle(unsigned long mode)
+ {
+-	tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2, cpu_boot_addr);
++	switch (mode) {
++	case TF_PM_MODE_LP0:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S3, cpu_boot_addr);
++		break;
 +
-+	switch (reg) {
-+	case L2X0_CTRL:
-+		if (l2x0_saved_regs.aux_ctrl & L310_AUX_CTRL_ASSOCIATIVITY_16)
-+			l2x0_way_mask = 0xffff;
++	case TF_PM_MODE_LP1:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2, cpu_boot_addr);
++		break;
 +
-+		if (val == L2X0_CTRL_EN)
-+			tf_generic_smc(TF_CACHE_MAINT, TF_CACHE_ENABLE,
-+				       l2x0_saved_regs.aux_ctrl);
-+		else
-+			tf_generic_smc(TF_CACHE_MAINT, TF_CACHE_DISABLE,
-+				       l2x0_way_mask);
++	case TF_PM_MODE_LP1_NO_MC_CLK:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2_NO_MC_CLK,
++			       cpu_boot_addr);
++		break;
++
++	case TF_PM_MODE_LP2:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1, cpu_boot_addr);
++		break;
++
++	case TF_PM_MODE_LP2_NOFLUSH_L2:
++		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2,
++			       cpu_boot_addr);
 +		break;
 +
 +	default:
-+		break;
++		return -EINVAL;
 +	}
-+}
-+
-+static int tf_init_cache(void)
-+{
-+	outer_cache.write_sec = tf_cache_write_sec;
-+
-+	return 0;
-+}
-+#endif /* CONFIG_CACHE_L2X0 */
-+
- static const struct firmware_ops trusted_foundations_ops = {
- 	.set_cpu_boot_addr = tf_set_cpu_boot_addr,
- 	.prepare_idle = tf_prepare_idle,
-+#ifdef CONFIG_CACHE_L2X0
-+	.l2x0_init = tf_init_cache,
-+#endif
- };
  
- void register_trusted_foundations(struct trusted_foundations_platform_data *pd)
+ 	return 0;
+ }
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+index 34c1d96ef46d..6698272bbcbf 100644
+--- a/arch/arm/include/asm/firmware.h
++++ b/arch/arm/include/asm/firmware.h
+@@ -24,7 +24,7 @@ struct firmware_ops {
+ 	/*
+ 	 * Inform the firmware we intend to enter CPU idle mode
+ 	 */
+-	int (*prepare_idle)(void);
++	int (*prepare_idle)(unsigned long mode);
+ 	/*
+ 	 * Enters CPU idle mode
+ 	 */
 diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-index 00748350cf72..d5d1b7efa02e 100644
+index d5d1b7efa02e..40445389ffe7 100644
 --- a/arch/arm/include/asm/trusted_foundations.h
 +++ b/arch/arm/include/asm/trusted_foundations.h
-@@ -32,6 +32,9 @@
- #include <linux/cpu.h>
- #include <linux/smp.h>
+@@ -35,6 +35,12 @@
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/outercache.h>
  
-+#include <asm/hardware/cache-l2x0.h>
-+#include <asm/outercache.h>
++#define TF_PM_MODE_LP0			0
++#define TF_PM_MODE_LP1			1
++#define TF_PM_MODE_LP1_NO_MC_CLK	2
++#define TF_PM_MODE_LP2			3
++#define TF_PM_MODE_LP2_NOFLUSH_L2	4
 +
  struct trusted_foundations_platform_data {
  	unsigned int version_major;
  	unsigned int version_minor;
-@@ -43,6 +46,11 @@ void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
- void of_register_trusted_foundations(void);
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+index e3fbcfedf845..3b9af4766cdf 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra114.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+@@ -24,6 +24,7 @@
+ #include <asm/cpuidle.h>
+ #include <asm/smp_plat.h>
+ #include <asm/suspend.h>
++#include <asm/trusted_foundations.h>
+ #include <asm/psci.h>
  
- #else /* CONFIG_TRUSTED_FOUNDATIONS */
-+static inline void tf_dummy_write_sec(unsigned long val, unsigned int reg)
-+{
-+	if (reg == L2X0_CTRL && val == L2X0_CTRL_EN)
-+		pr_err("Trusted Foundations unavailable, ignoring request to enable L2C\n");
-+}
+ #include "cpuidle.h"
+@@ -46,7 +47,7 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+ 	tegra_set_cpu_in_lp2();
+ 	cpu_pm_enter();
  
- static inline void register_trusted_foundations(
- 				   struct trusted_foundations_platform_data *pd)
-@@ -53,6 +61,10 @@ static inline void register_trusted_foundations(
- 	 */
- 	pr_err("No support for Trusted Foundations, continuing in degraded mode.\n");
- 	pr_err("Secondary processors as well as CPU PM will be disabled.\n");
-+#if IS_ENABLED(CONFIG_CACHE_L2X0)
-+	pr_err("L2X0 cache will be disabled.\n");
-+	outer_cache.write_sec = tf_dummy_write_sec;
-+#endif
- #if IS_ENABLED(CONFIG_SMP)
- 	setup_max_cpus = 0;
- #endif
+-	call_firmware_op(prepare_idle);
++	call_firmware_op(prepare_idle, TF_PM_MODE_LP2_NOFLUSH_L2);
+ 
+ 	/* Do suspend by ourselves if the firmware does not implement it */
+ 	if (call_firmware_op(do_idle, 0) == -ENOSYS)
 -- 
 2.20.1
