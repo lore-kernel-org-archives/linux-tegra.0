@@ -1,13 +1,14 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [RFC PATCH v2 0/7] i2c: core: introduce atomic transfers
-Date: Sat, 2 Mar 2019 18:22:08 +0200
-Message-ID: <CAHp75Vc-WYUJgaDPuWUn-_0Cizq=MG7N2cdHJxaEbad+xntcjQ@mail.gmail.com>
-References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2] tegra2/tegra3 automotive clock init
+Date: Sun, 3 Mar 2019 17:14:40 +0300
+Message-ID: <e1fade71-03b4-1c45-efbd-26e25f66ddc7@gmail.com>
+References: <20190301153540.14954-1-kejia.hu@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190301153540.14954-1-kejia.hu@codethink.co.uk>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,70 +18,51 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Phil Reid <preid@electromag.com.au>, Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, linux-tegra@vger.kernel.org, Stefan Lengfeld <contact@stefanchrist.eu>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Peter Rosin <peda@axentia.se>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+To: Kejia Hu <kejia.hu@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Mar 2, 2019 at 3:49 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> So, finally, here is the second RFC for supporting I2C transfers in atomic
-> contexts (i.e. very late). This will need some text because I tried some things
-> on the way but had to discard them. However, I think it is important to have
-> that documented.
-
-> Sorry, no TLDR; text here - I think this topic deserves a few words ;)
-
-Thank you for this work! It was indeed interesting reading.
-And since your series is targetting some exiting use cases, I would
-drop as well academic variants of brain-damaged hw design, I think it
-worth to go.
-
-WRT patches,
-
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-for patches 1-2
-and FWIW for patches 3-4.
-
-For the individual drivers I can't say much, code looks good, but I
-dunno if it's correct or not.
-
->
-> Looking forward to comments, thanks!
->
->    Wolfram
->
->
-> [1] http://patchwork.ozlabs.org/patch/1044789/
->
->
-> Tero Kristo (1):
->   i2c: busses: omap: Add the master_xfer_irqless hook
->
-> Wolfram Sang (6):
->   i2c: apply coding style for struct i2c_adapter
->   i2c: core: use I2C locking behaviour also for SMBUS
->   i2c: core: introduce callbacks for atomic transfers
->   i2c: demux: WIP: handle the new atomic callbacks
->   i2c: tegra-bpmp: convert to use new atomic callbacks
->   i2c: algo: bit: HACK! add atomic callback
->
->  drivers/i2c/algos/i2c-algo-bit.c      |  5 ++-
->  drivers/i2c/busses/i2c-omap.c         | 79 +++++++++++++++++++++++++++++------
->  drivers/i2c/busses/i2c-tegra-bpmp.c   | 27 +++++++++---
->  drivers/i2c/i2c-core-base.c           | 17 ++++----
->  drivers/i2c/i2c-core-smbus.c          | 25 ++++++++---
->  drivers/i2c/i2c-core.h                | 15 +++++++
->  drivers/i2c/muxes/i2c-demux-pinctrl.c |  3 ++
->  include/linux/i2c.h                   | 38 +++++++++++------
->  8 files changed, 162 insertions(+), 47 deletions(-)
->
-> --
-> 2.11.0
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+MDEuMDMuMjAxOSAxODozNSwgS2VqaWEgSHUg0L/QuNGI0LXRgjoKPiBUaGlzIGlzIGEgcmUtaW1w
+bGVtZW50YXRpb24gb2YgYWRkaW5nIGNsb2NrIGluaXRpYWxpemF0aW9uIGZvcgo+IHRlZ3JhMiBh
+bmQgdGVncmEzIGF1dG9tb3RpdmUgZGV2aWNlcyBhY2Nyb2RpbmcgdG8gRG1pdHJ5IE9zaXBlbmtv
+J3MKPiBmZWVkYmFjayBvbiB2ZXJzaW9uIDFbMF0uCj4gCj4gV2UgaGF2ZSBtb3ZlZCB0aGUgaW5p
+dGlhbGl6YXRpb24gZnJvbSB0aGUgY2xvY2sgZHJpdmVyIHRvIGRldmljZQo+IHRyZWUsIGJ1dCBp
+bnN0ZWFkIG9mIHB1dHRpbmcgdGhlbSBpbnRvIGEgZHRzaSBmaWxlLCB3ZSB1c2VkCj4gZHQgb3Zl
+cmxheSB0byBwYXRjaCB0aGUgZGV2aWNlIHRyZWUgYXQgcnVudGltZSwgd2UgYmVsaWV2ZSB0aGUK
+PiBhYmlsaXR5IHRvIGR5bmFtaWNhbGx5IGRldGVjdCB0aGUgY2hpcHNldCBhbmQgYXBwbHkgdGhl
+IHJpZ2h0Cj4gc2V0dGluZ3Mgc2hvdWxkIGJlIHVzZWZ1bCBhY2NvcmRpbmcgdG8gdGhlIGRpc2N1
+c3Npb25bMV0uCj4gCj4gQ2hhbmdlcyBhZ2FpbnN0IHYxOgo+ICAgLSB1c2UgZGV2aWNlIHRyZWUg
+b3ZlcmxheSB0byBpbnRyb2R1Y2UgdGhlIGF1dG9tYXRpdmUgY2xvY2sgY29uZmlncwo+ICAgLSBl
+bmFibGUgZHQgb3ZlcmxheSBmb3IgdGVncmEyMC8zMAo+ICAgLSBtb3ZlIHRoZSBjb25kaXRpb24g
+InNvY19pc190ZWdyYV9hdXRvIiB0byBiZSBhZnRlciBhcHBsaWVkCj4gICAgIGNsb2NrIGluaXQg
+dGFibGUuCj4gCj4gWzBdIGh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXRlZ3Jh
+L21zZzM4MzQ3Lmh0bWwKPiBbMV0gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtl
+cm5lbC9tc2c2NjUzNzMuaHRtbAo+IAoKSGVsbG8gS2VqaWEsCgpUaGFuayB5b3UgdmVyeSBtdWNo
+IGZvciB5b3VyIHdvcmshIE15IHBvaW50IHdhcyB0aGF0IHRoZSBjbG9jay1hc3NpZ25tZW50cyBz
+aG91bGQgYmUgbW92ZWQgaW50byB0aGUgYm9hcmQncyBEVCBmaWxlIG91dCBmcm9tIHRoZSBrZXJu
+ZWwncyBkcml2ZXIsIGluIHRoaXMgc2VyaWVzIHlvdSdyZSBub3QgbW92aW5nIG91dCB0aGUgYm9h
+cmQtc3BlY2lmaWMgcHJvcGVydGllcyBmcm9tIHRoZSBrZXJuZWwgc291cmNlcyBhbmQgZXNzZW50
+aWFsIGRvaW5nIHRoZSBzYW1lIHRoaW5nIHRoYXQgd2FzIGluIHRoZSBwcmV2aW91cyB2ZXJzaW9u
+cyBpbiBhIGRpZmZlcmVudCB3YXkgbm93LiBQbGVhc2UgdGFrZSBhIGxvb2sgYXQgdGVncmExMjQu
+ZHRzaSAvIHRlZ3JhMTI0LW55YW4uZHRzaSAvIHRlZ3JhMTI0LW55YW4tYmlnLmR0cyBmb3IgdGhl
+IGV4YW1wbGUsIGluIHlvdXIgY2FzZSBpdCBjb3VsZCBiZSBzb21ldGhpbmcgc2ltaWxhci4uIHNv
+bWV3aGF0IGxpa2UgdGVncmEyMC5kdHNpIC8gdGVncmEyMC1hdXRvbW90aXZlLmR0c2kgLyB0ZWdy
+YTIwLWF1dG9tb3RpdmUtYm9hcmQuZHRzLiBIZW5jZSB5b3Ugd29uJ3QgbmVlZCB0byB0b3VjaCBr
+ZXJuZWwncyBjb2RlIGF0IGFsbCBhbmQgY291bGQgc3BlY2lmeSBldmVyeXRoaW5nIGluIHRoZSBk
+ZXZpY2UtdHJlZSBzb2xlbHkuCgpJZiB5b3UncmUgdHJ5aW5nIHRvIHdvcmthcm91bmQgdGhlIGNh
+c2Ugd2hlcmUgZGV2aWNlLXRyZWUgaXNuJ3QgZWFzaWx5IGNoYW5nZWFibGUsIHRoZW4gSSdtIGFm
+cmFpZCB0aGlzIGlzIG5vdCBnb2luZyB0byB3b3JrIHdlbGwgaW4gcmVnYXJkcyB0byB1cHN0cmVh
+bWluZyBiZWNhdXNlIHVwc3RyZWFtIG1haW50YWluZXJzIGhhdmUgbm8gaW50ZXJlc3QgaW4gc3Vw
+cG9ydGluZyBkb3duc3RyZWFtLiBJZiBpdCdzIG5vdCB0aGF0IGNhc2UsIHRoZW4gcGxlYXNlIHRy
+eSB0byBleHBsYWluIHdoYXQgeW91J3JlIHRyeWluZyB0byBhY2hpZXZlIGluIG1vcmUgZGV0YWls
+LgoKSW4gb3ZlcmFsbCB5b3UnbGwgbmVlZCB0bzoKCjEpIFVwc3RyZWFtIGRldmljZS10cmVlIG9m
+IHRoZSBib2FyZC4KMikgR2V0IGFsbCBvdGhlciByZXF1aXJlZCBiaXRzIG9mIGtlcm5lbCBkcml2
+ZXJzIHVwc3RyZWFtJ2VkLgozKSBJc3N1ZSBmaXJtd2FyZSB1cGRhdGUgZm9yIHRoZSBkZXZpY2Ug
+dGhhdCB3aWxsIGNvbnRhaW4gbmV3IHVwc3RyZWFtLWNvbmZvcm1hbnQgZGV2aWNlLXRyZWUgYW5k
+IHVwc3RyZWFtIGtlcm5lbCBhdCBvbmNlLiBBbHNvIG5vdGUgdGhhdCBrZXJuZWwgc3VwcG9ydHMg
+YXBwZW5kaW5nIERUQiAoY29tcGlsZWQgZGV2aWNlLXRyZWUgYmluYXJ5KSB0byB0aGUga2VybmVs
+J3MgaW1hZ2UsIGhlbmNlIHlvdSBtYXkgd29ya2Fyb3VuZCBsb2NrZWQtZG93biBib290bG9hZGVy
+IHRoYXQgZG9lc24ndCBhbGxvdyB0byByZXBsYWNlIChvciBkb2Vzbid0IHN1cHBvcnQpIGRldmlj
+ZS10cmVlLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+bGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
+YWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGlu
+dXgtYXJtLWtlcm5lbAo=
