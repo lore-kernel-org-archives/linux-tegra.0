@@ -1,68 +1,107 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2] tegra2/tegra3 automotive clock init
-Date: Sun, 3 Mar 2019 17:14:40 +0300
-Message-ID: <e1fade71-03b4-1c45-efbd-26e25f66ddc7@gmail.com>
-References: <20190301153540.14954-1-kejia.hu@codethink.co.uk>
+Subject: [PATCH v9 0/7] Support Trusted Foundations firmware on Tegra30
+Date: Sun,  3 Mar 2019 20:12:07 +0300
+Message-ID: <20190303171214.24821-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190301153540.14954-1-kejia.hu@codethink.co.uk>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kejia Hu <kejia.hu@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MDEuMDMuMjAxOSAxODozNSwgS2VqaWEgSHUg0L/QuNGI0LXRgjoKPiBUaGlzIGlzIGEgcmUtaW1w
-bGVtZW50YXRpb24gb2YgYWRkaW5nIGNsb2NrIGluaXRpYWxpemF0aW9uIGZvcgo+IHRlZ3JhMiBh
-bmQgdGVncmEzIGF1dG9tb3RpdmUgZGV2aWNlcyBhY2Nyb2RpbmcgdG8gRG1pdHJ5IE9zaXBlbmtv
-J3MKPiBmZWVkYmFjayBvbiB2ZXJzaW9uIDFbMF0uCj4gCj4gV2UgaGF2ZSBtb3ZlZCB0aGUgaW5p
-dGlhbGl6YXRpb24gZnJvbSB0aGUgY2xvY2sgZHJpdmVyIHRvIGRldmljZQo+IHRyZWUsIGJ1dCBp
-bnN0ZWFkIG9mIHB1dHRpbmcgdGhlbSBpbnRvIGEgZHRzaSBmaWxlLCB3ZSB1c2VkCj4gZHQgb3Zl
-cmxheSB0byBwYXRjaCB0aGUgZGV2aWNlIHRyZWUgYXQgcnVudGltZSwgd2UgYmVsaWV2ZSB0aGUK
-PiBhYmlsaXR5IHRvIGR5bmFtaWNhbGx5IGRldGVjdCB0aGUgY2hpcHNldCBhbmQgYXBwbHkgdGhl
-IHJpZ2h0Cj4gc2V0dGluZ3Mgc2hvdWxkIGJlIHVzZWZ1bCBhY2NvcmRpbmcgdG8gdGhlIGRpc2N1
-c3Npb25bMV0uCj4gCj4gQ2hhbmdlcyBhZ2FpbnN0IHYxOgo+ICAgLSB1c2UgZGV2aWNlIHRyZWUg
-b3ZlcmxheSB0byBpbnRyb2R1Y2UgdGhlIGF1dG9tYXRpdmUgY2xvY2sgY29uZmlncwo+ICAgLSBl
-bmFibGUgZHQgb3ZlcmxheSBmb3IgdGVncmEyMC8zMAo+ICAgLSBtb3ZlIHRoZSBjb25kaXRpb24g
-InNvY19pc190ZWdyYV9hdXRvIiB0byBiZSBhZnRlciBhcHBsaWVkCj4gICAgIGNsb2NrIGluaXQg
-dGFibGUuCj4gCj4gWzBdIGh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXRlZ3Jh
-L21zZzM4MzQ3Lmh0bWwKPiBbMV0gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtl
-cm5lbC9tc2c2NjUzNzMuaHRtbAo+IAoKSGVsbG8gS2VqaWEsCgpUaGFuayB5b3UgdmVyeSBtdWNo
-IGZvciB5b3VyIHdvcmshIE15IHBvaW50IHdhcyB0aGF0IHRoZSBjbG9jay1hc3NpZ25tZW50cyBz
-aG91bGQgYmUgbW92ZWQgaW50byB0aGUgYm9hcmQncyBEVCBmaWxlIG91dCBmcm9tIHRoZSBrZXJu
-ZWwncyBkcml2ZXIsIGluIHRoaXMgc2VyaWVzIHlvdSdyZSBub3QgbW92aW5nIG91dCB0aGUgYm9h
-cmQtc3BlY2lmaWMgcHJvcGVydGllcyBmcm9tIHRoZSBrZXJuZWwgc291cmNlcyBhbmQgZXNzZW50
-aWFsIGRvaW5nIHRoZSBzYW1lIHRoaW5nIHRoYXQgd2FzIGluIHRoZSBwcmV2aW91cyB2ZXJzaW9u
-cyBpbiBhIGRpZmZlcmVudCB3YXkgbm93LiBQbGVhc2UgdGFrZSBhIGxvb2sgYXQgdGVncmExMjQu
-ZHRzaSAvIHRlZ3JhMTI0LW55YW4uZHRzaSAvIHRlZ3JhMTI0LW55YW4tYmlnLmR0cyBmb3IgdGhl
-IGV4YW1wbGUsIGluIHlvdXIgY2FzZSBpdCBjb3VsZCBiZSBzb21ldGhpbmcgc2ltaWxhci4uIHNv
-bWV3aGF0IGxpa2UgdGVncmEyMC5kdHNpIC8gdGVncmEyMC1hdXRvbW90aXZlLmR0c2kgLyB0ZWdy
-YTIwLWF1dG9tb3RpdmUtYm9hcmQuZHRzLiBIZW5jZSB5b3Ugd29uJ3QgbmVlZCB0byB0b3VjaCBr
-ZXJuZWwncyBjb2RlIGF0IGFsbCBhbmQgY291bGQgc3BlY2lmeSBldmVyeXRoaW5nIGluIHRoZSBk
-ZXZpY2UtdHJlZSBzb2xlbHkuCgpJZiB5b3UncmUgdHJ5aW5nIHRvIHdvcmthcm91bmQgdGhlIGNh
-c2Ugd2hlcmUgZGV2aWNlLXRyZWUgaXNuJ3QgZWFzaWx5IGNoYW5nZWFibGUsIHRoZW4gSSdtIGFm
-cmFpZCB0aGlzIGlzIG5vdCBnb2luZyB0byB3b3JrIHdlbGwgaW4gcmVnYXJkcyB0byB1cHN0cmVh
-bWluZyBiZWNhdXNlIHVwc3RyZWFtIG1haW50YWluZXJzIGhhdmUgbm8gaW50ZXJlc3QgaW4gc3Vw
-cG9ydGluZyBkb3duc3RyZWFtLiBJZiBpdCdzIG5vdCB0aGF0IGNhc2UsIHRoZW4gcGxlYXNlIHRy
-eSB0byBleHBsYWluIHdoYXQgeW91J3JlIHRyeWluZyB0byBhY2hpZXZlIGluIG1vcmUgZGV0YWls
-LgoKSW4gb3ZlcmFsbCB5b3UnbGwgbmVlZCB0bzoKCjEpIFVwc3RyZWFtIGRldmljZS10cmVlIG9m
-IHRoZSBib2FyZC4KMikgR2V0IGFsbCBvdGhlciByZXF1aXJlZCBiaXRzIG9mIGtlcm5lbCBkcml2
-ZXJzIHVwc3RyZWFtJ2VkLgozKSBJc3N1ZSBmaXJtd2FyZSB1cGRhdGUgZm9yIHRoZSBkZXZpY2Ug
-dGhhdCB3aWxsIGNvbnRhaW4gbmV3IHVwc3RyZWFtLWNvbmZvcm1hbnQgZGV2aWNlLXRyZWUgYW5k
-IHVwc3RyZWFtIGtlcm5lbCBhdCBvbmNlLiBBbHNvIG5vdGUgdGhhdCBrZXJuZWwgc3VwcG9ydHMg
-YXBwZW5kaW5nIERUQiAoY29tcGlsZWQgZGV2aWNlLXRyZWUgYmluYXJ5KSB0byB0aGUga2VybmVs
-J3MgaW1hZ2UsIGhlbmNlIHlvdSBtYXkgd29ya2Fyb3VuZCBsb2NrZWQtZG93biBib290bG9hZGVy
-IHRoYXQgZG9lc24ndCBhbGxvdyB0byByZXBsYWNlIChvciBkb2Vzbid0IHN1cHBvcnQpIGRldmlj
-ZS10cmVlLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-bGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGlu
-dXgtYXJtLWtlcm5lbAo=
+Hello,
+
+This patchset adds support for the Trusted Foundations firmware on
+NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have that
+firmware and upstream kernel can't boot on those devices without the
+firmware support. This series was tested on Nexus 7, TF300T and Ouya
+Tegra30 devices.
+
+Changelog:
+
+v9:     - Rebased on recent linux-next, resolved one conflict.
+
+v8:     - Replaced BIT() macro with a definition provided by cache-l2x0.h
+          in the "Support L2 cache maintenance" patch as was suggested by
+          Russell King in the review comment to v7.
+
+v7:     - Fixed kernel booting with CONFIG_TRUSTED_FOUNDATIONS=n by
+          providing a dummy L2C write_sec implementation in the
+          "Support L2 cache maintenance" patch.
+
+        - Minor clean up: no static variables anymore, replaced
+          white spaces with a tab in one place, etc.
+
+        - Added Michał's and Robert's Tested-by/Signed-off-by to the
+          patches.
+
+v6:     - One patch got messed up accidentally in v5, this is fixed now.
+
+        - Squashed "Support L2 cache maintenance done via firmware" patch
+          into the "Add firmware calls..." patch.
+
+        - The l2x0_init() firmware callback is now invoked unconditionally
+          because it is always a NO-OP on T114+ and is a NO-OP on T20/30
+          if firmware node is missed in device-tree, hence there is no
+          need to check the machine's DT compatible as it was done in the
+          previous versions of the series.
+
+v5:     - Fixed machine hanging on disabling D-cache during suspend,
+          turned out there are slight variations in behaviour between
+          firmware version in regards to cache-management. Thanks to
+          Robert Yang for reporting the problem and helping with the
+          solution.
+
+v4:     - Fixed Thumb2-kernel hanging on Tegra20, turned out it was not a
+          good idea to switch CPU into Thumb2 mode right after jumping into
+          the reset handler.
+
+        - Moved LP2-mode-set firmware call invocation to a later stage to
+          better replicate what downstream kernel does. This change was
+          suggested by Robert Yang and fixes system hang on Ouya game
+          console.
+
+        - Added references to the original work made by Michał Mirosław
+          into commit messages of the relevant patches.
+
+v3:     - Implemented suspend-resume support.
+
+        - Reworked arm/firmware/trusted_foundations.c a tad. Now cache
+          is getting properly initialized, cache enabling / disabling is
+          supported.
+
+v2:
+        - The "Don't apply CPU erratas in insecure mode" patch got some
+          cleanup, in particular resolved the messiness in
+          __tegra_cpu_reset_handler_data.
+
+        - Added a comment to tf_cache_write_sec(), justifying the warning
+          message.
+
+Dmitry Osipenko (7):
+  ARM: trusted_foundations: Support L2 cache maintenance
+  ARM: trusted_foundations: Make prepare_idle call to take mode argument
+  ARM: trusted_foundations: Provide information about whether firmware
+    is registered
+  ARM: tegra: Set up L2 cache using Trusted Foundations firmware
+  ARM: tegra: Don't apply CPU erratas in insecure mode
+  ARM: tegra: Always boot CPU in ARM-mode
+  ARM: tegra: Add firmware calls required for suspend-resume on Tegra30
+
+ arch/arm/firmware/trusted_foundations.c    | 75 +++++++++++++++++++++-
+ arch/arm/include/asm/firmware.h            |  2 +-
+ arch/arm/include/asm/trusted_foundations.h | 25 ++++++++
+ arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
+ arch/arm/mach-tegra/pm.c                   | 49 ++++++++++++++
+ arch/arm/mach-tegra/reset-handler.S        | 50 +++++++++++----
+ arch/arm/mach-tegra/reset.c                |  3 +
+ arch/arm/mach-tegra/reset.h                |  9 ++-
+ arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
+ arch/arm/mach-tegra/sleep.S                | 14 ++--
+ arch/arm/mach-tegra/tegra.c                |  2 +
+ 11 files changed, 214 insertions(+), 22 deletions(-)
+
+-- 
+2.20.1
