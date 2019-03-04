@@ -1,94 +1,154 @@
-From: Prateek Patel <prpatel@nvidia.com>
-Subject: Re: [PATCH] of: reserved_mem: disable kmemleak scan on removed memory
- blocks
-Date: Mon, 4 Mar 2019 16:56:24 +0530
-Message-ID: <b2127d64-0ea1-d7b1-6cf7-fb63e2a140db@nvidia.com>
-References: <1541747389-28544-1-git-send-email-prpatel@nvidia.com>
- <CAL_JsqKOH0SQRXuRW5Y5dmWeUTSxhf2Nmn_0uNLeKXFPRc549Q@mail.gmail.com>
- <39d4161b-bcc0-0f1c-e7a3-5ad552fae724@nvidia.com>
- <CANMq1KDU=rTbwBdej+E0=RaWGQCOJrtKo_0W6kc=EdomNrKzog@mail.gmail.com>
- <CANMq1KDr7QdP3oJR2+w4mh_Gf3JUUNmV8h_KffBRjN7kA3P4EA@mail.gmail.com>
+From: Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [REGRESSION] tegra124: nyan-big: LPAE not working
+Date: Sun, 3 Mar 2019 22:06:00 -0500
+Message-ID: <f6d64a28-7b44-07b1-979a-3f0c48e231cd@gmail.com>
+References: <20190211093829.GA3725@ulmo>
+ <20190211100437.Horde.N5S1UaNJsgMKD0ev6Zb_ckb@_> <20190211104826.GA4927@ulmo>
+ <bedfddd6-77b5-0754-4e4e-caa33d487f2a@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANMq1KDr7QdP3oJR2+w4mh_Gf3JUUNmV8h_KffBRjN7kA3P4EA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <u-boot-bounces@lists.denx.de>
+In-Reply-To: <bedfddd6-77b5-0754-4e4e-caa33d487f2a@wwwdotorg.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Boichat <drinkcat@chromium.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Will Deacon <will.deacon@arm.com>, matt@codeblueprint.co.uk, Catalin Marinas <catalin.marinas@arm.com>, Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, talho@nvidia.com, Stephen Warren <swarren@nvidia.com>, vdumpa@nvidia.com, snikam@nvidia.com, Mike Rapoport <rppt@linux.vnet.ibm.com>
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <treding@nvidia.com>, Tristan Bastian <tristan-c.bastian@gmx.de>
+Cc: gnurou@gmail.com, swarren@nvidia.com, jonathanh@nvidia.com, u-boot@lists.denx.de, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 3/4/2019 4:04 PM, Nicolas Boichat wrote:
-> On Wed, Feb 13, 2019 at 4:56 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
->> On Tue, Jan 22, 2019 at 4:46 PM Prateek Patel <prpatel@nvidia.com> wrote:
->>>
->>> On 11/10/2018 2:58 AM, Rob Herring wrote:
->>>> On Fri, Nov 9, 2018 at 1:09 AM Prateek Patel <prpatel@nvidia.com> wrote:
->>>>> From: Sri Krishna chowdary <schowdary@nvidia.com>
->>>>>
->>>>> Memory reserved with "nomap" DT property in of_reserved_mem.c
->>>>> removes the memory block. The removed memory blocks don't have
->>>>> VA to PA mapping created in kernel page table. Kmemleak scan on
->>>>> removed memory blocks is causing page faults and leading to
->>>>> kernel panic. So, Disable kmemleak scan on the removed memory
->>>>> blocks.
->>>>>
->>>>> Following is the observed crash log:
->>>>> [  154.846370] Unable to handle kernel paging request at virtual address ffffffc070a00000
->>>>> <1>[  154.846576] Mem abort info:
->>>>> <1>[  154.846635]   Exception class = DABT (current EL), IL = 32 bits
->>>>> <1>[  154.846737]   SET = 0, FnV = 0
->>>>> <1>[  154.846796]   EA = 0, S1PTW = 0
->>>>> <1>[  154.846859] Data abort info:
->>>>> <1>[  154.846913]   ISV = 0, ISS = 0x00000006
->>>>> <1>[  154.846983]   CM = 0, WnR = 0
->>>>> <1>[  154.847053] swapper pgtable: 4k pages, 39-bit VAs, pgd = ffffff8009df7000
->>>>> <1>[  154.847228] [ffffffc070a00000] *pgd=000000087fff5803, *pud=000000087fff5803, *pmd=0000000000000000
->>>>> <0>[  154.847408] Internal error: Oops: 96000006 [#1] PREEMPT SMP
->>>>> <4>[  154.847511] Modules linked in: nvs_led_test nvs_bmi160 nvs_cm3218 nvs_bh1730fvc nvi_bmpX80 nvi_ak89xx nvi_mpu cdc_acm uas lr388k7_ts imx268 imx318 imx204 imx274 imx185 lc898212 ov23850 ov10823 ov9281 ov5693 tc358840 pca9570 nvs snd_soc_tegra_machine_driver_mobile lp855x_bl spidev input_cfboost pwm_tegra tegra_cryptodev tegra_se_nvhost tegra_se_elp tegra_se ghash_ce sha2_ce sha1_ce aes_ce_ccm cryptd nvgpu cpufreq_userspace snd_soc_tegra186_alt_dspk snd_soc_tegra186_alt_asrc snd_soc_tegra186_alt_arad snd_soc_tegra210_alt_ope snd_soc_tegra210_alt_mvc snd_soc_tegra210_alt_dmic snd_soc_tegra210_alt_amx snd_soc_tegra210_alt_adx snd_soc_tegra210_alt_afc snd_soc_tegra210_alt_mixer snd_soc_tegra210_alt_i2s snd_soc_tegra210_alt_sfc snd_soc_tegra210_alt_adsp snd_soc_tegra210_alt_admaif sn
- d_soc_tegra210_alt_xbar
->>>>> <4>[  154.882606]  snd_soc_tegra_alt_utils snd_hda_tegra
->>>>> <4>[  154.888133] CPU: 2 PID: 8079 Comm: sh Not tainted 4.14.53-tegra-05132-g9c33465 #2
->>>>> <4>[  154.895983] Hardware name: e3360_1099 (DT)
->>>>> <4>[  154.900447] task: ffffffc7d62dda00 task.stack: ffffff800e2b0000
->>>>> <4>[  154.906502] PC is at scan_block+0x7c/0x148
->>>>> <4>[  154.911234] LR is at scan_block+0x78/0x148
->>>>> <4>[  154.915689] pc : [<ffffff8008271724>] lr : [<ffffff8008271720>] pstate: 804000c9
->>>>> <4>[  154.923290] sp : ffffff800e2b3b80
->>>>> <4>[  154.927228] x29: ffffff800e2b3b80 x28: ffffffc7d62dda00
->>>>> <4>[  154.932999] x27: ffffff8009aaa000 x26: ffffffc070c00000
->>>>> <4>[  154.938769] x25: 00000000000000c0 x24: ffffff8009d90608
->>>>> <4>[  154.944287] x23: ffffffc7dc6c6000 x22: ffffff8009d90000
->>>>> <4>[  154.950320] x21: ffffff8009aeb320 x20: ffffffc070a00ff9
->>>>> <4>[  154.955919] x19: ffffffc070a00000 x18: 00000000bec4c3f2
->>>>> <4>[  154.961438] x17: 0000002224777924 x16: ffffff80080bb0e0
->>>>> <4>[  154.967124] x15: 0000000000000000 x14: 0000000000000f75
->>>>> <4>[  154.973069] x13: 000fffffffffffff x12: ffffffbf1e9f4240
->>>>> <4>[  154.978670] x11: 0000000000000040 x10: 0000000000000ad0
->>>>> <4>[  154.984107] x9 : ffffff800e2b3ab0 x8 : ffffffc7d62de530
->>>>> <4>[  154.989958] x7 : 0000000780000000 x6 : 0000000000000018
->>>>> <4>[  154.995645] x5 : 0000000000000000 x4 : 0000000000000000
->>>>> <4>[  155.001245] x3 : ffffff8009aaa000 x2 : 00000047f6712000
->>>>> <4>[  155.006846] x1 : ffffffc7d1ae6900 x0 : 0000000000000000
-> [snip]
->
-> For reference, there is another patch series that fixes the problem,
-> by Mike Rapoport (https://lore.kernel.org/patchwork/patch/1041790/),
-> already in linux-next (through mmotm):
-> 42c9c0ac24393c of: fix kmemleak crash caused by imbalance in early
-> memory reservation
-> 48ec6d51f7d3f2 of: fix parameters order for call to memblock_find_in_range()
->
-> If anyone is interested, I backported these patch to our 4.19 tree
-> here, and they fix the issue:
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1496707
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1496708
->
-> Thanks,
-
-Thanks Nicolas for the reference,
-
-My acked-by is already present in the patch 
-(https://lore.kernel.org/patchwork/patch/1041790/)
+CgpPbiAyLzExLzIwMTkgNToxMyBQTSwgU3RlcGhlbiBXYXJyZW4gd3JvdGU6Cj4gT24gMi8xMS8x
+OSAzOjQ4IEFNLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4gT24gTW9uLCBGZWIgMTEsIDIwMTkg
+YXQgMTA6MDQ6MzdBTSArMDAwMCwgVHJpc3RhbiBCYXN0aWFuIHdyb3RlOgo+Pj4KPj4+Cj4+Pgo+
+Pj4gVGhpZXJyeSBSZWRpbmcg4oCTIE1vbiwgMTEuIEZlYnJ1YXJ5IDIwMTkgMTA6MzgKPj4+PiBP
+biBNb24sIEZlYiAxMSwgMjAxOSBhdCAwOToyMDozM0FNICswMDAwLCBUcmlzdGFuIEJhc3RpYW4g
+d3JvdGU6Cj4+Pj4+Cj4+Pj4+IFRoaWVycnkgUmVkaW5nIOKAkyBNb24sIDExLiBGZWJydWFyeSAy
+MDE5IDk6NTIKPj4+Pj4+IE9uIFN1biwgRmViIDEwLCAyMDE5IGF0IDA4OjUzOjExUE0gKzAxMDAs
+IFRyaXN0YW4gQmFzdGlhbiB3cm90ZToKPj4+Pj4+PiBUaGllcnJ5LCBkbyB5b3UgaGF2ZSBhbnkg
+bmV3cyBvbiB0aGlzPwo+Pj4+Pj4+Cj4+Pj4+Pj4gSSBkb24ndCB0aGluaywgdGhhdCBnb29nbGUg
+aXMgZ29pbmcgdG8gcHVzaCBhbiB1cGRhdGVkIHZlcnNpb24gb2YKPj4+PiBjb3JlYm9vdAo+Pj4+
+Pj4+IHRvIGVhY2ggbnlhbi1iaWcgZGV2aWNlLi4KPj4+Pj4+PiBTbyByZXZlcnRpbmcgdGhpcyBw
+YXRjaCBhdCBsZWFzdCBmb3IgdGhlIG55YW4gZGV2aWNlcyB3b3VsZCBiZSAKPj4+Pj4+PiB0aGUg
+YmVzdAo+Pj4+IEkKPj4+Pj4+PiB0aGluay4uCj4+Pj4+Pgo+Pj4+Pj4gWWVzLCBJIGFncmVlLiBJ
+IGhhZCBhIGJyaWVmIGNoYXQgd2l0aCBSb2IgSGVycmluZyBhYm91dCB0aGlzIGFuZCAKPj4+Pj4+
+IGhlIHRvbwo+Pj4+Pj4gYWdyZWVzIHRoYXQgd2Ugc2hvdWxkIHJldmVydCBpdCBmb3Igbm93LiBJ
+J2xsIG1ha2UgaXQgYSBtYW51YWwgcmV2ZXJ0Cj4+Pj4+PiBhbmQgYWRkIGEgY29tbWVudCB0byB0
+aGUgZGV2aWNlIHRyZWUgbm9kZSB0aGF0IHdpbGwgaG9wZWZ1bGx5IAo+Pj4+Pj4gYXZvaWQgYW55
+Cj4+Pj4+PiBmdXR1cmUgamFuaXRvcmlhbCAiY2xlYW51cHMiIG9mIHRoaXMgc29ydC4KPj4+Pj4K
+Pj4+Pj4gZ3JlYXQgbmV3cyEgOikKPj4+Pj4KPj4+Pj4+PiBCVFc6IEknbSBub3cgcnVubmluZyB1
+LWJvb3QgbmF0aXZlbHkgYW5kIGl0IHNlZW1zIGxpa2UgdS1ib290IAo+Pj4+Pj4+IGFsd2F5cyBo
+YXMKPj4+PiBhCj4+Pj4+Pj4gcHJvYmxlbSB3aXRoIHRoZSBtZW1vcnkuLgo+Pj4+Pj4+IElmIHUt
+Ym9vdCBpcyB1c2VkIGNoYWlubG9hZGVkIHRvIGNvcmVib290IGl0IGlzIG9ubHkgZ2V0dGluZyAy
+R0Igb2YKPj4+PiBtZW1vcnkKPj4+Pj4+PiBhbmQgcnVubmluZyB1LWJvb3QgbmF0aXZlbHkgYWxz
+byBqdXN0IGdpdmVzIG1lIDJHQi4uCj4+Pj4+Pj4gSSd2ZSB0ZXN0ZWQgdGhhdCB3aXRoIGEga2Vy
+bmVsIHdpdGggIkFSTTogdGVncmE6IEZpeCAKPj4+Pj4+PiB1bml0X2FkZHJlc3NfdnNfcmVnCj4+
+Pj4gRFRDCj4+Pj4+Pj4gd2FybmluZ3MgZm9yIC9tZW1vcnkiIHJldmVydGVkIGFuZCBhbHNvIG9u
+IGEga2VybmVsLCBiZWZvcmUgdGhpcyAKPj4+Pj4+PiBwYXRjaAo+Pj4+IHdhcwo+Pj4+Pj4+IGFw
+cGxpZWQuLgo+Pj4+Pj4KPj4+Pj4+IEl0J3MgcG9zc2libGUgdGhhdCBVLUJvb3QgZG9lc24ndCBz
+dXBwb3J0IExQQUUgYW5kIHRoZXJlZm9yZSBtYXkgCj4+Pj4+PiBub3QgYmUKPj4+Pj4+IGFibGUg
+dG8gdXNlIG1vcmUgdGhhbiB0aGUgMiBHaUIgb2YgbWVtb3J5Lgo+Pj4+Pgo+Pj4+PiBTbyBJIGF0
+IGxlYXN0IGVuYWJsZWQgTFBBRSBpbiB1LWJvb3Qgd2l0aCAiQ09ORklHX0FSTVY3X0xQQUU9eSIg
+YW5kCj4+Pj4+IHRoaXMgd2FzIGZvciBzb21lIHJlYXNvbiBhbHNvIG5lZWRlZCB0byBnZXQgc29t
+ZSBvdXRwdXQgb24gdGhlCj4+Pj4+IGRpc3BsYXkuLgo+Pj4+PiBJJ20gbm90IHN1cmUgd2h5IExQ
+QUUgbmVlZHMgdG8gYWN0aXZhdGVkIGluIHUtYm9vdCBmb3IgZGlzcGxheSBvdXRwdXQKPj4+Pj4g
+b24gdGhlIG55YW4tYmlnLi4KPj4+Pj4gV2l0aG91dCBMUEFFIGVuYWJsZWQgdS1ib290IHdhcyBz
+dGlsbCB3b3JraW5nLCBhbmQgYm9vdGVkIGxpbnV4LCBidXQKPj4+Pj4gdS1ib290IGRpZG4ndCBk
+aXNwbGF5IGFueXRoaW5nIG9uIHNjcmVlbiwgbGludXggdGhlbiBkaWQuLgo+Pj4+Cj4+Pj4gWWVh
+aCwgdGhhdCdzIHN1cnByaXNpbmcuIFBlcmhhcHMgd2l0aG91dCBMUEFFIFUtQm9vdCB0aGlua3Mg
+dGhlcmUncyBub3QKPj4+PiBlbm91Z2ggbWVtb3J5IGZvciB0aGUgZnJhbWVidWZmZXI/IFRoZXJl
+IHNob3VsZCBiZSBwbGVudHksIHNvIG1heWJlCj4+Pj4gdGhlcmUgaXMgc29tZXRoaW5nIGVsc2Ug
+Z29pbmcgb24gaGVyZS4KPj4+Pgo+Pj4+Pj4gSG93ZXZlciwgVS1Cb290IHNob3VsZCBiZQo+Pj4+
+Pj4gYWJsZSB0byB0ZWxsIHRoZSBrZXJuZWwgZXhhY3RseSBob3cgbXVjaCBtZW1vcnkgdGhlIHN5
+c3RlbSBoYXMgYW5kIAo+Pj4+Pj4gcGFzcwo+Pj4+Pj4gdGhhdCBvbiB2aWEgZGV2aWNlIHRyZWUu
+IFRoYXQgc3RpbGwgZG9lcyB3b3JrLCByaWdodD8KPj4+Pj4KPj4+Pj4gSXQgc2VlbXMgbGlrZSB0
+aGlzIGlzIG5vdCB3b3JraW5nLi4KPj4+Pj4gQW5kIHRoaXMgc2VlbXMgdG8gYmUgdGhlIGNhc2Ug
+d2l0aCBib3RoLCB1LWJvb3QgY2hhaW5sb2FkZWQgYW5kCj4+Pj4+IHJ1bm5pbmcgdS1ib290IG5h
+dGl2ZWx5Li4KPj4+Pj4KPj4+Pj4gSSd2ZSB1c2VkIHRoZXNlIHNjcmlwdHMgZm9yIGZsYXNoaW5n
+Ogo+Pj4+PiBnaXRodWIuY29tL05WSURJQS90ZWdyYS11Ym9vdC1mbGFzaGVyLXNjcmlwdHMKPj4+
+Pj4gQW5kIHVzZWQgdGhlIG5vcnJpbiBkZXZpY2Ugc2luY2UgaXQgc2VlbXMgbGlrZSBpdCBpcyB0
+aGUgbnlhbi1iaWcgZGV2Cj4+Pj4+IGJvYXJkPwo+Pj4+PiBCdXQgZ29pbmcgd2l0aCB0aGUgbm9y
+cmluIGRldmljZSBjb25maWcgc2hvdWxkIG5vdCBiZSB0aGUgaXNzdWUgaGVyZQo+Pj4+PiBzaW5j
+ZSB0aGUgcHJvYmxlbSBhbHNvIGV4aXN0cyB3aGVuIGNoYWlubG9hZGluZyB1LWJvb3QsIHJpZ2h0
+Pwo+Pj4+Cj4+Pj4gSXQgY291bGQgYmUgYSBwcm9ibGVtLiBUaGUgbWVtb3J5IGJhbmsgY29uZmln
+dXJhdGlvbiBpcyBzdG9yZWQgaW4gCj4+Pj4gd2hhdCdzCj4+Pj4gY2FsbGVkIGEgQkNUIGFsb25n
+IHdpdGggYSBidW5jaCBvZiBvdGhlciBwYXJhbWV0ZXJzIHRoYXQgZGVmaW5lIHdoYXQgCj4+Pj4g
+dGhlCj4+Pj4gbWVtb3J5IGNvbnRyb2xsZXIgbmVlZHMgdG8gYWNjZXNzIHRoZSBnaXZlbiBtZW1v
+cnkgY2hpcHMuIFNvIGlmIHlvdSd2ZQo+Pj4+IGZsYXNoZWQgYSBCQ1QgdGhhdCdzIGZvciBhIGJv
+YXJkIHdpdGggb25seSAyIEdpQiBvZiBtZW1vcnkgeW91IHdvdWxkIAo+Pj4+IGVuZAo+Pj4+IHVw
+IHdpdGggYSBzeXN0ZW0gdGhhdCBjYW4ndCBhZGRyZXNzIGFueSBtb3JlIHRoYW4gdGhhdC4gSXQn
+cyBzb21ld2hhdAo+Pj4+IHN1cnByaXNpbmcgdGhhdCBtZW1vcnkgYWNjZXNzZXMgd29yayBhdCBh
+bGwgd2l0aCBhIEJDVCB0aGF0J3MgZm9yCj4+Pj4gZGlmZmVyZW50IG1lbW9yeSBjaGlwcywgYnV0
+IHNvbWV0aW1lcyB5b3UgY2FuIGdldCBsdWNreS4KPj4+Pgo+Pj4+IFlvdSBtYXkgd2FudCB0byB0
+cnkgcmVmbGFzaGluZyB3aXRoIHRoZSByaWdodCBCQ1QuIFRoZSBzaW1wbGVzdCB3b3VsZAo+Pj4+
+IHByb2JhYmx5IGJlIHRvIGR1cGxpY2F0ZSB0aGUgY2Jvb3RpbWFnZSBjb25maWd1cmF0aW9uIGZv
+ciBOb3JyaW4gYW5kCj4+Pj4gc3Vic3RpdHV0ZSB0aGUgcmVsZXZhbnQgYml0cyBieSB3aGF0IHlv
+dSBoYXZlIGZyb20gdGhlIENocm9tZWJvb2sgZmxhc2gKPj4+PiB1dGlsaXRpZXMuIExvb2tzIGxp
+a2UgdGhlIEJDVCBpbiByZWFsbHkgdGhlIG9ubHkgdGhpbmcgeW91IGNhbiByZXBsYWNlCj4+Pj4g
+dGhlcmUuIE1ha2Ugc3VyZSB0byByZXBsYWNlIGl0IHdpdGggdGhlIG9uZSB0aGF0IG1hdGNoZXMg
+eW91ciAKPj4+PiBDaHJvbWVib29rCj4+Pj4gYW5kIGl0IHNob3VsZCBnaXZlIHlvdSB0aGUgcmln
+aHQgbWVtb3J5IGJhbmsgY29uZmlndXJhdGlvbi4KPj4+Cj4+PiBJcyB0aGVyZSBhIHdheSB0byBj
+aGVjayBpZiB0aGUgY29ycmVjdCBiY3QgZm9yIG15IDRHQiBtb2RlbCB3YXMgdXNlZD8KPj4+IFdo
+YXQgSSB0cmllZCB3YXMgdG8gZWRpdCB0aGUgZXhpc3RpbmcgYmN0IGNvbmZpZyBmaWxlIG9mIG5v
+cnJpbiBmcm9tIAo+Pj4gaGVyZToKPj4+IGh0dHBzOi8vZ2l0aHViLmNvbS9OVklESUEvY2Jvb3Rp
+bWFnZS1jb25maWdzL2Jsb2IvbWFzdGVyL3RlZ3JhMTI0L252aWRpYS9ub3JyaW4vUE0zNzBfSHlu
+aXhfMkdCX0g1VEM0RzYzQUZSX1BCQV85MjRNSHpfMDEyMTIwMTQuYmN0LmNmZyAKPj4+Cj4+PiBi
+eSByZXBsYWNpbmcgYWxsIGVudHJpZXMgZm9yIGVhY2ggbWVtb3J5IGJhbmsgd2l0aCB0aGUgZW50
+cmllcyBmcm9tIAo+Pj4gaGVyZToKPj4+IGh0dHBzOi8vZ2l0aHViLmNvbS9jb3JlYm9vdC9jb3Jl
+Ym9vdC9ibG9iL21hc3Rlci9zcmMvbWFpbmJvYXJkL2dvb2dsZS9ueWFuX2JpZy9iY3Qvc2RyYW0t
+aHluaXgtNEdCLTc5Mi5pbmMgCj4+Pgo+Pj4KPj4+IEkgYWxzbyBhZGRlZCB0aGUgU0RSQU1bMF0s
+IFNEUkFNWzFdLCBTRFJBTVsyXSwgU0RSQU1bM10gZWFjaCB0aW1lIGluIAo+Pj4gZnJvbnQgb2Yg
+ZWFjaCBsaW5lLi4KPj4+IFRoaXMgYWxzbyBib290ZWQgZm9yIG1lLCBidXQgYWxzbyBqdXN0IGxl
+YXZlcyBtZSB3aXRoIG9ubHkgMkdiIG9mIG15IAo+Pj4gNEdCLi4KPj4+Cj4+PiBBbmQgc2luY2Ug
+dGhpcyBwcm9ibGVtIGFsc28gb2NjdXJzLCB3aGVuIGNoYWlubG9hZGluZyB1LWJvb3QsIHRoaXMg
+Cj4+PiBtdXN0IGJlIGEgcHJvYmxlbSB3aXRoIHUtYm9vdCwgSSB0aGluay4uCj4+Cj4+IE5vdCBu
+ZWNlc3NhcmlseS4gVS1Cb290IHJlYWRzIHRoZSBtZW1vcnkgc2l6ZSBmcm9tIEVNQyByZWdpc3Rl
+cnMgYW5kCj4+IHRob3NlIEVNQyByZWdpc3RlcnMgYXJlIHByb2dyYW1tZWQgYmFzZWQgb24gdGhl
+IGNvbnRlbnRzIG9mIHRoZSBCQ1QuIFNvCj4+IGlmIHRoZSBCQ1QgaXMgd3JvbmcsIHRoZW4gaXQn
+cyBnb2luZyB0byBiZSB3cm9uZyBpcnJlc3BlY3RpdmUgb2Ygd2hhdAo+PiBib290bG9hZGVyIHlv
+dSB1c2UuCj4+Cj4+IFRoYXQgc2FpZCwgSSBkb2VzIGluZGVlZCBsb29rIGFzIGlmIFUtQm9vdCBv
+bmx5IHN1cHBvcnRzIDIgR2lCIG9mIG1lbW9yeQo+PiBvbiAzMi1iaXQgVGVncmEuIGFyY2gvYXJt
+L21hY2gtdGVncmEvYm9hcmQuYyBjb250YWlucyB0aGUgcmVsZXZhbnQgY29kZS4KPj4gSWYgeW91
+IGxvb2sgYXQgZHJhbV9pbml0KCkgaXQgdXNlcyBxdWVyeV9zZHJhbV9zaXplKCkgdG8gZ2V0IHRo
+ZSBzaXplIG9mCj4+IFJBTS4gVGhhdCB3aWxsIGFsbG93IHRvIGNvbnZleSB1cCB0byA0IEdpQiBv
+ZiBSQU0sIGJ1dCB0aGVuIHRoZSBjb2RlIGluCj4+IGJvYXJkMi5jIChzZWUgZHJhbV9pbml0X2Jh
+bmtzaXplKCkpIG9ubHkgdXNlcyBhIHNpbmdsZSBiYW5rIG9uIDMyLWJpdAo+PiBUZWdyYSAoQ09O
+RklHX1BIWVNfNjRCSVQgaXMgb25seSBzZXQgZm9yIDY0LWJpdCBUZWdyYSkuCj4+Cj4+IEFjY29y
+ZGluZyB0byB0aGUgY29tbWVudHMgZm9yIGRyYW1faW5pdF9iYW5rX3NpemUoKSB3ZSBjYW4ndCBz
+dG9yZSB0aGUKPj4gc2Vjb25kIGJhbmsgYmVjYXVzZSB0aGUgLnN0YXJ0IGZpZWxkIGlzIDMyIGJp
+dHMgd2lkZSBhbmQgdGhlcmVmb3JlIGNhbid0Cj4+IHN0b3JlIHRoZSAweDEwMDAwMDAwMCBzdGFy
+dCBhZGRyZXNzIGZvciB0aGUgYmFuay4KPj4KPj4gSXQgc291bmRzIHRvIG1lIGxpa2UgQVJNVjdf
+TFBBRSBzaG91bGQgcGVyaGFwcyBzZWxlY3QgUEhZU182NEJJVCB0byBtYWtlCj4+IHN1cmUgYWxs
+IHRoZSBhcHByb3ByaWF0ZSB2YXJpYWJsZXMgY2FuIHN0b3JlIGFkZHJlc3NlcyBiZXlvbmQgdGhl
+IDMyLWJpdAo+PiBib3VuZGFyeS4gSXQncyBvbmUgdGhpbmcgdG8gbm90IHN1cHBvcnQgPiAyIEdp
+QiBvZiBtZW1vcnkgaW4gVS1Cb290LCBidXQKPj4gaXQncyBhbiBlbnRpcmVseSBkaWZmZXJlbnQg
+c3RvcnkgaWYgd2UgY2FuJ3QgZXZlbiBwYXNzID4gR2lCIG9mIG1lbW9yeQo+PiB0byB0aGUga2Vy
+bmVsIGlmIHRoZXkgZXhpc3QuCj4+Cj4+IFN0ZXBoZW4sIGRvIHlvdSByZW1lbWJlciBpZiB0aGVy
+ZSB3YXMgYW55dGhpbmcgcHJldmVudGluZyB1cyBmcm9tIGdvaW5nCj4+IDY0LWJpdCBmb3IgcGh5
+c19hZGRyX3QgYW5kIHBoeXNfc2l6ZV90IG9uIExQQUUgZW5hYmxlZCBzeXN0ZW1zPwo+IAo+IFdl
+IHByb2JhYmx5IGp1c3QgbmV2ZXIgdHJpZWQgc2luY2Ugd2UgbmV2ZXIgbmVlZGVkIGl0IGFuZC9v
+ciBMUEFFIHdhc24ndCAKPiBhdmFpbGFibGUgKGluIFUtQm9vdCBTVykgd2hlbiBpdCBpbml0aWFs
+bHkgbWlnaHQgaGF2ZSBiZWVuIHVzZWZ1bC4gSSAKPiB3b3VsZCBub3QgYmUgc3VycHJpc2VkIGlm
+IHNvbWUgb2YgdGhlIGxvdy1sZXZlbCBUZWdyYSBjb2RlIGluIFUtQm9vdCAKPiBjb25mbGF0ZXMg
+NjQtYml0IHN1cHBvcnQgd2l0aCBTb0MgYmVpbmcgPj0gVDIxMCwgc28gdGhpbmdzIG1pZ2h0IG5v
+dCBiZSAKPiBhcyBzaW1wbGUgYXMgZW5hYmxpbmcgQ09ORklHX1BIWVNfNjRCSVQsIGJ1dCB5b3Ug
+bmV2ZXIga25vdy4uLgoKR29vZCBFdmVuaW5nLAoKSSBoYXZlIGZpbmFsbHkgYnVpbHQgbWFpbmxp
+bmUgdS1ib290IGZvciB0aGUgcmszMzI4LXJvYy1jYyBib2FyZCwgYW5kIApoYXZlIGFjdHVhbGx5
+IHJ1biBpbnRvIHRoaXMgaXNzdWUgYXMgd2VsbC4KV2l0aCB0aGUgZG93bnN0cmVhbSAyMDE3IHUt
+Ym9vdCwgdGhlIGJvYXJkIGNvcnJlY3RseSByZXBvcnRzIDRHQiB0byB0aGUgCmtlcm5lbC4KV2l0
+aCBtYWlubGluZSwgbm8gbWF0dGVyIHdoYXQgSSB0cnksIHRoZSBrZXJuZWwgb25seSBldmVyIHNl
+ZXMgMkdCLgpJIGRvbid0IHNlZSBhbnkgc2lnbmlmaWNhbnQgZGlmZmVyZW5jZXMgYmV0d2VlbiB0
+aGUgc3Bpbi11cCBjb2RlIGZyb20gCnRoZSBkb3duc3RyZWFtIHUtYm9vdCB0byB0aGUgbWFpbmxp
+bmUgdS1ib290LgoKSSBhbSBzdGFydGluZyB0byB3b25kZXIgaWYgdGhpcyBpcyBhIHUtYm9vdCBy
+ZWdyZXNzaW9uLCBidXQgc2luY2UgbW9zdCAKZW1iZWRkZWQgU0JDcyBkb24ndCB1c2UgNEdCIG9m
+IHJhbSBpdCBkb2VzIG5vdCBjcm9wIHVwIG9mdGVuLgpPZiBjb3Vyc2UgSSBtYXkganVzdCBiZSBt
+aXNzaW5nIHNvbWV0aGluZywgc2luY2UgdGhpcyBpcyBteSBmaXJzdCBmb3JheSAKaW50byB1LWJv
+b3QuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClUtQm9v
+dCBtYWlsaW5nIGxpc3QKVS1Cb290QGxpc3RzLmRlbnguZGUKaHR0cHM6Ly9saXN0cy5kZW54LmRl
+L2xpc3RpbmZvL3UtYm9vdAo=
