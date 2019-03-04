@@ -1,46 +1,37 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] ASoC: soc-core: Fix probe deferral following prelink failure
-Date: Mon, 4 Mar 2019 13:31:14 +0000
-Message-ID: <1551706274-22571-1-git-send-email-jonathanh@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
+Date: Mon, 4 Mar 2019 16:42:10 +0300
+Message-ID: <9171e4f6-1ede-ab3a-caa6-83a2d9033650@gmail.com>
+References: <20190224153222.8142-1-digetx@gmail.com>
+ <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
+ <20190304081857.GE21084@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190304081857.GE21084@pdeschrijver-desktop.Nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Curtis Malainey <cujomalainey@google.com>, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jonathan Hunter <jonathanh@nvidia.com>
+04.03.2019 11:18, Peter De Schrijver пишет:
+> On Wed, Feb 27, 2019 at 06:15:04PM +0300, Dmitry Osipenko wrote:
+>> 24.02.2019 18:32, Dmitry Osipenko пишет:
+>>> Initially Common Clock Framework isn't aware of the clock-enable status,
+>>> this results in enabling of clocks that were enabled by bootloader. This
+>>> is not a big deal for a regular clock-gates, but for PLL's it may have
+>>> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+>>> clock) may result in extra long period of PLL re-locking.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>
+>> Peter (and everyone else), yours r-b and ACK will be appreciated since you kinda already took a look at this patch in the past and were okay with it (IIRC, we had some brief discussion on the #tegra IRC a few months ago), thanks. 
+>>
+> 
+> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
 
-Commit 78a24e10cd94 ("ASoC: soc-core: clear platform pointers on error")
-re-worked the clean-up of any platform pointers that may have been
-initialised by the function snd_soc_init_platform(). This commit missed
-one error path where if any of the prelinks for a soundcard failed to
-initialise, then these platform pointers would not be cleaned-up. This
-then prevents the soundcard from being initialised following a probe
-deferral when any of the soundcard prelinks cannot be found.
-
-Fix this by ensuring that soc_cleanup_platform() is called when
-initialising the soundcard prelinks fails.
-
-Fixes: 78a24e10cd94 ("ASoC: soc-core: clear platform pointers on error")
-
-Signed-off-by: Jonathan Hunter <jonathanh@nvidia.com>
----
- sound/soc/soc-core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 93d316d5bf8e..5a5764dba147 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2797,6 +2797,7 @@ int snd_soc_register_card(struct snd_soc_card *card)
- 
- 		ret = soc_init_dai_link(card, link);
- 		if (ret) {
-+			soc_cleanup_platform(card);
- 			dev_err(card->dev, "ASoC: failed to init link %s\n",
- 				link->name);
- 			mutex_unlock(&client_mutex);
--- 
-1.9.1
+Awesome, thanks again!
