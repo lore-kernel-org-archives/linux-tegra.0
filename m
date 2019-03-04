@@ -1,154 +1,107 @@
-From: Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [REGRESSION] tegra124: nyan-big: LPAE not working
-Date: Sun, 3 Mar 2019 22:06:00 -0500
-Message-ID: <f6d64a28-7b44-07b1-979a-3f0c48e231cd@gmail.com>
-References: <20190211093829.GA3725@ulmo>
- <20190211100437.Horde.N5S1UaNJsgMKD0ev6Zb_ckb@_> <20190211104826.GA4927@ulmo>
- <bedfddd6-77b5-0754-4e4e-caa33d487f2a@wwwdotorg.org>
+From: Timo Alho <talho@nvidia.com>
+Subject: Re: [RFC PATCH v2 6/7] i2c: tegra-bpmp: convert to use new atomic
+ callbacks
+Date: Mon, 4 Mar 2019 14:25:33 +0200
+Message-ID: <66ad8bfa-12fc-3bda-a2f0-55a9f82e82a2@nvidia.com>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+ <20190302134735.4393-7-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <bedfddd6-77b5-0754-4e4e-caa33d487f2a@wwwdotorg.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190302134735.4393-7-wsa+renesas@sang-engineering.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <treding@nvidia.com>, Tristan Bastian <tristan-c.bastian@gmx.de>
-Cc: gnurou@gmail.com, swarren@nvidia.com, jonathanh@nvidia.com, u-boot@lists.denx.de, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-CgpPbiAyLzExLzIwMTkgNToxMyBQTSwgU3RlcGhlbiBXYXJyZW4gd3JvdGU6Cj4gT24gMi8xMS8x
-OSAzOjQ4IEFNLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4gT24gTW9uLCBGZWIgMTEsIDIwMTkg
-YXQgMTA6MDQ6MzdBTSArMDAwMCwgVHJpc3RhbiBCYXN0aWFuIHdyb3RlOgo+Pj4KPj4+Cj4+Pgo+
-Pj4gVGhpZXJyeSBSZWRpbmcg4oCTIE1vbiwgMTEuIEZlYnJ1YXJ5IDIwMTkgMTA6MzgKPj4+PiBP
-biBNb24sIEZlYiAxMSwgMjAxOSBhdCAwOToyMDozM0FNICswMDAwLCBUcmlzdGFuIEJhc3RpYW4g
-d3JvdGU6Cj4+Pj4+Cj4+Pj4+IFRoaWVycnkgUmVkaW5nIOKAkyBNb24sIDExLiBGZWJydWFyeSAy
-MDE5IDk6NTIKPj4+Pj4+IE9uIFN1biwgRmViIDEwLCAyMDE5IGF0IDA4OjUzOjExUE0gKzAxMDAs
-IFRyaXN0YW4gQmFzdGlhbiB3cm90ZToKPj4+Pj4+PiBUaGllcnJ5LCBkbyB5b3UgaGF2ZSBhbnkg
-bmV3cyBvbiB0aGlzPwo+Pj4+Pj4+Cj4+Pj4+Pj4gSSBkb24ndCB0aGluaywgdGhhdCBnb29nbGUg
-aXMgZ29pbmcgdG8gcHVzaCBhbiB1cGRhdGVkIHZlcnNpb24gb2YKPj4+PiBjb3JlYm9vdAo+Pj4+
-Pj4+IHRvIGVhY2ggbnlhbi1iaWcgZGV2aWNlLi4KPj4+Pj4+PiBTbyByZXZlcnRpbmcgdGhpcyBw
-YXRjaCBhdCBsZWFzdCBmb3IgdGhlIG55YW4gZGV2aWNlcyB3b3VsZCBiZSAKPj4+Pj4+PiB0aGUg
-YmVzdAo+Pj4+IEkKPj4+Pj4+PiB0aGluay4uCj4+Pj4+Pgo+Pj4+Pj4gWWVzLCBJIGFncmVlLiBJ
-IGhhZCBhIGJyaWVmIGNoYXQgd2l0aCBSb2IgSGVycmluZyBhYm91dCB0aGlzIGFuZCAKPj4+Pj4+
-IGhlIHRvbwo+Pj4+Pj4gYWdyZWVzIHRoYXQgd2Ugc2hvdWxkIHJldmVydCBpdCBmb3Igbm93LiBJ
-J2xsIG1ha2UgaXQgYSBtYW51YWwgcmV2ZXJ0Cj4+Pj4+PiBhbmQgYWRkIGEgY29tbWVudCB0byB0
-aGUgZGV2aWNlIHRyZWUgbm9kZSB0aGF0IHdpbGwgaG9wZWZ1bGx5IAo+Pj4+Pj4gYXZvaWQgYW55
-Cj4+Pj4+PiBmdXR1cmUgamFuaXRvcmlhbCAiY2xlYW51cHMiIG9mIHRoaXMgc29ydC4KPj4+Pj4K
-Pj4+Pj4gZ3JlYXQgbmV3cyEgOikKPj4+Pj4KPj4+Pj4+PiBCVFc6IEknbSBub3cgcnVubmluZyB1
-LWJvb3QgbmF0aXZlbHkgYW5kIGl0IHNlZW1zIGxpa2UgdS1ib290IAo+Pj4+Pj4+IGFsd2F5cyBo
-YXMKPj4+PiBhCj4+Pj4+Pj4gcHJvYmxlbSB3aXRoIHRoZSBtZW1vcnkuLgo+Pj4+Pj4+IElmIHUt
-Ym9vdCBpcyB1c2VkIGNoYWlubG9hZGVkIHRvIGNvcmVib290IGl0IGlzIG9ubHkgZ2V0dGluZyAy
-R0Igb2YKPj4+PiBtZW1vcnkKPj4+Pj4+PiBhbmQgcnVubmluZyB1LWJvb3QgbmF0aXZlbHkgYWxz
-byBqdXN0IGdpdmVzIG1lIDJHQi4uCj4+Pj4+Pj4gSSd2ZSB0ZXN0ZWQgdGhhdCB3aXRoIGEga2Vy
-bmVsIHdpdGggIkFSTTogdGVncmE6IEZpeCAKPj4+Pj4+PiB1bml0X2FkZHJlc3NfdnNfcmVnCj4+
-Pj4gRFRDCj4+Pj4+Pj4gd2FybmluZ3MgZm9yIC9tZW1vcnkiIHJldmVydGVkIGFuZCBhbHNvIG9u
-IGEga2VybmVsLCBiZWZvcmUgdGhpcyAKPj4+Pj4+PiBwYXRjaAo+Pj4+IHdhcwo+Pj4+Pj4+IGFw
-cGxpZWQuLgo+Pj4+Pj4KPj4+Pj4+IEl0J3MgcG9zc2libGUgdGhhdCBVLUJvb3QgZG9lc24ndCBz
-dXBwb3J0IExQQUUgYW5kIHRoZXJlZm9yZSBtYXkgCj4+Pj4+PiBub3QgYmUKPj4+Pj4+IGFibGUg
-dG8gdXNlIG1vcmUgdGhhbiB0aGUgMiBHaUIgb2YgbWVtb3J5Lgo+Pj4+Pgo+Pj4+PiBTbyBJIGF0
-IGxlYXN0IGVuYWJsZWQgTFBBRSBpbiB1LWJvb3Qgd2l0aCAiQ09ORklHX0FSTVY3X0xQQUU9eSIg
-YW5kCj4+Pj4+IHRoaXMgd2FzIGZvciBzb21lIHJlYXNvbiBhbHNvIG5lZWRlZCB0byBnZXQgc29t
-ZSBvdXRwdXQgb24gdGhlCj4+Pj4+IGRpc3BsYXkuLgo+Pj4+PiBJJ20gbm90IHN1cmUgd2h5IExQ
-QUUgbmVlZHMgdG8gYWN0aXZhdGVkIGluIHUtYm9vdCBmb3IgZGlzcGxheSBvdXRwdXQKPj4+Pj4g
-b24gdGhlIG55YW4tYmlnLi4KPj4+Pj4gV2l0aG91dCBMUEFFIGVuYWJsZWQgdS1ib290IHdhcyBz
-dGlsbCB3b3JraW5nLCBhbmQgYm9vdGVkIGxpbnV4LCBidXQKPj4+Pj4gdS1ib290IGRpZG4ndCBk
-aXNwbGF5IGFueXRoaW5nIG9uIHNjcmVlbiwgbGludXggdGhlbiBkaWQuLgo+Pj4+Cj4+Pj4gWWVh
-aCwgdGhhdCdzIHN1cnByaXNpbmcuIFBlcmhhcHMgd2l0aG91dCBMUEFFIFUtQm9vdCB0aGlua3Mg
-dGhlcmUncyBub3QKPj4+PiBlbm91Z2ggbWVtb3J5IGZvciB0aGUgZnJhbWVidWZmZXI/IFRoZXJl
-IHNob3VsZCBiZSBwbGVudHksIHNvIG1heWJlCj4+Pj4gdGhlcmUgaXMgc29tZXRoaW5nIGVsc2Ug
-Z29pbmcgb24gaGVyZS4KPj4+Pgo+Pj4+Pj4gSG93ZXZlciwgVS1Cb290IHNob3VsZCBiZQo+Pj4+
-Pj4gYWJsZSB0byB0ZWxsIHRoZSBrZXJuZWwgZXhhY3RseSBob3cgbXVjaCBtZW1vcnkgdGhlIHN5
-c3RlbSBoYXMgYW5kIAo+Pj4+Pj4gcGFzcwo+Pj4+Pj4gdGhhdCBvbiB2aWEgZGV2aWNlIHRyZWUu
-IFRoYXQgc3RpbGwgZG9lcyB3b3JrLCByaWdodD8KPj4+Pj4KPj4+Pj4gSXQgc2VlbXMgbGlrZSB0
-aGlzIGlzIG5vdCB3b3JraW5nLi4KPj4+Pj4gQW5kIHRoaXMgc2VlbXMgdG8gYmUgdGhlIGNhc2Ug
-d2l0aCBib3RoLCB1LWJvb3QgY2hhaW5sb2FkZWQgYW5kCj4+Pj4+IHJ1bm5pbmcgdS1ib290IG5h
-dGl2ZWx5Li4KPj4+Pj4KPj4+Pj4gSSd2ZSB1c2VkIHRoZXNlIHNjcmlwdHMgZm9yIGZsYXNoaW5n
-Ogo+Pj4+PiBnaXRodWIuY29tL05WSURJQS90ZWdyYS11Ym9vdC1mbGFzaGVyLXNjcmlwdHMKPj4+
-Pj4gQW5kIHVzZWQgdGhlIG5vcnJpbiBkZXZpY2Ugc2luY2UgaXQgc2VlbXMgbGlrZSBpdCBpcyB0
-aGUgbnlhbi1iaWcgZGV2Cj4+Pj4+IGJvYXJkPwo+Pj4+PiBCdXQgZ29pbmcgd2l0aCB0aGUgbm9y
-cmluIGRldmljZSBjb25maWcgc2hvdWxkIG5vdCBiZSB0aGUgaXNzdWUgaGVyZQo+Pj4+PiBzaW5j
-ZSB0aGUgcHJvYmxlbSBhbHNvIGV4aXN0cyB3aGVuIGNoYWlubG9hZGluZyB1LWJvb3QsIHJpZ2h0
-Pwo+Pj4+Cj4+Pj4gSXQgY291bGQgYmUgYSBwcm9ibGVtLiBUaGUgbWVtb3J5IGJhbmsgY29uZmln
-dXJhdGlvbiBpcyBzdG9yZWQgaW4gCj4+Pj4gd2hhdCdzCj4+Pj4gY2FsbGVkIGEgQkNUIGFsb25n
-IHdpdGggYSBidW5jaCBvZiBvdGhlciBwYXJhbWV0ZXJzIHRoYXQgZGVmaW5lIHdoYXQgCj4+Pj4g
-dGhlCj4+Pj4gbWVtb3J5IGNvbnRyb2xsZXIgbmVlZHMgdG8gYWNjZXNzIHRoZSBnaXZlbiBtZW1v
-cnkgY2hpcHMuIFNvIGlmIHlvdSd2ZQo+Pj4+IGZsYXNoZWQgYSBCQ1QgdGhhdCdzIGZvciBhIGJv
-YXJkIHdpdGggb25seSAyIEdpQiBvZiBtZW1vcnkgeW91IHdvdWxkIAo+Pj4+IGVuZAo+Pj4+IHVw
-IHdpdGggYSBzeXN0ZW0gdGhhdCBjYW4ndCBhZGRyZXNzIGFueSBtb3JlIHRoYW4gdGhhdC4gSXQn
-cyBzb21ld2hhdAo+Pj4+IHN1cnByaXNpbmcgdGhhdCBtZW1vcnkgYWNjZXNzZXMgd29yayBhdCBh
-bGwgd2l0aCBhIEJDVCB0aGF0J3MgZm9yCj4+Pj4gZGlmZmVyZW50IG1lbW9yeSBjaGlwcywgYnV0
-IHNvbWV0aW1lcyB5b3UgY2FuIGdldCBsdWNreS4KPj4+Pgo+Pj4+IFlvdSBtYXkgd2FudCB0byB0
-cnkgcmVmbGFzaGluZyB3aXRoIHRoZSByaWdodCBCQ1QuIFRoZSBzaW1wbGVzdCB3b3VsZAo+Pj4+
-IHByb2JhYmx5IGJlIHRvIGR1cGxpY2F0ZSB0aGUgY2Jvb3RpbWFnZSBjb25maWd1cmF0aW9uIGZv
-ciBOb3JyaW4gYW5kCj4+Pj4gc3Vic3RpdHV0ZSB0aGUgcmVsZXZhbnQgYml0cyBieSB3aGF0IHlv
-dSBoYXZlIGZyb20gdGhlIENocm9tZWJvb2sgZmxhc2gKPj4+PiB1dGlsaXRpZXMuIExvb2tzIGxp
-a2UgdGhlIEJDVCBpbiByZWFsbHkgdGhlIG9ubHkgdGhpbmcgeW91IGNhbiByZXBsYWNlCj4+Pj4g
-dGhlcmUuIE1ha2Ugc3VyZSB0byByZXBsYWNlIGl0IHdpdGggdGhlIG9uZSB0aGF0IG1hdGNoZXMg
-eW91ciAKPj4+PiBDaHJvbWVib29rCj4+Pj4gYW5kIGl0IHNob3VsZCBnaXZlIHlvdSB0aGUgcmln
-aHQgbWVtb3J5IGJhbmsgY29uZmlndXJhdGlvbi4KPj4+Cj4+PiBJcyB0aGVyZSBhIHdheSB0byBj
-aGVjayBpZiB0aGUgY29ycmVjdCBiY3QgZm9yIG15IDRHQiBtb2RlbCB3YXMgdXNlZD8KPj4+IFdo
-YXQgSSB0cmllZCB3YXMgdG8gZWRpdCB0aGUgZXhpc3RpbmcgYmN0IGNvbmZpZyBmaWxlIG9mIG5v
-cnJpbiBmcm9tIAo+Pj4gaGVyZToKPj4+IGh0dHBzOi8vZ2l0aHViLmNvbS9OVklESUEvY2Jvb3Rp
-bWFnZS1jb25maWdzL2Jsb2IvbWFzdGVyL3RlZ3JhMTI0L252aWRpYS9ub3JyaW4vUE0zNzBfSHlu
-aXhfMkdCX0g1VEM0RzYzQUZSX1BCQV85MjRNSHpfMDEyMTIwMTQuYmN0LmNmZyAKPj4+Cj4+PiBi
-eSByZXBsYWNpbmcgYWxsIGVudHJpZXMgZm9yIGVhY2ggbWVtb3J5IGJhbmsgd2l0aCB0aGUgZW50
-cmllcyBmcm9tIAo+Pj4gaGVyZToKPj4+IGh0dHBzOi8vZ2l0aHViLmNvbS9jb3JlYm9vdC9jb3Jl
-Ym9vdC9ibG9iL21hc3Rlci9zcmMvbWFpbmJvYXJkL2dvb2dsZS9ueWFuX2JpZy9iY3Qvc2RyYW0t
-aHluaXgtNEdCLTc5Mi5pbmMgCj4+Pgo+Pj4KPj4+IEkgYWxzbyBhZGRlZCB0aGUgU0RSQU1bMF0s
-IFNEUkFNWzFdLCBTRFJBTVsyXSwgU0RSQU1bM10gZWFjaCB0aW1lIGluIAo+Pj4gZnJvbnQgb2Yg
-ZWFjaCBsaW5lLi4KPj4+IFRoaXMgYWxzbyBib290ZWQgZm9yIG1lLCBidXQgYWxzbyBqdXN0IGxl
-YXZlcyBtZSB3aXRoIG9ubHkgMkdiIG9mIG15IAo+Pj4gNEdCLi4KPj4+Cj4+PiBBbmQgc2luY2Ug
-dGhpcyBwcm9ibGVtIGFsc28gb2NjdXJzLCB3aGVuIGNoYWlubG9hZGluZyB1LWJvb3QsIHRoaXMg
-Cj4+PiBtdXN0IGJlIGEgcHJvYmxlbSB3aXRoIHUtYm9vdCwgSSB0aGluay4uCj4+Cj4+IE5vdCBu
-ZWNlc3NhcmlseS4gVS1Cb290IHJlYWRzIHRoZSBtZW1vcnkgc2l6ZSBmcm9tIEVNQyByZWdpc3Rl
-cnMgYW5kCj4+IHRob3NlIEVNQyByZWdpc3RlcnMgYXJlIHByb2dyYW1tZWQgYmFzZWQgb24gdGhl
-IGNvbnRlbnRzIG9mIHRoZSBCQ1QuIFNvCj4+IGlmIHRoZSBCQ1QgaXMgd3JvbmcsIHRoZW4gaXQn
-cyBnb2luZyB0byBiZSB3cm9uZyBpcnJlc3BlY3RpdmUgb2Ygd2hhdAo+PiBib290bG9hZGVyIHlv
-dSB1c2UuCj4+Cj4+IFRoYXQgc2FpZCwgSSBkb2VzIGluZGVlZCBsb29rIGFzIGlmIFUtQm9vdCBv
-bmx5IHN1cHBvcnRzIDIgR2lCIG9mIG1lbW9yeQo+PiBvbiAzMi1iaXQgVGVncmEuIGFyY2gvYXJt
-L21hY2gtdGVncmEvYm9hcmQuYyBjb250YWlucyB0aGUgcmVsZXZhbnQgY29kZS4KPj4gSWYgeW91
-IGxvb2sgYXQgZHJhbV9pbml0KCkgaXQgdXNlcyBxdWVyeV9zZHJhbV9zaXplKCkgdG8gZ2V0IHRo
-ZSBzaXplIG9mCj4+IFJBTS4gVGhhdCB3aWxsIGFsbG93IHRvIGNvbnZleSB1cCB0byA0IEdpQiBv
-ZiBSQU0sIGJ1dCB0aGVuIHRoZSBjb2RlIGluCj4+IGJvYXJkMi5jIChzZWUgZHJhbV9pbml0X2Jh
-bmtzaXplKCkpIG9ubHkgdXNlcyBhIHNpbmdsZSBiYW5rIG9uIDMyLWJpdAo+PiBUZWdyYSAoQ09O
-RklHX1BIWVNfNjRCSVQgaXMgb25seSBzZXQgZm9yIDY0LWJpdCBUZWdyYSkuCj4+Cj4+IEFjY29y
-ZGluZyB0byB0aGUgY29tbWVudHMgZm9yIGRyYW1faW5pdF9iYW5rX3NpemUoKSB3ZSBjYW4ndCBz
-dG9yZSB0aGUKPj4gc2Vjb25kIGJhbmsgYmVjYXVzZSB0aGUgLnN0YXJ0IGZpZWxkIGlzIDMyIGJp
-dHMgd2lkZSBhbmQgdGhlcmVmb3JlIGNhbid0Cj4+IHN0b3JlIHRoZSAweDEwMDAwMDAwMCBzdGFy
-dCBhZGRyZXNzIGZvciB0aGUgYmFuay4KPj4KPj4gSXQgc291bmRzIHRvIG1lIGxpa2UgQVJNVjdf
-TFBBRSBzaG91bGQgcGVyaGFwcyBzZWxlY3QgUEhZU182NEJJVCB0byBtYWtlCj4+IHN1cmUgYWxs
-IHRoZSBhcHByb3ByaWF0ZSB2YXJpYWJsZXMgY2FuIHN0b3JlIGFkZHJlc3NlcyBiZXlvbmQgdGhl
-IDMyLWJpdAo+PiBib3VuZGFyeS4gSXQncyBvbmUgdGhpbmcgdG8gbm90IHN1cHBvcnQgPiAyIEdp
-QiBvZiBtZW1vcnkgaW4gVS1Cb290LCBidXQKPj4gaXQncyBhbiBlbnRpcmVseSBkaWZmZXJlbnQg
-c3RvcnkgaWYgd2UgY2FuJ3QgZXZlbiBwYXNzID4gR2lCIG9mIG1lbW9yeQo+PiB0byB0aGUga2Vy
-bmVsIGlmIHRoZXkgZXhpc3QuCj4+Cj4+IFN0ZXBoZW4sIGRvIHlvdSByZW1lbWJlciBpZiB0aGVy
-ZSB3YXMgYW55dGhpbmcgcHJldmVudGluZyB1cyBmcm9tIGdvaW5nCj4+IDY0LWJpdCBmb3IgcGh5
-c19hZGRyX3QgYW5kIHBoeXNfc2l6ZV90IG9uIExQQUUgZW5hYmxlZCBzeXN0ZW1zPwo+IAo+IFdl
-IHByb2JhYmx5IGp1c3QgbmV2ZXIgdHJpZWQgc2luY2Ugd2UgbmV2ZXIgbmVlZGVkIGl0IGFuZC9v
-ciBMUEFFIHdhc24ndCAKPiBhdmFpbGFibGUgKGluIFUtQm9vdCBTVykgd2hlbiBpdCBpbml0aWFs
-bHkgbWlnaHQgaGF2ZSBiZWVuIHVzZWZ1bC4gSSAKPiB3b3VsZCBub3QgYmUgc3VycHJpc2VkIGlm
-IHNvbWUgb2YgdGhlIGxvdy1sZXZlbCBUZWdyYSBjb2RlIGluIFUtQm9vdCAKPiBjb25mbGF0ZXMg
-NjQtYml0IHN1cHBvcnQgd2l0aCBTb0MgYmVpbmcgPj0gVDIxMCwgc28gdGhpbmdzIG1pZ2h0IG5v
-dCBiZSAKPiBhcyBzaW1wbGUgYXMgZW5hYmxpbmcgQ09ORklHX1BIWVNfNjRCSVQsIGJ1dCB5b3Ug
-bmV2ZXIga25vdy4uLgoKR29vZCBFdmVuaW5nLAoKSSBoYXZlIGZpbmFsbHkgYnVpbHQgbWFpbmxp
-bmUgdS1ib290IGZvciB0aGUgcmszMzI4LXJvYy1jYyBib2FyZCwgYW5kIApoYXZlIGFjdHVhbGx5
-IHJ1biBpbnRvIHRoaXMgaXNzdWUgYXMgd2VsbC4KV2l0aCB0aGUgZG93bnN0cmVhbSAyMDE3IHUt
-Ym9vdCwgdGhlIGJvYXJkIGNvcnJlY3RseSByZXBvcnRzIDRHQiB0byB0aGUgCmtlcm5lbC4KV2l0
-aCBtYWlubGluZSwgbm8gbWF0dGVyIHdoYXQgSSB0cnksIHRoZSBrZXJuZWwgb25seSBldmVyIHNl
-ZXMgMkdCLgpJIGRvbid0IHNlZSBhbnkgc2lnbmlmaWNhbnQgZGlmZmVyZW5jZXMgYmV0d2VlbiB0
-aGUgc3Bpbi11cCBjb2RlIGZyb20gCnRoZSBkb3duc3RyZWFtIHUtYm9vdCB0byB0aGUgbWFpbmxp
-bmUgdS1ib290LgoKSSBhbSBzdGFydGluZyB0byB3b25kZXIgaWYgdGhpcyBpcyBhIHUtYm9vdCBy
-ZWdyZXNzaW9uLCBidXQgc2luY2UgbW9zdCAKZW1iZWRkZWQgU0JDcyBkb24ndCB1c2UgNEdCIG9m
-IHJhbSBpdCBkb2VzIG5vdCBjcm9wIHVwIG9mdGVuLgpPZiBjb3Vyc2UgSSBtYXkganVzdCBiZSBt
-aXNzaW5nIHNvbWV0aGluZywgc2luY2UgdGhpcyBpcyBteSBmaXJzdCBmb3JheSAKaW50byB1LWJv
-b3QuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClUtQm9v
-dCBtYWlsaW5nIGxpc3QKVS1Cb290QGxpc3RzLmRlbnguZGUKaHR0cHM6Ly9saXN0cy5kZW54LmRl
-L2xpc3RpbmZvL3UtYm9vdAo=
+
+
+On 2.3.2019 15.47, Wolfram Sang wrote:
+> The driver did handle this internally, convert it to use the new
+> callbacks.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>   drivers/i2c/busses/i2c-tegra-bpmp.c | 27 ++++++++++++++++++++++-----
+>   1 file changed, 22 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c b/drivers/i2c/busses/i2c-tegra-bpmp.c
+> index f6cd35d0a2ac..02b78ba5b23b 100644
+> --- a/drivers/i2c/busses/i2c-tegra-bpmp.c
+> +++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
+> @@ -207,7 +207,8 @@ static int tegra_bpmp_i2c_msg_len_check(struct i2c_msg *msgs, unsigned int num)
+>   
+>   static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
+>   				   struct mrq_i2c_request *request,
+> -				   struct mrq_i2c_response *response)
+> +				   struct mrq_i2c_response *response,
+> +				   bool atomic)
+>   {
+>   	struct tegra_bpmp_message msg;
+>   	int err;
+> @@ -222,7 +223,7 @@ static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
+>   	msg.rx.data = response;
+>   	msg.rx.size = sizeof(*response);
+>   
+> -	if (irqs_disabled())
+> +	if (atomic)
+>   		err = tegra_bpmp_transfer_atomic(i2c->bpmp, &msg);
+>   	else
+>   		err = tegra_bpmp_transfer(i2c->bpmp, &msg);
+> @@ -230,8 +231,9 @@ static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
+>   	return err;
+>   }
+>   
+> -static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
+> -			       struct i2c_msg *msgs, int num)
+> +static int tegra_bpmp_i2c_xfer_common(struct i2c_adapter *adapter,
+> +				      struct i2c_msg *msgs, int num,
+> +				      bool atomic)
+>   {
+>   	struct tegra_bpmp_i2c *i2c = i2c_get_adapdata(adapter);
+>   	struct mrq_i2c_response response;
+> @@ -253,7 +255,7 @@ static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
+>   		return err;
+>   	}
+>   
+> -	err = tegra_bpmp_i2c_msg_xfer(i2c, &request, &response);
+> +	err = tegra_bpmp_i2c_msg_xfer(i2c, &request, &response, atomic);
+>   	if (err < 0) {
+>   		dev_err(i2c->dev, "failed to transfer message: %d\n", err);
+>   		return err;
+> @@ -268,6 +270,20 @@ static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
+>   	return num;
+>   }
+>   
+> +static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
+> +			       struct i2c_msg *msgs, int num)
+> +
+> +{
+> +	return tegra_bpmp_i2c_xfer_common(adapter, msgs, num, false);
+> +}
+> +
+> +static int tegra_bpmp_i2c_xfer_atomic(struct i2c_adapter *adapter,
+> +				      struct i2c_msg *msgs, int num)
+> +
+> +{
+> +	return tegra_bpmp_i2c_xfer_common(adapter, msgs, num, true);
+> +}
+> +
+>   static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
+>   {
+>   	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR |
+> @@ -276,6 +292,7 @@ static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
+>   
+>   static const struct i2c_algorithm tegra_bpmp_i2c_algo = {
+>   	.master_xfer = tegra_bpmp_i2c_xfer,
+> +	.master_xfer_atomic = tegra_bpmp_i2c_xfer_atomic,
+>   	.functionality = tegra_bpmp_i2c_func,
+>   };
+>   
+> 
+
+Looks good to me.
+
+Reviewed-by: Timo Alho <talho@nvidia.com>
