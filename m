@@ -1,132 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: Unstable Kernel behavior on an ARM based board
-Date: Mon, 4 Mar 2019 15:25:46 +0100
-Message-ID: <20190304142546.GB24676@ulmo>
-References: <CA+_ZnZTpES5bGZ0Cprnpy7HapMP3i=VTHgMZco6jq2zcKQzAVg@mail.gmail.com>
- <20190302113651.zerdonykcvv5ex3e@shell.armlinux.org.uk>
- <CA+_ZnZR_aTubOh3PJEVK0hbcDxxfK3vW1eLoknVo1yRBExawsw@mail.gmail.com>
- <20190302115729.zbowssfwf4j7jf22@shell.armlinux.org.uk>
- <CA+_ZnZS48d0OOTQJjktieO-yf09Ch6MRQLFoCjRtUgcXMrjWmg@mail.gmail.com>
- <20190302123907.qoe46qs6qmx7qnjs@shell.armlinux.org.uk>
- <453072a9-52e2-7591-750f-624ca27e0bbf@gmx.net>
- <CA+_ZnZTrGCzPLKWZdxBzV1Z9b+c-Sp27DeUeV2XFW0+ZNZipGw@mail.gmail.com>
- <e530ec49-942d-a993-9081-901c0ce29c75@arm.com>
- <CA+_ZnZTCtghS+oUdXGW+h6SVD6nMPfsyDAvOwEugrhx6NJ3yFg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6044456638626528228=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CA+_ZnZTCtghS+oUdXGW+h6SVD6nMPfsyDAvOwEugrhx6NJ3yFg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Embedded Engineer <embed786@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Vladimir Murzin <vladimir.murzin@arm.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: soc-core: Fix probe deferral following prelink failure" to the asoc tree
+Date: Mon,  4 Mar 2019 15:32:05 +0000 (GMT)
+Message-ID: <20190304153205.4F5D71128814@debutante.sirena.org.uk>
+References: <1551706274-22571-1-git-send-email-jonathanh@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1551706274-22571-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Curtis Malainey <cujomalainey@google.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.orgalsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
---===============6044456638626528228==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dc+cDN39EJAMEtIO"
-Content-Disposition: inline
+   ASoC: soc-core: Fix probe deferral following prelink failure
 
+has been applied to the asoc tree at
 
---dc+cDN39EJAMEtIO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-On Mon, Mar 04, 2019 at 05:25:28PM +0500, Embedded Engineer wrote:
-> On Mon, Mar 4, 2019 at 3:26 PM Vladimir Murzin <vladimir.murzin@arm.com> =
-wrote:
-> >
-> > You can try in-kernel memtest:
-> >
-> > - CONFIG_MEMTEST=3Dy
-> > - pass memtest in kernel's command line
-> >
->=20
-> Thanks Vladimir, I tried running mtest as suggested by Clemens in
-> u-boot and memtest in kernel as suggested by you. Both tests didn't
-> show any errors, however the board sometime hangs at "Starting kernel
-> ...". Following logs were obtained when it booted but ended in a
-> crash:
->=20
-> https://pastebin.com/sZZjUcbh
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Other than the memory corruption issue this looks like a fairly regular
-boot. It's not clear whether the crash of your /sbin/init is related to
-any memory issues. The earlier boot log that you had posted showed that
-it was failing to mount the root filesystem and dropped you to a
-maintenance shell, so that could be an indication that something isn't
-right about the root filesystem. Or it could indicate that something is
-wrong when loading files from the root filesystem.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-The earlier log showed EMEM address decode errors, which are odd because
-the addresses clearly lie in regions that should be system memory. EMEM
-address decode usually only happens if the memory controller thinks you
-are trying to access memory outside of system memory.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-The good news is that I think you're pretty close. The memory corruption
-is somewhat worrying, but at the same time it's unlikely that you'd get
-as far as you do if your memory timings are completely off. However, I
-think we need to gather more information to narrow down what's going
-wrong.
-
-All of the memory related configuration is part of a file called the
-BCT. I think if you could provide that it would be very useful to have.
-Also, it looks like you're using the Jetson TK1 device tree to boot, so
-can I assume you haven't modified it at all?
-
-Other bits of information that would be good to know are how you are
-generating the BCT and your boot images, what exactly you do to flash
-the board and which release of L4T you use.
-
-Perhaps also try to run a recent linux-next just to exclude any issues
-that may have been part of the 4.8.0-rc7 that you tested.
-
-Also adding Jon and linux-tegra for a broader audience.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Thierry
+Mark
 
---dc+cDN39EJAMEtIO
-Content-Type: application/pgp-signature; name="signature.asc"
+From c342febcde452f817cbd3896dc40953ab17c309d Mon Sep 17 00:00:00 2001
+From: Jonathan Hunter <jonathanh@nvidia.com>
+Date: Mon, 4 Mar 2019 13:31:14 +0000
+Subject: [PATCH] ASoC: soc-core: Fix probe deferral following prelink failure
 
------BEGIN PGP SIGNATURE-----
+Commit 78a24e10cd94 ("ASoC: soc-core: clear platform pointers on error")
+re-worked the clean-up of any platform pointers that may have been
+initialised by the function snd_soc_init_platform(). This commit missed
+one error path where if any of the prelinks for a soundcard failed to
+initialise, then these platform pointers would not be cleaned-up. This
+then prevents the soundcard from being initialised following a probe
+deferral when any of the soundcard prelinks cannot be found.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlx9NWcACgkQ3SOs138+
-s6GofA//doOYFzTD0CyBiYRTvwMCRFPDoVeepK8xLxdE45UjgQ0UnQ0EGHjzb89g
-UgxE5AFm3mH1IDrvyQ43A0/zhU31U34IKrjXbnk+mgxm6VnssFFrpIldoNKiw5p8
-szKgahtpJfcN9YU3c9a9j6J5IT1OMhSqJdow1BaMQ9jBBpH7Hoxs0X/AG45r8ecr
-pqpR/CpUKH87hw/QLmjGMh5tBwG0NWblcmelr64Qlyf3uNSfKZXrUQoKA7U4NOFU
-mtQKO/k3G9qrlkAk8NMVy+BRLN0OccRGUzLqLMOcpJ4gx7EZbDDC9rpbUh7GTD/U
-hcqDo2UyBlfCFAsrCdpQXscJ1KJv60lAh3GO5kJXLty80fLuH8eK7kp8n81+Pg2s
-Nof/y1x6BcWF3Y35k3FxfF1ILLpRbGjiyZnP2PK+ahIMSBNCK2356L/ZcSHzEEa7
-c8FUPNJSYonqcz4jocZuexeKTp+RNY+yX1ev6EyQIsLNFH5hJzdQDL8gh+s1euSI
-VzUPjN0MWNb6kZ43EdMCJWCzk1Dp6/J+opkiDZtP8DkNDJHITtxrxjrjvmyEc7RN
-vWjXzd+kDSuNFdUoRcfKp8scVI0Q6FhkI55RXQZaxHhhkdfMlsNPYazb6iBZ2NUU
-oeuP8Lmh56pL8fm8RvKwNOCTLyGDId9OERIw5OnsbdoCO5Uj8iQ=
-=rkMS
------END PGP SIGNATURE-----
+Fix this by ensuring that soc_cleanup_platform() is called when
+initialising the soundcard prelinks fails.
 
---dc+cDN39EJAMEtIO--
+Fixes: 78a24e10cd94 ("ASoC: soc-core: clear platform pointers on error")
 
+Signed-off-by: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---===============6044456638626528228==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6044456638626528228==--
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 93d316d5bf8e..5a5764dba147 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -2797,6 +2797,7 @@ int snd_soc_register_card(struct snd_soc_card *card)
+ 
+ 		ret = soc_init_dai_link(card, link);
+ 		if (ret) {
++			soc_cleanup_platform(card);
+ 			dev_err(card->dev, "ASoC: failed to init link %s\n",
+ 				link->name);
+ 			mutex_unlock(&client_mutex);
+-- 
+2.20.1
