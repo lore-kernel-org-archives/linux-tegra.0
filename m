@@ -1,135 +1,70 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 14/17] drm/tegra: Convert to using
- __drm_atomic_helper_crtc_reset() for reset.
-Date: Mon, 4 Mar 2019 14:02:38 +0100
-Message-ID: <20190304130238.GI9040@ulmo>
-References: <20190301125627.7285-1-maarten.lankhorst@linux.intel.com>
- <20190301125627.7285-15-maarten.lankhorst@linux.intel.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: Regression: ASoC: soc-core: clear platform pointers on error
+Date: Mon, 4 Mar 2019 13:07:34 +0000
+Message-ID: <e4b5fe11-0351-ee0b-d093-2044c9b0475d@nvidia.com>
+References: <bbc0d37a-5a08-9ce0-58b6-c89d28c558ce@nvidia.com>
+ <CAOReqxhYUASVFdrHzKEr8F_NA0CNnJ1Hx51L4ganvcrK=dSCCA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0963683880=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20190301125627.7285-15-maarten.lankhorst@linux.intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOReqxhYUASVFdrHzKEr8F_NA0CNnJ1Hx51L4ganvcrK=dSCCA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Curtis Malainey <cujomalainey@google.com>
+Cc: Mark Brown <broonie@kernel.org>, Curtis Malainey <cujomalainey@chromium.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0963683880==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AptwxgnoZDC4KQWS"
-Content-Disposition: inline
+On 01/03/2019 17:28, Curtis Malainey wrote:
+> On Fri, Mar 1, 2019 at 4:07 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>>
+>> Hi Mark, Curtis,
+>>
+>> I am seeing a regression on -next where the soundcard on one of our
+>> Tegra boards fails to initialise following a probe deferral. The bisect
+>> points to the commit 78a24e10cd94420f1b4e2dc5923ae7109e2aaba1 ('ASoC:
+>> soc-core: clear platform pointers on error') and reverting this on top
+>> of -next fixes the problem.
+>>
+>> Looking at the bootlog from the failure I see ...
+>>
+>>  tegra-snd-wm8903 sound: ASoC: failed to init link WM8903
+>>
+>>  tegra-snd-wm8903 sound: snd_soc_register_card failed (-517)
+>>
+>>  tegra30-i2s 70080400.i2s: DMA channels sourced from device 70080000.ahub
+>>
+>>  tegra-snd-wm8903 sound: ASoC: Both platform name/of_node are set for WM8903
+>>
+>>  tegra-snd-wm8903 sound: ASoC: failed to init link WM8903
+>>
+>>  tegra-snd-wm8903 sound: snd_soc_register_card failed (-22)
+>>
+>>  tegra-snd-wm8903: probe of sound failed with error -22
+>>
+>>
+>> With the above change I see soc_cleanup_platform() is ever being called
+>> when the probe is deferred and hence leads to the failure. Note that the
+>> initial failure, "ASoC: failed to init link WM8903" occurs very early
+>> in snd_soc_register_card() when initialising the prelinks.
+>>
+>> The following fixes it, but I have not scrutinised the code to see if
+>> there are other exit points that we need to handle.
+>>
+> You are indeed correct. That should be there. I think I got confused
+> when I was doing my initial debugging on our local 4.19 kernel as the
+> cleanup code had changed when I was testing on -next and forgot to add
+> this to my upstream patch and it wasn't caught in my testing. Thanks
+> for catching this. I went back and looked and it appears that is the
+> only call to soc_init_dai_link that is outside soc_instantiate_card
+> and therefore not caught by the original patch's cleanup routine. Do
+> you want to submit a patch and I'll add my signoff?
 
+Thanks. I will send out a patch shortly.
 
---AptwxgnoZDC4KQWS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cheers
+Jon
 
-On Fri, Mar 01, 2019 at 01:56:24PM +0100, Maarten Lankhorst wrote:
-> Convert tegra to using __drm_atomic_helper_crtc_reset(), instead of
-> writing its own version. Instead of open coding destroy_state(),
-> call it directly for freeing the old state.
->=20
-> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-tegra@vger.kernel.org
-> ---
->  drivers/gpu/drm/tegra/dc.c | 30 +++++++++++-------------------
->  1 file changed, 11 insertions(+), 19 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index 607a6ea17ecc..57c88d78cdaa 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -1153,25 +1153,6 @@ static void tegra_dc_destroy(struct drm_crtc *crtc)
->  	drm_crtc_cleanup(crtc);
->  }
-> =20
-> -static void tegra_crtc_reset(struct drm_crtc *crtc)
-> -{
-> -	struct tegra_dc_state *state;
-> -
-> -	if (crtc->state)
-> -		__drm_atomic_helper_crtc_destroy_state(crtc->state);
-> -
-> -	kfree(crtc->state);
-> -	crtc->state =3D NULL;
-> -
-> -	state =3D kzalloc(sizeof(*state), GFP_KERNEL);
-> -	if (state) {
-> -		crtc->state =3D &state->base;
-> -		crtc->state->crtc =3D crtc;
-> -	}
-> -
-> -	drm_crtc_vblank_reset(crtc);
-> -}
-> -
->  static struct drm_crtc_state *
->  tegra_crtc_atomic_duplicate_state(struct drm_crtc *crtc)
->  {
-> @@ -1198,6 +1179,17 @@ static void tegra_crtc_atomic_destroy_state(struct=
- drm_crtc *crtc,
->  	kfree(state);
->  }
-> =20
-> +static void tegra_crtc_reset(struct drm_crtc *crtc)
-> +{
-> +	struct tegra_dc_state *state =3D kzalloc(sizeof(*state), GFP_KERNEL);
-> +
-> +	if (crtc->state)
-> +		tegra_crtc_atomic_destroy_state(crtc, crtc->state);
-> +
-> +	__drm_atomic_helper_crtc_reset(crtc, &state->base);
-> +	drm_crtc_vblank_reset(crtc);
-> +}
-> +
-
-I would preferred a predeclaration of tegra_crtc_atomic_destroy_state()
-in this case because the implementations are in the same order as their
-use in tegra_crtc_funcs, but I think I can live with it, so either way:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---AptwxgnoZDC4KQWS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlx9Ie0ACgkQ3SOs138+
-s6GhWQ/+M7oR/xdDrXVysh+CZC40qvDeB9WWaBEbojdlZbx5zLxRaefhGB3ClfTf
-LKf2/oMCbr+n9JeE0uS+1LNSz3+Tc/GPELJ6BWp+8yLJfSWUB+yB23VkcGCHC9n4
-iUKt3cQuMN1f2czBqiNXbtdcvFM2logfE1/UymfgciAGzYcoM42iQnmpTv3PV0xd
-YCc1auvOAFTq5lMzhTxa6rvUsrmKxZUtaDVihQOOMtmMIY5ykjZoZXtWLwpfTWA5
-zyHzZt8hFgqylB32zKgCIHBWeVaA3ZE1Ww3kYwRDdx3hwRapG0fAvywC6/E6R55i
-PStUYz24o6wLDq4JVNO4SSyQUO8l3zuA0Ip8GOu9EmgGNDLw76r7N3iMoKSDGoyI
-VfTeOyWP/G/rS8qCEJopa96clb6PVvYkGE+3PiOj5k86TVwgJAVB1YaQrEnPB4Fj
-+yyutvey/+WYnH7AhUROy74+jjwkemyauvHFhvT/TkD7Qj78Eps5C2CssdWCBizD
-N+3uOXeSOkDPevaMT3PrSyrnRBdmrIhX0uyMFAflaZawb81PJsCPrxiYHy5m3j3m
-RNTruem15GZrMLfPHY57kiBIUhhkSMJC/0GgETTbUDNLIbcDY45ouH5C0Vz/ed8V
-Rm4W4EmmI8u2yfyzHtuxsDUkkbr9SLJvkL8mq/JgHi+DHvCMtjs=
-=qRhK
------END PGP SIGNATURE-----
-
---AptwxgnoZDC4KQWS--
-
---===============0963683880==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
-
---===============0963683880==--
+-- 
+nvpublic
