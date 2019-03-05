@@ -1,53 +1,43 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.20 00/88] 4.20.14-stable review
-Date: Tue, 5 Mar 2019 15:55:57 +0100
-Message-ID: <20190305145557.GC18959@kroah.com>
-References: <20190304081630.610632175@linuxfoundation.org>
- <ece0a914-4b84-b832-757a-72583516c1f6@nvidia.com>
+From: Embedded Engineer <embed786@gmail.com>
+Subject: Re: Unstable Kernel behavior on an ARM based board
+Date: Tue, 5 Mar 2019 19:57:18 +0500
+Message-ID: <CA+_ZnZQhvf5R2f-uMPPO3AgNbXTtoxcqpCYZR_Sb13jHN5X5wA@mail.gmail.com>
+References: <CA+_ZnZTCtghS+oUdXGW+h6SVD6nMPfsyDAvOwEugrhx6NJ3yFg@mail.gmail.com>
+ <20190304142546.GB24676@ulmo>
+ <CA+_ZnZQRV_7ytmbQZvWZUuyYiai0+Yo-pqV19RKebWAwSQokxQ@mail.gmail.com>
+ <20190305100731.uz6tleu3fkaruwb6@shell.armlinux.org.uk>
+ <CA+_ZnZTeZLyCcjZduQODzjWxTpU96AefzvTBDFbq2CSjVQxONg@mail.gmail.com>
+ <20190305112226.rhbl3dwopmip45ja@shell.armlinux.org.uk>
+ <20190305115730.GE26369@ulmo>
+ <CA+_ZnZQ1m8QyiMJWwmVvtdqiFRDYK8PocGpG38W0NyEZ3yA8zQ@mail.gmail.com>
+ <20190305132350.pzfmz4yvh6ujgotn@shell.armlinux.org.uk>
+ <CA+_ZnZS7wimpnH+TnvM_ztnX3wbADpf5FUBd_8igqeg+FnFr5g@mail.gmail.com>
+ <20190305142351.ktciqkj5kycdwilr@shell.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <ece0a914-4b84-b832-757a-72583516c1f6@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190305142351.ktciqkj5kycdwilr@shell.armlinux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Murzin <vladimir.murzin@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 05, 2019 at 02:07:34PM +0000, Jon Hunter wrote:
-> 
-> On 04/03/2019 08:21, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.20.14 release.
-> > There are 88 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Mar  6 08:16:03 UTC 2019.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.14-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.20:
->     11 builds:	11 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     28 tests:	28 pass, 0 fail
-> 
-> Linux version:	4.20.14-rc1-ge260750
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+On Tue, Mar 5, 2019 at 7:23 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+> +       for (offset = page->offset; offset < page->allocation;
+> +            offset = *(int *)(page->vaddr + offset))
 
-Wonderful, glad these are all working for you, thanks for testing and
-letting me know.
+ error: 'struct dma_page' has no member named 'allocation'. So I
+replaced 'page->allocation' with 'page->in_use'. Did you really meant
+that? If yes, following are the boot logs:
 
-greg k-h
+https://pastebin.com/rgfGdYcj
