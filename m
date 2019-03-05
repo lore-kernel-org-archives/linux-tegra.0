@@ -1,63 +1,54 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ALSA: hda/tegra: avoid build error without CONFIG_PM
-Date: Tue, 5 Mar 2019 13:20:52 +0100
-Message-ID: <20190305122052.GG26369@ulmo>
-References: <20190304203337.1968705-1-arnd@arndb.de>
+From: Embedded Engineer <embed786@gmail.com>
+Subject: Re: Unstable Kernel behavior on an ARM based board
+Date: Tue, 5 Mar 2019 18:16:38 +0500
+Message-ID: <CA+_ZnZQ1m8QyiMJWwmVvtdqiFRDYK8PocGpG38W0NyEZ3yA8zQ@mail.gmail.com>
+References: <20190302123907.qoe46qs6qmx7qnjs@shell.armlinux.org.uk>
+ <453072a9-52e2-7591-750f-624ca27e0bbf@gmx.net>
+ <CA+_ZnZTrGCzPLKWZdxBzV1Z9b+c-Sp27DeUeV2XFW0+ZNZipGw@mail.gmail.com>
+ <e530ec49-942d-a993-9081-901c0ce29c75@arm.com>
+ <CA+_ZnZTCtghS+oUdXGW+h6SVD6nMPfsyDAvOwEugrhx6NJ3yFg@mail.gmail.com>
+ <20190304142546.GB24676@ulmo>
+ <CA+_ZnZQRV_7ytmbQZvWZUuyYiai0+Yo-pqV19RKebWAwSQokxQ@mail.gmail.com>
+ <20190305100731.uz6tleu3fkaruwb6@shell.armlinux.org.uk>
+ <CA+_ZnZTeZLyCcjZduQODzjWxTpU96AefzvTBDFbq2CSjVQxONg@mail.gmail.com>
+ <20190305112226.rhbl3dwopmip45ja@shell.armlinux.org.uk>
+ <20190305115730.GE26369@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bO4vSxwwZtUjUWHo"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190304203337.1968705-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jonathan Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, Mohan Kumar D <mkumard@nvidia.com>, Ravindra Lokhande <rlokhande@nvidia.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190305115730.GE26369@ulmo>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Murzin <vladimir.murzin@arm.com>, Russell King - ARM Linux admin <linux@armlinux.org.uk>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+That was quite an in-depth analysis that you shared and took some time
+get my head around it :)
 
---bO4vSxwwZtUjUWHo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Mar 5, 2019 at 4:57 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> Can you try the following patch and send the boot log again?
 
-On Mon, Mar 04, 2019 at 09:33:25PM +0100, Arnd Bergmann wrote:
-> The #ifdef protection around the PM functions is wrong, leading to
-> a failed reference in some configurations:
->=20
-> sound/pci/hda/hda_tegra.c: In function 'hda_tegra_runtime_suspend':
-> sound/pci/hda/hda_tegra.c:273:2: error: implicit declaration of function =
-'hda_tegra_disable_clocks'; did you mean 'hda_tegra_enable_clocks'? [-Werro=
-r=3Dimplicit-function-declaration]
->=20
-> Better remove the #ifdefs entirely and rely on the compiler silently
-> dropping unused functions marked __maybe_unused.
->=20
-> Fixes: 707e0759f2f4 ("ALSA: hda/tegra: implement runtime suspend/resume")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  sound/pci/hda/hda_tegra.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+Please check the following logs after applying your patch:
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+https://pastebin.com/hGGKZcLU
 
---bO4vSxwwZtUjUWHo
-Content-Type: application/pgp-signature; name="signature.asc"
+Sorry to add more to your confusion, now the board is getting stuck
+once in a while at following:
 
------BEGIN PGP SIGNATURE-----
+U-Boot SPL 2014.10-rc2 (Mar 05 2019 - 14:29:35)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlx+aaMACgkQ3SOs138+
-s6H6WA//WB4N33fMs8yvZ6WJzt5fQx13eFdt+uBUbxiSVQ7R9DlGEpBImbJN1O56
-ypMbJuL4K6EsgkaiYCtbJz8PKEdW3ccMFzw00LZG1F2EDCs8NwBGTKNgEPrmcip6
-7rZO+wL9lmJbjQrZwGkEOi1UlZww/Xx0puMqr/fveIzjGpwFLYuG3HY/TIqmfbNP
-sosgOQvvAwMoXFBXR/du8+cFkLXJTP9oDhTqJhS5wpwfkqdR4So4Rh3fcwmvLfHq
-ZWm4zSDzNbmebCamq5Zx9wFUnWl2jYF1pvTTFauPJrWS4PGaO2Mvz8AtIvVK8cXU
-9ziFNJTq8Fsf7t7twd/O4u+bGyVnDgYK+jFWhml/WG30VIfDCi1mrdZ32ThsTssA
-5WBPTOlnzMpK8/37LMyZPkh6Zx0U7d0xlrr0BrAAs4xEueVfOKhjs90V8Y0HqAot
-5wTkwhkp3bhNhgNUFtADKVleyRQYDMPj0V2J1fJnlYwtxDWLxX2gMTke+AEdng+A
-5z8tubJhu3sBtlLShdB1m3SxeKyr/nBqqF3Qw7Tnc3HOGTmzE1ZJvw4u5IlauwOb
-R7rJDMNF3pjP5rxMnIkNsCjq12VgOFAxigrpRKpILzem3Ay6nrW/wJSix+HABfmv
-kO9fbYEhIUvwWoBCU90ot30cUF6nUbHaE1DqO6i8LOEVn6RoJrw=
-=jU4C
------END PGP SIGNATURE-----
+U-Boot 2014.10-rc2 (Mar 05 2019 - 14:29:35)
 
---bO4vSxwwZtUjUWHo--
+TEGRA124
+Board: NVIDIA Jetson TK1
+DRAM:
