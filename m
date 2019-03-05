@@ -1,7 +1,7 @@
-From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: Unstable Kernel behavior on an ARM based board
-Date: Tue, 5 Mar 2019 11:22:26 +0000
-Message-ID: <20190305112226.rhbl3dwopmip45ja@shell.armlinux.org.uk>
+Date: Tue, 5 Mar 2019 12:36:25 +0100
+Message-ID: <20190305113625.GD26369@ulmo>
 References: <CA+_ZnZS48d0OOTQJjktieO-yf09Ch6MRQLFoCjRtUgcXMrjWmg@mail.gmail.com>
  <20190302123907.qoe46qs6qmx7qnjs@shell.armlinux.org.uk>
  <453072a9-52e2-7591-750f-624ca27e0bbf@gmx.net>
@@ -10,14 +10,12 @@ References: <CA+_ZnZS48d0OOTQJjktieO-yf09Ch6MRQLFoCjRtUgcXMrjWmg@mail.gmail.com>
  <CA+_ZnZTCtghS+oUdXGW+h6SVD6nMPfsyDAvOwEugrhx6NJ3yFg@mail.gmail.com>
  <20190304142546.GB24676@ulmo>
  <CA+_ZnZQRV_7ytmbQZvWZUuyYiai0+Yo-pqV19RKebWAwSQokxQ@mail.gmail.com>
- <20190305100731.uz6tleu3fkaruwb6@shell.armlinux.org.uk>
- <CA+_ZnZTeZLyCcjZduQODzjWxTpU96AefzvTBDFbq2CSjVQxONg@mail.gmail.com>
+ <20190305103222.GB26369@ulmo>
+ <CA+_ZnZTzTGbVggEVMVkwJRAXrjg36Cms_3MiQciucRmMUpi2Hw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="===============1995601839715104642=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CA+_ZnZTeZLyCcjZduQODzjWxTpU96AefzvTBDFbq2CSjVQxONg@mail.gmail.com>
+In-Reply-To: <CA+_ZnZTzTGbVggEVMVkwJRAXrjg36Cms_3MiQciucRmMUpi2Hw@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -28,131 +26,102 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Embedded Engineer <embed786@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Murzin <vladimir.murzin@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Vladimir Murzin <vladimir.murzin@arm.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 05, 2019 at 03:29:26PM +0500, Embedded Engineer wrote:
-> On Tue, Mar 5, 2019 at 3:07 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
+
+--===============1995601839715104642==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IDYEmSnFhs3mNXr+"
+Content-Disposition: inline
+
+
+--IDYEmSnFhs3mNXr+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Mar 05, 2019 at 04:05:14PM +0500, Embedded Engineer wrote:
+> On Tue, Mar 5, 2019 at 3:32 PM Thierry Reding <thierry.reding@gmail.com> =
+wrote:
 > >
-> > Please apply this patch so we can see the (ptrval) values.  Thanks.
-> =
+> > One thing besides memory timings in BCT that comes to mind that could be
+> > causing memory corruption are power supplies. Are you sure they're all
+> > correctly configured and enabled as required?
+>=20
+> This part is 100% same as the Jetson TK1 on hardware end. And in
+> device tree, the node 'vdd_1v35_lp0: sd2' has already
+> 'regulator-always-on' property. We also tried once by using
+> oscilloscope to check if the power drops/fluctuates during operation
+> but noticed that DDR chips were getting stable power.
 
-> Please find below logs after applying patch:
-> =
+Okay, sounds like that's not relevant here, then.
 
-> https://pastebin.com/6TaBxPX5
+> > Does the upstream kernel and DTB boot reliably, even if it doesn't get
+> > you to a login prompt? Or does it also behave erratically like the
+> > downstream kernel and DTB that you have?
+>=20
+> 2 out of 10 times it behaved erratically, i.e. one time it stuck at
+> 'Starting kernel ...' and the other time it stuck after following
+> prints:
+>=20
+> Starting kernel ...
+>=20
+> [    0.000000] Booting Linux on physical CPU 0x0
+> [    0.000000] Linux version 5.0.0-rc8-next-20190304-dirty
+> (teresol@ubuntu) (gcc version 6.1.1 20160711 (Linaro GCC 6.1-2016.08))
+> #2 SMP PREEMPT Tue Mar 5 02:15:14 PST 2019
+> [    0.000000] CPU: ARMv7 Processor [413fc0f3] revision 3 (ARMv7), cr=3D1=
+0c5387d
+> [    0.000000] CPU: div instructions available: patching division code
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction =
+cache
+> [    0.000000] OF: fdt: Machine model: NVIDIA Tegra124 Jetson TK1
+> [    0.000000] earlycon: uart0 at MMIO 0x70006300 (options '115200n8')
+> [    0.000000] printk: bootconsole [uart0] enabled
+> [    0.000000] Memory policy: Data cache writealloc
+> [    0.000000] cma: Reserved 64 MiB at 0xac000000
 
-So we have a pattern here:
+Okay, this could corroborate the aliasing hypothesis. If aliasing is
+really the problem, it would most likely indicate an issue in the BCT
+that happened as part of shmooing. I'm not very familiar with the tests
+run as part of the Shmoo suite, but I would've hoped that it contains
+tests for aliasing.
 
-tegra-udc 7d000000.usb: dma_pool_alloc ci_hw_qh, ec056080 (corrupted)
-00000000: c0 00 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-00000010: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-00000020: 80 00 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-00000030: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-tegra-udc 7d000000.usb: dma_pool_alloc ci_hw_qh, ec056140 (corrupted)
-00000000: 80 01 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-00000010: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-00000020: 40 01 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0@.............=
-..
-00000030: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-tegra-udc 7d000000.usb: dma_pool_alloc ci_hw_qh, ec0561c0 (corrupted)
-00000000: 00 02 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-00000010: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-00000020: 40 03 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0@.............=
-..
-00000030: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
-tegra-udc 7d000000.usb: dma_pool_alloc ci_hw_qh, ec056200 (corrupted)
-00000000: 40 02 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0@.............=
-..
-00000010: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7=A0 ..............=
-..
-00000020: 40 05 00 00 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0@.............=
-..
-00000030: a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 a7 =A0..............=
-..
+Thierry
 
-and so it goes on.
+--IDYEmSnFhs3mNXr+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The first four bytes are the offset to the next free block of memory in
-this page, so can be ignored.  The remainder of the bytes should all be
-0xa7, but every word at offset 32 into these is corrupted with what
-looks to be a similar offset.
+-----BEGIN PGP SIGNATURE-----
 
-We dump 0x40 bytes, which, reading the code makes the pool size 0x40
-bytes in size.  Tabulating the object offset, the next offset, and
-the corruption at offset 32.  Corruption1 is from your latest log,
-corruption2 is derived from your previous log using the next pointer
-to tie up between the two:
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlx+XzUACgkQ3SOs138+
+s6F9Yg/+Laqi9mWzjCbiOUv5HVE4y7MagNvGCS1l5B4R6CnxAYnNByqO63PehWRR
+b/sR+852j8uDYWnSmlaqGcz6imb2c+gWDEMMOZzeORWRvtZge5EillrldqaKAiEE
+/y3myaJIxg1LC2DdZKojHDOOwmWi8tTyMs4J04PNlhPNAiztjtx6Y8YKNqbXH57T
+8W+FHXnTvJLI//gQ0GjfvRleLFAct4LgXoOGFv52JsggiMGgUYidgQhUNwnFu/Qa
+/PtL8ag20rTG75zSXaD3rq+RUUVDVHl0zyXFSg22D/rkROv3dQ7MnVEPl/yPQ8b5
+WZgRHU2ZFcbBiTOV4bZVU+ZM/cciLHL8zjgc/lClAnI1fa1nB2eEMU8Km8FfTCiI
+I9w2ebQ6QpzTXdNf9h2/RboVl/QjgLYn4d4OFGl1sr008fMffX+Gc3SHs5iLuqXR
+eyE4qrs0LZRKpyglBtKTjUXOBixSZogHh+JpTlDjMmhO44yhW163mWT5tT2qjutb
+rjW3Eg+T5DVQNjL29SWlz6j2qwzRCn0P1Lz5SUI0f88L4j+yDbse54wGM1X3RiZb
+Lh4qReAlcWWt78tNmeYY57LcyYTHEij5xrDySlxkqzwxzJg3gbD6fvlPfKLkEU12
++I6j/KV+8OuHRAlzF28w2LZX1U1F1EIUVDYCgKF3Q8d5iPs49Lo=
+=kTB4
+-----END PGP SIGNATURE-----
 
-object offset	next		corruption1	corruption2
-0x0080		0x00c0		0x00000080	0x00000080
-0x0140		0x0180		0x00000140	0x00000100
-0x01c0		0x0200		0x00000340	0x000001c0
-0x0200		0x0240		0x00000540	0x000001c0
-0x0280		0x02c0		0x00000340	0x00000300
-0x0340		0x0380		0x00000540	0x00000140
-0x03c0		0x0400		0x00000540	0x00000300
-0x0400		0x0440		0x000003c0	0x00000140
-0x0480		0x04c0		0x00000540	0x000003c0
-0x0540		0x0580		0x00000480	0x00000540
-0x05c0		0x0600		0x000005c0	0x000005c0
-0x0600		0x0640		0x00000500	0x000005c0
-0x0680		0x06c0		0x00000740	0x00000680
-??????		0x0780				0x00000740
-0x07c0		0x0800		0x000007c0	0x00000700
+--IDYEmSnFhs3mNXr+--
 
-The corruption looks very much like offset values, except they do not
-seem to follow any rhyme or reason.  They also appear to be different
-on each boot.
 
-Given that the sequence here when a pool allocation occurs is:
+--===============1995601839715104642==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-1. allocate DMA coherent page
-2. memset entire page with 0xa7
-3. write next offsets
-4. initialise 'offset' to zero (offset of first free object)
-5. add page to pools list of pages
-6. allocate first object, updating offset to the next free offset read
-   from the first word of the object.
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-then when the next allocation request comes along, we allocate the
-next object in the same way as step 6.  At the point of allocating the
-third object, we find that there is corruption in the third object at
-0x20 bytes into it - or 0xa0 bytes into the page.
-
-Now, what does the driver that's allocating these do with them?  That
-is done via init_eps() in drivers/usb/chipidea/udc.c, which doesn't do
-anything with the allocated memory.  This is the only place that the
-driver allocates from this DMA pool, which is done in a loop, so we
-know that the objects allocated from this pool will be in relatively
-quick succession.
-
-So this does not make sense.
-
-I really doubt that there is anything wrong with the kernel - this USB
-driver is used on other SoCs (such as iMX6) and does not exhibit this
-problem - it also works on the Tegra TK1 platform as well.
-
-You are definitely seeing memory corruption here - but given what the
-above looks like, I'd put forward another possible scenario - maybe
-u-boot or something else is leaving a USB controller or some other DMA
-agent active, which is writing over memory while the kernel is trying
-to boot, resulting in memory corruption.
-
--- =
-
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps =
-up
-According to speedtest.net: 11.9Mbps down 500kbps up
+--===============1995601839715104642==--
