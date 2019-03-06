@@ -1,58 +1,57 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 3/3] irqchip/gic-pm: use devm_clk_*() helpers
-Date: Wed, 6 Mar 2019 13:21:43 +0000
-Message-ID: <78b2d8e1-2dd0-e609-861b-420fcd884a9e@arm.com>
-References: <1551868878-1131-1-git-send-email-spujar@nvidia.com>
- <1551868878-1131-3-git-send-email-spujar@nvidia.com>
- <487578fe-fa14-f1c4-fad9-ff47ebde2273@arm.com>
- <573022cf-e2e3-0e12-d16c-6d465b8af2ce@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] [v2] gpu: host1x: avoid IOMMU_API build error
+Date: Wed,  6 Mar 2019 14:57:43 +0100
+Message-ID: <20190306135800.3982681-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <573022cf-e2e3-0e12-d16c-6d465b8af2ce@nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, vkoul@kernel.org, dan.j.williams@intel.com, tglx@linutronix.de, jason@lakedaemon.net
-Cc: thierry.reding@gmail.com, ldewangan@nvidia.com, mkumard@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/03/2019 12:00, Jon Hunter wrote:
-> 
-> On 06/03/2019 11:31, Marc Zyngier wrote:
->> Hi Sameer,
->> 
->> [unrelated to this email: anything that comes from NVIDIA reaches me
->>  encrypted with my public key. Not a big deal, but it'd be good if
->>  someone could fix that.]
->> 
->> On 06/03/2019 10:41, Sameer Pujar wrote:
->>> With pm_clk_*() usage, it is seen that clocks always remain ON. This
->>> happens because clocks are managed by BPMP on Tegra devices and clock
->>> enable/disable happens during prepare/unprepare phase. This patch
->>> avoids use of pm_clk_*() and replaces it with devm_clk_*() helpers.
->>>
->>> Suggested-by: Mohan Kumar D <mkumard@nvidia.com>
->>> Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
->>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> 
->> On its own, I'm not opposed to that patch.
->> 
->> But given that there is no in-tree platform using this, despite the code
->> sitting here for more than 2.5 years, this is just updating dead code.
->> 
->> Am I missing anything?
-> 
-> Nope, but we are working to fix that at long last. I hope in the next
-> few months it will not longer be dormant! This driver is still very much
-> important to our audio support for newer Tegra devices.
+When the iommu API is disabled, the host1x driver fails to build:
 
-Can we at least make sure it gets compiled when an NVIDIA platform
-(ARCH_TEGRA?) is selected? And if this isn't relevant to the current
-platforms, then hold off until it actually makes sense.
+drivers/gpu/host1x/hw/channel_hw.c: In function 'host1x_channel_set_streamid':
+drivers/gpu/host1x/hw/channel_hw.c:118:30: error: implicit declaration of function 'dev_iommu_fwspec_get'; did you mean 'iommu_fwspec_free'? [-Werror=implicit-function-declaration]
+  struct iommu_fwspec *spec = dev_iommu_fwspec_get(channel->dev->parent);
+                              ^~~~~~~~~~~~~~~~~~~~
+                              iommu_fwspec_free
+drivers/gpu/host1x/hw/channel_hw.c:118:30: error: initialization of 'struct iommu_fwspec *' from 'int' makes pointer from integer without a cast [-Werror=int-conversion]
+drivers/gpu/host1x/hw/channel_hw.c:119:23: error: 'struct iommu_fwspec' has no member named 'ids'
+  u32 sid = spec ? spec->ids[0] & 0xffff : 0x7f;
+                       ^~
+cc1: all warnings being treated as errors
 
-Thanks,
+As Mikko explains, we should program SMMU bypass (0x7f) if that
+happens.
 
-	M.
+Fixes: de5469c21ff9 ("gpu: host1x: Program the channel stream ID")
+Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+----
+v2: fall back to 0x7f sid
+---
+ drivers/gpu/host1x/hw/channel_hw.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+index 27101c04a827..0c0eb43abf65 100644
+--- a/drivers/gpu/host1x/hw/channel_hw.c
++++ b/drivers/gpu/host1x/hw/channel_hw.c
+@@ -115,8 +115,12 @@ static inline void synchronize_syncpt_base(struct host1x_job *job)
+ static void host1x_channel_set_streamid(struct host1x_channel *channel)
+ {
+ #if HOST1X_HW >= 6
++	u32 sid = 0x7f;
++#ifdef CONFIG_IOMMU_API
+ 	struct iommu_fwspec *spec = dev_iommu_fwspec_get(channel->dev->parent);
+-	u32 sid = spec ? spec->ids[0] & 0xffff : 0x7f;
++	if (spec)
++		sid = spec->ids[0] & 0xffff;
++#endif
+ 
+ 	host1x_ch_writel(channel, sid, HOST1X_CHANNEL_SMMU_STREAMID);
+ #endif
 -- 
-Jazz is not dead. It just smells funny...
+2.20.0
