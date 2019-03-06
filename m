@@ -1,12 +1,17 @@
 From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH] drivers: thermal: Kconfig: pedantic cleanups
-Date: Wed,  6 Mar 2019 19:52:22 +0100
-Message-ID: <1551898342-19308-1-git-send-email-info@metux.net>
+Subject: [PATCH v2] drivers: thermal: Kconfig: pedantic cleanups
+Date: Wed,  6 Mar 2019 23:05:24 +0100
+Message-ID: <1551909924-25233-1-git-send-email-info@metux.net>
+References: <1551898342-19308-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1551898342-19308-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
+
+Formatting of Kconfig files doesn't look so pretty, so just
+take damp cloth and clean it up.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
