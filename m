@@ -1,74 +1,37 @@
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH v2] drivers: thermal: Kconfig: pedantic cleanups
-Date: Wed,  6 Mar 2019 23:05:24 +0100
-Message-ID: <1551909924-25233-1-git-send-email-info@metux.net>
-References: <1551898342-19308-1-git-send-email-info@metux.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1551898342-19308-1-git-send-email-info@metux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 0/3] IOMMU: Tegra SMMU fixes
+Date: Thu,  7 Mar 2019 01:50:06 +0300
+Message-ID: <20190306225009.3391-1-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Formatting of Kconfig files doesn't look so pretty, so just
-take damp cloth and clean it up.
+Hello,
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/thermal/st/Kconfig    | 22 +++++++++++-----------
- drivers/thermal/tegra/Kconfig |  4 ++--
- 2 files changed, 13 insertions(+), 13 deletions(-)
+This small series primarily fixes a bug that affects Terga30 and
+Terga114 platforms, it also carries two patches that improve SMMU
+functionality and clean up code a tad.
 
-diff --git a/drivers/thermal/st/Kconfig b/drivers/thermal/st/Kconfig
-index b80f9a9..d8b1a45 100644
---- a/drivers/thermal/st/Kconfig
-+++ b/drivers/thermal/st/Kconfig
-@@ -3,9 +3,9 @@
- #
- 
- config ST_THERMAL
--       tristate "Thermal sensors on STMicroelectronics STi series of SoCs"
--       help
--         Support for thermal sensors on STMicroelectronics STi series of SoCs.
-+	tristate "Thermal sensors on STMicroelectronics STi series of SoCs"
-+	help
-+	  Support for thermal sensors on STMicroelectronics STi series of SoCs.
- 
- config ST_THERMAL_SYSCFG
- 	select ST_THERMAL
-@@ -16,11 +16,11 @@ config ST_THERMAL_MEMMAP
- 	tristate "STi series memory mapped access based thermal sensors"
- 
- config STM32_THERMAL
--       tristate "Thermal framework support on STMicroelectronics STM32 series of SoCs"
--       depends on MACH_STM32MP157
--       default y
--       help
--	Support for thermal framework on STMicroelectronics STM32 series of
--	SoCs. This thermal driver allows to access to general thermal framework
--	functionalities and to acces to SoC sensor functionalities. This
--	configuration is fully dependent of MACH_STM32MP157.
-+	tristate "Thermal framework support on STMicroelectronics STM32 series of SoCs"
-+	depends on MACH_STM32MP157
-+	default y
-+	help
-+	  Support for thermal framework on STMicroelectronics STM32 series of
-+	  SoCs. This thermal driver allows to access to general thermal framework
-+	  functionalities and to acces to SoC sensor functionalities. This
-+	  configuration is fully dependent of MACH_STM32MP157.
-diff --git a/drivers/thermal/tegra/Kconfig b/drivers/thermal/tegra/Kconfig
-index f8740f7..fc0b33b 100644
---- a/drivers/thermal/tegra/Kconfig
-+++ b/drivers/thermal/tegra/Kconfig
-@@ -14,7 +14,7 @@ config TEGRA_BPMP_THERMAL
- 	tristate "Tegra BPMP thermal sensing"
- 	depends on TEGRA_BPMP || COMPILE_TEST
- 	help
--	 Enable this option for support for sensing system temperature of NVIDIA
--	 Tegra systems-on-chip with the BPMP coprocessor (Tegra186).
-+	  Enable this option for support for sensing system temperature of NVIDIA
-+	  Tegra systems-on-chip with the BPMP coprocessor (Tegra186).
- 
- endmenu
+Dmitry Osipenko (3):
+  iommu/tegra-smmu: Fix invalid ASID bits on Tegra30/114
+  iommu/tegra-smmu: Properly release domain resources
+  iommu/tegra-smmu: Respect IOMMU API read-write protections
+
+ drivers/iommu/tegra-smmu.c | 41 ++++++++++++++++++++++++++++----------
+ 1 file changed, 31 insertions(+), 10 deletions(-)
+
 -- 
-1.9.1
+2.20.1
