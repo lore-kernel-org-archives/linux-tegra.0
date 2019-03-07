@@ -1,65 +1,57 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Thu, 7 Mar 2019 21:58:14 +0100
-Message-ID: <20190307205814.GB950@kunai>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
- <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
- <20190307201807.GA950@kunai>
- <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V1 01/11] mmc: tegra: fix ddr signaling for non-ddr modes
+Date: Thu, 7 Mar 2019 21:31:36 +0000
+Message-ID: <ff9d8656-fc4b-e460-d72b-2cb7ec4985ea@nvidia.com>
+References: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
+In-Reply-To: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Adam Ford <aford173@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, adrian.hunter@intel.com, ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, riteshh@codeaurora.org
+Cc: thierry.reding@gmail.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Sowjanya,
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 02/03/2019 05:20, Sowjanya Komatineni wrote:
+> ddr_signaling is set to true for DDR50 and DDR52 modes but is
+> not set back to false for other modes. This programs incorrect
+> host clock when mode change happens from DDR52/DDR50 to other
+> SDR or HS modes like incase of mmc_retune where it switches
+> from HS400 to HS DDR and then from HS DDR to HS mode and then
+> to HS200.
+> 
+> This patch fixes the ddr_signaling to set properly for non DDR
+> modes.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 32e62904c0d3..46086dd43bfb 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -779,6 +779,7 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+>  	bool set_dqs_trim = false;
+>  	bool do_hs400_dll_cal = false;
+>  
+> +	tegra_host->ddr_signaling = false;
+>  	switch (timing) {
+>  	case MMC_TIMING_UHS_SDR50:
+>  	case MMC_TIMING_UHS_SDR104:
 
-On Thu, Mar 07, 2019 at 09:53:50PM +0100, Enrico Weigelt, metux IT consult =
-wrote:
-> On 07.03.19 21:18, Wolfram Sang wrote:
-> >=20
-> >> It's been almost a year later, and several Linux revisions, and this
-> >> still seems stuck somewhere/somehow.
-> >=20
-> > I wanted to respin this series once rc1 is released.
-> >=20
-> Maybe just rebase and repost ?
+I have tested this series on Tegra210, Tegra186 and Tegra194 and see no
+further issues. Thanks for getting this out! Feel free to add my ...
 
-Then I'd miss all the new drivers which may need this fixed. Coccinelle
-makes respinning a breeze, so no problem with that.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
+Cheers
+Jon
 
---eAbsdosE1cNLO4uF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyBheIACgkQFA3kzBSg
-KbZj9Q/7BfZMRib+CTRXwFZJ3DHfp+wLWcSFipubqzbJkW8tAqgjyYR4X56NSUOo
-lwaQ5ymhPZuHGYSPYWBhxLKZSVzVyR1XeTyn7+LLctnA2rtfPS5VxXkbYRdAOsdW
-gqRCUiyz5FCuskho/7JwO82N2UBPyH+aOnhkA7nD7Xk2GoFcJXzG7nA/ECqvYOrm
-s6PXZb3tYdTmeT1n5t2AA7GrD3z0U6501rulyi+fTfC5L0cE9vX/vWWZe4H1Pi6S
-rGKl555Oa4tvXGYcJ2GJQXcbk9Mc2Csgch/jWR3d9mg9L5dVmVrkh1meZA/6VEgT
-H/2qvV03XFyCpr9wCOghH/d7LE72MTjWRSlmEKHG52fgYV1+HQrMFGc3OPn+GU6Q
-NN9IYpmVGHe0joajA638iPn+EGE+twimvV8vBDvNNXKubt7nxuFxfMNhdnQ7ZmnJ
-XTeG4jMiWZx2zOnZc5J2CjKib1mPTtvViI7lLF29t3A19gTst37bsWhZJ31lyh3M
-rH6qMapWa9hbkbZikW1EmP1aFRgQAv0xbzq7FnHRppqKkFNNAvQZ+tL8Gm33nUww
-1wkTzDJjJljc4/kkkViSKTX+F8TGW6eUcI3upBktCvdI6j/A47wi5c5oZZ8x+dDs
-uEIWFWfOkZxPnUGhly24Sd1y4O1sHBnbTwkW+793MERzqD4LwYk=
-=4j4A
------END PGP SIGNATURE-----
-
---eAbsdosE1cNLO4uF--
+-- 
+nvpublic
