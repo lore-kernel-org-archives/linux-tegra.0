@@ -1,46 +1,85 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] arm64: defconfig: Enable Tegra HDA support
-Date: Thu, 7 Mar 2019 16:46:48 +0000
-Message-ID: <1551977208-15702-1-git-send-email-jonathanh@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V1 07/11] mmc: cqhci: add quirk for setting DCMD
+ CMD_TIMING
+Date: Thu, 7 Mar 2019 18:16:08 +0000
+Message-ID: <BYAPR12MB33984D80A404EF919F3A86A0C24C0@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
+ <1551504025-3541-7-git-send-email-skomatineni@nvidia.com>
+ <a320c841-7e58-4d3e-5df6-61e10520d9d8@intel.com>
+ <a544bc6d-7b23-53e8-16d0-ee0eaf576eb2@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a544bc6d-7b23-53e8-16d0-ee0eaf576eb2@codeaurora.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ritesh Harjani <riteshh@codeaurora.org>, Adrian Hunter <adrian.hunter@intel.com>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Asutosh Das <asutoshd@codeaurora.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable support for Tegra HDA controller in the ARM64 defconfig which is
-used by Tegra210, Tegra186 and Tegra194. Please note that the Tegra HDA
-controller requires the HDA HDMI/DP codec driver and so enable this as
-well.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 1fbbfbb5d9d1..e578b12774f3 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -523,6 +523,8 @@ CONFIG_LOGO=y
- # CONFIG_LOGO_LINUX_VGA16 is not set
- CONFIG_SOUND=y
- CONFIG_SND=y
-+CONFIG_SND_HDA_TEGRA=m
-+CONFIG_SND_HDA_CODEC_HDMI=m
- CONFIG_SND_SOC=y
- CONFIG_SND_BCM2835_SOC_I2S=m
- CONFIG_SND_SOC_ROCKCHIP=m
--- 
-2.7.4
+DQo+IE9uIDMvNi8yMDE5IDY6MzAgUE0sIEFkcmlhbiBIdW50ZXIgd3JvdGU6DQo+PiBPbiAyLzAz
+LzE5IDc6MjAgQU0sIFNvd2phbnlhIEtvbWF0aW5lbmkgd3JvdGU6DQo+Pj4gVGhpcyBwYXRjaCBh
+ZGRzIGEgcXVpcmsgZm9yIHNldHRpbmcgQ01EX1RJTUlORyB0byAxIGluIGRlc2NyaXB0b3IgZm9y
+IA0KPj4+IERDTUQgd2l0aCBSMUIgcmVzcG9uc2UgdHlwZSB0byBhbGxvdyB0aGUgY29tbWFuZCB0
+byBiZSBzZW50IHRvIGRldmljZSANCj4+PiBkdXJpbmcgZGF0YSBhY3Rpdml0eSBvciBidXN5IHRp
+bWUuDQo+Pj4NCj4+PiBUZWdyYTE4NiBDUUhDSSBob3N0IGhhcyBidWcgd2hlcmUgaXQgc2VsZWN0
+cyBEQVRBX1BSRVNFTlRfU0VMRUNUIHRvIDEgDQo+Pj4gYnkgQ1FIQ0kgY29udHJvbGxlciBmb3Ig
+RENNRHMgd2l0aCBSMUIgcmVzcG9uc2UgdHlwZSBhbmQgc2luY2UgRENNRCANCj4+PiBkb2VzIG5v
+dCB0cmlnZ2VyIGFueSBkYXRhIHRyYW5zZmVyLCBEQ01EIHRhc2sgY29tcGxldGUgaGFwcGVucyAN
+Cj4+PiBsZWF2aW5nIHRoZSBEQVRBIEZTTSBvZiBob3N0IGNvbnRyb2xsZXIgaW4gd2FpdCBzdGF0
+ZSBmb3IgZGF0YS4NCj4+Pg0KPj4+IFRoaXMgZWZmZWN0cyB0aGUgZGF0YSB0cmFuc2ZlciB0YXNr
+IGlzc3VlZCBhZnRlciBSMUIgRENNRCB0YXNrIGFuZCBubyANCj4+PiBpbnRlcnJ1cHQgaXMgZ2Vu
+ZXJhdGVkIGZvciB0aGUgZGF0YSB0cmFuc2ZlciB0YXNrLg0KPj4+DQo+Pj4gU1cgV0FSIGZvciB0
+aGlzIGlzc3VlIGlzIHRvIHNldCBDTURfVElNSU5HIGJpdCB0byAxIGluIERDTUQgdGFzayANCj4+
+PiBkZXNjcmlwdG9yIGFuZCBhcyBEQ01EIHRhc2sgZGVzY3JpcHRvciBwcmVwYXJhdGlvbiBpcyBk
+b25lIGJ5IGNxaGNpIA0KPj4+IGRyaXZlciwgdGhpcyBwYXRjaCBhZGRzIGNxZXF1aXJrIHRvIGhh
+bmRsZSB0aGlzLg0KPj4+DQo+Pj4gU2lnbmVkLW9mZi1ieTogU293amFueWEgS29tYXRpbmVuaSA8
+c2tvbWF0aW5lbmlAbnZpZGlhLmNvbT4NCj4+PiAtLS0NCj4+PiAgIGRyaXZlcnMvbW1jL2hvc3Qv
+Y3FoY2kuYyB8IDUgKysrKy0NCj4+PiAgIGRyaXZlcnMvbW1jL2hvc3QvY3FoY2kuaCB8IDEgKw0K
+Pj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4+
+Pg0KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L2NxaGNpLmMgYi9kcml2ZXJzL21t
+Yy9ob3N0L2NxaGNpLmMgDQo+Pj4gaW5kZXggYThhZjY4MmE5MTgyLi5iMzRjMDcxMjVmMzIgMTAw
+NjQ0DQo+Pj4gLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9jcWhjaS5jDQo+Pj4gKysrIGIvZHJpdmVy
+cy9tbWMvaG9zdC9jcWhjaS5jDQo+Pj4gQEAgLTUyMSw3ICs1MjEsMTAgQEAgc3RhdGljIHZvaWQg
+Y3FoY2lfcHJlcF9kY21kX2Rlc2Moc3RydWN0IG1tY19ob3N0ICptbWMsDQo+Pj4gICAJfSBlbHNl
+IHsNCj4+PiAgIAkJaWYgKG1ycS0+Y21kLT5mbGFncyAmIE1NQ19SU1BfUjFCKSB7DQo+Pj4gICAJ
+CQlyZXNwX3R5cGUgPSAweDM7DQo+Pj4gLQkJCXRpbWluZyA9IDB4MDsNCj4+PiArCQkJaWYgKGNx
+X2hvc3QtPnF1aXJrcyAmIENRSENJX1FVSVJLX0NNRF9USU1JTkdfUjFCX0RDTUQpDQo+Pj4gKwkJ
+CQl0aW1pbmcgPSAweDE7DQo+Pj4gKwkJCWVsc2UNCj4+PiArCQkJCXRpbWluZyA9IDB4MDsNCj4+
+IEkgd2FzIHRoaW5raW5nIGl0IHdvdWxkIGJlIG5pY2UgaWYgdGhlcmUgd2FzIGEgZ2VuZXJpYyB3
+YXkgZm9yIGRyaXZlcnMgDQo+PiB0byBtYWtlIGNoYW5nZXMgdG8gZGVzY3JpcHRvcnMgYmVmb3Jl
+IGEgdGFzayBpcyBzdGFydGVkLiAgQ3VycmVudGx5IA0KPj4gdGhlcmUgaXMNCj4+IGhvc3QtPm9w
+cy0+d3JpdGVfbCgpIHdoaWNoIHdvdWxkIG1ha2UgaXQgcG9zc2libGUgYnkgY2hlY2tpbmcgZm9y
+IA0KPj4gaG9zdC0+b3BzLT5DUUhDSV9UREJSDQo+PiByZWdpc3RlciBhbmQsIGluIHRoaXMgY2Fz
+ZSwgdGhlIERDTUQgdGFnLiAgV2Ugd291bGQgbmVlZCB0byBleHBvcnQgDQo+PiBnZXRfZGVzYygp
+LCBwZXJoYXBzIHJlbmFtZSBpdCBjcWhjaV9nZXRfZGVzYygpIGFuZCBwdXQgaXQgaW4gY3FoY2ku
+aCANCj4+IHNpbmNlIGl0IGlzIGFuIGlubGluZSBmdW5jdGlvbi4NCj4NCj5XZSB0YWtlIHNwaW5f
+bG9ja19pcnFzYXZlIGFmdGVyIHRoZSBkZXNjcmlwdG9yIGlzIHByZXBhcmVkIGFuZCBiZWZvcmUg
+d3JpdGluZyB0byBUREJSLg0KPk5vdCBzdXJlIGJ1dCB0b21vcnJvdyB0aGlzIG1heSBiZWNvbWUg
+YSBsaW1pdGF0aW9uIGZvciBkcml2ZXJzIHRvIG1ha2UgY2hhbmdlcyB0byBkZXNjcmlwdG9ycyBp
+ZiB0aGV5IGVkaXQgZGVzY3JpcHRvcnMgaW4gaG9zdC0+b3BzLT53cml0ZV9sKCkgY2FsbC4NCj5U
+aG91Z2ggaW4gdGhpcyBjYXNlIGl0IGlzIG5vdCByZXF1aXJlZCBoZXJlLg0KPg0KPj4NCj4+IEFs
+dGVybmF0aXZlbHkgd2UgY291bGQgYWRkIGhvc3QtPm9wcyBmb3IgZGVzY3JpcHRvciBwcmVwYXJh
+dGlvbi4NCj4NCj5Cb3RoIHdheXMgc291bmRzIGdvb2QgdG8gbWUuDQo+QnV0IG1heWJlIGFkZGlu
+ZyBhIGhvc3QtPm9wcyBmb3IgZGVzY3JpcHRvciBwcmVwYXJhdGlvbiBpcyBiZXR0ZXIgd2F5IHRv
+IGdvLA0KPnNpbmNlIHRoYXQgd2lsbCBiZSB0aGUgcmlnaHQgaW50ZXJmYWNlIGV4cG9zZWQgdG8g
+bWFrZSBjaGFuZ2VzIHRvIA0KPmRlc2NyaXB0b3JzLg0KPg0KDQpEQ01EIGRlc2NyaXB0b3IgYXR0
+cmlidXRlcyByZW1haW4gc2FtZSBmb3IgYW55IGhvc3QgYW5kIGFsc28gdGFzayBwYXJhbWV0ZXJz
+IGFzIFFCUiBuZWVkIHRvIGJlIGVuYWJsZWQgd2l0aCBEQ01ELg0KU28gSSBiZWxpZXZlIGl0IHNo
+b3VsZCBiZSBvayBpZiB3ZSBqdXN0IGFkZCBjYWxsYmFjayB0byBhbGxvdyBob3N0cyB0byB1cGRh
+dGUgY29tbWFuZCBwYXJhbWV0ZXJzIG9mIERDTUQgZGVzY3JpcHRvciBvbmx5IHRocnUgY3FoY2lf
+aG9zdF9vcHMuDQoNCkFsc28sIGRvbuKAmXQgc2VlIGFueSByZXF1aXJlbWVudCBmb3IgaG9zdCBz
+cGVjaWZpYyBUYXNrIHBhcmFtZXRlciB1cGRhdGVzIGluIFRhc2sgZGVzY3JpcHRvciBzbyBub3Qg
+c3VyZSBpZiB0aGVyZSBpcyBhbnkgbmVlZCB0byBwcm92aWRlIGNhbGxiYWNrIGZvciB0YXNrIGRl
+c2NyaXB0b3IgZGF0YSBwcmVwYXJhdGlvbiB0byBob3N0cy4NClBsZWFzZSBjb25maXJtLg0KDQo+
+Pg0KPj4gV2hhdCBkbyBwZW9wbGUgdGhpbms/DQo+Pg0KPj4+ICAgCQl9IGVsc2Ugew0KPj4+ICAg
+CQkJcmVzcF90eXBlID0gMHgyOw0KPj4+ICAgCQkJdGltaW5nID0gMHgxOw0KPj4+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL21tYy9ob3N0L2NxaGNpLmggYi9kcml2ZXJzL21tYy9ob3N0L2NxaGNpLmgN
+Cj4+PiBpbmRleCA5ZTY4Mjg2YTA3YjQuLmY5NmQ4NTY1Y2MwNyAxMDA2NDQNCj4+PiAtLS0gYS9k
+cml2ZXJzL21tYy9ob3N0L2NxaGNpLmgNCj4+PiArKysgYi9kcml2ZXJzL21tYy9ob3N0L2NxaGNp
+LmgNCj4+PiBAQCAtMTcwLDYgKzE3MCw3IEBAIHN0cnVjdCBjcWhjaV9ob3N0IHsNCj4+PiAgIA0K
+Pj4+ICAgCXUzMiBxdWlya3M7DQo+Pj4gICAjZGVmaW5lIENRSENJX1FVSVJLX1NIT1JUX1RYRlJf
+REVTQ19TWgkweDENCj4+PiArI2RlZmluZSBDUUhDSV9RVUlSS19DTURfVElNSU5HX1IxQl9EQ01E
+CTB4Mg0KPj4+ICAgDQo+Pj4gICAJYm9vbCBlbmFibGVkOw0KPj4+ICAgCWJvb2wgaGFsdGVkOw0K
+Pj4+DQo=
