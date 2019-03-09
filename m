@@ -1,100 +1,58 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V1 07/11] mmc: cqhci: add quirk for setting DCMD
- CMD_TIMING
-Date: Sat, 9 Mar 2019 05:14:30 +0000
-Message-ID: <BYAPR12MB3398438AEB0E9D2625758406C24E0@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1551504025-3541-1-git-send-email-skomatineni@nvidia.com>
- <1551504025-3541-7-git-send-email-skomatineni@nvidia.com>
- <a320c841-7e58-4d3e-5df6-61e10520d9d8@intel.com>
- <a544bc6d-7b23-53e8-16d0-ee0eaf576eb2@codeaurora.org>
- <BYAPR12MB33984D80A404EF919F3A86A0C24C0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <1fa6f529-2cb8-0108-2041-99ad9b39498f@intel.com>
+From: Embedded Engineer <embed786@gmail.com>
+Subject: Re: Unstable Kernel behavior on an ARM based board
+Date: Sat, 9 Mar 2019 12:50:46 +0500
+Message-ID: <CA+_ZnZTizztzr6BHVMoN5aAHmJoGAvbnYZm3UjPvHG1FtZp8Xg@mail.gmail.com>
+References: <CA+_ZnZTeZLyCcjZduQODzjWxTpU96AefzvTBDFbq2CSjVQxONg@mail.gmail.com>
+ <20190305112226.rhbl3dwopmip45ja@shell.armlinux.org.uk>
+ <20190305115730.GE26369@ulmo>
+ <CA+_ZnZQ1m8QyiMJWwmVvtdqiFRDYK8PocGpG38W0NyEZ3yA8zQ@mail.gmail.com>
+ <20190305132350.pzfmz4yvh6ujgotn@shell.armlinux.org.uk>
+ <CA+_ZnZS7wimpnH+TnvM_ztnX3wbADpf5FUBd_8igqeg+FnFr5g@mail.gmail.com>
+ <20190305142351.ktciqkj5kycdwilr@shell.armlinux.org.uk>
+ <CA+_ZnZQhvf5R2f-uMPPO3AgNbXTtoxcqpCYZR_Sb13jHN5X5wA@mail.gmail.com>
+ <20190305145853.qsmcaop4ths2jgrl@shell.armlinux.org.uk>
+ <CA+_ZnZSTkA8vj4QYJizL=YUcvtiabrVzKtDUPYO+2v-AkgRSpw@mail.gmail.com>
+ <20190305153111.frvgnoba646uf5ar@shell.armlinux.org.uk>
+ <47d0bea5-0dfe-9ce0-fedc-92061769e0a1@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1fa6f529-2cb8-0108-2041-99ad9b39498f@intel.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ritesh Harjani <riteshh@codeaurora.org>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Asutosh Das <asutoshd@codeaurora.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <47d0bea5-0dfe-9ce0-fedc-92061769e0a1@gmx.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Clemens Koller <clemens.ml@gmx.net>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Vladimir Murzin <vladimir.murzin@arm.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBPbiA3LzAzLzE5IDg6MTYgUE0sIFNvd2phbnlhIEtvbWF0aW5lbmkgd3JvdGU6DQo+PiANCj4+
-PiBPbiAzLzYvMjAxOSA2OjMwIFBNLCBBZHJpYW4gSHVudGVyIHdyb3RlOg0KPj4+PiBPbiAyLzAz
-LzE5IDc6MjAgQU0sIFNvd2phbnlhIEtvbWF0aW5lbmkgd3JvdGU6DQo+Pj4+PiBUaGlzIHBhdGNo
-IGFkZHMgYSBxdWlyayBmb3Igc2V0dGluZyBDTURfVElNSU5HIHRvIDEgaW4gZGVzY3JpcHRvciAN
-Cj4+Pj4+IGZvciBEQ01EIHdpdGggUjFCIHJlc3BvbnNlIHR5cGUgdG8gYWxsb3cgdGhlIGNvbW1h
-bmQgdG8gYmUgc2VudCB0byANCj4+Pj4+IGRldmljZSBkdXJpbmcgZGF0YSBhY3Rpdml0eSBvciBi
-dXN5IHRpbWUuDQo+Pj4+Pg0KPj4+Pj4gVGVncmExODYgQ1FIQ0kgaG9zdCBoYXMgYnVnIHdoZXJl
-IGl0IHNlbGVjdHMgREFUQV9QUkVTRU5UX1NFTEVDVCB0byANCj4+Pj4+IDEgYnkgQ1FIQ0kgY29u
-dHJvbGxlciBmb3IgRENNRHMgd2l0aCBSMUIgcmVzcG9uc2UgdHlwZSBhbmQgc2luY2UgDQo+Pj4+
-PiBEQ01EIGRvZXMgbm90IHRyaWdnZXIgYW55IGRhdGEgdHJhbnNmZXIsIERDTUQgdGFzayBjb21w
-bGV0ZSBoYXBwZW5zIA0KPj4+Pj4gbGVhdmluZyB0aGUgREFUQSBGU00gb2YgaG9zdCBjb250cm9s
-bGVyIGluIHdhaXQgc3RhdGUgZm9yIGRhdGEuDQo+Pj4+Pg0KPj4+Pj4gVGhpcyBlZmZlY3RzIHRo
-ZSBkYXRhIHRyYW5zZmVyIHRhc2sgaXNzdWVkIGFmdGVyIFIxQiBEQ01EIHRhc2sgYW5kIA0KPj4+
-Pj4gbm8gaW50ZXJydXB0IGlzIGdlbmVyYXRlZCBmb3IgdGhlIGRhdGEgdHJhbnNmZXIgdGFzay4N
-Cj4+Pj4+DQo+Pj4+PiBTVyBXQVIgZm9yIHRoaXMgaXNzdWUgaXMgdG8gc2V0IENNRF9USU1JTkcg
-Yml0IHRvIDEgaW4gRENNRCB0YXNrIA0KPj4+Pj4gZGVzY3JpcHRvciBhbmQgYXMgRENNRCB0YXNr
-IGRlc2NyaXB0b3IgcHJlcGFyYXRpb24gaXMgZG9uZSBieSBjcWhjaSANCj4+Pj4+IGRyaXZlciwg
-dGhpcyBwYXRjaCBhZGRzIGNxZXF1aXJrIHRvIGhhbmRsZSB0aGlzLg0KPj4+Pj4NCj4+Pj4+IFNp
-Z25lZC1vZmYtYnk6IFNvd2phbnlhIEtvbWF0aW5lbmkgPHNrb21hdGluZW5pQG52aWRpYS5jb20+
-DQo+Pj4+PiAtLS0NCj4+Pj4+ICAgZHJpdmVycy9tbWMvaG9zdC9jcWhjaS5jIHwgNSArKysrLQ0K
-Pj4+Pj4gICBkcml2ZXJzL21tYy9ob3N0L2NxaGNpLmggfCAxICsNCj4+Pj4+ICAgMiBmaWxlcyBj
-aGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4+Pj4+DQo+Pj4+PiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC9jcWhjaS5jIGIvZHJpdmVycy9tbWMvaG9zdC9jcWhj
-aS5jIA0KPj4+Pj4gaW5kZXggYThhZjY4MmE5MTgyLi5iMzRjMDcxMjVmMzIgMTAwNjQ0DQo+Pj4+
-PiAtLS0gYS9kcml2ZXJzL21tYy9ob3N0L2NxaGNpLmMNCj4+Pj4+ICsrKyBiL2RyaXZlcnMvbW1j
-L2hvc3QvY3FoY2kuYw0KPj4+Pj4gQEAgLTUyMSw3ICs1MjEsMTAgQEAgc3RhdGljIHZvaWQgY3Fo
-Y2lfcHJlcF9kY21kX2Rlc2Moc3RydWN0IG1tY19ob3N0ICptbWMsDQo+Pj4+PiAgIAl9IGVsc2Ug
-ew0KPj4+Pj4gICAJCWlmIChtcnEtPmNtZC0+ZmxhZ3MgJiBNTUNfUlNQX1IxQikgew0KPj4+Pj4g
-ICAJCQlyZXNwX3R5cGUgPSAweDM7DQo+Pj4+PiAtCQkJdGltaW5nID0gMHgwOw0KPj4+Pj4gKwkJ
-CWlmIChjcV9ob3N0LT5xdWlya3MgJiBDUUhDSV9RVUlSS19DTURfVElNSU5HX1IxQl9EQ01EKQ0K
-Pj4+Pj4gKwkJCQl0aW1pbmcgPSAweDE7DQo+Pj4+PiArCQkJZWxzZQ0KPj4+Pj4gKwkJCQl0aW1p
-bmcgPSAweDA7DQo+Pj4+IEkgd2FzIHRoaW5raW5nIGl0IHdvdWxkIGJlIG5pY2UgaWYgdGhlcmUg
-d2FzIGEgZ2VuZXJpYyB3YXkgZm9yIA0KPj4+PiBkcml2ZXJzIHRvIG1ha2UgY2hhbmdlcyB0byBk
-ZXNjcmlwdG9ycyBiZWZvcmUgYSB0YXNrIGlzIHN0YXJ0ZWQuICANCj4+Pj4gQ3VycmVudGx5IHRo
-ZXJlIGlzDQo+Pj4+IGhvc3QtPm9wcy0+d3JpdGVfbCgpIHdoaWNoIHdvdWxkIG1ha2UgaXQgcG9z
-c2libGUgYnkgY2hlY2tpbmcgZm9yIA0KPj4+PiBob3N0LT5vcHMtPkNRSENJX1REQlINCj4+Pj4g
-cmVnaXN0ZXIgYW5kLCBpbiB0aGlzIGNhc2UsIHRoZSBEQ01EIHRhZy4gIFdlIHdvdWxkIG5lZWQg
-dG8gZXhwb3J0IA0KPj4+PiBnZXRfZGVzYygpLCBwZXJoYXBzIHJlbmFtZSBpdCBjcWhjaV9nZXRf
-ZGVzYygpIGFuZCBwdXQgaXQgaW4gY3FoY2kuaCANCj4+Pj4gc2luY2UgaXQgaXMgYW4gaW5saW5l
-IGZ1bmN0aW9uLg0KPj4+DQo+Pj4gV2UgdGFrZSBzcGluX2xvY2tfaXJxc2F2ZSBhZnRlciB0aGUg
-ZGVzY3JpcHRvciBpcyBwcmVwYXJlZCBhbmQgYmVmb3JlIHdyaXRpbmcgdG8gVERCUi4NCj4+PiBO
-b3Qgc3VyZSBidXQgdG9tb3Jyb3cgdGhpcyBtYXkgYmVjb21lIGEgbGltaXRhdGlvbiBmb3IgZHJp
-dmVycyB0byBtYWtlIGNoYW5nZXMgdG8gZGVzY3JpcHRvcnMgaWYgdGhleSBlZGl0IGRlc2NyaXB0
-b3JzIGluIGhvc3QtPm9wcy0+d3JpdGVfbCgpIGNhbGwuDQo+Pj4gVGhvdWdoIGluIHRoaXMgY2Fz
-ZSBpdCBpcyBub3QgcmVxdWlyZWQgaGVyZS4NCj4+Pg0KPj4+Pg0KPj4+PiBBbHRlcm5hdGl2ZWx5
-IHdlIGNvdWxkIGFkZCBob3N0LT5vcHMgZm9yIGRlc2NyaXB0b3IgcHJlcGFyYXRpb24uDQo+Pj4N
-Cj4+PiBCb3RoIHdheXMgc291bmRzIGdvb2QgdG8gbWUuDQo+Pj4gQnV0IG1heWJlIGFkZGluZyBh
-IGhvc3QtPm9wcyBmb3IgZGVzY3JpcHRvciBwcmVwYXJhdGlvbiBpcyBiZXR0ZXIgd2F5IA0KPj4+
-IHRvIGdvLCBzaW5jZSB0aGF0IHdpbGwgYmUgdGhlIHJpZ2h0IGludGVyZmFjZSBleHBvc2VkIHRv
-IG1ha2UgY2hhbmdlcyANCj4+PiB0byBkZXNjcmlwdG9ycy4NCj4+Pg0KPj4gDQo+PiBEQ01EIGRl
-c2NyaXB0b3IgYXR0cmlidXRlcyByZW1haW4gc2FtZSBmb3IgYW55IGhvc3QgYW5kIGFsc28gdGFz
-ayBwYXJhbWV0ZXJzIGFzIFFCUiBuZWVkIHRvIGJlIGVuYWJsZWQgd2l0aCBEQ01ELg0KPj4gU28g
-SSBiZWxpZXZlIGl0IHNob3VsZCBiZSBvayBpZiB3ZSBqdXN0IGFkZCBjYWxsYmFjayB0byBhbGxv
-dyBob3N0cyB0byB1cGRhdGUgY29tbWFuZCBwYXJhbWV0ZXJzIG9mIERDTUQgZGVzY3JpcHRvciBv
-bmx5IHRocnUgY3FoY2lfaG9zdF9vcHMuDQo+DQo+VGhhdCBzb3VuZHMgZmluZSB0byBtZS4gIE1h
-eWJlIGRvIHRoYXQgZm9yIHRoZSBuZXh0IHZlcnNpb24gb2YgdGhpcyBwYXRjaHNldC4NCg0KVGhh
-bmtzIEFkcmlhbi4gQWN0dWFsbHksIERDTUQgY29tbWFuZCBwYXJhbWV0ZXJzIGluY2x1ZGUgb3Bj
-b2RlLCB0aW1pbmcsIGFuZCByZXNwb25zZSB0eXBlIHdoZXJlIG9wY29kZSBhbmQgcmVzcG9uc2Ug
-dHlwZSBzdGF5cyBzYW1lLg0KU28gSSBvbmx5IHNlZSBuZWVkIGZvciBob3N0cyB0byBjaG9vc2Ug
-Y21kIHRpbWluZyB0byBjb250cm9sIGlmIGhhcmR3YXJlIHNob3VsZCB3YWl0IGZvciBidXN5IHRp
-bWUgb3Igbm90IGJhc2ljYWxseSB0byBzZW5kIGNvbW1hbmQgZHVyaW5nIGJ1c3kgb3IgaWRsZSB0
-aW1lLg0KDQpXaWxsIGFkZCBjcWhjaV9ob3N0X29wcyBpbnRlcmZhY2UgdG8gYWxsb3cgaG9zdCBk
-cml2ZXIgdG8gY2hvb3NlIGNtZCB0aW1pbmcgYW5kIHdpbGwgc2VuZCBhbG9uZyB3aXRoIHRoZSBv
-dGhlciB0dW5pbmcgcmVsYXRlZCBmZWVkYmFjayBmaXhlcyBvZiB0aGlzIHNlcmllcy4NCg0KPj4g
-DQo+PiBBbHNvLCBkb27igJl0IHNlZSBhbnkgcmVxdWlyZW1lbnQgZm9yIGhvc3Qgc3BlY2lmaWMg
-VGFzayBwYXJhbWV0ZXIgdXBkYXRlcyBpbiBUYXNrIGRlc2NyaXB0b3Igc28gbm90IHN1cmUgaWYg
-dGhlcmUgaXMgYW55IG5lZWQgdG8gcHJvdmlkZSBjYWxsYmFjayBmb3IgdGFzayBkZXNjcmlwdG9y
-IGRhdGEgcHJlcGFyYXRpb24gdG8gaG9zdHMuDQo+PiBQbGVhc2UgY29uZmlybS4NCj4+IA0KPj4+
-Pg0KPj4+PiBXaGF0IGRvIHBlb3BsZSB0aGluaz8NCj4+Pj4NCj4+Pj4+ICAgCQl9IGVsc2Ugew0K
-Pj4+Pj4gICAJCQlyZXNwX3R5cGUgPSAweDI7DQo+Pj4+PiAgIAkJCXRpbWluZyA9IDB4MTsNCj4+
-Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L2NxaGNpLmggYi9kcml2ZXJzL21tYy9o
-b3N0L2NxaGNpLmggDQo+Pj4+PiBpbmRleCA5ZTY4Mjg2YTA3YjQuLmY5NmQ4NTY1Y2MwNyAxMDA2
-NDQNCj4+Pj4+IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3QvY3FoY2kuaA0KPj4+Pj4gKysrIGIvZHJp
-dmVycy9tbWMvaG9zdC9jcWhjaS5oDQo+Pj4+PiBAQCAtMTcwLDYgKzE3MCw3IEBAIHN0cnVjdCBj
-cWhjaV9ob3N0IHsNCj4+Pj4+ICAgDQo+Pj4+PiAgIAl1MzIgcXVpcmtzOw0KPj4+Pj4gICAjZGVm
-aW5lIENRSENJX1FVSVJLX1NIT1JUX1RYRlJfREVTQ19TWgkweDENCj4+Pj4+ICsjZGVmaW5lIENR
-SENJX1FVSVJLX0NNRF9USU1JTkdfUjFCX0RDTUQJMHgyDQo+Pj4+PiAgIA0KPj4+Pj4gICAJYm9v
-bCBlbmFibGVkOw0KPj4+Pj4gICAJYm9vbCBoYWx0ZWQ7DQo+Pj4+Pg0KDQo=
+On Tue, Mar 5, 2019 at 9:01 PM Clemens Koller <clemens.ml@gmx.net> wrote:
+>
+> Yes, this really smells like memory timing issues.
+> Did you try the more extensive memory test of the latest u-boot? The regular one is quite naive. This is usually *not* enabled as default.
+
+Unfortunately I was unable to get the latest (or any other upstream)
+u-boot running on my board and even on Jetson TK1 kit. Although it
+seems that the u-boot has support for Jetson TK1 in mainline but don't
+know why its not working. The mtest command in the Nvidia's downstream
+version of u-boot did not report any errors.
+
+> Then, a Shmoo plot with different memory timing/voltage/temperature might be useful as well as a PCB layout review.
+
+Tried running Shmoo test again but it generated the BCT file with same
+parameters again. So it didn't seem to work.
+
+I also stopped u-boot at command line and checked using oscilloscope
+if there's some activity at data lines between DDR and TK1 processor.
+There was no activity on data lines which made me believe that when
+u-boot is in idle state, there's no peripheral (or DMA) writing to
+memory which might be corrupting the memory used by kernel as suggest
+by Thierry Reding.
+
+Can anyone give some other suggestion as it seems I'm running out of
+options to test :(
