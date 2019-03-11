@@ -1,40 +1,50 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V2 05/10] arm64: tegra: fix default tap and trim values
-Date: Mon, 11 Mar 2019 11:02:34 -0700
-Message-ID: <1552327359-8036-5-git-send-email-skomatineni@nvidia.com>
-References: <1552327359-8036-1-git-send-email-skomatineni@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Subject: [PATCH 09/42] drivers: gpio: sprd: use devm_platform_ioremap_resource()
+Date: Mon, 11 Mar 2019 19:54:48 +0100
+Message-ID: <1552330521-4276-9-git-send-email-info@metux.net>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552327359-8036-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1552330521-4276-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, riteshh@codeaurora.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Default tap and trim values are incorrect for Tegra186 SDMMC4.
-This patch fixes it.
+Use the new helper that wraps the calls to platform_get_resource()
+and devm_ioremap_resource() together.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-eic-sprd.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 97aeb946ed5e..472f55fe9488 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -317,8 +317,8 @@
- 		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
- 		nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
- 		nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
--		nvidia,default-tap = <0x5>;
--		nvidia,default-trim = <0x9>;
-+		nvidia,default-tap = <0x9>;
-+		nvidia,default-trim = <0x5>;
- 		nvidia,dqs-trim = <63>;
- 		mmc-hs400-1_8v;
- 		status = "disabled";
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index f0223ce..c12de87 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -567,7 +567,6 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 	const struct sprd_eic_variant_data *pdata;
+ 	struct gpio_irq_chip *irq;
+ 	struct sprd_eic *sprd_eic;
+-	struct resource *res;
+ 	int ret, i;
+ 
+ 	pdata = of_device_get_match_data(&pdev->dev);
+@@ -596,13 +595,9 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 		 * have one bank EIC, thus base[1] and base[2] can be
+ 		 * optional.
+ 		 */
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			continue;
+-
+-		sprd_eic->base[i] = devm_ioremap_resource(&pdev->dev, res);
++		sprd_eic->base[i] = devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(sprd_eic->base[i]))
+-			return PTR_ERR(sprd_eic->base[i]);
++			continue;
+ 	}
+ 
+ 	sprd_eic->chip.label = sprd_eic_label_name[sprd_eic->type];
 -- 
-2.7.4
+1.9.1
