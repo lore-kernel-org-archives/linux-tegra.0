@@ -1,58 +1,43 @@
-From: Embedded Engineer <embed786@gmail.com>
-Subject: Re: Unstable Kernel behavior on an ARM based board
-Date: Sat, 9 Mar 2019 12:50:46 +0500
-Message-ID: <CA+_ZnZTizztzr6BHVMoN5aAHmJoGAvbnYZm3UjPvHG1FtZp8Xg@mail.gmail.com>
-References: <CA+_ZnZTeZLyCcjZduQODzjWxTpU96AefzvTBDFbq2CSjVQxONg@mail.gmail.com>
- <20190305112226.rhbl3dwopmip45ja@shell.armlinux.org.uk>
- <20190305115730.GE26369@ulmo>
- <CA+_ZnZQ1m8QyiMJWwmVvtdqiFRDYK8PocGpG38W0NyEZ3yA8zQ@mail.gmail.com>
- <20190305132350.pzfmz4yvh6ujgotn@shell.armlinux.org.uk>
- <CA+_ZnZS7wimpnH+TnvM_ztnX3wbADpf5FUBd_8igqeg+FnFr5g@mail.gmail.com>
- <20190305142351.ktciqkj5kycdwilr@shell.armlinux.org.uk>
- <CA+_ZnZQhvf5R2f-uMPPO3AgNbXTtoxcqpCYZR_Sb13jHN5X5wA@mail.gmail.com>
- <20190305145853.qsmcaop4ths2jgrl@shell.armlinux.org.uk>
- <CA+_ZnZSTkA8vj4QYJizL=YUcvtiabrVzKtDUPYO+2v-AkgRSpw@mail.gmail.com>
- <20190305153111.frvgnoba646uf5ar@shell.armlinux.org.uk>
- <47d0bea5-0dfe-9ce0-fedc-92061769e0a1@gmx.net>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V2 01/10] mmc: tegra: fix ddr signaling for non-ddr modes
+Date: Mon, 11 Mar 2019 11:02:30 -0700
+Message-ID: <1552327359-8036-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <47d0bea5-0dfe-9ce0-fedc-92061769e0a1@gmx.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Clemens Koller <clemens.ml@gmx.net>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Vladimir Murzin <vladimir.murzin@arm.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, riteshh@codeaurora.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 5, 2019 at 9:01 PM Clemens Koller <clemens.ml@gmx.net> wrote:
->
-> Yes, this really smells like memory timing issues.
-> Did you try the more extensive memory test of the latest u-boot? The regular one is quite naive. This is usually *not* enabled as default.
+ddr_signaling is set to true for DDR50 and DDR52 modes but is
+not set back to false for other modes. This programs incorrect
+host clock when mode change happens from DDR52/DDR50 to other
+SDR or HS modes like incase of mmc_retune where it switches
+from HS400 to HS DDR and then from HS DDR to HS mode and then
+to HS200.
 
-Unfortunately I was unable to get the latest (or any other upstream)
-u-boot running on my board and even on Jetson TK1 kit. Although it
-seems that the u-boot has support for Jetson TK1 in mainline but don't
-know why its not working. The mtest command in the Nvidia's downstream
-version of u-boot did not report any errors.
+This patch fixes the ddr_signaling to set properly for non DDR
+modes.
 
-> Then, a Shmoo plot with different memory timing/voltage/temperature might be useful as well as a PCB layout review.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tried running Shmoo test again but it generated the BCT file with same
-parameters again. So it didn't seem to work.
-
-I also stopped u-boot at command line and checked using oscilloscope
-if there's some activity at data lines between DDR and TK1 processor.
-There was no activity on data lines which made me believe that when
-u-boot is in idle state, there's no peripheral (or DMA) writing to
-memory which might be corrupting the memory used by kernel as suggest
-by Thierry Reding.
-
-Can anyone give some other suggestion as it seems I'm running out of
-options to test :(
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 32e62904c0d3..46086dd43bfb 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -779,6 +779,7 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+ 	bool set_dqs_trim = false;
+ 	bool do_hs400_dll_cal = false;
+ 
++	tegra_host->ddr_signaling = false;
+ 	switch (timing) {
+ 	case MMC_TIMING_UHS_SDR50:
+ 	case MMC_TIMING_UHS_SDR104:
+-- 
+2.7.4
