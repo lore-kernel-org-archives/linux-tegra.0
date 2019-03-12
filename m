@@ -1,75 +1,39 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 16/42] drivers: gpio: janz-ttl: drop unneccessary temp
- variable dev
-Date: Tue, 12 Mar 2019 09:17:48 +0000
-Message-ID: <539b3cd4-8af3-d6d8-f5a9-2c426a1f0faa@codethink.co.uk>
-References: <1552330521-4276-1-git-send-email-info@metux.net>
- <1552330521-4276-16-git-send-email-info@metux.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Subject: [PATCH 1/9] drivers: ata: ahci_octeon: use devm_platform_ioremap_resource()
+Date: Tue, 12 Mar 2019 10:19:26 +0100
+Message-ID: <1552382374-28789-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552330521-4276-16-git-send-email-info@metux.net>
-Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>, linux-kernel@vger.kernel.org
-Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: axboe@kernel.dk, hdegoede@redhat.com, b.zolnierkie@samsung.com, linus.walleij@linaro.org, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/03/2019 18:54, Enrico Weigelt, metux IT consult wrote:
-> don't need the temporary variable "dev", directly use &pdev->dev
-> 
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+Use the new helper that wraps the calls to platform_get_resource()
+and devm_ioremap_resource() together.
 
-This is quite usual to do, and I like it as it saves typing.
-Personally I would say don't bother with this change.
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/ata/ahci_octeon.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> ---
->   drivers/gpio/gpio-janz-ttl.c | 9 ++++-----
->   1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-janz-ttl.c b/drivers/gpio/gpio-janz-ttl.c
-> index b97a911..91f91f6 100644
-> --- a/drivers/gpio/gpio-janz-ttl.c
-> +++ b/drivers/gpio/gpio-janz-ttl.c
-> @@ -144,18 +144,17 @@ static void ttl_setup_device(struct ttl_module *mod)
->   static int ttl_probe(struct platform_device *pdev)
->   {
->   	struct janz_platform_data *pdata;
-> -	struct device *dev = &pdev->dev;
->   	struct ttl_module *mod;
->   	struct gpio_chip *gpio;
->   	int ret;
->   
->   	pdata = dev_get_platdata(&pdev->dev);
->   	if (!pdata) {
-> -		dev_err(dev, "no platform data\n");
-> +		dev_err(&pdev->dev, "no platform data\n");
->   		return -ENXIO;
->   	}
->   
-> -	mod = devm_kzalloc(dev, sizeof(*mod), GFP_KERNEL);
-> +	mod = devm_kzalloc(&pdev->dev, sizeof(*mod), GFP_KERNEL);
->   	if (!mod)
->   		return -ENOMEM;
->   
-> @@ -181,9 +180,9 @@ static int ttl_probe(struct platform_device *pdev)
->   	gpio->base = -1;
->   	gpio->ngpio = 20;
->   
-> -	ret = devm_gpiochip_add_data(dev, gpio, NULL);
-> +	ret = devm_gpiochip_add_data(&pdev->dev, gpio, NULL);
->   	if (ret) {
-> -		dev_err(dev, "unable to add GPIO chip\n");
-> +		dev_err(&pdev->dev, "unable to add GPIO chip\n");
->   		return ret;
->   	}
->   
-> 
-
-
+diff --git a/drivers/ata/ahci_octeon.c b/drivers/ata/ahci_octeon.c
+index 5a44e08..2280180 100644
+--- a/drivers/ata/ahci_octeon.c
++++ b/drivers/ata/ahci_octeon.c
+@@ -32,13 +32,11 @@ static int ahci_octeon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *node = dev->of_node;
+-	struct resource *res;
+ 	void __iomem *base;
+ 	u64 cfg;
+ 	int ret;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+1.9.1
