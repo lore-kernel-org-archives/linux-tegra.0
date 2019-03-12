@@ -1,171 +1,54 @@
-From: Philippe Schenker <dev@pschenker.ch>
-Subject: [PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
-Date: Tue, 12 Mar 2019 11:00:44 +0100
-Message-ID: <20190312100044.2872-1-dev@pschenker.ch>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 20/42] drivers: gpio: mt7621: use
+ devm_platform_ioremap_resource()
+Date: Tue, 12 Mar 2019 12:14:02 +0100
+Message-ID: <fc31ef8a-f39c-21df-2778-fe6a5709ea73@gmail.com>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
+ <1552330521-4276-20-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1552330521-4276-20-git-send-email-info@metux.net>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Philippe Schenker <philippe.schenker@toradex.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>, linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, thierry.reding@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Philippe Schenker <philippe.schenker@toradex.com>
 
-Add the stmpe-adc DT node as found on Toradex T30 modules
 
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+On 11/03/2019 19:54, Enrico Weigelt, metux IT consult wrote:
+> Use the new helper that wraps the calls to platform_get_resource()
+> and devm_ioremap_resource() together.
+> 
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> ---
+>  drivers/gpio/gpio-mt7621.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
----
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
- 3 files changed, 42 insertions(+), 24 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-index 02f8126481a2..8b7a827d604d 100644
---- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-@@ -994,11 +994,17 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -1008,17 +1014,17 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				/* forbid to use ADC channels 3-0 (touch) */
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 7f112f192fe9..c18f6f61d764 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -976,11 +976,17 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -990,17 +996,17 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				/* forbid to use ADC channels 3-0 (touch) */
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 35af03ca9e90..1f9198bb24ff 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -845,11 +845,18 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -859,17 +866,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
--- 
-2.21.0
+> 
+> diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+> index 74401e0..79654fb 100644
+> --- a/drivers/gpio/gpio-mt7621.c
+> +++ b/drivers/gpio/gpio-mt7621.c
+> @@ -293,7 +293,6 @@ struct mtk {
+>  static int
+>  mediatek_gpio_probe(struct platform_device *pdev)
+>  {
+> -	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+>  	struct mtk *mtk;
+> @@ -304,7 +303,7 @@ struct mtk {
+>  	if (!mtk)
+>  		return -ENOMEM;
+>  
+> -	mtk->base = devm_ioremap_resource(dev, res);
+> +	mtk->base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(mtk->base))
+>  		return PTR_ERR(mtk->base);
+>  
+> 
