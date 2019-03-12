@@ -1,127 +1,53 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] dmaengine: tegra210-adma: use devm_clk_*() helpers
-Date: Tue, 12 Mar 2019 20:05:52 +0530
-Message-ID: <1552401352-30043-1-git-send-email-spujar@nvidia.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 4/9] drivers: ata: ahci_xgene: use
+ devm_platform_ioremap_resource()
+Date: Tue, 12 Mar 2019 17:43:49 +0300
+Message-ID: <4cab769a-f4cf-4042-fd0b-1a33f0dbd4f7@cogentembedded.com>
+References: <1552382374-28789-1-git-send-email-info@metux.net>
+ <1552382374-28789-4-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1552382374-28789-4-git-send-email-info@metux.net>
+Content-Language: en-MW
 Sender: linux-kernel-owner@vger.kernel.org
-To: dan.j.williams@intel.com, vkoul@kernel.org
-Cc: treding@nvidia.com, jonathanh@nvidia.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>, linux-kernel@vger.kernel.org
+Cc: axboe@kernel.dk, hdegoede@redhat.com, b.zolnierkie@samsung.com, linus.walleij@linaro.org, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Usage of pm_clk_*() results in non-zero prepare_count for clocks and hence
-module clocks remain ON always. This is not desired as it will leak power
-unncessarily. This patch replaces pm_clk_*() with devm_clk_*() interface.
-This helps to keep refcounts balanced when device is not in use and runtime
-PM callbacks help to enable or disable clocks. System suspend/resume calls
-can use pm_runtime_force_suspend/resume.
+Hello!
 
-Suggested-by: Mohan Kumar D <mkumard@nvidia.com>
-Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- drivers/dma/tegra210-adma.c | 37 ++++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 23 deletions(-)
+On 03/12/2019 12:19 PM, Enrico Weigelt, metux IT consult wrote:
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 5ec0dd9..be29171 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -22,7 +22,6 @@
- #include <linux/of_device.h>
- #include <linux/of_dma.h>
- #include <linux/of_irq.h>
--#include <linux/pm_clock.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
- 
-@@ -141,6 +140,7 @@ struct tegra_adma {
- 	struct dma_device		dma_dev;
- 	struct device			*dev;
- 	void __iomem			*base_addr;
-+	struct clk			*ahub_clk;
- 	unsigned int			nr_channels;
- 	unsigned long			rx_requests_reserved;
- 	unsigned long			tx_requests_reserved;
-@@ -637,8 +637,9 @@ static int tegra_adma_runtime_suspend(struct device *dev)
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
- 
- 	tdma->global_cmd = tdma_read(tdma, ADMA_GLOBAL_CMD);
-+	clk_disable_unprepare(tdma->ahub_clk);
- 
--	return pm_clk_suspend(dev);
-+	return 0;
- }
- 
- static int tegra_adma_runtime_resume(struct device *dev)
-@@ -646,10 +647,11 @@ static int tegra_adma_runtime_resume(struct device *dev)
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = pm_clk_resume(dev);
--	if (ret)
-+	ret = clk_prepare_enable(tdma->ahub_clk);
-+	if (ret) {
-+		dev_err(dev, "ahub clk_enable failed: %d\n", ret);
- 		return ret;
--
-+	}
- 	tdma_write(tdma, ADMA_GLOBAL_CMD, tdma->global_cmd);
- 
- 	return 0;
-@@ -693,13 +695,11 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	if (IS_ERR(tdma->base_addr))
- 		return PTR_ERR(tdma->base_addr);
- 
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		return ret;
--
--	ret = of_pm_clk_add_clk(&pdev->dev, "d_audio");
--	if (ret)
--		goto clk_destroy;
-+	tdma->ahub_clk = devm_clk_get(&pdev->dev, "d_audio");
-+	if (IS_ERR(tdma->ahub_clk)) {
-+		dev_err(&pdev->dev, "Error: Missing ahub controller clock\n");
-+		return PTR_ERR(tdma->ahub_clk);
-+	}
- 
- 	pm_runtime_enable(&pdev->dev);
- 
-@@ -776,8 +776,6 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	pm_runtime_put_sync(&pdev->dev);
- rpm_disable:
- 	pm_runtime_disable(&pdev->dev);
--clk_destroy:
--	pm_clk_destroy(&pdev->dev);
- 
- 	return ret;
- }
-@@ -794,22 +792,15 @@ static int tegra_adma_remove(struct platform_device *pdev)
- 
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
--	pm_clk_destroy(&pdev->dev);
- 
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int tegra_adma_pm_suspend(struct device *dev)
--{
--	return pm_runtime_suspended(dev) == false;
--}
--#endif
--
- static const struct dev_pm_ops tegra_adma_dev_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_adma_runtime_suspend,
- 			   tegra_adma_runtime_resume, NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(tegra_adma_pm_suspend, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
- };
- 
- static struct platform_driver tegra_admac_driver = {
--- 
-2.7.4
+> Use the new helper that wraps the calls to platform_get_resource()
+> and devm_ioremap_resource() together.
+> 
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> ---
+>  drivers/ata/ahci_xgene.c | 21 +++++++--------------
+>  1 file changed, 7 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+> index 7e157e1..99c622c 100644
+> --- a/drivers/ata/ahci_xgene.c
+> +++ b/drivers/ata/ahci_xgene.c
+> @@ -752,7 +752,6 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+[...]
+>  	/* Retrieve the optional IP mux resource */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 4);
+> -	if (res) {
+> -		void __iomem *csr = devm_ioremap_resource(dev, res);
+> -		if (IS_ERR(csr))
+> -			return PTR_ERR(csr);
+> -
+> -		ctx->csr_mux = csr;
+> +	ctx->csr_mux = csr = devm_platform_ioremap_resource(pdev, 4);
+> +	if (IS_ERR(ctx->csr_mux)) {
+> +		dev_info(&pdev->dev, "cant get ip mux resource (optional)");
+
+   Can't.
+
+> +		ctx->csr_mux = NULL;
+
+MBR, Sergei
