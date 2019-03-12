@@ -1,41 +1,38 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: use devm_clk_*() helpers
-Date: Tue, 12 Mar 2019 15:24:55 +0000
-Message-ID: <7598abfe-ae1a-61d2-e4d2-c95dc78c9697@nvidia.com>
-References: <1552401352-30043-1-git-send-email-spujar@nvidia.com>
+Subject: Re: [PATCH] bus: tegra-aconnect: use devm_clk_*() helpers
+Date: Tue, 12 Mar 2019 15:28:41 +0000
+Message-ID: <b4d6bbde-2c65-a46c-febf-38bc6a92683b@nvidia.com>
+References: <1552401249-29838-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552401352-30043-1-git-send-email-spujar@nvidia.com>
+In-Reply-To: <1552401249-29838-1-git-send-email-spujar@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>, dan.j.williams@intel.com, vkoul@kernel.org
-Cc: treding@nvidia.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>, treding@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 12/03/2019 14:35, Sameer Pujar wrote:
-> Usage of pm_clk_*() results in non-zero prepare_count for clocks and hence
-> module clocks remain ON always. This is not desired as it will leak power
-> unncessarily. This patch replaces pm_clk_*() with devm_clk_*() interface.
+On 12/03/2019 14:34, Sameer Pujar wrote:
+> aconnect bus driver is using pm_clk_*() for managing required clocks. With
+> this, clocks seem to be always ON. This happens because, the clock prepare
+> count is incremented in pm_clock_acquire() which is called during device
+> probe(). The count is decremented during remove(). Hence the prepare_count
+> for the clock is non-zero till the remove() gets executed. This is true for
+> BPMP managed clock sources, where clock enable and disable happens during
+> prepare and unprepare phases respectively. Thus clocks remain ON always and
+> that is why pm_clk_*() cannot be used on Tegra.
 
-Technically, this is not true for all devices. The actual problem here
-is that for some Tegra devices that use the BPMP co-processor to manage
-clocks, the clock are actually enabled during the prepare-phase and
-hence when using the pm-clocks framework they are never disabled for
-these devices. However, this is not the case for Tegra210 which does not
-use the BPMP for managing clocks.
+Same comments here as for the ADMA patch. This is not completely true
+for all devices.
 
-It maybe worth highlighting the fact the BPMP has to enable clocks
-during the prepare phase because calls to the BPMP are always blocking.
+> This patch replaces pm_clk_*() with devm_clk_*() and runtime PM callbacks
+> reflect this. System suspend/resume can use pm_runtime_force_suspend/resume
 
-> This helps to keep refcounts balanced when device is not in use and runtime
-> PM callbacks help to enable or disable clocks. System suspend/resume calls
-> can use pm_runtime_force_suspend/resume.
-
-I think that this last bit should be a separate patch as it has nothing
-to do with the $subject.
+You need to explain the last bit more. In fact I don't believe it
+belongs in this patch.
 
 Cheers
 Jon
