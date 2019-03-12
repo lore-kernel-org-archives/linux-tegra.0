@@ -1,60 +1,76 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 36/42] drivers: gpio: uniphier: use devm_platform_ioremap_resource()
-Date: Tue, 12 Mar 2019 18:37:02 +0900
-Message-ID: <CAK7LNASPyZVpN2JVT8v6qzXUNfu-dLqcwwSc-eZL+yMyMEFXCg@mail.gmail.com>
-References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-36-git-send-email-info@metux.net>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 3/9] drivers: ata: ahci_tegra: use
+ devm_platform_ioremap_resource()
+Date: Tue, 12 Mar 2019 10:04:45 +0000
+Message-ID: <c16b35f1-0c0a-707b-d097-bb0440454cbb@nvidia.com>
+References: <1552382374-28789-1-git-send-email-info@metux.net>
+ <1552382374-28789-3-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552330521-4276-36-git-send-email-info@metux.net>
+In-Reply-To: <1552382374-28789-3-git-send-email-info@metux.net>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, andrew@aj.id.au, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shaw>
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>, linux-kernel@vger.kernel.org
+Cc: axboe@kernel.dk, hdegoede@redhat.com, b.zolnierkie@samsung.com, linus.walleij@linaro.org, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 3:57 AM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
->
+
+On 12/03/2019 09:19, Enrico Weigelt, metux IT consult wrote:
 > Use the new helper that wraps the calls to platform_get_resource()
 > and devm_ioremap_resource() together.
->
+> 
 > Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 > ---
+>  drivers/ata/ahci_tegra.c | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+> index 004f260..88748ca 100644
+> --- a/drivers/ata/ahci_tegra.c
+> +++ b/drivers/ata/ahci_tegra.c
+> @@ -490,7 +490,6 @@ static int tegra_ahci_probe(struct platform_device *pdev)
+>  {
+>  	struct ahci_host_priv *hpriv;
+>  	struct tegra_ahci_priv *tegra;
+> -	struct resource *res;
+>  	int ret;
+>  	unsigned int i;
+>  
+> @@ -507,19 +506,17 @@ static int tegra_ahci_probe(struct platform_device *pdev)
+>  	tegra->pdev = pdev;
+>  	tegra->soc = of_device_get_match_data(&pdev->dev);
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> -	tegra->sata_regs = devm_ioremap_resource(&pdev->dev, res);
+> +	tegra->sata_regs = devm_platform_ioremap_resource(pdev, 1);
+>  	if (IS_ERR(tegra->sata_regs))
+>  		return PTR_ERR(tegra->sata_regs);
+>  
+>  	/*
+>  	 * AUX registers is optional.
+>  	 */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> -	if (res) {
+> -		tegra->sata_aux_regs = devm_ioremap_resource(&pdev->dev, res);
+> -		if (IS_ERR(tegra->sata_aux_regs))
+> -			return PTR_ERR(tegra->sata_aux_regs);
+> +	tegra->sata_aux_regs = devm_platform_ioremap_resource(pdev, 2);
+> +	if (IS_ERR(tegra->sata_aux_regs)) {
+> +		dev_info(&pdev->dev, "Cant get aux registers (optional)");
 
+dev_err?
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> +		tegra->sata_aux_regs = NULL;
 
+This bit does not look right, because although the AUX registers are
+optional, now we don't know if it failed because they are not supported
+for a given device or something else failed. So I am not sure we can do
+this here.
 
->  drivers/gpio/gpio-uniphier.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-> index 0f662b2..93cdcc4 100644
-> --- a/drivers/gpio/gpio-uniphier.c
-> +++ b/drivers/gpio/gpio-uniphier.c
-> @@ -346,7 +346,6 @@ static int uniphier_gpio_probe(struct platform_device *pdev)
->         struct uniphier_gpio_priv *priv;
->         struct gpio_chip *chip;
->         struct irq_chip *irq_chip;
-> -       struct resource *regs;
->         unsigned int nregs;
->         u32 ngpios;
->         int ret;
-> @@ -370,8 +369,7 @@ static int uniphier_gpio_probe(struct platform_device *pdev)
->         if (!priv)
->                 return -ENOMEM;
->
-> -       regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       priv->regs = devm_ioremap_resource(dev, regs);
-> +       priv->regs = devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(priv->regs))
->                 return PTR_ERR(priv->regs);
->
-> --
-> 1.9.1
->
-
+Cheers
+Jon
 
 -- 
-Best Regards
-Masahiro Yamada
+nvpublic
