@@ -1,85 +1,77 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 1/5] irqchip/gic-pm: add driver remove support
-Date: Wed, 13 Mar 2019 17:57:09 +0000
-Message-ID: <58f4ad18-c584-429c-9170-72cd7a3061bc@arm.com>
-References: <1552474956-25513-1-git-send-email-spujar@nvidia.com>
- <0cd78fb7-4bcb-b735-54ca-24a179b9ff72@arm.com>
- <bc00b804-2248-4f8b-1537-3e3db151d74d@nvidia.com>
- <da01de60-b76a-9575-16ed-138a78d997c1@arm.com> <20190313163435.GA6926@ulmo>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 25/48] ARM: tegra: Restore DT ABI on Tegra124 Chromebooks
+Date: Wed, 13 Mar 2019 15:12:27 -0400
+Message-ID: <20190313191250.158955-25-sashal@kernel.org>
+References: <20190313191250.158955-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190313163435.GA6926@ulmo>
-Content-Language: en-US
+In-Reply-To: <20190313191250.158955-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: Sameer Pujar <spujar@nvidia.com>, tglx@linutronix.de, jason@lakedaemon.net, catalin.marinas@arm.com, heiko@sntech.de, horms+renesas@verge.net.au, maxime.ripard@bootlin.com, andy.gross@linaro.org, olof@lixom.net, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, stefan.wahren@i2se.com, ezequiel@collabora.com, marc.w.gonzalez@free.fr, christoffer.dall@arm.com, drjones@redhat.com, julien.thierry@arm.com, will.deacon@arm.com, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Thierry Reding <treding@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+From: Thierry Reding <treding@nvidia.com>
 
-On 13/03/2019 16:34, Thierry Reding wrote:
-> On Wed, Mar 13, 2019 at 02:20:41PM +0000, Marc Zyngier wrote:
+[ Upstream commit 94d9b9337d09bdd27735005b3251d97ab29f7273 ]
 
-[...]
+Commit 482997699ef0 ("ARM: tegra: Fix unit_address_vs_reg DTC warnings
+for /memory") inadventently broke device tree ABI by adding a unit-
+address to the "/memory" node because the device tree compiler flagged
+the missing unit-address as a warning.
 
->> Sure, but look at the result:
->>
->> - you remove your gic-pm module
->> - the MMIO mapping disappears
->> - the GIC data structures *are still live*
->> - a driver does a disable_irq() on an interrupt routed to this block
->> (because nothing has taken the interrupts away, as far as the kernel is
->> concerned)
->> - ...
->> - profit! (or kernel panic, your choice)
-> 
-> I suppose we could use device links to model the dependency, but perhaps
-> it's not worth it for something like the GIC. The AGIC is somewhat of an
-> outlier because it serves a fairly encapsulated part of the system, so
-> it would be manageable to make it unloadable.
+Tegra124 Chromebooks (a.k.a. Nyan) use a bootloader that relies on the
+full name of the memory node in device tree being exactly "/memory". It
+can be argued whether this was a good decision or not, and some other
+bootloaders (such as U-Boot) do accept a unit-address in the name of the
+node, but the device tree is an ABI and we can't break existing setups
+just because the device tree compiler considers it bad practice to omit
+the unit-address nowadays.
 
-The problem is that the GIC is required so early that it cannot be a
-real device (devices require sysfs, which requires the VFS, which has
-indirect dependencies in the scheduler, which needs the timer, which
-needs interrupts -- I've been pondering turning that upside down for
-years, but life is too short).
+This partially reverts the offending commit and restores device tree ABI
+compatibility.
 
-> 
->> Even better if something else in the system has mapped anything that
->> ends up in the same vmalloc range. Congratulations, you have now
->> corrupted unsuspecting memory. This reminds me of the e1000 corruption
->> bug. Great stuff.
-> 
-> Can you elaborate on this point? How would unloading a driver cause
-> memory corruption in another driver's mapped memory? I've never heard of
-> this before, so I want to make sure I understand what to look out for in
-> the future.
+Fixes: 482997699ef0 ("ARM: tegra: Fix unit_address_vs_reg DTC warnings for /memory")
+Reported-by: Tristan Bastian <tristan-c.bastian@gmx.de>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Tested-by: Tristan Bastian <tristan-c.bastian@gmx.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/tegra124-nyan.dtsi | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-The MMIO ranges get their VA as part of the vmalloc space. If you free
-that space (iounmap), you allow it to be reused by another mapping if
-the hole you've created fits the new ioremap. Now the GIC driver (which,
-remember, still has references to that VA space all over the place)
-unexpectedly pokes into another driver's MMIO space.
-
-But it can be worse. You could have loaded a module instead, which also
-ends up in the vmalloc region. And now the GIC driver is writing to the
-module code or data. Or anything that gets allocated using vmalloc.
-
-> 
->> So for the whole thing, NAK. You don't pull an irqchip from under the
->> kernel's feet.
-> 
-> Maybe we should also set the driver's .suppress_bind_attrs = true while
-> at it, to prevent anyone from trying to force unbind the driver via
-> sysfs?
-
-Would that prevent a 'modprobe -r'? With the current approach, anything
-that allows the driver to be removed is potentially fatal.
-
-Thanks,
-
-	M.
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index d5f11d6d987e..bc85b6a166c7 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -13,10 +13,25 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory@80000000 {
++	/*
++	 * Note that recent version of the device tree compiler (starting with
++	 * version 1.4.2) warn about this node containing a reg property, but
++	 * missing a unit-address. However, the bootloader on these Chromebook
++	 * devices relies on the full name of this node to be exactly /memory.
++	 * Adding the unit-address causes the bootloader to create a /memory
++	 * node and write the memory bank configuration to that node, which in
++	 * turn leads the kernel to believe that the device has 2 GiB of
++	 * memory instead of the amount detected by the bootloader.
++	 *
++	 * The name of this node is effectively ABI and must not be changed.
++	 */
++	memory {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
++	/delete-node/ memory@80000000;
++
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+ 			status = "okay";
 -- 
-Jazz is not dead. It just smells funny...
+2.19.1
