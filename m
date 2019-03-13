@@ -1,66 +1,66 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 2/2] dmaengine: tegra210-adma: update system sleep
- callbacks
-Date: Wed, 13 Mar 2019 12:11:44 +0000
-Message-ID: <c93afa7f-f7af-a9d6-03ec-0d610dc78932@nvidia.com>
-References: <1552476757-22360-1-git-send-email-spujar@nvidia.com>
- <1552476757-22360-2-git-send-email-spujar@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: Re: [PATCH 1/5] irqchip/gic-pm: add driver remove support
+Date: Wed, 13 Mar 2019 19:20:24 +0530
+Message-ID: <bc00b804-2248-4f8b-1537-3e3db151d74d@nvidia.com>
+References: <1552474956-25513-1-git-send-email-spujar@nvidia.com>
+ <0cd78fb7-4bcb-b735-54ca-24a179b9ff72@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552476757-22360-2-git-send-email-spujar@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>, dan.j.williams@intel.com, vkoul@kernel.org
-Cc: treding@nvidia.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <0cd78fb7-4bcb-b735-54ca-24a179b9ff72@arm.com>
+Content-Language: en-GB
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>, tglx@linutronix.de, jason@lakedaemon.net, catalin.marinas@arm.com, heiko@sntech.de, horms+renesas@verge.net.au, maxime.ripard@bootlin.com, andy.gross@linaro.org, olof@lixom.net, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, stefan.wahren@i2se.com, ezequiel@collabora.com, marc.w.gonzalez@free.fr, christoffer.dall@arm.com, drjones@redhat.com, julien.thierry@arm.com
+Cc: will.deacon@arm.com, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 13/03/2019 11:32, Sameer Pujar wrote:
-> If the driver is active till late suspend, where runtime PM cannot run,
-> force suspend is essential in such case to put the device in low power
-> state. Thus pm_runtime_force_suspend and pm_runtime_force_resume are
-> used as system sleep callbacks during system wide PM transitions.
-> Late system sleep callbacks are used to ensure, for instance, that the
-> sound core has suspended any on-going activity, including stopping the
-> ADMA if active, before we attempt to suspend the ADMA.
-> 
-> Suggested-by: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  drivers/dma/tegra210-adma.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index 650cd9c..253d312 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -796,17 +796,11 @@ static int tegra_adma_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
-> -static int tegra_adma_pm_suspend(struct device *dev)
-> -{
-> -	return pm_runtime_suspended(dev) == false;
-> -}
-> -#endif
-> -
->  static const struct dev_pm_ops tegra_adma_dev_pm_ops = {
->  	SET_RUNTIME_PM_OPS(tegra_adma_runtime_suspend,
->  			   tegra_adma_runtime_resume, NULL)
-> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_adma_pm_suspend, NULL)
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +				     pm_runtime_force_resume)
->  };
->  
->  static struct platform_driver tegra_admac_driver = {
+On 3/13/2019 4:52 PM, Marc Zyngier wrote:
+> First things first:
+>
+> - Where is the cover letter?
+> - This series should be flagged as v2, as it not the same as the one you
+> sent last week.
+I had the dilemma whether to name this series as v2 or not, thought the 
+commits
+in the series are different and v2 may not be necessary.
+Also felt commit messages are descriptive enough and all belong to 
+irq-gic-pm,
+hence did not send cover letter.
+If you suggest so, I will send a cover letter next patch version(v2)
+>
+> On 13/03/2019 11:02, Sameer Pujar wrote:
+>> This is a preparatory patch for using irq-gic-pm driver as module and thus
+>> implement remove() call for the driver. Details of remove() are as below,
+>>
+>>   * pm_runtime_force_suspend() is added to balance runtime PM, otherwise
+>>     following is seen: "agic-controller: Unbalanced pm_runtime_enable!"
+>>   * Function gic_teardown() is exported from gic driver and called in remove
+>>     to perform io unmap.
+>>   * pm_clk_destroy() to free clock resources
+>>   * irq is unmapped and freed with irq_dispose_mapping()
+>>
+> Let's be clear, I have no desire to export any GIC symbol at all. Why
+> should we do this? This "driver" is the tiniest thing, and making it
+> modular doesn't get us anything.
+>
+> So what's the rational for doing so?
+Reason for this was, the driver gets used for AGIC block and audio is not
+boot critical and hence module option was preferred.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Thanks,
+Sameer.
 
-Cheers
-Jon
-
--- 
-nvpublic
+>
+> Thanks,
+>
+> 	M.
