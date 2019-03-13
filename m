@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 25/48] ARM: tegra: Restore DT ABI on Tegra124 Chromebooks
-Date: Wed, 13 Mar 2019 15:12:27 -0400
-Message-ID: <20190313191250.158955-25-sashal@kernel.org>
-References: <20190313191250.158955-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 31/60] ARM: tegra: Restore DT ABI on Tegra124 Chromebooks
+Date: Wed, 13 Mar 2019 15:09:52 -0400
+Message-ID: <20190313191021.158171-31-sashal@kernel.org>
+References: <20190313191021.158171-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190313191250.158955-1-sashal@kernel.org>
+In-Reply-To: <20190313191021.158171-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Thierry Reding <treding@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
