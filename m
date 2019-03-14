@@ -1,37 +1,112 @@
-From: Kangjie Lu <kjlu@umn.edu>
-Subject: [PATCH] pci: pci-tegra: fix a potential NULL pointer dereference
-Date: Thu, 14 Mar 2019 00:53:47 -0500
-Message-ID: <20190314055347.3519-1-kjlu@umn.edu>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kjlu@umn.edu
-Cc: pakki001@umn.edu, Thierry Reding <thierry.reding@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [REGRESSION] drm/tegra: hdmi: tegra_hdmi_setup_audio: division by
+ zero in kernel
+Date: Fri, 15 Mar 2019 00:55:28 +0300
+Message-ID: <6886a09b-385c-e8b2-1643-a7cb153ae0bc@gmail.com>
+References: <87f8fd40b25e2842b547059a8d28295533e8c09c.camel@toradex.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <87f8fd40b25e2842b547059a8d28295533e8c09c.camel@toradex.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "treding@nvidia.com" <treding@nvidia.com>
+Cc: "alban.bedel@avionic-design.de" <alban.bedel@avionic-design.de>
 List-Id: linux-tegra@vger.kernel.org
 
-In case __get_free_pages fails and returns NULL, the fix returns
--ENOMEM and releases resources to avoid NULL pointer dereference.
-
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/pci/controller/pci-tegra.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index f4f53d092e00..0bdc6ee904f3 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -1550,6 +1550,12 @@ static int tegra_pcie_msi_setup(struct tegra_pcie *pcie)
- 
- 	/* setup AFI/FPCI range */
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-+	if (!msi->pages) {
-+		dev_err(dev, "failed to get free pages\n");
-+		err = -ENOMEM;
-+		goto err;
-+	}
-+
- 	msi->phys = virt_to_phys((void *)msi->pages);
- 	host->msi = &msi->chip;
- 
--- 
-2.17.1
+MDguMDIuMjAxOSAyMzowMSwgTWFyY2VsIFppc3dpbGVyINC/0LjRiNC10YI6Cj4gSGkgdGhlcmUK
+PiAKPiBJIGp1c3Qgc3R1bWJsZWQgb3ZlciB0aGlzIG9uZToKPiAKPiBbICAgMzEuMDI2MjIwXSBE
+aXZpc2lvbiBieSB6ZXJvIGluIGtlcm5lbC4KPiBbICAgMzEuMDI2MjM4XSBDUFU6IDEgUElEOiA1
+MjkgQ29tbTogWCBOb3QgdGFpbnRlZCA1LjAuMC1yYzUtbmV4dC0KPiAyMDE5MDIwOC1kaXJ0eSAj
+MTUzCj4gWyAgIDMxLjAyNjI0NF0gSGFyZHdhcmUgbmFtZTogTlZJRElBIFRlZ3JhIFNvQyAoRmxh
+dHRlbmVkIERldmljZSBUcmVlKQo+IFsgICAzMS4wMjYyODFdIFs8YzAxMTIwY2M+XSAodW53aW5k
+X2JhY2t0cmFjZSkgZnJvbSBbPGMwMTBjOTJjPl0KPiAoc2hvd19zdGFjaysweDEwLzB4MTQpCj4g
+WyAgIDMxLjAyNjMwMV0gWzxjMDEwYzkyYz5dIChzaG93X3N0YWNrKSBmcm9tIFs8YzBhN2M1YWM+
+XQo+IChkdW1wX3N0YWNrKzB4YjQvMHhjOCkKPiBbICAgMzEuMDI2MzE3XSBbPGMwYTdjNWFjPl0g
+KGR1bXBfc3RhY2spIGZyb20gWzxjMGE3YTdlND5dCj4gKExkaXYwKzB4OC8weDEwKQo+IFsgICAz
+MS4wMjYzMzddIFs8YzBhN2E3ZTQ+XSAoTGRpdjApIGZyb20gWzxjMDU4ODc1OD5dCj4gKHRlZ3Jh
+X2hkbWlfc2V0dXBfYXVkaW8rMHgxYWMvMHhlZDApCj4gWyAgIDMxLjAyNjM1M10gWzxjMDU4ODc1
+OD5dICh0ZWdyYV9oZG1pX3NldHVwX2F1ZGlvKSBmcm9tIFs8YzA1ODlhNjg+XQo+ICh0ZWdyYV9o
+ZG1pX2VuY29kZXJfZW5hYmxlKzB4NWVjLzB4MmEyMCkKPiBbICAgMzEuMDI2Mzc5XSBbPGMwNTg5
+YTY4Pl0gKHRlZ3JhX2hkbWlfZW5jb2Rlcl9lbmFibGUpIGZyb20KPiBbPGMwNTQ0MTVjPl0gKGRy
+bV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2VuYWJsZXMrMHgxMGMvMHgyMjApCj4gWyAg
+IDMxLjAyNjM5N10gWzxjMDU0NDE1Yz5dIChkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNl
+dF9lbmFibGVzKQo+IGZyb20gWzxjMDU0NDQ5Yz5dIChkcm1fYXRvbWljX2hlbHBlcl9jb21taXRf
+dGFpbF9ycG0rMHgyNC8weDZjKQo+IFsgICAzMS4wMjY0MTJdIFs8YzA1NDQ0OWM+XSAoZHJtX2F0
+b21pY19oZWxwZXJfY29tbWl0X3RhaWxfcnBtKSBmcm9tCj4gWzxjMDU0NDMxYz5dIChjb21taXRf
+dGFpbCsweDQwLzB4NmMpCj4gWyAgIDMxLjAyNjQyN10gWzxjMDU0NDMxYz5dIChjb21taXRfdGFp
+bCkgZnJvbSBbPGMwNTQ0NDBjPl0KPiAoZHJtX2F0b21pY19oZWxwZXJfY29tbWl0KzB4YmMvMHgx
+MjgpCj4gWyAgIDMxLjAyNjQ0M10gWzxjMDU0NDQwYz5dIChkcm1fYXRvbWljX2hlbHBlcl9jb21t
+aXQpIGZyb20KPiBbPGMwNTQ3MjYwPl0gKHJlc3RvcmVfZmJkZXZfbW9kZV9hdG9taWMrMHgxNjAv
+MHgxY2MpCj4gWyAgIDMxLjAyNjQ1N10gWzxjMDU0NzI2MD5dIChyZXN0b3JlX2ZiZGV2X21vZGVf
+YXRvbWljKSBmcm9tCj4gWzxjMDU0NzQyMD5dIChkcm1fZmJfaGVscGVyX3Bhbl9kaXNwbGF5KzB4
+YzQvMHgxZDApCj4gWyAgIDMxLjAyNjQ4MV0gWzxjMDU0NzQyMD5dIChkcm1fZmJfaGVscGVyX3Bh
+bl9kaXNwbGF5KSBmcm9tCj4gWzxjMDRiMDI1MD5dIChmYl9wYW5fZGlzcGxheSsweDljLzB4MTE4
+KQo+IFsgICAzMS4wMjY0OThdIFs8YzA0YjAyNTA+XSAoZmJfcGFuX2Rpc3BsYXkpIGZyb20gWzxj
+MDRiMGZkYz5dCj4gKGRvX2ZiX2lvY3RsKzB4NGIwLzB4N2NjKQo+IFsgICAzMS4wMjY1MTRdIFs8
+YzA0YjBmZGM+XSAoZG9fZmJfaW9jdGwpIGZyb20gWzxjMDI3ZTY4OD5dCj4gKGRvX3Zmc19pb2N0
+bCsweGFjLzB4OGY4KQo+IFsgICAzMS4wMjY1MjddIFs8YzAyN2U2ODg+XSAoZG9fdmZzX2lvY3Rs
+KSBmcm9tIFs8YzAyN2VmMDg+XQo+IChrc3lzX2lvY3RsKzB4MzQvMHg2MCkKPiBbICAgMzEuMDI2
+NTQwXSBbPGMwMjdlZjA4Pl0gKGtzeXNfaW9jdGwpIGZyb20gWzxjMDEwMTAwMD5dCj4gKHJldF9m
+YXN0X3N5c2NhbGwrMHgwLzB4NTQpCj4gWyAgIDMxLjAyNjU0Nl0gRXhjZXB0aW9uIHN0YWNrKDB4
+Y2JhNTlmYTggdG8gMHhjYmE1OWZmMCkKPiBbICAgMzEuMDI2NTU5XSA5ZmEwOiAgICAgICAgICAg
+ICAgICAgICAwMDE1MjdhOCAwMDE1MjI3OCAwMDAwMDAwYQo+IDAwMDA0NjA2IDAwMTUyODA4IDAw
+MDAwMDAwCj4gWyAgIDMxLjAyNjU3Ml0gOWZjMDogMDAxNTI3YTggMDAxNTIyNzggMDAxNWIzNjgg
+MDAwMDAwMzYgYjZmMjA5NjEKPiAwMDAwMDAwYSBiZWRiNWRkNCAwMDAwMDAwMAo+IFsgICAzMS4w
+MjY1ODFdIDlmZTA6IGI2YWY3MDk4IGJlZGI1YjFjIGI2YWY0NjAzIGI2Y2RiNjdjCj4gWyAgIDMx
+LjAyNjU4Nl0gRGl2aXNpb24gYnkgemVybyBpbiBrZXJuZWwuCj4gWyAgIDMxLjAyNjU5NV0gQ1BV
+OiAxIFBJRDogNTI5IENvbW06IFggTm90IHRhaW50ZWQgNS4wLjAtcmM1LW5leHQtCj4gMjAxOTAy
+MDgtZGlydHkgIzE1Mwo+IFsgICAzMS4wMjY2MDBdIEhhcmR3YXJlIG5hbWU6IE5WSURJQSBUZWdy
+YSBTb0MgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkKPiBbICAgMzEuMDI2NjE1XSBbPGMwMTEyMGNj
+Pl0gKHVud2luZF9iYWNrdHJhY2UpIGZyb20gWzxjMDEwYzkyYz5dCj4gKHNob3dfc3RhY2srMHgx
+MC8weDE0KQo+IFsgICAzMS4wMjY2MjldIFs8YzAxMGM5MmM+XSAoc2hvd19zdGFjaykgZnJvbSBb
+PGMwYTdjNWFjPl0KPiAoZHVtcF9zdGFjaysweGI0LzB4YzgpCj4gWyAgIDMxLjAyNjY0MF0gWzxj
+MGE3YzVhYz5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzBhN2E3ZTQ+XQo+IChMZGl2MCsweDgvMHgx
+MCkKPiBbICAgMzEuMDI2NjU0XSBbPGMwYTdhN2U0Pl0gKExkaXYwKSBmcm9tIFs8YzA1ODg3YWM+
+XQo+ICh0ZWdyYV9oZG1pX3NldHVwX2F1ZGlvKzB4MjAwLzB4ZWQwKQo+IFsgICAzMS4wMjY2Njdd
+IFs8YzA1ODg3YWM+XSAodGVncmFfaGRtaV9zZXR1cF9hdWRpbykgZnJvbSBbPGMwNTg5YTY4Pl0K
+PiAodGVncmFfaGRtaV9lbmNvZGVyX2VuYWJsZSsweDVlYy8weDJhMjApCj4gWyAgIDMxLjAyNjY4
+NF0gWzxjMDU4OWE2OD5dICh0ZWdyYV9oZG1pX2VuY29kZXJfZW5hYmxlKSBmcm9tCj4gWzxjMDU0
+NDE1Yz5dIChkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzKzB4MTBjLzB4
+MjIwKQo+IFsgICAzMS4wMjY3MDBdIFs8YzA1NDQxNWM+XSAoZHJtX2F0b21pY19oZWxwZXJfY29t
+bWl0X21vZGVzZXRfZW5hYmxlcykKPiBmcm9tIFs8YzA1NDQ0OWM+XSAoZHJtX2F0b21pY19oZWxw
+ZXJfY29tbWl0X3RhaWxfcnBtKzB4MjQvMHg2YykKPiBbICAgMzEuMDI2NzE1XSBbPGMwNTQ0NDlj
+Pl0gKGRybV9hdG9taWNfaGVscGVyX2NvbW1pdF90YWlsX3JwbSkgZnJvbQo+IFs8YzA1NDQzMWM+
+XSAoY29tbWl0X3RhaWwrMHg0MC8weDZjKQo+IFsgICAzMS4wMjY3MjldIFs8YzA1NDQzMWM+XSAo
+Y29tbWl0X3RhaWwpIGZyb20gWzxjMDU0NDQwYz5dCj4gKGRybV9hdG9taWNfaGVscGVyX2NvbW1p
+dCsweGJjLzB4MTI4KQo+IFsgICAzMS4wMjY3NDNdIFs8YzA1NDQ0MGM+XSAoZHJtX2F0b21pY19o
+ZWxwZXJfY29tbWl0KSBmcm9tCj4gWzxjMDU0NzI2MD5dIChyZXN0b3JlX2ZiZGV2X21vZGVfYXRv
+bWljKzB4MTYwLzB4MWNjKQo+IFsgICAzMS4wMjY3NTVdIFs8YzA1NDcyNjA+XSAocmVzdG9yZV9m
+YmRldl9tb2RlX2F0b21pYykgZnJvbQo+IFs8YzA1NDc0MjA+XSAoZHJtX2ZiX2hlbHBlcl9wYW5f
+ZGlzcGxheSsweGM0LzB4MWQwKQo+IFsgICAzMS4wMjY3NzBdIFs8YzA1NDc0MjA+XSAoZHJtX2Zi
+X2hlbHBlcl9wYW5fZGlzcGxheSkgZnJvbQo+IFs8YzA0YjAyNTA+XSAoZmJfcGFuX2Rpc3BsYXkr
+MHg5Yy8weDExOCkKPiBbICAgMzEuMDI2Nzg1XSBbPGMwNGIwMjUwPl0gKGZiX3Bhbl9kaXNwbGF5
+KSBmcm9tIFs8YzA0YjBmZGM+XQo+IChkb19mYl9pb2N0bCsweDRiMC8weDdjYykKPiBbICAgMzEu
+MDI2Nzk3XSBbPGMwNGIwZmRjPl0gKGRvX2ZiX2lvY3RsKSBmcm9tIFs8YzAyN2U2ODg+XQo+IChk
+b192ZnNfaW9jdGwrMHhhYy8weDhmOCkKPiBbICAgMzEuMDI2ODA5XSBbPGMwMjdlNjg4Pl0gKGRv
+X3Zmc19pb2N0bCkgZnJvbSBbPGMwMjdlZjA4Pl0KPiAoa3N5c19pb2N0bCsweDM0LzB4NjApCj4g
+WyAgIDMxLjAyNjgyMF0gWzxjMDI3ZWYwOD5dIChrc3lzX2lvY3RsKSBmcm9tIFs8YzAxMDEwMDA+
+XQo+IChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDU0KQo+IFsgICAzMS4wMjY4MjZdIEV4Y2VwdGlv
+biBzdGFjaygweGNiYTU5ZmE4IHRvIDB4Y2JhNTlmZjApCj4gWyAgIDMxLjAyNjgzN10gOWZhMDog
+ICAgICAgICAgICAgICAgICAgMDAxNTI3YTggMDAxNTIyNzggMDAwMDAwMGEKPiAwMDAwNDYwNiAw
+MDE1MjgwOCAwMDAwMDAwMAo+IFsgICAzMS4wMjY4NTBdIDlmYzA6IDAwMTUyN2E4IDAwMTUyMjc4
+IDAwMTViMzY4IDAwMDAwMDM2IGI2ZjIwOTYxCj4gMDAwMDAwMGEgYmVkYjVkZDQgMDAwMDAwMDAK
+PiBbICAgMzEuMDI2ODU5XSA5ZmUwOiBiNmFmNzA5OCBiZWRiNWIxYyBiNmFmNDYwMyBiNmNkYjY3
+Ywo+IAo+IFRoaXMgaGFzIGJlZW4gb2JzZXJ2ZWQgb24gYSBBcGFsaXMgVDMwIDJHQiBydW5uaW5n
+IHRvZGF5cyAtbmV4dC4KPiAKPiBBbnlib2R5IGtub3dpbmcgd2hhdCBpcyBnb2luZyBvbiBiZWZv
+cmUgSSBkaWcgZGVlcGVyPwo+IAo+IENoZWVycwo+IAo+IE1hcmNlbAo+IAoKVGhlIHNhbWUgaGFw
+cGVucyBvbiBUZWdyYTIwIHdpdGggYXVkaW8tbGVzcyBIRE1JIGRpc3BsYXkuIFRoaWVycnksIGFy
+ZSB5b3UgZ29pbmcgdG8gZml4IG9yIHJldmVydCB0aGUgb2ZmZW5kaW5nIGNvbW1pdD8gCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2Vy
+bmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
+cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVs
+Cg==
