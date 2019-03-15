@@ -1,58 +1,66 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: Unstable Kernel behavior on an ARM based board
-Date: Fri, 15 Mar 2019 08:55:10 +0000
-Message-ID: <89e5f77af850436668c6a9108ed129a9574e2edf.camel@toradex.com>
-References: <CA+_ZnZTeZLyCcjZduQODzjWxTpU96AefzvTBDFbq2CSjVQxONg@mail.gmail.com>
- <20190305112226.rhbl3dwopmip45ja@shell.armlinux.org.uk>
- <20190305115730.GE26369@ulmo>
- <CA+_ZnZQ1m8QyiMJWwmVvtdqiFRDYK8PocGpG38W0NyEZ3yA8zQ@mail.gmail.com>
- <20190305132350.pzfmz4yvh6ujgotn@shell.armlinux.org.uk>
- <CA+_ZnZS7wimpnH+TnvM_ztnX3wbADpf5FUBd_8igqeg+FnFr5g@mail.gmail.com>
- <20190305142351.ktciqkj5kycdwilr@shell.armlinux.org.uk>
- <CA+_ZnZQhvf5R2f-uMPPO3AgNbXTtoxcqpCYZR_Sb13jHN5X5wA@mail.gmail.com>
- <20190305145853.qsmcaop4ths2jgrl@shell.armlinux.org.uk>
- <CA+_ZnZSTkA8vj4QYJizL=YUcvtiabrVzKtDUPYO+2v-AkgRSpw@mail.gmail.com>
- <20190305153111.frvgnoba646uf5ar@shell.armlinux.org.uk>
- <CA+_ZnZS7WPqA-JbcxjTLhyPOOQ0GTnTDTbxJJgdfcrtsWOuvfQ@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [RFC PATCH v2 1/7] i2c: apply coding style for struct i2c_adapter
+Date: Fri, 15 Mar 2019 13:15:51 +0100
+Message-ID: <20190315121550.53hhzjy57hndp2w5@verge.net.au>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+ <20190302134735.4393-2-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CA+_ZnZS7WPqA-JbcxjTLhyPOOQ0GTnTDTbxJJgdfcrtsWOuvfQ@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <C9D6B60BEEA2EF4AB52B0D36E30CE5D9@eurprd05.prod.outlook.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "embed786@gmail.com" <embed786@gmail.com>
-Cc: "andrew@lunn.ch" <andrew@lunn.ch>, "vladimir.murzin@arm.com" <vladimir.murzin@arm.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190302134735.4393-2-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2019-03-05 at 20:44 +0500, Embedded Engineer wrote:
-> On Tue, Mar 5, 2019 at 8:31 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
-> > Right now, I don't have anything further to add beyond what I've
-> > already suggested as causes - this is *definitely* memory
-> > corruption
-> > either by something else writing to memory, by the CPU writes not
-> > properly being stored in RAM or the CPU not being able to reliably
-> > read data back from RAM.
+On Sat, Mar 02, 2019 at 02:47:29PM +0100, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  include/linux/i2c.h | 23 +++++++++++++----------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
 > 
-> Thanks alot for your help, I will try updating u-boot to newer
-> version
-> so that we can eliminate the chance that u-boot has left something on
-> in undesired state.
-
-Sorry, I just saw this thread now. I have quite some TK1 experience
-from our Apalis TK1 bring-up. For us mainline U-Boot works quite nicely
-but I do remember some magic stuff called RAM repair NVIDIA has done to
-their downstream which fixed a strange hang issue we have seen at times
-during our extensive validation & verification:
-
-http://git.toradex.com/cgit/u-boot-toradex.git/commit/?h=2016.11-toradex&id=df2b46ba248687c208767865abe5fca32a43faaf
+> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> index 383510b4f083..758a6db864c9 100644
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -517,20 +517,23 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+>   * Documentation file Documentation/i2c/fault-codes.
+>   */
+>  struct i2c_algorithm {
+> -	/* If an adapter algorithm can't do I2C-level access, set master_xfer
+> -	   to NULL. If an adapter algorithm can do SMBus access, set
+> -	   smbus_xfer. If set to NULL, the SMBus protocol is simulated
+> -	   using common I2C messages */
+> -	/* master_xfer should return the number of messages successfully
+> -	   processed, or a negative value on error */
+> +	/*
+> +	 * If an adapter algorithm can't do I2C-level access, set master_xfer
+> +	 * to NULL. If an adapter algorithm can do SMBus access, set
+> +	 * smbus_xfer. If set to NULL, the SMBus protocol is simulated
+> +	 * using common I2C messages.
+> +	 *
+> +	 * master_xfer should return the number of messages successfully
+> +	 * processed, or a negative value on error
+> +	 */
+>  	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>  			   int num);
+> -	int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
+> -			   unsigned short flags, char read_write,
+> -			   u8 command, int size, union i2c_smbus_data *data);
+> +	int (*smbus_xfer)(struct i2c_adapter *adap, u16 addr,
+> +			  unsigned short flags, char read_write,
+> +			  u8 command, int size, union i2c_smbus_data *data);
+>  
+>  	/* To determine what the adapter supports */
+> -	u32 (*functionality) (struct i2c_adapter *);
+> +	u32 (*functionality)(struct i2c_adapter *adap);
+>  
+>  #if IS_ENABLED(CONFIG_I2C_SLAVE)
+>  	int (*reg_slave)(struct i2c_client *client);
+> -- 
+> 2.11.0
+> 
