@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v10 3/7] ARM: trusted_foundations: Provide information about whether firmware is registered
-Date: Mon, 18 Mar 2019 01:52:06 +0300
-Message-ID: <20190317225211.23091-4-digetx@gmail.com>
+Subject: [PATCH v10 4/7] ARM: tegra: Set up L2 cache using Trusted Foundations firmware
+Date: Mon, 18 Mar 2019 01:52:07 +0300
+Message-ID: <20190317225211.23091-5-digetx@gmail.com>
 References: <20190317225211.23091-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -13,61 +13,38 @@ To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.c
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a helper that provides information about whether Trusted Foundations
-firmware operations have been registered.
+On Tegra30 L2 cache should be initialized using firmware call if CPU
+is running in insecure mode. Set up the required outer-cache write_sec()
+callback early during boot using the firmware API, it is always a NO-OP
+on T114+ and is NO-OP on T20/30 if Trusted Foundations firmware node
+isn't present in device-tree.
 
 Tested-by: Robert Yang <decatf@gmail.com>
 Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/firmware/trusted_foundations.c    | 5 +++++
- arch/arm/include/asm/trusted_foundations.h | 7 +++++++
- 2 files changed, 12 insertions(+)
+ arch/arm/mach-tegra/tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-index 720904a43c00..bb2ee73d9e02 100644
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/arch/arm/firmware/trusted_foundations.c
-@@ -167,3 +167,8 @@ void of_register_trusted_foundations(void)
- 		panic("Trusted Foundation: missing version-minor property\n");
- 	register_trusted_foundations(&pdata);
- }
-+
-+bool trusted_foundations_registered(void)
-+{
-+	return firmware_ops == &trusted_foundations_ops;
-+}
-diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-index 201ceb259e71..54513c533811 100644
---- a/arch/arm/include/asm/trusted_foundations.h
-+++ b/arch/arm/include/asm/trusted_foundations.h
-@@ -31,6 +31,7 @@
- #include <linux/of.h>
- #include <linux/cpu.h>
- #include <linux/smp.h>
-+#include <linux/types.h>
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index f9587be48235..1e89cfefbf68 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -38,6 +38,7 @@
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/pmc.h>
  
++#include <asm/firmware.h>
  #include <asm/hardware/cache-l2x0.h>
- #include <asm/outercache.h>
-@@ -50,6 +51,7 @@ struct trusted_foundations_platform_data {
- 
- void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
- void of_register_trusted_foundations(void);
-+bool trusted_foundations_registered(void);
- 
- #else /* CONFIG_TRUSTED_FOUNDATIONS */
- static inline void tf_dummy_write_sec(unsigned long val, unsigned int reg)
-@@ -84,6 +86,11 @@ static inline void of_register_trusted_foundations(void)
- 	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
- 		register_trusted_foundations(NULL);
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+@@ -74,6 +75,7 @@ static void __init tegra_init_early(void)
+ {
+ 	of_register_trusted_foundations();
+ 	tegra_cpu_reset_handler_init();
++	call_firmware_op(l2x0_init);
  }
-+
-+static inline bool trusted_foundations_registered(void)
-+{
-+	return false;
-+}
- #endif /* CONFIG_TRUSTED_FOUNDATIONS */
  
- #endif
+ static void __init tegra_dt_init_irq(void)
 -- 
 2.20.1
