@@ -1,50 +1,51 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC PATCH v2 5/7] i2c: busses: omap: Add the
- master_xfer_irqless hook
-Date: Fri, 15 Mar 2019 15:14:35 +0200
-Message-ID: <20190315131435.GE9224@smile.fi.intel.com>
-References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
- <20190302134735.4393-6-wsa+renesas@sang-engineering.com>
- <20190315124717.x3do5evok5syipo7@verge.net.au>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] gpu: host1x: fix mismatch between function definitions and
+ declarations
+Date: Sun, 17 Mar 2019 22:47:03 +0000
+Message-ID: <20190317224703.6706-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190315124717.x3do5evok5syipo7@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 15, 2019 at 01:47:18PM +0100, Simon Horman wrote:
-> On Sat, Mar 02, 2019 at 02:47:33PM +0100, Wolfram Sang wrote:
-
-> > +	if (!polling) {
-> > +		timeout = wait_for_completion_timeout(&omap->cmd_complete,
-> > +						      OMAP_I2C_TIMEOUT);
-> > +	} else {
-> > +		do {
-> > +			omap_i2c_wait(omap);
-> > +			ret = omap_i2c_xfer_data(omap);
-> > +		} while (ret == -EAGAIN);
-> > +
-> > +		if (!ret)
-> > +			timeout = 1;
-> > +		else
-> > +			timeout = 0;
-> 
-> 
-> nit: the following might be cleaner
-> 
-> 		ret = !!timeout;
-> 
-
-Other way around, perhaps,
-
-      timeout = !ret;
-
-> > +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
+RnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4KClRocmVlIGZ1
+bmN0aW9ucyBoYXZlIGFyZ3VtZW50cyByIGFuZCB2IHN3YXBwZWQgaW4gdGhlaXIgZnVuY3Rpb24K
+ZGVjbGFyYXRpb25zIGluIHRoZSBoZWFkZXIgZmlsZSBkZXYuaCBjb21wYXJlZCB0byB0aGVpciBk
+ZWZpbml0aW9ucwppbiBkZXYuYy4gIFN3YXAgdGhlIG9yZGVyIGluIHRoZSBoZWFkZXIgZmlsZSB0
+byBmaXggdGhpcy4KCkZpeGVzOiBmMWI1M2M0ZTJjMDggKCJncHU6IGhvc3QxeDogQWRkIFRlZ3Jh
+MTg2IHN1cHBvcnQiKQpGaXhlczogNjU3OTMyNGE0MWNjICgiZ3B1OiBob3N0MXg6IEFkZCBjaGFu
+bmVsIHN1cHBvcnQiKQpGaXhlczogNzU0NzE2ODc0Mzg5ICgiZ3B1OiBob3N0MXg6IEFkZCBob3N0
+MXggZHJpdmVyIikKU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fu
+b25pY2FsLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmggfCA2ICsrKy0tLQogMSBm
+aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmggYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmgKaW5k
+ZXggMDUyMTZhN2U0ODMwLi5mODUxMzgyMjlmYmUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hv
+c3QxeC9kZXYuaAorKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmgKQEAgLTE1MywxMSArMTUz
+LDExIEBAIHN0cnVjdCBob3N0MXggewogCXN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKIH07CiAKLXZv
+aWQgaG9zdDF4X2h5cGVydmlzb3Jfd3JpdGVsKHN0cnVjdCBob3N0MXggKmhvc3QxeCwgdTMyIHIs
+IHUzMiB2KTsKK3ZvaWQgaG9zdDF4X2h5cGVydmlzb3Jfd3JpdGVsKHN0cnVjdCBob3N0MXggKmhv
+c3QxeCwgdTMyIHYsIHUzMiByKTsKIHUzMiBob3N0MXhfaHlwZXJ2aXNvcl9yZWFkbChzdHJ1Y3Qg
+aG9zdDF4ICpob3N0MXgsIHUzMiByKTsKLXZvaWQgaG9zdDF4X3N5bmNfd3JpdGVsKHN0cnVjdCBo
+b3N0MXggKmhvc3QxeCwgdTMyIHIsIHUzMiB2KTsKK3ZvaWQgaG9zdDF4X3N5bmNfd3JpdGVsKHN0
+cnVjdCBob3N0MXggKmhvc3QxeCwgdTMyIHYsIHUzMiByKTsKIHUzMiBob3N0MXhfc3luY19yZWFk
+bChzdHJ1Y3QgaG9zdDF4ICpob3N0MXgsIHUzMiByKTsKLXZvaWQgaG9zdDF4X2NoX3dyaXRlbChz
+dHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmNoLCB1MzIgciwgdTMyIHYpOwordm9pZCBob3N0MXhfY2hf
+d3JpdGVsKHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2gsIHUzMiB2LCB1MzIgcik7CiB1MzIgaG9z
+dDF4X2NoX3JlYWRsKHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2gsIHUzMiByKTsKIAogc3RhdGlj
+IGlubGluZSB2b2lkIGhvc3QxeF9od19zeW5jcHRfcmVzdG9yZShzdHJ1Y3QgaG9zdDF4ICpob3N0
+LAotLSAKMi4yMC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWw=
