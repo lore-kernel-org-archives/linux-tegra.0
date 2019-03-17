@@ -1,51 +1,111 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] gpu: host1x: fix mismatch between function definitions and
- declarations
-Date: Sun, 17 Mar 2019 22:47:03 +0000
-Message-ID: <20190317224703.6706-1-colin.king@canonical.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v10 0/7] Support Trusted Foundations firmware on Tegra30
+Date: Mon, 18 Mar 2019 01:52:03 +0300
+Message-ID: <20190317225211.23091-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4KClRocmVlIGZ1
-bmN0aW9ucyBoYXZlIGFyZ3VtZW50cyByIGFuZCB2IHN3YXBwZWQgaW4gdGhlaXIgZnVuY3Rpb24K
-ZGVjbGFyYXRpb25zIGluIHRoZSBoZWFkZXIgZmlsZSBkZXYuaCBjb21wYXJlZCB0byB0aGVpciBk
-ZWZpbml0aW9ucwppbiBkZXYuYy4gIFN3YXAgdGhlIG9yZGVyIGluIHRoZSBoZWFkZXIgZmlsZSB0
-byBmaXggdGhpcy4KCkZpeGVzOiBmMWI1M2M0ZTJjMDggKCJncHU6IGhvc3QxeDogQWRkIFRlZ3Jh
-MTg2IHN1cHBvcnQiKQpGaXhlczogNjU3OTMyNGE0MWNjICgiZ3B1OiBob3N0MXg6IEFkZCBjaGFu
-bmVsIHN1cHBvcnQiKQpGaXhlczogNzU0NzE2ODc0Mzg5ICgiZ3B1OiBob3N0MXg6IEFkZCBob3N0
-MXggZHJpdmVyIikKU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fu
-b25pY2FsLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmggfCA2ICsrKy0tLQogMSBm
-aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmggYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmgKaW5k
-ZXggMDUyMTZhN2U0ODMwLi5mODUxMzgyMjlmYmUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hv
-c3QxeC9kZXYuaAorKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmgKQEAgLTE1MywxMSArMTUz
-LDExIEBAIHN0cnVjdCBob3N0MXggewogCXN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKIH07CiAKLXZv
-aWQgaG9zdDF4X2h5cGVydmlzb3Jfd3JpdGVsKHN0cnVjdCBob3N0MXggKmhvc3QxeCwgdTMyIHIs
-IHUzMiB2KTsKK3ZvaWQgaG9zdDF4X2h5cGVydmlzb3Jfd3JpdGVsKHN0cnVjdCBob3N0MXggKmhv
-c3QxeCwgdTMyIHYsIHUzMiByKTsKIHUzMiBob3N0MXhfaHlwZXJ2aXNvcl9yZWFkbChzdHJ1Y3Qg
-aG9zdDF4ICpob3N0MXgsIHUzMiByKTsKLXZvaWQgaG9zdDF4X3N5bmNfd3JpdGVsKHN0cnVjdCBo
-b3N0MXggKmhvc3QxeCwgdTMyIHIsIHUzMiB2KTsKK3ZvaWQgaG9zdDF4X3N5bmNfd3JpdGVsKHN0
-cnVjdCBob3N0MXggKmhvc3QxeCwgdTMyIHYsIHUzMiByKTsKIHUzMiBob3N0MXhfc3luY19yZWFk
-bChzdHJ1Y3QgaG9zdDF4ICpob3N0MXgsIHUzMiByKTsKLXZvaWQgaG9zdDF4X2NoX3dyaXRlbChz
-dHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmNoLCB1MzIgciwgdTMyIHYpOwordm9pZCBob3N0MXhfY2hf
-d3JpdGVsKHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2gsIHUzMiB2LCB1MzIgcik7CiB1MzIgaG9z
-dDF4X2NoX3JlYWRsKHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2gsIHUzMiByKTsKIAogc3RhdGlj
-IGlubGluZSB2b2lkIGhvc3QxeF9od19zeW5jcHRfcmVzdG9yZShzdHJ1Y3QgaG9zdDF4ICpob3N0
-LAotLSAKMi4yMC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWw=
+Hello,
+
+This patchset adds support for the Trusted Foundations firmware on
+NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have that
+firmware and upstream kernel can't boot on those devices without the
+firmware support. This series was tested on Nexus 7, TF300T and Ouya
+Tegra30 devices.
+
+Changelog:
+
+v10:    - Removed duplicated message about keeping L2C disabled when
+          CONFIG_TRUSTED_FOUNDATIONS=n as was suggested by Michał Mirosław
+          in the review comment to v9.
+
+v9:     - Rebased on recent linux-next, resolved one conflict.
+
+v8:     - Replaced BIT() macro with a definition provided by cache-l2x0.h
+          in the "Support L2 cache maintenance" patch as was suggested by
+          Russell King in the review comment to v7.
+
+v7:     - Fixed kernel booting with CONFIG_TRUSTED_FOUNDATIONS=n by
+          providing a dummy L2C write_sec implementation in the
+          "Support L2 cache maintenance" patch.
+
+        - Minor clean up: no static variables anymore, replaced
+          white spaces with a tab in one place, etc.
+
+        - Added Michał's and Robert's Tested-by/Signed-off-by to the
+          patches.
+
+v6:     - One patch got messed up accidentally in v5, this is fixed now.
+
+        - Squashed "Support L2 cache maintenance done via firmware" patch
+          into the "Add firmware calls..." patch.
+
+        - The l2x0_init() firmware callback is now invoked unconditionally
+          because it is always a NO-OP on T114+ and is a NO-OP on T20/30
+          if firmware node is missed in device-tree, hence there is no
+          need to check the machine's DT compatible as it was done in the
+          previous versions of the series.
+
+v5:     - Fixed machine hanging on disabling D-cache during suspend,
+          turned out there are slight variations in behaviour between
+          firmware version in regards to cache-management. Thanks to
+          Robert Yang for reporting the problem and helping with the
+          solution.
+
+v4:     - Fixed Thumb2-kernel hanging on Tegra20, turned out it was not a
+          good idea to switch CPU into Thumb2 mode right after jumping into
+          the reset handler.
+
+        - Moved LP2-mode-set firmware call invocation to a later stage to
+          better replicate what downstream kernel does. This change was
+          suggested by Robert Yang and fixes system hang on Ouya game
+          console.
+
+        - Added references to the original work made by Michał Mirosław
+          into commit messages of the relevant patches.
+
+v3:     - Implemented suspend-resume support.
+
+        - Reworked arm/firmware/trusted_foundations.c a tad. Now cache
+          is getting properly initialized, cache enabling / disabling is
+          supported.
+
+v2:
+        - The "Don't apply CPU erratas in insecure mode" patch got some
+          cleanup, in particular resolved the messiness in
+          __tegra_cpu_reset_handler_data.
+
+        - Added a comment to tf_cache_write_sec(), justifying the warning
+          message.
+
+Dmitry Osipenko (7):
+  ARM: trusted_foundations: Support L2 cache maintenance
+  ARM: trusted_foundations: Make prepare_idle call to take mode argument
+  ARM: trusted_foundations: Provide information about whether firmware
+    is registered
+  ARM: tegra: Set up L2 cache using Trusted Foundations firmware
+  ARM: tegra: Don't apply CPU erratas in insecure mode
+  ARM: tegra: Always boot CPU in ARM-mode
+  ARM: tegra: Add firmware calls required for suspend-resume on Tegra30
+
+ arch/arm/firmware/trusted_foundations.c    | 75 +++++++++++++++++++++-
+ arch/arm/include/asm/firmware.h            |  2 +-
+ arch/arm/include/asm/trusted_foundations.h | 23 +++++++
+ arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
+ arch/arm/mach-tegra/pm.c                   | 49 ++++++++++++++
+ arch/arm/mach-tegra/reset-handler.S        | 50 +++++++++++----
+ arch/arm/mach-tegra/reset.c                |  3 +
+ arch/arm/mach-tegra/reset.h                |  9 ++-
+ arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
+ arch/arm/mach-tegra/sleep.S                | 14 ++--
+ arch/arm/mach-tegra/tegra.c                |  2 +
+ 11 files changed, 212 insertions(+), 22 deletions(-)
+
+-- 
+2.20.1
