@@ -1,59 +1,240 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v2 0/5] phy: tegra: xusb: Add Tegra186 support
-Date: Mon, 18 Mar 2019 14:26:17 +0530
-Message-ID: <5dbaa0ad-9567-621d-9836-9cdb6ed366b0@ti.com>
-References: <20190221154634.10684-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/5] reset: add acquired/released state for exclusive
+ reset controls
+Date: Mon, 18 Mar 2019 10:12:16 +0100
+Message-ID: <20190318091216.GB14465@ulmo>
+References: <20190221152557.8534-1-thierry.reding@gmail.com>
+ <20190221152858.GA8652@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190221154634.10684-1-thierry.reding@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190221152858.GA8652@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
 
-On 21/02/19 9:16 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> This series adds support for Tegra186 to the XUSB pad controller driver.
-> Patch 1 extends the device tree bindings with support for Tegra186 while
-> patches 2-4 are preparatory work for the final patch 5 that adds the
-> Tegra186 specific programming for the UPHY blocks.
-> 
-> Changes in v2:
-> - address review comments from Kishon
-> - added Reviewed-by tags from JC
+--wq9mPyueHGvFACwf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've merged this series.
-However I'd like to see if we can add the features of xusb.c to phy-core.c and
-remove xusb.c. This will be useful if there are other PHY vendors with similar
-design as Tegra.
-
-Thanks
-Kishon
-
-> 
+On Thu, Feb 21, 2019 at 04:28:58PM +0100, Thierry Reding wrote:
+> On Thu, Feb 21, 2019 at 04:25:53PM +0100, Thierry Reding wrote:
+> > From: Philipp Zabel <p.zabel@pengutronix.de>
+> >=20
+> > There are cases where a driver needs explicit control over a reset line
+> > that is exclusively conneted to its device, but this control has to be
+> > temporarily handed over to the power domain controller to handle reset
+> > requirements during power transitions.
+> > Allow multiple exclusive reset controls to be requested in 'released'
+> > state for the same physical reset line, only one of which can be
+> > acquired at the same time.
+> >=20
+> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/reset/core.c  | 139 ++++++++++++++++++++++++++++++++++++++----
+> >  include/linux/reset.h |  93 ++++++++++++++++++++++------
+> >  2 files changed, 200 insertions(+), 32 deletions(-)
+>=20
+> Hi Philipp,
+>=20
+> the bulk of this is unchanged relative to what you had posted
+> originally. I squashed in the few things that we had already discussed
+> earlier (EINVAL -> EPERM) and a couple of minor fixes for issues that I
+> found while working with this.
+>=20
+> Attached is my fixup patch which contains all the changes I made on top
+> of your version and that I squashed into this.
+>=20
 > Thierry
-> 
-> JC Kuo (2):
->   phy: tegra: xusb: Skip single function lane programming
->   phy: tegra: xusb: Add Tegra186 support
-> 
-> Thierry Reding (3):
->   dt-bindings: phy: tegra: Add Tegra186 support
->   phy: tegra: xusb: Parse dual-role mode property
->   phy: tegra: xusb: Add support for power supplies
-> 
->  .../phy/nvidia,tegra124-xusb-padctl.txt       |   9 +
->  MAINTAINERS                                   |   5 +
->  drivers/phy/tegra/Makefile                    |   1 +
->  drivers/phy/tegra/xusb-tegra186.c             | 899 ++++++++++++++++++
->  drivers/phy/tegra/xusb.c                      |  67 +-
->  drivers/phy/tegra/xusb.h                      |  35 +
->  6 files changed, 1014 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/phy/tegra/xusb-tegra186.c
-> 
+
+Hi Philipp,
+
+do you have any further comments on this series?
+
+Thierry
+
+> --- >8 ---
+> commit aa618d0b63eec676d9ea8db91a4c5fdc9330fc6b
+> Author: Thierry Reding <treding@nvidia.com>
+> Date:   Mon Feb 18 11:32:46 2019 +0100
+>=20
+>     fixup! reset: add acquired/released state for exclusive reset controls
+>=20
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index c6a7a4474142..1e8a42b16f23 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -65,6 +65,17 @@ struct reset_control_array {
+>  	struct reset_control *rstc[];
+>  };
+> =20
+> +static const char *rcdev_name(struct reset_controller_dev *rcdev)
+> +{
+> +	if (rcdev->dev)
+> +		return dev_name(rcdev->dev);
+> +
+> +	if (rcdev->of_node)
+> +		return rcdev->of_node->full_name;
+> +
+> +	return NULL;
+> +}
+> +
+>  /**
+>   * of_reset_simple_xlate - translate reset_spec to the reset line number
+>   * @rcdev: a pointer to the reset controller device
+> @@ -276,7 +287,7 @@ int reset_control_reset(struct reset_control *rstc)
+>  			return 0;
+>  	} else {
+>  		if (!rstc->acquired)
+> -			return -EINVAL;
+> +			return -EPERM;
+>  	}
+> =20
+>  	ret =3D rstc->rcdev->ops->reset(rstc->rcdev, rstc->id);
+> @@ -340,8 +351,11 @@ int reset_control_assert(struct reset_control *rstc)
+>  		if (!rstc->rcdev->ops->assert)
+>  			return -ENOTSUPP;
+> =20
+> -		if (!rstc->acquired)
+> -			return -EINVAL;
+> +		if (!rstc->acquired) {
+> +			WARN(1, "reset %s (ID: %u) is not acquired\n",
+> +			     rcdev_name(rstc->rcdev), rstc->id);
+> +			return -EPERM;
+> +		}
+>  	}
+> =20
+>  	return rstc->rcdev->ops->assert(rstc->rcdev, rstc->id);
+> @@ -378,8 +392,11 @@ int reset_control_deassert(struct reset_control *rst=
+c)
+>  		if (atomic_inc_return(&rstc->deassert_count) !=3D 1)
+>  			return 0;
+>  	} else {
+> -		if (!rstc->acquired)
+> -			return -EINVAL;
+> +		if (!rstc->acquired) {
+> +			WARN(1, "reset %s (ID: %u) is not acquired\n",
+> +			     rcdev_name(rstc->rcdev), rstc->id);
+> +			return -EPERM;
+> +		}
+>  	}
+> =20
+>  	/*
+> @@ -417,15 +434,43 @@ int reset_control_status(struct reset_control *rstc)
+>  }
+>  EXPORT_SYMBOL_GPL(reset_control_status);
+> =20
+> +/**
+> + * reset_control_acquire() - acquires a reset control for exclusive use
+> + * @rstc: reset control
+> + *
+> + * This is used to explicitly acquire a reset control for exclusive use.=
+ Note
+> + * that exclusive resets are requested as acquired by default. In order =
+for a
+> + * second consumer to be able to control the reset, the first consumer h=
+as to
+> + * release it first. Typically the easiest way to achieve this is to cal=
+l the
+> + * reset_control_get_exclusive_released() to obtain an instance of the r=
+eset
+> + * control. Such reset controls are not acquired by default.
+> + *
+> + * Consumers implementing shared access to an exclusive reset need to fo=
+llow
+> + * a specific protocol in order to work together. Before consumers can c=
+hange
+> + * a reset they must acquire exclusive access using reset_control_acquir=
+e().
+> + * After they are done operating the reset, they must release exclusive =
+access
+> + * with a call to reset_control_release(). Consumers are not granted exc=
+lusive
+> + * access to the reset as long as another consumer hasn't released a res=
+et.
+> + *
+> + * See also: reset_control_release()
+> + */
+>  int reset_control_acquire(struct reset_control *rstc)
+>  {
+>  	struct reset_control *rc;
+> =20
+> -	if (!rstc || rstc->acquired)
+> +	if (!rstc)
+>  		return 0;
+> =20
+> +	if (WARN_ON(IS_ERR(rstc)))
+> +		return -EINVAL;
+> +
+>  	mutex_lock(&reset_list_mutex);
+> =20
+> +	if (rstc->acquired) {
+> +		mutex_unlock(&reset_list_mutex);
+> +		return 0;
+> +	}
+> +
+>  	list_for_each_entry(rc, &rstc->rcdev->reset_control_head, list) {
+>  		if (rstc !=3D rc && rstc->id =3D=3D rc->id) {
+>  			if (rc->acquired) {
+> @@ -435,13 +480,28 @@ int reset_control_acquire(struct reset_control *rst=
+c)
+>  		}
+>  	}
+> =20
+> +	rstc->acquired =3D true;
+> +
+>  	mutex_unlock(&reset_list_mutex);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(reset_control_acquire);
+> =20
+> +/**
+> + * reset_control_release() - releases exclusive access to a reset control
+> + * @rstc: reset control
+> + *
+> + * Releases exclusive access right to a reset control previously obtaine=
+d by a
+> + * call to reset_control_acquire(). Until a consumer calls this function=
+, no
+> + * other consumers will be granted exclusive access.
+> + *
+> + * See also: reset_control_acquire()
+> + */
+>  void reset_control_release(struct reset_control *rstc)
+>  {
+> +	if (!rstc || WARN_ON(IS_ERR(rstc)))
+> +		return;
+> +
+>  	rstc->acquired =3D false;
+>  }
+>  EXPORT_SYMBOL_GPL(reset_control_release);
+
+
+
+--wq9mPyueHGvFACwf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyPYO0ACgkQ3SOs138+
+s6HHDg//YneTNkf+xXw6KFibhXVNaYKQd2HSjH9Y4UUlFQhA775m1F9Icicfb5IJ
+eXgHHqVeCPKTL3K/bDI2fWSwlFZ6wseSxij7W1HQGyjekDX0gEX1HnsF9HOmeP9B
+u/UqrAzrpoLnOa8tUpbIDZ6S7WyI5mn7Yd8LZxkpeNvcPwtBD2B34nU0SYcyp7bk
+DKJiM38a40Jo5g+URyyGP9eZFwFeT6tajJRN2Rk14mE0vJs3BLSIy373GVsV2jss
+jPa73igCcJ7Q6UDwNlDCmTIaZsTJ6cF7hMuM6QN9eB9owzESNeBjWy/xDyGDsbLQ
+pWJ8inQmADGEVfoUowCqew4pogR7vsxcdGfPF8ssFUA4DGGkgtW3WzvzeBoxpqVv
+KydytFT57r2WpcS9nod01rMcNbXPZNNxOuwGbv8Ynzr7jhyNnGq5Rs7hYp4XjWDk
+fhKsa8IsP8+twW7linsBeoK7Ws21CCi9eLai4s8dRCvhzLoShvsxOgsQkOtzGGy4
+I59GIR45Bw/iVyoraKM3f8CxqVBwOKoYXIH9j9+eluWtjnJOFdyzR5rakFKmooQT
+mpeRPTgrdc2Hjktj3hrcDSZkRMK5+rwVe5qzaAq3uMATkbT1IKrm9c/FATUxTQeg
+M2wMYzEogVWJELNzm9ox28N6sGE1cvFPWoJndX9LleRL1fIzj78=
+=cGMw
+-----END PGP SIGNATURE-----
+
+--wq9mPyueHGvFACwf--
