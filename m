@@ -1,91 +1,59 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH -next] phy: tegra: xusb: Make two functions static
-Date: Wed, 20 Mar 2019 09:42:11 +0100
-Message-ID: <20190320084211.GB6043@ulmo>
-References: <20190319153219.4196-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] clk: tegra: Make tegra_clk_super_mux_ops static
+Date: Wed, 20 Mar 2019 09:44:02 +0100
+Message-ID: <20190320084402.GC6043@ulmo>
+References: <20190319153504.23072-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
+        protocol="application/pgp-signature"; boundary="tqI+Z3u+9OQ7kwn0"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190319153219.4196-1-yuehaibing@huawei.com>
+In-Reply-To: <20190319153504.23072-1-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Yue Haibing <yuehaibing@huawei.com>
-Cc: jckuo@nvidia.com, kishon@ti.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---1LKvkjL3sHcu1TtY
+--tqI+Z3u+9OQ7kwn0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 19, 2019 at 11:32:19PM +0800, Yue Haibing wrote:
+On Tue, Mar 19, 2019 at 11:35:04PM +0800, Yue Haibing wrote:
 > From: YueHaibing <yuehaibing@huawei.com>
 >=20
 > Fix sparse warning:
 >=20
-> drivers/phy/tegra/xusb-tegra186.c:250:6: warning: symbol 'tegra_phy_xusb_=
-utmi_pad_power_on' was not declared. Should it be static?
-> drivers/phy/tegra/xusb-tegra186.c:281:6: warning: symbol 'tegra_phy_xusb_=
-utmi_pad_power_down' was not declared. Should it be static?
+> drivers/clk/tegra/clk-super.c:124:22:
+>  warning: symbol 'tegra_clk_super_mux_ops' was not declared. Should it be=
+ static?
 >=20
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/phy/tegra/xusb-tegra186.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Sigh... I evidently need to improve my build scripts.
+>  drivers/clk/tegra/clk-super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
-> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-t=
-egra186.c
-> index 11ad6e4..7a308b4 100644
-> --- a/drivers/phy/tegra/xusb-tegra186.c
-> +++ b/drivers/phy/tegra/xusb-tegra186.c
-> @@ -247,7 +247,7 @@ static void tegra186_utmi_bias_pad_power_off(struct t=
-egra_xusb_padctl *padctl)
->  	mutex_unlock(&padctl->lock);
->  }
-> =20
-> -void tegra_phy_xusb_utmi_pad_power_on(struct phy *phy)
-> +static void tegra_phy_xusb_utmi_pad_power_on(struct phy *phy)
->  {
->  	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
->  	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> @@ -278,7 +278,7 @@ void tegra_phy_xusb_utmi_pad_power_on(struct phy *phy)
->  	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
->  }
-> =20
-> -void tegra_phy_xusb_utmi_pad_power_down(struct phy *phy)
-> +static void tegra_phy_xusb_utmi_pad_power_down(struct phy *phy)
->  {
->  	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
->  	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> --=20
-> 2.7.4
->=20
->=20
-
---1LKvkjL3sHcu1TtY
+--tqI+Z3u+9OQ7kwn0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyR/OMACgkQ3SOs138+
-s6EFXg//e+QC0f53RB2Uvq0TIRG2Hv8pWteQzCdIfGJo0BsysI7l9RiMkUJLzT/r
-/0DkeOg3DpiOcivXXqaOONggMduMqLwFIVML5+yupRjZ0NooFzZd3Dz7twi50lpc
-dSjIvXL0VpVJ4Ii4E20l02zjaMTz5I1sPE9yDTZhWVwEojcAVcsKVIzjzuygZTC4
-Gmtb0fR8u/Qc2UVkb0RhUzh3TU/4K900tlp3sKornxW0BEMd9WUTH9R+9R1eq0j6
-5e3epfx0BkUIXEDzGE2ggmGsyWGC8HbXgrrWlrmJi2cj/TBV/M6RaEvs+1OOwEBZ
-gq3GyAbcMkqrr6IbinF9azw6bnnNX8vxIacD0ohITgWPB1Ui2kl2UuPRrWP547jc
-Sq4cqLPOiz58Hy5HuI368XgC4XgJY29A60Rm6OH9rhzDt48B3idfP+nUELzeJEbG
-hiAI6e+FkUvCGQ+pFsIVjN9+/ft16rB6OHZwHc5QTHgjvOobutDxVywtjrPD12Lm
-Wyb67eGPqHAsBrip0IPdGjZ4cQeGzhUL2gAFPicP2tY7EeyYor8ToFGpvgkIjB2V
-YfHi6DKvL1jhCNOAk+RzWZq4bTLuSFPEYqord9qup8Js4nadBL8gAzZdLOdkHTDx
-k4lbsJ+P4zZSo3DE4Ej7kOQC4Tgwj1jXbi1vsvBgP989A9JbGXA=
-=NJhj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyR/VIACgkQ3SOs138+
+s6EQjxAAoaL/KeouycZmBXVUKnEMaYJ6vzftGYyTCO2OJ5T/A3BMGxpJE9o1X+Sm
+0nvDonljrcoyVwP96Rrn6sMQaoOZd2tsM92U1T9nb0yBWD001TfDgjL02U9nVvf1
+DLNodMHtX3SDeDJJLWi7tAd05XekdXwjiZpg3JgEkYjUVXX0HHRdpZsJTlJT7JmS
+U+OnsXZugvo6OsviDkAxQd1JkYahukNVn7JgYunNf47zkodkhjD7oZflnJqkozgB
+1Vz9zHgKdlQlYd9YigLMwQ+VX1/VcBnOVyxT0ACk4pGqw6+l0Y6q8tu5AB6AXQWK
+xGRZSuedIQsQdondYAjXr1KhOEl2ZyHjD/fOWFrbXOhwTPrJI2KyZlF6UgDC0Lvm
+rBVBYfx2x8mgemFb7Ne09wx3rGBodJD6UqoV/QfrytFxfCzy/aoC6L7tQbDuN+Vq
+OUKSCBESPtzx1jJRVUVRMfov3/6nb0+qBbuE0ZtFW1ZcYBalJjCjzrW1AensY2fg
+NRdqF2zZhcL7A0G4ABXAyr5xgmYgm2HoSTrqPir46UTP1SXZAxKaGL8/RBog+C2E
+TsZ+nkeMn/D2aDBT5fR2QfKm2J6CulMCuiybP8nG+8JLnA4WjmkfLFhDas8GEn6q
+1Wa5Z8AGdUukXTrRbAOgCGJg504URghNTlaTZrPpsWg4xq6XmNQ=
+=EN85
 -----END PGP SIGNATURE-----
 
---1LKvkjL3sHcu1TtY--
+--tqI+Z3u+9OQ7kwn0--
