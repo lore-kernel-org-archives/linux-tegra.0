@@ -1,53 +1,106 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH V3 05/10] arm64: tegra: fix default tap and trim values
-Date: Thu, 21 Mar 2019 11:32:54 +0100
-Message-ID: <CAPDyKFq4ZVaMmvefuVqGs84E7xg5VgvU-Ecq1MYJdmBhuEm7xA@mail.gmail.com>
-References: <1552513552-23423-1-git-send-email-skomatineni@nvidia.com> <1552513552-23423-5-git-send-email-skomatineni@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PROBLEM] ALSA: hda: PCM streams are suspended
+	while opening
+Date: Thu, 21 Mar 2019 14:28:23 +0000
+Message-ID: <ffa1c237-baf8-587c-5389-29223613eb0e@nvidia.com>
+References: <1553097854-10287-1-git-send-email-jonathanh@nvidia.com>
+ <s5hzhppqx8q.wl-tiwai@suse.de>
+ <446faef9-a114-1b28-5636-a30bae04fa53@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552513552-23423-5-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Harjani Ritesh <riteshh@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, anrao@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <446faef9-a114-1b28-5636-a30bae04fa53@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 13 Mar 2019 at 22:45, Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
->
-> Default tap and trim values are incorrect for Tegra186 SDMMC4.
-> This patch fixes it.
->
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Is this a fix and/or for stable?
+On 20/03/2019 17:59, Jon Hunter wrote:
+> 
+> On 20/03/2019 17:19, Takashi Iwai wrote:
+>> On Wed, 20 Mar 2019 17:04:14 +0100,
+>> Jon Hunter wrote:
+>>>
+>>> From: Jonathan Hunter <jonathanh@nvidia.com>
+>>>
+>>> This issue is not observed on the latest mainline kernel since the
+>>> 'ALSA: PCM suspend cleanup' series has been applied and the
+>>> snd_pcm_suspend_all() function call in the HDA codec driver has been
+>>> removed. However, this issue impacts stable kernel branches and so I
+>>> am trying to find a solution for these branches.
+>>>
+>>> When stress testing audio playback across multiple HDA streams
+>>> simultaneously, the following failure is sometimes observed when
+>>> starting playback ...
+>>>
+>>>  Unable to set hw params for playback: File descriptor in bad state
+>>>
+>>> The problem is caused because ...
+>>> 1. Playback is starting for one HDA codec and so the chip->open_mutex
+>>>    in azx_pcm_open() has been acquired.
+>>> 2. Playback for another HDA codec is starting but is blocked waiting to
+>>>    acquire the chip->open_mutex in azx_pcm_open().
+>>> 3. For the HDA codec that is blocked, its runtime-pm status is still
+>>>    enabled from a previous playback session that has since completed and
+>>>    been closed, however its autosuspend timeout has not expired yet.
+>>> 4. For the HDA codec that is blocked, the runtime-pm autosuspend timeout
+>>>    now occurs calling the runtime-pm suspend callback and this calls
+>>>    snd_pcm_suspend_all() placing all PCM streams in the suspended state.
+>>> 5. The block HDA codec is now unblocked and fails to set the HW params
+>>>    because the PCM stream is in the suspended state.
+>>>
+>>> The above has been observed on Tegra platforms where the autosuspend
+>>> delay is set to 1 second and there is a delay to an AZX command. This
+>>> highlights that there is a window of time where autosuspend can place
+>>> the HDA PCM stream in the suspended state while opening the stream
+>>> and cause playback to fail.
+>>>
+>>> Looking at commit 3d21ef0b49f8 ('ALSA: pcm: Suspend streams globally via
+>>> device type PM ops') it appears that the call to snd_pcm_suspend_all()
+>>> has now been moved to the to the suspend handler for PCM streams and so
+>>> I am wondering if it would be equivalent to make the following change to
+>>> the HDA codec driver to achieve the same behaviour but only for the HDA
+>>> driver. So far the issue has not been observed with this change.
+>>>
+>>> Please note that I am not sending this as a formal patch as I wanted to
+>>> get some feedback/comments on the above.
+>>
+>> I guess just backporting 3d21ef0b49f8 should be OK even for older
+>> kernels.  This assures the PCM stream gets suspended before entering
+>> any parent device suspend call.
+>>
+>> The remaining changes (except for the one for atiixp) are merely
+>> cleanup of superfluous calls, and keeping them are harmless.
+>>
+>> Could you check whether my theory above correct?
+> 
+> I believe that you will need that change and 17bc4815de58 because we
+> need to prevent snd_pcm_suspend_all() being called in the pm-runtime
+> suspend callback. Applying only 3d21ef0b49f8 will means that at runtime
+> snd_pcm_suspend_all() can still be called from within the HDA codec
+> driver when the autosuspend timeout occurs. I will test this and
+> confirm. Maybe both could be backported?
 
-In either case, I am leaving this for arm-soc.
+I confirmed today that with just 3d21ef0b49f8 the issue can occur, but
+with both 3d21ef0b49f8 and 17bc4815de58 the issue is not seen.
 
-Kind regards
-Uffe
+Do you think that it would be appropriate to include these in the stable
+branches? They apply cleanly to v5.0, but we would probably need to
+back-port for early kernels such as v4.19, v4.9, etc.
 
+Cheers
+Jon
 
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> index 97aeb946ed5e..472f55fe9488 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> @@ -317,8 +317,8 @@
->                 nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
->                 nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
->                 nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
-> -               nvidia,default-tap = <0x5>;
-> -               nvidia,default-trim = <0x9>;
-> +               nvidia,default-tap = <0x9>;
-> +               nvidia,default-trim = <0x5>;
->                 nvidia,dqs-trim = <63>;
->                 mmc-hs400-1_8v;
->                 status = "disabled";
-> --
-> 2.7.4
->
+-- 
+nvpublic
