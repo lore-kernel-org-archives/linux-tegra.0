@@ -1,106 +1,80 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PROBLEM] ALSA: hda: PCM streams are suspended
-	while opening
-Date: Thu, 21 Mar 2019 14:28:23 +0000
-Message-ID: <ffa1c237-baf8-587c-5389-29223613eb0e@nvidia.com>
-References: <1553097854-10287-1-git-send-email-jonathanh@nvidia.com>
- <s5hzhppqx8q.wl-tiwai@suse.de>
- <446faef9-a114-1b28-5636-a30bae04fa53@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH -next] phy: tegra: xusb: fix typo in
+ tegra186_usb2_pad_probe()
+Date: Thu, 21 Mar 2019 16:05:37 +0100
+Message-ID: <20190321150537.GB8939@ulmo>
+References: <20190321085436.94975-1-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <446faef9-a114-1b28-5636-a30bae04fa53@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Sameer Pujar <spujar@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190321085436.94975-1-weiyongjun1@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 20/03/2019 17:59, Jon Hunter wrote:
-> 
-> On 20/03/2019 17:19, Takashi Iwai wrote:
->> On Wed, 20 Mar 2019 17:04:14 +0100,
->> Jon Hunter wrote:
->>>
->>> From: Jonathan Hunter <jonathanh@nvidia.com>
->>>
->>> This issue is not observed on the latest mainline kernel since the
->>> 'ALSA: PCM suspend cleanup' series has been applied and the
->>> snd_pcm_suspend_all() function call in the HDA codec driver has been
->>> removed. However, this issue impacts stable kernel branches and so I
->>> am trying to find a solution for these branches.
->>>
->>> When stress testing audio playback across multiple HDA streams
->>> simultaneously, the following failure is sometimes observed when
->>> starting playback ...
->>>
->>>  Unable to set hw params for playback: File descriptor in bad state
->>>
->>> The problem is caused because ...
->>> 1. Playback is starting for one HDA codec and so the chip->open_mutex
->>>    in azx_pcm_open() has been acquired.
->>> 2. Playback for another HDA codec is starting but is blocked waiting to
->>>    acquire the chip->open_mutex in azx_pcm_open().
->>> 3. For the HDA codec that is blocked, its runtime-pm status is still
->>>    enabled from a previous playback session that has since completed and
->>>    been closed, however its autosuspend timeout has not expired yet.
->>> 4. For the HDA codec that is blocked, the runtime-pm autosuspend timeout
->>>    now occurs calling the runtime-pm suspend callback and this calls
->>>    snd_pcm_suspend_all() placing all PCM streams in the suspended state.
->>> 5. The block HDA codec is now unblocked and fails to set the HW params
->>>    because the PCM stream is in the suspended state.
->>>
->>> The above has been observed on Tegra platforms where the autosuspend
->>> delay is set to 1 second and there is a delay to an AZX command. This
->>> highlights that there is a window of time where autosuspend can place
->>> the HDA PCM stream in the suspended state while opening the stream
->>> and cause playback to fail.
->>>
->>> Looking at commit 3d21ef0b49f8 ('ALSA: pcm: Suspend streams globally via
->>> device type PM ops') it appears that the call to snd_pcm_suspend_all()
->>> has now been moved to the to the suspend handler for PCM streams and so
->>> I am wondering if it would be equivalent to make the following change to
->>> the HDA codec driver to achieve the same behaviour but only for the HDA
->>> driver. So far the issue has not been observed with this change.
->>>
->>> Please note that I am not sending this as a formal patch as I wanted to
->>> get some feedback/comments on the above.
->>
->> I guess just backporting 3d21ef0b49f8 should be OK even for older
->> kernels.  This assures the PCM stream gets suspended before entering
->> any parent device suspend call.
->>
->> The remaining changes (except for the one for atiixp) are merely
->> cleanup of superfluous calls, and keeping them are harmless.
->>
->> Could you check whether my theory above correct?
-> 
-> I believe that you will need that change and 17bc4815de58 because we
-> need to prevent snd_pcm_suspend_all() being called in the pm-runtime
-> suspend callback. Applying only 3d21ef0b49f8 will means that at runtime
-> snd_pcm_suspend_all() can still be called from within the HDA codec
-> driver when the autosuspend timeout occurs. I will test this and
-> confirm. Maybe both could be backported?
+--lEGEL1/lMxI0MVQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I confirmed today that with just 3d21ef0b49f8 the issue can occur, but
-with both 3d21ef0b49f8 and 17bc4815de58 the issue is not seen.
+On Thu, Mar 21, 2019 at 08:54:36AM +0000, Wei Yongjun wrote:
+> Fix a typo in tegra186_usb2_pad_probe(), 'usb2->clk' should be
+> 'priv->usb2_trk_clk'.
+>=20
+> Fixes: b8998e928030 ("phy: tegra: xusb: Add Tegra186 support")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/phy/tegra/xusb-tegra186.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Do you think that it would be appropriate to include these in the stable
-branches? They apply cleanly to v5.0, but we would probably need to
-back-port for early kernels such as v4.19, v4.9, etc.
+Good catch!
 
-Cheers
-Jon
+Acked-by: Thierry Reding <treding@nvidia.com>
 
--- 
-nvpublic
+>=20
+> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-t=
+egra186.c
+> index 11ad6e4e4711..a627fe0b8e54 100644
+> --- a/drivers/phy/tegra/xusb-tegra186.c
+> +++ b/drivers/phy/tegra/xusb-tegra186.c
+> @@ -467,8 +467,8 @@ tegra186_usb2_pad_probe(struct tegra_xusb_padctl *pad=
+ctl,
+>  	}
+> =20
+>  	priv->usb2_trk_clk =3D devm_clk_get(&pad->dev, "trk");
+> -	if (IS_ERR(usb2->clk)) {
+> -		err =3D PTR_ERR(usb2->clk);
+> +	if (IS_ERR(priv->usb2_trk_clk)) {
+> +		err =3D PTR_ERR(priv->usb2_trk_clk);
+>  		dev_dbg(&pad->dev, "failed to get usb2 trk clock: %d\n", err);
+>  		goto unregister;
+>  	}
+>=20
+>=20
+>=20
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyTqD0ACgkQ3SOs138+
+s6GUgw/9HS6iD2OHPaeTstUqq7OVEzmQN7eRKd8nYqtSLLswJhubqAlJALcbM2pH
+1S3dgKjBNmmEsFcLw293WZuMZHLAXzmX4fdKFYwNAnNmNBQflXQsy0DhAjDtupyK
+Fts/ASsmq3EKfunnAhog7Ld9xBIrEBA73ahPjY1nOv+prlpiTuq6oZvx+xSayt6G
+uTG1Zl2eBWV1DRwy+oTQo6lqy5OkaRDLRTxdq5Tzv1uwlG3EQ0b18T+cKJR905Pg
+PInaYNeJsFuu3pusoHdqcKgwzMmYP/EXXLH6oUcBhX4qHZJoHn0mIz86ZZA97cA6
+l6oL0+7ZM28jkbjRN0cHP0C6Zlr0vd2iPCxsz7G5rkr0fiVoHGYVOt6+vLhGCsLI
+GRCjYZ0L58fEW90L7nIM/sXKVT5iixS+wRBrxTq9+6ix5AzMnkDFPbiKvQH683ZY
+9EyQb8DUye0AKycFME/atCJtsjQF2t85YXEuQxJ3W2EINzPlvkOw/4mJdxR/nKts
+2GwOxIw9wF073JegGqXWpe0+T1gaJ71om+pIv3QFhe4rCEgSLklHN0wyLTUf/8uO
++aUkY3CjFIv0rS5vFYUDJAGJSClHd+mY8HYgvTdqmQacC7DppaW7X0YruSVtG1XN
+k1SxuHT8YfqNybwgtjeZhRn/7f02DuDVHDhl4g0uTcigXtjJALE=
+=VM3Q
+-----END PGP SIGNATURE-----
+
+--lEGEL1/lMxI0MVQ2--
