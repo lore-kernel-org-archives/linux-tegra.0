@@ -1,80 +1,43 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH -next] phy: tegra: xusb: fix typo in
- tegra186_usb2_pad_probe()
-Date: Thu, 21 Mar 2019 16:05:37 +0100
-Message-ID: <20190321150537.GB8939@ulmo>
-References: <20190321085436.94975-1-weiyongjun1@huawei.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V3 05/10] arm64: tegra: fix default tap and trim values
+Date: Thu, 21 Mar 2019 15:22:47 +0000
+Message-ID: <BYAPR12MB3398F91B190D9B1C56FDC4F7C2420@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1552513552-23423-1-git-send-email-skomatineni@nvidia.com>
+ <1552513552-23423-5-git-send-email-skomatineni@nvidia.com>
+ <CAPDyKFq4ZVaMmvefuVqGs84E7xg5VgvU-Ecq1MYJdmBhuEm7xA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190321085436.94975-1-weiyongjun1@huawei.com>
+In-Reply-To: <CAPDyKFq4ZVaMmvefuVqGs84E7xg5VgvU-Ecq1MYJdmBhuEm7xA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Harjani Ritesh <riteshh@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 21, 2019 at 08:54:36AM +0000, Wei Yongjun wrote:
-> Fix a typo in tegra186_usb2_pad_probe(), 'usb2->clk' should be
-> 'priv->usb2_trk_clk'.
->=20
-> Fixes: b8998e928030 ("phy: tegra: xusb: Add Tegra186 support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/phy/tegra/xusb-tegra186.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Good catch!
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
->=20
-> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-t=
-egra186.c
-> index 11ad6e4e4711..a627fe0b8e54 100644
-> --- a/drivers/phy/tegra/xusb-tegra186.c
-> +++ b/drivers/phy/tegra/xusb-tegra186.c
-> @@ -467,8 +467,8 @@ tegra186_usb2_pad_probe(struct tegra_xusb_padctl *pad=
-ctl,
->  	}
-> =20
->  	priv->usb2_trk_clk =3D devm_clk_get(&pad->dev, "trk");
-> -	if (IS_ERR(usb2->clk)) {
-> -		err =3D PTR_ERR(usb2->clk);
-> +	if (IS_ERR(priv->usb2_trk_clk)) {
-> +		err =3D PTR_ERR(priv->usb2_trk_clk);
->  		dev_dbg(&pad->dev, "failed to get usb2 trk clock: %d\n", err);
->  		goto unregister;
->  	}
->=20
->=20
->=20
-
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyTqD0ACgkQ3SOs138+
-s6GUgw/9HS6iD2OHPaeTstUqq7OVEzmQN7eRKd8nYqtSLLswJhubqAlJALcbM2pH
-1S3dgKjBNmmEsFcLw293WZuMZHLAXzmX4fdKFYwNAnNmNBQflXQsy0DhAjDtupyK
-Fts/ASsmq3EKfunnAhog7Ld9xBIrEBA73ahPjY1nOv+prlpiTuq6oZvx+xSayt6G
-uTG1Zl2eBWV1DRwy+oTQo6lqy5OkaRDLRTxdq5Tzv1uwlG3EQ0b18T+cKJR905Pg
-PInaYNeJsFuu3pusoHdqcKgwzMmYP/EXXLH6oUcBhX4qHZJoHn0mIz86ZZA97cA6
-l6oL0+7ZM28jkbjRN0cHP0C6Zlr0vd2iPCxsz7G5rkr0fiVoHGYVOt6+vLhGCsLI
-GRCjYZ0L58fEW90L7nIM/sXKVT5iixS+wRBrxTq9+6ix5AzMnkDFPbiKvQH683ZY
-9EyQb8DUye0AKycFME/atCJtsjQF2t85YXEuQxJ3W2EINzPlvkOw/4mJdxR/nKts
-2GwOxIw9wF073JegGqXWpe0+T1gaJ71om+pIv3QFhe4rCEgSLklHN0wyLTUf/8uO
-+aUkY3CjFIv0rS5vFYUDJAGJSClHd+mY8HYgvTdqmQacC7DppaW7X0YruSVtG1XN
-k1SxuHT8YfqNybwgtjeZhRn/7f02DuDVHDhl4g0uTcigXtjJALE=
-=VM3Q
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
+PiA+DQo+ID4gRGVmYXVsdCB0YXAgYW5kIHRyaW0gdmFsdWVzIGFyZSBpbmNvcnJlY3QgZm9yIFRl
+Z3JhMTg2IFNETU1DNC4NCj4gPiBUaGlzIHBhdGNoIGZpeGVzIGl0Lg0KPiA+DQo+ID4gVGVzdGVk
+LWJ5OiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5
+OiBTb3dqYW55YSBLb21hdGluZW5pIDxza29tYXRpbmVuaUBudmlkaWEuY29tPg0KPg0KPiBJcyB0
+aGlzIGEgZml4IGFuZC9vciBmb3Igc3RhYmxlPw0KPg0KPiBJbiBlaXRoZXIgY2FzZSwgSSBhbSBs
+ZWF2aW5nIHRoaXMgZm9yIGFybS1zb2MuDQo+DQo+IEtpbmQgcmVnYXJkcw0KPiBVZmZlDQo+DQoN
+ClRoYW5rcyBVZmZlLiBZZXMgdGhpcyBpcyBhcHBsaWNhYmxlIGZvciBzdGFibGUuDQoNCj4gPiAt
+LS0NCj4gPiAgYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRzaSB8IDQgKyst
+LQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0K
+PiA+DQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2
+LmR0c2kgDQo+ID4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTE4Ni5kdHNpDQo+
+ID4gaW5kZXggOTdhZWI5NDZlZDVlLi40NzJmNTVmZTk0ODggMTAwNjQ0DQo+ID4gLS0tIGEvYXJj
+aC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJt
+NjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kNCj4gPiBAQCAtMzE3LDggKzMxNyw4IEBA
+DQo+ID4gICAgICAgICAgICAgICAgIG52aWRpYSxwYWQtYXV0b2NhbC1wdWxsLWRvd24tb2Zmc2V0
+LTF2OC10aW1lb3V0ID0gPDB4MGE+Ow0KPiA+ICAgICAgICAgICAgICAgICBudmlkaWEscGFkLWF1
+dG9jYWwtcHVsbC11cC1vZmZzZXQtM3YzLXRpbWVvdXQgPSA8MHgwYT47DQo+ID4gICAgICAgICAg
+ICAgICAgIG52aWRpYSxwYWQtYXV0b2NhbC1wdWxsLWRvd24tb2Zmc2V0LTN2My10aW1lb3V0ID0g
+PDB4MGE+Ow0KPiA+IC0gICAgICAgICAgICAgICBudmlkaWEsZGVmYXVsdC10YXAgPSA8MHg1PjsN
+Cj4gPiAtICAgICAgICAgICAgICAgbnZpZGlhLGRlZmF1bHQtdHJpbSA9IDwweDk+Ow0KPiA+ICsg
+ICAgICAgICAgICAgICBudmlkaWEsZGVmYXVsdC10YXAgPSA8MHg5PjsNCj4gPiArICAgICAgICAg
+ICAgICAgbnZpZGlhLGRlZmF1bHQtdHJpbSA9IDwweDU+Ow0KPiA+ICAgICAgICAgICAgICAgICBu
+dmlkaWEsZHFzLXRyaW0gPSA8NjM+Ow0KPiA+ICAgICAgICAgICAgICAgICBtbWMtaHM0MDAtMV84
+djsNCj4gPiAgICAgICAgICAgICAgICAgc3RhdHVzID0gImRpc2FibGVkIjsNCj4gPiAtLQ0KPiA+
+IDIuNy40DQo+ID4NCg==
