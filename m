@@ -1,37 +1,60 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Subject: [PATCH -next] phy: tegra: xusb: fix typo in tegra186_usb2_pad_probe()
-Date: Thu, 21 Mar 2019 08:54:36 +0000
-Message-ID: <20190321085436.94975-1-weiyongjun1@huawei.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V3 01/10] mmc: tegra: fix ddr signaling for non-ddr modes
+Date: Thu, 21 Mar 2019 11:32:34 +0100
+Message-ID: <CAPDyKFp30v1H0KfPFeOc5Ut1dW5tec7cT7NFk6j0VT+DWkAODw@mail.gmail.com>
+References: <1552513552-23423-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1552513552-23423-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Harjani Ritesh <riteshh@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, anrao@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix a typo in tegra186_usb2_pad_probe(), 'usb2->clk' should be
-'priv->usb2_trk_clk'.
+On Wed, 13 Mar 2019 at 22:45, Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
+>
+> ddr_signaling is set to true for DDR50 and DDR52 modes but is
+> not set back to false for other modes. This programs incorrect
+> host clock when mode change happens from DDR52/DDR50 to other
+> SDR or HS modes like incase of mmc_retune where it switches
+> from HS400 to HS DDR and then from HS DDR to HS mode and then
+> to HS200.
+>
+> This patch fixes the ddr_signaling to set properly for non DDR
+> modes.
+>
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Fixes: b8998e928030 ("phy: tegra: xusb: Add Tegra186 support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/phy/tegra/xusb-tegra186.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Is this a fix and/or shall I tag it for stable?
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 11ad6e4e4711..a627fe0b8e54 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -467,8 +467,8 @@ tegra186_usb2_pad_probe(struct tegra_xusb_padctl *padctl,
- 	}
- 
- 	priv->usb2_trk_clk = devm_clk_get(&pad->dev, "trk");
--	if (IS_ERR(usb2->clk)) {
--		err = PTR_ERR(usb2->clk);
-+	if (IS_ERR(priv->usb2_trk_clk)) {
-+		err = PTR_ERR(priv->usb2_trk_clk);
- 		dev_dbg(&pad->dev, "failed to get usb2 trk clock: %d\n", err);
- 		goto unregister;
- 	}
+The series looks good to me, however I am awaiting two more acks from
+Adrian on patch 2 and patch3.
+
+Kind regards
+Uffe
+
+
+
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 32e62904c0d3..46086dd43bfb 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -779,6 +779,7 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+>         bool set_dqs_trim = false;
+>         bool do_hs400_dll_cal = false;
+>
+> +       tegra_host->ddr_signaling = false;
+>         switch (timing) {
+>         case MMC_TIMING_UHS_SDR50:
+>         case MMC_TIMING_UHS_SDR104:
+> --
+> 2.7.4
+>
