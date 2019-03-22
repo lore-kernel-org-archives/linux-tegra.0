@@ -1,44 +1,56 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V3 01/10] mmc: tegra: fix ddr signaling for non-ddr modes
-Date: Thu, 21 Mar 2019 15:24:37 +0000
-Message-ID: <BYAPR12MB339888D3A370E790A29E217EC2420@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1552513552-23423-1-git-send-email-skomatineni@nvidia.com>
- <CAPDyKFp30v1H0KfPFeOc5Ut1dW5tec7cT7NFk6j0VT+DWkAODw@mail.gmail.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH 1/2] arm64: tegra: Add pinmux for PWM-based DFLL support on
+ Shield platform
+Date: Fri, 22 Mar 2019 15:11:10 +0800
+Message-ID: <20190322071111.32432-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFp30v1H0KfPFeOc5Ut1dW5tec7cT7NFk6j0VT+DWkAODw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Harjani Ritesh <riteshh@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+DQo+ID4gZGRyX3NpZ25hbGluZyBpcyBzZXQgdG8gdHJ1ZSBmb3IgRERSNTAgYW5kIEREUjUy
-IG1vZGVzIGJ1dCBpcyBub3Qgc2V0IA0KPiA+IGJhY2sgdG8gZmFsc2UgZm9yIG90aGVyIG1vZGVz
-LiBUaGlzIHByb2dyYW1zIGluY29ycmVjdCBob3N0IGNsb2NrIHdoZW4gDQo+ID4gbW9kZSBjaGFu
-Z2UgaGFwcGVucyBmcm9tIEREUjUyL0REUjUwIHRvIG90aGVyIFNEUiBvciBIUyBtb2RlcyBsaWtl
-IA0KPiA+IGluY2FzZSBvZiBtbWNfcmV0dW5lIHdoZXJlIGl0IHN3aXRjaGVzIGZyb20gSFM0MDAg
-dG8gSFMgRERSIGFuZCB0aGVuIA0KPiA+IGZyb20gSFMgRERSIHRvIEhTIG1vZGUgYW5kIHRoZW4g
-dG8gSFMyMDAuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGZpeGVzIHRoZSBkZHJfc2lnbmFsaW5nIHRv
-IHNldCBwcm9wZXJseSBmb3Igbm9uIEREUiBtb2Rlcy4NCj4gPg0KPiA+IFRlc3RlZC1ieTogSm9u
-IEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQo+ID4gQWNrZWQtYnk6IEFkcmlhbiBIdW50
-ZXIgPGFkcmlhbi5odW50ZXJAaW50ZWwuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNvd2phbnlh
-IEtvbWF0aW5lbmkgPHNrb21hdGluZW5pQG52aWRpYS5jb20+DQo+DQo+IElzIHRoaXMgYSBmaXgg
-YW5kL29yIHNoYWxsIEkgdGFnIGl0IGZvciBzdGFibGU/DQo+DQo+IFRoZSBzZXJpZXMgbG9va3Mg
-Z29vZCB0byBtZSwgaG93ZXZlciBJIGFtIGF3YWl0aW5nIHR3byBtb3JlIGFja3MgZnJvbSBBZHJp
-YW4gb24gcGF0Y2ggMiBhbmQgcGF0Y2gzLg0KPg0KPiBLaW5kIHJlZ2FyZHMNCj4gVWZmZQ0KPg0K
-Pg0KVGhhbmtzIFVmZmUuIFllcyB0aGlzIGlzIGFwcGxpY2FibGUgZm9yIHN0YWJsZS4NCg0KPiA+
-IC0tLQ0KPiA+ICBkcml2ZXJzL21tYy9ob3N0L3NkaGNpLXRlZ3JhLmMgfCAxICsNCj4gPiAgMSBm
-aWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9tbWMvaG9zdC9zZGhjaS10ZWdyYS5jIA0KPiA+IGIvZHJpdmVycy9tbWMvaG9zdC9zZGhjaS10
-ZWdyYS5jIGluZGV4IDMyZTYyOTA0YzBkMy4uNDYwODZkZDQzYmZiIA0KPiA+IDEwMDY0NA0KPiA+
-IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktdGVncmEuYw0KPiA+ICsrKyBiL2RyaXZlcnMv
-bW1jL2hvc3Qvc2RoY2ktdGVncmEuYw0KPiA+IEBAIC03NzksNiArNzc5LDcgQEAgc3RhdGljIHZv
-aWQgdGVncmFfc2RoY2lfc2V0X3Voc19zaWduYWxpbmcoc3RydWN0IHNkaGNpX2hvc3QgKmhvc3Qs
-DQo+ID4gICAgICAgICBib29sIHNldF9kcXNfdHJpbSA9IGZhbHNlOw0KPiA+ICAgICAgICAgYm9v
-bCBkb19oczQwMF9kbGxfY2FsID0gZmFsc2U7DQo+ID4NCj4gPiArICAgICAgIHRlZ3JhX2hvc3Qt
-PmRkcl9zaWduYWxpbmcgPSBmYWxzZTsNCj4gPiAgICAgICAgIHN3aXRjaCAodGltaW5nKSB7DQo+
-ID4gICAgICAgICBjYXNlIE1NQ19USU1JTkdfVUhTX1NEUjUwOg0KPiA+ICAgICAgICAgY2FzZSBN
-TUNfVElNSU5HX1VIU19TRFIxMDQ6DQo+ID4gLS0NCj4gPiAyLjcuNA0KPiA+DQo=
+Add pinmux for PWM-based DFLL support on Shield platform.
+
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+index 88a4b9333d84..c668f16c8574 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+@@ -1318,6 +1318,20 @@
+ 				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+ 			};
+ 		};
++
++		dvfs_pwm_active_state: dvfs_pwm_active {
++			dvfs_pwm_pbb1 {
++				nvidia,pins = "dvfs_pwm_pbb1";
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++			};
++		};
++
++		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
++			dvfs_pwm_pbb1 {
++				nvidia,pins = "dvfs_pwm_pbb1";
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++			};
++		};
+ 	};
+ 
+ 	serial@70006000 {
+-- 
+2.21.0
