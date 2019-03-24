@@ -1,43 +1,43 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Fixes for v5.1-rc2
-Date: Fri, 22 Mar 2019 14:15:17 +0100
-Message-ID: <20190322131517.825-1-thierry.reding@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V4 01/10] mmc: tegra: fix ddr signaling for non-ddr modes
+Date: Sat, 23 Mar 2019 21:45:18 -0700
+Message-ID: <1553402727-23130-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, riteshh@codeaurora.org
+Cc: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgOWU5OGM2NzhjMmQ2
-YWUzYTE3Y2IyZGU1NWQxN2Y2OWRkZGFhMjMxYjoKCiAgTGludXggNS4xLXJjMSAoMjAxOS0wMy0x
-NyAxNDoyMjoyNiAtMDcwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0
-OgoKICBnaXQ6Ly9hbm9uZ2l0LmZyZWVkZXNrdG9wLm9yZy90ZWdyYS9saW51eCB0YWdzL2RybS90
-ZWdyYS9mb3ItNS4xLXJjMgoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDUwOTg2OWEy
-ZmVjMzZlY2IyYjg0MTE4MDkxNTk5NWY0MWQ1YTAyMTk6CgogIGRybS90ZWdyYTogdmljOiBGaXgg
-aW1wbGljaXQgZnVuY3Rpb24gZGVjbGFyYXRpb24gd2FybmluZyAoMjAxOS0wMy0yMiAxNDowODo1
-NSArMDEwMCkKCkknbSBhIGxpdHRsZSBsYXRlIHNlbmRpbmcgdGhpcyBvdXQsIHNvIEkgcmVhbGl6
-ZSB0aGlzIHdpbGwgcHJvYmFibHkgZ28KaW50byB2NS4xLXJjMyBkZXNwaXRlIHRoZSBuYW1lIG9m
-IHRoZSB0YWcuCgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBGaXhlcyBmb3Ig
-djUuMS1yYzIKClRoZXNlIGFyZSBhIGNvdXBsZSBvZiBtaW5vciBmaXhlcyBmb3IgYnVpbGQgaXNz
-dWVzIGFuZCBzcGFyc2Ugd2FybmluZ3MuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkFuZGVycyBSb3hlbGwgKDEpOgogICAg
-ICBkcm0vdGVncmE6IHZpYzogRml4IGltcGxpY2l0IGZ1bmN0aW9uIGRlY2xhcmF0aW9uIHdhcm5p
-bmcKClRoaWVycnkgUmVkaW5nICgxKToKICAgICAgZHJtL3RlZ3JhOiBodWI6IEZpeCBkZXJlZmVy
-ZW5jZSBiZWZvcmUgY2hlY2sKCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMgfCA0ICsrKy0K
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYyB8IDIgKysKIDIgZmlsZXMgY2hhbmdlZCwgNSBp
-bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbA==
+ddr_signaling is set to true for DDR50 and DDR52 modes but is
+not set back to false for other modes. This programs incorrect
+host clock when mode change happens from DDR52/DDR50 to other
+SDR or HS modes like incase of mmc_retune where it switches
+from HS400 to HS DDR and then from HS DDR to HS mode and then
+to HS200.
+
+This patch fixes the ddr_signaling to set properly for non DDR
+modes.
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 32e62904c0d3..46086dd43bfb 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -779,6 +779,7 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+ 	bool set_dqs_trim = false;
+ 	bool do_hs400_dll_cal = false;
+ 
++	tegra_host->ddr_signaling = false;
+ 	switch (timing) {
+ 	case MMC_TIMING_UHS_SDR50:
+ 	case MMC_TIMING_UHS_SDR104:
+-- 
+2.7.4
