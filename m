@@ -1,34 +1,52 @@
-From: syzbot <syzbot+979ffc89b87309b1b94b@syzkaller.appspotmail.com>
-Subject: Re: WARNING: ODEBUG bug in netdev_freemem
-Date: Sat, 23 Mar 2019 23:09:01 -0700
-Message-ID: <0000000000009c14c60584d0ec76@google.com>
-References: <000000000000bc9ddf057e577c98@google.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 000/118] 4.9.165-stable review
+Date: Sun, 24 Mar 2019 11:55:15 +0000
+Message-ID: <b15d48cf-4006-489e-d9d9-9474bba34de9@nvidia.com>
+References: <20190322111215.873964544@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000000000000bc9ddf057e577c98@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: a@unstable.cc, alexander.h.duyck@intel.com, amritha.nambiar@intel.com, b.a.t.m.a.n@lists.open-mesh.org, davem@davemloft.net, decot@googlers.com, digetx@gmail.com, dmitry.torokhov@gmail.com, jeffrey.t.kirsher@intel.com, joe@perches.com, jonathanh@nvidia.com, ktkhai@virtuozzo.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, mareklindner@neomailbox.ch, netdev@vger.kernel.org, pdeschrijver@nvidia.com, petrm@mellanox.com, sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com, thierry.reding@gmail.com, treding@nvidia.com, tyhicks@canonical.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190322111215.873964544@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-syzbot has bisected this bug to:
 
-commit 96e5da7c842424bcf64afe1082b960b42b96190b
-Author: Dmitry Osipenko <digetx@gmail.com>
-Date:   Sun Oct 21 18:30:52 2018 +0000
+On 22/03/2019 11:14, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.165 release.
+> There are 118 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun Mar 24 11:11:02 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.165-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-     memory: tegra: Introduce Tegra20 EMC driver
+All tests are passing for Tegra ...
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14450b93200000
-start commit:   28e8c4bc Merge tag 'rtc-4.21' of git://git.kernel.org/pub/..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=16450b93200000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12450b93200000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c2ab9708c613a224
-dashboard link: https://syzkaller.appspot.com/bug?extid=979ffc89b87309b1b94b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a93c4b400000
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    20 tests:	20 pass, 0 fail
 
-Reported-by: syzbot+979ffc89b87309b1b94b@syzkaller.appspotmail.com
-Fixes: 96e5da7c8424 ("memory: tegra: Introduce Tegra20 EMC driver")
+Linux version:	4.9.165-g1c453af
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Cheers
+Jon
+
+-- 
+nvpublic
