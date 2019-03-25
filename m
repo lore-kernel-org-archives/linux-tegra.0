@@ -1,71 +1,127 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFC PATCH v2 0/7] i2c: core: introduce atomic transfers
-Date: Mon, 25 Mar 2019 14:40:20 +0100
-Message-ID: <20190325134020.GA3375@kunai>
-References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
- <CAHp75Vc-WYUJgaDPuWUn-_0Cizq=MG7N2cdHJxaEbad+xntcjQ@mail.gmail.com>
- <20190312154501.6v2symbq6eutp6dj@ninjato>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PROBLEM] ALSA: hda: PCM streams are suspended
+	while opening
+Date: Mon, 25 Mar 2019 15:31:26 +0000
+Message-ID: <dd9d4106-c2d8-3ed8-fe9e-f7744f3eb8a7@nvidia.com>
+References: <1553097854-10287-1-git-send-email-jonathanh@nvidia.com>
+ <s5hzhppqx8q.wl-tiwai@suse.de>
+ <446faef9-a114-1b28-5636-a30bae04fa53@nvidia.com>
+ <ffa1c237-baf8-587c-5389-29223613eb0e@nvidia.com>
+ <s5h5zs79sv8.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190312154501.6v2symbq6eutp6dj@ninjato>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c <linux-i2c@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <s5h5zs79sv8.wl-tiwai@suse.de>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 25/03/2019 09:59, Takashi Iwai wrote:
 
+...
 
-> This series seems like a valid approach to me if we still want to
-> respect the locking.
+> I reconsidered the problem again, and noticed that the very same
+> problem may appear with the system PM, not only with runtime PM.
+> The suspend can happen at any time, so even a stream in OPEN state may
+> go to suspend, and you'll hit the same problem.  It's just a corner
+> case so no one really cared much.
+> 
+> So, I think the patch like below should fix the problem.
+> This can be easily backported to all stable trees, and it alone should
+> work without backporting the else intrusive changes.
+> 
+> Could you check whether my theory is correct?
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> ---
+> From: Takashi Iwai <tiwai@suse.de>
+> Subject: [PATCH] ALSA: pcm: Don't suspend stream in unrecoverable PCM state
+> 
+> Currently PCM core sets each opened stream forcibly to SUSPENDED state
+> via snd_pcm_suspend_all() call, and the user-space is responsible for
+> re-triggering the resume manually either via snd_pcm_resume() or
+> prepare call.  The scheme works fine usually, but there are corner
+> cases where the stream can't be resumed by that call: the streams
+> still in OPEN state before finishing hw_params.  When they are
+> suspended, user-space cannot perform resume or prepare because they
+> haven't been set up yet.  The only possible recovery is to re-open the
+> device, which isn't nice at all.  Similarly, when a stream is in
+> DISCONNECTED state, it makes no sense to change it to SUSPENDED
+> state.  Ditto for in SETUP state; which you can re-prepare directly.
+> 
+> So, this patch addresses these issues by filtering the PCM streams to
+> be suspended by checking the PCM state.  When a stream is in either
+> OPEN, SETUP or DISCONNECTED as well as already SUSPENDED, the suspend
+> action is skipped.
+> 
+> To be noted, this problem was originally reported for the PCM runtime
+> PM on HD-audio.  And, the runtime PM problem itself was already
+> addressed (although not intended) by the code refactoring commits
+> 3d21ef0b49f8 ("ALSA: pcm: Suspend streams globally via device type PM
+> ops") and 17bc4815de58 ("ALSA: pci: Remove superfluous
+> snd_pcm_suspend*() calls").  These commits eliminated the
+> snd_pcm_suspend*() calls from the runtime PM suspend callback code
+> path, hence the racy OPEN state won't appear while runtime PM.
+> (FWIW, the race window is between snd_pcm_open_substream() and the
+> first power up in azx_pcm_open().)
+> 
+> Although the runtime PM issue was already "fixed", the same problem is
+> still present for the system PM, hence this patch is still needed.
+> And for stable trees, this patch alone should suffice for fixing the
+> runtime PM problem, too.
+> 
+> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>  sound/core/pcm_native.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+> index f731f904e8cc..1d8452912b14 100644
+> --- a/sound/core/pcm_native.c
+> +++ b/sound/core/pcm_native.c
+> @@ -1445,8 +1445,15 @@ static int snd_pcm_pause(struct snd_pcm_substream *substream, int push)
+>  static int snd_pcm_pre_suspend(struct snd_pcm_substream *substream, int state)
+>  {
+>  	struct snd_pcm_runtime *runtime = substream->runtime;
+> -	if (runtime->status->state == SNDRV_PCM_STATE_SUSPENDED)
+> +	switch (runtime->status->state) {
+> +	case SNDRV_PCM_STATE_SUSPENDED:
+>  		return -EBUSY;
+> +	/* unresumable PCM state; return -EBUSY for skipping suspend */
+> +	case SNDRV_PCM_STATE_OPEN:
+> +	case SNDRV_PCM_STATE_SETUP:
+> +	case SNDRV_PCM_STATE_DISCONNECTED:
+> +		return -EBUSY;
+> +	}
+>  	runtime->trigger_master = substream;
+>  	return 0;
+>  }
 
-And I am leaning to that it is good enough. I think pragmatism is OK
-here: The users who want this feature simply want to reboot their
-system, mostly development systems. They can't reboot otherwise. Except
-for the HW switch they are currently using anyhow.
+Thanks, this works for me! I have tested this on stable branch
+linux-5.0.y with Tegra194. So feel free to add my ...
 
-The panic fault-injector can create an inconsistent situation on the I2C
-bus when you want to reboot after an OOPS while a transfer was in
-progress. However, if rebooting in such scenarios is critical for you,
-you a) shouldn't reboot via I2C, and/or b) should have a watchdog in
-place. We can't guarantee to always fix this sitution. At best, we could
-just try to be better for some cases. However, this would mean having a
-backdoor to skip the locking scheme which doesn't sound right. Maybe
-just accepting the deadlock is not too bad because it will reliably
-point out a design flaw of the system (hopefully during the development
-stage)?
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Final call for other thoughts/comments.
+Cheers
+Jon
 
-PS: I am still interested in the use of in_atomic() here. I wonder if it is
-correct. If a change is needed, it should probably be a seperate series,
-though.
-
-
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyY2kAACgkQFA3kzBSg
-KbZo2g//dCNbQqq7JCJ5Lv/VujuOvXfvIAhTdixDdvjH0OB63oi+g7uOczVtHA3C
-MwOtHz0SzrK28zgFKP54noME6BxsaNA/wkFGRidTz5e1SbxgEuDBefLKTjo6eXWV
-w4qE87SZteJtKQhMTu2fMELiwDQoI3mVfWuBEucdhIqa9zumT6RALS5z/miAzr6E
-M53RUZ+k/tOanoOyuDN99mvhL3YSKNqPXe6Ixayx5VX9tVZAi+ua2nl9STbdsIio
-lwiBv3A4i/DEw7SMl3hxJfyQs2CE3y7Ix7EDJE85pGGruCY7QD9HpH6KNadmhg2q
-YMtSymts2f5jy1ZKtdrd9R7oR/Ihw6ZyaUME3qU92igmnAdIOJsDXPVoWQruSsLE
-6z0v5rsqQ6Vk+hSUbKEC6Ild80zEuKOcuQW12dHeZI+m6+7duLlvafp9RnKBK0pO
-bkmJchXcOTwLUUT/Y93zmI2cbPrGwx6Bjkbyv2I5O7asAxDHTJBG6qjBeaLaxrpq
-8PoNHnbrfNburNrmt90qCM/5MTT1B1VK+ghoy2vLD0mjf0Y9DQd4WyCyK1+p781Q
-CdqGh08ptk2VCdnRe8/WBjHIJ4T4FVM43nrDx+86nVXbgmHYhjYF5LPEl1K9svpe
-loGz64ibwn+UIG/8rZZaYauCzqdgYjGRHtp807khprYzC/KfHI0=
-=gywM
------END PGP SIGNATURE-----
-
---5mCyUwZo2JvN/JJP--
+-- 
+nvpublic
