@@ -1,36 +1,52 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH 10/10] arm64: Add Tegra194 PCIe driver to defconfig
-Date: Tue, 26 Mar 2019 20:43:27 +0530
-Message-ID: <1553613207-3988-11-git-send-email-vidyas@nvidia.com>
-References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 00/30] 4.9.166-stable review
+Date: Tue, 26 Mar 2019 15:18:49 +0000
+Message-ID: <7d8d4914-0508-15f2-cebd-8520ffcee51e@nvidia.com>
+References: <20190326042607.558087893@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, vidyas@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190326042607.558087893@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add PCIe host controller driver for DesignWare core based
-PCIe controller IP present in Tegra194.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 26/03/2019 06:29, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.166 release.
+> There are 30 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Mar 28 04:25:51 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.166-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 2d9c39033c1a..2ddea5c4e87d 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -87,6 +87,7 @@ CONFIG_PCIE_QCOM=y
- CONFIG_PCIE_ARMADA_8K=y
- CONFIG_PCIE_KIRIN=y
- CONFIG_PCIE_HISI_STB=y
-+CONFIG_PCIE_TEGRA194=y
- CONFIG_ARM64_VA_BITS_48=y
- CONFIG_SCHED_MC=y
- CONFIG_NUMA=y
+All tests are passing for Tegra ...
+
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    20 tests:	20 pass, 0 fail
+
+Linux version:	4.9.166-rc1-gb7e63ff
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.7.4
+nvpublic
