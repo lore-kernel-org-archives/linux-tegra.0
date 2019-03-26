@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH 01/10] PCI: save pci_bus pointer in pcie_port structure
-Date: Tue, 26 Mar 2019 20:43:18 +0530
-Message-ID: <1553613207-3988-2-git-send-email-vidyas@nvidia.com>
+Subject: [PATCH 02/10] PCI: perform dbi regs write lock towards the end
+Date: Tue, 26 Mar 2019 20:43:19 +0530
+Message-ID: <1553613207-3988-3-git-send-email-vidyas@nvidia.com>
 References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,46 +12,37 @@ To: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.redin
 Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-save pci_bus pointer created by PCIe sub-system's
-pci_scan_root_bus_bridge() to be used by host controller drivers for post
-processing. Tegra host controller driver needs it for the following
-reasons
-- to derive pci_host_bridge structure from pci_bus which is used to
-configure iATU's outbound regions for different windows accesses
-- to traverse and configure downstream hierarchy. One such case is,
-configuring all immediate downstream devices to D0 state before transiting
-link to L2 state. Saving pci_bus pointer seems the best method compared to
-deriving it by other means.
+Remove multiple write enable and disable sequences of dbi registers as
+Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+DBI write-lock enable bit thereby not allowing any further writes to BAR-0
+register in config space to take place. Hence disabling write permission
+only towards the end.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
- drivers/pci/controller/dwc/pcie-designware-host.c | 1 +
- drivers/pci/controller/dwc/pcie-designware.h      | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 25087d3c9a82..15add3cf3945 100644
+index 15add3cf3945..e17213f2217e 100644
 --- a/drivers/pci/controller/dwc/pcie-designware-host.c
 +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -494,6 +494,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		goto error;
+@@ -670,7 +670,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	val &= 0xffff00ff;
+ 	val |= 0x00000100;
+ 	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+-	dw_pcie_dbi_ro_wr_dis(pci);
  
- 	bus = bridge->bus;
-+	pp->bus = bus;
+ 	/* Setup bus numbers */
+ 	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+@@ -710,8 +709,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
  
- 	if (pp->ops->scan_bus)
- 		pp->ops->scan_bus(pp);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 377f4c0b52da..70007276bc93 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -175,6 +175,7 @@ struct pcie_port {
- 	struct resource		*busn;
- 	int			irq;
- 	const struct dw_pcie_host_ops *ops;
-+	struct pci_bus		*bus;
- 	int			msi_irq;
- 	struct irq_domain	*irq_domain;
- 	struct irq_domain	*msi_domain;
+ 	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+ 
+-	/* Enable write permission for the DBI read-only register */
+-	dw_pcie_dbi_ro_wr_en(pci);
+ 	/* Program correct class for RC */
+ 	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+ 	/* Better disable write permission right after the update */
 -- 
 2.7.4
