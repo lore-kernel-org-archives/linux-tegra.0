@@ -1,44 +1,63 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 18/21] drm/tegra: Use drm_fb_helper_fill_info
-Date: Tue, 26 Mar 2019 14:20:05 +0100
-Message-ID: <20190326132008.11781-18-daniel.vetter@ffwll.ch>
-References: <20190326132008.11781-1-daniel.vetter@ffwll.ch>
+From: =?UTF-8?q?Randolph=20Maa=C3=9Fen?= <gaireg@gaireg.de>
+Subject: [PATCH] spi: tegra20-slink: change chip select action order
+Date: Tue, 26 Mar 2019 15:30:50 +0100
+Message-ID: <20190326143050.26232-1-gaireg@gaireg.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190326132008.11781-1-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: DRI Development <dri-devel@lists.freedesktop.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gaireg@gaireg.de
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-QW5vdGhlciBkcml2ZXIgdGhhdCBkaWRuJ3Qgc2V0IGZiaW5mby0+Zml4LmlkIGJlZm9yZS4KCnYy
-OiBGaXggc3ViamVjdCBhbmQgcmViYXNlCgpBY2tlZC1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRp
-bmdAbnZpZGlhLmNvbT4KU2lnbmVkLW9mZi1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRl
-ckBpbnRlbC5jb20+CkNjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29t
-PgpDYzogSm9uYXRoYW4gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KQ2M6IGxpbnV4LXRl
-Z3JhQHZnZXIua2VybmVsLm9yZwotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jIHwgNCAr
-LS0tCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDMgZGVsZXRpb25zKC0pCgpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZmIuYwppbmRleCAwYTRjZTA1ZTAwYWIuLjFkZDgzYTc1N2RiYSAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMK
-QEAgLTI1NSwxMSArMjU1LDkgQEAgc3RhdGljIGludCB0ZWdyYV9mYmRldl9wcm9iZShzdHJ1Y3Qg
-ZHJtX2ZiX2hlbHBlciAqaGVscGVyLAogCWhlbHBlci0+ZmIgPSBmYjsKIAloZWxwZXItPmZiZGV2
-ID0gaW5mbzsKIAotCWluZm8tPnBhciA9IGhlbHBlcjsKIAlpbmZvLT5mYm9wcyA9ICZ0ZWdyYV9m
-Yl9vcHM7CiAKLQlkcm1fZmJfaGVscGVyX2ZpbGxfZml4KGluZm8sIGZiLT5waXRjaGVzWzBdLCBm
-Yi0+Zm9ybWF0LT5kZXB0aCk7Ci0JZHJtX2ZiX2hlbHBlcl9maWxsX3ZhcihpbmZvLCBoZWxwZXIs
-IGZiLT53aWR0aCwgZmItPmhlaWdodCk7CisJZHJtX2ZiX2hlbHBlcl9maWxsX2luZm8oaW5mbywg
-aGVscGVyLCBzaXplcyk7CiAKIAlvZmZzZXQgPSBpbmZvLT52YXIueG9mZnNldCAqIGJ5dGVzX3Bl
-cl9waXhlbCArCiAJCSBpbmZvLT52YXIueW9mZnNldCAqIGZiLT5waXRjaGVzWzBdOwotLSAKMi4y
-MC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+To transfer via SPI the tegra20-slink driver first sets the command
+register, which contains the chip select value, and after that the
+command2 register, which contains the chip select line. This leads to a
+small spike in the chip selct 0 line between the set of the value and
+the selection of the chip select line.
+
+This commit changes the order of the register writes so that first the
+chip select line is chosen and then the value is set, removing the
+spike.
+
+Signed-off-by: Randolph Maaßen <gaireg@gaireg.de>
+---
+ drivers/spi/spi-tegra20-slink.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 1427f343b39a..6d4679126213 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -717,9 +717,6 @@ static int tegra_slink_start_transfer_one(struct spi_device *spi,
+ 	command2 = tspi->command2_reg;
+ 	command2 &= ~(SLINK_RXEN | SLINK_TXEN);
+ 
+-	tegra_slink_writel(tspi, command, SLINK_COMMAND);
+-	tspi->command_reg = command;
+-
+ 	tspi->cur_direction = 0;
+ 	if (t->rx_buf) {
+ 		command2 |= SLINK_RXEN;
+@@ -729,9 +726,18 @@ static int tegra_slink_start_transfer_one(struct spi_device *spi,
+ 		command2 |= SLINK_TXEN;
+ 		tspi->cur_direction |= DATA_DIR_TX;
+ 	}
++
++	/*
++	 * Writing to the command2 register bevore the command register prevents
++	 * a spike in chip_select line 0. This selects the chip_select line
++	 * before changing the chip_select value.
++	 */
+ 	tegra_slink_writel(tspi, command2, SLINK_COMMAND2);
+ 	tspi->command2_reg = command2;
+ 
++	tegra_slink_writel(tspi, command, SLINK_COMMAND);
++	tspi->command_reg = command;
++
+ 	if (total_fifo_words > SLINK_FIFO_DEPTH)
+ 		ret = tegra_slink_start_dma_based_transfer(tspi, t);
+ 	else
+-- 
+2.11.0
