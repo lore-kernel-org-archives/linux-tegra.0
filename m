@@ -1,56 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] arm64: tegra: Disable CQE Support for SDMMC4 on Tegra186
-Date: Mon, 25 Mar 2019 17:09:31 +0100
-Message-ID: <CAK8P3a1S6XycS3d7qfMt-_trVrrX79oEHS2LiYYrSt_fdpipgw@mail.gmail.com>
-References: <20190325112807.24474-1-thierry.reding@gmail.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v2 00/12] Add some functionalities for Tegra soctherm
+Date: Tue, 26 Mar 2019 10:17:14 +0800
+Message-ID: <31c0ee3b-a8a1-ded3-0cb6-cffab8db58d8@nvidia.com>
+References: <1550744327-4677-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190325112807.24474-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, arm-soc <arm@kernel.org>, Sowjanya Komatineni <skomatineni@nvidia.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550744327-4677-1-git-send-email-wni@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, edubezval@gmail.com, robh@kernel.org
+Cc: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 12:28 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
->
-> From: Jonathan Hunter <jonathanh@nvidia.com>
->
-> Enabling CQE support on Tegra186 Jetson TX2 has introduced a regression
-> that is causing accesses to the file-system on the eMMC to fail. Errors
-> such as the following have been observed ...
->
->  mmc2: running CQE recovery
->  mmc2: mmc_select_hs400 failed, error -110
->  print_req_error: I/O error, dev mmcblk2, sector 8 flags 80700
->  mmc2: cqhci: CQE failed to exit halt state
->
-> For now disable CQE support for Tegra186 until this issue is resolved.
->
-> Fixes: dfd3cb6feb73 arm64: tegra: Add CQE Support for SDMMC4
-> Signed-off-by: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Hi ARM SoC maintainers,
->
-> Turned out there was a hardware bug that currently prevents CQE from
-> working on Tegra186. Patches for this are being worked on and are on
-> track to be merged for v5.2 but they are too involved to make it into
-> v5.1, so let's back out CQE support on Tegra186.
->
-> Can you please apply this for v5.1-rc3?
->
+Hi all,
+Does there have any comments on this serial?
 
-Applied on arm/fixes
+Thanks.
+Wei.
 
-      Arnd
+On 21/2/2019 6:18 PM, Wei Ni wrote:
+> Move the hw/sw shutdown patches into this serial. There already have
+> some discussion for it in https://lkml.org/lkml/2018/12/7/225.
+> Support GPU HW throttle, thermal IRQ, set_trips(), EDP IRQ and OC
+> hw throttle.
+> 
+> Main change from v1:
+> 1. Use boolean for "nvidia,polarity-active-low".
+> 2. Add suffix "-us" for "nvidia,throttle-period".
+> 
+> 
+> Wei Ni (12):
+>   of: Add bindings of thermtrip for Tegra soctherm
+>   thermal: tegra: support hw and sw shutdown
+>   arm64: dts: tegra210: set thermtrip
+>   of: Add bindings of gpu hw throttle for Tegra soctherm
+>   thermal: tegra: add support for gpu hw-throttle
+>   arm64: dts: tegra210: set gpu hw throttle level
+>   thermal: tegra: add support for thermal IRQ
+>   thermal: tegra: add set_trips functionality
+>   thermal: tegra: add support for EDP IRQ
+>   arm64: dts: tegra210: set EDP interrupt line
+>   of: Add bindings of OC hw throttle for Tegra soctherm
+>   thermal: tegra: enable OC hw throttle
+> 
+>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  62 +-
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
+>  drivers/thermal/tegra/soctherm.c                   | 961 +++++++++++++++++++--
+>  drivers/thermal/tegra/soctherm.h                   |  16 +
+>  drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
+>  drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
+>  drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
+>  include/dt-bindings/thermal/tegra124-soctherm.h    |   8 +-
+>  8 files changed, 1020 insertions(+), 76 deletions(-)
+> 
