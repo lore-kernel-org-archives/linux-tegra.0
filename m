@@ -1,60 +1,118 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFC PATCH v2 0/7] i2c: core: introduce atomic transfers
-Date: Wed, 27 Mar 2019 14:53:08 +0100
-Message-ID: <20190327135308.GG5345@kunai>
-References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
- <71aaab62-2965-8ad8-61b9-02d02694919d@axentia.se>
- <20190304224856.w7egngqynl3hlabp@ninjato>
- <6d9a1d1e-a6b7-b3ae-f560-4f906934e795@axentia.se>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 217/262] soc/tegra: fuse: Fix illegal free of IO base address
+Date: Wed, 27 Mar 2019 14:01:12 -0400
+Message-ID: <20190327180158.10245-217-sashal@kernel.org>
+References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xs+9IvWevLaxKUtW"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6d9a1d1e-a6b7-b3ae-f560-4f906934e795@axentia.se>
+In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Timo Alho <talho@nvidia.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Timo Alho <talho@nvidia.com>
 
---xs+9IvWevLaxKUtW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 51294bf6b9e897d595466dcda5a3f2751906a200 ]
 
+On cases where device tree entries for fuse and clock provider are in
+different order, fuse driver needs to defer probing. This leads to
+freeing incorrect IO base address as the fuse->base variable gets
+overwritten once during first probe invocation. This leads to the
+following spew during boot:
 
-> >> the demux-pinctrl driver... BTW, that driver should forward ->smbus_xf=
-er
-> >> just like it does for ->master_xfer, no?
-> >=20
-> > Yes. The idea of having two seperate SMBus controllers in one SoC which
-> > would need demuxing is amusing, but still, it exists for I2C and you are
-> > right.
->=20
-> Right, I didn't actually think all that far... :-)
+[    3.082285] Trying to vfree() nonexistent vm area (00000000cfe8fd94)
+[    3.082308] WARNING: CPU: 5 PID: 126 at /hdd/l4t/kernel/stable/mm/vmalloc.c:1511 __vunmap+0xcc/0xd8
+[    3.082318] Modules linked in:
+[    3.082330] CPU: 5 PID: 126 Comm: kworker/5:1 Tainted: G S                4.19.7-tegra-gce119d3 #1
+[    3.082340] Hardware name: quill (DT)
+[    3.082353] Workqueue: events deferred_probe_work_func
+[    3.082364] pstate: 40000005 (nZcv daif -PAN -UAO)
+[    3.082372] pc : __vunmap+0xcc/0xd8
+[    3.082379] lr : __vunmap+0xcc/0xd8
+[    3.082385] sp : ffff00000a1d3b60
+[    3.082391] x29: ffff00000a1d3b60 x28: 0000000000000000
+[    3.082402] x27: 0000000000000000 x26: ffff000008e8b610
+[    3.082413] x25: 0000000000000000 x24: 0000000000000009
+[    3.082423] x23: ffff000009221a90 x22: ffff000009f6d000
+[    3.082432] x21: 0000000000000000 x20: 0000000000000000
+[    3.082442] x19: ffff000009f6d000 x18: ffffffffffffffff
+[    3.082452] x17: 0000000000000000 x16: 0000000000000000
+[    3.082462] x15: ffff0000091396c8 x14: 0720072007200720
+[    3.082471] x13: 0720072007200720 x12: 0720072907340739
+[    3.082481] x11: 0764076607380765 x10: 0766076307300730
+[    3.082491] x9 : 0730073007300730 x8 : 0730073007280720
+[    3.082501] x7 : 0761076507720761 x6 : 0000000000000102
+[    3.082510] x5 : 0000000000000000 x4 : 0000000000000000
+[    3.082519] x3 : ffffffffffffffff x2 : ffff000009150ff8
+[    3.082528] x1 : 3d95b1429fff5200 x0 : 0000000000000000
+[    3.082538] Call trace:
+[    3.082545]  __vunmap+0xcc/0xd8
+[    3.082552]  vunmap+0x24/0x30
+[    3.082561]  __iounmap+0x2c/0x38
+[    3.082569]  tegra_fuse_probe+0xc8/0x118
+[    3.082577]  platform_drv_probe+0x50/0xa0
+[    3.082585]  really_probe+0x1b0/0x288
+[    3.082593]  driver_probe_device+0x58/0x100
+[    3.082601]  __device_attach_driver+0x98/0xf0
+[    3.082609]  bus_for_each_drv+0x64/0xc8
+[    3.082616]  __device_attach+0xd8/0x130
+[    3.082624]  device_initial_probe+0x10/0x18
+[    3.082631]  bus_probe_device+0x90/0x98
+[    3.082638]  deferred_probe_work_func+0x74/0xb0
+[    3.082649]  process_one_work+0x1e0/0x318
+[    3.082656]  worker_thread+0x228/0x450
+[    3.082664]  kthread+0x128/0x130
+[    3.082672]  ret_from_fork+0x10/0x18
+[    3.082678] ---[ end trace 0810fe6ba772c1c7 ]---
 
-On second thought, we can add smbus support when we need it.
+Fix this by retaining the value of fuse->base until driver has
+successfully probed.
 
+Signed-off-by: Timo Alho <talho@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/soc/tegra/fuse/fuse-tegra.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---xs+9IvWevLaxKUtW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlybgEQACgkQFA3kzBSg
-KbbCPA//QSEonhMDC7QwEFKO5Xh0XXUqNnENxmBvl4mJVvoblbTN9iT7NRBrSPo3
-0XCckebbtKmF/Pykg0zz7f1S7TYdvC39j1gAyomeoUq26O0q1rVIGozgMcdc8l7C
-yDm9fF3PUWUhOFOiW0py1A0V4yCPVTKiv2DoXCbajrYoydIV5DxzoK8uMyllRsfc
-PyXiLNx60XowckbekCXmsmYl2UDX5WrpEHaOxsUTjWRqjITng6Mh+0f01KsfBAX3
-VBVlIz1Yc1EKTTs6uOl8qAlJ2Hcp+NxgsImYqsvvvej9yOM8SZaxOBRFBJbdWKHf
-DBMH4KlqyFGHsCR37F7MKt+QJFNJPYFN9plMsmlQWnyuVBcpAmSTqPj1gIy7cMgV
-/FZTe4+IztH73mInq3pmPXg1D3UFLoPiiHGCS306RlLt5X/rCGIqapYOllMJVBym
-s7cAFtrGQJIPC1S+XdvvHfkDA4hrjdQ65Xi63Q6AF+SRjsDbt3LeW7QWJ5pG2Iza
-1HAkNEjY1JC78tmb++2dbHL1SIu/Nbwdxi0ENoj/XKNJueCEvMbtaMbG1Qy6ASZy
-Rc31/PCA0wTkDiSDqiLts9XVlWFq87TuMcYSM5D/3UlVnfdXfV5AHe01pZURc+fh
-uyDVwx5XDz2fbfCtqvpXfVwvsmj5SEnrn9RO421cKtrd/RJvH9c=
-=6fph
------END PGP SIGNATURE-----
-
---xs+9IvWevLaxKUtW--
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index a33ee8ef8b6b..51625703399e 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -137,13 +137,17 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	fuse->phys = res->start;
+ 	fuse->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(fuse->base))
+-		return PTR_ERR(fuse->base);
++	if (IS_ERR(fuse->base)) {
++		err = PTR_ERR(fuse->base);
++		fuse->base = base;
++		return err;
++	}
+ 
+ 	fuse->clk = devm_clk_get(&pdev->dev, "fuse");
+ 	if (IS_ERR(fuse->clk)) {
+ 		dev_err(&pdev->dev, "failed to get FUSE clock: %ld",
+ 			PTR_ERR(fuse->clk));
++		fuse->base = base;
+ 		return PTR_ERR(fuse->clk);
+ 	}
+ 
+@@ -152,8 +156,10 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+ 
+ 	if (fuse->soc->probe) {
+ 		err = fuse->soc->probe(fuse);
+-		if (err < 0)
++		if (err < 0) {
++			fuse->base = base;
+ 			return err;
++		}
+ 	}
+ 
+ 	if (tegra_fuse_create_sysfs(&pdev->dev, fuse->soc->info->size,
+-- 
+2.19.1
