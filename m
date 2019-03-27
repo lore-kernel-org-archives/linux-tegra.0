@@ -1,50 +1,33 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFC PATCH v2 1/7] i2c: apply coding style for struct i2c_adapter
-Date: Wed, 27 Mar 2019 14:15:50 +0100
-Message-ID: <20190327131549.GB5345@kunai>
-References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
- <20190302134735.4393-2-wsa+renesas@sang-engineering.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 1/2] bus: tegra-aconnect: use devm_clk_*() helpers
+Date: Wed, 27 Mar 2019 13:18:53 +0000
+Message-ID: <67a87b1d-b22f-f1c6-b792-cf180797409a@nvidia.com>
+References: <1552452119-6574-1-git-send-email-spujar@nvidia.com>
+ <32ab970f-d6a3-1232-77f1-41f97cc04f9a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190302134735.4393-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <32ab970f-d6a3-1232-77f1-41f97cc04f9a@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>, treding@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---H+4ONPRPur6+Ovig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 27/03/2019 11:10, Sameer Pujar wrote:
+> Hi Reviewers,
+> 
+> Request for review and approval.
 
-On Sat, Mar 02, 2019 at 02:47:29PM +0100, Wolfram Sang wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fine with me. I think you have my reviewed/acked-by.
 
-I think this preparational patch can be applied right away.
-Applied to for-next, thanks!
+If there are any changes we need to make, we could also use the clk_bulk
+APIs here too. However, not critical.
 
+Cheers
+Jon
 
---H+4ONPRPur6+Ovig
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlybd4UACgkQFA3kzBSg
-KbYWnRAAmUadlsRF622cbFRUumndjog2TVn07dP+XHyCKVxZ/ml29ePh2aAIhQsj
-8L4pjKIyXy4bLNoyKQuywMucLdk2SToh4q7Hv4wFhIYyD4LTQgPvuCj/AD0TFRGn
-pt7vcLTBerBse52UaMNE99sQnNzxTUrtebildwD/5/GrpN4RCdqo/w8URLaPgMbi
-R/Ui9lZWV7pylB/rhWSyYZuPggUFhaXXd8EA3v8w9lDGfOVFnaFv8SmR4RfGlUqM
-yGO0CjDTiMQ9KbWXSrwq2z8+jsdhl37WdY4G/kiw6oHy+AvYV3rYubY1oaKfAUW4
-Xlzm29ULJfUPOj56aKMSZ1m2dMOJW73uydObveTmIQC0aK3UnntZI1HRHzc4mKhA
-M4HGL6wPYKJX7zUf9A5hJcEutHlFunhogfXdG1wEwKS6m8MDFEk5j1H+I0hm8/zB
-deyXXyIr+oUv8quAkSz8Y8Y1aa25dMV4jSDpKT+A+G4amONjVb1pybdpqbvDhjtp
-5lgw9YqAuMM4w+gu93j4Iyyxxwd0OKmpJbxCgtB81bex0YTab0pbelr/X8l4Wm+D
-2XNOvuqgxpzYgLxtn0vFS04BkElncQ4hC0SBzZ/ID4LVFHAOlrkAzpIZ3XfOg6Ov
-YE1wcB53UHtO4+H++bwAykSQAZ9DQCofLXOB7Ut0dmq7yhxmQ2w=
-=mmPj
------END PGP SIGNATURE-----
-
---H+4ONPRPur6+Ovig--
+-- 
+nvpublic
