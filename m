@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 102/123] soc/tegra: fuse: Fix illegal free of IO base address
-Date: Wed, 27 Mar 2019 14:16:06 -0400
-Message-ID: <20190327181628.15899-102-sashal@kernel.org>
-References: <20190327181628.15899-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 161/192] soc/tegra: fuse: Fix illegal free of IO base address
+Date: Wed, 27 Mar 2019 14:09:53 -0400
+Message-ID: <20190327181025.13507-161-sashal@kernel.org>
+References: <20190327181025.13507-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327181628.15899-1-sashal@kernel.org>
+In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Timo Alho <talho@nvidia.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
@@ -79,12 +79,12 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index b7c552e3133c..37bde5c8268d 100644
+index a33ee8ef8b6b..51625703399e 100644
 --- a/drivers/soc/tegra/fuse/fuse-tegra.c
 +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -133,13 +133,17 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 	/* take over the memory region from the early initialization */
+@@ -137,13 +137,17 @@ static int tegra_fuse_probe(struct platform_device *pdev)
  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	fuse->phys = res->start;
  	fuse->base = devm_ioremap_resource(&pdev->dev, res);
 -	if (IS_ERR(fuse->base))
 -		return PTR_ERR(fuse->base);
@@ -102,7 +102,7 @@ index b7c552e3133c..37bde5c8268d 100644
  		return PTR_ERR(fuse->clk);
  	}
  
-@@ -148,8 +152,10 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+@@ -152,8 +156,10 @@ static int tegra_fuse_probe(struct platform_device *pdev)
  
  	if (fuse->soc->probe) {
  		err = fuse->soc->probe(fuse);
