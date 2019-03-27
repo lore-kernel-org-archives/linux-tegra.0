@@ -1,166 +1,56 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1 03/26] spi: tegra114: fix for unpacked mode transfers
-Date: Tue, 26 Mar 2019 22:56:24 -0700
-Message-ID: <1553666207-11414-3-git-send-email-skomatineni@nvidia.com>
-References: <1553666207-11414-1-git-send-email-skomatineni@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 09/10] PCI: tegra: Add Tegra194 PCIe support
+Date: Wed, 27 Mar 2019 10:07:59 +0000
+Message-ID: <96674380-a171-9c68-2030-564f15b88474@nvidia.com>
+References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
+ <1553613207-3988-10-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1553666207-11414-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1553613207-3988-10-git-send-email-vidyas@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyarlagadda@nvidia.com
-Cc: ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.co
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Fixes: computation of actual bytes to fill/receive in/from FIFO in unpacked
-mode when transfer length is not a multiple of requested bits per word.
 
-unpacked mode transfers fails when the transfer includes partial bytes in
-the last word.
+On 26/03/2019 15:13, Vidya Sagar wrote:
+> Add support for Synopsys DesignWare core IP based PCIe host controller
+> present in Tegra194 SoC.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  drivers/pci/controller/dwc/Kconfig         |   10 +
+>  drivers/pci/controller/dwc/Makefile        |    1 +
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 1862 ++++++++++++++++++++++++++++
+>  3 files changed, 1873 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 6ea74b1c0d94..d80f2d77892a 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -213,4 +213,14 @@ config PCIE_UNIPHIER
+>  	  Say Y here if you want PCIe controller support on UniPhier SoCs.
+>  	  This driver supports LD20 and PXs3 SoCs.
+>  
+> +config PCIE_TEGRA194
+> +	bool "NVIDIA Tegra (T194) PCIe controller"
+> +	depends on TEGRA_BPMP && (ARCH_TEGRA || COMPILE_TEST)
+> +	depends on PCI_MSI_IRQ_DOMAIN
+> +	select PCIE_DW_HOST
+> +	select PHY_TEGRA194_PCIE_P2U
+> +	help
+> +	  Say Y here if you want support for DesignWare core based PCIe host
+> +	  controller found in NVIDIA Tegra T194 SoC.
+> +
 
-Total words to be written/read to/from FIFO is computed based on transfer
-length and bits per word. Unpacked mode includes 0 padding bytes for partial
-words to align with bits per word and these extra bytes are also accounted
-for calculating bytes left to transfer in the current driver.
+Don't we want tristate here? You have a removal function.
 
-This causes extra bytes access of tx/rx buffers along with buffer index
-position crossing actual length where remain_len becomes negative and due to
-unsigned type, negative value is a 32 bit representation of signed value
-and transferred bytes never meets the actual transfer length resulting in
-transfer timeout and a hang.
+Cheers
+Jon
 
-This patch fixes this with proper computation of the actual bytes to fill in
-FIFO during transmit and the actual bytes to read from FIFO during receive
-ignoring 0 padded bytes.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/spi/spi-tegra114.c | 43 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 82431115b7c0..fdba302eb3b6 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -307,10 +307,16 @@ static unsigned tegra_spi_fill_tx_fifo_from_client_txbuf(
- 				x |= (u32)(*tx_buf++) << (i * 8);
- 			tegra_spi_writel(tspi, x, SPI_TX_FIFO);
- 		}
-+
-+		tspi->cur_tx_pos += written_words * tspi->bytes_per_word;
- 	} else {
-+		unsigned int write_bytes;
- 		max_n_32bit = min(tspi->curr_dma_words,  tx_empty_count);
- 		written_words = max_n_32bit;
- 		nbytes = written_words * tspi->bytes_per_word;
-+		if (nbytes > t->len - tspi->cur_pos)
-+			nbytes = t->len - tspi->cur_pos;
-+		write_bytes = nbytes;
- 		for (count = 0; count < max_n_32bit; count++) {
- 			u32 x = 0;
- 
-@@ -319,8 +325,10 @@ static unsigned tegra_spi_fill_tx_fifo_from_client_txbuf(
- 				x |= (u32)(*tx_buf++) << (i * 8);
- 			tegra_spi_writel(tspi, x, SPI_TX_FIFO);
- 		}
-+
-+		tspi->cur_tx_pos += write_bytes;
- 	}
--	tspi->cur_tx_pos += written_words * tspi->bytes_per_word;
-+
- 	return written_words;
- }
- 
-@@ -344,20 +352,27 @@ static unsigned int tegra_spi_read_rx_fifo_to_client_rxbuf(
- 			for (i = 0; len && (i < 4); i++, len--)
- 				*rx_buf++ = (x >> i*8) & 0xFF;
- 		}
--		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 		read_words += tspi->curr_dma_words;
-+		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 	} else {
- 		u32 rx_mask = ((u32)1 << t->bits_per_word) - 1;
-+		u8 bytes_per_word = tspi->bytes_per_word;
-+		unsigned int read_bytes;
- 
-+		len = rx_full_count * bytes_per_word;
-+		if (len > t->len - tspi->cur_pos)
-+			len = t->len - tspi->cur_pos;
-+		read_bytes = len;
- 		for (count = 0; count < rx_full_count; count++) {
- 			u32 x = tegra_spi_readl(tspi, SPI_RX_FIFO) & rx_mask;
- 
--			for (i = 0; (i < tspi->bytes_per_word); i++)
-+			for (i = 0; len && (i < bytes_per_word); i++, len--)
- 				*rx_buf++ = (x >> (i*8)) & 0xFF;
- 		}
--		tspi->cur_rx_pos += rx_full_count * tspi->bytes_per_word;
- 		read_words += rx_full_count;
-+		tspi->cur_rx_pos += read_bytes;
- 	}
-+
- 	return read_words;
- }
- 
-@@ -372,12 +387,17 @@ static void tegra_spi_copy_client_txbuf_to_spi_txbuf(
- 		unsigned len = tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 		memcpy(tspi->tx_dma_buf, t->tx_buf + tspi->cur_pos, len);
-+		tspi->cur_tx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 	} else {
- 		unsigned int i;
- 		unsigned int count;
- 		u8 *tx_buf = (u8 *)t->tx_buf + tspi->cur_tx_pos;
- 		unsigned consume = tspi->curr_dma_words * tspi->bytes_per_word;
-+		unsigned int write_bytes;
- 
-+		if (consume > t->len - tspi->cur_pos)
-+			consume = t->len - tspi->cur_pos;
-+		write_bytes = consume;
- 		for (count = 0; count < tspi->curr_dma_words; count++) {
- 			u32 x = 0;
- 
-@@ -386,8 +406,9 @@ static void tegra_spi_copy_client_txbuf_to_spi_txbuf(
- 				x |= (u32)(*tx_buf++) << (i * 8);
- 			tspi->tx_dma_buf[count] = x;
- 		}
-+
-+		tspi->cur_tx_pos += write_bytes;
- 	}
--	tspi->cur_tx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 	/* Make the dma buffer to read by dma */
- 	dma_sync_single_for_device(tspi->dev, tspi->tx_dma_phys,
-@@ -405,20 +426,28 @@ static void tegra_spi_copy_spi_rxbuf_to_client_rxbuf(
- 		unsigned len = tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 		memcpy(t->rx_buf + tspi->cur_rx_pos, tspi->rx_dma_buf, len);
-+		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 	} else {
- 		unsigned int i;
- 		unsigned int count;
- 		unsigned char *rx_buf = t->rx_buf + tspi->cur_rx_pos;
- 		u32 rx_mask = ((u32)1 << t->bits_per_word) - 1;
-+		unsigned consume = tspi->curr_dma_words * tspi->bytes_per_word;
-+		unsigned int read_bytes;
- 
-+		if (consume > t->len - tspi->cur_pos)
-+			consume = t->len - tspi->cur_pos;
-+		read_bytes = consume;
- 		for (count = 0; count < tspi->curr_dma_words; count++) {
- 			u32 x = tspi->rx_dma_buf[count] & rx_mask;
- 
--			for (i = 0; (i < tspi->bytes_per_word); i++)
-+			for (i = 0; consume && (i < tspi->bytes_per_word);
-+							i++, consume--)
- 				*rx_buf++ = (x >> (i*8)) & 0xFF;
- 		}
-+
-+		tspi->cur_rx_pos += read_bytes;
- 	}
--	tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 	/* Make the dma buffer to read by dma */
- 	dma_sync_single_for_device(tspi->dev, tspi->rx_dma_phys,
 -- 
-2.7.4
+nvpublic
