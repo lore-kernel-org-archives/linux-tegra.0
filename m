@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 186/192] dmaengine: tegra: avoid overflow of byte tracking
-Date: Wed, 27 Mar 2019 14:10:18 -0400
-Message-ID: <20190327181025.13507-186-sashal@kernel.org>
-References: <20190327181025.13507-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 62/63] dmaengine: tegra: avoid overflow of byte tracking
+Date: Wed, 27 Mar 2019 14:23:22 -0400
+Message-ID: <20190327182323.18577-62-sashal@kernel.org>
+References: <20190327182323.18577-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
+In-Reply-To: <20190327182323.18577-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -46,10 +46,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 9a558e30c461..8219ab88a507 100644
+index c8f79dcaaee8..67f201b8dcda 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -636,7 +636,10 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
+@@ -632,7 +632,10 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
  
  	sgreq = list_first_entry(&tdc->pending_sg_req, typeof(*sgreq), node);
  	dma_desc = sgreq->dma_desc;
