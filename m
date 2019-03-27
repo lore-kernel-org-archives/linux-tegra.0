@@ -1,67 +1,50 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 10/10] arm64: Add Tegra194 PCIe driver to defconfig
-Date: Wed, 27 Mar 2019 12:26:49 +0000
-Message-ID: <c5ca34fe-4290-d9b7-cda3-23b4a11ec5d8@nvidia.com>
-References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
- <1553613207-3988-11-git-send-email-vidyas@nvidia.com>
- <a0491042-2f24-4ba8-754b-ba3959b77d6f@nvidia.com>
- <44d7ff1d-c317-6ba2-86c0-981a6356ee9e@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [RFC PATCH v2 1/7] i2c: apply coding style for struct i2c_adapter
+Date: Wed, 27 Mar 2019 14:15:50 +0100
+Message-ID: <20190327131549.GB5345@kunai>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+ <20190302134735.4393-2-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <44d7ff1d-c317-6ba2-86c0-981a6356ee9e@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190302134735.4393-2-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.co
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stefan Lengfeld <contact@stefanchrist.eu>, Phil Reid <preid@electromag.com.au>, Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 27/03/2019 10:12, Vidya Sagar wrote:
-> On 3/27/2019 3:38 PM, Jon Hunter wrote:
->>
->> On 26/03/2019 15:13, Vidya Sagar wrote:
->>> Add PCIe host controller driver for DesignWare core based
->>> PCIe controller IP present in Tegra194.
->>>
->>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->>> ---
->>> =C2=A0 arch/arm64/configs/defconfig | 1 +
->>> =C2=A0 1 file changed, 1 insertion(+)
->>>
->>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
-g
->>> index 2d9c39033c1a..2ddea5c4e87d 100644
->>> --- a/arch/arm64/configs/defconfig
->>> +++ b/arch/arm64/configs/defconfig
->>> @@ -87,6 +87,7 @@ CONFIG_PCIE_QCOM=3Dy
->>> =C2=A0 CONFIG_PCIE_ARMADA_8K=3Dy
->>> =C2=A0 CONFIG_PCIE_KIRIN=3Dy
->>> =C2=A0 CONFIG_PCIE_HISI_STB=3Dy
->>> +CONFIG_PCIE_TEGRA194=3Dy
->>> =C2=A0 CONFIG_ARM64_VA_BITS_48=3Dy
->>> =C2=A0 CONFIG_SCHED_MC=3Dy
->>> =C2=A0 CONFIG_NUMA=3Dy
->>
->> Maybe building as a module is more appropriate here as I am not sure
->> that anyone else will want this built-in and it is not critical to
->> booting AFAIK.
-> Since the DesignWare core framework doesn't yet have support for making
-> this
-> as a module, I added it as a built-in driver. I'll switch it to a module
-> once support is available.
+--H+4ONPRPur6+Ovig
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ah I see. We often get reports/patches if a driver has a removal
-function but is defined in the Kconfig to only support being built-in.
+On Sat, Mar 02, 2019 at 02:47:29PM +0100, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Does the designware core just need to export some symbols to support it
-being a module? If so it maybe worth adding these as part of the series
-to see if it is acceptable, otherwise it might not get done and there is
-no point us supporting it as a module.
+I think this preparational patch can be applied right away.
+Applied to for-next, thanks!
 
-Cheers
-Jon
 
---=20
-nvpublic
+--H+4ONPRPur6+Ovig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlybd4UACgkQFA3kzBSg
+KbYWnRAAmUadlsRF622cbFRUumndjog2TVn07dP+XHyCKVxZ/ml29ePh2aAIhQsj
+8L4pjKIyXy4bLNoyKQuywMucLdk2SToh4q7Hv4wFhIYyD4LTQgPvuCj/AD0TFRGn
+pt7vcLTBerBse52UaMNE99sQnNzxTUrtebildwD/5/GrpN4RCdqo/w8URLaPgMbi
+R/Ui9lZWV7pylB/rhWSyYZuPggUFhaXXd8EA3v8w9lDGfOVFnaFv8SmR4RfGlUqM
+yGO0CjDTiMQ9KbWXSrwq2z8+jsdhl37WdY4G/kiw6oHy+AvYV3rYubY1oaKfAUW4
+Xlzm29ULJfUPOj56aKMSZ1m2dMOJW73uydObveTmIQC0aK3UnntZI1HRHzc4mKhA
+M4HGL6wPYKJX7zUf9A5hJcEutHlFunhogfXdG1wEwKS6m8MDFEk5j1H+I0hm8/zB
+deyXXyIr+oUv8quAkSz8Y8Y1aa25dMV4jSDpKT+A+G4amONjVb1pybdpqbvDhjtp
+5lgw9YqAuMM4w+gu93j4Iyyxxwd0OKmpJbxCgtB81bex0YTab0pbelr/X8l4Wm+D
+2XNOvuqgxpzYgLxtn0vFS04BkElncQ4hC0SBzZ/ID4LVFHAOlrkAzpIZ3XfOg6Ov
+YE1wcB53UHtO4+H++bwAykSQAZ9DQCofLXOB7Ut0dmq7yhxmQ2w=
+=mmPj
+-----END PGP SIGNATURE-----
+
+--H+4ONPRPur6+Ovig--
