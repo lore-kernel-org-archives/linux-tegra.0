@@ -1,148 +1,67 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v2 1/2] bus: tegra-aconnect: use devm_clk_*() helpers
-Date: Wed, 27 Mar 2019 16:40:15 +0530
-Message-ID: <32ab970f-d6a3-1232-77f1-41f97cc04f9a@nvidia.com>
-References: <1552452119-6574-1-git-send-email-spujar@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 10/10] arm64: Add Tegra194 PCIe driver to defconfig
+Date: Wed, 27 Mar 2019 12:26:49 +0000
+Message-ID: <c5ca34fe-4290-d9b7-cda3-23b4a11ec5d8@nvidia.com>
+References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
+ <1553613207-3988-11-git-send-email-vidyas@nvidia.com>
+ <a0491042-2f24-4ba8-754b-ba3959b77d6f@nvidia.com>
+ <44d7ff1d-c317-6ba2-86c0-981a6356ee9e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552452119-6574-1-git-send-email-spujar@nvidia.com>
-Content-Language: en-GB
+In-Reply-To: <44d7ff1d-c317-6ba2-86c0-981a6356ee9e@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: treding@nvidia.com, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.co
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Reviewers,
 
-Request for review and approval.
+On 27/03/2019 10:12, Vidya Sagar wrote:
+> On 3/27/2019 3:38 PM, Jon Hunter wrote:
+>>
+>> On 26/03/2019 15:13, Vidya Sagar wrote:
+>>> Add PCIe host controller driver for DesignWare core based
+>>> PCIe controller IP present in Tegra194.
+>>>
+>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>>> ---
+>>> =C2=A0 arch/arm64/configs/defconfig | 1 +
+>>> =C2=A0 1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
+g
+>>> index 2d9c39033c1a..2ddea5c4e87d 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -87,6 +87,7 @@ CONFIG_PCIE_QCOM=3Dy
+>>> =C2=A0 CONFIG_PCIE_ARMADA_8K=3Dy
+>>> =C2=A0 CONFIG_PCIE_KIRIN=3Dy
+>>> =C2=A0 CONFIG_PCIE_HISI_STB=3Dy
+>>> +CONFIG_PCIE_TEGRA194=3Dy
+>>> =C2=A0 CONFIG_ARM64_VA_BITS_48=3Dy
+>>> =C2=A0 CONFIG_SCHED_MC=3Dy
+>>> =C2=A0 CONFIG_NUMA=3Dy
+>>
+>> Maybe building as a module is more appropriate here as I am not sure
+>> that anyone else will want this built-in and it is not critical to
+>> booting AFAIK.
+> Since the DesignWare core framework doesn't yet have support for making
+> this
+> as a module, I added it as a built-in driver. I'll switch it to a module
+> once support is available.
 
-Thanks,
-Sameer.
+Ah I see. We often get reports/patches if a driver has a removal
+function but is defined in the Kconfig to only support being built-in.
 
-On 3/13/2019 10:11 AM, Sameer Pujar wrote:
-> aconnect bus driver is using pm_clk_*() interface for managing clocks.
-> With this, clocks seem to be always ON. This happens on Tegra devices
-> which use BPMP co-processor to manage clock resources, where clocks
-> are enabled during prepare phase. This is necessary because calls to
-> BPMP are always blocking. When pm_clk_*() interface is used on such
-> Tegra devices, clock prepare count is not balanced till driver remove()
-> gets executed and hence clocks are seen ON always. Thus this patch
-> replaces pm_clk_*() with devm_clk_*() framework.
->
-> Suggested-by: Mohan Kumar D <mkumard@nvidia.com>
-> Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->   drivers/bus/tegra-aconnect.c | 64 ++++++++++++++++++++++++++++++--------------
->   1 file changed, 44 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/bus/tegra-aconnect.c b/drivers/bus/tegra-aconnect.c
-> index 084ae28..9349157 100644
-> --- a/drivers/bus/tegra-aconnect.c
-> +++ b/drivers/bus/tegra-aconnect.c
-> @@ -12,28 +12,38 @@
->   #include <linux/module.h>
->   #include <linux/of_platform.h>
->   #include <linux/platform_device.h>
-> -#include <linux/pm_clock.h>
->   #include <linux/pm_runtime.h>
->   
-> +struct tegra_aconnect {
-> +	struct clk	*ape_clk;
-> +	struct clk	*apb2ape_clk;
-> +};
-> +
->   static int tegra_aconnect_probe(struct platform_device *pdev)
->   {
-> -	int ret;
-> +	struct tegra_aconnect *aconnect;
->   
->   	if (!pdev->dev.of_node)
->   		return -EINVAL;
->   
-> -	ret = pm_clk_create(&pdev->dev);
-> -	if (ret)
-> -		return ret;
-> +	aconnect = devm_kzalloc(&pdev->dev, sizeof(struct tegra_aconnect),
-> +				GFP_KERNEL);
-> +	if (!aconnect)
-> +		return -ENOMEM;
->   
-> -	ret = of_pm_clk_add_clk(&pdev->dev, "ape");
-> -	if (ret)
-> -		goto clk_destroy;
-> +	aconnect->ape_clk = devm_clk_get(&pdev->dev, "ape");
-> +	if (IS_ERR(aconnect->ape_clk)) {
-> +		dev_err(&pdev->dev, "Can't retrieve ape clock\n");
-> +		return PTR_ERR(aconnect->ape_clk);
-> +	}
->   
-> -	ret = of_pm_clk_add_clk(&pdev->dev, "apb2ape");
-> -	if (ret)
-> -		goto clk_destroy;
-> +	aconnect->apb2ape_clk = devm_clk_get(&pdev->dev, "apb2ape");
-> +	if (IS_ERR(aconnect->apb2ape_clk)) {
-> +		dev_err(&pdev->dev, "Can't retrieve apb2ape clock\n");
-> +		return PTR_ERR(aconnect->apb2ape_clk);
-> +	}
->   
-> +	dev_set_drvdata(&pdev->dev, aconnect);
->   	pm_runtime_enable(&pdev->dev);
->   
->   	of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
-> @@ -41,30 +51,44 @@ static int tegra_aconnect_probe(struct platform_device *pdev)
->   	dev_info(&pdev->dev, "Tegra ACONNECT bus registered\n");
->   
->   	return 0;
-> -
-> -clk_destroy:
-> -	pm_clk_destroy(&pdev->dev);
-> -
-> -	return ret;
->   }
->   
->   static int tegra_aconnect_remove(struct platform_device *pdev)
->   {
->   	pm_runtime_disable(&pdev->dev);
->   
-> -	pm_clk_destroy(&pdev->dev);
-> -
->   	return 0;
->   }
->   
->   static int tegra_aconnect_runtime_resume(struct device *dev)
->   {
-> -	return pm_clk_resume(dev);
-> +	struct tegra_aconnect *aconnect = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(aconnect->ape_clk);
-> +	if (ret) {
-> +		dev_err(dev, "ape clk_enable failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_prepare_enable(aconnect->apb2ape_clk);
-> +	if (ret) {
-> +		clk_disable_unprepare(aconnect->ape_clk);
-> +		dev_err(dev, "apb2ape clk_enable failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
->   }
->   
->   static int tegra_aconnect_runtime_suspend(struct device *dev)
->   {
-> -	return pm_clk_suspend(dev);
-> +	struct tegra_aconnect *aconnect = dev_get_drvdata(dev);
-> +
-> +	clk_disable_unprepare(aconnect->ape_clk);
-> +	clk_disable_unprepare(aconnect->apb2ape_clk);
-> +
-> +	return 0;
->   }
->   
->   static const struct dev_pm_ops tegra_aconnect_pm_ops = {
+Does the designware core just need to export some symbols to support it
+being a module? If so it maybe worth adding these as part of the series
+to see if it is acceptable, otherwise it might not get done and there is
+no point us supporting it as a module.
+
+Cheers
+Jon
+
+--=20
+nvpublic
