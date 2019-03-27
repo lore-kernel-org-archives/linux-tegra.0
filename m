@@ -1,139 +1,148 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH 05/10] dt-bindings: PCI: tegra: Add device tree support
- for T194
-Date: Wed, 27 Mar 2019 16:23:19 +0530
-Message-ID: <43f1a198-fc1f-91ec-0fbb-6aff4d35eeb2@nvidia.com>
-References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
- <1553613207-3988-6-git-send-email-vidyas@nvidia.com>
- <b8a7db52-0bc6-2d9d-dd50-7b041f2bf56d@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: Re: [PATCH v2 1/2] bus: tegra-aconnect: use devm_clk_*() helpers
+Date: Wed, 27 Mar 2019 16:40:15 +0530
+Message-ID: <32ab970f-d6a3-1232-77f1-41f97cc04f9a@nvidia.com>
+References: <1552452119-6574-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b8a7db52-0bc6-2d9d-dd50-7b041f2bf56d@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <1552452119-6574-1-git-send-email-spujar@nvidia.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com
+To: treding@nvidia.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 3/27/2019 3:40 PM, Jon Hunter wrote:
-> 
-> On 26/03/2019 15:13, Vidya Sagar wrote:
->> Add support for Tegra194 PCIe controllers. These controllers are based
->> on Synopsys DesignWare core IP.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->>   .../bindings/pci/nvidia,tegra194-pcie.txt          | 209 +++++++++++++++++++++
->>   .../devicetree/bindings/phy/phy-tegra194-p2u.txt   |  34 ++++
->>   2 files changed, 243 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
->>   create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
->> new file mode 100644
->> index 000000000000..31527283a0cd
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
->> @@ -0,0 +1,209 @@
->> +NVIDIA Tegra PCIe controller (Synopsys DesignWare Core based)
->> +
->> +This PCIe host controller is based on the Synopsis Designware PCIe IP
->> +and thus inherits all the common properties defined in designware-pcie.txt.
->> +
->> +Required properties:
->> +- compatible: For Tegra19x, must contain "nvidia,tegra194-pcie".
->> +- device_type: Must be "pci"
->> +- reg: A list of physical base address and length for each set of controller
->> +  registers. Must contain an entry for each entry in the reg-names property.
->> +- reg-names: Must include the following entries:
->> +  "appl": Controller's application logic registers
->> +  "window1": This is the aperture of controller available under 4GB boundary
->> +             (i.e. within 32-bit space). This aperture is typically used for
->> +             accessing config space of root port itself and also the connected
->> +             endpoints (by appropriately programming internal Address
->> +             Translation Unit's (iATU) out bound region) and also to map
->> +             prefetchable/non-prefetchable BARs.
->> +  "config": As per the definition in designware-pcie.txt
->> +  "atu_dma": iATU and DMA register. This is where the iATU (internal Address
->> +             Translation Unit) registers of the PCIe core are made available
->> +             fow SW access.
->> +  "dbi": The aperture where root port's own configuration registers are
->> +         available
->> +  "window2": This is the larger (compared to window1) aperture available above
->> +             4GB boundary (i.e. in 64-bit space). This is typically used for
->> +             mapping prefetchable/non-prefetchable BARs of endpoints
->> +- interrupts: A list of interrupt outputs of the controller. Must contain an
->> +  entry for each entry in the interrupt-names property.
->> +- interrupt-names: Must include the following entries:
->> +  "intr": The Tegra interrupt that is asserted for controller interrupts
->> +  "msi": The Tegra interrupt that is asserted when an MSI is received
->> +- bus-range: Range of bus numbers associated with this controller
->> +- #address-cells: Address representation for root ports (must be 3)
->> +  - cell 0 specifies the bus and device numbers of the root port:
->> +    [23:16]: bus number
->> +    [15:11]: device number
->> +  - cell 1 denotes the upper 32 address bits and should be 0
->> +  - cell 2 contains the lower 32 address bits and is used to translate to the
->> +    CPU address space
->> +- #size-cells: Size representation for root ports (must be 2)
->> +- ranges: Describes the translation of addresses for root ports and standard
->> +  PCI regions. The entries must be 7 cells each, where the first three cells
->> +  correspond to the address as described for the #address-cells property
->> +  above, the fourth and fifth cells are for the physical CPU address to
->> +  translate to and the sixth and seventh cells are as described for the
->> +  #size-cells property above.
->> +  - Entries setup the mapping for the standard I/O, memory and
->> +    prefetchable PCI regions. The first cell determines the type of region
->> +    that is setup:
->> +    - 0x81000000: I/O memory region
->> +    - 0x82000000: non-prefetchable memory region
->> +    - 0xc2000000: prefetchable memory region
->> +  Please refer to the standard PCI bus binding document for a more detailed
->> +  explanation.
->> +- #interrupt-cells: Size representation for interrupts (must be 1)
->> +- interrupt-map-mask and interrupt-map: Standard PCI IRQ mapping properties
->> +  Please refer to the standard PCI bus binding document for a more detailed
->> +  explanation.
->> +- clocks: Must contain an entry for each entry in clock-names.
->> +  See ../clocks/clock-bindings.txt for details.
->> +- clock-names: Must include the following entries:
->> +  - core_clk
->> +- resets: Must contain an entry for each entry in reset-names.
->> +  See ../reset/reset.txt for details.
->> +- reset-names: Must include the following entries:
->> +  - core_apb_rst
->> +  - core_rst
->> +- phys: Must contain a phandle to P2U PHY for each entry in phy-names.
->> +- phy-names: Must include an entry for each active lane.
->> +  "pcie-p2u-N": where N ranges from 0 to one less than the total number of lanes
->> +- Controller dependent register offsets
->> +  - nvidia,event-cntr-ctrl: EVENT_COUNTER_CONTROL reg offset
->> +      0x168 - FPGA
->> +      0x1a8 - C1, C2 and C3
->> +      0x1c4 - C4
->> +      0x1d8 - C0 and C5
->> +  - nvidia,event-cntr-data: EVENT_COUNTER_DATA reg offset
->> +      0x16c - FPGA
->> +      0x1ac - C1, C2 and C3
->> +      0x1c8 - C4
->> +      0x1dc - C0 and C5
->> +- nvidia,controller-id : Controller specific ID
->> +      0x0 - C0
->> +      0x1 - C1
->> +      0x2 - C2
->> +      0x3 - C3
->> +      0x4 - C4
->> +      0x5 - C5
->> +- vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
-> 
-> I don't see any power-domains listed here. We should have these for T194
-> right?
-Thanks for catching this.
-Yes. PCIe uses power-domains and I'll add that in the future patch.
+Hi Reviewers,
 
-> 
-> Cheers
-> Jon
-> 
+Request for review and approval.
+
+Thanks,
+Sameer.
+
+On 3/13/2019 10:11 AM, Sameer Pujar wrote:
+> aconnect bus driver is using pm_clk_*() interface for managing clocks.
+> With this, clocks seem to be always ON. This happens on Tegra devices
+> which use BPMP co-processor to manage clock resources, where clocks
+> are enabled during prepare phase. This is necessary because calls to
+> BPMP are always blocking. When pm_clk_*() interface is used on such
+> Tegra devices, clock prepare count is not balanced till driver remove()
+> gets executed and hence clocks are seen ON always. Thus this patch
+> replaces pm_clk_*() with devm_clk_*() framework.
+>
+> Suggested-by: Mohan Kumar D <mkumard@nvidia.com>
+> Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>   drivers/bus/tegra-aconnect.c | 64 ++++++++++++++++++++++++++++++--------------
+>   1 file changed, 44 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/bus/tegra-aconnect.c b/drivers/bus/tegra-aconnect.c
+> index 084ae28..9349157 100644
+> --- a/drivers/bus/tegra-aconnect.c
+> +++ b/drivers/bus/tegra-aconnect.c
+> @@ -12,28 +12,38 @@
+>   #include <linux/module.h>
+>   #include <linux/of_platform.h>
+>   #include <linux/platform_device.h>
+> -#include <linux/pm_clock.h>
+>   #include <linux/pm_runtime.h>
+>   
+> +struct tegra_aconnect {
+> +	struct clk	*ape_clk;
+> +	struct clk	*apb2ape_clk;
+> +};
+> +
+>   static int tegra_aconnect_probe(struct platform_device *pdev)
+>   {
+> -	int ret;
+> +	struct tegra_aconnect *aconnect;
+>   
+>   	if (!pdev->dev.of_node)
+>   		return -EINVAL;
+>   
+> -	ret = pm_clk_create(&pdev->dev);
+> -	if (ret)
+> -		return ret;
+> +	aconnect = devm_kzalloc(&pdev->dev, sizeof(struct tegra_aconnect),
+> +				GFP_KERNEL);
+> +	if (!aconnect)
+> +		return -ENOMEM;
+>   
+> -	ret = of_pm_clk_add_clk(&pdev->dev, "ape");
+> -	if (ret)
+> -		goto clk_destroy;
+> +	aconnect->ape_clk = devm_clk_get(&pdev->dev, "ape");
+> +	if (IS_ERR(aconnect->ape_clk)) {
+> +		dev_err(&pdev->dev, "Can't retrieve ape clock\n");
+> +		return PTR_ERR(aconnect->ape_clk);
+> +	}
+>   
+> -	ret = of_pm_clk_add_clk(&pdev->dev, "apb2ape");
+> -	if (ret)
+> -		goto clk_destroy;
+> +	aconnect->apb2ape_clk = devm_clk_get(&pdev->dev, "apb2ape");
+> +	if (IS_ERR(aconnect->apb2ape_clk)) {
+> +		dev_err(&pdev->dev, "Can't retrieve apb2ape clock\n");
+> +		return PTR_ERR(aconnect->apb2ape_clk);
+> +	}
+>   
+> +	dev_set_drvdata(&pdev->dev, aconnect);
+>   	pm_runtime_enable(&pdev->dev);
+>   
+>   	of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
+> @@ -41,30 +51,44 @@ static int tegra_aconnect_probe(struct platform_device *pdev)
+>   	dev_info(&pdev->dev, "Tegra ACONNECT bus registered\n");
+>   
+>   	return 0;
+> -
+> -clk_destroy:
+> -	pm_clk_destroy(&pdev->dev);
+> -
+> -	return ret;
+>   }
+>   
+>   static int tegra_aconnect_remove(struct platform_device *pdev)
+>   {
+>   	pm_runtime_disable(&pdev->dev);
+>   
+> -	pm_clk_destroy(&pdev->dev);
+> -
+>   	return 0;
+>   }
+>   
+>   static int tegra_aconnect_runtime_resume(struct device *dev)
+>   {
+> -	return pm_clk_resume(dev);
+> +	struct tegra_aconnect *aconnect = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(aconnect->ape_clk);
+> +	if (ret) {
+> +		dev_err(dev, "ape clk_enable failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(aconnect->apb2ape_clk);
+> +	if (ret) {
+> +		clk_disable_unprepare(aconnect->ape_clk);
+> +		dev_err(dev, "apb2ape clk_enable failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+>   }
+>   
+>   static int tegra_aconnect_runtime_suspend(struct device *dev)
+>   {
+> -	return pm_clk_suspend(dev);
+> +	struct tegra_aconnect *aconnect = dev_get_drvdata(dev);
+> +
+> +	clk_disable_unprepare(aconnect->ape_clk);
+> +	clk_disable_unprepare(aconnect->apb2ape_clk);
+> +
+> +	return 0;
+>   }
+>   
+>   static const struct dev_pm_ops tegra_aconnect_pm_ops = {
