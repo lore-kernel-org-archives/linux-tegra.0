@@ -1,67 +1,55 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3] ARM: tegra: enforce PM requirement
-Date: Thu, 28 Mar 2019 17:14:37 +0100
-Message-ID: <20190328161437.GE5518@ulmo>
-References: <1551255628-4794-1-git-send-email-spujar@nvidia.com>
+Subject: Re: [PATCH] arm64: tegra: dts: enable aconnect, adma and agic
+Date: Thu, 28 Mar 2019 17:32:15 +0100
+Message-ID: <20190328163215.GA31367@ulmo>
+References: <1552400705-1179-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PPYy/fEw/8QCHSq3"
+        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1551255628-4794-1-git-send-email-spujar@nvidia.com>
+In-Reply-To: <1552400705-1179-1-git-send-email-spujar@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sameer Pujar <spujar@nvidia.com>
-Cc: linux@armlinux.org.uk, digetx@gmail.com, jhogan@kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, treding@nvidia.com, jonathanh@nvidia.com, josephl@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---PPYy/fEw/8QCHSq3
+--Q68bSM7Ycu6FN28Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 27, 2019 at 01:50:28PM +0530, Sameer Pujar wrote:
-> Currently runtime PM is enabled for Tegra HDA driver. One of the concern
-> raised was about handling !PM case in HDA driver. In this case, there is
-> a need to manage clocks and power explicitly in the driver and reviewers
-> were not really convinced about this. The consensus at the end was to
-> enforce PM requirement to keep things simple, rather driver mentioning a
-> dependency on PM. This is how it is done for ARM 64-bit Tegra platforms
-> and the same can be done for 32-bit Tegra platforms too.
->=20
-> Finally the objective is to remove dependency on PM availability for all
-> Tegra drivers. The detailed discussion can be found in following patch,
-> https://patchwork.ozlabs.org/patch/1031007/
+On Tue, Mar 12, 2019 at 07:55:04PM +0530, Sameer Pujar wrote:
+> Enable aconnect, adma and agic for Tegra Jetson TX1.
 >=20
 > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
 > ---
->  arch/arm/mach-tegra/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
-Applied to for-5.2/arm/soc, thanks.
+Applied to for-5.2/arm64/dt, thanks.
 
 Thierry
 
---PPYy/fEw/8QCHSq3
+--Q68bSM7Ycu6FN28Q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyc8u0ACgkQ3SOs138+
-s6EdjhAAk1+0yhpb2a8qaFvS5uO1yjOA6wkkw/sTEkZDvfAA01N5/Lg4nn6i+Obr
-4zTcz12Q/uk15Gb6zrAMSnztYlqIwCdzRRSCgFxa47Ob+So6b3PXAVNV4l3y9cXA
-QMlcw8Ua3bztPstydBzqP9VxdNjtQF9KW1ZZp7GglkpnBBLCguJwLpsr2I9BgWm8
-UqAOnSjT1o7gauQXE2dhifNsv7ZV+sL5PqKUs+cQAUo2RdGgDAtipEhJzosK0q4s
-Dtrw8JKVKjxWkJF5F3AxlkGp5zjqk4Wcgzlw0Wb+OciFX3b8bcLtCO0Zrm4Kf5Lc
-vDgWmv9KbNu0rWpc2TGBTr2kv62j2u2Ea1IB455NPuXw1itMt/+d2nPkNh+AJ+xZ
-+CnEEknhOUjLyub7XW3mDERvTtV3kDIRGmj6az/ivma4Codyg6Xzf9Rh8LMNO539
-VWR+bpxcrelQw5aWA7M7dGOOU9II49iaEmHec7rJeuHPGo7kWxIRHpEWEn4xAoHN
-ozvo8+Qv7jR3BPNHM5Z7e1PjVRF2znIbY4LMhbILBmEjUGlnhUnUJ7FRjp72bKTz
-kXaj6Kd5PSYz+BbgNjdv0SLRIGkjEb7iiZcMlimPYEvIiHOyZp6U5mGjMgCmsitT
-NuP4s3b5ZPCJarWUBAvBeEewlpC1x33pAx89U38E/9oT+Kj2vm8=
-=WZZP
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyc9w0ACgkQ3SOs138+
+s6GPkRAAsHTq0EGmjGMqcTVmJfdXUIIJeDv6vk1RBhXVgg9si8SlLtTm7JDM55DR
+XASpL4NBzMPwZ6iKAmfWcaCbA9CXlNaIjjKyHZVVdy5g4wjXtphsKPgtXXMT5QTl
+Z10XZvN8/QsSsV6l4Br4ZBmJCy0Hqti7IvymNN5CU3uBnf6Nk+OE+4vb0+eKR4SU
+6GOZ1Cf4WgnZzLWMceQhSALvpGewgeHKNQIgAAKuJj7bncsl5XcYxijO5fMwun5w
+1P0hcWbcXk5KBuGrIN6z1nFZPq5w04MMMGDTsk23DGxF2G5a2VBPGbH8ja/NrfU8
+6DOF93JFwFY8M+pMbdvbgfbDMQLQCg49ctU4IT68smDjXpt30sgg0Ru3W7Bxark7
+2lcHF+Iohib5MFxLs+xbSQ+SEFMpRXX/iaJ55Pr+ObL0yBGWDTsgQdzDJf6BXRKd
+RIngYTLsdge+NOYyz8c2QZaWppbFz/VUWGHFauTzMeEu3o4YG4VFyg2u9PFiHWK9
+XNS4pe8HOa2dB5dKs2XoRk3kp4EosMfJf+e/7RFupoDiZUvleiUAx0uSoYl3sLPU
+51sFKfaOV7y+vpsG2yE/hXlHxKfQkhrBuqop/3FWb0iKlnGXUS4R+uYcRjOyd0E6
+UKThMNtY1nyM9YcQtqSkOY7Igg8oRrGJoLcdtIlKud8Wwvp8YzY=
+=vQrx
 -----END PGP SIGNATURE-----
 
---PPYy/fEw/8QCHSq3--
+--Q68bSM7Ycu6FN28Q--
