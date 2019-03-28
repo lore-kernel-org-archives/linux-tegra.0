@@ -1,87 +1,67 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] arm64: dts: tegra210: Add L2 cache topology
-Date: Thu, 28 Mar 2019 17:10:46 +0100
-Message-ID: <20190328161046.GD5518@ulmo>
-References: <20190201034347.18470-1-josephl@nvidia.com>
+Subject: Re: [PATCH v3] ARM: tegra: enforce PM requirement
+Date: Thu, 28 Mar 2019 17:14:37 +0100
+Message-ID: <20190328161437.GE5518@ulmo>
+References: <1551255628-4794-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6985600594115736702=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190201034347.18470-1-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PPYy/fEw/8QCHSq3"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1551255628-4794-1-git-send-email-spujar@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>
+Cc: linux@armlinux.org.uk, digetx@gmail.com, jhogan@kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6985600594115736702==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gE7i1rD7pdK0Ng3j"
-Content-Disposition: inline
-
-
---gE7i1rD7pdK0Ng3j
+--PPYy/fEw/8QCHSq3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 01, 2019 at 11:43:47AM +0800, Joseph Lo wrote:
-> Add L2 cache topology.
+On Wed, Feb 27, 2019 at 01:50:28PM +0530, Sameer Pujar wrote:
+> Currently runtime PM is enabled for Tegra HDA driver. One of the concern
+> raised was about handling !PM case in HDA driver. In this case, there is
+> a need to manage clocks and power explicitly in the driver and reviewers
+> were not really convinced about this. The consensus at the end was to
+> enforce PM requirement to keep things simple, rather driver mentioning a
+> dependency on PM. This is how it is done for ARM 64-bit Tegra platforms
+> and the same can be done for 32-bit Tegra platforms too.
 >=20
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Finally the objective is to remove dependency on PM availability for all
+> Tegra drivers. The detailed discussion can be found in following patch,
+> https://patchwork.ozlabs.org/patch/1031007/
+>=20
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
 > ---
-> Notice that,
-> This patch depends on the series of CPU idle support[1].
-> And that one depneds on [2].
-> [1]: http://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D89446
-> [2]: http://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D84380
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  arch/arm/mach-tegra/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-Applied to for-5.2/arm64/dt, thanks.
+Applied to for-5.2/arm/soc, thanks.
 
 Thierry
 
---gE7i1rD7pdK0Ng3j
+--PPYy/fEw/8QCHSq3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyc8gYACgkQ3SOs138+
-s6EPjg//f+abMf/KNaL/rgI949ONUF0l/BXzumxXM69whY3HHRWwerHZguJxzSaR
-A8MGuH3XQowQLZZaaHfY4VWDzPKP17rnJCqAp8SxXvgLisv0buYkL6PiZ9FsEhLj
-4TuvJmU4aNI1M0CXXOnl3ohPnFM2bVpucjo9LzskwY4i1+bLil+oYyeoYSmeHQYD
-IgqcwoYICjGBuVS56/hjtXN+9akAM3cQK+JVxWgXwesQWfGR7eiCIk6pUgWWSYB9
-jex0WK3XsLIdrllUvHdW9bCkejZdJh9AYFWZfNXlz/j+VnGyPdJUy1VgZQfB1txO
-3FhWUw3bC3MpGWV8ERQ+Kt6nZMoD6CUaqTdbtyUBly0Y2zIWWg9wO65rYYs2521c
-cZqrTFkGqbmw8sIwTWVus5YSfbi3wnVE+EzHoU7F4FWePmqi6eOa8H36iMBz8E+u
-D8SthCDcSPzISDYl2U9NFuIzTB84GdzJm6Kf2fPIzXTqGJdhJKNo86moC584MB9F
-VtcnG4zEC/m75zhNbU+3A49FR5UjXcUZO23e7L2LgG1eYl86F7764F19CWR6xo9i
-P5/cYtDCJqWRrIvy/a8plxEfOeFg4pfxxbvvX4H3jVUCKcQLb+cqn75yMU+Fcgyq
-ru4Qg12rQkS7BIaGKmPR8j5HYIefQKC26xhdYLEsKWfIijXa5G4=
-=YKd9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyc8u0ACgkQ3SOs138+
+s6EdjhAAk1+0yhpb2a8qaFvS5uO1yjOA6wkkw/sTEkZDvfAA01N5/Lg4nn6i+Obr
+4zTcz12Q/uk15Gb6zrAMSnztYlqIwCdzRRSCgFxa47Ob+So6b3PXAVNV4l3y9cXA
+QMlcw8Ua3bztPstydBzqP9VxdNjtQF9KW1ZZp7GglkpnBBLCguJwLpsr2I9BgWm8
+UqAOnSjT1o7gauQXE2dhifNsv7ZV+sL5PqKUs+cQAUo2RdGgDAtipEhJzosK0q4s
+Dtrw8JKVKjxWkJF5F3AxlkGp5zjqk4Wcgzlw0Wb+OciFX3b8bcLtCO0Zrm4Kf5Lc
+vDgWmv9KbNu0rWpc2TGBTr2kv62j2u2Ea1IB455NPuXw1itMt/+d2nPkNh+AJ+xZ
++CnEEknhOUjLyub7XW3mDERvTtV3kDIRGmj6az/ivma4Codyg6Xzf9Rh8LMNO539
+VWR+bpxcrelQw5aWA7M7dGOOU9II49iaEmHec7rJeuHPGo7kWxIRHpEWEn4xAoHN
+ozvo8+Qv7jR3BPNHM5Z7e1PjVRF2znIbY4LMhbILBmEjUGlnhUnUJ7FRjp72bKTz
+kXaj6Kd5PSYz+BbgNjdv0SLRIGkjEb7iiZcMlimPYEvIiHOyZp6U5mGjMgCmsitT
+NuP4s3b5ZPCJarWUBAvBeEewlpC1x33pAx89U38E/9oT+Kj2vm8=
+=WZZP
 -----END PGP SIGNATURE-----
 
---gE7i1rD7pdK0Ng3j--
-
-
---===============6985600594115736702==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6985600594115736702==--
+--PPYy/fEw/8QCHSq3--
