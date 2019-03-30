@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 15/21] soc/tegra: pmc: Drop locking from tegra_powergate_is_powered()
-Date: Fri, 29 Mar 2019 21:31:06 -0400
-Message-ID: <20190330013112.784-15-sashal@kernel.org>
-References: <20190330013112.784-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 24/37] soc/tegra: pmc: Drop locking from tegra_powergate_is_powered()
+Date: Fri, 29 Mar 2019 21:30:07 -0400
+Message-ID: <20190330013020.379-24-sashal@kernel.org>
+References: <20190330013020.379-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190330013112.784-1-sashal@kernel.org>
+In-Reply-To: <20190330013020.379-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
@@ -49,10 +49,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 9685f9b8be07..a12710c917a1 100644
+index 7e9ef3431bea..2422ed56895a 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -512,16 +512,10 @@ EXPORT_SYMBOL(tegra_powergate_power_off);
+@@ -521,16 +521,10 @@ EXPORT_SYMBOL(tegra_powergate_power_off);
   */
  int tegra_powergate_is_powered(unsigned int id)
  {
