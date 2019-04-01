@@ -1,81 +1,51 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 1/2] arm64: tegra: Add pinmux for PWM-based DFLL support
- on Shield platform
-Date: Tue, 2 Apr 2019 11:06:36 +0800
-Message-ID: <2c7c9268-0b95-fa49-294b-155a9499741e@nvidia.com>
-References: <20190322071111.32432-1-josephl@nvidia.com>
- <20190322095244.GF28640@ulmo>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2] spi: tegra20-slink: change chip select action order
+Date: Mon, 1 Apr 2019 16:17:53 +0700
+Message-ID: <20190401091753.GP2059@sirena.org.uk>
+References: <20190329174411.13832-1-gaireg@gaireg.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190322095244.GF28640@ulmo>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QKpLca3blcvhMJ0W"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190329174411.13832-1-gaireg@gaireg.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randolph =?iso-8859-1?Q?Maa=DFen?= <gaireg@gaireg.de>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 3/22/19 5:52 PM, Thierry Reding wrote:
-> On Fri, Mar 22, 2019 at 03:11:10PM +0800, Joseph Lo wrote:
->> Add pinmux for PWM-based DFLL support on Shield platform.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->>   arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi | 14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
-> 
-> There's been some discussion recently about moving away from programming
-> pinmux in the kernel because it isn't always safe to do that. The idea
-> is that early boot firmware (typically cboot) will already have set up
-> the pinmux, so there's no need to do it again in the kernel.
-> 
-> These look like you're going to change this pin to/from tristate at
-> runtime, so perhaps that's the kind of thing that we're okay with?
-> 
-> Adding Stephen for visibility.
 
-Gentle ping.
+--QKpLca3blcvhMJ0W
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Joseph
+On Fri, Mar 29, 2019 at 06:44:11PM +0100, Randolph Maa=DFen wrote:
+> To transfer via SPI the tegra20-slink driver first sets the command
+> register, which contains the chip select value, and after that the
+> command2 register, which contains the chip select line. This leads to a
+> small spike in the chip selct 0 line between the set of the value and
+> the selection of the chip select line.
 
-> 
-> Thierry
-> 
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
->> index 88a4b9333d84..c668f16c8574 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
->> @@ -1318,6 +1318,20 @@
->>   				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
->>   			};
->>   		};
->> +
->> +		dvfs_pwm_active_state: dvfs_pwm_active {
->> +			dvfs_pwm_pbb1 {
->> +				nvidia,pins = "dvfs_pwm_pbb1";
->> +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
->> +			};
->> +		};
->> +
->> +		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
->> +			dvfs_pwm_pbb1 {
->> +				nvidia,pins = "dvfs_pwm_pbb1";
->> +				nvidia,tristate = <TEGRA_PIN_ENABLE>;
->> +			};
->> +		};
->>   	};
->>   
->>   	serial@70006000 {
->> -- 
->> 2.21.0
->>
+Please do not submit new versions of already applied patches, please
+submit incremental updates to the existing code.  Modifying existing
+commits creates problems for other users building on top of those
+commits so it's best practice to only change pubished git commits if
+absolutely essential.
+
+--QKpLca3blcvhMJ0W
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyh1z4ACgkQJNaLcl1U
+h9BDYgf/YxJE2IHgyTgkto9LXOZqZugnVydpvQUWbP2oMfH2WkmNmnGlkfheNMCX
+CG7QiiEJ1ynANmzUkhSa7TZ6dVYDKc2Jrd58Bth540GSOhL9ceRsueaHtcH/glYs
+qDuha+hrPYhrQT3x9YcgS1lr6fzTO62aypzjX0cc/CcNcPzURQL9FOuMHtFyElG3
+SVHWVIBJnrMGac4te496gGdZe2oXBOv5QN9jcViRvRGQSYCJX2NJpyfpQmWj9sbZ
+H3d1N1gfc53ailiOM9JVKmjTQgOR8r9XADjukWUw/NUwDyJw7RgAcWEj3VGo7Sen
+6pEk4fP6z+P8lYmEX1OD3zTnNz9Bcw==
+=406+
+-----END PGP SIGNATURE-----
+
+--QKpLca3blcvhMJ0W--
