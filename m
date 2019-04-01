@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 4/6] arm64: tegra: Add XUSB and pad controller on Tegra186
-Date: Mon,  1 Apr 2019 12:40:48 +0200
-Message-ID: <20190401104050.31355-5-thierry.reding@gmail.com>
+Subject: [PATCH v2 5/6] arm64: tegra: Enable XUSB on P2771
+Date: Mon,  1 Apr 2019 12:40:49 +0200
+Message-ID: <20190401104050.31355-6-thierry.reding@gmail.com>
 References: <20190401104050.31355-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,92 +9,79 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190401104050.31355-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, JC Kuo <jckuo@nvidia.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Adds the XUSB pad and XUSB controllers on Tegra186.
+Enable the relevant pads for XUSB support on P2771-0000 and hook up the
+USB supply voltage regulators to the ports.
 
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 135 +++++++++++++++++++++++
- 1 file changed, 135 insertions(+)
+ .../boot/dts/nvidia/tegra186-p2771-0000.dts   | 115 ++++++++++++++++++
+ .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  19 ++-
+ 2 files changed, 130 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 97aeb946ed5e..c444b6fa304c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -340,6 +340,141 @@
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+index 31457f32e4d0..75ee6cf1e1b4 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -58,6 +58,93 @@
+ 		status = "okay";
  	};
  
-+	padctl: padctl@3520000 {
-+		compatible = "nvidia,tegra186-xusb-padctl";
-+		reg = <0x0 0x03520000 0x0 0x1000>,
-+		      <0x0 0x03540000 0x0 0x1000>;
-+		reg-names = "padctl", "ao";
++	padctl@3520000 {
++		status = "okay";
 +
-+		resets = <&bpmp TEGRA186_RESET_XUSB_PADCTL>;
-+		reset-names = "padctl";
-+
-+		status = "disabled";
++		avdd-pll-erefeut-supply = <&vdd_1v8_pll>;
++		avdd-usb-supply = <&vdd_3v3_sys>;
++		dvdd-pex-supply = <&vdd_pex>;
++		dvdd-pex-pll-supply = <&vdd_pex>;
++		hvdd-pex-supply = <&vdd_1v8>;
++		hvdd-pex-pll-supply = <&vdd_1v8>;
++		vclamp-usb-supply = <&vdd_1v8>;
++		vddio-hsic-supply = <&gnd>;
 +
 +		pads {
 +			usb2 {
-+				clocks = <&bpmp TEGRA186_CLK_USB2_TRK>;
-+				clock-names = "trk";
-+				status = "disabled";
++				status = "okay";
 +
 +				lanes {
 +					usb2-0 {
-+						status = "disabled";
-+						#phy-cells = <0>;
++						nvidia,function = "xusb";
++						status = "okay";
 +					};
 +
 +					usb2-1 {
-+						status = "disabled";
-+						#phy-cells = <0>;
++						nvidia,function = "xusb";
++						status = "okay";
 +					};
 +
 +					usb2-2 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+				};
-+			};
-+
-+			hsic {
-+				clocks = <&bpmp TEGRA186_CLK_HSIC_TRK>;
-+				clock-names = "trk";
-+				status = "disabled";
-+
-+				lanes {
-+					hsic-0 {
-+						status = "disabled";
-+						#phy-cells = <0>;
++						nvidia,function = "xusb";
++						status = "okay";
 +					};
 +				};
 +			};
 +
 +			usb3 {
-+				status = "disabled";
++				status = "okay";
 +
 +				lanes {
 +					usb3-0 {
-+						status = "disabled";
-+						#phy-cells = <0>;
++						nvidia,function = "xusb";
++						status = "okay";
 +					};
 +
 +					usb3-1 {
-+						status = "disabled";
-+						#phy-cells = <0>;
++						nvidia,function = "xusb";
++						status = "okay";
 +					};
 +
 +					usb3-2 {
-+						status = "disabled";
-+						#phy-cells = <0>;
++						nvidia,function = "xusb";
++						status = "okay";
 +					};
 +				};
 +			};
@@ -102,71 +89,119 @@ index 97aeb946ed5e..c444b6fa304c 100644
 +
 +		ports {
 +			usb2-0 {
-+				status = "disabled";
++				status = "okay";
++				mode = "otg";
++
++				vbus-supply = <&vdd_usb0>;
 +			};
 +
 +			usb2-1 {
-+				status = "disabled";
-+			};
++				status = "okay";
++				mode = "host";
 +
-+			usb2-2 {
-+				status = "disabled";
-+			};
-+
-+			hsic-0 {
-+				status = "disabled";
++				vbus-supply = <&vdd_usb1>;
 +			};
 +
 +			usb3-0 {
-+				status = "disabled";
-+			};
-+
-+			usb3-1 {
-+				status = "disabled";
-+			};
-+
-+			usb3-2 {
-+				status = "disabled";
++				nvidia,usb2-companion = <1>;
++				status = "okay";
 +			};
 +		};
 +	};
 +
 +	usb@3530000 {
-+		compatible = "nvidia,tegra186-xusb";
-+		reg = <0x0 0x03530000 0x0 0x8000>,
-+		      <0x0 0x03538000 0x0 0x1000>;
-+		reg-names = "hcd", "fpci";
++		status = "okay";
 +
-+		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&bpmp TEGRA186_CLK_XUSB_HOST>,
-+			 <&bpmp TEGRA186_CLK_XUSB_FALCON>,
-+			 <&bpmp TEGRA186_CLK_XUSB_SS>,
-+			 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
-+			 <&bpmp TEGRA186_CLK_CLK_M>,
-+			 <&bpmp TEGRA186_CLK_XUSB_FS>,
-+			 <&bpmp TEGRA186_CLK_PLLU>,
-+			 <&bpmp TEGRA186_CLK_CLK_M>,
-+			 <&bpmp TEGRA186_CLK_PLLE>;
-+		clock-names = "xusb_host", "xusb_falcon_src", "xusb_ss",
-+			      "xusb_ss_src", "xusb_hs_src", "xusb_fs_src",
-+			      "pll_u_480m", "clk_m", "pll_e";
-+
-+		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBC>,
-+				<&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
-+		power-domain-names = "xusb_host", "xusb_ss";
-+		nvidia,xusb-padctl = <&padctl>;
-+
-+		status = "disabled";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++		phys = <&{/padctl@3520000/pads/usb2/lanes/usb2-0}>,
++		       <&{/padctl@3520000/pads/usb2/lanes/usb2-1}>,
++		       <&{/padctl@3520000/pads/usb3/lanes/usb3-0}>;
++		phy-names = "usb2-0", "usb2-1", "usb3-0";
 +	};
 +
- 	fuse@3820000 {
- 		compatible = "nvidia,tegra186-efuse";
- 		reg = <0x0 0x03820000 0x0 0x10000>;
+ 	pcie@10003000 {
+ 		status = "okay";
+ 
+@@ -182,5 +269,33 @@
+ 
+ 			vin-supply = <&vdd_5v0_sys>;
+ 		};
++
++		vdd_usb0: regulator@102 {
++			compatible = "regulator-fixed";
++			reg = <102>;
++
++			regulator-name = "VDD_USB0";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++
++			gpio = <&gpio TEGRA_MAIN_GPIO(L, 4) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++
++			vin-supply = <&vdd_5v0_sys>;
++		};
++
++		vdd_usb1: regulator@103 {
++			compatible = "regulator-fixed";
++			reg = <103>;
++
++			regulator-name = "VDD_USB1";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++
++			gpio = <&gpio TEGRA_MAIN_GPIO(L, 5) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++
++			vin-supply = <&vdd_5v0_sys>;
++		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index 89a2da46efae..952062f0b9a9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -291,7 +291,7 @@
+ 						regulator-boot-on;
+ 					};
+ 
+-					ldo0 {
++					vdd_1v8_pll: ldo0 {
+ 						regulator-name = "VDD_1V8_AP_PLL";
+ 						regulator-min-microvolt = <1800000>;
+ 						regulator-max-microvolt = <1800000>;
+@@ -360,10 +360,21 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		vdd_5v0_sys: regulator@0 {
++		gnd: regulator@0 {
+ 			compatible = "regulator-fixed";
+ 			reg = <0>;
+ 
++			regulator-name = "GND";
++			regulator-min-microvolt = <0>;
++			regulator-max-microvolt = <0>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		vdd_5v0_sys: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++
+ 			regulator-name = "VDD_5V0_SYS";
+ 			regulator-min-microvolt = <5000000>;
+ 			regulator-max-microvolt = <5000000>;
+@@ -371,9 +382,9 @@
+ 			regulator-boot-on;
+ 		};
+ 
+-		vdd_1v8_ap: regulator@1 {
++		vdd_1v8_ap: regulator@2 {
+ 			compatible = "regulator-fixed";
+-			reg = <1>;
++			reg = <2>;
+ 
+ 			regulator-name = "VDD_1V8_AP";
+ 			regulator-min-microvolt = <1800000>;
 -- 
 2.21.0
