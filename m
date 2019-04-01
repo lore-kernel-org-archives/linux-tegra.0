@@ -1,47 +1,59 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V3 05/10] arm64: tegra: fix default tap and trim values
-Date: Mon, 1 Apr 2019 17:42:58 +0000
-Message-ID: <BYAPR12MB339845B4C5A37468841E256AC2550@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1552513552-23423-1-git-send-email-skomatineni@nvidia.com>
- <1552513552-23423-5-git-send-email-skomatineni@nvidia.com>
- <CAPDyKFq4ZVaMmvefuVqGs84E7xg5VgvU-Ecq1MYJdmBhuEm7xA@mail.gmail.com>
- <BYAPR12MB3398F91B190D9B1C56FDC4F7C2420@BYAPR12MB3398.namprd12.prod.outlook.com>
+Subject: RE: [PATCH V1 19/26] DT bindings: spi: add spi client device
+ properties
+Date: Mon, 1 Apr 2019 17:59:57 +0000
+Message-ID: <BYAPR12MB3398F515727D46DE21C54FD6C2550@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1553666207-11414-1-git-send-email-skomatineni@nvidia.com>
+ <1553666207-11414-19-git-send-email-skomatineni@nvidia.com>
+ <20190401073723.GH2059@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BYAPR12MB3398F91B190D9B1C56FDC4F7C2420@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <20190401073723.GH2059@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Harjani Ritesh <riteshh@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+ID4NCj4gPiA+IERlZmF1bHQgdGFwIGFuZCB0cmltIHZhbHVlcyBhcmUgaW5jb3JyZWN0IGZv
-ciBUZWdyYTE4NiBTRE1NQzQuDQo+ID4gPiBUaGlzIHBhdGNoIGZpeGVzIGl0Lg0KPiA+ID4NCj4g
-PiA+IFRlc3RlZC1ieTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQo+ID4gPiBT
-aWduZWQtb2ZmLWJ5OiBTb3dqYW55YSBLb21hdGluZW5pIDxza29tYXRpbmVuaUBudmlkaWEuY29t
-Pg0KPiA+DQo+ID4gSXMgdGhpcyBhIGZpeCBhbmQvb3IgZm9yIHN0YWJsZT8NCj4gPg0KPiA+IElu
-IGVpdGhlciBjYXNlLCBJIGFtIGxlYXZpbmcgdGhpcyBmb3IgYXJtLXNvYy4NCj4gPg0KPiA+IEtp
-bmQgcmVnYXJkcw0KPiA+IFVmZmUNCj4gPg0KPg0KPiBUaGFua3MgVWZmZS4gWWVzIHRoaXMgaXMg
-YXBwbGljYWJsZSBmb3Igc3RhYmxlLg0KDQpJIGRvbuKAmXQgc2VlIGFueSBjb25maXJtYXRpb24g
-b2YgdGhpcyBiZWluZyBhcHBsaWVkIGJ5IGFybS1zb2MuDQpTbyB0aG91Z2h0IHRvIHJlLWNoZWNr
-IGlmIHRoaXMgaXMgYXBwbGllZD8NCg0KPiA+ID4gLS0tDQo+ID4gPiAgYXJjaC9hcm02NC9ib290
-L2R0cy9udmlkaWEvdGVncmExODYuZHRzaSB8IDQgKystLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2Vk
-LCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kgDQo+ID4gPiBiL2Fy
-Y2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kNCj4gPiA+IGluZGV4IDk3YWVi
-OTQ2ZWQ1ZS4uNDcyZjU1ZmU5NDg4IDEwMDY0NA0KPiA+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290
-L2R0cy9udmlkaWEvdGVncmExODYuZHRzaQ0KPiA+ID4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0
-cy9udmlkaWEvdGVncmExODYuZHRzaQ0KPiA+ID4gQEAgLTMxNyw4ICszMTcsOCBAQA0KPiA+ID4g
-ICAgICAgICAgICAgICAgIG52aWRpYSxwYWQtYXV0b2NhbC1wdWxsLWRvd24tb2Zmc2V0LTF2OC10
-aW1lb3V0ID0gPDB4MGE+Ow0KPiA+ID4gICAgICAgICAgICAgICAgIG52aWRpYSxwYWQtYXV0b2Nh
-bC1wdWxsLXVwLW9mZnNldC0zdjMtdGltZW91dCA9IDwweDBhPjsNCj4gPiA+ICAgICAgICAgICAg
-ICAgICBudmlkaWEscGFkLWF1dG9jYWwtcHVsbC1kb3duLW9mZnNldC0zdjMtdGltZW91dCA9IDww
-eDBhPjsNCj4gPiA+IC0gICAgICAgICAgICAgICBudmlkaWEsZGVmYXVsdC10YXAgPSA8MHg1PjsN
-Cj4gPiA+IC0gICAgICAgICAgICAgICBudmlkaWEsZGVmYXVsdC10cmltID0gPDB4OT47DQo+ID4g
-PiArICAgICAgICAgICAgICAgbnZpZGlhLGRlZmF1bHQtdGFwID0gPDB4OT47DQo+ID4gPiArICAg
-ICAgICAgICAgICAgbnZpZGlhLGRlZmF1bHQtdHJpbSA9IDwweDU+Ow0KPiA+ID4gICAgICAgICAg
-ICAgICAgIG52aWRpYSxkcXMtdHJpbSA9IDw2Mz47DQo+ID4gPiAgICAgICAgICAgICAgICAgbW1j
-LWhzNDAwLTFfOHY7DQo+ID4gPiAgICAgICAgICAgICAgICAgc3RhdHVzID0gImRpc2FibGVkIjsN
-Cj4gPiA+IC0tDQo+ID4gPiAyLjcuNA0KPiA+ID4NCg==
+> On Tue, Mar 26, 2019 at 10:56:40PM -0700, Sowjanya Komatineni wrote:
+> > This patch adds below cs timing properties to allow SPI master=20
+> > configuring setup, hold and time interval between two SPI transactions=
+=20
+> > to meet specific SPI client device requirements.
+> >  CS setup time
+> >  CS hold time
+> >  CS inactive delay
+> > DKIM-Signature: v=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dnvidia.=
+com; s=3Dn1;
+> > 	t=3D1553666253; bh=3DTbJVgRAIkjok3TkKNkfcvYc4WGyZhOpiH6sUZvadGrQ=3D;
+> > 	h=3DX-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+> > 	 In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+> > 	 Content-Type;
+> > 	b=3DTud9guY5XCzkjKA2k2n0+xO/vTfMTNhH1e0viAyYmlgoG/j+uSBAAmOeZucVUlmEa
+> > 	 rwqxlSm+rkYMUfgSWqmJXqEjgRIAqMhA32FOJmhgpblGwYUR22hnbdhbk4TcqMNsIO
+>
+> Something got corrupted?
+
+Possible. Will re-send anyway with your feedback fixes.
+
+> > +spi-client device controller properties:
+> > +- nvidia,cs-setup-clk-count: CS setup timing parameter.
+> > +- nvidia,cs-hold-clk-count: CS hold timing parameter.
+> > +- nvidia,cs-inactive-cycles: CS inactive delay in terms of clock=20
+> > +between
+> > +  transfers.
+>
+> Why are these being done as nVidia specific properties rather than generi=
+c ones and why are these being configured in DT rather than by the client d=
+river?  If the devices have particular timing requirements for chip select =
+presumably that's going to apply no matter what controller or system they'r=
+e used with so it seems best to configure this in the client driver and hav=
+e an API that any controller can implement.
+
+These are implemented thru DT as Tegra SPI is master and master controls th=
+e timing.
+Some SPI slaves have specific requirements of certain CS setup/hold time an=
+d inactive cycles which SPI master should meet when driving during transfer=
+ and Tegra SPI controller supports tuning these parameters.
