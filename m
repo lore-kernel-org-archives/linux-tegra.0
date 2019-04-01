@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 3/6] usb: host: xhci-tegra: Add Tegra186 XUSB support
-Date: Mon,  1 Apr 2019 12:40:47 +0200
-Message-ID: <20190401104050.31355-4-thierry.reding@gmail.com>
+Subject: [PATCH v2 6/6] arm64: tegra: Remove regulator hacks on Jetson TX2
+Date: Mon,  1 Apr 2019 12:40:50 +0200
+Message-ID: <20190401104050.31355-7-thierry.reding@gmail.com>
 References: <20190401104050.31355-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,61 +9,97 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190401104050.31355-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-This commit adds Tegra186 XUSB host mode controller support. This is
-very similar to the existing support for Tegra124 and Tegra210, except
-that the number of ports and PHYs differs and the IPFS wrapper being
-gone.
+Various regulators were marked as always-on for Jetson TX2. At this
+point, all of the regulators are properly hooked up, so this workaround
+is no longer required.
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/usb/host/xhci-tegra.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 23 -------------------
+ 1 file changed, 23 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 4d133bbabdda..294158113d62 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1423,9 +1423,34 @@ static const struct tegra_xusb_soc tegra210_soc = {
- };
- MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index 952062f0b9a9..64686b033c38 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -268,43 +268,30 @@
+ 						regulator-name = "AVDD_DSI_CSI_1V2";
+ 						regulator-min-microvolt = <1200000>;
+ 						regulator-max-microvolt = <1200000>;
+-						/* XXX */
+-						regulator-always-on;
+-						regulator-boot-on;
+ 					};
  
-+static const char * const tegra186_supply_names[] = {
-+};
-+
-+static const struct tegra_xusb_phy_type tegra186_phy_types[] = {
-+	{ .name = "usb3", .num = 3, },
-+	{ .name = "usb2", .num = 3, },
-+	{ .name = "hsic", .num = 1, },
-+};
-+
-+static const struct tegra_xusb_soc tegra186_soc = {
-+	.firmware = "nvidia/tegra186/xusb.bin",
-+	.supply_names = tegra186_supply_names,
-+	.num_supplies = ARRAY_SIZE(tegra186_supply_names),
-+	.phy_types = tegra186_phy_types,
-+	.num_types = ARRAY_SIZE(tegra186_phy_types),
-+	.ports = {
-+		.usb3 = { .offset = 0, .count = 3, },
-+		.usb2 = { .offset = 3, .count = 3, },
-+		.hsic = { .offset = 6, .count = 1, },
-+	},
-+	.scale_ss_clock = false,
-+	.has_ipfs = false,
-+};
-+
- static const struct of_device_id tegra_xusb_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
- 	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
-+	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
+ 					vdd_1v8: sd2 {
+ 						regulator-name = "VDD_1V8";
+ 						regulator-min-microvolt = <1800000>;
+ 						regulator-max-microvolt = <1800000>;
+-						/* XXX */
+-						regulator-always-on;
+-						regulator-boot-on;
+ 					};
+ 
+ 					vdd_3v3_sys: sd3 {
+ 						regulator-name = "VDD_3V3_SYS";
+ 						regulator-min-microvolt = <3300000>;
+ 						regulator-max-microvolt = <3300000>;
+-						/* XXX */
+-						regulator-always-on;
+-						regulator-boot-on;
+ 					};
+ 
+ 					vdd_1v8_pll: ldo0 {
+ 						regulator-name = "VDD_1V8_AP_PLL";
+ 						regulator-min-microvolt = <1800000>;
+ 						regulator-max-microvolt = <1800000>;
+-						/* XXX */
+-						regulator-always-on;
+-						regulator-boot-on;
+ 					};
+ 
+ 					ldo2 {
+ 						regulator-name = "VDDIO_3V3_AOHV";
+ 						regulator-min-microvolt = <3300000>;
+ 						regulator-max-microvolt = <3300000>;
+-						/* XXX */
+ 						regulator-always-on;
+ 						regulator-boot-on;
+ 					};
+@@ -331,18 +318,12 @@
+ 						regulator-name = "VDD_HDMI_1V05";
+ 						regulator-min-microvolt = <1050000>;
+ 						regulator-max-microvolt = <1050000>;
+-						/* XXX */
+-						regulator-always-on;
+-						regulator-boot-on;
+ 					};
+ 
+ 					vdd_pex: ldo8 {
+ 						regulator-name = "VDD_PEX_1V05";
+ 						regulator-min-microvolt = <1050000>;
+ 						regulator-max-microvolt = <1050000>;
+-						/* XXX */
+-						regulator-always-on;
+-						regulator-boot-on;
+ 					};
+ 				};
+ 			};
+@@ -390,10 +371,6 @@
+ 			regulator-min-microvolt = <1800000>;
+ 			regulator-max-microvolt = <1800000>;
+ 
+-			/* XXX */
+-			regulator-always-on;
+-			regulator-boot-on;
+-
+ 			gpio = <&pmic 1 GPIO_ACTIVE_HIGH>;
+ 			enable-active-high;
+ 
 -- 
 2.21.0
