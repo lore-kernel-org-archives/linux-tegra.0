@@ -1,31 +1,31 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH 05/10] dt-bindings: PCI: tegra: Add device tree support
  for T194
-Date: Mon, 1 Apr 2019 16:31:38 +0200
-Message-ID: <20190401143138.GA4874@ulmo>
+Date: Mon, 1 Apr 2019 17:07:40 +0200
+Message-ID: <20190401150740.GB4874@ulmo>
 References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
  <1553613207-3988-6-git-send-email-vidyas@nvidia.com>
- <5ca06149.1c69fb81.720fd.79e1@mx.google.com>
- <5ef50168-2476-1088-7156-8a4488d7a2e1@nvidia.com>
+ <20190328131508.GB5518@ulmo>
+ <e5a12742-2dfa-e8c8-2a29-24838f4fa939@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+        protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5ef50168-2476-1088-7156-8a4488d7a2e1@nvidia.com>
+In-Reply-To: <e5a12742-2dfa-e8c8-2a29-24838f4fa939@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Vidya Sagar <vidyas@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, bhelgaas@google.com, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.com, shawn.lin@rock-chips.com, xiaowei.bao@nxp.com, linux
+Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.com, shawn.lin@rock-chips.com, xiaowei.bao@nxp.com, linux-pci@vger.kernel.or
 List-Id: linux-tegra@vger.kernel.org
 
 
---y0ulUmNC+osPPQO6
+--H1spWtNR+x+ondvy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 01, 2019 at 04:48:42PM +0530, Vidya Sagar wrote:
-> On 3/31/2019 12:12 PM, Rob Herring wrote:
+On Mon, Apr 01, 2019 at 03:31:54PM +0530, Vidya Sagar wrote:
+> On 3/28/2019 6:45 PM, Thierry Reding wrote:
 > > On Tue, Mar 26, 2019 at 08:43:22PM +0530, Vidya Sagar wrote:
 > > > Add support for Tegra194 PCIe controllers. These controllers are based
 > > > on Synopsys DesignWare core IP.
@@ -73,26 +73,34 @@ used for
 > > > +             Translation Unit's (iATU) out bound region) and also to=
  map
 > > > +             prefetchable/non-prefetchable BARs.
-> >=20
-> > This is usually represented in 'ranges' for BARs.
-> I added window1 and window2 as the umbrella apertures that each PCIe cont=
-roller has
-> and gave a description of how each aperture *can* be used. This is an ove=
-rview and as
-> such these two entries are not directly used by the driver.
-> 'ranges' property gives us the information as to how exactly are window1 =
-and window2
-> apertures used.
-> Thierry Reding also gave few comments about these entries. If this is con=
-fusing,
-> I'm ok to remove them as well. Please let me know.
-
-If all you want to do is document how these are used, it may be better
-to enhance the device tree bindings for the ranges property if it does
-not describe this fully enough yet, or add comments in the DT nodes to
-clarify.
-
 > > > +  "config": As per the definition in designware-pcie.txt
+> >=20
+> > I see that you set this to a 256 KiB region for all controllers. Since
+> > each function can have up to 4 KiB of extended configuration space, that
+> > means you have space to address:
+> >=20
+> >      256 KiB =3D 4 KiB * 8 functions * 8 devices
+> >=20
+> > Each bus can have up to 32 devices (including the root port) and there
+> > can be 256 busses, so I wonder how this is supposed to work. How does
+> > the mapping work for configuration space? Does the controller allow
+> > moving this 256 KiB window around so that more devices' configuration
+> > space can be accessed?
+> We are not using ECAM here instead only pick 4KB region from this 256 KB =
+region
+> and program iATU (internal Address Translation Unit) of PCIe with the B:D=
+:F of
+> the configuration space that is of interest to be able to view the respec=
+tive
+> config space in that 4KB space. It is a hardware requirement to reserve 2=
+56KB of
+> space (though we use only 4K to access configuration space of any downstr=
+eam B:D:F)
+
+Okay, sounds good. I'm wondering if we should maybe note here that
+window1 needs to be a 256 KiB window if that's what the hardware
+requires.
+
 > > > +  "atu_dma": iATU and DMA register. This is where the iATU (internal=
  Address
 > > > +             Translation Unit) registers of the PCIe core are made a=
@@ -101,6 +109,32 @@ vailable
 > > > +  "dbi": The aperture where root port's own configuration registers =
 are
 > > > +         available
+> >=20
+> > This is slightly confusing because you already said in the description
+> > of "window1" that it is used to access the configuration space of the
+> > root port itself.
+> >=20
+> > Is the root port configuration space available via the regular
+> > configuration space registers?
+> Root port configuration space is hidden by default and 'dbi' property tel=
+ls us
+> where we would like to *view* it. For this, we use a portion of window-1 =
+aperture
+> and use it as 'dbi' base to *view* the config space of root port.
+> Basically Window-1 and window-2 are the umbrella entries (which I added b=
+ased on
+> suggestion from Stephen Warren <swarren@nvidia.com> ) to give a complete =
+picture of
+> number of apertures available and what they are used for. The windows 1 &=
+ 2 as such
+> are not used by the driver directly.
+
+So I'm not exactly sure I understand how this works. Does the "dbi"
+entry contain a physical address and size of the aperture that we want
+to map into a subregion of "window-1"? Is this part of a region where
+similar subregions exist for all of the controllers? Could the offset
+into such a region be derived from the controller ID?
+
 > > > +  "window2": This is the larger (compared to window1) aperture avail=
 able above
 > > > +             4GB boundary (i.e. in 64-bit space). This is typically =
@@ -154,16 +188,35 @@ etailed
 > > > +  See ../clocks/clock-bindings.txt for details.
 > > > +- clock-names: Must include the following entries:
 > > > +  - core_clk
+> >=20
+> > It's redundant to name a clock _clk. Is this already required by the
+> > standard Designware bindings or is this new?
+> This is a new entry and not a standard Designware binding. I'll remove _c=
+lk
+> from the name in the next patch series.
+>=20
+> >=20
 > > > +- resets: Must contain an entry for each entry in reset-names.
 > > > +  See ../reset/reset.txt for details.
 > > > +- reset-names: Must include the following entries:
 > > > +  - core_apb_rst
 > > > +  - core_rst
+> >=20
+> > Same comment as for clock-names.
+> I'll take of it in the next patch series
+>=20
+> >=20
 > > > +- phys: Must contain a phandle to P2U PHY for each entry in phy-name=
 s.
 > > > +- phy-names: Must include an entry for each active lane.
 > > > +  "pcie-p2u-N": where N ranges from 0 to one less than the total num=
 ber of lanes
+> >=20
+> > I'd leave away the "pcie-" prefix since the surrounding context already
+> > makes it clear that this is for PCIe.
+> I'll take of it in the next patch series
+>=20
+> >=20
 > > > +- Controller dependent register offsets
 > > > +  - nvidia,event-cntr-ctrl: EVENT_COUNTER_CONTROL reg offset
 > > > +      0x168 - FPGA
@@ -182,6 +235,14 @@ ber of lanes
 > > > +      0x3 - C3
 > > > +      0x4 - C4
 > > > +      0x5 - C5
+> >=20
+> > It's redundant to have both a controller ID and parameterized register
+> > offsets based on that controller ID. I would recommend keeping the
+> > controller ID and then moving the register offsets to the driver and
+> > decide based on the controller ID.
+> Ok. I'll take of it in the next patch series
+>=20
+> >=20
 > > > +- vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
 > > > +
 > > > +Optional properties:
@@ -195,32 +256,6 @@ ber of lanes
 > > > +    2 - Gen-2 (5 GT/s)
 > > > +    3 - Gen-3 (8 GT/s)
 > > > +    4 - Gen-4 (16 GT/s)
-> >=20
-> > Don't we have standard speed properties?
-> Not that I'm aware of. If you come across any, please do let me know and
-> I'll change these.
-
-See Documentation/devicetree/bindings/pci/pci.txt, max-link-speed.
-There's a standard of_pci_get_max_link_speed() property that reads it
-=66rom device tree.
-
-> > Why do we need 2 values?
-> max-speed configures the controller to advertise the speed mentioned thro=
-ugh
-> this flag, whereas, init-speed gets the link up at this speed and software
-> can further take the link speed to a different speed by retraining the li=
-nk.
-> This is to give flexibility to developers depending on the platform.
-
-This seems to me like overcomplicating things. Couldn't we do something
-like start in the slowest mode by default and then upgrade if endpoints
-support higher speeds?
-
-I'm assuming that the maximum speed is already fixed by the IP hardware
-instantiation, so why would we want to limit it additionally? Similarly,
-what's the use-case for setting the initial link speed to something
-other than the lowest speed?
-
 > > > +- nvidia,disable-aspm-states : controls advertisement of ASPM states
 > > > +    bit-0 to '1' : disables advertisement of ASPM-L0s
 > > > +    bit-1 to '1' : disables advertisement of ASPM-L1. This also disa=
@@ -229,20 +264,31 @@ bles
 > > > +    bit-2 to '1' : disables advertisement of ASPM-L1.1
 > > > +    bit-3 to '1' : disables advertisement of ASPM-L1.2
 > >=20
-> > Seems like these too should be common.
-> This flag controls the advertisement of different ASPM states by root por=
-t.
-> Again, I'm not aware of any common method for this.
+> > These seem more like configuration options rather than hardware
+> > description.
+> Yes. Since the platforms like Jetson-Xavier based on T194 are going to go=
+ in
+> open market, we are providing these configuration options and hence they =
+are
+> optional
 
-rockchip-pcie-host.txt documents an "aspm-no-l0s" property that prevents
-the root complex from advertising L0s. Sounds like maybe following a
-similar scheme would be best for consistency. I think we'll also want
-these to be non-NVIDIA specific, so drop the "nvidia," prefix and maybe
-document them in pci.txt so that they can be more broadly used.
+Under what circumstances would we want to disable certain ASPM states?
+My understanding is that PCI device drivers can already disable
+individual ASPM states if they don't support them, so why would we ever
+want to disable advertisement of certain ASPM states?
 
 > > > +- nvidia,disable-clock-request : gives a hint to driver that there i=
 s no
 > > > +    CLKREQ signal routing on board
+
+Sounds like this could be useful for designs other than Tegra, so maybe
+remove the "nvidia," prefix? The name also doesn't match the description
+very well. "disable" kind of implies that we want to disable this
+feature despite it being available. However, what we really want to
+express here is that there's no CLKREQ signal on a design at all. So
+perhaps it would be better to invert this and add a property named
+"supports-clock-request" on boards where we have a CLKREQ signal.
+
 > > > +- nvidia,update-fc-fixup : needs it to improve perf when a platform =
 is designed
 > > > +    in such a way that it satisfies at least one of the following co=
@@ -251,20 +297,55 @@ nditions
 nd MPS)
 > > > +    2. If C0/C1/C2/C3/C4/C5 operate at their respective max link wid=
 ths and
-> >=20
-> > What is Cx?
-> Cx is the Controller with its ID.
->=20
-> >=20
 > > > +       a) speed is Gen-2 and MPS is 256B
 > > > +       b) speed is >=3D Gen-3 with any MPS
+> >=20
+> > If we know these conditions, can we not determine that the fixup is
+> > needed at runtime?
+> Not really. The programming that should take place based on these flags n=
+eed to
+> happen before PCIe link up and if we were to find them during run time, w=
+e can do
+> that only after the link is up. So, to avoid this chicken and egg situati=
+on, these
+> are passed as DT options
+
+Might be worth explaining what FC is in this context. Also, perhaps
+explain how and why setting this would improve performance. You're also
+not explicit here what the type of the property is. From the context it
+sounds like it's just a boolean, but you may want to spell that out.
+
 > > > +- nvidia,cdm-check : Enables CDM checking. For more information, ref=
 er Synopsis
 > > > +    DesignWare Cores  PCI Express Controller Databook r4.90a Chapter=
  S.4
+
+If this is documented in the DesignWare documentation, why not make this
+a generic property that applies to all DesignWare instantiations? Might
+also be worth giving a one or two sentence description of what this is
+so that people don't have to go look at the databook.
+
+> > Why should this be configurable through device tree?
+> This is a hardware feature for safety and can be enabled if required. So,=
+ I made it
+> as an optional feature that can be controlled through DT.
+>=20
+> >=20
 > > > +- nvidia,enable-power-down : Enables power down of respective contro=
 ller and
 > > > +    corresponding PLLs if they are not shared by any other entity
+> >=20
+> > Wouldn't we want this to be the default? Why keep things powered up if
+> > they are not needed?
+> There could be platforms (automotive based), where it is not required to =
+power down
+> controllers and hence needed a flag to control powering down of controlle=
+rs
+
+Is it harmful to power down the controllers on such platforms? It
+strikes me as odd to leave something enabled if it isn't needed,
+independent of the platform.
+
 > > > +- "nvidia,pex-wake" : Add PEX_WAKE gpio number to provide wake suppo=
 rt.
 > > > +- "nvidia,plat-gpios" : Add gpio number that needs to be configured =
@@ -275,53 +356,252 @@ ing 3.3V and
  all such
 > > > +   GPIOs can be specified through this property.
 > >=20
-> > These should be split out to their specific function.
-> Enabling Power rails is just an example and depending on the platform, th=
-ere could be
-> some on-board muxes which are controlled through GPIOs and all such platf=
-orm specific
-> configuration can be handled through this flag.
+> > For power supplies we usually use the regulator bindings. Are there any
+> > other cases where we'd need this?
+> Enabling power supplies is just one example, but there could be platforms=
+ where
+> programming of some GPIOs should happen (to configure muxes properly on P=
+CB etc...)
+> before going for enumeration. All such GPIOs can be passed through this D=
+T option.
 
-Doing this via a "generic" GPIO binding is bound to break at some point.
-What if at some point one of those muxes needs additional power, perhaps
-controlled through an I2C regulator? Or if the mux requires multiple
-GPIOs for the correct configuration? How do you allow the mux to be
-reconfigured to one of the other options?
+As explained in the other subthread, I think it's better to model these
+properly to make sure we have the flexibility that we need. One mux may
+be controlled by a GPIO, another may be connected to I2C.
 
-If all you have is a generic GPIO consumer of GPIOs there's not enough
-context for the driver to do anything with these GPIOs other than
-perhaps setting them to a specific value at probe time. In that case you
-could achieve the same thing using a gpio-hog.
+> > > +- "nvidia,aspm-cmrt" : Common Mode Restore time for proper operation=
+ of ASPM to
+> > > +   be specified in microseconds
+> > > +- "nvidia,aspm-pwr-on-t" : Power On time for proper operation of ASP=
+M to be
+> > > +   specified in microseconds
+> > > +- "nvidia,aspm-l0s-entrance-latency" : ASPM L0s entrance latency to =
+be specified
+> > > +   in microseconds
+> > > +
+> > > +Examples:
+> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > +
+> > > +Tegra194:
+> > > +--------
+> > > +
+> > > +SoC DTSI:
+> > > +
+> > > +	pcie@14180000 {
+> > > +		compatible =3D "nvidia,tegra194-pcie", "snps,dw-pcie";
+> >=20
+> > It doesn't seem to me like claiming compatibility with "snps,dw-pcie" is
+> > correct. There's a bunch of NVIDIA- or Tegra-specific properties below
+> > and code in the driver. Would this device be able to function if no
+> > driver was binding against the "nvidia,tegra194-pcie" compatible string?
+> > Would it work if you left that out? I don't think so, so we should also
+> > not list it here.
+> It is required for designware specific code to work properly. It is speci=
+fied
+> by ../designware-pcie.txt file
 
-I think we need to identify what the various uses for these can be and
-then find the right bindings (or come up with new ones) to properly
-describe the actual hardware. Otherwise we're going to paint ourselves
-into a corner.
+That sounds like a bug to me. Why does the driver need that? I mean the
+Tegra instantiation clearly isn't going to work if the driver matches on
+that compatible string, so by definition it is not compatible.
 
-Are there any use-cases besides regulators and muxes? For regulators we
-already have fixed and GPIO regulators, and for muxes there are a number
-of bindings defined in Documentation/devicetree/bindings/mux.
+Rob, was this intentional? Seems like all other users of the DesignWare
+PCIe core use the same scheme, so perhaps I'm missing something?
+
+> > > +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
+> > > +		reg =3D <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)=
+      */
+> > > +		       0x00 0x38000000 0x0 0x00040000   /* configuration space (25=
+6K) */
+> > > +		       0x00 0x38040000 0x0 0x00040000>; /* iATU_DMA reg space (256=
+K)  */
+> > > +		reg-names =3D "appl", "config", "atu_dma";
+> > > +
+> > > +		status =3D "disabled";
+> > > +
+> > > +		#address-cells =3D <3>;
+> > > +		#size-cells =3D <2>;
+> > > +		device_type =3D "pci";
+> > > +		num-lanes =3D <8>;
+> > > +		linux,pci-domain =3D <0>;
+> > > +
+> > > +		clocks =3D <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
+> > > +		clock-names =3D "core_clk";
+> > > +
+> > > +		resets =3D <&bpmp TEGRA194_RESET_PEX0_CORE_0_APB>,
+> > > +			 <&bpmp TEGRA194_RESET_PEX0_CORE_0>;
+> > > +		reset-names =3D "core_apb_rst", "core_rst";
+> > > +
+> > > +		interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,	/* controller int=
+errupt */
+> > > +			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+> > > +		interrupt-names =3D "intr", "msi";
+> > > +
+> > > +		#interrupt-cells =3D <1>;
+> > > +		interrupt-map-mask =3D <0 0 0 0>;
+> > > +		interrupt-map =3D <0 0 0 0 &gic 0 72 0x04>;
+> > > +
+> > > +		nvidia,bpmp =3D <&bpmp>;
+> > > +
+> > > +		nvidia,max-speed =3D <4>;
+> > > +		nvidia,disable-aspm-states =3D <0xf>;
+> > > +		nvidia,controller-id =3D <&bpmp 0x0>;
+> >=20
+> > Why is there a reference to the BPMP in this propert?
+> Ultimately Controller-ID is passed to BPMP-FW and a BPMP handle is requir=
+ed for that
+> which gets derived from this BPMP phandle.
+
+The binding doesn't say that the nvidia,controller-id is a (phandle, ID)
+pair. Also, you already have the nvidia,bpmp property that contains the
+phandle, although you don't describe that property in the binding above.
+I think you need to either get rid of the nvidia,bpmp property or drop
+the &bpmp phandle from the nvidia,controller-id property.
+
+My preference is the latter because the controller ID is really
+independent of the BPMP firmware, even if it may be used as part of a
+call to the BPMP firmware.
+
+> > > +		nvidia,aux-clk-freq =3D <0x13>;
+> > > +		nvidia,preset-init =3D <0x5>;
+> >=20
+> > aux-clk-freq and preset-init are not defined in the binding above.
+> Ok. I'll take of it in the next patch series
+>=20
+> >=20
+> > > +		nvidia,aspm-cmrt =3D <0x3C>;
+> > > +		nvidia,aspm-pwr-on-t =3D <0x14>;
+> > > +		nvidia,aspm-l0s-entrance-latency =3D <0x3>;
+> >=20
+> > These should be in decimal notation to make them easier to deal with. I
+> > don't usually read time in hexadecimal.
+> Ok. I'll take of it in the next patch series
+>=20
+> >=20
+> > > +
+> > > +		bus-range =3D <0x0 0xff>;
+> > > +		ranges =3D <0x81000000 0x0 0x38100000 0x0 0x38100000 0x0 0x0010000=
+0      /* downstream I/O (1MB) */
+> > > +			  0x82000000 0x0 0x38200000 0x0 0x38200000 0x0 0x01E00000      /*=
+ non-prefetchable memory (30MB) */
+> > > +			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /*=
+ prefetchable memory (16GB) */
+> > > +
+> > > +		nvidia,cfg-link-cap-l1sub =3D <0x1c4>;
+> > > +		nvidia,cap-pl16g-status =3D <0x174>;
+> > > +		nvidia,cap-pl16g-cap-off =3D <0x188>;
+> > > +		nvidia,event-cntr-ctrl =3D <0x1d8>;
+> > > +		nvidia,event-cntr-data =3D <0x1dc>;
+> > > +		nvidia,dl-feature-cap =3D <0x30c>;
+> >=20
+> > These are not defined in the binding above.
+> Ok. I'll take of it in the next patch series
+>=20
+> >=20
+> > > +	};
+> > > +
+> > > +Board DTS:
+> > > +
+> > > +	pcie@14180000 {
+> > > +		status =3D "okay";
+> > > +
+> > > +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
+> > > +
+> > > +		phys =3D <&p2u_2>,
+> > > +		       <&p2u_3>,
+> > > +		       <&p2u_4>,
+> > > +		       <&p2u_5>;
+> > > +		phy-names =3D "pcie-p2u-0", "pcie-p2u-1", "pcie-p2u-2",
+> > > +			    "pcie-p2u-3";
+> > > +	};
+> > > diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.t=
+xt b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+> >=20
+> > Might be better to split this into a separate patch.
+> Done.
+>=20
+> >=20
+> > > new file mode 100644
+> > > index 000000000000..cc0de8e8e8db
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+> > > @@ -0,0 +1,34 @@
+> > > +NVIDIA Tegra194 P2U binding
+> > > +
+> > > +Tegra194 has two PHY bricks namely HSIO (High Speed IO) and NVHS (NV=
+IDIA High
+> > > +Speed) each interfacing with 12 and 8 P2U instances respectively.
+> > > +A P2U instance is a glue logic between Synopsys DesignWare Core PCIe=
+ IP's PIPE
+> > > +interface and PHY of HSIO/NVHS bricks. Each P2U instance represents =
+one PCIe
+> > > +lane.
+> > > +
+> > > +Required properties:
+> > > +- compatible: For Tegra19x, must contain "nvidia,tegra194-phy-p2u".
+> >=20
+> > Isn't the "phy-" implied by "p2u"? The name of the hardware block is
+> > "Tegra194 P2U", so that "phy-" seems gratuitous to me.
+> Done.
+>=20
+> >=20
+> > > +- reg: Should be the physical address space and length of respective=
+ each P2U
+> > > +       instance.
+> > > +- reg-names: Must include the entry "base".
+> >=20
+> > "base" is a bad name. Each of these entries will be a "base" of the
+> > given region. The name should specify what region it is the base of.
+> I'll change it to "reg_base"
+
+Each of these entries will contain a "base" address for "registers" of
+some sort. I'm thinking more along the lines of "ctl" if they are
+control registers for the P2U, or perhaps just "p2u" if there is no
+better name.
 
 Thierry
 
---y0ulUmNC+osPPQO6
+> > > +Required properties for PHY port node:
+> > > +- #phy-cells: Defined by generic PHY bindings.  Must be 0.
+> > > +
+> > > +Refer to phy/phy-bindings.txt for the generic PHY binding properties.
+> > > +
+> > > +Example:
+> > > +
+> > > +hsio-p2u {
+> > > +	compatible =3D "simple-bus";
+> > > +	#address-cells =3D <2>;
+> > > +	#size-cells =3D <2>;
+> > > +	ranges;
+> > > +	p2u_0: p2u@03e10000 {
+> > > +		compatible =3D "nvidia,tegra194-phy-p2u";
+> > > +		reg =3D <0x0 0x03e10000 0x0 0x00010000>;
+> > > +		reg-names =3D "base";
+> > > +
+> > > +		#phy-cells =3D <0>;
+> > > +	};
+> > > +}
+> > > --=20
+> > > 2.7.4
+>=20
+
+--H1spWtNR+x+ondvy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyiIMgACgkQ3SOs138+
-s6G4Ow//c2ouN9/TfXsOspnWYHVLNgOXbBG5o3mniAJLXQlGxXQVFS3jQK3ADjuu
-xwNAa7KzyQ1GrlCuYdl62yGkCee1RoVRWCL9GluNl6H1eh+g3MXByQlcbyyp14iI
-H1f37dFiW+2m+HZ5SG+sY4yGAzlMOmN4noYcBZ8NILyABayD3NnO4qiYBZhYKXBq
-w4X33Lm5VcTe/GlXCURFAI6snpu7Hav2Qw7LNmsnOj8OJ2FpqQfpbD+ggFT9w3Lg
-aeBJ8ceyMSGIztcM5+AGKo21p2Ai1Gg1MyFpEvR091/rjQ9wM+D0xWvb1YrBUxNo
-iHd3F0jH0Z24xKEc3lByRf5nGf/ndqQhPmxJ1wbakAGhLhGlz3WDw1/Bv8mvojiy
-we4oEPFey9cn4PeJRPYwH6tuUnSXGbwP0fQgAqpzXr74l+rqO4Jh4mKoyyajwuJD
-+K+3EaGZNhZkRdmFAnZjb0Hi2lKDHBBFP4y0mBmHfeNnOuyvcp8B2LMIdtGLunVl
-JQKMusmQD70kfhw1qX3BysQYviCKF4ibpw/H9g8fwbpw+dMHUx4TLIo7cpz/dm/f
-kr6hLKbuAAeI4Po/w2MCKso4MdkSW8IQ4RR9M9QS9qUnMU3VqEO7LTrudEk8Tr89
-mMEZVRH9cCZrVqIrbivxtE6iCwwJRemxyQSGJsu29G6d9BPwUic=
-=RGoc
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyiKToACgkQ3SOs138+
+s6HcFg/9FDirPn81vUdGug5i5Tl/kIK05UTNWJUoMF9QgHQkR2axrwVL+2SYFag3
+xxNaXN22p8ZxItZOLh1PU8rCnzukrofIvP29Kz8/nOs0eK/hppG4Pn2FtwqTbV9J
+l1yVbSwwcbxU2IFXMklQ4V4wBdJ02oWiHDaxgaYX5h38XjPvHdYPF9SZXnPMYzOF
+y6XkMvtXL/Moh5+Tus/f1/b47YonnRL32H5P1gsfL9FswK7I+ztBR4fPjoXYco0u
+NzFQGsbX5RcdtsMATIpXN3HKDPwNp5Thuw6hYrZjwIm3g0ukGoH4KpIJUX6pqjSn
+by5dVLyLMfPkbnpGB6GCPng2jrhWSruK5EXj3v3+bdVzSzGbQbUxqiARY8ge/jUh
+T5jzlpHdbi11JWeOYW8m/po+/BJRcM1lbkBpdiXsT8CnZ4+s9DNFhF144WdJsbAM
+Mauwo00UX13QbKQMY/9QAbGEzVZCMVysklQ4df15AJcjfN6HM9m0/7jDV239QJcS
+Al9VAgHqUc8ePu+1icOa8Jik7sOrdTvI6fQgKzznH6xuH1ma1aa1k/BJk361ajSk
+LETf1pteY+6GIzpTcs0QHcUI8dzVSR1K9eXBAafjwvr5Mx7lKW9PmtVmwG0WB5Es
+WFxe5xMjNkCCMYqslg/AomcJSWmUffXQ4cLcbtECgr4Yif7M4LE=
+=d8Nr
 -----END PGP SIGNATURE-----
 
---y0ulUmNC+osPPQO6--
+--H1spWtNR+x+ondvy--
