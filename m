@@ -1,56 +1,339 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 1/6] dt-bindings: usb: xhci-tegra: Add Tegra186 support
-Date: Mon,  1 Apr 2019 12:40:45 +0200
-Message-ID: <20190401104050.31355-2-thierry.reding@gmail.com>
-References: <20190401104050.31355-1-thierry.reding@gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH 05/10] dt-bindings: PCI: tegra: Add device tree support
+ for T194
+Date: Mon, 1 Apr 2019 16:48:42 +0530
+Message-ID: <5ef50168-2476-1088-7156-8a4488d7a2e1@nvidia.com>
+References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
+ <1553613207-3988-6-git-send-email-vidyas@nvidia.com>
+ <5ca06149.1c69fb81.720fd.79e1@mx.google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190401104050.31355-1-thierry.reding@gmail.com>
+In-Reply-To: <5ca06149.1c69fb81.720fd.79e1@mx.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, JC Kuo <jckuo@nvidia.com>
+To: Rob Herring <robh@kernel.org>
+Cc: bhelgaas@google.com, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.comsh
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 3/31/2019 12:12 PM, Rob Herring wrote:
+> On Tue, Mar 26, 2019 at 08:43:22PM +0530, Vidya Sagar wrote:
+>> Add support for Tegra194 PCIe controllers. These controllers are based
+>> on Synopsys DesignWare core IP.
+>>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>>   .../bindings/pci/nvidia,tegra194-pcie.txt          | 209 +++++++++++++++++++++
+>>   .../devicetree/bindings/phy/phy-tegra194-p2u.txt   |  34 ++++
+>>   2 files changed, 243 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>>   create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> new file mode 100644
+>> index 000000000000..31527283a0cd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> @@ -0,0 +1,209 @@
+>> +NVIDIA Tegra PCIe controller (Synopsys DesignWare Core based)
+>> +
+>> +This PCIe host controller is based on the Synopsis Designware PCIe IP
+>> +and thus inherits all the common properties defined in designware-pcie.txt.
+>> +
+>> +Required properties:
+>> +- compatible: For Tegra19x, must contain "nvidia,tegra194-pcie".
+>> +- device_type: Must be "pci"
+>> +- reg: A list of physical base address and length for each set of controller
+>> +  registers. Must contain an entry for each entry in the reg-names property.
+>> +- reg-names: Must include the following entries:
+>> +  "appl": Controller's application logic registers
+>> +  "window1": This is the aperture of controller available under 4GB boundary
+>> +             (i.e. within 32-bit space). This aperture is typically used for
+>> +             accessing config space of root port itself and also the connected
+>> +             endpoints (by appropriately programming internal Address
+>> +             Translation Unit's (iATU) out bound region) and also to map
+>> +             prefetchable/non-prefetchable BARs.
+> 
+> This is usually represented in 'ranges' for BARs.
+I added window1 and window2 as the umbrella apertures that each PCIe controller has
+and gave a description of how each aperture *can* be used. This is an overview and as
+such these two entries are not directly used by the driver.
+'ranges' property gives us the information as to how exactly are window1 and window2
+apertures used.
+Thierry Reding also gave few comments about these entries. If this is confusing,
+I'm ok to remove them as well. Please let me know.
 
-Extend the bindings to cover the set of features found in Tegra186.
+> 
+>> +  "config": As per the definition in designware-pcie.txt
+>> +  "atu_dma": iATU and DMA register. This is where the iATU (internal Address
+>> +             Translation Unit) registers of the PCIe core are made available
+>> +             fow SW access.
+>> +  "dbi": The aperture where root port's own configuration registers are
+>> +         available
+>> +  "window2": This is the larger (compared to window1) aperture available above
+>> +             4GB boundary (i.e. in 64-bit space). This is typically used for
+>> +             mapping prefetchable/non-prefetchable BARs of endpoints
+>> +- interrupts: A list of interrupt outputs of the controller. Must contain an
+>> +  entry for each entry in the interrupt-names property.
+>> +- interrupt-names: Must include the following entries:
+>> +  "intr": The Tegra interrupt that is asserted for controller interrupts
+>> +  "msi": The Tegra interrupt that is asserted when an MSI is received
+>> +- bus-range: Range of bus numbers associated with this controller
+>> +- #address-cells: Address representation for root ports (must be 3)
+>> +  - cell 0 specifies the bus and device numbers of the root port:
+>> +    [23:16]: bus number
+>> +    [15:11]: device number
+>> +  - cell 1 denotes the upper 32 address bits and should be 0
+>> +  - cell 2 contains the lower 32 address bits and is used to translate to the
+>> +    CPU address space
+>> +- #size-cells: Size representation for root ports (must be 2)
+>> +- ranges: Describes the translation of addresses for root ports and standard
+>> +  PCI regions. The entries must be 7 cells each, where the first three cells
+>> +  correspond to the address as described for the #address-cells property
+>> +  above, the fourth and fifth cells are for the physical CPU address to
+>> +  translate to and the sixth and seventh cells are as described for the
+>> +  #size-cells property above.
+>> +  - Entries setup the mapping for the standard I/O, memory and
+>> +    prefetchable PCI regions. The first cell determines the type of region
+>> +    that is setup:
+>> +    - 0x81000000: I/O memory region
+>> +    - 0x82000000: non-prefetchable memory region
+>> +    - 0xc2000000: prefetchable memory region
+>> +  Please refer to the standard PCI bus binding document for a more detailed
+>> +  explanation.
+>> +- #interrupt-cells: Size representation for interrupts (must be 1)
+>> +- interrupt-map-mask and interrupt-map: Standard PCI IRQ mapping properties
+>> +  Please refer to the standard PCI bus binding document for a more detailed
+>> +  explanation.
+>> +- clocks: Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names: Must include the following entries:
+>> +  - core_clk
+>> +- resets: Must contain an entry for each entry in reset-names.
+>> +  See ../reset/reset.txt for details.
+>> +- reset-names: Must include the following entries:
+>> +  - core_apb_rst
+>> +  - core_rst
+>> +- phys: Must contain a phandle to P2U PHY for each entry in phy-names.
+>> +- phy-names: Must include an entry for each active lane.
+>> +  "pcie-p2u-N": where N ranges from 0 to one less than the total number of lanes
+>> +- Controller dependent register offsets
+>> +  - nvidia,event-cntr-ctrl: EVENT_COUNTER_CONTROL reg offset
+>> +      0x168 - FPGA
+>> +      0x1a8 - C1, C2 and C3
+>> +      0x1c4 - C4
+>> +      0x1d8 - C0 and C5
+>> +  - nvidia,event-cntr-data: EVENT_COUNTER_DATA reg offset
+>> +      0x16c - FPGA
+>> +      0x1ac - C1, C2 and C3
+>> +      0x1c8 - C4
+>> +      0x1dc - C0 and C5
+>> +- nvidia,controller-id : Controller specific ID
+>> +      0x0 - C0
+>> +      0x1 - C1
+>> +      0x2 - C2
+>> +      0x3 - C3
+>> +      0x4 - C4
+>> +      0x5 - C5
+>> +- vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
+>> +
+>> +Optional properties:
+>> +- nvidia,max-speed: limits controllers max speed to this value.
+>> +    1 - Gen-1 (2.5 GT/s)
+>> +    2 - Gen-2 (5 GT/s)
+>> +    3 - Gen-3 (8 GT/s)
+>> +    4 - Gen-4 (16 GT/s)
+>> +- nvidia,init-speed: limits controllers init speed to this value.
+>> +    1 - Gen-1 (2. 5 GT/s)
+>> +    2 - Gen-2 (5 GT/s)
+>> +    3 - Gen-3 (8 GT/s)
+>> +    4 - Gen-4 (16 GT/s)
+> 
+> Don't we have standard speed properties?
+Not that I'm aware of. If you come across any, please do let me know and
+I'll change these.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++++
- 1 file changed, 4 insertions(+)
+> 
+> Why do we need 2 values?
+max-speed configures the controller to advertise the speed mentioned through
+this flag, whereas, init-speed gets the link up at this speed and software
+can further take the link speed to a different speed by retraining the link.
+This is to give flexibility to developers depending on the platform.
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-index 4156c3e181c5..5bfcc0b4d6b9 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-@@ -10,6 +10,7 @@ Required properties:
-   - Tegra124: "nvidia,tegra124-xusb"
-   - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb"
-   - Tegra210: "nvidia,tegra210-xusb"
-+  - Tegra186: "nvidia,tegra186-xusb"
- - reg: Must contain the base and length of the xHCI host registers, XUSB FPCI
-   registers and XUSB IPFS registers.
- - reg-names: Must contain the following entries:
-@@ -59,6 +60,8 @@ For Tegra210:
- - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
- - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
- - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
-+
-+For Tegra210 and Tegra186:
- - power-domains: A list of PM domain specifiers that reference each power-domain
-   used by the xHCI controller. This list must comprise of a specifier for the
-   XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
-@@ -78,6 +81,7 @@ Optional properties:
-   - Tegra132: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
-   - Tegra210: usb2-0, usb2-1, usb2-2, usb2-3, hsic-0, usb3-0, usb3-1, usb3-2,
-               usb3-3
-+  - Tegra186: usb2-0, usb2-1, usb2-2, hsic-0, usb3-0, usb3-1, usb3-2
- 
- Example:
- --------
--- 
-2.21.0
+> 
+>> +- nvidia,disable-aspm-states : controls advertisement of ASPM states
+>> +    bit-0 to '1' : disables advertisement of ASPM-L0s
+>> +    bit-1 to '1' : disables advertisement of ASPM-L1. This also disables
+>> +                 advertisement of ASPM-L1.1 and ASPM-L1.2
+>> +    bit-2 to '1' : disables advertisement of ASPM-L1.1
+>> +    bit-3 to '1' : disables advertisement of ASPM-L1.2
+> 
+> Seems like these too should be common.
+This flag controls the advertisement of different ASPM states by root port.
+Again, I'm not aware of any common method for this.
+  
+> 
+>> +- nvidia,disable-clock-request : gives a hint to driver that there is no
+>> +    CLKREQ signal routing on board
+>> +- nvidia,update-fc-fixup : needs it to improve perf when a platform is designed
+>> +    in such a way that it satisfies at least one of the following conditions
+>> +    1. If C0/C4/C5 run at x1/x2 link widths (irrespective of speed and MPS)
+>> +    2. If C0/C1/C2/C3/C4/C5 operate at their respective max link widths and
+> 
+> What is Cx?
+Cx is the Controller with its ID.
+
+> 
+>> +       a) speed is Gen-2 and MPS is 256B
+>> +       b) speed is >= Gen-3 with any MPS
+>> +- nvidia,cdm-check : Enables CDM checking. For more information, refer Synopsis
+>> +    DesignWare Cores  PCI Express Controller Databook r4.90a Chapter S.4
+>> +- nvidia,enable-power-down : Enables power down of respective controller and
+>> +    corresponding PLLs if they are not shared by any other entity
+>> +- "nvidia,pex-wake" : Add PEX_WAKE gpio number to provide wake support.
+>> +- "nvidia,plat-gpios" : Add gpio number that needs to be configured before
+>> +   system goes for enumeration. There could be platforms where enabling 3.3V and
+>> +   12V power supplies are done through GPIOs, in which case, list of all such
+>> +   GPIOs can be specified through this property.
+> 
+> These should be split out to their specific function.
+Enabling Power rails is just an example and depending on the platform, there could be
+some on-board muxes which are controlled through GPIOs and all such platform specific
+configuration can be handled through this flag.
+
+> 
+>> +- "nvidia,aspm-cmrt" : Common Mode Restore time for proper operation of ASPM to
+>> +   be specified in microseconds
+>> +- "nvidia,aspm-pwr-on-t" : Power On time for proper operation of ASPM to be
+>> +   specified in microseconds
+>> +- "nvidia,aspm-l0s-entrance-latency" : ASPM L0s entrance latency to be specified
+>> +   in microseconds
+> 
+> properties with units need unit suffixes as defined in
+> property-units.txt.
+Done. I'll take care of this in next patch series.
+
+> 
+>> +
+>> +Examples:
+>> +=========
+>> +
+>> +Tegra194:
+>> +--------
+>> +
+>> +SoC DTSI:
+>> +
+>> +	pcie@14180000 {
+>> +		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
+>> +		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
+>> +		reg = <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)      */
+>> +		       0x00 0x38000000 0x0 0x00040000   /* configuration space (256K) */
+>> +		       0x00 0x38040000 0x0 0x00040000>; /* iATU_DMA reg space (256K)  */
+>> +		reg-names = "appl", "config", "atu_dma";
+>> +
+>> +		status = "disabled";
+>> +
+>> +		#address-cells = <3>;
+>> +		#size-cells = <2>;
+>> +		device_type = "pci";
+>> +		num-lanes = <8>;
+>> +		linux,pci-domain = <0>;
+>> +
+>> +		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
+>> +		clock-names = "core_clk";
+>> +
+>> +		resets = <&bpmp TEGRA194_RESET_PEX0_CORE_0_APB>,
+>> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_0>;
+>> +		reset-names = "core_apb_rst", "core_rst";
+>> +
+>> +		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,	/* controller interrupt */
+>> +			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+>> +		interrupt-names = "intr", "msi";
+>> +
+>> +		#interrupt-cells = <1>;
+>> +		interrupt-map-mask = <0 0 0 0>;
+>> +		interrupt-map = <0 0 0 0 &gic 0 72 0x04>;
+>> +
+>> +		nvidia,bpmp = <&bpmp>;
+>> +
+>> +		nvidia,max-speed = <4>;
+>> +		nvidia,disable-aspm-states = <0xf>;
+>> +		nvidia,controller-id = <&bpmp 0x0>;
+>> +		nvidia,aux-clk-freq = <0x13>;
+>> +		nvidia,preset-init = <0x5>;
+>> +		nvidia,aspm-cmrt = <0x3C>;
+>> +		nvidia,aspm-pwr-on-t = <0x14>;
+>> +		nvidia,aspm-l0s-entrance-latency = <0x3>;
+>> +
+>> +		bus-range = <0x0 0xff>;
+>> +		ranges = <0x81000000 0x0 0x38100000 0x0 0x38100000 0x0 0x00100000      /* downstream I/O (1MB) */
+>> +			  0x82000000 0x0 0x38200000 0x0 0x38200000 0x0 0x01E00000      /* non-prefetchable memory (30MB) */
+>> +			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
+>> +
+>> +		nvidia,cfg-link-cap-l1sub = <0x1c4>;
+>> +		nvidia,cap-pl16g-status = <0x174>;
+>> +		nvidia,cap-pl16g-cap-off = <0x188>;
+>> +		nvidia,event-cntr-ctrl = <0x1d8>;
+>> +		nvidia,event-cntr-data = <0x1dc>;
+>> +		nvidia,dl-feature-cap = <0x30c>;
+>> +	};
+>> +
+>> +Board DTS:
+>> +
+>> +	pcie@14180000 {
+>> +		status = "okay";
+>> +
+>> +		vddio-pex-ctl-supply = <&vdd_1v8ao>;
+>> +
+>> +		phys = <&p2u_2>,
+>> +		       <&p2u_3>,
+>> +		       <&p2u_4>,
+>> +		       <&p2u_5>;
+>> +		phy-names = "pcie-p2u-0", "pcie-p2u-1", "pcie-p2u-2",
+>> +			    "pcie-p2u-3";
+>> +	};
+>> diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+>> new file mode 100644
+>> index 000000000000..cc0de8e8e8db
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+>> @@ -0,0 +1,34 @@
+>> +NVIDIA Tegra194 P2U binding
+>> +
+>> +Tegra194 has two PHY bricks namely HSIO (High Speed IO) and NVHS (NVIDIA High
+>> +Speed) each interfacing with 12 and 8 P2U instances respectively.
+>> +A P2U instance is a glue logic between Synopsys DesignWare Core PCIe IP's PIPE
+>> +interface and PHY of HSIO/NVHS bricks. Each P2U instance represents one PCIe
+>> +lane.
+>> +
+>> +Required properties:
+>> +- compatible: For Tegra19x, must contain "nvidia,tegra194-phy-p2u".
+>> +- reg: Should be the physical address space and length of respective each P2U
+>> +       instance.
+>> +- reg-names: Must include the entry "base".
+>> +
+>> +Required properties for PHY port node:
+>> +- #phy-cells: Defined by generic PHY bindings.  Must be 0.
+>> +
+>> +Refer to phy/phy-bindings.txt for the generic PHY binding properties.
+>> +
+>> +Example:
+>> +
+>> +hsio-p2u {
+>> +	compatible = "simple-bus";
+>> +	#address-cells = <2>;
+>> +	#size-cells = <2>;
+>> +	ranges;
+>> +	p2u_0: p2u@03e10000 {
+>> +		compatible = "nvidia,tegra194-phy-p2u";
+>> +		reg = <0x0 0x03e10000 0x0 0x00010000>;
+>> +		reg-names = "base";
+>> +
+>> +		#phy-cells = <0>;
+>> +	};
+>> +}
+>> -- 
+>> 2.7.4
+>>
+> 
