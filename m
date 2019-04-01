@@ -1,19 +1,19 @@
 From: Mukesh Ojha <mojha@codeaurora.org>
-Subject: Re: [PATCH 02/12] drm/tegra: rgb: add missing of_node_put after
+Subject: Re: [PATCH 04/12] phy: tegra: add missing of_node_put after
  of_device_is_available
-Date: Mon, 1 Apr 2019 18:19:12 +0530
-Message-ID: <d1555267-5ddd-fc31-ccee-769834728828@codeaurora.org>
+Date: Mon, 1 Apr 2019 18:20:22 +0530
+Message-ID: <bb2f2129-8d68-9a55-1bc4-f6ffc26677c5@codeaurora.org>
 References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
- <1550928043-14889-3-git-send-email-Julia.Lawall@lip6.fr>
+ <1550928043-14889-5-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550928043-14889-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-5-git-send-email-Julia.Lawall@lip6.fr>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Thierry Reding <thierry.reding@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
@@ -46,7 +46,7 @@ On 2/23/2019 6:50 PM, Julia Lawall wrote:
 > }
 > // </smpl>
 >
-> Fixes: d8f4a9eda0067 ("drm: Add NVIDIA Tegra20 support")
+> Fixes: 53d2a715c2403 ("phy: Add Tegra XUSB pad controller support")
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 
@@ -54,22 +54,22 @@ Cheers,
 -Mukesh
 >
 > ---
->   drivers/gpu/drm/tegra/rgb.c |    4 +++-
+>   drivers/phy/tegra/xusb.c |    4 +++-
 >   1 file changed, 3 insertions(+), 1 deletion(-)
 >
-> diff -u -p a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-> --- a/drivers/gpu/drm/tegra/rgb.c
-> +++ b/drivers/gpu/drm/tegra/rgb.c
-> @@ -221,8 +221,10 @@ int tegra_dc_rgb_probe(struct tegra_dc *
+> diff -u -p a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -260,8 +260,10 @@ tegra_xusb_pad_create(struct tegra_xusb_
 >   	int err;
 >   
->   	np = of_get_child_by_name(dc->dev->of_node, "rgb");
+>   	np = tegra_xusb_find_pad_node(padctl, soc->name);
 > -	if (!np || !of_device_is_available(np))
 > +	if (!np || !of_device_is_available(np)) {
 > +		of_node_put(np);
->   		return -ENODEV;
+>   		return NULL;
 > +	}
 >   
->   	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
->   	if (!rgb)
+>   	pad = soc->ops->probe(padctl, soc, np);
+>   	if (IS_ERR(pad)) {
 >
