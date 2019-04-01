@@ -1,17 +1,17 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: tegra114: use packed mode for 32 bits per word" to the spi tree
-Date: Mon,  1 Apr 2019 09:54:15 +0100 (BST)
-Message-ID: <20190401085415.BEEC5440083@finisterre.ee.mobilebroadband>
-References: <1553666207-11414-4-git-send-email-skomatineni@nvidia.com>
+Subject: Applied "spi: tegra114: reset controller on probe" to the spi tree
+Date: Mon,  1 Apr 2019 09:54:30 +0100 (BST)
+Message-ID: <20190401085430.16093440082@finisterre.ee.mobilebroadband>
+References: <1553666207-11414-11-git-send-email-skomatineni@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1553666207-11414-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1553666207-11414-11-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Cc: Mark Brown <broonie@kernel.org>, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, skomatineni@nvidia.combroonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.orglinux-spi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   spi: tegra114: use packed mode for 32 bits per word
+   spi: tegra114: reset controller on probe
 
 has been applied to the spi tree at
 
@@ -36,32 +36,105 @@ to this mail.
 Thanks,
 Mark
 
-From fc9ba6e3e28afcedf3bb3105b1d8cbc5c183c2a3 Mon Sep 17 00:00:00 2001
+From 019194933339b3e9b486639c8cb3692020844d65 Mon Sep 17 00:00:00 2001
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Tue, 26 Mar 2019 22:56:25 -0700
-Subject: [PATCH] spi: tegra114: use packed mode for 32 bits per word
+Date: Tue, 26 Mar 2019 22:56:32 -0700
+Subject: [PATCH] spi: tegra114: reset controller on probe
 
-Fixes: Use packed mode for 32 bits per word transfers to increase
-performance as each packet is a full 32-bit word.
+Fixes: SPI driver can be built as module so perform SPI controller reset
+on probe to make sure it is in valid state before initiating transfer.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-tegra114.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-tegra114.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index a76acedd7e2f..929358e3487a 100644
+index 05bb2f9bff3c..09cfae3abce2 100644
 --- a/drivers/spi/spi-tegra114.c
 +++ b/drivers/spi/spi-tegra114.c
-@@ -259,7 +259,7 @@ static unsigned tegra_spi_calculate_curr_xfer_param(
+@@ -1136,27 +1136,19 @@ static int tegra_spi_probe(struct platform_device *pdev)
  
- 	tspi->bytes_per_word = DIV_ROUND_UP(bits_per_word, 8);
+ 	spi_irq = platform_get_irq(pdev, 0);
+ 	tspi->irq = spi_irq;
+-	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
+-			tegra_spi_isr_thread, IRQF_ONESHOT,
+-			dev_name(&pdev->dev), tspi);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
+-					tspi->irq);
+-		goto exit_free_master;
+-	}
  
--	if (bits_per_word == 8 || bits_per_word == 16) {
-+	if (bits_per_word == 8 || bits_per_word == 16 || bits_per_word == 32) {
- 		tspi->is_packed = 1;
- 		tspi->words_per_32bit = 32/bits_per_word;
- 	} else {
+ 	tspi->clk = devm_clk_get(&pdev->dev, "spi");
+ 	if (IS_ERR(tspi->clk)) {
+ 		dev_err(&pdev->dev, "can not get clock\n");
+ 		ret = PTR_ERR(tspi->clk);
+-		goto exit_free_irq;
++		goto exit_free_master;
+ 	}
+ 
+ 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
+ 	if (IS_ERR(tspi->rst)) {
+ 		dev_err(&pdev->dev, "can not get reset\n");
+ 		ret = PTR_ERR(tspi->rst);
+-		goto exit_free_irq;
++		goto exit_free_master;
+ 	}
+ 
+ 	tspi->max_buf_size = SPI_FIFO_DEPTH << 2;
+@@ -1164,7 +1156,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 
+ 	ret = tegra_spi_init_dma_param(tspi, true);
+ 	if (ret < 0)
+-		goto exit_free_irq;
++		goto exit_free_master;
+ 	ret = tegra_spi_init_dma_param(tspi, false);
+ 	if (ret < 0)
+ 		goto exit_rx_dma_free;
+@@ -1186,18 +1178,32 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
+ 		goto exit_pm_disable;
+ 	}
++
++	reset_control_assert(tspi->rst);
++	udelay(2);
++	reset_control_deassert(tspi->rst);
+ 	tspi->def_command1_reg  = SPI_M_S;
+ 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
+ 	pm_runtime_put(&pdev->dev);
++	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
++				   tegra_spi_isr_thread, IRQF_ONESHOT,
++				   dev_name(&pdev->dev), tspi);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
++			tspi->irq);
++		goto exit_pm_disable;
++	}
+ 
+ 	master->dev.of_node = pdev->dev.of_node;
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "can not register to master err %d\n", ret);
+-		goto exit_pm_disable;
++		goto exit_free_irq;
+ 	}
+ 	return ret;
+ 
++exit_free_irq:
++	free_irq(spi_irq, tspi);
+ exit_pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+ 	if (!pm_runtime_status_suspended(&pdev->dev))
+@@ -1205,8 +1211,6 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 	tegra_spi_deinit_dma_param(tspi, false);
+ exit_rx_dma_free:
+ 	tegra_spi_deinit_dma_param(tspi, true);
+-exit_free_irq:
+-	free_irq(spi_irq, tspi);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
 -- 
 2.20.1
