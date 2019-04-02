@@ -1,113 +1,130 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
-Date: Tue, 2 Apr 2019 10:26:33 +0800
-Message-ID: <d77f1605-a499-81af-bb14-aeaa0e083cff@nvidia.com>
-References: <20190325074523.26456-1-josephl@nvidia.com>
- <20190325074523.26456-2-josephl@nvidia.com>
- <dab337a7-195c-d03f-8b3a-bccf08b23d70@gmail.com>
+Subject: [PATCH] clocksource/drivers/tegra: rework for compensation of suspend time
+Date: Tue, 2 Apr 2019 11:02:34 +0800
+Message-ID: <20190402030234.13488-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <dab337a7-195c-d03f-8b3a-bccf08b23d70@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gNC8xLzE5IDg6MTIgUE0sIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAyNS4wMy4yMDE5IDEw
-OjQ1LCBKb3NlcGggTG8g0L/QuNGI0LXRgjoKPj4gQWRkIHRoZSBiaW5kaW5nIGRvY3VtZW50IGZv
-ciB0aGUgZXh0ZXJuYWwgbWVtb3J5IGNvbnRyb2xsZXIgKEVNQykgd2hpY2gKPj4gY29tbXVuaWNh
-dGVzIHdpdGggZXh0ZXJuYWwgTFBERFI0IGRldmljZXMuIEl0IGluY2x1ZGVzIHRoZSBiaW5kaW5n
-cyBvZgo+PiB0aGUgRU1DIG5vZGUgYW5kIHRoZSBFTUMgdGFibGUgb2YgZGlmZmVyZW50IHJhdGVz
-Lgo+Pgo+PiBUbyBzdXBwb3J0IGhpZ2ggcmF0ZXMgZm9yIExQRERSNCwgdGhlIEVNQyB0YWJsZSBt
-dXN0IGJlIHRyYWluZWQgYmVmb3JlCj4+IGl0IGNhbiBiZSB1c2VkIGZvciBydW50aW1lIGNsb2Nr
-IHN3aXRjaGluZy4gSXQgaGFzIGJlZW4gZG9uZSBieSBmaXJtd2FyZQo+PiBhbmQgbWVyZ2VkIHRv
-IHRoZSB0YWJsZSB0aGF0IExpbnV4IGtlcm5lbCB1c2VzLiBGb3IgYmFja3dhcmQKPj4gY29tcGF0
-aWJpbGl0eSB3aXRoIHRoZSBkZXZpY2VzIHRoYXQgaGFkIGJlZW4gbGF1bmNoZWQgb24gdGhlIG1h
-cmtldCwgbGlrZQo+PiBTaGllbGQgYW5kIEpldHNvbiBwbGF0Zm9ybXMsIHRoZSBiaW5kaW5ncyBp
-biB0aGUgRU1DIHRhYmxlIHNob3VsZCByZW1haW4KPj4gdGhlIHNhbWUuIFNvIHRoZSBmaXJtd2Fy
-ZSBjYW4gcmVjb2duaXplIHRoZW0gYW5kIG1lcmdlIHRoZSB0cmFpbmVkIEVNQwo+PiB0YWJsZSBm
-b3IgdGhlIGtlcm5lbC4KPj4KPj4gQmFzZWQgb24gdGhlIHdvcmsgb2YgUGV0ZXIgRGUgU2Nocmlq
-dmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEpvc2Vw
-aCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+PiAtLS0KPj4gICAuLi4vbnZpZGlhLHRlZ3JhMjEw
-LWVtYy50eHQgICAgICAgICAgICAgICAgICAgfCA2MDUgKysrKysrKysrKysrKysrKysrCj4+ICAg
-MSBmaWxlIGNoYW5nZWQsIDYwNSBpbnNlcnRpb25zKCspCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0
-IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZp
-ZGlhLHRlZ3JhMjEwLWVtYy50eHQKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZpZGlhLHRlZ3JhMjEwLWVtYy50
-eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJz
-L252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4
-IDAwMDAwMDAwMDAwMC4uMWY2YjZkZjZkMzdiCj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lbW9yeS1jb250cm9sbGVycy9udmlkaWEs
-dGVncmEyMTAtZW1jLnR4dAo+PiBAQCAtMCwwICsxLDYwNSBAQAo+PiArTlZJRElBIFRlZ3JhMjEw
-IFNvQyBFTUMgKGV4dGVybmFsIG1lbW9yeSBjb250cm9sbGVyKQo+PiArPT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpzbmlwCj4+ICstIG52aWRpYSxl
-bWMtdHJhaW5pbmctbW9kLXJlZ3MgOgo+PiArLSBudmlkaWEsZW1jLXNhdmUtcmVzdG9yZS1tb2Qt
-cmVncyA6Cj4+ICsJZGVwcmVjYXRlZCwga2VlcCBmb3IgZm9yIGJhY2t3YXJkIGNvbXBhdGliaWxp
-dHkKPiAKPiBUaGlzIGlzIGEgbmV3IGJpbmRpbmcsIHNvLi4gYmFja3dhcmQgY29tcGF0aWJpbGl0
-eSB3aXRoIHdoYXQ/IFNvbWUgb2xkIHZlcnNpb24gb2YgZG93bnN0cmVhbSBib290bG9hZGVyPyBE
-byB5b3UgcmVhbGx5IG5lZWQgaXQ/Cj4gClllcywgYmFja3dhcmQgY29tcGF0aWJpbGl0eSBmb3Ig
-dGhlIGZpcm13YXJlIHRoYXQgaGVscHMgdG8gZG8gdGhlIAppbml0aWFsIEREUjQgdHJhaW5pbmcg
-YmVmb3JlIHdlIGNhbiB1c2UgdGhhdC4gQWx0aG91Z2ggdGhlIGtlcm5lbCAKZG9lc24ndCB1c2Ug
-dGhhdCBmb3IgRU1DIHNjYWxpbmcsIHRoZSBmaXJtd2FyZSBzdGlsbCB1c2VzIHRoZXNlIGJpbmRp
-bmdzIAphbmQgdXBkYXRlcyB0aGVtLgoKPj4gKy0gbnZpZGlhLGVtYy1idXJzdC1tYy1yZWdzIDog
-dmFsdWVzIGZvciB0aGUgZm9sbG93aW5nIHJlZ2lzdGVycwo+PiArCQkJICAgICAoU2VlIFRSTSAx
-OC4xMC4xIGZvciByZWdpc3RlciBkZXNjcmlwdGlvbnMpCj4+ICsJTUNfRU1FTV9BUkJfQ0ZHCj4+
-ICsJTUNfRU1FTV9BUkJfT1VUU1RBTkRJTkdfUkVRCj4+ICsJTUNfRU1FTV9BUkJfUkVGUEJfSFBf
-Q1RSTAo+PiArCU1DX0VNRU1fQVJCX1JFRlBCX0JBTktfQ1RSTAo+PiArCU1DX0VNRU1fQVJCX1RJ
-TUlOR19SQ0QKPj4gKwlNQ19FTUVNX0FSQl9USU1JTkdfUlAKPj4gKwlNQ19FTUVNX0FSQl9USU1J
-TkdfUkMKPj4gKwlNQ19FTUVNX0FSQl9USU1JTkdfUkFTCj4+ICsJTUNfRU1FTV9BUkJfVElNSU5H
-X0ZBVwo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19SUkQKPj4gKwlNQ19FTUVNX0FSQl9USU1JTkdf
-UkFQMlBSRQo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19XQVAyUFJFCj4+ICsJTUNfRU1FTV9BUkJf
-VElNSU5HX1IyUgo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19XMlcKPj4gKwlNQ19FTUVNX0FSQl9U
-SU1JTkdfUjJXCj4+ICsJTUNfRU1FTV9BUkJfVElNSU5HX0NDRE1XCj4+ICsJTUNfRU1FTV9BUkJf
-VElNSU5HX1cyUgo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19SRkNQQgo+PiArCU1DX0VNRU1fQVJC
-X0RBX1RVUk5TCj4+ICsJTUNfRU1FTV9BUkJfREFfQ09WRVJTCj4+ICsJTUNfRU1FTV9BUkJfTUlT
-QzAKPj4gKwlNQ19FTUVNX0FSQl9NSVNDMQo+PiArCU1DX0VNRU1fQVJCX01JU0MyCj4+ICsJTUNf
-RU1FTV9BUkJfUklORzFfVEhST1RUTEUKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9DVFJMCj4+ICsJ
-TUNfRU1FTV9BUkJfREhZU1RfVElNRU9VVF9VVElMXzAKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9U
-SU1FT1VUX1VUSUxfMQo+PiArCU1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF8yCj4+ICsJ
-TUNfRU1FTV9BUkJfREhZU1RfVElNRU9VVF9VVElMXzMKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9U
-SU1FT1VUX1VUSUxfNAo+PiArCU1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF81Cj4+ICsJ
-TUNfRU1FTV9BUkJfREhZU1RfVElNRU9VVF9VVElMXzYKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9U
-SU1FT1VUX1VUSUxfNwo+PiArLSBudmlkaWEsZW1jLWxhLXNjYWxlLXJlZ3MgOiB2YWx1ZXMgZm9y
-IHRoZSBmb2xsb3dpbmcgcmVnaXN0ZXJzCj4+ICsJCQkgICAgIChTZWUgVFJNIDE4LjEwLjEgZm9y
-IHJlZ2lzdGVyIGRlc2NyaXB0aW9ucykKPj4gKwlNQ19NTExfTVBDT1JFUl9QVFNBX1JBVEUKPj4g
-KwlNQ19GVE9QX1BUU0FfUkFURQo+PiArCU1DX1BUU0FfR1JBTlRfREVDUkVNRU5UCj4+ICsJTUNf
-TEFURU5DWV9BTExPV0FOQ0VfWFVTQl8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfWFVTQl8x
-Cj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfVFNFQ18wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FO
-Q0VfU0RNTUNBXzAKPj4gKwlNQ19MQVRFTkNZX0FMTE9XQU5DRV9TRE1NQ0FBXzAKPj4gKwlNQ19M
-QVRFTkNZX0FMTE9XQU5DRV9TRE1NQ18wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfU0RNTUNB
-Ql8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfUFBDU18wCj4+ICsJTUNfTEFURU5DWV9BTExP
-V0FOQ0VfUFBDU18xCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfTVBDT1JFXzAKPj4gKwlNQ19M
-QVRFTkNZX0FMTE9XQU5DRV9IQ18wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfSENfMQo+PiAr
-CU1DX0xBVEVOQ1lfQUxMT1dBTkNFX0FWUENfMAo+PiArCU1DX0xBVEVOQ1lfQUxMT1dBTkNFX0dQ
-VV8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfR1BVMl8wCj4+ICsJTUNfTEFURU5DWV9BTExP
-V0FOQ0VfTlZFTkNfMAo+PiArCU1DX0xBVEVOQ1lfQUxMT1dBTkNFX05WREVDXzAKPj4gKwlNQ19M
-QVRFTkNZX0FMTE9XQU5DRV9WSUNfMAo+PiArCU1DX0xBVEVOQ1lfQUxMT1dBTkNFX1ZJMl8wCj4+
-ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfSVNQMl8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0Vf
-SVNQMl8xCj4gCj4gU2hvdWxkbid0IHRoaXMgYmUgYSBwYXJ0IG9mIGEgIk1lbW9yeSBDb250cm9s
-bGVyIiBiaW5kaW5nIGxpa2UgaXQgaXMgZG9uZSBmb3IgVDEyND8KPiAKClRoZSBUZWdyYSBTb0Nz
-IGJlZm9yZSBUZWdyYTEzMiBvbmx5IHN1cHBvcnRzIEREUjMgb3IgRERSMi4gVGhlIEVNQyB0YWJs
-ZSAKZG9lc24ndCBpbmNsdWRlIHRoZSBzZXR0aW5ncyBvZiBsYXRlbmN5IGFsbG93YW5jZSByZWdp
-c3RlcnMuIEZvciB0aGUgCkREUjQgc3VwcG9ydCBvbiBUZWdyYTIxMCwgd2Ugd2lsbCBkeW5hbWlj
-YWxseSBzY2FsZSB0aGVzZSBsYXRlbmN5IAphbGxvd2FuY2UgcmVnaXN0ZXJzIGFzIHdlbGwgdG8g
-c3VwcG9ydCBmYXN0ZXIgY2xvY2sgcmF0ZS4gU28gdGhlIAphcmJpdHJhdGlvbiBjYW4gYmUgYWRh
-cHRlZCBhY2NvcmRpbmcgdG8gdGhlIHJhdGUgc3dpdGNoaW5nLgoKQW5kIHRoZSBFTUMgc2NhbGlu
-ZyBzZXF1ZW5jZSBmb3IgRERSMyBhbmQgRERSNCBpcyBxdWl0ZSBkaWZmZXJlbnQuIFNvIAp0aGUg
-RU1DIHNjYWxpbmcgc2VxdWVuY2UgZm9yIFRlZ3JhMTI0IGNhbm5vdCBiZSB1c2VkIGZvciBUZWdy
-YTIxMC4gU2FtZSAKYXMgdGhlIEVNQyB0YWJsZSBiaW5kaW5ncy4KClRoYW5rcywKSm9zZXBoCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
-a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
-aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
-bmVsCg==
+Since the clocksource framework has the support for suspend time
+compensation. Re-work the driver to use that, so we can reduce the
+duplicate code.
+
+Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ drivers/clocksource/timer-tegra20.c | 63 +++++++++--------------------
+ 1 file changed, 20 insertions(+), 43 deletions(-)
+
+diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/time=
+r-tegra20.c
+index fdb3d795a409..919b3568c495 100644
+--- a/drivers/clocksource/timer-tegra20.c
++++ b/drivers/clocksource/timer-tegra20.c
+@@ -60,9 +60,6 @@
+ static u32 usec_config;
+ static void __iomem *timer_reg_base;
+ #ifdef CONFIG_ARM
+-static void __iomem *rtc_base;
+-static struct timespec64 persistent_ts;
+-static u64 persistent_ms, last_persistent_ms;
+ static struct delay_timer tegra_delay_timer;
+ #endif
+=20
+@@ -199,40 +196,30 @@ static unsigned long tegra_delay_timer_read_counter_l=
+ong(void)
+ 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
+ }
+=20
++static struct timer_of suspend_rtc_to =3D {
++	.flags =3D TIMER_OF_BASE | TIMER_OF_CLOCK,
++};
++
+ /*
+  * tegra_rtc_read - Reads the Tegra RTC registers
+  * Care must be taken that this funciton is not called while the
+  * tegra_rtc driver could be executing to avoid race conditions
+  * on the RTC shadow register
+  */
+-static u64 tegra_rtc_read_ms(void)
++static u64 tegra_rtc_read_ms(struct clocksource *cs)
+ {
+-	u32 ms =3D readl(rtc_base + RTC_MILLISECONDS);
+-	u32 s =3D readl(rtc_base + RTC_SHADOW_SECONDS);
++	u32 ms =3D readl(timer_of_base(&suspend_rtc_to) + RTC_MILLISECONDS);
++	u32 s =3D readl(timer_of_base(&suspend_rtc_to) + RTC_SHADOW_SECONDS);
+ 	return (u64)s * MSEC_PER_SEC + ms;
+ }
+=20
+-/*
+- * tegra_read_persistent_clock64 -  Return time from a persistent clock.
+- *
+- * Reads the time from a source which isn't disabled during PM, the
+- * 32k sync timer.  Convert the cycles elapsed since last read into
+- * nsecs and adds to a monotonically increasing timespec64.
+- * Care must be taken that this funciton is not called while the
+- * tegra_rtc driver could be executing to avoid race conditions
+- * on the RTC shadow register
+- */
+-static void tegra_read_persistent_clock64(struct timespec64 *ts)
+-{
+-	u64 delta;
+-
+-	last_persistent_ms =3D persistent_ms;
+-	persistent_ms =3D tegra_rtc_read_ms();
+-	delta =3D persistent_ms - last_persistent_ms;
+-
+-	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
+-	*ts =3D persistent_ts;
+-}
++static struct clocksource suspend_rtc_clocksource =3D {
++	.name	=3D "tegra_suspend_timer",
++	.rating	=3D 200,
++	.read	=3D tegra_rtc_read_ms,
++	.mask	=3D CLOCKSOURCE_MASK(32),
++	.flags	=3D CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
++};
+ #endif
+=20
+ static int tegra_timer_common_init(struct device_node *np, struct timer_of=
+ *to)
+@@ -385,25 +372,15 @@ static int __init tegra_init_timer(struct device_node=
+ *np)
+=20
+ static int __init tegra20_init_rtc(struct device_node *np)
+ {
+-	struct clk *clk;
++	int ret;
+=20
+-	rtc_base =3D of_iomap(np, 0);
+-	if (!rtc_base) {
+-		pr_err("Can't map RTC registers\n");
+-		return -ENXIO;
+-	}
++	ret =3D timer_of_init(np, &suspend_rtc_to);
++	if (ret)
++		return ret;
+=20
+-	/*
+-	 * rtc registers are used by read_persistent_clock, keep the rtc clock
+-	 * enabled
+-	 */
+-	clk =3D of_clk_get(np, 0);
+-	if (IS_ERR(clk))
+-		pr_warn("Unable to get rtc-tegra clock\n");
+-	else
+-		clk_prepare_enable(clk);
++	clocksource_register_hz(&suspend_rtc_clocksource, 1000);
+=20
+-	return register_persistent_clock(tegra_read_persistent_clock64);
++	return 0;
+ }
+ TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
+ #endif
+--=20
+2.21.0
