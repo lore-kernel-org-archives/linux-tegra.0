@@ -1,130 +1,81 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH] clocksource/drivers/tegra: rework for compensation of suspend time
-Date: Tue, 2 Apr 2019 11:02:34 +0800
-Message-ID: <20190402030234.13488-1-josephl@nvidia.com>
+Subject: Re: [PATCH 1/2] arm64: tegra: Add pinmux for PWM-based DFLL support
+ on Shield platform
+Date: Tue, 2 Apr 2019 11:06:36 +0800
+Message-ID: <2c7c9268-0b95-fa49-294b-155a9499741e@nvidia.com>
+References: <20190322071111.32432-1-josephl@nvidia.com>
+ <20190322095244.GF28640@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190322095244.GF28640@ulmo>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Since the clocksource framework has the support for suspend time
-compensation. Re-work the driver to use that, so we can reduce the
-duplicate code.
+On 3/22/19 5:52 PM, Thierry Reding wrote:
+> On Fri, Mar 22, 2019 at 03:11:10PM +0800, Joseph Lo wrote:
+>> Add pinmux for PWM-based DFLL support on Shield platform.
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+> 
+> There's been some discussion recently about moving away from programming
+> pinmux in the kernel because it isn't always safe to do that. The idea
+> is that early boot firmware (typically cboot) will already have set up
+> the pinmux, so there's no need to do it again in the kernel.
+> 
+> These look like you're going to change this pin to/from tristate at
+> runtime, so perhaps that's the kind of thing that we're okay with?
+> 
+> Adding Stephen for visibility.
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
- drivers/clocksource/timer-tegra20.c | 63 +++++++++--------------------
- 1 file changed, 20 insertions(+), 43 deletions(-)
+Gentle ping.
 
-diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/time=
-r-tegra20.c
-index fdb3d795a409..919b3568c495 100644
---- a/drivers/clocksource/timer-tegra20.c
-+++ b/drivers/clocksource/timer-tegra20.c
-@@ -60,9 +60,6 @@
- static u32 usec_config;
- static void __iomem *timer_reg_base;
- #ifdef CONFIG_ARM
--static void __iomem *rtc_base;
--static struct timespec64 persistent_ts;
--static u64 persistent_ms, last_persistent_ms;
- static struct delay_timer tegra_delay_timer;
- #endif
-=20
-@@ -199,40 +196,30 @@ static unsigned long tegra_delay_timer_read_counter_l=
-ong(void)
- 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
- }
-=20
-+static struct timer_of suspend_rtc_to =3D {
-+	.flags =3D TIMER_OF_BASE | TIMER_OF_CLOCK,
-+};
-+
- /*
-  * tegra_rtc_read - Reads the Tegra RTC registers
-  * Care must be taken that this funciton is not called while the
-  * tegra_rtc driver could be executing to avoid race conditions
-  * on the RTC shadow register
-  */
--static u64 tegra_rtc_read_ms(void)
-+static u64 tegra_rtc_read_ms(struct clocksource *cs)
- {
--	u32 ms =3D readl(rtc_base + RTC_MILLISECONDS);
--	u32 s =3D readl(rtc_base + RTC_SHADOW_SECONDS);
-+	u32 ms =3D readl(timer_of_base(&suspend_rtc_to) + RTC_MILLISECONDS);
-+	u32 s =3D readl(timer_of_base(&suspend_rtc_to) + RTC_SHADOW_SECONDS);
- 	return (u64)s * MSEC_PER_SEC + ms;
- }
-=20
--/*
-- * tegra_read_persistent_clock64 -  Return time from a persistent clock.
-- *
-- * Reads the time from a source which isn't disabled during PM, the
-- * 32k sync timer.  Convert the cycles elapsed since last read into
-- * nsecs and adds to a monotonically increasing timespec64.
-- * Care must be taken that this funciton is not called while the
-- * tegra_rtc driver could be executing to avoid race conditions
-- * on the RTC shadow register
-- */
--static void tegra_read_persistent_clock64(struct timespec64 *ts)
--{
--	u64 delta;
--
--	last_persistent_ms =3D persistent_ms;
--	persistent_ms =3D tegra_rtc_read_ms();
--	delta =3D persistent_ms - last_persistent_ms;
--
--	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
--	*ts =3D persistent_ts;
--}
-+static struct clocksource suspend_rtc_clocksource =3D {
-+	.name	=3D "tegra_suspend_timer",
-+	.rating	=3D 200,
-+	.read	=3D tegra_rtc_read_ms,
-+	.mask	=3D CLOCKSOURCE_MASK(32),
-+	.flags	=3D CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
-+};
- #endif
-=20
- static int tegra_timer_common_init(struct device_node *np, struct timer_of=
- *to)
-@@ -385,25 +372,15 @@ static int __init tegra_init_timer(struct device_node=
- *np)
-=20
- static int __init tegra20_init_rtc(struct device_node *np)
- {
--	struct clk *clk;
-+	int ret;
-=20
--	rtc_base =3D of_iomap(np, 0);
--	if (!rtc_base) {
--		pr_err("Can't map RTC registers\n");
--		return -ENXIO;
--	}
-+	ret =3D timer_of_init(np, &suspend_rtc_to);
-+	if (ret)
-+		return ret;
-=20
--	/*
--	 * rtc registers are used by read_persistent_clock, keep the rtc clock
--	 * enabled
--	 */
--	clk =3D of_clk_get(np, 0);
--	if (IS_ERR(clk))
--		pr_warn("Unable to get rtc-tegra clock\n");
--	else
--		clk_prepare_enable(clk);
-+	clocksource_register_hz(&suspend_rtc_clocksource, 1000);
-=20
--	return register_persistent_clock(tegra_read_persistent_clock64);
-+	return 0;
- }
- TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
- #endif
---=20
-2.21.0
+Thanks,
+Joseph
+
+> 
+> Thierry
+> 
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+>> index 88a4b9333d84..c668f16c8574 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+>> @@ -1318,6 +1318,20 @@
+>>   				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+>>   			};
+>>   		};
+>> +
+>> +		dvfs_pwm_active_state: dvfs_pwm_active {
+>> +			dvfs_pwm_pbb1 {
+>> +				nvidia,pins = "dvfs_pwm_pbb1";
+>> +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>> +			};
+>> +		};
+>> +
+>> +		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
+>> +			dvfs_pwm_pbb1 {
+>> +				nvidia,pins = "dvfs_pwm_pbb1";
+>> +				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+>> +			};
+>> +		};
+>>   	};
+>>   
+>>   	serial@70006000 {
+>> -- 
+>> 2.21.0
+>>
