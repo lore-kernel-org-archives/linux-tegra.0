@@ -1,55 +1,89 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 05/10] dt-bindings: PCI: tegra: Add device tree support
- for T194
-Date: Tue, 2 Apr 2019 14:21:50 -0500
-Message-ID: <20190402192150.GF141706@google.com>
-References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
- <1553613207-3988-6-git-send-email-vidyas@nvidia.com>
- <20190328131508.GB5518@ulmo>
- <e5a12742-2dfa-e8c8-2a29-24838f4fa939@nvidia.com>
- <20190401150740.GB4874@ulmo>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V1 21/26] DT bindings: spi: add tx/rx clock delay SPI
+ client properties
+Date: Tue, 2 Apr 2019 20:27:43 +0000
+Message-ID: <BYAPR12MB33988CD5578E3421E5AB005FC2560@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1553666207-11414-1-git-send-email-skomatineni@nvidia.com>
+ <1553666207-11414-21-git-send-email-skomatineni@nvidia.com>
+ <5ca06155.1c69fb81.60281.9b59@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190401150740.GB4874@ulmo>
+In-Reply-To: <5ca06155.1c69fb81.60281.9b59@mx.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>, mark.rutland@arm.com, heiko@sntech.de, hayashi.kunihiko@socionext.com, maxime.ripard@bootlin.com, catalin.marinas@arm.com, spujar@nvidia.com, will.deacon@arm.com, kthota@nvidia.com, mperttunen@nvidia.com, linux-tegra@vger.kernel.org, jonathanh@nvidia.com, stefan.wahren@i2se.com, lorenzo.pieralisi@arm.com, krzk@kernel.org, kishon@ti.com, tiwai@suse.de, jagan@amarulasolutions.com, linux-pci@vger.kernel.org, andy.gross@linaro.org, shawn.lin@rock-chips.com, devicetree@vger.kernel.org, mmaddireddy@nvidia.com, marc.w.gonzalez@free.fr, liviu.dudau@arm.com, yue.wang@amlogic.com, enric.balletbo@collabora.com, robh+dt@kernel.org, horms+renesas@verge.net.au, bjorn.andersson@linaro.org, ezequiel@collabora.com, linux-arm-kernel@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "broonie@kernel.org" <broonie@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 01, 2019 at 05:07:40PM +0200, Thierry Reding wrote:
-> On Mon, Apr 01, 2019 at 03:31:54PM +0530, Vidya Sagar wrote:
-> > On 3/28/2019 6:45 PM, Thierry Reding wrote:
-> > > On Tue, Mar 26, 2019 at 08:43:22PM +0530, Vidya Sagar wrote:
-> > > > Add support for Tegra194 PCIe controllers. These controllers are based
-> > > > on Synopsys DesignWare core IP.
+> On Tue, Mar 26, 2019 at 10:56:42PM -0700, Sowjanya Komatineni wrote:
+> > This patch adds Tegra SPI master tx and rx clock delay properties.
+> >=20
+> > TX/RX clock delays may vary depending on the platform design trace=20
+> > lengths for each client on the Tegra SPI bus. These properties helps=20
+> > to tune the clock delays.
+> >=20
+> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> > ---
+> >  .../devicetree/bindings/spi/nvidia,tegra114-spi.txt      | 16 ++++++++=
+++++++++
+> >  1 file changed, 16 insertions(+)
+>
+> Just combine this with patch 19.
+>
+> > diff --git=20
+> > a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt=20
+> > b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+> > index 6167c5234b64..2b84b7b726ce 100644
+> > --- a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+> > +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+> > @@ -29,6 +29,12 @@ spi-client device controller properties:
+> >  - nvidia,cs-hold-clk-count: CS hold timing parameter.
+> >  - nvidia,cs-inactive-cycles: CS inactive delay in terms of clock betwe=
+en
+> >    transfers.
+> > +- nvidia,tx-clk-tap-delay: Delays the clock going out to the external=
+=20
+> > +device
+> > +  with this tap value. This property is used to tune the outgoing=20
+> > +data from
+> > +  Tegra SPI master with respect to outgoing Tegra SPI master clock.
+> > +- nvidia,rx-clk-tap-delay: Delays the clock coming in from the=20
+> > +external device
+> > +  with this tap value. This property is used to adjust the Tegra SPI=20
+> > +master
+> > +  clock with respect to the data from the SPI slave device.
+>
+> Are there units? What's the range of values.
 
-> > > > +- nvidia,disable-aspm-states : controls advertisement of ASPM states
-> > > > +    bit-0 to '1' : disables advertisement of ASPM-L0s
-> > > > +    bit-1 to '1' : disables advertisement of ASPM-L1. This also disables
-> > > > +                 advertisement of ASPM-L1.1 and ASPM-L1.2
-> > > > +    bit-2 to '1' : disables advertisement of ASPM-L1.1
-> > > > +    bit-3 to '1' : disables advertisement of ASPM-L1.2
-> > > 
-> > > These seem more like configuration options rather than hardware
-> > > description.
-> > Yes. Since the platforms like Jetson-Xavier based on T194 are going to go in
-> > open market, we are providing these configuration options and hence they are
-> > optional
-> 
-> Under what circumstances would we want to disable certain ASPM states?
-> My understanding is that PCI device drivers can already disable
-> individual ASPM states if they don't support them, so why would we ever
-> want to disable advertisement of certain ASPM states?
+TX/RX Clock delays are tap counts and there is internal tap-to-tap delay.
+Will update to specify tap to delay correlation along with supported tap va=
+lues range.
 
-The PCI core (not individual device drivers) configures ASPM, and if both
-ends of the link implement the spec correctly, there is nothing the device
-driver needs to do.
+As per feedback from mark, will move CS timing to API implementation as the=
+y are not
+Tegra SPI specific and applicable in general.
 
-There *are* a few drivers that fiddle with ASPM-related things.  I think
-this is because either the core isn't doing things correctly and we haven't
-bothered to fix the root cause, or the device itself is broken and we need
-to disable something the hardware claims to support.
-
-Bjorn
+>
+> > =20
+> >  Example:
+> > =20
+> > @@ -45,4 +51,14 @@ spi@7000d600 {
+> >  	reset-names =3D "spi";
+> >  	dmas =3D <&apbdma 16>, <&apbdma 16>;
+> >  	dma-names =3D "rx", "tx";
+> > +
+> > +	<spi-client>@<bus_num> {
+> > +		...
+> > +		...
+> > +		nvidia,cs-setup-clk-count =3D <10>;
+> > +		nvidia,cs-hold-clk-count =3D <10>;
+> > +		nvidia,rx-clk-tap-delay =3D <0>;
+> > +		nvidia,tx-clk-tap-delay =3D <16>;
+> > +		...
+> > +	};
+> >  };
+> > --
+> > 2.7.4
+> >=20
