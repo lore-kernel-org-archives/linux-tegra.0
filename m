@@ -1,26 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 08/42] drivers: gpio: dwap: use devm_platform_ioremap_resource()
-Date: Tue, 2 Apr 2019 16:02:23 +0700
-Message-ID: <CACRpkdbFdWXFShmiKgdaBdQTH+HY2RQuKXMR3UU3_gMYb1inPg@mail.gmail.com>
-References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-8-git-send-email-info@metux.net>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 000/131] 4.4.178-stable review
+Date: Tue, 2 Apr 2019 10:02:41 +0100
+Message-ID: <481699aa-5965-71e6-1cd1-4f857ab22c53@nvidia.com>
+References: <20190401170051.645954551@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552330521-4276-8-git-send-email-info@metux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Hoan Tran <hoan@os.amperecomputing.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Lyra Zhang <zhang.lyra@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.j>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190401170051.645954551@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 1:55 AM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
 
-> Use the new helper that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
->
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+On 01/04/2019 18:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.178 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Apr  3 16:59:39 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.178-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Patch applied.
+All tests are passing for Tegra ...
 
-Yours,
-Linus Walleij
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    17 tests:	17 pass, 0 fail
+
+Linux version:	4.4.178-rc1-g3156397
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
