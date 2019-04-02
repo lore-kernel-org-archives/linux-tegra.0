@@ -1,43 +1,113 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V1 18/26] spi: tegra114: add support for hw based cs
-Date: Mon, 1 Apr 2019 18:40:36 +0000
-Message-ID: <BYAPR12MB339817E7F593A70D3F9D3D7AC2550@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1553666207-11414-1-git-send-email-skomatineni@nvidia.com>
- <1553666207-11414-18-git-send-email-skomatineni@nvidia.com>
- <20190401074857.GK2059@sirena.org.uk>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
+Date: Tue, 2 Apr 2019 10:26:33 +0800
+Message-ID: <d77f1605-a499-81af-bb14-aeaa0e083cff@nvidia.com>
+References: <20190325074523.26456-1-josephl@nvidia.com>
+ <20190325074523.26456-2-josephl@nvidia.com>
+ <dab337a7-195c-d03f-8b3a-bccf08b23d70@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190401074857.GK2059@sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <dab337a7-195c-d03f-8b3a-bccf08b23d70@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-> On Tue, Mar 26, 2019 at 10:56:39PM -0700, Sowjanya Komatineni wrote:
->=20
-> > Tegra SPI driver default uses SW CS control for transfers and HW CS=20
-> > control can be enabled through SPI client device node DT property=20
-> > nvidia,enable-hw-based-cs and is used only for single transfers.
->
-> Why have a property - if this feature works and is useful why would a sys=
-tem ever not want to use it?
-
-> > +	single_xfer =3D list_is_singular(&msg->transfers);
-> >  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-> >  		u32 cmd1;
-> > =20
-> >  		reinit_completion(&tspi->xfer_completion);
-> > =20
-> > -		cmd1 =3D tegra_spi_setup_transfer_one(spi, xfer, is_first_msg);
-> > +		cmd1 =3D tegra_spi_setup_transfer_one(spi, xfer, is_first_msg,
-> > +						    single_xfer);
->
-> It's not sufficient to check if there's only one transfer, you also need =
-to make sure that the driver isn't using cs_change to use non-standard chip=
- select handling.
-
-Yes we can avoid DT and force to use HW CS incase of all single transfers w=
-ithout cs_change. Will update in next version.
+T24gNC8xLzE5IDg6MTIgUE0sIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAyNS4wMy4yMDE5IDEw
+OjQ1LCBKb3NlcGggTG8g0L/QuNGI0LXRgjoKPj4gQWRkIHRoZSBiaW5kaW5nIGRvY3VtZW50IGZv
+ciB0aGUgZXh0ZXJuYWwgbWVtb3J5IGNvbnRyb2xsZXIgKEVNQykgd2hpY2gKPj4gY29tbXVuaWNh
+dGVzIHdpdGggZXh0ZXJuYWwgTFBERFI0IGRldmljZXMuIEl0IGluY2x1ZGVzIHRoZSBiaW5kaW5n
+cyBvZgo+PiB0aGUgRU1DIG5vZGUgYW5kIHRoZSBFTUMgdGFibGUgb2YgZGlmZmVyZW50IHJhdGVz
+Lgo+Pgo+PiBUbyBzdXBwb3J0IGhpZ2ggcmF0ZXMgZm9yIExQRERSNCwgdGhlIEVNQyB0YWJsZSBt
+dXN0IGJlIHRyYWluZWQgYmVmb3JlCj4+IGl0IGNhbiBiZSB1c2VkIGZvciBydW50aW1lIGNsb2Nr
+IHN3aXRjaGluZy4gSXQgaGFzIGJlZW4gZG9uZSBieSBmaXJtd2FyZQo+PiBhbmQgbWVyZ2VkIHRv
+IHRoZSB0YWJsZSB0aGF0IExpbnV4IGtlcm5lbCB1c2VzLiBGb3IgYmFja3dhcmQKPj4gY29tcGF0
+aWJpbGl0eSB3aXRoIHRoZSBkZXZpY2VzIHRoYXQgaGFkIGJlZW4gbGF1bmNoZWQgb24gdGhlIG1h
+cmtldCwgbGlrZQo+PiBTaGllbGQgYW5kIEpldHNvbiBwbGF0Zm9ybXMsIHRoZSBiaW5kaW5ncyBp
+biB0aGUgRU1DIHRhYmxlIHNob3VsZCByZW1haW4KPj4gdGhlIHNhbWUuIFNvIHRoZSBmaXJtd2Fy
+ZSBjYW4gcmVjb2duaXplIHRoZW0gYW5kIG1lcmdlIHRoZSB0cmFpbmVkIEVNQwo+PiB0YWJsZSBm
+b3IgdGhlIGtlcm5lbC4KPj4KPj4gQmFzZWQgb24gdGhlIHdvcmsgb2YgUGV0ZXIgRGUgU2Nocmlq
+dmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEpvc2Vw
+aCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+PiAtLS0KPj4gICAuLi4vbnZpZGlhLHRlZ3JhMjEw
+LWVtYy50eHQgICAgICAgICAgICAgICAgICAgfCA2MDUgKysrKysrKysrKysrKysrKysrCj4+ICAg
+MSBmaWxlIGNoYW5nZWQsIDYwNSBpbnNlcnRpb25zKCspCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZp
+ZGlhLHRlZ3JhMjEwLWVtYy50eHQKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZpZGlhLHRlZ3JhMjEwLWVtYy50
+eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJz
+L252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4
+IDAwMDAwMDAwMDAwMC4uMWY2YjZkZjZkMzdiCj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lbW9yeS1jb250cm9sbGVycy9udmlkaWEs
+dGVncmEyMTAtZW1jLnR4dAo+PiBAQCAtMCwwICsxLDYwNSBAQAo+PiArTlZJRElBIFRlZ3JhMjEw
+IFNvQyBFTUMgKGV4dGVybmFsIG1lbW9yeSBjb250cm9sbGVyKQo+PiArPT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpzbmlwCj4+ICstIG52aWRpYSxl
+bWMtdHJhaW5pbmctbW9kLXJlZ3MgOgo+PiArLSBudmlkaWEsZW1jLXNhdmUtcmVzdG9yZS1tb2Qt
+cmVncyA6Cj4+ICsJZGVwcmVjYXRlZCwga2VlcCBmb3IgZm9yIGJhY2t3YXJkIGNvbXBhdGliaWxp
+dHkKPiAKPiBUaGlzIGlzIGEgbmV3IGJpbmRpbmcsIHNvLi4gYmFja3dhcmQgY29tcGF0aWJpbGl0
+eSB3aXRoIHdoYXQ/IFNvbWUgb2xkIHZlcnNpb24gb2YgZG93bnN0cmVhbSBib290bG9hZGVyPyBE
+byB5b3UgcmVhbGx5IG5lZWQgaXQ/Cj4gClllcywgYmFja3dhcmQgY29tcGF0aWJpbGl0eSBmb3Ig
+dGhlIGZpcm13YXJlIHRoYXQgaGVscHMgdG8gZG8gdGhlIAppbml0aWFsIEREUjQgdHJhaW5pbmcg
+YmVmb3JlIHdlIGNhbiB1c2UgdGhhdC4gQWx0aG91Z2ggdGhlIGtlcm5lbCAKZG9lc24ndCB1c2Ug
+dGhhdCBmb3IgRU1DIHNjYWxpbmcsIHRoZSBmaXJtd2FyZSBzdGlsbCB1c2VzIHRoZXNlIGJpbmRp
+bmdzIAphbmQgdXBkYXRlcyB0aGVtLgoKPj4gKy0gbnZpZGlhLGVtYy1idXJzdC1tYy1yZWdzIDog
+dmFsdWVzIGZvciB0aGUgZm9sbG93aW5nIHJlZ2lzdGVycwo+PiArCQkJICAgICAoU2VlIFRSTSAx
+OC4xMC4xIGZvciByZWdpc3RlciBkZXNjcmlwdGlvbnMpCj4+ICsJTUNfRU1FTV9BUkJfQ0ZHCj4+
+ICsJTUNfRU1FTV9BUkJfT1VUU1RBTkRJTkdfUkVRCj4+ICsJTUNfRU1FTV9BUkJfUkVGUEJfSFBf
+Q1RSTAo+PiArCU1DX0VNRU1fQVJCX1JFRlBCX0JBTktfQ1RSTAo+PiArCU1DX0VNRU1fQVJCX1RJ
+TUlOR19SQ0QKPj4gKwlNQ19FTUVNX0FSQl9USU1JTkdfUlAKPj4gKwlNQ19FTUVNX0FSQl9USU1J
+TkdfUkMKPj4gKwlNQ19FTUVNX0FSQl9USU1JTkdfUkFTCj4+ICsJTUNfRU1FTV9BUkJfVElNSU5H
+X0ZBVwo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19SUkQKPj4gKwlNQ19FTUVNX0FSQl9USU1JTkdf
+UkFQMlBSRQo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19XQVAyUFJFCj4+ICsJTUNfRU1FTV9BUkJf
+VElNSU5HX1IyUgo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19XMlcKPj4gKwlNQ19FTUVNX0FSQl9U
+SU1JTkdfUjJXCj4+ICsJTUNfRU1FTV9BUkJfVElNSU5HX0NDRE1XCj4+ICsJTUNfRU1FTV9BUkJf
+VElNSU5HX1cyUgo+PiArCU1DX0VNRU1fQVJCX1RJTUlOR19SRkNQQgo+PiArCU1DX0VNRU1fQVJC
+X0RBX1RVUk5TCj4+ICsJTUNfRU1FTV9BUkJfREFfQ09WRVJTCj4+ICsJTUNfRU1FTV9BUkJfTUlT
+QzAKPj4gKwlNQ19FTUVNX0FSQl9NSVNDMQo+PiArCU1DX0VNRU1fQVJCX01JU0MyCj4+ICsJTUNf
+RU1FTV9BUkJfUklORzFfVEhST1RUTEUKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9DVFJMCj4+ICsJ
+TUNfRU1FTV9BUkJfREhZU1RfVElNRU9VVF9VVElMXzAKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9U
+SU1FT1VUX1VUSUxfMQo+PiArCU1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF8yCj4+ICsJ
+TUNfRU1FTV9BUkJfREhZU1RfVElNRU9VVF9VVElMXzMKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9U
+SU1FT1VUX1VUSUxfNAo+PiArCU1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF81Cj4+ICsJ
+TUNfRU1FTV9BUkJfREhZU1RfVElNRU9VVF9VVElMXzYKPj4gKwlNQ19FTUVNX0FSQl9ESFlTVF9U
+SU1FT1VUX1VUSUxfNwo+PiArLSBudmlkaWEsZW1jLWxhLXNjYWxlLXJlZ3MgOiB2YWx1ZXMgZm9y
+IHRoZSBmb2xsb3dpbmcgcmVnaXN0ZXJzCj4+ICsJCQkgICAgIChTZWUgVFJNIDE4LjEwLjEgZm9y
+IHJlZ2lzdGVyIGRlc2NyaXB0aW9ucykKPj4gKwlNQ19NTExfTVBDT1JFUl9QVFNBX1JBVEUKPj4g
+KwlNQ19GVE9QX1BUU0FfUkFURQo+PiArCU1DX1BUU0FfR1JBTlRfREVDUkVNRU5UCj4+ICsJTUNf
+TEFURU5DWV9BTExPV0FOQ0VfWFVTQl8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfWFVTQl8x
+Cj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfVFNFQ18wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FO
+Q0VfU0RNTUNBXzAKPj4gKwlNQ19MQVRFTkNZX0FMTE9XQU5DRV9TRE1NQ0FBXzAKPj4gKwlNQ19M
+QVRFTkNZX0FMTE9XQU5DRV9TRE1NQ18wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfU0RNTUNB
+Ql8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfUFBDU18wCj4+ICsJTUNfTEFURU5DWV9BTExP
+V0FOQ0VfUFBDU18xCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfTVBDT1JFXzAKPj4gKwlNQ19M
+QVRFTkNZX0FMTE9XQU5DRV9IQ18wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfSENfMQo+PiAr
+CU1DX0xBVEVOQ1lfQUxMT1dBTkNFX0FWUENfMAo+PiArCU1DX0xBVEVOQ1lfQUxMT1dBTkNFX0dQ
+VV8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfR1BVMl8wCj4+ICsJTUNfTEFURU5DWV9BTExP
+V0FOQ0VfTlZFTkNfMAo+PiArCU1DX0xBVEVOQ1lfQUxMT1dBTkNFX05WREVDXzAKPj4gKwlNQ19M
+QVRFTkNZX0FMTE9XQU5DRV9WSUNfMAo+PiArCU1DX0xBVEVOQ1lfQUxMT1dBTkNFX1ZJMl8wCj4+
+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0VfSVNQMl8wCj4+ICsJTUNfTEFURU5DWV9BTExPV0FOQ0Vf
+SVNQMl8xCj4gCj4gU2hvdWxkbid0IHRoaXMgYmUgYSBwYXJ0IG9mIGEgIk1lbW9yeSBDb250cm9s
+bGVyIiBiaW5kaW5nIGxpa2UgaXQgaXMgZG9uZSBmb3IgVDEyND8KPiAKClRoZSBUZWdyYSBTb0Nz
+IGJlZm9yZSBUZWdyYTEzMiBvbmx5IHN1cHBvcnRzIEREUjMgb3IgRERSMi4gVGhlIEVNQyB0YWJs
+ZSAKZG9lc24ndCBpbmNsdWRlIHRoZSBzZXR0aW5ncyBvZiBsYXRlbmN5IGFsbG93YW5jZSByZWdp
+c3RlcnMuIEZvciB0aGUgCkREUjQgc3VwcG9ydCBvbiBUZWdyYTIxMCwgd2Ugd2lsbCBkeW5hbWlj
+YWxseSBzY2FsZSB0aGVzZSBsYXRlbmN5IAphbGxvd2FuY2UgcmVnaXN0ZXJzIGFzIHdlbGwgdG8g
+c3VwcG9ydCBmYXN0ZXIgY2xvY2sgcmF0ZS4gU28gdGhlIAphcmJpdHJhdGlvbiBjYW4gYmUgYWRh
+cHRlZCBhY2NvcmRpbmcgdG8gdGhlIHJhdGUgc3dpdGNoaW5nLgoKQW5kIHRoZSBFTUMgc2NhbGlu
+ZyBzZXF1ZW5jZSBmb3IgRERSMyBhbmQgRERSNCBpcyBxdWl0ZSBkaWZmZXJlbnQuIFNvIAp0aGUg
+RU1DIHNjYWxpbmcgc2VxdWVuY2UgZm9yIFRlZ3JhMTI0IGNhbm5vdCBiZSB1c2VkIGZvciBUZWdy
+YTIxMC4gU2FtZSAKYXMgdGhlIEVNQyB0YWJsZSBiaW5kaW5ncy4KClRoYW5rcywKSm9zZXBoCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
+a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
+bmVsCg==
