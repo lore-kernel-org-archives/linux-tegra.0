@@ -1,61 +1,53 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 16/16] staging: media: tegra-vde: add proper SPDX identifiers
- on file that did not have it.
-Date: Tue,  2 Apr 2019 12:32:03 +0200
-Message-ID: <20190402103203.14959-17-gregkh@linuxfoundation.org>
-References: <20190402103203.14959-1-gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.0 000/146] 5.0.6-stable review
+Date: Tue, 2 Apr 2019 13:09:17 +0200
+Message-ID: <20190402110917.GA18896@kroah.com>
+References: <20190401170048.449559024@linuxfoundation.org>
+ <a109b148-2523-dd77-6aa0-35faec9e925c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20190402103203.14959-1-gregkh@linuxfoundation.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: devel@driverdev.osuosl.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <a109b148-2523-dd77-6aa0-35faec9e925c@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-There was a single file for the tegra-vde driver that did not have SPDX
-identifiers on it, so fix that up.  At the same time, remove the "free
-form" text that specified the license of the file, as that is impossible
-for any tool to properly parse.
+On Tue, Apr 02, 2019 at 10:04:25AM +0100, Jon Hunter wrote:
+> 
+> On 01/04/2019 18:00, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.0.6 release.
+> > There are 146 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Apr  3 16:59:21 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.6-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.0:
+>     11 builds:	11 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     30 tests:	30 pass, 0 fail
+> 
+> Linux version:	5.0.6-rc1-g7505a89
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-media@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/staging/media/tegra-vde/uapi.h | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+Thanks for testing all of these and letting me know.
 
-diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
-index 4bce08a7a54c..a0dad1ed94ef 100644
---- a/drivers/staging/media/tegra-vde/uapi.h
-+++ b/drivers/staging/media/tegra-vde/uapi.h
-@@ -1,12 +1,5 @@
--/*
-- * Copyright (C) 2016-2017 Dmitry Osipenko <digetx@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-- */
--
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/* Copyright (C) 2016-2017 Dmitry Osipenko <digetx@gmail.com> */
- #ifndef _UAPI_TEGRA_VDE_H_
- #define _UAPI_TEGRA_VDE_H_
- 
--- 
-2.21.0
+greg k-h
