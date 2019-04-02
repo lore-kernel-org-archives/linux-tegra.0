@@ -1,53 +1,26 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.0 000/146] 5.0.6-stable review
-Date: Tue, 2 Apr 2019 10:04:25 +0100
-Message-ID: <a109b148-2523-dd77-6aa0-35faec9e925c@nvidia.com>
-References: <20190401170048.449559024@linuxfoundation.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 29/42] drivers: gpio: sprd: use devm_platform_ioremap_resource()
+Date: Tue, 2 Apr 2019 16:04:30 +0700
+Message-ID: <CACRpkdYa+oaw-P9aYL6KApvetVBZLt7USVV3kx7xZ4R7U=Hfew@mail.gmail.com>
+References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-29-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190401170048.449559024@linuxfoundation.org>
-Content-Language: en-US
+In-Reply-To: <1552330521-4276-29-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Hoan Tran <hoan@os.amperecomputing.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Lyra Zhang <zhang.lyra@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.j>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Mar 12, 2019 at 1:57 AM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-On 01/04/2019 18:00, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.0.6 release.
-> There are 146 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Apr  3 16:59:21 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Use the new helper that wraps the calls to platform_get_resource()
+> and devm_ioremap_resource() together.
+>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-All tests are passing for Tegra ...
+Patch applied with Baolin's ACK.
 
-Test results for stable-v5.0:
-    11 builds:	11 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    30 tests:	30 pass, 0 fail
-
-Linux version:	5.0.6-rc1-g7505a89
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+Yours,
+Linus Walleij
