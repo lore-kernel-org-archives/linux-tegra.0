@@ -1,53 +1,84 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: soc-core: Fix probe deferral following prelink
- failure
-Date: Tue, 2 Apr 2019 16:19:55 +0700
-Message-ID: <20190402091955.GE2059@sirena.org.uk>
-References: <1551706274-22571-1-git-send-email-jonathanh@nvidia.com>
- <4eb94b41-7e16-7b39-5c14-a7d180ce67df@nvidia.com>
- <20190402043509.GQ2059@sirena.org.uk>
- <2d8a0569-b821-c0c0-af39-d3863d17f47f@nvidia.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH 29/42] drivers: gpio: sprd: use devm_platform_ioremap_resource()
+Date: Tue, 2 Apr 2019 17:20:25 +0800
+Message-ID: <CAMz4ku+zfKUero=YiWsOFqt=qvf7GoO1Agk8OvDYpC=bHMnjjA@mail.gmail.com>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
+ <1552330521-4276-29-git-send-email-info@metux.net> <CACRpkdYa+oaw-P9aYL6KApvetVBZLt7USVV3kx7xZ4R7U=Hfew@mail.gmail.com>
+ <CAMz4ku+L_iAGB4HrBuS8w5AQus1AZgKpbWbABbHwzDPWj9-rqg@mail.gmail.com> <CACRpkdZMpZMHR22USj_m+_j6=nKCsZbJ6FumSO0EtYvw0OsH3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tpXFRyzAyQ/GSAaD"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2d8a0569-b821-c0c0-af39-d3863d17f47f@nvidia.com>
+In-Reply-To: <CACRpkdZMpZMHR22USj_m+_j6=nKCsZbJ6FumSO0EtYvw0OsH3A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Curtis Malainey <cujomalainey@google.com>, linux-tegra@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Enrico Weigelt, metux IT consult" <info@metux.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Hoan Tran <hoan@os.amperecomputing.com>, Orson Zhai <orsonzhai@gmail.com>, Lyra Zhang <zhang.lyra@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 2 Apr 2019 at 17:19, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Tue, Apr 2, 2019 at 4:10 PM Baolin Wang <baolin.wang@linaro.org> wrote:
+> > On Tue, 2 Apr 2019 at 17:04, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > >
+> > > On Tue, Mar 12, 2019 at 1:57 AM Enrico Weigelt, metux IT consult
+> > > <info@metux.net> wrote:
+> > >
+> > > > Use the new helper that wraps the calls to platform_get_resource()
+> > > > and devm_ioremap_resource() together.
+> > > >
+> > > > Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> > >
+> > > Patch applied with Baolin's ACK.
+> >
+> > This patch had some problems which I've pointed out and I did not ack
+> > this patch. Please do not apply it now until fixing the problem.
+>
+> Sorry, it's the gmail threading that confuse the different patches.
+>
+> The patch I actually applied is for gpio-sprd.c and looks like this:
 
---tpXFRyzAyQ/GSAaD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, this one is correct.  Thanks :)
 
-On Tue, Apr 02, 2019 at 09:52:15AM +0100, Jon Hunter wrote:
-> On 02/04/2019 05:35, Mark Brown wrote:
+>
+> commit 851f66daeab961328507dcce0980cd7e4ff5f9ae (HEAD -> devel)
+> Author: Enrico Weigelt, metux IT consult <info@metux.net>
+> Date:   Mon Mar 11 19:55:08 2019 +0100
+>
+>     drivers: gpio: sprd: use devm_platform_ioremap_resource()
+>
+>     Use the new helper that wraps the calls to platform_get_resource()
+>     and devm_ioremap_resource() together.
+>
+>     Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+>     Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+>     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
+> index 55072d2b367f..f5c8b3a351d5 100644
+> --- a/drivers/gpio/gpio-sprd.c
+> +++ b/drivers/gpio/gpio-sprd.c
+> @@ -219,7 +219,6 @@ static int sprd_gpio_probe(struct platform_device *pdev)
+>  {
+>         struct gpio_irq_chip *irq;
+>         struct sprd_gpio *sprd_gpio;
+> -       struct resource *res;
+>         int ret;
+>
+>         sprd_gpio = devm_kzalloc(&pdev->dev, sizeof(*sprd_gpio), GFP_KERNEL);
+> @@ -232,8 +231,7 @@ static int sprd_gpio_probe(struct platform_device *pdev)
+>                 return sprd_gpio->irq;
+>         }
+>
+> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       sprd_gpio->base = devm_ioremap_resource(&pdev->dev, res);
+> +       sprd_gpio->base = devm_platform_ioremap_resource(pdev, 0);
+>         if (IS_ERR(sprd_gpio->base))
+>                 return PTR_ERR(sprd_gpio->base);
+>
+> Yours,
+> Linus Walleij
 
-> > I don't have this patch at all AFAICT.
 
-> That's odd. It is definitely in -next and I did receive an 'applied'
-> email from you [0]. So looks like something went wrong here. Can we get
-> this into v5.1?
 
-Oh, if I've applied that's why I don't have it any more.  Indeed it's
-applied in my 5.1 branch so I don't know what you're expecting here?
-
---tpXFRyzAyQ/GSAaD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyjKToACgkQJNaLcl1U
-h9C44wf+IAgKYLt9gaomDLHoupiqqE5n81Hc70YYK0P/YD8IsMTzUvA/jUPrnYnF
-kyBCu27wTkzTMK2x6lKN/YublQPJxAEbWtjqT+2NuEqSRXLQvJ5Wmv8dc6gmZJLT
-QxqhB4pWVMucX25QOqyUMhs8ZXIBxHU2Bj1pjGqrNMTltYFsvxiNpP7Y6B3QJXgI
-2NPDzP39tZ+pqywYikJ9ke4AYoBlgrToFHVt5nRxnGOsBFZRlMZ9NQvWYC3fzqJ/
-80rwPgXEsfUiRe+f4hd3ianW4CQaJEaRaY4ag6yno+gzyIg6trbs2G5Wy0Q0VooF
-k+NzaCaGYcQBnmdRhZKr67cSmPzX1w==
-=cNSi
------END PGP SIGNATURE-----
-
---tpXFRyzAyQ/GSAaD--
+-- 
+Baolin Wang
+Best Regards
