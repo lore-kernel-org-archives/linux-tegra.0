@@ -1,49 +1,81 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V1 24/26] spi: tegra114: de-assert CS before SPI mode is
- reset to its default
-Date: Tue, 2 Apr 2019 11:52:52 +0700
-Message-ID: <20190402045252.GT2059@sirena.org.uk>
-References: <1553666207-11414-1-git-send-email-skomatineni@nvidia.com>
- <1553666207-11414-24-git-send-email-skomatineni@nvidia.com>
- <20190401074940.GL2059@sirena.org.uk>
- <BYAPR12MB33984E9D0FA76FCC77FD72BFC2550@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V1] mmc: tegra: add sdhci tegra suspend and resume
+Date: Mon, 1 Apr 2019 22:27:33 -0700
+Message-ID: <1554182853-31612-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="K0M4iRgkWWXhiQ9N"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB33984E9D0FA76FCC77FD72BFC2550@BYAPR12MB3398.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, anrao@nvidia.com, talho@nvidia.com, bbiswas@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+This patch adds suspend and resume PM ops for tegra SDHCI.
 
---K0M4iRgkWWXhiQ9N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 45 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 1 deletion(-)
 
-On Mon, Apr 01, 2019 at 06:07:45PM +0000, Sowjanya Komatineni wrote:
-
-> I see you have applied some patches in V1 series so should I re-send
-> again those as well along with feedback changes in next version or
-> just only the patches that are not applied.
-
-Please don't resend already applied patches.
-
---K0M4iRgkWWXhiQ9N
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyi6qQACgkQJNaLcl1U
-h9BCGAf+NYRxMnW6ONYZmV4FftAloNGPGnqTBpiG/qRhwbHgasyY1onIMglKaEK/
-qM9LLV2fropNwrQmgaHMVYEcDctSL0c/e4qAsCYAil7MQE1GcZPhlWAMmhb53QhC
-HhYm4GU7V7pEUaC2qcWA8XaZu4vFXHmdnn9igjs9+EI+cS7E4ZczdXI93DgmOHYJ
-5lbvGAOaSYMjtcmiLgZs2TF7PNb3XedhyLvSZsnGHbNuHQzujFiaMlj/Za00bGuu
-M//ZznUdHmZb+aajej+dHPUdlw7GL1C4vDIjKi33mLGB2B9Q78JNWtXCDTEasrur
-VzbJiZ2onLGxcdvoLAxmGhcHsajbNA==
-=K83W
------END PGP SIGNATURE-----
-
---K0M4iRgkWWXhiQ9N--
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index eafaaefab4a6..68263ea4a93e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1611,11 +1611,54 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int sdhci_tegra_suspend(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	int ret;
++
++	if (host->mmc->caps2 & MMC_CAP2_CQE) {
++		ret = cqhci_suspend(host->mmc);
++		if (ret)
++			return ret;
++	}
++
++	ret = sdhci_suspend_host(host);
++	if (ret)
++		return ret;
++
++	clk_disable_unprepare(pltfm_host->clk);
++	return 0;
++}
++
++static int sdhci_tegra_resume(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	int ret;
++
++	clk_prepare_enable(pltfm_host->clk);
++
++	ret = sdhci_resume_host(host);
++	if (ret)
++		return ret;
++
++	if (host->mmc->caps2 & MMC_CAP2_CQE)
++		return cqhci_resume(host->mmc);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(sdhci_tegra_dev_pm_ops, sdhci_tegra_suspend,
++			 sdhci_tegra_resume);
++
+ static struct platform_driver sdhci_tegra_driver = {
+ 	.driver		= {
+ 		.name	= "sdhci-tegra",
+ 		.of_match_table = sdhci_tegra_dt_match,
+-		.pm	= &sdhci_pltfm_pmops,
++		.pm	= &sdhci_tegra_dev_pm_ops,
+ 	},
+ 	.probe		= sdhci_tegra_probe,
+ 	.remove		= sdhci_tegra_remove,
+-- 
+2.7.4
