@@ -1,134 +1,61 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
-Date: Tue, 2 Apr 2019 13:21:46 +0300
-Message-ID: <4aab770b-044a-80b6-00c9-52ba591228f2@gmail.com>
-References: <20190325074523.26456-1-josephl@nvidia.com>
- <20190325074523.26456-2-josephl@nvidia.com>
- <dab337a7-195c-d03f-8b3a-bccf08b23d70@gmail.com>
- <d77f1605-a499-81af-bb14-aeaa0e083cff@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 16/16] staging: media: tegra-vde: add proper SPDX identifiers
+ on file that did not have it.
+Date: Tue,  2 Apr 2019 12:32:03 +0200
+Message-ID: <20190402103203.14959-17-gregkh@linuxfoundation.org>
+References: <20190402103203.14959-1-gregkh@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <d77f1605-a499-81af-bb14-aeaa0e083cff@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20190402103203.14959-1-gregkh@linuxfoundation.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: devel@driverdev.osuosl.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MDIuMDQuMjAxOSA1OjI2LCBKb3NlcGggTG8g0L/QuNGI0LXRgjoKPiBPbiA0LzEvMTkgODoxMiBQ
-TSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+PiAyNS4wMy4yMDE5IDEwOjQ1LCBKb3NlcGggTG8g
-0L/QuNGI0LXRgjoKPj4+IEFkZCB0aGUgYmluZGluZyBkb2N1bWVudCBmb3IgdGhlIGV4dGVybmFs
-IG1lbW9yeSBjb250cm9sbGVyIChFTUMpIHdoaWNoCj4+PiBjb21tdW5pY2F0ZXMgd2l0aCBleHRl
-cm5hbCBMUEREUjQgZGV2aWNlcy4gSXQgaW5jbHVkZXMgdGhlIGJpbmRpbmdzIG9mCj4+PiB0aGUg
-RU1DIG5vZGUgYW5kIHRoZSBFTUMgdGFibGUgb2YgZGlmZmVyZW50IHJhdGVzLgo+Pj4KPj4+IFRv
-IHN1cHBvcnQgaGlnaCByYXRlcyBmb3IgTFBERFI0LCB0aGUgRU1DIHRhYmxlIG11c3QgYmUgdHJh
-aW5lZCBiZWZvcmUKPj4+IGl0IGNhbiBiZSB1c2VkIGZvciBydW50aW1lIGNsb2NrIHN3aXRjaGlu
-Zy4gSXQgaGFzIGJlZW4gZG9uZSBieSBmaXJtd2FyZQo+Pj4gYW5kIG1lcmdlZCB0byB0aGUgdGFi
-bGUgdGhhdCBMaW51eCBrZXJuZWwgdXNlcy4gRm9yIGJhY2t3YXJkCj4+PiBjb21wYXRpYmlsaXR5
-IHdpdGggdGhlIGRldmljZXMgdGhhdCBoYWQgYmVlbiBsYXVuY2hlZCBvbiB0aGUgbWFya2V0LCBs
-aWtlCj4+PiBTaGllbGQgYW5kIEpldHNvbiBwbGF0Zm9ybXMsIHRoZSBiaW5kaW5ncyBpbiB0aGUg
-RU1DIHRhYmxlIHNob3VsZCByZW1haW4KPj4+IHRoZSBzYW1lLiBTbyB0aGUgZmlybXdhcmUgY2Fu
-IHJlY29nbml6ZSB0aGVtIGFuZCBtZXJnZSB0aGUgdHJhaW5lZCBFTUMKPj4+IHRhYmxlIGZvciB0
-aGUga2VybmVsLgo+Pj4KPj4+IEJhc2VkIG9uIHRoZSB3b3JrIG9mIFBldGVyIERlIFNjaHJpanZl
-ciA8cGRlc2NocmlqdmVyQG52aWRpYS5jb20+Lgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEpvc2Vw
-aCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+Pj4gLS0tCj4+PiDCoCAuLi4vbnZpZGlhLHRlZ3Jh
-MjEwLWVtYy50eHTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA2MDUgKysr
-KysrKysrKysrKysrKysrCj4+PiDCoCAxIGZpbGUgY2hhbmdlZCwgNjA1IGluc2VydGlvbnMoKykK
-Pj4+IMKgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvbWVtb3J5LWNvbnRyb2xsZXJzL252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+Pgo+Pj4gZGlm
-ZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJv
-bGxlcnMvbnZpZGlhLHRlZ3JhMjEwLWVtYy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJzL252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+PiBu
-ZXcgZmlsZSBtb2RlIDEwMDY0NAo+Pj4gaW5kZXggMDAwMDAwMDAwMDAwLi4xZjZiNmRmNmQzN2IK
-Pj4+IC0tLSAvZGV2L251bGwKPj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZpZGlhLHRlZ3JhMjEwLWVtYy50eHQKPj4+IEBAIC0w
-LDAgKzEsNjA1IEBACj4+PiArTlZJRElBIFRlZ3JhMjEwIFNvQyBFTUMgKGV4dGVybmFsIG1lbW9y
-eSBjb250cm9sbGVyKQo+Pj4gKz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT0KPiBzbmlwCj4+PiArLSBudmlkaWEsZW1jLXRyYWluaW5nLW1vZC1yZWdz
-IDoKPj4+ICstIG52aWRpYSxlbWMtc2F2ZS1yZXN0b3JlLW1vZC1yZWdzIDoKPj4+ICvCoMKgwqAg
-ZGVwcmVjYXRlZCwga2VlcCBmb3IgZm9yIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkKPj4KPj4gVGhp
-cyBpcyBhIG5ldyBiaW5kaW5nLCBzby4uIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkgd2l0aCB3aGF0
-PyBTb21lIG9sZCB2ZXJzaW9uIG9mIGRvd25zdHJlYW0gYm9vdGxvYWRlcj8gRG8geW91IHJlYWxs
-eSBuZWVkIGl0Pwo+Pgo+IFllcywgYmFja3dhcmQgY29tcGF0aWJpbGl0eSBmb3IgdGhlIGZpcm13
-YXJlIHRoYXQgaGVscHMgdG8gZG8gdGhlIGluaXRpYWwgRERSNCB0cmFpbmluZyBiZWZvcmUgd2Ug
-Y2FuIHVzZSB0aGF0LiBBbHRob3VnaCB0aGUga2VybmVsIGRvZXNuJ3QgdXNlIHRoYXQgZm9yIEVN
-QyBzY2FsaW5nLCB0aGUgZmlybXdhcmUgc3RpbGwgdXNlcyB0aGVzZSBiaW5kaW5ncyBhbmQgdXBk
-YXRlcyB0aGVtLgo+IAo+Pj4gKy0gbnZpZGlhLGVtYy1idXJzdC1tYy1yZWdzIDogdmFsdWVzIGZv
-ciB0aGUgZm9sbG93aW5nIHJlZ2lzdGVycwo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIChTZWUgVFJNIDE4LjEwLjEgZm9yIHJlZ2lzdGVyIGRlc2NyaXB0aW9ucykKPj4+ICvC
-oMKgwqAgTUNfRU1FTV9BUkJfQ0ZHCj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX09VVFNUQU5ESU5H
-X1JFUQo+Pj4gK8KgwqDCoCBNQ19FTUVNX0FSQl9SRUZQQl9IUF9DVFJMCj4+PiArwqDCoMKgIE1D
-X0VNRU1fQVJCX1JFRlBCX0JBTktfQ1RSTAo+Pj4gK8KgwqDCoCBNQ19FTUVNX0FSQl9USU1JTkdf
-UkNECj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX1RJTUlOR19SUAo+Pj4gK8KgwqDCoCBNQ19FTUVN
-X0FSQl9USU1JTkdfUkMKPj4+ICvCoMKgwqAgTUNfRU1FTV9BUkJfVElNSU5HX1JBUwo+Pj4gK8Kg
-wqDCoCBNQ19FTUVNX0FSQl9USU1JTkdfRkFXCj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX1RJTUlO
-R19SUkQKPj4+ICvCoMKgwqAgTUNfRU1FTV9BUkJfVElNSU5HX1JBUDJQUkUKPj4+ICvCoMKgwqAg
-TUNfRU1FTV9BUkJfVElNSU5HX1dBUDJQUkUKPj4+ICvCoMKgwqAgTUNfRU1FTV9BUkJfVElNSU5H
-X1IyUgo+Pj4gK8KgwqDCoCBNQ19FTUVNX0FSQl9USU1JTkdfVzJXCj4+PiArwqDCoMKgIE1DX0VN
-RU1fQVJCX1RJTUlOR19SMlcKPj4+ICvCoMKgwqAgTUNfRU1FTV9BUkJfVElNSU5HX0NDRE1XCj4+
-PiArwqDCoMKgIE1DX0VNRU1fQVJCX1RJTUlOR19XMlIKPj4+ICvCoMKgwqAgTUNfRU1FTV9BUkJf
-VElNSU5HX1JGQ1BCCj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX0RBX1RVUk5TCj4+PiArwqDCoMKg
-IE1DX0VNRU1fQVJCX0RBX0NPVkVSUwo+Pj4gK8KgwqDCoCBNQ19FTUVNX0FSQl9NSVNDMAo+Pj4g
-K8KgwqDCoCBNQ19FTUVNX0FSQl9NSVNDMQo+Pj4gK8KgwqDCoCBNQ19FTUVNX0FSQl9NSVNDMgo+
-Pj4gK8KgwqDCoCBNQ19FTUVNX0FSQl9SSU5HMV9USFJPVFRMRQo+Pj4gK8KgwqDCoCBNQ19FTUVN
-X0FSQl9ESFlTVF9DVFJMCj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJ
-TF8wCj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF8xCj4+PiArwqDC
-oMKgIE1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF8yCj4+PiArwqDCoMKgIE1DX0VNRU1f
-QVJCX0RIWVNUX1RJTUVPVVRfVVRJTF8zCj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX0RIWVNUX1RJ
-TUVPVVRfVVRJTF80Cj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF81
-Cj4+PiArwqDCoMKgIE1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF82Cj4+PiArwqDCoMKg
-IE1DX0VNRU1fQVJCX0RIWVNUX1RJTUVPVVRfVVRJTF83Cj4+PiArLSBudmlkaWEsZW1jLWxhLXNj
-YWxlLXJlZ3MgOiB2YWx1ZXMgZm9yIHRoZSBmb2xsb3dpbmcgcmVnaXN0ZXJzCj4+PiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKFNlZSBUUk0gMTguMTAuMSBmb3IgcmVnaXN0ZXIg
-ZGVzY3JpcHRpb25zKQo+Pj4gK8KgwqDCoCBNQ19NTExfTVBDT1JFUl9QVFNBX1JBVEUKPj4+ICvC
-oMKgwqAgTUNfRlRPUF9QVFNBX1JBVEUKPj4+ICvCoMKgwqAgTUNfUFRTQV9HUkFOVF9ERUNSRU1F
-TlQKPj4+ICvCoMKgwqAgTUNfTEFURU5DWV9BTExPV0FOQ0VfWFVTQl8wCj4+PiArwqDCoMKgIE1D
-X0xBVEVOQ1lfQUxMT1dBTkNFX1hVU0JfMQo+Pj4gK8KgwqDCoCBNQ19MQVRFTkNZX0FMTE9XQU5D
-RV9UU0VDXzAKPj4+ICvCoMKgwqAgTUNfTEFURU5DWV9BTExPV0FOQ0VfU0RNTUNBXzAKPj4+ICvC
-oMKgwqAgTUNfTEFURU5DWV9BTExPV0FOQ0VfU0RNTUNBQV8wCj4+PiArwqDCoMKgIE1DX0xBVEVO
-Q1lfQUxMT1dBTkNFX1NETU1DXzAKPj4+ICvCoMKgwqAgTUNfTEFURU5DWV9BTExPV0FOQ0VfU0RN
-TUNBQl8wCj4+PiArwqDCoMKgIE1DX0xBVEVOQ1lfQUxMT1dBTkNFX1BQQ1NfMAo+Pj4gK8KgwqDC
-oCBNQ19MQVRFTkNZX0FMTE9XQU5DRV9QUENTXzEKPj4+ICvCoMKgwqAgTUNfTEFURU5DWV9BTExP
-V0FOQ0VfTVBDT1JFXzAKPj4+ICvCoMKgwqAgTUNfTEFURU5DWV9BTExPV0FOQ0VfSENfMAo+Pj4g
-K8KgwqDCoCBNQ19MQVRFTkNZX0FMTE9XQU5DRV9IQ18xCj4+PiArwqDCoMKgIE1DX0xBVEVOQ1lf
-QUxMT1dBTkNFX0FWUENfMAo+Pj4gK8KgwqDCoCBNQ19MQVRFTkNZX0FMTE9XQU5DRV9HUFVfMAo+
-Pj4gK8KgwqDCoCBNQ19MQVRFTkNZX0FMTE9XQU5DRV9HUFUyXzAKPj4+ICvCoMKgwqAgTUNfTEFU
-RU5DWV9BTExPV0FOQ0VfTlZFTkNfMAo+Pj4gK8KgwqDCoCBNQ19MQVRFTkNZX0FMTE9XQU5DRV9O
-VkRFQ18wCj4+PiArwqDCoMKgIE1DX0xBVEVOQ1lfQUxMT1dBTkNFX1ZJQ18wCj4+PiArwqDCoMKg
-IE1DX0xBVEVOQ1lfQUxMT1dBTkNFX1ZJMl8wCj4+PiArwqDCoMKgIE1DX0xBVEVOQ1lfQUxMT1dB
-TkNFX0lTUDJfMAo+Pj4gK8KgwqDCoCBNQ19MQVRFTkNZX0FMTE9XQU5DRV9JU1AyXzEKPj4KPj4g
-U2hvdWxkbid0IHRoaXMgYmUgYSBwYXJ0IG9mIGEgIk1lbW9yeSBDb250cm9sbGVyIiBiaW5kaW5n
-IGxpa2UgaXQgaXMgZG9uZSBmb3IgVDEyND8KPj4KPiAKPiBUaGUgVGVncmEgU29DcyBiZWZvcmUg
-VGVncmExMzIgb25seSBzdXBwb3J0cyBERFIzIG9yIEREUjIuIFRoZSBFTUMgdGFibGUgZG9lc24n
-dCBpbmNsdWRlIHRoZSBzZXR0aW5ncyBvZiBsYXRlbmN5IGFsbG93YW5jZSByZWdpc3RlcnMuIEZv
-ciB0aGUgRERSNCBzdXBwb3J0IG9uIFRlZ3JhMjEwLCB3ZSB3aWxsIGR5bmFtaWNhbGx5IHNjYWxl
-IHRoZXNlIGxhdGVuY3kgYWxsb3dhbmNlIHJlZ2lzdGVycyBhcyB3ZWxsIHRvIHN1cHBvcnQgZmFz
-dGVyIGNsb2NrIHJhdGUuIFNvIHRoZSBhcmJpdHJhdGlvbiBjYW4gYmUgYWRhcHRlZCBhY2NvcmRp
-bmcgdG8gdGhlIHJhdGUgc3dpdGNoaW5nLgo+IAo+IEFuZCB0aGUgRU1DIHNjYWxpbmcgc2VxdWVu
-Y2UgZm9yIEREUjMgYW5kIEREUjQgaXMgcXVpdGUgZGlmZmVyZW50LiBTbyB0aGUgRU1DIHNjYWxp
-bmcgc2VxdWVuY2UgZm9yIFRlZ3JhMTI0IGNhbm5vdCBiZSB1c2VkIGZvciBUZWdyYTIxMC4gU2Ft
-ZSBhcyB0aGUgRU1DIHRhYmxlIGJpbmRpbmdzLgoKVGhpcyBpcyBub3QgdHJ1ZSwgdGhlIE1DIGNv
-bmZpZ3VyYXRpb24gcGFydCBpcyBleGFjdGx5IHRoZSBzYW1lIGZvciBhbGwgb2YgdGhlIFRlZ3Jh
-J3MsIHNlZSBUMTI0IGRyaXZlciBhbmQgdGhlIHRlZ3JhX21jX3dyaXRlX2VtZW1fY29uZmlndXJh
-dGlvbigpIHdoaWNoIHdyaXRlcyBNQyByZWdpc3RlcnMgZGVmaW5lZCBwZXItU29DIGFuZCBUMjEw
-IGNvdWxkIGVhc2lseSBpbmNsdWRlIHRoZSBMQSByZWdpc3RlcnMuIEJ1dCBJIG5vdyBzZWUgdGhh
-dCB5b3UgbWVudGlvbmVkIGluIHRoZSBjb3ZlciBsZXR0ZXIgdGhhdCB5b3UncmUgbm90IGdvaW5n
-IHRvIGNoYW5nZSB0aGUgYmluZGluZyBhbmQgd2FudCB1cHN0cmVhbSB0byBhY2NlcHQgdGhlIGRv
-d25zdHJlYW0gYmluZGluZyBhcy1pcywgaW4gdGhpcyBjYXNlIGl0J3MgZmluZSB0byBtaXggRU1D
-IHdpdGggTUMuIFVsdGltYXRlbHkgaXQgd2lsbCBiZSBuaWNlciBpZiB0aGUgYm9vdGxvYWRlciBm
-aXJtd2FyZSBjb3VsZCBiZSB1cGRhdGVkIHRvIGNvbmZvcm0gd2l0aCB1cHN0cmVhbSB0byBoYXZl
-IGFsbCBvZiB0aGUgYmluZGluZ3MgY29uc2lzdGVudCBhY3Jvc3MgYWxsIG9mIFNvQyBnZW5lcmF0
-aW9ucywgQUZBSUsgdGhhdCdzIHdoYXQgb3RoZXIgdmVuZG9ycyBhcmUgZG9pbmcuCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVs
-IG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
-L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+There was a single file for the tegra-vde driver that did not have SPDX
+identifiers on it, so fix that up.  At the same time, remove the "free
+form" text that specified the license of the file, as that is impossible
+for any tool to properly parse.
+
+Cc: Dmitry Osipenko <digetx@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-media@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/staging/media/tegra-vde/uapi.h | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
+index 4bce08a7a54c..a0dad1ed94ef 100644
+--- a/drivers/staging/media/tegra-vde/uapi.h
++++ b/drivers/staging/media/tegra-vde/uapi.h
+@@ -1,12 +1,5 @@
+-/*
+- * Copyright (C) 2016-2017 Dmitry Osipenko <digetx@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version
+- * 2 of the License, or (at your option) any later version.
+- */
+-
++/* SPDX-License-Identifier: GPL-2.0+ */
++/* Copyright (C) 2016-2017 Dmitry Osipenko <digetx@gmail.com> */
+ #ifndef _UAPI_TEGRA_VDE_H_
+ #define _UAPI_TEGRA_VDE_H_
+ 
+-- 
+2.21.0
