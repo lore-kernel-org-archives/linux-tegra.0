@@ -1,124 +1,185 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1] mmc: tegra: add sdhci tegra suspend and resume
-Date: Tue, 2 Apr 2019 18:48:02 +0200
-Message-ID: <20190402164802.GA7797@ulmo>
-References: <1554182853-31612-1-git-send-email-skomatineni@nvidia.com>
- <20190402145901.GF8017@ulmo>
- <BYAPR12MB3398861980C3F967CD209393C2560@BYAPR12MB3398.namprd12.prod.outlook.com>
+Subject: Re: [PATCH] clocksource/drivers/tegra: rework for compensation of
+ suspend time
+Date: Tue, 2 Apr 2019 18:49:51 +0200
+Message-ID: <20190402164951.GB7797@ulmo>
+References: <20190402030234.13488-1-josephl@nvidia.com>
+ <20190402144603.GE8017@ulmo>
+ <01028c3a-8e2e-835b-f886-ca5b85474cd2@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <BYAPR12MB3398861980C3F967CD209393C2560@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <01028c3a-8e2e-835b-f886-ca5b85474cd2@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "adrian.hunter@intel.com" <adrian.hunter@intel.com>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, Timo Alho <talho@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+To: Joseph Lo <josephl@nvidia.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---/04w6evG8XlLl3ft
+--1UWUbFP1cBYEclgG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 02, 2019 at 04:41:18PM +0000, Sowjanya Komatineni wrote:
-> > On Mon, Apr 01, 2019 at 10:27:33PM -0700, Sowjanya Komatineni wrote:
-> > > This patch adds suspend and resume PM ops for tegra SDHCI.
+On Tue, Apr 02, 2019 at 11:50:20PM +0800, Joseph Lo wrote:
+> On 4/2/19 10:46 PM, Thierry Reding wrote:
+> > On Tue, Apr 02, 2019 at 11:02:34AM +0800, Joseph Lo wrote:
+> > > Since the clocksource framework has the support for suspend time
+> > > compensation. Re-work the driver to use that, so we can reduce the
+> > > duplicate code.
 > > >=20
-> > > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> > > Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > > > ---
-> > >  drivers/mmc/host/sdhci-tegra.c | 45=20
-> > > +++++++++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 44 insertions(+), 1 deletion(-)
+> > >   drivers/clocksource/timer-tegra20.c | 63 +++++++++-----------------=
+---
+> > >   1 file changed, 20 insertions(+), 43 deletions(-)
+> >=20
+> > Nice!
+> >=20
 > > >=20
-> > > diff --git a/drivers/mmc/host/sdhci-tegra.c=20
-> > > b/drivers/mmc/host/sdhci-tegra.c index eafaaefab4a6..68263ea4a93e=20
-> > > 100644
-> > > --- a/drivers/mmc/host/sdhci-tegra.c
-> > > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > > @@ -1611,11 +1611,54 @@ static int sdhci_tegra_remove(struct platform=
-_device *pdev)
-> > >  	return 0;
-> > >  }
-> > > =20
-> > > +#ifdef CONFIG_PM_SLEEP
-> > > +static int sdhci_tegra_suspend(struct device *dev) {
-> > > +	struct sdhci_host *host =3D dev_get_drvdata(dev);
-> > > +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> > > diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksourc=
+e/timer-tegra20.c
+> > > index fdb3d795a409..919b3568c495 100644
+> > > --- a/drivers/clocksource/timer-tegra20.c
+> > > +++ b/drivers/clocksource/timer-tegra20.c
+> > > @@ -60,9 +60,6 @@
+> > >   static u32 usec_config;
+> > >   static void __iomem *timer_reg_base;
+> > >   #ifdef CONFIG_ARM
+> > > -static void __iomem *rtc_base;
+> > > -static struct timespec64 persistent_ts;
+> > > -static u64 persistent_ms, last_persistent_ms;
+> > >   static struct delay_timer tegra_delay_timer;
+> > >   #endif
+> > > @@ -199,40 +196,30 @@ static unsigned long tegra_delay_timer_read_cou=
+nter_long(void)
+> > >   	return readl(timer_reg_base + TIMERUS_CNTR_1US);
+> > >   }
+> > > +static struct timer_of suspend_rtc_to =3D {
+> > > +	.flags =3D TIMER_OF_BASE | TIMER_OF_CLOCK,
+> > > +};
+> > > +
+> > >   /*
+> > >    * tegra_rtc_read - Reads the Tegra RTC registers
+> > >    * Care must be taken that this funciton is not called while the
+> > >    * tegra_rtc driver could be executing to avoid race conditions
+> > >    * on the RTC shadow register
+> > >    */
+> > > -static u64 tegra_rtc_read_ms(void)
+> > > +static u64 tegra_rtc_read_ms(struct clocksource *cs)
+> > >   {
+> > > -	u32 ms =3D readl(rtc_base + RTC_MILLISECONDS);
+> > > -	u32 s =3D readl(rtc_base + RTC_SHADOW_SECONDS);
+> > > +	u32 ms =3D readl(timer_of_base(&suspend_rtc_to) + RTC_MILLISECONDS);
+> > > +	u32 s =3D readl(timer_of_base(&suspend_rtc_to) + RTC_SHADOW_SECONDS=
+);
+> > >   	return (u64)s * MSEC_PER_SEC + ms;
+> > >   }
+> > > -/*
+> > > - * tegra_read_persistent_clock64 -  Return time from a persistent cl=
+ock.
+> > > - *
+> > > - * Reads the time from a source which isn't disabled during PM, the
+> > > - * 32k sync timer.  Convert the cycles elapsed since last read into
+> > > - * nsecs and adds to a monotonically increasing timespec64.
+> > > - * Care must be taken that this funciton is not called while the
+> > > - * tegra_rtc driver could be executing to avoid race conditions
+> > > - * on the RTC shadow register
+> > > - */
+> > > -static void tegra_read_persistent_clock64(struct timespec64 *ts)
+> > > -{
+> > > -	u64 delta;
+> > > -
+> > > -	last_persistent_ms =3D persistent_ms;
+> > > -	persistent_ms =3D tegra_rtc_read_ms();
+> > > -	delta =3D persistent_ms - last_persistent_ms;
+> > > -
+> > > -	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
+> > > -	*ts =3D persistent_ts;
+> > > -}
+> > > +static struct clocksource suspend_rtc_clocksource =3D {
+> > > +	.name	=3D "tegra_suspend_timer",
+> > > +	.rating	=3D 200,
+> > > +	.read	=3D tegra_rtc_read_ms,
+> > > +	.mask	=3D CLOCKSOURCE_MASK(32),
+> > > +	.flags	=3D CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTO=
+P,
+> > > +};
+> > >   #endif
+> > >   static int tegra_timer_common_init(struct device_node *np, struct t=
+imer_of *to)
+> > > @@ -385,25 +372,15 @@ static int __init tegra_init_timer(struct devic=
+e_node *np)
+> > >   static int __init tegra20_init_rtc(struct device_node *np)
+> > >   {
+> > > -	struct clk *clk;
 > > > +	int ret;
-> > > +
-> > > +	if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> > > +		ret =3D cqhci_suspend(host->mmc);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +	}
-> > > +
-> > > +	ret =3D sdhci_suspend_host(host);
+> > > -	rtc_base =3D of_iomap(np, 0);
+> > > -	if (!rtc_base) {
+> > > -		pr_err("Can't map RTC registers\n");
+> > > -		return -ENXIO;
+> > > -	}
+> > > +	ret =3D timer_of_init(np, &suspend_rtc_to);
 > > > +	if (ret)
 > > > +		return ret;
-> > > +
-> > > +	clk_disable_unprepare(pltfm_host->clk);
+> > > -	/*
+> > > -	 * rtc registers are used by read_persistent_clock, keep the rtc cl=
+ock
+> > > -	 * enabled
+> > > -	 */
+> > > -	clk =3D of_clk_get(np, 0);
+> > > -	if (IS_ERR(clk))
+> > > -		pr_warn("Unable to get rtc-tegra clock\n");
+> > > -	else
+> > > -		clk_prepare_enable(clk);
+> > > +	clocksource_register_hz(&suspend_rtc_clocksource, 1000);
+> > > -	return register_persistent_clock(tegra_read_persistent_clock64);
 > > > +	return 0;
-> > > +}
-> > > +
-> > > +static int sdhci_tegra_resume(struct device *dev) {
-> > > +	struct sdhci_host *host =3D dev_get_drvdata(dev);
-> > > +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
-> > > +	int ret;
-> > > +
-> > > +	clk_prepare_enable(pltfm_host->clk);
-> >
-> > You need to check this for errors here.
-> >
-> > > +
-> > > +	ret =3D sdhci_resume_host(host);
-> > > +	if (ret)
-> > > +		return ret;
-> >
-> > And clk_disable_unprepare() in case of failure.
-> >
-> > > +
-> > > +	if (host->mmc->caps2 & MMC_CAP2_CQE)
-> > > +		return cqhci_resume(host->mmc);
-> >
-> > Same here. Also make sure to sdhci_suspend_host() if cqhci_resume() fai=
-ls. It's probably best to have a standard error cleanup path for this.
-> >
-> > Thierry
+> > >   }
+> > >   TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rt=
+c);
+> > >   #endif
+> >=20
+> > I wonder if there's any reason left for the #ifdefs now. My recollection
+> > is that these were only needed because register_persistent_clock() was
+> > not available on 64-bit ARM. The new APIs seem to be available
+> > regardless of architecture, so do we still need to differentiate?
+> >=20
 >=20
-> Thanks Thierry. Will add error check and cleanup for clock and sdhci_resu=
-me_host.
-> Regarding, cqhci_resume always returns 0. Infact, it does nothing as resu=
-me happens on first cqhci_request.
-> Since helper functions exists in cqhci driver, was using it for explicit =
-resume call.
+> Actually, only Tegra20/30 that doesn't have ARM arch timer support need
+> this. The latter Tegra chips which have ARM arch timer support use TSC (
+> time stamp counter or timer system counter depends on the chip it has
+> different name) as the timer source in the PMC. And it uses OSC during
+> runtime and switches to 32KHz always-on clock source to keep counting when
+> the chip is in the SC7 or LP0 state.
+>=20
+> So I didn't change that for this reason.
 
-Yeah, I think it's good to use it. And I think it's also the safest
-option to handle errors from it properly because somebody may eventually
-add code to it that can fail. If we properly handle errors we'll be
-prepared for when that happens.
+Okay, looks good then.
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---/04w6evG8XlLl3ft
+--1UWUbFP1cBYEclgG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyjkj0ACgkQ3SOs138+
-s6EwEBAAhV3DcxKntQenphq/Inls3vasqeZSK1NBBoE+Ym+CZhO2v6+TGJOuEaxu
-RfoeodVB/6jasOplTv7EiBbxEuEdj4xzcSi2jVQnv6m4nQaflMpguvHbPd9M1TGO
-x/QMYxI2sBctVLjq8eiTBTbuclJki9M16Y4tlVXcgjFtgBb6Dyb7QJ86+PKOFazA
-56v/S7yY4++hcqHI0F1+fovDxNdgzQF5fUNi7CMWQA5q82qOw98mnZf3dm4H84ba
-ftjKD0gDJst+f0N7AipcXTEACGgD4Y+aOFs5jnmj0rAw14CfTi31GzPFNlCKq1Hp
-VlTSVQQOisdEI3nlalaf0b9IAn1kyarPqCgPQLPHm0/TiaZ7qp5o7bf1Eh7v29zC
-KSUNCjtKVh7bOzQJxPkPLFDjOVf8ocvYWXkGr33I1bF3aBlHYBUzS+9RRegwNed7
-ZH7t2LuKMHCprQ9hH30xDVKOrZCxT4GgIYYc+1lSrVFrsSeuHlMgOrwokJ3qwF4p
-mACxduNPyOClRJZQKksvqThgtg3aW9NxQaP/x2G5yCNihU9xk0zgrzz3HT542o0K
-Vl/cwKHcMaDRFJLQSWDOa7ZOJ6kc/baI3Vs4//3zaF5C24Y8exTGVdjGky0+LDJ8
-QmDJSEwKmYcW2tyXbs1yyZ+3W2T8X5my4SMhOEW11j5H9qvKSE0=
-=uStW
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyjkq8ACgkQ3SOs138+
+s6Hysg//b9UgRbVlTL6mp0e8viRfpi09fLqkEMjeDRQaqZGdh+Kcau/GJuX+OJCp
+PANjwQwYPYzZfP35IDT6Cc7Xvfct21ILCwKpfy8YustzIqHPdeBhvTzTm1gcf3JO
+YeqTX6lXBkhsUlVRMj1+EpQoAKCLD2+95CrIq73uCCJgRp7+TuwDkzP/SD/PbPHa
+GNquSSA2s8gUrrUr7eEA/Iy2WifrHd9s49M5agKrpv7kDcLKUmT6Ne9WOBBNrVBM
+BV4cDafnRtNbaLXpu0d0Dy5p3i/+Vov43/dErt0/cLodHVDagyv0jfVTsue1zeqK
+MsBP1R8QCKu2N/mdlEXvj/SEAKMqmKS+1ULHHBUbSe/HZ1lBkQIzTQ2iyCZ9aWXu
+eDo6N4H1jkiRyvDpuZoCTM9gbpn6SsU0d9roLWU7p9EtgDY0SlHlEFh2k21MBdYs
+wUAkUtvxGXISyYR7EeYVyrXnkrp08w5biPHO8AzdiMT3HciH6C9Gadlj5aClFReN
+ZmPO+PYEAVQW+EVaKkrM3E3a3nr2CKchmr7nzgqK/3fOq3A65hCotnIMMctMFBfO
+oee3GSoi0zZtSEd2b+E0vXGWk+BTXGWPboFvgkZI3yNEcUqYsqRlW5Xq5+gmYr98
+Db0YEtoYBgvuk7LPouMzCb2hjmF8CZQplzAp4RUO7cTAlWDlP3o=
+=d9bl
 -----END PGP SIGNATURE-----
 
---/04w6evG8XlLl3ft--
+--1UWUbFP1cBYEclgG--
