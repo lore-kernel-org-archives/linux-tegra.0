@@ -1,93 +1,71 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V3] mmc: tegra: add sdhci tegra suspend and resume
-Date: Wed, 3 Apr 2019 08:39:24 -0700
-Message-ID: <1554305964-19347-1-git-send-email-skomatineni@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH 7/7] drm/tegra: fix possible object reference leak
+Date: Thu, 4 Apr 2019 00:04:15 +0800
+Message-ID: <1554307455-40361-8-git-send-email-wen.yang99@zte.com.cn>
+References: <1554307455-40361-1-git-send-email-wen.yang99@zte.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1554307455-40361-1-git-send-email-wen.yang99@zte.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: skomatineni@nvidia.com, talho@nvidia.com, anrao@nvidia.com, bbiswas@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds suspend and resume PM ops for tegra SDHCI.
+The call to  of_get_child_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Detected by coccinelle with the following warnings:
+./drivers/gpu/drm/tegra/rgb.c:225:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 223, but without a corresponding object release within this function.
+./drivers/gpu/drm/tegra/rgb.c:229:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 223, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/mmc/host/sdhci-tegra.c | 56 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/output.c | 2 ++
+ drivers/gpu/drm/tegra/rgb.c    | 8 ++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index eafaaefab4a6..5ec304166566 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1611,11 +1611,65 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index 9c2b9da..78553d7 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -193,6 +193,8 @@ void tegra_output_remove(struct tegra_output *output)
+ 
+ 	if (output->ddc)
+ 		put_device(&output->ddc->dev);
++	if (output->of_node)
++		of_node_put(output->of_node);
  }
  
-+static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
-+{
-+	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	int ret;
-+
-+	if (host->mmc->caps2 & MMC_CAP2_CQE) {
-+		ret = cqhci_suspend(host->mmc);
-+		if (ret)
-+			return ret;
+ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+index 28a78d3..ad683a2 100644
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -221,12 +221,16 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+ 	int err;
+ 
+ 	np = of_get_child_by_name(dc->dev->of_node, "rgb");
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
 +	}
-+
-+	ret = sdhci_suspend_host(host);
-+	if (ret) {
-+		cqhci_resume(host->mmc);
-+		return ret;
+ 
+ 	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+-	if (!rgb)
++	if (!rgb) {
++		of_node_put(np);
+ 		return -ENOMEM;
 +	}
-+
-+	clk_disable_unprepare(pltfm_host->clk);
-+	return 0;
-+}
-+
-+static int __maybe_unused sdhci_tegra_resume(struct device *dev)
-+{
-+	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	int ret;
-+
-+	ret = clk_prepare_enable(pltfm_host->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = sdhci_resume_host(host);
-+	if (ret)
-+		goto disable_clk;
-+
-+	if (host->mmc->caps2 & MMC_CAP2_CQE) {
-+		ret = cqhci_resume(host->mmc);
-+		if (ret)
-+			goto suspend_host;
-+	}
-+
-+	return 0;
-+
-+suspend_host:
-+	sdhci_suspend_host(host);
-+disable_clk:
-+	clk_disable_unprepare(pltfm_host->clk);
-+	return ret;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(sdhci_tegra_dev_pm_ops, sdhci_tegra_suspend,
-+			 sdhci_tegra_resume);
-+
- static struct platform_driver sdhci_tegra_driver = {
- 	.driver		= {
- 		.name	= "sdhci-tegra",
- 		.of_match_table = sdhci_tegra_dt_match,
--		.pm	= &sdhci_pltfm_pmops,
-+		.pm	= &sdhci_tegra_dev_pm_ops,
- 	},
- 	.probe		= sdhci_tegra_probe,
- 	.remove		= sdhci_tegra_remove,
+ 
+ 	rgb->output.dev = dc->dev;
+ 	rgb->output.of_node = np;
 -- 
-2.7.4
+2.9.5
