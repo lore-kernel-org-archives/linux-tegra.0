@@ -1,111 +1,53 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 00/12] i2c: core: introduce atomic transfers
-Date: Wed, 3 Apr 2019 16:15:10 +0300
-Message-ID: <20190403131510.GE9224@smile.fi.intel.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 04/12] i2c: mux: populate the new *_atomic callbacks
+Date: Wed, 3 Apr 2019 15:17:12 +0000
+Message-ID: <59d32414-3859-d614-dc41-cc0a1bc63301@axentia.se>
 References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+ <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+Content-ID: <59CEFE5B4A4970489A9BEEEE3545A485@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@axentia.se>, Stefan Lengfeld <contact@stefanchrist.eu>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stefan Lengfeld <contact@stefanchrist.eu>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 02:40:07PM +0200, Wolfram Sang wrote:
-> This series adds support for very late atomic transfers to the I2C subsystem.
-> It finally reached a state which I think is ready-to-apply. This is mainly
-> because of two things:
-> 
-> a) we decided to respect the current locking scheme and to not give atomic
-> transfers a priority. The code needed for that would have been either
-> incomplete or very invasive. And we cannot guarantee successful transfers
-> anyhow. See [1] for the discussion and other write-ups for design choices.
-> 
-> b) thanks to a discussion with Peter Zijlstra[2], the conditions when to allow
-> atomic transfers became much clearer. The new helper i2c_in_atomic_xfer_mode()
-> adds readability, too.
-> 
-> In detail, changes since RFC v2:
-> 
-> * dropped coding style patch because already applied
-> * added new patch 1 to drop in_atomic() and have better conditions when
->   to enter the atomic path
-> * added support to the mux-core
-> * simplified omap conversion a little
-> * added new conversions for ocores, stu300, and algo-bit/gpio
-> * typo corrections found by Simon and Stefan
-> * added tags to drivers
-> * dropped tags from core patches because that part changed too much
-> 
-> All tested on a Renesas Lager board (R-Car H2). Sadly, the i2c-sh_mobile driver
-> cannot be converted now because of other work needed first. I tested with the
-> i2c-gpio driver, though. The other driver patches are build tested. A branch
-> can be found here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/atomic_xfer
-> 
-> I am happy for reviews and comments. Please note if you review (especially the
-> core parts), I'd like to have a short summary of your review even if there is
-> no proposed change. Like what you did, what you think about it, etc. Some stuff
-> in here is subtle, so if you went through the effort to double check my
-> assumptions you should name it :)
-> 
-
-Thank you!
-
-FWIW,
-
-Reviewed-by Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-for patches 1-5,12.
-
-Indeed, atomic condition sounds clear now.
-
-> 
-> Finally, a big thank you and credit to Renesas for funding this work, of course!
-> 
-> Happy hacking,
-> 
->    Wolfram
-> 
-> [1] https://lkml.org/lkml/2019/3/2/76
-> [2] http://patchwork.ozlabs.org/patch/1067437/
-> 
-> Wolfram Sang (12):
->   i2c: remove use of in_atomic()
->   i2c: core: use I2C locking behaviour also for SMBUS
->   i2c: core: introduce callbacks for atomic transfers
->   i2c: mux: populate the new *_atomic callbacks
->   i2c: demux: handle the new atomic callbacks
->   i2c: omap: Add the master_xfer_irqless hook
->   i2c: tegra-bpmp: convert to use new atomic callbacks
->   i2c: ocores: refactor setup for polling
->   i2c: ocores: enable atomic xfers
->   i2c: stu300: use xfer_atomic callback to bail out early
->   i2c: algo: bit: add flag to whitelist atomic transfers
->   i2c: gpio: flag atomic capability if possible
-> 
->  drivers/i2c/algos/i2c-algo-bit.c      | 22 +++++++++-
->  drivers/i2c/busses/i2c-gpio.c         |  2 +
->  drivers/i2c/busses/i2c-ocores.c       | 16 +++-----
->  drivers/i2c/busses/i2c-omap.c         | 76 +++++++++++++++++++++++++++++------
->  drivers/i2c/busses/i2c-stu300.c       | 25 +++++-------
->  drivers/i2c/busses/i2c-tegra-bpmp.c   | 25 +++++++++---
->  drivers/i2c/i2c-core-base.c           | 17 ++++----
->  drivers/i2c/i2c-core-smbus.c          | 25 +++++++++---
->  drivers/i2c/i2c-core.h                | 25 ++++++++++++
->  drivers/i2c/i2c-mux.c                 |  6 +++
->  drivers/i2c/muxes/i2c-demux-pinctrl.c |  2 +
->  include/linux/i2c-algo-bit.h          |  1 +
->  include/linux/i2c.h                   | 15 +++++--
->  13 files changed, 194 insertions(+), 63 deletions(-)
-> 
-> -- 
-> 2.11.0
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
+T24gMjAxOS0wNC0wMyAxNDo0MCwgV29sZnJhbSBTYW5nIHdyb3RlOg0KPiBJZiB0aGUgcGFyZW50
+IGFkYXB0ZXIgaGFzIGF0b21pY194ZmVyIGNhbGxiYWNrcywgcG9wdWxhdGUgdGhlbSBmb3IgdGhl
+DQo+IG11eCBhZGFwdGVyIGFzIHdlbGwuIFdlIGNhbiB1c2UgdGhlIHNhbWUgdHJhbnNsYXRpb24g
+ZnVuY3Rpb24gYXMgZm9yIHRoZQ0KPiBub24tYXRvbWljIHhmZXIgY2FsbGJhY2suDQo+IA0KPiBT
+aWduZWQtb2ZmLWJ5OiBXb2xmcmFtIFNhbmcgPHdzYStyZW5lc2FzQHNhbmctZW5naW5lZXJpbmcu
+Y29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvaTJjL2kyYy1tdXguYyB8IDYgKysrKysrDQo+ICAxIGZp
+bGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9p
+MmMvaTJjLW11eC5jIGIvZHJpdmVycy9pMmMvaTJjLW11eC5jDQo+IGluZGV4IGYzMzA2OTBiNDEy
+NS4uNjAzMjUyZmExMjg0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9pMmMtbXV4LmMNCj4g
+KysrIGIvZHJpdmVycy9pMmMvaTJjLW11eC5jDQo+IEBAIC0zMTAsMTIgKzMxMCwxOCBAQCBpbnQg
+aTJjX211eF9hZGRfYWRhcHRlcihzdHJ1Y3QgaTJjX211eF9jb3JlICptdXhjLA0KPiAgCQllbHNl
+DQo+ICAJCQlwcml2LT5hbGdvLm1hc3Rlcl94ZmVyID0gX19pMmNfbXV4X21hc3Rlcl94ZmVyOw0K
+PiAgCX0NCj4gKwlpZiAocGFyZW50LT5hbGdvLT5tYXN0ZXJfeGZlcl9hdG9taWMpDQo+ICsJCXBy
+aXYtPmFsZ28ubWFzdGVyX3hmZXJfYXRvbWljID0gcHJpdi0+YWxnby5tYXN0ZXJfeGZlcjsNCj4g
+Kw0KPiAgCWlmIChwYXJlbnQtPmFsZ28tPnNtYnVzX3hmZXIpIHsNCj4gIAkJaWYgKG11eGMtPm11
+eF9sb2NrZWQpDQo+ICAJCQlwcml2LT5hbGdvLnNtYnVzX3hmZXIgPSBpMmNfbXV4X3NtYnVzX3hm
+ZXI7DQo+ICAJCWVsc2UNCj4gIAkJCXByaXYtPmFsZ28uc21idXNfeGZlciA9IF9faTJjX211eF9z
+bWJ1c194ZmVyOw0KPiAgCX0NCj4gKwlpZiAocGFyZW50LT5hbGdvLT5zbWJ1c194ZmVyX2F0b21p
+YykNCj4gKwkJcHJpdi0+YWxnby5zbWJ1c194ZmVyX2F0b21pYyA9IHByaXYtPmFsZ28uc21idXNf
+eGZlcjsNCj4gKw0KPiAgCXByaXYtPmFsZ28uZnVuY3Rpb25hbGl0eSA9IGkyY19tdXhfZnVuY3Rp
+b25hbGl0eTsNCj4gIA0KPiAgCS8qIE5vdyBmaWxsIG91dCBuZXcgYWRhcHRlciBzdHJ1Y3R1cmUg
+Ki8NCj4gDQoNCkhtbW0sIHdoYXQgaGFwcGVucyBpZiBhIGRyaXZlciBpbXBsZW1lbnRzIC5tYXN0
+ZXJfeGZlciBhbmQgcmVsaWVzIG9uDQplbXVsYXRpb24gZm9yIFNNQnVzLCBhbmQgdGhlbiBzb21l
+b25lIGltcGxlbWVudHMgLnNtYnVzX3hmZXJfYXRvbWljDQp0byBoYW5kbGUgc29tZSBjb3JuZXIg
+Y2FzZSBhdCBwb3dlci1kb3duPw0KDQpUaGVuIHNvbWVvbmUgaGlkZXMgdGhlIHBvd2VyLWRvd24g
+ZGV2aWNlIGJlaGluZCBhIG11eC4gVGhhdCB3b3VsZCBlbmQNCndpdGggeGZlcnMgZGVzdGluZWQg
+Zm9yIC5zbWJ1c194ZmVyX2F0b21pYyBiZWluZyBlbXVsYXRlZCBieSB0aGUNCm5vbi1hdG9taWMg
+Lm1hc3Rlcl94ZmVyLCBubz8NCg0KTWF5YmUgdG9vIHdlaXJkIHRvIGNhcmUgYWJvdXQ/DQoNCkkg
+Z3Vlc3MgdGhlIHF1ZXN0aW9uIGlzIGlmIGl0IGlzIGFsbG93ZWQgdG8gaGF2ZSAubWFzdGVyX3hm
+ZXJfYXRvbWljDQpidXQgbm90IC5tYXN0ZXJfeGZlciAoYW5kIHNpbWlsYXJseSBmb3IgLnNtYnVz
+X3hmZXJ7LF9hdG9taWN9KT8gTWF5YmUNCnRoYXQgZGVjaXNpb24gc2hvdWxkIGJlIG1hZGUgZXhw
+bGljaXQ/IEFuZCBwZXJoYXBzIGVuZm9yY2VkPw0KDQpJIGRvbid0IGNhcmUgZGVlcGx5IGFib3V0
+IHRoZSBhYm92ZSB0aG91Z2gsIHNvIGZlZWwgZnJlZSB0byBkbw0Kc29tZXRoaW5nIGFib3V0IGl0
+LCBvcg0KDQpSZXZpZXdlZC1ieTogUGV0ZXIgUm9zaW4gPHBlZGFAYXhlbnRpYS5zZT4NCg0KQ2hl
+ZXJzLA0KUGV0ZXINCg==
