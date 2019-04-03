@@ -1,86 +1,150 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] mmc: tegra: add sdhci tegra suspend and resume
-Date: Wed, 3 Apr 2019 10:49:22 +0200
-Message-ID: <20190403084922.GE5238@ulmo>
-References: <1554226641-22612-1-git-send-email-skomatineni@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH 09/10] PCI: tegra: Add Tegra194 PCIe support
+Date: Wed, 3 Apr 2019 14:45:49 +0530
+Message-ID: <d51370ab-16be-18c8-5912-73ff9863a8ca@nvidia.com>
+References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
+ <1553613207-3988-10-git-send-email-vidyas@nvidia.com>
+ <20190329203159.GG24180@google.com>
+ <5eb9599c-a6d6-d3a3-beef-5225ed7393f9@nvidia.com>
+ <20190402141424.GB8017@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uCPdOCrL+PnN2Vxy"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1554226641-22612-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190402141424.GB8017@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, jonathanh@nvidia.com, anrao@nvidia.com, talho@nvidia.com, bbiswas@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.com
 List-Id: linux-tegra@vger.kernel.org
 
+On 4/2/2019 7:44 PM, Thierry Reding wrote:
+> On Tue, Apr 02, 2019 at 12:47:48PM +0530, Vidya Sagar wrote:
+>> On 3/30/2019 2:22 AM, Bjorn Helgaas wrote:
+> [...]
+>>>> +static int tegra_pcie_dw_host_init(struct pcie_port *pp)
+>>>> +{
+> [...]
+>>>> +	val_w = dw_pcie_readw_dbi(pci, CFG_LINK_STATUS);
+>>>> +	while (!(val_w & PCI_EXP_LNKSTA_DLLLA)) {
+>>>> +		if (!count) {
+>>>> +			val = readl(pcie->appl_base + APPL_DEBUG);
+>>>> +			val &= APPL_DEBUG_LTSSM_STATE_MASK;
+>>>> +			val >>= APPL_DEBUG_LTSSM_STATE_SHIFT;
+>>>> +			tmp = readl(pcie->appl_base + APPL_LINK_STATUS);
+>>>> +			tmp &= APPL_LINK_STATUS_RDLH_LINK_UP;
+>>>> +			if (val == 0x11 && !tmp) {
+>>>> +				dev_info(pci->dev, "link is down in DLL");
+>>>> +				dev_info(pci->dev,
+>>>> +					 "trying again with DLFE disabled\n");
+>>>> +				/* disable LTSSM */
+>>>> +				val = readl(pcie->appl_base + APPL_CTRL);
+>>>> +				val &= ~APPL_CTRL_LTSSM_EN;
+>>>> +				writel(val, pcie->appl_base + APPL_CTRL);
+>>>> +
+>>>> +				reset_control_assert(pcie->core_rst);
+>>>> +				reset_control_deassert(pcie->core_rst);
+>>>> +
+>>>> +				offset =
+>>>> +				dw_pcie_find_ext_capability(pci,
+>>>> +							    PCI_EXT_CAP_ID_DLF)
+>>>> +				+ PCI_DLF_CAP;
+>>>
+>>> This capability offset doesn't change, does it?  Could it be computed
+>>> outside the loop?
+>> This is the only place where DLF offset is needed and gets calculated and this
+>> scenario is very rare as so far only a legacy ASMedia USB3.0 card requires DLF
+>> to be disabled to get PCIe link up. So, I thought of calculating the offset
+>> here itself instead of using a separate variable.
+>>
+>>>
+>>>> +				val = dw_pcie_readl_dbi(pci, offset);
+>>>> +				val &= ~DL_FEATURE_EXCHANGE_EN;
+>>>> +				dw_pcie_writel_dbi(pci, offset, val);
+>>>> +
+>>>> +				tegra_pcie_dw_host_init(&pcie->pci.pp);
+>>>
+>>> This looks like some sort of "wait for link up" retry loop, but a
+>>> recursive call seems a little unusual.  My 5 second analysis is that
+>>> the loop could run this 200 times, and you sure don't want the
+>>> possibility of a 200-deep call chain.  Is there way to split out the
+>>> host init from the link-up polling?
+>> Again, this recursive calling comes into picture only for a legacy ASMedia
+>> USB3.0 card and it is going to be a 1-deep call chain as the recursion takes
+>> place only once depending on the condition. Apart from the legacy ASMedia card,
+>> there is no other card at this point in time out of a huge number of cards that we have
+>> tested.
+> 
+> A more idiomatic way would be to add a "retry:" label somewhere and goto
+> that after disabling DLFE. That way you achieve the same effect, but you
+> can avoid the recursion, even if it is harmless in practice.
+Initially I thought of using goto to keep it simple, but I thought it would be
+discouraged and hence used recursion. But, yeah.. agree that goto would keep
+it simple and I'll switch to goto now.
 
---uCPdOCrL+PnN2Vxy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+>>>> +static int tegra_pcie_dw_probe(struct platform_device *pdev)
+>>>> +{
+>>>> +	struct tegra_pcie_dw *pcie;
+>>>> +	struct pcie_port *pp;
+>>>> +	struct dw_pcie *pci;
+>>>> +	struct phy **phy;
+>>>> +	struct resource	*dbi_res;
+>>>> +	struct resource	*atu_dma_res;
+>>>> +	const struct of_device_id *match;
+>>>> +	const struct tegra_pcie_of_data *data;
+>>>> +	char *name;
+>>>> +	int ret, i;
+>>>> +
+>>>> +	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
+>>>> +	if (!pcie)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	pci = &pcie->pci;
+>>>> +	pci->dev = &pdev->dev;
+>>>> +	pci->ops = &tegra_dw_pcie_ops;
+>>>> +	pp = &pci->pp;
+>>>> +	pcie->dev = &pdev->dev;
+>>>> +
+>>>> +	match = of_match_device(of_match_ptr(tegra_pcie_dw_of_match),
+>>>> +				&pdev->dev);
+>>>> +	if (!match)
+>>>> +		return -EINVAL;
+>>>
+>>> Logically could be the first thing in the function since it doesn't
+>>> depend on anything.
+>> Done
+>>
+>>>
+>>>> +	data = (struct tegra_pcie_of_data *)match->data;
+> 
+> of_device_get_match_data() can help remove some of the above
+> boilerplate. Also, there's no reason to check for a failure with these
+> functions. The driver is OF-only and can only ever be probed if the
+> device exists, in which case match (or data for that matter) will never
+> be NULL.
+Done.
 
-On Tue, Apr 02, 2019 at 10:37:21AM -0700, Sowjanya Komatineni wrote:
-> This patch adds suspend and resume PM ops for tegra SDHCI.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 56 ++++++++++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 55 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
-a.c
-> index eafaaefab4a6..6c91926a012c 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -1611,11 +1611,65 @@ static int sdhci_tegra_remove(struct platform_dev=
-ice *pdev)
->  	return 0;
->  }
-> =20
-> +#ifdef CONFIG_PM_SLEEP
-> +static int sdhci_tegra_suspend(struct device *dev)
-> +{
-> +	struct sdhci_host *host =3D dev_get_drvdata(dev);
-> +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
-> +	int ret;
-> +
-> +	if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> +		ret =3D cqhci_suspend(host->mmc);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret =3D sdhci_suspend_host(host);
-> +	if (ret)
-> +		return ret;
+> 
+>>> I see that an earlier patch added "bus" to struct pcie_port.  I think
+>>> it would be better to somehow connect to the pci_host_bridge struct.
+>>> Several other drivers already do this; see uses of
+>>> pci_host_bridge_from_priv().
+>> All non-DesignWare based implementations save their private data structure
+>> in 'private' pointer of struct pci_host_bridge and use pci_host_bridge_from_priv()
+>> to get it back. But, DesignWare based implementations save pcie_port in 'sysdata'
+>> and nothing in 'private' pointer. So,  I'm not sure if pci_host_bridge_from_priv()
+>> can be used in this case. Please do let me know if you think otherwise.
+> 
+> If nothing is currently stored in the private pointer, why not do like
+> the other drivers and store the struct pci_host_bridge pointer there?
+non-designware drivers get their private data allocated as part of pci_alloc_host_bridge()
+by passing the size of their private structure and use pci_host_bridge_from_priv() to get
+pointer to their own private structure (which is within struct pci_host_bridge).
+Whereas in Designware core, we can get the memory for struct pcie_port much before than
+calling pci_alloc_host_bridge() API, in fact, size '0' is passed as an argument to alloc API.
+This is the reason why struct pcie_port pointer is saved in 'sysdata'.
 
-I didn't spot this earlier, but I think we'd need cqhci_resume() here in
-case of failure.
-
-With that fixed:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---uCPdOCrL+PnN2Vxy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlykc5IACgkQ3SOs138+
-s6EszQ//TkWf17Qu1wTq8l/vUCpn4kks/qsOMfrv83+b38TJwqGCem6T1Q8fEqj5
-WiDAd29Vqv8UFvmHLqsGG+wgik9wgJn5kWXvwgachk0eN5nvx7F3NqyB9f+pCng9
-ODq3JE5k01716y3t7iIBpXiYrENk9qdwZYlKYtCFY7cQxGvJJeHyXXwRj4tuM39f
-qyOU2EU+zkf+rjhSLKdJNwKz4MIJ63NAdwz6q4TKgf/aip8RWa2FNtxcpXNVyAcq
-Y8UubY2PWt/wqm9RF+B7G800W6wrsXUH6anDm2bs9hX2KHfgTyblQVarwV5s+1X8
-X9eAIV8rk5BuznqLd2QD+5grOPa8lhmZd76vJDUIvrU2gIJl0eVB40CY/j1olgdU
-fIpAC4Py1TNF4qMXbvKJoJXY9fxOUuFeMHwDOjeRqTA6ZzTAao8wXPPWf+I1v+LH
-Z/cgkGR2Cuu55TP5cWMzwaOMaAlOitke2pCqBbbRVmwIEvh/gmhtWSsPHSqZHnH2
-9ac6O+VZ4Spz6BqXBCc7Mn94jBB1As/GvgZG7t5Qxxf4HdzXDmkI+so8dlW7JUZn
-lKgOJi/iGwVO2k+P/IFfDSo/kVTRY1kYDxX2kfB0tTe0Z1bDqj4kbgaNN8KsbyyQ
-YGS9VWA0TGVArpM9o5J21P6NjCXFJ5SHfsJaoC8u/vbR4SGpecQ=
-=J/FS
------END PGP SIGNATURE-----
-
---uCPdOCrL+PnN2Vxy--
+> 
+> Thierry
+> 
