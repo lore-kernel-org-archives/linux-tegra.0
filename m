@@ -1,53 +1,93 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 04/12] i2c: mux: populate the new *_atomic callbacks
-Date: Wed, 3 Apr 2019 15:17:12 +0000
-Message-ID: <59d32414-3859-d614-dc41-cc0a1bc63301@axentia.se>
-References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
- <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V3] mmc: tegra: add sdhci tegra suspend and resume
+Date: Wed, 3 Apr 2019 08:39:24 -0700
+Message-ID: <1554305964-19347-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-Content-ID: <59CEFE5B4A4970489A9BEEEE3545A485@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stefan Lengfeld <contact@stefanchrist.eu>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: skomatineni@nvidia.com, talho@nvidia.com, anrao@nvidia.com, bbiswas@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjAxOS0wNC0wMyAxNDo0MCwgV29sZnJhbSBTYW5nIHdyb3RlOg0KPiBJZiB0aGUgcGFyZW50
-IGFkYXB0ZXIgaGFzIGF0b21pY194ZmVyIGNhbGxiYWNrcywgcG9wdWxhdGUgdGhlbSBmb3IgdGhl
-DQo+IG11eCBhZGFwdGVyIGFzIHdlbGwuIFdlIGNhbiB1c2UgdGhlIHNhbWUgdHJhbnNsYXRpb24g
-ZnVuY3Rpb24gYXMgZm9yIHRoZQ0KPiBub24tYXRvbWljIHhmZXIgY2FsbGJhY2suDQo+IA0KPiBT
-aWduZWQtb2ZmLWJ5OiBXb2xmcmFtIFNhbmcgPHdzYStyZW5lc2FzQHNhbmctZW5naW5lZXJpbmcu
-Y29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvaTJjL2kyYy1tdXguYyB8IDYgKysrKysrDQo+ICAxIGZp
-bGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9p
-MmMvaTJjLW11eC5jIGIvZHJpdmVycy9pMmMvaTJjLW11eC5jDQo+IGluZGV4IGYzMzA2OTBiNDEy
-NS4uNjAzMjUyZmExMjg0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9pMmMtbXV4LmMNCj4g
-KysrIGIvZHJpdmVycy9pMmMvaTJjLW11eC5jDQo+IEBAIC0zMTAsMTIgKzMxMCwxOCBAQCBpbnQg
-aTJjX211eF9hZGRfYWRhcHRlcihzdHJ1Y3QgaTJjX211eF9jb3JlICptdXhjLA0KPiAgCQllbHNl
-DQo+ICAJCQlwcml2LT5hbGdvLm1hc3Rlcl94ZmVyID0gX19pMmNfbXV4X21hc3Rlcl94ZmVyOw0K
-PiAgCX0NCj4gKwlpZiAocGFyZW50LT5hbGdvLT5tYXN0ZXJfeGZlcl9hdG9taWMpDQo+ICsJCXBy
-aXYtPmFsZ28ubWFzdGVyX3hmZXJfYXRvbWljID0gcHJpdi0+YWxnby5tYXN0ZXJfeGZlcjsNCj4g
-Kw0KPiAgCWlmIChwYXJlbnQtPmFsZ28tPnNtYnVzX3hmZXIpIHsNCj4gIAkJaWYgKG11eGMtPm11
-eF9sb2NrZWQpDQo+ICAJCQlwcml2LT5hbGdvLnNtYnVzX3hmZXIgPSBpMmNfbXV4X3NtYnVzX3hm
-ZXI7DQo+ICAJCWVsc2UNCj4gIAkJCXByaXYtPmFsZ28uc21idXNfeGZlciA9IF9faTJjX211eF9z
-bWJ1c194ZmVyOw0KPiAgCX0NCj4gKwlpZiAocGFyZW50LT5hbGdvLT5zbWJ1c194ZmVyX2F0b21p
-YykNCj4gKwkJcHJpdi0+YWxnby5zbWJ1c194ZmVyX2F0b21pYyA9IHByaXYtPmFsZ28uc21idXNf
-eGZlcjsNCj4gKw0KPiAgCXByaXYtPmFsZ28uZnVuY3Rpb25hbGl0eSA9IGkyY19tdXhfZnVuY3Rp
-b25hbGl0eTsNCj4gIA0KPiAgCS8qIE5vdyBmaWxsIG91dCBuZXcgYWRhcHRlciBzdHJ1Y3R1cmUg
-Ki8NCj4gDQoNCkhtbW0sIHdoYXQgaGFwcGVucyBpZiBhIGRyaXZlciBpbXBsZW1lbnRzIC5tYXN0
-ZXJfeGZlciBhbmQgcmVsaWVzIG9uDQplbXVsYXRpb24gZm9yIFNNQnVzLCBhbmQgdGhlbiBzb21l
-b25lIGltcGxlbWVudHMgLnNtYnVzX3hmZXJfYXRvbWljDQp0byBoYW5kbGUgc29tZSBjb3JuZXIg
-Y2FzZSBhdCBwb3dlci1kb3duPw0KDQpUaGVuIHNvbWVvbmUgaGlkZXMgdGhlIHBvd2VyLWRvd24g
-ZGV2aWNlIGJlaGluZCBhIG11eC4gVGhhdCB3b3VsZCBlbmQNCndpdGggeGZlcnMgZGVzdGluZWQg
-Zm9yIC5zbWJ1c194ZmVyX2F0b21pYyBiZWluZyBlbXVsYXRlZCBieSB0aGUNCm5vbi1hdG9taWMg
-Lm1hc3Rlcl94ZmVyLCBubz8NCg0KTWF5YmUgdG9vIHdlaXJkIHRvIGNhcmUgYWJvdXQ/DQoNCkkg
-Z3Vlc3MgdGhlIHF1ZXN0aW9uIGlzIGlmIGl0IGlzIGFsbG93ZWQgdG8gaGF2ZSAubWFzdGVyX3hm
-ZXJfYXRvbWljDQpidXQgbm90IC5tYXN0ZXJfeGZlciAoYW5kIHNpbWlsYXJseSBmb3IgLnNtYnVz
-X3hmZXJ7LF9hdG9taWN9KT8gTWF5YmUNCnRoYXQgZGVjaXNpb24gc2hvdWxkIGJlIG1hZGUgZXhw
-bGljaXQ/IEFuZCBwZXJoYXBzIGVuZm9yY2VkPw0KDQpJIGRvbid0IGNhcmUgZGVlcGx5IGFib3V0
-IHRoZSBhYm92ZSB0aG91Z2gsIHNvIGZlZWwgZnJlZSB0byBkbw0Kc29tZXRoaW5nIGFib3V0IGl0
-LCBvcg0KDQpSZXZpZXdlZC1ieTogUGV0ZXIgUm9zaW4gPHBlZGFAYXhlbnRpYS5zZT4NCg0KQ2hl
-ZXJzLA0KUGV0ZXINCg==
+This patch adds suspend and resume PM ops for tegra SDHCI.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 56 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 55 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index eafaaefab4a6..5ec304166566 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1611,11 +1611,65 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	int ret;
++
++	if (host->mmc->caps2 & MMC_CAP2_CQE) {
++		ret = cqhci_suspend(host->mmc);
++		if (ret)
++			return ret;
++	}
++
++	ret = sdhci_suspend_host(host);
++	if (ret) {
++		cqhci_resume(host->mmc);
++		return ret;
++	}
++
++	clk_disable_unprepare(pltfm_host->clk);
++	return 0;
++}
++
++static int __maybe_unused sdhci_tegra_resume(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	int ret;
++
++	ret = clk_prepare_enable(pltfm_host->clk);
++	if (ret)
++		return ret;
++
++	ret = sdhci_resume_host(host);
++	if (ret)
++		goto disable_clk;
++
++	if (host->mmc->caps2 & MMC_CAP2_CQE) {
++		ret = cqhci_resume(host->mmc);
++		if (ret)
++			goto suspend_host;
++	}
++
++	return 0;
++
++suspend_host:
++	sdhci_suspend_host(host);
++disable_clk:
++	clk_disable_unprepare(pltfm_host->clk);
++	return ret;
++}
++
++static SIMPLE_DEV_PM_OPS(sdhci_tegra_dev_pm_ops, sdhci_tegra_suspend,
++			 sdhci_tegra_resume);
++
+ static struct platform_driver sdhci_tegra_driver = {
+ 	.driver		= {
+ 		.name	= "sdhci-tegra",
+ 		.of_match_table = sdhci_tegra_dt_match,
+-		.pm	= &sdhci_pltfm_pmops,
++		.pm	= &sdhci_tegra_dev_pm_ops,
+ 	},
+ 	.probe		= sdhci_tegra_probe,
+ 	.remove		= sdhci_tegra_remove,
+-- 
+2.7.4
