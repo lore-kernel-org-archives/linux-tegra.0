@@ -1,58 +1,26 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: soc-core: Fix probe deferral following prelink
- failure
-Date: Wed, 3 Apr 2019 10:47:32 +0700
-Message-ID: <20190403034732.GA5748@sirena.org.uk>
-References: <1551706274-22571-1-git-send-email-jonathanh@nvidia.com>
- <4eb94b41-7e16-7b39-5c14-a7d180ce67df@nvidia.com>
- <20190402043509.GQ2059@sirena.org.uk>
- <2d8a0569-b821-c0c0-af39-d3863d17f47f@nvidia.com>
- <20190402091955.GE2059@sirena.org.uk>
- <10d454a4-e1e1-3a4b-8400-acd680d75a3d@nvidia.com>
- <20190402093159.GF2059@sirena.org.uk>
- <3053ef10-ba36-ee88-4ca0-d1e39c0ea25c@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 35/42] drivers: gpio: ts4800: use devm_platform_ioremap_resource()
+Date: Wed, 3 Apr 2019 10:48:14 +0700
+Message-ID: <CACRpkdYxL1SXt7yDHzfo12JFudVrS=4ag9nPBRUtbvs3NNTa1Q@mail.gmail.com>
+References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-35-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3053ef10-ba36-ee88-4ca0-d1e39c0ea25c@nvidia.com>
+In-Reply-To: <1552330521-4276-35-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Curtis Malainey <cujomalainey@google.com>, linux-tegra@vger.kernel.org
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Hoan Tran <hoan@os.amperecomputing.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Lyra Zhang <zhang.lyra@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.j>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Mar 12, 2019 at 1:57 AM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Use the new helper that wraps the calls to platform_get_resource()
+> and devm_ioremap_resource() together.
+>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-On Tue, Apr 02, 2019 at 10:44:34AM +0100, Jon Hunter wrote:
+Patch applied.
 
-> Right I see it in -next. Sorry but what I am asking is if you are
-> planning to send as a fix for v5.1? Maybe you have not sent out the
-> fixes yet for v5.1 and so wanted to check.
-
-It is in my for-5.1 branch so I am intending to send it for v5.1.  Like
-many maintainers I have separate branches in my tree and in -next for
-things that are intended for the next merge window and things that are
-intended to be sent sooner, in my case I have both for-linus and
-for-next branches, plus both topic and numberd for-x.y branches which
-feed into those.
-
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlykLNMACgkQJNaLcl1U
-h9BmVAf/ZcwA45Zda/LkY1pBNBCgd87JEXIVkqXKtQGiEnPfpPgVjzZGI2dUGdHy
-k2vP6x3i2/4tVQnihVezBNfuGh1wWSPiQD2WDBZURzn0TVpn0ACqD5m0c293f123
-nUTXSjC6W2En40vRwC9TJZw5TlDFm6Dz1p+Wrrcj9BU6g/8T0vCo9rjTFT2EBq0D
-i1VG7PojtINPWgLE/r2B/rewpPDtaxCMHRoA9/dKbpIcadXhX8aIbHlr95d6KqpN
-m2XStNxFVjNjQyF4V+K7oeS/dBeVjVccoP3cj5E8brUicgXfV6IEVgIVciQ/R6lT
-0qwd/+GKsvLlgwuy9Im4iSriS8pTvQ==
-=zXM5
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
+Yours,
+Linus Walleij
