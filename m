@@ -1,84 +1,111 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Add PWM Fan support
-Date: Wed, 3 Apr 2019 18:48:22 +0200
-Message-ID: <20190403164822.GC1837@ulmo>
-References: <1551282819-27274-1-git-send-email-jonathanh@nvidia.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 09/10] PCI: tegra: Add Tegra194 PCIe support
+Date: Wed, 3 Apr 2019 12:36:41 -0500
+Message-ID: <20190403173641.GI141706@google.com>
+References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
+ <1553613207-3988-10-git-send-email-vidyas@nvidia.com>
+ <20190329203159.GG24180@google.com>
+ <5eb9599c-a6d6-d3a3-beef-5225ed7393f9@nvidia.com>
+ <20190402183110.GE141706@google.com>
+ <dcbfbb32-9980-7ee4-89cd-baedfe624ce5@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5877716074636556494=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1551282819-27274-1-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <dcbfbb32-9980-7ee4-89cd-baedfe624ce5@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.com, shawn.lin@rock-chips.com, xiaowei.bao@nxp.com, devicetree@vger.ker
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Apr 03, 2019 at 03:13:09PM +0530, Vidya Sagar wrote:
+> On 4/3/2019 12:01 AM, Bjorn Helgaas wrote:
+> > On Tue, Apr 02, 2019 at 12:47:48PM +0530, Vidya Sagar wrote:
+> > > On 3/30/2019 2:22 AM, Bjorn Helgaas wrote:
+> > > > On Tue, Mar 26, 2019 at 08:43:26PM +0530, Vidya Sagar wrote:
+> > > > > Add support for Synopsys DesignWare core IP based PCIe host controller
+> > > > > present in Tegra194 SoC.
+> > 
+> >    - Why does this chip require pcie_pme_disable_msi()?  The only other
+> >      use is a DMI quirk for "MSI Wind U-100", added by c39fae1416d5
+> >      ("PCI PM: Make it possible to force using INTx for PCIe PME
+> >      signaling").
+>
+> Because Tegra194 doesn't support raising PME interrupts through MSI line.
 
---===============5877716074636556494==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="E13BgyNx05feLLmH"
-Content-Disposition: inline
+What does the spec say about this?  Is hardware supposed to support
+MSI for PME?  Given that MSI Wind U-100 and Tegra194 are the only two
+cases we know about where PME via MSI isn't supported, it seems like
+there must be either a requirement for that or some mechanism for the
+OS to figure this out, e.g., a capability bit.
 
+> > > > I see that an earlier patch added "bus" to struct pcie_port.
+> > > > I think it would be better to somehow connect to the
+> > > > pci_host_bridge struct.  Several other drivers already do
+> > > > this; see uses of pci_host_bridge_from_priv().
+> > >
+> > > All non-DesignWare based implementations save their private data
+> > > structure in 'private' pointer of struct pci_host_bridge and use
+> > > pci_host_bridge_from_priv() to get it back. But, DesignWare
+> > > based implementations save pcie_port in 'sysdata' and nothing in
+> > > 'private' pointer. So,  I'm not sure if
+> > > pci_host_bridge_from_priv() can be used in this case. Please do
+> > > let me know if you think otherwise.
+> > 
+> > DesignWare-based drivers should have a way to retrieve the
+> > pci_host_bridge pointer.  It doesn't have to be *exactly* the same
+> > as non-DesignWare drivers, but it should be similar.
+>
+> I gave my reasoning as to why with the current code, it is not
+> possible to get the pci_host_bridge structure pointer from struct
+> pcie_port pointer in another thread as a reply to Thierry Reding's
+> comments. Since Jishen'g changes to support remove functionality are
+> accepted, I think using bus pointer saved in struct pcie_port
+> pointer shouldn't be any issue now. Please do let me know if that is
+> something not acceptable.
+>
+> > > > That would give you the bus, as well as flags like
+> > > > no_ext_tags, native_aer, etc, which this driver, being a host
+> > > > bridge driver that's responsible for this part of the
+> > > > firmware/OS interface, may conceivably need.
 
---E13BgyNx05feLLmH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think saving the pp->root_bus pointer as Jisheng's patch does is a
+sub-optimal solution.  If we figure out how to save the
+pci_host_bridge pointer, we automatically get the root bus pointer as
+well.
 
-On Wed, Feb 27, 2019 at 03:53:39PM +0000, Jon Hunter wrote:
-> The Tegra194 Jetson AGX Xavier board includes a PWM based fan. Enable
-> PWM fan support in the ARM64 defconfig to support the fan on this board.
-> Please note that the device-tree PWM fan node is already present for
-> this board.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+It may require some restructuring to save the pci_host_bridge pointer,
+but I doubt it's really *impossible*.
 
-Applied to for-5.2/arm64/defconfig, thanks.
+> > > > > +static int tegra_pcie_dw_runtime_suspend(struct device *dev)
+> > > > > +{
+> > > > > +	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+> > > > > +
+> > > > > +	tegra_pcie_downstream_dev_to_D0(pcie);
+> > > > > +
+> > > > > +	pci_stop_root_bus(pcie->pci.pp.bus);
+> > > > > +	pci_remove_root_bus(pcie->pci.pp.bus);
+> > > > 
+> > > > Why are you calling these?  No other drivers do this except in
+> > > > their .remove() methods.  Is there something special about
+> > > > Tegra, or is this something the other drivers *should* be
+> > > > doing?
+> > >
+> > > Since this API is called by remove, I'm removing the hierarchy
+> > > to safely bring down all the devices. I'll have to re-visit this
+> > > part as Jisheng Zhang's patches
+> > > https://patchwork.kernel.org/project/linux-pci/list/?series=98559
+> > > are now approved and I need to verify this part after
+> > > cherry-picking Jisheng's changes.
+> > 
+> > Tegra194 should do this the same way as other drivers, independent
+> > of Jisheng's changes.
+>
+> When other Designware implementations add remove functionality, even
+> they should be calling these APIs (Jisheng also mentioned the same
+> in his commit message)
 
-Thierry
+My point is that these APIs should be called from driver .remove()
+methods, not from .runtime_suspend() methods.
 
---E13BgyNx05feLLmH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyk49UACgkQ3SOs138+
-s6ExUQ//S48YrC9/uUpJwxQSFMXG+8pIxs/tDgml6xtBdNdZoEZupYOTEA3gQ6TD
-Rv7Lu/k1Xw/I2GJtfiTejafvf99lBC7HxbveSYqC62YGDu6fuf1N4oBKLBYPd+g0
-LeVnI/CjxJiQpzOr8KxfY7tmlQyW3UdNY3TJcb4ZSmLb9s1deWg7AVw0wxjvOKqF
-kLTgo4MzVi2LjsAg/pv8tT8CbvRZMJna/R4ndJDTfCw5QLE1GqRMztu6uTSajp1r
-uBkGmO+hLz1Yz9c0+mBHDDbYWI2li0fUxymjEOYI8lL4JDhKv8224+PMS6zomVoW
-tsZcdgl804DyjZm3diAK8ZpDe3RqFRhPGSmOzZcH6JhbHFI2KCjQtKfJcgbPhyuH
-gY43VgHxeZvZywMqPobza89e1eaavsns1q83wW35g6xit7cDb0nfpFU5070EYlPr
-9eKSkJduwDd6MYk2QSRxt1TWIiGtnlh/9c70iq8ccm+uZOU4SqM52BJsuXE1qCcs
-eRvlZ2JpNxBw9A4ywjAeOm9KR3FzTAlh3RS/HkN72xFNOJdVUfjufjpB2odX256/
-QCJ5+eg9HQ1OmRZgPUxPczxgevE9QHXmwegM0uXyXskwdJngSvP8ugHLIjPY/DAn
-x70z2TAX4hfheG9VuP7dDKkLgPgoUccA3Mmm98J2kAASRbVaqMU=
-=tPoX
------END PGP SIGNATURE-----
-
---E13BgyNx05feLLmH--
-
-
---===============5877716074636556494==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5877716074636556494==--
+Bjorn
