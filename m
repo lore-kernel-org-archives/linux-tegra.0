@@ -1,26 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 42/42] drivers: gpio: use devm_platform_ioremap_resource()
-Date: Wed, 3 Apr 2019 10:57:05 +0700
-Message-ID: <CACRpkdZ2de7Z+yhwb_dYfn5ThmuCHtxhgYoOVJtc9mQU4PsSAg@mail.gmail.com>
-References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-42-git-send-email-info@metux.net>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
+Date: Tue, 2 Apr 2019 23:26:33 -0500
+Message-ID: <CAL_JsqLL5g7vGNmwcNQw5KBXFP4tE69zGyWd0msP3sexve_sNQ@mail.gmail.com>
+References: <20190325074523.26456-1-josephl@nvidia.com>
+ <20190325074523.26456-2-josephl@nvidia.com>
+ <5ca06133.1c69fb81.11ebf.91ce@mx.google.com>
+ <7d680700-d2f2-7b6c-a8bf-dca6d54dbf2c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552330521-4276-42-git-send-email-info@metux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Hoan Tran <hoan@os.amperecomputing.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Lyra Zhang <zhang.lyra@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.j>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <7d680700-d2f2-7b6c-a8bf-dca6d54dbf2c@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 1:56 AM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
-
-> Use the new helper that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
+On Mon, Apr 1, 2019 at 2:58 AM Joseph Lo <josephl@nvidia.com> wrote:
 >
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> On 3/31/19 2:41 PM, Rob Herring wrote:
+> > On Mon, Mar 25, 2019 at 03:45:16PM +0800, Joseph Lo wrote:
+> >> Add the binding document for the external memory controller (EMC) which
+> >> communicates with external LPDDR4 devices. It includes the bindings of
+> >> the EMC node and the EMC table of different rates.
+> >>
+> >> To support high rates for LPDDR4, the EMC table must be trained before
+> >> it can be used for runtime clock switching. It has been done by firmware
+> >> and merged to the table that Linux kernel uses. For backward
+> >> compatibility with the devices that had been launched on the market, like
+> >> Shield and Jetson platforms, the bindings in the EMC table should remain
+> >> the same. So the firmware can recognize them and merge the trained EMC
+> >> table for the kernel.
+>
+> Hi Rob,
+>
+> Thanks for reviewing.
+>
+> >
+> > Overall seems pretty bloated. How much of this really varies by board
+> > vs. just being a dump of all the register values to stuff?
+>
+> Most of them are register values. And by different SDRAM devices that
+> could be used on the same platform (use ram code to identify them), the
+> value could be different.
+>
+> >
+> > Primarily, I'm leary of getting a similar binding for every vendor's DDR
+> > setup.
+> >
+> > Some mostly trivial comments follow.
+>
+> Really sorry about that. I understand these basic rules for DT bindings,
+> but the case here is that these un-reviewed bindings have been used in
+> the firmware on the shipped products. To support the same with the
+> upstream kernel and consider the firmware blob may not be updated, we
+> have no choice to just use the same bindings in the upstream kernel.
+>
+> How can we deal with this case?
 
-Changed subject to gpio: zynq: and applied.
+Simply, we do not accept bindings as-is. If we did, then there would
+be no point in documenting and reviewing bindings. NVidia chose this
+path and now gets to live with it.
 
-Yours,
-Linus Walleij
+Rob
