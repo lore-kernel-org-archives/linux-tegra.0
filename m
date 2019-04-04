@@ -1,79 +1,125 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
-Date: Thu, 4 Apr 2019 12:30:37 +0300
-Message-ID: <8118ea70-df97-8050-ae12-b2cd4843960b@gmail.com>
-References: <20190325074523.26456-1-josephl@nvidia.com>
- <20190325074523.26456-2-josephl@nvidia.com>
- <6bd34a19-26e0-6bdd-ce89-4a30d35e9823@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [GIT PULL] drm/tegra: Fixes for v5.1-rc2
+Date: Thu, 4 Apr 2019 13:33:14 +0200
+Message-ID: <20190404113314.GA11569@ulmo>
+References: <20190322131517.825-1-thierry.reding@gmail.com>
+ <20190403160659.GL5238@ulmo>
+ <CAPM=9tz0+t5cWT43ESEpfOZU=SXFR4QVDK6k6W_FRFOOFsGyGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <6bd34a19-26e0-6bdd-ce89-4a30d35e9823@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============1251332921=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAPM=9tz0+t5cWT43ESEpfOZU=SXFR4QVDK6k6W_FRFOOFsGyGg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-MDQuMDQuMjAxOSAxMjoxNywgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4gMjUuMDMuMjAx
-OSAxMDo0NSwgSm9zZXBoIExvINC/0LjRiNC10YI6Cj4+IEFkZCB0aGUgYmluZGluZyBkb2N1bWVu
-dCBmb3IgdGhlIGV4dGVybmFsIG1lbW9yeSBjb250cm9sbGVyIChFTUMpIHdoaWNoCj4+IGNvbW11
-bmljYXRlcyB3aXRoIGV4dGVybmFsIExQRERSNCBkZXZpY2VzLiBJdCBpbmNsdWRlcyB0aGUgYmlu
-ZGluZ3Mgb2YKPj4gdGhlIEVNQyBub2RlIGFuZCB0aGUgRU1DIHRhYmxlIG9mIGRpZmZlcmVudCBy
-YXRlcy4KPj4KPj4gVG8gc3VwcG9ydCBoaWdoIHJhdGVzIGZvciBMUEREUjQsIHRoZSBFTUMgdGFi
-bGUgbXVzdCBiZSB0cmFpbmVkIGJlZm9yZQo+PiBpdCBjYW4gYmUgdXNlZCBmb3IgcnVudGltZSBj
-bG9jayBzd2l0Y2hpbmcuIEl0IGhhcyBiZWVuIGRvbmUgYnkgZmlybXdhcmUKPj4gYW5kIG1lcmdl
-ZCB0byB0aGUgdGFibGUgdGhhdCBMaW51eCBrZXJuZWwgdXNlcy4gRm9yIGJhY2t3YXJkCj4+IGNv
-bXBhdGliaWxpdHkgd2l0aCB0aGUgZGV2aWNlcyB0aGF0IGhhZCBiZWVuIGxhdW5jaGVkIG9uIHRo
-ZSBtYXJrZXQsIGxpa2UKPj4gU2hpZWxkIGFuZCBKZXRzb24gcGxhdGZvcm1zLCB0aGUgYmluZGlu
-Z3MgaW4gdGhlIEVNQyB0YWJsZSBzaG91bGQgcmVtYWluCj4+IHRoZSBzYW1lLiBTbyB0aGUgZmly
-bXdhcmUgY2FuIHJlY29nbml6ZSB0aGVtIGFuZCBtZXJnZSB0aGUgdHJhaW5lZCBFTUMKPj4gdGFi
-bGUgZm9yIHRoZSBrZXJuZWwuCj4+Cj4+IEJhc2VkIG9uIHRoZSB3b3JrIG9mIFBldGVyIERlIFNj
-aHJpanZlciA8cGRlc2NocmlqdmVyQG52aWRpYS5jb20+Lgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBK
-b3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4KPj4gLS0tCj4+ICAuLi4vbnZpZGlhLHRlZ3Jh
-MjEwLWVtYy50eHQgICAgICAgICAgICAgICAgICAgfCA2MDUgKysrKysrKysrKysrKysrKysrCj4+
-ICAxIGZpbGUgY2hhbmdlZCwgNjA1IGluc2VydGlvbnMoKykKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJzL252
-aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+Cj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJzL252aWRpYSx0ZWdyYTIxMC1lbWMu
-dHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lbW9yeS1jb250cm9sbGVy
-cy9udmlkaWEsdGVncmEyMTAtZW1jLnR4dAo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBpbmRl
-eCAwMDAwMDAwMDAwMDAuLjFmNmI2ZGY2ZDM3Ygo+PiAtLS0gL2Rldi9udWxsCj4+ICsrKyBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZpZGlh
-LHRlZ3JhMjEwLWVtYy50eHQKPj4gQEAgLTAsMCArMSw2MDUgQEAKPj4gK05WSURJQSBUZWdyYTIx
-MCBTb0MgRU1DIChleHRlcm5hbCBtZW1vcnkgY29udHJvbGxlcikKPj4gKz09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KPj4gKwo+PiArUmVxdWlyZWQg
-cHJvcGVydGllcyA6Cj4+ICstIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgIm52aWRpYSx0ZWdyYTIx
-LWVtYyIsICJudmlkaWEsdGVncmEyMTAtZW1jIi4KPj4gKy0gcmVnIDogcGh5c2ljYWwgYmFzZSBh
-ZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIGNvbnRyb2xsZXIncyByZWdpc3RlcnMuCj4+ICstIGNs
-b2NrcyA6IHBoYW5kbGVzIG9mIHRoZSBwb3NzaWJsZSBzb3VyY2UgY2xvY2tzCj4+ICstIGNsb2Nr
-LW5hbWVzIDogbmFtZXMgb2YgdGhlIHBvc3NpYmxlIHNvdXJjZSBjbG9ja3MKPj4gKy0gI2FkZHJl
-c3MtY2VsbHMgOiBzaG91bGQgYmUgMQo+PiArLSAjc2l6ZS1jZWxscyA6IHNob3VsZCBiZSAwCj4+
-ICstIG52aWRpYSxtZW1vcnktY29udHJvbGxlciA6IHBoYW5kbGUgb2YgdGhlIG1lbW9yeSBjb250
-cm9sbGVyLgo+PiArLSBudmlkaWEsdXNlLXJhbS1jb2RlIDogYm9vbGVhbiwgaW5kaWNhdGVzIHdo
-ZXRoZXIgd2Ugc2hvdWxkIHVzZSBSQU1fQ09ERSBpbgo+PiArCQkgICAgICAgIHRoZSByZWdpc3Rl
-ciB0byBmaW5kIG1hdGNoaW5nIGVtYy10YWJsZSBub2Rlcwo+PiArCj4gCj4gVGhlICJpbnRlcnJ1
-cHRzIiBwcm9wZXJ0eSBpcyBtaXNzaW5nLiBZb3UgY291bGQgdXNlIHRoZSBDTEsgaGFuZHNoYWtl
-IGV2ZW50IHRvIHdhaXQgZm9yIHRoZSBjbG9jayByYXRlIGNoYW5nZSBjb21wbGV0aW9uIGluc3Rl
-YWQgb2YgcG9sbGluZyB0aGUgcmVnaXN0ZXIgaWYgeW91IGRpZG4ndCByZWx5IG9uIHRoZSBkb3du
-c3RyZWFtIGJpbmRpbmcsIHNlZSBUMjAgZHJpdmVyIGZvciB0aGUgZXhhbXBsZS4gQlRXLCBJJ20g
-d29uZGVyaW5nIGlmIHlvdSdyZSBnb2luZyB0byBwdXNoIG90aGVyIGRvd25zdHJlYW0gYmluZGlu
-Z3MgdG8gdXBzdHJlYW0uLiBhcHBhcmVudGx5IEVNQyB3b24ndCBiZSB0aGUgb25seSBiaW5kaW5n
-IHRoYXQgdGhhdCBjb3VsZCBkaXZlcmdlIGZyb20gdGhlIHVwc3RyZWFtIGFuZCB0aGVuIGl0J3Mg
-bm90IG9idmlvdXMgd2hldGhlciB0aGUgbG9ja2VkLWRvd24gdmFyaWFudCBvZiBUMjEwIGlzIHN1
-cHBvcnRhYmxlIGJ5IHVwc3RyZWFtIGF0IGFsbC4KPiAKCk9uZSBzb2x1dGlvbiBjb3VsZCBiZSB0
-byB1c2UgYSBtdWx0aS1zdGFnZSBib290bG9hZGVyLCB3aGVyZSB0aGUgbGFzdCBzdGFnZSBpcyBh
-biBvcGVuc291cmNlIHBhcnQgdGhhdCB3aWxsIHRha2UgdGhlIGRvd25zdHJlYW0gYmluZGluZyBh
-bmQgY29udmVydCBpdCBpbnRvIGEgcHJvcGVyIG9uZS4KCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0Cmxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFk
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+
+--===============1251332921==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Disposition: inline
+
+
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 04, 2019 at 12:15:48PM +1000, Dave Airlie wrote:
+> On Thu, 4 Apr 2019 at 02:07, Thierry Reding <thierry.reding@gmail.com> wr=
+ote:
+> >
+> > On Fri, Mar 22, 2019 at 02:15:17PM +0100, Thierry Reding wrote:
+> > > Hi Dave,
+> > >
+> > > The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69ddd=
+aa231b:
+> > >
+> > >   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+> > >
+> > > are available in the Git repository at:
+> > >
+> > >   git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-5.1-rc2
+> > >
+> > > for you to fetch changes up to 509869a2fec36ecb2b841180915995f41d5a02=
+19:
+> > >
+> > >   drm/tegra: vic: Fix implicit function declaration warning (2019-03-=
+22 14:08:55 +0100)
+> > >
+> > > I'm a little late sending this out, so I realize this will probably go
+> > > into v5.1-rc3 despite the name of the tag.
+> > >
+> > > Thanks,
+> > > Thierry
+> > >
+> > > ----------------------------------------------------------------
+> > > drm/tegra: Fixes for v5.1-rc2
+> > >
+> > > These are a couple of minor fixes for build issues and sparse warning=
+s.
+> > >
+> > > ----------------------------------------------------------------
+> > > Anders Roxell (1):
+> > >       drm/tegra: vic: Fix implicit function declaration warning
+> > >
+> > > Thierry Reding (1):
+> > >       drm/tegra: hub: Fix dereference before check
+> > >
+> > >  drivers/gpu/drm/tegra/hub.c | 4 +++-
+> > >  drivers/gpu/drm/tegra/vic.c | 2 ++
+> > >  2 files changed, 5 insertions(+), 1 deletion(-)
+> >
+> > Ping. Can we get this into drm-fixes?
+>=20
+> Huh this already landed in Linus tree afaik,
+
+Indeed it has. I must've gotten confused because this is not in drm-misc
+and I was seeing build failures due to the above.
+
+Anyway, sorry for the noise.
+
+Thierry
+
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyl63UACgkQ3SOs138+
+s6FNSBAAj5wGqSTYydTuHfRtEdhvBWgWT+u35SqrgTy3wX1wwsiOIOyp9R8Npfxo
+CylbEx6+Y+EgSM2jIh7L3mKP9fQ3vRLiMpxRAgf2q95FgJrNUkeH2jeGYd/p7ecG
+59WhmQEMFZOOUUYrVIPMpeyE5qRQHPzKZ2y6xWNWvo41QOPhI71C3bDPj5B9pYmF
+U0Nkp1fOytJv39JWr7R3pi6T7ECIGbL2Am5OkKaISaleQVJrUATQ25g9UZJH1ZK4
+h2dbr0Ij4u+TCmF84xBFgr/FAa/EZ1N5fjZuh6tYQ1WwphiF0G0/r1KCqLGQhAGR
+/8v/SRbWq+siELHUfDCw9DV6adWNdnC9/raD/xn+aLc1nMe51kAziR/aT04o3Akc
+UajMBC0ZZHmnalZ+8bgbQBfXB/mLn0WhGeDF1Txgnzi6P/9bGjZHsVYC/rXNKoMO
+AOthtX3N7vbHAvqg3mnIu0+k7dX2KV4bm4D2bNHPHNG3xPMj5kkNfukoeKyWpUh4
+ucWmlPJwpF8MG5ttftVNgHen22tgj28c34y+fMYFS5bE5HM6W5m0dkZdekDbhTmh
+cAr5SCgbCW5Zuvbr9scjebnEyP0csUwez9X/lGejN07FZYX4SVnTgcaPeFUHoQy9
+1FK63HzwqrTm/IA8MS86oiOa94Ph/6hiz0KfFqeMN33cxH59h+E=
+=34au
+-----END PGP SIGNATURE-----
+
+--82I3+IH0IqGh5yIs--
+
+--===============1251332921==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1251332921==--
