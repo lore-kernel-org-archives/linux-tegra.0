@@ -1,148 +1,97 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH 09/10] PCI: tegra: Add Tegra194 PCIe support
-Date: Fri, 5 Apr 2019 01:23:51 +0530
-Message-ID: <6cc7e047-bc7e-fa60-88ba-0b69c3d5a3f0@nvidia.com>
-References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
- <1553613207-3988-10-git-send-email-vidyas@nvidia.com>
- <20190329203159.GG24180@google.com>
- <5eb9599c-a6d6-d3a3-beef-5225ed7393f9@nvidia.com>
- <20190402183110.GE141706@google.com>
- <dcbfbb32-9980-7ee4-89cd-baedfe624ce5@nvidia.com>
- <20190403173641.GI141706@google.com>
+Subject: [PATCH V2 00/16] Add Tegra194 PCIe support
+Date: Fri, 5 Apr 2019 01:24:27 +0530
+Message-ID: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190403173641.GI141706@google.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.com, sha
+To: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/3/2019 11:06 PM, Bjorn Helgaas wrote:
-> On Wed, Apr 03, 2019 at 03:13:09PM +0530, Vidya Sagar wrote:
->> On 4/3/2019 12:01 AM, Bjorn Helgaas wrote:
->>> On Tue, Apr 02, 2019 at 12:47:48PM +0530, Vidya Sagar wrote:
->>>> On 3/30/2019 2:22 AM, Bjorn Helgaas wrote:
->>>>> On Tue, Mar 26, 2019 at 08:43:26PM +0530, Vidya Sagar wrote:
->>>>>> Add support for Synopsys DesignWare core IP based PCIe host controller
->>>>>> present in Tegra194 SoC.
->>>
->>>     - Why does this chip require pcie_pme_disable_msi()?  The only other
->>>       use is a DMI quirk for "MSI Wind U-100", added by c39fae1416d5
->>>       ("PCI PM: Make it possible to force using INTx for PCIe PME
->>>       signaling").
->>
->> Because Tegra194 doesn't support raising PME interrupts through MSI line.
-> 
-> What does the spec say about this?  Is hardware supposed to support
-> MSI for PME?  Given that MSI Wind U-100 and Tegra194 are the only two
-> cases we know about where PME via MSI isn't supported, it seems like
-> there must be either a requirement for that or some mechanism for the
-> OS to figure this out, e.g., a capability bit.
-AFAIU, Spec doesn't say anything about whether PME interrupt should be through MSI
-or by other means. As far as Tegra194 is concerned, there are only two
-interrupt lanes that go from PCIe IP to GIC, one being legacy interrupt (that
-represents legacy interrupts coming over PCIe bus from downstream devices and
-also the events happening internal to root port) and the other being MSI
-interrupt (that represents MSI interrupts coming over PCIe bus from downstream
-devices). Since hardware folks had a choice to route PME interrupts either
-through legacy interrupt line or through MSI interrupt line and legacy interrupt
-line was chosen as a design choice. That being the case at hardware level, I tried
-to inform the same through pcie_pme_disable_msi() to PCIe sub-system that
-PME interrupts are not expected over MSI.
+Tegra194 has six PCIe controllers based on Synopsys DesignWare core.
+There are two Universal PHY (UPHY) blocks with each supporting 12(HSIO:
+Hisg Speed IO) and 8(NVHS: NVIDIA High Speed) lanes respectively.
+Controllers:0~4 use UPHY lanes from HSIO brick whereas Controller:5 uses
+UPHY lanes from NVHS brick. Lane mapping in HSIO UPHY brick to each PCIe
+controller (0~4) is controlled in XBAR module by BPMP-FW. Since PCIe
+core has PIPE interface, a glue module called PIPE-to-UPHY (P2U) is used
+to connect each UPHY lane (applicable to both HSIO and NVHS UPHY bricks)
+to PCIe controller
+This patch series
+- Adds support for P2U PHY driver
+- Adds support for PCIe host controller
+- Adds device tree nodes each PCIe controllers
+- Enables nodes applicable to p2972-0000 platform
+- Adds helper APIs in Designware core driver to get capability regs offset
+- Adds defines for new feature registers of PCIe spec revision 4
+- Makes changes in DesignWare core driver to get Tegra194 PCIe working
 
-> 
->>>>> I see that an earlier patch added "bus" to struct pcie_port.
->>>>> I think it would be better to somehow connect to the
->>>>> pci_host_bridge struct.  Several other drivers already do
->>>>> this; see uses of pci_host_bridge_from_priv().
->>>>
->>>> All non-DesignWare based implementations save their private data
->>>> structure in 'private' pointer of struct pci_host_bridge and use
->>>> pci_host_bridge_from_priv() to get it back. But, DesignWare
->>>> based implementations save pcie_port in 'sysdata' and nothing in
->>>> 'private' pointer. So,  I'm not sure if
->>>> pci_host_bridge_from_priv() can be used in this case. Please do
->>>> let me know if you think otherwise.
->>>
->>> DesignWare-based drivers should have a way to retrieve the
->>> pci_host_bridge pointer.  It doesn't have to be *exactly* the same
->>> as non-DesignWare drivers, but it should be similar.
->>
->> I gave my reasoning as to why with the current code, it is not
->> possible to get the pci_host_bridge structure pointer from struct
->> pcie_port pointer in another thread as a reply to Thierry Reding's
->> comments. Since Jishen'g changes to support remove functionality are
->> accepted, I think using bus pointer saved in struct pcie_port
->> pointer shouldn't be any issue now. Please do let me know if that is
->> something not acceptable.
->>
->>>>> That would give you the bus, as well as flags like
->>>>> no_ext_tags, native_aer, etc, which this driver, being a host
->>>>> bridge driver that's responsible for this part of the
->>>>> firmware/OS interface, may conceivably need.
-> 
-> I think saving the pp->root_bus pointer as Jisheng's patch does is a
-> sub-optimal solution.  If we figure out how to save the
-> pci_host_bridge pointer, we automatically get the root bus pointer as
-> well.
-> 
-> It may require some restructuring to save the pci_host_bridge pointer,
-> but I doubt it's really *impossible*.
-Is it OK to save pci_host_bridge pointer in pcie_port structure directly? I see
-that as another way to get pci_host_bridge pointer from pcie_port
-structure. My understanding is that, to get pci_host_bridge pointer, either
-pcie_port structure should be part of pci_host_bridge structure (which is the
-case with all non-DW implementations) or pcie_port should have a pointer to
-some structure which is directly (and not by means of a pointer) part of
-pci_host_bridge structure so that container_of() can be used to get pci_host_bridge.
-As I see, there is no data object of pci_host_bridge whose pointer is saved in
-pcie_port structure. In fact, in reverse, pcie_port's struct dev pointer is saved
-as parent to pci_host_bridge's struct dev. So, another way would be to iterate over
-the children of pcie_port's struct dev pointer to find pci_host_bridge's dev pointer
-and from there get pci_host_bridge through container_of. But, I think is complicating
-it more than using bus pointer from pcie_port. I'm not sure if I'm able to convey the
-issue I'm facing here to get pci_host_bridge from pcie_port, but doing any other thing seems complicating it even more.
+Testing done on P2972-0000 platform
+- Able to get PCIe link up with on-board Marvel eSATA controller
+- Able to get PCIe link up with NVMe cards connected to M.2 Key-M slot
+- Able to do data transfers with both SATA drives and NVMe cards
 
-> 
->>>>>> +static int tegra_pcie_dw_runtime_suspend(struct device *dev)
->>>>>> +{
->>>>>> +	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
->>>>>> +
->>>>>> +	tegra_pcie_downstream_dev_to_D0(pcie);
->>>>>> +
->>>>>> +	pci_stop_root_bus(pcie->pci.pp.bus);
->>>>>> +	pci_remove_root_bus(pcie->pci.pp.bus);
->>>>>
->>>>> Why are you calling these?  No other drivers do this except in
->>>>> their .remove() methods.  Is there something special about
->>>>> Tegra, or is this something the other drivers *should* be
->>>>> doing?
->>>>
->>>> Since this API is called by remove, I'm removing the hierarchy
->>>> to safely bring down all the devices. I'll have to re-visit this
->>>> part as Jisheng Zhang's patches
->>>> https://patchwork.kernel.org/project/linux-pci/list/?series=98559
->>>> are now approved and I need to verify this part after
->>>> cherry-picking Jisheng's changes.
->>>
->>> Tegra194 should do this the same way as other drivers, independent
->>> of Jisheng's changes.
->>
->> When other Designware implementations add remove functionality, even
->> they should be calling these APIs (Jisheng also mentioned the same
->> in his commit message)
-> 
-> My point is that these APIs should be called from driver .remove()
-> methods, not from .runtime_suspend() methods.
-.remove() internally calls pm_runtime_put_sync() API which calls
-.runtime_suspend(). I made a new patch to add a host_deinit() call
-which make all these calls. Since host_init() is called from inside
-.runtime_resume() of this driver, to be in sync, I'm now calling
-host_deinit() from inside .runtime_suspend() API.
-  
-> 
-> Bjorn
-> 
+Note
+- Enabling x8 slot on P2972-0000 platform requires pinmux driver for Tegra194.
+  It is being worked on currently and hence Controller:5 (i.e. x8 slot) is
+  disabled in this patch series. A future patch series would enable this.
+- This series is based on top of the following series
+  Jisheng's patches to add support to .remove() in Designware sub-system
+  https://patchwork.kernel.org/project/linux-pci/list/?series=98559
+  My patches made on top of Jisheng's patches to export various symbols
+  https://patchwork.kernel.org/project/linux-pci/list/?series=101259
+
+Changes since [v1]:
+* Addressed review comments from Bjorn, Thierry, Jonathan, Rob & Kishon
+* Added more patches in v2 series
+
+Vidya Sagar (16):
+  PCI: Add #defines for PCIe spec r4.0 features
+  PCI/PME: Export pcie_pme_disable_msi() API
+  PCI: Export pcie_bus_config symbol
+  PCI: dwc: Perform dbi regs write lock towards the end
+  PCI: dwc: Move config space capability search API
+  PCI: dwc: Add ext config space capability search API
+  dt-bindings: PCI: designware: Add binding for CDM register check
+  PCI: dwc: Add support to enable CDM register check
+  Documentation/devicetree: Add PCIe supports-clkreq property
+  dt-bindings: PCI: tegra: Add device tree support for T194
+  dt-bindings: PHY: P2U: Add Tegra 194 P2U block
+  arm64: tegra: Add P2U and PCIe controller nodes to Tegra194 DT
+  arm64: tegra: Enable PCIe slots in P2972-0000 board
+  phy: tegra: Add PCIe PIPE2UPHY support
+  PCI: tegra: Add Tegra194 PCIe support
+  arm64: Add Tegra194 PCIe driver to defconfig
+
+ .../devicetree/bindings/pci/designware-pcie.txt    |    4 +
+ .../bindings/pci/nvidia,tegra194-pcie.txt          |  181 ++
+ Documentation/devicetree/bindings/pci/pci.txt      |    5 +
+ .../devicetree/bindings/phy/phy-tegra194-p2u.txt   |   28 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |    2 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |   50 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |  449 +++++
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/pci/controller/dwc/Kconfig                 |   11 +
+ drivers/pci/controller/dwc/Makefile                |    1 +
+ drivers/pci/controller/dwc/pcie-designware-ep.c    |   37 +-
+ drivers/pci/controller/dwc/pcie-designware-host.c  |    3 -
+ drivers/pci/controller/dwc/pcie-designware.c       |   81 +
+ drivers/pci/controller/dwc/pcie-designware.h       |   12 +
+ drivers/pci/controller/dwc/pcie-tegra194.c         | 1760 ++++++++++++++++++++
+ drivers/pci/pci.c                                  |    1 +
+ drivers/pci/pcie/pme.c                             |    6 +
+ drivers/pci/pcie/portdrv.h                         |    5 +-
+ drivers/phy/tegra/Kconfig                          |    7 +
+ drivers/phy/tegra/Makefile                         |    1 +
+ drivers/phy/tegra/pcie-p2u-tegra194.c              |  120 ++
+ include/uapi/linux/pci_regs.h                      |   22 +-
+ 22 files changed, 2743 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+ create mode 100644 drivers/phy/tegra/pcie-p2u-tegra194.c
+
+-- 
+2.7.4
