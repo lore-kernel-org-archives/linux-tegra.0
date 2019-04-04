@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V2 02/16] PCI/PME: Export pcie_pme_disable_msi() API
-Date: Fri, 5 Apr 2019 01:24:29 +0530
-Message-ID: <1554407683-31580-3-git-send-email-vidyas@nvidia.com>
+Subject: [PATCH V2 03/16] PCI: Export pcie_bus_config symbol
+Date: Fri, 5 Apr 2019 01:24:30 +0530
+Message-ID: <1554407683-31580-4-git-send-email-vidyas@nvidia.com>
 References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,50 +12,28 @@ To: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.redin
 Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Export pcie_pme_disable_msi() API to enable drivers using this API be able to
-build as loadable modules
+Export pcie_bus_config to enable host controller drivers setting it to a
+specific configuration be able to build as loadable modules
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
-Changes from [v1]:
+Changes since [v1]:
 * This is a new patch in v2 series
 
- drivers/pci/pcie/pme.c     | 6 ++++++
- drivers/pci/pcie/portdrv.h | 5 +----
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/pci/pci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
-index 54d593d10396..18e815c1e3c9 100644
---- a/drivers/pci/pcie/pme.c
-+++ b/drivers/pci/pcie/pme.c
-@@ -27,6 +27,12 @@
-  */
- bool pcie_pme_msi_disabled;
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 7c1b362f599a..c3880af24f18 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -94,6 +94,7 @@ unsigned long pci_hotplug_mem_size = DEFAULT_HOTPLUG_MEM_SIZE;
+ unsigned long pci_hotplug_bus_size = DEFAULT_HOTPLUG_BUS_SIZE;
  
-+void pcie_pme_disable_msi(void)
-+{
-+	pcie_pme_msi_disabled = true;
-+}
-+EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
-+
- static int __init pcie_pme_setup(char *str)
- {
- 	if (!strncmp(str, "nomsi", 5))
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index 1d50dc58ac40..2be7b7e9a784 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -127,10 +127,7 @@ struct pci_dev;
- #ifdef CONFIG_PCIE_PME
- extern bool pcie_pme_msi_disabled;
+ enum pcie_bus_config_types pcie_bus_config = PCIE_BUS_DEFAULT;
++EXPORT_SYMBOL_GPL(pcie_bus_config);
  
--static inline void pcie_pme_disable_msi(void)
--{
--	pcie_pme_msi_disabled = true;
--}
-+void pcie_pme_disable_msi(void);
- 
- static inline bool pcie_pme_no_msi(void)
- {
+ /*
+  * The default CLS is used if arch didn't set CLS explicitly and not
 -- 
 2.7.4
