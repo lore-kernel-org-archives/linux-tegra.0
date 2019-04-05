@@ -1,31 +1,67 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 09/12] i2c: ocores: enable atomic xfers
-Date: Fri, 5 Apr 2019 21:20:21 +0200
-Message-ID: <20190405192021.GH23536@lunn.ch>
-References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
- <20190403124019.8947-10-wsa+renesas@sang-engineering.com>
+From: Sean Paul <sean@poorly.run>
+Subject: Re: [GIT PULL] drm/tegra: Fixes for v5.1-rc2
+Date: Fri, 5 Apr 2019 15:45:10 -0400
+Message-ID: <CAMavQKK7h8u1zN_ZZZyo3yjVvJ_cxQkfzLw+mdEy1kuv2-n2Gg@mail.gmail.com>
+References: <20190322131517.825-1-thierry.reding@gmail.com>
+ <20190403160659.GL5238@ulmo>
+ <CAPM=9tz0+t5cWT43ESEpfOZU=SXFR4QVDK6k6W_FRFOOFsGyGg@mail.gmail.com>
+ <20190404113314.GA11569@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190403124019.8947-10-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@axentia.se>, Stefan Lengfeld <contact@stefanchrist.eu>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190404113314.GA11569@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 02:40:16PM +0200, Wolfram Sang wrote:
-> The driver already has the routine in place, tie it to the new callback.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-
-The polling function was not really designed with the intention to be
-used in atomic context. But it does appear to be safe to use in that
-context.
-
-So
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+T24gVGh1LCBBcHIgNCwgMjAxOSBhdCA3OjMzIEFNIFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJl
+ZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+Cj4gT24gVGh1LCBBcHIgMDQsIDIwMTkgYXQgMTI6MTU6
+NDhQTSArMTAwMCwgRGF2ZSBBaXJsaWUgd3JvdGU6Cj4gPiBPbiBUaHUsIDQgQXByIDIwMTkgYXQg
+MDI6MDcsIFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+
+ID4gPgo+ID4gPiBPbiBGcmksIE1hciAyMiwgMjAxOSBhdCAwMjoxNToxN1BNICswMTAwLCBUaGll
+cnJ5IFJlZGluZyB3cm90ZToKPiA+ID4gPiBIaSBEYXZlLAo+ID4gPiA+Cj4gPiA+ID4gVGhlIGZv
+bGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA5ZTk4YzY3OGMyZDZhZTNhMTdjYjJkZTU1ZDE3
+ZjY5ZGRkYWEyMzFiOgo+ID4gPiA+Cj4gPiA+ID4gICBMaW51eCA1LjEtcmMxICgyMDE5LTAzLTE3
+IDE0OjIyOjI2IC0wNzAwKQo+ID4gPiA+Cj4gPiA+ID4gYXJlIGF2YWlsYWJsZSBpbiB0aGUgR2l0
+IHJlcG9zaXRvcnkgYXQ6Cj4gPiA+ID4KPiA+ID4gPiAgIGdpdDovL2Fub25naXQuZnJlZWRlc2t0
+b3Aub3JnL3RlZ3JhL2xpbnV4IHRhZ3MvZHJtL3RlZ3JhL2Zvci01LjEtcmMyCj4gPiA+ID4KPiA+
+ID4gPiBmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNTA5ODY5YTJmZWMzNmVjYjJiODQx
+MTgwOTE1OTk1ZjQxZDVhMDIxOToKPiA+ID4gPgo+ID4gPiA+ICAgZHJtL3RlZ3JhOiB2aWM6IEZp
+eCBpbXBsaWNpdCBmdW5jdGlvbiBkZWNsYXJhdGlvbiB3YXJuaW5nICgyMDE5LTAzLTIyIDE0OjA4
+OjU1ICswMTAwKQo+ID4gPiA+Cj4gPiA+ID4gSSdtIGEgbGl0dGxlIGxhdGUgc2VuZGluZyB0aGlz
+IG91dCwgc28gSSByZWFsaXplIHRoaXMgd2lsbCBwcm9iYWJseSBnbwo+ID4gPiA+IGludG8gdjUu
+MS1yYzMgZGVzcGl0ZSB0aGUgbmFtZSBvZiB0aGUgdGFnLgo+ID4gPiA+Cj4gPiA+ID4gVGhhbmtz
+LAo+ID4gPiA+IFRoaWVycnkKPiA+ID4gPgo+ID4gPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+ID4gPiBkcm0vdGVn
+cmE6IEZpeGVzIGZvciB2NS4xLXJjMgo+ID4gPiA+Cj4gPiA+ID4gVGhlc2UgYXJlIGEgY291cGxl
+IG9mIG1pbm9yIGZpeGVzIGZvciBidWlsZCBpc3N1ZXMgYW5kIHNwYXJzZSB3YXJuaW5ncy4KPiA+
+ID4gPgo+ID4gPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+ID4gPiBBbmRlcnMgUm94ZWxsICgxKToKPiA+ID4gPiAg
+ICAgICBkcm0vdGVncmE6IHZpYzogRml4IGltcGxpY2l0IGZ1bmN0aW9uIGRlY2xhcmF0aW9uIHdh
+cm5pbmcKPiA+ID4gPgo+ID4gPiA+IFRoaWVycnkgUmVkaW5nICgxKToKPiA+ID4gPiAgICAgICBk
+cm0vdGVncmE6IGh1YjogRml4IGRlcmVmZXJlbmNlIGJlZm9yZSBjaGVjawo+ID4gPiA+Cj4gPiA+
+ID4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuYyB8IDQgKysrLQo+ID4gPiA+ICBkcml2ZXJz
+L2dwdS9kcm0vdGVncmEvdmljLmMgfCAyICsrCj4gPiA+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNSBp
+bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPiA+Cj4gPiA+IFBpbmcuIENhbiB3ZSBnZXQg
+dGhpcyBpbnRvIGRybS1maXhlcz8KPiA+Cj4gPiBIdWggdGhpcyBhbHJlYWR5IGxhbmRlZCBpbiBM
+aW51cyB0cmVlIGFmYWlrLAo+Cj4gSW5kZWVkIGl0IGhhcy4gSSBtdXN0J3ZlIGdvdHRlbiBjb25m
+dXNlZCBiZWNhdXNlIHRoaXMgaXMgbm90IGluIGRybS1taXNjCj4gYW5kIEkgd2FzIHNlZWluZyBi
+dWlsZCBmYWlsdXJlcyBkdWUgdG8gdGhlIGFib3ZlLgo+CgpBZGRpbmcgTWF4aW1lIGZvciBhIGJh
+Y2ttZXJnZS9yZWJhc2Ugb2YgLWZpeGVzIHNvIHdlIGNhbiBwaWNrIHRoaXMgdXAuCgpTZWFuCgo+
+IEFueXdheSwgc29ycnkgZm9yIHRoZSBub2lzZS4KPgo+IFRoaWVycnkKPiBfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxp
+c3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
