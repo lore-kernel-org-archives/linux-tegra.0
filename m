@@ -1,113 +1,31 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: tegra114: de-assert CS before SPI mode change" to the spi tree
-Date: Fri,  5 Apr 2019 10:27:01 +0700 (+07)
-Message-ID: <20190405032701.14731441D3C@finisterre.ee.mobilebroadband>
-References: <1554423259-26056-3-git-send-email-skomatineni@nvidia.com>
+From: Peter Korsgaard <peter@korsgaard.com>
+Subject: Re: [PATCH 08/12] i2c: ocores: refactor setup for polling
+Date: Fri, 05 Apr 2019 17:09:48 +0200
+Message-ID: <8736mwtrnn.fsf@dell.be.48ers.dk>
+References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+        <20190403124019.8947-9-wsa+renesas@sang-engineering.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554423259-26056-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190403124019.8947-9-wsa+renesas@sang-engineering.com> (Wolfram
+        Sang's message of "Wed, 3 Apr 2019 14:40:15 +0200")
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, skomatineni@nvidia.combroonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.orglinux-spi@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@axentia.se>, Stefan Lengfeld <contact@stefanchrist.eu>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+>>>>> "Wolfram" == Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
 
-   spi: tegra114: de-assert CS before SPI mode change
+Hi,
 
-has been applied to the spi tree at
+ > By properly setting up the algorithm at probe time, we can skip the
+ > check at every transfer. This allows us to get rid of the flags
+ > completely.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+ > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ > Cc: Andrew Lunn <andrew@lunn.ch>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Acked-by: Peter Korsgaard <peter@korsgaard.com>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From f3e182c33e534f4caeb255a3ab927debc0d222aa Mon Sep 17 00:00:00 2001
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Thu, 4 Apr 2019 17:14:02 -0700
-Subject: [PATCH] spi: tegra114: de-assert CS before SPI mode change
-
-With SW CS, during the transfer completion CS is de-asserted by writing
-default command1 register value to SPI_COMMAND1 register. With this both
-mode and CS state are set at the same time and if current transfer mode
-is different to default SPI mode and if mode change happens prior to CS
-de-assert, clock polarity can change while CS is active before transfer
-finishes.
-
-This causes Slave to see spurious clock edges resulting in data mismatch.
-
-This patch fixes this by de-asserting CS before writing SPI_COMMAND1 to
-its default value so through out the transfer it will be in same SPI mode.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-tegra114.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 09cfae3abce2..8de002fc6943 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -856,6 +856,19 @@ static void tegra_spi_transfer_delay(int delay)
- 	udelay(delay % 1000);
- }
- 
-+static void tegra_spi_transfer_end(struct spi_device *spi)
-+{
-+	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
-+	int cs_val = (spi->mode & SPI_CS_HIGH) ? 0 : 1;
-+
-+	if (cs_val)
-+		tspi->command1_reg |= SPI_CS_SW_VAL;
-+	else
-+		tspi->command1_reg &= ~SPI_CS_SW_VAL;
-+	tegra_spi_writel(tspi, tspi->command1_reg, SPI_COMMAND1);
-+	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
-+}
-+
- static int tegra_spi_transfer_one_message(struct spi_master *master,
- 			struct spi_message *msg)
- {
-@@ -918,8 +931,7 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
- 
- complete_xfer:
- 		if (ret < 0 || skip) {
--			tegra_spi_writel(tspi, tspi->def_command1_reg,
--					SPI_COMMAND1);
-+			tegra_spi_transfer_end(spi);
- 			tegra_spi_transfer_delay(xfer->delay_usecs);
- 			goto exit;
- 		} else if (list_is_last(&xfer->transfer_list,
-@@ -927,13 +939,11 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
- 			if (xfer->cs_change)
- 				tspi->cs_control = spi;
- 			else {
--				tegra_spi_writel(tspi, tspi->def_command1_reg,
--						SPI_COMMAND1);
-+				tegra_spi_transfer_end(spi);
- 				tegra_spi_transfer_delay(xfer->delay_usecs);
- 			}
- 		} else if (xfer->cs_change) {
--			tegra_spi_writel(tspi, tspi->def_command1_reg,
--					SPI_COMMAND1);
-+			tegra_spi_transfer_end(spi);
- 			tegra_spi_transfer_delay(xfer->delay_usecs);
- 		}
- 
 -- 
-2.20.1
+Bye, Peter Korsgaard
