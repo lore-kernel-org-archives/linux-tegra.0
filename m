@@ -1,39 +1,38 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V2 16/16] arm64: Add Tegra194 PCIe driver to defconfig
-Date: Fri, 5 Apr 2019 01:24:43 +0530
-Message-ID: <1554407683-31580-17-git-send-email-vidyas@nvidia.com>
-References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V2 01/20] spi: tegra114: fix PIO transfer
+Date: Thu, 4 Apr 2019 17:14:00 -0700
+Message-ID: <1554423259-26056-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyarlagadda@nvidia.com
+Cc: ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add PCIe host controller driver for DesignWare core based
-PCIe controller IP present in Tegra194.
+This patch fixes PIO mode transfer to use PIO bit in SPI_COMMAND1 register.
+Current driver uses DMA_EN instead of PIO bit.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
-Changes since [v1]:
-* Changed CONFIG_PCIE_TEGRA194 from 'y' to 'm'
+ drivers/spi/spi-tegra114.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 2d9c39033c1a..2ddea5c4e87d 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -87,6 +87,7 @@ CONFIG_PCIE_QCOM=y
- CONFIG_PCIE_ARMADA_8K=y
- CONFIG_PCIE_KIRIN=y
- CONFIG_PCIE_HISI_STB=y
-+CONFIG_PCIE_TEGRA194=m
- CONFIG_ARM64_VA_BITS_48=y
- CONFIG_SCHED_MC=y
- CONFIG_NUMA=y
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 6bb40e46da91..ba1639310282 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -641,8 +641,9 @@ static int tegra_spi_start_cpu_based_transfer(
+ 
+ 	tspi->is_curr_dma_xfer = false;
+ 
+-	val |= SPI_DMA_EN;
+-	tegra_spi_writel(tspi, val, SPI_DMA_CTL);
++	val = tspi->command1_reg;
++	val |= SPI_PIO;
++	tegra_spi_writel(tspi, val, SPI_COMMAND1);
+ 	return 0;
+ }
+ 
 -- 
 2.7.4
