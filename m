@@ -1,17 +1,16 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 2/8] clk: tegra: clock changes for emc scaling support on
- Tegra210
-Date: Mon, 8 Apr 2019 12:15:21 +0300
-Message-ID: <20190408091521.GC12975@pdeschrijver-desktop.Nvidia.com>
+Subject: Re: [PATCH 3/8] memory: tegra: Add Tegra210 EMC clock driver
+Date: Mon, 8 Apr 2019 12:25:30 +0300
+Message-ID: <20190408092530.GD12975@pdeschrijver-desktop.Nvidia.com>
 References: <20190325074523.26456-1-josephl@nvidia.com>
- <20190325074523.26456-3-josephl@nvidia.com>
- <20190403092250.GG5238@ulmo>
+ <20190325074523.26456-4-josephl@nvidia.com>
+ <20190403113426.GH5238@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20190403092250.GG5238@ulmo>
+In-Reply-To: <20190403113426.GH5238@ulmo>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -25,104 +24,118 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 11:22:50AM +0200, Thierry Reding wrote:
-> On Mon, Mar 25, 2019 at 03:45:17PM +0800, Joseph Lo wrote:
-> > 1) Introduce low jitter paths for pllp and pll_mb used by the EMC driver.
-> > 2) Remove the old emc_mux clock and don't use the common EMC clock
-> >    definition. This will be replaced by a new clock defined in the EMC
-> >    driver.
-> > 3) Export functions to allow accessing the CAR register required for EMC
-> >    clock scaling. These functions will be used to access the CAR register
-> >    as part of the scaling sequence.
-> 
-> The fact that you can enumerate 3 logical changes made by this commit
-> indicates that it should be split up into smaller patches.
-> 
+On Wed, Apr 03, 2019 at 01:34:26PM +0200, Thierry Reding wrote:
+> On Mon, Mar 25, 2019 at 03:45:18PM +0800, Joseph Lo wrote:
+> > This is the initial patch for Tegra210 EMC clock driver, which doesn't
+> > include the support code and detail sequence for clock scaling yet.
+> > 
+> > The driver is designed to support LPDDR4 SDRAMs. Because of the LPDDR4
+> > devices need to do initial time training before it can be used, the
+> > firmware will help to do that at early boot stage. The trained table for
+> > the rates that we will support in the kernel will be merged to the
+> > kernel DTB. So the driver can get the trained table for clock scaling
+> > support.
+> > 
+> > For the higher rate support (above 800MHz), the periodic training is
+> > needed for the timing compensation. So basically, two methodologies for
+> > clock scaling support, one is following the clock changing sequence to
+> > update the EMC table to EMC registers and another is if the rate needs
+> > periodic training, then we will start a timer to do that periodically
+> > until it leaves the rate that doesn't need that.
+> > 
 > > Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
 > > 
 > > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > > ---
-> >  drivers/clk/tegra/clk-tegra210.c         | 112 +++++++++++++++++++----
-> >  include/dt-bindings/clock/tegra210-car.h |   4 +-
-> >  include/linux/clk/tegra.h                |   5 +
-> >  3 files changed, 103 insertions(+), 18 deletions(-)
+> >  drivers/memory/tegra/Kconfig             |   10 +
+> >  drivers/memory/tegra/Makefile            |    1 +
+> >  drivers/memory/tegra/tegra210-dt-parse.c |  340 +++++++
+> >  drivers/memory/tegra/tegra210-emc-reg.h  | 1083 ++++++++++++++++++++++
+> >  drivers/memory/tegra/tegra210-emc.c      |  886 ++++++++++++++++++
+> >  5 files changed, 2320 insertions(+)
+> >  create mode 100644 drivers/memory/tegra/tegra210-dt-parse.c
+> >  create mode 100644 drivers/memory/tegra/tegra210-emc-reg.h
+> >  create mode 100644 drivers/memory/tegra/tegra210-emc.c
 > > 
-> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> > index 7545af763d7a..e17b5279ea69 100644
-> > --- a/drivers/clk/tegra/clk-tegra210.c
-> > +++ b/drivers/clk/tegra/clk-tegra210.c
-> > @@ -47,6 +47,7 @@
-> >  #define CLK_SOURCE_LA 0x1f8
-> >  #define CLK_SOURCE_SDMMC2 0x154
-> >  #define CLK_SOURCE_SDMMC4 0x164
-> > +#define CLK_SOURCE_EMC_DLL 0x664
-> >  
-> >  #define PLLC_BASE 0x80
-> >  #define PLLC_OUT 0x84
-> > @@ -234,6 +235,10 @@
-> >  #define RST_DFLL_DVCO 0x2f4
-> >  #define DVFS_DFLL_RESET_SHIFT 0
-> >  
-> > +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
-> > +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
-> > +#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
+> > diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+> > index 34e0b70f5c5f..614e9b370183 100644
+> > --- a/drivers/memory/tegra/Kconfig
+> > +++ b/drivers/memory/tegra/Kconfig
+> > @@ -25,3 +25,13 @@ config TEGRA124_EMC
+> >  	  Tegra124 chips. The EMC controls the external DRAM on the board.
+> >  	  This driver is required to change memory timings / clock rate for
+> >  	  external memory.
 > > +
-> >  #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
-> >  #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+> > +config TEGRA210_EMC
+> > +	bool "NVIDIA Tegra210 External Memory Controller driver"
+> > +	default y
+> > +	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
+> > +	help
+> > +	  This driver is for the External Memory Controller (EMC) found on
+> > +	  Tegra210 chips. The EMC controls the external DRAM on the board.
+> > +	  This driver is required to change memory timings / clock rate for
+> > +	  external memory.
+> > diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
+> > index 3971a6b7c487..36a835620bbd 100644
+> > --- a/drivers/memory/tegra/Makefile
+> > +++ b/drivers/memory/tegra/Makefile
+> > @@ -12,4 +12,5 @@ obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
 > >  
-> > @@ -319,12 +324,6 @@ static unsigned long tegra210_input_freq[] = {
-> >  	[8] = 12000000,
-> >  };
-> >  
-> > -static const char *mux_pllmcp_clkm[] = {
-> > -	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
-> > -	"pll_p",
-> > -};
-> > -#define mux_pllmcp_clkm_idx NULL
-> > -
-> >  #define PLL_ENABLE			(1 << 30)
-> >  
-> >  #define PLLCX_MISC1_IDDQ		(1 << 27)
-> > @@ -2310,7 +2309,7 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
-> >  	[tegra_clk_i2c2] = { .dt_id = TEGRA210_CLK_I2C2, .present = true },
-> >  	[tegra_clk_uartc_8] = { .dt_id = TEGRA210_CLK_UARTC, .present = true },
-> >  	[tegra_clk_mipi_cal] = { .dt_id = TEGRA210_CLK_MIPI_CAL, .present = true },
-> > -	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = true },
-> > +	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = false },
-> >  	[tegra_clk_usb2] = { .dt_id = TEGRA210_CLK_USB2, .present = true },
-> >  	[tegra_clk_bsev] = { .dt_id = TEGRA210_CLK_BSEV, .present = true },
-> >  	[tegra_clk_uartd_8] = { .dt_id = TEGRA210_CLK_UARTD, .present = true },
-> > @@ -2921,6 +2920,82 @@ static int tegra210_init_pllu(void)
-> >  	return 0;
-> >  }
-> >  
-> > +void tegra210_clk_emc_dll_enable(bool flag)
-> > +{
-> > +	unsigned long flags = 0;
-> > +	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
-> > +		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
+> >  obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
+> >  obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
+> > +obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o tegra210-dt-parse.o
+> >  obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
+> > diff --git a/drivers/memory/tegra/tegra210-dt-parse.c b/drivers/memory/tegra/tegra210-dt-parse.c
+> > new file mode 100644
+> > index 000000000000..6a3a3a28ac64
+> > --- /dev/null
+> > +++ b/drivers/memory/tegra/tegra210-dt-parse.c
+> > @@ -0,0 +1,340 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2013-2019, NVIDIA CORPORATION.  All rights reserved.
+> > + */
 > > +
-> > +	spin_lock_irqsave(&emc_lock, flags);
+> > +#include <linux/kernel.h>
+> > +#include <linux/err.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <soc/tegra/fuse.h>
 > > +
-> > +	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
-> > +	readl(clk_base + offset);
+> > +#include "tegra210-emc-reg.h"
 > > +
-> > +	spin_unlock_irqrestore(&emc_lock, flags);
-> > +}
-> > +EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
-> > +
-> > +void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
+> > +static struct device_node *tegra_emc_ramcode_devnode(
+> > +	struct device_node *np)
 > 
-> Do we really want to pass the whole register value through this
-> function? The register has three fields, so perhaps it's safer to pass
-> the fields individually? Or perhaps we only need to modify a subset of
-> the fields and can reduce the number of parameters we pass? Letting a
-> different driver pass any arbitrary value here takes away any means of
-> checking for validity.
+> This is weirdly wrapped. Typically if it doesn't all fit on one line
+> you'd break after the return type, like so:
+> 
+>     static struct device_node *tegra_emc_ramcode_devnode(struct device_node *np)
+> 
+> That said, the above does seem to fit on a single line, so there'n no
+> reason to wrap at all. You could still try to make it a little shorter
+> by using the _node suffix instead of _devnode.
 > 
 
-The EMC scaling driver needs to modify all 3 fields. If the DDLL_CLK_SEL
-field would be fixed, this function could be left out and CCF be used
-instead.
+..
+
+> 
+> Should this be an array? Seems like that could make it easier to write
+> the tables to these registers later on.
+> 
+> > +
+> > +	struct emc_table *current_timing;
+> > +	struct emc_table *next_timing;
+> > +	struct emc_table start_timing;
+> 
+> Why is start_timing not a pointer? It looks to me like that's basically
+> a copy of emc_table[0], so why not just point it at that?
+> 
+
+No. Apparently it is possible the EMC registers are configured by the
+bootloader differently than anything mentioned in the table. Given that
+the switching sequence need some of the current register values, we need
+to read those from the hardware and we cannot just point to an existing
+table entry.
 
 Peter.
