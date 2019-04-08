@@ -1,15 +1,15 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 2/8] clk: tegra: clock changes for emc scaling support on
- Tegra210
-Date: Mon, 8 Apr 2019 15:52:37 +0800
-Message-ID: <104f44ba-cd61-44a5-6c31-2b0af91c7b44@nvidia.com>
+Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
+Date: Mon, 8 Apr 2019 16:49:30 +0800
+Message-ID: <747a38f5-72f6-ff34-d2a1-4ba7ac7d8782@nvidia.com>
 References: <20190325074523.26456-1-josephl@nvidia.com>
- <20190325074523.26456-3-josephl@nvidia.com> <20190403092250.GG5238@ulmo>
+ <20190325074523.26456-2-josephl@nvidia.com>
+ <6bd34a19-26e0-6bdd-ce89-4a30d35e9823@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190403092250.GG5238@ulmo>
+In-Reply-To: <6bd34a19-26e0-6bdd-ce89-4a30d35e9823@gmail.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -20,169 +20,61 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/3/19 5:22 PM, Thierry Reding wrote:
-> On Mon, Mar 25, 2019 at 03:45:17PM +0800, Joseph Lo wrote:
->> 1) Introduce low jitter paths for pllp and pll_mb used by the EMC driver.
->> 2) Remove the old emc_mux clock and don't use the common EMC clock
->>     definition. This will be replaced by a new clock defined in the EMC
->>     driver.
->> 3) Export functions to allow accessing the CAR register required for EMC
->>     clock scaling. These functions will be used to access the CAR register
->>     as part of the scaling sequence.
-> 
-> The fact that you can enumerate 3 logical changes made by this commit
-> indicates that it should be split up into smaller patches.
-
-Okay, will do.
-
-> 
->> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-tegra210.c         | 112 +++++++++++++++++++----
->>   include/dt-bindings/clock/tegra210-car.h |   4 +-
->>   include/linux/clk/tegra.h                |   5 +
->>   3 files changed, 103 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->> index 7545af763d7a..e17b5279ea69 100644
->> --- a/drivers/clk/tegra/clk-tegra210.c
->> +++ b/drivers/clk/tegra/clk-tegra210.c
->> @@ -47,6 +47,7 @@
->>   #define CLK_SOURCE_LA 0x1f8
->>   #define CLK_SOURCE_SDMMC2 0x154
->>   #define CLK_SOURCE_SDMMC4 0x164
->> +#define CLK_SOURCE_EMC_DLL 0x664
->>   
->>   #define PLLC_BASE 0x80
->>   #define PLLC_OUT 0x84
->> @@ -234,6 +235,10 @@
->>   #define RST_DFLL_DVCO 0x2f4
->>   #define DVFS_DFLL_RESET_SHIFT 0
->>   
->> +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
->> +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
->> +#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
->> +
->>   #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
->>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
->>   
->> @@ -319,12 +324,6 @@ static unsigned long tegra210_input_freq[] = {
->>   	[8] = 12000000,
->>   };
->>   
->> -static const char *mux_pllmcp_clkm[] = {
->> -	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
->> -	"pll_p",
->> -};
->> -#define mux_pllmcp_clkm_idx NULL
->> -
->>   #define PLL_ENABLE			(1 << 30)
->>   
->>   #define PLLCX_MISC1_IDDQ		(1 << 27)
->> @@ -2310,7 +2309,7 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
->>   	[tegra_clk_i2c2] = { .dt_id = TEGRA210_CLK_I2C2, .present = true },
->>   	[tegra_clk_uartc_8] = { .dt_id = TEGRA210_CLK_UARTC, .present = true },
->>   	[tegra_clk_mipi_cal] = { .dt_id = TEGRA210_CLK_MIPI_CAL, .present = true },
->> -	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = true },
->> +	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = false },
->>   	[tegra_clk_usb2] = { .dt_id = TEGRA210_CLK_USB2, .present = true },
->>   	[tegra_clk_bsev] = { .dt_id = TEGRA210_CLK_BSEV, .present = true },
->>   	[tegra_clk_uartd_8] = { .dt_id = TEGRA210_CLK_UARTD, .present = true },
->> @@ -2921,6 +2920,82 @@ static int tegra210_init_pllu(void)
->>   	return 0;
->>   }
->>   
->> +void tegra210_clk_emc_dll_enable(bool flag)
->> +{
->> +	unsigned long flags = 0;
->> +	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
->> +		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
->> +
->> +	spin_lock_irqsave(&emc_lock, flags);
->> +
->> +	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
->> +	readl(clk_base + offset);
->> +
->> +	spin_unlock_irqrestore(&emc_lock, flags);
->> +}
->> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
->> +
->> +void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
-> 
-> Do we really want to pass the whole register value through this
-> function? The register has three fields, so perhaps it's safer to pass
-> the fields individually? Or perhaps we only need to modify a subset of
-> the fields and can reduce the number of parameters we pass? Letting a
-> different driver pass any arbitrary value here takes away any means of
-> checking for validity.
-
-The emc table has a property for this register. So the scaling sequence 
-will update the register with the value in the table.
-
-> 
->> +{
->> +	unsigned long flags = 0;
->> +
->> +	spin_lock_irqsave(&emc_lock, flags);
->> +
->> +	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
->> +	readl(clk_base + CLK_SOURCE_EMC_DLL);
-> 
-> Could we not just use a writel() here and do away with the flushing
-> readl()?
-Will try that.
-
-> 
-> Also, it doesn't look like that spinlock actually protects anything.
-> You're just writing a value. If anyone else is holding that lock they
-> will either overwrite our value after we release the lock, or we
-> overwrite their value when they release the lock.
-
-Yeah, agreed. Will remove.
-
-Thanks,
-Joseph
-
-> 
->> +
->> +	spin_unlock_irqrestore(&emc_lock, flags);
->> +}
->> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
->> +
->> +void tegra210_clk_emc_update_setting(u32 emc_src_value)
->> +{
->> +	unsigned long flags = 0;
->> +
->> +	spin_lock_irqsave(&emc_lock, flags);
->> +
->> +	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
->> +	readl(clk_base + CLK_SOURCE_EMC);
->> +
->> +	spin_unlock_irqrestore(&emc_lock, flags);
->> +}
->> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
-> 
-> Same comments as above.
-> 
->> +
->> +u32 tegra210_clk_emc_get_setting(void)
->> +{
->> +	unsigned long flags = 0;
->> +	u32 val;
->> +
->> +	spin_lock_irqsave(&emc_lock, flags);
->> +
->> +	val = readl_relaxed(clk_base + CLK_SOURCE_EMC);
->> +
->> +	spin_unlock_irqrestore(&emc_lock, flags);
-> 
-> Similar to the above, the spinlock doesn't protect anything here.
-> 
-> Thierry
-> 
+T24gNC80LzE5IDU6MTcgUE0sIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAyNS4wMy4yMDE5IDEw
+OjQ1LCBKb3NlcGggTG8g0L/QuNGI0LXRgjoKPj4gQWRkIHRoZSBiaW5kaW5nIGRvY3VtZW50IGZv
+ciB0aGUgZXh0ZXJuYWwgbWVtb3J5IGNvbnRyb2xsZXIgKEVNQykgd2hpY2gKPj4gY29tbXVuaWNh
+dGVzIHdpdGggZXh0ZXJuYWwgTFBERFI0IGRldmljZXMuIEl0IGluY2x1ZGVzIHRoZSBiaW5kaW5n
+cyBvZgo+PiB0aGUgRU1DIG5vZGUgYW5kIHRoZSBFTUMgdGFibGUgb2YgZGlmZmVyZW50IHJhdGVz
+Lgo+Pgo+PiBUbyBzdXBwb3J0IGhpZ2ggcmF0ZXMgZm9yIExQRERSNCwgdGhlIEVNQyB0YWJsZSBt
+dXN0IGJlIHRyYWluZWQgYmVmb3JlCj4+IGl0IGNhbiBiZSB1c2VkIGZvciBydW50aW1lIGNsb2Nr
+IHN3aXRjaGluZy4gSXQgaGFzIGJlZW4gZG9uZSBieSBmaXJtd2FyZQo+PiBhbmQgbWVyZ2VkIHRv
+IHRoZSB0YWJsZSB0aGF0IExpbnV4IGtlcm5lbCB1c2VzLiBGb3IgYmFja3dhcmQKPj4gY29tcGF0
+aWJpbGl0eSB3aXRoIHRoZSBkZXZpY2VzIHRoYXQgaGFkIGJlZW4gbGF1bmNoZWQgb24gdGhlIG1h
+cmtldCwgbGlrZQo+PiBTaGllbGQgYW5kIEpldHNvbiBwbGF0Zm9ybXMsIHRoZSBiaW5kaW5ncyBp
+biB0aGUgRU1DIHRhYmxlIHNob3VsZCByZW1haW4KPj4gdGhlIHNhbWUuIFNvIHRoZSBmaXJtd2Fy
+ZSBjYW4gcmVjb2duaXplIHRoZW0gYW5kIG1lcmdlIHRoZSB0cmFpbmVkIEVNQwo+PiB0YWJsZSBm
+b3IgdGhlIGtlcm5lbC4KPj4KPj4gQmFzZWQgb24gdGhlIHdvcmsgb2YgUGV0ZXIgRGUgU2Nocmlq
+dmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEpvc2Vw
+aCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+PiAtLS0KPj4gICAuLi4vbnZpZGlhLHRlZ3JhMjEw
+LWVtYy50eHQgICAgICAgICAgICAgICAgICAgfCA2MDUgKysrKysrKysrKysrKysrKysrCj4+ICAg
+MSBmaWxlIGNoYW5nZWQsIDYwNSBpbnNlcnRpb25zKCspCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZp
+ZGlhLHRlZ3JhMjEwLWVtYy50eHQKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZpZGlhLHRlZ3JhMjEwLWVtYy50
+eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJz
+L252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4
+IDAwMDAwMDAwMDAwMC4uMWY2YjZkZjZkMzdiCj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lbW9yeS1jb250cm9sbGVycy9udmlkaWEs
+dGVncmEyMTAtZW1jLnR4dAo+PiBAQCAtMCwwICsxLDYwNSBAQAo+PiArTlZJRElBIFRlZ3JhMjEw
+IFNvQyBFTUMgKGV4dGVybmFsIG1lbW9yeSBjb250cm9sbGVyKQo+PiArPT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQo+PiArCj4+ICtSZXF1aXJlZCBw
+cm9wZXJ0aWVzIDoKPj4gKy0gY29tcGF0aWJsZSA6IHNob3VsZCBiZSAibnZpZGlhLHRlZ3JhMjEt
+ZW1jIiwgIm52aWRpYSx0ZWdyYTIxMC1lbWMiLgo+PiArLSByZWcgOiBwaHlzaWNhbCBiYXNlIGFk
+ZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgY29udHJvbGxlcidzIHJlZ2lzdGVycy4KPj4gKy0gY2xv
+Y2tzIDogcGhhbmRsZXMgb2YgdGhlIHBvc3NpYmxlIHNvdXJjZSBjbG9ja3MKPj4gKy0gY2xvY2st
+bmFtZXMgOiBuYW1lcyBvZiB0aGUgcG9zc2libGUgc291cmNlIGNsb2Nrcwo+PiArLSAjYWRkcmVz
+cy1jZWxscyA6IHNob3VsZCBiZSAxCj4+ICstICNzaXplLWNlbGxzIDogc2hvdWxkIGJlIDAKPj4g
+Ky0gbnZpZGlhLG1lbW9yeS1jb250cm9sbGVyIDogcGhhbmRsZSBvZiB0aGUgbWVtb3J5IGNvbnRy
+b2xsZXIuCj4+ICstIG52aWRpYSx1c2UtcmFtLWNvZGUgOiBib29sZWFuLCBpbmRpY2F0ZXMgd2hl
+dGhlciB3ZSBzaG91bGQgdXNlIFJBTV9DT0RFIGluCj4+ICsJCSAgICAgICAgdGhlIHJlZ2lzdGVy
+IHRvIGZpbmQgbWF0Y2hpbmcgZW1jLXRhYmxlIG5vZGVzCj4+ICsKPiAKPiBUaGUgImludGVycnVw
+dHMiIHByb3BlcnR5IGlzIG1pc3NpbmcuIFlvdSBjb3VsZCB1c2UgdGhlIENMSyBoYW5kc2hha2Ug
+ZXZlbnQgdG8gd2FpdCBmb3IgdGhlIGNsb2NrIHJhdGUgY2hhbmdlIGNvbXBsZXRpb24gaW5zdGVh
+ZCBvZiBwb2xsaW5nIHRoZSByZWdpc3RlciBpZiB5b3UgZGlkbid0IHJlbHkgb24gdGhlIGRvd25z
+dHJlYW0gYmluZGluZywgc2VlIFQyMCBkcml2ZXIgZm9yIHRoZSBleGFtcGxlLiBCVFcsIEknbSB3
+b25kZXJpbmcgaWYgeW91J3JlIGdvaW5nIHRvIHB1c2ggb3RoZXIgZG93bnN0cmVhbSBiaW5kaW5n
+cyB0byB1cHN0cmVhbS4uIGFwcGFyZW50bHkgRU1DIHdvbid0IGJlIHRoZSBvbmx5IGJpbmRpbmcg
+dGhhdCB0aGF0IGNvdWxkIGRpdmVyZ2UgZnJvbSB0aGUgdXBzdHJlYW0gYW5kIHRoZW4gaXQncyBu
+b3Qgb2J2aW91cyB3aGV0aGVyIHRoZSBsb2NrZWQtZG93biB2YXJpYW50IG9mIFQyMTAgaXMgc3Vw
+cG9ydGFibGUgYnkgdXBzdHJlYW0gYXQgYWxsLgo+IApXaWxsIGFkZCAiaW50ZXJydXB0cyIgcHJv
+cGVydHkuIEFuZCB5ZXMgYnkgZGVmYXVsdCwgd2UgZG9uJ3QgdXNlIHRoYXQgCmZvciBUZWdyYTIx
+MC4gQmVjYXVzZSBpdCdzIGluIHRoZSBtaWRkbGUgb2YgdGhlIHNjYWxpbmcgc2VxdWVuY2UgZm9y
+IApjaGVja2luZyB0aGUgY2xvY2sgc291cmNlIGNoYW5nZSBjb21wbGV0ZS4KClRoYW5rcywKSm9z
+ZXBoCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
+eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
+cm0ta2VybmVsCg==
