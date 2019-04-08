@@ -1,122 +1,188 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [GIT PULL] drm/tegra: Fixes for v5.1-rc2
-Date: Mon, 8 Apr 2019 11:05:33 +0200
-Message-ID: <20190408090533.czyr6ogzc2n4gjgz@flea>
-References: <20190322131517.825-1-thierry.reding@gmail.com>
- <20190403160659.GL5238@ulmo>
- <CAPM=9tz0+t5cWT43ESEpfOZU=SXFR4QVDK6k6W_FRFOOFsGyGg@mail.gmail.com>
- <20190404113314.GA11569@ulmo>
- <CAMavQKK7h8u1zN_ZZZyo3yjVvJ_cxQkfzLw+mdEy1kuv2-n2Gg@mail.gmail.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 2/8] clk: tegra: clock changes for emc scaling support on
+ Tegra210
+Date: Mon, 8 Apr 2019 15:52:37 +0800
+Message-ID: <104f44ba-cd61-44a5-6c31-2b0af91c7b44@nvidia.com>
+References: <20190325074523.26456-1-josephl@nvidia.com>
+ <20190325074523.26456-3-josephl@nvidia.com> <20190403092250.GG5238@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0080007008=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAMavQKK7h8u1zN_ZZZyo3yjVvJ_cxQkfzLw+mdEy1kuv2-n2Gg@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <sean@poorly.run>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190403092250.GG5238@ulmo>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 4/3/19 5:22 PM, Thierry Reding wrote:
+> On Mon, Mar 25, 2019 at 03:45:17PM +0800, Joseph Lo wrote:
+>> 1) Introduce low jitter paths for pllp and pll_mb used by the EMC driver.
+>> 2) Remove the old emc_mux clock and don't use the common EMC clock
+>>     definition. This will be replaced by a new clock defined in the EMC
+>>     driver.
+>> 3) Export functions to allow accessing the CAR register required for EMC
+>>     clock scaling. These functions will be used to access the CAR register
+>>     as part of the scaling sequence.
+> 
+> The fact that you can enumerate 3 logical changes made by this commit
+> indicates that it should be split up into smaller patches.
 
---===============0080007008==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yfjqfp4ujzbcmeyn"
-Content-Disposition: inline
+Okay, will do.
 
+> 
+>> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   drivers/clk/tegra/clk-tegra210.c         | 112 +++++++++++++++++++----
+>>   include/dt-bindings/clock/tegra210-car.h |   4 +-
+>>   include/linux/clk/tegra.h                |   5 +
+>>   3 files changed, 103 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>> index 7545af763d7a..e17b5279ea69 100644
+>> --- a/drivers/clk/tegra/clk-tegra210.c
+>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>> @@ -47,6 +47,7 @@
+>>   #define CLK_SOURCE_LA 0x1f8
+>>   #define CLK_SOURCE_SDMMC2 0x154
+>>   #define CLK_SOURCE_SDMMC4 0x164
+>> +#define CLK_SOURCE_EMC_DLL 0x664
+>>   
+>>   #define PLLC_BASE 0x80
+>>   #define PLLC_OUT 0x84
+>> @@ -234,6 +235,10 @@
+>>   #define RST_DFLL_DVCO 0x2f4
+>>   #define DVFS_DFLL_RESET_SHIFT 0
+>>   
+>> +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
+>> +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
+>> +#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
+>> +
+>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+>>   
+>> @@ -319,12 +324,6 @@ static unsigned long tegra210_input_freq[] = {
+>>   	[8] = 12000000,
+>>   };
+>>   
+>> -static const char *mux_pllmcp_clkm[] = {
+>> -	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
+>> -	"pll_p",
+>> -};
+>> -#define mux_pllmcp_clkm_idx NULL
+>> -
+>>   #define PLL_ENABLE			(1 << 30)
+>>   
+>>   #define PLLCX_MISC1_IDDQ		(1 << 27)
+>> @@ -2310,7 +2309,7 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+>>   	[tegra_clk_i2c2] = { .dt_id = TEGRA210_CLK_I2C2, .present = true },
+>>   	[tegra_clk_uartc_8] = { .dt_id = TEGRA210_CLK_UARTC, .present = true },
+>>   	[tegra_clk_mipi_cal] = { .dt_id = TEGRA210_CLK_MIPI_CAL, .present = true },
+>> -	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = true },
+>> +	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = false },
+>>   	[tegra_clk_usb2] = { .dt_id = TEGRA210_CLK_USB2, .present = true },
+>>   	[tegra_clk_bsev] = { .dt_id = TEGRA210_CLK_BSEV, .present = true },
+>>   	[tegra_clk_uartd_8] = { .dt_id = TEGRA210_CLK_UARTD, .present = true },
+>> @@ -2921,6 +2920,82 @@ static int tegra210_init_pllu(void)
+>>   	return 0;
+>>   }
+>>   
+>> +void tegra210_clk_emc_dll_enable(bool flag)
+>> +{
+>> +	unsigned long flags = 0;
+>> +	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
+>> +		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
+>> +
+>> +	spin_lock_irqsave(&emc_lock, flags);
+>> +
+>> +	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
+>> +	readl(clk_base + offset);
+>> +
+>> +	spin_unlock_irqrestore(&emc_lock, flags);
+>> +}
+>> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
+>> +
+>> +void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
+> 
+> Do we really want to pass the whole register value through this
+> function? The register has three fields, so perhaps it's safer to pass
+> the fields individually? Or perhaps we only need to modify a subset of
+> the fields and can reduce the number of parameters we pass? Letting a
+> different driver pass any arbitrary value here takes away any means of
+> checking for validity.
 
---yfjqfp4ujzbcmeyn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The emc table has a property for this register. So the scaling sequence 
+will update the register with the value in the table.
 
-On Fri, Apr 05, 2019 at 03:45:10PM -0400, Sean Paul wrote:
-> On Thu, Apr 4, 2019 at 7:33 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> >
-> > On Thu, Apr 04, 2019 at 12:15:48PM +1000, Dave Airlie wrote:
-> > > On Thu, 4 Apr 2019 at 02:07, Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > >
-> > > > On Fri, Mar 22, 2019 at 02:15:17PM +0100, Thierry Reding wrote:
-> > > > > Hi Dave,
-> > > > >
-> > > > > The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-> > > > >
-> > > > >   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-> > > > >
-> > > > > are available in the Git repository at:
-> > > > >
-> > > > >   git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-5.1-rc2
-> > > > >
-> > > > > for you to fetch changes up to 509869a2fec36ecb2b841180915995f41d5a0219:
-> > > > >
-> > > > >   drm/tegra: vic: Fix implicit function declaration warning (2019-03-22 14:08:55 +0100)
-> > > > >
-> > > > > I'm a little late sending this out, so I realize this will probably go
-> > > > > into v5.1-rc3 despite the name of the tag.
-> > > > >
-> > > > > Thanks,
-> > > > > Thierry
-> > > > >
-> > > > > ----------------------------------------------------------------
-> > > > > drm/tegra: Fixes for v5.1-rc2
-> > > > >
-> > > > > These are a couple of minor fixes for build issues and sparse warnings.
-> > > > >
-> > > > > ----------------------------------------------------------------
-> > > > > Anders Roxell (1):
-> > > > >       drm/tegra: vic: Fix implicit function declaration warning
-> > > > >
-> > > > > Thierry Reding (1):
-> > > > >       drm/tegra: hub: Fix dereference before check
-> > > > >
-> > > > >  drivers/gpu/drm/tegra/hub.c | 4 +++-
-> > > > >  drivers/gpu/drm/tegra/vic.c | 2 ++
-> > > > >  2 files changed, 5 insertions(+), 1 deletion(-)
-> > > >
-> > > > Ping. Can we get this into drm-fixes?
-> > >
-> > > Huh this already landed in Linus tree afaik,
-> >
-> > Indeed it has. I must've gotten confused because this is not in drm-misc
-> > and I was seeing build failures due to the above.
-> >
->
-> Adding Maxime for a backmerge/rebase of -fixes so we can pick this up.
+> 
+>> +{
+>> +	unsigned long flags = 0;
+>> +
+>> +	spin_lock_irqsave(&emc_lock, flags);
+>> +
+>> +	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
+>> +	readl(clk_base + CLK_SOURCE_EMC_DLL);
+> 
+> Could we not just use a writel() here and do away with the flushing
+> readl()?
+Will try that.
 
-It's done now, thanks for the notice
-Maxime
+> 
+> Also, it doesn't look like that spinlock actually protects anything.
+> You're just writing a value. If anyone else is holding that lock they
+> will either overwrite our value after we release the lock, or we
+> overwrite their value when they release the lock.
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yeah, agreed. Will remove.
 
---yfjqfp4ujzbcmeyn
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Joseph
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKsO3QAKCRDj7w1vZxhR
-xX5QAP93io/IPTe5c+0H51wQbJ1/Rj/clgh3VseaNJ/H43d7sAEAjpLRUaAtUwSz
-XYkjfDk6N5/+ui2xg8VJYXYROc9vMw8=
-=6zlg
------END PGP SIGNATURE-----
-
---yfjqfp4ujzbcmeyn--
-
---===============0080007008==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============0080007008==--
+> 
+>> +
+>> +	spin_unlock_irqrestore(&emc_lock, flags);
+>> +}
+>> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
+>> +
+>> +void tegra210_clk_emc_update_setting(u32 emc_src_value)
+>> +{
+>> +	unsigned long flags = 0;
+>> +
+>> +	spin_lock_irqsave(&emc_lock, flags);
+>> +
+>> +	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
+>> +	readl(clk_base + CLK_SOURCE_EMC);
+>> +
+>> +	spin_unlock_irqrestore(&emc_lock, flags);
+>> +}
+>> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
+> 
+> Same comments as above.
+> 
+>> +
+>> +u32 tegra210_clk_emc_get_setting(void)
+>> +{
+>> +	unsigned long flags = 0;
+>> +	u32 val;
+>> +
+>> +	spin_lock_irqsave(&emc_lock, flags);
+>> +
+>> +	val = readl_relaxed(clk_base + CLK_SOURCE_EMC);
+>> +
+>> +	spin_unlock_irqrestore(&emc_lock, flags);
+> 
+> Similar to the above, the spinlock doesn't protect anything here.
+> 
+> Thierry
+> 
