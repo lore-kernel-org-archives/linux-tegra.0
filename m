@@ -1,87 +1,72 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: tegra114: add dual mode support" to the spi tree
-Date: Mon,  8 Apr 2019 14:32:06 +0700 (+07)
-Message-ID: <20190408073206.BC75D441D3C@finisterre.ee.mobilebroadband>
-References: <1554423259-26056-8-git-send-email-skomatineni@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 0/6] usb: host: xhci-tegra: Add Tegra186 XUSB support
+Date: Mon, 8 Apr 2019 10:17:39 +0200
+Message-ID: <20190408081739.GB6644@ulmo>
+References: <20190401104050.31355-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554423259-26056-8-git-send-email-skomatineni@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <20190401104050.31355-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, skomatineni@nvidia.combroonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.orglinux-spi@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
 
-   spi: tegra114: add dual mode support
+--wq9mPyueHGvFACwf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the spi tree at
+On Mon, Apr 01, 2019 at 12:40:44PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Hi,
+>=20
+> This series introduces support for XUSB to the Tegra186 SoC. This is
+> mostly the same as on earlier generations in that it provides an XHCI
+> compatible interface with a bit of vendor-specific glue. Perhaps the
+> most notable change is the removal of the IPFS wrapper. Patches for
+> the UPHY related changes that control the PHYs for the XUSB controller
+> were merged into v5.1.
+>=20
+> This version is a rebase of the series posted here:
+>=20
+>     http://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D88193
+>=20
+> There have been no code changes and I collected Reviewed-by and Acked-by
+> tags.
+>=20
+> Greg, can you pick up patches 1-3 with Rob's and Mathias' Acked-by,
+> respectively? I'll pick up patches 4-6 into the Tegra tree.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Hi Greg,
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+would you mind picking up patches 1-3 of this series?
 
 Thanks,
-Mark
+Thierry
 
-From 9877a347f2056f7aa4e770de9a20048ad288f545 Mon Sep 17 00:00:00 2001
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Thu, 4 Apr 2019 17:14:07 -0700
-Subject: [PATCH] spi: tegra114: add dual mode support
+--wq9mPyueHGvFACwf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This patch adds support for dual mode SPI transfer.
+-----BEGIN PGP SIGNATURE-----
 
-Dual mode uses both MOSI and MISO lines in parallel where the data
-is interleaved on MOSI and MISO lines increasing the throughput.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyrA6MACgkQ3SOs138+
+s6HZIQ/+IDrPopch617P4krSq4RRYSipiePmD/iKvBjodWR/t/npMJJLji9bckIp
+PIE9KSBY1FqcYo9txWx6jy03WU1JhPvHimYyq4DwDPytI+BjJc/qsXHqDQep8QxT
+ENuG2A/k0ANmZInPeM3Y3YK0C1fVudXOA9YT5aBJ51cyp34UFYPOWleIKDoRgi7A
+L1mnbo45EsW7zs1eiDOHIVQhGr8XYFDQrnU8FozHD3VJG2D18InhRvwMTLIJnSZa
+DDnA2qfIgaaWWcWvN0tcTsBd1WEXLsYMrSUdBj1/wJOV6qFfixCKSduWkxbNcEP/
+/5vybxYJg1pAA6eTYCdLPmOkwNOhAo5iOvmaFqCm0132SWNaLmg63G7q9WWE3DZa
+GmV8oTndXLZohpLqQw9IwTnyMFeOUeFw0HoEUFgx7mHbbDQjNUB6JZMiY/GaBpHi
+ITE5dPt5DXQJ89i3Bv3uHI4X47U8WsjECm5XrIfD/NBYxXXOiaiGZERpedcQUbeQ
+VWRhxK783b9ovlqaU5CrDX+bahG4fg2K3pXc5hdM/L6z5SK97cNGn4C2dT+y4ej4
+GXq5bGhZSbTkqcvqNGxVFNhwY+fSucZnZxg+k7Mmp7Bg/K9iX0uIPnYhe+wgPFQB
+C+6M3VVnggmJcshMx16vFD+Py3nT57tpjy2gI7X1QoAawpHTtS0=
+=1XCU
+-----END PGP SIGNATURE-----
 
-Packet from Tx FIFO is transmitted on both MOSI and MISO lines and
-packet to Rx FIFO is received from both MOSI and MISO lines. Even
-bits are transmitted or received on the MOSI data line and odd bits
-are transmitted or received on the MISO data line.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-tegra114.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 402799c7f6b7..1e749ce13029 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -786,6 +786,11 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
- 
- 	total_fifo_words = tegra_spi_calculate_curr_xfer_param(spi, tspi, t);
- 
-+	if (t->rx_nbits == SPI_NBITS_DUAL || t->tx_nbits == SPI_NBITS_DUAL)
-+		command1 |= SPI_BOTH_EN_BIT;
-+	else
-+		command1 &= ~SPI_BOTH_EN_BIT;
-+
- 	if (tspi->is_packed)
- 		command1 |= SPI_PACKED;
- 	else
-@@ -1152,7 +1157,8 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 		master->max_speed_hz = 25000000; /* 25MHz */
- 
- 	/* the spi->mode bits understood by this driver: */
--	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST;
-+	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST |
-+			    SPI_TX_DUAL | SPI_RX_DUAL;
- 	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
- 	master->setup = tegra_spi_setup;
- 	master->transfer_one_message = tegra_spi_transfer_one_message;
--- 
-2.20.1
+--wq9mPyueHGvFACwf--
