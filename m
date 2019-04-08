@@ -1,54 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/3] rtc: tegra: convert to SPDX identifier
-Date: Mon, 8 Apr 2019 12:23:50 +0200
-Message-ID: <20190408102350.GE6644@ulmo>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH 1/3] rtc: tegra: set range
+Date: Mon, 8 Apr 2019 13:54:06 +0200
+Message-ID: <20190408115406.GJ7480@piout.net>
 References: <20190407211646.14962-1-alexandre.belloni@bootlin.com>
- <20190407211646.14962-3-alexandre.belloni@bootlin.com>
+ <20190408102249.GC6644@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3XA6nns4nE4KvaS/"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190407211646.14962-3-alexandre.belloni@bootlin.com>
+In-Reply-To: <20190408102249.GC6644@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-rtc@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/04/2019 12:22:49+0200, Thierry Reding wrote:
+> On Sun, Apr 07, 2019 at 11:16:44PM +0200, Alexandre Belloni wrote:
+> > The Tegra 20 RTC is a 32bit seconds counter (with an unused millisecond
+> > counter).
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > ---
+> >  drivers/rtc/rtc-tegra.c | 24 ++++++++++++++----------
+> >  1 file changed, 14 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+> > index c6b0a99aa3a9..3f93a1f7abb5 100644
+> > --- a/drivers/rtc/rtc-tegra.c
+> > +++ b/drivers/rtc/rtc-tegra.c
+> > @@ -306,6 +306,13 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
+> >  
+> >  	info->tegra_rtc_irq = ret;
+> >  
+> > +	info->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
+> > +	if (IS_ERR(info->rtc_dev))
+> > +		return PTR_ERR(info->rtc_dev);
+> > +
+> > +	info->rtc_dev->ops = &tegra_rtc_ops;
+> > +	info->rtc_dev->range_max = U32_MAX;
+> 
+> The placement of this new block seems somewhat arbitrary, but either
+> way:
+> 
 
---3XA6nns4nE4KvaS/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, I needed it to be before the clk_prepare_enable call so it can
+just return and I thought it would be better to leave devm_clk_get close
+to that clk_prepare_enable call. I don't mind, I can respin with it
+placed somewhere else.
 
-On Sun, Apr 07, 2019 at 11:16:46PM +0200, Alexandre Belloni wrote:
-> Use SPDX-License-Identifier instead of a verbose license text.
->=20
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/rtc/rtc-tegra.c | 15 +--------------
->  1 file changed, 1 insertion(+), 14 deletions(-)
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Acked-by: Thierry Reding <treding@nvidia.com>
 
---3XA6nns4nE4KvaS/
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyrITYACgkQ3SOs138+
-s6H9HQ/+JjzCxPggw/X0VhcIAijbbsshGx8YCLXkHeEiwqZEc7JVdm+2QfyPwZ/a
-EEeiYayKfwpB2qdC6NB4ju/sKVBxesjC7QC139ayUa3St76UtRj5yevAR8s93AQv
-yOuUNK7RmUyWh9i4/UnnpRhx5juU5rk2gR5x9SHuHD27UknQEDfYDMhmN4745X9j
-J+d38Dqhazf6zsh9UlHoDkDNJytOqSwl8hBNuQjIxfpeP86VGao7g1HjrQ4QTVrD
-fCd7oa4U4THAuoSRU+he2/O0WnBU3bKng5MIk57B5XbCsf3j+EH3yJl6doYPByvo
-Vg9W+DbEZFkz0Hj2ASyml70zcRRx1yygjnFhbw8c6FLyaAmFdoLMu3iPhfOvpb7/
-ilvldiXjPCzab4idMjymXsotNAtlZKasTFM83zyV04m1IX1KBprHJXjaPpGvqhM0
-dXC93vC59w6dH7S4AkLJtHXDU0L81SCigtTbTDxLLwH1w28WZx2Z3ajBcliY/K6Q
-vNo09u6YLsT//sGNVai+q4/3AqzgQTAKh6zViq2N/KdsJgbiS+gjCOks/LcXn5m/
-T+gUovUQgPXN+YJj5eb5viX5fR11Dr4+UY6P7wX8i0LY4NaWLIXg02cHnuDjG0WX
-YhqHEh3B8edAc8YxH64u/cE6zOZ514GQfHKyGD5WpFGG05xybBY=
-=N71O
------END PGP SIGNATURE-----
-
---3XA6nns4nE4KvaS/--
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
