@@ -1,64 +1,48 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/3] rtc: tegra: switch to rtc_time64_to_tm/rtc_tm_to_time64
-Date: Sun,  7 Apr 2019 23:16:45 +0200
-Message-ID: <20190407211646.14962-2-alexandre.belloni@bootlin.com>
-References: <20190407211646.14962-1-alexandre.belloni@bootlin.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2 10/20] Documentation: devicetree: spi: add
+ spi-lsbyte-first propery
+Date: Mon, 8 Apr 2019 13:27:12 +0700
+Message-ID: <20190408062712.GI2803@sirena.org.uk>
+References: <1554423259-26056-1-git-send-email-skomatineni@nvidia.com>
+ <1554423259-26056-10-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rCb8EA+9TsBVtA92"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190407211646.14962-1-alexandre.belloni@bootlin.com>
+Content-Disposition: inline
+In-Reply-To: <1554423259-26056-10-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-rtc@vger.kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Call the 64bit versions of rtc_tm time conversion now that the range is
-enforced by the core.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-tegra.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--rCb8EA+9TsBVtA92
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index 3f93a1f7abb5..e93092aa6f7d 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -123,7 +123,7 @@ static int tegra_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 
- 	spin_unlock_irqrestore(&info->tegra_rtc_lock, sl_irq_flags);
- 
--	rtc_time_to_tm(sec, tm);
-+	rtc_time64_to_tm(sec, tm);
- 
- 	dev_vdbg(dev, "time read as %lu. %ptR\n", sec, tm);
- 
-@@ -137,7 +137,7 @@ static int tegra_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	int ret;
- 
- 	/* convert tm to seconds. */
--	rtc_tm_to_time(tm, &sec);
-+	sec = rtc_tm_to_time64(tm);
- 
- 	dev_vdbg(dev, "time set to %lu. %ptR\n", sec, tm);
- 
-@@ -166,7 +166,7 @@ static int tegra_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 	} else {
- 		/* alarm is enabled. */
- 		alarm->enabled = 1;
--		rtc_time_to_tm(sec, &alarm->time);
-+		rtc_time64_to_tm(sec, &alarm->time);
- 	}
- 
- 	tmp = readl(info->rtc_base + TEGRA_RTC_REG_INTR_STATUS);
-@@ -204,7 +204,7 @@ static int tegra_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 	unsigned long sec;
- 
- 	if (alarm->enabled)
--		rtc_tm_to_time(&alarm->time, &sec);
-+		sec = rtc_tm_to_time64(&alarm->time);
- 	else
- 		sec = 0;
- 
--- 
-2.20.1
+On Thu, Apr 04, 2019 at 05:14:09PM -0700, Sowjanya Komatineni wrote:
+> spi-lsbyte-first optional property allows SPI slaves to choose byte
+> order of little endian for transfers.
+
+Why make this a DT property - surely it's either a fixed property of the
+relevant devices if they are LSB first (in which case we should know we
+can use it from the device) or it's something that the driver for the
+device can just vary at runtime?
+
+--rCb8EA+9TsBVtA92
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyq6b8ACgkQJNaLcl1U
+h9CIKggAg+pGXgMOqakZ8c/g8PSsF9z9x/vbR2jo4tv/AmNxenu+gDCF78d4wBgB
+a/2l8JORQi+knOxzUq0O7HhN8sR+lz7W45qVrc5jNLSAFPVRPSaBu9o3jxkHh5Sd
+WlI4mX7d18KbnoGgJlXSU7j2FXmVrYQQgco6u259vht9zFqQCxLqUd8Gv2RwzLFL
+3fiUpsU3BBp7EOE3YlMijX6Jqw76cpwmhmQP9joGwGnsUZexvBTkPen8+GSHqEtK
+jBHKF0PSCcHGyvdVGJsd5g92ga3oIPrs0DaW4z/+yXTRKNkkZJTz9rX4rkHnU5ku
+UmftTb8lLZibuRH4x8YdJsgLx5KvqA==
+=Wt2d
+-----END PGP SIGNATURE-----
+
+--rCb8EA+9TsBVtA92--
