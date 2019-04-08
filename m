@@ -1,141 +1,73 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 3/8] memory: tegra: Add Tegra210 EMC clock driver
-Date: Mon, 8 Apr 2019 12:25:30 +0300
-Message-ID: <20190408092530.GD12975@pdeschrijver-desktop.Nvidia.com>
-References: <20190325074523.26456-1-josephl@nvidia.com>
- <20190325074523.26456-4-josephl@nvidia.com>
- <20190403113426.GH5238@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/3] rtc: tegra: set range
+Date: Mon, 8 Apr 2019 12:22:49 +0200
+Message-ID: <20190408102249.GC6644@ulmo>
+References: <20190407211646.14962-1-alexandre.belloni@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190403113426.GH5238@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20190407211646.14962-1-alexandre.belloni@bootlin.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-rtc@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 01:34:26PM +0200, Thierry Reding wrote:
-> On Mon, Mar 25, 2019 at 03:45:18PM +0800, Joseph Lo wrote:
-> > This is the initial patch for Tegra210 EMC clock driver, which doesn't
-> > include the support code and detail sequence for clock scaling yet.
-> > 
-> > The driver is designed to support LPDDR4 SDRAMs. Because of the LPDDR4
-> > devices need to do initial time training before it can be used, the
-> > firmware will help to do that at early boot stage. The trained table for
-> > the rates that we will support in the kernel will be merged to the
-> > kernel DTB. So the driver can get the trained table for clock scaling
-> > support.
-> > 
-> > For the higher rate support (above 800MHz), the periodic training is
-> > needed for the timing compensation. So basically, two methodologies for
-> > clock scaling support, one is following the clock changing sequence to
-> > update the EMC table to EMC registers and another is if the rate needs
-> > periodic training, then we will start a timer to do that periodically
-> > until it leaves the rate that doesn't need that.
-> > 
-> > Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
-> > 
-> > Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> > ---
-> >  drivers/memory/tegra/Kconfig             |   10 +
-> >  drivers/memory/tegra/Makefile            |    1 +
-> >  drivers/memory/tegra/tegra210-dt-parse.c |  340 +++++++
-> >  drivers/memory/tegra/tegra210-emc-reg.h  | 1083 ++++++++++++++++++++++
-> >  drivers/memory/tegra/tegra210-emc.c      |  886 ++++++++++++++++++
-> >  5 files changed, 2320 insertions(+)
-> >  create mode 100644 drivers/memory/tegra/tegra210-dt-parse.c
-> >  create mode 100644 drivers/memory/tegra/tegra210-emc-reg.h
-> >  create mode 100644 drivers/memory/tegra/tegra210-emc.c
-> > 
-> > diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> > index 34e0b70f5c5f..614e9b370183 100644
-> > --- a/drivers/memory/tegra/Kconfig
-> > +++ b/drivers/memory/tegra/Kconfig
-> > @@ -25,3 +25,13 @@ config TEGRA124_EMC
-> >  	  Tegra124 chips. The EMC controls the external DRAM on the board.
-> >  	  This driver is required to change memory timings / clock rate for
-> >  	  external memory.
-> > +
-> > +config TEGRA210_EMC
-> > +	bool "NVIDIA Tegra210 External Memory Controller driver"
-> > +	default y
-> > +	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-> > +	help
-> > +	  This driver is for the External Memory Controller (EMC) found on
-> > +	  Tegra210 chips. The EMC controls the external DRAM on the board.
-> > +	  This driver is required to change memory timings / clock rate for
-> > +	  external memory.
-> > diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-> > index 3971a6b7c487..36a835620bbd 100644
-> > --- a/drivers/memory/tegra/Makefile
-> > +++ b/drivers/memory/tegra/Makefile
-> > @@ -12,4 +12,5 @@ obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
-> >  
-> >  obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
-> >  obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
-> > +obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o tegra210-dt-parse.o
-> >  obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
-> > diff --git a/drivers/memory/tegra/tegra210-dt-parse.c b/drivers/memory/tegra/tegra210-dt-parse.c
-> > new file mode 100644
-> > index 000000000000..6a3a3a28ac64
-> > --- /dev/null
-> > +++ b/drivers/memory/tegra/tegra210-dt-parse.c
-> > @@ -0,0 +1,340 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2013-2019, NVIDIA CORPORATION.  All rights reserved.
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/err.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <soc/tegra/fuse.h>
-> > +
-> > +#include "tegra210-emc-reg.h"
-> > +
-> > +static struct device_node *tegra_emc_ramcode_devnode(
-> > +	struct device_node *np)
-> 
-> This is weirdly wrapped. Typically if it doesn't all fit on one line
-> you'd break after the return type, like so:
-> 
->     static struct device_node *tegra_emc_ramcode_devnode(struct device_node *np)
-> 
-> That said, the above does seem to fit on a single line, so there'n no
-> reason to wrap at all. You could still try to make it a little shorter
-> by using the _node suffix instead of _devnode.
-> 
 
-..
+--oJ71EGRlYNjSvfq7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Should this be an array? Seems like that could make it easier to write
-> the tables to these registers later on.
-> 
-> > +
-> > +	struct emc_table *current_timing;
-> > +	struct emc_table *next_timing;
-> > +	struct emc_table start_timing;
-> 
-> Why is start_timing not a pointer? It looks to me like that's basically
-> a copy of emc_table[0], so why not just point it at that?
-> 
+On Sun, Apr 07, 2019 at 11:16:44PM +0200, Alexandre Belloni wrote:
+> The Tegra 20 RTC is a 32bit seconds counter (with an unused millisecond
+> counter).
+>=20
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  drivers/rtc/rtc-tegra.c | 24 ++++++++++++++----------
+>  1 file changed, 14 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+> index c6b0a99aa3a9..3f93a1f7abb5 100644
+> --- a/drivers/rtc/rtc-tegra.c
+> +++ b/drivers/rtc/rtc-tegra.c
+> @@ -306,6 +306,13 @@ static int __init tegra_rtc_probe(struct platform_de=
+vice *pdev)
+> =20
+>  	info->tegra_rtc_irq =3D ret;
+> =20
+> +	info->rtc_dev =3D devm_rtc_allocate_device(&pdev->dev);
+> +	if (IS_ERR(info->rtc_dev))
+> +		return PTR_ERR(info->rtc_dev);
+> +
+> +	info->rtc_dev->ops =3D &tegra_rtc_ops;
+> +	info->rtc_dev->range_max =3D U32_MAX;
 
-No. Apparently it is possible the EMC registers are configured by the
-bootloader differently than anything mentioned in the table. Given that
-the switching sequence need some of the current register values, we need
-to read those from the hardware and we cannot just point to an existing
-table entry.
+The placement of this new block seems somewhat arbitrary, but either
+way:
 
-Peter.
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--oJ71EGRlYNjSvfq7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyrIPUACgkQ3SOs138+
+s6EFHA//bcDrlv65Vh810bQ+bQqBQKmZg2VMLx1IKXABdzXeKleGTHMjVs+zvkeC
+zL+p1/6J+z8Oaq2uhCFuwdZG42ZFqGb59afSg3nLp0Sn6Dl5yNrYKmW5ZOO2FmW2
+oSw72M0WUR0B8E3yL7d8eFBYnLwEPk18hwdBjke9T71DiP6UB3q1XrD53vrqZHB/
+iJhThMJoiwnhkKa/XOEidPyr1qkP8dsVttND6iEuQBK0s+y/KK+X6AcMHDK1Ng5E
+tnby4q1fXHNb4avEHp0JIk7cCdHAM7NKnxbBza7gKe0UcytRWYChvigAuP6qStgR
+/QvNPaDkQy0QNq1j0+8yvFkq+gkmIjr5CUI08ev+3Q8AOZJDq1RM4/NKPpvwKIy9
+/J8rvlATzd7YTqXc4gM1T6r/rwGdbjjvTgvR6qWq/3NfDeK5rL0MXKsrGQkcgHsE
+JJhK+vE051ltQ4OZ7VjBFfyvFsQZ4Tc3AR/9Zl7z5m5+5IwukcZnn1P83RS7uOFL
+goZfATBFgtq2hUzRrIdlXLga0CQa1KZDx0jCribeEy4H1DdW6nFG4uJPFzKrcZHf
++gq875Wbp7of4h4pGeKs95aPwIXEyDNg05TX9EjFDc0oZUs4OXnQl4qK2WhLhNG3
+sd8uVIYu6IcEcW4ZmIGw/M5OZJEOjLcPi1ADA9DOz+3VYLXgSLU=
+=Pr/2
+-----END PGP SIGNATURE-----
+
+--oJ71EGRlYNjSvfq7--
