@@ -1,371 +1,208 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH 05/10] dt-bindings: PCI: tegra: Add device tree support
- for T194
-Date: Tue, 9 Apr 2019 16:37:59 +0530
-Message-ID: <3b1539ab-8d51-491d-a8e5-9fe00cc4762b@nvidia.com>
+Subject: Re: [PATCH 09/10] PCI: tegra: Add Tegra194 PCIe support
+Date: Tue, 9 Apr 2019 17:00:53 +0530
+Message-ID: <40c97eaa-e37e-860e-111d-879a135d9f51@nvidia.com>
 References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
- <1553613207-3988-6-git-send-email-vidyas@nvidia.com>
- <5ca06149.1c69fb81.720fd.79e1@mx.google.com>
- <5ef50168-2476-1088-7156-8a4488d7a2e1@nvidia.com>
- <1554748151.2142.31.camel@impinj.com>
+ <1553613207-3988-10-git-send-email-vidyas@nvidia.com>
+ <20190329203159.GG24180@google.com>
+ <5eb9599c-a6d6-d3a3-beef-5225ed7393f9@nvidia.com>
+ <20190402183110.GE141706@google.com>
+ <dcbfbb32-9980-7ee4-89cd-baedfe624ce5@nvidia.com>
+ <20190403173641.GI141706@google.com>
+ <6cc7e047-bc7e-fa60-88ba-0b69c3d5a3f0@nvidia.com>
+ <20190405185842.GC26522@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1554748151.2142.31.camel@impinj.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190405185842.GC26522@google.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Trent Piepho <tpiepho@impinj.com>, "robh@kernel.org" <robh@kernel.org>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, "heiko@sntech.de" <heiko@sntech.de>, "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>, "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "spujar@nvidia.com" <spujar@nvidia.com>, "liviu.dudau@arm.com" <liviu.dudau@arm.com>, "kthota@nvidia.com" <kthota@nvidia.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "bhelgaas@google.com" <bhelgaas@google.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "kishon@ti.com" <kishon@ti.com>, "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "krzk@kernel.org" <krzk@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "tiwai@suse.de" <tiwai@suse.de>, "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>, linux-pci@vger
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.com, sha
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/8/2019 11:59 PM, Trent Piepho wrote:
-> On Mon, 2019-04-01 at 16:48 +0530, Vidya Sagar wrote:
->> On 3/31/2019 12:12 PM, Rob Herring wrote:
->>> On Tue, Mar 26, 2019 at 08:43:22PM +0530, Vidya Sagar wrote:
+On 4/6/2019 12:28 AM, Bjorn Helgaas wrote:
+> On Fri, Apr 05, 2019 at 01:23:51AM +0530, Vidya Sagar wrote:
+>> On 4/3/2019 11:06 PM, Bjorn Helgaas wrote:
+>>> On Wed, Apr 03, 2019 at 03:13:09PM +0530, Vidya Sagar wrote:
+>>>> On 4/3/2019 12:01 AM, Bjorn Helgaas wrote:
+>>>>> On Tue, Apr 02, 2019 at 12:47:48PM +0530, Vidya Sagar wrote:
+>>>>>> On 3/30/2019 2:22 AM, Bjorn Helgaas wrote:
+>>>>>>> On Tue, Mar 26, 2019 at 08:43:26PM +0530, Vidya Sagar wrote:
+>>>>>>>> Add support for Synopsys DesignWare core IP based PCIe host controller
+>>>>>>>> present in Tegra194 SoC.
+>>>>>
+>>>>>      - Why does this chip require pcie_pme_disable_msi()?  The only other
+>>>>>        use is a DMI quirk for "MSI Wind U-100", added by c39fae1416d5
+>>>>>        ("PCI PM: Make it possible to force using INTx for PCIe PME
+>>>>>        signaling").
 >>>>
->>>> +- clock-names: Must include the following entries:
->>>> +  - core_clk
-> 
-> Basically every single device has a "core" clock.  Yet, there's just
-> only one device using "core_clk" as the name.  So it doesn't seem like
-> a very good choice.  Just "core" is used 186 times.  But if you have
-> just the one clock, then you don't need to provide "clock-names" at
-> all.
-Name is changed to 'core' from 'core_clk' in V2 patch series which is already
-sent out for review. Regarding 'clock-names', I thought it is better to have
-it this way as we may send patches in future with some more clock names to enable
-some features.
-
-> 
->>>> +- resets: Must contain an entry for each entry in reset-names.
->>>> +  See ../reset/reset.txt for details.
->>>> +- reset-names: Must include the following entries:
->>>> +  - core_apb_rst
->>>> +  - core_rst
-> 
-> IMHO, it's redundant to name the reset "core reset".  We already know
-> it's a reset.  So I scanned the current kernel dts files to see the
-> convention, and I couldn't find a single driver that uses "*_rst" for
-> the reset names.  "core" is used a number of times, and there are a few
-> "apb" resets.
-> 
-> Suggest naming these "core" and "apb".
-Already changed in V2 patch set.
-
-> 
->>>> +- phys: Must contain a phandle to P2U PHY for each entry in phy-names.
->>>> +- phy-names: Must include an entry for each active lane.
->>>> +  "pcie-p2u-N": where N ranges from 0 to one less than the total number of lanes
->>>> +- Controller dependent register offsets
->>>> +  - nvidia,event-cntr-ctrl: EVENT_COUNTER_CONTROL reg offset
->>>> +      0x168 - FPGA
->>>> +      0x1a8 - C1, C2 and C3
->>>> +      0x1c4 - C4
->>>> +      0x1d8 - C0 and C5
->>>> +  - nvidia,event-cntr-data: EVENT_COUNTER_DATA reg offset
->>>> +      0x16c - FPGA
->>>> +      0x1ac - C1, C2 and C3
->>>> +      0x1c8 - C4
->>>> +      0x1dc - C0 and C5
-> 
-> Does the event counter count events that are not part of pci-e?  Looks
-> like there are lots of empty spaces in the register map we see above
-> for other things.  Seems like the way this should be done is with a
-> driver for the event counter, and have handle here to an index in the
-> event counter driver.  I think there's a generic driver for something
-> like this that is just a register array shared between different
-> devices.
-These counters are used to count link's entry into different ASPM states
-and PCIe spec doesn't have any registers defined for this activity. Since
-different controller instances have these registers placed at different
-offsets, I'm passing them through device-tree. Since this is Tegra's
-implementation, I'm not sure if I can use any generic driver and also
-just for reading these registers, having a separate driver looks overkill
-to me.
-
-> 
->>>> +- nvidia,controller-id : Controller specific ID
->>>> +      0x0 - C0
->>>> +      0x1 - C1
->>>> +      0x2 - C2
->>>> +      0x3 - C3
->>>> +      0x4 - C4
->>>> +      0x5 - C5
-> 
-> Do you need this for something in the driver?  If you are trying to
-> enumerate controllers, then the board's aliases node would be the way
-> to do that.
-Yes. this is needed to be passed as an argument to BPMP-FW to enable/disable
-respective controller.
-
->   
->>>> +- vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
->>>> +
->>>> +Optional properties:
->>>> +- nvidia,max-speed: limits controllers max speed to this value.
->>>> +    1 - Gen-1 (2.5 GT/s)
->>>> +    2 - Gen-2 (5 GT/s)
->>>> +    3 - Gen-3 (8 GT/s)
->>>> +    4 - Gen-4 (16 GT/s)
->>>> +- nvidia,init-speed: limits controllers init speed to this value.
->>>> +    1 - Gen-1 (2. 5 GT/s)
->>>> +    2 - Gen-2 (5 GT/s)
->>>> +    3 - Gen-3 (8 GT/s)
->>>> +    4 - Gen-4 (16 GT/s)
+>>>> Because Tegra194 doesn't support raising PME interrupts through MSI line.
 >>>
->>> Don't we have standard speed properties?
+>>> What does the spec say about this?  Is hardware supposed to
+>>> support MSI for PME?  Given that MSI Wind U-100 and Tegra194 are
+>>> the only two cases we know about where PME via MSI isn't
+>>> supported, it seems like there must be either a requirement for
+>>> that or some mechanism for the OS to figure this out, e.g., a
+>>> capability bit.
 >>
->> Not that I'm aware of. If you come across any, please do let me know and
->> I'll change these.
+>> AFAIU, Spec doesn't say anything about whether PME interrupt should
+>> be through MSI or by other means. As far as Tegra194 is concerned,
+>> there are only two interrupt lanes that go from PCIe IP to GIC, one
+>> being legacy interrupt (that represents legacy interrupts coming
+>> over PCIe bus from downstream devices and also the events happening
+>> internal to root port) and the other being MSI interrupt (that
+>> represents MSI interrupts coming over PCIe bus from downstream
+>> devices). Since hardware folks had a choice to route PME interrupts
+>> either through legacy interrupt line or through MSI interrupt line
+>> and legacy interrupt line was chosen as a design choice. That being
+>> the case at hardware level, I tried to inform the same through
+>> pcie_pme_disable_msi() to PCIe sub-system that PME interrupts are
+>> not expected over MSI.
 > 
-> This is already in Documentation/devicetree/bindings/pci/pci.txt
-> 
-> - max-link-speed:
->     If present this property specifies PCI gen for link capability. Host
->     drivers could add this as a strategy to avoid unnecessary operation or
->     unsupported link speed, for instance, trying to do training for
->     unsupported link speed, etc.  Must be '4' for gen4, '3' for gen3, '2'
->     for gen2, and '1' for gen1. Any other values are invalid.
-> 
-Yes. Thierry Reding pointed this already and V2 patch set which is out for review
-has it. Thanks for pointing it though.
-
->>> Why do we need 2 values?
->>
->> max-speed configures the controller to advertise the speed mentioned through
->> this flag, whereas, init-speed gets the link up at this speed and software
->> can further take the link speed to a different speed by retraining the link.
->> This is to give flexibility to developers depending on the platform.
-> 
-> It doesn't seem like this is a hardware description then.  It seems
-> like Linux driver configuration.
-Yes. This is more like a helper for Linux driver to configure hardware to behave in
-a specific way. I'm waiting for Rob's call whether to keep it or remove it.
-
-> 
->>>> +- nvidia,disable-aspm-states : controls advertisement of ASPM states
->>>> +    bit-0 to '1' : disables advertisement of ASPM-L0s
->>>> +    bit-1 to '1' : disables advertisement of ASPM-L1. This also disables
->>>> +                 advertisement of ASPM-L1.1 and ASPM-L1.2
->>>> +    bit-2 to '1' : disables advertisement of ASPM-L1.1
->>>> +    bit-3 to '1' : disables advertisement of ASPM-L1.2
->>>
->>> Seems like these too should be common.
->>
->> This flag controls the advertisement of different ASPM states by root port.
->> Again, I'm not aware of any common method for this.
-> 
-> Found this one in rockchip.
-> 
-> Optional Property:
-> - aspm-no-l0s: RC won't support ASPM L0s. This property is needed if
->          using 24MHz OSC for RC's PHY.
-> 
-> Using individual boolean properties would be more device tree style
-> than encoding bits in a single property.
-Ok. Again, I'm waiting for Rob's opinion on this and if his views also are same,
-then, I'll change it to having individual entries for each ASPM state.
-
->    
->>>
->>>> +- nvidia,disable-clock-request : gives a hint to driver that there is no
->>>> +    CLKREQ signal routing on board
->>>> +- nvidia,update-fc-fixup : needs it to improve perf when a platform is designed
->>>> +    in such a way that it satisfies at least one of the following conditions
->>>> +    1. If C0/C4/C5 run at x1/x2 link widths (irrespective of speed and MPS)
->>>> +    2. If C0/C1/C2/C3/C4/C5 operate at their respective max link widths and
->>>
->>> What is Cx?
->>
->> Cx is the Controller with its ID.
->>
->>>
->>>> +       a) speed is Gen-2 and MPS is 256B
->>>> +       b) speed is >= Gen-3 with any MPS
-> 
-> Could the driver figure it out on its own if it needs this?  Looks like
-> the rules are defined.
-Not really. Driver can find out details required here only after the link is established
-and the programming to be done based on these should take place before going for link up.
-Its like chicken and egg problem. So, this information is passed through device-tree.
+> There's something wrong here.  Either the question of how PME is
+> signaled is generic and the spec provides a way for the OS to discover
+> that method, or it's part of the device-specific architecture that
+> each host bridge driver has to know about its device.  If the former,
+> we need to make the PCI core smart enough to figure it out.  If the
+> latter, we need a better interface than this ad hoc
+> pcie_pme_disable_msi() thing.  But if it is truly the latter, your
+> current code is sufficient and we can refine it over time.
+In case of Tegra194, it is the latter case.
 
 > 
->>>> +- nvidia,cdm-check : Enables CDM checking. For more information, refer Synopsis
->>>> +    DesignWare Cores  PCI Express Controller Databook r4.90a Chapter S.4
-> 
-> Should this be snps or dwc property then?
-In V2 series, I made it as Synopsys DWC property.
-
-> 
->>>> +- nvidia,enable-power-down : Enables power down of respective controller and
->>>> +    corresponding PLLs if they are not shared by any other entity
->>>> +- "nvidia,pex-wake" : Add PEX_WAKE gpio number to provide wake support.
-> 
-> GPIO number? Shouldn't this be phandle to gpio provider and address of
-> gpio?
-Yup. It is phandle to GPIO provider and address of GPIO. Description is misleading here.
-I'll correct it in my next patch. Thanks for this.
-
-> 
->>>> +- "nvidia,plat-gpios" : Add gpio number that needs to be configured before
->>>> +   system goes for enumeration. There could be platforms where enabling 3.3V and
->>>> +   12V power supplies are done through GPIOs, in which case, list of all such
->>>> +   GPIOs can be specified through this property.
->>>
->>> These should be split out to their specific function.
->>
->> Enabling Power rails is just an example and depending on the platform, there could be
->> some on-board muxes which are controlled through GPIOs and all such platform specific
->> configuration can be handled through this flag.
-> 
-> Wouldn't regulator framework be proper place to put enabling power for
-> device?  There is already standard support for adding a phandle to a
-> regulator to a device to enable the regulator.
-I've removed it in V2 series already. Based on platform requirement, we'll use regulator
-framework to add supplies.
-
-> 
->>>> +- "nvidia,aspm-cmrt" : Common Mode Restore time for proper operation of ASPM to
->>>> +   be specified in microseconds
->>>> +- "nvidia,aspm-pwr-on-t" : Power On time for proper operation of ASPM to be
->>>> +   specified in microseconds
->>>> +- "nvidia,aspm-l0s-entrance-latency" : ASPM L0s entrance latency to be specified
->>>> +   in microseconds
->>>
->>> properties with units need unit suffixes as defined in
->>> property-units.txt.
->>
->> Done. I'll take care of this in next patch series.
->>
->>>
->>>> +
->>>> +Examples:
->>>> +=========
->>>> +
->>>> +Tegra194:
->>>> +--------
->>>> +
->>>> +SoC DTSI:
->>>> +
->>>> +	pcie@14180000 {
->>>> +		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
->>>> +		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
->>>> +		reg = <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)      */
->>>> +		       0x00 0x38000000 0x0 0x00040000   /* configuration space (256K) */
->>>> +		       0x00 0x38040000 0x0 0x00040000>; /* iATU_DMA reg space (256K)  */
->>>> +		reg-names = "appl", "config", "atu_dma";
->>>> +
->>>> +		status = "disabled";
->>>> +
->>>> +		#address-cells = <3>;
->>>> +		#size-cells = <2>;
->>>> +		device_type = "pci";
->>>> +		num-lanes = <8>;
->>>> +		linux,pci-domain = <0>;
->>>> +
->>>> +		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
->>>> +		clock-names = "core_clk";
->>>> +
->>>> +		resets = <&bpmp TEGRA194_RESET_PEX0_CORE_0_APB>,
->>>> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_0>;
->>>> +		reset-names = "core_apb_rst", "core_rst";
->>>> +
->>>> +		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,	/* controller interrupt */
->>>> +			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
->>>> +		interrupt-names = "intr", "msi";
->>>> +
->>>> +		#interrupt-cells = <1>;
->>>> +		interrupt-map-mask = <0 0 0 0>;
->>>> +		interrupt-map = <0 0 0 0 &gic 0 72 0x04>;
->>>> +
->>>> +		nvidia,bpmp = <&bpmp>;
->>>> +
->>>> +		nvidia,max-speed = <4>;
->>>> +		nvidia,disable-aspm-states = <0xf>;
->>>> +		nvidia,controller-id = <&bpmp 0x0>;
->>>> +		nvidia,aux-clk-freq = <0x13>;
->>>> +		nvidia,preset-init = <0x5>;
->>>> +		nvidia,aspm-cmrt = <0x3C>;
->>>> +		nvidia,aspm-pwr-on-t = <0x14>;
->>>> +		nvidia,aspm-l0s-entrance-latency = <0x3>;
->>>> +
->>>> +		bus-range = <0x0 0xff>;
->>>> +		ranges = <0x81000000 0x0 0x38100000 0x0 0x38100000 0x0 0x00100000      /* downstream I/O (1MB) */
->>>> +			  0x82000000 0x0 0x38200000 0x0 0x38200000 0x0 0x01E00000      /* non-prefetchable memory (30MB) */
->>>> +			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
->>>> +
->>>> +		nvidia,cfg-link-cap-l1sub = <0x1c4>;
->>>> +		nvidia,cap-pl16g-status = <0x174>;
->>>> +		nvidia,cap-pl16g-cap-off = <0x188>;
->>>> +		nvidia,event-cntr-ctrl = <0x1d8>;
->>>> +		nvidia,event-cntr-data = <0x1dc>;
->>>> +		nvidia,dl-feature-cap = <0x30c>;
->>>> +	};
->>>> +
->>>> +Board DTS:
->>>> +
->>>> +	pcie@14180000 {
->>>> +		status = "okay";
->>>> +
->>>> +		vddio-pex-ctl-supply = <&vdd_1v8ao>;
->>>> +
->>>> +		phys = <&p2u_2>,
->>>> +		       <&p2u_3>,
->>>> +		       <&p2u_4>,
->>>> +		       <&p2u_5>;
->>>> +		phy-names = "pcie-p2u-0", "pcie-p2u-1", "pcie-p2u-2",
->>>> +			    "pcie-p2u-3";
->>>> +	};
->>>> diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
->>>> new file mode 100644
->>>> index 000000000000..cc0de8e8e8db
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
->>>> @@ -0,0 +1,34 @@
->>>> +NVIDIA Tegra194 P2U binding
->>>> +
->>>> +Tegra194 has two PHY bricks namely HSIO (High Speed IO) and NVHS (NVIDIA High
->>>> +Speed) each interfacing with 12 and 8 P2U instances respectively.
->>>> +A P2U instance is a glue logic between Synopsys DesignWare Core PCIe IP's PIPE
->>>> +interface and PHY of HSIO/NVHS bricks. Each P2U instance represents one PCIe
->>>> +lane.
->>>> +
->>>> +Required properties:
->>>> +- compatible: For Tegra19x, must contain "nvidia,tegra194-phy-p2u".
->>>> +- reg: Should be the physical address space and length of respective each P2U
->>>> +       instance.
->>>> +- reg-names: Must include the entry "base".
->>>> +
->>>> +Required properties for PHY port node:
->>>> +- #phy-cells: Defined by generic PHY bindings.  Must be 0.
->>>> +
->>>> +Refer to phy/phy-bindings.txt for the generic PHY binding properties.
->>>> +
->>>> +Example:
->>>> +
->>>> +hsio-p2u {
->>>> +	compatible = "simple-bus";
->>>> +	#address-cells = <2>;
->>>> +	#size-cells = <2>;
->>>> +	ranges;
->>>> +	p2u_0: p2u@03e10000 {
->>>> +		compatible = "nvidia,tegra194-phy-p2u";
->>>> +		reg = <0x0 0x03e10000 0x0 0x00010000>;
->>>> +		reg-names = "base";
->>>> +
->>>> +		#phy-cells = <0>;
->>>> +	};
->>>> +}
->>>> -- 
->>>> 2.7.4
+>>>>>>> I see that an earlier patch added "bus" to struct pcie_port.
+>>>>>>> I think it would be better to somehow connect to the
+>>>>>>> pci_host_bridge struct.  Several other drivers already do
+>>>>>>> this; see uses of pci_host_bridge_from_priv().
+>>>>>>
+>>>>>> All non-DesignWare based implementations save their private data
+>>>>>> structure in 'private' pointer of struct pci_host_bridge and use
+>>>>>> pci_host_bridge_from_priv() to get it back. But, DesignWare
+>>>>>> based implementations save pcie_port in 'sysdata' and nothing in
+>>>>>> 'private' pointer. So,  I'm not sure if
+>>>>>> pci_host_bridge_from_priv() can be used in this case. Please do
+>>>>>> let me know if you think otherwise.
+>>>>>
+>>>>> DesignWare-based drivers should have a way to retrieve the
+>>>>> pci_host_bridge pointer.  It doesn't have to be *exactly* the same
+>>>>> as non-DesignWare drivers, but it should be similar.
 >>>>
+>>>> I gave my reasoning as to why with the current code, it is not
+>>>> possible to get the pci_host_bridge structure pointer from struct
+>>>> pcie_port pointer in another thread as a reply to Thierry Reding's
+>>>> comments. Since Jishen'g changes to support remove functionality are
+>>>> accepted, I think using bus pointer saved in struct pcie_port
+>>>> pointer shouldn't be any issue now. Please do let me know if that is
+>>>> something not acceptable.
+>>>>
+>>>>>>> That would give you the bus, as well as flags like
+>>>>>>> no_ext_tags, native_aer, etc, which this driver, being a host
+>>>>>>> bridge driver that's responsible for this part of the
+>>>>>>> firmware/OS interface, may conceivably need.
+>>>
+>>> I think saving the pp->root_bus pointer as Jisheng's patch does is a
+>>> sub-optimal solution.  If we figure out how to save the
+>>> pci_host_bridge pointer, we automatically get the root bus pointer as
+>>> well.
+>>>
+>>> It may require some restructuring to save the pci_host_bridge pointer,
+>>> but I doubt it's really *impossible*.
 >>
+>> Is it OK to save pci_host_bridge pointer in pcie_port structure
+>> directly? I see that as another way to get pci_host_bridge pointer
+>> from pcie_port structure. My understanding is that, to get
+>> pci_host_bridge pointer, either pcie_port structure should be part
+>> of pci_host_bridge structure (which is the case with all non-DW
+>> implementations) or pcie_port should have a pointer to some
+>> structure which is directly (and not by means of a pointer) part of
+>> pci_host_bridge structure so that container_of() can be used to get
+>> pci_host_bridge.  As I see, there is no data object of
+>> pci_host_bridge whose pointer is saved in pcie_port structure. In
+>> fact, in reverse, pcie_port's struct dev pointer is saved as parent
+>> to pci_host_bridge's struct dev. So, another way would be to iterate
+>> over the children of pcie_port's struct dev pointer to find
+>> pci_host_bridge's dev pointer and from there get pci_host_bridge
+>> through container_of. But, I think is complicating it more than
+>> using bus pointer from pcie_port. I'm not sure if I'm able to convey
+>> the issue I'm facing here to get pci_host_bridge from pcie_port, but
+>> doing any other thing seems complicating it even more.
+> 
+> What I suspect should happen eventually is the DWC driver should call
+> devm_pci_alloc_host_bridge() directly, as all the non-DWC drivers do.
+> That would require a little reorganization of the DWC data structures,
+> but it would be good to be more consistent.
+> 
+> For now, I think stashing the pointer in pcie_port or dw_pcie would be
+> OK.  I'm not 100% clear on the difference, but it looks like either
+> should be common across all the DWC drivers, which is what we want.
+Since dw_pcie is common for both root port and end point mode structures,
+I think it makes sense to keep the pointer in pcie_port as this structure
+is specific to root port mode of operation.
+I'll make a note to reorganize code to have devm_pci_alloc_host_bridge()
+used in the beginning itself to be inline with non-DWC implementations.
+But, I'll take it up later (after I'm done with upstreaming current series)
+
+> 
+> (Tangent, dw_pcie_host_init() currently uses pci_alloc_host_bridge(),
+> not devm_pci_alloc_host_bridge(), even though it uses other devm
+> interfaces.  This looks like a probable buglet.)
+> 
+> (Tangent 2, devm_pci_alloc_host_bridge() doesn't initialize
+> bridge->native_aer, etc, as pci_alloc_host_bridge() does.  This looks
+> like my fault from 02bfeb484230 ("PCI/portdrv: Simplify PCIe feature
+> permission checking"), and it probably means none of those PCIe
+> services work correctly for these native host bridge drivers.)
+> 
+>>>>>>>> +static int tegra_pcie_dw_runtime_suspend(struct device *dev)
+>>>>>>>> +{
+>>>>>>>> +	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+>>>>>>>> +
+>>>>>>>> +	tegra_pcie_downstream_dev_to_D0(pcie);
+>>>>>>>> +
+>>>>>>>> +	pci_stop_root_bus(pcie->pci.pp.bus);
+>>>>>>>> +	pci_remove_root_bus(pcie->pci.pp.bus);
+>>>>>>>
+>>>>>>> Why are you calling these?  No other drivers do this except in
+>>>>>>> their .remove() methods.  Is there something special about
+>>>>>>> Tegra, or is this something the other drivers *should* be
+>>>>>>> doing?
+>>>>>>
+>>>>>> Since this API is called by remove, I'm removing the hierarchy
+>>>>>> to safely bring down all the devices. I'll have to re-visit this
+>>>>>> part as Jisheng Zhang's patches
+>>>>>> https://patchwork.kernel.org/project/linux-pci/list/?series=98559
+>>>>>> are now approved and I need to verify this part after
+>>>>>> cherry-picking Jisheng's changes.
+>>>>>
+>>>>> Tegra194 should do this the same way as other drivers, independent
+>>>>> of Jisheng's changes.
+>>>>
+>>>> When other Designware implementations add remove functionality, even
+>>>> they should be calling these APIs (Jisheng also mentioned the same
+>>>> in his commit message)
+>>>
+>>> My point is that these APIs should be called from driver .remove()
+>>> methods, not from .runtime_suspend() methods.
+>>
+>> .remove() internally calls pm_runtime_put_sync() API which calls
+>> .runtime_suspend(). I made a new patch to add a host_deinit() call
+>> which make all these calls. Since host_init() is called from inside
+>> .runtime_resume() of this driver, to be in sync, I'm now calling
+>> host_deinit() from inside .runtime_suspend() API.
+> 
+> I think this is wrong.  pci_stop_root_bus() will detach all the
+> drivers from all the devices.  We don't want to do that if we're
+> merely runtime suspending the host bridge, do we?
+In the current driver, the scenarios in which .runtime_suspend() is called
+are
+a) during .remove() call and
+b) when there is no endpoint found and controller would be shutdown
+In both cases, it is required to stop the root bus and remove all devices,
+so, instead of having same call present in respective paths, I kept them
+in .runtime_suspend() itself to avoid code duplication.
+
+> 
+> Bjorn
+> 
