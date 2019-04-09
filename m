@@ -1,109 +1,152 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 09/10] PCI: tegra: Add Tegra194 PCIe support
-Date: Tue, 9 Apr 2019 08:26:04 -0500
-Message-ID: <20190409132604.GA256045@google.com>
-References: <1553613207-3988-1-git-send-email-vidyas@nvidia.com>
- <1553613207-3988-10-git-send-email-vidyas@nvidia.com>
- <20190329203159.GG24180@google.com>
- <5eb9599c-a6d6-d3a3-beef-5225ed7393f9@nvidia.com>
- <20190402183110.GE141706@google.com>
- <dcbfbb32-9980-7ee4-89cd-baedfe624ce5@nvidia.com>
- <20190403173641.GI141706@google.com>
- <6cc7e047-bc7e-fa60-88ba-0b69c3d5a3f0@nvidia.com>
- <20190405185842.GC26522@google.com>
- <40c97eaa-e37e-860e-111d-879a135d9f51@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v10 0/7] Support Trusted Foundations firmware on Tegra30
+Date: Tue, 9 Apr 2019 16:42:19 +0200
+Message-ID: <20190409144219.GA29887@ulmo>
+References: <20190317225211.23091-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <40c97eaa-e37e-860e-111d-879a135d9f51@nvidia.com>
+In-Reply-To: <20190317225211.23091-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, tiwai@suse.de, spujar@nvidia.com, skomatineni@nvidia.com, liviu.dudau@arm.com, krzk@kernel.org, heiko@sntech.de, horms+renesas@verge.net.au, olof@lixom.net, maxime.ripard@bootlin.com, andy.gross@linaro.org, bjorn.andersson@linaro.org, jagan@amarulasolutions.com, enric.balletbo@collabora.com, ezequiel@collabora.com, stefan.wahren@i2se.com, marc.w.gonzalez@free.fr, l.stach@pengutronix.de, tpiepho@impinj.com, hayashi.kunihiko@socionext.com, yue.wang@amlogic.com, shawn.lin@rock-chips.com, xiaowei.bao@nxp.com, devicetree@vger.ker
+To: Russell King <linux@armlinux.org.uk>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robert Yang <decatf@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 09, 2019 at 05:00:53PM +0530, Vidya Sagar wrote:
-> On 4/6/2019 12:28 AM, Bjorn Helgaas wrote:
-> > On Fri, Apr 05, 2019 at 01:23:51AM +0530, Vidya Sagar wrote:
-> > > On 4/3/2019 11:06 PM, Bjorn Helgaas wrote:
-> > > > On Wed, Apr 03, 2019 at 03:13:09PM +0530, Vidya Sagar wrote:
-> > > > > On 4/3/2019 12:01 AM, Bjorn Helgaas wrote:
-> > > > > > On Tue, Apr 02, 2019 at 12:47:48PM +0530, Vidya Sagar wrote:
-> > > > > > > On 3/30/2019 2:22 AM, Bjorn Helgaas wrote:
-> > > > > > > > On Tue, Mar 26, 2019 at 08:43:26PM +0530, Vidya Sagar wrote:
-> > > > > > > > > Add support for Synopsys DesignWare core IP based PCIe host controller
-> > > > > > > > > present in Tegra194 SoC.
-> > > > > > 
-> > > > > >      - Why does this chip require pcie_pme_disable_msi()?  The only other
-> > > > > >        use is a DMI quirk for "MSI Wind U-100", added by c39fae1416d5
-> > > > > >        ("PCI PM: Make it possible to force using INTx for PCIe PME
-> > > > > >        signaling").
-> > > > > 
-> > > > > Because Tegra194 doesn't support raising PME interrupts through MSI line.
 
-> > There's something wrong here.  Either the question of how PME is
-> > signaled is generic and the spec provides a way for the OS to discover
-> > that method, or it's part of the device-specific architecture that
-> > each host bridge driver has to know about its device.  If the former,
-> > we need to make the PCI core smart enough to figure it out.  If the
-> > latter, we need a better interface than this ad hoc
-> > pcie_pme_disable_msi() thing.  But if it is truly the latter, your
-> > current code is sufficient and we can refine it over time.
->
-> In case of Tegra194, it is the latter case.
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This isn't a Tegra194 question; it's a question of whether this
-behavior is covered by the PCIe spec.
+On Mon, Mar 18, 2019 at 01:52:03AM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> This patchset adds support for the Trusted Foundations firmware on
+> NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have that
+> firmware and upstream kernel can't boot on those devices without the
+> firmware support. This series was tested on Nexus 7, TF300T and Ouya
+> Tegra30 devices.
+>=20
+> Changelog:
+>=20
+> v10:    - Removed duplicated message about keeping L2C disabled when
+>           CONFIG_TRUSTED_FOUNDATIONS=3Dn as was suggested by Micha=C5=82 =
+Miros=C5=82aw
+>           in the review comment to v9.
+>=20
+> v9:     - Rebased on recent linux-next, resolved one conflict.
+>=20
+> v8:     - Replaced BIT() macro with a definition provided by cache-l2x0.h
+>           in the "Support L2 cache maintenance" patch as was suggested by
+>           Russell King in the review comment to v7.
+>=20
+> v7:     - Fixed kernel booting with CONFIG_TRUSTED_FOUNDATIONS=3Dn by
+>           providing a dummy L2C write_sec implementation in the
+>           "Support L2 cache maintenance" patch.
+>=20
+>         - Minor clean up: no static variables anymore, replaced
+>           white spaces with a tab in one place, etc.
+>=20
+>         - Added Micha=C5=82's and Robert's Tested-by/Signed-off-by to the
+>           patches.
+>=20
+> v6:     - One patch got messed up accidentally in v5, this is fixed now.
+>=20
+>         - Squashed "Support L2 cache maintenance done via firmware" patch
+>           into the "Add firmware calls..." patch.
+>=20
+>         - The l2x0_init() firmware callback is now invoked unconditionally
+>           because it is always a NO-OP on T114+ and is a NO-OP on T20/30
+>           if firmware node is missed in device-tree, hence there is no
+>           need to check the machine's DT compatible as it was done in the
+>           previous versions of the series.
+>=20
+> v5:     - Fixed machine hanging on disabling D-cache during suspend,
+>           turned out there are slight variations in behaviour between
+>           firmware version in regards to cache-management. Thanks to
+>           Robert Yang for reporting the problem and helping with the
+>           solution.
+>=20
+> v4:     - Fixed Thumb2-kernel hanging on Tegra20, turned out it was not a
+>           good idea to switch CPU into Thumb2 mode right after jumping in=
+to
+>           the reset handler.
+>=20
+>         - Moved LP2-mode-set firmware call invocation to a later stage to
+>           better replicate what downstream kernel does. This change was
+>           suggested by Robert Yang and fixes system hang on Ouya game
+>           console.
+>=20
+>         - Added references to the original work made by Micha=C5=82 Miros=
+=C5=82aw
+>           into commit messages of the relevant patches.
+>=20
+> v3:     - Implemented suspend-resume support.
+>=20
+>         - Reworked arm/firmware/trusted_foundations.c a tad. Now cache
+>           is getting properly initialized, cache enabling / disabling is
+>           supported.
+>=20
+> v2:
+>         - The "Don't apply CPU erratas in insecure mode" patch got some
+>           cleanup, in particular resolved the messiness in
+>           __tegra_cpu_reset_handler_data.
+>=20
+>         - Added a comment to tf_cache_write_sec(), justifying the warning
+>           message.
+>=20
+> Dmitry Osipenko (7):
+>   ARM: trusted_foundations: Support L2 cache maintenance
+>   ARM: trusted_foundations: Make prepare_idle call to take mode argument
+>   ARM: trusted_foundations: Provide information about whether firmware
+>     is registered
+>   ARM: tegra: Set up L2 cache using Trusted Foundations firmware
+>   ARM: tegra: Don't apply CPU erratas in insecure mode
+>   ARM: tegra: Always boot CPU in ARM-mode
+>   ARM: tegra: Add firmware calls required for suspend-resume on Tegra30
+>=20
+>  arch/arm/firmware/trusted_foundations.c    | 75 +++++++++++++++++++++-
+>  arch/arm/include/asm/firmware.h            |  2 +-
+>  arch/arm/include/asm/trusted_foundations.h | 23 +++++++
+>  arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
+>  arch/arm/mach-tegra/pm.c                   | 49 ++++++++++++++
+>  arch/arm/mach-tegra/reset-handler.S        | 50 +++++++++++----
+>  arch/arm/mach-tegra/reset.c                |  3 +
+>  arch/arm/mach-tegra/reset.h                |  9 ++-
+>  arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
+>  arch/arm/mach-tegra/sleep.S                | 14 ++--
+>  arch/arm/mach-tegra/tegra.c                |  2 +
+>  11 files changed, 212 insertions(+), 22 deletions(-)
 
-> > What I suspect should happen eventually is the DWC driver should call
-> > devm_pci_alloc_host_bridge() directly, as all the non-DWC drivers do.
-> > That would require a little reorganization of the DWC data structures,
-> > but it would be good to be more consistent.
-> > 
-> > For now, I think stashing the pointer in pcie_port or dw_pcie would be
-> > OK.  I'm not 100% clear on the difference, but it looks like either
-> > should be common across all the DWC drivers, which is what we want.
->
-> Since dw_pcie is common for both root port and end point mode structures,
-> I think it makes sense to keep the pointer in pcie_port as this structure
-> is specific to root port mode of operation.
-> I'll make a note to reorganize code to have devm_pci_alloc_host_bridge()
-> used in the beginning itself to be inline with non-DWC implementations.
-> But, I'll take it up later (after I'm done with upstreaming current series)
+Hi Russell,
 
-Fair enough.
+I've picked these up into the Tegra tree so that they can get more
+exposure. Let me know if you have any objections to me carrying these in
+the Tegra tree.
 
-> > > .remove() internally calls pm_runtime_put_sync() API which calls
-> > > .runtime_suspend(). I made a new patch to add a host_deinit() call
-> > > which make all these calls. Since host_init() is called from inside
-> > > .runtime_resume() of this driver, to be in sync, I'm now calling
-> > > host_deinit() from inside .runtime_suspend() API.
-> > 
-> > I think this is wrong.  pci_stop_root_bus() will detach all the
-> > drivers from all the devices.  We don't want to do that if we're
-> > merely runtime suspending the host bridge, do we?
->
-> In the current driver, the scenarios in which .runtime_suspend() is called
-> are
-> a) during .remove() call and
+Thanks,
+Thierry
 
-It makes sense that you should call pci_stop_root_bus() during
-.remove(), i.e., when the host controller driver is being removed,
-because the PCI bus will no longer be accessible.  I think you should
-call it *directly* from tegra_pcie_dw_remove() because that will match
-what other drivers do.
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> b) when there is no endpoint found and controller would be shutdown
-> In both cases, it is required to stop the root bus and remove all devices,
-> so, instead of having same call present in respective paths, I kept them
-> in .runtime_suspend() itself to avoid code duplication.
+-----BEGIN PGP SIGNATURE-----
 
-I don't understand this part.  We should be able to runtime suspend
-the host controller without detaching drivers for child devices.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlysr0cACgkQ3SOs138+
+s6GHBg/8DqguXtSetEPBS2EtjqywGqkQyKSlMC+yEApOObNg8im7izuGx3Ky72M6
+WrOeTrUryDGV74twQ59+D5JY2/y6bfpKYYeA47/bzdOEXPpjaXv/kDTl0pBd12Q9
+Vo/at/ccr7U+3nvbWOAFc6s67VWIGG9fxMDFZw7gRWBWKuc0o1B2+V0l8r/Pb+E8
+7/a6ptZi67PKQ+znA/LM1JYrtFHOSZgqtLnEZF9A9tKXd7MN67oskVEUQg306u+t
+nr2woCN66FTANY20k3Jbu3LiJ3z2PzgjeVheEMC427jZwwPB5LVG8A7WSvEbcjq4
+MqzRq1Ku3Nu8B3bNLBOWupL7rFuQHPR45fSw906icjv48aku0CIxGc7r8M3v9sDi
+IK8LOiMIwCz+vvvC8IJb9ACK5Qlmj1Klc0KYiR4Kj+jzGV0/OMmzlm3AMmiT566j
+hWaFbvJAgTVnQ29EOR6tLBM0etC1oCFeI0+W6c0PMGm9AadGV8Epgy1z993BMjy/
+FC1JUgy/Amf1GRZgpBvycL8GhK0gL6/t9ldLA/SpQjy8kmqZuihl3rVAvwhSLYfn
+QVCq612vQdT1sHQR44qukLCBDDker2QKcoAAYQZogKGbK+WUGFvdSlXY4PiCzsYB
+sr2yTykJbGbkGG7SNTRh03w1f20+M2HoVxX8n1WRNpZws0uPYIc=
+=X7mn
+-----END PGP SIGNATURE-----
 
-If you shutdown the controller completely and detach the *host
-controller driver*, sure, it makes sense to detach drivers from child
-devices.  But that would be handled by the host controller .remove()
-method, not by the runtime suspend method.
-
-Bjorn
+--pf9I7BMVVzbSWLtt--
