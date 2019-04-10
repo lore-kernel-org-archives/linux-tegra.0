@@ -1,13 +1,24 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/2] firmware: Move Trusted Foundations support
-Date: Wed, 10 Apr 2019 10:57:08 +0200
-Message-ID: <20190410085708.10798-2-thierry.reding@gmail.com>
-References: <20190410085708.10798-1-thierry.reding@gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH 09/10] PCI: tegra: Add Tegra194 PCIe support
+Date: Wed, 10 Apr 2019 15:23:39 +0530
+Message-ID: <31385c64-86b9-ebe3-99e3-6d156b66fb6a@nvidia.com>
+References: <20190329203159.GG24180@google.com>
+ <5eb9599c-a6d6-d3a3-beef-5225ed7393f9@nvidia.com>
+ <20190402183110.GE141706@google.com>
+ <dcbfbb32-9980-7ee4-89cd-baedfe624ce5@nvidia.com>
+ <20190403173641.GI141706@google.com>
+ <6cc7e047-bc7e-fa60-88ba-0b69c3d5a3f0@nvidia.com>
+ <20190405185842.GC26522@google.com>
+ <40c97eaa-e37e-860e-111d-879a135d9f51@nvidia.com>
+ <20190409132604.GA256045@google.com>
+ <a414b42c-ce10-e2db-55f0-9428cfd23e68@nvidia.com>
+ <20190410081448.GC15144@e110455-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190410085708.10798-1-thierry.reding@gmail.com>
+In-Reply-To: <20190410081448.GC15144@e110455-lin.cambridge.arm.com>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,281 +28,148 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: mark.rutland@arm.com, heiko@sntech.de, hayashi.kunihiko@socionext.com, tiwai@suse.de, catalin.marinas@arm.com, spujar@nvidia.com, will.deacon@arm.com, kthota@nvidia.com, mperttunen@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, stefan.wahren@i2se.com, lorenzo.pieralisi@arm.com, krzk@kernel.org, kishon@ti.com, maxime.ripard@bootlin.com, Bjorn Helgaas <helgaas@kernel.org>, jagan@amarulasolutions.com, linux-pci@vger.kernel.org, andy.gross@linaro.org, shawn.lin@rock-chips.com, devicetree@vger.kernel.org, mmaddireddy@nvidia.com, marc.w.gonzalez@free.fr, yue.wang@amlogic.com, enric.balletbo@collabora.com, robh+dt@kernel.org, linux-tegra@vger.kernel.org, horms+renesas@verge.net.au, bjorn.andersson@linaro.org, ezequiel@collabora.com, linux-arm-kernel@lists.infradead.org, xiaowei.bao@nxp.com, gustavo.pimentel@synopsys.com, linux-kernel@vger.kernel.org, skomatineni@nv
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 4/10/2019 1:44 PM, Liviu Dudau wrote:
+> On Wed, Apr 10, 2019 at 11:40:40AM +0530, Vidya Sagar wrote:
+>> On 4/9/2019 6:56 PM, Bjorn Helgaas wrote:
+>>> On Tue, Apr 09, 2019 at 05:00:53PM +0530, Vidya Sagar wrote:
+>>>> On 4/6/2019 12:28 AM, Bjorn Helgaas wrote:
+>>>>> On Fri, Apr 05, 2019 at 01:23:51AM +0530, Vidya Sagar wrote:
+>>>>>> On 4/3/2019 11:06 PM, Bjorn Helgaas wrote:
+>>>>>>> On Wed, Apr 03, 2019 at 03:13:09PM +0530, Vidya Sagar wrote:
+>>>>>>>> On 4/3/2019 12:01 AM, Bjorn Helgaas wrote:
+>>>>>>>>> On Tue, Apr 02, 2019 at 12:47:48PM +0530, Vidya Sagar wrote:
+>>>>>>>>>> On 3/30/2019 2:22 AM, Bjorn Helgaas wrote:
+>>>>>>>>>>> On Tue, Mar 26, 2019 at 08:43:26PM +0530, Vidya Sagar wrote:
+>>>>>>>>>>>> Add support for Synopsys DesignWare core IP based PCIe host controller
+>>>>>>>>>>>> present in Tegra194 SoC.
+>>>>>>>>>
+>>>>>>>>>        - Why does this chip require pcie_pme_disable_msi()?  The only other
+>>>>>>>>>          use is a DMI quirk for "MSI Wind U-100", added by c39fae1416d5
+>>>>>>>>>          ("PCI PM: Make it possible to force using INTx for PCIe PME
+>>>>>>>>>          signaling").
+>>>>>>>>
+>>>>>>>> Because Tegra194 doesn't support raising PME interrupts through MSI line.
+>>>
+>>>>> There's something wrong here.  Either the question of how PME is
+>>>>> signaled is generic and the spec provides a way for the OS to discover
+>>>>> that method, or it's part of the device-specific architecture that
+>>>>> each host bridge driver has to know about its device.  If the former,
+>>>>> we need to make the PCI core smart enough to figure it out.  If the
+>>>>> latter, we need a better interface than this ad hoc
+>>>>> pcie_pme_disable_msi() thing.  But if it is truly the latter, your
+>>>>> current code is sufficient and we can refine it over time.
+>>>>
+>>>> In case of Tegra194, it is the latter case.
+>>>
+>>> This isn't a Tegra194 question; it's a question of whether this
+>>> behavior is covered by the PCIe spec.
+>> AFAIU the spec and what I heard from Nvidia hardware folks is that spec doesn't
+>> explicitly talk about this and it was a design choice made by Nvidia hardware
+>> folks to route these interrupts through legacy line instead of MSI line.
+>>
+>>>
+>>>>> What I suspect should happen eventually is the DWC driver should call
+>>>>> devm_pci_alloc_host_bridge() directly, as all the non-DWC drivers do.
+>>>>> That would require a little reorganization of the DWC data structures,
+>>>>> but it would be good to be more consistent.
+>>>>>
+>>>>> For now, I think stashing the pointer in pcie_port or dw_pcie would be
+>>>>> OK.  I'm not 100% clear on the difference, but it looks like either
+>>>>> should be common across all the DWC drivers, which is what we want.
+>>>>
+>>>> Since dw_pcie is common for both root port and end point mode structures,
+>>>> I think it makes sense to keep the pointer in pcie_port as this structure
+>>>> is specific to root port mode of operation.
+>>>> I'll make a note to reorganize code to have devm_pci_alloc_host_bridge()
+>>>> used in the beginning itself to be inline with non-DWC implementations.
+>>>> But, I'll take it up later (after I'm done with upstreaming current series)
+>>>
+>>> Fair enough.
+>>>
+>>>>>> .remove() internally calls pm_runtime_put_sync() API which calls
+>>>>>> .runtime_suspend(). I made a new patch to add a host_deinit() call
+>>>>>> which make all these calls. Since host_init() is called from inside
+>>>>>> .runtime_resume() of this driver, to be in sync, I'm now calling
+>>>>>> host_deinit() from inside .runtime_suspend() API.
+>>>>>
+>>>>> I think this is wrong.  pci_stop_root_bus() will detach all the
+>>>>> drivers from all the devices.  We don't want to do that if we're
+>>>>> merely runtime suspending the host bridge, do we?
+>>>>
+>>>> In the current driver, the scenarios in which .runtime_suspend() is called
+>>>> are
+>>>> a) during .remove() call and
+>>>
+>>> It makes sense that you should call pci_stop_root_bus() during
+>>> .remove(), i.e., when the host controller driver is being removed,
+>>> because the PCI bus will no longer be accessible.  I think you should
+>>> call it *directly* from tegra_pcie_dw_remove() because that will match
+>>> what other drivers do.
+>>>
+>>>> b) when there is no endpoint found and controller would be shutdown
+>>>> In both cases, it is required to stop the root bus and remove all devices,
+>>>> so, instead of having same call present in respective paths, I kept them
+>>>> in .runtime_suspend() itself to avoid code duplication.
+>>>
+>>> I don't understand this part.  We should be able to runtime suspend
+>>> the host controller without detaching drivers for child devices.
+>>>
+>>> If you shutdown the controller completely and detach the *host
+>>> controller driver*, sure, it makes sense to detach drivers from child
+>>> devices.  But that would be handled by the host controller .remove()
+>>> method, not by the runtime suspend method.
+>> I think it is time I give some background about why I chose to implement
+>> .runtime_suspend() and .runtime_resume() APIs in the first place. We wanted to
+>> powerdown PCIe controller if there is no link up (i.e. slot is open and no endpoint
+>> devices are connected). We want to achieve this without returning a failure in
+>> .probe() call. Given PCIe IP power partitioning is handled by generic power domain
+>> framework, power partition gets unpowergated before .probe() gets called and gets
+>> powergated either when a failure is returned in .probe() or when pm_runtime_put_sync()
+>> is called. So, I chose to call pm_runtime_put_sync() in no-link-up scenario and chose
+>> to implement .runtime_suspend() to handle all the cleanup work before PCIe partition
+>> getting powergated. In fact, to match this, I'm doing all the PCIe IP bring up
+>> activity in .runtime_resume() implementation which gets invoked by pm_runtime_get_sync()
+>> which in turn is called in .probe() path. In fact the very dw_pcie_host_init() itself
+>> is called from .runtime_resume() implementation. So, it is because of these reasons that
+>> I called pci_stop_root_bus() and pci_remove_root_bus() as part of .runtime_suspend()
+>> implementation as pm_runtime_put_sync() is called from both .remove() and also during
+>> no-link-up scenario. Please do let me know if there is a better way to do this.
+> 
+> I think you're missing the case where .runtime_suspend() is called when
+> there are no *active* devices on the bus, i.e. everyone is dormant. It
+> doesn't mean that you need to remove them from the bus and re-probe them
+> back on .runtime_resume(). Most of the drivers for PCI devices don't
+> expect to be removed during idle, as they will configure the hardware to
+> be in a "quick wake" state (see PCIe Dx power states).
+> 
+> You should probe and configure the bus during .probe() and remove and
+> detach all drivers during .remove(). For .runtime_suspend() all you need
+> to do is put the host controller in low power mode if it has one, or
+> stop all clocks that are not required for responding to devices waking
+> up from PCIe Dx state. For .runtime_resume() you then restore the
+> clocks, without re-scanning the bus.
+Since this is a host controller driver and the device as such is sitting on platform
+bus instead of PCIe bus, is it still the case that .runtime_suspend() and
+.runtime_resume() of this driver get called when devices on PCIe bus are idle?
 
-Move the Trusted Foundations support out of arch/arm/firmware and into
-drivers/firmware where most other firmware support implementations are
-located.
+Having asked that, I start to feel what I'm doing as part of .runtime_suspend() and
+.runtime_resume() doesn't really justify these API names. Since I know where I'm
+calling pm_runtime_get/put_sync() APIs (which eventually call .runtime_resume/suspend())
+I should probably move the content of these APIs before calling pm_runtime_get/put_sync().
+Do you agree with that?
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/Kconfig                              |  2 --
- arch/arm/Makefile                             |  1 -
- arch/arm/firmware/Kconfig                     | 29 -------------------
- arch/arm/firmware/Makefile                    |  4 ---
- arch/arm/mach-tegra/Kconfig                   |  2 +-
- arch/arm/mach-tegra/cpuidle-tegra114.c        |  3 +-
- arch/arm/mach-tegra/pm.c                      |  3 +-
- arch/arm/mach-tegra/reset.c                   |  3 +-
- arch/arm/mach-tegra/tegra.c                   |  3 +-
- drivers/firmware/Kconfig                      | 15 ++++++++++
- drivers/firmware/Makefile                     |  1 +
- .../firmware/trusted_foundations.c            |  4 ++-
- .../linux/firmware}/trusted_foundations.h     |  4 +--
- 13 files changed, 30 insertions(+), 44 deletions(-)
- delete mode 100644 arch/arm/firmware/Kconfig
- delete mode 100644 arch/arm/firmware/Makefile
- rename {arch/arm => drivers}/firmware/trusted_foundations.c (98%)
- rename {arch/arm/include/asm => include/linux/firmware}/trusted_foundations.h (97%)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 054ead960f98..f006b3c69247 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -899,8 +899,6 @@ config PLAT_PXA
- config PLAT_VERSATILE
- 	bool
- 
--source "arch/arm/firmware/Kconfig"
--
- source "arch/arm/mm/Kconfig"
- 
- config IWMMXT
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 807a7d06c2a0..05ecc004de86 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -290,7 +290,6 @@ core-y				+= arch/arm/kernel/ arch/arm/mm/ arch/arm/common/
- core-y				+= arch/arm/probes/
- core-y				+= arch/arm/net/
- core-y				+= arch/arm/crypto/
--core-y				+= arch/arm/firmware/
- core-y				+= $(machdirs) $(platdirs)
- 
- drivers-$(CONFIG_OPROFILE)      += arch/arm/oprofile/
-diff --git a/arch/arm/firmware/Kconfig b/arch/arm/firmware/Kconfig
-deleted file mode 100644
-index ad396af68e47..000000000000
---- a/arch/arm/firmware/Kconfig
-+++ /dev/null
-@@ -1,29 +0,0 @@
--config ARCH_SUPPORTS_FIRMWARE
--	bool
--
--config ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
--	bool
--	select ARCH_SUPPORTS_FIRMWARE
--
--menu "Firmware options"
--	depends on ARCH_SUPPORTS_FIRMWARE
--
--config TRUSTED_FOUNDATIONS
--	bool "Trusted Foundations secure monitor support"
--	depends on ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
--	default y
--	help
--	  Some devices (including most Tegra-based consumer devices on the
--	  market) are booted with the Trusted Foundations secure monitor
--	  active, requiring some core operations to be performed by the secure
--	  monitor instead of the kernel.
--
--	  This option allows the kernel to invoke the secure monitor whenever
--	  required on devices using Trusted Foundations. See
--	  arch/arm/include/asm/trusted_foundations.h or the
--	  tlm,trusted-foundations device tree binding documentation for details
--	  on how to use it.
--
--	  Say n if you don't know what this is about.
--
--endmenu
-diff --git a/arch/arm/firmware/Makefile b/arch/arm/firmware/Makefile
-deleted file mode 100644
-index 6e41336b0bc4..000000000000
---- a/arch/arm/firmware/Makefile
-+++ /dev/null
-@@ -1,4 +0,0 @@
--obj-$(CONFIG_TRUSTED_FOUNDATIONS)	+= trusted_foundations.o
--
--# tf_generic_smc() fails to build with -fsanitize-coverage=trace-pc
--KCOV_INSTRUMENT                := n
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 7b3fd0995a16..cbad7823f602 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -3,7 +3,6 @@ menuconfig ARCH_TEGRA
- 	bool "NVIDIA Tegra"
- 	depends on ARCH_MULTI_V7
- 	select ARCH_HAS_RESET_CONTROLLER
--	select ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
- 	select ARM_AMBA
- 	select ARM_GIC
- 	select CLKSRC_MMIO
-@@ -14,6 +13,7 @@ menuconfig ARCH_TEGRA
- 	select PM_OPP
- 	select RESET_CONTROLLER
- 	select SOC_BUS
-+	select TRUSTED_FOUNDATIONS
- 	select ZONE_DMA if ARM_LPAE
- 	help
- 	  This enables support for NVIDIA Tegra based systems.
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-index 3b9af4766cdf..43c695d83f03 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -21,10 +21,11 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
-+#include <linux/firmware/trusted_foundations.h>
-+
- #include <asm/cpuidle.h>
- #include <asm/smp_plat.h>
- #include <asm/suspend.h>
--#include <asm/trusted_foundations.h>
- #include <asm/psci.h>
- 
- #include "cpuidle.h"
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index abf5f88778f4..1b0ade06f204 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -27,6 +27,8 @@
- #include <linux/spinlock.h>
- #include <linux/suspend.h>
- 
-+#include <linux/firmware/trusted_foundations.h>
-+
- #include <soc/tegra/flowctrl.h>
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/pm.h>
-@@ -39,7 +41,6 @@
- #include <asm/smp_plat.h>
- #include <asm/suspend.h>
- #include <asm/tlbflush.h>
--#include <asm/trusted_foundations.h>
- 
- #include "iomap.h"
- #include "pm.h"
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index b02ae7699842..35dc5d419b6f 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -19,12 +19,13 @@
- #include <linux/init.h>
- #include <linux/io.h>
- 
-+#include <linux/firmware/trusted_foundations.h>
-+
- #include <soc/tegra/fuse.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/firmware.h>
- #include <asm/hardware/cache-l2x0.h>
--#include <asm/trusted_foundations.h>
- 
- #include "iomap.h"
- #include "irammap.h"
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 1e89cfefbf68..3e88f67dd521 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -35,6 +35,8 @@
- #include <linux/sys_soc.h>
- #include <linux/usb/tegra_usb_phy.h>
- 
-+#include <linux/firmware/trusted_foundations.h>
-+
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/pmc.h>
- 
-@@ -44,7 +46,6 @@
- #include <asm/mach/time.h>
- #include <asm/mach-types.h>
- #include <asm/setup.h>
--#include <asm/trusted_foundations.h>
- 
- #include "board.h"
- #include "common.h"
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index cac16c4b0df3..d1b1108aee72 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -267,6 +267,21 @@ config TI_SCI_PROTOCOL
- 	  This protocol library is used by client drivers to use the features
- 	  provided by the system controller.
- 
-+config TRUSTED_FOUNDATIONS
-+	bool "Trusted Foundations secure monitor support"
-+	help
-+	  Some devices (including most early Tegra-based consumer devices on
-+	  the market) are booted with the Trusted Foundations secure monitor
-+	  active, requiring some core operations to be performed by the secure
-+	  monitor instead of the kernel.
-+
-+	  This option allows the kernel to invoke the secure monitor whenever
-+	  required on devices using Trusted Foundations. See the functions and
-+	  comments in linux/firmware/trusted_foundations.h or the device tree
-+	  bindings for "tlm,trusted-foundations" for details on how to use it.
-+
-+	  Choose N if you don't know what this is about.
-+
- config HAVE_ARM_SMCCC
- 	bool
- 
-diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
-index 80feb635120f..745f4907e69b 100644
---- a/drivers/firmware/Makefile
-+++ b/drivers/firmware/Makefile
-@@ -23,6 +23,7 @@ obj-$(CONFIG_QCOM_SCM_64)	+= qcom_scm-64.o
- obj-$(CONFIG_QCOM_SCM_32)	+= qcom_scm-32.o
- CFLAGS_qcom_scm-32.o :=$(call as-instr,.arch armv7-a\n.arch_extension sec,-DREQUIRES_SEC=1) -march=armv7-a
- obj-$(CONFIG_TI_SCI_PROTOCOL)	+= ti_sci.o
-+obj-$(CONFIG_TRUSTED_FOUNDATIONS) += trusted_foundations.o
- 
- obj-$(CONFIG_ARM_SCMI_PROTOCOL)	+= arm_scmi/
- obj-y				+= broadcom/
-diff --git a/arch/arm/firmware/trusted_foundations.c b/drivers/firmware/trusted_foundations.c
-similarity index 98%
-rename from arch/arm/firmware/trusted_foundations.c
-rename to drivers/firmware/trusted_foundations.c
-index bb2ee73d9e02..fd4999388ff1 100644
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/drivers/firmware/trusted_foundations.c
-@@ -17,10 +17,12 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/of.h>
-+
-+#include <linux/firmware/trusted_foundations.h>
-+
- #include <asm/firmware.h>
- #include <asm/hardware/cache-l2x0.h>
- #include <asm/outercache.h>
--#include <asm/trusted_foundations.h>
- 
- #define TF_CACHE_MAINT		0xfffff100
- 
-diff --git a/arch/arm/include/asm/trusted_foundations.h b/include/linux/firmware/trusted_foundations.h
-similarity index 97%
-rename from arch/arm/include/asm/trusted_foundations.h
-rename to include/linux/firmware/trusted_foundations.h
-index 54513c533811..4064e7c74715 100644
---- a/arch/arm/include/asm/trusted_foundations.h
-+++ b/include/linux/firmware/trusted_foundations.h
-@@ -23,8 +23,8 @@
-  * PSCI standard.
-  */
- 
--#ifndef __ASM_ARM_TRUSTED_FOUNDATIONS_H
--#define __ASM_ARM_TRUSTED_FOUNDATIONS_H
-+#ifndef __FIRMWARE_TRUSTED_FOUNDATIONS_H
-+#define __FIRMWARE_TRUSTED_FOUNDATIONS_H
- 
- #include <linux/printk.h>
- #include <linux/bug.h>
--- 
-2.21.0
+> 
+> Best regards,
+> Liviu
+> 
+> 
+>>
+>>>
+>>> Bjorn
+>>>
+>>
+> 
