@@ -1,58 +1,49 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: RE: [PATCH V3 05/10] arm64: tegra: fix default tap and trim values
-Date: Thu, 11 Apr 2019 19:42:35 +0000
-Message-ID: <BYAPR12MB3398FC694371926446B377D3C22F0@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1552513552-23423-1-git-send-email-skomatineni@nvidia.com>
- <1552513552-23423-5-git-send-email-skomatineni@nvidia.com>
- <CAPDyKFq4ZVaMmvefuVqGs84E7xg5VgvU-Ecq1MYJdmBhuEm7xA@mail.gmail.com>
- <BYAPR12MB3398F91B190D9B1C56FDC4F7C2420@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB339845B4C5A37468841E256AC2550@BYAPR12MB3398.namprd12.prod.outlook.com>
- <CAPDyKFqwESQ9_gDxLXhzBzu236+8p6rnqricULA7GrZguVZQWQ@mail.gmail.com>
+Subject: RE: [PATCH V2 11/20] spi: expand mode support and add LSBYTE_FIRST
+ mode
+Date: Thu, 11 Apr 2019 19:58:33 +0000
+Message-ID: <BYAPR12MB3398CC43DC1F78A10BC51DE8C22F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1554423259-26056-1-git-send-email-skomatineni@nvidia.com>
+ <1554423259-26056-11-git-send-email-skomatineni@nvidia.com>
+ <20190408062819.GJ2803@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFqwESQ9_gDxLXhzBzu236+8p6rnqricULA7GrZguVZQWQ@mail.gmail.com>
+In-Reply-To: <20190408062819.GJ2803@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Harjani Ritesh <riteshh@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBPbiBNb24sIDEgQXByIDIwMTkgYXQgMTk6NDMsIFNvd2phbnlhIEtvbWF0aW5lbmkgPHNrb21h
-dGluZW5pQG52aWRpYS5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBEZWZh
-dWx0IHRhcCBhbmQgdHJpbSB2YWx1ZXMgYXJlIGluY29ycmVjdCBmb3IgVGVncmExODYgU0RNTUM0
-Lg0KPiA+ID4gPiA+IFRoaXMgcGF0Y2ggZml4ZXMgaXQuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBU
-ZXN0ZWQtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KPiA+ID4gPiA+IFNp
-Z25lZC1vZmYtYnk6IFNvd2phbnlhIEtvbWF0aW5lbmkgPHNrb21hdGluZW5pQG52aWRpYS5jb20+
-DQo+ID4gPiA+DQo+ID4gPiA+IElzIHRoaXMgYSBmaXggYW5kL29yIGZvciBzdGFibGU/DQo+ID4g
-PiA+DQo+ID4gPiA+IEluIGVpdGhlciBjYXNlLCBJIGFtIGxlYXZpbmcgdGhpcyBmb3IgYXJtLXNv
-Yy4NCj4gPiA+ID4NCj4gPiA+ID4gS2luZCByZWdhcmRzDQo+ID4gPiA+IFVmZmUNCj4gPiA+ID4N
-Cj4gPiA+DQo+ID4gPiBUaGFua3MgVWZmZS4gWWVzIHRoaXMgaXMgYXBwbGljYWJsZSBmb3Igc3Rh
-YmxlLg0KPiA+DQo+ID4gSSBkb27igJl0IHNlZSBhbnkgY29uZmlybWF0aW9uIG9mIHRoaXMgYmVp
-bmcgYXBwbGllZCBieSBhcm0tc29jLg0KPiA+IFNvIHRob3VnaHQgdG8gcmUtY2hlY2sgaWYgdGhp
-cyBpcyBhcHBsaWVkPw0KPg0KPiBQZXJoYXBzIHJlcG9zdCBpdCB0byByZW1pbmQgdGhlIHNvYyBt
-YWludGFpbmVyIHRvIHBpY2sgaXQgdXAuDQo+DQo+IEtpbmQgcmVnYXJkcw0KPiBVZmZlDQo+DQoN
-ClJlcG9zdGVkIHBhdGNoIDUgYW5kIDEwIGluIHRoaXMgc2VyaWVzIHRoYXQgYXJlIHdhaXRpbmcg
-Zm9yIHNvYyBtYWludGFpbmVycyBhcyBmcmVzaCBpbmRpdmlkdWFsIHBhdGNoZXMuDQoNClRoYW5r
-cw0KU293amFueWENCg0KPiA+DQo+ID4gPiA+ID4gLS0tDQo+ID4gPiA+ID4gIGFyY2gvYXJtNjQv
-Ym9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kgfCA0ICsrLS0NCj4gPiA+ID4gPiAgMSBmaWxl
-IGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPiA+ID4gPg0KPiA+
-ID4gPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTE4Ni5k
-dHNpDQo+ID4gPiA+ID4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTE4Ni5kdHNp
-DQo+ID4gPiA+ID4gaW5kZXggOTdhZWI5NDZlZDVlLi40NzJmNTVmZTk0ODggMTAwNjQ0DQo+ID4g
-PiA+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRzaQ0KPiA+
-ID4gPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kNCj4g
-PiA+ID4gPiBAQCAtMzE3LDggKzMxNyw4IEBADQo+ID4gPiA+ID4gICAgICAgICAgICAgICAgIG52
-aWRpYSxwYWQtYXV0b2NhbC1wdWxsLWRvd24tb2Zmc2V0LTF2OC10aW1lb3V0ID0gPDB4MGE+Ow0K
-PiA+ID4gPiA+ICAgICAgICAgICAgICAgICBudmlkaWEscGFkLWF1dG9jYWwtcHVsbC11cC1vZmZz
-ZXQtM3YzLXRpbWVvdXQgPSA8MHgwYT47DQo+ID4gPiA+ID4gICAgICAgICAgICAgICAgIG52aWRp
-YSxwYWQtYXV0b2NhbC1wdWxsLWRvd24tb2Zmc2V0LTN2My10aW1lb3V0ID0gPDB4MGE+Ow0KPiA+
-ID4gPiA+IC0gICAgICAgICAgICAgICBudmlkaWEsZGVmYXVsdC10YXAgPSA8MHg1PjsNCj4gPiA+
-ID4gPiAtICAgICAgICAgICAgICAgbnZpZGlhLGRlZmF1bHQtdHJpbSA9IDwweDk+Ow0KPiA+ID4g
-PiA+ICsgICAgICAgICAgICAgICBudmlkaWEsZGVmYXVsdC10YXAgPSA8MHg5PjsNCj4gPiA+ID4g
-PiArICAgICAgICAgICAgICAgbnZpZGlhLGRlZmF1bHQtdHJpbSA9IDwweDU+Ow0KPiA+ID4gPiA+
-ICAgICAgICAgICAgICAgICBudmlkaWEsZHFzLXRyaW0gPSA8NjM+Ow0KPiA+ID4gPiA+ICAgICAg
-ICAgICAgICAgICBtbWMtaHM0MDAtMV84djsNCj4gPiA+ID4gPiAgICAgICAgICAgICAgICAgc3Rh
-dHVzID0gImRpc2FibGVkIjsNCj4gPiA+ID4gPiAtLQ0KPiA+ID4gPiA+IDIuNy40DQo+ID4gPiA+
-ID4NCg==
+> On Thu, Apr 04, 2019 at 05:14:10PM -0700, Sowjanya Komatineni wrote:
+> > Some SPI Master controllers support configuring Least significant byte=
+=20
+> > first or Most significant byte first order for transfers. Also some=20
+> > SPI slave devices expect bytes to be in Least significant first order=20
+> > and some devices expect Most significant first order.
+> >=20
+> > SPI driver declares mode and mode_bits as u16 and all bits are used.
+> >=20
+> > This patch changes mode and mode_bits to be u32 to allow for more mode=
+=20
+> > configurations.
+> >=20
+> > This patch also creates SPI_LSBYTE_FIRST mode to allow SPI clients to=20
+> > choose LSByte order or MSByte order through the device tree property=20
+> > spi-lsbyte-first.
+>
+> Please submit one patch per change, each with a clear changelog, as cover=
+ed in SubmittingPatches.  This makes it much easier to review things since =
+it's easier to tell if the patch does what it was intended to do and means =
+that if one part of the patch casues problems it won't hold up the other pa=
+rts.
+
+Hi Mark,
+I split changes on SPI code side and SPI Tegra side as separate patches.
+Do you meant to have both changes on SPI core and SPI Tegra together in a s=
+ingle patch?
+
+Thanks
+Sowjanya
