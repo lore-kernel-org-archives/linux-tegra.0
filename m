@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/3] ARM: tegra: Enable Trusted Foundations by default
-Date: Thu, 11 Apr 2019 11:18:47 +0200
-Message-ID: <20190411091848.16949-2-thierry.reding@gmail.com>
+Subject: [PATCH 3/3] ARM: Enable Trusted Foundations for multiplatform ARM v7
+Date: Thu, 11 Apr 2019 11:18:48 +0200
+Message-ID: <20190411091848.16949-3-thierry.reding@gmail.com>
 References: <20190411091848.16949-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,27 +23,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Support for the Trusted Foundations firmware was recently moved outside
-of arch/arm and now needs to be selected explicitly. Since some 32-bit
-Tegra devices use this firmware, enable support for it in the default
-configuration.
+Some 32-bit Tegra devices supported by the multiplatform ARM v7 default
+configuration ship with the Trusted Foundations firmware. Enable support
+for it by default.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/configs/tegra_defconfig | 1 +
+ arch/arm/configs/multi_v7_defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 5708e58fe516..8f5c6a5b444c 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -27,6 +27,7 @@ CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index c75051b9392c..707dff396764 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -141,6 +141,7 @@ CONFIG_ARM_CPUIDLE=y
+ CONFIG_ARM_ZYNQ_CPUIDLE=y
+ CONFIG_ARM_EXYNOS_CPUIDLE=y
+ CONFIG_KERNEL_MODE_NEON=y
 +CONFIG_TRUSTED_FOUNDATIONS=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
- CONFIG_MODULE_FORCE_UNLOAD=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
 -- 
 2.21.0
