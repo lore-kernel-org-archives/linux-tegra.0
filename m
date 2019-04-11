@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/4] memory: tegra: Replace readl-writel with mc_readl-mc_writel
-Date: Fri, 12 Apr 2019 01:12:49 +0300
-Message-ID: <20190411221250.23233-4-digetx@gmail.com>
+Subject: [PATCH v1 4/4] Revert "ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+"
+Date: Fri, 12 Apr 2019 01:12:50 +0300
+Message-ID: <20190411221250.23233-5-digetx@gmail.com>
 References: <20190411221250.23233-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,48 +12,107 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need for a memory barriers on reading/writing of register
-values as we only care about the read/write order, hence let's use the
-common helpers.
+Turned out that the actual bug was in the Memory Controller driver
+that programmed shadowed registers without latching the new values
+and then there was a bug on EMEM arbitration configuration calculation
+that results in a wrong value being latched on resume from suspend.
+The Memory Controller has been fixed properly now, hence the workaround
+patch could be reverted safely.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/mc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/mach-tegra/iomap.h         |  9 ---------
+ arch/arm/mach-tegra/sleep-tegra30.S | 21 ---------------------
+ 2 files changed, 30 deletions(-)
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 89e463952b8a..31b47459c84d 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -288,24 +288,24 @@ static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
- 	tick = (unsigned long long)mc->tick * clk_get_rate(mc->clk);
- 	do_div(tick, NSEC_PER_SEC);
+diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
+index 4af9e92a216f..ba61db7fe533 100644
+--- a/arch/arm/mach-tegra/iomap.h
++++ b/arch/arm/mach-tegra/iomap.h
+@@ -79,24 +79,15 @@
+ #define TEGRA_PMC_BASE			0x7000E400
+ #define TEGRA_PMC_SIZE			SZ_256
  
--	value = readl(mc->regs + MC_EMEM_ARB_CFG);
-+	value = mc_readl(mc, MC_EMEM_ARB_CFG);
- 	value &= ~MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE_MASK;
- 	value |= MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE(tick);
--	writel(value, mc->regs + MC_EMEM_ARB_CFG);
-+	mc_writel(mc, value, MC_EMEM_ARB_CFG);
+-#define TEGRA_MC_BASE			0x7000F000
+-#define TEGRA_MC_SIZE			SZ_1K
+-
+ #define TEGRA_EMC_BASE			0x7000F400
+ #define TEGRA_EMC_SIZE			SZ_1K
  
- 	/* write latency allowance defaults */
- 	for (i = 0; i < mc->soc->num_clients; i++) {
- 		const struct tegra_mc_la *la = &mc->soc->clients[i].la;
- 		u32 value;
+-#define TEGRA114_MC_BASE		0x70019000
+-#define TEGRA114_MC_SIZE		SZ_4K
+-
+ #define TEGRA_EMC0_BASE			0x7001A000
+ #define TEGRA_EMC0_SIZE			SZ_2K
  
--		value = readl(mc->regs + la->reg);
-+		value = mc_readl(mc, la->reg);
- 		value &= ~(la->mask << la->shift);
- 		value |= (la->def & la->mask) << la->shift;
--		writel(value, mc->regs + la->reg);
-+		mc_writel(mc, value, la->reg);
- 	}
+ #define TEGRA_EMC1_BASE			0x7001A800
+ #define TEGRA_EMC1_SIZE			SZ_2K
  
- 	/* latch new values */
--	writel(MC_TIMING_UPDATE, mc->regs + MC_TIMING_CONTROL);
-+	mc_writel(mc, MC_TIMING_UPDATE, MC_TIMING_CONTROL);
+-#define TEGRA124_MC_BASE		0x70019000
+-#define TEGRA124_MC_SIZE		SZ_4K
+-
+ #define TEGRA124_EMC_BASE		0x7001B000
+ #define TEGRA124_EMC_SIZE		SZ_2K
  
- 	return 0;
- }
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index d0b4c486ddbf..7727e005c30e 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -44,8 +44,6 @@
+ #define EMC_XM2VTTGENPADCTRL		0x310
+ #define EMC_XM2VTTGENPADCTRL2		0x314
+ 
+-#define MC_EMEM_ARB_CFG			0x90
+-
+ #define PMC_CTRL			0x0
+ #define PMC_CTRL_SIDE_EFFECT_LP0 (1 << 14) /* enter LP0 when CPU pwr gated */
+ 
+@@ -420,22 +418,6 @@ _pll_m_c_x_done:
+ 	movweq	r0, #:lower16:TEGRA124_EMC_BASE
+ 	movteq	r0, #:upper16:TEGRA124_EMC_BASE
+ 
+-	cmp	r10, #TEGRA30
+-	moveq	r2, #0x20
+-	movweq	r4, #:lower16:TEGRA_MC_BASE
+-	movteq	r4, #:upper16:TEGRA_MC_BASE
+-	cmp	r10, #TEGRA114
+-	moveq	r2, #0x34
+-	movweq	r4, #:lower16:TEGRA114_MC_BASE
+-	movteq	r4, #:upper16:TEGRA114_MC_BASE
+-	cmp	r10, #TEGRA124
+-	moveq	r2, #0x20
+-	movweq	r4, #:lower16:TEGRA124_MC_BASE
+-	movteq	r4, #:upper16:TEGRA124_MC_BASE
+-
+-	ldr	r1, [r5, r2]		@ restore MC_EMEM_ARB_CFG
+-	str	r1, [r4, #MC_EMEM_ARB_CFG]
+-
+ exit_self_refresh:
+ 	ldr	r1, [r5, #0xC]		@ restore EMC_XM2VTTGENPADCTRL
+ 	str	r1, [r0, #EMC_XM2VTTGENPADCTRL]
+@@ -564,7 +546,6 @@ tegra30_sdram_pad_address:
+ 	.word	TEGRA_PMC_BASE + PMC_IO_DPD_STATUS			@0x14
+ 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_CLK_SOURCE_MSELECT	@0x18
+ 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_SCLK_BURST		@0x1c
+-	.word	TEGRA_MC_BASE + MC_EMEM_ARB_CFG				@0x20
+ tegra30_sdram_pad_address_end:
+ 
+ tegra114_sdram_pad_address:
+@@ -581,7 +562,6 @@ tegra114_sdram_pad_address:
+ 	.word	TEGRA_EMC1_BASE + EMC_AUTO_CAL_INTERVAL			@0x28
+ 	.word	TEGRA_EMC1_BASE + EMC_XM2VTTGENPADCTRL			@0x2c
+ 	.word	TEGRA_EMC1_BASE + EMC_XM2VTTGENPADCTRL2			@0x30
+-	.word	TEGRA114_MC_BASE + MC_EMEM_ARB_CFG			@0x34
+ tegra114_sdram_pad_adress_end:
+ 
+ tegra124_sdram_pad_address:
+@@ -593,7 +573,6 @@ tegra124_sdram_pad_address:
+ 	.word	TEGRA_PMC_BASE + PMC_IO_DPD_STATUS			@0x14
+ 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_CLK_SOURCE_MSELECT	@0x18
+ 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_SCLK_BURST		@0x1c
+-	.word	TEGRA124_MC_BASE + MC_EMEM_ARB_CFG			@0x20
+ tegra124_sdram_pad_address_end:
+ 
+ tegra30_sdram_pad_size:
 -- 
 2.21.0
