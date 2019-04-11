@@ -1,21 +1,40 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v1 0/3] IOMMU: Tegra SMMU fixes
-Date: Thu, 11 Apr 2019 14:52:43 +0200
-Message-ID: <20190411125242.GA4518@8bytes.org>
-References: <20190306225009.3391-1-digetx@gmail.com>
- <99d4f594-f9a0-1cf6-8031-a3faa8e091e3@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] clocksource/drivers/tegra: rework for compensation of
+ suspend time
+Date: Thu, 11 Apr 2019 15:21:37 +0200
+Message-ID: <b66bd5ef-1ab4-aa5e-6e97-5ccb7f7dd1cc@linaro.org>
+References: <20190402030234.13488-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <99d4f594-f9a0-1cf6-8031-a3faa8e091e3@gmail.com>
+In-Reply-To: <20190402030234.13488-1-josephl@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 08:14:18AM +0300, Dmitry Osipenko wrote:
+On 02/04/2019 05:02, Joseph Lo wrote:
+> Since the clocksource framework has the support for suspend time
+> compensation. Re-work the driver to use that, so we can reduce the
+> duplicate code.
+> 
+> Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
 
-> Joerg, could you please apply this series?
 
-Applied, thanks.
+Awesome, thanks for this patch.
+
+Applied for 5.2
+
+  -- Daniel
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
