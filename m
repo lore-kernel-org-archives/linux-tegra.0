@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 5/5] clk: tegra: divider: Mark Memory Controller clock as read-only
-Date: Fri, 12 Apr 2019 01:02:30 +0300
-Message-ID: <20190411220230.21726-6-digetx@gmail.com>
+Subject: [PATCH v1 3/5] clk: tegra: emc: Fix EMC max-rate clamping
+Date: Fri, 12 Apr 2019 01:02:28 +0300
+Message-ID: <20190411220230.21726-4-digetx@gmail.com>
 References: <20190411220230.21726-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,59 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvi
 Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Memory Controller clock rate can't be simply changed and nothing in
-kernel need to change the rate, hence let's make the clock read-only.
+When a clk user requests rate that is higher than the maximum possible,
+the rate shall be clamped to the maximum and not to the current value.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-divider.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-emc.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 205fe8ff63f0..f891bbb0d06d 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -175,6 +175,7 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
- 				  void __iomem *reg, spinlock_t *lock)
- {
- 	return clk_register_divider_table(NULL, name, parent_name,
--					  CLK_IS_CRITICAL, reg, 16, 1, 0,
--					  mc_div_table, lock);
-+					  CLK_IS_CRITICAL |
-+					  CLK_DIVIDER_READ_ONLY,
-+					  reg, 16, 1, 0, mc_div_table, lock);
- }
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+index 28068584ff6e..9a0179235939 100644
+--- a/drivers/clk/tegra/clk-emc.c
++++ b/drivers/clk/tegra/clk-emc.c
+@@ -121,7 +121,7 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ 	struct tegra_clk_emc *tegra;
+ 	u8 ram_code = tegra_read_ram_code();
+ 	struct emc_timing *timing = NULL;
+-	int i, k;
++	int i, k, t;
+ 
+ 	tegra = container_of(hw, struct tegra_clk_emc, hw);
+ 
+@@ -130,12 +130,17 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ 			break;
+ 	}
+ 
+-	for (i = k; i < tegra->num_timings; i++) {
+-		if (tegra->timings[i].ram_code != ram_code)
++	for (t = k; t < tegra->num_timings; t++) {
++		if (tegra->timings[t].ram_code != ram_code)
+ 			break;
++	}
+ 
++	for (i = k; i < t; i++) {
+ 		timing = tegra->timings + i;
+ 
++		if (timing->rate < req->rate && i != t - 1)
++			continue;
++
+ 		if (timing->rate > req->max_rate) {
+ 			i = max(i, k + 1);
+ 			req->rate = tegra->timings[i - 1].rate;
+@@ -145,10 +150,8 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ 		if (timing->rate < req->min_rate)
+ 			continue;
+ 
+-		if (timing->rate >= req->rate) {
+-			req->rate = timing->rate;
+-			return 0;
+-		}
++		req->rate = timing->rate;
++		return 0;
+ 	}
+ 
+ 	if (timing) {
 -- 
 2.21.0
