@@ -1,262 +1,531 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] PM / devfreq: Introduce driver for NVIDIA Tegra20
-Date: Fri, 12 Apr 2019 01:36:53 +0300
-Message-ID: <20190411223653.27322-1-digetx@gmail.com>
+Subject: [PATCH v1] clk: tegra20/30: Add custom EMC clock implementation
+Date: Fri, 12 Apr 2019 01:47:08 +0300
+Message-ID: <20190411224708.29103-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add devfreq driver for NVIDIA Tegra20 SoC's. The driver periodically
-reads out Memory Controller counters and adjusts memory frequency based
-on the memory clients activity.
+A proper External Memory Controller clock rounding and parent selection
+functionality is required by the EMC drivers. It is not available using
+the generic clock implementation, hence add a custom one. The clock rate
+rounding shall be done by the EMC drivers because they have information
+about available memory timings, so the drivers will have to register a
+callback that will round the requested rate. EMC clock users won't be able
+to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
+and the callback is set up. The functionality is somewhat similar to the
+clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
+more parent clock sources and the HW configuration and integration with
+the EMC drivers differs a tad from the older gens, hence it's not really
+worth to try to squash everything into a single source file.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- MAINTAINERS                       |   8 ++
- drivers/devfreq/Kconfig           |  10 ++
- drivers/devfreq/Makefile          |   1 +
- drivers/devfreq/tegra20-devfreq.c | 177 ++++++++++++++++++++++++++++++
- 4 files changed, 196 insertions(+)
- create mode 100644 drivers/devfreq/tegra20-devfreq.c
+ drivers/clk/tegra/Makefile          |   2 +
+ drivers/clk/tegra/clk-tegra20-emc.c | 274 ++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c     |  51 ++----
+ drivers/clk/tegra/clk-tegra30.c     |  35 ++--
+ drivers/clk/tegra/clk.h             |   6 +
+ include/linux/clk/tegra.h           |   3 +
+ 6 files changed, 321 insertions(+), 50 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 80b59db1b6e4..91f475ec4545 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10056,6 +10056,14 @@ F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	Documentation/core-api/boot-time-mm.rst
- 
-+MEMORY FREQUENCY SCALING DRIVER FOR NVIDIA TEGRA20
-+M:	Dmitry Osipenko <digetx@gmail.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-tegra@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+S:	Maintained
-+F:	drivers/devfreq/tegra20-devfreq.c
-+
- MEMORY MANAGEMENT
- L:	linux-mm@kvack.org
- W:	http://www.linux-mm.org
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 6bae9688a52b..c2a1f791ca86 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -101,6 +101,16 @@ config ARM_TEGRA_DEVFREQ
- 	  It reads ACTMON counters of memory controllers and adjusts the
- 	  operating frequencies and voltages with OPP support.
- 
-+config ARM_TEGRA20_DEVFREQ
-+	tristate "Tegra20 DEVFREQ Driver"
-+	depends on TEGRA_MC && TEGRA20_EMC
-+	select DEVFREQ_GOV_SIMPLE_ONDEMAND
-+	select PM_OPP
-+	help
-+	  This adds the DEVFREQ driver for the Tegra20 family of SoCs.
-+	  It reads Memory Controller counters and adjusts the operating
-+	  frequencies and voltages with OPP support.
-+
- config ARM_RK3399_DMC_DEVFREQ
- 	tristate "ARM RK3399 DMC DEVFREQ Driver"
- 	depends on ARCH_ROCKCHIP
-diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-index 32b8d4d3f12c..6fcc5596b8b7 100644
---- a/drivers/devfreq/Makefile
-+++ b/drivers/devfreq/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+= governor_passive.o
- obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
- obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
- obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra-devfreq.o
-+obj-$(CONFIG_ARM_TEGRA20_DEVFREQ)	+= tegra20-devfreq.o
- 
- # DEVFREQ Event Drivers
- obj-$(CONFIG_PM_DEVFREQ_EVENT)		+= event/
-diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index 4812e45c2214..df966ca06788 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
+ obj-y					+= clk-tegra-super-gen4.o
+ obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
++obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
++obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+ obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
+ obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
+diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-tegra20-emc.c
 new file mode 100644
-index 000000000000..18c9aad7a9d7
+index 000000000000..2cc8f16cd136
 --- /dev/null
-+++ b/drivers/devfreq/tegra20-devfreq.c
-@@ -0,0 +1,177 @@
++++ b/drivers/clk/tegra/clk-tegra20-emc.c
+@@ -0,0 +1,274 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * NVIDIA Tegra20 devfreq driver
-+ *
-+ * Author: Dmitry Osipenko <digetx@gmail.com>
-+ */
 +
-+#include <linux/clk.h>
-+#include <linux/devfreq.h>
++#include <linux/clk/tegra.h>
++#include <linux/err.h>
 +#include <linux/io.h>
 +#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
 +#include <linux/slab.h>
 +
-+#include <soc/tegra/mc.h>
++#include "clk.h"
 +
-+#include "governor.h"
++#define CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK	0xff
++#define CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT		30
++#define CLK_SOURCE_EMC_2X_CLK_SRC_MASK		0xc0000000
 +
-+#define MC_STAT_CONTROL				0x90
-+#define MC_STAT_EMC_CLOCK_LIMIT			0xa0
-+#define MC_STAT_EMC_CLOCKS			0xa4
-+#define MC_STAT_EMC_CONTROL			0xa8
-+#define MC_STAT_EMC_COUNT			0xb8
++#define CLK_SOURCE_EMC	0x19c
 +
-+#define EMC_GATHER_CLEAR			(1 << 8)
-+#define EMC_GATHER_ENABLE			(3 << 8)
++#define USE_PLLM_UD	BIT(29)
 +
-+struct tegra_devfreq {
-+	struct devfreq *devfreq;
++#define EMC_SRC_PLL_M	0
++#define EMC_SRC_PLL_C	1
++#define EMC_SRC_PLL_P	2
++#define EMC_SRC_CLK_M	3
++
++static const char * const emc_parent_clk_names[] = {
++	"pll_m", "pll_c", "pll_p", "clk_m",
++};
++
++struct tegra_clk_emc {
++	struct clk_hw hw;
++	void __iomem *ioaddr;
++	bool want_low_jitter;
++
++	long (*round_cb)(unsigned long, unsigned long, unsigned long, void *);
++	void *arg_cb;
++};
++
++static inline struct tegra_clk_emc *to_tegra_clk_emc(struct clk_hw *hw)
++{
++	return container_of(hw, struct tegra_clk_emc, hw);
++}
++
++static unsigned long emc_recalc_rate(struct clk_hw *hw,
++				     unsigned long parent_rate)
++{
++	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
++	u32 val, div;
++
++	val = readl_relaxed(emc->ioaddr);
++	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
++
++	return DIV_ROUND_UP(parent_rate * 2, div + 2);
++}
++
++static u8 emc_get_parent(struct clk_hw *hw)
++{
++	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
++
++	return readl_relaxed(emc->ioaddr) >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
++}
++
++static int emc_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
++	u32 val, div;
++
++	val = readl_relaxed(emc->ioaddr);
++	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
++	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
++	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
++
++	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
++		val |= USE_PLLM_UD;
++	else
++		val &= ~USE_PLLM_UD;
++
++	writel_relaxed(val, emc->ioaddr);
++
++	return 0;
++}
++
++static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long parent_rate)
++{
++	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
++	unsigned int parent;
++	u32 val, div;
++
++	div = div_frac_get(rate, parent_rate, 8, 1, 0);
++
++	val = readl_relaxed(emc->ioaddr);
++	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
++	val |= div;
++
++	parent = val >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
++
++	if (parent == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
++		val |= USE_PLLM_UD;
++	else
++		val &= ~USE_PLLM_UD;
++
++	writel_relaxed(val, emc->ioaddr);
++
++	return 0;
++}
++
++static int emc_set_rate_and_parent(struct clk_hw *hw,
++				   unsigned long rate,
++				   unsigned long parent_rate,
++				   u8 index)
++{
++	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
++	u32 val, div;
++
++	div = div_frac_get(rate, parent_rate, 8, 1, 0);
++
++	val = readl_relaxed(emc->ioaddr);
++
++	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
++	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
++
++	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
++	val |= div;
++
++	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
++		val |= USE_PLLM_UD;
++	else
++		val &= ~USE_PLLM_UD;
++
++	writel_relaxed(val, emc->ioaddr);
++
++	return 0;
++}
++
++static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
++	struct clk_hw *parent_hw;
++	unsigned long divided_rate;
++	unsigned long parent_rate;
++	unsigned int i;
++	long emc_rate;
++	int div;
++
++	emc_rate = emc->round_cb(req->rate, req->min_rate, req->max_rate,
++				 emc->arg_cb);
++	if (emc_rate < 0)
++		return emc_rate;
++
++	for (i = 0; i < ARRAY_SIZE(emc_parent_clk_names); i++) {
++		parent_hw = clk_hw_get_parent_by_index(hw, i);
++
++		if (req->best_parent_hw == parent_hw)
++			parent_rate = req->best_parent_rate;
++		else
++			parent_rate = clk_hw_get_rate(parent_hw);
++
++		if (emc_rate > parent_rate)
++			continue;
++
++		div = div_frac_get(emc_rate, parent_rate, 8, 1, 0);
++		divided_rate = DIV_ROUND_UP(parent_rate * 2, div + 2);
++
++		if (divided_rate != emc_rate)
++			continue;
++
++		req->best_parent_rate = parent_rate;
++		req->best_parent_hw = parent_hw;
++		req->rate = emc_rate;
++		break;
++	}
++
++	if (i == ARRAY_SIZE(emc_parent_clk_names)) {
++		WARN_ONCE(1, "can't find parent for rate %lu emc_rate %lu\n",
++			  req->rate, emc_rate);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static const struct clk_ops tegra_clk_emc_ops = {
++	.recalc_rate = emc_recalc_rate,
++	.get_parent = emc_get_parent,
++	.set_parent = emc_set_parent,
++	.set_rate = emc_set_rate,
++	.set_rate_and_parent = emc_set_rate_and_parent,
++	.determine_rate = emc_determine_rate,
++};
++
++void tegra20_clk_set_emc_round_callback(void *round_cb, void *arg_cb)
++{
++	struct clk *clk = __clk_lookup("emc");
++	struct tegra_clk_emc *emc;
++	struct clk_hw *hw;
++
++	if (clk) {
++		hw = __clk_get_hw(clk);
++		emc = to_tegra_clk_emc(hw);
++
++		emc->round_cb = round_cb;
++		emc->arg_cb = arg_cb;
++	}
++}
++
++bool tegra20_clk_emc_scaling_available(void)
++{
++	struct clk *clk = __clk_lookup("emc");
++	struct tegra_clk_emc *emc;
++	struct clk_hw *hw;
++
++	if (clk) {
++		hw = __clk_get_hw(clk);
++		emc = to_tegra_clk_emc(hw);
++
++		return !!emc->round_cb;
++	}
++
++	return false;
++}
++
++struct clk *tegra20_clk_register_emc(void __iomem *ioaddr)
++{
++	struct tegra_clk_emc *emc;
++	struct clk_init_data init;
 +	struct clk *clk;
-+	void __iomem *regs;
-+};
 +
-+static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-+				u32 flags)
-+{
-+	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
-+	struct dev_pm_opp *opp;
-+	unsigned long rate;
-+	int err;
++	emc = kzalloc(sizeof(*emc), GFP_KERNEL);
++	if (!emc)
++		return NULL;
 +
-+	opp = devfreq_recommended_opp(dev, freq, flags);
-+	if (IS_ERR(opp))
-+		return PTR_ERR(opp);
++	init.name = "emc";
++	init.ops = &tegra_clk_emc_ops;
++	init.flags = CLK_IS_CRITICAL;
++	init.parent_names = emc_parent_clk_names;
++	init.num_parents = ARRAY_SIZE(emc_parent_clk_names);
 +
-+	rate = dev_pm_opp_get_freq(opp);
-+	dev_pm_opp_put(opp);
++	emc->ioaddr = ioaddr;
++	emc->hw.init = &init;
 +
-+	err = clk_set_min_rate(tegra->clk, rate);
-+	if (err)
-+		return err;
-+
-+	err = clk_set_rate(tegra->clk, 0);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int tegra_devfreq_get_dev_status(struct device *dev,
-+					struct devfreq_dev_status *stat)
-+{
-+	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
-+
-+	stat->busy_time = readl_relaxed(tegra->regs + MC_STAT_EMC_COUNT);
-+	stat->total_time = readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / 8;
-+	stat->current_frequency = clk_get_rate(tegra->clk);
-+
-+	writel_relaxed(EMC_GATHER_CLEAR, tegra->regs + MC_STAT_CONTROL);
-+	writel_relaxed(EMC_GATHER_ENABLE, tegra->regs + MC_STAT_CONTROL);
-+
-+	return 0;
-+}
-+
-+static struct devfreq_dev_profile tegra_devfreq_profile = {
-+	.polling_ms	= 500,
-+	.target		= tegra_devfreq_target,
-+	.get_dev_status	= tegra_devfreq_get_dev_status,
-+};
-+
-+static struct tegra_mc *tegra_get_memory_controller(void)
-+{
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	struct tegra_mc *mc;
-+
-+	np = of_find_compatible_node(NULL, NULL, "nvidia,tegra20-mc-gart");
-+	if (!np)
-+		return ERR_PTR(-ENOENT);
-+
-+	pdev = of_find_device_by_node(np);
-+	of_node_put(np);
-+	if (!pdev)
-+		return ERR_PTR(-ENODEV);
-+
-+	mc = platform_get_drvdata(pdev);
-+	if (!mc)
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	return mc;
-+}
-+
-+static int tegra_devfeq_probe(struct platform_device *pdev)
-+{
-+	struct tegra_devfreq *tegra;
-+	struct tegra_mc *mc;
-+	unsigned long max_rate;
-+	unsigned long rate;
-+	int err;
-+
-+	mc = tegra_get_memory_controller();
-+	if (IS_ERR(mc)) {
-+		err = PTR_ERR(mc);
-+		dev_err(&pdev->dev, "failed to get mc: %d\n", err);
-+		return err;
++	clk = clk_register(NULL, &emc->hw);
++	if (IS_ERR(clk)) {
++		kfree(emc);
++		return NULL;
 +	}
 +
-+	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-+	if (!tegra)
-+		return -ENOMEM;
-+
-+	tegra->clk = devm_clk_get(&pdev->dev, "emc");
-+	if (IS_ERR(tegra->clk)) {
-+		err = PTR_ERR(tegra->clk);
-+		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
-+		return err;
-+	}
-+
-+	tegra->regs = mc->regs;
-+
-+	max_rate = clk_round_rate(tegra->clk, ULONG_MAX);
-+
-+	for (rate = 0; rate <= max_rate; rate++) {
-+		rate = clk_round_rate(tegra->clk, rate);
-+		dev_pm_opp_add(&pdev->dev, rate, 0);
-+	}
-+
-+	writel_relaxed(0x00000000, tegra->regs + MC_STAT_CONTROL);
-+	writel_relaxed(0x00000000, tegra->regs + MC_STAT_EMC_CONTROL);
-+	writel_relaxed(0xffffffff, tegra->regs + MC_STAT_EMC_CLOCK_LIMIT);
-+
-+	platform_set_drvdata(pdev, tegra);
-+
-+	tegra->devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
-+					    DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
-+	if (IS_ERR(tegra->devfreq))
-+		return PTR_ERR(tegra->devfreq);
-+
-+	return 0;
++	return clk;
 +}
 +
-+static int tegra_devfreq_remove(struct platform_device *pdev)
++void tegra30_clk_set_emc_round_callback(void *round_cb, void *arg_cb)
 +{
-+	struct tegra_devfreq *tegra = platform_get_drvdata(pdev);
-+
-+	devfreq_remove_device(tegra->devfreq);
-+	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-+
-+	return 0;
++	tegra20_clk_set_emc_round_callback(round_cb, arg_cb);
 +}
 +
-+static struct platform_driver tegra_devfeq_driver = {
-+	.probe		= tegra_devfeq_probe,
-+	.remove		= tegra_devfreq_remove,
-+	.driver		= {
-+		.name	= "tegra20-devfreq",
-+	},
-+};
-+module_platform_driver(tegra_devfeq_driver);
++bool tegra30_clk_emc_scaling_available(void)
++{
++	return tegra20_clk_emc_scaling_available();
++}
 +
-+MODULE_ALIAS("platform:tegra20-devfreq");
-+MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
-+MODULE_DESCRIPTION("NVIDIA Tegra20 devfreq driver");
-+MODULE_LICENSE("GPL v2");
++struct clk *tegra30_clk_register_emc(void __iomem *ioaddr)
++{
++	struct tegra_clk_emc *emc;
++	struct clk_hw *hw;
++	struct clk *clk;
++
++	clk = tegra20_clk_register_emc(ioaddr);
++	if (!clk)
++		return NULL;
++
++	hw = __clk_get_hw(clk);
++	emc = to_tegra_clk_emc(hw);
++	emc->want_low_jitter = true;
++
++	return clk;
++}
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index c71b61162a32..6f8b3795d33f 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -141,8 +141,6 @@ static struct cpu_clk_suspend_context {
+ static void __iomem *clk_base;
+ static void __iomem *pmc_base;
+ 
+-static DEFINE_SPINLOCK(emc_lock);
+-
+ #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
+ 			    _clk_num, _gate_flags, _clk_id)	\
+ 	TEGRA_INIT_DATA(_name, NULL, NULL, _parents, _offset,	\
+@@ -771,7 +769,6 @@ static const char *pwm_parents[] = { "pll_p", "pll_c", "audio", "clk_m",
+ static const char *mux_pllpcm_clkm[] = { "pll_p", "pll_c", "pll_m", "clk_m" };
+ static const char *mux_pllpdc_clkm[] = { "pll_p", "pll_d_out0", "pll_c",
+ 					 "clk_m" };
+-static const char *mux_pllmcp_clkm[] = { "pll_m", "pll_c", "pll_p", "clk_m" };
+ 
+ static struct tegra_periph_init_data tegra_periph_clk_list[] = {
+ 	TEGRA_INIT_DATA_MUX("i2s1", i2s1_parents,     CLK_SOURCE_I2S1,   11, TEGRA_PERIPH_ON_APB, TEGRA20_CLK_I2S1),
+@@ -798,41 +795,6 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
+ 
+-static void __init tegra20_emc_clk_init(void)
+-{
+-	const u32 use_pllm_ud = BIT(29);
+-	struct clk *clk;
+-	u32 emc_reg;
+-
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA20_CLK_MC] = clk;
+-
+-	/* un-divided pll_m_out0 is currently unsupported */
+-	emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
+-	if (emc_reg & use_pllm_ud) {
+-		pr_err("%s: un-divided PllM_out0 used as clock source\n",
+-		       __func__);
+-		return;
+-	}
+-
+-	/*
+-	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
+-	 * the same time due to a HW bug, this won't happen because we're
+-	 * defining 'emc_mux' and 'emc' as distinct clocks.
+-	 */
+-	clk = tegra_clk_register_divider("emc", "emc_mux",
+-				clk_base + CLK_SOURCE_EMC, CLK_IS_CRITICAL,
+-				TEGRA_DIVIDER_INT, 0, 8, 1, &emc_lock);
+-	clks[TEGRA20_CLK_EMC] = clk;
+-}
+-
+ static void __init tegra20_periph_clk_init(void)
+ {
+ 	struct tegra_periph_init_data *data;
+@@ -846,7 +808,13 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_AC97] = clk;
+ 
+ 	/* emc */
+-	tegra20_emc_clk_init();
++	clk = tegra20_clk_register_emc(clk_base + CLK_SOURCE_EMC);
++
++	clks[TEGRA20_CLK_EMC] = clk;
++
++	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
++				    NULL);
++	clks[TEGRA20_CLK_MC] = clk;
+ 
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
+@@ -1142,6 +1110,11 @@ static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
+ 			return ERR_PTR(-EPROBE_DEFER);
+ 	}
+ 
++	if (clkspec->args[0] == TEGRA20_CLK_EMC) {
++		if (!tegra20_clk_emc_scaling_available())
++			return ERR_PTR(-EPROBE_DEFER);
++	}
++
+ 	return clk;
+ }
+ 
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index fa8d573ac626..68aec6af4867 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -162,7 +162,6 @@ static unsigned long input_freq;
+ 
+ static DEFINE_SPINLOCK(cml_lock);
+ static DEFINE_SPINLOCK(pll_d_lock);
+-static DEFINE_SPINLOCK(emc_lock);
+ 
+ #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
+ 			    _clk_num, _gate_flags, _clk_id)	\
+@@ -819,7 +818,7 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_pll_a] = { .dt_id = TEGRA30_CLK_PLL_A, .present = true },
+ 	[tegra_clk_pll_a_out0] = { .dt_id = TEGRA30_CLK_PLL_A_OUT0, .present = true },
+ 	[tegra_clk_cec] = { .dt_id = TEGRA30_CLK_CEC, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA30_CLK_EMC, .present = true },
++	[tegra_clk_emc] = { .dt_id = TEGRA30_CLK_EMC, .present = false },
+ };
+ 
+ static const char *pll_e_parents[] = { "pll_ref", "pll_p" };
+@@ -1006,7 +1005,6 @@ static void __init tegra30_super_clk_init(void)
+ static const char *mux_pllacp_clkm[] = { "pll_a_out0", "unused", "pll_p",
+ 					 "clk_m" };
+ static const char *mux_pllpcm_clkm[] = { "pll_p", "pll_c", "pll_m", "clk_m" };
+-static const char *mux_pllmcp_clkm[] = { "pll_m", "pll_c", "pll_p", "clk_m" };
+ static const char *spdif_out_parents[] = { "pll_a_out0", "spdif_2x", "pll_p",
+ 					   "clk_m" };
+ static const char *mux_pllmcpa[] = { "pll_m", "pll_c", "pll_p", "pll_a_out0" };
+@@ -1055,14 +1053,12 @@ static void __init tegra30_periph_clk_init(void)
+ 	clks[TEGRA30_CLK_AFI] = clk;
+ 
+ 	/* emc */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
++	clk = tegra30_clk_register_emc(clk_base + CLK_SOURCE_EMC);
++
++	clks[TEGRA30_CLK_EMC] = clk;
+ 
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
++	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
++				    NULL);
+ 	clks[TEGRA30_CLK_MC] = clk;
+ 
+ 	/* cml0 */
+@@ -1313,6 +1309,23 @@ static struct tegra_audio_clk_info tegra30_audio_plls[] = {
+ 	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
+ };
+ 
++static struct clk *tegra30_clk_src_onecell_get(struct of_phandle_args *clkspec,
++					       void *data)
++{
++	struct clk *clk;
++
++	clk = of_clk_src_onecell_get(clkspec, data);
++	if (IS_ERR(clk))
++		return clk;
++
++	if (clkspec->args[0] == TEGRA30_CLK_EMC) {
++		if (!tegra30_clk_emc_scaling_available())
++			return ERR_PTR(-EPROBE_DEFER);
++	}
++
++	return clk;
++}
++
+ static void __init tegra30_clock_init(struct device_node *np)
+ {
+ 	struct device_node *node;
+@@ -1356,7 +1369,7 @@ static void __init tegra30_clock_init(struct device_node *np)
+ 
+ 	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
+ 
+-	tegra_add_of_provider(np, of_clk_src_onecell_get);
++	tegra_add_of_provider(np, tegra30_clk_src_onecell_get);
+ 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+ 
+ 	tegra_clk_apply_init_table = tegra30_clock_apply_init_table;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 09bccbb9640c..7d31914d0916 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -849,4 +849,10 @@ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+ 		udelay(delay);		\
+ 	} while (0)
+ 
++bool tegra20_clk_emc_scaling_available(void);
++struct clk *tegra20_clk_register_emc(void __iomem *ioaddr);
++
++bool tegra30_clk_emc_scaling_available(void);
++struct clk *tegra30_clk_register_emc(void __iomem *ioaddr);
++
+ #endif /* TEGRA_CLK_H */
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index afb9edfa5d58..fc5ed7b1489d 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -130,4 +130,7 @@ extern void tegra210_put_utmipll_in_iddq(void);
+ extern void tegra210_put_utmipll_out_iddq(void);
+ extern int tegra210_clk_handle_mbist_war(unsigned int id);
+ 
++void tegra20_clk_set_emc_round_callback(void *round_cb, void *arg_cb);
++void tegra30_clk_set_emc_round_callback(void *round_cb, void *arg_cb);
++
+ #endif /* __LINUX_CLK_TEGRA_H_ */
 -- 
 2.21.0
