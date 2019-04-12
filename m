@@ -1,58 +1,48 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1 2/2] arm64: tegra: enable command queue for tegra186
- sdmmc4
-Date: Fri, 12 Apr 2019 17:37:21 +0200
-Message-ID: <20190412153721.GB21159@ulmo>
-References: <1555011474-20107-1-git-send-email-skomatineni@nvidia.com>
- <1555011474-20107-2-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/8] PM / devfreq: tegra: Fix kHz to Hz conversion
+Date: Fri, 12 Apr 2019 19:56:58 +0300
+Message-ID: <ab8dfa58-5e38-7538-3d82-d762341cd1b9@gmail.com>
+References: <20190411222914.25539-1-digetx@gmail.com>
+ <20190411222914.25539-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1555011474-20107-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190411222914.25539-2-digetx@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, riteshh@codeaurora.org, jonathanh@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---FkmkrVfFsRoUs1wW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 11, 2019 at 12:37:54PM -0700, Sowjanya Komatineni wrote:
-> This patch enables command queue support for Tegra186 SDMMC4.
->=20
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+12.04.2019 1:29, Dmitry Osipenko пишет:
+> The kHz to Hz is incorrectly converted in a few places in the code,
+> this results in a wrong frequency being calculated because devfreq core
+> uses OPP frequencies that are given in Hz to clamp the rate, while
+> tegra-devfreq gives to the core value in kHz and then it also expects to
+> receive value in kHz from the core. In a result memory freq is always set
+> to a value which is close to ULONG_MAX because of the bug. Hence the EMC
+> frequency is always capped to the maximum and the driver doesn't do
+> anything useful. Let's provide OPP with rates in kHz since this eliminates
+> few multiplies and divisions in the code. This patch was tested on Tegra30
+> and Tegra124 SoC's, EMC frequency scaling works properly now.
+> 
+> Cc: <stable@vger.kernel.org>
+> Tested-by: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/devfreq/tegra-devfreq.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+> index c89ba7b834ff..ec4ff55f5eea 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -394,7 +394,7 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
+>  
+>  	tegra = container_of(nb, struct tegra_devfreq, rate_change_nb);
+>  
+> -	tegra->cur_freq = data->new_rate / KHZ;
+> +	tegra->cur_freq = data->new_rate;
 
-Applied, thanks.
-
-Thierry
-
---FkmkrVfFsRoUs1wW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlywsLAACgkQ3SOs138+
-s6Ez6w/9G4OglGZXk/Rwe6TE1G1g92cvW4k1u/TwGWo/UyM5xrs9deo04ZSns8dJ
-svV/yRsNRMIh3yyDAxj/nBmsybtMDzhtUTK6YmZMrPkZtbgrzOINaYltP8Yjd9Lj
-+Fj3sDyak3pD9CJo9r3fni24rIbdqMhCYx3ozspf72NOdRG3IF0OecbqI3o+oxKZ
-HiNs3e10cvSSWurK3oyIxLVvk0RO+PqL4TKGn2GXlXJbP7Zp5JL0c5nSohTzqfrQ
-mC/qPXR4z8UBIwdHysffk/CoJYOQmQ0G6PGqoDC2yCjy8r+6pyx1K8ZTSFY1KamD
-xCZ339xQyRYERDPxLZWv7tRDYf00sY8YRetbZKUP0+87yxwwVJtjUN6sHzE/5iua
-qGklQU+uUBI3FxDUZulv8MHsRFUc2gW9HMU5XnUP0BwW/7H9cr89JoIwla0t2d1P
-jFqYZLjUXtXaMlbNAoX5vh+Jblj9TSYplJ17olPdLZ/kvju8wnIi4atLhNI9P7LC
-6NK+8b0IQGmPfibNXzAumlC9EJB/gEoo2BA6Wuj++AxAPJXUqXBDMnjqb+CJ+IQj
-McazrlPUA6HD8D3hN2rVDf+ThGROADQnOrgjaUm9ZbkwB0/VD9l85SejOrpQ922w
-sdXzrZxS7KQlYkCR950cgb7HhJv13C1SqA9LAzBsgWP4mN0g4nA=
-=0Tdg
------END PGP SIGNATURE-----
-
---FkmkrVfFsRoUs1wW--
+This was a last-minute change and it is incorrect. The cur_freq should be kept in kHz, I'll fix it up in v2 and re-test everything properly once again.
