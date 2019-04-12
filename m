@@ -1,84 +1,81 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 11/20] spi: expand mode support and add LSBYTE_FIRST
- mode
-Date: Fri, 12 Apr 2019 09:32:48 +0100
-Message-ID: <20190412083248.GB6909@sirena.org.uk>
-References: <1554423259-26056-1-git-send-email-skomatineni@nvidia.com>
- <1554423259-26056-11-git-send-email-skomatineni@nvidia.com>
- <20190408062819.GJ2803@sirena.org.uk>
- <BYAPR12MB3398CC43DC1F78A10BC51DE8C22F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] clk: tegra20/30: Add custom EMC clock implementation
+Date: Fri, 12 Apr 2019 13:09:12 +0300
+Message-ID: <683b978a-8c7c-0593-755b-90975907e7ff@gmail.com>
+References: <20190411224708.29103-1-digetx@gmail.com>
+ <20190412074658.GF12975@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB3398CC43DC1F78A10BC51DE8C22F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <20190412074658.GF12975@pdeschrijver-desktop.Nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+12.04.2019 10:46, Peter De Schrijver пишет:
+> On Fri, Apr 12, 2019 at 01:47:08AM +0300, Dmitry Osipenko wrote:
+>> A proper External Memory Controller clock rounding and parent selection
+>> functionality is required by the EMC drivers. It is not available using
+>> the generic clock implementation, hence add a custom one. The clock rate
+>> rounding shall be done by the EMC drivers because they have information
+>> about available memory timings, so the drivers will have to register a
+>> callback that will round the requested rate. EMC clock users won't be able
+>> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
+>> and the callback is set up. The functionality is somewhat similar to the
+>> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
+>> more parent clock sources and the HW configuration and integration with
+>> the EMC drivers differs a tad from the older gens, hence it's not really
+>> worth to try to squash everything into a single source file.
+>>
+> ..
+> 
+>> +	val = readl_relaxed(emc->ioaddr);
+>> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+>> +	val |= div;
+>> +
+>> +	parent = val >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+>> +
+>> +	if (parent == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
+>> +		val |= USE_PLLM_UD;
+>> +	else
+>> +		val &= ~USE_PLLM_UD;
+>> +
+> 
+> Note that low jitter means the divider is bypassed, so you can only use
+> this when div == 1.
+> 
+>> +	writel_relaxed(val, emc->ioaddr);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int emc_set_rate_and_parent(struct clk_hw *hw,
+>> +				   unsigned long rate,
+>> +				   unsigned long parent_rate,
+>> +				   u8 index)
+>> +{
+>> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
+>> +	u32 val, div;
+>> +
+>> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
+>> +
+>> +	val = readl_relaxed(emc->ioaddr);
+>> +
+>> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
+>> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+>> +
+>> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+>> +	val |= div;
+>> +
+>> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
+>> +		val |= USE_PLLM_UD;
+>> +	else
+>> +		val &= ~USE_PLLM_UD;
+>> +
+> 
+> Same here ofcourse.
 
---DKU6Jbt7q3WqK7+M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 11, 2019 at 07:58:33PM +0000, Sowjanya Komatineni wrote:
-> > On Thu, Apr 04, 2019 at 05:14:10PM -0700, Sowjanya Komatineni wrote:
-
-> > > Some SPI Master controllers support configuring Least significant byt=
-e=20
-> > > first or Most significant byte first order for transfers. Also some=
-=20
-> > > SPI slave devices expect bytes to be in Least significant first order=
-=20
-> > > and some devices expect Most significant first order.
-
-> > > SPI driver declares mode and mode_bits as u16 and all bits are used.
-
-> > > This patch changes mode and mode_bits to be u32 to allow for more mod=
-e=20
-> > > configurations.
-
-> > > This patch also creates SPI_LSBYTE_FIRST mode to allow SPI clients to=
-=20
-> > > choose LSByte order or MSByte order through the device tree property=
-=20
-> > > spi-lsbyte-first.
-
-> > Please submit one patch per change, each with a clear changelog, as cov=
-ered in SubmittingPatches.  This makes it much easier to review things sinc=
-e it's easier to tell if the patch does what it was intended to do and mean=
-s that if one part of the patch casues problems it won't hold up the other =
-parts.
-
-> I split changes on SPI code side and SPI Tegra side as separate patches.
-> Do you meant to have both changes on SPI core and SPI Tegra together in a=
- single patch?
-
-You are expanding the size of the mode variable and adding a new mode in
-the same patch.  These are two separate changes and should be in two
-separate patches, as soon as you start writing "Also..." in a changelog
-that should be a warning flag.
-
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
-
---DKU6Jbt7q3WqK7+M
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlywTTAACgkQJNaLcl1U
-h9ASVgf/YJl1oQzWArLRQHn7PzVwQ4QsUKLnP+dbbx8RWVhM93Whw0IURubE0Qkj
-zHIRDTu88rSP4hQMymsqJwcN9ZSWA/QgWW/950S+kZQ23a7d2hmSfC5LEXZACawm
-gJ1MFuHKf5zA1nHTeSu1aXVR6QdABMaAvu0Bk+VPplAZPuLI5k7vvLxcxGZ7G3e8
-S5Xwyo3Prv9T4J8pMiD/5eg4jc/o05MTw26M2kFRE2IV9STQ25DaSIQjtMhTq8c2
-kaBMQKAfEnQ+roNYcqNKMo4SPCCmNrR8MljdRf/bmIqaLIhyj9P/qRFOrjeC19eM
-ELTmw4Unue23lYbVs5FVE3JuWWbQgg==
-=0IqI
------END PGP SIGNATURE-----
-
---DKU6Jbt7q3WqK7+M--
+Please note that hw_div = div + 1.0, hence writing div=0 means that HW divider is disabled and thus can be bypassed to get a low jitter clock. Also please note that div_frac_get() returns the "hw_div" value. Tegra30 doesn't work well if low jitter isn't enabled for the high clock rate (hangs after couple seconds) and Tegra20 is the opposite. Everything should be fine and it is working well, I don't see any problem.
