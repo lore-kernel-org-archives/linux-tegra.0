@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 3/5] clk: tegra: emc: Fix EMC max-rate clamping
-Date: Sun, 14 Apr 2019 22:23:19 +0300
-Message-ID: <20190414192321.23294-4-digetx@gmail.com>
+Subject: [PATCH v2 4/5] clk: tegra: emc: Replace BUG() with WARN_ONCE()
+Date: Sun, 14 Apr 2019 22:23:20 +0300
+Message-ID: <20190414192321.23294-5-digetx@gmail.com>
 References: <20190414192321.23294-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,59 +12,28 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvi
 Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-When a clk user requests rate that is higher than the maximum possible,
-the rate shall be clamped to the maximum and not to the current value.
+There is no justification for the BUG() in this code.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-emc.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/clk/tegra/clk-emc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 28068584ff6e..9a0179235939 100644
+index 9a0179235939..93ecb538e59b 100644
 --- a/drivers/clk/tegra/clk-emc.c
 +++ b/drivers/clk/tegra/clk-emc.c
-@@ -121,7 +121,7 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- 	struct tegra_clk_emc *tegra;
- 	u8 ram_code = tegra_read_ram_code();
- 	struct emc_timing *timing = NULL;
--	int i, k;
-+	int i, k, t;
+@@ -222,7 +222,10 @@ static int emc_set_timing(struct tegra_clk_emc *tegra,
  
- 	tegra = container_of(hw, struct tegra_clk_emc, hw);
- 
-@@ -130,12 +130,17 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- 			break;
+ 	if (emc_get_parent(&tegra->hw) == timing->parent_index &&
+ 	    clk_get_rate(timing->parent) != timing->parent_rate) {
+-		BUG();
++		WARN_ONCE(1, "parent %s rate mismatch %lu %lu\n",
++			  __clk_get_name(timing->parent),
++			  clk_get_rate(timing->parent),
++			  timing->parent_rate);
+ 		return -EINVAL;
  	}
  
--	for (i = k; i < tegra->num_timings; i++) {
--		if (tegra->timings[i].ram_code != ram_code)
-+	for (t = k; t < tegra->num_timings; t++) {
-+		if (tegra->timings[t].ram_code != ram_code)
- 			break;
-+	}
- 
-+	for (i = k; i < t; i++) {
- 		timing = tegra->timings + i;
- 
-+		if (timing->rate < req->rate && i != t - 1)
-+			continue;
-+
- 		if (timing->rate > req->max_rate) {
- 			i = max(i, k + 1);
- 			req->rate = tegra->timings[i - 1].rate;
-@@ -145,10 +150,8 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- 		if (timing->rate < req->min_rate)
- 			continue;
- 
--		if (timing->rate >= req->rate) {
--			req->rate = timing->rate;
--			return 0;
--		}
-+		req->rate = timing->rate;
-+		return 0;
- 	}
- 
- 	if (timing) {
 -- 
 2.21.0
