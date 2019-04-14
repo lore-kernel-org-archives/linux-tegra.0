@@ -1,44 +1,36 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
-Date: Sun, 14 Apr 2019 18:27:43 +0300
-Message-ID: <45e82026-3240-1c98-758b-d41fcc404377@gmail.com>
-References: <20190224153222.8142-1-digetx@gmail.com>
- <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
- <20190304081857.GE21084@pdeschrijver-desktop.Nvidia.com>
- <9171e4f6-1ede-ab3a-caa6-83a2d9033650@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [PATCH 04/12] phy: tegra: add missing of_node_put after
+ of_device_is_available
+Date: Sun, 14 Apr 2019 17:42:15 +0200
+Message-ID: <00e76c9f-a551-ee83-9cb3-b2c3b8523c5c@web.de>
+References: <1550928043-14889-5-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9171e4f6-1ede-ab3a-caa6-83a2d9033650@gmail.com>
+In-Reply-To: <1550928043-14889-5-git-send-email-Julia.Lawall@lip6.fr>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Mukesh Ojha <mojha@codeaurora.org>, linux-tegra@vger.kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-04.03.2019 16:42, Dmitry Osipenko пишет:
-> 04.03.2019 11:18, Peter De Schrijver пишет:
->> On Wed, Feb 27, 2019 at 06:15:04PM +0300, Dmitry Osipenko wrote:
->>> 24.02.2019 18:32, Dmitry Osipenko пишет:
->>>> Initially Common Clock Framework isn't aware of the clock-enable status,
->>>> this results in enabling of clocks that were enabled by bootloader. This
->>>> is not a big deal for a regular clock-gates, but for PLL's it may have
->>>> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
->>>> clock) may result in extra long period of PLL re-locking.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>
->>> Peter (and everyone else), yours r-b and ACK will be appreciated since you kinda already took a look at this patch in the past and were okay with it (IIRC, we had some brief discussion on the #tegra IRC a few months ago), thanks. 
->>>
->>
->> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
->>
-> 
-> Awesome, thanks again!
-> 
+> @@ -260,8 +260,10 @@  tegra_xusb_pad_create(struct tegra_xusb_
+>  	int err;
+>
+>  	np =3D tegra_xusb_find_pad_node(padctl, soc->name);
+> -	if (!np || !of_device_is_available(np))
+> +	if (!np || !of_device_is_available(np)) {
+> +		of_node_put(np);
+>  		return NULL;
+> +	}
+>
+>  	pad =3D soc->ops->probe(padctl, soc, np);
+>  	if (IS_ERR(pad)) {
 
-Hello Stephen and Michael,
+How do you think about to move this function call to an additional jump ta=
+rget
+for the desired exception handling?
 
-Could you please pick up this patch to get it into linux-next to get some more testing exposure before it will hit upstream? Thanks in advance.
+Regards,
+Markus
