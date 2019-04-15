@@ -1,153 +1,464 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 13/16] arm64: tegra: Enable PCIe slots in P2972-0000
- board
-Date: Mon, 15 Apr 2019 17:12:35 +0200
-Message-ID: <20190415151235.GH29254@ulmo>
+Subject: Re: [PATCH V2 12/16] arm64: tegra: Add P2U and PCIe controller nodes
+ to Tegra194 DT
+Date: Mon, 15 Apr 2019 17:15:52 +0200
+Message-ID: <20190415151552.GI29254@ulmo>
 References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
- <1554407683-31580-14-git-send-email-vidyas@nvidia.com>
+ <1554407683-31580-13-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zVyz+SkbhTrRQGHt"
+        protocol="application/pgp-signature"; boundary="McTFpSeH7KqpdXA3"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1554407683-31580-14-git-send-email-vidyas@nvidia.com>
+In-Reply-To: <1554407683-31580-13-git-send-email-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Vidya Sagar <vidyas@nvidia.com>
 Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---zVyz+SkbhTrRQGHt
+--McTFpSeH7KqpdXA3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 05, 2019 at 01:24:40AM +0530, Vidya Sagar wrote:
-> Enable PCIe controller nodes to enable respective PCIe slots on
-> P2972-0000 board. Following is the ownership of slots by different
-> PCIe controllers.
-> Controller-0 : M.2 Key-M slot
-> Controller-1 : On-board Marvell eSATA controller
-> Controller-3 : M.2 Key-E slot
+On Fri, Apr 05, 2019 at 01:24:39AM +0530, Vidya Sagar wrote:
+> Add P2U (PIPE to UPHY) and PCIe controller nodes to device tree.
+> The Tegra194 SoC contains six PCIe controllers and twenty P2U instances
+> grouped into two different PHY bricks namely High-Speed IO (HSIO-12 P2Us)
+> and NVIDIA High Speed (NVHS-8 P2Us) respectively.
 >=20
 > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
 > Changes since [v1]:
-> * Dropped 'pcie-' from phy-names property strings
+> * Flattened all P2U nodes by removing 'hsio-p2u' and 'nvhs-p2u' super nod=
+es
+> * Changed P2U nodes compatible string from 'nvidia,tegra194-phy-p2u' to '=
+nvidia,tegra194-p2u'
+> * Changed reg-name from 'base' to 'ctl'
+> * Updated all PCIe nodes according to the changes made to DT documentatio=
+n file
 >=20
->  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  2 +-
->  arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 50 ++++++++++++++++=
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 449 +++++++++++++++++++++++++=
 ++++++
->  2 files changed, 51 insertions(+), 1 deletion(-)
+>  1 file changed, 449 insertions(+)
 >=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra194-p2888.dtsi
-> index 246c1ebbd055..13263529125b 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> @@ -191,7 +191,7 @@
->  						regulator-boot-on;
->  					};
-> =20
-> -					sd3 {
-> +					vdd_1v8ao: sd3 {
->  						regulator-name =3D "VDD_1V8AO";
->  						regulator-min-microvolt =3D <1800000>;
->  						regulator-max-microvolt =3D <1800000>;
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/ar=
-m64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> index b62e96945846..82eb30bceaa6 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> @@ -169,4 +169,54 @@
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/d=
+ts/nvidia/tegra194.dtsi
+> index c77ca211fa8f..5b62136d97a5 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> @@ -884,6 +884,166 @@
+>  				nvidia,interface =3D <3>;
 >  			};
 >  		};
+> +
+> +		p2u_0: p2u@03e10000 {			/* HSIO-Lane-0 */
+> +			compatible =3D "nvidia,tegra194-p2u";
+> +			reg =3D <0x03e10000 0x10000>;
+> +			reg-names =3D "ctl";
+> +
+> +			#phy-cells =3D <0>;
+> +		};
+> +
+[...]
+> +		p2u_12: p2u@03eb0000 {			/* NVHS-Lane-0 */
+> +			compatible =3D "nvidia,tegra194-p2u";
+> +			reg =3D <0x03eb0000 0x10000>;
+> +			reg-names =3D "ctl";
+> +
+> +			#phy-cells =3D <0>;
+> +		};
+[...]
+
+Do we perhaps want to include the type of P2U in the label? That would
+make it more obvious which ones to list in the PCIe controller nodes'
+phys properties. Something like:
+
+		p2u_hsio_0: p2u@3e10000 {
+			...
+		};
+
+		...
+
+		p2u_nvhs_0: p2u@3eb0000 {
+			...
+		};
+
+? Also, make sure to drop the leading 0 from unit-addresses. Recent
+versions of DTC have checks for that in place and will warn about it in
+recent Linux builds.
+
+[...]
+> @@ -1054,4 +1214,293 @@
+>  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>  		interrupt-parent =3D <&gic>;
 >  	};
 > +
 > +	pcie@14180000 {
-> +		status =3D "okay";
+> +		compatible =3D "nvidia,tegra194-pcie", "snps,dw-pcie";
+> +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
+> +		reg =3D <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)    =
+  */
+> +		       0x00 0x38000000 0x0 0x00040000   /* configuration space (256K) =
+*/
+> +		       0x00 0x38040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  =
+*/
+> +		       0x00 0x38080000 0x0 0x00040000>; /* DBI reg space (256K)       =
+*/
+> +		reg-names =3D "appl", "config", "atu_dma", "dbi";
 > +
-> +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
-> +
-> +		phys =3D <&p2u_2>,
-> +		       <&p2u_3>,
-> +		       <&p2u_4>,
-> +		       <&p2u_5>;
-
-You can use multiple entries on a single line, especially if they are
-this short.
-
-> +		phy-names =3D "p2u-0", "p2u-1", "p2u-2",
-> +			    "p2u-3";
-
-Same here.
-
-> +	};
-> +
-> +	pcie@14100000 {
-> +		status =3D "okay";
-> +
-> +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
-> +
-> +		phys =3D <&p2u_0>;
-> +		phy-names =3D "p2u-0";
-> +	};
-> +
-> +	pcie@14140000 {
-> +		status =3D "okay";
-> +
-> +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
-> +
-> +		phys =3D <&p2u_7>;
-> +		phy-names =3D "p2u-0";
-> +	};
-> +
-> +	pcie@141a0000 {
 > +		status =3D "disabled";
 > +
-> +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
+> +		#address-cells =3D <3>;
+> +		#size-cells =3D <2>;
+> +		device_type =3D "pci";
+> +		num-lanes =3D <8>;
+> +		num-viewport =3D <8>;
+> +		linux,pci-domain =3D <0>;
 > +
-> +		phys =3D <&p2u_12>,
-> +		       <&p2u_13>,
-> +		       <&p2u_14>,
-> +		       <&p2u_15>,
-> +		       <&p2u_16>,
-> +		       <&p2u_17>,
-> +		       <&p2u_18>,
-> +		       <&p2u_19>;
+> +		clocks =3D <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
+> +		clock-names =3D "core";
 > +
-> +		phy-names =3D "p2u-0", "p2u-1", "p2u-2",
-> +			    "p2u-3", "p2u-4", "p2u-5",
-> +			    "p2u-6", "p2u-7";
+> +		resets =3D <&bpmp TEGRA194_RESET_PEX0_CORE_0_APB>,
+> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_0>;
+> +		reset-names =3D "core_apb", "core";
+> +
+> +		interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,	/* controller interru=
+pt */
+> +			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+> +		interrupt-names =3D "intr", "msi";
+> +
+> +		#interrupt-cells =3D <1>;
+> +		interrupt-map-mask =3D <0 0 0 0>;
+> +		interrupt-map =3D <0 0 0 0 &gic 0 72 0x04>;
+> +
+> +		nvidia,bpmp =3D <&bpmp>;
+> +
+> +		supports-clkreq;
+> +		nvidia,disable-aspm-states =3D <0xf>;
+> +		nvidia,controller-id =3D <0>;
+> +		nvidia,aspm-cmrt-us =3D <60>;
+> +		nvidia,aspm-pwr-on-t-us =3D <20>;
+> +		nvidia,aspm-l0s-entrance-latency-us =3D <3>;
 
-And here.
+Didn't you remove some of these from the bindings?
 
 Thierry
 
+> +
+> +		bus-range =3D <0x0 0xff>;
+> +		ranges =3D <0x81000000 0x0 0x38100000 0x0 0x38100000 0x0 0x00100000   =
+ /* downstream I/O (1MB) */
+> +			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x3 0x40000000  /* prefe=
+tchable memory (13GB) */
+> +			  0x82000000 0x0 0x40000000 0x1B 0x40000000 0x0 0xC0000000>; /* non-p=
+refetchable memory (3GB) */
+> +	};
+> +
+> +	pcie@14100000 {
+> +		compatible =3D "nvidia,tegra194-pcie", "snps,dw-pcie";
+> +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_PCIEX1A>;
+> +		reg =3D <0x00 0x14100000 0x0 0x00020000   /* appl registers (128K)    =
+  */
+> +		       0x00 0x30000000 0x0 0x00040000   /* configuration space (256K) =
+*/
+> +		       0x00 0x30040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  =
+*/
+> +		       0x00 0x30080000 0x0 0x00040000>; /* DBI reg space (256K)       =
+*/
+> +		reg-names =3D "appl", "config", "atu_dma", "dbi";
+> +
+> +		status =3D "disabled";
+> +
+> +		#address-cells =3D <3>;
+> +		#size-cells =3D <2>;
+> +		device_type =3D "pci";
+> +		num-lanes =3D <1>;
+> +		num-viewport =3D <8>;
+> +		linux,pci-domain =3D <1>;
+> +
+> +		clocks =3D <&bpmp TEGRA194_CLK_PEX0_CORE_1>;
+> +		clock-names =3D "core";
+> +
+> +		resets =3D <&bpmp TEGRA194_RESET_PEX0_CORE_1_APB>,
+> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_1>;
+> +		reset-names =3D "core_apb", "core";
+> +
+> +		interrupts =3D <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,	/* controller interru=
+pt */
+> +			     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+> +		interrupt-names =3D "intr", "msi";
+> +
+> +		#interrupt-cells =3D <1>;
+> +		interrupt-map-mask =3D <0 0 0 0>;
+> +		interrupt-map =3D <0 0 0 0 &gic 0 45 0x04>;
+> +
+> +		nvidia,bpmp =3D <&bpmp>;
+> +
+> +		supports-clkreq;
+> +		nvidia,disable-aspm-states =3D <0xf>;
+> +		nvidia,controller-id =3D <1>;
+> +		nvidia,aspm-cmrt-us =3D <60>;
+> +		nvidia,aspm-pwr-on-t-us =3D <20>;
+> +		nvidia,aspm-l0s-entrance-latency-us =3D <3>;
+> +
+> +		bus-range =3D <0x0 0xff>;
+> +		ranges =3D <0x81000000 0x0 0x30100000 0x0 0x30100000 0x0 0x00100000   =
+ /* downstream I/O (1MB) */
+> +			  0xc2000000 0x12 0x00000000 0x12 0x00000000 0x0 0x30000000  /* prefe=
+tchable memory (768MB) */
+> +			  0x82000000 0x0 0x40000000 0x12 0x30000000 0x0 0x10000000>; /* non-p=
+refetchable memory (256MB) */
+> +	};
+> +
+> +	pcie@14120000 {
+> +		compatible =3D "nvidia,tegra194-pcie", "snps,dw-pcie";
+> +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_PCIEX1A>;
+> +		reg =3D <0x00 0x14120000 0x0 0x00020000   /* appl registers (128K)    =
+  */
+> +		       0x00 0x32000000 0x0 0x00040000   /* configuration space (256K) =
+*/
+> +		       0x00 0x32040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  =
+*/
+> +		       0x00 0x32080000 0x0 0x00040000>; /* DBI reg space (256K)       =
+*/
+> +		reg-names =3D "appl", "config", "atu_dma", "dbi";
+> +
+> +		status =3D "disabled";
+> +
+> +		#address-cells =3D <3>;
+> +		#size-cells =3D <2>;
+> +		device_type =3D "pci";
+> +		num-lanes =3D <1>;
+> +		num-viewport =3D <8>;
+> +		linux,pci-domain =3D <2>;
+> +
+> +		clocks =3D <&bpmp TEGRA194_CLK_PEX0_CORE_2>;
+> +		clock-names =3D "core";
+> +
+> +		resets =3D <&bpmp TEGRA194_RESET_PEX0_CORE_2_APB>,
+> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_2>;
+> +		reset-names =3D "core_apb", "core";
+> +
+> +		interrupts =3D <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,	/* controller interru=
+pt */
+> +			     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+> +		interrupt-names =3D "intr", "msi";
+> +
+> +		#interrupt-cells =3D <1>;
+> +		interrupt-map-mask =3D <0 0 0 0>;
+> +		interrupt-map =3D <0 0 0 0 &gic 0 47 0x04>;
+> +
+> +		nvidia,bpmp =3D <&bpmp>;
+> +
+> +		supports-clkreq;
+> +		nvidia,disable-aspm-states =3D <0xf>;
+> +		nvidia,controller-id =3D <2>;
+> +		nvidia,aspm-cmrt-us =3D <60>;
+> +		nvidia,aspm-pwr-on-t-us =3D <20>;
+> +		nvidia,aspm-l0s-entrance-latency-us =3D <3>;
+> +
+> +		bus-range =3D <0x0 0xff>;
+> +		ranges =3D <0x81000000 0x0 0x32100000 0x0 0x32100000 0x0 0x00100000   =
+ /* downstream I/O (1MB) */
+> +			  0xc2000000 0x12 0x40000000 0x12 0x40000000 0x0 0x30000000  /* prefe=
+tchable memory (768MB) */
+> +			  0x82000000 0x0 0x40000000 0x12 0x70000000 0x0 0x10000000>; /* non-p=
+refetchable memory (256MB) */
+> +	};
+> +
+> +	pcie@14140000 {
+> +		compatible =3D "nvidia,tegra194-pcie", "snps,dw-pcie";
+> +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_PCIEX1A>;
+> +		reg =3D <0x00 0x14140000 0x0 0x00020000   /* appl registers (128K)    =
+  */
+> +		       0x00 0x34000000 0x0 0x00040000   /* configuration space (256K) =
+*/
+> +		       0x00 0x34040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  =
+*/
+> +		       0x00 0x34080000 0x0 0x00040000>; /* DBI reg space (256K)       =
+*/
+> +		reg-names =3D "appl", "config", "atu_dma", "dbi";
+> +
+> +		status =3D "disabled";
+> +
+> +		#address-cells =3D <3>;
+> +		#size-cells =3D <2>;
+> +		device_type =3D "pci";
+> +		num-lanes =3D <1>;
+> +		num-viewport =3D <8>;
+> +		linux,pci-domain =3D <3>;
+> +
+> +		clocks =3D <&bpmp TEGRA194_CLK_PEX0_CORE_3>;
+> +		clock-names =3D "core";
+> +
+> +		resets =3D <&bpmp TEGRA194_RESET_PEX0_CORE_3_APB>,
+> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_3>;
+> +		reset-names =3D "core_apb", "core";
+> +
+> +		interrupts =3D <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,	/* controller interru=
+pt */
+> +			     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+> +		interrupt-names =3D "intr", "msi";
+> +
+> +		#interrupt-cells =3D <1>;
+> +		interrupt-map-mask =3D <0 0 0 0>;
+> +		interrupt-map =3D <0 0 0 0 &gic 0 49 0x04>;
+> +
+> +		nvidia,bpmp =3D <&bpmp>;
+> +
+> +		supports-clkreq;
+> +		nvidia,disable-aspm-states =3D <0xf>;
+> +		nvidia,controller-id =3D <3>;
+> +		nvidia,aspm-cmrt-us =3D <60>;
+> +		nvidia,aspm-pwr-on-t-us =3D <20>;
+> +		nvidia,aspm-l0s-entrance-latency-us =3D <3>;
+> +
+> +		bus-range =3D <0x0 0xff>;
+> +		ranges =3D <0x81000000 0x0 0x34100000 0x0 0x34100000 0x0 0x00100000   =
+ /* downstream I/O (1MB) */
+> +			  0xc2000000 0x12 0x80000000 0x12 0x80000000 0x0 0x30000000  /* prefe=
+tchable memory (768MB) */
+> +			  0x82000000 0x0 0x40000000 0x12 0xB0000000 0x0 0x10000000>; /* non-p=
+refetchable memory (256MB) */
+> +	};
+> +
+> +	pcie@14160000 {
+> +		compatible =3D "nvidia,tegra194-pcie", "snps,dw-pcie";
+> +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_PCIEX4A>;
+> +		reg =3D <0x00 0x14160000 0x0 0x00020000   /* appl registers (128K)    =
+  */
+> +		       0x00 0x36000000 0x0 0x00040000   /* configuration space (256K) =
+*/
+> +		       0x00 0x36040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  =
+*/
+> +		       0x00 0x36080000 0x0 0x00040000>; /* DBI reg space (256K)       =
+*/
+> +		reg-names =3D "appl", "config", "atu_dma", "dbi";
+> +
+> +		status =3D "disabled";
+> +
+> +		#address-cells =3D <3>;
+> +		#size-cells =3D <2>;
+> +		device_type =3D "pci";
+> +		num-lanes =3D <4>;
+> +		num-viewport =3D <8>;
+> +		linux,pci-domain =3D <4>;
+> +
+> +		clocks =3D <&bpmp TEGRA194_CLK_PEX0_CORE_4>;
+> +		clock-names =3D "core";
+> +
+> +		resets =3D <&bpmp TEGRA194_RESET_PEX0_CORE_4_APB>,
+> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_4>;
+> +		reset-names =3D "core_apb", "core";
+> +
+> +		interrupts =3D <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,	/* controller interru=
+pt */
+> +			     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+> +		interrupt-names =3D "intr", "msi";
+> +
+> +		#interrupt-cells =3D <1>;
+> +		interrupt-map-mask =3D <0 0 0 0>;
+> +		interrupt-map =3D <0 0 0 0 &gic 0 51 0x04>;
+> +
+> +		nvidia,bpmp =3D <&bpmp>;
+> +
+> +		supports-clkreq;
+> +		nvidia,disable-aspm-states =3D <0xf>;
+> +		nvidia,controller-id =3D <4>;
+> +		nvidia,aspm-cmrt-us =3D <60>;
+> +		nvidia,aspm-pwr-on-t-us =3D <20>;
+> +		nvidia,aspm-l0s-entrance-latency-us =3D <3>;
+> +
+> +		bus-range =3D <0x0 0xff>;
+> +		ranges =3D <0x81000000 0x0 0x36100000 0x0 0x36100000 0x0 0x00100000   =
+ /* downstream I/O (1MB) */
+> +			  0xc2000000 0x14 0x00000000 0x14 0x00000000 0x3 0x40000000  /* prefe=
+tchable memory (13GB) */
+> +			  0x82000000 0x0 0x40000000 0x17 0x40000000 0x0 0xC0000000>; /* non-p=
+refetchable memory (3GB) */
+> +	};
+> +
+> +	pcie@141a0000 {
+> +		compatible =3D "nvidia,tegra194-pcie", "snps,dw-pcie";
+> +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8A>;
+> +		reg =3D <0x00 0x141a0000 0x0 0x00020000   /* appl registers (128K)    =
+  */
+> +		       0x00 0x3a000000 0x0 0x00040000   /* configuration space (256K) =
+*/
+> +		       0x00 0x3a040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  =
+*/
+> +		       0x00 0x3a080000 0x0 0x00040000>; /* DBI reg space (256K)       =
+*/
+> +		reg-names =3D "appl", "config", "atu_dma", "dbi";
+> +
+> +		status =3D "disabled";
+> +
+> +		#address-cells =3D <3>;
+> +		#size-cells =3D <2>;
+> +		device_type =3D "pci";
+> +		num-lanes =3D <8>;
+> +		num-viewport =3D <8>;
+> +		linux,pci-domain =3D <5>;
+> +
+> +		clocks =3D <&bpmp TEGRA194_CLK_PEX1_CORE_5>,
+> +			<&bpmp TEGRA194_CLK_PEX1_CORE_5M>;
+> +		clock-names =3D "core", "core_m";
+> +
+> +		resets =3D <&bpmp TEGRA194_RESET_PEX1_CORE_5_APB>,
+> +			 <&bpmp TEGRA194_RESET_PEX1_CORE_5>;
+> +		reset-names =3D "core_apb", "core";
+> +
+> +		interrupts =3D <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,	/* controller interru=
+pt */
+> +			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
+> +		interrupt-names =3D "intr", "msi";
+> +
+> +		nvidia,bpmp =3D <&bpmp>;
+> +
+> +		#interrupt-cells =3D <1>;
+> +		interrupt-map-mask =3D <0 0 0 0>;
+> +		interrupt-map =3D <0 0 0 0 &gic 0 53 0x04>;
+> +
+> +		supports-clkreq;
+> +		nvidia,disable-aspm-states =3D <0xf>;
+> +		nvidia,controller-id =3D <5>;
+> +		nvidia,aspm-cmrt-us =3D <60>;
+> +		nvidia,aspm-pwr-on-t-us =3D <20>;
+> +		nvidia,aspm-l0s-entrance-latency-us =3D <3>;
+> +
+> +		bus-range =3D <0x0 0xff>;
+> +		ranges =3D <0x81000000 0x0 0x3a100000 0x0 0x3a100000 0x0 0x00100000   =
+ /* downstream I/O (1MB) */
+> +			  0xc2000000 0x1c 0x00000000 0x1c 0x00000000 0x3 0x40000000  /* prefe=
+tchable memory (13GB) */
+> +			  0x82000000 0x0 0x40000000 0x1f 0x40000000 0x0 0xC0000000>; /* non-p=
+refetchable memory (3GB) */
 > +	};
 >  };
 > --=20
 > 2.7.4
 >=20
 
---zVyz+SkbhTrRQGHt
+--McTFpSeH7KqpdXA3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAly0n2MACgkQ3SOs138+
-s6EKUg/8CuQgd9IJSKcSqBqVy1qkktbrZ2TyIU+Nz6bWffZLOjmQVPJ/k1r6oyEW
-RTMkDFsBdstbWGnHahJN69f0EphUtoQrWVwUW8T2qaddvOF7QWiuQ7FRgwUOeRJL
-Or7wH64G/6JXpUX5hpVk9tSRTIv0Kngy7lV86+SD4RcmaEtKEJ+BT1Ks86Ak0v5Q
-5wUFKIsUo8Rem8PBxCWlsRvGRN6+DkvLrkvdkekOo3D1QmoLbST0iFzfdV+BSeCn
-D6DB1RJKzYwC8Lbf2T4816Gn+CuzcqwL8Hi5NYoNswn9SKvyVBri+JpZs4ZFqzrI
-Dk6APQhJllMBfDghXaFGIovjqJZAdML3vKrOXmbAoW4H9Uvsj2vF7gwT2PGKzPwo
-XZjUaa9QZn4KQZpOAtCiRFfD4b2aeJdokEwCVdRzTLoYOsXr8dIrZ3Wf3t0J6YVp
-uVfpY8z8h2Cke0fsO7qQu1FqVWYBvw0sDuB/s8YCR6gf7g5WDiioYJJVRtcF5P55
-NxL/LuieA5u7nfsdk2SEXKmiDo8uRGVLiTDEPppvrNlQnEPKxUFA1ZViXFRIYyaF
-uQNFoJ1S9jWOd28PaiW5ruTig3oXNoU8CRHt6d0cdbjvzWk+MXiBfaXQQ/b19L6N
-qZj5tCrjVJ1ZQFSXWsbjXVaFBZprQw00r30B7J3lKGv2GSfBImM=
-=euk7
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAly0oCgACgkQ3SOs138+
+s6FNtA/7B3EsMLrbJS6e3JxzTdh7l3B+keT7uHuQjqEaK0zRSYfAWMuNabf4cRpS
+XSe2oVzbE2NRkjL+re6BHVVrWU2usS6BflBwL8pqzDiFfN67BKp77qvNYN73b/IH
+eZmIySIquh14nPRx3ThiPRks6MWcsHLR0cLNutLRzftBFbbXFuHsyluYQMeWo+Ib
+VU3dJD3Ag4pPL2EprzZnuATQcRGZOfBIM5OsW57GHCTIuH6Raao5ikH5vKdwWV0a
+GHwbg93lnh/TtoCwaFm+1R5XM67jAXX5FdvKdNiKpxsBGnqtWsLNRaj7gOV4GcoS
+ZzlFUw44E1KCVviE3AfzaalkVNljzpK9sNM1ggvCYH+t0pvBQnFxD5C9ZVr+X8r/
+EUWHEV9kT6nJFwbokLxvHQPXRXLf8nvkk7m/OTEsn4tb5NJfD/b6buyUIOyCizLi
+sfiAMjQSNENCBZyTuJ52r6g6L0Zxvhxw38E7AXPXMqSKDwj7DI2Fvcz6iAyMoiKA
+fxy7jiloq7LmXd8qLvhv/YD6gDG8bqHXgDNA9gNAzl4APwUXaRyBKhId8kGl+acT
+H6RSS7bKeaC8jKf8CrCn6QVufy7W7NHsC1TnEs/tLoLS1BGmHXCoz9biD8PTzQJV
+t0oNda+3NtBbtC95OuMfXqCismMP0OmvWgC98TAWA+u9hnkzp88=
+=uQ8E
 -----END PGP SIGNATURE-----
 
---zVyz+SkbhTrRQGHt--
+--McTFpSeH7KqpdXA3--
