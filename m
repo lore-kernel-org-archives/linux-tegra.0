@@ -1,108 +1,97 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH V4] mmc: tegra: add sdhci tegra suspend and resume
-Date: Mon, 15 Apr 2019 12:06:33 +0200
-Message-ID: <CAPDyKFo+jwFJQUtTRnejX7CzJEOmfpYwX5ZwnMNHPK=wfW-Ycg@mail.gmail.com>
-References: <1555010299-19141-1-git-send-email-skomatineni@nvidia.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Subject: [PATCH RFT V2 0/8] clk: make register endianness a run-time property
+Date: Mon, 15 Apr 2019 12:10:38 +0200
+Message-ID: <20190415101046.5872-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555010299-19141-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, bbiswas@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 11 Apr 2019 at 21:18, Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
->
-> This patch adds suspend and resume PM ops for tegra SDHCI.
->
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Currently the endianness for register accesses of basic clocks if fixed
+based on the architecture (BE for PowerPC, LE for everyone else). This
+is inconvenient for architectures that support both.
 
-Applied for next, thanks!
+To avoid adding more rules to the #ifdef, this patchset adds new flags
+to the basic clocks to tag the registers as BE then converts the only
+big endian machine PowerPC to use it.
 
-Kind regards
-Uffe
+While not used by PowerPC, also add big endian support to clk-fractional-
+divider and clk-multiplier, to cover all basic clocks.
+Technically clk-multiplier isn't one as it doesn't provide any
+registration functions and none of its users set the basic clock flag,
+but nevertheless it and its flags are defined clk-provider.h. So I think
+it's close enough to a basic clock to still count.
 
+That way we can drop the special casing for PowerPC, and allow other big
+endian platforms/drivers to make use of the basic clocks.
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 58 +++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 57 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index eafaaefab4a6..f608417ae967 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -1611,11 +1611,67 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
->         return 0;
->  }
->
-> +#ifdef CONFIG_PM_SLEEP
-> +static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
-> +{
-> +       struct sdhci_host *host = dev_get_drvdata(dev);
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       int ret;
-> +
-> +       if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> +               ret = cqhci_suspend(host->mmc);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       ret = sdhci_suspend_host(host);
-> +       if (ret) {
-> +               cqhci_resume(host->mmc);
-> +               return ret;
-> +       }
-> +
-> +       clk_disable_unprepare(pltfm_host->clk);
-> +       return 0;
-> +}
-> +
-> +static int __maybe_unused sdhci_tegra_resume(struct device *dev)
-> +{
-> +       struct sdhci_host *host = dev_get_drvdata(dev);
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       int ret;
-> +
-> +       ret = clk_prepare_enable(pltfm_host->clk);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = sdhci_resume_host(host);
-> +       if (ret)
-> +               goto disable_clk;
-> +
-> +       if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> +               ret = cqhci_resume(host->mmc);
-> +               if (ret)
-> +                       goto suspend_host;
-> +       }
-> +
-> +       return 0;
-> +
-> +suspend_host:
-> +       sdhci_suspend_host(host);
-> +disable_clk:
-> +       clk_disable_unprepare(pltfm_host->clk);
-> +       return ret;
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(sdhci_tegra_dev_pm_ops, sdhci_tegra_suspend,
-> +                        sdhci_tegra_resume);
-> +
->  static struct platform_driver sdhci_tegra_driver = {
->         .driver         = {
->                 .name   = "sdhci-tegra",
->                 .of_match_table = sdhci_tegra_dt_match,
-> -               .pm     = &sdhci_pltfm_pmops,
-> +               .pm     = &sdhci_tegra_dev_pm_ops,
->         },
->         .probe          = sdhci_tegra_probe,
->         .remove         = sdhci_tegra_remove,
-> --
-> 2.7.4
->
+In addition, we can now drop clk_readl and clk_writel, and replace them
+with normal readl and writel accessors everywhere.
+
+Still RFT because I don't have a PowerPC device to test, and especially
+not a 512x one. I did compile test it though!
+
+I looked really hard, and this is the only place I could find where a
+PowerPC platform (indirectly) used the clk accessors.
+
+None of the regular drivers in clk/ were selected in any of the powerpc
+defconfigs, and this was the only platform code that registered basic
+clocks.
+
+Changelog:
+
+V1 -> V2:
+ * switch from global flag to per-clock flag
+ * also added fractional divider and multiplier clocks, to make all
+   basic or quasi basic clocks support big endian
+ * reordered the basic clock patches in alphabetical order
+ * drop clk_{readl,writel} instead of adding BE variants and use
+   common accessors directly
+ * dropped the RFC, as I got comments (yay). More always welcome of
+   course :-)
+
+Jonas Gorski (8):
+  clk: divider: add explicit big endian support
+  clk: fractional-divider: add explicit big endian support
+  clk: gate: add explicit big endian support
+  clk: multiplier: add explicit big endian support
+  clk: mux: add explicit big endian support
+  powerpc/512x: mark clocks as big endian
+  clk: core: remove powerpc special handling
+  clk: core: replace clk_{readl,writel} with {readl,writel}
+
+ arch/powerpc/platforms/512x/clock-commonclk.c | 11 +++---
+ drivers/clk/clk-divider.c                     | 26 +++++++++++---
+ drivers/clk/clk-fractional-divider.c          | 22 ++++++++++--
+ drivers/clk/clk-gate.c                        | 22 ++++++++++--
+ drivers/clk/clk-multiplier.c                  | 22 ++++++++++--
+ drivers/clk/clk-mux.c                         | 22 ++++++++++--
+ drivers/clk/clk-xgene.c                       |  6 ++--
+ drivers/clk/hisilicon/clk-hisi-phase.c        |  4 +--
+ drivers/clk/imx/clk-divider-gate.c            | 20 +++++------
+ drivers/clk/imx/clk-sccg-pll.c                | 12 +++----
+ drivers/clk/nxp/clk-lpc18xx-ccu.c             |  6 ++--
+ drivers/clk/nxp/clk-lpc18xx-cgu.c             | 24 ++++++-------
+ drivers/clk/rockchip/clk-ddr.c                |  2 +-
+ drivers/clk/rockchip/clk-half-divider.c       |  6 ++--
+ drivers/clk/tegra/clk-tegra124.c              |  4 +--
+ drivers/clk/tegra/clk-tegra210.c              |  6 ++--
+ drivers/clk/zynq/clkc.c                       |  6 ++--
+ drivers/clk/zynq/pll.c                        | 18 +++++-----
+ include/linux/clk-provider.h                  | 51 +++++++++++----------------
+ 19 files changed, 182 insertions(+), 108 deletions(-)
+
+-- 
+2.13.2
