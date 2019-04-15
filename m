@@ -1,45 +1,71 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 4/4] ARM: dts: tegra30: Add External Memory Controller node
-Date: Sun, 14 Apr 2019 23:20:09 +0300
-Message-ID: <20190414202009.31268-5-digetx@gmail.com>
-References: <20190414202009.31268-1-digetx@gmail.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 1/2] arm64: tegra: Add pinmux for PWM-based DFLL support
+ on Shield platform
+Date: Mon, 15 Apr 2019 09:27:30 +0800
+Message-ID: <cb06e21d-d308-8f70-10c5-d7e1771cbfd9@nvidia.com>
+References: <20190322071111.32432-1-josephl@nvidia.com>
+ <20190322095244.GF28640@ulmo>
+ <2c7c9268-0b95-fa49-294b-155a9499741e@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190414202009.31268-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2c7c9268-0b95-fa49-294b-155a9499741e@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add External Memory Controller node to the device-tree.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e074258d4518..92c4aeafab29 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -732,6 +732,17 @@
- 		#reset-cells = <1>;
- 	};
- 
-+	memory-controller@7000f400 {
-+		compatible = "nvidia,tegra30-emc";
-+		reg = <0x7000f400 0x400>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_EMC>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		nvidia,memory-controller = <&mc>;
-+	};
-+
- 	fuse@7000f800 {
- 		compatible = "nvidia,tegra30-efuse";
- 		reg = <0x7000f800 0x400>;
--- 
-2.21.0
+T24gNC8yLzE5IDExOjA2IEFNLCBKb3NlcGggTG8gd3JvdGU6Cj4gT24gMy8yMi8xOSA1OjUyIFBN
+LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4gT24gRnJpLCBNYXIgMjIsIDIwMTkgYXQgMDM6MTE6
+MTBQTSArMDgwMCwgSm9zZXBoIExvIHdyb3RlOgo+Pj4gQWRkIHBpbm11eCBmb3IgUFdNLWJhc2Vk
+IERGTEwgc3VwcG9ydCBvbiBTaGllbGQgcGxhdGZvcm0uCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTog
+Sm9zZXBoIExvIDxqb3NlcGhsQG52aWRpYS5jb20+Cj4+PiAtLS0KPj4+IMKgIGFyY2gvYXJtNjQv
+Ym9vdC9kdHMvbnZpZGlhL3RlZ3JhMjEwLXAyODk0LmR0c2kgfCAxNCArKysrKysrKysrKysrKwo+
+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykKPj4KPj4gVGhlcmUncyBiZWVu
+IHNvbWUgZGlzY3Vzc2lvbiByZWNlbnRseSBhYm91dCBtb3ZpbmcgYXdheSBmcm9tIHByb2dyYW1t
+aW5nCj4+IHBpbm11eCBpbiB0aGUga2VybmVsIGJlY2F1c2UgaXQgaXNuJ3QgYWx3YXlzIHNhZmUg
+dG8gZG8gdGhhdC4gVGhlIGlkZWEKPj4gaXMgdGhhdCBlYXJseSBib290IGZpcm13YXJlICh0eXBp
+Y2FsbHkgY2Jvb3QpIHdpbGwgYWxyZWFkeSBoYXZlIHNldCB1cAo+PiB0aGUgcGlubXV4LCBzbyB0
+aGVyZSdzIG5vIG5lZWQgdG8gZG8gaXQgYWdhaW4gaW4gdGhlIGtlcm5lbC4KPj4KPj4gVGhlc2Ug
+bG9vayBsaWtlIHlvdSdyZSBnb2luZyB0byBjaGFuZ2UgdGhpcyBwaW4gdG8vZnJvbSB0cmlzdGF0
+ZSBhdAo+PiBydW50aW1lLCBzbyBwZXJoYXBzIHRoYXQncyB0aGUga2luZCBvZiB0aGluZyB0aGF0
+IHdlJ3JlIG9rYXkgd2l0aD8KPj4KPj4gQWRkaW5nIFN0ZXBoZW4gZm9yIHZpc2liaWxpdHkuCj4g
+Cj4gR2VudGxlIHBpbmcuCj4gCgpJZiB0aGVyZSBpcyBubyBmdXJ0aGVyIG9iamVjdGlvbiwgY291
+bGQgd2UgYXBwbHkgdGhpcyBzZXJpZXM/CgpUaGFua3MsCkpvc2VwaAoKPj4KPj4+IGRpZmYgLS1n
+aXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC1wMjg5NC5kdHNpIAo+Pj4g
+Yi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC1wMjg5NC5kdHNpCj4+PiBpbmRl
+eCA4OGE0YjkzMzNkODQuLmM2NjhmMTZjODU3NCAxMDA2NDQKPj4+IC0tLSBhL2FyY2gvYXJtNjQv
+Ym9vdC9kdHMvbnZpZGlhL3RlZ3JhMjEwLXAyODk0LmR0c2kKPj4+ICsrKyBiL2FyY2gvYXJtNjQv
+Ym9vdC9kdHMvbnZpZGlhL3RlZ3JhMjEwLXAyODk0LmR0c2kKPj4+IEBAIC0xMzE4LDYgKzEzMTgs
+MjAgQEAKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbnZpZGlhLG9wZW4t
+ZHJhaW4gPSA8VEVHUkFfUElOX0RJU0FCTEU+Owo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfTsKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+Pj4gKwo+Pj4gK8KgwqDCoMKgwqDCoMKg
+IGR2ZnNfcHdtX2FjdGl2ZV9zdGF0ZTogZHZmc19wd21fYWN0aXZlIHsKPj4+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGR2ZnNfcHdtX3BiYjEgewo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBudmlkaWEscGlucyA9ICJkdmZzX3B3bV9wYmIxIjsKPj4+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgbnZpZGlhLHRyaXN0YXRlID0gPFRFR1JBX1BJTl9ESVNBQkxFPjsK
+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4+PiArwqDCoMKgwqDCoMKgwqAgfTsKPj4+
+ICsKPj4+ICvCoMKgwqDCoMKgwqDCoCBkdmZzX3B3bV9pbmFjdGl2ZV9zdGF0ZTogZHZmc19wd21f
+aW5hY3RpdmUgewo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZHZmc19wd21fcGJiMSB7Cj4+
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG52aWRpYSxwaW5zID0gImR2ZnNfcHdt
+X3BiYjEiOwo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBudmlkaWEsdHJpc3Rh
+dGUgPSA8VEVHUkFfUElOX0VOQUJMRT47Cj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+
+Pj4gK8KgwqDCoMKgwqDCoMKgIH07Cj4+PiDCoMKgwqDCoMKgIH07Cj4+PiDCoMKgwqDCoMKgIHNl
+cmlhbEA3MDAwNjAwMCB7Cj4+PiAtLSAKPj4+IDIuMjEuMAo+Pj4KPiAKPiBfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGxpbnV4LWFybS1rZXJuZWwgbWFp
+bGluZyBsaXN0Cj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCj4gaHR0cDov
+L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
+a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
+bmVsCg==
