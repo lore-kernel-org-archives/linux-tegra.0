@@ -1,7 +1,7 @@
 From: Jonas Gorski <jonas.gorski@gmail.com>
-Subject: [PATCH RFT V2 6/8] powerpc/512x: mark clocks as big endian
-Date: Mon, 15 Apr 2019 12:10:44 +0200
-Message-ID: <20190415101046.5872-7-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V2 7/8] clk: core: remove powerpc special handling
+Date: Mon, 15 Apr 2019 12:10:45 +0200
+Message-ID: <20190415101046.5872-8-jonas.gorski@gmail.com>
 References: <20190415101046.5872-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,62 +21,50 @@ To: linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@l
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-These clocks' registers are accessed as big endian, so mark them as
-such.
+Now that the powerpc clocks are properly marked as big endian, we can
+remove the special handling for PowerPC.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V1 -> V2:
- * switch from global to local flags
+ * no actual changes
 
- arch/powerpc/platforms/512x/clock-commonclk.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ include/linux/clk-provider.h | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/arch/powerpc/platforms/512x/clock-commonclk.c b/arch/powerpc/platforms/512x/clock-commonclk.c
-index b3097fe6441b..0072330350fa 100644
---- a/arch/powerpc/platforms/512x/clock-commonclk.c
-+++ b/arch/powerpc/platforms/512x/clock-commonclk.c
-@@ -240,7 +240,8 @@ static inline struct clk *mpc512x_clk_divider(
- 	u32 __iomem *reg, u8 pos, u8 len, int divflags)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index f82cda41e1a8..479e616ce7f5 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1001,20 +1001,6 @@ static inline int of_clk_detect_critical(struct device_node *np, int index,
+  * for improved portability across platforms
+  */
+ 
+-#if IS_ENABLED(CONFIG_PPC)
+-
+-static inline u32 clk_readl(u32 __iomem *reg)
+-{
+-	return ioread32be(reg);
+-}
+-
+-static inline void clk_writel(u32 val, u32 __iomem *reg)
+-{
+-	iowrite32be(val, reg);
+-}
+-
+-#else	/* platform dependent I/O accessors */
+-
+ static inline u32 clk_readl(u32 __iomem *reg)
  {
- 	return clk_register_divider(NULL, name, parent_name, clkflags,
--				    reg, pos, len, divflags, &clklock);
-+				    reg, pos, len,
-+				    divflags | CLK_DIVIDER_BIG_ENDIAN, &clklock);
+ 	return readl(reg);
+@@ -1025,8 +1011,6 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+ 	writel(val, reg);
  }
  
- static inline struct clk *mpc512x_clk_divtable(
-@@ -250,7 +251,7 @@ static inline struct clk *mpc512x_clk_divtable(
- {
- 	u8 divflags;
+-#endif	/* platform dependent I/O accessors */
+-
+ void clk_gate_restore_context(struct clk_hw *hw);
  
--	divflags = 0;
-+	divflags = CLK_DIVIDER_BIG_ENDIAN;
- 	return clk_register_divider_table(NULL, name, parent_name, 0,
- 					  reg, pos, len, divflags,
- 					  divtab, &clklock);
-@@ -261,10 +262,12 @@ static inline struct clk *mpc512x_clk_gated(
- 	u32 __iomem *reg, u8 pos)
- {
- 	int clkflags;
-+	u8 gateflags;
- 
- 	clkflags = CLK_SET_RATE_PARENT;
-+	gateflags = CLK_GATE_BIG_ENDIAN;
- 	return clk_register_gate(NULL, name, parent_name, clkflags,
--				 reg, pos, 0, &clklock);
-+				 reg, pos, gateflags, &clklock);
- }
- 
- static inline struct clk *mpc512x_clk_muxed(const char *name,
-@@ -275,7 +278,7 @@ static inline struct clk *mpc512x_clk_muxed(const char *name,
- 	u8 muxflags;
- 
- 	clkflags = CLK_SET_RATE_PARENT;
--	muxflags = 0;
-+	muxflags = CLK_MUX_BIG_ENDIAN;
- 	return clk_register_mux(NULL, name,
- 				parent_names, parent_count, clkflags,
- 				reg, pos, len, muxflags, &clklock);
+ #endif /* CONFIG_COMMON_CLK */
 -- 
 2.13.2
