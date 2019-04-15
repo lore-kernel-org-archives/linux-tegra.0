@@ -1,7 +1,7 @@
 From: Jonas Gorski <jonas.gorski@gmail.com>
-Subject: [PATCH RFT V2 5/8] clk: mux: add explicit big endian support
-Date: Mon, 15 Apr 2019 12:10:43 +0200
-Message-ID: <20190415101046.5872-6-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V2 6/8] powerpc/512x: mark clocks as big endian
+Date: Mon, 15 Apr 2019 12:10:44 +0200
+Message-ID: <20190415101046.5872-7-jonas.gorski@gmail.com>
 References: <20190415101046.5872-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,90 +21,62 @@ To: linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@l
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian mux clocks.
+These clocks' registers are accessed as big endian, so mark them as
+such.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V1 -> V2:
- * switch from global to local flag
+ * switch from global to local flags
 
- drivers/clk/clk-mux.c        | 22 +++++++++++++++++++---
- include/linux/clk-provider.h |  4 ++++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/512x/clock-commonclk.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 2ad2df2e8909..47f6f4f55f08 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -23,6 +23,22 @@
-  * parent - parent is adjustable through clk_set_parent
-  */
- 
-+static inline u32 clk_mux_readl(struct clk_mux *mux)
-+{
-+	if (mux->flags & CLK_MUX_BIG_ENDIAN)
-+		return ioread32be(mux->reg);
-+	else
-+		return clk_readl(mux->reg);
-+}
-+
-+static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
-+{
-+	if (mux->flags & CLK_MUX_BIG_ENDIAN)
-+		iowrite32be(val, mux->reg);
-+	else
-+		clk_writel(val, mux->reg);
-+}
-+
- int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
- 			 unsigned int val)
+diff --git a/arch/powerpc/platforms/512x/clock-commonclk.c b/arch/powerpc/platforms/512x/clock-commonclk.c
+index b3097fe6441b..0072330350fa 100644
+--- a/arch/powerpc/platforms/512x/clock-commonclk.c
++++ b/arch/powerpc/platforms/512x/clock-commonclk.c
+@@ -240,7 +240,8 @@ static inline struct clk *mpc512x_clk_divider(
+ 	u32 __iomem *reg, u8 pos, u8 len, int divflags)
  {
-@@ -73,7 +89,7 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	u32 val;
+ 	return clk_register_divider(NULL, name, parent_name, clkflags,
+-				    reg, pos, len, divflags, &clklock);
++				    reg, pos, len,
++				    divflags | CLK_DIVIDER_BIG_ENDIAN, &clklock);
+ }
  
--	val = clk_readl(mux->reg) >> mux->shift;
-+	val = clk_mux_readl(mux) >> mux->shift;
- 	val &= mux->mask;
+ static inline struct clk *mpc512x_clk_divtable(
+@@ -250,7 +251,7 @@ static inline struct clk *mpc512x_clk_divtable(
+ {
+ 	u8 divflags;
  
- 	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-@@ -94,12 +110,12 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
- 		reg = mux->mask << (mux->shift + 16);
- 	} else {
--		reg = clk_readl(mux->reg);
-+		reg = clk_mux_readl(mux);
- 		reg &= ~(mux->mask << mux->shift);
- 	}
- 	val = val << mux->shift;
- 	reg |= val;
--	clk_writel(reg, mux->reg);
-+	clk_mux_writel(mux, reg);
+-	divflags = 0;
++	divflags = CLK_DIVIDER_BIG_ENDIAN;
+ 	return clk_register_divider_table(NULL, name, parent_name, 0,
+ 					  reg, pos, len, divflags,
+ 					  divtab, &clklock);
+@@ -261,10 +262,12 @@ static inline struct clk *mpc512x_clk_gated(
+ 	u32 __iomem *reg, u8 pos)
+ {
+ 	int clkflags;
++	u8 gateflags;
  
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 9df78e3fb62b..f82cda41e1a8 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -510,6 +510,9 @@ void clk_hw_unregister_divider(struct clk_hw *hw);
-  * 	.get_parent clk_op.
-  * CLK_MUX_ROUND_CLOSEST - Use the parent rate that is closest to the desired
-  *	frequency.
-+ * CLK_MUX_BIG_ENDIAN - By default little endian register accesses are used for
-+ *	the mux register.  Setting this flag makes the register accesses big
-+ *	endian.
-  */
- struct clk_mux {
- 	struct clk_hw	hw;
-@@ -528,6 +531,7 @@ struct clk_mux {
- #define CLK_MUX_HIWORD_MASK		BIT(2)
- #define CLK_MUX_READ_ONLY		BIT(3) /* mux can't be changed */
- #define CLK_MUX_ROUND_CLOSEST		BIT(4)
-+#define CLK_MUX_BIG_ENDIAN		BIT(5)
+ 	clkflags = CLK_SET_RATE_PARENT;
++	gateflags = CLK_GATE_BIG_ENDIAN;
+ 	return clk_register_gate(NULL, name, parent_name, clkflags,
+-				 reg, pos, 0, &clklock);
++				 reg, pos, gateflags, &clklock);
+ }
  
- extern const struct clk_ops clk_mux_ops;
- extern const struct clk_ops clk_mux_ro_ops;
+ static inline struct clk *mpc512x_clk_muxed(const char *name,
+@@ -275,7 +278,7 @@ static inline struct clk *mpc512x_clk_muxed(const char *name,
+ 	u8 muxflags;
+ 
+ 	clkflags = CLK_SET_RATE_PARENT;
+-	muxflags = 0;
++	muxflags = CLK_MUX_BIG_ENDIAN;
+ 	return clk_register_mux(NULL, name,
+ 				parent_names, parent_count, clkflags,
+ 				reg, pos, len, muxflags, &clklock);
 -- 
 2.13.2
