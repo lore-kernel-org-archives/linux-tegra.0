@@ -1,11 +1,13 @@
 From: Jonas Gorski <jonas.gorski@gmail.com>
-Subject: [PATCH RFT V2 0/8] clk: make register endianness a run-time property
-Date: Mon, 15 Apr 2019 12:10:38 +0200
-Message-ID: <20190415101046.5872-1-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V2 1/8] clk: divider: add explicit big endian support
+Date: Mon, 15 Apr 2019 12:10:39 +0200
+Message-ID: <20190415101046.5872-2-jonas.gorski@gmail.com>
+References: <20190415101046.5872-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190415101046.5872-1-jonas.gorski@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,79 +21,100 @@ To: linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@l
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Currently the endianness for register accesses of basic clocks if fixed
-based on the architecture (BE for PowerPC, LE for everyone else). This
-is inconvenient for architectures that support both.
+Add a clock specific flag to switch register accesses to big endian, to
+allow runtime configuration of big endian divider clocks.
 
-To avoid adding more rules to the #ifdef, this patchset adds new flags
-to the basic clocks to tag the registers as BE then converts the only
-big endian machine PowerPC to use it.
-
-While not used by PowerPC, also add big endian support to clk-fractional-
-divider and clk-multiplier, to cover all basic clocks.
-Technically clk-multiplier isn't one as it doesn't provide any
-registration functions and none of its users set the basic clock flag,
-but nevertheless it and its flags are defined clk-provider.h. So I think
-it's close enough to a basic clock to still count.
-
-That way we can drop the special casing for PowerPC, and allow other big
-endian platforms/drivers to make use of the basic clocks.
-
-In addition, we can now drop clk_readl and clk_writel, and replace them
-with normal readl and writel accessors everywhere.
-
-Still RFT because I don't have a PowerPC device to test, and especially
-not a 512x one. I did compile test it though!
-
-I looked really hard, and this is the only place I could find where a
-PowerPC platform (indirectly) used the clk accessors.
-
-None of the regular drivers in clk/ were selected in any of the powerpc
-defconfigs, and this was the only platform code that registered basic
-clocks.
-
-Changelog:
-
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
 V1 -> V2:
- * switch from global flag to per-clock flag
- * also added fractional divider and multiplier clocks, to make all
-   basic or quasi basic clocks support big endian
- * reordered the basic clock patches in alphabetical order
- * drop clk_{readl,writel} instead of adding BE variants and use
-   common accessors directly
- * dropped the RFC, as I got comments (yay). More always welcome of
-   course :-)
+ * switch from global to local flag
 
-Jonas Gorski (8):
-  clk: divider: add explicit big endian support
-  clk: fractional-divider: add explicit big endian support
-  clk: gate: add explicit big endian support
-  clk: multiplier: add explicit big endian support
-  clk: mux: add explicit big endian support
-  powerpc/512x: mark clocks as big endian
-  clk: core: remove powerpc special handling
-  clk: core: replace clk_{readl,writel} with {readl,writel}
+ drivers/clk/clk-divider.c    | 26 ++++++++++++++++++++++----
+ include/linux/clk-provider.h |  4 ++++
+ 2 files changed, 26 insertions(+), 4 deletions(-)
 
- arch/powerpc/platforms/512x/clock-commonclk.c | 11 +++---
- drivers/clk/clk-divider.c                     | 26 +++++++++++---
- drivers/clk/clk-fractional-divider.c          | 22 ++++++++++--
- drivers/clk/clk-gate.c                        | 22 ++++++++++--
- drivers/clk/clk-multiplier.c                  | 22 ++++++++++--
- drivers/clk/clk-mux.c                         | 22 ++++++++++--
- drivers/clk/clk-xgene.c                       |  6 ++--
- drivers/clk/hisilicon/clk-hisi-phase.c        |  4 +--
- drivers/clk/imx/clk-divider-gate.c            | 20 +++++------
- drivers/clk/imx/clk-sccg-pll.c                | 12 +++----
- drivers/clk/nxp/clk-lpc18xx-ccu.c             |  6 ++--
- drivers/clk/nxp/clk-lpc18xx-cgu.c             | 24 ++++++-------
- drivers/clk/rockchip/clk-ddr.c                |  2 +-
- drivers/clk/rockchip/clk-half-divider.c       |  6 ++--
- drivers/clk/tegra/clk-tegra124.c              |  4 +--
- drivers/clk/tegra/clk-tegra210.c              |  6 ++--
- drivers/clk/zynq/clkc.c                       |  6 ++--
- drivers/clk/zynq/pll.c                        | 18 +++++-----
- include/linux/clk-provider.h                  | 51 +++++++++++----------------
- 19 files changed, 182 insertions(+), 108 deletions(-)
-
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index e5a17265cfaf..ff791a7a5e9e 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -25,6 +25,24 @@
+  * parent - fixed parent.  No clk_set_parent support
+  */
+ 
++static inline u32 clk_div_readl(struct clk_divider *divider)
++{
++	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
++		return ioread32be(divider->reg);
++	else
++		return clk_readl(divider->reg);
++}
++
++static inline void clk_div_writel(struct clk_divider *divider, u32 val)
++{
++	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
++		iowrite32be(val, divider->reg);
++	else
++		clk_writel(val, divider->reg);
++}
++
++#define div_mask(width)	((1 << (width)) - 1)
++
+ static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
+ 				      u8 width)
+ {
+@@ -135,7 +153,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+ 	struct clk_divider *divider = to_clk_divider(hw);
+ 	unsigned int val;
+ 
+-	val = clk_readl(divider->reg) >> divider->shift;
++	val = clk_div_readl(divider) >> divider->shift;
+ 	val &= clk_div_mask(divider->width);
+ 
+ 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+@@ -370,7 +388,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+ 		u32 val;
+ 
+-		val = clk_readl(divider->reg) >> divider->shift;
++		val = clk_div_readl(divider->reg) >> divider->shift;
+ 		val &= clk_div_mask(divider->width);
+ 
+ 		return divider_ro_round_rate(hw, rate, prate, divider->table,
+@@ -420,11 +438,11 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
+ 		val = clk_div_mask(divider->width) << (divider->shift + 16);
+ 	} else {
+-		val = clk_readl(divider->reg);
++		val = clk_div_readl(divider->reg);
+ 		val &= ~(clk_div_mask(divider->width) << divider->shift);
+ 	}
+ 	val |= (u32)value << divider->shift;
+-	clk_writel(val, divider->reg);
++	clk_div_writel(divider, val);
+ 
+ 	if (divider->lock)
+ 		spin_unlock_irqrestore(divider->lock, flags);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index db21437c77e2..7117b8cc0c0c 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -416,6 +416,9 @@ struct clk_div_table {
+  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+  *	except when the value read from the register is zero, the divisor is
+  *	2^width of the field.
++ * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses are used
++ *	for the divider register.  Setting this flag makes the register accesses
++ *	big endian.
+  */
+ struct clk_divider {
+ 	struct clk_hw	hw;
+@@ -437,6 +440,7 @@ struct clk_divider {
+ #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
+ #define CLK_DIVIDER_READ_ONLY		BIT(5)
+ #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
++#define CLK_DIVIDER_BIG_ENDIAN		BIT(7)
+ 
+ extern const struct clk_ops clk_divider_ops;
+ extern const struct clk_ops clk_divider_ro_ops;
 -- 
 2.13.2
