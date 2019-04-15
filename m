@@ -1,108 +1,110 @@
-From: Jonas Gorski <jonas.gorski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH RFT V2 4/8] clk: multiplier: add explicit big endian support
-Date: Mon, 15 Apr 2019 12:10:42 +0200
-Message-ID: <20190415101046.5872-5-jonas.gorski@gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Subject: [PATCH RFT V2 5/8] clk: mux: add explicit big endian support
+Date: Mon, 15 Apr 2019 12:10:43 +0200
+Message-ID: <20190415101046.5872-6-jonas.gorski@gmail.com>
 References: <20190415101046.5872-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190415101046.5872-1-jonas.gorski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Pengutronix Kernel Team <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Anatolij Gustschin <agust-ynQEQJNshbs@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190415101046.5872-1-jonas.gorski@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
 Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian multiplier clocks.
+allow runtime configuration of big endian mux clocks.
 
-Signed-off-by: Jonas Gorski <jonas.gorski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V1 -> V2:
- * newly added patch
+ * switch from global to local flag
 
- drivers/clk/clk-multiplier.c | 22 +++++++++++++++++++---
+ drivers/clk/clk-mux.c        | 22 +++++++++++++++++++---
  include/linux/clk-provider.h |  4 ++++
  2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-index 3c86f859c199..fb032f7dd407 100644
---- a/drivers/clk/clk-multiplier.c
-+++ b/drivers/clk/clk-multiplier.c
-@@ -11,6 +11,22 @@
- #include <linux/of.h>
- #include <linux/slab.h>
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 2ad2df2e8909..47f6f4f55f08 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -23,6 +23,22 @@
+  * parent - parent is adjustable through clk_set_parent
+  */
  
-+static inline u32 clk_mult_readl(struct clk_multiplier *mult)
++static inline u32 clk_mux_readl(struct clk_mux *mux)
 +{
-+	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
-+		return ioread32be(mult->reg);
++	if (mux->flags & CLK_MUX_BIG_ENDIAN)
++		return ioread32be(mux->reg);
 +	else
-+		return clk_readl(mult->reg);
++		return clk_readl(mux->reg);
 +}
 +
-+static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
++static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
 +{
-+	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
-+		iowrite32be(val, mult->reg);
++	if (mux->flags & CLK_MUX_BIG_ENDIAN)
++		iowrite32be(val, mux->reg);
 +	else
-+		clk_writel(val, mult->reg);
++		clk_writel(val, mux->reg);
 +}
 +
- static unsigned long __get_mult(struct clk_multiplier *mult,
- 				unsigned long rate,
- 				unsigned long parent_rate)
-@@ -27,7 +43,7 @@ static unsigned long clk_multiplier_recalc_rate(struct clk_hw *hw,
- 	struct clk_multiplier *mult = to_clk_multiplier(hw);
- 	unsigned long val;
+ int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
+ 			 unsigned int val)
+ {
+@@ -73,7 +89,7 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	u32 val;
  
--	val = clk_readl(mult->reg) >> mult->shift;
-+	val = clk_mult_readl(mult) >> mult->shift;
- 	val &= GENMASK(mult->width - 1, 0);
+-	val = clk_readl(mux->reg) >> mux->shift;
++	val = clk_mux_readl(mux) >> mux->shift;
+ 	val &= mux->mask;
  
- 	if (!val && mult->flags & CLK_MULTIPLIER_ZERO_BYPASS)
-@@ -118,10 +134,10 @@ static int clk_multiplier_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		__acquire(mult->lock);
+ 	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
+@@ -94,12 +110,12 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
+ 		reg = mux->mask << (mux->shift + 16);
+ 	} else {
+-		reg = clk_readl(mux->reg);
++		reg = clk_mux_readl(mux);
+ 		reg &= ~(mux->mask << mux->shift);
+ 	}
+ 	val = val << mux->shift;
+ 	reg |= val;
+-	clk_writel(reg, mux->reg);
++	clk_mux_writel(mux, reg);
  
--	val = clk_readl(mult->reg);
-+	val = clk_mult_readl(mult);
- 	val &= ~GENMASK(mult->width + mult->shift - 1, mult->shift);
- 	val |= factor << mult->shift;
--	clk_writel(val, mult->reg);
-+	clk_mult_writel(mult, val);
- 
- 	if (mult->lock)
- 		spin_unlock_irqrestore(mult->lock, flags);
+ 	if (mux->lock)
+ 		spin_unlock_irqrestore(mux->lock, flags);
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 8576c2dbc639..9df78e3fb62b 100644
+index 9df78e3fb62b..f82cda41e1a8 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -667,6 +667,9 @@ void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
-  *	leaving the parent rate unmodified.
-  * CLK_MULTIPLIER_ROUND_CLOSEST - Makes the best calculated divider to be
-  *	rounded to the closest integer instead of the down one.
-+ * CLK_MULTIPLIER_BIG_ENDIAN - By default little endian register accesses are
-+ *	used for the multiplier register.  Setting this flag makes the register
-+ *	accesses big endian.
+@@ -510,6 +510,9 @@ void clk_hw_unregister_divider(struct clk_hw *hw);
+  * 	.get_parent clk_op.
+  * CLK_MUX_ROUND_CLOSEST - Use the parent rate that is closest to the desired
+  *	frequency.
++ * CLK_MUX_BIG_ENDIAN - By default little endian register accesses are used for
++ *	the mux register.  Setting this flag makes the register accesses big
++ *	endian.
   */
- struct clk_multiplier {
+ struct clk_mux {
  	struct clk_hw	hw;
-@@ -681,6 +684,7 @@ struct clk_multiplier {
+@@ -528,6 +531,7 @@ struct clk_mux {
+ #define CLK_MUX_HIWORD_MASK		BIT(2)
+ #define CLK_MUX_READ_ONLY		BIT(3) /* mux can't be changed */
+ #define CLK_MUX_ROUND_CLOSEST		BIT(4)
++#define CLK_MUX_BIG_ENDIAN		BIT(5)
  
- #define CLK_MULTIPLIER_ZERO_BYPASS		BIT(0)
- #define CLK_MULTIPLIER_ROUND_CLOSEST	BIT(1)
-+#define CLK_MULTIPLIER_BIG_ENDIAN		BIT(2)
- 
- extern const struct clk_ops clk_multiplier_ops;
- 
+ extern const struct clk_ops clk_mux_ops;
+ extern const struct clk_ops clk_mux_ro_ops;
 -- 
 2.13.2
