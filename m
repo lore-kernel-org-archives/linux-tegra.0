@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V3 01/16] PCI: Add #defines for some of PCIe spec r4.0 features
-Date: Wed, 17 Apr 2019 00:57:15 +0530
-Message-ID: <20190416192730.15681-2-vidyas@nvidia.com>
+Subject: [PATCH V3 02/16] PCI/PME: Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs
+Date: Wed, 17 Apr 2019 00:57:16 +0530
+Message-ID: <20190416192730.15681-3-vidyas@nvidia.com>
 References: <20190416192730.15681-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,59 +12,75 @@ To: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.redin
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
-features.
+Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
+using this API be able to build as loadable modules.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
 ---
 Changes from [v2]:
-* Updated commit message and description to explicitly mention that defines are
-  added only for some of the features and not all.
+* Exported pcie_pme_no_msi() API after making pcie_pme_msi_disabled a static
 
 Changes from [v1]:
-* None
+* This is a new patch in v2 series
 
- include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/pci/pcie/pme.c     | 14 +++++++++++++-
+ drivers/pci/pcie/portdrv.h | 16 +++-------------
+ 2 files changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 5c98133f2c94..3e01b55d548d 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -705,7 +705,9 @@
- #define PCI_EXT_CAP_ID_DPC	0x1D	/* Downstream Port Containment */
- #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
- #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
--#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PTM
-+#define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
-+#define PCI_EXT_CAP_ID_PL	0x26	/* Physical Layer 16.0 GT/s */
-+#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL
- 
- #define PCI_EXT_CAP_DSN_SIZEOF	12
- #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
-@@ -1045,4 +1047,22 @@
- #define  PCI_L1SS_CTL1_LTR_L12_TH_SCALE	0xe0000000  /* LTR_L1.2_THRESHOLD_Scale */
- #define PCI_L1SS_CTL2		0x0c	/* Control 2 Register */
- 
-+/* Data Link Feature */
-+#define PCI_DLF_CAP		0x04	/* Capabilities Register */
-+#define  PCI_DLF_LOCAL_DLF_SUP_MASK	0x007fffff  /* Local Data Link Feature Supported */
-+#define  PCI_DLF_EXCHANGE_ENABLE	0x80000000  /* Data Link Feature Exchange Enable */
-+#define PCI_DLF_STS		0x08	/* Status Register */
-+#define  PCI_DLF_REMOTE_DLF_SUP_MASK	0x007fffff  /* Remote Data Link Feature Supported */
-+#define  PCI_DLF_REMOTE_DLF_SUP_VALID	0x80000000  /* Remote Data Link Feature Support Valid */
+diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
+index 54d593d10396..d5e0ea4a62fc 100644
+--- a/drivers/pci/pcie/pme.c
++++ b/drivers/pci/pcie/pme.c
+@@ -25,7 +25,19 @@
+  * that using MSI for PCIe PME signaling doesn't play well with PCIe PME-based
+  * wake-up from system sleep states.
+  */
+-bool pcie_pme_msi_disabled;
++static bool pcie_pme_msi_disabled;
 +
-+/* Physical Layer 16.0 GT/s */
-+#define PCI_PL_16GT_CAP		0x04	/* Capabilities Register */
-+#define PCI_PL_16GT_CTRL	0x08	/* Control Register */
-+#define PCI_PL_16GT_STS		0x0c	/* Status Register */
-+#define PCI_PL_16GT_LDPM_STS	0x10	/* Local Data Parity Mismatch Status Register */
-+#define PCI_PL_16GT_FRDPM_STS	0x14	/* First Retimer Data Parity Mismatch Status Register */
-+#define PCI_PL_16GT_SRDPM_STS	0x18	/* Second Retimer Data Parity Mismatch Status Register */
-+#define PCI_PL_16GT_RSVD	0x1C	/* Reserved */
-+#define PCI_PL_16GT_LE_CTRL	0x20	/* Lane Equalization Control Register */
++void pcie_pme_disable_msi(void)
++{
++	pcie_pme_msi_disabled = true;
++}
++EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
 +
- #endif /* LINUX_PCI_REGS_H */
++bool pcie_pme_no_msi(void)
++{
++	return pcie_pme_msi_disabled;
++}
++EXPORT_SYMBOL_GPL(pcie_pme_no_msi);
+ 
+ static int __init pcie_pme_setup(char *str)
+ {
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 1d50dc58ac40..7c8c3da4bd58 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -125,22 +125,12 @@ void pcie_port_bus_unregister(void);
+ struct pci_dev;
+ 
+ #ifdef CONFIG_PCIE_PME
+-extern bool pcie_pme_msi_disabled;
+-
+-static inline void pcie_pme_disable_msi(void)
+-{
+-	pcie_pme_msi_disabled = true;
+-}
+-
+-static inline bool pcie_pme_no_msi(void)
+-{
+-	return pcie_pme_msi_disabled;
+-}
+-
++void pcie_pme_disable_msi(void);
++bool pcie_pme_no_msi(void);
+ void pcie_pme_interrupt_enable(struct pci_dev *dev, bool enable);
+ #else /* !CONFIG_PCIE_PME */
+ static inline void pcie_pme_disable_msi(void) {}
+-static inline bool pcie_pme_no_msi(void) { return false; }
++static inline bool pcie_pme_no_msi(void) {}
+ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
+ #endif /* !CONFIG_PCIE_PME */
+ 
 -- 
 2.17.1
