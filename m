@@ -1,74 +1,64 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V2 02/16] PCI/PME: Export pcie_pme_disable_msi() API
-Date: Tue, 16 Apr 2019 19:00:50 +0530
-Message-ID: <f47408e4-c02d-bd28-31f9-96b92be02df5@nvidia.com>
-References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
- <1554407683-31580-3-git-send-email-vidyas@nvidia.com>
- <20190411101657.GF4633@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 03/19] PM / devfreq: tegra: Don't ignore clk errors
+Date: Tue, 16 Apr 2019 16:42:47 +0300
+Message-ID: <485c7af3-453a-1c89-a677-3ef622ee2ad3@gmail.com>
+References: <20190415145505.18397-1-digetx@gmail.com>
+ <CGME20190415145811epcas2p45772ac8ae956928341d76b80d3fa5e91@epcas2p4.samsung.com>
+ <20190415145505.18397-4-digetx@gmail.com>
+ <1e4038d1-0fd3-f6d2-4e01-d34b16aeddbd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190411101657.GF4633@ulmo>
+In-Reply-To: <1e4038d1-0fd3-f6d2-4e01-d34b16aeddbd@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/11/2019 3:46 PM, Thierry Reding wrote:
-> On Fri, Apr 05, 2019 at 01:24:29AM +0530, Vidya Sagar wrote:
->> Export pcie_pme_disable_msi() API to enable drivers using this API be able to
->> build as loadable modules
+16.04.2019 4:52, Chanwoo Choi пишет:
+> Hi,
+> 
+> On 19. 4. 15. 오후 11:54, Dmitry Osipenko wrote:
+>> The clk_set_min_rate() could fail and in this case clk_set_rate() sets
+>> rate to 0, which may drop EMC rate to minimum and make machine very
+>> difficult to use.
 >>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->> Changes from [v1]:
->> * This is a new patch in v2 series
+>>  drivers/devfreq/tegra-devfreq.c | 10 ++++++++--
+>>  1 file changed, 8 insertions(+), 2 deletions(-)
 >>
->>   drivers/pci/pcie/pme.c     | 6 ++++++
->>   drivers/pci/pcie/portdrv.h | 5 +----
->>   2 files changed, 7 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
->> index 54d593d10396..18e815c1e3c9 100644
->> --- a/drivers/pci/pcie/pme.c
->> +++ b/drivers/pci/pcie/pme.c
->> @@ -27,6 +27,12 @@
->>    */
->>   bool pcie_pme_msi_disabled;
->>   
->> +void pcie_pme_disable_msi(void)
->> +{
->> +	pcie_pme_msi_disabled = true;
->> +}
->> +EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
+>> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+>> index 0c0909fba545..69581c9082d4 100644
+>> --- a/drivers/devfreq/tegra-devfreq.c
+>> +++ b/drivers/devfreq/tegra-devfreq.c
+>> @@ -487,6 +487,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>  	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
+>>  	struct dev_pm_opp *opp;
+>>  	unsigned long rate;
+>> +	int err;
+>>  
+>>  	opp = devfreq_recommended_opp(dev, freq, flags);
+>>  	if (IS_ERR(opp)) {
+>> @@ -496,8 +497,13 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>  	rate = dev_pm_opp_get_freq(opp);
+>>  	dev_pm_opp_put(opp);
+>>  
+>> -	clk_set_min_rate(tegra->emc_clock, rate);
+>> -	clk_set_rate(tegra->emc_clock, 0);
+>> +	err = clk_set_min_rate(tegra->emc_clock, rate);
+>> +	if (err)
+>> +		return err;
 >> +
->>   static int __init pcie_pme_setup(char *str)
->>   {
->>   	if (!strncmp(str, "nomsi", 5))
->> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
->> index 1d50dc58ac40..2be7b7e9a784 100644
->> --- a/drivers/pci/pcie/portdrv.h
->> +++ b/drivers/pci/pcie/portdrv.h
->> @@ -127,10 +127,7 @@ struct pci_dev;
->>   #ifdef CONFIG_PCIE_PME
->>   extern bool pcie_pme_msi_disabled;
->>   
->> -static inline void pcie_pme_disable_msi(void)
->> -{
->> -	pcie_pme_msi_disabled = true;
->> -}
->> +void pcie_pme_disable_msi(void);
->>   
->>   static inline bool pcie_pme_no_msi(void)
->>   {
+>> +	err = clk_set_rate(tegra->emc_clock, 0);
+>> +	if (err)
 > 
-> Perhaps also export pcie_pme_no_msi()? That way you could get rid of the
-> extern declaration of the pcie_pme_msi_disabled variable and make it
-> static to drivers/pci/pcie/pme.c?
-Agree. I'll take care of this in V3 patch series.
+> Why don't you restore the previous minimum clock for tegra->emc_clock
+> when failed to execute 'clk_set_rate(tegra->emc_clock, 0);'?
+> 
+> I think that if you control the restoring the previous minimum clock,
+> it is more nice to handle the error handling.
 
-> 
-> Thierry
-> 
+I now see that devfreq has the previous_freq field and indeed it is possible to restore the min_rate value using it. Thanks for the suggestion.
