@@ -1,83 +1,102 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V2 01/16] PCI: Add #defines for PCIe spec r4.0 features
-Date: Tue, 16 Apr 2019 18:45:14 +0530
-Message-ID: <4f672035-262b-1e53-2718-8c0c5612b3f3@nvidia.com>
-References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
- <1554407683-31580-2-git-send-email-vidyas@nvidia.com>
- <20190411101353.GE4633@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 01/19] PM / devfreq: tegra: Fix kHz to Hz conversion
+Date: Tue, 16 Apr 2019 16:24:16 +0300
+Message-ID: <cd022104-6b31-9b0d-b5d5-32374bdc0e6a@gmail.com>
+References: <20190415145505.18397-1-digetx@gmail.com>
+ <CGME20190415145820epcas2p27ba84badad9cf5cf5b7853af7e908e43@epcas2p2.samsung.com>
+ <20190415145505.18397-2-digetx@gmail.com>
+ <a7cacb6c-1097-6d16-f6dc-7470f487c5b8@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190411101353.GE4633@ulmo>
+In-Reply-To: <a7cacb6c-1097-6d16-f6dc-7470f487c5b8@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/11/2019 3:43 PM, Thierry Reding wrote:
-> On Fri, Apr 05, 2019 at 01:24:28AM +0530, Vidya Sagar wrote:
->> Add #defines for the Data Link Feature and Physical Layer 16.0 GT/s
->> features.
+16.04.2019 4:45, Chanwoo Choi пишет:
+> Hi,
+> 
+> I add one minor comment (KHZ -> hz).
+
+Hello Chanwoo,
+
+Thank you very much for the review!
+
+> On 19. 4. 15. 오후 11:54, Dmitry Osipenko wrote:
+>> The kHz to Hz is incorrectly converted in a few places in the code,
+>> this results in a wrong frequency being calculated because devfreq core
+>> uses OPP frequencies that are given in Hz to clamp the rate, while
+>> tegra-devfreq gives to the core value in kHz and then it also expects to
+>> receive value in kHz from the core. In a result memory freq is always set
+>> to a value which is close to ULONG_MAX because of the bug. Hence the EMC
+>> frequency is always capped to the maximum and the driver doesn't do
+>> anything useful. This patch was tested on Tegra30 and Tegra124 SoC's, EMC
+>> frequency scaling works properly now.
 >>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> Cc: <stable@vger.kernel.org> # 4.14+
+>> Tested-by: Steev Klimaszewski <steev@kali.org>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->> Changes from [v1]:
->> * None
+>>  drivers/devfreq/tegra-devfreq.c | 10 ++++------
+>>  1 file changed, 4 insertions(+), 6 deletions(-)
 >>
->>   include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
->>   1 file changed, 21 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
->> index 5c98133f2c94..3e01b55d548d 100644
->> --- a/include/uapi/linux/pci_regs.h
->> +++ b/include/uapi/linux/pci_regs.h
->> @@ -705,7 +705,9 @@
->>   #define PCI_EXT_CAP_ID_DPC	0x1D	/* Downstream Port Containment */
->>   #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
->>   #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
->> -#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PTM
->> +#define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
->> +#define PCI_EXT_CAP_ID_PL	0x26	/* Physical Layer 16.0 GT/s */
->> +#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL
->>   
->>   #define PCI_EXT_CAP_DSN_SIZEOF	12
->>   #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
->> @@ -1045,4 +1047,22 @@
->>   #define  PCI_L1SS_CTL1_LTR_L12_TH_SCALE	0xe0000000  /* LTR_L1.2_THRESHOLD_Scale */
->>   #define PCI_L1SS_CTL2		0x0c	/* Control 2 Register */
->>   
->> +/* Data Link Feature */
->> +#define PCI_DLF_CAP		0x04	/* Capabilities Register */
->> +#define  PCI_DLF_LOCAL_DLF_SUP_MASK	0x007fffff  /* Local Data Link Feature Supported */
->> +#define  PCI_DLF_EXCHANGE_ENABLE	0x80000000  /* Data Link Feature Exchange Enable */
->> +#define PCI_DLF_STS		0x08	/* Status Register */
->> +#define  PCI_DLF_REMOTE_DLF_SUP_MASK	0x007fffff  /* Remote Data Link Feature Supported */
->> +#define  PCI_DLF_REMOTE_DLF_SUP_VALID	0x80000000  /* Remote Data Link Feature Support Valid */
->> +
->> +/* Physical Layer 16.0 GT/s */
->> +#define PCI_PL_16GT_CAP		0x04	/* Capabilities Register */
->> +#define PCI_PL_16GT_CTRL	0x08	/* Control Register */
->> +#define PCI_PL_16GT_STS		0x0c	/* Status Register */
->> +#define PCI_PL_16GT_LDPM_STS	0x10	/* Local Data Parity Mismatch Status Register */
->> +#define PCI_PL_16GT_FRDPM_STS	0x14	/* First Retimer Data Parity Mismatch Status Register */
->> +#define PCI_PL_16GT_SRDPM_STS	0x18	/* Second Retimer Data Parity Mismatch Status Register */
->> +#define PCI_PL_16GT_RSVD	0x1C	/* Reserved */
->> +#define PCI_PL_16GT_LE_CTRL	0x20	/* Lane Equalization Control Register */
+>> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+>> index c89ba7b834ff..02905978abe1 100644
+>> --- a/drivers/devfreq/tegra-devfreq.c
+>> +++ b/drivers/devfreq/tegra-devfreq.c
+>> @@ -486,9 +486,9 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>  {
+>>  	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
+>>  	struct dev_pm_opp *opp;
+>> -	unsigned long rate = *freq * KHZ;
+>> +	unsigned long rate;
+>>  
+>> -	opp = devfreq_recommended_opp(dev, &rate, flags);
+>> +	opp = devfreq_recommended_opp(dev, freq, flags);
+>>  	if (IS_ERR(opp)) {
+>>  		dev_err(dev, "Failed to find opp for %lu KHz\n", *freq);
 > 
-> This looks correct comparing to the specification. However, this leaves
-> out some definitions, so I'm wondering if perhaps this should include
-> all field definitions. There are also extended capabilities between the
-> current maximum 0x1F and 0x25. Perhaps those should be added as well. I
-> guess this could always be done as a follow-up.
-> 
-> Perhaps it'd be better to change the subject to more accurately reflect
-> that you're only adding a couple of PCIe 4.0 features.
-I'll change subject accordingly.
+> Need to change it as following:
+> - KHz -> Hz
+
+Indeed, good catch.
 
 > 
-> Other than that:
+>>  		return PTR_ERR(opp);
+>> @@ -499,8 +499,6 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>  	clk_set_min_rate(tegra->emc_clock, rate);
+>>  	clk_set_rate(tegra->emc_clock, 0);
+>>  
+>> -	*freq = rate;
+>> -
+>>  	return 0;
+>>  }
+>>  
+>> @@ -510,7 +508,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>>  	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
+>>  	struct tegra_devfreq_device *actmon_dev;
+>>  
+>> -	stat->current_frequency = tegra->cur_freq;
+>> +	stat->current_frequency = tegra->cur_freq * KHZ;
+>>  
+>>  	/* To be used by the tegra governor */
+>>  	stat->private_data = tegra;
+>> @@ -565,7 +563,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+>>  		target_freq = max(target_freq, dev->target_freq);
+>>  	}
+>>  
+>> -	*freq = target_freq;
+>> +	*freq = target_freq * KHZ;
+>>  
+>>  	return 0;
+>>  }
+>>
 > 
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> 
+> It looks good to me if modify it in accordance with my comment.
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Okay, thanks.
