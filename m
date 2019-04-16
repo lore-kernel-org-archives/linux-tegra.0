@@ -1,288 +1,46 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V2 10/16] dt-bindings: PCI: tegra: Add device tree support
- for T194
-Date: Tue, 16 Apr 2019 21:03:36 +0530
-Message-ID: <94b4cf4f-8cdd-da29-6661-68ae318b58a3@nvidia.com>
-References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
- <1554407683-31580-11-git-send-email-vidyas@nvidia.com>
- <20190415150819.GG29254@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] drm/tegra: hdmi: Setup audio only if configured
+Date: Tue, 16 Apr 2019 16:41:37 +0200
+Message-ID: <20190416144137.8205-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415150819.GG29254@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/15/2019 8:38 PM, Thierry Reding wrote:
-> On Fri, Apr 05, 2019 at 01:24:37AM +0530, Vidya Sagar wrote:
->> Add support for Tegra194 PCIe controllers. These controllers are based
->> on Synopsys DesignWare core IP.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->> Changes since [v1]:
->> * Added documentation for 'power-domains' property
->> * Removed 'window1' and 'window2' properties
->> * Removed '_clk' and '_rst' from clock and reset names
->> * Dropped 'pcie' from phy-names
->> * Added entry for BPMP-FW handle
->> * Removed offsets for some of the registers and added them in code and would be pickedup based on
->>    controller ID
->> * Changed 'nvidia,max-speed' to 'max-link-speed' and is made as an optional
->> * Changed 'nvidia,disable-clock-request' to 'supports-clkreq' with inverted operation
->> * Added more documentation for 'nvidia,update-fc-fixup' property
->> * Removed 'nvidia,enable-power-down' and 'nvidia,plat-gpios' properties
->> * Added '-us' to all properties that represent time in microseconds
->> * Moved P2U documentation to a separate file
->>
->>   .../bindings/pci/nvidia,tegra194-pcie.txt          | 181 +++++++++++++++++++++
->>   1 file changed, 181 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
->> new file mode 100644
->> index 000000000000..71aa01b6ccf3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
->> @@ -0,0 +1,181 @@
->> +NVIDIA Tegra PCIe controller (Synopsys DesignWare Core based)
->> +
->> +This PCIe host controller is based on the Synopsis Designware PCIe IP
->> +and thus inherits all the common properties defined in designware-pcie.txt.
->> +
->> +Required properties:
->> +- compatible: For Tegra19x, must contain "nvidia,tegra194-pcie".
->> +- device_type: Must be "pci"
->> +- power-domains: A phandle to the node that controls power to the respective
->> +  PCIe controller and a specifier name for the PCIe controller. Following are
->> +  the specifiers for the different PCIe controllers
->> +  - Controller-0 - TEGRA194_POWER_DOMAIN_PCIEX8B
->> +  - Controller-1 - TEGRA194_POWER_DOMAIN_PCIEX1A
->> +  - Controller-2 - TEGRA194_POWER_DOMAIN_PCIEX1A
->> +  - Controller-3 - TEGRA194_POWER_DOMAIN_PCIEX1A
->> +  - Controller-4 - TEGRA194_POWER_DOMAIN_PCIEX4A
->> +  - Controller-5 - TEGRA194_POWER_DOMAIN_PCIEX8A
-> 
-> I'm not sure if I missed it, but is there an include file that contains
-> definitions for these symbolic names? Might be worth referring to such
-> an include from this document.
-These are macros for power domains of different PCIe controller. I'll give
-the path of header where these macros are defined.
-
-> 
-> Also, why do we have two different ways of specifying the controllers?
-> Why are they called Controller-* in one place and PCIEX* in another? Can
-> we just pick one and stick with it?
-Since I've been using C0, C1, C2...Etc, I'll stick to it this format and PCIEX*
-is part of macro name and is used only here.
-
-> 
->> +- reg: A list of physical base address and length for each set of controller
->> +  registers. Must contain an entry for each entry in the reg-names property.
->> +- reg-names: Must include the following entries:
->> +  "appl": Controller's application logic registers
->> +  "config": As per the definition in designware-pcie.txt
->> +  "atu_dma": iATU and DMA registers. This is where the iATU (internal Address
->> +             Translation Unit) registers of the PCIe core are made available
->> +             fow SW access.
->> +  "dbi": The aperture where root port's own configuration registers are
->> +         available
->> +- interrupts: A list of interrupt outputs of the controller. Must contain an
->> +  entry for each entry in the interrupt-names property.
->> +- interrupt-names: Must include the following entries:
->> +  "intr": The Tegra interrupt that is asserted for controller interrupts
->> +  "msi": The Tegra interrupt that is asserted when an MSI is received
->> +- bus-range: Range of bus numbers associated with this controller
->> +- #address-cells: Address representation for root ports (must be 3)
->> +  - cell 0 specifies the bus and device numbers of the root port:
->> +    [23:16]: bus number
->> +    [15:11]: device number
->> +  - cell 1 denotes the upper 32 address bits and should be 0
->> +  - cell 2 contains the lower 32 address bits and is used to translate to the
->> +    CPU address space
->> +- #size-cells: Size representation for root ports (must be 2)
->> +- ranges: Describes the translation of addresses for root ports and standard
->> +  PCI regions. The entries must be 7 cells each, where the first three cells
->> +  correspond to the address as described for the #address-cells property
->> +  above, the fourth and fifth cells are for the physical CPU address to
->> +  translate to and the sixth and seventh cells are as described for the
->> +  #size-cells property above.
->> +  - Entries setup the mapping for the standard I/O, memory and
->> +    prefetchable PCI regions. The first cell determines the type of region
->> +    that is setup:
->> +    - 0x81000000: I/O memory region
->> +    - 0x82000000: non-prefetchable memory region
->> +    - 0xc2000000: prefetchable memory region
->> +  Please refer to the standard PCI bus binding document for a more detailed
->> +  explanation.
->> +- #interrupt-cells: Size representation for interrupts (must be 1)
->> +- interrupt-map-mask and interrupt-map: Standard PCI IRQ mapping properties
->> +  Please refer to the standard PCI bus binding document for a more detailed
->> +  explanation.
->> +- clocks: Must contain an entry for each entry in clock-names.
->> +  See ../clocks/clock-bindings.txt for details.
->> +- clock-names: Must include the following entries:
->> +  - core
->> +- resets: Must contain an entry for each entry in reset-names.
->> +  See ../reset/reset.txt for details.
->> +- reset-names: Must include the following entries:
->> +  - core_apb
->> +  - core
->> +- phys: Must contain a phandle to P2U PHY for each entry in phy-names.
->> +- phy-names: Must include an entry for each active lane.
->> +  "p2u-N": where N ranges from 0 to one less than the total number of lanes
->> +- nvidia,bpmp: Must contain a phandle to BPMP controller node.
->> +- nvidia,controller-id : Controller specific ID
->> +      0 - C0
->> +      1 - C1
->> +      2 - C2
->> +      3 - C3
->> +      4 - C4
->> +      5 - C5
-> 
-> Again, here you use a different name to refer to the controllers than
-> before, although it's fairly obvious that these correspond to the
-> earlier Controller-*. But best to pick one and stick with it.
-> 
-> Also, the list for the power-domains property has description - value,
-> whereas you have value - description here. Since eventually the device
-> tree bindings will be converted to YAML, perhaps stick with:
-> 
->      value: description
-> 
-> To help with a subsequent conversion.
-Done.
-
-> 
->> +- vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
->> +
->> +Optional properties:
->> +- max-link-speed: Limits controllers max speed to this value. For more info,
->> +    please refer to Documentation/devicetree/bindings/pci/pci.txt file.
->> +- nvidia,init-speed: Limits controllers init speed to this value.
->> +    1 - Gen-1 (2. 5 GT/s)
->> +    2 - Gen-2 (5 GT/s)
->> +    3 - Gen-3 (8 GT/s)
->> +    4 - Gen-4 (16 GT/s)
-> 
-> Please provide a description for when to use this and what the effects
-> are. "Limits controller's init speed" doesn't say anything about whether
-> the speed can be increased later, or whether it will always stay at this
-> speed. Also, does it actually mean "set" the initial speed, or would the
-> controller also be able to start out at a lower speed than the one given
-> by "nvidia,init-speed"? "Limits" would suggest the latter, but best to
-> clarify.
-Ok. I'll provide more details in V3 patch series.
-
-> 
->> +- nvidia,disable-aspm-states : Controls advertisement of ASPM states
->> +    bit-0 to '1' : Disables advertisement of ASPM-L0s
->> +    bit-1 to '1' : Disables advertisement of ASPM-L1. This also disables
->> +                   advertisement of ASPM-L1.1 and ASPM-L1.2
->> +    bit-2 to '1' : Disables advertisement of ASPM-L1.1
->> +    bit-3 to '1' : Disables advertisement of ASPM-L1.2
->> +- supports-clkreq : Refer to Documentation/devicetree/bindings/pci/pci.txt
->> +- nvidia,update-fc-fixup : This is a boolean property and needs to be present to
->> +    improve perf when a platform is designed in such a way that it satisfies at
->> +    least one of the following conditions thereby enabling root port to
->> +    exchange optimum number of FC (Flow Control) credits with downstream devices
->> +    1. If C0/C4/C5 run at x1/x2 link widths (irrespective of speed and MPS)
->> +    2. If C0/C1/C2/C3/C4/C5 operate at their respective max link widths and
->> +       a) speed is Gen-2 and MPS is 256B
->> +       b) speed is >= Gen-3 with any MPS
->> +- nvidia,cdm-check : Enables CDM checking. For more information, refer Synopsis
->> +    DesignWare Cores  PCI Express Controller Databook r4.90a Chapter S.4
->> +- "nvidia,pex-wake" : Add PEX_WAKE gpio number to provide wake support.
-> 
-> If it's a GPIO number it should have a -gpio or -gpios suffix. I think
-> -gpios is preferred. Since the parent of the property is already a PEX
-> controller, perhaps omit the pex- prefix and just call this:
-> 
->      "nvidia,wake-gpios"
-> 
-> ?Fine. I'll change it to 'nvidia,wake-gpios'.
-
-> 
-> Thierry
-> 
->> +- "nvidia,aspm-cmrt-us" : Common Mode Restore time for proper operation of ASPM
->> +   to be specified in microseconds
->> +- "nvidia,aspm-pwr-on-t-us" : Power On time for proper operation of ASPM to be
->> +   specified in microseconds
->> +- "nvidia,aspm-l0s-entrance-latency-us" : ASPM L0s entrance latency to be
->> +   specified in microseconds
->> +
->> +Examples:
->> +=========
->> +
->> +Tegra194:
->> +--------
->> +
->> +SoC DTSI:
->> +
->> +	pcie@14180000 {
->> +		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
->> +		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
->> +		reg = <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)      */
->> +		       0x00 0x38000000 0x0 0x00040000   /* configuration space (256K) */
->> +		       0x00 0x38040000 0x0 0x00040000>; /* iATU_DMA reg space (256K)  */
->> +		reg-names = "appl", "config", "atu_dma";
->> +
->> +		status = "disabled";
->> +
->> +		#address-cells = <3>;
->> +		#size-cells = <2>;
->> +		device_type = "pci";
->> +		num-lanes = <8>;
->> +		linux,pci-domain = <0>;
->> +
->> +		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
->> +		clock-names = "core";
->> +
->> +		resets = <&bpmp TEGRA194_RESET_PEX0_CORE_0_APB>,
->> +			 <&bpmp TEGRA194_RESET_PEX0_CORE_0>;
->> +		reset-names = "core_apb", "core";
->> +
->> +		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,	/* controller interrupt */
->> +			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
->> +		interrupt-names = "intr", "msi";
->> +
->> +		#interrupt-cells = <1>;
->> +		interrupt-map-mask = <0 0 0 0>;
->> +		interrupt-map = <0 0 0 0 &gic 0 72 0x04>;
->> +
->> +		nvidia,bpmp = <&bpmp>;
->> +
->> +		supports-clkreq;
->> +		nvidia,disable-aspm-states = <0xf>;
->> +		nvidia,controller-id = <0>;
->> +		nvidia,aspm-cmrt-us = <60>;
->> +		nvidia,aspm-pwr-on-t-us = <20>;
->> +		nvidia,aspm-l0s-entrance-latency-us = <3>;
->> +
->> +		bus-range = <0x0 0xff>;
->> +		ranges = <0x81000000 0x0 0x38100000 0x0 0x38100000 0x0 0x00100000      /* downstream I/O (1MB) */
->> +			  0x82000000 0x0 0x38200000 0x0 0x38200000 0x0 0x01E00000      /* non-prefetchable memory (30MB) */
->> +			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
->> +	};
->> +
->> +Board DTS:
->> +
->> +	pcie@14180000 {
->> +		status = "okay";
->> +
->> +		vddio-pex-ctl-supply = <&vdd_1v8ao>;
->> +
->> +		phys = <&p2u_2>,
->> +		       <&p2u_3>,
->> +		       <&p2u_4>,
->> +		       <&p2u_5>;
->> +		phy-names = "p2u-0", "p2u-1", "p2u-2", "p2u-3";
->> +	};
->> -- 
->> 2.7.4
->>
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBhdWRpbyBjb25m
+aWd1cmF0aW9uIGlzIG9ubHkgdmFsaWQgaWYgdGhlIEhETUkgY29kZWMgaGFzIGJlZW4KcHJvcGVy
+bHkgc2V0IHVwLiBEbyBub3QgYXR0ZW1wdCB0byBzZXQgdXAgYXVkaW8gYmVmb3JlIHRoYXQgaGFw
+cGVucwpiZWNhdXNlIGl0IGNhdXNlcyBhIGRpdmlzaW9uIGJ5IHplcm8uCgpOb3RlIHRoYXQgdGhp
+cyBpcyBvbmx5IHByb2JsZW1hdGljIG9uIFRlZ3JhMjAgYW5kIFRlZ3JhMzAuIExhdGVyIGNoaXBz
+CmltcGxlbWVudCB0aGUgZGl2aXNpb24gaW5zdHJ1Y3Rpb25zIHdoaWNoIHJldHVybiB6ZXJvIHdo
+ZW4gZGl2aWRpbmcgYnkKemVybyBhbmQgZG9uJ3QgdGhyb3cgYW4gZXhjZXB0aW9uLgoKRml4ZXM6
+IGRiNWFkZjRkNmRjZSAoImRybS90ZWdyYTogaGRtaTogRml4IGF1ZGlvIHRvIHdvcmsgd2l0aCBh
+bnkgcGl4ZWwgY2xvY2sgcmF0ZSIpClJlcG9ydGVkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNl
+bC56aXN3aWxlckB0b3JhZGV4LmNvbT4KU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
+ZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jIHwgNSAt
+LS0tLQogMSBmaWxlIGNoYW5nZWQsIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMKaW5k
+ZXggNDdjNTU5NzQ3NTZkLi5lNmM2MGJiYzBmZWMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9oZG1pLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwpAQCAtMTI1
+OSwxMSArMTI1OSw2IEBAIHN0YXRpYyB2b2lkIHRlZ3JhX2hkbWlfZW5jb2Rlcl9lbmFibGUoc3Ry
+dWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQogCXRlZ3JhX2hkbWlfd3JpdGVsKGhkbWksIHZhbHVl
+LCBIRE1JX05WX1BESVNQX1NPUl9SRUZDTEspOwogCiAJaGRtaS0+ZHZpID0gIXRlZ3JhX291dHB1
+dF9pc19oZG1pKG91dHB1dCk7Ci0JaWYgKCFoZG1pLT5kdmkpIHsKLQkJZXJyID0gdGVncmFfaGRt
+aV9zZXR1cF9hdWRpbyhoZG1pKTsKLQkJaWYgKGVyciA8IDApCi0JCQloZG1pLT5kdmkgPSB0cnVl
+OwotCX0KIAogCWlmIChoZG1pLT5jb25maWctPmhhc19oZGEpCiAJCXRlZ3JhX2hkbWlfd3JpdGVf
+ZWxkKGhkbWkpOwotLSAKMi4yMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWw=
