@@ -1,70 +1,59 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 02/19] PM / devfreq: tegra: Replace readl-writel with
- relaxed versions
-Date: Wed, 17 Apr 2019 10:02:13 +0900
-Message-ID: <127f2e0c-1cd0-25d9-1029-92af86775af8@samsung.com>
-References: <20190415145505.18397-1-digetx@gmail.com>
-        <CGME20190415145804epcas1p2c0d9f207713ae198599d34468261d64b@epcas1p2.samsung.com>
-        <20190415145505.18397-3-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2] drm/tegra: hdmi: Setup audio only if configured
+Date: Tue, 16 Apr 2019 20:42:04 +0300
+Message-ID: <c599077b-2b5f-d7d4-191d-ee07d3da86d4@gmail.com>
+References: <20190416151644.30974-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415145505.18397-3-digetx@gmail.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190416151644.30974-1-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On 19. 4. 15. 오후 11:54, Dmitry Osipenko wrote:
-> There is no need to insert memory barrier on each readl/writel
-> invocation, hence use the relaxed versions.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra-devfreq.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-> index 02905978abe1..0c0909fba545 100644
-> --- a/drivers/devfreq/tegra-devfreq.c
-> +++ b/drivers/devfreq/tegra-devfreq.c
-> @@ -191,23 +191,23 @@ static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
->  
->  static u32 actmon_readl(struct tegra_devfreq *tegra, u32 offset)
->  {
-> -	return readl(tegra->regs + offset);
-> +	return readl_relaxed(tegra->regs + offset);
->  }
->  
->  static void actmon_writel(struct tegra_devfreq *tegra, u32 val, u32 offset)
->  {
-> -	writel(val, tegra->regs + offset);
-> +	writel_relaxed(val, tegra->regs + offset);
->  }
->  
->  static u32 device_readl(struct tegra_devfreq_device *dev, u32 offset)
->  {
-> -	return readl(dev->regs + offset);
-> +	return readl_relaxed(dev->regs + offset);
->  }
->  
->  static void device_writel(struct tegra_devfreq_device *dev, u32 val,
->  			  u32 offset)
->  {
-> -	writel(val, dev->regs + offset);
-> +	writel_relaxed(val, dev->regs + offset);
->  }
->  
->  static unsigned long do_percent(unsigned long val, unsigned int pct)
-> 
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+MTYuMDQuMjAxOSAxODoxNiwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFRoZSBhdWRpbyBjb25maWd1cmF0
+aW9uIGlzIG9ubHkgdmFsaWQgaWYgdGhlIEhETUkgY29kZWMgaGFzIGJlZW4KPiBwcm9wZXJseSBz
+ZXQgdXAuIERvIG5vdCBhdHRlbXB0IHRvIHNldCB1cCBhdWRpbyBiZWZvcmUgdGhhdCBoYXBwZW5z
+Cj4gYmVjYXVzZSBpdCBjYXVzZXMgYSBkaXZpc2lvbiBieSB6ZXJvLgo+IAo+IE5vdGUgdGhhdCB0
+aGlzIGlzIG9ubHkgcHJvYmxlbWF0aWMgb24gVGVncmEyMCBhbmQgVGVncmEzMC4gTGF0ZXIgY2hp
+cHMKPiBpbXBsZW1lbnQgdGhlIGRpdmlzaW9uIGluc3RydWN0aW9ucyB3aGljaCByZXR1cm4gemVy
+byB3aGVuIGRpdmlkaW5nIGJ5Cj4gemVybyBhbmQgZG9uJ3QgdGhyb3cgYW4gZXhjZXB0aW9uLgo+
+IAo+IEZpeGVzOiBkYjVhZGY0ZDZkY2UgKCJkcm0vdGVncmE6IGhkbWk6IEZpeCBhdWRpbyB0byB3
+b3JrIHdpdGggYW55IHBpeGVsIGNsb2NrIHJhdGUiKQo+IFJlcG9ydGVkLWJ5OiBNYXJjZWwgWmlz
+d2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+IENoYW5nZXMgaW4gdjI6Cj4g
+LSBzZXR1cCBhdWRpbyBhdCAtPmVuYWJsZSgpIHRpbWUgaWYgaXQgaGFzIGJlZW4gY29uZmlndXJl
+ZCwgb3RoZXJ3aXNlCj4gICBhdWRpbyBwbGF5YmFjayBuZWVkcyB0byBiZSByZXN0YXJ0ZWQgYWZ0
+ZXIgdGhlIGRpc3BsYXkgZ29lcyB0aHJvdWdoCj4gICBhIGRpc2FibGUvZW5hYmxlIGN5Y2xlCj4g
+Cj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgfCAxMiArKysrKysrKystLS0KPiAgMSBm
+aWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9oZG1pLmMKPiBpbmRleCA0N2M1NTk3NDc1NmQuLmQyM2M0YmZkZTc5MCAxMDA2NDQKPiAtLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2hkbWkuYwo+IEBAIC0xMjYwLDkgKzEyNjAsMTUgQEAgc3RhdGljIHZvaWQgdGVncmFfaGRt
+aV9lbmNvZGVyX2VuYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCj4gIAo+ICAJaGRt
+aS0+ZHZpID0gIXRlZ3JhX291dHB1dF9pc19oZG1pKG91dHB1dCk7Cj4gIAlpZiAoIWhkbWktPmR2
+aSkgewo+IC0JCWVyciA9IHRlZ3JhX2hkbWlfc2V0dXBfYXVkaW8oaGRtaSk7Cj4gLQkJaWYgKGVy
+ciA8IDApCj4gLQkJCWhkbWktPmR2aSA9IHRydWU7Cj4gKwkJLyoKPiArCQkgKiBNYWtlIHN1cmUg
+dGhhdCB0aGUgYXVkaW8gZm9ybWF0IGhhcyBiZWVuIGNvbmZpZ3VyZWQgYmVmb3JlCj4gKwkJICog
+ZW5hYmxpbmcgYXVkaW8sIG90aGVyd2lzZSB3ZSBtYXkgdHJ5IHRvIGRpdmlkZSBieSB6ZXJvLgo+
+ICsJCSovCj4gKwkJaWYgKGhkbWktPmZvcm1hdC5zYW1wbGVfcmF0ZSA+IDApIHsKPiArCQkJZXJy
+ID0gdGVncmFfaGRtaV9zZXR1cF9hdWRpbyhoZG1pKTsKPiArCQkJaWYgKGVyciA8IDApCj4gKwkJ
+CQloZG1pLT5kdmkgPSB0cnVlOwo+ICsJCX0KPiAgCX0KPiAgCj4gIAlpZiAoaGRtaS0+Y29uZmln
+LT5oYXNfaGRhKQo+IAoKVGhhbmsgeW91IHZlcnkgbXVjaCEKClRlc3RlZC1ieTogRG1pdHJ5IE9z
+aXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWw=
