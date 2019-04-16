@@ -1,70 +1,76 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: tegra114: fix PIO transfer" to the spi tree
-Date: Tue, 16 Apr 2019 17:32:57 +0100 (BST)
-Message-ID: <20190416163257.956F211281C6@debutante.sirena.org.uk>
-References: <1555363834-32155-2-git-send-email-skomatineni@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555363834-32155-2-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: broonie@kernel.org, devicetree@vger.kernel.org, jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.orgMark Brown <broonie@kernel.org>, mark.rutland@arm.com, robh+dt@kernel.org, skomatineni@nvidia.com, talho@nvidia.com, thierry.reding@gmail.com
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 3/3] ARM: Enable Trusted Foundations for multiplatform
+ ARM v7
+Date: Tue, 16 Apr 2019 07:04:14 -0700
+Message-ID: <20190416140414.GD2839@atomide.com>
+References: <20190411091848.16949-1-thierry.reding@gmail.com>
+ <20190411091848.16949-3-thierry.reding@gmail.com>
+ <20190415172357.GC2839@atomide.com> <20190416074444.GA10907@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190416074444.GA10907@ulmo>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+* Thierry Reding <thierry.reding@gmail.com> [190416 07:45]:
+> On Mon, Apr 15, 2019 at 10:23:57AM -0700, Tony Lindgren wrote:
+> > Hi Thierry,
+> > 
+> > * Thierry Reding <thierry.reding@gmail.com> [190411 09:19]:
+> > > --- a/arch/arm/configs/multi_v7_defconfig
+> > > +++ b/arch/arm/configs/multi_v7_defconfig
+> > > @@ -141,6 +141,7 @@ CONFIG_ARM_CPUIDLE=y
+> > >  CONFIG_ARM_ZYNQ_CPUIDLE=y
+> > >  CONFIG_ARM_EXYNOS_CPUIDLE=y
+> > >  CONFIG_KERNEL_MODE_NEON=y
+> > > +CONFIG_TRUSTED_FOUNDATIONS=y
+> > >  CONFIG_NET=y
+> > >  CONFIG_PACKET=y
+> > >  CONFIG_UNIX=y
+> > 
+> > I'm updating my branch for make savedefconfig clean-up
+> > for multi_v7_defconfig as posted earlier in thread
+> > "[PATCHv2 0/2] Update multi_v7_defconfig for dropped
+> > and moved options", looks like this commit causes
+> > a trivial merge conflict.
+> > 
+> > Can we consider your branch immutable for commit
+> > 8b695aa58cc4 ("ARM: Enable Trusted Foundations for
+> > multiplatform ARM v7")?
+> 
+> In general, the for-next branch from the Tegra tree is not stable. The
+> individual branches that make up for-next are. In this case it would be
+> for-5.2/arm/defconfig. However...
+> 
+> > I'd like to merge that one in to avoid an unecessary
+> > merge conflict.
+> 
+> It's slightly tricky because I generated the multi_v7_defconfig on top
+> of a different branch (because the TRUSTED_FOUNDATIONS symbol moves
+> around in that branch), so if you base your update on top of my branch,
+> the symbol will likely get moved around again.
+> 
+> Perhaps better would be if you provide a stable branch with the update
+> and then I can rebase this patch on top.
+> 
+> Would that work for you?
 
-   spi: tegra114: fix PIO transfer
+OK sure, I'll push out a branch against v5.1-rc1 with just the
+savedefconfig changes.
 
-has been applied to the spi tree at
+Regards,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.1
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 3f6e3f7843a6a1667ed890ca51a1388fc7bf3429 Mon Sep 17 00:00:00 2001
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Mon, 15 Apr 2019 14:30:26 -0700
-Subject: [PATCH] spi: tegra114: fix PIO transfer
-
-This patch fixes PIO mode transfer to use PIO bit in SPI_COMMAND1 register.
-Current driver uses DMA_EN instead of PIO bit.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-tegra114.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index b57f10182fae..21e4fdad013f 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -641,8 +641,9 @@ static int tegra_spi_start_cpu_based_transfer(
- 
- 	tspi->is_curr_dma_xfer = false;
- 
--	val |= SPI_DMA_EN;
--	tegra_spi_writel(tspi, val, SPI_DMA_CTL);
-+	val = tspi->command1_reg;
-+	val |= SPI_PIO;
-+	tegra_spi_writel(tspi, val, SPI_COMMAND1);
- 	return 0;
- }
- 
--- 
-2.20.1
+Tony
