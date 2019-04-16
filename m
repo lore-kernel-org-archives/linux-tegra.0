@@ -1,173 +1,211 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH RFT V2 1/8] clk: divider: add explicit big endian support
-Date: Tue, 16 Apr 2019 12:05:48 +0800
-Message-ID: <201904161252.kWbdH4TW%lkp@intel.com>
-References: <20190415101046.5872-2-jonas.gorski@gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 10/19] PM / devfreq: tegra: Drop primary interrupt
+ handler
+Date: Tue, 16 Apr 2019 14:56:54 +0900
+Message-ID: <93574885-d695-2288-a4c6-2b845ad8daaf@samsung.com>
+References: <20190415145505.18397-1-digetx@gmail.com>
+        <CGME20190415145737epcas1p39300df7ef83ed20bd7aaa4e920d1f475@epcas1p3.samsung.com>
+        <20190415145505.18397-11-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190415101046.5872-2-jonas.gorski@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Sascha Hauer <s.hauer@pengutronix.de>, Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, Fabio Estevam <festevam@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, Shawn Guo <shawnguo@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Paul Mackerras <paulus@samba.org>, kbuild-all@01.org, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190415145505.18397-11-digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jonas,
+Hi,
 
-Thank you for the patch! Perhaps something to improve:
+It looks good to me to drop the primary interrupt handler
+but I have some comments. Please check it.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v5.1-rc5 next-20190415]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+On 19. 4. 15. 오후 11:54, Dmitry Osipenko wrote:
+> There is no real need in the primary interrupt handler, hence move
+> everything to the secondary (threaded) handler. In a result locking
+> is consistent now and there are no potential races with the interrupt
+> handler because it is protected with the devfreq's mutex.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/tegra-devfreq.c | 61 ++++++++++++---------------------
+>  1 file changed, 22 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+> index 2a1464098200..69b557df5084 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -144,7 +144,6 @@ static struct tegra_devfreq_device_config actmon_device_configs[] = {
+>  struct tegra_devfreq_device {
+>  	const struct tegra_devfreq_device_config *config;
+>  	void __iomem *regs;
+> -	spinlock_t lock;
+>  
+>  	/* Average event count sampled in the last interrupt */
+>  	u32 avg_count;
+> @@ -249,11 +248,8 @@ static void actmon_write_barrier(struct tegra_devfreq *tegra)
+>  static void actmon_isr_device(struct tegra_devfreq *tegra,
+>  			      struct tegra_devfreq_device *dev)
+>  {
+> -	unsigned long flags;
+>  	u32 intr_status, dev_ctrl;
+>  
+> -	spin_lock_irqsave(&dev->lock, flags);
+> -
+>  	dev->avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
+>  	tegra_devfreq_update_avg_wmark(tegra, dev);
+>  
+> @@ -302,26 +298,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+>  	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
+>  
+>  	actmon_write_barrier(tegra);
+> -
+> -	spin_unlock_irqrestore(&dev->lock, flags);
+> -}
+> -
+> -static irqreturn_t actmon_isr(int irq, void *data)
+> -{
+> -	struct tegra_devfreq *tegra = data;
+> -	bool handled = false;
+> -	unsigned int i;
+> -	u32 val;
+> -
+> -	val = actmon_readl(tegra, ACTMON_GLB_STATUS);
+> -	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
+> -		if (val & tegra->devices[i].config->irq_mask) {
+> -			actmon_isr_device(tegra, tegra->devices + i);
+> -			handled = true;
+> -		}
+> -	}
+> -
+> -	return handled ? IRQ_WAKE_THREAD : IRQ_NONE;
+>  }
+>  
+>  static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
+> @@ -348,35 +324,46 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
+>  	unsigned long cpu_freq = 0;
+>  	unsigned long static_cpu_emc_freq = 0;
+>  	unsigned int avg_sustain_coef;
+> -	unsigned long flags;
+> +	u32 avg_count;
+>  
+>  	if (dev->config->avg_dependency_threshold) {
+>  		cpu_freq = cpufreq_get(0);
+>  		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
+>  	}
+>  
+> -	spin_lock_irqsave(&dev->lock, flags);
+> -
+> -	dev->target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
+> +	avg_count = dev->avg_count;
+> +	dev->target_freq = avg_count / ACTMON_SAMPLING_PERIOD;
 
-url:    https://github.com/0day-ci/linux/commits/Jonas-Gorski/clk-make-register-endianness-a-run-time-property/20190415-235847
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+Actually, this change is not related to this patch.
+Please keep the original code.
+
+>  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
+>  	dev->target_freq = do_percent(dev->target_freq, avg_sustain_coef);
+>  	dev->target_freq += dev->boost_freq;
+>  
+> -	if (dev->avg_count >= dev->config->avg_dependency_threshold)
+> +	if (avg_count >= dev->config->avg_dependency_threshold)
+
+ditto.
+
+>  		dev->target_freq = max(dev->target_freq, static_cpu_emc_freq);
+> -
+> -	spin_unlock_irqrestore(&dev->lock, flags);
+>  }
+>  
+>  static irqreturn_t actmon_thread_isr(int irq, void *data)
+>  {
+>  	struct tegra_devfreq *tegra = data;
+> +	bool handled = false;
+> +	unsigned int i;
+> +	u32 val;
+>  
+>  	mutex_lock(&tegra->devfreq->lock);
+> -	update_devfreq(tegra->devfreq);
+> +
+> +	val = actmon_readl(tegra, ACTMON_GLB_STATUS);
+> +	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
+> +		if (val & tegra->devices[i].config->irq_mask) {
+> +			actmon_isr_device(tegra, tegra->devices + i);
+> +			handled = true;
+> +		}
+> +	}
+> +
+> +	if (handled)
+> +		update_devfreq(tegra->devfreq);
+> +
+>  	mutex_unlock(&tegra->devfreq->lock);
+>  
+> -	return IRQ_HANDLED;
+> +	return handled ? IRQ_HANDLED : IRQ_NONE;
+>  }
+>  
+>  static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
+> @@ -386,7 +373,6 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
+>  	struct tegra_devfreq *tegra;
+>  	struct tegra_devfreq_device *dev;
+>  	unsigned int i;
+> -	unsigned long flags;
+>  
+>  	if (action != POST_RATE_CHANGE)
+>  		return NOTIFY_OK;
+> @@ -398,9 +384,7 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
+
+When I review this patch, I have a question
+about why tegra_actmon_rate_notify_cb is needed.
+
+tegra_actmon_rate_notify_cb() do something
+when the clock rate of emc_clock is changed.
+I think that 'emc_clock' is changed by this driver.
+It means that the this driver can catch the change timing
+of emc_clock rate without notifier. 
+
+IMO, it is possible to call tegra_devfreq_update_wmark()
+directly without clock notifier before calling
+'clk_set_min_rate()/clk_set_rate()' in the tegra_devfreq_target().
+
+With clock notifier, it cannot restore something for
+tegra_devfreq_update_wmark(tegra, dev) when failed to
+set the rate of emc_clk by 'clk_set_min_rate()/clk_set_rate()'.
+
+>  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
+>  		dev = &tegra->devices[i];
+>  
+> -		spin_lock_irqsave(&dev->lock, flags);
+>  		tegra_devfreq_update_wmark(tegra, dev);
+> -		spin_unlock_irqrestore(&dev->lock, flags);
+>  	}
+>  
+>  	actmon_write_barrier(tegra);
+> @@ -668,7 +652,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  		dev = tegra->devices + i;
+>  		dev->config = actmon_device_configs + i;
+>  		dev->regs = tegra->regs + dev->config->offset;
+> -		spin_lock_init(&dev->lock);
+>  
+>  		tegra_actmon_configure_device(tegra, dev);
+>  	}
+> @@ -696,8 +679,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	err = devm_request_threaded_irq(&pdev->dev, irq, actmon_isr,
+> -					actmon_thread_isr, IRQF_SHARED,
+> +	err = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+> +					actmon_thread_isr, IRQF_ONESHOT,
+>  					"tegra-devfreq", tegra);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "Interrupt request failed\n");
+> 
 
 
-sparse warnings: (new ones prefixed by >>)
-
-   drivers/clk/clk-divider.c:317:18: sparse: expression using sizeof(void)
-   drivers/clk/clk-divider.c:317:18: sparse: expression using sizeof(void)
->> drivers/clk/clk-divider.c:391:44: sparse: incorrect type in argument 1 (different address spaces) @@    expected struct clk_divider *divider @@    got voistruct clk_divider *divider @@
-   drivers/clk/clk-divider.c:391:44:    expected struct clk_divider *divider
-   drivers/clk/clk-divider.c:391:44:    got void [noderef] <asn:2>*reg
-   drivers/clk/clk-divider.c:416:16: sparse: expression using sizeof(void)
-   drivers/clk/clk-divider.c:416:16: sparse: expression using sizeof(void)
-   drivers/clk/clk-divider.c:441:44: sparse: incorrect type in argument 1 (different address spaces) @@    expected struct clk_divider *divider @@    got voistruct clk_divider *divider @@
-   drivers/clk/clk-divider.c:441:44:    expected struct clk_divider *divider
-   drivers/clk/clk-divider.c:441:44:    got void [noderef] <asn:2>*reg
-
-vim +391 drivers/clk/clk-divider.c
-
-   289	
-   290	static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
-   291				       unsigned long rate,
-   292				       unsigned long *best_parent_rate,
-   293				       const struct clk_div_table *table, u8 width,
-   294				       unsigned long flags)
-   295	{
-   296		int i, bestdiv = 0;
-   297		unsigned long parent_rate, best = 0, now, maxdiv;
-   298		unsigned long parent_rate_saved = *best_parent_rate;
-   299	
-   300		if (!rate)
-   301			rate = 1;
-   302	
-   303		maxdiv = _get_maxdiv(table, width, flags);
-   304	
-   305		if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-   306			parent_rate = *best_parent_rate;
-   307			bestdiv = _div_round(table, parent_rate, rate, flags);
-   308			bestdiv = bestdiv == 0 ? 1 : bestdiv;
-   309			bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
-   310			return bestdiv;
-   311		}
-   312	
-   313		/*
-   314		 * The maximum divider we can use without overflowing
-   315		 * unsigned long in rate * i below
-   316		 */
- > 317		maxdiv = min(ULONG_MAX / rate, maxdiv);
-   318	
-   319		for (i = _next_div(table, 0, flags); i <= maxdiv;
-   320						     i = _next_div(table, i, flags)) {
-   321			if (rate * i == parent_rate_saved) {
-   322				/*
-   323				 * It's the most ideal case if the requested rate can be
-   324				 * divided from parent clock without needing to change
-   325				 * parent rate, so return the divider immediately.
-   326				 */
-   327				*best_parent_rate = parent_rate_saved;
-   328				return i;
-   329			}
-   330			parent_rate = clk_hw_round_rate(parent, rate * i);
-   331			now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
-   332			if (_is_best_div(rate, now, best, flags)) {
-   333				bestdiv = i;
-   334				best = now;
-   335				*best_parent_rate = parent_rate;
-   336			}
-   337		}
-   338	
-   339		if (!bestdiv) {
-   340			bestdiv = _get_maxdiv(table, width, flags);
-   341			*best_parent_rate = clk_hw_round_rate(parent, 1);
-   342		}
-   343	
-   344		return bestdiv;
-   345	}
-   346	
-   347	long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-   348				       unsigned long rate, unsigned long *prate,
-   349				       const struct clk_div_table *table,
-   350				       u8 width, unsigned long flags)
-   351	{
-   352		int div;
-   353	
-   354		div = clk_divider_bestdiv(hw, parent, rate, prate, table, width, flags);
-   355	
-   356		return DIV_ROUND_UP_ULL((u64)*prate, div);
-   357	}
-   358	EXPORT_SYMBOL_GPL(divider_round_rate_parent);
-   359	
-   360	long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-   361					  unsigned long rate, unsigned long *prate,
-   362					  const struct clk_div_table *table, u8 width,
-   363					  unsigned long flags, unsigned int val)
-   364	{
-   365		int div;
-   366	
-   367		div = _get_div(table, val, flags, width);
-   368	
-   369		/* Even a read-only clock can propagate a rate change */
-   370		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-   371			if (!parent)
-   372				return -EINVAL;
-   373	
-   374			*prate = clk_hw_round_rate(parent, rate * div);
-   375		}
-   376	
-   377		return DIV_ROUND_UP_ULL((u64)*prate, div);
-   378	}
-   379	EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
-   380	
-   381	
-   382	static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-   383					unsigned long *prate)
-   384	{
-   385		struct clk_divider *divider = to_clk_divider(hw);
-   386	
-   387		/* if read only, just return current value */
-   388		if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-   389			u32 val;
-   390	
- > 391			val = clk_div_readl(divider->reg) >> divider->shift;
-   392			val &= clk_div_mask(divider->width);
-   393	
-   394			return divider_ro_round_rate(hw, rate, prate, divider->table,
-   395						     divider->width, divider->flags,
-   396						     val);
-   397		}
-   398	
-   399		return divider_round_rate(hw, rate, prate, divider->table,
-   400					  divider->width, divider->flags);
-   401	}
-   402	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
