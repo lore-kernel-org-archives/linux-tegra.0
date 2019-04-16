@@ -1,102 +1,74 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 01/19] PM / devfreq: tegra: Fix kHz to Hz conversion
-Date: Tue, 16 Apr 2019 16:24:16 +0300
-Message-ID: <cd022104-6b31-9b0d-b5d5-32374bdc0e6a@gmail.com>
-References: <20190415145505.18397-1-digetx@gmail.com>
- <CGME20190415145820epcas2p27ba84badad9cf5cf5b7853af7e908e43@epcas2p2.samsung.com>
- <20190415145505.18397-2-digetx@gmail.com>
- <a7cacb6c-1097-6d16-f6dc-7470f487c5b8@samsung.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V2 02/16] PCI/PME: Export pcie_pme_disable_msi() API
+Date: Tue, 16 Apr 2019 19:00:50 +0530
+Message-ID: <f47408e4-c02d-bd28-31f9-96b92be02df5@nvidia.com>
+References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
+ <1554407683-31580-3-git-send-email-vidyas@nvidia.com>
+ <20190411101657.GF4633@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a7cacb6c-1097-6d16-f6dc-7470f487c5b8@samsung.com>
+In-Reply-To: <20190411101657.GF4633@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-16.04.2019 4:45, Chanwoo Choi пишет:
-> Hi,
-> 
-> I add one minor comment (KHZ -> hz).
-
-Hello Chanwoo,
-
-Thank you very much for the review!
-
-> On 19. 4. 15. 오후 11:54, Dmitry Osipenko wrote:
->> The kHz to Hz is incorrectly converted in a few places in the code,
->> this results in a wrong frequency being calculated because devfreq core
->> uses OPP frequencies that are given in Hz to clamp the rate, while
->> tegra-devfreq gives to the core value in kHz and then it also expects to
->> receive value in kHz from the core. In a result memory freq is always set
->> to a value which is close to ULONG_MAX because of the bug. Hence the EMC
->> frequency is always capped to the maximum and the driver doesn't do
->> anything useful. This patch was tested on Tegra30 and Tegra124 SoC's, EMC
->> frequency scaling works properly now.
+On 4/11/2019 3:46 PM, Thierry Reding wrote:
+> On Fri, Apr 05, 2019 at 01:24:29AM +0530, Vidya Sagar wrote:
+>> Export pcie_pme_disable_msi() API to enable drivers using this API be able to
+>> build as loadable modules
 >>
->> Cc: <stable@vger.kernel.org> # 4.14+
->> Tested-by: Steev Klimaszewski <steev@kali.org>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 >> ---
->>  drivers/devfreq/tegra-devfreq.c | 10 ++++------
->>  1 file changed, 4 insertions(+), 6 deletions(-)
+>> Changes from [v1]:
+>> * This is a new patch in v2 series
 >>
->> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
->> index c89ba7b834ff..02905978abe1 100644
->> --- a/drivers/devfreq/tegra-devfreq.c
->> +++ b/drivers/devfreq/tegra-devfreq.c
->> @@ -486,9 +486,9 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->>  {
->>  	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
->>  	struct dev_pm_opp *opp;
->> -	unsigned long rate = *freq * KHZ;
->> +	unsigned long rate;
->>  
->> -	opp = devfreq_recommended_opp(dev, &rate, flags);
->> +	opp = devfreq_recommended_opp(dev, freq, flags);
->>  	if (IS_ERR(opp)) {
->>  		dev_err(dev, "Failed to find opp for %lu KHz\n", *freq);
-> 
-> Need to change it as following:
-> - KHz -> Hz
-
-Indeed, good catch.
-
-> 
->>  		return PTR_ERR(opp);
->> @@ -499,8 +499,6 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->>  	clk_set_min_rate(tegra->emc_clock, rate);
->>  	clk_set_rate(tegra->emc_clock, 0);
->>  
->> -	*freq = rate;
->> -
->>  	return 0;
->>  }
->>  
->> @@ -510,7 +508,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->>  	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
->>  	struct tegra_devfreq_device *actmon_dev;
->>  
->> -	stat->current_frequency = tegra->cur_freq;
->> +	stat->current_frequency = tegra->cur_freq * KHZ;
->>  
->>  	/* To be used by the tegra governor */
->>  	stat->private_data = tegra;
->> @@ -565,7 +563,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
->>  		target_freq = max(target_freq, dev->target_freq);
->>  	}
->>  
->> -	*freq = target_freq;
->> +	*freq = target_freq * KHZ;
->>  
->>  	return 0;
->>  }
+>>   drivers/pci/pcie/pme.c     | 6 ++++++
+>>   drivers/pci/pcie/portdrv.h | 5 +----
+>>   2 files changed, 7 insertions(+), 4 deletions(-)
 >>
+>> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
+>> index 54d593d10396..18e815c1e3c9 100644
+>> --- a/drivers/pci/pcie/pme.c
+>> +++ b/drivers/pci/pcie/pme.c
+>> @@ -27,6 +27,12 @@
+>>    */
+>>   bool pcie_pme_msi_disabled;
+>>   
+>> +void pcie_pme_disable_msi(void)
+>> +{
+>> +	pcie_pme_msi_disabled = true;
+>> +}
+>> +EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
+>> +
+>>   static int __init pcie_pme_setup(char *str)
+>>   {
+>>   	if (!strncmp(str, "nomsi", 5))
+>> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+>> index 1d50dc58ac40..2be7b7e9a784 100644
+>> --- a/drivers/pci/pcie/portdrv.h
+>> +++ b/drivers/pci/pcie/portdrv.h
+>> @@ -127,10 +127,7 @@ struct pci_dev;
+>>   #ifdef CONFIG_PCIE_PME
+>>   extern bool pcie_pme_msi_disabled;
+>>   
+>> -static inline void pcie_pme_disable_msi(void)
+>> -{
+>> -	pcie_pme_msi_disabled = true;
+>> -}
+>> +void pcie_pme_disable_msi(void);
+>>   
+>>   static inline bool pcie_pme_no_msi(void)
+>>   {
 > 
-> It looks good to me if modify it in accordance with my comment.
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Perhaps also export pcie_pme_no_msi()? That way you could get rid of the
+> extern declaration of the pcie_pme_msi_disabled variable and make it
+> static to drivers/pci/pcie/pme.c?
+Agree. I'll take care of this in V3 patch series.
 
-Okay, thanks.
+> 
+> Thierry
+> 
