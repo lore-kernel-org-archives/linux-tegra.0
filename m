@@ -1,143 +1,52 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 10/19] PM / devfreq: tegra: Drop primary interrupt
- handler
-Date: Tue, 16 Apr 2019 18:23:10 +0300
-Message-ID: <286d8d4a-f761-93d3-8b77-cf71a7d0dab3@gmail.com>
-References: <20190415145505.18397-1-digetx@gmail.com>
- <CGME20190415145737epcas1p39300df7ef83ed20bd7aaa4e920d1f475@epcas1p3.samsung.com>
- <20190415145505.18397-11-digetx@gmail.com>
- <93574885-d695-2288-a4c6-2b845ad8daaf@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2] drm/tegra: hdmi: Setup audio only if configured
+Date: Tue, 16 Apr 2019 17:16:44 +0200
+Message-ID: <20190416151644.30974-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <93574885-d695-2288-a4c6-2b845ad8daaf@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-16.04.2019 8:56, Chanwoo Choi пишет:
-> Hi,
-> 
-> It looks good to me to drop the primary interrupt handler
-> but I have some comments. Please check it.
-> 
-> On 19. 4. 15. 오후 11:54, Dmitry Osipenko wrote:
->> There is no real need in the primary interrupt handler, hence move
->> everything to the secondary (threaded) handler. In a result locking
->> is consistent now and there are no potential races with the interrupt
->> handler because it is protected with the devfreq's mutex.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra-devfreq.c | 61 ++++++++++++---------------------
->>  1 file changed, 22 insertions(+), 39 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
->> index 2a1464098200..69b557df5084 100644
->> --- a/drivers/devfreq/tegra-devfreq.c
->> +++ b/drivers/devfreq/tegra-devfreq.c
->> @@ -144,7 +144,6 @@ static struct tegra_devfreq_device_config actmon_device_configs[] = {
->>  struct tegra_devfreq_device {
->>  	const struct tegra_devfreq_device_config *config;
->>  	void __iomem *regs;
->> -	spinlock_t lock;
->>  
->>  	/* Average event count sampled in the last interrupt */
->>  	u32 avg_count;
->> @@ -249,11 +248,8 @@ static void actmon_write_barrier(struct tegra_devfreq *tegra)
->>  static void actmon_isr_device(struct tegra_devfreq *tegra,
->>  			      struct tegra_devfreq_device *dev)
->>  {
->> -	unsigned long flags;
->>  	u32 intr_status, dev_ctrl;
->>  
->> -	spin_lock_irqsave(&dev->lock, flags);
->> -
->>  	dev->avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
->>  	tegra_devfreq_update_avg_wmark(tegra, dev);
->>  
->> @@ -302,26 +298,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
->>  	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
->>  
->>  	actmon_write_barrier(tegra);
->> -
->> -	spin_unlock_irqrestore(&dev->lock, flags);
->> -}
->> -
->> -static irqreturn_t actmon_isr(int irq, void *data)
->> -{
->> -	struct tegra_devfreq *tegra = data;
->> -	bool handled = false;
->> -	unsigned int i;
->> -	u32 val;
->> -
->> -	val = actmon_readl(tegra, ACTMON_GLB_STATUS);
->> -	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
->> -		if (val & tegra->devices[i].config->irq_mask) {
->> -			actmon_isr_device(tegra, tegra->devices + i);
->> -			handled = true;
->> -		}
->> -	}
->> -
->> -	return handled ? IRQ_WAKE_THREAD : IRQ_NONE;
->>  }
->>  
->>  static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
->> @@ -348,35 +324,46 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
->>  	unsigned long cpu_freq = 0;
->>  	unsigned long static_cpu_emc_freq = 0;
->>  	unsigned int avg_sustain_coef;
->> -	unsigned long flags;
->> +	u32 avg_count;
->>  
->>  	if (dev->config->avg_dependency_threshold) {
->>  		cpu_freq = cpufreq_get(0);
->>  		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
->>  	}
->>  
->> -	spin_lock_irqsave(&dev->lock, flags);
->> -
->> -	dev->target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
->> +	avg_count = dev->avg_count;
->> +	dev->target_freq = avg_count / ACTMON_SAMPLING_PERIOD;
-> 
-> Actually, this change is not related to this patch.
-> Please keep the original code.
-> 
->>  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
->>  	dev->target_freq = do_percent(dev->target_freq, avg_sustain_coef);
->>  	dev->target_freq += dev->boost_freq;
->>  
->> -	if (dev->avg_count >= dev->config->avg_dependency_threshold)
->> +	if (avg_count >= dev->config->avg_dependency_threshold)
-> 
-> ditto.
-
-Good catch, it's a leftover from v1 that I forgot to revert. Thank you.
-
-[snip]
-
-> 
-> When I review this patch, I have a question
-> about why tegra_actmon_rate_notify_cb is needed.
-> 
-> tegra_actmon_rate_notify_cb() do something
-> when the clock rate of emc_clock is changed.
-> I think that 'emc_clock' is changed by this driver.
-> It means that the this driver can catch the change timing
-> of emc_clock rate without notifier. 
-
-The devfreq driver isn't the only driver of the EMC clock rate. The devfreq driver changes EMC freq dynamically based of on average memory usage activity, but for some hardware units (like display controller for example) there is a requirement for a minimum memory bandwidth (isochronous transactions) and hence when display is waking up from suspend it immediately requires an amount of memory bandwidth that could be higher than ACTMON hardware unit suggests and besides the ACTMON's reaction is delayed by the sampling period (12ms).
-
-> IMO, it is possible to call tegra_devfreq_update_wmark()
-> directly without clock notifier before calling
-> 'clk_set_min_rate()/clk_set_rate()' in the tegra_devfreq_target().
-> 
-> With clock notifier, it cannot restore something for
-> tegra_devfreq_update_wmark(tegra, dev) when failed to
-> set the rate of emc_clk by 'clk_set_min_rate()/clk_set_rate()'.
-
-The watermarks should be changed in accordance to the actual EMC clock rate. Given that EMC rate could be changed by something else than the devfreq driver, we need to re-adjust the watermarks to the actual values after the EMC rate-change completion. Please note that the clock notifier uses the POST_RATE_CHANGE event that happens only after successful completion of EMC clock rate change.
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBhdWRpbyBjb25m
+aWd1cmF0aW9uIGlzIG9ubHkgdmFsaWQgaWYgdGhlIEhETUkgY29kZWMgaGFzIGJlZW4KcHJvcGVy
+bHkgc2V0IHVwLiBEbyBub3QgYXR0ZW1wdCB0byBzZXQgdXAgYXVkaW8gYmVmb3JlIHRoYXQgaGFw
+cGVucwpiZWNhdXNlIGl0IGNhdXNlcyBhIGRpdmlzaW9uIGJ5IHplcm8uCgpOb3RlIHRoYXQgdGhp
+cyBpcyBvbmx5IHByb2JsZW1hdGljIG9uIFRlZ3JhMjAgYW5kIFRlZ3JhMzAuIExhdGVyIGNoaXBz
+CmltcGxlbWVudCB0aGUgZGl2aXNpb24gaW5zdHJ1Y3Rpb25zIHdoaWNoIHJldHVybiB6ZXJvIHdo
+ZW4gZGl2aWRpbmcgYnkKemVybyBhbmQgZG9uJ3QgdGhyb3cgYW4gZXhjZXB0aW9uLgoKRml4ZXM6
+IGRiNWFkZjRkNmRjZSAoImRybS90ZWdyYTogaGRtaTogRml4IGF1ZGlvIHRvIHdvcmsgd2l0aCBh
+bnkgcGl4ZWwgY2xvY2sgcmF0ZSIpClJlcG9ydGVkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNl
+bC56aXN3aWxlckB0b3JhZGV4LmNvbT4KU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
+ZWRpbmdAbnZpZGlhLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjI6Ci0gc2V0dXAgYXVkaW8gYXQgLT5l
+bmFibGUoKSB0aW1lIGlmIGl0IGhhcyBiZWVuIGNvbmZpZ3VyZWQsIG90aGVyd2lzZQogIGF1ZGlv
+IHBsYXliYWNrIG5lZWRzIHRvIGJlIHJlc3RhcnRlZCBhZnRlciB0aGUgZGlzcGxheSBnb2VzIHRo
+cm91Z2gKICBhIGRpc2FibGUvZW5hYmxlIGN5Y2xlCgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hk
+bWkuYyB8IDEyICsrKysrKysrKy0tLQogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwg
+MyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5j
+IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwppbmRleCA0N2M1NTk3NDc1NmQuLmQyM2M0
+YmZkZTc5MCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYworKysgYi9k
+cml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCkBAIC0xMjYwLDkgKzEyNjAsMTUgQEAgc3RhdGlj
+IHZvaWQgdGVncmFfaGRtaV9lbmNvZGVyX2VuYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29k
+ZXIpCiAKIAloZG1pLT5kdmkgPSAhdGVncmFfb3V0cHV0X2lzX2hkbWkob3V0cHV0KTsKIAlpZiAo
+IWhkbWktPmR2aSkgewotCQllcnIgPSB0ZWdyYV9oZG1pX3NldHVwX2F1ZGlvKGhkbWkpOwotCQlp
+ZiAoZXJyIDwgMCkKLQkJCWhkbWktPmR2aSA9IHRydWU7CisJCS8qCisJCSAqIE1ha2Ugc3VyZSB0
+aGF0IHRoZSBhdWRpbyBmb3JtYXQgaGFzIGJlZW4gY29uZmlndXJlZCBiZWZvcmUKKwkJICogZW5h
+YmxpbmcgYXVkaW8sIG90aGVyd2lzZSB3ZSBtYXkgdHJ5IHRvIGRpdmlkZSBieSB6ZXJvLgorCQkq
+LworCQlpZiAoaGRtaS0+Zm9ybWF0LnNhbXBsZV9yYXRlID4gMCkgeworCQkJZXJyID0gdGVncmFf
+aGRtaV9zZXR1cF9hdWRpbyhoZG1pKTsKKwkJCWlmIChlcnIgPCAwKQorCQkJCWhkbWktPmR2aSA9
+IHRydWU7CisJCX0KIAl9CiAKIAlpZiAoaGRtaS0+Y29uZmlnLT5oYXNfaGRhKQotLSAKMi4yMS4w
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
