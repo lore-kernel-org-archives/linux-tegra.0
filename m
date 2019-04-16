@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V3 07/16] dt-bindings: PCI: designware: Add binding for CDM register check
-Date: Wed, 17 Apr 2019 00:57:21 +0530
-Message-ID: <20190416192730.15681-8-vidyas@nvidia.com>
+Subject: [PATCH V3 09/16] Documentation/devicetree: Add PCIe supports-clkreq property
+Date: Wed, 17 Apr 2019 00:57:23 +0530
+Message-ID: <20190416192730.15681-10-vidyas@nvidia.com>
 References: <20190416192730.15681-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,39 +12,36 @@ To: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.redin
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add support to enable CDM (Configuration Dependent Module) registers check
-for any data corruption. CDM registers include standard PCIe configuration
-space registers, Port Logic registers and iATU and DMA registers.
-Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
-Version 4.90a
+Some host controllers need to know the existence of clkreq signal routing to
+downstream devices to be able to advertise low power features like ASPM L1
+substates. Without clkreq signal routing being present, enabling ASPM L1 sub
+states might lead to downstream devices falling off the bus. Hence a new device
+tree property 'supports-clkreq' is added to make such host controllers
+aware of clkreq signal routing to downstream devices.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
 Changes since [v2]:
-* Changed flag name from 'cdm-check' to 'enable-cdm-check'
-* Added info about Port Logic and DMA registers being part of CDM
+* None
 
 Changes since [v1]:
 * This is a new patch in v2 series
 
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
+ Documentation/devicetree/bindings/pci/pci.txt | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index c124f9bc11f3..2b5f5e25a028 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -31,6 +31,11 @@ Optional properties:
- - clock-names: Must include the following entries:
- 	- "pcie"
- 	- "pcie_bus"
-+- enable-cdm-check: This is a boolean property and if present enables
-+   automatic checking of CDM (Configuration Dependent Module) registers
-+   for data corruption. CDM registers include standard PCIe configuration
-+   space registers, Port Logic registers, DMA and iATU (internal Address
-+   Translation Unit) registers.
- RC mode:
- - num-viewport: number of view ports configured in hardware. If a platform
-   does not specify it, the driver assumes 2.
+diff --git a/Documentation/devicetree/bindings/pci/pci.txt b/Documentation/devicetree/bindings/pci/pci.txt
+index c77981c5dd18..8ab574704c7a 100644
+--- a/Documentation/devicetree/bindings/pci/pci.txt
++++ b/Documentation/devicetree/bindings/pci/pci.txt
+@@ -24,3 +24,8 @@ driver implementation may support the following properties:
+    unsupported link speed, for instance, trying to do training for
+    unsupported link speed, etc.  Must be '4' for gen4, '3' for gen3, '2'
+    for gen2, and '1' for gen1. Any other values are invalid.
++- supports-clkreq:
++   If present this property specifies that CLKREQ signal routing exists from
++   root port to downstream device and host bridge drivers can do programming
++   which depends on CLKREQ signal existence. For example, programming root port
++   not to advertise ASPM L1 Sub-States support if there is no CLKREQ signal.
 -- 
 2.17.1
