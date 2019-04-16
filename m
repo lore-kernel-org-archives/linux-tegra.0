@@ -1,67 +1,38 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V2 07/16] dt-bindings: PCI: designware: Add binding for
- CDM register check
-Date: Tue, 16 Apr 2019 19:59:12 +0530
-Message-ID: <ccaf5077-4fb8-847c-d8b6-6e8a25f27660@nvidia.com>
-References: <1554407683-31580-1-git-send-email-vidyas@nvidia.com>
- <1554407683-31580-8-git-send-email-vidyas@nvidia.com>
- <20190415145402.GF29254@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 06/19] PM / devfreq: tegra: Fix missed error checking
+ on devfreq initialization failure
+Date: Tue, 16 Apr 2019 17:29:18 +0300
+Message-ID: <7f187635-a42e-02cf-899f-996702602785@gmail.com>
+References: <20190415145505.18397-1-digetx@gmail.com>
+ <CGME20190415145756epcas3p36a0597ca84dfbe079f9a453d8b28fea0@epcas3p3.samsung.com>
+ <20190415145505.18397-7-digetx@gmail.com>
+ <b610cdf7-5ca7-0f29-f74d-fb7892796577@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415145402.GF29254@ulmo>
+In-Reply-To: <b610cdf7-5ca7-0f29-f74d-fb7892796577@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, lorenzo.pieralisi@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/15/2019 8:24 PM, Thierry Reding wrote:
-> On Fri, Apr 05, 2019 at 01:24:34AM +0530, Vidya Sagar wrote:
->> Add support to enable CDM (Configuration Dependent Module) registers check
->> for any data corruption. CDM registers include standard PCIe configuration
->> space registers, Port Logic registers and iATU and DMA registers.
->> Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
->> Version 4.90a
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->> Changes since [v1]:
->> * This is a new patch in v2 series
->>
->>   Documentation/devicetree/bindings/pci/designware-pcie.txt | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> index c124f9bc11f3..728281b5bcd5 100644
->> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> @@ -31,6 +31,10 @@ Optional properties:
->>   - clock-names: Must include the following entries:
->>   	- "pcie"
->>   	- "pcie_bus"
->> +- cdm-check: This is a boolean property and if present enables automatic
->> +   checking of CDM (Configuration Dependent Module) registers for data
->> +   corruption. CDM registers include configuration space registers and iATU
->> +   (internal Address Translation Unit) registers.
+16.04.2019 5:32, Chanwoo Choi пишет:
+> Hi,
 > 
-> By comparison the commit message also lists "Port Logic" and "DMA"
-> registers as being part of the CDM registers. Shouldn't they be part of
-> the bindings document as well?
-Ok. I'll add them in V3 patch series.
+> patch6/7/8/9 are for handling of exception handling in probe() function.
+> Actually, I'm not sure that there are special reason to split out
+> the patches. I think that you can squash patch6/7/8/9 to only one patch.
 
-> 
-> Perhaps it'd also be a good idea to rename this property to something
-> more imperative, like "enable-cdm" or similar.
-Ok. I'll go with "enable-cdm-check". I hope that should be fine.
+Indeed, I was rebasing and reordering patches multiple times and looks like there is no reason not to squash these patches now.
 
-> 
-> Thierry
-> 
->>   RC mode:
->>   - num-viewport: number of view ports configured in hardware. If a platform
->>     does not specify it, the driver assumes 2.
->> -- 
->> 2.7.4
->>
+> Also, even if patch6/7/8/9 handle the exception handling in probe(),
+> the tegra_devfreq_probe() doesn't support the restoring sequence
+> when fail happen. I think that if you want to fix the fail case of probe(),
+> please add the restoring sequence about following function.
+> - clk_disable_unprepare()
+> - clk_notifier_unregister()
+> - dev_pm_opp_remove()
+
+When all of 6/7/8/9 patches are applied, the clk_notifier_register() becomes the last invocation of the probe function and clk_enable() is kept at the first place of the probe order. Hence the sequence you're suggesting is already incorrect because error-unwinding order usually should be opposite to the probe order. It looks to me that the current final result of these patches is already correct.
