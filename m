@@ -1,77 +1,50 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 17/19] PM / devfreq: tegra: Support Tegra30
-Date: Tue, 16 Apr 2019 18:49:49 +0300
-Message-ID: <53d0ead1-3a82-01d3-3b8a-094c1e6e34e0@gmail.com>
+Subject: Re: [PATCH v2 18/19] PM / devfreq: tegra: Enable COMPILE_TEST for the
+ driver
+Date: Tue, 16 Apr 2019 18:52:58 +0300
+Message-ID: <77653f79-45ef-1557-c940-0140bcb69311@gmail.com>
 References: <20190415145505.18397-1-digetx@gmail.com>
- <CGME20190415145707epcas3p27b7b927b14ef3c54274626c9df7cc14f@epcas3p2.samsung.com>
- <20190415145505.18397-18-digetx@gmail.com>
- <203f3cbf-d825-0597-b64a-dc876743ae86@samsung.com>
+ <CGME20190415145614epcas4p494a515b20cd351e220ac4eb37c05b7fb@epcas4p4.samsung.com>
+ <20190415145505.18397-19-digetx@gmail.com>
+ <8d8c55b8-b4aa-e072-7c5f-0b1e5e883031@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <203f3cbf-d825-0597-b64a-dc876743ae86@samsung.com>
+In-Reply-To: <8d8c55b8-b4aa-e072-7c5f-0b1e5e883031@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-16.04.2019 10:48, Chanwoo Choi пишет:
-> Hi,
-> 
+16.04.2019 10:43, Chanwoo Choi пишет:
 > On 19. 4. 15. 오후 11:55, Dmitry Osipenko wrote:
->> The devfreq driver can be used on Tegra30 without any code change and
->> it works perfectly fine, the default Tegra124 parameters are good enough
->> for Tegra30.
+>> The driver's compilation doesn't have any specific dependencies, hence
+>> the COMPILE_TEST option can be supported in Kconfig.
 >>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/devfreq/Kconfig         | 4 ++--
->>  drivers/devfreq/tegra-devfreq.c | 1 +
->>  2 files changed, 3 insertions(+), 2 deletions(-)
+>>  drivers/devfreq/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
 >> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
->> index a78dffe603c1..78c33ddd4eea 100644
+>> index 78c33ddd4eea..bd6652863e7d 100644
 >> --- a/drivers/devfreq/Kconfig
 >> +++ b/drivers/devfreq/Kconfig
->> @@ -92,8 +92,8 @@ config ARM_EXYNOS_BUS_DEVFREQ
->>  	  This does not yet operate with optimal voltages.
+>> @@ -93,7 +93,7 @@ config ARM_EXYNOS_BUS_DEVFREQ
 >>  
 >>  config ARM_TEGRA_DEVFREQ
->> -	tristate "Tegra DEVFREQ Driver"
->> -	depends on ARCH_TEGRA_124_SOC
->> +	tristate "NVIDIA Tegra30+ DEVFREQ Driver"
-> 
-> Looks good to me. But, I have a question.
-> 
-> 'Tegra30+' expression is enough in order to indicate
-> the support for both tegra30 and tegra124?
-> 
-> In my case, it is difficult to catch the meaning
-> of which tegra30+ support the kind of tegra124.
-
-The ACTMON serves Tegra30, Tegra124 and Tegra210 SoC's. The later Tegra generations also have the ACTMON hardware unit, but most of actual drivers have been moved into firmware on the later gens, including the ACTMON driver. I'll change the wording to "Tegra30/124/210" for clarity. Note that Tegra210 support isn't implemented at the moment by the driver, but that may change in the future.
-
->> +	depends on ARCH_TEGRA
+>>  	tristate "NVIDIA Tegra30+ DEVFREQ Driver"
+>> -	depends on ARCH_TEGRA
+>> +	depends on ARCH_TEGRA || COMPILE_TEST
 >>  	select PM_OPP
 >>  	help
 >>  	  This adds the DEVFREQ driver for the Tegra family of SoCs.
->> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
->> index f0711d5ad27d..0a2465a58cf5 100644
->> --- a/drivers/devfreq/tegra-devfreq.c
->> +++ b/drivers/devfreq/tegra-devfreq.c
->> @@ -719,6 +719,7 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
->>  }
->>  
->>  static const struct of_device_id tegra_devfreq_of_match[] = {
->> +	{ .compatible = "nvidia,tegra30-actmon" },
->>  	{ .compatible = "nvidia,tegra124-actmon" },
->>  	{ },
->>  };
 >>
 > 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> I think that it doesn't need to make it a separate patch.
+> You can merge this patch to patch17 and then drop this patch.
 > 
 
-Thanks.
+I'd prefer to have this change as a separate patch because this is a logically distinct change from the patch 17.
