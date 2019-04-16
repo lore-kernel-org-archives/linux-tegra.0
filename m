@@ -1,11 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2] drm/tegra: hdmi: Setup audio only if configured
-Date: Tue, 16 Apr 2019 17:16:44 +0200
-Message-ID: <20190416151644.30974-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: hdmi: Setup audio only if configured
+Date: Tue, 16 Apr 2019 17:12:37 +0200
+Message-ID: <20190416151237.GA24373@ulmo>
+References: <20190416144137.8205-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0137800845=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190416144137.8205-1-thierry.reding@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -15,38 +16,91 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBhdWRpbyBjb25m
-aWd1cmF0aW9uIGlzIG9ubHkgdmFsaWQgaWYgdGhlIEhETUkgY29kZWMgaGFzIGJlZW4KcHJvcGVy
-bHkgc2V0IHVwLiBEbyBub3QgYXR0ZW1wdCB0byBzZXQgdXAgYXVkaW8gYmVmb3JlIHRoYXQgaGFw
-cGVucwpiZWNhdXNlIGl0IGNhdXNlcyBhIGRpdmlzaW9uIGJ5IHplcm8uCgpOb3RlIHRoYXQgdGhp
-cyBpcyBvbmx5IHByb2JsZW1hdGljIG9uIFRlZ3JhMjAgYW5kIFRlZ3JhMzAuIExhdGVyIGNoaXBz
-CmltcGxlbWVudCB0aGUgZGl2aXNpb24gaW5zdHJ1Y3Rpb25zIHdoaWNoIHJldHVybiB6ZXJvIHdo
-ZW4gZGl2aWRpbmcgYnkKemVybyBhbmQgZG9uJ3QgdGhyb3cgYW4gZXhjZXB0aW9uLgoKRml4ZXM6
-IGRiNWFkZjRkNmRjZSAoImRybS90ZWdyYTogaGRtaTogRml4IGF1ZGlvIHRvIHdvcmsgd2l0aCBh
-bnkgcGl4ZWwgY2xvY2sgcmF0ZSIpClJlcG9ydGVkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNl
-bC56aXN3aWxlckB0b3JhZGV4LmNvbT4KU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
-ZWRpbmdAbnZpZGlhLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjI6Ci0gc2V0dXAgYXVkaW8gYXQgLT5l
-bmFibGUoKSB0aW1lIGlmIGl0IGhhcyBiZWVuIGNvbmZpZ3VyZWQsIG90aGVyd2lzZQogIGF1ZGlv
-IHBsYXliYWNrIG5lZWRzIHRvIGJlIHJlc3RhcnRlZCBhZnRlciB0aGUgZGlzcGxheSBnb2VzIHRo
-cm91Z2gKICBhIGRpc2FibGUvZW5hYmxlIGN5Y2xlCgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hk
-bWkuYyB8IDEyICsrKysrKysrKy0tLQogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwg
-MyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5j
-IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwppbmRleCA0N2M1NTk3NDc1NmQuLmQyM2M0
-YmZkZTc5MCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYworKysgYi9k
-cml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCkBAIC0xMjYwLDkgKzEyNjAsMTUgQEAgc3RhdGlj
-IHZvaWQgdGVncmFfaGRtaV9lbmNvZGVyX2VuYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29k
-ZXIpCiAKIAloZG1pLT5kdmkgPSAhdGVncmFfb3V0cHV0X2lzX2hkbWkob3V0cHV0KTsKIAlpZiAo
-IWhkbWktPmR2aSkgewotCQllcnIgPSB0ZWdyYV9oZG1pX3NldHVwX2F1ZGlvKGhkbWkpOwotCQlp
-ZiAoZXJyIDwgMCkKLQkJCWhkbWktPmR2aSA9IHRydWU7CisJCS8qCisJCSAqIE1ha2Ugc3VyZSB0
-aGF0IHRoZSBhdWRpbyBmb3JtYXQgaGFzIGJlZW4gY29uZmlndXJlZCBiZWZvcmUKKwkJICogZW5h
-YmxpbmcgYXVkaW8sIG90aGVyd2lzZSB3ZSBtYXkgdHJ5IHRvIGRpdmlkZSBieSB6ZXJvLgorCQkq
-LworCQlpZiAoaGRtaS0+Zm9ybWF0LnNhbXBsZV9yYXRlID4gMCkgeworCQkJZXJyID0gdGVncmFf
-aGRtaV9zZXR1cF9hdWRpbyhoZG1pKTsKKwkJCWlmIChlcnIgPCAwKQorCQkJCWhkbWktPmR2aSA9
-IHRydWU7CisJCX0KIAl9CiAKIAlpZiAoaGRtaS0+Y29uZmlnLT5oYXNfaGRhKQotLSAKMi4yMS4w
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--===============0137800845==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Content-Disposition: inline
+
+
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Apr 16, 2019 at 04:41:37PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> The audio configuration is only valid if the HDMI codec has been
+> properly set up. Do not attempt to set up audio before that happens
+> because it causes a division by zero.
+>=20
+> Note that this is only problematic on Tegra20 and Tegra30. Later chips
+> implement the division instructions which return zero when dividing by
+> zero and don't throw an exception.
+>=20
+> Fixes: db5adf4d6dce ("drm/tegra: hdmi: Fix audio to work with any pixel c=
+lock rate")
+> Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/gpu/drm/tegra/hdmi.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+> index 47c55974756d..e6c60bbc0fec 100644
+> --- a/drivers/gpu/drm/tegra/hdmi.c
+> +++ b/drivers/gpu/drm/tegra/hdmi.c
+> @@ -1259,11 +1259,6 @@ static void tegra_hdmi_encoder_enable(struct drm_e=
+ncoder *encoder)
+>  	tegra_hdmi_writel(hdmi, value, HDMI_NV_PDISP_SOR_REFCLK);
+> =20
+>  	hdmi->dvi =3D !tegra_output_is_hdmi(output);
+> -	if (!hdmi->dvi) {
+> -		err =3D tegra_hdmi_setup_audio(hdmi);
+> -		if (err < 0)
+> -			hdmi->dvi =3D true;
+> -	}
+
+This has the disadvantage of keeping audio disabled after a disable/
+enable sequence, even if userspace is still playing audio. I'll send
+out a better fix that keeps audio working after disable/enable.
+
+Thierry
+
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAly18OIACgkQ3SOs138+
+s6FuzQ/9HJIYmePzZsgMKn7AN4Lj/lSaNgwKiDTSRkAqBctDZAAAl5y7sScuUrs6
+NwT54jlbM0iSWkuKSR0BiLEEkvf72vuX/ueMYmqXxNV3Ia5Hoo++/j0bl3VLwJQz
+u3sOUc9TvcbOTM2Xpo8+lT5xXtdnigoqKR2Vprm0vdU461RyStfY1IDEYupGAfqD
+hAedNtW2JT8RwQkOq8JHKySNOtkjJOvBYKhp+uJCzfLHyK22K9Jd2jPJkqa9331i
+yL87Db+48ETMdCz9Xy7U1ylQzbHmXVJV5hHVKEcaIJrdeQVJxw6bL5TwxZk34TwI
+pnDruWYB+LCgsjG3uGPrmGgR4y5e1d3vYOjbIrmeK6tMwfaEvv7DD+QJNPpKZJws
+cIIYSw26pxtifFrquomwwlaBgcEigoefwZe/qH0M/qFKKsEPuJOmpsXsRUQ6goPh
+/sX5LRbnrIw6Z+psfEI7VZ3ySKVOzVumLM3+VbUyBTvtdb/0DQt+h4M9SY/KIJtj
+sPOu9tZnzSImh9VyNJrLe0qXYoWkFCn+y4wK+22EDqcoOKo1wy18KEJgAbIif0N9
+/4bBN9WY7uldgYRLQnr0YKkCWJXDVOcBO45cTd9JA/ix8as3CaPv/+qt9c6y90nL
+6LxvZjwsGZaM/T988XgSW2zlqb4e61RYWziP56rB9tq8o38GpUE=
+=t1CZ
+-----END PGP SIGNATURE-----
+
+--pWyiEgJYm5f9v55/--
+
+--===============0137800845==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============0137800845==--
