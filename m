@@ -1,108 +1,49 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 11/16] PM / devfreq: tegra: Move governor registration to driver's probe
-Date: Thu, 18 Apr 2019 01:29:20 +0300
-Message-ID: <20190417222925.5815-12-digetx@gmail.com>
-References: <20190417222925.5815-1-digetx@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH RFT V2 2/8] clk: fractional-divider: add explicit big
+ endian support
+Date: Wed, 17 Apr 2019 16:30:53 -0700
+Message-ID: <155554385335.15276.1472868812556796901@swboyd.mtv.corp.google.com>
+References: <20190415101046.5872-1-jonas.gorski@gmail.com>
+ <20190415101046.5872-3-jonas.gorski@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190417222925.5815-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190415101046.5872-3-jonas.gorski@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jonas Gorski <jonas.gorski@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need to register the ACTMON's governor separately from
-the driver, hence let's move the registration into the driver's probe
-function for consistency and to make code cleaner a tad.
+Quoting Jonas Gorski (2019-04-15 03:10:40)
+> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+> index fdfe2e423d15..b9988d3b3828 100644
+> --- a/drivers/clk/clk-fractional-divider.c
+> +++ b/drivers/clk/clk-fractional-divider.c
+> @@ -13,6 +13,22 @@
+>  #include <linux/slab.h>
+>  #include <linux/rational.h>
+>  
+> +static inline u32 clk_fd_readl(struct clk_fractional_divider *fd)
+> +{
+> +       if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
+> +               return ioread32be(fd->reg);
+> +       else
+> +               return clk_readl(fd->reg);
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/devfreq/tegra-devfreq.c | 43 +++++++++------------------------
- 1 file changed, 12 insertions(+), 31 deletions(-)
+Can you write it without the else?
 
-diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-index 272232ce2960..62f35e818122 100644
---- a/drivers/devfreq/tegra-devfreq.c
-+++ b/drivers/devfreq/tegra-devfreq.c
-@@ -695,6 +695,12 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 		goto remove_opps;
- 	}
- 
-+	err = devfreq_add_governor(&tegra_devfreq_governor);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to add governor: %d\n", err);
-+		goto unreg_notifier;
-+	}
-+
- 	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
- 	tegra->devfreq = devfreq_add_device(&pdev->dev,
- 					    &tegra_devfreq_profile,
-@@ -702,7 +708,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 					    NULL);
- 	if (IS_ERR(tegra->devfreq)) {
- 		err = PTR_ERR(tegra->devfreq);
--		goto unreg_notifier;
-+		goto remove_governor;
- 	}
- 
- 	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
-@@ -718,6 +724,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- remove_devfreq:
- 	devfreq_remove_device(tegra->devfreq);
- 
-+remove_governor:
-+	devfreq_remove_governor(&tegra_devfreq_governor);
-+
- unreg_notifier:
- 	clk_notifier_unregister(tegra->emc_clock, &tegra->rate_change_nb);
- 
-@@ -735,6 +744,7 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
- 	struct tegra_devfreq *tegra = platform_get_drvdata(pdev);
- 
- 	devfreq_remove_device(tegra->devfreq);
-+	devfreq_remove_governor(&tegra_devfreq_governor);
- 	dev_pm_opp_remove_all_dynamic(&pdev->dev);
- 
- 	clk_notifier_unregister(tegra->emc_clock, &tegra->rate_change_nb);
-@@ -760,36 +770,7 @@ static struct platform_driver tegra_devfreq_driver = {
- 		.of_match_table = tegra_devfreq_of_match,
- 	},
- };
--
--static int __init tegra_devfreq_init(void)
--{
--	int ret = 0;
--
--	ret = devfreq_add_governor(&tegra_devfreq_governor);
--	if (ret) {
--		pr_err("%s: failed to add governor: %d\n", __func__, ret);
--		return ret;
--	}
--
--	ret = platform_driver_register(&tegra_devfreq_driver);
--	if (ret)
--		devfreq_remove_governor(&tegra_devfreq_governor);
--
--	return ret;
--}
--module_init(tegra_devfreq_init)
--
--static void __exit tegra_devfreq_exit(void)
--{
--	int ret = 0;
--
--	platform_driver_unregister(&tegra_devfreq_driver);
--
--	ret = devfreq_remove_governor(&tegra_devfreq_governor);
--	if (ret)
--		pr_err("%s: failed to remove governor: %d\n", __func__, ret);
--}
--module_exit(tegra_devfreq_exit)
-+module_platform_driver(tegra_devfreq_driver);
- 
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("Tegra devfreq driver");
--- 
-2.21.0
+       if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
+               return ioread32be(fd->reg);
+
+       return clk_readl(fd->reg);
+
+This same comment applies to all the basic clk types.
