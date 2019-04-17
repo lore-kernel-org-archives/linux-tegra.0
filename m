@@ -1,59 +1,52 @@
-From: Igor Opaniuk <igor.opaniuk@toradex.com>
-Subject: Re: [PATCH] ARM: tegra: Remove gratuitous parentheses in SPDX license
- identifier
-Date: Wed, 17 Apr 2019 10:09:00 +0000
-Message-ID: <CAByghJbrT+bL-Rrc6_c7XOKNE6ASAGxLxNpAeuuF+31zv+repw@mail.gmail.com>
-References: <20190417090223.32108-1-thierry.reding@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.0 000/117] 5.0.8-stable review
+Date: Wed, 17 Apr 2019 13:03:55 +0200
+Message-ID: <20190417110355.GA6878@kroah.com>
+References: <20190415183744.887851196@linuxfoundation.org>
+ <c3ff53a4-9d22-47b8-a385-e01229c43a0d@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190417090223.32108-1-thierry.reding@gmail.com>
-Content-Language: en-US
-Content-ID: <28C7B46F2B711744B6464FA9B2D11113@eurprd05.prod.outlook.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Igor Opaniuk <igor.opaniuk@toradex.com>, Marcel Ziswiler <marcel@ziswiler.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <c3ff53a4-9d22-47b8-a385-e01229c43a0d@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-UmV2aWV3ZWQtYnk6IElnb3IgT3Bhbml1ayA8aWdvci5vcGFuaXVrQHRvcmFkZXguY29tPg0KDQpP
-biBXZWQsIEFwciAxNywgMjAxOSBhdCAxMTowMiBBTSBUaGllcnJ5IFJlZGluZw0KPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6DQo+DQo+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVk
-aW5nQG52aWRpYS5jb20+DQo+DQo+IFBhcmVudGhlc2VzIGluIHRoZSBTUERYIGxpY2Vuc2UgaWRl
-bnRpZmllciBhcmUgb25seSB1c2VkIHRvIGdyb3VwIHN1Yi0NCj4gZXhwcmVzc2lvbnMuIElmIHRo
-ZXJlJ3Mgbm8gbmVlZCBmb3Igc3VjaCBncm91cGluZywgdGhlIHBhcmVudGhlc2VzIGNhbg0KPiBi
-ZSBvbWl0dGVkLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Bu
-dmlkaWEuY29tPg0KPiAtLS0NCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy12
-MS4yLWV2YWwuZHRzIHwgMiArLQ0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlz
-LXYxLjIuZHRzaSAgICAgfCAyICstDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
-KSwgMiBkZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3Rl
-Z3JhMTI0LWFwYWxpcy12MS4yLWV2YWwuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQt
-YXBhbGlzLXYxLjItZXZhbC5kdHMNCj4gaW5kZXggNzk2MWViNGJkODAzLi44MjZiNzc2ZmJlNmYg
-MTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy12MS4yLWV2
-YWwuZHRzDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy12MS4yLWV2
-YWwuZHRzDQo+IEBAIC0xLDQgKzEsNCBAQA0KPiAtLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6
-IChHUEwtMi4wIE9SIE1JVCkNCj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4w
-IE9SIE1JVA0KPiAgLyoNCj4gICAqIENvcHlyaWdodCAyMDE2LTIwMTggVG9yYWRleCBBRw0KPiAg
-ICovDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtdjEu
-Mi5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLXYxLjIuZHRzaQ0KPiBp
-bmRleCAzNjdlYjhjODYwOTguLjg5MWY3Yjc2ZGFhNCAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0v
-Ym9vdC9kdHMvdGVncmExMjQtYXBhbGlzLXYxLjIuZHRzaQ0KPiArKysgYi9hcmNoL2FybS9ib290
-L2R0cy90ZWdyYTEyNC1hcGFsaXMtdjEuMi5kdHNpDQo+IEBAIC0xLDQgKzEsNCBAQA0KPiAtLy8g
-U1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wIE9SIE1JVCkNCj4gKy8vIFNQRFgtTGlj
-ZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wIE9SIE1JVA0KPiAgLyoNCj4gICAqIENvcHlyaWdodCAy
-MDE2LTIwMTggVG9yYWRleCBBRw0KPiAgICovDQo+IC0tDQo+IDIuMjEuMA0KPg0KDQoNCi0tIA0K
-QmVzdCByZWdhcmRzIC0gRnJldW5kbGljaGUgR3LDvHNzZSAtIE1laWxsZXVyZXMgc2FsdXRhdGlv
-bnMNCg0KU2VuaW9yIERldmVsb3BtZW50IEVuZ2luZWVyLA0KSWdvciBPcGFuaXVrDQoNClRvcmFk
-ZXggQUcNCkFsdHNhZ2Vuc3RyYXNzZSA1IHwgNjA0OCBIb3J3L0x1emVybiB8IFN3aXR6ZXJsYW5k
-IHwgVDogKzQxIDQxIDUwMCA0OA0KMDAgKG1haW4gbGluZSkNCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0
-CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFk
-ZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Tue, Apr 16, 2019 at 11:34:44AM +0100, Jon Hunter wrote:
+> 
+> On 15/04/2019 19:59, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.0.8 release.
+> > There are 117 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Apr 17 18:36:42 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.8-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.0:
+>     11 builds:	11 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     30 tests:	30 pass, 0 fail
+> 
+> Linux version:	5.0.8-rc1-ge6fdfdb
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+
+Thanks for testing all of these and letting me know.
+
+greg k-h
