@@ -1,890 +1,183 @@
 From: Igor Opaniuk <igor.opaniuk@toradex.com>
-Subject: [PATCH v3 1/2] ARM: dts: colibri/apalis: convert to SPDX license tags
-Date: Wed, 17 Apr 2019 11:10:21 +0200
-Message-ID: <20190417091022.14167-1-igor.opaniuk@toradex.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: tegra124-apalis: convert to SPDX license
+ tags
+Date: Wed, 17 Apr 2019 09:17:26 +0000
+Message-ID: <CAByghJZ8OOH6UiXCL9yTdd8bqiXOP2ZWDvcNxKttzcXdKL3euA@mail.gmail.com>
+References: <20190410071007.13276-1-igor.opaniuk@toradex.com>
+ <20190410071007.13276-2-igor.opaniuk@toradex.com>
+ <D9979557-09AE-4EEB-8524-437E630E339C@ziswiler.com>
+ <20190417085454.GD26626@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190417085454.GD26626@ulmo>
+Content-Language: en-US
+Content-ID: <DAC1C5228192D143A4DD79A5A6D60241@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-imx@nxp.com
-Cc: jonathanh@nvidia.com, thierry.reding@gmail.com, festevam@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, marcel@ziswiler.com, marcel.ziswiler@toradex.com, stefan@agner.ch
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Marcel Ziswiler <marcel@ziswiler.com>, Igor Opaniuk <igor.opaniuk@toradex.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-imx@nxp.com" <linux-imx@nxp.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "festevam@gmail.com" <festevam@gmail.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, stefan@agne
 List-Id: linux-tegra@vger.kernel.org
 
-Replace boiler plate licenses texts with the SPDX license
-identifiers in Colibri/Apalis DTS files.
-
-Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Signed-off-by: Igor Opaniuk <igor.opaniuk@toradex.com>
----
-
-v3:
-- Add Marcel's Acked-by tag
-- Remove un-needed parentheses in SPDX line
-
-v2:
-- Address Stefan's comment: replace GPL-2.0+ instead GPL-2.0
-
- arch/arm/boot/dts/imx6q-apalis-eval.dts       | 40 +-----------------
- arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts | 40 +-----------------
- arch/arm/boot/dts/imx6q-apalis-ixora.dts      | 40 +-----------------
- arch/arm/boot/dts/imx6qdl-apalis.dtsi         | 40 +-----------------
- arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi   | 39 +-----------------
- arch/arm/boot/dts/imx7-colibri.dtsi           | 39 +-----------------
- arch/arm/boot/dts/imx7d-colibri-eval-v3.dts   | 39 +-----------------
- arch/arm/boot/dts/imx7d-colibri.dtsi          | 41 +------------------
- arch/arm/boot/dts/imx7s-colibri-eval-v3.dts   | 41 +------------------
- arch/arm/boot/dts/imx7s-colibri.dtsi          | 41 +------------------
- arch/arm/boot/dts/vf-colibri-eval-v3.dtsi     | 40 +-----------------
- arch/arm/boot/dts/vf-colibri.dtsi             | 38 +----------------
- arch/arm/boot/dts/vf500-colibri-eval-v3.dts   | 40 +-----------------
- arch/arm/boot/dts/vf500-colibri.dtsi          | 39 +-----------------
- arch/arm/boot/dts/vf610-colibri-eval-v3.dts   | 38 +----------------
- arch/arm/boot/dts/vf610-colibri.dtsi          | 40 +-----------------
- arch/arm/boot/dts/vf610m4-colibri.dts         | 40 +-----------------
- 17 files changed, 29 insertions(+), 646 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx6q-apalis-eval.dts b/arch/arm/boot/dts/imx6q-apalis-eval.dts
-index 0edd3043d9c1..8aae0732c70d 100644
---- a/arch/arm/boot/dts/imx6q-apalis-eval.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-eval.dts
-@@ -1,44 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014-2017 Toradex AG
-+ * Copyright 2014-2019 Toradex AG
-  * Copyright 2012 Freescale Semiconductor, Inc.
-  * Copyright 2011 Linaro Ltd.
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-index b94bb687be6b..5cd10d07c8e0 100644
---- a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-@@ -1,44 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014-2017 Toradex AG
-+ * Copyright 2014-2019 Toradex AG
-  * Copyright 2012 Freescale Semiconductor, Inc.
-  * Copyright 2011 Linaro Ltd.
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora.dts b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-index 302fd6adc8a7..832fca0bd169 100644
---- a/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-@@ -1,44 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014-2017 Toradex AG
-+ * Copyright 2014-2019 Toradex AG
-  * Copyright 2012 Freescale Semiconductor, Inc.
-  * Copyright 2011 Linaro Ltd.
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index 7c4ad541c3f5..70069f826d1f 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -1,44 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014-2017 Toradex AG
-+ * Copyright 2014-2019 Toradex AG
-  * Copyright 2012 Freescale Semiconductor, Inc.
-  * Copyright 2011 Linaro Ltd.
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/gpio/gpio.h>
-diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-index 3f2746169181..e5a631394441 100644
---- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-@@ -1,43 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR X11
- /*
-  * Copyright 2016 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- / {
-diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
-index 895fbde4d433..50d1a0f510c6 100644
---- a/arch/arm/boot/dts/imx7-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-@@ -1,43 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR X11
- /*
-  * Copyright 2016 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- / {
-diff --git a/arch/arm/boot/dts/imx7d-colibri-eval-v3.dts b/arch/arm/boot/dts/imx7d-colibri-eval-v3.dts
-index 136e11ab4893..ce77d6ab7eb5 100644
---- a/arch/arm/boot/dts/imx7d-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/imx7d-colibri-eval-v3.dts
-@@ -1,43 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR X11
- /*
-  * Copyright 2016 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/imx7d-colibri.dtsi b/arch/arm/boot/dts/imx7d-colibri.dtsi
-index e2e327f437e3..ebf0ee8d74da 100644
---- a/arch/arm/boot/dts/imx7d-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7d-colibri.dtsi
-@@ -1,43 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR X11
- /*
-- * Copyright 2016 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-+ * Copyright 2016-2019 Toradex AG
-  */
- 
- #include "imx7d.dtsi"
-diff --git a/arch/arm/boot/dts/imx7s-colibri-eval-v3.dts b/arch/arm/boot/dts/imx7s-colibri-eval-v3.dts
-index bd2a49c1ade6..6ebabf162430 100644
---- a/arch/arm/boot/dts/imx7s-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/imx7s-colibri-eval-v3.dts
-@@ -1,43 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR X11
- /*
-- * Copyright 2016 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-+ * Copyright 2016-2019 Toradex AG
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/imx7s-colibri.dtsi b/arch/arm/boot/dts/imx7s-colibri.dtsi
-index 1fb1ec5d3d70..2e76d0294131 100644
---- a/arch/arm/boot/dts/imx7s-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7s-colibri.dtsi
-@@ -1,43 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR X11
- /*
-- * Copyright 2016 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-+ * Copyright 2016-2019 Toradex AG
-  */
- 
- #include "imx7s.dtsi"
-diff --git a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-index e2da122a63f4..6b77e09ad581 100644
---- a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-+++ b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-+ * Copyright 2014-2016 Toradex AG
-  */
- 
- / {
-diff --git a/arch/arm/boot/dts/vf-colibri.dtsi b/arch/arm/boot/dts/vf-colibri.dtsi
-index b6a1eeeb2bb4..ce543523cd16 100644
---- a/arch/arm/boot/dts/vf-colibri.dtsi
-+++ b/arch/arm/boot/dts/vf-colibri.dtsi
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-  * Copyright 2014 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- / {
-diff --git a/arch/arm/boot/dts/vf500-colibri-eval-v3.dts b/arch/arm/boot/dts/vf500-colibri-eval-v3.dts
-index 076998968fb5..f7971ddbac4e 100644
---- a/arch/arm/boot/dts/vf500-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/vf500-colibri-eval-v3.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-+ * Copyright 2014-2019 Toradex AG
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/vf500-colibri.dtsi b/arch/arm/boot/dts/vf500-colibri.dtsi
-index 237b0246fa84..88bc6542be34 100644
---- a/arch/arm/boot/dts/vf500-colibri.dtsi
-+++ b/arch/arm/boot/dts/vf500-colibri.dtsi
-@@ -1,42 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014 Toradex AG
-+ * Copyright 2014-2019 Toradex AG
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include "vf500.dtsi"
-diff --git a/arch/arm/boot/dts/vf610-colibri-eval-v3.dts b/arch/arm/boot/dts/vf610-colibri-eval-v3.dts
-index ef9b4d6209f6..f0e20be345a5 100644
---- a/arch/arm/boot/dts/vf610-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/vf610-colibri-eval-v3.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-  * Copyright 2014 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/vf610-colibri.dtsi b/arch/arm/boot/dts/vf610-colibri.dtsi
-index 05c9a39509b8..fd9269e0f719 100644
---- a/arch/arm/boot/dts/vf610-colibri.dtsi
-+++ b/arch/arm/boot/dts/vf610-colibri.dtsi
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
- /*
-- * Copyright 2014 Toradex AG
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-+ * Copyright 2014-2016 Toradex AG
-  */
- 
- #include "vf610.dtsi"
-diff --git a/arch/arm/boot/dts/vf610m4-colibri.dts b/arch/arm/boot/dts/vf610m4-colibri.dts
-index d4bc0e3f2f11..110cf605fcd3 100644
---- a/arch/arm/boot/dts/vf610m4-colibri.dts
-+++ b/arch/arm/boot/dts/vf610m4-colibri.dts
-@@ -1,45 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR X11
- /*
-  * Device tree for Colibri VF61 Cortex-M4 support
-  *
-+ * Copyright (C) 2019 Toradex AG
-  * Copyright (C) 2015 Stefan Agner
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
--- 
-2.17.1
+SGkgVGhpZXJyeSwNCg0KVGhhbmtzIGZvciBwb2ludGluZyB0aGF0IG91dCwNCkFscmVhZHkgZml4
+ZWQgYW5kIHNlbnQgdjMNCg0KT24gV2VkLCBBcHIgMTcsIDIwMTkgYXQgMTA6NTUgQU0gVGhpZXJy
+eSBSZWRpbmcNCjx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOg0KPg0KPiBPbiBXZWQs
+IEFwciAxNywgMjAxOSBhdCAwODoxMzo1MUFNICswMjAwLCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6
+DQo+ID4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBYMTEpDQo+ID4N
+Cj4gPiBJIGJlbGlldmUgdGhlIHBhcmVudGhlc2VzIGRvbid0IHJlYWxseSBzZXJ2ZXIgYW55IHB1
+cnBvc2UgaGVyZS4gV2l0aCB0aGF0Og0KPiA+DQo+ID4gQWNrZWQtYnk6IE1hcmNlbCBaaXN3aWxl
+ciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+DQo+ID4gT24gQXByaWwgMTAsIDIw
+MTkgOToxMDowNyBBTSBHTVQrMDI6MDAsIElnb3IgT3Bhbml1ayA8aWdvci5vcGFuaXVrQHRvcmFk
+ZXguY29tPiB3cm90ZToNCj4gPiA+UmVwbGFjZSBib2lsZXIgcGxhdGUgbGljZW5zZXMgdGV4dHMg
+d2l0aCB0aGUgU1BEWCBsaWNlbnNlDQo+ID4gPmlkZW50aWZpZXJzIGluIENvbGlicmkvQXBhbGlz
+IERUUyBmaWxlcy4NCj4gPiA+DQo+ID4gPlNpZ25lZC1vZmYtYnk6IElnb3IgT3Bhbml1ayA8aWdv
+ci5vcGFuaXVrQHRvcmFkZXguY29tPg0KPiA+ID4tLS0NCj4gPiA+IGFyY2gvYXJtL2Jvb3QvZHRz
+L3RlZ3JhMTI0LWFwYWxpcy1lbWMuZHRzaSB8IDM5ICsrLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+
+ID4gYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLWV2YWwuZHRzIHwgNDAgKystLS0t
+LS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlz
+LmR0c2kgICAgIHwgNDAgKystLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gMyBmaWxlcyBjaGFu
+Z2VkLCA2IGluc2VydGlvbnMoKyksIDExMyBkZWxldGlvbnMoLSkNCj4gPiA+DQo+ID4gPmRpZmYg
+LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtZW1jLmR0c2kNCj4gPiA+
+Yi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtZW1jLmR0c2kNCj4gPiA+aW5kZXgg
+Y2EyYzNhNTU3ODk1Li4zNjIxMWY4NzZlMzMgMTAwNjQ0DQo+ID4gPi0tLSBhL2FyY2gvYXJtL2Jv
+b3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy1lbWMuZHRzaQ0KPiA+ID4rKysgYi9hcmNoL2FybS9ib290
+L2R0cy90ZWdyYTEyNC1hcGFsaXMtZW1jLmR0c2kNCj4gPiA+QEAgLTEsNDIgKzEsNyBAQA0KPiA+
+ID4rLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAgT1IgTUlUDQo+DQo+IFRoZSBv
+bGQgdGV4dCBiZWxvdyBzYXlzIHRoYXQgdGhpcyB3YXMgc3VwcG9zZWQgdG8gYmUgR1BMLTIuMCBP
+UiBYMTEuIERvDQo+IHlvdSB3YW50IG1lIHRvIGZpeCB0aGF0IHdoaWxlIGFwcGx5aW5nPw0KPg0K
+PiBUaGllcnJ5DQo+DQo+ID4gPiAvKg0KPiA+ID4tICogQ29weXJpZ2h0IDIwMTYgVG9yYWRleCBB
+Rw0KPiA+ID4rICogQ29weXJpZ2h0IDIwMTYtMjAxOSBUb3JhZGV4IEFHDQo+ID4gPiAgKg0KPiA+
+ID4tICogVGhpcyBmaWxlIGlzIGR1YWwtbGljZW5zZWQ6IHlvdSBjYW4gdXNlIGl0IGVpdGhlciB1
+bmRlciB0aGUgdGVybXMNCj4gPiA+LSAqIG9mIHRoZSBHUEwgb3IgdGhlIFgxMSBsaWNlbnNlLCBh
+dCB5b3VyIG9wdGlvbi4gTm90ZSB0aGF0IHRoaXMgZHVhbA0KPiA+ID4tICogbGljZW5zaW5nIG9u
+bHkgYXBwbGllcyB0byB0aGlzIGZpbGUsIGFuZCBub3QgdGhpcyBwcm9qZWN0IGFzIGENCj4gPiA+
+LSAqIHdob2xlLg0KPiA+ID4tICoNCj4gPiA+LSAqICBhKSBUaGlzIGZpbGUgaXMgZnJlZSBzb2Z0
+d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yDQo+ID4gPi0gKiAgICAgbW9kaWZ5
+IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UNCj4g
+PiA+LSAqICAgICB2ZXJzaW9uIDIgYXMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZv
+dW5kYXRpb24uDQo+ID4gPi0gKg0KPiA+ID4tICogICAgIFRoaXMgZmlsZSBpcyBkaXN0cmlidXRl
+ZCBpbiB0aGUgaG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVsDQo+ID4gPi0gKiAgICAgYnV0IFdJ
+VEhPVVQgQU5ZIFdBUlJBTlRZOyB3aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQgd2FycmFudHkgb2YN
+Cj4gPiA+LSAqICAgICBNRVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFS
+IFBVUlBPU0UuICBTZWUgdGhlDQo+ID4gPi0gKiAgICAgR05VIEdlbmVyYWwgUHVibGljIExpY2Vu
+c2UgZm9yIG1vcmUgZGV0YWlscy4NCj4gPiA+LSAqDQo+ID4gPi0gKiBPciwgYWx0ZXJuYXRpdmVs
+eQ0KPiA+ID4tICoNCj4gPiA+LSAqICBiKSBQZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBm
+cmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbg0KPiA+ID4tICogICAgIG9idGFpbmluZyBhIGNv
+cHkgb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uDQo+ID4gPi0g
+KiAgICAgZmlsZXMgKHRoZSAiU29mdHdhcmUiKSwgdG8gZGVhbCBpbiB0aGUgU29mdHdhcmUgd2l0
+aG91dA0KPiA+ID4tICogICAgIHJlc3RyaWN0aW9uLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0
+aW9uIHRoZSByaWdodHMgdG8gdXNlDQo+ID4gPi0gKiAgICAgY29weSwgbW9kaWZ5LCBtZXJnZSwg
+cHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwgYW5kL29yDQo+ID4gPi0gKiAgICAgc2Vs
+bCBjb3BpZXMgb2YgdGhlIFNvZnR3YXJlLCBhbmQgdG8gcGVybWl0IHBlcnNvbnMgdG8gd2hvbSB0
+aGUNCj4gPiA+LSAqICAgICBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3Qg
+dG8gdGhlIGZvbGxvd2luZw0KPiA+ID4tICogICAgIGNvbmRpdGlvbnM6DQo+ID4gPi0gKg0KPiA+
+ID4tICogICAgIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24g
+bm90aWNlIHNoYWxsIGJlDQo+ID4gPi0gKiAgICAgaW5jbHVkZWQgaW4gYWxsIGNvcGllcyBvciBz
+dWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuDQo+ID4gPi0gKg0KPiA+ID4tICog
+ICAgIFRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAsIFdJVEhPVVQgV0FSUkFOVFkgT0YgQU5ZIEtJ
+TkQNCj4gPiA+LSAqICAgICBFWFBSRVNTIE9SIElNUExJRUQsIElOQ0xVRElORyBCVVQgTk9UIExJ
+TUlURUQgVE8gVEhFIFdBUlJBTlRJRVMNCj4gPiA+LSAqICAgICBPRiBNRVJDSEFOVEFCSUxJVFks
+IEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORA0KPiA+ID4tICogICAgIE5PTklO
+RlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFIEFVVEhPUlMgT1IgQ09QWVJJR0hUDQo+
+ID4gPi0gKiAgICAgSE9MREVSUyBCRSBMSUFCTEUgRk9SIEFOWSBDTEFJTSwgREFNQUdFUyBPUiBP
+VEhFUiBMSUFCSUxJVFkNCj4gPiA+LSAqICAgICBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05U
+UkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcNCj4gPiA+LSAqICAgICBGUk9NLCBPVVQg
+T0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SDQo+ID4g
+Pi0gKiAgICAgT1RIRVIgREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLg0KPiA+ID4gICovDQo+ID4g
+Pg0KPiA+ID4gLyB7DQo+ID4gPmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEy
+NC1hcGFsaXMtZXZhbC5kdHMNCj4gPiA+Yi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFs
+aXMtZXZhbC5kdHMNCj4gPiA+aW5kZXggZWFlZTEwZWY2NTEyLi5lMjM4ODM2OGQ2MzUgMTAwNjQ0
+DQo+ID4gPi0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy1ldmFsLmR0cw0K
+PiA+ID4rKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtZXZhbC5kdHMNCj4g
+PiA+QEAgLTEsNDIgKzEsNiBAQA0KPiA+ID4rLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChH
+UEwtMi4wIE9SIFgxMSkNCj4gPiA+IC8qDQo+ID4gPi0gKiBDb3B5cmlnaHQgMjAxNi0yMDE4IFRv
+cmFkZXggQUcNCj4gPiA+LSAqDQo+ID4gPi0gKiBUaGlzIGZpbGUgaXMgZHVhbC1saWNlbnNlZDog
+eW91IGNhbiB1c2UgaXQgZWl0aGVyIHVuZGVyIHRoZSB0ZXJtcw0KPiA+ID4tICogb2YgdGhlIEdQ
+TCBvciB0aGUgWDExIGxpY2Vuc2UsIGF0IHlvdXIgb3B0aW9uLiBOb3RlIHRoYXQgdGhpcyBkdWFs
+DQo+ID4gPi0gKiBsaWNlbnNpbmcgb25seSBhcHBsaWVzIHRvIHRoaXMgZmlsZSwgYW5kIG5vdCB0
+aGlzIHByb2plY3QgYXMgYQ0KPiA+ID4tICogd2hvbGUuDQo+ID4gPi0gKg0KPiA+ID4tICogIGEp
+IFRoaXMgZmlsZSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQv
+b3INCj4gPiA+LSAqICAgICBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
+ZXJhbCBQdWJsaWMgTGljZW5zZQ0KPiA+ID4tICogICAgIHZlcnNpb24gMiBhcyBwdWJsaXNoZWQg
+YnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4NCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAg
+VGhpcyBmaWxlIGlzIGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd2lsbCBiZSB1c2Vm
+dWwNCj4gPiA+LSAqICAgICBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0
+aGUgaW1wbGllZCB3YXJyYW50eSBvZg0KPiA+ID4tICogICAgIE1FUkNIQU5UQUJJTElUWSBvciBG
+SVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRS4gIFNlZSB0aGUNCj4gPiA+LSAqICAgICBH
+TlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLg0KPiA+ID4tICoNCj4g
+PiA+LSAqIE9yLCBhbHRlcm5hdGl2ZWx5DQo+ID4gPi0gKg0KPiA+ID4tICogIGIpIFBlcm1pc3Np
+b24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uDQo+ID4g
+Pi0gKiAgICAgb2J0YWluaW5nIGEgY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVk
+IGRvY3VtZW50YXRpb24NCj4gPiA+LSAqICAgICBmaWxlcyAodGhlICJTb2Z0d2FyZSIpLCB0byBk
+ZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0DQo+ID4gPi0gKiAgICAgcmVzdHJpY3Rpb24sIGlu
+Y2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cyB0byB1c2UNCj4gPiA+LSAqICAg
+ICBjb3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBh
+bmQvb3INCj4gPiA+LSAqICAgICBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBw
+ZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZQ0KPiA+ID4tICogICAgIFNvZnR3YXJlIGlzIGZ1cm5p
+c2hlZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nDQo+ID4gPi0gKiAgICAgY29u
+ZGl0aW9uczoNCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVGhlIGFib3ZlIGNvcHlyaWdodCBub3Rp
+Y2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUNCj4gPiA+LSAqICAgICBpbmNs
+dWRlZCBpbiBhbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2Fy
+ZS4NCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVEhFIFNPRlRXQVJFIElTIFBST1ZJREVEICwgV0lU
+SE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORA0KPiA+ID4tICogICAgIEVYUFJFU1MgT1IgSU1QTElF
+RCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUw0KPiA+ID4tICog
+ICAgIE9GIE1FUkNIQU5UQUJJTElUWSwgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0Ug
+QU5EDQo+ID4gPi0gKiAgICAgTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUg
+QVVUSE9SUyBPUiBDT1BZUklHSFQNCj4gPiA+LSAqICAgICBIT0xERVJTIEJFIExJQUJMRSBGT1Ig
+QU5ZIENMQUlNLCBEQU1BR0VTIE9SIE9USEVSIExJQUJJTElUWQ0KPiA+ID4tICogICAgIFdIRVRI
+RVIgSU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORw0K
+PiA+ID4tICogICAgIEZST00sIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRX
+QVJFIE9SIFRIRSBVU0UgT1INCj4gPiA+LSAqICAgICBPVEhFUiBERUFMSU5HUyBJTiBUSEUgU09G
+VFdBUkUuDQo+ID4gPisgKiBDb3B5cmlnaHQgMjAxNi0yMDE5IFRvcmFkZXggQUcNCj4gPiA+ICAq
+Lw0KPiA+ID4NCj4gPiA+IC9kdHMtdjEvOw0KPiA+ID5kaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9v
+dC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kNCj4gPiA+Yi9hcmNoL2FybS9ib290L2R0cy90ZWdy
+YTEyNC1hcGFsaXMuZHRzaQ0KPiA+ID5pbmRleCAxM2M5M2NkNTA3ZDguLjY5MGY4ODFlYTljYiAx
+MDA2NDQNCj4gPiA+LS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kN
+Cj4gPiA+KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kNCj4gPiA+
+QEAgLTEsNDIgKzEsNiBAQA0KPiA+ID4rLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwt
+Mi4wIE9SIFgxMSkNCj4gPiA+IC8qDQo+ID4gPi0gKiBDb3B5cmlnaHQgMjAxNi0yMDE4IFRvcmFk
+ZXggQUcNCj4gPiA+LSAqDQo+ID4gPi0gKiBUaGlzIGZpbGUgaXMgZHVhbC1saWNlbnNlZDogeW91
+IGNhbiB1c2UgaXQgZWl0aGVyIHVuZGVyIHRoZSB0ZXJtcw0KPiA+ID4tICogb2YgdGhlIEdQTCBv
+ciB0aGUgWDExIGxpY2Vuc2UsIGF0IHlvdXIgb3B0aW9uLiBOb3RlIHRoYXQgdGhpcyBkdWFsDQo+
+ID4gPi0gKiBsaWNlbnNpbmcgb25seSBhcHBsaWVzIHRvIHRoaXMgZmlsZSwgYW5kIG5vdCB0aGlz
+IHByb2plY3QgYXMgYQ0KPiA+ID4tICogd2hvbGUuDQo+ID4gPi0gKg0KPiA+ID4tICogIGEpIFRo
+aXMgZmlsZSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3IN
+Cj4gPiA+LSAqICAgICBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJh
+bCBQdWJsaWMgTGljZW5zZQ0KPiA+ID4tICogICAgIHZlcnNpb24gMiBhcyBwdWJsaXNoZWQgYnkg
+dGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4NCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVGhp
+cyBmaWxlIGlzIGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd2lsbCBiZSB1c2VmdWwN
+Cj4gPiA+LSAqICAgICBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUg
+aW1wbGllZCB3YXJyYW50eSBvZg0KPiA+ID4tICogICAgIE1FUkNIQU5UQUJJTElUWSBvciBGSVRO
+RVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRS4gIFNlZSB0aGUNCj4gPiA+LSAqICAgICBHTlUg
+R2VuZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLg0KPiA+ID4tICoNCj4gPiA+
+LSAqIE9yLCBhbHRlcm5hdGl2ZWx5DQo+ID4gPi0gKg0KPiA+ID4tICogIGIpIFBlcm1pc3Npb24g
+aXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uDQo+ID4gPi0g
+KiAgICAgb2J0YWluaW5nIGEgY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRv
+Y3VtZW50YXRpb24NCj4gPiA+LSAqICAgICBmaWxlcyAodGhlICJTb2Z0d2FyZSIpLCB0byBkZWFs
+IGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0DQo+ID4gPi0gKiAgICAgcmVzdHJpY3Rpb24sIGluY2x1
+ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cyB0byB1c2UNCj4gPiA+LSAqICAgICBj
+b3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBhbmQv
+b3INCj4gPiA+LSAqICAgICBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJt
+aXQgcGVyc29ucyB0byB3aG9tIHRoZQ0KPiA+ID4tICogICAgIFNvZnR3YXJlIGlzIGZ1cm5pc2hl
+ZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nDQo+ID4gPi0gKiAgICAgY29uZGl0
+aW9uczoNCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2Ug
+YW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUNCj4gPiA+LSAqICAgICBpbmNsdWRl
+ZCBpbiBhbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS4N
+Cj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVEhFIFNPRlRXQVJFIElTIFBST1ZJREVEICwgV0lUSE9V
+VCBXQVJSQU5UWSBPRiBBTlkgS0lORA0KPiA+ID4tICogICAgIEVYUFJFU1MgT1IgSU1QTElFRCwg
+SU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUw0KPiA+ID4tICogICAg
+IE9GIE1FUkNIQU5UQUJJTElUWSwgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5E
+DQo+ID4gPi0gKiAgICAgTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUgQVVU
+SE9SUyBPUiBDT1BZUklHSFQNCj4gPiA+LSAqICAgICBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5Z
+IENMQUlNLCBEQU1BR0VTIE9SIE9USEVSIExJQUJJTElUWQ0KPiA+ID4tICogICAgIFdIRVRIRVIg
+SU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORw0KPiA+
+ID4tICogICAgIEZST00sIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJF
+IE9SIFRIRSBVU0UgT1INCj4gPiA+LSAqICAgICBPVEhFUiBERUFMSU5HUyBJTiBUSEUgU09GVFdB
+UkUuDQo+ID4gPisgKiBDb3B5cmlnaHQgMjAxNi0yMDE5IFRvcmFkZXggQUcNCj4gPiA+ICAqLw0K
+PiA+ID4NCj4gPiA+ICNpbmNsdWRlICJ0ZWdyYTEyNC5kdHNpIg0KPiA+ID4tLQ0KPiA+ID4yLjE3
+LjENCj4gPg0KPiA+IC0tDQo+ID4gU2VudCBmcm9tIG15IEFuZHJvaWQgZGV2aWNlIHdpdGggSy05
+IE1haWwuIFBsZWFzZSBleGN1c2UgbXkgYnJldml0eS4NCg0KDQoNCi0tIA0KQmVzdCByZWdhcmRz
+IC0gRnJldW5kbGljaGUgR3LDvHNzZSAtIE1laWxsZXVyZXMgc2FsdXRhdGlvbnMNCg0KU2VuaW9y
+IERldmVsb3BtZW50IEVuZ2luZWVyLA0KSWdvciBPcGFuaXVrDQoNClRvcmFkZXggQUcNCkFsdHNh
+Z2Vuc3RyYXNzZSA1IHwgNjA0OCBIb3J3L0x1emVybiB8IFN3aXR6ZXJsYW5kIHwgVDogKzQxIDQx
+IDUwMCA0OA0KMDAgKG1haW4gbGluZSkNCg==
