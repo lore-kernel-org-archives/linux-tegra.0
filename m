@@ -1,183 +1,108 @@
-From: Igor Opaniuk <igor.opaniuk@toradex.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: tegra124-apalis: convert to SPDX license
- tags
-Date: Wed, 17 Apr 2019 09:17:26 +0000
-Message-ID: <CAByghJZ8OOH6UiXCL9yTdd8bqiXOP2ZWDvcNxKttzcXdKL3euA@mail.gmail.com>
-References: <20190410071007.13276-1-igor.opaniuk@toradex.com>
- <20190410071007.13276-2-igor.opaniuk@toradex.com>
- <D9979557-09AE-4EEB-8524-437E630E339C@ziswiler.com>
- <20190417085454.GD26626@ulmo>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: RE: [PATCH V3 06/16] PCI: dwc: Add ext config space capability
+ search API
+Date: Wed, 17 Apr 2019 09:27:59 +0000
+Message-ID: <305100E33629484CBB767107E4246BBB0A22C0A7@de02wembxa.internal.synopsys.com>
+References: <20190416192730.15681-1-vidyas@nvidia.com>
+ <20190416192730.15681-7-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190417085454.GD26626@ulmo>
+In-Reply-To: <20190416192730.15681-7-vidyas@nvidia.com>
 Content-Language: en-US
-Content-ID: <DAC1C5228192D143A4DD79A5A6D60241@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Marcel Ziswiler <marcel@ziswiler.com>, Igor Opaniuk <igor.opaniuk@toradex.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-imx@nxp.com" <linux-imx@nxp.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "festevam@gmail.com" <festevam@gmail.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, stefan@agne
+To: Vidya Sagar <vidyas@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
+Cc: "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kthota@nvidia.com" <kthota@nvidia.com>, "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>, "sagar.tv@gmail.com" <sagar.tv@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgVGhpZXJyeSwNCg0KVGhhbmtzIGZvciBwb2ludGluZyB0aGF0IG91dCwNCkFscmVhZHkgZml4
-ZWQgYW5kIHNlbnQgdjMNCg0KT24gV2VkLCBBcHIgMTcsIDIwMTkgYXQgMTA6NTUgQU0gVGhpZXJy
-eSBSZWRpbmcNCjx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOg0KPg0KPiBPbiBXZWQs
-IEFwciAxNywgMjAxOSBhdCAwODoxMzo1MUFNICswMjAwLCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6
-DQo+ID4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBYMTEpDQo+ID4N
-Cj4gPiBJIGJlbGlldmUgdGhlIHBhcmVudGhlc2VzIGRvbid0IHJlYWxseSBzZXJ2ZXIgYW55IHB1
-cnBvc2UgaGVyZS4gV2l0aCB0aGF0Og0KPiA+DQo+ID4gQWNrZWQtYnk6IE1hcmNlbCBaaXN3aWxl
-ciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+DQo+ID4gT24gQXByaWwgMTAsIDIw
-MTkgOToxMDowNyBBTSBHTVQrMDI6MDAsIElnb3IgT3Bhbml1ayA8aWdvci5vcGFuaXVrQHRvcmFk
-ZXguY29tPiB3cm90ZToNCj4gPiA+UmVwbGFjZSBib2lsZXIgcGxhdGUgbGljZW5zZXMgdGV4dHMg
-d2l0aCB0aGUgU1BEWCBsaWNlbnNlDQo+ID4gPmlkZW50aWZpZXJzIGluIENvbGlicmkvQXBhbGlz
-IERUUyBmaWxlcy4NCj4gPiA+DQo+ID4gPlNpZ25lZC1vZmYtYnk6IElnb3IgT3Bhbml1ayA8aWdv
-ci5vcGFuaXVrQHRvcmFkZXguY29tPg0KPiA+ID4tLS0NCj4gPiA+IGFyY2gvYXJtL2Jvb3QvZHRz
-L3RlZ3JhMTI0LWFwYWxpcy1lbWMuZHRzaSB8IDM5ICsrLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+
-ID4gYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLWV2YWwuZHRzIHwgNDAgKystLS0t
-LS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlz
-LmR0c2kgICAgIHwgNDAgKystLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gMyBmaWxlcyBjaGFu
-Z2VkLCA2IGluc2VydGlvbnMoKyksIDExMyBkZWxldGlvbnMoLSkNCj4gPiA+DQo+ID4gPmRpZmYg
-LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtZW1jLmR0c2kNCj4gPiA+
-Yi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtZW1jLmR0c2kNCj4gPiA+aW5kZXgg
-Y2EyYzNhNTU3ODk1Li4zNjIxMWY4NzZlMzMgMTAwNjQ0DQo+ID4gPi0tLSBhL2FyY2gvYXJtL2Jv
-b3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy1lbWMuZHRzaQ0KPiA+ID4rKysgYi9hcmNoL2FybS9ib290
-L2R0cy90ZWdyYTEyNC1hcGFsaXMtZW1jLmR0c2kNCj4gPiA+QEAgLTEsNDIgKzEsNyBAQA0KPiA+
-ID4rLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAgT1IgTUlUDQo+DQo+IFRoZSBv
-bGQgdGV4dCBiZWxvdyBzYXlzIHRoYXQgdGhpcyB3YXMgc3VwcG9zZWQgdG8gYmUgR1BMLTIuMCBP
-UiBYMTEuIERvDQo+IHlvdSB3YW50IG1lIHRvIGZpeCB0aGF0IHdoaWxlIGFwcGx5aW5nPw0KPg0K
-PiBUaGllcnJ5DQo+DQo+ID4gPiAvKg0KPiA+ID4tICogQ29weXJpZ2h0IDIwMTYgVG9yYWRleCBB
-Rw0KPiA+ID4rICogQ29weXJpZ2h0IDIwMTYtMjAxOSBUb3JhZGV4IEFHDQo+ID4gPiAgKg0KPiA+
-ID4tICogVGhpcyBmaWxlIGlzIGR1YWwtbGljZW5zZWQ6IHlvdSBjYW4gdXNlIGl0IGVpdGhlciB1
-bmRlciB0aGUgdGVybXMNCj4gPiA+LSAqIG9mIHRoZSBHUEwgb3IgdGhlIFgxMSBsaWNlbnNlLCBh
-dCB5b3VyIG9wdGlvbi4gTm90ZSB0aGF0IHRoaXMgZHVhbA0KPiA+ID4tICogbGljZW5zaW5nIG9u
-bHkgYXBwbGllcyB0byB0aGlzIGZpbGUsIGFuZCBub3QgdGhpcyBwcm9qZWN0IGFzIGENCj4gPiA+
-LSAqIHdob2xlLg0KPiA+ID4tICoNCj4gPiA+LSAqICBhKSBUaGlzIGZpbGUgaXMgZnJlZSBzb2Z0
-d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yDQo+ID4gPi0gKiAgICAgbW9kaWZ5
-IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UNCj4g
-PiA+LSAqICAgICB2ZXJzaW9uIDIgYXMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZv
-dW5kYXRpb24uDQo+ID4gPi0gKg0KPiA+ID4tICogICAgIFRoaXMgZmlsZSBpcyBkaXN0cmlidXRl
-ZCBpbiB0aGUgaG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVsDQo+ID4gPi0gKiAgICAgYnV0IFdJ
-VEhPVVQgQU5ZIFdBUlJBTlRZOyB3aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQgd2FycmFudHkgb2YN
-Cj4gPiA+LSAqICAgICBNRVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFS
-IFBVUlBPU0UuICBTZWUgdGhlDQo+ID4gPi0gKiAgICAgR05VIEdlbmVyYWwgUHVibGljIExpY2Vu
-c2UgZm9yIG1vcmUgZGV0YWlscy4NCj4gPiA+LSAqDQo+ID4gPi0gKiBPciwgYWx0ZXJuYXRpdmVs
-eQ0KPiA+ID4tICoNCj4gPiA+LSAqICBiKSBQZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBm
-cmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbg0KPiA+ID4tICogICAgIG9idGFpbmluZyBhIGNv
-cHkgb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uDQo+ID4gPi0g
-KiAgICAgZmlsZXMgKHRoZSAiU29mdHdhcmUiKSwgdG8gZGVhbCBpbiB0aGUgU29mdHdhcmUgd2l0
-aG91dA0KPiA+ID4tICogICAgIHJlc3RyaWN0aW9uLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0
-aW9uIHRoZSByaWdodHMgdG8gdXNlDQo+ID4gPi0gKiAgICAgY29weSwgbW9kaWZ5LCBtZXJnZSwg
-cHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwgYW5kL29yDQo+ID4gPi0gKiAgICAgc2Vs
-bCBjb3BpZXMgb2YgdGhlIFNvZnR3YXJlLCBhbmQgdG8gcGVybWl0IHBlcnNvbnMgdG8gd2hvbSB0
-aGUNCj4gPiA+LSAqICAgICBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3Qg
-dG8gdGhlIGZvbGxvd2luZw0KPiA+ID4tICogICAgIGNvbmRpdGlvbnM6DQo+ID4gPi0gKg0KPiA+
-ID4tICogICAgIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24g
-bm90aWNlIHNoYWxsIGJlDQo+ID4gPi0gKiAgICAgaW5jbHVkZWQgaW4gYWxsIGNvcGllcyBvciBz
-dWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuDQo+ID4gPi0gKg0KPiA+ID4tICog
-ICAgIFRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAsIFdJVEhPVVQgV0FSUkFOVFkgT0YgQU5ZIEtJ
-TkQNCj4gPiA+LSAqICAgICBFWFBSRVNTIE9SIElNUExJRUQsIElOQ0xVRElORyBCVVQgTk9UIExJ
-TUlURUQgVE8gVEhFIFdBUlJBTlRJRVMNCj4gPiA+LSAqICAgICBPRiBNRVJDSEFOVEFCSUxJVFks
-IEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORA0KPiA+ID4tICogICAgIE5PTklO
-RlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFIEFVVEhPUlMgT1IgQ09QWVJJR0hUDQo+
-ID4gPi0gKiAgICAgSE9MREVSUyBCRSBMSUFCTEUgRk9SIEFOWSBDTEFJTSwgREFNQUdFUyBPUiBP
-VEhFUiBMSUFCSUxJVFkNCj4gPiA+LSAqICAgICBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05U
-UkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcNCj4gPiA+LSAqICAgICBGUk9NLCBPVVQg
-T0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SDQo+ID4g
-Pi0gKiAgICAgT1RIRVIgREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLg0KPiA+ID4gICovDQo+ID4g
-Pg0KPiA+ID4gLyB7DQo+ID4gPmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEy
-NC1hcGFsaXMtZXZhbC5kdHMNCj4gPiA+Yi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFs
-aXMtZXZhbC5kdHMNCj4gPiA+aW5kZXggZWFlZTEwZWY2NTEyLi5lMjM4ODM2OGQ2MzUgMTAwNjQ0
-DQo+ID4gPi0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy1ldmFsLmR0cw0K
-PiA+ID4rKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtZXZhbC5kdHMNCj4g
-PiA+QEAgLTEsNDIgKzEsNiBAQA0KPiA+ID4rLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChH
-UEwtMi4wIE9SIFgxMSkNCj4gPiA+IC8qDQo+ID4gPi0gKiBDb3B5cmlnaHQgMjAxNi0yMDE4IFRv
-cmFkZXggQUcNCj4gPiA+LSAqDQo+ID4gPi0gKiBUaGlzIGZpbGUgaXMgZHVhbC1saWNlbnNlZDog
-eW91IGNhbiB1c2UgaXQgZWl0aGVyIHVuZGVyIHRoZSB0ZXJtcw0KPiA+ID4tICogb2YgdGhlIEdQ
-TCBvciB0aGUgWDExIGxpY2Vuc2UsIGF0IHlvdXIgb3B0aW9uLiBOb3RlIHRoYXQgdGhpcyBkdWFs
-DQo+ID4gPi0gKiBsaWNlbnNpbmcgb25seSBhcHBsaWVzIHRvIHRoaXMgZmlsZSwgYW5kIG5vdCB0
-aGlzIHByb2plY3QgYXMgYQ0KPiA+ID4tICogd2hvbGUuDQo+ID4gPi0gKg0KPiA+ID4tICogIGEp
-IFRoaXMgZmlsZSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQv
-b3INCj4gPiA+LSAqICAgICBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
-ZXJhbCBQdWJsaWMgTGljZW5zZQ0KPiA+ID4tICogICAgIHZlcnNpb24gMiBhcyBwdWJsaXNoZWQg
-YnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4NCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAg
-VGhpcyBmaWxlIGlzIGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd2lsbCBiZSB1c2Vm
-dWwNCj4gPiA+LSAqICAgICBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0
-aGUgaW1wbGllZCB3YXJyYW50eSBvZg0KPiA+ID4tICogICAgIE1FUkNIQU5UQUJJTElUWSBvciBG
-SVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRS4gIFNlZSB0aGUNCj4gPiA+LSAqICAgICBH
-TlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLg0KPiA+ID4tICoNCj4g
-PiA+LSAqIE9yLCBhbHRlcm5hdGl2ZWx5DQo+ID4gPi0gKg0KPiA+ID4tICogIGIpIFBlcm1pc3Np
-b24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uDQo+ID4g
-Pi0gKiAgICAgb2J0YWluaW5nIGEgY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVk
-IGRvY3VtZW50YXRpb24NCj4gPiA+LSAqICAgICBmaWxlcyAodGhlICJTb2Z0d2FyZSIpLCB0byBk
-ZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0DQo+ID4gPi0gKiAgICAgcmVzdHJpY3Rpb24sIGlu
-Y2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cyB0byB1c2UNCj4gPiA+LSAqICAg
-ICBjb3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBh
-bmQvb3INCj4gPiA+LSAqICAgICBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBw
-ZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZQ0KPiA+ID4tICogICAgIFNvZnR3YXJlIGlzIGZ1cm5p
-c2hlZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nDQo+ID4gPi0gKiAgICAgY29u
-ZGl0aW9uczoNCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVGhlIGFib3ZlIGNvcHlyaWdodCBub3Rp
-Y2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUNCj4gPiA+LSAqICAgICBpbmNs
-dWRlZCBpbiBhbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2Fy
-ZS4NCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVEhFIFNPRlRXQVJFIElTIFBST1ZJREVEICwgV0lU
-SE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORA0KPiA+ID4tICogICAgIEVYUFJFU1MgT1IgSU1QTElF
-RCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUw0KPiA+ID4tICog
-ICAgIE9GIE1FUkNIQU5UQUJJTElUWSwgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0Ug
-QU5EDQo+ID4gPi0gKiAgICAgTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUg
-QVVUSE9SUyBPUiBDT1BZUklHSFQNCj4gPiA+LSAqICAgICBIT0xERVJTIEJFIExJQUJMRSBGT1Ig
-QU5ZIENMQUlNLCBEQU1BR0VTIE9SIE9USEVSIExJQUJJTElUWQ0KPiA+ID4tICogICAgIFdIRVRI
-RVIgSU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORw0K
-PiA+ID4tICogICAgIEZST00sIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRX
-QVJFIE9SIFRIRSBVU0UgT1INCj4gPiA+LSAqICAgICBPVEhFUiBERUFMSU5HUyBJTiBUSEUgU09G
-VFdBUkUuDQo+ID4gPisgKiBDb3B5cmlnaHQgMjAxNi0yMDE5IFRvcmFkZXggQUcNCj4gPiA+ICAq
-Lw0KPiA+ID4NCj4gPiA+IC9kdHMtdjEvOw0KPiA+ID5kaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9v
-dC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kNCj4gPiA+Yi9hcmNoL2FybS9ib290L2R0cy90ZWdy
-YTEyNC1hcGFsaXMuZHRzaQ0KPiA+ID5pbmRleCAxM2M5M2NkNTA3ZDguLjY5MGY4ODFlYTljYiAx
-MDA2NDQNCj4gPiA+LS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kN
-Cj4gPiA+KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kNCj4gPiA+
-QEAgLTEsNDIgKzEsNiBAQA0KPiA+ID4rLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwt
-Mi4wIE9SIFgxMSkNCj4gPiA+IC8qDQo+ID4gPi0gKiBDb3B5cmlnaHQgMjAxNi0yMDE4IFRvcmFk
-ZXggQUcNCj4gPiA+LSAqDQo+ID4gPi0gKiBUaGlzIGZpbGUgaXMgZHVhbC1saWNlbnNlZDogeW91
-IGNhbiB1c2UgaXQgZWl0aGVyIHVuZGVyIHRoZSB0ZXJtcw0KPiA+ID4tICogb2YgdGhlIEdQTCBv
-ciB0aGUgWDExIGxpY2Vuc2UsIGF0IHlvdXIgb3B0aW9uLiBOb3RlIHRoYXQgdGhpcyBkdWFsDQo+
-ID4gPi0gKiBsaWNlbnNpbmcgb25seSBhcHBsaWVzIHRvIHRoaXMgZmlsZSwgYW5kIG5vdCB0aGlz
-IHByb2plY3QgYXMgYQ0KPiA+ID4tICogd2hvbGUuDQo+ID4gPi0gKg0KPiA+ID4tICogIGEpIFRo
-aXMgZmlsZSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3IN
-Cj4gPiA+LSAqICAgICBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJh
-bCBQdWJsaWMgTGljZW5zZQ0KPiA+ID4tICogICAgIHZlcnNpb24gMiBhcyBwdWJsaXNoZWQgYnkg
-dGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4NCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVGhp
-cyBmaWxlIGlzIGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd2lsbCBiZSB1c2VmdWwN
-Cj4gPiA+LSAqICAgICBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUg
-aW1wbGllZCB3YXJyYW50eSBvZg0KPiA+ID4tICogICAgIE1FUkNIQU5UQUJJTElUWSBvciBGSVRO
-RVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRS4gIFNlZSB0aGUNCj4gPiA+LSAqICAgICBHTlUg
-R2VuZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLg0KPiA+ID4tICoNCj4gPiA+
-LSAqIE9yLCBhbHRlcm5hdGl2ZWx5DQo+ID4gPi0gKg0KPiA+ID4tICogIGIpIFBlcm1pc3Npb24g
-aXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uDQo+ID4gPi0g
-KiAgICAgb2J0YWluaW5nIGEgY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRv
-Y3VtZW50YXRpb24NCj4gPiA+LSAqICAgICBmaWxlcyAodGhlICJTb2Z0d2FyZSIpLCB0byBkZWFs
-IGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0DQo+ID4gPi0gKiAgICAgcmVzdHJpY3Rpb24sIGluY2x1
-ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cyB0byB1c2UNCj4gPiA+LSAqICAgICBj
-b3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBhbmQv
-b3INCj4gPiA+LSAqICAgICBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJt
-aXQgcGVyc29ucyB0byB3aG9tIHRoZQ0KPiA+ID4tICogICAgIFNvZnR3YXJlIGlzIGZ1cm5pc2hl
-ZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nDQo+ID4gPi0gKiAgICAgY29uZGl0
-aW9uczoNCj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2Ug
-YW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUNCj4gPiA+LSAqICAgICBpbmNsdWRl
-ZCBpbiBhbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS4N
-Cj4gPiA+LSAqDQo+ID4gPi0gKiAgICAgVEhFIFNPRlRXQVJFIElTIFBST1ZJREVEICwgV0lUSE9V
-VCBXQVJSQU5UWSBPRiBBTlkgS0lORA0KPiA+ID4tICogICAgIEVYUFJFU1MgT1IgSU1QTElFRCwg
-SU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUw0KPiA+ID4tICogICAg
-IE9GIE1FUkNIQU5UQUJJTElUWSwgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5E
-DQo+ID4gPi0gKiAgICAgTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUgQVVU
-SE9SUyBPUiBDT1BZUklHSFQNCj4gPiA+LSAqICAgICBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5Z
-IENMQUlNLCBEQU1BR0VTIE9SIE9USEVSIExJQUJJTElUWQ0KPiA+ID4tICogICAgIFdIRVRIRVIg
-SU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORw0KPiA+
-ID4tICogICAgIEZST00sIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJF
-IE9SIFRIRSBVU0UgT1INCj4gPiA+LSAqICAgICBPVEhFUiBERUFMSU5HUyBJTiBUSEUgU09GVFdB
-UkUuDQo+ID4gPisgKiBDb3B5cmlnaHQgMjAxNi0yMDE5IFRvcmFkZXggQUcNCj4gPiA+ICAqLw0K
-PiA+ID4NCj4gPiA+ICNpbmNsdWRlICJ0ZWdyYTEyNC5kdHNpIg0KPiA+ID4tLQ0KPiA+ID4yLjE3
-LjENCj4gPg0KPiA+IC0tDQo+ID4gU2VudCBmcm9tIG15IEFuZHJvaWQgZGV2aWNlIHdpdGggSy05
-IE1haWwuIFBsZWFzZSBleGN1c2UgbXkgYnJldml0eS4NCg0KDQoNCi0tIA0KQmVzdCByZWdhcmRz
-IC0gRnJldW5kbGljaGUgR3LDvHNzZSAtIE1laWxsZXVyZXMgc2FsdXRhdGlvbnMNCg0KU2VuaW9y
-IERldmVsb3BtZW50IEVuZ2luZWVyLA0KSWdvciBPcGFuaXVrDQoNClRvcmFkZXggQUcNCkFsdHNh
-Z2Vuc3RyYXNzZSA1IHwgNjA0OCBIb3J3L0x1emVybiB8IFN3aXR6ZXJsYW5kIHwgVDogKzQxIDQx
-IDUwMCA0OA0KMDAgKG1haW4gbGluZSkNCg==
+On Tue, Apr 16, 2019 at 20:27:20, Vidya Sagar <vidyas@nvidia.com> wrote:
+
+> Add extended configuration space capability search API using struct dw_pc=
+ie *
+> pointer
+>=20
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+> Changes from [v2]:
+> * None
+>=20
+> Changes from [v1]:
+> * This is a new patch in v2 series
+>=20
+>  drivers/pci/controller/dwc/pcie-designware.c | 41 ++++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h |  1 +
+>  2 files changed, 42 insertions(+)
+>=20
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/c=
+ontroller/dwc/pcie-designware.c
+> index d68c123e409c..44c0ba078452 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -53,6 +53,47 @@ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap=
+)
+>  	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
+>  }
+> =20
+> +static int dw_pcie_find_next_ext_capability(struct dw_pcie *pci, int sta=
+rt,
+> +					    int cap)
+> +{
+> +	u32 header;
+> +	int ttl;
+> +	int pos =3D PCI_CFG_SPACE_SIZE;
+> +
+> +	/* minimum 8 bytes per capability */
+> +	ttl =3D (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
+> +
+> +	if (start)
+> +		pos =3D start;
+> +
+> +	header =3D dw_pcie_readl_dbi(pci, pos);
+> +	/*
+> +	 * If we have no capabilities, this is indicated by cap ID,
+> +	 * cap version and next pointer all being 0.
+> +	 */
+> +	if (header =3D=3D 0)
+> +		return 0;
+> +
+> +	while (ttl-- > 0) {
+> +		if (PCI_EXT_CAP_ID(header) =3D=3D cap && pos !=3D start)
+> +			return pos;
+> +
+> +		pos =3D PCI_EXT_CAP_NEXT(header);
+> +		if (pos < PCI_CFG_SPACE_SIZE)
+> +			break;
+> +
+> +		header =3D dw_pcie_readl_dbi(pci, pos);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int dw_pcie_find_ext_capability(struct dw_pcie *pci, int cap)
+> +{
+> +	return dw_pcie_find_next_ext_capability(pci, 0, cap);
+> +}
+> +EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
+> +
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+>  {
+>  	if (!IS_ALIGNED((uintptr_t)addr, size)) {
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/c=
+ontroller/dwc/pcie-designware.h
+> index 4ccd4c706ddb..fa41d675c48f 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -248,6 +248,7 @@ struct dw_pcie {
+>  		container_of((endpoint), struct dw_pcie, ep)
+> =20
+>  u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
+> +int dw_pcie_find_ext_capability(struct dw_pcie *pci, int cap);
+> =20
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val);
+>  int dw_pcie_write(void __iomem *addr, int size, u32 val);
+> --=20
+> 2.17.1
+
+This ext capability function is aimed to be used by the EP also?
