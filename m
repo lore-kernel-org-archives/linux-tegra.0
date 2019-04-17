@@ -1,78 +1,69 @@
 From: Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Subject: RE: [PATCH V3 06/16] PCI: dwc: Add ext config space capability
- search API
-Date: Wed, 17 Apr 2019 09:46:20 +0000
-Message-ID: <305100E33629484CBB767107E4246BBB0A22C104@de02wembxa.internal.synopsys.com>
+Subject: RE: [PATCH V3 04/16] PCI: dwc: Perform dbi regs write lock towards
+ the end
+Date: Wed, 17 Apr 2019 09:56:33 +0000
+Message-ID: <305100E33629484CBB767107E4246BBB0A22C127@de02wembxa.internal.synopsys.com>
 References: <20190416192730.15681-1-vidyas@nvidia.com>
- <20190416192730.15681-7-vidyas@nvidia.com>
- <305100E33629484CBB767107E4246BBB0A22C0A7@de02wembxa.internal.synopsys.com>
- <97924cc1-0ccb-52c3-5396-accd516f91d4@nvidia.com>
+ <20190416192730.15681-5-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <97924cc1-0ccb-52c3-5396-accd516f91d4@nvidia.com>
+In-Reply-To: <20190416192730.15681-5-vidyas@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>, Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>
+To: Vidya Sagar <vidyas@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "gustavo.pimentel@synopsys.com" <Gustavo.Pimentel@synopsys.com>
 Cc: "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kthota@nvidia.com" <kthota@nvidia.com>, "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>, "sagar.tv@gmail.com" <sagar.tv@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBBcHIgMTcsIDIwMTkgYXQgMTA6MzQ6NTIsIFZpZHlhIFNhZ2FyIDx2aWR5YXNAbnZp
-ZGlhLmNvbT4gd3JvdGU6DQoNCj4gT24gNC8xNy8yMDE5IDI6NTcgUE0sIEd1c3Rhdm8gUGltZW50
-ZWwgd3JvdGU6DQo+ID4gT24gVHVlLCBBcHIgMTYsIDIwMTkgYXQgMjA6Mjc6MjAsIFZpZHlhIFNh
-Z2FyIDx2aWR5YXNAbnZpZGlhLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4+IEFkZCBleHRlbmRlZCBj
-b25maWd1cmF0aW9uIHNwYWNlIGNhcGFiaWxpdHkgc2VhcmNoIEFQSSB1c2luZyBzdHJ1Y3QgZHdf
-cGNpZSAqDQo+ID4+IHBvaW50ZXINCj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogVmlkeWEgU2Fn
-YXIgPHZpZHlhc0BudmlkaWEuY29tPg0KPiA+PiAtLS0NCj4gPj4gQ2hhbmdlcyBmcm9tIFt2Ml06
-DQo+ID4+ICogTm9uZQ0KPiA+Pg0KPiA+PiBDaGFuZ2VzIGZyb20gW3YxXToNCj4gPj4gKiBUaGlz
-IGlzIGEgbmV3IHBhdGNoIGluIHYyIHNlcmllcw0KPiA+Pg0KPiA+PiAgIGRyaXZlcnMvcGNpL2Nv
-bnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5jIHwgNDEgKysrKysrKysrKysrKysrKysrKysN
-Cj4gPj4gICBkcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLWRlc2lnbndhcmUuaCB8ICAx
-ICsNCj4gPj4gICAyIGZpbGVzIGNoYW5nZWQsIDQyIGluc2VydGlvbnMoKykNCj4gPj4NCj4gPj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5j
-IGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpZS1kZXNpZ253YXJlLmMNCj4gPj4gaW5k
-ZXggZDY4YzEyM2U0MDljLi40NGMwYmEwNzg0NTIgMTAwNjQ0DQo+ID4+IC0tLSBhL2RyaXZlcnMv
-cGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5jDQo+ID4+ICsrKyBiL2RyaXZlcnMv
-cGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5jDQo+ID4+IEBAIC01Myw2ICs1Myw0
-NyBAQCB1OCBkd19wY2llX2ZpbmRfY2FwYWJpbGl0eShzdHJ1Y3QgZHdfcGNpZSAqcGNpLCB1OCBj
-YXApDQo+ID4+ICAgCXJldHVybiBfX2R3X3BjaWVfZmluZF9uZXh0X2NhcChwY2ksIG5leHRfY2Fw
-X3B0ciwgY2FwKTsNCj4gPj4gICB9DQo+ID4+ICAgDQo+ID4+ICtzdGF0aWMgaW50IGR3X3BjaWVf
-ZmluZF9uZXh0X2V4dF9jYXBhYmlsaXR5KHN0cnVjdCBkd19wY2llICpwY2ksIGludCBzdGFydCwN
-Cj4gPj4gKwkJCQkJICAgIGludCBjYXApDQo+ID4+ICt7DQo+ID4+ICsJdTMyIGhlYWRlcjsNCj4g
-Pj4gKwlpbnQgdHRsOw0KPiA+PiArCWludCBwb3MgPSBQQ0lfQ0ZHX1NQQUNFX1NJWkU7DQo+ID4+
-ICsNCj4gPj4gKwkvKiBtaW5pbXVtIDggYnl0ZXMgcGVyIGNhcGFiaWxpdHkgKi8NCj4gPj4gKwl0
-dGwgPSAoUENJX0NGR19TUEFDRV9FWFBfU0laRSAtIFBDSV9DRkdfU1BBQ0VfU0laRSkgLyA4Ow0K
-PiA+PiArDQo+ID4+ICsJaWYgKHN0YXJ0KQ0KPiA+PiArCQlwb3MgPSBzdGFydDsNCj4gPj4gKw0K
-PiA+PiArCWhlYWRlciA9IGR3X3BjaWVfcmVhZGxfZGJpKHBjaSwgcG9zKTsNCj4gPj4gKwkvKg0K
-PiA+PiArCSAqIElmIHdlIGhhdmUgbm8gY2FwYWJpbGl0aWVzLCB0aGlzIGlzIGluZGljYXRlZCBi
-eSBjYXAgSUQsDQo+ID4+ICsJICogY2FwIHZlcnNpb24gYW5kIG5leHQgcG9pbnRlciBhbGwgYmVp
-bmcgMC4NCj4gPj4gKwkgKi8NCj4gPj4gKwlpZiAoaGVhZGVyID09IDApDQo+ID4+ICsJCXJldHVy
-biAwOw0KPiA+PiArDQo+ID4+ICsJd2hpbGUgKHR0bC0tID4gMCkgew0KPiA+PiArCQlpZiAoUENJ
-X0VYVF9DQVBfSUQoaGVhZGVyKSA9PSBjYXAgJiYgcG9zICE9IHN0YXJ0KQ0KPiA+PiArCQkJcmV0
-dXJuIHBvczsNCj4gPj4gKw0KPiA+PiArCQlwb3MgPSBQQ0lfRVhUX0NBUF9ORVhUKGhlYWRlcik7
-DQo+ID4+ICsJCWlmIChwb3MgPCBQQ0lfQ0ZHX1NQQUNFX1NJWkUpDQo+ID4+ICsJCQlicmVhazsN
-Cj4gPj4gKw0KPiA+PiArCQloZWFkZXIgPSBkd19wY2llX3JlYWRsX2RiaShwY2ksIHBvcyk7DQo+
-ID4+ICsJfQ0KPiA+PiArDQo+ID4+ICsJcmV0dXJuIDA7DQo+ID4+ICt9DQo+ID4+ICsNCj4gPj4g
-K2ludCBkd19wY2llX2ZpbmRfZXh0X2NhcGFiaWxpdHkoc3RydWN0IGR3X3BjaWUgKnBjaSwgaW50
-IGNhcCkNCj4gPj4gK3sNCj4gPj4gKwlyZXR1cm4gZHdfcGNpZV9maW5kX25leHRfZXh0X2NhcGFi
-aWxpdHkocGNpLCAwLCBjYXApOw0KPiA+PiArfQ0KPiA+PiArRVhQT1JUX1NZTUJPTF9HUEwoZHdf
-cGNpZV9maW5kX2V4dF9jYXBhYmlsaXR5KTsNCj4gPj4gKw0KPiA+PiAgIGludCBkd19wY2llX3Jl
-YWQodm9pZCBfX2lvbWVtICphZGRyLCBpbnQgc2l6ZSwgdTMyICp2YWwpDQo+ID4+ICAgew0KPiA+
-PiAgIAlpZiAoIUlTX0FMSUdORUQoKHVpbnRwdHJfdClhZGRyLCBzaXplKSkgew0KPiA+PiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpZS1kZXNpZ253YXJlLmggYi9k
-cml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLWRlc2lnbndhcmUuaA0KPiA+PiBpbmRleCA0
-Y2NkNGM3MDZkZGIuLmZhNDFkNjc1YzQ4ZiAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVycy9wY2kv
-Y29udHJvbGxlci9kd2MvcGNpZS1kZXNpZ253YXJlLmgNCj4gPj4gKysrIGIvZHJpdmVycy9wY2kv
-Y29udHJvbGxlci9kd2MvcGNpZS1kZXNpZ253YXJlLmgNCj4gPj4gQEAgLTI0OCw2ICsyNDgsNyBA
-QCBzdHJ1Y3QgZHdfcGNpZSB7DQo+ID4+ICAgCQljb250YWluZXJfb2YoKGVuZHBvaW50KSwgc3Ry
-dWN0IGR3X3BjaWUsIGVwKQ0KPiA+PiAgIA0KPiA+PiAgIHU4IGR3X3BjaWVfZmluZF9jYXBhYmls
-aXR5KHN0cnVjdCBkd19wY2llICpwY2ksIHU4IGNhcCk7DQo+ID4+ICtpbnQgZHdfcGNpZV9maW5k
-X2V4dF9jYXBhYmlsaXR5KHN0cnVjdCBkd19wY2llICpwY2ksIGludCBjYXApOw0KPiA+PiAgIA0K
-PiA+PiAgIGludCBkd19wY2llX3JlYWQodm9pZCBfX2lvbWVtICphZGRyLCBpbnQgc2l6ZSwgdTMy
-ICp2YWwpOw0KPiA+PiAgIGludCBkd19wY2llX3dyaXRlKHZvaWQgX19pb21lbSAqYWRkciwgaW50
-IHNpemUsIHUzMiB2YWwpOw0KPiA+PiAtLSANCj4gPj4gMi4xNy4xDQo+ID4gDQo+ID4gVGhpcyBl
-eHQgY2FwYWJpbGl0eSBmdW5jdGlvbiBpcyBhaW1lZCB0byBiZSB1c2VkIGJ5IHRoZSBFUCBhbHNv
-Pw0KPiA+IA0KPiBZZXMuIEl0IGNhbiBiZSB1c2VkIGJ5IEVQIGFsc28uIEhlbmNlIEkgYWRkZWQg
-aXQgaW4gY29tbW9uIGZpbGVzLg0KDQoNCkFja2VkLWJ5OiBHdXN0YXZvIFBpbWVudGVsIDxndXN0
-YXZvLnBpbWVudGVsQHN5bm9wc3lzLmNvbT4NCg0KDQo=
+On Tue, Apr 16, 2019 at 20:27:18, Vidya Sagar <vidyas@nvidia.com> wrote:
+
+> Remove multiple write enable and disable sequences of dbi registers as
+> Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+> DBI write-lock enable bit thereby not allowing any further writes to BAR-=
+0
+> register in config space to take place. Hence disabling write permission
+> only towards the end.
+>=20
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+> Changes since [v2]:
+> * None
+>=20
+> Changes since [v1]:
+> * None
+>=20
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>=20
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/=
+pci/controller/dwc/pcie-designware-host.c
+> index 2a5332e5ccfa..c0334c92c1a6 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -683,7 +683,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>  	val &=3D 0xffff00ff;
+>  	val |=3D 0x00000100;
+>  	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+> -	dw_pcie_dbi_ro_wr_dis(pci);
+> =20
+>  	/* Setup bus numbers */
+>  	val =3D dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+> @@ -723,8 +722,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+> =20
+>  	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+> =20
+> -	/* Enable write permission for the DBI read-only register */
+> -	dw_pcie_dbi_ro_wr_en(pci);
+>  	/* Program correct class for RC */
+>  	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+>  	/* Better disable write permission right after the update */
+> --=20
+> 2.17.1
+
+This setup sequence was written by Jingoo Han, let's check if he did this=20
+by some particular reason.
+Jingoo do you remember why you wrote the code like this?
+
+Regards,
+Gustavo
