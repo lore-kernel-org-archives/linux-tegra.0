@@ -1,7 +1,7 @@
 From: Jonas Gorski <jonas.gorski@gmail.com>
-Subject: [PATCH RFT V3 3/8] clk: gate: add explicit big endian support
-Date: Thu, 18 Apr 2019 13:12:06 +0200
-Message-ID: <20190418111211.10474-4-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V3 4/8] clk: multiplier: add explicit big endian support
+Date: Thu, 18 Apr 2019 13:12:07 +0200
+Message-ID: <20190418111211.10474-5-jonas.gorski@gmail.com>
 References: <20190418111211.10474-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,94 +22,89 @@ Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.
 List-Id: linux-tegra@vger.kernel.org
 
 Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian gated clocks.
+allow runtime configuration of big endian multiplier clocks.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V2 -> V3:
- * drop unneeded else in clk_gate_readl
+ * drop unneeded else in clk_mult_readl
 V1 -> V2:
  * switch from global to local flag
 
- drivers/clk/clk-gate.c       | 22 +++++++++++++++++++---
+ drivers/clk/clk-multiplier.c | 22 +++++++++++++++++++---
  include/linux/clk-provider.h |  4 ++++
  2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index f05823cd9b21..6ced7b1f5585 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -23,6 +23,22 @@
-  * parent - fixed parent.  No clk_set_parent support
-  */
+diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
+index 3c86f859c199..77327df9bf32 100644
+--- a/drivers/clk/clk-multiplier.c
++++ b/drivers/clk/clk-multiplier.c
+@@ -11,6 +11,22 @@
+ #include <linux/of.h>
+ #include <linux/slab.h>
  
-+static inline u32 clk_gate_readl(struct clk_gate *gate)
++static inline u32 clk_mult_readl(struct clk_multiplier *mult)
 +{
-+	if (gate->flags & CLK_GATE_BIG_ENDIAN)
-+		return ioread32be(gate->reg);
++	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
++		return ioread32be(mult->reg);
 +
-+	return clk_readl(gate->reg);
++	return clk_readl(mult->reg);
 +}
 +
-+static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
++static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
 +{
-+	if (gate->flags & CLK_GATE_BIG_ENDIAN)
-+		iowrite32be(val, gate->reg);
++	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
++		iowrite32be(val, mult->reg);
 +	else
-+		clk_writel(val, gate->reg);
++		clk_writel(val, mult->reg);
 +}
 +
- /*
-  * It works on following logic:
-  *
-@@ -55,7 +71,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
- 		if (set)
- 			reg |= BIT(gate->bit_idx);
- 	} else {
--		reg = clk_readl(gate->reg);
-+		reg = clk_gate_readl(gate);
+ static unsigned long __get_mult(struct clk_multiplier *mult,
+ 				unsigned long rate,
+ 				unsigned long parent_rate)
+@@ -27,7 +43,7 @@ static unsigned long clk_multiplier_recalc_rate(struct clk_hw *hw,
+ 	struct clk_multiplier *mult = to_clk_multiplier(hw);
+ 	unsigned long val;
  
- 		if (set)
- 			reg |= BIT(gate->bit_idx);
-@@ -63,7 +79,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
- 			reg &= ~BIT(gate->bit_idx);
- 	}
+-	val = clk_readl(mult->reg) >> mult->shift;
++	val = clk_mult_readl(mult) >> mult->shift;
+ 	val &= GENMASK(mult->width - 1, 0);
  
--	clk_writel(reg, gate->reg);
-+	clk_gate_writel(gate, reg);
+ 	if (!val && mult->flags & CLK_MULTIPLIER_ZERO_BYPASS)
+@@ -118,10 +134,10 @@ static int clk_multiplier_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	else
+ 		__acquire(mult->lock);
  
- 	if (gate->lock)
- 		spin_unlock_irqrestore(gate->lock, flags);
-@@ -88,7 +104,7 @@ int clk_gate_is_enabled(struct clk_hw *hw)
- 	u32 reg;
- 	struct clk_gate *gate = to_clk_gate(hw);
+-	val = clk_readl(mult->reg);
++	val = clk_mult_readl(mult);
+ 	val &= ~GENMASK(mult->width + mult->shift - 1, mult->shift);
+ 	val |= factor << mult->shift;
+-	clk_writel(val, mult->reg);
++	clk_mult_writel(mult, val);
  
--	reg = clk_readl(gate->reg);
-+	reg = clk_gate_readl(gate);
- 
- 	/* if a set bit disables this clk, flip it before masking */
- 	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
+ 	if (mult->lock)
+ 		spin_unlock_irqrestore(mult->lock, flags);
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 8c07d810acf5..8576c2dbc639 100644
+index 8576c2dbc639..9df78e3fb62b 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -348,6 +348,9 @@ void of_fixed_clk_setup(struct device_node *np);
-  *	of this register, and mask of gate bits are in higher 16-bit of this
-  *	register.  While setting the gate bits, higher 16-bit should also be
-  *	updated to indicate changing gate bits.
-+ * CLK_GATE_BIG_ENDIAN - by default little endian register accesses are used for
-+ *	the gate register.  Setting this flag makes the register accesses big
-+ *	endian.
+@@ -667,6 +667,9 @@ void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
+  *	leaving the parent rate unmodified.
+  * CLK_MULTIPLIER_ROUND_CLOSEST - Makes the best calculated divider to be
+  *	rounded to the closest integer instead of the down one.
++ * CLK_MULTIPLIER_BIG_ENDIAN - By default little endian register accesses are
++ *	used for the multiplier register.  Setting this flag makes the register
++ *	accesses big endian.
   */
- struct clk_gate {
- 	struct clk_hw hw;
-@@ -361,6 +364,7 @@ struct clk_gate {
+ struct clk_multiplier {
+ 	struct clk_hw	hw;
+@@ -681,6 +684,7 @@ struct clk_multiplier {
  
- #define CLK_GATE_SET_TO_DISABLE		BIT(0)
- #define CLK_GATE_HIWORD_MASK		BIT(1)
-+#define CLK_GATE_BIG_ENDIAN		BIT(2)
+ #define CLK_MULTIPLIER_ZERO_BYPASS		BIT(0)
+ #define CLK_MULTIPLIER_ROUND_CLOSEST	BIT(1)
++#define CLK_MULTIPLIER_BIG_ENDIAN		BIT(2)
  
- extern const struct clk_ops clk_gate_ops;
- struct clk *clk_register_gate(struct device *dev, const char *name,
+ extern const struct clk_ops clk_multiplier_ops;
+ 
 -- 
 2.13.2
