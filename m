@@ -1,179 +1,49 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 06/16] PM / devfreq: tegra: Drop primary interrupt
- handler
-Date: Thu, 18 Apr 2019 09:24:52 +0900
-Message-ID: <22ae12dc-9a6c-4f37-722b-adc7289a32c3@samsung.com>
-References: <20190417222925.5815-1-digetx@gmail.com>
-        <CGME20190417224246epcas3p2fe81ce63069496ea13c3aeeb54189afd@epcas3p2.samsung.com>
-        <20190417222925.5815-7-digetx@gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Subject: Re: [PATCH RFT V2 1/8] clk: divider: add explicit big endian support
+Date: Thu, 18 Apr 2019 11:00:21 +0200
+Message-ID: <CAOiHx==vJ7ss3G8poddKpdDA_3U9bh9LtBaaFZ2EcxxGF4nNGA@mail.gmail.com>
+References: <20190415101046.5872-1-jonas.gorski@gmail.com>
+ <20190415101046.5872-2-jonas.gorski@gmail.com>
+ <155554397723.15276.10863024281240089015@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190417222925.5815-7-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <155554397723.15276.10863024281240089015@swboyd.mtv.corp.google.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, Heiko Stuebner <heiko@sntech.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Anatolij Gustschin <agust@denx.de>, linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 19. 4. 18. 오전 7:29, Dmitry Osipenko wrote:
-> There is no real need in the primary interrupt handler, hence move
-> everything to the secondary (threaded) handler. In a result locking
-> is consistent now and there are no potential races with the interrupt
-> handler because it is protected with the devfreq's mutex.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra-devfreq.c | 55 +++++++++++----------------------
->  1 file changed, 18 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-> index 24ec65556c39..b65313fe3c2e 100644
-> --- a/drivers/devfreq/tegra-devfreq.c
-> +++ b/drivers/devfreq/tegra-devfreq.c
-> @@ -144,7 +144,6 @@ static struct tegra_devfreq_device_config actmon_device_configs[] = {
->  struct tegra_devfreq_device {
->  	const struct tegra_devfreq_device_config *config;
->  	void __iomem *regs;
-> -	spinlock_t lock;
->  
->  	/* Average event count sampled in the last interrupt */
->  	u32 avg_count;
-> @@ -249,11 +248,8 @@ static void actmon_write_barrier(struct tegra_devfreq *tegra)
->  static void actmon_isr_device(struct tegra_devfreq *tegra,
->  			      struct tegra_devfreq_device *dev)
->  {
-> -	unsigned long flags;
->  	u32 intr_status, dev_ctrl;
->  
-> -	spin_lock_irqsave(&dev->lock, flags);
-> -
->  	dev->avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
->  	tegra_devfreq_update_avg_wmark(tegra, dev);
->  
-> @@ -302,26 +298,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
->  	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
->  
->  	actmon_write_barrier(tegra);
-> -
-> -	spin_unlock_irqrestore(&dev->lock, flags);
-> -}
-> -
-> -static irqreturn_t actmon_isr(int irq, void *data)
-> -{
-> -	struct tegra_devfreq *tegra = data;
-> -	bool handled = false;
-> -	unsigned int i;
-> -	u32 val;
-> -
-> -	val = actmon_readl(tegra, ACTMON_GLB_STATUS);
-> -	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
-> -		if (val & tegra->devices[i].config->irq_mask) {
-> -			actmon_isr_device(tegra, tegra->devices + i);
-> -			handled = true;
-> -		}
-> -	}
-> -
-> -	return handled ? IRQ_WAKE_THREAD : IRQ_NONE;
->  }
->  
->  static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
-> @@ -348,15 +324,12 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
->  	unsigned long cpu_freq = 0;
->  	unsigned long static_cpu_emc_freq = 0;
->  	unsigned int avg_sustain_coef;
-> -	unsigned long flags;
->  
->  	if (dev->config->avg_dependency_threshold) {
->  		cpu_freq = cpufreq_get(0);
->  		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
->  	}
->  
-> -	spin_lock_irqsave(&dev->lock, flags);
-> -
->  	dev->target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
->  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
->  	dev->target_freq = do_percent(dev->target_freq, avg_sustain_coef);
-> @@ -364,19 +337,31 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
->  
->  	if (dev->avg_count >= dev->config->avg_dependency_threshold)
->  		dev->target_freq = max(dev->target_freq, static_cpu_emc_freq);
-> -
-> -	spin_unlock_irqrestore(&dev->lock, flags);
->  }
->  
->  static irqreturn_t actmon_thread_isr(int irq, void *data)
->  {
->  	struct tegra_devfreq *tegra = data;
-> +	bool handled = false;
-> +	unsigned int i;
-> +	u32 val;
->  
->  	mutex_lock(&tegra->devfreq->lock);
-> -	update_devfreq(tegra->devfreq);
-> +
-> +	val = actmon_readl(tegra, ACTMON_GLB_STATUS);
-> +	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
-> +		if (val & tegra->devices[i].config->irq_mask) {
-> +			actmon_isr_device(tegra, tegra->devices + i);
-> +			handled = true;
-> +		}
-> +	}
-> +
-> +	if (handled)
-> +		update_devfreq(tegra->devfreq);
-> +
->  	mutex_unlock(&tegra->devfreq->lock);
->  
-> -	return IRQ_HANDLED;
-> +	return handled ? IRQ_HANDLED : IRQ_NONE;
->  }
->  
->  static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
-> @@ -386,7 +371,6 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
->  	struct tegra_devfreq *tegra;
->  	struct tegra_devfreq_device *dev;
->  	unsigned int i;
-> -	unsigned long flags;
->  
->  	if (action != POST_RATE_CHANGE)
->  		return NOTIFY_OK;
-> @@ -398,9 +382,7 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
->  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
->  		dev = &tegra->devices[i];
->  
-> -		spin_lock_irqsave(&dev->lock, flags);
->  		tegra_devfreq_update_wmark(tegra, dev);
-> -		spin_unlock_irqrestore(&dev->lock, flags);
->  	}
->  
->  	actmon_write_barrier(tegra);
-> @@ -682,7 +664,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  		dev = tegra->devices + i;
->  		dev->config = actmon_device_configs + i;
->  		dev->regs = tegra->regs + dev->config->offset;
-> -		spin_lock_init(&dev->lock);
->  
->  		tegra_actmon_configure_device(tegra, dev);
->  	}
-> @@ -700,8 +681,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, tegra);
->  
-> -	err = devm_request_threaded_irq(&pdev->dev, irq, actmon_isr,
-> -					actmon_thread_isr, IRQF_SHARED,
-> +	err = devm_request_threaded_irq(&pdev->dev, irq, NULL,
-> +					actmon_thread_isr, IRQF_ONESHOT,
->  					"tegra-devfreq", tegra);
->  	if (err) {
->  		dev_err(&pdev->dev, "Interrupt request failed\n");
-> 
+On Thu, 18 Apr 2019 at 01:32, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Jonas Gorski (2019-04-15 03:10:39)
+> > @@ -370,7 +388,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> >         if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+> >                 u32 val;
+> >
+> > -               val = clk_readl(divider->reg) >> divider->shift;
+> > +               val = clk_div_readl(divider->reg) >> divider->shift;
+>
+> Good deal that kbuild running sparse found that this was supposed to be
+> divider and not divider->reg. If you can fix that and remove the else in
+> all the basic type readl wrappers then this series looks good to merge
+> for me.
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Yeah, I'm quite glad about that. I was first confused why I didn't
+catch it in my test build, but then remembered only C++ complains
+about implicit void* casts (IIRC). I have it already fixed locally and
+did a sparse build myself, was just waiting for at least one non-bot
+comment before resending the series.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+
+Regards
+Jonas
