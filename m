@@ -1,55 +1,32 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Changes for v5.2-rc1
-Date: Thu, 18 Apr 2019 17:14:47 +0200
-Message-ID: <20190418151447.9430-1-thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH RFT V3 1/8] clk: divider: add explicit big endian support
+Date: Thu, 18 Apr 2019 14:51:14 -0700
+Message-ID: <155562427433.15276.6915220903928244004@swboyd.mtv.corp.google.com>
+References: <20190418111211.10474-1-jonas.gorski@gmail.com>
+ <20190418111211.10474-2-jonas.gorski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190418111211.10474-2-jonas.gorski@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jonas Gorski <jonas.gorski@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgOWU5OGM2NzhjMmQ2
-YWUzYTE3Y2IyZGU1NWQxN2Y2OWRkZGFhMjMxYjoKCiAgTGludXggNS4xLXJjMSAoMjAxOS0wMy0x
-NyAxNDoyMjoyNiAtMDcwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0
-OgoKICBnaXQ6Ly9hbm9uZ2l0LmZyZWVkZXNrdG9wLm9yZy90ZWdyYS9saW51eCB0YWdzL2RybS90
-ZWdyYS9mb3ItNS4yLXJjMQoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDYxYjUxZmI1
-MWMwMWE1MTlhMjQ5ZDI4ZWM1NWM2NTEzYTEzYmU1YTM6CgogIGRybS90ZWdyYTogZ2VtOiBGaXgg
-Q1BVLWNhY2hlIG1haW50ZW5hbmNlIGZvciBCTydzIGFsbG9jYXRlZCB1c2luZyBnZXRfcGFnZXMo
-KSAoMjAxOS0wNC0xOCAxMTo0ODowOSArMDIwMCkKCk5vdGUgdGhhdCB0aGlzIHB1bGxzIGluIGEg
-c3RhYmxlIGJyYW5jaCBmcm9tIFBoaWxpcHAgZm9yIHRoZSBjb3JlIHJlc2V0CmZyYW1ld29yayBj
-aGFuZ2VzIHRoYXQgYWRkIHRoZSByZXF1aXJlL3JlbGVhc2UgcHJvdG9jb2wgQVBJLgoKVGhhbmtz
-LApUaGllcnJ5CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tCmRybS90ZWdyYTogQ2hhbmdlcyBmb3IgdjUuMi1yYzEKClRoaXMg
-Y29udGFpbnMgYSBmaXggZm9yIHRoZSB1c2FnZSBvZiBzaGFyZWQgcmVzZXRzIHRoYXQgcHJldmlv
-dXNseQpnZW5lcmF0ZWQgYSBXQVJOIG9uIGJvb3QuIEluIGFkZGl0aW9uLCB0aGVyZSdzIGEgZml4
-IGZvciBDUFUgY2FjaGUKbWFpbnRlbmFuY2Ugb2YgR0VNIGJ1ZmZlcnMgYWxsb2NhdGVkIHVzaW5n
-IGdldF9wYWdlcygpLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEbWl0cnkgT3NpcGVua28gKDEpOgogICAgICBkcm0vdGVn
-cmE6IGdlbTogRml4IENQVS1jYWNoZSBtYWludGVuYW5jZSBmb3IgQk8ncyBhbGxvY2F0ZWQgdXNp
-bmcgZ2V0X3BhZ2VzKCkKClBoaWxpcHAgWmFiZWwgKDEpOgogICAgICByZXNldDogYWRkIGFjcXVp
-cmVkL3JlbGVhc2VkIHN0YXRlIGZvciBleGNsdXNpdmUgcmVzZXQgY29udHJvbHMKClRoaWVycnkg
-UmVkaW5nICg0KToKICAgICAgcmVzZXQ6IEFkZCBhY3F1aXJlZCBmbGFnIHRvIG9mX3Jlc2V0X2Nv
-bnRyb2xfYXJyYXlfZ2V0KCkKICAgICAgcmVzZXQ6IEFkZCBhY3F1aXJlL3JlbGVhc2Ugc3VwcG9y
-dCBmb3IgYXJyYXlzCiAgICAgIE1lcmdlIGJyYW5jaCAncmVzZXQvYWNxdWlyZScgb2YgZ2l0Oi8v
-Z2l0LnBlbmd1dHJvbml4LmRlL2dpdC9wemEvbGludXggaW50byBkcm0vdGVncmEvZm9yLW5leHQK
-ICAgICAgZHJtL3RlZ3JhOiBzb3I6IEltcGxlbWVudCBhY3F1aXJlL3JlbGVhc2UgZm9yIHJlc2V0
-CgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jICAgICAgIHwgICA0ICstCiBkcml2ZXJzL2dw
-dS9kcm0vdGVncmEvc29yLmMgICAgICAgfCAgMjEgKysrKy0KIGRyaXZlcnMvcmVzZXQvY29yZS5j
-ICAgICAgICAgICAgICB8IDE4MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
-LQogZHJpdmVycy91c2IvZHdjMy9kd2MzLW9mLXNpbXBsZS5jIHwgICAzICstCiBpbmNsdWRlL2xp
-bnV4L3Jlc2V0LmggICAgICAgICAgICAgfCAxMTMgKysrKysrKysrKysrKysrKysrLS0tLS0tCiA1
-IGZpbGVzIGNoYW5nZWQsIDI3NyBpbnNlcnRpb25zKCspLCA0NCBkZWxldGlvbnMoLSkKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Quoting Jonas Gorski (2019-04-18 04:12:04)
+> Add a clock specific flag to switch register accesses to big endian, to
+> allow runtime configuration of big endian divider clocks.
+> 
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> ---
+
+Applied to clk-next
