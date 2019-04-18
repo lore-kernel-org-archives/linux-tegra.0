@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 6/9] ARM: tegra: Device tree changes for v5.2-rc1
-Date: Thu, 18 Apr 2019 17:07:17 +0200
-Message-ID: <20190418150721.8828-6-thierry.reding@gmail.com>
+Subject: [GIT PULL 7/9] ARM: tegra: Default configuration updates for v5.2-rc1
+Date: Thu, 18 Apr 2019 17:07:18 +0200
+Message-ID: <20190418150721.8828-7-thierry.reding@gmail.com>
 References: <20190418150721.8828-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,45 +29,36 @@ The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm-defconfig
 
-for you to fetch changes up to 1078946b4b2e44ffe924b0261afddbb38ff7d2c2:
+for you to fetch changes up to a6f3d883a6ef19feee1d80bfd90701627b01b98a:
 
-  ARM: tegra: Add ACTMON support on Tegra30 (2019-04-18 11:37:46 +0200)
+  ARM: Enable Trusted Foundations for multiplatform ARM v7 (2019-04-17 16:36:34 +0200)
+
+Note that this pulls in a stable tag from Tony that brings the multi_v7
+default configuratio up to date.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v5.2-rc1
+ARM: tegra: Default configuration updates for v5.2-rc1
 
-This contains a set of changes to move PLL power supplies to the XUSB
-pad controller, which is necessary to ensure the proper sequencing
-during boot. Other patches in this set clean up usage of SPDX license
-identifiers in device tree files as well as add support for the ACTMON
-hardware on Tegra30.
+Enable Trusted Foundations support in the default configurations for
+Tegra and multi-v7. This is necessary because the symbol is no longer
+selected by default.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      ARM: tegra: Add ACTMON support on Tegra30
+Thierry Reding (4):
+      Merge tag 'multi-v7-defconfig-for-v5.2-signed' of git://git.kernel.org/.../tmlind/linux-omap into for-5.2/arm/defconfig
+      ARM: tegra: Update default configuration for v5.1-rc1
+      ARM: tegra: Enable Trusted Foundations by default
+      ARM: Enable Trusted Foundations for multiplatform ARM v7
 
-Igor Opaniuk (1):
-      ARM: tegra: Convert to SPDX license tags for Tegra124 Apalis
+Tony Lindgren (2):
+      ARM: multi_v7_defconfig: Update for dropped options
+      ARM: multi_v7_defconfig: Update for moved options
 
-Thierry Reding (5):
-      ARM: tegra: Remove gratuitous parentheses in SPDX license identifier
-      ARM: tegra: apalis: Move PLL power supplies to XUSB pad controller
-      ARM: tegra: jetson-tk1: Move PLL power supplies to XUSB pad controller
-      ARM: tegra: nyan: Move PLL power supplies to XUSB pad controller
-      ARM: tegra: venice2: Move PLL power supplies to XUSB pad controller
-
- arch/arm/boot/dts/tegra124-apalis-emc.dtsi      | 39 ++-------------------
- arch/arm/boot/dts/tegra124-apalis-eval.dts      | 40 ++--------------------
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  2 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     |  9 ++++-
- arch/arm/boot/dts/tegra124-apalis.dtsi          | 45 ++++---------------------
- arch/arm/boot/dts/tegra124-jetson-tk1.dts       |  5 +++
- arch/arm/boot/dts/tegra124-nyan.dtsi            |  5 +++
- arch/arm/boot/dts/tegra124-venice2.dts          |  5 +++
- arch/arm/boot/dts/tegra30.dtsi                  | 11 ++++++
- 9 files changed, 46 insertions(+), 115 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 133 +++++++++++++++++-------------------
+ arch/arm/configs/tegra_defconfig    |  36 +++++-----
+ 2 files changed, 81 insertions(+), 88 deletions(-)
