@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 5/9] ARM: tegra: Core changes for v5.2-rc1
-Date: Thu, 18 Apr 2019 17:07:16 +0200
-Message-ID: <20190418150721.8828-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 6/9] ARM: tegra: Device tree changes for v5.2-rc1
+Date: Thu, 18 Apr 2019 17:07:17 +0200
+Message-ID: <20190418150721.8828-6-thierry.reding@gmail.com>
 References: <20190418150721.8828-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,30 +29,45 @@ The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm-dt
 
-for you to fetch changes up to 36841ba2796324507452f9854bf08b2c65836cce:
+for you to fetch changes up to 1078946b4b2e44ffe924b0261afddbb38ff7d2c2:
 
-  ARM: tegra: cpuidle: Handle tick broadcasting within cpuidle core on Tegra20/30 (2019-04-18 11:32:57 +0200)
+  ARM: tegra: Add ACTMON support on Tegra30 (2019-04-18 11:37:46 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Core changes for v5.2-rc1
+ARM: tegra: Device tree changes for v5.2-rc1
 
-One of these patches enables PM by default on 32-bit ARM, following the
-same default that we already have on 64-bit ARM. The other patch fixes a
-cosmetic issue in the cpuidle driver for Tegra20 and Tegra30.
+This contains a set of changes to move PLL power supplies to the XUSB
+pad controller, which is necessary to ensure the proper sequencing
+during boot. Other patches in this set clean up usage of SPDX license
+identifiers in device tree files as well as add support for the ACTMON
+hardware on Tegra30.
 
 ----------------------------------------------------------------
 Dmitry Osipenko (1):
-      ARM: tegra: cpuidle: Handle tick broadcasting within cpuidle core on Tegra20/30
+      ARM: tegra: Add ACTMON support on Tegra30
 
-Sameer Pujar (1):
-      ARM: tegra: enforce PM requirement
+Igor Opaniuk (1):
+      ARM: tegra: Convert to SPDX license tags for Tegra124 Apalis
 
- arch/arm/mach-tegra/Kconfig           |  1 +
- arch/arm/mach-tegra/cpuidle-tegra20.c | 11 ++---------
- arch/arm/mach-tegra/cpuidle-tegra30.c |  9 +--------
- 3 files changed, 4 insertions(+), 17 deletions(-)
+Thierry Reding (5):
+      ARM: tegra: Remove gratuitous parentheses in SPDX license identifier
+      ARM: tegra: apalis: Move PLL power supplies to XUSB pad controller
+      ARM: tegra: jetson-tk1: Move PLL power supplies to XUSB pad controller
+      ARM: tegra: nyan: Move PLL power supplies to XUSB pad controller
+      ARM: tegra: venice2: Move PLL power supplies to XUSB pad controller
+
+ arch/arm/boot/dts/tegra124-apalis-emc.dtsi      | 39 ++-------------------
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 40 ++--------------------
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     |  9 ++++-
+ arch/arm/boot/dts/tegra124-apalis.dtsi          | 45 ++++---------------------
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts       |  5 +++
+ arch/arm/boot/dts/tegra124-nyan.dtsi            |  5 +++
+ arch/arm/boot/dts/tegra124-venice2.dts          |  5 +++
+ arch/arm/boot/dts/tegra30.dtsi                  | 11 ++++++
+ 9 files changed, 46 insertions(+), 115 deletions(-)
