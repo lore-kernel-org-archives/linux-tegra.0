@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 2/9] soc/tegra: Changes for v5.2-rc1
-Date: Thu, 18 Apr 2019 17:07:13 +0200
-Message-ID: <20190418150721.8828-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/9] firmware: tegra: Changes for v5.2-rc1
+Date: Thu, 18 Apr 2019 17:07:14 +0200
+Message-ID: <20190418150721.8828-3-thierry.reding@gmail.com>
 References: <20190418150721.8828-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,44 +29,56 @@ The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-firmware
 
-for you to fetch changes up to 6ac2a01de1700c1b6d889f02f61c4c9602573a8d:
+for you to fetch changes up to 4cb5d9eca143f7fbf8cc457be19a91914f978a00:
 
-  soc/tegra: pmc: Move powergate initialisation to probe (2019-04-17 10:32:33 +0200)
-
-Note that this pulls in a stable branch from Philipp for the core
-acquire/release protocol changes to the reset framework.
+  firmware: Move Trusted Foundations support (2019-04-17 16:43:03 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v5.2-rc1
+firmware: tegra: Changes for v5.2-rc1
 
-Besides a couple of fixes to better cope with deferred probing, this set
-of patches also implements the acquire/release protocol for resets used
-during powergate operations. This is necessary to allow these resets to
-be temporarily shared with other devices that may also need to control
-these resets.
+This set of changes includes improvements for Trusted Foundations and
+also moves the source files for this support into the standard location
+under drivers/firmware.
 
 ----------------------------------------------------------------
-Jon Hunter (3):
-      soc/tegra: pmc: Fix reset sources and levels
-      soc/tegra: pmc: Remove reset sysfs entries on error
-      soc/tegra: pmc: Move powergate initialisation to probe
+Dmitry Osipenko (7):
+      ARM: trusted_foundations: Support L2 cache maintenance
+      ARM: trusted_foundations: Make prepare_idle call to take mode argument
+      ARM: trusted_foundations: Provide information about whether firmware is registered
+      ARM: tegra: Set up L2 cache using Trusted Foundations firmware
+      ARM: tegra: Don't apply CPU erratas in insecure mode
+      ARM: tegra: Always boot CPU in ARM-mode
+      ARM: tegra: Add firmware calls required for suspend-resume on Tegra30
 
-Philipp Zabel (1):
-      reset: add acquired/released state for exclusive reset controls
+Thierry Reding (2):
+      ARM: tegra: Sort dependencies alphabetically
+      firmware: Move Trusted Foundations support
 
-Thierry Reding (4):
-      reset: Add acquired flag to of_reset_control_array_get()
-      reset: Add acquire/release support for arrays
-      Merge branch 'reset/acquire' of git://git.pengutronix.de/git/pza/linux into for-5.2/soc
-      soc/tegra: pmc: Implement acquire/release for resets
-
- drivers/reset/core.c              | 180 +++++++++++++++++++++++++++++++++++---
- drivers/soc/tegra/pmc.c           | 171 ++++++++++++++++++++++++++++--------
- drivers/usb/dwc3/dwc3-of-simple.c |   3 +-
- include/linux/reset.h             | 113 ++++++++++++++++++------
- 4 files changed, 389 insertions(+), 78 deletions(-)
+ arch/arm/Kconfig                                   |  2 -
+ arch/arm/Makefile                                  |  1 -
+ arch/arm/firmware/Kconfig                          | 29 --------
+ arch/arm/firmware/Makefile                         |  4 --
+ arch/arm/include/asm/firmware.h                    |  2 +-
+ arch/arm/mach-tegra/Kconfig                        |  3 +-
+ arch/arm/mach-tegra/cpuidle-tegra114.c             |  4 +-
+ arch/arm/mach-tegra/pm.c                           | 50 ++++++++++++++
+ arch/arm/mach-tegra/reset-handler.S                | 50 +++++++++++---
+ arch/arm/mach-tegra/reset.c                        |  4 ++
+ arch/arm/mach-tegra/reset.h                        |  9 ++-
+ arch/arm/mach-tegra/sleep-tegra20.S                |  4 ++
+ arch/arm/mach-tegra/sleep.S                        | 14 ++--
+ arch/arm/mach-tegra/tegra.c                        |  5 +-
+ drivers/firmware/Kconfig                           | 16 +++++
+ drivers/firmware/Makefile                          |  1 +
+ .../arm => drivers}/firmware/trusted_foundations.c | 79 +++++++++++++++++++++-
+ .../linux/firmware}/trusted_foundations.h          | 27 +++++++-
+ 18 files changed, 240 insertions(+), 64 deletions(-)
+ delete mode 100644 arch/arm/firmware/Kconfig
+ delete mode 100644 arch/arm/firmware/Makefile
+ rename {arch/arm => drivers}/firmware/trusted_foundations.c (62%)
+ rename {arch/arm/include/asm => include/linux/firmware}/trusted_foundations.h (77%)
