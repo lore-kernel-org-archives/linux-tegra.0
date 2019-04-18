@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 3/9] firmware: tegra: Changes for v5.2-rc1
-Date: Thu, 18 Apr 2019 17:07:14 +0200
-Message-ID: <20190418150721.8828-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/9] memory: tegra: Changes for v5.2-rc1
+Date: Thu, 18 Apr 2019 17:07:15 +0200
+Message-ID: <20190418150721.8828-4-thierry.reding@gmail.com>
 References: <20190418150721.8828-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,56 +29,44 @@ The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-memory
 
-for you to fetch changes up to 4cb5d9eca143f7fbf8cc457be19a91914f978a00:
+for you to fetch changes up to 67a8d5b0fadfd931f7e6a78e9ee7b2792a7114aa:
 
-  firmware: Move Trusted Foundations support (2019-04-17 16:43:03 +0200)
+  memory: tegra: Fix a typos for "fdcdwr2" mc client (2019-04-18 11:51:17 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v5.2-rc1
+memory: tegra: Changes for v5.2-rc1
 
-This set of changes includes improvements for Trusted Foundations and
-also moves the source files for this support into the standard location
-under drivers/firmware.
+These are a set of fixes for various issues related to the Tegra memory
+controller.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (7):
-      ARM: trusted_foundations: Support L2 cache maintenance
-      ARM: trusted_foundations: Make prepare_idle call to take mode argument
-      ARM: trusted_foundations: Provide information about whether firmware is registered
-      ARM: tegra: Set up L2 cache using Trusted Foundations firmware
-      ARM: tegra: Don't apply CPU erratas in insecure mode
-      ARM: tegra: Always boot CPU in ARM-mode
-      ARM: tegra: Add firmware calls required for suspend-resume on Tegra30
+Dmitry Osipenko (4):
+      memory: tegra: Fix missed registers values latching
+      memory: tegra: Fix integer overflow on tick value calculation
+      memory: tegra: Replace readl-writel with mc_readl-mc_writel
+      Revert "ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+"
 
-Thierry Reding (2):
-      ARM: tegra: Sort dependencies alphabetically
-      firmware: Move Trusted Foundations support
+Edward Cragg (1):
+      memory: tegra: Fix a typos for "fdcdwr2" mc client
 
- arch/arm/Kconfig                                   |  2 -
- arch/arm/Makefile                                  |  1 -
- arch/arm/firmware/Kconfig                          | 29 --------
- arch/arm/firmware/Makefile                         |  4 --
- arch/arm/include/asm/firmware.h                    |  2 +-
- arch/arm/mach-tegra/Kconfig                        |  3 +-
- arch/arm/mach-tegra/cpuidle-tegra114.c             |  4 +-
- arch/arm/mach-tegra/pm.c                           | 50 ++++++++++++++
- arch/arm/mach-tegra/reset-handler.S                | 50 +++++++++++---
- arch/arm/mach-tegra/reset.c                        |  4 ++
- arch/arm/mach-tegra/reset.h                        |  9 ++-
- arch/arm/mach-tegra/sleep-tegra20.S                |  4 ++
- arch/arm/mach-tegra/sleep.S                        | 14 ++--
- arch/arm/mach-tegra/tegra.c                        |  5 +-
- drivers/firmware/Kconfig                           | 16 +++++
- drivers/firmware/Makefile                          |  1 +
- .../arm => drivers}/firmware/trusted_foundations.c | 79 +++++++++++++++++++++-
- .../linux/firmware}/trusted_foundations.h          | 27 +++++++-
- 18 files changed, 240 insertions(+), 64 deletions(-)
- delete mode 100644 arch/arm/firmware/Kconfig
- delete mode 100644 arch/arm/firmware/Makefile
- rename {arch/arm => drivers}/firmware/trusted_foundations.c (62%)
- rename {arch/arm/include/asm => include/linux/firmware}/trusted_foundations.h (77%)
+Thierry Reding (1):
+      memory: tegra: Properly spell "tegra"
+
+Yue Haibing (1):
+      memory: tegra: Make terga20_mc_reset_ops static
+
+ arch/arm/mach-tegra/iomap.h         |  9 ---------
+ arch/arm/mach-tegra/sleep-tegra30.S | 21 ---------------------
+ drivers/memory/tegra/mc.c           | 34 ++++++++++++++++++++--------------
+ drivers/memory/tegra/mc.h           |  2 +-
+ drivers/memory/tegra/tegra114.c     |  4 ++--
+ drivers/memory/tegra/tegra124.c     |  4 ++--
+ drivers/memory/tegra/tegra20.c      | 28 ++++++++++++++--------------
+ drivers/memory/tegra/tegra210.c     |  2 +-
+ drivers/memory/tegra/tegra30.c      |  4 ++--
+ 9 files changed, 42 insertions(+), 66 deletions(-)
