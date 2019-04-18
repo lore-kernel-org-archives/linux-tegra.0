@@ -1,7 +1,7 @@
 From: Jonas Gorski <jonas.gorski@gmail.com>
-Subject: [PATCH RFT V3 4/8] clk: multiplier: add explicit big endian support
-Date: Thu, 18 Apr 2019 13:12:07 +0200
-Message-ID: <20190418111211.10474-5-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V3 5/8] clk: mux: add explicit big endian support
+Date: Thu, 18 Apr 2019 13:12:08 +0200
+Message-ID: <20190418111211.10474-6-jonas.gorski@gmail.com>
 References: <20190418111211.10474-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,89 +22,91 @@ Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.
 List-Id: linux-tegra@vger.kernel.org
 
 Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian multiplier clocks.
+allow runtime configuration of big endian mux clocks.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V2 -> V3:
- * drop unneeded else in clk_mult_readl
+ * drop unneeded else in clk_mux_readl
 V1 -> V2:
  * switch from global to local flag
 
- drivers/clk/clk-multiplier.c | 22 +++++++++++++++++++---
+ drivers/clk/clk-mux.c        | 22 +++++++++++++++++++---
  include/linux/clk-provider.h |  4 ++++
  2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-index 3c86f859c199..77327df9bf32 100644
---- a/drivers/clk/clk-multiplier.c
-+++ b/drivers/clk/clk-multiplier.c
-@@ -11,6 +11,22 @@
- #include <linux/of.h>
- #include <linux/slab.h>
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 2ad2df2e8909..61ad331b7ff4 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -23,6 +23,22 @@
+  * parent - parent is adjustable through clk_set_parent
+  */
  
-+static inline u32 clk_mult_readl(struct clk_multiplier *mult)
++static inline u32 clk_mux_readl(struct clk_mux *mux)
 +{
-+	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
-+		return ioread32be(mult->reg);
++	if (mux->flags & CLK_MUX_BIG_ENDIAN)
++		return ioread32be(mux->reg);
 +
-+	return clk_readl(mult->reg);
++	return clk_readl(mux->reg);
 +}
 +
-+static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
++static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
 +{
-+	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
-+		iowrite32be(val, mult->reg);
++	if (mux->flags & CLK_MUX_BIG_ENDIAN)
++		iowrite32be(val, mux->reg);
 +	else
-+		clk_writel(val, mult->reg);
++		clk_writel(val, mux->reg);
 +}
 +
- static unsigned long __get_mult(struct clk_multiplier *mult,
- 				unsigned long rate,
- 				unsigned long parent_rate)
-@@ -27,7 +43,7 @@ static unsigned long clk_multiplier_recalc_rate(struct clk_hw *hw,
- 	struct clk_multiplier *mult = to_clk_multiplier(hw);
- 	unsigned long val;
+ int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
+ 			 unsigned int val)
+ {
+@@ -73,7 +89,7 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	u32 val;
  
--	val = clk_readl(mult->reg) >> mult->shift;
-+	val = clk_mult_readl(mult) >> mult->shift;
- 	val &= GENMASK(mult->width - 1, 0);
+-	val = clk_readl(mux->reg) >> mux->shift;
++	val = clk_mux_readl(mux) >> mux->shift;
+ 	val &= mux->mask;
  
- 	if (!val && mult->flags & CLK_MULTIPLIER_ZERO_BYPASS)
-@@ -118,10 +134,10 @@ static int clk_multiplier_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		__acquire(mult->lock);
+ 	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
+@@ -94,12 +110,12 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
+ 		reg = mux->mask << (mux->shift + 16);
+ 	} else {
+-		reg = clk_readl(mux->reg);
++		reg = clk_mux_readl(mux);
+ 		reg &= ~(mux->mask << mux->shift);
+ 	}
+ 	val = val << mux->shift;
+ 	reg |= val;
+-	clk_writel(reg, mux->reg);
++	clk_mux_writel(mux, reg);
  
--	val = clk_readl(mult->reg);
-+	val = clk_mult_readl(mult);
- 	val &= ~GENMASK(mult->width + mult->shift - 1, mult->shift);
- 	val |= factor << mult->shift;
--	clk_writel(val, mult->reg);
-+	clk_mult_writel(mult, val);
- 
- 	if (mult->lock)
- 		spin_unlock_irqrestore(mult->lock, flags);
+ 	if (mux->lock)
+ 		spin_unlock_irqrestore(mux->lock, flags);
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 8576c2dbc639..9df78e3fb62b 100644
+index 9df78e3fb62b..f82cda41e1a8 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -667,6 +667,9 @@ void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
-  *	leaving the parent rate unmodified.
-  * CLK_MULTIPLIER_ROUND_CLOSEST - Makes the best calculated divider to be
-  *	rounded to the closest integer instead of the down one.
-+ * CLK_MULTIPLIER_BIG_ENDIAN - By default little endian register accesses are
-+ *	used for the multiplier register.  Setting this flag makes the register
-+ *	accesses big endian.
+@@ -510,6 +510,9 @@ void clk_hw_unregister_divider(struct clk_hw *hw);
+  * 	.get_parent clk_op.
+  * CLK_MUX_ROUND_CLOSEST - Use the parent rate that is closest to the desired
+  *	frequency.
++ * CLK_MUX_BIG_ENDIAN - By default little endian register accesses are used for
++ *	the mux register.  Setting this flag makes the register accesses big
++ *	endian.
   */
- struct clk_multiplier {
+ struct clk_mux {
  	struct clk_hw	hw;
-@@ -681,6 +684,7 @@ struct clk_multiplier {
+@@ -528,6 +531,7 @@ struct clk_mux {
+ #define CLK_MUX_HIWORD_MASK		BIT(2)
+ #define CLK_MUX_READ_ONLY		BIT(3) /* mux can't be changed */
+ #define CLK_MUX_ROUND_CLOSEST		BIT(4)
++#define CLK_MUX_BIG_ENDIAN		BIT(5)
  
- #define CLK_MULTIPLIER_ZERO_BYPASS		BIT(0)
- #define CLK_MULTIPLIER_ROUND_CLOSEST	BIT(1)
-+#define CLK_MULTIPLIER_BIG_ENDIAN		BIT(2)
- 
- extern const struct clk_ops clk_multiplier_ops;
- 
+ extern const struct clk_ops clk_mux_ops;
+ extern const struct clk_ops clk_mux_ro_ops;
 -- 
 2.13.2
