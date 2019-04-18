@@ -1,85 +1,102 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: expand mode support" to the spi tree
-Date: Thu, 18 Apr 2019 11:26:08 +0100 (BST)
-Message-ID: <20190418102608.0CC9F1126DCF@debutante.sirena.org.uk>
-References: <1555363834-32155-3-git-send-email-skomatineni@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555363834-32155-3-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: broonie@kernel.org, devicetree@vger.kernel.org, jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.orgMark Brown <broonie@kernel.org>, mark.rutland@arm.com, robh+dt@kernel.org, skomatineni@nvidia.com, talho@nvidia.com, thierry.reding@gmail.com
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Subject: [PATCH RFT V3 0/8] clk: make register endianness a run-time property
+Date: Thu, 18 Apr 2019 13:12:03 +0200
+Message-ID: <20190418111211.10474-1-jonas.gorski@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+Currently the endianness for register accesses of basic clocks if fixed
+based on the architecture (BE for PowerPC, LE for everyone else). This
+is inconvenient for architectures that support both.
 
-   spi: expand mode support
+To avoid adding more rules to the #ifdef, this patchset adds new flags
+to the basic clocks to tag the registers as BE then converts the only
+big endian machine PowerPC to use it.
 
-has been applied to the spi tree at
+While not used by PowerPC, also add big endian support to clk-fractional-
+divider and clk-multiplier, to cover all basic clocks.
+Technically clk-multiplier isn't one as it doesn't provide any
+registration functions and none of its users set the basic clock flag,
+but nevertheless it and its flags are defined clk-provider.h. So I think
+it's close enough to a basic clock to still count.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.2
+That way we can drop the special casing for PowerPC, and allow other big
+endian platforms/drivers to make use of the basic clocks.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+In addition, we can now drop clk_readl and clk_writel, and replace them
+with normal readl and writel accessors everywhere.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Still RFT because I don't have a PowerPC device to test, and especially
+not a 512x one. I did compile test it though!
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+I looked really hard, and this is the only place I could find where a
+PowerPC platform (indirectly) used the clk accessors.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+None of the regular drivers in clk/ were selected in any of the powerpc
+defconfigs, and this was the only platform code that registered basic
+clocks.
 
-Thanks,
-Mark
+Changelog:
 
-From 4b490710d4d24f95e95a07baac6f3f98bb94cf3b Mon Sep 17 00:00:00 2001
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Mon, 15 Apr 2019 14:30:27 -0700
-Subject: [PATCH] spi: expand mode support
+V2 -> V3:
+ * fix passed arguments to clk_div_readl found by kbuild
+ * drop unneeded else in generic read accessors
+ * fix a >80 chars line issue in the powerpc patch
 
-This patch changes mode and mode_bits from u16 to u32 to allow more
-mode configurations.
+V1 -> V2:
+ * switch from global flag to per-clock flag
+ * also added fractional divider and multiplier clocks, to make all
+   basic or quasi basic clocks support big endian
+ * reordered the basic clock patches in alphabetical order
+ * drop clk_{readl,writel} instead of adding BE variants and use
+   common accessors directly
+ * dropped the RFC, as I got comments (yay). More always welcome of
+   course :-)
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/linux/spi/spi.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Jonas Gorski (8):
+  clk: divider: add explicit big endian support
+  clk: fractional-divider: add explicit big endian support
+  clk: gate: add explicit big endian support
+  clk: multiplier: add explicit big endian support
+  clk: mux: add explicit big endian support
+  powerpc/512x: mark clocks as big endian
+  clk: core: remove powerpc special handling
+  clk: core: replace clk_{readl,writel} with {readl,writel}
 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 589f9dc9ac2b..053abd22ad31 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -143,7 +143,7 @@ struct spi_device {
- 	u32			max_speed_hz;
- 	u8			chip_select;
- 	u8			bits_per_word;
--	u16			mode;
-+	u32			mode;
- #define	SPI_CPHA	0x01			/* clock phase */
- #define	SPI_CPOL	0x02			/* clock polarity */
- #define	SPI_MODE_0	(0|0)			/* (original MicroWire) */
-@@ -443,7 +443,7 @@ struct spi_controller {
- 	u16			dma_alignment;
- 
- 	/* spi_device.mode flags understood by this controller driver */
--	u16			mode_bits;
-+	u32			mode_bits;
- 
- 	/* bitmask of supported bits_per_word for transfers */
- 	u32			bits_per_word_mask;
-@@ -1291,7 +1291,7 @@ struct spi_board_info {
- 	/* mode becomes spi_device.mode, and is essential for chips
- 	 * where the default of SPI_CS_HIGH = 0 is wrong.
- 	 */
--	u16		mode;
-+	u32		mode;
- 
- 	/* ... may need additional spi_device chip config data here.
- 	 * avoid stuff protocol drivers can set; but include stuff
+ arch/powerpc/platforms/512x/clock-commonclk.c |  9 +++--
+ drivers/clk/clk-divider.c                     | 26 +++++++++++---
+ drivers/clk/clk-fractional-divider.c          | 22 ++++++++++--
+ drivers/clk/clk-gate.c                        | 22 ++++++++++--
+ drivers/clk/clk-multiplier.c                  | 22 ++++++++++--
+ drivers/clk/clk-mux.c                         | 22 ++++++++++--
+ drivers/clk/clk-xgene.c                       |  6 ++--
+ drivers/clk/hisilicon/clk-hisi-phase.c        |  4 +--
+ drivers/clk/imx/clk-divider-gate.c            | 20 +++++------
+ drivers/clk/imx/clk-sccg-pll.c                | 12 +++----
+ drivers/clk/nxp/clk-lpc18xx-ccu.c             |  6 ++--
+ drivers/clk/nxp/clk-lpc18xx-cgu.c             | 24 ++++++-------
+ drivers/clk/rockchip/clk-ddr.c                |  2 +-
+ drivers/clk/rockchip/clk-half-divider.c       |  6 ++--
+ drivers/clk/tegra/clk-tegra124.c              |  4 +--
+ drivers/clk/tegra/clk-tegra210.c              |  6 ++--
+ drivers/clk/zynq/clkc.c                       |  6 ++--
+ drivers/clk/zynq/pll.c                        | 18 +++++-----
+ include/linux/clk-provider.h                  | 51 +++++++++++----------------
+ 19 files changed, 181 insertions(+), 107 deletions(-)
+
 -- 
-2.20.1
+2.13.2
