@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 7/9] ARM: tegra: Default configuration updates for v5.2-rc1
-Date: Thu, 18 Apr 2019 17:07:18 +0200
-Message-ID: <20190418150721.8828-7-thierry.reding@gmail.com>
+Subject: [GIT PULL 8/9] arm64: tegra: Device tree changes for v5.2-rc1
+Date: Thu, 18 Apr 2019 17:07:19 +0200
+Message-ID: <20190418150721.8828-8-thierry.reding@gmail.com>
 References: <20190418150721.8828-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,42 +23,65 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hi ARM SoC maintainers,
 
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
 
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm64-dt
 
-for you to fetch changes up to a6f3d883a6ef19feee1d80bfd90701627b01b98a:
+for you to fetch changes up to 2f03e39b5bfe41f3a0d9a8b01231e7e5045cb9c4:
 
-  ARM: Enable Trusted Foundations for multiplatform ARM v7 (2019-04-17 16:36:34 +0200)
-
-Note that this pulls in a stable tag from Tony that brings the multi_v7
-default configuratio up to date.
+  arm64: tegra: Remove regulator hacks on Jetson TX2 (2019-04-17 16:48:44 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Default configuration updates for v5.2-rc1
+arm64: tegra: Device tree changes for v5.2-rc1
 
-Enable Trusted Foundations support in the default configurations for
-Tegra and multi-v7. This is necessary because the symbol is no longer
-selected by default.
+This contains a bunch of changes all across the board. Perhaps the most
+notable introduction here is support for the Jetson Nano Developer Kit.
 
 ----------------------------------------------------------------
-Thierry Reding (4):
-      Merge tag 'multi-v7-defconfig-for-v5.2-signed' of git://git.kernel.org/.../tmlind/linux-omap into for-5.2/arm/defconfig
-      ARM: tegra: Update default configuration for v5.1-rc1
-      ARM: tegra: Enable Trusted Foundations by default
-      ARM: Enable Trusted Foundations for multiplatform ARM v7
+Jon Hunter (1):
+      arm64: tegra: Add supply for temperature sensor on P2888
 
-Tony Lindgren (2):
-      ARM: multi_v7_defconfig: Update for dropped options
-      ARM: multi_v7_defconfig: Update for moved options
+Joseph Lo (6):
+      arm64: tegra: Fix timer node for Tegra210
+      arm64: tegra: Add CPU idle states properties for Tegra210
+      arm64: tegra: Enable CPU idle support for Jetson TX1
+      arm64: tegra: Enable CPU idle support for Smaug
+      arm64: tegra: Enable CPU idle support for Shield
+      arm64: tegra: Add L2 cache topology to Tegra210
 
- arch/arm/configs/multi_v7_defconfig | 133 +++++++++++++++++-------------------
- arch/arm/configs/tegra_defconfig    |  36 +++++-----
- 2 files changed, 81 insertions(+), 88 deletions(-)
+Sameer Pujar (1):
+      arm64: tegra: Enable aconnect, ADMA and AGIC on Jetson TX1
+
+Sowjanya Komatineni (2):
+      arm64: tegra: Fix default tap and trim values
+      arm64: tegra: Enable command queue for Tegra186 SDMMC4
+
+Thierry Reding (6):
+      arm64: tegra: jetson-tx1: Move PLL power supplies to XUSB pad controller
+      arm64: tegra: smaug: Move PLL power supplies to XUSB pad controller
+      arm64: tegra: Add NVIDIA Jetson Nano Developer Kit support
+      arm64: tegra: Add XUSB and pad controller on Tegra186
+      arm64: tegra: Enable XUSB on P2771
+      arm64: tegra: Remove regulator hacks on Jetson TX2
+
+ arch/arm64/boot/dts/nvidia/Makefile                |   1 +
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 115 ++++
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |  42 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 140 ++++-
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   1 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   6 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  12 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   5 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi     |   6 +
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 650 +++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |  12 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  41 +-
+ 12 files changed, 999 insertions(+), 32 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
