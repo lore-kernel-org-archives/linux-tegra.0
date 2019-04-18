@@ -1,91 +1,85 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1] drm/tegra: gem: Fix CPU-cache maintenance for BO's
- allocated using get_pages()
-Date: Thu, 18 Apr 2019 12:00:48 +0200
-Message-ID: <20190418100048.GE26909@ulmo>
-References: <20190306225519.4538-1-digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0944456498=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190306225519.4538-1-digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: expand mode support" to the spi tree
+Date: Thu, 18 Apr 2019 11:26:08 +0100 (BST)
+Message-ID: <20190418102608.0CC9F1126DCF@debutante.sirena.org.uk>
+References: <1555363834-32155-3-git-send-email-skomatineni@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1555363834-32155-3-git-send-email-skomatineni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: broonie@kernel.org, devicetree@vger.kernel.org, jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.orgMark Brown <broonie@kernel.org>, mark.rutland@arm.com, robh+dt@kernel.org, skomatineni@nvidia.com, talho@nvidia.com, thierry.reding@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
---===============0944456498==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="//IivP0gvsAy3Can"
-Content-Disposition: inline
+   spi: expand mode support
 
+has been applied to the spi tree at
 
---//IivP0gvsAy3Can
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.2
 
-On Thu, Mar 07, 2019 at 01:55:19AM +0300, Dmitry Osipenko wrote:
-> The allocated pages need to be invalidated in CPU caches. On ARM32 the
-> DMA_BIDIRECTIONAL flag only ensures that data is written-back to DRAM and
-> the data stays in CPU cache lines. While the DMA_FROM_DEVICE flag ensures
-> that the corresponding CPU cache lines are getting invalidated and nothing
-> more, that's exactly what is needed for a newly allocated pages.
->=20
-> This fixes randomly failing rendercheck tests on Tegra30 using the
-> Opentegra driver for tests that use small-sized pixmaps (10x10 and less,
-> i.e. 1-2 memory pages) because apparently CPU reads out stale data from
-> caches and/or that data is getting evicted to DRAM at the time of HW job
-> execution.
->=20
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/gem.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Applied, thanks.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Thierry
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---//IivP0gvsAy3Can
-Content-Type: application/pgp-signature; name="signature.asc"
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Mark
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAly4Ss8ACgkQ3SOs138+
-s6H/pA/+PnAiqF8BhsLe/ca70FozOtJ2QQSCeaOEIHTZZh1O1igrR7pyLdRdOG3k
-iHz9bjdIpXEwb5Bh0H6QvnS0RUs/LF/q2wnrYl/oy3CkqfmrAwAUc0KS9rhHxyy5
-gm7EAiCwYr7WEwDEMkUwtgkibfBolvOfHe7wdmnPyPIXjsdkfea8/GynrFZ7FT0C
-eAXi4aMqfSNHvq4Ns6ixR9huXWPuzZOsR1HFWG4TBMUnfE+R/jeNa65O2r/2JbGH
-gDHxp6fXlvkY2294AQWcPFB+tWRkxxQmkWmHLFP7C1VGJ4BE/G0E2LQxxgzZxPky
-96Lewz4/r5CItiUjDM/F9EjyhfqzLI35mFl2npbfESPmyc36NBsEVxLmi6lbvQES
-WkuX54Of1LL/D6hHG7fIW524Q5QKBM2WxZZ7phNA4I2C5boJUARDYD9u/8u/AbeQ
-dAGfyqkJ/BFgwFJ2JzBZj5WEZSh2W3JTCbCRYKMBRHijVYr9MiCw7UNJW7aEYaje
-yP8rv/gZk0aQVKiLTiIpdA/m2XbGuGEvOY/mhNkY4ajKvMt+ESDHJN4HuPNCwees
-Nx2dC0pkduqoiwLwFhxwRyFQp8ZolCLWnc83U4eDwjcn38U5RvIjGxek8UU0WTcB
-rBW3ICwawPTQt9aj43bEDSzscO9/M9DbpGs8pH9aWrpALMWSQOU=
-=fPhS
------END PGP SIGNATURE-----
+From 4b490710d4d24f95e95a07baac6f3f98bb94cf3b Mon Sep 17 00:00:00 2001
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Date: Mon, 15 Apr 2019 14:30:27 -0700
+Subject: [PATCH] spi: expand mode support
 
---//IivP0gvsAy3Can--
+This patch changes mode and mode_bits from u16 to u32 to allow more
+mode configurations.
 
---===============0944456498==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/linux/spi/spi.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============0944456498==--
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 589f9dc9ac2b..053abd22ad31 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -143,7 +143,7 @@ struct spi_device {
+ 	u32			max_speed_hz;
+ 	u8			chip_select;
+ 	u8			bits_per_word;
+-	u16			mode;
++	u32			mode;
+ #define	SPI_CPHA	0x01			/* clock phase */
+ #define	SPI_CPOL	0x02			/* clock polarity */
+ #define	SPI_MODE_0	(0|0)			/* (original MicroWire) */
+@@ -443,7 +443,7 @@ struct spi_controller {
+ 	u16			dma_alignment;
+ 
+ 	/* spi_device.mode flags understood by this controller driver */
+-	u16			mode_bits;
++	u32			mode_bits;
+ 
+ 	/* bitmask of supported bits_per_word for transfers */
+ 	u32			bits_per_word_mask;
+@@ -1291,7 +1291,7 @@ struct spi_board_info {
+ 	/* mode becomes spi_device.mode, and is essential for chips
+ 	 * where the default of SPI_CS_HIGH = 0 is wrong.
+ 	 */
+-	u16		mode;
++	u32		mode;
+ 
+ 	/* ... may need additional spi_device chip config data here.
+ 	 * avoid stuff protocol drivers can set; but include stuff
+-- 
+2.20.1
