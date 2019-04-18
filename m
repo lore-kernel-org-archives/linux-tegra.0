@@ -1,8 +1,7 @@
 From: Jonas Gorski <jonas.gorski@gmail.com>
-Subject: [PATCH RFT V3 2/8] clk: fractional-divider: add explicit big endian
- support
-Date: Thu, 18 Apr 2019 13:12:05 +0200
-Message-ID: <20190418111211.10474-3-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V3 3/8] clk: gate: add explicit big endian support
+Date: Thu, 18 Apr 2019 13:12:06 +0200
+Message-ID: <20190418111211.10474-4-jonas.gorski@gmail.com>
 References: <20190418111211.10474-1-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,89 +22,94 @@ Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.
 List-Id: linux-tegra@vger.kernel.org
 
 Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian fractional divider clocks.
+allow runtime configuration of big endian gated clocks.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V2 -> V3:
- * drop unneeded else in clk_fd_readl
+ * drop unneeded else in clk_gate_readl
 V1 -> V2:
  * switch from global to local flag
 
- drivers/clk/clk-fractional-divider.c | 22 +++++++++++++++++++---
- include/linux/clk-provider.h         |  4 ++++
+ drivers/clk/clk-gate.c       | 22 +++++++++++++++++++---
+ include/linux/clk-provider.h |  4 ++++
  2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index fdfe2e423d15..f88df265e787 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -13,6 +13,22 @@
- #include <linux/slab.h>
- #include <linux/rational.h>
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index f05823cd9b21..6ced7b1f5585 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -23,6 +23,22 @@
+  * parent - fixed parent.  No clk_set_parent support
+  */
  
-+static inline u32 clk_fd_readl(struct clk_fractional_divider *fd)
++static inline u32 clk_gate_readl(struct clk_gate *gate)
 +{
-+	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
-+		return ioread32be(fd->reg);
++	if (gate->flags & CLK_GATE_BIG_ENDIAN)
++		return ioread32be(gate->reg);
 +
-+	return clk_readl(fd->reg);
++	return clk_readl(gate->reg);
 +}
 +
-+static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
++static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
 +{
-+	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
-+		iowrite32be(val, fd->reg);
++	if (gate->flags & CLK_GATE_BIG_ENDIAN)
++		iowrite32be(val, gate->reg);
 +	else
-+		clk_writel(val, fd->reg);
++		clk_writel(val, gate->reg);
 +}
 +
- static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- 					unsigned long parent_rate)
- {
-@@ -27,7 +43,7 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- 	else
- 		__acquire(fd->lock);
+ /*
+  * It works on following logic:
+  *
+@@ -55,7 +71,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 		if (set)
+ 			reg |= BIT(gate->bit_idx);
+ 	} else {
+-		reg = clk_readl(gate->reg);
++		reg = clk_gate_readl(gate);
  
--	val = clk_readl(fd->reg);
-+	val = clk_fd_readl(fd);
+ 		if (set)
+ 			reg |= BIT(gate->bit_idx);
+@@ -63,7 +79,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 			reg &= ~BIT(gate->bit_idx);
+ 	}
  
- 	if (fd->lock)
- 		spin_unlock_irqrestore(fd->lock, flags);
-@@ -115,10 +131,10 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		__acquire(fd->lock);
+-	clk_writel(reg, gate->reg);
++	clk_gate_writel(gate, reg);
  
--	val = clk_readl(fd->reg);
-+	val = clk_fd_readl(fd);
- 	val &= ~(fd->mmask | fd->nmask);
- 	val |= (m << fd->mshift) | (n << fd->nshift);
--	clk_writel(val, fd->reg);
-+	clk_fd_writel(fd, val);
+ 	if (gate->lock)
+ 		spin_unlock_irqrestore(gate->lock, flags);
+@@ -88,7 +104,7 @@ int clk_gate_is_enabled(struct clk_hw *hw)
+ 	u32 reg;
+ 	struct clk_gate *gate = to_clk_gate(hw);
  
- 	if (fd->lock)
- 		spin_unlock_irqrestore(fd->lock, flags);
+-	reg = clk_readl(gate->reg);
++	reg = clk_gate_readl(gate);
+ 
+ 	/* if a set bit disables this clk, flip it before masking */
+ 	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7117b8cc0c0c..8c07d810acf5 100644
+index 8c07d810acf5..8576c2dbc639 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -607,6 +607,9 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
-  *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
-  *	is set then the numerator and denominator are both the value read
-  *	plus one.
-+ * CLK_FRAC_DIVIDER_BIG_ENDIAN - By default little endian register accesses are
-+ *	used for the divider register.  Setting this flag makes the register
-+ *	accesses big endian.
+@@ -348,6 +348,9 @@ void of_fixed_clk_setup(struct device_node *np);
+  *	of this register, and mask of gate bits are in higher 16-bit of this
+  *	register.  While setting the gate bits, higher 16-bit should also be
+  *	updated to indicate changing gate bits.
++ * CLK_GATE_BIG_ENDIAN - by default little endian register accesses are used for
++ *	the gate register.  Setting this flag makes the register accesses big
++ *	endian.
   */
- struct clk_fractional_divider {
- 	struct clk_hw	hw;
-@@ -627,6 +630,7 @@ struct clk_fractional_divider {
- #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
+ struct clk_gate {
+ 	struct clk_hw hw;
+@@ -361,6 +364,7 @@ struct clk_gate {
  
- #define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
-+#define CLK_FRAC_DIVIDER_BIG_ENDIAN		BIT(1)
+ #define CLK_GATE_SET_TO_DISABLE		BIT(0)
+ #define CLK_GATE_HIWORD_MASK		BIT(1)
++#define CLK_GATE_BIG_ENDIAN		BIT(2)
  
- extern const struct clk_ops clk_fractional_divider_ops;
- struct clk *clk_register_fractional_divider(struct device *dev,
+ extern const struct clk_ops clk_gate_ops;
+ struct clk *clk_register_gate(struct device *dev, const char *name,
 -- 
 2.13.2
