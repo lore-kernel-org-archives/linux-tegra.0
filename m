@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 4/9] memory: tegra: Changes for v5.2-rc1
-Date: Thu, 18 Apr 2019 17:07:15 +0200
-Message-ID: <20190418150721.8828-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/9] ARM: tegra: Core changes for v5.2-rc1
+Date: Thu, 18 Apr 2019 17:07:16 +0200
+Message-ID: <20190418150721.8828-5-thierry.reding@gmail.com>
 References: <20190418150721.8828-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,44 +29,30 @@ The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-memory
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm-soc
 
-for you to fetch changes up to 67a8d5b0fadfd931f7e6a78e9ee7b2792a7114aa:
+for you to fetch changes up to 36841ba2796324507452f9854bf08b2c65836cce:
 
-  memory: tegra: Fix a typos for "fdcdwr2" mc client (2019-04-18 11:51:17 +0200)
+  ARM: tegra: cpuidle: Handle tick broadcasting within cpuidle core on Tegra20/30 (2019-04-18 11:32:57 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-memory: tegra: Changes for v5.2-rc1
+ARM: tegra: Core changes for v5.2-rc1
 
-These are a set of fixes for various issues related to the Tegra memory
-controller.
+One of these patches enables PM by default on 32-bit ARM, following the
+same default that we already have on 64-bit ARM. The other patch fixes a
+cosmetic issue in the cpuidle driver for Tegra20 and Tegra30.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (4):
-      memory: tegra: Fix missed registers values latching
-      memory: tegra: Fix integer overflow on tick value calculation
-      memory: tegra: Replace readl-writel with mc_readl-mc_writel
-      Revert "ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+"
+Dmitry Osipenko (1):
+      ARM: tegra: cpuidle: Handle tick broadcasting within cpuidle core on Tegra20/30
 
-Edward Cragg (1):
-      memory: tegra: Fix a typos for "fdcdwr2" mc client
+Sameer Pujar (1):
+      ARM: tegra: enforce PM requirement
 
-Thierry Reding (1):
-      memory: tegra: Properly spell "tegra"
-
-Yue Haibing (1):
-      memory: tegra: Make terga20_mc_reset_ops static
-
- arch/arm/mach-tegra/iomap.h         |  9 ---------
- arch/arm/mach-tegra/sleep-tegra30.S | 21 ---------------------
- drivers/memory/tegra/mc.c           | 34 ++++++++++++++++++++--------------
- drivers/memory/tegra/mc.h           |  2 +-
- drivers/memory/tegra/tegra114.c     |  4 ++--
- drivers/memory/tegra/tegra124.c     |  4 ++--
- drivers/memory/tegra/tegra20.c      | 28 ++++++++++++++--------------
- drivers/memory/tegra/tegra210.c     |  2 +-
- drivers/memory/tegra/tegra30.c      |  4 ++--
- 9 files changed, 42 insertions(+), 66 deletions(-)
+ arch/arm/mach-tegra/Kconfig           |  1 +
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 11 ++---------
+ arch/arm/mach-tegra/cpuidle-tegra30.c |  9 +--------
+ 3 files changed, 4 insertions(+), 17 deletions(-)
