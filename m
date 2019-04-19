@@ -1,53 +1,27 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.0 00/93] 5.0.9-stable review
-Date: Fri, 19 Apr 2019 11:08:50 +0100
-Message-ID: <34d2263a-8c63-7859-e73a-52cd11d926b5@nvidia.com>
-References: <20190418160436.781762249@linuxfoundation.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH RESEND] clk: tegra: Don't enable already enabled PLLs
+Date: Fri, 19 Apr 2019 15:19:32 -0700
+Message-ID: <155571237296.15276.7432257601401549388@swboyd.mtv.corp.google.com>
+References: <20190419114226.8066-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190418160436.781762249@linuxfoundation.org>
-Content-Language: en-US
+In-Reply-To: <20190419114226.8066-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Quoting Dmitry Osipenko (2019-04-19 04:42:26)
+> Initially Common Clock Framework isn't aware of the clock-enable status,
+> this results in enabling of clocks that were enabled by bootloader. This
+> is not a big deal for a regular clock-gates, but for PLL's it may have
+> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+> clock) may result in extra long period of PLL re-locking.
+>=20
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-On 18/04/2019 18:56, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.0.9 release.
-> There are 93 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Apr 20 16:03:33 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-
-All tests are passing for Tegra ...
-
-Test results for stable-v5.0:
-    11 builds:  11 pass, 0 fail
-    22 boots:   22 pass, 0 fail
-    32 tests:   32 pass, 0 fail
-
-Linux version:  5.0.9-rc1-g68497c6
-Boards tested:  tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+Applied to clk-next
