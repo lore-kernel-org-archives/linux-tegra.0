@@ -1,34 +1,52 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH RFT V3 8/8] clk: core: replace clk_{readl,
- writel} with {readl, writel}
-Date: Thu, 18 Apr 2019 14:51:55 -0700
-Message-ID: <155562431544.15276.5634748612989968529@swboyd.mtv.corp.google.com>
-References: <20190418111211.10474-1-jonas.gorski@gmail.com>
- <20190418111211.10474-9-jonas.gorski@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V3 3/9] spi: add SPI_LSBYTE_FIRST mode
+Date: Fri, 19 Apr 2019 16:22:08 +0100
+Message-ID: <20190419152208.GT2803@sirena.org.uk>
+References: <1555363834-32155-1-git-send-email-skomatineni@nvidia.com>
+ <1555363834-32155-4-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190418111211.10474-9-jonas.gorski@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jonas Gorski <jonas.gorski@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Paul Mackerras <paulus@samba.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Thierry Reding <thierry.reding@gmail.com>, Anatolij Gustschin <agust@denx.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pnDjx0H/VpusRTEI"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1555363834-32155-4-git-send-email-skomatineni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Jonas Gorski (2019-04-18 04:12:11)
-> Now that clk_{readl,writel} is just an alias for {readl,writel}, we can
-> switch all users of clk_* to use the accessors directly and remove the
-> helpers.
-> 
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-> ---
 
-Applied to clk-next
+--pnDjx0H/VpusRTEI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 15, 2019 at 02:30:28PM -0700, Sowjanya Komatineni wrote:
+> Some SPI slaves expect bytes to be in least significant first order
+> and some expects most significant first oder.
+>=20
+> This patch adds support for requesting SPI master controllers for
+> least significant first order using SPI_LSBYTE_FIRST mode.
+
+This is byte ordering as opposed to bit ordering which the core already
+supports.  Do you have any examples of devices that need this or is it
+just being added for completeness?  If devices are going to rely on this
+we probably need emulation support in the core I guess given that this
+is a pretty unusual controller feature.
+
+--pnDjx0H/VpusRTEI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAly5558ACgkQJNaLcl1U
+h9ABdAf/VSTPgRMQCRuu5mKG7sETGap2gcwbgefEWavIGVVyUwfycisAdwMX7fnz
+o9BCutybIvNC09o6dTuMEwJEVfYDMDQGdLY337ofB/O1lOKbFNp51bOC5knj69Rn
+rX1O0T5DP9pHAbAWle473JCt4QXoLjw6bfasqZww/g6GQBQVFTMFw5RAI6Tbdwci
+OSEmszHN/b8s6u5oty9GmPjc0kn2SPoahgM4myTvTBNFrzabvsfyXhV7XeaHOox8
+kmMRDhZ2X8hrOkBpno4nFW63ZmVzKgqKkcrNoERIPmzw6awYpNCaWmvIA88Ba/es
+TMw7K+3CDCo+OOrDtOWR/CQ2VCUNAw==
+=00zp
+-----END PGP SIGNATURE-----
+
+--pnDjx0H/VpusRTEI--
