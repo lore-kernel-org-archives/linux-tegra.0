@@ -1,104 +1,81 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 5/5] mfd: max77620: Support device-tree properly
-Date: Sun, 21 Apr 2019 20:48:34 +0300
-Message-ID: <20190421174834.9366-6-digetx@gmail.com>
-References: <20190421174834.9366-1-digetx@gmail.com>
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Subject: Re: [PATCH V3 04/16] PCI: dwc: Perform dbi regs write lock towards
+ the end
+Date: Mon, 22 Apr 2019 07:54:32 +0000
+Message-ID: <20190422154608.6e6f8ae3@xhacker.debian>
+References: <20190416192730.15681-1-vidyas@nvidia.com>
+        <20190416192730.15681-5-vidyas@nvidia.com>
+        <305100E33629484CBB767107E4246BBB0A22C127@de02wembxa.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190421174834.9366-1-digetx@gmail.com>
+In-Reply-To: <305100E33629484CBB767107E4246BBB0A22C127@de02wembxa.internal.synopsys.com>
+Content-Language: en-US
+Content-ID: <C182E1A434A58143A8B4545110B023F8@namprd03.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+Cc: Vidya Sagar <vidyas@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>, "kthota@nvidia.com" <kthota@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-For some unknown reason the driver for Max77620 doesn't wire up the
-device-tree support properly and nothing in kernel creates I2C device
-for the driver (and never did), moreover device-tree files for NVIDIA
-Tegra210/186/194 boards already have nodes for Max77620. Hence add the
-missing of_match_table to make driver actually usable.
+On Wed, 17 Apr 2019 09:56:33 +0000 Gustavo Pimentel wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/mfd/max77620.c | 33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
+>=20
+> On Tue, Apr 16, 2019 at 20:27:18, Vidya Sagar <vidyas@nvidia.com> wrote:
+>=20
+> > Remove multiple write enable and disable sequences of dbi registers as
+> > Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled =
+by
+> > DBI write-lock enable bit thereby not allowing any further writes to BA=
+R-0
+> > register in config space to take place. Hence disabling write permissio=
+n
+> > only towards the end.
+> >
+> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > ---
+> > Changes since [v2]:
+> > * None
+> >
+> > Changes since [v1]:
+> > * None
+> >
+> >  drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/driver=
+s/pci/controller/dwc/pcie-designware-host.c
+> > index 2a5332e5ccfa..c0334c92c1a6 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > @@ -683,7 +683,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+> >       val &=3D 0xffff00ff;
+> >       val |=3D 0x00000100;
+> >       dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+> > -     dw_pcie_dbi_ro_wr_dis(pci);
+> >
+> >       /* Setup bus numbers */
+> >       val =3D dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+> > @@ -723,8 +722,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+> >
+> >       dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+> >
+> > -     /* Enable write permission for the DBI read-only register */
+> > -     dw_pcie_dbi_ro_wr_en(pci);
+> >       /* Program correct class for RC */
+> >       dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI=
+);
+> >       /* Better disable write permission right after the update */
+> > --
+> > 2.17.1 =20
+>=20
+> This setup sequence was written by Jingoo Han, let's check if he did this
+> by some particular reason.
+> Jingoo do you remember why you wrote the code like this?
 
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index 3b6dded0595c..ef313604ca47 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -37,6 +37,10 @@
- #include <linux/regmap.h>
- #include <linux/slab.h>
- 
-+struct max77620_desc {
-+	enum max77620_chip_id chip_id;
-+};
-+
- static const struct resource gpio_resources[] = {
- 	DEFINE_RES_IRQ(MAX77620_IRQ_TOP_GPIO),
- };
-@@ -486,6 +490,7 @@ static int max77620_probe(struct i2c_client *client,
- 	const struct regmap_config *rmap_config;
- 	struct max77620_chip *chip;
- 	const struct mfd_cell *mfd_cells;
-+	const struct max77620_desc *desc;
- 	int n_mfd_cells;
- 	int ret;
- 
-@@ -493,11 +498,13 @@ static int max77620_probe(struct i2c_client *client,
- 	if (!chip)
- 		return -ENOMEM;
- 
-+	desc = of_device_get_match_data(&client->dev);
-+
- 	i2c_set_clientdata(client, chip);
- 	chip->dev = &client->dev;
- 	chip->irq_base = -1;
- 	chip->chip_irq = client->irq;
--	chip->chip_id = (enum max77620_chip_id)id->driver_data;
-+	chip->chip_id = desc->chip_id;
- 
- 	switch (chip->chip_id) {
- 	case MAX77620:
-@@ -665,11 +672,23 @@ static int max77620_i2c_resume(struct device *dev)
- }
- #endif
- 
--static const struct i2c_device_id max77620_id[] = {
--	{"max77620", MAX77620},
--	{"max20024", MAX20024},
--	{"max77663", MAX77663},
--	{},
-+static const struct max77620_desc max77620_desc = {
-+	.chip_id = MAX77620,
-+};
-+
-+static const struct max77620_desc max20024_desc = {
-+	.chip_id = MAX20024,
-+};
-+
-+static const struct max77620_desc max77663_desc = {
-+	.chip_id = MAX77663,
-+};
-+
-+static const struct of_device_id max77620_of_match[] = {
-+	{ .compatible = "maxim,max77620", .data = &max77620_desc },
-+	{ .compatible = "maxim,max20024", .data = &max20024_desc },
-+	{ .compatible = "maxim,max77663", .data = &max77663_desc },
-+	{ },
- };
- 
- static const struct dev_pm_ops max77620_pm_ops = {
-@@ -680,8 +699,8 @@ static struct i2c_driver max77620_driver = {
- 	.driver = {
- 		.name = "max77620",
- 		.pm = &max77620_pm_ops,
-+		.of_match_table = of_match_ptr(max77620_of_match),
- 	},
- 	.probe = max77620_probe,
--	.id_table = max77620_id,
- };
- builtin_i2c_driver(max77620_driver);
--- 
-2.21.0
+FWICT, enabling RO writeable in the setup sequence is introduced in
+commit d91dfe5054d4 ("PCI: dwc: Enable write permission for Class Code,=20
+Interrupt Pin updates"). The Reason why not towards the end maybe
+only enable the RO writeable when necessary.
+
+thanks
