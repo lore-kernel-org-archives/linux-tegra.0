@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 6/7] mfd: max77620: Support device-tree properly
-Date: Mon, 22 Apr 2019 22:13:49 +0300
-Message-ID: <20190422191350.27527-7-digetx@gmail.com>
+Subject: [PATCH v2 7/7] mfd: max77620: Provide system power-off functionality
+Date: Mon, 22 Apr 2019 22:13:50 +0300
+Message-ID: <20190422191350.27527-8-digetx@gmail.com>
 References: <20190422191350.27527-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,84 +12,64 @@ To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rut
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-For some unknown reason the driver for Max77620 doesn't wire up the
-device-tree support properly and nothing in kernel creates I2C device
-for the driver (and never did), moreover device-tree files for NVIDIA
-Tegra210/186/194 boards already have nodes for Max77620. Hence add the
-missing of_match_table to make driver actually usable.
+Provide system power-off functionality that allows to turn off machine
+gracefully.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/mfd/max77620.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/mfd/max77620.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index 9b0009c29610..b7a058069808 100644
+index b7a058069808..3b8fd0b45425 100644
 --- a/drivers/mfd/max77620.c
 +++ b/drivers/mfd/max77620.c
-@@ -37,6 +37,10 @@
- #include <linux/regmap.h>
- #include <linux/slab.h>
+@@ -41,6 +41,8 @@ struct max77620_desc {
+ 	enum max77620_chip_id chip_id;
+ };
  
-+struct max77620_desc {
-+	enum max77620_chip_id chip_id;
-+};
++static struct max77620_chip *max77620_scratch;
 +
  static const struct resource gpio_resources[] = {
  	DEFINE_RES_IRQ(MAX77620_IRQ_TOP_GPIO),
  };
-@@ -487,6 +491,7 @@ static int max77620_probe(struct i2c_client *client,
- 	const struct regmap_config *rmap_config;
- 	struct max77620_chip *chip;
+@@ -485,6 +487,15 @@ static int max77620_read_es_version(struct max77620_chip *chip)
+ 	return ret;
+ }
+ 
++static void max77620_pm_power_off(void)
++{
++	struct max77620_chip *chip = max77620_scratch;
++
++	regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG1,
++			   MAX77620_ONOFFCNFG1_SFT_RST,
++			   MAX77620_ONOFFCNFG1_SFT_RST);
++}
++
+ static int max77620_probe(struct i2c_client *client,
+ 			  const struct i2c_device_id *id)
+ {
+@@ -493,6 +504,7 @@ static int max77620_probe(struct i2c_client *client,
  	const struct mfd_cell *mfd_cells;
-+	const struct max77620_desc *desc;
+ 	const struct max77620_desc *desc;
  	int n_mfd_cells;
++	bool pm_off;
  	int ret;
  
-@@ -500,6 +505,10 @@ static int max77620_probe(struct i2c_client *client,
- 	chip->chip_irq = client->irq;
- 	chip->chip_id = (enum max77620_chip_id)id->driver_data;
+ 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+@@ -563,6 +575,13 @@ static int max77620_probe(struct i2c_client *client,
+ 		return ret;
+ 	}
  
-+	desc = of_device_get_match_data(&client->dev);
-+	if (desc)
-+		chip->chip_id = desc->chip_id;
++	pm_off = of_property_read_bool(client->dev.of_node,
++				       "maxim,system-power-controller");
++	if (pm_off && !pm_power_off) {
++		max77620_scratch = chip;
++		pm_power_off = max77620_pm_power_off;
++	}
 +
- 	switch (chip->chip_id) {
- 	case MAX77620:
- 		mfd_cells = max77620_children;
-@@ -673,6 +682,25 @@ static const struct i2c_device_id max77620_id[] = {
- 	{},
- };
+ 	return 0;
+ }
  
-+static const struct max77620_desc max77620_desc = {
-+	.chip_id = MAX77620,
-+};
-+
-+static const struct max77620_desc max20024_desc = {
-+	.chip_id = MAX20024,
-+};
-+
-+static const struct max77620_desc max77663_desc = {
-+	.chip_id = MAX77663,
-+};
-+
-+static const struct of_device_id max77620_of_match[] = {
-+	{ .compatible = "maxim,max77620", .data = &max77620_desc },
-+	{ .compatible = "maxim,max20024", .data = &max20024_desc },
-+	{ .compatible = "maxim,max77663", .data = &max77663_desc },
-+	{ },
-+};
-+
- static const struct dev_pm_ops max77620_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(max77620_i2c_suspend, max77620_i2c_resume)
- };
-@@ -681,6 +709,7 @@ static struct i2c_driver max77620_driver = {
- 	.driver = {
- 		.name = "max77620",
- 		.pm = &max77620_pm_ops,
-+		.of_match_table = of_match_ptr(max77620_of_match),
- 	},
- 	.probe = max77620_probe,
- 	.id_table = max77620_id,
 -- 
 2.21.0
