@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 7/7] mfd: max77620: Provide system power-off functionality
-Date: Mon, 22 Apr 2019 22:13:50 +0300
-Message-ID: <20190422191350.27527-8-digetx@gmail.com>
+Subject: [PATCH v2 4/7] dt-bindings: mfd: max77620: Add compatible for Maxim 77663
+Date: Mon, 22 Apr 2019 22:13:47 +0300
+Message-ID: <20190422191350.27527-5-digetx@gmail.com>
 References: <20190422191350.27527-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,64 +12,36 @@ To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rut
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Provide system power-off functionality that allows to turn off machine
-gracefully.
+Maxim 77663 has a few minor differences in regards to hardware interface
+and available capabilities by comparing it with 77620 and 20024 models,
+hence re-use 77620 device-tree binding for the 77663.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/mfd/max77620.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ Documentation/devicetree/bindings/mfd/max77620.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index b7a058069808..3b8fd0b45425 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -41,6 +41,8 @@ struct max77620_desc {
- 	enum max77620_chip_id chip_id;
- };
+diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+index 9c16d51cc15b..9058499051e0 100644
+--- a/Documentation/devicetree/bindings/mfd/max77620.txt
++++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+@@ -4,7 +4,8 @@ Required properties:
+ -------------------
+ - compatible: Must be one of
+ 		"maxim,max77620"
+-		"maxim,max20024".
++		"maxim,max20024"
++		"maxim,max77663".
+ - reg: I2C device address.
  
-+static struct max77620_chip *max77620_scratch;
-+
- static const struct resource gpio_resources[] = {
- 	DEFINE_RES_IRQ(MAX77620_IRQ_TOP_GPIO),
- };
-@@ -485,6 +487,15 @@ static int max77620_read_es_version(struct max77620_chip *chip)
- 	return ret;
- }
+ Optional properties:
+@@ -105,6 +106,7 @@ Optional properties:
+ Here supported time periods by device in microseconds are as follows:
+ MAX77620 supports 40, 80, 160, 320, 640, 1280, 2560 and 5120 microseconds.
+ MAX20024 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
++MAX77663 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
  
-+static void max77620_pm_power_off(void)
-+{
-+	struct max77620_chip *chip = max77620_scratch;
-+
-+	regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG1,
-+			   MAX77620_ONOFFCNFG1_SFT_RST,
-+			   MAX77620_ONOFFCNFG1_SFT_RST);
-+}
-+
- static int max77620_probe(struct i2c_client *client,
- 			  const struct i2c_device_id *id)
- {
-@@ -493,6 +504,7 @@ static int max77620_probe(struct i2c_client *client,
- 	const struct mfd_cell *mfd_cells;
- 	const struct max77620_desc *desc;
- 	int n_mfd_cells;
-+	bool pm_off;
- 	int ret;
- 
- 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-@@ -563,6 +575,13 @@ static int max77620_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
-+	pm_off = of_property_read_bool(client->dev.of_node,
-+				       "maxim,system-power-controller");
-+	if (pm_off && !pm_power_off) {
-+		max77620_scratch = chip;
-+		pm_power_off = max77620_pm_power_off;
-+	}
-+
- 	return 0;
- }
- 
+ -maxim,power-ok-control: configure map power ok bit
+ 			1: Enables POK(Power OK) to control nRST_IO and GPIO1
 -- 
 2.21.0
