@@ -1,13 +1,14 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 49/98] drm/tegra: hub: Fix dereference before check
-Date: Mon, 22 Apr 2019 15:41:16 -0400
-Message-ID: <20190422194205.10404-49-sashal@kernel.org>
-References: <20190422194205.10404-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 38/68] drm/tegra: hub: Fix dereference before
+ check
+Date: Mon, 22 Apr 2019 15:44:46 -0400
+Message-ID: <20190422194516.11634-38-sashal@kernel.org>
+References: <20190422194516.11634-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190422194205.10404-1-sashal@kernel.org>
+In-Reply-To: <20190422194516.11634-1-sashal@kernel.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -28,8 +29,8 @@ eTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KU2lnbmVkLW9mZi1ieTogU2Fz
 aGEgTGV2aW4gKE1pY3Jvc29mdCkgPHNhc2hhbEBrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvZ3B1
 L2RybS90ZWdyYS9odWIuYyB8IDQgKysrLQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygr
 KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIu
-YyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuYwppbmRleCA5MjJhNDhkNWE0ODMuLmM3YzYx
-MjU3OTI3MCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jCisrKyBiL2Ry
+YyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuYwppbmRleCA4ZjRmY2JiNTE1ZmIuLmJiOTdj
+YWQxZWI2OSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jCisrKyBiL2Ry
 aXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuYwpAQCAtMzc4LDE0ICszNzgsMTYgQEAgc3RhdGljIGlu
 dCB0ZWdyYV9zaGFyZWRfcGxhbmVfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
 LAogc3RhdGljIHZvaWQgdGVncmFfc2hhcmVkX3BsYW5lX2F0b21pY19kaXNhYmxlKHN0cnVjdCBk
