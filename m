@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V4 03/16] PCI: Export pcie_bus_config symbol
-Date: Tue, 23 Apr 2019 13:57:17 +0530
-Message-ID: <20190423082730.370-4-vidyas@nvidia.com>
+Subject: [PATCH V4 04/16] PCI: dwc: Perform dbi regs write lock towards the end
+Date: Tue, 23 Apr 2019 13:57:18 +0530
+Message-ID: <20190423082730.370-5-vidyas@nvidia.com>
 References: <20190423082730.370-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,8 +12,11 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Export pcie_bus_config to enable host controller drivers setting it to a
-specific configuration be able to build as loadable modules
+Remove multiple write enable and disable sequences of dbi registers as
+Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+DBI write-lock enable bit thereby not allowing any further writes to BAR-0
+register in config space to take place. Hence disabling write permission
+only towards the end.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
@@ -24,22 +27,31 @@ Changes since [v2]:
 * None
 
 Changes since [v1]:
-* This is a new patch in v2 series
+* None
 
- drivers/pci/pci.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f5ff01dc4b13..731f78508601 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -94,6 +94,7 @@ unsigned long pci_hotplug_mem_size = DEFAULT_HOTPLUG_MEM_SIZE;
- unsigned long pci_hotplug_bus_size = DEFAULT_HOTPLUG_BUS_SIZE;
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 36fd3f5b48f6..e5e3571dd2fe 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -654,7 +654,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	val &= 0xffff00ff;
+ 	val |= 0x00000100;
+ 	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+-	dw_pcie_dbi_ro_wr_dis(pci);
  
- enum pcie_bus_config_types pcie_bus_config = PCIE_BUS_DEFAULT;
-+EXPORT_SYMBOL_GPL(pcie_bus_config);
+ 	/* Setup bus numbers */
+ 	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+@@ -686,8 +685,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
  
- /*
-  * The default CLS is used if arch didn't set CLS explicitly and not
+ 	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+ 
+-	/* Enable write permission for the DBI read-only register */
+-	dw_pcie_dbi_ro_wr_en(pci);
+ 	/* Program correct class for RC */
+ 	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+ 	/* Better disable write permission right after the update */
 -- 
 2.17.1
