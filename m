@@ -1,48 +1,82 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 38/68] drm/tegra: hub: Fix dereference before
- check
-Date: Mon, 22 Apr 2019 15:44:46 -0400
-Message-ID: <20190422194516.11634-38-sashal@kernel.org>
-References: <20190422194516.11634-1-sashal@kernel.org>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V3 04/16] PCI: dwc: Perform dbi regs write lock towards
+ the end
+Date: Tue, 23 Apr 2019 11:41:18 +0530
+Message-ID: <f0b5973a-b7a5-ac59-06d6-fdce71fda03d@nvidia.com>
+References: <20190416192730.15681-1-vidyas@nvidia.com>
+ <20190416192730.15681-5-vidyas@nvidia.com>
+ <305100E33629484CBB767107E4246BBB0A22C127@de02wembxa.internal.synopsys.com>
+ <20190422154608.6e6f8ae3@xhacker.debian>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190422194516.11634-1-sashal@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190422154608.6e6f8ae3@xhacker.debian>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>, Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>, "kthota@nvidia.com" <kthota@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mperttunen@nvidia.com" <mperttun>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClsgVXBzdHJlYW0gY29t
-bWl0IDdjZjc3YjI3M2E4ZmM1MWU3ZGU2MjJmYTY2OTFhYmQ0NDM2YTlhNmIgXQoKUmVwb3J0ZWQt
-Ynk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KU2lnbmVkLW9mZi1i
-eTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KU2lnbmVkLW9mZi1ieTogU2Fz
-aGEgTGV2aW4gKE1pY3Jvc29mdCkgPHNhc2hhbEBrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9odWIuYyB8IDQgKysrLQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygr
-KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIu
-YyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuYwppbmRleCA4ZjRmY2JiNTE1ZmIuLmJiOTdj
-YWQxZWI2OSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jCisrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuYwpAQCAtMzc4LDE0ICszNzgsMTYgQEAgc3RhdGljIGlu
-dCB0ZWdyYV9zaGFyZWRfcGxhbmVfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
-LAogc3RhdGljIHZvaWQgdGVncmFfc2hhcmVkX3BsYW5lX2F0b21pY19kaXNhYmxlKHN0cnVjdCBk
-cm1fcGxhbmUgKnBsYW5lLAogCQkJCQkgICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpvbGRf
-c3RhdGUpCiB7Ci0Jc3RydWN0IHRlZ3JhX2RjICpkYyA9IHRvX3RlZ3JhX2RjKG9sZF9zdGF0ZS0+
-Y3J0Yyk7CiAJc3RydWN0IHRlZ3JhX3BsYW5lICpwID0gdG9fdGVncmFfcGxhbmUocGxhbmUpOwor
-CXN0cnVjdCB0ZWdyYV9kYyAqZGM7CiAJdTMyIHZhbHVlOwogCiAJLyogcmllbiBuZSB2YSBwbHVz
-ICovCiAJaWYgKCFvbGRfc3RhdGUgfHwgIW9sZF9zdGF0ZS0+Y3J0YykKIAkJcmV0dXJuOwogCisJ
-ZGMgPSB0b190ZWdyYV9kYyhvbGRfc3RhdGUtPmNydGMpOworCiAJLyoKIAkgKiBYWFggTGVnYWN5
-IGhlbHBlcnMgc2VlbSB0byBzb21ldGltZXMgY2FsbCAtPmF0b21pY19kaXNhYmxlKCkgZXZlbgog
-CSAqIG9uIHBsYW5lcyB0aGF0IGFyZSBhbHJlYWR5IGRpc2FibGVkLiBNYWtlIHN1cmUgd2UgZmFs
-bGJhY2sgdG8gdGhlCi0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbA==
+On 4/22/2019 1:24 PM, Jisheng Zhang wrote:
+> On Wed, 17 Apr 2019 09:56:33 +0000 Gustavo Pimentel wrote:
+> 
+>>
+>> On Tue, Apr 16, 2019 at 20:27:18, Vidya Sagar <vidyas@nvidia.com> wrote:
+>>
+>>> Remove multiple write enable and disable sequences of dbi registers as
+>>> Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+>>> DBI write-lock enable bit thereby not allowing any further writes to BAR-0
+>>> register in config space to take place. Hence disabling write permission
+>>> only towards the end.
+>>>
+>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>>> ---
+>>> Changes since [v2]:
+>>> * None
+>>>
+>>> Changes since [v1]:
+>>> * None
+>>>
+>>>   drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
+>>>   1 file changed, 3 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> index 2a5332e5ccfa..c0334c92c1a6 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> @@ -683,7 +683,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>>>        val &= 0xffff00ff;
+>>>        val |= 0x00000100;
+>>>        dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+>>> -     dw_pcie_dbi_ro_wr_dis(pci);
+>>>
+>>>        /* Setup bus numbers */
+>>>        val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+>>> @@ -723,8 +722,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>>>
+>>>        dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+>>>
+>>> -     /* Enable write permission for the DBI read-only register */
+>>> -     dw_pcie_dbi_ro_wr_en(pci);
+>>>        /* Program correct class for RC */
+>>>        dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+>>>        /* Better disable write permission right after the update */
+>>> --
+>>> 2.17.1
+>>
+>> This setup sequence was written by Jingoo Han, let's check if he did this
+>> by some particular reason.
+>> Jingoo do you remember why you wrote the code like this?
+> 
+> FWICT, enabling RO writeable in the setup sequence is introduced in
+> commit d91dfe5054d4 ("PCI: dwc: Enable write permission for Class Code,
+> Interrupt Pin updates"). The Reason why not towards the end maybe
+> only enable the RO writeable when necessary.
+In that case, my patch shouldn't cause any issue and if any it would avoid
+few writes to speed up the process. So, in my opinion, it is a good to go change.
+Please let me know if you have disagree with me on this.
+
+> 
+> thanks
+> 
