@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V4 04/16] PCI: dwc: Perform dbi regs write lock towards the end
-Date: Tue, 23 Apr 2019 13:57:18 +0530
-Message-ID: <20190423082730.370-5-vidyas@nvidia.com>
+Subject: [PATCH V4 05/16] PCI: dwc: Move config space capability search API
+Date: Tue, 23 Apr 2019 13:57:19 +0530
+Message-ID: <20190423082730.370-6-vidyas@nvidia.com>
 References: <20190423082730.370-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,46 +12,82 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Remove multiple write enable and disable sequences of dbi registers as
-Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
-DBI write-lock enable bit thereby not allowing any further writes to BAR-0
-register in config space to take place. Hence disabling write permission
-only towards the end.
+Move PCIe config space capability search API to common DesignWare file
+as this can be used by both host and ep mode codes.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
-Changes since [v3]:
+Changes from [v3]:
+* Rebased to linux-next top of the tree
+
+Changes from [v2]:
 * None
 
-Changes since [v2]:
-* None
+Changes from [v1]:
+* Removed dw_pcie_find_next_ext_capability() API from here and made a
+  separate patch for that
 
-Changes since [v1]:
-* None
+ drivers/pci/controller/dwc/pcie-designware.c | 33 ++++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.h |  2 ++
+ 2 files changed, 35 insertions(+)
 
- drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 36fd3f5b48f6..e5e3571dd2fe 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -654,7 +654,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- 	val &= 0xffff00ff;
- 	val |= 0x00000100;
- 	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
--	dw_pcie_dbi_ro_wr_dis(pci);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 8e0081ccf83b..6a98135244d6 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -20,6 +20,39 @@
+ #define PCIE_PHY_DEBUG_R1_LINK_UP	(0x1 << 4)
+ #define PCIE_PHY_DEBUG_R1_LINK_IN_TRAINING	(0x1 << 29)
  
- 	/* Setup bus numbers */
- 	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
-@@ -686,8 +685,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
++static u8 __dw_pcie_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
++				  u8 cap)
++{
++	u8 cap_id, next_cap_ptr;
++	u16 reg;
++
++	reg = dw_pcie_readw_dbi(pci, cap_ptr);
++	next_cap_ptr = (reg & 0xff00) >> 8;
++	cap_id = (reg & 0x00ff);
++
++	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
++		return 0;
++
++	if (cap_id == cap)
++		return cap_ptr;
++
++	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
++}
++
++u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
++{
++	u8 next_cap_ptr;
++	u16 reg;
++
++	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
++	next_cap_ptr = (reg & 0x00ff);
++
++	if (!next_cap_ptr)
++		return 0;
++
++	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
++}
++
+ int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+ {
+ 	if (!IS_ALIGNED((uintptr_t)addr, size)) {
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 9ee98ced1ef6..35160b4ce929 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -248,6 +248,8 @@ struct dw_pcie {
+ #define to_dw_pcie_from_ep(endpoint)   \
+ 		container_of((endpoint), struct dw_pcie, ep)
  
- 	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
++u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
++
+ int dw_pcie_read(void __iomem *addr, int size, u32 *val);
+ int dw_pcie_write(void __iomem *addr, int size, u32 val);
  
--	/* Enable write permission for the DBI read-only register */
--	dw_pcie_dbi_ro_wr_en(pci);
- 	/* Program correct class for RC */
- 	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
- 	/* Better disable write permission right after the update */
 -- 
 2.17.1
