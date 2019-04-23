@@ -1,95 +1,87 @@
-From: Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Subject: RE: [PATCH V3 04/16] PCI: dwc: Perform dbi regs write lock towards
- the end
-Date: Tue, 23 Apr 2019 09:40:40 +0000
-Message-ID: <305100E33629484CBB767107E4246BBB0A22FA36@de02wembxa.internal.synopsys.com>
-References: <20190416192730.15681-1-vidyas@nvidia.com>
-        <20190416192730.15681-5-vidyas@nvidia.com>
-        <305100E33629484CBB767107E4246BBB0A22C127@de02wembxa.internal.synopsys.com>
- <20190422154608.6e6f8ae3@xhacker.debian>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Subject: Re: [PATCH RFT V3 1/8] clk: divider: add explicit big endian support
+Date: Tue, 23 Apr 2019 12:39:59 +0200
+Message-ID: <CAOiHx=mjhzG-i8H5R0A+Mu3mcBXTNEaaBhC8rwCQPMWArDA+1A@mail.gmail.com>
+References: <20190418111211.10474-1-jonas.gorski@gmail.com>
+ <20190418111211.10474-2-jonas.gorski@gmail.com>
+ <CAMuHMdX7E8fR+2s-gPgGLKUCdW_--YUDW7w+op3BDurgACFEmA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190422154608.6e6f8ae3@xhacker.debian>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>, Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>, "kthota@nvidia.com" <kthota@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAMuHMdX7E8fR+2s-gPgGLKUCdW_--YUDW7w+op3BDurgACFEmA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Fabio Estevam <festevam@gmail.com>, linux-clk <linux-clk@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, NXP Linux Team <linux-imx@nxp.com>, Anatolij Gustschin <agust@denx.de>, Sascha Hauer <s.hauer@pengutronix.de>, linux-tegra <linux-tegra@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Pengutronix Kernel Team <kernel@pengutron>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 22, 2019 at 8:54:32, Jisheng Zhang=20
-<Jisheng.Zhang@synaptics.com> wrote:
+Hi Geert,
 
-> On Wed, 17 Apr 2019 09:56:33 +0000 Gustavo Pimentel wrote:
->=20
-> >=20
-> > On Tue, Apr 16, 2019 at 20:27:18, Vidya Sagar <vidyas@nvidia.com> wrote=
-:
-> >=20
-> > > Remove multiple write enable and disable sequences of dbi registers a=
-s
-> > > Tegra194 implements writes to BAR-0 register (offset: 0x10) controlle=
-d by
-> > > DBI write-lock enable bit thereby not allowing any further writes to =
-BAR-0
-> > > register in config space to take place. Hence disabling write permiss=
-ion
-> > > only towards the end.
-> > >
-> > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > ---
-> > > Changes since [v2]:
-> > > * None
-> > >
-> > > Changes since [v1]:
-> > > * None
-> > >
-> > >  drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
-> > >  1 file changed, 3 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/driv=
-ers/pci/controller/dwc/pcie-designware-host.c
-> > > index 2a5332e5ccfa..c0334c92c1a6 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > @@ -683,7 +683,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
-> > >       val &=3D 0xffff00ff;
-> > >       val |=3D 0x00000100;
-> > >       dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
-> > > -     dw_pcie_dbi_ro_wr_dis(pci);
-> > >
-> > >       /* Setup bus numbers */
-> > >       val =3D dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
-> > > @@ -723,8 +722,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
-> > >
-> > >       dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
-> > >
-> > > -     /* Enable write permission for the DBI read-only register */
-> > > -     dw_pcie_dbi_ro_wr_en(pci);
-> > >       /* Program correct class for RC */
-> > >       dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_P=
-CI);
-> > >       /* Better disable write permission right after the update */
-> > > --
-> > > 2.17.1 =20
-> >=20
-> > This setup sequence was written by Jingoo Han, let's check if he did th=
-is
-> > by some particular reason.
-> > Jingoo do you remember why you wrote the code like this?
->=20
-> FWICT, enabling RO writeable in the setup sequence is introduced in
-> commit d91dfe5054d4 ("PCI: dwc: Enable write permission for Class Code,=20
-> Interrupt Pin updates"). The Reason why not towards the end maybe
-> only enable the RO writeable when necessary.
+On Tue, 23 Apr 2019 at 09:49, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Jonas,
+>
+> On Thu, Apr 18, 2019 at 1:12 PM Jonas Gorski <jonas.gorski@gmail.com> wrote:
+> > Add a clock specific flag to switch register accesses to big endian, to
+> > allow runtime configuration of big endian divider clocks.
+> >
+> > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> > ---
+> > V2 -> V3:
+> >  * fix passed arguments to clk_div_readl found by kbuild
+> >  * drop unneeded else in clk_div_readl
+> > V1 -> V2:
+> >  * switch from global to local flag
+> >
+> >  drivers/clk/clk-divider.c    | 26 ++++++++++++++++++++++----
+> >  include/linux/clk-provider.h |  4 ++++
+> >  2 files changed, 26 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > index e5a17265cfaf..25c7404e376c 100644
+> > --- a/drivers/clk/clk-divider.c
+> > +++ b/drivers/clk/clk-divider.c
+> > @@ -25,6 +25,24 @@
+> >   * parent - fixed parent.  No clk_set_parent support
+> >   */
+> >
+> > +static inline u32 clk_div_readl(struct clk_divider *divider)
+> > +{
+> > +       if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+> > +               return ioread32be(divider->reg);
+> > +
+> > +       return clk_readl(divider->reg);
+> > +}
+> > +
+> > +static inline void clk_div_writel(struct clk_divider *divider, u32 val)
+> > +{
+> > +       if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+> > +               iowrite32be(val, divider->reg);
+> > +       else
+> > +               clk_writel(val, divider->reg);
+> > +}
+> > +
+> > +#define div_mask(width)        ((1 << (width)) - 1)
+>
+> What's the purpose of adding this definition?
+> It does not seem to be used.
 
-I also share that belief, in any case, I just want to confirm with the=20
-original developer if this was coded like this for some good reason,=20
-maybe to force some additional protection. Otherwise, I think the=20
-presented patch is harmless.
+No purpose at all, it's an uncaught artifact from rebasing ._.
 
-Gustavo
+Stephen, which one is your preferred way of fixing that?
 
->=20
-> thanks
+a) a new V4 patchset without this line
+b) a follow up patch that removes it
+c) just removing the line yourself
+
+
+Regards
+Jonas
