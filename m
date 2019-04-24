@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 4/6] dt-bindings: mfd: max77620: Add compatible for Maxim 77663
-Date: Thu, 25 Apr 2019 01:48:58 +0300
-Message-ID: <20190424224900.8018-5-digetx@gmail.com>
+Subject: [PATCH v3 1/6] mfd: max77620: Fix swapped FPS_PERIOD_MAX_US values
+Date: Thu, 25 Apr 2019 01:48:55 +0300
+Message-ID: <20190424224900.8018-2-digetx@gmail.com>
 References: <20190424224900.8018-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,36 +12,29 @@ To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rut
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Maxim 77663 has a few minor differences in regards to hardware interface
-and available capabilities by comparing it with 77620 and 20024 models,
-hence re-use 77620 device-tree binding for the 77663.
+The FPS_PERIOD_MAX_US definitions are swapped for MAX20024 and MAX77620,
+fix it.
 
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- Documentation/devicetree/bindings/mfd/max77620.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/mfd/max77620.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
-index 9c16d51cc15b..9058499051e0 100644
---- a/Documentation/devicetree/bindings/mfd/max77620.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77620.txt
-@@ -4,7 +4,8 @@ Required properties:
- -------------------
- - compatible: Must be one of
- 		"maxim,max77620"
--		"maxim,max20024".
-+		"maxim,max20024"
-+		"maxim,max77663".
- - reg: I2C device address.
+diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
+index ad2a9a852aea..b4fd5a7c2aaa 100644
+--- a/include/linux/mfd/max77620.h
++++ b/include/linux/mfd/max77620.h
+@@ -136,8 +136,8 @@
+ #define MAX77620_FPS_PERIOD_MIN_US		40
+ #define MAX20024_FPS_PERIOD_MIN_US		20
  
- Optional properties:
-@@ -105,6 +106,7 @@ Optional properties:
- Here supported time periods by device in microseconds are as follows:
- MAX77620 supports 40, 80, 160, 320, 640, 1280, 2560 and 5120 microseconds.
- MAX20024 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
-+MAX77663 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
+-#define MAX77620_FPS_PERIOD_MAX_US		2560
+-#define MAX20024_FPS_PERIOD_MAX_US		5120
++#define MAX20024_FPS_PERIOD_MAX_US		2560
++#define MAX77620_FPS_PERIOD_MAX_US		5120
  
- -maxim,power-ok-control: configure map power ok bit
- 			1: Enables POK(Power OK) to control nRST_IO and GPIO1
+ #define MAX77620_REG_FPS_GPIO1			0x54
+ #define MAX77620_REG_FPS_GPIO2			0x55
 -- 
 2.21.0
