@@ -1,165 +1,174 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] dma: tegra: add accurate reporting of dma state
-Date: Wed, 24 Apr 2019 21:17:00 +0300
-Message-ID: <dbe7c256-c7ad-a172-9e63-9251bec6f182@gmail.com>
-References: <20190424162348.23692-1-ben.dooks@codethink.co.uk>
+Subject: [PATCH v3 2/6] mfd: max77620: Support Maxim 77663
+Date: Thu, 25 Apr 2019 01:48:56 +0300
+Message-ID: <20190424224900.8018-3-digetx@gmail.com>
+References: <20190424224900.8018-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424162348.23692-1-ben.dooks@codethink.co.uk>
-Content-Language: en-US
+In-Reply-To: <20190424224900.8018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-kernel@lists.codethink.co.uk
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.04.2019 19:23, Ben Dooks пишет:
-> The tx_status callback does not report the state of the transfer
-> beyond complete segments. This causes problems with users such as
-> ALSA when applications want to know accurately how much data has
-> been moved.
-> 
-> This patch addes a function tegra_dma_update_residual() to query
-> the hardware and modify the residual information accordinly. It
-> takes into account any hardware issues when trying to read the
-> state, such as delays between finishing a buffer and signalling
-> the interrupt.
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Add support for Maxim 77663 using the Max77620 driver. The hardware
+is very similar to Max77663/20024, although there are couple minor
+differences.
 
-Hello Ben,
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/mfd/max77620.c       | 69 +++++++++++++++++++++++++++++++++++-
+ include/linux/mfd/max77620.h |  1 +
+ 2 files changed, 69 insertions(+), 1 deletion(-)
 
-Thank you very much for keeping it up. I have couple comments, please see them below.
-
-> Cc: Dmitry Osipenko <digetx@gmail.com>
-> Cc: Laxman Dewangan <ldewangan@nvidia.com> (supporter:TEGRA DMA DRIVERS)
-> Cc: Jon Hunter <jonathanh@nvidia.com> (supporter:TEGRA DMA DRIVERS)
-> Cc: Vinod Koul <vkoul@kernel.org> (maintainer:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM)
-> Cc: Dan Williams <dan.j.williams@intel.com> (reviewer:ASYNCHRONOUS TRANSFERS/TRANSFORMS (IOAT) API)
-> Cc: Thierry Reding <thierry.reding@gmail.com> (supporter:TEGRA ARCHITECTURE SUPPORT)
-> Cc: dmaengine@vger.kernel.org (open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM)
-> Cc: linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-> Cc: linux-kernel@vger.kernel.org (open list)
-> ---
->  drivers/dma/tegra20-apb-dma.c | 92 ++++++++++++++++++++++++++++++++---
->  1 file changed, 86 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index cf462b1abc0b..544e7273e741 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -808,6 +808,90 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->  	return 0;
->  }
->  
-> +static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
-> +					      struct tegra_dma_sg_req *sg_req,
-> +					      struct tegra_dma_desc *dma_desc,
-> +					      unsigned int residual)
-> +{
-> +	unsigned long status = 0x0;
-> +	unsigned long wcount;
-> +	unsigned long ahbptr;
-> +	unsigned long tmp = 0x0;
-> +	unsigned int result;
-
-You could pre-assign ahbptr=0xffffffff and result=residual here, then you could remove all the duplicated assigns below. 
-
-> +	int retries = TEGRA_APBDMA_BURST_COMPLETE_TIME * 10;
-> +	int done;
-> +
-> +	/* if we're not the current request, then don't alter the residual */
-> +	if (sg_req != list_first_entry(&tdc->pending_sg_req,
-> +				       struct tegra_dma_sg_req, node)) {
-> +		result = residual;
-> +		ahbptr = 0xffffffff;
-> +		goto done;
-> +	}
-> +
-> +	/* loop until we have a reliable result for residual */
-> +	do {
-> +		ahbptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBPTR);
-> +		status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-> +		tmp =  tdc_read(tdc, 0x08);	/* total count for debug */
-
-The "tmp" variable isn't used anywhere in the code, please remove it.
-
-> +
-> +		/* check status, if channel isn't busy then skip */
-> +		if (!(status & TEGRA_APBDMA_STATUS_BUSY)) {
-> +			result = residual;
-> +			break;
-> +		}
-
-This doesn't look correct because TRM says "Busy bit gets set as soon as a channel is enabled and gets cleared after transfer completes", hence a cleared BUSY bit means that all transfers are completed and result=residual is incorrect here. Given that there is a check for EOC bit being set below, this hunk should be removed.
-
-> +
-> +		/* if we've got an interrupt pending on the channel, don't
-> +		 * try and deal with the residue as the hardware has likely
-> +		 * moved on to the next buffer. return all data moved.
-> +		 */
-> +		if (status & TEGRA_APBDMA_STATUS_ISE_EOC) {
-> +			result = residual - sg_req->req_len;
-> +			break;
-> +		}
-> +
-> +		if (tdc->tdma->chip_data->support_separate_wcount_reg)
-> +			wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
-> +		else
-> +			wcount = status;
-> +
-> +		/* If the request is at the full point, then there is a
-> +		 * chance that we have read the status register in the
-> +		 * middle of the hardware reloading the next buffer.
-> +		 *
-> +		 * The sequence seems to be at the end of the buffer, to
-> +		 * load the new word count before raising the EOC flag (or
-> +		 * changing the ping-pong flag which could have also been
-> +		 * used to determine a new buffer). This  means there is a
-> +		 * small window where we cannot determine zero-done for the
-> +		 * current buffer, or moved to next buffer.
-> +		 *
-> +		 * If done shows 0, then retry the load, as it may hit the
-> +		 * above hardware race. We will either get a new value which
-> +		 * is from the first buffer, or we get an EOC (new buffer)
-> +		 * or both a new value and an EOC...
-> +		 */
-> +		done = get_current_xferred_count(tdc, sg_req, wcount);
-> +		if (done != 0) {
-> +			result = residual - done;
-> +			break;
-> +		}
-> +
-> +		ndelay(100);
-
-Please use udelay(1) because there is no ndelay on arm32 and ndelay(100) is getting rounded up to 1usec. AFAIK, arm64 doesn't have reliable ndelay on Tegra either because timer rate changes with the CPU frequency scaling.
-
-Secondly done=0 isn't a error case, technically this could be the case when tegra_dma_update_residual() is invoked just after starting the transfer. Hence I think this do-while loop and timeout checking aren't needed at all since done=0 is a perfectly valid case.
-
-
-Altogether seems the tegra_dma_update_residual() could be reduced to:
-
-static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
-					      struct tegra_dma_sg_req *sg_req,
-					      struct tegra_dma_desc *dma_desc,
-					      unsigned int residual)
-{
-	unsigned long status, wcount;
-
-	if (list_is_first(&sg_req->node, &tdc->pending_sg_req))
-		return residual;
-
-	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
-
-	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-
-	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
-		wcount = status;
-
-	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
-		return residual - sg_req->req_len;
-
-	return residual - get_current_xferred_count(tdc, sg_req, wcount);
-}
+diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+index d8ddd1a6f304..9b0009c29610 100644
+--- a/drivers/mfd/max77620.c
++++ b/drivers/mfd/max77620.c
+@@ -111,6 +111,26 @@ static const struct mfd_cell max20024_children[] = {
+ 	},
+ };
+ 
++static const struct mfd_cell max77663_children[] = {
++	{ .name = "max77620-pinctrl", },
++	{ .name = "max77620-clock", },
++	{ .name = "max77663-pmic", },
++	{ .name = "max77620-watchdog", },
++	{
++		.name = "max77620-gpio",
++		.resources = gpio_resources,
++		.num_resources = ARRAY_SIZE(gpio_resources),
++	}, {
++		.name = "max77620-rtc",
++		.resources = rtc_resources,
++		.num_resources = ARRAY_SIZE(rtc_resources),
++	}, {
++		.name = "max77663-power",
++		.resources = power_resources,
++		.num_resources = ARRAY_SIZE(power_resources),
++	},
++};
++
+ static const struct regmap_range max77620_readable_ranges[] = {
+ 	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_DVSSD4),
+ };
+@@ -171,6 +191,35 @@ static const struct regmap_config max20024_regmap_config = {
+ 	.volatile_table = &max77620_volatile_table,
+ };
+ 
++static const struct regmap_range max77663_readable_ranges[] = {
++	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_CID5),
++};
++
++static const struct regmap_access_table max77663_readable_table = {
++	.yes_ranges = max77663_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(max77663_readable_ranges),
++};
++
++static const struct regmap_range max77663_writable_ranges[] = {
++	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_CID5),
++};
++
++static const struct regmap_access_table max77663_writable_table = {
++	.yes_ranges = max77663_writable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(max77663_writable_ranges),
++};
++
++static const struct regmap_config max77663_regmap_config = {
++	.name = "power-slave",
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = MAX77620_REG_CID5 + 1,
++	.cache_type = REGCACHE_RBTREE,
++	.rd_table = &max77663_readable_table,
++	.wr_table = &max77663_writable_table,
++	.volatile_table = &max77620_volatile_table,
++};
++
+ /*
+  * MAX77620 and MAX20024 has the following steps of the interrupt handling
+  * for TOP interrupts:
+@@ -237,6 +286,9 @@ static int max77620_get_fps_period_reg_value(struct max77620_chip *chip,
+ 	case MAX20024:
+ 		fps_min_period = MAX20024_FPS_PERIOD_MIN_US;
+ 		break;
++	case MAX77663:
++		fps_min_period = MAX20024_FPS_PERIOD_MIN_US;
++		break;
+ 	case MAX77620:
+ 		fps_min_period = MAX77620_FPS_PERIOD_MIN_US;
+ 		break;
+@@ -274,6 +326,9 @@ static int max77620_config_fps(struct max77620_chip *chip,
+ 	case MAX77620:
+ 		fps_max_period = MAX77620_FPS_PERIOD_MAX_US;
+ 		break;
++	case MAX77663:
++		fps_max_period = MAX20024_FPS_PERIOD_MAX_US;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -375,6 +430,9 @@ static int max77620_initialise_fps(struct max77620_chip *chip)
+ 	}
+ 
+ skip_fps:
++	if (chip->chip_id == MAX77663)
++		return 0;
++
+ 	/* Enable wake on EN0 pin */
+ 	ret = regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG2,
+ 				 MAX77620_ONOFFCNFG2_WK_EN0,
+@@ -453,6 +511,11 @@ static int max77620_probe(struct i2c_client *client,
+ 		n_mfd_cells = ARRAY_SIZE(max20024_children);
+ 		rmap_config = &max20024_regmap_config;
+ 		break;
++	case MAX77663:
++		mfd_cells = max77663_children;
++		n_mfd_cells = ARRAY_SIZE(max77663_children);
++		rmap_config = &max77663_regmap_config;
++		break;
+ 	default:
+ 		dev_err(chip->dev, "ChipID is invalid %d\n", chip->chip_id);
+ 		return -EINVAL;
+@@ -546,6 +609,9 @@ static int max77620_i2c_suspend(struct device *dev)
+ 		return ret;
+ 	}
+ 
++	if (chip->chip_id == MAX77663)
++		goto out;
++
+ 	/* Disable WK_EN0 */
+ 	ret = regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG2,
+ 				 MAX77620_ONOFFCNFG2_WK_EN0, 0);
+@@ -581,7 +647,7 @@ static int max77620_i2c_resume(struct device *dev)
+ 	 * For MAX20024: No need to configure WKEN0 on resume as
+ 	 * it is configured on Init.
+ 	 */
+-	if (chip->chip_id == MAX20024)
++	if (chip->chip_id == MAX20024 || chip->chip_id == MAX77663)
+ 		goto out;
+ 
+ 	/* Enable WK_EN0 */
+@@ -603,6 +669,7 @@ static int max77620_i2c_resume(struct device *dev)
+ static const struct i2c_device_id max77620_id[] = {
+ 	{"max77620", MAX77620},
+ 	{"max20024", MAX20024},
++	{"max77663", MAX77663},
+ 	{},
+ };
+ 
+diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
+index b4fd5a7c2aaa..82407fe85ca2 100644
+--- a/include/linux/mfd/max77620.h
++++ b/include/linux/mfd/max77620.h
+@@ -324,6 +324,7 @@ enum max77620_fps_src {
+ enum max77620_chip_id {
+ 	MAX77620,
+ 	MAX20024,
++	MAX77663,
+ };
+ 
+ struct max77620_chip {
+-- 
+2.21.0
