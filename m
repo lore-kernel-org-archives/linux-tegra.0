@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 2/6] mfd: max77620: Support Maxim 77663
-Date: Thu, 25 Apr 2019 01:48:56 +0300
-Message-ID: <20190424224900.8018-3-digetx@gmail.com>
+Subject: [PATCH v3 6/6] mfd: max77620: Provide system power-off functionality
+Date: Thu, 25 Apr 2019 01:49:00 +0300
+Message-ID: <20190424224900.8018-7-digetx@gmail.com>
 References: <20190424224900.8018-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,163 +12,64 @@ To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rut
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for Maxim 77663 using the Max77620 driver. The hardware
-is very similar to Max77663/20024, although there are couple minor
-differences.
+Provide system power-off functionality that allows to turn off machine
+gracefully.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/mfd/max77620.c       | 69 +++++++++++++++++++++++++++++++++++-
- include/linux/mfd/max77620.h |  1 +
- 2 files changed, 69 insertions(+), 1 deletion(-)
+ drivers/mfd/max77620.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index d8ddd1a6f304..9b0009c29610 100644
+index 9b0009c29610..e56223bde568 100644
 --- a/drivers/mfd/max77620.c
 +++ b/drivers/mfd/max77620.c
-@@ -111,6 +111,26 @@ static const struct mfd_cell max20024_children[] = {
- 	},
- };
+@@ -37,6 +37,8 @@
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
  
-+static const struct mfd_cell max77663_children[] = {
-+	{ .name = "max77620-pinctrl", },
-+	{ .name = "max77620-clock", },
-+	{ .name = "max77663-pmic", },
-+	{ .name = "max77620-watchdog", },
-+	{
-+		.name = "max77620-gpio",
-+		.resources = gpio_resources,
-+		.num_resources = ARRAY_SIZE(gpio_resources),
-+	}, {
-+		.name = "max77620-rtc",
-+		.resources = rtc_resources,
-+		.num_resources = ARRAY_SIZE(rtc_resources),
-+	}, {
-+		.name = "max77663-power",
-+		.resources = power_resources,
-+		.num_resources = ARRAY_SIZE(power_resources),
-+	},
-+};
++static struct max77620_chip *max77620_scratch;
 +
- static const struct regmap_range max77620_readable_ranges[] = {
- 	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_DVSSD4),
+ static const struct resource gpio_resources[] = {
+ 	DEFINE_RES_IRQ(MAX77620_IRQ_TOP_GPIO),
  };
-@@ -171,6 +191,35 @@ static const struct regmap_config max20024_regmap_config = {
- 	.volatile_table = &max77620_volatile_table,
- };
+@@ -481,6 +483,15 @@ static int max77620_read_es_version(struct max77620_chip *chip)
+ 	return ret;
+ }
  
-+static const struct regmap_range max77663_readable_ranges[] = {
-+	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_CID5),
-+};
++static void max77620_pm_power_off(void)
++{
++	struct max77620_chip *chip = max77620_scratch;
 +
-+static const struct regmap_access_table max77663_readable_table = {
-+	.yes_ranges = max77663_readable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(max77663_readable_ranges),
-+};
++	regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG1,
++			   MAX77620_ONOFFCNFG1_SFT_RST,
++			   MAX77620_ONOFFCNFG1_SFT_RST);
++}
 +
-+static const struct regmap_range max77663_writable_ranges[] = {
-+	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_CID5),
-+};
-+
-+static const struct regmap_access_table max77663_writable_table = {
-+	.yes_ranges = max77663_writable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(max77663_writable_ranges),
-+};
-+
-+static const struct regmap_config max77663_regmap_config = {
-+	.name = "power-slave",
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = MAX77620_REG_CID5 + 1,
-+	.cache_type = REGCACHE_RBTREE,
-+	.rd_table = &max77663_readable_table,
-+	.wr_table = &max77663_writable_table,
-+	.volatile_table = &max77620_volatile_table,
-+};
-+
- /*
-  * MAX77620 and MAX20024 has the following steps of the interrupt handling
-  * for TOP interrupts:
-@@ -237,6 +286,9 @@ static int max77620_get_fps_period_reg_value(struct max77620_chip *chip,
- 	case MAX20024:
- 		fps_min_period = MAX20024_FPS_PERIOD_MIN_US;
- 		break;
-+	case MAX77663:
-+		fps_min_period = MAX20024_FPS_PERIOD_MIN_US;
-+		break;
- 	case MAX77620:
- 		fps_min_period = MAX77620_FPS_PERIOD_MIN_US;
- 		break;
-@@ -274,6 +326,9 @@ static int max77620_config_fps(struct max77620_chip *chip,
- 	case MAX77620:
- 		fps_max_period = MAX77620_FPS_PERIOD_MAX_US;
- 		break;
-+	case MAX77663:
-+		fps_max_period = MAX20024_FPS_PERIOD_MAX_US;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -375,6 +430,9 @@ static int max77620_initialise_fps(struct max77620_chip *chip)
- 	}
+ static int max77620_probe(struct i2c_client *client,
+ 			  const struct i2c_device_id *id)
+ {
+@@ -488,6 +499,7 @@ static int max77620_probe(struct i2c_client *client,
+ 	struct max77620_chip *chip;
+ 	const struct mfd_cell *mfd_cells;
+ 	int n_mfd_cells;
++	bool pm_off;
+ 	int ret;
  
- skip_fps:
-+	if (chip->chip_id == MAX77663)
-+		return 0;
-+
- 	/* Enable wake on EN0 pin */
- 	ret = regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG2,
- 				 MAX77620_ONOFFCNFG2_WK_EN0,
-@@ -453,6 +511,11 @@ static int max77620_probe(struct i2c_client *client,
- 		n_mfd_cells = ARRAY_SIZE(max20024_children);
- 		rmap_config = &max20024_regmap_config;
- 		break;
-+	case MAX77663:
-+		mfd_cells = max77663_children;
-+		n_mfd_cells = ARRAY_SIZE(max77663_children);
-+		rmap_config = &max77663_regmap_config;
-+		break;
- 	default:
- 		dev_err(chip->dev, "ChipID is invalid %d\n", chip->chip_id);
- 		return -EINVAL;
-@@ -546,6 +609,9 @@ static int max77620_i2c_suspend(struct device *dev)
+ 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+@@ -554,6 +566,13 @@ static int max77620_probe(struct i2c_client *client,
  		return ret;
  	}
  
-+	if (chip->chip_id == MAX77663)
-+		goto out;
++	pm_off = of_property_read_bool(client->dev.of_node,
++				       "maxim,system-power-controller");
++	if (pm_off && !pm_power_off) {
++		max77620_scratch = chip;
++		pm_power_off = max77620_pm_power_off;
++	}
 +
- 	/* Disable WK_EN0 */
- 	ret = regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG2,
- 				 MAX77620_ONOFFCNFG2_WK_EN0, 0);
-@@ -581,7 +647,7 @@ static int max77620_i2c_resume(struct device *dev)
- 	 * For MAX20024: No need to configure WKEN0 on resume as
- 	 * it is configured on Init.
- 	 */
--	if (chip->chip_id == MAX20024)
-+	if (chip->chip_id == MAX20024 || chip->chip_id == MAX77663)
- 		goto out;
+ 	return 0;
+ }
  
- 	/* Enable WK_EN0 */
-@@ -603,6 +669,7 @@ static int max77620_i2c_resume(struct device *dev)
- static const struct i2c_device_id max77620_id[] = {
- 	{"max77620", MAX77620},
- 	{"max20024", MAX20024},
-+	{"max77663", MAX77663},
- 	{},
- };
- 
-diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
-index b4fd5a7c2aaa..82407fe85ca2 100644
---- a/include/linux/mfd/max77620.h
-+++ b/include/linux/mfd/max77620.h
-@@ -324,6 +324,7 @@ enum max77620_fps_src {
- enum max77620_chip_id {
- 	MAX77620,
- 	MAX20024,
-+	MAX77663,
- };
- 
- struct max77620_chip {
 -- 
 2.21.0
