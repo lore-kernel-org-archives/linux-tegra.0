@@ -1,38 +1,54 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 5/6] dt-bindings: mfd: max77620: Add maxim,system-power-controller property
-Date: Thu, 25 Apr 2019 01:48:59 +0300
-Message-ID: <20190424224900.8018-6-digetx@gmail.com>
-References: <20190424224900.8018-1-digetx@gmail.com>
+Subject: [PATCH v3 0/6] Add support for Maxim 77663 MFD
+Date: Thu, 25 Apr 2019 01:48:54 +0300
+Message-ID: <20190424224900.8018-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424224900.8018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add new property that designates the PMIC as the system's power
-controller.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- Documentation/devicetree/bindings/mfd/max77620.txt | 3 +++
- 1 file changed, 3 insertions(+)
+This series adds support for the Maxim 77663 chip that provides PMIC, RTC,
+GPIO and watchdog timer functionality. The hardware is very similar to the
+Maxim 77620/20024 hardware units that are already supported by the kernel,
+hence we will reuse the existing drivers for 77663. The GPIO, regulator,
+RTC and watchdog timer functionality was tested on a Nexus 7 tablet that
+has the Max77663 chip, everything is working perfectly fine. I'm looking
+at upstreaming support for that tablet device and Max77663 is one of the
+core components that are currently missing in the upstream kernel.
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
-index 9058499051e0..dda6d158b170 100644
---- a/Documentation/devicetree/bindings/mfd/max77620.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77620.txt
-@@ -18,6 +18,9 @@ Optional properties:
- 			IRQ numbers for different interrupt source of MAX77620
- 			are defined at dt-bindings/mfd/max77620.h.
- 
-+- maxim,system-power-controller: Indicates that this PMIC is controlling the
-+				 system power.
-+
- Optional subnodes and their properties:
- =======================================
- 
+Changelog:
+
+v3: Dropped "Support device-tree properly" patch since turned out that
+    I2C core takes care of the device-tree matching and I wasn't aware of
+    it.
+
+v2: Added PINCTRL sub-device to Max77663 MFD as it looks compatible with
+    77620.
+
+    Added new "maxim,system-power-controller" OF property.
+
+    Patch "Support device-tree properly" now doesn't remove driver's
+    "id_table" since potentially it could have some use in the downstream
+    kernel forks and it doesn't hurt to keep it around.
+
+Dmitry Osipenko (6):
+  mfd: max77620: Fix swapped FPS_PERIOD_MAX_US values
+  mfd: max77620: Support Maxim 77663
+  regulator: max77620: Support Maxim 77663
+  dt-bindings: mfd: max77620: Add compatible for Maxim 77663
+  dt-bindings: mfd: max77620: Add maxim,system-power-controller property
+  mfd: max77620: Provide system power-off functionality
+
+ .../devicetree/bindings/mfd/max77620.txt      |  7 +-
+ drivers/mfd/max77620.c                        | 88 ++++++++++++++++++-
+ drivers/regulator/max77620-regulator.c        | 26 +++++-
+ include/linux/mfd/max77620.h                  |  5 +-
+ 4 files changed, 121 insertions(+), 5 deletions(-)
+
 -- 
 2.21.0
