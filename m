@@ -1,133 +1,109 @@
-From: Oliver <oohall@gmail.com>
-Subject: Re: [PATCH V4 05/16] PCI: dwc: Move config space capability search API
-Date: Wed, 24 Apr 2019 13:42:43 +1000
-Message-ID: <CAOSf1CF9oBwt+hy3Q=G2Bj0ku5iak=pnLYq4Hi7QgpBC5sBfPA@mail.gmail.com>
-References: <20190423082730.370-1-vidyas@nvidia.com>
- <20190423082730.370-6-vidyas@nvidia.com>
- <20190423203244.GD14616@google.com>
- <22c7a99b-2d6c-e49b-43b0-219c60f7e5e9@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH V5 00/16] Add Tegra194 PCIe support
+Date: Wed, 24 Apr 2019 10:49:48 +0530
+Message-ID: <20190424052004.6270-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <22c7a99b-2d6c-e49b-43b0-219c60f7e5e9@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Device Tree <devicetree@vger.kernel.org>, lorenzo.pieralisi@arm.com, mperttunen@nvidia.com, mmaddireddy@nvidia.com, linux-pci@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, jonathanh@nvidia.com, kthota@nvidia.com, thierry.reding@gmail.com, Bjorn Helgaas <helgaas@kernel.org>, gustavo.pimentel@synopsys.com, jingoohan1@gmail.com, linux-tegra@vger.kernel.org, kishon@ti.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
+Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 1:12 PM Vidya Sagar <vidyas@nvidia.com> wrote:
->
-> On 4/24/2019 2:02 AM, Bjorn Helgaas wrote:
-> > On Tue, Apr 23, 2019 at 01:57:19PM +0530, Vidya Sagar wrote:
-> >> Move PCIe config space capability search API to common DesignWare file
-> >> as this can be used by both host and ep mode codes.
-> >>
-> >> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> >> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> >> ---
-> >> Changes from [v3]:
-> >> * Rebased to linux-next top of the tree
-> >>
-> >> Changes from [v2]:
-> >> * None
-> >>
-> >> Changes from [v1]:
-> >> * Removed dw_pcie_find_next_ext_capability() API from here and made a
-> >>    separate patch for that
-> >>
-> >>   drivers/pci/controller/dwc/pcie-designware.c | 33 ++++++++++++++++++++
-> >>   drivers/pci/controller/dwc/pcie-designware.h |  2 ++
-> >
-> > You claim this is a "move", but I only see adds.  Where did it move
-> > *from*?
-> These are supposed to be moved from pcie-designware-ep.c file. That was the case
-> with my old patches but when I rebased them onto ToT, I missed the change that
-> removes them from pcie-designware-ep.c file. Thanks for catching this. I'll
-> address it in the next patch.
->
-> >
-> > While you're at it, can you add a comment in the code about why we
-> > can't use the regular pci_find_capability() interface?  It's really a
-> > shame to have to reimplement that.
-> Regular pci_find_capability() uses 'struct pci_dev *dev' pointer and can be used
-> only after device enumeration is done. Whereas, these APIs are used particularly
-> before link up and use 'struct dw_pcie *pci' pointer.
+Tegra194 has six PCIe controllers based on Synopsys DesignWare core.
+There are two Universal PHY (UPHY) blocks with each supporting 12(HSIO:
+Hisg Speed IO) and 8(NVHS: NVIDIA High Speed) lanes respectively.
+Controllers:0~4 use UPHY lanes from HSIO brick whereas Controller:5 uses
+UPHY lanes from NVHS brick. Lane mapping in HSIO UPHY brick to each PCIe
+controller (0~4) is controlled in XBAR module by BPMP-FW. Since PCIe
+core has PIPE interface, a glue module called PIPE-to-UPHY (P2U) is used
+to connect each UPHY lane (applicable to both HSIO and NVHS UPHY bricks)
+to PCIe controller
+This patch series
+- Adds support for P2U PHY driver
+- Adds support for PCIe host controller
+- Adds device tree nodes each PCIe controllers
+- Enables nodes applicable to p2972-0000 platform
+- Adds helper APIs in Designware core driver to get capability regs offset
+- Adds defines for new feature registers of PCIe spec revision 4
+- Makes changes in DesignWare core driver to get Tegra194 PCIe working
 
-pci_bus_find_capability() can be used without enumerating the devices
-if you have a pci_bus. It's probably not worth using here though since
-you need this code anyway for endpoint mode.
+Testing done on P2972-0000 platform
+- Able to get PCIe link up with on-board Marvel eSATA controller
+- Able to get PCIe link up with NVMe cards connected to M.2 Key-M slot
+- Able to do data transfers with both SATA drives and NVMe cards
 
->
-> >
-> >>   2 files changed, 35 insertions(+)
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> >> index 8e0081ccf83b..6a98135244d6 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> >> @@ -20,6 +20,39 @@
-> >>   #define PCIE_PHY_DEBUG_R1_LINK_UP  (0x1 << 4)
-> >>   #define PCIE_PHY_DEBUG_R1_LINK_IN_TRAINING (0x1 << 29)
-> >>
-> >> +static u8 __dw_pcie_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
-> >> +                              u8 cap)
-> >> +{
-> >> +    u8 cap_id, next_cap_ptr;
-> >> +    u16 reg;
-> >> +
-> >> +    reg = dw_pcie_readw_dbi(pci, cap_ptr);
-> >> +    next_cap_ptr = (reg & 0xff00) >> 8;
-> >> +    cap_id = (reg & 0x00ff);
-> >> +
-> >> +    if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
-> >> +            return 0;
-> >> +
-> >> +    if (cap_id == cap)
-> >> +            return cap_ptr;
-> >> +
-> >> +    return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
-> >> +}
-> >> +
-> >> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
-> >> +{
-> >> +    u8 next_cap_ptr;
-> >> +    u16 reg;
-> >> +
-> >> +    reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
-> >> +    next_cap_ptr = (reg & 0x00ff);
-> >> +
-> >> +    if (!next_cap_ptr)
-> >> +            return 0;
-> >> +
-> >> +    return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
-> >> +}
-> >> +
-> >>   int dw_pcie_read(void __iomem *addr, int size, u32 *val)
-> >>   {
-> >>      if (!IS_ALIGNED((uintptr_t)addr, size)) {
-> >> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> >> index 9ee98ced1ef6..35160b4ce929 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> >> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> >> @@ -248,6 +248,8 @@ struct dw_pcie {
-> >>   #define to_dw_pcie_from_ep(endpoint)   \
-> >>              container_of((endpoint), struct dw_pcie, ep)
-> >>
-> >> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
-> >> +
-> >>   int dw_pcie_read(void __iomem *addr, int size, u32 *val);
-> >>   int dw_pcie_write(void __iomem *addr, int size, u32 val);
-> >>
-> >> --
-> >> 2.17.1
-> >>
->
+Note
+- Enabling x8 slot on P2972-0000 platform requires pinmux driver for Tegra194.
+  It is being worked on currently and hence Controller:5 (i.e. x8 slot) is
+  disabled in this patch series. A future patch series would enable this.
+- This series is based on top of the following series
+  Jisheng's patches to add support to .remove() in Designware sub-system
+  https://patchwork.kernel.org/project/linux-pci/list/?series=98559
+  (Jisheng's patches are now accepted and applied for v5.2)
+  My patches made on top of Jisheng's patches to export various symbols
+  https://patchwork.kernel.org/project/linux-pci/list/?series=101259
+
+Changes since [v4]:
+* Removed redundant APIs in pcie-designware-ep.c file after moving them
+  to pcie-designware.c file based on Bjorn's review comments
+
+Changes since [v3]:
+* Rebased on top of linux-next top of the tree
+* Addressed Gustavo's comments and added his Ack for some of the changes.
+
+Changes since [v2]:
+* Addressed review comments from Thierry
+
+Changes since [v1]:
+* Addressed review comments from Bjorn, Thierry, Jonathan, Rob & Kishon
+* Added more patches in v2 series
+
+Vidya Sagar (16):
+  PCI: Add #defines for some of PCIe spec r4.0 features
+  PCI/PME: Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs
+  PCI: Export pcie_bus_config symbol
+  PCI: dwc: Perform dbi regs write lock towards the end
+  PCI: dwc: Move config space capability search API
+  PCI: dwc: Add ext config space capability search API
+  dt-bindings: PCI: designware: Add binding for CDM register check
+  PCI: dwc: Add support to enable CDM register check
+  Documentation/devicetree: Add PCIe supports-clkreq property
+  dt-bindings: PCI: tegra: Add device tree support for T194
+  dt-bindings: PHY: P2U: Add Tegra 194 P2U block
+  arm64: tegra: Add P2U and PCIe controller nodes to Tegra194 DT
+  arm64: tegra: Enable PCIe slots in P2972-0000 board
+  phy: tegra: Add PCIe PIPE2UPHY support
+  PCI: tegra: Add Tegra194 PCIe support
+  arm64: Add Tegra194 PCIe driver to defconfig
+
+ .../bindings/pci/designware-pcie.txt          |    5 +
+ .../bindings/pci/nvidia,tegra194-pcie.txt     |  187 ++
+ Documentation/devicetree/bindings/pci/pci.txt |    5 +
+ .../bindings/phy/phy-tegra194-p2u.txt         |   28 +
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |    2 +-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |   41 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  449 +++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/pci/controller/dwc/Kconfig            |   11 +
+ drivers/pci/controller/dwc/Makefile           |    1 +
+ .../pci/controller/dwc/pcie-designware-ep.c   |   37 +-
+ .../pci/controller/dwc/pcie-designware-host.c |    3 -
+ drivers/pci/controller/dwc/pcie-designware.c  |   87 +
+ drivers/pci/controller/dwc/pcie-designware.h  |   12 +
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 1760 +++++++++++++++++
+ drivers/pci/pci.c                             |    1 +
+ drivers/pci/pcie/pme.c                        |   14 +-
+ drivers/pci/pcie/portdrv.h                    |   16 +-
+ drivers/phy/tegra/Kconfig                     |    7 +
+ drivers/phy/tegra/Makefile                    |    1 +
+ drivers/phy/tegra/pcie-p2u-tegra194.c         |  120 ++
+ include/uapi/linux/pci_regs.h                 |   22 +-
+ 22 files changed, 2756 insertions(+), 54 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+ create mode 100644 drivers/phy/tegra/pcie-p2u-tegra194.c
+
+-- 
+2.17.1
