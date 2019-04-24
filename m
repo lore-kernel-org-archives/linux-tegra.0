@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V5 06/16] PCI: dwc: Add ext config space capability search API
-Date: Wed, 24 Apr 2019 10:49:54 +0530
-Message-ID: <20190424052004.6270-7-vidyas@nvidia.com>
+Subject: [PATCH V5 07/16] dt-bindings: PCI: designware: Add binding for CDM register check
+Date: Wed, 24 Apr 2019 10:49:55 +0530
+Message-ID: <20190424052004.6270-8-vidyas@nvidia.com>
 References: <20190424052004.6270-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,91 +12,45 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add extended configuration space capability search API using struct dw_pcie *
-pointer
+Add support to enable CDM (Configuration Dependent Module) registers check
+for any data corruption. CDM registers include standard PCIe configuration
+space registers, Port Logic registers and iATU and DMA registers.
+Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
+Version 4.90a
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
-Changes from [v4]:
+Changes since [v4]:
 * None
 
-Changes from [v3]:
+Changes since [v3]:
 * None
 
-Changes from [v2]:
-* None
+Changes since [v2]:
+* Changed flag name from 'cdm-check' to 'enable-cdm-check'
+* Added info about Port Logic and DMA registers being part of CDM
 
-Changes from [v1]:
+Changes since [v1]:
 * This is a new patch in v2 series
 
- drivers/pci/controller/dwc/pcie-designware.c | 41 ++++++++++++++++++++
- drivers/pci/controller/dwc/pcie-designware.h |  1 +
- 2 files changed, 42 insertions(+)
+ Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index ed21e861df82..417ee51ae502 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -59,6 +59,47 @@ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
- 	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
- }
- 
-+static int dw_pcie_find_next_ext_capability(struct dw_pcie *pci, int start,
-+					    int cap)
-+{
-+	u32 header;
-+	int ttl;
-+	int pos = PCI_CFG_SPACE_SIZE;
-+
-+	/* minimum 8 bytes per capability */
-+	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-+
-+	if (start)
-+		pos = start;
-+
-+	header = dw_pcie_readl_dbi(pci, pos);
-+	/*
-+	 * If we have no capabilities, this is indicated by cap ID,
-+	 * cap version and next pointer all being 0.
-+	 */
-+	if (header == 0)
-+		return 0;
-+
-+	while (ttl-- > 0) {
-+		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
-+			return pos;
-+
-+		pos = PCI_EXT_CAP_NEXT(header);
-+		if (pos < PCI_CFG_SPACE_SIZE)
-+			break;
-+
-+		header = dw_pcie_readl_dbi(pci, pos);
-+	}
-+
-+	return 0;
-+}
-+
-+int dw_pcie_find_ext_capability(struct dw_pcie *pci, int cap)
-+{
-+	return dw_pcie_find_next_ext_capability(pci, 0, cap);
-+}
-+EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
-+
- int dw_pcie_read(void __iomem *addr, int size, u32 *val)
- {
- 	if (!IS_ALIGNED((uintptr_t)addr, size)) {
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 35160b4ce929..67307842e003 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -249,6 +249,7 @@ struct dw_pcie {
- 		container_of((endpoint), struct dw_pcie, ep)
- 
- u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
-+int dw_pcie_find_ext_capability(struct dw_pcie *pci, int cap);
- 
- int dw_pcie_read(void __iomem *addr, int size, u32 *val);
- int dw_pcie_write(void __iomem *addr, int size, u32 val);
+diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+index 5561a1c060d0..85b872c42a9f 100644
+--- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+@@ -34,6 +34,11 @@ Optional properties:
+ - clock-names: Must include the following entries:
+ 	- "pcie"
+ 	- "pcie_bus"
++- enable-cdm-check: This is a boolean property and if present enables
++   automatic checking of CDM (Configuration Dependent Module) registers
++   for data corruption. CDM registers include standard PCIe configuration
++   space registers, Port Logic registers, DMA and iATU (internal Address
++   Translation Unit) registers.
+ RC mode:
+ - num-viewport: number of view ports configured in hardware. If a platform
+   does not specify it, the driver assumes 2.
 -- 
 2.17.1
