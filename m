@@ -1,40 +1,43 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 0/2] clk: Tegra124 PLLM fixes
-Date: Thu, 25 Apr 2019 18:43:13 +0300
-Message-ID: <692c6b3f-9f46-0b0a-63a7-029ec7a7409d@gmail.com>
-References: <20190411214835.19947-1-digetx@gmail.com>
- <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
- <20190424083625.GQ12975@pdeschrijver-desktop.Nvidia.com>
- <d020b512-59be-51bd-39c1-4827e57b020c@gmail.com>
- <155620524950.15276.14252541417126056267@swboyd.mtv.corp.google.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 3/6] regulator: max77620: Support Maxim 77663
+Date: Thu, 25 Apr 2019 18:41:44 +0100
+Message-ID: <20190425174144.GC22575@sirena.org.uk>
+References: <20190424224900.8018-1-digetx@gmail.com>
+ <20190424224900.8018-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <155620524950.15276.14252541417126056267@swboyd.mtv.corp.google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190424224900.8018-4-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-25.04.2019 18:14, Stephen Boyd пишет:
-> Quoting Dmitry Osipenko (2019-04-25 06:50:39)
->> 24.04.2019 11:36, Peter De Schrijver пишет:
->>> On Fri, Apr 19, 2019 at 02:50:10PM +0300, Dmitry Osipenko wrote:
->>>> 12.04.2019 0:48, Dmitry Osipenko пишет:
->>>>
->>>> The patches in this series are trivial and fixing the longstanding bug on Tegra124. Could you please take a look and and ACK the series if it looks good to you?
->>>
->>> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>                                                              
->>
->> Thank you, Peter.
->>
->>
->> Stephen, is yours maintainer-tool able to pick up the "Acked-By" for the whole series or do I need to resend the series with a proper "Acked-by" tag added to every patch? Please let me know.
-> 
-> The maintainer-tool is me, but I don't require you to resend to collect
-> acks or other tags. I can do it and I'll do it today.
-> 
 
-Thank you very much!
+--B4IIlcmfBL/1gGOG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Apr 25, 2019 at 01:48:57AM +0300, Dmitry Osipenko wrote:
+> Add support for Maxim 77663.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--B4IIlcmfBL/1gGOG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzB8VcACgkQJNaLcl1U
+h9C5MQf/e2dZ7OiWk6YvNr2eKFK3rstlkbMyDYubayOmpQ+34xTFCBU3W6VHjoPC
+kF+Aqr8vVUh8VFcEAU/kw4V7P5ghtZ8IPV3SrT4Ta1dP4ntd12SKkD9EwBIsXlGg
+NrSblWxWunv+aSUaPZ/1gkdvJ+orhRkul+f8yoxPZGKqcGhvDTcBOIfYYkxSfqm9
+d8OEf+hf9hNC1uxg/Jawtm/8oi9hYQEIQm/sm6M33DkBkScHkhUXYZB2KQRWx3LE
+wnryRHfks1n1aXDudkiBwjpXZ094cBTtx519NZR7DQKNZ3TMQZVe6T7t9cIF0RN/
+rRUgO7y5ZPqYJnP6iK6UxLWfW4TH+Q==
+=AyPs
+-----END PGP SIGNATURE-----
+
+--B4IIlcmfBL/1gGOG--
