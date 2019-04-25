@@ -1,53 +1,40 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/3] phy: tegra: xusb: Add Tegra210 PLL power supplies
-Date: Thu, 25 Apr 2019 17:34:44 +0200
-Message-ID: <20190425153444.6281-3-thierry.reding@gmail.com>
-References: <20190425153444.6281-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 0/2] clk: Tegra124 PLLM fixes
+Date: Thu, 25 Apr 2019 18:43:13 +0300
+Message-ID: <692c6b3f-9f46-0b0a-63a7-029ec7a7409d@gmail.com>
+References: <20190411214835.19947-1-digetx@gmail.com>
+ <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
+ <20190424083625.GQ12975@pdeschrijver-desktop.Nvidia.com>
+ <d020b512-59be-51bd-39c1-4827e57b020c@gmail.com>
+ <155620524950.15276.14252541417126056267@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190425153444.6281-1-thierry.reding@gmail.com>
+In-Reply-To: <155620524950.15276.14252541417126056267@swboyd.mtv.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+25.04.2019 18:14, Stephen Boyd пишет:
+> Quoting Dmitry Osipenko (2019-04-25 06:50:39)
+>> 24.04.2019 11:36, Peter De Schrijver пишет:
+>>> On Fri, Apr 19, 2019 at 02:50:10PM +0300, Dmitry Osipenko wrote:
+>>>> 12.04.2019 0:48, Dmitry Osipenko пишет:
+>>>>
+>>>> The patches in this series are trivial and fixing the longstanding bug on Tegra124. Could you please take a look and and ACK the series if it looks good to you?
+>>>
+>>> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>                                                              
+>>
+>> Thank you, Peter.
+>>
+>>
+>> Stephen, is yours maintainer-tool able to pick up the "Acked-By" for the whole series or do I need to resend the series with a proper "Acked-by" tag added to every patch? Please let me know.
+> 
+> The maintainer-tool is me, but I don't require you to resend to collect
+> acks or other tags. I can do it and I'll do it today.
+> 
 
-The Tegra210 SoC has four inputs that consume power in order to supply
-the PLLs that drive the various USB, PCI and SATA pads.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/phy/tegra/xusb-tegra210.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index 05bee32a3a4d..eb754baa8d71 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -2017,6 +2017,13 @@ static const struct tegra_xusb_padctl_ops tegra210_xusb_padctl_ops = {
- 	.hsic_set_idle = tegra210_hsic_set_idle,
- };
- 
-+static const char * const tegra210_xusb_padctl_supply_names[] = {
-+	"avdd-pll-utmip",
-+	"avdd-pll-uerefe",
-+	"dvdd-pex-pll",
-+	"hvdd-pex-pll-e",
-+};
-+
- const struct tegra_xusb_padctl_soc tegra210_xusb_padctl_soc = {
- 	.num_pads = ARRAY_SIZE(tegra210_pads),
- 	.pads = tegra210_pads,
-@@ -2035,6 +2042,8 @@ const struct tegra_xusb_padctl_soc tegra210_xusb_padctl_soc = {
- 		},
- 	},
- 	.ops = &tegra210_xusb_padctl_ops,
-+	.supply_names = tegra210_xusb_padctl_supply_names,
-+	.num_supplies = ARRAY_SIZE(tegra210_xusb_padctl_supply_names),
- };
- EXPORT_SYMBOL_GPL(tegra210_xusb_padctl_soc);
- 
--- 
-2.21.0
+Thank you very much!
