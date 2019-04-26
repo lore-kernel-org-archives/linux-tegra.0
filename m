@@ -1,30 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add Tegra194 pinmux driver
-Date: Fri, 26 Apr 2019 09:11:00 +0200
-Message-ID: <CACRpkdbnzB690mPncGGe2fKMBx3kDN+RPBEbowBsvsXO23gOGw@mail.gmail.com>
-References: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com> <1556247378-3335-2-git-send-email-kyarlagadda@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/3] dt-bindings: phy: tegra-xusb: List PLL power supplies
+Date: Fri, 26 Apr 2019 09:06:29 +0100
+Message-ID: <2ca553b9-a744-534b-6b64-634c14500077@nvidia.com>
+References: <20190425153444.6281-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1556247378-3335-2-git-send-email-kyarlagadda@nvidia.com>
+In-Reply-To: <20190425153444.6281-1-thierry.reding@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, vidyas@nvidia.com
+To: Thierry Reding <thierry.reding@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 4:56 AM Krishna Yarlagadda
-<kyarlagadda@nvidia.com> wrote:
 
-> Tegra194 has PCIE L5 rst and clkreq pins which need to be controlled
-> dynamically at runtime. This driver supports change pinmux for these
-> pins. Pinmux for rest of the pins is set statically by bootloader and
-> will not be changed by this driver
->
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
+On 25/04/2019 16:34, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> These power supplies provide power for various PLLs that are set up and
+> driven by the XUSB pad controller. These power supplies were previously
+> improperly added to the PCIe and XUSB controllers, but depending on the
+> driver probe order, power to the PLLs will not be supplied soon enough
+> and cause initialization to fail.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+For the series ...
 
-Paging Stephen Warren about this patch, an ACK from Thierry would
-be nice too.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Yours,
-Linus Walleij
+Cheers
+Jon
+
+-- 
+nvpublic
