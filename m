@@ -1,64 +1,58 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V5 07/16] dt-bindings: PCI: designware: Add binding for
- CDM register check
-Date: Fri, 26 Apr 2019 09:32:47 -0500
-Message-ID: <20190426143247.GA25107@bogus>
-References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-8-vidyas@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] amba: tegra-ahb: mark PM functions as __maybe_unused
+Date: Fri, 26 Apr 2019 16:56:03 +0200
+Message-ID: <20190426145617.2342824-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190424052004.6270-8-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 10:49:55AM +0530, Vidya Sagar wrote:
-> Add support to enable CDM (Configuration Dependent Module) registers check
-> for any data corruption. CDM registers include standard PCIe configuration
-> space registers, Port Logic registers and iATU and DMA registers.
-> Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
-> Version 4.90a
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> Changes since [v4]:
-> * None
-> 
-> Changes since [v3]:
-> * None
-> 
-> Changes since [v2]:
-> * Changed flag name from 'cdm-check' to 'enable-cdm-check'
-> * Added info about Port Logic and DMA registers being part of CDM
-> 
-> Changes since [v1]:
-> * This is a new patch in v2 series
-> 
->  Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> index 5561a1c060d0..85b872c42a9f 100644
-> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> @@ -34,6 +34,11 @@ Optional properties:
->  - clock-names: Must include the following entries:
->  	- "pcie"
->  	- "pcie_bus"
-> +- enable-cdm-check: This is a boolean property and if present enables
+clang warns about an unused variable when CONFIG_PM is disabled,
+since it is only referenced from an #ifdef:
 
-This needs a vendor prefix.
+drivers/amba/tegra-ahb.c:97:18: error: variable 'tegra_ahb_gizmo' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
 
-> +   automatic checking of CDM (Configuration Dependent Module) registers
-> +   for data corruption. CDM registers include standard PCIe configuration
-> +   space registers, Port Logic registers, DMA and iATU (internal Address
-> +   Translation Unit) registers.
->  RC mode:
->  - num-viewport: number of view ports configured in hardware. If a platform
->    does not specify it, the driver assumes 2.
-> -- 
-> 2.17.1
-> 
+Rather than trying to get the #ifdef right, remove it and
+use __maybe_unused here, which is less error prone.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/amba/tegra-ahb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index b0b688c481e8..3751d811be39 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -170,8 +170,7 @@ int tegra_ahb_enable_smmu(struct device_node *dn)
+ EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+ #endif
+ 
+-#ifdef CONFIG_PM
+-static int tegra_ahb_suspend(struct device *dev)
++static int __maybe_unused tegra_ahb_suspend(struct device *dev)
+ {
+ 	int i;
+ 	struct tegra_ahb *ahb = dev_get_drvdata(dev);
+@@ -181,7 +180,7 @@ static int tegra_ahb_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_ahb_resume(struct device *dev)
++static int __maybe_unused tegra_ahb_resume(struct device *dev)
+ {
+ 	int i;
+ 	struct tegra_ahb *ahb = dev_get_drvdata(dev);
+@@ -190,7 +189,6 @@ static int tegra_ahb_resume(struct device *dev)
+ 		gizmo_writel(ahb, ahb->ctx[i], tegra_ahb_gizmo[i]);
+ 	return 0;
+ }
+-#endif
+ 
+ static UNIVERSAL_DEV_PM_OPS(tegra_ahb_pm,
+ 			    tegra_ahb_suspend,
+-- 
+2.20.0
