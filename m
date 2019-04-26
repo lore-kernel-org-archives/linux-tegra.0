@@ -1,11 +1,11 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH 1/2] dt-binding: Tegra194 pinctrl support
-Date: Fri, 26 Apr 2019 15:05:37 +0200
-Message-ID: <20190426130537.GB16228@ulmo>
+Date: Fri, 26 Apr 2019 15:07:48 +0200
+Message-ID: <20190426130748.GC16228@ulmo>
 References: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
+        protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
@@ -15,7 +15,7 @@ Cc: linus.walleij@linaro.org, jonathanh@nvidia.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---p4qYPpj5QlsIQJ0K
+--B4IIlcmfBL/1gGOG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -29,12 +29,7 @@ On Fri, Apr 26, 2019 at 08:26:17AM +0530, Krishna Yarlagadda wrote:
 >  .../bindings/pinctrl/nvidia,tegra210-pinmux.txt    | 43 ++++++++++++++++=
 +++---
 >  1 file changed, 38 insertions(+), 5 deletions(-)
-
-I think it'd make sense to create an nvidia,tegra194-pinmux.txt and just
-duplicate the generic parts in this file. The bulk of the document is
-about the specifics anyway and having a separate file makes it a little
-cleaner and easier to read.
-
+>=20
 > diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pi=
 nmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux=
 =2Etxt
@@ -117,6 +112,10 @@ spi4,
 > +			reg =3D <0x2430000 0x17000
 > +			       0xc300000 0x4000>;
 > +			#gpio-range-cells =3D <2>;
+
+This doesn't appear to be documented and we don't use this on any other
+chip.
+
 > +			pex_rst_c5_out_state: pex_rst_c5_out {
 > +				pex_rst {
 > +					nvidia,pins =3D "pex_l5_rst_n_pgg1";
@@ -126,6 +125,11 @@ spi4,
 > +					nvidia,io-high-voltage =3D <TEGRA_PIN_ENABLE>;
 > +					nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
 > +					nvidia,pull =3D <TEGRA_PIN_PULL_NONE>;
+
+Should the above not set a nvidia,function property for the pex_rst pin?
+
+Thierry
+
 > +				};
 > +			};
 > +		};
@@ -134,34 +138,28 @@ spi4,
 > +			pinctrl-names =3D "pex_rst";
 > +			pinctrl-0 =3D <&pex_rst_c5_out_state>;
 > +		};
+> --=20
+> 2.7.4
+>=20
 
-It's not clean to me what that pinmuxtest@0 node is there for. That
-compatible string is not defined anywhere and nothing references the
-state.
-
-Wouldn't it make more sense to have an example similar to what we have
-for Tegra210?
-
-Thierry
-
---p4qYPpj5QlsIQJ0K
+--B4IIlcmfBL/1gGOG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzDAg8ACgkQ3SOs138+
-s6EsDRAAqOpwAotzi5SjF379qvUwX9oWkVDrzDCCq7Tkj+x29JUKRWc+OJiXOCaF
-L0WeZTL33MV1a2Y4nt7W9V3/oZ5RgPWlTc/FmHSURe0FzObqT9tzj1Gy49nNBqgw
-voJHEUzrqf/sCMJMFWDK81sTc1CXcrF50xu9I/Je3nX60Zxc4f9GKDlXycXW7dPh
-E/geagK8UDHMm2LzQmewCm0tPTBxbHUmMAfkMl70rYYHLpLXoFETskxry6IC4udg
-f0gZOM0ZLqDQRAhHXP/gD2APJDw9WHhoBbaze3TDbeCGredQXT9R+zQds6uvQnJZ
-yxFx0ouaevNmCCTVgXXjlHcPwfGD26rbfjupsxnkAsSUdJKAYLW1sOVjGKVtBhiO
-56RaaZhHZYb9SIdNqia4uExz4YkdOO4wDMm4vjIQmIvySiqXoNyPal+AeiAHOnWm
-4KHR4jviGF7T/tMtYYa37DF9s/YgxXfJTBqzZb+Wavwdq10Yc6UZvFkMDV4cZKCu
-0PNaAuxzYgJwfSWNMRDr5BW05UxQE6SkmdSVD2NZxJ2rqZmcVHdF76DjwXCu0SI0
-noX0hV/OJWWPwTaimorwqTa+fswcAz9fO8HpmA2r7j522PzneGupueRoOomurL2P
-ICEZ58EeMZ018LOiQ89fcy4Pj3uoCqHcwNRpehiyzuJu1sqx3ks=
-=lisa
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzDAqQACgkQ3SOs138+
+s6H1qg//RWcDJBPuUXv7TZF/CL+BdbTsUBWjBbYxyO2uIWwCpgOB6IPSIbWWHP+D
+TMux4TUd0Jdra2AuWfOPQSJXhHlGxSSQWPyPvCX5ZMuMAb0khraFsCcmjcQzEtgi
+aUDm3kupODoKbuwV7bwJuuRjhlINM3o7ItB/Z3QQ6kelY8SCMqlkY2yAU2YXZi9Q
+t1wFSyP0SkovHHYkz1SMsqejraX91i6VT+3MN4sCrztSquD6QeLWZNfNfLET0Y6G
+zTin1D1JHpVaFPOn4WoNDTZUGFgSe6VzZePAuO22yj9uaFZo6bm1q5UJRPk+YWM0
+CgsfibQoGLhRxQJhZIREXisQDwJkcuM5Q//PkZlA7OFd3+0gqnzGvHZ4wGnUlcAS
+kAlL951+YrRkyhVyalm2X9q7zZ5Az+PdT5OcYQx6fDquk9kHCCYOZbyghU2U7EL6
+Fr+Y2wk1praI7Xu29JhHbS4/i5t15MlNeZ2b2csqtG+5Z0QOfRWjOswqnfqNVgqG
+yM5ZBsrQk+43rWwXmgiDv89HHn9QXi4lyJF1cbbLToqLlt0FXR4MYGMwGycw0F5z
+3d4/0aVXAtn5wsqWIanSmtqyGncRz5bKkx0EeYHLTHEIlY38+LdXWVqgXjAUNiGn
+EDrLWVWJn/eG0ITIw9aO3Cm6CquLxktdwV/4mTIHYkCc+kunUcE=
+=ibra
 -----END PGP SIGNATURE-----
 
---p4qYPpj5QlsIQJ0K--
+--B4IIlcmfBL/1gGOG--
