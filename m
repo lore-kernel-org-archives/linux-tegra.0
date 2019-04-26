@@ -1,165 +1,372 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] dt-binding: Tegra194 pinctrl support
-Date: Fri, 26 Apr 2019 15:07:48 +0200
-Message-ID: <20190426130748.GC16228@ulmo>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add Tegra194 pinmux driver
+Date: Fri, 26 Apr 2019 15:16:40 +0200
+Message-ID: <20190426131640.GD16228@ulmo>
 References: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
+ <1556247378-3335-2-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
+        protocol="application/pgp-signature"; boundary="AbQceqfdZEv+FvjW"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
+In-Reply-To: <1556247378-3335-2-git-send-email-kyarlagadda@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 Cc: linus.walleij@linaro.org, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com, vidyas@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---B4IIlcmfBL/1gGOG
+--AbQceqfdZEv+FvjW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 26, 2019 at 08:26:17AM +0530, Krishna Yarlagadda wrote:
-> Add new compatible string and other fields used in pinctrl
-> driver for Tegra194 in nvidia,tegra210-pinmux.txt
+On Fri, Apr 26, 2019 at 08:26:18AM +0530, Krishna Yarlagadda wrote:
+> Tegra194 has PCIE L5 rst and clkreq pins which need to be controlled
+> dynamically at runtime. This driver supports change pinmux for these
+> pins. Pinmux for rest of the pins is set statically by bootloader and
+> will not be changed by this driver
 >=20
 > Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
 > ---
->  .../bindings/pinctrl/nvidia,tegra210-pinmux.txt    | 43 ++++++++++++++++=
-+++---
->  1 file changed, 38 insertions(+), 5 deletions(-)
+>  drivers/pinctrl/tegra/Kconfig            |   4 +
+>  drivers/pinctrl/tegra/Makefile           |   1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra.c    |   8 +-
+>  drivers/pinctrl/tegra/pinctrl-tegra.h    |   8 +-
+>  drivers/pinctrl/tegra/pinctrl-tegra194.c | 175 +++++++++++++++++++++++++=
+++++++
+>  drivers/soc/tegra/Kconfig                |   1 +
+>  6 files changed, 189 insertions(+), 8 deletions(-)
+>  create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra194.c
 >=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pi=
-nmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux=
-=2Etxt
-> index 85f2114..c4e802d 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-> @@ -1,7 +1,7 @@
-> -NVIDIA Tegra210 pinmux controller
-> +NVIDIA Tegra210/194 pinmux controller
+> diff --git a/drivers/pinctrl/tegra/Kconfig b/drivers/pinctrl/tegra/Kconfig
+> index 24e20cc..6f79f1f 100644
+> --- a/drivers/pinctrl/tegra/Kconfig
+> +++ b/drivers/pinctrl/tegra/Kconfig
+> @@ -23,6 +23,10 @@ config PINCTRL_TEGRA210
+>  	bool
+>  	select PINCTRL_TEGRA
 > =20
->  Required properties:
-> -- compatible: "nvidia,tegra210-pinmux"
-> +- compatible: "nvidia,tegra210-pinmux" or "nvidia,tegra194-pinmux"
->  - reg: Should contain a list of base address and size pairs for:
->    - first entry: The APB_MISC_GP_*_PADCTRL registers (pad control)
->    - second entry: The PINMUX_AUX_* registers (pinmux)
-> @@ -83,6 +83,10 @@ Valid values for pin and group names (nvidia,pin) are:
->      These correspond to Tegra PINMUX_AUX_* (pinmux) registers. Any prope=
-rty
->      that exists in those registers may be set for the following pin name=
-s.
-> =20
-> +  Tegra194:
-> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+> +config PINCTRL_TEGRA194
+> +	bool
+> +	select PINCTRL_TEGRA
 > +
-> +  Tegra210:
->      In Tegra210, many pins also have a dedicated APB_MISC_GP_*_PADCTRL
->      register. Where that is true, and property that exists in that regis=
-ter
->      may also be set on the following pin names.
-> @@ -127,12 +131,15 @@ Valid values for pin and group names (nvidia,pin) a=
-re:
->      registers. Note that where one of these registers controls a single =
-pin
->      for which a PINMUX_AUX_* exists, see the list above for the pin name=
- to
->      use when configuring the pinmux.
-> -
-> +  Tegra210:
->      pa6, pcc7, pe6, pe7, ph6, pk0, pk1, pk2, pk3, pk4, pk5, pk6, pk7, pl=
-0, pl1,
->      pz0, pz1, pz2, pz3, pz4, pz5, sdmmc1, sdmmc2, sdmmc3, sdmmc4
-> +  Tegra194:
-> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+>  config PINCTRL_TEGRA_XUSB
+>  	def_bool y if ARCH_TEGRA
+>  	select GENERIC_PHY
+> diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makef=
+ile
+> index bbcb043..ead4e10 100644
+> --- a/drivers/pinctrl/tegra/Makefile
+> +++ b/drivers/pinctrl/tegra/Makefile
+> @@ -5,4 +5,5 @@ obj-$(CONFIG_PINCTRL_TEGRA30)		+=3D pinctrl-tegra30.o
+>  obj-$(CONFIG_PINCTRL_TEGRA114)		+=3D pinctrl-tegra114.o
+>  obj-$(CONFIG_PINCTRL_TEGRA124)		+=3D pinctrl-tegra124.o
+>  obj-$(CONFIG_PINCTRL_TEGRA210)		+=3D pinctrl-tegra210.o
+> +obj-$(CONFIG_PINCTRL_TEGRA194)		+=3D pinctrl-tegra194.o
+>  obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+=3D pinctrl-tegra-xusb.o
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
+a/pinctrl-tegra.c
+> index a5008c0..76e88c4 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -292,7 +292,7 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
+>  			     const struct tegra_pingroup *g,
+>  			     enum tegra_pinconf_param param,
+>  			     bool report_err,
+> -			     s8 *bank, s16 *reg, s8 *bit, s8 *width)
+> +			     s8 *bank, s32 *reg, s8 *bit, s8 *width)
+>  {
+>  	switch (param) {
+>  	case TEGRA_PINCONF_PARAM_PULL:
+> @@ -451,7 +451,7 @@ static int tegra_pinconf_group_get(struct pinctrl_dev=
+ *pctldev,
+>  	const struct tegra_pingroup *g;
+>  	int ret;
+>  	s8 bank, bit, width;
+> -	s16 reg;
+> +	s32 reg;
+>  	u32 val, mask;
 > =20
->  Valid values for nvidia,functions are:
+>  	g =3D &pmx->soc->groups[group];
+> @@ -480,7 +480,7 @@ static int tegra_pinconf_group_set(struct pinctrl_dev=
+ *pctldev,
+>  	const struct tegra_pingroup *g;
+>  	int ret, i;
+>  	s8 bank, bit, width;
+> -	s16 reg;
+> +	s32 reg;
+>  	u32 val, mask;
 > =20
-> +  Tegra210:
->      aud, bcl, blink, ccla, cec, cldvfs, clk, core, cpu, displaya, displa=
-yb,
->      dmic1, dmic2, dmic3, dp, dtv, extperiph3, i2c1, i2c2, i2c3, i2cpmu, =
-i2cvi,
->      i2s1, i2s2, i2s3, i2s4a, i2s4b, i2s5a, i2s5b, iqc0, iqc1, jtag, pe, =
-pe0,
-> @@ -140,9 +147,12 @@ Valid values for nvidia,functions are:
->      sdmmc1, sdmmc3, shutdown, soc, sor0, sor1, spdif, spi1, spi2, spi3, =
-spi4,
->      sys, touch, uart, uarta, uartb, uartc, uartd, usb, vgp1, vgp2, vgp3,=
- vgp4,
->      vgp5, vgp6, vimclk, vimclk2
-> +  Tegra194:
-> +    pe5
+>  	g =3D &pmx->soc->groups[group];
+> @@ -548,7 +548,7 @@ static void tegra_pinconf_group_dbg_show(struct pinct=
+rl_dev *pctldev,
+>  	const struct tegra_pingroup *g;
+>  	int i, ret;
+>  	s8 bank, bit, width;
+> -	s16 reg;
+> +	s32 reg;
+>  	u32 val;
 > =20
-> -Example:
-> +Examples:
-> =20
-> +  Tegra210:
->  	pinmux: pinmux@70000800 {
->  		compatible =3D "nvidia,tegra210-pinmux";
->  		reg =3D <0x0 0x700008d4 0x0 0x2a8>, /* Pad control registers */
-> @@ -163,4 +173,27 @@ Example:
->  			};
->  		};
->  	};
-> -};
+>  	g =3D &pmx->soc->groups[group];
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegr=
+a/pinctrl-tegra.h
+> index 44c7194..82cd947 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+> @@ -143,10 +143,10 @@ struct tegra_pingroup {
+>  	const unsigned *pins;
+>  	u8 npins;
+>  	u8 funcs[4];
+> -	s16 mux_reg;
+> -	s16 pupd_reg;
+> -	s16 tri_reg;
+> -	s16 drv_reg;
+> +	s32 mux_reg;
+> +	s32 pupd_reg;
+> +	s32 tri_reg;
+> +	s32 drv_reg;
+>  	u32 mux_bank:2;
+>  	u32 pupd_bank:2;
+>  	u32 tri_bank:2;
+
+I think the above should go into a separate, preparatory patch that
+explains in the commit message why this change is necessary.
+
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra194.c b/drivers/pinctrl/t=
+egra/pinctrl-tegra194.c
+> new file mode 100644
+> index 0000000..9172a8c
+> --- /dev/null
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra194.c
+> @@ -0,0 +1,175 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Pinctrl data for the NVIDIA Tegra210 pinmux
+
+You probably meant to say Tegra194 here.
+
+> + *
+> + * Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify =
+it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
+ for
+> + * more details.
+> + */
 > +
-> +  Tegra194:
-> +		tegra_pinctrl: pinmux: pinmux@2430000 {
-> +			compatible =3D "nvidia,tegra194-pinmux";
-> +			reg =3D <0x2430000 0x17000
-> +			       0xc300000 0x4000>;
-> +			#gpio-range-cells =3D <2>;
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+> +
+> +#include "pinctrl-tegra.h"
+> +
+> +#define _GPIO(offset)			(offset)
 
-This doesn't appear to be documented and we don't use this on any other
-chip.
+This is rather pointless.
 
-> +			pex_rst_c5_out_state: pex_rst_c5_out {
-> +				pex_rst {
-> +					nvidia,pins =3D "pex_l5_rst_n_pgg1";
-> +					nvidia,schmitt =3D <TEGRA_PIN_DISABLE>;
-> +					nvidia,lpdr =3D <TEGRA_PIN_ENABLE>;
-> +					nvidia,enable-input =3D <TEGRA_PIN_DISABLE>;
-> +					nvidia,io-high-voltage =3D <TEGRA_PIN_ENABLE>;
-> +					nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
-> +					nvidia,pull =3D <TEGRA_PIN_PULL_NONE>;
+> +#define NUM_GPIOS			(TEGRA_PIN_PEX_L5_RST_N_PGG1 + 1)
 
-Should the above not set a nvidia,function property for the pex_rst pin?
+Perhaps make this part of the enum pin_id enum below so that it doesn't
+look out of place?
+
+> +
+> +/* Define unique ID for each pins */
+> +enum pin_id {
+> +	TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0 =3D _GPIO(256),
+> +	TEGRA_PIN_PEX_L5_RST_N_PGG1 =3D _GPIO(257),
+> +};
+> +
+> +/* Table for pin descriptor */
+> +static const struct pinctrl_pin_desc tegra194_pins[] =3D {
+> +	PINCTRL_PIN(TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0,
+> +		    "TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0"),
+> +	PINCTRL_PIN(TEGRA_PIN_PEX_L5_RST_N_PGG1,
+> +		    "TEGRA_PIN_PEX_L5_RST_N_PGG1"),
+> +};
+> +
+> +static const unsigned int pex_l5_clkreq_n_pgg0_pins[] =3D {
+> +	TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0,
+> +};
+> +
+> +static const unsigned int pex_l5_rst_n_pgg1_pins[] =3D {
+> +	TEGRA_PIN_PEX_L5_RST_N_PGG1,
+> +};
+> +
+> +/* Define unique ID for each function */
+> +enum tegra_mux_dt {
+> +	TEGRA_MUX_RSVD0,
+> +	TEGRA_MUX_RSVD1,
+> +	TEGRA_MUX_RSVD2,
+> +	TEGRA_MUX_RSVD3,
+> +	TEGRA_MUX_PE5,
+> +};
+> +
+> +/* Make list of each function name */
+> +#define TEGRA_PIN_FUNCTION(lid)			\
+> +	{					\
+> +		.name =3D #lid,			\
+> +	}
+> +static struct tegra_function tegra194_functions[] =3D {
+> +	TEGRA_PIN_FUNCTION(rsvd0),
+> +	TEGRA_PIN_FUNCTION(rsvd1),
+> +	TEGRA_PIN_FUNCTION(rsvd2),
+> +	TEGRA_PIN_FUNCTION(rsvd3),
+> +	TEGRA_PIN_FUNCTION(pe5),
+> +};
+> +
+> +#define PINGROUP_REG_Y(r) ((r))
+> +#define DRV_PINGROUP_Y(r) ((r))
+
+Again, why do we need this?
+
+> +
+> +#define DRV_PINGROUP_ENTRY_Y(r, drvdn_b, drvdn_w, drvup_b,	\
+> +			     drvup_w, slwr_b, slwr_w, slwf_b,	\
+> +			     slwf_w, bank)			\
+> +		.drv_reg =3D DRV_PINGROUP_Y(r),			\
+> +		.drv_bank =3D bank,				\
+> +		.drvdn_bit =3D drvdn_b,				\
+> +		.drvdn_width =3D drvdn_w,				\
+> +		.drvup_bit =3D drvup_b,				\
+> +		.drvup_width =3D drvup_w,				\
+> +		.slwr_bit =3D slwr_b,				\
+> +		.slwr_width =3D slwr_w,				\
+> +		.slwf_bit =3D slwf_b,				\
+> +		.slwf_width =3D slwf_w
+> +
+> +#define PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_lpbk, e_input,	\
+> +			     e_od, schmitt_b, drvtype)		\
+> +		.mux_reg =3D PINGROUP_REG_Y(r),			\
+> +		.lpmd_bit =3D -1,					\
+> +		.lock_bit =3D -1,					\
+> +		.hsm_bit =3D -1,					\
+> +		.parked_bit =3D -1,				\
+> +		.mux_bank =3D bank,				\
+> +		.mux_bit =3D 0,					\
+> +		.pupd_reg =3D PINGROUP_REG_##pupd(r),		\
+> +		.pupd_bank =3D bank,				\
+> +		.pupd_bit =3D 2,					\
+> +		.tri_reg =3D PINGROUP_REG_Y(r),			\
+> +		.tri_bank =3D bank,				\
+> +		.tri_bit =3D 4,					\
+> +		.einput_bit =3D e_input,				\
+> +		.odrain_bit =3D e_od,				\
+> +		.schmitt_bit =3D schmitt_b,			\
+> +		.drvtype_bit =3D 13,				\
+> +		.drv_reg =3D -1
+> +
+> +#define drive_pex_l5_clkreq_n_pgg0				\
+> +	DRV_PINGROUP_ENTRY_Y(0x14004, 12, 5, 20, 5, -1, -1, -1, -1, 0)
+> +#define drive_pex_l5_rst_n_pgg1					\
+> +	DRV_PINGROUP_ENTRY_Y(0x1400c, 12, 5, 20, 5, -1, -1, -1, -1, 0)
+> +
+> +#define PINGROUP(pg_name, f0, f1, f2, f3, r, bank, pupd, e_lpbk,	\
+> +		 e_input, e_lpdr, e_od, schmitt_b, drvtype, io_rail)	\
+> +	{							\
+> +		.name =3D #pg_name,				\
+> +		.pins =3D pg_name##_pins,				\
+> +		.npins =3D ARRAY_SIZE(pg_name##_pins),		\
+> +			.funcs =3D {				\
+> +				TEGRA_MUX_##f0,			\
+> +				TEGRA_MUX_##f1,			\
+> +				TEGRA_MUX_##f2,			\
+> +				TEGRA_MUX_##f3,			\
+> +			},					\
+> +		PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_lpbk,	\
+> +				     e_input, e_od,		\
+> +				     schmitt_b, drvtype),	\
+> +		drive_##pg_name,				\
+> +	}
+> +
+> +static const struct tegra_pingroup tegra194_groups[] =3D {
+> +	PINGROUP(pex_l5_clkreq_n_pgg0, PE5, RSVD1, RSVD2, RSVD3, 0x14000, 0,
+> +		 Y, -1, 6, 8, 11, 12, N, "vddio_pex_ctl_2"),
+> +	PINGROUP(pex_l5_rst_n_pgg1, PE5, RSVD1, RSVD2, RSVD3, 0x14008, 0,
+> +		 Y, -1, 6, 8, 11, 12, N, "vddio_pex_ctl_2"),
+> +};
+> +
+> +static const struct tegra_pinctrl_soc_data tegra194_pinctrl =3D {
+> +	.ngpios =3D NUM_GPIOS,
+> +	.pins =3D tegra194_pins,
+> +	.npins =3D ARRAY_SIZE(tegra194_pins),
+> +	.functions =3D tegra194_functions,
+> +	.nfunctions =3D ARRAY_SIZE(tegra194_functions),
+> +	.groups =3D tegra194_groups,
+> +	.ngroups =3D ARRAY_SIZE(tegra194_groups),
+> +	.hsm_in_mux =3D true,
+> +	.schmitt_in_mux =3D true,
+> +	.drvtype_in_mux =3D true,
+> +};
+> +
+> +static int tegra194_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	return tegra_pinctrl_probe(pdev, &tegra194_pinctrl);
+> +}
+> +
+> +static const struct of_device_id tegra194_pinctrl_of_match[] =3D {
+> +	{ .compatible =3D "nvidia,tegra194-pinmux", },
+> +	{ },
+> +};
+> +
+> +static struct platform_driver tegra194_pinctrl_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "tegra194-pinctrl",
+> +		.of_match_table =3D tegra194_pinctrl_of_match,
+> +	},
+> +	.probe =3D tegra194_pinctrl_probe,
+> +};
+> +
+> +static int __init tegra194_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&tegra194_pinctrl_driver);
+> +}
+> +arch_initcall(tegra194_pinctrl_init);
+> diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+> index a0b0344..b6d3a2e 100644
+> --- a/drivers/soc/tegra/Kconfig
+> +++ b/drivers/soc/tegra/Kconfig
+> @@ -107,6 +107,7 @@ config ARCH_TEGRA_186_SOC
+> =20
+>  config ARCH_TEGRA_194_SOC
+>  	bool "NVIDIA Tegra194 SoC"
+> +	select PINCTRL_TEGRA194
+>  	select MAILBOX
+>  	select TEGRA_BPMP
+>  	select TEGRA_HSP_MBOX
+
+This should be a separate patch. Also, make sure the select entries are
+sorted alphabetically.
 
 Thierry
 
-> +				};
-> +			};
-> +		};
-> +		pinmuxtest@0 {
-> +			compatible =3D "nvidia,tegra194-pinmux-test";
-> +			pinctrl-names =3D "pex_rst";
-> +			pinctrl-0 =3D <&pex_rst_c5_out_state>;
-> +		};
-> --=20
-> 2.7.4
->=20
-
---B4IIlcmfBL/1gGOG
+--AbQceqfdZEv+FvjW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzDAqQACgkQ3SOs138+
-s6H1qg//RWcDJBPuUXv7TZF/CL+BdbTsUBWjBbYxyO2uIWwCpgOB6IPSIbWWHP+D
-TMux4TUd0Jdra2AuWfOPQSJXhHlGxSSQWPyPvCX5ZMuMAb0khraFsCcmjcQzEtgi
-aUDm3kupODoKbuwV7bwJuuRjhlINM3o7ItB/Z3QQ6kelY8SCMqlkY2yAU2YXZi9Q
-t1wFSyP0SkovHHYkz1SMsqejraX91i6VT+3MN4sCrztSquD6QeLWZNfNfLET0Y6G
-zTin1D1JHpVaFPOn4WoNDTZUGFgSe6VzZePAuO22yj9uaFZo6bm1q5UJRPk+YWM0
-CgsfibQoGLhRxQJhZIREXisQDwJkcuM5Q//PkZlA7OFd3+0gqnzGvHZ4wGnUlcAS
-kAlL951+YrRkyhVyalm2X9q7zZ5Az+PdT5OcYQx6fDquk9kHCCYOZbyghU2U7EL6
-Fr+Y2wk1praI7Xu29JhHbS4/i5t15MlNeZ2b2csqtG+5Z0QOfRWjOswqnfqNVgqG
-yM5ZBsrQk+43rWwXmgiDv89HHn9QXi4lyJF1cbbLToqLlt0FXR4MYGMwGycw0F5z
-3d4/0aVXAtn5wsqWIanSmtqyGncRz5bKkx0EeYHLTHEIlY38+LdXWVqgXjAUNiGn
-EDrLWVWJn/eG0ITIw9aO3Cm6CquLxktdwV/4mTIHYkCc+kunUcE=
-=ibra
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzDBLgACgkQ3SOs138+
+s6FVcQ/+KxCHjpFUlol7k+sjpu8Wylck0TYNszvr9kfu8OToUi3DEKl1f1zqH6Fy
+kK463e76VLkgzXesvaZ+sHCYuETuEHIIFfdIiqxSaaGLUe/N5OC94RJccLlS4hjZ
+Dai8w+6e2r5zJSg6qoOpZD2oZDBGg33Voq0rqV3d4BNCGC83diVYiXcw+uGN9S4J
+Fotjl1nXG1pSxO0pAduiM2LxTMCEQCZzW5vBCxUQt3W7kId3FAIdTxFWmV2xcR1E
+9KWBYB8ODxYSY1vffFoYapF0fbtMZ1b5DMz5jL/Jymgm559rAgDc9pODOfPLjK8J
+eZaSR8gjVZKNIqpd4AyhXK/S0VXOgEr9DAINH2boZFAsnTufm7RAfpanll381rTI
+gW63/DZ7jg0PzhE0fVxqCxFZIWO/c72KajYGpsanb71WdHJTS+zjeAuPb5FqT/WI
+d+BCXv/nuz8fgdNYFnml1Tw4P1NXpBzAiHp8woOtDbYxQKOdFcADfbMVnOoQMcwJ
+asRK61K0jfy44+FCr/z495MtYQ7izZO3twNEn0hDWVZH00fRpqnY+zUeAVHJ/vxG
+bs7IC9EY8EPCzre8fcmeLjCAtTwYzmTzXN8DWSZUhAMKK9f39qBIWk+cw+ok8SsM
+r0ANt9Yq9ORqRtD2sXFaBUVcZ7hcMcvyz46r1C5euaBLLXpwfRI=
+=ifXE
 -----END PGP SIGNATURE-----
 
---B4IIlcmfBL/1gGOG--
+--AbQceqfdZEv+FvjW--
