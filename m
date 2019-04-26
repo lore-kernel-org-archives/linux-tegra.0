@@ -1,117 +1,167 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] dmaengine: tegra: Use relaxed versions of readl/writel
-Date: Fri, 26 Apr 2019 16:03:08 +0300
-Message-ID: <d6d1e420-6707-f446-a531-4b38e4e82c19@gmail.com>
-References: <20190424231708.21219-1-digetx@gmail.com>
- <d789f1bc-44d1-abf6-a046-7cf835416e8f@nvidia.com>
- <4a315b63-bc71-3c3e-f1ae-8638bcf4033d@gmail.com>
- <bff59709-426b-32d2-08eb-d8f51cd7d5c1@nvidia.com>
- <49392c02-6dcc-9a95-0035-27c4c0d14820@gmail.com>
- <242863b9-b75e-4b37-178a-5aa03e56d3e1@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] dt-binding: Tegra194 pinctrl support
+Date: Fri, 26 Apr 2019 15:05:37 +0200
+Message-ID: <20190426130537.GB16228@ulmo>
+References: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <242863b9-b75e-4b37-178a-5aa03e56d3e1@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc: linus.walleij@linaro.org, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com, vidyas@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-26.04.2019 15:42, Dmitry Osipenko пишет:
-> 26.04.2019 15:18, Dmitry Osipenko пишет:
->> 26.04.2019 14:13, Jon Hunter пишет:
->>>
->>> On 26/04/2019 11:45, Dmitry Osipenko wrote:
->>>> 26.04.2019 12:52, Jon Hunter пишет:
->>>>>
->>>>> On 25/04/2019 00:17, Dmitry Osipenko wrote:
->>>>>> The readl/writel functions are inserting memory barrier in order to
->>>>>> ensure that memory stores are completed. On Tegra20 and Tegra30 this
->>>>>> results in L2 cache syncing which isn't a cheapest operation. The
->>>>>> tegra20-apb-dma driver doesn't need to synchronize generic memory
->>>>>> accesses, hence use the relaxed versions of the functions.
->>>>>
->>>>> Do you mean device-io accesses here as this is not generic memory?
->>>>
->>>> Yes. The IOMEM accesses within are always ordered and uncached, while
->>>> generic memory accesses are out-of-order and cached.
->>>>
->>>>> Although there may not be any issues with this change, I think I need a
->>>>> bit more convincing that we should do this given that we have had it
->>>>> this way for sometime and I would not like to see us introduce any
->>>>> regressions as this point without being 100% certain we would not.
->>>>> Ideally, if I had some good extensive tests I could run to hammer the
->>>>> DMA for all configurations with different combinations of channels
->>>>> running simultaneously then we could test this, but right now I don't :-(
->>>>>
->>>>> Have you ...
->>>>> 1. Tested both cyclic and scatter-gather transfers?
->>>>> 2. Stress tested simultaneous transfers with various different
->>>>>    configurations?
->>>>> 3. Quantified the actual performance benefit of this change so we can
->>>>>    understand how much of a performance boost this offers?
->>>>
->>>> Actually I found a case where this change causes a problem, I'm seeing
->>>> I2C transfer timeout for touchscreen and it breaks the touch input.
->>>> Indeed, I haven't tested this patch very well.
->>>>
->>>> And the fix is this:
->>>>
->>>> @@ -1592,6 +1592,8 @@ static int tegra_dma_runtime_suspend(struct device
->>>> *dev)
->>>>  						  TEGRA_APBDMA_CHAN_WCOUNT);
->>>>  	}
->>>>
->>>> +	dsb();
->>>> +
->>>>  	clk_disable_unprepare(tdma->dma_clk);
->>>>
->>>>  	return 0;
->>>>
->>>>
->>>> Apparently the problem is that CLK/DMA (PPSB/APB) accesses are
->>>> incoherent and CPU disables clock before writes are reaching DMA controller.
->>>>
->>>> I'd say that cyclic and scatter-gather transfers are now tested. I also
->>>> made some more testing of simultaneous transfers.
->>>>
->>>> Quantifying performance probably won't be easy to make as the DMA
->>>> read/writes are not on any kind of code's hot-path.
->>>
->>> So why make the change?
->>
->> For consistency.
->>
->>>> Jon, are you still insisting about to drop this patch or you will be
->>>> fine with the v2 that will have the dsb() in place?
->>>
->>> If we can't quantify the performance gain, then it is difficult to
->>> justify the change. I would also be concerned if that is the only place
->>> we need an explicit dsb.
->>
->> Maybe it won't hurt to add dsb to the ISR as well. But okay, let's drop
->> this patch for now.
->>
-> 
-> Jon, it occurred to me that there still should be a problem with the
-> writel() ordering in the driver because writel() ensures that memory
-> stores are completed *before* the write occurs and hence translates into
-> iowmb() + writel_relaxed() [0]. Thus the last write will always happen
-> asynchronously in regards to clk accesses.
-> 
-> [0]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm/include/asm/io.h#n311
-> 
 
-Also please note that iowmb() translates into wmb() if
-CONFIG_ARM_DMA_MEM_BUFFERABLE=y and sometime ago I was profiling host1x
-driver job submission performance and have seen cases where wmb() could
-take up to 1ms on T20 due to L2 syncing if there are outstanding memory
-writes in the cache (or even more, I don't remember exactly already how
-bad it was..).
+--p4qYPpj5QlsIQJ0K
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Altogether, I think the usage of readl/writel in pretty much all of
-Tegra drivers is plainly wrong and explicit dsb() shall be used in
-places where hardware synchronization is really needed.
+On Fri, Apr 26, 2019 at 08:26:17AM +0530, Krishna Yarlagadda wrote:
+> Add new compatible string and other fields used in pinctrl
+> driver for Tegra194 in nvidia,tegra210-pinmux.txt
+>=20
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  .../bindings/pinctrl/nvidia,tegra210-pinmux.txt    | 43 ++++++++++++++++=
++++---
+>  1 file changed, 38 insertions(+), 5 deletions(-)
+
+I think it'd make sense to create an nvidia,tegra194-pinmux.txt and just
+duplicate the generic parts in this file. The bulk of the document is
+about the specifics anyway and having a separate file makes it a little
+cleaner and easier to read.
+
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pi=
+nmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux=
+=2Etxt
+> index 85f2114..c4e802d 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
+> @@ -1,7 +1,7 @@
+> -NVIDIA Tegra210 pinmux controller
+> +NVIDIA Tegra210/194 pinmux controller
+> =20
+>  Required properties:
+> -- compatible: "nvidia,tegra210-pinmux"
+> +- compatible: "nvidia,tegra210-pinmux" or "nvidia,tegra194-pinmux"
+>  - reg: Should contain a list of base address and size pairs for:
+>    - first entry: The APB_MISC_GP_*_PADCTRL registers (pad control)
+>    - second entry: The PINMUX_AUX_* registers (pinmux)
+> @@ -83,6 +83,10 @@ Valid values for pin and group names (nvidia,pin) are:
+>      These correspond to Tegra PINMUX_AUX_* (pinmux) registers. Any prope=
+rty
+>      that exists in those registers may be set for the following pin name=
+s.
+> =20
+> +  Tegra194:
+> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+> +
+> +  Tegra210:
+>      In Tegra210, many pins also have a dedicated APB_MISC_GP_*_PADCTRL
+>      register. Where that is true, and property that exists in that regis=
+ter
+>      may also be set on the following pin names.
+> @@ -127,12 +131,15 @@ Valid values for pin and group names (nvidia,pin) a=
+re:
+>      registers. Note that where one of these registers controls a single =
+pin
+>      for which a PINMUX_AUX_* exists, see the list above for the pin name=
+ to
+>      use when configuring the pinmux.
+> -
+> +  Tegra210:
+>      pa6, pcc7, pe6, pe7, ph6, pk0, pk1, pk2, pk3, pk4, pk5, pk6, pk7, pl=
+0, pl1,
+>      pz0, pz1, pz2, pz3, pz4, pz5, sdmmc1, sdmmc2, sdmmc3, sdmmc4
+> +  Tegra194:
+> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+> =20
+>  Valid values for nvidia,functions are:
+> =20
+> +  Tegra210:
+>      aud, bcl, blink, ccla, cec, cldvfs, clk, core, cpu, displaya, displa=
+yb,
+>      dmic1, dmic2, dmic3, dp, dtv, extperiph3, i2c1, i2c2, i2c3, i2cpmu, =
+i2cvi,
+>      i2s1, i2s2, i2s3, i2s4a, i2s4b, i2s5a, i2s5b, iqc0, iqc1, jtag, pe, =
+pe0,
+> @@ -140,9 +147,12 @@ Valid values for nvidia,functions are:
+>      sdmmc1, sdmmc3, shutdown, soc, sor0, sor1, spdif, spi1, spi2, spi3, =
+spi4,
+>      sys, touch, uart, uarta, uartb, uartc, uartd, usb, vgp1, vgp2, vgp3,=
+ vgp4,
+>      vgp5, vgp6, vimclk, vimclk2
+> +  Tegra194:
+> +    pe5
+> =20
+> -Example:
+> +Examples:
+> =20
+> +  Tegra210:
+>  	pinmux: pinmux@70000800 {
+>  		compatible =3D "nvidia,tegra210-pinmux";
+>  		reg =3D <0x0 0x700008d4 0x0 0x2a8>, /* Pad control registers */
+> @@ -163,4 +173,27 @@ Example:
+>  			};
+>  		};
+>  	};
+> -};
+> +
+> +  Tegra194:
+> +		tegra_pinctrl: pinmux: pinmux@2430000 {
+> +			compatible =3D "nvidia,tegra194-pinmux";
+> +			reg =3D <0x2430000 0x17000
+> +			       0xc300000 0x4000>;
+> +			#gpio-range-cells =3D <2>;
+> +			pex_rst_c5_out_state: pex_rst_c5_out {
+> +				pex_rst {
+> +					nvidia,pins =3D "pex_l5_rst_n_pgg1";
+> +					nvidia,schmitt =3D <TEGRA_PIN_DISABLE>;
+> +					nvidia,lpdr =3D <TEGRA_PIN_ENABLE>;
+> +					nvidia,enable-input =3D <TEGRA_PIN_DISABLE>;
+> +					nvidia,io-high-voltage =3D <TEGRA_PIN_ENABLE>;
+> +					nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> +					nvidia,pull =3D <TEGRA_PIN_PULL_NONE>;
+> +				};
+> +			};
+> +		};
+> +		pinmuxtest@0 {
+> +			compatible =3D "nvidia,tegra194-pinmux-test";
+> +			pinctrl-names =3D "pex_rst";
+> +			pinctrl-0 =3D <&pex_rst_c5_out_state>;
+> +		};
+
+It's not clean to me what that pinmuxtest@0 node is there for. That
+compatible string is not defined anywhere and nothing references the
+state.
+
+Wouldn't it make more sense to have an example similar to what we have
+for Tegra210?
+
+Thierry
+
+--p4qYPpj5QlsIQJ0K
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzDAg8ACgkQ3SOs138+
+s6EsDRAAqOpwAotzi5SjF379qvUwX9oWkVDrzDCCq7Tkj+x29JUKRWc+OJiXOCaF
+L0WeZTL33MV1a2Y4nt7W9V3/oZ5RgPWlTc/FmHSURe0FzObqT9tzj1Gy49nNBqgw
+voJHEUzrqf/sCMJMFWDK81sTc1CXcrF50xu9I/Je3nX60Zxc4f9GKDlXycXW7dPh
+E/geagK8UDHMm2LzQmewCm0tPTBxbHUmMAfkMl70rYYHLpLXoFETskxry6IC4udg
+f0gZOM0ZLqDQRAhHXP/gD2APJDw9WHhoBbaze3TDbeCGredQXT9R+zQds6uvQnJZ
+yxFx0ouaevNmCCTVgXXjlHcPwfGD26rbfjupsxnkAsSUdJKAYLW1sOVjGKVtBhiO
+56RaaZhHZYb9SIdNqia4uExz4YkdOO4wDMm4vjIQmIvySiqXoNyPal+AeiAHOnWm
+4KHR4jviGF7T/tMtYYa37DF9s/YgxXfJTBqzZb+Wavwdq10Yc6UZvFkMDV4cZKCu
+0PNaAuxzYgJwfSWNMRDr5BW05UxQE6SkmdSVD2NZxJ2rqZmcVHdF76DjwXCu0SI0
+noX0hV/OJWWPwTaimorwqTa+fswcAz9fO8HpmA2r7j522PzneGupueRoOomurL2P
+ICEZ58EeMZ018LOiQ89fcy4Pj3uoCqHcwNRpehiyzuJu1sqx3ks=
+=lisa
+-----END PGP SIGNATURE-----
+
+--p4qYPpj5QlsIQJ0K--
