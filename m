@@ -1,216 +1,310 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 1/4] clk: tegra20/30: Add custom EMC clock
- implementation
-Date: Fri, 26 Apr 2019 05:22:45 +0300
-Message-ID: <f81bdfb0-40d6-f9fc-44da-618551963387@gmail.com>
-References: <20190414202009.31268-1-digetx@gmail.com>
- <20190414202009.31268-2-digetx@gmail.com>
- <155621927685.15276.16453873579880842057@swboyd.mtv.corp.google.com>
- <2b4f56cd-caf9-e6b5-6344-a045e08a9c91@gmail.com>
- <155623110849.15276.13181079281286430446@swboyd.mtv.corp.google.com>
- <1497cbbe-9748-87f1-2edc-daa54dbf6360@gmail.com>
- <155623927513.15276.3011897763001027401@swboyd.mtv.corp.google.com>
+From: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [PATCH 2/2] pinctrl: tegra: Add Tegra194 pinmux driver
+Date: Fri, 26 Apr 2019 08:26:18 +0530
+Message-ID: <1556247378-3335-2-git-send-email-kyarlagadda@nvidia.com>
+References: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <155623927513.15276.3011897763001027401@swboyd.mtv.corp.google.com>
-Content-Language: en-US
+In-Reply-To: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com, vidyas@nvidia.com, Krishna Yarlagadda <kyarlagadda@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-26.04.2019 3:41, Stephen Boyd пишет:
-> Quoting Dmitry Osipenko (2019-04-25 17:03:11)
->> 26.04.2019 1:25, Stephen Boyd пишет:
->>> Quoting Dmitry Osipenko (2019-04-25 14:42:19)
->>>> 25.04.2019 22:07, Stephen Boyd пишет:
->>>>> Quoting Dmitry Osipenko (2019-04-14 13:20:06)
->>>>>> +{
->>>>>> +       struct clk *clk = __clk_lookup("emc");
->>>>>> +       struct tegra_clk_emc *emc;
->>>>>> +       struct clk_hw *hw;
->>>>>> +
->>>>>> +       if (clk) {
->>>>>> +               hw = __clk_get_hw(clk);
->>>>>> +               emc = to_tegra_clk_emc(hw);
->>>>>> +
->>>>>> +               emc->round_cb = round_cb;
->>>>>> +               emc->arg_cb = arg_cb;
->>>>>> +       }
->>>>>> +}
->>>>>> +
->>>>>> +bool tegra20_clk_emc_driver_available(void)
->>>>>> +{
->>>>>> +       struct clk *clk = __clk_lookup("emc");
->>>>>
->>>>> Can we avoid using __clk_lookup()? Maybe by having the clk_hw pointer in
->>>>> this driver somehow?
->>>>
->>>> tegra20_clk_emc_driver_available() is a private function of the Tegra's
->>>> clk-core. Please note that prototype of this function is added to the
->>>> local "drivers/clk/tegra/clk.h" file.
->>>>
->>>> It is indeed possible to use clk pointer instead of __clk_lookup() and
->>>> I'll change that in v3 since it's causing some confusion.
->>>
->>> Can you use a clk_hw pointer directly? I'd like to see clk provider
->>> drivers only use struct clk_hw, and clk consumers only use struct clk.
->>
->> The clk_hw pointers are not stored directly anywhere in the Tegra's
->> clk-driver, it will be a quite massive change to make the clk driver's
->> code to use clk_hw pointers instead of struct clk.
-> 
-> Well they must be stored in the clk driver somewhere because that's how
-> the whole clk framework works.
+Tegra194 has PCIE L5 rst and clkreq pins which need to be controlled
+dynamically at runtime. This driver supports change pinmux for these
+pins. Pinmux for rest of the pins is set statically by bootloader and
+will not be changed by this driver
 
-AFAIK, Tegra stores them only in a form of clk->core->hw.
+Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
+---
+ drivers/pinctrl/tegra/Kconfig            |   4 +
+ drivers/pinctrl/tegra/Makefile           |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra.c    |   8 +-
+ drivers/pinctrl/tegra/pinctrl-tegra.h    |   8 +-
+ drivers/pinctrl/tegra/pinctrl-tegra194.c | 175 +++++++++++++++++++++++++++++++
+ drivers/soc/tegra/Kconfig                |   1 +
+ 6 files changed, 189 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra194.c
 
->>
->> I can add a global variable for the tegra_clk_emc pointer, but it is
->> not really necessary since there is __clk_get_hw.
->>
->> Could you please explain what's the problem with __clk_get_hw?
-> 
-> If it's a large invasive change then no worries. The thin that's wrong
-> with __clk_get_hw() is that it's using a struct clk, meaing that most
-> likely this is a clk consumer driver doing something weird.
-> 
->>
->>>>
->>>>>> +       struct tegra_clk_emc *emc; +       struct clk_hw *hw; + +
->>>>>> if (clk) { +               hw = __clk_get_hw(clk);
->>>>>
->>>>> This gets further to the point, we don't prefer to see drivers use
->>>>> __clk_get_hw() unless they absolutely need to. Maybe I don't
->>>>> understand the driver structure, but it seems like maybe the
->>>>> driver that's providing the callbacks could be the same driver
->>>>> that's registering these clks, and thus everything could be inside
->>>>> one file so that we don't have to pass around callbacks and clk_hw
->>>>> pointers? Commit text says "this is how it's been" but that's not
->>>>> a reason to keep doing it.
->>>>
->>>> Again, tegra20_clk_emc_driver_available() is for the Terga's
->>>> clk-core and not for the EMC (External Memory Controller) driver.
->>>> This function is used to determine whether EMC driver is ready to
->>>> handle clock-rate changes (PRE/POST rate-change notifications), clk
->>>> users can't get EMC clock until driver is ready (i.e. the "round"
->>>> callback is registered by the driver).
->>>
->>> Who are the other users of the EMC clk? Why does the EMC driver and
->>> the clk driver need to be in sync in such a way that requires us to
->>> check if some code in the EMC driver is ready before we can hand out
->>> clks from this clk provider? It looks like some tight coupling
->>> between these two pieces of code on the clk_get() path which is
->>> setting off alarms for me.
->>
->> The other EMC clk user is the devfreq driver. We don't want the
->> devfreq driver to get and use the EMC clock if memory timing can't be
->> programmed.
-> 
-> Alright, got it!
-> 
->> That is correct.
->>
->>> Is there some other entity that's needing to be deferred while the
->>> EMC and clk drivers tell each other that they're probed and ready so
->>> that these notifiers all work? Is that entity using clks directly
->>> instead of going through the EMC to change frequencies? If so, why
->>> can't we funnel that logic through EMC which then goes to the clk
->>> driver? That way it's clearly "thing that changes frequency" -> EMC
->>> -> clk controller call chain. It might even allow us to get rid of
->>> the rate notifiers?
->>>
->>
->> That entity is the devfreq driver which uses EMC clk directly right
->> now.
->>
->>         https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/devfreq/tegra-devfreq.c#n484
->>
->> I think we can funnel all the rate-changing logic through the EMC
->> drivers using the PM memory bandwidth QoS API, which is currently
->> unsupported by the drivers. And then indeed the rate notifiers won't
->> be needed.
-> 
-> Why does PM QoS matter here? I'm mostly asking for the chain to be
-> stacked and the devfreq driver to be the same as the EMC driver and then
-> have the EMC/devfreq combo driver use clk APIs to set rates and do
-> things before and after.
-
-It could be implemented either way, the result will be the same. The
-final decision probably will be made after wiring up the PM QoS support
-and doing some more testing. Also note that EMC and devfreq are actually
-separate hardware blocks that are integrated.
-
-So it all could look like this (current variant that in works):
-
- +-------+   PM QoS   +-+
- |DEVICE1+----------->+E|    CLK API
- +-------+   PM QoS   |M+<----------+   +-+
-             +------->+C|           +--->C|
-             |        +-+               |L|
- +-------+   |                       +-->K|
- |DEVICE2+---+    +-------+  CLK API |  +-+
- +-------+        |DEVFREQ+<---------+
-                  +-------+
-
-And like this:
-
-+-------+ PM QoS  +-+
-|DEVICE1+---------+ |
-+-------+         | |       +-+
-+-------+ PM QoS  |E|  CLK  |C|
-|DEVICE2+-------->+M+<----->+L|
-+-------+         |C|  API  |K|
-+-------+ PM QoS  | |       +++
-|DEVFREQ+---------+ |        |
-+---+---+         +-+        |
-    ^                        |
-    +------------------------+
-             CLK API
-
-Or like this:
-
-+-------+ PM QoS  +-+
-|DEVICE1+---------+ |
-+-------+         | |       +-+
-+-------+ PM QoS  |E|  CLK  |C|
-|DEVICE2+-------->+M+<----->+L|
-+-------+         |C|  API  |K|
-+-------+ PM QoS  | |       +-+
-|DEVFREQ+---------+ |
-+---+---+         +++
-    ^              |
-    +--------------+
-         PM QoS
-
-As you can see there will be other drivers that will demand memory
-bandwidth too. For example the display controller performs isochronous
-memory transfers and hence may require higher bandwidth than devfreq
-suggests because devfreq judges the bandwidth demand by taking average
-of bandwidth consumption over a period of time.
-
-The other thing is that drivers should be abstracted from the knowledge
-about the EMC because:
-
-  a) memory/device hardware units do not know about each other
-
-  b) it is common to express memory bandwidth in Mbs and not in a clock rate
-
-It's only the devfreq driver that is a bit special because devfreq
-hardware is actually integrated with the EMC.
-
->>
->>         https://github.com/grate-driver/linux/commit/2aa2390dd0cb8bca98e4cea6a29d7bda64a51bb3
->>
->> Actually it will be the next step to wire up the PM QoS support to all
->> relevant drivers that I'm going to implement after the current
->> CLK/EMC/DEVFREQ patch sets will land, it's just not realistic to do
->> everything in a single hop.
-> 
-> Ok. It doesn't make me feel great but I suppose if you don't disappear
-> after this code is merged things will work out in the end.
-> 
-
-Correct.
+diff --git a/drivers/pinctrl/tegra/Kconfig b/drivers/pinctrl/tegra/Kconfig
+index 24e20cc..6f79f1f 100644
+--- a/drivers/pinctrl/tegra/Kconfig
++++ b/drivers/pinctrl/tegra/Kconfig
+@@ -23,6 +23,10 @@ config PINCTRL_TEGRA210
+ 	bool
+ 	select PINCTRL_TEGRA
+ 
++config PINCTRL_TEGRA194
++	bool
++	select PINCTRL_TEGRA
++
+ config PINCTRL_TEGRA_XUSB
+ 	def_bool y if ARCH_TEGRA
+ 	select GENERIC_PHY
+diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
+index bbcb043..ead4e10 100644
+--- a/drivers/pinctrl/tegra/Makefile
++++ b/drivers/pinctrl/tegra/Makefile
+@@ -5,4 +5,5 @@ obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
+ obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
+ obj-$(CONFIG_PINCTRL_TEGRA124)		+= pinctrl-tegra124.o
+ obj-$(CONFIG_PINCTRL_TEGRA210)		+= pinctrl-tegra210.o
++obj-$(CONFIG_PINCTRL_TEGRA194)		+= pinctrl-tegra194.o
+ obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+= pinctrl-tegra-xusb.o
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index a5008c0..76e88c4 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -292,7 +292,7 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
+ 			     const struct tegra_pingroup *g,
+ 			     enum tegra_pinconf_param param,
+ 			     bool report_err,
+-			     s8 *bank, s16 *reg, s8 *bit, s8 *width)
++			     s8 *bank, s32 *reg, s8 *bit, s8 *width)
+ {
+ 	switch (param) {
+ 	case TEGRA_PINCONF_PARAM_PULL:
+@@ -451,7 +451,7 @@ static int tegra_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 	const struct tegra_pingroup *g;
+ 	int ret;
+ 	s8 bank, bit, width;
+-	s16 reg;
++	s32 reg;
+ 	u32 val, mask;
+ 
+ 	g = &pmx->soc->groups[group];
+@@ -480,7 +480,7 @@ static int tegra_pinconf_group_set(struct pinctrl_dev *pctldev,
+ 	const struct tegra_pingroup *g;
+ 	int ret, i;
+ 	s8 bank, bit, width;
+-	s16 reg;
++	s32 reg;
+ 	u32 val, mask;
+ 
+ 	g = &pmx->soc->groups[group];
+@@ -548,7 +548,7 @@ static void tegra_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 	const struct tegra_pingroup *g;
+ 	int i, ret;
+ 	s8 bank, bit, width;
+-	s16 reg;
++	s32 reg;
+ 	u32 val;
+ 
+ 	g = &pmx->soc->groups[group];
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index 44c7194..82cd947 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -143,10 +143,10 @@ struct tegra_pingroup {
+ 	const unsigned *pins;
+ 	u8 npins;
+ 	u8 funcs[4];
+-	s16 mux_reg;
+-	s16 pupd_reg;
+-	s16 tri_reg;
+-	s16 drv_reg;
++	s32 mux_reg;
++	s32 pupd_reg;
++	s32 tri_reg;
++	s32 drv_reg;
+ 	u32 mux_bank:2;
+ 	u32 pupd_bank:2;
+ 	u32 tri_bank:2;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra194.c b/drivers/pinctrl/tegra/pinctrl-tegra194.c
+new file mode 100644
+index 0000000..9172a8c
+--- /dev/null
++++ b/drivers/pinctrl/tegra/pinctrl-tegra194.c
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Pinctrl data for the NVIDIA Tegra210 pinmux
++ *
++ * Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++
++#include "pinctrl-tegra.h"
++
++#define _GPIO(offset)			(offset)
++#define NUM_GPIOS			(TEGRA_PIN_PEX_L5_RST_N_PGG1 + 1)
++
++/* Define unique ID for each pins */
++enum pin_id {
++	TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0 = _GPIO(256),
++	TEGRA_PIN_PEX_L5_RST_N_PGG1 = _GPIO(257),
++};
++
++/* Table for pin descriptor */
++static const struct pinctrl_pin_desc tegra194_pins[] = {
++	PINCTRL_PIN(TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0,
++		    "TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0"),
++	PINCTRL_PIN(TEGRA_PIN_PEX_L5_RST_N_PGG1,
++		    "TEGRA_PIN_PEX_L5_RST_N_PGG1"),
++};
++
++static const unsigned int pex_l5_clkreq_n_pgg0_pins[] = {
++	TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0,
++};
++
++static const unsigned int pex_l5_rst_n_pgg1_pins[] = {
++	TEGRA_PIN_PEX_L5_RST_N_PGG1,
++};
++
++/* Define unique ID for each function */
++enum tegra_mux_dt {
++	TEGRA_MUX_RSVD0,
++	TEGRA_MUX_RSVD1,
++	TEGRA_MUX_RSVD2,
++	TEGRA_MUX_RSVD3,
++	TEGRA_MUX_PE5,
++};
++
++/* Make list of each function name */
++#define TEGRA_PIN_FUNCTION(lid)			\
++	{					\
++		.name = #lid,			\
++	}
++static struct tegra_function tegra194_functions[] = {
++	TEGRA_PIN_FUNCTION(rsvd0),
++	TEGRA_PIN_FUNCTION(rsvd1),
++	TEGRA_PIN_FUNCTION(rsvd2),
++	TEGRA_PIN_FUNCTION(rsvd3),
++	TEGRA_PIN_FUNCTION(pe5),
++};
++
++#define PINGROUP_REG_Y(r) ((r))
++#define DRV_PINGROUP_Y(r) ((r))
++
++#define DRV_PINGROUP_ENTRY_Y(r, drvdn_b, drvdn_w, drvup_b,	\
++			     drvup_w, slwr_b, slwr_w, slwf_b,	\
++			     slwf_w, bank)			\
++		.drv_reg = DRV_PINGROUP_Y(r),			\
++		.drv_bank = bank,				\
++		.drvdn_bit = drvdn_b,				\
++		.drvdn_width = drvdn_w,				\
++		.drvup_bit = drvup_b,				\
++		.drvup_width = drvup_w,				\
++		.slwr_bit = slwr_b,				\
++		.slwr_width = slwr_w,				\
++		.slwf_bit = slwf_b,				\
++		.slwf_width = slwf_w
++
++#define PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_lpbk, e_input,	\
++			     e_od, schmitt_b, drvtype)		\
++		.mux_reg = PINGROUP_REG_Y(r),			\
++		.lpmd_bit = -1,					\
++		.lock_bit = -1,					\
++		.hsm_bit = -1,					\
++		.parked_bit = -1,				\
++		.mux_bank = bank,				\
++		.mux_bit = 0,					\
++		.pupd_reg = PINGROUP_REG_##pupd(r),		\
++		.pupd_bank = bank,				\
++		.pupd_bit = 2,					\
++		.tri_reg = PINGROUP_REG_Y(r),			\
++		.tri_bank = bank,				\
++		.tri_bit = 4,					\
++		.einput_bit = e_input,				\
++		.odrain_bit = e_od,				\
++		.schmitt_bit = schmitt_b,			\
++		.drvtype_bit = 13,				\
++		.drv_reg = -1
++
++#define drive_pex_l5_clkreq_n_pgg0				\
++	DRV_PINGROUP_ENTRY_Y(0x14004, 12, 5, 20, 5, -1, -1, -1, -1, 0)
++#define drive_pex_l5_rst_n_pgg1					\
++	DRV_PINGROUP_ENTRY_Y(0x1400c, 12, 5, 20, 5, -1, -1, -1, -1, 0)
++
++#define PINGROUP(pg_name, f0, f1, f2, f3, r, bank, pupd, e_lpbk,	\
++		 e_input, e_lpdr, e_od, schmitt_b, drvtype, io_rail)	\
++	{							\
++		.name = #pg_name,				\
++		.pins = pg_name##_pins,				\
++		.npins = ARRAY_SIZE(pg_name##_pins),		\
++			.funcs = {				\
++				TEGRA_MUX_##f0,			\
++				TEGRA_MUX_##f1,			\
++				TEGRA_MUX_##f2,			\
++				TEGRA_MUX_##f3,			\
++			},					\
++		PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_lpbk,	\
++				     e_input, e_od,		\
++				     schmitt_b, drvtype),	\
++		drive_##pg_name,				\
++	}
++
++static const struct tegra_pingroup tegra194_groups[] = {
++	PINGROUP(pex_l5_clkreq_n_pgg0, PE5, RSVD1, RSVD2, RSVD3, 0x14000, 0,
++		 Y, -1, 6, 8, 11, 12, N, "vddio_pex_ctl_2"),
++	PINGROUP(pex_l5_rst_n_pgg1, PE5, RSVD1, RSVD2, RSVD3, 0x14008, 0,
++		 Y, -1, 6, 8, 11, 12, N, "vddio_pex_ctl_2"),
++};
++
++static const struct tegra_pinctrl_soc_data tegra194_pinctrl = {
++	.ngpios = NUM_GPIOS,
++	.pins = tegra194_pins,
++	.npins = ARRAY_SIZE(tegra194_pins),
++	.functions = tegra194_functions,
++	.nfunctions = ARRAY_SIZE(tegra194_functions),
++	.groups = tegra194_groups,
++	.ngroups = ARRAY_SIZE(tegra194_groups),
++	.hsm_in_mux = true,
++	.schmitt_in_mux = true,
++	.drvtype_in_mux = true,
++};
++
++static int tegra194_pinctrl_probe(struct platform_device *pdev)
++{
++	return tegra_pinctrl_probe(pdev, &tegra194_pinctrl);
++}
++
++static const struct of_device_id tegra194_pinctrl_of_match[] = {
++	{ .compatible = "nvidia,tegra194-pinmux", },
++	{ },
++};
++
++static struct platform_driver tegra194_pinctrl_driver = {
++	.driver = {
++		.name = "tegra194-pinctrl",
++		.of_match_table = tegra194_pinctrl_of_match,
++	},
++	.probe = tegra194_pinctrl_probe,
++};
++
++static int __init tegra194_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra194_pinctrl_driver);
++}
++arch_initcall(tegra194_pinctrl_init);
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index a0b0344..b6d3a2e 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -107,6 +107,7 @@ config ARCH_TEGRA_186_SOC
+ 
+ config ARCH_TEGRA_194_SOC
+ 	bool "NVIDIA Tegra194 SoC"
++	select PINCTRL_TEGRA194
+ 	select MAILBOX
+ 	select TEGRA_BPMP
+ 	select TEGRA_HSP_MBOX
+-- 
+2.7.4
