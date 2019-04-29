@@ -1,181 +1,50 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: memory: tegra: Add external memory
- controller binding for Tegra210
-Date: Mon, 29 Apr 2019 16:56:05 -0500
-Message-ID: <20190429215605.GA3078@bogus>
-References: <20190412080855.387-1-josephl@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V3 5/9] spi: export spi core function spi_set_cs
+Date: Mon, 29 Apr 2019 22:02:46 +0000
+Message-ID: <BYAPR12MB3398D133D1C71355BC530754C2390@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1555363834-32155-1-git-send-email-skomatineni@nvidia.com>
+ <1555363834-32155-6-git-send-email-skomatineni@nvidia.com>
+ <20190419151823.GS2803@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190412080855.387-1-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190419151823.GS2803@sirena.org.uk>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 12, 2019 at 04:08:55PM +0800, Joseph Lo wrote:
-> Add the binding document for the external memory controller (EMC) which
-> communicates with external LPDDR4 devices. It includes the bindings of
-> the EMC node and the EMC table of different rates.
-> 
-> To support high rates for LPDDR4, the EMC table must be trained before
-> it can be used for runtime clock switching. It has been done by firmware
-> and merged the training data to the table that the kernel can share the
-> result. So the bindings are used for both kernel and firmware.
-> 
-> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
-> This patch splits from the original patch set that supports EMC scaling
-> with binding document and drivers. Because the binding would be shared
-> by both firmware and kernel. We want to settle this first. Then we can
-> fix the kernel and firmware to support the same.
-> 
-> Changes in v2:
-> * only use "tegra210" string in compatible string and remove the legacy
->   "tegra21" string.
-> * clock-frequency -> fix the unit from kilohertz to hertz
-> * add "interrupts" property
-> * s/nvidia,emc-min-mv/nvidia,emc-min-millivolt/
-> * s/nvidia,gk20a-min-mv/nvidia,gk20a-min-millivolt/
-> * s/nvidia,source/clock-names/
-> * fix lots of properties that use underline to hyphen
-> * s/nvidia,emc-clock-latency-change/nvidia,emc-clock-latency-microsecond/
-> * add more information in the property descriptions
-> ---
->  .../nvidia,tegra210-emc.txt                   | 614 ++++++++++++++++++
->  1 file changed, 614 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> new file mode 100644
-> index 000000000000..318239c3c295
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> @@ -0,0 +1,614 @@
-> +NVIDIA Tegra210 SoC EMC (external memory controller)
-> +====================================================
-> +
-> +Required properties :
-> +- compatible : should be "nvidia,tegra210-emc".
-> +- reg : physical base address and length of the controller's registers.
-> +- clocks : phandles of the possible source clocks
-> +- clock-names : names of the possible source clocks
-> +- interrupts : Should contain the EMC general interrupt
-> +- #address-cells : should be 1
-> +- #size-cells : should be 0
-> +- nvidia,memory-controller : phandle of the memory controller.
-> +- nvidia,use-ram-code : boolean, indicates whether we should use RAM_CODE in
-> +		        the register to find matching emc-table nodes
-> +
-> +The node should contain a "emc-table" subnode for each supported RAM type
-> +(see field RAM_CODE in register APB_MISC_PP_STRAPPING_OPT_A), with its unit
-> +address being its RAM_CODE.
-> +
-> +Required properties for "emc-tables" nodes :
-> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
-> +		    used for.
-> +
-> +Each "emc-tables" node should contain a "emc-table" subnode for every supported
-> +EMC clock rate. The "emc-table" subnodes should have the clock rate in hertz as
-> +their unit address.
-> +
-> +Required properties for "emc-table" nodes :
-> +- compatible :  "nvidia,tegra210-emc-table"
-> +- nvidia,revision : revision of the parameter set used for this node. All
-> +                    nodes in the same "emc-table" should have the same revision
-> +- nvidia,dvfs-version : string for the DVFS version of this table
-> +- clock-frequency : frequency in hertz
-> +- clock-names : name of clock source to be used for this rate
-> +- nvidia,emc-min-millivolt : minimum voltage in millivolt for this rate
-> +- nvidia,gk20a-min-millivolt : minimum GPU voltage in millivolt for this rate
-> +- nvidia,src-sel-reg : value of EMC CAR register to be used for this rate
-> +- nvidia,needs-training : 1 if needs training at boot, 0 otherwise
-> +- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
-> +- nvidia,periodic-training : 1 if needs periodic training, 0 otherwise
-> +- nvidia,trained-dram-clktree-c0d0u0 : training data word
-> +- nvidia,trained-dram-clktree-c0d0u1 : training data word
-> +- nvidia,trained-dram-clktree-c0d1u0 : training data word
-> +- nvidia,trained-dram-clktree-c0d1u1 : training data word
-> +- nvidia,trained-dram-clktree-c1d0u0 : training data word
-> +- nvidia,trained-dram-clktree-c1d0u1 : training data word
-> +- nvidia,trained-dram-clktree-c1d1u0 : training data word
-> +- nvidia,trained-dram-clktree-c1d1u1 : training data word
-> +- nvidia,current-dram-clktree-c0d0u0 : training data word
-> +- nvidia,current-dram-clktree-c0d0u1 : training data word
-> +- nvidia,current-dram-clktree-c0d1u0 : training data word
-> +- nvidia,current-dram-clktree-c0d1u1 : training data word
-> +- nvidia,current-dram-clktree-c1d0u0 : training data word
-> +- nvidia,current-dram-clktree-c1d0u1 : training data word
-> +- nvidia,current-dram-clktree-c1d1u0 : training data word
-> +- nvidia,current-dram-clktree-c1d1u1 : training data word
-> +- nvidia,run-clocks : training data for clock timing of oscillator clock
-> +- nvidia,tree-margin : training data for clock timing
-> +- nvidia,burst-regs-num : number of values in nvidia,emc-registers
-> +- nvidia,burst-regs-per-ch-num : number of values in
-> +				 nvidia,emc-burst-regs-per-ch
-> +- nvidia,trim-regs-num : number of values in nvidia,emc-trim-regs
-> +- nvidia,trim-regs-per-ch-num : number of values in nvidia,emc-trim-regs-per-ch
-> +- nvidia,burst-mc-regs-num : number of values in nvidia,emc-burst-mc-regs
-> +- nvidia,la-scale-regs-num : number of values in nvidia,emc-la-scale-regs
-> +- nvidia,vref-regs-num : number of values in nvidia,emc-vref-regs
-> +- nvidia,training-mod-regs-num : number of values in nvidia,training-mod-regs
-> +- nvidia,dram-timing-regs-num : number of values in nvidia,emc-dram-timing-regs
-> +- nvidia,min-mrs-wait : number of EMC clock count to wait for MRS command
-> +- nvidia,emc-mrw : value of the EMC_MRW register
-> +- nvidia,emc-mrw2 : value of the EMC_MRW2 register
-> +- nvidia,emc-mrw3 : value of the EMC_MRW3 register
-> +- nvidia,emc-mrw4 : value of the EMC_MRW4 register
-> +- nvidia,emc-mrw9 : value of the EMC_MRW4 register
-> +- nvidia,emc-mrs : value of the EMC_MRS register
-> +- nvidia,emc-emrs : value of the EMC_EMRS register
-> +- nvidia,emc-emrs2 : value of the EMC_EMRS2 register
-> +- nvidia,emc-auto-cal-config : value of the EMC_AUTO_CAL_CONFIG register
-> +- nvidia,emc-auto-cal-config2 : value of the EMC_AUTO_CAL_CONFIG2 register
-> +- nvidia,emc-auto-cal-config3 : value of the EMC_AUTO_CAL_CONFIG3 register
-> +- nvidia,emc-auto-cal-config4 : value of the EMC_AUTO_CAL_CONFIG4 register
-> +- nvidia,emc-auto-cal-config5 : value of the EMC_AUTO_CAL_CONFIG5 register
-> +- nvidia,emc-auto-cal-config6 : value of the EMC_AUTO_CAL_CONFIG6 register
-> +- nvidia,emc-auto-cal-config7 : value of the EMC_AUTO_CAL_CONFIG7 register
-> +- nvidia,emc-auto-cal-config8 : value of the EMC_AUTO_CAL_CONFIG8 register
-> +- nvidia,emc-cfg-2 : value of the EMC_CFG_2 register
-> +- nvidia,emc-sel-dpd-ctrl : value of the EMC_SEL_DPD_CTRL register
-> +- nvidia,emc-fdpd-ctrl-cmd-no-ramp : value of the EMC_FDPD_CTRL_CMD_NO_RAMP
-> +				     register
-> +- nvidia,dll-clk-src : value of the CLK_RST_CONTROLLER_CLK_SOURCE_EMC_DLL
-> +		       register
-> +- nvidia,clk-out-enb-x-0-clk-enb-emc-dll : 1 for enable EMC_DLL in the
-> +					   CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET,
-> +					   or 0 for clear in the
-> +					   CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR
-> +- nvidia,emc-clock-latency-microsecond : clock latency value in micro seconds
-> +- nvidia,ptfv : a 12 word array of control data for periodic training
-> +- nvidia,emc-registers :
-> +- nvidia,emc-shadow-regs-ca-train :
-> +- nvidia,emc-shadow-regs-quse-train :
-> +- nvidia,emc-shadow-regs-rdwr-train :
-> +  a 221 word array of the following registers (See TRM 18.10.2 for register
-> +  descriptions)
+> On Mon, Apr 15, 2019 at 02:30:30PM -0700, Sowjanya Komatineni wrote:
+> > This patch exports spi_set_cs of the spi core to allow SPI masters to=20
+> > use when gpio based chip select is needed.
+>
+> This isn't really what I meant when I said it'd be good to use the core G=
+PIO code - this function doesn't do a huge amount really and the usage of i=
+t in your subsequent patch for the > driver isn't exactly joined up with th=
+e little it does (which is mainly swapping in the GPIO chip select instead =
+of the hardware chip select) isn't used in your driver usage of this as far=
+ as I can see.  The bulk of the chip select handling code in the core is ac=
+tually in transfer_one_message() which your driver doesn't use as it's got =
+it's own implementation of that; I've not looked in enough detail to figure=
+ out if it could use it.
+>
+>
+>
+In SPI Tegra driver, we wanted to have GPIO based CS control when cs-gpios =
+is specified in parallel to HW/SW CS. Having parallel GPIO based CS is to m=
+imic some of the timing stuff that's needed for some spi devices by not act=
+ually using HW CS on platform but only for SPI HW design logic inside the c=
+hip.
 
-I think this dumping of register values should not be in DT. I think the 
-result here will be a lot of duplication of data. How many of the 
-registers' values vary between 2 frequencies, for example? 
+Tegra spi driver don't use set_cs callback so looking into spi_set_cs from =
+spi core implementation when cs-gpios property is used it exactly the same =
+that is needed for GPIO control CS. So used this in V3.=20
 
-We have bindings already for DDR that use timing values (see 
-bindings/lpddr2/lpddr2.txt). There's one for LPDDR3 being added. This 
-data is similar to the SPD data which is used in DIMMs. If SPD data is 
-enough information for any DIMM to work on any PC, then that should be 
-sufficient for embedded uses too.
+Can you please provide more details on what you are suggesting?
+Do you prefer not to use SPI core spi_set_cs and gpio_set_values APIs and i=
+nstead implement in tegra SPI driver using GPIO descriptors ?
 
-Rob
+Thanks
+Sowjanya
