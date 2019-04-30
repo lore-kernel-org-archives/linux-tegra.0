@@ -1,212 +1,139 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 12/16] PM / devfreq: tegra: Reconfigure hardware on
- governor's restart
-Date: Tue, 30 Apr 2019 10:19:22 +0900
-Message-ID: <2bcf8ece-c744-bf18-0b7b-177cbb09c174@samsung.com>
-References: <20190417222925.5815-1-digetx@gmail.com>
-        <CGME20190417224236epcas1p15d8c9b1b75ce29ac06d1ecbae46a572b@epcas1p1.samsung.com>
-        <20190417222925.5815-13-digetx@gmail.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH v2] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Date: Tue, 30 Apr 2019 09:30:02 +0800
+Message-ID: <4d08d43e-d325-c357-9d4e-1ad7d2ec5569@nvidia.com>
+References: <20190412080855.387-1-josephl@nvidia.com>
+ <20190429215605.GA3078@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190417222925.5815-13-digetx@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190429215605.GA3078@bogus>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On 19. 4. 18. 오전 7:29, Dmitry Osipenko wrote:
-> Move hardware configuration to governor's start/resume methods.
-> This allows to re-initialize hardware counters and reconfigure
-> cleanly if governor was stopped/paused. That is needed because we
-> are not aware of all hardware changes that happened while governor
-> was stopped and the paused state may get out of sync with reality,
-> hence it's better to start with a clean slate after the pause. In
-> a result there is no memory bandwidth starvation after resume from
-> suspend-to-ram that results in display controller underflowing that
-> happens on resume because of improper decision made by devfreq about
-> the required memory frequency. This change also cleans up code a tad
-> by moving hardware-configuration code into a single location.
+On 4/30/19 5:56 AM, Rob Herring wrote:
+> On Fri, Apr 12, 2019 at 04:08:55PM +0800, Joseph Lo wrote:
+>> Add the binding document for the external memory controller (EMC) which
+>> communicates with external LPDDR4 devices. It includes the bindings of
+>> the EMC node and the EMC table of different rates.
+>>
+>> To support high rates for LPDDR4, the EMC table must be trained before
+>> it can be used for runtime clock switching. It has been done by firmware
+>> and merged the training data to the table that the kernel can share the
+>> result. So the bindings are used for both kernel and firmware.
+>>
+>> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>> This patch splits from the original patch set that supports EMC scaling
+>> with binding document and drivers. Because the binding would be shared
+>> by both firmware and kernel. We want to settle this first. Then we can
+>> fix the kernel and firmware to support the same.
+>>
+>> Changes in v2:
+>> * only use "tegra210" string in compatible string and remove the legacy
+>>    "tegra21" string.
+>> * clock-frequency -> fix the unit from kilohertz to hertz
+>> * add "interrupts" property
+>> * s/nvidia,emc-min-mv/nvidia,emc-min-millivolt/
+>> * s/nvidia,gk20a-min-mv/nvidia,gk20a-min-millivolt/
+>> * s/nvidia,source/clock-names/
+>> * fix lots of properties that use underline to hyphen
+>> * s/nvidia,emc-clock-latency-change/nvidia,emc-clock-latency-microsecond/
+>> * add more information in the property descriptions
+>> ---
+>>   .../nvidia,tegra210-emc.txt                   | 614 ++++++++++++++++++
+>>   1 file changed, 614 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+>> new file mode 100644
+>> index 000000000000..318239c3c295
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+>> @@ -0,0 +1,614 @@
+>> +NVIDIA Tegra210 SoC EMC (external memory controller)
+>> +====================================================
+>> +
+>> +Required properties :
+>> +- compatible : should be "nvidia,tegra210-emc".
+>> +- reg : physical base address and length of the controller's registers.
+>> +- clocks : phandles of the possible source clocks
+>> +- clock-names : names of the possible source clocks
+>> +- interrupts : Should contain the EMC general interrupt
+>> +- #address-cells : should be 1
+>> +- #size-cells : should be 0
+>> +- nvidia,memory-controller : phandle of the memory controller.
+>> +- nvidia,use-ram-code : boolean, indicates whether we should use RAM_CODE in
+>> +		        the register to find matching emc-table nodes
+>> +
+...
+>> +- nvidia,ptfv : a 12 word array of control data for periodic training
+>> +- nvidia,emc-registers :
+>> +- nvidia,emc-shadow-regs-ca-train :
+>> +- nvidia,emc-shadow-regs-quse-train :
+>> +- nvidia,emc-shadow-regs-rdwr-train :
+>> +  a 221 word array of the following registers (See TRM 18.10.2 for register
+>> +  descriptions)
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra-devfreq.c | 98 ++++++++++++++-------------------
->  1 file changed, 40 insertions(+), 58 deletions(-)
+> I think this dumping of register values should not be in DT. I think the
+> result here will be a lot of duplication of data. How many of the
+> registers' values vary between 2 frequencies, for example?
 > 
-> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-> index 62f35e818122..e9ab49394d35 100644
-> --- a/drivers/devfreq/tegra-devfreq.c
-> +++ b/drivers/devfreq/tegra-devfreq.c
-> @@ -392,55 +392,6 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
->  	return NOTIFY_OK;
->  }
->  
-> -static void tegra_actmon_enable_interrupts(struct tegra_devfreq *tegra)
-> -{
-> -	struct tegra_devfreq_device *dev;
-> -	u32 val;
-> -	unsigned int i;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
-> -		dev = &tegra->devices[i];
-> -
-> -		val = device_readl(dev, ACTMON_DEV_CTRL);
-> -		val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
-> -		val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
-> -		val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-> -		val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
-> -
-> -		device_writel(dev, val, ACTMON_DEV_CTRL);
-> -	}
-> -
-> -	actmon_write_barrier(tegra);
-> -}
-> -
-> -static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
-> -{
-> -	struct tegra_devfreq_device *dev;
-> -	u32 val;
-> -	unsigned int i;
-> -
-> -	disable_irq(tegra->irq);
-> -
-> -	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
-> -		dev = &tegra->devices[i];
-> -
-> -		val = device_readl(dev, ACTMON_DEV_CTRL);
-> -		val &= ~ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
-> -		val &= ~ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
-> -		val &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-> -		val &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
-> -
-> -		device_writel(dev, val, ACTMON_DEV_CTRL);
-> -
-> -		device_writel(dev, ACTMON_INTR_STATUS_CLEAR,
-> -			      ACTMON_DEV_INTR_STATUS);
-> -	}
-> -
-> -	actmon_write_barrier(tegra);
-> -
-> -	enable_irq(tegra->irq);
-> -}
-> -
->  static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->  					  struct tegra_devfreq_device *dev)
->  {
-> @@ -464,11 +415,47 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->  		<< ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_NUM_SHIFT;
->  	val |= (ACTMON_ABOVE_WMARK_WINDOW - 1)
->  		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
-> +	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
-> +	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
-> +	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-> +	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
->  	val |= ACTMON_DEV_CTRL_ENB;
->  
->  	device_writel(dev, val, ACTMON_DEV_CTRL);
-> +}
-> +
-> +static void tegra_actmon_start(struct tegra_devfreq *tegra)
-> +{
-> +	unsigned int i;
-> +
-> +	disable_irq(tegra->irq);
-> +
-> +	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
-> +		      ACTMON_GLB_PERIOD_CTRL);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
-> +		tegra_actmon_configure_device(tegra, &tegra->devices[i]);
-
-nitpick.
-I agree this patch.
-
-In order to make it more simple, I think that you can remove
-tegra_actmon_configure() function and then just do some opertion
-under the for loop in the tegra_actmon_start() to keep
-similar style with tegra_actmon_stop(). But there is perfect solution.
-If you agree, edit it on next patch. If you think that it is not necessary,
-just keep this code.
-
-> +
-> +	actmon_write_barrier(tegra);
-> +
-> +	enable_irq(tegra->irq);
-> +}
-> +
-> +static void tegra_actmon_stop(struct tegra_devfreq *tegra)
-> +{
-> +	unsigned int i;
-> +
-> +	disable_irq(tegra->irq);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
-> +		device_writel(&tegra->devices[i], 0x00000000, ACTMON_DEV_CTRL);
-> +		device_writel(&tegra->devices[i], ACTMON_INTR_STATUS_CLEAR,
-> +			      ACTMON_DEV_INTR_STATUS);
-> +	}
->  
->  	actmon_write_barrier(tegra);
-> +
-> +	enable_irq(tegra->irq);
->  }
->  
->  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-> @@ -580,22 +567,22 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->  	switch (event) {
->  	case DEVFREQ_GOV_START:
->  		devfreq_monitor_start(devfreq);
-> -		tegra_actmon_enable_interrupts(tegra);
-> +		tegra_actmon_start(tegra);
->  		break;
->  
->  	case DEVFREQ_GOV_STOP:
-> -		tegra_actmon_disable_interrupts(tegra);
-> +		tegra_actmon_stop(tegra);
->  		devfreq_monitor_stop(devfreq);
->  		break;
->  
->  	case DEVFREQ_GOV_SUSPEND:
-> -		tegra_actmon_disable_interrupts(tegra);
-> +		tegra_actmon_stop(tegra);
->  		devfreq_monitor_suspend(devfreq);
->  		break;
->  
->  	case DEVFREQ_GOV_RESUME:
->  		devfreq_monitor_resume(devfreq);
-> -		tegra_actmon_enable_interrupts(tegra);
-> +		tegra_actmon_start(tegra);
->  		break;
->  	}
->  
-> @@ -664,15 +651,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  	tegra->max_freq = clk_round_rate(tegra->emc_clock, ULONG_MAX) / KHZ;
->  	tegra->cur_freq = clk_get_rate(tegra->emc_clock) / KHZ;
->  
-> -	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
-> -		      ACTMON_GLB_PERIOD_CTRL);
-> -
->  	for (i = 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
->  		dev = tegra->devices + i;
->  		dev->config = actmon_device_configs + i;
->  		dev->regs = tegra->regs + dev->config->offset;
-> -
-> -		tegra_actmon_configure_device(tegra, dev);
->  	}
->  
->  	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+> We have bindings already for DDR that use timing values (see
+> bindings/lpddr2/lpddr2.txt). There's one for LPDDR3 being added. This
+> data is similar to the SPD data which is used in DIMMs. If SPD data is
+> enough information for any DIMM to work on any PC, then that should be
+> sufficient for embedded uses too.
 > 
+Hi Rob,
 
-I agree to always initialize the device when START or RESUME
-and also to reset the device when STOP or SUSPEND.
+Thanks for the review. After some internal discussions, we decide to 
+choose another approach. Instead of these EMC table bindings in the DT, 
+we think that would be easier to pass the binary blob of the EMC table. 
+Because the timing/settings in the EMC table could be different depends 
+on vendors and devices (lpddr2/3/4), unify binding may not fit for each 
+vendor.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+For Tegra210, lpddr4 is the only SDRAM devices we support, it's more 
+complicated than lpddr2/3. And the rate above 800MHz must be trained 
+before it can be used, it's done by firmware, so the table also includes 
+these training data. Just want to describe the table could have many 
+private settings.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+So we want to go through the EMC table with binary blob, it makes the DT 
+binding easier for review and control in the driver. Will re-work the 
+series to support this approach.
+
+reserved-memory {
+     #address-cells = <...>;
+     #size-cells = <...>;
+     ranges;
+
+     emc_table: emc-table@.... {
+         compatible = ...;
+         reg = <...>;
+     };
+};
+
+external-memory-controller@... {
+     ...
+     memory-region = <&emc_table>;
+};
+
+Thanks,
+Joseph
