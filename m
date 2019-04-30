@@ -1,82 +1,212 @@
-From: "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: RE: [EXT] Re: [PATCH V3 04/16] PCI: dwc: Perform dbi regs write lock
- towards the end
-Date: Tue, 30 Apr 2019 00:36:22 +0000
-Message-ID: <AM6PR04MB57816120E04D106D64F2AA39843A0@AM6PR04MB5781.eurprd04.prod.outlook.com>
-References: <20190416192730.15681-1-vidyas@nvidia.com>
-        <20190416192730.15681-5-vidyas@nvidia.com>
-        <305100E33629484CBB767107E4246BBB0A22C127@de02wembxa.internal.synopsys.com>
- <20190422154608.6e6f8ae3@xhacker.debian>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 12/16] PM / devfreq: tegra: Reconfigure hardware on
+ governor's restart
+Date: Tue, 30 Apr 2019 10:19:22 +0900
+Message-ID: <2bcf8ece-c744-bf18-0b7b-177cbb09c174@samsung.com>
+References: <20190417222925.5815-1-digetx@gmail.com>
+        <CGME20190417224236epcas1p15d8c9b1b75ce29ac06d1ecbae46a572b@epcas1p1.samsung.com>
+        <20190417222925.5815-13-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190422154608.6e6f8ae3@xhacker.debian>
+In-Reply-To: <20190417222925.5815-13-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>, Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>, "kthota@nvidia.com" <kthota@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEppc2hlbmcgWmhhbmcgW21h
-aWx0bzpKaXNoZW5nLlpoYW5nQHN5bmFwdGljcy5jb21dDQo+IFNlbnQ6IDIwMTnE6jTUwjIyyNUg
-MTU6NTUNCj4gVG86IEd1c3Rhdm8gUGltZW50ZWwgPEd1c3Rhdm8uUGltZW50ZWxAc3lub3BzeXMu
-Y29tPjsgWi5xLiBIb3UNCj4gPHpoaXFpYW5nLmhvdUBueHAuY29tPg0KPiBDYzogVmlkeWEgU2Fn
-YXIgPHZpZHlhc0BudmlkaWEuY29tPjsgYmhlbGdhYXNAZ29vZ2xlLmNvbTsNCj4gcm9iaCtkdEBr
-ZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgdGhpZXJyeS5yZWRpbmdAZ21haWwuY29t
-Ow0KPiBqb25hdGhhbmhAbnZpZGlhLmNvbTsga2lzaG9uQHRpLmNvbTsgY2F0YWxpbi5tYXJpbmFz
-QGFybS5jb207DQo+IHdpbGwuZGVhY29uQGFybS5jb207IGxvcmVuem8ucGllcmFsaXNpQGFybS5j
-b207IGppbmdvb2hhbjFAZ21haWwuY29tOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsg
-bW1hZGRpcmVkZHlAbnZpZGlhLmNvbTsga3Rob3RhQG52aWRpYS5jb207DQo+IGxpbnV4LXBjaUB2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IG1wZXJ0dHVu
-ZW5AbnZpZGlhLmNvbTsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IHNhZ2FyLnR2QGdtYWlsLmNvbQ0KPiBTdWJqZWN0
-OiBbRVhUXSBSZTogW1BBVENIIFYzIDA0LzE2XSBQQ0k6IGR3YzogUGVyZm9ybSBkYmkgcmVncyB3
-cml0ZSBsb2NrDQo+IHRvd2FyZHMgdGhlIGVuZA0KPiANCj4gV0FSTklORzogVGhpcyBlbWFpbCB3
-YXMgY3JlYXRlZCBvdXRzaWRlIG9mIE5YUC4gRE8gTk9UIENMSUNLIGxpbmtzIG9yDQo+IGF0dGFj
-aG1lbnRzIHVubGVzcyB5b3UgcmVjb2duaXplIHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRl
-bnQgaXMgc2FmZS4NCj4gDQo+IA0KPiANCj4gT24gV2VkLCAxNyBBcHIgMjAxOSAwOTo1NjozMyAr
-MDAwMCBHdXN0YXZvIFBpbWVudGVsIHdyb3RlOg0KPiANCj4gPg0KPiA+IE9uIFR1ZSwgQXByIDE2
-LCAyMDE5IGF0IDIwOjI3OjE4LCBWaWR5YSBTYWdhciA8dmlkeWFzQG52aWRpYS5jb20+IHdyb3Rl
-Og0KPiA+DQo+ID4gPiBSZW1vdmUgbXVsdGlwbGUgd3JpdGUgZW5hYmxlIGFuZCBkaXNhYmxlIHNl
-cXVlbmNlcyBvZiBkYmkgcmVnaXN0ZXJzDQo+ID4gPiBhcw0KPiA+ID4gVGVncmExOTQgaW1wbGVt
-ZW50cyB3cml0ZXMgdG8gQkFSLTAgcmVnaXN0ZXIgKG9mZnNldDogMHgxMCkNCj4gPiA+IGNvbnRy
-b2xsZWQgYnkgREJJIHdyaXRlLWxvY2sgZW5hYmxlIGJpdCB0aGVyZWJ5IG5vdCBhbGxvd2luZyBh
-bnkNCj4gPiA+IGZ1cnRoZXIgd3JpdGVzIHRvIEJBUi0wIHJlZ2lzdGVyIGluIGNvbmZpZyBzcGFj
-ZSB0byB0YWtlIHBsYWNlLg0KPiA+ID4gSGVuY2UgZGlzYWJsaW5nIHdyaXRlIHBlcm1pc3Npb24g
-b25seSB0b3dhcmRzIHRoZSBlbmQuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogVmlkeWEg
-U2FnYXIgPHZpZHlhc0BudmlkaWEuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiBDaGFuZ2VzIHNpbmNl
-IFt2Ml06DQo+ID4gPiAqIE5vbmUNCj4gPiA+DQo+ID4gPiBDaGFuZ2VzIHNpbmNlIFt2MV06DQo+
-ID4gPiAqIE5vbmUNCj4gPiA+DQo+ID4gPiAgZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNp
-ZS1kZXNpZ253YXJlLWhvc3QuYyB8IDMgLS0tDQo+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgZGVs
-ZXRpb25zKC0pDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xs
-ZXIvZHdjL3BjaWUtZGVzaWdud2FyZS1ob3N0LmMNCj4gPiA+IGIvZHJpdmVycy9wY2kvY29udHJv
-bGxlci9kd2MvcGNpZS1kZXNpZ253YXJlLWhvc3QuYw0KPiA+ID4gaW5kZXggMmE1MzMyZTVjY2Zh
-Li5jMDMzNGM5MmMxYTYgMTAwNjQ0DQo+ID4gPiAtLS0gYS9kcml2ZXJzL3BjaS9jb250cm9sbGVy
-L2R3Yy9wY2llLWRlc2lnbndhcmUtaG9zdC5jDQo+ID4gPiArKysgYi9kcml2ZXJzL3BjaS9jb250
-cm9sbGVyL2R3Yy9wY2llLWRlc2lnbndhcmUtaG9zdC5jDQo+ID4gPiBAQCAtNjgzLDcgKzY4Myw2
-IEBAIHZvaWQgZHdfcGNpZV9zZXR1cF9yYyhzdHJ1Y3QgcGNpZV9wb3J0ICpwcCkNCj4gPiA+ICAg
-ICAgIHZhbCAmPSAweGZmZmYwMGZmOw0KPiA+ID4gICAgICAgdmFsIHw9IDB4MDAwMDAxMDA7DQo+
-ID4gPiAgICAgICBkd19wY2llX3dyaXRlbF9kYmkocGNpLCBQQ0lfSU5URVJSVVBUX0xJTkUsIHZh
-bCk7DQo+ID4gPiAtICAgICBkd19wY2llX2RiaV9yb193cl9kaXMocGNpKTsNCj4gPiA+DQo+ID4g
-PiAgICAgICAvKiBTZXR1cCBidXMgbnVtYmVycyAqLw0KPiA+ID4gICAgICAgdmFsID0gZHdfcGNp
-ZV9yZWFkbF9kYmkocGNpLCBQQ0lfUFJJTUFSWV9CVVMpOyBAQCAtNzIzLDgNCj4gPiA+ICs3MjIs
-NiBAQCB2b2lkIGR3X3BjaWVfc2V0dXBfcmMoc3RydWN0IHBjaWVfcG9ydCAqcHApDQo+ID4gPg0K
-PiA+ID4gICAgICAgZHdfcGNpZV93cl9vd25fY29uZihwcCwgUENJX0JBU0VfQUREUkVTU18wLCA0
-LCAwKTsNCj4gPiA+DQo+ID4gPiAtICAgICAvKiBFbmFibGUgd3JpdGUgcGVybWlzc2lvbiBmb3Ig
-dGhlIERCSSByZWFkLW9ubHkgcmVnaXN0ZXIgKi8NCj4gPiA+IC0gICAgIGR3X3BjaWVfZGJpX3Jv
-X3dyX2VuKHBjaSk7DQo+ID4gPiAgICAgICAvKiBQcm9ncmFtIGNvcnJlY3QgY2xhc3MgZm9yIFJD
-ICovDQo+ID4gPiAgICAgICBkd19wY2llX3dyX293bl9jb25mKHBwLCBQQ0lfQ0xBU1NfREVWSUNF
-LCAyLA0KPiBQQ0lfQ0xBU1NfQlJJREdFX1BDSSk7DQo+ID4gPiAgICAgICAvKiBCZXR0ZXIgZGlz
-YWJsZSB3cml0ZSBwZXJtaXNzaW9uIHJpZ2h0IGFmdGVyIHRoZSB1cGRhdGUgKi8NCj4gPiA+IC0t
-DQo+ID4gPiAyLjE3LjENCj4gPg0KPiA+IFRoaXMgc2V0dXAgc2VxdWVuY2Ugd2FzIHdyaXR0ZW4g
-YnkgSmluZ29vIEhhbiwgbGV0J3MgY2hlY2sgaWYgaGUgZGlkDQo+ID4gdGhpcyBieSBzb21lIHBh
-cnRpY3VsYXIgcmVhc29uLg0KPiA+IEppbmdvbyBkbyB5b3UgcmVtZW1iZXIgd2h5IHlvdSB3cm90
-ZSB0aGUgY29kZSBsaWtlIHRoaXM/DQo+IA0KPiBGV0lDVCwgZW5hYmxpbmcgUk8gd3JpdGVhYmxl
-IGluIHRoZSBzZXR1cCBzZXF1ZW5jZSBpcyBpbnRyb2R1Y2VkIGluIGNvbW1pdA0KPiBkOTFkZmU1
-MDU0ZDQgKCJQQ0k6IGR3YzogRW5hYmxlIHdyaXRlIHBlcm1pc3Npb24gZm9yIENsYXNzIENvZGUs
-IEludGVycnVwdA0KPiBQaW4gdXBkYXRlcyIpLiBUaGUgUmVhc29uIHdoeSBub3QgdG93YXJkcyB0
-aGUgZW5kIG1heWJlIG9ubHkgZW5hYmxlIHRoZQ0KPiBSTyB3cml0ZWFibGUgd2hlbiBuZWNlc3Nh
-cnkuDQo+IA0KDQpZZXMsIHlvdSBnZXQgdGhlIHBvaW50LCBJIHRoaW5rIGl0J3Mgbm90IGEgZ29v
-ZCBjaG9pY2UgdG8gdW5sb2NrIHRoZSB3cml0ZSBwZXJtaXNzaW9uDQpvZiB0aGUgUk8gcmVnaXN0
-ZXJzIGFsbCB0aHJvdWdoLg0KDQpUaGFua3MsDQpaaGlxaWFuZw0K
+Hi,
+
+On 19. 4. 18. 오전 7:29, Dmitry Osipenko wrote:
+> Move hardware configuration to governor's start/resume methods.
+> This allows to re-initialize hardware counters and reconfigure
+> cleanly if governor was stopped/paused. That is needed because we
+> are not aware of all hardware changes that happened while governor
+> was stopped and the paused state may get out of sync with reality,
+> hence it's better to start with a clean slate after the pause. In
+> a result there is no memory bandwidth starvation after resume from
+> suspend-to-ram that results in display controller underflowing that
+> happens on resume because of improper decision made by devfreq about
+> the required memory frequency. This change also cleans up code a tad
+> by moving hardware-configuration code into a single location.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/tegra-devfreq.c | 98 ++++++++++++++-------------------
+>  1 file changed, 40 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+> index 62f35e818122..e9ab49394d35 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -392,55 +392,6 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
+>  	return NOTIFY_OK;
+>  }
+>  
+> -static void tegra_actmon_enable_interrupts(struct tegra_devfreq *tegra)
+> -{
+> -	struct tegra_devfreq_device *dev;
+> -	u32 val;
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
+> -		dev = &tegra->devices[i];
+> -
+> -		val = device_readl(dev, ACTMON_DEV_CTRL);
+> -		val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
+> -		val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
+> -		val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+> -		val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+> -
+> -		device_writel(dev, val, ACTMON_DEV_CTRL);
+> -	}
+> -
+> -	actmon_write_barrier(tegra);
+> -}
+> -
+> -static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
+> -{
+> -	struct tegra_devfreq_device *dev;
+> -	u32 val;
+> -	unsigned int i;
+> -
+> -	disable_irq(tegra->irq);
+> -
+> -	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
+> -		dev = &tegra->devices[i];
+> -
+> -		val = device_readl(dev, ACTMON_DEV_CTRL);
+> -		val &= ~ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
+> -		val &= ~ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
+> -		val &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+> -		val &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+> -
+> -		device_writel(dev, val, ACTMON_DEV_CTRL);
+> -
+> -		device_writel(dev, ACTMON_INTR_STATUS_CLEAR,
+> -			      ACTMON_DEV_INTR_STATUS);
+> -	}
+> -
+> -	actmon_write_barrier(tegra);
+> -
+> -	enable_irq(tegra->irq);
+> -}
+> -
+>  static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+>  					  struct tegra_devfreq_device *dev)
+>  {
+> @@ -464,11 +415,47 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+>  		<< ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_NUM_SHIFT;
+>  	val |= (ACTMON_ABOVE_WMARK_WINDOW - 1)
+>  		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
+> +	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
+> +	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
+> +	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+> +	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+>  	val |= ACTMON_DEV_CTRL_ENB;
+>  
+>  	device_writel(dev, val, ACTMON_DEV_CTRL);
+> +}
+> +
+> +static void tegra_actmon_start(struct tegra_devfreq *tegra)
+> +{
+> +	unsigned int i;
+> +
+> +	disable_irq(tegra->irq);
+> +
+> +	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+> +		      ACTMON_GLB_PERIOD_CTRL);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
+> +		tegra_actmon_configure_device(tegra, &tegra->devices[i]);
+
+nitpick.
+I agree this patch.
+
+In order to make it more simple, I think that you can remove
+tegra_actmon_configure() function and then just do some opertion
+under the for loop in the tegra_actmon_start() to keep
+similar style with tegra_actmon_stop(). But there is perfect solution.
+If you agree, edit it on next patch. If you think that it is not necessary,
+just keep this code.
+
+> +
+> +	actmon_write_barrier(tegra);
+> +
+> +	enable_irq(tegra->irq);
+> +}
+> +
+> +static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+> +{
+> +	unsigned int i;
+> +
+> +	disable_irq(tegra->irq);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
+> +		device_writel(&tegra->devices[i], 0x00000000, ACTMON_DEV_CTRL);
+> +		device_writel(&tegra->devices[i], ACTMON_INTR_STATUS_CLEAR,
+> +			      ACTMON_DEV_INTR_STATUS);
+> +	}
+>  
+>  	actmon_write_barrier(tegra);
+> +
+> +	enable_irq(tegra->irq);
+>  }
+>  
+>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+> @@ -580,22 +567,22 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>  	switch (event) {
+>  	case DEVFREQ_GOV_START:
+>  		devfreq_monitor_start(devfreq);
+> -		tegra_actmon_enable_interrupts(tegra);
+> +		tegra_actmon_start(tegra);
+>  		break;
+>  
+>  	case DEVFREQ_GOV_STOP:
+> -		tegra_actmon_disable_interrupts(tegra);
+> +		tegra_actmon_stop(tegra);
+>  		devfreq_monitor_stop(devfreq);
+>  		break;
+>  
+>  	case DEVFREQ_GOV_SUSPEND:
+> -		tegra_actmon_disable_interrupts(tegra);
+> +		tegra_actmon_stop(tegra);
+>  		devfreq_monitor_suspend(devfreq);
+>  		break;
+>  
+>  	case DEVFREQ_GOV_RESUME:
+>  		devfreq_monitor_resume(devfreq);
+> -		tegra_actmon_enable_interrupts(tegra);
+> +		tegra_actmon_start(tegra);
+>  		break;
+>  	}
+>  
+> @@ -664,15 +651,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	tegra->max_freq = clk_round_rate(tegra->emc_clock, ULONG_MAX) / KHZ;
+>  	tegra->cur_freq = clk_get_rate(tegra->emc_clock) / KHZ;
+>  
+> -	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+> -		      ACTMON_GLB_PERIOD_CTRL);
+> -
+>  	for (i = 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
+>  		dev = tegra->devices + i;
+>  		dev->config = actmon_device_configs + i;
+>  		dev->regs = tegra->regs + dev->config->offset;
+> -
+> -		tegra_actmon_configure_device(tegra, dev);
+>  	}
+>  
+>  	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+> 
+
+I agree to always initialize the device when START or RESUME
+and also to reset the device when STOP or SUSPEND.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
