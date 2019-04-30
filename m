@@ -1,150 +1,188 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] dmaengine: tegra: Use relaxed versions of readl/writel
-Date: Tue, 30 Apr 2019 15:25:45 +0300
-Message-ID: <cbe75689-fb54-6d5d-c7d0-91bf7ea50cbb@gmail.com>
-References: <20190424231708.21219-1-digetx@gmail.com>
- <d789f1bc-44d1-abf6-a046-7cf835416e8f@nvidia.com>
- <4a315b63-bc71-3c3e-f1ae-8638bcf4033d@gmail.com>
- <bff59709-426b-32d2-08eb-d8f51cd7d5c1@nvidia.com>
- <49392c02-6dcc-9a95-0035-27c4c0d14820@gmail.com>
- <242863b9-b75e-4b37-178a-5aa03e56d3e1@gmail.com>
- <d6d1e420-6707-f446-a531-4b38e4e82c19@gmail.com>
- <20190426151157.GA19559@ulmo>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v2 2/4] iommu/dma-iommu: Handle deferred devices
+Date: Tue, 30 Apr 2019 14:42:03 +0100
+Message-ID: <2750fa37-a59c-3074-6545-b19046ce3699@arm.com>
+References: <20190430002952.18909-1-tmurphy@arista.com>
+ <20190430002952.18909-3-tmurphy@arista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190426151157.GA19559@ulmo>
-Content-Language: en-US
+In-Reply-To: <20190430002952.18909-3-tmurphy@arista.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org
+Cc: murphyt7@tcd.ie, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.orglin
 List-Id: linux-tegra@vger.kernel.org
 
-26.04.2019 18:11, Thierry Reding пишет:
-> On Fri, Apr 26, 2019 at 04:03:08PM +0300, Dmitry Osipenko wrote:
->> 26.04.2019 15:42, Dmitry Osipenko пишет:
->>> 26.04.2019 15:18, Dmitry Osipenko пишет:
->>>> 26.04.2019 14:13, Jon Hunter пишет:
->>>>>
->>>>> On 26/04/2019 11:45, Dmitry Osipenko wrote:
->>>>>> 26.04.2019 12:52, Jon Hunter пишет:
->>>>>>>
->>>>>>> On 25/04/2019 00:17, Dmitry Osipenko wrote:
->>>>>>>> The readl/writel functions are inserting memory barrier in order to
->>>>>>>> ensure that memory stores are completed. On Tegra20 and Tegra30 this
->>>>>>>> results in L2 cache syncing which isn't a cheapest operation. The
->>>>>>>> tegra20-apb-dma driver doesn't need to synchronize generic memory
->>>>>>>> accesses, hence use the relaxed versions of the functions.
->>>>>>>
->>>>>>> Do you mean device-io accesses here as this is not generic memory?
->>>>>>
->>>>>> Yes. The IOMEM accesses within are always ordered and uncached, while
->>>>>> generic memory accesses are out-of-order and cached.
->>>>>>
->>>>>>> Although there may not be any issues with this change, I think I need a
->>>>>>> bit more convincing that we should do this given that we have had it
->>>>>>> this way for sometime and I would not like to see us introduce any
->>>>>>> regressions as this point without being 100% certain we would not.
->>>>>>> Ideally, if I had some good extensive tests I could run to hammer the
->>>>>>> DMA for all configurations with different combinations of channels
->>>>>>> running simultaneously then we could test this, but right now I don't :-(
->>>>>>>
->>>>>>> Have you ...
->>>>>>> 1. Tested both cyclic and scatter-gather transfers?
->>>>>>> 2. Stress tested simultaneous transfers with various different
->>>>>>>    configurations?
->>>>>>> 3. Quantified the actual performance benefit of this change so we can
->>>>>>>    understand how much of a performance boost this offers?
->>>>>>
->>>>>> Actually I found a case where this change causes a problem, I'm seeing
->>>>>> I2C transfer timeout for touchscreen and it breaks the touch input.
->>>>>> Indeed, I haven't tested this patch very well.
->>>>>>
->>>>>> And the fix is this:
->>>>>>
->>>>>> @@ -1592,6 +1592,8 @@ static int tegra_dma_runtime_suspend(struct device
->>>>>> *dev)
->>>>>>  						  TEGRA_APBDMA_CHAN_WCOUNT);
->>>>>>  	}
->>>>>>
->>>>>> +	dsb();
->>>>>> +
->>>>>>  	clk_disable_unprepare(tdma->dma_clk);
->>>>>>
->>>>>>  	return 0;
->>>>>>
->>>>>>
->>>>>> Apparently the problem is that CLK/DMA (PPSB/APB) accesses are
->>>>>> incoherent and CPU disables clock before writes are reaching DMA controller.
->>>>>>
->>>>>> I'd say that cyclic and scatter-gather transfers are now tested. I also
->>>>>> made some more testing of simultaneous transfers.
->>>>>>
->>>>>> Quantifying performance probably won't be easy to make as the DMA
->>>>>> read/writes are not on any kind of code's hot-path.
->>>>>
->>>>> So why make the change?
->>>>
->>>> For consistency.
->>>>
->>>>>> Jon, are you still insisting about to drop this patch or you will be
->>>>>> fine with the v2 that will have the dsb() in place?
->>>>>
->>>>> If we can't quantify the performance gain, then it is difficult to
->>>>> justify the change. I would also be concerned if that is the only place
->>>>> we need an explicit dsb.
->>>>
->>>> Maybe it won't hurt to add dsb to the ISR as well. But okay, let's drop
->>>> this patch for now.
->>>>
->>>
->>> Jon, it occurred to me that there still should be a problem with the
->>> writel() ordering in the driver because writel() ensures that memory
->>> stores are completed *before* the write occurs and hence translates into
->>> iowmb() + writel_relaxed() [0]. Thus the last write will always happen
->>> asynchronously in regards to clk accesses.
->>>
->>> [0]
->>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm/include/asm/io.h#n311
->>>
->>
->> Also please note that iowmb() translates into wmb() if
->> CONFIG_ARM_DMA_MEM_BUFFERABLE=y and sometime ago I was profiling host1x
->> driver job submission performance and have seen cases where wmb() could
->> take up to 1ms on T20 due to L2 syncing if there are outstanding memory
->> writes in the cache (or even more, I don't remember exactly already how
->> bad it was..).
-> 
-> This looks to be primarily caused by the fact that we have the L2X0
-> cache on Tegra20. So there's not really anything that can be done there
-> without potentially compromising correctness of the code.
-> 
->> Altogether, I think the usage of readl/writel in pretty much all of
->> Tegra drivers is plainly wrong and explicit dsb() shall be used in
->> places where hardware synchronization is really needed.
-> 
-> I don't think that's an accurate observation. readl()/writel() are more
-> likely to be correct than the relaxed versions. You already saw yourself
-> that using the relaxed versions can easily introduce regressions.
-> 
-> Granted, readl()/writel() might add more memory barriers than strictly
-> necessary, and therefore they might in many cases be suboptimal. But, we
-> can't just go and engage in a wholesale conversion of all drivers. If we
-> do this, we need to very carefully audit every conversion to make sure
-> no regressions are introduced. This is especially complicated because
-> these would be subtle regressions and may be difficult to catch or
-> reproduce.
-> 
-> Also, we should avoid using primitives such as dsb in driver code to
-> avoid making the code too architecture specific.
+On 30/04/2019 01:29, Tom Murphy wrote:
+> Handle devices which defer their attach to the iommu in the dma-iommu api
 
-I was testing this a bit more for a couple of days and my current
-conclusion that there is likely some problem that is getting masked by
-writel/readl because I tried to manually insert the syncing that
-writel/readl does for the relaxed versions (and more) and that slight
-shuffling of the code makes the problem to occur intermittently. My
-observations show that it's only the I2C-DMA that has the trouble, other
-DMA clients are working fine. Maybe there is some timing problem or
-missing ready-state polling somewhere, for now I don't know what's the
-actual problem is.
+I've just spent a while trying to understand what this is about...
+
+AFAICS it's a kdump thing where the regular default domain attachment 
+may lead to ongoing DMA traffic from the crashed kernel raising a fault 
+storm, so we put off the "real" attach of a given device until we know 
+it's been reset and brought into a sane state, but the only way to 
+reliably detect that is to wait until the kdump kernel driver starts 
+making new DMA mappings. Is that about right?
+
+(I note that for SMMUv3 we now handle that situation with the slightly 
+more heavy-handed approach of just turning off reporting and letting the 
+'rogue' devices fault silently, but I appreciate that not all IOMMUs may 
+have that option)
+
+> Signed-off-by: Tom Murphy <tmurphy@arista.com>
+> ---
+>   drivers/iommu/dma-iommu.c | 30 ++++++++++++++++++++++++++++++
+>   1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 7a96c2c8f56b..c18f74ad1e8b 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -322,6 +322,17 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+>   	return iova_reserve_iommu_regions(dev, domain);
+>   }
+>   
+> +static int handle_deferred_device(struct device *dev)
+> +{
+> +	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+
+We don't want iommu_get_domain_for_dev() in fast-paths, as the 
+contention on the group refcount has proven to have a surprisingly high 
+overhead on some large systems. That's what iommu_get_dma_domain() 
+solves, but ideally, can this be wrapped in is_kdump_kernel() such as to 
+have no impact at all on the general case?
+
+> +	const struct iommu_ops *ops = domain->ops;
+> +
+> +	if (ops->is_attach_deferred && ops->is_attach_deferred(domain, dev))
+> +		return iommu_attach_device(domain, dev);
+> +
+> +	return 0;
+> +}
+> +
+>   /**
+>    * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
+>    *                    page flags.
+> @@ -835,6 +846,8 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+>   	bool coherent = dev_is_dma_coherent(dev);
+>   	dma_addr_t dma_handle;
+>   
+> +	handle_deferred_device(dev);
+> +
+>   	dma_handle =__iommu_dma_map(dev, phys, size,
+>   			dma_info_to_prot(dir, coherent, attrs),
+>   			iommu_get_dma_domain(dev));
+> @@ -849,6 +862,8 @@ static void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
+>   {
+>   	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+>   
+> +	handle_deferred_device(dev);
+
+You don't need this - it's completely bogus to make an unmap call 
+without having already called the corresponding map function, so we can 
+assume it's already been dealt with.
+
+> +
+>   	if (!dev_is_dma_coherent(dev) && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)) {
+>   		phys_addr_t phys = iommu_iova_to_phys(domain, dma_handle);
+>   
+> @@ -873,6 +888,8 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
+>   	unsigned int cur_len = 0, max_len = dma_get_max_seg_size(dev);
+>   	int i, count = 0;
+>   
+> +	handle_deferred_device(dev);
+
+Hmm, this should be in iommu_dma_map_sg() - that's the guy that needs a 
+valid domain, and it's impossible to get to __finalise_sg() without 
+having been through there anyway.
+
+> +
+>   	for_each_sg(sg, s, nents, i) {
+>   		/* Restore this segment's original unaligned fields first */
+>   		unsigned int s_iova_off = sg_dma_address(s);
+> @@ -1022,6 +1039,8 @@ static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+>   	struct scatterlist *tmp;
+>   	int i;
+>   
+> +	handle_deferred_device(dev);
+
+Again, not necessary.
+
+> +
+>   	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
+>   		iommu_dma_sync_sg_for_cpu(dev, sg, nents, dir);
+>   
+> @@ -1042,6 +1061,8 @@ static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+>   static dma_addr_t iommu_dma_map_resource(struct device *dev, phys_addr_t phys,
+>   		size_t size, enum dma_data_direction dir, unsigned long attrs)
+>   {
+> +	handle_deferred_device(dev);
+
+Ditto.
+
+> +
+>   	return __iommu_dma_map(dev, phys, size,
+>   			dma_info_to_prot(dir, false, attrs) | IOMMU_MMIO,
+>   			iommu_get_dma_domain(dev));
+> @@ -1050,12 +1071,15 @@ static dma_addr_t iommu_dma_map_resource(struct device *dev, phys_addr_t phys,
+>   static void iommu_dma_unmap_resource(struct device *dev, dma_addr_t handle,
+>   		size_t size, enum dma_data_direction dir, unsigned long attrs)
+>   {
+> +	handle_deferred_device(dev);
+
+Ditto.
+
+> +
+>   	__iommu_dma_unmap(iommu_get_dma_domain(dev), handle, size);
+>   }
+>   
+>   static void *iommu_dma_alloc(struct device *dev, size_t size,
+>   		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
+>   {
+> +	handle_deferred_device(dev);
+>   	gfp |= __GFP_ZERO;
+>   
+>   #ifdef CONFIG_DMA_DIRECT_REMAP
+> @@ -1076,6 +1100,8 @@ static void iommu_dma_free(struct device *dev, size_t size, void *cpu_addr,
+>   {
+>   	struct page *page;
+>   
+> +	handle_deferred_device(dev);
+
+Similarly, you can't free anything that hasn't already come from a 
+successful call to iommu_dma_alloc()...
+
+> +
+>   	/*
+>   	 * cpu_addr can be one of 4 things depending on how it was allocated:
+>   	 *
+> @@ -1115,6 +1141,8 @@ static int iommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+>   	unsigned long pfn;
+>   	int ret;
+>   
+> +	handle_deferred_device(dev);
+
+...nor can you mmap() it...
+
+> +
+>   	vma->vm_page_prot = arch_dma_mmap_pgprot(dev, vma->vm_page_prot, attrs);
+>   
+>   	if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
+> @@ -1143,6 +1171,8 @@ static int iommu_dma_get_sgtable(struct device *dev, struct sg_table *sgt,
+>   	struct page *page;
+>   	int ret;
+>   
+> +	handle_deferred_device(dev);
+
+...nor attempt to export it.
+
+Robin.
+
+> +
+>   #ifdef CONFIG_DMA_DIRECT_REMAP
+>   	if (is_vmalloc_addr(cpu_addr)) {
+>   		if (!(attrs & DMA_ATTR_FORCE_CONTIGUOUS))
+> 
