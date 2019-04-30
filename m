@@ -1,314 +1,52 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 16/16] PM / devfreq: Introduce driver for NVIDIA
- Tegra20
-Date: Tue, 30 Apr 2019 09:21:38 +0900
-Message-ID: <298cb2de-4191-4cd4-5bee-4501efe1967b@samsung.com>
-References: <20190417222925.5815-1-digetx@gmail.com>
-        <CGME20190417224323epcas2p1fdc2aa12d442dd8e22e3cdd04d0204c8@epcas2p1.samsung.com>
-        <20190417222925.5815-17-digetx@gmail.com>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: [PATCH v2 0/4] iommu/amd: Convert the AMD iommu driver to the dma-iommu api
+Date: Tue, 30 Apr 2019 01:29:47 +0100
+Message-ID: <20190430002952.18909-1-tmurphy@arista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190417222925.5815-17-digetx@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: murphyt7@tcd.ie, Tom Murphy <tmurphy@arista.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+Convert the AMD iommu driver to the dma-iommu api. Remove the iova
+handling and reserve region code from the AMD iommu driver.
 
-Looks good to me. But, just I have one minor comment
-about '8' divider value in the tegra_devfreq_get_dev_status().
+Change-log:
+v2:
+-Rebase on top of this series:
+ http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+-Add a gfp_t parameter to the iommu_ops::map function.
+-Made use of the reserve region code inside the dma-iommu api
 
-On the next version, you better to add the comment about the meaning
-of '8' divider value.
+Tom Murphy (4):
+  iommu: Add gfp parameter to iommu_ops::map
+  iommu/dma-iommu: Handle deferred devices
+  iommu/dma-iommu: Use the dev->coherent_dma_mask
+  iommu/amd: Convert the AMD iommu driver to the dma-iommu api
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-On 19. 4. 18. 오전 7:29, Dmitry Osipenko wrote:
-> Add devfreq driver for NVIDIA Tegra20 SoC's. The driver periodically
-> reads out Memory Controller counters and adjusts memory frequency based
-> on the memory clients activity.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  MAINTAINERS                       |   8 ++
->  drivers/devfreq/Kconfig           |  10 ++
->  drivers/devfreq/Makefile          |   1 +
->  drivers/devfreq/tegra20-devfreq.c | 202 ++++++++++++++++++++++++++++++
->  4 files changed, 221 insertions(+)
->  create mode 100644 drivers/devfreq/tegra20-devfreq.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 002d564efbe5..c70896550a27 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10070,6 +10070,14 @@ F:	include/linux/memblock.h
->  F:	mm/memblock.c
->  F:	Documentation/core-api/boot-time-mm.rst
->  
-> +MEMORY FREQUENCY SCALING DRIVER FOR NVIDIA TEGRA20
-> +M:	Dmitry Osipenko <digetx@gmail.com>
-> +L:	linux-pm@vger.kernel.org
-> +L:	linux-tegra@vger.kernel.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-> +S:	Maintained
-> +F:	drivers/devfreq/tegra20-devfreq.c
-> +
->  MEMORY MANAGEMENT
->  L:	linux-mm@kvack.org
->  W:	http://www.linux-mm.org
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index a6bba6e1e7d9..1530dbefa31f 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -100,6 +100,16 @@ config ARM_TEGRA_DEVFREQ
->  	  It reads ACTMON counters of memory controllers and adjusts the
->  	  operating frequencies and voltages with OPP support.
->  
-> +config ARM_TEGRA20_DEVFREQ
-> +	tristate "NVIDIA Tegra20 DEVFREQ Driver"
-> +	depends on (TEGRA_MC && TEGRA20_EMC) || COMPILE_TEST
-> +	select DEVFREQ_GOV_SIMPLE_ONDEMAND
-> +	select PM_OPP
-> +	help
-> +	  This adds the DEVFREQ driver for the Tegra20 family of SoCs.
-> +	  It reads Memory Controller counters and adjusts the operating
-> +	  frequencies and voltages with OPP support.
-> +
->  config ARM_RK3399_DMC_DEVFREQ
->  	tristate "ARM RK3399 DMC DEVFREQ Driver"
->  	depends on ARCH_ROCKCHIP
-> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-> index 47e5aeeebfd1..338ae8440db6 100644
-> --- a/drivers/devfreq/Makefile
-> +++ b/drivers/devfreq/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+= governor_passive.o
->  obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
->  obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
->  obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra30-devfreq.o
-> +obj-$(CONFIG_ARM_TEGRA20_DEVFREQ)	+= tegra20-devfreq.o
->  
->  # DEVFREQ Event Drivers
->  obj-$(CONFIG_PM_DEVFREQ_EVENT)		+= event/
-> diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
-> new file mode 100644
-> index 000000000000..ec2cec6808ed
-> --- /dev/null
-> +++ b/drivers/devfreq/tegra20-devfreq.c
-> @@ -0,0 +1,202 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * NVIDIA Tegra20 devfreq driver
-> + *
-> + * Copyright (C) 2019 GRATE-DRIVER project
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/devfreq.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/tegra/mc.h>
-> +
-> +#include "governor.h"
-> +
-> +#define MC_STAT_CONTROL				0x90
-> +#define MC_STAT_EMC_CLOCK_LIMIT			0xa0
-> +#define MC_STAT_EMC_CLOCKS			0xa4
-> +#define MC_STAT_EMC_CONTROL			0xa8
-> +#define MC_STAT_EMC_COUNT			0xb8
-> +
-> +#define EMC_GATHER_CLEAR			(1 << 8)
-> +#define EMC_GATHER_ENABLE			(3 << 8)
-> +
-> +struct tegra_devfreq {
-> +	struct devfreq *devfreq;
-> +	struct clk *clk;
-> +	void __iomem *regs;
-> +};
-> +
-> +static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-> +				u32 flags)
-> +{
-> +	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
-> +	struct devfreq *devfreq = tegra->devfreq;
-> +	struct dev_pm_opp *opp;
-> +	unsigned long rate;
-> +	int err;
-> +
-> +	opp = devfreq_recommended_opp(dev, freq, flags);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	rate = dev_pm_opp_get_freq(opp);
-> +	dev_pm_opp_put(opp);
-> +
-> +	err = clk_set_min_rate(tegra->clk, rate);
-> +	if (err)
-> +		return err;
-> +
-> +	err = clk_set_rate(tegra->clk, 0);
-> +	if (err)
-> +		goto restore_min_rate;
-> +
-> +	return 0;
-> +
-> +restore_min_rate:
-> +	clk_set_min_rate(tegra->clk, devfreq->previous_freq);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra_devfreq_get_dev_status(struct device *dev,
-> +					struct devfreq_dev_status *stat)
-> +{
-> +	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
-> +
-> +	stat->busy_time = readl_relaxed(tegra->regs + MC_STAT_EMC_COUNT);
-> +	stat->total_time = readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / 8;
-
-How about adding the comment why divide with '8' constant value?
-
-
-> +	stat->current_frequency = clk_get_rate(tegra->clk);
-> +
-> +	writel_relaxed(EMC_GATHER_CLEAR, tegra->regs + MC_STAT_CONTROL);
-> +	writel_relaxed(EMC_GATHER_ENABLE, tegra->regs + MC_STAT_CONTROL);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct devfreq_dev_profile tegra_devfreq_profile = {
-> +	.polling_ms	= 500,
-> +	.target		= tegra_devfreq_target,
-> +	.get_dev_status	= tegra_devfreq_get_dev_status,
-> +};
-> +
-> +static struct tegra_mc *tegra_get_memory_controller(void)
-> +{
-> +	struct platform_device *pdev;
-> +	struct device_node *np;
-> +	struct tegra_mc *mc;
-> +
-> +	np = of_find_compatible_node(NULL, NULL, "nvidia,tegra20-mc-gart");
-> +	if (!np)
-> +		return ERR_PTR(-ENOENT);
-> +
-> +	pdev = of_find_device_by_node(np);
-> +	of_node_put(np);
-> +	if (!pdev)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	mc = platform_get_drvdata(pdev);
-> +	if (!mc)
-> +		return ERR_PTR(-EPROBE_DEFER);
-> +
-> +	return mc;
-> +}
-> +
-> +static int tegra_devfreq_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_devfreq *tegra;
-> +	struct tegra_mc *mc;
-> +	unsigned long max_rate;
-> +	unsigned long rate;
-> +	int err;
-> +
-> +	mc = tegra_get_memory_controller();
-> +	if (IS_ERR(mc)) {
-> +		err = PTR_ERR(mc);
-> +		dev_err(&pdev->dev, "failed to get memory controller: %d\n",
-> +			err);
-> +		return err;
-> +	}
-> +
-> +	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-> +	if (!tegra)
-> +		return -ENOMEM;
-> +
-> +	/* EMC is a system-critical clock that is always enabled */
-> +	tegra->clk = devm_clk_get(&pdev->dev, "emc");
-> +	if (IS_ERR(tegra->clk)) {
-> +		err = PTR_ERR(tegra->clk);
-> +		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	tegra->regs = mc->regs;
-> +
-> +	max_rate = clk_round_rate(tegra->clk, ULONG_MAX);
-> +
-> +	for (rate = 0; rate <= max_rate; rate++) {
-> +		rate = clk_round_rate(tegra->clk, rate);
-> +
-> +		err = dev_pm_opp_add(&pdev->dev, rate, 0);
-> +		if (err) {
-> +			dev_err(&pdev->dev, "failed to add opp: %d\n", err);
-> +			goto remove_opps;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Reset statistic gathers state, select global bandwidth for the
-> +	 * statistics collection mode and set clocks counter saturation
-> +	 * limit to maximum.
-> +	 */
-> +	writel_relaxed(0x00000000, tegra->regs + MC_STAT_CONTROL);
-> +	writel_relaxed(0x00000000, tegra->regs + MC_STAT_EMC_CONTROL);
-> +	writel_relaxed(0xffffffff, tegra->regs + MC_STAT_EMC_CLOCK_LIMIT);
-> +
-> +	platform_set_drvdata(pdev, tegra);
-> +
-> +	tegra->devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
-> +					    DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
-> +	if (IS_ERR(tegra->devfreq)) {
-> +		err = PTR_ERR(tegra->devfreq);
-> +		goto remove_opps;
-> +	}
-> +
-> +	return 0;
-> +
-> +remove_opps:
-> +	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra_devfreq_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_devfreq *tegra = platform_get_drvdata(pdev);
-> +
-> +	devfreq_remove_device(tegra->devfreq);
-> +	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver tegra_devfreq_driver = {
-> +	.probe		= tegra_devfreq_probe,
-> +	.remove		= tegra_devfreq_remove,
-> +	.driver		= {
-> +		.name	= "tegra20-devfreq",
-> +	},
-> +};
-> +module_platform_driver(tegra_devfreq_driver);
-> +
-> +MODULE_ALIAS("platform:tegra20-devfreq");
-> +MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
-> +MODULE_DESCRIPTION("NVIDIA Tegra20 devfreq driver");
-> +MODULE_LICENSE("GPL v2");
-> 
-
+ drivers/iommu/Kconfig          |   1 +
+ drivers/iommu/amd_iommu.c      | 694 ++++-----------------------------
+ drivers/iommu/arm-smmu-v3.c    |   2 +-
+ drivers/iommu/arm-smmu.c       |   2 +-
+ drivers/iommu/dma-iommu.c      |  52 ++-
+ drivers/iommu/exynos-iommu.c   |   2 +-
+ drivers/iommu/intel-iommu.c    |   2 +-
+ drivers/iommu/iommu.c          |  43 +-
+ drivers/iommu/ipmmu-vmsa.c     |   2 +-
+ drivers/iommu/msm_iommu.c      |   2 +-
+ drivers/iommu/mtk_iommu.c      |   2 +-
+ drivers/iommu/mtk_iommu_v1.c   |   2 +-
+ drivers/iommu/omap-iommu.c     |   2 +-
+ drivers/iommu/qcom_iommu.c     |   2 +-
+ drivers/iommu/rockchip-iommu.c |   2 +-
+ drivers/iommu/s390-iommu.c     |   2 +-
+ drivers/iommu/tegra-gart.c     |   2 +-
+ drivers/iommu/tegra-smmu.c     |   2 +-
+ include/linux/iommu.h          |  21 +-
+ 19 files changed, 187 insertions(+), 652 deletions(-)
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
