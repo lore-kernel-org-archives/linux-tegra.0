@@ -1,375 +1,136 @@
-From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
-        <ckoenig.leichtzumerken@gmail.com>
-Subject: [PATCH] dma-buf: add struct dma_buf_attach_info v2
-Date: Tue, 30 Apr 2019 13:10:02 +0200
-Message-ID: <20190430111002.106168-1-christian.koenig@amd.com>
+From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v2 3/4] iommu/dma-iommu: Use the dev->coherent_dma_mask
+Date: Tue, 30 Apr 2019 04:12:22 -0700
+Message-ID: <20190430111222.GA3191@infradead.org>
+References: <20190430002952.18909-1-tmurphy@arista.com>
+ <20190430002952.18909-4-tmurphy@arista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: xen-devel@lists.xenproject.org, devel@driverdev.osuosl.org, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, sstabellini@kernel.org, jgross@suse.com, boris.ostrovsky@oracle.com, digetx@gmail.com, gregkh@linuxfoundation.org, arnd@arndb.de, mchehab@kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, pawel@osciak.com, jonathanh@nvidia.com, thierry.reding@gmail.com, tomi.valkeinen@ti.com, rodrigo.vivi@intel.com, joonas.lahtinen@linux.intel.com, jani.nikula@linux.intel.com, sean@poorly.run, maxime.ripard@bootlin.com, maarten.lankhorst@linux.intel.com, linux@armlinux.org.uk, sumit.semwal@linaro.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20190430002952.18909-4-tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Tom Murphy <tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, murphyt7-/Zw1syy4LHg@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a structure for the parameters of dma_buf_attach, this makes it much easier
-to add new parameters later on.
+>  static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+> -		size_t size, int prot, struct iommu_domain *domain)
+> +		size_t size, int prot, struct iommu_domain *domain,
+> +		dma_addr_t dma_limit)
 
-v2: rebase cleanup and fix all new implementations as well
+Can we just call this dma_mask?
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
+>  static void iommu_dma_unmap_resource(struct device *dev, dma_addr_t handle,
+> @@ -1250,7 +1251,8 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+>  	if (!msi_page)
+>  		return NULL;
+>  
+> -	iova = __iommu_dma_map(dev, msi_addr, size, prot, domain);
+> +	iova = __iommu_dma_map(dev, msi_addr, size, prot, domain,
+> +			dma_get_mask(dev));
+
+Hmm, I don't think we need the DMA mask for the MSI mapping, this
+should probably always use a 64-bit mask.  Or we could just untangle
+it from the DMA mapping fast path entire, something like:
+
 ---
- drivers/dma-buf/dma-buf.c                       | 13 +++++++------
- drivers/gpu/drm/armada/armada_gem.c             |  6 +++++-
- drivers/gpu/drm/drm_prime.c                     |  6 +++++-
- drivers/gpu/drm/i915/i915_gem_dmabuf.c          |  6 +++++-
- drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c       |  6 +++++-
- drivers/gpu/drm/tegra/gem.c                     |  6 +++++-
- drivers/gpu/drm/udl/udl_dmabuf.c                |  6 +++++-
- .../common/videobuf2/videobuf2-dma-contig.c     |  6 +++++-
- .../media/common/videobuf2/videobuf2-dma-sg.c   |  6 +++++-
- drivers/misc/fastrpc.c                          |  6 +++++-
- drivers/staging/media/tegra-vde/tegra-vde.c     |  6 +++++-
- drivers/xen/gntdev-dmabuf.c                     |  4 ++++
- include/linux/dma-buf.h                         | 17 +++++++++++++++--
- 13 files changed, 76 insertions(+), 18 deletions(-)
+From 0debafc85174ca830f2e371ff8e8f7465bde3ad8 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Date: Tue, 30 Apr 2019 07:06:23 -0400
+Subject: iommu/dma: opencode __iommu_dma_map in iommu_dma_get_msi_page
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 3ae6c0c2cc02..e295e76a8c57 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -535,8 +535,9 @@ EXPORT_SYMBOL_GPL(dma_buf_put);
- /**
-  * dma_buf_attach - Add the device to dma_buf's attachments list; optionally,
-  * calls attach() of dma_buf_ops to allow device-specific attach functionality
-- * @dmabuf:	[in]	buffer to attach device to.
-- * @dev:	[in]	device to be attached.
-+ * @info:	[in]	holds all the attach related information provided
-+ *			by the importer. see &struct dma_buf_attach_info
-+ *			for further details.
-  *
-  * Returns struct dma_buf_attachment pointer for this attachment. Attachments
-  * must be cleaned up by calling dma_buf_detach().
-@@ -550,20 +551,20 @@ EXPORT_SYMBOL_GPL(dma_buf_put);
-  * accessible to @dev, and cannot be moved to a more suitable place. This is
-  * indicated with the error code -EBUSY.
-  */
--struct dma_buf_attachment *dma_buf_attach(struct dma_buf *dmabuf,
--					  struct device *dev)
-+struct dma_buf_attachment *dma_buf_attach(const struct dma_buf_attach_info *info)
+The MSI page mapping really is a little different from the normal DMA
+mappings and doesn't need to look at the DMA mask.  Just open code
+it instead of trying to squeeze the behavior into the DMA path helpers.
+
+Signed-off-by: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+---
+ drivers/iommu/dma-iommu.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 58c35bab7626..2ac0df0879d7 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -358,11 +358,6 @@ static dma_addr_t iommu_dma_alloc_iova(struct iommu_domain *domain,
+ 	struct iova_domain *iovad = &cookie->iovad;
+ 	unsigned long shift, iova_len, iova = 0;
+ 
+-	if (cookie->type == IOMMU_DMA_MSI_COOKIE) {
+-		cookie->msi_iova += size;
+-		return cookie->msi_iova - size;
+-	}
+-
+ 	shift = iova_shift(iovad);
+ 	iova_len = size >> shift;
+ 	/*
+@@ -397,10 +392,7 @@ static void iommu_dma_free_iova(struct iommu_dma_cookie *cookie,
  {
-+	struct dma_buf *dmabuf = info->dmabuf;
- 	struct dma_buf_attachment *attach;
- 	int ret;
+ 	struct iova_domain *iovad = &cookie->iovad;
  
--	if (WARN_ON(!dmabuf || !dev))
-+	if (WARN_ON(!dmabuf || !info->dev))
- 		return ERR_PTR(-EINVAL);
- 
- 	attach = kzalloc(sizeof(*attach), GFP_KERNEL);
- 	if (!attach)
- 		return ERR_PTR(-ENOMEM);
- 
--	attach->dev = dev;
-+	attach->dev = info->dev;
- 	attach->dmabuf = dmabuf;
- 
- 	mutex_lock(&dmabuf->lock);
-diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/armada/armada_gem.c
-index 642d0e70d0f8..19c47821032f 100644
---- a/drivers/gpu/drm/armada/armada_gem.c
-+++ b/drivers/gpu/drm/armada/armada_gem.c
-@@ -501,6 +501,10 @@ armada_gem_prime_export(struct drm_device *dev, struct drm_gem_object *obj,
- struct drm_gem_object *
- armada_gem_prime_import(struct drm_device *dev, struct dma_buf *buf)
+-	/* The MSI case is only ever cleaning up its most recent allocation */
+-	if (cookie->type == IOMMU_DMA_MSI_COOKIE)
+-		cookie->msi_iova -= size;
+-	else if (cookie->fq_domain)	/* non-strict mode */
++	if (cookie->fq_domain)	/* non-strict mode */
+ 		queue_iova(iovad, iova_pfn(iovad, iova),
+ 				size >> iova_shift(iovad), 0);
+ 	else
+@@ -430,14 +422,10 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
  {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = dev->dev,
-+		.dmabuf = buf
-+	};
- 	struct dma_buf_attachment *attach;
- 	struct armada_gem_object *dobj;
+ 	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+-	size_t iova_off = 0;
++	size_t iova_off = iova_offset(&cookie->iovad, phys);
+ 	dma_addr_t iova;
  
-@@ -516,7 +520,7 @@ armada_gem_prime_import(struct drm_device *dev, struct dma_buf *buf)
- 		}
- 	}
- 
--	attach = dma_buf_attach(buf, dev->dev);
-+	attach = dma_buf_attach(&attach_info);
- 	if (IS_ERR(attach))
- 		return ERR_CAST(attach);
- 
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index dc079efb3b0f..1dd70fc095ee 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -710,6 +710,10 @@ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
- 					    struct dma_buf *dma_buf,
- 					    struct device *attach_dev)
+-	if (cookie->type == IOMMU_DMA_IOVA_COOKIE) {
+-		iova_off = iova_offset(&cookie->iovad, phys);
+-		size = iova_align(&cookie->iovad, size + iova_off);
+-	}
+-
++	size = iova_align(&cookie->iovad, size + iova_off);
+ 	iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
+ 	if (!iova)
+ 		return DMA_MAPPING_ERROR;
+@@ -1121,7 +1109,6 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
  {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = attach_dev,
-+		.dmabuf = dma_buf
-+	};
- 	struct dma_buf_attachment *attach;
- 	struct sg_table *sgt;
- 	struct drm_gem_object *obj;
-@@ -730,7 +734,7 @@ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
- 	if (!dev->driver->gem_prime_import_sg_table)
- 		return ERR_PTR(-EINVAL);
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+ 	struct iommu_dma_msi_page *msi_page;
+-	dma_addr_t iova;
+ 	int prot = IOMMU_WRITE | IOMMU_NOEXEC | IOMMU_MMIO;
+ 	size_t size = cookie_msi_granule(cookie);
  
--	attach = dma_buf_attach(dma_buf, attach_dev);
-+	attach = dma_buf_attach(&attach_info);
- 	if (IS_ERR(attach))
- 		return ERR_CAST(attach);
+@@ -1134,16 +1121,16 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+ 	if (!msi_page)
+ 		return NULL;
  
-diff --git a/drivers/gpu/drm/i915/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/i915_gem_dmabuf.c
-index 5a101a9462d8..978054157c64 100644
---- a/drivers/gpu/drm/i915/i915_gem_dmabuf.c
-+++ b/drivers/gpu/drm/i915/i915_gem_dmabuf.c
-@@ -277,6 +277,10 @@ static const struct drm_i915_gem_object_ops i915_gem_object_dmabuf_ops = {
- struct drm_gem_object *i915_gem_prime_import(struct drm_device *dev,
- 					     struct dma_buf *dma_buf)
- {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = dev->dev,
-+		.dmabuf = dma_buf
-+	};
- 	struct dma_buf_attachment *attach;
- 	struct drm_i915_gem_object *obj;
- 	int ret;
-@@ -295,7 +299,7 @@ struct drm_gem_object *i915_gem_prime_import(struct drm_device *dev,
- 	}
+-	iova = __iommu_dma_map(dev, msi_addr, size, prot);
+-	if (iova == DMA_MAPPING_ERROR)
++	if (iommu_map(domain, cookie->msi_iova, msi_addr, size, prot))
+ 		goto out_free_page;
  
- 	/* need to attach */
--	attach = dma_buf_attach(dma_buf, dev->dev);
-+	attach = dma_buf_attach(&attach_info);
- 	if (IS_ERR(attach))
- 		return ERR_CAST(attach);
+ 	INIT_LIST_HEAD(&msi_page->list);
+ 	msi_page->phys = msi_addr;
+-	msi_page->iova = iova;
++	msi_page->iova = cookie->msi_iova;
+ 	list_add(&msi_page->list, &cookie->msi_page_list);
+-	return msi_page;
  
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c b/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-index 0f8b597ccd10..38d06574b251 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-@@ -156,6 +156,10 @@ struct dma_buf *omap_gem_prime_export(struct drm_device *dev,
- struct drm_gem_object *omap_gem_prime_import(struct drm_device *dev,
- 					     struct dma_buf *dma_buf)
- {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = dev->dev,
-+		.dmabuf = dma_buf
-+	};
- 	struct dma_buf_attachment *attach;
- 	struct drm_gem_object *obj;
- 	struct sg_table *sgt;
-@@ -173,7 +177,7 @@ struct drm_gem_object *omap_gem_prime_import(struct drm_device *dev,
- 		}
- 	}
- 
--	attach = dma_buf_attach(dma_buf, dev->dev);
-+	attach = dma_buf_attach(&attach_info);
- 	if (IS_ERR(attach))
- 		return ERR_CAST(attach);
- 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 4f80100ff5f3..8e6b6c879add 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -332,6 +332,10 @@ struct tegra_bo *tegra_bo_create_with_handle(struct drm_file *file,
- static struct tegra_bo *tegra_bo_import(struct drm_device *drm,
- 					struct dma_buf *buf)
- {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = drm->dev,
-+		.dmabuf = buf
-+	};
- 	struct tegra_drm *tegra = drm->dev_private;
- 	struct dma_buf_attachment *attach;
- 	struct tegra_bo *bo;
-@@ -341,7 +345,7 @@ static struct tegra_bo *tegra_bo_import(struct drm_device *drm,
- 	if (IS_ERR(bo))
- 		return bo;
- 
--	attach = dma_buf_attach(buf, drm->dev);
-+	attach = dma_buf_attach(&attach_info);
- 	if (IS_ERR(attach)) {
- 		err = PTR_ERR(attach);
- 		goto free;
-diff --git a/drivers/gpu/drm/udl/udl_dmabuf.c b/drivers/gpu/drm/udl/udl_dmabuf.c
-index 556f62662aa9..86b928f9742f 100644
---- a/drivers/gpu/drm/udl/udl_dmabuf.c
-+++ b/drivers/gpu/drm/udl/udl_dmabuf.c
-@@ -226,6 +226,10 @@ static int udl_prime_create(struct drm_device *dev,
- struct drm_gem_object *udl_gem_prime_import(struct drm_device *dev,
- 				struct dma_buf *dma_buf)
- {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = dev->dev,
-+		.dmabuf = dma_buf
-+	};
- 	struct dma_buf_attachment *attach;
- 	struct sg_table *sg;
- 	struct udl_gem_object *uobj;
-@@ -233,7 +237,7 @@ struct drm_gem_object *udl_gem_prime_import(struct drm_device *dev,
- 
- 	/* need to attach */
- 	get_device(dev->dev);
--	attach = dma_buf_attach(dma_buf, dev->dev);
-+	attach = dma_buf_attach(&attach_info);
- 	if (IS_ERR(attach)) {
- 		put_device(dev->dev);
- 		return ERR_CAST(attach);
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-index 82389aead6ed..b2d844d45ea6 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-@@ -653,6 +653,10 @@ static void vb2_dc_detach_dmabuf(void *mem_priv)
- static void *vb2_dc_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
- 	unsigned long size, enum dma_data_direction dma_dir)
- {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = dev,
-+		.dmabuf = dbuf
-+	};
- 	struct vb2_dc_buf *buf;
- 	struct dma_buf_attachment *dba;
- 
-@@ -668,7 +672,7 @@ static void *vb2_dc_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
- 
- 	buf->dev = dev;
- 	/* create attachment for the dmabuf with the user device */
--	dba = dma_buf_attach(dbuf, buf->dev);
-+	dba = dma_buf_attach(&attach_info);
- 	if (IS_ERR(dba)) {
- 		pr_err("failed to attach dmabuf\n");
- 		kfree(buf);
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-index 270c3162fdcb..ddd5f36a8ec7 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-@@ -608,6 +608,10 @@ static void vb2_dma_sg_detach_dmabuf(void *mem_priv)
- static void *vb2_dma_sg_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
- 	unsigned long size, enum dma_data_direction dma_dir)
- {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = dev,
-+		.dmabuf = dbuf
-+	};
- 	struct vb2_dma_sg_buf *buf;
- 	struct dma_buf_attachment *dba;
- 
-@@ -623,7 +627,7 @@ static void *vb2_dma_sg_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
- 
- 	buf->dev = dev;
- 	/* create attachment for the dmabuf with the user device */
--	dba = dma_buf_attach(dbuf, buf->dev);
-+	dba = dma_buf_attach(&attach_info);
- 	if (IS_ERR(dba)) {
- 		pr_err("failed to attach dmabuf\n");
- 		kfree(buf);
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 39f832d27288..93d0aac05715 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -482,6 +482,7 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
- 			      u64 len, struct fastrpc_map **ppmap)
- {
- 	struct fastrpc_session_ctx *sess = fl->sctx;
-+	struct dma_buf_attach_info attach_info;
- 	struct fastrpc_map *map = NULL;
- 	int err = 0;
- 
-@@ -501,7 +502,10 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
- 		goto get_err;
- 	}
- 
--	map->attach = dma_buf_attach(map->buf, sess->dev);
-+	memset(&attach_info, 0, sizeof(attach_info));
-+	attach_info.dev = sess->dev;
-+	attach_info.dmabuf = map->buf;
-+	map->attach = dma_buf_attach(&attach_info);
- 	if (IS_ERR(map->attach)) {
- 		dev_err(sess->dev, "Failed to attach dmabuf\n");
- 		err = PTR_ERR(map->attach);
-diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-index aa6c6bba961e..5a10c1facc27 100644
---- a/drivers/staging/media/tegra-vde/tegra-vde.c
-+++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-@@ -568,6 +568,10 @@ static int tegra_vde_attach_dmabuf(struct device *dev,
- 				   size_t *size,
- 				   enum dma_data_direction dma_dir)
- {
-+	struct dma_buf_attach_info attach_info = {
-+		.dev = dev,
-+		.dmabuf = dmabuf
-+	};
- 	struct dma_buf_attachment *attachment;
- 	struct dma_buf *dmabuf;
- 	struct sg_table *sgt;
-@@ -591,7 +595,7 @@ static int tegra_vde_attach_dmabuf(struct device *dev,
- 		return -EINVAL;
- 	}
- 
--	attachment = dma_buf_attach(dmabuf, dev);
-+	attachment = dma_buf_attach(&attach_info);
- 	if (IS_ERR(attachment)) {
- 		dev_err(dev, "Failed to attach dmabuf\n");
- 		err = PTR_ERR(attachment);
-diff --git a/drivers/xen/gntdev-dmabuf.c b/drivers/xen/gntdev-dmabuf.c
-index 2c4f324f8626..cacca830b482 100644
---- a/drivers/xen/gntdev-dmabuf.c
-+++ b/drivers/xen/gntdev-dmabuf.c
-@@ -608,6 +608,7 @@ dmabuf_imp_to_refs(struct gntdev_dmabuf_priv *priv, struct device *dev,
- 		   int fd, int count, int domid)
- {
- 	struct gntdev_dmabuf *gntdev_dmabuf, *ret;
-+	struct dma_buf_attach_info attach_info;
- 	struct dma_buf *dma_buf;
- 	struct dma_buf_attachment *attach;
- 	struct sg_table *sgt;
-@@ -627,6 +628,9 @@ dmabuf_imp_to_refs(struct gntdev_dmabuf_priv *priv, struct device *dev,
- 	gntdev_dmabuf->priv = priv;
- 	gntdev_dmabuf->fd = fd;
- 
-+	memset(&attach_info, 0, sizeof(attach_info));
-+	attach_info.dev = dev;
-+	attach_info.dmabuf = dma_buf;
- 	attach = dma_buf_attach(dma_buf, dev);
- 	if (IS_ERR(attach)) {
- 		ret = ERR_CAST(attach);
-diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-index a0bd071466fc..b5b0f5e3f186 100644
---- a/include/linux/dma-buf.h
-+++ b/include/linux/dma-buf.h
-@@ -375,6 +375,19 @@ struct dma_buf_export_info {
- 	struct dma_buf_export_info name = { .exp_name = KBUILD_MODNAME, \
- 					 .owner = THIS_MODULE }
- 
-+/**
-+ * struct dma_buf_attach_info - holds information needed to attach to a dma_buf
-+ * @dmabuf:	the exported dma_buf
-+ * @dev:	the device which wants to import the attachment
-+ *
-+ * This structure holds the information required to attach to a buffer. Used
-+ * with dma_buf_attach() only.
-+ */
-+struct dma_buf_attach_info {
-+	struct dma_buf *dmabuf;
-+	struct device *dev;
-+};
-+
- /**
-  * get_dma_buf - convenience wrapper for get_file.
-  * @dmabuf:	[in]	pointer to dma_buf
-@@ -389,8 +402,8 @@ static inline void get_dma_buf(struct dma_buf *dmabuf)
- 	get_file(dmabuf->file);
- }
- 
--struct dma_buf_attachment *dma_buf_attach(struct dma_buf *dmabuf,
--							struct device *dev);
-+struct dma_buf_attachment *
-+dma_buf_attach(const struct dma_buf_attach_info *info);
- void dma_buf_detach(struct dma_buf *dmabuf,
- 				struct dma_buf_attachment *dmabuf_attach);
- 
++	cookie->msi_iova += size;
++	return msi_page;
+ out_free_page:
+ 	kfree(msi_page);
+ 	return NULL;
 -- 
-2.17.1
+2.20.1
