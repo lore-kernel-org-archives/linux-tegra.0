@@ -1,60 +1,70 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] ASoC: max98090: Fix restore of DAPM Muxes
-Date: Wed, 1 May 2019 15:29:38 +0100
-Message-ID: <1556720978-13233-1-git-send-email-jonathanh@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v4 00/16] NVIDIA Tegra devfreq improvements and Tegra20/30 support
+Date: Thu,  2 May 2019 02:37:59 +0300
+Message-ID: <20190501233815.32643-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The max98090 driver defines 3 DAPM muxes; one for the right line output
-(LINMOD Mux), one for the left headphone mixer source (MIXHPLSEL Mux)
-and one for the right headphone mixer source (MIXHPRSEL Mux). The same
-bit is used for the mux as well as the DAPM enable, and although the mux
-can be correctly configured, after playback has completed, the mux will
-be reset during the disable phase. This is preventing the state of these
-muxes from being saved and restored correctly on system reboot. Fix this
-by marking these muxes as SND_SOC_NOPM.
+Changelog:
 
-Note this has been verified this on the Tegra124 Nyan Big which features
-the MAX98090 codec.
+v4: Addressed all review comments that were made by Chanwoo Choi to v3:
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-If this is the correct fix for this issue, can we tag this for stable?
-Or I can re-send with the stable tag. However, wanted to send out for
-review first.
+    - changed the driver removal order to match the probe exactly
+    - added clarifying comment for 1/8 ratio to the Tegra20 driver
 
- sound/soc/codecs/max98090.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+    Chanwoo, please also note that the clk patch that should fix
+    compilation problem that was reported the kbuild-test-robot is already
+    applied and available in the recent linux-next.
 
-diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
-index 30c242c38d99..7619ea31ab50 100644
---- a/sound/soc/codecs/max98090.c
-+++ b/sound/soc/codecs/max98090.c
-@@ -1194,14 +1194,14 @@ static const struct snd_soc_dapm_widget max98090_dapm_widgets[] = {
- 		&max98090_right_rcv_mixer_controls[0],
- 		ARRAY_SIZE(max98090_right_rcv_mixer_controls)),
- 
--	SND_SOC_DAPM_MUX("LINMOD Mux", M98090_REG_LOUTR_MIXER,
--		M98090_LINMOD_SHIFT, 0, &max98090_linmod_mux),
-+	SND_SOC_DAPM_MUX("LINMOD Mux", SND_SOC_NOPM, 0, 0,
-+		&max98090_linmod_mux),
- 
--	SND_SOC_DAPM_MUX("MIXHPLSEL Mux", M98090_REG_HP_CONTROL,
--		M98090_MIXHPLSEL_SHIFT, 0, &max98090_mixhplsel_mux),
-+	SND_SOC_DAPM_MUX("MIXHPLSEL Mux", SND_SOC_NOPM, 0, 0,
-+		&max98090_mixhplsel_mux),
- 
--	SND_SOC_DAPM_MUX("MIXHPRSEL Mux", M98090_REG_HP_CONTROL,
--		M98090_MIXHPRSEL_SHIFT, 0, &max98090_mixhprsel_mux),
-+	SND_SOC_DAPM_MUX("MIXHPRSEL Mux", SND_SOC_NOPM, 0, 0,
-+		&max98090_mixhprsel_mux),
- 
- 	SND_SOC_DAPM_PGA("HP Left Out", M98090_REG_OUTPUT_ENABLE,
- 		M98090_HPLEN_SHIFT, 0, NULL, 0),
+v3: Addressed all review comments that were made by Chanwoo Choi to v2.
+
+    Patch "Synchronize IRQ after masking it in hardware" morphed into
+    "Properly disable interrupts", which disables interrupts more solidly.
+
+    Added new minor patch: "Rename tegra-devfreq.c to tegra30-devfreq.c".
+
+    Added missed error handlings for dev_pm_opp_add().
+
+v2: The patchset was quite heavily reworked since v1, few patches we
+    dropped or squashed into the new ones and more patches we added.
+    In a result more bugs and potential problems are fixed now, driver's
+    code got more clean up.
+
+    The Tegra20 driver-addition patch is now a part of this series, it has
+    no changes since v1.
+
+Dmitry Osipenko (16):
+  PM / devfreq: tegra: Fix kHz to Hz conversion
+  PM / devfreq: tegra: Replace readl-writel with relaxed versions
+  PM / devfreq: tegra: Replace write memory barrier with the read
+    barrier
+  PM / devfreq: tegra: Don't ignore clk errors
+  PM / devfreq: tegra: Don't set EMC clock rate to maximum on probe
+  PM / devfreq: tegra: Drop primary interrupt handler
+  PM / devfreq: tegra: Properly disable interrupts
+  PM / devfreq: tegra: Clean up driver's probe / remove
+  PM / devfreq: tegra: Avoid inconsistency of current frequency value
+  PM / devfreq: tegra: Mark ACTMON's governor as immutable
+  PM / devfreq: tegra: Move governor registration to driver's probe
+  PM / devfreq: tegra: Reconfigure hardware on governor's restart
+  PM / devfreq: tegra: Support Tegra30
+  PM / devfreq: tegra: Enable COMPILE_TEST for the driver
+  PM / devfreq: tegra: Rename tegra-devfreq.c to tegra30-devfreq.c
+  PM / devfreq: Introduce driver for NVIDIA Tegra20
+
+ MAINTAINERS                                   |   8 +
+ drivers/devfreq/Kconfig                       |  15 +-
+ drivers/devfreq/Makefile                      |   3 +-
+ drivers/devfreq/tegra20-devfreq.c             | 212 ++++++++++++
+ .../{tegra-devfreq.c => tegra30-devfreq.c}    | 315 ++++++++----------
+ 5 files changed, 379 insertions(+), 174 deletions(-)
+ create mode 100644 drivers/devfreq/tegra20-devfreq.c
+ rename drivers/devfreq/{tegra-devfreq.c => tegra30-devfreq.c} (81%)
+
 -- 
-2.7.4
+2.21.0
