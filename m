@@ -1,121 +1,66 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 4/6] dmaengine: tegra210-adma: add pause/resume support
-Date: Thu, 2 May 2019 18:25:15 +0530
-Message-ID: <1556801717-31507-5-git-send-email-spujar@nvidia.com>
-References: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] arm64: tegra: Fix insecure SMMU users for Tegra186
+Date: Thu, 2 May 2019 14:27:21 +0100
+Message-ID: <1556803641-22305-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: vkoul@kernel.org, dan.j.williams@intel.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Douglas Anderson <dianders@chromium.org>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-During an audio playback session it is observed that, audio goes off after
-few seconds of continuous pause and play. No audio is heard even when the
-playback is resumed.
+From: Jonathan Hunter <jonathanh@nvidia.com>
 
-The reason for above is, currently ADMA driver does not handle DMA_PAUSE/
-DMA_RESUME and relevant callbacks for dma_device are not implemented. This
-patch implements device_pause and device_resume callbacks for the device.
-During pause TRANSFER_PAUSE bit of dma channel control register is set and
-the same is cleared during resume.
+Commit 954a03be033c ("iommu/arm-smmu: Break insecure users by disabling
+bypass by default") intentionally breaks all devices using the SMMU in
+bypass mode. This is breaking various devices on Tegra186 which include
+the ethernet, BPMP and HDA device. Fix this by populating the SMMU node
+for these devices with their stream ID.
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Fixes: 954a03be033c ("iommu/arm-smmu: Break insecure users by disabling bypass by default")
+
+Signed-off-by: Jonathan Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra210-adma.c | 51 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 115ee10f..f26c458 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -30,6 +30,7 @@
- #define ADMA_CH_CMD					0x00
- #define ADMA_CH_STATUS					0x0c
- #define ADMA_CH_STATUS_XFER_EN				BIT(0)
-+#define ADMA_CH_STATUS_XFER_PAUSED			BIT(1)
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index f0bb6ced4976..3fb60f6f3a93 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -60,6 +60,7 @@
+ 		clock-names = "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
+ 		resets = <&bpmp TEGRA186_RESET_EQOS>;
+ 		reset-names = "eqos";
++		iommus = <&smmu TEGRA186_SID_EQOS>;
+ 		status = "disabled";
  
- #define ADMA_CH_INT_STATUS				0x10
- #define ADMA_CH_INT_STATUS_XFER_DONE			BIT(0)
-@@ -41,6 +42,7 @@
- #define ADMA_CH_CTRL_DIR_MEM2AHUB			4
- #define ADMA_CH_CTRL_MODE_CONTINUOUS			(2 << 8)
- #define ADMA_CH_CTRL_FLOWCTRL_EN			BIT(1)
-+#define ADMA_CH_CTRL_XFER_PAUSE_SHIFT			0
+ 		snps,write-requests = <1>;
+@@ -338,6 +339,7 @@
+ 			 <&bpmp TEGRA186_RESET_HDA2CODEC_2X>;
+ 		reset-names = "hda", "hda2hdmi", "hda2codec_2x";
+ 		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
++		iommus = <&smmu TEGRA186_SID_HDA>;
+ 		status = "disabled";
+ 	};
  
- #define ADMA_CH_CONFIG					0x28
- #define ADMA_CH_CONFIG_SRC_BUF(val)			(((val) & 0x7) << 28)
-@@ -67,6 +69,8 @@
- #define ADMA_GLOBAL_CMD					0x00
- #define ADMA_GLOBAL_SOFT_RESET				0x04
+@@ -1158,6 +1160,7 @@
  
-+#define TEGRA_ADMA_BURST_COMPLETE_TIME			20
-+
- #define ADMA_CH_FIFO_CTRL_DEFAULT	(ADMA_CH_FIFO_CTRL_OVRFW_THRES(1) | \
- 					 ADMA_CH_FIFO_CTRL_STARV_THRES(1))
- 
-@@ -437,6 +441,51 @@ static void tegra_adma_issue_pending(struct dma_chan *dc)
- 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
- }
- 
-+static bool tegra_adma_is_paused(struct tegra_adma_chan *tdc)
-+{
-+	u32 csts;
-+
-+	csts = tdma_ch_read(tdc, ADMA_CH_STATUS);
-+	csts &= ADMA_CH_STATUS_XFER_PAUSED;
-+
-+	return csts ? true : false;
-+}
-+
-+static int tegra_adma_pause(struct dma_chan *dc)
-+{
-+	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
-+	struct tegra_adma_desc *desc = tdc->desc;
-+	struct tegra_adma_chan_regs *ch_regs = &desc->ch_regs;
-+	int dcnt = 10;
-+
-+	ch_regs->ctrl = tdma_ch_read(tdc, ADMA_CH_CTRL);
-+	ch_regs->ctrl |= (1 << ADMA_CH_CTRL_XFER_PAUSE_SHIFT);
-+	tdma_ch_write(tdc, ADMA_CH_CTRL, ch_regs->ctrl);
-+
-+	while (dcnt-- && !tegra_adma_is_paused(tdc))
-+		udelay(TEGRA_ADMA_BURST_COMPLETE_TIME);
-+
-+	if (dcnt < 0) {
-+		dev_err(tdc2dev(tdc), "unable to pause DMA channel\n");
-+		return -EBUSY;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_adma_resume(struct dma_chan *dc)
-+{
-+	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
-+	struct tegra_adma_desc *desc = tdc->desc;
-+	struct tegra_adma_chan_regs *ch_regs = &desc->ch_regs;
-+
-+	ch_regs->ctrl = tdma_ch_read(tdc, ADMA_CH_CTRL);
-+	ch_regs->ctrl &= ~(1 << ADMA_CH_CTRL_XFER_PAUSE_SHIFT);
-+	tdma_ch_write(tdc, ADMA_CH_CTRL, ch_regs->ctrl);
-+
-+	return 0;
-+}
-+
- static int tegra_adma_terminate_all(struct dma_chan *dc)
- {
- 	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
-@@ -798,6 +847,8 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	tdma->dma_dev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
- 	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
- 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-+	tdma->dma_dev.device_pause = tegra_adma_pause;
-+	tdma->dma_dev.device_resume = tegra_adma_resume;
- 
- 	ret = dma_async_device_register(&tdma->dma_dev);
- 	if (ret < 0) {
+ 	bpmp: bpmp {
+ 		compatible = "nvidia,tegra186-bpmp";
++		iommus = <&smmu TEGRA186_SID_BPMP>;
+ 		mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB
+ 				    TEGRA_HSP_DB_MASTER_BPMP>;
+ 		shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
 -- 
-2.7.4
+1.9.1
