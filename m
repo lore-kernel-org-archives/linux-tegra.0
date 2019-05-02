@@ -1,77 +1,248 @@
 From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 0/6] Add support for Tegra186/Tegra194 and generic fixes
-Date: Thu, 2 May 2019 18:25:11 +0530
-Message-ID: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
+Subject: [PATCH 1/6] dmaengine: tegra210-adma: prepare for supporting newer Tegra chips
+Date: Thu, 2 May 2019 18:25:12 +0530
+Message-ID: <1556801717-31507-2-git-send-email-spujar@nvidia.com>
+References: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: vkoul@kernel.org, dan.j.williams@intel.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Audio DMA(ADMA) interface is a gateway in the AHUB for facilitating DMA
-transfers between memory and all of its clients. Currently the driver
-supports Tegra210 based platforms. This series adds support for Tegra186
-and Tegra194 based platforms and fixes few functional issues.
+This is a preparatory patch to add support for Tegra186 and Tegra194 chips.
+Following changes are necessary to make driver code generic.
+ * chip_data structure is enhanced to have chip specific details and
+   following are the additions to the structure
+   * Offset addresses for ADMA global and channel registers
+   * Offset values for Tx and Rx channel selection
+   * Maximum supported Tx and Rx channels
+   * Tx and Rx channel request mask
+   * ADMA channel register space size
+ * Make use of above chip_data to generalise the driver code
 
-Patches in the series are classified into three categories,
-  1. Add support for Tegra186 and Tegra194
-  2. Add DMA pause/resume feature
-  3. Fixes common to differernt Tegra generations
+Support for Tegra186 and Tegra194 will be added in subsequent patches of
+the series.
 
-Below change log describes the patches in detail.
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ drivers/dma/tegra210-adma.c | 91 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 57 insertions(+), 34 deletions(-)
 
-Change log:
-=====================================
-v1
-----
-The series can be classified into 3 categories,
-  1. Add support for Tegra186 and Tegra194
-     [Patch 1/6] dmaengine: tegra210-adma: prepare for supporting newer
-     Tegra chips
-       * The support was there only for Tegra210
-       * This is a preparation for adding support for newer Tegra chips
-       * chip_data is enhanced to support differences between Tegra210 and
-         Tegra186/Tegra194
-     [Patch 2/6] Documentation: DT: Add compatibility binding for Tegra186
-       * New compatibility string is required for driver to work for
-         Tegra186 and Tegra194. Hence new compatibility is introduced.
-       * Tegra194 can use the same compatibility as Tegra186
-     [Patch 3/6] dmaengine: tegra210-adma: add support for Tegra186/
-     Tegra194
-       * Populates chip specific information for Tegra186
-       * There is a difference in the way ADMA CH_CONFIG registers are
-         encoded for Tegra210 and Tegra186. Added helper fucntions to
-         support different versions of burst size configuration
-
-  2. Add DMA pause/resume feature
-     [Patch 4/6] dmaengine: tegra210-adma: add pause/resume support
-       * Adds support for ADMA pause/resume, otherwise audio loss was seen
-         during continuous pause/resume of audio playback.
-
-  3. Fixes common to differernt Tegra generations
-     [Patch 5/6] dmaengine: tegra210-dma: free dma controller in remove()
-       * Fixes kernel panic observed during driver reload. DMA controller
-         needs to be freed when driver is unloaded
-     [Patch 6/6] dmaengine: tegra210-adma: restore channel status
-       * Fixes resume across system suspend. If the channel state is not
-         restored, the transfers won't resume from the state from where it
-         was left during suspend entry. In this case, audio playback did
-         not resume properly once system exited from low power state.
-
-===============================
-Sameer Pujar (6):
-  dmaengine: tegra210-adma: prepare for supporting newer Tegra chips
-  Documentation: DT: Add compatibility binding for Tegra186
-  dmaengine: tegra210-adma: add support for Tegra186/Tegra194
-  dmaengine: tegra210-adma: add pause/resume support
-  dmaengine: tegra210-dma: free dma controller in remove()
-  dmaengine: tegra210-adma: restore channel status
-
- .../bindings/dma/nvidia,tegra210-adma.txt     |   4 +-
- drivers/dma/tegra210-adma.c                   | 232 +++++++++++++++++----
- 2 files changed, 193 insertions(+), 43 deletions(-)
-
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 253d312..9aee015 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -36,10 +36,6 @@
+ 
+ #define ADMA_CH_INT_CLEAR				0x1c
+ #define ADMA_CH_CTRL					0x24
+-#define ADMA_CH_CTRL_TX_REQ(val)			(((val) & 0xf) << 28)
+-#define ADMA_CH_CTRL_TX_REQ_MAX				10
+-#define ADMA_CH_CTRL_RX_REQ(val)			(((val) & 0xf) << 24)
+-#define ADMA_CH_CTRL_RX_REQ_MAX				10
+ #define ADMA_CH_CTRL_DIR(val)				(((val) & 0xf) << 12)
+ #define ADMA_CH_CTRL_DIR_AHUB2MEM			2
+ #define ADMA_CH_CTRL_DIR_MEM2AHUB			4
+@@ -57,8 +53,8 @@
+ #define ADMA_CH_FIFO_CTRL				0x2c
+ #define ADMA_CH_FIFO_CTRL_OVRFW_THRES(val)		(((val) & 0xf) << 24)
+ #define ADMA_CH_FIFO_CTRL_STARV_THRES(val)		(((val) & 0xf) << 16)
+-#define ADMA_CH_FIFO_CTRL_TX_SIZE(val)			(((val) & 0xf) << 8)
+-#define ADMA_CH_FIFO_CTRL_RX_SIZE(val)			((val) & 0xf)
++#define ADMA_CH_FIFO_CTRL_TX_FIFO_SIZE_SHIFT		8
++#define ADMA_CH_FIFO_CTRL_RX_FIFO_SIZE_SHIFT		0
+ 
+ #define ADMA_CH_LOWER_SRC_ADDR				0x34
+ #define ADMA_CH_LOWER_TRG_ADDR				0x3c
+@@ -68,25 +64,38 @@
+ #define ADMA_CH_XFER_STATUS				0x54
+ #define ADMA_CH_XFER_STATUS_COUNT_MASK			0xffff
+ 
+-#define ADMA_GLOBAL_CMD					0xc00
+-#define ADMA_GLOBAL_SOFT_RESET				0xc04
+-#define ADMA_GLOBAL_INT_CLEAR				0xc20
+-#define ADMA_GLOBAL_CTRL				0xc24
+-
+-#define ADMA_CH_REG_OFFSET(a)				(a * 0x80)
++#define ADMA_GLOBAL_CMD					0x00
++#define ADMA_GLOBAL_SOFT_RESET				0x04
+ 
+ #define ADMA_CH_FIFO_CTRL_DEFAULT	(ADMA_CH_FIFO_CTRL_OVRFW_THRES(1) | \
+-					 ADMA_CH_FIFO_CTRL_STARV_THRES(1) | \
+-					 ADMA_CH_FIFO_CTRL_TX_SIZE(3)     | \
+-					 ADMA_CH_FIFO_CTRL_RX_SIZE(3))
++					 ADMA_CH_FIFO_CTRL_STARV_THRES(1))
++
++#define ADMA_CH_REG_FIELD_VAL(val, mask, shift)	(((val) & mask) << shift)
++
+ struct tegra_adma;
+ 
+ /*
+  * struct tegra_adma_chip_data - Tegra chip specific data
++ * @global_reg_offset: Register offset of DMA global register.
++ * @global_int_clear: Register offset of DMA global interrupt clear.
++ * @ch_req_tx_shift: Register offset for AHUB transmit channel select.
++ * @ch_req_rx_shift: Register offset for AHUB receive channel select.
++ * @ch_base_offset: Reister offset of DMA channel registers.
++ * @ch_req_mask: Mask for Tx or Rx channel select.
++ * @ch_req_max: Maximum number of Tx or Rx channels available.
++ * @ch_reg_size: Size of DMA channel register space.
+  * @nr_channels: Number of DMA channels available.
+  */
+ struct tegra_adma_chip_data {
+-	int nr_channels;
++	unsigned int global_reg_offset;
++	unsigned int global_int_clear;
++	unsigned int ch_req_tx_shift;
++	unsigned int ch_req_rx_shift;
++	unsigned int ch_base_offset;
++	unsigned int ch_req_mask;
++	unsigned int ch_req_max;
++	unsigned int ch_reg_size;
++	unsigned int nr_channels;
+ };
+ 
+ /*
+@@ -148,18 +157,20 @@ struct tegra_adma {
+ 	/* Used to store global command register state when suspending */
+ 	unsigned int			global_cmd;
+ 
++	const struct tegra_adma_chip_data *cdata;
++
+ 	/* Last member of the structure */
+ 	struct tegra_adma_chan		channels[0];
+ };
+ 
+ static inline void tdma_write(struct tegra_adma *tdma, u32 reg, u32 val)
+ {
+-	writel(val, tdma->base_addr + reg);
++	writel(val, tdma->base_addr + tdma->cdata->global_reg_offset + reg);
+ }
+ 
+ static inline u32 tdma_read(struct tegra_adma *tdma, u32 reg)
+ {
+-	return readl(tdma->base_addr + reg);
++	return readl(tdma->base_addr + tdma->cdata->global_reg_offset + reg);
+ }
+ 
+ static inline void tdma_ch_write(struct tegra_adma_chan *tdc, u32 reg, u32 val)
+@@ -209,14 +220,16 @@ static int tegra_adma_init(struct tegra_adma *tdma)
+ 	int ret;
+ 
+ 	/* Clear any interrupts */
+-	tdma_write(tdma, ADMA_GLOBAL_INT_CLEAR, 0x1);
++	tdma_write(tdma, tdma->cdata->global_int_clear, 0x1);
+ 
+ 	/* Assert soft reset */
+ 	tdma_write(tdma, ADMA_GLOBAL_SOFT_RESET, 0x1);
+ 
+ 	/* Wait for reset to clear */
+ 	ret = readx_poll_timeout(readl,
+-				 tdma->base_addr + ADMA_GLOBAL_SOFT_RESET,
++				 tdma->base_addr +
++				 tdma->cdata->global_reg_offset +
++				 ADMA_GLOBAL_SOFT_RESET,
+ 				 status, status == 0, 20, 10000);
+ 	if (ret)
+ 		return ret;
+@@ -236,13 +249,13 @@ static int tegra_adma_request_alloc(struct tegra_adma_chan *tdc,
+ 	if (tdc->sreq_reserved)
+ 		return tdc->sreq_dir == direction ? 0 : -EINVAL;
+ 
++	if (sreq_index > tdma->cdata->ch_req_max) {
++		dev_err(tdma->dev, "invalid DMA request\n");
++		return -EINVAL;
++	}
++
+ 	switch (direction) {
+ 	case DMA_MEM_TO_DEV:
+-		if (sreq_index > ADMA_CH_CTRL_TX_REQ_MAX) {
+-			dev_err(tdma->dev, "invalid DMA request\n");
+-			return -EINVAL;
+-		}
+-
+ 		if (test_and_set_bit(sreq_index, &tdma->tx_requests_reserved)) {
+ 			dev_err(tdma->dev, "DMA request reserved\n");
+ 			return -EINVAL;
+@@ -250,11 +263,6 @@ static int tegra_adma_request_alloc(struct tegra_adma_chan *tdc,
+ 		break;
+ 
+ 	case DMA_DEV_TO_MEM:
+-		if (sreq_index > ADMA_CH_CTRL_RX_REQ_MAX) {
+-			dev_err(tdma->dev, "invalid DMA request\n");
+-			return -EINVAL;
+-		}
+-
+ 		if (test_and_set_bit(sreq_index, &tdma->rx_requests_reserved)) {
+ 			dev_err(tdma->dev, "DMA request reserved\n");
+ 			return -EINVAL;
+@@ -487,6 +495,7 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+ 				      enum dma_transfer_direction direction)
+ {
+ 	struct tegra_adma_chan_regs *ch_regs = &desc->ch_regs;
++	const struct tegra_adma_chip_data *cdata = tdc->tdma->cdata;
+ 	unsigned int burst_size, adma_dir;
+ 
+ 	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS)
+@@ -497,7 +506,9 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+ 		adma_dir = ADMA_CH_CTRL_DIR_MEM2AHUB;
+ 		burst_size = fls(tdc->sconfig.dst_maxburst);
+ 		ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(desc->num_periods - 1);
+-		ch_regs->ctrl = ADMA_CH_CTRL_TX_REQ(tdc->sreq_index);
++		ch_regs->ctrl = ADMA_CH_REG_FIELD_VAL(tdc->sreq_index,
++						      cdata->ch_req_mask,
++						      cdata->ch_req_tx_shift);
+ 		ch_regs->src_addr = buf_addr;
+ 		break;
+ 
+@@ -505,7 +516,9 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+ 		adma_dir = ADMA_CH_CTRL_DIR_AHUB2MEM;
+ 		burst_size = fls(tdc->sconfig.src_maxburst);
+ 		ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(desc->num_periods - 1);
+-		ch_regs->ctrl = ADMA_CH_CTRL_RX_REQ(tdc->sreq_index);
++		ch_regs->ctrl = ADMA_CH_REG_FIELD_VAL(tdc->sreq_index,
++						      cdata->ch_req_mask,
++						      cdata->ch_req_rx_shift);
+ 		ch_regs->trg_addr = buf_addr;
+ 		break;
+ 
+@@ -658,7 +671,15 @@ static int tegra_adma_runtime_resume(struct device *dev)
+ }
+ 
+ static const struct tegra_adma_chip_data tegra210_chip_data = {
+-	.nr_channels = 22,
++	.global_reg_offset	= 0xc00,
++	.global_int_clear	= 0x20,
++	.ch_req_tx_shift	= 28,
++	.ch_req_rx_shift	= 24,
++	.ch_base_offset		= 0,
++	.ch_req_mask		= 0xf,
++	.ch_req_max		= 10,
++	.ch_reg_size		= 0x80,
++	.nr_channels		= 22,
+ };
+ 
+ static const struct of_device_id tegra_adma_of_match[] = {
+@@ -687,6 +708,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	tdma->dev = &pdev->dev;
++	tdma->cdata = cdata;
+ 	tdma->nr_channels = cdata->nr_channels;
+ 	platform_set_drvdata(pdev, tdma);
+ 
+@@ -715,7 +737,8 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	for (i = 0; i < tdma->nr_channels; i++) {
+ 		struct tegra_adma_chan *tdc = &tdma->channels[i];
+ 
+-		tdc->chan_addr = tdma->base_addr + ADMA_CH_REG_OFFSET(i);
++		tdc->chan_addr = tdma->base_addr + cdata->ch_base_offset
++				 + (cdata->ch_reg_size * i);
+ 
+ 		tdc->irq = of_irq_get(pdev->dev.of_node, i);
+ 		if (tdc->irq <= 0) {
 -- 
 2.7.4
