@@ -1,40 +1,53 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 00/16] NVIDIA Tegra devfreq improvements and Tegra20/30
- support
-Date: Fri, 3 May 2019 03:52:50 +0300
-Message-ID: <fa061a65-f108-6c5e-1f87-950a9a8caafc@gmail.com>
-References: <CGME20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727@epcas5p1.samsung.com>
- <20190501233815.32643-1-digetx@gmail.com>
- <60ef6e47-e61b-3a92-e90d-90debedfcfc4@samsung.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 5.0 000/101] 5.0.12-stable review
+Date: Fri, 3 May 2019 10:27:56 +0100
+Message-ID: <7a4ddaf6-819f-b8f3-4104-f979b2c08655@nvidia.com>
+References: <20190502143339.434882399@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <60ef6e47-e61b-3a92-e90d-90debedfcfc4@samsung.com>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-03.05.2019 3:31, Chanwoo Choi пишет:
-> Hi Dmitry,
-> 
-> On 19. 5. 2. 오전 8:37, Dmitry Osipenko wrote:
->> Changelog:
->>
->> v4: Addressed all review comments that were made by Chanwoo Choi to v3:
->>
->>     - changed the driver removal order to match the probe exactly
->>     - added clarifying comment for 1/8 ratio to the Tegra20 driver
->>
->>     Chanwoo, please also note that the clk patch that should fix
->>     compilation problem that was reported the kbuild-test-robot is already
->>     applied and available in the recent linux-next.
-> 
-> I knew that Stephen picked up your path about clock.
 
-Hi Chanwoo,
+On 02/05/2019 16:20, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.0.12 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 04 May 2019 02:32:10 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.12-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Okay, good. Thank you very much for reviewing this series! I assume it's
-too late now for v5.2, but it should be good to go for v5.3.
+All tests are passing for Tegra ...
+
+Test results for stable-v5.0:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
+
+Linux version:	5.0.12-rc1-g17f9302
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana, tegra210,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
