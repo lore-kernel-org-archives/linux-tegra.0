@@ -1,41 +1,30 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V5 03/16] PCI: Export pcie_bus_config symbol
-Date: Fri, 3 May 2019 13:07:32 +0200
-Message-ID: <20190503110732.GC32400@ulmo>
+Subject: Re: [PATCH V5 10/16] dt-bindings: PCI: tegra: Add device tree
+ support for T194
+Date: Fri, 3 May 2019 13:19:23 +0200
+Message-ID: <20190503111923.GE32400@ulmo>
 References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-4-vidyas@nvidia.com>
+ <20190424052004.6270-11-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1289226113309427538=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190424052004.6270-4-vidyas@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gMR3gsNFwZpnI/Ts"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190424052004.6270-11-vidyas@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Vidya Sagar <vidyas@nvidia.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, lorenzo.pieralisi@arm.com, mperttunen@nvidia.com, mmaddireddy@nvidia.com, linux-pci@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, kthota@nvidia.com, kishon@ti.com, linux-tegra@vger.kernel.org, robh+dt@kernel.org, gustavo.pimentel@synopsys.com, jingoohan1@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1289226113309427538==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="R+My9LyyhiUvIEro"
-Content-Disposition: inline
-
-
---R+My9LyyhiUvIEro
+--gMR3gsNFwZpnI/Ts
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 24, 2019 at 10:49:51AM +0530, Vidya Sagar wrote:
-> Export pcie_bus_config to enable host controller drivers setting it to a
-> specific configuration be able to build as loadable modules
+On Wed, Apr 24, 2019 at 10:49:58AM +0530, Vidya Sagar wrote:
+> Add support for Tegra194 PCIe controllers. These controllers are based
+> on Synopsys DesignWare core IP.
 >=20
 > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
@@ -46,72 +35,103 @@ On Wed, Apr 24, 2019 at 10:49:51AM +0530, Vidya Sagar wrote:
 > * None
 >=20
 > Changes since [v2]:
-> * None
+> * Using only 'Cx' (x-being controller number) format to represent a contr=
+oller
+> * Changed to 'value: description' format where applicable
+> * Changed 'nvidia,init-speed' to 'nvidia,init-link-speed'
+> * Provided more documentation for 'nvidia,init-link-speed' property
+> * Changed 'nvidia,pex-wake' to 'nvidia,wake-gpios'
 >=20
 > Changes since [v1]:
-> * This is a new patch in v2 series
+> * Added documentation for 'power-domains' property
+> * Removed 'window1' and 'window2' properties
+> * Removed '_clk' and '_rst' from clock and reset names
+> * Dropped 'pcie' from phy-names
+> * Added entry for BPMP-FW handle
+> * Removed offsets for some of the registers and added them in code and wo=
+uld be pickedup based on
+>   controller ID
+> * Changed 'nvidia,max-speed' to 'max-link-speed' and is made as an option=
+al
+> * Changed 'nvidia,disable-clock-request' to 'supports-clkreq' with invert=
+ed operation
+> * Added more documentation for 'nvidia,update-fc-fixup' property
+> * Removed 'nvidia,enable-power-down' and 'nvidia,plat-gpios' properties
+> * Added '-us' to all properties that represent time in microseconds
+> * Moved P2U documentation to a separate file
 >=20
->  drivers/pci/pci.c | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/pci/nvidia,tegra194-pcie.txt     | 187 ++++++++++++++++++
+>  1 file changed, 187 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194=
+-pcie.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.t=
+xt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+> new file mode 100644
+> index 000000000000..208dff126108
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+> @@ -0,0 +1,187 @@
+> +NVIDIA Tegra PCIe controller (Synopsys DesignWare Core based)
+> +
+> +This PCIe host controller is based on the Synopsis Designware PCIe IP
+> +and thus inherits all the common properties defined in designware-pcie.t=
+xt.
+> +
+> +Required properties:
+> +- compatible: For Tegra19x, must contain "nvidia,tegra194-pcie".
+> +- device_type: Must be "pci"
+> +- power-domains: A phandle to the node that controls power to the respec=
+tive
+> +  PCIe controller and a specifier name for the PCIe controller. Followin=
+g are
+> +  the specifiers for the different PCIe controllers
+> +    TEGRA194_POWER_DOMAIN_PCIEX8B: C0
+> +    TEGRA194_POWER_DOMAIN_PCIEX1A: C1
+> +    TEGRA194_POWER_DOMAIN_PCIEX1A: C2
+> +    TEGRA194_POWER_DOMAIN_PCIEX1A: C3
+> +    TEGRA194_POWER_DOMAIN_PCIEX4A: C4
+> +    TEGRA194_POWER_DOMAIN_PCIEX8A: C5
+> +  these specifiers are defined in
+> +  "include/dt-bindings/power/tegra194-powergate.h" file.
+> +- reg: A list of physical base address and length for each set of contro=
+ller
 
-It doesn't look to me like this is something that host controller
-drivers are supposed to change. This is set via the pci kernel command-
-line parameter, meaning it's a way of tuning the system configuration.
-Drivers should not be allowed to override this after the fact.
+Perhaps "list of physical base address and length pairs".
 
-Why do we need to set this?
+> +  registers. Must contain an entry for each entry in the reg-names prope=
+rty.
+> +- reg-names: Must include the following entries:
+> +  "appl": Controller's application logic registers
+> +  "config": As per the definition in designware-pcie.txt
+> +  "atu_dma": iATU and DMA registers. This is where the iATU (internal Ad=
+dress
+> +             Translation Unit) registers of the PCIe core are made avail=
+able
+> +             fow SW access.
+
+s/fow/for/
 
 Thierry
 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index f5ff01dc4b13..731f78508601 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -94,6 +94,7 @@ unsigned long pci_hotplug_mem_size =3D DEFAULT_HOTPLUG_=
-MEM_SIZE;
->  unsigned long pci_hotplug_bus_size =3D DEFAULT_HOTPLUG_BUS_SIZE;
-> =20
->  enum pcie_bus_config_types pcie_bus_config =3D PCIE_BUS_DEFAULT;
-> +EXPORT_SYMBOL_GPL(pcie_bus_config);
-> =20
->  /*
->   * The default CLS is used if arch didn't set CLS explicitly and not
-> --=20
-> 2.17.1
->=20
-
---R+My9LyyhiUvIEro
+--gMR3gsNFwZpnI/Ts
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzMIPQACgkQ3SOs138+
-s6GSnA/9HdsbQNxtdYHMx36I9O7XPCiJpWTqbqCG5v80y6wwm85gZ7gKZ3tnpqoG
-AVff+CvhQQwIIW7t5OxkdDNvNz/65YPCYRngILQIIgQbXppF/tMu3YMQVPWGNY6R
-LuV8/SkicRqGoyYvEhNY8oxObL191X964tV6roAy2zaPCk4FuNCqJPlRPpu7fXlG
-u9H5zlpi/gVtvZNyJyOJLb/zG9cXIaO4lJCN43thTSD/vVCtytgvQRNWHWT9r7lR
-wqy5o69fRtUXowCRNjlVR/nYJfguU1Eh+9YVr8l0Hen9XgKyNv6ebrzWSeZx76nS
-xTj3bgbOrGm4yWM4EbQZNiGzM1d1+Ggz08osM7n6dqymSMP1zjAHAvb/S+7AulfC
-J2b9VwKf/VnRzdU5fkbQEHtPsoOAwA7t70z5qwukraNLVgE7BO0R4A+Wca1kRRJ+
-2NMhLmTFJJoR42ZI80UGH6KjixdU7p8cAup1ftb6YqxAWxIthSjb+xhka9s0cPV0
-/XcAjoNMXXV9LRk/VoiuNhPMNs17u19NwVZ4O4f/l6qiSvI4BsjMs5B/70UXJgET
-aAw4RI207uObGTDCKFKEXNVKf3WPwjiCRBv8X06OfKReDdnPobVETv4boTZFfreZ
-WNKJYDqWndqUkSMR46sxPEUnfXNr+he7XCyzGLhOs3lAxGEsdPE=
-=F/Ew
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzMI7sACgkQ3SOs138+
+s6EIIQ/+JneyIE1QInUy25Ht9TxH6uK1NfNwHzcE3w7WQOHSFZ6cCm60usW9tX7y
+5bVqKGD/Qk/van6DX4OJbVWqUXSU4kKpCvL6e9ImuJn50qtt+SZCvzn2ITB1RrMY
+cx9g/qtQjrRgv9lnezcEBGFGFk0Mr828WkPfzZSIIT2xqJ7Hn+Irp5gvU+6LoDhv
+7J3FiCWf08MsSP/GmoTROtgkEl72UkltbhPUNb+YtL/AZd858eXm7ao/zP3mUIO2
+f67wTlzzqC1kYJYLERm4DOVlrpPehlz+fp+4QXbKsBovY4qkkRJCW4FM9F9d7Qe9
+z5wGlqk7SRZQPNDAVGhZ4XWRjpyiMss72Mqv4FjHU+FQiuney9b/NVu60XtJ0JqA
+LMo+JVI8w+5Pqq/n5+5mN9aM/dmmumTyaPZiQ/AASYX7iU8dXe6aKIcgZo+a10LW
+X4fezVQ/BlzdHQ72ADFg66g1UkONCAYFaLemAf60OYJQQPKLTy4dAaemtleMoLsF
+hbKQng3PJSkG8L33JiMlvGg4N0cIaWx+1ugkMLrjbgrx8z8qceHyc3nrGvBPUyTU
+X9srLQMC7WsiahwlWUZPqMewXYPPXFKDg1+ExlLkQi/vSt88iJcu4X+ljt693WmR
+GOIY4OkOtmYrcJZEdJLmxCjqTNMkxCRrKjSpv3OEHCigvugwYeo=
+=pPtB
 -----END PGP SIGNATURE-----
 
---R+My9LyyhiUvIEro--
-
-
---===============1289226113309427538==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1289226113309427538==--
+--gMR3gsNFwZpnI/Ts--
