@@ -1,174 +1,58 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 4/6] mfd: max77620: Support Maxim 77663
-Date: Sun,  5 May 2019 18:43:23 +0300
-Message-ID: <20190505154325.30026-5-digetx@gmail.com>
-References: <20190505154325.30026-1-digetx@gmail.com>
+Subject: [PATCH v4 0/6] Add support for Maxim 77663 MFD
+Date: Sun,  5 May 2019 18:43:19 +0300
+Message-ID: <20190505154325.30026-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190505154325.30026-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for Maxim 77663 using the Max77620 driver. The hardware
-is very similar to Max77663/20024, although there are couple minor
-differences.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/mfd/max77620.c       | 69 +++++++++++++++++++++++++++++++++++-
- include/linux/mfd/max77620.h |  1 +
- 2 files changed, 69 insertions(+), 1 deletion(-)
+This series adds support for the Maxim 77663 chip that provides PMIC, RTC,
+GPIO and watchdog timer functionality. The hardware is very similar to the
+Maxim 77620/20024 hardware units that are already supported by the kernel,
+hence we will reuse the existing drivers for 77663. The GPIO, regulator,
+RTC and watchdog timer functionality was tested on a Nexus 7 tablet that
+has the Max77663 chip, everything is working perfectly fine. I'm looking
+at upstreaming support for that tablet device and Max77663 is one of the
+core components that are currently missing in the upstream kernel.
 
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index d8ddd1a6f304..c2d88a5eca7a 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -111,6 +111,26 @@ static const struct mfd_cell max20024_children[] = {
- 	},
- };
- 
-+static const struct mfd_cell max77663_children[] = {
-+	{ .name = "max77620-pinctrl", },
-+	{ .name = "max77620-clock", },
-+	{ .name = "max77663-pmic", },
-+	{ .name = "max77620-watchdog", },
-+	{
-+		.name = "max77620-gpio",
-+		.resources = gpio_resources,
-+		.num_resources = ARRAY_SIZE(gpio_resources),
-+	}, {
-+		.name = "max77620-rtc",
-+		.resources = rtc_resources,
-+		.num_resources = ARRAY_SIZE(rtc_resources),
-+	}, {
-+		.name = "max77663-power",
-+		.resources = power_resources,
-+		.num_resources = ARRAY_SIZE(power_resources),
-+	},
-+};
-+
- static const struct regmap_range max77620_readable_ranges[] = {
- 	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_DVSSD4),
- };
-@@ -171,6 +191,35 @@ static const struct regmap_config max20024_regmap_config = {
- 	.volatile_table = &max77620_volatile_table,
- };
- 
-+static const struct regmap_range max77663_readable_ranges[] = {
-+	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_CID5),
-+};
-+
-+static const struct regmap_access_table max77663_readable_table = {
-+	.yes_ranges = max77663_readable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(max77663_readable_ranges),
-+};
-+
-+static const struct regmap_range max77663_writable_ranges[] = {
-+	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_CID5),
-+};
-+
-+static const struct regmap_access_table max77663_writable_table = {
-+	.yes_ranges = max77663_writable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(max77663_writable_ranges),
-+};
-+
-+static const struct regmap_config max77663_regmap_config = {
-+	.name = "power-slave",
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = MAX77620_REG_CID5 + 1,
-+	.cache_type = REGCACHE_RBTREE,
-+	.rd_table = &max77663_readable_table,
-+	.wr_table = &max77663_writable_table,
-+	.volatile_table = &max77620_volatile_table,
-+};
-+
- /*
-  * MAX77620 and MAX20024 has the following steps of the interrupt handling
-  * for TOP interrupts:
-@@ -240,6 +289,9 @@ static int max77620_get_fps_period_reg_value(struct max77620_chip *chip,
- 	case MAX77620:
- 		fps_min_period = MAX77620_FPS_PERIOD_MIN_US;
- 		break;
-+	case MAX77663:
-+		fps_min_period = MAX20024_FPS_PERIOD_MIN_US;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -274,6 +326,9 @@ static int max77620_config_fps(struct max77620_chip *chip,
- 	case MAX77620:
- 		fps_max_period = MAX77620_FPS_PERIOD_MAX_US;
- 		break;
-+	case MAX77663:
-+		fps_max_period = MAX20024_FPS_PERIOD_MAX_US;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -375,6 +430,9 @@ static int max77620_initialise_fps(struct max77620_chip *chip)
- 	}
- 
- skip_fps:
-+	if (chip->chip_id == MAX77663)
-+		return 0;
-+
- 	/* Enable wake on EN0 pin */
- 	ret = regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG2,
- 				 MAX77620_ONOFFCNFG2_WK_EN0,
-@@ -453,6 +511,11 @@ static int max77620_probe(struct i2c_client *client,
- 		n_mfd_cells = ARRAY_SIZE(max20024_children);
- 		rmap_config = &max20024_regmap_config;
- 		break;
-+	case MAX77663:
-+		mfd_cells = max77663_children;
-+		n_mfd_cells = ARRAY_SIZE(max77663_children);
-+		rmap_config = &max77663_regmap_config;
-+		break;
- 	default:
- 		dev_err(chip->dev, "ChipID is invalid %d\n", chip->chip_id);
- 		return -EINVAL;
-@@ -546,6 +609,9 @@ static int max77620_i2c_suspend(struct device *dev)
- 		return ret;
- 	}
- 
-+	if (chip->chip_id == MAX77663)
-+		goto out;
-+
- 	/* Disable WK_EN0 */
- 	ret = regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG2,
- 				 MAX77620_ONOFFCNFG2_WK_EN0, 0);
-@@ -581,7 +647,7 @@ static int max77620_i2c_resume(struct device *dev)
- 	 * For MAX20024: No need to configure WKEN0 on resume as
- 	 * it is configured on Init.
- 	 */
--	if (chip->chip_id == MAX20024)
-+	if (chip->chip_id == MAX20024 || chip->chip_id == MAX77663)
- 		goto out;
- 
- 	/* Enable WK_EN0 */
-@@ -603,6 +669,7 @@ static int max77620_i2c_resume(struct device *dev)
- static const struct i2c_device_id max77620_id[] = {
- 	{"max77620", MAX77620},
- 	{"max20024", MAX20024},
-+	{"max77663", MAX77663},
- 	{},
- };
- 
-diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
-index b4fd5a7c2aaa..82407fe85ca2 100644
---- a/include/linux/mfd/max77620.h
-+++ b/include/linux/mfd/max77620.h
-@@ -324,6 +324,7 @@ enum max77620_fps_src {
- enum max77620_chip_id {
- 	MAX77620,
- 	MAX20024,
-+	MAX77663,
- };
- 
- struct max77620_chip {
+Changelog:
+
+v4: Addressed review comments from Rob Herring to v3 by making use of
+    generic "system-power-controller" property and making couple other
+    minor cosmetic changes. Added Mark's Brown a-b to the regulator-patch.
+
+v3: Dropped "Support device-tree properly" patch since turned out that
+    I2C core takes care of the device-tree matching and I wasn't aware of
+    it.
+
+v2: Added PINCTRL sub-device to Max77663 MFD as it looks compatible with
+    77620.
+
+    Added new "maxim,system-power-controller" OF property.
+
+    Patch "Support device-tree properly" now doesn't remove driver's
+    "id_table" since potentially it could have some use in the downstream
+    kernel forks and it doesn't hurt to keep it around.
+
+Dmitry Osipenko (6):
+  dt-bindings: mfd: max77620: Add compatible for Maxim 77663
+  dt-bindings: mfd: max77620: Add system-power-controller property
+  mfd: max77620: Fix swapped FPS_PERIOD_MAX_US values
+  mfd: max77620: Support Maxim 77663
+  mfd: max77620: Provide system power-off functionality
+  regulator: max77620: Support Maxim 77663
+
+ .../devicetree/bindings/mfd/max77620.txt      |  9 +-
+ drivers/mfd/max77620.c                        | 87 ++++++++++++++++++-
+ drivers/regulator/max77620-regulator.c        | 26 +++++-
+ include/linux/mfd/max77620.h                  |  5 +-
+ 4 files changed, 122 insertions(+), 5 deletions(-)
+
 -- 
 2.21.0
