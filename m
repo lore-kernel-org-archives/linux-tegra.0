@@ -1,97 +1,132 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/3] drm/tegra: dc: Extend debug stats with total number of events
-Date: Sun,  5 May 2019 20:37:06 +0300
-Message-ID: <20190505173707.29282-3-digetx@gmail.com>
-References: <20190505173707.29282-1-digetx@gmail.com>
+Subject: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag properly
+Date: Sun,  5 May 2019 21:12:35 +0300
+Message-ID: <20190505181235.14798-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190505173707.29282-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I found useful to know the total number of underflow events while was
-working on adding support for memory bandwidth management. Currently
-the debug stats are getting reset after disabling CRTC, let's account
-the overall number of events that doesn't get reset.
+The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
+invoked upon transfer completion and that's it. For some reason driver
+completely disables the hardware interrupt handling, leaving channel in
+unusable state if transfer is issued with the flag being unset. Note
+that there are no occurrences in the relevant drivers that do not set
+the flag, hence this patch doesn't fix any actual bug and merely fixes
+potential problem.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 10 ++++++++++
- drivers/gpu/drm/tegra/dc.h |  5 +++++
- 2 files changed, 15 insertions(+)
+ drivers/dma/tegra20-apb-dma.c | 41 ++++++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index cf622a07e9b6..41cb67db6dbc 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1482,6 +1482,11 @@ static int tegra_dc_show_stats(struct seq_file *s, void *data)
- 	seq_printf(s, "underflow: %lu\n", dc->stats.underflow);
- 	seq_printf(s, "overflow: %lu\n", dc->stats.overflow);
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index cf462b1abc0b..29d972b7546f 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -561,6 +561,9 @@ static void tegra_dma_abort_all(struct tegra_dma_channel *tdc)
+ 			dma_desc->dma_status = DMA_ERROR;
+ 			list_add_tail(&dma_desc->node, &tdc->free_dma_desc);
  
-+	seq_printf(s, "frames total: %lu\n", dc->stats.frames_total);
-+	seq_printf(s, "vblank total: %lu\n", dc->stats.vblank_total);
-+	seq_printf(s, "underflow total: %lu\n", dc->stats.underflow_total);
-+	seq_printf(s, "overflow total: %lu\n", dc->stats.overflow_total);
++			if (dma_desc->cb_count < 0)
++				continue;
 +
+ 			/* Add in cb list if it is not there. */
+ 			if (!dma_desc->cb_count)
+ 				list_add_tail(&dma_desc->cb_node,
+@@ -616,9 +619,13 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
+ 	if (sgreq->last_sg) {
+ 		dma_desc->dma_status = DMA_COMPLETE;
+ 		dma_cookie_complete(&dma_desc->txd);
+-		if (!dma_desc->cb_count)
+-			list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
+-		dma_desc->cb_count++;
++		if (dma_desc->cb_count >= 0) {
++			if (!dma_desc->cb_count)
++				list_add_tail(&dma_desc->cb_node,
++					      &tdc->cb_desc);
++
++			dma_desc->cb_count++;
++		}
+ 		list_add_tail(&dma_desc->node, &tdc->free_dma_desc);
+ 	}
+ 	list_add_tail(&sgreq->node, &tdc->free_sg_req);
+@@ -645,9 +652,11 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
+ 		dma_desc->bytes_requested;
+ 
+ 	/* Callback need to be call */
+-	if (!dma_desc->cb_count)
+-		list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
+-	dma_desc->cb_count++;
++	if (dma_desc->cb_count >= 0) {
++		if (!dma_desc->cb_count)
++			list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
++		dma_desc->cb_count++;
++	}
+ 
+ 	/* If not last req then put at end of pending list */
+ 	if (!list_is_last(&sgreq->node, &tdc->pending_sg_req)) {
+@@ -802,7 +811,7 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+ 		dma_desc  = list_first_entry(&tdc->cb_desc,
+ 					typeof(*dma_desc), cb_node);
+ 		list_del(&dma_desc->cb_node);
+-		dma_desc->cb_count = 0;
++		dma_desc->cb_count = -1;
+ 	}
+ 	spin_unlock_irqrestore(&tdc->lock, flags);
  	return 0;
- }
- 
-@@ -1945,6 +1950,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): frame end\n", __func__);
- 		*/
-+		dc->stats.frames_total++;
- 		dc->stats.frames++;
+@@ -988,8 +997,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
  	}
  
-@@ -1953,6 +1959,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		dev_dbg(dc->dev, "%s(): vertical blank\n", __func__);
- 		*/
- 		drm_crtc_handle_vblank(&dc->base);
-+		dc->stats.vblank_total++;
- 		dc->stats.vblank++;
- 	}
+-	if (flags & DMA_PREP_INTERRUPT)
+-		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	csr |= TEGRA_APBDMA_CSR_IE_EOC;
  
-@@ -1960,6 +1967,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): underflow\n", __func__);
- 		*/
-+		dc->stats.underflow_total++;
- 		dc->stats.underflow++;
- 	}
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
  
-@@ -1967,11 +1975,13 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): overflow\n", __func__);
- 		*/
-+		dc->stats.overflow_total++;
- 		dc->stats.overflow++;
+@@ -1000,11 +1008,15 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
  	}
+ 	INIT_LIST_HEAD(&dma_desc->tx_list);
+ 	INIT_LIST_HEAD(&dma_desc->cb_node);
+-	dma_desc->cb_count = 0;
+ 	dma_desc->bytes_requested = 0;
+ 	dma_desc->bytes_transferred = 0;
+ 	dma_desc->dma_status = DMA_IN_PROGRESS;
  
- 	if (status & HEAD_UF_INT) {
- 		dev_dbg_ratelimited(dc->dev, "%s(): head underflow\n", __func__);
-+		dc->stats.underflow_total++;
- 		dc->stats.underflow++;
- 	}
- 
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 1256dfb6b2f5..ab25157c948e 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -41,6 +41,11 @@ struct tegra_dc_stats {
- 	unsigned long vblank;
- 	unsigned long underflow;
- 	unsigned long overflow;
++	if (flags & DMA_PREP_INTERRUPT)
++		dma_desc->cb_count = 0;
++	else
++		dma_desc->cb_count = -1;
 +
-+	unsigned long frames_total;
-+	unsigned long vblank_total;
-+	unsigned long underflow_total;
-+	unsigned long overflow_total;
- };
+ 	/* Make transfer requests */
+ 	for_each_sg(sgl, sg, sg_len, i) {
+ 		u32 len, mem;
+@@ -1131,8 +1143,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+ 	}
  
- struct tegra_windowgroup_soc {
+-	if (flags & DMA_PREP_INTERRUPT)
+-		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	csr |= TEGRA_APBDMA_CSR_IE_EOC;
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+ 
+@@ -1144,7 +1155,11 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 
+ 	INIT_LIST_HEAD(&dma_desc->tx_list);
+ 	INIT_LIST_HEAD(&dma_desc->cb_node);
+-	dma_desc->cb_count = 0;
++
++	if (flags & DMA_PREP_INTERRUPT)
++		dma_desc->cb_count = 0;
++	else
++		dma_desc->cb_count = -1;
+ 
+ 	dma_desc->bytes_transferred = 0;
+ 	dma_desc->bytes_requested = buf_len;
 -- 
 2.21.0
