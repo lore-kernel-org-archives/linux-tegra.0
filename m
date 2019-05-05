@@ -1,221 +1,109 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 2/7] clocksource/drivers/tegra: Unify timer code
-Date: Sun,  5 May 2019 19:24:31 +0300
-Message-ID: <20190505162436.23125-3-digetx@gmail.com>
-References: <20190505162436.23125-1-digetx@gmail.com>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: Re: [RFC 6/7] iommu/vt-d: convert the intel iommu driver to the
+ dma-iommu ops api
+Date: Sun, 5 May 2019 18:03:02 +0100
+Message-ID: <CAPL0++57nyLYP1fq=-6zvNS0z_iCqjWLbQ1MsG5F60ODkmRCQQ@mail.gmail.com>
+References: <20190504132327.27041-1-tmurphy@arista.com> <20190504132327.27041-7-tmurphy@arista.com>
+ <602b77a2-9c68-ad14-b64f-904a7ff27a15@linux.intel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190505162436.23125-1-digetx@gmail.com>
+In-Reply-To: <602b77a2-9c68-ad14-b64f-904a7ff27a15@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.co>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra132 is 64bit platform and it has the tegra20-timer hardware unit.
-Right now the corresponding timer code isn't compiled for ARM64, remove
-ifdef'iness from the code and compile tegra20-timer for both 32 and 64 bit
-platforms. Also note that like the older generations, Tegra210 has the
-microseconds counter. Hence the delay timer and timer_us clocksource are
-now made available for Tegra210 as well.
+On Sun, May 5, 2019 at 3:44 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>
+> Hi,
+>
+> On 5/4/19 9:23 PM, Tom Murphy wrote:
+> > static int intel_iommu_add_device(struct device *dev)
+> >   {
+> > +     struct dmar_domain *dmar_domain;
+> > +     struct iommu_domain *domain;
+> >       struct intel_iommu *iommu;
+> >       struct iommu_group *group;
+> > -     struct iommu_domain *domain;
+> > +     dma_addr_t base;
+> >       u8 bus, devfn;
+> >
+> >       iommu = device_to_iommu(dev, &bus, &devfn);
+> > @@ -4871,9 +4514,12 @@ static int intel_iommu_add_device(struct device *dev)
+> >       if (IS_ERR(group))
+> >               return PTR_ERR(group);
+> >
+> > +     base = IOVA_START_PFN << VTD_PAGE_SHIFT;
+> >       domain = iommu_get_domain_for_dev(dev);
+> > +     dmar_domain = to_dmar_domain(domain);
+> >       if (domain->type == IOMMU_DOMAIN_DMA)
+> > -             dev->dma_ops = &intel_dma_ops;
+> > +             iommu_setup_dma_ops(dev, base,
+> > +                             __DOMAIN_MAX_ADDR(dmar_domain->gaw) - base);
+>
+> I didn't find the implementation of iommu_setup_dma_ops() in this
+> series. Will the iova resource be initialized in this function?
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clocksource/timer-tegra20.c | 107 +++++++++++++++-------------
- 1 file changed, 56 insertions(+), 51 deletions(-)
+Ah sorry, I should've mentioned this is based on the
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+branch with the "iommu/vt-d: Delegate DMA domain to generic iommu" and
+"iommu/amd: Convert the AMD iommu driver to the dma-iommu api" patch
+sets applied.
 
-diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index 58e8bb6deac9..42a19a4019a9 100644
---- a/drivers/clocksource/timer-tegra20.c
-+++ b/drivers/clocksource/timer-tegra20.c
-@@ -30,10 +30,6 @@
- 
- #include "timer-of.h"
- 
--#ifdef CONFIG_ARM
--#include <asm/mach/time.h>
--#endif
--
- #define RTC_SECONDS            0x08
- #define RTC_SHADOW_SECONDS     0x0c
- #define RTC_MILLISECONDS       0x10
-@@ -48,25 +44,17 @@
- #define TIMER_PCR		0x4
- #define TIMER_PCR_INTR_CLR	BIT(30)
- 
--#ifdef CONFIG_ARM
--#define TIMER_CPU0		0x00 /* TIMER1 */
--#define TIMER_CPU2		0x50 /* TIMER3 */
-+#define TIMER1_BASE		0x00
-+#define TIMER2_BASE		0x08
-+#define TIMER3_BASE		0x50
-+#define TIMER4_BASE		0x58
-+#define TIMER10_BASE		0x90
-+
- #define TIMER1_IRQ_IDX		0
--#define IRQ_IDX_FOR_CPU(cpu)	(TIMER1_IRQ_IDX + cpu)
--#define TIMER_BASE_FOR_CPU(cpu)	\
--	(((cpu) & 1) * 8 + ((cpu) < 2 ? TIMER_CPU0 : TIMER_CPU2))
--#else
--#define TIMER_CPU0		0x90 /* TIMER10 */
- #define TIMER10_IRQ_IDX		10
--#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
--#define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
--#endif
- 
- static u32 usec_config;
- static void __iomem *timer_reg_base;
--#ifdef CONFIG_ARM
--static struct delay_timer tegra_delay_timer;
--#endif
- 
- static int tegra_timer_set_next_event(unsigned long cycles,
- 					 struct clock_event_device *evt)
-@@ -164,7 +152,6 @@ static int tegra_timer_stop(unsigned int cpu)
- 	return 0;
- }
- 
--#ifdef CONFIG_ARM
- static u64 notrace tegra_read_sched_clock(void)
- {
- 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
-@@ -175,6 +162,11 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
- 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
- }
- 
-+static struct delay_timer tegra_delay_timer = {
-+	.read_current_timer = tegra_delay_timer_read_counter_long,
-+	.freq = 1000000,
-+};
-+
- static struct timer_of suspend_rtc_to = {
- 	.flags = TIMER_OF_BASE | TIMER_OF_CLOCK,
- };
-@@ -199,9 +191,34 @@ static struct clocksource suspend_rtc_clocksource = {
- 	.mask	= CLOCKSOURCE_MASK(32),
- 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
- };
--#endif
- 
--static int tegra_init_timer(struct device_node *np, bool tegra20)
-+static inline unsigned int tegra_base_for_cpu(int cpu, bool tegra20)
-+{
-+	if (tegra20) {
-+		switch (cpu) {
-+		case 0:
-+			return TIMER1_BASE;
-+		case 1:
-+			return TIMER2_BASE;
-+		case 2:
-+			return TIMER3_BASE;
-+		default:
-+			return TIMER4_BASE;
-+		}
-+	}
-+
-+	return TIMER10_BASE + cpu * 8;
-+}
-+
-+static inline unsigned int tegra_irq_idx_for_cpu(int cpu, bool tegra20)
-+{
-+	if (tegra20)
-+		return TIMER1_IRQ_IDX + cpu;
-+
-+	return TIMER10_IRQ_IDX + cpu;
-+}
-+
-+static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- {
- 	struct timer_of *to;
- 	int cpu, ret;
-@@ -252,6 +269,8 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
- 
- 	for_each_possible_cpu(cpu) {
- 		struct timer_of *cpu_to = per_cpu_ptr(&tegra_to, cpu);
-+		unsigned int base = tegra_base_for_cpu(cpu, tegra20);
-+		unsigned int idx = tegra_irq_idx_for_cpu(cpu, tegra20);
- 
- 		/*
- 		 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
-@@ -260,10 +279,10 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
- 		if (tegra20)
- 			cpu_to->of_clk.rate = 1000000;
- 
--		cpu_to->of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(cpu);
-+		cpu_to = per_cpu_ptr(&tegra_to, cpu);
-+		cpu_to->of_base.base = timer_reg_base + base;
- 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
--		cpu_to->clkevt.irq =
--			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
-+		cpu_to->clkevt.irq = irq_of_parse_and_map(np, idx);
- 		if (!cpu_to->clkevt.irq) {
- 			pr_err("%s: can't map IRQ for CPU%d\n",
- 			       __func__, cpu);
-@@ -283,6 +302,16 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
- 		}
- 	}
- 
-+	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
-+
-+	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
-+				    "timer_us", 1000000,
-+				    300, 32, clocksource_mmio_readl_up);
-+	if (ret)
-+		pr_err("failed to register clocksource: %d\n", ret);
-+
-+	register_current_timer_delay(&tegra_delay_timer);
-+
- 	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
- 			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
- 			  tegra_timer_stop);
-@@ -303,39 +332,17 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
- 	return ret;
- }
- 
--#ifdef CONFIG_ARM64
- static int __init tegra210_init_timer(struct device_node *np)
- {
- 	return tegra_init_timer(np, false);
- }
- TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_init_timer);
--#else /* CONFIG_ARM */
-+
- static int __init tegra20_init_timer(struct device_node *np)
- {
--	struct timer_of *to;
--	int err;
--
--	err = tegra_init_timer(np, true);
--	if (err)
--		return err;
--
--	to = this_cpu_ptr(&tegra_to);
--
--	sched_clock_register(tegra_read_sched_clock, 32,
--			     timer_of_rate(to));
--	err = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
--				    "timer_us", timer_of_rate(to),
--				    300, 32, clocksource_mmio_readl_up);
--	if (err)
--		pr_err("Failed to register clocksource: %d\n", err);
--
--	tegra_delay_timer.read_current_timer =
--			tegra_delay_timer_read_counter_long;
--	tegra_delay_timer.freq = timer_of_rate(to);
--	register_current_timer_delay(&tegra_delay_timer);
--
--	return 0;
-+	return tegra_init_timer(np, true);
- }
-+TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
- 
- static int __init tegra20_init_rtc(struct device_node *np)
- {
-@@ -350,5 +357,3 @@ static int __init tegra20_init_rtc(struct device_node *np)
- 	return 0;
- }
- TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
--TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
--#endif
--- 
-2.21.0
+>
+> If so, will this block iommu_group_create_direct_mappings() which
+> reserves and maps the reserved iova ranges.
+
+The reserved regions will be reserved by the
+iova_reserve_iommu_regions function instead:
+( https://github.com/torvalds/linux/blob/6203838dec05352bc357625b1e9ba0a10d3bca35/drivers/iommu/dma-iommu.c#L238
+)
+iommu_setup_dma_ops calls iommu_dma_init_domain which calls
+iova_reserve_iommu_regions.
+iommu_group_create_direct_mappings will still execute normally but it
+won't be able to call the intel_iommu_apply_resv_region function
+because it's been removed in this patchset.
+This shouldn't change any behavior and the same regions should be reserved.
+
+>
+> >
+> >       iommu_group_put(group);
+> >       return 0;
+> > @@ -5002,19 +4648,6 @@ int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sd
+> >       return ret;
+> >   }
+> >
+> > -static void intel_iommu_apply_resv_region(struct device *dev,
+> > -                                       struct iommu_domain *domain,
+> > -                                       struct iommu_resv_region *region)
+> > -{
+> > -     struct dmar_domain *dmar_domain = to_dmar_domain(domain);
+> > -     unsigned long start, end;
+> > -
+> > -     start = IOVA_PFN(region->start);
+> > -     end   = IOVA_PFN(region->start + region->length - 1);
+> > -
+> > -     WARN_ON_ONCE(!reserve_iova(&dmar_domain->iovad, start, end));
+> > -}
+> > -
+> >   struct intel_iommu *intel_svm_device_to_iommu(struct device *dev)
+> >   {
+> >       struct intel_iommu *iommu;
+> > @@ -5050,13 +4683,13 @@ const struct iommu_ops intel_iommu_ops = {
+> >       .detach_dev             = intel_iommu_detach_device,
+> >       .map                    = intel_iommu_map,
+> >       .unmap                  = intel_iommu_unmap,
+> > +     .flush_iotlb_all        = iommu_flush_iova,
+> >       .flush_iotlb_range      = intel_iommu_flush_iotlb_range,
+> >       .iova_to_phys           = intel_iommu_iova_to_phys,
+> >       .add_device             = intel_iommu_add_device,
+> >       .remove_device          = intel_iommu_remove_device,
+> >       .get_resv_regions       = intel_iommu_get_resv_regions,
+> >       .put_resv_regions       = intel_iommu_put_resv_regions,
+> > -     .apply_resv_region      = intel_iommu_apply_resv_region,
+>
+> With this removed, how will iommu_group_create_direct_mappings() work?
+>
+> Best regards,
+> Lu Baolu
