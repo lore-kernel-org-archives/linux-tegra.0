@@ -1,100 +1,52 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [RFC 1/7] iommu/vt-d: Set the dma_ops per device so we can remove
- the iommu_no_mapping code
-Date: Mon, 6 May 2019 16:27:09 +0100
-Message-ID: <CAPL0++4_Qa+dxzQ2k6BJi_o+VSSrHEtomYgVmRqjtjsOfHbGew@mail.gmail.com>
-References: <20190504132327.27041-1-tmurphy@arista.com> <20190504132327.27041-2-tmurphy@arista.com>
- <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] arm64: tegra: Enable SMMU translation for PCI on Tegra186
+Date: Mon,  6 May 2019 18:34:53 +0200
+Message-ID: <20190506163453.3852-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.co>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 6, 2019 at 2:48 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
-> Hi,
->
-> On 5/4/19 9:23 PM, Tom Murphy wrote:
-> > Set the dma_ops per device so we can remove the iommu_no_mapping code.
-> >
-> > Signed-off-by: Tom Murphy<tmurphy@arista.com>
-> > ---
-> >   drivers/iommu/intel-iommu.c | 85 +++----------------------------------
-> >   1 file changed, 6 insertions(+), 79 deletions(-)
-> >
-> > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> > index eace915602f0..2db1dc47e7e4 100644
-> > --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -2622,17 +2622,6 @@ static int __init si_domain_init(int hw)
-> >       return 0;
-> >   }
-> >
-> > -static int identity_mapping(struct device *dev)
-> > -{
-> > -     struct device_domain_info *info;
-> > -
-> > -     info = dev->archdata.iommu;
-> > -     if (info && info != DUMMY_DEVICE_DOMAIN_INFO)
-> > -             return (info->domain == si_domain);
-> > -
-> > -     return 0;
-> > -}
-> > -
-> >   static int domain_add_dev_info(struct dmar_domain *domain, struct device *dev)
-> >   {
-> >       struct dmar_domain *ndomain;
-> > @@ -3270,43 +3259,6 @@ static unsigned long intel_alloc_iova(struct device *dev,
-> >       return iova_pfn;
-> >   }
-> >
-> > -/* Check if the dev needs to go through non-identity map and unmap process.*/
-> > -static int iommu_no_mapping(struct device *dev)
-> > -{
-> > -     int found;
-> > -
-> > -     if (iommu_dummy(dev))
-> > -             return 1;
-> > -
-> > -     found = identity_mapping(dev);
-> > -     if (found) {
-> > -             /*
-> > -              * If the device's dma_mask is less than the system's memory
-> > -              * size then this is not a candidate for identity mapping.
-> > -              */
-> > -             u64 dma_mask = *dev->dma_mask;
-> > -
-> > -             if (dev->coherent_dma_mask &&
-> > -                 dev->coherent_dma_mask < dma_mask)
-> > -                     dma_mask = dev->coherent_dma_mask;
-> > -
-> > -             if (dma_mask < dma_get_required_mask(dev)) {
-> > -                     /*
-> > -                      * 32 bit DMA is removed from si_domain and fall back
-> > -                      * to non-identity mapping.
-> > -                      */
-> > -                     dmar_remove_one_dev_info(dev);
-> > -                     dev_warn(dev, "32bit DMA uses non-identity mapping\n");
-> > -
-> > -                     return 0;
-> > -             }
->
-> The iommu_no_mapping() also checks whether any 32bit DMA device uses
-> identity mapping. The device might not work if the system memory space
-> is bigger than 4G.
+From: Thierry Reding <treding@nvidia.com>
 
-It looks like their is actually a bug in the v3 of the "iommu/vt-d:
-Delegate DMA domain to generic iommu" patch set. I will leave a
-message in that email thread. Fixing that bug should also fix this
-issue.
+Commit 954a03be033c ("iommu/arm-smmu: Break insecure users by disabling
+bypass by default") intentionally breaks all devices using the SMMU in
+bypass mode. This breaks, among other things, PCI support on Tegra186.
+Fix this by populating the iommus property and friends for the PCIe
+controller.
 
+Fixes: 954a03be033c ("iommu/arm-smmu: Break insecure users by disabling bypass by default")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
->
-> Will you add this to other place, or it's unnecessary?
->
-> Best regards,
-> Lu Baolu
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 3fb60f6f3a93..426ac0bdf6a6 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -673,6 +673,10 @@
+ 			 <&bpmp TEGRA186_RESET_PCIEXCLK>;
+ 		reset-names = "afi", "pex", "pcie_x";
+ 
++		iommus = <&smmu TEGRA186_SID_AFI>;
++		iommu-map = <0x0 &smmu TEGRA186_SID_AFI 0x1000>;
++		iommu-map-mask = <0x0>;
++
+ 		status = "disabled";
+ 
+ 		pci@1,0 {
+-- 
+2.21.0
