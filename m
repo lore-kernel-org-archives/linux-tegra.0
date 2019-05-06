@@ -1,93 +1,64 @@
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFC 1/7] iommu/vt-d: Set the dma_ops per device so we can remove
- the iommu_no_mapping code
-Date: Mon, 6 May 2019 09:42:15 +0800
-Message-ID: <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
-References: <20190504132327.27041-1-tmurphy@arista.com>
- <20190504132327.27041-2-tmurphy@arista.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V3 3/9] spi: add SPI_LSBYTE_FIRST mode
+Date: Mon, 6 May 2019 13:49:16 +0900
+Message-ID: <20190506044916.GO14916@sirena.org.uk>
+References: <1555363834-32155-1-git-send-email-skomatineni@nvidia.com>
+ <1555363834-32155-4-git-send-email-skomatineni@nvidia.com>
+ <20190419152208.GT2803@sirena.org.uk>
+ <BYAPR12MB33989D8DCEFCDE5DB76429E7C23F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AoBLyXwWXtFbU0pZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190504132327.27041-2-tmurphy@arista.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <BYAPR12MB33989D8DCEFCDE5DB76429E7C23F0@BYAPR12MB3398.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org
-Cc: baolu.lu@linux.intel.com, murphyt7@tcd.ie, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-ker
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
 
-On 5/4/19 9:23 PM, Tom Murphy wrote:
-> Set the dma_ops per device so we can remove the iommu_no_mapping code.
-> 
-> Signed-off-by: Tom Murphy<tmurphy@arista.com>
-> ---
->   drivers/iommu/intel-iommu.c | 85 +++----------------------------------
->   1 file changed, 6 insertions(+), 79 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index eace915602f0..2db1dc47e7e4 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -2622,17 +2622,6 @@ static int __init si_domain_init(int hw)
->   	return 0;
->   }
->   
-> -static int identity_mapping(struct device *dev)
-> -{
-> -	struct device_domain_info *info;
-> -
-> -	info = dev->archdata.iommu;
-> -	if (info && info != DUMMY_DEVICE_DOMAIN_INFO)
-> -		return (info->domain == si_domain);
-> -
-> -	return 0;
-> -}
-> -
->   static int domain_add_dev_info(struct dmar_domain *domain, struct device *dev)
->   {
->   	struct dmar_domain *ndomain;
-> @@ -3270,43 +3259,6 @@ static unsigned long intel_alloc_iova(struct device *dev,
->   	return iova_pfn;
->   }
->   
-> -/* Check if the dev needs to go through non-identity map and unmap process.*/
-> -static int iommu_no_mapping(struct device *dev)
-> -{
-> -	int found;
-> -
-> -	if (iommu_dummy(dev))
-> -		return 1;
-> -
-> -	found = identity_mapping(dev);
-> -	if (found) {
-> -		/*
-> -		 * If the device's dma_mask is less than the system's memory
-> -		 * size then this is not a candidate for identity mapping.
-> -		 */
-> -		u64 dma_mask = *dev->dma_mask;
-> -
-> -		if (dev->coherent_dma_mask &&
-> -		    dev->coherent_dma_mask < dma_mask)
-> -			dma_mask = dev->coherent_dma_mask;
-> -
-> -		if (dma_mask < dma_get_required_mask(dev)) {
-> -			/*
-> -			 * 32 bit DMA is removed from si_domain and fall back
-> -			 * to non-identity mapping.
-> -			 */
-> -			dmar_remove_one_dev_info(dev);
-> -			dev_warn(dev, "32bit DMA uses non-identity mapping\n");
-> -
-> -			return 0;
-> -		}
+--AoBLyXwWXtFbU0pZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The iommu_no_mapping() also checks whether any 32bit DMA device uses
-identity mapping. The device might not work if the system memory space
-is bigger than 4G.
+On Sat, Apr 27, 2019 at 12:32:58AM +0000, Sowjanya Komatineni wrote:
+> > On Mon, Apr 15, 2019 at 02:30:28PM -0700, Sowjanya Komatineni wrote:
 
-Will you add this to other place, or it's unnecessary?
+> > This is byte ordering as opposed to bit ordering which the core
+> > already supports.  Do you have any examples of devices that need
+> > this or is it just being added for completeness?  If devices are
+> > going to rely on this we probably need emulation > support in the
+> > core I guess given that this is a pretty unusual controller feature.
 
-Best regards,
-Lu Baolu
+> Current upstream platforms have no specific device requirement but
+> added this feature as Tegra support it for specific requirements of
+> some slaves.
+
+Do we have any examples of such devices?  In any case I think the main
+thing here would be a software implementation of the feature so that
+drivers can use it sensibly - at the minute they'd have to provide code
+to work without the feature anyway and it seems like a relatively small
+optimization for most things.
+
+> [Changed mail client message format word wrap limit to 74 columns]
+
+It's not working, and it's also mangling quoted sections of the mail
+too.
+
+--AoBLyXwWXtFbU0pZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzPvMwACgkQJNaLcl1U
+h9BhdAf+KaNn14IkNGm8rJREfmZNBQNH91xi4m0l7rxa6aW9c9YwozOM6cKxPdyR
+LRhdsAMvfNxCdosH7hrOPptQgEsAudA3+JVIwnhOuhFkkBmqfeNlc2/HUQIoXkKr
++RIH1nJJA9bxD0Z5u2x7wAt1F4bQ6EQ1kb0oSSuHThMI7WI5u7y3kafC/gUctwzB
+JeU9TplFlzXmGLHkve6berLhGmZOvZ+bnOPHC7H0FlGScV6M6qk9sw7zxt6zxPF9
+Aw9KSh05HPZ5aCYz/4kYBGYf7K+w97bjpUxX73idvJeXauzklnVgAnaq2S1JZf8q
+hUny8YE9djcs/IQXidQFluYReixJDA==
+=8Pu3
+-----END PGP SIGNATURE-----
+
+--AoBLyXwWXtFbU0pZ--
