@@ -1,99 +1,177 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/3] drm/tegra: Support PM QoS memory bandwidth
- management
-Date: Mon, 6 May 2019 14:15:59 +0300
-Message-ID: <e1dc16d2-db9e-6869-81dc-8ffe5d5fd6fe@gmail.com>
-References: <20190505173707.29282-1-digetx@gmail.com>
- <20190505173707.29282-4-digetx@gmail.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+Date: Mon, 6 May 2019 17:28:27 +0530
+Message-ID: <1557143908-5850-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190505173707.29282-4-digetx@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-05.05.2019 20:37, Dmitry Osipenko пишет:
-> Display controller (DC) performs isochronous memory transfers and thus
-> has a requirement for a minimum memory bandwidth that shall be fulfilled,
-> otherwise framebuffer data can't be fetched fast enough and this results
-> in a DC's data-FIFO underflow that follows by a visual corruption.
-> 
-> The External Memory Controller drivers will provide memory bandwidth
-> management facility via the generic Power Management QoS API soonish.
-> This patch wires up the PM QoS API support for the display driver
-> beforehand.
-> 
-> Display won't have visual corruption on coming up from suspend state when
-> devfreq driver is active once all prerequisite bits will get upstreamed.
-> The devfreq reaction has a quite significant latency and it also doesn't
-> take into account the ISO transfers which may result in assumption about
-> lower memory bandwidth requirement than actually needed.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/dc.c    | 216 +++++++++++++++++++++++++++++++++-
->  drivers/gpu/drm/tegra/dc.h    |   8 ++
->  drivers/gpu/drm/tegra/drm.c   |  18 +++
->  drivers/gpu/drm/tegra/plane.c |   1 +
->  drivers/gpu/drm/tegra/plane.h |   4 +-
->  5 files changed, 245 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index 41cb67db6dbc..8c5b9e71ca6f 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -514,6 +514,107 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
->  		tegra_plane_setup_blending(plane, window);
->  }
->  
-> +static unsigned long
-> +tegra_plane_memory_bandwidth(struct drm_plane_state *state,
-> +			     struct tegra_dc_window *window)
-> +{
-> +	struct tegra_plane_state *tegra_state;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct tegra_dc_window win;
-> +	unsigned int mul;
-> +	unsigned int bpp;
-> +	bool planar;
-> +	bool yuv;
-> +
-> +	if (!state->fb || !state->visible)
-> +		return 0;
-> +
-> +	crtc_state = drm_atomic_get_new_crtc_state(state->state, state->crtc);
-> +	tegra_state = to_tegra_plane_state(state);
-> +
-> +	if (!window)
-> +		window = &win;
-> +
-> +	window->src.w = drm_rect_width(&state->src) >> 16;
-> +	window->src.h = drm_rect_height(&state->src) >> 16;
-> +	window->dst.w = drm_rect_width(&state->dst);
-> +	window->dst.h = drm_rect_height(&state->dst);
-> +	window->format = tegra_state->format;
-> +	window->tiling = tegra_state->tiling;
-> +
-> +	yuv = tegra_plane_format_is_yuv(window->format, &planar);
-> +	if (!yuv || !planar)
-> +		bpp = state->fb->format->cpp[0] * 8;
-> +	else
-> +		bpp = 16;
+Add DT nodes for following devices on Tegra186 and Tegra194
+ * ACONNECT
+ * ADMA
+ * AGIC
 
-It occurred to me that it will be much better to use the drm_format_*
-helpers here to calculate the bits-per-pixel because the above variant
-isn't really good for all of possible formats. I'll switch to the
-generic helpers in v2.
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+)
 
-Thierry, for now I'll wait for awhile for yours comments. Please let me
-know if you'll want to see anything else changed in v2. I think there is
-a good chance that we could get everything ready in regards to memory
-bandwidth management basics for v5.3, please help with reviewing and
-getting the patches upstreamed.
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 6e2b6ce..2c432c9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1153,4 +1153,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect@2a41000 {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA186_CLK_APE>,
++			 <&bpmp TEGRA186_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		status = "disabled";
++
++		dma@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x0 0x02930000 0x0 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH 0>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA186_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: agic@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <4>;
++			interrupt-controller;
++			reg = <0x0 0x02a41000 0x0 0x1000>,
++			      <0x0 0x02a42000 0x0 0x1000>;
++			interrupts = <GIC_SPI 145 (GIC_CPU_MASK_SIMPLE(4) |
++					IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA186_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c77ca21..dcab504 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1054,4 +1054,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect@2a41000 {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA194_CLK_APE>,
++			 <&bpmp TEGRA194_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_AUD>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		status = "disabled";
++
++		dma@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x0 0x02930000 0x0 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH 0>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH 0>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA194_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: agic@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <4>;
++			interrupt-controller;
++			reg = <0x0 0x02a41000 0x0 0x1000>,
++			      <0x0 0x02a42000 0x0 0x1000>;
++			interrupts = <GIC_SPI 145 (GIC_CPU_MASK_SIMPLE(4) |
++					IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA194_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
 -- 
-Dmitry
+2.7.4
