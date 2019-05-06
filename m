@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] arm64: tegra: Enable SMMU translation for PCI on Tegra186
-Date: Mon,  6 May 2019 18:34:53 +0200
-Message-ID: <20190506163453.3852-1-thierry.reding@gmail.com>
+Subject: [PATCH] arm64: tegra: Disable XUSB support on Jetson TX2
+Date: Mon,  6 May 2019 18:41:21 +0200
+Message-ID: <20190506164121.4507-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,37 +16,46 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, Bitan Biswas <bbiswas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Commit 954a03be033c ("iommu/arm-smmu: Break insecure users by disabling
-bypass by default") intentionally breaks all devices using the SMMU in
-bypass mode. This breaks, among other things, PCI support on Tegra186.
-Fix this by populating the iommus property and friends for the PCIe
-controller.
+The recently introduced XUSB support for Jetson TX2 is causing boot, CPU
+hotplug and suspend/resume failures according to several reports.
 
-Fixes: 954a03be033c ("iommu/arm-smmu: Break insecure users by disabling bypass by default")
+Temporarily work around this by disabling the XUSB controller and XUSB
+pad controller nodes in device tree, while we figure out what's causing
+this.
+
+Reported-by: Bitan Biswas <bbiswas@nvidia.com>
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 3fb60f6f3a93..426ac0bdf6a6 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -673,6 +673,10 @@
- 			 <&bpmp TEGRA186_RESET_PCIEXCLK>;
- 		reset-names = "afi", "pex", "pcie_x";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+index 75ee6cf1e1b4..14d7fea82daf 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -59,7 +59,7 @@
+ 	};
  
-+		iommus = <&smmu TEGRA186_SID_AFI>;
-+		iommu-map = <0x0 &smmu TEGRA186_SID_AFI 0x1000>;
-+		iommu-map-mask = <0x0>;
-+
- 		status = "disabled";
+ 	padctl@3520000 {
+-		status = "okay";
++		status = "disabled";
  
- 		pci@1,0 {
+ 		avdd-pll-erefeut-supply = <&vdd_1v8_pll>;
+ 		avdd-usb-supply = <&vdd_3v3_sys>;
+@@ -137,7 +137,7 @@
+ 	};
+ 
+ 	usb@3530000 {
+-		status = "okay";
++		status = "disabled";
+ 
+ 		phys = <&{/padctl@3520000/pads/usb2/lanes/usb2-0}>,
+ 		       <&{/padctl@3520000/pads/usb2/lanes/usb2-1}>,
 -- 
 2.21.0
