@@ -1,47 +1,66 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [PATCH v2 3/4] iommu/dma-iommu: Use the dev->coherent_dma_mask
-Date: Mon, 6 May 2019 18:56:13 +0100
-Message-ID: <CAPL0++61WytVhs63tvt+hdpZKXGinrkYx=4nDtNx1UoNTRWWjw@mail.gmail.com>
-References: <20190430002952.18909-1-tmurphy@arista.com> <20190430002952.18909-4-tmurphy@arista.com>
- <20190430111222.GA3191@infradead.org> <da835ce2-f73e-3035-e1d7-d3028cc1a838@arm.com>
- <20190430113253.GA23210@infradead.org> <96ebb6fc-a889-fa94-09ba-65d505b85724@arm.com>
+From: Tom Murphy via iommu <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Subject: [PATCH v3 0/4] iommu/amd: Convert the AMD iommu driver to the
+	dma-iommu api
+Date: Mon,  6 May 2019 19:52:02 +0100
+Message-ID: <20190506185207.31069-1-tmurphy@arista.com>
+Reply-To: Tom Murphy <tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <96ebb6fc-a889-fa94-09ba-65d505b85724@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Christoph Hellwig <hch@infradead.org>, iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tom Murphy <murphyt7@tcd.ie>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tom Murphy <tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, murphyt7-/Zw1syy4LHg@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Just to make this clear, I won't apply Christoph's patch (the one in
-this email thread) and instead the only change I will make is to
-rename dma_limit to dma_mask.
+Convert the AMD iommu driver to the dma-iommu api. Remove the iova
+handling and reserve region code from the AMD iommu driver.
 
-On Tue, Apr 30, 2019 at 1:05 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 30/04/2019 12:32, Christoph Hellwig wrote:
-> > On Tue, Apr 30, 2019 at 12:27:02PM +0100, Robin Murphy wrote:
-> >>> Hmm, I don't think we need the DMA mask for the MSI mapping, this
-> >>> should probably always use a 64-bit mask.
-> >>
-> >> If that were true then we wouldn't need DMA masks for regular mappings
-> >> either. If we have to map the MSI doorbell at all, then we certainly have to
-> >> place it at an IOVA that the relevant device is actually capable of
-> >> addressing.
-> >
-> > Well, as shown by the patch below we don't even look at the DMA mask
-> > for the MSI page - we just allocate from bottom to top.
->
-> In the trivial cookie for unmanaged domains, yes, but in that case the
-> responsibility is on VFIO to provide a suitable (i.e. sub-32-bit)
-> address range for that cookie in the first place. In the managed case,
-> allocation uses the streaming mask via iommu_dma_get_msi_page() calling
-> __iommu_dma_map(). Admittedly the mask can then get overlooked when
-> reusing an existing mapping, which strictly could pose a problem if you
-> have multiple devices with incompatible masks in the same group (and
-> such that the PCI stuff doesn't already mitigate it), but that's such an
-> obscure corner case that I'm reticent to introduce the complication to
-> handle it until it's actually proven necessary.
->
-> Robin.
+Change-log:
+v3:
+-rename dma_limit to dma_mask
+-exit handle_deferred_device early if (!is_kdump_kernel())
+-remove pointless calls to handle_deferred_device
+v2:
+-Rebase on top of this series:
+ http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+-Add a gfp_t parameter to the iommu_ops::map function.
+-Made use of the reserve region code inside the dma-iommu api
+
+Tom Murphy (4):
+  iommu: Add gfp parameter to iommu_ops::map
+  iommu/dma-iommu: Handle deferred devices
+  iommu/dma-iommu: Use the dev->coherent_dma_mask
+  iommu/amd: Convert the AMD iommu driver to the dma-iommu api
+
+ drivers/iommu/Kconfig          |   1 +
+ drivers/iommu/amd_iommu.c      | 694 ++++-----------------------------
+ drivers/iommu/arm-smmu-v3.c    |   2 +-
+ drivers/iommu/arm-smmu.c       |   2 +-
+ drivers/iommu/dma-iommu.c      |  50 ++-
+ drivers/iommu/exynos-iommu.c   |   2 +-
+ drivers/iommu/intel-iommu.c    |   2 +-
+ drivers/iommu/iommu.c          |  43 +-
+ drivers/iommu/ipmmu-vmsa.c     |   2 +-
+ drivers/iommu/msm_iommu.c      |   2 +-
+ drivers/iommu/mtk_iommu.c      |   2 +-
+ drivers/iommu/mtk_iommu_v1.c   |   2 +-
+ drivers/iommu/omap-iommu.c     |   2 +-
+ drivers/iommu/qcom_iommu.c     |   2 +-
+ drivers/iommu/rockchip-iommu.c |   2 +-
+ drivers/iommu/s390-iommu.c     |   2 +-
+ drivers/iommu/tegra-gart.c     |   2 +-
+ drivers/iommu/tegra-smmu.c     |   2 +-
+ include/linux/iommu.h          |  21 +-
+ 19 files changed, 184 insertions(+), 653 deletions(-)
+
+-- 
+2.17.1
