@@ -1,132 +1,75 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag properly
-Date: Sun,  5 May 2019 21:12:35 +0300
-Message-ID: <20190505181235.14798-1-digetx@gmail.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFC 6/7] iommu/vt-d: convert the intel iommu driver to the
+ dma-iommu ops api
+Date: Mon, 6 May 2019 09:34:59 +0800
+Message-ID: <2419e94d-bfdb-e70d-bbfd-425671886e99@linux.intel.com>
+References: <20190504132327.27041-1-tmurphy@arista.com>
+ <20190504132327.27041-7-tmurphy@arista.com>
+ <602b77a2-9c68-ad14-b64f-904a7ff27a15@linux.intel.com>
+ <CAPL0++57nyLYP1fq=-6zvNS0z_iCqjWLbQ1MsG5F60ODkmRCQQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAPL0++57nyLYP1fq=-6zvNS0z_iCqjWLbQ1MsG5F60ODkmRCQQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tom Murphy <tmurphy@arista.com>
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc
 List-Id: linux-tegra@vger.kernel.org
 
-The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
-invoked upon transfer completion and that's it. For some reason driver
-completely disables the hardware interrupt handling, leaving channel in
-unusable state if transfer is issued with the flag being unset. Note
-that there are no occurrences in the relevant drivers that do not set
-the flag, hence this patch doesn't fix any actual bug and merely fixes
-potential problem.
+Hi,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/dma/tegra20-apb-dma.c | 41 ++++++++++++++++++++++++-----------
- 1 file changed, 28 insertions(+), 13 deletions(-)
+On 5/6/19 1:03 AM, Tom Murphy wrote:
+> On Sun, May 5, 2019 at 3:44 AM Lu Baolu<baolu.lu@linux.intel.com>  wrote:
+>> Hi,
+>>
+>> On 5/4/19 9:23 PM, Tom Murphy wrote:
+>>> static int intel_iommu_add_device(struct device *dev)
+>>>    {
+>>> +     struct dmar_domain *dmar_domain;
+>>> +     struct iommu_domain *domain;
+>>>        struct intel_iommu *iommu;
+>>>        struct iommu_group *group;
+>>> -     struct iommu_domain *domain;
+>>> +     dma_addr_t base;
+>>>        u8 bus, devfn;
+>>>
+>>>        iommu = device_to_iommu(dev, &bus, &devfn);
+>>> @@ -4871,9 +4514,12 @@ static int intel_iommu_add_device(struct device *dev)
+>>>        if (IS_ERR(group))
+>>>                return PTR_ERR(group);
+>>>
+>>> +     base = IOVA_START_PFN << VTD_PAGE_SHIFT;
+>>>        domain = iommu_get_domain_for_dev(dev);
+>>> +     dmar_domain = to_dmar_domain(domain);
+>>>        if (domain->type == IOMMU_DOMAIN_DMA)
+>>> -             dev->dma_ops = &intel_dma_ops;
+>>> +             iommu_setup_dma_ops(dev, base,
+>>> +                             __DOMAIN_MAX_ADDR(dmar_domain->gaw) - base);
+>> I didn't find the implementation of iommu_setup_dma_ops() in this
+>> series. Will the iova resource be initialized in this function?
+> Ah sorry, I should've mentioned this is based on the
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+> branch with the "iommu/vt-d: Delegate DMA domain to generic iommu" and
+> "iommu/amd: Convert the AMD iommu driver to the dma-iommu api" patch
+> sets applied.
+> 
+>> If so, will this block iommu_group_create_direct_mappings() which
+>> reserves and maps the reserved iova ranges.
+> The reserved regions will be reserved by the
+> iova_reserve_iommu_regions function instead:
+> (https://github.com/torvalds/linux/blob/6203838dec05352bc357625b1e9ba0a10d3bca35/drivers/iommu/dma-iommu.c#L238
+> )
+> iommu_setup_dma_ops calls iommu_dma_init_domain which calls
+> iova_reserve_iommu_regions.
+> iommu_group_create_direct_mappings will still execute normally but it
+> won't be able to call the intel_iommu_apply_resv_region function
+> because it's been removed in this patchset.
+> This shouldn't change any behavior and the same regions should be reserved.
+> 
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index cf462b1abc0b..29d972b7546f 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -561,6 +561,9 @@ static void tegra_dma_abort_all(struct tegra_dma_channel *tdc)
- 			dma_desc->dma_status = DMA_ERROR;
- 			list_add_tail(&dma_desc->node, &tdc->free_dma_desc);
- 
-+			if (dma_desc->cb_count < 0)
-+				continue;
-+
- 			/* Add in cb list if it is not there. */
- 			if (!dma_desc->cb_count)
- 				list_add_tail(&dma_desc->cb_node,
-@@ -616,9 +619,13 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
- 	if (sgreq->last_sg) {
- 		dma_desc->dma_status = DMA_COMPLETE;
- 		dma_cookie_complete(&dma_desc->txd);
--		if (!dma_desc->cb_count)
--			list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
--		dma_desc->cb_count++;
-+		if (dma_desc->cb_count >= 0) {
-+			if (!dma_desc->cb_count)
-+				list_add_tail(&dma_desc->cb_node,
-+					      &tdc->cb_desc);
-+
-+			dma_desc->cb_count++;
-+		}
- 		list_add_tail(&dma_desc->node, &tdc->free_dma_desc);
- 	}
- 	list_add_tail(&sgreq->node, &tdc->free_sg_req);
-@@ -645,9 +652,11 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
- 		dma_desc->bytes_requested;
- 
- 	/* Callback need to be call */
--	if (!dma_desc->cb_count)
--		list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
--	dma_desc->cb_count++;
-+	if (dma_desc->cb_count >= 0) {
-+		if (!dma_desc->cb_count)
-+			list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
-+		dma_desc->cb_count++;
-+	}
- 
- 	/* If not last req then put at end of pending list */
- 	if (!list_is_last(&sgreq->node, &tdc->pending_sg_req)) {
-@@ -802,7 +811,7 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
- 		dma_desc  = list_first_entry(&tdc->cb_desc,
- 					typeof(*dma_desc), cb_node);
- 		list_del(&dma_desc->cb_node);
--		dma_desc->cb_count = 0;
-+		dma_desc->cb_count = -1;
- 	}
- 	spin_unlock_irqrestore(&tdc->lock, flags);
- 	return 0;
-@@ -988,8 +997,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 	}
- 
--	if (flags & DMA_PREP_INTERRUPT)
--		csr |= TEGRA_APBDMA_CSR_IE_EOC;
-+	csr |= TEGRA_APBDMA_CSR_IE_EOC;
- 
- 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
- 
-@@ -1000,11 +1008,15 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 	}
- 	INIT_LIST_HEAD(&dma_desc->tx_list);
- 	INIT_LIST_HEAD(&dma_desc->cb_node);
--	dma_desc->cb_count = 0;
- 	dma_desc->bytes_requested = 0;
- 	dma_desc->bytes_transferred = 0;
- 	dma_desc->dma_status = DMA_IN_PROGRESS;
- 
-+	if (flags & DMA_PREP_INTERRUPT)
-+		dma_desc->cb_count = 0;
-+	else
-+		dma_desc->cb_count = -1;
-+
- 	/* Make transfer requests */
- 	for_each_sg(sgl, sg, sg_len, i) {
- 		u32 len, mem;
-@@ -1131,8 +1143,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 	}
- 
--	if (flags & DMA_PREP_INTERRUPT)
--		csr |= TEGRA_APBDMA_CSR_IE_EOC;
-+	csr |= TEGRA_APBDMA_CSR_IE_EOC;
- 
- 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
- 
-@@ -1144,7 +1155,11 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 
- 	INIT_LIST_HEAD(&dma_desc->tx_list);
- 	INIT_LIST_HEAD(&dma_desc->cb_node);
--	dma_desc->cb_count = 0;
-+
-+	if (flags & DMA_PREP_INTERRUPT)
-+		dma_desc->cb_count = 0;
-+	else
-+		dma_desc->cb_count = -1;
- 
- 	dma_desc->bytes_transferred = 0;
- 	dma_desc->bytes_requested = buf_len;
--- 
-2.21.0
+Okay, I understand it now. Thanks for the explanation.
+
+Best regards,
+Lu Baolu
