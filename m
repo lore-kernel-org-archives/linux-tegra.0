@@ -1,90 +1,100 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: max98090: Fix restore of DAPM Muxes" to the asoc tree
-Date: Mon,  6 May 2019 16:03:45 +0100 (BST)
-Message-ID: <20190506150345.663AD440036@finisterre.ee.mobilebroadband>
-References: <1556720978-13233-1-git-send-email-jonathanh@nvidia.com>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: Re: [RFC 1/7] iommu/vt-d: Set the dma_ops per device so we can remove
+ the iommu_no_mapping code
+Date: Mon, 6 May 2019 16:27:09 +0100
+Message-ID: <CAPL0++4_Qa+dxzQ2k6BJi_o+VSSrHEtomYgVmRqjtjsOfHbGew@mail.gmail.com>
+References: <20190504132327.27041-1-tmurphy@arista.com> <20190504132327.27041-2-tmurphy@arista.com>
+ <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1556720978-13233-1-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.co>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+On Mon, May 6, 2019 at 2:48 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>
+> Hi,
+>
+> On 5/4/19 9:23 PM, Tom Murphy wrote:
+> > Set the dma_ops per device so we can remove the iommu_no_mapping code.
+> >
+> > Signed-off-by: Tom Murphy<tmurphy@arista.com>
+> > ---
+> >   drivers/iommu/intel-iommu.c | 85 +++----------------------------------
+> >   1 file changed, 6 insertions(+), 79 deletions(-)
+> >
+> > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> > index eace915602f0..2db1dc47e7e4 100644
+> > --- a/drivers/iommu/intel-iommu.c
+> > +++ b/drivers/iommu/intel-iommu.c
+> > @@ -2622,17 +2622,6 @@ static int __init si_domain_init(int hw)
+> >       return 0;
+> >   }
+> >
+> > -static int identity_mapping(struct device *dev)
+> > -{
+> > -     struct device_domain_info *info;
+> > -
+> > -     info = dev->archdata.iommu;
+> > -     if (info && info != DUMMY_DEVICE_DOMAIN_INFO)
+> > -             return (info->domain == si_domain);
+> > -
+> > -     return 0;
+> > -}
+> > -
+> >   static int domain_add_dev_info(struct dmar_domain *domain, struct device *dev)
+> >   {
+> >       struct dmar_domain *ndomain;
+> > @@ -3270,43 +3259,6 @@ static unsigned long intel_alloc_iova(struct device *dev,
+> >       return iova_pfn;
+> >   }
+> >
+> > -/* Check if the dev needs to go through non-identity map and unmap process.*/
+> > -static int iommu_no_mapping(struct device *dev)
+> > -{
+> > -     int found;
+> > -
+> > -     if (iommu_dummy(dev))
+> > -             return 1;
+> > -
+> > -     found = identity_mapping(dev);
+> > -     if (found) {
+> > -             /*
+> > -              * If the device's dma_mask is less than the system's memory
+> > -              * size then this is not a candidate for identity mapping.
+> > -              */
+> > -             u64 dma_mask = *dev->dma_mask;
+> > -
+> > -             if (dev->coherent_dma_mask &&
+> > -                 dev->coherent_dma_mask < dma_mask)
+> > -                     dma_mask = dev->coherent_dma_mask;
+> > -
+> > -             if (dma_mask < dma_get_required_mask(dev)) {
+> > -                     /*
+> > -                      * 32 bit DMA is removed from si_domain and fall back
+> > -                      * to non-identity mapping.
+> > -                      */
+> > -                     dmar_remove_one_dev_info(dev);
+> > -                     dev_warn(dev, "32bit DMA uses non-identity mapping\n");
+> > -
+> > -                     return 0;
+> > -             }
+>
+> The iommu_no_mapping() also checks whether any 32bit DMA device uses
+> identity mapping. The device might not work if the system memory space
+> is bigger than 4G.
 
-   ASoC: max98090: Fix restore of DAPM Muxes
+It looks like their is actually a bug in the v3 of the "iommu/vt-d:
+Delegate DMA domain to generic iommu" patch set. I will leave a
+message in that email thread. Fixing that bug should also fix this
+issue.
 
-has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From ecb2795c08bc825ebd604997e5be440b060c5b18 Mon Sep 17 00:00:00 2001
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Wed, 1 May 2019 15:29:38 +0100
-Subject: [PATCH] ASoC: max98090: Fix restore of DAPM Muxes
-
-The max98090 driver defines 3 DAPM muxes; one for the right line output
-(LINMOD Mux), one for the left headphone mixer source (MIXHPLSEL Mux)
-and one for the right headphone mixer source (MIXHPRSEL Mux). The same
-bit is used for the mux as well as the DAPM enable, and although the mux
-can be correctly configured, after playback has completed, the mux will
-be reset during the disable phase. This is preventing the state of these
-muxes from being saved and restored correctly on system reboot. Fix this
-by marking these muxes as SND_SOC_NOPM.
-
-Note this has been verified this on the Tegra124 Nyan Big which features
-the MAX98090 codec.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
- sound/soc/codecs/max98090.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
-index 30c242c38d99..7619ea31ab50 100644
---- a/sound/soc/codecs/max98090.c
-+++ b/sound/soc/codecs/max98090.c
-@@ -1194,14 +1194,14 @@ static const struct snd_soc_dapm_widget max98090_dapm_widgets[] = {
- 		&max98090_right_rcv_mixer_controls[0],
- 		ARRAY_SIZE(max98090_right_rcv_mixer_controls)),
- 
--	SND_SOC_DAPM_MUX("LINMOD Mux", M98090_REG_LOUTR_MIXER,
--		M98090_LINMOD_SHIFT, 0, &max98090_linmod_mux),
-+	SND_SOC_DAPM_MUX("LINMOD Mux", SND_SOC_NOPM, 0, 0,
-+		&max98090_linmod_mux),
- 
--	SND_SOC_DAPM_MUX("MIXHPLSEL Mux", M98090_REG_HP_CONTROL,
--		M98090_MIXHPLSEL_SHIFT, 0, &max98090_mixhplsel_mux),
-+	SND_SOC_DAPM_MUX("MIXHPLSEL Mux", SND_SOC_NOPM, 0, 0,
-+		&max98090_mixhplsel_mux),
- 
--	SND_SOC_DAPM_MUX("MIXHPRSEL Mux", M98090_REG_HP_CONTROL,
--		M98090_MIXHPRSEL_SHIFT, 0, &max98090_mixhprsel_mux),
-+	SND_SOC_DAPM_MUX("MIXHPRSEL Mux", SND_SOC_NOPM, 0, 0,
-+		&max98090_mixhprsel_mux),
- 
- 	SND_SOC_DAPM_PGA("HP Left Out", M98090_REG_OUTPUT_ENABLE,
- 		M98090_HPLEN_SHIFT, 0, NULL, 0),
--- 
-2.20.1
+>
+> Will you add this to other place, or it's unnecessary?
+>
+> Best regards,
+> Lu Baolu
