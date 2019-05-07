@@ -1,176 +1,72 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V5 05/16] PCI: dwc: Move config space capability search
- API
-Date: Tue, 7 May 2019 13:34:32 +0530
-Message-ID: <ee628f18-0f19-f501-db28-7db31fd3bcbc@nvidia.com>
+Subject: Re: [PATCH V5 07/16] dt-bindings: PCI: designware: Add binding for
+ CDM register check
+Date: Tue, 7 May 2019 13:55:42 +0530
+Message-ID: <031df2ca-27de-2388-5f23-078320203f5d@nvidia.com>
 References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-6-vidyas@nvidia.com>
- <305100E33629484CBB767107E4246BBB0A230666@de02wembxa.internal.synopsys.com>
+ <20190424052004.6270-8-vidyas@nvidia.com> <20190426143247.GA25107@bogus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <305100E33629484CBB767107E4246BBB0A230666@de02wembxa.internal.synopsys.com>
+In-Reply-To: <20190426143247.GA25107@bogus>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>
-Cc: "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kthota@nvidia.com" <kthota@nvidia.com>, "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>, "sagar.tv@gmail.com" <sagar.tv@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/24/2019 1:43 PM, Gustavo Pimentel wrote:
-> On Wed, Apr 24, 2019 at 6:19:53, Vidya Sagar <vidyas@nvidia.com> wrote:
-> 
->> Move PCIe config space capability search API to common DesignWare file
->> as this can be used by both host and ep mode codes.
+On 4/26/2019 8:02 PM, Rob Herring wrote:
+> On Wed, Apr 24, 2019 at 10:49:55AM +0530, Vidya Sagar wrote:
+>> Add support to enable CDM (Configuration Dependent Module) registers check
+>> for any data corruption. CDM registers include standard PCIe configuration
+>> space registers, Port Logic registers and iATU and DMA registers.
+>> Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
+>> Version 4.90a
 >>
 >> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 >> ---
->> Changes from [v4]:
->> * Removed redundant APIs in pcie-designware-ep.c file after moving them
->>    to pcie-designware.c file based on Bjorn's comments.
->>
->> Changes from [v3]:
->> * Rebased to linux-next top of the tree
->>
->> Changes from [v2]:
+>> Changes since [v4]:
 >> * None
 >>
->> Changes from [v1]:
->> * Removed dw_pcie_find_next_ext_capability() API from here and made a
->>    separate patch for that
+>> Changes since [v3]:
+>> * None
 >>
->>   .../pci/controller/dwc/pcie-designware-ep.c   | 37 +-----------------
->>   drivers/pci/controller/dwc/pcie-designware.c  | 39 +++++++++++++++++++
->>   drivers/pci/controller/dwc/pcie-designware.h  |  2 +
->>   3 files changed, 43 insertions(+), 35 deletions(-)
+>> Changes since [v2]:
+>> * Changed flag name from 'cdm-check' to 'enable-cdm-check'
+>> * Added info about Port Logic and DMA registers being part of CDM
 >>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> index 2bf5a35c0570..65f479250087 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> @@ -40,39 +40,6 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
->>   	__dw_pcie_ep_reset_bar(pci, bar, 0);
->>   }
->>   
->> -static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
->> -			      u8 cap)
->> -{
->> -	u8 cap_id, next_cap_ptr;
->> -	u16 reg;
->> -
->> -	if (!cap_ptr)
->> -		return 0;
->> -
->> -	reg = dw_pcie_readw_dbi(pci, cap_ptr);
->> -	cap_id = (reg & 0x00ff);
->> -
->> -	if (cap_id > PCI_CAP_ID_MAX)
->> -		return 0;
->> -
->> -	if (cap_id == cap)
->> -		return cap_ptr;
->> -
->> -	next_cap_ptr = (reg & 0xff00) >> 8;
->> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
->> -}
->> -
->> -static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
->> -{
->> -	u8 next_cap_ptr;
->> -	u16 reg;
->> -
->> -	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
->> -	next_cap_ptr = (reg & 0x00ff);
->> -
->> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
->> -}
->> -
->>   static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
->>   				   struct pci_epf_header *hdr)
->>   {
->> @@ -612,9 +579,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->>   		dev_err(dev, "Failed to reserve memory for MSI/MSI-X\n");
->>   		return -ENOMEM;
->>   	}
->> -	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
->> +	ep->msi_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
->>   
->> -	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
->> +	ep->msix_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSIX);
->>   
->>   	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
->>   	if (offset) {
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
->> index 8e0081ccf83b..ed21e861df82 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware.c
->> @@ -20,6 +20,45 @@
->>   #define PCIE_PHY_DEBUG_R1_LINK_UP	(0x1 << 4)
->>   #define PCIE_PHY_DEBUG_R1_LINK_IN_TRAINING	(0x1 << 29)
->>   
->> +/*
->> + * These APIs are different from standard pci_find_*capability() APIs in the
->> + * sense that former can only be used post device enumeration as they require
->> + * 'struct pci_dev *' pointer whereas these APIs require 'struct dw_pcie *'
->> + * pointer and can be used before link up also.
->> + */
->> +static u8 __dw_pcie_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
->> +				  u8 cap)
->> +{
->> +	u8 cap_id, next_cap_ptr;
->> +	u16 reg;
->> +
->> +	if (!cap_ptr)
->> +		return 0;
->> +
->> +	reg = dw_pcie_readw_dbi(pci, cap_ptr);
->> +	cap_id = (reg & 0x00ff);
->> +
->> +	if (cap_id > PCI_CAP_ID_MAX)
->> +		return 0;
->> +
->> +	if (cap_id == cap)
->> +		return cap_ptr;
->> +
->> +	next_cap_ptr = (reg & 0xff00) >> 8;
->> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
->> +}
->> +
->> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
->> +{
->> +	u8 next_cap_ptr;
->> +	u16 reg;
->> +
->> +	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
->> +	next_cap_ptr = (reg & 0x00ff);
->> +
->> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
->> +}
->> +
->>   int dw_pcie_read(void __iomem *addr, int size, u32 *val)
->>   {
->>   	if (!IS_ALIGNED((uintptr_t)addr, size)) {
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index 9ee98ced1ef6..35160b4ce929 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -248,6 +248,8 @@ struct dw_pcie {
->>   #define to_dw_pcie_from_ep(endpoint)   \
->>   		container_of((endpoint), struct dw_pcie, ep)
->>   
->> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
->> +
+>> Changes since [v1]:
+>> * This is a new patch in v2 series
+>>
+>>   Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> index 5561a1c060d0..85b872c42a9f 100644
+>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> @@ -34,6 +34,11 @@ Optional properties:
+>>   - clock-names: Must include the following entries:
+>>   	- "pcie"
+>>   	- "pcie_bus"
+>> +- enable-cdm-check: This is a boolean property and if present enables
 > 
-> Can you remove this extra line space?
-In patch 06/15, I added dw_pcie_find_ext_capability() API so that they are grouped together
-(separated by a blank line) like how dw_pcie_read() and dw_pcie_write() are grouped.
+> This needs a vendor prefix.
+Why only for this? Since this whole file is for Synopsys DesignWare core based PCIe IP,
+I thought there is specific prefix required. Am I wrong? Also, CDM checking is a feature
+of IP and DWC based implementations can choose either to enable this feature at hardware level
+or not. And whoever enabled it at hardware level (like Tegra194) can set this flag to
+enable corresponding software support.
 
 > 
->>   int dw_pcie_read(void __iomem *addr, int size, u32 *val);
->>   int dw_pcie_write(void __iomem *addr, int size, u32 val);
->>   
+>> +   automatic checking of CDM (Configuration Dependent Module) registers
+>> +   for data corruption. CDM registers include standard PCIe configuration
+>> +   space registers, Port Logic registers, DMA and iATU (internal Address
+>> +   Translation Unit) registers.
+>>   RC mode:
+>>   - num-viewport: number of view ports configured in hardware. If a platform
+>>     does not specify it, the driver assumes 2.
 >> -- 
 >> 2.17.1
-> 
-> 
+>>
