@@ -1,99 +1,76 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V5 02/16] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-Date: Tue, 7 May 2019 12:40:36 +0530
-Message-ID: <b8f482f4-8136-07b5-3d68-f45a6fd580ba@nvidia.com>
+Subject: Re: [PATCH V5 04/16] PCI: dwc: Perform dbi regs write lock towards
+ the end
+Date: Tue, 7 May 2019 13:19:32 +0530
+Message-ID: <2544621a-4c88-3f3e-786c-7ee8103e132d@nvidia.com>
 References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-3-vidyas@nvidia.com> <20190503110159.GB32400@ulmo>
+ <20190424052004.6270-5-vidyas@nvidia.com> <20190503111303.GD32400@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190503110159.GB32400@ulmo>
+In-Reply-To: <20190503111303.GD32400@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/3/2019 4:31 PM, Thierry Reding wrote:
-> On Wed, Apr 24, 2019 at 10:49:50AM +0530, Vidya Sagar wrote:
->> Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
->> using this API be able to build as loadable modules.
+On 5/3/2019 4:43 PM, Thierry Reding wrote:
+> On Wed, Apr 24, 2019 at 10:49:52AM +0530, Vidya Sagar wrote:
+>> Remove multiple write enable and disable sequences of dbi registers as
+>> Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+>> DBI write-lock enable bit thereby not allowing any further writes to BAR-0
+>> register in config space to take place. Hence disabling write permission
+>> only towards the end.
 >>
 >> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 >> ---
->> Changes from [v4]:
+>> Changes since [v4]:
 >> * None
 >>
->> Changes from [v3]:
+>> Changes since [v3]:
 >> * None
 >>
->> Changes from [v2]:
->> * Exported pcie_pme_no_msi() API after making pcie_pme_msi_disabled a static
+>> Changes since [v2]:
+>> * None
 >>
->> Changes from [v1]:
->> * This is a new patch in v2 series
+>> Changes since [v1]:
+>> * None
 >>
->>   drivers/pci/pcie/pme.c     | 14 +++++++++++++-
->>   drivers/pci/pcie/portdrv.h | 16 +++-------------
->>   2 files changed, 16 insertions(+), 14 deletions(-)
+>>   drivers/pci/controller/dwc/pcie-designware-host.c | 3 ---
+>>   1 file changed, 3 deletions(-)
 >>
->> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
->> index 54d593d10396..d5e0ea4a62fc 100644
->> --- a/drivers/pci/pcie/pme.c
->> +++ b/drivers/pci/pcie/pme.c
->> @@ -25,7 +25,19 @@
->>    * that using MSI for PCIe PME signaling doesn't play well with PCIe PME-based
->>    * wake-up from system sleep states.
->>    */
->> -bool pcie_pme_msi_disabled;
->> +static bool pcie_pme_msi_disabled;
->> +
->> +void pcie_pme_disable_msi(void)
->> +{
->> +	pcie_pme_msi_disabled = true;
->> +}
->> +EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
->> +
->> +bool pcie_pme_no_msi(void)
->> +{
->> +	return pcie_pme_msi_disabled;
->> +}
->> +EXPORT_SYMBOL_GPL(pcie_pme_no_msi);
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> index 36fd3f5b48f6..e5e3571dd2fe 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> @@ -654,7 +654,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>>   	val &= 0xffff00ff;
+>>   	val |= 0x00000100;
+>>   	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+>> -	dw_pcie_dbi_ro_wr_dis(pci);
 >>   
->>   static int __init pcie_pme_setup(char *str)
->>   {
->> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
->> index 1d50dc58ac40..7c8c3da4bd58 100644
->> --- a/drivers/pci/pcie/portdrv.h
->> +++ b/drivers/pci/pcie/portdrv.h
->> @@ -125,22 +125,12 @@ void pcie_port_bus_unregister(void);
->>   struct pci_dev;
+>>   	/* Setup bus numbers */
+>>   	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+>> @@ -686,8 +685,6 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
 >>   
->>   #ifdef CONFIG_PCIE_PME
->> -extern bool pcie_pme_msi_disabled;
->> -
->> -static inline void pcie_pme_disable_msi(void)
->> -{
->> -	pcie_pme_msi_disabled = true;
->> -}
->> -
->> -static inline bool pcie_pme_no_msi(void)
->> -{
->> -	return pcie_pme_msi_disabled;
->> -}
->> -
->> +void pcie_pme_disable_msi(void);
->> +bool pcie_pme_no_msi(void);
->>   void pcie_pme_interrupt_enable(struct pci_dev *dev, bool enable);
->>   #else /* !CONFIG_PCIE_PME */
->>   static inline void pcie_pme_disable_msi(void) {}
->> -static inline bool pcie_pme_no_msi(void) { return false; }
->> +static inline bool pcie_pme_no_msi(void) {}
+>>   	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+>>   
+>> -	/* Enable write permission for the DBI read-only register */
+>> -	dw_pcie_dbi_ro_wr_en(pci);
+>>   	/* Program correct class for RC */
+>>   	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+>>   	/* Better disable write permission right after the update */
 > 
-> This looks wrong.
-Can you please give more info on what is wrong in this?
+> Perhaps make this explicit by moving the write enable call to the
+> beginning of the function and the write disable call to the end?
+> 
+> Currently it's pretty difficult to see where it's being disabled. Also,
+> that would make it more resilient against instantiations that require a
+> different register to be programmed with writes enabled.
+Agree. I'll move enabling write to beginning of this function and disabling
+to the end in the next patch series.
 
 > 
 > Thierry
