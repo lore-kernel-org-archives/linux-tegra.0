@@ -1,7 +1,7 @@
 From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 5/8] dmaengine: mmp_tdma: Let the core do the device node validation
-Date: Tue,  7 May 2019 14:09:42 +0800
-Message-ID: <1c420603d220b1ab28f7d98165bb37feaf706f61.1557206859.git.baolin.wang@linaro.org>
+Subject: [PATCH 6/8] dmaengine: mxs-dma: Let the core do the device node validation
+Date: Tue,  7 May 2019 14:09:43 +0800
+Message-ID: <c9b8865e869b4ca0bfcbaf04a997c4883dd8e15e.1557206859.git.baolin.wang@linaro.org>
 References: <cover.1557206859.git.baolin.wang@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1557206859.git.baolin.wang@linaro.org>
@@ -16,47 +16,46 @@ Let the DMA engine core do the device node validation instead of drivers.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/dma/mmp_tdma.c |   10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/dma/mxs-dma.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/mmp_tdma.c b/drivers/dma/mmp_tdma.c
-index 0c56faa0..e76858b 100644
---- a/drivers/dma/mmp_tdma.c
-+++ b/drivers/dma/mmp_tdma.c
-@@ -586,18 +586,12 @@ static int mmp_tdma_chan_init(struct mmp_tdma_device *tdev,
+diff --git a/drivers/dma/mxs-dma.c b/drivers/dma/mxs-dma.c
+index 22cc7f6..8ce5e79 100644
+--- a/drivers/dma/mxs-dma.c
++++ b/drivers/dma/mxs-dma.c
+@@ -716,7 +716,6 @@ static int __init mxs_dma_init(struct mxs_dma_engine *mxs_dma)
  }
  
- struct mmp_tdma_filter_param {
+ struct mxs_dma_filter_param {
 -	struct device_node *of_node;
  	unsigned int chan_id;
  };
  
- static bool mmp_tdma_filter_fn(struct dma_chan *chan, void *fn_param)
- {
- 	struct mmp_tdma_filter_param *param = fn_param;
--	struct mmp_tdma_chan *tdmac = to_mmp_tdma_chan(chan);
--	struct dma_device *pdma_device = tdmac->chan.device;
--
--	if (pdma_device->dev->of_node != param->of_node)
--		return false;
+@@ -727,9 +726,6 @@ static bool mxs_dma_filter_fn(struct dma_chan *chan, void *fn_param)
+ 	struct mxs_dma_engine *mxs_dma = mxs_chan->mxs_dma;
+ 	int chan_irq;
  
+-	if (mxs_dma->dma_device.dev->of_node != param->of_node)
+-		return false;
+-
  	if (chan->chan_id != param->chan_id)
  		return false;
-@@ -615,13 +609,13 @@ static struct dma_chan *mmp_tdma_xlate(struct of_phandle_args *dma_spec,
+ 
+@@ -752,13 +748,13 @@ static struct dma_chan *mxs_dma_xlate(struct of_phandle_args *dma_spec,
  	if (dma_spec->args_count != 1)
  		return NULL;
  
 -	param.of_node = ofdma->of_node;
  	param.chan_id = dma_spec->args[0];
  
- 	if (param.chan_id >= TDMA_CHANNEL_NUM)
+ 	if (param.chan_id >= mxs_dma->nr_channels)
  		return NULL;
  
--	return dma_request_channel(mask, mmp_tdma_filter_fn, &param);
-+	return __dma_request_channel(&mask, mmp_tdma_filter_fn, &param,
+-	return dma_request_channel(mask, mxs_dma_filter_fn, &param);
++	return __dma_request_channel(&mask, mxs_dma_filter_fn, &param,
 +				     ofdma->of_node);
  }
  
- static const struct of_device_id mmp_tdma_dt_ids[] = {
+ static int __init mxs_dma_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
