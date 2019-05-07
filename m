@@ -1,48 +1,100 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v3 2/4] iommu/dma-iommu: Handle deferred devices
-Date: Mon, 6 May 2019 23:40:00 -0700
-Message-ID: <20190507064000.GB5173@infradead.org>
-References: <20190506185207.31069-1-tmurphy@arista.com>
- <20190506185207.31069-3-tmurphy@arista.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V5 02/16] PCI/PME: Export pcie_pme_disable_msi() &
+ pcie_pme_no_msi() APIs
+Date: Tue, 7 May 2019 12:40:36 +0530
+Message-ID: <b8f482f4-8136-07b5-3d68-f45a6fd580ba@nvidia.com>
+References: <20190424052004.6270-1-vidyas@nvidia.com>
+ <20190424052004.6270-3-vidyas@nvidia.com> <20190503110159.GB32400@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190506185207.31069-3-tmurphy@arista.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tom Murphy <tmurphy@arista.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org, murphyt7@tcd.ie, Rob Clark <robdclark@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190503110159.GB32400@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 06, 2019 at 07:52:04PM +0100, Tom Murphy wrote:
-> +static int handle_deferred_device(struct device *dev)
-> +{
-> +	struct iommu_domain *domain;
-> +	const struct iommu_ops *ops;
-> +
-> +	if (!is_kdump_kernel())
-> +		return 0;
-> +
-> +	domain = iommu_get_domain_for_dev(dev);
+On 5/3/2019 4:31 PM, Thierry Reding wrote:
+> On Wed, Apr 24, 2019 at 10:49:50AM +0530, Vidya Sagar wrote:
+>> Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
+>> using this API be able to build as loadable modules.
+>>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>> Changes from [v4]:
+>> * None
+>>
+>> Changes from [v3]:
+>> * None
+>>
+>> Changes from [v2]:
+>> * Exported pcie_pme_no_msi() API after making pcie_pme_msi_disabled a static
+>>
+>> Changes from [v1]:
+>> * This is a new patch in v2 series
+>>
+>>   drivers/pci/pcie/pme.c     | 14 +++++++++++++-
+>>   drivers/pci/pcie/portdrv.h | 16 +++-------------
+>>   2 files changed, 16 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
+>> index 54d593d10396..d5e0ea4a62fc 100644
+>> --- a/drivers/pci/pcie/pme.c
+>> +++ b/drivers/pci/pcie/pme.c
+>> @@ -25,7 +25,19 @@
+>>    * that using MSI for PCIe PME signaling doesn't play well with PCIe PME-based
+>>    * wake-up from system sleep states.
+>>    */
+>> -bool pcie_pme_msi_disabled;
+>> +static bool pcie_pme_msi_disabled;
+>> +
+>> +void pcie_pme_disable_msi(void)
+>> +{
+>> +	pcie_pme_msi_disabled = true;
+>> +}
+>> +EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
+>> +
+>> +bool pcie_pme_no_msi(void)
+>> +{
+>> +	return pcie_pme_msi_disabled;
+>> +}
+>> +EXPORT_SYMBOL_GPL(pcie_pme_no_msi);
+>>   
+>>   static int __init pcie_pme_setup(char *str)
+>>   {
+>> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+>> index 1d50dc58ac40..7c8c3da4bd58 100644
+>> --- a/drivers/pci/pcie/portdrv.h
+>> +++ b/drivers/pci/pcie/portdrv.h
+>> @@ -125,22 +125,12 @@ void pcie_port_bus_unregister(void);
+>>   struct pci_dev;
+>>   
+>>   #ifdef CONFIG_PCIE_PME
+>> -extern bool pcie_pme_msi_disabled;
+>> -
+>> -static inline void pcie_pme_disable_msi(void)
+>> -{
+>> -	pcie_pme_msi_disabled = true;
+>> -}
+>> -
+>> -static inline bool pcie_pme_no_msi(void)
+>> -{
+>> -	return pcie_pme_msi_disabled;
+>> -}
+>> -
+>> +void pcie_pme_disable_msi(void);
+>> +bool pcie_pme_no_msi(void);
+>>   void pcie_pme_interrupt_enable(struct pci_dev *dev, bool enable);
+>>   #else /* !CONFIG_PCIE_PME */
+>>   static inline void pcie_pme_disable_msi(void) {}
+>> -static inline bool pcie_pme_no_msi(void) { return false; }
+>> +static inline bool pcie_pme_no_msi(void) {}
+> 
+> This looks wrong.
+Can you please give more info on what is wrong in this?
 
-> -	dma_handle =__iommu_dma_map(dev, phys, size,
-> +	if (unlikely(handle_deferred_device(dev)))
-> +		return DMA_MAPPING_ERROR;
-> +
-> +	dma_handle = __iommu_dma_map(dev, phys, size,
-
-__iommu_dma_map already looks up the domain, and as far as I can
-tell all callers need the handle_deferred_device call.  Should we
-just move it to there and pass the domain from the caller?
-
-Also shouldn't the iommu_attach_device call inside
-handle_deferred_device also get an unlikely marker?
+> 
+> Thierry
+> 
