@@ -1,27 +1,48 @@
 From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 3/4] iommu/dma-iommu: Use the dev->coherent_dma_mask
-Date: Mon, 6 May 2019 23:35:15 -0700
-Message-ID: <20190507063515.GA5173@infradead.org>
-References: <20190430002952.18909-1-tmurphy@arista.com>
- <20190430002952.18909-4-tmurphy@arista.com>
- <20190430111222.GA3191@infradead.org>
- <da835ce2-f73e-3035-e1d7-d3028cc1a838@arm.com>
- <20190430113253.GA23210@infradead.org>
- <96ebb6fc-a889-fa94-09ba-65d505b85724@arm.com>
- <CAPL0++61WytVhs63tvt+hdpZKXGinrkYx=4nDtNx1UoNTRWWjw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] iommu/dma-iommu: Handle deferred devices
+Date: Mon, 6 May 2019 23:40:00 -0700
+Message-ID: <20190507064000.GB5173@infradead.org>
+References: <20190506185207.31069-1-tmurphy@arista.com>
+ <20190506185207.31069-3-tmurphy@arista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <CAPL0++61WytVhs63tvt+hdpZKXGinrkYx=4nDtNx1UoNTRWWjw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20190506185207.31069-3-tmurphy@arista.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Tom Murphy <tmurphy@arista.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@infradead.org>, iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tom
+Cc: Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org, murphyt7@tcd.ie, Rob Clark <robdclark@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 06, 2019 at 06:56:13PM +0100, Tom Murphy wrote:
-> Just to make this clear, I won't apply Christoph's patch (the one in
-> this email thread) and instead the only change I will make is to
-> rename dma_limit to dma_mask.
+On Mon, May 06, 2019 at 07:52:04PM +0100, Tom Murphy wrote:
+> +static int handle_deferred_device(struct device *dev)
+> +{
+> +	struct iommu_domain *domain;
+> +	const struct iommu_ops *ops;
+> +
+> +	if (!is_kdump_kernel())
+> +		return 0;
+> +
+> +	domain = iommu_get_domain_for_dev(dev);
 
-Sounds good for now.
+> -	dma_handle =__iommu_dma_map(dev, phys, size,
+> +	if (unlikely(handle_deferred_device(dev)))
+> +		return DMA_MAPPING_ERROR;
+> +
+> +	dma_handle = __iommu_dma_map(dev, phys, size,
+
+__iommu_dma_map already looks up the domain, and as far as I can
+tell all callers need the handle_deferred_device call.  Should we
+just move it to there and pass the domain from the caller?
+
+Also shouldn't the iommu_attach_device call inside
+handle_deferred_device also get an unlikely marker?
