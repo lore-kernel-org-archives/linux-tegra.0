@@ -1,47 +1,27 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 8/8] dmaengine: sh: usb-dmac: Let the core do the device node validation
-Date: Tue,  7 May 2019 14:09:45 +0800
-Message-ID: <6dc4f90df68276e6c21f7e0087b91e95b153f85f.1557206859.git.baolin.wang@linaro.org>
-References: <cover.1557206859.git.baolin.wang@linaro.org>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 3/4] iommu/dma-iommu: Use the dev->coherent_dma_mask
+Date: Mon, 6 May 2019 23:35:15 -0700
+Message-ID: <20190507063515.GA5173@infradead.org>
+References: <20190430002952.18909-1-tmurphy@arista.com>
+ <20190430002952.18909-4-tmurphy@arista.com>
+ <20190430111222.GA3191@infradead.org>
+ <da835ce2-f73e-3035-e1d7-d3028cc1a838@arm.com>
+ <20190430113253.GA23210@infradead.org>
+ <96ebb6fc-a889-fa94-09ba-65d505b85724@arm.com>
+ <CAPL0++61WytVhs63tvt+hdpZKXGinrkYx=4nDtNx1UoNTRWWjw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1557206859.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1557206859.git.baolin.wang@linaro.org>
-References: <cover.1557206859.git.baolin.wang@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <CAPL0++61WytVhs63tvt+hdpZKXGinrkYx=4nDtNx1UoNTRWWjw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dan.j.williams@intel.com, vkoul@kernel.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, Zubair.Kakakhel@imgtec.com, wsa+renesas@sang-engineering.com, jroedel@suse.de, vincent.guittot@linaro.org, baolin.wang@linaro.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Tom Murphy <tmurphy@arista.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@infradead.org>, iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tom
 List-Id: linux-tegra@vger.kernel.org
 
-Let the DMA engine core do the device node validation instead of drivers.
+On Mon, May 06, 2019 at 06:56:13PM +0100, Tom Murphy wrote:
+> Just to make this clear, I won't apply Christoph's patch (the one in
+> this email thread) and instead the only change I will make is to
+> rename dma_limit to dma_mask.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/dma/sh/usb-dmac.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
-index 59403f6..0afabf3 100644
---- a/drivers/dma/sh/usb-dmac.c
-+++ b/drivers/dma/sh/usb-dmac.c
-@@ -636,9 +636,6 @@ static bool usb_dmac_chan_filter(struct dma_chan *chan, void *arg)
- 	struct usb_dmac_chan *uchan = to_usb_dmac_chan(chan);
- 	struct of_phandle_args *dma_spec = arg;
- 
--	if (dma_spec->np != chan->device->dev->of_node)
--		return false;
--
- 	/* USB-DMAC should be used with fixed usb controller's FIFO */
- 	if (uchan->index != dma_spec->args[0])
- 		return false;
-@@ -659,7 +656,8 @@ static struct dma_chan *usb_dmac_of_xlate(struct of_phandle_args *dma_spec,
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	chan = dma_request_channel(mask, usb_dmac_chan_filter, dma_spec);
-+	chan = __dma_request_channel(&mask, usb_dmac_chan_filter, dma_spec,
-+				     ofdma->of_node);
- 	if (!chan)
- 		return NULL;
- 
--- 
-1.7.9.5
+Sounds good for now.
