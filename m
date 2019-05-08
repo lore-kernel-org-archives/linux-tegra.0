@@ -1,55 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH v1 1/6] regulator: core: Introduce API for
- machine-specific regulators coupling
-Date: Wed, 8 May 2019 16:55:42 +0900
-Message-ID: <20190508075542.GV14916@sirena.org.uk>
-References: <20190414175939.12368-1-digetx@gmail.com>
- <20190414175939.12368-2-digetx@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag
+ properly
+Date: Wed, 8 May 2019 10:24:37 +0100
+Message-ID: <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
+References: <20190505181235.14798-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Pv0wy+ojp4n+t/Vq"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190414175939.12368-2-digetx@gmail.com>
+In-Reply-To: <20190505181235.14798-1-digetx@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Pv0wy+ojp4n+t/Vq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 05/05/2019 19:12, Dmitry Osipenko wrote:
+> The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
+> invoked upon transfer completion and that's it. For some reason driver
+> completely disables the hardware interrupt handling, leaving channel in
+> unusable state if transfer is issued with the flag being unset. Note
+> that there are no occurrences in the relevant drivers that do not set
+> the flag, hence this patch doesn't fix any actual bug and merely fixes
+> potential problem.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-On Sun, Apr 14, 2019 at 08:59:34PM +0300, Dmitry Osipenko wrote:
-> Right now regulator core supports only one type of regulators coupling,
-> the "voltage max-spread" which keeps voltages of coupled regulators in a
-> given range. A more sophisticated coupling may be required in practice,
-> one example is the NVIDIA Tegra SoC's which besides the max-spreading
-> have other restrictions that must be adhered. Introduce API that allow
-> platforms to provide their own custom coupling algorithms.
+From having a look at this, I am guessing that we have never really
+tested the case where DMA_PREP_INTERRUPT flag is not set because as you
+mentioned it does not look like this will work at all!
 
-This is really concerning since it's jumping straight to open coding the
-algorithm in platform specific code which isn't great, especially since
-that platform specific code is now going to have to handle all possible
-board specific restrictions that might be found on that platform.  Why
-is it not possible to express the rules that exist in a more general
-fashion which can be encoded in drivers?  I'm not thrilled about later
-patches that export core functionality for platform specific use either.
+Is there are use-case you are looking at where you don't set the
+DMA_PREP_INTERRUPT flag?
 
---Pv0wy+ojp4n+t/Vq
-Content-Type: application/pgp-signature; name="signature.asc"
+If not I am wondering if we should even bother supporting this and warn
+if it is not set. AFAICT it does not appear to be mandatory, but maybe
+Vinod can comment more on this.
 
------BEGIN PGP SIGNATURE-----
+Cheers
+Jon
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzSi34ACgkQJNaLcl1U
-h9D1UAf/UAwJK/b/t/+xtrLdSj2q7XnjDc+jt0JG8fzPdnxULJenEbdnDLSPd+S0
-VNe0KuOFhyWYAaY9E12iBe8Z3akZ3z5DviE5KODSYlmU9mf4wRgzuC828Ho3Z8Nz
-ffbbBWmVu8/3F1OJktrfiuX1e52z25LmXT0c9XNa/EFi1XeMISR9Ghi/Q3sfG45u
-1w4eeq2pVflE13N5vtu20vqOpjo3Z8glftnxFN1htIEDAhuhaKSTnmotr9dqQyML
-lujag20oYDVKTtb18ZiFnJSEdfYeHqDdiz6BwvOyGwmupyIqS62xe0/h+nyjgMyM
-jK5+9dcG0cRbL3BRsuekodVatgxo1A==
-=R/Xh
------END PGP SIGNATURE-----
-
---Pv0wy+ojp4n+t/Vq--
+-- 
+nvpublic
