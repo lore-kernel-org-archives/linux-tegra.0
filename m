@@ -1,41 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 09/16] mmc: sdhci-xenon: use new match_string()
- helper/macro
-Date: Wed, 8 May 2019 15:20:10 +0300
-Message-ID: <20190508122010.GC21059@kadam>
-References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
- <20190508112842.11654-11-alexandru.ardelean@analog.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag
+ properly
+Date: Wed, 8 May 2019 15:37:14 +0300
+Message-ID: <cbe8352c-c1c7-12a7-c658-82e7ffee0be8@gmail.com>
+References: <20190505181235.14798-1-digetx@gmail.com>
+ <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <20190508112842.11654-11-alexandru.ardelean@analog.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc: linux-fbdev@vger.kernel.org, kvm@vger.kernel.org, linux-pci@vger.kernel.org, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, linux-clk@vger.kernel.org, devel@driverdev.osuosl.org, andriy.shevchenko@linux.intel.com, linux-rockchip@lists.infradead.org, linux-mmc@vger.kernel.org, linux-pm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, cgroups@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, gregkh@linuxfoundation.org, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 08, 2019 at 02:28:35PM +0300, Alexandru Ardelean wrote:
-> -static const char * const phy_types[] = {
-> -	"emmc 5.0 phy",
-> -	"emmc 5.1 phy"
-> -};
-> -
->  enum xenon_phy_type_enum {
->  	EMMC_5_0_PHY,
->  	EMMC_5_1_PHY,
->  	NR_PHY_TYPES
+08.05.2019 12:24, Jon Hunter пишет:
+> 
+> On 05/05/2019 19:12, Dmitry Osipenko wrote:
+>> The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
+>> invoked upon transfer completion and that's it. For some reason driver
+>> completely disables the hardware interrupt handling, leaving channel in
+>> unusable state if transfer is issued with the flag being unset. Note
+>> that there are no occurrences in the relevant drivers that do not set
+>> the flag, hence this patch doesn't fix any actual bug and merely fixes
+>> potential problem.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> From having a look at this, I am guessing that we have never really
+> tested the case where DMA_PREP_INTERRUPT flag is not set because as you
+> mentioned it does not look like this will work at all!
+> 
+> Is there are use-case you are looking at where you don't set the
+> DMA_PREP_INTERRUPT flag?
 
-There is no need for NR_PHY_TYPES now so you could remove that as well.
+No. I just noticed it while was checking whether we really need to
+handle the BUSY bit state for the Ben's "accurate reporting" patch.
 
-regards,
-dan carpenter
+> If not I am wondering if we should even bother supporting this and warn
+> if it is not set. AFAICT it does not appear to be mandatory, but maybe
+> Vinod can comment more on this.
+
+The warning message will be also okay if it's not mandatory.
