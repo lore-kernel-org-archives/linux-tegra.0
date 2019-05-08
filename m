@@ -1,42 +1,73 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag
- properly
-Date: Wed, 8 May 2019 10:24:37 +0100
-Message-ID: <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
-References: <20190505181235.14798-1-digetx@gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Disable XUSB support on Jetson TX2
+Date: Wed, 8 May 2019 11:53:48 +0100
+Message-ID: <cb8cb5e8-a4f3-4009-fd89-853040d6b2cd@nvidia.com>
+References: <20190506164121.4507-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190505181235.14798-1-digetx@gmail.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190506164121.4507-1-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bitan Biswas <bbiswas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 05/05/2019 19:12, Dmitry Osipenko wrote:
-> The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
-> invoked upon transfer completion and that's it. For some reason driver
-> completely disables the hardware interrupt handling, leaving channel in
-> unusable state if transfer is issued with the flag being unset. Note
-> that there are no occurrences in the relevant drivers that do not set
-> the flag, hence this patch doesn't fix any actual bug and merely fixes
-> potential problem.
+On 06/05/2019 17:41, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> The recently introduced XUSB support for Jetson TX2 is causing boot, CPU
+> hotplug and suspend/resume failures according to several reports.
+> 
+> Temporarily work around this by disabling the XUSB controller and XUSB
+> pad controller nodes in device tree, while we figure out what's causing
+> this.
+> 
+> Reported-by: Bitan Biswas <bbiswas@nvidia.com>
+> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> index 75ee6cf1e1b4..14d7fea82daf 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> @@ -59,7 +59,7 @@
+>  	};
+>  
+>  	padctl@3520000 {
+> -		status = "okay";
+> +		status = "disabled";
+>  
+>  		avdd-pll-erefeut-supply = <&vdd_1v8_pll>;
+>  		avdd-usb-supply = <&vdd_3v3_sys>;
+> @@ -137,7 +137,7 @@
+>  	};
+>  
+>  	usb@3530000 {
+> -		status = "okay";
+> +		status = "disabled";
+>  
+>  		phys = <&{/padctl@3520000/pads/usb2/lanes/usb2-0}>,
+>  		       <&{/padctl@3520000/pads/usb2/lanes/usb2-1}>,
+> 
 
-From having a look at this, I am guessing that we have never really
-tested the case where DMA_PREP_INTERRUPT flag is not set because as you
-mentioned it does not look like this will work at all!
+Thanks.
 
-Is there are use-case you are looking at where you don't set the
-DMA_PREP_INTERRUPT flag?
-
-If not I am wondering if we should even bother supporting this and warn
-if it is not set. AFAICT it does not appear to be mandatory, but maybe
-Vinod can comment more on this.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
