@@ -1,7 +1,7 @@
 From: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 15/16] video: fbdev: pxafb: use new match_string() helper/macro
-Date: Wed, 8 May 2019 14:28:41 +0300
-Message-ID: <20190508112842.11654-17-alexandru.ardelean@analog.com>
+Subject: [PATCH 10/16] pinctrl: armada-37xx: use new match_string() helper/macro
+Date: Wed, 8 May 2019 14:28:36 +0300
+Message-ID: <20190508112842.11654-12-alexandru.ardelean@analog.com>
 References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,39 +12,51 @@ To: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ide@vger.
 Cc: gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, Alexandru Ardelean <alexandru.ardelean@analog.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The `lcd_types` array is a static array of strings.
-Using match_string() (which computes the array size via ARRAY_SIZE())
-is possible.
+The change is mostly cosmetic.
 
-This reduces the array by 1 element, since the NULL (at the end of the
-array) is no longer needed.
+The `armada_37xx_pin_group` struct is defined as.
+struct armada_37xx_pin_group {
+        const char      *name;
+        unsigned int    start_pin;
+        unsigned int    npins;
+        u32             reg_mask;
+        u32             val[NB_FUNCS];
+        unsigned int    extra_pin;
+        unsigned int    extra_npins;
+        const char      *funcs[NB_FUNCS];
+        unsigned int    *pins;
+};
+
+The `funcs` field is a static array of strings, so using the
+new `match_string()` helper (which does an implicit ARRAY_SIZE(gp->funcs))
+should be fine.
 
 Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 ---
- drivers/video/fbdev/pxafb.c | 4 ++--
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-index 0025781e6e1e..e657a04f5b1d 100644
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -2114,7 +2114,7 @@ static void pxafb_check_options(struct device *dev, struct pxafb_mach_info *inf)
- #if defined(CONFIG_OF)
- static const char * const lcd_types[] = {
- 	"unknown", "mono-stn", "mono-dstn", "color-stn", "color-dstn",
--	"color-tft", "smart-panel", NULL
-+	"color-tft", "smart-panel"
- };
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 07a5bcaa0067..68b0db5ef5e9 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -348,7 +348,7 @@ static int armada_37xx_pmx_set_by_name(struct pinctrl_dev *pctldev,
+ 	dev_dbg(info->dev, "enable function %s group %s\n",
+ 		name, grp->name);
  
- static int of_get_pxafb_display(struct device *dev, struct device_node *disp,
-@@ -2129,7 +2129,7 @@ static int of_get_pxafb_display(struct device *dev, struct device_node *disp,
- 	if (ret)
- 		s = "color-tft";
+-	func = __match_string(grp->funcs, NB_FUNCS, name);
++	func = match_string(grp->funcs, name);
+ 	if (func < 0)
+ 		return -ENOTSUPP;
  
--	i = __match_string(lcd_types, -1, s);
-+	i = match_string(lcd_types, s);
- 	if (i < 0) {
- 		dev_err(dev, "lcd-type %s is unknown\n", s);
- 		return i;
+@@ -938,7 +938,7 @@ static int armada_37xx_fill_func(struct armada_37xx_pinctrl *info)
+ 			struct armada_37xx_pin_group *gp = &info->groups[g];
+ 			int f;
+ 
+-			f = __match_string(gp->funcs, NB_FUNCS, name);
++			f = match_string(gp->funcs, name);
+ 			if (f < 0)
+ 				continue;
+ 
 -- 
 2.17.1
