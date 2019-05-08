@@ -1,46 +1,41 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag
- properly
-Date: Wed, 8 May 2019 15:37:14 +0300
-Message-ID: <cbe8352c-c1c7-12a7-c658-82e7ffee0be8@gmail.com>
-References: <20190505181235.14798-1-digetx@gmail.com>
- <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
+Subject: Re: [RFC PATCH v1 1/6] regulator: core: Introduce API for
+ machine-specific regulators coupling
+Date: Wed, 8 May 2019 16:05:32 +0300
+Message-ID: <674a93f6-0d35-c558-72ed-45a66f8c8c3e@gmail.com>
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-2-digetx@gmail.com>
+ <20190508075542.GV14916@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
+In-Reply-To: <20190508075542.GV14916@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.05.2019 12:24, Jon Hunter пишет:
+08.05.2019 10:55, Mark Brown пишет:
+> On Sun, Apr 14, 2019 at 08:59:34PM +0300, Dmitry Osipenko wrote:
+>> Right now regulator core supports only one type of regulators coupling,
+>> the "voltage max-spread" which keeps voltages of coupled regulators in a
+>> given range. A more sophisticated coupling may be required in practice,
+>> one example is the NVIDIA Tegra SoC's which besides the max-spreading
+>> have other restrictions that must be adhered. Introduce API that allow
+>> platforms to provide their own custom coupling algorithms.
 > 
-> On 05/05/2019 19:12, Dmitry Osipenko wrote:
->> The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
->> invoked upon transfer completion and that's it. For some reason driver
->> completely disables the hardware interrupt handling, leaving channel in
->> unusable state if transfer is issued with the flag being unset. Note
->> that there are no occurrences in the relevant drivers that do not set
->> the flag, hence this patch doesn't fix any actual bug and merely fixes
->> potential problem.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> This is really concerning since it's jumping straight to open coding the
+> algorithm in platform specific code which isn't great, especially since
+> that platform specific code is now going to have to handle all possible
+> board specific restrictions that might be found on that platform.  Why
+> is it not possible to express the rules that exist in a more general
+> fashion which can be encoded in drivers?  I'm not thrilled about later
+> patches that export core functionality for platform specific use either.
 > 
-> From having a look at this, I am guessing that we have never really
-> tested the case where DMA_PREP_INTERRUPT flag is not set because as you
-> mentioned it does not look like this will work at all!
-> 
-> Is there are use-case you are looking at where you don't set the
-> DMA_PREP_INTERRUPT flag?
 
-No. I just noticed it while was checking whether we really need to
-handle the BUSY bit state for the Ben's "accurate reporting" patch.
-
-> If not I am wondering if we should even bother supporting this and warn
-> if it is not set. AFAICT it does not appear to be mandatory, but maybe
-> Vinod can comment more on this.
-
-The warning message will be also okay if it's not mandatory.
+Indeed, it's absolutely not the part of the idea that platform specific
+code will be handling board specifics as well. I just wanted to KISS for
+the first draft and will change that for a more generic solution in the
+next revision.
