@@ -1,80 +1,61 @@
-From: Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] i2c: tegra: use busendiannes variable
-Date: Thu,  9 May 2019 02:48:57 +0200
-Message-ID: <1557362937-6591-1-git-send-email-hofrat@osadl.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH 2/8] soc: tegra: fuse: Change to the correct
+ __dma_request_channel() prototype
+Date: Thu, 9 May 2019 09:44:15 +0800
+Message-ID: <CAMz4kuJaP2UGiqCRrRX=cwwyqfnmiJ0CG-BXBkTpwKE825xKsQ@mail.gmail.com>
+References: <cover.1557206859.git.baolin.wang@linaro.org> <1ddb1abe8722154dd546d265d5c4536480a24a87.1557206859.git.baolin.wang@linaro.org>
+ <8746a913-0014-7036-7fab-4e0dfab04e1b@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <8746a913-0014-7036-7fab-4e0dfab04e1b@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, Zubair.Kakakhel@imgtec.com, Wolfram Sang <wsa+renesas@sang-engineering.com>, jroedel@suse.de, Vincent Guittot <vincent.guittot@linaro.org>, dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Converting from bus to host endiannes was done using the same variable
-which makes sparse unhappy as it can not verify the endiannes handling
-properly. To allow sparse to verify endiannes handling a __le32 is
-introduced. This patch does not actually change the code logic while
-the binary does change due to limit on instruction re-ordering induced
-by the additional constraint.
+On Wed, 8 May 2019 at 23:15, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 07.05.2019 9:09, Baolin Wang =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Since we've introduced one device node parameter for __dma_request_chan=
+nel(),
+> > thus change to the correct function prototype.
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > ---
+> >  drivers/soc/tegra/fuse/fuse-tegra20.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/=
+fuse/fuse-tegra20.c
+> > index 49ff017..e2571b6 100644
+> > --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
+> > +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> > @@ -110,7 +110,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fu=
+se)
+> >       dma_cap_zero(mask);
+> >       dma_cap_set(DMA_SLAVE, mask);
+> >
+> > -     fuse->apbdma.chan =3D __dma_request_channel(&mask, dma_filter, NU=
+LL);
+> > +     fuse->apbdma.chan =3D __dma_request_channel(&mask, dma_filter, NU=
+LL, NULL);
+> >       if (!fuse->apbdma.chan)
+> >               return -EPROBE_DEFER;
+> >
+> >
+>
+> 1) Kernel should be kept bisect'able by not having intermediate patches
+> that break compilation. Hence you should squash the changes into a
+> single patch.
+>
+> 2) Better to replace __dma_request_channel() with dma_request_channel()
+> since they are equal.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
----
+Good point. I'll change to use dma_request_channel() in next version
+if no other objections. Thanks.
 
-Problem located by an experimental coccinelle script to locate
-patters that make sparse unhappy (false positives):
-
-sparse was complaining about:
-drivers/i2c/busses/i2c-tegra.c:596:23: warning: cast to restricted __le32
-
-Note that the binary does change in this case - from inspection of the
-.lst files it seems that the introduction of the __le32 limits
-the re-ordering options for the compiler so one instruction
-position changed (ldr     r1, [sp, #4]) but from my understanding
-that does not change the program logic here.
-
-Patch was compile-tested with: tegra_defconfig (implies I2C_TEGRA=y)
-
-Patch is against 5.1 (localversion-next is next-20190508)
-
- drivers/i2c/busses/i2c-tegra.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index ebaa78d..cbaddcc 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -543,18 +543,19 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 val;
-+	__le32 busval;
- 	int tx_fifo_avail;
- 	u8 *buf = i2c_dev->msg_buf;
- 	size_t buf_remaining = i2c_dev->msg_buf_remaining;
- 	int words_to_transfer;
- 
- 	if (i2c_dev->hw->has_mst_fifo) {
--		val = i2c_readl(i2c_dev, I2C_MST_FIFO_STATUS);
--		tx_fifo_avail = (val & I2C_MST_FIFO_STATUS_TX_MASK) >>
-+		busval = i2c_readl(i2c_dev, I2C_MST_FIFO_STATUS);
-+		tx_fifo_avail = (busval & I2C_MST_FIFO_STATUS_TX_MASK) >>
- 			I2C_MST_FIFO_STATUS_TX_SHIFT;
- 	} else {
--		val = i2c_readl(i2c_dev, I2C_FIFO_STATUS);
--		tx_fifo_avail = (val & I2C_FIFO_STATUS_TX_MASK) >>
-+		busval = i2c_readl(i2c_dev, I2C_FIFO_STATUS);
-+		tx_fifo_avail = (busval & I2C_FIFO_STATUS_TX_MASK) >>
- 			I2C_FIFO_STATUS_TX_SHIFT;
- 	}
- 
-@@ -592,8 +593,8 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	 */
- 	if (tx_fifo_avail > 0 && buf_remaining > 0) {
- 		BUG_ON(buf_remaining > 3);
--		memcpy(&val, buf, buf_remaining);
--		val = le32_to_cpu(val);
-+		memcpy(&busval, buf, buf_remaining);
-+		val = le32_to_cpu(busval);
- 
- 		/* Again update before writing to FIFO to make sure isr sees. */
- 		i2c_dev->msg_buf_remaining = 0;
--- 
-2.1.4
+--=20
+Baolin Wang
+Best Regards
