@@ -1,108 +1,130 @@
-From: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Subject: RE: [Patch-V2 1/4] dt-binding: Tegra194 pinctrl support
-Date: Thu, 9 May 2019 10:27:21 +0000
-Message-ID: <SN6PR12MB2734B6AAEEADCF432DD4001EC3330@SN6PR12MB2734.namprd12.prod.outlook.com>
-References: <1557389296-10257-1-git-send-email-kyarlagadda@nvidia.com>
- <41dbf606-0a15-a0bc-07fd-2c7101d7f6a1@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 03/15] clocksource/drivers/tegra: Rework for compensation of suspend time
+Date: Thu,  9 May 2019 13:10:36 +0200
+Message-ID: <20190509111048.11151-3-daniel.lezcano@linaro.org>
+References: <7e786ba3-a664-8fd9-dd17-6a5be996a712@linaro.org>
+ <20190509111048.11151-1-daniel.lezcano@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <41dbf606-0a15-a0bc-07fd-2c7101d7f6a1@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <20190509111048.11151-1-daniel.lezcano@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Hunter <jonathanh@nvidia.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEpvbmF0aGFuIEh1bnRlciA8
-am9uYXRoYW5oQG52aWRpYS5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBNYXkgOSwgMjAxOSAzOjEy
-IFBNDQo+IFRvOiBLcmlzaG5hIFlhcmxhZ2FkZGEgPGt5YXJsYWdhZGRhQG52aWRpYS5jb20+OyBs
-aW51cy53YWxsZWlqQGxpbmFyby5vcmc7DQo+IHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbTsgbGlu
-dXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGdwaW9Admdlci5rZXJuZWwub3Jn
-OyBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGRldmljZXRyZWVAdmdlci5rZXJuZWwu
-b3JnDQo+IENjOiBQZXRlciBEZSBTY2hyaWp2ZXIgPHBkZXNjaHJpanZlckBudmlkaWEuY29tPjsg
-Sm9zZXBoIExvDQo+IDxqb3NlcGhsQG52aWRpYS5jb20+OyBTdXJlc2ggTWFuZ2lwdWRpIDxzbWFu
-Z2lwdWRpQG52aWRpYS5jb20+Ow0KPiBMYXhtYW4gRGV3YW5nYW4gPGxkZXdhbmdhbkBudmlkaWEu
-Y29tPjsgVmlkeWEgU2FnYXINCj4gPHZpZHlhc0BudmlkaWEuY29tPg0KPiBTdWJqZWN0OiBSZTog
-W1BhdGNoLVYyIDEvNF0gZHQtYmluZGluZzogVGVncmExOTQgcGluY3RybCBzdXBwb3J0DQo+IA0K
-PiANCj4gT24gMDkvMDUvMjAxOSAwOTowOCwgS3Jpc2huYSBZYXJsYWdhZGRhIHdyb3RlOg0KPiA+
-IEFkZCBiaW5kaW5nIGRvYyBmb3IgVGVncmEgMTk0IHBpbmN0cmwgZHJpdmVyDQo+ID4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBLcmlzaG5hIFlhcmxhZ2FkZGEgPGt5YXJsYWdhZGRhQG52aWRpYS5jb20+
-DQo+ID4gLS0tDQo+ID4gQ2hhbmdlcyBpbiBWMjoNCj4gPiBjcmVhdGVkIG5ldyBiaW5kaW5nIGRv
-YyB0byBoYW5kbGUgVGVncmExOTQgcGluY3RybCBkcml2ZXINCj4gPg0KPiA+ICAuLi4vYmluZGlu
-Z3MvcGluY3RybC9udmlkaWEsdGVncmExOTQtcGlubXV4LnR4dCAgICB8IDExNg0KPiArKysrKysr
-KysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDExNiBpbnNlcnRpb25zKCspDQo+
-ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NA0KPiA+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9waW5jdHJsL252aWRpYSx0ZWdyYTE5NC1waW5tdXgudHh0DQo+ID4NCj4gPiBkaWZmIC0t
-Z2l0DQo+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9udmlk
-aWEsdGVncmExOTQtcGlubXV4LnR4dA0KPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL3BpbmN0cmwvbnZpZGlhLHRlZ3JhMTk0LXBpbm11eC50eHQNCj4gPiBuZXcgZmlsZSBt
-b2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAuLjgwZTM2YzcNCj4gPiAtLS0gL2Rldi9udWxs
-DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvbnZp
-ZGlhLHRlZ3JhMTk0LXBpbm11eA0KPiA+ICsrKyAudHh0DQo+ID4gQEAgLTAsMCArMSwxMTYgQEAN
-Cj4gPiArTlZJRElBIFRlZ3JhMTk0IHBpbm11eCBjb250cm9sbGVyDQo+ID4gKw0KPiA+ICtSZXF1
-aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ICstIGNvbXBhdGlibGU6ICJudmlkaWEsdGVncmExOTQtcGlu
-bXV4Ig0KPiA+ICstIHJlZzogU2hvdWxkIGNvbnRhaW4gYSBsaXN0IG9mIGJhc2UgYWRkcmVzcyBh
-bmQgc2l6ZSBwYWlycyBmb3I6DQo+ID4gKyAgLSBmaXJzdCBlbnRyeTogVGhlIEFQQl9NSVNDX0dQ
-XypfUEFEQ1RSTCByZWdpc3RlcnMgKHBhZCBjb250cm9sKQ0KPiA+ICsgIC0gc2Vjb25kIGVudHJ5
-OiBUaGUgUElOTVVYX0FVWF8qIHJlZ2lzdGVycyAocGlubXV4KQ0KPiA+ICsNCj4gPiArUGxlYXNl
-IHJlZmVyIHRvIHBpbmN0cmwtYmluZGluZ3MudHh0IGluIHRoaXMgZGlyZWN0b3J5IGZvciBkZXRh
-aWxzIG9mDQo+ID4gK3RoZSBjb21tb24gcGluY3RybCBiaW5kaW5ncyB1c2VkIGJ5IGNsaWVudCBk
-ZXZpY2VzLCBpbmNsdWRpbmcgdGhlDQo+ID4gK21lYW5pbmcgb2YgdGhlIHBocmFzZSAicGluIGNv
-bmZpZ3VyYXRpb24gbm9kZSIuDQo+ID4gKw0KPiA+ICtUZWdyYSdzIHBpbiBjb25maWd1cmF0aW9u
-IG5vZGVzIGFjdCBhcyBhIGNvbnRhaW5lciBmb3IgYW4gYXJiaXRyYXJ5DQo+ID4gK251bWJlciBv
-ZiBzdWJub2Rlcy4gRWFjaCBvZiB0aGVzZSBzdWJub2RlcyByZXByZXNlbnRzIHNvbWUgZGVzaXJl
-ZA0KPiA+ICtjb25maWd1cmF0aW9uIGZvciBhIHBpbiwgYSBncm91cCwgb3IgYSBsaXN0IG9mIHBp
-bnMgb3IgZ3JvdXBzLiBUaGlzDQo+ID4gK2NvbmZpZ3VyYXRpb24gY2FuIGluY2x1ZGUgdGhlIG11
-eCBmdW5jdGlvbiB0byBzZWxlY3Qgb24gdGhvc2UNCj4gPiArcGluKHMpL2dyb3VwKHMpLCBhbmQg
-dmFyaW91cyBwaW4gY29uZmlndXJhdGlvbiBwYXJhbWV0ZXJzLCBzdWNoIGFzIHB1bGwtdXAsDQo+
-IHRyaXN0YXRlLCBkcml2ZSBzdHJlbmd0aCwgZXRjLg0KPiA+ICsNCj4gPiArU2VlIHRoZSBUUk0g
-dG8gZGV0ZXJtaW5lIHdoaWNoIHByb3BlcnRpZXMgYW5kIHZhbHVlcyBhcHBseSB0byBlYWNoDQo+
-IHBpbi9ncm91cC4NCj4gPiArTWFjcm8gdmFsdWVzIGZvciBwcm9wZXJ0eSB2YWx1ZXMgYXJlIGRl
-ZmluZWQgaW4NCj4gPiAraW5jbHVkZS9kdC1iaW5kaW5nL3BpbmN0cmwvcGluY3RybC10ZWdyYS5o
-Lg0KPiA+ICsNCj4gPiArUmVxdWlyZWQgc3Vibm9kZS1wcm9wZXJ0aWVzOg0KPiA+ICstIG52aWRp
-YSxwaW5zIDogQW4gYXJyYXkgb2Ygc3RyaW5ncy4gRWFjaCBzdHJpbmcgY29udGFpbnMgdGhlIG5h
-bWUgb2YgYSBwaW4gb3INCj4gPiArICAgIGdyb3VwLiBWYWxpZCB2YWx1ZXMgZm9yIHRoZXNlIG5h
-bWVzIGFyZSBsaXN0ZWQgYmVsb3cuDQo+ID4gKw0KPiA+ICtPcHRpb25hbCBzdWJub2RlLXByb3Bl
-cnRpZXM6DQo+ID4gKy0gbnZpZGlhLGZ1bmN0aW9uOiBBIHN0cmluZyBjb250YWluaW5nIHRoZSBu
-YW1lIG9mIHRoZSBmdW5jdGlvbiB0byBtdXggdG8NCj4gdGhlDQo+ID4gKyAgICBwaW4gb3IgZ3Jv
-dXAuDQo+ID4gKy0gbnZpZGlhLHB1bGw6IEludGVnZXIsIHJlcHJlc2VudGluZyB0aGUgcHVsbC1k
-b3duL3VwIHRvIGFwcGx5IHRvIHRoZSBwaW4uDQo+ID4gKyAgICAwOiBub25lLCAxOiBkb3duLCAy
-OiB1cC4NCj4gPiArLSBudmlkaWEsdHJpc3RhdGU6IEludGVnZXIuDQo+ID4gKyAgICAwOiBkcml2
-ZSwgMTogdHJpc3RhdGUuDQo+ID4gKy0gbnZpZGlhLGVuYWJsZS1pbnB1dDogSW50ZWdlci4gRW5h
-YmxlIHRoZSBwaW4ncyBpbnB1dCBwYXRoLg0KPiA+ICsgICAgZW5hYmxlIDpURUdSQV9QSU5fRU5B
-QkxFIGFuZA0KPiA+ICsgICAgZGlzYWJsZSBvciBvdXRwdXQgb25seTogVEVHUkFfUElOX0RJU0FC
-TEUuDQo+ID4gKy0gbnZpZGlhLG9wZW4tZHJhaW46IEludGVnZXIuDQo+ID4gKyAgICBlbmFibGU6
-IFRFR1JBX1BJTl9FTkFCTEUuDQo+ID4gKyAgICBkaXNhYmxlOiBURUdSQV9QSU5fRElTQUJMRS4N
-Cj4gPiArLSBudmlkaWEsbG9jazogSW50ZWdlci4gTG9jayB0aGUgcGluIGNvbmZpZ3VyYXRpb24g
-YWdhaW5zdCBmdXJ0aGVyIGNoYW5nZXMNCj4gPiArICAgIHVudGlsIHJlc2V0Lg0KPiA+ICsgICAg
-ZW5hYmxlOiBURUdSQV9QSU5fRU5BQkxFLg0KPiA+ICsgICAgZGlzYWJsZTogVEVHUkFfUElOX0RJ
-U0FCTEUuDQo+ID4gKy0gbnZpZGlhLGlvLWh2OiBJbnRlZ2VyLiBTZWxlY3QgaGlnaC12b2x0YWdl
-IHJlY2VpdmVycy4NCj4gPiArICAgIG5vcm1hbDogVEVHUkFfUElOX0RJU0FCTEUNCj4gPiArICAg
-IGhpZ2g6IFRFR1JBX1BJTl9FTkFCTEUNCj4gPiArLSBudmlkaWEsaGlnaC1zcGVlZC1tb2RlOiBJ
-bnRlZ2VyLiBFbmFibGUgaGlnaCBzcGVlZCBtb2RlIHRoZSBwaW5zLg0KPiA+ICsgICAgbm9ybWFs
-OiBURUdSQV9QSU5fRElTQUJMRQ0KPiA+ICsgICAgaGlnaDogVEVHUkFfUElOX0VOQUJMRQ0KPiA+
-ICstIG52aWRpYSxzY2htaXR0OiBJbnRlZ2VyLiBFbmFibGVzIFNjaG1pdHQgVHJpZ2dlciBvbiB0
-aGUgaW5wdXQuDQo+ID4gKyAgICBub3JtYWw6IFRFR1JBX1BJTl9ESVNBQkxFDQo+ID4gKyAgICBo
-aWdoOiBURUdSQV9QSU5fRU5BQkxFDQo+ID4gKy0gbnZpZGlhLGRyaXZlLXR5cGU6IEludGVnZXIu
-IFZhbGlkIHJhbmdlIDAuLi4zLg0KPiA+ICstIG52aWRpYSxwdWxsLWRvd24tc3RyZW5ndGg6IElu
-dGVnZXIuIENvbnRyb2xzIGRyaXZlIHN0cmVuZ3RoLiAwIGlzIHdlYWtlc3QuDQo+ID4gKyAgICBU
-aGUgcmFuZ2Ugb2YgdmFsaWQgdmFsdWVzIGRlcGVuZHMgb24gdGhlIHBpbmdyb3VwLiBTZWUgIkNB
-TF9EUlZETiINCj4gaW4gdGhlDQo+ID4gKyAgICBUZWdyYSBUUk0uDQo+ID4gKy0gbnZpZGlhLHB1
-bGwtdXAtc3RyZW5ndGg6IEludGVnZXIuIENvbnRyb2xzIGRyaXZlIHN0cmVuZ3RoLiAwIGlzIHdl
-YWtlc3QuDQo+ID4gKyAgICBUaGUgcmFuZ2Ugb2YgdmFsaWQgdmFsdWVzIGRlcGVuZHMgb24gdGhl
-IHBpbmdyb3VwLiBTZWUgIkNBTF9EUlZVUCINCj4gaW4gdGhlDQo+ID4gKyAgICBUZWdyYSBUUk0u
-DQo+ID4gKy0gbnZpZGlhLHNsZXctcmF0ZS1yaXNpbmc6IEludGVnZXIuIENvbnRyb2xzIHJpc2lu
-ZyBzaWduYWwgc2xldyByYXRlLiAwIGlzDQo+ID4gKyAgICBmYXN0ZXN0LiBUaGUgcmFuZ2Ugb2Yg
-dmFsaWQgdmFsdWVzIGRlcGVuZHMgb24gdGhlIHBpbmdyb3VwLiBTZWUNCj4gPiArICAgICJEUlZE
-Tl9TTFdSIiBpbiB0aGUgVGVncmEgVFJNLg0KPiA+ICstIG52aWRpYSxzbGV3LXJhdGUtZmFsbGlu
-ZzogSW50ZWdlci4gQ29udHJvbHMgZmFsbGluZyBzaWduYWwgc2xldyByYXRlLiAwIGlzDQo+ID4g
-KyAgICBmYXN0ZXN0LiBUaGUgcmFuZ2Ugb2YgdmFsaWQgdmFsdWVzIGRlcGVuZHMgb24gdGhlIHBp
-bmdyb3VwLiBTZWUNCj4gPiArICAgICJEUlZVUF9TTFdGIiBpbiB0aGUgVGVncmEgVFJNLg0KPiAN
-Cj4gQXJlIGFsbCB0aGVzZSBwcm9wZXJ0aWVzIGFwcGxpY2FibGUgdG8gdGhlIHBleF9sNV9jbGty
-ZXEgYW5kIHBleF9sNV9yc3QgcGlucz8NCj4gUGFydGljdWxhcmx5IHRoZSBzbGV3LXJhdGUgcHJv
-cGVydGllcz8NCj4gDQo+IENoZWVycw0KPiBKb24NClNsZXctcmF0ZSwgaGlnaC1zcGVlZC1tb2Rl
-IGFyZSBzdXBwb3J0ZWQgYnkgZHJpdmVyIGJ1dCBub3QgdGhlc2UgcGlucy4NCldpbGwgcmVtb3Zl
-IHByb3BlcnRpZXMgbm90IHN1cHBvcnRlZCBieSBwZXggcGlucyBpbiBuZXh0IHZlcnNpb24uDQo+
-IA0KPiAtLQ0KPiBudnB1YmxpYw0K
+From: Joseph Lo <josephl@nvidia.com>
+
+Since the clocksource framework has the support for suspend time
+compensation. Re-work the driver to use that, so we can reduce the
+duplicate code.
+
+Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/timer-tegra20.c | 63 +++++++++--------------------
+ 1 file changed, 20 insertions(+), 43 deletions(-)
+
+diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
+index fdb3d795a409..919b3568c495 100644
+--- a/drivers/clocksource/timer-tegra20.c
++++ b/drivers/clocksource/timer-tegra20.c
+@@ -60,9 +60,6 @@
+ static u32 usec_config;
+ static void __iomem *timer_reg_base;
+ #ifdef CONFIG_ARM
+-static void __iomem *rtc_base;
+-static struct timespec64 persistent_ts;
+-static u64 persistent_ms, last_persistent_ms;
+ static struct delay_timer tegra_delay_timer;
+ #endif
+ 
+@@ -199,40 +196,30 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
+ 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
+ }
+ 
++static struct timer_of suspend_rtc_to = {
++	.flags = TIMER_OF_BASE | TIMER_OF_CLOCK,
++};
++
+ /*
+  * tegra_rtc_read - Reads the Tegra RTC registers
+  * Care must be taken that this funciton is not called while the
+  * tegra_rtc driver could be executing to avoid race conditions
+  * on the RTC shadow register
+  */
+-static u64 tegra_rtc_read_ms(void)
++static u64 tegra_rtc_read_ms(struct clocksource *cs)
+ {
+-	u32 ms = readl(rtc_base + RTC_MILLISECONDS);
+-	u32 s = readl(rtc_base + RTC_SHADOW_SECONDS);
++	u32 ms = readl(timer_of_base(&suspend_rtc_to) + RTC_MILLISECONDS);
++	u32 s = readl(timer_of_base(&suspend_rtc_to) + RTC_SHADOW_SECONDS);
+ 	return (u64)s * MSEC_PER_SEC + ms;
+ }
+ 
+-/*
+- * tegra_read_persistent_clock64 -  Return time from a persistent clock.
+- *
+- * Reads the time from a source which isn't disabled during PM, the
+- * 32k sync timer.  Convert the cycles elapsed since last read into
+- * nsecs and adds to a monotonically increasing timespec64.
+- * Care must be taken that this funciton is not called while the
+- * tegra_rtc driver could be executing to avoid race conditions
+- * on the RTC shadow register
+- */
+-static void tegra_read_persistent_clock64(struct timespec64 *ts)
+-{
+-	u64 delta;
+-
+-	last_persistent_ms = persistent_ms;
+-	persistent_ms = tegra_rtc_read_ms();
+-	delta = persistent_ms - last_persistent_ms;
+-
+-	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
+-	*ts = persistent_ts;
+-}
++static struct clocksource suspend_rtc_clocksource = {
++	.name	= "tegra_suspend_timer",
++	.rating	= 200,
++	.read	= tegra_rtc_read_ms,
++	.mask	= CLOCKSOURCE_MASK(32),
++	.flags	= CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
++};
+ #endif
+ 
+ static int tegra_timer_common_init(struct device_node *np, struct timer_of *to)
+@@ -385,25 +372,15 @@ static int __init tegra_init_timer(struct device_node *np)
+ 
+ static int __init tegra20_init_rtc(struct device_node *np)
+ {
+-	struct clk *clk;
++	int ret;
+ 
+-	rtc_base = of_iomap(np, 0);
+-	if (!rtc_base) {
+-		pr_err("Can't map RTC registers\n");
+-		return -ENXIO;
+-	}
++	ret = timer_of_init(np, &suspend_rtc_to);
++	if (ret)
++		return ret;
+ 
+-	/*
+-	 * rtc registers are used by read_persistent_clock, keep the rtc clock
+-	 * enabled
+-	 */
+-	clk = of_clk_get(np, 0);
+-	if (IS_ERR(clk))
+-		pr_warn("Unable to get rtc-tegra clock\n");
+-	else
+-		clk_prepare_enable(clk);
++	clocksource_register_hz(&suspend_rtc_clocksource, 1000);
+ 
+-	return register_persistent_clock(tegra_read_persistent_clock64);
++	return 0;
+ }
+ TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
+ #endif
+-- 
+2.17.1
