@@ -1,102 +1,58 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: RE: [PATCH V5 03/16] PCI: Export pcie_bus_config symbol
-Date: Fri, 10 May 2019 11:51:24 +0530
-Message-ID: <80616ff5-d7a5-84a4-a71b-569e340d128c@nvidia.com>
-References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-4-vidyas@nvidia.com> <20190503110732.GC32400@ulmo>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH V3 0/8] Add EMC scaling support for Tegra210
+Date: Fri, 10 May 2019 16:47:11 +0800
+Message-ID: <20190510084719.18902-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190503110732.GC32400@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>, Mikko Perttunen <mperttunen@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@li
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob
+ Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+This series introduces the EMC clock scaling support for Tegra210. The
+new version has a significant change, which drops the EMC table bindings
+and replaces by memory region node of EMC table.
 
+And most of the comments in V1 have been addressed.
+Thanks.
 
-> -----Original Message-----
-> From: linux-pci-owner@vger.kernel.org <linux-pci-owner@vger.kernel.org> On
-> Behalf Of Thierry Reding
-> Sent: Friday, May 3, 2019 4:38 PM
-> To: Vidya Sagar <vidyas@nvidia.com>
-> Cc: lorenzo.pieralisi@arm.com; bhelgaas@google.com; robh+dt@kernel.org;
-> mark.rutland@arm.com; Jonathan Hunter <jonathanh@nvidia.com>;
-> kishon@ti.com; catalin.marinas@arm.com; will.deacon@arm.com;
-> jingoohan1@gmail.com; gustavo.pimentel@synopsys.com; Mikko Perttunen
-> <mperttunen@nvidia.com>; linux-pci@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Krishna Thota
-> <kthota@nvidia.com>; Manikanta Maddireddy <mmaddireddy@nvidia.com>;
-> sagar.tv@gmail.com
-> Subject: Re: [PATCH V5 03/16] PCI: Export pcie_bus_config symbol
-> 
-> On Wed, Apr 24, 2019 at 10:49:51AM +0530, Vidya Sagar wrote:
-> > Export pcie_bus_config to enable host controller drivers setting it to
-> > a specific configuration be able to build as loadable modules
-> >
-> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > ---
-> > Changes since [v4]:
-> > * None
-> >
-> > Changes since [v3]:
-> > * None
-> >
-> > Changes since [v2]:
-> > * None
-> >
-> > Changes since [v1]:
-> > * This is a new patch in v2 series
-> >
-> >  drivers/pci/pci.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> 
-> It doesn't look to me like this is something that host controller drivers are
-> supposed to change. This is set via the pci kernel command- line parameter,
-> meaning it's a way of tuning the system configuration.
-> Drivers should not be allowed to override this after the fact.
-> 
-> Why do we need to set this?
-Here is the reason I'm doing it.
-First things first, Tegra194 supports MPS up to 256 bytes.
-Assume there are two endpoints with MPS supported up to
-a) 128 bytes (Ex:- Realtek NIC with 8168 controller)
-b) 256 bytes (Ex:- Kingston NVMe drive)
-Now, leaving "pcie_bus_config" untouched in the driver sets it to
-PCIE_BUS_DEFAULT by default. With this setting, for both (a) and (b),
-MPS is set to 128, which means, even though Tegra194 supports 256 MPS, it is not
-set to 256 even in case of (b) thereby not using RP's 256 MPS feature.
-If I explicitly set pcie_bus_config=PCIE_BUS_PERFORMACE in the code, then 256 MPS is set when
-(b) is connected, but when (a) is connected, for root port MPS 256 is set and for
-endpoint MPS 128 is set, because of which root port tries to send packets with 256
-payload that breaks functionality of Realtek NIC card.
-The best option I've found out is that when I set 256 in PCI_EXP_DEVCTL of root port
-explicitly before link up and use pcie_bus_config=PCIE_BUS_SAFE, then, I get the best of both
-PCIE_BUS_DEFAULT and PCIE_BUS_PERFORMANCE i.e. with (a) connected, MPS is set to 128 in both RP
-and EP and with (b) connected, MPS is set to 256 in both RP and EP.
+Joseph Lo (8):
+  dt-bindings: memory: tegra: Add external memory controller binding for
+    Tegra210
+  clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
+  clk: tegra: Export functions for EMC clock scaling
+  memory: tegra: Add Tegra210 EMC clock driver
+  memory: tegra: Add EMC scaling support code for Tegra210
+  memory: tegra: Add EMC scaling sequence code for Tegra210
+  clk: tegra: Remove the old emc_mux clock for Tegra210
+  arm64: tegra: Add external memory controller node for Tegra210
 
-So, is it like, pcie_bus_config shouldn't be set to anything explicitly in the driver and depending on the
-platform and what is connected to root port, kernel parameter can be passed with appropriate setting?
+ .../nvidia,tegra210-emc.txt                   |   55 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi      |   33 +
+ drivers/clk/tegra/clk-tegra210.c              |   85 +-
+ drivers/memory/tegra/Kconfig                  |   10 +
+ drivers/memory/tegra/Makefile                 |    1 +
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1953 +++++++++++++++
+ drivers/memory/tegra/tegra210-emc.c           | 2123 +++++++++++++++++
+ drivers/memory/tegra/tegra210-emc.h           | 1037 ++++++++
+ include/dt-bindings/clock/tegra210-car.h      |    4 +-
+ include/linux/clk/tegra.h                     |    5 +
+ 10 files changed, 5288 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+ create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc.h
 
-> 
-> Thierry
-> 
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c index
-> > f5ff01dc4b13..731f78508601 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -94,6 +94,7 @@ unsigned long pci_hotplug_mem_size =
-> > DEFAULT_HOTPLUG_MEM_SIZE;  unsigned long pci_hotplug_bus_size =
-> > DEFAULT_HOTPLUG_BUS_SIZE;
-> >
-> >  enum pcie_bus_config_types pcie_bus_config = PCIE_BUS_DEFAULT;
-> > +EXPORT_SYMBOL_GPL(pcie_bus_config);
-> >
-> >  /*
-> >   * The default CLS is used if arch didn't set CLS explicitly and not
-> > --
-> > 2.17.1
-> >
+-- 
+2.21.0
