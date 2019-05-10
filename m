@@ -1,8 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
- controller binding for Tegra210
-Date: Fri, 10 May 2019 16:47:12 +0800
-Message-ID: <20190510084719.18902-2-josephl@nvidia.com>
+Subject: [PATCH V3 2/8] clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
+Date: Fri, 10 May 2019 16:47:13 +0800
+Message-ID: <20190510084719.18902-3-josephl@nvidia.com>
 References: <20190510084719.18902-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,86 +17,58 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob
- Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the binding document for the external memory controller (EMC) which
-communicates with external LPDDR4 devices. It includes the bindings of
-the EMC node and a sub-node of EMC table which under the reserved memory
-node. The EMC table contains the data of the rates that EMC supported.
+Introduce the low jitter path of PLLP and PLLMB which can be used as EMC
+clock source.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v3:
-- drop the bindings of EMC table
-- add memory-region and reserved-memory node for EMC table
+- split to 3 patches from the previous version
 ---
- .../nvidia,tegra210-emc.txt                   | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+ drivers/clk/tegra/clk-tegra210.c         | 11 +++++++++++
+ include/dt-bindings/clock/tegra210-car.h |  4 ++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-new file mode 100644
-index 000000000000..d65aeef2329c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-@@ -0,0 +1,55 @@
-+NVIDIA Tegra210 SoC EMC (external memory controller)
-+====================================================
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 7545af763d7a..4bfa9bb698be 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3116,6 +3116,17 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 	clk_register_clkdev(clk, "pll_m_ud", NULL);
+ 	clks[TEGRA210_CLK_PLL_M_UD] = clk;
+ 
++	/* PLLMB_UD */
++	clk = clk_register_fixed_factor(NULL, "pll_mb_ud", "pll_mb",
++					CLK_SET_RATE_PARENT, 1, 1);
++	clk_register_clkdev(clk, "pll_mb_ud", NULL);
++	clks[TEGRA210_CLK_PLL_MB_UD] = clk;
 +
-+Device node
-+===========
-+Required properties :
-+- compatible : should be "nvidia,tegra210-emc".
-+- reg : physical base address and length of the controller's registers.
-+- clocks : phandles of the possible source clocks.
-+- clock-names : names of the possible source clocks.
-+- interrupts : Should contain the EMC general interrupt.
-+- memory-region : phandle to the reserved memory (see
-+  Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt) which
-+  contains a sub-node of EMC table.
-+- nvidia,memory-controller : phandle of the memory controller.
++	/* PLLP_UD */
++	clk = clk_register_fixed_factor(NULL, "pll_p_ud", "pll_p",
++					0, 1, 1);
++	clks[TEGRA210_CLK_PLL_P_UD] = clk;
 +
-+Reserved memory node
-+====================
-+Should contain a sub-node of EMC table with required properties:
-+- compatible : should be "nvidia,tegra210-emc-table".
-+- reg : physical address and length of the location of EMC table.
-+
-+Example:
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		emc_table: emc-table@8be00000 {
-+			compatible = "nvidia,tegra210-emc-table";
-+			reg = <0x0 0x8be00000 0x0 0x10000>;
-+			status = "okay";
-+		};
-+	};
-+
-+	external-memory-controller@7001b000 {
-+		compatible = "nvidia,tegra210-emc";
-+		reg = <0x0 0x7001b000 0x0 0x1000>,
-+		      <0x0 0x7001e000 0x0 0x1000>,
-+		      <0x0 0x7001f000 0x0 0x1000>;
-+		clocks = <&tegra_car TEGRA210_CLK_EMC>,
-+			 <&tegra_car TEGRA210_CLK_PLL_M>,
-+			 <&tegra_car TEGRA210_CLK_PLL_C>,
-+			 <&tegra_car TEGRA210_CLK_PLL_P>,
-+			 <&tegra_car TEGRA210_CLK_CLK_M>,
-+			 <&tegra_car TEGRA210_CLK_PLL_M_UD>,
-+			 <&tegra_car TEGRA210_CLK_PLL_MB_UD>,
-+			 <&tegra_car TEGRA210_CLK_PLL_MB>,
-+			 <&tegra_car TEGRA210_CLK_PLL_P_UD>;
-+		clock-names = "emc", "pll_m", "pll_c", "pll_p", "clk_m",
-+			      "pll_m_ud", "pll_mb_ud", "pll_mb", "pll_p_ud";
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		memory-region = <&emc_table>;
-+		nvidia,memory-controller = <&mc>;
-+	};
+ 	/* PLLU_VCO */
+ 	if (!tegra210_init_pllu()) {
+ 		clk = clk_register_fixed_rate(NULL, "pll_u_vco", "pll_ref", 0,
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 6b77e721f6b1..832a89788525 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -349,8 +349,8 @@
+ #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
+ #define TEGRA210_CLK_XUSB_SSP_SRC 318
+ #define TEGRA210_CLK_PLL_RE_OUT1 319
+-/* 320 */
+-/* 321 */
++#define TEGRA210_CLK_PLL_MB_UD 320
++#define TEGRA210_CLK_PLL_P_UD 321
+ #define TEGRA210_CLK_ISP 322
+ #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
+ #define TEGRA210_CLK_PLL_A_OUT0_OUT_ADSP 324
 -- 
 2.21.0
