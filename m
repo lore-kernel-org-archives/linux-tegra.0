@@ -1,95 +1,91 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V5 03/16] PCI: Export pcie_bus_config symbol
-Date: Fri, 10 May 2019 23:20:43 +0530
-Message-ID: <484cd585-d576-e6c3-d222-0b2391b5a7fe@nvidia.com>
-References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-4-vidyas@nvidia.com> <20190503110732.GC32400@ulmo>
- <80616ff5-d7a5-84a4-a71b-569e340d128c@nvidia.com>
- <20190510164623.GI235064@google.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: RE: [PATCH V3 5/9] spi: export spi core function spi_set_cs
+Date: Fri, 10 May 2019 18:53:25 +0000
+Message-ID: <BYAPR12MB3398D946FDD0E5406B23EB50C20C0@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1555363834-32155-1-git-send-email-skomatineni@nvidia.com>
+ <1555363834-32155-6-git-send-email-skomatineni@nvidia.com>
+ <20190419151823.GS2803@sirena.org.uk>
+ <BYAPR12MB3398D133D1C71355BC530754C2390@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <20190506044425.GN14916@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190510164623.GI235064@google.com>
+In-Reply-To: <20190506044425.GN14916@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, "kishon@ti.com" <kishon@ti.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>, Mikko Perttunen <mperttunen@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@list
+To: Mark Brown <broonie@kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/10/2019 10:16 PM, Bjorn Helgaas wrote:
-> Hi Vidya,
-> 
-> On Fri, May 10, 2019 at 11:51:24AM +0530, Vidya Sagar wrote:
->>> -----Original Message-----
->>> From: linux-pci-owner@vger.kernel.org <linux-pci-owner@vger.kernel.org> On
->>> Behalf Of Thierry Reding
->>> Sent: Friday, May 3, 2019 4:38 PM
->>> To: Vidya Sagar <vidyas@nvidia.com>
->>> On Wed, Apr 24, 2019 at 10:49:51AM +0530, Vidya Sagar wrote:
->>>> Export pcie_bus_config to enable host controller drivers setting it to
->>>> a specific configuration be able to build as loadable modules
->>>>
->>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> 
->>> It doesn't look to me like this is something that host controller drivers are
->>> supposed to change. This is set via the pci kernel command- line parameter,
->>> meaning it's a way of tuning the system configuration.
->>> Drivers should not be allowed to override this after the fact.
->>>
->>> Why do we need to set this?
->> Here is the reason I'm doing it.
->> First things first, Tegra194 supports MPS up to 256 bytes.
->> Assume there are two endpoints with MPS supported up to
->> a) 128 bytes (Ex:- Realtek NIC with 8168 controller)
->> b) 256 bytes (Ex:- Kingston NVMe drive)
->> Now, leaving "pcie_bus_config" untouched in the driver sets it to
->> PCIE_BUS_DEFAULT by default. With this setting, for both (a) and (b),
->> MPS is set to 128, which means, even though Tegra194 supports 256 MPS, it is not
->> set to 256 even in case of (b) thereby not using RP's 256 MPS feature.
->> If I explicitly set pcie_bus_config=PCIE_BUS_PERFORMACE in the code, then 256 MPS is set when
->> (b) is connected, but when (a) is connected, for root port MPS 256 is set and for
->> endpoint MPS 128 is set, because of which root port tries to send packets with 256
->> payload that breaks functionality of Realtek NIC card.
->> The best option I've found out is that when I set 256 in PCI_EXP_DEVCTL of root port
->> explicitly before link up and use pcie_bus_config=PCIE_BUS_SAFE, then, I get the best of both
->> PCIE_BUS_DEFAULT and PCIE_BUS_PERFORMANCE i.e. with (a) connected, MPS is set to 128 in both RP
->> and EP and with (b) connected, MPS is set to 256 in both RP and EP.
->>
->> So, is it like, pcie_bus_config shouldn't be set to anything explicitly in the driver and depending on the
->> platform and what is connected to root port, kernel parameter can be passed with appropriate setting?
-> 
-> Host controller drivers shouldn't change this unless there's some host
-> controller defect that means the generic code can't do the right
-> thing.  Even then, I'd prefer that the host controller driver merely
-> set a quirk bit that describes the defect, e.g., "mps_*_broken".  Then
-> the generic code could pay attention to that and we wouldn't have to
-> make "pcie_bus_config" a part of the ABI.
-> 
->  From your description, it sounds like there's nothing actually wrong
-> with the Tegra194 hardware, but the generic code isn't as smart about
-> setting MPS as it possibly could be.  My solution to that would be to
-> make the generic code smarter so everybody can benefit.
-> 
-> Bjorn
-Thanks Bjorn for your take on this. I'll drop this patch from the current series
-and make a note to optimize PCIE_BUS_DEFAULT to do a better job of setting
-MPS in the best possible way.
+> On Mon, Apr 29, 2019 at 10:02:46PM +0000, Sowjanya Komatineni wrote:
+>=20
+> Please fix your mail client to word wrap within paragraphs at something s=
+ubstantially less than 80 columns.  Doing this makes your messages much eas=
+ier to read and reply to.
+>=20
+> > > On Mon, Apr 15, 2019 at 02:30:30PM -0700, Sowjanya Komatineni wrote:
+> > > > This patch exports spi_set_cs of the spi core to allow SPI masters=
+=20
+> > > > to use when gpio based chip select is needed.
+>
+> > > This isn't really what I meant when I said it'd be good to use the=20
+> > > core GPIO code - this function doesn't do a huge amount really and=20
+> > > the usage of it in your subsequent patch for the > driver isn't=20
+> > > exactly joined up with the little it does (which is mainly swapping=20
+> > > in the GPIO chip select instead of the hardware chip select) isn't=20
+> > > used in your driver usage of this as far as I can see.  The bulk of=20
+> > > the chip select handling code in the core is actually in
+> > > transfer_one_message() which your driver doesn't use as it's got=20
+> > > it's own implementation of that; I've not looked in enough detail to=
+=20
+> > > figure out if it could use it.
+>
+> > In SPI Tegra driver, we wanted to have GPIO based CS control when=20
+> > cs-gpios is specified in parallel to HW/SW CS. Having parallel GPIO=20
+> > based CS is to mimic some of the timing stuff that's needed for some=20
+> > spi devices by not actually using HW CS on platform but only for SPI=20
+> > HW design logic inside the chip.
+>
+> > Tegra spi driver don't use set_cs callback so looking into spi_set_cs=20
+> > from spi core implementation when cs-gpios property is used it exactly=
+=20
+> > the same that is needed for GPIO control CS. So used this in V3.
+>
+> > Can you please provide more details on what you are suggesting?
+> > Do you prefer not to use SPI core spi_set_cs and gpio_set_values APIs=20
+> > and instead implement in tegra SPI driver using GPIO descriptors ?
+>
+> You're probably best open coding in the driver if there's value in using =
+the hardware chip select.
 
-> 
->>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c index
->>>> f5ff01dc4b13..731f78508601 100644
->>>> --- a/drivers/pci/pci.c
->>>> +++ b/drivers/pci/pci.c
->>>> @@ -94,6 +94,7 @@ unsigned long pci_hotplug_mem_size =
->>>> DEFAULT_HOTPLUG_MEM_SIZE;  unsigned long pci_hotplug_bus_size =
->>>> DEFAULT_HOTPLUG_BUS_SIZE;
->>>>
->>>>   enum pcie_bus_config_types pcie_bus_config = PCIE_BUS_DEFAULT;
->>>> +EXPORT_SYMBOL_GPL(pcie_bus_config);
->>>>
->>>>   /*
->>>>    * The default CLS is used if arch didn't set CLS explicitly and not
->>>> --
->>>> 2.17.1
->>>>
+Sorry, Just to be clear on my understanding of your suggestion,
+
+3 ways of CS control implementation is needed for Tegra SPI
+- SW CS thru SPI Controller
+- HW CS thru SPI Controller
+- Direct GPIO based CS control=20
+
+Patch Series includes both HW CS and also direct GPIO based CS.
+
+Regarding direct GPIO based CS, I understood you prefer to use GPIO descrip=
+tors.
+I see SPI core set_cs API also uses GPIO descriptor for direct GPIO control=
+ of CS.=20
+
+Tegra SPI driver need parallel implementation of direct gpio based cs to hw=
+/sw based
+CS control thru SPI controller.
+Since SPI core set_cs already has implementation using gpio descriptors, in=
+ V3 I am using
+the same API.
+
+Any concerns for using set_cs API from SPI core as it already does direct g=
+pio based cs using
+Descriptors?
+
+Thanks
+Sowjanya
+
+
+=20
