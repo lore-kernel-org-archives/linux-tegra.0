@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 2/8] clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
-Date: Fri, 10 May 2019 16:47:13 +0800
-Message-ID: <20190510084719.18902-3-josephl@nvidia.com>
+Subject: [PATCH V3 3/8] clk: tegra: Export functions for EMC clock scaling
+Date: Fri, 10 May 2019 16:47:14 +0800
+Message-ID: <20190510084719.18902-4-josephl@nvidia.com>
 References: <20190510084719.18902-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -17,58 +17,110 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob
+ Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Introduce the low jitter path of PLLP and PLLMB which can be used as EMC
-clock source.
+Export functions to allow accessing the CAR register required by EMC
+clock scaling. These functions will be used to access the CAR register
+as part of the scaling sequence.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+	t57478018; bh=emd3R6nSFwL5B+aWA2W+bJqcZ1Jhvwnayz1wGOPSA4M=;
+	h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+	 Content-Transfer-Encoding:Content-Type;
+	b=fW7ddx6p6BuGNLGA6jAL5AxsojqeQcOg9fZBqbA1Ze45XU3gt7tiL88s8g7gTftA+
+	 NdruKRXPLS0r4iOgKqEUf3bmoBP0Kf+l0PQcJu55U5v55XnP6cuKrQw2cmbDaw/g2Z
+	 a6DZrAIbUZzi3P3b764ZDmUlRD1sHAWWswZwG3kHwBP0TDOXNjAEVcp7NPm868VOvv
+	 aJrdb6VblknwjNkE6OV7ktGB1ODge5YSAePDLNAplZBw+BFnogtESwvf0cFcYVbxCG
+	 COh/UNKdlJuOM95IgbZiom9I8NiwuS07bA2WzudSgnMKbhNI6VlFgDu5A6JaPt3Irv
+	 N4nuUT4+Ln3Fg=
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v3:
 - split to 3 patches from the previous version
 ---
- drivers/clk/tegra/clk-tegra210.c         | 11 +++++++++++
- include/dt-bindings/clock/tegra210-car.h |  4 ++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++++++++++++++++
+ include/linux/clk/tegra.h        |  5 +++++
+ 2 files changed, 41 insertions(+)
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 7545af763d7a..4bfa9bb698be 100644
+index 4bfa9bb698be..6d7bb53e9603 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3116,6 +3116,17 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 	clk_register_clkdev(clk, "pll_m_ud", NULL);
- 	clks[TEGRA210_CLK_PLL_M_UD] = clk;
+@@ -47,6 +47,7 @@
+ #define CLK_SOURCE_LA 0x1f8
+ #define CLK_SOURCE_SDMMC2 0x154
+ #define CLK_SOURCE_SDMMC4 0x164
++#define CLK_SOURCE_EMC_DLL 0x664
  
-+	/* PLLMB_UD */
-+	clk = clk_register_fixed_factor(NULL, "pll_mb_ud", "pll_mb",
-+					CLK_SET_RATE_PARENT, 1, 1);
-+	clk_register_clkdev(clk, "pll_mb_ud", NULL);
-+	clks[TEGRA210_CLK_PLL_MB_UD] = clk;
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -234,6 +235,10 @@
+ #define RST_DFLL_DVCO 0x2f4
+ #define DVFS_DFLL_RESET_SHIFT 0
+ 
++#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
++#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
++#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
 +
-+	/* PLLP_UD */
-+	clk = clk_register_fixed_factor(NULL, "pll_p_ud", "pll_p",
-+					0, 1, 1);
-+	clks[TEGRA210_CLK_PLL_P_UD] = clk;
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+ 
+@@ -560,6 +565,37 @@ void tegra210_set_sata_pll_seq_sw(bool state)
+ }
+ EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
+ 
++void tegra210_clk_emc_dll_enable(bool flag)
++{
++	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
++		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
 +
- 	/* PLLU_VCO */
- 	if (!tegra210_init_pllu()) {
- 		clk = clk_register_fixed_rate(NULL, "pll_u_vco", "pll_ref", 0,
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 6b77e721f6b1..832a89788525 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -349,8 +349,8 @@
- #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
- #define TEGRA210_CLK_XUSB_SSP_SRC 318
- #define TEGRA210_CLK_PLL_RE_OUT1 319
--/* 320 */
--/* 321 */
-+#define TEGRA210_CLK_PLL_MB_UD 320
-+#define TEGRA210_CLK_PLL_P_UD 321
- #define TEGRA210_CLK_ISP 322
- #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
- #define TEGRA210_CLK_PLL_A_OUT0_OUT_ADSP 324
++	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
++
++void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
++{
++	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
++
++void tegra210_clk_emc_update_setting(u32 emc_src_value)
++{
++	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
++
++u32 tegra210_clk_emc_get_setting(void)
++{
++	u32 val;
++
++	val = readl_relaxed(clk_base + CLK_SOURCE_EMC);
++
++	return val;
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_get_setting);
++
+ static void tegra210_generic_mbist_war(struct tegra210_domain_mbist_war *mbist)
+ {
+ 	u32 val;
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index afb9edfa5d58..b212c332b6e0 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -129,5 +129,10 @@ extern void tegra210_set_sata_pll_seq_sw(bool state);
+ extern void tegra210_put_utmipll_in_iddq(void);
+ extern void tegra210_put_utmipll_out_iddq(void);
+ extern int tegra210_clk_handle_mbist_war(unsigned int id);
++extern void tegra210_clk_emc_dll_enable(bool flag);
++extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
++extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
++extern u32 tegra210_clk_emc_get_setting(void);
++
+ 
+ #endif /* __LINUX_CLK_TEGRA_H_ */
 -- 
 2.21.0
