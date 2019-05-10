@@ -1,53 +1,86 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.1 00/30] 5.1.1-stable review
-Date: Fri, 10 May 2019 11:18:07 +0100
-Message-ID: <61c05635-32ea-cb62-cf3a-44d9c57836d7@nvidia.com>
-References: <20190509181250.417203112@linuxfoundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 09/16] mmc: sdhci-xenon: use new match_string()
+ helper/macro
+Date: Fri, 10 May 2019 14:01:17 +0300
+Message-ID: <20190510110116.GB18105@kadam>
+References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
+ <20190508112842.11654-11-alexandru.ardelean@analog.com>
+ <20190508122010.GC21059@kadam>
+ <2ec6812d6bf2f33860c7c816c641167a31eb2ed6.camel@analog.com>
+ <31be52eb1a1abbc99a24729f5c65619235cb201f.camel@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <31be52eb1a1abbc99a24729f5c65619235cb201f.camel@analog.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, linux-gpio@vger.kerne
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 09/05/2019 19:42, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.1 release.
-> There are 30 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, May 10, 2019 at 09:13:26AM +0000, Ardelean, Alexandru wrote:
+> On Wed, 2019-05-08 at 16:26 +0300, Alexandru Ardelean wrote:
+> > On Wed, 2019-05-08 at 15:20 +0300, Dan Carpenter wrote:
+> > > 
+> > > 
+> > > On Wed, May 08, 2019 at 02:28:35PM +0300, Alexandru Ardelean wrote:
+> > > > -static const char * const phy_types[] = {
+> > > > -     "emmc 5.0 phy",
+> > > > -     "emmc 5.1 phy"
+> > > > -};
+> > > > -
+> > > >  enum xenon_phy_type_enum {
+> > > >       EMMC_5_0_PHY,
+> > > >       EMMC_5_1_PHY,
+> > > >       NR_PHY_TYPES
+> > > 
+> > > There is no need for NR_PHY_TYPES now so you could remove that as well.
+> > > 
+> > 
+> > I thought the same.
+> > The only reason to keep NR_PHY_TYPES, is for potential future patches,
+> > where it would be just 1 addition
+> > 
+> >  enum xenon_phy_type_enum {
+> >       EMMC_5_0_PHY,
+> >       EMMC_5_1_PHY,
+> > +      EMMC_5_2_PHY,
+> >       NR_PHY_TYPES
+> >   }
+> > 
+> > Depending on style/preference of how to do enums (allow comma on last
+> > enum
+> > or not allow comma on last enum value), adding new enum values woudl be 2
+> > additions + 1 deletion lines.
+> > 
+> >  enum xenon_phy_type_enum {
+> >       EMMC_5_0_PHY,
+> > -      EMMC_5_1_PHY
+> > +      EMM
+> > C_5_1_PHY,
+> > +      EMMC_5_2_PHY
+> >  }
+> > 
+> > Either way (leave NR_PHY_TYPES or remove NR_PHY_TYPES) is fine from my
+> > side.
+> > 
 > 
-> Responses should be made by Sat 11 May 2019 06:11:35 PM UTC.
-> Anything received after that time might be too late.
+> Preference on this ?
+> If no objection [nobody insists] I would keep.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.1-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> I don't feel strongly about it [dropping NR_PHY_TYPES or not].
 
-All tests are passing for Tegra ...
+If you end up resending the series could you remove it, but if not then
+it's not worth it.
 
-Test results for stable-v5.1:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
-
-Linux version:	5.1.1-rc1-ge4f05f7
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+regards,
+dan carpenter
