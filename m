@@ -1,11 +1,14 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 0/8] Add EMC scaling support for Tegra210
-Date: Fri, 10 May 2019 16:47:11 +0800
-Message-ID: <20190510084719.18902-1-josephl@nvidia.com>
+Subject: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Date: Fri, 10 May 2019 16:47:12 +0800
+Message-ID: <20190510084719.18902-2-josephl@nvidia.com>
+References: <20190510084719.18902-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190510084719.18902-1-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,39 +23,81 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This series introduces the EMC clock scaling support for Tegra210. The
-new version has a significant change, which drops the EMC table bindings
-and replaces by memory region node of EMC table.
+Add the binding document for the external memory controller (EMC) which
+communicates with external LPDDR4 devices. It includes the bindings of
+the EMC node and a sub-node of EMC table which under the reserved memory
+node. The EMC table contains the data of the rates that EMC supported.
 
-And most of the comments in V1 have been addressed.
-Thanks.
-
-Joseph Lo (8):
-  dt-bindings: memory: tegra: Add external memory controller binding for
-    Tegra210
-  clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
-  clk: tegra: Export functions for EMC clock scaling
-  memory: tegra: Add Tegra210 EMC clock driver
-  memory: tegra: Add EMC scaling support code for Tegra210
-  memory: tegra: Add EMC scaling sequence code for Tegra210
-  clk: tegra: Remove the old emc_mux clock for Tegra210
-  arm64: tegra: Add external memory controller node for Tegra210
-
- .../nvidia,tegra210-emc.txt                   |   55 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |   33 +
- drivers/clk/tegra/clk-tegra210.c              |   85 +-
- drivers/memory/tegra/Kconfig                  |   10 +
- drivers/memory/tegra/Makefile                 |    1 +
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1953 +++++++++++++++
- drivers/memory/tegra/tegra210-emc.c           | 2123 +++++++++++++++++
- drivers/memory/tegra/tegra210-emc.h           | 1037 ++++++++
- include/dt-bindings/clock/tegra210-car.h      |    4 +-
- include/linux/clk/tegra.h                     |    5 +
- 10 files changed, 5288 insertions(+), 18 deletions(-)
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+v3:
+- drop the bindings of EMC table
+- add memory-region and reserved-memory node for EMC table
+---
+ .../nvidia,tegra210-emc.txt                   | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
- create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
- create mode 100644 drivers/memory/tegra/tegra210-emc.c
- create mode 100644 drivers/memory/tegra/tegra210-emc.h
 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+new file mode 100644
+index 000000000000..d65aeef2329c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+@@ -0,0 +1,55 @@
++NVIDIA Tegra210 SoC EMC (external memory controller)
++====================================================
++
++Device node
++===========
++Required properties :
++- compatible : should be "nvidia,tegra210-emc".
++- reg : physical base address and length of the controller's registers.
++- clocks : phandles of the possible source clocks.
++- clock-names : names of the possible source clocks.
++- interrupts : Should contain the EMC general interrupt.
++- memory-region : phandle to the reserved memory (see
++  Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt) which
++  contains a sub-node of EMC table.
++- nvidia,memory-controller : phandle of the memory controller.
++
++Reserved memory node
++====================
++Should contain a sub-node of EMC table with required properties:
++- compatible : should be "nvidia,tegra210-emc-table".
++- reg : physical address and length of the location of EMC table.
++
++Example:
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		emc_table: emc-table@8be00000 {
++			compatible = "nvidia,tegra210-emc-table";
++			reg = <0x0 0x8be00000 0x0 0x10000>;
++			status = "okay";
++		};
++	};
++
++	external-memory-controller@7001b000 {
++		compatible = "nvidia,tegra210-emc";
++		reg = <0x0 0x7001b000 0x0 0x1000>,
++		      <0x0 0x7001e000 0x0 0x1000>,
++		      <0x0 0x7001f000 0x0 0x1000>;
++		clocks = <&tegra_car TEGRA210_CLK_EMC>,
++			 <&tegra_car TEGRA210_CLK_PLL_M>,
++			 <&tegra_car TEGRA210_CLK_PLL_C>,
++			 <&tegra_car TEGRA210_CLK_PLL_P>,
++			 <&tegra_car TEGRA210_CLK_CLK_M>,
++			 <&tegra_car TEGRA210_CLK_PLL_M_UD>,
++			 <&tegra_car TEGRA210_CLK_PLL_MB_UD>,
++			 <&tegra_car TEGRA210_CLK_PLL_MB>,
++			 <&tegra_car TEGRA210_CLK_PLL_P_UD>;
++		clock-names = "emc", "pll_m", "pll_c", "pll_p", "clk_m",
++			      "pll_m_ud", "pll_mb_ud", "pll_mb", "pll_p_ud";
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		memory-region = <&emc_table>;
++		nvidia,memory-controller = <&mc>;
++	};
 -- 
 2.21.0
