@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 2/3] arm64: tegra: Core fixes for v5.2-rc1
-Date: Fri, 10 May 2019 13:35:45 +0200
-Message-ID: <20190510113546.15698-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/3] arm64: tegra: Device tree fixes for v5.2-rc1
+Date: Fri, 10 May 2019 13:35:46 +0200
+Message-ID: <20190510113546.15698-3-thierry.reding@gmail.com>
 References: <20190510113546.15698-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,30 +23,41 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hi ARM SoC maintainers,
 
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+The following changes since commit 2f03e39b5bfe41f3a0d9a8b01231e7e5045cb9c4:
 
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+  arm64: tegra: Remove regulator hacks on Jetson TX2 (2019-04-17 16:48:44 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm64-soc-fixes
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.2-arm64-dt-fixes
 
-for you to fetch changes up to 2e988a83874b689f9e095cf60b40f1a8aff6731a:
+for you to fetch changes up to 7278358407be770130b6b72567c1b5831c6eef28:
 
-  arm64: tegra: Select ARM_GIC_PM (2019-05-08 14:41:25 +0200)
+  arm64: tegra: Disable XUSB support on Jetson TX2 (2019-05-08 14:42:57 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Core fixes for v5.2-rc1
+arm64: tegra: Device tree fixes for v5.2-rc1
 
-This enables the ARM_GIC_PM driver by default for Tegra in order to
-increase build coverage.
+This contains one patch to disable the recently added XUSB support on
+Jetson TX2 which is reported to cause boot and CPU hotplug failures in
+some cases and doesn't allow the core power rail to be switched off.
+
+Furthermore there are some changes to enable IOMMU support on more
+devices. This is needed in order to prevent these devices from breaking
+with the policy change in the ARM SMMU driver to break insecure devices
+that is currently headed for v5.2.
 
 ----------------------------------------------------------------
-Sameer Pujar (1):
-      arm64: tegra: Select ARM_GIC_PM
+Jonathan Hunter (1):
+      arm64: tegra: Fix insecure SMMU users for Tegra186
 
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+Thierry Reding (2):
+      arm64: tegra: Enable SMMU translation for PCI on Tegra186
+      arm64: tegra: Disable XUSB support on Jetson TX2
+
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 4 ++--
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 7 +++++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
