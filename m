@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 3/8] clk: tegra: Export functions for EMC clock scaling
-Date: Fri, 10 May 2019 16:47:14 +0800
-Message-ID: <20190510084719.18902-4-josephl@nvidia.com>
+Subject: [PATCH V3 7/8] clk: tegra: Remove the old emc_mux clock for Tegra210
+Date: Fri, 10 May 2019 16:47:18 +0800
+Message-ID: <20190510084719.18902-8-josephl@nvidia.com>
 References: <20190510084719.18902-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -17,110 +17,91 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob
- Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Export functions to allow accessing the CAR register required by EMC
-clock scaling. These functions will be used to access the CAR register
-as part of the scaling sequence.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-	t57478018; bh=emd3R6nSFwL5B+aWA2W+bJqcZ1Jhvwnayz1wGOPSA4M=;
-	h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-	 Content-Transfer-Encoding:Content-Type;
-	b=fW7ddx6p6BuGNLGA6jAL5AxsojqeQcOg9fZBqbA1Ze45XU3gt7tiL88s8g7gTftA+
-	 NdruKRXPLS0r4iOgKqEUf3bmoBP0Kf+l0PQcJu55U5v55XnP6cuKrQw2cmbDaw/g2Z
-	 a6DZrAIbUZzi3P3b764ZDmUlRD1sHAWWswZwG3kHwBP0TDOXNjAEVcp7NPm868VOvv
-	 aJrdb6VblknwjNkE6OV7ktGB1ODge5YSAePDLNAplZBw+BFnogtESwvf0cFcYVbxCG
-	 COh/UNKdlJuOM95IgbZiom9I8NiwuS07bA2WzudSgnMKbhNI6VlFgDu5A6JaPt3Irv
-	 N4nuUT4+Ln3Fg=
+Remove the old emc_mux clock and don't use the common EMC clock
+definition. This will be replaced by a new clock defined in the
+EMC driver.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v3:
 - split to 3 patches from the previous version
 ---
- drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++++++++++++++++
- include/linux/clk/tegra.h        |  5 +++++
- 2 files changed, 41 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 38 ++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 4bfa9bb698be..6d7bb53e9603 100644
+index 6d7bb53e9603..534bee95557b 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -47,6 +47,7 @@
- #define CLK_SOURCE_LA 0x1f8
- #define CLK_SOURCE_SDMMC2 0x154
- #define CLK_SOURCE_SDMMC4 0x164
-+#define CLK_SOURCE_EMC_DLL 0x664
+@@ -324,12 +324,6 @@ static unsigned long tegra210_input_freq[] = {
+ 	[8] = 12000000,
+ };
  
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
-@@ -234,6 +235,10 @@
- #define RST_DFLL_DVCO 0x2f4
- #define DVFS_DFLL_RESET_SHIFT 0
+-static const char *mux_pllmcp_clkm[] = {
+-	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
+-	"pll_p",
+-};
+-#define mux_pllmcp_clkm_idx NULL
+-
+ #define PLL_ENABLE			(1 << 30)
  
-+#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
-+#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
-+#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
-+
- #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
- #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
- 
-@@ -560,6 +565,37 @@ void tegra210_set_sata_pll_seq_sw(bool state)
+ #define PLLCX_MISC1_IDDQ		(1 << 27)
+@@ -2346,7 +2340,6 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_i2c2] = { .dt_id = TEGRA210_CLK_I2C2, .present = true },
+ 	[tegra_clk_uartc_8] = { .dt_id = TEGRA210_CLK_UARTC, .present = true },
+ 	[tegra_clk_mipi_cal] = { .dt_id = TEGRA210_CLK_MIPI_CAL, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = true },
+ 	[tegra_clk_usb2] = { .dt_id = TEGRA210_CLK_USB2, .present = true },
+ 	[tegra_clk_bsev] = { .dt_id = TEGRA210_CLK_BSEV, .present = true },
+ 	[tegra_clk_uartd_8] = { .dt_id = TEGRA210_CLK_UARTD, .present = true },
+@@ -2957,6 +2950,26 @@ static int tegra210_init_pllu(void)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
  
-+void tegra210_clk_emc_dll_enable(bool flag)
++static const struct clk_div_table mc_div_table_tegra210[] = {
++	{ .val = 0, .div = 2 },
++	{ .val = 1, .div = 4 },
++	{ .val = 2, .div = 1 },
++	{ .val = 3, .div = 2 },
++	{ .val = 0, .div = 0 },
++};
++
++static void tegra_clk_register_mc_tegra210(const char *name,
++					   const char *parent_name)
 +{
-+	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
-+		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
++	struct clk *clk;
 +
-+	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
++	clk = clk_register_divider_table(NULL, name, parent_name, 0,
++					 clk_base + CLK_SOURCE_EMC,
++					 15, 2, CLK_DIVIDER_READ_ONLY,
++					 mc_div_table_tegra210, &emc_lock);
++	clks[TEGRA210_CLK_MC] = clk;
 +}
-+EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
 +
-+void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
-+{
-+	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
-+
-+void tegra210_clk_emc_update_setting(u32 emc_src_value)
-+{
-+	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
-+
-+u32 tegra210_clk_emc_get_setting(void)
-+{
-+	u32 val;
-+
-+	val = readl_relaxed(clk_base + CLK_SOURCE_EMC);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL_GPL(tegra210_clk_emc_get_setting);
-+
- static void tegra210_generic_mbist_war(struct tegra210_domain_mbist_war *mbist)
- {
- 	u32 val;
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index afb9edfa5d58..b212c332b6e0 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -129,5 +129,10 @@ extern void tegra210_set_sata_pll_seq_sw(bool state);
- extern void tegra210_put_utmipll_in_iddq(void);
- extern void tegra210_put_utmipll_out_iddq(void);
- extern int tegra210_clk_handle_mbist_war(unsigned int id);
-+extern void tegra210_clk_emc_dll_enable(bool flag);
-+extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
-+extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
-+extern u32 tegra210_clk_emc_get_setting(void);
-+
+ static const char * const sor1_out_parents[] = {
+ 	/*
+ 	 * Bit 0 of the mux selects sor1_pad_clkout, irrespective of bit 1, so
+@@ -3040,15 +3053,8 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 			CLK_SOURCE_LA, 0);
+ 	clks[TEGRA210_CLK_LA] = clk;
  
- #endif /* __LINUX_CLK_TEGRA_H_ */
+-	/* emc mux */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       29, 3, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA210_CLK_MC] = clk;
++	/* mc */
++	tegra_clk_register_mc_tegra210("mc", "emc");
+ 
+ 	/* cml0 */
+ 	clk = clk_register_gate(NULL, "cml0", "pll_e", 0, clk_base + PLLE_AUX,
 -- 
 2.21.0
