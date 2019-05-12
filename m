@@ -1,62 +1,29 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V3 5/9] spi: export spi core function spi_set_cs
-Date: Sun, 12 May 2019 12:12:42 +0900
-Message-ID: <20190512031242.GB21483@sirena.org.uk>
-References: <1555363834-32155-1-git-send-email-skomatineni@nvidia.com>
- <1555363834-32155-6-git-send-email-skomatineni@nvidia.com>
- <20190419151823.GS2803@sirena.org.uk>
- <BYAPR12MB3398D133D1C71355BC530754C2390@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190506044425.GN14916@sirena.org.uk>
- <BYAPR12MB3398D946FDD0E5406B23EB50C20C0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 6/6] regulator: max77620: Support Maxim 77663
+Date: Sun, 12 May 2019 17:08:15 +0300
+Message-ID: <f8f67e00-0544-c999-92e0-3998c2f70ee7@gmail.com>
+References: <20190505154325.30026-1-digetx@gmail.com>
+ <20190505154325.30026-7-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB3398D946FDD0E5406B23EB50C20C0@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <20190505154325.30026-7-digetx@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+05.05.2019 18:43, Dmitry Osipenko пишет:
+> Add support for Maxim 77663.
+> 
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
---neYutvxvOLaeuPCA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello Mark,
 
-On Fri, May 10, 2019 at 06:53:25PM +0000, Sowjanya Komatineni wrote:
-> > On Mon, Apr 29, 2019 at 10:02:46PM +0000, Sowjanya Komatineni wrote:
-
-To reiterate:
-
-> > Please fix your mail client to word wrap within paragraphs at
-> > something substantially less than 80 columns.  Doing this makes your
-> > messages much easier to read and reply to.
-
-> Any concerns for using set_cs API from SPI core as it already does direct gpio based cs using
-> Descriptors?
-
-Yes, that is precisely what I'm telling you not to do.  That function
-doesn't do enough to make it worth exporting and the code that uses it
-assumes it's managing the chip select entirely, adding a single other
-use will make things fragile as it will mean that there's a chance
-someone will change what the core is doing without taking into account
-the different things that the Tegra code is doing.  Either let the core
-handle chip select entirely or open code it.
-
---neYutvxvOLaeuPCA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzXjykACgkQJNaLcl1U
-h9CdDwf/RMwk8JveODVogg3LW+9FdUslYiuSh/72+FYAjmKk28dm3H328PpA/y2c
-ZytPr8GyaF0vI4dbOhl7xFeHSJvb3FSmZxYUrD0f5kWkPjMI/SB2Z2hCZFdnONMm
-wssyJ+3Q7dS4fOCmSOg11yn8c02PAzP5R+G2Vqdt/tKH+hj2ItKxghQI10qGL78K
-AtAYMCzLlUNJ1QgWeg3cAfNZZlGTQoOuRCx6hvklNTgwxk6ED2aKF2FV4Jw2AxI0
-n89eG0UOGQeI0KmPSc8GOUduj/0vUITd0qSWVNOtvirNf1rV6gu6mMZIclPiLPjp
-kPI1Fp72G4ZAFyfGuleOFW2K6uDZVA==
-=qEfj
------END PGP SIGNATURE-----
-
---neYutvxvOLaeuPCA--
+Just want to get yours attention to that Lee picked up the patches into
+the MFD tree, excluding this patch. I assume this one will have to go
+via the regulator's tree.
