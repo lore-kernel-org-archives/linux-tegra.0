@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs
-Date: Mon, 13 May 2019 10:36:13 +0530
-Message-ID: <20190513050626.14991-3-vidyas@nvidia.com>
+Subject: [PATCH V6 03/15] PCI: dwc: Perform dbi regs write lock towards the end
+Date: Mon, 13 May 2019 10:36:14 +0530
+Message-ID: <20190513050626.14991-4-vidyas@nvidia.com>
 References: <20190513050626.14991-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,13 +12,16 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
-using these APIs be able to build as loadable modules.
+Remove multiple write enable and disable sequences of dbi registers as
+Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+DBI write-lock enable bit thereby not allowing any further writes to BAR-0
+register in config space to take place. Hence enabling write permission at
+the start of function and disabling the same only towards the end.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
 Changes since [v5]:
-* Corrected inline implementation of pcie_pme_no_msi() API
+* Moved write enable to the beginning of the API and write disable to the end
 
 Changes since [v4]:
 * None
@@ -27,64 +30,61 @@ Changes since [v3]:
 * None
 
 Changes since [v2]:
-* Exported pcie_pme_no_msi() API after making pcie_pme_msi_disabled a static
+* None
 
 Changes since [v1]:
-* This is a new patch in v2 series
+* None
 
- drivers/pci/pcie/pme.c     | 14 +++++++++++++-
- drivers/pci/pcie/portdrv.h | 14 ++------------
- 2 files changed, 15 insertions(+), 13 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
-index 54d593d10396..d5e0ea4a62fc 100644
---- a/drivers/pci/pcie/pme.c
-+++ b/drivers/pci/pcie/pme.c
-@@ -25,7 +25,19 @@
-  * that using MSI for PCIe PME signaling doesn't play well with PCIe PME-based
-  * wake-up from system sleep states.
-  */
--bool pcie_pme_msi_disabled;
-+static bool pcie_pme_msi_disabled;
-+
-+void pcie_pme_disable_msi(void)
-+{
-+	pcie_pme_msi_disabled = true;
-+}
-+EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
-+
-+bool pcie_pme_no_msi(void)
-+{
-+	return pcie_pme_msi_disabled;
-+}
-+EXPORT_SYMBOL_GPL(pcie_pme_no_msi);
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index f93252d0da5b..d3156446ff27 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -628,6 +628,12 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	u32 val, ctrl, num_ctrls;
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
  
- static int __init pcie_pme_setup(char *str)
- {
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index 944827a8c7d3..1d441fe26c51 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -129,18 +129,8 @@ void pcie_port_bus_unregister(void);
- struct pci_dev;
++	/*
++	 * Enable DBI read-only registers for writing/updating configuration.
++	 * Write permission gets disabled towards the end of this function.
++	 */
++	dw_pcie_dbi_ro_wr_en(pci);
++
+ 	dw_pcie_setup(pci);
  
- #ifdef CONFIG_PCIE_PME
--extern bool pcie_pme_msi_disabled;
--
--static inline void pcie_pme_disable_msi(void)
--{
--	pcie_pme_msi_disabled = true;
--}
--
--static inline bool pcie_pme_no_msi(void)
--{
--	return pcie_pme_msi_disabled;
--}
--
-+void pcie_pme_disable_msi(void);
-+bool pcie_pme_no_msi(void);
- void pcie_pme_interrupt_enable(struct pci_dev *dev, bool enable);
- #else /* !CONFIG_PCIE_PME */
- static inline void pcie_pme_disable_msi(void) {}
+ 	if (!pp->ops->msi_host_init) {
+@@ -650,12 +656,10 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
+ 
+ 	/* Setup interrupt pins */
+-	dw_pcie_dbi_ro_wr_en(pci);
+ 	val = dw_pcie_readl_dbi(pci, PCI_INTERRUPT_LINE);
+ 	val &= 0xffff00ff;
+ 	val |= 0x00000100;
+ 	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+-	dw_pcie_dbi_ro_wr_dis(pci);
+ 
+ 	/* Setup bus numbers */
+ 	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+@@ -687,15 +691,13 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 
+ 	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+ 
+-	/* Enable write permission for the DBI read-only register */
+-	dw_pcie_dbi_ro_wr_en(pci);
+ 	/* Program correct class for RC */
+ 	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+-	/* Better disable write permission right after the update */
+-	dw_pcie_dbi_ro_wr_dis(pci);
+ 
+ 	dw_pcie_rd_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, &val);
+ 	val |= PORT_LOGIC_SPEED_CHANGE;
+ 	dw_pcie_wr_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, val);
++
++	dw_pcie_dbi_ro_wr_dis(pci);
+ }
+ EXPORT_SYMBOL_GPL(dw_pcie_setup_rc);
 -- 
 2.17.1
