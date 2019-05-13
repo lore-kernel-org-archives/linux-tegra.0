@@ -1,68 +1,60 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V5 07/16] dt-bindings: PCI: designware: Add binding for
- CDM register check
-Date: Mon, 13 May 2019 10:15:46 -0500
-Message-ID: <CAL_JsqKvES6OuPRgu8A009j6L4rkc11rB9TyxPe1iUJhvk1O8w@mail.gmail.com>
-References: <20190424052004.6270-1-vidyas@nvidia.com> <20190424052004.6270-8-vidyas@nvidia.com>
- <20190426143247.GA25107@bogus> <031df2ca-27de-2388-5f23-078320203f5d@nvidia.com>
+Subject: Re: [PATCH V5 10/16] dt-bindings: PCI: tegra: Add device tree support
+ for T194
+Date: Mon, 13 May 2019 10:20:50 -0500
+Message-ID: <CAL_JsqLEw+HAeqd2TD33cSVBjwDUNMb5amk2wGsW9m_4Z6CucQ@mail.gmail.com>
+References: <20190424052004.6270-1-vidyas@nvidia.com> <20190424052004.6270-11-vidyas@nvidia.com>
+ <20190426154306.GA16455@bogus> <504abd8f-9eb3-1089-953c-a6372c34b346@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <031df2ca-27de-2388-5f23-078320203f5d@nvidia.com>
+In-Reply-To: <504abd8f-9eb3-1089-953c-a6372c34b346@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Vidya Sagar <vidyas@nvidia.com>
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Jingoo Han <jingoohan1@gmail.com>, Gustavo Pimentel <gustavo.pimentel@synopsys.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>, sagar
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 7, 2019 at 3:25 AM Vidya Sagar <vidyas@nvidia.com> wrote:
+On Tue, May 7, 2019 at 4:20 AM Vidya Sagar <vidyas@nvidia.com> wrote:
 >
-> On 4/26/2019 8:02 PM, Rob Herring wrote:
-> > On Wed, Apr 24, 2019 at 10:49:55AM +0530, Vidya Sagar wrote:
-> >> Add support to enable CDM (Configuration Dependent Module) registers check
-> >> for any data corruption. CDM registers include standard PCIe configuration
-> >> space registers, Port Logic registers and iATU and DMA registers.
-> >> Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
-> >> Version 4.90a
+> On 4/26/2019 9:13 PM, Rob Herring wrote:
+> > On Wed, Apr 24, 2019 at 10:49:58AM +0530, Vidya Sagar wrote:
+> >> Add support for Tegra194 PCIe controllers. These controllers are based
+> >> on Synopsys DesignWare core IP.
 > >>
 > >> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > >> ---
-> >> Changes since [v4]:
-> >> * None
-> >>
-> >> Changes since [v3]:
-> >> * None
-> >>
-> >> Changes since [v2]:
-> >> * Changed flag name from 'cdm-check' to 'enable-cdm-check'
-> >> * Added info about Port Logic and DMA registers being part of CDM
-> >>
-> >> Changes since [v1]:
-> >> * This is a new patch in v2 series
-> >>
-> >>   Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
-> >>   1 file changed, 5 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> >> index 5561a1c060d0..85b872c42a9f 100644
-> >> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> >> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> >> @@ -34,6 +34,11 @@ Optional properties:
-> >>   - clock-names: Must include the following entries:
-> >>      - "pcie"
-> >>      - "pcie_bus"
-> >> +- enable-cdm-check: This is a boolean property and if present enables
+
+> >> +- nvidia,bpmp: Must contain a phandle to BPMP controller node.
+> >> +- nvidia,controller-id : Controller specific ID
+> >> +    0: C0
+> >> +    1: C1
+> >> +    2: C2
+> >> +    3: C3
+> >> +    4: C4
+> >> +    5: C5
 > >
-> > This needs a vendor prefix.
-> Why only for this? Since this whole file is for Synopsys DesignWare core based PCIe IP,
-> I thought there is specific prefix required. Am I wrong? Also, CDM checking is a feature
-> of IP and DWC based implementations can choose either to enable this feature at hardware level
-> or not. And whoever enabled it at hardware level (like Tegra194) can set this flag to
-> enable corresponding software support.
+> > We don't normal put device indexes into DT. Why do you need this.
+> > Perhaps for accessing the BPMP? If so, make nvidia,bpmp a phandle+cell.
+> BPMP needs to know the controller number to enable it hence it needs to be
+> passed to BPMP. Just for accessing BPMP, I already added 'nvidia,bpmp' property.
 
-TBC, I meant a Synopsys vendor prefix, not NVIDIA.
+Then make nvidia,bpmp take the phandle and this number.
 
-Any property that's not from a common binding should have a vendor
-prefix. That hasn't always happened, so we do have lots of examples
-without.
+
+> >> +- nvidia,disable-aspm-states: Controls advertisement of ASPM states
+> >> +    bit-0 to '1': Disables advertisement of ASPM-L0s
+> >> +    bit-1 to '1': Disables advertisement of ASPM-L1. This also disables
+> >> +                   advertisement of ASPM-L1.1 and ASPM-L1.2
+> >> +    bit-2 to '1': Disables advertisement of ASPM-L1.1
+> >> +    bit-3 to '1': Disables advertisement of ASPM-L1.2
+> >
+> > Can't this cover what 'supports-clkreq' does?
+> Well, they are related partially. i.e. if a platform doesn't have 'supports-clkreq' set,
+> then, by definition, it can't advertise support for ASPM L1.1 and L1.2 states. But, ASPM-L0s
+> and ASPM-L1 states don't depend on 'supports-clkreq' property.
+> Having this property gives more granularity as to support for which particular ASPM state
+> shouldn't be advertised by the root port.
+
+Okay, then it should be a common property then.
 
 Rob
