@@ -1,38 +1,67 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] thermal: tegra: Make tegra210_tsensor_thermtrips static
-Date: Mon, 13 May 2019 21:55:59 +0800
-Message-ID: <20190513135559.43836-1-yuehaibing@huawei.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V6 06/15] dt-bindings: PCI: designware: Add binding for
+ CDM register check
+Date: Mon, 13 May 2019 10:10:38 -0500
+Message-ID: <20190513151038.GA30653@bogus>
+References: <20190513050626.14991-1-vidyas@nvidia.com>
+ <20190513050626.14991-7-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190513050626.14991-7-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Fix sparse warning:
+On Mon, May 13, 2019 at 10:36:17AM +0530, Vidya Sagar wrote:
+> Add support to enable CDM (Configuration Dependent Module) registers check
+> for any data corruption. CDM registers include standard PCIe configuration
+> space registers, Port Logic registers and iATU and DMA registers.
+> Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
+> Version 4.90a
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+> Changes since [v5]:
+> * None
+> 
+> Changes since [v4]:
+> * None
+> 
+> Changes since [v3]:
+> * None
+> 
+> Changes since [v2]:
+> * Changed flag name from 'cdm-check' to 'enable-cdm-check'
+> * Added info about Port Logic and DMA registers being part of CDM
+> 
+> Changes since [v1]:
+> * This is a new patch in v2 series
+> 
+>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> index 5561a1c060d0..85b872c42a9f 100644
+> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> @@ -34,6 +34,11 @@ Optional properties:
+>  - clock-names: Must include the following entries:
+>  	- "pcie"
+>  	- "pcie_bus"
+> +- enable-cdm-check: This is a boolean property and if present enables
+> +   automatic checking of CDM (Configuration Dependent Module) registers
+> +   for data corruption. CDM registers include standard PCIe configuration
+> +   space registers, Port Logic registers, DMA and iATU (internal Address
+> +   Translation Unit) registers.
 
-drivers/thermal/tegra/tegra210-soctherm.c:211:33: warning:
- symbol 'tegra210_tsensor_thermtrips' was not declared. Should it be static?
+snps,enable-cdm-check
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/thermal/tegra/tegra210-soctherm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/tegra/tegra210-soctherm.c b/drivers/thermal/tegra/tegra210-soctherm.c
-index d31b500..d0ff793 100644
---- a/drivers/thermal/tegra/tegra210-soctherm.c
-+++ b/drivers/thermal/tegra/tegra210-soctherm.c
-@@ -208,7 +208,7 @@ static const struct tegra_soctherm_fuse tegra210_soctherm_fuse = {
- 	.fuse_spare_realignment = 0,
- };
- 
--struct tsensor_group_thermtrips tegra210_tsensor_thermtrips[] = {
-+static struct tsensor_group_thermtrips tegra210_tsensor_thermtrips[] = {
- 	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
- 	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
- 	{.id = TEGRA124_SOCTHERM_SENSOR_NUM},
--- 
-2.7.4
+>  RC mode:
+>  - num-viewport: number of view ports configured in hardware. If a platform
+>    does not specify it, the driver assumes 2.
+> -- 
+> 2.17.1
+> 
