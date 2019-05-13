@@ -1,66 +1,111 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFC PATCH v1 6/6] soc/tegra: regulators: Add regulators coupler
- for Tegra30
-Date: Sun, 12 May 2019 21:29:54 +0300
-Message-ID: <3988cfb6-55fe-48c4-5365-ac79871f7fd2@gmail.com>
-References: <20190414175939.12368-1-digetx@gmail.com>
- <20190414175939.12368-7-digetx@gmail.com>
- <20190508075848.GX14916@sirena.org.uk>
- <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
- <20190512090446.GN21483@sirena.org.uk>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH V6 00/15] Add Tegra194 PCIe support
+Date: Mon, 13 May 2019 10:36:11 +0530
+Message-ID: <20190513050626.14991-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190512090446.GN21483@sirena.org.uk>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
+Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-12.05.2019 12:04, Mark Brown пишет:
-> On Wed, May 08, 2019 at 04:27:42PM +0300, Dmitry Osipenko wrote:
-> 
->> Constraints:
-> 
->> 1) The max-spread voltage is 300mV.
-> 
->> 2) CORE voltage must be higher than the CPU by at least N mV, where N
->> varies depending on the CPU voltage.
-> 
-> Those seem like they should be doable in generic code, though the fact
-> that the constraint is variable makes it annoying to specify - otherwise
-> it'd just be a minimum and maximum spread.  I'm not really coming up
-> with any great ideas right now, it's getting into OPP type territory but
-> it sounds like there's more flexibility for ramping the core voltage so
-> you'd end up with silly numbers of OPPs.
+Tegra194 has six PCIe controllers based on Synopsys DesignWare core.
+There are two Universal PHY (UPHY) blocks with each supporting 12(HSIO:
+Hisg Speed IO) and 8(NVHS: NVIDIA High Speed) lanes respectively.
+Controllers:0~4 use UPHY lanes from HSIO brick whereas Controller:5 uses
+UPHY lanes from NVHS brick. Lane mapping in HSIO UPHY brick to each PCIe
+controller (0~4) is controlled in XBAR module by BPMP-FW. Since PCIe
+core has PIPE interface, a glue module called PIPE-to-UPHY (P2U) is used
+to connect each UPHY lane (applicable to both HSIO and NVHS UPHY bricks)
+to PCIe controller
+This patch series
+- Adds support for P2U PHY driver
+- Adds support for PCIe host controller
+- Adds device tree nodes each PCIe controllers
+- Enables nodes applicable to p2972-0000 platform
+- Adds helper APIs in Designware core driver to get capability regs offset
+- Adds defines for new feature registers of PCIe spec revision 4
+- Makes changes in DesignWare core driver to get Tegra194 PCIe working
 
-The OPP shouldn't have to do anything in regards to the regulators
-coupling. The whole idea of the regulators coupling is to make device
-drivers to not churn with the coupling. The coupling in this case is
-specific to SoC and not to a particular board.
+Testing done on P2972-0000 platform
+- Able to get PCIe link up with on-board Marvel eSATA controller
+- Able to get PCIe link up with NVMe cards connected to M.2 Key-M slot
+- Able to do data transfers with both SATA drives and NVMe cards
 
-I think the current approach with the customized regulators coupler is
-the best solution for the time being. We may consider something more
-generic if there will be other users with a similar coupling
-requirements, otherwise it's quite difficult to judge what is "generic".
-Do you agree?
+Note
+- Enabling x8 slot on P2972-0000 platform requires pinmux driver for Tegra194.
+  It is being worked on currently and hence Controller:5 (i.e. x8 slot) is
+  disabled in this patch series. A future patch series would enable this.
+- This series is based on top of the following series
+  Jisheng's patches to add support to .remove() in Designware sub-system
+  https://patchwork.kernel.org/project/linux-pci/list/?series=98559
+  (Jisheng's patches are now accepted and applied for v5.2)
+  My patches made on top of Jisheng's patches to export various symbols
+  https://patchwork.kernel.org/project/linux-pci/list/?series=101259
 
->> 3) There is a constraint on the maximum CORE voltage depending on
->> hardware model/revision (cpu_speedo_id) where a higher voltages
->> apparently may cause physical damage, so it's better to hardcode the
->> limitation in the code rather than to rely on a board's device-tree
->> description. This constraint is quite vaguely defined in the downstream
->> kernel, I'm not really sure if it's solely about the hardware safety.
-> 
-> I'd expect this to be enforced by the cpufreq driver just not selecting
-> higher voltages on affected parts.
-> 
+Changes since [v5]:
+* Removed patch that exports pcie_bus_config symbol
+* Took care of review comments from Thierry and Rob
 
-CPUFreq driver will only handle the CPU regulator and it won't know
-anything about the CORE.
+Changes since [v4]:
+* Removed redundant APIs in pcie-designware-ep.c file after moving them
+  to pcie-designware.c file based on Bjorn's review comments
 
-Anyway, please scratch the third constraint, I messed up it with the
-other *minimum* CORE voltage constraint detail which makes the minimum
-voltage to depend on the hardware version in addition to the CPU voltage.
+Changes since [v3]:
+* Rebased on top of linux-next top of the tree
+* Addressed Gustavo's comments and added his Ack for some of the changes.
+
+Changes since [v2]:
+* Addressed review comments from Thierry
+
+Changes since [v1]:
+* Addressed review comments from Bjorn, Thierry, Jonathan, Rob & Kishon
+* Added more patches in v2 series
+
+Vidya Sagar (15):
+  PCI: Add #defines for some of PCIe spec r4.0 features
+  PCI/PME: Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs
+  PCI: dwc: Perform dbi regs write lock towards the end
+  PCI: dwc: Move config space capability search API
+  PCI: dwc: Add ext config space capability search API
+  dt-bindings: PCI: designware: Add binding for CDM register check
+  PCI: dwc: Add support to enable CDM register check
+  dt-bindings: Add PCIe supports-clkreq property
+  dt-bindings: PCI: tegra: Add device tree support for Tegra194
+  dt-bindings: PHY: P2U: Add Tegra194 P2U block
+  arm64: tegra: Add P2U and PCIe controller nodes to Tegra194 DT
+  arm64: tegra: Enable PCIe slots in P2972-0000 board
+  phy: tegra: Add PCIe PIPE2UPHY support
+  PCI: tegra: Add Tegra194 PCIe support
+  arm64: Add Tegra194 PCIe driver to defconfig
+
+ .../bindings/pci/designware-pcie.txt          |    5 +
+ .../bindings/pci/nvidia,tegra194-pcie.txt     |  164 ++
+ Documentation/devicetree/bindings/pci/pci.txt |    5 +
+ .../bindings/phy/phy-tegra194-p2u.txt         |   28 +
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |    2 +-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |   41 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  449 +++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/pci/controller/dwc/Kconfig            |   10 +
+ drivers/pci/controller/dwc/Makefile           |    1 +
+ .../pci/controller/dwc/pcie-designware-ep.c   |   37 +-
+ .../pci/controller/dwc/pcie-designware-host.c |   14 +-
+ drivers/pci/controller/dwc/pcie-designware.c  |   87 +
+ drivers/pci/controller/dwc/pcie-designware.h  |   12 +
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 1678 +++++++++++++++++
+ drivers/pci/pcie/pme.c                        |   14 +-
+ drivers/pci/pcie/portdrv.h                    |   14 +-
+ drivers/phy/tegra/Kconfig                     |    7 +
+ drivers/phy/tegra/Makefile                    |    1 +
+ drivers/phy/tegra/pcie-p2u-tegra194.c         |  109 ++
+ include/uapi/linux/pci_regs.h                 |   22 +-
+ 21 files changed, 2645 insertions(+), 56 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+ create mode 100644 drivers/phy/tegra/pcie-p2u-tegra194.c
+
+-- 
+2.17.1
