@@ -1,69 +1,71 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
-Date: Mon, 13 May 2019 22:03:52 -0700
-Message-ID: <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
-References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V6 06/15] dt-bindings: PCI: designware: Add binding for
+ CDM register check
+Date: Tue, 14 May 2019 10:57:04 +0530
+Message-ID: <bdffcc1e-062a-a39e-1a3d-bc48e78f9668@nvidia.com>
+References: <20190513050626.14991-1-vidyas@nvidia.com>
+ <20190513050626.14991-7-vidyas@nvidia.com> <20190513151038.GA30653@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190513151038.GA30653@bogus>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: Rob Herring <robh@kernel.org>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds support for GPIO based CS control through SPI core
-function spi_set_cs.
+On 5/13/2019 8:40 PM, Rob Herring wrote:
+> On Mon, May 13, 2019 at 10:36:17AM +0530, Vidya Sagar wrote:
+>> Add support to enable CDM (Configuration Dependent Module) registers check
+>> for any data corruption. CDM registers include standard PCIe configuration
+>> space registers, Port Logic registers and iATU and DMA registers.
+>> Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
+>> Version 4.90a
+>>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>> Changes since [v5]:
+>> * None
+>>
+>> Changes since [v4]:
+>> * None
+>>
+>> Changes since [v3]:
+>> * None
+>>
+>> Changes since [v2]:
+>> * Changed flag name from 'cdm-check' to 'enable-cdm-check'
+>> * Added info about Port Logic and DMA registers being part of CDM
+>>
+>> Changes since [v1]:
+>> * This is a new patch in v2 series
+>>
+>>   Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> index 5561a1c060d0..85b872c42a9f 100644
+>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> @@ -34,6 +34,11 @@ Optional properties:
+>>   - clock-names: Must include the following entries:
+>>   	- "pcie"
+>>   	- "pcie_bus"
+>> +- enable-cdm-check: This is a boolean property and if present enables
+>> +   automatic checking of CDM (Configuration Dependent Module) registers
+>> +   for data corruption. CDM registers include standard PCIe configuration
+>> +   space registers, Port Logic registers, DMA and iATU (internal Address
+>> +   Translation Unit) registers.
+> 
+> snps,enable-cdm-check
+Ok. Done.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/spi/spi-tegra114.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index b1f31bb16659..f47417dd9edb 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -776,6 +776,10 @@ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
- 		} else
- 			tegra_spi_writel(tspi, command1, SPI_COMMAND1);
- 
-+		/* GPIO based chip select control */
-+		if (spi->cs_gpiod)
-+			gpiod_set_value(spi->cs_gpiod, 1);
-+
- 		command1 |= SPI_CS_SW_HW;
- 		if (spi->mode & SPI_CS_HIGH)
- 			command1 |= SPI_CS_SW_VAL;
-@@ -864,6 +868,10 @@ static int tegra_spi_setup(struct spi_device *spi)
- 	}
- 
- 	spin_lock_irqsave(&tspi->lock, flags);
-+	/* GPIO based chip select control */
-+	if (spi->cs_gpiod)
-+		gpiod_set_value(spi->cs_gpiod, 0);
-+
- 	val = tspi->def_command1_reg;
- 	if (spi->mode & SPI_CS_HIGH)
- 		val &= ~SPI_CS_POL_INACTIVE(spi->chip_select);
-@@ -893,6 +901,10 @@ static void tegra_spi_transfer_end(struct spi_device *spi)
- 	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
- 	int cs_val = (spi->mode & SPI_CS_HIGH) ? 0 : 1;
- 
-+	/* GPIO based chip select control */
-+	if (spi->cs_gpiod)
-+		gpiod_set_value(spi->cs_gpiod, 0);
-+
- 	if (cs_val)
- 		tspi->command1_reg |= SPI_CS_SW_VAL;
- 	else
-@@ -1199,6 +1211,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 		master->max_speed_hz = 25000000; /* 25MHz */
- 
- 	/* the spi->mode bits understood by this driver: */
-+	master->use_gpio_descriptors = true;
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST |
- 			    SPI_TX_DUAL | SPI_RX_DUAL | SPI_3WIRE;
- 	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
--- 
-2.7.4
+> 
+>>   RC mode:
+>>   - num-viewport: number of view ports configured in hardware. If a platform
+>>     does not specify it, the driver assumes 2.
+>> -- 
+>> 2.17.1
+>>
