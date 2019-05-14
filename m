@@ -1,76 +1,48 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V5 07/16] dt-bindings: PCI: designware: Add binding for
- CDM register check
-Date: Tue, 14 May 2019 10:59:31 +0530
-Message-ID: <f340cb14-a6df-340b-ce37-227685f78b80@nvidia.com>
-References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-8-vidyas@nvidia.com> <20190426143247.GA25107@bogus>
- <031df2ca-27de-2388-5f23-078320203f5d@nvidia.com>
- <CAL_JsqKvES6OuPRgu8A009j6L4rkc11rB9TyxPe1iUJhvk1O8w@mail.gmail.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
+ pcie_pme_no_msi() APIs
+Date: Mon, 13 May 2019 23:02:27 -0700
+Message-ID: <20190514060227.GA7625@infradead.org>
+References: <20190513050626.14991-1-vidyas@nvidia.com>
+ <20190513050626.14991-3-vidyas@nvidia.com>
+ <20190513072539.GA27708@infradead.org>
+ <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqKvES6OuPRgu8A009j6L4rkc11rB9TyxPe1iUJhvk1O8w@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Jingoo Han <jingoohan1@gmail.com>, Gustavo Pimentel <gustavo.pimentel@synopsys.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, lorenzo.pieralisi@arm.com, mperttunen@nvidia.com, mmaddireddy@nvidia.com, linux-pci@vger.kernel.org, catalin.marinas@arm.com, kthota@nvidia.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com, Christoph Hellwig <hch@infradead.org>, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, gustavo.pimentel@synopsys.com, jingoohan1@gmail.com, bhelgaas@google.com, kishon@ti.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/13/2019 8:45 PM, Rob Herring wrote:
-> On Tue, May 7, 2019 at 3:25 AM Vidya Sagar <vidyas@nvidia.com> wrote:
->>
->> On 4/26/2019 8:02 PM, Rob Herring wrote:
->>> On Wed, Apr 24, 2019 at 10:49:55AM +0530, Vidya Sagar wrote:
->>>> Add support to enable CDM (Configuration Dependent Module) registers check
->>>> for any data corruption. CDM registers include standard PCIe configuration
->>>> space registers, Port Logic registers and iATU and DMA registers.
->>>> Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
->>>> Version 4.90a
->>>>
->>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->>>> ---
->>>> Changes since [v4]:
->>>> * None
->>>>
->>>> Changes since [v3]:
->>>> * None
->>>>
->>>> Changes since [v2]:
->>>> * Changed flag name from 'cdm-check' to 'enable-cdm-check'
->>>> * Added info about Port Logic and DMA registers being part of CDM
->>>>
->>>> Changes since [v1]:
->>>> * This is a new patch in v2 series
->>>>
->>>>    Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
->>>>    1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->>>> index 5561a1c060d0..85b872c42a9f 100644
->>>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
->>>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->>>> @@ -34,6 +34,11 @@ Optional properties:
->>>>    - clock-names: Must include the following entries:
->>>>       - "pcie"
->>>>       - "pcie_bus"
->>>> +- enable-cdm-check: This is a boolean property and if present enables
->>>
->>> This needs a vendor prefix.
->> Why only for this? Since this whole file is for Synopsys DesignWare core based PCIe IP,
->> I thought there is specific prefix required. Am I wrong? Also, CDM checking is a feature
->> of IP and DWC based implementations can choose either to enable this feature at hardware level
->> or not. And whoever enabled it at hardware level (like Tegra194) can set this flag to
->> enable corresponding software support.
-> 
-> TBC, I meant a Synopsys vendor prefix, not NVIDIA.
-> 
-> Any property that's not from a common binding should have a vendor
-> prefix. That hasn't always happened, so we do have lots of examples
-> without.
-Ok. got it. I'm going to take care of this in V7 series.
+On Tue, May 14, 2019 at 09:00:19AM +0530, Vidya Sagar wrote:
+> There is nothing broken in Tegra194 root port as such, rather,  this is more
+> of software configuration choice and we are going with legacy interrupts than
+> MSI interrupts (as Tegra194 doesn't support raising PME interrupts through MSI
+> and please note that this doesn't mean root port is broken).
 
-> 
-> Rob
-> 
+It seems odd at least and probably broken if it adverises MSI interrupts,
+but than doesn't actually support them fully.
+
+> Since Tegra194 has
+> only Synopsys DesignWare core based host controllers and not any other hosts, I
+> think it is fine to call this API in driver. Also, since this is a global setting,
+> calling this APIs from anywhere (be it from quirk or from driver) would have the
+> same effect, or did I miss anything here?
+
+Maybe in your current particular case this is true, but in general
+we see more and more systems with different kind of root ports, and
+having a driver set a global variable due to its own hardwares quirk
+defeats that.  So the right thing here is to replace the global
+flag with a per-device one first before setting it for a driver.
