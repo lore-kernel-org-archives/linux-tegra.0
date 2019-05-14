@@ -1,32 +1,73 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
-Date: Tue, 14 May 2019 10:33:40 +0100
-Message-ID: <cf4bd167-49b8-5649-a2e2-7bf5ddcc6e2d@nvidia.com>
-References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
- <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Date: Tue, 14 May 2019 19:28:16 +0300
+Message-ID: <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
+References: <20190510084719.18902-1-josephl@nvidia.com>
+ <20190510084719.18902-2-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190510084719.18902-2-josephl@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, ldewangan@nvidia.com, broonie@kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 14/05/2019 06:03, Sowjanya Komatineni wrote:
-> This patch adds support for GPIO based CS control through SPI core
-> function spi_set_cs.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Can you elaborate on the use-case where this is needed? I am curious
-what platforms are using this and why they would not use the dedicated
-CS signals.
-
-Cheers
-Jon
-
--- 
-nvpublic
+MTAuMDUuMjAxOSAxMTo0NywgSm9zZXBoIExvINC/0LjRiNC10YI6Cj4gQWRkIHRoZSBiaW5kaW5n
+IGRvY3VtZW50IGZvciB0aGUgZXh0ZXJuYWwgbWVtb3J5IGNvbnRyb2xsZXIgKEVNQykgd2hpY2gK
+PiBjb21tdW5pY2F0ZXMgd2l0aCBleHRlcm5hbCBMUEREUjQgZGV2aWNlcy4gSXQgaW5jbHVkZXMg
+dGhlIGJpbmRpbmdzIG9mCj4gdGhlIEVNQyBub2RlIGFuZCBhIHN1Yi1ub2RlIG9mIEVNQyB0YWJs
+ZSB3aGljaCB1bmRlciB0aGUgcmVzZXJ2ZWQgbWVtb3J5Cj4gbm9kZS4gVGhlIEVNQyB0YWJsZSBj
+b250YWlucyB0aGUgZGF0YSBvZiB0aGUgcmF0ZXMgdGhhdCBFTUMgc3VwcG9ydGVkLgo+IAo+IFNp
+Z25lZC1vZmYtYnk6IEpvc2VwaCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+IC0tLQo+IHYzOgo+
+IC0gZHJvcCB0aGUgYmluZGluZ3Mgb2YgRU1DIHRhYmxlCj4gLSBhZGQgbWVtb3J5LXJlZ2lvbiBh
+bmQgcmVzZXJ2ZWQtbWVtb3J5IG5vZGUgZm9yIEVNQyB0YWJsZQo+IC0tLQo+ICAuLi4vbnZpZGlh
+LHRlZ3JhMjEwLWVtYy50eHQgICAgICAgICAgICAgICAgICAgfCA1NSArKysrKysrKysrKysrKysr
+KysrCj4gIDEgZmlsZSBjaGFuZ2VkLCA1NSBpbnNlcnRpb25zKCspCj4gIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJz
+L252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4gCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZpZGlhLHRlZ3JhMjEwLWVt
+Yy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xs
+ZXJzL252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiBpbmRl
+eCAwMDAwMDAwMDAwMDAuLmQ2NWFlZWYyMzI5Ywo+IC0tLSAvZGV2L251bGwKPiArKysgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJzL252aWRpYSx0
+ZWdyYTIxMC1lbWMudHh0Cj4gQEAgLTAsMCArMSw1NSBAQAo+ICtOVklESUEgVGVncmEyMTAgU29D
+IEVNQyAoZXh0ZXJuYWwgbWVtb3J5IGNvbnRyb2xsZXIpCj4gKz09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KPiArCj4gK0RldmljZSBub2RlCj4gKz09
+PT09PT09PT09Cj4gK1JlcXVpcmVkIHByb3BlcnRpZXMgOgo+ICstIGNvbXBhdGlibGUgOiBzaG91
+bGQgYmUgIm52aWRpYSx0ZWdyYTIxMC1lbWMiLgo+ICstIHJlZyA6IHBoeXNpY2FsIGJhc2UgYWRk
+cmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBjb250cm9sbGVyJ3MgcmVnaXN0ZXJzLgo+ICstIGNsb2Nr
+cyA6IHBoYW5kbGVzIG9mIHRoZSBwb3NzaWJsZSBzb3VyY2UgY2xvY2tzLgo+ICstIGNsb2NrLW5h
+bWVzIDogbmFtZXMgb2YgdGhlIHBvc3NpYmxlIHNvdXJjZSBjbG9ja3MuCj4gKy0gaW50ZXJydXB0
+cyA6IFNob3VsZCBjb250YWluIHRoZSBFTUMgZ2VuZXJhbCBpbnRlcnJ1cHQuCj4gKy0gbWVtb3J5
+LXJlZ2lvbiA6IHBoYW5kbGUgdG8gdGhlIHJlc2VydmVkIG1lbW9yeSAoc2VlCj4gKyAgRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Jlc2VydmVkLW1lbW9yeS9yZXNlcnZlZC1tZW1v
+cnkudHh0KSB3aGljaAo+ICsgIGNvbnRhaW5zIGEgc3ViLW5vZGUgb2YgRU1DIHRhYmxlLgo+ICst
+IG52aWRpYSxtZW1vcnktY29udHJvbGxlciA6IHBoYW5kbGUgb2YgdGhlIG1lbW9yeSBjb250cm9s
+bGVyLgo+ICsKPiArUmVzZXJ2ZWQgbWVtb3J5IG5vZGUKPiArPT09PT09PT09PT09PT09PT09PT0K
+PiArU2hvdWxkIGNvbnRhaW4gYSBzdWItbm9kZSBvZiBFTUMgdGFibGUgd2l0aCByZXF1aXJlZCBw
+cm9wZXJ0aWVzOgo+ICstIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgIm52aWRpYSx0ZWdyYTIxMC1l
+bWMtdGFibGUiLgo+ICstIHJlZyA6IHBoeXNpY2FsIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUg
+bG9jYXRpb24gb2YgRU1DIHRhYmxlLgo+ICsKPiArRXhhbXBsZToKPiArCXJlc2VydmVkLW1lbW9y
+eSB7Cj4gKwkJI2FkZHJlc3MtY2VsbHMgPSA8Mj47Cj4gKwkJI3NpemUtY2VsbHMgPSA8Mj47Cj4g
+KwkJcmFuZ2VzOwo+ICsKPiArCQllbWNfdGFibGU6IGVtYy10YWJsZUA4YmUwMDAwMCB7Cj4gKwkJ
+CWNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMjEwLWVtYy10YWJsZSI7Cj4gKwkJCXJlZyA9IDww
+eDAgMHg4YmUwMDAwMCAweDAgMHgxMDAwMD47Cj4gKwkJCXN0YXR1cyA9ICJva2F5IjsKPiArCQl9
+OwoKWW91IGVzc2VudGlhbGx5IG1vdmVkIHRoZSB2MSBiaW5kaW5nIGludG8gb2JzY3VyZSBhbmQg
+dW5kb2N1bWVudGVkIGJsb2IsCmlnbm9yaW5nIHByZXZpb3VzIHJldmlldyBjb21tZW50cy4gVGhp
+cyBpcyBhIHZlcnkgb2RkIG1vdmUuLi4gcGxlYXNlCmV4cGxhaW4gd2hhdCBpcyBnb2luZyBvbi4K
+Ci0tIApEbWl0cnkKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2xpbnV4LWFybS1rZXJuZWwK
