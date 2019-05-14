@@ -1,35 +1,118 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-Date: Tue, 14 May 2019 09:00:19 +0530
-Message-ID: <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
-References: <20190513050626.14991-1-vidyas@nvidia.com>
- <20190513050626.14991-3-vidyas@nvidia.com>
- <20190513072539.GA27708@infradead.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V4 2/4] spi: tegra114: add support for hw based cs
+Date: Mon, 13 May 2019 21:31:50 -0700
+Message-ID: <1557808312-3213-2-git-send-email-skomatineni@nvidia.com>
+References: <1557808312-3213-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190513072539.GA27708@infradead.org>
-Content-Language: en-US
+In-Reply-To: <1557808312-3213-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/13/2019 12:55 PM, Christoph Hellwig wrote:
-> On Mon, May 13, 2019 at 10:36:13AM +0530, Vidya Sagar wrote:
->> Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
->> using these APIs be able to build as loadable modules.
-> 
-> But this is a global setting.  If you root port is broken you need
-> a per-rootport quirk instead.
-> 
-There is nothing broken in Tegra194 root port as such, rather,  this is more
-of software configuration choice and we are going with legacy interrupts than
-MSI interrupts (as Tegra194 doesn't support raising PME interrupts through MSI
-and please note that this doesn't mean root port is broken). Since Tegra194 has
-only Synopsys DesignWare core based host controllers and not any other hosts, I
-think it is fine to call this API in driver. Also, since this is a global setting,
-calling this APIs from anywhere (be it from quirk or from driver) would have the
-same effect, or did I miss anything here?
+Tegra SPI controller supports both HW and SW based CS control
+for SPI transfers.
+
+This patch adds support for HW based CS control where CS is driven
+to active state during the transfer and is driven inactive at the
+end of the transfer directly by the HW.
+
+This patch enables the use of HW based CS only for single transfers
+without cs_change request.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/spi/spi-tegra114.c | 39 +++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index f47417dd9edb..0cb0932d32fd 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -193,6 +193,7 @@ struct tegra_spi_data {
+ 	unsigned				dma_buf_size;
+ 	unsigned				max_buf_size;
+ 	bool					is_curr_dma_xfer;
++	bool					use_hw_based_cs;
+ 
+ 	struct completion			rx_dma_complete;
+ 	struct completion			tx_dma_complete;
+@@ -723,7 +724,9 @@ static void tegra_spi_deinit_dma_param(struct tegra_spi_data *tspi,
+ }
+ 
+ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
+-		struct spi_transfer *t, bool is_first_of_msg)
++					struct spi_transfer *t,
++					bool is_first_of_msg,
++					bool is_single_xfer)
+ {
+ 	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
+ 	u32 speed = t->speed_hz;
+@@ -780,11 +783,17 @@ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
+ 		if (spi->cs_gpiod)
+ 			gpiod_set_value(spi->cs_gpiod, 1);
+ 
+-		command1 |= SPI_CS_SW_HW;
+-		if (spi->mode & SPI_CS_HIGH)
+-			command1 |= SPI_CS_SW_VAL;
+-		else
+-			command1 &= ~SPI_CS_SW_VAL;
++		if (is_single_xfer && !(t->cs_change)) {
++			tspi->use_hw_based_cs = true;
++			command1 &= ~(SPI_CS_SW_HW | SPI_CS_SW_VAL);
++		} else {
++			tspi->use_hw_based_cs = false;
++			command1 |= SPI_CS_SW_HW;
++			if (spi->mode & SPI_CS_HIGH)
++				command1 |= SPI_CS_SW_VAL;
++			else
++				command1 &= ~SPI_CS_SW_VAL;
++		}
+ 
+ 		tegra_spi_writel(tspi, 0, SPI_COMMAND2);
+ 	} else {
+@@ -905,11 +914,14 @@ static void tegra_spi_transfer_end(struct spi_device *spi)
+ 	if (spi->cs_gpiod)
+ 		gpiod_set_value(spi->cs_gpiod, 0);
+ 
+-	if (cs_val)
+-		tspi->command1_reg |= SPI_CS_SW_VAL;
+-	else
+-		tspi->command1_reg &= ~SPI_CS_SW_VAL;
+-	tegra_spi_writel(tspi, tspi->command1_reg, SPI_COMMAND1);
++	if (!tspi->use_hw_based_cs) {
++		if (cs_val)
++			tspi->command1_reg |= SPI_CS_SW_VAL;
++		else
++			tspi->command1_reg &= ~SPI_CS_SW_VAL;
++		tegra_spi_writel(tspi, tspi->command1_reg, SPI_COMMAND1);
++	}
++
+ 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
+ }
+ 
+@@ -936,16 +948,19 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ 	struct spi_device *spi = msg->spi;
+ 	int ret;
+ 	bool skip = false;
++	int single_xfer;
+ 
+ 	msg->status = 0;
+ 	msg->actual_length = 0;
+ 
++	single_xfer = list_is_singular(&msg->transfers);
+ 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+ 		u32 cmd1;
+ 
+ 		reinit_completion(&tspi->xfer_completion);
+ 
+-		cmd1 = tegra_spi_setup_transfer_one(spi, xfer, is_first_msg);
++		cmd1 = tegra_spi_setup_transfer_one(spi, xfer, is_first_msg,
++						    single_xfer);
+ 
+ 		if (!xfer->len) {
+ 			ret = 0;
+-- 
+2.7.4
