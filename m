@@ -1,57 +1,97 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFC PATCH v1 5/6] soc/tegra: regulators: Add regulators coupler
- for Tegra20
-Date: Tue, 14 May 2019 22:12:45 +0300
-Message-ID: <b7bd37d4-471a-4c31-f561-8d4eb89519a4@gmail.com>
-References: <20190414175939.12368-1-digetx@gmail.com>
- <20190414175939.12368-6-digetx@gmail.com>
- <20190508075706.GW14916@sirena.org.uk>
- <9756d8ca-0778-5185-5b6b-3168d63819ec@gmail.com>
- <20190512090627.GO21483@sirena.org.uk>
- <586b4f29-1937-2d7b-3944-c29311502878@gmail.com>
- <20190513173816.GG5168@sirena.org.uk>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Date: Wed, 15 May 2019 15:17:10 +0800
+Message-ID: <63360b18-6a17-ab3f-6c54-6e11e24885d0@nvidia.com>
+References: <20190510084719.18902-1-josephl@nvidia.com>
+ <20190510084719.18902-2-josephl@nvidia.com>
+ <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190513173816.GG5168@sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-13.05.2019 20:38, Mark Brown пишет:
-> On Sun, May 12, 2019 at 08:42:39PM +0300, Dmitry Osipenko wrote:
->> 12.05.2019 12:06, Mark Brown пишет:
-> 
->>> This seems like it should be easy enough to describe - we just need
->>> minimum and maximum spreads between pairs of rails.
-> 
->> Yes, but the proper CORE/RTC minimum voltages shall be maintained until
->> all drivers will get support for the voltage management, which likely to
->> take a lot of time to get upstreamed. So I'd want to get at least some
->> basics working for the start, later on it should be possible to consider
->> generalization of the regulators coupling. Mark, are you okay with
->> having the custom regulators coupler as an interim solution?
-> 
-> Let me think about it.  Interim solutions have this habit of hanging
-> around and the bit with needing to get all the drivers loaded is very
-> much an open and substantial question...  :/  Definitely not something
-> I'd close the door on at this point though.
-> 
-
-This one has a good chance to stick around for a substantial time.
-
-Realistically I see two variants right now:
-
-  1) get at least some basics to work (regulators coupling, CPUFreq
-voltage managing) and then continue step-by-step
-
-  2) give up on it all in upstream because likely that an immediate
-complete solution will take just too much time and effort for a one
-person to cope (I have other things to do as well)
-
-Mark, I'm glad that you're not strongly opposed. Will prepare  v2.
-
-If anyone else has something to say, please don't shy.
+T24gNS8xNS8xOSAxMjoyOCBBTSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+IDEwLjA1LjIwMTkg
+MTE6NDcsIEpvc2VwaCBMbyDQv9C40YjQtdGCOgo+PiBBZGQgdGhlIGJpbmRpbmcgZG9jdW1lbnQg
+Zm9yIHRoZSBleHRlcm5hbCBtZW1vcnkgY29udHJvbGxlciAoRU1DKSB3aGljaAo+PiBjb21tdW5p
+Y2F0ZXMgd2l0aCBleHRlcm5hbCBMUEREUjQgZGV2aWNlcy4gSXQgaW5jbHVkZXMgdGhlIGJpbmRp
+bmdzIG9mCj4+IHRoZSBFTUMgbm9kZSBhbmQgYSBzdWItbm9kZSBvZiBFTUMgdGFibGUgd2hpY2gg
+dW5kZXIgdGhlIHJlc2VydmVkIG1lbW9yeQo+PiBub2RlLiBUaGUgRU1DIHRhYmxlIGNvbnRhaW5z
+IHRoZSBkYXRhIG9mIHRoZSByYXRlcyB0aGF0IEVNQyBzdXBwb3J0ZWQuCj4+Cj4+IFNpZ25lZC1v
+ZmYtYnk6IEpvc2VwaCBMbyA8am9zZXBobEBudmlkaWEuY29tPgo+PiAtLS0KPj4gdjM6Cj4+IC0g
+ZHJvcCB0aGUgYmluZGluZ3Mgb2YgRU1DIHRhYmxlCj4+IC0gYWRkIG1lbW9yeS1yZWdpb24gYW5k
+IHJlc2VydmVkLW1lbW9yeSBub2RlIGZvciBFTUMgdGFibGUKPj4gLS0tCj4+ICAgLi4uL252aWRp
+YSx0ZWdyYTIxMC1lbWMudHh0ICAgICAgICAgICAgICAgICAgIHwgNTUgKysrKysrKysrKysrKysr
+KysrKwo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA1NSBpbnNlcnRpb25zKCspCj4+ICAgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJv
+bGxlcnMvbnZpZGlhLHRlZ3JhMjEwLWVtYy50eHQKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZW1vcnktY29udHJvbGxlcnMvbnZpZGlhLHRlZ3Jh
+MjEwLWVtYy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNv
+bnRyb2xsZXJzL252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0
+Cj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZDY1YWVlZjIzMjljCj4+IC0tLSAvZGV2L251bGwKPj4g
+KysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lbW9yeS1jb250cm9sbGVy
+cy9udmlkaWEsdGVncmEyMTAtZW1jLnR4dAo+PiBAQCAtMCwwICsxLDU1IEBACj4+ICtOVklESUEg
+VGVncmEyMTAgU29DIEVNQyAoZXh0ZXJuYWwgbWVtb3J5IGNvbnRyb2xsZXIpCj4+ICs9PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Cj4+ICsKPj4gK0Rl
+dmljZSBub2RlCj4+ICs9PT09PT09PT09PQo+PiArUmVxdWlyZWQgcHJvcGVydGllcyA6Cj4+ICst
+IGNvbXBhdGlibGUgOiBzaG91bGQgYmUgIm52aWRpYSx0ZWdyYTIxMC1lbWMiLgo+PiArLSByZWcg
+OiBwaHlzaWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgY29udHJvbGxlcidzIHJl
+Z2lzdGVycy4KPj4gKy0gY2xvY2tzIDogcGhhbmRsZXMgb2YgdGhlIHBvc3NpYmxlIHNvdXJjZSBj
+bG9ja3MuCj4+ICstIGNsb2NrLW5hbWVzIDogbmFtZXMgb2YgdGhlIHBvc3NpYmxlIHNvdXJjZSBj
+bG9ja3MuCj4+ICstIGludGVycnVwdHMgOiBTaG91bGQgY29udGFpbiB0aGUgRU1DIGdlbmVyYWwg
+aW50ZXJydXB0Lgo+PiArLSBtZW1vcnktcmVnaW9uIDogcGhhbmRsZSB0byB0aGUgcmVzZXJ2ZWQg
+bWVtb3J5IChzZWUKPj4gKyAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Jlc2Vy
+dmVkLW1lbW9yeS9yZXNlcnZlZC1tZW1vcnkudHh0KSB3aGljaAo+PiArICBjb250YWlucyBhIHN1
+Yi1ub2RlIG9mIEVNQyB0YWJsZS4KPj4gKy0gbnZpZGlhLG1lbW9yeS1jb250cm9sbGVyIDogcGhh
+bmRsZSBvZiB0aGUgbWVtb3J5IGNvbnRyb2xsZXIuCj4+ICsKPj4gK1Jlc2VydmVkIG1lbW9yeSBu
+b2RlCj4+ICs9PT09PT09PT09PT09PT09PT09PQo+PiArU2hvdWxkIGNvbnRhaW4gYSBzdWItbm9k
+ZSBvZiBFTUMgdGFibGUgd2l0aCByZXF1aXJlZCBwcm9wZXJ0aWVzOgo+PiArLSBjb21wYXRpYmxl
+IDogc2hvdWxkIGJlICJudmlkaWEsdGVncmEyMTAtZW1jLXRhYmxlIi4KPj4gKy0gcmVnIDogcGh5
+c2ljYWwgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBsb2NhdGlvbiBvZiBFTUMgdGFibGUuCj4+
+ICsKPj4gK0V4YW1wbGU6Cj4+ICsJcmVzZXJ2ZWQtbWVtb3J5IHsKPj4gKwkJI2FkZHJlc3MtY2Vs
+bHMgPSA8Mj47Cj4+ICsJCSNzaXplLWNlbGxzID0gPDI+Owo+PiArCQlyYW5nZXM7Cj4+ICsKPj4g
+KwkJZW1jX3RhYmxlOiBlbWMtdGFibGVAOGJlMDAwMDAgewo+PiArCQkJY29tcGF0aWJsZSA9ICJu
+dmlkaWEsdGVncmEyMTAtZW1jLXRhYmxlIjsKPj4gKwkJCXJlZyA9IDwweDAgMHg4YmUwMDAwMCAw
+eDAgMHgxMDAwMD47Cj4+ICsJCQlzdGF0dXMgPSAib2theSI7Cj4+ICsJCX07Cj4gCj4gWW91IGVz
+c2VudGlhbGx5IG1vdmVkIHRoZSB2MSBiaW5kaW5nIGludG8gb2JzY3VyZSBhbmQgdW5kb2N1bWVu
+dGVkIGJsb2IsCj4gaWdub3JpbmcgcHJldmlvdXMgcmV2aWV3IGNvbW1lbnRzLiBUaGlzIGlzIGEg
+dmVyeSBvZGQgbW92ZS4uLiBwbGVhc2UKPiBleHBsYWluIHdoYXQgaXMgZ29pbmcgb24uCj4gCgpE
+aXNjdXNzZWQgd2l0aCBUaGllcnJ5IG9mZmxpbmUgd2hpY2ggd2F5IHdlIHByZWZlciB0byBwYXNz
+IHRoZSBFTUMgdGFibGUgCnRvIHRoZSBrZXJuZWwuIFNvbWUgcmVhc29ucyBiZWxvdyB3ZSBkZWNp
+ZGUgdG8gY2hvc2UgdGhpcyBvbmUgKHZpYSAKYmluYXJ5IGJsb2IpLgoKLSBUaGUgRU1DIHRhYmxl
+IGlzIG11Y2ggYmlnZ2VyIHRoYW4gdGhlIHByZXZpb3VzIFRlZ3JhIGdlbmVyYXRpb25zIAooTFBE
+RFI0IHYucy4gTFBERFIyLzMpLiBJdCdzIGhhcmRlciB0byBzZXR0bGUgaW4gdGhlIHJldmlldyBw
+cm9jZXNzLiBBbmQgCmlmIHRoZXJlIGlzIGEgbmV3IGZpeCBvZiB0aGUgdGFibGUgaW4gdGhlIGZ1
+dHVyZSwgd2UnbGwgbmVlZCB0byBnbyAKdGhyb3VnaCB0aGF0IGFnYWluLgotIEJlY2F1c2UgaXQn
+cyBMUEREUjQgd2Ugd2FudCB0byBzdXBwb3J0IGhlcmUsIHRvIHN1cHBvcnQgaGlnaGVyIHJhdGVz
+LCAKdGhlIGRldmljZXMgaGF2ZSBtdXN0IGJlIGdvbmUgdGhyb3VnaCB0aGUgdHJhaW5pbmcgcHJv
+Y2Vzcywgd2hpY2ggaXMgCmRvbmUgaW4gdGhlIGZpcm13YXJlLiBXaGljaCBtZWFucyBXZSBhbHJl
+YWR5IGhhdmUgdGhlIHRhYmxlIHNvbWV3aGVyZSBpbiAKdGhlIG1lbW9yeSBhbmQga2VybmVsIGNh
+biBqdXN0IHJlLXVzZSB0aGF0LiBObyBuZWVkIHRvIGNvbnZlcnQgdGhlbSBiYWNrIAp0byBEVCBh
+bmQgcGFzcyB0byB0aGUga2VybmVsLiBUaGlzIGlzIG11Y2ggZWFzaWVyIHRvIG1haW50YWluIGlu
+IHRoZSAKZnV0dXJlIGlmIHRoZXJlIGlzIHNvbWV0aGluZyBuZWVkcyB0byBmaXguCi0gV2l0aCB0
+aGUgbWVjaGFuaXNtIGFib3ZlLCB3ZSBkb24ndCBuZWVkIHRvIG1haW50YWluIHRoZSBodWdlIEVN
+QyB0YWJsZSAKaW4gdGhlIERUIGZpbGUgbGlrZSBiZWxvdy4KaHR0cDovL3BhdGNod29yay5vemxh
+YnMub3JnL3BhdGNoLzEwNjM4ODYvCmh0dHA6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC8x
+MDYzODg5LwoKQW5kIHNvcnJ5LCBtYXliZSBpdCdzIG5vdCBjbGVhciBhdCB0aGF0IG1vbWVudCwg
+YnV0IEkgZGlkIG1lbnRpb24gdGhhdCAKd2Ugd2FudCB0byBnbyB3aXRoIHRoZSBuZXcgbWV0aG9k
+ICh2aWEgYmluYXJ5IGJsb2IpIGluIHRoZSBwcmV2aW91cyByZXZpZXcuClBsZWFzZSBzZWUgaHR0
+cDovL3BhdGNod29yay5vemxhYnMub3JnL3BhdGNoLzEwODQ0NjcvCgpUaGFua3MsCkpvc2VwaAoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJt
+LWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
+Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtl
+cm5lbAo=
