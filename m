@@ -1,142 +1,137 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: tegra114: add support for HW CS timing" to the spi tree
-Date: Wed, 15 May 2019 12:18:23 +0100 (BST)
-Message-ID: <20190515111823.E25FB1126D6C@debutante.sirena.org.uk>
-References: <1557810235-16401-4-git-send-email-skomatineni@nvidia.com>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: Re: [PATCH v3 2/4] iommu/dma-iommu: Handle deferred devices
+Date: Wed, 15 May 2019 13:46:43 +0100
+Message-ID: <CAPL0++5AUyVHexpsE86PfXxmQgDHfxjSSoAAGXM5c7Mdix=OZQ@mail.gmail.com>
+References: <20190506185207.31069-1-tmurphy@arista.com> <20190506185207.31069-3-tmurphy@arista.com>
+ <20190507064000.GB5173@infradead.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1557810235-16401-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190507064000.GB5173@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: broonie@kernel.org, jonathanh@nvidia.com, ldewangan@nvidia.com, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.orgMark Brown <broonie@kernel.org>, thierry.reding@gmail.com
+To: Christoph Hellwig <hch@infradead.org>
+Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.ker
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+like this?
 
-   spi: tegra114: add support for HW CS timing
+In that case we need to add a call to iommu_dma_alloc_remap.
 
-has been applied to the spi tree at
+From 862aeebb601008cf863e3aff4ff8ed7cefebeefa Mon Sep 17 00:00:00 2001
+From: Tom Murphy <tmurphy@tmurphy-419tom-0.sjc.aristanetworks.com>
+Date: Wed, 15 May 2019 05:43:25 -0700
+Subject: [PATCH] iommu/dma-iommu: Handle deferred devices
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+Handle devices which defer their attach to the iommu in the dma-iommu api
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9b76ef39b7fbc2ddb0869725f9745a402d93cce5 Mon Sep 17 00:00:00 2001
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Mon, 13 May 2019 22:03:54 -0700
-Subject: [PATCH] spi: tegra114: add support for HW CS timing
-
-This patch implements set_cs_timing SPI controller method to allow
-SPI client driver to configure device specific SPI CS timings.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Tom Murphy <tmurphy@arista.com>
 ---
- drivers/spi/spi-tegra114.c | 48 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 46 insertions(+), 2 deletions(-)
+ drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 0cb0932d32fd..e59ff7c1cee6 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -95,8 +95,10 @@
- 		(reg = (((val) & 0x1) << ((cs) * 8 + 5)) |	\
- 			((reg) & ~(1 << ((cs) * 8 + 5))))
- #define SPI_SET_CYCLES_BETWEEN_PACKETS(reg, cs, val)		\
--		(reg = (((val) & 0xF) << ((cs) * 8)) |		\
--			((reg) & ~(0xF << ((cs) * 8))))
-+		(reg = (((val) & 0x1F) << ((cs) * 8)) |		\
-+			((reg) & ~(0x1F << ((cs) * 8))))
-+#define MAX_SETUP_HOLD_CYCLES			16
-+#define MAX_INACTIVE_CYCLES			32
- 
- #define SPI_TRANS_STATUS			0x010
- #define SPI_BLK_CNT(val)			(((val) >> 0) & 0xFFFF)
-@@ -206,6 +208,8 @@ struct tegra_spi_data {
- 	u32					command1_reg;
- 	u32					dma_control_reg;
- 	u32					def_command1_reg;
-+	u32					spi_cs_timing1;
-+	u32					spi_cs_timing2;
- 
- 	struct completion			xfer_completion;
- 	struct spi_transfer			*curr_xfer;
-@@ -723,6 +727,43 @@ static void tegra_spi_deinit_dma_param(struct tegra_spi_data *tspi,
- 	dma_release_channel(dma_chan);
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 7f313cfa9..a48ae906d 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -22,6 +22,7 @@
+ #include <linux/pci.h>
+ #include <linux/scatterlist.h>
+ #include <linux/vmalloc.h>
++#include <linux/crash_dump.h>
+
+ struct iommu_dma_msi_page {
+     struct list_head    list;
+@@ -323,6 +324,21 @@ static int iommu_dma_init_domain(struct
+iommu_domain *domain, dma_addr_t base,
+     return iova_reserve_iommu_regions(dev, domain);
  }
- 
-+static void tegra_spi_set_hw_cs_timing(struct spi_device *spi, u8 setup_dly,
-+				       u8 hold_dly, u8 inactive_dly)
+
++static int handle_deferred_device(struct device *dev,
++        struct iommu_domain *domain)
 +{
-+	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
-+	u32 setup_hold;
-+	u32 spi_cs_timing;
-+	u32 inactive_cycles;
-+	u8 cs_state;
++    const struct iommu_ops *ops = domain->ops;
 +
-+	setup_dly = min_t(u8, setup_dly, MAX_SETUP_HOLD_CYCLES);
-+	hold_dly = min_t(u8, hold_dly, MAX_SETUP_HOLD_CYCLES);
-+	if (setup_dly && hold_dly) {
-+		setup_hold = SPI_SETUP_HOLD(setup_dly - 1, hold_dly - 1);
-+		spi_cs_timing = SPI_CS_SETUP_HOLD(tspi->spi_cs_timing1,
-+						  spi->chip_select,
-+						  setup_hold);
-+		if (tspi->spi_cs_timing1 != spi_cs_timing) {
-+			tspi->spi_cs_timing1 = spi_cs_timing;
-+			tegra_spi_writel(tspi, spi_cs_timing, SPI_CS_TIMING1);
-+		}
-+	}
++    if (!is_kdump_kernel())
++        return 0;
 +
-+	inactive_cycles = min_t(u8, inactive_dly, MAX_INACTIVE_CYCLES);
-+	if (inactive_cycles)
-+		inactive_cycles--;
-+	cs_state = inactive_cycles ? 0 : 1;
-+	spi_cs_timing = tspi->spi_cs_timing2;
-+	SPI_SET_CS_ACTIVE_BETWEEN_PACKETS(spi_cs_timing, spi->chip_select,
-+					  cs_state);
-+	SPI_SET_CYCLES_BETWEEN_PACKETS(spi_cs_timing, spi->chip_select,
-+				       inactive_cycles);
-+	if (tspi->spi_cs_timing2 != spi_cs_timing) {
-+		tspi->spi_cs_timing2 = spi_cs_timing;
-+		tegra_spi_writel(tspi, spi_cs_timing, SPI_CS_TIMING2);
-+	}
++    if (unlikely(ops->is_attach_deferred &&
++            ops->is_attach_deferred(domain, dev)))
++        return iommu_attach_device(domain, dev);
++
++    return 0;
 +}
 +
- static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
- 					struct spi_transfer *t,
- 					bool is_first_of_msg,
-@@ -1232,6 +1273,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
- 	master->setup = tegra_spi_setup;
- 	master->transfer_one_message = tegra_spi_transfer_one_message;
-+	master->set_cs_timing = tegra_spi_set_hw_cs_timing;
- 	master->num_chipselect = MAX_CHIP_SELECT;
- 	master->auto_runtime_pm = true;
- 	bus_num = of_alias_get_id(pdev->dev.of_node, "spi");
-@@ -1307,6 +1349,8 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	reset_control_deassert(tspi->rst);
- 	tspi->def_command1_reg  = SPI_M_S;
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
-+	tspi->spi_cs_timing1 = tegra_spi_readl(tspi, SPI_CS_TIMING1);
-+	tspi->spi_cs_timing2 = tegra_spi_readl(tspi, SPI_CS_TIMING2);
- 	pm_runtime_put(&pdev->dev);
- 	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
- 				   tegra_spi_isr_thread, IRQF_ONESHOT,
+ /**
+  * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
+  *                    page flags.
+@@ -432,6 +448,9 @@ static dma_addr_t __iommu_dma_map(struct device
+*dev, phys_addr_t phys,
+     size_t iova_off = 0;
+     dma_addr_t iova;
+
++    if (unlikely(handle_deferred_device(dev, domain)))
++        return DMA_MAPPING_ERROR;
++
+     if (cookie->type == IOMMU_DMA_IOVA_COOKIE) {
+         iova_off = iova_offset(&cookie->iovad, phys);
+         size = iova_align(&cookie->iovad, size + iova_off);
+@@ -609,6 +628,9 @@ static void *iommu_dma_alloc_remap(struct device
+*dev, size_t size,
+     dma_addr_t iova;
+     void *vaddr;
+
++    if (unlikely(handle_deferred_device(dev, domain)))
++        return DMA_MAPPING_ERROR;
++
+     *dma_handle = DMA_MAPPING_ERROR;
+
+     min_size = alloc_sizes & -alloc_sizes;
+@@ -836,7 +858,7 @@ static dma_addr_t iommu_dma_map_page(struct device
+*dev, struct page *page,
+     bool coherent = dev_is_dma_coherent(dev);
+     dma_addr_t dma_handle;
+
+-    dma_handle =__iommu_dma_map(dev, phys, size,
++    dma_handle = __iommu_dma_map(dev, phys, size,
+             dma_info_to_prot(dir, coherent, attrs),
+             iommu_get_dma_domain(dev));
+     if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
+@@ -954,6 +976,9 @@ static int iommu_dma_map_sg(struct device *dev,
+struct scatterlist *sg,
+     unsigned long mask = dma_get_seg_boundary(dev);
+     int i;
+
++    if (unlikely(handle_deferred_device(dev, domain)))
++        return 0;
++
+     if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+         iommu_dma_sync_sg_for_device(dev, sg, nents, dir);
+
 -- 
-2.20.1
+2.20.0
+
+On Tue, May 7, 2019 at 7:40 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, May 06, 2019 at 07:52:04PM +0100, Tom Murphy wrote:
+> > +static int handle_deferred_device(struct device *dev)
+> > +{
+> > +     struct iommu_domain *domain;
+> > +     const struct iommu_ops *ops;
+> > +
+> > +     if (!is_kdump_kernel())
+> > +             return 0;
+> > +
+> > +     domain = iommu_get_domain_for_dev(dev);
+>
+> > -     dma_handle =__iommu_dma_map(dev, phys, size,
+> > +     if (unlikely(handle_deferred_device(dev)))
+> > +             return DMA_MAPPING_ERROR;
+> > +
+> > +     dma_handle = __iommu_dma_map(dev, phys, size,
+>
+> __iommu_dma_map already looks up the domain, and as far as I can
+> tell all callers need the handle_deferred_device call.  Should we
+> just move it to there and pass the domain from the caller?
+>
+> Also shouldn't the iommu_attach_device call inside
+> handle_deferred_device also get an unlikely marker?
