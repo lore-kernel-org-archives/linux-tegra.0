@@ -1,58 +1,59 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH v1 6/6] soc/tegra: regulators: Add regulators coupler
- for Tegra30
-Date: Wed, 15 May 2019 10:05:57 +0100
-Message-ID: <20190515090557.GB5613@sirena.org.uk>
-References: <20190414175939.12368-1-digetx@gmail.com>
- <20190414175939.12368-7-digetx@gmail.com>
- <20190508075848.GX14916@sirena.org.uk>
- <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
- <20190512090446.GN21483@sirena.org.uk>
- <3988cfb6-55fe-48c4-5365-ac79871f7fd2@gmail.com>
- <20190513174000.GH5168@sirena.org.uk>
- <9e13bbd1-ff28-1570-b1a6-0cc6337b8f6c@gmail.com>
+Subject: Re: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
+Date: Wed, 15 May 2019 10:35:22 +0100
+Message-ID: <20190515093522.GC5613@sirena.org.uk>
+References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
+ <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
+ <cf4bd167-49b8-5649-a2e2-7bf5ddcc6e2d@nvidia.com>
+ <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
+        protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <9e13bbd1-ff28-1570-b1a6-0cc6337b8f6c@gmail.com>
+In-Reply-To: <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---TakKZr9L6Hm6aLOc
+--raC6veAxrt5nqIoY
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2019 at 09:30:05PM +0300, Dmitry Osipenko wrote:
-> 13.05.2019 20:40, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On Tue, May 14, 2019 at 05:18:48PM +0000, Sowjanya Komatineni wrote:
 
-> > The thing with OPPs is that they specify a whole table of values that
-> > work together including regulator settings, the result being that you
-> > have many fewer options but don't need to think about constraints.
+> Tegra SPI doesn=E2=80=99t support inter byte delay directly to meet some =
+SPI slave requirements.
+> So we use GPIO control CS in parallel with a dummy HW CS and use inactive=
+ cycles delay of SPI controller to mimic inter byte delay.
 
-> I'm afraid this is just a way of abusing the OPP's. I actually already
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
 
-There's nothing wrong with handling regulators in an OPP, that's a
-totally normal thing.
+Please don't ignore review comments, people are generally making them
+for a reason and are likely to have the same concerns if issues remain
+unaddressed.  Having to repeat the same comments can get repetitive and
+make people question the value of time spent reviewing.  If you disagree
+with the review comments that's fine but you need to reply and discuss
+your concerns so that the reviewer can understand your decisions.
 
---TakKZr9L6Hm6aLOc
+--raC6veAxrt5nqIoY
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzb1nQACgkQJNaLcl1U
-h9B+uAf+ICo1YFwIDtc0IRXVChQYg8IxHaOtl3E0HssgAOIT+MbeRs+M+SSk6EbC
-Kr1Psm76LVW/stVAjPoOmyapJczTaKrlNHDwDHwrQE7gEXgQ31AsOFzEMjQrVKzU
-P2FBDNi1dIOvNJ27+0+FqDcBQOMIDZHUy/Z/bJhdQGtdg0YXp+SyTHxSnUIuNLTI
-4DCFaCyP76gLH3Q8wkQjE5MmUeFQ8E0v4RlrImFH4NaJndqwKGoVMKGsCqPo6DTr
-1bQdnF0AgJoRLEvsD/tPhff5AlaGjnuSfVeENJ4A2YQPLWcTDbs+uqh8T88D5Y59
-0RP2BxB9PjODwkZuyRaWsFUDGNkkqQ==
-=k+RW
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzb3VkACgkQJNaLcl1U
+h9DDwgf+IgSDwzI5qR9A6I3NzqXiuPcYQwmgXzmah1o3/xQ9fvEAUz4bAkK2FkqX
+VtvQy+JWAMR/3O5ydxa3czZfwgWVTXvwM45kwrgye/uuc6plpsJmsHPNraBuy28z
+iPEJZSuAWrhTYT/5sHrjAv4tEapzYRBMs/HIYxXclBbz3mvHy9TvgF49iwgScJF/
+p2GZVLoX2cfaxzvhdFzV2HZrJA/838DdOp06vKR1PPr7csfwDtTBOnjpMd6WLEJ1
+pi/+g/kRW7qCzshGjqBhKGorhPo5HONC9qap8+D1RU8ol7p4JjuxgDhjgaSDa/rY
+x/RgG+BBwZjujStSaE/v31pqdFUAzA==
+=GuwL
 -----END PGP SIGNATURE-----
 
---TakKZr9L6Hm6aLOc--
+--raC6veAxrt5nqIoY--
