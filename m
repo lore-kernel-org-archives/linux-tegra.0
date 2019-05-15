@@ -1,137 +1,113 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [PATCH v3 2/4] iommu/dma-iommu: Handle deferred devices
-Date: Wed, 15 May 2019 13:46:43 +0100
-Message-ID: <CAPL0++5AUyVHexpsE86PfXxmQgDHfxjSSoAAGXM5c7Mdix=OZQ@mail.gmail.com>
-References: <20190506185207.31069-1-tmurphy@arista.com> <20190506185207.31069-3-tmurphy@arista.com>
- <20190507064000.GB5173@infradead.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Date: Wed, 15 May 2019 16:50:31 +0300
+Message-ID: <c3909c66-5aa4-161b-98d4-02ad20e02c88@gmail.com>
+References: <20190510084719.18902-1-josephl@nvidia.com>
+ <20190510084719.18902-2-josephl@nvidia.com>
+ <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
+ <63360b18-6a17-ab3f-6c54-6e11e24885d0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190507064000.GB5173@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.ker
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <63360b18-6a17-ab3f-6c54-6e11e24885d0@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-like this?
-
-In that case we need to add a call to iommu_dma_alloc_remap.
-
-From 862aeebb601008cf863e3aff4ff8ed7cefebeefa Mon Sep 17 00:00:00 2001
-From: Tom Murphy <tmurphy@tmurphy-419tom-0.sjc.aristanetworks.com>
-Date: Wed, 15 May 2019 05:43:25 -0700
-Subject: [PATCH] iommu/dma-iommu: Handle deferred devices
-
-Handle devices which defer their attach to the iommu in the dma-iommu api
-
-Signed-off-by: Tom Murphy <tmurphy@arista.com>
----
- drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 7f313cfa9..a48ae906d 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -22,6 +22,7 @@
- #include <linux/pci.h>
- #include <linux/scatterlist.h>
- #include <linux/vmalloc.h>
-+#include <linux/crash_dump.h>
-
- struct iommu_dma_msi_page {
-     struct list_head    list;
-@@ -323,6 +324,21 @@ static int iommu_dma_init_domain(struct
-iommu_domain *domain, dma_addr_t base,
-     return iova_reserve_iommu_regions(dev, domain);
- }
-
-+static int handle_deferred_device(struct device *dev,
-+        struct iommu_domain *domain)
-+{
-+    const struct iommu_ops *ops = domain->ops;
-+
-+    if (!is_kdump_kernel())
-+        return 0;
-+
-+    if (unlikely(ops->is_attach_deferred &&
-+            ops->is_attach_deferred(domain, dev)))
-+        return iommu_attach_device(domain, dev);
-+
-+    return 0;
-+}
-+
- /**
-  * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
-  *                    page flags.
-@@ -432,6 +448,9 @@ static dma_addr_t __iommu_dma_map(struct device
-*dev, phys_addr_t phys,
-     size_t iova_off = 0;
-     dma_addr_t iova;
-
-+    if (unlikely(handle_deferred_device(dev, domain)))
-+        return DMA_MAPPING_ERROR;
-+
-     if (cookie->type == IOMMU_DMA_IOVA_COOKIE) {
-         iova_off = iova_offset(&cookie->iovad, phys);
-         size = iova_align(&cookie->iovad, size + iova_off);
-@@ -609,6 +628,9 @@ static void *iommu_dma_alloc_remap(struct device
-*dev, size_t size,
-     dma_addr_t iova;
-     void *vaddr;
-
-+    if (unlikely(handle_deferred_device(dev, domain)))
-+        return DMA_MAPPING_ERROR;
-+
-     *dma_handle = DMA_MAPPING_ERROR;
-
-     min_size = alloc_sizes & -alloc_sizes;
-@@ -836,7 +858,7 @@ static dma_addr_t iommu_dma_map_page(struct device
-*dev, struct page *page,
-     bool coherent = dev_is_dma_coherent(dev);
-     dma_addr_t dma_handle;
-
--    dma_handle =__iommu_dma_map(dev, phys, size,
-+    dma_handle = __iommu_dma_map(dev, phys, size,
-             dma_info_to_prot(dir, coherent, attrs),
-             iommu_get_dma_domain(dev));
-     if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
-@@ -954,6 +976,9 @@ static int iommu_dma_map_sg(struct device *dev,
-struct scatterlist *sg,
-     unsigned long mask = dma_get_seg_boundary(dev);
-     int i;
-
-+    if (unlikely(handle_deferred_device(dev, domain)))
-+        return 0;
-+
-     if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-         iommu_dma_sync_sg_for_device(dev, sg, nents, dir);
-
--- 
-2.20.0
-
-On Tue, May 7, 2019 at 7:40 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Mon, May 06, 2019 at 07:52:04PM +0100, Tom Murphy wrote:
-> > +static int handle_deferred_device(struct device *dev)
-> > +{
-> > +     struct iommu_domain *domain;
-> > +     const struct iommu_ops *ops;
-> > +
-> > +     if (!is_kdump_kernel())
-> > +             return 0;
-> > +
-> > +     domain = iommu_get_domain_for_dev(dev);
->
-> > -     dma_handle =__iommu_dma_map(dev, phys, size,
-> > +     if (unlikely(handle_deferred_device(dev)))
-> > +             return DMA_MAPPING_ERROR;
-> > +
-> > +     dma_handle = __iommu_dma_map(dev, phys, size,
->
-> __iommu_dma_map already looks up the domain, and as far as I can
-> tell all callers need the handle_deferred_device call.  Should we
-> just move it to there and pass the domain from the caller?
->
-> Also shouldn't the iommu_attach_device call inside
-> handle_deferred_device also get an unlikely marker?
+MTUuMDUuMjAxOSAxMDoxNywgSm9zZXBoIExvINC/0LjRiNC10YI6Cj4gT24gNS8xNS8xOSAxMjoy
+OCBBTSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+PiAxMC4wNS4yMDE5IDExOjQ3LCBKb3NlcGgg
+TG8g0L/QuNGI0LXRgjoKPj4+IEFkZCB0aGUgYmluZGluZyBkb2N1bWVudCBmb3IgdGhlIGV4dGVy
+bmFsIG1lbW9yeSBjb250cm9sbGVyIChFTUMpIHdoaWNoCj4+PiBjb21tdW5pY2F0ZXMgd2l0aCBl
+eHRlcm5hbCBMUEREUjQgZGV2aWNlcy4gSXQgaW5jbHVkZXMgdGhlIGJpbmRpbmdzIG9mCj4+PiB0
+aGUgRU1DIG5vZGUgYW5kIGEgc3ViLW5vZGUgb2YgRU1DIHRhYmxlIHdoaWNoIHVuZGVyIHRoZSBy
+ZXNlcnZlZCBtZW1vcnkKPj4+IG5vZGUuIFRoZSBFTUMgdGFibGUgY29udGFpbnMgdGhlIGRhdGEg
+b2YgdGhlIHJhdGVzIHRoYXQgRU1DIHN1cHBvcnRlZC4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBK
+b3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4KPj4+IC0tLQo+Pj4gdjM6Cj4+PiAtIGRyb3Ag
+dGhlIGJpbmRpbmdzIG9mIEVNQyB0YWJsZQo+Pj4gLSBhZGQgbWVtb3J5LXJlZ2lvbiBhbmQgcmVz
+ZXJ2ZWQtbWVtb3J5IG5vZGUgZm9yIEVNQyB0YWJsZQo+Pj4gLS0tCj4+PiDCoCAuLi4vbnZpZGlh
+LHRlZ3JhMjEwLWVtYy50eHTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA1
+NSArKysrKysrKysrKysrKysrKysrCj4+PiDCoCAxIGZpbGUgY2hhbmdlZCwgNTUgaW5zZXJ0aW9u
+cygrKQo+Pj4gwqAgY3JlYXRlIG1vZGUgMTAwNjQ0Cj4+PiBEb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJzL252aWRpYSx0ZWdyYTIxMC1lbWMudHh0Cj4+
+Pgo+Pj4KPj4+IGRpZmYgLS1naXQKPj4+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL21lbW9yeS1jb250cm9sbGVycy9udmlkaWEsdGVncmEyMTAtZW1jLnR4dAo+Pj4gYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVtb3J5LWNvbnRyb2xsZXJzL252aWRpYSx0
+ZWdyYTIxMC1lbWMudHh0Cj4+Pgo+Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPj4+IGluZGV4IDAw
+MDAwMDAwMDAwMC4uZDY1YWVlZjIzMjljCj4+PiAtLS0gL2Rldi9udWxsCj4+PiArKysKPj4+IGIv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lbW9yeS1jb250cm9sbGVycy9udmlk
+aWEsdGVncmEyMTAtZW1jLnR4dAo+Pj4KPj4+IEBAIC0wLDAgKzEsNTUgQEAKPj4+ICtOVklESUEg
+VGVncmEyMTAgU29DIEVNQyAoZXh0ZXJuYWwgbWVtb3J5IGNvbnRyb2xsZXIpCj4+PiArPT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQo+Pj4gKwo+Pj4g
+K0RldmljZSBub2RlCj4+PiArPT09PT09PT09PT0KPj4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzIDoK
+Pj4+ICstIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgIm52aWRpYSx0ZWdyYTIxMC1lbWMiLgo+Pj4g
+Ky0gcmVnIDogcGh5c2ljYWwgYmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIGNvbnRyb2xs
+ZXIncyByZWdpc3RlcnMuCj4+PiArLSBjbG9ja3MgOiBwaGFuZGxlcyBvZiB0aGUgcG9zc2libGUg
+c291cmNlIGNsb2Nrcy4KPj4+ICstIGNsb2NrLW5hbWVzIDogbmFtZXMgb2YgdGhlIHBvc3NpYmxl
+IHNvdXJjZSBjbG9ja3MuCj4+PiArLSBpbnRlcnJ1cHRzIDogU2hvdWxkIGNvbnRhaW4gdGhlIEVN
+QyBnZW5lcmFsIGludGVycnVwdC4KPj4+ICstIG1lbW9yeS1yZWdpb24gOiBwaGFuZGxlIHRvIHRo
+ZSByZXNlcnZlZCBtZW1vcnkgKHNlZQo+Pj4gK8KgCj4+PiBEb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvcmVzZXJ2ZWQtbWVtb3J5L3Jlc2VydmVkLW1lbW9yeS50eHQpIHdoaWNoCj4+
+Pgo+Pj4gK8KgIGNvbnRhaW5zIGEgc3ViLW5vZGUgb2YgRU1DIHRhYmxlLgo+Pj4gKy0gbnZpZGlh
+LG1lbW9yeS1jb250cm9sbGVyIDogcGhhbmRsZSBvZiB0aGUgbWVtb3J5IGNvbnRyb2xsZXIuCj4+
+PiArCj4+PiArUmVzZXJ2ZWQgbWVtb3J5IG5vZGUKPj4+ICs9PT09PT09PT09PT09PT09PT09PQo+
+Pj4gK1Nob3VsZCBjb250YWluIGEgc3ViLW5vZGUgb2YgRU1DIHRhYmxlIHdpdGggcmVxdWlyZWQg
+cHJvcGVydGllczoKPj4+ICstIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgIm52aWRpYSx0ZWdyYTIx
+MC1lbWMtdGFibGUiLgo+Pj4gKy0gcmVnIDogcGh5c2ljYWwgYWRkcmVzcyBhbmQgbGVuZ3RoIG9m
+IHRoZSBsb2NhdGlvbiBvZiBFTUMgdGFibGUuCj4+PiArCj4+PiArRXhhbXBsZToKPj4+ICvCoMKg
+wqAgcmVzZXJ2ZWQtbWVtb3J5IHsKPj4+ICvCoMKgwqDCoMKgwqDCoCAjYWRkcmVzcy1jZWxscyA9
+IDwyPjsKPj4+ICvCoMKgwqDCoMKgwqDCoCAjc2l6ZS1jZWxscyA9IDwyPjsKPj4+ICvCoMKgwqDC
+oMKgwqDCoCByYW5nZXM7Cj4+PiArCj4+PiArwqDCoMKgwqDCoMKgwqAgZW1jX3RhYmxlOiBlbWMt
+dGFibGVAOGJlMDAwMDAgewo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29tcGF0aWJsZSA9
+ICJudmlkaWEsdGVncmEyMTAtZW1jLXRhYmxlIjsKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHJlZyA9IDwweDAgMHg4YmUwMDAwMCAweDAgMHgxMDAwMD47Cj4+PiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBzdGF0dXMgPSAib2theSI7Cj4+PiArwqDCoMKgwqDCoMKgwqAgfTsKPj4KPj4gWW91
+IGVzc2VudGlhbGx5IG1vdmVkIHRoZSB2MSBiaW5kaW5nIGludG8gb2JzY3VyZSBhbmQgdW5kb2N1
+bWVudGVkIGJsb2IsCj4+IGlnbm9yaW5nIHByZXZpb3VzIHJldmlldyBjb21tZW50cy4gVGhpcyBp
+cyBhIHZlcnkgb2RkIG1vdmUuLi4gcGxlYXNlCj4+IGV4cGxhaW4gd2hhdCBpcyBnb2luZyBvbi4K
+Pj4KPiAKPiBEaXNjdXNzZWQgd2l0aCBUaGllcnJ5IG9mZmxpbmUgd2hpY2ggd2F5IHdlIHByZWZl
+ciB0byBwYXNzIHRoZSBFTUMgdGFibGUKPiB0byB0aGUga2VybmVsLiBTb21lIHJlYXNvbnMgYmVs
+b3cgd2UgZGVjaWRlIHRvIGNob3NlIHRoaXMgb25lICh2aWEKPiBiaW5hcnkgYmxvYikuCj4gCj4g
+LSBUaGUgRU1DIHRhYmxlIGlzIG11Y2ggYmlnZ2VyIHRoYW4gdGhlIHByZXZpb3VzIFRlZ3JhIGdl
+bmVyYXRpb25zCj4gKExQRERSNCB2LnMuIExQRERSMi8zKS4gSXQncyBoYXJkZXIgdG8gc2V0dGxl
+IGluIHRoZSByZXZpZXcgcHJvY2Vzcy4gQW5kCj4gaWYgdGhlcmUgaXMgYSBuZXcgZml4IG9mIHRo
+ZSB0YWJsZSBpbiB0aGUgZnV0dXJlLCB3ZSdsbCBuZWVkIHRvIGdvCj4gdGhyb3VnaCB0aGF0IGFn
+YWluLgoKSSBkb24ndCB0aGluayB0aGF0IHRoaXMgYSB2ZXJ5IGdvb2QgZXhjdXNlIGZvciBub3Qg
+ZG9jdW1lbnRpbmcgdGhlCmJsb2IncyBzdHJ1Y3R1cmUuCgo+IC0gQmVjYXVzZSBpdCdzIExQRERS
+NCB3ZSB3YW50IHRvIHN1cHBvcnQgaGVyZSwgdG8gc3VwcG9ydCBoaWdoZXIgcmF0ZXMsCj4gdGhl
+IGRldmljZXMgaGF2ZSBtdXN0IGJlIGdvbmUgdGhyb3VnaCB0aGUgdHJhaW5pbmcgcHJvY2Vzcywg
+d2hpY2ggaXMKPiBkb25lIGluIHRoZSBmaXJtd2FyZS4gV2hpY2ggbWVhbnMgV2UgYWxyZWFkeSBo
+YXZlIHRoZSB0YWJsZSBzb21ld2hlcmUgaW4KPiB0aGUgbWVtb3J5IGFuZCBrZXJuZWwgY2FuIGp1
+c3QgcmUtdXNlIHRoYXQuIE5vIG5lZWQgdG8gY29udmVydCB0aGVtIGJhY2sKPiB0byBEVCBhbmQg
+cGFzcyB0byB0aGUga2VybmVsLiBUaGlzIGlzIG11Y2ggZWFzaWVyIHRvIG1haW50YWluIGluIHRo
+ZQo+IGZ1dHVyZSBpZiB0aGVyZSBpcyBzb21ldGhpbmcgbmVlZHMgdG8gZml4Lgo+IC0gV2l0aCB0
+aGUgbWVjaGFuaXNtIGFib3ZlLCB3ZSBkb24ndCBuZWVkIHRvIG1haW50YWluIHRoZSBodWdlIEVN
+QyB0YWJsZQo+IGluIHRoZSBEVCBmaWxlIGxpa2UgYmVsb3cuCj4gaHR0cDovL3BhdGNod29yay5v
+emxhYnMub3JnL3BhdGNoLzEwNjM4ODYvCj4gaHR0cDovL3BhdGNod29yay5vemxhYnMub3JnL3Bh
+dGNoLzEwNjM4ODkvCgpUaGUgYmxvYidzIEVNQyB0YWJsZSBjb250YWlucyBzdHVmZiBzcGVjaWZp
+YyB0byBkb3duc3RyZWFtIGtlcm5lbCwgaGVuY2UKaXQncyBhIG5vdCB2ZXJ5IHJlLXVzYWJsZSBk
+b3duc3RyZWFtIHNvZnR3YXJlIEFCSSBtaXhlZCB3aXRoIEhXCmRlc2NyaXB0aW9uIHRoYXQgeW91
+J3JlIGJyaW5naW5nIGludG8gdXBzdHJlYW0uIFRoaXMgaXMgbm90IHZlcnkKd2VsY29tZWQsIGFs
+dGhvdWdoIEkgZG9uJ3Qgc2VlIGl0IGFzIGEgYmlnIHByb2JsZW0gaWYgeW91J2xsIHN0YXRlIHRo
+YXQKYWxsIGNsZWFybHkgaW4gdGhlIGNvbW1pdCBtZXNzYWdlIHdpdGggYSBzb2xpZCBleHBsYW5h
+dGlvbiB3aHkgaXQgaXMgdGhlCmJlc3QgcG9zc2libGUgb3B0aW9uLgoKPiBBbmQgc29ycnksIG1h
+eWJlIGl0J3Mgbm90IGNsZWFyIGF0IHRoYXQgbW9tZW50LCBidXQgSSBkaWQgbWVudGlvbiB0aGF0
+Cj4gd2Ugd2FudCB0byBnbyB3aXRoIHRoZSBuZXcgbWV0aG9kICh2aWEgYmluYXJ5IGJsb2IpIGlu
+IHRoZSBwcmV2aW91cyByZXZpZXcuCj4gUGxlYXNlIHNlZSBodHRwOi8vcGF0Y2h3b3JrLm96bGFi
+cy5vcmcvcGF0Y2gvMTA4NDQ2Ny8KCk9rYXkuIEl0IHdpbGwgYmUgYmV0dGVyIGlmIHRoZSBkaXNj
+dXNzaW9uIGhhcHBlbmVkIHB1YmxpY2x5LCBhdCBsZWFzdCBJCmhvcGUgdGhhdCBSb2IgaXMgaW52
+b2x2ZWQgaW4gaXQuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9saW51eC1hcm0ta2VybmVsCg==
