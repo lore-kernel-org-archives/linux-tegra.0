@@ -1,55 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
-Date: Wed, 15 May 2019 12:42:33 +0100
-Message-ID: <20190515114233.GF5613@sirena.org.uk>
-References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
- <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
- <cf4bd167-49b8-5649-a2e2-7bf5ddcc6e2d@nvidia.com>
- <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190515093522.GC5613@sirena.org.uk>
- <BYAPR12MB3398ED52051F5BFA08D7B3A6C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190515112900.GE5613@sirena.org.uk>
- <BYAPR12MB3398528B86D3DE9CC3AA6D85C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v1 6/6] soc/tegra: regulators: Add regulators coupler
+ for Tegra30
+Date: Wed, 15 May 2019 14:44:33 +0300
+Message-ID: <3be50306-d3e0-f931-9d6b-0ae0ad5c78ce@gmail.com>
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-7-digetx@gmail.com>
+ <20190508075848.GX14916@sirena.org.uk>
+ <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
+ <20190512090446.GN21483@sirena.org.uk>
+ <3988cfb6-55fe-48c4-5365-ac79871f7fd2@gmail.com>
+ <20190513174000.GH5168@sirena.org.uk>
+ <9e13bbd1-ff28-1570-b1a6-0cc6337b8f6c@gmail.com>
+ <20190515090557.GB5613@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dgjlcl3Tl+kb3YDk"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB3398528B86D3DE9CC3AA6D85C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <20190515090557.GB5613@sirena.org.uk>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Krishna Yarlagadda <kyarlagadda@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+15.05.2019 12:05, Mark Brown пишет:
+> On Tue, May 14, 2019 at 09:30:05PM +0300, Dmitry Osipenko wrote:
+>> 13.05.2019 20:40, Mark Brown пишет:
+> 
+>>> The thing with OPPs is that they specify a whole table of values that
+>>> work together including regulator settings, the result being that you
+>>> have many fewer options but don't need to think about constraints.
+> 
+>> I'm afraid this is just a way of abusing the OPP's. I actually already
+> 
+> There's nothing wrong with handling regulators in an OPP, that's a
+> totally normal thing.
+> 
 
---dgjlcl3Tl+kb3YDk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 15, 2019 at 11:40:41AM +0000, Sowjanya Komatineni wrote:
-> I tried few settings before sending V5 too but didn't made diff.
-> Will try with different email client.
->=20
-> What email client are you using?
-
-I personally use mutt.  I know people also use things like Thunderbird
-and Evolution successfully.  There should be other people at nVidia you
-can ask about how they get things set up I guess?
-
---dgjlcl3Tl+kb3YDk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzb+ygACgkQJNaLcl1U
-h9B1yQf/aoNSV/N3Iq8hWgg8l7YtShuKh8pJ5p5FRa8eM/RrsWiGS0Ih3uARw12Y
-jwhP0HRwm1WMSphc4F/gwbRIS6KiCLmtK21uVfQ8ZhwePMzM7riNNCNInkHsEyq/
-MWm7JRK3YEjPpbqRhzGjUylGbuMqeY2oifTnZPMhLpu98nqZBxdkLlbvVMvQ4Lzq
-bs8R5PeuqWFOZgb2d89fb6jGVheVWKGjP4cxlreDlGd00IlBZDdKFMUlkxqWytj8
-LRLPtjy6Ekaq5qQh7TDrxHkogptz9dQo5cB4gfDPj3AN+UVX7caCwUe2qc3x3e66
-xjey0jls24Elt0FLSZAgUIPOremvZw==
-=Fhe/
------END PGP SIGNATURE-----
-
---dgjlcl3Tl+kb3YDk--
+Only if those regulators are directly related to the hardware unit,
+which is not the case here. Regulators coupling is the right abstraction
+that glues things together, there is absolutely no need in trying to
+make workarounds using OPP.
