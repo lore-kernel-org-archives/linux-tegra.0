@@ -1,78 +1,104 @@
-From: Daniel Wagner <wagi@monom.org>
-Subject: Re: [PATCH 4.4 000/266] 4.4.180-stable review
-Date: Thu, 16 May 2019 13:59:43 +0200
-Message-ID: <75c1f549-9098-933e-ab8b-4d0eeab87ddd@monom.org>
-References: <20190515090722.696531131@linuxfoundation.org>
- <f32de22f-c928-2eaa-ee3f-d2b26c184dd4@nvidia.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
+ pcie_pme_no_msi() APIs
+Date: Thu, 16 May 2019 08:28:07 -0500
+Message-ID: <20190516132807.GB101793@google.com>
+References: <20190513050626.14991-1-vidyas@nvidia.com>
+ <20190513050626.14991-3-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <f32de22f-c928-2eaa-ee3f-d2b26c184dd4@nvidia.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190513050626.14991-3-vidyas@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
+On Mon, May 13, 2019 at 10:36:13AM +0530, Vidya Sagar wrote:
+> Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
+> using these APIs be able to build as loadable modules.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 
-> Boot regression detected for Tegra ...
-> 
-> Test results for stable-v4.4:
->     6 builds:	6 pass, 0 fail
->     15 boots:	6 pass, 9 fail
->     8 tests:	8 pass, 0 fail
-> 
-> Linux version:	4.4.180-rc1-gbe756da
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra30-cardhu-a04
-> 
-> Bisect is point to the following commit ...
-> 
-> # first bad commit: [7849d64a1700ddae1963ff22a77292e9fb5c2983] mm, vmstat: make quiet_vmstat lighter
-> 
-> Reverting this on top v4.4.180-rc1 fixes the problem.  
+Nak, as-is.
 
-I guess the patch depends on another change. I'll try to figure out what
-is missing.
+1) The argument for why this is needed is unconvincing.  If device
+advertises MSI support, we should be able to use it.
 
-> Crash observed ...
+2) If it turns out we really need this, it should be some sort of
+per-device setting rather than a global thing like this.
+
+> ---
+> Changes since [v5]:
+> * Corrected inline implementation of pcie_pme_no_msi() API
 > 
-> [   17.155812] ------------[ cut here ]------------
-> [   17.160431] kernel BUG at /home/jonathanh/workdir/tegra/mlt-linux_stable-4.4/kernel/mm/vmstat.c:1425!
-> [   17.169632] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-> [   17.175450] Modules linked in: ttm
-> [   17.178859] CPU: 0 PID: 92 Comm: kworker/0:2 Not tainted 4.4.179-00160-g7849d64a1700 #8
-> [   17.186843] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [   17.193100] Workqueue: vmstat vmstat_update
-> [   17.197279] task: ee14e700 ti: ee17a000 task.ti: ee17a000
-> [   17.202663] PC is at vmstat_update+0x9c/0xa4
-> [   17.206921] LR is at vmstat_update+0x94/0xa4
-> [   17.211179] pc : [<c00cdd80>]    lr : [<c00cdd78>]    psr: 20000113
-> [   17.211179] sp : ee17bef8  ip : 00000000  fp : eef91ac0
-> [   17.222629] r10: 00000008  r9 : 00000000  r8 : 00000000
-> [   17.227840] r7 : eef99900  r6 : eef91ac0  r5 : eef8f34c  r4 : ee13dc00
-> [   17.234350] r3 : 00000001  r2 : 0000000f  r1 : c0a885e0  r0 : 00000001
-> [   17.240861] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> [   17.247978] Control: 10c5387d  Table: ad02006a  DAC: 00000051
-> [   17.253708] Process kworker/0:2 (pid: 92, stack limit = 0xee17a210)
-> [   17.259957] Stack: (0xee17bef8 to 0xee17c000)
-> [   17.264301] bee0:                                                       ee13dc00 eef8f34c
-> [   17.272459] bf00: eef91ac0 c003b69c eef91ac0 ee17a038 c0a4ba60 eef91ac0 eef91ad4 ee17a038
-> [   17.280618] bf20: c0a4ba60 ee13dc18 ee13dc00 00000008 eef91ac0 c003b8f8 00000000 c09f6100
-> [   17.288778] bf40: c003b8b0 ee102a00 00000000 ee13dc00 c003b8b0 00000000 00000000 00000000
-> [   17.296937] bf60: 00000000 c0040ad0 00000000 00000000 00000000 ee13dc00 00000000 00000000
-> [   17.305094] bf80: ee17bf80 ee17bf80 00000000 00000000 ee17bf90 ee17bf90 ee17bfac ee102a00
-> [   17.313253] bfa0: c00409d0 00000000 00000000 c000f650 00000000 00000000 00000000 00000000
-> [   17.321412] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [   17.329570] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-> [   17.337733] [<c00cdd80>] (vmstat_update) from [<c003b69c>] (process_one_work+0x124/0x338)
-> [   17.345893] [<c003b69c>] (process_one_work) from [<c003b8f8>] (worker_thread+0x48/0x4c4)
-> [   17.353966] [<c003b8f8>] (worker_thread) from [<c0040ad0>] (kthread+0x100/0x118)
-> [   17.361348] [<c0040ad0>] (kthread) from [<c000f650>] (ret_from_fork+0x14/0x24)
-> [   17.368553] Code: e5930010 eb05c417 e3500000 08bd8070 (e7f001f2) 
-> [   17.374633] ---[ end trace 17cf004302766810 ]---
-
-Thanks,
-Daniel
+> Changes since [v4]:
+> * None
+> 
+> Changes since [v3]:
+> * None
+> 
+> Changes since [v2]:
+> * Exported pcie_pme_no_msi() API after making pcie_pme_msi_disabled a static
+> 
+> Changes since [v1]:
+> * This is a new patch in v2 series
+> 
+>  drivers/pci/pcie/pme.c     | 14 +++++++++++++-
+>  drivers/pci/pcie/portdrv.h | 14 ++------------
+>  2 files changed, 15 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
+> index 54d593d10396..d5e0ea4a62fc 100644
+> --- a/drivers/pci/pcie/pme.c
+> +++ b/drivers/pci/pcie/pme.c
+> @@ -25,7 +25,19 @@
+>   * that using MSI for PCIe PME signaling doesn't play well with PCIe PME-based
+>   * wake-up from system sleep states.
+>   */
+> -bool pcie_pme_msi_disabled;
+> +static bool pcie_pme_msi_disabled;
+> +
+> +void pcie_pme_disable_msi(void)
+> +{
+> +	pcie_pme_msi_disabled = true;
+> +}
+> +EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
+> +
+> +bool pcie_pme_no_msi(void)
+> +{
+> +	return pcie_pme_msi_disabled;
+> +}
+> +EXPORT_SYMBOL_GPL(pcie_pme_no_msi);
+>  
+>  static int __init pcie_pme_setup(char *str)
+>  {
+> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+> index 944827a8c7d3..1d441fe26c51 100644
+> --- a/drivers/pci/pcie/portdrv.h
+> +++ b/drivers/pci/pcie/portdrv.h
+> @@ -129,18 +129,8 @@ void pcie_port_bus_unregister(void);
+>  struct pci_dev;
+>  
+>  #ifdef CONFIG_PCIE_PME
+> -extern bool pcie_pme_msi_disabled;
+> -
+> -static inline void pcie_pme_disable_msi(void)
+> -{
+> -	pcie_pme_msi_disabled = true;
+> -}
+> -
+> -static inline bool pcie_pme_no_msi(void)
+> -{
+> -	return pcie_pme_msi_disabled;
+> -}
+> -
+> +void pcie_pme_disable_msi(void);
+> +bool pcie_pme_no_msi(void);
+>  void pcie_pme_interrupt_enable(struct pci_dev *dev, bool enable);
+>  #else /* !CONFIG_PCIE_PME */
+>  static inline void pcie_pme_disable_msi(void) {}
+> -- 
+> 2.17.1
+> 
