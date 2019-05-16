@@ -1,53 +1,138 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.1 00/46] 5.1.3-stable review
-Date: Thu, 16 May 2019 12:04:32 +0100
-Message-ID: <5b7b4163-f616-3cd8-ea45-3fd3f495ae7f@nvidia.com>
-References: <20190515090616.670410738@linuxfoundation.org>
+From: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [PATCH V3 1/4] dt-binding: Tegra194 pinctrl support
+Date: Thu, 16 May 2019 17:23:11 +0530
+Message-ID: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: linus.walleij@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com, vidyas@nvidia.com, Krishna Yarlagadda <kyarlagadda@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Add binding doc for Tegra 194 pinctrl driver
 
-On 15/05/2019 11:56, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.3 release.
-> There are 46 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri 17 May 2019 09:04:22 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+---
+Changes in V3:
+remove optional fields not supported by pins published here
 
-All tests are passing for Tegra ...
+ .../bindings/pinctrl/nvidia,tegra194-pinmux.txt    | 107 +++++++++++++++++++++
+ 1 file changed, 107 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
 
-Test results for stable-v5.1:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
-
-Linux version:	5.1.3-rc1-g6c9703a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+new file mode 100644
+index 0000000..8763f44
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+@@ -0,0 +1,107 @@
++NVIDIA Tegra194 pinmux controller
++
++Required properties:
++- compatible: "nvidia,tegra194-pinmux"
++- reg: Should contain a list of base address and size pairs for:
++  - first entry: The APB_MISC_GP_*_PADCTRL registers (pad control)
++  - second entry: The PINMUX_AUX_* registers (pinmux)
++
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning of the
++phrase "pin configuration node".
++
++Tegra's pin configuration nodes act as a container for an arbitrary number of
++subnodes. Each of these subnodes represents some desired configuration for a
++pin, a group, or a list of pins or groups. This configuration can include the
++mux function to select on those pin(s)/group(s), and various pin configuration
++parameters, such as pull-up, tristate, drive strength, etc.
++
++See the TRM to determine which properties and values apply to each pin/group.
++Macro values for property values are defined in
++include/dt-binding/pinctrl/pinctrl-tegra.h.
++
++Required subnode-properties:
++- nvidia,pins : An array of strings. Each string contains the name of a pin or
++    group. Valid values for these names are listed below.
++
++Optional subnode-properties:
++- nvidia,function: A string containing the name of the function to mux to the
++    pin or group.
++- nvidia,pull: Integer, representing the pull-down/up to apply to the pin.
++    0: none, 1: down, 2: up.
++- nvidia,tristate: Integer.
++    0: drive, 1: tristate.
++- nvidia,enable-input: Integer. Enable the pin's input path.
++    enable :TEGRA_PIN_ENABLE and
++    disable or output only: TEGRA_PIN_DISABLE.
++- nvidia,open-drain: Integer.
++    enable: TEGRA_PIN_ENABLE.
++    disable: TEGRA_PIN_DISABLE.
++- nvidia,lock: Integer. Lock the pin configuration against further changes
++    until reset.
++    enable: TEGRA_PIN_ENABLE.
++    disable: TEGRA_PIN_DISABLE.
++- nvidia,io-hv: Integer. Select high-voltage receivers.
++    normal: TEGRA_PIN_DISABLE
++    high: TEGRA_PIN_ENABLE
++- nvidia,schmitt: Integer. Enables Schmitt Trigger on the input.
++    normal: TEGRA_PIN_DISABLE
++    high: TEGRA_PIN_ENABLE
++- nvidia,drive-type: Integer. Valid range 0...3.
++- nvidia,pull-down-strength: Integer. Controls drive strength. 0 is weakest.
++    The range of valid values depends on the pingroup. See "CAL_DRVDN" in the
++    Tegra TRM.
++- nvidia,pull-up-strength: Integer. Controls drive strength. 0 is weakest.
++    The range of valid values depends on the pingroup. See "CAL_DRVUP" in the
++    Tegra TRM.
++
++Valid values for pin and group names (nvidia,pin) are:
++
++    These correspond to Tegra PADCTL_* (pinmux) registers.
++
++  Mux groups:
++
++    These correspond to Tegra PADCTL_* (pinmux) registers. Any property
++    that exists in those registers may be set for the following pin names.
++
++    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
++
++  Drive groups:
++
++    These registers controls a single pin for which a mux group exists.
++    See the list above for the pin name to use when configuring the pinmux.
++
++    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
++
++Valid values for nvidia,functions are:
++
++    pe5
++
++Power Domain:
++    pex_l5_clkreq_n_pgg0 and pex_l5_rst_n_pgg1 are part of PCIE C5 power
++    partition. Client devices must enable this partition before accessing
++    these pins here.
++
++
++Example:
++
++		tegra_pinctrl: pinmux: pinmux@2430000 {
++			compatible = "nvidia,tegra194-pinmux";
++			reg = <0x2430000 0x17000
++			       0xc300000 0x4000>;
++
++			pinctrl-names = "pex_rst";
++			pinctrl-0 = <&pex_rst_c5_out_state>;
++
++			pex_rst_c5_out_state: pex_rst_c5_out {
++				pex_rst {
++					nvidia,pins = "pex_l5_rst_n_pgg1";
++					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
++					nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
++					nvidia,tristate = <TEGRA_PIN_DISABLE>;
++					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				};
++			};
++		};
 -- 
-nvpublic
+2.7.4
