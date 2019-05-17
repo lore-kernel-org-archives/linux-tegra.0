@@ -1,239 +1,82 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V3 3/4] pinctrl: tegra: Add Tegra194 pinmux driver
-Date: Fri, 17 May 2019 17:04:21 +0530
-Message-ID: <9066b6bd-c8ca-2d5b-dd1e-20c94a492cbf@nvidia.com>
-References: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
- <1558007594-14824-3-git-send-email-kyarlagadda@nvidia.com>
+Subject: [PATCH V7 01/15] PCI: Add #defines for some of PCIe spec r4.0 features
+Date: Fri, 17 May 2019 18:08:32 +0530
+Message-ID: <20190517123846.3708-2-vidyas@nvidia.com>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1558007594-14824-3-git-send-email-kyarlagadda@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <20190517123846.3708-1-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linus.walleij@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Cc: pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
+Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/16/2019 5:23 PM, Krishna Yarlagadda wrote:
-> Tegra194 has PCIE L5 rst and clkreq pins which need to be controlled
-> dynamically at runtime. This driver supports change pinmux for these
-> pins. Pinmux for rest of the pins is set statically by bootloader and
-> will not be changed by this driver
-> 
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
-> ---
-> Changes in V3:
-> Fix build issue observed with previous version
-> 
->   drivers/pinctrl/tegra/Kconfig            |   4 +
->   drivers/pinctrl/tegra/Makefile           |   1 +
->   drivers/pinctrl/tegra/pinctrl-tegra194.c | 170 +++++++++++++++++++++++++++++++
->   3 files changed, 175 insertions(+)
->   create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra194.c
-> 
-> diff --git a/drivers/pinctrl/tegra/Kconfig b/drivers/pinctrl/tegra/Kconfig
-> index 24e20cc..6f79f1f 100644
-> --- a/drivers/pinctrl/tegra/Kconfig
-> +++ b/drivers/pinctrl/tegra/Kconfig
-> @@ -23,6 +23,10 @@ config PINCTRL_TEGRA210
->   	bool
->   	select PINCTRL_TEGRA
->   
-> +config PINCTRL_TEGRA194
-> +	bool
-> +	select PINCTRL_TEGRA
-> +
->   config PINCTRL_TEGRA_XUSB
->   	def_bool y if ARCH_TEGRA
->   	select GENERIC_PHY
-> diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
-> index bbcb043..ead4e10 100644
-> --- a/drivers/pinctrl/tegra/Makefile
-> +++ b/drivers/pinctrl/tegra/Makefile
-> @@ -5,4 +5,5 @@ obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
->   obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
->   obj-$(CONFIG_PINCTRL_TEGRA124)		+= pinctrl-tegra124.o
->   obj-$(CONFIG_PINCTRL_TEGRA210)		+= pinctrl-tegra210.o
-> +obj-$(CONFIG_PINCTRL_TEGRA194)		+= pinctrl-tegra194.o
->   obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+= pinctrl-tegra-xusb.o
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra194.c b/drivers/pinctrl/tegra/pinctrl-tegra194.c
-> new file mode 100644
-> index 0000000..957ef19
-> --- /dev/null
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra194.c
-> @@ -0,0 +1,170 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Pinctrl data for the NVIDIA Tegra194 pinmux
-> + *
-> + * Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinmux.h>
-> +
-> +#include "pinctrl-tegra.h"
-> +
-> +/* Define unique ID for each pins */
-> +enum pin_id {
-> +	TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0 = 256,
-> +	TEGRA_PIN_PEX_L5_RST_N_PGG1 = 257,
-> +	TEGRA_PIN_NUM_GPIOS = 258,
-> +};
-> +
-> +/* Table for pin descriptor */
-> +static const struct pinctrl_pin_desc tegra194_pins[] = {
-> +	PINCTRL_PIN(TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0,
-> +		    "TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0"),
-> +	PINCTRL_PIN(TEGRA_PIN_PEX_L5_RST_N_PGG1,
-> +		    "TEGRA_PIN_PEX_L5_RST_N_PGG1"),
-> +};
-> +
-> +static const unsigned int pex_l5_clkreq_n_pgg0_pins[] = {
-> +	TEGRA_PIN_PEX_L5_CLKREQ_N_PGG0,
-> +};
-> +
-> +static const unsigned int pex_l5_rst_n_pgg1_pins[] = {
-> +	TEGRA_PIN_PEX_L5_RST_N_PGG1,
-> +};
-> +
-> +/* Define unique ID for each function */
-> +enum tegra_mux_dt {
-> +	TEGRA_MUX_RSVD0,
-> +	TEGRA_MUX_RSVD1,
-> +	TEGRA_MUX_RSVD2,
-> +	TEGRA_MUX_RSVD3,
-> +	TEGRA_MUX_PE5,
-> +};
-> +
-> +/* Make list of each function name */
-> +#define TEGRA_PIN_FUNCTION(lid)			\
-> +	{					\
-> +		.name = #lid,			\
-> +	}
-> +static struct tegra_function tegra194_functions[] = {
-> +	TEGRA_PIN_FUNCTION(rsvd0),
-> +	TEGRA_PIN_FUNCTION(rsvd1),
-> +	TEGRA_PIN_FUNCTION(rsvd2),
-> +	TEGRA_PIN_FUNCTION(rsvd3),
-> +	TEGRA_PIN_FUNCTION(pe5),
-> +};
-> +
-> +#define DRV_PINGROUP_ENTRY_Y(r, drvdn_b, drvdn_w, drvup_b,	\
-> +			     drvup_w, slwr_b, slwr_w, slwf_b,	\
-> +			     slwf_w, bank)			\
-> +		.drv_reg = ((r)),			\
-> +		.drv_bank = bank,				\
-> +		.drvdn_bit = drvdn_b,				\
-> +		.drvdn_width = drvdn_w,				\
-> +		.drvup_bit = drvup_b,				\
-> +		.drvup_width = drvup_w,				\
-> +		.slwr_bit = slwr_b,				\
-> +		.slwr_width = slwr_w,				\
-> +		.slwf_bit = slwf_b,				\
-> +		.slwf_width = slwf_w
-> +
-> +#define PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_lpbk, e_input,	\
-> +			     e_od, schmitt_b, drvtype)		\
-> +		.mux_reg = ((r)),				\
-> +		.lpmd_bit = -1,					\
-> +		.lock_bit = -1,					\
-> +		.hsm_bit = -1,					\
-> +		.parked_bit = -1,				\
-> +		.mux_bank = bank,				\
-> +		.mux_bit = 0,					\
-> +		.pupd_reg = ((r)),		\
-> +		.pupd_bank = bank,				\
-> +		.pupd_bit = 2,					\
-> +		.tri_reg = ((r)),				\
-> +		.tri_bank = bank,				\
-> +		.tri_bit = 4,					\
-> +		.einput_bit = e_input,				\
-> +		.odrain_bit = e_od,				\
-> +		.schmitt_bit = schmitt_b,			\
-> +		.drvtype_bit = 13,				\
-> +		.drv_reg = -1
-> +
-> +#define drive_pex_l5_clkreq_n_pgg0				\
-> +	DRV_PINGROUP_ENTRY_Y(0x14004, 12, 5, 20, 5, -1, -1, -1, -1, 0)
-> +#define drive_pex_l5_rst_n_pgg1					\
-> +	DRV_PINGROUP_ENTRY_Y(0x1400c, 12, 5, 20, 5, -1, -1, -1, -1, 0)
-> +
-> +#define PINGROUP(pg_name, f0, f1, f2, f3, r, bank, pupd, e_lpbk,	\
-> +		 e_input, e_lpdr, e_od, schmitt_b, drvtype, io_rail)	\
-> +	{							\
-> +		.name = #pg_name,				\
-> +		.pins = pg_name##_pins,				\
-> +		.npins = ARRAY_SIZE(pg_name##_pins),		\
-> +			.funcs = {				\
-> +				TEGRA_MUX_##f0,			\
-> +				TEGRA_MUX_##f1,			\
-> +				TEGRA_MUX_##f2,			\
-> +				TEGRA_MUX_##f3,			\
-> +			},					\
-> +		PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_lpbk,	\
-> +				     e_input, e_od,		\
-> +				     schmitt_b, drvtype),	\
-> +		drive_##pg_name,				\
-> +	}
-> +
-> +static const struct tegra_pingroup tegra194_groups[] = {
-> +	PINGROUP(pex_l5_clkreq_n_pgg0, PE5, RSVD1, RSVD2, RSVD3, 0x14000, 0,
-> +		 Y, -1, 6, 8, 11, 12, N, "vddio_pex_ctl_2"),
-> +	PINGROUP(pex_l5_rst_n_pgg1, PE5, RSVD1, RSVD2, RSVD3, 0x14008, 0,
-> +		 Y, -1, 6, 8, 11, 12, N, "vddio_pex_ctl_2"),
-> +};
-> +
-> +static const struct tegra_pinctrl_soc_data tegra194_pinctrl = {
-> +	.ngpios = TEGRA_PIN_NUM_GPIOS,
-> +	.pins = tegra194_pins,
-> +	.npins = ARRAY_SIZE(tegra194_pins),
-> +	.functions = tegra194_functions,
-> +	.nfunctions = ARRAY_SIZE(tegra194_functions),
-> +	.groups = tegra194_groups,
-> +	.ngroups = ARRAY_SIZE(tegra194_groups),
-> +	.hsm_in_mux = true,
-> +	.schmitt_in_mux = true,
-> +	.drvtype_in_mux = true,
-> +};
-> +
-> +static int tegra194_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	return tegra_pinctrl_probe(pdev, &tegra194_pinctrl);
-> +}
-> +
-> +static const struct of_device_id tegra194_pinctrl_of_match[] = {
-> +	{ .compatible = "nvidia,tegra194-pinmux", },
-> +	{ },
-> +};
-> +
-> +static struct platform_driver tegra194_pinctrl_driver = {
-> +	.driver = {
-> +		.name = "tegra194-pinctrl",
-> +		.of_match_table = tegra194_pinctrl_of_match,
-> +	},
-> +	.probe = tegra194_pinctrl_probe,
-> +};
-> +
-> +static int __init tegra194_pinctrl_init(void)
-> +{
-> +	return platform_driver_register(&tegra194_pinctrl_driver);
-> +}
-> +arch_initcall(tegra194_pinctrl_init);
-> 
+Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
+features.
 
-Tested-by: Vidya Sagar <vidyas@nvidia.com>
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+---
+Changes since [v6]:
+* None
+
+Changes since [v5]:
+* None
+
+Changes since [v4]:
+* None
+
+Changes since [v3]:
+* None
+
+Changes since [v2]:
+* Updated commit message and description to explicitly mention that defines are
+  added only for some of the features and not all.
+
+Changes since [v1]:
+* None
+
+ include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index 27164769d184..95a1eeb22f49 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -709,7 +709,9 @@
+ #define PCI_EXT_CAP_ID_DPC	0x1D	/* Downstream Port Containment */
+ #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
+ #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
+-#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PTM
++#define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
++#define PCI_EXT_CAP_ID_PL	0x26	/* Physical Layer 16.0 GT/s */
++#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL
+ 
+ #define PCI_EXT_CAP_DSN_SIZEOF	12
+ #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
+@@ -1049,4 +1051,22 @@
+ #define  PCI_L1SS_CTL1_LTR_L12_TH_SCALE	0xe0000000  /* LTR_L1.2_THRESHOLD_Scale */
+ #define PCI_L1SS_CTL2		0x0c	/* Control 2 Register */
+ 
++/* Data Link Feature */
++#define PCI_DLF_CAP		0x04	/* Capabilities Register */
++#define  PCI_DLF_LOCAL_DLF_SUP_MASK	0x007fffff  /* Local Data Link Feature Supported */
++#define  PCI_DLF_EXCHANGE_ENABLE	0x80000000  /* Data Link Feature Exchange Enable */
++#define PCI_DLF_STS		0x08	/* Status Register */
++#define  PCI_DLF_REMOTE_DLF_SUP_MASK	0x007fffff  /* Remote Data Link Feature Supported */
++#define  PCI_DLF_REMOTE_DLF_SUP_VALID	0x80000000  /* Remote Data Link Feature Support Valid */
++
++/* Physical Layer 16.0 GT/s */
++#define PCI_PL_16GT_CAP		0x04	/* Capabilities Register */
++#define PCI_PL_16GT_CTRL	0x08	/* Control Register */
++#define PCI_PL_16GT_STS		0x0c	/* Status Register */
++#define PCI_PL_16GT_LDPM_STS	0x10	/* Local Data Parity Mismatch Status Register */
++#define PCI_PL_16GT_FRDPM_STS	0x14	/* First Retimer Data Parity Mismatch Status Register */
++#define PCI_PL_16GT_SRDPM_STS	0x18	/* Second Retimer Data Parity Mismatch Status Register */
++#define PCI_PL_16GT_RSVD	0x1C	/* Reserved */
++#define PCI_PL_16GT_LE_CTRL	0x20	/* Lane Equalization Control Register */
++
+ #endif /* LINUX_PCI_REGS_H */
+-- 
+2.17.1
