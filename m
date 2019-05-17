@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V7 04/15] PCI: dwc: Move config space capability search API
-Date: Fri, 17 May 2019 18:08:35 +0530
-Message-ID: <20190517123846.3708-5-vidyas@nvidia.com>
+Subject: [PATCH V7 05/15] PCI: dwc: Add ext config space capability search API
+Date: Fri, 17 May 2019 18:08:36 +0530
+Message-ID: <20190517123846.3708-6-vidyas@nvidia.com>
 References: <20190517123846.3708-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,156 +12,97 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Move PCIe config space capability search API to common DesignWare file
-as this can be used by both host and ep mode codes.
+Add extended configuration space capability search API using struct dw_pcie *
+pointer
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
 Changes since [v6]:
-* Exported dw_pcie_find_capability() API
+* None
 
 Changes since [v5]:
 * None
 
 Changes since [v4]:
-* Removed redundant APIs in pcie-designware-ep.c file after moving them
-  to pcie-designware.c file based on Bjorn's comments.
+* None
 
 Changes since [v3]:
-* Rebased to linux-next top of the tree
+* None
 
 Changes since [v2]:
 * None
 
 Changes since [v1]:
-* Removed dw_pcie_find_next_ext_capability() API from here and made a
-  separate patch for that
+* This is a new patch in v2 series
 
- .../pci/controller/dwc/pcie-designware-ep.c   | 37 +----------------
- drivers/pci/controller/dwc/pcie-designware.c  | 40 +++++++++++++++++++
- drivers/pci/controller/dwc/pcie-designware.h  |  2 +
- 3 files changed, 44 insertions(+), 35 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware.c | 41 ++++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.h |  1 +
+ 2 files changed, 42 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 2bf5a35c0570..65f479250087 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -40,39 +40,6 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
- 	__dw_pcie_ep_reset_bar(pci, bar, 0);
- }
- 
--static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
--			      u8 cap)
--{
--	u8 cap_id, next_cap_ptr;
--	u16 reg;
--
--	if (!cap_ptr)
--		return 0;
--
--	reg = dw_pcie_readw_dbi(pci, cap_ptr);
--	cap_id = (reg & 0x00ff);
--
--	if (cap_id > PCI_CAP_ID_MAX)
--		return 0;
--
--	if (cap_id == cap)
--		return cap_ptr;
--
--	next_cap_ptr = (reg & 0xff00) >> 8;
--	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
--}
--
--static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
--{
--	u8 next_cap_ptr;
--	u16 reg;
--
--	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
--	next_cap_ptr = (reg & 0x00ff);
--
--	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
--}
--
- static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
- 				   struct pci_epf_header *hdr)
- {
-@@ -612,9 +579,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 		dev_err(dev, "Failed to reserve memory for MSI/MSI-X\n");
- 		return -ENOMEM;
- 	}
--	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
-+	ep->msi_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
- 
--	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
-+	ep->msix_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSIX);
- 
- 	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
- 	if (offset) {
 diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 83cdd2ce2486..8f53ce63d17e 100644
+index 8f53ce63d17e..3b7d50888caa 100644
 --- a/drivers/pci/controller/dwc/pcie-designware.c
 +++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -14,6 +14,46 @@
+@@ -54,6 +54,47 @@ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
+ }
+ EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
  
- #include "pcie-designware.h"
- 
-+/*
-+ * These APIs are different from standard pci_find_*capability() APIs in the
-+ * sense that former can only be used post device enumeration as they require
-+ * 'struct pci_dev *' pointer whereas these APIs require 'struct dw_pcie *'
-+ * pointer and can be used before link up also.
-+ */
-+static u8 __dw_pcie_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
-+				  u8 cap)
++static int dw_pcie_find_next_ext_capability(struct dw_pcie *pci, int start,
++					    int cap)
 +{
-+	u8 cap_id, next_cap_ptr;
-+	u16 reg;
++	u32 header;
++	int ttl;
++	int pos = PCI_CFG_SPACE_SIZE;
 +
-+	if (!cap_ptr)
++	/* minimum 8 bytes per capability */
++	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
++
++	if (start)
++		pos = start;
++
++	header = dw_pcie_readl_dbi(pci, pos);
++	/*
++	 * If we have no capabilities, this is indicated by cap ID,
++	 * cap version and next pointer all being 0.
++	 */
++	if (header == 0)
 +		return 0;
 +
-+	reg = dw_pcie_readw_dbi(pci, cap_ptr);
-+	cap_id = (reg & 0x00ff);
++	while (ttl-- > 0) {
++		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
++			return pos;
 +
-+	if (cap_id > PCI_CAP_ID_MAX)
-+		return 0;
++		pos = PCI_EXT_CAP_NEXT(header);
++		if (pos < PCI_CFG_SPACE_SIZE)
++			break;
 +
-+	if (cap_id == cap)
-+		return cap_ptr;
++		header = dw_pcie_readl_dbi(pci, pos);
++	}
 +
-+	next_cap_ptr = (reg & 0xff00) >> 8;
-+	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
++	return 0;
 +}
 +
-+u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
++int dw_pcie_find_ext_capability(struct dw_pcie *pci, int cap)
 +{
-+	u8 next_cap_ptr;
-+	u16 reg;
-+
-+	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
-+	next_cap_ptr = (reg & 0x00ff);
-+
-+	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
++	return dw_pcie_find_next_ext_capability(pci, 0, cap);
 +}
-+EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
++EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
 +
  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
  {
  	if (!IS_ALIGNED((uintptr_t)addr, size)) {
 diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 14762e262758..6cb978132469 100644
+index 6cb978132469..fff284098117 100644
 --- a/drivers/pci/controller/dwc/pcie-designware.h
 +++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -251,6 +251,8 @@ struct dw_pcie {
- #define to_dw_pcie_from_ep(endpoint)   \
+@@ -252,6 +252,7 @@ struct dw_pcie {
  		container_of((endpoint), struct dw_pcie, ep)
  
-+u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
-+
+ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
++int dw_pcie_find_ext_capability(struct dw_pcie *pci, int cap);
+ 
  int dw_pcie_read(void __iomem *addr, int size, u32 *val);
  int dw_pcie_write(void __iomem *addr, int size, u32 val);
- 
 -- 
 2.17.1
