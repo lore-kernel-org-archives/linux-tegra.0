@@ -1,46 +1,75 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.4 000/266] 4.4.180-stable review
-Date: Fri, 17 May 2019 09:19:04 +0100
-Message-ID: <da3b7cf4-6ea0-ebe8-c680-2a93fbabde0d@nvidia.com>
-References: <20190515090722.696531131@linuxfoundation.org>
- <f32de22f-c928-2eaa-ee3f-d2b26c184dd4@nvidia.com>
- <75c1f549-9098-933e-ab8b-4d0eeab87ddd@monom.org>
- <20190516164918.GA12641@kroah.com>
- <1f9c1d93-0c00-2eea-96ef-10eb078317a4@monom.org>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
+ pcie_pme_no_msi() APIs
+Date: Fri, 17 May 2019 13:49:49 +0530
+Message-ID: <bd08ccaa-c6ee-f966-91e4-bcd5d99d5cf2@nvidia.com>
+References: <20190513050626.14991-1-vidyas@nvidia.com>
+ <20190513050626.14991-3-vidyas@nvidia.com>
+ <20190513072539.GA27708@infradead.org>
+ <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
+ <20190516133426.GC101793@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1f9c1d93-0c00-2eea-96ef-10eb078317a4@monom.org>
+In-Reply-To: <20190516133426.GC101793@google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Wagner <wagi@monom.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+On 5/16/2019 7:04 PM, Bjorn Helgaas wrote:
+> On Tue, May 14, 2019 at 09:00:19AM +0530, Vidya Sagar wrote:
+>> On 5/13/2019 12:55 PM, Christoph Hellwig wrote:
+>>> On Mon, May 13, 2019 at 10:36:13AM +0530, Vidya Sagar wrote:
+>>>> Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
+>>>> using these APIs be able to build as loadable modules.
+>>>
+>>> But this is a global setting.  If you root port is broken you need
+>>> a per-rootport quirk instead.
+>>>
+>> There is nothing broken in Tegra194 root port as such, rather, this
+>> is more of software configuration choice and we are going with
+>> legacy interrupts than MSI interrupts (as Tegra194 doesn't support
+>> raising PME interrupts through MSI and please note that this doesn't
+>> mean root port is broken).
+> 
+> I think the port *is* broken.  PCIe r4.0, sec 6.1.6, says
+> 
+>    If the Root Port is enabled for edge-triggered interrupt signaling
+>    using MSI or MSI-X, an interrupt message must be sent every time the
+>    logical AND of the following conditions transitions from FALSE to
+>    TRUE:
+> 
+>      * The associated vector is unmasked (not applicable if MSI does
+>        not support PVM).
+> 
+>      * The PME Interrupt Enable bit in the Root Control register is set
+>        to 1b.
+> 
+>      * The PME Status bit in the Root Status register is set.
+> 
+> The Tegra194 root port advertises MSI support, so the above should
+> apply.
+I had a discussion with our hardware engineers and we are of the opinion
+that the root port is not really broken w.r.t MSI as spec doesn't clearly
+say that if root port advertises MSI support, it must generate MSI interrupts
+for PME. All that it says is, if MSI is enabled, then MSI should be raised
+for PME events. Here, by 'enable', we understand that as enabling at
+hardware level to generate MSI interrupt which is not the case with Tegra194.
+In Tegra194, root port is enabled to generate MSI only for hot-plug events and
+legacy interrupts are used for PME, AER. Having said that I'm fine to add a
+quick based on Vendor-ID and Device-IDs of root port in Tegra194 to set
+pdev->no_msi to '1'.
 
-On 17/05/2019 08:44, Daniel Wagner wrote:
-> Hi Greg,
 > 
-> On 16.05.19 18:49, Greg Kroah-Hartman wrote:
->> Jon, thanks for the testing, I'll go drop this patch now from the final
->> version.
+>> Since Tegra194 has only Synopsys DesignWare core based host
+>> controllers and not any other hosts, I think it is fine to call this
+>> API in driver.
 > 
-> That's fine, I wanted to suggest this too. I have some time to look at
-> this next week. So there is no hurry with this patch.
+> It's fine to add a per-device quirk to set pdev->no_msi or something
+> similar.
 > 
->> Daniel, if you can come up with a working series, I'll be glad to take
->> it.  Or, I'd recommend you just move to a newer kernel :)
+> Bjorn
 > 
-> Sure, I will see what is missing.
-> 
-> @Jon if I get have something to test, would you have time to give it a
-> try first?
-
-Yes no problem.
-
-Cheers
-Jon
-
--- 
-nvpublic
