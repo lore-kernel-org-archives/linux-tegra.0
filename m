@@ -1,75 +1,144 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-Date: Fri, 17 May 2019 13:49:49 +0530
-Message-ID: <bd08ccaa-c6ee-f966-91e4-bcd5d99d5cf2@nvidia.com>
-References: <20190513050626.14991-1-vidyas@nvidia.com>
- <20190513050626.14991-3-vidyas@nvidia.com>
- <20190513072539.GA27708@infradead.org>
- <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
- <20190516133426.GC101793@google.com>
+Subject: Re: [PATCH V3 1/4] dt-binding: Tegra194 pinctrl support
+Date: Fri, 17 May 2019 17:03:56 +0530
+Message-ID: <83198211-5c66-6f41-5ec2-cb16eb96fc5f@nvidia.com>
+References: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190516133426.GC101793@google.com>
+In-Reply-To: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linus.walleij@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/16/2019 7:04 PM, Bjorn Helgaas wrote:
-> On Tue, May 14, 2019 at 09:00:19AM +0530, Vidya Sagar wrote:
->> On 5/13/2019 12:55 PM, Christoph Hellwig wrote:
->>> On Mon, May 13, 2019 at 10:36:13AM +0530, Vidya Sagar wrote:
->>>> Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
->>>> using these APIs be able to build as loadable modules.
->>>
->>> But this is a global setting.  If you root port is broken you need
->>> a per-rootport quirk instead.
->>>
->> There is nothing broken in Tegra194 root port as such, rather, this
->> is more of software configuration choice and we are going with
->> legacy interrupts than MSI interrupts (as Tegra194 doesn't support
->> raising PME interrupts through MSI and please note that this doesn't
->> mean root port is broken).
+On 5/16/2019 5:23 PM, Krishna Yarlagadda wrote:
+> Add binding doc for Tegra 194 pinctrl driver
 > 
-> I think the port *is* broken.  PCIe r4.0, sec 6.1.6, says
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+> Changes in V3:
+> remove optional fields not supported by pins published here
 > 
->    If the Root Port is enabled for edge-triggered interrupt signaling
->    using MSI or MSI-X, an interrupt message must be sent every time the
->    logical AND of the following conditions transitions from FALSE to
->    TRUE:
+>   .../bindings/pinctrl/nvidia,tegra194-pinmux.txt    | 107 +++++++++++++++++++++
+>   1 file changed, 107 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
 > 
->      * The associated vector is unmasked (not applicable if MSI does
->        not support PVM).
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+> new file mode 100644
+> index 0000000..8763f44
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+> @@ -0,0 +1,107 @@
+> +NVIDIA Tegra194 pinmux controller
+> +
+> +Required properties:
+> +- compatible: "nvidia,tegra194-pinmux"
+> +- reg: Should contain a list of base address and size pairs for:
+> +  - first entry: The APB_MISC_GP_*_PADCTRL registers (pad control)
+> +  - second entry: The PINMUX_AUX_* registers (pinmux)
+> +
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning of the
+> +phrase "pin configuration node".
+> +
+> +Tegra's pin configuration nodes act as a container for an arbitrary number of
+> +subnodes. Each of these subnodes represents some desired configuration for a
+> +pin, a group, or a list of pins or groups. This configuration can include the
+> +mux function to select on those pin(s)/group(s), and various pin configuration
+> +parameters, such as pull-up, tristate, drive strength, etc.
+> +
+> +See the TRM to determine which properties and values apply to each pin/group.
+> +Macro values for property values are defined in
+> +include/dt-binding/pinctrl/pinctrl-tegra.h.
+> +
+> +Required subnode-properties:
+> +- nvidia,pins : An array of strings. Each string contains the name of a pin or
+> +    group. Valid values for these names are listed below.
+> +
+> +Optional subnode-properties:
+> +- nvidia,function: A string containing the name of the function to mux to the
+> +    pin or group.
+> +- nvidia,pull: Integer, representing the pull-down/up to apply to the pin.
+> +    0: none, 1: down, 2: up.
+> +- nvidia,tristate: Integer.
+> +    0: drive, 1: tristate.
+> +- nvidia,enable-input: Integer. Enable the pin's input path.
+> +    enable :TEGRA_PIN_ENABLE and
+> +    disable or output only: TEGRA_PIN_DISABLE.
+> +- nvidia,open-drain: Integer.
+> +    enable: TEGRA_PIN_ENABLE.
+> +    disable: TEGRA_PIN_DISABLE.
+> +- nvidia,lock: Integer. Lock the pin configuration against further changes
+> +    until reset.
+> +    enable: TEGRA_PIN_ENABLE.
+> +    disable: TEGRA_PIN_DISABLE.
+> +- nvidia,io-hv: Integer. Select high-voltage receivers.
+> +    normal: TEGRA_PIN_DISABLE
+> +    high: TEGRA_PIN_ENABLE
+> +- nvidia,schmitt: Integer. Enables Schmitt Trigger on the input.
+> +    normal: TEGRA_PIN_DISABLE
+> +    high: TEGRA_PIN_ENABLE
+> +- nvidia,drive-type: Integer. Valid range 0...3.
+> +- nvidia,pull-down-strength: Integer. Controls drive strength. 0 is weakest.
+> +    The range of valid values depends on the pingroup. See "CAL_DRVDN" in the
+> +    Tegra TRM.
+> +- nvidia,pull-up-strength: Integer. Controls drive strength. 0 is weakest.
+> +    The range of valid values depends on the pingroup. See "CAL_DRVUP" in the
+> +    Tegra TRM.
+> +
+> +Valid values for pin and group names (nvidia,pin) are:
+> +
+> +    These correspond to Tegra PADCTL_* (pinmux) registers.
+> +
+> +  Mux groups:
+> +
+> +    These correspond to Tegra PADCTL_* (pinmux) registers. Any property
+> +    that exists in those registers may be set for the following pin names.
+> +
+> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+> +
+> +  Drive groups:
+> +
+> +    These registers controls a single pin for which a mux group exists.
+> +    See the list above for the pin name to use when configuring the pinmux.
+> +
+> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+> +
+> +Valid values for nvidia,functions are:
+> +
+> +    pe5
+> +
+> +Power Domain:
+> +    pex_l5_clkreq_n_pgg0 and pex_l5_rst_n_pgg1 are part of PCIE C5 power
+> +    partition. Client devices must enable this partition before accessing
+> +    these pins here.
+> +
+> +
+> +Example:
+> +
+> +		tegra_pinctrl: pinmux: pinmux@2430000 {
+> +			compatible = "nvidia,tegra194-pinmux";
+> +			reg = <0x2430000 0x17000
+> +			       0xc300000 0x4000>;
+> +
+> +			pinctrl-names = "pex_rst";
+> +			pinctrl-0 = <&pex_rst_c5_out_state>;
+> +
+> +			pex_rst_c5_out_state: pex_rst_c5_out {
+> +				pex_rst {
+> +					nvidia,pins = "pex_l5_rst_n_pgg1";
+> +					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
+> +					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
+> +					nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+> +					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
+> +					nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> +					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> +				};
+> +			};
+> +		};
 > 
->      * The PME Interrupt Enable bit in the Root Control register is set
->        to 1b.
-> 
->      * The PME Status bit in the Root Status register is set.
-> 
-> The Tegra194 root port advertises MSI support, so the above should
-> apply.
-I had a discussion with our hardware engineers and we are of the opinion
-that the root port is not really broken w.r.t MSI as spec doesn't clearly
-say that if root port advertises MSI support, it must generate MSI interrupts
-for PME. All that it says is, if MSI is enabled, then MSI should be raised
-for PME events. Here, by 'enable', we understand that as enabling at
-hardware level to generate MSI interrupt which is not the case with Tegra194.
-In Tegra194, root port is enabled to generate MSI only for hot-plug events and
-legacy interrupts are used for PME, AER. Having said that I'm fine to add a
-quick based on Vendor-ID and Device-IDs of root port in Tegra194 to set
-pdev->no_msi to '1'.
 
-> 
->> Since Tegra194 has only Synopsys DesignWare core based host
->> controllers and not any other hosts, I think it is fine to call this
->> API in driver.
-> 
-> It's fine to add a per-device quirk to set pdev->no_msi or something
-> similar.
-> 
-> Bjorn
-> 
+Tested-by: Vidya Sagar <vidyas@nvidia.com>
