@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V7 06/15] dt-bindings: PCI: designware: Add binding for CDM register check
-Date: Fri, 17 May 2019 18:08:37 +0530
-Message-ID: <20190517123846.3708-7-vidyas@nvidia.com>
+Subject: [PATCH V7 07/15] PCI: dwc: Add support to enable CDM register check
+Date: Fri, 17 May 2019 18:08:38 +0530
+Message-ID: <20190517123846.3708-8-vidyas@nvidia.com>
 References: <20190517123846.3708-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,13 +12,11 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add support to enable CDM (Configuration Dependent Module) registers check
-for any data corruption. CDM registers include standard PCIe configuration
-space registers, Port Logic registers and iATU and DMA registers.
-Refer Section S.4 of Synopsys DesignWare Cores PCI Express Controller Databook
-Version 4.90a
+Add support to enable CDM (Configuration Dependent Module) register check
+for any data corruption based on the device-tree flag 'snps,enable-cdm-check'.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
 Changes since [v6]:
 * Changed "enable-cdm-check" to "snps,enable-cdm-check"
@@ -33,30 +31,51 @@ Changes since [v3]:
 * None
 
 Changes since [v2]:
-* Changed flag name from 'cdm-check' to 'enable-cdm-check'
-* Added info about Port Logic and DMA registers being part of CDM
+* Changed code and commit description to reflect change in flag from
+  'cdm-check' to 'enable-cdm-check'
 
 Changes since [v1]:
 * This is a new patch in v2 series
 
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/pci/controller/dwc/pcie-designware.c | 7 +++++++
+ drivers/pci/controller/dwc/pcie-designware.h | 9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index 5561a1c060d0..3fba04da6a59 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -34,6 +34,11 @@ Optional properties:
- - clock-names: Must include the following entries:
- 	- "pcie"
- 	- "pcie_bus"
-+- snps,enable-cdm-check: This is a boolean property and if present enables
-+   automatic checking of CDM (Configuration Dependent Module) registers
-+   for data corruption. CDM registers include standard PCIe configuration
-+   space registers, Port Logic registers, DMA and iATU (internal Address
-+   Translation Unit) registers.
- RC mode:
- - num-viewport: number of view ports configured in hardware. If a platform
-   does not specify it, the driver assumes 2.
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 3b7d50888caa..7cba4ce343e1 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -522,4 +522,11 @@ void dw_pcie_setup(struct dw_pcie *pci)
+ 		break;
+ 	}
+ 	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
++
++	if (of_property_read_bool(np, "snps,enable-cdm-check")) {
++		val = dw_pcie_readl_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS);
++		val |= PCIE_PL_CHK_REG_CHK_REG_CONTINUOUS |
++		       PCIE_PL_CHK_REG_CHK_REG_START;
++		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
++	}
+ }
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index fff284098117..55e9c941e280 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -86,6 +86,15 @@
+ #define PCIE_MISC_CONTROL_1_OFF		0x8BC
+ #define PCIE_DBI_RO_WR_EN		BIT(0)
+ 
++#define PCIE_PL_CHK_REG_CONTROL_STATUS			0xB20
++#define PCIE_PL_CHK_REG_CHK_REG_START			BIT(0)
++#define PCIE_PL_CHK_REG_CHK_REG_CONTINUOUS		BIT(1)
++#define PCIE_PL_CHK_REG_CHK_REG_COMPARISON_ERROR	BIT(16)
++#define PCIE_PL_CHK_REG_CHK_REG_LOGIC_ERROR		BIT(17)
++#define PCIE_PL_CHK_REG_CHK_REG_COMPLETE		BIT(18)
++
++#define PCIE_PL_CHK_REG_ERR_ADDR			0xB28
++
+ /*
+  * iATU Unroll-specific register definitions
+  * From 4.80 core version the address translation will be made by unroll
 -- 
 2.17.1
