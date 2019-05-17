@@ -1,82 +1,124 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V7 01/15] PCI: Add #defines for some of PCIe spec r4.0 features
-Date: Fri, 17 May 2019 18:08:32 +0530
-Message-ID: <20190517123846.3708-2-vidyas@nvidia.com>
-References: <20190517123846.3708-1-vidyas@nvidia.com>
+Subject: [PATCH V7 00/15] Add Tegra194 PCIe support
+Date: Fri, 17 May 2019 18:08:31 +0530
+Message-ID: <20190517123846.3708-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190517123846.3708-1-vidyas@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
-Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
+Cc: devicetree@vger.kernel.org, mmaddireddy@nvidia.com, kthota@nvidia.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, linux-tegra@vger.kernel.org, vidyas@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
-features.
+Tegra194 has six PCIe controllers based on Synopsys DesignWare core.
+There are two Universal PHY (UPHY) blocks with each supporting 12(HSIO:
+Hisg Speed IO) and 8(NVHS: NVIDIA High Speed) lanes respectively.
+Controllers:0~4 use UPHY lanes from HSIO brick whereas Controller:5 uses
+UPHY lanes from NVHS brick. Lane mapping in HSIO UPHY brick to each PCIe
+controller (0~4) is controlled in XBAR module by BPMP-FW. Since PCIe
+core has PIPE interface, a glue module called PIPE-to-UPHY (P2U) is used
+to connect each UPHY lane (applicable to both HSIO and NVHS UPHY bricks)
+to PCIe controller
+This patch series
+- Adds support for P2U PHY driver
+- Adds support for PCIe host controller
+- Adds device tree nodes each PCIe controllers
+- Enables nodes applicable to p2972-0000 platform
+- Adds helper APIs in Designware core driver to get capability regs offset
+- Adds defines for new feature registers of PCIe spec revision 4
+- Makes changes in DesignWare core driver to get Tegra194 PCIe working
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
----
+Testing done on P2972-0000 platform
+- Able to get PCIe link up with on-board Marvel eSATA controller
+- Able to get PCIe link up with NVMe cards connected to M.2 Key-M slot
+- Able to do data transfers with both SATA drives and NVMe cards
+
+Note
+- Enabling x8 slot on P2972-0000 platform requires pinmux driver for Tegra194.
+  It is being worked on currently and hence Controller:5 (i.e. x8 slot) is
+  disabled in this patch series. A future patch series would enable this.
+- This series is based on top of the following series
+  Jisheng's patches to add support to .remove() in Designware sub-system
+  https://patchwork.kernel.org/project/linux-pci/list/?series=98559
+  (Jisheng's patches are now accepted and applied for v5.2)
+  My patches made on top of Jisheng's patches to export various symbols
+  https://patchwork.kernel.org/project/linux-pci/list/?series=101259
+
 Changes since [v6]:
-* None
+* Took care of review comments from Rob
+* Added a quirk to disable MSI for root ports
+* Removed using pcie_pme_disable_msi() API in host controller driver
 
 Changes since [v5]:
-* None
+* Removed patch that exports pcie_bus_config symbol
+* Took care of review comments from Thierry and Rob
 
 Changes since [v4]:
-* None
+* Removed redundant APIs in pcie-designware-ep.c file after moving them
+  to pcie-designware.c file based on Bjorn's review comments
 
 Changes since [v3]:
-* None
+* Rebased on top of linux-next top of the tree
+* Addressed Gustavo's comments and added his Ack for some of the changes.
 
 Changes since [v2]:
-* Updated commit message and description to explicitly mention that defines are
-  added only for some of the features and not all.
+* Addressed review comments from Thierry
 
 Changes since [v1]:
-* None
+* Addressed review comments from Bjorn, Thierry, Jonathan, Rob & Kishon
+* Added more patches in v2 series
 
- include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+Vidya Sagar (15):
+  PCI: Add #defines for some of PCIe spec r4.0 features
+  PCI: Disable MSI for Tegra194 root port
+  PCI: dwc: Perform dbi regs write lock towards the end
+  PCI: dwc: Move config space capability search API
+  PCI: dwc: Add ext config space capability search API
+  dt-bindings: PCI: designware: Add binding for CDM register check
+  PCI: dwc: Add support to enable CDM register check
+  dt-bindings: Add PCIe supports-clkreq property
+  dt-bindings: PCI: tegra: Add device tree support for Tegra194
+  dt-bindings: PHY: P2U: Add Tegra194 P2U block
+  arm64: tegra: Add P2U and PCIe controller nodes to Tegra194 DT
+  arm64: tegra: Enable PCIe slots in P2972-0000 board
+  phy: tegra: Add PCIe PIPE2UPHY support
+  PCI: tegra: Add Tegra194 PCIe support
+  arm64: Add Tegra194 PCIe driver to defconfig
 
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 27164769d184..95a1eeb22f49 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -709,7 +709,9 @@
- #define PCI_EXT_CAP_ID_DPC	0x1D	/* Downstream Port Containment */
- #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
- #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
--#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PTM
-+#define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
-+#define PCI_EXT_CAP_ID_PL	0x26	/* Physical Layer 16.0 GT/s */
-+#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL
- 
- #define PCI_EXT_CAP_DSN_SIZEOF	12
- #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
-@@ -1049,4 +1051,22 @@
- #define  PCI_L1SS_CTL1_LTR_L12_TH_SCALE	0xe0000000  /* LTR_L1.2_THRESHOLD_Scale */
- #define PCI_L1SS_CTL2		0x0c	/* Control 2 Register */
- 
-+/* Data Link Feature */
-+#define PCI_DLF_CAP		0x04	/* Capabilities Register */
-+#define  PCI_DLF_LOCAL_DLF_SUP_MASK	0x007fffff  /* Local Data Link Feature Supported */
-+#define  PCI_DLF_EXCHANGE_ENABLE	0x80000000  /* Data Link Feature Exchange Enable */
-+#define PCI_DLF_STS		0x08	/* Status Register */
-+#define  PCI_DLF_REMOTE_DLF_SUP_MASK	0x007fffff  /* Remote Data Link Feature Supported */
-+#define  PCI_DLF_REMOTE_DLF_SUP_VALID	0x80000000  /* Remote Data Link Feature Support Valid */
-+
-+/* Physical Layer 16.0 GT/s */
-+#define PCI_PL_16GT_CAP		0x04	/* Capabilities Register */
-+#define PCI_PL_16GT_CTRL	0x08	/* Control Register */
-+#define PCI_PL_16GT_STS		0x0c	/* Status Register */
-+#define PCI_PL_16GT_LDPM_STS	0x10	/* Local Data Parity Mismatch Status Register */
-+#define PCI_PL_16GT_FRDPM_STS	0x14	/* First Retimer Data Parity Mismatch Status Register */
-+#define PCI_PL_16GT_SRDPM_STS	0x18	/* Second Retimer Data Parity Mismatch Status Register */
-+#define PCI_PL_16GT_RSVD	0x1C	/* Reserved */
-+#define PCI_PL_16GT_LE_CTRL	0x20	/* Lane Equalization Control Register */
-+
- #endif /* LINUX_PCI_REGS_H */
+ .../bindings/pci/designware-pcie.txt          |    5 +
+ .../bindings/pci/nvidia,tegra194-pcie.txt     |  158 ++
+ Documentation/devicetree/bindings/pci/pci.txt |    5 +
+ .../bindings/phy/phy-tegra194-p2u.txt         |   28 +
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |    2 +-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |   41 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  437 +++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/pci/controller/dwc/Kconfig            |   10 +
+ drivers/pci/controller/dwc/Makefile           |    1 +
+ .../pci/controller/dwc/pcie-designware-ep.c   |   37 +-
+ .../pci/controller/dwc/pcie-designware-host.c |   14 +-
+ drivers/pci/controller/dwc/pcie-designware.c  |   88 +
+ drivers/pci/controller/dwc/pcie-designware.h  |   12 +
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 1620 +++++++++++++++++
+ drivers/pci/quirks.c                          |   14 +
+ drivers/phy/tegra/Kconfig                     |    7 +
+ drivers/phy/tegra/Makefile                    |    1 +
+ drivers/phy/tegra/pcie-p2u-tegra194.c         |  109 ++
+ include/uapi/linux/pci_regs.h                 |   22 +-
+ 20 files changed, 2569 insertions(+), 43 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+ create mode 100644 drivers/phy/tegra/pcie-p2u-tegra194.c
+
 -- 
 2.17.1
