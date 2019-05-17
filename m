@@ -1,64 +1,42 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH] ASoC: simple-card: Fix configuration of DAI format
-Date: Thu, 16 May 2019 18:51:26 +0100
-Message-ID: <1558029086-18024-1-git-send-email-jonathanh@nvidia.com>
+From: Daniel Wagner <wagi@monom.org>
+Subject: Re: [PATCH 4.4 000/266] 4.4.180-stable review
+Date: Fri, 17 May 2019 09:44:12 +0200
+Message-ID: <1f9c1d93-0c00-2eea-96ef-10eb078317a4@monom.org>
+References: <20190515090722.696531131@linuxfoundation.org>
+ <f32de22f-c928-2eaa-ee3f-d2b26c184dd4@nvidia.com>
+ <75c1f549-9098-933e-ab8b-4d0eeab87ddd@monom.org>
+ <20190516164918.GA12641@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190516164918.GA12641@kroah.com>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
 List-Id: linux-tegra@vger.kernel.org
 
-When configuring a codec to be both bit-clock and frame-master, it was
-found that the codec was always configured as bit-clock and frame-slave.
-Looking at the simple_dai_link_of() function there appears to be two
-problems with the configuration of the DAI format, which are ...
+Hi Greg,
 
-1. The function asoc_simple_parse_daifmt() is called before the function
-   asoc_simple_parse_codec() and this means that the device-tree node
-   for the codec has not been parsed yet, which is needed by the
-   function asoc_simple_parse_daifmt() to determine who is the codec.
-2. The phandle passed to asoc_simple_parse_daifmt() is the phandle to
-   the 'codec' node and not the phandle of the actual codec defined by
-   the 'sound-dai' property under the 'codec' node.
+On 16.05.19 18:49, Greg Kroah-Hartman wrote:
+> Jon, thanks for the testing, I'll go drop this patch now from the final
+> version.
 
-Fix the above by moving the call to asoc_simple_parse_daifmt() after the
-the call to asoc_simple_parse_codec() and pass the phandle for the codec
-to asoc_simple_parse_daifmt().
+That's fine, I wanted to suggest this too. I have some time to look at
+this next week. So there is no hurry with this patch.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- sound/soc/generic/simple-card.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> Daniel, if you can come up with a working series, I'll be glad to take
+> it.  Or, I'd recommend you just move to a newer kernel :)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 9b568f578bcd..c2c8dcbcf795 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -283,11 +283,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	codec_dai		=
- 	dai_props->codec_dai	= &priv->dais[li->dais++];
- 
--	ret = asoc_simple_parse_daifmt(dev, node, codec,
--				       prefix, &dai_link->dai_fmt);
--	if (ret < 0)
--		goto dai_link_of_err;
--
- 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
- 
- 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
-@@ -298,6 +293,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
-+	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
-+				       prefix, &dai_link->dai_fmt);
-+	if (ret < 0)
-+		goto dai_link_of_err;
-+
- 	ret = asoc_simple_parse_platform(plat, dai_link);
- 	if (ret < 0)
- 		goto dai_link_of_err;
--- 
-2.7.4
+Sure, I will see what is missing.
+
+@Jon if I get have something to test, would you have time to give it a
+try first?
+
+There is someone constantly updating the v4.4.y tree, which makes me
+update the -rt patches all the time. Don't fear, I am not running 4.4.y,
+this is only for important infrastructure :)
+
+Thanks,
+Daniel
