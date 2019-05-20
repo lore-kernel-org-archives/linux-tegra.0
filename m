@@ -1,7 +1,7 @@
 From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH v2 4/8] dmaengine: dma-jz4780: Let the core do the device node validation
-Date: Mon, 20 May 2019 19:32:17 +0800
-Message-ID: <231f063f65d0f4ca9a69edfb267fb82500954415.1558351667.git.baolin.wang@linaro.org>
+Subject: [PATCH v2 6/8] dmaengine: mxs-dma: Let the core do the device node validation
+Date: Mon, 20 May 2019 19:32:19 +0800
+Message-ID: <15bd5303ecf61f3a3aacd0b078d13f042dea73c6.1558351667.git.baolin.wang@linaro.org>
 References: <cover.1558351667.git.baolin.wang@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1558351667.git.baolin.wang@linaro.org>
@@ -16,47 +16,46 @@ Let the DMA engine core do the device node validation instead of drivers.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/dma/dma-jz4780.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/dma/mxs-dma.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 9ce0a38..7e1d381 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -160,7 +160,6 @@ struct jz4780_dma_dev {
- };
- 
- struct jz4780_dma_filter_data {
--	struct device_node *of_node;
- 	uint32_t transfer_type;
- 	int channel;
- };
-@@ -765,8 +764,6 @@ static bool jz4780_dma_filter_fn(struct dma_chan *chan, void *param)
- 	struct jz4780_dma_dev *jzdma = jz4780_dma_chan_parent(jzchan);
- 	struct jz4780_dma_filter_data *data = param;
- 
--	if (jzdma->dma_device.dev->of_node != data->of_node)
--		return false;
- 
- 	if (data->channel > -1) {
- 		if (data->channel != jzchan->id)
-@@ -790,7 +787,6 @@ static struct dma_chan *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
- 	if (dma_spec->args_count != 2)
- 		return NULL;
- 
--	data.of_node = ofdma->of_node;
- 	data.transfer_type = dma_spec->args[0];
- 	data.channel = dma_spec->args[1];
- 
-@@ -815,7 +811,8 @@ static struct dma_chan *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
- 		return dma_get_slave_channel(
- 			&jzdma->chan[data.channel].vchan.chan);
- 	} else {
--		return dma_request_channel(mask, jz4780_dma_filter_fn, &data);
-+		return __dma_request_channel(&mask, jz4780_dma_filter_fn, &data,
-+					     ofdma->of_node);
- 	}
+diff --git a/drivers/dma/mxs-dma.c b/drivers/dma/mxs-dma.c
+index 22cc7f6..8ce5e79 100644
+--- a/drivers/dma/mxs-dma.c
++++ b/drivers/dma/mxs-dma.c
+@@ -716,7 +716,6 @@ static int __init mxs_dma_init(struct mxs_dma_engine *mxs_dma)
  }
  
+ struct mxs_dma_filter_param {
+-	struct device_node *of_node;
+ 	unsigned int chan_id;
+ };
+ 
+@@ -727,9 +726,6 @@ static bool mxs_dma_filter_fn(struct dma_chan *chan, void *fn_param)
+ 	struct mxs_dma_engine *mxs_dma = mxs_chan->mxs_dma;
+ 	int chan_irq;
+ 
+-	if (mxs_dma->dma_device.dev->of_node != param->of_node)
+-		return false;
+-
+ 	if (chan->chan_id != param->chan_id)
+ 		return false;
+ 
+@@ -752,13 +748,13 @@ static struct dma_chan *mxs_dma_xlate(struct of_phandle_args *dma_spec,
+ 	if (dma_spec->args_count != 1)
+ 		return NULL;
+ 
+-	param.of_node = ofdma->of_node;
+ 	param.chan_id = dma_spec->args[0];
+ 
+ 	if (param.chan_id >= mxs_dma->nr_channels)
+ 		return NULL;
+ 
+-	return dma_request_channel(mask, mxs_dma_filter_fn, &param);
++	return __dma_request_channel(&mask, mxs_dma_filter_fn, &param,
++				     ofdma->of_node);
+ }
+ 
+ static int __init mxs_dma_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
