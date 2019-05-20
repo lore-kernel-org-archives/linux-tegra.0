@@ -1,150 +1,176 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-Date: Sat, 18 May 2019 07:28:29 +0530
-Message-ID: <bf220eba-f9d7-81f3-6b75-db463c74fbfa@nvidia.com>
-References: <20190513050626.14991-1-vidyas@nvidia.com>
- <20190513050626.14991-3-vidyas@nvidia.com>
- <20190513072539.GA27708@infradead.org>
- <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
- <20190516133426.GC101793@google.com>
- <bd08ccaa-c6ee-f966-91e4-bcd5d99d5cf2@nvidia.com>
- <20190517132453.GA30700@google.com>
- <ba611a45-9589-8dce-58e1-d99dd463265d@nvidia.com>
- <20190517185545.GB49425@google.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH 1/8] dmaengine: Add matching device node validation in __dma_request_channel()
+Date: Mon, 20 May 2019 19:27:04 +0800
+Message-ID: <CAMz4kuLokUGVXQaRt5aOBJOUQjsrPK74WGsif6Y1F7zwMvDXfA@mail.gmail.com>
+References: <cover.1557206859.git.baolin.wang@linaro.org> <17a22052fdb759ae6129e30f9bd8862f23a03ad9.1557206859.git.baolin.wang@linaro.org>
+ <42b84cfe-3281-7f4e-03cc-6ca126e16191@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190517185545.GB49425@google.com>
-Content-Language: en-US
+In-Reply-To: <42b84cfe-3281-7f4e-03cc-6ca126e16191@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, Zubair.Kakakhel@imgtec.com, Wolfram Sang <wsa+renesas@sang-engineering.com>, jroedel@suse.de, Vincent Guittot <vincent.guittot@linaro.org>, dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/18/2019 12:25 AM, Bjorn Helgaas wrote:
-> On Fri, May 17, 2019 at 11:23:36PM +0530, Vidya Sagar wrote:
->> On 5/17/2019 6:54 PM, Bjorn Helgaas wrote:
->>> Do you have "lspci -vvxxx" output for the root ports handy?
->>>
->>> If there's some clue in the standard config space that would tell us
->>> that MSI works for some events but not others, we could make the PCI
->>> core pay attention it.  That would be the best solution because it
->>> wouldn't require Tegra-specific code.
->>
->> Here is the output of 'lspci vvxxx' for one of Tegra194's root ports.
-> 
-> Thanks!
-> 
-> This port advertises both MSI and MSI-X, and neither one is enabled.
-> This particular port doesn't have a slot, so hotplug isn't applicable
-> to it.
-> 
-> But if I understand correctly, if MSI or MSI-X were enabled and the
-> port had a slot, the port would generate MSI/MSI-X hotplug interrupts.
-> But PME and AER events would still cause INTx interrupts (even with
-> MSI or MSI-X enabled).
-> 
-> Do I have that right?  I just want to make sure that the reason for
-> PME being INTx is a permanent hardware choice and that it's not
-> related to MSI and MSI-X currently being disabled.
-Yes. Thats right. Its hardware choice that our hardware engineers made to
-use INTx for PME instead of MSI irrespective of MSI/MSI-X enabled/disabled
-in the root port.
+On Tue, 7 May 2019 at 16:37, Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>
+> Hi,
+>
+> On 07/05/2019 9.09, Baolin Wang wrote:
+> > When user try to request one DMA channel by __dma_request_channel(), it=
+ won't
+> > validate if it is the correct DMA device to request, that will lead eac=
+h DMA
+> > engine driver to validate the correct device node in their filter funct=
+ion
+> > if it is necessary.
+> >
+> > Thus we can add the matching device node validation in the DMA engine c=
+ore,
+> > to remove all of device node validation in the drivers.
+>
+> I have picked this patch to my TI UDMA series and with
+> __dma_request_channel() it works as expected - picking the channel from
+> the correct DMA device.
+>
+> Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-> 
->> 0005:00:00.0 PCI bridge: NVIDIA Corporation Device 1ad0 (rev a1) (prog-if 00 [Normal decode])
->> 	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR+ FastB2B- DisINTx-
->> 	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
->> 	Latency: 0
->> 	Interrupt: pin A routed to IRQ 50
->> 	Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
->> 	I/O behind bridge: None
->> 	Memory behind bridge: 40000000-400fffff [size=1M]
->> 	Prefetchable memory behind bridge: None
->> 	Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- <SERR- <PERR-
->> 	BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- FastB2B-
->> 		PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
->> 	Capabilities: [40] Power Management version 3
->> 		Flags: PMEClk- DSI- D1- D2- AuxCurrent=375mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
->> 		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
->> 	Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
->> 		Address: 0000000000000000  Data: 0000
->> 		Masking: 00000000  Pending: 00000000
->> 	Capabilities: [70] Express (v2) Root Port (Slot-), MSI 00
->> 		DevCap:	MaxPayload 256 bytes, PhantFunc 0
->> 			ExtTag- RBE+
->> 		DevCtl:	CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
->> 			RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+
->> 			MaxPayload 128 bytes, MaxReadReq 512 bytes
->> 		DevSta:	CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr+ TransPend-
->> 		LnkCap:	Port #0, Speed 16GT/s, Width x8, ASPM L0s L1, Exit Latency L0s <1us, L1 <64us
->> 			ClockPM- Surprise+ LLActRep+ BwNot+ ASPMOptComp+
->> 		LnkCtl:	ASPM Disabled; RCB 64 bytes Disabled- CommClk+
->> 			ExtSynch- ClockPM- AutWidDis- BWInt+ AutBWInt-
->> 		LnkSta:	Speed 5GT/s (downgraded), Width x1 (downgraded)
->> 			TrErr- Train- SlotClk+ DLActive+ BWMgmt+ ABWMgmt+
->> 		RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal- PMEIntEna+ CRSVisible+
->> 		RootCap: CRSVisible+
->> 		RootSta: PME ReqID 0000, PMEStatus- PMEPending-
->> 		DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Not Supported ARIFwd-
->> 			 AtomicOpsCap: Routing- 32bit- 64bit- 128bitCAS-
->> 		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR+, OBFF Disabled ARIFwd-
->> 			 AtomicOpsCtl: ReqEn- EgressBlck-
->> 		LnkCtl2: Target Link Speed: 16GT/s, EnterCompliance- SpeedDis-
->> 			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
->> 			 Compliance De-emphasis: -6dB
->> 		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete-, EqualizationPhase1-
->> 			 EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
->> 	Capabilities: [b0] MSI-X: Enable- Count=8 Masked-
->> 		Vector table: BAR=2 offset=00000000
->> 		PBA: BAR=2 offset=00010000
->> 	Capabilities: [100 v2] Advanced Error Reporting
->> 		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
->> 		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
->> 		UESvrt:	DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
->> 		CESta:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr-
->> 		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr+
->> 		AERCap:	First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
->> 			MultHdrRecCap+ MultHdrRecEn- TLPPfxPres- HdrLogCap-
->> 		HeaderLog: 00000000 00000000 00000000 00000000
->> 		RootCmd: CERptEn+ NFERptEn+ FERptEn+
->> 		RootSta: CERcvd- MultCERcvd- UERcvd- MultUERcvd-
->> 			 FirstFatal- NonFatalMsg- FatalMsg- IntMsg 0
->> 		ErrorSrc: ERR_COR: 0000 ERR_FATAL/NONFATAL: 0000
->> 	Capabilities: [148 v1] Secondary PCI Express <?>
->> 	Capabilities: [168 v1] Physical Layer 16.0 GT/s <?>
->> 	Capabilities: [190 v1] Lane Margining at the Receiver <?>
->> 	Capabilities: [1c0 v1] L1 PM Substates
->> 		L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
->> 			  PortCommonModeRestoreTime=60us PortTPowerOnTime=40us
->> 		L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
->> 			   T_CommonMode=10us LTR1.2_Threshold=0ns
->> 		L1SubCtl2: T_PwrOn=10us
->> 	Capabilities: [1d0 v1] Vendor Specific Information: ID=0002 Rev=4 Len=100 <?>
->> 	Capabilities: [2d0 v1] Vendor Specific Information: ID=0001 Rev=1 Len=038 <?>
->> 	Capabilities: [308 v1] Data Link Feature <?>
->> 	Capabilities: [314 v1] Precision Time Measurement
->> 		PTMCap: Requester:+ Responder:+ Root:+
->> 		PTMClockGranularity: 16ns
->> 		PTMControl: Enabled:- RootSelected:-
->> 		PTMEffectiveGranularity: Unknown
->> 	Capabilities: [320 v1] Vendor Specific Information: ID=0004 Rev=1 Len=054 <?>
->> 	Kernel driver in use: pcieport
->> 00: de 10 d0 1a 07 01 10 00 a1 00 04 06 00 00 01 00
->> 10: 00 00 00 00 00 00 00 00 00 01 ff 00 f0 00 00 00
->> 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
->> 30: 00 00 00 00 40 00 00 00 00 00 00 00 32 01 02 00
->> 40: 01 50 c3 c9 08 00 00 00 00 00 00 00 00 00 00 00
->> 50: 05 70 80 01 00 00 00 00 00 00 00 00 00 00 00 00
->> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> 70: 10 b0 42 00 01 80 00 00 1f 28 10 00 84 4c 7b 00
->> 80: 40 04 12 f0 00 00 00 00 c0 03 40 00 18 00 01 00
->> 90: 00 00 00 00 1f 0c 01 00 00 04 00 00 1e 00 80 01
->> a0: 04 00 00 02 00 00 00 00 00 00 00 00 00 00 00 00
->> b0: 11 00 07 00 02 00 00 00 02 00 01 00 00 00 00 00
->> c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Thanks Peter.
+
+>
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > ---
+> >  drivers/dma/dmaengine.c   |   10 ++++++++--
+> >  drivers/dma/of-dma.c      |    4 ++--
+> >  include/linux/dmaengine.h |   12 ++++++++----
+> >  3 files changed, 18 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> > index 3a11b10..610080c 100644
+> > --- a/drivers/dma/dmaengine.c
+> > +++ b/drivers/dma/dmaengine.c
+> > @@ -641,11 +641,13 @@ struct dma_chan *dma_get_any_slave_channel(struct=
+ dma_device *device)
+> >   * @mask: capabilities that the channel must satisfy
+> >   * @fn: optional callback to disposition available channels
+> >   * @fn_param: opaque parameter to pass to dma_filter_fn
+> > + * @np: device node to look for DMA channels
+> >   *
+> >   * Returns pointer to appropriate DMA channel on success or NULL.
+> >   */
+> >  struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
+> > -                                    dma_filter_fn fn, void *fn_param)
+> > +                                    dma_filter_fn fn, void *fn_param,
+> > +                                    struct device_node *np)
+> >  {
+> >       struct dma_device *device, *_d;
+> >       struct dma_chan *chan =3D NULL;
+> > @@ -653,6 +655,10 @@ struct dma_chan *__dma_request_channel(const dma_c=
+ap_mask_t *mask,
+> >       /* Find a channel */
+> >       mutex_lock(&dma_list_mutex);
+> >       list_for_each_entry_safe(device, _d, &dma_device_list, global_nod=
+e) {
+> > +             /* Finds a DMA controller with matching device node */
+> > +             if (np && device->dev->of_node && np !=3D device->dev->of=
+_node)
+> > +                     continue;
+> > +
+> >               chan =3D find_candidate(device, mask, fn, fn_param);
+> >               if (!IS_ERR(chan))
+> >                       break;
+> > @@ -769,7 +775,7 @@ struct dma_chan *dma_request_chan_by_mask(const dma=
+_cap_mask_t *mask)
+> >       if (!mask)
+> >               return ERR_PTR(-ENODEV);
+> >
+> > -     chan =3D __dma_request_channel(mask, NULL, NULL);
+> > +     chan =3D __dma_request_channel(mask, NULL, NULL, NULL);
+> >       if (!chan) {
+> >               mutex_lock(&dma_list_mutex);
+> >               if (list_empty(&dma_device_list))
+> > diff --git a/drivers/dma/of-dma.c b/drivers/dma/of-dma.c
+> > index 91fd395..6b43d04 100644
+> > --- a/drivers/dma/of-dma.c
+> > +++ b/drivers/dma/of-dma.c
+> > @@ -316,8 +316,8 @@ struct dma_chan *of_dma_simple_xlate(struct of_phan=
+dle_args *dma_spec,
+> >       if (count !=3D 1)
+> >               return NULL;
+> >
+> > -     return dma_request_channel(info->dma_cap, info->filter_fn,
+> > -                     &dma_spec->args[0]);
+> > +     return __dma_request_channel(&info->dma_cap, info->filter_fn,
+> > +                                  &dma_spec->args[0], dma_spec->np);
+> >  }
+> >  EXPORT_SYMBOL_GPL(of_dma_simple_xlate);
+> >
+> > diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> > index d49ec5c..504085b 100644
+> > --- a/include/linux/dmaengine.h
+> > +++ b/include/linux/dmaengine.h
+> > @@ -1314,7 +1314,8 @@ static inline enum dma_status dma_async_is_comple=
+te(dma_cookie_t cookie,
+> >  enum dma_status dma_wait_for_async_tx(struct dma_async_tx_descriptor *=
+tx);
+> >  void dma_issue_pending_all(void);
+> >  struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
+> > -                                     dma_filter_fn fn, void *fn_param)=
+;
+> > +                                    dma_filter_fn fn, void *fn_param,
+> > +                                    struct device_node *np);
+> >  struct dma_chan *dma_request_slave_channel(struct device *dev, const c=
+har *name);
+> >
+> >  struct dma_chan *dma_request_chan(struct device *dev, const char *name=
+);
+> > @@ -1339,7 +1340,9 @@ static inline void dma_issue_pending_all(void)
+> >  {
+> >  }
+> >  static inline struct dma_chan *__dma_request_channel(const dma_cap_mas=
+k_t *mask,
+> > -                                           dma_filter_fn fn, void *fn_=
+param)
+> > +                                                  dma_filter_fn fn,
+> > +                                                  void *fn_param,
+> > +                                                  struct device_node *=
+np)
+> >  {
+> >       return NULL;
+> >  }
+> > @@ -1411,7 +1414,8 @@ static inline int dmaengine_desc_free(struct dma_=
+async_tx_descriptor *desc)
+> >  void dma_run_dependencies(struct dma_async_tx_descriptor *tx);
+> >  struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
+> >  struct dma_chan *dma_get_any_slave_channel(struct dma_device *device);
+> > -#define dma_request_channel(mask, x, y) __dma_request_channel(&(mask),=
+ x, y)
+> > +#define dma_request_channel(mask, x, y) \
+> > +     __dma_request_channel(&(mask), x, y, NULL)
+> >  #define dma_request_slave_channel_compat(mask, x, y, dev, name) \
+> >       __dma_request_slave_channel_compat(&(mask), x, y, dev, name)
+> >
+> > @@ -1429,6 +1433,6 @@ static inline int dmaengine_desc_free(struct dma_=
+async_tx_descriptor *desc)
+> >       if (!fn || !fn_param)
+> >               return NULL;
+> >
+> > -     return __dma_request_channel(mask, fn, fn_param);
+> > +     return __dma_request_channel(mask, fn, fn_param, NULL);
+> >  }
+> >  #endif /* DMAENGINE_H */
+> >
+>
+> - P=C3=A9ter
+>
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
+
+
+--=20
+Baolin Wang
+Best Regards
