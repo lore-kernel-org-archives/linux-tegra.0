@@ -1,218 +1,97 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V7 13/15] phy: tegra: Add PCIe PIPE2UPHY support
-Date: Wed, 22 May 2019 01:07:49 +0530
-Message-ID: <40509b95-0e64-f533-cc78-6ebc81daf321@nvidia.com>
-References: <20190517123846.3708-1-vidyas@nvidia.com>
- <20190517123846.3708-14-vidyas@nvidia.com> <20190521110011.GL29166@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: simple-card: Fix configuration of DAI format" to the asoc tree
+Date: Tue, 21 May 2019 21:32:41 +0100 (BST)
+Message-ID: <20190521203241.B277E1126D1B@debutante.sirena.org.uk>
+References: <1558029086-18024-1-git-send-email-jonathanh@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190521110011.GL29166@ulmo>
-Content-Language: en-US
+In-Reply-To: <1558029086-18024-1-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/21/2019 4:30 PM, Thierry Reding wrote:
-> On Fri, May 17, 2019 at 06:08:44PM +0530, Vidya Sagar wrote:
->> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
->> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
->> For each PCIe lane of a controller, there is a P2U unit instantiated at
->> hardware level. This driver provides support for the programming required
->> for each P2U that is going to be used for a PCIe controller.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->> Changes since [v6]:
->> * None
->>
->> Changes since [v5]:
->> * Addressed review comments from Thierry
->>
->> Changes since [v4]:
->> * None
->>
->> Changes since [v3]:
->> * Rebased on top of linux-next top of the tree
->>
->> Changes since [v2]:
->> * Replaced spaces with tabs in Kconfig file
->> * Sorted header file inclusion alphabetically
->>
->> Changes since [v1]:
->> * Added COMPILE_TEST in Kconfig
->> * Removed empty phy_ops implementations
->> * Modified code according to DT documentation file modifications
->>
->>   drivers/phy/tegra/Kconfig             |   7 ++
->>   drivers/phy/tegra/Makefile            |   1 +
->>   drivers/phy/tegra/pcie-p2u-tegra194.c | 109 ++++++++++++++++++++++++++
->>   3 files changed, 117 insertions(+)
->>   create mode 100644 drivers/phy/tegra/pcie-p2u-tegra194.c
->>
->> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
->> index a3b1de953fb7..06d423fa85b4 100644
->> --- a/drivers/phy/tegra/Kconfig
->> +++ b/drivers/phy/tegra/Kconfig
->> @@ -6,3 +6,10 @@ config PHY_TEGRA_XUSB
->>   
->>   	  To compile this driver as a module, choose M here: the module will
->>   	  be called phy-tegra-xusb.
->> +
->> +config PHY_TEGRA194_PCIE_P2U
->> +	tristate "NVIDIA Tegra P2U PHY Driver"
-> 
-> The Kconfig symbol and driver are named inconsistently. That's not
-> inherently wrong, but I think it unnecessarily complicates things. Why
-> not just do something like:
-> 
-> 	config PHY_TEGRA194_P2U
-> 
-> and name the driver...
-Ok. Done.
+The patch
 
-> 
->> +	depends on ARCH_TEGRA || COMPILE_TEST
->> +	select GENERIC_PHY
->> +	help
->> +	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x SOCs.
->> diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
->> index a93cd9a499b2..1aaca794f40c 100644
->> --- a/drivers/phy/tegra/Makefile
->> +++ b/drivers/phy/tegra/Makefile
->> @@ -5,3 +5,4 @@ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) += xusb-tegra124.o
->>   phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) += xusb-tegra124.o
->>   phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_210_SOC) += xusb-tegra210.o
->>   phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) += xusb-tegra186.o
->> +obj-$(CONFIG_PHY_TEGRA194_PCIE_P2U) += pcie-p2u-tegra194.o
-> 
-> ... phy-tegra194-p2u here? Or perhaps even leave away the 194 and make
-> it just phy-tegra-p2u. That would make it consistent with the
-> phy-tegra-xusb driver.
-I'll go with phy-tegra194-p2u here as P2U is present only starting from T194.
+   ASoC: simple-card: Fix configuration of DAI format
 
-> 
-> Looks good otherwise.
-> 
-> Thierry
-> 
->> diff --git a/drivers/phy/tegra/pcie-p2u-tegra194.c b/drivers/phy/tegra/pcie-p2u-tegra194.c
->> new file mode 100644
->> index 000000000000..fae2afe1a1aa
->> --- /dev/null
->> +++ b/drivers/phy/tegra/pcie-p2u-tegra194.c
->> @@ -0,0 +1,109 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * P2U (PIPE to UPHY) driver for Tegra T194 SoC
->> + *
->> + * Copyright (C) 2019 NVIDIA Corporation.
->> + *
->> + * Author: Vidya Sagar <vidyas@nvidia.com>
->> + */
->> +
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/phy/phy.h>
->> +
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3	0xc0
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN		BIT(0)
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
->> +#define P2U_PERIODIC_EQ_CTRL_GEN4	0xc4
->> +#define P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
->> +
->> +#define P2U_RX_DEBOUNCE_TIME				0xa4
->> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK	0xffff
->> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL		160
->> +
->> +struct tegra_p2u {
->> +	void __iomem *base;
->> +};
->> +
->> +static int tegra_p2u_power_on(struct phy *x)
->> +{
->> +	struct tegra_p2u *phy = phy_get_drvdata(x);
->> +	u32 val;
->> +
->> +	val = readl(phy->base + P2U_PERIODIC_EQ_CTRL_GEN3);
->> +	val &= ~P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN;
->> +	val |= P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN;
->> +	writel(val, phy->base + P2U_PERIODIC_EQ_CTRL_GEN3);
->> +
->> +	val = readl(phy->base + P2U_PERIODIC_EQ_CTRL_GEN4);
->> +	val |= P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN;
->> +	writel(val, phy->base + P2U_PERIODIC_EQ_CTRL_GEN4);
->> +
->> +	val = readl(phy->base + P2U_RX_DEBOUNCE_TIME);
->> +	val &= ~P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK;
->> +	val |= P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL;
->> +	writel(val, phy->base + P2U_RX_DEBOUNCE_TIME);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct phy_ops ops = {
->> +	.power_on = tegra_p2u_power_on,
->> +	.owner = THIS_MODULE,
->> +};
->> +
->> +static int tegra_p2u_probe(struct platform_device *pdev)
->> +{
->> +	struct phy_provider *phy_provider;
->> +	struct device *dev = &pdev->dev;
->> +	struct phy *generic_phy;
->> +	struct tegra_p2u *phy;
->> +	struct resource *res;
->> +
->> +	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
->> +	if (!phy)
->> +		return -ENOMEM;
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctl");
->> +	phy->base = devm_ioremap_resource(dev, res);
->> +	if (IS_ERR(phy->base))
->> +		return PTR_ERR_OR_ZERO(phy->base);
->> +
->> +	platform_set_drvdata(pdev, phy);
->> +
->> +	generic_phy = devm_phy_create(dev, NULL, &ops);
->> +	if (IS_ERR(generic_phy))
->> +		return PTR_ERR_OR_ZERO(generic_phy);
->> +
->> +	phy_set_drvdata(generic_phy, phy);
->> +
->> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->> +	if (IS_ERR(phy_provider))
->> +		return PTR_ERR_OR_ZERO(phy_provider);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id tegra_p2u_id_table[] = {
->> +	{
->> +		.compatible = "nvidia,tegra194-p2u",
->> +	},
->> +	{}
->> +};
->> +MODULE_DEVICE_TABLE(of, tegra_p2u_id_table);
->> +
->> +static struct platform_driver tegra_p2u_driver = {
->> +	.probe = tegra_p2u_probe,
->> +	.driver = {
->> +		.name = "tegra194-p2u",
->> +		.of_match_table = tegra_p2u_id_table,
->> +	},
->> +};
->> +module_platform_driver(tegra_p2u_driver);
->> +
->> +MODULE_AUTHOR("Vidya Sagar <vidyas@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra PIPE2UPHY PHY driver");
->> +MODULE_LICENSE("GPL v2");
->> -- 
->> 2.17.1
->>
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 069d037aea98ffa64c26d4b1dc958fb8f39f5c2b Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh@nvidia.com>
+Date: Thu, 16 May 2019 18:51:26 +0100
+Subject: [PATCH] ASoC: simple-card: Fix configuration of DAI format
+
+When configuring a codec to be both bit-clock and frame-master, it was
+found that the codec was always configured as bit-clock and frame-slave.
+Looking at the simple_dai_link_of() function there appears to be two
+problems with the configuration of the DAI format, which are ...
+
+1. The function asoc_simple_parse_daifmt() is called before the function
+   asoc_simple_parse_codec() and this means that the device-tree node
+   for the codec has not been parsed yet, which is needed by the
+   function asoc_simple_parse_daifmt() to determine who is the codec.
+2. The phandle passed to asoc_simple_parse_daifmt() is the phandle to
+   the 'codec' node and not the phandle of the actual codec defined by
+   the 'sound-dai' property under the 'codec' node.
+
+Fix the above by moving the call to asoc_simple_parse_daifmt() after the
+the call to asoc_simple_parse_codec() and pass the phandle for the codec
+to asoc_simple_parse_daifmt().
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/generic/simple-card.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 9b568f578bcd..c2c8dcbcf795 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -283,11 +283,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	codec_dai		=
+ 	dai_props->codec_dai	= &priv->dais[li->dais++];
+ 
+-	ret = asoc_simple_parse_daifmt(dev, node, codec,
+-				       prefix, &dai_link->dai_fmt);
+-	if (ret < 0)
+-		goto dai_link_of_err;
+-
+ 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
+ 
+ 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
+@@ -298,6 +293,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
++	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
++				       prefix, &dai_link->dai_fmt);
++	if (ret < 0)
++		goto dai_link_of_err;
++
+ 	ret = asoc_simple_parse_platform(plat, dai_link);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+-- 
+2.20.1
