@@ -1,136 +1,79 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V7 03/15] PCI: dwc: Perform dbi regs write lock towards
- the end
-Date: Tue, 21 May 2019 12:29:03 +0200
-Message-ID: <20190521102903.GC29166@ulmo>
+Subject: Re: [PATCH V7 04/15] PCI: dwc: Move config space capability search
+ API
+Date: Tue, 21 May 2019 12:29:59 +0200
+Message-ID: <20190521102959.GD29166@ulmo>
 References: <20190517123846.3708-1-vidyas@nvidia.com>
- <20190517123846.3708-4-vidyas@nvidia.com>
+ <20190517123846.3708-5-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZmUaFz6apKcXQszQ"
+        protocol="application/pgp-signature"; boundary="5p8PegU4iirBW1oA"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190517123846.3708-4-vidyas@nvidia.com>
+In-Reply-To: <20190517123846.3708-5-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Vidya Sagar <vidyas@nvidia.com>
 Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---ZmUaFz6apKcXQszQ
+--5p8PegU4iirBW1oA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2019 at 06:08:34PM +0530, Vidya Sagar wrote:
-> Remove multiple write enable and disable sequences of dbi registers as
-> Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
-> DBI write-lock enable bit thereby not allowing any further writes to BAR-0
-> register in config space to take place. Hence enabling write permission at
-> the start of function and disabling the same only towards the end.
+On Fri, May 17, 2019 at 06:08:35PM +0530, Vidya Sagar wrote:
+> Move PCIe config space capability search API to common DesignWare file
+> as this can be used by both host and ep mode codes.
 >=20
 > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 > ---
 > Changes since [v6]:
-> * None
+> * Exported dw_pcie_find_capability() API
 >=20
 > Changes since [v5]:
-> * Moved write enable to the beginning of the API and write disable to the=
- end
+> * None
 >=20
 > Changes since [v4]:
-> * None
+> * Removed redundant APIs in pcie-designware-ep.c file after moving them
+>   to pcie-designware.c file based on Bjorn's comments.
 >=20
 > Changes since [v3]:
-> * None
+> * Rebased to linux-next top of the tree
 >=20
 > Changes since [v2]:
 > * None
 >=20
 > Changes since [v1]:
-> * None
+> * Removed dw_pcie_find_next_ext_capability() API from here and made a
+>   separate patch for that
 >=20
->  drivers/pci/controller/dwc/pcie-designware-host.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-
-Looks good to me:
+>  .../pci/controller/dwc/pcie-designware-ep.c   | 37 +----------------
+>  drivers/pci/controller/dwc/pcie-designware.c  | 40 +++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h  |  2 +
+>  3 files changed, 44 insertions(+), 35 deletions(-)
 
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
->=20
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/=
-pci/controller/dwc/pcie-designware-host.c
-> index f93252d0da5b..d3156446ff27 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -628,6 +628,12 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
->  	u32 val, ctrl, num_ctrls;
->  	struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
-> =20
-> +	/*
-> +	 * Enable DBI read-only registers for writing/updating configuration.
-> +	 * Write permission gets disabled towards the end of this function.
-> +	 */
-> +	dw_pcie_dbi_ro_wr_en(pci);
-> +
->  	dw_pcie_setup(pci);
-> =20
->  	if (!pp->ops->msi_host_init) {
-> @@ -650,12 +656,10 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
->  	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
-> =20
->  	/* Setup interrupt pins */
-> -	dw_pcie_dbi_ro_wr_en(pci);
->  	val =3D dw_pcie_readl_dbi(pci, PCI_INTERRUPT_LINE);
->  	val &=3D 0xffff00ff;
->  	val |=3D 0x00000100;
->  	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
-> -	dw_pcie_dbi_ro_wr_dis(pci);
-> =20
->  	/* Setup bus numbers */
->  	val =3D dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
-> @@ -687,15 +691,13 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
-> =20
->  	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
-> =20
-> -	/* Enable write permission for the DBI read-only register */
-> -	dw_pcie_dbi_ro_wr_en(pci);
->  	/* Program correct class for RC */
->  	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
-> -	/* Better disable write permission right after the update */
-> -	dw_pcie_dbi_ro_wr_dis(pci);
-> =20
->  	dw_pcie_rd_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, &val);
->  	val |=3D PORT_LOGIC_SPEED_CHANGE;
->  	dw_pcie_wr_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, val);
-> +
-> +	dw_pcie_dbi_ro_wr_dis(pci);
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_setup_rc);
-> --=20
-> 2.17.1
->=20
-
---ZmUaFz6apKcXQszQ
+--5p8PegU4iirBW1oA
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzj0u8ACgkQ3SOs138+
-s6EJCxAAnfv9ugCWZBC133ybiQYMaRJDUdLgGhyHZVX1/ZdmY5GToImZM6vjRujM
-WlozE5s76t1gP0g6h1EhQqKoayUTSpKsqYHN8/H6SqPOZNlJLxELi2ZeIj66fcAC
-/CahfKX4LFBR1Nb8QESoVaKPz0luor5SfwJmZsxHJTbfI+kXgs/4CYfXuhI3mRRU
-NHSNushq/sxYks4IXV9oaMq4G8VVcmzGilKTiU65mYaQLYmFUpvkYLnBZlsig7qT
-wYx1X34PPcO1/hg+dy55Kb2+TPU+tiMbIWKhhD/7efmoTobK77eNe3kcvylMier5
-h6rzvmY8Vg2yJUlz498PO/0Vt6KTDC09fbTIQCELwak64CEfdIaR1K+gUXAp2YaL
-lgjJFZtMpwGd8/DiC3gaIaiJQaYEMYj0cVyE+zpvDYTrue7l4ohkQjoyE/VbFhv+
-PkIvP49aEiu0cm6FOEn1o64d7rzuXHUAK14ePYB5zmaovQ+7dEnS8NTo7cxAB5TB
-EqkeWiHLrC32T/q0S01MO07/+3uX4sRUByRUgCjxPcgI2pJQM28SzxoQDGiozdYC
-DiQW/JxNkL8+VWvPaZxBW6ywShWqzfXk9j8XoNOs0GLoArxiokfBjpigxJpF//Fs
-CxDzv0ERBk2rPlTXg3GitfuOjs7H1wdZzHjJmLwfaQx1oPPaHL4=
-=ZY4e
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzj0ycACgkQ3SOs138+
+s6Et4BAAkzOyahrHoqB04OU7kbCFa+2VAYqoXjgDQvu1RjouQbsh+UdAzNrLWTeX
+ChYzsu6i3jeymB0oD/WAOCtHx9SbLP/4YEwlBQ5Y9U5SoHy16bSiC1fJ2+IrTKoj
+2G50K3ILtwZHuDFBL9D/NRtwdrGxu4txjtB6ch6sJDKRvr8UbtXvLO1Rija3oaut
+31nP2HoCqZ8ZW+Ku7D15BPxdcLYidJJqWELWw251PitQkixGV2JEjv/MYoKBMIhD
+jCIo+b5o1yS36PUf5I0Piuz4vbDmiJOUjKsjMbkKniN+l9bBtNwPepBdSxxYl+CN
+QbYbDw1mPUBLP/mlhEsMgBGDUp+auR+vMrCsXaK+BQIoLHQeslhKpWwIsGOBZDka
+5iNo8zxXK2FC8yHNjgz7sIWI9dfA4dX+8YJEnEVRjuhcQG+aE5B5NXDrqtTMYN1Z
+Hoe+q16UNDLmsq2siAD6r7ENyzUVzaCdjg/q/P8v3H7PZWFgPO49v+xZdDq37cqi
+j/Z5/gTH0v07hu5dtXQLfQ5+8KszcexKRfkGlYCBYG8BFVTdMmF3sR7XIY4tE2lt
+muOCI7ajeYAq/bDP9vibl1O7o7Myry716uTwfGGAB8w9/g+Fm7BKpa+Wj9MuZWtW
+CYi8auqMTnAh11SDNQeakXNHranXpLvBhMKpfIBfNYaUDFbjdd8=
+=LWc3
 -----END PGP SIGNATURE-----
 
---ZmUaFz6apKcXQszQ--
+--5p8PegU4iirBW1oA--
