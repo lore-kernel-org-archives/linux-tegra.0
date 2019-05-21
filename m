@@ -1,97 +1,194 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: simple-card: Fix configuration of DAI format" to the asoc tree
-Date: Tue, 21 May 2019 21:32:41 +0100 (BST)
-Message-ID: <20190521203241.B277E1126D1B@debutante.sirena.org.uk>
-References: <1558029086-18024-1-git-send-email-jonathanh@nvidia.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH V7 04/15] PCI: dwc: Move config space capability search
+ API
+Date: Tue, 21 May 2019 16:17:57 -0500
+Message-ID: <20190521211757.GF57618@google.com>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
+ <20190517123846.3708-5-vidyas@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1558029086-18024-1-git-send-email-jonathanh@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <20190517123846.3708-5-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+On Fri, May 17, 2019 at 06:08:35PM +0530, Vidya Sagar wrote:
+> Move PCIe config space capability search API to common DesignWare file
+> as this can be used by both host and ep mode codes.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Changes since [v6]:
+> * Exported dw_pcie_find_capability() API
+> 
+> Changes since [v5]:
+> * None
+> 
+> Changes since [v4]:
+> * Removed redundant APIs in pcie-designware-ep.c file after moving them
+>   to pcie-designware.c file based on Bjorn's comments.
+> 
+> Changes since [v3]:
+> * Rebased to linux-next top of the tree
+> 
+> Changes since [v2]:
+> * None
+> 
+> Changes since [v1]:
+> * Removed dw_pcie_find_next_ext_capability() API from here and made a
+>   separate patch for that
+> 
+>  .../pci/controller/dwc/pcie-designware-ep.c   | 37 +----------------
+>  drivers/pci/controller/dwc/pcie-designware.c  | 40 +++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h  |  2 +
+>  3 files changed, 44 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 2bf5a35c0570..65f479250087 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -40,39 +40,6 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+>  	__dw_pcie_ep_reset_bar(pci, bar, 0);
+>  }
+>  
+> -static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+> -			      u8 cap)
+> -{
+> -	u8 cap_id, next_cap_ptr;
+> -	u16 reg;
+> -
+> -	if (!cap_ptr)
+> -		return 0;
+> -
+> -	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+> -	cap_id = (reg & 0x00ff);
+> -
+> -	if (cap_id > PCI_CAP_ID_MAX)
+> -		return 0;
+> -
+> -	if (cap_id == cap)
+> -		return cap_ptr;
+> -
+> -	next_cap_ptr = (reg & 0xff00) >> 8;
+> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+> -}
+> -
+> -static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+> -{
+> -	u8 next_cap_ptr;
+> -	u16 reg;
+> -
+> -	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+> -	next_cap_ptr = (reg & 0x00ff);
+> -
+> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+> -}
+> -
+>  static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
+>  				   struct pci_epf_header *hdr)
+>  {
+> @@ -612,9 +579,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  		dev_err(dev, "Failed to reserve memory for MSI/MSI-X\n");
+>  		return -ENOMEM;
+>  	}
+> -	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
+> +	ep->msi_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
+>  
+> -	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
+> +	ep->msix_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSIX);
+>  
+>  	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
+>  	if (offset) {
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 83cdd2ce2486..8f53ce63d17e 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -14,6 +14,46 @@
+>  
+>  #include "pcie-designware.h"
+>  
+> +/*
+> + * These APIs are different from standard pci_find_*capability() APIs in the
+> + * sense that former can only be used post device enumeration as they require
+> + * 'struct pci_dev *' pointer whereas these APIs require 'struct dw_pcie *'
+> + * pointer and can be used before link up also.
 
-   ASoC: simple-card: Fix configuration of DAI format
+I think this comment is slightly misleading because it suggests the
+reason we need these DW interfaces is because we're doing something
+before a pci_dev pointer is available.
 
-has been applied to the asoc tree at
+But these DW interfaces are used on devices that will *never* have a
+pci_dev pointer because they are not PCI devices.  They're used on
+host controller devices, which have a PCIe link on the downstream
+side, but the host controller driver operates them using their
+upstream, non-PCI interfaces.  Logically, I think they would be
+considered parts of Root Complexes, not Root Ports.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+There's actually no reason why that upstream interface should look
+anything like PCI; it doesn't need to organize registers into
+capability lists at all.  It might be convenient for the hardware to
+do that and share things with a Root Port device, which *is* a PCI
+device, but it's not required.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+It also really has nothing to do with whether the link is up.  This
+code operates on hardware that is upstream from the link, so we can
+reach it regardless of the link.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 069d037aea98ffa64c26d4b1dc958fb8f39f5c2b Mon Sep 17 00:00:00 2001
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Thu, 16 May 2019 18:51:26 +0100
-Subject: [PATCH] ASoC: simple-card: Fix configuration of DAI format
-
-When configuring a codec to be both bit-clock and frame-master, it was
-found that the codec was always configured as bit-clock and frame-slave.
-Looking at the simple_dai_link_of() function there appears to be two
-problems with the configuration of the DAI format, which are ...
-
-1. The function asoc_simple_parse_daifmt() is called before the function
-   asoc_simple_parse_codec() and this means that the device-tree node
-   for the codec has not been parsed yet, which is needed by the
-   function asoc_simple_parse_daifmt() to determine who is the codec.
-2. The phandle passed to asoc_simple_parse_daifmt() is the phandle to
-   the 'codec' node and not the phandle of the actual codec defined by
-   the 'sound-dai' property under the 'codec' node.
-
-Fix the above by moving the call to asoc_simple_parse_daifmt() after the
-the call to asoc_simple_parse_codec() and pass the phandle for the codec
-to asoc_simple_parse_daifmt().
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-card.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 9b568f578bcd..c2c8dcbcf795 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -283,11 +283,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	codec_dai		=
- 	dai_props->codec_dai	= &priv->dais[li->dais++];
- 
--	ret = asoc_simple_parse_daifmt(dev, node, codec,
--				       prefix, &dai_link->dai_fmt);
--	if (ret < 0)
--		goto dai_link_of_err;
--
- 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
- 
- 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
-@@ -298,6 +293,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
-+	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
-+				       prefix, &dai_link->dai_fmt);
-+	if (ret < 0)
-+		goto dai_link_of_err;
-+
- 	ret = asoc_simple_parse_platform(plat, dai_link);
- 	if (ret < 0)
- 		goto dai_link_of_err;
--- 
-2.20.1
+> + */
+> +static u8 __dw_pcie_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+> +				  u8 cap)
+> +{
+> +	u8 cap_id, next_cap_ptr;
+> +	u16 reg;
+> +
+> +	if (!cap_ptr)
+> +		return 0;
+> +
+> +	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+> +	cap_id = (reg & 0x00ff);
+> +
+> +	if (cap_id > PCI_CAP_ID_MAX)
+> +		return 0;
+> +
+> +	if (cap_id == cap)
+> +		return cap_ptr;
+> +
+> +	next_cap_ptr = (reg & 0xff00) >> 8;
+> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
+> +}
+> +
+> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
+> +{
+> +	u8 next_cap_ptr;
+> +	u16 reg;
+> +
+> +	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+> +	next_cap_ptr = (reg & 0x00ff);
+> +
+> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
+> +}
+> +EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
+> +
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+>  {
+>  	if (!IS_ALIGNED((uintptr_t)addr, size)) {
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 14762e262758..6cb978132469 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -251,6 +251,8 @@ struct dw_pcie {
+>  #define to_dw_pcie_from_ep(endpoint)   \
+>  		container_of((endpoint), struct dw_pcie, ep)
+>  
+> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
+> +
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val);
+>  int dw_pcie_write(void __iomem *addr, int size, u32 val);
+>  
+> -- 
+> 2.17.1
+> 
