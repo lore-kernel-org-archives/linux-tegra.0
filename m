@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1 08/12] soc/tegra: pmc: allow support for more tegra wake models
-Date: Tue, 21 May 2019 16:31:19 -0700
-Message-ID: <1558481483-22254-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V1 11/12] soc/tegra: pmc: configure tegra deep sleep control settings
+Date: Tue, 21 May 2019 16:31:22 -0700
+Message-ID: <1558481483-22254-12-git-send-email-skomatineni@nvidia.com>
 References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,97 +12,106 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc: jckuo@nvidia.com, talho@nvidia.com, josephl@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch allows to create separate irq_set_wake and irq_set_type
-implementations for different tegra designs PMC that has different
-wake models which require difference wake registers and different
-programming sequence.
+Tegra210 and prior Tegra chips have power request signal polarity,
+deep sleep entry and wake related timings which are platform specific
+that should be configured before entering into deep sleep.
 
-AOWAKE model support is available for Tegra186 and Tegra194 only
-and it resides within PMC and supports tiered wake architecture.
+Below are the timings specific configurations for deep sleep and wake.
+- Core rail power-on stabilization timer
+- OSC clock stabilization timer after SOC rail power is stabilized.
+- Core power off time is the minimum wake delay to keep the system
+in deep sleep state irrespective of any quick wake event.
 
-Tegra210 and prior tegra designs uses PMC directly to receive wake
-events and coordinate the wake sequence.
+These values depends on the discharge time of regulators and turn OFF
+time of the PMIC to allow the complete system to finish entering into
+deep sleep state.
+
+These values vary based on the platform design and are specified
+through the device tree.
+
+This patch has implementation to configure these configurations which
+are must to have for deep sleep state.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  7 +++++++
+ drivers/soc/tegra/pmc.c                        | 18 ++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 4dcd0d36189a..7ac5e55a30aa 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -266,6 +266,13 @@
+ 
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
++		nvidia,suspend-mode = <0>;
++		nvidia,cpu-pwr-good-time = <0>;
++		nvidia,cpu-pwr-off-time = <0>;
++		nvidia,core-pwr-good-time = <4587 3876>;
++		nvidia,core-pwr-off-time = <39065>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
+ 	};
+ 
+ 	/* eMMC */
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 5648e5c09ef5..f77ce4b827e3 100644
+index 5e68e1de1780..8d225962d136 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -235,6 +235,8 @@ struct tegra_pmc_soc {
- 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
- 				   struct device_node *np,
- 				   bool invert);
-+	int (*pmc_irq_set_wake)(struct irq_data *data, unsigned int on);
-+	int (*pmc_irq_set_type)(struct irq_data *data, unsigned int type);
+@@ -66,6 +66,7 @@
+ #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
+ #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+ #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
++#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
+ #define  PMC_CNTRL_MAIN_RST		BIT(4)
+ #define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
  
- 	const char * const *reset_sources;
- 	unsigned int num_reset_sources;
-@@ -1915,12 +1917,15 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
- 	.alloc = tegra_pmc_irq_alloc,
- };
+@@ -98,6 +99,8 @@
  
--static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-+static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ #define PMC_CPUPWRGOOD_TIMER		0xc8
+ #define PMC_CPUPWROFF_TIMER		0xcc
++#define PMC_COREPWRGOOD_TIMER		0x3c
++#define PMC_COREPWROFF_TIMER		0xe0
+ 
+ #define PMC_PWR_DET_VALUE		0xe4
+ 
+@@ -2293,6 +2296,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
+ static void tegra20_pmc_init(struct tegra_pmc *pmc)
  {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	unsigned int offset, bit;
  	u32 value;
++	unsigned long osc, pmu, off;
  
-+	if (data->hwirq < 0)
-+		return 0;
+ 	/* Always enable CPU power request */
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+@@ -2306,6 +2310,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	else
+ 		value |= PMC_CNTRL_SYSCLK_POLARITY;
+ 
++	if (pmc->corereq_high)
++		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
++	else
++		value |= PMC_CNTRL_PWRREQ_POLARITY;
 +
- 	offset = data->hwirq / 32;
- 	bit = data->hwirq % 32;
+ 	/* configure the output polarity while the request is tristated */
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
  
-@@ -1943,12 +1948,12 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
+@@ -2313,6 +2322,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+ 	value |= PMC_CNTRL_SYSCLK_OE;
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
++
++	osc = DIV_ROUND_UP_ULL(pmc->core_osc_time * 8192, 1000000);
++	pmu = DIV_ROUND_UP_ULL(pmc->core_pmu_time * 32768, 1000000);
++	off = DIV_ROUND_UP_ULL(pmc->core_off_time * 32768, 1000000);
++	if (osc && pmu)
++		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
++				 PMC_COREPWRGOOD_TIMER);
++	if (off)
++		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
  }
  
--static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
-+static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	u32 value;
- 
--	if (data->hwirq == ULONG_MAX)
-+	if (data->hwirq < 0)
- 		return 0;
- 
- 	value = readl(pmc->wake + WAKE_AOWAKE_CNTRL(data->hwirq));
-@@ -1996,8 +2001,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
- 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
- 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
- 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
--	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
--	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
-+	if (pmc->soc->pmc_irq_set_type)
-+		pmc->irq.irq_set_type = pmc->soc->pmc_irq_set_type;
-+	if (pmc->soc->pmc_irq_set_wake)
-+		pmc->irq.irq_set_wake = pmc->soc->pmc_irq_set_wake;
- 
- 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
- 					       &tegra_pmc_irq_domain_ops, pmc);
-@@ -2670,6 +2677,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.pmc_irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.pmc_irq_set_type = tegra186_pmc_irq_set_type,
- 	.reset_sources = tegra186_reset_sources,
- 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
- 	.reset_levels = tegra186_reset_levels,
-@@ -2748,6 +2757,8 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.pmc_irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.pmc_irq_set_type = tegra186_pmc_irq_set_type,
- 	.num_wake_events = ARRAY_SIZE(tegra194_wake_events),
- 	.wake_events = tegra194_wake_events,
- };
+ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
 -- 
 2.7.4
