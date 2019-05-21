@@ -1,83 +1,50 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-Date: Mon, 20 May 2019 12:57:29 -0500
-Message-ID: <20190520175729.GC49425@google.com>
-References: <20190513050626.14991-1-vidyas@nvidia.com>
- <20190513050626.14991-3-vidyas@nvidia.com>
- <20190513072539.GA27708@infradead.org>
- <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
- <20190516133426.GC101793@google.com>
- <bd08ccaa-c6ee-f966-91e4-bcd5d99d5cf2@nvidia.com>
- <20190517132453.GA30700@google.com>
- <ba611a45-9589-8dce-58e1-d99dd463265d@nvidia.com>
- <20190517185545.GB49425@google.com>
- <bf220eba-f9d7-81f3-6b75-db463c74fbfa@nvidia.com>
+From: Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag
+ properly
+Date: Tue, 21 May 2019 10:25:45 +0530
+Message-ID: <20190521045545.GP15118@vkoul-mobl>
+References: <20190505181235.14798-1-digetx@gmail.com>
+ <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <bf220eba-f9d7-81f3-6b75-db463c74fbfa@nvidia.com>
+In-Reply-To: <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: Christoph Hellwig <hch@infradead.org>, lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, May 18, 2019 at 07:28:29AM +0530, Vidya Sagar wrote:
-> On 5/18/2019 12:25 AM, Bjorn Helgaas wrote:
-> > On Fri, May 17, 2019 at 11:23:36PM +0530, Vidya Sagar wrote:
-> > > On 5/17/2019 6:54 PM, Bjorn Helgaas wrote:
-> > > > Do you have "lspci -vvxxx" output for the root ports handy?
-> > > > 
-> > > > If there's some clue in the standard config space that would tell us
-> > > > that MSI works for some events but not others, we could make the PCI
-> > > > core pay attention it.  That would be the best solution because it
-> > > > wouldn't require Tegra-specific code.
-> > > 
-> > > Here is the output of 'lspci vvxxx' for one of Tegra194's root ports.
+On 08-05-19, 10:24, Jon Hunter wrote:
+> 
+> On 05/05/2019 19:12, Dmitry Osipenko wrote:
+> > The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
+> > invoked upon transfer completion and that's it. For some reason driver
+> > completely disables the hardware interrupt handling, leaving channel in
+> > unusable state if transfer is issued with the flag being unset. Note
+> > that there are no occurrences in the relevant drivers that do not set
+> > the flag, hence this patch doesn't fix any actual bug and merely fixes
+> > potential problem.
 > > 
-> > Thanks!
-> > 
-> > This port advertises both MSI and MSI-X, and neither one is enabled.
-> > This particular port doesn't have a slot, so hotplug isn't applicable
-> > to it.
-> > 
-> > But if I understand correctly, if MSI or MSI-X were enabled and the
-> > port had a slot, the port would generate MSI/MSI-X hotplug interrupts.
-> > But PME and AER events would still cause INTx interrupts (even with
-> > MSI or MSI-X enabled).
-> > 
-> > Do I have that right?  I just want to make sure that the reason for
-> > PME being INTx is a permanent hardware choice and that it's not
-> > related to MSI and MSI-X currently being disabled.
->
-> Yes. Thats right. Its hardware choice that our hardware engineers made to
-> use INTx for PME instead of MSI irrespective of MSI/MSI-X enabled/disabled
-> in the root port.
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> >From having a look at this, I am guessing that we have never really
+> tested the case where DMA_PREP_INTERRUPT flag is not set because as you
+> mentioned it does not look like this will work at all!
 
-Here are more spec references that seem applicable:
+That is a fair argument
+> 
+> Is there are use-case you are looking at where you don't set the
+> DMA_PREP_INTERRUPT flag?
+> 
+> If not I am wondering if we should even bother supporting this and warn
+> if it is not set. AFAICT it does not appear to be mandatory, but maybe
+> Vinod can comment more on this.
 
-  - PCIe r4.0, sec 7.7.1.2 (Message Control Register for MSI) says:
+This is supposed to be used in the cases where you submit a bunch of
+descriptors and selectively dont want an interrupt in few cases...
 
-      MSI Enable – If Set and the MSI-X Enable bit in the MSI-X
-      Message Control register (see Section 7.9.2) is Clear, the
-      Function is permitted to use MSI to request service and is
-      prohibited from using INTx interrupts.
+Is this such a case?
 
-  - PCIe r4.0, sec 7.7.2.2 (Message Control Register for MSI-X) says:
-
-      MSI-X Enable – If Set and the MSI Enable bit in the MSI Message
-      Control register (see Section 6.8.1.3) is Clear, the Function is
-      permitted to use MSI-X to request service and is prohibited from
-      using INTx interrupts (if implemented).
-
-I read that to mean a device is prohibited from using MSI/MSI-X for
-some interrupts and INTx for others.  Since Tegra194 cannot use
-MSI/MSI-X for PME, it should use INTx for *all* interrupts.  That
-makes the MSI/MSI-X Capabilities superfluous, and they should be
-omitted.
-
-If we set pdev->no_msi for Tegra194, we'll avoid MSI/MSI-X completely,
-so we'll assume *all* interrupts including hotplug will be INTx.  Will
-that work?
+Thanks
+~Vinod
