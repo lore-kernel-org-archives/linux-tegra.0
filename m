@@ -1,93 +1,52 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-Date: Tue, 21 May 2019 10:36:47 +0530
-Message-ID: <367cb46a-de04-0611-f298-104ba0e74f21@nvidia.com>
-References: <20190513050626.14991-1-vidyas@nvidia.com>
- <20190513050626.14991-3-vidyas@nvidia.com>
- <20190513072539.GA27708@infradead.org>
- <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
- <20190516133426.GC101793@google.com>
- <bd08ccaa-c6ee-f966-91e4-bcd5d99d5cf2@nvidia.com>
- <20190517132453.GA30700@google.com>
- <ba611a45-9589-8dce-58e1-d99dd463265d@nvidia.com>
- <20190517185545.GB49425@google.com>
- <bf220eba-f9d7-81f3-6b75-db463c74fbfa@nvidia.com>
- <20190520175729.GC49425@google.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 00/44] 4.9.178-stable review
+Date: Tue, 21 May 2019 09:51:22 +0100
+Message-ID: <1b88142e-24ac-6b2f-58dd-5801a709da80@nvidia.com>
+References: <20190520115230.720347034@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190520175729.GC49425@google.com>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/20/2019 11:27 PM, Bjorn Helgaas wrote:
-> On Sat, May 18, 2019 at 07:28:29AM +0530, Vidya Sagar wrote:
->> On 5/18/2019 12:25 AM, Bjorn Helgaas wrote:
->>> On Fri, May 17, 2019 at 11:23:36PM +0530, Vidya Sagar wrote:
->>>> On 5/17/2019 6:54 PM, Bjorn Helgaas wrote:
->>>>> Do you have "lspci -vvxxx" output for the root ports handy?
->>>>>
->>>>> If there's some clue in the standard config space that would tell us
->>>>> that MSI works for some events but not others, we could make the PCI
->>>>> core pay attention it.  That would be the best solution because it
->>>>> wouldn't require Tegra-specific code.
->>>>
->>>> Here is the output of 'lspci vvxxx' for one of Tegra194's root ports.
->>>
->>> Thanks!
->>>
->>> This port advertises both MSI and MSI-X, and neither one is enabled.
->>> This particular port doesn't have a slot, so hotplug isn't applicable
->>> to it.
->>>
->>> But if I understand correctly, if MSI or MSI-X were enabled and the
->>> port had a slot, the port would generate MSI/MSI-X hotplug interrupts.
->>> But PME and AER events would still cause INTx interrupts (even with
->>> MSI or MSI-X enabled).
->>>
->>> Do I have that right?  I just want to make sure that the reason for
->>> PME being INTx is a permanent hardware choice and that it's not
->>> related to MSI and MSI-X currently being disabled.
->>
->> Yes. Thats right. Its hardware choice that our hardware engineers made t=
-o
->> use INTx for PME instead of MSI irrespective of MSI/MSI-X enabled/disabl=
-ed
->> in the root port.
->=20
-> Here are more spec references that seem applicable:
->=20
->    - PCIe r4.0, sec 7.7.1.2 (Message Control Register for MSI) says:
->=20
->        MSI Enable =E2=80=93 If Set and the MSI-X Enable bit in the MSI-X
->        Message Control register (see Section 7.9.2) is Clear, the
->        Function is permitted to use MSI to request service and is
->        prohibited from using INTx interrupts.
->=20
->    - PCIe r4.0, sec 7.7.2.2 (Message Control Register for MSI-X) says:
->=20
->        MSI-X Enable =E2=80=93 If Set and the MSI Enable bit in the MSI Me=
-ssage
->        Control register (see Section 6.8.1.3) is Clear, the Function is
->        permitted to use MSI-X to request service and is prohibited from
->        using INTx interrupts (if implemented).
->=20
-> I read that to mean a device is prohibited from using MSI/MSI-X for
-> some interrupts and INTx for others.  Since Tegra194 cannot use
-> MSI/MSI-X for PME, it should use INTx for *all* interrupts.  That
-> makes the MSI/MSI-X Capabilities superfluous, and they should be
-> omitted.
->=20
-> If we set pdev->no_msi for Tegra194, we'll avoid MSI/MSI-X completely,
-> so we'll assume *all* interrupts including hotplug will be INTx.  Will
-> that work?
-Yes. We are fine with having all root port originated interrupts getting ge=
-nerated
-through INTx instead of MSI/MSI-X.
 
->=20
+On 20/05/2019 13:13, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.178 release.
+> There are 44 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 22 May 2019 11:50:58 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.178-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
+
+Linux version:	4.9.178-rc1-g1a569b6
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
