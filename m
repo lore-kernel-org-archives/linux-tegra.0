@@ -1,321 +1,86 @@
-From: Kamal Dasu <kdasu.kdev@gmail.com>
-Subject: [PATCH] dt: bindings: mtd: replace references to nand.txt with nand-controller.yaml
-Date: Tue, 21 May 2019 15:27:57 -0400
-Message-ID: <1558466890-45471-1-git-send-email-kdasu.kdev@gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V7 02/15] PCI: Disable MSI for Tegra194 root port
+Date: Wed, 22 May 2019 01:04:58 +0530
+Message-ID: <220fcb99-c3b5-58dc-a37a-57cbe9efa072@nvidia.com>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
+ <20190517123846.3708-3-vidyas@nvidia.com> <20190521102729.GB29166@ulmo>
+ <f63051b0-a220-125b-219e-25156d65ea6d@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f63051b0-a220-125b-219e-25156d65ea6d@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-mtd@lists.infradead.org
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>, Liang Yang <liang.yang@amlogic.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@baylibre.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Neil Armstrong <narmstrong@baylibre.com>, Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Maxime
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-nand-controller.yaml replaced nand.txt however the references to it were
-not updated. This change updates these references wherever it appears in
-bindings documentation.
-
-Fixes: 212e49693592 ("dt-bindings: mtd: Add YAML schemas for the generic NAND options")
-
-Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
----
- .../devicetree/bindings/mtd/amlogic,meson-nand.txt         |  2 +-
- Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt    |  6 +++---
- Documentation/devicetree/bindings/mtd/denali-nand.txt      |  6 +++---
- Documentation/devicetree/bindings/mtd/fsmc-nand.txt        |  6 +++---
- Documentation/devicetree/bindings/mtd/gpmc-nand.txt        |  2 +-
- Documentation/devicetree/bindings/mtd/hisi504-nand.txt     |  2 +-
- Documentation/devicetree/bindings/mtd/marvell-nand.txt     | 14 +++++++-------
- Documentation/devicetree/bindings/mtd/mxc-nand.txt         |  6 +++---
- .../devicetree/bindings/mtd/nvidia-tegra20-nand.txt        |  6 +++---
- Documentation/devicetree/bindings/mtd/oxnas-nand.txt       |  2 +-
- Documentation/devicetree/bindings/mtd/qcom_nandc.txt       |  4 ++--
- Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt  |  6 +++---
- Documentation/devicetree/bindings/mtd/stm32-fmc2-nand.txt  |  6 +++---
- Documentation/devicetree/bindings/mtd/tango-nand.txt       |  2 +-
- Documentation/devicetree/bindings/mtd/vf610-nfc.txt        |  8 ++++----
- 15 files changed, 39 insertions(+), 39 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-index 3983c11..5794ab11 100644
---- a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-@@ -24,7 +24,7 @@ Optional children nodes:
- Children nodes represent the available nand chips.
- 
- Other properties:
--see Documentation/devicetree/bindings/mtd/nand.txt for generic bindings.
-+see Documentation/devicetree/bindings/mtd/nand-controller.yaml for generic bindings.
- 
- Example demonstrate on AXG SoC:
- 
-diff --git a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-index bcda1df..0b7c373 100644
---- a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-+++ b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-@@ -101,12 +101,12 @@ Required properties:
-                               number (e.g., 0, 1, 2, etc.)
- - #address-cells            : see partition.txt
- - #size-cells               : see partition.txt
--- nand-ecc-strength         : see nand.txt
--- nand-ecc-step-size        : must be 512 or 1024. See nand.txt
-+- nand-ecc-strength         : see nand-controller.yaml
-+- nand-ecc-step-size        : must be 512 or 1024. See nand-controller.yaml
- 
- Optional properties:
- - nand-on-flash-bbt         : boolean, to enable the on-flash BBT for this
--                              chip-select. See nand.txt
-+                              chip-select. See nand-controller.yaml
- - brcm,nand-oob-sector-size : integer, to denote the spare area sector size
-                               expected for the ECC layout in use. This size, in
-                               addition to the strength and step-size,
-diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-index b14b675..b32aed1 100644
---- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-@@ -22,16 +22,16 @@ Sub-nodes:
-       select is connected.
- 
-   Optional properties:
--    - nand-ecc-step-size: see nand.txt for details.
-+    - nand-ecc-step-size: see nand-controller.yaml for details.
-       If present, the value must be
-         512        for "altr,socfpga-denali-nand"
-         1024       for "socionext,uniphier-denali-nand-v5a"
-         1024       for "socionext,uniphier-denali-nand-v5b"
--    - nand-ecc-strength: see nand.txt for details. Valid values are:
-+    - nand-ecc-strength: see nand-controller.yaml for details. Valid values are:
-         8, 15      for "altr,socfpga-denali-nand"
-         8, 16, 24  for "socionext,uniphier-denali-nand-v5a"
-         8, 16      for "socionext,uniphier-denali-nand-v5b"
--    - nand-ecc-maximize: see nand.txt for details
-+    - nand-ecc-maximize: see nand-controller.yaml for details
- 
- The chip nodes may optionally contain sub-nodes describing partitions of the
- address space. See partition.txt for more detail.
-diff --git a/Documentation/devicetree/bindings/mtd/fsmc-nand.txt b/Documentation/devicetree/bindings/mtd/fsmc-nand.txt
-index 32636eb..6762d3c 100644
---- a/Documentation/devicetree/bindings/mtd/fsmc-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/fsmc-nand.txt
-@@ -30,9 +30,9 @@ Optional properties:
-                  command is asserted. Zero means one cycle, 255 means 256
-                  cycles.
- - bank: default NAND bank to use (0-3 are valid, 0 is the default).
--- nand-ecc-mode      : see nand.txt
--- nand-ecc-strength  : see nand.txt
--- nand-ecc-step-size : see nand.txt
-+- nand-ecc-mode      : see nand-controller.yaml
-+- nand-ecc-strength  : see nand-controller.yaml
-+- nand-ecc-step-size : see nand-controller.yaml
- 
- Can support 1-bit HW ECC (default) or if stronger correction is required,
- software-based BCH.
-diff --git a/Documentation/devicetree/bindings/mtd/gpmc-nand.txt b/Documentation/devicetree/bindings/mtd/gpmc-nand.txt
-index c059ab7..44919d4 100644
---- a/Documentation/devicetree/bindings/mtd/gpmc-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/gpmc-nand.txt
-@@ -8,7 +8,7 @@ explained in a separate documents - please refer to
- Documentation/devicetree/bindings/memory-controllers/omap-gpmc.txt
- 
- For NAND specific properties such as ECC modes or bus width, please refer to
--Documentation/devicetree/bindings/mtd/nand.txt
-+Documentation/devicetree/bindings/mtd/nand-controller.yaml
- 
- 
- Required properties:
-diff --git a/Documentation/devicetree/bindings/mtd/hisi504-nand.txt b/Documentation/devicetree/bindings/mtd/hisi504-nand.txt
-index 2e35f06..8963983 100644
---- a/Documentation/devicetree/bindings/mtd/hisi504-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/hisi504-nand.txt
-@@ -7,7 +7,7 @@ Required properties:
-                        NAND controller's registers. The second contains base
-                        physical address and size of NAND controller's buffer.
- - interrupts:          Interrupt number for nfc.
--- nand-bus-width:      See nand.txt.
-+- nand-bus-width:      See nand-controller.yaml.
- - nand-ecc-mode:       Support none and hw ecc mode.
- - #address-cells:      Partition address, should be set 1.
- - #size-cells:         Partition size, should be set 1.
-diff --git a/Documentation/devicetree/bindings/mtd/marvell-nand.txt b/Documentation/devicetree/bindings/mtd/marvell-nand.txt
-index e0c7907..a2d9a0f 100644
---- a/Documentation/devicetree/bindings/mtd/marvell-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/marvell-nand.txt
-@@ -36,29 +36,29 @@ Children nodes represent the available NAND chips.
- 
- Required properties:
- - reg: shall contain the native Chip Select ids (0-3).
--- nand-rb: see nand.txt (0-1).
-+- nand-rb: see nand-controller.yaml (0-1).
- 
- Optional properties:
- - marvell,nand-keep-config: orders the driver not to take the timings
-   from the core and leaving them completely untouched. Bootloader
-   timings will then be used.
- - label: MTD name.
--- nand-on-flash-bbt: see nand.txt.
--- nand-ecc-mode: see nand.txt. Will use hardware ECC if not specified.
--- nand-ecc-algo: see nand.txt. This property is essentially useful when
-+- nand-on-flash-bbt: see nand-controller.yaml.
-+- nand-ecc-mode: see nand-controller.yaml. Will use hardware ECC if not specified.
-+- nand-ecc-algo: see nand-controller.yaml. This property is essentially useful when
-   not using hardware ECC. Howerver, it may be added when using hardware
-   ECC for clarification but will be ignored by the driver because ECC
-   mode is chosen depending on the page size and the strength required by
-   the NAND chip. This value may be overwritten with nand-ecc-strength
-   property.
--- nand-ecc-strength: see nand.txt.
--- nand-ecc-step-size: see nand.txt. Marvell's NAND flash controller does
-+- nand-ecc-strength: see nand-controller.yaml.
-+- nand-ecc-step-size: see nand-controller.yaml. Marvell's NAND flash controller does
-   use fixed strength (1-bit for Hamming, 16-bit for BCH), so the actual
-   step size will shrink or grow in order to fit the required strength.
-   Step sizes are not completely random for all and follow certain
-   patterns described in AN-379, "Marvell SoC NFC ECC".
- 
--See Documentation/devicetree/bindings/mtd/nand.txt for more details on
-+See Documentation/devicetree/bindings/mtd/nand-controller.yaml for more details on
- generic bindings.
- 
- 
-diff --git a/Documentation/devicetree/bindings/mtd/mxc-nand.txt b/Documentation/devicetree/bindings/mtd/mxc-nand.txt
-index b5833d1..2857c62 100644
---- a/Documentation/devicetree/bindings/mtd/mxc-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/mxc-nand.txt
-@@ -4,9 +4,9 @@ Required properties:
- - compatible: "fsl,imxXX-nand"
- - reg: address range of the nfc block
- - interrupts: irq to be used
--- nand-bus-width: see nand.txt
--- nand-ecc-mode: see nand.txt
--- nand-on-flash-bbt: see nand.txt
-+- nand-bus-width: see nand-controller.yaml
-+- nand-ecc-mode: see nand-controller.yaml
-+- nand-on-flash-bbt: see nand-controller.yaml
- 
- Example:
- 
-diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-index b2f2ca1..e737e5b 100644
---- a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-@@ -26,14 +26,14 @@ Optional children node properties:
- 		 "hw" is supported.
- - nand-ecc-algo: string, algorithm of NAND ECC.
- 		 Supported values with "hw" ECC mode are: "rs", "bch".
--- nand-bus-width : See nand.txt
--- nand-on-flash-bbt: See nand.txt
-+- nand-bus-width : See nand-controller.yaml
-+- nand-on-flash-bbt: See nand-controller.yaml
- - nand-ecc-strength: integer representing the number of bits to correct
- 		     per ECC step (always 512). Supported strength using HW ECC
- 		     modes are:
- 		     - RS: 4, 6, 8
- 		     - BCH: 4, 8, 14, 16
--- nand-ecc-maximize: See nand.txt
-+- nand-ecc-maximize: See nand-controller.yaml
- - nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
- 		       are chosen.
- - wp-gpios: GPIO specifier for the write protect pin.
-diff --git a/Documentation/devicetree/bindings/mtd/oxnas-nand.txt b/Documentation/devicetree/bindings/mtd/oxnas-nand.txt
-index 56d5c19d..2ba07fc 100644
---- a/Documentation/devicetree/bindings/mtd/oxnas-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/oxnas-nand.txt
-@@ -1,6 +1,6 @@
- * Oxford Semiconductor OXNAS NAND Controller
- 
--Please refer to nand.txt for generic information regarding MTD NAND bindings.
-+Please refer to nand-controller.yaml for generic information regarding MTD NAND bindings.
- 
- Required properties:
-  - compatible: "oxsemi,ox820-nand"
-diff --git a/Documentation/devicetree/bindings/mtd/qcom_nandc.txt b/Documentation/devicetree/bindings/mtd/qcom_nandc.txt
-index 1123cc6..5c2fba4 100644
---- a/Documentation/devicetree/bindings/mtd/qcom_nandc.txt
-+++ b/Documentation/devicetree/bindings/mtd/qcom_nandc.txt
-@@ -47,8 +47,8 @@ Required properties:
- - #size-cells:		see partition.txt
- 
- Optional properties:
--- nand-bus-width:	see nand.txt
--- nand-ecc-strength:	see nand.txt. If not specified, then ECC strength will
-+- nand-bus-width:	see nand-controller.yaml
-+- nand-ecc-strength:	see nand-controller.yaml. If not specified, then ECC strength will
- 			be used according to chip requirement and available
- 			OOB size.
- 
-diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-index 0040eb8..09815c4 100644
---- a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-+++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-@@ -6,7 +6,7 @@ Required properties:
- 	"samsung,s3c2412-nand"
- 	"samsung,s3c2440-nand"
- - reg : register's location and length.
--- #address-cells, #size-cells : see nand.txt
-+- #address-cells, #size-cells : see nand-controller.yaml
- - clocks : phandle to the nand controller clock
- - clock-names : must contain "nand"
- 
-@@ -14,8 +14,8 @@ Optional child nodes:
- Child nodes representing the available nand chips.
- 
- Optional child properties:
--- nand-ecc-mode : see nand.txt
--- nand-on-flash-bbt : see nand.txt
-+- nand-ecc-mode : see nand-controller.yaml
-+- nand-on-flash-bbt : see nand-controller.yaml
- 
- Each child device node may optionally contain a 'partitions' sub-node,
- which further contains sub-nodes describing the flash partition mapping.
-diff --git a/Documentation/devicetree/bindings/mtd/stm32-fmc2-nand.txt b/Documentation/devicetree/bindings/mtd/stm32-fmc2-nand.txt
-index ad2bef8..e55895e 100644
---- a/Documentation/devicetree/bindings/mtd/stm32-fmc2-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/stm32-fmc2-nand.txt
-@@ -24,9 +24,9 @@ Required properties:
- - reg: describes the CS lines assigned to the NAND device.
- 
- Optional properties:
--- nand-on-flash-bbt: see nand.txt
--- nand-ecc-strength: see nand.txt
--- nand-ecc-step-size: see nand.txt
-+- nand-on-flash-bbt: see nand-controller.yaml
-+- nand-ecc-strength: see nand-controller.yaml
-+- nand-ecc-step-size: see nand-controller.yaml
- 
- The following ECC strength and step size are currently supported:
-  - nand-ecc-strength = <1>, nand-ecc-step-size = <512> (Hamming)
-diff --git a/Documentation/devicetree/bindings/mtd/tango-nand.txt b/Documentation/devicetree/bindings/mtd/tango-nand.txt
-index cd1bf2a..91c8420 100644
---- a/Documentation/devicetree/bindings/mtd/tango-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/tango-nand.txt
-@@ -11,7 +11,7 @@ Required properties:
- - #size-cells: <0>
- 
- Children nodes represent the available NAND chips.
--See Documentation/devicetree/bindings/mtd/nand.txt for generic bindings.
-+See Documentation/devicetree/bindings/mtd/nand-controller.yaml for generic bindings.
- 
- Example:
- 
-diff --git a/Documentation/devicetree/bindings/mtd/vf610-nfc.txt b/Documentation/devicetree/bindings/mtd/vf610-nfc.txt
-index c96eeb6..7db5e6e 100644
---- a/Documentation/devicetree/bindings/mtd/vf610-nfc.txt
-+++ b/Documentation/devicetree/bindings/mtd/vf610-nfc.txt
-@@ -25,14 +25,14 @@ only handle one NAND chip.
- 
- Required properties:
- - compatible: Should be set to "fsl,vf610-nfc-cs".
--- nand-bus-width: see nand.txt
--- nand-ecc-mode: see nand.txt
-+- nand-bus-width: see nand-controller.yaml
-+- nand-ecc-mode: see nand-controller.yaml
- 
- Required properties for hardware ECC:
--- nand-ecc-strength: supported strengths are 24 and 32 bit (see nand.txt)
-+- nand-ecc-strength: supported strengths are 24 and 32 bit (see nand-controller.yaml)
- - nand-ecc-step-size: step size equals page size, currently only 2k pages are
-     supported
--- nand-on-flash-bbt: see nand.txt
-+- nand-on-flash-bbt: see nand-controller.yaml
- 
- Example:
- 
--- 
-1.9.0.138.g2de3478
+On 5/21/2019 10:17 PM, Vidya Sagar wrote:
+> On 5/21/2019 3:57 PM, Thierry Reding wrote:
+>> On Fri, May 17, 2019 at 06:08:33PM +0530, Vidya Sagar wrote:
+>>> Tegra194 rootports don't generate MSI interrupts for PME events and hen=
+ce
+>>> MSI needs to be disabled for them to avoid root ports service drivers
+>>> registering their respective ISRs with MSI interrupt.
+>>>
+>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>>> ---
+>>> Changes since [v6]:
+>>> * This is a new patch
+>>>
+>>> =A0 drivers/pci/quirks.c | 14 ++++++++++++++
+>>> =A0 1 file changed, 14 insertions(+)
+>>>
+>>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>>> index 0f16acc323c6..28f9a0380df5 100644
+>>> --- a/drivers/pci/quirks.c
+>>> +++ b/drivers/pci/quirks.c
+>>> @@ -2592,6 +2592,20 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA,
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 PCI_DEVICE_ID_NVIDIA_NVENET_15,
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 nvenet_msi_disable);
+>>> +/*
+>>> + * Tegra194's PCIe root ports don't generate MSI interrupts for PME ev=
+ents
+>>> + * instead legacy interrupts are generated. Hence, to avoid service dr=
+ivers
+>>> + * registering their respective ISRs for MSIs, need to disable MSI int=
+errupts
+>>> + * for root ports.
+>>> + */
+>>> +static void disable_tegra194_rp_msi(struct pci_dev *dev)
+>>> +{
+>>> +=A0=A0=A0 dev->no_msi =3D 1;
+>>> +}
+>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad0, disable_tegra194=
+_rp_msi);
+>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad1, disable_tegra194=
+_rp_msi);
+>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad2, disable_tegra194=
+_rp_msi);
+>>> +
+>>
+>> Later functions in this file seem to use a more consistent naming
+>> pattern, according to which the name for this would become:
+>>
+>> =A0=A0=A0=A0pci_quirk_nvidia_tegra194_disable_rp_msi
+>>
+>> Might be worth considering making this consistent.
+>>
+>> This could also be moved to the DWC driver to restrict this to where it
+>> is needed. In either case, this seems like a good solution, so:
+>>
+>> Reviewed-by: Thierry Reding <treding@nvidia.com>
+>>
+> Ok. I'll move it to DWC driver along with name change for the quirk API.
+>=20
+I see that if quirk macros and API are present in pcie-tegra194.c file and =
+driver is built
+as a module, quirk API is not getting invoked by the system, whereas it get=
+s invoked if driver
+is built into kernel. Is this behavior expected? I think it is because of q=
+uirk API symbol
+not available as part of global quirk symbol table when driver is built as =
+a module?
+for now, I'm going to keep quirk macros and API in pci/quirks.c file itself=
+.
