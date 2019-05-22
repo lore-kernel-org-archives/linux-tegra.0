@@ -1,69 +1,97 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: [PATCH 1/4] drm/tegra: remove irrelevant DRM_UNLOCKED flag
-Date: Wed, 22 May 2019 16:46:59 +0100
-Message-ID: <20190522154702.16269-1-emil.l.velikov@gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 016/317] dmaengine: tegra210-dma: free dma controller in remove()
+Date: Wed, 22 May 2019 15:18:37 -0400
+Message-ID: <20190522192338.23715-16-sashal@kernel.org>
+References: <20190522192338.23715-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, kernel@collabora.com
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sameer Pujar <spujar@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogRW1pbCBWZWxpa292IDxlbWlsLnZlbGlrb3ZAY29sbGFib3JhLmNvbT4KCkRSTV9VTkxP
-Q0tFRCBkb2Vzbid0IGRvIGFueXRoaW5nIGZvciBub24tbGVnYWN5IGRyaXZlcnMuIFJlbW92ZSBp
-dC4KCkNjOiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgpDYzogbGludXgtdGVn
-cmFAdmdlci5rZXJuZWwub3JnCkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+ClNp
-Z25lZC1vZmYtYnk6IEVtaWwgVmVsaWtvdiA8ZW1pbC52ZWxpa292QGNvbGxhYm9yYS5jb20+Ci0t
-LQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgMjggKysrKysrKysrKysrKystLS0tLS0t
-LS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygt
-KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9kcm0uYwppbmRleCAwYzVmMWU2YTA0NDYuLjg4MzZjMTEzYjM5MiAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kcm0uYwpAQCAtODkxLDMzICs4OTEsMzMgQEAgc3RhdGljIGludCB0ZWdyYV9nZW1fZ2V0
-X2ZsYWdzKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHZvaWQgKmRhdGEsCiBzdGF0aWMgY29uc3Qg
-c3RydWN0IGRybV9pb2N0bF9kZXNjIHRlZ3JhX2RybV9pb2N0bHNbXSA9IHsKICNpZmRlZiBDT05G
-SUdfRFJNX1RFR1JBX1NUQUdJTkcKIAlEUk1fSU9DVExfREVGX0RSVihURUdSQV9HRU1fQ1JFQVRF
-LCB0ZWdyYV9nZW1fY3JlYXRlLAotCQkJICBEUk1fVU5MT0NLRUQgfCBEUk1fUkVOREVSX0FMTE9X
-KSwKKwkJCSAgRFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9EUlYoVEVHUkFfR0VN
-X01NQVAsIHRlZ3JhX2dlbV9tbWFwLAotCQkJICBEUk1fVU5MT0NLRUQgfCBEUk1fUkVOREVSX0FM
-TE9XKSwKKwkJCSAgRFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9EUlYoVEVHUkFf
-U1lOQ1BUX1JFQUQsIHRlZ3JhX3N5bmNwdF9yZWFkLAotCQkJICBEUk1fVU5MT0NLRUQgfCBEUk1f
-UkVOREVSX0FMTE9XKSwKKwkJCSAgRFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9E
-UlYoVEVHUkFfU1lOQ1BUX0lOQ1IsIHRlZ3JhX3N5bmNwdF9pbmNyLAotCQkJICBEUk1fVU5MT0NL
-RUQgfCBEUk1fUkVOREVSX0FMTE9XKSwKKwkJCSAgRFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lP
-Q1RMX0RFRl9EUlYoVEVHUkFfU1lOQ1BUX1dBSVQsIHRlZ3JhX3N5bmNwdF93YWl0LAotCQkJICBE
-Uk1fVU5MT0NLRUQgfCBEUk1fUkVOREVSX0FMTE9XKSwKKwkJCSAgRFJNX1JFTkRFUl9BTExPVyks
-CiAJRFJNX0lPQ1RMX0RFRl9EUlYoVEVHUkFfT1BFTl9DSEFOTkVMLCB0ZWdyYV9vcGVuX2NoYW5u
-ZWwsCi0JCQkgIERSTV9VTkxPQ0tFRCB8IERSTV9SRU5ERVJfQUxMT1cpLAorCQkJICBEUk1fUkVO
-REVSX0FMTE9XKSwKIAlEUk1fSU9DVExfREVGX0RSVihURUdSQV9DTE9TRV9DSEFOTkVMLCB0ZWdy
-YV9jbG9zZV9jaGFubmVsLAotCQkJICBEUk1fVU5MT0NLRUQgfCBEUk1fUkVOREVSX0FMTE9XKSwK
-KwkJCSAgRFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9EUlYoVEVHUkFfR0VUX1NZ
-TkNQVCwgdGVncmFfZ2V0X3N5bmNwdCwKLQkJCSAgRFJNX1VOTE9DS0VEIHwgRFJNX1JFTkRFUl9B
-TExPVyksCisJCQkgIERSTV9SRU5ERVJfQUxMT1cpLAogCURSTV9JT0NUTF9ERUZfRFJWKFRFR1JB
-X1NVQk1JVCwgdGVncmFfc3VibWl0LAotCQkJICBEUk1fVU5MT0NLRUQgfCBEUk1fUkVOREVSX0FM
-TE9XKSwKKwkJCSAgRFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9EUlYoVEVHUkFf
-R0VUX1NZTkNQVF9CQVNFLCB0ZWdyYV9nZXRfc3luY3B0X2Jhc2UsCi0JCQkgIERSTV9VTkxPQ0tF
-RCB8IERSTV9SRU5ERVJfQUxMT1cpLAorCQkJICBEUk1fUkVOREVSX0FMTE9XKSwKIAlEUk1fSU9D
-VExfREVGX0RSVihURUdSQV9HRU1fU0VUX1RJTElORywgdGVncmFfZ2VtX3NldF90aWxpbmcsCi0J
-CQkgIERSTV9VTkxPQ0tFRCB8IERSTV9SRU5ERVJfQUxMT1cpLAorCQkJICBEUk1fUkVOREVSX0FM
-TE9XKSwKIAlEUk1fSU9DVExfREVGX0RSVihURUdSQV9HRU1fR0VUX1RJTElORywgdGVncmFfZ2Vt
-X2dldF90aWxpbmcsCi0JCQkgIERSTV9VTkxPQ0tFRCB8IERSTV9SRU5ERVJfQUxMT1cpLAorCQkJ
-ICBEUk1fUkVOREVSX0FMTE9XKSwKIAlEUk1fSU9DVExfREVGX0RSVihURUdSQV9HRU1fU0VUX0ZM
-QUdTLCB0ZWdyYV9nZW1fc2V0X2ZsYWdzLAotCQkJICBEUk1fVU5MT0NLRUQgfCBEUk1fUkVOREVS
-X0FMTE9XKSwKKwkJCSAgRFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9EUlYoVEVH
-UkFfR0VNX0dFVF9GTEFHUywgdGVncmFfZ2VtX2dldF9mbGFncywKLQkJCSAgRFJNX1VOTE9DS0VE
-IHwgRFJNX1JFTkRFUl9BTExPVyksCisJCQkgIERSTV9SRU5ERVJfQUxMT1cpLAogI2VuZGlmCiB9
-OwogCi0tIAoyLjIxLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbA==
+From: Sameer Pujar <spujar@nvidia.com>
+
+[ Upstream commit f030e419501cb95e961e9ed35c493b5d46a04eca ]
+
+Following kernel panic is seen during DMA driver unload->load sequence
+==========================================================================
+Unable to handle kernel paging request at virtual address ffffff8001198880
+Internal error: Oops: 86000007 [#1] PREEMPT SMP
+CPU: 0 PID: 5907 Comm: HwBinder:4123_1 Tainted: G C 4.9.128-tegra-g065839f
+Hardware name: galen (DT)
+task: ffffffc3590d1a80 task.stack: ffffffc3d0678000
+PC is at 0xffffff8001198880
+LR is at of_dma_request_slave_channel+0xd8/0x1f8
+pc : [<ffffff8001198880>] lr : [<ffffff8008746f30>] pstate: 60400045
+sp : ffffffc3d067b710
+x29: ffffffc3d067b710 x28: 000000000000002f
+x27: ffffff800949e000 x26: ffffff800949e750
+x25: ffffff800949e000 x24: ffffffbefe817d84
+x23: ffffff8009f77cb0 x22: 0000000000000028
+x21: ffffffc3ffda49c8 x20: 0000000000000029
+x19: 0000000000000001 x18: ffffffffffffffff
+x17: 0000000000000000 x16: ffffff80082b66a0
+x15: ffffff8009e78250 x14: 000000000000000a
+x13: 0000000000000038 x12: 0101010101010101
+x11: 0000000000000030 x10: 0101010101010101
+x9 : fffffffffffffffc x8 : 7f7f7f7f7f7f7f7f
+x7 : 62ff726b6b64622c x6 : 0000000000008064
+x5 : 6400000000000000 x4 : ffffffbefe817c44
+x3 : ffffffc3ffda3e08 x2 : ffffff8001198880
+x1 : ffffffc3d48323c0 x0 : ffffffc3d067b788
+
+Process HwBinder:4123_1 (pid: 5907, stack limit = 0xffffffc3d0678028)
+Call trace:
+[<ffffff8001198880>] 0xffffff8001198880
+[<ffffff80087459f8>] dma_request_chan+0x50/0x1f0
+[<ffffff8008745bc0>] dma_request_slave_channel+0x28/0x40
+[<ffffff8001552c44>] tegra_alt_pcm_open+0x114/0x170
+[<ffffff8008d65fa4>] soc_pcm_open+0x10c/0x878
+[<ffffff8008d18618>] snd_pcm_open_substream+0xc0/0x170
+[<ffffff8008d1878c>] snd_pcm_open+0xc4/0x240
+[<ffffff8008d189e0>] snd_pcm_playback_open+0x58/0x80
+[<ffffff8008cfc6d4>] snd_open+0xb4/0x178
+[<ffffff8008250628>] chrdev_open+0xb8/0x1d0
+[<ffffff8008246fdc>] do_dentry_open+0x214/0x318
+[<ffffff80082485d0>] vfs_open+0x58/0x88
+[<ffffff800825bce0>] do_last+0x450/0xde0
+[<ffffff800825c718>] path_openat+0xa8/0x368
+[<ffffff800825dd84>] do_filp_open+0x8c/0x110
+[<ffffff8008248a74>] do_sys_open+0x164/0x220
+[<ffffff80082b66dc>] compat_SyS_openat+0x3c/0x50
+[<ffffff8008083040>] el0_svc_naked+0x34/0x38
+---[ end trace 67e6d544e65b5145 ]---
+Kernel panic - not syncing: Fatal exception
+==========================================================================
+
+In device probe(), of_dma_controller_register() registers DMA controller.
+But when driver is removed, this is not freed. During driver reload this
+results in data abort and kernel panic. Add of_dma_controller_free() in
+driver remove path to fix the issue.
+
+Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/dma/tegra210-adma.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index b26256f23d67f..08b10274284a8 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -786,6 +786,7 @@ static int tegra_adma_remove(struct platform_device *pdev)
+ 	struct tegra_adma *tdma = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 
+ 	for (i = 0; i < tdma->nr_channels; ++i)
+-- 
+2.20.1
