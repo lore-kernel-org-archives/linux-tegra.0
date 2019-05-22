@@ -1,215 +1,72 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V7 04/15] PCI: dwc: Move config space capability search API
-Date: Wed, 22 May 2019 14:26:08 +0530
-Message-ID: <fd164d1f-cf99-fe81-c368-46e3a3742a59@nvidia.com>
+Subject: Re: [PATCH V7 13/15] phy: tegra: Add PCIe PIPE2UPHY support
+Date: Wed, 22 May 2019 14:29:46 +0530
+Message-ID: <ff85f75b-2b4d-eb31-2c9c-44122833b5e3@nvidia.com>
 References: <20190517123846.3708-1-vidyas@nvidia.com>
- <20190517123846.3708-5-vidyas@nvidia.com> <20190521211757.GF57618@google.com>
+ <20190517123846.3708-14-vidyas@nvidia.com> <20190521110053.GM29166@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190521211757.GF57618@google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190521110053.GM29166@ulmo>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, lorenzo.pieralisi@arm.com, mperttunen@nvidia.com, mmaddireddy@nvidia.com, linux-pci@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, kishon@ti.com, kthota@nvidia.com, thierry.reding@gmail.com, gustavo.pimentel@synopsys.com, jingoohan1@gmail.com, linux-tegra@vger.kernel.org, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/22/2019 2:47 AM, Bjorn Helgaas wrote:
-> On Fri, May 17, 2019 at 06:08:35PM +0530, Vidya Sagar wrote:
->> Move PCIe config space capability search API to common DesignWare file
->> as this can be used by both host and ep mode codes.
+On 5/21/2019 4:30 PM, Thierry Reding wrote:
+> On Fri, May 17, 2019 at 06:08:44PM +0530, Vidya Sagar wrote:
+>> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
+>> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
+>> For each PCIe lane of a controller, there is a P2U unit instantiated at
+>> hardware level. This driver provides support for the programming required
+>> for each P2U that is going to be used for a PCIe controller.
 >>
 >> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 >> ---
 >> Changes since [v6]:
->> * Exported dw_pcie_find_capability() API
+>> * None
 >>
 >> Changes since [v5]:
->> * None
+>> * Addressed review comments from Thierry
 >>
 >> Changes since [v4]:
->> * Removed redundant APIs in pcie-designware-ep.c file after moving them
->>    to pcie-designware.c file based on Bjorn's comments.
->>
->> Changes since [v3]:
->> * Rebased to linux-next top of the tree
->>
->> Changes since [v2]:
 >> * None
 >>
+>> Changes since [v3]:
+>> * Rebased on top of linux-next top of the tree
+>>
+>> Changes since [v2]:
+>> * Replaced spaces with tabs in Kconfig file
+>> * Sorted header file inclusion alphabetically
+>>
 >> Changes since [v1]:
->> * Removed dw_pcie_find_next_ext_capability() API from here and made a
->>    separate patch for that
+>> * Added COMPILE_TEST in Kconfig
+>> * Removed empty phy_ops implementations
+>> * Modified code according to DT documentation file modifications
 >>
->>   .../pci/controller/dwc/pcie-designware-ep.c   | 37 +----------------
->>   drivers/pci/controller/dwc/pcie-designware.c  | 40 +++++++++++++++++++
->>   drivers/pci/controller/dwc/pcie-designware.h  |  2 +
->>   3 files changed, 44 insertions(+), 35 deletions(-)
+>>   drivers/phy/tegra/Kconfig             |   7 ++
+>>   drivers/phy/tegra/Makefile            |   1 +
+>>   drivers/phy/tegra/pcie-p2u-tegra194.c | 109 ++++++++++++++++++++++++++
+>>   3 files changed, 117 insertions(+)
+>>   create mode 100644 drivers/phy/tegra/pcie-p2u-tegra194.c
 >>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> index 2bf5a35c0570..65f479250087 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> @@ -40,39 +40,6 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
->>   	__dw_pcie_ep_reset_bar(pci, bar, 0);
->>   }
+>> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+>> index a3b1de953fb7..06d423fa85b4 100644
+>> --- a/drivers/phy/tegra/Kconfig
+>> +++ b/drivers/phy/tegra/Kconfig
+>> @@ -6,3 +6,10 @@ config PHY_TEGRA_XUSB
 >>   
->> -static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
->> -			      u8 cap)
->> -{
->> -	u8 cap_id, next_cap_ptr;
->> -	u16 reg;
->> -
->> -	if (!cap_ptr)
->> -		return 0;
->> -
->> -	reg = dw_pcie_readw_dbi(pci, cap_ptr);
->> -	cap_id = (reg & 0x00ff);
->> -
->> -	if (cap_id > PCI_CAP_ID_MAX)
->> -		return 0;
->> -
->> -	if (cap_id == cap)
->> -		return cap_ptr;
->> -
->> -	next_cap_ptr = (reg & 0xff00) >> 8;
->> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
->> -}
->> -
->> -static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
->> -{
->> -	u8 next_cap_ptr;
->> -	u16 reg;
->> -
->> -	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
->> -	next_cap_ptr = (reg & 0x00ff);
->> -
->> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
->> -}
->> -
->>   static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
->>   				   struct pci_epf_header *hdr)
->>   {
->> @@ -612,9 +579,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->>   		dev_err(dev, "Failed to reserve memory for MSI/MSI-X\n");
->>   		return -ENOMEM;
->>   	}
->> -	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
->> +	ep->msi_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
->>   
->> -	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
->> +	ep->msix_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSIX);
->>   
->>   	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
->>   	if (offset) {
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
->> index 83cdd2ce2486..8f53ce63d17e 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware.c
->> @@ -14,6 +14,46 @@
->>   
->>   #include "pcie-designware.h"
->>   
->> +/*
->> + * These APIs are different from standard pci_find_*capability() APIs in the
->> + * sense that former can only be used post device enumeration as they require
->> + * 'struct pci_dev *' pointer whereas these APIs require 'struct dw_pcie *'
->> + * pointer and can be used before link up also.
+>>   	  To compile this driver as a module, choose M here: the module will
+>>   	  be called phy-tegra-xusb.
+>> +
+>> +config PHY_TEGRA194_PCIE_P2U
+>> +	tristate "NVIDIA Tegra P2U PHY Driver"
 > 
-> I think this comment is slightly misleading because it suggests the
-> reason we need these DW interfaces is because we're doing something
-> before a pci_dev pointer is available.
+> One more thing: perhaps make this description consistent with the driver
+> description in the source file.
+Done.
 > 
-> But these DW interfaces are used on devices that will *never* have a
-> pci_dev pointer because they are not PCI devices.  They're used on
-> host controller devices, which have a PCIe link on the downstream
-> side, but the host controller driver operates them using their
-> upstream, non-PCI interfaces.  Logically, I think they would be
-> considered parts of Root Complexes, not Root Ports.
+> Thierry
 > 
-> There's actually no reason why that upstream interface should look
-> anything like PCI; it doesn't need to organize registers into
-> capability lists at all.  It might be convenient for the hardware to
-> do that and share things with a Root Port device, which *is* a PCI
-> device, but it's not required.
-> 
-> It also really has nothing to do with whether the link is up.  This
-> code operates on hardware that is upstream from the link, so we can
-> reach it regardless of the link.
-I added this comment after receiving a review comment to justify why standard
-pci_find_*capability() APIs can't be used here. Hence added this.
-I understand your comment that DW interface need not have to be a PCI device,
-but what is present in the hardware is effectively a root port implementation
-and post enumeration, we get a 'struct pci_dev' created for it, hence I thought
-it is fine to bring 'struct pci_dev' into picture.
-Also, I agree that mention of 'link up' is unwarranted and could be reworded in
-a better way.
-Do you suggest to remove this comment altogether or reword it
-s/and can be used before link up also/and can be used before 'struct pci_dev' is
-available/ ?
-
-> 
->> + */
->> +static u8 __dw_pcie_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
->> +				  u8 cap)
->> +{
->> +	u8 cap_id, next_cap_ptr;
->> +	u16 reg;
->> +
->> +	if (!cap_ptr)
->> +		return 0;
->> +
->> +	reg = dw_pcie_readw_dbi(pci, cap_ptr);
->> +	cap_id = (reg & 0x00ff);
->> +
->> +	if (cap_id > PCI_CAP_ID_MAX)
->> +		return 0;
->> +
->> +	if (cap_id == cap)
->> +		return cap_ptr;
->> +
->> +	next_cap_ptr = (reg & 0xff00) >> 8;
->> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
->> +}
->> +
->> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
->> +{
->> +	u8 next_cap_ptr;
->> +	u16 reg;
->> +
->> +	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
->> +	next_cap_ptr = (reg & 0x00ff);
->> +
->> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
->> +}
->> +EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
->> +
->>   int dw_pcie_read(void __iomem *addr, int size, u32 *val)
->>   {
->>   	if (!IS_ALIGNED((uintptr_t)addr, size)) {
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index 14762e262758..6cb978132469 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -251,6 +251,8 @@ struct dw_pcie {
->>   #define to_dw_pcie_from_ep(endpoint)   \
->>   		container_of((endpoint), struct dw_pcie, ep)
->>   
->> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
->> +
->>   int dw_pcie_read(void __iomem *addr, int size, u32 *val);
->>   int dw_pcie_write(void __iomem *addr, int size, u32 val);
->>   
->> -- 
->> 2.17.1
->>
