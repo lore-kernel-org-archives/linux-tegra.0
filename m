@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 016/317] dmaengine: tegra210-dma: free dma controller in remove()
-Date: Wed, 22 May 2019 15:18:37 -0400
-Message-ID: <20190522192338.23715-16-sashal@kernel.org>
-References: <20190522192338.23715-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 011/244] dmaengine: tegra210-dma: free dma controller in remove()
+Date: Wed, 22 May 2019 15:22:37 -0400
+Message-ID: <20190522192630.24917-11-sashal@kernel.org>
+References: <20190522192630.24917-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
+In-Reply-To: <20190522192630.24917-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Sameer Pujar <spujar@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
