@@ -1,80 +1,27 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1 08/12] soc/tegra: pmc: allow support for more tegra
- wake models
-Date: Wed, 22 May 2019 15:02:35 +0200
-Message-ID: <20190522130235.GK30938@ulmo>
-References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
- <1558481483-22254-9-git-send-email-skomatineni@nvidia.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH] dt: bindings: mtd: replace references to nand.txt with nand-controller.yaml
+Date: Wed, 22 May 2019 08:19:09 -0500
+Message-ID: <CAL_JsqKd53W1E33YdtJwagi4=7DrVQ5+N3rSY=Rxo5J0RiW46g@mail.gmail.com>
+References: <1558466890-45471-1-git-send-email-kdasu.kdev@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="F55Y67F01HNW3AgB"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1558481483-22254-9-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1558466890-45471-1-git-send-email-kdasu.kdev@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, jckuo@nvidia.com, talho@nvidia.com, josephl@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kamal Dasu <kdasu.kdev@gmail.com>
+Cc: MTD Maling List <linux-mtd@lists.infradead.org>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liang Yang <liang.yang@amlogic.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@baylibre.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Neil Armstrong <narmstrong@baylibre.com>, Andy Gross <agross@ker>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, May 21, 2019 at 2:28 PM Kamal Dasu <kdasu.kdev@gmail.com> wrote:
+>
+> nand-controller.yaml replaced nand.txt however the references to it were
+> not updated. This change updates these references wherever it appears in
+> bindings documentation.
+>
+> Fixes: 212e49693592 ("dt-bindings: mtd: Add YAML schemas for the generic NAND options")
+>
+> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
 
---F55Y67F01HNW3AgB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Mauro already sent a similar patch.
 
-On Tue, May 21, 2019 at 04:31:19PM -0700, Sowjanya Komatineni wrote:
-> This patch allows to create separate irq_set_wake and irq_set_type
-> implementations for different tegra designs PMC that has different
-> wake models which require difference wake registers and different
-> programming sequence.
->=20
-> AOWAKE model support is available for Tegra186 and Tegra194 only
-> and it resides within PMC and supports tiered wake architecture.
->=20
-> Tegra210 and prior tegra designs uses PMC directly to receive wake
-> events and coordinate the wake sequence.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
-
-One more thing...
-
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 5648e5c09ef5..f77ce4b827e3 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -235,6 +235,8 @@ struct tegra_pmc_soc {
->  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
->  				   struct device_node *np,
->  				   bool invert);
-> +	int (*pmc_irq_set_wake)(struct irq_data *data, unsigned int on);
-> +	int (*pmc_irq_set_type)(struct irq_data *data, unsigned int type);
-
-=2E.. drop the pmc_ prefix here. These are part of a struct tegra_pmc_soc
-structure, so that pmc_ is redundant.
-
-Thierry
-
---F55Y67F01HNW3AgB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzlSGsACgkQ3SOs138+
-s6HxsxAAn4FIWyy16hYAw8H5oy8A4vJGWv2gUZTS5idKN2eKFrehhGUPdUkde3yg
-zLfZM3pkzQ3vCHI6t9D3zBJv14CTwZjDCBXPSOCoiNDuy23YagCfpXAhqNz5hKOV
-4iUTJNKGlHpLnNCG3WXRtzIJgbzNfN+bKuvHA1BuB+QLzejZfkMbS2BuW/Y43NxM
-DX5zGG1VgCdDpX9vmSPYY2PvQdpjdXC/0JRYyOtK/3K4R8yb/oavoHIQoCBOyYN6
-7PS6/jHI3gz5HI+nVcoYRTxfZ7RT/lbsATd8xKVlDpfYkKxSwOxFjzeHaBfs486N
-PtP8CN0wfU5990qNERI3k1yf855GzH3+JwBiO5bV3QmpbNCCjm3+dMnmKKGBSXhs
-ktiEkVwrhh75zMULkAkzvWEGbRp0/AM9gegASee6fbPgIr1X6Pctz1ss2MqRB0CI
-u15VXwKSIl6JCQ0levuFkJM71GpAlW5jacRegl6+wUGgJh/YIjN4guV/2HJnaWdB
-xrfD830h+fVSKHChbNRx02j5Y2x7/PnijTKLcjXIT6X5QBSeF3jB2ygXx+omcXuu
-bcz/LG5gPXqe7nsmaaYwTWbrGa6qFqODT7bZdbooEWMmEQLV07zt2FPr1a7SSKrd
-E2cGoh3GWoKQLcRc1W7qkLUusgIulOl1VjS1MThxutpHxc54fFs=
-=I9/r
------END PGP SIGNATURE-----
-
---F55Y67F01HNW3AgB--
+Rob
