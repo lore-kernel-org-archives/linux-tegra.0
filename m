@@ -1,333 +1,159 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1 02/12] pinctrl: tegra: add suspend and resume support
-Date: Wed, 22 May 2019 14:37:19 +0200
-Message-ID: <20190522123719.GH30938@ulmo>
+Subject: Re: [PATCH V1 08/12] soc/tegra: pmc: allow support for more tegra
+ wake models
+Date: Wed, 22 May 2019 14:49:44 +0200
+Message-ID: <20190522124944.GI30938@ulmo>
 References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
- <1558481483-22254-3-git-send-email-skomatineni@nvidia.com>
+ <1558481483-22254-9-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xQmOcGOVkeO43v2v"
+        protocol="application/pgp-signature"; boundary="7IgncvKP0CVPV/ZZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1558481483-22254-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1558481483-22254-9-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc: jonathanh@nvidia.com, jckuo@nvidia.com, talho@nvidia.com, josephl@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---xQmOcGOVkeO43v2v
+--7IgncvKP0CVPV/ZZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2019 at 04:31:13PM -0700, Sowjanya Komatineni wrote:
-> This patch adds suspend and resume support for Tegra pinctrl driver
-> and registers them to syscore so the pinmux settings are restored
-> before the devices resume.
+On Tue, May 21, 2019 at 04:31:19PM -0700, Sowjanya Komatineni wrote:
+> This patch allows to create separate irq_set_wake and irq_set_type
+> implementations for different tegra designs PMC that has different
+> wake models which require difference wake registers and different
+> programming sequence.
+>=20
+> AOWAKE model support is available for Tegra186 and Tegra194 only
+> and it resides within PMC and supports tiered wake architecture.
+>=20
+> Tegra210 and prior tegra designs uses PMC directly to receive wake
+> events and coordinate the wake sequence.
 >=20
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c    | 68 ++++++++++++++++++++++++++=
-+++++-
->  drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
->  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
->  7 files changed, 75 insertions(+), 1 deletion(-)
+>  drivers/soc/tegra/pmc.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
 >=20
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
-a/pinctrl-tegra.c
-> index a5008c066bac..585debbc4291 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -28,11 +28,18 @@
->  #include <linux/pinctrl/pinmux.h>
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/slab.h>
-> +#include <linux/syscore_ops.h>
-
-I'd like to avoid moving this to syscore_ops if possible. The reason is
-that there are other mechanisms that allow proper sequencing of suspend
-and resume. syscore_ops might give you the correct sequence with respect
-to device drivers, but there's no way to control the sequence with
-respect to other syscore_ops. It also sets a bad precedent because this
-requires a global variable and is therefore no longer properly
-encapsulated (i.e. you can't have more than one instance, otherwise you
-would end up overwriting the global variable).
-
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 5648e5c09ef5..f77ce4b827e3 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -235,6 +235,8 @@ struct tegra_pmc_soc {
+>  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+>  				   struct device_node *np,
+>  				   bool invert);
+> +	int (*pmc_irq_set_wake)(struct irq_data *data, unsigned int on);
+> +	int (*pmc_irq_set_type)(struct irq_data *data, unsigned int type);
 > =20
->  #include "../core.h"
->  #include "../pinctrl-utils.h"
->  #include "pinctrl-tegra.h"
+>  	const char * const *reset_sources;
+>  	unsigned int num_reset_sources;
+> @@ -1915,12 +1917,15 @@ static const struct irq_domain_ops tegra_pmc_irq_=
+domain_ops =3D {
+>  	.alloc =3D tegra_pmc_irq_alloc,
+>  };
 > =20
-> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
-> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
-> +#define EMMC_DPD_PARKING			(0x1FFF << 14)
-
-Use lower-case hexadecimal digits consistently.
-
-> +
-> +static struct tegra_pmx *pmx;
-> +
->  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int=
+ on)
 >  {
->  	return readl(pmx->regs[bank] + reg);
-> @@ -629,6 +636,50 @@ static void tegra_pinctrl_clear_parked_bits(struct t=
-egra_pmx *pmx)
->  	}
->  }
+>  	struct tegra_pmc *pmc =3D irq_data_get_irq_chip_data(data);
+>  	unsigned int offset, bit;
+>  	u32 value;
 > =20
-> +static int __maybe_unused tegra_pinctrl_suspend(void)
-> +{
-> +	u32 *pg_data =3D pmx->pg_data;
-
-This is a very generic name. Perhaps use something more contextual like
-pmx->suspend_backup, pmx->saved_regs or something along those lines.
-
-> +	u32 *regs;
-> +	int i, j;
+> +	if (data->hwirq < 0)
+> +		return 0;
 > +
-> +	for (i =3D 0; i < pmx->nbanks; i++) {
-> +		regs =3D pmx->regs[i];
-> +		for (j =3D 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			*pg_data++ =3D readl(regs++);
 
-Perhaps avoid the regs temporary variable and just do regs[i][j]?
-
-> +	}
-> +
-> +	return pinctrl_force_sleep(pmx->pctl);
-> +}
-> +
-> +static void __maybe_unused tegra_pinctrl_resume(void)
-> +{
-> +	u32 *pg_data =3D pmx->pg_data;
-> +	u32 *regs;
-> +	u32 val;
-> +	int i, j;
-> +
-> +	for (i =3D 0; i < pmx->nbanks; i++) {
-> +		regs =3D pmx->regs[i];
-> +		for (j =3D 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			writel(*pg_data++, regs++);
-> +	}
-> +
-> +	if (pmx->soc->has_park_padcfg) {
-> +		val =3D pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
-> +		val &=3D ~EMMC_DPD_PARKING;
-> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
-> +
-> +		val =3D pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
-> +		val &=3D ~EMMC_DPD_PARKING;
-> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
-> +	}
-> +}
-> +
-> +static struct syscore_ops pinctrl_syscore_ops =3D {
-> +	.suspend =3D tegra_pinctrl_suspend,
-> +	.resume =3D tegra_pinctrl_resume,
-> +};
-> +
->  static bool gpio_node_has_range(const char *compatible)
->  {
->  	struct device_node *np;
-> @@ -648,11 +699,11 @@ static bool gpio_node_has_range(const char *compati=
-ble)
->  int tegra_pinctrl_probe(struct platform_device *pdev,
->  			const struct tegra_pinctrl_soc_data *soc_data)
->  {
-> -	struct tegra_pmx *pmx;
->  	struct resource *res;
->  	int i;
->  	const char **group_pins;
->  	int fn, gn, gfn;
-> +	int pg_data_size =3D 0;
-> =20
->  	pmx =3D devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
->  	if (!pmx)
-> @@ -705,6 +756,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  		res =3D platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		if (!res)
->  			break;
-> +		pg_data_size +=3D resource_size(res);
->  	}
->  	pmx->nbanks =3D i;
-> =20
-> @@ -712,12 +764,25 @@ int tegra_pinctrl_probe(struct platform_device *pde=
-v,
->  				 GFP_KERNEL);
->  	if (!pmx->regs)
->  		return -ENOMEM;
-> +#ifdef CONFIG_PM_SLEEP
-
-Do we really need the #ifdef here? I don't think it buys us much and
-PM_SLEEP is likely always going to be enabled.
-
-> +	pmx->reg_bank_size =3D devm_kcalloc(&pdev->dev, pmx->nbanks,
-> +					  sizeof(*pmx->reg_bank_size),
-> +					  GFP_KERNEL);
-> +	if (!pmx->reg_bank_size)
-> +		return -ENOMEM;
-> =20
-> +	pmx->pg_data =3D devm_kzalloc(&pdev->dev, pg_data_size, GFP_KERNEL);
-> +	if (!pmx->pg_data)
-> +		return -ENOMEM;
-> +#endif
->  	for (i =3D 0; i < pmx->nbanks; i++) {
->  		res =3D platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		pmx->regs[i] =3D devm_ioremap_resource(&pdev->dev, res);
->  		if (IS_ERR(pmx->regs[i]))
->  			return PTR_ERR(pmx->regs[i]);
-> +#ifdef CONFIG_PM_SLEEP
-> +		pmx->reg_bank_size[i] =3D resource_size(res);
-> +#endif
->  	}
-> =20
->  	pmx->pctl =3D devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pm=
-x);
-> @@ -732,6 +797,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  		pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
-> =20
->  	platform_set_drvdata(pdev, pmx);
-> +	register_syscore_ops(&pinctrl_syscore_ops);
-> =20
->  	dev_dbg(&pdev->dev, "Probed Tegra pinctrl driver\n");
-> =20
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegr=
-a/pinctrl-tegra.h
-> index 44c71941b5f8..8c7cd94124ea 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-> @@ -25,6 +25,8 @@ struct tegra_pmx {
-> =20
->  	int nbanks;
->  	void __iomem **regs;
-> +	int *reg_bank_size;
-
-size_t
-
-However, I wonder if there's not a better way to do this. You already do
-pinctrl_force_sleep(). I wonder if it'd make sense to add functionality
-to the pinctrl framework to restore the current state.
-
-Adding Linus Walleij. Linus, do you know if there's some way of tracking
-the current state for all of the pins? I can't seem to find anything
-like that anywhere, but it seems to me like a bit of a waste for every
-driver to have to allocate extra system memory to store register values
-that could equally well just be reconstructed from state kept in the
-pinctrl framework.
-
-Any ideas if this is possible, or whether that'd be worth doing?
+This isn't going to work: data->hwirq is unsigned long so it will never
+be < 0. Also, why is this necessary? I see that it's there in
+tegra_pmc_irq_set_wake(), but I fail to remember why that's there. When
+is this ever invalid?
 
 Thierry
 
-> +	u32 *pg_data;
->  };
+>  	offset =3D data->hwirq / 32;
+>  	bit =3D data->hwirq % 32;
 > =20
->  enum tegra_pinconf_param {
-> @@ -199,6 +201,7 @@ struct tegra_pinctrl_soc_data {
->  	bool hsm_in_mux;
->  	bool schmitt_in_mux;
->  	bool drvtype_in_mux;
-> +	bool has_park_padcfg;
->  };
+> @@ -1943,12 +1948,12 @@ static int tegra_pmc_irq_set_wake(struct irq_data=
+ *data, unsigned int on)
+>  	return 0;
+>  }
 > =20
->  int tegra_pinctrl_probe(struct platform_device *pdev,
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/t=
-egra/pinctrl-tegra114.c
-> index d43c209e9c30..4ac44f34dccf 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-> @@ -1849,6 +1849,7 @@ static const struct tegra_pinctrl_soc_data tegra114=
-_pinctrl =3D {
->  	.hsm_in_mux =3D false,
->  	.schmitt_in_mux =3D false,
->  	.drvtype_in_mux =3D false,
-> +	.has_park_padcfg =3D false,
->  };
+> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int ty=
+pe)
+> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int=
+ type)
+>  {
+>  	struct tegra_pmc *pmc =3D irq_data_get_irq_chip_data(data);
+>  	u32 value;
 > =20
->  static int tegra114_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/t=
-egra/pinctrl-tegra124.c
-> index 5b07a5834d15..1dac7648b41f 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-> @@ -2061,6 +2061,7 @@ static const struct tegra_pinctrl_soc_data tegra124=
-_pinctrl =3D {
->  	.hsm_in_mux =3D false,
->  	.schmitt_in_mux =3D false,
->  	.drvtype_in_mux =3D false,
-> +	.has_park_padcfg =3D false,
->  };
+> -	if (data->hwirq =3D=3D ULONG_MAX)
+> +	if (data->hwirq < 0)
+>  		return 0;
 > =20
->  static int tegra124_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/te=
-gra/pinctrl-tegra20.c
-> index 1fc82a9576e0..9d2b25200f32 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-> @@ -2231,6 +2231,7 @@ static const struct tegra_pinctrl_soc_data tegra20_=
-pinctrl =3D {
->  	.hsm_in_mux =3D false,
->  	.schmitt_in_mux =3D false,
->  	.drvtype_in_mux =3D false,
-> +	.has_park_padcfg =3D false,
->  };
+>  	value =3D readl(pmc->wake + WAKE_AOWAKE_CNTRL(data->hwirq));
+> @@ -1996,8 +2001,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pm=
+c)
+>  	pmc->irq.irq_unmask =3D irq_chip_unmask_parent;
+>  	pmc->irq.irq_eoi =3D irq_chip_eoi_parent;
+>  	pmc->irq.irq_set_affinity =3D irq_chip_set_affinity_parent;
+> -	pmc->irq.irq_set_type =3D tegra_pmc_irq_set_type;
+> -	pmc->irq.irq_set_wake =3D tegra_pmc_irq_set_wake;
+> +	if (pmc->soc->pmc_irq_set_type)
+> +		pmc->irq.irq_set_type =3D pmc->soc->pmc_irq_set_type;
+> +	if (pmc->soc->pmc_irq_set_wake)
+> +		pmc->irq.irq_set_wake =3D pmc->soc->pmc_irq_set_wake;
 > =20
->  static const char *cdev1_parents[] =3D {
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/t=
-egra/pinctrl-tegra210.c
-> index 3e77f5474dd8..dc06c36e698a 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> @@ -1563,6 +1563,7 @@ static const struct tegra_pinctrl_soc_data tegra210=
-_pinctrl =3D {
->  	.hsm_in_mux =3D true,
->  	.schmitt_in_mux =3D true,
->  	.drvtype_in_mux =3D true,
-> +	.has_park_padcfg =3D true,
+>  	pmc->domain =3D irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_no=
+de,
+>  					       &tegra_pmc_irq_domain_ops, pmc);
+> @@ -2670,6 +2677,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc =
+=3D {
+>  	.regs =3D &tegra186_pmc_regs,
+>  	.init =3D NULL,
+>  	.setup_irq_polarity =3D tegra186_pmc_setup_irq_polarity,
+> +	.pmc_irq_set_wake =3D tegra186_pmc_irq_set_wake,
+> +	.pmc_irq_set_type =3D tegra186_pmc_irq_set_type,
+>  	.reset_sources =3D tegra186_reset_sources,
+>  	.num_reset_sources =3D ARRAY_SIZE(tegra186_reset_sources),
+>  	.reset_levels =3D tegra186_reset_levels,
+> @@ -2748,6 +2757,8 @@ static const struct tegra_pmc_soc tegra194_pmc_soc =
+=3D {
+>  	.regs =3D &tegra186_pmc_regs,
+>  	.init =3D NULL,
+>  	.setup_irq_polarity =3D tegra186_pmc_setup_irq_polarity,
+> +	.pmc_irq_set_wake =3D tegra186_pmc_irq_set_wake,
+> +	.pmc_irq_set_type =3D tegra186_pmc_irq_set_type,
+>  	.num_wake_events =3D ARRAY_SIZE(tegra194_wake_events),
+>  	.wake_events =3D tegra194_wake_events,
 >  };
-> =20
->  static int tegra210_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/te=
-gra/pinctrl-tegra30.c
-> index 10e617003e9c..42182d714950 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-> @@ -2484,6 +2484,7 @@ static const struct tegra_pinctrl_soc_data tegra30_=
-pinctrl =3D {
->  	.hsm_in_mux =3D false,
->  	.schmitt_in_mux =3D false,
->  	.drvtype_in_mux =3D false,
-> +	.has_park_padcfg =3D false,
->  };
-> =20
->  static int tegra30_pinctrl_probe(struct platform_device *pdev)
 > --=20
 > 2.7.4
 >=20
 
---xQmOcGOVkeO43v2v
+--7IgncvKP0CVPV/ZZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzlQn0ACgkQ3SOs138+
-s6EhNA/8C+LkVpKOWBjote9hTTbyzCY0IU6wIe21lgfVnkLyGHhda28REkrZM+ku
-AHlWnR7iAf7bZLudOMH87x7qZDmRIorQJTKgxT1qVfWK81vLG9ggV8lC7MZd3jJv
-0cLkjP1/r2ALQwzIZhmHrIJrO98ZjTnlP5aNUude5j9WK0Ptw4D8+aqp7vhUxUiD
-n9x8vVmpeq2Te4A06sTU9lHZmAjkNMbJE3brqRFP4cy3wzA5ehEczbLBcDCVbmtj
-7frKuEExDAeV+lBbkmT0ksLJHUl3XuDTJkKQ12jADcJKR1zMnoJFSFfRbpY2b9vh
-4+fiObChfYKA2rawijY7uyB7N2fKqCKwytrJb2XODV0g/9OXMTrne6atR0+0XeBZ
-6u9fEpfzUSMGcw8s8VA0PlGMI4615KPmyXHppqEYFDSpiFa9GbZsJ2CpskWCJfLh
-j1ezD5D+XPmtZJ4RnoP3o/48TU9WgkW2T6vysyXDXLUv5waXI1P0UjB00v+sc5+l
-ZQ/WeiiWon5EfCsewHDrt7htaKBIsPGbhhzO4DN1l4zD0gMqrFLfoJradF8K0hsK
-PL9X4Ukx07a2U8kez9Zckvzi3gu9FFYXqtN1wjwvtZ1uhiV6g+6/9L8fsf4EuFN/
-yy6DRyNvV0A8xG00tSQYn5vbEeZv4QLfhuqUuWjPkI0JlRKsB5A=
-=XFJG
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzlRWYACgkQ3SOs138+
+s6HkiBAAhdT95aojoGVVofzPjlKWofpbrp+5rqG5LnDZ7iadgclc101WMwJcSzrm
+2A/5z0nN1QJFY4G0rN7+nOxYw1Cc/B5nGOzZjYDi5Z6bUj0l7dnjU8nizuEY0RuW
+HLzQsncWD2HzQAbwXD3DNNcT7tn324PHZB5KMXPsy7F484X3Hq44IU5gDMJYEIXD
+Ejn7CgXEd7bMmHS0Hkh5dxFk5jfeIKqjJtyS8fX39/m9it8mva/ctkQNgYi5RJSX
+EcSc05JG78ft0d87IhPblahDRV5tjq/2x99LORMpHrmhwtm6X458mAi89ZpyRz+q
+0KuK2LtvnRwNYtfFkX2SQ3FXIl6CgoY8LTkT8FUlL52lt/aRCGJqImulyjGmRY46
+5Hkso6UtEihTchD/27JaIEFid5nSoycE/ib0HK1V26cloGn/eICNnCnqHrhEszaq
+VNIeZ+SkRgCie7emmmhd/YXMj+gwOnNIuSshBkrw2P/84fSy3FCQjg+Fc5VjZT2j
+XR1w5SOxnXxmE72EItt7oJsaaluxe1R77edh1LWUuLj24XjYG3lT27FWh2X7E+Hg
+zqFIQ89btCRHtozs4ngEsSyXU4+FlZNRIT17bww1sAbFECWst9nagh7nTsz/rFuF
+nV0lGoapFYY8Frtt/7pP3vy9wnQ/f4xYzpMFIC6LbSJvk4oQWIU=
+=ZN1C
 -----END PGP SIGNATURE-----
 
---xQmOcGOVkeO43v2v--
+--7IgncvKP0CVPV/ZZ--
