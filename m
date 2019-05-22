@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 008/167] dmaengine: tegra210-dma: free dma controller in remove()
-Date: Wed, 22 May 2019 15:26:03 -0400
-Message-ID: <20190522192842.25858-8-sashal@kernel.org>
-References: <20190522192842.25858-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 021/375] dmaengine: tegra210-dma: free dma controller in remove()
+Date: Wed, 22 May 2019 15:15:21 -0400
+Message-ID: <20190522192115.22666-21-sashal@kernel.org>
+References: <20190522192115.22666-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
+In-Reply-To: <20190522192115.22666-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Sameer Pujar <spujar@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index b26256f23d67f..08b10274284a8 100644
+index 5ec0dd97b3971..9aa35a7f13692 100644
 --- a/drivers/dma/tegra210-adma.c
 +++ b/drivers/dma/tegra210-adma.c
-@@ -786,6 +786,7 @@ static int tegra_adma_remove(struct platform_device *pdev)
+@@ -787,6 +787,7 @@ static int tegra_adma_remove(struct platform_device *pdev)
  	struct tegra_adma *tdma = platform_get_drvdata(pdev);
  	int i;
  
