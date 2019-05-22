@@ -1,108 +1,158 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1 00/12] LP0 entry and exit support for Tegra210
-Date: Wed, 22 May 2019 15:33:52 +0200
-Message-ID: <20190522133352.GO30938@ulmo>
-References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH V7 12/15] arm64: tegra: Enable PCIe slots in P2972-0000
+ board
+Date: Wed, 22 May 2019 15:48:55 +0200
+Message-ID: <20190522134855.GQ30938@ulmo>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
+ <20190517123846.3708-13-vidyas@nvidia.com>
+ <20190521105455.GK29166@ulmo>
+ <6a2c0a9a-1c37-3e32-535a-aaf0db2f101d@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="B3NBd8mrXZtPJEYR"
+        protocol="application/pgp-signature"; boundary="aNvCJ41Feu8IgPyB"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <6a2c0a9a-1c37-3e32-535a-aaf0db2f101d@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, jckuo@nvidia.com, talho@nvidia.com, josephl@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---B3NBd8mrXZtPJEYR
+--aNvCJ41Feu8IgPyB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2019 at 04:31:11PM -0700, Sowjanya Komatineni wrote:
-> This patch series includes Tegra210 deepsleep or LP0 support with
-> deep sleep exit through RTC alarm wake and power button wake events.
+On Tue, May 21, 2019 at 11:47:45PM +0530, Vidya Sagar wrote:
+> On 5/21/2019 4:24 PM, Thierry Reding wrote:
+> > On Fri, May 17, 2019 at 06:08:43PM +0530, Vidya Sagar wrote:
+> > > Enable PCIe controller nodes to enable respective PCIe slots on
+> > > P2972-0000 board. Following is the ownership of slots by different
+> > > PCIe controllers.
+> > > Controller-0 : M.2 Key-M slot
+> > > Controller-1 : On-board Marvell eSATA controller
+> > > Controller-3 : M.2 Key-E slot
+> > >=20
+> > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > > ---
+> > > Changes since [v6]:
+> > > * None
+> > >=20
+> > > Changes since [v5]:
+> > > * Arranged PCIe nodes in the order of their addresses
+> > >=20
+> > > Changes since [v4]:
+> > > * None
+> > >=20
+> > > Changes since [v3]:
+> > > * None
+> > >=20
+> > > Changes since [v2]:
+> > > * Changed P2U label names to reflect new format that includes 'hsio'/=
+'nvhs'
+> > >    strings to reflect UPHY brick they belong to
+> > >=20
+> > > Changes since [v1]:
+> > > * Dropped 'pcie-' from phy-names property strings
+> > >=20
+> > >   .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  2 +-
+> > >   .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 41 ++++++++++++++++=
++++
+> > >   2 files changed, 42 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/ar=
+m64/boot/dts/nvidia/tegra194-p2888.dtsi
+> > > index 0fd5bd29fbf9..30a83d4c5b69 100644
+> > > --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+> > > +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+> > > @@ -191,7 +191,7 @@
+> > >   						regulator-boot-on;
+> > >   					};
+> > > -					sd3 {
+> > > +					vdd_1v8ao: sd3 {
+> > >   						regulator-name =3D "VDD_1V8AO";
+> > >   						regulator-min-microvolt =3D <1800000>;
+> > >   						regulator-max-microvolt =3D <1800000>;
+> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arc=
+h/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> > > index 73801b48d1d8..a22704e76a84 100644
+> > > --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> > > +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> > > @@ -167,4 +167,45 @@
+> > >   			};
+> > >   		};
+> > >   	};
+> > > +
+> > > +	pcie@14100000 {
+> > > +		status =3D "okay";
+> > > +
+> > > +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
+> > > +
+> > > +		phys =3D <&p2u_hsio_0>;
+> > > +		phy-names =3D "p2u-0";
+> > > +	};
+> > > +
+> > > +	pcie@14140000 {
+> > > +		status =3D "okay";
+> > > +
+> > > +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
+> > > +
+> > > +		phys =3D <&p2u_hsio_7>;
+> > > +		phy-names =3D "p2u-0";
+> > > +	};
+> > > +
+> > > +	pcie@14180000 {
+> > > +		status =3D "okay";
+> > > +
+> > > +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
+> > > +
+> > > +		phys =3D <&p2u_hsio_2>, <&p2u_hsio_3>, <&p2u_hsio_4>,
+> > > +		       <&p2u_hsio_5>;
+> > > +		phy-names =3D "p2u-0", "p2u-1", "p2u-2", "p2u-3";
+> > > +	};
+> > > +
+> > > +	pcie@141a0000 {
+> > > +		status =3D "disabled";
+> > > +
+> > > +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
+> > > +
+> > > +		phys =3D <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
+> > > +		       <&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
+> > > +		       <&p2u_nvhs_6>, <&p2u_nvhs_7>;
+> > > +
+> > > +		phy-names =3D "p2u-0", "p2u-1", "p2u-2", "p2u-3", "p2u-4",
+> > > +			    "p2u-5", "p2u-6", "p2u-7";
+> > > +	};
+> >=20
+> > This last controller is disabled by default. Why do we need to include
+> > all of this if it's not going to be used anyway?
+> I want to keep this entry ready by populating all the required fields. Wh=
+en pinctrl
+> driver is ready, I'll send out patches to enable this node as well.
 
-There doesn't seem to be support for waking up from a power button
-press. Is that in a patch that you didn't send out yet, or are you still
-working on that?
-
-The recipient list on this is very trimmed. I'm not sure if this was on
-purpose. I'm fine if you want to keep it that way until things settle
-down a bit, but eventually the subsystem maintainers will need to see
-these, so make sure to Cc them when you think the patches are ready.
+Okay, makes sense.
 
 Thierry
 
->=20
-> This series also includes save and restore of PLLs, clocks, OSC contexts
-> for basic LP0 exit.
->=20
-> This patch series is doesn't support for 100% suspend/resume to fully
-> functional state and we are working on some more drivers suspend and
-> resume implementations.
->=20
-> Sowjanya Komatineni (12):
->   irqchip: tegra: do not disable COP IRQ during suspend
->   pinctrl: tegra: add suspend and resume support
->   clk: tegra: save and restore PLLs state for system
->   clk: tegra: add support for peripheral clock suspend and resume
->   clk: tegra: add support for OSC clock resume
->   clk: tegra: add suspend resume support for DFLL clock
->   clk: tegra: support for Tegra210 clocks suspend-resume
->   soc/tegra: pmc: allow support for more tegra wake models
->   soc/tegra: pmc: add pmc wake support for tegra210
->   gpio: tegra: implement wake event support for Tegra210 and prior GPIO
->   soc/tegra: pmc: configure tegra deep sleep control settings
->   arm64: tegra: enable wake from deep sleep on RTC alarm.
->=20
->  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |   7 +
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi       |   5 +-
->  drivers/clk/tegra/clk-dfll.c                   |  82 ++++++
->  drivers/clk/tegra/clk-dfll.h                   |   2 +
->  drivers/clk/tegra/clk-divider.c                |  19 ++
->  drivers/clk/tegra/clk-pll-out.c                |  25 ++
->  drivers/clk/tegra/clk-pll.c                    | 220 ++++++++++++--
->  drivers/clk/tegra/clk-tegra-fixed.c            |  15 +
->  drivers/clk/tegra/clk-tegra210.c               | 382 +++++++++++++++++++=
-++++++
->  drivers/clk/tegra/clk.c                        |  74 ++++-
->  drivers/clk/tegra/clk.h                        |  18 ++
->  drivers/gpio/gpio-tegra.c                      | 109 ++++++-
->  drivers/irqchip/irq-tegra.c                    |  10 +-
->  drivers/pinctrl/tegra/pinctrl-tegra.c          |  68 ++++-
->  drivers/pinctrl/tegra/pinctrl-tegra.h          |   3 +
->  drivers/pinctrl/tegra/pinctrl-tegra114.c       |   1 +
->  drivers/pinctrl/tegra/pinctrl-tegra124.c       |   1 +
->  drivers/pinctrl/tegra/pinctrl-tegra20.c        |   1 +
->  drivers/pinctrl/tegra/pinctrl-tegra210.c       |   1 +
->  drivers/pinctrl/tegra/pinctrl-tegra30.c        |   1 +
->  drivers/soc/tegra/pmc.c                        | 159 +++++++++-
->  21 files changed, 1167 insertions(+), 36 deletions(-)
->=20
-> --=20
-> 2.7.4
->=20
-
---B3NBd8mrXZtPJEYR
+--aNvCJ41Feu8IgPyB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzlT8AACgkQ3SOs138+
-s6E/gxAAu98wY6tGYvONnepzK4edJe84108hoTkQo81y8IT5p0twCMrJCLSK3kbl
-Pw1K9ixrGK1cqV2mvTfaZAiF/Dt+ueZCIWrpqKSvyPRuGIYF6lVUEZ+PXak7J8t1
-uVHA8+M6/TvDOytvb4cjWwVv8bWoMkgbUU2AdYObEfvMjSrl54ZhCjk1TyuuOfFY
-Cg84ygIRe+EXFhrmahxWs3EgupHziiFDXMaZrctTgenmgGLWKV1F3wIWehDQ/HP/
-wPtxI4Vez7uX+JhArAtkXEVUusFce3e8j0plsWeXLhx1LVNNlpEEuBown/qaU4oA
-2neByqV3oTO30r2wtqjv3snwN2Eosu/66EZGkpDO0zKbQcf8LTqadnqja6zmzMQB
-TLFArTqpmH3oi6hmAhMNE/rYx4W4uMKKYaPfaugGrXn5a92byJ9kJEC1U+bh7dpH
-976Sm9ksAlVFfYH+YaChyrwIWOfhWiSZ8TgoqlJ7iSp6SpHGnNsGvR1ZOecg53YF
-s+VUjwfT/s+s9ykWyNHA/Swf+GsGey1L1glvbEcCBqCL0dp5PkI5A4DFigvEVnUK
-KaND7VQe7zfBC5v/+Nc5GjWBgt7SaOKs83kn/zzyWmsMjNRyY8CeplykBdCrHD+b
-Sik2p0It26u3IfQPEKHfTk9Jrt/BRiL+c6TeWwJGVz5zl/TBd+o=
-=3vyI
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzlU0QACgkQ3SOs138+
+s6H22w/+NtFf3N+erJ1kmeI6iADQ1aPCyQLeYyKJnlpmga3nBTGjnWKcMOMvvKWJ
+dd5BJVw/2y4WG/4MPOHVwNWqgikVwh9bWC1hvozWqOCVTgLfKmuJFDCuhYeEbRvo
+IYvQ+1NC+9VOrsL/L4g9LprbvZaIcCjIRKlVJBuTddpjq9fKeNQq8eAuuronYKj4
+ahrHQ4Xahni/Qe8R2crqo8qltCHwd4qWVPnTwJ0N90seqIh2sB6ZyPTUhb8WKeiL
+NoGYw5w3VAVxgV8g6nXnWPcSbhV3lM7ju0M8g1d482EpNARag+nuFMyiKkBhO3uB
+SQJQuXSJaclaThtJmdRKoL/HGd3efiJQBysjmdOyTHLPZ4Kth3Rtk7JHXJgiRmsD
+zuh+P0KOe2aYUY4ZIx6jOG2SEHGghntBpGUpyZCpPoaVhmckstaRLxObmQAd/Q9a
+tBwzjs2D1uSRLvGPYnA7BmGxzuEVq0gkg+a7EIESiEiNnuht4eIyfpaNLXaTAafU
+RwDop6KWQk7Itcpt73agmOsXf5UyLJQpf6fT4yXX1kac4YdEr3gNLo2R0rENXgp+
+THNyLcvLPPZGeS2oScl0wvhTObeAPoM42ELGLrIoZl8S8LrGYueIVjmThbsTIX1P
+QuPXkfgLQNU6KQMzDMC9Dwa0+8lAH+ofvoEqihJkSre0uBwIMqY=
+=SO5k
 -----END PGP SIGNATURE-----
 
---B3NBd8mrXZtPJEYR--
+--aNvCJ41Feu8IgPyB--
