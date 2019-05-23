@@ -1,119 +1,86 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: Applied "ASoC: simple-card: Fix configuration of DAI format" to
- the asoc tree
-Date: Thu, 23 May 2019 09:54:25 +0100
-Message-ID: <51ce00db-05ce-ba66-f1be-74c800f6daed@nvidia.com>
-References: <20190521203241.B277E1126D1B@debutante.sirena.org.uk>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH 1/4] drm/tegra: remove irrelevant DRM_UNLOCKED flag
+Date: Thu, 23 May 2019 11:15:56 +0200
+Message-ID: <20190523091555.GA18130@ulmo>
+References: <20190522154702.16269-1-emil.l.velikov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190521203241.B277E1126D1B@debutante.sirena.org.uk>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Content-Type: multipart/mixed; boundary="===============0751200552=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190522154702.16269-1-emil.l.velikov@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: linux-tegra@vger.kernel.org, kernel@collabora.com, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
+--===============0751200552==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Disposition: inline
 
-On 21/05/2019 21:32, Mark Brown wrote:
-> The patch
-> 
->    ASoC: simple-card: Fix configuration of DAI format
-> 
-> has been applied to the asoc tree at
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
-> 
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.  
-> 
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
-> 
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
-> 
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
-> 
-> Thanks,
-> Mark
-> 
-> From 069d037aea98ffa64c26d4b1dc958fb8f39f5c2b Mon Sep 17 00:00:00 2001
-> From: Jon Hunter <jonathanh@nvidia.com>
-> Date: Thu, 16 May 2019 18:51:26 +0100
-> Subject: [PATCH] ASoC: simple-card: Fix configuration of DAI format
-> 
-> When configuring a codec to be both bit-clock and frame-master, it was
-> found that the codec was always configured as bit-clock and frame-slave.
-> Looking at the simple_dai_link_of() function there appears to be two
-> problems with the configuration of the DAI format, which are ...
-> 
-> 1. The function asoc_simple_parse_daifmt() is called before the function
->    asoc_simple_parse_codec() and this means that the device-tree node
->    for the codec has not been parsed yet, which is needed by the
->    function asoc_simple_parse_daifmt() to determine who is the codec.
-> 2. The phandle passed to asoc_simple_parse_daifmt() is the phandle to
->    the 'codec' node and not the phandle of the actual codec defined by
->    the 'sound-dai' property under the 'codec' node.
-> 
-> Fix the above by moving the call to asoc_simple_parse_daifmt() after the
-> the call to asoc_simple_parse_codec() and pass the phandle for the codec
-> to asoc_simple_parse_daifmt().
-Please can you drop this patch?
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Per some offline review with Morimoto-san, it turns out that the actual
-issue resided in my DT (which was incorrect) and not the simple-card
-machine driver.
+On Wed, May 22, 2019 at 04:46:59PM +0100, Emil Velikov wrote:
+> From: Emil Velikov <emil.velikov@collabora.com>
+>=20
+> DRM_UNLOCKED doesn't do anything for non-legacy drivers. Remove it.
+>=20
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Signed-off-by: Emil Velikov <emil.velikov@collabora.com>
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 
-In my DT I incorrectly had ...
+I assume you want to take this through drm-misc? In that case:
 
-sound {
-	compatible = "simple-audio-card";
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-	...
-=>	simple-audio-card,bitclock-master = <&codec>;
-=>	simple-audio-card,frame-master = <&codec>;
-	...
+Otherwise let me know and I'll pick it up into the Tegra tree.
 
-	simple-audio-card,cpu {
-		sound-dai = <&xxx>;
-	};
+Thierry
 
-	simple-audio-card,codec {
-=>		sound-dai = <&codec>;
-	};
-};
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But I should have had ...
+-----BEGIN PGP SIGNATURE-----
 
-sound {
-	compatible = "simple-audio-card";
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzmZMgACgkQ3SOs138+
+s6HDbQ/+Nb4/XzRK2QUP3qBku8izstd6Np9t5erO7ZgQ0T/v5ctkG3ZZFMTjXRDl
+y647hQphtVliCn3BzOyl51VzDN/vEoifIidUI8wkJXnm1fRb9tZxwzJHi/5iDgq4
+mfbtN8sumBNp/YPDiGRR36te8qmf+BHPnuJ1diKb5foNFu871NkBWMzUBnSiDzcv
+fLHluu/o6OJ7QdGYA5j145BbFlwtI0BNSq6PwGhDG+mZ9NQ4EX+EluJ2NS8fFN1l
+4j7rY1qUMldmWSu/WEJR//jHlAUDOVvlLRhkVzHq06UD4OoU+cS2pTSju6cYQ9CH
+daTJK+lNU0SFW5RfEtbMGhXLwXRXM9Z98YEXZcuLnRAN6U/gK8i7CHnC6mt89Ak6
+LaCRACFyNiaeMC+ISo2F5pc4Lzujbxl7et9JVqgyCrwlVhK7XicjPklV/seXZYuU
+fUQOryXR0d//mgo80+FR1lQg7KzsySQyXV1GsFMjNrmeoDniDmrO+3vVVyK3zHKc
+EbLsrz2AzU1b8BkD88PjXJeu5EfG7ebo9LcOPa3p55EpZC7YPuRZxf2NmwsaBBYi
+sNqkUl+/7Qz+ZihW2PqZYT25pzBysEeEIib9KwWM9yM3m9YlroU5zbftoBOxE91J
+aqOAkN4KU6ixgOmh8Ymm5ky5ClfxMw/E2uJkPCmoBGEEpFmjb9Q=
+=JLGP
+-----END PGP SIGNATURE-----
 
-	...
-=>	simple-audio-card,bitclock-master = <&codec>;
-=>	simple-audio-card,frame-master = <&codec>;
-	...
+--wRRV7LY7NUeQGEoC--
 
-	simple-audio-card,cpu {
-		sound-dai = <&xxx>;
-	};
+--===============0751200552==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
 
-=>	codec: simple-audio-card,codec {	/* simple-card wants here */
-		sound-dai = <&xxx>;		/* not here */
-	};
-};
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
 
-Thanks to Morimoto-san for correcting me!
-
-Cheers
-Jon
-
--- 
-nvpublic
+--===============0751200552==--
