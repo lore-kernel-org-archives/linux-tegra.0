@@ -1,97 +1,68 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 021/375] dmaengine: tegra210-dma: free dma controller in remove()
-Date: Wed, 22 May 2019 15:15:21 -0400
-Message-ID: <20190522192115.22666-21-sashal@kernel.org>
-References: <20190522192115.22666-1-sashal@kernel.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: Re: [PATCH V5 4/4] spi: tegra114: add support for TX and RX trimmers
+Date: Wed, 22 May 2019 18:02:35 -0700
+Message-ID: <20190523010235.GA105588@archlinux-epyc>
+References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
+ <1557810235-16401-5-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522192115.22666-1-sashal@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1557810235-16401-5-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sameer Pujar <spujar@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Sameer Pujar <spujar@nvidia.com>
+Hi Sowjanya,
 
-[ Upstream commit f030e419501cb95e961e9ed35c493b5d46a04eca ]
+On Mon, May 13, 2019 at 10:03:55PM -0700, Sowjanya Komatineni wrote:
+> Tegra SPI master controller has programmable trimmers to adjust the
+> data with respect to the clock.
+> 
+> These trimmers are programmed in TX_CLK_TAP_DELAY and RX_CLK_TAP_DELAY
+> fields of COMMAND2 register.
+> 
+> SPI TX trimmer is to adjust the outgoing data with respect to the
+> outgoing clock and SPI RX trimmer is to adjust the loopback clock with
+> respect to the incoming data from the slave device.
+> 
+> These trimmers vary based on trace lengths of the platform design for
+> each of the slaves on the SPI bus and optimal value programmed is from
+> the platform validation across PVT.
+> 
+> This patch adds support for configuring TX and RX clock delay trimmers
+> through the device tree properties.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/spi/spi-tegra114.c | 67 ++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 65 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+> index e59ff7c1cee6..253a7f182fc9 100644
+> --- a/drivers/spi/spi-tegra114.c
+> +++ b/drivers/spi/spi-tegra114.c
 
-Following kernel panic is seen during DMA driver unload->load sequence
-==========================================================================
-Unable to handle kernel paging request at virtual address ffffff8001198880
-Internal error: Oops: 86000007 [#1] PREEMPT SMP
-CPU: 0 PID: 5907 Comm: HwBinder:4123_1 Tainted: G C 4.9.128-tegra-g065839f
-Hardware name: galen (DT)
-task: ffffffc3590d1a80 task.stack: ffffffc3d0678000
-PC is at 0xffffff8001198880
-LR is at of_dma_request_slave_channel+0xd8/0x1f8
-pc : [<ffffff8001198880>] lr : [<ffffff8008746f30>] pstate: 60400045
-sp : ffffffc3d067b710
-x29: ffffffc3d067b710 x28: 000000000000002f
-x27: ffffff800949e000 x26: ffffff800949e750
-x25: ffffff800949e000 x24: ffffffbefe817d84
-x23: ffffff8009f77cb0 x22: 0000000000000028
-x21: ffffffc3ffda49c8 x20: 0000000000000029
-x19: 0000000000000001 x18: ffffffffffffffff
-x17: 0000000000000000 x16: ffffff80082b66a0
-x15: ffffff8009e78250 x14: 000000000000000a
-x13: 0000000000000038 x12: 0101010101010101
-x11: 0000000000000030 x10: 0101010101010101
-x9 : fffffffffffffffc x8 : 7f7f7f7f7f7f7f7f
-x7 : 62ff726b6b64622c x6 : 0000000000008064
-x5 : 6400000000000000 x4 : ffffffbefe817c44
-x3 : ffffffc3ffda3e08 x2 : ffffff8001198880
-x1 : ffffffc3d48323c0 x0 : ffffffc3d067b788
+<snip>
 
-Process HwBinder:4123_1 (pid: 5907, stack limit = 0xffffffc3d0678028)
-Call trace:
-[<ffffff8001198880>] 0xffffff8001198880
-[<ffffff80087459f8>] dma_request_chan+0x50/0x1f0
-[<ffffff8008745bc0>] dma_request_slave_channel+0x28/0x40
-[<ffffff8001552c44>] tegra_alt_pcm_open+0x114/0x170
-[<ffffff8008d65fa4>] soc_pcm_open+0x10c/0x878
-[<ffffff8008d18618>] snd_pcm_open_substream+0xc0/0x170
-[<ffffff8008d1878c>] snd_pcm_open+0xc4/0x240
-[<ffffff8008d189e0>] snd_pcm_playback_open+0x58/0x80
-[<ffffff8008cfc6d4>] snd_open+0xb4/0x178
-[<ffffff8008250628>] chrdev_open+0xb8/0x1d0
-[<ffffff8008246fdc>] do_dentry_open+0x214/0x318
-[<ffffff80082485d0>] vfs_open+0x58/0x88
-[<ffffff800825bce0>] do_last+0x450/0xde0
-[<ffffff800825c718>] path_openat+0xa8/0x368
-[<ffffff800825dd84>] do_filp_open+0x8c/0x110
-[<ffffff8008248a74>] do_sys_open+0x164/0x220
-[<ffffff80082b66dc>] compat_SyS_openat+0x3c/0x50
-[<ffffff8008083040>] el0_svc_naked+0x34/0x38
----[ end trace 67e6d544e65b5145 ]---
-Kernel panic - not syncing: Fatal exception
-==========================================================================
+> +static void tegra_spi_cleanup(struct spi_device *spi)
+> +{
+> +	struct tegra_spi_client_data *cdata = spi->controller_data;
+> +
+> +	spi->controller_data = NULL;
+> +	if (spi->dev.of_node)
+> +		kfree(cdata);
+> +}
+> +
 
-In device probe(), of_dma_controller_register() registers DMA controller.
-But when driver is removed, this is not freed. During driver reload this
-results in data abort and kernel panic. Add of_dma_controller_free() in
-driver remove path to fix the issue.
+This function is not called anywhere and it is marked as static so it
+triggers an unused function warning. Was that intentional?
 
-Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/dma/tegra210-adma.c | 1 +
- 1 file changed, 1 insertion(+)
+drivers/spi/spi-tegra114.c:938:13: warning: unused function 'tegra_spi_cleanup' [-Wunused-function]
+static void tegra_spi_cleanup(struct spi_device *spi)
+            ^
+1 warning generated.
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 5ec0dd97b3971..9aa35a7f13692 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -787,6 +787,7 @@ static int tegra_adma_remove(struct platform_device *pdev)
- 	struct tegra_adma *tdma = platform_get_drvdata(pdev);
- 	int i;
- 
-+	of_dma_controller_free(pdev->dev.of_node);
- 	dma_async_device_unregister(&tdma->dma_dev);
- 
- 	for (i = 0; i < tdma->nr_channels; ++i)
--- 
-2.20.1
+Cheers,
+Nathan
