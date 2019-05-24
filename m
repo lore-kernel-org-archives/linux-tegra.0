@@ -1,45 +1,93 @@
-From: Gen Zhang <blackgod016574@gmail.com>
-Subject: Re: [PATCH] tegra_wm9712: Fix a memory leaking bug in
- tegra_wm9712_driver_probe()
-Date: Fri, 24 May 2019 22:33:09 +0800
-Message-ID: <20190524143309.GA8631@zhanggen-UX430UQ>
-References: <20190524005014.GA2289@zhanggen-UX430UQ>
- <b2d43dfe-17e5-a975-435b-49f2aa2ad550@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V7 04/15] PCI: dwc: Move config space capability search
+ API
+Date: Fri, 24 May 2019 20:16:04 +0530
+Message-ID: <fcd437d6-1bf8-9247-9453-d7769f430cb7@nvidia.com>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
+ <20190517123846.3708-5-vidyas@nvidia.com> <20190521211757.GF57618@google.com>
+ <fd164d1f-cf99-fe81-c368-46e3a3742a59@nvidia.com>
+ <20190522140235.GB79339@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b2d43dfe-17e5-a975-435b-49f2aa2ad550@nvidia.com>
+In-Reply-To: <20190522140235.GB79339@google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: lgirdwood@gmail.com, perex@perex.cz, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 24, 2019 at 09:33:13AM +0100, Jon Hunter wrote:
+On 5/22/2019 7:32 PM, Bjorn Helgaas wrote:
+> On Wed, May 22, 2019 at 02:26:08PM +0530, Vidya Sagar wrote:
+>> On 5/22/2019 2:47 AM, Bjorn Helgaas wrote:
+>>> On Fri, May 17, 2019 at 06:08:35PM +0530, Vidya Sagar wrote:
+>>>> Move PCIe config space capability search API to common DesignWare file
+>>>> as this can be used by both host and ep mode codes.
 > 
-> On 24/05/2019 01:50, Gen Zhang wrote:
-> > In tegra_wm9712_driver_probe(), 'machine->codec' is allocated by
-> > platform_device_alloc(). When it is NULL, function returns ENOMEM.
-> > However, 'machine' is allocated by devm_kzalloc() before this site.
-> > Thus we should free 'machine' before function ends to prevent memory
-> > leaking.
+>>>>    .../pci/controller/dwc/pcie-designware-ep.c   | 37 +----------------
+>>>>    drivers/pci/controller/dwc/pcie-designware.c  | 40 +++++++++++++++++++
+>>>>    drivers/pci/controller/dwc/pcie-designware.h  |  2 +
+>>>>    3 files changed, 44 insertions(+), 35 deletions(-)
 > 
-> Memory allocated by devm_xxx() is automatically freed on failure so this
-> is not correct.
-Thanks for your comments, Jon. But after I examined the code, I am still
-confused about the usage of devm_kmalloc(). You can kindly refer to 
-hisi_sas_debugfs_init() in drivers/scsi/hisi_sas/hisi_sas_main.c. And
-devm_kfree() is used to free a memory allocated by devm_kmalloc(). And
-I found other situations similar to this in other files.
+>>>> --- a/drivers/pci/controller/dwc/pcie-designware.c
+>>>> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+>>>> @@ -14,6 +14,46 @@
+>>>>    #include "pcie-designware.h"
+>>>> +/*
+>>>> + * These APIs are different from standard pci_find_*capability() APIs in the
+>>>> + * sense that former can only be used post device enumeration as they require
+>>>> + * 'struct pci_dev *' pointer whereas these APIs require 'struct dw_pcie *'
+>>>> + * pointer and can be used before link up also.
+>>>
+>>> I think this comment is slightly misleading because it suggests the
+>>> reason we need these DW interfaces is because we're doing something
+>>> before a pci_dev pointer is available.
+>>>
+>>> But these DW interfaces are used on devices that will *never* have a
+>>> pci_dev pointer because they are not PCI devices.  They're used on
+>>> host controller devices, which have a PCIe link on the downstream
+>>> side, but the host controller driver operates them using their
+>>> upstream, non-PCI interfaces.  Logically, I think they would be
+>>> considered parts of Root Complexes, not Root Ports.
+>>>
+>>> There's actually no reason why that upstream interface should look
+>>> anything like PCI; it doesn't need to organize registers into
+>>> capability lists at all.  It might be convenient for the hardware to
+>>> do that and share things with a Root Port device, which *is* a PCI
+>>> device, but it's not required.
+>>>
+>>> It also really has nothing to do with whether the link is up.  This
+>>> code operates on hardware that is upstream from the link, so we can
+>>> reach it regardless of the link.
+>>
+>> I added this comment after receiving a review comment to justify why
+>> standard pci_find_*capability() APIs can't be used here. Hence added
+>> this.  I understand your comment that DW interface need not have to
+>> be a PCI device, but what is present in the hardware is effectively
+>> a root port implementation and post enumeration, we get a 'struct
+>> pci_dev' created for it, hence I thought it is fine to bring 'struct
+>> pci_dev' into picture.
+> 
+> This code operates on the host controller.  It configures the bridge
+> that leads *to* PCI devices.  Since that bridge is not a PCI device,
+> the PCI specs don't say anything about how to program it.
+> 
+> The fact that the host controller programming interface happens to
+> resemble the PCI programming interface is purely coincidental.
+> 
+>> Also, I agree that mention of 'link up' is unwarranted and could be
+>> reworded in a better way.
+>>
+>> Do you suggest to remove this comment altogether or reword it s/and
+>> can be used before link up also/and can be used before 'struct
+>> pci_dev' is available/ ?
+> 
+> Maybe something like this?
+> 
+>      These interfaces resemble the pci_find_*capability() interfaces,
+>      but these are for configuring host controllers, which are bridges
+>      *to* PCI devices but are not PCI devices themselves.
+Ok. Done.
 
-So, I hope you can give me some guidance on this. Thanks!
 > 
-> > Further, we should free 'machine->util_data', 'machine->codec' and
-> > 'machine' before this function normally ends to prevent memory leaking.
-> 
-> This is also incorrect. Why would we free all resources after
-> successfully initialising the driver?
-I re-checked this part, and it is totally incorrect. It should be deleted.
-
-Thanks
-Gen
