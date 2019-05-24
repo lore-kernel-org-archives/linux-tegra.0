@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 7/8] clocksource/drivers/tegra: Use SPDX identifier
-Date: Fri, 24 May 2019 18:32:52 +0300
-Message-ID: <20190524153253.28564-8-digetx@gmail.com>
+Subject: [PATCH v3 8/8] clocksource/drivers/tegra: Support COMPILE_TEST universally
+Date: Fri, 24 May 2019 18:32:53 +0300
+Message-ID: <20190524153253.28564-9-digetx@gmail.com>
 References: <20190524153253.28564-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,38 +12,31 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Use SPDX tag for the license identification instead of a free form text
-to aid license-checking automation and for brevity.
+Remove build dependency on ARM for compile-testing to allow non-arch
+specific build-bots (like Intel's test robot) to compile the driver and
+report about problems.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra20.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ drivers/clocksource/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index 12784a82fd57..1a3ee928e9a5 100644
---- a/drivers/clocksource/timer-tegra20.c
-+++ b/drivers/clocksource/timer-tegra20.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2010 Google, Inc.
-- *
-- * Author:
-- *	Colin Cross <ccross@google.com>
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-+ * Author: Colin Cross <ccross@google.com>
-  */
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 3300739edce4..8c21e557181b 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -137,10 +137,10 @@ config SUN5I_HSTIMER
+ 	  Enables support the Sun5i timer.
  
- #define pr_fmt(fmt)	"tegra-timer: " fmt
+ config TEGRA_TIMER
+-	bool "Tegra timer driver" if COMPILE_TEST
++	bool "Tegra timer driver"
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF
+-	depends on ARM || ARM64
++	depends on ARCH_TEGRA || COMPILE_TEST
+ 	help
+ 	  Enables support for the Tegra driver.
+ 
 -- 
 2.21.0
