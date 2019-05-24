@@ -1,69 +1,101 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] tegra_wm9712: Fix a memory leaking bug in
- tegra_wm9712_driver_probe()
-Date: Fri, 24 May 2019 09:33:13 +0100
-Message-ID: <b2d43dfe-17e5-a975-435b-49f2aa2ad550@nvidia.com>
-References: <20190524005014.GA2289@zhanggen-UX430UQ>
+Subject: [PATCH] Revert "ASoC: simple-card: Fix configuration
+	of DAI format"
+Date: Fri, 24 May 2019 09:54:04 +0100
+Message-ID: <1558688044-22025-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190524005014.GA2289@zhanggen-UX430UQ>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gen Zhang <blackgod016574@gmail.com>, lgirdwood@gmail.com, perex@perex.cz
-Cc: alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Revert commit 069d037aea98 ("ASoC: simple-card: Fix configuration of
+DAI format"). During further review, it turns out that the actual issue
+was caused by an incorrectly formatted device-tree node describing the
+soundcard.
 
-On 24/05/2019 01:50, Gen Zhang wrote:
-> In tegra_wm9712_driver_probe(), 'machine->codec' is allocated by
-> platform_device_alloc(). When it is NULL, function returns ENOMEM.
-> However, 'machine' is allocated by devm_kzalloc() before this site.
-> Thus we should free 'machine' before function ends to prevent memory
-> leaking.
+The following is incorrect because the simple-audio-card
+'bitclock-master' and 'frame-master' properties should not reference the
+actual codec phandle ...
 
-Memory allocated by devm_xxx() is automatically freed on failure so this
-is not correct.
+	sound {
+		compatible = "simple-audio-card";
+		...
+	=>	simple-audio-card,bitclock-master = <&codec>;
+	=>	simple-audio-card,frame-master = <&codec>;
+		...
 
-> Further, we should free 'machine->util_data', 'machine->codec' and
-> 'machine' before this function normally ends to prevent memory leaking.
+		simple-audio-card,cpu {
+			sound-dai = <&xxx>;
+		};
 
-This is also incorrect. Why would we free all resources after
-successfully initialising the driver?
+		simple-audio-card,codec {
+	=>		sound-dai = <&codec>;
+		};
+	};
 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> ---
-> diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.c
-> index 864a334..295c41d 100644
-> --- a/sound/soc/tegra/tegra_wm9712.c
-> +++ b/sound/soc/tegra/tegra_wm9712.c
-> @@ -86,7 +86,8 @@ static int tegra_wm9712_driver_probe(struct platform_device *pdev)
->  	machine->codec = platform_device_alloc("wm9712-codec", -1);
->  	if (!machine->codec) {
->  		dev_err(&pdev->dev, "Can't allocate wm9712 platform device\n");
-> -		return -ENOMEM;
-> +		ret = -ENOMEM;
-> +		goto codec_free;
->  	}
->  
->  	ret = platform_device_add(machine->codec);
-> @@ -127,6 +128,10 @@ static int tegra_wm9712_driver_probe(struct platform_device *pdev)
->  		goto asoc_utils_fini;
->  	}
->  
-> +	tegra_asoc_utils_fini(&machine->util_data);
-> +	platform_device_del(machine->codec);
-> +	platform_device_put(machine->codec);
-> +	devm_kfree(&pdev->dev, machine);
->  	return 0;
+Rather, these properties should reference the phandle to the
+'simple-audio-card,codec' property as shown below ...
 
-As stated above, this is incorrect.
+	sound {
+		compatible = "simple-audio-card";
+		...
+	=>	simple-audio-card,bitclock-master = <&codec>;
+	=>	simple-audio-card,frame-master = <&codec>;
+		...
 
-Did you actually test this? I think you would find this would break the
-driver.
+		simple-audio-card,cpu {
+			sound-dai = <&xxx>;
+		};
 
-Jon
+	=>	codec: simple-audio-card,codec { /* simple-card wants here */
+			sound-dai = <&xxx>;	 /* not here */
+		};
+	};
 
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ sound/soc/generic/simple-card.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index c2a2c5fd0801..d16e894fce2b 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -283,6 +283,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	codec_dai		=
+ 	dai_props->codec_dai	= &priv->dais[li->dais++];
+ 
++	ret = asoc_simple_parse_daifmt(dev, node, codec,
++				       prefix, &dai_link->dai_fmt);
++	if (ret < 0)
++		goto dai_link_of_err;
++
+ 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
+ 
+ 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
+@@ -293,11 +298,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
+-	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
+-				       prefix, &dai_link->dai_fmt);
+-	if (ret < 0)
+-		goto dai_link_of_err;
+-
+ 	ret = asoc_simple_parse_platform(plat, dai_link);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
 -- 
-nvpublic
+2.7.4
