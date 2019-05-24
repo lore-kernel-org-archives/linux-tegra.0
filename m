@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 5/8] clocksource/drivers/tegra: Release all IRQ's on request_irq() error
-Date: Fri, 24 May 2019 18:32:50 +0300
-Message-ID: <20190524153253.28564-6-digetx@gmail.com>
+Subject: [PATCH v3 7/8] clocksource/drivers/tegra: Use SPDX identifier
+Date: Fri, 24 May 2019 18:32:52 +0300
+Message-ID: <20190524153253.28564-8-digetx@gmail.com>
 References: <20190524153253.28564-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,36 +12,38 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Release all requested IRQ's on the request error to properly clean up
-allocated resources.
+Use SPDX tag for the license identification instead of a free form text
+to aid license-checking automation and for brevity.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra20.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-tegra20.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index 55e9b3e1fbeb..18b81d814b3b 100644
+index 12784a82fd57..1a3ee928e9a5 100644
 --- a/drivers/clocksource/timer-tegra20.c
 +++ b/drivers/clocksource/timer-tegra20.c
-@@ -293,7 +293,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 			pr_err("%s: can't map IRQ for CPU%d\n",
- 			       __func__, cpu);
- 			ret = -EINVAL;
--			goto out;
-+			goto out_irq;
- 		}
+@@ -1,18 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross@google.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
++ * Author: Colin Cross <ccross@google.com>
+  */
  
- 		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
-@@ -303,7 +303,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 		if (ret) {
- 			pr_err("%s: cannot setup irq %d for CPU%d\n",
- 				__func__, cpu_to->clkevt.irq, cpu);
--			ret = -EINVAL;
-+			irq_dispose_mapping(cpu_to->clkevt.irq);
-+			cpu_to->clkevt.irq = 0;
- 			goto out_irq;
- 		}
- 	}
+ #define pr_fmt(fmt)	"tegra-timer: " fmt
 -- 
 2.21.0
