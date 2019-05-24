@@ -1,53 +1,47 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.1 000/122] 5.1.5-stable review
-Date: Fri, 24 May 2019 12:05:42 +0100
-Message-ID: <02faed58-61a0-b4ff-a127-533b97207c0f@nvidia.com>
-References: <20190523181705.091418060@linuxfoundation.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] Revert "ASoC: simple-card: Fix configuration of DAI
+ format"
+Date: Fri, 24 May 2019 12:10:54 +0100
+Message-ID: <20190524111054.GA2456@sirena.org.uk>
+References: <1558688044-22025-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1558688044-22025-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 23/05/2019 20:05, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.5 release.
-> There are 122 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat 25 May 2019 06:14:44 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-All tests are passing for Tegra ...
+On Fri, May 24, 2019 at 09:54:04AM +0100, Jon Hunter wrote:
+> Revert commit 069d037aea98 ("ASoC: simple-card: Fix configuration of
+> DAI format"). During further review, it turns out that the actual issue
+> was caused by an incorrectly formatted device-tree node describing the
+> soundcard.
 
-Test results for stable-v5.1:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.
 
-Linux version:	5.1.5-rc1-gad8ad5ad
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers
-Jon
+-----BEGIN PGP SIGNATURE-----
 
--- 
-nvpublic
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzn0TsACgkQJNaLcl1U
+h9D7hgf+KnlthPCAcNyZh9TNU0VlaxTKG3nZmDHU6QQg/BOOt48b+aWZBg7UIuHi
+ii8RJQsiBLnRhDUs8COFEcoyDMwlCaFcyn31Gtfno7H2IvZgWHgN9zff1hkibOZ+
+571fGi0LS3x+5htd4wNPQQdNSai7uSTVR4NYGl2jh9H3fLLRU16PatCRlT5xQoyO
+lEc+c6Ag/greLJbHgoT5bJf0GSOTaGcATCI2NWmTx86dyZ568Fs7gEDKGph7Md8h
+NGMHhk8Wew0avn6epDR2opQhXFP1pqD9KK/TUm0GgRX0x2gqauePZeq6W2ucgQD1
+CuA1xZr3ytSJsWyVaP1GGMEPph0iRw==
+=NXV0
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
