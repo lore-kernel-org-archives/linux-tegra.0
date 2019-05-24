@@ -1,101 +1,52 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] Revert "ASoC: simple-card: Fix configuration
-	of DAI format"
-Date: Fri, 24 May 2019 09:54:04 +0100
-Message-ID: <1558688044-22025-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 00/53] 4.9.179-stable review
+Date: Fri, 24 May 2019 12:04:01 +0100
+Message-ID: <f2cd8618-eec9-e46c-a476-8bb4f73fcb9d@nvidia.com>
+References: <20190523181710.981455400@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Revert commit 069d037aea98 ("ASoC: simple-card: Fix configuration of
-DAI format"). During further review, it turns out that the actual issue
-was caused by an incorrectly formatted device-tree node describing the
-soundcard.
 
-The following is incorrect because the simple-audio-card
-'bitclock-master' and 'frame-master' properties should not reference the
-actual codec phandle ...
+On 23/05/2019 20:05, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.179 release.
+> There are 53 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 25 May 2019 06:15:18 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.179-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-	sound {
-		compatible = "simple-audio-card";
-		...
-	=>	simple-audio-card,bitclock-master = <&codec>;
-	=>	simple-audio-card,frame-master = <&codec>;
-		...
+All tests are passing for Tegra ...
 
-		simple-audio-card,cpu {
-			sound-dai = <&xxx>;
-		};
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
 
-		simple-audio-card,codec {
-	=>		sound-dai = <&codec>;
-		};
-	};
+Linux version:	4.9.179-rc1-gf6bc31d
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Rather, these properties should reference the phandle to the
-'simple-audio-card,codec' property as shown below ...
+Cheers
+Jon
 
-	sound {
-		compatible = "simple-audio-card";
-		...
-	=>	simple-audio-card,bitclock-master = <&codec>;
-	=>	simple-audio-card,frame-master = <&codec>;
-		...
-
-		simple-audio-card,cpu {
-			sound-dai = <&xxx>;
-		};
-
-	=>	codec: simple-audio-card,codec { /* simple-card wants here */
-			sound-dai = <&xxx>;	 /* not here */
-		};
-	};
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- sound/soc/generic/simple-card.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index c2a2c5fd0801..d16e894fce2b 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -283,6 +283,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	codec_dai		=
- 	dai_props->codec_dai	= &priv->dais[li->dais++];
- 
-+	ret = asoc_simple_parse_daifmt(dev, node, codec,
-+				       prefix, &dai_link->dai_fmt);
-+	if (ret < 0)
-+		goto dai_link_of_err;
-+
- 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
- 
- 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
-@@ -293,11 +298,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
--				       prefix, &dai_link->dai_fmt);
--	if (ret < 0)
--		goto dai_link_of_err;
--
- 	ret = asoc_simple_parse_platform(plat, dai_link);
- 	if (ret < 0)
- 		goto dai_link_of_err;
 -- 
-2.7.4
+nvpublic
