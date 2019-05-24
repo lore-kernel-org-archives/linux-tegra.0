@@ -1,80 +1,42 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 RE-SEND] regulator: max77620: Support Maxim 77663
-Date: Fri, 24 May 2019 18:10:34 +0300
-Message-ID: <20190524151034.26048-1-digetx@gmail.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 1/4] drm/tegra: remove irrelevant DRM_UNLOCKED flag
+Date: Fri, 24 May 2019 16:19:52 +0100
+Message-ID: <20190524151952.GC8938@arch-x1c3>
+References: <20190522154702.16269-1-emil.l.velikov@gmail.com>
+ <20190523091555.GA18130@ulmo>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190523091555.GA18130@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <treding@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, kernel@collabora.com, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for Maxim 77663.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
-
-This patch was a part of MFD/Regulator patch-series and the MFD patches are
-already in v5.2, the regulator patch was left out because the MFD subsys
-maintainer decided to not take it via the MFD tree. There are no changes in
-v5 of this patch, this is merely a re-send of the patch.
-
- drivers/regulator/max77620-regulator.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/max77620-regulator.c b/drivers/regulator/max77620-regulator.c
-index 0ad91a7f9cb9..0ec9f81fe74a 100644
---- a/drivers/regulator/max77620-regulator.c
-+++ b/drivers/regulator/max77620-regulator.c
-@@ -761,6 +761,24 @@ static struct max77620_regulator_info max20024_regs_info[MAX77620_NUM_REGS] = {
- 	RAIL_LDO(LDO8, ldo8, "in-ldo7-8", N, 800000, 3950000, 50000),
- };
- 
-+static struct max77620_regulator_info max77663_regs_info[MAX77620_NUM_REGS] = {
-+	RAIL_SD(SD0, sd0, "in-sd0", SD0, 600000, 3387500, 12500, 0xFF, NONE),
-+	RAIL_SD(SD1, sd1, "in-sd1", SD1, 800000, 1587500, 12500, 0xFF, NONE),
-+	RAIL_SD(SD2, sd2, "in-sd2", SDX, 600000, 3787500, 12500, 0xFF, NONE),
-+	RAIL_SD(SD3, sd3, "in-sd3", SDX, 600000, 3787500, 12500, 0xFF, NONE),
-+	RAIL_SD(SD4, sd4, "in-sd4", SDX, 600000, 3787500, 12500, 0xFF, NONE),
-+
-+	RAIL_LDO(LDO0, ldo0, "in-ldo0-1", N, 800000, 2375000, 25000),
-+	RAIL_LDO(LDO1, ldo1, "in-ldo0-1", N, 800000, 2375000, 25000),
-+	RAIL_LDO(LDO2, ldo2, "in-ldo2",   P, 800000, 3950000, 50000),
-+	RAIL_LDO(LDO3, ldo3, "in-ldo3-5", P, 800000, 3950000, 50000),
-+	RAIL_LDO(LDO4, ldo4, "in-ldo4-6", P, 800000, 1587500, 12500),
-+	RAIL_LDO(LDO5, ldo5, "in-ldo3-5", P, 800000, 3950000, 50000),
-+	RAIL_LDO(LDO6, ldo6, "in-ldo4-6", P, 800000, 3950000, 50000),
-+	RAIL_LDO(LDO7, ldo7, "in-ldo7-8", N, 800000, 3950000, 50000),
-+	RAIL_LDO(LDO8, ldo8, "in-ldo7-8", N, 800000, 3950000, 50000),
-+};
-+
- static int max77620_regulator_probe(struct platform_device *pdev)
- {
- 	struct max77620_chip *max77620_chip = dev_get_drvdata(pdev->dev.parent);
-@@ -785,9 +803,14 @@ static int max77620_regulator_probe(struct platform_device *pdev)
- 	case MAX77620:
- 		rinfo = max77620_regs_info;
- 		break;
--	default:
-+	case MAX20024:
- 		rinfo = max20024_regs_info;
- 		break;
-+	case MAX77663:
-+		rinfo = max77663_regs_info;
-+		break;
-+	default:
-+		return -EINVAL;
- 	}
- 
- 	config.regmap = pmic->rmap;
-@@ -881,6 +904,7 @@ static const struct dev_pm_ops max77620_regulator_pm_ops = {
- static const struct platform_device_id max77620_regulator_devtype[] = {
- 	{ .name = "max77620-pmic", },
- 	{ .name = "max20024-pmic", },
-+	{ .name = "max77663-pmic", },
- 	{},
- };
- MODULE_DEVICE_TABLE(platform, max77620_regulator_devtype);
--- 
-2.21.0
+T24gMjAxOS8wNS8yMywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24gV2VkLCBNYXkgMjIsIDIw
+MTkgYXQgMDQ6NDY6NTlQTSArMDEwMCwgRW1pbCBWZWxpa292IHdyb3RlOgo+ID4gRnJvbTogRW1p
+bCBWZWxpa292IDxlbWlsLnZlbGlrb3ZAY29sbGFib3JhLmNvbT4KPiA+IAo+ID4gRFJNX1VOTE9D
+S0VEIGRvZXNuJ3QgZG8gYW55dGhpbmcgZm9yIG5vbi1sZWdhY3kgZHJpdmVycy4gUmVtb3ZlIGl0
+Lgo+ID4gCj4gPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiA+IENj
+OiBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKPiA+IENjOiBEYW5pZWwgVmV0dGVyIDxkYW5p
+ZWxAZmZ3bGwuY2g+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBFbWlsIFZlbGlrb3YgPGVtaWwudmVsaWtv
+dkBjb2xsYWJvcmEuY29tPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5j
+IHwgMjggKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAx
+NCBpbnNlcnRpb25zKCspLCAxNCBkZWxldGlvbnMoLSkKPiAKPiBJIGFzc3VtZSB5b3Ugd2FudCB0
+byB0YWtlIHRoaXMgdGhyb3VnaCBkcm0tbWlzYz8gSW4gdGhhdCBjYXNlOgo+IAo+IEFja2VkLWJ5
+OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IE90aGVyd2lzZSBsZXQg
+bWUga25vdyBhbmQgSSdsbCBwaWNrIGl0IHVwIGludG8gdGhlIFRlZ3JhIHRyZWUuCj4gClllcywg
+SSdsbCBwaWNrIGl0IHVwIHRocm91Z2ggZHJtLW1pc2MuCgpUaGFua3MKRW1pbAoKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
