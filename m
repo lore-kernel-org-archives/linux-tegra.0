@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 5/8] memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-Date: Fri, 24 May 2019 20:23:50 +0300
-Message-ID: <20190524172353.29087-6-digetx@gmail.com>
+Subject: [PATCH v3 4/8] memory: tegra20-emc: Include io.h instead of iopoll.h
+Date: Fri, 24 May 2019 20:23:49 +0300
+Message-ID: <20190524172353.29087-5-digetx@gmail.com>
 References: <20190524172353.29087-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,56 +12,26 @@ To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no problem for drivers to request pll_m and pll_p clocks for
-the device, hence there is no need to use clk_get_sys() and it could be
-replaced with devm_clk_get() for consistency.
+The register polling code was gone, but the included header change was
+missed. Fix it up for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/memory/tegra/tegra20-emc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 43aef3614b65..527aa4b90e95 100644
+index d3e1f898d745..43aef3614b65 100644
 --- a/drivers/memory/tegra/tegra20-emc.c
 +++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -527,33 +527,29 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		goto unset_cb;
- 	}
- 
--	emc->pll_m = clk_get_sys(NULL, "pll_m");
-+	emc->pll_m = devm_clk_get(&pdev->dev, "pll_m");
- 	if (IS_ERR(emc->pll_m)) {
- 		err = PTR_ERR(emc->pll_m);
- 		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
- 		goto unset_cb;
- 	}
- 
--	emc->backup_clk = clk_get_sys(NULL, "pll_p");
-+	emc->backup_clk = devm_clk_get(&pdev->dev, "pll_p");
- 	if (IS_ERR(emc->backup_clk)) {
- 		err = PTR_ERR(emc->backup_clk);
- 		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
--		goto put_pll_m;
-+		goto unset_cb;
- 	}
- 
- 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
- 			err);
--		goto put_backup;
-+		goto unset_cb;
- 	}
- 
- 	return 0;
- 
--put_backup:
--	clk_put(emc->backup_clk);
--put_pll_m:
--	clk_put(emc->pll_m);
- unset_cb:
- 	tegra20_clk_set_emc_round_callback(NULL, NULL);
- 
+@@ -10,7 +10,7 @@
+ #include <linux/completion.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+-#include <linux/iopoll.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
 -- 
 2.21.0
