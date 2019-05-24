@@ -1,59 +1,52 @@
-From: Gen Zhang <blackgod016574@gmail.com>
-Subject: Re: [PATCH] tegra_wm9712: Fix a memory leaking bug in
- tegra_wm9712_driver_probe()
-Date: Fri, 24 May 2019 23:00:53 +0800
-Message-ID: <20190524150053.GA9235@zhanggen-UX430UQ>
-References: <20190524005014.GA2289@zhanggen-UX430UQ>
- <b2d43dfe-17e5-a975-435b-49f2aa2ad550@nvidia.com>
- <20190524143309.GA8631@zhanggen-UX430UQ>
- <e52f4140-a119-a584-40a2-6359d6e1784a@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.1 000/122] 5.1.5-stable review
+Date: Fri, 24 May 2019 17:01:21 +0200
+Message-ID: <20190524150121.GB9757@kroah.com>
+References: <20190523181705.091418060@linuxfoundation.org>
+ <02faed58-61a0-b4ff-a127-533b97207c0f@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <e52f4140-a119-a584-40a2-6359d6e1784a@nvidia.com>
+In-Reply-To: <02faed58-61a0-b4ff-a127-533b97207c0f@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: lgirdwood@gmail.com, perex@perex.cz, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 24, 2019 at 03:47:34PM +0100, Jon Hunter wrote:
+On Fri, May 24, 2019 at 12:05:42PM +0100, Jon Hunter wrote:
 > 
-> On 24/05/2019 15:33, Gen Zhang wrote:
-> > On Fri, May 24, 2019 at 09:33:13AM +0100, Jon Hunter wrote:
-> >>
-> >> On 24/05/2019 01:50, Gen Zhang wrote:
-> >>> In tegra_wm9712_driver_probe(), 'machine->codec' is allocated by
-> >>> platform_device_alloc(). When it is NULL, function returns ENOMEM.
-> >>> However, 'machine' is allocated by devm_kzalloc() before this site.
-> >>> Thus we should free 'machine' before function ends to prevent memory
-> >>> leaking.
-> >>
-> >> Memory allocated by devm_xxx() is automatically freed on failure so this
-> >> is not correct.
-> > Thanks for your comments, Jon. But after I examined the code, I am still
-> > confused about the usage of devm_kmalloc(). You can kindly refer to 
-> > hisi_sas_debugfs_init() in drivers/scsi/hisi_sas/hisi_sas_main.c. And
-> > devm_kfree() is used to free a memory allocated by devm_kmalloc(). And
-> > I found other situations similar to this in other files.
+> On 23/05/2019 20:05, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.1.5 release.
+> > There are 122 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > So, I hope you can give me some guidance on this. Thanks!
+> > Responses should be made by Sat 25 May 2019 06:14:44 PM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.5-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Please refer to the devres documentation [0].
+> All tests are passing for Tegra ...
 > 
-> Cheers,
-> Jon
+> Test results for stable-v5.1:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     32 tests:	32 pass, 0 fail
 > 
-> [0] https://www.kernel.org/doc/Documentation/driver-model/devres.txt
-> 
-> -- 
-> nvpublic
-Thanks for your reply. I figured out that devm_kmalloc will free the 
-memory no matter fail or not. But I still want to ask why other codes
-as I above mentioned use devm_kfree() to free memory allocated by 
-devm_kmalloc(). If the memory is automatically freed, is this 
-devm_kfee() redundant codes that should be removed? Am I 
-misunderstanding this again or it is something else?
+> Linux version:	5.1.5-rc1-gad8ad5ad
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Thanks
-Gen
+Thanks for testing all of these and letting me know.
+
+greg k-h
