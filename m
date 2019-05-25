@@ -1,145 +1,229 @@
-From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Subject: [PATCH] drivers/pci/controller: fix warning PTR_ERR_OR_ZERO can be
- used
-Date: Sat, 25 May 2019 14:27:48 +0530
-Message-ID: <20190525085748.GA10926@hari-Inspiron-1545>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH V1 10/12] gpio: tegra: implement wake event support for
+ Tegra210 and prior GPIO
+Date: Sat, 25 May 2019 13:39:31 -0700
+Message-ID: <8f37c4d8-44d4-50d0-26c4-af31706a1d0c@nvidia.com>
+References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
+ <1558481483-22254-11-git-send-email-skomatineni@nvidia.com>
+ <20190522132413.GL30938@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20190522132413.GL30938@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: ingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Yue Wang <yue.wang@Amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang <wangbinghui@hisilicon.com>, Stanimir Varbanov <svarbanov@mm-sol.com>, Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: jonathanh@nvidia.com, jckuo@nvidia.com, talho@nvidia.com, josephl@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-fix below warnings reported by coccichek
 
-/drivers/pci/controller/pci-tegra.c:1132:1-3: WARNING: PTR_ERR_OR_ZERO
-can be used
-./drivers/pci/controller/dwc/pcie-qcom.c:703:1-3: WARNING:
-PTR_ERR_OR_ZERO can be used
-./drivers/pci/controller/dwc/pci-meson.c:185:1-3: WARNING:
-PTR_ERR_OR_ZERO can be used
-./drivers/pci/controller/dwc/pci-meson.c:262:1-3: WARNING:
-PTR_ERR_OR_ZERO can be used
-./drivers/pci/controller/dwc/pcie-kirin.c:141:1-3: WARNING:
-PTR_ERR_OR_ZERO can be used
-./drivers/pci/controller/dwc/pcie-kirin.c:177:1-3: WARNING:
-PTR_ERR_OR_ZERO can be used
-./drivers/pci/controller/dwc/pci-exynos.c:95:1-3: WARNING:
-PTR_ERR_OR_ZERO can be used
+On 5/22/19 6:24 AM, Thierry Reding wrote:
+> On Tue, May 21, 2019 at 04:31:21PM -0700, Sowjanya Komatineni wrote:
+>> The GPIO controller doesn't have any controls to enable the system to
+>> wake up from low power states based on activity on GPIO pins. An extra
+>> hardware block that is part of the power management controller (PMC)
+>> contains these controls. In order for the GPIO controller to be able
+>> to cooperate with the PMC, obtain a reference to the PMC's IRQ domain
+>> and make it a parent to the GPIO controller's IRQ domain. This way the
+>> PMC gets an opportunity to program the additional registers required
+>> to enable wakeup sources on suspend.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/gpio/gpio-tegra.c | 109 +++++++++++++++++++++++++++++++++++++++++++---
+>>   1 file changed, 103 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+>> index 6d9b6906b9d0..d57e33050d0c 100644
+>> --- a/drivers/gpio/gpio-tegra.c
+>> +++ b/drivers/gpio/gpio-tegra.c
+>> @@ -32,6 +32,8 @@
+>>   #include <linux/pinctrl/consumer.h>
+>>   #include <linux/pm.h>
+>>   
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>>   #define GPIO_BANK(x)		((x) >> 5)
+>>   #define GPIO_PORT(x)		(((x) >> 3) & 0x3)
+>>   #define GPIO_BIT(x)		((x) & 0x7)
+>> @@ -275,8 +277,22 @@ static int tegra_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+>>   static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+>>   {
+>>   	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>> +	struct irq_domain *domain = tgi->irq_domain;
+>> +
+>> +	if (!gpiochip_irqchip_irq_valid(chip, offset))
+>> +		return -ENXIO;
+>> +
+>> +	if (irq_domain_is_hierarchy(domain)) {
+>> +		struct irq_fwspec spec;
+>> +
+>> +		spec.fwnode = domain->fwnode;
+>> +		spec.param_count = 2;
+>> +		spec.param[0] = offset;
+>> +		spec.param[1] = IRQ_TYPE_NONE;
+>> +		return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
+>> +	}
+>>   
+>> -	return irq_find_mapping(tgi->irq_domain, offset);
+>> +	return irq_find_mapping(domain, offset);
+>>   }
+>>   
+>>   static void tegra_gpio_irq_ack(struct irq_data *d)
+>> @@ -365,7 +381,10 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>>   	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+>>   		irq_set_handler_locked(d, handle_edge_irq);
+>>   
+>> -	return 0;
+>> +	if (d->parent_data)
+>> +		return irq_chip_set_type_parent(d, type);
+>> +	else
+>> +		return 0;
+> Why is this needed?
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/pci/controller/dwc/pci-exynos.c | 4 +---
- drivers/pci/controller/dwc/pci-meson.c  | 8 ++------
- drivers/pci/controller/dwc/pcie-kirin.c | 8 ++------
- drivers/pci/controller/dwc/pcie-qcom.c  | 4 +---
- drivers/pci/controller/pci-tegra.c      | 4 +---
- 5 files changed, 7 insertions(+), 21 deletions(-)
+Invoking GPIO irq_domain parent's set_type to configure PMC wake level 
+based on the type for those GPIO's
 
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index cee5f2f..b0b4849 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -92,10 +92,8 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	ep->mem_res->elbi_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(ep->mem_res->elbi_base))
--		return PTR_ERR(ep->mem_res->elbi_base);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(ep->mem_res->elbi_base);
- }
- 
- static int exynos5440_pcie_get_clk_resources(struct exynos_pcie *ep)
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index e35e9ea..1ca78c2 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -182,10 +182,8 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
- 
- 	/* Meson SoC has two PCI controllers use same phy register*/
- 	mp->mem_res.phy_base = meson_pcie_get_mem_shared(pdev, mp, "phy");
--	if (IS_ERR(mp->mem_res.phy_base))
--		return PTR_ERR(mp->mem_res.phy_base);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(mp->mem_res.phy_base);
- }
- 
- static void meson_pcie_power_on(struct meson_pcie *mp)
-@@ -259,10 +257,8 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
- 		return PTR_ERR(res->general_clk);
- 
- 	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
--	if (IS_ERR(res->clk))
--		return PTR_ERR(res->clk);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(res->clk);
- }
- 
- static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
-diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-index 9b59929..87cfdb4 100644
---- a/drivers/pci/controller/dwc/pcie-kirin.c
-+++ b/drivers/pci/controller/dwc/pcie-kirin.c
-@@ -138,10 +138,8 @@ static long kirin_pcie_get_clk(struct kirin_pcie *kirin_pcie,
- 		return PTR_ERR(kirin_pcie->apb_sys_clk);
- 
- 	kirin_pcie->pcie_aclk = devm_clk_get(dev, "pcie_aclk");
--	if (IS_ERR(kirin_pcie->pcie_aclk))
--		return PTR_ERR(kirin_pcie->pcie_aclk);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(kirin_pcie->pcie_aclk);
- }
- 
- static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
-@@ -174,10 +172,8 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
- 
- 	kirin_pcie->sysctrl =
- 		syscon_regmap_lookup_by_compatible("hisilicon,hi3660-sctrl");
--	if (IS_ERR(kirin_pcie->sysctrl))
--		return PTR_ERR(kirin_pcie->sysctrl);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(kirin_pcie->sysctrl);
- }
- 
- static int kirin_pcie_phy_init(struct kirin_pcie *kirin_pcie)
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 0ed235d..6c421e6 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -700,10 +700,8 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
- 		return PTR_ERR(res->ahb_reset);
- 
- 	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
--	if (IS_ERR(res->phy_ahb_reset))
--		return PTR_ERR(res->phy_ahb_reset);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(res->phy_ahb_reset);
- }
- 
- static void qcom_pcie_deinit_2_4_0(struct qcom_pcie *pcie)
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 464ba25..3cd5069 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -1129,10 +1129,8 @@ static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
- 		return PTR_ERR(pcie->afi_rst);
- 
- 	pcie->pcie_xrst = devm_reset_control_get_exclusive(dev, "pcie_x");
--	if (IS_ERR(pcie->pcie_xrst))
--		return PTR_ERR(pcie->pcie_xrst);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
- }
- 
- static int tegra_pcie_phys_get_legacy(struct tegra_pcie *pcie)
--- 
-2.7.4
+that are wake-able thru specified PMC wake events.
+
+>
+>>   }
+>>   
+>>   static void tegra_gpio_irq_shutdown(struct irq_data *d)
+>> @@ -566,10 +585,79 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+>>   	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+>>   };
+>>   
+>> +static int tegra_gpio_irq_domain_translate(struct irq_domain *domain,
+>> +					   struct irq_fwspec *fwspec,
+>> +					   unsigned long *hwirq,
+>> +					   unsigned int *type)
+>> +{
+>> +	if (WARN_ON(fwspec->param_count < 2))
+>> +		return -EINVAL;
+>> +
+>> +	*type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
+>> +	*hwirq = fwspec->param[0];
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_gpio_irq_domain_alloc(struct irq_domain *domain,
+>> +				       unsigned int virq,
+>> +				       unsigned int num_irqs, void *data)
+>> +{
+>> +	struct tegra_gpio_info *tgi = gpiochip_get_data(domain->host_data);
+>> +	struct irq_fwspec *fwspec = data;
+>> +	struct irq_fwspec spec;
+> You can put the above two lines onto a single line.
+>
+Will fix in next version
+>> +	struct tegra_gpio_bank *bank;
+>> +	unsigned long hwirq;
+>> +	unsigned int type;
+>> +	int err = 0;
+>> +
+>> +	if (WARN_ON(fwspec->param_count < 2))
+>> +		return -EINVAL;
+>> +
+>> +	if (!irq_domain_get_of_node(domain->parent))
+>> +		return -EINVAL;
+> Can this ever fail?
+Will remove in next version of updated series..
+>
+>> +
+>> +	err = tegra_gpio_irq_domain_translate(domain, fwspec, &hwirq, &type);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	bank = &tgi->bank_info[GPIO_BANK(hwirq)];
+>> +	err = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
+>> +					    &tgi->ic, bank);
+>> +
+>> +	if (err < 0)
+>> +		return err;
+>> +
+>> +	spec.fwnode = domain->parent->fwnode;
+>> +	spec.param_count = 3;
+>> +	spec.param[0] = GIC_SPI;
+>> +	spec.param[1] = fwspec->param[0];
+>> +	spec.param[2] = fwspec->param[1];
+>> +
+>> +	return irq_domain_alloc_irqs_parent(domain, virq, 1, &spec);
+> What if num_irqs is different from 1? I'm not exactly sure what to pass
+> as &spec, but likely we'd have to create an array of struct irq_fwspec
+> and pass that along. It seems like some drivers catch that case and
+> refuse to work rather than pass potentially rubbish information along.
+> See for example drivers/irqchip/irq-meson-gpio.c.
+Will fix in next version
+>> +}
+>> +
+>> +static const struct irq_domain_ops tegra_gpio_irq_domain_ops = {
+>> +	.translate = tegra_gpio_irq_domain_translate,
+>> +	.alloc = tegra_gpio_irq_domain_alloc,
+>> +};
+>> +
+>> +static const struct of_device_id tegra_pmc_of_match[] = {
+>> +	{ .compatible = "nvidia,tegra210-pmc" },
+>> +	{ .compatible = "nvidia,tegra132-pmc" },
+>> +	{ .compatible = "nvidia,tegra124-pmc" },
+>> +	{ .compatible = "nvidia,tegra114-pmc" },
+>> +	{ .compatible = "nvidia,tegra30-pmc" },
+>> +	{ .compatible = "nvidia,tegra20-pmc" },
+>> +	{ }
+>> +};
+>> +
+>>   static int tegra_gpio_probe(struct platform_device *pdev)
+>>   {
+>>   	struct tegra_gpio_info *tgi;
+>>   	struct tegra_gpio_bank *bank;
+>> +	struct device_node *np;
+>> +	struct irq_domain *parent_domain = NULL;
+>>   	unsigned int gpio, i, j;
+>>   	int ret;
+>>   
+>> @@ -612,8 +700,15 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>>   	tgi->ic.irq_set_type		= tegra_gpio_irq_set_type;
+>>   	tgi->ic.irq_shutdown		= tegra_gpio_irq_shutdown;
+>>   #ifdef CONFIG_PM_SLEEP
+>> -	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
+>> +	tgi->ic.irq_set_wake		= irq_chip_set_wake_parent;
+> This doesn't seem right. What about tegra_gpio_irq_set_wake()? If it's
+> no longer needed, just remove it. But then, what about the extra logic
+> in that function that causes the interrupts to be enabled during
+> suspend? Is that no longer necessary? Maybe that's no longer needed on
+> Tegra210, but what about other Tegra generations?
+>
+> Thierry
+>
+Missed this. Will fix in next version
+>>   #endif
+>> +	np = of_find_matching_node(NULL, tegra_pmc_of_match);
+>> +	if (np) {
+>> +		parent_domain = irq_find_host(np);
+>> +		of_node_put(np);
+>> +		if (!parent_domain)
+>> +			return -EPROBE_DEFER;
+>> +	}
+>>   
+>>   	platform_set_drvdata(pdev, tgi);
+>>   
+>> @@ -625,9 +720,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>>   	if (!tgi->bank_info)
+>>   		return -ENOMEM;
+>>   
+>> -	tgi->irq_domain = irq_domain_add_linear(pdev->dev.of_node,
+>> -						tgi->gc.ngpio,
+>> -						&irq_domain_simple_ops, NULL);
+>> +	tgi->irq_domain = irq_domain_add_hierarchy(parent_domain, 0,
+>> +						   tgi->gc.ngpio,
+>> +						   pdev->dev.of_node,
+>> +						   &tegra_gpio_irq_domain_ops,
+>> +						   &tgi->gc);
+>>   	if (!tgi->irq_domain)
+>>   		return -ENODEV;
+>>   
+>> -- 
+>> 2.7.4
+>>
