@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V2 08/12] soc/tegra: pmc: allow support for more tegra wake models
-Date: Tue, 28 May 2019 16:08:52 -0700
-Message-ID: <1559084936-4610-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V2 03/12] clk: tegra: save and restore PLLs state for system
+Date: Tue, 28 May 2019 16:08:47 -0700
+Message-ID: <1559084936-4610-4-git-send-email-skomatineni@nvidia.com>
 References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,91 +12,256 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch allows to create separate irq_set_wake and irq_set_type
-implementations for different tegra designs PMC that has different
-wake models which require difference wake registers and different
-programming sequence.
-
-AOWAKE model support is available for Tegra186 and Tegra194 only
-and it resides within PMC and supports tiered wake architecture.
-
-Tegra210 and prior tegra designs uses PMC directly to receive wake
-events and coordinate the wake sequence.
+This patch has implementation of saving and restoring PLL's state to
+support system suspend and resume operations.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-divider.c | 19 ++++++++
+ drivers/clk/tegra/clk-pll-out.c | 25 +++++++++++
+ drivers/clk/tegra/clk-pll.c     | 99 ++++++++++++++++++++++++++++++++---------
+ drivers/clk/tegra/clk.h         |  9 ++++
+ 4 files changed, 132 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 5648e5c09ef5..974b4c9f6ada 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -235,6 +235,8 @@ struct tegra_pmc_soc {
- 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
- 				   struct device_node *np,
- 				   bool invert);
-+	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
-+	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 2a1822a22740..718694727042 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -14,6 +14,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
  
- 	const char * const *reset_sources;
- 	unsigned int num_reset_sources;
-@@ -1915,12 +1917,15 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
- 	.alloc = tegra_pmc_irq_alloc,
++#include <linux/clk.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+ #include <linux/err.h>
+@@ -179,3 +180,21 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
+ 					  reg, 16, 1, CLK_DIVIDER_READ_ONLY,
+ 					  mc_div_table, lock);
+ }
++
++#if defined(CONFIG_PM_SLEEP)
++void tegra_clk_divider_resume(struct clk_hw *hw, unsigned long rate)
++{
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate;
++
++	if (IS_ERR(parent)) {
++		WARN_ON(1);
++		return;
++	}
++
++	parent_rate = clk_hw_get_rate(parent);
++
++	if (clk_frac_div_set_rate(hw, rate, parent_rate) < 0)
++		WARN_ON(1);
++}
++#endif
+diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+index 257cae0c1488..8b8c3b77d243 100644
+--- a/drivers/clk/tegra/clk-pll-out.c
++++ b/drivers/clk/tegra/clk-pll-out.c
+@@ -14,6 +14,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+ #include <linux/err.h>
+@@ -120,3 +121,27 @@ struct clk *tegra_clk_register_pll_out(const char *name,
+ 
+ 	return clk;
+ }
++
++#if defined(CONFIG_PM_SLEEP)
++void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++
++	if (IS_ERR(parent)) {
++		WARN_ON(1);
++		return;
++	}
++
++	tegra_clk_divider_resume(parent, rate);
++	clk_pll_out_enable(hw);
++}
++
++void tegra_clk_sync_state_pll_out(struct clk *clk)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++
++	if (!__clk_get_enable_count(clk))
++		clk_pll_out_disable(hw);
++}
++#endif
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 6b976b2514f7..b363b6c6f600 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -20,6 +20,7 @@
+ #include <linux/err.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/clk/tegra.h>
+ 
+ #include "clk.h"
+ 
+@@ -1813,6 +1814,28 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ 
+ 	return ret;
+ }
++
++static void _clk_plle_tegra_init_parent(struct tegra_clk_pll *pll)
++{
++	u32 val, val_aux;
++
++	/* ensure parent is set to pll_ref */
++
++	val = pll_readl_base(pll);
++	val_aux = pll_readl(pll->params->aux_reg, pll);
++
++	if (val & PLL_BASE_ENABLE) {
++		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
++		    (val_aux & PLLE_AUX_PLLP_SEL))
++			WARN(1, "pll_e enabled with unsupported parent %s\n",
++			     (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
++			     "pll_re_vco");
++	} else {
++		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
++		pll_writel(val_aux, pll->params->aux_reg, pll);
++		fence_udelay(1, pll->clk_base);
++	}
++}
+ #endif
+ 
+ static struct tegra_clk_pll *_tegra_init_pll(void __iomem *clk_base,
+@@ -2289,6 +2312,21 @@ static const struct clk_ops tegra_clk_pllss_ops = {
+ 	.set_rate = clk_pllxc_set_rate,
  };
  
--static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-+static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	unsigned int offset, bit;
- 	u32 value;
- 
-+	if (data->hwirq == ULONG_MAX)
-+		return 0;
++static void _pllss_set_defaults(struct tegra_clk_pll *pll)
++{
++	u32 val;
 +
- 	offset = data->hwirq / 32;
- 	bit = data->hwirq % 32;
++	pll_writel_misc(PLLSS_MISC_DEFAULT, pll);
++	pll_writel(PLLSS_CFG_DEFAULT, pll->params->ext_misc_reg[0], pll);
++	pll_writel(PLLSS_CTRL1_DEFAULT, pll->params->ext_misc_reg[1], pll);
++	pll_writel(PLLSS_CTRL2_DEFAULT, pll->params->ext_misc_reg[2], pll);
++
++	val = pll_readl_base(pll);
++	val &= ~PLLSS_LOCK_OVERRIDE;
++	pll_writel_base(val, pll);
++}
++
+ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 				void __iomem *clk_base, unsigned long flags,
+ 				struct tegra_clk_pll_params *pll_params,
+@@ -2339,10 +2377,7 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
  
-@@ -1943,7 +1948,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
+ 	_update_pll_mnp(pll, &cfg);
+ 
+-	pll_writel_misc(PLLSS_MISC_DEFAULT, pll);
+-	pll_writel(PLLSS_CFG_DEFAULT, pll_params->ext_misc_reg[0], pll);
+-	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[1], pll);
+-	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[2], pll);
++	_pllss_set_defaults(pll);
+ 
+ 	val = pll_readl_base(pll);
+ 	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+@@ -2546,27 +2581,12 @@ struct clk *tegra_clk_register_plle_tegra210(const char *name,
+ {
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk;
+-	u32 val, val_aux;
+ 
+ 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+ 
+-	/* ensure parent is set to pll_re_vco */
+-
+-	val = pll_readl_base(pll);
+-	val_aux = pll_readl(pll_params->aux_reg, pll);
+-
+-	if (val & PLLE_BASE_ENABLE) {
+-		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
+-			(val_aux & PLLE_AUX_PLLP_SEL))
+-			WARN(1, "pll_e enabled with unsupported parent %s\n",
+-			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
+-					"pll_re_vco");
+-	} else {
+-		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
+-		pll_writel(val_aux, pll_params->aux_reg, pll);
+-	}
++	_clk_plle_tegra_init_parent(pll);
+ 
+ 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+ 				      &tegra_clk_plle_tegra210_ops);
+@@ -2710,3 +2730,42 @@ struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
  }
  
--static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
-+static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	u32 value;
-@@ -1996,8 +2001,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
- 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
- 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
- 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
--	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
--	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
-+	if (pmc->soc->irq_set_type)
-+		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
-+	if (pmc->soc->irq_set_wake)
-+		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+ #endif
++
++#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARCH_TEGRA_210_SOC)
++void tegra_clk_pll_resume(struct clk *c, unsigned long rate)
++{
++	struct clk_hw *hw = __clk_get_hw(c);
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++
++	if (clk_pll_is_enabled(hw))
++		return;
++
++	if (IS_ERR(parent)) {
++		WARN_ON(1);
++		return;
++	}
++
++	if (pll->params->set_defaults)
++		pll->params->set_defaults(pll);
++
++	clk_set_rate(c, rate);
++	clk_pll_enable(hw);
++}
++
++void tegra_clk_sync_state_pll(struct clk *c)
++{
++	struct clk_hw *hw = __clk_get_hw(c);
++
++	if (!__clk_get_enable_count(c))
++		clk_pll_disable(hw);
++}
++
++void tegra_clk_plle_tegra210_resume(struct clk *c)
++{
++	struct clk_hw *hw = __clk_get_hw(c);
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++
++	_clk_plle_tegra_init_parent(pll);
++}
++#endif
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 09bccbb9640c..e4d124cc5657 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -841,6 +841,15 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+ 		 u8 frac_width, u8 flags);
  
- 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
- 					       &tegra_pmc_irq_domain_ops, pmc);
-@@ -2670,6 +2677,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.irq_set_type = tegra186_pmc_irq_set_type,
- 	.reset_sources = tegra186_reset_sources,
- 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
- 	.reset_levels = tegra186_reset_levels,
-@@ -2748,6 +2757,8 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.irq_set_type = tegra186_pmc_irq_set_type,
- 	.num_wake_events = ARRAY_SIZE(tegra194_wake_events),
- 	.wake_events = tegra194_wake_events,
- };
++#ifdef CONFIG_PM_SLEEP
++void tegra_clk_pll_resume(struct clk *c, unsigned long rate);
++void tegra_clk_divider_resume(struct clk_hw *hw, unsigned long rate);
++void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate);
++void tegra_clk_plle_tegra210_resume(struct clk *c);
++void tegra_clk_sync_state_pll(struct clk *c);
++void tegra_clk_sync_state_pll_out(struct clk *clk);
++#endif
++
+ 
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
 -- 
 2.7.4
