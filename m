@@ -1,45 +1,62 @@
-From: Gen Zhang <blackgod016574@gmail.com>
-Subject: Re: [PATCH] tegra-hsp: fix a missing-check bug in
- tegra_hsp_doorbell_create()
-Date: Mon, 27 May 2019 22:10:38 +0800
-Message-ID: <20190527141038.GA6453@zhanggen-UX430UQ>
-References: <20190527130430.GA5367@zhanggen-UX430UQ>
- <20190527140549.GA7202@ulmo>
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 1/3][V2] lib: fix match_string() helper on -1 array size
+Date: Tue, 28 May 2019 10:39:30 +0300
+Message-ID: <20190528073932.25365-1-alexandru.ardelean@analog.com>
+References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190527140549.GA7202@ulmo>
+In-Reply-To: <20190508112842.11654-1-alexandru.ardelean@analog.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org, kvm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-mtd@lists.infradead.org, cgroups@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org
+Cc: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, Alexandru Ardelean <alexandru.ardelean@analog.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 27, 2019 at 04:05:49PM +0200, Thierry Reding wrote:
-> On Mon, May 27, 2019 at 09:04:30PM +0800, Gen Zhang wrote:
-> > In tegra_hsp_doorbell_create(), 'db->name' is allocated by 
-> > devm_kstrdup_const(). It returns NULL when fails. So 'db->name' should
-> > be checked.
-> > 
-> > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> > ---
-> > diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> > index 11fc9fd..b613c46 100644
-> > --- a/drivers/mailbox/tegra-hsp.c
-> > +++ b/drivers/mailbox/tegra-hsp.c
-> > @@ -292,6 +292,8 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
-> >  	db->channel.hsp = hsp;
-> >  
-> >  	db->name = devm_kstrdup_const(hsp->dev, name, GFP_KERNEL);
-> > +	if (!db->name)
-> > +		return ERR_PTR(-ENOMEM);
-> 
-> I don't think this could ever happen, since name is always from .rodata
-> and hence devm_kstrdup_const() never returns NULL. But formally this is
-> correct, so:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-Thanks for your reply, Thierry.
+The documentation the `_match_string()` helper mentions that `n`
+should be:
+ * @n: number of strings in the array or -1 for NULL terminated arrays
 
-Thanks
-Gen
+The behavior of the function is different, in the sense that it exits on
+the first NULL element in the array, regardless of whether `n` is -1 or a
+positive number.
+
+This patch changes the behavior, to exit the loop when a NULL element is
+found and n == -1. Essentially, this aligns the behavior with the
+doc-string.
+
+There are currently many users of `match_string()`, and so, in order to go
+through them, the next patches in the series will focus on doing some
+cosmetic changes, which are aimed at grouping the users of
+`match_string()`.
+
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+
+Changelog v1 -> v2:
+* split the initial series into just 3 patches that fix the
+  `match_string()` helper and start introducing a new version of this
+  helper, which computes array-size of static arrays
+
+ lib/string.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/lib/string.c b/lib/string.c
+index 6016eb3ac73d..e2cf5acc83bd 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -681,8 +681,11 @@ int match_string(const char * const *array, size_t n, const char *string)
+ 
+ 	for (index = 0; index < n; index++) {
+ 		item = array[index];
+-		if (!item)
++		if (!item) {
++			if (n != (size_t)-1)
++				continue;
+ 			break;
++		}
+ 		if (!strcmp(item, string))
+ 			return index;
+ 	}
+-- 
+2.20.1
