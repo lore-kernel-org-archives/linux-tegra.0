@@ -1,50 +1,27 @@
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 3/3][V2] lib: re-introduce new match_string() helper/macro
-Date: Tue, 28 May 2019 10:39:32 +0300
-Message-ID: <20190528073932.25365-3-alexandru.ardelean@analog.com>
-References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
- <20190528073932.25365-1-alexandru.ardelean@analog.com>
+From: Billy Laws <blaws05@gmail.com>
+Subject: Re: [PATCH V1 00/12] LP0 entry and exit support for Tegra210
+Date: Tue, 28 May 2019 10:28:48 +0100
+Message-ID: <CAFUUQHP5e=oQZC29foYD+uA96r5-M4wCxKYVL_LodrWRG5kp1Q@mail.gmail.com>
+References: <1558574922-16531-1-git-send-email-skomatineni@nvidia.com> <0418cbdb-1bb6-23c3-f13d-e0a70f899f3c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190528073932.25365-1-alexandru.ardelean@analog.com>
+In-Reply-To: <0418cbdb-1bb6-23c3-f13d-e0a70f899f3c@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org, kvm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-mtd@lists.infradead.org, cgroups@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org
-Cc: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, Alexandru Ardelean <alexandru.ardelean@analog.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>, broonie@kernel.org, natechancellor@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This change re-introduces `match_string()` as a macro that uses
-ARRAY_SIZE() to compute the size of the array.
-
-After this change, work can start on migrating subsystems to use this new
-helper. Since the original helper is pretty used, migrating to this new one
-will take a while, and will be reviewed by each subsystem.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- include/linux/string.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 7149fcdf62df..34491b075449 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -198,6 +198,15 @@ static inline int strtobool(const char *s, bool *res)
- int __match_string(const char * const *array, size_t n, const char *string);
- int __sysfs_match_string(const char * const *array, size_t n, const char *s);
- 
-+/**
-+ * match_string - matches given string in an array
-+ * @_a: array of strings
-+ * @_s: string to match with
-+ *
-+ * Helper for __match_string(). Calculates the size of @a automatically.
-+ */
-+#define match_string(_a, _s) __match_string(_a, ARRAY_SIZE(_a), _s)
-+
- /**
-  * sysfs_match_string - matches given string in an array
-  * @_a: array of strings
--- 
-2.20.1
+Hi,
+By the looks of this you configure wake events but the pmc driver
+still only configures lp1, which is the same as linux 4 tegra 4.4+
+which also doesn't support lp0, if its selected in dts it'll just
+change it to LP1/SC7 (both have same code path and neither set any lp0
+stuff trm says). What confuses me further is that l4t and this
+ptachset both configure wake events, which I think should only work in
+LP0 and not LP1 and yet neither have lp0 entry code for t210. I also
+looked at ATF, whis sets the flags to wake the cpu on interrupts,
+which would suggest that it only supports lp1 (in deep sleep I dont
+think them flags would work). Am I missing some important detail here?
+Two other things, will you be adding full lp0 in later patchets and
+will they use the bpmp or not?
