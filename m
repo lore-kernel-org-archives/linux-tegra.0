@@ -1,154 +1,133 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 08/12] soc/tegra: pmc: allow support for more tegra
- wake models
-Date: Wed, 29 May 2019 16:30:46 +0200
-Message-ID: <20190529143046.GF17679@ulmo>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
+Date: Wed, 29 May 2019 16:53:21 +0200
+Message-ID: <20190529145322.20630-2-thierry.reding@gmail.com>
+References: <20190529145322.20630-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qp4W5+cUSnZs0RIF"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1559084936-4610-9-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190529145322.20630-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---qp4W5+cUSnZs0RIF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hierarchical IRQ domains can be used to stack different IRQ controllers
+on top of each other. One specific use-case where this can be useful is
+if a power management controller has top-level controls for wakeup
+interrupts. In such cases, the power management controller can be a
+parent to other interrupt controllers and program additional registers
+when an IRQ has its wake capability enabled or disabled.
 
-On Tue, May 28, 2019 at 04:08:52PM -0700, Sowjanya Komatineni wrote:
-> This patch allows to create separate irq_set_wake and irq_set_type
-> implementations for different tegra designs PMC that has different
-> wake models which require difference wake registers and different
-> programming sequence.
->=20
-> AOWAKE model support is available for Tegra186 and Tegra194 only
-> and it resides within PMC and supports tiered wake architecture.
->=20
-> Tegra210 and prior tegra designs uses PMC directly to receive wake
-> events and coordinate the wake sequence.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 5648e5c09ef5..974b4c9f6ada 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -235,6 +235,8 @@ struct tegra_pmc_soc {
->  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
->  				   struct device_node *np,
->  				   bool invert);
-> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
-> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
-> =20
->  	const char * const *reset_sources;
->  	unsigned int num_reset_sources;
-> @@ -1915,12 +1917,15 @@ static const struct irq_domain_ops tegra_pmc_irq_=
-domain_ops =3D {
->  	.alloc =3D tegra_pmc_irq_alloc,
->  };
-> =20
-> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int=
- on)
->  {
->  	struct tegra_pmc *pmc =3D irq_data_get_irq_chip_data(data);
->  	unsigned int offset, bit;
->  	u32 value;
-> =20
-> +	if (data->hwirq =3D=3D ULONG_MAX)
-> +		return 0;
-> +
->  	offset =3D data->hwirq / 32;
->  	bit =3D data->hwirq % 32;
-> =20
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v3:
+- use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
+- add missing kerneldoc for new parent_domain field
+- keep IRQ_DOMAIN dependency for clarity
 
-I've submitted this hunk as a separate patch because I think we may end
-up needing to backport that to v5.0.
+Changes in v2:
+- select IRQ_DOMAIN_HIERARCHY to avoid build failure
+- move more code into the gpiolib core
 
-No need for you to worry about that, though. I'll take care of it when I
-apply this patch.
+ drivers/gpio/Kconfig        |  1 +
+ drivers/gpio/gpiolib.c      | 33 +++++++++++++++++++++++++++++----
+ include/linux/gpio/driver.h |  8 ++++++++
+ 3 files changed, 38 insertions(+), 4 deletions(-)
 
-Thierry
-
-> @@ -1943,7 +1948,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *=
-data, unsigned int on)
->  	return 0;
->  }
-> =20
-> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int ty=
-pe)
-> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int=
- type)
->  {
->  	struct tegra_pmc *pmc =3D irq_data_get_irq_chip_data(data);
->  	u32 value;
-> @@ -1996,8 +2001,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pm=
-c)
->  	pmc->irq.irq_unmask =3D irq_chip_unmask_parent;
->  	pmc->irq.irq_eoi =3D irq_chip_eoi_parent;
->  	pmc->irq.irq_set_affinity =3D irq_chip_set_affinity_parent;
-> -	pmc->irq.irq_set_type =3D tegra_pmc_irq_set_type;
-> -	pmc->irq.irq_set_wake =3D tegra_pmc_irq_set_wake;
-> +	if (pmc->soc->irq_set_type)
-> +		pmc->irq.irq_set_type =3D pmc->soc->irq_set_type;
-> +	if (pmc->soc->irq_set_wake)
-> +		pmc->irq.irq_set_wake =3D pmc->soc->irq_set_wake;
-> =20
->  	pmc->domain =3D irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_no=
-de,
->  					       &tegra_pmc_irq_domain_ops, pmc);
-> @@ -2670,6 +2677,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc =
-=3D {
->  	.regs =3D &tegra186_pmc_regs,
->  	.init =3D NULL,
->  	.setup_irq_polarity =3D tegra186_pmc_setup_irq_polarity,
-> +	.irq_set_wake =3D tegra186_pmc_irq_set_wake,
-> +	.irq_set_type =3D tegra186_pmc_irq_set_type,
->  	.reset_sources =3D tegra186_reset_sources,
->  	.num_reset_sources =3D ARRAY_SIZE(tegra186_reset_sources),
->  	.reset_levels =3D tegra186_reset_levels,
-> @@ -2748,6 +2757,8 @@ static const struct tegra_pmc_soc tegra194_pmc_soc =
-=3D {
->  	.regs =3D &tegra186_pmc_regs,
->  	.init =3D NULL,
->  	.setup_irq_polarity =3D tegra186_pmc_setup_irq_polarity,
-> +	.irq_set_wake =3D tegra186_pmc_irq_set_wake,
-> +	.irq_set_type =3D tegra186_pmc_irq_set_type,
->  	.num_wake_events =3D ARRAY_SIZE(tegra194_wake_events),
->  	.wake_events =3D tegra194_wake_events,
->  };
-> --=20
-> 2.7.4
->=20
-
---qp4W5+cUSnZs0RIF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzul5YACgkQ3SOs138+
-s6EvRg//SiL8/cj7vXeGPNhShOjMQH5iYJIHqsX0WbMVVHn86pA6gpNyEYzZKaMU
-Sx9GsAU6QQSaitW2WJ+9Dd2+uNaHiOIFSqZwGEHUxDcYCyEsvNhq99mPVw+KOQXs
-u+hCCzhEN/4emURsfohOTDBRORr30tbLqzl3WinPLrseqLlY5oHXz5RmzXPY8wRV
-ZmBo6X5xXAr3IctQpZUlTDr/TiY60JLEN3zVqPHlNEShtlMVVVzMzR6ByP20NSh0
-fVL/P3iTC3nKHtwlqhaaMpu27wMNz+HHa6xaMRRkM+BLQyuDlN5cZEN3HsiFijB3
-lYn5sMz9bonxyaHX5ROFOeqCfGqPAhBde6d92X+/uq3xLAzt7VzHL9NCNlAjDzMi
-CK6H+9+Uv669KZqw1PG+DhPFNCyCJYx9rPTaR1xZ8T1M2pakLXl15CwSJMIvNWd3
-4hdhDYtCIcrlu23UkjwKZFOIxyMzijobk9FLRBRQoxkL8MXtqqPGlWlAF2Gw4nwi
-k1rcuUPgm/RCtnLa03zGehmKgiJpsGOSevI+ahEPeHSeSaPGbaxgLOXKO0D2PWA3
-80QpD6NO6NiU5VuM/BYomu29sZYWVEQxR1F2LIR4JB3nm2a77nh/eNo7TMlk1WSn
-NNL00bUomOFZXHk+D39puub7N443xeLpEg9PqWtia/nxhyFLrbM=
-=mmOw
------END PGP SIGNATURE-----
-
---qp4W5+cUSnZs0RIF--
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 62f3fe06cd2f..b87cc36005d8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -45,6 +45,7 @@ config GPIO_ACPI
+ 
+ config GPIOLIB_IRQCHIP
+ 	select IRQ_DOMAIN
++	select IRQ_DOMAIN_HIERARCHY
+ 	bool
+ 
+ config DEBUG_GPIO
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e013d417a936..6b64bfa90089 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1825,9 +1825,22 @@ EXPORT_SYMBOL_GPL(gpiochip_irq_domain_deactivate);
+ 
+ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
++	struct irq_domain *domain = chip->irq.domain;
++
+ 	if (!gpiochip_irqchip_irq_valid(chip, offset))
+ 		return -ENXIO;
+ 
++	if (irq_domain_is_hierarchy(domain)) {
++		struct irq_fwspec spec;
++
++		spec.fwnode = domain->fwnode;
++		spec.param_count = 2;
++		spec.param[0] = offset;
++		spec.param[1] = IRQ_TYPE_NONE;
++
++		return irq_create_fwspec_mapping(&spec);
++	}
++
+ 	return irq_create_mapping(chip->irq.domain, offset);
+ }
+ 
+@@ -1936,7 +1949,14 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
+ 		type = IRQ_TYPE_NONE;
+ 	}
+ 
+-	gpiochip->to_irq = gpiochip_to_irq;
++	/*
++	 * Allow GPIO chips to override the ->to_irq() if they really need to.
++	 * This should only be very rarely needed, the majority should be fine
++	 * with gpiochip_to_irq().
++	 */
++	if (!gpiochip->to_irq)
++		gpiochip->to_irq = gpiochip_to_irq;
++
+ 	gpiochip->irq.default_type = type;
+ 	gpiochip->irq.lock_key = lock_key;
+ 	gpiochip->irq.request_key = request_key;
+@@ -1946,9 +1966,14 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
+ 	else
+ 		ops = &gpiochip_domain_ops;
+ 
+-	gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
+-						     gpiochip->irq.first,
+-						     ops, gpiochip);
++	if (gpiochip->irq.parent_domain)
++		gpiochip->irq.domain = irq_domain_add_hierarchy(gpiochip->irq.parent_domain,
++								0, gpiochip->ngpio,
++								np, ops, gpiochip);
++	else
++		gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
++							     gpiochip->irq.first,
++							     ops, gpiochip);
+ 	if (!gpiochip->irq.domain)
+ 		return -EINVAL;
+ 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index a1d273c96016..472f2c127bf6 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -48,6 +48,14 @@ struct gpio_irq_chip {
+ 	 */
+ 	const struct irq_domain_ops *domain_ops;
+ 
++	/**
++	 * @parent_domain:
++	 *
++	 * If non-NULL, will be set as the parent of this GPIO interrupt
++	 * controller's IRQ domain to establish a hierarchy.
++	 */
++	struct irq_domain *parent_domain;
++
+ 	/**
+ 	 * @handler:
+ 	 *
+-- 
+2.21.0
