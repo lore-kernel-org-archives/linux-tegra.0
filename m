@@ -1,66 +1,107 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v3 0/2] Implement wake event support on Tegra186 and later
-Date: Wed, 29 May 2019 16:53:20 +0200
-Message-ID: <20190529145322.20630-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V2 02/12] pinctrl: tegra: add suspend and resume support
+Date: Wed, 29 May 2019 18:29:52 +0300
+Message-ID: <6273a790-d4b7-c501-3fec-d9816288b139@gmail.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+ <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+29.05.2019 2:08, Sowjanya Komatineni пишет:
+> This patch adds suspend and resume support for Tegra pinctrl driver
+> and registers them to syscore so the pinmux settings are restored
+> before the devices resume.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 68 +++++++++++++++++++++++++++++++-
+>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
+>  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>  7 files changed, 75 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> index a5008c066bac..bdc47e62c457 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -28,11 +28,18 @@
+>  #include <linux/pinctrl/pinmux.h>
+>  #include <linux/pinctrl/pinconf.h>
+>  #include <linux/slab.h>
+> +#include <linux/syscore_ops.h>
+>  
+>  #include "../core.h"
+>  #include "../pinctrl-utils.h"
+>  #include "pinctrl-tegra.h"
+>  
+> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+> +#define EMMC_DPD_PARKING			(0x1fff << 14)
+> +
+> +static struct tegra_pmx *pmx;
+> +
+>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>  {
+>  	return readl(pmx->regs[bank] + reg);
+> @@ -629,6 +636,50 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>  	}
+>  }
+>  
+> +static int __maybe_unused tegra_pinctrl_suspend(void)
+> +{
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	int i, j;
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		regs = pmx->regs[i];
+> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+> +			*backup_regs++ = readl(regs++);
+> +	}
+> +
+> +	return pinctrl_force_sleep(pmx->pctl);
+> +}
+> +
+> +static void __maybe_unused tegra_pinctrl_resume(void)
+> +{
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	u32 val;
+> +	int i, j;
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		regs = pmx->regs[i];
+> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+> +			writel(*backup_regs++, regs++);
+> +	}
+> +
+> +	if (pmx->soc->has_park_padcfg) {
+> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+> +		val &= ~EMMC_DPD_PARKING;
+> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+> +
+> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+> +		val &= ~EMMC_DPD_PARKING;
+> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+> +	}
+> +}
+>
 
-Hi,
-
-The following is a set of patches that allow certain interrupts to be
-used as wakeup sources on Tegra186 and later. To implement this, each
-of the GPIO controllers' IRQ domain needs to become hierarchical, and
-parented to the PMC domain. The PMC domain in turn implements a new
-IRQ domain that is a child to the GIC IRQ domain.
-
-The above ensures that the interrupt chip implementation of the PMC is
-called at the correct time. The ->irq_set_type() and ->irq_set_wake()
-implementations program the PMC wake registers in a way to enable the
-given interrupts as wakeup sources.
-
-This is based on a suggestion from Thomas Gleixner that resulted from
-the following thread:
-
-        https://lkml.org/lkml/2018/9/13/1042
-
-Changes in v3:
-- use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
-- drop preparatory patch exporting irq_domain_alloc_irqs()
-- properly set GPIO instance on Tegra186
-
-Changes in v2:
-- dropped the Tegra PMC specific patches to simplify the series
-- drop wakeup-parent usage, lookup up PMC by compatible
-- convert Tegra186 GPIO driver to use valid mask
-- move hierarchy support code into gpiolib core
-
-Linus, this is a new revision based on our previous discussion. Sorry it
-took so long to get back to this. I also verified that with this series
-I can make things work with gpio-keys whether I use the "gpios" property
-or the "interrupts" property, which was your primary concern.
-
-I'm also adding Lina to the thread since she's been basing her QCOM
-series on top of this patch. Lina, it'd be great if you could confirm
-that the changes I made in this version continue to work for you.
-
-Thierry
-
-Thierry Reding (2):
-  gpio: Add support for hierarchical IRQ domains
-  gpio: tegra186: Implement wake event support
-
- drivers/gpio/Kconfig         |   1 +
- drivers/gpio/gpio-tegra186.c | 120 +++++++++++++++++++++++++++++++----
- drivers/gpio/gpiolib.c       |  33 ++++++++--
- include/linux/gpio/driver.h  |   8 +++
- 4 files changed, 144 insertions(+), 18 deletions(-)
+But the CFGPADCTRL registers are already programmed by restoring the
+backup_regs and hence the relevant EMMC's are already unparked. Hence
+why do you need to force-unpark both of the EMMC's? What if EMMC is
+unpopulated on a board, why do you need to unpark it then?
 
 -- 
-2.21.0
+Dmitry
