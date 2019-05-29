@@ -1,7 +1,8 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 7/8] clk: tegra: Remove the old emc_mux clock for Tegra210
-Date: Wed, 29 May 2019 16:21:38 +0800
-Message-ID: <20190529082139.5581-8-josephl@nvidia.com>
+Subject: [PATCH V4 8/8] arm64: tegra: Add external memory controller node for
+ Tegra210
+Date: Wed, 29 May 2019 16:21:39 +0800
+Message-ID: <20190529082139.5581-9-josephl@nvidia.com>
 References: <20190529082139.5581-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,103 +22,69 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove the old emc_mux clock and don't use the common EMC clock
-definition. This will be replaced by a new clock defined in the
-EMC driver.
+Add external memory controller (EMC) node for Tegra210
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v4:
-- make sure the behavior is compatible with case if the kernel still
-  uses the older DTB which doesn't have EMC node. And the MC and EMC
-  clock can still be registered successuflly.
+- no change.
 v3:
-- split to 3 patches from the previous version
+- apply memory-region for emc_table. And add reserved-memory node with
+  it.
 ---
- drivers/clk/tegra/clk-tegra210.c | 42 ++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 33 ++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 1d52354820ca..8b209e8b5eaf 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -28,6 +28,7 @@
- #include <dt-bindings/reset/tegra210-car.h>
- #include <linux/iopoll.h>
- #include <linux/sizes.h>
-+#include <soc/tegra/emc.h>
- #include <soc/tegra/pmc.h>
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index bc71ef8f9a09..b9ccfee39ed2 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -872,6 +872,27 @@
+ 		#iommu-cells = <1>;
+ 	};
  
- #include "clk.h"
-@@ -324,12 +325,6 @@ static unsigned long tegra210_input_freq[] = {
- 	[8] = 12000000,
- };
- 
--static const char *mux_pllmcp_clkm[] = {
--	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
--	"pll_p",
--};
--#define mux_pllmcp_clkm_idx NULL
--
- #define PLL_ENABLE			(1 << 30)
- 
- #define PLLCX_MISC1_IDDQ		(1 << 27)
-@@ -2346,7 +2341,6 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_i2c2] = { .dt_id = TEGRA210_CLK_I2C2, .present = true },
- 	[tegra_clk_uartc_8] = { .dt_id = TEGRA210_CLK_UARTC, .present = true },
- 	[tegra_clk_mipi_cal] = { .dt_id = TEGRA210_CLK_MIPI_CAL, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = true },
- 	[tegra_clk_usb2] = { .dt_id = TEGRA210_CLK_USB2, .present = true },
- 	[tegra_clk_bsev] = { .dt_id = TEGRA210_CLK_BSEV, .present = true },
- 	[tegra_clk_uartd_8] = { .dt_id = TEGRA210_CLK_UARTD, .present = true },
-@@ -2957,6 +2951,27 @@ static int tegra210_init_pllu(void)
- 	return 0;
- }
- 
-+static const struct clk_div_table mc_div_table_tegra210[] = {
-+	{ .val = 0, .div = 2 },
-+	{ .val = 1, .div = 4 },
-+	{ .val = 2, .div = 1 },
-+	{ .val = 3, .div = 2 },
-+	{ .val = 0, .div = 0 },
-+};
++	external-memory-controller@7001b000 {
++		compatible = "nvidia,tegra210-emc";
++		reg = <0x0 0x7001b000 0x0 0x1000>,
++		      <0x0 0x7001e000 0x0 0x1000>,
++		      <0x0 0x7001f000 0x0 0x1000>;
++		clocks = <&tegra_car TEGRA210_CLK_EMC>,
++			 <&tegra_car TEGRA210_CLK_PLL_M>,
++			 <&tegra_car TEGRA210_CLK_PLL_C>,
++			 <&tegra_car TEGRA210_CLK_PLL_P>,
++			 <&tegra_car TEGRA210_CLK_CLK_M>,
++			 <&tegra_car TEGRA210_CLK_PLL_M_UD>,
++			 <&tegra_car TEGRA210_CLK_PLL_MB_UD>,
++			 <&tegra_car TEGRA210_CLK_PLL_MB>,
++			 <&tegra_car TEGRA210_CLK_PLL_P_UD>;
++		clock-names = "emc", "pll_m", "pll_c", "pll_p", "clk_m",
++			      "pll_m_ud", "pll_mb_ud", "pll_mb", "pll_p_ud";
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		memory-region = <&emc_table>;
++		nvidia,memory-controller = <&mc>;
++	};
 +
-+static void tegra210_clk_register_mc(const char *name,
-+				     const char *parent_name)
-+{
-+	struct clk *clk;
+ 	sata@70020000 {
+ 		compatible = "nvidia,tegra210-ahci";
+ 		reg = <0x0 0x70027000 0x0 0x2000>, /* AHCI */
+@@ -1431,6 +1452,18 @@
+ 		};
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
 +
-+	clk = clk_register_divider_table(NULL, name, parent_name,
-+					 CLK_IS_CRITICAL,
-+					 clk_base + CLK_SOURCE_EMC,
-+					 15, 2, CLK_DIVIDER_READ_ONLY,
-+					 mc_div_table_tegra210, &emc_lock);
-+	clks[TEGRA210_CLK_MC] = clk;
-+}
++		emc_table: emc-table@8be00000 {
++			compatible = "nvidia,tegra210-emc-table";
++			reg = <0x0 0x8be00000 0x0 0x10000>;
++			status = "disabled";
++		};
++	};
 +
- static const char * const sor1_out_parents[] = {
- 	/*
- 	 * Bit 0 of the mux selects sor1_pad_clkout, irrespective of bit 1, so
-@@ -3040,15 +3055,12 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 			CLK_SOURCE_LA, 0);
- 	clks[TEGRA210_CLK_LA] = clk;
- 
--	/* emc mux */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
--			       clk_base + CLK_SOURCE_EMC,
--			       29, 3, 0, &emc_lock);
-+	/* emc */
-+	clk = tegra210_clk_register_emc();
-+	clks[TEGRA210_CLK_EMC] = clk;
- 
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
--	clks[TEGRA210_CLK_MC] = clk;
-+	/* mc */
-+	tegra210_clk_register_mc("mc", "emc");
- 
- 	/* cml0 */
- 	clk = clk_register_gate(NULL, "cml0", "pll_e", 0, clk_base + PLLE_AUX,
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts = <GIC_PPI 13
 -- 
 2.21.0
