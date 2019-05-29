@@ -1,8 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V4 1/8] dt-bindings: memory: tegra: Add external memory
- controller binding for Tegra210
-Date: Wed, 29 May 2019 16:21:32 +0800
-Message-ID: <20190529082139.5581-2-josephl@nvidia.com>
+Subject: [PATCH V4 3/8] clk: tegra: Export functions for EMC clock scaling
+Date: Wed, 29 May 2019 16:21:34 +0800
+Message-ID: <20190529082139.5581-4-josephl@nvidia.com>
 References: <20190529082139.5581-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,88 +17,100 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob
- Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the binding document for the external memory controller (EMC) which
-communicates with external LPDDR4 devices. It includes the bindings of
-the EMC node and a sub-node of EMC table which under the reserved memory
-node. The EMC table contains the data of the rates that EMC supported.
+Export functions to allow accessing the CAR register required by EMC
+clock scaling. These functions will be used to access the CAR register
+as part of the scaling sequence.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 v4:
 - no change
 v3:
-- drop the bindings of EMC table
-- add memory-region and reserved-memory node for EMC table
+- split to 3 patches from the previous version
 ---
- .../nvidia,tegra210-emc.txt                   | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+ drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++++++++++++++++
+ include/linux/clk/tegra.h        |  5 +++++
+ 2 files changed, 41 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-new file mode 100644
-index 000000000000..d65aeef2329c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-@@ -0,0 +1,55 @@
-+NVIDIA Tegra210 SoC EMC (external memory controller)
-+====================================================
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index a985faa4a3c1..1d52354820ca 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -47,6 +47,7 @@
+ #define CLK_SOURCE_LA 0x1f8
+ #define CLK_SOURCE_SDMMC2 0x154
+ #define CLK_SOURCE_SDMMC4 0x164
++#define CLK_SOURCE_EMC_DLL 0x664
+ 
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -234,6 +235,10 @@
+ #define RST_DFLL_DVCO 0x2f4
+ #define DVFS_DFLL_RESET_SHIFT 0
+ 
++#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
++#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
++#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
 +
-+Device node
-+===========
-+Required properties :
-+- compatible : should be "nvidia,tegra210-emc".
-+- reg : physical base address and length of the controller's registers.
-+- clocks : phandles of the possible source clocks.
-+- clock-names : names of the possible source clocks.
-+- interrupts : Should contain the EMC general interrupt.
-+- memory-region : phandle to the reserved memory (see
-+  Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt) which
-+  contains a sub-node of EMC table.
-+- nvidia,memory-controller : phandle of the memory controller.
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+ 
+@@ -560,6 +565,37 @@ void tegra210_set_sata_pll_seq_sw(bool state)
+ }
+ EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
+ 
++void tegra210_clk_emc_dll_enable(bool flag)
++{
++	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
++		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
 +
-+Reserved memory node
-+====================
-+Should contain a sub-node of EMC table with required properties:
-+- compatible : should be "nvidia,tegra210-emc-table".
-+- reg : physical address and length of the location of EMC table.
++	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
 +
-+Example:
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
++void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
++{
++	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
 +
-+		emc_table: emc-table@8be00000 {
-+			compatible = "nvidia,tegra210-emc-table";
-+			reg = <0x0 0x8be00000 0x0 0x10000>;
-+			status = "okay";
-+		};
-+	};
++void tegra210_clk_emc_update_setting(u32 emc_src_value)
++{
++	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
 +
-+	external-memory-controller@7001b000 {
-+		compatible = "nvidia,tegra210-emc";
-+		reg = <0x0 0x7001b000 0x0 0x1000>,
-+		      <0x0 0x7001e000 0x0 0x1000>,
-+		      <0x0 0x7001f000 0x0 0x1000>;
-+		clocks = <&tegra_car TEGRA210_CLK_EMC>,
-+			 <&tegra_car TEGRA210_CLK_PLL_M>,
-+			 <&tegra_car TEGRA210_CLK_PLL_C>,
-+			 <&tegra_car TEGRA210_CLK_PLL_P>,
-+			 <&tegra_car TEGRA210_CLK_CLK_M>,
-+			 <&tegra_car TEGRA210_CLK_PLL_M_UD>,
-+			 <&tegra_car TEGRA210_CLK_PLL_MB_UD>,
-+			 <&tegra_car TEGRA210_CLK_PLL_MB>,
-+			 <&tegra_car TEGRA210_CLK_PLL_P_UD>;
-+		clock-names = "emc", "pll_m", "pll_c", "pll_p", "clk_m",
-+			      "pll_m_ud", "pll_mb_ud", "pll_mb", "pll_p_ud";
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		memory-region = <&emc_table>;
-+		nvidia,memory-controller = <&mc>;
-+	};
++u32 tegra210_clk_emc_get_setting(void)
++{
++	u32 val;
++
++	val = readl_relaxed(clk_base + CLK_SOURCE_EMC);
++
++	return val;
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_get_setting);
++
+ static void tegra210_generic_mbist_war(struct tegra210_domain_mbist_war *mbist)
+ {
+ 	u32 val;
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index afb9edfa5d58..b212c332b6e0 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -129,5 +129,10 @@ extern void tegra210_set_sata_pll_seq_sw(bool state);
+ extern void tegra210_put_utmipll_in_iddq(void);
+ extern void tegra210_put_utmipll_out_iddq(void);
+ extern int tegra210_clk_handle_mbist_war(unsigned int id);
++extern void tegra210_clk_emc_dll_enable(bool flag);
++extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
++extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
++extern u32 tegra210_clk_emc_get_setting(void);
++
+ 
+ #endif /* __LINUX_CLK_TEGRA_H_ */
 -- 
 2.21.0
