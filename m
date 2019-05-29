@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V2 02/12] pinctrl: tegra: add suspend and resume support
-Date: Wed, 29 May 2019 14:07:59 -0700
-Message-ID: <412be5a5-8f82-95ce-72ef-623602cb7c81@nvidia.com>
+Date: Thu, 30 May 2019 00:25:41 +0300
+Message-ID: <5e074715-fd8c-908a-b880-9f1fd03a244f@gmail.com>
 References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
  <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
  <6273a790-d4b7-c501-3fec-d9816288b139@gmail.com>
@@ -11,47 +11,39 @@ References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
  <34480b14-48da-2745-086d-6a8900c5a049@gmail.com>
  <fc1f3c56-ab6b-478e-75d8-797d8e3bf21f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <fc1f3c56-ab6b-478e-75d8-797d8e3bf21f@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 5/29/19 1:56 PM, Sowjanya Komatineni wrote:
->
+29.05.2019 23:56, Sowjanya Komatineni пишет:
+> 
 > On 5/29/19 1:47 PM, Dmitry Osipenko wrote:
->> 29.05.2019 23:11, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> 29.05.2019 23:11, Sowjanya Komatineni пишет:
 >>> On 5/29/19 12:32 PM, Dmitry Osipenko wrote:
->>>> 29.05.2019 21:14, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> 29.05.2019 21:14, Sowjanya Komatineni пишет:
 >>>>> On 5/29/19 8:29 AM, Dmitry Osipenko wrote:
->>>>>> 29.05.2019 2:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> 29.05.2019 2:08, Sowjanya Komatineni пишет:
 >>>>>>> This patch adds suspend and resume support for Tegra pinctrl driver
 >>>>>>> and registers them to syscore so the pinmux settings are restored
 >>>>>>> before the devices resume.
 >>>>>>>
 >>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 >>>>>>> ---
->>>>>>> =C2=A0=C2=A0=C2=A0 drivers/pinctrl/tegra/pinctrl-tegra.c=C2=A0=C2=
-=A0=C2=A0 | 68
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra.c    | 68
 >>>>>>> +++++++++++++++++++++++++++++++-
->>>>>>> =C2=A0=C2=A0=C2=A0 drivers/pinctrl/tegra/pinctrl-tegra.h=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 3 ++
->>>>>>> =C2=A0=C2=A0=C2=A0 drivers/pinctrl/tegra/pinctrl-tegra114.c |=C2=A0=
- 1 +
->>>>>>> =C2=A0=C2=A0=C2=A0 drivers/pinctrl/tegra/pinctrl-tegra124.c |=C2=A0=
- 1 +
->>>>>>> =C2=A0=C2=A0=C2=A0 drivers/pinctrl/tegra/pinctrl-tegra20.c=C2=A0 |=
-=C2=A0 1 +
->>>>>>> =C2=A0=C2=A0=C2=A0 drivers/pinctrl/tegra/pinctrl-tegra210.c |=C2=A0=
- 1 +
->>>>>>> =C2=A0=C2=A0=C2=A0 drivers/pinctrl/tegra/pinctrl-tegra30.c=C2=A0 |=
-=C2=A0 1 +
->>>>>>> =C2=A0=C2=A0=C2=A0 7 files changed, 75 insertions(+), 1 deletion(-)
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>>>>>>>     7 files changed, 75 insertions(+), 1 deletion(-)
 >>>>>>>
 >>>>>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c
 >>>>>>> b/drivers/pinctrl/tegra/pinctrl-tegra.c
@@ -59,117 +51,95 @@ On 5/29/19 1:56 PM, Sowjanya Komatineni wrote:
 >>>>>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
 >>>>>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
 >>>>>>> @@ -28,11 +28,18 @@
->>>>>>> =C2=A0=C2=A0=C2=A0 #include <linux/pinctrl/pinmux.h>
->>>>>>> =C2=A0=C2=A0=C2=A0 #include <linux/pinctrl/pinconf.h>
->>>>>>> =C2=A0=C2=A0=C2=A0 #include <linux/slab.h>
+>>>>>>>     #include <linux/pinctrl/pinmux.h>
+>>>>>>>     #include <linux/pinctrl/pinconf.h>
+>>>>>>>     #include <linux/slab.h>
 >>>>>>> +#include <linux/syscore_ops.h>
->>>>>>> =C2=A0=C2=A0=C2=A0 =C2=A0 #include "../core.h"
->>>>>>> =C2=A0=C2=A0=C2=A0 #include "../pinctrl-utils.h"
->>>>>>> =C2=A0=C2=A0=C2=A0 #include "pinctrl-tegra.h"
->>>>>>> =C2=A0=C2=A0=C2=A0 +#define EMMC2_PAD_CFGPADCTRL_0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1c8
->>>>>>> +#define EMMC4_PAD_CFGPADCTRL_0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1e0
->>>>>>> +#define EMMC_DPD_PARKING=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 (0x1fff << 14)
+>>>>>>>       #include "../core.h"
+>>>>>>>     #include "../pinctrl-utils.h"
+>>>>>>>     #include "pinctrl-tegra.h"
+>>>>>>>     +#define EMMC2_PAD_CFGPADCTRL_0            0x1c8
+>>>>>>> +#define EMMC4_PAD_CFGPADCTRL_0            0x1e0
+>>>>>>> +#define EMMC_DPD_PARKING            (0x1fff << 14)
 >>>>>>> +
 >>>>>>> +static struct tegra_pmx *pmx;
 >>>>>>> +
->>>>>>> =C2=A0=C2=A0=C2=A0 static inline u32 pmx_readl(struct tegra_pmx *pm=
-x, u32 bank,=20
->>>>>>> u32
+>>>>>>>     static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32
 >>>>>>> reg)
->>>>>>> =C2=A0=C2=A0=C2=A0 {
->>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return readl(pmx->regs[b=
-ank] + reg);
+>>>>>>>     {
+>>>>>>>         return readl(pmx->regs[bank] + reg);
 >>>>>>> @@ -629,6 +636,50 @@ static void
 >>>>>>> tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>>> =C2=A0=C2=A0=C2=A0 }
->>>>>>> =C2=A0=C2=A0=C2=A0 +static int __maybe_unused tegra_pinctrl_suspend=
-(void)
+>>>>>>>         }
+>>>>>>>     }
+>>>>>>>     +static int __maybe_unused tegra_pinctrl_suspend(void)
 >>>>>>> +{
->>>>>>> +=C2=A0=C2=A0=C2=A0 u32 *backup_regs =3D pmx->backup_regs;
->>>>>>> +=C2=A0=C2=A0=C2=A0 u32 *regs;
->>>>>>> +=C2=A0=C2=A0=C2=A0 int i, j;
+>>>>>>> +    u32 *backup_regs = pmx->backup_regs;
+>>>>>>> +    u32 *regs;
+>>>>>>> +    int i, j;
 >>>>>>> +
->>>>>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < pmx->nbanks; i++) {
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regs =3D pmx->regs[i];
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (j =3D 0; j < pmx->=
-reg_bank_size[i] / 4; j++)
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- *backup_regs++ =3D readl(regs++);
->>>>>>> +=C2=A0=C2=A0=C2=A0 }
+>>>>>>> +    for (i = 0; i < pmx->nbanks; i++) {
+>>>>>>> +        regs = pmx->regs[i];
+>>>>>>> +        for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+>>>>>>> +            *backup_regs++ = readl(regs++);
+>>>>>>> +    }
 >>>>>>> +
->>>>>>> +=C2=A0=C2=A0=C2=A0 return pinctrl_force_sleep(pmx->pctl);
+>>>>>>> +    return pinctrl_force_sleep(pmx->pctl);
 >>>>>>> +}
 >>>>>>> +
 >>>>>>> +static void __maybe_unused tegra_pinctrl_resume(void)
 >>>>>>> +{
->>>>>>> +=C2=A0=C2=A0=C2=A0 u32 *backup_regs =3D pmx->backup_regs;
->>>>>>> +=C2=A0=C2=A0=C2=A0 u32 *regs;
->>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>>>>> +=C2=A0=C2=A0=C2=A0 int i, j;
+>>>>>>> +    u32 *backup_regs = pmx->backup_regs;
+>>>>>>> +    u32 *regs;
+>>>>>>> +    u32 val;
+>>>>>>> +    int i, j;
 >>>>>>> +
->>>>>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < pmx->nbanks; i++) {
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regs =3D pmx->regs[i];
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (j =3D 0; j < pmx->=
-reg_bank_size[i] / 4; j++)
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- writel(*backup_regs++, regs++);
->>>>>>> +=C2=A0=C2=A0=C2=A0 }
+>>>>>>> +    for (i = 0; i < pmx->nbanks; i++) {
+>>>>>>> +        regs = pmx->regs[i];
+>>>>>>> +        for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+>>>>>>> +            writel(*backup_regs++, regs++);
+>>>>>>> +    }
 >>>>>>> +
->>>>>>> +=C2=A0=C2=A0=C2=A0 if (pmx->soc->has_park_padcfg) {
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D pmx_readl(pmx, =
-0, EMMC2_PAD_CFGPADCTRL_0);
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val &=3D ~EMMC_DPD_PARK=
-ING;
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmx_writel(pmx, val, 0,=
- EMMC2_PAD_CFGPADCTRL_0);
+>>>>>>> +    if (pmx->soc->has_park_padcfg) {
+>>>>>>> +        val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>>>>>> +        val &= ~EMMC_DPD_PARKING;
+>>>>>>> +        pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
 >>>>>>> +
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D pmx_readl(pmx, =
-0, EMMC4_PAD_CFGPADCTRL_0);
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val &=3D ~EMMC_DPD_PARK=
-ING;
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmx_writel(pmx, val, 0,=
- EMMC4_PAD_CFGPADCTRL_0);
->>>>>>> +=C2=A0=C2=A0=C2=A0 }
+>>>>>>> +        val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>>>>>> +        val &= ~EMMC_DPD_PARKING;
+>>>>>>> +        pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>>>>>> +    }
 >>>>>>> +}
 >>>>>>>
 >>>>>> But the CFGPADCTRL registers are already programmed by restoring the
->>>>>> backup_regs and hence the relevant EMMC's are already unparked.=20
->>>>>> Hence
+>>>>>> backup_regs and hence the relevant EMMC's are already unparked. Hence
 >>>>>> why do you need to force-unpark both of the EMMC's? What if EMMC is
 >>>>>> unpopulated on a board, why do you need to unpark it then?
->>>>> PARK bit for EMMC2/EMMC4 (EMMC2_PAD_CFGPADCTRL and=20
+>>>>> PARK bit for EMMC2/EMMC4 (EMMC2_PAD_CFGPADCTRL and
 >>>>> EMMC4_PAD_CFGPADCTRL)
 >>>>> are not part of pinmux.
 >>>>>
->>>>> They are part of CFGPADCTRL register so pinctrl driver pingroup=20
+>>>>> They are part of CFGPADCTRL register so pinctrl driver pingroup
 >>>>> doesn't
 >>>>> include these registers.
 >>>> I'm looking at the tegra210_groups and it clearly has these both
 >>>> registers as a part of pinctrl setup because the rest of the bits
 >>>> configure drive of the pads.
 >>>>
->>>> =C2=A0=C2=A0From pinctrl-tegra210.c:
+>>>>   From pinctrl-tegra210.c:
 >>>>
->>>> #define DRV_PINGROUP_REG_A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=
-x8d4=C2=A0=C2=A0=C2=A0 /* bank 0 */
+>>>> #define DRV_PINGROUP_REG_A        0x8d4    /* bank 0 */
 >>>>
->>>> DRV_PINGROUP(sdmmc2, 0xa9c, 2,=C2=A0 6,=C2=A0 8,=C2=A0 6,=C2=A0 28, 2,=
-=C2=A0 30, 2),
->>>> DRV_PINGROUP(sdmmc4, 0xab4, 2,=C2=A0 6,=C2=A0 8,=C2=A0 6,=C2=A0 28, 2,=
-=C2=A0 30, 2),
+>>>> DRV_PINGROUP(sdmmc2, 0xa9c, 2,  6,  8,  6,  28, 2,  30, 2),
+>>>> DRV_PINGROUP(sdmmc4, 0xab4, 2,  6,  8,  6,  28, 2,  30, 2),
 >>>>
 >>>> ...
 >>>>
->>>> 0xa9c - 0x8d4 =3D 0x1c8
->>>> 0xab4 - 0x8d4 =3D 0x1e0
+>>>> 0xa9c - 0x8d4 = 0x1c8
+>>>> 0xab4 - 0x8d4 = 0x1e0
 >>>>
 >>>> Hence the PARK bits are already getting unset by restoring the
->>>> backup_regs because the CFGPADCTRL registers are a part of the=20
->>>> "bank 0"
+>>>> backup_regs because the CFGPADCTRL registers are a part of the "bank 0"
 >>>> registers.
 >>>>
 >>>> Am I still missing something?
@@ -180,7 +150,7 @@ x8d4=C2=A0=C2=A0=C2=A0 /* bank 0 */
 >>> for other IO pads its part of pinmux
 >> You're storing raw values of all of the PINCTRL registers and then
 >> restoring the raw values (if I'm not misreading that part on the patch),
->> it's absolutely meaningless that DRV_PINGROUP doesn't define the PARK=20
+>> it's absolutely meaningless that DRV_PINGROUP doesn't define the PARK
 >> bits.
 >>
 >> In a result, the backup_regs array contains raw CFGPADCTRL value with
@@ -189,24 +159,21 @@ x8d4=C2=A0=C2=A0=C2=A0 /* bank 0 */
 >>
 >> And why DRV_PINGROUP misses PARK bits for the EMMC's? Looks like a
 >> driver's drawback that need to be addressed.
->
+> 
 > Parked bits from padcfg are available only for couple of EMMC registers.
->
-> default PARK bits are set so stored value contains park bit set. on=20
+> 
+> default PARK bits are set so stored value contains park bit set. on
 > resume, after restoring park bit is cleared.
->
-> on subsequence DPD entry, stored value contains park bit 0 and HW=20
-> clamps park bit to logic 1 during DPD entry and cleared again on resume.
->
->
-Other IOs park bit in pinmux gets cleared thru=20
-tegra_pinctrl_clear_parked_bits on probe and during suspend register=20
-values saved contains park bit =3D 0 which is same when restored on DPD=20
-resume.
 
-clearing park bit during resume for EMMC pads is same as clearing it=20
-during probe which is then saved during suspend and restored on resume=20
-similar to pinmux registers.
+TRM says that the PARK bits are set on HW reset (and on DPD IIUC) and
+then SW should unset the bits. I assume that the PARK bits of the EMMC
+pads are unset by bootloader and that's why it doesn't cause problems
+for kernel, in oppose to PARK bits of the rest of pinmux that are unset
+by the driver in tegra_pinctrl_clear_parked_bits() on driver's probe.
 
-So for more readability, probably can clear parked bit for EMMC during=20
-pinctrl_clear_parked_bits instead of on resume.
+> on subsequence DPD entry, stored value contains park bit 0 and HW clamps
+> park bit to logic 1 during DPD entry and cleared again on resume.
+
+I assume that EMMC won't work properly if pads are "parked" and the PARK
+bits should be in unset state on kernel boot-up as I wrote above, hence
+stored value should always contain 0 for the EMMC PARK bits. No?
