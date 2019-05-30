@@ -1,73 +1,67 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Error out if DMA_PREP_INTERRUPT
- flag is unset
-Date: Thu, 30 May 2019 13:01:35 +0100
-Message-ID: <9b0e0d20-6386-a38a-1347-4264d249cb44@nvidia.com>
-References: <20190529214355.15339-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V4 6/8] memory: tegra: Add EMC scaling sequence code for
+ Tegra210
+Date: Thu, 30 May 2019 16:16:26 +0300
+Message-ID: <3929cca9-5277-a88d-5270-c6c2a9c5c2a0@gmail.com>
+References: <20190529082139.5581-1-josephl@nvidia.com>
+ <20190529082139.5581-7-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190529214355.15339-1-digetx@gmail.com>
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190529082139.5581-7-josephl@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 29/05/2019 22:43, Dmitry Osipenko wrote:
-> Apparently driver was never tested with DMA_PREP_INTERRUPT flag being
-> unset since it completely disables interrupt handling instead of skipping
-> the callbacks invocations, hence putting channel into unusable state.
-> 
-> The flag is always set by all of kernel drivers that use APB DMA, so let's
-> error out in otherwise case for consistency. It won't be difficult to
-> support that case properly if ever will be needed.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index cf462b1abc0b..2c84a660ba36 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -988,8 +988,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
->  		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->  	}
->  
-> -	if (flags & DMA_PREP_INTERRUPT)
-> +	if (flags & DMA_PREP_INTERRUPT) {
->  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
-> +	} else {
-> +		WARN_ON_ONCE(1);
-> +		return NULL;
-> +	}
->  
->  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
->  
-> @@ -1131,8 +1135,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
->  		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->  	}
->  
-> -	if (flags & DMA_PREP_INTERRUPT)
-> +	if (flags & DMA_PREP_INTERRUPT) {
->  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
-> +	} else {
-> +		WARN_ON_ONCE(1);
-> +		return NULL;
-> +	}
->  
->  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
-
-Looks good to me.
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+MjkuMDUuMjAxOSAxMToyMSwgSm9zZXBoIExvINC/0LjRiNC10YI6Cj4gVGhpcyBwYXRjaCBpbmNs
+dWRlcyB0aGUgc2VxdWVuY2UgZm9yIGNsb2NrIHR1bmluZyBhbmQgdGhlIGR5bmFtaWMKPiB0cmFp
+bmluZyBtZWNoYW5pc20gZm9yIHRoZSBjbG9jayBhYm92ZSA4MDBNSHouCj4gCj4gQW5kIGhpc3Rv
+cmljYWxseSB0aGVyZSBoYXZlIGJlZW4gZGlmZmVyZW50IHNlcXVlbmNlcyB0byBjaGFuZ2UgdGhl
+IEVNQwo+IGNsb2NrLiBUaGUgc2VxdWVuY2UgdG8gYmUgdXNlZCBpcyBzcGVjaWZpZWQgaW4gdGhl
+IEVNQyB0YWJsZS4KPiBIb3dldmVyLCBmb3IgdGhlIGN1cnJlbnRseSBzdXBwb3J0ZWQgdXBzdHJl
+YW1pbmcgcGxhdGZvcm0sIG9ubHkgdGhlIG1vc3QKPiByZWNlbnQgc2VxdWVuY2UgaXMgdXNlZC4g
+U28gb25seSBzdXBwb3J0IHRoYXQgaW4gdGhpcyBwYXRjaC4KPiAKPiBCYXNlZCBvbiB0aGUgd29y
+ayBvZiBQZXRlciBEZSBTY2hyaWp2ZXIgPHBkZXNjaHJpanZlckBudmlkaWEuY29tPi4KPiAKPiBT
+aWduZWQtb2ZmLWJ5OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4KPiAtLS0KPiB2NDoK
+PiAtIG5vIGNoYW5nZQo+IC0tLQo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS9NYWtlZmlsZSAgICAg
+ICAgICAgICAgICAgfCAgICAyICstCj4gIGRyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjEwLWVt
+Yy1jYy1yMjEwMjEuYyB8IDE5NTMgKysrKysrKysrKysrKysrKysKPiAgZHJpdmVycy9tZW1vcnkv
+dGVncmEvdGVncmEyMTAtZW1jLmMgICAgICAgICAgIHwgICAgNSArCj4gIGRyaXZlcnMvbWVtb3J5
+L3RlZ3JhL3RlZ3JhMjEwLWVtYy5oICAgICAgICAgICB8ICAxNTcgKysKPiAgNCBmaWxlcyBjaGFu
+Z2VkLCAyMTE2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAgY3JlYXRlIG1vZGUgMTAw
+NjQ0IGRyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjEwLWVtYy1jYy1yMjEwMjEuYwo+IAo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90ZWdyYS9NYWtlZmlsZSBiL2RyaXZlcnMvbWVtb3J5
+L3RlZ3JhL01ha2VmaWxlCj4gaW5kZXggZjc4YmJiN2NkMTZmLi5kZWYwODdmMTNhMDkgMTAwNjQ0
+Cj4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvTWFrZWZpbGUKPiArKysgYi9kcml2ZXJzL21l
+bW9yeS90ZWdyYS9NYWtlZmlsZQo+IEBAIC0xMiw1ICsxMiw1IEBAIG9iai0kKENPTkZJR19URUdS
+QV9NQykgKz0gdGVncmEtbWMubwo+ICAKPiAgb2JqLSQoQ09ORklHX1RFR1JBMjBfRU1DKSAgKz0g
+dGVncmEyMC1lbWMubwo+ICBvYmotJChDT05GSUdfVEVHUkExMjRfRU1DKSArPSB0ZWdyYTEyNC1l
+bWMubwo+IC1vYmotJChDT05GSUdfVEVHUkEyMTBfRU1DKSArPSB0ZWdyYTIxMC1lbWMubwo+ICtv
+YmotJChDT05GSUdfVEVHUkEyMTBfRU1DKSArPSB0ZWdyYTIxMC1lbWMubyB0ZWdyYTIxMC1lbWMt
+Y2MtcjIxMDIxLm8KPiAgb2JqLSQoQ09ORklHX0FSQ0hfVEVHUkFfMTg2X1NPQykgKz0gdGVncmEx
+ODYubwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTIxMC1lbWMtY2Mt
+cjIxMDIxLmMgYi9kcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTIxMC1lbWMtY2MtcjIxMDIxLmMK
+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAwMDAwMC4uZWM1ZTFkYjcxODk2
+Cj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjEwLWVt
+Yy1jYy1yMjEwMjEuYwo+IEBAIC0wLDAgKzEsMTk1MyBAQAo+ICsvLyBTUERYLUxpY2Vuc2UtSWRl
+bnRpZmllcjogR1BMLTIuMAo+ICsvKgo+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTQtMjAxOSwgTlZJ
+RElBIENPUlBPUkFUSU9OLiAgQWxsIHJpZ2h0cyByZXNlcnZlZC4KPiArICovCj4gKwo+ICsjaW5j
+bHVkZSA8bGludXgva2VybmVsLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9pby5oPgo+ICsjaW5jbHVk
+ZSA8bGludXgvY2xrLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9kZWxheS5oPgo+ICsjaW5jbHVkZSA8
+bGludXgvb2YuaD4KPiArI2luY2x1ZGUgPHNvYy90ZWdyYS9tYy5oPgoKTWlub3Igbml0OiBwbGVh
+c2Uga2VlcCBhbGwgdGhlIGluY2x1ZGVzIHNvcnRlZCBpbiBhbHBoYWJldCBvcmRlci4KCi0tIApE
+bWl0cnkKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
+bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
+LWFybS1rZXJuZWwK
