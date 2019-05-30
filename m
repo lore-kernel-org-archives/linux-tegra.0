@@ -1,67 +1,52 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V4 6/8] memory: tegra: Add EMC scaling sequence code for
- Tegra210
-Date: Thu, 30 May 2019 16:16:26 +0300
-Message-ID: <3929cca9-5277-a88d-5270-c6c2a9c5c2a0@gmail.com>
-References: <20190529082139.5581-1-josephl@nvidia.com>
- <20190529082139.5581-7-josephl@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 000/128] 4.9.180-stable review
+Date: Thu, 30 May 2019 14:21:38 +0100
+Message-ID: <e3e21897-caeb-a117-557e-b7e81be781de@nvidia.com>
+References: <20190530030432.977908967@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190529082139.5581-7-josephl@nvidia.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-MjkuMDUuMjAxOSAxMToyMSwgSm9zZXBoIExvINC/0LjRiNC10YI6Cj4gVGhpcyBwYXRjaCBpbmNs
-dWRlcyB0aGUgc2VxdWVuY2UgZm9yIGNsb2NrIHR1bmluZyBhbmQgdGhlIGR5bmFtaWMKPiB0cmFp
-bmluZyBtZWNoYW5pc20gZm9yIHRoZSBjbG9jayBhYm92ZSA4MDBNSHouCj4gCj4gQW5kIGhpc3Rv
-cmljYWxseSB0aGVyZSBoYXZlIGJlZW4gZGlmZmVyZW50IHNlcXVlbmNlcyB0byBjaGFuZ2UgdGhl
-IEVNQwo+IGNsb2NrLiBUaGUgc2VxdWVuY2UgdG8gYmUgdXNlZCBpcyBzcGVjaWZpZWQgaW4gdGhl
-IEVNQyB0YWJsZS4KPiBIb3dldmVyLCBmb3IgdGhlIGN1cnJlbnRseSBzdXBwb3J0ZWQgdXBzdHJl
-YW1pbmcgcGxhdGZvcm0sIG9ubHkgdGhlIG1vc3QKPiByZWNlbnQgc2VxdWVuY2UgaXMgdXNlZC4g
-U28gb25seSBzdXBwb3J0IHRoYXQgaW4gdGhpcyBwYXRjaC4KPiAKPiBCYXNlZCBvbiB0aGUgd29y
-ayBvZiBQZXRlciBEZSBTY2hyaWp2ZXIgPHBkZXNjaHJpanZlckBudmlkaWEuY29tPi4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBKb3NlcGggTG8gPGpvc2VwaGxAbnZpZGlhLmNvbT4KPiAtLS0KPiB2NDoK
-PiAtIG5vIGNoYW5nZQo+IC0tLQo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS9NYWtlZmlsZSAgICAg
-ICAgICAgICAgICAgfCAgICAyICstCj4gIGRyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjEwLWVt
-Yy1jYy1yMjEwMjEuYyB8IDE5NTMgKysrKysrKysrKysrKysrKysKPiAgZHJpdmVycy9tZW1vcnkv
-dGVncmEvdGVncmEyMTAtZW1jLmMgICAgICAgICAgIHwgICAgNSArCj4gIGRyaXZlcnMvbWVtb3J5
-L3RlZ3JhL3RlZ3JhMjEwLWVtYy5oICAgICAgICAgICB8ICAxNTcgKysKPiAgNCBmaWxlcyBjaGFu
-Z2VkLCAyMTE2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAgY3JlYXRlIG1vZGUgMTAw
-NjQ0IGRyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjEwLWVtYy1jYy1yMjEwMjEuYwo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90ZWdyYS9NYWtlZmlsZSBiL2RyaXZlcnMvbWVtb3J5
-L3RlZ3JhL01ha2VmaWxlCj4gaW5kZXggZjc4YmJiN2NkMTZmLi5kZWYwODdmMTNhMDkgMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvTWFrZWZpbGUKPiArKysgYi9kcml2ZXJzL21l
-bW9yeS90ZWdyYS9NYWtlZmlsZQo+IEBAIC0xMiw1ICsxMiw1IEBAIG9iai0kKENPTkZJR19URUdS
-QV9NQykgKz0gdGVncmEtbWMubwo+ICAKPiAgb2JqLSQoQ09ORklHX1RFR1JBMjBfRU1DKSAgKz0g
-dGVncmEyMC1lbWMubwo+ICBvYmotJChDT05GSUdfVEVHUkExMjRfRU1DKSArPSB0ZWdyYTEyNC1l
-bWMubwo+IC1vYmotJChDT05GSUdfVEVHUkEyMTBfRU1DKSArPSB0ZWdyYTIxMC1lbWMubwo+ICtv
-YmotJChDT05GSUdfVEVHUkEyMTBfRU1DKSArPSB0ZWdyYTIxMC1lbWMubyB0ZWdyYTIxMC1lbWMt
-Y2MtcjIxMDIxLm8KPiAgb2JqLSQoQ09ORklHX0FSQ0hfVEVHUkFfMTg2X1NPQykgKz0gdGVncmEx
-ODYubwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTIxMC1lbWMtY2Mt
-cjIxMDIxLmMgYi9kcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTIxMC1lbWMtY2MtcjIxMDIxLmMK
-PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAwMDAwMC4uZWM1ZTFkYjcxODk2
-Cj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjEwLWVt
-Yy1jYy1yMjEwMjEuYwo+IEBAIC0wLDAgKzEsMTk1MyBAQAo+ICsvLyBTUERYLUxpY2Vuc2UtSWRl
-bnRpZmllcjogR1BMLTIuMAo+ICsvKgo+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTQtMjAxOSwgTlZJ
-RElBIENPUlBPUkFUSU9OLiAgQWxsIHJpZ2h0cyByZXNlcnZlZC4KPiArICovCj4gKwo+ICsjaW5j
-bHVkZSA8bGludXgva2VybmVsLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9pby5oPgo+ICsjaW5jbHVk
-ZSA8bGludXgvY2xrLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9kZWxheS5oPgo+ICsjaW5jbHVkZSA8
-bGludXgvb2YuaD4KPiArI2luY2x1ZGUgPHNvYy90ZWdyYS9tYy5oPgoKTWlub3Igbml0OiBwbGVh
-c2Uga2VlcCBhbGwgdGhlIGluY2x1ZGVzIHNvcnRlZCBpbiBhbHBoYWJldCBvcmRlci4KCi0tIApE
-bWl0cnkKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
-bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
-LWFybS1rZXJuZWwK
+
+On 30/05/2019 04:05, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.180 release.
+> There are 128 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 01 Jun 2019 03:02:06 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.180-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
+
+Linux version:	4.9.180-rc1-g545b59e
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
