@@ -1,218 +1,56 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V2] drivers: i2c: tegra: fix checkpatch defects
-Date: Wed, 29 May 2019 23:14:10 -0700
-Message-ID: <1559196850-7007-1-git-send-email-bbiswas@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V4 5/8] memory: tegra: Add EMC scaling support code for
+ Tegra210
+Date: Thu, 30 May 2019 14:20:18 +0300
+Message-ID: <1838333d-bf58-1e06-7e4c-a64753075053@gmail.com>
+References: <20190529082139.5581-1-josephl@nvidia.com>
+ <20190529082139.5581-6-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190529082139.5581-6-josephl@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
-except for BUG/BUG_ON checks
-
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 54 +++++++++++++++++++++++-------------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index ebaa78d..59f19d3 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -112,7 +112,7 @@
- #define I2C_CLKEN_OVERRIDE			0x090
- #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
- 
--#define I2C_CONFIG_LOAD_TIMEOUT			1000000
-+#define I2C_CONFIG_LOAD_TMOUT			1000000
- 
- #define I2C_MST_FIFO_CONTROL			0x0b4
- #define I2C_MST_FIFO_CONTROL_RX_FLUSH		BIT(0)
-@@ -280,6 +280,7 @@ struct tegra_i2c_dev {
- 	u32 bus_clk_rate;
- 	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
-+	/* xfer_lock: lock to serialize transfer submission and processing */
- 	spinlock_t xfer_lock;
- 	struct dma_chan *tx_dma_chan;
- 	struct dma_chan *rx_dma_chan;
-@@ -306,7 +307,7 @@ static u32 dvc_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
-  * to the I2C block inside the DVC block
-  */
- static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
--	unsigned long reg)
-+					unsigned long reg)
- {
- 	if (i2c_dev->is_dvc)
- 		reg += (reg >= I2C_TX_FIFO) ? 0x10 : 0x40;
-@@ -314,7 +315,7 @@ static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
- }
- 
- static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
--	unsigned long reg)
-+		       unsigned long reg)
- {
- 	writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
- 
-@@ -329,13 +330,13 @@ static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
- }
- 
- static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
--	unsigned long reg, int len)
-+			unsigned long reg, int len)
- {
- 	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
- }
- 
- static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
--	unsigned long reg, int len)
-+		       unsigned long reg, int len)
- {
- 	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
- }
-@@ -486,7 +487,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
- 			dev_warn(i2c_dev->dev, "timeout waiting for fifo flush\n");
- 			return -ETIMEDOUT;
- 		}
--		msleep(1);
-+		usleep_range(1000, 2000);
- 	}
- 	return 0;
- }
-@@ -680,10 +681,11 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
- 		if (in_interrupt())
- 			err = readl_poll_timeout_atomic(addr, val, val == 0,
--					1000, I2C_CONFIG_LOAD_TIMEOUT);
-+							1000,
-+							I2C_CONFIG_LOAD_TMOUT);
- 		else
--			err = readl_poll_timeout(addr, val, val == 0,
--					1000, I2C_CONFIG_LOAD_TIMEOUT);
-+			err = readl_poll_timeout(addr, val, val == 0, 1000,
-+						 I2C_CONFIG_LOAD_TMOUT);
- 
- 		if (err) {
- 			dev_warn(i2c_dev->dev,
-@@ -863,11 +865,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		}
- 
- 		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
--			if (i2c_dev->msg_buf_remaining)
--				tegra_i2c_fill_tx_fifo(i2c_dev);
--			else
-+			if (i2c_dev->msg_buf_remaining) {
-+				if (tegra_i2c_fill_tx_fifo(i2c_dev))
-+					goto err;
-+			} else {
- 				tegra_i2c_mask_irq(i2c_dev,
- 						   I2C_INT_TX_FIFO_DATA_REQ);
-+			}
- 		}
- 	}
- 
-@@ -1024,7 +1028,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- }
- 
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
--	struct i2c_msg *msg, enum msg_end_type end_state)
-+			      struct i2c_msg *msg, enum msg_end_type end_state)
- {
- 	u32 packet_header;
- 	u32 int_mask;
-@@ -1034,7 +1038,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 *buffer = NULL;
- 	int err = 0;
- 	bool dma;
--	u16 xfer_time = 100;
-+	u16 xfer_tm = 100;
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
- 
-@@ -1058,7 +1062,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	 * Transfer time in mSec = Total bits / transfer rate
- 	 * Total bits = 9 bits per byte (including ACK bit) + Start & stop bits
- 	 */
--	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
-+	xfer_tm += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
- 					i2c_dev->bus_clk_rate);
- 	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
- 
-@@ -1137,7 +1141,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 				goto unlock;
- 			}
- 		} else {
--			tegra_i2c_fill_tx_fifo(i2c_dev);
-+			if (tegra_i2c_fill_tx_fifo(i2c_dev))
-+				goto unlock;
- 		}
- 	}
- 
-@@ -1161,9 +1166,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		if (err)
- 			return err;
- 
--		time_left = wait_for_completion_timeout(
--						&i2c_dev->dma_complete,
--						msecs_to_jiffies(xfer_time));
-+		time_left =
-+			wait_for_completion_timeout(&i2c_dev->dma_complete,
-+						    msecs_to_jiffies(xfer_tm));
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
- 			dmaengine_terminate_sync(i2c_dev->msg_read ?
-@@ -1189,7 +1194,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	}
- 
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						msecs_to_jiffies(xfer_time));
-+						msecs_to_jiffies(xfer_tm));
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
- 
- 	if (time_left == 0) {
-@@ -1225,7 +1230,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- }
- 
- static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
--	int num)
-+			  int num)
- {
- 	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
- 	int i;
-@@ -1273,12 +1278,12 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
- 	int ret;
- 
- 	ret = of_property_read_u32(np, "clock-frequency",
--			&i2c_dev->bus_clk_rate);
-+				   &i2c_dev->bus_clk_rate);
- 	if (ret)
- 		i2c_dev->bus_clk_rate = 100000; /* default clock rate */
- 
- 	i2c_dev->is_multimaster_mode = of_property_read_bool(np,
--			"multi-master");
-+							     "multi-master");
- }
- 
- static const struct i2c_algorithm tegra_i2c_algo = {
-@@ -1622,7 +1627,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
--			tegra_i2c_isr, 0, dev_name(&pdev->dev), i2c_dev);
-+			       tegra_i2c_isr, 0, dev_name(&pdev->dev), i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
- 		goto release_dma;
-@@ -1691,6 +1696,7 @@ static const struct dev_pm_ops tegra_i2c_pm = {
- 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
- 			   NULL)
- };
-+
- #define TEGRA_I2C_PM	(&tegra_i2c_pm)
- #else
- #define TEGRA_I2C_PM	NULL
--- 
-2.7.4
+MjkuMDUuMjAxOSAxMToyMSwgSm9zZXBoIExvINC/0LjRiNC10YI6Cj4gVGhpcyBwYXRjaCBhZGRz
+IHRoZSByZXF1aXJlZCBBUElzIGFuZCB2YXJpYWJsZXMgZm9yIHRoZSBFTUMgc2NhbGluZwo+IHNl
+cXVlbmNlIGNvZGUgb24gVGVncmEyMTAuCj4gCj4gQmFzZWQgb24gdGhlIHdvcmsgb2YgUGV0ZXIg
+RGUgU2NocmlqdmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4uCj4gCj4gU2lnbmVkLW9mZi1i
+eTogSm9zZXBoIExvIDxqb3NlcGhsQG52aWRpYS5jb20+Cj4gLS0tCj4gdjQ6Cj4gLSBmaXggdGhl
+IEFQSSB3aXRoIGdlbmVyaWMgbmFtaW5nCgo+ICtleHRlcm4gY29uc3Qgc3RydWN0IGVtY190YWJs
+ZV9yZWdpc3Rlcl9vZmZzZXQgcmVnX29mZjsKPiArZXh0ZXJuIHVuc2lnbmVkIGxvbmcgZHJhbV9v
+dmVyX3RlbXBfc3RhdGU7Cj4gKwo+ICt2b2lkIGNjZmlmb193cml0ZWwoc3RydWN0IHRlZ3JhX2Vt
+YyAqZW1jLCB1MzIgdmFsLCB1bnNpZ25lZCBsb25nIGFkZHIsCj4gKwkJICAgdTMyIGRlbGF5KTsK
+PiArdTMyIGRpdl9vMyh1MzIgYSwgdTMyIGIpOwo+ICt2b2lkIGVtY193cml0ZWwoc3RydWN0IHRl
+Z3JhX2VtYyAqZW1jLCB1MzIgdmFsLCB1bnNpZ25lZCBsb25nIG9mZnNldCk7Cj4gK3UzMiAgZW1j
+X3JlYWRsKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdW5zaWduZWQgbG9uZyBvZmZzZXQpOwo+ICt2
+b2lkIGVtY193cml0ZWxfcGVyX2NoKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdTMyIHZhbCwgaW50
+IHR5cGUsCj4gKwkJICAgICAgIHVuc2lnbmVkIGxvbmcgb2Zmc2V0KTsKPiArdTMyICBlbWMxX3Jl
+YWRsKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdW5zaWduZWQgbG9uZyBvZmZzZXQpOwo+ICsKPiAr
+dm9pZCBlbWNfZG9fY2xvY2tfY2hhbmdlKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdTMyIGNsa3Ny
+Yyk7Cj4gK3ZvaWQgZW1jX3NldF9zaGFkb3dfYnlwYXNzKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywg
+aW50IHNldCk7Cj4gK3ZvaWQgZW1jX3RpbWluZ191cGRhdGUoc3RydWN0IHRlZ3JhX2VtYyAqZW1j
+LCBpbnQgZHVhbF9jaGFuKTsKPiArdTMyIGVtY19nZXRfZGxsX3N0YXRlKHN0cnVjdCBlbWNfdGFi
+bGUgKm5leHRfdGltaW5nKTsKPiArc3RydWN0IGVtY190YWJsZSAqZW1jX2dldF90aW1pbmdfZnJv
+bV9mcmVxKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywKPiArCQkJCQkgICB1bnNpZ25lZCBsb25nIHJh
+dGUpOwo+ICt2b2lkIGVtY19zZXRfb3Zlcl90ZW1wX3RpbWluZyhzdHJ1Y3QgdGVncmFfZW1jICpl
+bWMsIHN0cnVjdCBlbWNfdGFibGUgKnRpbWluZywKPiArCQkJICAgICAgdW5zaWduZWQgbG9uZyBz
+dGF0ZSk7Cj4gK2ludCBlbWNfd2FpdF9mb3JfdXBkYXRlKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywg
+dTMyIHN0YXR1c19yZWcsIHUzMiBiaXRfbWFzaywKPiArCQkJYm9vbCB1cGRhdGVkX3N0YXRlLCBp
+bnQgY2hhbik7CgpJdCB3b3VsZG4ndCBodXJ0IHRvIHByZXBlbmQgdGhlc2UgYWxsIHdpdGggInRl
+Z3JhMjEwXyIuCgotLSAKRG1pdHJ5CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
