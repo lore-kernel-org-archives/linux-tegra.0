@@ -1,75 +1,41 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Error out if DMA_PREP_INTERRUPT
- flag is unset
-Date: Thu, 30 May 2019 20:32:17 +0300
-Message-ID: <359abcbb-b3bd-ad32-9f35-15bb9b25f3b0@gmail.com>
-References: <20190529214355.15339-1-digetx@gmail.com>
- <9b0e0d20-6386-a38a-1347-4264d249cb44@nvidia.com>
+From: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH] staging: media: tegra-vde: Remove variable
+Date: Fri, 31 May 2019 02:14:39 +0530
+Message-ID: <20190530204439.29830-1-nishkadg.linux@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9b0e0d20-6386-a38a-1347-4264d249cb44@nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: digetx@gmail.com, mchehab@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathan@nvidia.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Nishka Dasgupta <nishkadg.linux@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-30.05.2019 15:01, Jon Hunter пишет:
-> 
-> On 29/05/2019 22:43, Dmitry Osipenko wrote:
->> Apparently driver was never tested with DMA_PREP_INTERRUPT flag being
->> unset since it completely disables interrupt handling instead of skipping
->> the callbacks invocations, hence putting channel into unusable state.
->>
->> The flag is always set by all of kernel drivers that use APB DMA, so let's
->> error out in otherwise case for consistency. It won't be difficult to
->> support that case properly if ever will be needed.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/dma/tegra20-apb-dma.c | 12 ++++++++++--
->>  1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->> index cf462b1abc0b..2c84a660ba36 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -988,8 +988,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
->>  		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->>  	}
->>  
->> -	if (flags & DMA_PREP_INTERRUPT)
->> +	if (flags & DMA_PREP_INTERRUPT) {
->>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
->> +	} else {
->> +		WARN_ON_ONCE(1);
->> +		return NULL;
->> +	}
->>  
->>  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
->>  
->> @@ -1131,8 +1135,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
->>  		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->>  	}
->>  
->> -	if (flags & DMA_PREP_INTERRUPT)
->> +	if (flags & DMA_PREP_INTERRUPT) {
->>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
->> +	} else {
->> +		WARN_ON_ONCE(1);
->> +		return NULL;
->> +	}
->>  
->>  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
-> 
-> Looks good to me.
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> Cheers
-> Jon
-> 
+Remove unnecessary variable iram_tables and use its value directly.
+Issue found using Coccinelle.
 
-Thanks
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+---
+ drivers/staging/media/tegra-vde/tegra-vde.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+index a5020dbf6eef..3205973218e4 100644
+--- a/drivers/staging/media/tegra-vde/tegra-vde.c
++++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+@@ -273,12 +273,10 @@ static void tegra_vde_setup_iram_entry(struct tegra_vde *vde,
+ 				       unsigned int row,
+ 				       u32 value1, u32 value2)
+ {
+-	u32 *iram_tables = vde->iram;
+-
+ 	trace_vde_setup_iram_entry(table, row, value1, value2);
+ 
+-	iram_tables[0x20 * table + row * 2] = value1;
+-	iram_tables[0x20 * table + row * 2 + 1] = value2;
++	vde->iram[0x20 * table + row * 2] = value1;
++	vde->iram[0x20 * table + row * 2 + 1] = value2;
+ }
+ 
+ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+-- 
+2.19.1
