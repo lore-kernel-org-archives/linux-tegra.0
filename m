@@ -1,56 +1,88 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V4 5/8] memory: tegra: Add EMC scaling support code for
- Tegra210
-Date: Thu, 30 May 2019 14:20:18 +0300
-Message-ID: <1838333d-bf58-1e06-7e4c-a64753075053@gmail.com>
-References: <20190529082139.5581-1-josephl@nvidia.com>
- <20190529082139.5581-6-josephl@nvidia.com>
+Subject: Re: [PATCH V1] i2c: busses: tegra: Add suspend-resume support
+Date: Thu, 30 May 2019 14:27:30 +0300
+Message-ID: <c8bad04b-67ef-bcdf-04df-4aa61271e81c@gmail.com>
+References: <1559195718-6693-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190529082139.5581-6-josephl@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1559195718-6693-1-git-send-email-bbiswas@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-MjkuMDUuMjAxOSAxMToyMSwgSm9zZXBoIExvINC/0LjRiNC10YI6Cj4gVGhpcyBwYXRjaCBhZGRz
-IHRoZSByZXF1aXJlZCBBUElzIGFuZCB2YXJpYWJsZXMgZm9yIHRoZSBFTUMgc2NhbGluZwo+IHNl
-cXVlbmNlIGNvZGUgb24gVGVncmEyMTAuCj4gCj4gQmFzZWQgb24gdGhlIHdvcmsgb2YgUGV0ZXIg
-RGUgU2NocmlqdmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4uCj4gCj4gU2lnbmVkLW9mZi1i
-eTogSm9zZXBoIExvIDxqb3NlcGhsQG52aWRpYS5jb20+Cj4gLS0tCj4gdjQ6Cj4gLSBmaXggdGhl
-IEFQSSB3aXRoIGdlbmVyaWMgbmFtaW5nCgo+ICtleHRlcm4gY29uc3Qgc3RydWN0IGVtY190YWJs
-ZV9yZWdpc3Rlcl9vZmZzZXQgcmVnX29mZjsKPiArZXh0ZXJuIHVuc2lnbmVkIGxvbmcgZHJhbV9v
-dmVyX3RlbXBfc3RhdGU7Cj4gKwo+ICt2b2lkIGNjZmlmb193cml0ZWwoc3RydWN0IHRlZ3JhX2Vt
-YyAqZW1jLCB1MzIgdmFsLCB1bnNpZ25lZCBsb25nIGFkZHIsCj4gKwkJICAgdTMyIGRlbGF5KTsK
-PiArdTMyIGRpdl9vMyh1MzIgYSwgdTMyIGIpOwo+ICt2b2lkIGVtY193cml0ZWwoc3RydWN0IHRl
-Z3JhX2VtYyAqZW1jLCB1MzIgdmFsLCB1bnNpZ25lZCBsb25nIG9mZnNldCk7Cj4gK3UzMiAgZW1j
-X3JlYWRsKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdW5zaWduZWQgbG9uZyBvZmZzZXQpOwo+ICt2
-b2lkIGVtY193cml0ZWxfcGVyX2NoKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdTMyIHZhbCwgaW50
-IHR5cGUsCj4gKwkJICAgICAgIHVuc2lnbmVkIGxvbmcgb2Zmc2V0KTsKPiArdTMyICBlbWMxX3Jl
-YWRsKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdW5zaWduZWQgbG9uZyBvZmZzZXQpOwo+ICsKPiAr
-dm9pZCBlbWNfZG9fY2xvY2tfY2hhbmdlKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywgdTMyIGNsa3Ny
-Yyk7Cj4gK3ZvaWQgZW1jX3NldF9zaGFkb3dfYnlwYXNzKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywg
-aW50IHNldCk7Cj4gK3ZvaWQgZW1jX3RpbWluZ191cGRhdGUoc3RydWN0IHRlZ3JhX2VtYyAqZW1j
-LCBpbnQgZHVhbF9jaGFuKTsKPiArdTMyIGVtY19nZXRfZGxsX3N0YXRlKHN0cnVjdCBlbWNfdGFi
-bGUgKm5leHRfdGltaW5nKTsKPiArc3RydWN0IGVtY190YWJsZSAqZW1jX2dldF90aW1pbmdfZnJv
-bV9mcmVxKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywKPiArCQkJCQkgICB1bnNpZ25lZCBsb25nIHJh
-dGUpOwo+ICt2b2lkIGVtY19zZXRfb3Zlcl90ZW1wX3RpbWluZyhzdHJ1Y3QgdGVncmFfZW1jICpl
-bWMsIHN0cnVjdCBlbWNfdGFibGUgKnRpbWluZywKPiArCQkJICAgICAgdW5zaWduZWQgbG9uZyBz
-dGF0ZSk7Cj4gK2ludCBlbWNfd2FpdF9mb3JfdXBkYXRlKHN0cnVjdCB0ZWdyYV9lbWMgKmVtYywg
-dTMyIHN0YXR1c19yZWcsIHUzMiBiaXRfbWFzaywKPiArCQkJYm9vbCB1cGRhdGVkX3N0YXRlLCBp
-bnQgY2hhbik7CgpJdCB3b3VsZG4ndCBodXJ0IHRvIHByZXBlbmQgdGhlc2UgYWxsIHdpdGggInRl
-Z3JhMjEwXyIuCgotLSAKRG1pdHJ5CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2Vy
-bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+30.05.2019 8:55, Bitan Biswas пишет:
+> Post suspend I2C registers have power on reset values. Before any
+> transfer initialize I2C registers to prevent I2C transfer timeout
+> and implement suspend and resume callbacks needed. Fix below errors
+> post suspend:
+> 
+> 1) Tegra I2C transfer timeout during jetson tx2 resume:
+> 
+> [   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @ 2939, parent: i2c-1
+> [   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
+> [   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
+> [   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
+> [   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0 returns -110
+> [   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110 after 127152 usecs
+> [   27.666194] PM: Device 1-0074 failed to resume: error -110
+> 
+> 2) Tegra I2C transfer timeout error on jetson Xavier post resume.
+> 
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index ebaa78d..f6a377f 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -1687,9 +1687,33 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+>  }
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> +static int tegra_i2c_suspend(struct device *dev)
+> +{
+> +	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+> +
+> +	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_i2c_resume(struct device *dev)
+> +{
+> +	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+> +	ret = tegra_i2c_init(i2c_dev, false);
+> +	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+
+Why the locking is needed here?
+
+> +	if (!ret)
+> +		i2c_mark_adapter_resumed(&i2c_dev->adapter);
+> +
+> +       return ret;
+
+A very minor nit.. will be a bit more straightforward to write this as:
+
+	int err;
+
+	err = tegra_i2c_init(i2c_dev, false);
+	if (err)
+		return err;
+
+	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+
+	return 0;
+
+It is always cleaner to return 0 on success.
+
+--
+Dmitry
