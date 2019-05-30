@@ -1,42 +1,73 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V2] drivers: i2c: tegra: fix checkpatch defects
-Date: Thu, 30 May 2019 14:43:05 +0300
-Message-ID: <911e52ed-8f3c-583a-7610-e38723219eca@gmail.com>
-References: <1559196850-7007-1-git-send-email-bbiswas@nvidia.com>
- <e9e3d8b0-a76a-81a9-1110-2d07ba1c787f@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Error out if DMA_PREP_INTERRUPT
+ flag is unset
+Date: Thu, 30 May 2019 13:01:35 +0100
+Message-ID: <9b0e0d20-6386-a38a-1347-4264d249cb44@nvidia.com>
+References: <20190529214355.15339-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e9e3d8b0-a76a-81a9-1110-2d07ba1c787f@gmail.com>
+In-Reply-To: <20190529214355.15339-1-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-30.05.2019 14:36, Dmitry Osipenko пишет:
-> 30.05.2019 9:14, Bitan Biswas пишет:
->> Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
->> except for BUG/BUG_ON checks
-> 
-> Please turn the BUG_ON's into WARN_ON's. The machine won't go on fire,
-> hence there is absolutely no good reason in making system unusable on a
-> software bug. BUG_ON may be more useful for development, but not for a
-> casual daily usage.
-> 
->> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->> ---
-> 
->> @@ -1034,7 +1038,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>  	u32 *buffer = NULL;
->>  	int err = 0;
->>  	bool dma;
->> -	u16 xfer_time = 100;
->> +	u16 xfer_tm = 100;
-> 
-> What's wrong with the "time"? I'm finding the "xfer_tm" as a very
-> unintuitive naming.
-> 
 
-Also, please don't version patch as v2 if v1 was never sent out.
+On 29/05/2019 22:43, Dmitry Osipenko wrote:
+> Apparently driver was never tested with DMA_PREP_INTERRUPT flag being
+> unset since it completely disables interrupt handling instead of skipping
+> the callbacks invocations, hence putting channel into unusable state.
+> 
+> The flag is always set by all of kernel drivers that use APB DMA, so let's
+> error out in otherwise case for consistency. It won't be difficult to
+> support that case properly if ever will be needed.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index cf462b1abc0b..2c84a660ba36 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -988,8 +988,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>  		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+>  	}
+>  
+> -	if (flags & DMA_PREP_INTERRUPT)
+> +	if (flags & DMA_PREP_INTERRUPT) {
+>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+> +	} else {
+> +		WARN_ON_ONCE(1);
+> +		return NULL;
+> +	}
+>  
+>  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+>  
+> @@ -1131,8 +1135,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>  		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+>  	}
+>  
+> -	if (flags & DMA_PREP_INTERRUPT)
+> +	if (flags & DMA_PREP_INTERRUPT) {
+>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+> +	} else {
+> +		WARN_ON_ONCE(1);
+> +		return NULL;
+> +	}
+>  
+>  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+
+Looks good to me.
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
