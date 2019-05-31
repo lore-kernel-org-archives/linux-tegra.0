@@ -1,55 +1,59 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: Re: [PATCH V2] drivers: i2c: tegra: fix checkpatch defects
-Date: Fri, 31 May 2019 02:04:17 -0700
-Message-ID: <b86b9104-1754-531f-70b9-3c1a5d347b9b@nvidia.com>
-References: <1559196850-7007-1-git-send-email-bbiswas@nvidia.com>
- <e9e3d8b0-a76a-81a9-1110-2d07ba1c787f@gmail.com>
- <911e52ed-8f3c-583a-7610-e38723219eca@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/2] soc/tegra: pmc: Fail to allocate more than one wake
+ IRQ
+Date: Fri, 31 May 2019 10:24:28 +0100
+Message-ID: <f7b6923f-4e27-83ae-8ef9-3488d1720416@nvidia.com>
+References: <20190529102654.14665-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <911e52ed-8f3c-583a-7610-e38723219eca@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190529102654.14665-1-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bitan Biswas <bbiswas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
+On 29/05/2019 11:26, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The code currently doesn't support allocating more than one wake IRQ at
+> a time. Detect this situation and error out. Also make sure to output a
+> warning when that happens to help track down callers.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 5648e5c09ef5..653fe2c466f6 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1863,6 +1863,9 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+>  	unsigned int i;
+>  	int err = 0;
+>  
+> +	if (WARN_ON(num_irqs > 1))
+> +		return -EINVAL;
+> +
+>  	for (i = 0; i < soc->num_wake_events; i++) {
+>  		const struct tegra_wake_event *event = &soc->wake_events[i];
 
-On 5/30/19 4:43 AM, Dmitry Osipenko wrote:
-> 30.05.2019 14:36, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> 30.05.2019 9:14, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
->>> except for BUG/BUG_ON checks
->>
->> Please turn the BUG_ON's into WARN_ON's. The machine won't go on fire,
->> hence there is absolutely no good reason in making system unusable on a
->> software bug. BUG_ON may be more useful for development, but not for a
->> casual daily usage.
-I shall update the patch to remove the BUG/BUG_ON calls.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
->>
->>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>> ---
->>
->>> @@ -1034,7 +1038,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_de=
-v *i2c_dev,
->>>   	u32 *buffer =3D NULL;
->>>   	int err =3D 0;
->>>   	bool dma;
->>> -	u16 xfer_time =3D 100;
->>> +	u16 xfer_tm =3D 100;
->>
->> What's wrong with the "time"? I'm finding the "xfer_tm" as a very
->> unintuitive naming.
->>
->=20
-> Also, please don't version patch as v2 if v1 was never sent out.
->=20
-I marked the patch version as V2 incorrectly. Sorry. I shall be careful=20
-about the patch version sequence from now on.
+Cheers
+Jon
 
--regards,
-  Bitan
+-- 
+nvpublic
