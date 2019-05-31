@@ -1,49 +1,43 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: media: tegra-vde: Remove variable
-Date: Thu, 30 May 2019 13:46:38 -0700
-Message-ID: <20190530204638.GA4784@kroah.com>
-References: <20190530204439.29830-1-nishkadg.linux@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v3 0/8] NVIDIA Tegra clocksource driver improvements
+Date: Fri, 31 May 2019 11:26:34 +0300
+Message-ID: <20190531082634.GA6070@pdeschrijver-desktop.Nvidia.com>
+References: <20190524153253.28564-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190530204439.29830-1-nishkadg.linux@gmail.com>
+In-Reply-To: <20190524153253.28564-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc: digetx@gmail.com, mchehab@kernel.org, thierry.reding@gmail.com, jonathan@nvidia.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 31, 2019 at 02:14:39AM +0530, Nishka Dasgupta wrote:
-> Remove unnecessary variable iram_tables and use its value directly.
-> Issue found using Coccinelle.
+On Fri, May 24, 2019 at 06:32:45PM +0300, Dmitry Osipenko wrote:
+> Hello,
 > 
-> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-> ---
->  drivers/staging/media/tegra-vde/tegra-vde.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-> index a5020dbf6eef..3205973218e4 100644
-> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
-> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-> @@ -273,12 +273,10 @@ static void tegra_vde_setup_iram_entry(struct tegra_vde *vde,
->  				       unsigned int row,
->  				       u32 value1, u32 value2)
->  {
-> -	u32 *iram_tables = vde->iram;
-> -
->  	trace_vde_setup_iram_entry(table, row, value1, value2);
->  
-> -	iram_tables[0x20 * table + row * 2] = value1;
-> -	iram_tables[0x20 * table + row * 2 + 1] = value2;
-> +	vde->iram[0x20 * table + row * 2] = value1;
-> +	vde->iram[0x20 * table + row * 2 + 1] = value2;
+> This series primarily unifies the driver code across all Tegra SoC
+> generations. In a result the clocksources are allocated per-CPU on
+> older Tegra's and have a higher rating than the arch-timer, the newer
+> Tegra210 is getting support for microsecond clocksource and the driver's
+> code is getting much cleaner. Note that arch-timer usage is discouraged on
+> all Tegra's due to the time jitter caused by the CPU frequency scaling.
 
-Ick, no, why?  why why why?
+I think the limitations are more as follows:
 
-You keep sending these patches, please take a bit of time to think about
-what you are doing and see if the change actually makes sense.
+Chip	timer		suffers cpu dvfs jitter		can wakeup from cc7
+T20	us-timer	No				Yes
+T20	twd timer	Yes				No?
+T30	us-timer	No				Yes
+T30	twd timer	Yes				No?
+T114	us-timer	No				Yes
+T114	arch timer	No				Yes
+T124	us-timer	No				Yes
+T124	arch timer	No				Yes
+T210	us-timer	No				Yes
+T210	arch timer	No				No
+T210	clk_m timer	No				Yes
 
-Again, here, no, it does not.
+right?
 
-greg k-h
+Peter.
