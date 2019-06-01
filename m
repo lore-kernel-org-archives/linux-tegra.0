@@ -1,129 +1,60 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V2 10/12] gpio: tegra: implement wake event support for
- Tegra210 and prior GPIO
-Date: Sat, 1 Jun 2019 01:28:44 -0700
-Message-ID: <9f9633e0-5f45-d2ba-9758-d2a85a41ede9@nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-11-git-send-email-skomatineni@nvidia.com>
- <20190529140318.GB17679@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 0/8] NVIDIA Tegra clocksource driver improvements
+Date: Sat, 1 Jun 2019 16:00:24 +0300
+Message-ID: <6909cb87-8583-4ec8-74b7-a6153aec0246@gmail.com>
+References: <20190524153253.28564-1-digetx@gmail.com>
+ <20190531082634.GA6070@pdeschrijver-desktop.Nvidia.com>
+ <c686aae8-3be0-805e-265b-a7f16f2a6c02@gmail.com>
+ <26aeb9f0-5eb1-005a-02c1-4d785fe70331@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190529140318.GB17679@ulmo>
+In-Reply-To: <26aeb9f0-5eb1-005a-02c1-4d785fe70331@linaro.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 5/29/19 7:03 AM, Thierry Reding wrote:
-> On Tue, May 28, 2019 at 04:08:54PM -0700, Sowjanya Komatineni wrote:
->> The GPIO controller doesn't have any controls to enable the system to
->> wake up from low power states based on activity on GPIO pins. An extra
->> hardware block that is part of the power management controller (PMC)
->> contains these controls. In order for the GPIO controller to be able
->> to cooperate with the PMC, obtain a reference to the PMC's IRQ domain
->> and make it a parent to the GPIO controller's IRQ domain. This way the
->> PMC gets an opportunity to program the additional registers required
->> to enable wakeup sources on suspend.
+31.05.2019 23:31, Daniel Lezcano пишет:
+> On 31/05/2019 14:33, Dmitry Osipenko wrote:
+>> 31.05.2019 11:26, Peter De Schrijver пишет:
+>>> On Fri, May 24, 2019 at 06:32:45PM +0300, Dmitry Osipenko wrote:
+>>>> Hello,
+>>>>
+>>>> This series primarily unifies the driver code across all Tegra SoC
+>>>> generations. In a result the clocksources are allocated per-CPU on
+>>>> older Tegra's and have a higher rating than the arch-timer, the newer
+>>>> Tegra210 is getting support for microsecond clocksource and the driver's
+>>>> code is getting much cleaner. Note that arch-timer usage is discouraged on
+>>>> all Tegra's due to the time jitter caused by the CPU frequency scaling.
+>>>
+>>> I think the limitations are more as follows:
+>>>
+>>> Chip	timer		suffers cpu dvfs jitter		can wakeup from cc7
+>>> T20	us-timer	No				Yes
+>>> T20	twd timer	Yes				No?
+>>> T30	us-timer	No				Yes
+>>> T30	twd timer	Yes				No?
+>>> T114	us-timer	No				Yes
+>>> T114	arch timer	No				Yes
+>>> T124	us-timer	No				Yes
+>>> T124	arch timer	No				Yes
+>>> T210	us-timer	No				Yes
+>>> T210	arch timer	No				No
+>>> T210	clk_m timer	No				Yes
+>>>
+>>> right?
 >>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/gpio/gpio-tegra.c | 116 +++++++++++++++++++++++++++++++++++++++++++---
->>   1 file changed, 110 insertions(+), 6 deletions(-)
+>> Doesn't arch timer run off the CPU clock? If yes (that's what I
+>> assumed), then it should be affected by the DVFS. Otherwise I'll lower
+>> the clocksource's rating for T114/124/132.
 >>
->> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
->> index 6d9b6906b9d0..5190129668d3 100644
->> --- a/drivers/gpio/gpio-tegra.c
->> +++ b/drivers/gpio/gpio-tegra.c
->> @@ -32,6 +32,8 @@
->>   #include <linux/pinctrl/consumer.h>
->>   #include <linux/pm.h>
->>   
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->>   #define GPIO_BANK(x)		((x) >> 5)
->>   #define GPIO_PORT(x)		(((x) >> 3) & 0x3)
->>   #define GPIO_BIT(x)		((x) & 0x7)
->> @@ -275,8 +277,22 @@ static int tegra_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
->>   static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
->>   {
->>   	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
->> +	struct irq_domain *domain = tgi->irq_domain;
->> +
->> +	if (!gpiochip_irqchip_irq_valid(chip, offset))
->> +		return -ENXIO;
->> +
->> +	if (irq_domain_is_hierarchy(domain)) {
->> +		struct irq_fwspec spec;
->> +
->> +		spec.fwnode = domain->fwnode;
->> +		spec.param_count = 2;
->> +		spec.param[0] = offset;
->> +		spec.param[1] = IRQ_TYPE_NONE;
->> +		return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
-> This looks like it was copied from the equivalent Tegra186 patch. I have
-> since then changed the implementation, based on feedback by Linus, to
-> not call irq_domain_alloc_irqs() here and instead call
-> irq_create_fwspec_mapping(). This has the advantage of not requiring the
-> irq_domain_alloc_irqs() function to be exported. It ends up calling that
-> function internally, but as discussed with Linus it's also a nicer way
-> to create these mappings.
->
-existing gpio-tegra driver maps hwirq to virtual interrupt number using 
-irq_create_mapping during gpio probe
+>> TWD can't wake CPU from the power-down state, so it's a solid "No" for
+>> TWD in the "can wakeup from cc7" column.
+> 
+> Wouldn't make sense to rename the timer-tegra20.c to timer-tegra.c now ?
 
-and irq_create_fwspec_mapping() will always return virq number as virq 
-number exists already and irq_domain_alloc_irqs doesn't happen.
-
-So I was using irq_domain_alloc_irqs().
-
-
->> +	}
->>   
->> -	return irq_find_mapping(tgi->irq_domain, offset);
->> +	return irq_find_mapping(domain, offset);
->>   }
->>   
->>   static void tegra_gpio_irq_ack(struct irq_data *d)
->> @@ -365,7 +381,10 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->>   	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
->>   		irq_set_handler_locked(d, handle_edge_irq);
->>   
->> -	return 0;
->> +	if (d->parent_data)
->> +		return irq_chip_set_type_parent(d, type);
->> +	else
->> +		return 0;
-> There's no need for this final else. Just make it a regular "return 0;"
-> at the end of the function, without the extra else branch.
->
->>   }
->>   
->>   static void tegra_gpio_irq_shutdown(struct irq_data *d)
->> @@ -503,6 +522,7 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
->>   	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
->>   	unsigned int gpio = d->hwirq;
->>   	u32 port, bit, mask;
->> +	int ret;
->>   
->>   	port = GPIO_PORT(gpio);
->>   	bit = GPIO_BIT(gpio);
->> @@ -513,7 +533,14 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
->>   	else
->>   		bank->wake_enb[port] &= ~mask;
->>   
->> -	return irq_set_irq_wake(bank->irq, enable);
->> +	ret = irq_set_irq_wake(bank->irq, enable);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	if (d->parent_data)
->> +		return irq_chip_set_wake_parent(d, enable);
->> +	else
->> +		return 0;
-> Same here.
->
-> Thierry
+Wouldn't hurt, given the refreshment that driver is getting lately. I'll
+include a patch for that in the next revision, thanks.
