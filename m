@@ -1,7 +1,7 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
-Date: Sun, 2 Jun 2019 15:46:00 +0200
-Message-ID: <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
+Date: Sun, 2 Jun 2019 15:51:51 +0200
+Message-ID: <CACRpkda_aK++k0eVHmGszgts86usaxbQ9uU0kqAzAjapK8AOQg@mail.gmail.com>
 References: <20190529145322.20630-1-thierry.reding@gmail.com> <20190529145322.20630-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
@@ -29,56 +29,10 @@ On Wed, May 29, 2019 at 4:53 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 > - use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
 > - add missing kerneldoc for new parent_domain field
 > - keep IRQ_DOMAIN dependency for clarity
->
-> Changes in v2:
-> - select IRQ_DOMAIN_HIERARCHY to avoid build failure
-> - move more code into the gpiolib core
 
-This is looking really good!
-
->  config GPIOLIB_IRQCHIP
->         select IRQ_DOMAIN
-> +       select IRQ_DOMAIN_HIERARCHY
->         bool
-
-Hm OK I guess. It would be ugly to ifdef all hierarchy
-code in gpiolib.
-
->  static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
->  {
-> +       struct irq_domain *domain = chip->irq.domain;
-> +
->         if (!gpiochip_irqchip_irq_valid(chip, offset))
->                 return -ENXIO;
->
-> +       if (irq_domain_is_hierarchy(domain)) {
-> +               struct irq_fwspec spec;
-> +
-> +               spec.fwnode = domain->fwnode;
-> +               spec.param_count = 2;
-> +               spec.param[0] = offset;
-> +               spec.param[1] = IRQ_TYPE_NONE;
-> +
-> +               return irq_create_fwspec_mapping(&spec);
-> +       }
-> +
->         return irq_create_mapping(chip->irq.domain, offset);
-
-This is looking really good!
-
-> +       /*
-> +        * Allow GPIO chips to override the ->to_irq() if they really need to.
-> +        * This should only be very rarely needed, the majority should be fine
-> +        * with gpiochip_to_irq().
-> +        */
-> +       if (!gpiochip->to_irq)
-> +               gpiochip->to_irq = gpiochip_to_irq;
-
-Please drop this. The default .to_irq() should be good for everyone.
-Also patch 2/2 now contains a identical copy of the gpiolib
-.to_irq() which I suspect you indended to drop, actually.
-
-Other than that I'm ready to merge the v3 of this!
+Actually I applied the patch, and dropped the two lines making
+it possible to override .to_irq() for now, so I can illustrate my
+idea on top. If I manage.
 
 Yours,
 Linus Walleij
