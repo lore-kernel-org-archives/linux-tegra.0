@@ -1,8 +1,8 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] media: dt: bindings: tegra-vde: Document new optional
- IOMMU property
-Date: Mon,  3 Jun 2019 00:37:08 +0300
-Message-ID: <20190602213712.26857-4-digetx@gmail.com>
+Subject: [PATCH v1 1/4] staging: media: tegra-vde: Remove BIT() macro from
+ UAPI header
+Date: Mon,  3 Jun 2019 00:37:09 +0300
+Message-ID: <20190602213712.26857-5-digetx@gmail.com>
 References: <20190602213712.26857-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,32 +22,30 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-All NVIDIA Tegra SoC generations provide IOMMU support for the video
-decoder engine. Document new optional device-tree property that connects
-VDE with the IOMMU provider.
+The BIT macro isn't available in userspace. Checkpatch complains about
+shifts being used instead of the macro and people are starting to send
+patches without realizing that it's a UAPI header file. Hence let's
+replace the BIT macro with a hex values to make everyone happy.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/media/tegra-vde/uapi.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-index 7302e949e662..602169b8aa19 100644
---- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-+++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-@@ -35,6 +35,7 @@ Optional properties:
- - resets : Must contain an entry for each entry in reset-names.
- - reset-names : Must include the following entries:
-   - mc
-+- iommus: Must contain phandle to the IOMMU device node.
+diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
+index a0dad1ed94ef..dd3e4a8c9f7e 100644
+--- a/drivers/staging/media/tegra-vde/uapi.h
++++ b/drivers/staging/media/tegra-vde/uapi.h
+@@ -6,8 +6,8 @@
+ #include <linux/types.h>
+ #include <asm/ioctl.h>
  
- Example:
+-#define FLAG_B_FRAME		BIT(0)
+-#define FLAG_REFERENCE		BIT(1)
++#define FLAG_B_FRAME		0x1
++#define FLAG_REFERENCE		0x2
  
-@@ -59,4 +60,5 @@ video-codec@6001a000 {
- 	clocks = <&tegra_car TEGRA20_CLK_VDE>;
- 	reset-names = "vde", "mc";
- 	resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
-+	iommus = <&mc TEGRA_SWGROUP_VDE>;
- };
+ struct tegra_vde_h264_frame {
+ 	__s32 y_fd;
 -- 
 2.21.0
