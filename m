@@ -1,44 +1,57 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 07/26] iommu/dma: move the arm64 wrappers to common code
-Date: Mon, 3 Jun 2019 20:47:57 +0100
-Message-ID: <acb46c7f-0855-de30-485f-a6242968f947@nvidia.com>
-References: <20190422175942.18788-1-hch@lst.de>
- <20190422175942.18788-8-hch@lst.de>
- <06b331f0-7df7-a6cd-954c-789f89a0836d@arm.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Add HWMON INA3221 support
+Date: Mon, 3 Jun 2019 14:17:46 -0700
+Message-ID: <20190603211745.GA21855@Asurada-Nvidia.nvidia.com>
+References: <20190424181010.28950-1-nicoleotsuka@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <06b331f0-7df7-a6cd-954c-789f89a0836d@arm.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>
-Cc: Joerg Roedel <joro@8bytes.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Tom Lendacky <thomas.lendacky@amd.com>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190424181010.28950-1-nicoleotsuka@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: treding@nvidia.com
+Cc: linux-tegra@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Apr 24, 2019 at 11:10:10AM -0700, Nicolin Chen wrote:
+> Tegra186 board under arm64 is using this device, according to
+> its dts file. So this patch enables its driver with a "=m" as
+> the other HWMON drivers.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-On 29/04/2019 13:56, Robin Murphy wrote:
-> On 22/04/2019 18:59, Christoph Hellwig wrote:
->> There is nothing really arm64 specific in the iommu_dma_ops
->> implementation, so move it to dma-iommu.c and keep a lot of symbols
->> self-contained.=C2=A0 Note the implementation does depend on the
->> DMA_DIRECT_REMAP infrastructure for now, so we'll have to make the
->> DMA_IOMMU support depend on it, but this will be relaxed soon.
->=20
-> Nothing looks objectionable, and boot testing with this much of the
-> series merged has my coherent and non-coherent IOMMU-backed devices
-> appearing to still work OK, so:
->=20
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
+Sorry to ping this patch. But I am wondering if I sent it wrong
+-- had been missing some other reviewers or maillists. May some
+one kindly remind me?
 
-Since next-20190529 one of our tests for MMC has started failing, where
-the symptom is that the data written to the MMC does not match the
-source. Bisecting this is pointing to this commit. Unfortunately, I am
-not able to cleanly revert this on top of -next, but wanted to report
-this if case you have any ideas.
+Thank you
+Nicolin
 
-Cheers
-Jon
-
---=20
-nvpublic
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 04cc2a2adc39..00043e706399 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -424,6 +424,7 @@ CONFIG_SENSORS_LM90=m
+>  CONFIG_SENSORS_PWM_FAN=m
+>  CONFIG_SENSORS_RASPBERRYPI_HWMON=m
+>  CONFIG_SENSORS_INA2XX=m
+> +CONFIG_SENSORS_INA3221=m
+>  CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+>  CONFIG_CPU_THERMAL=y
+>  CONFIG_THERMAL_EMULATION=y
+> -- 
+> 2.17.1
+> 
