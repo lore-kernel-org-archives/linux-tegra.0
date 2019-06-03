@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 2/8] regulator: core: Parse max-spread value per regulator couple
-Date: Tue,  4 Jun 2019 02:58:58 +0300
-Message-ID: <20190603235904.19097-3-digetx@gmail.com>
+Subject: [PATCH v2 1/8] regulator: core: Introduce API for regulators coupling customization
+Date: Tue,  4 Jun 2019 02:58:57 +0300
+Message-ID: <20190603235904.19097-2-digetx@gmail.com>
 References: <20190603235904.19097-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,195 +12,245 @@ To: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Parse and validate max-spread value per regulator couple. Now regulator
-core can take multiple regulator couples, although balancing is still
-limited to a single couple.
+Right now regulator core supports only one type of regulators coupling,
+the "voltage max-spread" which keeps voltages of coupled regulators in a
+given range from each other. A more sophisticated coupling may be required
+in practice, one example is the NVIDIA Tegra SoC's which besides the
+max-spreading have other restrictions that must be adhered. Introduce API
+that allow platforms to provide their own customized coupling algorithms.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/regulator/core.c          | 13 ++++----
- drivers/regulator/of_regulator.c  | 49 +++++++++++++++++++++----------
- include/linux/regulator/machine.h |  3 +-
- 3 files changed, 43 insertions(+), 22 deletions(-)
+ drivers/regulator/core.c         | 66 ++++++++++++++++++++++++++++++++
+ include/linux/regulator/driver.h | 33 ++++++++++++++++
+ 2 files changed, 99 insertions(+)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 3b2d10a46bb5..c148dd7d306e 100644
+index 85f61e5dc312..3b2d10a46bb5 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -3435,7 +3435,7 @@ static int regulator_get_optimal_voltage(struct regulator_dev *rdev,
- 	struct coupling_desc *c_desc = &rdev->coupling_desc;
- 	struct regulator_dev **c_rdevs = c_desc->coupled_rdevs;
- 	struct regulation_constraints *constraints = rdev->constraints;
--	int max_spread = constraints->max_spread;
-+	int max_spread = constraints->max_spread[0];
- 	int desired_min_uV = 0, desired_max_uV = INT_MAX;
- 	int max_current_uV = 0, min_current_uV = INT_MAX;
- 	int highest_min_uV = 0, target_uV, possible_uV;
-@@ -3597,6 +3597,12 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
- 	if (coupler && coupler->balance_voltage)
- 		return coupler->balance_voltage(coupler, rdev, state);
+@@ -50,6 +50,7 @@ static DEFINE_MUTEX(regulator_list_mutex);
+ static LIST_HEAD(regulator_map_list);
+ static LIST_HEAD(regulator_ena_gpio_list);
+ static LIST_HEAD(regulator_supply_alias_list);
++static LIST_HEAD(regulator_coupler_list);
+ static bool has_full_constraints;
  
-+	if (n_coupled > 2) {
-+		rdev_err(rdev,
-+			 "Voltage balancing for multiple regulator couples is unimplemented\n");
-+		return -EPERM;
-+	}
+ static struct dentry *debugfs_root;
+@@ -3573,6 +3574,7 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+ 	struct regulator_dev **c_rdevs;
+ 	struct regulator_dev *best_rdev;
+ 	struct coupling_desc *c_desc = &rdev->coupling_desc;
++	struct regulator_coupler *coupler = c_desc->coupler;
+ 	int i, ret, n_coupled, best_min_uV, best_max_uV, best_c_rdev;
+ 	bool best_c_rdev_done, c_rdev_done[MAX_COUPLED];
+ 	unsigned int delta, best_delta;
+@@ -3592,6 +3594,9 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+ 		return -EPERM;
+ 	}
+ 
++	if (coupler && coupler->balance_voltage)
++		return coupler->balance_voltage(coupler, rdev, state);
 +
  	for (i = 0; i < n_coupled; i++)
  		c_rdev_done[i] = false;
  
-@@ -4849,11 +4855,6 @@ static int regulator_init_coupling(struct regulator_dev *rdev)
- 		return -EPERM;
- 	}
+@@ -4707,8 +4712,33 @@ static int regulator_register_resolve_supply(struct device *dev, void *data)
+ 	return 0;
+ }
  
--	if (rdev->constraints->max_spread <= 0) {
--		rdev_err(rdev, "wrong max_spread value\n");
--		return -EPERM;
--	}
--
++int regulator_coupler_register(struct regulator_coupler *coupler)
++{
++	mutex_lock(&regulator_list_mutex);
++	list_add(&coupler->list, &regulator_coupler_list);
++	mutex_unlock(&regulator_list_mutex);
++
++	return 0;
++}
++
++static struct regulator_coupler *
++regulator_find_coupler(struct regulator_dev *rdev)
++{
++	struct regulator_coupler *coupler;
++	int err;
++
++	list_for_each_entry(coupler, &regulator_coupler_list, list) {
++		err = coupler->attach_regulator(coupler, rdev);
++		if (!err)
++			return coupler;
++	}
++
++	return NULL;
++}
++
+ static void regulator_resolve_coupling(struct regulator_dev *rdev)
+ {
++	struct regulator_coupler *coupler = rdev->coupling_desc.coupler;
+ 	struct coupling_desc *c_desc = &rdev->coupling_desc;
+ 	int n_coupled = c_desc->n_coupled;
+ 	struct regulator_dev *c_rdev;
+@@ -4724,6 +4754,12 @@ static void regulator_resolve_coupling(struct regulator_dev *rdev)
+ 		if (!c_rdev)
+ 			continue;
+ 
++		if (c_rdev->coupling_desc.coupler != coupler) {
++			rdev_err(rdev, "coupler mismatch with %s\n",
++				 rdev_get_name(c_rdev));
++			return;
++		}
++
+ 		regulator_lock(c_rdev);
+ 
+ 		c_desc->coupled_rdevs[i] = c_rdev;
+@@ -4737,10 +4773,12 @@ static void regulator_resolve_coupling(struct regulator_dev *rdev)
+ 
+ static void regulator_remove_coupling(struct regulator_dev *rdev)
+ {
++	struct regulator_coupler *coupler = rdev->coupling_desc.coupler;
+ 	struct coupling_desc *__c_desc, *c_desc = &rdev->coupling_desc;
+ 	struct regulator_dev *__c_rdev, *c_rdev;
+ 	unsigned int __n_coupled, n_coupled;
+ 	int i, k;
++	int err;
+ 
+ 	n_coupled = c_desc->n_coupled;
+ 
+@@ -4770,6 +4808,13 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
+ 		c_desc->coupled_rdevs[i] = NULL;
+ 		c_desc->n_resolved--;
+ 	}
++
++	if (coupler && coupler->detach_regulator) {
++		err = coupler->detach_regulator(coupler, rdev);
++		if (err)
++			rdev_err(rdev, "failed to detach from coupler: %d\n",
++				 err);
++	}
+ }
+ 
+ static int regulator_init_coupling(struct regulator_dev *rdev)
+@@ -4812,9 +4857,25 @@ static int regulator_init_coupling(struct regulator_dev *rdev)
  	if (!of_check_coupling_data(rdev))
  		return -EPERM;
  
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 0ead1164e4d6..41cf8819f60a 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -30,8 +30,14 @@ static void of_get_regulation_constraints(struct device_node *np,
- 	struct device_node *suspend_np;
- 	unsigned int mode;
- 	int ret, i, len;
-+	int n_phandles;
-+	u32 pvals[MAX_COUPLED];
- 	u32 pval;
- 
-+	n_phandles = of_count_phandle_with_args(np, "regulator-coupled-with",
-+						NULL);
-+	n_phandles = max(n_phandles, 0);
-+
- 	constraints->name = of_get_property(np, "regulator-name", NULL);
- 
- 	if (!of_property_read_u32(np, "regulator-min-microvolt", &pval))
-@@ -163,9 +169,12 @@ static void of_get_regulation_constraints(struct device_node *np,
- 	if (!of_property_read_u32(np, "regulator-system-load", &pval))
- 		constraints->system_load = pval;
- 
--	if (!of_property_read_u32(np, "regulator-coupled-max-spread",
--				  &pval))
--		constraints->max_spread = pval;
-+	if (!of_property_read_u32_array(np, "regulator-coupled-max-spread",
-+					pvals, n_phandles)) {
-+
-+		for (i = 0; i < n_phandles; i++)
-+			constraints->max_spread[i] = pvals[i];
++	rdev->coupling_desc.coupler = regulator_find_coupler(rdev);
++	if (!rdev->coupling_desc.coupler) {
++		rdev_err(rdev, "failed to find coupler\n");
++		return -EINVAL;
 +	}
- 
- 	if (!of_property_read_u32(np, "regulator-max-step-microvolt",
- 				  &pval))
-@@ -473,7 +482,8 @@ int of_get_n_coupled(struct regulator_dev *rdev)
- 
- /* Looks for "to_find" device_node in src's "regulator-coupled-with" property */
- static bool of_coupling_find_node(struct device_node *src,
--				  struct device_node *to_find)
-+				  struct device_node *to_find,
-+				  int *index)
- {
- 	int n_phandles, i;
- 	bool found = false;
-@@ -495,8 +505,10 @@ static bool of_coupling_find_node(struct device_node *src,
- 
- 		of_node_put(tmp);
- 
--		if (found)
-+		if (found) {
-+			*index = i;
- 			break;
-+		}
- 	}
- 
- 	return found;
-@@ -517,22 +529,28 @@ static bool of_coupling_find_node(struct device_node *src,
-  */
- bool of_check_coupling_data(struct regulator_dev *rdev)
- {
--	int max_spread = rdev->constraints->max_spread;
- 	struct device_node *node = rdev->dev.of_node;
- 	int n_phandles = of_get_n_coupled(rdev);
- 	struct device_node *c_node;
-+	int index;
- 	int i;
- 	bool ret = true;
- 
--	if (max_spread <= 0) {
--		dev_err(&rdev->dev, "max_spread value invalid\n");
-+	if (n_phandles >= MAX_COUPLED) {
-+		dev_err(&rdev->dev, "please bump MAX_COUPLED number\n");
- 		return false;
- 	}
- 
- 	/* iterate over rdev's phandles */
- 	for (i = 0; i < n_phandles; i++) {
-+		int max_spread = rdev->constraints->max_spread[i];
- 		int c_max_spread, c_n_phandles;
- 
-+		if (max_spread <= 0) {
-+			dev_err(&rdev->dev, "max_spread value invalid\n");
-+			return false;
-+		}
 +
- 		c_node = of_parse_phandle(node,
- 					  "regulator-coupled-with", i);
+ 	return 0;
+ }
  
-@@ -549,22 +567,23 @@ bool of_check_coupling_data(struct regulator_dev *rdev)
- 			goto clean;
- 		}
++static int generic_coupler_attach(struct regulator_coupler *coupler,
++				  struct regulator_dev *rdev)
++{
++	return 0;
++}
++
++static struct regulator_coupler generic_regulator_coupler = {
++	.attach_regulator = generic_coupler_attach,
++};
++
+ /**
+  * regulator_register - register regulator
+  * @regulator_desc: regulator to register
+@@ -4976,7 +5037,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	if (ret < 0)
+ 		goto wash;
  
--		if (of_property_read_u32(c_node, "regulator-coupled-max-spread",
--					 &c_max_spread)) {
-+		if (!of_coupling_find_node(c_node, node, &index)) {
-+			dev_err(&rdev->dev, "missing 2-way linking for coupled regulators\n");
- 			ret = false;
- 			goto clean;
- 		}
++	mutex_lock(&regulator_list_mutex);
+ 	ret = regulator_init_coupling(rdev);
++	mutex_unlock(&regulator_list_mutex);
+ 	if (ret < 0)
+ 		goto wash;
  
--		if (c_max_spread != max_spread) {
--			dev_err(&rdev->dev,
--				"coupled regulators max_spread mismatch\n");
-+		if (of_property_read_u32_index(c_node, "regulator-coupled-max-spread",
-+					       index, &c_max_spread)) {
- 			ret = false;
- 			goto clean;
- 		}
+@@ -5025,6 +5088,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ unset_supplies:
+ 	mutex_lock(&regulator_list_mutex);
+ 	unset_regulator_supplies(rdev);
++	regulator_remove_coupling(rdev);
+ 	mutex_unlock(&regulator_list_mutex);
+ wash:
+ 	kfree(rdev->constraints);
+@@ -5480,6 +5544,8 @@ static int __init regulator_init(void)
+ #endif
+ 	regulator_dummy_init();
  
--		if (!of_coupling_find_node(c_node, node)) {
--			dev_err(&rdev->dev, "missing 2-way linking for coupled regulators\n");
-+		if (c_max_spread != max_spread) {
-+			dev_err(&rdev->dev,
-+				"coupled regulators max_spread mismatch\n");
- 			ret = false;
-+			goto clean;
- 		}
++	regulator_coupler_register(&generic_regulator_coupler);
++
+ 	return ret;
+ }
  
- clean:
-diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
-index 1d34a70ffda2..53830d0c0b6f 100644
---- a/include/linux/regulator/machine.h
-+++ b/include/linux/regulator/machine.h
-@@ -15,6 +15,7 @@
- #ifndef __LINUX_REGULATOR_MACHINE_H_
- #define __LINUX_REGULATOR_MACHINE_H_
- 
-+#include <linux/regulator/driver.h>
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 377da2357118..18bbbd4135a1 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -20,6 +20,7 @@
+ #include <linux/device.h>
+ #include <linux/notifier.h>
  #include <linux/regulator/consumer.h>
- #include <linux/suspend.h>
++#include <linux/suspend.h>
+ #include <linux/ww_mutex.h>
  
-@@ -156,7 +157,7 @@ struct regulation_constraints {
- 	int system_load;
+ struct gpio_desc;
+@@ -28,6 +29,7 @@ struct regulator_dev;
+ struct regulator_config;
+ struct regulator_init_data;
+ struct regulator_enable_gpio;
++struct regulator_coupler;
  
- 	/* used for coupled regulators */
--	int max_spread;
-+	int max_spread[MAX_COUPLED];
+ enum regulator_status {
+ 	REGULATOR_STATUS_OFF,
+@@ -427,6 +429,7 @@ struct regulator_config {
+  */
+ struct coupling_desc {
+ 	struct regulator_dev *coupled_rdevs[MAX_COUPLED];
++	struct regulator_coupler *coupler;
+ 	int n_resolved;
+ 	int n_coupled;
+ };
+@@ -482,6 +485,33 @@ struct regulator_dev {
+ 	unsigned long last_off_jiffy;
+ };
  
- 	/* used for changing voltage in steps */
- 	int max_uV_step;
++/**
++ * struct regulator_coupler - customized regulator's coupler
++ *
++ * Regulator's coupler allows to customize coupling algorithm.
++ *
++ * @list: couplers list entry
++ * @attach_regulator: Callback invoked on creation of a coupled regulator,
++ *                    couples are unresolved at this point. The callee should
++ *                    check that it could handle the regulator and return 0 on
++ *                    success, -errno otherwise.
++ * @detach_regulator: Callback invoked on destruction of a coupled regulator.
++ * @balance_voltage: Callback invoked when voltage of a coupled regulator is
++ *                   changing. The callee should perform voltage balancing
++ *                   and change voltage of the coupled regulators.
++ */
++struct regulator_coupler {
++	struct list_head list;
++
++	int (*attach_regulator)(struct regulator_coupler *coupler,
++				struct regulator_dev *rdev);
++	int (*detach_regulator)(struct regulator_coupler *coupler,
++				struct regulator_dev *rdev);
++	int (*balance_voltage)(struct regulator_coupler *coupler,
++			       struct regulator_dev *rdev,
++			       suspend_state_t state);
++};
++
+ struct regulator_dev *
+ regulator_register(const struct regulator_desc *regulator_desc,
+ 		   const struct regulator_config *config);
+@@ -552,4 +582,7 @@ void regulator_unlock(struct regulator_dev *rdev);
+  */
+ int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
+ 					     unsigned int selector);
++
++int regulator_coupler_register(struct regulator_coupler *coupler);
++
+ #endif
 -- 
 2.21.0
