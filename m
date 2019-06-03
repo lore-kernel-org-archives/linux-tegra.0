@@ -1,61 +1,56 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v3 0/8] NVIDIA Tegra clocksource driver improvements
-Date: Mon, 3 Jun 2019 10:17:50 +0300
-Message-ID: <20190603071750.GA29894@pdeschrijver-desktop.Nvidia.com>
-References: <20190524153253.28564-1-digetx@gmail.com>
- <20190531082634.GA6070@pdeschrijver-desktop.Nvidia.com>
- <c686aae8-3be0-805e-265b-a7f16f2a6c02@gmail.com>
+Subject: Re: [PATCH 2/2] soc/tegra: pmc: Avoid crash for non-wake IRQs
+Date: Mon, 3 Jun 2019 10:20:38 +0300
+Message-ID: <20190603072038.GB29894@pdeschrijver-desktop.Nvidia.com>
+References: <20190529102654.14665-1-thierry.reding@gmail.com>
+ <20190529102654.14665-2-thierry.reding@gmail.com>
+ <27ffbfe6-1c88-63a1-aee1-7fe6ce252e54@nvidia.com>
+ <20190531102858.GA21355@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <c686aae8-3be0-805e-265b-a7f16f2a6c02@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>
+In-Reply-To: <20190531102858.GA21355@ulmo>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 31, 2019 at 03:33:41PM +0300, Dmitry Osipenko wrote:
-> 31.05.2019 11:26, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, May 24, 2019 at 06:32:45PM +0300, Dmitry Osipenko wrote:
-> >> Hello,
-> >>
-> >> This series primarily unifies the driver code across all Tegra SoC
-> >> generations. In a result the clocksources are allocated per-CPU on
-> >> older Tegra's and have a higher rating than the arch-timer, the newer
-> >> Tegra210 is getting support for microsecond clocksource and the driver=
-'s
-> >> code is getting much cleaner. Note that arch-timer usage is discourage=
-d on
-> >> all Tegra's due to the time jitter caused by the CPU frequency scaling=
-.
-> >=20
-> > I think the limitations are more as follows:
-> >=20
-> > Chip	timer		suffers cpu dvfs jitter		can wakeup from cc7
-> > T20	us-timer	No				Yes
-> > T20	twd timer	Yes				No?
-> > T30	us-timer	No				Yes
-> > T30	twd timer	Yes				No?
-> > T114	us-timer	No				Yes
-> > T114	arch timer	No				Yes
-> > T124	us-timer	No				Yes
-> > T124	arch timer	No				Yes
-> > T210	us-timer	No				Yes
-> > T210	arch timer	No				No
-> > T210	clk_m timer	No				Yes
-> >=20
-> > right?
->=20
-> Doesn't arch timer run off the CPU clock? If yes (that's what I
-> assumed), then it should be affected by the DVFS. Otherwise I'll lower
-> the clocksource's rating for T114/124/132.
->=20
+On Fri, May 31, 2019 at 12:28:58PM +0200, Thierry Reding wrote:
+> On Fri, May 31, 2019 at 10:32:40AM +0100, Jon Hunter wrote:
+> > 
+> > 
+> > On 29/05/2019 11:26, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > For interrupts that are not wakeup sources but that may end up getting
+> > > mapped through the PMC as interrupt parent (this can happen for GPIOs),
+> > > return early in order to avoid a subsequent crash from an out-of-bounds
+> > > access to the register region.
+> > 
+> > Maybe worth clarifying here what you mean by 'not wakeup sources'
+> > because the Tegra GPIO driver does have a set_wake() API to enable
+> > wakeup at the LIC IIRC. So maybe GPIOs that are not wakeup sources for
+> > what level of suspend?
+> 
+> Wakeup sources in the context of PMC is always LP0 wakeup sources. At
+> that point I don't think LIC is enabled anymore. So LIC is to wake up
+> from LP1 (and perhaps LP2), while PMC wakeup sources need to be
+> configured in order to wake up from LP0.
+> 
+> Adding Peter to confirm, I think he's more familiar with the power
+> states on earlier chips than I am.
 
-No. It doesn't. This is the big change between A9 and later CPUs.=20
+Yes. LIC is in a domain which is off during SC7 so it can't trigger a
+wakeup.
 
 Peter.
-
-> TWD can't wake CPU from the power-down state, so it's a solid "No" for
-> TWD in the "can wakeup from cc7" column.
