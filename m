@@ -1,58 +1,82 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [PATCH v3 0/4] iommu/amd: Convert the AMD iommu driver to the
- dma-iommu api
-Date: Mon, 3 Jun 2019 12:27:37 +0100
-Message-ID: <CAPL0++72dekt=re1=sTWpCJtMX=mUOc3Jcq=9d1sr1QO25_zFA@mail.gmail.com>
-References: <20190506185207.31069-1-tmurphy@arista.com> <20190603105158.GL12745@8bytes.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
+Date: Mon, 3 Jun 2019 14:12:27 +0200
+Message-ID: <20190603121227.GB30132@ulmo>
+References: <20190529145322.20630-1-thierry.reding@gmail.com>
+ <20190529145322.20630-2-thierry.reding@gmail.com>
+ <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
+ <20190603075324.GA27753@ulmo>
+ <CACRpkda47EX981Dw=jLrU=PHn50+AQhJmpVRWJ9uJEQdcAsrTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="JP+T4n/bALQSJXh8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190603105158.GL12745@8bytes.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkda47EX981Dw=jLrU=PHn50+AQhJmpVRWJ9uJEQdcAsrTw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.in
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 11:52 AM Joerg Roedel <joro@8bytes.org> wrote:
->
-> Hi Tom,
->
-> On Mon, May 06, 2019 at 07:52:02PM +0100, Tom Murphy wrote:
-> > Convert the AMD iommu driver to the dma-iommu api. Remove the iova
-> > handling and reserve region code from the AMD iommu driver.
->
-> Thank you for your work on this! I appreciate that much, but I am not
-> sure we are ready to make that move for the AMD and Intel IOMMU drivers
-> yet.
->
-> My main concern right now is that these changes will add a per-page
-> table lock into the fast-path for dma-mapping operations. There has been
-> much work in the past to remove all locking from these code-paths and
-> make it scalable on x86.
 
-Where is the locking introduced? intel doesn't use a lock in it's
-iommu_map function:
-https://github.com/torvalds/linux/blob/f2c7c76c5d0a443053e94adb9f0918fa2fb85c3a/drivers/iommu/intel-iommu.c#L5302
-because it cleverly uses cmpxchg64 to avoid using locks:
-https://github.com/torvalds/linux/blob/f2c7c76c5d0a443053e94adb9f0918fa2fb85c3a/drivers/iommu/intel-iommu.c#L900
-And the locking in AMD's iommu_map function can be removed (and i have
-removed it in my patch set) because it does that same thing as intel:
-https://github.com/torvalds/linux/blob/f2c7c76c5d0a443053e94adb9f0918fa2fb85c3a/drivers/iommu/amd_iommu.c#L1486
+--JP+T4n/bALQSJXh8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is there something I'm missing?
+On Mon, Jun 03, 2019 at 12:58:02PM +0200, Linus Walleij wrote:
+> On Mon, Jun 3, 2019 at 9:53 AM Thierry Reding <thierry.reding@gmail.com> =
+wrote:
+> > Me
+>=20
+> > > Please drop this. The default .to_irq() should be good for everyone.
+> > > Also patch 2/2 now contains a identical copy of the gpiolib
+> > > .to_irq() which I suspect you indended to drop, actually.
+> >
+> > It's not actually identical to the gpiolib implementation. There's still
+> > the conversion to the non-linear DT representation for GPIO specifiers
+> > from the linear GPIO number space, which is not taken care of by the
+> > gpiolib variant. That's precisely the point why this patch makes it
+> > possible to let the driver override things.
+>=20
+> OK something is off here, because the purpose of the irqdomain
+> is exactly to translate between different number spaces, so it should
+> not happen in the .to_irq() function at all.
+>=20
+> Irqdomain uses .map() in the old variant and .translate() in the
+> hierarchical variant to do this, so something is skewed.
+>=20
+> All .to_irq() should ever do is just call the irqdomain to do the
+> translation, no other logic (unless I am mistaken) so we should
+> be able to keep the simple .to_irq() logic inside gpiolib.
 
->
-> The dma-ops implementations in the x86 IOMMU drivers have the benefit
-> that they can call their page-table manipulation functions directly and
-> without locks, because they can make the necessary assumptions. The
-> IOMMU-API mapping/unmapping path can't make these assumptions because it
-> is also used for non-DMA-API use-cases.
->
-> So before we can move the AMD and Intel drivers to the generic DMA-API
-> implementation we need to solve this problem to not introduce new
-> scalability regressions.
->
-> Regards,
->
->         Joerg
->
+Well, that's exactly the problem that I'm trying to solve. The problem
+is that .translate() translates from the DT number space to the GPIO or
+IRQ number space. However, since gpiochip_to_irq() now wants to call the
+irq_create_fwspec_mapping() interface, it must convert from the offset
+(in GPIO space) into the DT number space, which is what that function
+expects.
+
+Thierry
+
+--JP+T4n/bALQSJXh8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz1DqUACgkQ3SOs138+
+s6FVhA/+Ntg+Cx3rozwF01ZERFalnR9/BSEZVnaumyiI7sPBN7oUjVKDz2STSBx9
+afn5lhn/4zkPKoQSJxSOI/r2O7rTURcgI5oxk7tF2yqGeczzAK5vwIcT5G0nSJuT
+TkXRlJ9zfqtPyeB2Yx4GfCWSEH/Vr41qyvSkguXh/i9W6BvLa2P6bswPnlyAxfNT
+Koqvr3s1n8XTAe0I9LgMfOysi4z11rkFzFa+mlYUKZ3AEcugwmaq7YB+Vh/h/3tB
+kGujCh54G7A+pS4btTFMh838a87X1BsK1wmGYEl6IMGtvIgFgjLXH5OsqY6v7w27
+xsy9mSsJvjqkgs3g0ket7A98fJj2cCyPwizWcw7E928I2gsycFTme1eD15Lqc67g
+9bs5u4qYz3XmlQKwpfcJrclWOuf2t4oLz1oOmGSN23BgCaeN0LeC8bNwz3qRQike
+PF3OjFVuT2akYLqdwWulq7QuChpF+MM08gxyGrDzi5r6LeseHW1pCxkkx1232UdW
+zCkLy0sB2REYnGtehK1tPxQsFlgdvpcGkFT/OO8GUs8SlFTi6KMV05obpLyKM5Kr
+M2zy80BLHRqTt92WkFbDpDjJDjPSI5/TDIoLeyfygwHnyHYRQgcFK3Amd3ymEkO+
+I41b2VVXfoJKe+5jvXJaCOe5k4BfwEzhX9se78FozBsPLC7VnIw=
+=9g0c
+-----END PGP SIGNATURE-----
+
+--JP+T4n/bALQSJXh8--
