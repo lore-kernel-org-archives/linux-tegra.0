@@ -1,84 +1,44 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
-Date: Mon, 3 Jun 2019 09:54:05 +0200
-Message-ID: <20190603075405.GB27753@ulmo>
-References: <20190529145322.20630-1-thierry.reding@gmail.com>
- <20190529145322.20630-2-thierry.reding@gmail.com>
- <CACRpkda_aK++k0eVHmGszgts86usaxbQ9uU0kqAzAjapK8AOQg@mail.gmail.com>
- <CACRpkdb6OjHZGgDHXH8gfi0WwzX8170zHJKbpbnSRv+UsZvfhw@mail.gmail.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v3 0/4] iommu/amd: Convert the AMD iommu driver to the
+ dma-iommu api
+Date: Mon, 3 Jun 2019 12:51:58 +0200
+Message-ID: <20190603105158.GL12745@8bytes.org>
+References: <20190506185207.31069-1-tmurphy@arista.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TRYliJ5NKNqkz5bu"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdb6OjHZGgDHXH8gfi0WwzX8170zHJKbpbnSRv+UsZvfhw@mail.gmail.com>
+In-Reply-To: <20190506185207.31069-1-tmurphy@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Tom Murphy <tmurphy@arista.com>
+Cc: iommu@lists.linux-foundation.org, murphyt7@tcd.ie, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Tom,
 
---TRYliJ5NKNqkz5bu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 06, 2019 at 07:52:02PM +0100, Tom Murphy wrote:
+> Convert the AMD iommu driver to the dma-iommu api. Remove the iova
+> handling and reserve region code from the AMD iommu driver.
 
-On Sun, Jun 02, 2019 at 10:35:22PM +0200, Linus Walleij wrote:
-> On Sun, Jun 2, 2019 at 3:51 PM Linus Walleij <linus.walleij@linaro.org> w=
-rote:
-> > On Wed, May 29, 2019 at 4:53 PM Thierry Reding <thierry.reding@gmail.co=
-m> wrote:
-> >
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >
-> > > Hierarchical IRQ domains can be used to stack different IRQ controlle=
-rs
-> > > on top of each other. One specific use-case where this can be useful =
-is
-> > > if a power management controller has top-level controls for wakeup
-> > > interrupts. In such cases, the power management controller can be a
-> > > parent to other interrupt controllers and program additional registers
-> > > when an IRQ has its wake capability enabled or disabled.
-> > >
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > > Changes in v3:
-> > > - use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
-> > > - add missing kerneldoc for new parent_domain field
-> > > - keep IRQ_DOMAIN dependency for clarity
-> >
-> > Actually I applied the patch, and dropped the two lines making
-> > it possible to override .to_irq() for now, so I can illustrate my
-> > idea on top. If I manage.
->=20
-> Bah I rewrote the whole think as I want it, maybe my ideas are stupid
-> but take a look at it, also very interested in input from the irqchip
-> maintainers.
->=20
-> Sending it out as RFC in a moment.
+Thank you for your work on this! I appreciate that much, but I am not
+sure we are ready to make that move for the AMD and Intel IOMMU drivers
+yet.
 
-Okay, taking a look.
+My main concern right now is that these changes will add a per-page
+table lock into the fast-path for dma-mapping operations. There has been
+much work in the past to remove all locking from these code-paths and
+make it scalable on x86.
 
-Thierry
+The dma-ops implementations in the x86 IOMMU drivers have the benefit
+that they can call their page-table manipulation functions directly and
+without locks, because they can make the necessary assumptions. The
+IOMMU-API mapping/unmapping path can't make these assumptions because it
+is also used for non-DMA-API use-cases.
 
---TRYliJ5NKNqkz5bu
-Content-Type: application/pgp-signature; name="signature.asc"
+So before we can move the AMD and Intel drivers to the generic DMA-API
+implementation we need to solve this problem to not introduce new
+scalability regressions.
 
------BEGIN PGP SIGNATURE-----
+Regards,
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz00h0ACgkQ3SOs138+
-s6EZfw/7BJannL3kB1Nh/+VGh/5w17Bx5M9krNi9ZnAdgOmUdIkhU2jgYJeq9rHL
-lL0mqmiTp3kOC/P6UaWZDuP9Ua2c4A4tWyDm1f1/mFntd+jwdf/RCkeeGwlGKeaP
-Hjk+xQLfb+iJGAIDE/yFuObO5/4NbcqtfNr62odpmhy/X2AvZT09bDIRJEtkrPdw
-Eg2QIsO7Y7IQ7FaIpL353upu01V7xgiFxJuTq883zLT7TEF//RxnpYe3KEqAwVA2
-Vj18fFheP0kJbFfsQWeHw7Dald+4pENxQzfq2eohnl2BdwkbFWLEwlNRcozhLgLP
-cT8AX1H1L//+aOSZAnvm2QvVNsvkMyGELs1rznw6+82/BS3+bZctpDXUoJ9gl1Bc
-nvZjzKftd3cUkr10K5tPgXiM/72MqQWflEHhlJ68kA2sJrOuoTEpRyNgXpIBqHuX
-StSVhjqQU3UHP/QgviN1Bp/QpEI+1NPjrO1debtHdiKEa/JcwqGuzl/6bcckBwoC
-0bT1bb/5DE5IFYLixCQndPaX5rWnV6xX7FDttEi7+1f6QtqvH1tkexhddKWNOCOB
-rCMlNgDYTpbV0wVNixKgepiJLbUw3xxX/UMOZV161MQayl9ahIKa1y1zJWTzjlPg
-nc6cNCt8uaYBLH/rm0w4nQ4VN2EypDKEn7fjj3Sk8QqLYz0s3mE=
-=lwgL
------END PGP SIGNATURE-----
-
---TRYliJ5NKNqkz5bu--
+	Joerg
