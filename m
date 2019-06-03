@@ -1,73 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
-Date: Mon, 3 Jun 2019 19:30:19 +0200
-Message-ID: <CACRpkdaiZEqLWYGoVLYTzWEc-hX10kT4bXqx3bUynBDcyStLjw@mail.gmail.com>
-References: <20190529145322.20630-1-thierry.reding@gmail.com>
- <20190529145322.20630-2-thierry.reding@gmail.com> <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
- <20190603075324.GA27753@ulmo> <CACRpkda47EX981Dw=jLrU=PHn50+AQhJmpVRWJ9uJEQdcAsrTw@mail.gmail.com>
- <20190603121227.GB30132@ulmo>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.19 00/32] 4.19.48-stable review
+Date: Mon, 3 Jun 2019 19:33:00 +0100
+Message-ID: <87bedfca-5d88-a697-1f10-25fe964d69a3@nvidia.com>
+References: <20190603090308.472021390@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190603121227.GB30132@ulmo>
+In-Reply-To: <20190603090308.472021390@linuxfoundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 2:12 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Mon, Jun 03, 2019 at 12:58:02PM +0200, Linus Walleij wrote:
-> > On Mon, Jun 3, 2019 at 9:53 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > Me
-> >
-> > > > Please drop this. The default .to_irq() should be good for everyone.
-> > > > Also patch 2/2 now contains a identical copy of the gpiolib
-> > > > .to_irq() which I suspect you indended to drop, actually.
-> > >
-> > > It's not actually identical to the gpiolib implementation. There's still
-> > > the conversion to the non-linear DT representation for GPIO specifiers
-> > > from the linear GPIO number space, which is not taken care of by the
-> > > gpiolib variant. That's precisely the point why this patch makes it
-> > > possible to let the driver override things.
-> >
-> > OK something is off here, because the purpose of the irqdomain
-> > is exactly to translate between different number spaces, so it should
-> > not happen in the .to_irq() function at all.
-> >
-> > Irqdomain uses .map() in the old variant and .translate() in the
-> > hierarchical variant to do this, so something is skewed.
-> >
-> > All .to_irq() should ever do is just call the irqdomain to do the
-> > translation, no other logic (unless I am mistaken) so we should
-> > be able to keep the simple .to_irq() logic inside gpiolib.
->
-> Well, that's exactly the problem that I'm trying to solve. The problem
-> is that .translate() translates from the DT number space to the GPIO or
-> IRQ number space. However, since gpiochip_to_irq() now wants to call the
-> irq_create_fwspec_mapping() interface, it must convert from the offset
-> (in GPIO space) into the DT number space, which is what that function
-> expects.
 
-It sounds a lot like you want to use the irqdomain APIs for
-something they were not made for.
+On 03/06/2019 10:07, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.48 release.
+> There are 32 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 05 Jun 2019 09:02:49 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.48-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The irqdomain in general remaps from hwirqs to Linux irqs.
+All tests are passing for Tegra ...
 
-The hierarchical irqdomain 1-to-1 remaps hwirqs on interrupt
-controller A to hwirqs on interrupt controller B, then to Linux irqs.
+Test results for stable-v4.19:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-The DT number space is not normally any concern of the
-irqdomain, and is not normally used to shape up that.
+Linux version:	4.19.48-rc1-g322f407
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-But how to do it is another question. Maybe making it
-possible to override .translate() is what we need to do,
-as you say.
+Cheers
+Jon
 
-That way .translate() can account for weirdness in the DT,
-get the real hwirq out and proceed to translate as usual.
-
-And then in the end the irqdomain .translate() is indeed
-used to fix up weird DTs.... well. Hm this one is strange. :)
-
-Yours,
-Linus Walleij
+-- 
+nvpublic
