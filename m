@@ -1,136 +1,84 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
-Date: Mon, 3 Jun 2019 09:53:24 +0200
-Message-ID: <20190603075324.GA27753@ulmo>
+Date: Mon, 3 Jun 2019 09:54:05 +0200
+Message-ID: <20190603075405.GB27753@ulmo>
 References: <20190529145322.20630-1-thierry.reding@gmail.com>
  <20190529145322.20630-2-thierry.reding@gmail.com>
- <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
+ <CACRpkda_aK++k0eVHmGszgts86usaxbQ9uU0kqAzAjapK8AOQg@mail.gmail.com>
+ <CACRpkdb6OjHZGgDHXH8gfi0WwzX8170zHJKbpbnSRv+UsZvfhw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+        protocol="application/pgp-signature"; boundary="TRYliJ5NKNqkz5bu"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
+In-Reply-To: <CACRpkdb6OjHZGgDHXH8gfi0WwzX8170zHJKbpbnSRv+UsZvfhw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---+QahgC5+KEYLbs62
+--TRYliJ5NKNqkz5bu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 02, 2019 at 03:46:00PM +0200, Linus Walleij wrote:
-> On Wed, May 29, 2019 at 4:53 PM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
->=20
-> > From: Thierry Reding <treding@nvidia.com>
+On Sun, Jun 02, 2019 at 10:35:22PM +0200, Linus Walleij wrote:
+> On Sun, Jun 2, 2019 at 3:51 PM Linus Walleij <linus.walleij@linaro.org> w=
+rote:
+> > On Wed, May 29, 2019 at 4:53 PM Thierry Reding <thierry.reding@gmail.co=
+m> wrote:
 > >
-> > Hierarchical IRQ domains can be used to stack different IRQ controllers
-> > on top of each other. One specific use-case where this can be useful is
-> > if a power management controller has top-level controls for wakeup
-> > interrupts. In such cases, the power management controller can be a
-> > parent to other interrupt controllers and program additional registers
-> > when an IRQ has its wake capability enabled or disabled.
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >
+> > > Hierarchical IRQ domains can be used to stack different IRQ controlle=
+rs
+> > > on top of each other. One specific use-case where this can be useful =
+is
+> > > if a power management controller has top-level controls for wakeup
+> > > interrupts. In such cases, the power management controller can be a
+> > > parent to other interrupt controllers and program additional registers
+> > > when an IRQ has its wake capability enabled or disabled.
+> > >
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> > > Changes in v3:
+> > > - use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
+> > > - add missing kerneldoc for new parent_domain field
+> > > - keep IRQ_DOMAIN dependency for clarity
 > >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v3:
-> > - use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
-> > - add missing kerneldoc for new parent_domain field
-> > - keep IRQ_DOMAIN dependency for clarity
-> >
-> > Changes in v2:
-> > - select IRQ_DOMAIN_HIERARCHY to avoid build failure
-> > - move more code into the gpiolib core
+> > Actually I applied the patch, and dropped the two lines making
+> > it possible to override .to_irq() for now, so I can illustrate my
+> > idea on top. If I manage.
 >=20
-> This is looking really good!
+> Bah I rewrote the whole think as I want it, maybe my ideas are stupid
+> but take a look at it, also very interested in input from the irqchip
+> maintainers.
 >=20
-> >  config GPIOLIB_IRQCHIP
-> >         select IRQ_DOMAIN
-> > +       select IRQ_DOMAIN_HIERARCHY
-> >         bool
->=20
-> Hm OK I guess. It would be ugly to ifdef all hierarchy
-> code in gpiolib.
->=20
-> >  static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
-> >  {
-> > +       struct irq_domain *domain =3D chip->irq.domain;
-> > +
-> >         if (!gpiochip_irqchip_irq_valid(chip, offset))
-> >                 return -ENXIO;
-> >
-> > +       if (irq_domain_is_hierarchy(domain)) {
-> > +               struct irq_fwspec spec;
-> > +
-> > +               spec.fwnode =3D domain->fwnode;
-> > +               spec.param_count =3D 2;
-> > +               spec.param[0] =3D offset;
-> > +               spec.param[1] =3D IRQ_TYPE_NONE;
-> > +
-> > +               return irq_create_fwspec_mapping(&spec);
-> > +       }
-> > +
-> >         return irq_create_mapping(chip->irq.domain, offset);
->=20
-> This is looking really good!
->=20
-> > +       /*
-> > +        * Allow GPIO chips to override the ->to_irq() if they really n=
-eed to.
-> > +        * This should only be very rarely needed, the majority should =
-be fine
-> > +        * with gpiochip_to_irq().
-> > +        */
-> > +       if (!gpiochip->to_irq)
-> > +               gpiochip->to_irq =3D gpiochip_to_irq;
->=20
-> Please drop this. The default .to_irq() should be good for everyone.
-> Also patch 2/2 now contains a identical copy of the gpiolib
-> .to_irq() which I suspect you indended to drop, actually.
+> Sending it out as RFC in a moment.
 
-It's not actually identical to the gpiolib implementation. There's still
-the conversion to the non-linear DT representation for GPIO specifiers
-=66rom the linear GPIO number space, which is not taken care of by the
-gpiolib variant. That's precisely the point why this patch makes it
-possible to let the driver override things.
-
-More generally, if we drop this we restrict access to the built-in
-hierarchical support to devices that use 2 cells as the specifier. Most
-drivers support that, but there are a few exceptions:
-
-  - gpio-lpc32xx
-  - gpio-mt7621
-  - gpio-pxa
-
-gpio-pxa seems like it's really just two-cell, but the other two are
-definitely different. As discussed before gpio-tegra186 is also
-different but could be tweaked into doing two-cell by generating the
-GPIO/IRQ map upfront.
+Okay, taking a look.
 
 Thierry
 
---+QahgC5+KEYLbs62
+--TRYliJ5NKNqkz5bu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz00fEACgkQ3SOs138+
-s6ExUg/+Kgpk/o+5xU/+vPkJcf5qgh8ZH6Ieri+vtLVy6O9OIMHNXZB9Lq9DLVB7
-Z21poqg0pUmpUttaCmGPkecyWqBH1vkgkZWLiLJ5BD40TiHFiOCHDC1MhrEBocsl
-k5RDqV/29pRq+itQq8o31RoxPvvYaKzgYd2ReFtOcptI901cF8m905TICVk480sZ
-WCe74YNqMTCQSg7ZMM2LkCVz+vZsCdbza1OtsL0rzIXpdAAvmGNtNMzYhZBn+l7b
-LmhG82DM9Zu53rQaVgderWXO/3XhQo7JQQTgTEXNP9bSpxeRU0gxnR7Wy1VtD+yr
-+mKRLLZ0oEUAhMg8RAxJPeFPPCZB+Xu7T2l9cL/BewHAH6V/1DompdJPokWLw8+Q
-v3CKY8962TcyrQo3tcDHnYUjmsiS69L+P5/Q5aydRZ8aGjKykrBfEF87D693uFm6
-nqShCP6IHFxJnWVIYSEC9GfHuKW+Osae55lqReE5zJdtMnpmRcl5qSZIywi1VUYE
-BkxBL/gf6WjSqjdJxdHYje87Dhz0/OhKktGPLGRt04MfrOIAHaTUXjdIfJ28oylG
-sIavcbuO6d2mdBFAgGeQ/XpF1/8OPBSWHNyMwWw3nPt1vvjJaGMvfd1DrTBHJ52K
-MSGfRQ2/Ot14UGU6sYz3ZbZwZm9T1d5u5OZTTe7FN7sxib1/Kuk=
-=O3rF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz00h0ACgkQ3SOs138+
+s6EZfw/7BJannL3kB1Nh/+VGh/5w17Bx5M9krNi9ZnAdgOmUdIkhU2jgYJeq9rHL
+lL0mqmiTp3kOC/P6UaWZDuP9Ua2c4A4tWyDm1f1/mFntd+jwdf/RCkeeGwlGKeaP
+Hjk+xQLfb+iJGAIDE/yFuObO5/4NbcqtfNr62odpmhy/X2AvZT09bDIRJEtkrPdw
+Eg2QIsO7Y7IQ7FaIpL353upu01V7xgiFxJuTq883zLT7TEF//RxnpYe3KEqAwVA2
+Vj18fFheP0kJbFfsQWeHw7Dald+4pENxQzfq2eohnl2BdwkbFWLEwlNRcozhLgLP
+cT8AX1H1L//+aOSZAnvm2QvVNsvkMyGELs1rznw6+82/BS3+bZctpDXUoJ9gl1Bc
+nvZjzKftd3cUkr10K5tPgXiM/72MqQWflEHhlJ68kA2sJrOuoTEpRyNgXpIBqHuX
+StSVhjqQU3UHP/QgviN1Bp/QpEI+1NPjrO1debtHdiKEa/JcwqGuzl/6bcckBwoC
+0bT1bb/5DE5IFYLixCQndPaX5rWnV6xX7FDttEi7+1f6QtqvH1tkexhddKWNOCOB
+rCMlNgDYTpbV0wVNixKgepiJLbUw3xxX/UMOZV161MQayl9ahIKa1y1zJWTzjlPg
+nc6cNCt8uaYBLH/rm0w4nQ4VN2EypDKEn7fjj3Sk8QqLYz0s3mE=
+=lwgL
 -----END PGP SIGNATURE-----
 
---+QahgC5+KEYLbs62--
+--TRYliJ5NKNqkz5bu--
