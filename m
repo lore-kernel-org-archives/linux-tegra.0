@@ -1,53 +1,64 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.1 00/40] 5.1.7-stable review
-Date: Mon, 3 Jun 2019 19:34:09 +0100
-Message-ID: <75303365-74d0-de3c-2f54-5cff3469d8a0@nvidia.com>
-References: <20190603090522.617635820@linuxfoundation.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v4 00/10] NVIDIA Tegra clocksource driver improvements
+Date: Mon,  3 Jun 2019 21:59:38 +0300
+Message-ID: <20190603185948.30438-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
-On 03/06/2019 10:08, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.7 release.
-> There are 40 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed 05 Jun 2019 09:04:46 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+This series primarily unifies the driver code across all Tegra SoC
+generations. In a result the clocksources are allocated per-CPU on
+older Tegra's and have a higher rating than the arch-timer where
+appropriate, the newer Tegra210 is getting support for microsecond
+clocksource and the driver's code is getting much cleaner.
 
-All tests are passing for Tegra ...
+The series was extensively tested on Tegra20 and Tegra30.
 
-Test results for stable-v5.1:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+Changelog:
 
-Linux version:	5.1.7-rc1-ge674455
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+v4: In the comment to v3 Peter De Schrijver pointed out that arch-timer
+    isn't affected by DVFS changes and thus it is preferred over tegra-timer
+    on [T114, T210). Added new patch to address that: "Lower clocksource
+    rating for some Tegra's".
 
-Cheers
-Jon
+    Daniel Lezcano suggested that it will be worthwhile to rename driver's
+    source file as driver now covers more SoC generations than it initially
+    did. Hence the new "Rename timer-tegra20.c to timer-tegra.c" patch.
+
+v3: Fixed compilation on ARM64. Turned out that it doesn't have the
+    delay-timer, thanks to Nicolas Chauvet for the report.
+
+    Added new "Support COMPILE_TEST universally" patch for better
+    compile-test coverage.
+
+v2: Rebased on recent linux-next. Now all of #ifdef's are removed from the
+    code due to the recent patch that generalized persistent clocksource.
+
+    Couple other minor cosmetic changes.
+
+Dmitry Osipenko (10):
+  clocksource/drivers/tegra: Support per-CPU timers on all Tegra's
+  clocksource/drivers/tegra: Unify timer code
+  clocksource/drivers/tegra: Reset hardware state on init
+  clocksource/drivers/tegra: Replace readl/writel with relaxed versions
+  clocksource/drivers/tegra: Release all IRQ's on request_irq() error
+  clocksource/drivers/tegra: Minor code clean up
+  clocksource/drivers/tegra: Use SPDX identifier
+  clocksource/drivers/tegra: Support COMPILE_TEST universally
+  clocksource/drivers/tegra: Lower clocksource rating for some Tegra's
+  clocksource/drivers/tegra: Rename timer-tegra20.c to timer-tegra.c
+
+ drivers/clocksource/Kconfig                   |   2 +-
+ drivers/clocksource/Makefile                  |   2 +-
+ .../{timer-tegra20.c => timer-tegra.c}        | 296 +++++++++---------
+ 3 files changed, 148 insertions(+), 152 deletions(-)
+ rename drivers/clocksource/{timer-tegra20.c => timer-tegra.c} (54%)
 
 -- 
-nvpublic
+2.21.0
