@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 01/10] clocksource/drivers/tegra: Support per-CPU timers on all Tegra's
-Date: Mon,  3 Jun 2019 21:59:39 +0300
-Message-ID: <20190603185948.30438-2-digetx@gmail.com>
+Subject: [PATCH v4 02/10] clocksource/drivers/tegra: Unify timer code
+Date: Mon,  3 Jun 2019 21:59:40 +0300
+Message-ID: <20190603185948.30438-3-digetx@gmail.com>
 References: <20190603185948.30438-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,211 +12,217 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, 
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Assign TMR1-4 per-CPU core on 32bit Tegra's in a way it is done for
-Tegra210. In a result each core can handle its own timer events, less
-code is unique to ARM64 and Tegra's clock events driver now has higher
-rating on all Tegra's, replacing the ARM's TWD timer which isn't very
-accurate due to the clock rate jitter caused by CPU frequency scaling.
+Tegra132 is 64bit platform and it has the tegra20-timer hardware unit.
+Right now the corresponding timer code isn't compiled for ARM64, remove
+ifdef'iness from the code and compile tegra20-timer for both 32 and 64 bit
+platforms. Also note that like the older generations, Tegra210 has the
+microseconds counter, hence the timer_us clocksource is now made available
+for Tegra210 as well.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra20.c | 120 ++++++++++------------------
- 1 file changed, 43 insertions(+), 77 deletions(-)
+ drivers/clocksource/timer-tegra20.c | 111 +++++++++++++++-------------
+ 1 file changed, 60 insertions(+), 51 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index 919b3568c495..58e8bb6deac9 100644
+index 58e8bb6deac9..57e7aa2b80a3 100644
 --- a/drivers/clocksource/timer-tegra20.c
 +++ b/drivers/clocksource/timer-tegra20.c
-@@ -49,13 +49,18 @@
+@@ -30,10 +30,6 @@
+ 
+ #include "timer-of.h"
+ 
+-#ifdef CONFIG_ARM
+-#include <asm/mach/time.h>
+-#endif
+-
+ #define RTC_SECONDS            0x08
+ #define RTC_SHADOW_SECONDS     0x0c
+ #define RTC_MILLISECONDS       0x10
+@@ -48,25 +44,17 @@
+ #define TIMER_PCR		0x4
  #define TIMER_PCR_INTR_CLR	BIT(30)
  
- #ifdef CONFIG_ARM
--#define TIMER_CPU0		0x50 /* TIMER3 */
-+#define TIMER_CPU0		0x00 /* TIMER1 */
-+#define TIMER_CPU2		0x50 /* TIMER3 */
-+#define TIMER1_IRQ_IDX		0
-+#define IRQ_IDX_FOR_CPU(cpu)	(TIMER1_IRQ_IDX + cpu)
-+#define TIMER_BASE_FOR_CPU(cpu)	\
-+	(((cpu) & 1) * 8 + ((cpu) < 2 ? TIMER_CPU0 : TIMER_CPU2))
- #else
- #define TIMER_CPU0		0x90 /* TIMER10 */
+-#ifdef CONFIG_ARM
+-#define TIMER_CPU0		0x00 /* TIMER1 */
+-#define TIMER_CPU2		0x50 /* TIMER3 */
++#define TIMER1_BASE		0x00
++#define TIMER2_BASE		0x08
++#define TIMER3_BASE		0x50
++#define TIMER4_BASE		0x58
++#define TIMER10_BASE		0x90
++
+ #define TIMER1_IRQ_IDX		0
+-#define IRQ_IDX_FOR_CPU(cpu)	(TIMER1_IRQ_IDX + cpu)
+-#define TIMER_BASE_FOR_CPU(cpu)	\
+-	(((cpu) & 1) * 8 + ((cpu) < 2 ? TIMER_CPU0 : TIMER_CPU2))
+-#else
+-#define TIMER_CPU0		0x90 /* TIMER10 */
  #define TIMER10_IRQ_IDX		10
- #define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
+-#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
+-#define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
 -#endif
- #define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
-+#endif
  
  static u32 usec_config;
  static void __iomem *timer_reg_base;
-@@ -118,7 +123,6 @@ static void tegra_timer_resume(struct clock_event_device *evt)
- 	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
- }
+-#ifdef CONFIG_ARM
+-static struct delay_timer tegra_delay_timer;
+-#endif
  
--#ifdef CONFIG_ARM64
- static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
- 	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE,
- 
-@@ -159,33 +163,8 @@ static int tegra_timer_stop(unsigned int cpu)
- 
+ static int tegra_timer_set_next_event(unsigned long cycles,
+ 					 struct clock_event_device *evt)
+@@ -164,17 +152,23 @@ static int tegra_timer_stop(unsigned int cpu)
  	return 0;
  }
--#else /* CONFIG_ARM */
--static struct timer_of tegra_to = {
--	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE | TIMER_OF_IRQ,
--
--	.clkevt = {
--		.name = "tegra_timer",
--		.rating	= 300,
--		.features = CLOCK_EVT_FEAT_ONESHOT |
--			    CLOCK_EVT_FEAT_PERIODIC |
--			    CLOCK_EVT_FEAT_DYNIRQ,
--		.set_next_event	= tegra_timer_set_next_event,
--		.set_state_shutdown = tegra_timer_shutdown,
--		.set_state_periodic = tegra_timer_set_periodic,
--		.set_state_oneshot = tegra_timer_shutdown,
--		.tick_resume = tegra_timer_shutdown,
--		.suspend = tegra_timer_suspend,
--		.resume = tegra_timer_resume,
--		.cpumask = cpu_possible_mask,
--	},
--
--	.of_irq = {
--		.index = 2,
--		.flags = IRQF_TIMER | IRQF_TRIGGER_HIGH,
--		.handler = tegra_timer_isr,
--	},
--};
  
-+#ifdef CONFIG_ARM
+-#ifdef CONFIG_ARM
  static u64 notrace tegra_read_sched_clock(void)
  {
  	return readl(timer_reg_base + TIMERUS_CNTR_1US);
-@@ -222,10 +201,12 @@ static struct clocksource suspend_rtc_clocksource = {
- };
- #endif
+ }
  
--static int tegra_timer_common_init(struct device_node *np, struct timer_of *to)
-+static int tegra_init_timer(struct device_node *np, bool tegra20)
++#ifdef CONFIG_ARM
+ static unsigned long tegra_delay_timer_read_counter_long(void)
  {
--	int ret = 0;
-+	struct timer_of *to;
-+	int cpu, ret;
+ 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
+ }
  
-+	to = this_cpu_ptr(&tegra_to);
- 	ret = timer_of_init(np, to);
- 	if (ret < 0)
- 		goto out;
-@@ -267,29 +248,19 @@ static int tegra_timer_common_init(struct device_node *np, struct timer_of *to)
- 		goto out;
- 	}
++static struct delay_timer tegra_delay_timer = {
++	.read_current_timer = tegra_delay_timer_read_counter_long,
++	.freq = 1000000,
++};
++#endif
++
+ static struct timer_of suspend_rtc_to = {
+ 	.flags = TIMER_OF_BASE | TIMER_OF_CLOCK,
+ };
+@@ -199,9 +193,34 @@ static struct clocksource suspend_rtc_clocksource = {
+ 	.mask	= CLOCKSOURCE_MASK(32),
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
+ };
+-#endif
  
--	writel(usec_config, timer_of_base(to) + TIMERUS_USEC_CFG);
--
--out:
--	return ret;
--}
--
--#ifdef CONFIG_ARM64
--static int __init tegra_init_timer(struct device_node *np)
--{
--	int cpu, ret = 0;
--	struct timer_of *to;
--
--	to = this_cpu_ptr(&tegra_to);
--	ret = tegra_timer_common_init(np, to);
--	if (ret < 0)
--		goto out;
-+	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
+-static int tegra_init_timer(struct device_node *np, bool tegra20)
++static inline unsigned int tegra_base_for_cpu(int cpu, bool tegra20)
++{
++	if (tegra20) {
++		switch (cpu) {
++		case 0:
++			return TIMER1_BASE;
++		case 1:
++			return TIMER2_BASE;
++		case 2:
++			return TIMER3_BASE;
++		default:
++			return TIMER4_BASE;
++		}
++	}
++
++	return TIMER10_BASE + cpu * 8;
++}
++
++static inline unsigned int tegra_irq_idx_for_cpu(int cpu, bool tegra20)
++{
++	if (tegra20)
++		return TIMER1_IRQ_IDX + cpu;
++
++	return TIMER10_IRQ_IDX + cpu;
++}
++
++static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ {
+ 	struct timer_of *to;
+ 	int cpu, ret;
+@@ -252,6 +271,8 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
  
  	for_each_possible_cpu(cpu) {
--		struct timer_of *cpu_to;
-+		struct timer_of *cpu_to = per_cpu_ptr(&tegra_to, cpu);
-+
-+		/*
-+		 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
-+		 * parent clock.
-+		 */
-+		if (tegra20)
-+			cpu_to->of_clk.rate = 1000000;
+ 		struct timer_of *cpu_to = per_cpu_ptr(&tegra_to, cpu);
++		unsigned int base = tegra_base_for_cpu(cpu, tegra20);
++		unsigned int idx = tegra_irq_idx_for_cpu(cpu, tegra20);
  
--		cpu_to = per_cpu_ptr(&tegra_to, cpu);
- 		cpu_to->of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(cpu);
--		cpu_to->of_clk.rate = timer_of_rate(to);
+ 		/*
+ 		 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
+@@ -260,10 +281,10 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
+ 		if (tegra20)
+ 			cpu_to->of_clk.rate = 1000000;
+ 
+-		cpu_to->of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(cpu);
++		cpu_to = per_cpu_ptr(&tegra_to, cpu);
++		cpu_to->of_base.base = timer_reg_base + base;
  		cpu_to->clkevt.cpumask = cpumask_of(cpu);
- 		cpu_to->clkevt.irq =
- 			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
-@@ -331,43 +302,39 @@ static int __init tegra_init_timer(struct device_node *np)
- 	timer_of_cleanup(to);
+-		cpu_to->clkevt.irq =
+-			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
++		cpu_to->clkevt.irq = irq_of_parse_and_map(np, idx);
+ 		if (!cpu_to->clkevt.irq) {
+ 			pr_err("%s: can't map IRQ for CPU%d\n",
+ 			       __func__, cpu);
+@@ -283,6 +304,18 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
+ 		}
+ 	}
+ 
++	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
++
++	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
++				    "timer_us", 1000000,
++				    300, 32, clocksource_mmio_readl_up);
++	if (ret)
++		pr_err("failed to register clocksource: %d\n", ret);
++
++#ifdef CONFIG_ARM
++	register_current_timer_delay(&tegra_delay_timer);
++#endif
++
+ 	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
+ 			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
+ 			  tegra_timer_stop);
+@@ -303,39 +336,17 @@ static int tegra_init_timer(struct device_node *np, bool tegra20)
  	return ret;
  }
-+
-+#ifdef CONFIG_ARM64
-+static int __init tegra210_init_timer(struct device_node *np)
-+{
-+	return tegra_init_timer(np, false);
-+}
-+TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_init_timer);
- #else /* CONFIG_ARM */
--static int __init tegra_init_timer(struct device_node *np)
-+static int __init tegra20_init_timer(struct device_node *np)
+ 
+-#ifdef CONFIG_ARM64
+ static int __init tegra210_init_timer(struct device_node *np)
  {
--	int ret = 0;
-+	struct timer_of *to;
-+	int err;
- 
--	ret = tegra_timer_common_init(np, &tegra_to);
--	if (ret < 0)
--		goto out;
-+	err = tegra_init_timer(np, true);
-+	if (err)
-+		return err;
- 
--	tegra_to.of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(0);
--	tegra_to.of_clk.rate = 1000000; /* microsecond timer */
-+	to = this_cpu_ptr(&tegra_to);
- 
- 	sched_clock_register(tegra_read_sched_clock, 32,
--			     timer_of_rate(&tegra_to));
--	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
--				    "timer_us", timer_of_rate(&tegra_to),
-+			     timer_of_rate(to));
-+	err = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
-+				    "timer_us", timer_of_rate(to),
- 				    300, 32, clocksource_mmio_readl_up);
--	if (ret) {
--		pr_err("Failed to register clocksource\n");
--		goto out;
--	}
-+	if (err)
-+		pr_err("Failed to register clocksource: %d\n", err);
- 
- 	tegra_delay_timer.read_current_timer =
- 			tegra_delay_timer_read_counter_long;
--	tegra_delay_timer.freq = timer_of_rate(&tegra_to);
-+	tegra_delay_timer.freq = timer_of_rate(to);
- 	register_current_timer_delay(&tegra_delay_timer);
- 
--	clockevents_config_and_register(&tegra_to.clkevt,
--					timer_of_rate(&tegra_to),
--					0x1,
--					0x1fffffff);
--
--	return ret;
--out:
--	timer_of_cleanup(&tegra_to);
--
--	return ret;
-+	return 0;
+ 	return tegra_init_timer(np, false);
  }
+ TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_init_timer);
+-#else /* CONFIG_ARM */
++
+ static int __init tegra20_init_timer(struct device_node *np)
+ {
+-	struct timer_of *to;
+-	int err;
+-
+-	err = tegra_init_timer(np, true);
+-	if (err)
+-		return err;
+-
+-	to = this_cpu_ptr(&tegra_to);
+-
+-	sched_clock_register(tegra_read_sched_clock, 32,
+-			     timer_of_rate(to));
+-	err = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+-				    "timer_us", timer_of_rate(to),
+-				    300, 32, clocksource_mmio_readl_up);
+-	if (err)
+-		pr_err("Failed to register clocksource: %d\n", err);
+-
+-	tegra_delay_timer.read_current_timer =
+-			tegra_delay_timer_read_counter_long;
+-	tegra_delay_timer.freq = timer_of_rate(to);
+-	register_current_timer_delay(&tegra_delay_timer);
+-
+-	return 0;
++	return tegra_init_timer(np, true);
+ }
++TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
  
  static int __init tegra20_init_rtc(struct device_node *np)
-@@ -383,6 +350,5 @@ static int __init tegra20_init_rtc(struct device_node *np)
+ {
+@@ -350,5 +361,3 @@ static int __init tegra20_init_rtc(struct device_node *np)
  	return 0;
  }
  TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
-+TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
- #endif
--TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra_init_timer);
--TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra_init_timer);
+-TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+-#endif
 -- 
 2.21.0
