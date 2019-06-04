@@ -1,62 +1,94 @@
-From: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] iommu: Add gfp parameter to iommu_ops::map
-Date: Tue, 4 Jun 2019 14:24:42 -0700
-Message-ID: <CAF6AEGuk8GkbZ_XZJg6Gbpng+BaKjVHQ9M-6nGW0pi+h_Nh3Hw@mail.gmail.com>
-References: <20190506185207.31069-1-tmurphy@arista.com>
-	<20190506185207.31069-2-tmurphy@arista.com>
-	<33a1e3c1-1906-9e45-d060-e7998424973b@arm.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 07/16] PM / devfreq: tegra: Properly disable interrupts
+Date: Wed, 5 Jun 2019 01:55:05 +0300
+Message-ID: <2b09a162-a090-901b-01cf-46b116a87a7a@gmail.com>
+References: <20190501233815.32643-1-digetx@gmail.com>
+ <20190501233815.32643-8-digetx@gmail.com> <20190604110744.GG16519@ulmo>
+ <c2f2a8c8-1f30-34aa-9b95-a7a44e0ec96f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <33a1e3c1-1906-9e45-d060-e7998424973b-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Tom Murphy <tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, murphyt7-/Zw1syy4LHg@public.gmane.orglis
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c2f2a8c8-1f30-34aa-9b95-a7a44e0ec96f@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 11:11 AM Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org> wrote:
->
-> On 06/05/2019 19:52, Tom Murphy wrote:
-> > Add a gfp_t parameter to the iommu_ops::map function.
-> > Remove the needless locking in the AMD iommu driver.
-> >
-> > The iommu_ops::map function (or the iommu_map function which calls it)
-> > was always supposed to be sleepable (according to Joerg's comment in
-> > this thread: https://lore.kernel.org/patchwork/patch/977520/ ) and so
-> > should probably have had a "might_sleep()" since it was written. However
-> > currently the dma-iommu api can call iommu_map in an atomic context,
-> > which it shouldn't do. This doesn't cause any problems because any iommu
-> > driver which uses the dma-iommu api uses gfp_atomic in it's
-> > iommu_ops::map function. But doing this wastes the memory allocators
-> > atomic pools.
->
-> Hmm, in some cases iommu_ops::unmap may need to allocate as well,
-> primarily if it needs to split a hugepage mapping. Should we pass flags
-> through there as well, or are we prepared to assume that that case will
-> happen rarely enough that it's fair to just assume GFP_ATOMIC? It won't
-> happen for DMA ops, but it's conceivable that other users such as GPU
-> drivers might make partial unmaps, and I doubt we could totally rule out
-> the wackiest ones doing so from non-sleeping contexts.
->
+04.06.2019 16:40, Dmitry Osipenko пишет:
+> 04.06.2019 14:07, Thierry Reding пишет:
+>> On Thu, May 02, 2019 at 02:38:06AM +0300, Dmitry Osipenko wrote:
+>>> There is no guarantee that interrupt handling isn't running in parallel
+>>> with tegra_actmon_disable_interrupts(), hence it is necessary to protect
+>>> DEV_CTRL register accesses and clear IRQ status with ACTMON's IRQ being
+>>> disabled in the Interrupt Controller in order to ensure that device
+>>> interrupt is indeed being disabled.
+>>>
+>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/devfreq/tegra-devfreq.c | 21 +++++++++++++++------
+>>>  1 file changed, 15 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+>>> index b65313fe3c2e..ce1eb97a2090 100644
+>>> --- a/drivers/devfreq/tegra-devfreq.c
+>>> +++ b/drivers/devfreq/tegra-devfreq.c
+>>> @@ -171,6 +171,8 @@ struct tegra_devfreq {
+>>>  	struct notifier_block	rate_change_nb;
+>>>  
+>>>  	struct tegra_devfreq_device devices[ARRAY_SIZE(actmon_device_configs)];
+>>> +
+>>> +	int irq;
+>>
+>> Interrupts are typically unsigned int.
+>>
+>>>  };
+>>>  
+>>>  struct tegra_actmon_emc_ratio {
+>>> @@ -417,6 +419,8 @@ static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
+>>>  	u32 val;
+>>>  	unsigned int i;
+>>>  
+>>> +	disable_irq(tegra->irq);
+>>> +
+>>>  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
+>>>  		dev = &tegra->devices[i];
+>>>  
+>>> @@ -427,9 +431,14 @@ static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
+>>>  		val &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+>>>  
+>>>  		device_writel(dev, val, ACTMON_DEV_CTRL);
+>>> +
+>>> +		device_writel(dev, ACTMON_INTR_STATUS_CLEAR,
+>>> +			      ACTMON_DEV_INTR_STATUS);
+>>>  	}
+>>>  
+>>>  	actmon_write_barrier(tegra);
+>>> +
+>>> +	enable_irq(tegra->irq);
+>>
+>> Why do we enable interrupts after this? Is there any use in having the
+>> top-level interrupt enabled if nothing's going to generate an interrupt
+>> anyway?
+> 
+> There is no real point in having the interrupt enabled other than to
+> keep the enable count balanced.
+> 
+> IIUC, we will need to disable IRQ at the driver's probe time (after
+> requesting the IRQ) if we want to avoid that (not really necessary)
+> balancing. This is probably something that could be improved in a
+> follow-up patches, if desired.
 
-jfyi, today we (well, drm/msm) only unmap entire buffers, so assuming
-there isn't any coelescense of adjacent buffers that happen to form a
-hugepage on ::map(), we are probably ok on ::unmap()..
+Nah, it's not worth the effort. It is quite problematic that we can't
+keep interrupt disabled during of devfreq_add_device() execution because
+it asks governor to enable the interrupt and the interrupt shall be
+disabled because we're using device's lock in the governor interrupt
+handler.. device is getting assigned only after completion of the
+devfreq_add_device() and hence ISR gets a NULL deref if it is fired
+before device is assigned. So I'll leave this part as-is.
 
-we do always only call ::map or ::unmap under sleepable conditions.
-
-btw, would it be simpler to just make gfp_t a domain a attribute?
-That seems like it would be less churn, but maybe I'm overlooking
-something.
-
-BR,
--R
+Thierry, please answer to all of the remaining patches where you had
+some concerns. I'll send out another series on top of this, addressing
+yours comments and fixing another bug that I spotted today.
