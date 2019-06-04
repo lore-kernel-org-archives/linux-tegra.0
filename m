@@ -1,123 +1,39 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 14/16] PM / devfreq: tegra: Enable COMPILE_TEST for the
- driver
-Date: Tue, 4 Jun 2019 18:15:36 +0300
-Message-ID: <df040294-37d1-064c-009e-ba2fcac90364@gmail.com>
-References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-15-digetx@gmail.com> <20190604112026.GN16519@ulmo>
- <ed2c502f-8f49-d89b-32c6-4b5415e1fa47@gmail.com> <20190604141031.GB397@ulmo>
- <20190604141824.GC397@ulmo> <02a6651f-17f3-2e79-7780-57657596ba23@gmail.com>
- <20190604145004.GA3208@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] gpu: host1x: Do not output error message for deferred probe
+Date: Tue,  4 Jun 2019 17:31:50 +0200
+Message-ID: <20190604153150.22265-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190604145004.GA3208@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.06.2019 17:50, Thierry Reding пишет:
-> On Tue, Jun 04, 2019 at 05:41:53PM +0300, Dmitry Osipenko wrote:
->> 04.06.2019 17:18, Thierry Reding пишет:
->>> On Tue, Jun 04, 2019 at 04:10:31PM +0200, Thierry Reding wrote:
->>>> On Tue, Jun 04, 2019 at 04:53:17PM +0300, Dmitry Osipenko wrote:
->>>>> 04.06.2019 14:20, Thierry Reding пишет:
->>>>>> On Thu, May 02, 2019 at 02:38:13AM +0300, Dmitry Osipenko wrote:
->>>>>>> The driver's compilation doesn't have any specific dependencies, hence
->>>>>>> the COMPILE_TEST option can be supported in Kconfig.
->>>>>>>
->>>>>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>> ---
->>>>>>>  drivers/devfreq/Kconfig | 2 +-
->>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
->>>>>>> index 56db9dc05edb..a6bba6e1e7d9 100644
->>>>>>> --- a/drivers/devfreq/Kconfig
->>>>>>> +++ b/drivers/devfreq/Kconfig
->>>>>>> @@ -93,7 +93,7 @@ config ARM_EXYNOS_BUS_DEVFREQ
->>>>>>>  
->>>>>>>  config ARM_TEGRA_DEVFREQ
->>>>>>>  	tristate "NVIDIA Tegra30/114/124/210 DEVFREQ Driver"
->>>>>>> -	depends on ARCH_TEGRA
->>>>>>> +	depends on ARCH_TEGRA || COMPILE_TEST
->>>>>>>  	select PM_OPP
->>>>>>>  	help
->>>>>>>  	  This adds the DEVFREQ driver for the Tegra family of SoCs.
->>>>>>
->>>>>> You need to be careful with these. You're using I/O register accessors,
->>>>>> which are not supported on the UM architecture, for example.
->>>>>>
->>>>>> This may end up getting flagged during build testing.
->>>>>
->>>>> We have similar cases in other drivers and it doesn't cause any known
->>>>> problems because (I think) build-bots are aware of this detail. Hence
->>>>
->>>> I don't understand how the build-bots would be aware of this detail.
->>>> Unless you explicitly state what the dependencies are, how would the
->>>> build-bots know? Perhaps there's some logic built-in somewhere that I
->>>> don't know about?
->>>
->>> So looks like COMPILE_TEST has a !UML dependency, so this might just
->>> work.
->>>
->>> Acked-by: Thierry Reding <treding@nvidia.com>
->>>
->>
->> Thank you very much for the clarification! Certainly that would caused
->> problems already since there are such cases all over the kernel,
->> including Tegra drivers.
-> 
-> In the cases that I'm aware of we used to explicitly list all the
-> dependencies that would've otherwise been pulled in by the ARCH_TEGRA
-> dependency to make sure there were no issues.
-> 
-> Now that we've been discussing this I vaguely recall a discussion about
-> the only real issue nowadays being HAS_IOMEM and since that's only
-> missing on UML, that may have been the reason for why the !UML
-> dependency was added.
-> 
-> Yes, looks like that was it:
-> 
-> 	commit bc083a64b6c035135c0f80718f9e9192cc0867c6
-> 	Author: Richard Weinberger <richard@nod.at>
-> 	Date:   Tue Aug 2 14:03:27 2016 -0700
-> 
-> 	    init/Kconfig: make COMPILE_TEST depend on !UML
-> 
-> 	    UML is a bit special since it does not have iomem nor dma.  That means a
-> 	    lot of drivers will not build if they miss a dependency on HAS_IOMEM.
-> 	    s390 used to have the same issues but since it gained PCI support UML is
-> 	    the only stranger.
-> 
-> 	    We are tired of patching dozens of new drivers after every merge window
-> 	    just to un-break allmod/yesconfig UML builds.  One could argue that a
-> 	    decent driver has to know on what it depends and therefore a missing
-> 	    HAS_IOMEM dependency is a clear driver bug.  But the dependency not
-> 	    obvious and not everyone does UML builds with COMPILE_TEST enabled when
-> 	    developing a device driver.
-> 
-> 	    A possible solution to make these builds succeed on UML would be
-> 	    providing stub functions for ioremap() and friends which fail upon
-> 	    runtime.  Another one is simply disabling COMPILE_TEST for UML.  Since
-> 	    it is the least hassle and does not force use to fake iomem support
-> 	    let's do the latter.
-> 
-> 	    Link: http://lkml.kernel.org/r/1466152995-28367-1-git-send-email-richard@nod.at
-> 	    Signed-off-by: Richard Weinberger <richard@nod.at>
-> 	    Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 	    Cc: Al Viro <viro@zeniv.linux.org.uk>
-> 	    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> 	    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-That was a wise solution. Thank you very much again for the detailed
-comment! Very appreciate that!
-
-> Oh wow... almost three years now.
-
-Please don't pay much attention to the time, it never stops. Live in the
-moment :)
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCldoZW4gZGVmZXJyaW5n
+IHByb2JlLCBhdm9pZCBsb2dnaW5nIGEgY29uZnVzaW5nIGVycm9yIG1lc3NhZ2UuIFdoaWxlIGF0
+Cml0LCBtYWtlIHRoZSBlcnJvciBtZXNzYWdlIG1vcmUgaW5mb3JtYXRpb25hbC4KClNpZ25lZC1v
+ZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9n
+cHUvaG9zdDF4L2Rldi5jIHwgNSArKysrLQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyBi
+L2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwppbmRleCBjNTVlMmQ2MzQ4ODcuLjVhM2Y3OTcyNDBk
+NCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCisrKyBiL2RyaXZlcnMvZ3B1
+L2hvc3QxeC9kZXYuYwpAQCAtMjQ3LDggKzI0NywxMSBAQCBzdGF0aWMgaW50IGhvc3QxeF9wcm9i
+ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCiAJaG9zdC0+Y2xrID0gZGV2bV9jbGtf
+Z2V0KCZwZGV2LT5kZXYsIE5VTEwpOwogCWlmIChJU19FUlIoaG9zdC0+Y2xrKSkgewotCQlkZXZf
+ZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gZ2V0IGNsb2NrXG4iKTsKIAkJZXJyID0gUFRSX0VS
+Uihob3N0LT5jbGspOworCisJCWlmIChlcnIgIT0gLUVQUk9CRV9ERUZFUikKKwkJCWRldl9lcnIo
+JnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgY2xvY2s6ICVkXG4iLCBlcnIpOworCiAJCXJldHVy
+biBlcnI7CiAJfQogCi0tIAoyLjIxLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbA==
