@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 2/3] soc/tegra: pmc: Avoid crash for non-wake IRQs
-Date: Tue,  4 Jun 2019 17:51:34 +0200
-Message-ID: <20190604155135.25390-2-thierry.reding@gmail.com>
+Subject: [PATCH v2 3/3] soc/tegra: pmc: Add comments clarifying wake events
+Date: Tue,  4 Jun 2019 17:51:35 +0200
+Message-ID: <20190604155135.25390-3-thierry.reding@gmail.com>
 References: <20190604155135.25390-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,30 +23,57 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-For interrupts that are not wakeup sources but that may end up getting
-mapped through the PMC as interrupt parent (this can happen for GPIOs),
-return early in order to avoid a subsequent crash from an out-of-bounds
-access to the register region.
+Add some comments to clarify the purpose of the wake event support
+implemented in the PMC driver.
 
-Reported-by: Bitan Biswas <bbiswas@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/soc/tegra/pmc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 653fe2c466f6..6e66b5e293be 100644
+index 6e66b5e293be..af8f63a844cd 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -1924,6 +1924,9 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+@@ -241,6 +241,11 @@ struct tegra_pmc_soc {
+ 	const char * const *reset_levels;
+ 	unsigned int num_reset_levels;
+ 
++	/*
++	 * These describe events that can wake the system from sleep (i.e.
++	 * LP0 or SC7). Wakeup from other sleep states (such as LP1 or LP2)
++	 * are dealt with in the LIC.
++	 */
+ 	const struct tegra_wake_event *wake_events;
+ 	unsigned int num_wake_events;
+ };
+@@ -1906,6 +1911,11 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 		}
+ 	}
+ 
++	/*
++	 * For interrupts that don't have associated wake events, assign a
++	 * dummy hardware IRQ number. This is used in the ->irq_set_type()
++	 * and ->irq_set_wake() callbacks to return early for these IRQs.
++	 */
+ 	if (i == soc->num_wake_events)
+ 		err = irq_domain_set_hwirq_and_chip(domain, virq, ULONG_MAX,
+ 						    &pmc->irq, pmc);
+@@ -1924,6 +1934,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
  	unsigned int offset, bit;
  	u32 value;
  
-+	if (WARN_ON(data->hwirq == ULONG_MAX))
-+		return 0;
-+
- 	offset = data->hwirq / 32;
- 	bit = data->hwirq % 32;
++	/* nothing to do if there's no associated wake event */
+ 	if (WARN_ON(data->hwirq == ULONG_MAX))
+ 		return 0;
+ 
+@@ -1954,6 +1965,7 @@ static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	u32 value;
+ 
++	/* nothing to do if there's no associated wake event */
+ 	if (data->hwirq == ULONG_MAX)
+ 		return 0;
  
 -- 
 2.21.0
