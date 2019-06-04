@@ -1,55 +1,49 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 05/16] PM / devfreq: tegra: Don't set EMC clock rate to
- maximum on probe
-Date: Tue, 4 Jun 2019 16:05:31 +0300
-Message-ID: <71f7b41c-b33f-92fa-e0a5-85fefeb57274@gmail.com>
-References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-6-digetx@gmail.com> <20190604110042.GE16519@ulmo>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v4 00/10] NVIDIA Tegra clocksource driver improvements
+Date: Tue, 4 Jun 2019 16:33:55 +0300
+Message-ID: <20190604133355.GE29894@pdeschrijver-desktop.Nvidia.com>
+References: <20190603185948.30438-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190604110042.GE16519@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190603185948.30438-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.06.2019 14:00, Thierry Reding пишет:
-> On Thu, May 02, 2019 at 02:38:04AM +0300, Dmitry Osipenko wrote:
->> There is no real benefit from doing so, hence let's drop that rate setting
->> for consistency.
->>
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra-devfreq.c | 2 --
->>  1 file changed, 2 deletions(-)
+On Mon, Jun 03, 2019 at 09:59:38PM +0300, Dmitry Osipenko wrote:
+> Hello,
 > 
-> Do you have any numbers to tell how long it would take for the EMC rate
-> to get incremented? My understanding is that ACTMON basically reacts to
-> system load, so I could imagine that not setting to the maximum
-> frequency after this is loaded might make the system slow in the short
-> term. Only after ACTMON has collected enough data to determine that it
-> needs to clock the EMC higher would system speed resume normal.
+> This series primarily unifies the driver code across all Tegra SoC
+> generations. In a result the clocksources are allocated per-CPU on
+> older Tegra's and have a higher rating than the arch-timer where
+> appropriate, the newer Tegra210 is getting support for microsecond
+> clocksource and the driver's code is getting much cleaner.
 > 
-> I guess technically this patch doesn't change anything if the system
-> already boots at the highest EMC frequency anyway, which I think it does
-> on many (although not all) devices.
+> The series was extensively tested on Tegra20 and Tegra30.
 > 
-> Anyway, you said you've tested this and are satisfied with the
-> performance, so it can't be that bad:
+> Changelog:
 > 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+> v4: In the comment to v3 Peter De Schrijver pointed out that arch-timer
+>     isn't affected by DVFS changes and thus it is preferred over tegra-timer
+>     on [T114, T210). Added new patch to address that: "Lower clocksource
+>     rating for some Tegra's".
+> 
+>     Daniel Lezcano suggested that it will be worthwhile to rename driver's
+>     source file as driver now covers more SoC generations than it initially
+>     did. Hence the new "Rename timer-tegra20.c to timer-tegra.c" patch.
+> 
+> v3: Fixed compilation on ARM64. Turned out that it doesn't have the
+>     delay-timer, thanks to Nicolas Chauvet for the report.
+> 
+>     Added new "Support COMPILE_TEST universally" patch for better
+>     compile-test coverage.
+> 
+> v2: Rebased on recent linux-next. Now all of #ifdef's are removed from the
+>     code due to the recent patch that generalized persistent clocksource.
+> 
+>     Couple other minor cosmetic changes.
 
-It takes 12ms for ACTMON to react and then about (couple) hundred
-microseconds to change memory freq. This is a very short period of time
-that human being can't notice.
-
-AFAIK, in practice there are no devices in the wild that boot up with
-DRAM clocked at lowest rate. Most devices have a video output and thus
-require significant memory bandwidth at a boot time already. Secondly,
-higher memory bandwidth is only really needed for a cases like
-multimedia, in most generic cases CPU is hitting cache and not utilizing
-DRAM a lot.
+Series Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
