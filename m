@@ -1,131 +1,83 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 07/16] PM / devfreq: tegra: Properly disable interrupts
-Date: Tue, 4 Jun 2019 16:40:18 +0300
-Message-ID: <c2f2a8c8-1f30-34aa-9b95-a7a44e0ec96f@gmail.com>
-References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-8-digetx@gmail.com> <20190604110744.GG16519@ulmo>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH V2 00/12] LP0 entry and exit support for Tegra210
+Date: Tue, 4 Jun 2019 16:47:21 +0300
+Message-ID: <20190604134721.GF29894@pdeschrijver-desktop.Nvidia.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190604110744.GG16519@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.06.2019 14:07, Thierry Reding пишет:
-> On Thu, May 02, 2019 at 02:38:06AM +0300, Dmitry Osipenko wrote:
->> There is no guarantee that interrupt handling isn't running in parallel
->> with tegra_actmon_disable_interrupts(), hence it is necessary to protect
->> DEV_CTRL register accesses and clear IRQ status with ACTMON's IRQ being
->> disabled in the Interrupt Controller in order to ensure that device
->> interrupt is indeed being disabled.
->>
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra-devfreq.c | 21 +++++++++++++++------
->>  1 file changed, 15 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
->> index b65313fe3c2e..ce1eb97a2090 100644
->> --- a/drivers/devfreq/tegra-devfreq.c
->> +++ b/drivers/devfreq/tegra-devfreq.c
->> @@ -171,6 +171,8 @@ struct tegra_devfreq {
->>  	struct notifier_block	rate_change_nb;
->>  
->>  	struct tegra_devfreq_device devices[ARRAY_SIZE(actmon_device_configs)];
->> +
->> +	int irq;
-> 
-> Interrupts are typically unsigned int.
-> 
->>  };
->>  
->>  struct tegra_actmon_emc_ratio {
->> @@ -417,6 +419,8 @@ static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
->>  	u32 val;
->>  	unsigned int i;
->>  
->> +	disable_irq(tegra->irq);
->> +
->>  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
->>  		dev = &tegra->devices[i];
->>  
->> @@ -427,9 +431,14 @@ static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
->>  		val &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
->>  
->>  		device_writel(dev, val, ACTMON_DEV_CTRL);
->> +
->> +		device_writel(dev, ACTMON_INTR_STATUS_CLEAR,
->> +			      ACTMON_DEV_INTR_STATUS);
->>  	}
->>  
->>  	actmon_write_barrier(tegra);
->> +
->> +	enable_irq(tegra->irq);
-> 
-> Why do we enable interrupts after this? Is there any use in having the
-> top-level interrupt enabled if nothing's going to generate an interrupt
-> anyway?
-
-There is no real point in having the interrupt enabled other than to
-keep the enable count balanced.
-
-IIUC, we will need to disable IRQ at the driver's probe time (after
-requesting the IRQ) if we want to avoid that (not really necessary)
-balancing. This is probably something that could be improved in a
-follow-up patches, if desired.
-
->>  }
->>  
->>  static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->> @@ -604,7 +613,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>  	struct resource *res;
->>  	unsigned int i;
->>  	unsigned long rate;
->> -	int irq;
->>  	int err;
->>  
->>  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
->> @@ -673,15 +681,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>  		dev_pm_opp_add(&pdev->dev, rate, 0);
->>  	}
->>  
->> -	irq = platform_get_irq(pdev, 0);
->> -	if (irq < 0) {
->> -		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", irq);
->> -		return irq;
->> +	tegra->irq = platform_get_irq(pdev, 0);
->> +	if (tegra->irq < 0) {
->> +		err = tegra->irq;
->> +		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", err);
->> +		return err;
->>  	}
-> 
-> This is very oddly written. tegra->irq should really be an unsigned int
-> since that's the standard type for interrupt numbers. But since you need
-> to be able to detect errors from platform_get_irq() it now becomes
-> natural to write this as:
-> 
-> 	err = platform_get_irq(pdev, 0);
-> 	if (err < 0) {
-> 		dev_err(...);
-> 		return err;
-> 	}
-> 
-> 	tegra->irq = err;
-> 
-> Two birds with one stone. I suppose this could be done in a follow-up
-> patch since it isn't practically wrong in your version, so either way:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+On Tue, May 28, 2019 at 04:08:44PM -0700, Sowjanya Komatineni wrote:
+> This patch series includes Tegra210 deepsleep/LP0 support with
+> deep sleep exit through RTC alarm wake and power button wake events.
 > 
 
-Thank you for the ACK! Although, I disagree with yours suggestion, to me
-that makes code a bit less straightforward and it's not really
-worthwhile to bloat the code just because technically IRQ's are unsigned
-numbers (we don't care about that). It also makes me a bit uncomfortable
-to see "err" assigned to a variable, I don't think it's a good practice.
+We have been calling this SC7 (system C-state 7) for quite a while now.
+
+Peter.
+
+> Note: Wake on power button is through gpio-keys node in device tree.
+> 
+> This series also includes save and restore of PLLs, clocks, OSC contexts
+> for basic LP0 exit.
+> 
+> This patch series doesn't support 100% suspend/resume to allow fully
+> functional state upon resume and we are working on some more drivers suspend
+> and resume implementations.
+> 
+> [V2] : V1 feedback fixes
+> 	Patch 0002: This version still using syscore. Thierry suggest not to
+> 	use syscore and waiting on suggestion from Linux Walleij for any better
+> 	way of storing current state of pins before suspend entry and restoring
+> 	them on resume at very early stage. So left this the same way as V1 and
+> 	will address once I get more feedback on this.
+> 	Also need to findout and implement proper way of forcing resume order
+> 	between pinctrl and gpio driver.
+> 
+> 
+> Sowjanya Komatineni (12):
+>   irqchip: tegra: do not disable COP IRQ during suspend
+>   pinctrl: tegra: add suspend and resume support
+>   clk: tegra: save and restore PLLs state for system
+>   clk: tegra: add support for peripheral clock suspend and resume
+>   clk: tegra: add support for OSC clock resume
+>   clk: tegra: add suspend resume support for DFLL clock
+>   clk: tegra: support for Tegra210 clocks suspend-resume
+>   soc/tegra: pmc: allow support for more tegra wake models
+>   soc/tegra: pmc: add pmc wake support for tegra210
+>   gpio: tegra: implement wake event support for Tegra210 and prior GPIO
+>   arm64: tegra: enable wake from deep sleep on RTC alarm.
+>   soc/tegra: pmc: configure tegra deep sleep control settings
+> 
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |   7 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi       |   5 +-
+>  drivers/clk/tegra/clk-dfll.c                   |  82 ++++++
+>  drivers/clk/tegra/clk-dfll.h                   |   2 +
+>  drivers/clk/tegra/clk-divider.c                |  19 ++
+>  drivers/clk/tegra/clk-pll-out.c                |  25 ++
+>  drivers/clk/tegra/clk-pll.c                    |  99 +++++--
+>  drivers/clk/tegra/clk-tegra-fixed.c            |  16 ++
+>  drivers/clk/tegra/clk-tegra210.c               | 382 +++++++++++++++++++++++++
+>  drivers/clk/tegra/clk.c                        |  74 ++++-
+>  drivers/clk/tegra/clk.h                        |  13 +
+>  drivers/gpio/gpio-tegra.c                      | 116 +++++++-
+>  drivers/irqchip/irq-tegra.c                    |  22 +-
+>  drivers/pinctrl/tegra/pinctrl-tegra.c          |  68 ++++-
+>  drivers/pinctrl/tegra/pinctrl-tegra.h          |   3 +
+>  drivers/pinctrl/tegra/pinctrl-tegra114.c       |   1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra124.c       |   1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c        |   1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c       |   1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra30.c        |   1 +
+>  drivers/soc/tegra/pmc.c                        | 150 +++++++++-
+>  21 files changed, 1053 insertions(+), 35 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
