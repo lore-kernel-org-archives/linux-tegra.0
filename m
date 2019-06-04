@@ -1,76 +1,94 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 14/16] PM / devfreq: tegra: Enable COMPILE_TEST for
- the driver
-Date: Tue, 4 Jun 2019 13:20:26 +0200
-Message-ID: <20190604112026.GN16519@ulmo>
+Subject: Re: [PATCH v4 15/16] PM / devfreq: tegra: Rename tegra-devfreq.c to
+ tegra30-devfreq.c
+Date: Tue, 4 Jun 2019 13:23:23 +0200
+Message-ID: <20190604112323.GO16519@ulmo>
 References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-15-digetx@gmail.com>
+ <20190501233815.32643-16-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="U6leaJ20qZQc29iB"
+        protocol="application/pgp-signature"; boundary="ctUzwJm0i+kwMBIK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190501233815.32643-15-digetx@gmail.com>
+In-Reply-To: <20190501233815.32643-16-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---U6leaJ20qZQc29iB
+--ctUzwJm0i+kwMBIK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 02, 2019 at 02:38:13AM +0300, Dmitry Osipenko wrote:
-> The driver's compilation doesn't have any specific dependencies, hence
-> the COMPILE_TEST option can be supported in Kconfig.
+On Thu, May 02, 2019 at 02:38:14AM +0300, Dmitry Osipenko wrote:
+> In order to reflect that driver serves NVIDIA Tegra30 and later SoC
+> generations, let's rename the driver's source file to "tegra30-devfreq.c".
+> This will make driver files to look more consistent after addition of a
+> driver for Tegra20.
 >=20
 > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/devfreq/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/devfreq/Makefile                               | 2 +-
+>  drivers/devfreq/{tegra-devfreq.c =3D> tegra30-devfreq.c} | 0
+>  2 files changed, 1 insertion(+), 1 deletion(-)
+>  rename drivers/devfreq/{tegra-devfreq.c =3D> tegra30-devfreq.c} (100%)
 >=20
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index 56db9dc05edb..a6bba6e1e7d9 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -93,7 +93,7 @@ config ARM_EXYNOS_BUS_DEVFREQ
-> =20
->  config ARM_TEGRA_DEVFREQ
->  	tristate "NVIDIA Tegra30/114/124/210 DEVFREQ Driver"
-> -	depends on ARCH_TEGRA
-> +	depends on ARCH_TEGRA || COMPILE_TEST
->  	select PM_OPP
->  	help
->  	  This adds the DEVFREQ driver for the Tegra family of SoCs.
+> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
+> index 32b8d4d3f12c..47e5aeeebfd1 100644
+> --- a/drivers/devfreq/Makefile
+> +++ b/drivers/devfreq/Makefile
+> @@ -10,7 +10,7 @@ obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+=3D governor_passive=
+=2Eo
+>  # DEVFREQ Drivers
+>  obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+=3D exynos-bus.o
+>  obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+=3D rk3399_dmc.o
+> -obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+=3D tegra-devfreq.o
+> +obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+=3D tegra30-devfreq.o
 
-You need to be careful with these. You're using I/O register accessors,
-which are not supported on the UM architecture, for example.
+Technically this changes the name of the driver. Sometimes boot or other
+scripts rely on those names. Perhaps a better way of keeping backwards-
+compatibility would be to do:
 
-This may end up getting flagged during build testing.
+	obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+=3D tegra-devfreq.o
+	tegra-devfreq-y				+=3D tegra30-devfreq.o
+
+That way you can later on just add the tegra20-devfreq.o to that driver
+as well and have them both ship in one .ko.
 
 Thierry
+> =20
+>  # DEVFREQ Event Drivers
+>  obj-$(CONFIG_PM_DEVFREQ_EVENT)		+=3D event/
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra30-de=
+vfreq.c
+> similarity index 100%
+> rename from drivers/devfreq/tegra-devfreq.c
+> rename to drivers/devfreq/tegra30-devfreq.c
+> --=20
+> 2.21.0
+>=20
 
---U6leaJ20qZQc29iB
+--ctUzwJm0i+kwMBIK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2U/oACgkQ3SOs138+
-s6FAvw//dyUsGtKs5mTTMtrTOsyA/yTph5TFbQxj6Ldz0Qe+yvt8q9UhJQrZ8Otr
-fGKRedThgT/kV3BsBtgyy1KaPNRncN4unwk5X3maqZAL11pHfTTt8gKqWvEa3qvt
-WdaZNZRzL6ltGvazChtYHgnJy/+U0CNEVpb2JdXKsns0WapnLfABvjS2nYzcNmYm
-F6AqZjwSXF4uFyXUfzDiRLC6he8Ttgmrwrsz2OLdVNTRiGc1AMxd7NclevjxyHPA
-NkjEjSIEI95DjCTqTzXynnFAPUPQmXoUo38Fa0eM/hBe02YzESE1W+MFXGYxWx7o
-SGgRqvNPa3bH/bVs1o7izQtvAfNbIDqMEJGU/DXu058xy3ChZ/v9ANI/E3Yf0O8y
-Kg0ux0lbTfx9B/Lju2nXYAQF1edjpdfSYKDvwRARZsWlsOsfjjc678S1jHRZ8P1u
-8giEjfWwFRFgpZfq5cWBeO0i70Z/zBnl7osKKkMGRkaaWSepdR1gX+49vFXmCwjs
-UAvcKMGYIr5OK3zi+WS5eZ3YtYQKmOzzSvgCMQn5W5nCi3T5k5pQ/hspX4ibu9w4
-75BYN5E0NV0dVadCdNxI+C/v/5z3rsKUzf5oMxz4VTW/esqR8UZ/wS8T47LpAFIG
-GFOoUzbeumE50C6Vch4QI90MqJiKr3CYhcmQe6r4Mbqhg787rtw=
-=Fb77
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2VKsACgkQ3SOs138+
+s6Es9A/9Gi8I2G20qIVMJQ9sSA/3ZNS2aM3O4x2G2qQQFvuY81Q1MrPZ4OcGxElj
+3I453R13AX/9UUzhKx4AxhjG+C22ZorezLuYM7AEZ6zDQB9vdJydreXBjOc+bpCP
+mcUnFTFKzKJxCmyLxRtvGyh4RYwvRLmXHhbt7vOdlXv2wIGr+QanMCCTmEb4IIZF
+ORe+lcro244KgDezZKj2L2ejTTVY3BVa2H5afLwxjnNr/mmv7sl2TVA97lOlrKjV
+DFXET0ygtakT3UusMXM1dlGMaoG/Kf4iFaKwrNeA2nd4vli01P5ljiNVNZVK01mz
+30BrBRZWywxaVwb4K1WJkkErFjjn+vTkIxzj0sVpTEW3Kp3pSjxqBrPULkLFCtxw
+ldbvjbNBfVYy00rKffQqpZf+qajSM25n+jePFRWHBcn+VYtkRobpx1xv8jGehQco
+I/woAOT7pqmf7bil2dbppIYXLWdFNpIZblLXPsfvDoCsqa0XlUqU91uoi/D7KAF+
+ZsK3ypaajkXtaauOD+i4faDsSZ5m6fPBpQ6NAWriDGLHhyS69UNGEBPZxwuIGIa/
+5xWn1tSS3jXlWYP4IrMUA+HGw7btVGden1mAZ24rmHT7PeL6qwId5wUjcXGo4kW1
+JAQytoZkhY9UOEhkxJFjz8Khy88potwE9rPDs9fvS4T6jVoL4rY=
+=bEO/
 -----END PGP SIGNATURE-----
 
---U6leaJ20qZQc29iB--
+--ctUzwJm0i+kwMBIK--
