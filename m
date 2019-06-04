@@ -1,39 +1,48 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] gpu: host1x: Do not output error message for deferred probe
-Date: Tue,  4 Jun 2019 17:31:50 +0200
-Message-ID: <20190604153150.22265-1-thierry.reding@gmail.com>
+Subject: [PATCH v2 1/3] soc/tegra: pmc: Fail to allocate more than one wake IRQ
+Date: Tue,  4 Jun 2019 17:51:33 +0200
+Message-ID: <20190604155135.25390-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCldoZW4gZGVmZXJyaW5n
-IHByb2JlLCBhdm9pZCBsb2dnaW5nIGEgY29uZnVzaW5nIGVycm9yIG1lc3NhZ2UuIFdoaWxlIGF0
-Cml0LCBtYWtlIHRoZSBlcnJvciBtZXNzYWdlIG1vcmUgaW5mb3JtYXRpb25hbC4KClNpZ25lZC1v
-ZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9n
-cHUvaG9zdDF4L2Rldi5jIHwgNSArKysrLQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
-KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyBi
-L2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwppbmRleCBjNTVlMmQ2MzQ4ODcuLjVhM2Y3OTcyNDBk
-NCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2hvc3QxeC9kZXYuYwpAQCAtMjQ3LDggKzI0NywxMSBAQCBzdGF0aWMgaW50IGhvc3QxeF9wcm9i
-ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCiAJaG9zdC0+Y2xrID0gZGV2bV9jbGtf
-Z2V0KCZwZGV2LT5kZXYsIE5VTEwpOwogCWlmIChJU19FUlIoaG9zdC0+Y2xrKSkgewotCQlkZXZf
-ZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gZ2V0IGNsb2NrXG4iKTsKIAkJZXJyID0gUFRSX0VS
-Uihob3N0LT5jbGspOworCisJCWlmIChlcnIgIT0gLUVQUk9CRV9ERUZFUikKKwkJCWRldl9lcnIo
-JnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgY2xvY2s6ICVkXG4iLCBlcnIpOworCiAJCXJldHVy
-biBlcnI7CiAJfQogCi0tIAoyLjIxLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbA==
+From: Thierry Reding <treding@nvidia.com>
+
+The code currently doesn't support allocating more than one wake IRQ at
+a time. Detect this situation and error out. Also make sure to output a
+warning when that happens to help track down callers.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 5648e5c09ef5..653fe2c466f6 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1863,6 +1863,9 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 	unsigned int i;
+ 	int err = 0;
+ 
++	if (WARN_ON(num_irqs > 1))
++		return -EINVAL;
++
+ 	for (i = 0; i < soc->num_wake_events; i++) {
+ 		const struct tegra_wake_event *event = &soc->wake_events[i];
+ 
+-- 
+2.21.0
