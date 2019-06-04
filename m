@@ -1,56 +1,55 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH V2 06/12] clk: tegra: add suspend resume support for DFLL
- clock
-Date: Tue, 4 Jun 2019 15:41:20 +0300
-Message-ID: <20190604124120.GD29894@pdeschrijver-desktop.Nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-7-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 05/16] PM / devfreq: tegra: Don't set EMC clock rate to
+ maximum on probe
+Date: Tue, 4 Jun 2019 16:05:31 +0300
+Message-ID: <71f7b41c-b33f-92fa-e0a5-85fefeb57274@gmail.com>
+References: <20190501233815.32643-1-digetx@gmail.com>
+ <20190501233815.32643-6-digetx@gmail.com> <20190604110042.GE16519@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1559084936-4610-7-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190604110042.GE16519@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 28, 2019 at 04:08:50PM -0700, Sowjanya Komatineni wrote:
-> This patch adds support for suspend and resume for DFLL clock.
+04.06.2019 14:00, Thierry Reding пишет:
+> On Thu, May 02, 2019 at 02:38:04AM +0300, Dmitry Osipenko wrote:
+>> There is no real benefit from doing so, hence let's drop that rate setting
+>> for consistency.
+>>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra-devfreq.c | 2 --
+>>  1 file changed, 2 deletions(-)
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-dfll.c | 82 ++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk-dfll.h |  2 ++
->  2 files changed, 84 insertions(+)
+> Do you have any numbers to tell how long it would take for the EMC rate
+> to get incremented? My understanding is that ACTMON basically reacts to
+> system load, so I could imagine that not setting to the maximum
+> frequency after this is loaded might make the system slow in the short
+> term. Only after ACTMON has collected enough data to determine that it
+> needs to clock the EMC higher would system speed resume normal.
 > 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 1fc71baae13b..d92a5a05fbbc 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -286,6 +286,7 @@ struct tegra_dfll {
->  	unsigned long			dvco_rate_min;
->  
->  	enum dfll_ctrl_mode		mode;
-> +	enum dfll_ctrl_mode		resume_mode;
->  	enum dfll_tune_range		tune_range;
->  	struct dentry			*debugfs_dir;
->  	struct clk_hw			dfll_clk_hw;
-> @@ -1873,6 +1874,87 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
->  }
->  
->  /*
-> + * tegra_dfll_suspend
-> + * @pdev: DFLL instance
-> + *
-> + * dfll controls clock/voltage to other devices, including CPU. Therefore,
-> + * dfll driver pm suspend callback does not stop cl-dvfs operations. It is
-> + * only used to enforce cold voltage limit, since SoC may cool down during
-> + * suspend without waking up. The correct temperature zone after suspend will
-> + * be updated via dfll cooling device interface during resume of temperature
-> + * sensor.
+> I guess technically this patch doesn't change anything if the system
+> already boots at the highest EMC frequency anyway, which I think it does
+> on many (although not all) devices.
+> 
+> Anyway, you said you've tested this and are satisfied with the
+> performance, so it can't be that bad:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Temperature dependent cl-dvfs is not yet implemented in upstream, so
-leave out the part about cold voltage limits and temperature zones.
+It takes 12ms for ACTMON to react and then about (couple) hundred
+microseconds to change memory freq. This is a very short period of time
+that human being can't notice.
 
-Peter.
+AFAIK, in practice there are no devices in the wild that boot up with
+DRAM clocked at lowest rate. Most devices have a video output and thus
+require significant memory bandwidth at a boot time already. Secondly,
+higher memory bandwidth is only really needed for a cases like
+multimedia, in most generic cases CPU is hitting cache and not utilizing
+DRAM a lot.
