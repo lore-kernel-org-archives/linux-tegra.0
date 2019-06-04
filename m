@@ -1,88 +1,52 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH] arm64: tegra: add CPU cache topology for Tegra186
-Date: Tue, 4 Jun 2019 10:35:35 +0800
-Message-ID: <20190604023535.7115-1-josephl@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.1 00/40] 5.1.7-stable review
+Date: Tue, 4 Jun 2019 07:50:48 +0200
+Message-ID: <20190604055048.GD16504@kroah.com>
+References: <20190603090522.617635820@linuxfoundation.org>
+ <75303365-74d0-de3c-2f54-5cff3469d8a0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <75303365-74d0-de3c-2f54-5cff3469d8a0@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra186 has two CPU clusters with its own cache hierarchy. This patch
-adds them with the cache information of each of the CPUs.
+On Mon, Jun 03, 2019 at 07:34:09PM +0100, Jon Hunter wrote:
+> 
+> On 03/06/2019 10:08, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.1.7 release.
+> > There are 40 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed 05 Jun 2019 09:04:46 AM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.7-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.1:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     32 tests:	32 pass, 0 fail
+> 
+> Linux version:	5.1.7-rc1-ge674455
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Thanks for testing all of these and letting me know.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 426ac0bdf6a6..26055c7f26e7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1128,38 +1128,52 @@
- 		cpu@0 {
- 			compatible = "nvidia,tegra186-denver";
- 			device_type = "cpu";
-+			next-level-cache = <&L2_DENVER>;
- 			reg = <0x000>;
- 		};
- 
- 		cpu@1 {
- 			compatible = "nvidia,tegra186-denver";
- 			device_type = "cpu";
-+			next-level-cache = <&L2_DENVER>;
- 			reg = <0x001>;
- 		};
- 
- 		cpu@2 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			next-level-cache = <&L2_A57>;
- 			reg = <0x100>;
- 		};
- 
- 		cpu@3 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			next-level-cache = <&L2_A57>;
- 			reg = <0x101>;
- 		};
- 
- 		cpu@4 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			next-level-cache = <&L2_A57>;
- 			reg = <0x102>;
- 		};
- 
- 		cpu@5 {
- 			compatible = "arm,cortex-a57";
- 			device_type = "cpu";
-+			next-level-cache = <&L2_A57>;
- 			reg = <0x103>;
- 		};
-+
-+		L2_DENVER: l2-cache0 {
-+			compatible = "cache";
-+		};
-+
-+		L2_A57: l2-cache1 {
-+			compatible = "cache";
-+		};
- 	};
- 
- 	bpmp: bpmp {
--- 
-2.21.0
+greg k-h
