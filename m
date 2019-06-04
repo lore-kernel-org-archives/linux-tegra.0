@@ -1,58 +1,59 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 09/16] PM / devfreq: tegra: Avoid inconsistency of
- current frequency value
-Date: Tue, 4 Jun 2019 13:14:42 +0200
-Message-ID: <20190604111442.GI16519@ulmo>
+Subject: Re: [PATCH v4 10/16] PM / devfreq: tegra: Mark ACTMON's governor as
+ immutable
+Date: Tue, 4 Jun 2019 13:15:15 +0200
+Message-ID: <20190604111515.GJ16519@ulmo>
 References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-10-digetx@gmail.com>
+ <20190501233815.32643-11-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="X+nYw8KZ/oNxZ8JS"
+        protocol="application/pgp-signature"; boundary="x0KprKst+ZOYEj2z"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190501233815.32643-10-digetx@gmail.com>
+In-Reply-To: <20190501233815.32643-11-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---X+nYw8KZ/oNxZ8JS
+--x0KprKst+ZOYEj2z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 02, 2019 at 02:38:08AM +0300, Dmitry Osipenko wrote:
-> The frequency value potentially could change in-between. It doesn't
-> cause any real problem at all right now, but that could change in the
-> future. Hence let's avoid the inconsistency.
+On Thu, May 02, 2019 at 02:38:09AM +0300, Dmitry Osipenko wrote:
+> The ACTMON's governor supports only the Tegra's devfreq device and there
+> is no need to use any other governor, hence let's mark Tegra governor as
+> immutable to permanently stick it with Tegra's devfreq device.
 >=20
 > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/devfreq/tegra-devfreq.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/devfreq/Kconfig         | 1 -
+>  drivers/devfreq/tegra-devfreq.c | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---X+nYw8KZ/oNxZ8JS
+--x0KprKst+ZOYEj2z
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2UqIACgkQ3SOs138+
-s6FdDw//XYp02JzFYTmM5pd+HyO9uQsHazV0k4wuxheR+J2EbT+HOp4DBtstdbNv
-jEg35xHhbQ4xXgt67Uc6aJt74WQpSDOXX6SMLa7Mu9inUodKqFSoivMW+u0DsSRe
-4Bz5uAcB7jX1e4vxA5toS5th+CKCi9oz1K4PJAQVBuRldO6Noo75hN6ojLx469As
-Ary2EfGIQZ3fSutmmNJ6FC+HNx69MHy/pL30HIEEMqqi2xfQzDr8692zMPi3rZ/T
-XJjVr6+MBs3Mn+z6QgQbvYeQPekSIOWIGj3RGvcXwKzi3jEGpG0s9sQPMaLDqsDk
-BvhRa27hNvGUppGg8kx14UyYdxxahc0ZERwnerjEpyWzfsAa2EKvX9fyF/tOQ6PG
-JXYy4E+vj8bkvxD9G6DdHwn7mugkqMD21PQVCrygfsSBfjyYvCdRUMIKzsoItVVB
-08hJQeTBTZV9vAnfwvNwzjm38BDlZum+nO+SMewQtmtf1s7p+I1HO+kAmFhqhE+M
-7cV/EeMhuGN8U7qWig2NxbcBNjmC650hthxgb2ntk5Q88NxpCfsay6+ESKIHGYzg
-dEuaxVzAuU28snKN8KQgXWTIJpxy/Yt5XrGRaNqbChgyb6SHOydCOQW8hbexSuZm
-eXgfZ+MJP2q/oc/a/f/b9iDoB3LrDKKSLtEUH2DJhjYdvoMW/e8=
-=/qKL
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2UsMACgkQ3SOs138+
+s6FeHw/8DpennipWHJZs16Spe8PMpTRqUEUMRe1bA6x36n7C9dP3gYROw09b5ySi
+a1Eea+j8bPt59BB3FRWjQbGVkiR4ckSWzbcfwNtAjk3ISpte8YzzQppnbgMaOkmt
+SgAIhvFKKcC27260sSn0VSpWjU4I4ruXUO5Y52YcRrNdxBodObcV1AcTNrlZbrdd
+S9rK9pQT7WAJfMjRAEeAbWQ5Vqg8PS4jvxPHygqUoZxmh3ZVTJLPsiASYfRt83TQ
+7ynFRYWqi6JKyMw/S0dRUSKG38vZdeAQyeiPMdh3so31GItLD5Vwy3Hfpbrkiqg1
+wFveOrtgQIonYmk487eWDu5EgqQUnlpDclU0XL5t0v0Y0lBpNm58G58mxptelK0I
+cf8IwAtwucgEltpfFpxuOHOZfaKfS199gqlYAUlUVtZcrx/PDf1FNRDFDhAj5MZY
+fnXevxW9x4nHx8DBoEsUufIfSbOIFUgff9I1VrqprtHY7X5f+t+S/5dT8oc+r8yF
+03J7+unNywVR9y5I9tQMbgpnGn3Sb/vklqjU3Yik00cPyqaZG9khBftCJ4EpOe2W
+c2rAosrAR19aiSoCNJN+Ttrwa8xvSXIj957e8+uocM0QNN9K/vU8HanC9iAFNCp2
+Ea3NL3AhomKLeGF/gIEUX6FxFlWVqPZuISutPTHNujZQafevTXM=
+=2pq8
 -----END PGP SIGNATURE-----
 
---X+nYw8KZ/oNxZ8JS--
+--x0KprKst+ZOYEj2z--
