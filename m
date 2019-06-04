@@ -1,344 +1,50 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 16/16] PM / devfreq: Introduce driver for NVIDIA
- Tegra20
-Date: Tue, 4 Jun 2019 13:25:24 +0200
-Message-ID: <20190604112524.GP16519@ulmo>
-References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-17-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 07/26] iommu/dma: move the arm64 wrappers to common code
+Date: Tue, 4 Jun 2019 12:35:05 +0100
+Message-ID: <5e119919-bbfd-14a4-0258-93e8249d11c4@nvidia.com>
+References: <20190422175942.18788-1-hch@lst.de>
+	<20190422175942.18788-8-hch@lst.de>
+	<06b331f0-7df7-a6cd-954c-789f89a0836d@arm.com>
+	<acb46c7f-0855-de30-485f-a6242968f947@nvidia.com>
+	<20190604060554.GA14536@lst.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b5sSX5qSQrSInIHt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190501233815.32643-17-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20190604060554.GA14536-jcswGhMUV9g@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Cc: Tom Lendacky <thomas.lendacky-5C7GfCeVMHo@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---b5sSX5qSQrSInIHt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/06/2019 07:05, Christoph Hellwig wrote:
+> On Mon, Jun 03, 2019 at 08:47:57PM +0100, Jon Hunter wrote:
+>> Since next-20190529 one of our tests for MMC has started failing, where
+>> the symptom is that the data written to the MMC does not match the
+>> source. Bisecting this is pointing to this commit. Unfortunately, I am
+>> not able to cleanly revert this on top of -next, but wanted to report
+>> this if case you have any ideas.
+> 
+> Does this fix your problem?
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/commit/?h=generic-dma-ops&id=1b961423158caaae49d3900b7c9c37477bbfa9b3
 
-On Thu, May 02, 2019 at 02:38:15AM +0300, Dmitry Osipenko wrote:
-> Add devfreq driver for NVIDIA Tegra20 SoC's. The driver periodically
-> reads out Memory Controller counters and adjusts memory frequency based
-> on the memory clients activity.
->=20
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  MAINTAINERS                       |   8 ++
->  drivers/devfreq/Kconfig           |  10 ++
->  drivers/devfreq/Makefile          |   1 +
->  drivers/devfreq/tegra20-devfreq.c | 212 ++++++++++++++++++++++++++++++
->  4 files changed, 231 insertions(+)
->  create mode 100644 drivers/devfreq/tegra20-devfreq.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 98edc38bfd7b..e7e434f74038 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10098,6 +10098,14 @@ F:	include/linux/memblock.h
->  F:	mm/memblock.c
->  F:	Documentation/core-api/boot-time-mm.rst
-> =20
-> +MEMORY FREQUENCY SCALING DRIVER FOR NVIDIA TEGRA20
-> +M:	Dmitry Osipenko <digetx@gmail.com>
-> +L:	linux-pm@vger.kernel.org
-> +L:	linux-tegra@vger.kernel.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-> +S:	Maintained
-> +F:	drivers/devfreq/tegra20-devfreq.c
-> +
->  MEMORY MANAGEMENT
->  L:	linux-mm@kvack.org
->  W:	http://www.linux-mm.org
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index a6bba6e1e7d9..1530dbefa31f 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -100,6 +100,16 @@ config ARM_TEGRA_DEVFREQ
->  	  It reads ACTMON counters of memory controllers and adjusts the
->  	  operating frequencies and voltages with OPP support.
-> =20
-> +config ARM_TEGRA20_DEVFREQ
-> +	tristate "NVIDIA Tegra20 DEVFREQ Driver"
-> +	depends on (TEGRA_MC && TEGRA20_EMC) || COMPILE_TEST
-> +	select DEVFREQ_GOV_SIMPLE_ONDEMAND
-> +	select PM_OPP
+Yes I can confirm with this patch on today's -next the issue is no
+longer seen, and reverting this patch on top of today's -next causes the
+problem to occur again. So yes this fixes my problem.
 
-Again, I'm not sure the COMPILE_TEST will work here unless you add a few
-more dependencies.
+Thanks!
+Jon
 
-Thierry
-
-> +	help
-> +	  This adds the DEVFREQ driver for the Tegra20 family of SoCs.
-> +	  It reads Memory Controller counters and adjusts the operating
-> +	  frequencies and voltages with OPP support.
-> +
->  config ARM_RK3399_DMC_DEVFREQ
->  	tristate "ARM RK3399 DMC DEVFREQ Driver"
->  	depends on ARCH_ROCKCHIP
-> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-> index 47e5aeeebfd1..338ae8440db6 100644
-> --- a/drivers/devfreq/Makefile
-> +++ b/drivers/devfreq/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+=3D governor_passive=
-=2Eo
->  obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+=3D exynos-bus.o
->  obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+=3D rk3399_dmc.o
->  obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+=3D tegra30-devfreq.o
-> +obj-$(CONFIG_ARM_TEGRA20_DEVFREQ)	+=3D tegra20-devfreq.o
-> =20
->  # DEVFREQ Event Drivers
->  obj-$(CONFIG_PM_DEVFREQ_EVENT)		+=3D event/
-> diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-=
-devfreq.c
-> new file mode 100644
-> index 000000000000..ff82bac9ee4e
-> --- /dev/null
-> +++ b/drivers/devfreq/tegra20-devfreq.c
-> @@ -0,0 +1,212 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * NVIDIA Tegra20 devfreq driver
-> + *
-> + * Copyright (C) 2019 GRATE-DRIVER project
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/devfreq.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/tegra/mc.h>
-> +
-> +#include "governor.h"
-> +
-> +#define MC_STAT_CONTROL				0x90
-> +#define MC_STAT_EMC_CLOCK_LIMIT			0xa0
-> +#define MC_STAT_EMC_CLOCKS			0xa4
-> +#define MC_STAT_EMC_CONTROL			0xa8
-> +#define MC_STAT_EMC_COUNT			0xb8
-> +
-> +#define EMC_GATHER_CLEAR			(1 << 8)
-> +#define EMC_GATHER_ENABLE			(3 << 8)
-> +
-> +struct tegra_devfreq {
-> +	struct devfreq *devfreq;
-> +	struct clk *emc_clock;
-> +	void __iomem *regs;
-> +};
-> +
-> +static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-> +				u32 flags)
-> +{
-> +	struct tegra_devfreq *tegra =3D dev_get_drvdata(dev);
-> +	struct devfreq *devfreq =3D tegra->devfreq;
-> +	struct dev_pm_opp *opp;
-> +	unsigned long rate;
-> +	int err;
-> +
-> +	opp =3D devfreq_recommended_opp(dev, freq, flags);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	rate =3D dev_pm_opp_get_freq(opp);
-> +	dev_pm_opp_put(opp);
-> +
-> +	err =3D clk_set_min_rate(tegra->emc_clock, rate);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D clk_set_rate(tegra->emc_clock, 0);
-> +	if (err)
-> +		goto restore_min_rate;
-> +
-> +	return 0;
-> +
-> +restore_min_rate:
-> +	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra_devfreq_get_dev_status(struct device *dev,
-> +					struct devfreq_dev_status *stat)
-> +{
-> +	struct tegra_devfreq *tegra =3D dev_get_drvdata(dev);
-> +
-> +	/*
-> +	 * EMC_COUNT returns number of memory events, that number is lower
-> +	 * than the number of clocks. Conversion ratio of 1/8 results in a
-> +	 * bit higher bandwidth than actually needed, it is good enough for
-> +	 * the time being because drivers don't support requesting minimum
-> +	 * needed memory bandwidth yet.
-> +	 *
-> +	 * TODO: adjust the ratio value once relevant drivers will support
-> +	 * memory bandwidth management.
-> +	 */
-> +	stat->busy_time =3D readl_relaxed(tegra->regs + MC_STAT_EMC_COUNT);
-> +	stat->total_time =3D readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / =
-8;
-> +	stat->current_frequency =3D clk_get_rate(tegra->emc_clock);
-> +
-> +	writel_relaxed(EMC_GATHER_CLEAR, tegra->regs + MC_STAT_CONTROL);
-> +	writel_relaxed(EMC_GATHER_ENABLE, tegra->regs + MC_STAT_CONTROL);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct devfreq_dev_profile tegra_devfreq_profile =3D {
-> +	.polling_ms	=3D 500,
-> +	.target		=3D tegra_devfreq_target,
-> +	.get_dev_status	=3D tegra_devfreq_get_dev_status,
-> +};
-> +
-> +static struct tegra_mc *tegra_get_memory_controller(void)
-> +{
-> +	struct platform_device *pdev;
-> +	struct device_node *np;
-> +	struct tegra_mc *mc;
-> +
-> +	np =3D of_find_compatible_node(NULL, NULL, "nvidia,tegra20-mc-gart");
-> +	if (!np)
-> +		return ERR_PTR(-ENOENT);
-> +
-> +	pdev =3D of_find_device_by_node(np);
-> +	of_node_put(np);
-> +	if (!pdev)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	mc =3D platform_get_drvdata(pdev);
-> +	if (!mc)
-> +		return ERR_PTR(-EPROBE_DEFER);
-> +
-> +	return mc;
-> +}
-> +
-> +static int tegra_devfreq_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_devfreq *tegra;
-> +	struct tegra_mc *mc;
-> +	unsigned long max_rate;
-> +	unsigned long rate;
-> +	int err;
-> +
-> +	mc =3D tegra_get_memory_controller();
-> +	if (IS_ERR(mc)) {
-> +		err =3D PTR_ERR(mc);
-> +		dev_err(&pdev->dev, "failed to get memory controller: %d\n",
-> +			err);
-> +		return err;
-> +	}
-> +
-> +	tegra =3D devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-> +	if (!tegra)
-> +		return -ENOMEM;
-> +
-> +	/* EMC is a system-critical clock that is always enabled */
-> +	tegra->emc_clock =3D devm_clk_get(&pdev->dev, "emc");
-> +	if (IS_ERR(tegra->emc_clock)) {
-> +		err =3D PTR_ERR(tegra->emc_clock);
-> +		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	tegra->regs =3D mc->regs;
-> +
-> +	max_rate =3D clk_round_rate(tegra->emc_clock, ULONG_MAX);
-> +
-> +	for (rate =3D 0; rate <=3D max_rate; rate++) {
-> +		rate =3D clk_round_rate(tegra->emc_clock, rate);
-> +
-> +		err =3D dev_pm_opp_add(&pdev->dev, rate, 0);
-> +		if (err) {
-> +			dev_err(&pdev->dev, "failed to add opp: %d\n", err);
-> +			goto remove_opps;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Reset statistic gathers state, select global bandwidth for the
-> +	 * statistics collection mode and set clocks counter saturation
-> +	 * limit to maximum.
-> +	 */
-> +	writel_relaxed(0x00000000, tegra->regs + MC_STAT_CONTROL);
-> +	writel_relaxed(0x00000000, tegra->regs + MC_STAT_EMC_CONTROL);
-> +	writel_relaxed(0xffffffff, tegra->regs + MC_STAT_EMC_CLOCK_LIMIT);
-> +
-> +	platform_set_drvdata(pdev, tegra);
-> +
-> +	tegra->devfreq =3D devfreq_add_device(&pdev->dev, &tegra_devfreq_profil=
-e,
-> +					    DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
-> +	if (IS_ERR(tegra->devfreq)) {
-> +		err =3D PTR_ERR(tegra->devfreq);
-> +		goto remove_opps;
-> +	}
-> +
-> +	return 0;
-> +
-> +remove_opps:
-> +	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra_devfreq_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_devfreq *tegra =3D platform_get_drvdata(pdev);
-> +
-> +	devfreq_remove_device(tegra->devfreq);
-> +	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver tegra_devfreq_driver =3D {
-> +	.probe		=3D tegra_devfreq_probe,
-> +	.remove		=3D tegra_devfreq_remove,
-> +	.driver		=3D {
-> +		.name	=3D "tegra20-devfreq",
-> +	},
-> +};
-> +module_platform_driver(tegra_devfreq_driver);
-> +
-> +MODULE_ALIAS("platform:tegra20-devfreq");
-> +MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
-> +MODULE_DESCRIPTION("NVIDIA Tegra20 devfreq driver");
-> +MODULE_LICENSE("GPL v2");
-> --=20
-> 2.21.0
->=20
-
---b5sSX5qSQrSInIHt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2VSQACgkQ3SOs138+
-s6Fpnw//ShKwtgVr1pHOxNmjT8I+pZUxGNzv6vi+49HAZRpNeatucR0WBoVRquK+
-Xt/ZarB9driAZRg8UkbCb5i9HAKilBcWXfso1q+judg9jy34HFwX5U6qGQGylybJ
-hNx87Nn+Gx4am7fYy6MMmmFH6xflA2dJHCABZlYlapbbXYJcVZHneZEIj5sDopVo
-xOLK3BQvg426d7ArSfw+hXMBkrW4I32QbuRsqnblLRx2PUx0sjQnH3jQpM4nHaIX
-5oK9hyGyYnfQiGR8amAwvkl9knffZa19MSIxH3b5u4ESXn78HyN9rWXzIfbutci9
-cFzoKWj7Qw1m0Syo1IAEpySULsKydjaxZMJGXjwDytCUPcAyOfef72W8G8C5ixA1
-6oYuG2H0OJWXHSViZzJImXP9vIO3eB+sShDLsc+qsei9hrHAaA+lELiozgL9N4/a
-NWf9DuDjE1VnVhUmbUygW4GzNVY5tkJAKUBAGyqMvfrksWOvvrRY2M4jTdsy7vMA
-i/2IN7noBl5TDtxUk2l2H1wp5ZRixjvLXa49ElAMgF4SB7+UuNU10rDqRWkgnGtQ
-Q/+UZstvhaoHMBtZVXyC8COFaTUG3IHS12NQRxGxq5Ar1SkVWNpT7NCSqQOrtMfO
-a6UkKzobei7mtYqPfmfHHW2HN87CL/xDmABbYoBO3oZO4q6gu5A=
-=eJ30
------END PGP SIGNATURE-----
-
---b5sSX5qSQrSInIHt--
+-- 
+nvpublic
