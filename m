@@ -1,65 +1,57 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 01/16] PM / devfreq: tegra: Fix kHz to Hz conversion
-Date: Tue, 4 Jun 2019 12:54:46 +0200
-Message-ID: <20190604105446.GA16519@ulmo>
+Subject: Re: [PATCH v4 02/16] PM / devfreq: tegra: Replace readl-writel with
+ relaxed versions
+Date: Tue, 4 Jun 2019 12:55:54 +0200
+Message-ID: <20190604105554.GB16519@ulmo>
 References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-2-digetx@gmail.com>
+ <20190501233815.32643-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+        protocol="application/pgp-signature"; boundary="gatW/ieO32f1wygP"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190501233815.32643-2-digetx@gmail.com>
+In-Reply-To: <20190501233815.32643-3-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---LZvS9be/3tNcYl/X
+--gatW/ieO32f1wygP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 02, 2019 at 02:38:00AM +0300, Dmitry Osipenko wrote:
-> The kHz to Hz is incorrectly converted in a few places in the code,
-> this results in a wrong frequency being calculated because devfreq core
-> uses OPP frequencies that are given in Hz to clamp the rate, while
-> tegra-devfreq gives to the core value in kHz and then it also expects to
-> receive value in kHz from the core. In a result memory freq is always set
-> to a value which is close to ULONG_MAX because of the bug. Hence the EMC
-> frequency is always capped to the maximum and the driver doesn't do
-> anything useful. This patch was tested on Tegra30 and Tegra124 SoC's, EMC
-> frequency scaling works properly now.
+On Thu, May 02, 2019 at 02:38:01AM +0300, Dmitry Osipenko wrote:
+> There is no need to insert memory barrier on each readl/writel
+> invocation, hence use the relaxed versions.
 >=20
-> Cc: <stable@vger.kernel.org> # 4.14+
-> Tested-by: Steev Klimaszewski <steev@kali.org>
 > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/devfreq/tegra-devfreq.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
+>  drivers/devfreq/tegra-devfreq.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---LZvS9be/3tNcYl/X
+--gatW/ieO32f1wygP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2TfQACgkQ3SOs138+
-s6GExg/9HsPjT2SjCQvZabaE2o3s+/XY1gquN4JnV0phciJyXkDiCEYstAtLTcwR
-K464Jww0SwHI9j28NVkTwfCI5ZCV8PJgjY+5R/NRSW0JidhZS8AaMKkFfCMa8Ubz
-8KBWHvn+iRlGR4Lpssr/nWPqk0NLga+exxpzQVQmY7iPZ02yxoC3sNiJmbXHT54F
-o7QgAd1qwFST5DQ/yMHzZK27iUhFdupDGkyb2BVh2X0y6q2iseuvoW5at81ZuoVI
-TB8Knl5dWItuG/ERGfnfoU8hV5i7RJDzTcnlLh//GSdD4cpRLGFVDbDE7lgnd4vq
-DSCu/I4befv91FmHVIgEgI5qmccCzm9sFUrRT3Ga8hGtclm/namJyL8std4Jxh+b
-9s7O9EeBAo/ZisfXhlzZnY5mg2Z8dfCxwxbxXhPZE/Mz6/ndmGfVFKsXRIvVBd5f
-lDn71dlug/uXWQ5Tudkz/23JQyGW6dbQK14BZPt/2EEygyJnsmJckQuyOYUhy3Ak
-xBkemlaQNzBS/ILhs7TVKA/+EFkdS/8Fcow5Kl4RdORdx9aXpbNxPIOMNWqyJYVH
-v7Y0DsHPN98oshCFNQ7K0z9XIV6auZrlZ7RCnyfXhCz4NLQcxlrGYGQX6NIafFN8
-ZXJgm+e4fuFBdNGBWUeh5STwqInQ4zLEdp9RwywxzH+SUoA6ePg=
-=8Afm
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2TjoACgkQ3SOs138+
+s6HCig/+MYGm5lDlw7UEH/pX4xq0xSFTzfNLCvBD6nL3btL51CHXKvLRfsOJT1yy
+mvGMSI7THp7XjAJkMWQfu3dyhdTFMsEKl+BAafPV4EhUtK0XkL4Jjttb7cP64ryf
+l8OLys9nDOFLx3qHy1ZQ3HeWmWcxykzeVaX+ymvICq++6H6WR+hNYGO+bUuOA92y
+588v7IjusMz4gxhiO0U6f8JhNJIvyco+TtND/KfeeNC1Svc3epWeijG25O/Zd1Yu
+uYHo9F852kgM2ZVIPnVBQljZXX+5H5cOmCkP2L9iF3TcQRcCJwsTaIRpATBmWgJR
+EcqM2XF+aJ2hlA8SlaJkLma0MP5EuZllYYrIO5+FpPfcDnEjOFNlK+2B1rN151pR
+Zi35DCYQ0XZoK2ZKvw7ICQdPv56TZpW17u6GMS7qx+KbiCWHOFGMTg6KVNO4TeO6
+Uk+nm9U4JzAhwdHdvkelGsIHIcer1QuAPCiT+v+JZNcdV0QE8nn30Np27EEVWdqK
+EyNDxplwghjO8/PUaBHNwqjQs/fMemM/XCB6ffledqxi8SHLL4HZ/02KvYVI3rX7
+wYyVs/HRaHaottLqKLGeaUFLz7XQkZ+eB4vmMuwSDjyRTcqAJDKf5eiN4TfTQvU/
+up1EiOF/H31z8jGNyYfXZ4MK7s3+XKvouYN2ayy02N1ti9U/CjA=
+=jArK
 -----END PGP SIGNATURE-----
 
---LZvS9be/3tNcYl/X--
+--gatW/ieO32f1wygP--
