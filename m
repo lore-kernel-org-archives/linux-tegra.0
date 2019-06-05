@@ -1,101 +1,50 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra210: Fix default rates for HDA clocks
-Date: Wed, 5 Jun 2019 14:38:30 +0200
-Message-ID: <20190605123830.GA1012@ulmo>
-References: <1559121501-8566-1-git-send-email-jonathanh@nvidia.com>
- <20190529134625.GD17223@ulmo>
- <5f2b8f8d-f3e5-fab8-8cf0-fa8a3e917845@nvidia.com>
- <f2757c84-363c-cef0-db9d-c4e4423200b5@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] gpu: host1x: Do not output error message for deferred
+ probe
+Date: Wed, 5 Jun 2019 14:40:12 +0200
+Message-ID: <20190605124012.GU21222@phenom.ffwll.local>
+References: <20190604153150.22265-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <f2757c84-363c-cef0-db9d-c4e4423200b5@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+In-Reply-To: <20190604153150.22265-1-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 05, 2019 at 12:30:31PM +0100, Jon Hunter wrote:
->=20
-> On 31/05/2019 15:58, Jon Hunter wrote:
-> >=20
-> > On 29/05/2019 14:46, Thierry Reding wrote:
-> >> On Wed, May 29, 2019 at 10:18:21AM +0100, Jon Hunter wrote:
-> >>> Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
-> >>> are both 19.2MHz. However, the default rates for these clocks should
-> >>> actually be 51MHz and 48MHz, respectively. Correct the default clock
-> >>> rates for these clocks by specifying them in the clock init table for
-> >>> Tegra210.
-> >>>
-> >>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> >>> ---
-> >>>  drivers/clk/tegra/clk-tegra210.c | 2 ++
-> >>>  1 file changed, 2 insertions(+)
-> >>
-> >> Does this fix anything? Should this be backported to stable releases?
-> >=20
-> > Good point. We are aligning the clock configuration with what we ship.
-> > So I thought for completeness it would be good to test HDA playback
-> > across the various sample-rates we support (32kHz to 192kHz) but with or
-> > without this patch I am not hearing anything. Let me check on this with
-> > Sameer as I would like to see if we need to mark this for stable or not.
-> >=20
-> >> Acked-by: Thierry Reding <treding@nvidia.com>
->=20
-> I have confirmed that this does fix HDA playback on Tegra210. Without
-> this fix, I am seeing the following messages during playback and
-> playback is distorted ...
->=20
-> Write error: -32,Broken pipe
-> [   15.069335] tegra-mc 70019000.memory-controller: hdar: read
-> @0x0000000000000000: EMEM address decode error (EMEM decode error)
-> Write error: -32,Broken pipe
-> [   15.465362] tegra-mc 70019000.memory-controller: hdar: read
-> @0x0000000000000000: EMEM address decode error (EMEM decode error)
-> Write error: -32,Broken pipe
-> [   15.858615] tegra-mc 70019000.memory-controller: hdar: read
-> @0x0000000000000000: EMEM address decode error (EMEM decode error)
-> W
->=20
-> Do you want me to update the change and resend?
-
-Honestly I'm not sure if it's worth it. I haven't seen any bug reports
-for this and we haven't had audio over HDMI support for very long, so a
-backport may not be necessary.
-
-I guess there'd be some use to backport this so that our stable kernel
-testing passes these. So it's really up to you. I have a slight tendency
-towards backporting, because it's really tiny and then we just have it
-out of the way and it's not going to haunt us.
-
-Thierry
-
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz3t8YACgkQ3SOs138+
-s6HDVw//fVw0ZwJVA8M4iHuRpPgj6iIfoP9raM5gEG0eUfa6FEr3iDtfOIW+rB7G
-GQqEtIR/l6GaPKrRWQX/0AwTOKb3uIoVxACSye7jh/M4o8A4ml8faPvQGpx97Oe3
-3hq6aEaU3lwTCOv4hJy3QWXAYqNJAyEFv9puOm0iiNuTODVNHO4dlAg8SYZQMzG+
-FqBPH08pEZaQ0sRktNX00wcWrrLPEnRJwHZr0yWfnajdeWJAhNtrU5d5vD5ffUsn
-sdu5PnEOxZdpuzqPFdwZDYAmj5i+D7cw1aLF9vN+Vzuju4dxtVgb+0uWSD4osmyy
-l8TDbLrVNx2IRqMe6EaMl8tg5ZCubNtVbA/cuo+XdBGjNBzXQVTPK/sni/Tt/g3K
-+gl5cyOcCdGDjNyER6Ve2g1hmnBld4mkKrH1A20IDlIhO1WTa3Eej0eWpfJzpIvR
-nS0Zds+7tNDsjDlSjlBFSxmgzUtmhtQdJ7M4ymdXZNt5BVcQGBK4fteewDYZgf2T
-23+LpkKudJxWPVTLc60Bzu+EYUOOyrdOMoITAKWmzw5k0ZaLwSpmgcrvPi+xGrgk
-THaYxb8LgJENFvOZQF7MFepAGRfaeknYptfUKV2Qw/+Rrjjyg2ZqIbT86bBq5obj
-izICkwk+/IWwz0efRc0kMYu6+S9Tpfr5rewS7hB2uzg+EM8AMqQ=
-=AXlW
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
+T24gVHVlLCBKdW4gMDQsIDIwMTkgYXQgMDU6MzE6NTBQTSArMDIwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBX
+aGVuIGRlZmVycmluZyBwcm9iZSwgYXZvaWQgbG9nZ2luZyBhIGNvbmZ1c2luZyBlcnJvciBtZXNz
+YWdlLiBXaGlsZSBhdAo+IGl0LCBtYWtlIHRoZSBlcnJvciBtZXNzYWdlIG1vcmUgaW5mb3JtYXRp
+b25hbC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEu
+Y29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgfCA1ICsrKystCj4gIDEgZmls
+ZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCj4g
+aW5kZXggYzU1ZTJkNjM0ODg3Li41YTNmNzk3MjQwZDQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvaG9zdDF4L2Rldi5jCj4gKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCj4gQEAgLTI0
+Nyw4ICsyNDcsMTEgQEAgc3RhdGljIGludCBob3N0MXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
+dmljZSAqcGRldikKPiAgCj4gIAlob3N0LT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwg
+TlVMTCk7Cj4gIAlpZiAoSVNfRVJSKGhvc3QtPmNsaykpIHsKPiAtCQlkZXZfZXJyKCZwZGV2LT5k
+ZXYsICJmYWlsZWQgdG8gZ2V0IGNsb2NrXG4iKTsKPiAgCQllcnIgPSBQVFJfRVJSKGhvc3QtPmNs
+ayk7Cj4gKwo+ICsJCWlmIChlcnIgIT0gLUVQUk9CRV9ERUZFUikKPiArCQkJZGV2X2VycigmcGRl
+di0+ZGV2LCAiZmFpbGVkIHRvIGdldCBjbG9jazogJWRcbiIsIGVycik7CgpSZXZpZXdlZC1ieTog
+RGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KCj4gKwo+ICAJCXJldHVybiBl
+cnI7Cj4gIAl9Cj4gIAo+IC0tIAo+IDIuMjEuMAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUg
+RW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
