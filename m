@@ -1,50 +1,36 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] gpu: host1x: Do not output error message for deferred
- probe
-Date: Wed, 5 Jun 2019 14:40:12 +0200
-Message-ID: <20190605124012.GU21222@phenom.ffwll.local>
-References: <20190604153150.22265-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] rtc: tegra: Drop MODULE_ALIAS
+Date: Wed, 5 Jun 2019 15:43:17 +0300
+Message-ID: <3cc5b0f5-83ae-23b8-e064-652300b93aae@gmail.com>
+References: <20190605122613.21303-1-digetx@gmail.com>
+ <20190605123327.GB724@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190604153150.22265-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190605123327.GB724@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdW4gMDQsIDIwMTkgYXQgMDU6MzE6NTBQTSArMDIwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBX
-aGVuIGRlZmVycmluZyBwcm9iZSwgYXZvaWQgbG9nZ2luZyBhIGNvbmZ1c2luZyBlcnJvciBtZXNz
-YWdlLiBXaGlsZSBhdAo+IGl0LCBtYWtlIHRoZSBlcnJvciBtZXNzYWdlIG1vcmUgaW5mb3JtYXRp
-b25hbC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEu
-Y29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgfCA1ICsrKystCj4gIDEgZmls
-ZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCj4g
-aW5kZXggYzU1ZTJkNjM0ODg3Li41YTNmNzk3MjQwZDQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
-cHUvaG9zdDF4L2Rldi5jCj4gKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCj4gQEAgLTI0
-Nyw4ICsyNDcsMTEgQEAgc3RhdGljIGludCBob3N0MXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikKPiAgCj4gIAlob3N0LT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwg
-TlVMTCk7Cj4gIAlpZiAoSVNfRVJSKGhvc3QtPmNsaykpIHsKPiAtCQlkZXZfZXJyKCZwZGV2LT5k
-ZXYsICJmYWlsZWQgdG8gZ2V0IGNsb2NrXG4iKTsKPiAgCQllcnIgPSBQVFJfRVJSKGhvc3QtPmNs
-ayk7Cj4gKwo+ICsJCWlmIChlcnIgIT0gLUVQUk9CRV9ERUZFUikKPiArCQkJZGV2X2VycigmcGRl
-di0+ZGV2LCAiZmFpbGVkIHRvIGdldCBjbG9jazogJWRcbiIsIGVycik7CgpSZXZpZXdlZC1ieTog
-RGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KCj4gKwo+ICAJCXJldHVybiBl
-cnI7Cj4gIAl9Cj4gIAo+IC0tIAo+IDIuMjEuMAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUg
-RW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+05.06.2019 15:33, Thierry Reding пишет:
+> On Wed, Jun 05, 2019 at 03:26:13PM +0300, Dmitry Osipenko wrote:
+>> RTC driver was converted to OF driver long time ago. The MODULE_ALIAS
+>> macro has no effect for the OF drivers since the alias is overridden by
+>> the drivers core to follow the OF naming convention of the driver's alias,
+>> which is based on the device-tree matching name.
+>>
+>> $ cat /sys/devices/soc0/7000e000.rtc/modalias
+>> of:NrtcT(null)Cnvidia,tegra20-rtc
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/rtc/rtc-tegra.c | 1 -
+>>  1 file changed, 1 deletion(-)
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+
+Thanks!
