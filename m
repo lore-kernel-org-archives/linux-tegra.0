@@ -1,52 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] drm/tegra: dpaux: Make VDD supply optional
-Date: Wed,  5 Jun 2019 10:48:01 +0200
-Message-ID: <20190605084801.12599-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra210: Fix default rates for HDA clocks
+Date: Wed, 5 Jun 2019 12:30:31 +0100
+Message-ID: <f2757c84-363c-cef0-db9d-c4e4423200b5@nvidia.com>
+References: <1559121501-8566-1-git-send-email-jonathanh@nvidia.com>
+ <20190529134625.GD17223@ulmo>
+ <5f2b8f8d-f3e5-fab8-8cf0-fa8a3e917845@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5f2b8f8d-f3e5-fab8-8cf0-fa8a3e917845@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBWREQgc3VwcGx5
-IGlzIG9ubHkgbmVlZGVkIHRvIHN1cHBseSBwb3dlciB0byBlRFAgcGFuZWxzIGNvbm5lY3RlZCB0
-bwpEUEFVWC4gVGVjaG5pY2FsbHkgdGhhdCBzdXBwbHkgc2hvdWxkIGJlIGRlYWx0IHdpdGggaW4g
-dGhlIHBhbmVsIGRyaXZlciwKYnV0IGZvciBiYWNrd2FyZHMtY29tcGF0aWJpbGl0eSB3ZSBuZWVk
-IHRvIGtlZXAgdGhpcyBhcm91bmQgYW55d2F5LgoKQWxzbyBhcyBhIGJpdCBvZiBiYWNrZ3JvdW5k
-OiB0aGUgcmVhc29uIGZvciB3aHkgdGhpcyBzdXBwbHkgaXMgYXR0YWNoZWQKdG8gRFBBVVggaXMg
-dG8gbWFrZSBzdXJlIHRoZSBwYW5lbCBpcyBwcm9wZXJseSBwb3dlcmVkIGVhcmx5IG9uIHNvIHRo
-YXQKaXQgY2FuIGdlbmVyYXRlIGEgaG90cGx1ZyBwdWxzZSBhdCB0aGUgYXBwcm9wcmlhdGUgdGlt
-ZS4gVGhpcyBtYXkgbm8KbG9uZ2VyIGJlIHJlcXVpcmVkIGdpdmVuIHRoZSBzdXBwb3J0IGZvciBk
-ZWZlcnJlZCBmYmRldiBzZXR1cCB0aGF0IHdhcwoicmVjZW50bHkiIGludHJvZHVjZWQgaW4gRFJN
-L0tNUy4KClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+
-Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgfCAxMyArKysrKysrKystLS0tCiAx
-IGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2RwYXV4LmMKaW5kZXggZWU0MTgwZDhkYjE0Li42NWMzODlkOWM4NWQgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
-cGF1eC5jCkBAIC00ODUsMTEgKzQ4NSwxNiBAQCBzdGF0aWMgaW50IHRlZ3JhX2RwYXV4X3Byb2Jl
-KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCXJldHVybiBlcnI7CiAJfQogCi0JZHBh
-dXgtPnZkZCA9IGRldm1fcmVndWxhdG9yX2dldCgmcGRldi0+ZGV2LCAidmRkIik7CisJZHBhdXgt
-PnZkZCA9IGRldm1fcmVndWxhdG9yX2dldF9vcHRpb25hbCgmcGRldi0+ZGV2LCAidmRkIik7CiAJ
-aWYgKElTX0VSUihkcGF1eC0+dmRkKSkgewotCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQg
-dG8gZ2V0IFZERCBzdXBwbHk6ICVsZFxuIiwKLQkJCVBUUl9FUlIoZHBhdXgtPnZkZCkpOwotCQly
-ZXR1cm4gUFRSX0VSUihkcGF1eC0+dmRkKTsKKwkJaWYgKFBUUl9FUlIoZHBhdXgtPnZkZCkgIT0g
-LUVOT0RFVikgeworCQkJaWYgKFBUUl9FUlIoZHBhdXgtPnZkZCkgIT0gLUVQUk9CRV9ERUZFUikK
-KwkJCQlkZXZfZXJyKCZwZGV2LT5kZXYsCisJCQkJCSJmYWlsZWQgdG8gZ2V0IFZERCBzdXBwbHk6
-ICVsZFxuIiwKKwkJCQkJUFRSX0VSUihkcGF1eC0+dmRkKSk7CisKKwkJCXJldHVybiBQVFJfRVJS
-KGRwYXV4LT52ZGQpOworCQl9CiAJfQogCiAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZHBh
-dXgpOwotLSAKMi4yMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWw=
+
+On 31/05/2019 15:58, Jon Hunter wrote:
+> 
+> On 29/05/2019 14:46, Thierry Reding wrote:
+>> On Wed, May 29, 2019 at 10:18:21AM +0100, Jon Hunter wrote:
+>>> Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+>>> are both 19.2MHz. However, the default rates for these clocks should
+>>> actually be 51MHz and 48MHz, respectively. Correct the default clock
+>>> rates for these clocks by specifying them in the clock init table for
+>>> Tegra210.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>> ---
+>>>  drivers/clk/tegra/clk-tegra210.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>
+>> Does this fix anything? Should this be backported to stable releases?
+> 
+> Good point. We are aligning the clock configuration with what we ship.
+> So I thought for completeness it would be good to test HDA playback
+> across the various sample-rates we support (32kHz to 192kHz) but with or
+> without this patch I am not hearing anything. Let me check on this with
+> Sameer as I would like to see if we need to mark this for stable or not.
+> 
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+
+I have confirmed that this does fix HDA playback on Tegra210. Without
+this fix, I am seeing the following messages during playback and
+playback is distorted ...
+
+Write error: -32,Broken pipe
+[   15.069335] tegra-mc 70019000.memory-controller: hdar: read
+@0x0000000000000000: EMEM address decode error (EMEM decode error)
+Write error: -32,Broken pipe
+[   15.465362] tegra-mc 70019000.memory-controller: hdar: read
+@0x0000000000000000: EMEM address decode error (EMEM decode error)
+Write error: -32,Broken pipe
+[   15.858615] tegra-mc 70019000.memory-controller: hdar: read
+@0x0000000000000000: EMEM address decode error (EMEM decode error)
+W
+
+Do you want me to update the change and resend?
+
+Jon
+
+-- 
+nvpublic
