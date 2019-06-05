@@ -1,53 +1,85 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: Do not output error message for deferred
- probe
-Date: Tue, 4 Jun 2019 21:35:53 +0300
-Message-ID: <a96b1738-9f7f-69c6-ec44-bc9a355a620a@gmail.com>
-References: <20190604153150.22265-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2] arm64: tegra: add CPU cache topology for Tegra186
+Date: Wed, 5 Jun 2019 10:16:59 +0200
+Message-ID: <20190605081659.GA10944@ulmo>
+References: <20190605022640.17837-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190604153150.22265-1-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: multipart/mixed; boundary="===============5389831247136737110=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190605022640.17837-1-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-MDQuMDYuMjAxOSAxODozMSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
-cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFdoZW4gZGVmZXJyaW5nIHByb2Jl
-LCBhdm9pZCBsb2dnaW5nIGEgY29uZnVzaW5nIGVycm9yIG1lc3NhZ2UuIFdoaWxlIGF0Cj4gaXQs
-IG1ha2UgdGhlIGVycm9yIG1lc3NhZ2UgbW9yZSBpbmZvcm1hdGlvbmFsLgo+IAo+IFNpZ25lZC1v
-ZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0tCj4gIGRyaXZl
-cnMvZ3B1L2hvc3QxeC9kZXYuYyB8IDUgKysrKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0
-aW9ucygrKSwgMSBkZWxldGlvbigtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0
-MXgvZGV2LmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMKPiBpbmRleCBjNTVlMmQ2MzQ4ODcu
-LjVhM2Y3OTcyNDBkNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMKPiAr
-KysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMKPiBAQCAtMjQ3LDggKzI0NywxMSBAQCBzdGF0
-aWMgaW50IGhvc3QxeF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAKPiAg
-CWhvc3QtPmNsayA9IGRldm1fY2xrX2dldCgmcGRldi0+ZGV2LCBOVUxMKTsKPiAgCWlmIChJU19F
-UlIoaG9zdC0+Y2xrKSkgewo+IC0JCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQg
-Y2xvY2tcbiIpOwo+ICAJCWVyciA9IFBUUl9FUlIoaG9zdC0+Y2xrKTsKPiArCj4gKwkJaWYgKGVy
-ciAhPSAtRVBST0JFX0RFRkVSKQo+ICsJCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8g
-Z2V0IGNsb2NrOiAlZFxuIiwgZXJyKTsKPiArCj4gIAkJcmV0dXJuIGVycjsKPiAgCX0KClRoZSBj
-bG9jayBkcml2ZXIgc2hvdWxkIGJlIGF2YWlsYWJsZSBhdCB0aGUgdGltZSBvZiBob3N0MXgncyBw
-cm9iaW5nIG9uCmFsbCBUZWdyYSdzIGJlY2F1c2UgaXQgaXMgb25lIG9mIGVzc2VudGlhbCBjb3Jl
-IGRyaXZlcnMgdGhhdCBiZWNvbWUKYXZhaWxhYmxlIGVhcmx5IGR1cmluZyBib290LgoKSSBndWVz
-cyB5b3UncmUgbWFraW5nIHRoaXMgY2hhbmdlIGZvciBUMTg2LCBpcyBpdCBiZWNhdXNlIHRoZSBC
-UE1QCmRyaXZlcidzIHByb2JlIGdldHRpbmcgZGVmZXJyZWQ/IElmIHllcywgd29uJ3QgaXQgYmUg
-cG9zc2libGUgdG8gZml4IHRoZQpkZWZlciBvZiB0aGUgY2xvY2sgZHJpdmVyIGluc3RlYWQgb2Yg
-bWFraW5nIHN1Y2ggY2hhbmdlcyBpbiBhbGwgb2YgdGhlCmFmZmVjdGVkIGRyaXZlcnM/CgpbaXQg
-YXBwZWFyZWQgdG8gbWUgdGhhdCBmaXJzdCBlbWFpbCBnb3QgZHJvcHBlZCBieSBnbWFpbCwgc28g
-SSdtCnJlLXNlbmRpbmcgaXQgc2Vjb25kIHRpbWUganVzdCBpbiBhIGNhc2VdCgotLSAKRG1pdHJ5
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+
+--===============5389831247136737110==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
+
+
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 05, 2019 at 10:26:40AM +0800, Joseph Lo wrote:
+> Tegra186 has two CPU clusters with its own cache hierarchy. This patch
+> adds them with the cache information of each of the CPUs.
+>=20
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+> v2:
+>  - add detail cache information
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 60 ++++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+
+Applied, thanks.
+
+Thierry
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz3enYACgkQ3SOs138+
+s6Ft9g//YhdzpDxT8SmLLJxJ+RqnMTzqOtGr5Gn6zGrVsJqu9rOnscmSY3aYVqoj
+Tsp+6ZEQp2IqmzxfCKF3Dmbnd7d3tgnUI2iAb3DyF24e4TGJH76ivK9hnVaxNteX
+3vGtfKjalTkw1cbGFGi7KeRc3Rkmz7GIJtw7T8b75NQ20bT8XKBO2znIs48GRFoE
+vnlCsEt4JAzH9EgQpllYZzO9re69JnVCUNS6TXJ6DLGkyR7h1lAWgKXW4bKo0PMN
+vV/Dr51VPRLc5j6177mWh8sUryxiYmDnNsdqhNpXpLXSVUjZuSoW724bdsSPK7oq
+p0YzmjxiMUG+inBgeneypDt9Uic3ozJnUoWnm/JiiDYxgfb6yq3SZ+A9mq945lvg
+2iLK/Axg8y3hhCuiGNqYeJFPyHh6OQoMTMqyP3PY08ngW86NcYlrx22zTRKDqPR9
+5MlRPsv0ewj94M0PR8yvShupwl8irJ9RfLr1zWCbWvV8EHFO7zFKHBOOYHAXew6x
+x+Rkp5Qj1eQEwE5oNTTasePntVFfMVB+bSTfTDTYEyV6xXA96DvwNrGL5tW10mYl
+Xf+5g6MAtN+CKCDKvJaK9GM6s0ybmgH7v8QY3ZxNiNHKpo5fjLib6CbxPCxvLjjL
+LA0QHleueeSZHC1PHURdXU3L//y9GrykEDP1BCkhXt3nzf2yJQk=
+=yybJ
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
+
+
+--===============5389831247136737110==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5389831247136737110==--
