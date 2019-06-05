@@ -1,59 +1,101 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1] rtc: tegra: Drop MODULE_ALIAS
-Date: Wed, 5 Jun 2019 14:33:27 +0200
-Message-ID: <20190605123327.GB724@ulmo>
-References: <20190605122613.21303-1-digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra210: Fix default rates for HDA clocks
+Date: Wed, 5 Jun 2019 14:38:30 +0200
+Message-ID: <20190605123830.GA1012@ulmo>
+References: <1559121501-8566-1-git-send-email-jonathanh@nvidia.com>
+ <20190529134625.GD17223@ulmo>
+ <5f2b8f8d-f3e5-fab8-8cf0-fa8a3e917845@nvidia.com>
+ <f2757c84-363c-cef0-db9d-c4e4423200b5@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
+        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190605122613.21303-1-digetx@gmail.com>
+In-Reply-To: <f2757c84-363c-cef0-db9d-c4e4423200b5@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---NMuMz9nt05w80d4+
+--bg08WKrSYDhXBjb5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05, 2019 at 03:26:13PM +0300, Dmitry Osipenko wrote:
-> RTC driver was converted to OF driver long time ago. The MODULE_ALIAS
-> macro has no effect for the OF drivers since the alias is overridden by
-> the drivers core to follow the OF naming convention of the driver's alias,
-> which is based on the device-tree matching name.
+On Wed, Jun 05, 2019 at 12:30:31PM +0100, Jon Hunter wrote:
 >=20
-> $ cat /sys/devices/soc0/7000e000.rtc/modalias
-> of:NrtcT(null)Cnvidia,tegra20-rtc
+> On 31/05/2019 15:58, Jon Hunter wrote:
+> >=20
+> > On 29/05/2019 14:46, Thierry Reding wrote:
+> >> On Wed, May 29, 2019 at 10:18:21AM +0100, Jon Hunter wrote:
+> >>> Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+> >>> are both 19.2MHz. However, the default rates for these clocks should
+> >>> actually be 51MHz and 48MHz, respectively. Correct the default clock
+> >>> rates for these clocks by specifying them in the clock init table for
+> >>> Tegra210.
+> >>>
+> >>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >>> ---
+> >>>  drivers/clk/tegra/clk-tegra210.c | 2 ++
+> >>>  1 file changed, 2 insertions(+)
+> >>
+> >> Does this fix anything? Should this be backported to stable releases?
+> >=20
+> > Good point. We are aligning the clock configuration with what we ship.
+> > So I thought for completeness it would be good to test HDA playback
+> > across the various sample-rates we support (32kHz to 192kHz) but with or
+> > without this patch I am not hearing anything. Let me check on this with
+> > Sameer as I would like to see if we need to mark this for stable or not.
+> >=20
+> >> Acked-by: Thierry Reding <treding@nvidia.com>
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/rtc/rtc-tegra.c | 1 -
->  1 file changed, 1 deletion(-)
+> I have confirmed that this does fix HDA playback on Tegra210. Without
+> this fix, I am seeing the following messages during playback and
+> playback is distorted ...
+>=20
+> Write error: -32,Broken pipe
+> [   15.069335] tegra-mc 70019000.memory-controller: hdar: read
+> @0x0000000000000000: EMEM address decode error (EMEM decode error)
+> Write error: -32,Broken pipe
+> [   15.465362] tegra-mc 70019000.memory-controller: hdar: read
+> @0x0000000000000000: EMEM address decode error (EMEM decode error)
+> Write error: -32,Broken pipe
+> [   15.858615] tegra-mc 70019000.memory-controller: hdar: read
+> @0x0000000000000000: EMEM address decode error (EMEM decode error)
+> W
+>=20
+> Do you want me to update the change and resend?
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Honestly I'm not sure if it's worth it. I haven't seen any bug reports
+for this and we haven't had audio over HDMI support for very long, so a
+backport may not be necessary.
 
---NMuMz9nt05w80d4+
+I guess there'd be some use to backport this so that our stable kernel
+testing passes these. So it's really up to you. I have a slight tendency
+towards backporting, because it's really tiny and then we just have it
+out of the way and it's not going to haunt us.
+
+Thierry
+
+--bg08WKrSYDhXBjb5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz3tpcACgkQ3SOs138+
-s6E+Ng//eZTxse0nIaE8yFtTYIk+8duVndMR5gjd4dlPfNlYj+22Mwbrkjdbwhaf
-6UxRgSSDeEBIsRIogl7Js/UzxOhIDw6dT16DItWGUVNoX5CJ/kAXhimnis4x7guh
-IHiLEBfJLmq1+x2tq+oIA/P7CpaVpSjII/27Be5ju84T94SDiGwCKqfCpLyWCePC
-XNghQ1CUJWj9GXltqg2Amjbn49yGcYId16DwHHfbqeeQYmS/Du1IZnQEevMMy+92
-1EEow8h4LmfBmb7mq97Xl+ozX7ADgwwF+3oEGLpuFrSKyInvND8VW8WG4zhPa2SX
-TQ4NzyJe9AqJh6MXMT+zL9Jd3b150AE/+VHcDKb42IETXi4KIRg2dmBV1VxOvg0G
-b/fDJtMtOI/XtCG4Eca6wc+F6y9KkJ07d53FTuja1CZmJ3nyYoeZS7OLWKOxmurR
-2kire874EEt8R8WHX3P5yE/qz2+6LlShbluMMRy8OyxSETkandrjFZVyghT/LWp5
-zi3NvxqmJw20IMODPMguloMBXqaN+ahLzZOcmzQu85w8lc++A2z53Oqd94JckOC3
-9B04eXEzxDtz2rJ/K07JAt9SR0fV4cmMMTWbUh6OINjCOcOHsHLTlu6jW69ey15H
-kt94WU6mhdsyImTx4glAK3hmhtF9xD4+GKkZ8k2veTLJZLoKzH8=
-=Yr7G
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz3t8YACgkQ3SOs138+
+s6HDVw//fVw0ZwJVA8M4iHuRpPgj6iIfoP9raM5gEG0eUfa6FEr3iDtfOIW+rB7G
+GQqEtIR/l6GaPKrRWQX/0AwTOKb3uIoVxACSye7jh/M4o8A4ml8faPvQGpx97Oe3
+3hq6aEaU3lwTCOv4hJy3QWXAYqNJAyEFv9puOm0iiNuTODVNHO4dlAg8SYZQMzG+
+FqBPH08pEZaQ0sRktNX00wcWrrLPEnRJwHZr0yWfnajdeWJAhNtrU5d5vD5ffUsn
+sdu5PnEOxZdpuzqPFdwZDYAmj5i+D7cw1aLF9vN+Vzuju4dxtVgb+0uWSD4osmyy
+l8TDbLrVNx2IRqMe6EaMl8tg5ZCubNtVbA/cuo+XdBGjNBzXQVTPK/sni/Tt/g3K
++gl5cyOcCdGDjNyER6Ve2g1hmnBld4mkKrH1A20IDlIhO1WTa3Eej0eWpfJzpIvR
+nS0Zds+7tNDsjDlSjlBFSxmgzUtmhtQdJ7M4ymdXZNt5BVcQGBK4fteewDYZgf2T
+23+LpkKudJxWPVTLc60Bzu+EYUOOyrdOMoITAKWmzw5k0ZaLwSpmgcrvPi+xGrgk
+THaYxb8LgJENFvOZQF7MFepAGRfaeknYptfUKV2Qw/+Rrjjyg2ZqIbT86bBq5obj
+izICkwk+/IWwz0efRc0kMYu6+S9Tpfr5rewS7hB2uzg+EM8AMqQ=
+=AXlW
 -----END PGP SIGNATURE-----
 
---NMuMz9nt05w80d4+--
+--bg08WKrSYDhXBjb5--
