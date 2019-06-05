@@ -1,263 +1,123 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V3] drivers: i2c: tegra: fix checkpatch defects
-Date: Wed, 5 Jun 2019 23:31:00 -0700
-Message-ID: <1559802660-6636-1-git-send-email-bbiswas@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] gpu: host1x: Do not output error message for deferred
+ probe
+Date: Wed, 5 Jun 2019 14:25:43 +0300
+Message-ID: <1654b4cb-930c-dbc7-b40d-1f854ff2ac69@gmail.com>
+References: <20190604153150.22265-1-thierry.reding@gmail.com>
+ <21c2443c-9166-edc0-5d7b-46b9e3c48e70@gmail.com>
+ <20190605082848.GB10944@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190605082848.GB10944@ulmo>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
-
-Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
-as needed. Replace BUG() with error handling code.
-
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 66 +++++++++++++++++++++++-------------------
- 1 file changed, 36 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 76b7926..06864d5 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -112,7 +112,7 @@
- #define I2C_CLKEN_OVERRIDE			0x090
- #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
- 
--#define I2C_CONFIG_LOAD_TIMEOUT			1000000
-+#define I2C_CONFIG_LOAD_TMOUT			1000000
- 
- #define I2C_MST_FIFO_CONTROL			0x0b4
- #define I2C_MST_FIFO_CONTROL_RX_FLUSH		BIT(0)
-@@ -280,6 +280,7 @@ struct tegra_i2c_dev {
- 	u32 bus_clk_rate;
- 	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
-+	/* xfer_lock: lock to serialize transfer submission and processing */
- 	spinlock_t xfer_lock;
- 	struct dma_chan *tx_dma_chan;
- 	struct dma_chan *rx_dma_chan;
-@@ -306,7 +307,7 @@ static u32 dvc_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
-  * to the I2C block inside the DVC block
-  */
- static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
--	unsigned long reg)
-+					unsigned long reg)
- {
- 	if (i2c_dev->is_dvc)
- 		reg += (reg >= I2C_TX_FIFO) ? 0x10 : 0x40;
-@@ -314,7 +315,7 @@ static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
- }
- 
- static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
--	unsigned long reg)
-+		       unsigned long reg)
- {
- 	writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
- 
-@@ -329,13 +330,13 @@ static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
- }
- 
- static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
--	unsigned long reg, int len)
-+			unsigned long reg, int len)
- {
- 	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
- }
- 
- static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
--	unsigned long reg, int len)
-+		       unsigned long reg, int len)
- {
- 	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
- }
-@@ -486,7 +487,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
- 			dev_warn(i2c_dev->dev, "timeout waiting for fifo flush\n");
- 			return -ETIMEDOUT;
- 		}
--		msleep(1);
-+		usleep_range(1000, 2000);
- 	}
- 	return 0;
- }
-@@ -525,7 +526,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	 * prevent overwriting past the end of buf
- 	 */
- 	if (rx_fifo_avail > 0 && buf_remaining > 0) {
--		BUG_ON(buf_remaining > 3);
- 		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
- 		val = cpu_to_le32(val);
- 		memcpy(buf, &val, buf_remaining);
-@@ -533,7 +533,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 		rx_fifo_avail--;
- 	}
- 
--	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
- 	i2c_dev->msg_buf_remaining = buf_remaining;
- 	i2c_dev->msg_buf = buf;
- 
-@@ -591,7 +590,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	 * boundary and fault.
- 	 */
- 	if (tx_fifo_avail > 0 && buf_remaining > 0) {
--		BUG_ON(buf_remaining > 3);
- 		memcpy(&val, buf, buf_remaining);
- 		val = le32_to_cpu(val);
- 
-@@ -680,10 +678,11 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
- 		if (in_interrupt())
- 			err = readl_poll_timeout_atomic(addr, val, val == 0,
--					1000, I2C_CONFIG_LOAD_TIMEOUT);
-+							1000,
-+							I2C_CONFIG_LOAD_TMOUT);
- 		else
--			err = readl_poll_timeout(addr, val, val == 0,
--					1000, I2C_CONFIG_LOAD_TIMEOUT);
-+			err = readl_poll_timeout(addr, val, val == 0, 1000,
-+						 I2C_CONFIG_LOAD_TMOUT);
- 
- 		if (err) {
- 			dev_warn(i2c_dev->dev,
-@@ -858,16 +857,21 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
- 			if (i2c_dev->msg_buf_remaining)
- 				tegra_i2c_empty_rx_fifo(i2c_dev);
--			else
--				BUG();
-+			else {
-+				dev_err(i2c_dev->dev, "unexpected rx data request\n");
-+				i2c_dev->msg_err |= I2C_ERR_UNEXPECTED_STATUS;
-+				goto err;
-+			}
- 		}
- 
- 		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
--			if (i2c_dev->msg_buf_remaining)
--				tegra_i2c_fill_tx_fifo(i2c_dev);
--			else
-+			if (i2c_dev->msg_buf_remaining) {
-+				if (tegra_i2c_fill_tx_fifo(i2c_dev))
-+					goto err;
-+			} else {
- 				tegra_i2c_mask_irq(i2c_dev,
- 						   I2C_INT_TX_FIFO_DATA_REQ);
-+			}
- 		}
- 	}
- 
-@@ -885,7 +889,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
- 		if (i2c_dev->is_curr_dma_xfer)
- 			i2c_dev->msg_buf_remaining = 0;
--		BUG_ON(i2c_dev->msg_buf_remaining);
-+		WARN_ON_ONCE(i2c_dev->msg_buf_remaining);
- 		complete(&i2c_dev->msg_complete);
- 	}
- 	goto done;
-@@ -1024,7 +1028,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- }
- 
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
--	struct i2c_msg *msg, enum msg_end_type end_state)
-+			      struct i2c_msg *msg, enum msg_end_type end_state)
- {
- 	u32 packet_header;
- 	u32 int_mask;
-@@ -1034,7 +1038,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 *buffer = NULL;
- 	int err = 0;
- 	bool dma;
--	u16 xfer_time = 100;
-+	u16 xfer_tm = 100;
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
- 
-@@ -1058,7 +1062,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	 * Transfer time in mSec = Total bits / transfer rate
- 	 * Total bits = 9 bits per byte (including ACK bit) + Start & stop bits
- 	 */
--	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
-+	xfer_tm += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
- 					i2c_dev->bus_clk_rate);
- 	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
- 
-@@ -1137,7 +1141,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 				goto unlock;
- 			}
- 		} else {
--			tegra_i2c_fill_tx_fifo(i2c_dev);
-+			if (tegra_i2c_fill_tx_fifo(i2c_dev))
-+				goto unlock;
- 		}
- 	}
- 
-@@ -1161,9 +1166,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		if (err)
- 			return err;
- 
--		time_left = wait_for_completion_timeout(
--						&i2c_dev->dma_complete,
--						msecs_to_jiffies(xfer_time));
-+		time_left =
-+			wait_for_completion_timeout(&i2c_dev->dma_complete,
-+						    msecs_to_jiffies(xfer_tm));
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
- 			dmaengine_terminate_sync(i2c_dev->msg_read ?
-@@ -1189,7 +1194,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	}
- 
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						msecs_to_jiffies(xfer_time));
-+						msecs_to_jiffies(xfer_tm));
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
- 
- 	if (time_left == 0) {
-@@ -1225,7 +1230,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- }
- 
- static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
--	int num)
-+			  int num)
- {
- 	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
- 	int i;
-@@ -1273,12 +1278,12 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
- 	int ret;
- 
- 	ret = of_property_read_u32(np, "clock-frequency",
--			&i2c_dev->bus_clk_rate);
-+				   &i2c_dev->bus_clk_rate);
- 	if (ret)
- 		i2c_dev->bus_clk_rate = 100000; /* default clock rate */
- 
- 	i2c_dev->is_multimaster_mode = of_property_read_bool(np,
--			"multi-master");
-+							     "multi-master");
- }
- 
- static const struct i2c_algorithm tegra_i2c_algo = {
-@@ -1622,7 +1627,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
--			tegra_i2c_isr, 0, dev_name(&pdev->dev), i2c_dev);
-+			       tegra_i2c_isr, 0, dev_name(&pdev->dev), i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
- 		goto release_dma;
-@@ -1714,6 +1719,7 @@ static const struct dev_pm_ops tegra_i2c_pm = {
- 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
- 			   NULL)
- };
-+
- #define TEGRA_I2C_PM	(&tegra_i2c_pm)
- #else
- #define TEGRA_I2C_PM	NULL
--- 
-2.7.4
+MDUuMDYuMjAxOSAxMToyOCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBPbiBUdWUsIEp1
+biAwNCwgMjAxOSBhdCAwNzowNzo0MlBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+
+IDA0LjA2LjIwMTkgMTg6MzEsIFRoaWVycnkgUmVkaW5nINC/0LjRiNC10YI6Cj4+PiBGcm9tOiBU
+aGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Pj4KPj4+IFdoZW4gZGVmZXJyaW5n
+IHByb2JlLCBhdm9pZCBsb2dnaW5nIGEgY29uZnVzaW5nIGVycm9yIG1lc3NhZ2UuIFdoaWxlIGF0
+Cj4+PiBpdCwgbWFrZSB0aGUgZXJyb3IgbWVzc2FnZSBtb3JlIGluZm9ybWF0aW9uYWwuCj4+Pgo+
+Pj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+
+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyB8IDUgKysrKy0KPj4+ICAxIGZpbGUg
+Y2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4+Pgo+Pj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwo+
+Pj4gaW5kZXggYzU1ZTJkNjM0ODg3Li41YTNmNzk3MjQwZDQgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2
+ZXJzL2dwdS9ob3N0MXgvZGV2LmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwo+
+Pj4gQEAgLTI0Nyw4ICsyNDcsMTEgQEAgc3RhdGljIGludCBob3N0MXhfcHJvYmUoc3RydWN0IHBs
+YXRmb3JtX2RldmljZSAqcGRldikKPj4+ICAKPj4+ICAJaG9zdC0+Y2xrID0gZGV2bV9jbGtfZ2V0
+KCZwZGV2LT5kZXYsIE5VTEwpOwo+Pj4gIAlpZiAoSVNfRVJSKGhvc3QtPmNsaykpIHsKPj4+IC0J
+CWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgY2xvY2tcbiIpOwo+Pj4gIAkJZXJy
+ID0gUFRSX0VSUihob3N0LT5jbGspOwo+Pj4gKwo+Pj4gKwkJaWYgKGVyciAhPSAtRVBST0JFX0RF
+RkVSKQo+Pj4gKwkJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgY2xvY2s6ICVk
+XG4iLCBlcnIpOwo+Pj4gKwo+Pj4gIAkJcmV0dXJuIGVycjsKPj4+ICAJfQo+Pgo+PiBUaGUgY2xv
+Y2sgZHJpdmVyIHNob3VsZCBiZSBhdmFpbGFibGUgYXQgdGhlIHRpbWUgb2YgaG9zdDF4J3MgcHJv
+YmluZyBvbgo+PiBhbGwgVGVncmEncyBiZWNhdXNlIGl0IGlzIG9uZSBvZiBlc3NlbnRpYWwgY29y
+ZSBkcml2ZXJzIHRoYXQgYmVjb21lCj4+IGF2YWlsYWJsZSBlYXJseSBkdXJpbmcgYm9vdC4KPiAK
+PiBUaGF0J3MgdGhlIGN1cnJlbnRseSBiYWtlZC1pbiBhc3N1bXB0aW9uLiBIb3dldmVyLCB0aGVy
+ZSBjYW4gYmUgYW55Cj4gbnVtYmVyIG9mIHJlYXNvbnMgZm9yIHdoeSB0aGUgY2xvY2tzIG1heSBu
+b3Qgc2hvdyB1cCBhcyBlYXJseSBhcwo+IGV4cGVjdGVkLCBhcyBldmlkZW5jZWQgaW4gdGhlIGNh
+c2Ugb2YgVGVncmExODYuCj4gCj4+IEkgZ3Vlc3MgeW91J3JlIG1ha2luZyB0aGlzIGNoYW5nZSBm
+b3IgVDE4NiwgaXMgaXQgYmVjYXVzZSB0aGUgQlBNUAo+PiBkcml2ZXIncyBwcm9iZSBnZXR0aW5n
+IGRlZmVycmVkPyBJZiB5ZXMsIHdvbid0IGl0IGJlIHBvc3NpYmxlIHRvIGZpeCB0aGUKPj4gZGVm
+ZXIgb2YgdGhlIGNsb2NrIGRyaXZlciBpbnN0ZWFkIG9mIG1ha2luZyBzdWNoIGNoYW5nZXMgaW4g
+dGhlIGFmZmVjdGVkCj4+IGRyaXZlcnM/Cj4gCj4gVGhlIHJlYXNvbiB3aHkgdGhpcyBpcyBub3cg
+aGFwcGVuaW5nIG9uIFRlZ3JhMTg2IGlzIGJlY2F1c2UgdGhlIEJQTVAgaXMKPiBib3VuZCB0byBh
+biBJT01NVSB0byBhdm9pZCBnZXR0aW5nIGZhdWx0cyBmcm9tIHRoZSBuZXcgbm8tYnlwYXNzIHBv
+bGljeQo+IHRoYXQgdGhlIEFSTSBTTU1VIGRyaXZlciBpcyBpbXBsZW1lbnRpbmcgYXMgb2YgdjUu
+Mi1yYzEuCj4gCj4gQXMgYSByZXN1bHQgb2YgYmluZGluZyB0byBhbiBJT01NVSwgdGhlIGZpcnN0
+IHByb2JlIG9mIHRoZSBCUE1QIGRyaXZlcgo+IHdpbGwgZ2V0IGRlZmVycmVkLCBzbyBhbnkgZHJp
+dmVyIHRyeWluZyB0byByZXF1ZXN0IGEgY2xvY2sgYWZ0ZXIgdGhhdAo+IGFuZCBiZWZvcmUgQlBN
+UCBnZXRzIHByb2JlZCBzdWNjZXNzZnVsbHkgdGhlIG5leHQgdGltZSwgYW55IGNsa19nZXQoKQo+
+IGNhbGxzIHdpbGwgZmFpbCB3aXRoIC1FUFJPQkVfREVGRVIuCj4gCj4gVGhpcyBpcyBhIGJpdCB1
+bmZvcnR1bmF0ZSwgYnV0IGxpa2UgSSBzYWlkLCB0aGVzZSBraW5kcyBvZiB0aGluZ3MgY2FuCj4g
+aGFwcGVuLCBhbmQgcHJvYmUgZGVmZXJyYWwgd2FzIGRlc2lnbmVkIHNwZWNpZmljYWxseSB0byBk
+ZWFsIHdpdGggdGhhdAo+IGtpbmQgb2Ygc2l0dWF0aW9uIHNvIHRoYXQgd2Ugd291bGRuJ3QgaGF2
+ZSB0byByZWx5IG9uIGFsbCBvZiB0aGVzZQo+IGJ1aWx0LWluIGFzc3VtcHRpb25zIHRoYXQgb2Nj
+YXNpb25hbGx5IGJyZWFrLgo+IAo+IFRoZSBkcml2ZXIgYWxzbyBhbHJlYWR5IGhhbmRsZXMgZGVm
+ZXJyZWQgcHJvYmUgcHJvcGVybHkuIFRoZSBvbmx5IHRoaW5nCj4gdGhhdCB0aGlzIHBhdGNoIHJl
+YWxseSBjaGFuZ2VzIGlzIHRvIG5vIGxvbmdlciBjb25zaWRlciAtRVBST0JFX0RFRkVSIGFuCj4g
+ZXJyb3IuIEl0J3MgaW4gZmFjdCBhIHByZXR0eSBjb21tb24gc2l0dWF0aW9uIGluIG1hbnkgZHJp
+dmVycyBhbmQgc2hvdWxkCj4gbm90IHdhcnJhbnQgYSBrZXJuZWwgbG9nIG1lc3NhZ2UuCgpZb3Un
+cmUgdHJ5aW5nIHRvIG1hc2sgc3ltcHRvbXMgaW5zdGVhZCBvZiBjdXJpbmcgdGhlIGRlY2Vhc2Ug
+YW5kIGl0IGxvb2tzCmxpa2UgdGhlIGRlY2Vhc2UgY291bGQgYmUgY3VyZWQuCgpXb24ndCBzb21l
+dGhpbmcgbGlrZSB0aGlzIHdvcmsgZm9yIHlvdT8KCkZyb20gZmJlYWJiYTVmMTE1MWU5NmVkYzM4
+NjIwZGI2NzU5MzU4NTU1OGNhMCBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKRnJvbTogRG1pdHJ5
+IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgpEYXRlOiBXZWQsIDUgSnVuIDIwMTkgMTQ6MDI6
+MDAgKzAzMDAKU3ViamVjdDogW1BBVENIIDEvMl0gaW9tbXUvYXJtLXNtbXU6IE1vdmUgZHJpdmVy
+IHJlZ2lzdHJhdGlvbiB0byBzdWJzeXMgbGV2ZWwKCk9uIHNvbWUgcGxhdGZvcm1zIHRoZXJlIGlz
+IGEgZGVwZW5kZW5jeSBvbiB0aGUgSU9NTVUgYXZhaWxhYmlsaXR5IHRoYXQKY29tZXMgdXAgZWFy
+bHkgZHVyaW5nIG9mIHRoZSBib290IHByb2Nlc3MuIE9uZSBleGFtcGxlIGlzIE5WSURJQSBUZWdy
+YTE4Ngp3aGljaCB1c2VzIGZpcm13YXJlLCBjYWxsZWQgQlBNUCwgd2hpY2ggbWFuYWdlcyBsb3Rz
+IG9mIGNvcmUgZnVuY3Rpb25zCmxpa2Ugc3lzdGVtIGNsb2NrcyBmb3IgZXhhbXBsZS4gVGhhdCBm
+aXJtd2FyZSBkcml2ZXIgcmVxdWlyZSBJT01NVQpmdW5jdGlvbmFsaXR5IGFuZCBoZW5jZSB0aGUg
+ZHJpdmVyJ3MgcHJvYmluZyBpcyBnZXR0aW5nIGRlZmVycmVkIGJlY2F1c2UKdGhlIEFSTSdzIFNN
+TVUgZHJpdmVyIGlzIHByb2JlZCBsYXRlciwgdGh1cyBhbGwgdGhlIGRyaXZlcnMgdGhhdCBkZXBl
+bmQKb24gdGhlIEJQTVAgYXZhaWxhYmlsaXR5IGFyZSBhbHNvIGdldHRpbmcgZGVmZXJyZWQgb24g
+VGVncmExODYuIExldCdzIG1vdmUKU01NVSBkcml2ZXIncyByZWdpc3RyYXRpb24gdG8gYW4gZWFy
+bGllciBib290IHN0YWdlLCBhbGxvd2luZyBkcml2ZXJzIGxpa2UKQlBNUCB0byBwcm9iZSBzdWNj
+ZXNzZnVsbHkgd2l0aG91dCB0aGUgZGVmZXIuCgpTaWduZWQtb2ZmLWJ5OiBEbWl0cnkgT3NpcGVu
+a28gPGRpZ2V0eEBnbWFpbC5jb20+Ci0tLQogZHJpdmVycy9pb21tdS9hcm0tc21tdS5jIHwgNyAr
+KysrKystCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9hcm0tc21tdS5jIGIvZHJpdmVycy9pb21tdS9hcm0t
+c21tdS5jCmluZGV4IDVlNTRjYzBhMjhiMy4uMDg5MTlmMmZkZjA0IDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2lvbW11L2FybS1zbW11LmMKKysrIGIvZHJpdmVycy9pb21tdS9hcm0tc21tdS5jCkBAIC0y
+NDEwLDQgKzI0MTAsOSBAQCBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBhcm1fc21tdV9k
+cml2ZXIgPSB7CiAJLnByb2JlCT0gYXJtX3NtbXVfZGV2aWNlX3Byb2JlLAogCS5zaHV0ZG93biA9
+IGFybV9zbW11X2RldmljZV9zaHV0ZG93biwKIH07Ci1idWlsdGluX3BsYXRmb3JtX2RyaXZlcihh
+cm1fc21tdV9kcml2ZXIpOworCitzdGF0aWMgaW50IF9faW5pdCBhcm1fc21tdV9pbml0KHZvaWQp
+Cit7CisJcmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmYXJtX3NtbXVfZHJpdmVyKTsK
+K30KK3N1YnN5c19pbml0Y2FsbChhcm1fc21tdV9pbml0KTsKLS0gCjIuMjEuMAoKRnJvbSAxMmVj
+OTBlMjI0MDViNmQ1NTc0Y2JmY2JkMzNiOTI3MzZhZDZiZmU0IE1vbiBTZXAgMTcgMDA6MDA6MDAg
+MjAwMQpGcm9tOiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+CkRhdGU6IFdlZCwg
+NSBKdW4gMjAxOSAxNDoxMzoxNSArMDMwMApTdWJqZWN0OiBbUEFUQ0ggMi8yXSBmaXJtd2FyZS90
+ZWdyYTogTW92ZSBkcml2ZXIgcmVnaXN0cmF0aW9uIHRvIHN1YnN5cy1zeW5jCiBsZXZlbAoKVGhl
+IEJQTVAgZHJpdmVyIGRlcGVuZHMgb24gdGhlIEFSTSBTTU1VIGRyaXZlciB3aGljaCBpcyBub3cg
+Z2V0dGluZwpwcm9iZWQgZnJvbSB0aGUgc3Vic3lzIGxldmVsLCBoZW5jZSBsZXQncyBtb3ZlIHRo
+ZSBCUE1QJ3MgcHJvYmluZyB0bwp0aGUgc3Vic3lzLXN5bmMgbGV2ZWwgaW4gb3JkZXIgdG8gYXZv
+aWQgcHJvYmUgZGVmZXJyaW5nIG9mIHRoZSBCUE1QJ3MKZHJpdmVyLgoKU2lnbmVkLW9mZi1ieTog
+RG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgotLS0KIGRyaXZlcnMvZmlybXdhcmUv
+dGVncmEvYnBtcC5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
+bGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJtd2FyZS90ZWdyYS9icG1wLmMgYi9k
+cml2ZXJzL2Zpcm13YXJlL3RlZ3JhL2JwbXAuYwppbmRleCBkZDc3NWU4YmE1YTAuLjNmNjQ5ZTEy
+ZjlmNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9maXJtd2FyZS90ZWdyYS9icG1wLmMKKysrIGIvZHJp
+dmVycy9maXJtd2FyZS90ZWdyYS9icG1wLmMKQEAgLTg4Myw0ICs4ODMsNCBAQCBzdGF0aWMgaW50
+IF9faW5pdCB0ZWdyYV9icG1wX2luaXQodm9pZCkKIHsKIAlyZXR1cm4gcGxhdGZvcm1fZHJpdmVy
+X3JlZ2lzdGVyKCZ0ZWdyYV9icG1wX2RyaXZlcik7CiB9Ci1jb3JlX2luaXRjYWxsKHRlZ3JhX2Jw
+bXBfaW5pdCk7CitzdWJzeXNfaW5pdGNhbGxfc3luYyh0ZWdyYV9icG1wX2luaXQpOwotLSAKMi4y
+MS4wCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
