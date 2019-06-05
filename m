@@ -1,84 +1,54 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [REGRESSION v5.2-rc] SUNRPC: Declare RPC timers as TIMER_DEFERRABLE
- (431235818bc3)
-Date: Wed, 5 Jun 2019 09:40:30 +0100
-Message-ID: <c54db63b-0d5d-2012-162a-cb08cf32245a@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] gpu: host1x: Increase maximum DMA segment size
+Date: Wed,  5 Jun 2019 10:46:05 +0200
+Message-ID: <20190605084605.12225-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trondmy@hammerspace.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Trond,
-
-I have been noticing intermittent failures with a system suspend test on
-some of our machines that have a NFS mounted root file-system. Bisecting
-this issue points to your commit 431235818bc3 ("SUNRPC: Declare RPC
-timers as TIMER_DEFERRABLE") and reverting this on top of v5.2-rc3 does
-appear to resolve the problem.
-
-The cause of the suspend failure appears to be a long delay observed
-sometimes when resuming from suspend, and this is causing our test to
-timeout. For example, in a failing case I see something like the
-following ...
-
-[   69.667385] PM: suspend entry (deep)
-
-[   69.675642] Filesystems sync: 0.000 seconds
-
-[   69.684983] Freezing user space processes ... (elapsed 0.001 seconds) done.
-
-[   69.697880] OOM killer disabled.
-
-[   69.705670] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-
-[   69.719043] printk: Suspending console(s) (use no_console_suspend to debug)
-
-[   69.758911] Disabling non-boot CPUs ...
-
-[   69.761875] IRQ 17: no longer affine to CPU3
-
-[   69.762609] Entering suspend state LP1
-
-[   69.762636] Enabling non-boot CPUs ...
-
-[   69.763600] CPU1 is up
-
-[   69.764517] CPU2 is up
-
-[   69.765532] CPU3 is up
-
-[   69.845832] mmc1: queuing unknown CIS tuple 0x80 (50 bytes)
-
-[   69.854223] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-
-[   69.857238] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-
-[   69.892700] mmc1: queuing unknown CIS tuple 0x02 (1 bytes)
-
-[   70.407286] OOM killer enabled.
-
-[   70.414674] Restarting tasks ... done.
-
-[   70.423232] PM: suspend exit
-
-[   73.533252] asix 1-1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
-
-[  105.461852] nfs: server 192.168.99.1 not responding, still trying
-
-[  105.462347] nfs: server 192.168.99.1 not responding, still trying
-
-[  105.484809] nfs: server 192.168.99.1 OK
-
-[  105.486454] nfs: server 192.168.99.1 OK
-
-
-So it would appear that making these timers deferrable is having an impact
-when resuming from suspend. Do you have any thoughts on this?
-
-Thanks
-Jon
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClJlY2VudCB2ZXJzaW9u
+cyBvZiB0aGUgRE1BIEFQSSBkZWJ1ZyBjb2RlIGhhdmUgc3RhcnRlZCB0byB3YXJuIGFib3V0CnZp
+b2xhdGlvbnMgb2YgdGhlIG1heGltdW0gRE1BIHNlZ21lbnQgc2l6ZS4gVGhpcyBpcyBiZWNhdXNl
+IHRoZSBzZWdtZW50CnNpemUgZGVmYXVsdHMgdG8gNjQgS2lCLCB3aGljaCBjYW4gZWFzaWx5IGJl
+IGV4Y2VlZGVkIGluIGxhcmdlIGJ1ZmZlcgphbGxvY2F0aW9ucyBzdWNoIGFzIHVzZWQgaW4gRFJN
+L0tNUyBmb3IgZnJhbWVidWZmZXJzLgoKVGVjaG5pY2FsbHkgdGhlIFRlZ3JhIFNNTVUgYW5kIEFS
+TSBTTU1VIGRvbid0IGhhdmUgYSBtYXhpbXVtIHNlZ21lbnQKc2l6ZSAodGhleSBtYXAgaW5kaXZp
+ZHVhbCBwYWdlcyBpcnJlc3BlY3RpdmUgb2Ygd2hldGhlciB0aGV5IGFyZQpjb250aWd1b3VzIG9y
+IG5vdCksIHNvIHRoZSBjaG9pY2Ugb2YgNCBNaUIgaXMgYSBiaXQgYXJiaXRyYXJ5IGhlcmUuIFRo
+ZQptYXhpbXVtIHNlZ21lbnQgc2l6ZSBpcyBhIDMyLWJpdCB1bnNpZ25lZCBpbnRlZ2VyLCB0aG91
+Z2gsIHNvIHdlIGNhbid0CnNldCBpdCB0byB0aGUgY29ycmVjdCBtYXhpbXVtIHNpemUsIHdoaWNo
+IHdvdWxkIGJlIHRoZSBzaXplIG9mIHRoZQphcGVydHVyZS4KClNpZ25lZC1vZmYtYnk6IFRoaWVy
+cnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9ncHUvaG9zdDF4L2J1
+cy5jIHwgMyArKysKIGluY2x1ZGUvbGludXgvaG9zdDF4LmggICB8IDIgKysKIDIgZmlsZXMgY2hh
+bmdlZCwgNSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2J1
+cy5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jCmluZGV4IDk3OTdjY2IwYTA3My4uNjM4NzMw
+MmMxMjQ1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMKKysrIGIvZHJpdmVy
+cy9ncHUvaG9zdDF4L2J1cy5jCkBAIC00MTQsNiArNDE0LDkgQEAgc3RhdGljIGludCBob3N0MXhf
+ZGV2aWNlX2FkZChzdHJ1Y3QgaG9zdDF4ICpob3N0MXgsCiAKIAlvZl9kbWFfY29uZmlndXJlKCZk
+ZXZpY2UtPmRldiwgaG9zdDF4LT5kZXYtPm9mX25vZGUsIHRydWUpOwogCisJZGV2aWNlLT5kZXYu
+ZG1hX3Bhcm1zID0gJmRldmljZS0+ZG1hX3Bhcm1zOworCWRtYV9zZXRfbWF4X3NlZ19zaXplKCZk
+ZXZpY2UtPmRldiwgU1pfNE0pOworCiAJZXJyID0gaG9zdDF4X2RldmljZV9wYXJzZV9kdChkZXZp
+Y2UsIGRyaXZlcik7CiAJaWYgKGVyciA8IDApIHsKIAkJa2ZyZWUoZGV2aWNlKTsKZGlmZiAtLWdp
+dCBhL2luY2x1ZGUvbGludXgvaG9zdDF4LmggYi9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oCmluZGV4
+IGNmZmYzMGI5YTYyZS4uZTZlZWE0NWUxMTU0IDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2hv
+c3QxeC5oCisrKyBiL2luY2x1ZGUvbGludXgvaG9zdDF4LmgKQEAgLTI5Nyw2ICsyOTcsOCBAQCBz
+dHJ1Y3QgaG9zdDF4X2RldmljZSB7CiAJc3RydWN0IGxpc3RfaGVhZCBjbGllbnRzOwogCiAJYm9v
+bCByZWdpc3RlcmVkOworCisJc3RydWN0IGRldmljZV9kbWFfcGFyYW1ldGVycyBkbWFfcGFybXM7
+CiB9OwogCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBob3N0MXhfZGV2aWNlICp0b19ob3N0MXhfZGV2
+aWNlKHN0cnVjdCBkZXZpY2UgKmRldikKLS0gCjIuMjEuMAoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
