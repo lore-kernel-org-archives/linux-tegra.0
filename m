@@ -1,118 +1,86 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: Do not output error message for deferred
- probe
-Date: Wed, 5 Jun 2019 16:16:44 +0300
-Message-ID: <3bb637a1-50f7-2234-0dfe-f8d8bff8751c@gmail.com>
-References: <20190604153150.22265-1-thierry.reding@gmail.com>
- <21c2443c-9166-edc0-5d7b-46b9e3c48e70@gmail.com>
- <20190605082848.GB10944@ulmo>
- <1654b4cb-930c-dbc7-b40d-1f854ff2ac69@gmail.com> <20190605123226.GA724@ulmo>
- <60f6e811-e4de-7bc6-fc9d-53a8bb8aff53@gmail.com> <20190605130441.GB1012@ulmo>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+Date: Thu, 6 Jun 2019 08:06:57 +0100
+Message-ID: <3b19a2bb-20a0-c650-49b7-d966585b5ba9@nvidia.com>
+References: <1557143908-5850-1-git-send-email-spujar@nvidia.com>
+ <9f9962fc-a261-aecc-b4c5-408a75ebcb5f@nvidia.com>
+ <490b81d9-2734-bb93-303b-94bb20a4f6a5@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190605130441.GB1012@ulmo>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <490b81d9-2734-bb93-303b-94bb20a4f6a5@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MDUuMDYuMjAxOSAxNjowNCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBPbiBXZWQsIEp1
-biAwNSwgMjAxOSBhdCAwMzo0MDoyOFBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+
-IDA1LjA2LjIwMTkgMTU6MzIsIFRoaWVycnkgUmVkaW5nINC/0LjRiNC10YI6Cj4+PiBPbiBXZWQs
-IEp1biAwNSwgMjAxOSBhdCAwMjoyNTo0M1BNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-Cj4+Pj4gMDUuMDYuMjAxOSAxMToyOCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPj4+Pj4g
-T24gVHVlLCBKdW4gMDQsIDIwMTkgYXQgMDc6MDc6NDJQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
-IHdyb3RlOgo+Pj4+Pj4gMDQuMDYuMjAxOSAxODozMSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXR
-gjoKPj4+Pj4+PiBGcm9tOiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Pj4+
-Pj4+Cj4+Pj4+Pj4gV2hlbiBkZWZlcnJpbmcgcHJvYmUsIGF2b2lkIGxvZ2dpbmcgYSBjb25mdXNp
-bmcgZXJyb3IgbWVzc2FnZS4gV2hpbGUgYXQKPj4+Pj4+PiBpdCwgbWFrZSB0aGUgZXJyb3IgbWVz
-c2FnZSBtb3JlIGluZm9ybWF0aW9uYWwuCj4+Pj4+Pj4KPj4+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBU
-aGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Pj4+Pj4+IC0tLQo+Pj4+Pj4+ICBk
-cml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgfCA1ICsrKystCj4+Pj4+Pj4gIDEgZmlsZSBjaGFuZ2Vk
-LCA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4+Pj4+Pgo+Pj4+Pj4+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMK
-Pj4+Pj4+PiBpbmRleCBjNTVlMmQ2MzQ4ODcuLjVhM2Y3OTcyNDBkNCAxMDA2NDQKPj4+Pj4+PiAt
-LS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMKPj4+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9o
-b3N0MXgvZGV2LmMKPj4+Pj4+PiBAQCAtMjQ3LDggKzI0NywxMSBAQCBzdGF0aWMgaW50IGhvc3Qx
-eF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+Pj4+Pj4+ICAKPj4+Pj4+PiAg
-CWhvc3QtPmNsayA9IGRldm1fY2xrX2dldCgmcGRldi0+ZGV2LCBOVUxMKTsKPj4+Pj4+PiAgCWlm
-IChJU19FUlIoaG9zdC0+Y2xrKSkgewo+Pj4+Pj4+IC0JCWRldl9lcnIoJnBkZXYtPmRldiwgImZh
-aWxlZCB0byBnZXQgY2xvY2tcbiIpOwo+Pj4+Pj4+ICAJCWVyciA9IFBUUl9FUlIoaG9zdC0+Y2xr
-KTsKPj4+Pj4+PiArCj4+Pj4+Pj4gKwkJaWYgKGVyciAhPSAtRVBST0JFX0RFRkVSKQo+Pj4+Pj4+
-ICsJCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gZ2V0IGNsb2NrOiAlZFxuIiwgZXJy
-KTsKPj4+Pj4+PiArCj4+Pj4+Pj4gIAkJcmV0dXJuIGVycjsKPj4+Pj4+PiAgCX0KPj4+Pj4+Cj4+
-Pj4+PiBUaGUgY2xvY2sgZHJpdmVyIHNob3VsZCBiZSBhdmFpbGFibGUgYXQgdGhlIHRpbWUgb2Yg
-aG9zdDF4J3MgcHJvYmluZyBvbgo+Pj4+Pj4gYWxsIFRlZ3JhJ3MgYmVjYXVzZSBpdCBpcyBvbmUg
-b2YgZXNzZW50aWFsIGNvcmUgZHJpdmVycyB0aGF0IGJlY29tZQo+Pj4+Pj4gYXZhaWxhYmxlIGVh
-cmx5IGR1cmluZyBib290Lgo+Pj4+Pgo+Pj4+PiBUaGF0J3MgdGhlIGN1cnJlbnRseSBiYWtlZC1p
-biBhc3N1bXB0aW9uLiBIb3dldmVyLCB0aGVyZSBjYW4gYmUgYW55Cj4+Pj4+IG51bWJlciBvZiBy
-ZWFzb25zIGZvciB3aHkgdGhlIGNsb2NrcyBtYXkgbm90IHNob3cgdXAgYXMgZWFybHkgYXMKPj4+
-Pj4gZXhwZWN0ZWQsIGFzIGV2aWRlbmNlZCBpbiB0aGUgY2FzZSBvZiBUZWdyYTE4Ni4KPj4+Pj4K
-Pj4+Pj4+IEkgZ3Vlc3MgeW91J3JlIG1ha2luZyB0aGlzIGNoYW5nZSBmb3IgVDE4NiwgaXMgaXQg
-YmVjYXVzZSB0aGUgQlBNUAo+Pj4+Pj4gZHJpdmVyJ3MgcHJvYmUgZ2V0dGluZyBkZWZlcnJlZD8g
-SWYgeWVzLCB3b24ndCBpdCBiZSBwb3NzaWJsZSB0byBmaXggdGhlCj4+Pj4+PiBkZWZlciBvZiB0
-aGUgY2xvY2sgZHJpdmVyIGluc3RlYWQgb2YgbWFraW5nIHN1Y2ggY2hhbmdlcyBpbiB0aGUgYWZm
-ZWN0ZWQKPj4+Pj4+IGRyaXZlcnM/Cj4+Pj4+Cj4+Pj4+IFRoZSByZWFzb24gd2h5IHRoaXMgaXMg
-bm93IGhhcHBlbmluZyBvbiBUZWdyYTE4NiBpcyBiZWNhdXNlIHRoZSBCUE1QIGlzCj4+Pj4+IGJv
-dW5kIHRvIGFuIElPTU1VIHRvIGF2b2lkIGdldHRpbmcgZmF1bHRzIGZyb20gdGhlIG5ldyBuby1i
-eXBhc3MgcG9saWN5Cj4+Pj4+IHRoYXQgdGhlIEFSTSBTTU1VIGRyaXZlciBpcyBpbXBsZW1lbnRp
-bmcgYXMgb2YgdjUuMi1yYzEuCj4+Pj4+Cj4+Pj4+IEFzIGEgcmVzdWx0IG9mIGJpbmRpbmcgdG8g
-YW4gSU9NTVUsIHRoZSBmaXJzdCBwcm9iZSBvZiB0aGUgQlBNUCBkcml2ZXIKPj4+Pj4gd2lsbCBn
-ZXQgZGVmZXJyZWQsIHNvIGFueSBkcml2ZXIgdHJ5aW5nIHRvIHJlcXVlc3QgYSBjbG9jayBhZnRl
-ciB0aGF0Cj4+Pj4+IGFuZCBiZWZvcmUgQlBNUCBnZXRzIHByb2JlZCBzdWNjZXNzZnVsbHkgdGhl
-IG5leHQgdGltZSwgYW55IGNsa19nZXQoKQo+Pj4+PiBjYWxscyB3aWxsIGZhaWwgd2l0aCAtRVBS
-T0JFX0RFRkVSLgo+Pj4+Pgo+Pj4+PiBUaGlzIGlzIGEgYml0IHVuZm9ydHVuYXRlLCBidXQgbGlr
-ZSBJIHNhaWQsIHRoZXNlIGtpbmRzIG9mIHRoaW5ncyBjYW4KPj4+Pj4gaGFwcGVuLCBhbmQgcHJv
-YmUgZGVmZXJyYWwgd2FzIGRlc2lnbmVkIHNwZWNpZmljYWxseSB0byBkZWFsIHdpdGggdGhhdAo+
-Pj4+PiBraW5kIG9mIHNpdHVhdGlvbiBzbyB0aGF0IHdlIHdvdWxkbid0IGhhdmUgdG8gcmVseSBv
-biBhbGwgb2YgdGhlc2UKPj4+Pj4gYnVpbHQtaW4gYXNzdW1wdGlvbnMgdGhhdCBvY2Nhc2lvbmFs
-bHkgYnJlYWsuCj4+Pj4+Cj4+Pj4+IFRoZSBkcml2ZXIgYWxzbyBhbHJlYWR5IGhhbmRsZXMgZGVm
-ZXJyZWQgcHJvYmUgcHJvcGVybHkuIFRoZSBvbmx5IHRoaW5nCj4+Pj4+IHRoYXQgdGhpcyBwYXRj
-aCByZWFsbHkgY2hhbmdlcyBpcyB0byBubyBsb25nZXIgY29uc2lkZXIgLUVQUk9CRV9ERUZFUiBh
-bgo+Pj4+PiBlcnJvci4gSXQncyBpbiBmYWN0IGEgcHJldHR5IGNvbW1vbiBzaXR1YXRpb24gaW4g
-bWFueSBkcml2ZXJzIGFuZCBzaG91bGQKPj4+Pj4gbm90IHdhcnJhbnQgYSBrZXJuZWwgbG9nIG1l
-c3NhZ2UuCj4+Pj4KPj4+PiBZb3UncmUgdHJ5aW5nIHRvIG1hc2sgc3ltcHRvbXMgaW5zdGVhZCBv
-ZiBjdXJpbmcgdGhlIGRlY2Vhc2UgYW5kIGl0IGxvb2tzCj4+Pj4gbGlrZSB0aGUgZGVjZWFzZSBj
-b3VsZCBiZSBjdXJlZC4KPj4+Cj4+PiBUaGVyZSdzIG5vdGhpbmcgaGVyZSB0byBjdXJlLiAtRVBS
-T0JFX0RFRkVSIHdhcyBkZXNpZ25lZCBzcGVjaWZpY2FsbHkgdG8KPj4+IGF2b2lkIGhhdmluZyB0
-byBwbGF5IHRoZXNlIGtpbmRzIG9mIGdhbWVzIHdpdGggaW5pdGNhbGwgbGV2ZWxzLgo+Pj4KPj4+
-IFdoYXQgdGhpcyBwYXRjaCB0cmllcyB0byBkbyBpcyBqdXN0IHRvIGF2b2lkIHByaW50aW5nIGFu
-IGVycm9yIG1lc3NhZ2UKPj4+IGZvciBzb21ldGhpbmcgdGhhdCBpcyBub3QgYW4gZXJyb3IuIC1F
-UFJPQkVfREVGRVIgaXMgdG90YWxseSBleHBlY3RlZCB0bwo+Pj4gaGFwcGVuLCBpdCdzIG5vcm1h
-bCwgaXQncyBub3Qgc29tZXRoaW5nIHRoYXQgd2Ugc2hvdWxkIGJvdGhlciB1c2VycyB3aXRoCj4+
-PiBiZWNhdXNlIHRoaW5ncyBlbmQgdXAgc29ydGluZyB0aGVtc2VsdmVzIG91dCBpbiB0aGUgZW5k
-Lgo+Pj4KPj4+PiBXb24ndCBzb21ldGhpbmcgbGlrZSB0aGlzIHdvcmsgZm9yIHlvdT8KPj4+Cj4+
-PiBJJ20gc3VyZSB3ZSBjb3VsZCBmaW5kIGEgbnVtYmVyIG9mIHdheXMgdG8gZml4IHRoaXMuIEJ1
-dCB0aGVyZSdzIG5vIG5lZWQKPj4+IHRvIGZpeCB0aGlzIGJlY2F1c2UgaXQncyBub3QgYnJva2Vu
-LiBXaGF0IGlzIGJyb2tlbiBpcyB0aGF0IHdlIG91dHB1dCBhbgo+Pj4gZXJyb3IgbWVzc2FnZSB3
-aGVuIHRoaXMgaGFwcGVucyBhbmQgbWFrZSBhbiBlbGVwaGFudCBvdXQgb2YgYSBmbHkuCj4+Cj4+
-IFN1cmUsIHRoaXMgaXMgYWJzb2x1dGVseSBub3QgY3JpdGljYWwgYW5kIGRlZmVycmVkIHByb2Jl
-IGlzIGRvaW5nIGl0cyBqb2IuCj4+IEJ1dCBkb24ndCB5b3UgYWdyZWUgdGhhdCBpdCdzIGJldHRl
-ciB0byBmaXggdGhlIHJvb3Qgb2YgdGhlIGFubm95YW5jZSBvbmNlCj4+IGFuZCBmb3IgYWxsPwo+
-IAo+IEZyb20gbXkgcG9pbnQgb2YgdmlldyBkZWZlcnJlZCBwcm9iZSBpcyB0aGUgb25jZSBhbmQg
-Zm9yIGFsbCBmaXguIEJhY2sKPiBiZWZvcmUgd2UgaGFkIGRlZmVycmVkIHByb2JlLCBkb2luZyB0
-aGVzZSBraW5kcyBvZiBpbml0Y2FsbCByZW9yZGVyaW5nCj4gdHJpY2tzIHdhcyBmYWlybHkgY29t
-bW9uIGFuZCB3aGlsZSBzdWNoIGEgY2hhbmdlIG1heSBmaXggb25lIHNldHVwLCBpdAo+IG9mdGVu
-IGVuZGVkIHVwIGJyZWFraW5nIG90aGVycy4KPiAKPiBTb3JyeSwgdGhpcyBpcyBhIGxlc3NvbiB0
-aGF0IHdlIGFscmVhZHkgbGVhcm5lZCBhIGNvdXBsZSBvZiB5ZWFycyBhZ28sCj4gbm8gbmVlZCB0
-byByZWhhc2ggaXQuCgpXZSBoYWQgYSBzdWNjZXNzIHN0b3J5IGluIHNpbWlsYXIgY2FzZSBvZiBw
-aW5jdHJsIHZzIEdQSU8gZHJpdmVyIHByb2JlCm9yZGVyLCByZW9yZGVyaW5nIHRoZSBwcm9iZSBv
-cmRlciBmaXhlZCBhIGxvdCBvZiBkZWZlcnJlZCBwcm9iaW5ncyBhbmQKaW1wcm92ZWQgYm9vdCB1
-cCB0aW1lIGEgdGFkLiBPaCwgdGhhdCByZW1pbmRlZCBtZSB0aGF0IHRoZSBTdGVmYW4ncwpwYXRj
-aCB3YXMgbmV2ZXIgbWVyZ2VkIFswXSA6KAoKSSdtIHRyeWluZyB0byBoZWxwLCBidXQgc2VlbXMg
-bm90IG11Y2ggSSBjb3VsZCBkbyBzaW5jZSB5b3UncmUgaW4gb3Bwb3NlIDspCgpbMF0gaHR0cHM6
-Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC85NDk3NzYvCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+
+On 06/06/2019 06:58, Sameer Pujar wrote:
+>=20
+> On 6/4/2019 2:37 PM, Jon Hunter wrote:
+>> On 06/05/2019 12:58, Sameer Pujar wrote:
+>>> Add DT nodes for following devices on Tegra186 and Tegra194
+>>> =C2=A0 * ACONNECT
+>>> =C2=A0 * ADMA
+>>> =C2=A0 * AGIC
+>>>
+>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>> ---
+>>> =C2=A0 arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67
+>>> ++++++++++++++++++++++++++++++++
+>>> =C2=A0 arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67
+>>> ++++++++++++++++++++++++++++++++
+>>> =C2=A0 2 files changed, 134 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> index 6e2b6ce..2c432c9 100644
+>>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> @@ -1153,4 +1153,71 @@
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_=
+LOW)>;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupt-parent=
+ =3D <&gic>;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 aconnect@2a41000 {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "nvidia,tegr=
+a210-aconnect";
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&bpmp TEGRA186_=
+CLK_APE>,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 <&bpmp TEGRA186_CLK_APB2APE>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D "ape", "apb=
+2ape";
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 power-domains =3D <&bpmp TE=
+GRA186_POWER_DOMAIN_AUD>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <2>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <2>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ranges;
+>> My recollection is that non-empty range is preferred from what Rob told
+>> me in the past. See the Tegra210 binding.
+> I see at various places empty ranges property is used. From DT spec, it
+> means
+> there is no translation in the address space between parent/child.
+
+Yes that is correct, but this is what Rob told me in the past ...
+
+"Use of non-empty ranges is preferred though there is not much benefit
+if the parent and child sizes are the same. However, it does also
+limit what is a valid address for those child nodes."
+
+So I think it is best to be consistent.
+
+> Also I looked at Tegra210 binding,
+> ranges =3D <0x702c0000 0x0 0x702c0000 0x00040000>;
+> Should it be encoded as a triplet(child addr, parent addr, length)?
+Right but remember the parent address is 2 cells, hence the 4 values.
+
+Jon
+
+--=20
+nvpublic
