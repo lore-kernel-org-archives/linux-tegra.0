@@ -1,38 +1,89 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: Re: [PATCH V4] drivers: i2c: tegra: fix checkpatch defects
-Date: Thu, 6 Jun 2019 11:22:45 -0700
-Message-ID: <70a73e4b-c5d2-9c5d-7b18-f4325c6360b3@nvidia.com>
-References: <1559806523-1352-1-git-send-email-bbiswas@nvidia.com>
- <20190606115705.6j2oigsm2imvvqh7@ninjato>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V8 14/15] PCI: tegra: Add Tegra194 PCIe support
+Date: Thu, 6 Jun 2019 21:52:09 +0300
+Message-ID: <cbdac43f-32f7-c992-832b-ed40bef2375b@gmail.com>
+References: <20190526043751.12729-1-vidyas@nvidia.com>
+ <20190526043751.12729-15-vidyas@nvidia.com>
+ <f30e7fc6-3f64-d321-c32c-5e273115a869@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190606115705.6j2oigsm2imvvqh7@ninjato>
+In-Reply-To: <f30e7fc6-3f64-d321-c32c-5e273115a869@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Vidya Sagar <vidyas@nvidia.com>, lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
+Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 6/6/19 4:57 AM, Wolfram Sang wrote:
-> On Thu, Jun 06, 2019 at 12:35:23AM -0700, Bitan Biswas wrote:
->> Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
+06.06.2019 19:35, Dmitry Osipenko пишет:
+> 26.05.2019 7:37, Vidya Sagar пишет:
+>> Add support for Synopsys DesignWare core IP based PCIe host controller
+>> present in Tegra194 SoC.
 >>
->> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
->> as needed. Replace BUG() with error handling code.
->> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>> Changes since [v7]:
+>> * Addressed review comments from Thierry
 >>
->> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>> Changes since [v6]:
+>> * Removed code around "nvidia,disable-aspm-states" DT property
+>> * Refactored code to remove code duplication
+>>
+>> Changes since [v5]:
+>> * Addressed review comments from Thierry
+>>
+>> Changes since [v4]:
+>> * None
+>>
+>> Changes since [v3]:
+>> * None
+>>
+>> Changes since [v2]:
+>> * Changed 'nvidia,init-speed' to 'nvidia,init-link-speed'
+>> * Changed 'nvidia,pex-wake' to 'nvidia,wake-gpios'
+>> * Removed .runtime_suspend() & .runtime_resume() implementations
+>>
+>> Changes since [v1]:
+>> * Made CONFIG_PCIE_TEGRA194 as 'm' by default from its previous 'y' state
+>> * Modified code as per changes made to DT documentation
+>> * Refactored code to address Bjorn & Thierry's review comments
+>> * Added goto to avoid recursion in tegra_pcie_dw_host_init() API
+>> * Merged .scan_bus() of dw_pcie_host_ops implementation to tegra_pcie_dw_host_init() API
+>>
+>>  drivers/pci/controller/dwc/Kconfig         |   10 +
+>>  drivers/pci/controller/dwc/Makefile        |    1 +
+>>  drivers/pci/controller/dwc/pcie-tegra194.c | 1621 ++++++++++++++++++++
+>>  3 files changed, 1632 insertions(+)
+>>  create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+>>
+>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+>> index a6ce1ee51b4c..884112afc11b 100644
+>> --- a/drivers/pci/controller/dwc/Kconfig
+>> +++ b/drivers/pci/controller/dwc/Kconfig
+>> @@ -220,6 +220,16 @@ config PCI_MESON
+>>  	  and therefore the driver re-uses the DesignWare core functions to
+>>  	  implement the driver.
+>>  
+>> +config PCIE_TEGRA194
+>> +	tristate "NVIDIA Tegra194 (and later) PCIe controller"
+>> +	depends on (TEGRA_BPMP && ARCH_TEGRA) || COMPILE_TEST
 > 
-> I wonder why you didn't fix this checkpatch defect?
+> TEGRA_BPMP will be enough here as it depends on other relevant options.
 > 
-> WARNING: A patch subject line should describe the change not the tool that found it
+> Hence I mean:
 > 
-I ran checkpatch.pl on the source file only hence missed this warning. I 
-shall fix this in updated patch.
+> 	depends on TEGRA_BPMP || COMPILE_TEST
 
--Thanks,
-  Bitan
+Maybe it's worth to even change TEGRA_BPMP to ARCH_TEGRA_194_SOC.
+Although then you'll have to extend it with other platforms later on,
+but probably that's fine.
+
+> 
+>> +	depends on PCI_MSI_IRQ_DOMAIN
+> 
+> You probably want to s/depends on/select/ PCI_MSI_IRQ_DOMAIN, don't you?
+> 
+
+I actually looked up the PCI_MSI_IRQ_DOMAIN and it is correct in your
+case, my bad.
