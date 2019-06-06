@@ -1,44 +1,119 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] phy: tegra: xusb: Remove set but not used variable 'priv'
-Date: Thu, 6 Jun 2019 09:27:46 +0000
-Message-ID: <20190606092746.80310-1-yuehaibing@huawei.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+Date: Thu, 6 Jun 2019 11:49:16 +0100
+Message-ID: <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502060446.GI3845@vkoul-mobl.Dlink>
+ <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
+ <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
+ <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
+ <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>, Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+Cc: dan.j.williams@intel.com, tiwai@suse.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/phy/tegra/xusb-tegra210.c: In function 'tegra210_hsic_phy_power_on':
-drivers/phy/tegra/xusb-tegra210.c:1236:31: warning:
- variable 'priv' set but not used [-Wunused-but-set-variable]
+On 06/06/2019 11:22, Peter Ujfalusi wrote:
 
-It's never used, so can be removed
+...
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/phy/tegra/xusb-tegra210.c | 3 ---
- 1 file changed, 3 deletions(-)
+>>>> It does sounds like that FIFO_SIZE == src/dst_maxburst in your case as
+>>>> well.
+>>> Not exactly equal.
+>>> ADMA burst_size can range from 1(WORD) to 16(WORDS)
+>>> FIFO_SIZE can be adjusted from 16(WORDS) to 1024(WORDS) [can vary in
+>>> multiples of 16]
+>>
+>> So I think that the key thing to highlight here, is that the as Sameer
+>> highlighted above for the Tegra ADMA there are two values that need to
+>> be programmed; the DMA client FIFO size and the max burst size. The ADMA
+>> has register fields for both of these.
+> 
+> How does the ADMA uses the 'client FIFO size' and 'max burst size'
+> values and what is the relation of these values to the peripheral side
+> (ADMAIF)?
 
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index eb754baa8d71..4076b22c4087 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -1233,13 +1233,10 @@ static int tegra210_hsic_phy_power_on(struct phy *phy)
- 	struct tegra_xusb_hsic_lane *hsic = to_hsic_lane(lane);
- 	struct tegra_xusb_hsic_pad *pad = to_hsic_pad(lane->pad);
- 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
--	struct tegra210_xusb_padctl *priv;
- 	unsigned int index = lane->index;
- 	u32 value;
- 	int err;
- 
--	priv = to_tegra210_xusb_padctl(padctl);
--
- 	err = regulator_enable(pad->supply);
- 	if (err)
- 		return err;
+Per Sameer's previous comment, the FIFO size is used by the ADMA to
+determine how much space is available in the FIFO. I assume the burst
+size just limits how much data is transferred per transaction.
+
+>> As you can see from the above the FIFO size can be much greater than the
+>> burst size and so ideally both of these values would be passed to the DMA.
+>>
+>> We could get by with just passing the FIFO size (as the max burst size)
+>> and then have the DMA driver set the max burst size depending on this,
+>> but this does feel quite correct for this DMA. Hence, ideally, we would
+>> like to pass both.
+>>
+>> We are also open to other ideas.
+> 
+> I can not find public documentation (I think they are walled off by
+> registration), but correct me if I'm wrong:
+
+No unfortunately, you are not wrong here :-(
+
+> ADMAIF - peripheral side
+>  - kind of a small DMA for audio preipheral(s)?
+
+Yes this is the interface to the APE (audio processing engine) and data
+sent to the ADMAIF is then sent across a crossbar to one of many
+devices/interfaces (I2S, DMIC, etc). Basically a large mux that is user
+configurable depending on the use-case.
+
+>  - Variable FIFO size
+
+Yes.
+
+>  - sends DMA request to ADMA per words
+
+From Sameer's notes it says the ADMAIF send a signal to the ADMA per
+word, yes.
+
+> ADMA - system DMA
+>  - receives the DMA requests from ADMAIF
+>  - counts the requests
+>  - based on some threshold of the counter it will send/read from ADMAIF?
+>   - maxburst number of words probably?
+
+Sounds about right to me.
+
+> ADMA needs to know the ADMAIF's FIFO size because, it is the one who is
+> managing that FIFO from the outside, making sure that it does not over
+> or underrun?
+
+Yes.
+
+> And it is the one who sets the pace (in effect the DMA burst size - how
+> many bytes the DMA jumps between refills) of refills to the ADMAIF's FIFO?
+
+Yes.
+
+So currently, if you look at the ADMA driver
+(drivers/dma/tegra210-adma.c) you will see we use the src/dst_maxburst
+for the burst, but the FIFO size is hard-coded (see the
+TEGRA210_FIFO_CTRL_DEFAULT and TEGRA186_FIFO_CTRL_DEFAULT definitions).
+Ideally, we should not hard-code this but pass it.
+
+Given that there are no current users of the ADMA upstream, we could
+change the usage of the src/dst_maxburst, but being able to set the FIFO
+size as well would be ideal.
+
+Cheers
+Jon
+
+-- 
+nvpublic
