@@ -1,119 +1,200 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
-Date: Thu, 6 Jun 2019 11:49:16 +0100
-Message-ID: <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
-References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
- <20190502060446.GI3845@vkoul-mobl.Dlink>
- <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
- <20190502122506.GP3845@vkoul-mobl.Dlink>
- <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
- <20190504102304.GZ3845@vkoul-mobl.Dlink>
- <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
- <20190506155046.GH3845@vkoul-mobl.Dlink>
- <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
- <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
- <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
- <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
- <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V4] drivers: i2c: tegra: fix checkpatch defects
+Date: Thu, 6 Jun 2019 14:39:09 +0300
+Message-ID: <bbe8ef0e-fdef-613c-9758-6525b60e5992@gmail.com>
+References: <1559806523-1352-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+In-Reply-To: <1559806523-1352-1-git-send-email-bbiswas@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>, Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
-Cc: dan.j.williams@intel.com, tiwai@suse.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 06/06/2019 11:22, Peter Ujfalusi wrote:
-
-...
-
->>>> It does sounds like that FIFO_SIZE == src/dst_maxburst in your case as
->>>> well.
->>> Not exactly equal.
->>> ADMA burst_size can range from 1(WORD) to 16(WORDS)
->>> FIFO_SIZE can be adjusted from 16(WORDS) to 1024(WORDS) [can vary in
->>> multiples of 16]
->>
->> So I think that the key thing to highlight here, is that the as Sameer
->> highlighted above for the Tegra ADMA there are two values that need to
->> be programmed; the DMA client FIFO size and the max burst size. The ADMA
->> has register fields for both of these.
+06.06.2019 10:35, Bitan Biswas пишет:
+> Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
 > 
-> How does the ADMA uses the 'client FIFO size' and 'max burst size'
-> values and what is the relation of these values to the peripheral side
-> (ADMAIF)?
-
-Per Sameer's previous comment, the FIFO size is used by the ADMA to
-determine how much space is available in the FIFO. I assume the burst
-size just limits how much data is transferred per transaction.
-
->> As you can see from the above the FIFO size can be much greater than the
->> burst size and so ideally both of these values would be passed to the DMA.
->>
->> We could get by with just passing the FIFO size (as the max burst size)
->> and then have the DMA driver set the max burst size depending on this,
->> but this does feel quite correct for this DMA. Hence, ideally, we would
->> like to pass both.
->>
->> We are also open to other ideas.
+> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+> as needed. Replace BUG() with error handling code.
+> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
 > 
-> I can not find public documentation (I think they are walled off by
-> registration), but correct me if I'm wrong:
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 67 +++++++++++++++++++++++-------------------
+>  1 file changed, 37 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 76b7926..55a5d87 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -78,6 +78,7 @@
+>  #define I2C_ERR_NO_ACK				0x01
+>  #define I2C_ERR_ARBITRATION_LOST		0x02
+>  #define I2C_ERR_UNKNOWN_INTERRUPT		0x04
+> +#define I2C_ERR_UNEXPECTED_STATUS               0x08
+>  
+>  #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+>  #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+> @@ -112,7 +113,7 @@
+>  #define I2C_CLKEN_OVERRIDE			0x090
+>  #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
+>  
+> -#define I2C_CONFIG_LOAD_TIMEOUT			1000000
+> +#define I2C_CONFIG_LOAD_TMOUT			1000000
+>  
+>  #define I2C_MST_FIFO_CONTROL			0x0b4
+>  #define I2C_MST_FIFO_CONTROL_RX_FLUSH		BIT(0)
+> @@ -280,6 +281,7 @@ struct tegra_i2c_dev {
+>  	u32 bus_clk_rate;
+>  	u16 clk_divisor_non_hs_mode;
+>  	bool is_multimaster_mode;
+> +	/* xfer_lock: lock to serialize transfer submission and processing */
+>  	spinlock_t xfer_lock;
+>  	struct dma_chan *tx_dma_chan;
+>  	struct dma_chan *rx_dma_chan;
+> @@ -306,7 +308,7 @@ static u32 dvc_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
+>   * to the I2C block inside the DVC block
+>   */
+>  static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
+> -	unsigned long reg)
+> +					unsigned long reg)
+>  {
+>  	if (i2c_dev->is_dvc)
+>  		reg += (reg >= I2C_TX_FIFO) ? 0x10 : 0x40;
+> @@ -314,7 +316,7 @@ static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
+>  }
+>  
+>  static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+> -	unsigned long reg)
+> +		       unsigned long reg)
+>  {
+>  	writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+>  
+> @@ -329,13 +331,13 @@ static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
+>  }
+>  
+>  static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
+> -	unsigned long reg, int len)
+> +			unsigned long reg, int len)
+>  {
+>  	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
+>  }
+>  
+>  static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
+> -	unsigned long reg, int len)
+> +		       unsigned long reg, int len)
+>  {
+>  	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
+>  }
+> @@ -486,7 +488,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+>  			dev_warn(i2c_dev->dev, "timeout waiting for fifo flush\n");
+>  			return -ETIMEDOUT;
+>  		}
+> -		msleep(1);
+> +		usleep_range(1000, 2000);
+>  	}
+>  	return 0;
+>  }
+> @@ -525,7 +527,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  	 * prevent overwriting past the end of buf
+>  	 */
+>  	if (rx_fifo_avail > 0 && buf_remaining > 0) {
+> -		BUG_ON(buf_remaining > 3);
+>  		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
+>  		val = cpu_to_le32(val);
+>  		memcpy(buf, &val, buf_remaining);
+> @@ -533,7 +534,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  		rx_fifo_avail--;
+>  	}
+>  
+> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+>  	i2c_dev->msg_buf_remaining = buf_remaining;
+>  	i2c_dev->msg_buf = buf;
+>  
+> @@ -591,7 +591,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  	 * boundary and fault.
+>  	 */
+>  	if (tx_fifo_avail > 0 && buf_remaining > 0) {
+> -		BUG_ON(buf_remaining > 3);
+>  		memcpy(&val, buf, buf_remaining);
+>  		val = le32_to_cpu(val);
+>  
+> @@ -680,10 +679,11 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+>  		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
+>  		if (in_interrupt())
+>  			err = readl_poll_timeout_atomic(addr, val, val == 0,
+> -					1000, I2C_CONFIG_LOAD_TIMEOUT);
+> +							1000,
+> +							I2C_CONFIG_LOAD_TMOUT);
+>  		else
+> -			err = readl_poll_timeout(addr, val, val == 0,
+> -					1000, I2C_CONFIG_LOAD_TIMEOUT);
+> +			err = readl_poll_timeout(addr, val, val == 0, 1000,
+> +						 I2C_CONFIG_LOAD_TMOUT);
+>  
+>  		if (err) {
+>  			dev_warn(i2c_dev->dev,
+> @@ -858,16 +858,21 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+>  			if (i2c_dev->msg_buf_remaining)
+>  				tegra_i2c_empty_rx_fifo(i2c_dev);
+> -			else
+> -				BUG();
+> +			else {
+> +				dev_err(i2c_dev->dev, "unexpected rx data request\n");
+> +				i2c_dev->msg_err |= I2C_ERR_UNEXPECTED_STATUS;
+> +				goto err;
+> +			}
+>  		}
+>  
+>  		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+> -			if (i2c_dev->msg_buf_remaining)
+> -				tegra_i2c_fill_tx_fifo(i2c_dev);
+> -			else
+> +			if (i2c_dev->msg_buf_remaining) {
+> +				if (tegra_i2c_fill_tx_fifo(i2c_dev))
+> +					goto err;
+> +			} else {
+>  				tegra_i2c_mask_irq(i2c_dev,
+>  						   I2C_INT_TX_FIFO_DATA_REQ);
+> +			}
+>  		}
+>  	}
+>  
+> @@ -885,7 +890,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+>  		if (i2c_dev->is_curr_dma_xfer)
+>  			i2c_dev->msg_buf_remaining = 0;
+> -		BUG_ON(i2c_dev->msg_buf_remaining);
+> +		WARN_ON_ONCE(i2c_dev->msg_buf_remaining);
+>  		complete(&i2c_dev->msg_complete);
+>  	}
+>  	goto done;
+> @@ -1024,7 +1029,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
+>  }
+>  
+>  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+> -	struct i2c_msg *msg, enum msg_end_type end_state)
+> +			      struct i2c_msg *msg, enum msg_end_type end_state)
+>  {
+>  	u32 packet_header;
+>  	u32 int_mask;
+> @@ -1034,7 +1039,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	u32 *buffer = NULL;
+>  	int err = 0;
+>  	bool dma;
+> -	u16 xfer_time = 100;
+> +	u16 xfer_tm = 100;
 
-No unfortunately, you are not wrong here :-(
+Why xfer_time is renamed? It is much more important to keep code
+readable rather than to satisfy checkpatch. You should *not* follow
+checkpatch recommendations where they do not make much sense. The
+xfer_tm is a less intuitive naming and hence it harms readability of the
+code. Hence it is better to have "lines over 80 chars" in this
+particular case.
 
-> ADMAIF - peripheral side
->  - kind of a small DMA for audio preipheral(s)?
-
-Yes this is the interface to the APE (audio processing engine) and data
-sent to the ADMAIF is then sent across a crossbar to one of many
-devices/interfaces (I2S, DMIC, etc). Basically a large mux that is user
-configurable depending on the use-case.
-
->  - Variable FIFO size
-
-Yes.
-
->  - sends DMA request to ADMA per words
-
-From Sameer's notes it says the ADMAIF send a signal to the ADMA per
-word, yes.
-
-> ADMA - system DMA
->  - receives the DMA requests from ADMAIF
->  - counts the requests
->  - based on some threshold of the counter it will send/read from ADMAIF?
->   - maxburst number of words probably?
-
-Sounds about right to me.
-
-> ADMA needs to know the ADMAIF's FIFO size because, it is the one who is
-> managing that FIFO from the outside, making sure that it does not over
-> or underrun?
-
-Yes.
-
-> And it is the one who sets the pace (in effect the DMA burst size - how
-> many bytes the DMA jumps between refills) of refills to the ADMAIF's FIFO?
-
-Yes.
-
-So currently, if you look at the ADMA driver
-(drivers/dma/tegra210-adma.c) you will see we use the src/dst_maxburst
-for the burst, but the FIFO size is hard-coded (see the
-TEGRA210_FIFO_CTRL_DEFAULT and TEGRA186_FIFO_CTRL_DEFAULT definitions).
-Ideally, we should not hard-code this but pass it.
-
-Given that there are no current users of the ADMA upstream, we could
-change the usage of the src/dst_maxburst, but being able to set the FIFO
-size as well would be ideal.
-
-Cheers
-Jon
-
--- 
-nvpublic
+Also, please don't skip review comments. I already pointed out the above
+in the answer to previous version of the patch.
