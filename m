@@ -1,213 +1,47 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
-Date: Thu, 6 Jun 2019 11:28:04 +0530
-Message-ID: <490b81d9-2734-bb93-303b-94bb20a4f6a5@nvidia.com>
-References: <1557143908-5850-1-git-send-email-spujar@nvidia.com>
- <9f9962fc-a261-aecc-b4c5-408a75ebcb5f@nvidia.com>
+From: Bitan Biswas <bbiswas@nvidia.com>
+Subject: Re: [PATCH V2] drivers: i2c: tegra: fix checkpatch defects
+Date: Wed, 5 Jun 2019 23:24:39 -0700
+Message-ID: <89488516-a064-a1a0-9e3d-8234043201be@nvidia.com>
+References: <1559196850-7007-1-git-send-email-bbiswas@nvidia.com>
+ <e9e3d8b0-a76a-81a9-1110-2d07ba1c787f@gmail.com>
+ <911e52ed-8f3c-583a-7610-e38723219eca@gmail.com>
+ <b86b9104-1754-531f-70b9-3c1a5d347b9b@nvidia.com>
+ <2d83ad21-b012-1b3e-fc9a-741972ee3ba9@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9f9962fc-a261-aecc-b4c5-408a75ebcb5f@nvidia.com>
-Content-Language: en-GB
+In-Reply-To: <2d83ad21-b012-1b3e-fc9a-741972ee3ba9@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 6/4/2019 2:37 PM, Jon Hunter wrote:
-> On 06/05/2019 12:58, Sameer Pujar wrote:
->> Add DT nodes for following devices on Tegra186 and Tegra194
->>   * ACONNECT
->>   * ADMA
->>   * AGIC
->>
->> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> ---
->>   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
->>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
->>   2 files changed, 134 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> index 6e2b6ce..2c432c9 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> @@ -1153,4 +1153,71 @@
->>   				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->>   		interrupt-parent = <&gic>;
->>   	};
->> +
->> +	aconnect@2a41000 {
->> +		compatible = "nvidia,tegra210-aconnect";
->> +		clocks = <&bpmp TEGRA186_CLK_APE>,
->> +			 <&bpmp TEGRA186_CLK_APB2APE>;
->> +		clock-names = "ape", "apb2ape";
->> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		ranges;
-> My recollection is that non-empty range is preferred from what Rob told
-> me in the past. See the Tegra210 binding.
-I see at various places empty ranges property is used. From DT spec, it 
-means
-there is no translation in the address space between parent/child.
 
-Also I looked at Tegra210 binding,
-ranges = <0x702c0000 0x0 0x702c0000 0x00040000>;
-Should it be encoded as a triplet(child addr, parent addr, length)?
->
->> +		status = "disabled";
->> +
->> +		dma@2930000 {
-> Although I did not do this for Tegra210, I think that the preferred
-> convention is 'dma-controller@xxxxxxxxx'.
-done.
->> +			compatible = "nvidia,tegra186-adma";
->> +			reg = <0x0 0x02930000 0x0 0x50000>;
->> +			interrupt-parent = <&agic>;
->> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH 0>;
->> +			#dma-cells = <1>;
->> +			clocks = <&bpmp TEGRA186_CLK_AHUB>;
->> +			clock-names = "d_audio";
->> +			status = "disabled";
->> +		};
->> +
->> +		agic: agic@2a41000 {
->> +			compatible = "nvidia,tegra210-agic";
->> +			#interrupt-cells = <4>;
-> Why 4? This does not match the binding document for the arm-gic.
-will fix.
->> +			interrupt-controller;
->> +			reg = <0x0 0x02a41000 0x0 0x1000>,
->> +			      <0x0 0x02a42000 0x0 0x1000>;
-> I believe that the 2nd address range should have size 0x2000 for the CPU
-> interfaces.
-done
->> +			interrupts = <GIC_SPI 145 (GIC_CPU_MASK_SIMPLE(4) |
->> +					IRQ_TYPE_LEVEL_HIGH)>;
->> +			clocks = <&bpmp TEGRA186_CLK_APE>;
->> +			clock-names = "clk";
->> +			status = "disabled";
->> +		};
->> +	};
->>   };
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> index c77ca21..dcab504 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> @@ -1054,4 +1054,71 @@
->>   				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->>   		interrupt-parent = <&gic>;
->>   	};
->> +
->> +	aconnect@2a41000 {
->> +		compatible = "nvidia,tegra210-aconnect";
->> +		clocks = <&bpmp TEGRA194_CLK_APE>,
->> +			 <&bpmp TEGRA194_CLK_APB2APE>;
->> +		clock-names = "ape", "apb2ape";
->> +		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_AUD>;
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		ranges;
-> Same as above.
->
->> +		status = "disabled";
->> +
->> +		dma@2930000 {
-> Same as above.
->
->> +			compatible = "nvidia,tegra186-adma";
->> +			reg = <0x0 0x02930000 0x0 0x50000>;
->> +			interrupt-parent = <&agic>;
->> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH 0>,
->> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH 0>;
->> +			#dma-cells = <1>;
->> +			clocks = <&bpmp TEGRA194_CLK_AHUB>;
->> +			clock-names = "d_audio";
->> +			status = "disabled";
->> +		};
->> +
->> +		agic: agic@2a41000 {
->> +			compatible = "nvidia,tegra210-agic";
->> +			#interrupt-cells = <4>;
-> Same as above.
->
->> +			interrupt-controller;
->> +			reg = <0x0 0x02a41000 0x0 0x1000>,
->> +			      <0x0 0x02a42000 0x0 0x1000>;
-> Same as above.
->
->> +			interrupts = <GIC_SPI 145 (GIC_CPU_MASK_SIMPLE(4) |
->> +					IRQ_TYPE_LEVEL_HIGH)>;
->> +			clocks = <&bpmp TEGRA194_CLK_APE>;
->> +			clock-names = "clk";
->> +			status = "disabled";
->> +		};
->> +	};
->>   };
+On 5/31/19 5:45 AM, Dmitry Osipenko wrote:
+> 31.05.2019 12:04, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 >>
-> Cheers
-> Jon
->
+>>
+>> On 5/30/19 4:43 AM, Dmitry Osipenko wrote:
+>>> 30.05.2019 14:36, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> 30.05.2019 9:14, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
+>>>>> except for BUG/BUG_ON checks
+>>>>
+>>>> Please turn the BUG_ON's into WARN_ON's. The machine won't go on fire,
+>>>> hence there is absolutely no good reason in making system unusable on =
+a
+>>>> software bug. BUG_ON may be more useful for development, but not for a
+>>>> casual daily usage.
+>> I shall update the patch to remove the BUG/BUG_ON calls.
+>=20
+> Please replace them with WARN_ON_ONCE.
+>=20
+Based on review of the BUG_ON some were found redundant calls and hence=20
+planned to be removed. Non-trivial BUG_ON planned to be replaced with=20
+WARN_ON_ONCE call.
+
+-regards,
+  Bitan
