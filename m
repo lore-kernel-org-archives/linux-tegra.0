@@ -1,200 +1,99 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V4] drivers: i2c: tegra: fix checkpatch defects
-Date: Thu, 6 Jun 2019 14:39:09 +0300
-Message-ID: <bbe8ef0e-fdef-613c-9758-6525b60e5992@gmail.com>
-References: <1559806523-1352-1-git-send-email-bbiswas@nvidia.com>
+Subject: Re: [PATCH V1] i2c: busses: tegra: Add suspend-resume support
+Date: Thu, 6 Jun 2019 14:52:24 +0300
+Message-ID: <d5803f1d-0895-08b8-4851-cd8afad830c6@gmail.com>
+References: <1559195718-6693-1-git-send-email-bbiswas@nvidia.com>
+ <c8bad04b-67ef-bcdf-04df-4aa61271e81c@gmail.com>
+ <9142282b-ab76-53a0-13ce-c43b8adc575f@nvidia.com>
+ <4f14a218-332c-0263-c6c5-73a13b2446f0@gmail.com>
+ <caa17a53-6f29-411b-9a84-58ff019752ff@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559806523-1352-1-git-send-email-bbiswas@nvidia.com>
+In-Reply-To: <caa17a53-6f29-411b-9a84-58ff019752ff@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-06.06.2019 10:35, Bitan Biswas пишет:
-> Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
+06.06.2019 8:43, Bitan Biswas пишет:
 > 
-> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
-> as needed. Replace BUG() with error handling code.
-> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
 > 
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 67 +++++++++++++++++++++++-------------------
->  1 file changed, 37 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 76b7926..55a5d87 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -78,6 +78,7 @@
->  #define I2C_ERR_NO_ACK				0x01
->  #define I2C_ERR_ARBITRATION_LOST		0x02
->  #define I2C_ERR_UNKNOWN_INTERRUPT		0x04
-> +#define I2C_ERR_UNEXPECTED_STATUS               0x08
->  
->  #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
->  #define PACKET_HEADER0_PACKET_ID_SHIFT		16
-> @@ -112,7 +113,7 @@
->  #define I2C_CLKEN_OVERRIDE			0x090
->  #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
->  
-> -#define I2C_CONFIG_LOAD_TIMEOUT			1000000
-> +#define I2C_CONFIG_LOAD_TMOUT			1000000
->  
->  #define I2C_MST_FIFO_CONTROL			0x0b4
->  #define I2C_MST_FIFO_CONTROL_RX_FLUSH		BIT(0)
-> @@ -280,6 +281,7 @@ struct tegra_i2c_dev {
->  	u32 bus_clk_rate;
->  	u16 clk_divisor_non_hs_mode;
->  	bool is_multimaster_mode;
-> +	/* xfer_lock: lock to serialize transfer submission and processing */
->  	spinlock_t xfer_lock;
->  	struct dma_chan *tx_dma_chan;
->  	struct dma_chan *rx_dma_chan;
-> @@ -306,7 +308,7 @@ static u32 dvc_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
->   * to the I2C block inside the DVC block
->   */
->  static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
-> -	unsigned long reg)
-> +					unsigned long reg)
->  {
->  	if (i2c_dev->is_dvc)
->  		reg += (reg >= I2C_TX_FIFO) ? 0x10 : 0x40;
-> @@ -314,7 +316,7 @@ static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
->  }
->  
->  static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
-> -	unsigned long reg)
-> +		       unsigned long reg)
->  {
->  	writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
->  
-> @@ -329,13 +331,13 @@ static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
->  }
->  
->  static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
-> -	unsigned long reg, int len)
-> +			unsigned long reg, int len)
->  {
->  	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
->  }
->  
->  static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
-> -	unsigned long reg, int len)
-> +		       unsigned long reg, int len)
->  {
->  	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
->  }
-> @@ -486,7 +488,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
->  			dev_warn(i2c_dev->dev, "timeout waiting for fifo flush\n");
->  			return -ETIMEDOUT;
->  		}
-> -		msleep(1);
-> +		usleep_range(1000, 2000);
->  	}
->  	return 0;
->  }
-> @@ -525,7 +527,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
->  	 * prevent overwriting past the end of buf
->  	 */
->  	if (rx_fifo_avail > 0 && buf_remaining > 0) {
-> -		BUG_ON(buf_remaining > 3);
->  		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
->  		val = cpu_to_le32(val);
->  		memcpy(buf, &val, buf_remaining);
-> @@ -533,7 +534,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
->  		rx_fifo_avail--;
->  	}
->  
-> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
->  	i2c_dev->msg_buf_remaining = buf_remaining;
->  	i2c_dev->msg_buf = buf;
->  
-> @@ -591,7 +591,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
->  	 * boundary and fault.
->  	 */
->  	if (tx_fifo_avail > 0 && buf_remaining > 0) {
-> -		BUG_ON(buf_remaining > 3);
->  		memcpy(&val, buf, buf_remaining);
->  		val = le32_to_cpu(val);
->  
-> @@ -680,10 +679,11 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
->  		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
->  		if (in_interrupt())
->  			err = readl_poll_timeout_atomic(addr, val, val == 0,
-> -					1000, I2C_CONFIG_LOAD_TIMEOUT);
-> +							1000,
-> +							I2C_CONFIG_LOAD_TMOUT);
->  		else
-> -			err = readl_poll_timeout(addr, val, val == 0,
-> -					1000, I2C_CONFIG_LOAD_TIMEOUT);
-> +			err = readl_poll_timeout(addr, val, val == 0, 1000,
-> +						 I2C_CONFIG_LOAD_TMOUT);
->  
->  		if (err) {
->  			dev_warn(i2c_dev->dev,
-> @@ -858,16 +858,21 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->  		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->  			if (i2c_dev->msg_buf_remaining)
->  				tegra_i2c_empty_rx_fifo(i2c_dev);
-> -			else
-> -				BUG();
-> +			else {
-> +				dev_err(i2c_dev->dev, "unexpected rx data request\n");
-> +				i2c_dev->msg_err |= I2C_ERR_UNEXPECTED_STATUS;
-> +				goto err;
-> +			}
->  		}
->  
->  		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
-> -			if (i2c_dev->msg_buf_remaining)
-> -				tegra_i2c_fill_tx_fifo(i2c_dev);
-> -			else
-> +			if (i2c_dev->msg_buf_remaining) {
-> +				if (tegra_i2c_fill_tx_fifo(i2c_dev))
-> +					goto err;
-> +			} else {
->  				tegra_i2c_mask_irq(i2c_dev,
->  						   I2C_INT_TX_FIFO_DATA_REQ);
-> +			}
->  		}
->  	}
->  
-> @@ -885,7 +890,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->  	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->  		if (i2c_dev->is_curr_dma_xfer)
->  			i2c_dev->msg_buf_remaining = 0;
-> -		BUG_ON(i2c_dev->msg_buf_remaining);
-> +		WARN_ON_ONCE(i2c_dev->msg_buf_remaining);
->  		complete(&i2c_dev->msg_complete);
->  	}
->  	goto done;
-> @@ -1024,7 +1029,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
->  }
->  
->  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
-> -	struct i2c_msg *msg, enum msg_end_type end_state)
-> +			      struct i2c_msg *msg, enum msg_end_type end_state)
->  {
->  	u32 packet_header;
->  	u32 int_mask;
-> @@ -1034,7 +1039,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	u32 *buffer = NULL;
->  	int err = 0;
->  	bool dma;
-> -	u16 xfer_time = 100;
-> +	u16 xfer_tm = 100;
+> On 5/31/19 5:43 AM, Dmitry Osipenko wrote:
+>> 31.05.2019 11:50, Bitan Biswas пишет:
+>>>
+>>>
+>>> On 5/30/19 4:27 AM, Dmitry Osipenko wrote:
+>>>> 30.05.2019 8:55, Bitan Biswas пишет:
+>>>>> Post suspend I2C registers have power on reset values. Before any
+>>>>> transfer initialize I2C registers to prevent I2C transfer timeout
+>>>>> and implement suspend and resume callbacks needed. Fix below errors
+>>>>> post suspend:
+>>>>>
+>>>>> 1) Tegra I2C transfer timeout during jetson tx2 resume:
+>>>>>
+>>>>> [   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @
+>>>>> 2939, parent: i2c-1
+>>>>> [   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
+>>>>> [   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
+>>>>> [   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
+>>>>> [   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0
+>>>>> returns -110
+>>>>> [   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110
+>>>>> after 127152 usecs
+>>>>> [   27.666194] PM: Device 1-0074 failed to resume: error -110
+>>>>>
+>>>>> 2) Tegra I2C transfer timeout error on jetson Xavier post resume.
+>>>>>
+>>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>>>> ---
+>>>>>    drivers/i2c/busses/i2c-tegra.c | 24 ++++++++++++++++++++++++
+>>>>>    1 file changed, 24 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c
+>>>>> b/drivers/i2c/busses/i2c-tegra.c
+>>>>> index ebaa78d..f6a377f 100644
+>>>>> --- a/drivers/i2c/busses/i2c-tegra.c
+>>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>>>>> @@ -1687,9 +1687,33 @@ static int tegra_i2c_remove(struct
+>>>>> platform_device *pdev)
+>>>>>    }
+>>>>>      #ifdef CONFIG_PM_SLEEP
+>>>>> +static int tegra_i2c_suspend(struct device *dev)
+>>>>> +{
+>>>>> +    struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>>>>> +
+>>>>> +    i2c_mark_adapter_suspended(&i2c_dev->adapter);
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static int tegra_i2c_resume(struct device *dev)
+>>>>> +{
+>>>>> +    struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>>>>> +    int ret;
+>>>>> +
+>>>>> +    i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>>>>> +    ret = tegra_i2c_init(i2c_dev, false);
+>>>>> +    i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>>>>
+>>>> Why the locking is needed here?
+>>>
+>>> async resume could result in stress test issues if some client accesses
+>>> the i2c instance. This ensures the i2c instance is locked till the
+>>> initialization is complete.
+>>
+>> 1) This doesn't make much sense.. if client could access I2C during of
+>> tegra_i2c_init execution, then what stops it to perform the access
+>> before the lock is taken?
+> Client resumes will start after I2C instance resume because of driver
+> dependency. Since lock is the first call in i2c-tegra I believe I2C
+> calls of client will not start.
 
-Why xfer_time is renamed? It is much more important to keep code
-readable rather than to satisfy checkpatch. You should *not* follow
-checkpatch recommendations where they do not make much sense. The
-xfer_tm is a less intuitive naming and hence it harms readability of the
-code. Hence it is better to have "lines over 80 chars" in this
-particular case.
-
-Also, please don't skip review comments. I already pointed out the above
-in the answer to previous version of the patch.
+You're incorrectly assuming that client can start resuming in the middle
+of the controller's resume process. I2C client's resume won't start
+until tegra_i2c_resume() is finished completely. That is because child
+drivers are resumed only after theirs parent is ready and this is
+guaranteed by the drivers core.
