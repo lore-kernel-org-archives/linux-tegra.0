@@ -1,9 +1,8 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
-Date: Thu, 6 Jun 2019 20:25:14 +0300
-Message-ID: <457eb5e1-40cc-8c0f-e21c-3881c3c04de2@gmail.com>
+Date: Thu, 6 Jun 2019 20:56:21 +0300
+Message-ID: <307ade99-757a-ac75-6358-28f8e5dd9596@gmail.com>
 References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
- <20190502122506.GP3845@vkoul-mobl.Dlink>
  <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
  <20190504102304.GZ3845@vkoul-mobl.Dlink>
  <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
@@ -22,63 +21,69 @@ References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
  <4b098fb6-1a5b-1100-ae16-978a887c9535@nvidia.com>
  <e6741e07-be0c-d16b-36d7-77a3288f0500@gmail.com>
  <a652b103-979d-7910-5e3f-ec4bca3a3a3b@nvidia.com>
+ <457eb5e1-40cc-8c0f-e21c-3881c3c04de2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a652b103-979d-7910-5e3f-ec4bca3a3a3b@nvidia.com>
+In-Reply-To: <457eb5e1-40cc-8c0f-e21c-3881c3c04de2@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
 Cc: dan.j.williams@intel.com, tiwai@suse.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-06.06.2019 19:53, Jon Hunter пишет:
-> 
-> On 06/06/2019 17:44, Dmitry Osipenko wrote:
->> 06.06.2019 19:32, Jon Hunter пишет:
->>>
->>> On 06/06/2019 16:18, Dmitry Osipenko wrote:
->>>
->>> ...
->>>
->>>>>> If I understood everything correctly, the FIFO buffer is shared among
->>>>>> all of the ADMA clients and hence it should be up to the ADMA driver to
->>>>>> manage the quotas of the clients. So if there is only one client that
->>>>>> uses ADMA at a time, then this client will get a whole FIFO buffer, but
->>>>>> once another client starts to use ADMA, then the ADMA driver will have
->>>>>> to reconfigure hardware to split the quotas.
+06.06.2019 20:25, Dmitry Osipenko пишет:
+> 06.06.2019 19:53, Jon Hunter пишет:
+>>
+>> On 06/06/2019 17:44, Dmitry Osipenko wrote:
+>>> 06.06.2019 19:32, Jon Hunter пишет:
+>>>>
+>>>> On 06/06/2019 16:18, Dmitry Osipenko wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>>>> If I understood everything correctly, the FIFO buffer is shared among
+>>>>>>> all of the ADMA clients and hence it should be up to the ADMA driver to
+>>>>>>> manage the quotas of the clients. So if there is only one client that
+>>>>>>> uses ADMA at a time, then this client will get a whole FIFO buffer, but
+>>>>>>> once another client starts to use ADMA, then the ADMA driver will have
+>>>>>>> to reconfigure hardware to split the quotas.
+>>>>>>
+>>>>>> The FIFO quotas are managed by the ADMAIF driver (does not exist in
+>>>>>> mainline currently but we are working to upstream this) because it is
+>>>>>> this device that owns and needs to configure the FIFOs. So it is really
+>>>>>> a means to pass the information from the ADMAIF to the ADMA.
 >>>>>
->>>>> The FIFO quotas are managed by the ADMAIF driver (does not exist in
->>>>> mainline currently but we are working to upstream this) because it is
->>>>> this device that owns and needs to configure the FIFOs. So it is really
->>>>> a means to pass the information from the ADMAIF to the ADMA.
+>>>>> So you'd want to reserve a larger FIFO for an audio channel that has a
+>>>>> higher audio rate since it will perform reads more often. You could also
+>>>>> prioritize one channel over the others, like in a case of audio call for
+>>>>> example.
+>>>>>
+>>>>> Is the shared buffer smaller than may be needed by clients in a worst
+>>>>> case scenario? If you could split the quotas statically such that each
+>>>>> client won't ever starve, then seems there is no much need in the
+>>>>> dynamic configuration.
 >>>>
->>>> So you'd want to reserve a larger FIFO for an audio channel that has a
->>>> higher audio rate since it will perform reads more often. You could also
->>>> prioritize one channel over the others, like in a case of audio call for
->>>> example.
->>>>
->>>> Is the shared buffer smaller than may be needed by clients in a worst
->>>> case scenario? If you could split the quotas statically such that each
->>>> client won't ever starve, then seems there is no much need in the
->>>> dynamic configuration.
+>>>> Actually, this is still very much relevant for the static case. Even if
+>>>> we defined a static configuration of the FIFO mapping in the ADMAIF
+>>>> driver we still need to pass this information to the ADMA. I don't
+>>>> really like the idea of having it statically defined in two different
+>>>> drivers.
 >>>
->>> Actually, this is still very much relevant for the static case. Even if
->>> we defined a static configuration of the FIFO mapping in the ADMAIF
->>> driver we still need to pass this information to the ADMA. I don't
->>> really like the idea of having it statically defined in two different
->>> drivers.
+>>> Ah, so you need to apply the same configuration in two places. Correct?
+>>>
+>>> Are ADMAIF and ADMA really two different hardware blocks? Or you
+>>> artificially decoupled the ADMA driver?
 >>
->> Ah, so you need to apply the same configuration in two places. Correct?
->>
->> Are ADMAIF and ADMA really two different hardware blocks? Or you
->> artificially decoupled the ADMA driver?
+>> These are two different hardware modules with their own register sets.
+>> Yes otherwise, it would be a lot simpler!
 > 
-> These are two different hardware modules with their own register sets.
-> Yes otherwise, it would be a lot simpler!
+> The register sets are indeed separated, but it looks like that ADMAIF is
+> really a part of ADMA that is facing to Audio Crossbar. No? What is the
+> purpose of ADMAIF? Maybe you could amend the ADMA hardware description
+> with the ADMAIF addition until it's too late.
+> 
 
-The register sets are indeed separated, but it looks like that ADMAIF is
-really a part of ADMA that is facing to Audio Crossbar. No? What is the
-purpose of ADMAIF? Maybe you could amend the ADMA hardware description
-with the ADMAIF addition until it's too late.
+Ugh.. I now regret looking at the TRM. That Audio Processor Engine is a
+horrifying beast, it even has FPGA :)
