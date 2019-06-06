@@ -1,75 +1,213 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V2] i2c: busses: tegra: Add suspend-resume support
-Date: Wed, 5 Jun 2019 22:54:35 -0700
-Message-ID: <1559800475-5446-1-git-send-email-bbiswas@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: Re: [PATCH 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+Date: Thu, 6 Jun 2019 11:28:04 +0530
+Message-ID: <490b81d9-2734-bb93-303b-94bb20a4f6a5@nvidia.com>
+References: <1557143908-5850-1-git-send-email-spujar@nvidia.com>
+ <9f9962fc-a261-aecc-b4c5-408a75ebcb5f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9f9962fc-a261-aecc-b4c5-408a75ebcb5f@nvidia.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>, thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Post suspend I2C registers have power on reset values. Before any
-transfer initialize I2C registers to prevent I2C transfer timeout
-and implement suspend and resume callbacks needed. Fix below errors
-post suspend:
 
-1) Tegra I2C transfer timeout during jetson tx2 resume:
+On 6/4/2019 2:37 PM, Jon Hunter wrote:
+> On 06/05/2019 12:58, Sameer Pujar wrote:
+>> Add DT nodes for following devices on Tegra186 and Tegra194
+>>   * ACONNECT
+>>   * ADMA
+>>   * AGIC
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
+>>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
+>>   2 files changed, 134 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>> index 6e2b6ce..2c432c9 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>> @@ -1153,4 +1153,71 @@
+>>   				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>>   		interrupt-parent = <&gic>;
+>>   	};
+>> +
+>> +	aconnect@2a41000 {
+>> +		compatible = "nvidia,tegra210-aconnect";
+>> +		clocks = <&bpmp TEGRA186_CLK_APE>,
+>> +			 <&bpmp TEGRA186_CLK_APB2APE>;
+>> +		clock-names = "ape", "apb2ape";
+>> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+> My recollection is that non-empty range is preferred from what Rob told
+> me in the past. See the Tegra210 binding.
+I see at various places empty ranges property is used. From DT spec, it 
+means
+there is no translation in the address space between parent/child.
 
-[   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @ 2939, parent: i2c-1
-[   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
-[   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
-[   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
-[   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0 returns -110
-[   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110 after 127152 usecs
-[   27.666194] PM: Device 1-0074 failed to resume: error -110
-
-2) Tegra I2C transfer timeout error on jetson Xavier post resume.
-
-Remove i2c bus lock-unlock calls in resume callback as i2c_mark_adapter_*
-(suspended-resumed) help ensure i2c core calls from client are not
-executed before i2c-tegra resume.
-
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index ebaa78d..76b7926 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1687,7 +1687,30 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_PM_SLEEP
-+static int tegra_i2c_suspend(struct device *dev)
-+{
-+	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+
-+	i2c_mark_adapter_suspended(&i2c_dev->adapter);
-+
-+	return 0;
-+}
-+
-+static int tegra_i2c_resume(struct device *dev)
-+{
-+	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = tegra_i2c_init(i2c_dev, false);
-+	if (ret)
-+		return ret;
-+
-+	i2c_mark_adapter_resumed(&i2c_dev->adapter);
-+	return 0;
-+}
-+
- static const struct dev_pm_ops tegra_i2c_pm = {
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
- 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
- 			   NULL)
- };
--- 
-2.7.4
+Also I looked at Tegra210 binding,
+ranges = <0x702c0000 0x0 0x702c0000 0x00040000>;
+Should it be encoded as a triplet(child addr, parent addr, length)?
+>
+>> +		status = "disabled";
+>> +
+>> +		dma@2930000 {
+> Although I did not do this for Tegra210, I think that the preferred
+> convention is 'dma-controller@xxxxxxxxx'.
+done.
+>> +			compatible = "nvidia,tegra186-adma";
+>> +			reg = <0x0 0x02930000 0x0 0x50000>;
+>> +			interrupt-parent = <&agic>;
+>> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH 0>;
+>> +			#dma-cells = <1>;
+>> +			clocks = <&bpmp TEGRA186_CLK_AHUB>;
+>> +			clock-names = "d_audio";
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		agic: agic@2a41000 {
+>> +			compatible = "nvidia,tegra210-agic";
+>> +			#interrupt-cells = <4>;
+> Why 4? This does not match the binding document for the arm-gic.
+will fix.
+>> +			interrupt-controller;
+>> +			reg = <0x0 0x02a41000 0x0 0x1000>,
+>> +			      <0x0 0x02a42000 0x0 0x1000>;
+> I believe that the 2nd address range should have size 0x2000 for the CPU
+> interfaces.
+done
+>> +			interrupts = <GIC_SPI 145 (GIC_CPU_MASK_SIMPLE(4) |
+>> +					IRQ_TYPE_LEVEL_HIGH)>;
+>> +			clocks = <&bpmp TEGRA186_CLK_APE>;
+>> +			clock-names = "clk";
+>> +			status = "disabled";
+>> +		};
+>> +	};
+>>   };
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> index c77ca21..dcab504 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> @@ -1054,4 +1054,71 @@
+>>   				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>>   		interrupt-parent = <&gic>;
+>>   	};
+>> +
+>> +	aconnect@2a41000 {
+>> +		compatible = "nvidia,tegra210-aconnect";
+>> +		clocks = <&bpmp TEGRA194_CLK_APE>,
+>> +			 <&bpmp TEGRA194_CLK_APB2APE>;
+>> +		clock-names = "ape", "apb2ape";
+>> +		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_AUD>;
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+> Same as above.
+>
+>> +		status = "disabled";
+>> +
+>> +		dma@2930000 {
+> Same as above.
+>
+>> +			compatible = "nvidia,tegra186-adma";
+>> +			reg = <0x0 0x02930000 0x0 0x50000>;
+>> +			interrupt-parent = <&agic>;
+>> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH 0>,
+>> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH 0>;
+>> +			#dma-cells = <1>;
+>> +			clocks = <&bpmp TEGRA194_CLK_AHUB>;
+>> +			clock-names = "d_audio";
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		agic: agic@2a41000 {
+>> +			compatible = "nvidia,tegra210-agic";
+>> +			#interrupt-cells = <4>;
+> Same as above.
+>
+>> +			interrupt-controller;
+>> +			reg = <0x0 0x02a41000 0x0 0x1000>,
+>> +			      <0x0 0x02a42000 0x0 0x1000>;
+> Same as above.
+>
+>> +			interrupts = <GIC_SPI 145 (GIC_CPU_MASK_SIMPLE(4) |
+>> +					IRQ_TYPE_LEVEL_HIGH)>;
+>> +			clocks = <&bpmp TEGRA194_CLK_APE>;
+>> +			clock-names = "clk";
+>> +			status = "disabled";
+>> +		};
+>> +	};
+>>   };
+>>
+> Cheers
+> Jon
+>
