@@ -1,77 +1,103 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V8 13/15] phy: tegra: Add PCIe PIPE2UPHY support
-Date: Fri, 7 Jun 2019 19:15:32 +0530
-Message-ID: <5a5545c8-9e4c-b459-c40e-9e1c4e5daf5b@nvidia.com>
+Subject: Re: [PATCH V8 14/15] PCI: tegra: Add Tegra194 PCIe support
+Date: Fri, 7 Jun 2019 19:40:37 +0530
+Message-ID: <06f2f74e-d618-8688-14ae-beb4920bcbf6@nvidia.com>
 References: <20190526043751.12729-1-vidyas@nvidia.com>
- <20190526043751.12729-14-vidyas@nvidia.com>
- <c81c5d42-4292-ba6d-b5ab-afe1a604115f@gmail.com>
+ <20190526043751.12729-15-vidyas@nvidia.com>
+ <f30e7fc6-3f64-d321-c32c-5e273115a869@gmail.com>
+ <cbdac43f-32f7-c992-832b-ed40bef2375b@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c81c5d42-4292-ba6d-b5ab-afe1a604115f@gmail.com>
+In-Reply-To: <cbdac43f-32f7-c992-832b-ed40bef2375b@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
 Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/6/2019 10:00 PM, Dmitry Osipenko wrote:
-> 26.05.2019 7:37, Vidya Sagar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interfa=
-ce
->> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
->> For each PCIe lane of a controller, there is a P2U unit instantiated at
->> hardware level. This driver provides support for the programming require=
-d
->> for each P2U that is going to be used for a PCIe controller.
+On 6/7/2019 12:22 AM, Dmitry Osipenko wrote:
+> 06.06.2019 19:35, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> 26.05.2019 7:37, Vidya Sagar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> Add support for Synopsys DesignWare core IP based PCIe host controller
+>>> present in Tegra194 SoC.
+>>>
+>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>>> ---
+>>> Changes since [v7]:
+>>> * Addressed review comments from Thierry
+>>>
+>>> Changes since [v6]:
+>>> * Removed code around "nvidia,disable-aspm-states" DT property
+>>> * Refactored code to remove code duplication
+>>>
+>>> Changes since [v5]:
+>>> * Addressed review comments from Thierry
+>>>
+>>> Changes since [v4]:
+>>> * None
+>>>
+>>> Changes since [v3]:
+>>> * None
+>>>
+>>> Changes since [v2]:
+>>> * Changed 'nvidia,init-speed' to 'nvidia,init-link-speed'
+>>> * Changed 'nvidia,pex-wake' to 'nvidia,wake-gpios'
+>>> * Removed .runtime_suspend() & .runtime_resume() implementations
+>>>
+>>> Changes since [v1]:
+>>> * Made CONFIG_PCIE_TEGRA194 as 'm' by default from its previous 'y' sta=
+te
+>>> * Modified code as per changes made to DT documentation
+>>> * Refactored code to address Bjorn & Thierry's review comments
+>>> * Added goto to avoid recursion in tegra_pcie_dw_host_init() API
+>>> * Merged .scan_bus() of dw_pcie_host_ops implementation to tegra_pcie_d=
+w_host_init() API
+>>>
+>>>   drivers/pci/controller/dwc/Kconfig         |   10 +
+>>>   drivers/pci/controller/dwc/Makefile        |    1 +
+>>>   drivers/pci/controller/dwc/pcie-tegra194.c | 1621 +++++++++++++++++++=
++
+>>>   3 files changed, 1632 insertions(+)
+>>>   create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controlle=
+r/dwc/Kconfig
+>>> index a6ce1ee51b4c..884112afc11b 100644
+>>> --- a/drivers/pci/controller/dwc/Kconfig
+>>> +++ b/drivers/pci/controller/dwc/Kconfig
+>>> @@ -220,6 +220,16 @@ config PCI_MESON
+>>>   	  and therefore the driver re-uses the DesignWare core functions to
+>>>   	  implement the driver.
+>>>  =20
+>>> +config PCIE_TEGRA194
+>>> +	tristate "NVIDIA Tegra194 (and later) PCIe controller"
+>>> +	depends on (TEGRA_BPMP && ARCH_TEGRA) || COMPILE_TEST
 >>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->> Changes since [v7]:
->> * Changed P2U driver file name from pcie-p2u-tegra194.c to phy-tegra194-=
-p2u.c
+>> TEGRA_BPMP will be enough here as it depends on other relevant options.
 >>
->> Changes since [v6]:
->> * None
+>> Hence I mean:
 >>
->> Changes since [v5]:
->> * Addressed review comments from Thierry
->>
->> Changes since [v4]:
->> * None
->>
->> Changes since [v3]:
->> * Rebased on top of linux-next top of the tree
->>
->> Changes since [v2]:
->> * Replaced spaces with tabs in Kconfig file
->> * Sorted header file inclusion alphabetically
->>
->> Changes since [v1]:
->> * Added COMPILE_TEST in Kconfig
->> * Removed empty phy_ops implementations
->> * Modified code according to DT documentation file modifications
->>
->>   drivers/phy/tegra/Kconfig            |   7 ++
->>   drivers/phy/tegra/Makefile           |   1 +
->>   drivers/phy/tegra/phy-tegra194-p2u.c | 109 +++++++++++++++++++++++++++
->>   3 files changed, 117 insertions(+)
->>   create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
->>
->> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
->> index a3b1de953fb7..c56fc8452e03 100644
->> --- a/drivers/phy/tegra/Kconfig
->> +++ b/drivers/phy/tegra/Kconfig
->> @@ -6,3 +6,10 @@ config PHY_TEGRA_XUSB
->>  =20
->>   	  To compile this driver as a module, choose M here: the module will
->>   	  be called phy-tegra-xusb.
->> +
->> +config PHY_TEGRA194_P2U
->> +	tristate "NVIDIA Tegra194 PIPE2UPHY PHY driver"
->> +	depends on ARCH_TEGRA || COMPILE_TEST
+>> 	depends on TEGRA_BPMP || COMPILE_TEST
 >=20
-> ARCH_TEGRA is a bit too much, ARCH_TEGRA_194_SOC should fit better here.
+> Maybe it's worth to even change TEGRA_BPMP to ARCH_TEGRA_194_SOC.
+> Although then you'll have to extend it with other platforms later on,
+> but probably that's fine.
+I received an explicit comment previously to make this dependent on TEGRA_B=
+PMP
+as the driver is using APIs to get certain jobs done by BPMP-FW. But, since
+we can't boot kernel in the first place without having BPMP-FW in place, I =
+think
+it should be fine to make it dependent on ARCH_TEGRA_194_SOC directly.
+
 >=20
-Ok. I'll take care of it in the next patch series.
+>>
+>>> +	depends on PCI_MSI_IRQ_DOMAIN
+>>
+>> You probably want to s/depends on/select/ PCI_MSI_IRQ_DOMAIN, don't you?
+>>
+>=20
+> I actually looked up the PCI_MSI_IRQ_DOMAIN and it is correct in your
+> case, my bad.
+>=20
