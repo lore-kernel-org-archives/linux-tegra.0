@@ -1,107 +1,130 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 07/16] PM / devfreq: tegra: Properly disable interrupts
-Date: Fri, 7 Jun 2019 19:58:20 +0300
-Message-ID: <7be61b38-62c7-8536-a102-36f5ac6668e2@gmail.com>
-References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-8-digetx@gmail.com> <20190604110744.GG16519@ulmo>
- <c2f2a8c8-1f30-34aa-9b95-a7a44e0ec96f@gmail.com>
- <2b09a162-a090-901b-01cf-46b116a87a7a@gmail.com>
+From: Bitan Biswas <bbiswas@nvidia.com>
+Subject: Re: [PATCH V1 6/6] i2c: tegra: remove BUG, BUG_ON
+Date: Fri, 7 Jun 2019 11:55:54 -0700
+Message-ID: <75a7f16f-5d54-797d-fb72-445411f20424@nvidia.com>
+References: <1559908507-31192-1-git-send-email-bbiswas@nvidia.com>
+ <1559908507-31192-6-git-send-email-bbiswas@nvidia.com>
+ <4aec6d7a-0dea-18c9-efde-96cc1a54b945@gmail.com>
+ <2281ef29-6e69-78e7-4d07-77f33c2f2d5a@gmail.com>
+ <9adcde41-2450-27dc-36a0-b3b99022b43d@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2b09a162-a090-901b-01cf-46b116a87a7a@gmail.com>
+In-Reply-To: <9adcde41-2450-27dc-36a0-b3b99022b43d@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-05.06.2019 1:55, Dmitry Osipenko пишет:
-> 04.06.2019 16:40, Dmitry Osipenko пишет:
->> 04.06.2019 14:07, Thierry Reding пишет:
->>> On Thu, May 02, 2019 at 02:38:06AM +0300, Dmitry Osipenko wrote:
->>>> There is no guarantee that interrupt handling isn't running in parallel
->>>> with tegra_actmon_disable_interrupts(), hence it is necessary to protect
->>>> DEV_CTRL register accesses and clear IRQ status with ACTMON's IRQ being
->>>> disabled in the Interrupt Controller in order to ensure that device
->>>> interrupt is indeed being disabled.
+
+
+On 6/7/19 5:18 AM, Dmitry Osipenko wrote:
+> 07.06.2019 15:12, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> 07.06.2019 15:08, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> 07.06.2019 14:55, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+>>>> as needed. Replace BUG() with error handling code.
+>>>> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
 >>>>
->>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
 >>>> ---
->>>>  drivers/devfreq/tegra-devfreq.c | 21 +++++++++++++++------
->>>>  1 file changed, 15 insertions(+), 6 deletions(-)
+>>>>   drivers/i2c/busses/i2c-tegra.c | 15 ++++++++-------
+>>>>   1 file changed, 8 insertions(+), 7 deletions(-)
 >>>>
->>>> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
->>>> index b65313fe3c2e..ce1eb97a2090 100644
->>>> --- a/drivers/devfreq/tegra-devfreq.c
->>>> +++ b/drivers/devfreq/tegra-devfreq.c
->>>> @@ -171,6 +171,8 @@ struct tegra_devfreq {
->>>>  	struct notifier_block	rate_change_nb;
->>>>  
->>>>  	struct tegra_devfreq_device devices[ARRAY_SIZE(actmon_device_configs)];
->>>> +
->>>> +	int irq;
+>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-t=
+egra.c
+>>>> index 4dfb4c1..c407bd7 100644
+>>>> --- a/drivers/i2c/busses/i2c-tegra.c
+>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>>>> @@ -73,6 +73,7 @@
+>>>>   #define I2C_ERR_NO_ACK				BIT(0)
+>>>>   #define I2C_ERR_ARBITRATION_LOST		BIT(1)
+>>>>   #define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
+>>>> +#define I2C_ERR_UNEXPECTED_STATUS		BIT(3)
+>>>>  =20
+>>>>   #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+>>>>   #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+>>>> @@ -515,7 +516,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2=
+c_dev *i2c_dev)
+>>>>   	 * prevent overwriting past the end of buf
+>>>>   	 */
+>>>>   	if (rx_fifo_avail > 0 && buf_remaining > 0) {
+>>>> -		BUG_ON(buf_remaining > 3);
+>>>>   		val =3D i2c_readl(i2c_dev, I2C_RX_FIFO);
+>>>>   		val =3D cpu_to_le32(val);
+>>>>   		memcpy(buf, &val, buf_remaining);
+>>>> @@ -523,7 +523,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2=
+c_dev *i2c_dev)
+>>>>   		rx_fifo_avail--;
+>>>>   	}
+>>>>  =20
+>>>> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+>>>>   	i2c_dev->msg_buf_remaining =3D buf_remaining;
+>>>>   	i2c_dev->msg_buf =3D buf;
+>>>>  =20
+>>>> @@ -581,7 +580,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c=
+_dev *i2c_dev)
+>>>>   	 * boundary and fault.
+>>>>   	 */
+>>>>   	if (tx_fifo_avail > 0 && buf_remaining > 0) {
+>>>> -		BUG_ON(buf_remaining > 3);
+>>>>   		memcpy(&val, buf, buf_remaining);
+>>>>   		val =3D le32_to_cpu(val);
+>>>>  =20
+>>>> @@ -847,10 +845,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *=
+dev_id)
+>>>>  =20
+>>>>   	if (!i2c_dev->is_curr_dma_xfer) {
+>>>>   		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+>>>> -			if (i2c_dev->msg_buf_remaining)
+>>>> +			if (i2c_dev->msg_buf_remaining) {
+>>>>   				tegra_i2c_empty_rx_fifo(i2c_dev);
+>>>> -			else
+>>>> -				BUG();
+>>>> +			} else {
+>>>> +				dev_err(i2c_dev->dev, "unexpected rx data request\n");
+>>>> +				i2c_dev->msg_err |=3D I2C_ERR_UNEXPECTED_STATUS;
+>>>> +				goto err;
+>>>> +			}
+>>>>   		}
+>>>>  =20
+>>>>   		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+>>>> @@ -876,7 +877,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *de=
+v_id)
+>>>>   	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+>>>>   		if (i2c_dev->is_curr_dma_xfer)
+>>>>   			i2c_dev->msg_buf_remaining =3D 0;
+>>>> -		BUG_ON(i2c_dev->msg_buf_remaining);
+>>>> +		WARN_ON_ONCE(i2c_dev->msg_buf_remaining);
+>>>>   		complete(&i2c_dev->msg_complete);
+>>>>   	}
+>>>>   	goto done;
+>>>>
 >>>
->>> Interrupts are typically unsigned int.
+>>> Very nice, thank you very much! BTW, I think it may worth to add anothe=
+r
+>>> patch that will reset hardware state in a case of the warning since we
+>>> know that something gone wrong.
 >>>
->>>>  };
->>>>  
->>>>  struct tegra_actmon_emc_ratio {
->>>> @@ -417,6 +419,8 @@ static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
->>>>  	u32 val;
->>>>  	unsigned int i;
->>>>  
->>>> +	disable_irq(tegra->irq);
->>>> +
->>>>  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
->>>>  		dev = &tegra->devices[i];
->>>>  
->>>> @@ -427,9 +431,14 @@ static void tegra_actmon_disable_interrupts(struct tegra_devfreq *tegra)
->>>>  		val &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
->>>>  
->>>>  		device_writel(dev, val, ACTMON_DEV_CTRL);
->>>> +
->>>> +		device_writel(dev, ACTMON_INTR_STATUS_CLEAR,
->>>> +			      ACTMON_DEV_INTR_STATUS);
->>>>  	}
->>>>  
->>>>  	actmon_write_barrier(tegra);
->>>> +
->>>> +	enable_irq(tegra->irq);
+>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 >>>
->>> Why do we enable interrupts after this? Is there any use in having the
->>> top-level interrupt enabled if nothing's going to generate an interrupt
->>> anyway?
 >>
->> There is no real point in having the interrupt enabled other than to
->> keep the enable count balanced.
+>> Something like that:
 >>
->> IIUC, we will need to disable IRQ at the driver's probe time (after
->> requesting the IRQ) if we want to avoid that (not really necessary)
->> balancing. This is probably something that could be improved in a
->> follow-up patches, if desired.
-> 
-> Nah, it's not worth the effort. It is quite problematic that we can't
-> keep interrupt disabled during of devfreq_add_device() execution because
-> it asks governor to enable the interrupt and the interrupt shall be
-> disabled because we're using device's lock in the governor interrupt
-> handler.. device is getting assigned only after completion of the
-> devfreq_add_device() and hence ISR gets a NULL deref if it is fired
-> before device is assigned. So I'll leave this part as-is.
-> 
-> Thierry, please answer to all of the remaining patches where you had
-> some concerns. I'll send out another series on top of this, addressing
-> yours comments and fixing another bug that I spotted today.
-> 
+>>   	complete(&i2c_dev->msg_complete);
+>>
+>> 	if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining))
+>> 		goto err;
+>>
+>=20
+> Ah, that's inside the ISR, so maybe will make sense to just not complete
+> the transfer and let it timeout:
+>=20
+> 	if (!WARN_ON_ONCE(i2c_dev->msg_buf_remaining))
+> 		complete(&i2c_dev->msg_complete);
+OK. I shall send the updated patch.
 
-I looked at this once again and found that the interrupt could be kept
-disabled on request using the IRQ_NOAUTOEN flag and then the device
-could be assigned within the governor's event handler, so everything is
-resolved very nicely! :)
-
-I'll send patches addressing this comment and the rest after getting
-relies from you guys. Please try to not postpone the responses too much
-as more interactivity in a review/apply process usually help quite a
-lot, thanks in advance!
+-Thanks,
+  Bitan
