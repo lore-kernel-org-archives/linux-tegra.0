@@ -1,87 +1,92 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
-Date: Fri, 7 Jun 2019 09:27:45 +0300
-Message-ID: <21a2b722-cd1d-284f-2a4d-99bb12c98afd@gmail.com>
-References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+Date: Fri, 7 Jun 2019 08:50:08 +0300
+Message-ID: <d0db90e3-3d05-dfba-8768-28511d9ee3ac@ti.com>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502060446.GI3845@vkoul-mobl.Dlink>
+ <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
+ <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
+ <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
+ <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+ <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+ <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
+ <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
+In-Reply-To: <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+Cc: dan.j.williams@intel.com, tiwai@suse.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-07.06.2019 8:37, Bitan Biswas пишет:
-> Post suspend I2C registers have power on reset values. Before any
-> transfer initialize I2C registers to prevent I2C transfer timeout
-> and implement suspend and resume callbacks needed. Fix below errors
-> post suspend:
-> 
-> 1) Tegra I2C transfer timeout during jetson tx2 resume:
-> 
-> [   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @ 2939, parent: i2c-1
-> [   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
-> [   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
-> [   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
-> [   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0 returns -110
-> [   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110 after 127152 usecs
-> [   27.666194] PM: Device 1-0074 failed to resume: error -110
-> 
-> 2) Tegra I2C transfer timeout error on jetson Xavier post resume.
-> 
-> Remove i2c bus lock-unlock calls in resume callback as i2c_mark_adapter_*
-> (suspended-resumed) help ensure i2c core calls from client are not
-> executed before i2c-tegra resume.
-> 
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index ebaa78d..1dbba39 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1687,7 +1687,31 @@ static int tegra_i2c_remove(struct platform_device *pdev)
->  }
->  
->  #ifdef CONFIG_PM_SLEEP
-> +static int tegra_i2c_suspend(struct device *dev)
-> +{
-> +	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-> +
-> +	i2c_mark_adapter_suspended(&i2c_dev->adapter);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_i2c_resume(struct device *dev)
-> +{
-> +	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-> +	int err;
-> +
-> +	err = tegra_i2c_init(i2c_dev, false);
-> +	if (err)
-> +		return err;
-> +
-> +	i2c_mark_adapter_resumed(&i2c_dev->adapter);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct dev_pm_ops tegra_i2c_pm = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
->  	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
->  			   NULL)
->  };
-> 
+Jon,
 
-Thanks!
+On 06/06/2019 15.37, Jon Hunter wrote:
+>> Looking at the drivers/dma/tegra210-adma.c for the
+>> TEGRA*_FIFO_CTRL_DEFAULT definition it is still not clear where the
+>> remote FIFO size would fit.
+>> There are fields for overflow and starvation(?) thresholds and TX/RX
+>> size (assuming word length, 3 == 32bits?).
+> 
+> The TX/RX size are the FIFO size. So 3 equates to a FIFO size of 3 * 64
+> bytes.
+> 
+>> Both threshold is set to one, so I assume currently ADMA is
+>> pushing/pulling data word by word.
+> 
+> That's different. That indicates thresholds when transfers start.
+> 
+>> Not sure what the burst size is used for, my guess would be that it is
+>> used on the memory (DDR) side for optimized, more efficient accesses?
+> 
+> That is the actual burst size.
+> 
+>> My guess is that the threshold values are the counter limits, if the DMA
+>> request counter reaches it then ADMA would do a threshold limit worth of
+>> push/pull to ADMAIF.
+>> Or there is another register where the remote FIFO size can be written
+>> and ADMA is counting back from there until it reaches the threshold (and
+>> pushes/pulling again threshold amount of data) so it keeps the FIFO
+>> filled with at least threshold amount of data?
+>>
+>> I think in both cases the threshold would be the maxburst.
+>>
+>> I suppose you have the patch for adma on how to use the fifo_size
+>> parameter? That would help understand what you are trying to achieve better.
+> 
+> Its quite simple, we would just use the FIFO size to set the fields
+> TEGRAXXX_ADMA_CH_FIFO_CTRL_TXSIZE/RXSIZE in the
+> TEGRAXXX_ADMA_CH_FIFO_CTRL register. That's all.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Hrm, it is still not clear how all of these fits together.
 
--- 
-Dmitry
+What happens if you configure ADMA side:
+BURST = 10
+TX/RXSIZE = 100 (100 * 64 bytes?) /* FIFO_SIZE? */
+*THRES = 5
+
+And if you change the *THRES to 10?
+And if you change the TX/RXSIZE to 50 (50 * 64 bytes?)
+And if you change the BURST to 5?
+
+In other words what is the relation between all of these?
+
+There must be a rule and constraints around these and if we do really
+need a new parameter for ADMA's FIFO_SIZE I'd like it to be defined in a
+generic way so others could benefit without 'misusing' a fifo_size
+parameter for similar, but not quite fifo_size information.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
