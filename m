@@ -1,43 +1,65 @@
-From: Gen Zhang <blackgod016574@gmail.com>
-Subject: Re: [PATCH] tegra-hsp: fix a missing-check bug in
- tegra_hsp_doorbell_create()
-Date: Sun, 9 Jun 2019 00:11:44 +0800
-Message-ID: <20190608161144.GA4090@zhanggen-UX430UQ>
-References: <20190530011920.GA6490@zhanggen-UX430UQ>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] gpu: host1x: Increase maximum DMA segment size
+Date: Sun, 9 Jun 2019 15:48:57 +0300
+Message-ID: <db06ce74-6051-8bb4-555d-505f8d3baa85@gmail.com>
+References: <20190605084605.12225-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190530011920.GA6490@zhanggen-UX430UQ>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jassisinghbrar@gmail.com
-Cc: thierry.reding@gmail.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190605084605.12225-1-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 30, 2019 at 09:19:20AM +0800, Gen Zhang wrote:
-> In tegra_hsp_doorbell_create(), 'db->name' is allocated by 
-> devm_kstrdup_const(). It returns NULL when fails. So 'db->name' should
-> be checked.
-> 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> ---
-> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> index 11fc9fd..b613c46 100644
-> --- a/drivers/mailbox/tegra-hsp.c
-> +++ b/drivers/mailbox/tegra-hsp.c
-> @@ -292,6 +292,8 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
->  	db->channel.hsp = hsp;
->  
->  	db->name = devm_kstrdup_const(hsp->dev, name, GFP_KERNEL);
-> +	if (!db->name)
-> +		return ERR_PTR(-ENOMEM);
->  	db->master = master;
->  	db->index = index;
->  
-> ---
-Can anyone look into this patch? It's acked by Thierry Reding 
-<treding@nvidia.com>.
-
-Thanks
-Gen
+MDUuMDYuMjAxOSAxMTo0NiwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFJlY2VudCB2ZXJzaW9ucyBvZiB0
+aGUgRE1BIEFQSSBkZWJ1ZyBjb2RlIGhhdmUgc3RhcnRlZCB0byB3YXJuIGFib3V0Cj4gdmlvbGF0
+aW9ucyBvZiB0aGUgbWF4aW11bSBETUEgc2VnbWVudCBzaXplLiBUaGlzIGlzIGJlY2F1c2UgdGhl
+IHNlZ21lbnQKPiBzaXplIGRlZmF1bHRzIHRvIDY0IEtpQiwgd2hpY2ggY2FuIGVhc2lseSBiZSBl
+eGNlZWRlZCBpbiBsYXJnZSBidWZmZXIKPiBhbGxvY2F0aW9ucyBzdWNoIGFzIHVzZWQgaW4gRFJN
+L0tNUyBmb3IgZnJhbWVidWZmZXJzLgo+IAo+IFRlY2huaWNhbGx5IHRoZSBUZWdyYSBTTU1VIGFu
+ZCBBUk0gU01NVSBkb24ndCBoYXZlIGEgbWF4aW11bSBzZWdtZW50Cj4gc2l6ZSAodGhleSBtYXAg
+aW5kaXZpZHVhbCBwYWdlcyBpcnJlc3BlY3RpdmUgb2Ygd2hldGhlciB0aGV5IGFyZQo+IGNvbnRp
+Z3VvdXMgb3Igbm90KSwgc28gdGhlIGNob2ljZSBvZiA0IE1pQiBpcyBhIGJpdCBhcmJpdHJhcnkg
+aGVyZS4gVGhlCj4gbWF4aW11bSBzZWdtZW50IHNpemUgaXMgYSAzMi1iaXQgdW5zaWduZWQgaW50
+ZWdlciwgdGhvdWdoLCBzbyB3ZSBjYW4ndAo+IHNldCBpdCB0byB0aGUgY29ycmVjdCBtYXhpbXVt
+IHNpemUsIHdoaWNoIHdvdWxkIGJlIHRoZSBzaXplIG9mIHRoZQo+IGFwZXJ0dXJlLgo+IAo+IFNp
+Z25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0tCj4g
+IGRyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyB8IDMgKysrCj4gIGluY2x1ZGUvbGludXgvaG9zdDF4
+LmggICB8IDIgKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKykKPiAKPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2J1
+cy5jCj4gaW5kZXggOTc5N2NjYjBhMDczLi42Mzg3MzAyYzEyNDUgMTAwNjQ0Cj4gLS0tIGEvZHJp
+dmVycy9ncHUvaG9zdDF4L2J1cy5jCj4gKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jCj4g
+QEAgLTQxNCw2ICs0MTQsOSBAQCBzdGF0aWMgaW50IGhvc3QxeF9kZXZpY2VfYWRkKHN0cnVjdCBo
+b3N0MXggKmhvc3QxeCwKPiAgCj4gIAlvZl9kbWFfY29uZmlndXJlKCZkZXZpY2UtPmRldiwgaG9z
+dDF4LT5kZXYtPm9mX25vZGUsIHRydWUpOwo+ICAKPiArCWRldmljZS0+ZGV2LmRtYV9wYXJtcyA9
+ICZkZXZpY2UtPmRtYV9wYXJtczsKPiArCWRtYV9zZXRfbWF4X3NlZ19zaXplKCZkZXZpY2UtPmRl
+diwgU1pfNE0pOwo+ICsKPiAgCWVyciA9IGhvc3QxeF9kZXZpY2VfcGFyc2VfZHQoZGV2aWNlLCBk
+cml2ZXIpOwo+ICAJaWYgKGVyciA8IDApIHsKPiAgCQlrZnJlZShkZXZpY2UpOwo+IGRpZmYgLS1n
+aXQgYS9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oIGIvaW5jbHVkZS9saW51eC9ob3N0MXguaAo+IGlu
+ZGV4IGNmZmYzMGI5YTYyZS4uZTZlZWE0NWUxMTU0IDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvbGlu
+dXgvaG9zdDF4LmgKPiArKysgYi9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oCj4gQEAgLTI5Nyw2ICsy
+OTcsOCBAQCBzdHJ1Y3QgaG9zdDF4X2RldmljZSB7Cj4gIAlzdHJ1Y3QgbGlzdF9oZWFkIGNsaWVu
+dHM7Cj4gIAo+ICAJYm9vbCByZWdpc3RlcmVkOwo+ICsKPiArCXN0cnVjdCBkZXZpY2VfZG1hX3Bh
+cmFtZXRlcnMgZG1hX3Bhcm1zOwo+ICB9Owo+ICAKPiAgc3RhdGljIGlubGluZSBzdHJ1Y3QgaG9z
+dDF4X2RldmljZSAqdG9faG9zdDF4X2RldmljZShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gCgpKdXN0
+IGEgdmVyeSBtaW5vciBuaXQ6CgpJdCBtYXkgYmUgd29ydGh3aGlsZSB0byBpbmNsdWRlICJkbWEt
+bWFwcGluZy5oIiBkaXJlY3RseSBmb3IgY29uc2lzdGVuY3kKaGVyZSBhcyB3ZWxsIHNpbmNlIG5v
+dGhpbmcgaW5jbHVkZXMgaXQgZGlyZWN0bHkuIEkgbm90aWNlZCBhIGJ1aWxkCmJyZWFrYWdlIG9m
+IHRoZSBncmF0ZS1kcml2ZXIncyBrZXJuZWwgb24gYSByZWJhc2Ugd2l0aCAiZ2l0IC0tZXhlYwon
+bWFrZS4uJyIgY2F1c2Ugd2UgaGF2ZSBzb21lIG9mICJpb21tdS9pb3ZhIiBoZWFkZXJzIHRoYXQg
+YXJlIG1vdmVkCmFyb3VuZCBpbiB0aGUgaW50ZXJtZWRpYXRlIHBhdGNoZXMuCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
+c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
