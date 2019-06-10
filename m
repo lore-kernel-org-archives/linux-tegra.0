@@ -1,119 +1,94 @@
 From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: Re: [PATCH V2 6/6] i2c: tegra: remove BUG, BUG_ON
-Date: Sun, 9 Jun 2019 20:52:38 -0700
-Message-ID: <8daef4be-f841-bb9a-3865-9cc6bf9c51c5@nvidia.com>
-References: <1559935826-25812-1-git-send-email-bbiswas@nvidia.com>
- <1559935826-25812-6-git-send-email-bbiswas@nvidia.com>
- <dfe5e3a7-a761-0633-8da6-32f94aae171f@gmail.com>
+Subject: [PATCH V3 1/6] i2c: tegra: clean up macros
+Date: Sun, 9 Jun 2019 22:08:39 -0700
+Message-ID: <1560143324-21754-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <dfe5e3a7-a761-0633-8da6-32f94aae171f@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Clean up macros by:
+1) removing unused macros
+2) replace constants by macro BIT()
 
+Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-On 6/7/19 12:47 PM, Dmitry Osipenko wrote:
-> 07.06.2019 22:30, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
->> as needed. Replace BUG() with error handling code.
->> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
->>
->> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->> ---
->>   drivers/i2c/busses/i2c-tegra.c | 16 +++++++++-------
->>   1 file changed, 9 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-teg=
-ra.c
->> index 4dfb4c1..c89d0ee 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -73,6 +73,7 @@
->>   #define I2C_ERR_NO_ACK				BIT(0)
->>   #define I2C_ERR_ARBITRATION_LOST		BIT(1)
->>   #define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
->> +#define I2C_ERR_UNEXPECTED_STATUS		BIT(3)
->>  =20
->>   #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
->>   #define PACKET_HEADER0_PACKET_ID_SHIFT		16
->> @@ -515,7 +516,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_=
-dev *i2c_dev)
->>   	 * prevent overwriting past the end of buf
->>   	 */
->>   	if (rx_fifo_avail > 0 && buf_remaining > 0) {
->> -		BUG_ON(buf_remaining > 3);
->>   		val =3D i2c_readl(i2c_dev, I2C_RX_FIFO);
->>   		val =3D cpu_to_le32(val);
->>   		memcpy(buf, &val, buf_remaining);
->> @@ -523,7 +523,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_=
-dev *i2c_dev)
->>   		rx_fifo_avail--;
->>   	}
->>  =20
->> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
->>   	i2c_dev->msg_buf_remaining =3D buf_remaining;
->>   	i2c_dev->msg_buf =3D buf;
->>  =20
->> @@ -581,7 +580,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_d=
-ev *i2c_dev)
->>   	 * boundary and fault.
->>   	 */
->>   	if (tx_fifo_avail > 0 && buf_remaining > 0) {
->> -		BUG_ON(buf_remaining > 3);
->>   		memcpy(&val, buf, buf_remaining);
->>   		val =3D le32_to_cpu(val);
->>  =20
->> @@ -847,10 +845,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *de=
-v_id)
->>  =20
->>   	if (!i2c_dev->is_curr_dma_xfer) {
->>   		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->> -			if (i2c_dev->msg_buf_remaining)
->> +			if (i2c_dev->msg_buf_remaining) {
->>   				tegra_i2c_empty_rx_fifo(i2c_dev);
->> -			else
->> -				BUG();
->> +			} else {
->> +				dev_err(i2c_dev->dev, "unexpected rx data request\n");
->> +				i2c_dev->msg_err |=3D I2C_ERR_UNEXPECTED_STATUS;
->> +				goto err;
->> +			}
->>   		}
->>  =20
->>   		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
->> @@ -876,7 +877,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_=
-id)
->>   	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->>   		if (i2c_dev->is_curr_dma_xfer)
->>   			i2c_dev->msg_buf_remaining =3D 0;
->> -		BUG_ON(i2c_dev->msg_buf_remaining);
->> +		if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining))
->> +			goto err;
->>   		complete(&i2c_dev->msg_complete);
->>   	}
->>   	goto done;
->>
->=20
-> Unfortunately that's not enough because the indicator of the error is
-> the i2c_dev->msg_err and no error is set in yours case, hence no
-> hardware reset will be performed. It should be at least somewhat like thi=
-s:
->=20
-> 	if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) {
-> 		i2c_dev->msg_err |=3D I2C_ERR_UNKNOWN_INTERRUPT;
-> 		goto err;
-> 	}
->=20
-Fine. I shall set msg_err as I2C_ERR_UNKNOWN_INTERRUPT instead of=20
-I2C_ERR_UNEXPECTED_STATUS for condition of non-zero msg_bug_remaining in=20
-PIO mode with transfer complete interrupt.
-
-
--Thanks,
-  Bitan
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 1dbba39..00692d8 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -54,20 +54,15 @@
+ #define I2C_INT_STATUS				0x068
+ #define I2C_INT_BUS_CLR_DONE			BIT(11)
+ #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
+-#define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
+-#define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
+-#define I2C_INT_RX_FIFO_UNDERFLOW		BIT(4)
+ #define I2C_INT_NO_ACK				BIT(3)
+ #define I2C_INT_ARBITRATION_LOST		BIT(2)
+ #define I2C_INT_TX_FIFO_DATA_REQ		BIT(1)
+ #define I2C_INT_RX_FIFO_DATA_REQ		BIT(0)
+ #define I2C_CLK_DIVISOR				0x06c
+ #define I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT	16
+-#define I2C_CLK_MULTIPLIER_STD_FAST_MODE	8
+ 
+ #define DVC_CTRL_REG1				0x000
+ #define DVC_CTRL_REG1_INTR_EN			BIT(10)
+-#define DVC_CTRL_REG2				0x004
+ #define DVC_CTRL_REG3				0x008
+ #define DVC_CTRL_REG3_SW_PROG			BIT(26)
+ #define DVC_CTRL_REG3_I2C_DONE_INTR_EN		BIT(30)
+@@ -75,24 +70,21 @@
+ #define DVC_STATUS_I2C_DONE_INTR		BIT(30)
+ 
+ #define I2C_ERR_NONE				0x00
+-#define I2C_ERR_NO_ACK				0x01
+-#define I2C_ERR_ARBITRATION_LOST		0x02
+-#define I2C_ERR_UNKNOWN_INTERRUPT		0x04
++#define I2C_ERR_NO_ACK				BIT(0)
++#define I2C_ERR_ARBITRATION_LOST		BIT(1)
++#define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
+ 
+ #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+ #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+ #define PACKET_HEADER0_CONT_ID_SHIFT		12
+ #define PACKET_HEADER0_PROTOCOL_I2C		BIT(4)
+ 
+-#define I2C_HEADER_HIGHSPEED_MODE		BIT(22)
+ #define I2C_HEADER_CONT_ON_NAK			BIT(21)
+-#define I2C_HEADER_SEND_START_BYTE		BIT(20)
+ #define I2C_HEADER_READ				BIT(19)
+ #define I2C_HEADER_10BIT_ADDR			BIT(18)
+ #define I2C_HEADER_IE_ENABLE			BIT(17)
+ #define I2C_HEADER_REPEAT_START			BIT(16)
+ #define I2C_HEADER_CONTINUE_XFER		BIT(15)
+-#define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
+ 
+ #define I2C_BUS_CLEAR_CNFG			0x084
+@@ -106,8 +98,6 @@
+ 
+ #define I2C_CONFIG_LOAD				0x08C
+ #define I2C_MSTR_CONFIG_LOAD			BIT(0)
+-#define I2C_SLV_CONFIG_LOAD			BIT(1)
+-#define I2C_TIMEOUT_CONFIG_LOAD			BIT(2)
+ 
+ #define I2C_CLKEN_OVERRIDE			0x090
+ #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
+@@ -133,7 +123,6 @@
+ #define I2C_STANDARD_MODE			100000
+ #define I2C_FAST_MODE				400000
+ #define I2C_FAST_PLUS_MODE			1000000
+-#define I2C_HS_MODE				3500000
+ 
+ /* Packet header size in bytes */
+ #define I2C_PACKET_HEADER_SIZE			12
+-- 
+2.7.4
