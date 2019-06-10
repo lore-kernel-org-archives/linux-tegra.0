@@ -1,53 +1,98 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.1 00/70] 5.1.9-stable review
-Date: Mon, 10 Jun 2019 09:52:18 +0100
-Message-ID: <c767d39b-49b2-de5b-2527-a39fcd242bb6@nvidia.com>
-References: <20190609164127.541128197@linuxfoundation.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V3 6/6] i2c: tegra: remove BUG, BUG_ON
+Date: Mon, 10 Jun 2019 13:30:05 +0300
+Message-ID: <89190a56-bc79-7c07-9b21-ebdfb532df30@gmail.com>
+References: <1560143324-21754-1-git-send-email-bbiswas@nvidia.com>
+ <1560143324-21754-6-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1560143324-21754-6-git-send-email-bbiswas@nvidia.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 09/06/2019 17:41, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.9 release.
-> There are 70 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+10.06.2019 8:08, Bitan Biswas пишет:
+> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+> as needed. Replace BUG() with error handling code.
+> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
 > 
-> Responses should be made by Tue 11 Jun 2019 04:40:04 PM UTC.
-> Anything received after that time might be too late.
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 4dfb4c1..d9e99b4 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -73,6 +73,7 @@
+>  #define I2C_ERR_NO_ACK				BIT(0)
+>  #define I2C_ERR_ARBITRATION_LOST		BIT(1)
+>  #define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
+> +#define I2C_ERR_UNEXPECTED_STATUS		BIT(3)
+>  
+>  #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+>  #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+> @@ -515,7 +516,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  	 * prevent overwriting past the end of buf
+>  	 */
+>  	if (rx_fifo_avail > 0 && buf_remaining > 0) {
+> -		BUG_ON(buf_remaining > 3);
+>  		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
+>  		val = cpu_to_le32(val);
+>  		memcpy(buf, &val, buf_remaining);
+> @@ -523,7 +523,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  		rx_fifo_avail--;
+>  	}
+>  
+> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+>  	i2c_dev->msg_buf_remaining = buf_remaining;
+>  	i2c_dev->msg_buf = buf;
+>  
+> @@ -581,7 +580,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  	 * boundary and fault.
+>  	 */
+>  	if (tx_fifo_avail > 0 && buf_remaining > 0) {
+> -		BUG_ON(buf_remaining > 3);
+>  		memcpy(&val, buf, buf_remaining);
+>  		val = le32_to_cpu(val);
+>  
+> @@ -847,10 +845,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  
+>  	if (!i2c_dev->is_curr_dma_xfer) {
+>  		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+> -			if (i2c_dev->msg_buf_remaining)
+> +			if (i2c_dev->msg_buf_remaining) {
+>  				tegra_i2c_empty_rx_fifo(i2c_dev);
+> -			else
+> -				BUG();
+> +			} else {
+> +				dev_err(i2c_dev->dev, "unexpected rx data request\n");
+> +				i2c_dev->msg_err |= I2C_ERR_UNEXPECTED_STATUS;
+> +				goto err;
+> +			}
+>  		}
+>  
+>  		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+> @@ -876,7 +877,10 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+>  		if (i2c_dev->is_curr_dma_xfer)
+>  			i2c_dev->msg_buf_remaining = 0;
+> -		BUG_ON(i2c_dev->msg_buf_remaining);
+> +		if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) {
+> +			i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
+> +			goto err;
+> +		}
+>  		complete(&i2c_dev->msg_complete);
+>  	}
+>  	goto done;
 > 
-> thanks,
-> 
-> greg k-h
 
-All tests are passing for Tegra ...
-
-Test results for stable-v5.1:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
-
-Linux version:	5.1.9-rc1-g5b3d375b3838
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+It looks nearly ideal now, although there is still one thing that could
+be improved. We're going to print a error message in a case of RX and
+spew a warning on a similar case of TX, this makes code inconsistent.
+Let's switch to either a error message or just a warning in both places.
