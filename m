@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 4/6] clocksource/drivers/tegra: Drop unneeded typecasting in one place
-Date: Mon, 10 Jun 2019 19:43:58 +0300
-Message-ID: <20190610164400.11830-5-digetx@gmail.com>
+Subject: [PATCH v2 6/6] clocksource/drivers/tegra: Restore base address before cleanup
+Date: Mon, 10 Jun 2019 19:44:00 +0300
+Message-ID: <20190610164400.11830-7-digetx@gmail.com>
 References: <20190610164400.11830-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,28 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, 
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need to cast void because kernel allows to do that without
-a warning message from a compiler.
+We're adjusting the timer's base for each per-CPU timer to point to the
+actual start of the timer since device-tree defines a compound registers
+range that includes all of the timers. In this case the original base
+need to be restore before calling iounmap to unmap the proper address.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/timer-tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index 646b3530c2d2..a7fa12488066 100644
+index 2a428fdf702f..7be91db98bd7 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -81,7 +81,7 @@ static int tegra_timer_set_periodic(struct clock_event_device *evt)
+@@ -345,6 +345,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 			irq_dispose_mapping(cpu_to->clkevt.irq);
+ 		}
+ 	}
++
++	to->of_base.base = timer_reg_base;
+ out:
+ 	timer_of_cleanup(to);
  
- static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
- {
--	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-+	struct clock_event_device *evt = dev_id;
- 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
- 
- 	writel_relaxed(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
 -- 
 2.21.0
