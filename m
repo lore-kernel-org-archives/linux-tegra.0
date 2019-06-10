@@ -1,150 +1,110 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
-Date: Mon, 10 Jun 2019 09:01:25 +0100
-Message-ID: <4526f63f-8e77-334d-7656-ae1c7bc57d3b@nvidia.com>
-References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
- <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
- <20190504102304.GZ3845@vkoul-mobl.Dlink>
- <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
- <20190506155046.GH3845@vkoul-mobl.Dlink>
- <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
- <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
- <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
- <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
- <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
- <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
- <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
- <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
- <d0db90e3-3d05-dfba-8768-28511d9ee3ac@ti.com>
- <5208a50a-9ca0-8f24-9ad0-d7503ec53f1c@nvidia.com>
- <ba845a19-5dfb-a891-719f-43821b2dd412@nvidia.com>
- <e67a2d7c-5bd1-93ad-fe75-afcab38bc17c@ti.com>
- <a65f2b07-4a3a-7f83-e21f-8b374844a4b9@nvidia.com>
- <56aa6f45-cfd8-7f1e-9392-628ceb58093f@ti.com>
- <68e72598-8d53-115c-14a2-9d3042165aff@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v1 1/3] clocksource/drivers/tegra: Remove duplicated use
+ of per_cpu_ptr
+Date: Mon, 10 Jun 2019 10:11:14 +0200
+Message-ID: <4e1f1389-afde-3994-2ccc-4e57e9ad78d1@linaro.org>
+References: <20190609192730.29459-1-digetx@gmail.com>
+ <20190609192730.29459-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <68e72598-8d53-115c-14a2-9d3042165aff@gmail.com>
+In-Reply-To: <20190609192730.29459-2-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
-Cc: dan.j.williams@intel.com, tiwai@suse.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 07/06/2019 21:53, Dmitry Osipenko wrote:
-> 07.06.2019 16:35, Peter Ujfalusi =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->>
->> On 07/06/2019 15.58, Jon Hunter wrote:
->>>> Imho if you can explain it without using 'HACK' in the sentences it
->>>> might be OK, but it does not feel right.
->>>
->>> I don't perceive this as a hack. Although from looking at the
->>> description of the src/dst_maxburst these are burst size with regard to
->>> the device, so maybe it is a stretch.
->>>
->>>> However since your ADMA and ADMIF is highly coupled and it does needs
->>>> special maxburst information (burst and allocated FIFO depth) I would
->>>> rather use src_maxburst/dst_maxburst alone for DEV_TO_MEM/MEM_TO_DEV:
->>>>
->>>> ADMA_BURST_SIZE(maxburst)	((maxburst) & 0xff)
->>>> ADMA_FIFO_SIZE(maxburst)	(((maxburst) >> 8) & 0xffffff)
->>>>
->>>> So lower 1 byte is the burst value you want from ADMA
->>>> the other 3 bytes are the allocated FIFO size for the given ADMAIF cha=
-nnel.
->>>>
->>>> Sure, you need a header for this to make sure there is no
->>>> misunderstanding between the two sides.
->>>
->>> I don't like this because as I mentioned to Dmitry, the ADMA can perfor=
-m
->>> memory-to-memory transfers where such encoding would not be applicable.
->>
->> mem2mem does not really use dma_slave_config, it is for used by
->> is_slave_direction() =3D=3D true type of transfers.
->>
->> But true, if you use ADMA against anything other than ADMAIF then this
->> might be not right for non cyclic transfers.
->>
->>> That does not align with the description in the
->>> include/linux/dmaengine.h either.
->>
->> True.
->>
->>>> Or pass the allocated FIFO size via maxburst and then the ADMA driver
->>>> will pick a 'good/safe' burst value for it.
->>>>
->>>> Or new member, but do you need two of them for src/dst? Probably
->>>> fifo_depth is better word for it, or allocated_fifo_depth.
->>>
->>> Right, so looking at the struct dma_slave_config we have ...
->>>
->>> u32 src_maxburst;
->>> u32 dst_maxburst;
->>> u32 src_port_window_size;
->>> u32 dst_port_window_size;
->>>
->>> Now if we could make these window sizes a union like the following this
->>> could work ...
->>>
->>> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
->>> index 8fcdee1c0cf9..851251263527 100644
->>> --- a/include/linux/dmaengine.h
->>> +++ b/include/linux/dmaengine.h
->>> @@ -360,8 +360,14 @@ struct dma_slave_config {
->>>         enum dma_slave_buswidth dst_addr_width;
->>>         u32 src_maxburst;
->>>         u32 dst_maxburst;
->>> -       u32 src_port_window_size;
->>> -       u32 dst_port_window_size;
->>> +       union {
->>> +               u32 port_window_size;
->>> +               u32 port_fifo_size;
->>> +       } src;
->>> +       union {
->>> +               u32 port_window_size;
->>> +               u32 port_fifo_size;
->>> +       } dst;
->>
->> What if in the future someone will have a setup where they would need bo=
-th?
->>
->> So not sure. Your problems are coming from a split DMA setup where the
->> two are highly coupled, but sits in a different place and need to be
->> configured as one device.
->>
->> I think xilinx_dma is facing with similar issues and they have a custom
->> API to set parameters which does not fit or is peripheral specific:
->> include/linux/dma/xilinx_dma.h
->>
->> Not sure if that is an acceptable solution.
->=20
-> If there are no other drivers with the exactly same requirement, then
-> the custom API is an a good variant given that there is a precedent
-> already. It is always possible to convert to a common thing later on
-> since that's all internal to kernel.
->=20
-> Jon / Sameer, you should check all the other drivers thoroughly to find
-> anyone who is doing the same thing as you need in order to achieve
-> something that is really common. I'm also wondering if it will be
-> possible to make dma_slave_config more flexible in order to start
-> accepting vendor specific properties in a somewhat common fashion, maybe
-> Vinod and Dan already have some thoughts on it? Apparently there is
-> already a need for the customization and people are just starting to
-> invent their own thing, but maybe that's fine too. That's really up to
-> subsys maintainer to decide in what direction to steer.
+Hi Dmitry,
 
-I am not a fan of having custom APIs, however, I would agree that
-extending the dma_slave_config to allow a DMA specific structure to be
-passed with additional configuration would be useful in this case as
-well as the Xilinx case.
 
-Cheers
-Jon
+On 09/06/2019 21:27, Dmitry Osipenko wrote:
+> It was left unnoticed by accident, which means that the code could be
+> cleaned up a tad more.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clocksource/timer-tegra.c | 40 +++++++++++++++++++------------
+>  1 file changed, 25 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+> index 9406855781ff..6da169de47f9 100644
+> --- a/drivers/clocksource/timer-tegra.c
+> +++ b/drivers/clocksource/timer-tegra.c
+> @@ -216,6 +216,19 @@ static inline unsigned int tegra_irq_idx_for_cpu(int cpu, bool tegra20)
+>  	return TIMER10_IRQ_IDX + cpu;
+>  }
+>  
+> +static inline unsigned long tegra_rate_for_timer(struct timer_of *to,
+> +						 bool tegra20)
+> +{
+> +	/*
+> +	 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
+> +	 * parent clock.
+> +	 */
+> +	if (tegra20)
+> +		return 1000000;
 
---=20
-nvpublic
+Mind to take the opportunity to convert the literal value to a constant?
+
+> +
+> +	return to->of_clk.rate;
+> +}
+> +
+>  static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>  				   int rating)
+>  {
+> @@ -268,30 +281,27 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>  
+>  	for_each_possible_cpu(cpu) {
+>  		struct timer_of *cpu_to = per_cpu_ptr(&tegra_to, cpu);
+> +		unsigned long flags = IRQF_TIMER | IRQF_NOBALANCING;
+> +		unsigned long rate = tegra_rate_for_timer(&tegra_to, tegra20);
+>  		unsigned int base = tegra_base_for_cpu(cpu, tegra20);
+>  		unsigned int idx = tegra_irq_idx_for_cpu(cpu, tegra20);
+> +		unsigned int irq = irq_of_parse_and_map(np, idx);
+>  
+> -		/*
+> -		 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
+> -		 * parent clock.
+> -		 */
+> -		if (tegra20)
+> -			cpu_to->of_clk.rate = 1000000;
+> -
+> -		cpu_to = per_cpu_ptr(&tegra_to, cpu);
+> -		cpu_to->of_base.base = timer_reg_base + base;
+> -		cpu_to->clkevt.rating = rating;
+> -		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+> -		cpu_to->clkevt.irq = irq_of_parse_and_map(np, idx);
+> -		if (!cpu_to->clkevt.irq) {
+> +		if (!irq) {
+>  			pr_err("failed to map irq for cpu%d\n", cpu);
+>  			ret = -EINVAL;
+>  			goto out_irq;
+>  		}
+>  
+> +		cpu_to->clkevt.irq = irq;
+> +		cpu_to->clkevt.rating = rating;
+> +		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+> +		cpu_to->of_base.base = timer_reg_base + base;
+> +		cpu_to->of_clk.rate = rate;
+> +
+>  		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
+> -		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
+> -				  IRQF_TIMER | IRQF_NOBALANCING,
+> +
+> +		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr, flags,
+>  				  cpu_to->clkevt.name, &cpu_to->clkevt);
+>  		if (ret) {
+>  			pr_err("failed to set up irq for cpu%d: %d\n",
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
