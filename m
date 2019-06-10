@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 5/6] clocksource/drivers/tegra: Add verbose definition for 1MHz constant
-Date: Mon, 10 Jun 2019 19:43:59 +0300
-Message-ID: <20190610164400.11830-6-digetx@gmail.com>
+Subject: [PATCH v2 3/6] clocksource/drivers/tegra: Set and use timer's period
+Date: Mon, 10 Jun 2019 19:43:57 +0300
+Message-ID: <20190610164400.11830-4-digetx@gmail.com>
 References: <20190610164400.11830-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,59 +12,41 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, 
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Convert all 1MHz literals to a verbose constant for better readability.
+The of_clk structure has a period field that is set up initially by
+timer_of_clk_init(), that period value need to be adjusted for a case of
+TIMER1-9 that are running at a fixed rate that doesn't match the clock's
+rate. Note that the period value is currently used only by some of the
+clocksource drivers internally and hence this is just a minor cleanup
+change that doesn't fix anything.
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/clocksource/timer-tegra.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index a7fa12488066..2a428fdf702f 100644
+index 810b4e7435cf..646b3530c2d2 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -44,6 +44,8 @@
- #define TIMER1_IRQ_IDX		0
- #define TIMER10_IRQ_IDX		10
+@@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
+ static int tegra_timer_set_periodic(struct clock_event_device *evt)
+ {
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
++	unsigned long period = timer_of_period(to_timer_of(evt));
  
-+#define TIMER_1MHz		1000000
-+
- static u32 usec_config;
- static void __iomem *timer_reg_base;
+-	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
+-		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
++	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
+ 		       reg_base + TIMER_PTV);
  
-@@ -158,7 +160,7 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
+ 	return 0;
+@@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 		cpu_to->clkevt.rating = rating;
+ 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+ 		cpu_to->of_base.base = timer_reg_base + base;
++		cpu_to->of_clk.period = DIV_ROUND_UP(rate, HZ);
+ 		cpu_to->of_clk.rate = rate;
  
- static struct delay_timer tegra_delay_timer = {
- 	.read_current_timer = tegra_delay_timer_read_counter_long,
--	.freq = 1000000,
-+	.freq = TIMER_1MHz,
- };
- #endif
- 
-@@ -224,7 +226,7 @@ static inline unsigned long tegra_rate_for_timer(struct timer_of *to,
- 	 * parent clock.
- 	 */
- 	if (tegra20)
--		return 1000000;
-+		return TIMER_1MHz;
- 
- 	return timer_of_rate(to);
- }
-@@ -313,11 +315,11 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
- 		}
- 	}
- 
--	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
-+	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
- 
- 	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
--				    "timer_us", 1000000,
--				    300, 32, clocksource_mmio_readl_up);
-+				    "timer_us", TIMER_1MHz, 300, 32,
-+				    clocksource_mmio_readl_up);
- 	if (ret)
- 		pr_err("failed to register clocksource: %d\n", ret);
- 
+ 		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
 -- 
 2.21.0
