@@ -1,52 +1,46 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.1 00/70] 5.1.9-stable review
-Date: Mon, 10 Jun 2019 16:25:45 +0200
-Message-ID: <20190610142545.GE5937@kroah.com>
-References: <20190609164127.541128197@linuxfoundation.org>
- <c767d39b-49b2-de5b-2527-a39fcd242bb6@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 0/6] Few more cleanups for tegra-timer
+Date: Mon, 10 Jun 2019 19:43:54 +0300
+Message-ID: <20190610164400.11830-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <c767d39b-49b2-de5b-2527-a39fcd242bb6@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 09:52:18AM +0100, Jon Hunter wrote:
-> 
-> On 09/06/2019 17:41, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.1.9 release.
-> > There are 70 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue 11 Jun 2019 04:40:04 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.9-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.1:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     32 tests:	32 pass, 0 fail
-> 
-> Linux version:	5.1.9-rc1-g5b3d375b3838
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+Hello,
 
-Thanks for testing all of these and letting me know.
+This a followup to [0] that includes some more fixes and further
+prettifies the driver's code.
 
-greg k-h
+[0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=111529
+
+Changelog:
+
+v2: Fixed a bug that was introduced by [0] in a newly added patch:
+    "Restore timer rate on Tegra210".
+
+    Fixed potential problem in regards to error handling in another new
+    patch: "Restore base address before cleanup".
+
+    Added new patch "Add verbose definition for 1MHz constant" as per
+    Daniel's Lezcano recommendation.
+
+    Fixed a code typo that was made in "Remove duplicated use of per_cpu_ptr"
+    of v1.
+
+Dmitry Osipenko (6):
+  clocksource/drivers/tegra: Restore timer rate on Tegra210
+  clocksource/drivers/tegra: Remove duplicated use of per_cpu_ptr
+  clocksource/drivers/tegra: Set and use timer's period
+  clocksource/drivers/tegra: Drop unneeded typecasting in one place
+  clocksource/drivers/tegra: Add verbose definition for 1MHz constant
+  clocksource/drivers/tegra: Restore base address before cleanup
+
+ drivers/clocksource/timer-tegra.c | 59 +++++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 22 deletions(-)
+
+-- 
+2.21.0
