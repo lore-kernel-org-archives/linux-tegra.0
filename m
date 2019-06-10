@@ -1,33 +1,33 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.4 000/241] 4.4.181-stable review
-Date: Mon, 10 Jun 2019 09:49:50 +0100
-Message-ID: <fb51391e-6de3-313d-ed5d-a8b5e2874431@nvidia.com>
-References: <20190609164147.729157653@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 00/83] 4.9.181-stable review
+Date: Mon, 10 Jun 2019 09:50:27 +0100
+Message-ID: <585769c0-2c9d-20d1-de18-cba5e37b03e5@nvidia.com>
+References: <20190609164127.843327870@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
 Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 09/06/2019 17:39, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.181 release.
-> There are 241 patches in this series, all will be posted as a response
+On 09/06/2019 17:41, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.181 release.
+> There are 83 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Tue 11 Jun 2019 04:39:53 PM UTC.
+> Responses should be made by Tue 11 Jun 2019 04:39:58 PM UTC.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.181-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.181-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,14 +36,14 @@ On 09/06/2019 17:39, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v4.4:
-    6 builds:	6 pass, 0 fail
-    12 boots:	12 pass, 0 fail
-    19 tests:	19 pass, 0 fail
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
 
-Linux version:	4.4.181-rc1-gc9c6a08
+Linux version:	4.9.181-rc1-g4fcf72d
 Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
 Cheers
 Jon
