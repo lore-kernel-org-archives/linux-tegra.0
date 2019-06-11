@@ -1,7 +1,7 @@
 From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V5 2/7] i2c: tegra: remove unnecessary variable init
-Date: Tue, 11 Jun 2019 03:51:09 -0700
-Message-ID: <1560250274-18499-2-git-send-email-bbiswas@nvidia.com>
+Subject: [PATCH V5 5/7] i2c: tegra: fix msleep warning
+Date: Tue, 11 Jun 2019 03:51:12 -0700
+Message-ID: <1560250274-18499-5-git-send-email-bbiswas@nvidia.com>
 References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,45 +12,30 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>,
 Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove variable initializations in functions that
-are followed by assignments before use
+Fix checkpatch.pl WARNING for delay of approximately 1msec
+in flush i2c FIFO polling loop by using usleep_range(1000, 2000):
+WARNING: msleep < 20ms can sleep for up to 20ms; see ...
+Documentation/timers/timers-howto.txt
++               msleep(1);
 
 Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 00692d8..f7116b7 100644
+index bececa6..4dfb4c1 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -689,7 +689,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
- 	u32 val;
- 	int err;
- 	u32 clk_divisor, clk_multiplier;
--	u32 tsu_thd = 0;
-+	u32 tsu_thd;
- 	u8 tlow, thigh;
- 
- 	err = pm_runtime_get_sync(i2c_dev->dev);
-@@ -1218,7 +1218,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- {
- 	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
- 	int i;
--	int ret = 0;
-+	int ret;
- 
- 	ret = pm_runtime_get_sync(i2c_dev->dev);
- 	if (ret < 0) {
-@@ -1489,7 +1489,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	phys_addr_t base_phys;
- 	int irq;
--	int ret = 0;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base_phys = res->start;
+@@ -476,7 +476,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+ 			dev_warn(i2c_dev->dev, "timeout waiting for fifo flush\n");
+ 			return -ETIMEDOUT;
+ 		}
+-		msleep(1);
++		usleep_range(1000, 2000);
+ 	}
+ 	return 0;
+ }
 -- 
 2.7.4
