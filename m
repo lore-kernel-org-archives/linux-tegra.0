@@ -1,94 +1,147 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V5 1/7] i2c: tegra: clean up macros
-Date: Tue, 11 Jun 2019 03:51:08 -0700
-Message-ID: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V4 6/6] i2c: tegra: remove BUG, BUG_ON
+Date: Tue, 11 Jun 2019 14:34:23 +0300
+Message-ID: <d29804b9-d3be-9eb2-ba06-f4de2aad3764@gmail.com>
+References: <1560186515-30797-1-git-send-email-bbiswas@nvidia.com>
+ <1560186515-30797-6-git-send-email-bbiswas@nvidia.com>
+ <06ab30b6-bf79-c628-0a04-d0307511a06f@gmail.com>
+ <851d7837-5b98-228e-d8c9-3c41be1fb2e0@nvidia.com>
+ <e733bcb0-ea8c-61d1-e6b5-cee8b7696c70@gmail.com>
+ <fe0a0cb2-73e3-8f5c-8115-f99c150bd5df@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <fe0a0cb2-73e3-8f5c-8115-f99c150bd5df@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Clean up macros by:
-1) removing unused macros
-2) replace constants by macro BIT()
+11.06.2019 10:38, Bitan Biswas пишет:
+> 
+> 
+> On 6/10/19 2:00 PM, Dmitry Osipenko wrote:
+>> 10.06.2019 22:41, Bitan Biswas пишет:
+>>>
+>>>
+>>> On 6/10/19 11:12 AM, Dmitry Osipenko wrote:
+>>>> 10.06.2019 20:08, Bitan Biswas пишет:
+>>>>> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+>>>>> as needed. Remove BUG() and make Rx and Tx case handling
+>>>>> similar.
+>>>>>
+>>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>>>> ---
+>>>>>    drivers/i2c/busses/i2c-tegra.c | 11 ++++++-----
+>>>>>    1 file changed, 6 insertions(+), 5 deletions(-)
+>>>>
+>>>> Looks that this is still not correct. What if it transfer-complete flag
+>>>> is set and buffer is full on RX? In this case the transfer will succeed
+>>>> while it was a failure.
+>>>>
+>>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c
+>>>>> b/drivers/i2c/busses/i2c-tegra.c
+>>>>> index 4dfb4c1..30619d6 100644
+>>>>> --- a/drivers/i2c/busses/i2c-tegra.c
+>>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>>>>> @@ -515,7 +515,6 @@ static int tegra_i2c_empty_rx_fifo(struct
+>>>>> tegra_i2c_dev *i2c_dev)
+>>>>>         * prevent overwriting past the end of buf
+>>>>>         */
+>>>>>        if (rx_fifo_avail > 0 && buf_remaining > 0) {
+>>>>> -        BUG_ON(buf_remaining > 3);
+>>>>
+>>>> Actually error should be returned here since out-of-bounds memory
+>>>> accesses must be avoided, hence:
+>>>>
+>>>>      if (WARN_ON_ONCE(buf_remaining > 3))
+>>>>          return -EINVAL;
+>>> buf_remaining will be less than equal to 3 because of the expression
+>>> earlier
+>>> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-tegra.c#L520
+>>>
+>>>
+>>
+>> Ah yes, indeed!
+>>
+> I see that I am wrong and buf_remaining > 3 needs to be prevented at
+> 
+> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-tegra.c#L528
+> 
+> 
+> because of word_to_transfer is limited to rx_fifo_avail:
+> 
+> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-tegra.c#L515
+> 
+> 
+> I shall add the check for less than 3 in both RX and TX cases in a
+> separate patch in this series.
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+When word_to_transfer is more than rx_fifo_avail, then the rx_fifo_avail
+becomes zero and hence the nibbles won't be copied. Please take a closer
+look, the current code is correct, but the buf_remaining > 3 is unneeded
+because it can't ever happen.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 1dbba39..00692d8 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -54,20 +54,15 @@
- #define I2C_INT_STATUS				0x068
- #define I2C_INT_BUS_CLR_DONE			BIT(11)
- #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
--#define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
--#define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
--#define I2C_INT_RX_FIFO_UNDERFLOW		BIT(4)
- #define I2C_INT_NO_ACK				BIT(3)
- #define I2C_INT_ARBITRATION_LOST		BIT(2)
- #define I2C_INT_TX_FIFO_DATA_REQ		BIT(1)
- #define I2C_INT_RX_FIFO_DATA_REQ		BIT(0)
- #define I2C_CLK_DIVISOR				0x06c
- #define I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT	16
--#define I2C_CLK_MULTIPLIER_STD_FAST_MODE	8
- 
- #define DVC_CTRL_REG1				0x000
- #define DVC_CTRL_REG1_INTR_EN			BIT(10)
--#define DVC_CTRL_REG2				0x004
- #define DVC_CTRL_REG3				0x008
- #define DVC_CTRL_REG3_SW_PROG			BIT(26)
- #define DVC_CTRL_REG3_I2C_DONE_INTR_EN		BIT(30)
-@@ -75,24 +70,21 @@
- #define DVC_STATUS_I2C_DONE_INTR		BIT(30)
- 
- #define I2C_ERR_NONE				0x00
--#define I2C_ERR_NO_ACK				0x01
--#define I2C_ERR_ARBITRATION_LOST		0x02
--#define I2C_ERR_UNKNOWN_INTERRUPT		0x04
-+#define I2C_ERR_NO_ACK				BIT(0)
-+#define I2C_ERR_ARBITRATION_LOST		BIT(1)
-+#define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
- 
- #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
- #define PACKET_HEADER0_PACKET_ID_SHIFT		16
- #define PACKET_HEADER0_CONT_ID_SHIFT		12
- #define PACKET_HEADER0_PROTOCOL_I2C		BIT(4)
- 
--#define I2C_HEADER_HIGHSPEED_MODE		BIT(22)
- #define I2C_HEADER_CONT_ON_NAK			BIT(21)
--#define I2C_HEADER_SEND_START_BYTE		BIT(20)
- #define I2C_HEADER_READ				BIT(19)
- #define I2C_HEADER_10BIT_ADDR			BIT(18)
- #define I2C_HEADER_IE_ENABLE			BIT(17)
- #define I2C_HEADER_REPEAT_START			BIT(16)
- #define I2C_HEADER_CONTINUE_XFER		BIT(15)
--#define I2C_HEADER_MASTER_ADDR_SHIFT		12
- #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
- 
- #define I2C_BUS_CLEAR_CNFG			0x084
-@@ -106,8 +98,6 @@
- 
- #define I2C_CONFIG_LOAD				0x08C
- #define I2C_MSTR_CONFIG_LOAD			BIT(0)
--#define I2C_SLV_CONFIG_LOAD			BIT(1)
--#define I2C_TIMEOUT_CONFIG_LOAD			BIT(2)
- 
- #define I2C_CLKEN_OVERRIDE			0x090
- #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
-@@ -133,7 +123,6 @@
- #define I2C_STANDARD_MODE			100000
- #define I2C_FAST_MODE				400000
- #define I2C_FAST_PLUS_MODE			1000000
--#define I2C_HS_MODE				3500000
- 
- /* Packet header size in bytes */
- #define I2C_PACKET_HEADER_SIZE			12
--- 
-2.7.4
+The code is structured the way that it's difficult to follow, apparently
+the person who added the BUG_ON check in the first place couldn't follow
+it either. Maybe it's worth to invest some more effort into refactoring
+at least that part of the code. At minimum a clarifying comments would
+be helpful.
+
+[snip]
+
+>>>> Then here:
+>>>>
+>>>>      if (WARN_ON_ONCE(!i2c_dev->msg_buf_remaining) ||
+>>>>          tegra_i2c_empty_rx_fifo(i2c_dev)) {
+>>>>          i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
+>>>>          goto err;
+>>>>      }
+>>>>
+>>> Can you please elaborate why the condition needs to be as follows
+>>> instead of " if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) " ?
+>>>
+>>>>       if (WARN_ON_ONCE(!i2c_dev->msg_buf_remaining) ||
+>>>>           tegra_i2c_empty_rx_fifo(i2c_dev)) {
+>>
+>> Because this is a "receive" transfer and hence it is a error condition
+>> if the data-message was already fully received and then there is another
+>> request from hardware to receive more data. So
+>> "!i2c_dev->msg_buf_remaining" is the error condition here because there
+>> is no more space in the buffer.
+>>
+>> Looking at this again, seems checking for "if
+>> (WARN_ON_ONCE(rx_fifo_avail))" in the above hunk [1] will be already
+>> enough since a not fully drained RX FIFO means that there is no enough
+>> space in the buffer. Then it could be:
+>>
+>>          if (tegra_i2c_empty_rx_fifo(i2c_dev)) {
+>>                  i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
+>>                  goto err;
+>>     }
+>>
+> In the case "if (status & I2C_INT_PACKET_XFER_COMPLETE) {" , we do not
+> have any tegra_i2c_empty_rx_fifo call today. In this current driver I do
+> not see any code that checks for the buffer space and prevents RX FIFO
+> from being drained. The transfer complete when seen must have already
+> consumed all bytes of msg_buf_remaining in the call at the line
+> 
+> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-tegra.c#L860
+> 
+> 
+> So we can put the "WARN_ON_ONCE(i2c_dev->msg_buf_remaining) with msg_err
+> assignment and goto err" to confirm if some corner case is not handled.
+> 
+> Planning to share updated patch.
+
+There are two possible error conditions:
+
+1) Underflow: the XFER_COMPLETE happens before message is fully sent.
+
+2) Overflow: message is fully sent, but there is no XFER_COMPLETE and
+then hardware asks to transfer more.
+
+We are addressing the second case here, while you seems are confusing it
+with the first case.
