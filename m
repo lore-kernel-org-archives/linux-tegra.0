@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V10 08/15] dt-bindings: Add PCIe supports-clkreq property
-Date: Wed, 12 Jun 2019 15:23:32 +0530
-Message-ID: <20190612095339.20118-9-vidyas@nvidia.com>
+Subject: [PATCH V10 10/15] dt-bindings: PHY: P2U: Add Tegra194 P2U block
+Date: Wed, 12 Jun 2019 15:23:34 +0530
+Message-ID: <20190612095339.20118-11-vidyas@nvidia.com>
 References: <20190612095339.20118-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,16 +12,13 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Some host controllers need to know the existence of clkreq signal routing to
-downstream devices to be able to advertise low power features like ASPM L1
-substates. Without clkreq signal routing being present, enabling ASPM L1 sub
-states might lead to downstream devices falling off the bus. Hence a new device
-tree property 'supports-clkreq' is added to make such host controllers
-aware of clkreq signal routing to downstream devices.
+Add support for Tegra194 P2U (PIPE to UPHY) module block which is a glue
+module instantiated one for each PCIe lane between Synopsys DesignWare core
+based PCIe IP and Universal PHY block.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 ---
 Changes since [v9]:
 * None
@@ -36,38 +33,59 @@ Changes since [v6]:
 * None
 
 Changes since [v5]:
-* s/Documentation\/devicetree/dt-bindings/ in the subject
+* Added Sob
+* Changed node name from "p2u@xxxxxxxx" to "phy@xxxxxxxx"
 
 Changes since [v4]:
 * None
 
 Changes since [v3]:
-* Rebased on top of linux-next top of the tree
+* None
 
 Changes since [v2]:
-* None
+* Changed node label to reflect new format that includes either 'hsio' or
+  'nvhs' in its name to reflect which UPHY brick they belong to
 
 Changes since [v1]:
 * This is a new patch in v2 series
 
- Documentation/devicetree/bindings/pci/pci.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/phy/phy-tegra194-p2u.txt         | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
 
-diff --git a/Documentation/devicetree/bindings/pci/pci.txt b/Documentation/devicetree/bindings/pci/pci.txt
-index 92c01db610df..d132f9efeb3e 100644
---- a/Documentation/devicetree/bindings/pci/pci.txt
-+++ b/Documentation/devicetree/bindings/pci/pci.txt
-@@ -24,6 +24,11 @@ driver implementation may support the following properties:
-    unsupported link speed, for instance, trying to do training for
-    unsupported link speed, etc.  Must be '4' for gen4, '3' for gen3, '2'
-    for gen2, and '1' for gen1. Any other values are invalid.
-+- supports-clkreq:
-+   If present this property specifies that CLKREQ signal routing exists from
-+   root port to downstream device and host bridge drivers can do programming
-+   which depends on CLKREQ signal existence. For example, programming root port
-+   not to advertise ASPM L1 Sub-States support if there is no CLKREQ signal.
- 
- PCI-PCI Bridge properties
- -------------------------
+diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+new file mode 100644
+index 000000000000..d23ff90baad5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+@@ -0,0 +1,28 @@
++NVIDIA Tegra194 P2U binding
++
++Tegra194 has two PHY bricks namely HSIO (High Speed IO) and NVHS (NVIDIA High
++Speed) each interfacing with 12 and 8 P2U instances respectively.
++A P2U instance is a glue logic between Synopsys DesignWare Core PCIe IP's PIPE
++interface and PHY of HSIO/NVHS bricks. Each P2U instance represents one PCIe
++lane.
++
++Required properties:
++- compatible: For Tegra19x, must contain "nvidia,tegra194-p2u".
++- reg: Should be the physical address space and length of respective each P2U
++       instance.
++- reg-names: Must include the entry "ctl".
++
++Required properties for PHY port node:
++- #phy-cells: Defined by generic PHY bindings.  Must be 0.
++
++Refer to phy/phy-bindings.txt for the generic PHY binding properties.
++
++Example:
++
++p2u_hsio_0: phy@3e10000 {
++	compatible = "nvidia,tegra194-p2u";
++	reg = <0x03e10000 0x10000>;
++	reg-names = "ctl";
++
++	#phy-cells = <0>;
++};
 -- 
 2.17.1
