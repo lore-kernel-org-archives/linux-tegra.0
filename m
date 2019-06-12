@@ -1,190 +1,55 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: Re: [PATCH V4 6/6] i2c: tegra: remove BUG, BUG_ON
-Date: Tue, 11 Jun 2019 11:22:49 -0700
-Message-ID: <acb7970e-b1b2-ce14-d822-fc74ca7751fb@nvidia.com>
-References: <1560186515-30797-1-git-send-email-bbiswas@nvidia.com>
- <1560186515-30797-6-git-send-email-bbiswas@nvidia.com>
- <06ab30b6-bf79-c628-0a04-d0307511a06f@gmail.com>
- <851d7837-5b98-228e-d8c9-3c41be1fb2e0@nvidia.com>
- <e733bcb0-ea8c-61d1-e6b5-cee8b7696c70@gmail.com>
- <fe0a0cb2-73e3-8f5c-8115-f99c150bd5df@nvidia.com>
- <d29804b9-d3be-9eb2-ba06-f4de2aad3764@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 1/6] clocksource/drivers/tegra: Restore timer rate on
+ Tegra210
+Date: Wed, 12 Jun 2019 09:30:02 +0100
+Message-ID: <17eac2c4-41fa-a616-83e9-fa18a9e1483d@nvidia.com>
+References: <20190610164400.11830-1-digetx@gmail.com>
+ <20190610164400.11830-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d29804b9-d3be-9eb2-ba06-f4de2aad3764@gmail.com>
+In-Reply-To: <20190610164400.11830-2-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+On 10/06/2019 17:43, Dmitry Osipenko wrote:
+> The clocksource rate is initialized only for the first per-CPU clocksource
+> and then that rate shall be replicated for the rest of clocksource's
+> because they are initialized manually in the code.
+> 
+> Fixes: 3be2a85a0b61 ("Support per-CPU timers on all Tegra's")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clocksource/timer-tegra.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+> index 9406855781ff..830c66e2d927 100644
+> --- a/drivers/clocksource/timer-tegra.c
+> +++ b/drivers/clocksource/timer-tegra.c
+> @@ -277,6 +277,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>  		 */
+>  		if (tegra20)
+>  			cpu_to->of_clk.rate = 1000000;
+> +		else
+> +			cpu_to->of_clk.rate = timer_of_rate(to);
+>  
+>  		cpu_to = per_cpu_ptr(&tegra_to, cpu);
+>  		cpu_to->of_base.base = timer_reg_base + base;
 
-On 6/11/19 4:34 AM, Dmitry Osipenko wrote:
-> 11.06.2019 10:38, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->>
->> On 6/10/19 2:00 PM, Dmitry Osipenko wrote:
->>> 10.06.2019 22:41, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>
->>>>
->>>> On 6/10/19 11:12 AM, Dmitry Osipenko wrote:
->>>>> 10.06.2019 20:08, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
->>>>>> as needed. Remove BUG() and make Rx and Tx case handling
->>>>>> similar.
->>>>>>
->>>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>>>>> ---
->>>>>>  =C2=A0=C2=A0 drivers/i2c/busses/i2c-tegra.c | 11 ++++++-----
->>>>>>  =C2=A0=C2=A0 1 file changed, 6 insertions(+), 5 deletions(-)
->>>>>
->>>>> Looks that this is still not correct. What if it transfer-complete fl=
-ag
->>>>> is set and buffer is full on RX? In this case the transfer will succe=
-ed
->>>>> while it was a failure.
->>>>>
->>>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c
->>>>>> b/drivers/i2c/busses/i2c-tegra.c
->>>>>> index 4dfb4c1..30619d6 100644
->>>>>> --- a/drivers/i2c/busses/i2c-tegra.c
->>>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>>>>> @@ -515,7 +515,6 @@ static int tegra_i2c_empty_rx_fifo(struct
->>>>>> tegra_i2c_dev *i2c_dev)
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * prevent overwriting pa=
-st the end of buf
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rx_fifo_avail > 0 && buf_r=
-emaining > 0) {
->>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUG_ON(buf_remaining > 3=
-);
->>>>>
->>>>> Actually error should be returned here since out-of-bounds memory
->>>>> accesses must be avoided, hence:
->>>>>
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (WARN_ON_ONCE(buf_remaining > 3))
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
->>>> buf_remaining will be less than equal to 3 because of the expression
->>>> earlier
->>>> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2=
-c-tegra.c#L520
->>>>
->>>>
->>>
->>> Ah yes, indeed!
->>>
->> I see that I am wrong and buf_remaining > 3 needs to be prevented at
->>
->> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-=
-tegra.c#L528
->>
->>
->> because of word_to_transfer is limited to rx_fifo_avail:
->>
->> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-=
-tegra.c#L515
->>
->>
->> I shall add the check for less than 3 in both RX and TX cases in a
->> separate patch in this series.
->=20
-> When word_to_transfer is more than rx_fifo_avail, then the rx_fifo_avail
-> becomes zero and hence the nibbles won't be copied. Please take a closer
-> look, the current code is correct, but the buf_remaining > 3 is unneeded
-> because it can't ever happen.
->=20
-> The code is structured the way that it's difficult to follow, apparently
-> the person who added the BUG_ON check in the first place couldn't follow
-> it either. Maybe it's worth to invest some more effort into refactoring
-> at least that part of the code. At minimum a clarifying comments would
-> be helpful.
->=20
-I shall try to add some comments near the BUG_ON check.
+Thanks. This fixes a boot regression we are seeing on -next with
+Tegra210 (introduced by the commit referenced above). So ...
 
-> [snip]
->=20
->>>>> Then here:
->>>>>
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (WARN_ON_ONCE(!i2c_dev->msg_buf_rem=
-aining) ||
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_i2c_empty_rx_=
-fifo(i2c_dev)) {
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i2c_dev->msg_err |=
-=3D I2C_ERR_UNKNOWN_INTERRUPT;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
->>>>>
->>>> Can you please elaborate why the condition needs to be as follows
->>>> instead of " if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) " ?
->>>>
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (WARN_ON_ONCE(!i2c_dev->msg_buf_re=
-maining) ||
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_i2c_emp=
-ty_rx_fifo(i2c_dev)) {
->>>
->>> Because this is a "receive" transfer and hence it is a error condition
->>> if the data-message was already fully received and then there is anothe=
-r
->>> request from hardware to receive more data. So
->>> "!i2c_dev->msg_buf_remaining" is the error condition here because there
->>> is no more space in the buffer.
->>>
->>> Looking at this again, seems checking for "if
->>> (WARN_ON_ONCE(rx_fifo_avail))" in the above hunk [1] will be already
->>> enough since a not fully drained RX FIFO means that there is no enough
->>> space in the buffer. Then it could be:
->>>
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (tegra_i2c_empty_r=
-x_fifo(i2c_dev)) {
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 i2c_dev->msg_err |=3D I2C_ERR_UNKNOWN_INTERRUPT=
-;
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err;
->>>  =C2=A0=C2=A0=C2=A0=C2=A0}
->>>
->> In the case "if (status & I2C_INT_PACKET_XFER_COMPLETE) {" , we do not
->> have any tegra_i2c_empty_rx_fifo call today. In this current driver I do
->> not see any code that checks for the buffer space and prevents RX FIFO
->> from being drained. The transfer complete when seen must have already
->> consumed all bytes of msg_buf_remaining in the call at the line
->>
->> https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-=
-tegra.c#L860
->>
->>
->> So we can put the "WARN_ON_ONCE(i2c_dev->msg_buf_remaining) with msg_err
->> assignment and goto err" to confirm if some corner case is not handled.
->>
->> Planning to share updated patch.
->=20
-> There are two possible error conditions:
->=20
-> 1) Underflow: the XFER_COMPLETE happens before message is fully sent.
->=20
-> 2) Overflow: message is fully sent, but there is no XFER_COMPLETE and
-> then hardware asks to transfer more.
->=20
-> We are addressing the second case here, while you seems are confusing it
-> with the first case.
->=20
-Is the Overflow case pointed above corresponding to when=20
-msg_buf_remaining is zero? If no, what indicates that message is fully=20
-sent? I see that if msg_buf_remaining is already zero, the call=20
-tegra_i2c_empty_rx_fifo will not do any copy of the bytes from FIFO to buf.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-One more point that is not clear to me is are the above suggestions you=20
-made is corresponding to replacing below line in linux-next ?
+Cheers
+Jon
 
-https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-teg=
-ra.c#L888
-
-Can you please also review the newly added patch "V5 6/7 "that was newly=20
-posted? I think it is needed.
-
-
--regards,
-  Bitan
+-- 
+nvpublic
