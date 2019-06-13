@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 08/10] iommu/sysfs: convert to SPDX license tags
-Date: Thu, 13 Jun 2019 12:27:01 -0400
-Message-ID: <20190613162703.986-8-tiny.windzz@gmail.com>
+Subject: [PATCH 10/10] iommu/tegra-smmu: convert to SPDX license tags
+Date: Thu, 13 Jun 2019 12:27:03 -0400
+Message-ID: <20190613162703.986-10-tiny.windzz@gmail.com>
 References: <20190613162703.986-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190613162703.986-1-tiny.windzz@gmail.com>
@@ -14,26 +14,23 @@ Updates license to use SPDX-License-Identifier.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/iommu/iommu-sysfs.c | 5 +----
+ drivers/iommu/tegra-smmu.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/iommu-sysfs.c b/drivers/iommu/iommu-sysfs.c
-index 44127d54e943..a193758c8122 100644
---- a/drivers/iommu/iommu-sysfs.c
-+++ b/drivers/iommu/iommu-sysfs.c
-@@ -1,12 +1,9 @@
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 463ee08f7d3a..9a50ca4ec65c 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -1,9 +1,6 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * IOMMU sysfs class support
-  *
-  * Copyright (C) 2014 Red Hat, Inc.  All rights reserved.
-  *     Author: Alex Williamson <alex.williamson@redhat.com>
+  * Copyright (C) 2011-2014 NVIDIA CORPORATION.  All rights reserved.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
   */
  
- #include <linux/device.h>
+ #include <linux/bitops.h>
 -- 
 2.17.0
