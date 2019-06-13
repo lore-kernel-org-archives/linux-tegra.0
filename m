@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 05/10] iommu/dma-iommu: convert to SPDX license tags
-Date: Thu, 13 Jun 2019 12:26:58 -0400
-Message-ID: <20190613162703.986-5-tiny.windzz@gmail.com>
+Subject: [PATCH 06/10] iommu/io-pgtable-arm-v7s: convert to SPDX license tags
+Date: Thu, 13 Jun 2019 12:26:59 -0400
+Message-ID: <20190613162703.986-6-tiny.windzz@gmail.com>
 References: <20190613162703.986-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190613162703.986-1-tiny.windzz@gmail.com>
@@ -14,23 +14,22 @@ Updates license to use SPDX-License-Identifier.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/iommu/dma-iommu.c | 13 +------------
+ drivers/iommu/io-pgtable-arm-v7s.c | 13 +------------
  1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 129c4badf9ae..2d76bac43b82 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
+diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+index 9a8a8870e267..fd0c8f2def45 100644
+--- a/drivers/iommu/io-pgtable-arm-v7s.c
++++ b/drivers/iommu/io-pgtable-arm-v7s.c
 @@ -1,3 +1,4 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * A fairly generic DMA-API to IOMMU-API glue layer.
+  * CPU-agnostic ARM page table allocator.
   *
-@@ -5,18 +6,6 @@
+@@ -14,18 +15,6 @@
+  * - PXN
+  * - Domains
   *
-  * based in part on arch/arm/mm/dma-mapping.c:
-  * Copyright (C) 2000-2004 Russell King
-- *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
@@ -42,8 +41,9 @@ index 129c4badf9ae..2d76bac43b82 100644
 - *
 - * You should have received a copy of the GNU General Public License
 - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- *
+  * Copyright (C) 2014-2015 ARM Limited
+  * Copyright (c) 2014-2015 MediaTek Inc.
   */
- 
- #include <linux/acpi_iort.h>
 -- 
 2.17.0
