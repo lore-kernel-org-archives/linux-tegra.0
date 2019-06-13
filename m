@@ -1,29 +1,21 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: Cleanup of -Wunused-const-variable in
- drivers/usb/host/xhci-tegra.c
-Date: Thu, 13 Jun 2019 20:44:50 +0200
-Message-ID: <20190613184450.GA896@kroah.com>
-References: <CAJkfWY4nKwyPDh=MuCURst2SZceceeR2v3qrT9UY=VbvLnEmFg@mail.gmail.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 09/10] iommu/rockchip: convert to SPDX license tags
+Date: Thu, 13 Jun 2019 21:09:39 +0200
+Message-ID: <1921640.M456AIj05J@diego>
+References: <20190613162703.986-1-tiny.windzz@gmail.com> <20190613162703.986-9-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJkfWY4nKwyPDh=MuCURst2SZceceeR2v3qrT9UY=VbvLnEmFg@mail.gmail.com>
+In-Reply-To: <20190613162703.986-9-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nathan Huckleberry <nhuck@google.com>
-Cc: treding@nvidia.com, mathias.nyman@intel.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+To: Yangtao Li <tiny.windzz@gmail.com>
+Cc: joro@8bytes.org, m.szyprowski@samsung.com, kgene@kernel.org, krzk@kernel.org, will.deacon@arm.com, robin.murphy@arm.com, agross@kernel.org, david.brown@linaro.org, robdclark@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 11:38:38AM -0700, Nathan Huckleberry wrote:
-> Hey all,
+Am Donnerstag, 13. Juni 2019, 18:27:02 CEST schrieb Yangtao Li:
+> Updates license to use SPDX-License-Identifier.
 > 
-> I'm looking into cleaning up ignored warnings in the kernel so we can
-> remove compiler flags to ignore warnings.
-> 
-> There's an unused variable ('mbox_cmd_name') in xhci-tegra.c. Looks
-> like it was intended for logging or debugging, but never used. Just
-> wanted to reach out to ask the best steps for cleaning this up.
-> 
-> If the variable is no longer needed I'd like to send a patch to remove it.
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-You never have to ask permission to send a patch :)
+Acked-by: Heiko Stuebner <heiko@sntech.de>
