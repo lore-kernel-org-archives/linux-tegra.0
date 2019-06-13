@@ -1,55 +1,67 @@
-From: Wolfram Sang <wsa@the-dreams.de>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
-Date: Thu, 13 Jun 2019 15:13:21 +0200
-Message-ID: <20190613131321.GA6370@ninjato>
+Date: Thu, 13 Jun 2019 15:28:02 +0300
+Message-ID: <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
 References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
  <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
- <20190612102458.liieiohnprfyyvs6@ninjato>
- <5841fe57-fe68-aab3-670c-26b40a5d46ae@nvidia.com>
+ <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
+ <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5841fe57-fe68-aab3-670c-26b40a5d46ae@nvidia.com>
+In-Reply-To: <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Bitan Biswas <bbiswas@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Dmitry Osipenko <digetx@gmail.com>, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+13.06.2019 14:30, Bitan Biswas пишет:
+> 
+> 
+> On 6/12/19 7:30 AM, Dmitry Osipenko wrote:
+>> 11.06.2019 13:51, Bitan Biswas пишет:
+>>> Fix expression for residual bytes(less than word) transfer
+>>> in I2C PIO mode RX/TX.
+>>>
+>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>> ---
+>>
+>> [snip]
+>>
+>>>           /*
+>>> -         * Update state before writing to FIFO.  If this casues us
+>>> +         * Update state before writing to FIFO.  If this causes us
+>>>            * to finish writing all bytes (AKA buf_remaining goes to
+>>> 0) we
+>>>            * have a potential for an interrupt (PACKET_XFER_COMPLETE is
+>>> -         * not maskable).  We need to make sure that the isr sees
+>>> -         * buf_remaining as 0 and doesn't call us back re-entrantly.
+>>> +         * not maskable).
+>>>            */
+>>>           buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
+>>
+>> Looks like the comment could be removed altogether because it doesn't
+>> make sense since interrupt handler is under xfer_lock which is kept
+>> locked during of tegra_i2c_xfer_msg().
+> I would push a separate patch to remove this comment because of
+> xfer_lock in ISR now.
+> 
+>>
+>> Moreover the comment says that "PACKET_XFER_COMPLETE is not maskable",
+>> but then what I2C_INT_PACKET_XFER_COMPLETE masking does?
+>>
+> I2C_INT_PACKET_XFER_COMPLETE masking support available in Tegra chips
+> newer than Tegra30 allows one to not see interrupt after Packet transfer
+> complete. With the xfer_lock in ISR the scenario discussed in comment
+> can be ignored.
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Also note that xfer_lock could be removed and replaced with a just
+irq_enable/disable() calls in tegra_i2c_xfer_msg() because we only care
+about IRQ not firing during of the preparation process.
 
-
-> Most of patches are coming from the downstream as part of upstream effort.
-> Hence not reviewing explicitly.
-
-It would help me a lot if you could ack the patches, then, once you are
-fine with them. I am really relying on driver maintainers these days. An
-ack or rev from them is kinda required and speeds up things
-significantly.
-
-
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0CS+0ACgkQFA3kzBSg
-Kba1RQ/9GWBeTxXEjL9VYaeijLQUznToGQszZUm59CLaUakBZ1U5zHv4Q1mXscqT
-nS5W/g+jehr+iveA57dhlj5S+QftqasQ6gSUS6esF5Un6PIDfpty4mwWPda4Rq0n
-DhPCALujwZD5BM4jSB4M2xLSypmMjOPpPQq1WfA1BhEJVLBW5hdf1lBbecBNcm4k
-TE3s0VFdZmzVdLQQKNsKNPfct1TyQiD+RzELa22ptlHDpMOIMudT0EHWpmXUNyID
-oN8ZGO6ygdlUjLDeCe3QgGLVJaEDndS8sgu4vPpRwnDHbOx5CLOT5zktN1YitupR
-fFvSxH1JSWu8mHJ/rsbu7vYv/NfiFvubaUucFexHUFuVHCEbV7Su7Zjy3NebcJyo
-RgHv3UtljdmL0QhOg4DoQJRQ3iMFEhRVDQ1iAcUubcr6mSpBF48/WpqvW0mOpEyd
-rAO75Lf0uW9Hdhbdmdb7Sb/p4z5QfMBOXstBB/79OiQOp1c3C7jmL4bxrbbEAcKq
-1hT/Q79CEm8snsH0vua4aQr37BTf+G7lMPKlGRfwd70Dk1P5gOBNdzZUb8PetReU
-lMSiE7DjkwHe6b5+UVJg7AScWLl78opLyMqrvnpBhihEqrg4tvvhMCgqwKbJR8gm
-pEq1e6OqggD9dsf4GU79FkqbgwX13ZJsDBRsndEMPEPxpk0zTiI=
-=VgqH
------END PGP SIGNATURE-----
-
---IS0zKkzwUGydFO0o--
+It also looks like tegra_i2c_[un]nmask_irq isn't really needed and all
+IRQ's could be simply unmasked during the driver's probe, in that case
+it may worth to add a kind of "in-progress" flag to catch erroneous
+interrupts.
