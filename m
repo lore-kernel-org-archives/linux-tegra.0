@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/4] arm64: tegra: Add ID EEPROM for Jetson TX2 Developer Kit
-Date: Thu, 13 Jun 2019 18:53:29 +0200
-Message-ID: <20190613165331.8689-2-thierry.reding@gmail.com>
+Subject: [PATCH 3/4] arm64: tegra: Add ID EEPROM for Jetson TX1 module
+Date: Thu, 13 Jun 2019 18:53:30 +0200
+Message-ID: <20190613165331.8689-3-thierry.reding@gmail.com>
 References: <20190613165331.8689-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,29 +23,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-There is an ID EEPROM on the Jetson TX2 carrier board, part of the
-Jetson TX2 Developer Kit, that exposes information that can be used to
-identify the carrier board. Add the device tree node so that operating
-systems can access this EEPROM.
+There is an ID EEPROM in the Jetson TX1 module that stores various bits
+of information to indentify the module. Add the device tree node so that
+operating systems can access this EEPROM.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 13 +++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 837218e83e69..ab6648c72ad5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -149,6 +149,19 @@
- 		phy-names = "usb2-0", "usb2-1", "usb3-0";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 4dcd0d36189a..e8654061ce03 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -264,6 +264,19 @@
+ 		};
  	};
  
-+	i2c@c250000 {
-+		/* carrier board ID EEPROM */
-+		eeprom@57 {
++	i2c@7000c500 {
++		/* module ID EEPROM */
++		eeprom@50 {
 +			compatible = "atmel,24c02";
-+			reg = <0x57>;
++			reg = <0x50>;
 +
 +			address-bits = <8>;
 +			page-size = <8>;
@@ -54,8 +53,8 @@ index 837218e83e69..ab6648c72ad5 100644
 +		};
 +	};
 +
- 	pcie@10003000 {
- 		status = "okay";
- 
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
+ 	};
 -- 
 2.21.0
