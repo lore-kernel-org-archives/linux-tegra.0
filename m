@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 06/10] iommu/io-pgtable-arm-v7s: convert to SPDX license tags
-Date: Thu, 13 Jun 2019 12:26:59 -0400
-Message-ID: <20190613162703.986-6-tiny.windzz@gmail.com>
+Subject: [PATCH 07/10] iommu/io-pgtable-arm: convert to SPDX license tags
+Date: Thu, 13 Jun 2019 12:27:00 -0400
+Message-ID: <20190613162703.986-7-tiny.windzz@gmail.com>
 References: <20190613162703.986-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190613162703.986-1-tiny.windzz@gmail.com>
@@ -14,21 +14,17 @@ Updates license to use SPDX-License-Identifier.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/iommu/io-pgtable-arm-v7s.c | 13 +------------
+ drivers/iommu/io-pgtable-arm.c | 13 +------------
  1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
-index 9a8a8870e267..fd0c8f2def45 100644
---- a/drivers/iommu/io-pgtable-arm-v7s.c
-+++ b/drivers/iommu/io-pgtable-arm-v7s.c
-@@ -1,3 +1,4 @@
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 4e21efbc4459..6282c45eefaa 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -1,18 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
   * CPU-agnostic ARM page table allocator.
-  *
-@@ -14,18 +15,6 @@
-  * - PXN
-  * - Domains
   *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
@@ -42,8 +38,8 @@ index 9a8a8870e267..fd0c8f2def45 100644
 - * You should have received a copy of the GNU General Public License
 - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - *
-  * Copyright (C) 2014-2015 ARM Limited
-  * Copyright (c) 2014-2015 MediaTek Inc.
-  */
+  * Copyright (C) 2014 ARM Limited
+  *
+  * Author: Will Deacon <will.deacon@arm.com>
 -- 
 2.17.0
