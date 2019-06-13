@@ -1,111 +1,55 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
-Date: Thu, 13 Jun 2019 15:09:11 +0100
-Message-ID: <3f1ebc62-1498-f26c-9044-8634242fc61e@nvidia.com>
-References: <1560422477-11242-1-git-send-email-spujar@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
+Date: Thu, 13 Jun 2019 15:13:21 +0200
+Message-ID: <20190613131321.GA6370@ninjato>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
+ <20190612102458.liieiohnprfyyvs6@ninjato>
+ <5841fe57-fe68-aab3-670c-26b40a5d46ae@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560422477-11242-1-git-send-email-spujar@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <5841fe57-fe68-aab3-670c-26b40a5d46ae@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: mkumard@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Bitan Biswas <bbiswas@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Dmitry Osipenko <digetx@gmail.com>, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 13/06/2019 11:41, Sameer Pujar wrote:
-> Add DT nodes for following devices on Tegra186 and Tegra194
->  * ACONNECT
->  * ADMA
->  * AGIC
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  changes from previous revision
->   * fixed size value for ranges property in aconnect
-> 
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
->  2 files changed, 134 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> index 426ac0b..5e9fe7e 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> @@ -1295,4 +1295,71 @@
->  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->  		interrupt-parent = <&gic>;
->  	};
-> +
-> +	aconnect {
-> +		compatible = "nvidia,tegra210-aconnect";
-> +		clocks = <&bpmp TEGRA186_CLK_APE>,
-> +			 <&bpmp TEGRA186_CLK_APB2APE>;
-> +		clock-names = "ape", "apb2ape";
-> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x02900000 0x0 0x02900000 0x200000>;
-> +		status = "disabled";
-> +
-> +		dma-controller@2930000 {
-> +			compatible = "nvidia,tegra186-adma";
-> +			reg = <0x02930000 0x50000>;
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sorry but I have been double checking these register addresses and I
-wonder if this should be a length of 0x10000. The 0x50000 includes all
-the ranges where the registers are paged, so I don't think that this is
-correct including these.
 
-> +			interrupt-parent = <&agic>;
-> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +			#dma-cells = <1>;
-> +			clocks = <&bpmp TEGRA186_CLK_AHUB>;
-> +			clock-names = "d_audio";
-> +			status = "disabled";
-> +		};
-> +
-> +		agic: interrupt-controller@2a41000 {
+> Most of patches are coming from the downstream as part of upstream effort.
+> Hence not reviewing explicitly.
 
-I think that this should be 2a40000 but otherwise looks correct.
+It would help me a lot if you could ack the patches, then, once you are
+fine with them. I am really relying on driver maintainers these days. An
+ack or rev from them is kinda required and speeds up things
+significantly.
 
-Sorry but you are too quick for me to keep up!
 
-Cheers
-Jon
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0CS+0ACgkQFA3kzBSg
+Kba1RQ/9GWBeTxXEjL9VYaeijLQUznToGQszZUm59CLaUakBZ1U5zHv4Q1mXscqT
+nS5W/g+jehr+iveA57dhlj5S+QftqasQ6gSUS6esF5Un6PIDfpty4mwWPda4Rq0n
+DhPCALujwZD5BM4jSB4M2xLSypmMjOPpPQq1WfA1BhEJVLBW5hdf1lBbecBNcm4k
+TE3s0VFdZmzVdLQQKNsKNPfct1TyQiD+RzELa22ptlHDpMOIMudT0EHWpmXUNyID
+oN8ZGO6ygdlUjLDeCe3QgGLVJaEDndS8sgu4vPpRwnDHbOx5CLOT5zktN1YitupR
+fFvSxH1JSWu8mHJ/rsbu7vYv/NfiFvubaUucFexHUFuVHCEbV7Su7Zjy3NebcJyo
+RgHv3UtljdmL0QhOg4DoQJRQ3iMFEhRVDQ1iAcUubcr6mSpBF48/WpqvW0mOpEyd
+rAO75Lf0uW9Hdhbdmdb7Sb/p4z5QfMBOXstBB/79OiQOp1c3C7jmL4bxrbbEAcKq
+1hT/Q79CEm8snsH0vua4aQr37BTf+G7lMPKlGRfwd70Dk1P5gOBNdzZUb8PetReU
+lMSiE7DjkwHe6b5+UVJg7AScWLl78opLyMqrvnpBhihEqrg4tvvhMCgqwKbJR8gm
+pEq1e6OqggD9dsf4GU79FkqbgwX13ZJsDBRsndEMPEPxpk0zTiI=
+=VgqH
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
