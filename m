@@ -1,105 +1,83 @@
-From: Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>
-Subject: [PATCH v4 3/5] iommu/dma-iommu: Handle deferred devices
-Date: Thu, 13 Jun 2019 23:38:58 +0100
-Message-ID: <20190613223901.9523-4-murphyt7@tcd.ie>
+From: Tom Murphy <murphyt7@tcd.ie>
+Subject: [PATCH v4 4/5] iommu/dma-iommu: Use the dev->coherent_dma_mask
+Date: Thu, 13 Jun 2019 23:38:59 +0100
+Message-ID: <20190613223901.9523-5-murphyt7@tcd.ie>
 References: <20190613223901.9523-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20190613223901.9523-1-murphyt7-/Zw1syy4LHg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean-Philippe Brucker <jean-philippe.brucker-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190613223901.9523-1-murphyt7@tcd.ie>
+Sender: linux-kernel-owner@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.orglinux
 List-Id: linux-tegra@vger.kernel.org
 
-Handle devices which defer their attach to the iommu in the dma-iommu api
+Use the dev->coherent_dma_mask when allocating in the dma-iommu ops api.
 
-Signed-off-by: Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>
+Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
 ---
- drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ drivers/iommu/dma-iommu.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index e64dbbcde63c..f303bbe20e51 100644
+index f303bbe20e51..082fb789e3cf 100644
 --- a/drivers/iommu/dma-iommu.c
 +++ b/drivers/iommu/dma-iommu.c
-@@ -22,6 +22,7 @@
- #include <linux/pci.h>
- #include <linux/scatterlist.h>
- #include <linux/vmalloc.h>
-+#include <linux/crash_dump.h>
- 
- struct iommu_dma_msi_page {
- 	struct list_head	list;
-@@ -351,6 +352,21 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
- 	return iova_reserve_iommu_regions(dev, domain);
+@@ -471,7 +471,7 @@ static void __iommu_dma_unmap(struct device *dev, dma_addr_t dma_addr,
  }
  
-+static int handle_deferred_device(struct device *dev,
-+	struct iommu_domain *domain)
-+{
-+	const struct iommu_ops *ops = domain->ops;
-+
-+	if (!is_kdump_kernel())
-+		return 0;
-+
-+	if (unlikely(ops->is_attach_deferred &&
-+		ops->is_attach_deferred(domain, dev)))
-+		return iommu_attach_device(domain, dev);
-+
-+	return 0;
-+}
-+
- /**
-  * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
-  *                    page flags.
-@@ -462,6 +478,9 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
- 	size_t iova_off = 0;
- 	dma_addr_t iova;
- 
-+	if (unlikely(handle_deferred_device(dev, domain)))
-+		return DMA_MAPPING_ERROR;
-+
- 	if (cookie->type == IOMMU_DMA_IOVA_COOKIE) {
- 		iova_off = iova_offset(&cookie->iovad, phys);
+ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+-		size_t size, int prot)
++		size_t size, int prot, dma_addr_t dma_mask)
+ {
+ 	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+@@ -486,7 +486,7 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
  		size = iova_align(&cookie->iovad, size + iova_off);
-@@ -583,6 +602,9 @@ static void *iommu_dma_alloc_remap(struct device *dev, size_t size,
+ 	}
  
- 	*dma_handle = DMA_MAPPING_ERROR;
+-	iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
++	iova = iommu_dma_alloc_iova(domain, size, dma_mask, dev);
+ 	if (!iova)
+ 		return DMA_MAPPING_ERROR;
  
-+	if (unlikely(handle_deferred_device(dev, domain)))
-+		return NULL;
-+
- 	min_size = alloc_sizes & -alloc_sizes;
- 	if (min_size < PAGE_SIZE) {
- 		min_size = PAGE_SIZE;
-@@ -715,7 +737,7 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+@@ -737,7 +737,7 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
  	int prot = dma_info_to_prot(dir, coherent, attrs);
  	dma_addr_t dma_handle;
  
--	dma_handle =__iommu_dma_map(dev, phys, size, prot);
-+	dma_handle = __iommu_dma_map(dev, phys, size, prot);
+-	dma_handle = __iommu_dma_map(dev, phys, size, prot);
++	dma_handle = __iommu_dma_map(dev, phys, size, prot, dma_get_mask(dev));
  	if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
  	    dma_handle != DMA_MAPPING_ERROR)
  		arch_sync_dma_for_device(dev, phys, size, dir);
-@@ -825,6 +847,9 @@ static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 	unsigned long mask = dma_get_seg_boundary(dev);
- 	int i;
+@@ -940,7 +940,8 @@ static dma_addr_t iommu_dma_map_resource(struct device *dev, phys_addr_t phys,
+ 		size_t size, enum dma_data_direction dir, unsigned long attrs)
+ {
+ 	return __iommu_dma_map(dev, phys, size,
+-			dma_info_to_prot(dir, false, attrs) | IOMMU_MMIO);
++			dma_info_to_prot(dir, false, attrs) | IOMMU_MMIO,
++			dma_get_mask(dev));
+ }
  
-+	if (unlikely(handle_deferred_device(dev, domain)))
-+		return 0;
-+
- 	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
- 		iommu_dma_sync_sg_for_device(dev, sg, nents, dir);
+ static void iommu_dma_unmap_resource(struct device *dev, dma_addr_t handle,
+@@ -1049,7 +1050,8 @@ static void *iommu_dma_alloc(struct device *dev, size_t size,
+ 	if (!cpu_addr)
+ 		return NULL;
+ 
+-	*handle = __iommu_dma_map(dev, page_to_phys(page), size, ioprot);
++	*handle = __iommu_dma_map(dev, page_to_phys(page), size, ioprot,
++			dev->coherent_dma_mask);
+ 	if (*handle == DMA_MAPPING_ERROR) {
+ 		__iommu_dma_free(dev, size, cpu_addr);
+ 		return NULL;
+@@ -1178,7 +1180,7 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+ 	if (!msi_page)
+ 		return NULL;
+ 
+-	iova = __iommu_dma_map(dev, msi_addr, size, prot);
++	iova = __iommu_dma_map(dev, msi_addr, size, prot, dma_get_mask(dev));
+ 	if (iova == DMA_MAPPING_ERROR)
+ 		goto out_free_page;
  
 -- 
 2.20.1
