@@ -1,92 +1,73 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
-Date: Thu, 13 Jun 2019 11:21:45 +0100
-Message-ID: <7a8426e9-a2c3-5cf6-9088-8ad81f558488@nvidia.com>
-References: <1560417053-2966-1-git-send-email-spujar@nvidia.com>
- <8a71e670-7943-6bce-ba61-3f020fd9450d@nvidia.com>
- <6a4b5fac-68cd-542a-a907-0d80713f9d82@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v4 2/2] arm64: tegra: enable ACONNECT, ADMA and AGIC
+Date: Thu, 13 Jun 2019 15:46:12 +0530
+Message-ID: <1560420972-22350-2-git-send-email-spujar@nvidia.com>
+References: <1560420972-22350-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6a4b5fac-68cd-542a-a907-0d80713f9d82@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <1560420972-22350-1-git-send-email-spujar@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: mkumard@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: mkumard@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Enable ACONNECT, ADMA and AGIC devices for following platforms
+  * Jetson TX2
+  * Jetson Xavier
 
-On 13/06/2019 10:47, Sameer Pujar wrote:
->=20
-> On 6/13/2019 3:12 PM, Jon Hunter wrote:
->> On 13/06/2019 10:10, Sameer Pujar wrote:
->>> Add DT nodes for following devices on Tegra186 and Tegra194
->>> =C2=A0 * ACONNECT
->>> =C2=A0 * ADMA
->>> =C2=A0 * AGIC
->>>
->>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>> ---
->>> =C2=A0 changes in current revision
->>> =C2=A0=C2=A0 * use single address range for all APE modules
->>> =C2=A0=C2=A0 * fix address range for agic
->>>
->>> =C2=A0 arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67
->>> ++++++++++++++++++++++++++++++++
->>> =C2=A0 arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67
->>> ++++++++++++++++++++++++++++++++
->>> =C2=A0 2 files changed, 134 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->>> b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->>> index 426ac0b..b4d735e 100644
->>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->>> @@ -1295,4 +1295,71 @@
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_=
-LOW)>;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupt-parent=
- =3D <&gic>;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>> +
->>> +=C2=A0=C2=A0=C2=A0 aconnect@2a41000 {
->> This address does not look correct. This appears to be the address of
->> the AGIC. I think it should be 2900000, however, I also wonder if we
->> should even bother with an address for the aconnect as this is just a
->> bus and we don't specific a 'reg' property.
-> Do you mean, should be ok to just mention "aconnect {"?
+Verified driver probe path and devices get registered fine.
 
-I did a bit more reading and for Tegra186 there are no registers
-implement for the aconnect (which is different from Tegra210) and so in
-this case we should just have ...
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ changes in current revision
+  * changed names for aconnect and agic nodes
 
-	aconnect {
-		...
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 12 ++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 12 ++++++++++++
+ 2 files changed, 24 insertions(+)
 
->>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "nvidia,tegr=
-a210-aconnect";
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&bpmp TEGRA186_=
-CLK_APE>,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 <&bpmp TEGRA186_CLK_APB2APE>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D "ape", "apb=
-2ape";
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 power-domains =3D <&bpmp TE=
-GRA186_POWER_DOMAIN_AUD>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ranges =3D <0x02900000 0x0 =
-0x02900000 0x1FFFFF>;
->> This should be 0x1fffff.
-> done
-
-Sorry this should be 0x200000.
-
-Cheers
-Jon
-
---=20
-nvpublic
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+index 5102de1..d055913 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -298,4 +298,16 @@
+ 			vin-supply = <&vdd_5v0_sys>;
+ 		};
+ 	};
++
++	aconnect {
++		status = "okay";
++
++		dma-controller@2930000 {
++			status = "okay";
++		};
++
++		interrupt-controller@2a41000 {
++			status = "okay";
++		};
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+index 6e6df65..c4a57959 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+@@ -167,4 +167,16 @@
+ 			};
+ 		};
+ 	};
++
++	aconnect {
++		status = "okay";
++
++		dma-controller@2930000 {
++			status = "okay";
++		};
++
++		interrupt-controller@2a41000 {
++			status = "okay";
++		};
++	};
+ };
+-- 
+2.7.4
