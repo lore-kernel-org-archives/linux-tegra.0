@@ -1,63 +1,80 @@
 From: Tom Murphy <murphyt7@tcd.ie>
-Subject: [PATCH v4 0/5] iommu/amd: Convert the AMD iommu driver to the dma-iommu api
-Date: Thu, 13 Jun 2019 23:38:55 +0100
-Message-ID: <20190613223901.9523-1-murphyt7@tcd.ie>
+Subject: [PATCH v4 1/5] iommu/amd: Remove unnecessary locking from AMD iommu driver
+Date: Thu, 13 Jun 2019 23:38:56 +0100
+Message-ID: <20190613223901.9523-2-murphyt7@tcd.ie>
+References: <20190613223901.9523-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190613223901.9523-1-murphyt7@tcd.ie>
 Sender: linux-kernel-owner@vger.kernel.org
 To: iommu@lists.linux-foundation.org
 Cc: Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.orglinux
 List-Id: linux-tegra@vger.kernel.org
 
-Convert the AMD iommu driver to the dma-iommu api. Remove the iova
-handling and reserve region code from the AMD iommu driver.
+We can remove the mutex lock from amd_iommu_map and amd_iommu_unmap.
+iommu_map doesn’t lock while mapping and so no two calls should touch
+the same iova range. The AMD driver already handles the page table page
+allocations without locks so we can safely remove the locks.
 
-Change-log:
-V4:
--Rebase on top of linux-next
--Split the removing of the unnecessary locking in the amd iommu driver into a seperate patch
--refactor the "iommu/dma-iommu: Handle deferred devices" patch and address comments
-v3:
--rename dma_limit to dma_mask
--exit handle_deferred_device early if (!is_kdump_kernel())
--remove pointless calls to handle_deferred_device
-v2:
--Rebase on top of this series:
- http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
--Add a gfp_t parameter to the iommu_ops::map function.
--Made use of the reserve region code inside the dma-iommu api
+Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+---
+ drivers/iommu/amd_iommu.c       | 10 +---------
+ drivers/iommu/amd_iommu_types.h |  1 -
+ 2 files changed, 1 insertion(+), 10 deletions(-)
 
-Tom Murphy (5):
-  iommu/amd: Remove unnecessary locking from AMD iommu driver
-  iommu: Add gfp parameter to iommu_ops::map
-  iommu/dma-iommu: Handle deferred devices
-  iommu/dma-iommu: Use the dev->coherent_dma_mask
-  iommu/amd: Convert AMD iommu driver to the dma-iommu api
-
- drivers/iommu/Kconfig           |   1 +
- drivers/iommu/amd_iommu.c       | 690 ++++----------------------------
- drivers/iommu/amd_iommu_types.h |   1 -
- drivers/iommu/arm-smmu-v3.c     |   2 +-
- drivers/iommu/arm-smmu.c        |   2 +-
- drivers/iommu/dma-iommu.c       |  45 ++-
- drivers/iommu/exynos-iommu.c    |   2 +-
- drivers/iommu/intel-iommu.c     |   2 +-
- drivers/iommu/iommu.c           |  43 +-
- drivers/iommu/ipmmu-vmsa.c      |   2 +-
- drivers/iommu/msm_iommu.c       |   2 +-
- drivers/iommu/mtk_iommu.c       |   2 +-
- drivers/iommu/mtk_iommu_v1.c    |   2 +-
- drivers/iommu/omap-iommu.c      |   2 +-
- drivers/iommu/qcom_iommu.c      |   2 +-
- drivers/iommu/rockchip-iommu.c  |   2 +-
- drivers/iommu/s390-iommu.c      |   2 +-
- drivers/iommu/tegra-gart.c      |   2 +-
- drivers/iommu/tegra-smmu.c      |   2 +-
- drivers/iommu/virtio-iommu.c    |   2 +-
- include/linux/iommu.h           |  21 +-
- 21 files changed, 179 insertions(+), 652 deletions(-)
-
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 73740b969e62..065639e090fe 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2858,7 +2858,6 @@ static void protection_domain_free(struct protection_domain *domain)
+ static int protection_domain_init(struct protection_domain *domain)
+ {
+ 	spin_lock_init(&domain->lock);
+-	mutex_init(&domain->api_lock);
+ 	domain->id = domain_id_alloc();
+ 	if (!domain->id)
+ 		return -ENOMEM;
+@@ -3045,9 +3044,7 @@ static int amd_iommu_map(struct iommu_domain *dom, unsigned long iova,
+ 	if (iommu_prot & IOMMU_WRITE)
+ 		prot |= IOMMU_PROT_IW;
+ 
+-	mutex_lock(&domain->api_lock);
+ 	ret = iommu_map_page(domain, iova, paddr, page_size, prot, GFP_KERNEL);
+-	mutex_unlock(&domain->api_lock);
+ 
+ 	domain_flush_np_cache(domain, iova, page_size);
+ 
+@@ -3058,16 +3055,11 @@ static size_t amd_iommu_unmap(struct iommu_domain *dom, unsigned long iova,
+ 			   size_t page_size)
+ {
+ 	struct protection_domain *domain = to_pdomain(dom);
+-	size_t unmap_size;
+ 
+ 	if (domain->mode == PAGE_MODE_NONE)
+ 		return 0;
+ 
+-	mutex_lock(&domain->api_lock);
+-	unmap_size = iommu_unmap_page(domain, iova, page_size);
+-	mutex_unlock(&domain->api_lock);
+-
+-	return unmap_size;
++	return iommu_unmap_page(domain, iova, page_size);
+ }
+ 
+ static phys_addr_t amd_iommu_iova_to_phys(struct iommu_domain *dom,
+diff --git a/drivers/iommu/amd_iommu_types.h b/drivers/iommu/amd_iommu_types.h
+index 52c35d557fad..5d5f5d009b19 100644
+--- a/drivers/iommu/amd_iommu_types.h
++++ b/drivers/iommu/amd_iommu_types.h
+@@ -461,7 +461,6 @@ struct protection_domain {
+ 	struct iommu_domain domain; /* generic domain handle used by
+ 				       iommu core code */
+ 	spinlock_t lock;	/* mostly used to lock the page table*/
+-	struct mutex api_lock;	/* protect page tables in the iommu-api path */
+ 	u16 id;			/* the domain id written to the device table */
+ 	int mode;		/* paging mode (0-6 levels) */
+ 	u64 *pt_root;		/* page table root pointer */
 -- 
 2.20.1
