@@ -1,225 +1,180 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v3 1/8] clk: tegra20/30: Add custom EMC clock
- implementation
-Date: Thu, 13 Jun 2019 13:49:45 +0300
-Message-ID: <20190613104945.GJ29894@pdeschrijver-desktop.Nvidia.com>
-References: <20190524172353.29087-1-digetx@gmail.com>
- <20190524172353.29087-2-digetx@gmail.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v5 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+Date: Thu, 13 Jun 2019 16:11:16 +0530
+Message-ID: <1560422477-11242-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190524172353.29087-2-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: mkumard@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 24, 2019 at 08:23:46PM +0300, Dmitry Osipenko wrote:
-> A proper External Memory Controller clock rounding and parent selection
-> functionality is required by the EMC drivers. It is not available using
-> the generic clock implementation, hence add a custom one. The clock rate
-> rounding shall be done by the EMC drivers because they have information
-> about available memory timings, so the drivers will have to register a
-> callback that will round the requested rate. EMC clock users won't be able
-> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
-> and the callback is set up. The functionality is somewhat similar to the
-> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
-> more parent clock sources and the HW configuration and integration with
-> the EMC drivers differs a tad from the older gens, hence it's not really
-> worth to try to squash everything into a single source file.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/Makefile          |   2 +
->  drivers/clk/tegra/clk-tegra20-emc.c | 299 ++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk-tegra20.c     |  55 ++---
->  drivers/clk/tegra/clk-tegra30.c     |  38 +++-
->  drivers/clk/tegra/clk.h             |   6 +
->  include/linux/clk/tegra.h           |  14 ++
->  6 files changed, 362 insertions(+), 52 deletions(-)
->  create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 4812e45c2214..df966ca06788 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
->  obj-y					+= clk-tegra-super-gen4.o
->  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
-> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
-> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
-> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-tegra20-emc.c
-> new file mode 100644
-> index 000000000000..d971b5425ce3
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
-> @@ -0,0 +1,299 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/bits.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk/tegra.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +
-> +#include "clk.h"
-> +
-> +#define CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK	GENMASK(7, 0)
-> +#define CLK_SOURCE_EMC_2X_CLK_SRC_MASK		GENMASK(31, 30)
-> +#define CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT		30
-> +
-> +#define MC_EMC_SAME_FREQ	BIT(16)
-> +#define USE_PLLM_UD		BIT(29)
-> +
-> +#define EMC_SRC_PLL_M		0
-> +#define EMC_SRC_PLL_C		1
-> +#define EMC_SRC_PLL_P		2
-> +#define EMC_SRC_CLK_M		3
-> +
-> +static const char * const emc_parent_clk_names[] = {
-> +	"pll_m", "pll_c", "pll_p", "clk_m",
-> +};
-> +
-> +struct tegra_clk_emc {
-> +	struct clk_hw hw;
-> +	void __iomem *reg;
-> +	bool mc_same_freq;
-> +	bool want_low_jitter;
-> +
-> +	tegra20_clk_emc_round_cb *round_cb;
-> +	void *cb_arg;
-> +};
-> +
-> +static inline struct tegra_clk_emc *to_tegra_clk_emc(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct tegra_clk_emc, hw);
-> +}
-> +
-> +static unsigned long emc_recalc_rate(struct clk_hw *hw,
-> +				     unsigned long parent_rate)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	u32 val, div;
-> +
-> +	val = readl_relaxed(emc->reg);
-> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +
-> +	return DIV_ROUND_UP(parent_rate * 2, div + 2);
-> +}
-> +
-> +static u8 emc_get_parent(struct clk_hw *hw)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +
-> +	return readl_relaxed(emc->reg) >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +}
-> +
-> +static int emc_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	u32 val, div;
-> +
-> +	val = readl_relaxed(emc->reg);
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
-> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +
-> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +
-> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
-> +		val |= USE_PLLM_UD;
-> +	else
-> +		val &= ~USE_PLLM_UD;
-> +
-> +	if (emc->mc_same_freq)
-> +		val |= MC_EMC_SAME_FREQ;
-> +	else
-> +		val &= ~MC_EMC_SAME_FREQ;
-> +
-> +	writel_relaxed(val, emc->reg);
-> +
+Add DT nodes for following devices on Tegra186 and Tegra194
+ * ACONNECT
+ * ADMA
+ * AGIC
 
-I think technically you need a fence_udelay(1) here, but in practice
-this is probably not needed because you will poll some EMC register for
-the frequency completion anyway. Maybe add a comment about this?
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ changes from previous revision
+  * fixed size value for ranges property in aconnect
 
-> +	return 0;
-> +}
-> +
-> +static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			unsigned long parent_rate)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	unsigned int index;
-> +	u32 val, div;
-> +
-> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
-> +
-> +	val = readl_relaxed(emc->reg);
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +	val |= div;
-> +
-> +	index = val >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +
-> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
-> +		val |= USE_PLLM_UD;
-> +	else
-> +		val &= ~USE_PLLM_UD;
-> +
-> +	if (emc->mc_same_freq)
-> +		val |= MC_EMC_SAME_FREQ;
-> +	else
-> +		val &= ~MC_EMC_SAME_FREQ;
-> +
-> +	writel_relaxed(val, emc->reg);
-> +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+)
 
-Same here.
-
-> +	return 0;
-> +}
-> +
-> +static int emc_set_rate_and_parent(struct clk_hw *hw,
-> +				   unsigned long rate,
-> +				   unsigned long parent_rate,
-> +				   u8 index)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	u32 val, div;
-> +
-> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
-> +
-> +	val = readl_relaxed(emc->reg);
-> +
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
-> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +	val |= div;
-> +
-> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
-> +		val |= USE_PLLM_UD;
-> +	else
-> +		val &= ~USE_PLLM_UD;
-> +
-> +	if (emc->mc_same_freq)
-> +		val |= MC_EMC_SAME_FREQ;
-> +	else
-> +		val &= ~MC_EMC_SAME_FREQ;
-> +
-> +	writel_relaxed(val, emc->reg);
-> +
-
-And here.
-
-> +	return 0;
-> +}
-
-Peter.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 426ac0b..5e9fe7e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1295,4 +1295,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA186_CLK_APE>,
++			 <&bpmp TEGRA186_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x02900000 0x0 0x02900000 0x200000>;
++		status = "disabled";
++
++		dma-controller@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x02930000 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA186_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: interrupt-controller@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0x02a41000 0x1000>,
++			      <0x02a42000 0x2000>;
++			interrupts = <GIC_SPI 145
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA186_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c77ca21..a60ed5f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1054,4 +1054,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA194_CLK_APE>,
++			 <&bpmp TEGRA194_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_AUD>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x02900000 0x0 0x02900000 0x200000>;
++		status = "disabled";
++
++		dma-controller@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x02930000 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA194_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: interrupt-controller@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0x02a41000 0x1000>,
++			      <0x02a42000 0x2000>;
++			interrupts = <GIC_SPI 145
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA194_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
+-- 
+2.7.4
