@@ -1,76 +1,57 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2] clk: tegra210: Fix default rates for HDA clocks
-Date: Thu, 13 Jun 2019 16:53:22 +0100
-Message-ID: <d69e549b-1509-b249-0a4e-16417b2ce3e8@nvidia.com>
-References: <1559743299-11576-1-git-send-email-jonathanh@nvidia.com>
- <20190607002314.4AEF321019@mail.kernel.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V3 4/4] soc/tegra: select pinctrl for Tegra194
+Date: Thu, 13 Jun 2019 10:47:36 +0200
+Message-ID: <20190613084736.GA30664@ulmo>
+References: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
+ <1558007594-14824-4-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190607002314.4AEF321019@mail.kernel.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Sasha Levin <sashal@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1558007594-14824-4-git-send-email-kyarlagadda@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc: linus.walleij@linaro.org, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com, vidyas@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 07/06/2019 01:23, Sasha Levin wrote:
-> Hi,
-> 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a -stable tag.
-> The stable tag indicates that it's relevant for the following trees: all
-> 
-> The bot has tested the following trees: v5.1.7, v5.0.21, v4.19.48, v4.14.123, v4.9.180, v4.4.180.
-> 
-> v5.1.7: Build OK!
-> v5.0.21: Build OK!
-> v4.19.48: Failed to apply! Possible dependencies:
->     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
-> 
-> v4.14.123: Failed to apply! Possible dependencies:
->     26f8590c4a1f ("clk: tegra: Make vic03 a child of pll_c3")
->     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
->     c485ad63abb4 ("clk: tegra: Specify VDE clock rate")
-> 
-> v4.9.180: Failed to apply! Possible dependencies:
->     24c3ebef1ab6 ("clk: tegra: Add aclk")
->     26f8590c4a1f ("clk: tegra: Make vic03 a child of pll_c3")
->     319af7975c9f ("clk: tegra: Define Tegra210 DMIC sync clocks")
->     34ac2c278b30 ("clk: tegra: Fix ISP clock modelling")
->     3843832fc8ca ("clk: tegra: Handle UTMIPLL IDDQ")
->     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
->     8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
->     9326947f2215 ("clk: tegra: Fix pll_a1 iddq register, add pll_a1")
->     bfa34832df1f ("clk: tegra: Add CEC clock")
->     c485ad63abb4 ("clk: tegra: Specify VDE clock rate")
->     e745f992cf4b ("clk: tegra: Rework pll_u")
-> 
-> v4.4.180: Failed to apply! Possible dependencies:
->     26f8590c4a1f ("clk: tegra: Make vic03 a child of pll_c3")
->     385f9adf625f ("clk: tegra: Constify pdiv-to-hw mappings")
->     407254da291c ("clk: tegra: pll: Add logic for out-of-table rates for T210")
->     6583a6309e83 ("clk: tegra: pll: Add tegra_pll_wait_for_lock to clk header")
->     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
->     86c679a52294 ("clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate")
->     8d99704fde54 ("clk: tegra: Format tables consistently")
->     c485ad63abb4 ("clk: tegra: Specify VDE clock rate")
->     c4947e364b50 ("clk: tegra: Fix 26 MHz oscillator frequency")
->     d907f4b4a178 ("clk: tegra: pll: Add logic for handling SDM data")
->     dd322f047d22 ("clk: tegra: pll: Add specialized logic for Tegra210")
->     e52d7c04bb39 ("clk: tegra: Miscellaneous coding style cleanups")
->     e745f992cf4b ("clk: tegra: Rework pll_u")
-> 
-> 
-> How should we proceed with this patch?
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think that applying to 5.0 and 5.1 is fine for now.
+On Thu, May 16, 2019 at 05:23:14PM +0530, Krishna Yarlagadda wrote:
+> Select PINCTRL_TEGRA194 by default for Tegra194 SOC needed
+> for dynamically controlling PCIe pins
+>=20
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  drivers/soc/tegra/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-Thanks
-Jon
+Applied to for-5.3/soc, thanks.
 
--- 
-nvpublic
+Thierry
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0CDaUACgkQ3SOs138+
+s6Gw+Q/9GEMCAGe1/osKqqMZNuojtuyy3aCNb+QVhJWlJVtLn/VtdBx0AqAuAf63
+2HPt17CnmoqKcToQFlPHma+uC0BEiNuPx7E0dPLCddNI9JrNxqNuU7JaPN81WsXi
+Spydy5O5ioyDK42BTkWtljUAVHT8KwUDuLDMlvoINV8pWGCRKmU6CuN4+7XraC5R
+kZRutq0uc0bILzcVxVbzbe449ZF3y2aZyHdayaEYwPWmpN0JXWkmFIr093TWK7li
+NE+KSHUQBxujoct5IkKzgDTHAHLn3edNlzxXDLM1aM3QVN1BIo0ADnybyyFBj69y
+bhiOeczT5iI74h8cuNGf5BwCsgk2CgeQX4M3DpQMXHfdkZchqC/xTbSuafI9BiAS
+X9sip1PaNzHJyPMrfefXtx2uZJFz8IU6LGUqKsOfomFS4JkvJ/DKJtBaTMU8C+yq
+U2FCfMJfm79zUe1Gii2dHK2BCjj2Op8LRW3vKOP9B+qL+EIdBk75VxwbJABAI2ly
+C7B2Rkjl4JZ/Q0Co8+vHQ6DSxjNPJB7xnaM0S4oF0TFz++ykcLrnEVZP5QsevWrk
+Hjdysh9Od2rXOKhr3NlFHlarY8ZcvQGg2KTLiKpa4IOrC8MAKabs2AmKlsCjxA24
+FgzBW5XkLVHGKkUy5SmJSgE2B2Xlb/k9denLDi1UotFiEAMBhZ8=
+=7+8+
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
