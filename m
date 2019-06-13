@@ -1,61 +1,126 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4/4] arm64: tegra: Add ID EEPROM for Jetson TX1 Developer Kit
-Date: Thu, 13 Jun 2019 18:53:31 +0200
-Message-ID: <20190613165331.8689-4-thierry.reding@gmail.com>
-References: <20190613165331.8689-1-thierry.reding@gmail.com>
+From: Frank Lee <tiny.windzz@gmail.com>
+Subject: Re: [PATCH 03/10] iommu/omap: convert to SPDX license tags
+Date: Fri, 14 Jun 2019 00:55:02 +0800
+Message-ID: <CAEExFWuM+oMUKf440myr0GHAnatdzaxr=0ibFDGVXDHs6J1bzA@mail.gmail.com>
+References: <20190613162703.986-1-tiny.windzz@gmail.com> <20190613162703.986-3-tiny.windzz@gmail.com>
+ <ac67e363-70cf-af64-d634-c3b0b6d408fa@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190613165331.8689-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ac67e363-70cf-af64-d634-c3b0b6d408fa@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Suman Anna <s-anna@ti.com>
+Cc: "joro@8bytes.org" <joro@8bytes.org>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "will.deacon@arm.com" <will.deacon@arm.com>, "robin.murphy@arm.com" <robin.murphy@arm.com>, "agross@kernel.org" <agross@kernel.org>, "david.brown@linaro.org" <david.brown@linaro.org>, "robdclark@gmail.com" <robdclark@gmail.com>, "heiko@sntech.de" <heiko@sntech.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradea
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Fri, Jun 14, 2019 at 12:39 AM Suman Anna <s-anna@ti.com> wrote:
+>
+> Hi Yangtao,
+>
+> On 6/13/19 11:26 AM, Yangtao Li wrote:
+> > Updates license to use SPDX-License-Identifier.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>
+> Thanks for the patch. Can you also update another related file
+> while at this. Will leave it to Joerg if he prefers it as a separate
+> patch, or folded into this patch.
+>
+> include/linux/platform_data/iommu-omap.h
+>
 
-There is an ID EEPROM on the Jetson TX1 carrier board, part of the
-Jetson TX1 Developer Kit, that exposes information that can be used to
-identify the carrier board. Add the device tree node so that operating
-systems can access this EEPROM.
+Done.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Yangtao
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 5a57396b5948..a3cafe39ba4c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -79,6 +79,19 @@
- 		};
- 	};
- 
-+	i2c@7000c500 {
-+		/* carrier board ID EEPROM */
-+		eeprom@57 {
-+			compatible = "atmel,24c02";
-+			reg = <0x57>;
-+
-+			address-bits = <8>;
-+			page-size = <8>;
-+			size = <256>;
-+			read-only;
-+		};
-+	};
-+
- 	clock@70110000 {
- 		status = "okay";
- 
--- 
-2.21.0
+> Acked-by: Suman Anna <s-anna@ti.com>
+>
+> regards
+> Suman
+>
+> > ---
+> >  drivers/iommu/omap-iommu-debug.c | 5 +----
+> >  drivers/iommu/omap-iommu.c       | 5 +----
+> >  drivers/iommu/omap-iommu.h       | 5 +----
+> >  drivers/iommu/omap-iopgtable.h   | 5 +----
+> >  4 files changed, 4 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/iommu/omap-iommu-debug.c b/drivers/iommu/omap-iommu-debug.c
+> > index 4abc0ef522a8..55ec67a45101 100644
+> > --- a/drivers/iommu/omap-iommu-debug.c
+> > +++ b/drivers/iommu/omap-iommu-debug.c
+> > @@ -1,13 +1,10 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> >  /*
+> >   * omap iommu: debugfs interface
+> >   *
+> >   * Copyright (C) 2008-2009 Nokia Corporation
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #include <linux/err.h>
+> > diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+> > index d2fb347aa4ff..e6442876913f 100644
+> > --- a/drivers/iommu/omap-iommu.c
+> > +++ b/drivers/iommu/omap-iommu.c
+> > @@ -1,3 +1,4 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> >  /*
+> >   * omap iommu: tlb and pagetable primitives
+> >   *
+> > @@ -6,10 +7,6 @@
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>,
+> >   *           Paul Mundt and Toshihiro Kobayashi
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #include <linux/dma-mapping.h>
+> > diff --git a/drivers/iommu/omap-iommu.h b/drivers/iommu/omap-iommu.h
+> > index 1703159ef5af..5256e17d86a7 100644
+> > --- a/drivers/iommu/omap-iommu.h
+> > +++ b/drivers/iommu/omap-iommu.h
+> > @@ -1,13 +1,10 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> >  /*
+> >   * omap iommu: main structures
+> >   *
+> >   * Copyright (C) 2008-2009 Nokia Corporation
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #ifndef _OMAP_IOMMU_H
+> > diff --git a/drivers/iommu/omap-iopgtable.h b/drivers/iommu/omap-iopgtable.h
+> > index 01a315227bf0..871c2a38f453 100644
+> > --- a/drivers/iommu/omap-iopgtable.h
+> > +++ b/drivers/iommu/omap-iopgtable.h
+> > @@ -1,13 +1,10 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> >  /*
+> >   * omap iommu: pagetable definitions
+> >   *
+> >   * Copyright (C) 2008-2010 Nokia Corporation
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #ifndef _OMAP_IOPGTABLE_H
+> >
+>
