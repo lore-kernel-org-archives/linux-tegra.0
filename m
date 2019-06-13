@@ -1,236 +1,105 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 1/8] clk: tegra20/30: Add custom EMC clock
- implementation
-Date: Thu, 13 Jun 2019 15:14:28 +0300
-Message-ID: <9c4af080-89d1-84a3-d909-b5595b8a6959@gmail.com>
-References: <20190524172353.29087-1-digetx@gmail.com>
- <20190524172353.29087-2-digetx@gmail.com>
- <20190613104945.GJ29894@pdeschrijver-desktop.Nvidia.com>
+From: Bitan Biswas <bbiswas@nvidia.com>
+Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
+Date: Thu, 13 Jun 2019 05:00:43 -0700
+Message-ID: <508037a2-52cb-43e8-24a9-1c064972d2d8@nvidia.com>
+References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
+ <21a2b722-cd1d-284f-2a4d-99bb12c98afd@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190613104945.GJ29894@pdeschrijver-desktop.Nvidia.com>
+In-Reply-To: <21a2b722-cd1d-284f-2a4d-99bb12c98afd@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
 List-Id: linux-tegra@vger.kernel.org
 
-13.06.2019 13:49, Peter De Schrijver пишет:
-> On Fri, May 24, 2019 at 08:23:46PM +0300, Dmitry Osipenko wrote:
->> A proper External Memory Controller clock rounding and parent selection
->> functionality is required by the EMC drivers. It is not available using
->> the generic clock implementation, hence add a custom one. The clock rate
->> rounding shall be done by the EMC drivers because they have information
->> about available memory timings, so the drivers will have to register a
->> callback that will round the requested rate. EMC clock users won't be able
->> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
->> and the callback is set up. The functionality is somewhat similar to the
->> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
->> more parent clock sources and the HW configuration and integration with
->> the EMC drivers differs a tad from the older gens, hence it's not really
->> worth to try to squash everything into a single source file.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/clk/tegra/Makefile          |   2 +
->>  drivers/clk/tegra/clk-tegra20-emc.c | 299 ++++++++++++++++++++++++++++
->>  drivers/clk/tegra/clk-tegra20.c     |  55 ++---
->>  drivers/clk/tegra/clk-tegra30.c     |  38 +++-
->>  drivers/clk/tegra/clk.h             |   6 +
->>  include/linux/clk/tegra.h           |  14 ++
->>  6 files changed, 362 insertions(+), 52 deletions(-)
->>  create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
->>
->> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
->> index 4812e45c2214..df966ca06788 100644
->> --- a/drivers/clk/tegra/Makefile
->> +++ b/drivers/clk/tegra/Makefile
->> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
->>  obj-y					+= clk-tegra-super-gen4.o
->>  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
->> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->>  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
->> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-tegra20-emc.c
->> new file mode 100644
->> index 000000000000..d971b5425ce3
->> --- /dev/null
->> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
->> @@ -0,0 +1,299 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +#include <linux/bits.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/clk/tegra.h>
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/slab.h>
->> +
->> +#include "clk.h"
->> +
->> +#define CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK	GENMASK(7, 0)
->> +#define CLK_SOURCE_EMC_2X_CLK_SRC_MASK		GENMASK(31, 30)
->> +#define CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT		30
->> +
->> +#define MC_EMC_SAME_FREQ	BIT(16)
->> +#define USE_PLLM_UD		BIT(29)
->> +
->> +#define EMC_SRC_PLL_M		0
->> +#define EMC_SRC_PLL_C		1
->> +#define EMC_SRC_PLL_P		2
->> +#define EMC_SRC_CLK_M		3
->> +
->> +static const char * const emc_parent_clk_names[] = {
->> +	"pll_m", "pll_c", "pll_p", "clk_m",
->> +};
->> +
->> +struct tegra_clk_emc {
->> +	struct clk_hw hw;
->> +	void __iomem *reg;
->> +	bool mc_same_freq;
->> +	bool want_low_jitter;
->> +
->> +	tegra20_clk_emc_round_cb *round_cb;
->> +	void *cb_arg;
->> +};
->> +
->> +static inline struct tegra_clk_emc *to_tegra_clk_emc(struct clk_hw *hw)
->> +{
->> +	return container_of(hw, struct tegra_clk_emc, hw);
->> +}
->> +
->> +static unsigned long emc_recalc_rate(struct clk_hw *hw,
->> +				     unsigned long parent_rate)
->> +{
->> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
->> +	u32 val, div;
->> +
->> +	val = readl_relaxed(emc->reg);
->> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
->> +
->> +	return DIV_ROUND_UP(parent_rate * 2, div + 2);
->> +}
->> +
->> +static u8 emc_get_parent(struct clk_hw *hw)
->> +{
->> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
->> +
->> +	return readl_relaxed(emc->reg) >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
->> +}
->> +
->> +static int emc_set_parent(struct clk_hw *hw, u8 index)
->> +{
->> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
->> +	u32 val, div;
->> +
->> +	val = readl_relaxed(emc->reg);
->> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
->> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
->> +
->> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
->> +
->> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
->> +		val |= USE_PLLM_UD;
->> +	else
->> +		val &= ~USE_PLLM_UD;
->> +
->> +	if (emc->mc_same_freq)
->> +		val |= MC_EMC_SAME_FREQ;
->> +	else
->> +		val &= ~MC_EMC_SAME_FREQ;
->> +
->> +	writel_relaxed(val, emc->reg);
->> +
-> 
-> I think technically you need a fence_udelay(1) here, but in practice
-> this is probably not needed because you will poll some EMC register for
-> the frequency completion anyway. Maybe add a comment about this?
-> 
->> +	return 0;
->> +}
->> +
->> +static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
->> +			unsigned long parent_rate)
->> +{
->> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
->> +	unsigned int index;
->> +	u32 val, div;
->> +
->> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
->> +
->> +	val = readl_relaxed(emc->reg);
->> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
->> +	val |= div;
->> +
->> +	index = val >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
->> +
->> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
->> +		val |= USE_PLLM_UD;
->> +	else
->> +		val &= ~USE_PLLM_UD;
->> +
->> +	if (emc->mc_same_freq)
->> +		val |= MC_EMC_SAME_FREQ;
->> +	else
->> +		val &= ~MC_EMC_SAME_FREQ;
->> +
->> +	writel_relaxed(val, emc->reg);
->> +
-> 
-> Same here.
-> 
->> +	return 0;
->> +}
->> +
->> +static int emc_set_rate_and_parent(struct clk_hw *hw,
->> +				   unsigned long rate,
->> +				   unsigned long parent_rate,
->> +				   u8 index)
->> +{
->> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
->> +	u32 val, div;
->> +
->> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
->> +
->> +	val = readl_relaxed(emc->reg);
->> +
->> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
->> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
->> +
->> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
->> +	val |= div;
->> +
->> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
->> +		val |= USE_PLLM_UD;
->> +	else
->> +		val &= ~USE_PLLM_UD;
->> +
->> +	if (emc->mc_same_freq)
->> +		val |= MC_EMC_SAME_FREQ;
->> +	else
->> +		val &= ~MC_EMC_SAME_FREQ;
->> +
->> +	writel_relaxed(val, emc->reg);
->> +
-> 
-> And here.
-> 
->> +	return 0;
->> +}
-> 
-> Peter.
-> 
 
-Thank you very much for the feedback! Indeed, it will be a bit more
-robust to add fence_udelay() since one microsecond is practically
-nothing and then it will be a part of the clk-change awaiting anyway
-(note that EMC driver waits for the interrupt event and doesn't poll the
-status), we also don't really care about the EMC rate-change performance
-much because it won't happen frequently.
+
+On 6/6/19 11:27 PM, Dmitry Osipenko wrote:
+> 07.06.2019 8:37, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Post suspend I2C registers have power on reset values. Before any
+>> transfer initialize I2C registers to prevent I2C transfer timeout
+>> and implement suspend and resume callbacks needed. Fix below errors
+>> post suspend:
+>>
+>> 1) Tegra I2C transfer timeout during jetson tx2 resume:
+>>
+>> [   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @ 2939, =
+parent: i2c-1
+>> [   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
+>> [   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
+>> [   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
+>> [   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0 returns =
+-110
+>> [   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110 af=
+ter 127152 usecs
+>> [   27.666194] PM: Device 1-0074 failed to resume: error -110
+>>
+>> 2) Tegra I2C transfer timeout error on jetson Xavier post resume.
+>>
+>> Remove i2c bus lock-unlock calls in resume callback as i2c_mark_adapter_=
+*
+>> (suspended-resumed) help ensure i2c core calls from client are not
+>> executed before i2c-tegra resume.
+>>
+>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 24 ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-teg=
+ra.c
+>> index ebaa78d..1dbba39 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -1687,7 +1687,31 @@ static int tegra_i2c_remove(struct platform_devic=
+e *pdev)
+>>   }
+>>  =20
+>>   #ifdef CONFIG_PM_SLEEP
+>> +static int tegra_i2c_suspend(struct device *dev)
+>> +{
+>> +	struct tegra_i2c_dev *i2c_dev =3D dev_get_drvdata(dev);
+>> +
+>> +	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_i2c_resume(struct device *dev)
+>> +{
+>> +	struct tegra_i2c_dev *i2c_dev =3D dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	err =3D tegra_i2c_init(i2c_dev, false);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static const struct dev_pm_ops tegra_i2c_pm =3D {
+>> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
+>>   	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resum=
+e,
+>>   			   NULL)
+>>   };
+>>
+>=20
+> Thanks!
+>=20
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>=20
+
+Please get back if there is/are any further review comment(s) for below=20
+patch.
+
+
+http://patchwork.ozlabs.org/patch/1111570/
+
+-Thanks,
+  Bitan
