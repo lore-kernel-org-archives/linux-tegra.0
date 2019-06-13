@@ -1,11 +1,13 @@
 From: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 01/10] iommu/exynos: convert to SPDX license tags
-Date: Thu, 13 Jun 2019 12:26:54 -0400
-Message-ID: <20190613162703.986-1-tiny.windzz@gmail.com>
+Subject: [PATCH 02/10] iommu/io-pgtable: convert to SPDX license tags
+Date: Thu, 13 Jun 2019 12:26:55 -0400
+Message-ID: <20190613162703.986-2-tiny.windzz@gmail.com>
+References: <20190613162703.986-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20190613162703.986-1-tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
@@ -23,24 +25,32 @@ Updates license to use SPDX-License-Identifier.
 
 Signed-off-by: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/iommu/exynos-iommu.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/iommu/io-pgtable.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 05c6bc099d62..938a33d2f89d 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1,10 +1,7 @@
+diff --git a/drivers/iommu/io-pgtable.c b/drivers/iommu/io-pgtable.c
+index 5227cfdbb65b..3c84ff1901ea 100644
+--- a/drivers/iommu/io-pgtable.c
++++ b/drivers/iommu/io-pgtable.c
+@@ -1,18 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Copyright (c) 2011,2016 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-- *
+  * Generic page table allocator for IOMMUs.
+  *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
-  */
- 
- #ifdef CONFIG_EXYNOS_IOMMU_DEBUG
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- *
+  * Copyright (C) 2014 ARM Limited
+  *
+  * Author: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 -- 
 2.17.0
