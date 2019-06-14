@@ -1,62 +1,87 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: Cleanup of -Wunused-const-variable in
- drivers/usb/host/xhci-tegra.c
-Date: Fri, 14 Jun 2019 11:09:27 +0200
-Message-ID: <20190614090926.GB14954@ulmo>
-References: <CAJkfWY4nKwyPDh=MuCURst2SZceceeR2v3qrT9UY=VbvLnEmFg@mail.gmail.com>
+From: Bitan Biswas <bbiswas@nvidia.com>
+Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
+Date: Fri, 14 Jun 2019 02:50:27 -0700
+Message-ID: <e795ddcf-dd11-4e39-2a94-b663e5ecb35b@nvidia.com>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
+ <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
+ <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
+ <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJkfWY4nKwyPDh=MuCURst2SZceceeR2v3qrT9UY=VbvLnEmFg@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nathan Huckleberry <nhuck@google.com>
-Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
---p4qYPpj5QlsIQJ0K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2019 at 11:38:38AM -0700, Nathan Huckleberry wrote:
-> Hey all,
+
+On 6/13/19 5:28 AM, Dmitry Osipenko wrote:
+> 13.06.2019 14:30, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>>
+>> On 6/12/19 7:30 AM, Dmitry Osipenko wrote:
+>>> 11.06.2019 13:51, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> Fix expression for residual bytes(less than word) transfer
+>>>> in I2C PIO mode RX/TX.
+>>>>
+>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>>> ---
+>>>
+>>> [snip]
+>>>
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Update state befor=
+e writing to FIFO.=C2=A0 If this casues us
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Update state befor=
+e writing to FIFO.=C2=A0 If this causes us
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * to fin=
+ish writing all bytes (AKA buf_remaining goes to
+>>>> 0) we
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * have a=
+ potential for an interrupt (PACKET_XFER_COMPLETE is
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * not maskable).=C2=
+=A0 We need to make sure that the isr sees
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * buf_remaining as 0=
+ and doesn't call us back re-entrantly.
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * not maskable).
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buf_remaining =
+-=3D words_to_transfer * BYTES_PER_FIFO_WORD;
+>>>
+>>> Looks like the comment could be removed altogether because it doesn't
+>>> make sense since interrupt handler is under xfer_lock which is kept
+>>> locked during of tegra_i2c_xfer_msg().
+>> I would push a separate patch to remove this comment because of
+>> xfer_lock in ISR now.
+>>
+>>>
+>>> Moreover the comment says that "PACKET_XFER_COMPLETE is not maskable",
+>>> but then what I2C_INT_PACKET_XFER_COMPLETE masking does?
+>>>
+>> I2C_INT_PACKET_XFER_COMPLETE masking support available in Tegra chips
+>> newer than Tegra30 allows one to not see interrupt after Packet transfer
+>> complete. With the xfer_lock in ISR the scenario discussed in comment
+>> can be ignored.
 >=20
-> I'm looking into cleaning up ignored warnings in the kernel so we can
-> remove compiler flags to ignore warnings.
+> Also note that xfer_lock could be removed and replaced with a just
+> irq_enable/disable() calls in tegra_i2c_xfer_msg() because we only care
+> about IRQ not firing during of the preparation process.
+This should need sufficient testing hence let us do it in a different=20
+series.
+
 >=20
-> There's an unused variable ('mbox_cmd_name') in xhci-tegra.c. Looks
-> like it was intended for logging or debugging, but never used. Just
-> wanted to reach out to ask the best steps for cleaning this up.
+> It also looks like tegra_i2c_[un]nmask_irq isn't really needed and all
+> IRQ's could be simply unmasked during the driver's probe, in that case
+> it may worth to add a kind of "in-progress" flag to catch erroneous
+> interrupts.
 >=20
-> If the variable is no longer needed I'd like to send a patch to remove it.
->=20
-> https://github.com/ClangBuiltLinux/linux/issues/533
+TX interrupt needs special handling if this change is done. Hence I=20
+think it should be taken up after sufficient testing in a separate patch.
 
-Feel free to send that patch. If we ever need this debug information
-again we can easily add it back by reverting.
-
-Thierry
-
---p4qYPpj5QlsIQJ0K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DZEYACgkQ3SOs138+
-s6F0tw//W5cSvT/bzIDSSWLG2gWjBGan521TaQV9D62U4c5bYKIDMGBGyXKIQkPC
-yL81T65cFTzuAD/+4isvxTihI42lYK5CbI1JyjKdE2SGjrMOQQkrm7+O02FGye4w
-TDje5ir0HRUx2KtjfuDbjvRKlUY3Q/gp8255k4KPSY3ZozepzO1FrjaaXMew6bn1
-xcWtVh8LVqcsGbP0Ifp0bMrHx7mKHajEnhtPtevnH1/11ELJE86l/iOOekjL151m
-feA9Vs5v4NB84NRFE3HVx9c5N8DBdmuLfDHgrECIbP/xvbgGrqKQi+6a0cZOMZcB
-LJ9oTATYH/FpbmFOg7MCrfjkU4eKP6xVUjL+Y3qD7iha7IWuWxGuK+QtrWhq3Bxq
-qiE4r5eFdRVAu44dl0GoNIuNzlHqiuOvZ52DyTzHuBqEkyLYQYm4NqHsFgjHMwnd
-cz2oALUYAcrhFv8qfSVeqDIg23PK7ulrAt2hBUaDDDD8hYOc2WIdVw3xg7wCa9qb
-ZW07rRakhLV1xsoIhcbKhKzSpVNymchyI5HvrRQyY5nVdx99N4dyHO6rDrMHWAQE
-VUautrjtchnOkHpIPQi+rkcZjCqtGK1GNfpljSP42WSZCYeOZJMoFbkdfU5AVRVu
-wSxU5NEnY4uo4Xm31cvUXd+DU14SuF+kicc02+fU9GuKnVfc/Is=
-=BAJT
------END PGP SIGNATURE-----
-
---p4qYPpj5QlsIQJ0K--
+-regards,
+  Bitan
