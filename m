@@ -1,96 +1,87 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1 1/2] mailbox: tegra: hsp: add noirq resume
-Date: Fri, 14 Jun 2019 17:50:41 +0200
-Message-ID: <20190614155041.GB26922@ulmo>
+Subject: Re: [PATCH V1 2/2] mailbox: tegra: avoid resume NULL mailboxes
+Date: Fri, 14 Jun 2019 17:52:10 +0200
+Message-ID: <20190614155210.GC26922@ulmo>
 References: <1560515734-2085-1-git-send-email-bbiswas@nvidia.com>
+ <1560515734-2085-2-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
+        protocol="application/pgp-signature"; boundary="z4+8/lEcDcG5Ke9S"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1560515734-2085-1-git-send-email-bbiswas@nvidia.com>
+In-Reply-To: <1560515734-2085-2-git-send-email-bbiswas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Bitan Biswas <bbiswas@nvidia.com>
 Cc: Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---7ZAtKRhVyVSsbBD2
+--z4+8/lEcDcG5Ke9S
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2019 at 05:35:33AM -0700, Bitan Biswas wrote:
-> Add noirq resume instead of resume callback for Tegra HSP. Tegra HSP
-> resume needs tegra_hsp_doorbell_startup() call to fix timeout error for
-> tegra_bpmp_transfer() during genpd resume noirq on jetson-tx2.
+On Fri, Jun 14, 2019 at 05:35:34AM -0700, Bitan Biswas wrote:
+> If Tegra hsp device tree does not have 'shared irqs',
 
-s/jetson-tx2/Jetson TX2/?
-
->=20
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> ---
->  drivers/mailbox/tegra-hsp.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> index 91f1a0c..f147374 100644
-> --- a/drivers/mailbox/tegra-hsp.c
-> +++ b/drivers/mailbox/tegra-hsp.c
-> @@ -771,10 +771,16 @@ static int tegra_hsp_probe(struct platform_device *=
-pdev)
->  	return 0;
->  }
-> =20
-> -static int __maybe_unused tegra_hsp_resume(struct device *dev)
-> +static int __maybe_unused tegra_hsp_noirq_resume(struct device *dev)
-
-Maybe call this tegra_hsp_resume_noirq() to match the naming of the
-dev_pm_ops callback?
-
->  {
->  	struct tegra_hsp *hsp =3D dev_get_drvdata(dev);
->  	unsigned int i;
-> +	struct tegra_hsp_doorbell *db;
-> +
-> +	list_for_each_entry(db, &hsp->doorbells, list) {
-> +		if (db && db->channel.chan)
-> +			tegra_hsp_doorbell_startup(db->channel.chan);
-> +	}
-> =20
->  	for (i =3D 0; i < hsp->num_sm; i++) {
->  		struct tegra_hsp_mailbox *mb =3D &hsp->mailboxes[i];
-> @@ -786,7 +792,9 @@ static int __maybe_unused tegra_hsp_resume(struct dev=
-ice *dev)
->  	return 0;
->  }
-> =20
-> -static SIMPLE_DEV_PM_OPS(tegra_hsp_pm_ops, NULL, tegra_hsp_resume);
-> +static const struct dev_pm_ops tegra_hsp_pm_ops =3D {
-> +	.resume_noirq   =3D tegra_hsp_noirq_resume,
-
-There seems to be two extra spaces before that =3D.
+s/hsp/HSP/, otherwise looks good.
 
 Thierry
 
---7ZAtKRhVyVSsbBD2
+> mailboxes pointer is NULL. Add non-NULL HSP mailboxes
+> check in resume callback before tegra_hsp_mailbox_startup()
+> call and prevent NULL pointer exception.
+>=20
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
+>  drivers/mailbox/tegra-hsp.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> index f147374..a11fb1c 100644
+> --- a/drivers/mailbox/tegra-hsp.c
+> +++ b/drivers/mailbox/tegra-hsp.c
+> @@ -782,11 +782,13 @@ static int __maybe_unused tegra_hsp_noirq_resume(st=
+ruct device *dev)
+>  			tegra_hsp_doorbell_startup(db->channel.chan);
+>  	}
+> =20
+> -	for (i =3D 0; i < hsp->num_sm; i++) {
+> -		struct tegra_hsp_mailbox *mb =3D &hsp->mailboxes[i];
+> +	if (hsp->mailboxes) {
+> +		for (i =3D 0; i < hsp->num_sm; i++) {
+> +			struct tegra_hsp_mailbox *mb =3D &hsp->mailboxes[i];
+> =20
+> -		if (mb->channel.chan->cl)
+> -			tegra_hsp_mailbox_startup(mb->channel.chan);
+> +			if (mb->channel.chan->cl)
+> +				tegra_hsp_mailbox_startup(mb->channel.chan);
+> +		}
+>  	}
+> =20
+>  	return 0;
+> --=20
+> 2.7.4
+>=20
+
+--z4+8/lEcDcG5Ke9S
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DwlEACgkQ3SOs138+
-s6FF9hAAiJ4bYQf3muX8DROz4Scc57EGDwt0MelsUs6uPgSREWy1pruYby4Ynmub
-9bT2rhXcUZYDRHZTKqnwhgl1juMnbMMjfCWfjrbE68/2sX/6td5/qYhwCiUVq0uK
-4j0rlF1SgzlqIoeEWaZaVVpxiWGuh192MH1NVacIYQvJvanWhlFxJzeO9yUKX5eb
-5hDxA6MrLsU9hGx3GS8GJ64Df8mfHJOy3kZ6sACOaBY/w03oB3kU3GB6LIW3B/ck
-ds5wx6VLvrfw1OCuM0jlijd7aFM72/u3Gv6U0kGLmXhAaptOZtSYYGVCTcbKlCL6
-mwY6ryNasRgWIIk7S7Ni2ilTo9AJaHzmf4dL/XlXgPVAK7QDHKzRm3CYu5hjCmMx
-c/WBwP9Cme+/ZtI3TK/gvEBtWwdHOsLDb+kpfE8GFHCFQ2exigovGEqMy+Fscqrl
-9Vs7wGoVHFEKZafXike8rFB6otmdEhRhEh0+nFVXFmn4kqa2ZeTdsettOGRmXowR
-o0FB4D4bHESnGmPzv2DpD8ievqDM9jFy2blj762OjxwITNw3V6AtQ47Ay9IYNOz0
-L609ZNxyqi45+6PyYUkuIIj6XR0Ny/TaAHQCkzIUDMtbg4guV9qnVr9XQxytgm9H
-hnCI5uBSdK4M9nv3eFFGSsgwBnIf9sc3+Zxl12TELCvroW5MJEQ=
-=IXnu
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DwqoACgkQ3SOs138+
+s6HJehAAlPsKTuPsEIq3BYzsUwtxA2ZtjCFy0N/+cOom6PoIlmFZQ3ZqVVYmVGUt
+6sP7L8VoUzcgP1LXassF3wiTLv7/Il+hWM9SxHN5k8a1UBEnij4vxtt13/vIirLh
+FfeV5AyZZ7FmgsyGm/ZM41evcYZg/WM6JKXaHGMjbxMhxXk2sQxH98WY2urTSxoz
+rb2+MRrTQu5jrbUiF//cjSrULA6tcldY567nFyFPTRTu8e+jtqGna1lMDIrNHw5q
+n3SR3Z5sOobv5R5qcp4SBBrHLRMPaiIPiGrLnUccLDsxrjYzeII51Ij2ib5y4osZ
+BfALmCAAy06DoJWoeTLH706nEv0hIeXTYTQSgWgY2Jqzt68beW0pOc59KFjcn/fr
+4yK51+AqGwwYNfnlVSp1WdJD4eXdahHzBWFpBzr9koHpsYUeTnUfMNfrZRHsOPJb
+9gWbFUmUj7O7QzTdB5coMcmhSi9bpGd9B5/9Lrk7S/fKRUQfI6YhjHRhaZTG3R80
+7Yg5p133EU334sl3K6i91ekysja57vJDlQngieJzGWRZRItjMOSI+l2PxsGXD4Z+
+KTXVl57gbB6Zl5W44CWfAo0N/+UblHIfLn81x6hmAuD5G3ewHVj0CcG0ccyn2Cem
+H1NjV3NH0goy6jG2v/XfL88I38u2Hm9ZG03yK80lJekkZ+nS5OY=
+=ErAC
 -----END PGP SIGNATURE-----
 
---7ZAtKRhVyVSsbBD2--
+--z4+8/lEcDcG5Ke9S--
