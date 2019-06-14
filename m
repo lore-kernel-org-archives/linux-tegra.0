@@ -1,11 +1,14 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/2] arm64: tegra: Mark architected timer as always on
-Date: Fri, 14 Jun 2019 12:52:36 +0200
-Message-ID: <20190614105237.20076-1-thierry.reding@gmail.com>
+Subject: [PATCH 2/2] arm64: tegra: Don't use architected timer for suspend on
+ Tegra210
+Date: Fri, 14 Jun 2019 12:52:37 +0200
+Message-ID: <20190614105237.20076-2-thierry.reding@gmail.com>
+References: <20190614105237.20076-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190614105237.20076-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,37 +24,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The architected timer on Tegra186 and Tegra194 is in an always on power
-partition and its reference clock will always run, so mark the timer as
-always on.
+Due to an integration issue the architected timer on Tegra210 does not
+remain on during system suspend (a.k.a. SC7). Mark it accordingly so
+that it isn't considered as a means to track suspend time.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 0f4eacaf5b77..3c811943e700 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1360,5 +1360,6 @@
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 58ca520d5230..96027572ac12 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1435,6 +1435,7 @@
  			     <GIC_PPI 10
  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
  		interrupt-parent = <&gic>;
-+		always-on;
++		arm,no-tick-in-suspend;
  	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c77ca211fa8f..a2528312db5f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1053,5 +1053,6 @@
- 			     <GIC_PPI 10
- 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 		interrupt-parent = <&gic>;
-+		always-on;
- 	};
- };
+ 
+ 	soctherm: thermal-sensor@700e2000 {
 -- 
 2.21.0
