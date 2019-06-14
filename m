@@ -1,102 +1,236 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 1/2] clocksource: tegra: Use rating when registering clock
- source
-Date: Fri, 14 Jun 2019 17:06:48 +0300
-Message-ID: <fba9791a-8e73-398b-5851-689dc1d769f0@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/2] rtc: tegra: Implement suspend clock source
+Date: Fri, 14 Jun 2019 16:14:00 +0200
+Message-ID: <20190614141400.GI15526@ulmo>
 References: <20190614104747.19712-1-thierry.reding@gmail.com>
- <8ff5d2da-907e-611c-ec82-bbe50197c2f4@gmail.com>
- <20190614132253.GE15526@ulmo>
- <3c339341-e77a-38aa-702a-1aef6c229eed@gmail.com>
- <20190614135353.GH15526@ulmo>
- <286cb0b7-1c8a-1a61-517e-1a9eee08e614@gmail.com>
+ <20190614104747.19712-2-thierry.reding@gmail.com>
+ <5a00bccf-6542-51bd-9030-99a59f14f2f9@gmail.com>
+ <20190614134110.GF15526@ulmo>
+ <d9b65fd9-ecad-b241-a0d6-251a648488aa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="STPqjqpCrtky8aYs"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <286cb0b7-1c8a-1a61-517e-1a9eee08e614@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <d9b65fd9-ecad-b241-a0d6-251a648488aa@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-14.06.2019 17:02, Dmitry Osipenko пишет:
-> 14.06.2019 16:53, Thierry Reding пишет:
->> On Fri, Jun 14, 2019 at 04:29:17PM +0300, Dmitry Osipenko wrote:
->>> 14.06.2019 16:22, Thierry Reding пишет:
->>>> On Fri, Jun 14, 2019 at 03:24:07PM +0300, Dmitry Osipenko wrote:
->>>>> 14.06.2019 13:47, Thierry Reding пишет:
->>>>>> From: Thierry Reding <treding@nvidia.com>
->>>>>>
->>>>>> The rating is parameterized depending on SoC generation to make sure it
->>>>>> takes precedence on implementations where the architected timer can't be
->>>>>> used. This rating is already used for the clock event device. Use the
->>>>>> same rating for the clock source to be consistent.
->>>>>>
->>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>>>>> ---
->>>>>>  drivers/clocksource/timer-tegra.c | 2 +-
->>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
->>>>>> index f6a8eb0d7322..e6608141cccb 100644
->>>>>> --- a/drivers/clocksource/timer-tegra.c
->>>>>> +++ b/drivers/clocksource/timer-tegra.c
->>>>>> @@ -318,7 +318,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
->>>>>>  	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
->>>>>>  
->>>>>>  	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
->>>>>> -				    "timer_us", TIMER_1MHz, 300, 32,
->>>>>> +				    "timer_us", TIMER_1MHz, rating, 32,
->>>>>>  				    clocksource_mmio_readl_up);
->>>>>>  	if (ret)
->>>>>>  		pr_err("failed to register clocksource: %d\n", ret);
->>>>>>
->>>>>
->>>>> Looks good. Although, could you please clarify whether arch-timer stops on T210 when CPU
->>>>> enters deepest (powerdown) idle state? I'm starting to lose track a bit already. Because
->>>>> if arch-timer stops in the deepest idle state, then it's a bit odd that Joseph didn't add
->>>>> the clocksource for T210 in the first place and v5.1 probably shouldn't work well because
->>>>> of that already.
->>>>
->>>> Yes, the architected timer doesn't work across an SC7 (which is what the
->>>> deepest idle state is called on Tegra210) transition, hence why we can't
->>>> use it as a suspend clocksource. I actually sent out a patch to do that,
->>>> earlier.
->>>>
->>>> And yes, it's entirely possible that v5.1 doesn't work in this regard,
->>>> but we're not noticing that because we don't have suspend/resume support
->>>> for Tegra210 anyway. There are a couple of missing pieces that we need
->>>> in order to make it work.
->>>>
->>>> This change in particular is only going to affect the CPU idle state
->>>> (CC7). Since the architected timer doesn't survive that either, we need
->>>> the Tegra timer to be preferred over the architected timer for normal
->>>> operation.
->>>>
->>>> All of these issues go away on Tegra186 and later, where the architected
->>>> timer is in an always-on partition and has a PLL that remains on during
->>>> SC7 (and CC7).
->>>
->>> Thank you very much for the clarification. But then what about the
->>> sched_clock? I suppose sched_clock will suffer on T210 as well and it's
->>> a bit trickier case because apparently arch-timer always wins since it
->>> has a higher precision. I guess the best solution will be to just bail
->>> out from arch-timer's driver probe in a case of T210.
->>>
->>> if (of_machine_is_compatible("nvidia,tegra210"))
->>> 	return 0.
->>
->> I don't think there's any issue with the scheduler clock on Tegra210.
->> Before the CPU can be turned off, all tasks scheduled on that CPU have
->> to be migrated to another CPU, right? Conversely, before any tasks can
->> be scheduled on a CPU that CPU needs to be brought online, at which
->> point the architected timer should work fine again.
-> 
-> Is SC7 a CPU-idle state that cpuidle driver may enter or it's a
-> system-wide suspend state? It's still not clear to me.
-> 
 
-Ah, looks like I see now. So CC7 (CPU idle state) also affects the
-arch-timer (like SC7) and hence scheduler clock will be stopped while it
-shouldn't, which doesn't sound good.
+--STPqjqpCrtky8aYs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jun 14, 2019 at 04:49:44PM +0300, Dmitry Osipenko wrote:
+> 14.06.2019 16:41, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Fri, Jun 14, 2019 at 03:01:13PM +0300, Dmitry Osipenko wrote:
+> >> 14.06.2019 13:47, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> From: Thierry Reding <treding@nvidia.com>
+> >>>
+> >>> The suspend clock source for Tegra210 and earlier is currently
+> >>> implemented in the Tegra timer driver. However, the suspend clock sou=
+rce
+> >>> code accesses registers that are part of the RTC hardware block, so b=
+oth
+> >>> can step on each others' toes. In practice this isn't an issue, but
+> >>> there is no reason why the RTC driver can't implement the clock sourc=
+e,
+> >>> so move the code over to the tegra-rtc driver.
+> >>>
+> >>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >>> ---
+> >>>  drivers/clocksource/timer-tegra.c | 44 -----------------------------=
+--
+> >>>  drivers/rtc/rtc-tegra.c           | 42 +++++++++++++++++++++++++++++
+> >>>  2 files changed, 42 insertions(+), 44 deletions(-)
+> >>>
+> >>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/=
+timer-tegra.c
+> >>> index e6608141cccb..87eac618924d 100644
+> >>> --- a/drivers/clocksource/timer-tegra.c
+> >>> +++ b/drivers/clocksource/timer-tegra.c
+> >>> @@ -21,10 +21,6 @@
+> >>> =20
+> >>>  #include "timer-of.h"
+> >>> =20
+> >>> -#define RTC_SECONDS		0x08
+> >>> -#define RTC_SHADOW_SECONDS	0x0c
+> >>> -#define RTC_MILLISECONDS	0x10
+> >>> -
+> >>>  #define TIMERUS_CNTR_1US	0x10
+> >>>  #define TIMERUS_USEC_CFG	0x14
+> >>>  #define TIMERUS_CNTR_FREEZE	0x4c
+> >>> @@ -164,34 +160,6 @@ static struct delay_timer tegra_delay_timer =3D {
+> >>>  };
+> >>>  #endif
+> >>> =20
+> >>> -static struct timer_of suspend_rtc_to =3D {
+> >>> -	.flags =3D TIMER_OF_BASE | TIMER_OF_CLOCK,
+> >>> -};
+> >>> -
+> >>> -/*
+> >>> - * tegra_rtc_read - Reads the Tegra RTC registers
+> >>> - * Care must be taken that this function is not called while the
+> >>> - * tegra_rtc driver could be executing to avoid race conditions
+> >>> - * on the RTC shadow register
+> >>> - */
+> >>> -static u64 tegra_rtc_read_ms(struct clocksource *cs)
+> >>> -{
+> >>> -	void __iomem *reg_base =3D timer_of_base(&suspend_rtc_to);
+> >>> -
+> >>> -	u32 ms =3D readl_relaxed(reg_base + RTC_MILLISECONDS);
+> >>> -	u32 s =3D readl_relaxed(reg_base + RTC_SHADOW_SECONDS);
+> >>> -
+> >>> -	return (u64)s * MSEC_PER_SEC + ms;
+> >>> -}
+> >>> -
+> >>> -static struct clocksource suspend_rtc_clocksource =3D {
+> >>> -	.name	=3D "tegra_suspend_timer",
+> >>> -	.rating	=3D 200,
+> >>> -	.read	=3D tegra_rtc_read_ms,
+> >>> -	.mask	=3D CLOCKSOURCE_MASK(32),
+> >>> -	.flags	=3D CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTO=
+P,
+> >>> -};
+> >>> -
+> >>>  static inline unsigned int tegra_base_for_cpu(int cpu, bool tegra20)
+> >>>  {
+> >>>  	if (tegra20) {
+> >>> @@ -385,15 +353,3 @@ static int __init tegra20_init_timer(struct devi=
+ce_node *np)
+> >>>  	return tegra_init_timer(np, true, rating);
+> >>>  }
+> >>>  TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init=
+_timer);
+> >>> -
+> >>> -static int __init tegra20_init_rtc(struct device_node *np)
+> >>> -{
+> >>> -	int ret;
+> >>> -
+> >>> -	ret =3D timer_of_init(np, &suspend_rtc_to);
+> >>> -	if (ret)
+> >>> -		return ret;
+> >>> -
+> >>> -	return clocksource_register_hz(&suspend_rtc_clocksource, 1000);
+> >>> -}
+> >>> -TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc=
+);
+> >>> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+> >>> index 8fa1b3febf69..6da54264a27a 100644
+> >>> --- a/drivers/rtc/rtc-tegra.c
+> >>> +++ b/drivers/rtc/rtc-tegra.c
+> >>> @@ -6,6 +6,7 @@
+> >>>   */
+> >>> =20
+> >>>  #include <linux/clk.h>
+> >>> +#include <linux/clocksource.h>
+> >>>  #include <linux/delay.h>
+> >>>  #include <linux/init.h>
+> >>>  #include <linux/io.h>
+> >>> @@ -52,8 +53,15 @@ struct tegra_rtc_info {
+> >>>  	struct clk *clk;
+> >>>  	int irq; /* alarm and periodic IRQ */
+> >>>  	spinlock_t lock;
+> >>> +
+> >>> +	struct clocksource clksrc;
+> >>>  };
+> >>> =20
+> >>> +static struct tegra_rtc_info *to_tegra_rtc(struct clocksource *clksr=
+c)
+> >>> +{
+> >>> +	return container_of(clksrc, struct tegra_rtc_info, clksrc);
+> >>> +}
+> >>> +
+> >>>  /*
+> >>>   * RTC hardware is busy when it is updating its values over AHB once=
+ every
+> >>>   * eight 32 kHz clocks (~250 us). Outside of these updates the CPU i=
+s free to
+> >>> @@ -268,6 +276,17 @@ static const struct rtc_class_ops tegra_rtc_ops =
+=3D {
+> >>>  	.alarm_irq_enable =3D tegra_rtc_alarm_irq_enable,
+> >>>  };
+> >>> =20
+> >>> +static u64 tegra_rtc_read_ms(struct clocksource *clksrc)
+> >>> +{
+> >>> +	struct tegra_rtc_info *info =3D to_tegra_rtc(clksrc);
+> >>> +	u32 ms, s;
+> >>> +
+> >>> +	ms =3D readl_relaxed(info->base + TEGRA_RTC_REG_MILLI_SECONDS);
+> >>> +	s =3D readl_relaxed(info->base + TEGRA_RTC_REG_SHADOW_SECONDS);
+> >>> +
+> >>> +	return (u64)s * MSEC_PER_SEC + ms;
+> >>> +}
+> >>> +
+> >>>  static const struct of_device_id tegra_rtc_dt_match[] =3D {
+> >>>  	{ .compatible =3D "nvidia,tegra20-rtc", },
+> >>>  	{}
+> >>> @@ -339,6 +358,28 @@ static int tegra_rtc_probe(struct platform_devic=
+e *pdev)
+> >>>  		goto disable_clk;
+> >>>  	}
+> >>> =20
+> >>> +	/*
+> >>> +	 * The Tegra RTC is the only reliable clock source that persists
+> >>> +	 * across an SC7 transition (VDD_CPU and VDD_CORE off) on Tegra210
+> >>> +	 * and earlier. Starting with Tegra186, the ARM v8 architected timer
+> >>> +	 * is in an always on power partition and its reference clock keeps
+> >>> +	 * running during SC7. Therefore, we technically don't need to have
+> >>> +	 * the RTC register as a clock source on Tegra186 and later, but it
+> >>> +	 * doesn't hurt either, so we just register it unconditionally here.
+> >>> +	 */
+> >>> +	info->clksrc.name =3D "tegra_rtc";
+> >>> +	info->clksrc.rating =3D 200;
+> >>> +	info->clksrc.read =3D tegra_rtc_read_ms;
+> >>> +	info->clksrc.mask =3D CLOCKSOURCE_MASK(32);
+> >>
+> >> Hm.. shouldn't this be CLOCKSOURCE_MASK(52)? Given that there are 32 b=
+its for seconds and
+> >> 10bits for milliseconds.
+> >=20
+> > Did you mean to say CLOCKSOURCE_MASK(42)? Yeah, that's probably better
+> > here.
+>=20
+> Yes, 42 :)
+
+I'm wondering if that could perhaps be a little problematic because
+we're not actually using all of the 10 bits for the milliseconds. So the
+maximum value that we can return is:
+
+	4294967296 * 1000 + 999 =3D 4294967296999
+
+However, the maximum value for a 42 bit mask is:
+
+	2^42 - 1 =3D 4398046511103
+
+That mask is only used in order to wrap around in delta computations. So
+I can imagine a situation where we'd end up with a wrong value in the
+delta. I suppose this can only really happen if the two samples are very
+far apart in time, so maybe this isn't worth worrying about.
+
+Thierry
+
+--STPqjqpCrtky8aYs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0Dq6UACgkQ3SOs138+
+s6F2oA//fpp1Y3qRBJ5italtlN4pwpQW8vwmsZ3jYfSpheuiBD/GjwebCGtoKjCy
+gZCDBFEjBD+smaPPrMBzEL71hEAp65lZL8IcEyxM2c7HaE1BwGXwEyKyMxNjkZN6
+IK19g0xfsqI6z+UJuPa6nYp4BBPjn/ndGxDcT7IriLTTe2cCkifgyr0Tig0RPOTZ
+CX12IxYqdSGNyfLuUV0RM9sgDP9ukF0zTBj6sE3HU7DfCkJNCOoboax5i2hFYY5/
+hA7K0hImYXTk9llwierL1CEk4071yipVcxnti8PdEhOD+yZQ/vjrF+DA9J/XO+8Y
+Rn+c28sY7IcVCwhSdtBzvzQXKW9Z1o0BbkeH7ouxi97CSO4KNjOdwPyBGCEkcEh7
+AiSg9s4hfoDQuG574xwwI+PuPNoXlvMqCfKuEpWAPajsdZOGyf0DRwMrmlQgyoog
+gKJT1PlrERZos0KgEnCEE2DMu4QwilM+fMLd23tQvAlYYtLW4/6NGZL3I2Oecklz
+gohySpcz5cr24DFcs0Lg38ShaCWnUy8DK1f6l8XrIr/3mTsUmKlWbZFoQyptvNWC
+weajR/n4ioyFV9lD78t/UmCyaUBPiQCfOgklPA7q4eHbZLkBwpY1guNatZxOaCDp
+E4+mpT2k+2mq8b/DkIC6wA4wWon84aplkvNIcV60jZxY7hcig18=
+=sJkU
+-----END PGP SIGNATURE-----
+
+--STPqjqpCrtky8aYs--
