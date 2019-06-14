@@ -1,86 +1,107 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
-Date: Fri, 14 Jun 2019 16:02:25 +0300
-Message-ID: <d2c97291-6392-d614-5cd9-1490a816548c@gmail.com>
-References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
- <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
- <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
- <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
- <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
- <e795ddcf-dd11-4e39-2a94-b663e5ecb35b@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] clocksource: tegra: Use rating when registering
+ clock source
+Date: Fri, 14 Jun 2019 15:22:53 +0200
+Message-ID: <20190614132253.GE15526@ulmo>
+References: <20190614104747.19712-1-thierry.reding@gmail.com>
+ <8ff5d2da-907e-611c-ec82-bbe50197c2f4@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="idY8LE8SD6/8DnRI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e795ddcf-dd11-4e39-2a94-b663e5ecb35b@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <8ff5d2da-907e-611c-ec82-bbe50197c2f4@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-14.06.2019 12:50, Bitan Biswas пишет:
-> 
-> 
-> On 6/13/19 5:28 AM, Dmitry Osipenko wrote:
->> 13.06.2019 14:30, Bitan Biswas пишет:
->>>
->>>
->>> On 6/12/19 7:30 AM, Dmitry Osipenko wrote:
->>>> 11.06.2019 13:51, Bitan Biswas пишет:
->>>>> Fix expression for residual bytes(less than word) transfer
->>>>> in I2C PIO mode RX/TX.
->>>>>
->>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>>>> ---
->>>>
->>>> [snip]
->>>>
->>>>>            /*
->>>>> -         * Update state before writing to FIFO.  If this casues us
->>>>> +         * Update state before writing to FIFO.  If this causes us
->>>>>             * to finish writing all bytes (AKA buf_remaining goes to
->>>>> 0) we
->>>>>             * have a potential for an interrupt (PACKET_XFER_COMPLETE is
->>>>> -         * not maskable).  We need to make sure that the isr sees
->>>>> -         * buf_remaining as 0 and doesn't call us back re-entrantly.
->>>>> +         * not maskable).
->>>>>             */
->>>>>            buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
->>>>
->>>> Looks like the comment could be removed altogether because it doesn't
->>>> make sense since interrupt handler is under xfer_lock which is kept
->>>> locked during of tegra_i2c_xfer_msg().
->>> I would push a separate patch to remove this comment because of
->>> xfer_lock in ISR now.
->>>
->>>>
->>>> Moreover the comment says that "PACKET_XFER_COMPLETE is not maskable",
->>>> but then what I2C_INT_PACKET_XFER_COMPLETE masking does?
->>>>
->>> I2C_INT_PACKET_XFER_COMPLETE masking support available in Tegra chips
->>> newer than Tegra30 allows one to not see interrupt after Packet transfer
->>> complete. With the xfer_lock in ISR the scenario discussed in comment
->>> can be ignored.
->>
->> Also note that xfer_lock could be removed and replaced with a just
->> irq_enable/disable() calls in tegra_i2c_xfer_msg() because we only care
->> about IRQ not firing during of the preparation process.
-> This should need sufficient testing hence let us do it in a different series.
 
-I don't think that there is much to test here since obviously it should work.
+--idY8LE8SD6/8DnRI
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>
->> It also looks like tegra_i2c_[un]nmask_irq isn't really needed and all
->> IRQ's could be simply unmasked during the driver's probe, in that case
->> it may worth to add a kind of "in-progress" flag to catch erroneous
->> interrupts.
->>
-> TX interrupt needs special handling if this change is done. Hence I think it should be
-> taken up after sufficient testing in a separate patch.
+On Fri, Jun 14, 2019 at 03:24:07PM +0300, Dmitry Osipenko wrote:
+> 14.06.2019 13:47, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The rating is parameterized depending on SoC generation to make sure it
+> > takes precedence on implementations where the architected timer can't be
+> > used. This rating is already used for the clock event device. Use the
+> > same rating for the clock source to be consistent.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/clocksource/timer-tegra.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/ti=
+mer-tegra.c
+> > index f6a8eb0d7322..e6608141cccb 100644
+> > --- a/drivers/clocksource/timer-tegra.c
+> > +++ b/drivers/clocksource/timer-tegra.c
+> > @@ -318,7 +318,7 @@ static int __init tegra_init_timer(struct device_no=
+de *np, bool tegra20,
+> >  	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
+> > =20
+> >  	ret =3D clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+> > -				    "timer_us", TIMER_1MHz, 300, 32,
+> > +				    "timer_us", TIMER_1MHz, rating, 32,
+> >  				    clocksource_mmio_readl_up);
+> >  	if (ret)
+> >  		pr_err("failed to register clocksource: %d\n", ret);
+> >=20
+>=20
+> Looks good. Although, could you please clarify whether arch-timer stops o=
+n T210 when CPU
+> enters deepest (powerdown) idle state? I'm starting to lose track a bit a=
+lready. Because
+> if arch-timer stops in the deepest idle state, then it's a bit odd that J=
+oseph didn't add
+> the clocksource for T210 in the first place and v5.1 probably shouldn't w=
+ork well because
+> of that already.
 
-This one is indeed a bit more trickier. Probably another alternative could be to keep GIC
-interrupt disabled while no transfer is performed, then you'll have to request interrupt
-in a disabled state using IRQ_NOAUTOEN flag.
+Yes, the architected timer doesn't work across an SC7 (which is what the
+deepest idle state is called on Tegra210) transition, hence why we can't
+use it as a suspend clocksource. I actually sent out a patch to do that,
+earlier.
 
-And yes, that all should be a separate changes if you're going to implement them.
+And yes, it's entirely possible that v5.1 doesn't work in this regard,
+but we're not noticing that because we don't have suspend/resume support
+for Tegra210 anyway. There are a couple of missing pieces that we need
+in order to make it work.
+
+This change in particular is only going to affect the CPU idle state
+(CC7). Since the architected timer doesn't survive that either, we need
+the Tegra timer to be preferred over the architected timer for normal
+operation.
+
+All of these issues go away on Tegra186 and later, where the architected
+timer is in an always-on partition and has a PLL that remains on during
+SC7 (and CC7).
+
+Thierry
+
+--idY8LE8SD6/8DnRI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0Dn6kACgkQ3SOs138+
+s6GWiBAAkYEeolDw2tllrVQFDf/ZmeLxHHy6pAh9DsxdalcYjpX8Twg1q3rUnVut
+beWoisjLjgGnPeEDpATd8Gth0SK4dF65dVsNlhzJR/o+VhZ60XWrCQTvGWtnK0p+
+IPfLDwHebxymb/d7iYfNde8mWXSvT4kFjcgx0g3H3c3lVRlWgTqqCmzMuV2EbbUT
+fspE5pSsn5dce8E81ncb98medX7BNEHPZId0QsCnebZG6d2O5VWNkvn2fJSPMvor
+SckKEY4E4zmth55mSxmJoIW3oZlwRpU34DvhyxocyfvLxEu7dz4co4w59oFPInpc
+QUXifr71D0IcwUqvT9I8Q+AAsXMuhG01zBv7s/VmHrN5t6t02QBE0OScHHkoaiWI
+jxcpKOJsfMbVt7z4ot7jcq7TbXPANsisZjBlYPbDtVzx4qfRd0qhrkuvI0ha3Abs
++0x9aLCwhMmS5JqHPCnkcD2+1tviLwqL5D6oRMWFUBDQbRsYD312sdSQx0cNlImU
+tPYrSusbKmoh9gJKeRIMgHkA2kITLeM7VqwQOWNsow9fF2BJ6yjU99+ynfZN+qKs
+1rJgZkkV2XE7yCMemQeZaNSHguL+7hdk2vAWdxWEwXjCLruv5iN4k6U+UOMPStJS
+C1Nbqt6h9/NjkT/6iSKsZhW3lx/nMqnYEJg6Nt+2G/hmJnsL+F0=
+=DrMZ
+-----END PGP SIGNATURE-----
+
+--idY8LE8SD6/8DnRI--
