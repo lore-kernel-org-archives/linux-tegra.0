@@ -1,43 +1,40 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V1] firmware: tegra: early resume bpmp
-Date: Fri, 14 Jun 2019 05:31:39 -0700
-Message-ID: <1560515499-1015-1-git-send-email-bbiswas@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 2/2] rtc: tegra: Implement suspend clock source
+Date: Fri, 14 Jun 2019 15:35:14 +0300
+Message-ID: <d3de8c42-3718-d87d-3c38-af18c671036c@gmail.com>
+References: <20190614104747.19712-1-thierry.reding@gmail.com>
+ <20190614104747.19712-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190614104747.19712-2-thierry.reding@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Sivaram Nair <sivaramn@nvidia.com>, Allison Randal <allison@lohutok.net>, Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bitan Biswas <bbiswas@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Early resume Tegra bpmp to fix Xavier clock rate error as follows:
-[  159.017101] of_serial 3110000.serial: calling platform_pm_resume+0x0/0x58 @ 317, parent: cbb
-[  159.025501] of_serial 3110000.serial: platform_pm_resume+0x0/0x58 returned 0 after 14 usecs
-[  159.033694] tegra-i2c 31c0000.i2c: calling platform_pm_resume+0x0/0x58 @ 317, parent: cbb
-[  159.042254] tegra-i2c 31c0000.i2c: failed changing clock rate: -22
-[  159.048216] PM: dpm_run_callback(): platform_pm_resume+0x0/0x58 returns -22
-[  159.055553] tegra-i2c 31c0000.i2c: platform_pm_resume+0x0/0x58 returned -22 after 13072 usecs
-[  159.063875] PM: Device 31c0000.i2c failed to resume: error -22
+14.06.2019 13:47, Thierry Reding пишет:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The suspend clock source for Tegra210 and earlier is currently
+> implemented in the Tegra timer driver. However, the suspend clock source
+> code accesses registers that are part of the RTC hardware block, so both
+> can step on each others' toes. In practice this isn't an issue, but
+> there is no reason why the RTC driver can't implement the clock source,
+> so move the code over to the tegra-rtc driver.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/firmware/tegra/bpmp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index dd775e8..de09036 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -811,7 +811,9 @@ static int __maybe_unused tegra_bpmp_resume(struct device *dev)
- 		return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(tegra_bpmp_pm_ops, NULL, tegra_bpmp_resume);
-+const struct dev_pm_ops tegra_bpmp_pm_ops = {
-+	.resume_early = tegra_bpmp_resume
-+};
- 
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
-     IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
--- 
-2.7.4
+[snip]
+
+> +static struct tegra_rtc_info *to_tegra_rtc(struct clocksource *clksrc)
+> +{
+> +	return container_of(clksrc, struct tegra_rtc_info, clksrc);
+> +}
+
+Shouldn't hurt to inline this function explicitly because I assume that it won't get
+inlined with a certain kernel configurations, like with enabled ftracing for example.
