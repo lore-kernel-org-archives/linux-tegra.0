@@ -1,82 +1,60 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1] firmware: tegra: early resume bpmp
-Date: Fri, 14 Jun 2019 17:48:27 +0200
-Message-ID: <20190614154827.GA26922@ulmo>
-References: <1560515499-1015-1-git-send-email-bbiswas@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 3/6] clocksource/drivers/tegra: Set and use timer's
+ period
+Date: Fri, 14 Jun 2019 16:48:32 +0100
+Message-ID: <ac8a1da8-9b82-3d5a-5fa6-0c1cc7f627f1@nvidia.com>
+References: <20190610164400.11830-1-digetx@gmail.com>
+ <20190610164400.11830-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1560515499-1015-1-git-send-email-bbiswas@nvidia.com>
+In-Reply-To: <20190610164400.11830-4-digetx@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bitan Biswas <bbiswas@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Sivaram Nair <sivaramn@nvidia.com>, Allison Randal <allison@lohutok.net>, Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jun 14, 2019 at 05:31:39AM -0700, Bitan Biswas wrote:
-> Early resume Tegra bpmp to fix Xavier clock rate error as follows:
-> [  159.017101] of_serial 3110000.serial: calling platform_pm_resume+0x0/0=
-x58 @ 317, parent: cbb
-> [  159.025501] of_serial 3110000.serial: platform_pm_resume+0x0/0x58 retu=
-rned 0 after 14 usecs
-> [  159.033694] tegra-i2c 31c0000.i2c: calling platform_pm_resume+0x0/0x58=
- @ 317, parent: cbb
-> [  159.042254] tegra-i2c 31c0000.i2c: failed changing clock rate: -22
-> [  159.048216] PM: dpm_run_callback(): platform_pm_resume+0x0/0x58 return=
-s -22
-> [  159.055553] tegra-i2c 31c0000.i2c: platform_pm_resume+0x0/0x58 returne=
-d -22 after 13072 usecs
-> [  159.063875] PM: Device 31c0000.i2c failed to resume: error -22
->=20
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+On 10/06/2019 17:43, Dmitry Osipenko wrote:
+> The of_clk structure has a period field that is set up initially by
+> timer_of_clk_init(), that period value need to be adjusted for a case of
+> TIMER1-9 that are running at a fixed rate that doesn't match the clock's
+> rate. Note that the period value is currently used only by some of the
+> clocksource drivers internally and hence this is just a minor cleanup
+> change that doesn't fix anything.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/firmware/tegra/bpmp.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index dd775e8..de09036 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -811,7 +811,9 @@ static int __maybe_unused tegra_bpmp_resume(struct de=
-vice *dev)
->  		return 0;
->  }
-> =20
-> -static SIMPLE_DEV_PM_OPS(tegra_bpmp_pm_ops, NULL, tegra_bpmp_resume);
-> +const struct dev_pm_ops tegra_bpmp_pm_ops =3D {
-> +	.resume_early =3D tegra_bpmp_resume
-> +};
+>  drivers/clocksource/timer-tegra.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+> index 810b4e7435cf..646b3530c2d2 100644
+> --- a/drivers/clocksource/timer-tegra.c
+> +++ b/drivers/clocksource/timer-tegra.c
+> @@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
+>  static int tegra_timer_set_periodic(struct clock_event_device *evt)
+>  {
+>  	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
+> +	unsigned long period = timer_of_period(to_timer_of(evt));
+>  
+> -	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
+> -		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
+> +	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
+>  		       reg_base + TIMER_PTV);
+>  
+>  	return 0;
+> @@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>  		cpu_to->clkevt.rating = rating;
+>  		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+>  		cpu_to->of_base.base = timer_reg_base + base;
+> +		cpu_to->of_clk.period = DIV_ROUND_UP(rate, HZ);
 
-I've changed this to be static while applying to for-5.3/firmware.
+Any reason you made this a round-up?
 
-Thanks,
-Thierry
+Jon
 
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DwcgACgkQ3SOs138+
-s6FrSA//YUjeQWiQlGeMcSwux1wp1dvL2rCYk6E9sAfygd3R6A82DGnwaus1D059
-3mxsdy6EM2cevn8/nGzE9iBr3W0DuLhQq9PSKQmzhpB0vbBB95MrgJsuz610qFA2
-oCErRcoIq1dSP84mjmdf+JyOoYuO3xfclatViHtpmQMFxiHivmLZOdnA4gRfZG+4
-jIDAOCPwl+XHPAM3B57ziuW/vP03+FD3bf3/ZWQhoRaTSJyXAg0fbnZKM/CtE8sO
-8DYSx8w2zYjC4O7UhUo/TLzF8rJVtztxN+skWfkGiSomOuCmbbk1P+WasWwnmWbK
-8YxS73oiGHY5OU44UXFaB/v3G/khoAdFq1iPLRyO1ne8NGrvD85FdturGN341Uhd
-1V9ptlMApXxlC4wi2ICb7MiunBb4EsNDh/Gm9TXyUgc6vwSJTkyPQDrnX1NePd/L
-BOoE71cZOHMp1wKwHOwiwuXpr5py71BPB/Zcn7P1KphFUlC3IEDoXLP2NttltizB
-glhG25km0jZO5EV/h3HFgYncVVf2Z1FR6i9Q7WkljtzJNvPGcZTJ37rF8A6q7avw
-dHJXAPXfITIIxH063H0LbWKo8ium2TYSo3hVhxLo8YSO9SlpldPLsT8CyTufejF6
-fAlL1vxehCsKl6cz5QmXnOHup9kHJFsoPo84iuV6FC9AporHFyQ=
-=BROs
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
+-- 
+nvpublic
