@@ -1,83 +1,68 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Add HWMON INA3221 support
-Date: Fri, 14 Jun 2019 18:01:47 +0200
-Message-ID: <20190614160147.GA28409@ulmo>
-References: <20190424181010.28950-1-nicoleotsuka@gmail.com>
+Subject: Re: [PATCH v2] memory: tegra: Fix -Wunused-const-variable
+Date: Fri, 14 Jun 2019 18:02:34 +0200
+Message-ID: <20190614160234.GB28409@ulmo>
+References: <CAKwvOdn930hhHcnCA9arJ5=9SsT-6BfFC_1punmUZX2xWM-Hnw@mail.gmail.com>
+ <20190613182610.238801-1-nhuck@google.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1924714368175975404=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190424181010.28950-1-nicoleotsuka@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: linux-tegra@vger.kernel.org, catalin.marinas@arm.com, treding@nvidia.com, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190613182610.238801-1-nhuck@google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nathan Huckleberry <nhuck@google.com>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1924714368175975404==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
-Content-Disposition: inline
-
-
---NzB8fVQJ5HfG6fxh
+--i0/AhcQY5QxfSsSZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 24, 2019 at 11:10:10AM -0700, Nicolin Chen wrote:
-> Tegra186 board under arm64 is using this device, according to
-> its dts file. So this patch enables its driver with a "=3Dm" as
-> the other HWMON drivers.
+On Thu, Jun 13, 2019 at 11:26:10AM -0700, Nathan Huckleberry wrote:
+> Clang produces the following warning
 >=20
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> drivers/memory/tegra/tegra124.c:36:28: warning: unused variable
+> 'tegra124_mc_emem_regs' [-Wunused-const-variable]
+> static const unsigned long tegra124_mc_emem_regs[] =3D {
+>                            ^
+>=20
+> The only usage of this variable is from within an ifdef.
+> It seems logical to move the variable into the ifdef as well.
+>=20
+> Cc: clang-built-linux@googlegroups.com
+> Link: https://github.com/ClangBuiltLinux/linux/issues/526
+> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
 > ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+> Changes from v1 -> v2:
+> * Moved definition of tegra124_mc_emem_regs into existing ifdef
+>  drivers/memory/tegra/tegra124.c | 44 ++++++++++++++++-----------------
+>  1 file changed, 22 insertions(+), 22 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---NzB8fVQJ5HfG6fxh
+--i0/AhcQY5QxfSsSZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DxOoACgkQ3SOs138+
-s6GVwg/+P/AvfzdpZqk+ZPGxa7bpI+hMZJWx608PHZLFziGdVT6L4TCTbkitOnA2
-lsrSkOXjfjVBbxe+wz9zHRYjlQuTkeqNJ7qa/q7X0IDXn3L238gOz1Cw34IBu+Uq
-GJUlHtzqAIMd4QoISPKUkEn2QxAGDJyxFq9XPOCgxcwwfmLK7J+n0qdfSrX86Azc
-T8itykniaIepsFW4T85KUAd+D4ORat7sns5gpWNKqGG5QqCJJDLVURK8pDflqltz
-x5EsWdPy7WrPV58CCj8dMKd8xO5FM7qUUlzP3/vQILQiXza9npEa6Okg5tTd1Yo8
-Pso2qjA1JsoO2nxMYU1MOohveyuuuk0E31imHNf5Uem5x/ThUPWZQdXi5q5OMKl8
-o8miSKjm0IFHE9mAgM/lQ1kGmD2s1eNpl90uObQFcqHeoLT6/yNlIvNLP5Ij7WW2
-HtHG14Jbd2Bmax5OY8AFI8DPFqLRAJsyI0fAFFveZ0dSsn4fo08WAwbjRK+Ps0Ue
-+94KsuaTg7Ig5aZ9fhStz9LGgw6lUG64gA/DjgQWSP0Q8f1Vr1LgB4T43x2tZ7Id
-x95bl3PkZOavjeuGjV5FFV4K+foMkQyUQDHKFx2VimGo4ZH6xv0HNa+X9D4XeHx6
-GD4tm6nhf2PQ9H1Oc7Rt/plmwhEm42sN+8DJAPpigq22j3i0bAE=
-=eXs8
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DxRoACgkQ3SOs138+
+s6Hufw/9Ec9XB2EyJYZEW3fBZ6EdkkTZ89eyLwpbp/7Twoh20GQItlUGEJZFNAvK
+enZi2pOoGHMFp5RDmGdpwwk11a4f4e6h4LYGAAko1vg3LOZ6PKSNixTe1AFJKBI3
+0H/CLUARvTEeM8450C8VZnFDIb9Il8xByUY/d/hHYDgHsBFWLu8zTvBmsH23qVRZ
+DfUbVsuPEWM2Q4kxq7unVx/RME1k6GJZw0wCWRy94q/sj6AjgBOCTPteoH5DSWF6
+paGobJgw6AZQo2pjTUi7w159dvqN5SJwn59FMwEbiqtv0yVuEfb1KHSFIgp1AwSL
+34U4MchsRD7EnMF9DDlFnva76qfXCME/oB5Kux+GZXqJjrCaIwlcEEmqSI10KWC8
+hv9u1Ss2aBdWE9vZwD2ykoanyz3BLPeVquVqFz0RXS+tQ9D1pIr4E6INEsPzASM1
+xAsp3E7eC+OdWsdOfkogWh/RlW3OFRIIXkBdqaXlgFzizpztruIvDTVnArDTXUbI
+F6ckVy3BzhZnnWQQI6UxMzzSRqDXy9PyAxBg6ErroXTu6QjBQ3psREQ3KTICPMNW
+ALMOMHJamxvapi6K1Ghcqty3m8wjoSXcMjB6D382lQ6ojHmxMzxQ2CjVAD2OmD9a
+G3mdQpg8wk0jmxY3ZgYL/T/tz228kvs6HIEcFU9bvPt7Ir7QcnE=
+=KQH8
 -----END PGP SIGNATURE-----
 
---NzB8fVQJ5HfG6fxh--
-
-
---===============1924714368175975404==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1924714368175975404==--
+--i0/AhcQY5QxfSsSZ--
