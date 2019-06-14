@@ -1,87 +1,83 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V1 2/2] mailbox: tegra: avoid resume NULL mailboxes
-Date: Fri, 14 Jun 2019 17:52:10 +0200
-Message-ID: <20190614155210.GC26922@ulmo>
-References: <1560515734-2085-1-git-send-email-bbiswas@nvidia.com>
- <1560515734-2085-2-git-send-email-bbiswas@nvidia.com>
+Subject: Re: [PATCH] arm64: defconfig: Add HWMON INA3221 support
+Date: Fri, 14 Jun 2019 18:01:47 +0200
+Message-ID: <20190614160147.GA28409@ulmo>
+References: <20190424181010.28950-1-nicoleotsuka@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z4+8/lEcDcG5Ke9S"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1560515734-2085-2-git-send-email-bbiswas@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bitan Biswas <bbiswas@nvidia.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1924714368175975404=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190424181010.28950-1-nicoleotsuka@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: linux-tegra@vger.kernel.org, catalin.marinas@arm.com, treding@nvidia.com, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---z4+8/lEcDcG5Ke9S
+--===============1924714368175975404==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Disposition: inline
+
+
+--NzB8fVQJ5HfG6fxh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2019 at 05:35:34AM -0700, Bitan Biswas wrote:
-> If Tegra hsp device tree does not have 'shared irqs',
+On Wed, Apr 24, 2019 at 11:10:10AM -0700, Nicolin Chen wrote:
+> Tegra186 board under arm64 is using this device, according to
+> its dts file. So this patch enables its driver with a "=3Dm" as
+> the other HWMON drivers.
+>=20
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-s/hsp/HSP/, otherwise looks good.
+Applied, thanks.
 
 Thierry
 
-> mailboxes pointer is NULL. Add non-NULL HSP mailboxes
-> check in resume callback before tegra_hsp_mailbox_startup()
-> call and prevent NULL pointer exception.
->=20
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> ---
->  drivers/mailbox/tegra-hsp.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> index f147374..a11fb1c 100644
-> --- a/drivers/mailbox/tegra-hsp.c
-> +++ b/drivers/mailbox/tegra-hsp.c
-> @@ -782,11 +782,13 @@ static int __maybe_unused tegra_hsp_noirq_resume(st=
-ruct device *dev)
->  			tegra_hsp_doorbell_startup(db->channel.chan);
->  	}
-> =20
-> -	for (i =3D 0; i < hsp->num_sm; i++) {
-> -		struct tegra_hsp_mailbox *mb =3D &hsp->mailboxes[i];
-> +	if (hsp->mailboxes) {
-> +		for (i =3D 0; i < hsp->num_sm; i++) {
-> +			struct tegra_hsp_mailbox *mb =3D &hsp->mailboxes[i];
-> =20
-> -		if (mb->channel.chan->cl)
-> -			tegra_hsp_mailbox_startup(mb->channel.chan);
-> +			if (mb->channel.chan->cl)
-> +				tegra_hsp_mailbox_startup(mb->channel.chan);
-> +		}
->  	}
-> =20
->  	return 0;
-> --=20
-> 2.7.4
->=20
-
---z4+8/lEcDcG5Ke9S
+--NzB8fVQJ5HfG6fxh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DwqoACgkQ3SOs138+
-s6HJehAAlPsKTuPsEIq3BYzsUwtxA2ZtjCFy0N/+cOom6PoIlmFZQ3ZqVVYmVGUt
-6sP7L8VoUzcgP1LXassF3wiTLv7/Il+hWM9SxHN5k8a1UBEnij4vxtt13/vIirLh
-FfeV5AyZZ7FmgsyGm/ZM41evcYZg/WM6JKXaHGMjbxMhxXk2sQxH98WY2urTSxoz
-rb2+MRrTQu5jrbUiF//cjSrULA6tcldY567nFyFPTRTu8e+jtqGna1lMDIrNHw5q
-n3SR3Z5sOobv5R5qcp4SBBrHLRMPaiIPiGrLnUccLDsxrjYzeII51Ij2ib5y4osZ
-BfALmCAAy06DoJWoeTLH706nEv0hIeXTYTQSgWgY2Jqzt68beW0pOc59KFjcn/fr
-4yK51+AqGwwYNfnlVSp1WdJD4eXdahHzBWFpBzr9koHpsYUeTnUfMNfrZRHsOPJb
-9gWbFUmUj7O7QzTdB5coMcmhSi9bpGd9B5/9Lrk7S/fKRUQfI6YhjHRhaZTG3R80
-7Yg5p133EU334sl3K6i91ekysja57vJDlQngieJzGWRZRItjMOSI+l2PxsGXD4Z+
-KTXVl57gbB6Zl5W44CWfAo0N/+UblHIfLn81x6hmAuD5G3ewHVj0CcG0ccyn2Cem
-H1NjV3NH0goy6jG2v/XfL88I38u2Hm9ZG03yK80lJekkZ+nS5OY=
-=ErAC
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DxOoACgkQ3SOs138+
+s6GVwg/+P/AvfzdpZqk+ZPGxa7bpI+hMZJWx608PHZLFziGdVT6L4TCTbkitOnA2
+lsrSkOXjfjVBbxe+wz9zHRYjlQuTkeqNJ7qa/q7X0IDXn3L238gOz1Cw34IBu+Uq
+GJUlHtzqAIMd4QoISPKUkEn2QxAGDJyxFq9XPOCgxcwwfmLK7J+n0qdfSrX86Azc
+T8itykniaIepsFW4T85KUAd+D4ORat7sns5gpWNKqGG5QqCJJDLVURK8pDflqltz
+x5EsWdPy7WrPV58CCj8dMKd8xO5FM7qUUlzP3/vQILQiXza9npEa6Okg5tTd1Yo8
+Pso2qjA1JsoO2nxMYU1MOohveyuuuk0E31imHNf5Uem5x/ThUPWZQdXi5q5OMKl8
+o8miSKjm0IFHE9mAgM/lQ1kGmD2s1eNpl90uObQFcqHeoLT6/yNlIvNLP5Ij7WW2
+HtHG14Jbd2Bmax5OY8AFI8DPFqLRAJsyI0fAFFveZ0dSsn4fo08WAwbjRK+Ps0Ue
++94KsuaTg7Ig5aZ9fhStz9LGgw6lUG64gA/DjgQWSP0Q8f1Vr1LgB4T43x2tZ7Id
+x95bl3PkZOavjeuGjV5FFV4K+foMkQyUQDHKFx2VimGo4ZH6xv0HNa+X9D4XeHx6
+GD4tm6nhf2PQ9H1Oc7Rt/plmwhEm42sN+8DJAPpigq22j3i0bAE=
+=eXs8
 -----END PGP SIGNATURE-----
 
---z4+8/lEcDcG5Ke9S--
+--NzB8fVQJ5HfG6fxh--
+
+
+--===============1924714368175975404==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1924714368175975404==--
