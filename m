@@ -1,148 +1,94 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] clocksource: tegra: Use rating when registering
- clock source
-Date: Fri, 14 Jun 2019 16:55:27 +0200
-Message-ID: <20190614145527.GJ15526@ulmo>
-References: <20190614104747.19712-1-thierry.reding@gmail.com>
- <8ff5d2da-907e-611c-ec82-bbe50197c2f4@gmail.com>
- <20190614132253.GE15526@ulmo>
- <3c339341-e77a-38aa-702a-1aef6c229eed@gmail.com>
- <20190614135353.GH15526@ulmo>
- <286cb0b7-1c8a-1a61-517e-1a9eee08e614@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
+ granularity
+Date: Fri, 14 Jun 2019 16:21:18 +0100
+Message-ID: <5fbe4374-cc9a-8212-017e-05f4dee64443@nvidia.com>
+References: <20190613210849.10382-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NqSa+Xr3J/G6Hhls"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <286cb0b7-1c8a-1a61-517e-1a9eee08e614@gmail.com>
+In-Reply-To: <20190613210849.10382-1-digetx@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---NqSa+Xr3J/G6Hhls
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 13/06/2019 22:08, Dmitry Osipenko wrote:
+> Tegra's APB DMA engine updates words counter after each transferred burst
+> of data, hence it can report transfer's residual with more fidelity which
+> may be required in cases like audio playback. In particular this fixes
+> audio stuttering during playback in a chromiuim web browser. The patch is
+> based on the original work that was made by Ben Dooks [1]. It was tested
+> on Tegra20 and Tegra30 devices.
+> 
+> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
+> 
+> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-------
+>  1 file changed, 28 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 79e9593815f1..c5af8f703548 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+>  	return 0;
+>  }
+>  
+> +static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
+> +					      struct tegra_dma_sg_req *sg_req,
+> +					      struct tegra_dma_desc *dma_desc,
+> +					      unsigned int residual)
+> +{
+> +	unsigned long status, wcount = 0;
+> +
+> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
+> +		return residual;
+> +
+> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
+> +		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
+> +
+> +	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+> +
+> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
+> +		wcount = status;
+> +
+> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
+> +		return residual - sg_req->req_len;
+> +
+> +	return residual - get_current_xferred_count(tdc, sg_req, wcount);
+> +}
+> +
+>  static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+>  	dma_cookie_t cookie, struct dma_tx_state *txstate)
+>  {
+>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+> +	struct tegra_dma_sg_req *sg_req = NULL;
+>  	struct tegra_dma_desc *dma_desc;
+> -	struct tegra_dma_sg_req *sg_req;
+>  	enum dma_status ret;
+>  	unsigned long flags;
+>  	unsigned int residual;
+> @@ -838,6 +862,8 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+>  		residual = dma_desc->bytes_requested -
+>  			   (dma_desc->bytes_transferred %
+>  			    dma_desc->bytes_requested);
+> +		residual = tegra_dma_update_residual(tdc, sg_req, dma_desc,
+> +						     residual);
 
-On Fri, Jun 14, 2019 at 05:02:45PM +0300, Dmitry Osipenko wrote:
-> 14.06.2019 16:53, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, Jun 14, 2019 at 04:29:17PM +0300, Dmitry Osipenko wrote:
-> >> 14.06.2019 16:22, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> On Fri, Jun 14, 2019 at 03:24:07PM +0300, Dmitry Osipenko wrote:
-> >>>> 14.06.2019 13:47, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>>> From: Thierry Reding <treding@nvidia.com>
-> >>>>>
-> >>>>> The rating is parameterized depending on SoC generation to make sur=
-e it
-> >>>>> takes precedence on implementations where the architected timer can=
-'t be
-> >>>>> used. This rating is already used for the clock event device. Use t=
-he
-> >>>>> same rating for the clock source to be consistent.
-> >>>>>
-> >>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> >>>>> ---
-> >>>>>  drivers/clocksource/timer-tegra.c | 2 +-
-> >>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>
-> >>>>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksourc=
-e/timer-tegra.c
-> >>>>> index f6a8eb0d7322..e6608141cccb 100644
-> >>>>> --- a/drivers/clocksource/timer-tegra.c
-> >>>>> +++ b/drivers/clocksource/timer-tegra.c
-> >>>>> @@ -318,7 +318,7 @@ static int __init tegra_init_timer(struct devic=
-e_node *np, bool tegra20,
-> >>>>>  	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
-> >>>>> =20
-> >>>>>  	ret =3D clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
-> >>>>> -				    "timer_us", TIMER_1MHz, 300, 32,
-> >>>>> +				    "timer_us", TIMER_1MHz, rating, 32,
-> >>>>>  				    clocksource_mmio_readl_up);
-> >>>>>  	if (ret)
-> >>>>>  		pr_err("failed to register clocksource: %d\n", ret);
-> >>>>>
-> >>>>
-> >>>> Looks good. Although, could you please clarify whether arch-timer st=
-ops on T210 when CPU
-> >>>> enters deepest (powerdown) idle state? I'm starting to lose track a =
-bit already. Because
-> >>>> if arch-timer stops in the deepest idle state, then it's a bit odd t=
-hat Joseph didn't add
-> >>>> the clocksource for T210 in the first place and v5.1 probably should=
-n't work well because
-> >>>> of that already.
-> >>>
-> >>> Yes, the architected timer doesn't work across an SC7 (which is what =
-the
-> >>> deepest idle state is called on Tegra210) transition, hence why we ca=
-n't
-> >>> use it as a suspend clocksource. I actually sent out a patch to do th=
-at,
-> >>> earlier.
-> >>>
-> >>> And yes, it's entirely possible that v5.1 doesn't work in this regard,
-> >>> but we're not noticing that because we don't have suspend/resume supp=
-ort
-> >>> for Tegra210 anyway. There are a couple of missing pieces that we need
-> >>> in order to make it work.
-> >>>
-> >>> This change in particular is only going to affect the CPU idle state
-> >>> (CC7). Since the architected timer doesn't survive that either, we ne=
-ed
-> >>> the Tegra timer to be preferred over the architected timer for normal
-> >>> operation.
-> >>>
-> >>> All of these issues go away on Tegra186 and later, where the architec=
-ted
-> >>> timer is in an always-on partition and has a PLL that remains on duri=
-ng
-> >>> SC7 (and CC7).
-> >>
-> >> Thank you very much for the clarification. But then what about the
-> >> sched_clock? I suppose sched_clock will suffer on T210 as well and it's
-> >> a bit trickier case because apparently arch-timer always wins since it
-> >> has a higher precision. I guess the best solution will be to just bail
-> >> out from arch-timer's driver probe in a case of T210.
-> >>
-> >> if (of_machine_is_compatible("nvidia,tegra210"))
-> >> 	return 0.
-> >=20
-> > I don't think there's any issue with the scheduler clock on Tegra210.
-> > Before the CPU can be turned off, all tasks scheduled on that CPU have
-> > to be migrated to another CPU, right? Conversely, before any tasks can
-> > be scheduled on a CPU that CPU needs to be brought online, at which
-> > point the architected timer should work fine again.
->=20
-> Is SC7 a CPU-idle state that cpuidle driver may enter or it's a
-> system-wide suspend state? It's still not clear to me.
+I had a quick look at this, I am not sure that we want to call
+tegra_dma_update_residual() here for cases where the dma_desc is on the
+free_dma_desc list. In fact, couldn't this be simplified a bit for case
+where the dma_desc is on the free list? In that case I believe that the
+residual should always be 0.
 
-SC7 is the system-wide suspend state. When entered pretty much
-everything in the SoC is turned off. The CPU idle state is called CC7,
-but I think we only expose that via PSCI. However, I'm not sure we have
-any extensive testing for that. I'll have to check that.
+Cheers
+Jon
 
-Thierry
-
---NqSa+Xr3J/G6Hhls
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DtVwACgkQ3SOs138+
-s6HmoA/7BZqvHAtXYmKwnc+4h3cfk+VmKRx+C9VyVaUSwc1clAfoeBtRBF9IGMX1
-BXyBjEycXMDzooVWokRO889MHMk1hvSaRCwaHYcsNGpFPjtL0/nxGUTWaeGCsZcW
-g7G4mYczxob1gSQj7k/sZw1PwSopLUZfGms5Z1BT3bM3rCaEsBZBjbIs4Dh2pgrx
-BeSqsnWDbpiXBqq+ds2gD8WYxP+m6t37mScluHe2ZYwXVN5piw11svOBhgdDDULj
-m2ewotvyElyw76x8PJB5NJwcaipOSV9urhKQ4Ifz3yAcjDakYJ8QmutKXjjEkN5P
-Fr/H3t57fsta8/W361ddJnY959TRb63o4qViHoNB9JNxgzG4dkXWlsnz7QqBLo4Y
-pr8GGZUgyoYshhFXtBdbvSjR+3CPZT0E+jvIUlmVfG7HEKoUaXdzuTfWlHCdUGxw
-jW94oq0Le/x/b4ZcpzIiC/m192LqM3YBuqzUeyZTyvKEJJ5Hl182sCt/ZLIIN50G
-lzXLI6bnVTlEf5ECwhdax6pDzTcfQtePBqmoZqEkPDBjmN4i8/CXdQ8TAmnPFCGR
-fE6fG0mAj4Qdl1uYNd1+wDX/dU84etbhvq0Ze9kxiZVNtQG4R3x8/UKNEQSlnxLr
-lHn5w6Ioz8VxQe4lDE3p65kmc1MXWtoy4bassDdWXO6DnAggH6M=
-=TiYy
------END PGP SIGNATURE-----
-
---NqSa+Xr3J/G6Hhls--
+-- 
+nvpublic
