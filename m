@@ -1,125 +1,96 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V6] i2c: tegra: remove BUG, BUG_ON
-Date: Fri, 14 Jun 2019 08:50:38 -0700
-Message-ID: <1560527438-30150-1-git-send-email-bbiswas@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V1 1/2] mailbox: tegra: hsp: add noirq resume
+Date: Fri, 14 Jun 2019 17:50:41 +0200
+Message-ID: <20190614155041.GB26922@ulmo>
+References: <1560515734-2085-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1560515734-2085-1-git-send-email-bbiswas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
+To: Bitan Biswas <bbiswas@nvidia.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
-as needed. Remove BUG() and mask Rx interrupt similar as Tx
-for message fully sent case. Add WARN_ON_ONCE check
-for non-zero rx_fifo_avail in tegra_i2c_empty_rx_fifo()
-after all processing. Error handling in tegra_i2c_empty_rx_fifo
-caller is also added.
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 46 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 8 deletions(-)
+--7ZAtKRhVyVSsbBD2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 4dfb4c1..26a7c8c 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -73,6 +73,7 @@
- #define I2C_ERR_NO_ACK				BIT(0)
- #define I2C_ERR_ARBITRATION_LOST		BIT(1)
- #define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
-+#define I2C_ERR_UNEXPECTED_STATUS		BIT(3)
- 
- #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
- #define PACKET_HEADER0_PACKET_ID_SHIFT		16
-@@ -515,15 +516,23 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	 * prevent overwriting past the end of buf
- 	 */
- 	if (rx_fifo_avail > 0 && buf_remaining > 0) {
--		BUG_ON(buf_remaining > 3);
-+		/* buf_remaining > 3 check not needed as rx_fifo_avail == 0
-+		 * when (words_to_transfer was > rx_fifo_avail) earlier
-+		 * in this function
-+		 */
- 		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
- 		val = cpu_to_le32(val);
- 		memcpy(buf, &val, buf_remaining);
- 		buf_remaining = 0;
- 		rx_fifo_avail--;
- 	}
-+	if (WARN_ON_ONCE(rx_fifo_avail))
-+		return -EINVAL;
- 
--	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
-+	/* buf_remaining > 0 at this point can only have rx_fifo_avail == 0
-+	 * as this corresponds to (words_to_transfer was > rx_fifo_avail)
-+	 * case earlier in this function
-+	 */
- 	i2c_dev->msg_buf_remaining = buf_remaining;
- 	i2c_dev->msg_buf = buf;
- 
-@@ -581,7 +590,10 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	 * boundary and fault.
- 	 */
- 	if (tx_fifo_avail > 0 && buf_remaining > 0) {
--		BUG_ON(buf_remaining > 3);
-+		/* buf_remaining > 3 check not needed as tx_fifo_avail == 0
-+		 * when (words_to_transfer was > tx_fifo_avail) earlier
-+		 * in this function for non-zero words_to_transfer
-+		 */
- 		memcpy(&val, buf, buf_remaining);
- 		val = le32_to_cpu(val);
- 
-@@ -811,6 +823,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	u32 status;
- 	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	struct tegra_i2c_dev *i2c_dev = dev_id;
-+	int err_val;
- 
- 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
- 
-@@ -847,10 +860,21 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 
- 	if (!i2c_dev->is_curr_dma_xfer) {
- 		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
--			if (i2c_dev->msg_buf_remaining)
--				tegra_i2c_empty_rx_fifo(i2c_dev);
--			else
--				BUG();
-+			err_val = tegra_i2c_empty_rx_fifo(i2c_dev);
-+			if ((!(i2c_dev->msg_buf_remaining)) &&
-+			    (!(status & I2C_INT_PACKET_XFER_COMPLETE)) &&
-+			    err_val) {
-+				/*
-+				 * Overflow error condition: message fully sent,
-+				 * with no XFER_COMPLETE interrupt but hardware
-+				 * asks to transfer more.
-+				 */
-+				tegra_i2c_mask_irq(i2c_dev,
-+						   I2C_INT_RX_FIFO_DATA_REQ);
-+				i2c_dev->msg_err |=
-+					I2C_ERR_UNEXPECTED_STATUS;
-+				goto err;
-+			}
- 		}
- 
- 		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
-@@ -876,7 +900,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
- 		if (i2c_dev->is_curr_dma_xfer)
- 			i2c_dev->msg_buf_remaining = 0;
--		BUG_ON(i2c_dev->msg_buf_remaining);
-+		/* Underflow error condition: XFER_COMPLETE before message
-+		 * fully sent.
-+		 */
-+		if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) {
-+			i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
-+			goto err;
-+		}
- 		complete(&i2c_dev->msg_complete);
- 	}
- 	goto done;
--- 
-2.7.4
+On Fri, Jun 14, 2019 at 05:35:33AM -0700, Bitan Biswas wrote:
+> Add noirq resume instead of resume callback for Tegra HSP. Tegra HSP
+> resume needs tegra_hsp_doorbell_startup() call to fix timeout error for
+> tegra_bpmp_transfer() during genpd resume noirq on jetson-tx2.
+
+s/jetson-tx2/Jetson TX2/?
+
+>=20
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
+>  drivers/mailbox/tegra-hsp.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> index 91f1a0c..f147374 100644
+> --- a/drivers/mailbox/tegra-hsp.c
+> +++ b/drivers/mailbox/tegra-hsp.c
+> @@ -771,10 +771,16 @@ static int tegra_hsp_probe(struct platform_device *=
+pdev)
+>  	return 0;
+>  }
+> =20
+> -static int __maybe_unused tegra_hsp_resume(struct device *dev)
+> +static int __maybe_unused tegra_hsp_noirq_resume(struct device *dev)
+
+Maybe call this tegra_hsp_resume_noirq() to match the naming of the
+dev_pm_ops callback?
+
+>  {
+>  	struct tegra_hsp *hsp =3D dev_get_drvdata(dev);
+>  	unsigned int i;
+> +	struct tegra_hsp_doorbell *db;
+> +
+> +	list_for_each_entry(db, &hsp->doorbells, list) {
+> +		if (db && db->channel.chan)
+> +			tegra_hsp_doorbell_startup(db->channel.chan);
+> +	}
+> =20
+>  	for (i =3D 0; i < hsp->num_sm; i++) {
+>  		struct tegra_hsp_mailbox *mb =3D &hsp->mailboxes[i];
+> @@ -786,7 +792,9 @@ static int __maybe_unused tegra_hsp_resume(struct dev=
+ice *dev)
+>  	return 0;
+>  }
+> =20
+> -static SIMPLE_DEV_PM_OPS(tegra_hsp_pm_ops, NULL, tegra_hsp_resume);
+> +static const struct dev_pm_ops tegra_hsp_pm_ops =3D {
+> +	.resume_noirq   =3D tegra_hsp_noirq_resume,
+
+There seems to be two extra spaces before that =3D.
+
+Thierry
+
+--7ZAtKRhVyVSsbBD2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0DwlEACgkQ3SOs138+
+s6FF9hAAiJ4bYQf3muX8DROz4Scc57EGDwt0MelsUs6uPgSREWy1pruYby4Ynmub
+9bT2rhXcUZYDRHZTKqnwhgl1juMnbMMjfCWfjrbE68/2sX/6td5/qYhwCiUVq0uK
+4j0rlF1SgzlqIoeEWaZaVVpxiWGuh192MH1NVacIYQvJvanWhlFxJzeO9yUKX5eb
+5hDxA6MrLsU9hGx3GS8GJ64Df8mfHJOy3kZ6sACOaBY/w03oB3kU3GB6LIW3B/ck
+ds5wx6VLvrfw1OCuM0jlijd7aFM72/u3Gv6U0kGLmXhAaptOZtSYYGVCTcbKlCL6
+mwY6ryNasRgWIIk7S7Ni2ilTo9AJaHzmf4dL/XlXgPVAK7QDHKzRm3CYu5hjCmMx
+c/WBwP9Cme+/ZtI3TK/gvEBtWwdHOsLDb+kpfE8GFHCFQ2exigovGEqMy+Fscqrl
+9Vs7wGoVHFEKZafXike8rFB6otmdEhRhEh0+nFVXFmn4kqa2ZeTdsettOGRmXowR
+o0FB4D4bHESnGmPzv2DpD8ievqDM9jFy2blj762OjxwITNw3V6AtQ47Ay9IYNOz0
+L609ZNxyqi45+6PyYUkuIIj6XR0Ny/TaAHQCkzIUDMtbg4guV9qnVr9XQxytgm9H
+hnCI5uBSdK4M9nv3eFFGSsgwBnIf9sc3+Zxl12TELCvroW5MJEQ=
+=IXnu
+-----END PGP SIGNATURE-----
+
+--7ZAtKRhVyVSsbBD2--
