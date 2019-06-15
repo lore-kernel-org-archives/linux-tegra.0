@@ -1,51 +1,56 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
 Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
-Date: Fri, 14 Jun 2019 21:36:15 -0700
-Message-ID: <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
+Date: Sat, 15 Jun 2019 06:54:05 +0200
+Message-ID: <20190615045405.GA1023@kunai>
 References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
  <20190614211129.GG17899@ninjato>
+ <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190614211129.GG17899@ninjato>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
+To: Bitan Biswas <bbiswas@nvidia.com>
 Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
+--zhXaljGHf11kAtnf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/14/19 2:11 PM, Wolfram Sang wrote:
-> On Thu, Jun 06, 2019 at 10:37:47PM -0700, Bitan Biswas wrote:
->> Post suspend I2C registers have power on reset values. Before any
->> transfer initialize I2C registers to prevent I2C transfer timeout
->> and implement suspend and resume callbacks needed. Fix below errors
->> post suspend:
->>
->> 1) Tegra I2C transfer timeout during jetson tx2 resume:
->>
->> [   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @ 2939, parent: i2c-1
->> [   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
->> [   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
->> [   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
->> [   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0 returns -110
->> [   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110 after 127152 usecs
->> [   27.666194] PM: Device 1-0074 failed to resume: error -110
->>
->> 2) Tegra I2C transfer timeout error on jetson Xavier post resume.
->>
->> Remove i2c bus lock-unlock calls in resume callback as i2c_mark_adapter_*
->> (suspended-resumed) help ensure i2c core calls from client are not
->> executed before i2c-tegra resume.
->>
->> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> 
-> Applied to for-next, thanks!
-> 
-> Without a maintainer ack, this is an exception this time. Should we add
-> Dmitry as another maintainer or reviewer at least?
-> 
-I shall followup with Maintainer for ACK in future I2C tegra patches. 
-Probably maintainers or reviewers should comment here.
+
+> > Without a maintainer ack, this is an exception this time. Should we add
+> > Dmitry as another maintainer or reviewer at least?
+> >=20
+> I shall followup with Maintainer for ACK in future I2C tegra patches.
+
+This comment was not directed at you, sorry if that was not clear. It
+was more for Laxman, Thierry, Jonathan, and Dmitry (if he is
+interested).
+
+
+--zhXaljGHf11kAtnf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0EeekACgkQFA3kzBSg
+KbaVmA/+P60cfZFmp0sAAnUoP1zD8BebXSZyahwavyyZYMm/6SN157oGzQiswyXo
+OGqXYOnLVTIOW2vF1irRxSyuh2BfOeeewilxqZHkyV8HXNDW3IXdUwmQP2NmH1im
+8qo8YS4PcRWn7EfO/o+HrDr8eGP/cYpkAyFJrYl2JDb0J/pd3AQsTGnmXb7swkA8
+Eo56+5Tmvba7DSYK6brugQDSSU4uw999QnEfyCNzWleE3Yl+BlL3aAeHt9jnMJ5/
+4ZQ7K9U/3VBj2yUJDD3V0KGprgKTWMqfx1Zos8hwgSpSNn3dxB65Qa2FlijvDd/P
+mrkIFNGzzVmbaNLkxdtzdkKWckuNIAIhht5Zf+SJftDXjnAfYZjd7ddRDfqOzfz5
+3kXUa9eMER/jXTUTzqxUI9sx6/dxQHiAznT7bgT/FDIqUwIvxFx2p0xfrnAWODNY
+9pTJMnRPOV/1h41jF2QsFdFw/L2UvNX1KBEElfn+NNl6ywscs44HuzSVTWG0Oyk/
+eih/h1g/PdzQI/AyWU2aVGrwUI/x8C7CtYwolMw1WEaIljd/gZ9bpzPfu09QrB3e
+NpkILKmP2ET6FCdKhtFUwW5VG8YZl3x2opPEcYY5IaU6osyelDlucx/Lmf2QuVs4
+dJBv4ZwbpgGwr2QI0otNIV7qVRAj3e6ul04NLi2pMYw/P7DlQZM=
+=VSmd
+-----END PGP SIGNATURE-----
+
+--zhXaljGHf11kAtnf--
