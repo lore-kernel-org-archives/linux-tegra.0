@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 05/10] memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-Date: Mon, 17 Jun 2019 02:35:46 +0300
-Message-ID: <20190616233551.6838-6-digetx@gmail.com>
+Subject: [PATCH v4 10/10] ARM: dts: tegra30: Add External Memory Controller node
+Date: Mon, 17 Jun 2019 02:35:51 +0300
+Message-ID: <20190616233551.6838-11-digetx@gmail.com>
 References: <20190616233551.6838-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,56 +12,34 @@ To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no problem for drivers to request pll_m and pll_p clocks for
-the device, hence there is no need to use clk_get_sys() and it could be
-replaced with devm_clk_get() for consistency.
+Add External Memory Controller node to the device-tree.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/tegra30.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 43aef3614b65..527aa4b90e95 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -527,33 +527,29 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		goto unset_cb;
- 	}
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index e074258d4518..92c4aeafab29 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -732,6 +732,17 @@
+ 		#reset-cells = <1>;
+ 	};
  
--	emc->pll_m = clk_get_sys(NULL, "pll_m");
-+	emc->pll_m = devm_clk_get(&pdev->dev, "pll_m");
- 	if (IS_ERR(emc->pll_m)) {
- 		err = PTR_ERR(emc->pll_m);
- 		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
- 		goto unset_cb;
- 	}
- 
--	emc->backup_clk = clk_get_sys(NULL, "pll_p");
-+	emc->backup_clk = devm_clk_get(&pdev->dev, "pll_p");
- 	if (IS_ERR(emc->backup_clk)) {
- 		err = PTR_ERR(emc->backup_clk);
- 		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
--		goto put_pll_m;
-+		goto unset_cb;
- 	}
- 
- 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
- 			err);
--		goto put_backup;
-+		goto unset_cb;
- 	}
- 
- 	return 0;
- 
--put_backup:
--	clk_put(emc->backup_clk);
--put_pll_m:
--	clk_put(emc->pll_m);
- unset_cb:
- 	tegra20_clk_set_emc_round_callback(NULL, NULL);
- 
++	memory-controller@7000f400 {
++		compatible = "nvidia,tegra30-emc";
++		reg = <0x7000f400 0x400>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA30_CLK_EMC>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		nvidia,memory-controller = <&mc>;
++	};
++
+ 	fuse@7000f800 {
+ 		compatible = "nvidia,tegra30-efuse";
+ 		reg = <0x7000f800 0x400>;
 -- 
 2.22.0
