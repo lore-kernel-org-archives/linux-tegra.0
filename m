@@ -1,61 +1,61 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 6/8] regulator: core: Don't attach generic coupler to
- Tegra SoC regulators
-Date: Mon, 17 Jun 2019 16:44:55 +0100
-Message-ID: <20190617154455.GA5316@sirena.org.uk>
+Subject: Re: [PATCH v2 7/8] soc/tegra: regulators: Add regulators coupler for
+ Tegra20
+Date: Mon, 17 Jun 2019 16:46:32 +0100
+Message-ID: <20190617154632.GB5316@sirena.org.uk>
 References: <20190603235904.19097-1-digetx@gmail.com>
- <20190603235904.19097-7-digetx@gmail.com>
+ <20190603235904.19097-8-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="27E2kr7c9faIxYHh"
+        protocol="application/pgp-signature"; boundary="039oG8jMepJcyEBX"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190603235904.19097-7-digetx@gmail.com>
+In-Reply-To: <20190603235904.19097-8-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---27E2kr7c9faIxYHh
+--039oG8jMepJcyEBX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jun 04, 2019 at 02:59:02AM +0300, Dmitry Osipenko wrote:
+On Tue, Jun 04, 2019 at 02:59:03AM +0300, Dmitry Osipenko wrote:
 
->  static int generic_coupler_attach(struct regulator_coupler *coupler,
->  				  struct regulator_dev *rdev)
->  {
-> +	/*
-> +	 * Generic coupler isn't suitable for NVIVIA Tegra SoC's, at least
-> +	 * for now. Hence filter out the unwanted regulators as they shall be
-> +	 * managed by a platform-specific coupler.
-> +	 */
-> +	if (of_property_read_bool(rdev->dev.of_node, "tegra-core-regulator") ||
-> +	    of_property_read_bool(rdev->dev.of_node, "tegra-rtc-regulator") ||
-> +	    of_property_read_bool(rdev->dev.of_node, "tegra-cpu-regulator"))
-> +		return -EPERM;
-> +
+> +config SOC_TEGRA20_VOLTAGE_COUPLER
+> +	bool "Voltage scaling support for Tegra20 SoC's"
 
-I'm having a hard time loving this as it requires explicit DT changes
-for implementation.  I'm thinking that since the couplers are going to
-need to be built in it'd be better to make sure that any custom ones get
-registered first and then only bind the generic coupler to anything they
-reject.
+SoCs
 
---27E2kr7c9faIxYHh
+> +	depends on ARCH_TEGRA_2x_SOC
+
+Can we have an || COMPILE_TEST here please?
+
+> +++ b/drivers/soc/tegra/regulators-tegra20.c
+> @@ -0,0 +1,348 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Voltage regulators coupling resolver for NVIDIA Tegra20
+> + *
+> + * Copyright (C) 2019 GRATE-DRIVER project
+
+Please make the entire comment a C++ one so things look more
+intentional.
+
+--039oG8jMepJcyEBX
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0HtXYACgkQJNaLcl1U
-h9Cs2gf/S5a8DWJTtoEHbG3ws7VHQpSeAm4iqr2UgbzOBEkdCHLdjK0r2Iu3LU2l
-KpNbc46t5ZXSQjLIuQ3apaG1mBvinvL5AAX93z4uxez5NAnREGp6NbbP2Ph0bfBe
-BMNr3a8K1FBZdaqi2lUjFJS1ZWaUB2Npz32XrgD4Cmhlw+y1Rrl7NPT9HztYaCa5
-Jc7shPryXFXmczy12EARskXg2bcLlQ/Ne92dHRXKZEn2hMwW/1ehTNHadMHHBLjT
-bikjaqGSNIvd9LlxcbzpBvukrgCaaT8ENLHPCVmeB3gag3n55alTU5ZnUIhpAXyp
-eaXOfvK5Zmo08r+D59q1tU61z1s0JA==
-=ZHI+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0HtdcACgkQJNaLcl1U
+h9B0cgf+PFAOtZrfNkd5ty3QOvOIs+A0kjwXoqrJYQMgIIObO7EI9+RipxKuoDae
+UUlOrx4BRvIRGTDJWwvHFNF2ADWvfMPCtdqX67ZA3drCWiPgEGUIJHbIiEXPIt19
+IYBhcnbKGPfpeRTtOWXGfwwOpA+tWgluz5bvmKPLDYkZ8m8MuSkxy4YIWuXEk5+x
+Cgy9CvTfWlk2kZm+a0MocWRlKbTLy7Y499xLXDwBTvSC94Ci0Jp8BGmKR7oJwu45
+cbgEnnXUvOURfP+vhjuh5id+SNXUqFz1tKI9aoXKef/t6EIkvlDiBcDZ+40MSbyD
+SG+VI65FbmXV73iCH+VAQG0Jv+6wjA==
+=eKZo
 -----END PGP SIGNATURE-----
 
---27E2kr7c9faIxYHh--
+--039oG8jMepJcyEBX--
