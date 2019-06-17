@@ -1,263 +1,704 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/2] rtc: tegra: Implement suspend clock source
-Date: Mon, 17 Jun 2019 16:29:56 +0300
-Message-ID: <b5b12bd1-b522-0886-29b4-acfd7f4a7715@gmail.com>
-References: <20190614104747.19712-1-thierry.reding@gmail.com>
- <20190614104747.19712-2-thierry.reding@gmail.com>
- <5a00bccf-6542-51bd-9030-99a59f14f2f9@gmail.com>
- <20190614134110.GF15526@ulmo>
- <d9b65fd9-ecad-b241-a0d6-251a648488aa@gmail.com>
- <20190614141400.GI15526@ulmo>
- <3c6ac621-bc2a-c9c8-64fc-531be7dd323d@gmail.com> <20190617102049.GF508@ulmo>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v1 3/4] staging: media: tegra-vde: Add IOMMU support
+Date: Mon, 17 Jun 2019 15:31:00 +0200
+Message-ID: <5c274249-6c88-b4bd-70fe-0751f5bbfdfc@xs4all.nl>
+References: <20190602213712.26857-1-digetx@gmail.com>
+ <20190602213712.26857-7-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190617102049.GF508@ulmo>
+In-Reply-To: <20190602213712.26857-7-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-17.06.2019 13:20, Thierry Reding пишет:
-> On Fri, Jun 14, 2019 at 07:41:54PM +0300, Dmitry Osipenko wrote:
->> 14.06.2019 17:14, Thierry Reding пишет:
->>> On Fri, Jun 14, 2019 at 04:49:44PM +0300, Dmitry Osipenko wrote:
->>>> 14.06.2019 16:41, Thierry Reding пишет:
->>>>> On Fri, Jun 14, 2019 at 03:01:13PM +0300, Dmitry Osipenko wrote:
->>>>>> 14.06.2019 13:47, Thierry Reding пишет:
->>>>>>> From: Thierry Reding <treding@nvidia.com>
->>>>>>>
->>>>>>> The suspend clock source for Tegra210 and earlier is currently
->>>>>>> implemented in the Tegra timer driver. However, the suspend clock source
->>>>>>> code accesses registers that are part of the RTC hardware block, so both
->>>>>>> can step on each others' toes. In practice this isn't an issue, but
->>>>>>> there is no reason why the RTC driver can't implement the clock source,
->>>>>>> so move the code over to the tegra-rtc driver.
->>>>>>>
->>>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>>>>>> ---
->>>>>>>  drivers/clocksource/timer-tegra.c | 44 -------------------------------
->>>>>>>  drivers/rtc/rtc-tegra.c           | 42 +++++++++++++++++++++++++++++
->>>>>>>  2 files changed, 42 insertions(+), 44 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
->>>>>>> index e6608141cccb..87eac618924d 100644
->>>>>>> --- a/drivers/clocksource/timer-tegra.c
->>>>>>> +++ b/drivers/clocksource/timer-tegra.c
->>>>>>> @@ -21,10 +21,6 @@
->>>>>>>  
->>>>>>>  #include "timer-of.h"
->>>>>>>  
->>>>>>> -#define RTC_SECONDS		0x08
->>>>>>> -#define RTC_SHADOW_SECONDS	0x0c
->>>>>>> -#define RTC_MILLISECONDS	0x10
->>>>>>> -
->>>>>>>  #define TIMERUS_CNTR_1US	0x10
->>>>>>>  #define TIMERUS_USEC_CFG	0x14
->>>>>>>  #define TIMERUS_CNTR_FREEZE	0x4c
->>>>>>> @@ -164,34 +160,6 @@ static struct delay_timer tegra_delay_timer = {
->>>>>>>  };
->>>>>>>  #endif
->>>>>>>  
->>>>>>> -static struct timer_of suspend_rtc_to = {
->>>>>>> -	.flags = TIMER_OF_BASE | TIMER_OF_CLOCK,
->>>>>>> -};
->>>>>>> -
->>>>>>> -/*
->>>>>>> - * tegra_rtc_read - Reads the Tegra RTC registers
->>>>>>> - * Care must be taken that this function is not called while the
->>>>>>> - * tegra_rtc driver could be executing to avoid race conditions
->>>>>>> - * on the RTC shadow register
->>>>>>> - */
->>>>>>> -static u64 tegra_rtc_read_ms(struct clocksource *cs)
->>>>>>> -{
->>>>>>> -	void __iomem *reg_base = timer_of_base(&suspend_rtc_to);
->>>>>>> -
->>>>>>> -	u32 ms = readl_relaxed(reg_base + RTC_MILLISECONDS);
->>>>>>> -	u32 s = readl_relaxed(reg_base + RTC_SHADOW_SECONDS);
->>>>>>> -
->>>>>>> -	return (u64)s * MSEC_PER_SEC + ms;
->>>>>>> -}
->>>>>>> -
->>>>>>> -static struct clocksource suspend_rtc_clocksource = {
->>>>>>> -	.name	= "tegra_suspend_timer",
->>>>>>> -	.rating	= 200,
->>>>>>> -	.read	= tegra_rtc_read_ms,
->>>>>>> -	.mask	= CLOCKSOURCE_MASK(32),
->>>>>>> -	.flags	= CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
->>>>>>> -};
->>>>>>> -
->>>>>>>  static inline unsigned int tegra_base_for_cpu(int cpu, bool tegra20)
->>>>>>>  {
->>>>>>>  	if (tegra20) {
->>>>>>> @@ -385,15 +353,3 @@ static int __init tegra20_init_timer(struct device_node *np)
->>>>>>>  	return tegra_init_timer(np, true, rating);
->>>>>>>  }
->>>>>>>  TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
->>>>>>> -
->>>>>>> -static int __init tegra20_init_rtc(struct device_node *np)
->>>>>>> -{
->>>>>>> -	int ret;
->>>>>>> -
->>>>>>> -	ret = timer_of_init(np, &suspend_rtc_to);
->>>>>>> -	if (ret)
->>>>>>> -		return ret;
->>>>>>> -
->>>>>>> -	return clocksource_register_hz(&suspend_rtc_clocksource, 1000);
->>>>>>> -}
->>>>>>> -TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
->>>>>>> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
->>>>>>> index 8fa1b3febf69..6da54264a27a 100644
->>>>>>> --- a/drivers/rtc/rtc-tegra.c
->>>>>>> +++ b/drivers/rtc/rtc-tegra.c
->>>>>>> @@ -6,6 +6,7 @@
->>>>>>>   */
->>>>>>>  
->>>>>>>  #include <linux/clk.h>
->>>>>>> +#include <linux/clocksource.h>
->>>>>>>  #include <linux/delay.h>
->>>>>>>  #include <linux/init.h>
->>>>>>>  #include <linux/io.h>
->>>>>>> @@ -52,8 +53,15 @@ struct tegra_rtc_info {
->>>>>>>  	struct clk *clk;
->>>>>>>  	int irq; /* alarm and periodic IRQ */
->>>>>>>  	spinlock_t lock;
->>>>>>> +
->>>>>>> +	struct clocksource clksrc;
->>>>>>>  };
->>>>>>>  
->>>>>>> +static struct tegra_rtc_info *to_tegra_rtc(struct clocksource *clksrc)
->>>>>>> +{
->>>>>>> +	return container_of(clksrc, struct tegra_rtc_info, clksrc);
->>>>>>> +}
->>>>>>> +
->>>>>>>  /*
->>>>>>>   * RTC hardware is busy when it is updating its values over AHB once every
->>>>>>>   * eight 32 kHz clocks (~250 us). Outside of these updates the CPU is free to
->>>>>>> @@ -268,6 +276,17 @@ static const struct rtc_class_ops tegra_rtc_ops = {
->>>>>>>  	.alarm_irq_enable = tegra_rtc_alarm_irq_enable,
->>>>>>>  };
->>>>>>>  
->>>>>>> +static u64 tegra_rtc_read_ms(struct clocksource *clksrc)
->>>>>>> +{
->>>>>>> +	struct tegra_rtc_info *info = to_tegra_rtc(clksrc);
->>>>>>> +	u32 ms, s;
->>>>>>> +
->>>>>>> +	ms = readl_relaxed(info->base + TEGRA_RTC_REG_MILLI_SECONDS);
->>>>>>> +	s = readl_relaxed(info->base + TEGRA_RTC_REG_SHADOW_SECONDS);
->>>>>>> +
->>>>>>> +	return (u64)s * MSEC_PER_SEC + ms;
->>>>>>> +}
->>>>>>> +
->>>>>>>  static const struct of_device_id tegra_rtc_dt_match[] = {
->>>>>>>  	{ .compatible = "nvidia,tegra20-rtc", },
->>>>>>>  	{}
->>>>>>> @@ -339,6 +358,28 @@ static int tegra_rtc_probe(struct platform_device *pdev)
->>>>>>>  		goto disable_clk;
->>>>>>>  	}
->>>>>>>  
->>>>>>> +	/*
->>>>>>> +	 * The Tegra RTC is the only reliable clock source that persists
->>>>>>> +	 * across an SC7 transition (VDD_CPU and VDD_CORE off) on Tegra210
->>>>>>> +	 * and earlier. Starting with Tegra186, the ARM v8 architected timer
->>>>>>> +	 * is in an always on power partition and its reference clock keeps
->>>>>>> +	 * running during SC7. Therefore, we technically don't need to have
->>>>>>> +	 * the RTC register as a clock source on Tegra186 and later, but it
->>>>>>> +	 * doesn't hurt either, so we just register it unconditionally here.
->>>>>>> +	 */
->>>>>>> +	info->clksrc.name = "tegra_rtc";
->>>>>>> +	info->clksrc.rating = 200;
->>>>>>> +	info->clksrc.read = tegra_rtc_read_ms;
->>>>>>> +	info->clksrc.mask = CLOCKSOURCE_MASK(32);
->>>>>>
->>>>>> Hm.. shouldn't this be CLOCKSOURCE_MASK(52)? Given that there are 32 bits for seconds and
->>>>>> 10bits for milliseconds.
->>>>>
->>>>> Did you mean to say CLOCKSOURCE_MASK(42)? Yeah, that's probably better
->>>>> here.
->>>>
->>>> Yes, 42 :)
->>>
->>> I'm wondering if that could perhaps be a little problematic because
->>> we're not actually using all of the 10 bits for the milliseconds. So the
->>> maximum value that we can return is:
->>>
->>> 	4294967296 * 1000 + 999 = 4294967296999
->>>
->>> However, the maximum value for a 42 bit mask is:
->>>
->>> 	2^42 - 1 = 4398046511103
->>>
->>> That mask is only used in order to wrap around in delta computations. So
->>> I can imagine a situation where we'd end up with a wrong value in the
->>> delta. I suppose this can only really happen if the two samples are very
->>> far apart in time, so maybe this isn't worth worrying about.
->>
->> I'm a bit puzzled now. Looks problematic that wraparound will happen unexpectedly for
->> the timekeeping. Although please bare in mind that I'm not expert in the area of
->> timekeeping, actually I know very little about it.
->>
->> Maybe tegra_rtc_read_ms() should track wraparound case itself and return a
->> monotonically incrementing value?
->>
->> static u64 tegra_rtc_read_ms(struct clocksource *clksrc)
->> {
->> 	struct tegra_rtc_info *info = to_tegra_rtc(clksrc);
->> 	u64 ms, s, now;
->>
->> 	ms = readl_relaxed(info->base + TEGRA_RTC_REG_MILLI_SECONDS);
->> 	s = readl_relaxed(info->base + TEGRA_RTC_REG_SHADOW_SECONDS);
->>
->> 	now = s * MSEC_PER_SEC + ms;
->>
->> 	if (now < info->last)
->> 		info->ms_cnt += 0x3e8000003e8ull - info->last + now;
->> 	else
->> 		info->ms_cnt += now - info->last;
->>
->> 	info->last = now;
->>
->> 	return info->ms_cnt;
->> }
->>
->> and then simply CLOCKSOURCE_MASK(64).
+On 6/2/19 11:37 PM, Dmitry Osipenko wrote:
+> All Tegra's could provide memory isolation for the video decoder
+> hardware using IOMMU, it is also required for Tegra30+ in order
+> to handle sparse dmabuf's which GPU exports in a default kernel
+> configuration.
 > 
-> This sounds like a bit of overkill to me. There's an obscure constant in
-> there that's completely non-obvious and we're duplicating code that's
-> effectively already in the core. I think the only thing that we need to
-> make sure is that we don't confuse the timekeeping system by having this
-> discrepancy of 24 values between the values that we report and the mask.
+> Inspired-by: Thierry Reding <thierry.reding@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/staging/media/tegra-vde/Kconfig       |   1 +
+>  drivers/staging/media/tegra-vde/Makefile      |   1 +
+>  drivers/staging/media/tegra-vde/iommu.c       | 148 ++++++++++++++
+>  drivers/staging/media/tegra-vde/trace.h       |   1 +
+>  .../media/tegra-vde/{tegra-vde.c => vde.c}    | 188 +++++++++---------
+>  drivers/staging/media/tegra-vde/vde.h         |  89 +++++++++
+>  6 files changed, 335 insertions(+), 93 deletions(-)
+>  create mode 100644 drivers/staging/media/tegra-vde/iommu.c
+>  rename drivers/staging/media/tegra-vde/{tegra-vde.c => vde.c} (91%)
+>  create mode 100644 drivers/staging/media/tegra-vde/vde.h
 > 
-> I think we could probably do this by setting a mask of 41 bits and then
-> also applying that mask to the values that we return:
-> 
-> 	return (u64)(s * MSEC_PER_SEC + ms) & clksrc->mask;
-> 
-> That way we always wrap around before we reach the maximum numerical
-> value that we could. So we "loose" that 24 value range, but that's not
-> really a problem.
-> 
-> Actually, saying it that way I don't think we actually have to worry
-> about this at all. Those 24 values (0x3E8-0x3FF) are already lost. We
-> never return any values in that range because the MILLI_SECONDS register
-> wraps around to 0x000 after 0x3E7. So we will never end up with any of
-> those 24 values being used. They are effectively already lost. The fact
-> that we "hide" them by contracting the 10 bit field to 1000 values does
-> not change that.
+> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
+> index ff8e846cd15d..2e7f644ae591 100644
+> --- a/drivers/staging/media/tegra-vde/Kconfig
+> +++ b/drivers/staging/media/tegra-vde/Kconfig
+> @@ -3,6 +3,7 @@ config TEGRA_VDE
+>  	tristate "NVIDIA Tegra Video Decoder Engine driver"
+>  	depends on ARCH_TEGRA || COMPILE_TEST
+>  	select DMA_SHARED_BUFFER
+> +	select IOMMU_IOVA if IOMMU_SUPPORT
+>  	select SRAM
+>  	help
+>  	    Say Y here to enable support for the NVIDIA Tegra video decoder
+> diff --git a/drivers/staging/media/tegra-vde/Makefile b/drivers/staging/media/tegra-vde/Makefile
+> index 7f9020e634f3..c11867e28233 100644
+> --- a/drivers/staging/media/tegra-vde/Makefile
+> +++ b/drivers/staging/media/tegra-vde/Makefile
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +tegra-vde-y := vde.o iommu.o
+>  obj-$(CONFIG_TEGRA_VDE)	+= tegra-vde.o
+> diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
+> new file mode 100644
+> index 000000000000..295c3d7cccd3
+> --- /dev/null
+> +++ b/drivers/staging/media/tegra-vde/iommu.c
+> @@ -0,0 +1,148 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * NVIDIA Tegra Video decoder driver
+> + *
+> + * Copyright (C) 2016-2019 GRATE-DRIVER project
+> + */
+> +
+> +#include <linux/iommu.h>
+> +#include <linux/iova.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +
+> +#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+> +#include <asm/dma-iommu.h>
+> +#endif
+> +
+> +#include "vde.h"
+> +
+> +int tegra_vde_iommu_map(struct tegra_vde *vde,
+> +			struct sg_table *sgt,
+> +			struct iova **iovap,
+> +			dma_addr_t *addrp,
+> +			size_t size)
+> +{
+> +	struct iova *iova;
+> +	unsigned long shift;
+> +	unsigned long end;
+> +	dma_addr_t addr;
+> +
+> +	end = vde->domain->geometry.aperture_end;
+> +	size = iova_align(&vde->iova, size);
+> +	shift = iova_shift(&vde->iova);
+> +
+> +	iova = alloc_iova(&vde->iova, size >> shift, end >> shift, true);
+> +	if (!iova)
+> +		return -ENOMEM;
+> +
+> +	addr = iova_dma_addr(&vde->iova, iova);
+> +
+> +	size = iommu_map_sg(vde->domain, addr, sgt->sgl, sgt->nents,
+> +			    IOMMU_READ | IOMMU_WRITE);
+> +	if (!size) {
+> +		__free_iova(&vde->iova, iova);
+> +		return -ENXIO;
+> +	}
+> +
+> +	*iovap = iova;
+> +	*addrp = addr;
+> +
+> +	return 0;
+> +}
+> +
+> +void tegra_vde_iommu_unmap(struct tegra_vde *vde, struct iova *iova)
+> +{
+> +	unsigned long shift = iova_shift(&vde->iova);
+> +	unsigned long size = iova_size(iova) << shift;
+> +	dma_addr_t addr = iova_dma_addr(&vde->iova, iova);
+> +
+> +	iommu_unmap(vde->domain, addr, size);
+> +	__free_iova(&vde->iova, iova);
+> +}
+> +
+> +int tegra_vde_iommu_init(struct tegra_vde *vde)
+> +{
+> +	struct iova *iova;
+> +	unsigned long order;
+> +	unsigned long shift;
+> +	int err;
+> +
+> +	vde->group = iommu_group_get(vde->miscdev.parent);
+> +	if (!vde->group)
+> +		return 0;
+> +
+> +#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+> +	if (dev->archdata.mapping) {
 
-IIUC, clocksource code has assumption that the wraparound happens at a pow2 value,
-hence the problem is that the time will go backwards unexpectedly because 0xffffffff *
-1000 isn't a pow2 value and masking of 41 bits won't help with that. The mask is only
-needed by clocksource to account the pow2 overflow correctly and again, we don't have
-the pow2.
+'dev' doesn't exist, so this fails to compile!
 
-Indeed, it looks like a bit of overkill. But it's not a performance-critical code at
-all and thus it's better to preserve correctness whenever possible. You could add a
-clarifying comment to the obscure constant and to the code in general, explaining why
-that all is needed.
+Regards,
 
-Also, please note that the info->lock should be taken within tegra_rtc_read_ms() for
-consistency. I'd also rename "m" and "s" variables to "msec" "sec" to be consistent
-with the tegra_rtc_read_time().
+	Hans
+
+> +		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+> +
+> +		arm_iommu_detach_device(dev);
+> +		arm_iommu_release_mapping(mapping);
+> +	}
+> +#endif
+> +	vde->domain = iommu_domain_alloc(&platform_bus_type);
+> +	if (!vde->domain) {
+> +		err = -ENOMEM;
+> +		goto put_group;
+> +	}
+> +
+> +	err = iova_cache_get();
+> +	if (err)
+> +		goto free_domain;
+> +
+> +	order = __ffs(vde->domain->pgsize_bitmap);
+> +	init_iova_domain(&vde->iova, 1UL << order, 0);
+> +
+> +	err = iommu_attach_group(vde->domain, vde->group);
+> +	if (err)
+> +		goto put_iova;
+> +
+> +	/*
+> +	 * We're using some static addresses that are not accessible by VDE
+> +	 * to trap invalid memory accesses.
+> +	 */
+> +	shift = iova_shift(&vde->iova);
+> +	iova = reserve_iova(&vde->iova, 0x60000000 >> shift,
+> +			    0x70000000 >> shift);
+> +	if (!iova) {
+> +		err = -ENOMEM;
+> +		goto detach_group;
+> +	}
+> +
+> +	/*
+> +	 * BSEV's end addresses wraps around due to integer overflow on
+> +	 * hardware context set up if IOVA is allocated at the end of
+> +	 * address space and VDE can't handle that. Hence simply reserve
+> +	 * the last page to avoid the problem.
+> +	 */
+> +	iova = reserve_iova(&vde->iova, (0xffffffff >> shift) - 1,
+> +			    0xffffffff >> shift);
+> +	if (!iova) {
+> +		err = -ENOMEM;
+> +		goto detach_group;
+> +	}
+> +
+> +	return 0;
+> +
+> +detach_group:
+> +	iommu_detach_group(vde->domain, vde->group);
+> +put_iova:
+> +	put_iova_domain(&vde->iova);
+> +	iova_cache_put();
+> +free_domain:
+> +	iommu_domain_free(vde->domain);
+> +put_group:
+> +	iommu_group_put(vde->group);
+> +
+> +	return err;
+> +}
+> +
+> +void tegra_vde_iommu_deinit(struct tegra_vde *vde)
+> +{
+> +	if (vde->domain) {
+> +		iommu_detach_group(vde->domain, vde->group);
+> +		put_iova_domain(&vde->iova);
+> +		iova_cache_put();
+> +		iommu_domain_free(vde->domain);
+> +		iommu_group_put(vde->group);
+> +	}
+> +}
+> diff --git a/drivers/staging/media/tegra-vde/trace.h b/drivers/staging/media/tegra-vde/trace.h
+> index 85e2f7e2d4d0..c7e7d6f5fd4c 100644
+> --- a/drivers/staging/media/tegra-vde/trace.h
+> +++ b/drivers/staging/media/tegra-vde/trace.h
+> @@ -7,6 +7,7 @@
+>  #define TEGRA_VDE_TRACE_H
+>  
+>  #include <linux/tracepoint.h>
+> +#include "vde.h"
+>  
+>  DECLARE_EVENT_CLASS(register_access,
+>  	TP_PROTO(struct tegra_vde *vde, void __iomem *base,
+> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/vde.c
+> similarity index 91%
+> rename from drivers/staging/media/tegra-vde/tegra-vde.c
+> rename to drivers/staging/media/tegra-vde/vde.c
+> index cc4244da2705..cbcdbfef072d 100644
+> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+> +++ b/drivers/staging/media/tegra-vde/vde.c
+> @@ -22,6 +22,10 @@
+>  #include <soc/tegra/pmc.h>
+>  
+>  #include "uapi.h"
+> +#include "vde.h"
+> +
+> +#define CREATE_TRACE_POINTS
+> +#include "trace.h"
+>  
+>  #define ICMDQUE_WR		0x00
+>  #define CMDQUE_CONTROL		0x08
+> @@ -33,6 +37,10 @@
+>  #define BSE_DMA_BUSY		BIT(23)
+>  
+>  struct video_frame {
+> +	struct iova *y_iova;
+> +	struct iova *cb_iova;
+> +	struct iova *cr_iova;
+> +	struct iova *aux_iova;
+>  	struct dma_buf_attachment *y_dmabuf_attachment;
+>  	struct dma_buf_attachment *cb_dmabuf_attachment;
+>  	struct dma_buf_attachment *cr_dmabuf_attachment;
+> @@ -49,63 +57,6 @@ struct video_frame {
+>  	u32 flags;
+>  };
+>  
+> -struct tegra_vde {
+> -	void __iomem *sxe;
+> -	void __iomem *bsev;
+> -	void __iomem *mbe;
+> -	void __iomem *ppe;
+> -	void __iomem *mce;
+> -	void __iomem *tfe;
+> -	void __iomem *ppb;
+> -	void __iomem *vdma;
+> -	void __iomem *frameid;
+> -	struct mutex lock;
+> -	struct miscdevice miscdev;
+> -	struct reset_control *rst;
+> -	struct reset_control *rst_mc;
+> -	struct gen_pool *iram_pool;
+> -	struct completion decode_completion;
+> -	struct clk *clk;
+> -	dma_addr_t iram_lists_addr;
+> -	u32 *iram;
+> -};
+> -
+> -static __maybe_unused char const *
+> -tegra_vde_reg_base_name(struct tegra_vde *vde, void __iomem *base)
+> -{
+> -	if (vde->sxe == base)
+> -		return "SXE";
+> -
+> -	if (vde->bsev == base)
+> -		return "BSEV";
+> -
+> -	if (vde->mbe == base)
+> -		return "MBE";
+> -
+> -	if (vde->ppe == base)
+> -		return "PPE";
+> -
+> -	if (vde->mce == base)
+> -		return "MCE";
+> -
+> -	if (vde->tfe == base)
+> -		return "TFE";
+> -
+> -	if (vde->ppb == base)
+> -		return "PPB";
+> -
+> -	if (vde->vdma == base)
+> -		return "VDMA";
+> -
+> -	if (vde->frameid == base)
+> -		return "FRAMEID";
+> -
+> -	return "???";
+> -}
+> -
+> -#define CREATE_TRACE_POINTS
+> -#include "trace.h"
+> -
+>  static void tegra_vde_writel(struct tegra_vde *vde,
+>  			     u32 value, void __iomem *base, u32 offset)
+>  {
+> @@ -543,28 +494,35 @@ static void tegra_vde_decode_frame(struct tegra_vde *vde,
+>  			 vde->sxe, 0x00);
+>  }
+>  
+> -static void tegra_vde_detach_and_put_dmabuf(struct dma_buf_attachment *a,
+> +static void tegra_vde_detach_and_put_dmabuf(struct tegra_vde *vde,
+> +					    enum dma_data_direction dma_dir,
+> +					    struct dma_buf_attachment *a,
+>  					    struct sg_table *sgt,
+> -					    enum dma_data_direction dma_dir)
+> +					    struct iova *iova)
+>  {
+>  	struct dma_buf *dmabuf = a->dmabuf;
+>  
+> +	if (vde->domain)
+> +		tegra_vde_iommu_unmap(vde, iova);
+> +
+>  	dma_buf_unmap_attachment(a, sgt, dma_dir);
+>  	dma_buf_detach(dmabuf, a);
+>  	dma_buf_put(dmabuf);
+>  }
+>  
+> -static int tegra_vde_attach_dmabuf(struct device *dev,
+> +static int tegra_vde_attach_dmabuf(struct tegra_vde *vde,
+>  				   int fd,
+>  				   unsigned long offset,
+>  				   size_t min_size,
+>  				   size_t align_size,
+>  				   struct dma_buf_attachment **a,
+> -				   dma_addr_t *addr,
+> +				   dma_addr_t *addrp,
+>  				   struct sg_table **s,
+> +				   struct iova **iovap,
+>  				   size_t *size,
+>  				   enum dma_data_direction dma_dir)
+>  {
+> +	struct device *dev = vde->miscdev.parent;
+>  	struct dma_buf_attachment *attachment;
+>  	struct dma_buf *dmabuf;
+>  	struct sg_table *sgt;
+> @@ -602,13 +560,23 @@ static int tegra_vde_attach_dmabuf(struct device *dev,
+>  		goto err_detach;
+>  	}
+>  
+> -	if (sgt->nents != 1) {
+> -		dev_err(dev, "Sparse DMA region is unsupported\n");
+> +	if (!vde->domain && sgt->nents > 1) {
+> +		dev_err(dev, "Sparse DMA region is unsupported, please enable IOMMU\n");
+>  		err = -EINVAL;
+>  		goto err_unmap;
+>  	}
+>  
+> -	*addr = sg_dma_address(sgt->sgl) + offset;
+> +	if (vde->domain) {
+> +		err = tegra_vde_iommu_map(vde, sgt, iovap, addrp, dmabuf->size);
+> +		if (err) {
+> +			dev_err(dev, "IOMMU mapping failed: %d\n", err);
+> +			goto err_unmap;
+> +		}
+> +	} else {
+> +		*addrp = sg_dma_address(sgt->sgl);
+> +	}
+> +
+> +	*addrp = *addrp + offset;
+>  	*a = attachment;
+>  	*s = sgt;
+>  
+> @@ -627,7 +595,7 @@ static int tegra_vde_attach_dmabuf(struct device *dev,
+>  	return err;
+>  }
+>  
+> -static int tegra_vde_attach_dmabufs_to_frame(struct device *dev,
+> +static int tegra_vde_attach_dmabufs_to_frame(struct tegra_vde *vde,
+>  					     struct video_frame *frame,
+>  					     struct tegra_vde_h264_frame *src,
+>  					     enum dma_data_direction dma_dir,
+> @@ -636,29 +604,32 @@ static int tegra_vde_attach_dmabufs_to_frame(struct device *dev,
+>  {
+>  	int err;
+>  
+> -	err = tegra_vde_attach_dmabuf(dev, src->y_fd,
+> +	err = tegra_vde_attach_dmabuf(vde, src->y_fd,
+>  				      src->y_offset, lsize, SZ_256,
+>  				      &frame->y_dmabuf_attachment,
+>  				      &frame->y_addr,
+>  				      &frame->y_sgt,
+> +				      &frame->y_iova,
+>  				      NULL, dma_dir);
+>  	if (err)
+>  		return err;
+>  
+> -	err = tegra_vde_attach_dmabuf(dev, src->cb_fd,
+> +	err = tegra_vde_attach_dmabuf(vde, src->cb_fd,
+>  				      src->cb_offset, csize, SZ_256,
+>  				      &frame->cb_dmabuf_attachment,
+>  				      &frame->cb_addr,
+>  				      &frame->cb_sgt,
+> +				      &frame->cb_iova,
+>  				      NULL, dma_dir);
+>  	if (err)
+>  		goto err_release_y;
+>  
+> -	err = tegra_vde_attach_dmabuf(dev, src->cr_fd,
+> +	err = tegra_vde_attach_dmabuf(vde, src->cr_fd,
+>  				      src->cr_offset, csize, SZ_256,
+>  				      &frame->cr_dmabuf_attachment,
+>  				      &frame->cr_addr,
+>  				      &frame->cr_sgt,
+> +				      &frame->cr_iova,
+>  				      NULL, dma_dir);
+>  	if (err)
+>  		goto err_release_cb;
+> @@ -668,11 +639,12 @@ static int tegra_vde_attach_dmabufs_to_frame(struct device *dev,
+>  		return 0;
+>  	}
+>  
+> -	err = tegra_vde_attach_dmabuf(dev, src->aux_fd,
+> +	err = tegra_vde_attach_dmabuf(vde, src->aux_fd,
+>  				      src->aux_offset, csize, SZ_256,
+>  				      &frame->aux_dmabuf_attachment,
+>  				      &frame->aux_addr,
+>  				      &frame->aux_sgt,
+> +				      &frame->aux_iova,
+>  				      NULL, dma_dir);
+>  	if (err)
+>  		goto err_release_cr;
+> @@ -680,34 +652,49 @@ static int tegra_vde_attach_dmabufs_to_frame(struct device *dev,
+>  	return 0;
+>  
+>  err_release_cr:
+> -	tegra_vde_detach_and_put_dmabuf(frame->cr_dmabuf_attachment,
+> -					frame->cr_sgt, dma_dir);
+> +	tegra_vde_detach_and_put_dmabuf(vde, dma_dir,
+> +					frame->cr_dmabuf_attachment,
+> +					frame->cr_sgt,
+> +					frame->cr_iova);
+>  err_release_cb:
+> -	tegra_vde_detach_and_put_dmabuf(frame->cb_dmabuf_attachment,
+> -					frame->cb_sgt, dma_dir);
+> +	tegra_vde_detach_and_put_dmabuf(vde, dma_dir,
+> +					frame->cb_dmabuf_attachment,
+> +					frame->cb_sgt,
+> +					frame->cb_iova);
+>  err_release_y:
+> -	tegra_vde_detach_and_put_dmabuf(frame->y_dmabuf_attachment,
+> -					frame->y_sgt, dma_dir);
+> +	tegra_vde_detach_and_put_dmabuf(vde, dma_dir,
+> +					frame->y_dmabuf_attachment,
+> +					frame->y_sgt,
+> +					frame->y_iova);
+>  
+>  	return err;
+>  }
+>  
+> -static void tegra_vde_release_frame_dmabufs(struct video_frame *frame,
+> +static void tegra_vde_release_frame_dmabufs(struct tegra_vde *vde,
+> +					    struct video_frame *frame,
+>  					    enum dma_data_direction dma_dir,
+>  					    bool baseline_profile)
+>  {
+>  	if (!baseline_profile)
+> -		tegra_vde_detach_and_put_dmabuf(frame->aux_dmabuf_attachment,
+> -						frame->aux_sgt, dma_dir);
+> -
+> -	tegra_vde_detach_and_put_dmabuf(frame->cr_dmabuf_attachment,
+> -					frame->cr_sgt, dma_dir);
+> -
+> -	tegra_vde_detach_and_put_dmabuf(frame->cb_dmabuf_attachment,
+> -					frame->cb_sgt, dma_dir);
+> -
+> -	tegra_vde_detach_and_put_dmabuf(frame->y_dmabuf_attachment,
+> -					frame->y_sgt, dma_dir);
+> +		tegra_vde_detach_and_put_dmabuf(vde, dma_dir,
+> +						frame->aux_dmabuf_attachment,
+> +						frame->aux_sgt,
+> +						frame->aux_iova);
+> +
+> +	tegra_vde_detach_and_put_dmabuf(vde, dma_dir,
+> +					frame->cr_dmabuf_attachment,
+> +					frame->cr_sgt,
+> +					frame->cr_iova);
+> +
+> +	tegra_vde_detach_and_put_dmabuf(vde, dma_dir,
+> +					frame->cb_dmabuf_attachment,
+> +					frame->cb_sgt,
+> +					frame->cb_iova);
+> +
+> +	tegra_vde_detach_and_put_dmabuf(vde, dma_dir,
+> +					frame->y_dmabuf_attachment,
+> +					frame->y_sgt,
+> +					frame->y_iova);
+>  }
+>  
+>  static int tegra_vde_validate_frame(struct device *dev,
+> @@ -800,6 +787,7 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  	struct video_frame *dpb_frames;
+>  	struct dma_buf_attachment *bitstream_data_dmabuf_attachment;
+>  	struct sg_table *bitstream_sgt;
+> +	struct iova *bitstream_iova;
+>  	enum dma_data_direction dma_dir;
+>  	dma_addr_t bitstream_data_addr;
+>  	dma_addr_t bsev_ptr;
+> @@ -819,12 +807,13 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = tegra_vde_attach_dmabuf(dev, ctx.bitstream_data_fd,
+> +	ret = tegra_vde_attach_dmabuf(vde, ctx.bitstream_data_fd,
+>  				      ctx.bitstream_data_offset,
+>  				      SZ_16K, SZ_16K,
+>  				      &bitstream_data_dmabuf_attachment,
+>  				      &bitstream_data_addr,
+>  				      &bitstream_sgt,
+> +				      &bitstream_iova,
+>  				      &bitstream_data_size,
+>  				      DMA_TO_DEVICE);
+>  	if (ret)
+> @@ -866,7 +855,7 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  
+>  		dma_dir = (i == 0) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+>  
+> -		ret = tegra_vde_attach_dmabufs_to_frame(dev, &dpb_frames[i],
+> +		ret = tegra_vde_attach_dmabufs_to_frame(vde, &dpb_frames[i],
+>  							&frames[i], dma_dir,
+>  							ctx.baseline_profile,
+>  							lsize, csize);
+> @@ -954,7 +943,7 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  	while (i--) {
+>  		dma_dir = (i == 0) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+>  
+> -		tegra_vde_release_frame_dmabufs(&dpb_frames[i], dma_dir,
+> +		tegra_vde_release_frame_dmabufs(vde, &dpb_frames[i], dma_dir,
+>  						ctx.baseline_profile);
+>  	}
+>  
+> @@ -965,8 +954,10 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  	kfree(frames);
+>  
+>  release_bitstream_dmabuf:
+> -	tegra_vde_detach_and_put_dmabuf(bitstream_data_dmabuf_attachment,
+> -					bitstream_sgt, DMA_TO_DEVICE);
+> +	tegra_vde_detach_and_put_dmabuf(vde, DMA_TO_DEVICE,
+> +					bitstream_data_dmabuf_attachment,
+> +					bitstream_sgt,
+> +					bitstream_iova);
+>  
+>  	return ret;
+>  }
+> @@ -1176,10 +1167,16 @@ static int tegra_vde_probe(struct platform_device *pdev)
+>  	vde->miscdev.fops = &tegra_vde_fops;
+>  	vde->miscdev.parent = dev;
+>  
+> +	err = tegra_vde_iommu_init(vde);
+> +	if (err) {
+> +		dev_err(dev, "Failed to initialize IOMMU: %d\n", err);
+> +		goto err_gen_free;
+> +	}
+> +
+>  	err = misc_register(&vde->miscdev);
+>  	if (err) {
+>  		dev_err(dev, "Failed to register misc device: %d\n", err);
+> -		goto err_gen_free;
+> +		goto err_deinit_iommu;
+>  	}
+>  
+>  	pm_runtime_enable(dev);
+> @@ -1197,6 +1194,9 @@ static int tegra_vde_probe(struct platform_device *pdev)
+>  err_misc_unreg:
+>  	misc_deregister(&vde->miscdev);
+>  
+> +err_deinit_iommu:
+> +	tegra_vde_iommu_deinit(vde);
+> +
+>  err_gen_free:
+>  	gen_pool_free(vde->iram_pool, (unsigned long)vde->iram,
+>  		      gen_pool_size(vde->iram_pool));
+> @@ -1221,6 +1221,8 @@ static int tegra_vde_remove(struct platform_device *pdev)
+>  
+>  	misc_deregister(&vde->miscdev);
+>  
+> +	tegra_vde_iommu_deinit(vde);
+> +
+>  	gen_pool_free(vde->iram_pool, (unsigned long)vde->iram,
+>  		      gen_pool_size(vde->iram_pool));
+>  
+> diff --git a/drivers/staging/media/tegra-vde/vde.h b/drivers/staging/media/tegra-vde/vde.h
+> new file mode 100644
+> index 000000000000..37414b7fdee1
+> --- /dev/null
+> +++ b/drivers/staging/media/tegra-vde/vde.h
+> @@ -0,0 +1,89 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * NVIDIA Tegra Video decoder driver
+> + *
+> + * Copyright (C) 2016-2019 GRATE-DRIVER project
+> + */
+> +
+> +#ifndef TEGRA_VDE_H
+> +#define TEGRA_VDE_H
+> +
+> +#include <linux/completion.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/mutex.h>
+> +#include <linux/types.h>
+> +#include <linux/iova.h>
+> +
+> +struct clk;
+> +struct gen_pool;
+> +struct iommu_group;
+> +struct iommu_domain;
+> +struct reset_control;
+> +
+> +struct tegra_vde {
+> +	void __iomem *sxe;
+> +	void __iomem *bsev;
+> +	void __iomem *mbe;
+> +	void __iomem *ppe;
+> +	void __iomem *mce;
+> +	void __iomem *tfe;
+> +	void __iomem *ppb;
+> +	void __iomem *vdma;
+> +	void __iomem *frameid;
+> +	struct mutex lock;
+> +	struct miscdevice miscdev;
+> +	struct reset_control *rst;
+> +	struct reset_control *rst_mc;
+> +	struct gen_pool *iram_pool;
+> +	struct completion decode_completion;
+> +	struct clk *clk;
+> +	struct iommu_domain *domain;
+> +	struct iommu_group *group;
+> +	struct iova_domain iova;
+> +	dma_addr_t iram_lists_addr;
+> +	u32 *iram;
+> +};
+> +
+> +int tegra_vde_iommu_init(struct tegra_vde *vde);
+> +void tegra_vde_iommu_deinit(struct tegra_vde *vde);
+> +int tegra_vde_iommu_map(struct tegra_vde *vde,
+> +			struct sg_table *sgt,
+> +			struct iova **iovap,
+> +			dma_addr_t *addrp,
+> +			size_t size);
+> +void tegra_vde_iommu_unmap(struct tegra_vde *vde, struct iova *iova);
+> +
+> +static __maybe_unused char const *
+> +tegra_vde_reg_base_name(struct tegra_vde *vde, void __iomem *base)
+> +{
+> +	if (vde->sxe == base)
+> +		return "SXE";
+> +
+> +	if (vde->bsev == base)
+> +		return "BSEV";
+> +
+> +	if (vde->mbe == base)
+> +		return "MBE";
+> +
+> +	if (vde->ppe == base)
+> +		return "PPE";
+> +
+> +	if (vde->mce == base)
+> +		return "MCE";
+> +
+> +	if (vde->tfe == base)
+> +		return "TFE";
+> +
+> +	if (vde->ppb == base)
+> +		return "PPB";
+> +
+> +	if (vde->vdma == base)
+> +		return "VDMA";
+> +
+> +	if (vde->frameid == base)
+> +		return "FRAMEID";
+> +
+> +	return "???";
+> +}
+> +
+> +#endif /* TEGRA_VDE_H */
+> 
