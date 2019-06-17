@@ -1,205 +1,143 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 07/10] memory: tegra: Introduce Tegra30 EMC driver
-Date: Mon, 17 Jun 2019 11:50:48 +0200
-Message-ID: <20190617095048.GD508@ulmo>
-References: <20190616233551.6838-1-digetx@gmail.com>
- <20190616233551.6838-8-digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 09/59] drm/prime: Align gem_prime_export with
+ obj_funcs.export
+Date: Mon, 17 Jun 2019 11:53:54 +0200
+Message-ID: <20190617095354.GE508@ulmo>
+References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
+ <20190614203615.12639-10-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uxuisgdDHaNETlh8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190616233551.6838-8-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1402900301=="
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20190614203615.12639-10-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+Cc: Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Feifei Xu <Feifei.Xu-5C7GfCeVMHo@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thomas Zimmermann <tdz-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Jilayne Lovejoy <opensource-y0T6pEZso2lBDgjK7y7TUQ@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sumit Semwal <sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Mika Kuoppala <mika.kuoppala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Matthew Auld <matthew.auld-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Zhi Wang <zhi.a.wang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>lin
 List-Id: linux-tegra@vger.kernel.org
 
 
---uxuisgdDHaNETlh8
-Content-Type: text/plain; charset=us-ascii
+--===============1402900301==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9crTWz/Z+Zyzu20v"
+Content-Disposition: inline
+
+
+--9crTWz/Z+Zyzu20v
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2019 at 02:35:48AM +0300, Dmitry Osipenko wrote:
-> Introduce driver for the External Memory Controller (EMC) found on Tegra30
-> chips, it controls the external DRAM on the board. The purpose of this
-> driver is to program memory timing for external memory on the EMC clock
-> rate change.
+On Fri, Jun 14, 2019 at 10:35:25PM +0200, Daniel Vetter wrote:
+> The idea is that gem_prime_export is deprecated in favor of
+> obj_funcs.export. That's much easier to do if both have matching
+> function signatures.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+> Cc: Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>
+> Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+> Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+> Cc: Zhenyu Wang <zhenyuw-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Cc: Zhi Wang <zhi.a.wang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Cc: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Cc: Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Cc: Rodrigo Vivi <rodrigo.vivi-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Cc: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
+> Cc: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
+> Cc: "Christian K=C3=B6nig" <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+> Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+> Cc: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
+> Cc: "Michel D=C3=A4nzer" <michel.daenzer-5C7GfCeVMHo@public.gmane.org>
+> Cc: Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>
+> Cc: Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>
+> Cc: Felix Kuehling <Felix.Kuehling-5C7GfCeVMHo@public.gmane.org>
+> Cc: Hawking Zhang <Hawking.Zhang-5C7GfCeVMHo@public.gmane.org>
+> Cc: Feifei Xu <Feifei.Xu-5C7GfCeVMHo@public.gmane.org>
+> Cc: Jim Qu <Jim.Qu-5C7GfCeVMHo@public.gmane.org>
+> Cc: Evan Quan <evan.quan-5C7GfCeVMHo@public.gmane.org>
+> Cc: Matthew Auld <matthew.auld-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Cc: Mika Kuoppala <mika.kuoppala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Cc: Thomas Zimmermann <tdz-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+> Cc: Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+> Cc: Sumit Semwal <sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Jilayne Lovejoy <opensource-y0T6pEZso2lBDgjK7y7TUQ@public.gmane.org>
+> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+> Cc: Mikulas Patocka <mpatocka-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+> Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+> Cc: Junwei Zhang <Jerry.Zhang-5C7GfCeVMHo@public.gmane.org>
+> Cc: intel-gvt-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> Cc: intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> Cc: amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > ---
->  drivers/memory/tegra/Kconfig       |   10 +
->  drivers/memory/tegra/Makefile      |    1 +
->  drivers/memory/tegra/mc.c          |    9 +-
->  drivers/memory/tegra/mc.h          |   30 +-
->  drivers/memory/tegra/tegra30-emc.c | 1197 ++++++++++++++++++++++++++++
->  drivers/memory/tegra/tegra30.c     |   44 +
->  include/soc/tegra/mc.h             |    2 +-
->  7 files changed, 1278 insertions(+), 15 deletions(-)
->  create mode 100644 drivers/memory/tegra/tegra30-emc.c
->=20
-> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> index 4680124ddcab..fbfbaada61a2 100644
-> --- a/drivers/memory/tegra/Kconfig
-> +++ b/drivers/memory/tegra/Kconfig
-> @@ -17,6 +17,16 @@ config TEGRA20_EMC
->  	  This driver is required to change memory timings / clock rate for
->  	  external memory.
-> =20
-> +config TEGRA30_EMC
-> +	bool "NVIDIA Tegra30 External Memory Controller driver"
-> +	default y
-> +	depends on TEGRA_MC && ARCH_TEGRA_3x_SOC
-> +	help
-> +	  This driver is for the External Memory Controller (EMC) found on
-> +	  Tegra30 chips. The EMC controls the external DRAM on the board.
-> +	  This driver is required to change memory timings / clock rate for
-> +	  external memory.
-> +
->  config TEGRA124_EMC
->  	bool "NVIDIA Tegra124 External Memory Controller driver"
->  	default y
-> diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-> index 3971a6b7c487..3d23c4261104 100644
-> --- a/drivers/memory/tegra/Makefile
-> +++ b/drivers/memory/tegra/Makefile
-> @@ -11,5 +11,6 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) +=3D tegra210.o
->  obj-$(CONFIG_TEGRA_MC) +=3D tegra-mc.o
-> =20
->  obj-$(CONFIG_TEGRA20_EMC)  +=3D tegra20-emc.o
-> +obj-$(CONFIG_TEGRA30_EMC)  +=3D tegra30-emc.o
->  obj-$(CONFIG_TEGRA124_EMC) +=3D tegra124-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_186_SOC) +=3D tegra186.o
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index 163b6c69e651..eaebe371625c 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -51,9 +51,6 @@
->  #define MC_EMEM_ADR_CFG 0x54
->  #define MC_EMEM_ADR_CFG_EMEM_NUMDEV BIT(0)
-> =20
-> -#define MC_TIMING_CONTROL		0xfc
-> -#define MC_TIMING_UPDATE		BIT(0)
-> -
->  static const struct of_device_id tegra_mc_of_match[] =3D {
->  #ifdef CONFIG_ARCH_TEGRA_2x_SOC
->  	{ .compatible =3D "nvidia,tegra20-mc-gart", .data =3D &tegra20_mc_soc },
-> @@ -310,7 +307,7 @@ static int tegra_mc_setup_latency_allowance(struct te=
-gra_mc *mc)
->  	return 0;
->  }
-> =20
-> -void tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned lon=
-g rate)
-> +int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long=
- rate)
->  {
->  	unsigned int i;
->  	struct tegra_mc_timing *timing =3D NULL;
-> @@ -325,11 +322,13 @@ void tegra_mc_write_emem_configuration(struct tegra=
-_mc *mc, unsigned long rate)
->  	if (!timing) {
->  		dev_err(mc->dev, "no memory timing registered for rate %lu\n",
->  			rate);
-> -		return;
-> +		return -EINVAL;
->  	}
-> =20
->  	for (i =3D 0; i < mc->soc->num_emem_regs; ++i)
->  		mc_writel(mc, timing->emem_data[i], mc->soc->emem_regs[i]);
-> +
-> +	return 0;
->  }
-> =20
->  unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc)
-> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-> index 392993955c93..0720a1d2023e 100644
-> --- a/drivers/memory/tegra/mc.h
-> +++ b/drivers/memory/tegra/mc.h
-> @@ -9,20 +9,32 @@
->  #ifndef MEMORY_TEGRA_MC_H
->  #define MEMORY_TEGRA_MC_H
-> =20
-> +#include <linux/bits.h>
->  #include <linux/io.h>
->  #include <linux/types.h>
-> =20
->  #include <soc/tegra/mc.h>
-> =20
-> -#define MC_INT_DECERR_MTS (1 << 16)
-> -#define MC_INT_SECERR_SEC (1 << 13)
-> -#define MC_INT_DECERR_VPR (1 << 12)
-> -#define MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
-> -#define MC_INT_INVALID_SMMU_PAGE (1 << 10)
-> -#define MC_INT_ARBITRATION_EMEM (1 << 9)
-> -#define MC_INT_SECURITY_VIOLATION (1 << 8)
-> -#define MC_INT_INVALID_GART_PAGE (1 << 7)
-> -#define MC_INT_DECERR_EMEM (1 << 6)
-> +#define MC_INT_DECERR_MTS				BIT(16)
-> +#define MC_INT_SECERR_SEC				BIT(13)
-> +#define MC_INT_DECERR_VPR				BIT(12)
-> +#define MC_INT_INVALID_APB_ASID_UPDATE			BIT(11)
-> +#define MC_INT_INVALID_SMMU_PAGE			BIT(10)
-> +#define MC_INT_ARBITRATION_EMEM				BIT(9)
-> +#define MC_INT_SECURITY_VIOLATION			BIT(8)
-> +#define MC_INT_INVALID_GART_PAGE			BIT(7)
-> +#define MC_INT_DECERR_EMEM				BIT(6)
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c          | 7 +++----
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.h          | 3 +--
+>  drivers/gpu/drm/armada/armada_gem.c                  | 5 ++---
+>  drivers/gpu/drm/armada/armada_gem.h                  | 3 +--
+>  drivers/gpu/drm/drm_prime.c                          | 9 ++++-----
+>  drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c           | 5 ++---
+>  drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c | 8 ++++----
+>  drivers/gpu/drm/i915/gvt/dmabuf.c                    | 2 +-
+>  drivers/gpu/drm/i915/i915_drv.h                      | 3 +--
+>  drivers/gpu/drm/omapdrm/omap_gem.h                   | 3 +--
+>  drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c            | 5 ++---
+>  drivers/gpu/drm/radeon/radeon_drv.c                  | 3 +--
+>  drivers/gpu/drm/radeon/radeon_prime.c                | 5 ++---
+>  drivers/gpu/drm/tegra/gem.c                          | 7 +++----
+>  drivers/gpu/drm/tegra/gem.h                          | 3 +--
+>  drivers/gpu/drm/udl/udl_dmabuf.c                     | 5 ++---
+>  drivers/gpu/drm/udl/udl_drv.h                        | 3 +--
+>  drivers/gpu/drm/vc4/vc4_bo.c                         | 5 ++---
+>  drivers/gpu/drm/vc4/vc4_drv.h                        | 3 +--
+>  drivers/gpu/drm/vgem/vgem_fence.c                    | 2 +-
+>  include/drm/drm_drv.h                                | 4 ++--
+>  include/drm/drm_prime.h                              | 3 +--
+>  22 files changed, 39 insertions(+), 57 deletions(-)
 
-This /could/ be a separate patch, with it being unrelated to the EMC
-support, but probably not worth it.
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> +#define MC_EMEM_ARB_OUTSTANDING_REQ			0x94
-> +#define MC_EMEM_ARB_OUTSTANDING_REQ_MAX_MASK		0x1ff
-> +#define MC_EMEM_ARB_OUTSTANDING_REQ_HOLDOFF_OVERRIDE	BIT(30)
-> +#define MC_EMEM_ARB_OUTSTANDING_REQ_LIMIT_ENABLE	BIT(31)
-> +
-> +#define MC_EMEM_ARB_OVERRIDE				0xe8
-> +#define MC_EMEM_ARB_OVERRIDE_EACK_MASK			0x3
-> +
-> +#define MC_TIMING_CONTROL				0xfc
-> +#define MC_TIMING_UPDATE				BIT(0)
-> =20
->  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
->  {
-> diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/te=
-gra30-emc.c
-> new file mode 100644
-> index 000000000000..4700f7c8022e
-> --- /dev/null
-> +++ b/drivers/memory/tegra/tegra30-emc.c
-> @@ -0,0 +1,1197 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Tegra30 External Memory Controller driver
-> + *
-> + * Author: Dmitry Osipenko <digetx@gmail.com>
-> + */
-
-Copyright?
-
-Otherwise looks good to me.
-
-Thierry
-
---uxuisgdDHaNETlh8
+--9crTWz/Z+Zyzu20v
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0HYngACgkQ3SOs138+
-s6E/YBAAqW9N+1Tl7SnZT90QbnHy6rYsOgODQy0qxFFK8p3U6WwYTo/A3xoFNnjZ
-1WdvNsQ8UiMjQPFZWLDBtULgjpjHveoerArT4ux6AKOd2UDMC9OPxWVNs8p5nJmQ
-HcJXbnBp9+8jiWU2bIMka6XMpbOB0NdND5Scj3AbhMg+NJYtPzp8wQ37QCLiVGBP
-MtLRUVipdVDH5x/O3ZvfBayWlT8nn7cX9G2X6oTIzQiXNsWPfxk3L7bwz+JXm9cQ
-4GNK/uWpDX5n2tPq7+lGi+YxPCsn9HSRpVETTV9u23arRaWEekpb/WMnpPP5CCTe
-BYiZFDTcWv7Acn2PAuG2HAnLYe1oelR7KEx/EYkUG8JIuu8oV6f4oYd3W6fWBqz+
-fiRnK7uTH33EkIl4SOhYuG5riD38UMJFCC3pG+jcgl/4MbNjQAxiRI6mKokaHZxE
-b67gXzhb+0gk4eQbGCxWVVK2pRYLDxKkANiYwfD5KNNbt2A4U2eCuQbN003OyMbA
-cJHfAZEwRLT2aRXKEg7NkrxRUdD5Pz46TUIanv50BS2sjr4BscZZPGh64VDAC7KA
-P6f4tAzQIJnm9uDbpXuJnftxEdUI+NKvN59YgAYooJSplyBUnxGcl8kCZmWFn+q+
-w2G9BgEIH8bj/+byO1oYBFrXac5qvigybNxBZ0GWuKFGQ79lxRk=
-=P89T
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0HYzIACgkQ3SOs138+
+s6HxLQ/+IJSDeTbnIzRqn4TaMdKNu1FVggK+ADeKsMTPzxC++oZbESUWovyZqtXH
+d7Bo0CLqgkYPEVs2gY7wwfqgGb0/TdKgCFrh9qO4Bw3Yy+zz3dnypNYa/fXqacwe
+5hacUyrJ33Q8uJoiCgmys4ePTIM5xnxLGkqdBxRpXeS9Jrnb4d5+2WWOCk2sRee5
+oBODNqNNam6sL17u1UlFf+6AMVcs3vjn3RHC+cLDThv+ScNQHOMVzIXhX20DQ7fr
+N7G0yOPDWSeLJoPZExyaBUeu/JTj/TL9I1QZn3+xqghw2cw5et4ESgotC19nz01z
+Zy+TVn4/xCbhUDMid5W8EkqamqHfwHW09hmQAWgVVU7tSpx+l8T4ET/XZv/5pjlN
+AUlKLNhwuGS9vV7EJMm36w6IuSlpZixK5fkeytOnqKHHxf37a5Zarp8YYBsdNsrm
+2AUGAsFuN6yBn45aBXQJFGN0fB4FfX4uY5up2dtZp79mdCr/w82UJeHRy5fh2rmq
+pXlAspYSybP59KN6H0dNcrRHipfVMIuXbvEB00OteWxmu7C5gdyNz5Kcklz3YOdo
+jbEyhlTQN1yMoGhDjekGqQAANCmUtwWuUWCeJx8M3Wzu9RhShdLscJC8Uvp69Bm9
+pnZLmgDIx0kl21NPmaP9fWIXSflV5D0C8bfDWY43pHN7q3dtNKQ=
+=OSua
 -----END PGP SIGNATURE-----
 
---uxuisgdDHaNETlh8--
+--9crTWz/Z+Zyzu20v--
+
+--===============1402900301==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYW1kLWdmeCBt
+YWlsaW5nIGxpc3QKYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbWQtZ2Z4
+
+--===============1402900301==--
