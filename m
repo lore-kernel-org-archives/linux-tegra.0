@@ -1,47 +1,35 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
-Date: Mon, 17 Jun 2019 10:58:12 -0700
-Message-ID: <4abda3d1-b70b-672d-0fe0-6e0ef748f9aa@nvidia.com>
-References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
- <20190614211129.GG17899@ninjato>
- <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
- <20190615045405.GA1023@kunai> <20190617070935.GB30126@ulmo>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 06/59] drm/prime: Actually remove DRIVER_PRIME everywhere
+Date: Mon, 17 Jun 2019 18:56:06 +0100
+Message-ID: <20190617175606.GE26766@arch-x1c3>
+References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
+	<20190614203615.12639-7-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190617070935.GB30126@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <20190614203615.12639-7-daniel.vetter@ffwll.ch>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Daniel Vetter <daniel.vetter@intel.com>, linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org, VMware Graphics <linux-graphics-maintainer@vmware.com>, NXP Linux Team <linux-imx@nxp.com>, spice-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, etnaviv@lists.freedesktop.org, xen-devel@lists.xenproject.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 6/17/19 12:09 AM, Thierry Reding wrote:
-> On Sat, Jun 15, 2019 at 06:54:05AM +0200, Wolfram Sang wrote:
->>
->>>> Without a maintainer ack, this is an exception this time. Should we add
->>>> Dmitry as another maintainer or reviewer at least?
->>>>
->>> I shall followup with Maintainer for ACK in future I2C tegra patches.
->>
->> This comment was not directed at you, sorry if that was not clear. It
->> was more for Laxman, Thierry, Jonathan, and Dmitry (if he is
->> interested).
+On 2019/06/14, Daniel Vetter wrote:
+> Split out to make the functional changes stick out more.
 > 
-> I thought I had already acked this. I've certainly been testing this
-> since I carry it in a local tree. So for what it's worth:
-> 
-> Tested-by: Thierry Reding <treding@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> 
-> Bitan, I don't mind getting the patches to the corporate email address,
-> but please make sure to also always include the gmail address when
-> sending patches to the public mailing lists. My workflow is somewhat
-> quirky that way because I work remotely and for historical reasons.
-I shall put both email addresses going forward.
+Since this patch flew-by, as standalone one (intentionally or not) I'd
+add, anything vaguely like:
 
--regards,
-  Bitan
+"Core users of DRIVER_PRIME were removed from core with prior patches."
+
+HTH
+Emil
