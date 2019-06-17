@@ -1,61 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 7/8] soc/tegra: regulators: Add regulators coupler for
- Tegra20
-Date: Mon, 17 Jun 2019 16:46:32 +0100
-Message-ID: <20190617154632.GB5316@sirena.org.uk>
-References: <20190603235904.19097-1-digetx@gmail.com>
- <20190603235904.19097-8-digetx@gmail.com>
+From: Bitan Biswas <bbiswas@nvidia.com>
+Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
+Date: Mon, 17 Jun 2019 10:58:12 -0700
+Message-ID: <4abda3d1-b70b-672d-0fe0-6e0ef748f9aa@nvidia.com>
+References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
+ <20190614211129.GG17899@ninjato>
+ <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
+ <20190615045405.GA1023@kunai> <20190617070935.GB30126@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="039oG8jMepJcyEBX"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190603235904.19097-8-digetx@gmail.com>
+In-Reply-To: <20190617070935.GB30126@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---039oG8jMepJcyEBX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Jun 04, 2019 at 02:59:03AM +0300, Dmitry Osipenko wrote:
+On 6/17/19 12:09 AM, Thierry Reding wrote:
+> On Sat, Jun 15, 2019 at 06:54:05AM +0200, Wolfram Sang wrote:
+>>
+>>>> Without a maintainer ack, this is an exception this time. Should we add
+>>>> Dmitry as another maintainer or reviewer at least?
+>>>>
+>>> I shall followup with Maintainer for ACK in future I2C tegra patches.
+>>
+>> This comment was not directed at you, sorry if that was not clear. It
+>> was more for Laxman, Thierry, Jonathan, and Dmitry (if he is
+>> interested).
+> 
+> I thought I had already acked this. I've certainly been testing this
+> since I carry it in a local tree. So for what it's worth:
+> 
+> Tested-by: Thierry Reding <treding@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> Bitan, I don't mind getting the patches to the corporate email address,
+> but please make sure to also always include the gmail address when
+> sending patches to the public mailing lists. My workflow is somewhat
+> quirky that way because I work remotely and for historical reasons.
+I shall put both email addresses going forward.
 
-> +config SOC_TEGRA20_VOLTAGE_COUPLER
-> +	bool "Voltage scaling support for Tegra20 SoC's"
-
-SoCs
-
-> +	depends on ARCH_TEGRA_2x_SOC
-
-Can we have an || COMPILE_TEST here please?
-
-> +++ b/drivers/soc/tegra/regulators-tegra20.c
-> @@ -0,0 +1,348 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Voltage regulators coupling resolver for NVIDIA Tegra20
-> + *
-> + * Copyright (C) 2019 GRATE-DRIVER project
-
-Please make the entire comment a C++ one so things look more
-intentional.
-
---039oG8jMepJcyEBX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0HtdcACgkQJNaLcl1U
-h9B0cgf+PFAOtZrfNkd5ty3QOvOIs+A0kjwXoqrJYQMgIIObO7EI9+RipxKuoDae
-UUlOrx4BRvIRGTDJWwvHFNF2ADWvfMPCtdqX67ZA3drCWiPgEGUIJHbIiEXPIt19
-IYBhcnbKGPfpeRTtOWXGfwwOpA+tWgluz5bvmKPLDYkZ8m8MuSkxy4YIWuXEk5+x
-Cgy9CvTfWlk2kZm+a0MocWRlKbTLy7Y499xLXDwBTvSC94Ci0Jp8BGmKR7oJwu45
-cbgEnnXUvOURfP+vhjuh5id+SNXUqFz1tKI9aoXKef/t6EIkvlDiBcDZ+40MSbyD
-SG+VI65FbmXV73iCH+VAQG0Jv+6wjA==
-=eKZo
------END PGP SIGNATURE-----
-
---039oG8jMepJcyEBX--
+-regards,
+  Bitan
