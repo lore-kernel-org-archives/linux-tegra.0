@@ -1,74 +1,71 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
-Date: Mon, 17 Jun 2019 09:02:59 +0200
-Message-ID: <20190617070259.GA30126@ulmo>
+Date: Mon, 17 Jun 2019 09:09:35 +0200
+Message-ID: <20190617070935.GB30126@ulmo>
 References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
  <20190614211129.GG17899@ninjato>
  <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
  <20190615045405.GA1023@kunai>
- <69a9a7e3-f885-b6ab-60bb-a1165ce2db23@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+        protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <69a9a7e3-f885-b6ab-60bb-a1165ce2db23@gmail.com>
+In-Reply-To: <20190615045405.GA1023@kunai>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Wolfram Sang <wsa@the-dreams.de>, Bitan Biswas <bbiswas@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---HlL+5n6rz5pIUxbD
-Content-Type: text/plain; charset=utf-8
+--cmJC7u66zC7hs+87
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 16, 2019 at 04:56:06PM +0300, Dmitry Osipenko wrote:
-> 15.06.2019 7:54, Wolfram Sang =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >=20
-> >>> Without a maintainer ack, this is an exception this time. Should we a=
-dd
-> >>> Dmitry as another maintainer or reviewer at least?
-> >>>
-> >> I shall followup with Maintainer for ACK in future I2C tegra patches.
-> >=20
-> > This comment was not directed at you, sorry if that was not clear. It
-> > was more for Laxman, Thierry, Jonathan, and Dmitry (if he is
-> > interested).
-> >=20
+On Sat, Jun 15, 2019 at 06:54:05AM +0200, Wolfram Sang wrote:
 >=20
-> I don't mind at all to review and test patches for the driver and can pro=
-pose myself
-> as a reviewer if that helps and if there are no objections from the Tegra=
- maintainers.
-> My primary interest is to have my devices working after next kernel updat=
-e, but I also
-> like to review patches in general if they are touching area that I'm fami=
-liar with.
+> > > Without a maintainer ack, this is an exception this time. Should we a=
+dd
+> > > Dmitry as another maintainer or reviewer at least?
+> > >=20
+> > I shall followup with Maintainer for ACK in future I2C tegra patches.
+>=20
+> This comment was not directed at you, sorry if that was not clear. It
+> was more for Laxman, Thierry, Jonathan, and Dmitry (if he is
+> interested).
 
-No objection from me.
+I thought I had already acked this. I've certainly been testing this
+since I carry it in a local tree. So for what it's worth:
+
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+Bitan, I don't mind getting the patches to the corporate email address,
+but please make sure to also always include the gmail address when
+sending patches to the public mailing lists. My workflow is somewhat
+quirky that way because I work remotely and for historical reasons.
 
 Thierry
 
---HlL+5n6rz5pIUxbD
+--cmJC7u66zC7hs+87
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0HOyAACgkQ3SOs138+
-s6FunA/9FnsBC0lgpKTkMD4x/XSYqwhavvrILocW3n6+bcJ2oQonGzaHr3+QJzHQ
-9Eipq1rP5XmUzm/OvCyUXWV+jXBuVmgUOt/duHJSC7rRs6YYQuhGYpF5+HWPAoQG
-dKiUX4/x/ziFiSorakCNQtTK/nufWC2Oe4k8qc5Gh2G8GRFwqij2DVRmCvElP4qm
-Cnf8J6K6gfwuTNX6KAcK0sfbDycBsu6VKa/9A72O8rf47JPCVYPR/8PpvftKzWZ+
-CcHHggTE2KfexaydT9VsC2PGniYwkcKp7CyS7YWQ/IPUuaVztydbJCdpmHgsd7yC
-kNWYdGUl9TeD0SyzK8vPRMmBiWZ9EqNE621iqg7gS2A3V4oru+NFWvlFsVDzLVs+
-SLFberGcdx6lgXDFLK5IMrTlpszfSG8Bwsc78ub2d9D+UU7tmsMXyxMqCbi+bCbu
-HbyqnLCivgz8t4lujcBggGWGzn4w+Rx0OafqSm/NhjmQfiBsQ5yc1n/zuEEMT/cO
-AkPxOLERNhHUanYwhz4bmErkmbdiKGZAz38I1nYnFzvNxRq77rfjMNgZg7e50wr6
-pK5LmpXZ14X4y4Fv1kD5y/CJh97dfrUqIAWiC8Az9N9zJ1mdEwjp7f41U44MA1+e
-mZd2Qf3kF1icB8X4lsgW47ObG7YAMK0oXxBdcV5d9RLYtwSoWks=
-=+FPI
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0HPK8ACgkQ3SOs138+
+s6FohhAAueqXXOLMZn3+hgH+DaEpPrk9LFMEZiSlIPZ7H/nQ7UBUFlw5RL+eMCi8
+VdtLa4T3PVlHCWkQB525d+e2Zz59rpsAiLaFpbjnH6rg/1USybHGmXiZonu1q65N
+mfia5/uyCp/zOjFI59IUSCWUtDNukWa4Ypy1OIjt/l+kBmPjFALVRNzfdTBDoxli
+45IaxfFz0zV/F+1kGSHlcrgPFU14KsFYOdiXsKe2+LS4+dKPmhXf4MALat2f9RRM
+QyoniVVfd3a8wMAPuQ7K0KAU4KtnjHglpgxd0WlJ0TN95aTjqi+9cCxIEsshw3T7
+FYKWyQqHcZ7j5GPk8UBt9jKHnmsg4z8r2ZMO2+F2+xmMnUvW67vZzFsSNti0KJc7
+8IeyHVbhTOQya2fR5pj6pyPDfW7k+kKQ9iQYl98XvaCDrND7k0SdtkB+ctbi/qva
+ZqFErPJFPWZggjz2CICICaH98ueKpvKODf/wCDM57ManU7iXO6zx34f4eR758O54
+SPvblD8XW6L0RPMq9hnlTmn7mJKw4XhVvGXkABxvwErfKeew+GIcCyJsgz/BsIAZ
+SRwKl7WC1FECPHtWQfwN1oWuu33T2eg5Z/nKsJcFQ/mcyk6Kq41Bi0A3NohkJvsp
+AkLVEx8ivhD68wLQ/RZQyFcVbiPiUBmxT9OM1BKzZ5utoIsldts=
+=e940
 -----END PGP SIGNATURE-----
 
---HlL+5n6rz5pIUxbD--
+--cmJC7u66zC7hs+87--
