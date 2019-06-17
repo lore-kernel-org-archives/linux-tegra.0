@@ -1,126 +1,97 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
- granularity
-Date: Mon, 17 Jun 2019 11:57:21 +0100
-Message-ID: <d34c100d-e82a-bb00-22c6-c5f2f6cdb03a@nvidia.com>
-References: <20190613210849.10382-1-digetx@gmail.com>
- <5fbe4374-cc9a-8212-017e-05f4dee64443@nvidia.com>
- <7ab96aa5-0be2-dc01-d187-eb718093eb99@nvidia.com>
- <840fcf60-8e24-ff44-a816-ef63a5f18652@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V7] i2c: tegra: remove BUG, BUG_ON
+Date: Mon, 17 Jun 2019 15:13:06 +0300
+Message-ID: <5a8ad23f-33c8-5140-cef8-f9cef70764b1@gmail.com>
+References: <1560748152-6575-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <840fcf60-8e24-ff44-a816-ef63a5f18652@gmail.com>
+In-Reply-To: <1560748152-6575-1-git-send-email-bbiswas@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+17.06.2019 8:09, Bitan Biswas пишет:
+> Remove BUG, BUG_ON as it makes system usable:
+>  - Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+>    as needed.
+>  - Remove BUG() and mask Rx interrupt similar as Tx
+>    for message fully sent case.
+>  - Add caller error handling and WARN_ON_ONCE check for non-zero
+>    rx_fifo_avail in tegra_i2c_empty_rx_fifo() after all processing.
 
-On 14/06/2019 17:44, Dmitry Osipenko wrote:
-> 14.06.2019 18:24, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->> On 14/06/2019 16:21, Jon Hunter wrote:
->>>
->>> On 13/06/2019 22:08, Dmitry Osipenko wrote:
->>>> Tegra's APB DMA engine updates words counter after each transferred bu=
-rst
->>>> of data, hence it can report transfer's residual with more fidelity wh=
-ich
->>>> may be required in cases like audio playback. In particular this fixes
->>>> audio stuttering during playback in a chromiuim web browser. The patch=
- is
->>>> based on the original work that was made by Ben Dooks [1]. It was test=
-ed
->>>> on Tegra20 and Tegra30 devices.
->>>>
->>>> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@code=
-think.co.uk/
->>>>
->>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++------=
--
->>>>  1 file changed, 28 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-d=
-ma.c
->>>> index 79e9593815f1..c5af8f703548 100644
->>>> --- a/drivers/dma/tegra20-apb-dma.c
->>>> +++ b/drivers/dma/tegra20-apb-dma.c
->>>> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_ch=
-an *dc)
->>>>  	return 0;
->>>>  }
->>>> =20
->>>> +static unsigned int tegra_dma_update_residual(struct tegra_dma_channe=
-l *tdc,
->>>> +					      struct tegra_dma_sg_req *sg_req,
->>>> +					      struct tegra_dma_desc *dma_desc,
->>>> +					      unsigned int residual)
->>>> +{
->>>> +	unsigned long status, wcount =3D 0;
->>>> +
->>>> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
->>>> +		return residual;
->>>> +
->>>> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
->>>> +		wcount =3D tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
->>>> +
->>>> +	status =3D tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->>>> +
->>>> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
->>>> +		wcount =3D status;
->>>> +
->>>> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->>>> +		return residual - sg_req->req_len;
->>>> +
->>>> +	return residual - get_current_xferred_count(tdc, sg_req, wcount);
->>>> +}
->>>> +
->>>>  static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
->>>>  	dma_cookie_t cookie, struct dma_tx_state *txstate)
->>>>  {
->>>>  	struct tegra_dma_channel *tdc =3D to_tegra_dma_chan(dc);
->>>> +	struct tegra_dma_sg_req *sg_req =3D NULL;
->>>>  	struct tegra_dma_desc *dma_desc;
->>>> -	struct tegra_dma_sg_req *sg_req;
->>>>  	enum dma_status ret;
->>>>  	unsigned long flags;
->>>>  	unsigned int residual;
->>>> @@ -838,6 +862,8 @@ static enum dma_status tegra_dma_tx_status(struct =
-dma_chan *dc,
->>>>  		residual =3D dma_desc->bytes_requested -
->>>>  			   (dma_desc->bytes_transferred %
->>>>  			    dma_desc->bytes_requested);
->>>> +		residual =3D tegra_dma_update_residual(tdc, sg_req, dma_desc,
->>>> +						     residual);
->>>
->>> I had a quick look at this, I am not sure that we want to call
->>> tegra_dma_update_residual() here for cases where the dma_desc is on the
->>> free_dma_desc list. In fact, couldn't this be simplified a bit for case
->>> where the dma_desc is on the free list? In that case I believe that the
->>> residual should always be 0.
->>
->> Actually, no, it could be non-zero in the case the transfer is aborted.
->=20
-> Looks like everything should be fine as-is.
+The commit message should describe motivation of the change and not the change itself,
+unless it's some additional information which is required for better understanding of
+the code.
 
-I am still not sure we want to call this for the case where dma_desc is
-on the free list.
+In yours case it could be something like that:
 
-> BTW, it's a bit hard to believe that there is any real benefit from the
-> free_dma_desc list at all, maybe worth to just remove it?
+    The usage of BUG() macro is generally discouraged in kernel, unless
+    it's a problem that results in a physical damage or loss of data.
+    This patch removes unnecessary BUG() macros and replaces the rest
+    with a warnings.
 
-I think you need to elaborate a bit more here. I am not a massive fan of
-this driver, but I am also not in the mood for changing unless there is
-a good reason.
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 45 ++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 37 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 4dfb4c1..b155b61 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -73,6 +73,7 @@
+>  #define I2C_ERR_NO_ACK				BIT(0)
+>  #define I2C_ERR_ARBITRATION_LOST		BIT(1)
+>  #define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
+> +#define I2C_ERR_RX_BUFFER_OVERFLOW		BIT(3)
+>  
+>  #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+>  #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+> @@ -515,7 +516,11 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  	 * prevent overwriting past the end of buf
+>  	 */
+>  	if (rx_fifo_avail > 0 && buf_remaining > 0) {
+> -		BUG_ON(buf_remaining > 3);
+> +		/*
+> +		 * buf_remaining > 3 check not needed as rx_fifo_avail == 0
+> +		 * when (words_to_transfer was > rx_fifo_avail) earlier
+> +		 * in this function.
+> +		 */
+>  		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
+>  		val = cpu_to_le32(val);
+>  		memcpy(buf, &val, buf_remaining);
+> @@ -523,7 +528,15 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>  		rx_fifo_avail--;
+>  	}
+>  
+> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+> +	if ((!(i2c_dev->msg_buf_remaining)) &&
 
-Cheers
-Jon
+The RX FIFO shall be drained completely no matter what.
 
---=20
-nvpublic
+Hence why the "i2c_dev->msg_buf_remaining" checking is needed here?
+
+Secondly, in the future please don't add parens where they are not needed. In this
+case parens around !i2c_dev->msg_buf_remaining are not needed at all.
+
+> +	    WARN_ON_ONCE(rx_fifo_avail))
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * buf_remaining > 0 at this point can only have rx_fifo_avail == 0
+
+The rx_fifo_avail is always 0 at this point, including the case of buf_remaining == 0.
+It will be better if you'll add a comment for the WARN_ON_ONCE(rx_fifo_avail) above,
+saying that RX FIFO must be fully drained, and then just drop this comment.
+
+> +	 * as this corresponds to (words_to_transfer was > rx_fifo_avail)
+> +	 * case earlier in this function.
+> +	 */
+>  	i2c_dev->msg_buf_remaining = buf_remaining;
+>  	i2c_dev->msg_buf = buf;
+
+[snip]
