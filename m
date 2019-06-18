@@ -1,63 +1,121 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: drm connectors, tegra,
- and the web they weave (was Re: [PATCH 58/59] drm/todo: Add new
- debugfs todo)
-Date: Tue, 18 Jun 2019 23:46:56 +0200
-Message-ID: <20190618214656.GH12905@phenom.ffwll.local>
-References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
- <20190614203615.12639-59-daniel.vetter@ffwll.ch>
- <20190618151938.GA2567@kroah.com> <20190618152530.GA4576@kroah.com>
- <CAKMK7uEd0sZ81RMjDsz6cnkW+krPuvoqUcEY4U3ofB9W_qeFvA@mail.gmail.com>
- <20190618180113.GA26105@kroah.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
+ granularity
+Date: Tue, 18 Jun 2019 23:22:53 +0100
+Message-ID: <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
+References: <20190613210849.10382-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190618180113.GA26105@kroah.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190613210849.10382-1-digetx@gmail.com>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdW4gMTgsIDIwMTkgYXQgMDg6MDE6MTNQTSArMDIwMCwgR3JlZyBLcm9haC1IYXJ0
-bWFuIHdyb3RlOgo+IE9uIFR1ZSwgSnVuIDE4LCAyMDE5IGF0IDA3OjMyOjIwUE0gKzAyMDAsIERh
-bmllbCBWZXR0ZXIgd3JvdGU6Cj4gPiBPbiBUdWUsIEp1biAxOCwgMjAxOSBhdCA1OjI1IFBNIEdy
-ZWcgS3JvYWgtSGFydG1hbgo+ID4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPiB3cm90ZToK
-PiA+ID4gT24gVHVlLCBKdW4gMTgsIDIwMTkgYXQgMDU6MTk6MzhQTSArMDIwMCwgR3JlZyBLcm9h
-aC1IYXJ0bWFuIHdyb3RlOgo+ID4gPiA+IEkgY291bGQganVzdCAib3BlbiBjb2RlIiBhIGJ1bmNo
-IG9mIGNhbGxzIHRvIGRlYnVnZnNfY3JlYXRlX2ZpbGUoKSBmb3IKPiA+ID4gPiB0aGVzZSBkcml2
-ZXJzLCB3aGljaCB3b3VsZCBzb2x2ZSB0aGlzIGlzc3VlLCBidXQgaW4gYSBtb3JlICJub24tZHJt
-Igo+ID4gPiA+IHdheS4gIElzIGl0IHdvcnRoIHRvIGp1c3QgZG8gdGhhdCBpbnN0ZWFkIG9mIG92
-ZXJ0aGlua2luZyB0aGUgd2hvbGUKPiA+ID4gPiB0aGluZyBhbmQgdHJ5aW5nIHRvIHNxdWlzaCBp
-dCBpbnRvIHRoZSBkcm0gIm1vZGVsIiBvZiBkcm0gZGVidWdmcyBjYWxscz8KPiA+ID4KPiA+ID4g
-QW4gZXhhbXBsZSBvZiAib3BlbiBjb2RpbmciIHRoaXMgaXMgdGhlIHBhdGNoIGJlbG93IGZvciB0
-aGUgc29yLmMKPiA+ID4gZHJpdmVyLgo+ID4gCj4gPiBJIHRoaW5rIG9wZW4tY29kaW5nIGlzIHRo
-ZSB3YXkgdG8gZ28gaGVyZS4gT25lIG9mIHRoZSB0b2RvcyBpcyB0bwo+ID4gZXh0ZW5kIGRlYnVn
-ZnMgc3VwcG9ydCBmb3IgY3J0Yy9jb25uZWN0b3JzLCBidXQgbG9va2luZyBhdCB0aGUKPiA+IG9w
-ZW4tY29kZWQgdmVyc2lvbiB3ZSByZWFsbHkgZG9uJ3QgbmVlZCBhIGRybS1mbGF2b3VyZWQgbWlk
-bGF5ZXIgaGVyZS4KPiAKPiBUaGVyZSBhbHJlYWR5IGlzIGRlYnVnZnMgc3VwcG9ydCBpbiB0aGUg
-Y29kZSBmb3IgY3J0Yy9jb25uZWN0b3JzLCB0aGVzZQo+IGZpbGVzIGFyZSAiaGFuZ2luZyIgb2Zm
-IG9mIHRob3NlIGxvY2F0aW9ucyBhbHJlYWR5LiAgSSdsbCBrZWVwIHRoYXQsIGJ1dAo+IGluZGVu
-dCBpdCBvbmUgbW9yZSBkaXJlY3Rvcnkgc28gdGhhdCB0aGVyZSdzIG5vIG5hbWVzcGFjZSBjb2xs
-aXNpb25zLgoKVGhlIHRvZG8gd2FzIHRvIGhhdmUgc29tZSBkcm0gd3JhcHBlcnMgaGVyZSBmb3Ig
-dGhlIGJvaWxlcnBsYXRlLCBidXQgYWZ0ZXIKbG9va2luZyBhdCB5b3VyIHZlcnNpb24gdGhhdCdz
-IG5vdCBhIGdvb2QgaWRlYS4gU28gbm90IGp1c3QgbWFraW5nIHN1cmUKY3J0Y3MvY29ubmVjdG9y
-cyBoYXZlIGEgZGVidWdmcyBkaXJlY3RvcnkgbWFkZSBmb3IgdGhlbSwgYnV0IG1vcmUuCgpXcnQg
-YWRkaW5nIGEgbmV3IGRpcmVjdG9yeTogZGVidWdmcyBpc250IHVhcGksIGJ1dCB0aGVyZSdzIHVz
-dWFsbHkgYQptYXNzaXZlIHBpbGUgb2Ygc2NyaXB0IHJlbHlpbmcgb24gdGhlbSwgc28gaXQncyBu
-b3QgbmljZSB0byBzaHVmZmxlIHBhdGhzCmFyb3VuZC4gUGx1cyB0aGUgbGlmZXRpbWVzIG1hdGNo
-IGFueXdheSAoYXQgbGVhc3QgaWYgeW91IGRvbid0IGhvdHBsdWcKY29ubmVjdG9ycywgd2hpY2gg
-dGVncmEgZG9lc24ndCBkbykuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5n
-aW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxp
-c3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeA==
+On 13/06/2019 22:08, Dmitry Osipenko wrote:
+> Tegra's APB DMA engine updates words counter after each transferred burst
+> of data, hence it can report transfer's residual with more fidelity which
+> may be required in cases like audio playback. In particular this fixes
+> audio stuttering during playback in a chromiuim web browser. The patch is
+> based on the original work that was made by Ben Dooks [1]. It was tested
+> on Tegra20 and Tegra30 devices.
+> 
+> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
+> 
+> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>   drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-------
+>   1 file changed, 28 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 79e9593815f1..c5af8f703548 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+>   	return 0;
+>   }
+>   
+> +static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
+> +					      struct tegra_dma_sg_req *sg_req,
+> +					      struct tegra_dma_desc *dma_desc,
+> +					      unsigned int residual)
+> +{
+> +	unsigned long status, wcount = 0;
+> +
+> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
+> +		return residual;
+> +
+> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
+> +		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
+> +
+> +	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+> +
+> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
+> +		wcount = status;
+> +
+> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
+> +		return residual - sg_req->req_len;
+> +
+> +	return residual - get_current_xferred_count(tdc, sg_req, wcount);
+> +}
+
+I am unfortunately nowhere near my notes, so can't completely
+review this. I think the complexity of my patch series is due
+to an issue with the count being updated before the EOC IRQ
+is actually flagged (and most definetly before it gets to the
+CPU IRQ handler).
+
+The test system I was using, which i've not really got any
+access to at the moment would show these internal inconsistent
+states every few hours, however it was moving 48kHz 8ch 16bit
+TDM data.
+
+Thanks for looking into this, I am not sure if I am going to
+get any time to look into this within the next couple of
+months.
+
+>   static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+>   	dma_cookie_t cookie, struct dma_tx_state *txstate)
+>   {
+>   	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+> +	struct tegra_dma_sg_req *sg_req = NULL;
+>   	struct tegra_dma_desc *dma_desc;
+> -	struct tegra_dma_sg_req *sg_req;
+>   	enum dma_status ret;
+>   	unsigned long flags;
+>   	unsigned int residual;
+> @@ -838,6 +862,8 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+>   		residual = dma_desc->bytes_requested -
+>   			   (dma_desc->bytes_transferred %
+>   			    dma_desc->bytes_requested);
+> +		residual = tegra_dma_update_residual(tdc, sg_req, dma_desc,
+> +						     residual);
+>   		dma_set_residue(txstate, residual);
+>   	}
+>   
+> @@ -1441,12 +1467,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>   		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
+>   		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+>   	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+> -	/*
+> -	 * XXX The hardware appears to support
+> -	 * DMA_RESIDUE_GRANULARITY_BURST-level reporting, but it's
+> -	 * only used by this driver during tegra_dma_terminate_all()
+> -	 */
+> -	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
+> +	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+>   	tdma->dma_dev.device_config = tegra_dma_slave_config;
+>   	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
+>   	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
+> 
+
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
