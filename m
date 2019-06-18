@@ -1,96 +1,63 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-Date: Tue, 18 Jun 2019 09:41:55 +0000
-Message-ID: <d911ad6c-477f-7946-c0c4-ac7e86d15ceb@axentia.se>
-References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
+ phylib logic
+Date: Tue, 18 Jun 2019 10:42:31 +0100
+Message-ID: <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
+References: <cover.1560266175.git.joabreu@synopsys.com>
+ <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
+ <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
+ <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
+In-Reply-To: <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
 Content-Language: en-US
-Content-ID: <27E9B971228C324985661CDD2D33B01C@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjAxOS0wNi0xOCAxMDo0MiwgQml0YW4gQmlzd2FzIHdyb3RlOg0KPiB0ZWdyYV9pMmNfeGZl
-cl9tc2cgaW5pdGlhdGVzIHRoZSBJMkMgdHJhbnNmZXIgaW4gRE1BDQo+IG9yIFBJTyBtb2RlLiBJ
-dCBpbnZvbHZlcyBzdGVwcyB0aGF0IG5lZWQgRklGTyByZWdpc3Rlcg0KPiBhY2Nlc3MsIERNQSBB
-UEkgY2FsbHMgbGlrZSBkbWFfc3luY19zaW5nbGVfZm9yX2RldmljZSwgZXRjLg0KPiBUZWdyYSBJ
-MkMgSVNSIGhhcyBjYWxscyB0byB0ZWdyYV9pMmNfZW1wdHlfcnhfZmlmbyBpbiBQSU8gbW9kZQ0K
-PiBhbmQgaW4gRE1BL1BJTyBtb2RlIHdyaXRlcyBkaWZmZXJlbnQgSTJDIHJlZ2lzdGVycyBpbmNs
-dWRpbmcNCj4gSTJDIGludGVycnVwdCBzdGF0dXMuIElTUiBjYW5ub3Qgc3RhcnQgcHJvY2Vzc2lu
-Zw0KPiBiZWZvcmUgdGhlIHByZXBhcmF0aW9uIHN0ZXAgYXQgdGVncmFfaTJjX3hmZXJfbXNnIGlz
-IGNvbXBsZXRlLg0KPiBIZW5jZSwgYSBzeW5jaHJvbml6YXRpb24gYmV0d2VlbiBJU1IgYW5kIHRl
-Z3JhX2kyY194ZmVyX21zZw0KPiBpcyBpbiBwbGFjZSB0b2RheSB1c2luZyBzcGlubG9jay4NCj4g
-DQo+IFNwaW5sb2NrIGJ1c3kgd2FpdHMgYW5kIGNhbiBhZGQgYXZvaWRhYmxlIGRlbGF5cy4NCj4g
-DQo+IEluIHRoaXMgcGF0Y2ggbmVlZGVkIHN5bmNocm9uaXphdGlvbiBpcyBhY2hpZXZlZCBieSBk
-aXNhYmxpbmcNCj4gSTJDIGludGVycnVwdCBkdXJpbmcgcHJlcGFyYXRpb24gc3RlcCBhbmQgZW5h
-YmxpbmcgaW50ZXJydXB0DQo+IG9uY2UgcHJlcGFyYXRpb24gaXMgb3ZlciBhbmQgc3BpbmxvY2sg
-aXMgbm8gbG9uZ2VyIG5lZWRlZC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEJpdGFuIEJpc3dhcyA8
-YmJpc3dhc0BudmlkaWEuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVn
-cmEuYyB8IDE3ICsrKysrKysrLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRp
-b25zKCspLCA5IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1
-c3Nlcy9pMmMtdGVncmEuYyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYw0KPiBpbmRl
-eCA2ZmI1NDVlLi5jY2M3ZmFlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJj
-LXRlZ3JhLmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+IEBAIC0y
-NDAsNyArMjQwLDYgQEAgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHsNCj4gICAqIEBidXNf
-Y2xrX3JhdGU6IGN1cnJlbnQgSTJDIGJ1cyBjbG9jayByYXRlDQo+ICAgKiBAY2xrX2Rpdmlzb3Jf
-bm9uX2hzX21vZGU6IGNsb2NrIGRpdmlkZXIgZm9yIG5vbi1oaWdoLXNwZWVkIG1vZGVzDQo+ICAg
-KiBAaXNfbXVsdGltYXN0ZXJfbW9kZTogdHJhY2sgaWYgSTJDIGNvbnRyb2xsZXIgaXMgaW4gbXVs
-dGktbWFzdGVyIG1vZGUNCj4gLSAqIEB4ZmVyX2xvY2s6IGxvY2sgdG8gc2VyaWFsaXplIHRyYW5z
-ZmVyIHN1Ym1pc3Npb24gYW5kIHByb2Nlc3NpbmcNCj4gICAqIEB0eF9kbWFfY2hhbjogRE1BIHRy
-YW5zbWl0IGNoYW5uZWwNCj4gICAqIEByeF9kbWFfY2hhbjogRE1BIHJlY2VpdmUgY2hhbm5lbA0K
-PiAgICogQGRtYV9waHlzOiBoYW5kbGUgdG8gRE1BIHJlc291cmNlcw0KPiBAQCAtMjcwLDggKzI2
-OSw2IEBAIHN0cnVjdCB0ZWdyYV9pMmNfZGV2IHsNCj4gIAl1MzIgYnVzX2Nsa19yYXRlOw0KPiAg
-CXUxNiBjbGtfZGl2aXNvcl9ub25faHNfbW9kZTsNCj4gIAlib29sIGlzX211bHRpbWFzdGVyX21v
-ZGU7DQo+IC0JLyogeGZlcl9sb2NrOiBsb2NrIHRvIHNlcmlhbGl6ZSB0cmFuc2ZlciBzdWJtaXNz
-aW9uIGFuZCBwcm9jZXNzaW5nICovDQo+IC0Jc3BpbmxvY2tfdCB4ZmVyX2xvY2s7DQo+ICAJc3Ry
-dWN0IGRtYV9jaGFuICp0eF9kbWFfY2hhbjsNCj4gIAlzdHJ1Y3QgZG1hX2NoYW4gKnJ4X2RtYV9j
-aGFuOw0KPiAgCWRtYV9hZGRyX3QgZG1hX3BoeXM7DQo+IEBAIC04MzUsNyArODMyLDYgQEAgc3Rh
-dGljIGlycXJldHVybl90IHRlZ3JhX2kyY19pc3IoaW50IGlycSwgdm9pZCAqZGV2X2lkKQ0KPiAg
-DQo+ICAJc3RhdHVzID0gaTJjX3JlYWRsKGkyY19kZXYsIEkyQ19JTlRfU1RBVFVTKTsNCj4gIA0K
-PiAtCXNwaW5fbG9jaygmaTJjX2Rldi0+eGZlcl9sb2NrKTsNCj4gIAlpZiAoc3RhdHVzID09IDAp
-IHsNCj4gIAkJZGV2X3dhcm4oaTJjX2Rldi0+ZGV2LCAiaXJxIHN0YXR1cyAwICUwOHggJTA4eCAl
-MDh4XG4iLA0KPiAgCQkJIGkyY19yZWFkbChpMmNfZGV2LCBJMkNfUEFDS0VUX1RSQU5TRkVSX1NU
-QVRVUyksDQo+IEBAIC05MzUsNyArOTMxLDYgQEAgc3RhdGljIGlycXJldHVybl90IHRlZ3JhX2ky
-Y19pc3IoaW50IGlycSwgdm9pZCAqZGV2X2lkKQ0KPiAgDQo+ICAJY29tcGxldGUoJmkyY19kZXYt
-Pm1zZ19jb21wbGV0ZSk7DQo+ICBkb25lOg0KPiAtCXNwaW5fdW5sb2NrKCZpMmNfZGV2LT54ZmVy
-X2xvY2spOw0KPiAgCXJldHVybiBJUlFfSEFORExFRDsNCj4gIH0NCj4gIA0KPiBAQCAtMTA1NCw3
-ICsxMDQ5LDYgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2coc3RydWN0IHRlZ3JhX2ky
-Y19kZXYgKmkyY19kZXYsDQo+ICAJdTMyIHBhY2tldF9oZWFkZXI7DQo+ICAJdTMyIGludF9tYXNr
-Ow0KPiAgCXVuc2lnbmVkIGxvbmcgdGltZV9sZWZ0Ow0KPiAtCXVuc2lnbmVkIGxvbmcgZmxhZ3M7
-DQo+ICAJc2l6ZV90IHhmZXJfc2l6ZTsNCj4gIAl1MzIgKmJ1ZmZlciA9IE5VTEw7DQo+ICAJaW50
-IGVyciA9IDA7DQo+IEBAIC0xMDg1LDcgKzEwNzksMTAgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNf
-eGZlcl9tc2coc3RydWN0IHRlZ3JhX2kyY19kZXYgKmkyY19kZXYsDQo+ICAJICovDQo+ICAJeGZl
-cl90aW1lICs9IERJVl9ST1VORF9DTE9TRVNUKCgoeGZlcl9zaXplICogOSkgKyAyKSAqIE1TRUNf
-UEVSX1NFQywNCj4gIAkJCQkJaTJjX2Rldi0+YnVzX2Nsa19yYXRlKTsNCj4gLQlzcGluX2xvY2tf
-aXJxc2F2ZSgmaTJjX2Rldi0+eGZlcl9sb2NrLCBmbGFncyk7DQo+ICsJaWYgKCFpMmNfZGV2LT5p
-cnFfZGlzYWJsZWQpIHsNCj4gKwkJZGlzYWJsZV9pcnFfbm9zeW5jKGkyY19kZXYtPmlycSk7DQoN
-CldoeSBkbyB5b3UgdXNlIC4uLl9ub3N5bmMgaW4gdGhpcyBjb250ZXh0PyBEbyB5b3Ugbm90IGNh
-cmUgYWJvdXQgZXhhY3RseSB3aGVuDQp0aGUgaXJxIGlzIGFjdHVhbGx5IGRpc2FibGVkPyBNYXli
-ZSB5b3UgbXVzdCB1c2UgX25vc3luYywgSSBkb24ndCBrbm93LCBidXQgSQ0KZ2V0IHRoZSBmZWVs
-aW5nIHRoYXQgeW91IGp1c3QgY29waWVkIHRoZSBjb2RlIGZyb20gdGhlIElTUi4gQW55d2F5LCB0
-aGUNCnF1ZXN0aW9uIGlzIGlmIHRoaXMgaXMgc3RpbGwgYWRlcXVhdGUgc3luY2hyb25pemF0aW9u
-PyBFdmVyeXRoaW5nIG1pZ2h0IHZlcnkNCndlbGwgYmUgc2FmZSBhbmQgaW4gb3JkZXIsIGJ1dCB0
-aGlzIGlzIG5vdCBjbGVhciB0byBtZSBmcm9tIG5laXRoZXIgdGhlIGNvZGUsDQp0aGUgKG5vbmV4
-aXN0aW5nKSBjb21tZW50cyBub3IgdGhlIHBhdGNoIGRlc2NyaXB0aW9uLg0KDQpJJ20gbm8gSVJR
-IGV4cGVydCwgSSdtIGp1c3QgYXNraW5nIHF1ZXN0aW9ucy4uLg0KDQpDaGVlcnMsDQpQZXRlcg0K
-DQo+ICsJCWkyY19kZXYtPmlycV9kaXNhYmxlZCA9IHRydWU7DQo+ICsJfQ0KPiAgDQo+ICAJaW50
-X21hc2sgPSBJMkNfSU5UX05PX0FDSyB8IEkyQ19JTlRfQVJCSVRSQVRJT05fTE9TVDsNCj4gIAl0
-ZWdyYV9pMmNfdW5tYXNrX2lycShpMmNfZGV2LCBpbnRfbWFzayk7DQo+IEBAIC0xMTgwLDcgKzEx
-NzcsMTAgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2coc3RydWN0IHRlZ3JhX2kyY19k
-ZXYgKmkyY19kZXYsDQo+ICAJCWkyY19yZWFkbChpMmNfZGV2LCBJMkNfSU5UX01BU0spKTsNCj4g
-IA0KPiAgdW5sb2NrOg0KPiAtCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmkyY19kZXYtPnhmZXJf
-bG9jaywgZmxhZ3MpOw0KPiArCWlmIChpMmNfZGV2LT5pcnFfZGlzYWJsZWQpIHsNCj4gKwkJaTJj
-X2Rldi0+aXJxX2Rpc2FibGVkID0gZmFsc2U7DQo+ICsJCWVuYWJsZV9pcnEoaTJjX2Rldi0+aXJx
-KTsNCj4gKwl9DQo+ICANCj4gIAlpZiAoZG1hKSB7DQo+ICAJCWlmIChlcnIpDQo+IEBAIC0xNTc2
-LDcgKzE1NzYsNiBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
-ZGV2aWNlICpwZGV2KQ0KPiAgCQkJCUkyQ19QQUNLRVRfSEVBREVSX1NJWkU7DQo+ICAJaW5pdF9j
-b21wbGV0aW9uKCZpMmNfZGV2LT5tc2dfY29tcGxldGUpOw0KPiAgCWluaXRfY29tcGxldGlvbigm
-aTJjX2Rldi0+ZG1hX2NvbXBsZXRlKTsNCj4gLQlzcGluX2xvY2tfaW5pdCgmaTJjX2Rldi0+eGZl
-cl9sb2NrKTsNCj4gIA0KPiAgCWlmICghaTJjX2Rldi0+aHctPmhhc19zaW5nbGVfY2xrX3NvdXJj
-ZSkgew0KPiAgCQlmYXN0X2NsayA9IGRldm1fY2xrX2dldCgmcGRldi0+ZGV2LCAiZmFzdC1jbGsi
-KTsNCj4gDQoNCg==
+
+On 18/06/2019 10:35, Jose Abreu wrote:
+> From: Jon Hunter <jonathanh@nvidia.com>
+> 
+>> I am seeing a boot regression on -next for some of our boards that have
+>> a synopsys ethernet controller that uses the dwmac-dwc-qos-ethernet
+>> driver. Git bisect is pointing to this commit, but unfortunately this
+>> cannot be cleanly reverted on top of -next to confirm. 
+> 
+> Thanks for reporting. Looks like the timer is not setup when 
+> stmmac_tx_clean() is called. When do you see this stacktrace ? After 
+> ifdown ?
+
+I am not certain but I don't believe so. We are using a static IP address
+and mounting the root file-system via NFS when we see this ...
+
+[   10.607510] dwc-eth-dwmac 2490000.ethernet eth0: phy link up rgmii/1Gbps/Full
+[   10.607536] dwc-eth-dwmac 2490000.ethernet eth0: phylink_mac_config: mode=phy/rgmii/1Gbps/Full adv=00,00000000,00000000 pause=0f link=1 an=0
+[   10.608804] dwc-eth-dwmac 2490000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
+[   10.630979] IP-Config: Complete:
+[   10.639046]      device=eth0, hwaddr=d2:e5:1c:57:26:4b, ipaddr=192.168.99.2, mask=255.255.255.0, gw=192.168.99.1
+[   10.649201]      host=192.168.99.2, domain=, nis-domain=(none)
+[   10.655022]      bootserver=192.168.0.1, rootserver=192.168.0.1, rootpath=
+[   10.677531] VDD_1V8_AP_PLL: disabling
+[   10.681194] VDD_RTC: disabling
+[   10.684246] VDDIO_SDMMC3_AP: disabling
+[   10.688132] VDD_HDMI_1V05: disabling
+[   10.691704] SD_CARD_SW_PWR: disabling
+[   10.695357] VDD_USB0: disabling
+[   10.698488] VDD_USB1: disabling
+[   10.701621] VDD_HDMI_5V0: disabling
+[   10.705100] ALSA device list:
+[   10.708063]   No soundcards found.
+[   10.711914] Freeing unused kernel memory: 1472K
+[   10.727005] Run /init as init process
+[   10.784989] ------------[ cut here ]------------
+[   10.789597] kernel BUG at /home/jonathanh/workdir/tegra/mlt-linux_next/kernel/kernel/time/timer.c:952!
+
+Cheers
+Jon
+
+-- 
+nvpublic
