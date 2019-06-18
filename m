@@ -1,100 +1,113 @@
 From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V1] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-Date: Mon, 17 Jun 2019 22:23:06 -0700
-Message-ID: <1560835386-2865-1-git-send-email-bbiswas@nvidia.com>
+Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
+Date: Mon, 17 Jun 2019 22:21:57 -0700
+Message-ID: <87b38915-3b2d-9484-e33e-eeacb3746c75@nvidia.com>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
+ <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
+ <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
+ <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
+ <e795ddcf-dd11-4e39-2a94-b663e5ecb35b@nvidia.com>
+ <d2c97291-6392-d614-5cd9-1490a816548c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d2c97291-6392-d614-5cd9-1490a816548c@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Synchronize ISR and tegra_i2c_xfer_msg execution
-by disabling interrupt. This avoids spinlock usage
-for same purpose.
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 6fb545e..ccc7fae 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -240,7 +240,6 @@ struct tegra_i2c_hw_feature {
-  * @bus_clk_rate: current I2C bus clock rate
-  * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
-  * @is_multimaster_mode: track if I2C controller is in multi-master mode
-- * @xfer_lock: lock to serialize transfer submission and processing
-  * @tx_dma_chan: DMA transmit channel
-  * @rx_dma_chan: DMA receive channel
-  * @dma_phys: handle to DMA resources
-@@ -270,8 +269,6 @@ struct tegra_i2c_dev {
- 	u32 bus_clk_rate;
- 	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
--	/* xfer_lock: lock to serialize transfer submission and processing */
--	spinlock_t xfer_lock;
- 	struct dma_chan *tx_dma_chan;
- 	struct dma_chan *rx_dma_chan;
- 	dma_addr_t dma_phys;
-@@ -835,7 +832,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 
- 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
- 
--	spin_lock(&i2c_dev->xfer_lock);
- 	if (status == 0) {
- 		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
- 			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
-@@ -935,7 +931,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 
- 	complete(&i2c_dev->msg_complete);
- done:
--	spin_unlock(&i2c_dev->xfer_lock);
- 	return IRQ_HANDLED;
- }
- 
-@@ -1054,7 +1049,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 packet_header;
- 	u32 int_mask;
- 	unsigned long time_left;
--	unsigned long flags;
- 	size_t xfer_size;
- 	u32 *buffer = NULL;
- 	int err = 0;
-@@ -1085,7 +1079,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	 */
- 	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
- 					i2c_dev->bus_clk_rate);
--	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-+	if (!i2c_dev->irq_disabled) {
-+		disable_irq_nosync(i2c_dev->irq);
-+		i2c_dev->irq_disabled = true;
-+	}
- 
- 	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-@@ -1180,7 +1177,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		i2c_readl(i2c_dev, I2C_INT_MASK));
- 
- unlock:
--	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
-+	if (i2c_dev->irq_disabled) {
-+		i2c_dev->irq_disabled = false;
-+		enable_irq(i2c_dev->irq);
-+	}
- 
- 	if (dma) {
- 		if (err)
-@@ -1576,7 +1576,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 				I2C_PACKET_HEADER_SIZE;
- 	init_completion(&i2c_dev->msg_complete);
- 	init_completion(&i2c_dev->dma_complete);
--	spin_lock_init(&i2c_dev->xfer_lock);
- 
- 	if (!i2c_dev->hw->has_single_clk_source) {
- 		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
--- 
-2.7.4
+On 6/14/19 6:02 AM, Dmitry Osipenko wrote:
+> 14.06.2019 12:50, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>>
+>> On 6/13/19 5:28 AM, Dmitry Osipenko wrote:
+>>> 13.06.2019 14:30, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>
+>>>>
+>>>> On 6/12/19 7:30 AM, Dmitry Osipenko wrote:
+>>>>> 11.06.2019 13:51, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> Fix expression for residual bytes(less than word) transfer
+>>>>>> in I2C PIO mode RX/TX.
+>>>>>>
+>>>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>>>>> ---
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Update state bef=
+ore writing to FIFO.=C2=A0 If this casues us
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Update state bef=
+ore writing to FIFO.=C2=A0 If this causes us
+>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+* to finish writing all bytes (AKA buf_remaining goes to
+>>>>>> 0) we
+>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+* have a potential for an interrupt (PACKET_XFER_COMPLETE is
+>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * not maskable).=
+=C2=A0 We need to make sure that the isr sees
+>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * buf_remaining as=
+ 0 and doesn't call us back re-entrantly.
+>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * not maskable).
+>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+*/
+>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buf_re=
+maining -=3D words_to_transfer * BYTES_PER_FIFO_WORD;
+>>>>>
+>>>>> Looks like the comment could be removed altogether because it doesn't
+>>>>> make sense since interrupt handler is under xfer_lock which is kept
+>>>>> locked during of tegra_i2c_xfer_msg().
+>>>> I would push a separate patch to remove this comment because of
+>>>> xfer_lock in ISR now.
+>>>>
+>>>>>
+>>>>> Moreover the comment says that "PACKET_XFER_COMPLETE is not maskable"=
+,
+>>>>> but then what I2C_INT_PACKET_XFER_COMPLETE masking does?
+>>>>>
+>>>> I2C_INT_PACKET_XFER_COMPLETE masking support available in Tegra chips
+>>>> newer than Tegra30 allows one to not see interrupt after Packet transf=
+er
+>>>> complete. With the xfer_lock in ISR the scenario discussed in comment
+>>>> can be ignored.
+>>>
+>>> Also note that xfer_lock could be removed and replaced with a just
+>>> irq_enable/disable() calls in tegra_i2c_xfer_msg() because we only care
+>>> about IRQ not firing during of the preparation process.
+>> This should need sufficient testing hence let us do it in a different se=
+ries.
+>=20
+> I don't think that there is much to test here since obviously it should w=
+ork.
+>=20
+I shall push a patch for this as basic i2c read write test passed.
+
+>>>
+>>> It also looks like tegra_i2c_[un]nmask_irq isn't really needed and all
+>>> IRQ's could be simply unmasked during the driver's probe, in that case
+>>> it may worth to add a kind of "in-progress" flag to catch erroneous
+>>> interrupts.
+>>>
+>> TX interrupt needs special handling if this change is done. Hence I thin=
+k it should be
+>> taken up after sufficient testing in a separate patch.
+>=20
+> This one is indeed a bit more trickier. Probably another alternative coul=
+d be to keep GIC
+> interrupt disabled while no transfer is performed, then you'll have to re=
+quest interrupt
+> in a disabled state using IRQ_NOAUTOEN flag.
+>=20
+> And yes, that all should be a separate changes if you're going to impleme=
+nt them.
+>=20
+OK
+
+-Thanks,
+  Bitan
