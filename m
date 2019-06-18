@@ -1,76 +1,100 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
-Date: Tue, 18 Jun 2019 12:22:50 +0300
-Message-ID: <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH V3 12/17] soc/tegra: pmc: allow support for more tegra
+ wake
+Date: Tue, 18 Jun 2019 10:26:26 +0100
+Message-ID: <bbbaaad7-d20d-c648-af73-ec0960a33896@arm.com>
 References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-13-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1560843991-24123-13-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.06.2019 10:46, Sowjanya Komatineni пишет:
-> This patch adds suspend and resume support for Tegra pinctrl driver
-> and registers them to syscore so the pinmux settings are restored
-> before the devices resume.
+On 18/06/2019 08:46, Sowjanya Komatineni wrote:
+> This patch allows to create separate irq_set_wake and irq_set_type
+> implementations for different tegra designs PMC that has different
+> wake models which require difference wake registers and different
+> programming sequence.
+> 
+> AOWAKE model support is available for Tegra186 and Tegra194 only
+> and it resides within PMC and supports tiered wake architecture.
+> 
+> Tegra210 and prior tegra designs uses PMC directly to receive wake
+> events and coordinate the wake sequence.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
->  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
->  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
->  7 files changed, 84 insertions(+)
+>  drivers/soc/tegra/pmc.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 34596b246578..ceced30d8bd1 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -20,11 +20,16 @@
->  #include <linux/pinctrl/pinmux.h>
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/slab.h>
-> +#include <linux/syscore_ops.h>
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index edd4fe06810f..e87f29a35fcf 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -226,6 +226,8 @@ struct tegra_pmc_soc {
+>  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+>  				   struct device_node *np,
+>  				   bool invert);
+> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
+> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
 >  
->  #include "../core.h"
->  #include "../pinctrl-utils.h"
->  #include "pinctrl-tegra.h"
+>  	const char * const *reset_sources;
+>  	unsigned int num_reset_sources;
+> @@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>  	.alloc = tegra_pmc_irq_alloc,
+>  };
 >  
-> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
-> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
-> +#define EMMC_DPD_PARKING			(0x1fff << 14)
-> +
->  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
 >  {
->  	return readl(pmx->regs[bank] + reg);
-> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->  			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
->  		}
->  	}
-> +
-> +	if (pmx->soc->has_park_padcfg) {
-> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
-> +		val &= ~EMMC_DPD_PARKING;
-> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
-> +
-> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
-> +		val &= ~EMMC_DPD_PARKING;
-> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
-> +	}
-> +}
+>  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>  	unsigned int offset, bit;
+> @@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>  	return 0;
+>  }
+>  
+> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>  {
+>  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>  	u32 value;
+> @@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+>  	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+>  	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+>  	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+> -	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+> -	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
+> +	if (pmc->soc->irq_set_type)
+> +		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+> +	if (pmc->soc->irq_set_wake)
+> +		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
 
-Is there any reason why parked_bit can't be changed to parked_bitmask like I was
-asking in a comment to v2?
+Two cases: either the value is non NULL, and we assign it, or it is
+NULL, and we leave it to what it was, presumably NULL. I guess you can
+drop the both ifs.
 
-I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
-consistency when possible, hence adding platform specifics here should be discouraged.
-And then the parked_bitmask will also result in a proper hardware description in the code.
+>  
+>  	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+>  					       &tegra_pmc_irq_domain_ops, pmc);
+> @@ -2679,6 +2683,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+>  	.regs = &tegra186_pmc_regs,
+>  	.init = NULL,
+>  	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
+> +	.irq_set_wake = tegra186_pmc_irq_set_wake,
+> +	.irq_set_type = tegra186_pmc_irq_set_type,
+>  	.reset_sources = tegra186_reset_sources,
+>  	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
+>  	.reset_levels = tegra186_reset_levels,
+> 
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
