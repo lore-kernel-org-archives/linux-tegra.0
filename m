@@ -1,50 +1,61 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: Re: [PATCH V9] i2c: tegra: remove BUG() macro
-Date: Tue, 18 Jun 2019 04:52:39 -0700
-Message-ID: <2724f809-fe0b-810c-6236-d94a1efc2112@nvidia.com>
-References: <1560856182-26072-1-git-send-email-bbiswas@nvidia.com>
- <e1bf5aac-5528-3e54-0f41-5a1bbabce419@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V3 10/17] clk: tegra: add suspend resume support for DFLL
+Date: Tue, 18 Jun 2019 13:59:13 +0200
+Message-ID: <20190618115913.GM28892@ulmo>
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-11-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VB1oQhYtJt8uuzk+"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e1bf5aac-5528-3e54-0f41-5a1bbabce419@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1560843991-24123-11-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+--VB1oQhYtJt8uuzk+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/18/19 4:29 AM, Dmitry Osipenko wrote:
-> 18.06.2019 14:09, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> The usage of BUG() macro is generally discouraged in kernel, unless
->> it's a problem that results in a physical damage or loss of data.
->> This patch removes unnecessary BUG() macros and replaces the rest
->> with warning.
->>
->> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->> ---
->>   drivers/i2c/busses/i2c-tegra.c | 47 ++++++++++++++++++++++++++++++++++=
-+-------
->>   1 file changed, 39 insertions(+), 8 deletions(-)
+On Tue, Jun 18, 2019 at 12:46:24AM -0700, Sowjanya Komatineni wrote:
+> This patch creates APIs for supporting Tegra210 clock driver to
+> perform DFLL suspend and resume operation.
 >=20
-> Thank you very much! Please keep applying all the advises that were given=
- to you
-> during the reviews in the future patches.
-Thank you Dmitry for the review inputs and patience. I shall try to keep=20
-the advices in mind for future reviews.
+> During suspend, DFLL mode is saved and on resume Tegra210 clock driver
+> invokes DFLL resume API to re-initialize DFLL to enable target device
+> clock in open loop mode or closed loop mode.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-dfll.c | 78 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/tegra/clk-dfll.h |  2 ++
+>  2 files changed, 80 insertions(+)
 
+Acked-by: Thierry Reding <treding@nvidia.com>
 
->=20
-> I made a quick test and no problems spotted, all warning spots are silent=
-.
->=20
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
->=20
-Also, Thank you for help in testing the patch at your end.
+--VB1oQhYtJt8uuzk+
+Content-Type: application/pgp-signature; name="signature.asc"
 
--regards,
-  Bitan
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0I0hEACgkQ3SOs138+
+s6EKmA/7BKKxe4K40G19IsWN0t2GnZNUe6alysAl7lWVuw4DHcAHG1DTpZGqAPJU
+5eP6/jwJZYVC7cR1bDT4S/tnErF4ZJZSPGDPwtEPTpiX27hEGWnJl/PiFrAEf1m2
+0XhBlK7P5j/n957G3pRJrvfz1RkSxT5J/0wZwkJIPaU43v6Sw1pxB/NiwHRW+eIT
+PUaw2bNytrTJWoVmyyxDXHc9R8KCbtkJNtIAXxSE52Clde/uaSyDhBfqbbzBs4kV
+YGZEqkh3uAG/Q9/ZGDd5XAFR3ZToNJqAac+QYVhV26Xo9UwV9Rsy7eLxYsLO3KvW
+szw+frexcDuuV7Ecx75VeFhf7oaam33TvQPUcrWAO9NWfMiNzAzbtGVS41PjQM06
+f+3y+4OnSSdc6z6RlfKqFzuzfs9b3qeOlsR0CRLDiD6/wgJ725UeFsbga3vqCD+3
+AH0euxJCJCRkLjOuEXO/p/So/TA46OstJmJm6QZYgGwwVFWYjlUT756TVY7xrlqg
+NAn4PxiJvaY+JkR+bWKH7+6KfpOzo6mbvQax43QsX0CmoKUHvCwKyY5/4jkZ25lI
+QBQkmmXCMrgPlACpPjtcKfTlJ5ExDJQqW13r4wg9MIiSKGoXMuvUbuz+WPDDFxVq
+ZdcJixDmfeYsrLm9eCwV5IaFy9V35f2M4Y7qfqL7KyDFTCE1WTg=
+=BZR8
+-----END PGP SIGNATURE-----
+
+--VB1oQhYtJt8uuzk+--
