@@ -1,62 +1,127 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v2 1/4] staging: media: tegra-vde: Remove BIT() macro
- from UAPI header
-Date: Tue, 18 Jun 2019 11:23:13 -0700
-Message-ID: <26cd63896d6930385b4f770e305f0782a455a688.camel@perches.com>
-References: <20190618161458.20499-1-digetx@gmail.com>
-         <20190618161458.20499-5-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
+Date: Tue, 18 Jun 2019 21:26:51 +0300
+Message-ID: <cda89c10-c597-ce90-98dd-5cc13ee9b83d@gmail.com>
+References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190618161458.20499-5-digetx@gmail.com>
+In-Reply-To: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Johannes Berg <johannes@sipsolutions.net>, Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Jesper Dangaard Brouer <hawk@kernel.org>
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2019-06-18 at 19:14 +0300, Dmitry Osipenko wrote:
-> The BIT macro isn't available in userspace. Checkpatch complains about
-> shifts being used instead of the macro and people are starting to send
-> patches without realizing that it's a UAPI header file. Hence let's
-> replace the BIT macro with a hex values to make everyone happy.
+18.06.2019 11:42, Bitan Biswas пишет:
+> tegra_i2c_xfer_msg initiates the I2C transfer in DMA
+> or PIO mode. It involves steps that need FIFO register
+> access, DMA API calls like dma_sync_single_for_device, etc.
+> Tegra I2C ISR has calls to tegra_i2c_empty_rx_fifo in PIO mode
+> and in DMA/PIO mode writes different I2C registers including
+> I2C interrupt status. ISR cannot start processing
+> before the preparation step at tegra_i2c_xfer_msg is complete.
+> Hence, a synchronization between ISR and tegra_i2c_xfer_msg
+> is in place today using spinlock.
+
+Please use full 75 chars per-line, this should make commit message to look better.
+
+> Spinlock busy waits and can add avoidable delays.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> In this patch needed synchronization is achieved by disabling
+> I2C interrupt during preparation step and enabling interrupt
+> once preparation is over and spinlock is no longer needed.
+> 
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
 > ---
->  drivers/staging/media/tegra-vde/uapi.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
-> index a0dad1ed94ef..dd3e4a8c9f7e 100644
-> --- a/drivers/staging/media/tegra-vde/uapi.h
-> +++ b/drivers/staging/media/tegra-vde/uapi.h
-> @@ -6,8 +6,8 @@
->  #include <linux/types.h>
->  #include <asm/ioctl.h>
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 6fb545e..ccc7fae 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -240,7 +240,6 @@ struct tegra_i2c_hw_feature {
+>   * @bus_clk_rate: current I2C bus clock rate
+>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
+>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
+> - * @xfer_lock: lock to serialize transfer submission and processing
+>   * @tx_dma_chan: DMA transmit channel
+>   * @rx_dma_chan: DMA receive channel
+>   * @dma_phys: handle to DMA resources
+> @@ -270,8 +269,6 @@ struct tegra_i2c_dev {
+>  	u32 bus_clk_rate;
+>  	u16 clk_divisor_non_hs_mode;
+>  	bool is_multimaster_mode;
+> -	/* xfer_lock: lock to serialize transfer submission and processing */
+> -	spinlock_t xfer_lock;
+>  	struct dma_chan *tx_dma_chan;
+>  	struct dma_chan *rx_dma_chan;
+>  	dma_addr_t dma_phys;
+> @@ -835,7 +832,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
 >  
-> -#define FLAG_B_FRAME		BIT(0)
-> -#define FLAG_REFERENCE		BIT(1)
-> +#define FLAG_B_FRAME		0x1
-> +#define FLAG_REFERENCE		0x2
+>  	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
 >  
->  struct tegra_vde_h264_frame {
->  	__s32 y_fd;
+> -	spin_lock(&i2c_dev->xfer_lock);
+>  	if (status == 0) {
+>  		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
+>  			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
+> @@ -935,7 +931,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  
+>  	complete(&i2c_dev->msg_complete);
+>  done:
+> -	spin_unlock(&i2c_dev->xfer_lock);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> @@ -1054,7 +1049,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	u32 packet_header;
+>  	u32 int_mask;
+>  	unsigned long time_left;
+> -	unsigned long flags;
+>  	size_t xfer_size;
+>  	u32 *buffer = NULL;
+>  	int err = 0;
+> @@ -1085,7 +1079,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	 */
+>  	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
+>  					i2c_dev->bus_clk_rate);
+> -	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
+> +	if (!i2c_dev->irq_disabled) {
+> +		disable_irq_nosync(i2c_dev->irq);
+> +		i2c_dev->irq_disabled = true;
+> +	}
 
-The BIT macro is already used quite a bit in uapi headers.
-I imagine all those need fixup...
+1) Peter correctly pointed out in the other email that the disabling should be synced.
+But see more below in 3.
 
-$ git grep -P '\bBIT\s*\(' include/uapi
-include/uapi/linux/bpf.h:#define BPF_FIB_LOOKUP_DIRECT  BIT(0)
-include/uapi/linux/bpf.h:#define BPF_FIB_LOOKUP_OUTPUT  BIT(1)
-include/uapi/linux/coresight-stm.h:#define STM_FLAG_TIMESTAMPED   BIT(3)
-include/uapi/linux/coresight-stm.h:#define STM_FLAG_GUARANTEED    BIT(7)
-include/uapi/linux/nl80211.h: * bitmask of BIT(NL80211_BAND_*) as described in %enum
-include/uapi/linux/pkt_sched.h:#define TC_ETF_DEADLINE_MODE_ON  BIT(0)
-include/uapi/linux/pkt_sched.h:#define TC_ETF_OFFLOAD_ON        BIT(1)
-include/uapi/linux/psci.h:#define PSCI_1_0_OS_INITIATED                 BIT(0)
-include/uapi/linux/serio.h:#define SERIO_TIMEOUT        BIT(0)
-include/uapi/linux/serio.h:#define SERIO_PARITY BIT(1)
-include/uapi/linux/serio.h:#define SERIO_FRAME  BIT(2)
-include/uapi/linux/serio.h:#define SERIO_OOB_DATA       BIT(3)
-include/uapi/linux/tc_act/tc_ctinfo.h:  CTINFO_MODE_DSCP        = BIT(0),
-include/uapi/linux/tc_act/tc_ctinfo.h:  CTINFO_MODE_CPMARK      = BIT(1)
+2) i2c_dev->irq_disabled == true can't ever be the case here because tegra_i2c_init()
+re-enables interrupt in a case of error condition. Hence interrupt always enabled at
+the beginning of the transfer.
+
+3) In my previous answer I was suggesting to request IRQ in a disabled state, this
+will allow to remove i2c_dev->irq_disabled completely.
+
+Then the tegra_i2c_xfer_msg() will have to enable IRQ after completion of the
+transfer-preparation process and disable IRQ once transfer is done (both success and
+failure cases). This is actually not a bad additional motivation for this patch, to
+keep CPU's interrupt disabled while idling and not to only rely on interrupt masking
+of the I2C hardware.
+
+4) ISR should simply return IRQ_NONE when interrupt status is 0 and allow kernel core
+to disable the faulty interrupt itself. There will be "unhandled interrupt" error
+message in KMSG log, following the disabling.
+
+5) In order to request IRQ in a disabled state, the IRQ_NOAUTOEN flag need to be set
+before the requesting, like this:
+
+    irq_set_status_flags(irq, IRQ_NOAUTOEN);
+
+    devm_request_irq(&pdev->dev, irq...);
+
+In a result of combining 3-5, both i2c_dev->irq_disabled and i2c_dev->irq variables
+become obsolete and could be removed in addition to xfer_lock. That all is a good
+cleanup in my opinion.
+
+[snip]
