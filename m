@@ -1,80 +1,177 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 01/10] clk: tegra20/30: Add custom EMC clock
- implementation
-Date: Tue, 18 Jun 2019 14:21:08 +0200
-Message-ID: <20190618122108.GO28892@ulmo>
-References: <20190616233551.6838-1-digetx@gmail.com>
- <20190616233551.6838-2-digetx@gmail.com>
+From: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+Subject: Re: [PATCH V4 22/28] PCI: tegra: Access endpoint config only if
+ PCIe link is up
+Date: Tue, 18 Jun 2019 14:32:59 +0200
+Message-ID: <9c0fb01f0dc6a193265297eaa100a35ff25413e7.camel@sipsolutions.net>
+References: <20190516055307.25737-23-mmaddireddy@nvidia.com>
+         <20190604131436.GS16519@ulmo>
+         <09bcc121-eaca-3866-d0ef-7806503e883f@nvidia.com>
+         <ca34eb24-8696-576f-26bc-8d6141f81a41@nvidia.com>
+         <20190613143946.GA30445@e121166-lin.cambridge.arm.com>
+         <20190613154250.GA32713@ulmo>
+         <a523a19c-fdfa-01f7-6f6d-2ca367a10a50@nvidia.com>
+         <20190617114745.GL508@ulmo> <20190617193024.GC13533@google.com>
+         <a7e0472d-f4a7-ed63-836a-b5e8b1360645@nvidia.com>
+         <20190618104918.GA28892@ulmo> (sfid-20190618_124921_930194_6A075FC5)
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1SVgZ+3xbDF9VW5n"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190616233551.6838-2-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Rob Herring <robh+dt@kernel.org>, Joseph Lo <josephl@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20190618104918.GA28892@ulmo> (sfid-20190618_124921_930194_6A075FC5)
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+I got to this thread really late I guess :-)
 
---1SVgZ+3xbDF9VW5n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2019-06-18 at 12:49 +0200, Thierry Reding wrote:
 
-On Mon, Jun 17, 2019 at 02:35:42AM +0300, Dmitry Osipenko wrote:
-> A proper External Memory Controller clock rounding and parent selection
-> functionality is required by the EMC drivers. It is not available using
-> the generic clock implementation, hence add a custom one. The clock rate
-> rounding shall be done by the EMC drivers because they have information
-> about available memory timings, so the drivers will have to register a
-> callback that will round the requested rate. EMC clock users won't be able
-> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
-> and the callback is set up. The functionality is somewhat similar to the
-> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
-> more parent clock sources and the HW configuration and integration with
-> the EMC drivers differs a tad from the older gens, hence it's not really
-> worth to try to squash everything into a single source file.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/Makefile          |   2 +
->  drivers/clk/tegra/clk-tegra20-emc.c | 305 ++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk-tegra20.c     |  55 ++---
->  drivers/clk/tegra/clk-tegra30.c     |  38 +++-
->  drivers/clk/tegra/clk.h             |   6 +
->  include/linux/clk/tegra.h           |  14 ++
->  6 files changed, 368 insertions(+), 52 deletions(-)
->  create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
+> > > > > > > > > 1. WiFi devices provides power-off feature for power saving
+> > > > > > > > > in mobiles.  When WiFi is turned off we shouldn't power on
+> > > > > > > > > the HW back without user turning it back on.
 
-Hi Mike, Stephen,
+But why would you disconnect the PCIe device just to power it down?!
 
-The remaining patches of this series have a build-time dependency on
-this clock driver patch. Would you mind if I pick this up into the Tegra
-tree, so that I can resolve the dependency there? I can send a pull
-request of the stable branch with this one patch if we need to resolve a
-conflict between the clk and Tegra trees.
+> > > > > > The problem that Manikanta is trying to solve here occurs in
+> > > > > > this situation (Manikanta, correct me if I've got this wrong):
+> > > > > > on some setups, a WiFi module connected over PCI will toggle a
+> > > > > > power GPIO as part of runtime suspend. This effectively causes
+> > > > > > the module to disappear from the PCI bus (i.e. it can no longer
+> > > > > > be accessed until the power GPIO is toggled again).
+> > > > > 
+> > > > > GPIO is toggled as part of WiFi on/off, can be triggered from
+> > > > > network manager UI.
 
-Thierry
+That's kinda icky, IMHO.
 
---1SVgZ+3xbDF9VW5n
-Content-Type: application/pgp-signature; name="signature.asc"
+> > > > > Correct, rfkill switch should handle the GPIO.
+> > > > > Sequence will be,
+> > > > >  - WiFi ON
+> > > > >    - rfkill switch enables the WiFi GPIO
+> > > > >    - Tegra PCIe receives hot plug event
+> > > > >    - Tegra PCIe hot plug driver rescans PCI bus and enumerates the device
+> > > > >    - PCI client driver is probed, which will create network interface
+> > > > >  - WiFi OFF
+> > > > >    - rfkill switch disables the WiFi GPIO
+> > > > >    - Tegra PCIe receives hot unplug event
+> > > > >    - Tegra PCIe hot plug driver removes PCI devices under the bus
+> > > > >    - PCI client driver remove is executed, which will remove
+> > > > >      network interface
+> > > > > We don't need current patch in this case because PCI device is not
+> > > > > present in the PCI hierarchy, so there cannot be EP config access
+> > > > > with link down.  However Tegra doesn't support hot plug and unplug
+> > > > > events. I am not sure if we have any software based hot plug event
+> > > > > trigger.
 
------BEGIN PGP SIGNATURE-----
+Looks reasonable to me.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0I1zQACgkQ3SOs138+
-s6GmNxAAh2/FHVRpd1T/DtfRNWMm4FuJgUZNxY4iWXI2BBihdTriaHoryReZxM5J
-jbMpjbFEF7O8luXOxjT8N9msBIUKeIEGSMssD42yuz0YQ0qFAi5R8JJCk9ZEhP37
-S8Mucfsuc3W4y+E1k6TcYAyCANyVbnYVQKP2JW/cTsP8kTpg6kTwSOVC3zqSSiFM
-VwxqF/e3WFbvH/YjQFExotAB2JrTlgcdLOwwBEFI/pbgW6QwlHXNCQS59x10bqVa
-VqanvlQQusiu6F1CFJRQgy2VzJZHOIv1mtj0RjoM1WF+aNSFBrRr9FMlniQrFedj
-mvH72ES60Ely+A11pjdTL3h5n2ckubGHREU6d0q+Qd29G7IP+II1NRbHWXi0A6Gp
-p3m/SUHGdKLltA8mSH6si9trqXevmKfM3lz3lF3OUVzyVmwk7q2o3l4BoluVvOtE
-s41nMWBNqWhaVw7HWcyAeAXbjnTsUcM19ZuLpe+gJw0El/yPU5gJ95/KPFapEVxw
-1NVYt4F4mSgT2jqEdP06w2aoh9N+sW8lBY4vMaHoAxn10ysSR4UT3aPj3228SnXK
-gRZIq1XpQvruxfowMHuMuxllWjADW8HCTBw605/M9S+E0jArFo831tDm27tp3bv/
-b882fe4FQ96z/KNDIdRTm1URKHPWz6ZsBGjptfhBBj0cm9KNI4o=
-=XtZc
------END PGP SIGNATURE-----
+I guess if you absolutely know in software when the device is present or
+not, you don't need "real" PCIe hotplug, just need to tickle the
+software right?
 
---1SVgZ+3xbDF9VW5n--
+> > > How does rfkill work?  It sounds like it completely removes power from
+> > > the wifi device, putting it in D3cold.  Is there any software
+> > > notification other than the "Slot present pin change" (which looks
+> > > like a Tegra-specific thing)?
+
+Well, they said above it's a GPIO that controls it, so the software
+already knows and doesn't really need an event?
+
+> > The rfkill subsystem provides a generic interface for disabling any radio
+> > transmitter in the system. WiFi M.2 form factor cards provide W_DISABLE
+> > GPIO to control the radio transmitter
+
+But it depends on the hardware how this is handled, Intel NICs for
+example just trigger an IRQ to the host and don't turn off much, for
+them the W_DISABLE pin is just a GPIO in input mode, with edge triggered
+interrupt to the driver.
+
+> > and I have seen some cards provide
+> > control to turn off complete chip through this GPIO. 
+
+I never heard of this. Which NICs are we talking about?
+
+> Perhaps what we need here is some sort of mechanism to make rfkill and
+> the PCI host controller interoperate? I could imagine for example that
+> the PCI host controller would get a new "rfkill" property in device
+> tree that points at the rfkill device via phandle.
+
+But you don't know which the rfkill device is, do you?
+
+I mean, fundamentally, you just have a GPIO that turns on and off the
+W_DISABLE pin. NICs will not generally disappear from the bus when
+that's turned on, so you need a NIC driver integration.
+
+I guess you also have an rfkill-gpio driver assigned to this GPIO, which
+gets assigned there via DT/platform code?
+
+Ah, but then I guess you could have a phandle in the DT or so that ties
+the W_DISABLE-GPIO with the PCIe slot that it controls.
+
+> The driver could then get a reference to it using something like:
+> 
+> 	rfkill = rfkill_get(dev);
+> 	if (IS_ERR(rfkill)) {
+> 		...
+> 	}
+> 
+> and register for notification:
+> 
+> 	err = rfkill_subscribe(rfkill, callback);
+> 	if (err < 0) {
+> 		...
+> 	}
+> 
+> rfkill_unsubscribe() and rfkill_put() would then be used upon driver
+> unload to detach from the rfkill.
+
+This I don't understand.
+
+> I noticed that there's an rfkill-gpio driver (net/rfkill/rfkill-gpio.c)
+> that already does pretty much everything that we need, except that it
+> doesn't support DT yet, but I suspect that that's pretty easy to add.
+
+Oh, good point, no DT support here - so how *do* you actually
+instantiate the rfkill today??
+
+> Johannes, any thoughts on this. In a nutshell what we're trying to solve
+> here is devices that get removed from/added to PCI based on an rfkill-
+> type of device. The difference to other implementations is that we have
+> no way of detecting when the device has gone away (PCI hotplug does not
+> work). So we'd need some software-triggered mechanism to let the PCI
+> host controller know when the device is presumably going away or being
+> added back, so that the PCI bus can be rescanned and the PCI device
+> removed or added at that point).
+
+Right.
+
+So, I'm not even sure we need the *driver* to do anything other than say
+"I know the device will drop off the bus when rfkill is enabled", right?
+
+
+But do we actually need rfkill to be involved here?
+
+I mean, let's say first we make rfkill-gpio DT-aware, rather than just
+ACPI. This should be simple. Then it drives a GPIO (it can actually
+drive two and a clock, not sure I know why).
+
+Now, next we need something that says that the device should be treated
+as hotplug/unplug. We could make this in the driver somehow like you
+suggested, but that seems like a lot of effort?
+
+Couldn't we put this into the *GPIO* subsystem instead?
+
+I mean - conceivably there could be GPIOs that just power down a device
+for example. Not even through something like W_DISABLE, but just having
+a GPIO hooked up to a transistor on the voltage pin of the device. That
+would have very similar semantics?
+
+So why not just attach the PCIe device/port to the GPIO, and have the
+GPIO implementation here call the detach/attach (or detach/rescan?) when
+they are toggled?
+
+Not that I'd mind having it in rfkill! But it seems like a special case
+to have it there, when you can do so much more with GPIOs.
+
+johannes
