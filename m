@@ -1,118 +1,76 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH V3 01/17] irqchip: tegra: do not disable COP IRQ during
- suspend
-Date: Tue, 18 Jun 2019 10:19:31 +0100
-Message-ID: <dc4b60ae-8716-0e7e-4e41-431c0ef9f50f@arm.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
+Date: Tue, 18 Jun 2019 12:22:50 +0300
+Message-ID: <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
 References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-2-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560843991-24123-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18/06/2019 08:46, Sowjanya Komatineni wrote:
-> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
-> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
-> 
-> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
-> for Tegra210.
-> 
-> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
-> interrupt controller suspend operation.
+18.06.2019 10:46, Sowjanya Komatineni пишет:
+> This patch adds suspend and resume support for Tegra pinctrl driver
+> and registers them to syscore so the pinmux settings are restored
+> before the devices resume.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/irqchip/irq-tegra.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
+>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
+>  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>  7 files changed, 84 insertions(+)
 > 
-> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-> index e1f771c72fc4..cf0c07052064 100644
-> --- a/drivers/irqchip/irq-tegra.c
-> +++ b/drivers/irqchip/irq-tegra.c
-> @@ -44,18 +44,22 @@ static unsigned int num_ictlrs;
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> index 34596b246578..ceced30d8bd1 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -20,11 +20,16 @@
+>  #include <linux/pinctrl/pinmux.h>
+>  #include <linux/pinctrl/pinconf.h>
+>  #include <linux/slab.h>
+> +#include <linux/syscore_ops.h>
 >  
->  struct tegra_ictlr_soc {
->  	unsigned int num_ictlrs;
-> +	bool supports_sc7;
->  };
+>  #include "../core.h"
+>  #include "../pinctrl-utils.h"
+>  #include "pinctrl-tegra.h"
 >  
->  static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
->  	.num_ictlrs = 4,
-> +	.supports_sc7 = false,
-
-nit: that's the default for a statically initialized structure.
-
->  };
->  
->  static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
->  	.num_ictlrs = 5,
-> +	.supports_sc7 = false,
->  };
->  
->  static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
->  	.num_ictlrs = 6,
-> +	.supports_sc7 = true,
->  };
->  
->  static const struct of_device_id ictlr_matches[] = {
-> @@ -67,6 +71,7 @@ static const struct of_device_id ictlr_matches[] = {
->  
->  struct tegra_ictlr_info {
->  	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
-> +	const struct tegra_ictlr_soc *soc;
->  #ifdef CONFIG_PM_SLEEP
->  	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
->  	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
-> @@ -147,8 +152,19 @@ static int tegra_ictlr_suspend(void)
->  		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
->  		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
->  
-> -		/* Disable COP interrupts */
-> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-> +		/*
-> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
-> +		 *
-> +		 * Tegra210 system suspend flow uses sc7entry firmware which
-> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
-> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
-> +		 * system to go to SC7/LP0.
-> +		 *
-> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
-> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
-
-It is great that you're describing what happens when the system does
-support this SC7 thing...
-
-> +		 */
-> +		if (!lic->soc->supports_sc7)
-> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-
-Except that the code actually deals with *not* having this SC7, and
-you've deleted the one line of comment that was explaining it.
-
->  
->  		/* Disable CPU interrupts */
->  		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
-> @@ -339,6 +355,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
->  		goto out_unmap;
+> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+> +#define EMMC_DPD_PARKING			(0x1fff << 14)
+> +
+>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>  {
+>  	return readl(pmx->regs[bank] + reg);
+> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>  			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+>  		}
 >  	}
->  
-> +	lic->soc = soc;
->  	tegra_ictlr_syscore_init();
->  
->  	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
-> 
+> +
+> +	if (pmx->soc->has_park_padcfg) {
+> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+> +		val &= ~EMMC_DPD_PARKING;
+> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+> +
+> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+> +		val &= ~EMMC_DPD_PARKING;
+> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+> +	}
+> +}
 
-Otherwise looks OK to me.
+Is there any reason why parked_bit can't be changed to parked_bitmask like I was
+asking in a comment to v2?
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
+consistency when possible, hence adding platform specifics here should be discouraged.
+And then the parked_bitmask will also result in a proper hardware description in the code.
