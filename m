@@ -1,61 +1,111 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V3 09/17] clk: tegra: support for saving and restoring
- OSC clock context
-Date: Tue, 18 Jun 2019 13:51:42 +0200
-Message-ID: <20190618115142.GL28892@ulmo>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-10-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2] dmaengine: tegra-apb: Support per-burst residue granularity
+Date: Tue, 18 Jun 2019 14:50:35 +0300
+Message-ID: <20190618115035.29250-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GU3/x65mZ6MFE8p3"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1560843991-24123-10-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra's APB DMA engine updates words counter after each transferred burst
+of data, hence it can report transfer's residual with more fidelity which
+may be required in cases like audio playback. In particular this fixes
+audio stuttering during playback in a chromiuim web browser. The patch is
+based on the original work that was made by Ben Dooks. It was tested on
+Tegra20 and Tegra30 devices.
 
---GU3/x65mZ6MFE8p3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
+Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-On Tue, Jun 18, 2019 at 12:46:23AM -0700, Sowjanya Komatineni wrote:
-> This patch adds support for storing OSC clock frequency and the
-> drive-strength during OSC clock init and creates an API to restore
-> OSC control register value from the saved context.
->=20
-> This API is invoked by Tegra210 clock driver during system resume
-> to restore the  OSC clock settings.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra-fixed.c | 14 ++++++++++++++
->  drivers/clk/tegra/clk.h             |  1 +
->  2 files changed, 15 insertions(+)
+Changelog:
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+v2:  Addressed review comments made by Jon Hunter to v1. We won't try
+     to get words count if dma_desc is on free list as it will result
+     in a NULL dereference because this case wasn't handled properly.
 
---GU3/x65mZ6MFE8p3
-Content-Type: application/pgp-signature; name="signature.asc"
+     The residual value is now updated properly, avoiding potential
+     integer overflow by adding the "bytes" to the "bytes_transferred"
+     instead of the subtraction.
 
------BEGIN PGP SIGNATURE-----
+ drivers/dma/tegra20-apb-dma.c | 33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0I0E4ACgkQ3SOs138+
-s6GxLw/+OxIXQLuP5OvaapQAKg6vVmpGZhVjAP62Q6c66ykv24Ph+jLXsJo+vpm9
-jBeQhjpiEVGyPoc3ONfiOS0tvt4JvDNwChjxKw8YtVYShBYUDRi79JIgfrzhsZWX
-vKSozb0EHtrjrjbZNUVIXYq64iblgqKk4KsYi4wDsfqMCiqNeV3I3d7IjDA4mNTt
-qlGxvltMXgsrnUzJxGdLYW6GEag5eCuiF19nv/9+uq8Sb90Z1+CBo7NaAlO59545
-m1RBSLnRMQ/TVrnX6PyfygZlXNFwfXAVr1Oxp2JIgtdKQcNombhVFitTJwF5eKMe
-gf8silIq8AQrFxeZ9ojdh+A99GADYTg8WN81y6uFn1ZYyB557X9DGLRl4aYDeO6V
-mJUTrOc/O5E9W+fZLUYDTNkiZ9MVUi1AK+H+xEitePlC0zKxcf4WdT7uAm36qWnv
-EXhMxxebLGZGSbkS+iKGQ3PIT3ofPoQrn9We0Fu8vySuD+NOqP+MtfdsrbQ/PyYq
-Qs85AGlkg5tYbxW3HVy4oTTFu/mB/pJW184oNDeHqf6kRzLFcVnoGdUF1qCvnEru
-27OzodaP6Nv+af801lC6x7MaB2+RajmP4Ic5N83AtBEu+RVxyzd9zahR+uiCDPnC
-tdstFpewSTYtgufqZiHqJIUSodRppqaJzigx6XqCwoylsyTVsIc=
-=KKeu
------END PGP SIGNATURE-----
-
---GU3/x65mZ6MFE8p3--
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 79e9593815f1..fed18bc46479 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -797,6 +797,28 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+ 	return 0;
+ }
+ 
++static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
++					       struct tegra_dma_sg_req *sg_req)
++{
++	unsigned long status, wcount = 0;
++
++	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
++		return 0;
++
++	if (tdc->tdma->chip_data->support_separate_wcount_reg)
++		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
++
++	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
++
++	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
++		wcount = status;
++
++	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
++		return sg_req->req_len;
++
++	return get_current_xferred_count(tdc, sg_req, wcount);
++}
++
+ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	dma_cookie_t cookie, struct dma_tx_state *txstate)
+ {
+@@ -806,6 +828,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	enum dma_status ret;
+ 	unsigned long flags;
+ 	unsigned int residual;
++	unsigned int bytes = 0;
+ 
+ 	ret = dma_cookie_status(dc, cookie, txstate);
+ 	if (ret == DMA_COMPLETE)
+@@ -825,6 +848,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	list_for_each_entry(sg_req, &tdc->pending_sg_req, node) {
+ 		dma_desc = sg_req->dma_desc;
+ 		if (dma_desc->txd.cookie == cookie) {
++			bytes = tegra_dma_sg_bytes_xferred(tdc, sg_req);
+ 			ret = dma_desc->dma_status;
+ 			goto found;
+ 		}
+@@ -836,7 +860,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ found:
+ 	if (dma_desc && txstate) {
+ 		residual = dma_desc->bytes_requested -
+-			   (dma_desc->bytes_transferred %
++			   ((dma_desc->bytes_transferred + bytes) %
+ 			    dma_desc->bytes_requested);
+ 		dma_set_residue(txstate, residual);
+ 	}
+@@ -1441,12 +1465,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
+ 		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+ 	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+-	/*
+-	 * XXX The hardware appears to support
+-	 * DMA_RESIDUE_GRANULARITY_BURST-level reporting, but it's
+-	 * only used by this driver during tegra_dma_terminate_all()
+-	 */
+-	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
++	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 	tdma->dma_dev.device_config = tegra_dma_slave_config;
+ 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
+ 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
+-- 
+2.22.0
