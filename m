@@ -1,32 +1,64 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 3/8] regulator: core: Expose some of core functions
-Date: Tue, 18 Jun 2019 19:29:46 +0300
-Message-ID: <f0a83ad0-a6a6-52ae-6184-4908e8dd19fd@gmail.com>
-References: <20190603235904.19097-1-digetx@gmail.com>
- <20190603235904.19097-4-digetx@gmail.com>
- <20190617153259.GZ5316@sirena.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 3/8] clocksource/drivers/tegra: Set and use timer's
+ period
+Date: Tue, 18 Jun 2019 17:32:10 +0100
+Message-ID: <16c20c1b-d106-cb1e-6d67-bdd402ecf57f@nvidia.com>
+References: <20190618140358.13148-1-digetx@gmail.com>
+ <20190618140358.13148-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190617153259.GZ5316@sirena.org.uk>
+In-Reply-To: <20190618140358.13148-4-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-17.06.2019 18:32, Mark Brown пишет:
-> On Tue, Jun 04, 2019 at 02:58:59AM +0300, Dmitry Osipenko wrote:
->> Expose some of internal functions that are required for implementation of
->> customized regulator couplers.
-> 
->>  include/linux/regulator/driver.h | 11 ++++++
-> 
-> I'm a bit dubious about exposing any of this but there's no way we
-> should be exposing it directly to random drivers, this needs a new
-> header so it's more obvious that normal code shouldn't be using these
-> interfaces.
-> 
 
-That's a good call! Will address it in the v3.
+On 18/06/2019 15:03, Dmitry Osipenko wrote:
+> The of_clk structure has a period field that is set up initially by
+> timer_of_clk_init(), that period value need to be adjusted for a case of
+> TIMER1-9 that are running at a fixed rate that doesn't match the clock's
+> rate. Note that the period value is currently used only by some of the
+> clocksource drivers internally and hence this is just a minor cleanup
+> change that doesn't fix anything.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clocksource/timer-tegra.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+> index ff5a4ccb5d52..e6221e070499 100644
+> --- a/drivers/clocksource/timer-tegra.c
+> +++ b/drivers/clocksource/timer-tegra.c
+> @@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
+>  static int tegra_timer_set_periodic(struct clock_event_device *evt)
+>  {
+>  	void __iomem *reg_base = timer_of_base(to_timer_of(evt)); 
+> +	unsigned long period = timer_of_period(to_timer_of(evt));
+>  
+> -	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
+> -		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
+> +	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
+>  		       reg_base + TIMER_PTV);
+>  
+>  	return 0;
+> @@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>  		cpu_to->clkevt.rating = rating;
+>  		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+>  		cpu_to->of_base.base = timer_reg_base + base;
+> +		cpu_to->of_clk.period = rate / HZ;
+>  		cpu_to->of_clk.rate = rate;
+>  
+>  		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
