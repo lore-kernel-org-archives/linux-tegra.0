@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V3 12/17] soc/tegra: pmc: allow support for more tegra wake
-Date: Tue, 18 Jun 2019 00:46:26 -0700
-Message-ID: <1560843991-24123-13-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V3 09/17] clk: tegra: support for saving and restoring OSC clock context
+Date: Tue, 18 Jun 2019 00:46:23 -0700
+Message-ID: <1560843991-24123-10-git-send-email-skomatineni@nvidia.com>
 References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,74 +12,67 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch allows to create separate irq_set_wake and irq_set_type
-implementations for different tegra designs PMC that has different
-wake models which require difference wake registers and different
-programming sequence.
+This patch adds support for storing OSC clock frequency and the
+drive-strength during OSC clock init and creates an API to restore
+OSC control register value from the saved context.
 
-AOWAKE model support is available for Tegra186 and Tegra194 only
-and it resides within PMC and supports tiered wake architecture.
-
-Tegra210 and prior tegra designs uses PMC directly to receive wake
-events and coordinate the wake sequence.
+This API is invoked by Tegra210 clock driver during system resume
+to restore the  OSC clock settings.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-tegra-fixed.c | 14 ++++++++++++++
+ drivers/clk/tegra/clk.h             |  1 +
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index edd4fe06810f..e87f29a35fcf 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -226,6 +226,8 @@ struct tegra_pmc_soc {
- 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
- 				   struct device_node *np,
- 				   bool invert);
-+	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
-+	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 8d91b2b191cf..e8df0ccbffd0 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -17,7 +17,10 @@
+ #define OSC_CTRL			0x50
+ #define OSC_CTRL_OSC_FREQ_SHIFT		28
+ #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
++#define OSC_CTRL_MASK			(0x3f2 |	\
++					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
  
- 	const char * const *reset_sources;
- 	unsigned int num_reset_sources;
-@@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
- 	.alloc = tegra_pmc_irq_alloc,
- };
++static u32 osc_ctrl_ctx;
+ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 			      unsigned long *input_freqs, unsigned int num,
+ 			      unsigned int clk_m_div, unsigned long *osc_freq,
+@@ -29,6 +32,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 	unsigned osc_idx;
  
--static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-+static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	unsigned int offset, bit;
-@@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
+ 	val = readl_relaxed(clk_base + OSC_CTRL);
++	osc_ctrl_ctx = val & OSC_CTRL_MASK;
+ 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
+ 
+ 	if (osc_idx < num)
+@@ -96,3 +100,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 		*dt_clk = clk;
+ 	}
  }
++
++void tegra_clk_osc_resume(void __iomem *clk_base)
++{
++	u32 val;
++
++	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
++	val |= osc_ctrl_ctx;
++	writel_relaxed(val, clk_base + OSC_CTRL);
++	fence_udelay(2, clk_base);
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index a354cacae5a6..bb34a19aaf26 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -856,6 +856,7 @@ void tegra_sclk_cpulp_burst_policy_restore_context(void);
+ void tegra_clk_periph_suspend(void __iomem *clk_base);
+ void tegra_clk_periph_resume(void __iomem *clk_base);
+ void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base);
++void tegra_clk_osc_resume(void __iomem *clk_base);
  
--static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
-+static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	u32 value;
-@@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
- 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
- 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
- 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
--	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
--	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
-+	if (pmc->soc->irq_set_type)
-+		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
-+	if (pmc->soc->irq_set_wake)
-+		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
- 
- 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
- 					       &tegra_pmc_irq_domain_ops, pmc);
-@@ -2679,6 +2683,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.irq_set_type = tegra186_pmc_irq_set_type,
- 	.reset_sources = tegra186_reset_sources,
- 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
- 	.reset_levels = tegra186_reset_levels,
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
 -- 
 2.7.4
