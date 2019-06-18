@@ -1,66 +1,71 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 0/8] Few more cleanups for tegra-timer
-Date: Tue, 18 Jun 2019 17:03:50 +0300
-Message-ID: <20190618140358.13148-1-digetx@gmail.com>
+Subject: [PATCH v3 5/8] clocksource/drivers/tegra: Add verbose definition for 1MHz constant
+Date: Tue, 18 Jun 2019 17:03:55 +0300
+Message-ID: <20190618140358.13148-6-digetx@gmail.com>
+References: <20190618140358.13148-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190618140358.13148-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+Convert all 1MHz literals to a verbose constant for better readability.
 
-This a followup to [0] that includes some more fixes and further
-prettifies the driver's code.
+Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clocksource/timer-tegra.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-[0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=111529
-
-Changelog:
-
-v3: Addressed request from Jon Hunter that was made in a review comment
-    to v2 by dropping the timer's period rounding-up in the "Set and use
-    timer' period" patch.
-
-    Appended two new patches to this series that were already sent out
-    and reviewed after the v2 of this series:
-
-      clocksource/drivers/tegra: Cycles can't be 0
-      clocksource/drivers/tegra: Set up maximum-ticks limit properly
-
-    In this two new patches I addressed review comments that were made by
-    Thierry Reding by adding clarifying comments to the code and extending
-    the commit messages a tad.
-
-    Corrected the "Fixes" tag in a "Restore timer rate on Tegra210"
-    patch such that linux-next checker won't complain about the shortened
-    commit's subject.
-
-v2: Fixed a bug that was introduced by [0] in a newly added patch:
-    "Restore timer rate on Tegra210".
-
-    Fixed potential problem in regards to error handling in another new
-    patch: "Restore base address before cleanup".
-
-    Added new patch "Add verbose definition for 1MHz constant" as per
-    Daniel's Lezcano recommendation.
-
-    Fixed a code typo that was made in "Remove duplicated use of per_cpu_ptr"
-    of v1.
-
-Dmitry Osipenko (8):
-  clocksource/drivers/tegra: Restore timer rate on Tegra210
-  clocksource/drivers/tegra: Remove duplicated use of per_cpu_ptr
-  clocksource/drivers/tegra: Set and use timer's period
-  clocksource/drivers/tegra: Drop unneeded typecasting in one place
-  clocksource/drivers/tegra: Add verbose definition for 1MHz constant
-  clocksource/drivers/tegra: Restore base address before cleanup
-  clocksource/drivers/tegra: Cycles can't be 0
-  clocksource/drivers/tegra: Set up maximum-ticks limit properly
-
- drivers/clocksource/timer-tegra.c | 82 +++++++++++++++++++++----------
- 1 file changed, 56 insertions(+), 26 deletions(-)
-
+diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+index 3afa66c6730b..ddf5531c48a9 100644
+--- a/drivers/clocksource/timer-tegra.c
++++ b/drivers/clocksource/timer-tegra.c
+@@ -44,6 +44,8 @@
+ #define TIMER1_IRQ_IDX		0
+ #define TIMER10_IRQ_IDX		10
+ 
++#define TIMER_1MHz		1000000
++
+ static u32 usec_config;
+ static void __iomem *timer_reg_base;
+ 
+@@ -158,7 +160,7 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
+ 
+ static struct delay_timer tegra_delay_timer = {
+ 	.read_current_timer = tegra_delay_timer_read_counter_long,
+-	.freq = 1000000,
++	.freq = TIMER_1MHz,
+ };
+ #endif
+ 
+@@ -224,7 +226,7 @@ static inline unsigned long tegra_rate_for_timer(struct timer_of *to,
+ 	 * parent clock.
+ 	 */
+ 	if (tegra20)
+-		return 1000000;
++		return TIMER_1MHz;
+ 
+ 	return timer_of_rate(to);
+ }
+@@ -313,11 +315,11 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 		}
+ 	}
+ 
+-	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
++	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
+ 
+ 	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+-				    "timer_us", 1000000,
+-				    300, 32, clocksource_mmio_readl_up);
++				    "timer_us", TIMER_1MHz, 300, 32,
++				    clocksource_mmio_readl_up);
+ 	if (ret)
+ 		pr_err("failed to register clocksource: %d\n", ret);
+ 
 -- 
 2.22.0
