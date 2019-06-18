@@ -1,88 +1,96 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 3/6] clocksource/drivers/tegra: Set and use timer's
- period
-Date: Tue, 18 Jun 2019 12:41:15 +0300
-Message-ID: <af97341c-f787-2e35-eb63-e6b3138df8a9@gmail.com>
-References: <20190610164400.11830-1-digetx@gmail.com>
- <20190610164400.11830-4-digetx@gmail.com>
- <ac8a1da8-9b82-3d5a-5fa6-0c1cc7f627f1@nvidia.com>
- <3e941c50-ac62-719e-aac1-7072e9a3bcd0@gmail.com>
- <660f3645-3fa6-175c-75a6-3fcc79e972ad@nvidia.com>
- <e0e1b708-7dd4-a58a-7906-05bf3065cbda@gmail.com>
- <b92383e6-31e4-0797-1e7a-76410ebfba6c@nvidia.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
+Date: Tue, 18 Jun 2019 09:41:55 +0000
+Message-ID: <d911ad6c-477f-7946-c0c4-ac7e86d15ceb@axentia.se>
+References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b92383e6-31e4-0797-1e7a-76410ebfba6c@nvidia.com>
+In-Reply-To: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
 Content-Language: en-US
+Content-ID: <27E9B971228C324985661CDD2D33B01C@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-18.06.2019 11:40, Jon Hunter пишет:
-> 
-> On 17/06/2019 15:04, Dmitry Osipenko wrote:
->> 17.06.2019 13:51, Jon Hunter пишет:
->>>
->>> On 14/06/2019 17:45, Dmitry Osipenko wrote:
->>>> 14.06.2019 18:48, Jon Hunter пишет:
->>>>>
->>>>> On 10/06/2019 17:43, Dmitry Osipenko wrote:
->>>>>> The of_clk structure has a period field that is set up initially by
->>>>>> timer_of_clk_init(), that period value need to be adjusted for a case of
->>>>>> TIMER1-9 that are running at a fixed rate that doesn't match the clock's
->>>>>> rate. Note that the period value is currently used only by some of the
->>>>>> clocksource drivers internally and hence this is just a minor cleanup
->>>>>> change that doesn't fix anything.
->>>>>>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>> ---
->>>>>>  drivers/clocksource/timer-tegra.c | 5 +++--
->>>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
->>>>>> index 810b4e7435cf..646b3530c2d2 100644
->>>>>> --- a/drivers/clocksource/timer-tegra.c
->>>>>> +++ b/drivers/clocksource/timer-tegra.c
->>>>>> @@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
->>>>>>  static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>>>>>  {
->>>>>>  	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->>>>>> +	unsigned long period = timer_of_period(to_timer_of(evt));
->>>>>>  
->>>>>> -	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
->>>>>> -		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
->>>>>> +	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
->>>>>>  		       reg_base + TIMER_PTV);
->>>>>>  
->>>>>>  	return 0;
->>>>>> @@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
->>>>>>  		cpu_to->clkevt.rating = rating;
->>>>>>  		cpu_to->clkevt.cpumask = cpumask_of(cpu);
->>>>>>  		cpu_to->of_base.base = timer_reg_base + base;
->>>>>> +		cpu_to->of_clk.period = DIV_ROUND_UP(rate, HZ);
->>>>>
->>>>> Any reason you made this a round-up?
->>>>
->>>> That's what timer_of_clk_init() does, I assume it should be a more correct variant.
->>>
->>> Sounds to me like this should be 2 patches, because you are changing the
->>> value. This is not just purely cleanup IMO.
->>
->> Indeed, that could be at least mentioned in the commit message. Probably I just
->> assumed that this is such a minor change that not worth anything. A hundred of
->> microseconds is hardly noticeable.
->>
->> I'm not really sure if this really worth a re-spin at this point. Jon, are you insisting?
-> 
-> At a minimum the changelog needs to be udpated to reflect what is going
-> on here. Yes it may not be a massive difference, but I prefer not to
-> change things without any rationale.
-
-Okay, I'll respin this series and probably will just drop the round-up. I'll also
-append the other two new patches "cycles can't be 0" and "max limit correction" to
-this series.
-
-Daniel, I'll also correct the "Fixes" tag to satisfy the linux-next patch checker.
+T24gMjAxOS0wNi0xOCAxMDo0MiwgQml0YW4gQmlzd2FzIHdyb3RlOg0KPiB0ZWdyYV9pMmNfeGZl
+cl9tc2cgaW5pdGlhdGVzIHRoZSBJMkMgdHJhbnNmZXIgaW4gRE1BDQo+IG9yIFBJTyBtb2RlLiBJ
+dCBpbnZvbHZlcyBzdGVwcyB0aGF0IG5lZWQgRklGTyByZWdpc3Rlcg0KPiBhY2Nlc3MsIERNQSBB
+UEkgY2FsbHMgbGlrZSBkbWFfc3luY19zaW5nbGVfZm9yX2RldmljZSwgZXRjLg0KPiBUZWdyYSBJ
+MkMgSVNSIGhhcyBjYWxscyB0byB0ZWdyYV9pMmNfZW1wdHlfcnhfZmlmbyBpbiBQSU8gbW9kZQ0K
+PiBhbmQgaW4gRE1BL1BJTyBtb2RlIHdyaXRlcyBkaWZmZXJlbnQgSTJDIHJlZ2lzdGVycyBpbmNs
+dWRpbmcNCj4gSTJDIGludGVycnVwdCBzdGF0dXMuIElTUiBjYW5ub3Qgc3RhcnQgcHJvY2Vzc2lu
+Zw0KPiBiZWZvcmUgdGhlIHByZXBhcmF0aW9uIHN0ZXAgYXQgdGVncmFfaTJjX3hmZXJfbXNnIGlz
+IGNvbXBsZXRlLg0KPiBIZW5jZSwgYSBzeW5jaHJvbml6YXRpb24gYmV0d2VlbiBJU1IgYW5kIHRl
+Z3JhX2kyY194ZmVyX21zZw0KPiBpcyBpbiBwbGFjZSB0b2RheSB1c2luZyBzcGlubG9jay4NCj4g
+DQo+IFNwaW5sb2NrIGJ1c3kgd2FpdHMgYW5kIGNhbiBhZGQgYXZvaWRhYmxlIGRlbGF5cy4NCj4g
+DQo+IEluIHRoaXMgcGF0Y2ggbmVlZGVkIHN5bmNocm9uaXphdGlvbiBpcyBhY2hpZXZlZCBieSBk
+aXNhYmxpbmcNCj4gSTJDIGludGVycnVwdCBkdXJpbmcgcHJlcGFyYXRpb24gc3RlcCBhbmQgZW5h
+YmxpbmcgaW50ZXJydXB0DQo+IG9uY2UgcHJlcGFyYXRpb24gaXMgb3ZlciBhbmQgc3BpbmxvY2sg
+aXMgbm8gbG9uZ2VyIG5lZWRlZC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEJpdGFuIEJpc3dhcyA8
+YmJpc3dhc0BudmlkaWEuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVn
+cmEuYyB8IDE3ICsrKysrKysrLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRp
+b25zKCspLCA5IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1
+c3Nlcy9pMmMtdGVncmEuYyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYw0KPiBpbmRl
+eCA2ZmI1NDVlLi5jY2M3ZmFlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJj
+LXRlZ3JhLmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+IEBAIC0y
+NDAsNyArMjQwLDYgQEAgc3RydWN0IHRlZ3JhX2kyY19od19mZWF0dXJlIHsNCj4gICAqIEBidXNf
+Y2xrX3JhdGU6IGN1cnJlbnQgSTJDIGJ1cyBjbG9jayByYXRlDQo+ICAgKiBAY2xrX2Rpdmlzb3Jf
+bm9uX2hzX21vZGU6IGNsb2NrIGRpdmlkZXIgZm9yIG5vbi1oaWdoLXNwZWVkIG1vZGVzDQo+ICAg
+KiBAaXNfbXVsdGltYXN0ZXJfbW9kZTogdHJhY2sgaWYgSTJDIGNvbnRyb2xsZXIgaXMgaW4gbXVs
+dGktbWFzdGVyIG1vZGUNCj4gLSAqIEB4ZmVyX2xvY2s6IGxvY2sgdG8gc2VyaWFsaXplIHRyYW5z
+ZmVyIHN1Ym1pc3Npb24gYW5kIHByb2Nlc3NpbmcNCj4gICAqIEB0eF9kbWFfY2hhbjogRE1BIHRy
+YW5zbWl0IGNoYW5uZWwNCj4gICAqIEByeF9kbWFfY2hhbjogRE1BIHJlY2VpdmUgY2hhbm5lbA0K
+PiAgICogQGRtYV9waHlzOiBoYW5kbGUgdG8gRE1BIHJlc291cmNlcw0KPiBAQCAtMjcwLDggKzI2
+OSw2IEBAIHN0cnVjdCB0ZWdyYV9pMmNfZGV2IHsNCj4gIAl1MzIgYnVzX2Nsa19yYXRlOw0KPiAg
+CXUxNiBjbGtfZGl2aXNvcl9ub25faHNfbW9kZTsNCj4gIAlib29sIGlzX211bHRpbWFzdGVyX21v
+ZGU7DQo+IC0JLyogeGZlcl9sb2NrOiBsb2NrIHRvIHNlcmlhbGl6ZSB0cmFuc2ZlciBzdWJtaXNz
+aW9uIGFuZCBwcm9jZXNzaW5nICovDQo+IC0Jc3BpbmxvY2tfdCB4ZmVyX2xvY2s7DQo+ICAJc3Ry
+dWN0IGRtYV9jaGFuICp0eF9kbWFfY2hhbjsNCj4gIAlzdHJ1Y3QgZG1hX2NoYW4gKnJ4X2RtYV9j
+aGFuOw0KPiAgCWRtYV9hZGRyX3QgZG1hX3BoeXM7DQo+IEBAIC04MzUsNyArODMyLDYgQEAgc3Rh
+dGljIGlycXJldHVybl90IHRlZ3JhX2kyY19pc3IoaW50IGlycSwgdm9pZCAqZGV2X2lkKQ0KPiAg
+DQo+ICAJc3RhdHVzID0gaTJjX3JlYWRsKGkyY19kZXYsIEkyQ19JTlRfU1RBVFVTKTsNCj4gIA0K
+PiAtCXNwaW5fbG9jaygmaTJjX2Rldi0+eGZlcl9sb2NrKTsNCj4gIAlpZiAoc3RhdHVzID09IDAp
+IHsNCj4gIAkJZGV2X3dhcm4oaTJjX2Rldi0+ZGV2LCAiaXJxIHN0YXR1cyAwICUwOHggJTA4eCAl
+MDh4XG4iLA0KPiAgCQkJIGkyY19yZWFkbChpMmNfZGV2LCBJMkNfUEFDS0VUX1RSQU5TRkVSX1NU
+QVRVUyksDQo+IEBAIC05MzUsNyArOTMxLDYgQEAgc3RhdGljIGlycXJldHVybl90IHRlZ3JhX2ky
+Y19pc3IoaW50IGlycSwgdm9pZCAqZGV2X2lkKQ0KPiAgDQo+ICAJY29tcGxldGUoJmkyY19kZXYt
+Pm1zZ19jb21wbGV0ZSk7DQo+ICBkb25lOg0KPiAtCXNwaW5fdW5sb2NrKCZpMmNfZGV2LT54ZmVy
+X2xvY2spOw0KPiAgCXJldHVybiBJUlFfSEFORExFRDsNCj4gIH0NCj4gIA0KPiBAQCAtMTA1NCw3
+ICsxMDQ5LDYgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2coc3RydWN0IHRlZ3JhX2ky
+Y19kZXYgKmkyY19kZXYsDQo+ICAJdTMyIHBhY2tldF9oZWFkZXI7DQo+ICAJdTMyIGludF9tYXNr
+Ow0KPiAgCXVuc2lnbmVkIGxvbmcgdGltZV9sZWZ0Ow0KPiAtCXVuc2lnbmVkIGxvbmcgZmxhZ3M7
+DQo+ICAJc2l6ZV90IHhmZXJfc2l6ZTsNCj4gIAl1MzIgKmJ1ZmZlciA9IE5VTEw7DQo+ICAJaW50
+IGVyciA9IDA7DQo+IEBAIC0xMDg1LDcgKzEwNzksMTAgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNf
+eGZlcl9tc2coc3RydWN0IHRlZ3JhX2kyY19kZXYgKmkyY19kZXYsDQo+ICAJICovDQo+ICAJeGZl
+cl90aW1lICs9IERJVl9ST1VORF9DTE9TRVNUKCgoeGZlcl9zaXplICogOSkgKyAyKSAqIE1TRUNf
+UEVSX1NFQywNCj4gIAkJCQkJaTJjX2Rldi0+YnVzX2Nsa19yYXRlKTsNCj4gLQlzcGluX2xvY2tf
+aXJxc2F2ZSgmaTJjX2Rldi0+eGZlcl9sb2NrLCBmbGFncyk7DQo+ICsJaWYgKCFpMmNfZGV2LT5p
+cnFfZGlzYWJsZWQpIHsNCj4gKwkJZGlzYWJsZV9pcnFfbm9zeW5jKGkyY19kZXYtPmlycSk7DQoN
+CldoeSBkbyB5b3UgdXNlIC4uLl9ub3N5bmMgaW4gdGhpcyBjb250ZXh0PyBEbyB5b3Ugbm90IGNh
+cmUgYWJvdXQgZXhhY3RseSB3aGVuDQp0aGUgaXJxIGlzIGFjdHVhbGx5IGRpc2FibGVkPyBNYXli
+ZSB5b3UgbXVzdCB1c2UgX25vc3luYywgSSBkb24ndCBrbm93LCBidXQgSQ0KZ2V0IHRoZSBmZWVs
+aW5nIHRoYXQgeW91IGp1c3QgY29waWVkIHRoZSBjb2RlIGZyb20gdGhlIElTUi4gQW55d2F5LCB0
+aGUNCnF1ZXN0aW9uIGlzIGlmIHRoaXMgaXMgc3RpbGwgYWRlcXVhdGUgc3luY2hyb25pemF0aW9u
+PyBFdmVyeXRoaW5nIG1pZ2h0IHZlcnkNCndlbGwgYmUgc2FmZSBhbmQgaW4gb3JkZXIsIGJ1dCB0
+aGlzIGlzIG5vdCBjbGVhciB0byBtZSBmcm9tIG5laXRoZXIgdGhlIGNvZGUsDQp0aGUgKG5vbmV4
+aXN0aW5nKSBjb21tZW50cyBub3IgdGhlIHBhdGNoIGRlc2NyaXB0aW9uLg0KDQpJJ20gbm8gSVJR
+IGV4cGVydCwgSSdtIGp1c3QgYXNraW5nIHF1ZXN0aW9ucy4uLg0KDQpDaGVlcnMsDQpQZXRlcg0K
+DQo+ICsJCWkyY19kZXYtPmlycV9kaXNhYmxlZCA9IHRydWU7DQo+ICsJfQ0KPiAgDQo+ICAJaW50
+X21hc2sgPSBJMkNfSU5UX05PX0FDSyB8IEkyQ19JTlRfQVJCSVRSQVRJT05fTE9TVDsNCj4gIAl0
+ZWdyYV9pMmNfdW5tYXNrX2lycShpMmNfZGV2LCBpbnRfbWFzayk7DQo+IEBAIC0xMTgwLDcgKzEx
+NzcsMTAgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2coc3RydWN0IHRlZ3JhX2kyY19k
+ZXYgKmkyY19kZXYsDQo+ICAJCWkyY19yZWFkbChpMmNfZGV2LCBJMkNfSU5UX01BU0spKTsNCj4g
+IA0KPiAgdW5sb2NrOg0KPiAtCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmkyY19kZXYtPnhmZXJf
+bG9jaywgZmxhZ3MpOw0KPiArCWlmIChpMmNfZGV2LT5pcnFfZGlzYWJsZWQpIHsNCj4gKwkJaTJj
+X2Rldi0+aXJxX2Rpc2FibGVkID0gZmFsc2U7DQo+ICsJCWVuYWJsZV9pcnEoaTJjX2Rldi0+aXJx
+KTsNCj4gKwl9DQo+ICANCj4gIAlpZiAoZG1hKSB7DQo+ICAJCWlmIChlcnIpDQo+IEBAIC0xNTc2
+LDcgKzE1NzYsNiBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpwZGV2KQ0KPiAgCQkJCUkyQ19QQUNLRVRfSEVBREVSX1NJWkU7DQo+ICAJaW5pdF9j
+b21wbGV0aW9uKCZpMmNfZGV2LT5tc2dfY29tcGxldGUpOw0KPiAgCWluaXRfY29tcGxldGlvbigm
+aTJjX2Rldi0+ZG1hX2NvbXBsZXRlKTsNCj4gLQlzcGluX2xvY2tfaW5pdCgmaTJjX2Rldi0+eGZl
+cl9sb2NrKTsNCj4gIA0KPiAgCWlmICghaTJjX2Rldi0+aHctPmhhc19zaW5nbGVfY2xrX3NvdXJj
+ZSkgew0KPiAgCQlmYXN0X2NsayA9IGRldm1fY2xrX2dldCgmcGRldi0+ZGV2LCAiZmFzdC1jbGsi
+KTsNCj4gDQoNCg==
