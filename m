@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 4/8] clocksource/drivers/tegra: Drop unneeded typecasting in one place
-Date: Tue, 18 Jun 2019 17:03:54 +0300
-Message-ID: <20190618140358.13148-5-digetx@gmail.com>
+Subject: [PATCH v3 1/8] clocksource/drivers/tegra: Restore timer rate on Tegra210
+Date: Tue, 18 Jun 2019 17:03:51 +0300
+Message-ID: <20190618140358.13148-2-digetx@gmail.com>
 References: <20190618140358.13148-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,30 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@g
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need to cast void because kernel allows to do that without
-a warning message from a compiler.
+The clocksource rate is initialized only for the first per-CPU clocksource
+and then that rate shall be replicated for the rest of clocksource's
+because they are initialized manually in the code.
 
+Fixes: 3be2a85a0b61 ("clocksource/drivers/tegra: Support per-CPU timers on all Tegra's")
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/timer-tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index e6221e070499..3afa66c6730b 100644
+index 1cc5847a1030..501071f09fa8 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -81,7 +81,7 @@ static int tegra_timer_set_periodic(struct clock_event_device *evt)
+@@ -277,6 +277,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 		 */
+ 		if (tegra20)
+ 			cpu_to->of_clk.rate = 1000000;
++		else
++			cpu_to->of_clk.rate = timer_of_rate(to);
  
- static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
- {
--	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-+	struct clock_event_device *evt = dev_id;
- 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
- 
- 	writel_relaxed(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
+ 		cpu_to = per_cpu_ptr(&tegra_to, cpu);
+ 		cpu_to->of_base.base = timer_reg_base + base;
 -- 
 2.22.0
