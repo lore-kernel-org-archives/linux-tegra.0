@@ -1,51 +1,63 @@
-From: Anna Schumaker <schumaker.anna@gmail.com>
-Subject: Re: [REGRESSION v5.2-rc] SUNRPC: Declare RPC timers as
- TIMER_DEFERRABLE (431235818bc3)
-Date: Tue, 18 Jun 2019 16:18:24 -0400
-Message-ID: <7d335b53c9878865cef1de83960701c0ece4e611.camel@gmail.com>
-References: <c54db63b-0d5d-2012-162a-cb08cf32245a@nvidia.com>
-         <b2c142996bc25aff51a197db52015bf9222139fe.camel@hammerspace.com>
-         <36e34e81-8399-be71-2dd6-399d70057657@nvidia.com>
-         <313d971a-96ab-c7f0-34f5-631bb5f39e49@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: drm connectors, tegra,
+ and the web they weave (was Re: [PATCH 58/59] drm/todo: Add new
+ debugfs todo)
+Date: Tue, 18 Jun 2019 23:46:56 +0200
+Message-ID: <20190618214656.GH12905@phenom.ffwll.local>
+References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
+ <20190614203615.12639-59-daniel.vetter@ffwll.ch>
+ <20190618151938.GA2567@kroah.com> <20190618152530.GA4576@kroah.com>
+ <CAKMK7uEd0sZ81RMjDsz6cnkW+krPuvoqUcEY4U3ofB9W_qeFvA@mail.gmail.com>
+ <20190618180113.GA26105@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <313d971a-96ab-c7f0-34f5-631bb5f39e49@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Trond Myklebust <trondmy@hammerspace.com>
-Cc: "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190618180113.GA26105@kroah.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On Tue, 2019-06-18 at 10:35 +0100, Jon Hunter wrote:
-> Trond, Anna,
-> 
-> On 12/06/2019 15:23, Jon Hunter wrote:
-> > On 05/06/2019 23:01, Trond Myklebust wrote:
-> > 
-> > ...
-> > 
-> > > I'd be OK with just reverting this patch if it is causing a
-> > > performance
-> > > issue.
-> > > 
-> > > Anna?
-> > 
-> > Any update on this?
-> 
-> I have not seen any update on this. Do you plan to revert this?
-> 
-> We are getting ever closer to v5.2 and this problem still persists.
-
-Hi Jon,
-
-Sorry it took me so long to see this. I've applied the revert and
-pushed it out to my linux-next branch. I'm planning to send it with
-some other bugfixes this week.
-
-Anna
-> 
-> Thanks
-> Jon
-> 
+T24gVHVlLCBKdW4gMTgsIDIwMTkgYXQgMDg6MDE6MTNQTSArMDIwMCwgR3JlZyBLcm9haC1IYXJ0
+bWFuIHdyb3RlOgo+IE9uIFR1ZSwgSnVuIDE4LCAyMDE5IGF0IDA3OjMyOjIwUE0gKzAyMDAsIERh
+bmllbCBWZXR0ZXIgd3JvdGU6Cj4gPiBPbiBUdWUsIEp1biAxOCwgMjAxOSBhdCA1OjI1IFBNIEdy
+ZWcgS3JvYWgtSGFydG1hbgo+ID4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPiB3cm90ZToK
+PiA+ID4gT24gVHVlLCBKdW4gMTgsIDIwMTkgYXQgMDU6MTk6MzhQTSArMDIwMCwgR3JlZyBLcm9h
+aC1IYXJ0bWFuIHdyb3RlOgo+ID4gPiA+IEkgY291bGQganVzdCAib3BlbiBjb2RlIiBhIGJ1bmNo
+IG9mIGNhbGxzIHRvIGRlYnVnZnNfY3JlYXRlX2ZpbGUoKSBmb3IKPiA+ID4gPiB0aGVzZSBkcml2
+ZXJzLCB3aGljaCB3b3VsZCBzb2x2ZSB0aGlzIGlzc3VlLCBidXQgaW4gYSBtb3JlICJub24tZHJt
+Igo+ID4gPiA+IHdheS4gIElzIGl0IHdvcnRoIHRvIGp1c3QgZG8gdGhhdCBpbnN0ZWFkIG9mIG92
+ZXJ0aGlua2luZyB0aGUgd2hvbGUKPiA+ID4gPiB0aGluZyBhbmQgdHJ5aW5nIHRvIHNxdWlzaCBp
+dCBpbnRvIHRoZSBkcm0gIm1vZGVsIiBvZiBkcm0gZGVidWdmcyBjYWxscz8KPiA+ID4KPiA+ID4g
+QW4gZXhhbXBsZSBvZiAib3BlbiBjb2RpbmciIHRoaXMgaXMgdGhlIHBhdGNoIGJlbG93IGZvciB0
+aGUgc29yLmMKPiA+ID4gZHJpdmVyLgo+ID4gCj4gPiBJIHRoaW5rIG9wZW4tY29kaW5nIGlzIHRo
+ZSB3YXkgdG8gZ28gaGVyZS4gT25lIG9mIHRoZSB0b2RvcyBpcyB0bwo+ID4gZXh0ZW5kIGRlYnVn
+ZnMgc3VwcG9ydCBmb3IgY3J0Yy9jb25uZWN0b3JzLCBidXQgbG9va2luZyBhdCB0aGUKPiA+IG9w
+ZW4tY29kZWQgdmVyc2lvbiB3ZSByZWFsbHkgZG9uJ3QgbmVlZCBhIGRybS1mbGF2b3VyZWQgbWlk
+bGF5ZXIgaGVyZS4KPiAKPiBUaGVyZSBhbHJlYWR5IGlzIGRlYnVnZnMgc3VwcG9ydCBpbiB0aGUg
+Y29kZSBmb3IgY3J0Yy9jb25uZWN0b3JzLCB0aGVzZQo+IGZpbGVzIGFyZSAiaGFuZ2luZyIgb2Zm
+IG9mIHRob3NlIGxvY2F0aW9ucyBhbHJlYWR5LiAgSSdsbCBrZWVwIHRoYXQsIGJ1dAo+IGluZGVu
+dCBpdCBvbmUgbW9yZSBkaXJlY3Rvcnkgc28gdGhhdCB0aGVyZSdzIG5vIG5hbWVzcGFjZSBjb2xs
+aXNpb25zLgoKVGhlIHRvZG8gd2FzIHRvIGhhdmUgc29tZSBkcm0gd3JhcHBlcnMgaGVyZSBmb3Ig
+dGhlIGJvaWxlcnBsYXRlLCBidXQgYWZ0ZXIKbG9va2luZyBhdCB5b3VyIHZlcnNpb24gdGhhdCdz
+IG5vdCBhIGdvb2QgaWRlYS4gU28gbm90IGp1c3QgbWFraW5nIHN1cmUKY3J0Y3MvY29ubmVjdG9y
+cyBoYXZlIGEgZGVidWdmcyBkaXJlY3RvcnkgbWFkZSBmb3IgdGhlbSwgYnV0IG1vcmUuCgpXcnQg
+YWRkaW5nIGEgbmV3IGRpcmVjdG9yeTogZGVidWdmcyBpc250IHVhcGksIGJ1dCB0aGVyZSdzIHVz
+dWFsbHkgYQptYXNzaXZlIHBpbGUgb2Ygc2NyaXB0IHJlbHlpbmcgb24gdGhlbSwgc28gaXQncyBu
+b3QgbmljZSB0byBzaHVmZmxlIHBhdGhzCmFyb3VuZC4gUGx1cyB0aGUgbGlmZXRpbWVzIG1hdGNo
+IGFueXdheSAoYXQgbGVhc3QgaWYgeW91IGRvbid0IGhvdHBsdWcKY29ubmVjdG9ycywgd2hpY2gg
+dGVncmEgZG9lc24ndCBkbykuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5n
+aW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxp
+c3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeA==
