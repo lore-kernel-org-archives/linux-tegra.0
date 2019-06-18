@@ -1,56 +1,118 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-Date: Tue, 18 Jun 2019 10:13:54 +0100
-Message-ID: <61c2dbcd-85f2-2094-7596-78ac01f55421@nvidia.com>
-References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH V3 01/17] irqchip: tegra: do not disable COP IRQ during
+ suspend
+Date: Tue, 18 Jun 2019 10:19:31 +0100
+Message-ID: <dc4b60ae-8716-0e7e-4e41-431c0ef9f50f@arm.com>
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
+In-Reply-To: <1560843991-24123-2-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 18/06/2019 09:42, Bitan Biswas wrote:
-> tegra_i2c_xfer_msg initiates the I2C transfer in DMA
-> or PIO mode. It involves steps that need FIFO register
-> access, DMA API calls like dma_sync_single_for_device, etc.
-> Tegra I2C ISR has calls to tegra_i2c_empty_rx_fifo in PIO mode
-> and in DMA/PIO mode writes different I2C registers including
-> I2C interrupt status. ISR cannot start processing
-> before the preparation step at tegra_i2c_xfer_msg is complete.
-> Hence, a synchronization between ISR and tegra_i2c_xfer_msg
-> is in place today using spinlock.
+On 18/06/2019 08:46, Sowjanya Komatineni wrote:
+> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
+> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
 > 
-> Spinlock busy waits and can add avoidable delays.
+> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
+> for Tegra210.
 > 
-> In this patch needed synchronization is achieved by disabling
-> I2C interrupt during preparation step and enabling interrupt
-> once preparation is over and spinlock is no longer needed.
-Sorry but I still don't understand the problem you are trying to solve.
-Yes spinlocks are busy waits but is this busy wait an actual problem? If
-so what is the problem with this?
+> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+> interrupt controller suspend operation.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/irqchip/irq-tegra.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+> index e1f771c72fc4..cf0c07052064 100644
+> --- a/drivers/irqchip/irq-tegra.c
+> +++ b/drivers/irqchip/irq-tegra.c
+> @@ -44,18 +44,22 @@ static unsigned int num_ictlrs;
+>  
+>  struct tegra_ictlr_soc {
+>  	unsigned int num_ictlrs;
+> +	bool supports_sc7;
+>  };
+>  
+>  static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
+>  	.num_ictlrs = 4,
+> +	.supports_sc7 = false,
 
-It appears that the spinlock was added to prevent error interrupts
-occurring until the transfer has started. If this is for error cases,
-then probably it is not often that the CPU is stuck busy waiting on the
-spinlock.
+nit: that's the default for a statically initialized structure.
 
-Furthermore, in addition to the spinlock we also have calls to
-tegra_i2c_unmask_irq/tegra_i2c_mask_irq. Therefore, if we are going to
-change this it would seem like a good idea to consolidate the
-masking/unmasking of IRQs and the spinlock, if possible.
+>  };
+>  
+>  static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
+>  	.num_ictlrs = 5,
+> +	.supports_sc7 = false,
+>  };
+>  
+>  static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
+>  	.num_ictlrs = 6,
+> +	.supports_sc7 = true,
+>  };
+>  
+>  static const struct of_device_id ictlr_matches[] = {
+> @@ -67,6 +71,7 @@ static const struct of_device_id ictlr_matches[] = {
+>  
+>  struct tegra_ictlr_info {
+>  	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
+> +	const struct tegra_ictlr_soc *soc;
+>  #ifdef CONFIG_PM_SLEEP
+>  	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
+>  	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
+> @@ -147,8 +152,19 @@ static int tegra_ictlr_suspend(void)
+>  		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
+>  		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+>  
+> -		/* Disable COP interrupts */
+> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+> +		/*
+> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
+> +		 *
+> +		 * Tegra210 system suspend flow uses sc7entry firmware which
+> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
+> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
+> +		 * system to go to SC7/LP0.
+> +		 *
+> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
+> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
 
-Finally, I still see that we have a spinlock in the downstream kernels
-we are shipping and so I would prefer to see such a change also be
-tested in the downstream kernels we are releasing.
+It is great that you're describing what happens when the system does
+support this SC7 thing...
 
-Cheers
-Jon
+> +		 */
+> +		if (!lic->soc->supports_sc7)
+> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
 
+Except that the code actually deals with *not* having this SC7, and
+you've deleted the one line of comment that was explaining it.
+
+>  
+>  		/* Disable CPU interrupts */
+>  		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
+> @@ -339,6 +355,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
+>  		goto out_unmap;
+>  	}
+>  
+> +	lic->soc = soc;
+>  	tegra_ictlr_syscore_init();
+>  
+>  	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
+> 
+
+Otherwise looks OK to me.
+
+Thanks,
+
+	M.
 -- 
-nvpublic
+Jazz is not dead. It just smells funny...
