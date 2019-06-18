@@ -1,416 +1,217 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V3 11/17] clk: tegra210: support for Tegra210 clocks
- suspend and resume
-Date: Tue, 18 Jun 2019 10:58:40 -0700
-Message-ID: <491e0b18-11e7-837c-4591-06ed30950e1d@nvidia.com>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-12-git-send-email-skomatineni@nvidia.com>
- <20190618121607.GN28892@ulmo>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: drm connectors, tegra, and the web they weave (was Re: [PATCH
+ 58/59] drm/todo: Add new debugfs todo)
+Date: Tue, 18 Jun 2019 20:01:13 +0200
+Message-ID: <20190618180113.GA26105@kroah.com>
+References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
+ <20190614203615.12639-59-daniel.vetter@ffwll.ch>
+ <20190618151938.GA2567@kroah.com> <20190618152530.GA4576@kroah.com>
+ <CAKMK7uEd0sZ81RMjDsz6cnkW+krPuvoqUcEY4U3ofB9W_qeFvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190618121607.GN28892@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uEd0sZ81RMjDsz6cnkW+krPuvoqUcEY4U3ofB9W_qeFvA@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 6/18/19 5:16 AM, Thierry Reding wrote:
-> On Tue, Jun 18, 2019 at 12:46:25AM -0700, Sowjanya Komatineni wrote:
->> This patch adds system suspend and resume support for Tegra210
->> clocks.
->>
->> All the CAR controller settings are lost on suspend when core power
->> goes off.
->>
->> This patch has implementation for saving and restoring all the PLLs
->> and clocks context during system suspend and resume to have the
->> system back to operating state.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-tegra210.c | 218 +++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 211 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->> index e1ba62d2b1a0..c34d92e871f4 100644
->> --- a/drivers/clk/tegra/clk-tegra210.c
->> +++ b/drivers/clk/tegra/clk-tegra210.c
->> @@ -9,10 +9,12 @@
->>   #include <linux/clkdev.h>
->>   #include <linux/of.h>
->>   #include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->>   #include <linux/delay.h>
->>   #include <linux/export.h>
->>   #include <linux/mutex.h>
->>   #include <linux/clk/tegra.h>
->> +#include <linux/syscore_ops.h>
->>   #include <dt-bindings/clock/tegra210-car.h>
->>   #include <dt-bindings/reset/tegra210-car.h>
->>   #include <linux/iopoll.h>
->> @@ -20,6 +22,7 @@
->>   #include <soc/tegra/pmc.h>
->>   
->>   #include "clk.h"
->> +#include "clk-dfll.h"
->>   #include "clk-id.h"
->>   
->>   /*
->> @@ -36,6 +39,8 @@
->>   #define CLK_SOURCE_LA 0x1f8
->>   #define CLK_SOURCE_SDMMC2 0x154
->>   #define CLK_SOURCE_SDMMC4 0x164
->> +#define CLK_OUT_ENB_Y 0x298
->> +#define CLK_ENB_PLLP_OUT_CPU BIT(31)
->>   
->>   #define PLLC_BASE 0x80
->>   #define PLLC_OUT 0x84
->> @@ -225,6 +230,7 @@
->>   
->>   #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
->>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
->> +#define CPU_SOFTRST_CTRL 0x380
->>   
->>   #define LVL2_CLK_GATE_OVRA 0xf8
->>   #define LVL2_CLK_GATE_OVRC 0x3a0
->> @@ -2820,6 +2826,7 @@ static int tegra210_enable_pllu(void)
->>   	struct tegra_clk_pll_freq_table *fentry;
->>   	struct tegra_clk_pll pllu;
->>   	u32 reg;
->> +	int ret;
->>   
->>   	for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
->>   		if (fentry->input_rate == pll_ref_freq)
->> @@ -2836,7 +2843,7 @@ static int tegra210_enable_pllu(void)
->>   	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
->>   	reg &= ~BIT(pllu.params->iddq_bit_idx);
->>   	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
->> -	udelay(5);
->> +	fence_udelay(5, clk_base);
->>   
->>   	reg = readl_relaxed(clk_base + PLLU_BASE);
->>   	reg &= ~GENMASK(20, 0);
->> @@ -2844,13 +2851,13 @@ static int tegra210_enable_pllu(void)
->>   	reg |= fentry->n << 8;
->>   	reg |= fentry->p << 16;
->>   	writel(reg, clk_base + PLLU_BASE);
->> -	udelay(1);
->> +	fence_udelay(1, clk_base);
-> These udelay() -> fence_udelay() seem like they should be a separate
-> patch.
->
->>   	reg |= PLL_ENABLE;
->>   	writel(reg, clk_base + PLLU_BASE);
->> +	fence_udelay(1, clk_base);
->>   
->> -	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
->> -					  reg & PLL_BASE_LOCK, 2, 1000);
->> -	if (!(reg & PLL_BASE_LOCK)) {
->> +	ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
->> +	if (ret) {
->>   		pr_err("Timed out waiting for PLL_U to lock\n");
->>   		return -ETIMEDOUT;
->>   	}
->> @@ -2890,12 +2897,12 @@ static int tegra210_init_pllu(void)
->>   		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
->>   		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
->>   		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
->> -		udelay(1);
->> +		fence_udelay(1, clk_base);
->>   
->>   		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
->>   		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
->>   		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
->> -		udelay(1);
->> +		fence_udelay(1, clk_base);
->>   
->>   		reg = readl_relaxed(clk_base + PLLU_BASE);
->>   		reg &= ~PLLU_BASE_CLKENABLE_USB;
->> @@ -3282,6 +3289,188 @@ static void tegra210_disable_cpu_clock(u32 cpu)
->>   }
->>   
->>   #ifdef CONFIG_PM_SLEEP
->> +static u32 cpu_softrst_ctx[3];
->> +static struct platform_device *dfll_pdev;
->> +static u32 *periph_clk_src_ctx;
->> +struct periph_source_bank {
-> Blank line between the above two.
->
->> +	u32 start;
->> +	u32 end;
->> +};
->> +
->> +static struct periph_source_bank periph_srcs[] = {
->> +	[0] = {
->> +		.start = 0x100,
->> +		.end = 0x198,
->> +	},
->> +	[1] = {
->> +		.start = 0x1a0,
->> +		.end = 0x1f8,
->> +	},
->> +	[2] = {
->> +		.start = 0x3b4,
->> +		.end = 0x42c,
->> +	},
->> +	[3] = {
->> +		.start = 0x49c,
->> +		.end = 0x4b4,
->> +	},
->> +	[4] = {
->> +		.start = 0x560,
->> +		.end = 0x564,
->> +	},
->> +	[5] = {
->> +		.start = 0x600,
->> +		.end = 0x678,
->> +	},
->> +	[6] = {
->> +		.start = 0x694,
->> +		.end = 0x6a0,
->> +	},
->> +	[7] = {
->> +		.start = 0x6b8,
->> +		.end = 0x718,
->> +	},
->> +};
->> +
->> +/* This array lists the valid clocks for each periph clk bank */
->> +static u32 periph_clks_on[] = {
->> +	0xdcd7dff9,
->> +	0x87d1f3e7,
->> +	0xf3fed3fa,
->> +	0xffc18cfb,
->> +	0x793fb7ff,
->> +	0x3fe66fff,
->> +	0xfc1fc7ff,
->> +};
-> Hm... this is a bunch of magic. Perhaps replace this by a list of the
-> clock IDs? That's perhaps a little more verbose, but if we ever need to
-> tweak the list of IDs in that periph_clks_on array, that'll be quite the
-> challenge.
->
-> Also, is this list a "guess" or are these all guaranteed to be always
-> on? What if some of these ended up getting disabled as part of suspend
-> already (by their users). If we force them on, won't their references
-> become unbalanced if the driver later enables them again on resume?
-
-Yes, will replace with list of peripheral clock names..
-
-This list is not a guess. Each entry of this list maps to CLK_ENB set 
-register.
-
-Total 7 registers are available and each bit of these registers is for 
-enable/disable clock to corresponding peripheral.
-
-Some of the bits are off as those peripheral clocks don't need to be 
-enabled as we are not changing source or not using them like MIPIBIF, 
-PLLG_REF..
-
-This list of peripheral clocks are enabled during resume before changing 
-clock sources and after clock source update, they are restored back to 
-the state they were before suspend. So their references don't become 
-unbalanced.
-
->> +
->> +static struct platform_device *dfll_pdev;
-> I think you already predeclared this one above.
->
->> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) + ((_off) * 4))
->> +#define car_writel(_val, _base, _off) \
->> +		writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
->> +
->> +static u32 * __init tegra210_init_suspend_ctx(void)
->> +{
->> +	int i, size = 0;
-> Can both be unsigned int.
->
->> +
->> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
->> +		size += periph_srcs[i].end - periph_srcs[i].start + 4;
->> +
->> +	periph_clk_src_ctx = kmalloc(size, GFP_KERNEL);
->> +
->> +	return periph_clk_src_ctx;
-> It's somewhat wasteful to return a global variable since you can access
-> it anyway. Perhaps it'd be more useful to make the function return a
-> boolean?
->
->> +}
->> +
->> +static int tegra210_clk_suspend(void)
->> +{
->> +	int i;
-> unsigned int.
->
->> +	unsigned long off;
->> +	struct device_node *node;
->> +	u32 *clk_rst_ctx = periph_clk_src_ctx;
->> +	u32 val;
->> +
->> +	tegra_cclkg_burst_policy_save_context();
->> +
->> +	if (!dfll_pdev) {
->> +		node = of_find_compatible_node(NULL, NULL,
->> +					       "nvidia,tegra210-dfll");
->> +		if (node)
->> +			dfll_pdev = of_find_device_by_node(node);
->> +		of_node_put(node);
->> +		if (!dfll_pdev)
->> +			pr_err("dfll node not found. no suspend for dfll\n");
->> +	}
-> Wouldn't it make sense to run this only once, perhaps as part of
-> tegra210_init_suspend_ctx()?
->
->> +
->> +	if (dfll_pdev)
->> +		tegra_dfll_suspend(dfll_pdev);
->> +
->> +	/* Enable PLLP_OUT_CPU after dfll suspend */
->> +	val = car_readl(CLK_OUT_ENB_Y, 0);
->> +	val |= CLK_ENB_PLLP_OUT_CPU;
->> +	car_writel(val, CLK_OUT_ENB_Y, 0);
->> +
->> +	tegra_clk_periph_suspend(clk_base);
->> +
->> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
->> +		for (off = periph_srcs[i].start; off <= periph_srcs[i].end;
->> +		     off += 4)
->> +			*clk_rst_ctx++ = car_readl(off, 0);
->> +
->> +	tegra_sclk_cclklp_burst_policy_save_context();
->> +
->> +	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->> +		cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
->> +
->> +	clk_save_context();
->> +
->> +	return 0;
->> +}
->> +
->> +static void tegra210_clk_resume(void)
->> +{
->> +	int i;
->> +	unsigned long off;
->> +	u32 val;
->> +	u32 *clk_rst_ctx = periph_clk_src_ctx;
->> +	struct clk_hw *parent;
->> +	struct clk *clk;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->> +		car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
->> +
->> +	tegra_clk_osc_resume(clk_base);
->> +
->> +	/*
->> +	 * restore all the plls before configuring clocks and resetting
->> +	 * the devices.
->> +	 */
->> +	tegra210_init_pllu();
->> +	tegra_sclk_cpulp_burst_policy_restore_context();
->> +	clk_restore_context();
->> +
->> +	/* enable all clocks before configuring clock sources */
->> +	tegra_clk_periph_force_on(periph_clks_on, ARRAY_SIZE(periph_clks_on),
->> +				  clk_base);
->> +	/* wait for all writes to happen to have all the clocks enabled */
->> +	wmb();
->> +	fence_udelay(2, clk_base);
->> +
->> +	/* restore all the devices clock sources */
->> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
->> +		for (off = periph_srcs[i].start; off <= periph_srcs[i].end;
->> +		     off += 4)
->> +			car_writel(*clk_rst_ctx++, off, 0);
->> +
->> +	/* propagate and restore resets, restore clock state */
->> +	fence_udelay(5, clk_base);
->> +	tegra_clk_periph_resume(clk_base);
->> +
->> +	/*
->> +	 * restore CPUG clocks:
->> +	 * - enable DFLL in open loop mode
->> +	 * - switch CPUG to DFLL clock source
->> +	 * - close DFLL loop
->> +	 * - sync PLLX state
->> +	 */
->> +	if (dfll_pdev)
->> +		tegra_dfll_resume(dfll_pdev, false);
->> +
->> +	tegra_cclkg_burst_policy_restore_context();
->> +	fence_udelay(2, clk_base);
->> +
->> +	if (dfll_pdev)
->> +		tegra_dfll_resume(dfll_pdev, true);
->> +
->> +	parent = clk_hw_get_parent(__clk_get_hw(clks[TEGRA210_CLK_CCLK_G]));
->> +	clk = clks[TEGRA210_CLK_PLL_X];
->> +	if (parent != __clk_get_hw(clk))
->> +		tegra_clk_sync_state_pll(__clk_get_hw(clk));
->> +
->> +	/* Disable PLL_OUT_CPU after DFLL resume */
->> +	val = car_readl(CLK_OUT_ENB_Y, 0);
->> +	val &= ~CLK_ENB_PLLP_OUT_CPU;
->> +	car_writel(val, CLK_OUT_ENB_Y, 0);
->> +}
-> I'm surprised by the amount of work that we need to do here. I had hoped
-> that the clock framework's save/restore infrastructure would be enough.
-> I suppose you do call clk_restore_context() somewhere in there, so maybe
-> this really is as good as it gets.
->
-> Thierry
-
-Reason is there are dependencies b/w the clocks and DFLL resume and 
-clocks resume order needed is not same as clock tree list.
-
-during resume as per clock tree, CPU clock configs to use DFLL will 
-happen first as its first in the clock tree but DFLL resume should be 
-done prior to switching CPU to use from DFLL output.
-
-To resume DFLL, peripheral clocks should be restored.
-
-Considering these dependencies, performing peripheral and DFLL/CPU 
-resume in Tegra210 clock driver rather than in corresponding peripheral 
-clk_ops using save and restore context callback.
-
->> +
->>   static void tegra210_cpu_clock_suspend(void)
->>   {
->>   	/* switch coresite to clk_m, save off original source */
->> @@ -3295,8 +3484,20 @@ static void tegra210_cpu_clock_resume(void)
->>   	writel(tegra210_cpu_clk_sctx.clk_csite_src,
->>   				clk_base + CLK_SOURCE_CSITE);
->>   }
->> +#else
->> +#define tegra210_clk_suspend	NULL
->> +#define tegra210_clk_resume	NULL
->> +static inline u32 *tegra210_init_suspend_ctx(void)
->> +{
->> +	return NULL;
->> +}
->>   #endif
->>   
->> +static struct syscore_ops tegra_clk_syscore_ops = {
->> +	.suspend = tegra210_clk_suspend,
->> +	.resume = tegra210_clk_resume,
->> +};
->> +
->>   static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
->>   	.wait_for_reset	= tegra210_wait_cpu_in_reset,
->>   	.disable_clock	= tegra210_disable_cpu_clock,
->> @@ -3580,5 +3781,8 @@ static void __init tegra210_clock_init(struct device_node *np)
->>   	tegra210_mbist_clk_init();
->>   
->>   	tegra_cpu_car_ops = &tegra210_cpu_car_ops;
->> +
->> +	if (tegra210_init_suspend_ctx())
->> +		register_syscore_ops(&tegra_clk_syscore_ops);
->>   }
->>   CLK_OF_DECLARE(tegra210, "nvidia,tegra210-car", tegra210_clock_init);
->> -- 
->> 2.7.4
->>
+T24gVHVlLCBKdW4gMTgsIDIwMTkgYXQgMDc6MzI6MjBQTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
+cm90ZToKPiBPbiBUdWUsIEp1biAxOCwgMjAxOSBhdCA1OjI1IFBNIEdyZWcgS3JvYWgtSGFydG1h
+bgo+IDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4gd3JvdGU6Cj4gPiBPbiBUdWUsIEp1biAx
+OCwgMjAxOSBhdCAwNToxOTozOFBNICswMjAwLCBHcmVnIEtyb2FoLUhhcnRtYW4gd3JvdGU6Cj4g
+PiA+IE9uIEZyaSwgSnVuIDE0LCAyMDE5IGF0IDEwOjM2OjE0UE0gKzAyMDAsIERhbmllbCBWZXR0
+ZXIgd3JvdGU6Cj4gPiA+ID4gR3JlZyBpcyBidXN5IGFscmVhZHksIGJ1dCBtYXliZSBoZSB3b24n
+dCBkbyBldmVyeXRoaW5nIC4uLgo+ID4gPiA+Cj4gPiA+ID4gQ2M6IEdyZWcgS3JvYWgtSGFydG1h
+biA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogRGFu
+aWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBpbnRlbC5jb20+Cj4gPiA+ID4gLS0tCj4gPiA+ID4g
+IERvY3VtZW50YXRpb24vZ3B1L3RvZG8ucnN0IHwgMyArKysKPiA+ID4gPiAgMSBmaWxlIGNoYW5n
+ZWQsIDMgaW5zZXJ0aW9ucygrKQo+ID4gPiA+Cj4gPiA+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50
+YXRpb24vZ3B1L3RvZG8ucnN0IGIvRG9jdW1lbnRhdGlvbi9ncHUvdG9kby5yc3QKPiA+ID4gPiBp
+bmRleCA5NzE3NTQwZWUyOGYuLjAyNmU1NWM1MTdlMSAxMDA2NDQKPiA+ID4gPiAtLS0gYS9Eb2N1
+bWVudGF0aW9uL2dwdS90b2RvLnJzdAo+ID4gPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZ3B1L3Rv
+ZG8ucnN0Cj4gPiA+ID4gQEAgLTM3NSw2ICszNzUsOSBAQCBUaGVyZSdzIGEgYnVuY2ggb2YgaXNz
+dWVzIHdpdGggaXQ6Cj4gPiA+ID4gICAgdGhpcyAodG9nZXRoZXIgd2l0aCB0aGUgZHJtX21pbm9y
+LT5kcm1fZGV2aWNlIG1vdmUpIHdvdWxkIGFsbG93IHVzIHRvIHJlbW92ZQo+ID4gPiA+ICAgIGRl
+YnVnZnNfaW5pdC4KPiA+ID4gPgo+ID4gPiA+ICstIERyb3AgdGhlIHJldHVybiBjb2RlIGFuZCBl
+cnJvciBjaGVja2luZyBmcm9tIGFsbCBkZWJ1Z2ZzIGZ1bmN0aW9ucy4gR3JlZyBLSCBpcwo+ID4g
+PiA+ICsgIHdvcmtpbmcgb24gdGhpcyBhbHJlYWR5Lgo+ID4gPgo+ID4gPgo+ID4gPiBQYXJ0IG9m
+IHRoaXMgd29yayB3YXMgdG8gdHJ5IHRvIGRlbGV0ZSBkcm1fZGVidWdmc19yZW1vdmVfZmlsZXMo
+KS4KPiA+ID4KPiA+ID4gVGhlcmUgYXJlIG9ubHkgNCBmaWxlcyB0aGF0IGN1cnJlbnRseSBzdGls
+bCBjYWxsIHRoaXMgZnVuY3Rpb246Cj4gPiA+ICAgICAgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+Yy5jCj4gPiA+ICAgICAgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kc2kuYwo+ID4gPiAgICAgICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCj4gPiA+ICAgICAgIGRyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9zb3IuYwo+ID4gPgo+ID4gPiBGb3IgZGMuYywgdGhlIGRyaXZlciB3YW50cyB0byBhZGQg
+ZGVidWdmcyBmaWxlcyB0byB0aGUgc3RydWN0IGRybV9jcnRjCj4gPiA+IGRlYnVnZnMgZGlyZWN0
+b3J5LiAgV2hpY2ggaXMgZmluZSwgYnV0IGl0IGhhcyB0byBkbyBzb21lIHNwZWNpYWwgbWVtb3J5
+Cj4gPiA+IGFsbG9jYXRpb24gdG8gZ2V0IHRoZSBkZWJ1Z2ZzIGNhbGxiYWNrIHRvIHBvaW50IG5v
+dCB0byB0aGUgc3RydWN0Cj4gPiA+IGRybV9taW5vciBwb2ludGVyLCBidXQgcmF0aGVyIHRoZSBk
+cm1fY3J0YyBzdHJ1Y3R1cmUuCj4gCj4gVGhlcmUncyBhbHJlYWR5IGEgdG9kbyB0byBzd2l0Y2gg
+dGhlIGRybV9taW5vciBkZWJ1Z2ZzIHN0dWZmIG92ZXIgdG8KPiBkcm1fZGV2aWNlLiBkcm1fbWlu
+b3IgaXMgZXNzZW50aWFsbHkgZGlmZmVyZW50IHVhcGkgZmxhdm91cnMgKC9kZXYvCj4gbWlub3Ig
+bm9kZXMsIGhlbmNlIHRoZSBuYW1lKSBzaXR0aW5nIG9uIHRvcCBvZiB0aGUgc2FtZSBkcm1fZGV2
+aWNlLgo+IExhc3QgdGltZSBJIGNoZWNrZWQgYWxsIHRoZSBkZWJ1Z2ZzIGZpbGVzIHdhbnQgdGhl
+IGRybV9kZXZpY2UsIG5vdCB0aGUKPiBtaW5vci4gSSB0aGluayB3ZSBldmVuIGRpc2N1c3NlZCB0
+byBvbmx5IHJlZ2lzdGVyIHRoZSBkZWJ1Z2ZzIGZpbGVzCj4gZm9yIHRoZSBmaXJzdCBtaW5vciwg
+YW5kIGNyZWF0ZSB0aGUgb3RoZXIgb25lcyBhcyBzeW1saW5rcyB0byB0aGUKPiBmaXJzdCBvbmUu
+IEJ1dCBoYXZlbid0IHlldCBnb3R0ZW4gYXJvdW5kIHRvIHR5cGluZyB0aGF0Lgo+IAo+IGRybV9j
+cnRjL2Nvbm5lY3RvciBhcmUgcGFydHMgb2YgZHJtX2RldmljZSB3aXRoIG1vZGVzZXR0aW5nIHN1
+cHBvcnQsCj4gc28gdGhlIGRybV9taW5vciBpcyBldmVuIHdvcnNlIGNob2ljZSByZWFsbHkuCgpI
+ZWgsIG9rLCBzbyB0aGUgZXhpc3RpbmcgY29kZSBpcyB3b3JraW5nIGFyb3VuZCB0aGF0IGNob2lj
+ZSByaWdodCBub3csCmJ1dCB0aGF0IHdhc24ndCBhIGdvb2QgY2hvaWNlLCBzbyBJJ2xsIGlnbm9y
+ZSBpdCA6KQoKPiBOb3QgZXhhY3RseSBzdXJlIHdoeSB3ZSB3ZW50IHdpdGggdGhpcywgYnV0IHBy
+b2JhYmx5IGRhdGVzIGJhY2sgdG8gdGhlCj4gKmJzZCBjb21wYXQgbGF5ZXIgYW5kIGEgbG90IG9m
+IHRoZXNlIGZpbGVzIGhhbmdpbmcgb3V0IGluIHByb2NmcyB0b28KPiAod2UndmUgZml4ZWQgdGhv
+c2UgbWlzdGFrZXMgYSBmZXcgeWVhcnMgYWdvLCB5YXkhKS4KPiAKPiA+ID4gU28sIHRvIHJlbW92
+ZSB0aGlzIGNhbGwsIEkgbmVlZCB0byByZW1vdmUgdGhpcyBzcGVjaWFsIG1lbW9yeSBhbGxvY2F0
+aW9uCj4gPiA+IGFuZCB0byBkbyB0aGF0LCBJIG5lZWQgdG8gc29tZWhvdyBiZSBhYmxlIHRvIGNh
+c3QgZnJvbSBkcm1fbWlub3IgYmFjayB0bwo+ID4gPiB0aGUgZHJtX2NydGMgc3RydWN0dXJlIGJl
+aW5nIHVzZWQgaW4gdGhpcyBkcml2ZXIuICBBbmQgSSBjYW4ndCBmaWd1cmUKPiA+ID4gaG93IHRo
+ZXkgYXJlIHJlbGF0ZWQgYXQgYWxsLgo+ID4gPgo+ID4gPiBBbnkgcG9pbnRlcnMgaGVyZSAocHVu
+IGludGVuZGVkKSB3b3VsZCBiZSBhcHByZWNpYXRlZC4KPiA+ID4KPiA+ID4gRm9yIHRoZSBvdGhl
+ciAzIGZpbGVzLCB0aGUgc2l0dWF0aW9uIGlzIG11Y2ggdGhlIHNhbWUsIGJ1dCBJIG5lZWQgdG8g
+Z2V0Cj4gPiA+IGZyb20gYSAnc3RydWN0IGRybV9taW5vcicgcG9pbnRlciB0byBhICdzdHJ1Y3Qg
+ZHJtX2Nvbm5lY3RvcicgcG9pbnRlci4KPiAKPiBEaXRjaCB0aGUgZHJtX21pbm9yLCB0aGVyZSdz
+IG5vIG5vIHdheSB0byBnZXQgZnJvbSB0aGF0IHRvIHNvbWV0aGluZwo+IGxpa2UgZHJtX2Nvbm5l
+Y3Rvci9jcnRjLCBzaW5jZSBpdCdzIGEgbjptIHJlbGF0aW9uc2hpcC4KCk9rLCB3aWxsIGRvLgoK
+PiAKPiA+ID4gSSBjb3VsZCBqdXN0ICJvcGVuIGNvZGUiIGEgYnVuY2ggb2YgY2FsbHMgdG8gZGVi
+dWdmc19jcmVhdGVfZmlsZSgpIGZvcgo+ID4gPiB0aGVzZSBkcml2ZXJzLCB3aGljaCB3b3VsZCBz
+b2x2ZSB0aGlzIGlzc3VlLCBidXQgaW4gYSBtb3JlICJub24tZHJtIgo+ID4gPiB3YXkuICBJcyBp
+dCB3b3J0aCB0byBqdXN0IGRvIHRoYXQgaW5zdGVhZCBvZiBvdmVydGhpbmtpbmcgdGhlIHdob2xl
+Cj4gPiA+IHRoaW5nIGFuZCB0cnlpbmcgdG8gc3F1aXNoIGl0IGludG8gdGhlIGRybSAibW9kZWwi
+IG9mIGRybSBkZWJ1Z2ZzIGNhbGxzPwo+ID4KPiA+IEFuIGV4YW1wbGUgb2YgIm9wZW4gY29kaW5n
+IiB0aGlzIGlzIHRoZSBwYXRjaCBiZWxvdyBmb3IgdGhlIHNvci5jCj4gPiBkcml2ZXIuCj4gCj4g
+SSB0aGluayBvcGVuLWNvZGluZyBpcyB0aGUgd2F5IHRvIGdvIGhlcmUuIE9uZSBvZiB0aGUgdG9k
+b3MgaXMgdG8KPiBleHRlbmQgZGVidWdmcyBzdXBwb3J0IGZvciBjcnRjL2Nvbm5lY3RvcnMsIGJ1
+dCBsb29raW5nIGF0IHRoZQo+IG9wZW4tY29kZWQgdmVyc2lvbiB3ZSByZWFsbHkgZG9uJ3QgbmVl
+ZCBhIGRybS1mbGF2b3VyZWQgbWlkbGF5ZXIgaGVyZS4KClRoZXJlIGFscmVhZHkgaXMgZGVidWdm
+cyBzdXBwb3J0IGluIHRoZSBjb2RlIGZvciBjcnRjL2Nvbm5lY3RvcnMsIHRoZXNlCmZpbGVzIGFy
+ZSAiaGFuZ2luZyIgb2ZmIG9mIHRob3NlIGxvY2F0aW9ucyBhbHJlYWR5LiAgSSdsbCBrZWVwIHRo
+YXQsIGJ1dAppbmRlbnQgaXQgb25lIG1vcmUgZGlyZWN0b3J5IHNvIHRoYXQgdGhlcmUncyBubyBu
+YW1lc3BhY2UgY29sbGlzaW9ucy4KCj4gPiBUb3RhbGx5IHVudGVzdGVkLCBub3QgZXZlbiBidWls
+dCwgYnV0IHlvdSBzaG91bGQgZ2V0IHRoZSBpZGVhIGhlcmUuCj4gPgo+ID4gdGhhbmtzLAo+ID4K
+PiA+IGdyZWcgay1oCj4gPgo+ID4gLS0tLS0tLS0tLS0tLS0tCj4gPgo+ID4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3Iu
+Ywo+ID4gaW5kZXggNWJlNWEwODE3ZGZlLi4zMjE2MjIxYzc3YzQgMTAwNjQ0Cj4gPiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9zb3IuYwo+ID4gQEAgLTQxNCw3ICs0MTQsOCBAQCBzdHJ1Y3QgdGVncmFfc29yIHsKPiA+Cj4g
+PiAgICAgICAgIHN0cnVjdCBkcm1fZHBfYXV4ICphdXg7Cj4gPgo+ID4gLSAgICAgICBzdHJ1Y3Qg
+ZHJtX2luZm9fbGlzdCAqZGVidWdmc19maWxlczsKPiA+ICsgICAgICAgc3RydWN0IGRlbnRyeSAq
+ZGVidWdmc19yb290Owo+ID4gKyAgICAgICBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtOwo+ID4KPiA+
+ICAgICAgICAgY29uc3Qgc3RydWN0IHRlZ3JhX3Nvcl9vcHMgKm9wczsKPiA+ICAgICAgICAgZW51
+bSB0ZWdyYV9pb19wYWQgcGFkOwo+ID4gQEAgLTEyNjIsMTAgKzEyNjMsOSBAQCBzdGF0aWMgaW50
+IHRlZ3JhX3Nvcl9jcmNfd2FpdChzdHJ1Y3QgdGVncmFfc29yICpzb3IsIHVuc2lnbmVkIGxvbmcg
+dGltZW91dCkKPiA+Cj4gPiAgc3RhdGljIGludCB0ZWdyYV9zb3Jfc2hvd19jcmMoc3RydWN0IHNl
+cV9maWxlICpzLCB2b2lkICpkYXRhKQo+ID4gIHsKPiA+IC0gICAgICAgc3RydWN0IGRybV9pbmZv
+X25vZGUgKm5vZGUgPSBzLT5wcml2YXRlOwo+ID4gLSAgICAgICBzdHJ1Y3QgdGVncmFfc29yICpz
+b3IgPSBub2RlLT5pbmZvX2VudC0+ZGF0YTsKPiA+ICsgICAgICAgc3RydWN0IHRlZ3JhX3NvciAq
+c29yID0gcy0+cHJpdmF0ZTsKPiA+ICAgICAgICAgc3RydWN0IGRybV9jcnRjICpjcnRjID0gc29y
+LT5vdXRwdXQuZW5jb2Rlci5jcnRjOwo+ID4gLSAgICAgICBzdHJ1Y3QgZHJtX2RldmljZSAqZHJt
+ID0gbm9kZS0+bWlub3ItPmRldjsKPiA+ICsgICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybSA9
+IHNvci0+ZHJtOwo+ID4gICAgICAgICBpbnQgZXJyID0gMDsKPiA+ICAgICAgICAgdTMyIHZhbHVl
+Owo+ID4KPiA+IEBAIC0xMzAyLDYgKzEzMDIsMjAgQEAgc3RhdGljIGludCB0ZWdyYV9zb3Jfc2hv
+d19jcmMoc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQo+ID4gICAgICAgICByZXR1cm4g
+ZXJyOwo+ID4gIH0KPiA+Cj4gPiArc3RhdGljIGludCBjcmNfb3BlbihzdHJ1Y3QgaW5vZGUgKmlu
+b2RlLCBzdHJ1Y3QgZmlsZSAqZmlsZSkKPiA+ICt7Cj4gPiArICAgICAgIHN0cnVjdCB0ZWdyYV9z
+b3IgKnNvciA9IGlub2RlLT5pX3ByaXZhdGU7Cj4gPiArICAgICAgIHJldHVybiBzaW5nbGVfb3Bl
+bihmaWxlLCB0ZWdyYV9zb3Jfc2hvd19jcmMsIHNvcik7Cj4gPiArfQo+ID4gKwo+ID4gK3N0YXRp
+YyBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRpb25zIGNyY19mb3BzID0gewo+ID4gKyAgICAgICAu
+b3duZXIgPSBUSElTX01PRFVMRSwKPiA+ICsgICAgICAgLm9wZW4gPSBjcmNfb3BlbiwKPiA+ICsg
+ICAgICAgLnJlYWQgPSBzZXFfcmVhZCwKPiA+ICsgICAgICAgLmxsc2VlayA9IHNlcV9sc2VlaywK
+PiA+ICsgICAgICAgLnJlbGVhc2UgPSBzaW5nbGVfcmVsZWFzZSwKPiA+ICt9Owo+IAo+IEhtLCBp
+cyB0aGVyZSBub3QgYSBtYWNybyB0byBjcmVhdGUgc3VjaCBzaW1wbGUgZmlsZXMgd2l0aCByZWFk
+L3dyaXRlCj4gb3BzPyBBdCBsZWFzdCBmb3Igc3lzZnMgdGhpcyBpcyBhIGJpdCBsZXNzIGJvaWxl
+cnBsYXRlIGlpcmMuCgpGb3IgInNpbXBsZSIgdGhpbmdzIGxpa2Ugc2luZ2xlIHZhcmlhYmxlcywg
+eWVzLCB0aGVyZSBpcy4KCkZvciBtb3JlICJmcmVlLWZvcm0iIHRleHQsIHdoZXJlIHlvdSB3YW50
+IHRvIHVzZSBhIHNlcSBmaWxlIGludGVyZmFjZSwKdGhpcyBzZWVtcyB0byBiZSB0aGUgInNpbXBs
+ZXN0IiBib2lsZXItcGxhdGUgdG8gY3JlYXRlLiAgQWN0dWFsbHkgc2hvdWxkCmJlIHByZXR0eSBz
+aW1wbGUgdG8gY3JlYXRlIGEgbWFjcm8gZm9yIHRoaXMsIGFzIGl0J3MgcHJldHR5IHRyaXZpYWwg
+KHRoZQpkcm0gY29yZSBhbHJlYWR5IHdyYXBzIHRoaXMgb24gaXRzIG93biwgc28gaXQgY2FuIGJl
+IGRvbmUuLi4pCgpJJ2xsIGRvIHRoYXQgdG9vLgoKPiA+ICAjZGVmaW5lIERFQlVHRlNfUkVHMzIo
+X25hbWUpIHsgLm5hbWUgPSAjX25hbWUsIC5vZmZzZXQgPSBfbmFtZSB9Cj4gPgo+ID4gIHN0YXRp
+YyBjb25zdCBzdHJ1Y3QgZGVidWdmc19yZWczMiB0ZWdyYV9zb3JfcmVnc1tdID0gewo+ID4gQEAg
+LTE0MjQsMTAgKzE0MzgsOSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRlYnVnZnNfcmVnMzIgdGVn
+cmFfc29yX3JlZ3NbXSA9IHsKPiA+Cj4gPiAgc3RhdGljIGludCB0ZWdyYV9zb3Jfc2hvd19yZWdz
+KHN0cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAqZGF0YSkKPiA+ICB7Cj4gPiAtICAgICAgIHN0cnVj
+dCBkcm1faW5mb19ub2RlICpub2RlID0gcy0+cHJpdmF0ZTsKPiA+IC0gICAgICAgc3RydWN0IHRl
+Z3JhX3NvciAqc29yID0gbm9kZS0+aW5mb19lbnQtPmRhdGE7Cj4gPiArICAgICAgIHN0cnVjdCB0
+ZWdyYV9zb3IgKnNvciA9IHMtPnByaXZhdGU7Cj4gPiAgICAgICAgIHN0cnVjdCBkcm1fY3J0YyAq
+Y3J0YyA9IHNvci0+b3V0cHV0LmVuY29kZXIuY3J0YzsKPiA+IC0gICAgICAgc3RydWN0IGRybV9k
+ZXZpY2UgKmRybSA9IG5vZGUtPm1pbm9yLT5kZXY7Cj4gPiArICAgICAgIHN0cnVjdCBkcm1fZGV2
+aWNlICpkcm0gPSBzb3ItPmRybTsKPiAKPiBzb3ItPm91dHB1dC5jb25uZWN0b3IuZGV2IHNob3Vs
+ZCBnaXZlIHlvdSB0aGlzIGFscmVhZHkuIEFuZCBJIHRoaW5rCj4gZ2V0dGluZyBhdCB0aGUgZHJt
+X2RldmljZSBpcyB0aGUgb25seSByZWFzb24gd2UgbmVlZGVkIHRoZSBkcm1fbWlub3IKPiBoZXJl
+IGF0IGFsbC4KCkFoLCBnb29kLCBJIG1pc3NlZCB0aGF0LCBzaG91bGQgbWFrZSB0aGlzIGNvZGUg
+c2ltcGxlciB0aGVuLCB0aGFua3MhCgoKPiAKPiA+ICAgICAgICAgdW5zaWduZWQgaW50IGk7Cj4g
+PiAgICAgICAgIGludCBlcnIgPSAwOwo+ID4KPiA+IEBAIC0xNDUwLDUxICsxNDYzLDQ0IEBAIHN0
+YXRpYyBpbnQgdGVncmFfc29yX3Nob3dfcmVncyhzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZvaWQgKmRh
+dGEpCj4gPiAgICAgICAgIHJldHVybiBlcnI7Cj4gPiAgfQo+ID4KPiA+IC1zdGF0aWMgY29uc3Qg
+c3RydWN0IGRybV9pbmZvX2xpc3QgZGVidWdmc19maWxlc1tdID0gewo+ID4gLSAgICAgICB7ICJj
+cmMiLCB0ZWdyYV9zb3Jfc2hvd19jcmMsIDAsIE5VTEwgfSwKPiA+IC0gICAgICAgeyAicmVncyIs
+IHRlZ3JhX3Nvcl9zaG93X3JlZ3MsIDAsIE5VTEwgfSwKPiA+ICtzdGF0aWMgaW50IHJlZ3Nfb3Bl
+bihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmlsZSkKPiA+ICt7Cj4gPiArICAg
+ICAgIHN0cnVjdCB0ZWdyYV9zb3IgKnNvciA9IGlub2RlLT5pX3ByaXZhdGU7Cj4gPiArICAgICAg
+IHJldHVybiBzaW5nbGVfb3BlbihmaWxlLCB0ZWdyYV9zb3Jfc2hvd19yZWdzLCBzb3IpOwo+ID4g
+K30KPiA+ICsKPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBjcmNfZm9w
+cyA9IHsKPiA+ICsgICAgICAgLm93bmVyID0gVEhJU19NT0RVTEUsCj4gPiArICAgICAgIC5vcGVu
+ID0gY3JjX29wZW4sCj4gPiArICAgICAgIC5yZWFkID0gc2VxX3JlYWQsCj4gPiArICAgICAgIC5s
+bHNlZWsgPSBzZXFfbHNlZWssCj4gPiArICAgICAgIC5yZWxlYXNlID0gc2luZ2xlX3JlbGVhc2Us
+Cj4gPiAgfTsKPiA+Cj4gPiAgc3RhdGljIGludCB0ZWdyYV9zb3JfbGF0ZV9yZWdpc3RlcihzdHJ1
+Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ID4gIHsKPiA+IC0gICAgICAgc3RydWN0IHRl
+Z3JhX291dHB1dCAqb3V0cHV0ID0gY29ubmVjdG9yX3RvX291dHB1dChjb25uZWN0b3IpOwo+ID4g
+LSAgICAgICB1bnNpZ25lZCBpbnQgaSwgY291bnQgPSBBUlJBWV9TSVpFKGRlYnVnZnNfZmlsZXMp
+Owo+ID4gICAgICAgICBzdHJ1Y3QgZHJtX21pbm9yICptaW5vciA9IGNvbm5lY3Rvci0+ZGV2LT5w
+cmltYXJ5Owo+ID4gLSAgICAgICBzdHJ1Y3QgZGVudHJ5ICpyb290ID0gY29ubmVjdG9yLT5kZWJ1
+Z2ZzX2VudHJ5Owo+ID4gKyAgICAgICBzdHJ1Y3QgdGVncmFfb3V0cHV0ICpvdXRwdXQgPSBjb25u
+ZWN0b3JfdG9fb3V0cHV0KGNvbm5lY3Rvcik7Cj4gPiAgICAgICAgIHN0cnVjdCB0ZWdyYV9zb3Ig
+KnNvciA9IHRvX3NvcihvdXRwdXQpOwo+ID4gLSAgICAgICBpbnQgZXJyOwo+ID4gKyAgICAgICBz
+dHJ1Y3QgZGVudHJ5ICpyb290Owo+ID4KPiA+IC0gICAgICAgc29yLT5kZWJ1Z2ZzX2ZpbGVzID0g
+a21lbWR1cChkZWJ1Z2ZzX2ZpbGVzLCBzaXplb2YoZGVidWdmc19maWxlcyksCj4gPiAtICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR0ZQX0tFUk5FTCk7Cj4gPiAtICAgICAgIGlm
+ICghc29yLT5kZWJ1Z2ZzX2ZpbGVzKQo+ID4gLSAgICAgICAgICAgICAgIHJldHVybiAtRU5PTUVN
+Owo+ID4gKyAgICAgICBzb3ItPmRybSA9IG1pbm9yLT5kZXY7Cj4gPgo+ID4gLSAgICAgICBmb3Ig
+KGkgPSAwOyBpIDwgY291bnQ7IGkrKykKPiA+IC0gICAgICAgICAgICAgICBzb3ItPmRlYnVnZnNf
+ZmlsZXNbaV0uZGF0YSA9IHNvcjsKPiA+ICsgICAgICAgcm9vdCA9IGRlYnVnZnNfY3JlYXRlX2Rp
+cigic29yIiwgY29ubmVjdG9yLT5kZWJ1Z2ZzX2VudHJ5KTsKPiAKPiBIbSBJIHRoaW5rIHRoZSBv
+bGQgZmlsZXMgZ290IGNyZWF0ZWQgcmlnaHQgaW4gdGhlCj4gZHJtX2Nvbm5lY3Rvci0+ZGVidWdm
+c19lbnRyeSBkaXJlY3Rvcnk/CgpUaGV5IGRpZC4gIEkgd2FzIHRyeWluZyB0byBiZSBuaWNlIGFu
+ZCBrZWVwIHRoaW5ncyBpbiB0aGVpciBvd24KZGlyZWN0b3J5IHNvIEkgY291bGQgY2xlYW4gaXQg
+dXAuICBCdXQgSSBndWVzcyB3ZSB3YW50IHRoZSBkcm0gY29yZSB0bwpiZSBjbGVhbmluZyB0aGlu
+Z3MgdXAsIEkgZm9yZ290IGFib3V0IGRybV9kZWJ1Z2ZzX3JlbW92ZV9maWxlcygpIGJlaW5nCnRo
+ZSBtYWluIGdvYWwgdG8gZ2V0IHJpZCBvZiBoZXJlIDopCgo+ID4gKyAgICAgICBzb3ItPmRlYnVn
+ZnNfcm9vdCA9IHJvb3Q7Cj4gPgo+ID4gLSAgICAgICBlcnIgPSBkcm1fZGVidWdmc19jcmVhdGVf
+ZmlsZXMoc29yLT5kZWJ1Z2ZzX2ZpbGVzLCBjb3VudCwgcm9vdCwgbWlub3IpOwo+ID4gLSAgICAg
+ICBpZiAoZXJyIDwgMCkKPiA+IC0gICAgICAgICAgICAgICBnb3RvIGZyZWU7Cj4gPiArICAgICAg
+IGRlYnVnZnNfY3JlYXRlX2ZpbGUoImNyYyIsIFNfSUZSRUcgfCBTX0lSVUdPLCByb290LCBzb3Is
+ICZjcmNfZm9wcyk7Cj4gPiArICAgICAgIGRlYnVnZnNfY3JlYXRlX2ZpbGUoInJlZ3MiLCBTX0lG
+UkVHIHwgU19JUlVHTywgcm9vdCwgc29yLCAmcmVnc19mb3BzKTsKPiA+Cj4gPiAgICAgICAgIHJl
+dHVybiAwOwo+ID4gLQo+ID4gLWZyZWU6Cj4gPiAtICAgICAgIGtmcmVlKHNvci0+ZGVidWdmc19m
+aWxlcyk7Cj4gPiAtICAgICAgIHNvci0+ZGVidWdmc19maWxlcyA9IE5VTEw7Cj4gPiAtCj4gPiAt
+ICAgICAgIHJldHVybiBlcnI7Cj4gPiAgfQo+IAo+IEkgdGhpbmsgaWYgeW91IGNhbiBjcmVhdGUg
+YSBkZWJ1Z2ZzLXNpbXBsZS1maWxlIG1hY3JvLCB0aGlzIGhlcmUgd291bGQKPiB3aW4gaGFuZHMt
+ZG93biBmcm9tIGEgYm9pbGVycGxhdGUgcG92LiBJIGxpa2UuCgpPaywgd2lsbCBkby4KCj4gPiAg
+c3RhdGljIHZvaWQgdGVncmFfc29yX2Vhcmx5X3VucmVnaXN0ZXIoc3RydWN0IGRybV9jb25uZWN0
+b3IgKmNvbm5lY3RvcikKPiA+ICB7Cj4gPiAgICAgICAgIHN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91
+dHB1dCA9IGNvbm5lY3Rvcl90b19vdXRwdXQoY29ubmVjdG9yKTsKPiA+IC0gICAgICAgdW5zaWdu
+ZWQgaW50IGNvdW50ID0gQVJSQVlfU0laRShkZWJ1Z2ZzX2ZpbGVzKTsKPiA+ICAgICAgICAgc3Ry
+dWN0IHRlZ3JhX3NvciAqc29yID0gdG9fc29yKG91dHB1dCk7Cj4gPgo+ID4gLSAgICAgICBkcm1f
+ZGVidWdmc19yZW1vdmVfZmlsZXMoc29yLT5kZWJ1Z2ZzX2ZpbGVzLCBjb3VudCwKPiA+IC0gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGV2LT5wcmltYXJ5KTsKPiA+
+IC0gICAgICAga2ZyZWUoc29yLT5kZWJ1Z2ZzX2ZpbGVzKTsKPiA+IC0gICAgICAgc29yLT5kZWJ1
+Z2ZzX2ZpbGVzID0gTlVMTDsKPiA+ICsgICAgICAgZGVidWdmc19yZW1vdmVfcmVjdXJzaXZlKHNv
+ci0+ZGVidWdmc19yb290KTsKPiAKPiBOb3QgbmVlZGVkLCB3ZSB0ZWFyIGRvd24gZXZlcnl0aGlu
+ZyBhcyBwYXJ0IG9mIGRybV9kZXZfdW5yZWdpc3Rlcgo+IGFueXdheS4gU28geW91IGNhbiBkaXRj
+aCB0aGlzLgoKV29uZGVyZnVsLCB3aWxsIGRvLgoKdGhhbmtzIGZvciB0aGUgcmV2aWV3LgoKZ3Jl
+ZyBrLWgKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
