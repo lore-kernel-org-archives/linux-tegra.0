@@ -1,192 +1,145 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: drm connectors, tegra,
- and the web they weave (was Re: [PATCH 58/59] drm/todo: Add new
- debugfs todo)
-Date: Tue, 18 Jun 2019 19:32:20 +0200
-Message-ID: <CAKMK7uEd0sZ81RMjDsz6cnkW+krPuvoqUcEY4U3ofB9W_qeFvA@mail.gmail.com>
-References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
- <20190614203615.12639-59-daniel.vetter@ffwll.ch>
- <20190618151938.GA2567@kroah.com> <20190618152530.GA4576@kroah.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
+Date: Tue, 18 Jun 2019 10:34:59 -0700
+Message-ID: <cff9b6a2-dc33-d03b-9945-799b158deb07@nvidia.com>
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+ <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+ <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+ <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
+ <e53bf16a-681e-da31-1e9c-4ed2a24ed3a6@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20190618152530.GA4576@kroah.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <e53bf16a-681e-da31-1e9c-4ed2a24ed3a6@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Dmitry Osipenko <digetx@gmail.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdW4gMTgsIDIwMTkgYXQgNToyNSBQTSBHcmVnIEtyb2FoLUhhcnRtYW4KPGdyZWdr
-aEBsaW51eGZvdW5kYXRpb24ub3JnPiB3cm90ZToKPiBPbiBUdWUsIEp1biAxOCwgMjAxOSBhdCAw
-NToxOTozOFBNICswMjAwLCBHcmVnIEtyb2FoLUhhcnRtYW4gd3JvdGU6Cj4gPiBPbiBGcmksIEp1
-biAxNCwgMjAxOSBhdCAxMDozNjoxNFBNICswMjAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+ID4g
-PiBHcmVnIGlzIGJ1c3kgYWxyZWFkeSwgYnV0IG1heWJlIGhlIHdvbid0IGRvIGV2ZXJ5dGhpbmcg
-Li4uCj4gPiA+Cj4gPiA+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5k
-YXRpb24ub3JnPgo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0
-dGVyQGludGVsLmNvbT4KPiA+ID4gLS0tCj4gPiA+ICBEb2N1bWVudGF0aW9uL2dwdS90b2RvLnJz
-dCB8IDMgKysrCj4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspCj4gPiA+Cj4g
-PiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2dwdS90b2RvLnJzdCBiL0RvY3VtZW50YXRp
-b24vZ3B1L3RvZG8ucnN0Cj4gPiA+IGluZGV4IDk3MTc1NDBlZTI4Zi4uMDI2ZTU1YzUxN2UxIDEw
-MDY0NAo+ID4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2dwdS90b2RvLnJzdAo+ID4gPiArKysgYi9E
-b2N1bWVudGF0aW9uL2dwdS90b2RvLnJzdAo+ID4gPiBAQCAtMzc1LDYgKzM3NSw5IEBAIFRoZXJl
-J3MgYSBidW5jaCBvZiBpc3N1ZXMgd2l0aCBpdDoKPiA+ID4gICAgdGhpcyAodG9nZXRoZXIgd2l0
-aCB0aGUgZHJtX21pbm9yLT5kcm1fZGV2aWNlIG1vdmUpIHdvdWxkIGFsbG93IHVzIHRvIHJlbW92
-ZQo+ID4gPiAgICBkZWJ1Z2ZzX2luaXQuCj4gPiA+Cj4gPiA+ICstIERyb3AgdGhlIHJldHVybiBj
-b2RlIGFuZCBlcnJvciBjaGVja2luZyBmcm9tIGFsbCBkZWJ1Z2ZzIGZ1bmN0aW9ucy4gR3JlZyBL
-SCBpcwo+ID4gPiArICB3b3JraW5nIG9uIHRoaXMgYWxyZWFkeS4KPiA+Cj4gPgo+ID4gUGFydCBv
-ZiB0aGlzIHdvcmsgd2FzIHRvIHRyeSB0byBkZWxldGUgZHJtX2RlYnVnZnNfcmVtb3ZlX2ZpbGVz
-KCkuCj4gPgo+ID4gVGhlcmUgYXJlIG9ubHkgNCBmaWxlcyB0aGF0IGN1cnJlbnRseSBzdGlsbCBj
-YWxsIHRoaXMgZnVuY3Rpb246Cj4gPiAgICAgICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwo+
-ID4gICAgICAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RzaS5jCj4gPiAgICAgICBkcml2ZXJzL2dw
-dS9kcm0vdGVncmEvaGRtaS5jCj4gPiAgICAgICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMK
-PiA+Cj4gPiBGb3IgZGMuYywgdGhlIGRyaXZlciB3YW50cyB0byBhZGQgZGVidWdmcyBmaWxlcyB0
-byB0aGUgc3RydWN0IGRybV9jcnRjCj4gPiBkZWJ1Z2ZzIGRpcmVjdG9yeS4gIFdoaWNoIGlzIGZp
-bmUsIGJ1dCBpdCBoYXMgdG8gZG8gc29tZSBzcGVjaWFsIG1lbW9yeQo+ID4gYWxsb2NhdGlvbiB0
-byBnZXQgdGhlIGRlYnVnZnMgY2FsbGJhY2sgdG8gcG9pbnQgbm90IHRvIHRoZSBzdHJ1Y3QKPiA+
-IGRybV9taW5vciBwb2ludGVyLCBidXQgcmF0aGVyIHRoZSBkcm1fY3J0YyBzdHJ1Y3R1cmUuCgpU
-aGVyZSdzIGFscmVhZHkgYSB0b2RvIHRvIHN3aXRjaCB0aGUgZHJtX21pbm9yIGRlYnVnZnMgc3R1
-ZmYgb3ZlciB0bwpkcm1fZGV2aWNlLiBkcm1fbWlub3IgaXMgZXNzZW50aWFsbHkgZGlmZmVyZW50
-IHVhcGkgZmxhdm91cnMgKC9kZXYvCm1pbm9yIG5vZGVzLCBoZW5jZSB0aGUgbmFtZSkgc2l0dGlu
-ZyBvbiB0b3Agb2YgdGhlIHNhbWUgZHJtX2RldmljZS4KTGFzdCB0aW1lIEkgY2hlY2tlZCBhbGwg
-dGhlIGRlYnVnZnMgZmlsZXMgd2FudCB0aGUgZHJtX2RldmljZSwgbm90IHRoZQptaW5vci4gSSB0
-aGluayB3ZSBldmVuIGRpc2N1c3NlZCB0byBvbmx5IHJlZ2lzdGVyIHRoZSBkZWJ1Z2ZzIGZpbGVz
-CmZvciB0aGUgZmlyc3QgbWlub3IsIGFuZCBjcmVhdGUgdGhlIG90aGVyIG9uZXMgYXMgc3ltbGlu
-a3MgdG8gdGhlCmZpcnN0IG9uZS4gQnV0IGhhdmVuJ3QgeWV0IGdvdHRlbiBhcm91bmQgdG8gdHlw
-aW5nIHRoYXQuCgpkcm1fY3J0Yy9jb25uZWN0b3IgYXJlIHBhcnRzIG9mIGRybV9kZXZpY2Ugd2l0
-aCBtb2Rlc2V0dGluZyBzdXBwb3J0LApzbyB0aGUgZHJtX21pbm9yIGlzIGV2ZW4gd29yc2UgY2hv
-aWNlIHJlYWxseS4KCk5vdCBleGFjdGx5IHN1cmUgd2h5IHdlIHdlbnQgd2l0aCB0aGlzLCBidXQg
-cHJvYmFibHkgZGF0ZXMgYmFjayB0byB0aGUKKmJzZCBjb21wYXQgbGF5ZXIgYW5kIGEgbG90IG9m
-IHRoZXNlIGZpbGVzIGhhbmdpbmcgb3V0IGluIHByb2NmcyB0b28KKHdlJ3ZlIGZpeGVkIHRob3Nl
-IG1pc3Rha2VzIGEgZmV3IHllYXJzIGFnbywgeWF5ISkuCgo+ID4gU28sIHRvIHJlbW92ZSB0aGlz
-IGNhbGwsIEkgbmVlZCB0byByZW1vdmUgdGhpcyBzcGVjaWFsIG1lbW9yeSBhbGxvY2F0aW9uCj4g
-PiBhbmQgdG8gZG8gdGhhdCwgSSBuZWVkIHRvIHNvbWVob3cgYmUgYWJsZSB0byBjYXN0IGZyb20g
-ZHJtX21pbm9yIGJhY2sgdG8KPiA+IHRoZSBkcm1fY3J0YyBzdHJ1Y3R1cmUgYmVpbmcgdXNlZCBp
-biB0aGlzIGRyaXZlci4gIEFuZCBJIGNhbid0IGZpZ3VyZQo+ID4gaG93IHRoZXkgYXJlIHJlbGF0
-ZWQgYXQgYWxsLgo+ID4KPiA+IEFueSBwb2ludGVycyBoZXJlIChwdW4gaW50ZW5kZWQpIHdvdWxk
-IGJlIGFwcHJlY2lhdGVkLgo+ID4KPiA+IEZvciB0aGUgb3RoZXIgMyBmaWxlcywgdGhlIHNpdHVh
-dGlvbiBpcyBtdWNoIHRoZSBzYW1lLCBidXQgSSBuZWVkIHRvIGdldAo+ID4gZnJvbSBhICdzdHJ1
-Y3QgZHJtX21pbm9yJyBwb2ludGVyIHRvIGEgJ3N0cnVjdCBkcm1fY29ubmVjdG9yJyBwb2ludGVy
-LgoKRGl0Y2ggdGhlIGRybV9taW5vciwgdGhlcmUncyBubyBubyB3YXkgdG8gZ2V0IGZyb20gdGhh
-dCB0byBzb21ldGhpbmcKbGlrZSBkcm1fY29ubmVjdG9yL2NydGMsIHNpbmNlIGl0J3MgYSBuOm0g
-cmVsYXRpb25zaGlwLgoKPiA+IEkgY291bGQganVzdCAib3BlbiBjb2RlIiBhIGJ1bmNoIG9mIGNh
-bGxzIHRvIGRlYnVnZnNfY3JlYXRlX2ZpbGUoKSBmb3IKPiA+IHRoZXNlIGRyaXZlcnMsIHdoaWNo
-IHdvdWxkIHNvbHZlIHRoaXMgaXNzdWUsIGJ1dCBpbiBhIG1vcmUgIm5vbi1kcm0iCj4gPiB3YXku
-ICBJcyBpdCB3b3J0aCB0byBqdXN0IGRvIHRoYXQgaW5zdGVhZCBvZiBvdmVydGhpbmtpbmcgdGhl
-IHdob2xlCj4gPiB0aGluZyBhbmQgdHJ5aW5nIHRvIHNxdWlzaCBpdCBpbnRvIHRoZSBkcm0gIm1v
-ZGVsIiBvZiBkcm0gZGVidWdmcyBjYWxscz8KPgo+IEFuIGV4YW1wbGUgb2YgIm9wZW4gY29kaW5n
-IiB0aGlzIGlzIHRoZSBwYXRjaCBiZWxvdyBmb3IgdGhlIHNvci5jCj4gZHJpdmVyLgoKSSB0aGlu
-ayBvcGVuLWNvZGluZyBpcyB0aGUgd2F5IHRvIGdvIGhlcmUuIE9uZSBvZiB0aGUgdG9kb3MgaXMg
-dG8KZXh0ZW5kIGRlYnVnZnMgc3VwcG9ydCBmb3IgY3J0Yy9jb25uZWN0b3JzLCBidXQgbG9va2lu
-ZyBhdCB0aGUKb3Blbi1jb2RlZCB2ZXJzaW9uIHdlIHJlYWxseSBkb24ndCBuZWVkIGEgZHJtLWZs
-YXZvdXJlZCBtaWRsYXllciBoZXJlLgoKPiBUb3RhbGx5IHVudGVzdGVkLCBub3QgZXZlbiBidWls
-dCwgYnV0IHlvdSBzaG91bGQgZ2V0IHRoZSBpZGVhIGhlcmUuCj4KPiB0aGFua3MsCj4KPiBncmVn
-IGstaAo+Cj4gLS0tLS0tLS0tLS0tLS0tCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL3Nvci5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jCj4gaW5kZXggNWJlNWEw
-ODE3ZGZlLi4zMjE2MjIxYzc3YzQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L3Nvci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jCj4gQEAgLTQxNCw3ICs0
-MTQsOCBAQCBzdHJ1Y3QgdGVncmFfc29yIHsKPgo+ICAgICAgICAgc3RydWN0IGRybV9kcF9hdXgg
-KmF1eDsKPgo+IC0gICAgICAgc3RydWN0IGRybV9pbmZvX2xpc3QgKmRlYnVnZnNfZmlsZXM7Cj4g
-KyAgICAgICBzdHJ1Y3QgZGVudHJ5ICpkZWJ1Z2ZzX3Jvb3Q7Cj4gKyAgICAgICBzdHJ1Y3QgZHJt
-X2RldmljZSAqZHJtOwo+Cj4gICAgICAgICBjb25zdCBzdHJ1Y3QgdGVncmFfc29yX29wcyAqb3Bz
-Owo+ICAgICAgICAgZW51bSB0ZWdyYV9pb19wYWQgcGFkOwo+IEBAIC0xMjYyLDEwICsxMjYzLDkg
-QEAgc3RhdGljIGludCB0ZWdyYV9zb3JfY3JjX3dhaXQoc3RydWN0IHRlZ3JhX3NvciAqc29yLCB1
-bnNpZ25lZCBsb25nIHRpbWVvdXQpCj4KPiAgc3RhdGljIGludCB0ZWdyYV9zb3Jfc2hvd19jcmMo
-c3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQo+ICB7Cj4gLSAgICAgICBzdHJ1Y3QgZHJt
-X2luZm9fbm9kZSAqbm9kZSA9IHMtPnByaXZhdGU7Cj4gLSAgICAgICBzdHJ1Y3QgdGVncmFfc29y
-ICpzb3IgPSBub2RlLT5pbmZvX2VudC0+ZGF0YTsKPiArICAgICAgIHN0cnVjdCB0ZWdyYV9zb3Ig
-KnNvciA9IHMtPnByaXZhdGU7Cj4gICAgICAgICBzdHJ1Y3QgZHJtX2NydGMgKmNydGMgPSBzb3It
-Pm91dHB1dC5lbmNvZGVyLmNydGM7Cj4gLSAgICAgICBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0g
-bm9kZS0+bWlub3ItPmRldjsKPiArICAgICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBzb3It
-PmRybTsKPiAgICAgICAgIGludCBlcnIgPSAwOwo+ICAgICAgICAgdTMyIHZhbHVlOwo+Cj4gQEAg
-LTEzMDIsNiArMTMwMiwyMCBAQCBzdGF0aWMgaW50IHRlZ3JhX3Nvcl9zaG93X2NyYyhzdHJ1Y3Qg
-c2VxX2ZpbGUgKnMsIHZvaWQgKmRhdGEpCj4gICAgICAgICByZXR1cm4gZXJyOwo+ICB9Cj4KPiAr
-c3RhdGljIGludCBjcmNfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmls
-ZSkKPiArewo+ICsgICAgICAgc3RydWN0IHRlZ3JhX3NvciAqc29yID0gaW5vZGUtPmlfcHJpdmF0
-ZTsKPiArICAgICAgIHJldHVybiBzaW5nbGVfb3BlbihmaWxlLCB0ZWdyYV9zb3Jfc2hvd19jcmMs
-IHNvcik7Cj4gK30KPiArCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRpb25zIGNy
-Y19mb3BzID0gewo+ICsgICAgICAgLm93bmVyID0gVEhJU19NT0RVTEUsCj4gKyAgICAgICAub3Bl
-biA9IGNyY19vcGVuLAo+ICsgICAgICAgLnJlYWQgPSBzZXFfcmVhZCwKPiArICAgICAgIC5sbHNl
-ZWsgPSBzZXFfbHNlZWssCj4gKyAgICAgICAucmVsZWFzZSA9IHNpbmdsZV9yZWxlYXNlLAo+ICt9
-OwoKSG0sIGlzIHRoZXJlIG5vdCBhIG1hY3JvIHRvIGNyZWF0ZSBzdWNoIHNpbXBsZSBmaWxlcyB3
-aXRoIHJlYWQvd3JpdGUKb3BzPyBBdCBsZWFzdCBmb3Igc3lzZnMgdGhpcyBpcyBhIGJpdCBsZXNz
-IGJvaWxlcnBsYXRlIGlpcmMuCgo+ICsKPiAgI2RlZmluZSBERUJVR0ZTX1JFRzMyKF9uYW1lKSB7
-IC5uYW1lID0gI19uYW1lLCAub2Zmc2V0ID0gX25hbWUgfQo+Cj4gIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgZGVidWdmc19yZWczMiB0ZWdyYV9zb3JfcmVnc1tdID0gewo+IEBAIC0xNDI0LDEwICsxNDM4
-LDkgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkZWJ1Z2ZzX3JlZzMyIHRlZ3JhX3Nvcl9yZWdzW10g
-PSB7Cj4KPiAgc3RhdGljIGludCB0ZWdyYV9zb3Jfc2hvd19yZWdzKHN0cnVjdCBzZXFfZmlsZSAq
-cywgdm9pZCAqZGF0YSkKPiAgewo+IC0gICAgICAgc3RydWN0IGRybV9pbmZvX25vZGUgKm5vZGUg
-PSBzLT5wcml2YXRlOwo+IC0gICAgICAgc3RydWN0IHRlZ3JhX3NvciAqc29yID0gbm9kZS0+aW5m
-b19lbnQtPmRhdGE7Cj4gKyAgICAgICBzdHJ1Y3QgdGVncmFfc29yICpzb3IgPSBzLT5wcml2YXRl
-Owo+ICAgICAgICAgc3RydWN0IGRybV9jcnRjICpjcnRjID0gc29yLT5vdXRwdXQuZW5jb2Rlci5j
-cnRjOwo+IC0gICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybSA9IG5vZGUtPm1pbm9yLT5kZXY7
-Cj4gKyAgICAgICBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gc29yLT5kcm07Cgpzb3ItPm91dHB1
-dC5jb25uZWN0b3IuZGV2IHNob3VsZCBnaXZlIHlvdSB0aGlzIGFscmVhZHkuIEFuZCBJIHRoaW5r
-CmdldHRpbmcgYXQgdGhlIGRybV9kZXZpY2UgaXMgdGhlIG9ubHkgcmVhc29uIHdlIG5lZWRlZCB0
-aGUgZHJtX21pbm9yCmhlcmUgYXQgYWxsLgoKPiAgICAgICAgIHVuc2lnbmVkIGludCBpOwo+ICAg
-ICAgICAgaW50IGVyciA9IDA7Cj4KPiBAQCAtMTQ1MCw1MSArMTQ2Myw0NCBAQCBzdGF0aWMgaW50
-IHRlZ3JhX3Nvcl9zaG93X3JlZ3Moc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQo+ICAg
-ICAgICAgcmV0dXJuIGVycjsKPiAgfQo+Cj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2luZm9f
-bGlzdCBkZWJ1Z2ZzX2ZpbGVzW10gPSB7Cj4gLSAgICAgICB7ICJjcmMiLCB0ZWdyYV9zb3Jfc2hv
-d19jcmMsIDAsIE5VTEwgfSwKPiAtICAgICAgIHsgInJlZ3MiLCB0ZWdyYV9zb3Jfc2hvd19yZWdz
-LCAwLCBOVUxMIH0sCj4gK3N0YXRpYyBpbnQgcmVnc19vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUs
-IHN0cnVjdCBmaWxlICpmaWxlKQo+ICt7Cj4gKyAgICAgICBzdHJ1Y3QgdGVncmFfc29yICpzb3Ig
-PSBpbm9kZS0+aV9wcml2YXRlOwo+ICsgICAgICAgcmV0dXJuIHNpbmdsZV9vcGVuKGZpbGUsIHRl
-Z3JhX3Nvcl9zaG93X3JlZ3MsIHNvcik7Cj4gK30KPiArCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
-ZmlsZV9vcGVyYXRpb25zIGNyY19mb3BzID0gewo+ICsgICAgICAgLm93bmVyID0gVEhJU19NT0RV
-TEUsCj4gKyAgICAgICAub3BlbiA9IGNyY19vcGVuLAo+ICsgICAgICAgLnJlYWQgPSBzZXFfcmVh
-ZCwKPiArICAgICAgIC5sbHNlZWsgPSBzZXFfbHNlZWssCj4gKyAgICAgICAucmVsZWFzZSA9IHNp
-bmdsZV9yZWxlYXNlLAo+ICB9Owo+Cj4gIHN0YXRpYyBpbnQgdGVncmFfc29yX2xhdGVfcmVnaXN0
-ZXIoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKPiAgewo+IC0gICAgICAgc3RydWN0
-IHRlZ3JhX291dHB1dCAqb3V0cHV0ID0gY29ubmVjdG9yX3RvX291dHB1dChjb25uZWN0b3IpOwo+
-IC0gICAgICAgdW5zaWduZWQgaW50IGksIGNvdW50ID0gQVJSQVlfU0laRShkZWJ1Z2ZzX2ZpbGVz
-KTsKPiAgICAgICAgIHN0cnVjdCBkcm1fbWlub3IgKm1pbm9yID0gY29ubmVjdG9yLT5kZXYtPnBy
-aW1hcnk7Cj4gLSAgICAgICBzdHJ1Y3QgZGVudHJ5ICpyb290ID0gY29ubmVjdG9yLT5kZWJ1Z2Zz
-X2VudHJ5Owo+ICsgICAgICAgc3RydWN0IHRlZ3JhX291dHB1dCAqb3V0cHV0ID0gY29ubmVjdG9y
-X3RvX291dHB1dChjb25uZWN0b3IpOwo+ICAgICAgICAgc3RydWN0IHRlZ3JhX3NvciAqc29yID0g
-dG9fc29yKG91dHB1dCk7Cj4gLSAgICAgICBpbnQgZXJyOwo+ICsgICAgICAgc3RydWN0IGRlbnRy
-eSAqcm9vdDsKPgo+IC0gICAgICAgc29yLT5kZWJ1Z2ZzX2ZpbGVzID0ga21lbWR1cChkZWJ1Z2Zz
-X2ZpbGVzLCBzaXplb2YoZGVidWdmc19maWxlcyksCj4gLSAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIEdGUF9LRVJORUwpOwo+IC0gICAgICAgaWYgKCFzb3ItPmRlYnVnZnNfZmls
-ZXMpCj4gLSAgICAgICAgICAgICAgIHJldHVybiAtRU5PTUVNOwo+ICsgICAgICAgc29yLT5kcm0g
-PSBtaW5vci0+ZGV2Owo+Cj4gLSAgICAgICBmb3IgKGkgPSAwOyBpIDwgY291bnQ7IGkrKykKPiAt
-ICAgICAgICAgICAgICAgc29yLT5kZWJ1Z2ZzX2ZpbGVzW2ldLmRhdGEgPSBzb3I7Cj4gKyAgICAg
-ICByb290ID0gZGVidWdmc19jcmVhdGVfZGlyKCJzb3IiLCBjb25uZWN0b3ItPmRlYnVnZnNfZW50
-cnkpOwoKSG0gSSB0aGluayB0aGUgb2xkIGZpbGVzIGdvdCBjcmVhdGVkIHJpZ2h0IGluIHRoZQpk
-cm1fY29ubmVjdG9yLT5kZWJ1Z2ZzX2VudHJ5IGRpcmVjdG9yeT8KCj4gKyAgICAgICBzb3ItPmRl
-YnVnZnNfcm9vdCA9IHJvb3Q7Cj4KPiAtICAgICAgIGVyciA9IGRybV9kZWJ1Z2ZzX2NyZWF0ZV9m
-aWxlcyhzb3ItPmRlYnVnZnNfZmlsZXMsIGNvdW50LCByb290LCBtaW5vcik7Cj4gLSAgICAgICBp
-ZiAoZXJyIDwgMCkKPiAtICAgICAgICAgICAgICAgZ290byBmcmVlOwo+ICsgICAgICAgZGVidWdm
-c19jcmVhdGVfZmlsZSgiY3JjIiwgU19JRlJFRyB8IFNfSVJVR08sIHJvb3QsIHNvciwgJmNyY19m
-b3BzKTsKPiArICAgICAgIGRlYnVnZnNfY3JlYXRlX2ZpbGUoInJlZ3MiLCBTX0lGUkVHIHwgU19J
-UlVHTywgcm9vdCwgc29yLCAmcmVnc19mb3BzKTsKPgo+ICAgICAgICAgcmV0dXJuIDA7Cj4gLQo+
-IC1mcmVlOgo+IC0gICAgICAga2ZyZWUoc29yLT5kZWJ1Z2ZzX2ZpbGVzKTsKPiAtICAgICAgIHNv
-ci0+ZGVidWdmc19maWxlcyA9IE5VTEw7Cj4gLQo+IC0gICAgICAgcmV0dXJuIGVycjsKPiAgfQoK
-SSB0aGluayBpZiB5b3UgY2FuIGNyZWF0ZSBhIGRlYnVnZnMtc2ltcGxlLWZpbGUgbWFjcm8sIHRo
-aXMgaGVyZSB3b3VsZAp3aW4gaGFuZHMtZG93biBmcm9tIGEgYm9pbGVycGxhdGUgcG92LiBJIGxp
-a2UuCgo+ICBzdGF0aWMgdm9pZCB0ZWdyYV9zb3JfZWFybHlfdW5yZWdpc3RlcihzdHJ1Y3QgZHJt
-X2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ICB7Cj4gICAgICAgICBzdHJ1Y3QgdGVncmFfb3V0cHV0
-ICpvdXRwdXQgPSBjb25uZWN0b3JfdG9fb3V0cHV0KGNvbm5lY3Rvcik7Cj4gLSAgICAgICB1bnNp
-Z25lZCBpbnQgY291bnQgPSBBUlJBWV9TSVpFKGRlYnVnZnNfZmlsZXMpOwo+ICAgICAgICAgc3Ry
-dWN0IHRlZ3JhX3NvciAqc29yID0gdG9fc29yKG91dHB1dCk7Cj4KPiAtICAgICAgIGRybV9kZWJ1
-Z2ZzX3JlbW92ZV9maWxlcyhzb3ItPmRlYnVnZnNfZmlsZXMsIGNvdW50LAo+IC0gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGV2LT5wcmltYXJ5KTsKPiAtICAgICAg
-IGtmcmVlKHNvci0+ZGVidWdmc19maWxlcyk7Cj4gLSAgICAgICBzb3ItPmRlYnVnZnNfZmlsZXMg
-PSBOVUxMOwo+ICsgICAgICAgZGVidWdmc19yZW1vdmVfcmVjdXJzaXZlKHNvci0+ZGVidWdmc19y
-b290KTsKCk5vdCBuZWVkZWQsIHdlIHRlYXIgZG93biBldmVyeXRoaW5nIGFzIHBhcnQgb2YgZHJt
-X2Rldl91bnJlZ2lzdGVyCmFueXdheS4gU28geW91IGNhbiBkaXRjaCB0aGlzLgoKPiAgfQo+Cj4g
-IHN0YXRpYyB2b2lkIHRlZ3JhX3Nvcl9jb25uZWN0b3JfcmVzZXQoc3RydWN0IGRybV9jb25uZWN0
-b3IgKmNvbm5lY3RvcikKCkNoZWVycywgRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJl
-IEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgorNDEgKDApIDc5IDM2NSA1NyA0OCAtIGh0dHA6
-Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVs
-LWdmeA==
+
+On 6/18/19 9:50 AM, Sowjanya Komatineni wrote:
+>
+> On 6/18/19 8:41 AM, Stephen Warren wrote:
+>> On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
+>>> 18.06.2019 12:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> 18.06.2019 10:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> This patch adds suspend and resume support for Tegra pinctrl driver
+>>>>> and registers them to syscore so the pinmux settings are restored
+>>>>> before the devices resume.
+>>>>>
+>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>> ---
+>>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra.c=C2=A0=C2=A0=C2=A0 | 62=20
+>>>>> ++++++++++++++++++++++++++++++++
+>>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra.h=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 5 +++
+>>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra114.c |=C2=A0 1 +
+>>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra124.c |=C2=A0 1 +
+>>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra20.c=C2=A0 |=C2=A0 1 +
+>>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
+>>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra30.c=C2=A0 |=C2=A0 1 +
+>>>>> =C2=A0 7 files changed, 84 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c=20
+>>>>> b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>>>> index 34596b246578..ceced30d8bd1 100644
+>>>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>>>> @@ -20,11 +20,16 @@
+>>>>> =C2=A0 #include <linux/pinctrl/pinmux.h>
+>>>>> =C2=A0 #include <linux/pinctrl/pinconf.h>
+>>>>> =C2=A0 #include <linux/slab.h>
+>>>>> +#include <linux/syscore_ops.h>
+>>>>> =C2=A0 =C2=A0 #include "../core.h"
+>>>>> =C2=A0 #include "../pinctrl-utils.h"
+>>>>> =C2=A0 #include "pinctrl-tegra.h"
+>>>>> =C2=A0 +#define EMMC2_PAD_CFGPADCTRL_0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1c8
+>>>>> +#define EMMC4_PAD_CFGPADCTRL_0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1e0
+>>>>> +#define EMMC_DPD_PARKING=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 (0x1fff << 14)
+>>>>> +
+>>>>> =C2=A0 static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u=
+32=20
+>>>>> reg)
+>>>>> =C2=A0 {
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return readl(pmx->regs[bank] + reg);
+>>>>> @@ -619,6 +624,48 @@ static void=20
+>>>>> tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0 if (pmx->soc->has_park_padcfg) {
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D pmx_readl(pmx, 0,=
+ EMMC2_PAD_CFGPADCTRL_0);
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val &=3D ~EMMC_DPD_PARKIN=
+G;
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmx_writel(pmx, val, 0, E=
+MMC2_PAD_CFGPADCTRL_0);
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D pmx_readl(pmx, 0,=
+ EMMC4_PAD_CFGPADCTRL_0);
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val &=3D ~EMMC_DPD_PARKIN=
+G;
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmx_writel(pmx, val, 0, E=
+MMC4_PAD_CFGPADCTRL_0);
+>>>>> +=C2=A0=C2=A0=C2=A0 }
+>>>>> +}
+>>>>
+>>>> Is there any reason why parked_bit can't be changed to=20
+>>>> parked_bitmask like I was
+>>>> asking in a comment to v2?
+>>>>
+>>>> I suppose that it's more preferable to keep pinctrl-tegra.c=20
+>>>> platform-agnostic for
+>>>> consistency when possible, hence adding platform specifics here=20
+>>>> should be discouraged.
+>>>> And then the parked_bitmask will also result in a proper hardware=20
+>>>> description in the code.
+>>>>
+>>>
+>>> I'm now also vaguely recalling that Stephen Warren had some kind of=20
+>>> a "code generator"
+>>> for the pinctrl drivers. So I guess all those tables were=20
+>>> auto-generated initially.
+>>>
+>>> Stephen, maybe you could adjust the generator to take into account=20
+>>> the bitmask (of
+>>> course if that's a part of the generated code) and then re-gen it=20
+>>> all for Sowjanya?
+>>
+>> https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that=20
+>> generate tegra-pinctrlNNN.c. See soc-to-kernel-pinctrl-driver.py.=20
+>> IIRC, tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya=20
+>> is welcome to send a patch to that repo if the code needs to be updated.
+>
+>
+> Hi Dmitry,
+>
+> Just want to be clear on my understanding of your request.
+>
+> "change parked_bit to parked_bitmask" are you requested to change=20
+> parked_bit of PINGROUP and DRV_PINGROUP to use bitmask value rather=20
+> than bit position inorder to have parked bit configuration for EMMC=20
+> PADs as well to happen by masking rather than checking for existence=20
+> of parked_bit?
+>
+> Trying to understand the reason/benefit for changing parked_bit to=20
+> parked_bitmask.
+Also, Park bits in CFGPAD registers are not common for all CFGPAD=20
+registers. Park bits are available only for EMMC and also those bits are=20
+used for something else on other CFGPAD registers so bitmask can't be=20
+common and this also need an update to DRV_PINGROUP macro args just only=20
+to handle EMMC parked_bitmask. So not sure of the benefit in using=20
+bitmask rather than parked_bit
+>
+> thanks
+>
+> Sowjanya
+>
