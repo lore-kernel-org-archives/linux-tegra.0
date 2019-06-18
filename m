@@ -1,68 +1,129 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: drm connectors, tegra,  and the web they weave (was Re: [PATCH
- 58/59] drm/todo: Add new debugfs todo)
-Date: Tue, 18 Jun 2019 17:19:38 +0200
-Message-ID: <20190618151938.GA2567@kroah.com>
-References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
- <20190614203615.12639-59-daniel.vetter@ffwll.ch>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
+ phylib logic
+Date: Tue, 18 Jun 2019 16:20:33 +0100
+Message-ID: <d96f8bea-f7ef-82ae-01ba-9c97aec0ee38@nvidia.com>
+References: <cover.1560266175.git.joabreu@synopsys.com>
+ <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
+ <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
+ <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
+ <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
+ <78EB27739596EE489E55E81C33FEC33A0B9C8DD9@DE02WEMBXB.internal.synopsys.com>
+ <b66c7578-172f-4443-f4c3-411525e28738@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190614203615.12639-59-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <b66c7578-172f-4443-f4c3-411525e28738@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBKdW4gMTQsIDIwMTkgYXQgMTA6MzY6MTRQTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBHcmVnIGlzIGJ1c3kgYWxyZWFkeSwgYnV0IG1heWJlIGhlIHdvbid0IGRvIGV2ZXJ5
-dGhpbmcgLi4uCj4gCj4gQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRh
-dGlvbi5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBp
-bnRlbC5jb20+Cj4gLS0tCj4gIERvY3VtZW50YXRpb24vZ3B1L3RvZG8ucnN0IHwgMyArKysKPiAg
-MSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9Eb2N1bWVu
-dGF0aW9uL2dwdS90b2RvLnJzdCBiL0RvY3VtZW50YXRpb24vZ3B1L3RvZG8ucnN0Cj4gaW5kZXgg
-OTcxNzU0MGVlMjhmLi4wMjZlNTVjNTE3ZTEgMTAwNjQ0Cj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9n
-cHUvdG9kby5yc3QKPiArKysgYi9Eb2N1bWVudGF0aW9uL2dwdS90b2RvLnJzdAo+IEBAIC0zNzUs
-NiArMzc1LDkgQEAgVGhlcmUncyBhIGJ1bmNoIG9mIGlzc3VlcyB3aXRoIGl0Ogo+ICAgIHRoaXMg
-KHRvZ2V0aGVyIHdpdGggdGhlIGRybV9taW5vci0+ZHJtX2RldmljZSBtb3ZlKSB3b3VsZCBhbGxv
-dyB1cyB0byByZW1vdmUKPiAgICBkZWJ1Z2ZzX2luaXQuCj4gIAo+ICstIERyb3AgdGhlIHJldHVy
-biBjb2RlIGFuZCBlcnJvciBjaGVja2luZyBmcm9tIGFsbCBkZWJ1Z2ZzIGZ1bmN0aW9ucy4gR3Jl
-ZyBLSCBpcwo+ICsgIHdvcmtpbmcgb24gdGhpcyBhbHJlYWR5LgoKClBhcnQgb2YgdGhpcyB3b3Jr
-IHdhcyB0byB0cnkgdG8gZGVsZXRlIGRybV9kZWJ1Z2ZzX3JlbW92ZV9maWxlcygpLgoKVGhlcmUg
-YXJlIG9ubHkgNCBmaWxlcyB0aGF0IGN1cnJlbnRseSBzdGlsbCBjYWxsIHRoaXMgZnVuY3Rpb246
-Cglkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwoJZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RzaS5j
-Cglkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCglkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29y
-LmMKCkZvciBkYy5jLCB0aGUgZHJpdmVyIHdhbnRzIHRvIGFkZCBkZWJ1Z2ZzIGZpbGVzIHRvIHRo
-ZSBzdHJ1Y3QgZHJtX2NydGMKZGVidWdmcyBkaXJlY3RvcnkuICBXaGljaCBpcyBmaW5lLCBidXQg
-aXQgaGFzIHRvIGRvIHNvbWUgc3BlY2lhbCBtZW1vcnkKYWxsb2NhdGlvbiB0byBnZXQgdGhlIGRl
-YnVnZnMgY2FsbGJhY2sgdG8gcG9pbnQgbm90IHRvIHRoZSBzdHJ1Y3QKZHJtX21pbm9yIHBvaW50
-ZXIsIGJ1dCByYXRoZXIgdGhlIGRybV9jcnRjIHN0cnVjdHVyZS4KClNvLCB0byByZW1vdmUgdGhp
-cyBjYWxsLCBJIG5lZWQgdG8gcmVtb3ZlIHRoaXMgc3BlY2lhbCBtZW1vcnkgYWxsb2NhdGlvbgph
-bmQgdG8gZG8gdGhhdCwgSSBuZWVkIHRvIHNvbWVob3cgYmUgYWJsZSB0byBjYXN0IGZyb20gZHJt
-X21pbm9yIGJhY2sgdG8KdGhlIGRybV9jcnRjIHN0cnVjdHVyZSBiZWluZyB1c2VkIGluIHRoaXMg
-ZHJpdmVyLiAgQW5kIEkgY2FuJ3QgZmlndXJlCmhvdyB0aGV5IGFyZSByZWxhdGVkIGF0IGFsbC4K
-CkFueSBwb2ludGVycyBoZXJlIChwdW4gaW50ZW5kZWQpIHdvdWxkIGJlIGFwcHJlY2lhdGVkLgoK
-Rm9yIHRoZSBvdGhlciAzIGZpbGVzLCB0aGUgc2l0dWF0aW9uIGlzIG11Y2ggdGhlIHNhbWUsIGJ1
-dCBJIG5lZWQgdG8gZ2V0CmZyb20gYSAnc3RydWN0IGRybV9taW5vcicgcG9pbnRlciB0byBhICdz
-dHJ1Y3QgZHJtX2Nvbm5lY3RvcicgcG9pbnRlci4KCkkgY291bGQganVzdCAib3BlbiBjb2RlIiBh
-IGJ1bmNoIG9mIGNhbGxzIHRvIGRlYnVnZnNfY3JlYXRlX2ZpbGUoKSBmb3IKdGhlc2UgZHJpdmVy
-cywgd2hpY2ggd291bGQgc29sdmUgdGhpcyBpc3N1ZSwgYnV0IGluIGEgbW9yZSAibm9uLWRybSIK
-d2F5LiAgSXMgaXQgd29ydGggdG8ganVzdCBkbyB0aGF0IGluc3RlYWQgb2Ygb3ZlcnRoaW5raW5n
-IHRoZSB3aG9sZQp0aGluZyBhbmQgdHJ5aW5nIHRvIHNxdWlzaCBpdCBpbnRvIHRoZSBkcm0gIm1v
-ZGVsIiBvZiBkcm0gZGVidWdmcyBjYWxscz8KCkVpdGhlciB3YXksIHdobyBjYW4gdGVzdCB0aGVz
-ZSBjaGFuZ2VzPyAgSSBjYW4ndCBldmVuIGJ1aWxkIHRoZSB0ZWdyYQpkcml2ZXIgd2l0aG91dCBk
-aWdnaW5nIHVwIGFuIGFybTY0IGNyb3NzLWNvbXBpbGVyLCBhbmQgY2FuJ3QgdGVzdCBpdCBhcwpJ
-IGhhdmUgbm8gaGFyZHdhcmUgYXQgYWxsLgoKdGhhbmtzLAoKZ3JlZyBrLWgKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+On 18/06/2019 11:18, Jon Hunter wrote:
+> 
+> On 18/06/2019 10:46, Jose Abreu wrote:
+>> From: Jon Hunter <jonathanh@nvidia.com>
+>>
+>>> I am not certain but I don't believe so. We are using a static IP address
+>>> and mounting the root file-system via NFS when we see this ...
+>>
+>> Can you please add a call to napi_synchronize() before every 
+>> napi_disable() calls, like this:
+>>
+>> if (queue < rx_queues_cnt) {
+>> 	napi_synchronize(&ch->rx_napi);
+>> 	napi_disable(&ch->rx_napi);
+>> }
+>>
+>> if (queue < tx_queues_cnt) {
+>> 	napi_synchronize(&ch->tx_napi);
+>> 	napi_disable(&ch->tx_napi);
+>> }
+>>
+>> [ I can send you a patch if you prefer ]
+> 
+> Yes I can try this and for completeness you mean ...
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 4ca46289a742..d4a12cb64d8e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -146,10 +146,15 @@ static void stmmac_disable_all_queues(struct stmmac_priv *priv)
+>         for (queue = 0; queue < maxq; queue++) {
+>                 struct stmmac_channel *ch = &priv->channel[queue];
+>  
+> -               if (queue < rx_queues_cnt)
+> +               if (queue < rx_queues_cnt) {
+> +                       napi_synchronize(&ch->rx_napi);
+>                         napi_disable(&ch->rx_napi);
+> -               if (queue < tx_queues_cnt)
+> +               }
+> +
+> +               if (queue < tx_queues_cnt) {
+> +                       napi_synchronize(&ch->tx_napi);
+>                         napi_disable(&ch->tx_napi);
+> +               }
+>         }
+>  }
+
+So good news and bad news ...
+
+The good news is that the above change does fix the initial crash
+I am seeing. However, even with this change applied on top of
+-next, it is still dying somewhere else and so there appears to
+be a second issue. 
+
+On a successful boot I see ...
+
+[    6.150419] dwc-eth-dwmac 2490000.ethernet: Cannot get CSR clock
+
+[    6.156441] dwc-eth-dwmac 2490000.ethernet: no reset control found
+
+[    6.175866] dwc-eth-dwmac 2490000.ethernet: User ID: 0x10, Synopsys ID: 0x41
+
+[    6.182912] dwc-eth-dwmac 2490000.ethernet: 	DWMAC4/5
+
+[    6.187961] dwc-eth-dwmac 2490000.ethernet: DMA HW capability register supported
+
+[    6.195351] dwc-eth-dwmac 2490000.ethernet: RX Checksum Offload Engine supported
+
+[    6.202735] dwc-eth-dwmac 2490000.ethernet: TX Checksum insertion supported
+
+[    6.209685] dwc-eth-dwmac 2490000.ethernet: Wake-Up On Lan supported
+
+[    6.216041] dwc-eth-dwmac 2490000.ethernet: TSO supported
+
+[    6.221433] dwc-eth-dwmac 2490000.ethernet: Enable RX Mitigation via HW Watchdog Timer
+
+[    6.229342] dwc-eth-dwmac 2490000.ethernet: device MAC address 9a:9b:49:6f:a5:ee
+
+[    6.236727] dwc-eth-dwmac 2490000.ethernet: TSO feature enabled
+
+[    6.242689] libphy: stmmac: probed
+
+On the latest -next with the patch applied I see ...
+
+[    6.043529] dwc-eth-dwmac 2490000.ethernet: Cannot get CSR clock
+[    6.049546] dwc-eth-dwmac 2490000.ethernet: no reset control found
+[    6.068895] dwc-eth-dwmac 2490000.ethernet: User ID: 0x10, Synopsys ID: 0x41
+[    6.075941] dwc-eth-dwmac 2490000.ethernet: 	DWMAC4/5
+[    6.080989] dwc-eth-dwmac 2490000.ethernet: DMA HW capability register supported
+[    6.088373] dwc-eth-dwmac 2490000.ethernet: RX Checksum Offload Engine supported
+[    6.095756] dwc-eth-dwmac 2490000.ethernet: TX Checksum insertion supported
+[    6.102708] dwc-eth-dwmac 2490000.ethernet: Wake-Up On Lan supported
+[    6.109074] dwc-eth-dwmac 2490000.ethernet: TSO supported
+[    6.114465] dwc-eth-dwmac 2490000.ethernet: Enable RX Mitigation via HW Watchdog Timer
+[    6.122373] dwc-eth-dwmac 2490000.ethernet: device MAC address ee:3a:9a:b0:7e:34
+[    6.129756] dwc-eth-dwmac 2490000.ethernet: TSO feature enabled
+
+And it dies here. No more output is seen. I will try to figure
+out which commit is causing this issue.
+
+Cheers
+Jon
+
+-- 
+nvpublic
