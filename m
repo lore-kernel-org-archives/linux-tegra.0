@@ -1,76 +1,92 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: drm connectors, tegra, and the web they weave (was Re: [PATCH
- 58/59] drm/todo: Add new debugfs todo)
-Date: Tue, 18 Jun 2019 16:37:16 +0100
-Message-ID: <3271ab62-43dc-a845-45ff-c3dae62ad2d6@nvidia.com>
-References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
- <20190614203615.12639-59-daniel.vetter@ffwll.ch>
- <20190618151938.GA2567@kroah.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
+Date: Tue, 18 Jun 2019 09:41:03 -0600
+Message-ID: <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+ <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+ <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190618151938.GA2567@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, DRI Development <dri-devel@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE4LzA2LzIwMTkgMTY6MTksIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToKPiBPbiBGcmks
-IEp1biAxNCwgMjAxOSBhdCAxMDozNjoxNFBNICswMjAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+
-PiBHcmVnIGlzIGJ1c3kgYWxyZWFkeSwgYnV0IG1heWJlIGhlIHdvbid0IGRvIGV2ZXJ5dGhpbmcg
-Li4uCj4+Cj4+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24u
-b3JnPgo+PiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGludGVs
-LmNvbT4KPj4gLS0tCj4+ICBEb2N1bWVudGF0aW9uL2dwdS90b2RvLnJzdCB8IDMgKysrCj4+ICAx
-IGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspCj4+Cj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVu
-dGF0aW9uL2dwdS90b2RvLnJzdCBiL0RvY3VtZW50YXRpb24vZ3B1L3RvZG8ucnN0Cj4+IGluZGV4
-IDk3MTc1NDBlZTI4Zi4uMDI2ZTU1YzUxN2UxIDEwMDY0NAo+PiAtLS0gYS9Eb2N1bWVudGF0aW9u
-L2dwdS90b2RvLnJzdAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2dwdS90b2RvLnJzdAo+PiBAQCAt
-Mzc1LDYgKzM3NSw5IEBAIFRoZXJlJ3MgYSBidW5jaCBvZiBpc3N1ZXMgd2l0aCBpdDoKPj4gICAg
-dGhpcyAodG9nZXRoZXIgd2l0aCB0aGUgZHJtX21pbm9yLT5kcm1fZGV2aWNlIG1vdmUpIHdvdWxk
-IGFsbG93IHVzIHRvIHJlbW92ZQo+PiAgICBkZWJ1Z2ZzX2luaXQuCj4+ICAKPj4gKy0gRHJvcCB0
-aGUgcmV0dXJuIGNvZGUgYW5kIGVycm9yIGNoZWNraW5nIGZyb20gYWxsIGRlYnVnZnMgZnVuY3Rp
-b25zLiBHcmVnIEtIIGlzCj4+ICsgIHdvcmtpbmcgb24gdGhpcyBhbHJlYWR5Lgo+IAo+IAo+IFBh
-cnQgb2YgdGhpcyB3b3JrIHdhcyB0byB0cnkgdG8gZGVsZXRlIGRybV9kZWJ1Z2ZzX3JlbW92ZV9m
-aWxlcygpLgo+IAo+IFRoZXJlIGFyZSBvbmx5IDQgZmlsZXMgdGhhdCBjdXJyZW50bHkgc3RpbGwg
-Y2FsbCB0aGlzIGZ1bmN0aW9uOgo+IAlkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwo+IAlkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMKPiAJZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwo+
-IAlkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKPiAKPiBGb3IgZGMuYywgdGhlIGRyaXZlciB3
-YW50cyB0byBhZGQgZGVidWdmcyBmaWxlcyB0byB0aGUgc3RydWN0IGRybV9jcnRjCj4gZGVidWdm
-cyBkaXJlY3RvcnkuICBXaGljaCBpcyBmaW5lLCBidXQgaXQgaGFzIHRvIGRvIHNvbWUgc3BlY2lh
-bCBtZW1vcnkKPiBhbGxvY2F0aW9uIHRvIGdldCB0aGUgZGVidWdmcyBjYWxsYmFjayB0byBwb2lu
-dCBub3QgdG8gdGhlIHN0cnVjdAo+IGRybV9taW5vciBwb2ludGVyLCBidXQgcmF0aGVyIHRoZSBk
-cm1fY3J0YyBzdHJ1Y3R1cmUuCj4gCj4gU28sIHRvIHJlbW92ZSB0aGlzIGNhbGwsIEkgbmVlZCB0
-byByZW1vdmUgdGhpcyBzcGVjaWFsIG1lbW9yeSBhbGxvY2F0aW9uCj4gYW5kIHRvIGRvIHRoYXQs
-IEkgbmVlZCB0byBzb21laG93IGJlIGFibGUgdG8gY2FzdCBmcm9tIGRybV9taW5vciBiYWNrIHRv
-Cj4gdGhlIGRybV9jcnRjIHN0cnVjdHVyZSBiZWluZyB1c2VkIGluIHRoaXMgZHJpdmVyLiAgQW5k
-IEkgY2FuJ3QgZmlndXJlCj4gaG93IHRoZXkgYXJlIHJlbGF0ZWQgYXQgYWxsLgo+IAo+IEFueSBw
-b2ludGVycyBoZXJlIChwdW4gaW50ZW5kZWQpIHdvdWxkIGJlIGFwcHJlY2lhdGVkLgo+IAo+IEZv
-ciB0aGUgb3RoZXIgMyBmaWxlcywgdGhlIHNpdHVhdGlvbiBpcyBtdWNoIHRoZSBzYW1lLCBidXQg
-SSBuZWVkIHRvIGdldAo+IGZyb20gYSAnc3RydWN0IGRybV9taW5vcicgcG9pbnRlciB0byBhICdz
-dHJ1Y3QgZHJtX2Nvbm5lY3RvcicgcG9pbnRlci4KPiAKPiBJIGNvdWxkIGp1c3QgIm9wZW4gY29k
-ZSIgYSBidW5jaCBvZiBjYWxscyB0byBkZWJ1Z2ZzX2NyZWF0ZV9maWxlKCkgZm9yCj4gdGhlc2Ug
-ZHJpdmVycywgd2hpY2ggd291bGQgc29sdmUgdGhpcyBpc3N1ZSwgYnV0IGluIGEgbW9yZSAibm9u
-LWRybSIKPiB3YXkuICBJcyBpdCB3b3J0aCB0byBqdXN0IGRvIHRoYXQgaW5zdGVhZCBvZiBvdmVy
-dGhpbmtpbmcgdGhlIHdob2xlCj4gdGhpbmcgYW5kIHRyeWluZyB0byBzcXVpc2ggaXQgaW50byB0
-aGUgZHJtICJtb2RlbCIgb2YgZHJtIGRlYnVnZnMgY2FsbHM/Cj4gCj4gRWl0aGVyIHdheSwgd2hv
-IGNhbiB0ZXN0IHRoZXNlIGNoYW5nZXM/ICBJIGNhbid0IGV2ZW4gYnVpbGQgdGhlIHRlZ3JhCj4g
-ZHJpdmVyIHdpdGhvdXQgZGlnZ2luZyB1cCBhbiBhcm02NCBjcm9zcy1jb21waWxlciwgYW5kIGNh
-bid0IHRlc3QgaXQgYXMKPiBJIGhhdmUgbm8gaGFyZHdhcmUgYXQgYWxsLgoKV2UgY2FuIGRlZmlu
-aXRlbHkgY29tcGlsZSBhbmQgYm9vdCB0ZXN0IHRoZXNlIG5vIHByb2JsZW0uIEluIGZhY3QKYW55
-dGhpbmcgdGhhdCBsYW5kcyBpbiAtbmV4dCB3ZSB3aWxsIGJvb3QgdGVzdC4gSG93ZXZlciwgSSBj
-YW4gZG8gc29tZQpxdWljayBzYW5pdHkgaWYgeW91IGhhdmUgc29tZXRoaW5nIHRvIHRlc3QuCgpU
-aGllcnJ5IG1heSBoYXZlIG1vcmUgc3BlY2lmaWMgVGVncmEgRFJNIHRlc3RzLgoKQ2hlZXJzCkpv
-bgoKLS0gCm52cHVibGljCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbA==
+On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
+> 18.06.2019 12:22, Dmitry Osipenko пишет:
+>> 18.06.2019 10:46, Sowjanya Komatineni пишет:
+>>> This patch adds suspend and resume support for Tegra pinctrl driver
+>>> and registers them to syscore so the pinmux settings are restored
+>>> before the devices resume.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>>>   7 files changed, 84 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> index 34596b246578..ceced30d8bd1 100644
+>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> @@ -20,11 +20,16 @@
+>>>   #include <linux/pinctrl/pinmux.h>
+>>>   #include <linux/pinctrl/pinconf.h>
+>>>   #include <linux/slab.h>
+>>> +#include <linux/syscore_ops.h>
+>>>   
+>>>   #include "../core.h"
+>>>   #include "../pinctrl-utils.h"
+>>>   #include "pinctrl-tegra.h"
+>>>   
+>>> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+>>> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+>>> +#define EMMC_DPD_PARKING			(0x1fff << 14)
+>>> +
+>>>   static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>>>   {
+>>>   	return readl(pmx->regs[bank] + reg);
+>>> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>>   			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+>>>   		}
+>>>   	}
+>>> +
+>>> +	if (pmx->soc->has_park_padcfg) {
+>>> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +
+>>> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +	}
+>>> +}
+>>
+>> Is there any reason why parked_bit can't be changed to parked_bitmask like I was
+>> asking in a comment to v2?
+>>
+>> I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
+>> consistency when possible, hence adding platform specifics here should be discouraged.
+>> And then the parked_bitmask will also result in a proper hardware description in the code.
+>>
+> 
+> I'm now also vaguely recalling that Stephen Warren had some kind of a "code generator"
+> for the pinctrl drivers. So I guess all those tables were auto-generated initially.
+> 
+> Stephen, maybe you could adjust the generator to take into account the bitmask (of
+> course if that's a part of the generated code) and then re-gen it all for Sowjanya?
+
+https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that 
+generate tegra-pinctrlNNN.c. See  	soc-to-kernel-pinctrl-driver.py. 
+IIRC, tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya is 
+welcome to send a patch to that repo if the code needs to be updated.
