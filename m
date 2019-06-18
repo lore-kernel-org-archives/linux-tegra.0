@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V3 17/17] arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
-Date: Tue, 18 Jun 2019 00:46:31 -0700
-Message-ID: <1560843991-24123-18-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V3 12/17] soc/tegra: pmc: allow support for more tegra wake
+Date: Tue, 18 Jun 2019 00:46:26 -0700
+Message-ID: <1560843991-24123-13-git-send-email-skomatineni@nvidia.com>
 References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,31 +12,74 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch has Jetson TX1 platform specific SC7 timing configuration
-in device tree.
+This patch allows to create separate irq_set_wake and irq_set_type
+implementations for different tegra designs PMC that has different
+wake models which require difference wake registers and different
+programming sequence.
+
+AOWAKE model support is available for Tegra186 and Tegra194 only
+and it resides within PMC and supports tiered wake architecture.
+
+Tegra210 and prior tegra designs uses PMC directly to receive wake
+events and coordinate the wake sequence.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/soc/tegra/pmc.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index e8654061ce03..f7c9332085f8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -279,6 +279,13 @@
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index edd4fe06810f..e87f29a35fcf 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -226,6 +226,8 @@ struct tegra_pmc_soc {
+ 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+ 				   struct device_node *np,
+ 				   bool invert);
++	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
++	int (*irq_set_type)(struct irq_data *data, unsigned int type);
  
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <0>;
-+		nvidia,cpu-pwr-good-time = <0>;
-+		nvidia,cpu-pwr-off-time = <0>;
-+		nvidia,core-pwr-good-time = <4587 3876>;
-+		nvidia,core-pwr-off-time = <39065>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
- 	};
+ 	const char * const *reset_sources;
+ 	unsigned int num_reset_sources;
+@@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+ 	.alloc = tegra_pmc_irq_alloc,
+ };
  
- 	/* eMMC */
+-static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
++static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	unsigned int offset, bit;
+@@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ 	return 0;
+ }
+ 
+-static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
++static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	u32 value;
+@@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+ 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+ 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+ 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+-	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+-	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
++	if (pmc->soc->irq_set_type)
++		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
++	if (pmc->soc->irq_set_wake)
++		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+ 
+ 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+ 					       &tegra_pmc_irq_domain_ops, pmc);
+@@ -2679,6 +2683,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.regs = &tegra186_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
++	.irq_set_wake = tegra186_pmc_irq_set_wake,
++	.irq_set_type = tegra186_pmc_irq_set_type,
+ 	.reset_sources = tegra186_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
+ 	.reset_levels = tegra186_reset_levels,
 -- 
 2.7.4
