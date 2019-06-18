@@ -1,129 +1,144 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
- phylib logic
-Date: Tue, 18 Jun 2019 16:20:33 +0100
-Message-ID: <d96f8bea-f7ef-82ae-01ba-9c97aec0ee38@nvidia.com>
-References: <cover.1560266175.git.joabreu@synopsys.com>
- <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
- <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
- <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9C8DD9@DE02WEMBXB.internal.synopsys.com>
- <b66c7578-172f-4443-f4c3-411525e28738@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: drm connectors, tegra,
+ and the web they weave (was Re: [PATCH 58/59] drm/todo: Add new
+ debugfs todo)
+Date: Tue, 18 Jun 2019 17:25:30 +0200
+Message-ID: <20190618152530.GA4576@kroah.com>
+References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
+ <20190614203615.12639-59-daniel.vetter@ffwll.ch>
+ <20190618151938.GA2567@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b66c7578-172f-4443-f4c3-411525e28738@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190618151938.GA2567@kroah.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 18/06/2019 11:18, Jon Hunter wrote:
-> 
-> On 18/06/2019 10:46, Jose Abreu wrote:
->> From: Jon Hunter <jonathanh@nvidia.com>
->>
->>> I am not certain but I don't believe so. We are using a static IP address
->>> and mounting the root file-system via NFS when we see this ...
->>
->> Can you please add a call to napi_synchronize() before every 
->> napi_disable() calls, like this:
->>
->> if (queue < rx_queues_cnt) {
->> 	napi_synchronize(&ch->rx_napi);
->> 	napi_disable(&ch->rx_napi);
->> }
->>
->> if (queue < tx_queues_cnt) {
->> 	napi_synchronize(&ch->tx_napi);
->> 	napi_disable(&ch->tx_napi);
->> }
->>
->> [ I can send you a patch if you prefer ]
-> 
-> Yes I can try this and for completeness you mean ...
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 4ca46289a742..d4a12cb64d8e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -146,10 +146,15 @@ static void stmmac_disable_all_queues(struct stmmac_priv *priv)
->         for (queue = 0; queue < maxq; queue++) {
->                 struct stmmac_channel *ch = &priv->channel[queue];
->  
-> -               if (queue < rx_queues_cnt)
-> +               if (queue < rx_queues_cnt) {
-> +                       napi_synchronize(&ch->rx_napi);
->                         napi_disable(&ch->rx_napi);
-> -               if (queue < tx_queues_cnt)
-> +               }
-> +
-> +               if (queue < tx_queues_cnt) {
-> +                       napi_synchronize(&ch->tx_napi);
->                         napi_disable(&ch->tx_napi);
-> +               }
->         }
->  }
-
-So good news and bad news ...
-
-The good news is that the above change does fix the initial crash
-I am seeing. However, even with this change applied on top of
--next, it is still dying somewhere else and so there appears to
-be a second issue. 
-
-On a successful boot I see ...
-
-[    6.150419] dwc-eth-dwmac 2490000.ethernet: Cannot get CSR clock
-
-[    6.156441] dwc-eth-dwmac 2490000.ethernet: no reset control found
-
-[    6.175866] dwc-eth-dwmac 2490000.ethernet: User ID: 0x10, Synopsys ID: 0x41
-
-[    6.182912] dwc-eth-dwmac 2490000.ethernet: 	DWMAC4/5
-
-[    6.187961] dwc-eth-dwmac 2490000.ethernet: DMA HW capability register supported
-
-[    6.195351] dwc-eth-dwmac 2490000.ethernet: RX Checksum Offload Engine supported
-
-[    6.202735] dwc-eth-dwmac 2490000.ethernet: TX Checksum insertion supported
-
-[    6.209685] dwc-eth-dwmac 2490000.ethernet: Wake-Up On Lan supported
-
-[    6.216041] dwc-eth-dwmac 2490000.ethernet: TSO supported
-
-[    6.221433] dwc-eth-dwmac 2490000.ethernet: Enable RX Mitigation via HW Watchdog Timer
-
-[    6.229342] dwc-eth-dwmac 2490000.ethernet: device MAC address 9a:9b:49:6f:a5:ee
-
-[    6.236727] dwc-eth-dwmac 2490000.ethernet: TSO feature enabled
-
-[    6.242689] libphy: stmmac: probed
-
-On the latest -next with the patch applied I see ...
-
-[    6.043529] dwc-eth-dwmac 2490000.ethernet: Cannot get CSR clock
-[    6.049546] dwc-eth-dwmac 2490000.ethernet: no reset control found
-[    6.068895] dwc-eth-dwmac 2490000.ethernet: User ID: 0x10, Synopsys ID: 0x41
-[    6.075941] dwc-eth-dwmac 2490000.ethernet: 	DWMAC4/5
-[    6.080989] dwc-eth-dwmac 2490000.ethernet: DMA HW capability register supported
-[    6.088373] dwc-eth-dwmac 2490000.ethernet: RX Checksum Offload Engine supported
-[    6.095756] dwc-eth-dwmac 2490000.ethernet: TX Checksum insertion supported
-[    6.102708] dwc-eth-dwmac 2490000.ethernet: Wake-Up On Lan supported
-[    6.109074] dwc-eth-dwmac 2490000.ethernet: TSO supported
-[    6.114465] dwc-eth-dwmac 2490000.ethernet: Enable RX Mitigation via HW Watchdog Timer
-[    6.122373] dwc-eth-dwmac 2490000.ethernet: device MAC address ee:3a:9a:b0:7e:34
-[    6.129756] dwc-eth-dwmac 2490000.ethernet: TSO feature enabled
-
-And it dies here. No more output is seen. I will try to figure
-out which commit is causing this issue.
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gVHVlLCBKdW4gMTgsIDIwMTkgYXQgMDU6MTk6MzhQTSArMDIwMCwgR3JlZyBLcm9haC1IYXJ0
+bWFuIHdyb3RlOgo+IE9uIEZyaSwgSnVuIDE0LCAyMDE5IGF0IDEwOjM2OjE0UE0gKzAyMDAsIERh
+bmllbCBWZXR0ZXIgd3JvdGU6Cj4gPiBHcmVnIGlzIGJ1c3kgYWxyZWFkeSwgYnV0IG1heWJlIGhl
+IHdvbid0IGRvIGV2ZXJ5dGhpbmcgLi4uCj4gPiAKPiA+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4g
+PGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPgo+ID4gU2lnbmVkLW9mZi1ieTogRGFuaWVsIFZl
+dHRlciA8ZGFuaWVsLnZldHRlckBpbnRlbC5jb20+Cj4gPiAtLS0KPiA+ICBEb2N1bWVudGF0aW9u
+L2dwdS90b2RvLnJzdCB8IDMgKysrCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygr
+KQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9ncHUvdG9kby5yc3QgYi9Eb2N1
+bWVudGF0aW9uL2dwdS90b2RvLnJzdAo+ID4gaW5kZXggOTcxNzU0MGVlMjhmLi4wMjZlNTVjNTE3
+ZTEgMTAwNjQ0Cj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2dwdS90b2RvLnJzdAo+ID4gKysrIGIv
+RG9jdW1lbnRhdGlvbi9ncHUvdG9kby5yc3QKPiA+IEBAIC0zNzUsNiArMzc1LDkgQEAgVGhlcmUn
+cyBhIGJ1bmNoIG9mIGlzc3VlcyB3aXRoIGl0Ogo+ID4gICAgdGhpcyAodG9nZXRoZXIgd2l0aCB0
+aGUgZHJtX21pbm9yLT5kcm1fZGV2aWNlIG1vdmUpIHdvdWxkIGFsbG93IHVzIHRvIHJlbW92ZQo+
+ID4gICAgZGVidWdmc19pbml0Lgo+ID4gIAo+ID4gKy0gRHJvcCB0aGUgcmV0dXJuIGNvZGUgYW5k
+IGVycm9yIGNoZWNraW5nIGZyb20gYWxsIGRlYnVnZnMgZnVuY3Rpb25zLiBHcmVnIEtIIGlzCj4g
+PiArICB3b3JraW5nIG9uIHRoaXMgYWxyZWFkeS4KPiAKPiAKPiBQYXJ0IG9mIHRoaXMgd29yayB3
+YXMgdG8gdHJ5IHRvIGRlbGV0ZSBkcm1fZGVidWdmc19yZW1vdmVfZmlsZXMoKS4KPiAKPiBUaGVy
+ZSBhcmUgb25seSA0IGZpbGVzIHRoYXQgY3VycmVudGx5IHN0aWxsIGNhbGwgdGhpcyBmdW5jdGlv
+bjoKPiAJZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKPiAJZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2RzaS5jCj4gCWRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMKPiAJZHJpdmVycy9ncHUvZHJt
+L3RlZ3JhL3Nvci5jCj4gCj4gRm9yIGRjLmMsIHRoZSBkcml2ZXIgd2FudHMgdG8gYWRkIGRlYnVn
+ZnMgZmlsZXMgdG8gdGhlIHN0cnVjdCBkcm1fY3J0Ywo+IGRlYnVnZnMgZGlyZWN0b3J5LiAgV2hp
+Y2ggaXMgZmluZSwgYnV0IGl0IGhhcyB0byBkbyBzb21lIHNwZWNpYWwgbWVtb3J5Cj4gYWxsb2Nh
+dGlvbiB0byBnZXQgdGhlIGRlYnVnZnMgY2FsbGJhY2sgdG8gcG9pbnQgbm90IHRvIHRoZSBzdHJ1
+Y3QKPiBkcm1fbWlub3IgcG9pbnRlciwgYnV0IHJhdGhlciB0aGUgZHJtX2NydGMgc3RydWN0dXJl
+Lgo+IAo+IFNvLCB0byByZW1vdmUgdGhpcyBjYWxsLCBJIG5lZWQgdG8gcmVtb3ZlIHRoaXMgc3Bl
+Y2lhbCBtZW1vcnkgYWxsb2NhdGlvbgo+IGFuZCB0byBkbyB0aGF0LCBJIG5lZWQgdG8gc29tZWhv
+dyBiZSBhYmxlIHRvIGNhc3QgZnJvbSBkcm1fbWlub3IgYmFjayB0bwo+IHRoZSBkcm1fY3J0YyBz
+dHJ1Y3R1cmUgYmVpbmcgdXNlZCBpbiB0aGlzIGRyaXZlci4gIEFuZCBJIGNhbid0IGZpZ3VyZQo+
+IGhvdyB0aGV5IGFyZSByZWxhdGVkIGF0IGFsbC4KPiAKPiBBbnkgcG9pbnRlcnMgaGVyZSAocHVu
+IGludGVuZGVkKSB3b3VsZCBiZSBhcHByZWNpYXRlZC4KPiAKPiBGb3IgdGhlIG90aGVyIDMgZmls
+ZXMsIHRoZSBzaXR1YXRpb24gaXMgbXVjaCB0aGUgc2FtZSwgYnV0IEkgbmVlZCB0byBnZXQKPiBm
+cm9tIGEgJ3N0cnVjdCBkcm1fbWlub3InIHBvaW50ZXIgdG8gYSAnc3RydWN0IGRybV9jb25uZWN0
+b3InIHBvaW50ZXIuCj4gCj4gSSBjb3VsZCBqdXN0ICJvcGVuIGNvZGUiIGEgYnVuY2ggb2YgY2Fs
+bHMgdG8gZGVidWdmc19jcmVhdGVfZmlsZSgpIGZvcgo+IHRoZXNlIGRyaXZlcnMsIHdoaWNoIHdv
+dWxkIHNvbHZlIHRoaXMgaXNzdWUsIGJ1dCBpbiBhIG1vcmUgIm5vbi1kcm0iCj4gd2F5LiAgSXMg
+aXQgd29ydGggdG8ganVzdCBkbyB0aGF0IGluc3RlYWQgb2Ygb3ZlcnRoaW5raW5nIHRoZSB3aG9s
+ZQo+IHRoaW5nIGFuZCB0cnlpbmcgdG8gc3F1aXNoIGl0IGludG8gdGhlIGRybSAibW9kZWwiIG9m
+IGRybSBkZWJ1Z2ZzIGNhbGxzPwoKQW4gZXhhbXBsZSBvZiAib3BlbiBjb2RpbmciIHRoaXMgaXMg
+dGhlIHBhdGNoIGJlbG93IGZvciB0aGUgc29yLmMKZHJpdmVyLgoKVG90YWxseSB1bnRlc3RlZCwg
+bm90IGV2ZW4gYnVpbHQsIGJ1dCB5b3Ugc2hvdWxkIGdldCB0aGUgaWRlYSBoZXJlLgoKdGhhbmtz
+LAoKZ3JlZyBrLWgKCi0tLS0tLS0tLS0tLS0tLQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9zb3IuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYwppbmRleCA1YmU1YTA4
+MTdkZmUuLjMyMTYyMjFjNzdjNCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nv
+ci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYwpAQCAtNDE0LDcgKzQxNCw4IEBA
+IHN0cnVjdCB0ZWdyYV9zb3IgewogCiAJc3RydWN0IGRybV9kcF9hdXggKmF1eDsKIAotCXN0cnVj
+dCBkcm1faW5mb19saXN0ICpkZWJ1Z2ZzX2ZpbGVzOworCXN0cnVjdCBkZW50cnkgKmRlYnVnZnNf
+cm9vdDsKKwlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtOwogCiAJY29uc3Qgc3RydWN0IHRlZ3JhX3Nv
+cl9vcHMgKm9wczsKIAllbnVtIHRlZ3JhX2lvX3BhZCBwYWQ7CkBAIC0xMjYyLDEwICsxMjYzLDkg
+QEAgc3RhdGljIGludCB0ZWdyYV9zb3JfY3JjX3dhaXQoc3RydWN0IHRlZ3JhX3NvciAqc29yLCB1
+bnNpZ25lZCBsb25nIHRpbWVvdXQpCiAKIHN0YXRpYyBpbnQgdGVncmFfc29yX3Nob3dfY3JjKHN0
+cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAqZGF0YSkKIHsKLQlzdHJ1Y3QgZHJtX2luZm9fbm9kZSAq
+bm9kZSA9IHMtPnByaXZhdGU7Ci0Jc3RydWN0IHRlZ3JhX3NvciAqc29yID0gbm9kZS0+aW5mb19l
+bnQtPmRhdGE7CisJc3RydWN0IHRlZ3JhX3NvciAqc29yID0gcy0+cHJpdmF0ZTsKIAlzdHJ1Y3Qg
+ZHJtX2NydGMgKmNydGMgPSBzb3ItPm91dHB1dC5lbmNvZGVyLmNydGM7Ci0Jc3RydWN0IGRybV9k
+ZXZpY2UgKmRybSA9IG5vZGUtPm1pbm9yLT5kZXY7CisJc3RydWN0IGRybV9kZXZpY2UgKmRybSA9
+IHNvci0+ZHJtOwogCWludCBlcnIgPSAwOwogCXUzMiB2YWx1ZTsKIApAQCAtMTMwMiw2ICsxMzAy
+LDIwIEBAIHN0YXRpYyBpbnQgdGVncmFfc29yX3Nob3dfY3JjKHN0cnVjdCBzZXFfZmlsZSAqcywg
+dm9pZCAqZGF0YSkKIAlyZXR1cm4gZXJyOwogfQogCitzdGF0aWMgaW50IGNyY19vcGVuKHN0cnVj
+dCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxlKQoreworCXN0cnVjdCB0ZWdyYV9zb3Ig
+KnNvciA9IGlub2RlLT5pX3ByaXZhdGU7CisJcmV0dXJuIHNpbmdsZV9vcGVuKGZpbGUsIHRlZ3Jh
+X3Nvcl9zaG93X2NyYywgc29yKTsKK30KKworc3RhdGljIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJh
+dGlvbnMgY3JjX2ZvcHMgPSB7CisJLm93bmVyID0gVEhJU19NT0RVTEUsCisJLm9wZW4gPSBjcmNf
+b3BlbiwKKwkucmVhZCA9IHNlcV9yZWFkLAorCS5sbHNlZWsgPSBzZXFfbHNlZWssCisJLnJlbGVh
+c2UgPSBzaW5nbGVfcmVsZWFzZSwKK307CisKICNkZWZpbmUgREVCVUdGU19SRUczMihfbmFtZSkg
+eyAubmFtZSA9ICNfbmFtZSwgLm9mZnNldCA9IF9uYW1lIH0KIAogc3RhdGljIGNvbnN0IHN0cnVj
+dCBkZWJ1Z2ZzX3JlZzMyIHRlZ3JhX3Nvcl9yZWdzW10gPSB7CkBAIC0xNDI0LDEwICsxNDM4LDkg
+QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkZWJ1Z2ZzX3JlZzMyIHRlZ3JhX3Nvcl9yZWdzW10gPSB7
+CiAKIHN0YXRpYyBpbnQgdGVncmFfc29yX3Nob3dfcmVncyhzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZv
+aWQgKmRhdGEpCiB7Ci0Jc3RydWN0IGRybV9pbmZvX25vZGUgKm5vZGUgPSBzLT5wcml2YXRlOwot
+CXN0cnVjdCB0ZWdyYV9zb3IgKnNvciA9IG5vZGUtPmluZm9fZW50LT5kYXRhOworCXN0cnVjdCB0
+ZWdyYV9zb3IgKnNvciA9IHMtPnByaXZhdGU7CiAJc3RydWN0IGRybV9jcnRjICpjcnRjID0gc29y
+LT5vdXRwdXQuZW5jb2Rlci5jcnRjOwotCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBub2RlLT5t
+aW5vci0+ZGV2OworCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBzb3ItPmRybTsKIAl1bnNpZ25l
+ZCBpbnQgaTsKIAlpbnQgZXJyID0gMDsKIApAQCAtMTQ1MCw1MSArMTQ2Myw0NCBAQCBzdGF0aWMg
+aW50IHRlZ3JhX3Nvcl9zaG93X3JlZ3Moc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQog
+CXJldHVybiBlcnI7CiB9CiAKLXN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2luZm9fbGlzdCBkZWJ1
+Z2ZzX2ZpbGVzW10gPSB7Ci0JeyAiY3JjIiwgdGVncmFfc29yX3Nob3dfY3JjLCAwLCBOVUxMIH0s
+Ci0JeyAicmVncyIsIHRlZ3JhX3Nvcl9zaG93X3JlZ3MsIDAsIE5VTEwgfSwKK3N0YXRpYyBpbnQg
+cmVnc19vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxlKQoreworCXN0
+cnVjdCB0ZWdyYV9zb3IgKnNvciA9IGlub2RlLT5pX3ByaXZhdGU7CisJcmV0dXJuIHNpbmdsZV9v
+cGVuKGZpbGUsIHRlZ3JhX3Nvcl9zaG93X3JlZ3MsIHNvcik7Cit9CisKK3N0YXRpYyBjb25zdCBz
+dHJ1Y3QgZmlsZV9vcGVyYXRpb25zIGNyY19mb3BzID0geworCS5vd25lciA9IFRISVNfTU9EVUxF
+LAorCS5vcGVuID0gY3JjX29wZW4sCisJLnJlYWQgPSBzZXFfcmVhZCwKKwkubGxzZWVrID0gc2Vx
+X2xzZWVrLAorCS5yZWxlYXNlID0gc2luZ2xlX3JlbGVhc2UsCiB9OwogCiBzdGF0aWMgaW50IHRl
+Z3JhX3Nvcl9sYXRlX3JlZ2lzdGVyKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCiB7
+Ci0Jc3RydWN0IHRlZ3JhX291dHB1dCAqb3V0cHV0ID0gY29ubmVjdG9yX3RvX291dHB1dChjb25u
+ZWN0b3IpOwotCXVuc2lnbmVkIGludCBpLCBjb3VudCA9IEFSUkFZX1NJWkUoZGVidWdmc19maWxl
+cyk7CiAJc3RydWN0IGRybV9taW5vciAqbWlub3IgPSBjb25uZWN0b3ItPmRldi0+cHJpbWFyeTsK
+LQlzdHJ1Y3QgZGVudHJ5ICpyb290ID0gY29ubmVjdG9yLT5kZWJ1Z2ZzX2VudHJ5OworCXN0cnVj
+dCB0ZWdyYV9vdXRwdXQgKm91dHB1dCA9IGNvbm5lY3Rvcl90b19vdXRwdXQoY29ubmVjdG9yKTsK
+IAlzdHJ1Y3QgdGVncmFfc29yICpzb3IgPSB0b19zb3Iob3V0cHV0KTsKLQlpbnQgZXJyOworCXN0
+cnVjdCBkZW50cnkgKnJvb3Q7CiAKLQlzb3ItPmRlYnVnZnNfZmlsZXMgPSBrbWVtZHVwKGRlYnVn
+ZnNfZmlsZXMsIHNpemVvZihkZWJ1Z2ZzX2ZpbGVzKSwKLQkJCQkgICAgIEdGUF9LRVJORUwpOwot
+CWlmICghc29yLT5kZWJ1Z2ZzX2ZpbGVzKQotCQlyZXR1cm4gLUVOT01FTTsKKwlzb3ItPmRybSA9
+IG1pbm9yLT5kZXY7CiAKLQlmb3IgKGkgPSAwOyBpIDwgY291bnQ7IGkrKykKLQkJc29yLT5kZWJ1
+Z2ZzX2ZpbGVzW2ldLmRhdGEgPSBzb3I7CisJcm9vdCA9IGRlYnVnZnNfY3JlYXRlX2Rpcigic29y
+IiwgY29ubmVjdG9yLT5kZWJ1Z2ZzX2VudHJ5KTsKKwlzb3ItPmRlYnVnZnNfcm9vdCA9IHJvb3Q7
+CiAKLQllcnIgPSBkcm1fZGVidWdmc19jcmVhdGVfZmlsZXMoc29yLT5kZWJ1Z2ZzX2ZpbGVzLCBj
+b3VudCwgcm9vdCwgbWlub3IpOwotCWlmIChlcnIgPCAwKQotCQlnb3RvIGZyZWU7CisJZGVidWdm
+c19jcmVhdGVfZmlsZSgiY3JjIiwgU19JRlJFRyB8IFNfSVJVR08sIHJvb3QsIHNvciwgJmNyY19m
+b3BzKTsKKwlkZWJ1Z2ZzX2NyZWF0ZV9maWxlKCJyZWdzIiwgU19JRlJFRyB8IFNfSVJVR08sIHJv
+b3QsIHNvciwgJnJlZ3NfZm9wcyk7CiAKIAlyZXR1cm4gMDsKLQotZnJlZToKLQlrZnJlZShzb3It
+PmRlYnVnZnNfZmlsZXMpOwotCXNvci0+ZGVidWdmc19maWxlcyA9IE5VTEw7Ci0KLQlyZXR1cm4g
+ZXJyOwogfQogCiBzdGF0aWMgdm9pZCB0ZWdyYV9zb3JfZWFybHlfdW5yZWdpc3RlcihzdHJ1Y3Qg
+ZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQogewogCXN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91dHB1
+dCA9IGNvbm5lY3Rvcl90b19vdXRwdXQoY29ubmVjdG9yKTsKLQl1bnNpZ25lZCBpbnQgY291bnQg
+PSBBUlJBWV9TSVpFKGRlYnVnZnNfZmlsZXMpOwogCXN0cnVjdCB0ZWdyYV9zb3IgKnNvciA9IHRv
+X3NvcihvdXRwdXQpOwogCi0JZHJtX2RlYnVnZnNfcmVtb3ZlX2ZpbGVzKHNvci0+ZGVidWdmc19m
+aWxlcywgY291bnQsCi0JCQkJIGNvbm5lY3Rvci0+ZGV2LT5wcmltYXJ5KTsKLQlrZnJlZShzb3It
+PmRlYnVnZnNfZmlsZXMpOwotCXNvci0+ZGVidWdmc19maWxlcyA9IE5VTEw7CisJZGVidWdmc19y
+ZW1vdmVfcmVjdXJzaXZlKHNvci0+ZGVidWdmc19yb290KTsKIH0KIAogc3RhdGljIHZvaWQgdGVn
+cmFfc29yX2Nvbm5lY3Rvcl9yZXNldChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZngg
+bWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZng=
