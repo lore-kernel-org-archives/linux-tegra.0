@@ -1,85 +1,28 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
-Date: Tue, 18 Jun 2019 12:30:39 +0300
-Message-ID: <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
- <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
+ phylib logic
+Date: Tue, 18 Jun 2019 09:35:47 +0000
+Message-ID: <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
+References: <cover.1560266175.git.joabreu@synopsys.com>
+ <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
+ <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+In-Reply-To: <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, Stephen Warren <swarren@wwwdotorg.org>
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-18.06.2019 12:22, Dmitry Osipenko пишет:
-> 18.06.2019 10:46, Sowjanya Komatineni пишет:
->> This patch adds suspend and resume support for Tegra pinctrl driver
->> and registers them to syscore so the pinmux settings are restored
->> before the devices resume.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
->>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
->>  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
->>  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
->>  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
->>  drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
->>  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
->>  7 files changed, 84 insertions(+)
->>
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
->> index 34596b246578..ceced30d8bd1 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
->> @@ -20,11 +20,16 @@
->>  #include <linux/pinctrl/pinmux.h>
->>  #include <linux/pinctrl/pinconf.h>
->>  #include <linux/slab.h>
->> +#include <linux/syscore_ops.h>
->>  
->>  #include "../core.h"
->>  #include "../pinctrl-utils.h"
->>  #include "pinctrl-tegra.h"
->>  
->> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
->> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
->> +#define EMMC_DPD_PARKING			(0x1fff << 14)
->> +
->>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
->>  {
->>  	return readl(pmx->regs[bank] + reg);
->> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->>  			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
->>  		}
->>  	}
->> +
->> +	if (pmx->soc->has_park_padcfg) {
->> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
->> +		val &= ~EMMC_DPD_PARKING;
->> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
->> +
->> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
->> +		val &= ~EMMC_DPD_PARKING;
->> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
->> +	}
->> +}
-> 
-> Is there any reason why parked_bit can't be changed to parked_bitmask like I was
-> asking in a comment to v2?
-> 
-> I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
-> consistency when possible, hence adding platform specifics here should be discouraged.
-> And then the parked_bitmask will also result in a proper hardware description in the code.
-> 
-
-I'm now also vaguely recalling that Stephen Warren had some kind of a "code generator"
-for the pinctrl drivers. So I guess all those tables were auto-generated initially.
-
-Stephen, maybe you could adjust the generator to take into account the bitmask (of
-course if that's a part of the generated code) and then re-gen it all for Sowjanya?
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQoNCj4gSSBhbSBzZWVpbmcg
+YSBib290IHJlZ3Jlc3Npb24gb24gLW5leHQgZm9yIHNvbWUgb2Ygb3VyIGJvYXJkcyB0aGF0IGhh
+dmUNCj4gYSBzeW5vcHN5cyBldGhlcm5ldCBjb250cm9sbGVyIHRoYXQgdXNlcyB0aGUgZHdtYWMt
+ZHdjLXFvcy1ldGhlcm5ldA0KPiBkcml2ZXIuIEdpdCBiaXNlY3QgaXMgcG9pbnRpbmcgdG8gdGhp
+cyBjb21taXQsIGJ1dCB1bmZvcnR1bmF0ZWx5IHRoaXMNCj4gY2Fubm90IGJlIGNsZWFubHkgcmV2
+ZXJ0ZWQgb24gdG9wIG9mIC1uZXh0IHRvIGNvbmZpcm0uIA0KDQpUaGFua3MgZm9yIHJlcG9ydGlu
+Zy4gTG9va3MgbGlrZSB0aGUgdGltZXIgaXMgbm90IHNldHVwIHdoZW4gDQpzdG1tYWNfdHhfY2xl
+YW4oKSBpcyBjYWxsZWQuIFdoZW4gZG8geW91IHNlZSB0aGlzIHN0YWNrdHJhY2UgPyBBZnRlciAN
+CmlmZG93biA/DQoNClRoYW5rcywNCkpvc2UgTWlndWVsIEFicmV1DQo=
