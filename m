@@ -1,57 +1,26 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-Date: Tue, 18 Jun 2019 21:34:08 +0300
-Message-ID: <28cd06ca-3bd4-87e1-6d52-504cd00e1adb@gmail.com>
-References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
- <61c2dbcd-85f2-2094-7596-78ac01f55421@nvidia.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH v2 1/4] staging: media: tegra-vde: Remove BIT() macro
+ from UAPI header
+Date: Tue, 18 Jun 2019 20:37:23 +0200
+Message-ID: <e5b8756590260b4d6a26cf9f02deb9d157cfca83.camel@sipsolutions.net>
+References: <20190618161458.20499-1-digetx@gmail.com>
+         <20190618161458.20499-5-digetx@gmail.com>
+         <26cd63896d6930385b4f770e305f0782a455a688.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <61c2dbcd-85f2-2094-7596-78ac01f55421@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <26cd63896d6930385b4f770e305f0782a455a688.camel@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Joe Perches <joe@perches.com>, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-18.06.2019 12:13, Jon Hunter пишет:
+On Tue, 2019-06-18 at 11:23 -0700, Joe Perches wrote:
 > 
-> On 18/06/2019 09:42, Bitan Biswas wrote:
->> tegra_i2c_xfer_msg initiates the I2C transfer in DMA
->> or PIO mode. It involves steps that need FIFO register
->> access, DMA API calls like dma_sync_single_for_device, etc.
->> Tegra I2C ISR has calls to tegra_i2c_empty_rx_fifo in PIO mode
->> and in DMA/PIO mode writes different I2C registers including
->> I2C interrupt status. ISR cannot start processing
->> before the preparation step at tegra_i2c_xfer_msg is complete.
->> Hence, a synchronization between ISR and tegra_i2c_xfer_msg
->> is in place today using spinlock.
->>
->> Spinlock busy waits and can add avoidable delays.
->>
->> In this patch needed synchronization is achieved by disabling
->> I2C interrupt during preparation step and enabling interrupt
->> once preparation is over and spinlock is no longer needed.
-> Sorry but I still don't understand the problem you are trying to solve.
-> Yes spinlocks are busy waits but is this busy wait an actual problem? If
-> so what is the problem with this?
+> include/uapi/linux/nl80211.h: * bitmask of BIT(NL80211_BAND_*) as described in %enum
+> 
+> 
+That's a comment :P
 
-There is no real problem here, the intent is to clean up the code more and that should
-be mentioned in the commit message for clarity. This was actually my suggestion that
-Bitan is now started to implement, which is very nice! It should be a good result in
-the end.
-
-> It appears that the spinlock was added to prevent error interrupts
-> occurring until the transfer has started. If this is for error cases,
-> then probably it is not often that the CPU is stuck busy waiting on the
-> spinlock.
-> 
-> Furthermore, in addition to the spinlock we also have calls to
-> tegra_i2c_unmask_irq/tegra_i2c_mask_irq. Therefore, if we are going to
-> change this it would seem like a good idea to consolidate the
-> masking/unmasking of IRQs and the spinlock, if possible.
-> 
-> Finally, I still see that we have a spinlock in the downstream kernels
-> we are shipping and so I would prefer to see such a change also be
-> tested in the downstream kernels we are releasing.
+johannes
