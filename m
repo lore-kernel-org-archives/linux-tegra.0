@@ -1,95 +1,95 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V3 00/17] SC7 entry and exit support for Tegra210
-Date: Tue, 18 Jun 2019 00:46:14 -0700
-Message-ID: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V3 01/17] irqchip: tegra: do not disable COP IRQ during suspend
+Date: Tue, 18 Jun 2019 00:46:15 -0700
+Message-ID: <1560843991-24123-2-git-send-email-skomatineni@nvidia.com>
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series includes Tegra210 deepsleep support with RTC alarm
-wake event.
+Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
+sequence and sc7 entry firmware is run from COP/BPMP-Lite.
 
-This series also includes save and restore of PLLs, clocks, OSC contexts
-for deepsleep exit to normal operation.
+So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
+for Tegra210.
 
-This patch series doesn't support 100% suspend/resume to allow fully
-functional state upon resume and we are working on some more drivers suspend
-and resume implementations.
+This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+interrupt controller suspend operation.
 
-[V3]: Changes between V2 & V3 are
-	- V2 feedback fixes
-	- GPIO restore should happen prior to Pinctrl restore to prevent
-	  glitch on GPIO lines. So using resume_noirq for gpio tegra to allow
-	  gpio resume prior to pinctrl resume.
-	- Implemented save_context and restore_context callbacks for clock
-	  plls, pll outs and dividers in corresponding drivers.
-	  Note: Peripheral clocks and clock enable and reset need to be in
-	  Tegra210 clock suspend/resume as they need to be in proper sequence
-	  w.r.t DFLL resume for restoring CPU clock.
-	- Removed gpio-tegra changes for hierarchical support to have PMC as
-	  parent to GPIOs for GPIO wake event support. Thierry is working on
-	  gpiolib for some cleanup before adding hierarchical support. So
-	  holding on to GPIO wake support for now.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/irqchip/irq-tegra.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-[V2] : V1 feedback fixes
-	Patch 0002: This version still using syscore. Thierry suggest not to
-	use syscore and waiting on suggestion from Linux Walleij for any better
-	way of storing current state of pins before suspend entry and restoring
-	them on resume at very early stage. So left this the same way as V1 and
-	will address once I get more feedback on this.
-	Also need to findout and implement proper way of forcing resume order
-	between pinctrl and gpio driver.
-
-[V1]:	Tegra210 SC7 entry and exit thru RTC wake and Power button GPIO wake
-	using hierarchical IRQ with PMC as parent to GPIO.
-
-
-Sowjanya Komatineni (17):
-  irqchip: tegra: do not disable COP IRQ during suspend
-  pinctrl: tegra: add suspend and resume support
-  gpio: tegra: use resume_noirq for tegra gpio resume
-  clk: tegra: save and restore divider rate
-  clk: tegra: pllout: save and restore pllout context
-  clk: tegra: pll: save and restore pll context
-  clk: tegra: save and restore CPU and System clocks context
-  clk: tegra: add support for peripheral clock suspend and resume
-  clk: tegra: support for saving and restoring OSC clock context
-  clk: tegra: add suspend resume support for DFLL
-  clk: tegra210: support for Tegra210 clocks suspend and resume
-  soc/tegra: pmc: allow support for more tegra wake
-  soc/tegra: pmc: add pmc wake support for tegra210
-  arm64: tegra: enable wake from deep sleep on RTC alarm.
-  soc/tegra: pmc: configure core power request polarity
-  soc/tegra: pmc: configure deep sleep control settings
-  arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
-
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |   7 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi       |   5 +-
- drivers/clk/tegra/clk-dfll.c                   |  78 +++++++++
- drivers/clk/tegra/clk-dfll.h                   |   2 +
- drivers/clk/tegra/clk-divider.c                |  23 +++
- drivers/clk/tegra/clk-pll-out.c                |  28 ++++
- drivers/clk/tegra/clk-pll.c                    | 115 +++++++++----
- drivers/clk/tegra/clk-tegra-fixed.c            |  14 ++
- drivers/clk/tegra/clk-tegra-super-gen4.c       |   4 -
- drivers/clk/tegra/clk-tegra210.c               | 218 ++++++++++++++++++++++++-
- drivers/clk/tegra/clk.c                        | 150 ++++++++++++++++-
- drivers/clk/tegra/clk.h                        |  29 +++-
- drivers/gpio/gpio-tegra.c                      |  17 +-
- drivers/irqchip/irq-tegra.c                    |  21 ++-
- drivers/pinctrl/tegra/pinctrl-tegra.c          |  62 +++++++
- drivers/pinctrl/tegra/pinctrl-tegra.h          |   5 +
- drivers/pinctrl/tegra/pinctrl-tegra114.c       |   1 +
- drivers/pinctrl/tegra/pinctrl-tegra124.c       |   1 +
- drivers/pinctrl/tegra/pinctrl-tegra20.c        |   1 +
- drivers/pinctrl/tegra/pinctrl-tegra210.c       |  13 ++
- drivers/pinctrl/tegra/pinctrl-tegra30.c        |   1 +
- drivers/soc/tegra/pmc.c                        | 143 +++++++++++++++-
- 22 files changed, 880 insertions(+), 58 deletions(-)
-
+diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+index e1f771c72fc4..cf0c07052064 100644
+--- a/drivers/irqchip/irq-tegra.c
++++ b/drivers/irqchip/irq-tegra.c
+@@ -44,18 +44,22 @@ static unsigned int num_ictlrs;
+ 
+ struct tegra_ictlr_soc {
+ 	unsigned int num_ictlrs;
++	bool supports_sc7;
+ };
+ 
+ static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
+ 	.num_ictlrs = 4,
++	.supports_sc7 = false,
+ };
+ 
+ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
+ 	.num_ictlrs = 5,
++	.supports_sc7 = false,
+ };
+ 
+ static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
+ 	.num_ictlrs = 6,
++	.supports_sc7 = true,
+ };
+ 
+ static const struct of_device_id ictlr_matches[] = {
+@@ -67,6 +71,7 @@ static const struct of_device_id ictlr_matches[] = {
+ 
+ struct tegra_ictlr_info {
+ 	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
++	const struct tegra_ictlr_soc *soc;
+ #ifdef CONFIG_PM_SLEEP
+ 	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
+ 	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
+@@ -147,8 +152,19 @@ static int tegra_ictlr_suspend(void)
+ 		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
+ 		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+ 
+-		/* Disable COP interrupts */
+-		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
++		/*
++		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
++		 *
++		 * Tegra210 system suspend flow uses sc7entry firmware which
++		 * is executed by COP/BPMP and it includes disabling COP IRQ,
++		 * clamping CPU rail, turning off VDD_CPU, and preparing the
++		 * system to go to SC7/LP0.
++		 *
++		 * COP/BPMP wakes up when COP IRQ is triggered and runs
++		 * sc7entry-firmware. So need to keep COP interrupt enabled.
++		 */
++		if (!lic->soc->supports_sc7)
++			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+ 
+ 		/* Disable CPU interrupts */
+ 		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
+@@ -339,6 +355,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
+ 		goto out_unmap;
+ 	}
+ 
++	lic->soc = soc;
+ 	tegra_ictlr_syscore_init();
+ 
+ 	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
 -- 
 2.7.4
