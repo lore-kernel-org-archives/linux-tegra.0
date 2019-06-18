@@ -1,111 +1,50 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] dmaengine: tegra-apb: Support per-burst residue granularity
-Date: Tue, 18 Jun 2019 14:50:35 +0300
-Message-ID: <20190618115035.29250-1-digetx@gmail.com>
+From: Bitan Biswas <bbiswas@nvidia.com>
+Subject: Re: [PATCH V9] i2c: tegra: remove BUG() macro
+Date: Tue, 18 Jun 2019 04:52:39 -0700
+Message-ID: <2724f809-fe0b-810c-6236-d94a1efc2112@nvidia.com>
+References: <1560856182-26072-1-git-send-email-bbiswas@nvidia.com>
+ <e1bf5aac-5528-3e54-0f41-5a1bbabce419@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <e1bf5aac-5528-3e54-0f41-5a1bbabce419@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra's APB DMA engine updates words counter after each transferred burst
-of data, hence it can report transfer's residual with more fidelity which
-may be required in cases like audio playback. In particular this fixes
-audio stuttering during playback in a chromiuim web browser. The patch is
-based on the original work that was made by Ben Dooks. It was tested on
-Tegra20 and Tegra30 devices.
 
-Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
-Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
 
-Changelog:
+On 6/18/19 4:29 AM, Dmitry Osipenko wrote:
+> 18.06.2019 14:09, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> The usage of BUG() macro is generally discouraged in kernel, unless
+>> it's a problem that results in a physical damage or loss of data.
+>> This patch removes unnecessary BUG() macros and replaces the rest
+>> with warning.
+>>
+>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 47 ++++++++++++++++++++++++++++++++++=
++-------
+>>   1 file changed, 39 insertions(+), 8 deletions(-)
+>=20
+> Thank you very much! Please keep applying all the advises that were given=
+ to you
+> during the reviews in the future patches.
+Thank you Dmitry for the review inputs and patience. I shall try to keep=20
+the advices in mind for future reviews.
 
-v2:  Addressed review comments made by Jon Hunter to v1. We won't try
-     to get words count if dma_desc is on free list as it will result
-     in a NULL dereference because this case wasn't handled properly.
 
-     The residual value is now updated properly, avoiding potential
-     integer overflow by adding the "bytes" to the "bytes_transferred"
-     instead of the subtraction.
+>=20
+> I made a quick test and no problems spotted, all warning spots are silent=
+.
+>=20
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+>=20
+Also, Thank you for help in testing the patch at your end.
 
- drivers/dma/tegra20-apb-dma.c | 33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 79e9593815f1..fed18bc46479 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -797,6 +797,28 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
- 	return 0;
- }
- 
-+static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
-+					       struct tegra_dma_sg_req *sg_req)
-+{
-+	unsigned long status, wcount = 0;
-+
-+	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
-+		return 0;
-+
-+	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-+		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
-+
-+	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-+
-+	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
-+		wcount = status;
-+
-+	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
-+		return sg_req->req_len;
-+
-+	return get_current_xferred_count(tdc, sg_req, wcount);
-+}
-+
- static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	dma_cookie_t cookie, struct dma_tx_state *txstate)
- {
-@@ -806,6 +828,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	enum dma_status ret;
- 	unsigned long flags;
- 	unsigned int residual;
-+	unsigned int bytes = 0;
- 
- 	ret = dma_cookie_status(dc, cookie, txstate);
- 	if (ret == DMA_COMPLETE)
-@@ -825,6 +848,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	list_for_each_entry(sg_req, &tdc->pending_sg_req, node) {
- 		dma_desc = sg_req->dma_desc;
- 		if (dma_desc->txd.cookie == cookie) {
-+			bytes = tegra_dma_sg_bytes_xferred(tdc, sg_req);
- 			ret = dma_desc->dma_status;
- 			goto found;
- 		}
-@@ -836,7 +860,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- found:
- 	if (dma_desc && txstate) {
- 		residual = dma_desc->bytes_requested -
--			   (dma_desc->bytes_transferred %
-+			   ((dma_desc->bytes_transferred + bytes) %
- 			    dma_desc->bytes_requested);
- 		dma_set_residue(txstate, residual);
- 	}
-@@ -1441,12 +1465,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
- 		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
- 	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
--	/*
--	 * XXX The hardware appears to support
--	 * DMA_RESIDUE_GRANULARITY_BURST-level reporting, but it's
--	 * only used by this driver during tegra_dma_terminate_all()
--	 */
--	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-+	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
- 	tdma->dma_dev.device_config = tegra_dma_slave_config;
- 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
- 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
--- 
-2.22.0
+-regards,
+  Bitan
