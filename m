@@ -1,15 +1,15 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4/4] arm64: tegra: Add ID EEPROM for Jetson TX1 Developer
+Subject: Re: [PATCH 2/4] arm64: tegra: Add ID EEPROM for Jetson TX2 Developer
  Kit
-Date: Wed, 19 Jun 2019 11:37:56 +0100
-Message-ID: <b0c4e9c1-34d9-6293-c347-faf10f415107@nvidia.com>
+Date: Wed, 19 Jun 2019 11:39:59 +0100
+Message-ID: <9c343fc9-1a36-eaab-a7ed-8a2854c2cba4@nvidia.com>
 References: <20190613165331.8689-1-thierry.reding@gmail.com>
- <20190613165331.8689-4-thierry.reding@gmail.com>
+ <20190613165331.8689-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190613165331.8689-4-thierry.reding@gmail.com>
+In-Reply-To: <20190613165331.8689-2-thierry.reding@gmail.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -28,25 +28,25 @@ List-Id: linux-tegra@vger.kernel.org
 On 13/06/2019 17:53, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> There is an ID EEPROM on the Jetson TX1 carrier board, part of the
-> Jetson TX1 Developer Kit, that exposes information that can be used to
+> There is an ID EEPROM on the Jetson TX2 carrier board, part of the
+> Jetson TX2 Developer Kit, that exposes information that can be used to
 > identify the carrier board. Add the device tree node so that operating
 > systems can access this EEPROM.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 13 +++++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 13 +++++++++++++
 >  1 file changed, 13 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-> index 5a57396b5948..a3cafe39ba4c 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-> @@ -79,6 +79,19 @@
->  		};
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> index 837218e83e69..ab6648c72ad5 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> @@ -149,6 +149,19 @@
+>  		phy-names = "usb2-0", "usb2-1", "usb3-0";
 >  	};
 >  
-> +	i2c@7000c500 {
+> +	i2c@c250000 {
 > +		/* carrier board ID EEPROM */
 > +		eeprom@57 {
 > +			compatible = "atmel,24c02";
@@ -59,16 +59,15 @@ On 13/06/2019 17:53, Thierry Reding wrote:
 > +		};
 > +	};
 > +
->  	clock@70110000 {
+>  	pcie@10003000 {
 >  		status = "okay";
->  
-> 
 
 
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
+
 
 -- 
 nvpublic
