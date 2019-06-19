@@ -1,73 +1,180 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v6 2/2] arm64: tegra: enable ACONNECT, ADMA and AGIC
-Date: Wed, 19 Jun 2019 17:21:22 +0530
-Message-ID: <1560945082-24554-2-git-send-email-spujar@nvidia.com>
-References: <1560945082-24554-1-git-send-email-spujar@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
+ granularity
+Date: Wed, 19 Jun 2019 13:22:14 +0100
+Message-ID: <c7e4d99a-f02f-e7a2-a4c2-81496ee54d24@nvidia.com>
+References: <20190613210849.10382-1-digetx@gmail.com>
+ <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
+ <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
+ <1db9bac2-957d-3c0a-948a-429bc59f1b72@nvidia.com>
+ <c8bccb6e-27f8-d6c8-cfdb-10ab5ae98b26@gmail.com>
+ <49d087fe-a634-4a53-1caa-58a0e52ef1ba@nvidia.com>
+ <73d5cdb7-0462-944a-1f9a-3dc02f179385@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560945082-24554-1-git-send-email-spujar@nvidia.com>
+In-Reply-To: <73d5cdb7-0462-944a-1f9a-3dc02f179385@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: mkumard@nvidia.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enable ACONNECT, ADMA and AGIC devices for following platforms
-  * Jetson TX2
-  * Jetson Xavier
 
-Verified driver probe path and devices get registered fine.
+On 19/06/2019 12:10, Dmitry Osipenko wrote:
+> 19.06.2019 13:55, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 19/06/2019 11:27, Dmitry Osipenko wrote:
+>>> 19.06.2019 13:04, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>
+>>>> On 19/06/2019 00:27, Dmitry Osipenko wrote:
+>>>>> 19.06.2019 1:22, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> On 13/06/2019 22:08, Dmitry Osipenko wrote:
+>>>>>>> Tegra's APB DMA engine updates words counter after each transferred=
+ burst
+>>>>>>> of data, hence it can report transfer's residual with more fidelity=
+ which
+>>>>>>> may be required in cases like audio playback. In particular this fi=
+xes
+>>>>>>> audio stuttering during playback in a chromiuim web browser. The pa=
+tch is
+>>>>>>> based on the original work that was made by Ben Dooks [1]. It was t=
+ested
+>>>>>>> on Tegra20 and Tegra30 devices.
+>>>>>>>
+>>>>>>> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@c=
+odethink.co.uk/
+>>>>>>>
+>>>>>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>> ---
+>>>>>>> =C2=A0 drivers/dma/tegra20-apb-dma.c | 35 +++++++++++++++++++++++++=
++++-------
+>>>>>>> =C2=A0 1 file changed, 28 insertions(+), 7 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-ap=
+b-dma.c
+>>>>>>> index 79e9593815f1..c5af8f703548 100644
+>>>>>>> --- a/drivers/dma/tegra20-apb-dma.c
+>>>>>>> +++ b/drivers/dma/tegra20-apb-dma.c
+>>>>>>> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma=
+_chan *dc)
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>>>>>> =C2=A0 }
+>>>>>>> =C2=A0 +static unsigned int tegra_dma_update_residual(struct tegra_=
+dma_channel *tdc,
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 struct tegra_dma_sg_req *sg_req,
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 struct tegra_dma_desc *dma_desc,
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 unsigned int residual)
+>>>>>>> +{
+>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned long status, wcount =3D 0;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!list_is_first(&sg_req->node, &tdc->pending=
+_sg_req))
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return residual;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (tdc->tdma->chip_data->support_separate_wcou=
+nt_reg)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wcount =3D tdc_read(tdc=
+, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 status =3D tdc_read(tdc, TEGRA_APBDMA_CHAN_STAT=
+US);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!tdc->tdma->chip_data->support_separate_wco=
+unt_reg)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wcount =3D status;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return residual - sg_re=
+q->req_len;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 return residual - get_current_xferred_count(tdc=
+, sg_req, wcount);
+>>>>>>> +}
+>>>>>>
+>>>>>> I am unfortunately nowhere near my notes, so can't completely
+>>>>>> review this. I think the complexity of my patch series is due
+>>>>>> to an issue with the count being updated before the EOC IRQ
+>>>>>> is actually flagged (and most definetly before it gets to the
+>>>>>> CPU IRQ handler).
+>>>>>>
+>>>>>> The test system I was using, which i've not really got any
+>>>>>> access to at the moment would show these internal inconsistent
+>>>>>> states every few hours, however it was moving 48kHz 8ch 16bit
+>>>>>> TDM data.
+>>>>>>
+>>>>>> Thanks for looking into this, I am not sure if I am going to
+>>>>>> get any time to look into this within the next couple of
+>>>>>> months.
+>>>>>
+>>>>> I'll try to add some debug checks to try to catch the case where coun=
+t is updated before EOC
+>>>>> is set. Thank you very much for the clarification of the problem. So =
+far I haven't spotted
+>>>>> anything going wrong.
+>>>>>
+>>>>> Jon / Laxman, are you aware about the possibility to get such inconsi=
+stency of words count
+>>>>> vs EOC? Assuming the cyclic transfer mode.
+>>>>
+>>>> I can't say that I am. However, for the case of cyclic transfer, given
+>>>> that the next transfer is always programmed into the registers before
+>>>> the last one completes, I could see that by the time the interrupt is
+>>>> serviced that the DMA has moved on to the next transfer (which I assum=
+e
+>>>> would reset the count).
+>>>>
+>>>> Interestingly, our downstream kernel implemented a change to avoid the
+>>>> count appearing to move backwards. I am curious if this also works,
+>>>> which would be a lot simpler that what Ben has implemented and may
+>>>> mitigate that race condition that Ben is describing.
+>>>>
+>>>> Cheers
+>>>> Jon
+>>>>
+>>>> [0]
+>>>> https://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-4.4.git;a=3Dcommit;h=3Dc=
+7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
+>>>>
+>>>
+>>> The downstream patch doesn't check for EOC and has no comments about it=
+, so it's hard to
+>>> tell if it's intentional. Secondly, looks like the downstream patch is =
+mucked up because it
+>>> doesn't check whether the dma_desc is *the active* transfer and not a p=
+ending!
+>>
+>> I agree that it should check to see if it is active. I assume that what
+>> this patch is doing is not updating the dma position if it appears to
+>> have gone backwards, implying we have moved on to the next buffer. Yes
+>> this is still probably not as accurate as Ben's implementation because
+>> most likely we have finished that transfer and this patch would report
+>> that it is not quite finished.
+>>
+>> If Ben's patch works for you then why not go with this?
+>=20
+> Because I'm doubtful that it is really the case and not something else. I=
+t will be very odd
+> if hardware updates words count and sets EOC asynchronously, I'd call it =
+as a faulty design
+> and thus a bug that need to worked around in software if that's really ha=
+ppening.
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- changes in current revision
-   * renamed agic, interrupt-controller, name
+I don't see it that way. Probably as soon as the EOC happens, if there
+is another transfer queued up, the next transfer will start and count
+gets reset. So if you happen to asynchronously read the count at the
+very end of the transfer, then it is possible you are doing so at the
+same time that the EOC occurs but before the ISR has been triggered.
 
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 12 ++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 12 ++++++++++++
- 2 files changed, 24 insertions(+)
+Jon
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 5102de1..55c84bb 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -298,4 +298,16 @@
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
- 	};
-+
-+	aconnect {
-+		status = "okay";
-+
-+		dma-controller@2930000 {
-+			status = "okay";
-+		};
-+
-+		interrupt-controller@2a40000 {
-+			status = "okay";
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 6e6df65..5981cdc 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -167,4 +167,16 @@
- 			};
- 		};
- 	};
-+
-+	aconnect {
-+		status = "okay";
-+
-+		dma-controller@2930000 {
-+			status = "okay";
-+		};
-+
-+		interrupt-controller@2a40000 {
-+			status = "okay";
-+		};
-+	};
- };
--- 
-2.7.4
+--=20
+nvpublic
