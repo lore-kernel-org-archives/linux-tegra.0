@@ -1,138 +1,135 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-Date: Wed, 19 Jun 2019 12:10:54 +0300
-Message-ID: <30386276-d5cc-7a74-9f2f-b773b9f3e7a4@gmail.com>
-References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
- <cda89c10-c597-ce90-98dd-5cc13ee9b83d@gmail.com>
- <d29aa32d-55ef-c98b-00cd-f836bf003662@nvidia.com>
- <698b4903-0580-8a68-88f8-fba3e2cbe6c7@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
+ granularity
+Date: Wed, 19 Jun 2019 11:04:50 +0100
+Message-ID: <1db9bac2-957d-3c0a-948a-429bc59f1b72@nvidia.com>
+References: <20190613210849.10382-1-digetx@gmail.com>
+ <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
+ <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <698b4903-0580-8a68-88f8-fba3e2cbe6c7@gmail.com>
+In-Reply-To: <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.06.2019 12:02, Dmitry Osipenko пишет:
-> 19.06.2019 11:58, Jon Hunter пишет:
+
+On 19/06/2019 00:27, Dmitry Osipenko wrote:
+> 19.06.2019 1:22, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 13/06/2019 22:08, Dmitry Osipenko wrote:
+>>> Tegra's APB DMA engine updates words counter after each transferred bur=
+st
+>>> of data, hence it can report transfer's residual with more fidelity whi=
+ch
+>>> may be required in cases like audio playback. In particular this fixes
+>>> audio stuttering during playback in a chromiuim web browser. The patch =
+is
+>>> based on the original work that was made by Ben Dooks [1]. It was teste=
+d
+>>> on Tegra20 and Tegra30 devices.
+>>>
+>>> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codet=
+hink.co.uk/
+>>>
+>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>> =C2=A0 drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-=
+------
+>>> =C2=A0 1 file changed, 28 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
+a.c
+>>> index 79e9593815f1..c5af8f703548 100644
+>>> --- a/drivers/dma/tegra20-apb-dma.c
+>>> +++ b/drivers/dma/tegra20-apb-dma.c
+>>> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_cha=
+n *dc)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> =C2=A0 }
+>>> =C2=A0 +static unsigned int tegra_dma_update_residual(struct tegra_dma_=
+channel *tdc,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 struct tegra_dma_sg_req *sg_req,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 struct tegra_dma_desc *dma_desc,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 unsigned int residual)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 unsigned long status, wcount =3D 0;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (!list_is_first(&sg_req->node, &tdc->pending_sg_=
+req))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return residual;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (tdc->tdma->chip_data->support_separate_wcount_r=
+eg)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wcount =3D tdc_read(tdc, TE=
+GRA_APBDMA_CHAN_WORD_TRANSFER);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 status =3D tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (!tdc->tdma->chip_data->support_separate_wcount_=
+reg)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wcount =3D status;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return residual - sg_req->r=
+eq_len;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return residual - get_current_xferred_count(tdc, sg=
+_req, wcount);
+>>> +}
 >>
->> On 18/06/2019 19:26, Dmitry Osipenko wrote:
->>> 18.06.2019 11:42, Bitan Biswas пишет:
->>>> tegra_i2c_xfer_msg initiates the I2C transfer in DMA
->>>> or PIO mode. It involves steps that need FIFO register
->>>> access, DMA API calls like dma_sync_single_for_device, etc.
->>>> Tegra I2C ISR has calls to tegra_i2c_empty_rx_fifo in PIO mode
->>>> and in DMA/PIO mode writes different I2C registers including
->>>> I2C interrupt status. ISR cannot start processing
->>>> before the preparation step at tegra_i2c_xfer_msg is complete.
->>>> Hence, a synchronization between ISR and tegra_i2c_xfer_msg
->>>> is in place today using spinlock.
->>>
->>> Please use full 75 chars per-line, this should make commit message to look better.
->>>
->>>> Spinlock busy waits and can add avoidable delays.
->>>>
->>>> In this patch needed synchronization is achieved by disabling
->>>> I2C interrupt during preparation step and enabling interrupt
->>>> once preparation is over and spinlock is no longer needed.
->>>>
->>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>>> ---
->>>>  drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
->>>>  1 file changed, 8 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->>>> index 6fb545e..ccc7fae 100644
->>>> --- a/drivers/i2c/busses/i2c-tegra.c
->>>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>>> @@ -240,7 +240,6 @@ struct tegra_i2c_hw_feature {
->>>>   * @bus_clk_rate: current I2C bus clock rate
->>>>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
->>>>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
->>>> - * @xfer_lock: lock to serialize transfer submission and processing
->>>>   * @tx_dma_chan: DMA transmit channel
->>>>   * @rx_dma_chan: DMA receive channel
->>>>   * @dma_phys: handle to DMA resources
->>>> @@ -270,8 +269,6 @@ struct tegra_i2c_dev {
->>>>  	u32 bus_clk_rate;
->>>>  	u16 clk_divisor_non_hs_mode;
->>>>  	bool is_multimaster_mode;
->>>> -	/* xfer_lock: lock to serialize transfer submission and processing */
->>>> -	spinlock_t xfer_lock;
->>>>  	struct dma_chan *tx_dma_chan;
->>>>  	struct dma_chan *rx_dma_chan;
->>>>  	dma_addr_t dma_phys;
->>>> @@ -835,7 +832,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>>>  
->>>>  	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
->>>>  
->>>> -	spin_lock(&i2c_dev->xfer_lock);
->>>>  	if (status == 0) {
->>>>  		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
->>>>  			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
->>>> @@ -935,7 +931,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>>>  
->>>>  	complete(&i2c_dev->msg_complete);
->>>>  done:
->>>> -	spin_unlock(&i2c_dev->xfer_lock);
->>>>  	return IRQ_HANDLED;
->>>>  }
->>>>  
->>>> @@ -1054,7 +1049,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>>>  	u32 packet_header;
->>>>  	u32 int_mask;
->>>>  	unsigned long time_left;
->>>> -	unsigned long flags;
->>>>  	size_t xfer_size;
->>>>  	u32 *buffer = NULL;
->>>>  	int err = 0;
->>>> @@ -1085,7 +1079,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>>>  	 */
->>>>  	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
->>>>  					i2c_dev->bus_clk_rate);
->>>> -	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
->>>> +	if (!i2c_dev->irq_disabled) {
->>>> +		disable_irq_nosync(i2c_dev->irq);
->>>> +		i2c_dev->irq_disabled = true;
->>>> +	}
->>>
->>> 1) Peter correctly pointed out in the other email that the disabling should be synced.
->>> But see more below in 3.
->>>
->>> 2) i2c_dev->irq_disabled == true can't ever be the case here because tegra_i2c_init()
->>> re-enables interrupt in a case of error condition. Hence interrupt always enabled at
->>> the beginning of the transfer.
->>>
->>> 3) In my previous answer I was suggesting to request IRQ in a disabled state, this
->>> will allow to remove i2c_dev->irq_disabled completely.
->>>
->>> Then the tegra_i2c_xfer_msg() will have to enable IRQ after completion of the
->>> transfer-preparation process and disable IRQ once transfer is done (both success and
->>> failure cases). This is actually not a bad additional motivation for this patch, to
->>> keep CPU's interrupt disabled while idling and not to only rely on interrupt masking
->>> of the I2C hardware.
->>>
->>> 4) ISR should simply return IRQ_NONE when interrupt status is 0 and allow kernel core
->>> to disable the faulty interrupt itself. There will be "unhandled interrupt" error
->>> message in KMSG log, following the disabling.
->>>
->>> 5) In order to request IRQ in a disabled state, the IRQ_NOAUTOEN flag need to be set
->>> before the requesting, like this:
->>>
->>>     irq_set_status_flags(irq, IRQ_NOAUTOEN);
->>>
->>>     devm_request_irq(&pdev->dev, irq...);
->>>
->>> In a result of combining 3-5, both i2c_dev->irq_disabled and i2c_dev->irq variables
->>> become obsolete and could be removed in addition to xfer_lock. That all is a good
->>> cleanup in my opinion.
+>> I am unfortunately nowhere near my notes, so can't completely
+>> review this. I think the complexity of my patch series is due
+>> to an issue with the count being updated before the EOC IRQ
+>> is actually flagged (and most definetly before it gets to the
+>> CPU IRQ handler).
+>>
+>> The test system I was using, which i've not really got any
+>> access to at the moment would show these internal inconsistent
+>> states every few hours, however it was moving 48kHz 8ch 16bit
+>> TDM data.
+>>
+>> Thanks for looking into this, I am not sure if I am going to
+>> get any time to look into this within the next couple of
+>> months.
+>=20
+> I'll try to add some debug checks to try to catch the case where count is=
+ updated before EOC
+> is set. Thank you very much for the clarification of the problem. So far =
+I haven't spotted
+> anything going wrong.
+>=20
+> Jon / Laxman, are you aware about the possibility to get such inconsisten=
+cy of words count
+> vs EOC? Assuming the cyclic transfer mode.
 
+I can't say that I am. However, for the case of cyclic transfer, given
+that the next transfer is always programmed into the registers before
+the last one completes, I could see that by the time the interrupt is
+serviced that the DMA has moved on to the next transfer (which I assume
+would reset the count).
 
-Ah, actually looks like i2c_dev->irq won't be obsoleted, but not a big deal.
+Interestingly, our downstream kernel implemented a change to avoid the
+count appearing to move backwards. I am curious if this also works,
+which would be a lot simpler that what Ben has implemented and may
+mitigate that race condition that Ben is describing.
 
-Also, please note that it won't be the least to change the type of "irq" to unsigned int for
-consistency. I know that Thierry is picky about it.
+Cheers
+Jon
+
+[0]
+https://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-4.4.git;a=3Dcommit;h=3Dc7bba4=
+0c6846fbf3eaad35c4472dcc7d8bbc02e5
+
+--=20
+nvpublic
