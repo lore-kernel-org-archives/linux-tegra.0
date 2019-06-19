@@ -1,87 +1,62 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
- granularity
-Date: Wed, 19 Jun 2019 02:27:22 +0300
-Message-ID: <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
-References: <20190613210849.10382-1-digetx@gmail.com>
- <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
+Subject: Re: [PATCH v3 3/8] clocksource/drivers/tegra: Set and use timer's
+ period
+Date: Wed, 19 Jun 2019 03:41:05 +0300
+Message-ID: <17556fe2-8481-258a-9be9-2598da0a67eb@gmail.com>
+References: <20190618140358.13148-1-digetx@gmail.com>
+ <20190618140358.13148-4-digetx@gmail.com>
+ <16c20c1b-d106-cb1e-6d67-bdd402ecf57f@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
+In-Reply-To: <16c20c1b-d106-cb1e-6d67-bdd402ecf57f@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.06.2019 1:22, Ben Dooks пишет:
-> On 13/06/2019 22:08, Dmitry Osipenko wrote:
->> Tegra's APB DMA engine updates words counter after each transferred burst
->> of data, hence it can report transfer's residual with more fidelity which
->> may be required in cases like audio playback. In particular this fixes
->> audio stuttering during playback in a chromiuim web browser. The patch is
->> based on the original work that was made by Ben Dooks [1]. It was tested
->> on Tegra20 and Tegra30 devices.
+18.06.2019 19:32, Jon Hunter пишет:
+> 
+> On 18/06/2019 15:03, Dmitry Osipenko wrote:
+>> The of_clk structure has a period field that is set up initially by
+>> timer_of_clk_init(), that period value need to be adjusted for a case of
+>> TIMER1-9 that are running at a fixed rate that doesn't match the clock's
+>> rate. Note that the period value is currently used only by some of the
+>> clocksource drivers internally and hence this is just a minor cleanup
+>> change that doesn't fix anything.
 >>
->> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
->>
->> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>   drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-------
->>   1 file changed, 28 insertions(+), 7 deletions(-)
+>>  drivers/clocksource/timer-tegra.c | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->> index 79e9593815f1..c5af8f703548 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->>       return 0;
->>   }
->>   +static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
->> +                          struct tegra_dma_sg_req *sg_req,
->> +                          struct tegra_dma_desc *dma_desc,
->> +                          unsigned int residual)
->> +{
->> +    unsigned long status, wcount = 0;
->> +
->> +    if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
->> +        return residual;
->> +
->> +    if (tdc->tdma->chip_data->support_separate_wcount_reg)
->> +        wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
->> +
->> +    status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->> +
->> +    if (!tdc->tdma->chip_data->support_separate_wcount_reg)
->> +        wcount = status;
->> +
->> +    if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->> +        return residual - sg_req->req_len;
->> +
->> +    return residual - get_current_xferred_count(tdc, sg_req, wcount);
->> +}
+>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+>> index ff5a4ccb5d52..e6221e070499 100644
+>> --- a/drivers/clocksource/timer-tegra.c
+>> +++ b/drivers/clocksource/timer-tegra.c
+>> @@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
+>>  static int tegra_timer_set_periodic(struct clock_event_device *evt)
+>>  {
+>>  	void __iomem *reg_base = timer_of_base(to_timer_of(evt)); 
+>> +	unsigned long period = timer_of_period(to_timer_of(evt));
+>>  
+>> -	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
+>> -		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
+>> +	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
+>>  		       reg_base + TIMER_PTV);
+>>  
+>>  	return 0;
+>> @@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>>  		cpu_to->clkevt.rating = rating;
+>>  		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+>>  		cpu_to->of_base.base = timer_reg_base + base;
+>> +		cpu_to->of_clk.period = rate / HZ;
+>>  		cpu_to->of_clk.rate = rate;
+>>  
+>>  		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
 > 
-> I am unfortunately nowhere near my notes, so can't completely
-> review this. I think the complexity of my patch series is due
-> to an issue with the count being updated before the EOC IRQ
-> is actually flagged (and most definetly before it gets to the
-> CPU IRQ handler).
-> 
-> The test system I was using, which i've not really got any
-> access to at the moment would show these internal inconsistent
-> states every few hours, however it was moving 48kHz 8ch 16bit
-> TDM data.
-> 
-> Thanks for looking into this, I am not sure if I am going to
-> get any time to look into this within the next couple of
-> months.
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-I'll try to add some debug checks to try to catch the case where count is updated before EOC
-is set. Thank you very much for the clarification of the problem. So far I haven't spotted
-anything going wrong.
-
-Jon / Laxman, are you aware about the possibility to get such inconsistency of words count
-vs EOC? Assuming the cyclic transfer mode.
+Thanks!
