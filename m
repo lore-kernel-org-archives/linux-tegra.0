@@ -1,151 +1,259 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
- granularity
-Date: Wed, 19 Jun 2019 16:52:42 +0300
-Message-ID: <1de7d185-54c3-be83-cb37-4f2fd009253f@gmail.com>
-References: <20190613210849.10382-1-digetx@gmail.com>
- <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
- <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
- <1db9bac2-957d-3c0a-948a-429bc59f1b72@nvidia.com>
- <c8bccb6e-27f8-d6c8-cfdb-10ab5ae98b26@gmail.com>
- <49d087fe-a634-4a53-1caa-58a0e52ef1ba@nvidia.com>
- <73d5cdb7-0462-944a-1f9a-3dc02f179385@gmail.com>
- <c7e4d99a-f02f-e7a2-a4c2-81496ee54d24@nvidia.com>
+Subject: Re: [PATCH v4 01/10] clk: tegra20/30: Add custom EMC clock
+ implementation
+Date: Wed, 19 Jun 2019 18:37:46 +0300
+Message-ID: <1b3a95c7-37e5-535a-ff8c-2d52596cef1b@gmail.com>
+References: <20190616233551.6838-1-digetx@gmail.com>
+ <20190616233551.6838-2-digetx@gmail.com>
+ <20190619011401.9DE5C2085A@mail.kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c7e4d99a-f02f-e7a2-a4c2-81496ee54d24@nvidia.com>
+In-Reply-To: <20190619011401.9DE5C2085A@mail.kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.06.2019 15:22, Jon Hunter пишет:
+19.06.2019 4:14, Stephen Boyd пишет:
+> Quoting Dmitry Osipenko (2019-06-16 16:35:42)
+>> A proper External Memory Controller clock rounding and parent selection
+>> functionality is required by the EMC drivers. It is not available using
+>> the generic clock implementation, hence add a custom one. 
 > 
-> On 19/06/2019 12:10, Dmitry Osipenko wrote:
->> 19.06.2019 13:55, Jon Hunter пишет:
->>>
->>> On 19/06/2019 11:27, Dmitry Osipenko wrote:
->>>> 19.06.2019 13:04, Jon Hunter пишет:
->>>>>
->>>>> On 19/06/2019 00:27, Dmitry Osipenko wrote:
->>>>>> 19.06.2019 1:22, Ben Dooks пишет:
->>>>>>> On 13/06/2019 22:08, Dmitry Osipenko wrote:
->>>>>>>> Tegra's APB DMA engine updates words counter after each transferred burst
->>>>>>>> of data, hence it can report transfer's residual with more fidelity which
->>>>>>>> may be required in cases like audio playback. In particular this fixes
->>>>>>>> audio stuttering during playback in a chromiuim web browser. The patch is
->>>>>>>> based on the original work that was made by Ben Dooks [1]. It was tested
->>>>>>>> on Tegra20 and Tegra30 devices.
->>>>>>>>
->>>>>>>> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
->>>>>>>>
->>>>>>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>> ---
->>>>>>>>   drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-------
->>>>>>>>   1 file changed, 28 insertions(+), 7 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->>>>>>>> index 79e9593815f1..c5af8f703548 100644
->>>>>>>> --- a/drivers/dma/tegra20-apb-dma.c
->>>>>>>> +++ b/drivers/dma/tegra20-apb-dma.c
->>>>>>>> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->>>>>>>>       return 0;
->>>>>>>>   }
->>>>>>>>   +static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
->>>>>>>> +                          struct tegra_dma_sg_req *sg_req,
->>>>>>>> +                          struct tegra_dma_desc *dma_desc,
->>>>>>>> +                          unsigned int residual)
->>>>>>>> +{
->>>>>>>> +    unsigned long status, wcount = 0;
->>>>>>>> +
->>>>>>>> +    if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
->>>>>>>> +        return residual;
->>>>>>>> +
->>>>>>>> +    if (tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>>>> +        wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
->>>>>>>> +
->>>>>>>> +    status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->>>>>>>> +
->>>>>>>> +    if (!tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>>>> +        wcount = status;
->>>>>>>> +
->>>>>>>> +    if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->>>>>>>> +        return residual - sg_req->req_len;
->>>>>>>> +
->>>>>>>> +    return residual - get_current_xferred_count(tdc, sg_req, wcount);
->>>>>>>> +}
->>>>>>>
->>>>>>> I am unfortunately nowhere near my notes, so can't completely
->>>>>>> review this. I think the complexity of my patch series is due
->>>>>>> to an issue with the count being updated before the EOC IRQ
->>>>>>> is actually flagged (and most definetly before it gets to the
->>>>>>> CPU IRQ handler).
->>>>>>>
->>>>>>> The test system I was using, which i've not really got any
->>>>>>> access to at the moment would show these internal inconsistent
->>>>>>> states every few hours, however it was moving 48kHz 8ch 16bit
->>>>>>> TDM data.
->>>>>>>
->>>>>>> Thanks for looking into this, I am not sure if I am going to
->>>>>>> get any time to look into this within the next couple of
->>>>>>> months.
->>>>>>
->>>>>> I'll try to add some debug checks to try to catch the case where count is updated before EOC
->>>>>> is set. Thank you very much for the clarification of the problem. So far I haven't spotted
->>>>>> anything going wrong.
->>>>>>
->>>>>> Jon / Laxman, are you aware about the possibility to get such inconsistency of words count
->>>>>> vs EOC? Assuming the cyclic transfer mode.
->>>>>
->>>>> I can't say that I am. However, for the case of cyclic transfer, given
->>>>> that the next transfer is always programmed into the registers before
->>>>> the last one completes, I could see that by the time the interrupt is
->>>>> serviced that the DMA has moved on to the next transfer (which I assume
->>>>> would reset the count).
->>>>>
->>>>> Interestingly, our downstream kernel implemented a change to avoid the
->>>>> count appearing to move backwards. I am curious if this also works,
->>>>> which would be a lot simpler that what Ben has implemented and may
->>>>> mitigate that race condition that Ben is describing.
->>>>>
->>>>> Cheers
->>>>> Jon
->>>>>
->>>>> [0]
->>>>> https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
->>>>>
->>>>
->>>> The downstream patch doesn't check for EOC and has no comments about it, so it's hard to
->>>> tell if it's intentional. Secondly, looks like the downstream patch is mucked up because it
->>>> doesn't check whether the dma_desc is *the active* transfer and not a pending!
->>>
->>> I agree that it should check to see if it is active. I assume that what
->>> this patch is doing is not updating the dma position if it appears to
->>> have gone backwards, implying we have moved on to the next buffer. Yes
->>> this is still probably not as accurate as Ben's implementation because
->>> most likely we have finished that transfer and this patch would report
->>> that it is not quite finished.
->>>
->>> If Ben's patch works for you then why not go with this?
+> Why isn't it available? Please add this information to the commit text.
+
+Ok! It's not available because only the EMC driver has information about available memory
+timings and thus about the available rates (and parents consequently).
+
+>> The clock rate
+>> rounding shall be done by the EMC drivers because they have information
+>> about available memory timings, so the drivers will have to register a
+>> callback that will round the requested rate. EMC clock users won't be able
+>> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
+>> and the callback is set up. The functionality is somewhat similar to the
+>> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
+>> more parent clock sources and the HW configuration and integration with
+>> the EMC drivers differs a tad from the older gens, hence it's not really
+>> worth to try to squash everything into a single source file.
 >>
->> Because I'm doubtful that it is really the case and not something else. It will be very odd
->> if hardware updates words count and sets EOC asynchronously, I'd call it as a faulty design
->> and thus a bug that need to worked around in software if that's really happening.
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> [...]
+>> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-tegra20-emc.c
+>> new file mode 100644
+>> index 000000000000..b7f64ad5c04c
+>> --- /dev/null
+>> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
+>> @@ -0,0 +1,305 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <linux/bits.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clk/tegra.h>
+>> +#include <linux/err.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include "clk.h"
+>> +
+>> +#define CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK     GENMASK(7, 0)
+>> +#define CLK_SOURCE_EMC_2X_CLK_SRC_MASK         GENMASK(31, 30)
+>> +#define CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT                30
+>> +
+>> +#define MC_EMC_SAME_FREQ       BIT(16)
+>> +#define USE_PLLM_UD            BIT(29)
+>> +
+>> +#define EMC_SRC_PLL_M          0
+>> +#define EMC_SRC_PLL_C          1
+>> +#define EMC_SRC_PLL_P          2
+>> +#define EMC_SRC_CLK_M          3
+>> +
+> [...]
+>> +void tegra20_clk_set_emc_round_callback(tegra20_clk_emc_round_cb *round_cb,
+>> +                                       void *cb_arg)
+>> +{
+>> +       struct clk *clk = __clk_lookup("emc");
+>> +       struct tegra_clk_emc *emc;
+>> +       struct clk_hw *hw;
+>> +
+>> +       if (clk) {
+>> +               hw = __clk_get_hw(clk);
+>> +               emc = to_tegra_clk_emc(hw);
+>> +
+>> +               emc->round_cb = round_cb;
+>> +               emc->cb_arg = cb_arg;
+>> +       }
+>> +}
+>> +
+>> +bool tegra20_clk_emc_driver_available(struct clk_hw *emc_hw)
+>> +{
+>> +       return to_tegra_clk_emc(emc_hw)->round_cb != NULL;
+>> +}
+>> +
+>> +struct clk *tegra20_clk_register_emc(void __iomem *ioaddr)
 > 
-> I don't see it that way. Probably as soon as the EOC happens, if there
-> is another transfer queued up, the next transfer will start and count
-> gets reset. So if you happen to asynchronously read the count at the
-> very end of the transfer, then it is possible you are doing so at the
-> same time that the EOC occurs but before the ISR has been triggered.
+> Is this used outside this file?
 
-In our case we can't read out EOC status and words count asynchronously because the
-interrupt status and words count are within the same hardware register on pre-T114 and on
-T114+ we're reading words count register and only then the status register. ISR has nothing
-to do with it, if you're taking about tegra_dma_isr.
+Yes, it is. It is getting used even in this patch, you just snipped it off in the reply.
 
-Ben claims that the words count may get updated in hardware before EOC bit is set in the
-status register.
+>> +{
+>> +       struct tegra_clk_emc *emc;
+>> +       struct clk_init_data init;
+>> +       struct clk *clk;
+>> +
+>> +       emc = kzalloc(sizeof(*emc), GFP_KERNEL);
+>> +       if (!emc)
+>> +               return NULL;
+>> +
+>> +       init.name = "emc";
+>> +       init.ops = &tegra_clk_emc_ops;
+>> +       init.flags = CLK_IS_CRITICAL;
+> 
+> Can you please add a comment in the code why this clk is critical?
+
+Okay!
+
+>> +       init.parent_names = emc_parent_clk_names;
+>> +       init.num_parents = ARRAY_SIZE(emc_parent_clk_names);
+>> +
+>> +       emc->reg = ioaddr;
+>> +       emc->hw.init = &init;
+>> +
+>> +       clk = clk_register(NULL, &emc->hw);
+>> +       if (IS_ERR(clk)) {
+>> +               kfree(emc);
+>> +               return NULL;
+>> +       }
+>> +
+>> +       return clk;
+>> +}
+>> +
+>> +void tegra30_clk_set_emc_round_callback(tegra30_clk_emc_round_cb *round_cb,
+>> +                                       void *cb_arg)
+>> +{
+>> +       tegra20_clk_set_emc_round_callback(round_cb, cb_arg);
+>> +}
+>> +
+>> +bool tegra30_clk_emc_driver_available(struct clk_hw *emc_hw)
+>> +{
+>> +       return tegra20_clk_emc_driver_available(emc_hw);
+>> +}
+>> +
+>> +struct clk *tegra30_clk_register_emc(void __iomem *ioaddr)
+>> +{
+>> +       struct tegra_clk_emc *emc;
+>> +       struct clk_hw *hw;
+>> +       struct clk *clk;
+>> +
+>> +       clk = tegra20_clk_register_emc(ioaddr);
+>> +       if (!clk)
+>> +               return NULL;
+>> +
+>> +       hw = __clk_get_hw(clk);
+> 
+> It would be nicer to not use __clk_get_hw() and have the above function
+> return the clk_hw pointer instead. Then some driver can return the clk
+> pointer from there, if it's even needed for anything?
+
+This is solely for internal use by the tegra-clk driver itself, this function isn't publicly
+exposed. Again, you snipped off a lot in the reply, please take a look at the original patch.
+
+Technically I could return clk_hw from here, but it doesn't make much sense in the context
+of the tegra-clk driver. Please see how these functions are getting used in the original patch.
+
+In short, tegra-clk driver operates with clk struct and not clk_hw. You already was asking
+the same question in v3 and I replied that converting the whole driver for clk_hw will take
+a lot of effort. I suppose it will be somewhat similar to what was done for the IMX driver
+recently [1].
+
+[1] https://lkml.org/lkml/2019/5/2/170
+
+>> +       emc = to_tegra_clk_emc(hw);
+>> +       emc->want_low_jitter = true;
+>> +
+>> +       return clk;
+>> +}
+>> +
+>> +int tegra30_clk_prepare_emc_mc_same_freq(struct clk *emc_clk, bool same)
+>> +{
+>> +       struct tegra_clk_emc *emc;
+>> +       struct clk_hw *hw;
+>> +
+>> +       if (emc_clk) {
+>> +               hw = __clk_get_hw(emc_clk);
+>> +               emc = to_tegra_clk_emc(hw);
+>> +               emc->mc_same_freq = same;
+>> +
+>> +               return 0;
+>> +       }
+>> +
+>> +       return -EINVAL;
+>> +}
+>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+>> index bcd871134f45..f937a0f35afb 100644
+>> --- a/drivers/clk/tegra/clk-tegra20.c
+>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>> @@ -1115,6 +1083,8 @@ static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
+>>         if (IS_ERR(clk))
+>>                 return clk;
+>>  
+>> +       hw = __clk_get_hw(clk);
+>> +
+>>         /*
+>>          * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
+>>          * clock is created by the pinctrl driver. It is possible for clk user
+>> @@ -1124,13 +1094,16 @@ static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
+>>          */
+>>         if (clkspec->args[0] == TEGRA20_CLK_CDEV1 ||
+>>             clkspec->args[0] == TEGRA20_CLK_CDEV2) {
+>> -               hw = __clk_get_hw(clk);
+>> -
+>>                 parent_hw = clk_hw_get_parent(hw);
+>>                 if (!parent_hw)
+>>                         return ERR_PTR(-EPROBE_DEFER);
+>>         }
+>>  
+>> +       if (clkspec->args[0] == TEGRA20_CLK_EMC) {
+>> +               if (!tegra20_clk_emc_driver_available(hw))
+>> +                       return ERR_PTR(-EPROBE_DEFER);
+>> +       }
+>> +
+>>         return clk;
+>>  }
+>>  
+>> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+>> index 7b4c6a488527..fab075808c20 100644
+>> --- a/drivers/clk/tegra/clk-tegra30.c
+>> +++ b/drivers/clk/tegra/clk-tegra30.c
+>> @@ -1302,6 +1298,26 @@ static struct tegra_audio_clk_info tegra30_audio_plls[] = {
+>>         { "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
+>>  };
+>>  
+>> +static struct clk *tegra30_clk_src_onecell_get(struct of_phandle_args *clkspec,
+>> +                                              void *data)
+>> +{
+>> +       struct clk_hw *hw;
+>> +       struct clk *clk;
+>> +
+>> +       clk = of_clk_src_onecell_get(clkspec, data);
+>> +       if (IS_ERR(clk))
+>> +               return clk;
+>> +
+>> +       hw = __clk_get_hw(clk);
+>> +
+>> +       if (clkspec->args[0] == TEGRA30_CLK_EMC) {
+>> +               if (!tegra30_clk_emc_driver_available(hw))
+>> +                       return ERR_PTR(-EPROBE_DEFER);
+>> +       }
+>> +
+>> +       return clk;
+>> +}
+> 
+> This above function makes me uneasy because it looks like a clk_get() on
+> top of a clk_get()? 
+
+Yes, this way we're intercepting clk_get() within the driver, which is a very nice feature.
+We're already doing that in the clk-tegra20.c, can't see any problems with that.
