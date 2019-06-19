@@ -1,69 +1,45 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/4] arm64: tegra: Add ID EEPROM for Jetson TX2 module
-Date: Wed, 19 Jun 2019 11:40:38 +0100
-Message-ID: <bec2ec6d-a88e-4ebd-cef9-f0317097e618@nvidia.com>
-References: <20190613165331.8689-1-thierry.reding@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/53] 4.14.128-stable review
+Date: Wed, 19 Jun 2019 12:46:00 +0200
+Message-ID: <20190619104600.GC3150@kroah.com>
+References: <20190617210745.104187490@linuxfoundation.org>
+ <c4c6c3f5-2117-2db2-58a8-1a84143dc034@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190613165331.8689-1-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <c4c6c3f5-2117-2db2-58a8-1a84143dc034@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 13/06/2019 17:53, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Wed, Jun 19, 2019 at 09:49:00AM +0100, Jon Hunter wrote:
 > 
-> There is an ID EEPROM in the Jetson TX2 module that stores various bits
-> of information to indentify the module. Add the device tree node so that
-> operating systems can access this EEPROM.
+> On 17/06/2019 22:09, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.128 release.
+> > There are 53 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed 19 Jun 2019 09:06:21 PM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.128-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> index 38ad1053f21a..4bbee83d9943 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> @@ -124,6 +124,17 @@
->  
->  	i2c@c250000 {
->  		status = "okay";
-> +
-> +		/* module ID EEPROM */
-> +		eeprom@50 {
-> +			compatible = "atmel,24c02";
-> +			reg = <0x50>;
-> +
-> +			address-bits = <8>;
-> +			page-size = <8>;
-> +			size = <256>;
-> +			read-only;
-> +		};
->  	};
->  
->  	rtc@c2a0000 {
-> 
+> I am still waiting on the test results for 4.14-128-rc1. The builds are
+> all passing, but waiting for the tests to complete. We have been having
+> some issues with our test farm this week and so the results are delayed,
+> but should be available later today, I hope.
 
+No worries, thanks for testing all of these and letting me know.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+greg k-h
