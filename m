@@ -1,127 +1,67 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2] dmaengine: tegra-apb: Support per-burst residue
- granularity
-Date: Thu, 20 Jun 2019 09:38:51 +0100
-Message-ID: <8f48fcba-df7c-a313-2f84-0fa896e4ccec@nvidia.com>
-References: <20190618115035.29250-1-digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/3] arm64: tegra: Fix AGIC register range
+Date: Thu, 20 Jun 2019 11:13:07 +0200
+Message-ID: <20190620091307.GF26689@ulmo>
+References: <20190620081702.17209-1-jonathanh@nvidia.com>
+ <20190620081702.17209-2-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190618115035.29250-1-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5CUMAwwhRxlRszMD"
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190620081702.17209-2-jonathanh@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 18/06/2019 12:50, Dmitry Osipenko wrote:
-> Tegra's APB DMA engine updates words counter after each transferred burst
-> of data, hence it can report transfer's residual with more fidelity which
-> may be required in cases like audio playback. In particular this fixes
-> audio stuttering during playback in a chromiuim web browser. The patch is
-> based on the original work that was made by Ben Dooks. It was tested on
-> Tegra20 and Tegra30 devices.
-> 
-> Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
-> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+--5CUMAwwhRxlRszMD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 20, 2019 at 09:17:00AM +0100, Jon Hunter wrote:
+> The Tegra AGIC interrupt controller is an ARM GIC400 interrupt
+> controller. Per the ARM GIC device-tree binding, the first address
+> region is for the GIC distributor registers and the second address
+> region is for the GIC CPU interface registers. The address space for
+> the distributor registers is 4kB, but currently this is incorrectly
+> defined as 8kB for the Tegra AGIC and overlaps with the CPU interface
+> registers. Correct the address space for the distributor to be 4kB.
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
-> 
-> Changelog:
-> 
-> v2:  Addressed review comments made by Jon Hunter to v1. We won't try
->      to get words count if dma_desc is on free list as it will result
->      in a NULL dereference because this case wasn't handled properly.
-> 
->      The residual value is now updated properly, avoiding potential
->      integer overflow by adding the "bytes" to the "bytes_transferred"
->      instead of the subtraction.
-> 
->  drivers/dma/tegra20-apb-dma.c | 33 ++++++++++++++++++++++++++-------
->  1 file changed, 26 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 79e9593815f1..fed18bc46479 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -797,6 +797,28 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->  	return 0;
->  }
->  
-> +static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
-> +					       struct tegra_dma_sg_req *sg_req)
-> +{
-> +	unsigned long status, wcount = 0;
-> +
-> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
-> +		return 0;
-> +
-> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-> +		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
-> +
-> +	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-> +
-> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
-> +		wcount = status;
-> +
-> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
-> +		return sg_req->req_len;
-> +
-> +	return get_current_xferred_count(tdc, sg_req, wcount);
-> +}
-> +
->  static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
->  	dma_cookie_t cookie, struct dma_tx_state *txstate)
->  {
-> @@ -806,6 +828,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
->  	enum dma_status ret;
->  	unsigned long flags;
->  	unsigned int residual;
-> +	unsigned int bytes = 0;
->  
->  	ret = dma_cookie_status(dc, cookie, txstate);
->  	if (ret == DMA_COMPLETE)
-> @@ -825,6 +848,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
->  	list_for_each_entry(sg_req, &tdc->pending_sg_req, node) {
->  		dma_desc = sg_req->dma_desc;
->  		if (dma_desc->txd.cookie == cookie) {
-> +			bytes = tegra_dma_sg_bytes_xferred(tdc, sg_req);
->  			ret = dma_desc->dma_status;
->  			goto found;
->  		}
-> @@ -836,7 +860,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
->  found:
->  	if (dma_desc && txstate) {
->  		residual = dma_desc->bytes_requested -
-> -			   (dma_desc->bytes_transferred %
-> +			   ((dma_desc->bytes_transferred + bytes) %
->  			    dma_desc->bytes_requested);
->  		dma_set_residue(txstate, residual);
->  	}
-> @@ -1441,12 +1465,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
->  		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
->  	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
-> -	/*
-> -	 * XXX The hardware appears to support
-> -	 * DMA_RESIDUE_GRANULARITY_BURST-level reporting, but it's
-> -	 * only used by this driver during tegra_dma_terminate_all()
-> -	 */
-> -	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-> +	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
->  	tdma->dma_dev.device_config = tegra_dma_slave_config;
->  	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
->  	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
-> 
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good to me. Thanks for fixing!
+Applied to for-5.3/arm64/dt, though I also added the following Fixes:
+line:
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: bcdbde433542 ("arm64: tegra: Add AGIC node for Tegra210")
 
-Cheers
-Jon
+Thanks,
+Thierry
 
--- 
-nvpublic
+--5CUMAwwhRxlRszMD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0LTiIACgkQ3SOs138+
+s6GY4w/+MMaim+cU/P4jt3haccBqVOz26dTGf4DqXEF/agrQwv0CwCOuwWjUxzLY
+enl2a+nzqXC6UwHRetCeL+En/ul0nbmF8+4OptO+gFd5t6E2T+bcV6KeV7DxrfMp
+uTWAwiQctbDqJjRJ2dv1weTTfbpC/hEtd4VmbPW7R62z5FEC+EmUcOFbIQql3XuK
+6No6LVFDiCvV+8p4zHpbNEmfm/glVzsoV/CjS/rGVszfGteG1+dNX2gt5ASuxjFB
+5XyN9z2NSzkQat9sMKMk56EY1xC+HuHi5ZlZboReTxf9wq/3rpofyalMoeWcm4RV
+rzNWNXU5yWoII8L4CR80WsGV4BphyklkzFUgC61Z7MXu/STIGrTPB3U9vbJdBNov
+kidAGdL1u+ya9cvrBB3St+G9P+rsYIGAgZY0yePBTlXRSUYbYkfSiyiKiDVdE1LM
+riiaB4gqMpxchLlY0AcUf0gGep+1z+eOTmKng2EmEbSAF1D3WW7r48EMyctvhRo/
+3jHaWe3K8uzYVT3eYANyAWK3pacyWFPjVSZTbFJ9taLZIKsKXj7LQrclZGZ79NvN
+QOxbQepxdHyMgJ+ZeueB+vbspaMpcmAfNhrcmlZ9oeFU2EDTjqCJfy4Tw8yEaKwn
+zK39Mhin/EY8vr76fV8k2Oz644MiCxV4zyz31F/b+TRisRf7AI4=
+=Gdxk
+-----END PGP SIGNATURE-----
+
+--5CUMAwwhRxlRszMD--
