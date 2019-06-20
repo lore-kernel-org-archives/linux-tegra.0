@@ -1,100 +1,94 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V10 15/15] arm64: Add Tegra194 PCIe driver to defconfig
-Date: Thu, 20 Jun 2019 13:03:14 +0200
-Message-ID: <20190620110314.GC15892@ulmo>
-References: <20190612095339.20118-1-vidyas@nvidia.com>
- <20190612095339.20118-16-vidyas@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
+ phylib logic
+Date: Thu, 20 Jun 2019 15:05:22 +0100
+Message-ID: <7f0f2ed0-f47c-4670-d169-25f0413c1fd3@nvidia.com>
+References: <cover.1560266175.git.joabreu@synopsys.com>
+ <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
+ <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
+ <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
+ <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
+ <78EB27739596EE489E55E81C33FEC33A0B9C8DD9@DE02WEMBXB.internal.synopsys.com>
+ <b66c7578-172f-4443-f4c3-411525e28738@nvidia.com>
+ <d96f8bea-f7ef-82ae-01ba-9c97aec0ee38@nvidia.com>
+ <6f36b6b6-8209-ed98-e7e1-3dac0a92f6cd@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190612095339.20118-16-vidyas@nvidia.com>
+In-Reply-To: <6f36b6b6-8209-ed98-e7e1-3dac0a92f6cd@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---LwW0XdcUbUexiWVK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 18/06/2019 20:44, Jon Hunter wrote:
+> 
+> On 18/06/2019 16:20, Jon Hunter wrote:
+>>
+>> On 18/06/2019 11:18, Jon Hunter wrote:
+>>>
+>>> On 18/06/2019 10:46, Jose Abreu wrote:
+>>>> From: Jon Hunter <jonathanh@nvidia.com>
+>>>>
+>>>>> I am not certain but I don't believe so. We are using a static IP address
+>>>>> and mounting the root file-system via NFS when we see this ...
+>>>>
+>>>> Can you please add a call to napi_synchronize() before every 
+>>>> napi_disable() calls, like this:
+>>>>
+>>>> if (queue < rx_queues_cnt) {
+>>>> 	napi_synchronize(&ch->rx_napi);
+>>>> 	napi_disable(&ch->rx_napi);
+>>>> }
+>>>>
+>>>> if (queue < tx_queues_cnt) {
+>>>> 	napi_synchronize(&ch->tx_napi);
+>>>> 	napi_disable(&ch->tx_napi);
+>>>> }
+>>>>
+>>>> [ I can send you a patch if you prefer ]
+>>>
+>>> Yes I can try this and for completeness you mean ...
+>>>
+>>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>>> index 4ca46289a742..d4a12cb64d8e 100644
+>>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>>> @@ -146,10 +146,15 @@ static void stmmac_disable_all_queues(struct stmmac_priv *priv)
+>>>         for (queue = 0; queue < maxq; queue++) {
+>>>                 struct stmmac_channel *ch = &priv->channel[queue];
+>>>  
+>>> -               if (queue < rx_queues_cnt)
+>>> +               if (queue < rx_queues_cnt) {
+>>> +                       napi_synchronize(&ch->rx_napi);
+>>>                         napi_disable(&ch->rx_napi);
+>>> -               if (queue < tx_queues_cnt)
+>>> +               }
+>>> +
+>>> +               if (queue < tx_queues_cnt) {
+>>> +                       napi_synchronize(&ch->tx_napi);
+>>>                         napi_disable(&ch->tx_napi);
+>>> +               }
+>>>         }
+>>>  }
+>>
+>> So good news and bad news ...
+>>
+>> The good news is that the above change does fix the initial crash
+>> I am seeing. However, even with this change applied on top of
+>> -next, it is still dying somewhere else and so there appears to
+>> be a second issue. 
+> 
+> Further testing has shown that actually this does NOT resolve the issue
+> and I am still seeing the crash. Sorry for the false-positive.
 
-On Wed, Jun 12, 2019 at 03:23:39PM +0530, Vidya Sagar wrote:
-> Add PCIe host controller driver for DesignWare core based
-> PCIe controller IP present in Tegra194.
->=20
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> Changes since [v9]:
-> * None
->=20
-> Changes since [v8]:
-> * None
->=20
-> Changes since [v7]:
-> * None
->=20
-> Changes since [v6]:
-> * None
->=20
-> Changes since [v5]:
-> * None
->=20
-> Changes since [v4]:
-> * None
->=20
-> Changes since [v3]:
-> * None
->=20
-> Changes since [v2]:
-> * None
->=20
-> Changes since [v1]:
-> * Changed CONFIG_PCIE_TEGRA194 from 'y' to 'm'
->=20
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+Any further feedback? I am still seeing this issue on today's -next.
 
-Applied to for-5.3/arm64/defconfig, thanks.
+Thanks
+Jon
 
-Thierry
-
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index bb0705e1f52e..6462a4dbac87 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -192,6 +192,7 @@ CONFIG_PCIE_QCOM=3Dy
->  CONFIG_PCIE_ARMADA_8K=3Dy
->  CONFIG_PCIE_KIRIN=3Dy
->  CONFIG_PCIE_HISI_STB=3Dy
-> +CONFIG_PCIE_TEGRA194=3Dm
->  CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
->  CONFIG_DEVTMPFS=3Dy
->  CONFIG_DEVTMPFS_MOUNT=3Dy
-> --=20
-> 2.17.1
->=20
-
---LwW0XdcUbUexiWVK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0LZ/IACgkQ3SOs138+
-s6HnVQ//V0AiVK2T4Zt26dMdZRhdje5rcfQvqSvS26yAWlB19a4K+KnSpeO7nTt8
-i6xPCg/PJR7n4dZixeneI2T9CbseVldNr3S1pYDhZkauq6BjAdC83QHLsp9Qi7tX
-DEFCr7Q7S5Kydzm2qWiHqEH0RkU4uS3aHLYqmQgjwegLS70jCaQZ6YKbgOcPbukl
-O8+1Dh62jUJWf4aQrk2td+MtfjSkY3/w+J/ath9tZ2mUgyU3DnLXcX8bl2p2iL3e
-v/fxv6TunUNh4qfxNoPxe+RKYV58eYgYdTx4/iYWWBvmuqGGfDsPibgO/PB2aueu
-7GZu7HlOyAww4ZZyJZq+V59eusRVVdfOmBYNH0V7s4cZ5uylcXjo0OyVxcPaLagc
-+4QAQvFvffG8dJ/EtbECoLMp2Yztw1Uq1SVLnt8MBod7DbAYL022NVBIjMB86lLj
-JiWpkweF8hOdUS1adn+j5gsgRVBMR62wBKtkQ8qYx8f4pX0Vl1VEIY2ZnEq44Q7E
-e1uqUuVaLcwszTaFO+CEsPDrdvWqUKyu8F01G+Qx+xC8rgh/g6b8AqDNK/y/x1q9
-z+3DzwdYbUtxw9G2iL4jk76dNnJnGDAKKiDeEmxeO1qYsxEIHdBgySs/eNHvdoRh
-Z1TuJN879ifWwPHgEOB95zZ8Ed5CByYQXa+JT+eDqZuumu8eU2w=
-=BWCx
------END PGP SIGNATURE-----
-
---LwW0XdcUbUexiWVK--
+-- 
+nvpublic
