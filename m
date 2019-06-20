@@ -1,135 +1,106 @@
-From: Bitan Biswas <bbiswas@nvidia.com>
-Subject: Re: [PATCH V9] i2c: tegra: remove BUG() macro
-Date: Wed, 19 Jun 2019 22:00:51 -0700
-Message-ID: <a2a94eb5-c3c3-24bb-e7a6-0d02f2546f94@nvidia.com>
-References: <1560856182-26072-1-git-send-email-bbiswas@nvidia.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH V10 10/15] dt-bindings: PHY: P2U: Add Tegra194 P2U block
+Date: Thu, 20 Jun 2019 12:52:16 +0530
+Message-ID: <1ecf61d7-5535-4f07-5e1e-5d492f4194da@ti.com>
+References: <20190612095339.20118-1-vidyas@nvidia.com>
+ <20190612095339.20118-11-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560856182-26072-1-git-send-email-bbiswas@nvidia.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190612095339.20118-11-vidyas@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Shardar Mohammed <smohammed@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mantravadi Karthik <mkarthik@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vidya Sagar <vidyas@nvidia.com>, lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
+Cc: devicetree@vger.kernel.org, mmaddireddy@nvidia.com, kthota@nvidia.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, linux-tegra@vger.kernel.org, digetx@gmail.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 6/18/19 4:09 AM, Bitan Biswas wrote:
-> The usage of BUG() macro is generally discouraged in kernel, unless
-> it's a problem that results in a physical damage or loss of data.
-> This patch removes unnecessary BUG() macros and replaces the rest
-> with warning.
+On 12/06/19 3:23 PM, Vidya Sagar wrote:
+> Add support for Tegra194 P2U (PIPE to UPHY) module block which is a glue
+> module instantiated one for each PCIe lane between Synopsys DesignWare core
+> based PCIe IP and Universal PHY block.
 > 
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
->   drivers/i2c/busses/i2c-tegra.c | 47 +++++++++++++++++++++++++++++++++++-------
->   1 file changed, 39 insertions(+), 8 deletions(-)
+> Changes since [v9]:
+> * None
 > 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 4dfb4c1..e9ff96d 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -73,6 +73,7 @@
->   #define I2C_ERR_NO_ACK				BIT(0)
->   #define I2C_ERR_ARBITRATION_LOST		BIT(1)
->   #define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
-> +#define I2C_ERR_RX_BUFFER_OVERFLOW		BIT(3)
->   
->   #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
->   #define PACKET_HEADER0_PACKET_ID_SHIFT		16
-> @@ -489,6 +490,13 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
->   	size_t buf_remaining = i2c_dev->msg_buf_remaining;
->   	int words_to_transfer;
->   
-> +	/*
-> +	 * Catch overflow due to message fully sent
-> +	 * before the check for RX FIFO availability.
-> +	 */
-> +	if (WARN_ON_ONCE(!(i2c_dev->msg_buf_remaining)))
-> +		return -EINVAL;
-> +
->   	if (i2c_dev->hw->has_mst_fifo) {
->   		val = i2c_readl(i2c_dev, I2C_MST_FIFO_STATUS);
->   		rx_fifo_avail = (val & I2C_MST_FIFO_STATUS_RX_MASK) >>
-> @@ -515,7 +523,11 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
->   	 * prevent overwriting past the end of buf
->   	 */
->   	if (rx_fifo_avail > 0 && buf_remaining > 0) {
-> -		BUG_ON(buf_remaining > 3);
-> +		/*
-> +		 * buf_remaining > 3 check not needed as rx_fifo_avail == 0
-> +		 * when (words_to_transfer was > rx_fifo_avail) earlier
-> +		 * in this function.
-> +		 */
->   		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
->   		val = cpu_to_le32(val);
->   		memcpy(buf, &val, buf_remaining);
-> @@ -523,7 +535,10 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
->   		rx_fifo_avail--;
->   	}
->   
-> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
-> +	/* RX FIFO must be drained, otherwise it's an Overflow case. */
-> +	if (WARN_ON_ONCE(rx_fifo_avail))
-> +		return -EINVAL;
-> +
->   	i2c_dev->msg_buf_remaining = buf_remaining;
->   	i2c_dev->msg_buf = buf;
->   
-> @@ -581,7 +596,11 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
->   	 * boundary and fault.
->   	 */
->   	if (tx_fifo_avail > 0 && buf_remaining > 0) {
-> -		BUG_ON(buf_remaining > 3);
-> +		/*
-> +		 * buf_remaining > 3 check not needed as tx_fifo_avail == 0
-> +		 * when (words_to_transfer was > tx_fifo_avail) earlier
-> +		 * in this function for non-zero words_to_transfer.
-> +		 */
->   		memcpy(&val, buf, buf_remaining);
->   		val = le32_to_cpu(val);
->   
-> @@ -847,10 +866,15 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->   
->   	if (!i2c_dev->is_curr_dma_xfer) {
->   		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
-> -			if (i2c_dev->msg_buf_remaining)
-> -				tegra_i2c_empty_rx_fifo(i2c_dev);
-> -			else
-> -				BUG();
-> +			if (tegra_i2c_empty_rx_fifo(i2c_dev)) {
-> +				/*
-> +				 * Overflow error condition: message fully sent,
-> +				 * with no XFER_COMPLETE interrupt but hardware
-> +				 * asks to transfer more.
-> +				 */
-> +				i2c_dev->msg_err |= I2C_ERR_RX_BUFFER_OVERFLOW;
-> +				goto err;
-> +			}
->   		}
->   
->   		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
-> @@ -876,7 +900,14 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->   	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->   		if (i2c_dev->is_curr_dma_xfer)
->   			i2c_dev->msg_buf_remaining = 0;
-> -		BUG_ON(i2c_dev->msg_buf_remaining);
-> +		/*
-> +		 * Underflow error condition: XFER_COMPLETE before message
-> +		 * fully sent.
-> +		 */
-> +		if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) {
-> +			i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
-> +			goto err;
-> +		}
->   		complete(&i2c_dev->msg_complete);
->   	}
->   	goto done;
+> Changes since [v8]:
+> * None
 > 
-
-Please get back if there are any further comments regarding this patch.
-
--regards,
-  Bitan
+> Changes since [v7]:
+> * None
+> 
+> Changes since [v6]:
+> * None
+> 
+> Changes since [v5]:
+> * Added Sob
+> * Changed node name from "p2u@xxxxxxxx" to "phy@xxxxxxxx"
+> 
+> Changes since [v4]:
+> * None
+> 
+> Changes since [v3]:
+> * None
+> 
+> Changes since [v2]:
+> * Changed node label to reflect new format that includes either 'hsio' or
+>   'nvhs' in its name to reflect which UPHY brick they belong to
+> 
+> Changes since [v1]:
+> * This is a new patch in v2 series
+> 
+>  .../bindings/phy/phy-tegra194-p2u.txt         | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+> new file mode 100644
+> index 000000000000..d23ff90baad5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+> @@ -0,0 +1,28 @@
+> +NVIDIA Tegra194 P2U binding
+> +
+> +Tegra194 has two PHY bricks namely HSIO (High Speed IO) and NVHS (NVIDIA High
+> +Speed) each interfacing with 12 and 8 P2U instances respectively.
+> +A P2U instance is a glue logic between Synopsys DesignWare Core PCIe IP's PIPE
+> +interface and PHY of HSIO/NVHS bricks. Each P2U instance represents one PCIe
+> +lane.
+> +
+> +Required properties:
+> +- compatible: For Tegra19x, must contain "nvidia,tegra194-p2u".
+> +- reg: Should be the physical address space and length of respective each P2U
+> +       instance.
+> +- reg-names: Must include the entry "ctl".
+> +
+> +Required properties for PHY port node:
+> +- #phy-cells: Defined by generic PHY bindings.  Must be 0.
+> +
+> +Refer to phy/phy-bindings.txt for the generic PHY binding properties.
+> +
+> +Example:
+> +
+> +p2u_hsio_0: phy@3e10000 {
+> +	compatible = "nvidia,tegra194-p2u";
+> +	reg = <0x03e10000 0x10000>;
+> +	reg-names = "ctl";
+> +
+> +	#phy-cells = <0>;
+> +};
+> 
