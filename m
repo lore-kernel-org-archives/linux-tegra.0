@@ -1,56 +1,50 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 5/5] arm64: tegra: Default configuration changes for
- v5.3-rc1
-Date: Fri, 21 Jun 2019 17:02:06 +0200
-Message-ID: <20190621150206.19037-5-thierry.reding@gmail.com>
-References: <20190621150206.19037-1-thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v5.3-rc1
+Date: Fri, 21 Jun 2019 17:07:53 +0200
+Message-ID: <20190621150753.19550-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190621150206.19037-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
-
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-arm64-defconfig
-
-for you to fetch changes up to 01d6fb565b4a7858af1699727f25da2279d75deb:
-
-  arm64: defconfig: Add Tegra194 PCIe driver (2019-06-20 13:02:27 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Default configuration changes for v5.3-rc1
-
-This enables the INA3221 power monitoring driver that is used on many of
-the Jetson boards as well as Tegra194 PCIe support.
-
-----------------------------------------------------------------
-Nicolin Chen (1):
-      arm64: defconfig: Add HWMON INA3221 support
-
-Vidya Sagar (1):
-      arm64: defconfig: Add Tegra194 PCIe driver
-
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgYTE4ODMzOWNhNWEz
+OTZhY2M1ODhlNTg1MWVkN2UxOWY2NmIwZWJkOToKCiAgTGludXggNS4yLXJjMSAoMjAxOS0wNS0x
+OSAxNTo0NzowOSAtMDcwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0
+OgoKICBnaXQ6Ly9hbm9uZ2l0LmZyZWVkZXNrdG9wLm9yZy90ZWdyYS9saW51eCB0YWdzL2RybS90
+ZWdyYS9mb3ItNS4zLXJjMQoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIGViN2NmOTQ1
+YThkYWM4NjAzZTZkMDc1OTAyM2U5YjZjZmVkN2EwMDg6CgogIGhvc3QxeDogZGVidWdmc19jcmVh
+dGVfZGlyKCkgY2FuIG5ldmVyIHJldHVybiBOVUxMICgyMDE5LTA2LTEzIDE4OjIzOjM4ICswMjAw
+KQoKVGhhbmtzLApUaGllcnJ5CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCmRybS90ZWdyYTogQ2hhbmdlcyBmb3IgdjUuMy1y
+YzEKClRoaXMgY29udGFpbnMgYSBjb3VwbGUgb2Ygc21hbGwgaW1wcm92ZW1lbnRzIGFuZCBjbGVh
+bnVwcyBmb3IgdGhlIFRlZ3JhCkRSTSBkcml2ZXIuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkdyZWcgS3JvYWgtSGFydG1h
+biAoMSk6CiAgICAgIGhvc3QxeDogZGVidWdmc19jcmVhdGVfZGlyKCkgY2FuIG5ldmVyIHJldHVy
+biBOVUxMCgpUaGllcnJ5IFJlZGluZyAoNSk6CiAgICAgIGdwdTogaG9zdDF4OiBEbyBub3Qgb3V0
+cHV0IGVycm9yIG1lc3NhZ2UgZm9yIGRlZmVycmVkIHByb2JlCiAgICAgIGdwdTogaG9zdDF4OiBJ
+bmNyZWFzZSBtYXhpbXVtIERNQSBzZWdtZW50IHNpemUKICAgICAgZ3B1OiBob3N0MXg6IERvIG5v
+dCBsaW5rIGxvZ2ljYWwgZGV2aWNlcyB0byBEVCBub2RlcwogICAgICBkcm0vdGVncmE6IFVzZSBH
+UElPIGRlc2NyaXB0b3IgQVBJCiAgICAgIGRybS90ZWdyYTogZHBhdXg6IE1ha2UgVkREIHN1cHBs
+eSBvcHRpb25hbAoKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jICB8IDEzICsrKysrKyst
+LS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICAgfCAgMyArLS0KIGRyaXZlcnMvZ3B1
+L2RybS90ZWdyYS9vdXRwdXQuYyB8IDUyICsrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQogZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jICAgICAgIHwgMzUgKysrKysrKysr
+KysrKysrKysrKysrKysrKysrLQogZHJpdmVycy9ncHUvaG9zdDF4L2RlYnVnLmMgICAgIHwgIDMg
+LS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgICAgICAgfCAgNSArKystCiBpbmNsdWRlL2xp
+bnV4L2hvc3QxeC5oICAgICAgICAgfCAgMiArKwogNyBmaWxlcyBjaGFuZ2VkLCA2OSBpbnNlcnRp
+b25zKCspLCA0NCBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVs
