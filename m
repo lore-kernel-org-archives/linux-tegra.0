@@ -1,210 +1,95 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V10 13/15] phy: tegra: Add PCIe PIPE2UPHY support
-Date: Fri, 21 Jun 2019 02:23:50 +0300
-Message-ID: <68a6579b-af28-ed7e-35f8-d857638368ba@gmail.com>
-References: <20190612095339.20118-1-vidyas@nvidia.com>
- <20190612095339.20118-14-vidyas@nvidia.com>
- <9e699085-ef5e-f7be-e27c-23907ba92c82@ti.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: Re: [PATCH] dmaengine: tegra210-adma: fix transfer failure
+Date: Fri, 21 Jun 2019 08:20:51 +0530
+Message-ID: <740ce945-9f11-1e38-8bdf-739c4c85ee43@nvidia.com>
+References: <1561047348-14413-1-git-send-email-spujar@nvidia.com>
+ <1ea807ca-24b3-c884-6a4d-4e260f51ceaa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9e699085-ef5e-f7be-e27c-23907ba92c82@ti.com>
-Content-Language: en-US
+In-Reply-To: <1ea807ca-24b3-c884-6a4d-4e260f51ceaa@nvidia.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, Vidya Sagar <vidyas@nvidia.com>, lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
-Cc: mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Jon Hunter <jonathanh@nvidia.com>, vkoul@kernel.org, dan.j.williams@intel.com
+Cc: thierry.reding@gmail.com, ldewangan@nvidia.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-20.06.2019 10:24, Kishon Vijay Abraham I пишет:
-> 
-> 
-> On 12/06/19 3:23 PM, Vidya Sagar wrote:
->> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
->> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
->> For each PCIe lane of a controller, there is a P2U unit instantiated at
->> hardware level. This driver provides support for the programming required
->> for each P2U that is going to be used for a PCIe controller.
-> 
-> One minor comment below. With that fixed
-> 
-> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+
+On 6/20/2019 10:07 PM, Jon Hunter wrote:
+> On 20/06/2019 17:15, Sameer Pujar wrote:
+>>  From Tegra186 onwards OUTSTANDING_REQUESTS field is added in channel
+>> configuration register (bits 7:4). ADMA allows a maximum of 8 reads
+>> to source and that many writes to target memory be outstanding at any
+>> given point of time. If this field is not programmed, DMA transfers
+>> fail to happen.
 >>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> Thus added 'ch_pending_req' member in chip data structure and the
+>> same is populated with maximum allowed pending requests. Since the
+>> field is not applicable to Tegra210, mentioned bit fields are unused
+>> and hence the member is initialized with 0.
+>>
+>> Fixes: 433de642a76c ("dmaengine: tegra210-adma: add support for Tegra186/Tegra194")
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 >> ---
->> Changes since [v9]:
->> * Used _relaxed() versions of readl() & writel()
+>>   drivers/dma/tegra210-adma.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
 >>
->> Changes since [v8]:
->> * Made it dependent on ARCH_TEGRA_194_SOC directly instead of ARCH_TEGRA
+>> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+>> index 17ea4dd99..8d291cf 100644
+>> --- a/drivers/dma/tegra210-adma.c
+>> +++ b/drivers/dma/tegra210-adma.c
+>> @@ -96,6 +96,7 @@ struct tegra_adma;
+>>    * @ch_req_tx_shift: Register offset for AHUB transmit channel select.
+>>    * @ch_req_rx_shift: Register offset for AHUB receive channel select.
+>>    * @ch_base_offset: Register offset of DMA channel registers.
+>> + * @ch_pending_req: Outstaning DMA requests for a channel.
+>>    * @ch_fifo_ctrl: Default value for channel FIFO CTRL register.
+>>    * @ch_req_mask: Mask for Tx or Rx channel select.
+>>    * @ch_req_max: Maximum number of Tx or Rx channels available.
+>> @@ -109,6 +110,7 @@ struct tegra_adma_chip_data {
+>>   	unsigned int ch_req_tx_shift;
+>>   	unsigned int ch_req_rx_shift;
+>>   	unsigned int ch_base_offset;
+>> +	unsigned int ch_pending_req;
+>>   	unsigned int ch_fifo_ctrl;
+>>   	unsigned int ch_req_mask;
+>>   	unsigned int ch_req_max;
+>> @@ -613,6 +615,7 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+>>   			 ADMA_CH_CTRL_FLOWCTRL_EN;
+>>   	ch_regs->config |= cdata->adma_get_burst_config(burst_size);
+>>   	ch_regs->config |= ADMA_CH_CONFIG_WEIGHT_FOR_WRR(1);
+>> +	ch_regs->config |= cdata->ch_pending_req;
+>>   	ch_regs->fifo_ctrl = cdata->ch_fifo_ctrl;
+>>   	ch_regs->tc = desc->period_len & ADMA_CH_TC_COUNT_MASK;
+>>   
+>> @@ -797,6 +800,7 @@ static const struct tegra_adma_chip_data tegra210_chip_data = {
+>>   	.ch_req_tx_shift	= 28,
+>>   	.ch_req_rx_shift	= 24,
+>>   	.ch_base_offset		= 0,
+>> +	.ch_pending_req		= 0,
+>>   	.ch_fifo_ctrl		= TEGRA210_FIFO_CTRL_DEFAULT,
+>>   	.ch_req_mask		= 0xf,
+>>   	.ch_req_max		= 10,
+>> @@ -811,6 +815,7 @@ static const struct tegra_adma_chip_data tegra186_chip_data = {
+>>   	.ch_req_tx_shift	= 27,
+>>   	.ch_req_rx_shift	= 22,
+>>   	.ch_base_offset		= 0x10000,
+>> +	.ch_pending_req		= (8 << 4),
+> So given that this is a value and a shift, I think that we should add a
+> proper definition like we have for TEGRA186_FIFO_CTRL_DEFAULT below.
+I can add.
+>
+>>   	.ch_fifo_ctrl		= TEGRA186_FIFO_CTRL_DEFAULT,
+>>   	.ch_req_mask		= 0x1f,
+>>   	.ch_req_max		= 20,
 >>
->> Changes since [v7]:
->> * Changed P2U driver file name from pcie-p2u-tegra194.c to phy-tegra194-p2u.c
->>
->> Changes since [v6]:
->> * None
->>
->> Changes since [v5]:
->> * Addressed review comments from Thierry
->>
->> Changes since [v4]:
->> * None
->>
->> Changes since [v3]:
->> * Rebased on top of linux-next top of the tree
->>
->> Changes since [v2]:
->> * Replaced spaces with tabs in Kconfig file
->> * Sorted header file inclusion alphabetically
->>
->> Changes since [v1]:
->> * Added COMPILE_TEST in Kconfig
->> * Removed empty phy_ops implementations
->> * Modified code according to DT documentation file modifications
->>
->>  drivers/phy/tegra/Kconfig            |   7 ++
->>  drivers/phy/tegra/Makefile           |   1 +
->>  drivers/phy/tegra/phy-tegra194-p2u.c | 120 +++++++++++++++++++++++++++
->>  3 files changed, 128 insertions(+)
->>  create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
->>
->> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
->> index e516967d695b..f9817c3ae85f 100644
->> --- a/drivers/phy/tegra/Kconfig
->> +++ b/drivers/phy/tegra/Kconfig
->> @@ -7,3 +7,10 @@ config PHY_TEGRA_XUSB
->>  
->>  	  To compile this driver as a module, choose M here: the module will
->>  	  be called phy-tegra-xusb.
->> +
->> +config PHY_TEGRA194_P2U
->> +	tristate "NVIDIA Tegra194 PIPE2UPHY PHY driver"
->> +	depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
->> +	select GENERIC_PHY
->> +	help
->> +	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x SOCs.
->> diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
->> index 64ccaeacb631..320dd389f34d 100644
->> --- a/drivers/phy/tegra/Makefile
->> +++ b/drivers/phy/tegra/Makefile
->> @@ -6,3 +6,4 @@ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) += xusb-tegra124.o
->>  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) += xusb-tegra124.o
->>  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_210_SOC) += xusb-tegra210.o
->>  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) += xusb-tegra186.o
->> +obj-$(CONFIG_PHY_TEGRA194_P2U) += phy-tegra194-p2u.o
->> diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
->> new file mode 100644
->> index 000000000000..df009abd2482
->> --- /dev/null
->> +++ b/drivers/phy/tegra/phy-tegra194-p2u.c
->> @@ -0,0 +1,120 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * P2U (PIPE to UPHY) driver for Tegra T194 SoC
->> + *
->> + * Copyright (C) 2019 NVIDIA Corporation.
->> + *
->> + * Author: Vidya Sagar <vidyas@nvidia.com>
->> + */
->> +
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/phy/phy.h>
->> +
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3	0xc0
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN		BIT(0)
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
->> +#define P2U_PERIODIC_EQ_CTRL_GEN4	0xc4
->> +#define P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
->> +
->> +#define P2U_RX_DEBOUNCE_TIME				0xa4
->> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK	0xffff
->> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL		160
->> +
->> +struct tegra_p2u {
->> +	void __iomem *base;
->> +};
->> +
->> +static inline void p2u_writel(struct tegra_p2u *phy, const u32 value,
->> +			      const u32 reg)
->> +{
->> +	writel_relaxed(value, phy->base + reg);
->> +}
->> +
->> +static inline u32 p2u_readl(struct tegra_p2u *phy, const u32 reg)
->> +{
->> +	return readl_relaxed(phy->base + reg);
->> +}
->> +
->> +static int tegra_p2u_power_on(struct phy *x)
->> +{
->> +	struct tegra_p2u *phy = phy_get_drvdata(x);
->> +	u32 val;
->> +
->> +	val = p2u_readl(phy, P2U_PERIODIC_EQ_CTRL_GEN3);
->> +	val &= ~P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN;
->> +	val |= P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN;
->> +	p2u_writel(phy, val, P2U_PERIODIC_EQ_CTRL_GEN3);
->> +
->> +	val = p2u_readl(phy, P2U_PERIODIC_EQ_CTRL_GEN4);
->> +	val |= P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN;
->> +	p2u_writel(phy, val, P2U_PERIODIC_EQ_CTRL_GEN4);
->> +
->> +	val = p2u_readl(phy, P2U_RX_DEBOUNCE_TIME);
->> +	val &= ~P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK;
->> +	val |= P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL;
->> +	p2u_writel(phy, val, P2U_RX_DEBOUNCE_TIME);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct phy_ops ops = {
->> +	.power_on = tegra_p2u_power_on,
->> +	.owner = THIS_MODULE,
->> +};
->> +
->> +static int tegra_p2u_probe(struct platform_device *pdev)
->> +{
->> +	struct phy_provider *phy_provider;
->> +	struct device *dev = &pdev->dev;
->> +	struct phy *generic_phy;
->> +	struct tegra_p2u *phy;
->> +	struct resource *res;
->> +
->> +	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
->> +	if (!phy)
->> +		return -ENOMEM;
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctl");
->> +	phy->base = devm_ioremap_resource(dev, res);
->> +	if (IS_ERR(phy->base))
->> +		return PTR_ERR_OR_ZERO(phy->base);
->> +
->> +	platform_set_drvdata(pdev, phy);
->> +
->> +	generic_phy = devm_phy_create(dev, NULL, &ops);
->> +	if (IS_ERR(generic_phy))
->> +		return PTR_ERR_OR_ZERO(generic_phy);
->> +
->> +	phy_set_drvdata(generic_phy, phy);
->> +
->> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->> +	if (IS_ERR(phy_provider))
->> +		return PTR_ERR_OR_ZERO(phy_provider);
->> +
->> +	return 0;
-> 
-> Just make this..
-> phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> return PTR_ERR_OR_ZERO(phy_provider);
-
-There is a need to s/PTR_ERR_OR_ZERO/PTR_ERR/ for all of the occurrences
-in this patch because it is impossible to get ZERO if we already know
-that pointer is a error.
-
-Secondly, it is always cleaner to return 0 explicitly on success and
-PTR_ERR_OR_ZERO(phy_provider) is a much less readable form than a simple
-return 0. So I'm suggesting to keep that part as-is.
+> Please group your patches into a series if you have more than one for a
+> given driver.
+The other ADMA related change is in Kconfig and a simple change. Current 
+patch can go through some review
+cycles. Hence didn't want to delay the other patch.
+> Cheers
+> Jon
+>
