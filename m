@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 2/5] memory: tegra: Changes for v5.3-rc1
-Date: Fri, 21 Jun 2019 17:02:03 +0200
-Message-ID: <20190621150206.19037-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/5] soc: tegra: Changes for v5.3-rc1
+Date: Fri, 21 Jun 2019 17:02:04 +0200
+Message-ID: <20190621150206.19037-3-thierry.reding@gmail.com>
 References: <20190621150206.19037-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,24 +29,31 @@ The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-memory
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-soc
 
-for you to fetch changes up to 76ce48bdb303afa6e33cfbadca9d6bee23a4f559:
+for you to fetch changes up to 7ac13f6dcbd59b8f99395588cd7ef31f7e3bd3c6:
 
-  memory: tegra: Fix -Wunused-const-variable (2019-06-14 18:02:02 +0200)
+  soc/tegra: Select pinctrl for Tegra194 (2019-06-13 10:44:08 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-memory: tegra: Changes for v5.3-rc1
+soc: tegra: Changes for v5.3-rc1
 
-A single fix for an unused constant variable, due to it being declared
-outside the only #ifdef that it was being used from.
+This contains a set of minor fixes and cleanups for core Tegra drivers.
 
 ----------------------------------------------------------------
-Nathan Huckleberry (1):
-      memory: tegra: Fix -Wunused-const-variable
+Krishna Yarlagadda (1):
+      soc/tegra: Select pinctrl for Tegra194
 
- drivers/memory/tegra/tegra124.c | 44 ++++++++++++++++++++---------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+Thierry Reding (4):
+      soc/tegra: pmc: Fail to allocate more than one wake IRQ
+      soc/tegra: pmc: Avoid crash for non-wake IRQs
+      soc/tegra: pmc: Add comments clarifying wake events
+      soc/tegra: fuse: Do not log error message on deferred probe
+
+ drivers/soc/tegra/Kconfig           |  1 +
+ drivers/soc/tegra/fuse/fuse-tegra.c |  6 ++++--
+ drivers/soc/tegra/pmc.c             | 18 ++++++++++++++++++
+ 3 files changed, 23 insertions(+), 2 deletions(-)
