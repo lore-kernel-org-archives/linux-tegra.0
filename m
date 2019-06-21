@@ -1,11 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 1/5] firmware: tegra: Changes for v5.3-rc1
-Date: Fri, 21 Jun 2019 17:02:02 +0200
-Message-ID: <20190621150206.19037-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/5] memory: tegra: Changes for v5.3-rc1
+Date: Fri, 21 Jun 2019 17:02:03 +0200
+Message-ID: <20190621150206.19037-2-thierry.reding@gmail.com>
+References: <20190621150206.19037-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190621150206.19037-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -27,25 +29,24 @@ The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-memory
 
-for you to fetch changes up to 61ed7ef952fc482ec8d4a966ed0d1e32df276c59:
+for you to fetch changes up to 76ce48bdb303afa6e33cfbadca9d6bee23a4f559:
 
-  firmware: tegra: Early resume BPMP (2019-06-14 17:45:17 +0200)
+  memory: tegra: Fix -Wunused-const-variable (2019-06-14 18:02:02 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v5.3-rc1
+memory: tegra: Changes for v5.3-rc1
 
-This contains a single, simple change that resumes the BPMP driver early
-so that it is available when the various consumers want to enable their
-clocks.
+A single fix for an unused constant variable, due to it being declared
+outside the only #ifdef that it was being used from.
 
 ----------------------------------------------------------------
-Bitan Biswas (1):
-      firmware: tegra: Early resume BPMP
+Nathan Huckleberry (1):
+      memory: tegra: Fix -Wunused-const-variable
 
- drivers/firmware/tegra/bpmp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/memory/tegra/tegra124.c | 44 ++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
