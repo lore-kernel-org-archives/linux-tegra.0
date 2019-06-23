@@ -1,186 +1,53 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 07/18] clk: tegra: save and restore CPU and System clocks context
-Date: Sun, 23 Jun 2019 20:02:48 -0700
-Message-ID: <1561345379-2429-8-git-send-email-skomatineni@nvidia.com>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 08/11] PM / devfreq: tegra30: Stop de-boosting once it's finished
+Date: Mon, 24 Jun 2019 00:46:55 +0300
+Message-ID: <20190623214658.11680-9-digetx@gmail.com>
+References: <20190623214658.11680-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190623214658.11680-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-During system suspend state, core power goes off and looses all the
-CAR controller register settings.
+Once boosting value is 0, then further consecutive-down events won't do
+anything useful since the only purpose of those consecutive events to
+boost the freq and de-boosting is over in the case of 0. Note that upper
+watermark is infinitely high in a case of frequency max out and thus the
+upper events are stopping by themselves. In a result of this change all
+parasite interrupts are fixed now and interrupts activity is nearly
+non-existent now!
 
-This patch creates APIs for saving and restoring the context of Tegra
-CPUG, CPULP and SCLK.
-
-CPU and System clock context includes
-- CPUG, CPULP, and SCLK burst policy settings for clock sourcea of all
-  their normal states.
-- SCLK divisor and System clock rate for restoring SCLK, AHB and APB
-  rates on resume.
-- OSC_DIV settings which are used as reference clock input to some PLLs.
-- SPARE_REG and CLK_MASK settings.
-
-These APIs are used in Tegra210 clock driver during suspend and resume
-operation.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra-super-gen4.c |  4 --
- drivers/clk/tegra/clk.c                  | 80 ++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h                  | 14 ++++++
- 3 files changed, 94 insertions(+), 4 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-index cdfe7c9697e1..ed69ec4d883e 100644
---- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -19,10 +19,6 @@
- #define PLLX_MISC2 0x514
- #define PLLX_MISC3 0x518
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 6fb3ca125438..81449cc1392b 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -424,6 +424,8 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 					     dev->config->boost_up_coeff);
+ 		dev->boost_freq += ACTMON_BOOST_FREQ_STEP;
  
--#define CCLKG_BURST_POLICY 0x368
--#define CCLKLP_BURST_POLICY 0x370
--#define SCLK_BURST_POLICY 0x028
--#define SYSTEM_CLK_RATE 0x030
- #define SCLK_DIVIDER 0x2c
- 
- static DEFINE_SPINLOCK(sysrate_lock);
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 573e3c967ae1..9e863362d2bf 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -70,6 +70,12 @@ static struct clk **clks;
- static int clk_num;
- static struct clk_onecell_data clk_data;
- 
-+static u32 cclkg_burst_policy_ctx[2];
-+static u32 cclklp_burst_policy_ctx[2];
-+static u32 sclk_burst_policy_ctx[2];
-+static u32 sys_clk_divisor_ctx, system_rate_ctx;
-+static u32 spare_ctx, misc_clk_enb_ctx, clk_arm_ctx;
++		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
 +
- /* Handlers for SoC-specific reset lines */
- static int (*special_reset_assert)(unsigned long);
- static int (*special_reset_deassert)(unsigned long);
-@@ -199,6 +205,80 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ 		if (dev->boost_freq >= tegra->max_freq && !low_activity)
+ 			dev->boost_freq = tegra->max_freq;
+ 
+@@ -442,6 +444,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 		tegra_devfreq_update_wmark(tegra, dev);
  	}
- }
  
-+void tegra_cclkg_burst_policy_save_context(void)
-+{
-+	unsigned int i;
++	/* no boosting => no need for consecutive-down interrupt */
++	if (dev->boost_freq == 0)
++		dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
 +
-+	for (i = 0; i < BURST_POLICY_REG_SIZE; i++)
-+		cclkg_burst_policy_ctx[i] = readl_relaxed(clk_base +
-+							  CCLKG_BURST_POLICY +
-+							  (i * 4));
-+}
-+
-+void tegra_cclkg_burst_policy_restore_context(void)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < BURST_POLICY_REG_SIZE; i++)
-+		writel_relaxed(cclkg_burst_policy_ctx[i],
-+			       clk_base + CCLKG_BURST_POLICY + (i * 4));
-+
-+	fence_udelay(2, clk_base);
-+}
-+
-+void tegra_sclk_cclklp_burst_policy_save_context(void)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < BURST_POLICY_REG_SIZE; i++) {
-+		cclklp_burst_policy_ctx[i] = readl_relaxed(clk_base +
-+							  CCLKLP_BURST_POLICY +
-+							  (i * 4));
-+
-+		sclk_burst_policy_ctx[i] = readl_relaxed(clk_base +
-+							  SCLK_BURST_POLICY +
-+							  (i * 4));
-+	}
-+
-+	sys_clk_divisor_ctx = readl_relaxed(clk_base + SYS_CLK_DIV);
-+	system_rate_ctx = readl_relaxed(clk_base + SYSTEM_CLK_RATE);
-+	spare_ctx = readl_relaxed(clk_base + SPARE_REG0);
-+	misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
-+	clk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
-+}
-+
-+void tegra_sclk_cpulp_burst_policy_restore_context(void)
-+{
-+	unsigned int i;
-+	u32 val;
-+
-+	/*
-+	 * resume SCLK and CPULP clocks
-+	 * for SCLk, set safe dividers values first and then restore source
-+	 * and dividers
-+	 */
-+
-+	writel_relaxed(0x1, clk_base + SYSTEM_CLK_RATE);
-+	val = readl_relaxed(clk_base + SYS_CLK_DIV);
-+	if (val < sys_clk_divisor_ctx)
-+		writel_relaxed(sys_clk_divisor_ctx, clk_base + SYS_CLK_DIV);
-+
-+	fence_udelay(2, clk_base);
-+
-+	for (i = 0; i < BURST_POLICY_REG_SIZE; i++) {
-+		writel_relaxed(cclklp_burst_policy_ctx[i],
-+			       clk_base + CCLKLP_BURST_POLICY + (i * 4));
-+		writel_relaxed(sclk_burst_policy_ctx[i],
-+			       clk_base + SCLK_BURST_POLICY + (i * 4));
-+	}
-+
-+	writel_relaxed(sys_clk_divisor_ctx, clk_base + SYS_CLK_DIV);
-+	writel_relaxed(system_rate_ctx, clk_base + SYSTEM_CLK_RATE);
-+	writel_relaxed(spare_ctx, clk_base + SPARE_REG0);
-+	writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
-+	writel_relaxed(clk_arm_ctx, clk_base + CLK_MASK_ARM);
-+}
-+
- struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- {
- 	clk_base = regs;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 581deb4f3ac0..5ba4f503aea0 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -10,6 +10,16 @@
- #include <linux/clkdev.h>
- #include <linux/delay.h>
+ 	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
  
-+#define SCLK_BURST_POLICY	0x28
-+#define SYSTEM_CLK_RATE		0x30
-+#define CLK_MASK_ARM		0x44
-+#define MISC_CLK_ENB		0x48
-+#define CCLKG_BURST_POLICY	0x368
-+#define CCLKLP_BURST_POLICY	0x370
-+#define SYS_CLK_DIV		0x400
-+#define SPARE_REG0		0x55c
-+#define BURST_POLICY_REG_SIZE	2
-+
- /**
-  * struct tegra_clk_sync_source - external clock source from codec
-  *
-@@ -839,6 +849,10 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
- int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
- 		 u8 frac_width, u8 flags);
- void tegra_clk_sync_state_pll(struct clk_hw *hw);
-+void tegra_cclkg_burst_policy_save_context(void);
-+void tegra_cclkg_burst_policy_restore_context(void);
-+void tegra_sclk_cclklp_burst_policy_save_context(void);
-+void tegra_sclk_cpulp_burst_policy_restore_context(void);
- 
- /* Combined read fence with delay */
- #define fence_udelay(delay, reg)	\
+ 	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
 -- 
-2.7.4
+2.22.0
