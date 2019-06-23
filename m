@@ -1,38 +1,41 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH] i2c: tegra: Add Dmitry as a reviewer
-Date: Sun, 23 Jun 2019 20:46:55 +0300
-Message-ID: <20190623174655.25445-1-digetx@gmail.com>
+Subject: [PATCH v1] OPP: Fix crashing when current OPP has unsupportable voltage
+Date: Sun, 23 Jun 2019 20:50:53 +0300
+Message-ID: <20190623175053.26167-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I'm contributing to Tegra's upstream development in general and happened
-to review the Tegra's I2C patches for awhile because I'm actively using
-upstream kernel on all of my Tegra-powered devices and initially some of
-the submitted patches were getting my attention since they were causing
-problems. Recently Wolfram Sang asked whether I'm interested in becoming
-a reviewer for the driver and I don't mind at all.
+Fix NULL dereference caused by a typo in the code. In particular it
+happens when CPU is running on a frequency which has unsupportable voltage
+(by regulator) defined in the OPP table and a custom set_opp() callback is
+being used. The problem was spotted during of testing of upcoming update
+for the NVIDIA Tegra CPUFreq driver.
 
+Cc: stable <stable@vger.kernel.org>
+Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
+Reported-by: Marc Dietrich <marvin24@gmx.de>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/opp/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ac347278f1fc..402c6ee32db6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15588,6 +15588,7 @@ F:	drivers/dma/tegra*
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 9fda9a0ec016..89ec6aa220cf 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -685,7 +685,7 @@ static int _set_opp_custom(const struct opp_table *opp_table,
  
- TEGRA I2C DRIVER
- M:	Laxman Dewangan <ldewangan@nvidia.com>
-+R:	Dmitry Osipenko <digetx@gmail.com>
- S:	Supported
- F:	drivers/i2c/busses/i2c-tegra.c
- 
+ 	data->old_opp.rate = old_freq;
+ 	size = sizeof(*old_supply) * opp_table->regulator_count;
+-	if (IS_ERR(old_supply))
++	if (!old_supply)
+ 		memset(data->old_opp.supplies, 0, size);
+ 	else
+ 		memcpy(data->old_opp.supplies, old_supply, size);
 -- 
 2.22.0
