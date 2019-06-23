@@ -1,95 +1,67 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 00/16] NVIDIA Tegra devfreq improvements and Tegra20/30
- support
-Date: Sun, 23 Jun 2019 20:17:53 +0300
-Message-ID: <389cc71d-8f0b-fa39-1325-433d27c75dc8@gmail.com>
-References: <CGME20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727@epcas5p1.samsung.com>
- <20190501233815.32643-1-digetx@gmail.com>
- <60ef6e47-e61b-3a92-e90d-90debedfcfc4@samsung.com>
- <fa061a65-f108-6c5e-1f87-950a9a8caafc@gmail.com>
- <0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com>
- <683b343a-e64f-8345-ac44-10f5c00521bd@samsung.com>
- <5c2a7c32-a98c-3930-14ae-beb0241908d0@gmail.com>
+Subject: [PATCH v1 1/3] gpu: host1x: Remove implicit IOMMU backing on client's registration
+Date: Sun, 23 Jun 2019 20:37:41 +0300
+Message-ID: <20190623173743.24088-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5c2a7c32-a98c-3930-14ae-beb0241908d0@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-05.06.2019 2:09, Dmitry Osipenko пишет:
-> 04.06.2019 3:49, Chanwoo Choi пишет:
->> On 19. 6. 4. 오전 1:52, Dmitry Osipenko wrote:
->>> 03.05.2019 3:52, Dmitry Osipenko пишет:
->>>> 03.05.2019 3:31, Chanwoo Choi пишет:
->>>>> Hi Dmitry,
->>>>>
->>>>> On 19. 5. 2. 오전 8:37, Dmitry Osipenko wrote:
->>>>>> Changelog:
->>>>>>
->>>>>> v4: Addressed all review comments that were made by Chanwoo Choi to v3:
->>>>>>
->>>>>>     - changed the driver removal order to match the probe exactly
->>>>>>     - added clarifying comment for 1/8 ratio to the Tegra20 driver
->>>>>>
->>>>>>     Chanwoo, please also note that the clk patch that should fix
->>>>>>     compilation problem that was reported the kbuild-test-robot is already
->>>>>>     applied and available in the recent linux-next.
->>>>>
->>>>> I knew that Stephen picked up your path about clock.
->>>>
->>>> Hi Chanwoo,
->>>>
->>>> Okay, good. Thank you very much for reviewing this series! I assume it's
->>>> too late now for v5.2, but it should be good to go for v5.3.
->>>>
->>>
->>> Hello Chanwoo,
->>>
->>> Will be nice to see the patches in the linux-next before they'll hit mainline. We have tested that
->>> everything works fine on a selective devices, but won't hurt to get some extra testing beforehand.
->>> AFAIK, at least NVIDIA people are regularly testing -next on theirs dev boards. Please note that
->>> this not very important, so don't bother if there is some hurdle with pushing to the tracking branch
->>> for now. Also please let me know if you're expecting to see some ACK's on the patches, I'm sure
->>> we'll be able to work out that with Thierry and Jon if necessary.
->>>
->>>
->>
->> Hi Dmitry,
->> I think that it is enough for applying to mainline branch.
->> The devfreq.git is maintained by Myungjoo. He will be merged or
->> reviewed if there are th remained review point.
-> 
-> Thank you very much!
-> 
->>
->> Hi Myungjoo,
->> I reviewed the Dmitry's patches from v1 to v4 patches.
->> And then I tested them on my testing branch[1] for catching
->> the build warning and error. In result, it is clean.
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-testing
->>
->> Please review or apply these patches for v5.3.
->>
-> 
-> Hello Myungjoo,
-> 
-> I think this patchset should be completed now. Thierry has some extra
-> comments to the patches, but seems nothing critical so far and all the
-> concerns could be addressed in a follow-up series. Please let me know if
-> you're fine with this, I can re-spin v5 as well if necessary.
-> 
+On ARM32 we don't want any of the clients device to be backed by the
+implicit domain, simply because we can't afford such a waste on older
+Tegra SoCs that have very few domains available in total. The recent IOMMU
+support addition for the Video Decoder hardware uncovered the problem
+that an unfortunate drivers probe order results in the DRM driver probe
+failure if CONFIG_ARM_DMA_USE_IOMMU=y due to a shortage of IOMMU domains
+caused by the implicit backing. The host1x_client_register() is a common
+function that is invoked by all of the relevant DRM drivers during theirs
+probe and hence it is convenient to remove the implicit backing there,
+resolving the problem.
 
-Hello Chanwoo,
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/host1x/bus.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-It looks like Myungjoo is inactive at the moment. Do you know if he'll
-be back to the time of the merge window opening or you'll be curating
-the pull request for 5.3 this time?
-
-Secondly, I'll send a few more patches on top of this series, addressing
-Thierry's comments and making more improvements. Please let me know if
-this causes any problems and I should re-spin the whole series.
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 742aa9ff21b8..559df3974afb 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -14,6 +14,10 @@
+ #include "bus.h"
+ #include "dev.h"
+ 
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++#include <asm/dma-iommu.h>
++#endif
++
+ static DEFINE_MUTEX(clients_lock);
+ static LIST_HEAD(clients);
+ 
+@@ -710,6 +714,21 @@ int host1x_client_register(struct host1x_client *client)
+ 	struct host1x *host1x;
+ 	int err;
+ 
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++	/*
++	 * The client's driver could be backed by implicit IOMMU mapping
++	 * and we don't want to have that because all of current Tegra
++	 * drivers are managing IOMMU by themselves. This is a convenient
++	 * place for unmapping of the implicit mapping because this function
++	 * is called by all host1x drivers during theirs probe.
++	 */
++	if (client->dev->archdata.mapping) {
++		struct dma_iommu_mapping *mapping =
++			to_dma_iommu_mapping(client->dev);
++		arm_iommu_detach_device(client->dev);
++		arm_iommu_release_mapping(mapping);
++	}
++#endif
+ 	mutex_lock(&devices_lock);
+ 
+ 	list_for_each_entry(host1x, &devices, list) {
+-- 
+2.22.0
