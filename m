@@ -1,67 +1,94 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/3] gpu: host1x: Remove implicit IOMMU backing on client's registration
-Date: Sun, 23 Jun 2019 20:37:41 +0300
-Message-ID: <20190623173743.24088-1-digetx@gmail.com>
+Subject: [PATCH v1 3/3] drm/tegra: vic: Use common helpers to attach/detach from IOMMU domain
+Date: Sun, 23 Jun 2019 20:37:43 +0300
+Message-ID: <20190623173743.24088-3-digetx@gmail.com>
+References: <20190623173743.24088-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190623173743.24088-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On ARM32 we don't want any of the clients device to be backed by the
-implicit domain, simply because we can't afford such a waste on older
-Tegra SoCs that have very few domains available in total. The recent IOMMU
-support addition for the Video Decoder hardware uncovered the problem
-that an unfortunate drivers probe order results in the DRM driver probe
-failure if CONFIG_ARM_DMA_USE_IOMMU=y due to a shortage of IOMMU domains
-caused by the implicit backing. The host1x_client_register() is a common
-function that is invoked by all of the relevant DRM drivers during theirs
-probe and hence it is convenient to remove the implicit backing there,
-resolving the problem.
+We now have helpers for the domain's attachment, let's use them.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/host1x/bus.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/gpu/drm/tegra/vic.c | 27 ++++++++-------------------
+ 1 file changed, 8 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 742aa9ff21b8..559df3974afb 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -14,6 +14,10 @@
- #include "bus.h"
- #include "dev.h"
- 
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+#include <asm/dma-iommu.h>
-+#endif
-+
- static DEFINE_MUTEX(clients_lock);
- static LIST_HEAD(clients);
- 
-@@ -710,6 +714,21 @@ int host1x_client_register(struct host1x_client *client)
- 	struct host1x *host1x;
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index 982ce37ecde1..baa00da780d0 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -36,7 +36,7 @@ struct vic {
+ 	void __iomem *regs;
+ 	struct tegra_drm_client client;
+ 	struct host1x_channel *channel;
+-	struct iommu_domain *domain;
++	struct iommu_group *group;
+ 	struct device *dev;
+ 	struct clk *clk;
+ 	struct reset_control *rst;
+@@ -183,21 +183,16 @@ static const struct falcon_ops vic_falcon_ops = {
+ static int vic_init(struct host1x_client *client)
+ {
+ 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
+-	struct iommu_group *group = iommu_group_get(client->dev);
+ 	struct drm_device *dev = dev_get_drvdata(client->parent);
+ 	struct tegra_drm *tegra = dev->dev_private;
+ 	struct vic *vic = to_vic(drm);
  	int err;
  
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+	/*
-+	 * The client's driver could be backed by implicit IOMMU mapping
-+	 * and we don't want to have that because all of current Tegra
-+	 * drivers are managing IOMMU by themselves. This is a convenient
-+	 * place for unmapping of the implicit mapping because this function
-+	 * is called by all host1x drivers during theirs probe.
-+	 */
-+	if (client->dev->archdata.mapping) {
-+		struct dma_iommu_mapping *mapping =
-+			to_dma_iommu_mapping(client->dev);
-+		arm_iommu_detach_device(client->dev);
-+		arm_iommu_release_mapping(mapping);
-+	}
-+#endif
- 	mutex_lock(&devices_lock);
+-	if (group && tegra->domain) {
+-		err = iommu_attach_group(tegra->domain, group);
+-		if (err < 0) {
+-			dev_err(vic->dev, "failed to attach to domain: %d\n",
+-				err);
+-			return err;
+-		}
+-
+-		vic->domain = tegra->domain;
++	vic->group = host1x_client_iommu_attach(client, false);
++	if (IS_ERR(vic->group)) {
++		err = PTR_ERR(vic->group);
++		dev_err(client->dev, "failed to attach to domain: %d\n", err);
++		return err;
+ 	}
  
- 	list_for_each_entry(host1x, &devices, list) {
+ 	vic->channel = host1x_channel_request(client->dev);
+@@ -223,8 +218,7 @@ static int vic_init(struct host1x_client *client)
+ free_channel:
+ 	host1x_channel_put(vic->channel);
+ detach:
+-	if (group && tegra->domain)
+-		iommu_detach_group(tegra->domain, group);
++	host1x_client_iommu_detach(client, vic->group, false);
+ 
+ 	return err;
+ }
+@@ -232,7 +226,6 @@ static int vic_init(struct host1x_client *client)
+ static int vic_exit(struct host1x_client *client)
+ {
+ 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
+-	struct iommu_group *group = iommu_group_get(client->dev);
+ 	struct drm_device *dev = dev_get_drvdata(client->parent);
+ 	struct tegra_drm *tegra = dev->dev_private;
+ 	struct vic *vic = to_vic(drm);
+@@ -244,11 +237,7 @@ static int vic_exit(struct host1x_client *client)
+ 
+ 	host1x_syncpt_free(client->syncpts[0]);
+ 	host1x_channel_put(vic->channel);
+-
+-	if (vic->domain) {
+-		iommu_detach_group(vic->domain, group);
+-		vic->domain = NULL;
+-	}
++	host1x_client_iommu_detach(client, vic->group, false);
+ 
+ 	return 0;
+ }
 -- 
 2.22.0
