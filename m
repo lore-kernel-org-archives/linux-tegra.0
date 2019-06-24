@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 05/18] clk: tegra: pllout: save and restore pllout context
-Date: Sun, 23 Jun 2019 20:02:46 -0700
-Message-ID: <1561345379-2429-6-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V4 07/18] clk: tegra: save and restore CPU and System clocks context
+Date: Sun, 23 Jun 2019 20:02:48 -0700
+Message-ID: <1561345379-2429-8-git-send-email-skomatineni@nvidia.com>
 References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,87 +12,175 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch implements save and restore of pllout context.
+During system suspend state, core power goes off and looses all the
+CAR controller register settings.
 
-During system suspend, core power goes off and looses the settings
-of the Tegra CAR controller registers.
+This patch creates APIs for saving and restoring the context of Tegra
+CPUG, CPULP and SCLK.
 
-So during suspend entry the state of pllout is saved and on resume
-it is restored back to have pllout in same state as before suspend.
+CPU and System clock context includes
+- CPUG, CPULP, and SCLK burst policy settings for clock sourcea of all
+  their normal states.
+- SCLK divisor and System clock rate for restoring SCLK, AHB and APB
+  rates on resume.
+- OSC_DIV settings which are used as reference clock input to some PLLs.
+- SPARE_REG and CLK_MASK settings.
 
-pllout rate is saved and restore in clock divider so it will be at
-same rate as before suspend when pllout state is restored.
+These APIs are used in Tegra210 clock driver during suspend and resume
+operation.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll-out.c | 28 ++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h         |  3 +++
- 2 files changed, 31 insertions(+)
+ drivers/clk/tegra/clk-tegra-super-gen4.c |  4 --
+ drivers/clk/tegra/clk.c                  | 80 ++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h                  | 14 ++++++
+ 3 files changed, 94 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
-index 35f2bf00e1e6..52d140379ce3 100644
---- a/drivers/clk/tegra/clk-pll-out.c
-+++ b/drivers/clk/tegra/clk-pll-out.c
-@@ -69,10 +69,38 @@ static void clk_pll_out_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll_out->lock, flags);
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+index cdfe7c9697e1..ed69ec4d883e 100644
+--- a/drivers/clk/tegra/clk-tegra-super-gen4.c
++++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+@@ -19,10 +19,6 @@
+ #define PLLX_MISC2 0x514
+ #define PLLX_MISC3 0x518
+ 
+-#define CCLKG_BURST_POLICY 0x368
+-#define CCLKLP_BURST_POLICY 0x370
+-#define SCLK_BURST_POLICY 0x028
+-#define SYSTEM_CLK_RATE 0x030
+ #define SCLK_DIVIDER 0x2c
+ 
+ static DEFINE_SPINLOCK(sysrate_lock);
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index 573e3c967ae1..9e863362d2bf 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -70,6 +70,12 @@ static struct clk **clks;
+ static int clk_num;
+ static struct clk_onecell_data clk_data;
+ 
++static u32 cclkg_burst_policy_ctx[2];
++static u32 cclklp_burst_policy_ctx[2];
++static u32 sclk_burst_policy_ctx[2];
++static u32 sys_clk_divisor_ctx, system_rate_ctx;
++static u32 spare_ctx, misc_clk_enb_ctx, clk_arm_ctx;
++
+ /* Handlers for SoC-specific reset lines */
+ static int (*special_reset_assert)(unsigned long);
+ static int (*special_reset_deassert)(unsigned long);
+@@ -199,6 +205,80 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ 	}
  }
  
-+static int tegra_clk_pll_out_save_context(struct clk_hw *hw)
++void tegra_cclkg_burst_policy_save_context(void)
 +{
-+	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
++	unsigned int i;
 +
-+	if (!strcmp(__clk_get_name(hw->clk), "pll_re_out1"))
-+		pll_out->pllout_ctx = readl_relaxed(pll_out->reg);
-+	else
-+		pll_out->pllout_ctx = clk_hw_get_rate(hw);
-+
-+	return 0;
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++)
++		cclkg_burst_policy_ctx[i] = readl_relaxed(clk_base +
++							  CCLKG_BURST_POLICY +
++							  (i * 4));
 +}
 +
-+static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
++void tegra_cclkg_burst_policy_restore_context(void)
 +{
-+	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
++	unsigned int i;
 +
-+	if (!strcmp(__clk_get_name(hw->clk), "pll_re_out1")) {
-+		writel_relaxed(pll_out->pllout_ctx, pll_out->reg);
-+	} else {
-+		if (!__clk_get_enable_count(hw->clk))
-+			clk_pll_out_disable(hw);
-+		else
-+			clk_pll_out_enable(hw);
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++)
++		writel_relaxed(cclkg_burst_policy_ctx[i],
++			       clk_base + CCLKG_BURST_POLICY + (i * 4));
++
++	fence_udelay(2, clk_base);
++}
++
++void tegra_sclk_cclklp_burst_policy_save_context(void)
++{
++	unsigned int i;
++
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++) {
++		cclklp_burst_policy_ctx[i] = readl_relaxed(clk_base +
++							  CCLKLP_BURST_POLICY +
++							  (i * 4));
++
++		sclk_burst_policy_ctx[i] = readl_relaxed(clk_base +
++							  SCLK_BURST_POLICY +
++							  (i * 4));
 +	}
++
++	sys_clk_divisor_ctx = readl_relaxed(clk_base + SYS_CLK_DIV);
++	system_rate_ctx = readl_relaxed(clk_base + SYSTEM_CLK_RATE);
++	spare_ctx = readl_relaxed(clk_base + SPARE_REG0);
++	misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
++	clk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
 +}
 +
- const struct clk_ops tegra_clk_pll_out_ops = {
- 	.is_enabled = clk_pll_out_is_enabled,
- 	.enable = clk_pll_out_enable,
- 	.disable = clk_pll_out_disable,
-+	.save_context = tegra_clk_pll_out_save_context,
-+	.restore_context = tegra_clk_pll_out_restore_context,
- };
- 
- struct clk *tegra_clk_register_pll_out(const char *name,
++void tegra_sclk_cpulp_burst_policy_restore_context(void)
++{
++	unsigned int i;
++	u32 val;
++
++	/*
++	 * resume SCLK and CPULP clocks
++	 * for SCLk, set safe dividers values first and then restore source
++	 * and dividers
++	 */
++
++	writel_relaxed(0x1, clk_base + SYSTEM_CLK_RATE);
++	val = readl_relaxed(clk_base + SYS_CLK_DIV);
++	if (val < sys_clk_divisor_ctx)
++		writel_relaxed(sys_clk_divisor_ctx, clk_base + SYS_CLK_DIV);
++
++	fence_udelay(2, clk_base);
++
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++) {
++		writel_relaxed(cclklp_burst_policy_ctx[i],
++			       clk_base + CCLKLP_BURST_POLICY + (i * 4));
++		writel_relaxed(sclk_burst_policy_ctx[i],
++			       clk_base + SCLK_BURST_POLICY + (i * 4));
++	}
++
++	writel_relaxed(sys_clk_divisor_ctx, clk_base + SYS_CLK_DIV);
++	writel_relaxed(system_rate_ctx, clk_base + SYSTEM_CLK_RATE);
++	writel_relaxed(spare_ctx, clk_base + SPARE_REG0);
++	writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
++	writel_relaxed(clk_arm_ctx, clk_base + CLK_MASK_ARM);
++}
++
+ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ {
+ 	clk_base = regs;
 diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 83623f5f55f3..b47f373c35ad 100644
+index 581deb4f3ac0..5ba4f503aea0 100644
 --- a/drivers/clk/tegra/clk.h
 +++ b/drivers/clk/tegra/clk.h
-@@ -439,6 +439,8 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
-  * @rst_bit_idx:	bit to reset PLL divider
-  * @lock:		register lock
-  * @flags:		hardware-specific flags
-+ * @pllout_ctx:		pllout context to save and restore during suspend
-+ *			and resume
-  */
- struct tegra_clk_pll_out {
- 	struct clk_hw	hw;
-@@ -447,6 +449,7 @@ struct tegra_clk_pll_out {
- 	u8		rst_bit_idx;
- 	spinlock_t	*lock;
- 	u8		flags;
-+	unsigned int	pllout_ctx;
- };
+@@ -10,6 +10,16 @@
+ #include <linux/clkdev.h>
+ #include <linux/delay.h>
  
- #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
++#define SCLK_BURST_POLICY	0x28
++#define SYSTEM_CLK_RATE		0x30
++#define CLK_MASK_ARM		0x44
++#define MISC_CLK_ENB		0x48
++#define CCLKG_BURST_POLICY	0x368
++#define CCLKLP_BURST_POLICY	0x370
++#define SYS_CLK_DIV		0x400
++#define SPARE_REG0		0x55c
++#define BURST_POLICY_REG_SIZE	2
++
+ /**
+  * struct tegra_clk_sync_source - external clock source from codec
+  *
+@@ -839,6 +849,10 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+ 		 u8 frac_width, u8 flags);
+ void tegra_clk_sync_state_pll(struct clk_hw *hw);
++void tegra_cclkg_burst_policy_save_context(void);
++void tegra_cclkg_burst_policy_restore_context(void);
++void tegra_sclk_cclklp_burst_policy_save_context(void);
++void tegra_sclk_cpulp_burst_policy_restore_context(void);
+ 
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
 -- 
 2.7.4
