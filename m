@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 16/18] soc/tegra: pmc: configure core power request polarity
-Date: Sun, 23 Jun 2019 20:02:57 -0700
-Message-ID: <1561345379-2429-17-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V4 18/18] arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
+Date: Sun, 23 Jun 2019 20:02:59 -0700
+Message-ID: <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
 References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,40 +12,31 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch configures polarity of the core power request signal
-in PMC control register based on the device tree property.
-
-PMC asserts and de-asserts power request signal based on it polarity
-when it need to power-up and power-down the core rail during SC7.
+This patch has Jetson TX1 platform specific SC7 timing configuration
+in device tree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 603fc3bd73f5..c9eea5ef008a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -56,6 +56,7 @@
- #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
- #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
- #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
-+#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
- #define  PMC_CNTRL_MAIN_RST		BIT(4)
- #define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 27723829d033..cb58f79deb48 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -279,6 +279,13 @@
  
-@@ -2304,6 +2305,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
- 	else
- 		value |= PMC_CNTRL_SYSCLK_POLARITY;
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
++		nvidia,suspend-mode = <0>;
++		nvidia,cpu-pwr-good-time = <0>;
++		nvidia,cpu-pwr-off-time = <0>;
++		nvidia,core-pwr-good-time = <4587 3876>;
++		nvidia,core-pwr-off-time = <39065>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
+ 	};
  
-+	if (pmc->corereq_high)
-+		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
-+	else
-+		value |= PMC_CNTRL_PWRREQ_POLARITY;
-+
- 	/* configure the output polarity while the request is tristated */
- 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
- 
+ 	/* eMMC */
 -- 
 2.7.4
