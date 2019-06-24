@@ -1,166 +1,53 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V4 02/18] pinctrl: tegra: add suspend and resume support
-Date: Mon, 24 Jun 2019 10:34:13 -0700
-Message-ID: <896de0f3-78b0-c5fc-9b74-fee442ab116c@nvidia.com>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
- <a03ce644-5efd-e721-fb06-16de097171bb@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2] PCI: PM: Skip devices in D0 for suspend-to-idle
+Date: Mon, 24 Jun 2019 23:37:29 +0200
+Message-ID: <CAJZ5v0hdtXqoK84DpYtyMSCnkR9zOHFiUPAzWZDtkFmEjyWD1g@mail.gmail.com>
+References: <1668247.RaJIPSxJUN@kreacher> <9906d02b-8c77-f2c8-7168-93ea444b950e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a03ce644-5efd-e721-fb06-16de097171bb@gmail.com>
-Content-Language: en-US
+In-Reply-To: <9906d02b-8c77-f2c8-7168-93ea444b950e@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PCI <linux-pci@vger.kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Keith Busch <kbusch@kernel.org>, Kai-Heng Feng <kai.heng.feng@canonical.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jun 24, 2019 at 2:43 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> Hi Rafael,
+>
+> On 13/06/2019 22:59, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Commit d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
+> > attempted to avoid a problem with devices whose drivers want them to
+> > stay in D0 over suspend-to-idle and resume, but it did not go as far
+> > as it should with that.
+> >
+> > Namely, first of all, the power state of a PCI bridge with a
+> > downstream device in D0 must be D0 (based on the PCI PM spec r1.2,
+> > sec 6, table 6-1, if the bridge is not in D0, there can be no PCI
+> > transactions on its secondary bus), but that is not actively enforced
+> > during system-wide PM transitions, so use the skip_bus_pm flag
+> > introduced by commit d491f2b75237 for that.
+> >
+> > Second, the configuration of devices left in D0 (whatever the reason)
+> > during suspend-to-idle need not be changed and attempting to put them
+> > into D0 again by force is pointless, so explicitly avoid doing that.
+> >
+> > Fixes: d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
+> > Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>
+> I have noticed a regression in both the mainline and -next branches on
+> one of our boards when testing suspend. The bisect is point to this
+> commit and reverting on top of mainline does fix the problem. So far I
+> have not looked at this in close detail but kernel log is showing ...
 
-On 6/24/19 2:46 AM, Dmitry Osipenko wrote:
-> 24.06.2019 6:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> This patch adds support for Tegra pinctrl driver suspend and resume.
->>
->> During suspend, context of all pinctrl registers are stored and
->> on resume they are all restored to have all the pinmux and pad
->> configuration for normal operation.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/pinctrl/tegra/pinctrl-tegra.c    | 47 ++++++++++++++++++++++++=
-++++++++
->>   drivers/pinctrl/tegra/pinctrl-tegra.h    |  4 +++
->>   drivers/pinctrl/tegra/pinctrl-tegra210.c |  6 ++++
->>   3 files changed, 57 insertions(+)
->>
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/teg=
-ra/pinctrl-tegra.c
->> index b03c465917b8..c0ba6fa63ad1 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
->> @@ -631,6 +631,38 @@ static void tegra_pinctrl_clear_parked_bits(struct =
-tegra_pmx *pmx)
->>   	}
->>   }
->>  =20
->> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev)
-> The "maybe_unused" attribute isn't needed for global functions because
-> compiler always assumes that such functions are used somewhere outside.
-Will fix this in V5
->> +{
->> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
->> +	u32 *backup_regs =3D pmx->backup_regs;
->> +	u32 *regs;
->> +	unsigned int i, j;
->> +
->> +	for (i =3D 0; i < pmx->nbanks; i++) {
->> +		regs =3D pmx->regs[i];
->> +		for (j =3D 0; j < pmx->reg_bank_size[i] / 4; j++)
->> +			*backup_regs++ =3D readl(regs++);
->> +	}
->> +
->> +	return pinctrl_force_sleep(pmx->pctl);
->> +}
->> +
->> +int __maybe_unused tegra_pinctrl_resume(struct device *dev)
->> +{
->> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
->> +	u32 *backup_regs =3D pmx->backup_regs;
->> +	u32 *regs;
->> +	unsigned int i, j;
->> +
->> +	for (i =3D 0; i < pmx->nbanks; i++) {
->> +		regs =3D pmx->regs[i];
->> +		for (j =3D 0; j < pmx->reg_bank_size[i] / 4; j++)
->> +			writel(*backup_regs++, regs++);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   static bool gpio_node_has_range(const char *compatible)
->>   {
->>   	struct device_node *np;
->> @@ -655,6 +687,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev=
-,
->>   	int i;
->>   	const char **group_pins;
->>   	int fn, gn, gfn;
->> +	unsigned long backup_regs_size =3D 0;
->>  =20
->>   	pmx =3D devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
->>   	if (!pmx)
->> @@ -707,6 +740,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev=
-,
->>   		res =3D platform_get_resource(pdev, IORESOURCE_MEM, i);
->>   		if (!res)
->>   			break;
->> +		backup_regs_size +=3D resource_size(res);
->>   	}
->>   	pmx->nbanks =3D i;
->>  =20
->> @@ -715,11 +749,24 @@ int tegra_pinctrl_probe(struct platform_device *pd=
-ev,
->>   	if (!pmx->regs)
->>   		return -ENOMEM;
->>  =20
->> +	pmx->reg_bank_size =3D devm_kcalloc(&pdev->dev, pmx->nbanks,
->> +					  sizeof(*pmx->reg_bank_size),
->> +					  GFP_KERNEL);
->> +	if (!pmx->reg_bank_size)
->> +		return -ENOMEM;
->> +
->> +	pmx->backup_regs =3D devm_kzalloc(&pdev->dev, backup_regs_size,
->> +					GFP_KERNEL);
->> +	if (!pmx->backup_regs)
->> +		return -ENOMEM;
->> +
->>   	for (i =3D 0; i < pmx->nbanks; i++) {
->>   		res =3D platform_get_resource(pdev, IORESOURCE_MEM, i);
->>   		pmx->regs[i] =3D devm_ioremap_resource(&pdev->dev, res);
->>   		if (IS_ERR(pmx->regs[i]))
->>   			return PTR_ERR(pmx->regs[i]);
->> +
->> +		pmx->reg_bank_size[i] =3D resource_size(res);
->>   	}
->>  =20
->>   	pmx->pctl =3D devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, =
-pmx);
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/teg=
-ra/pinctrl-tegra.h
->> index 32642af3f871..65fcbf8c7579 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
->> @@ -17,6 +17,8 @@ struct tegra_pmx {
->>  =20
->>   	int nbanks;
->>   	void __iomem **regs;
->> +	size_t *reg_bank_size;
->> +	u32 *backup_regs;
->>   };
->>  =20
->>   enum tegra_pinconf_param {
->> @@ -195,4 +197,6 @@ struct tegra_pinctrl_soc_data {
->>  =20
->>   int tegra_pinctrl_probe(struct platform_device *pdev,
->>   			const struct tegra_pinctrl_soc_data *soc_data);
->> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev);
->> +int __maybe_unused tegra_pinctrl_resume(struct device *dev);
->>   #endif
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/=
-tegra/pinctrl-tegra210.c
->> index 617ad963f5ad..4616bbc2efba 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> @@ -1562,6 +1562,11 @@ static int tegra210_pinctrl_probe(struct platform=
-_device *pdev)
->>   	return tegra_pinctrl_probe(pdev, &tegra210_pinctrl);
->>   }
->>  =20
->> +static const struct dev_pm_ops tegra_pinctrl_pm =3D {
->> +	.suspend =3D &tegra_pinctrl_suspend,
->> +	.resume =3D &tegra_pinctrl_resume
->> +};
-> What about to move tegra_pinctrl_pm out into pinctrl-tegra.c to make it
-> common for all of the drivers?
-OK, Will do that in V5
+Can you please collect a log like that, but with dynamic debug in
+pci-driver.c enabled?
+
+Note that reverting this commit is rather out of the question, so we
+need to get to the bottom of the failure.
