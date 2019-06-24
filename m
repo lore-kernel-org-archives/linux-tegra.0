@@ -1,54 +1,108 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 08/10] memory: tegra: Ensure timing control debug features are disabled
-Date: Mon, 24 Jun 2019 03:31:30 +0300
-Message-ID: <20190624003132.29473-9-digetx@gmail.com>
-References: <20190624003132.29473-1-digetx@gmail.com>
+Subject: Re: [PATCH v4 00/16] NVIDIA Tegra devfreq improvements and Tegra20/30
+ support
+Date: Mon, 24 Jun 2019 03:35:43 +0300
+Message-ID: <5d5cba1f-1625-7496-3599-7bdc6042b5ca@gmail.com>
+References: <CGME20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727@epcas5p1.samsung.com>
+ <20190501233815.32643-1-digetx@gmail.com>
+ <60ef6e47-e61b-3a92-e90d-90debedfcfc4@samsung.com>
+ <fa061a65-f108-6c5e-1f87-950a9a8caafc@gmail.com>
+ <0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com>
+ <683b343a-e64f-8345-ac44-10f5c00521bd@samsung.com>
+ <5c2a7c32-a98c-3930-14ae-beb0241908d0@gmail.com>
+ <389cc71d-8f0b-fa39-1325-433d27c75dc8@gmail.com>
+ <31fc1430-5a3b-cccb-06bb-7b46081edb68@samsung.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190624003132.29473-1-digetx@gmail.com>
+In-Reply-To: <31fc1430-5a3b-cccb-06bb-7b46081edb68@samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Timing control debug features should be disabled at a boot time, but you
-never now and hence it's better to disable them explicitly because some of
-those features are crucial for the driver to do a proper thing.
+24.06.2019 2:50, Chanwoo Choi пишет:
+> Hi Dmitry,
+> 
+> On 19. 6. 24. 오전 2:17, Dmitry Osipenko wrote:
+>> 05.06.2019 2:09, Dmitry Osipenko пишет:
+>>> 04.06.2019 3:49, Chanwoo Choi пишет:
+>>>> On 19. 6. 4. 오전 1:52, Dmitry Osipenko wrote:
+>>>>> 03.05.2019 3:52, Dmitry Osipenko пишет:
+>>>>>> 03.05.2019 3:31, Chanwoo Choi пишет:
+>>>>>>> Hi Dmitry,
+>>>>>>>
+>>>>>>> On 19. 5. 2. 오전 8:37, Dmitry Osipenko wrote:
+>>>>>>>> Changelog:
+>>>>>>>>
+>>>>>>>> v4: Addressed all review comments that were made by Chanwoo Choi to v3:
+>>>>>>>>
+>>>>>>>>     - changed the driver removal order to match the probe exactly
+>>>>>>>>     - added clarifying comment for 1/8 ratio to the Tegra20 driver
+>>>>>>>>
+>>>>>>>>     Chanwoo, please also note that the clk patch that should fix
+>>>>>>>>     compilation problem that was reported the kbuild-test-robot is already
+>>>>>>>>     applied and available in the recent linux-next.
+>>>>>>>
+>>>>>>> I knew that Stephen picked up your path about clock.
+>>>>>>
+>>>>>> Hi Chanwoo,
+>>>>>>
+>>>>>> Okay, good. Thank you very much for reviewing this series! I assume it's
+>>>>>> too late now for v5.2, but it should be good to go for v5.3.
+>>>>>>
+>>>>>
+>>>>> Hello Chanwoo,
+>>>>>
+>>>>> Will be nice to see the patches in the linux-next before they'll hit mainline. We have tested that
+>>>>> everything works fine on a selective devices, but won't hurt to get some extra testing beforehand.
+>>>>> AFAIK, at least NVIDIA people are regularly testing -next on theirs dev boards. Please note that
+>>>>> this not very important, so don't bother if there is some hurdle with pushing to the tracking branch
+>>>>> for now. Also please let me know if you're expecting to see some ACK's on the patches, I'm sure
+>>>>> we'll be able to work out that with Thierry and Jon if necessary.
+>>>>>
+>>>>>
+>>>>
+>>>> Hi Dmitry,
+>>>> I think that it is enough for applying to mainline branch.
+>>>> The devfreq.git is maintained by Myungjoo. He will be merged or
+>>>> reviewed if there are th remained review point.
+>>>
+>>> Thank you very much!
+>>>
+>>>>
+>>>> Hi Myungjoo,
+>>>> I reviewed the Dmitry's patches from v1 to v4 patches.
+>>>> And then I tested them on my testing branch[1] for catching
+>>>> the build warning and error. In result, it is clean.
+>>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-testing
+>>>>
+>>>> Please review or apply these patches for v5.3.
+>>>>
+>>>
+>>> Hello Myungjoo,
+>>>
+>>> I think this patchset should be completed now. Thierry has some extra
+>>> comments to the patches, but seems nothing critical so far and all the
+>>> concerns could be addressed in a follow-up series. Please let me know if
+>>> you're fine with this, I can re-spin v5 as well if necessary.
+>>>
+>>
+>> Hello Chanwoo,
+>>
+>> It looks like Myungjoo is inactive at the moment. Do you know if he'll
+>> be back to the time of the merge window opening or you'll be curating
+>> the pull request for 5.3 this time?
+> 
+> Myungoo works in the same place. I'll talk with him.
+> 
+>>
+>> Secondly, I'll send a few more patches on top of this series, addressing
+>> Thierry's comments and making more improvements. Please let me know if
+>> this causes any problems and I should re-spin the whole series.
+> 
+> OK. I'll review them.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/memory/tegra/mc.c | 3 +++
- drivers/memory/tegra/mc.h | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index eaebe371625c..4c1492c653e1 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -660,6 +660,9 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 	} else
- #endif
- 	{
-+		/* ensure that debug features are disabled */
-+		mc_writel(mc, 0x00000000, MC_TIMING_CONTROL_DBG);
-+
- 		err = tegra_mc_setup_latency_allowance(mc);
- 		if (err < 0) {
- 			dev_err(&pdev->dev,
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index 0720a1d2023e..abc565b42225 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -33,6 +33,8 @@
- #define MC_EMEM_ARB_OVERRIDE				0xe8
- #define MC_EMEM_ARB_OVERRIDE_EACK_MASK			0x3
- 
-+#define MC_TIMING_CONTROL_DBG				0xf8
-+
- #define MC_TIMING_CONTROL				0xfc
- #define MC_TIMING_UPDATE				BIT(0)
- 
--- 
-2.22.0
+Thank you!
