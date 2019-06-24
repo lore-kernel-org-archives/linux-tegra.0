@@ -1,84 +1,64 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] OPP: Fix crashing when current OPP has unsupportable
- voltage
-Date: Mon, 24 Jun 2019 13:18:23 +0300
-Message-ID: <c5c7d412-b3f6-1f6c-dc34-0f541e955d47@gmail.com>
-References: <20190623175053.26167-1-digetx@gmail.com>
- <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
+Subject: Re: [PATCH v4 13/16] PM / devfreq: tegra: Support Tegra30
+Date: Mon, 24 Jun 2019 13:42:20 +0300
+Message-ID: <37db00bc-3a22-d1c2-7bdc-e27af42cd5c7@gmail.com>
+References: <20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
+ <CGME20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p8>
+ <20190624073414epcms1p87b6dc13758b6bd401d275cfba583314a@epcms1p8>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
+In-Reply-To: <20190624073414epcms1p87b6dc13758b6bd401d275cfba583314a@epcms1p8>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marc Dietrich <marvin24@gmx.de>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: myungjoo.ham@samsung.com
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-24.06.2019 10:18, Viresh Kumar пишет:
-> On 23-06-19, 20:50, Dmitry Osipenko wrote:
->> Fix NULL dereference caused by a typo in the code. In particular it
->> happens when CPU is running on a frequency which has unsupportable voltage
->> (by regulator) defined in the OPP table and a custom set_opp() callback is
->> being used. The problem was spotted during of testing of upcoming update
->> for the NVIDIA Tegra CPUFreq driver.
+24.06.2019 10:34, MyungJoo Ham пишет:
 >>
->> Cc: stable <stable@vger.kernel.org>
->> Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
->> Reported-by: Marc Dietrich <marvin24@gmx.de>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/opp/core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> A question:
 >>
->> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
->> index 9fda9a0ec016..89ec6aa220cf 100644
->> --- a/drivers/opp/core.c
->> +++ b/drivers/opp/core.c
->> @@ -685,7 +685,7 @@ static int _set_opp_custom(const struct opp_table *opp_table,
->>  
->>  	data->old_opp.rate = old_freq;
->>  	size = sizeof(*old_supply) * opp_table->regulator_count;
->> -	if (IS_ERR(old_supply))
->> +	if (!old_supply)
->>  		memset(data->old_opp.supplies, 0, size);
->>  	else
->>  		memcpy(data->old_opp.supplies, old_supply, size);
+>> Does this driver support Tegra20 as well?
+>> I'm asking this because ARCH_TEGRA includes ARCH_TEGRA_2x_SOC
+>> according to /drivers/soc/tegra/Kconfig.
+>>
 > 
-> While the change is fine, the commit log isn't. It isn't about
-> unsupportable voltage but frequency. The frequency the CPU is
-> currently running at, is not present in the OPP table and so there is
-> no corresponding OPP, hence no voltage supplies.
-
-Ah, indeed! Looks like the reason for old OPP not being found was caused
-by the appropriate OPP being disabled because of unsupportable voltage.
-The offending higher "unsupportable" CPU freq was left after bootloader.
-
-> I have applied this patch with following change log:
+> For this matter, how about updating your 13/16 patch as follows?
 > 
-> commit 560d1bcad715c215e7ffe5d7cffe045974b623d0 (HEAD -> opp/linux-next)
-> Author: Dmitry Osipenko <digetx@gmail.com>
-> Date:   Sun Jun 23 20:50:53 2019 +0300
-> 
->     opp: Don't use IS_ERR on invalid supplies
->     
->     _set_opp_custom() receives a set of OPP supplies as its arguments and
->     the caller of it passes NULL when the supplies are not valid. But
->     _set_opp_custom(), by mistake, checks for error by performing
->     IS_ERR(old_supply) on it which will always evaluate to false.
->     
->     The problem was spotted during of testing of upcoming update for the
->     NVIDIA Tegra CPUFreq driver.
->     
->     Cc: stable <stable@vger.kernel.org>
->     Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
->     Reported-by: Marc Dietrich <marvin24@gmx.de>
->     Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->     [ Viresh: Massaged changelog ]
->     Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/opp/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/devfreq/Kconfig         | 4 ++--
+>  drivers/devfreq/tegra-devfreq.c | 1 +
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index 7dd46d44579d..78c4b436aad8 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -93,8 +93,8 @@ config ARM_EXYNOS_BUS_DEVFREQ
+>  	  This does not yet operate with optimal voltages.
+>  
+>  config ARM_TEGRA_DEVFREQ
+> -	tristate "Tegra DEVFREQ Driver"
+> -	depends on ARCH_TEGRA_124_SOC
+> +	tristate "NVIDIA Tegra30/114/124/210 DEVFREQ Driver"
+> +	depends on ARCH_TEGRA_3x_SOC || ARCH_TEGRA_114_SOC || ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC
+>  	select PM_OPP
+>  	help
+>  	  This adds the DEVFREQ driver for the Tegra family of SoCs.
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+> index 5cddf2199c4e..a6ba75f4106d 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -726,6 +726,7 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id tegra_devfreq_of_match[] = {
+> +	{ .compatible = "nvidia,tegra30-actmon" },
+>  	{ .compatible = "nvidia,tegra124-actmon" },
+>  	{ },
+>  };
+> 
 
-Thank you very much!
+Good call! I'll update this patch following yours suggestion, thanks.
