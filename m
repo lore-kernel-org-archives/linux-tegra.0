@@ -1,33 +1,53 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v4 0/5] iommu/amd: Convert the AMD iommu driver to the
- dma-iommu api
-Date: Sun, 23 Jun 2019 23:19:45 -0700
-Message-ID: <20190624061945.GA4912@infradead.org>
-References: <20190613223901.9523-1-murphyt7@tcd.ie>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v4 13/16] PM / devfreq: tegra: Support Tegra30
+Date: Mon, 24 Jun 2019 15:59:19 +0900
+Message-ID: <20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
+References: <CGME20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190613223901.9523-1-murphyt7-/Zw1syy4LHg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean-Philippe Brucker <jean-philippe.brucker-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "digetx@gmail.com" <digetx@gmail.com>, "janathanh@nvidia.com" <janathanh@nvidia.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tom,
+> On Thu, May 02, 2019 at 02:38:12AM +0300, Dmitry Osipenko wrote:
+> > The devfreq driver can be used on Tegra30 without any code change and
+> > it works perfectly fine, the default Tegra124 parameters are good enough
+> > for Tegra30.
+> > 
+> > Reviewed-by: Chanwoo Choi 
+> > Signed-off-by: Dmitry Osipenko 
+> > ---
+> >  drivers/devfreq/Kconfig         | 4 ++--
+> >  drivers/devfreq/tegra-devfreq.c | 1 +
+> >  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> Acked-by: Thierry Reding 
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index 7dd46d4..b291803 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -93,8 +93,8 @@ config ARM_EXYNOS_BUS_DEVFREQ
+>  	  This does not yet operate with optimal voltages.
+>  
+>  config ARM_TEGRA_DEVFREQ
+> -	tristate "Tegra DEVFREQ Driver"
+> -	depends on ARCH_TEGRA_124_SOC
+> +	tristate "NVIDIA Tegra30/114/124/210 DEVFREQ Driver"
+> +	depends on ARCH_TEGRA
+>  	select PM_OPP
+>  	help
+>  	  This adds the DEVFREQ driver for the Tegra family of SoCs.
 
-next time please cc Jerg as the AMD IOMMU maintainer.
+A question:
 
-Joerg, any chance you could review this?  Toms patches to convert the
-AMD and Intel IOMMU drivers to the dma-iommu code are going to make my
-life in DMA land significantly easier, so I have a vested interest
-in this series moving forward :)
+Does this driver support Tegra20 as well?
+I'm asking this because ARCH_TEGRA includes ARCH_TEGRA_2x_SOC
+according to /drivers/soc/tegra/Kconfig.
+
+Cheers,
+MyungJoo.
