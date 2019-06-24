@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio resume
-Date: Sun, 23 Jun 2019 20:02:44 -0700
-Message-ID: <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V4 02/18] pinctrl: tegra: add suspend and resume support
+Date: Sun, 23 Jun 2019 20:02:43 -0700
+Message-ID: <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
 References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,43 +12,146 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-During SC7 resume, PARKED bit clear from the pinmux registers may
-cause a glitch on the GPIO lines.
+This patch adds support for Tegra pinctrl driver suspend and resume.
 
-So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
-to keep the GPIO lines in a known good state prior to clearing PARKED
-bit.
-
-This patch has fix for this by moving Tegra GPIOs restore to happen
-very early than pinctrl resume.
+During suspend, context of all pinctrl registers are stored and
+on resume they are all restored to have all the pinmux and pad
+configuration for normal operation.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/gpio/gpio-tegra.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c    | 47 ++++++++++++++++++++++++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h    |  4 +++
+ drivers/pinctrl/tegra/pinctrl-tegra210.c |  6 ++++
+ 3 files changed, 57 insertions(+)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index f57bfc07ae22..f427540568f9 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -410,7 +410,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index b03c465917b8..c0ba6fa63ad1 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -631,6 +631,38 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+ 	}
  }
  
- #ifdef CONFIG_PM_SLEEP
--static int tegra_gpio_resume(struct device *dev)
-+static int tegra_gpio_resume_noirq(struct device *dev)
++int __maybe_unused tegra_pinctrl_suspend(struct device *dev)
++{
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	unsigned int i, j;
++
++	for (i = 0; i < pmx->nbanks; i++) {
++		regs = pmx->regs[i];
++		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
++			*backup_regs++ = readl(regs++);
++	}
++
++	return pinctrl_force_sleep(pmx->pctl);
++}
++
++int __maybe_unused tegra_pinctrl_resume(struct device *dev)
++{
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	unsigned int i, j;
++
++	for (i = 0; i < pmx->nbanks; i++) {
++		regs = pmx->regs[i];
++		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
++			writel(*backup_regs++, regs++);
++	}
++
++	return 0;
++}
++
+ static bool gpio_node_has_range(const char *compatible)
  {
- 	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
- 	unsigned long flags;
-@@ -554,7 +554,8 @@ static inline void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
- #endif
+ 	struct device_node *np;
+@@ -655,6 +687,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	int i;
+ 	const char **group_pins;
+ 	int fn, gn, gfn;
++	unsigned long backup_regs_size = 0;
  
- static const struct dev_pm_ops tegra_gpio_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
-+	.suspend = tegra_gpio_suspend,
-+	.resume_noirq = tegra_gpio_resume_noirq
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx)
+@@ -707,6 +740,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		if (!res)
+ 			break;
++		backup_regs_size += resource_size(res);
+ 	}
+ 	pmx->nbanks = i;
+ 
+@@ -715,11 +749,24 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	if (!pmx->regs)
+ 		return -ENOMEM;
+ 
++	pmx->reg_bank_size = devm_kcalloc(&pdev->dev, pmx->nbanks,
++					  sizeof(*pmx->reg_bank_size),
++					  GFP_KERNEL);
++	if (!pmx->reg_bank_size)
++		return -ENOMEM;
++
++	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
++					GFP_KERNEL);
++	if (!pmx->backup_regs)
++		return -ENOMEM;
++
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(pmx->regs[i]))
+ 			return PTR_ERR(pmx->regs[i]);
++
++		pmx->reg_bank_size[i] = resource_size(res);
+ 	}
+ 
+ 	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index 32642af3f871..65fcbf8c7579 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -17,6 +17,8 @@ struct tegra_pmx {
+ 
+ 	int nbanks;
+ 	void __iomem **regs;
++	size_t *reg_bank_size;
++	u32 *backup_regs;
  };
  
- static int tegra_gpio_probe(struct platform_device *pdev)
+ enum tegra_pinconf_param {
+@@ -195,4 +197,6 @@ struct tegra_pinctrl_soc_data {
+ 
+ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 			const struct tegra_pinctrl_soc_data *soc_data);
++int __maybe_unused tegra_pinctrl_suspend(struct device *dev);
++int __maybe_unused tegra_pinctrl_resume(struct device *dev);
+ #endif
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 617ad963f5ad..4616bbc2efba 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1562,6 +1562,11 @@ static int tegra210_pinctrl_probe(struct platform_device *pdev)
+ 	return tegra_pinctrl_probe(pdev, &tegra210_pinctrl);
+ }
+ 
++static const struct dev_pm_ops tegra_pinctrl_pm = {
++	.suspend = &tegra_pinctrl_suspend,
++	.resume = &tegra_pinctrl_resume
++};
++
+ static const struct of_device_id tegra210_pinctrl_of_match[] = {
+ 	{ .compatible = "nvidia,tegra210-pinmux", },
+ 	{ },
+@@ -1571,6 +1576,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "tegra210-pinctrl",
+ 		.of_match_table = tegra210_pinctrl_of_match,
++		.pm = &tegra_pinctrl_pm,
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
 -- 
 2.7.4
