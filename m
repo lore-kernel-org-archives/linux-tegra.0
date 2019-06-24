@@ -1,154 +1,84 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V4 02/18] pinctrl: tegra: add suspend and resume support
-Date: Mon, 24 Jun 2019 12:46:28 +0300
-Message-ID: <a03ce644-5efd-e721-fb06-16de097171bb@gmail.com>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH v1] OPP: Fix crashing when current OPP has unsupportable
+ voltage
+Date: Mon, 24 Jun 2019 13:18:23 +0300
+Message-ID: <c5c7d412-b3f6-1f6c-dc34-0f541e955d47@gmail.com>
+References: <20190623175053.26167-1-digetx@gmail.com>
+ <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marc Dietrich <marvin24@gmx.de>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.06.2019 6:02, Sowjanya Komatineni пишет:
-> This patch adds support for Tegra pinctrl driver suspend and resume.
+24.06.2019 10:18, Viresh Kumar пишет:
+> On 23-06-19, 20:50, Dmitry Osipenko wrote:
+>> Fix NULL dereference caused by a typo in the code. In particular it
+>> happens when CPU is running on a frequency which has unsupportable voltage
+>> (by regulator) defined in the OPP table and a custom set_opp() callback is
+>> being used. The problem was spotted during of testing of upcoming update
+>> for the NVIDIA Tegra CPUFreq driver.
+>>
+>> Cc: stable <stable@vger.kernel.org>
+>> Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
+>> Reported-by: Marc Dietrich <marvin24@gmx.de>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/opp/core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>> index 9fda9a0ec016..89ec6aa220cf 100644
+>> --- a/drivers/opp/core.c
+>> +++ b/drivers/opp/core.c
+>> @@ -685,7 +685,7 @@ static int _set_opp_custom(const struct opp_table *opp_table,
+>>  
+>>  	data->old_opp.rate = old_freq;
+>>  	size = sizeof(*old_supply) * opp_table->regulator_count;
+>> -	if (IS_ERR(old_supply))
+>> +	if (!old_supply)
+>>  		memset(data->old_opp.supplies, 0, size);
+>>  	else
+>>  		memcpy(data->old_opp.supplies, old_supply, size);
 > 
-> During suspend, context of all pinctrl registers are stored and
-> on resume they are all restored to have all the pinmux and pad
-> configuration for normal operation.
+> While the change is fine, the commit log isn't. It isn't about
+> unsupportable voltage but frequency. The frequency the CPU is
+> currently running at, is not present in the OPP table and so there is
+> no corresponding OPP, hence no voltage supplies.
+
+Ah, indeed! Looks like the reason for old OPP not being found was caused
+by the appropriate OPP being disabled because of unsupportable voltage.
+The offending higher "unsupportable" CPU freq was left after bootloader.
+
+> I have applied this patch with following change log:
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> commit 560d1bcad715c215e7ffe5d7cffe045974b623d0 (HEAD -> opp/linux-next)
+> Author: Dmitry Osipenko <digetx@gmail.com>
+> Date:   Sun Jun 23 20:50:53 2019 +0300
+> 
+>     opp: Don't use IS_ERR on invalid supplies
+>     
+>     _set_opp_custom() receives a set of OPP supplies as its arguments and
+>     the caller of it passes NULL when the supplies are not valid. But
+>     _set_opp_custom(), by mistake, checks for error by performing
+>     IS_ERR(old_supply) on it which will always evaluate to false.
+>     
+>     The problem was spotted during of testing of upcoming update for the
+>     NVIDIA Tegra CPUFreq driver.
+>     
+>     Cc: stable <stable@vger.kernel.org>
+>     Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
+>     Reported-by: Marc Dietrich <marvin24@gmx.de>
+>     Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>     [ Viresh: Massaged changelog ]
+>     Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c    | 47 ++++++++++++++++++++++++++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra.h    |  4 +++
->  drivers/pinctrl/tegra/pinctrl-tegra210.c |  6 ++++
->  3 files changed, 57 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index b03c465917b8..c0ba6fa63ad1 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -631,6 +631,38 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->  	}
->  }
->  
-> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev)
+>  drivers/opp/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The "maybe_unused" attribute isn't needed for global functions because
-compiler always assumes that such functions are used somewhere outside.
-
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	unsigned int i, j;
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];
-> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			*backup_regs++ = readl(regs++);
-> +	}
-> +
-> +	return pinctrl_force_sleep(pmx->pctl);
-> +}
-> +
-> +int __maybe_unused tegra_pinctrl_resume(struct device *dev)
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	unsigned int i, j;
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];
-> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			writel(*backup_regs++, regs++);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static bool gpio_node_has_range(const char *compatible)
->  {
->  	struct device_node *np;
-> @@ -655,6 +687,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  	int i;
->  	const char **group_pins;
->  	int fn, gn, gfn;
-> +	unsigned long backup_regs_size = 0;
->  
->  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
->  	if (!pmx)
-> @@ -707,6 +740,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		if (!res)
->  			break;
-> +		backup_regs_size += resource_size(res);
->  	}
->  	pmx->nbanks = i;
->  
-> @@ -715,11 +749,24 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  	if (!pmx->regs)
->  		return -ENOMEM;
->  
-> +	pmx->reg_bank_size = devm_kcalloc(&pdev->dev, pmx->nbanks,
-> +					  sizeof(*pmx->reg_bank_size),
-> +					  GFP_KERNEL);
-> +	if (!pmx->reg_bank_size)
-> +		return -ENOMEM;
-> +
-> +	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
-> +					GFP_KERNEL);
-> +	if (!pmx->backup_regs)
-> +		return -ENOMEM;
-> +
->  	for (i = 0; i < pmx->nbanks; i++) {
->  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
->  		if (IS_ERR(pmx->regs[i]))
->  			return PTR_ERR(pmx->regs[i]);
-> +
-> +		pmx->reg_bank_size[i] = resource_size(res);
->  	}
->  
->  	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-> index 32642af3f871..65fcbf8c7579 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-> @@ -17,6 +17,8 @@ struct tegra_pmx {
->  
->  	int nbanks;
->  	void __iomem **regs;
-> +	size_t *reg_bank_size;
-> +	u32 *backup_regs;
->  };
->  
->  enum tegra_pinconf_param {
-> @@ -195,4 +197,6 @@ struct tegra_pinctrl_soc_data {
->  
->  int tegra_pinctrl_probe(struct platform_device *pdev,
->  			const struct tegra_pinctrl_soc_data *soc_data);
-> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev);
-> +int __maybe_unused tegra_pinctrl_resume(struct device *dev);
->  #endif
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> index 617ad963f5ad..4616bbc2efba 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> @@ -1562,6 +1562,11 @@ static int tegra210_pinctrl_probe(struct platform_device *pdev)
->  	return tegra_pinctrl_probe(pdev, &tegra210_pinctrl);
->  }
->  
-> +static const struct dev_pm_ops tegra_pinctrl_pm = {
-> +	.suspend = &tegra_pinctrl_suspend,
-> +	.resume = &tegra_pinctrl_resume
-> +};
-
-What about to move tegra_pinctrl_pm out into pinctrl-tegra.c to make it
-common for all of the drivers?
+Thank you very much!
