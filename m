@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V11 09/12] dt-bindings: PCI: tegra: Add device tree support for Tegra194
-Date: Mon, 24 Jun 2019 14:45:02 +0530
-Message-ID: <20190624091505.1711-10-vidyas@nvidia.com>
+Subject: [PATCH V11 11/12] phy: tegra: Add PCIe PIPE2UPHY support
+Date: Mon, 24 Jun 2019 14:45:04 +0530
+Message-ID: <20190624091505.1711-12-vidyas@nvidia.com>
 References: <20190624091505.1711-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,228 +12,204 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for Tegra194 PCIe controllers. These controllers are based
-on Synopsys DesignWare core IP.
+Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
+with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
+For each PCIe lane of a controller, there is a P2U unit instantiated at
+hardware level. This driver provides support for the programming required
+for each P2U that is going to be used for a PCIe controller.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
 Changes since [v10]:
-* None
+* Replaced PTR_ERR_OR_ZERO() with PTR_ERR() as the check for zero is already
+  present in the code.
 
 Changes since [v9]:
-* None
+* Used _relaxed() versions of readl() & writel()
 
 Changes since [v8]:
-* Added Acked-by from Thierry
+* Made it dependent on ARCH_TEGRA_194_SOC directly instead of ARCH_TEGRA
 
 Changes since [v7]:
-* Addressed review comments from Thierry
-* Modified DT example to reflect new changes
+* Changed P2U driver file name from pcie-p2u-tegra194.c to phy-tegra194-p2u.c
 
 Changes since [v6]:
-* Changed description of the property "nvidia,bpmp".
-* Removed property "nvidia,disable-aspm-states".
+* None
 
 Changes since [v5]:
-* Removed 'max-link-speed' as it is going to be a common sub-system property
-* Removed 'nvidia,init-link-speed' as there isn't much value addition
-* Removed 'nvidia,wake-gpios' for now
-* Addressed review comments from Thierry and Rob in general
+* Addressed review comments from Thierry
 
 Changes since [v4]:
 * None
 
 Changes since [v3]:
-* None
+* Rebased on top of linux-next top of the tree
 
 Changes since [v2]:
-* Using only 'Cx' (x-being controller number) format to represent a controller
-* Changed to 'value: description' format where applicable
-* Changed 'nvidia,init-speed' to 'nvidia,init-link-speed'
-* Provided more documentation for 'nvidia,init-link-speed' property
-* Changed 'nvidia,pex-wake' to 'nvidia,wake-gpios'
+* Replaced spaces with tabs in Kconfig file
+* Sorted header file inclusion alphabetically
 
 Changes since [v1]:
-* Added documentation for 'power-domains' property
-* Removed 'window1' and 'window2' properties
-* Removed '_clk' and '_rst' from clock and reset names
-* Dropped 'pcie' from phy-names
-* Added entry for BPMP-FW handle
-* Removed offsets for some of the registers and added them in code and would be pickedup based on
-  controller ID
-* Changed 'nvidia,max-speed' to 'max-link-speed' and is made as an optional
-* Changed 'nvidia,disable-clock-request' to 'supports-clkreq' with inverted operation
-* Added more documentation for 'nvidia,update-fc-fixup' property
-* Removed 'nvidia,enable-power-down' and 'nvidia,plat-gpios' properties
-* Added '-us' to all properties that represent time in microseconds
-* Moved P2U documentation to a separate file
+* Added COMPILE_TEST in Kconfig
+* Removed empty phy_ops implementations
+* Modified code according to DT documentation file modifications
 
- .../bindings/pci/nvidia,tegra194-pcie.txt     | 155 ++++++++++++++++++
- 1 file changed, 155 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+ drivers/phy/tegra/Kconfig            |   7 ++
+ drivers/phy/tegra/Makefile           |   1 +
+ drivers/phy/tegra/phy-tegra194-p2u.c | 120 +++++++++++++++++++++++++++
+ 3 files changed, 128 insertions(+)
+ create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+index e516967d695b..f9817c3ae85f 100644
+--- a/drivers/phy/tegra/Kconfig
++++ b/drivers/phy/tegra/Kconfig
+@@ -7,3 +7,10 @@ config PHY_TEGRA_XUSB
+ 
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called phy-tegra-xusb.
++
++config PHY_TEGRA194_P2U
++	tristate "NVIDIA Tegra194 PIPE2UPHY PHY driver"
++	depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
++	select GENERIC_PHY
++	help
++	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x SOCs.
+diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
+index 64ccaeacb631..320dd389f34d 100644
+--- a/drivers/phy/tegra/Makefile
++++ b/drivers/phy/tegra/Makefile
+@@ -6,3 +6,4 @@ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) += xusb-tegra124.o
+ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) += xusb-tegra124.o
+ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_210_SOC) += xusb-tegra210.o
+ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) += xusb-tegra186.o
++obj-$(CONFIG_PHY_TEGRA194_P2U) += phy-tegra194-p2u.o
+diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
 new file mode 100644
-index 000000000000..674e5adb2895
+index 000000000000..7042bed9feaa
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-@@ -0,0 +1,155 @@
-+NVIDIA Tegra PCIe controller (Synopsys DesignWare Core based)
++++ b/drivers/phy/tegra/phy-tegra194-p2u.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * P2U (PIPE to UPHY) driver for Tegra T194 SoC
++ *
++ * Copyright (C) 2019 NVIDIA Corporation.
++ *
++ * Author: Vidya Sagar <vidyas@nvidia.com>
++ */
 +
-+This PCIe host controller is based on the Synopsis Designware PCIe IP
-+and thus inherits all the common properties defined in designware-pcie.txt.
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/phy/phy.h>
 +
-+Required properties:
-+- compatible: For Tegra19x, must contain "nvidia,tegra194-pcie".
-+- device_type: Must be "pci"
-+- power-domains: A phandle to the node that controls power to the respective
-+  PCIe controller and a specifier name for the PCIe controller. Following are
-+  the specifiers for the different PCIe controllers
-+    TEGRA194_POWER_DOMAIN_PCIEX8B: C0
-+    TEGRA194_POWER_DOMAIN_PCIEX1A: C1
-+    TEGRA194_POWER_DOMAIN_PCIEX1A: C2
-+    TEGRA194_POWER_DOMAIN_PCIEX1A: C3
-+    TEGRA194_POWER_DOMAIN_PCIEX4A: C4
-+    TEGRA194_POWER_DOMAIN_PCIEX8A: C5
-+  these specifiers are defined in
-+  "include/dt-bindings/power/tegra194-powergate.h" file.
-+- reg: A list of physical base address and length pairs for each set of
-+  controller registers. Must contain an entry for each entry in the reg-names
-+  property.
-+- reg-names: Must include the following entries:
-+  "appl": Controller's application logic registers
-+  "config": As per the definition in designware-pcie.txt
-+  "atu_dma": iATU and DMA registers. This is where the iATU (internal Address
-+             Translation Unit) registers of the PCIe core are made available
-+             for SW access.
-+  "dbi": The aperture where root port's own configuration registers are
-+         available
-+- interrupts: A list of interrupt outputs of the controller. Must contain an
-+  entry for each entry in the interrupt-names property.
-+- interrupt-names: Must include the following entries:
-+  "intr": The Tegra interrupt that is asserted for controller interrupts
-+  "msi": The Tegra interrupt that is asserted when an MSI is received
-+- bus-range: Range of bus numbers associated with this controller
-+- #address-cells: Address representation for root ports (must be 3)
-+  - cell 0 specifies the bus and device numbers of the root port:
-+    [23:16]: bus number
-+    [15:11]: device number
-+  - cell 1 denotes the upper 32 address bits and should be 0
-+  - cell 2 contains the lower 32 address bits and is used to translate to the
-+    CPU address space
-+- #size-cells: Size representation for root ports (must be 2)
-+- ranges: Describes the translation of addresses for root ports and standard
-+  PCI regions. The entries must be 7 cells each, where the first three cells
-+  correspond to the address as described for the #address-cells property
-+  above, the fourth and fifth cells are for the physical CPU address to
-+  translate to and the sixth and seventh cells are as described for the
-+  #size-cells property above.
-+  - Entries setup the mapping for the standard I/O, memory and
-+    prefetchable PCI regions. The first cell determines the type of region
-+    that is setup:
-+    - 0x81000000: I/O memory region
-+    - 0x82000000: non-prefetchable memory region
-+    - 0xc2000000: prefetchable memory region
-+  Please refer to the standard PCI bus binding document for a more detailed
-+  explanation.
-+- #interrupt-cells: Size representation for interrupts (must be 1)
-+- interrupt-map-mask and interrupt-map: Standard PCI IRQ mapping properties
-+  Please refer to the standard PCI bus binding document for a more detailed
-+  explanation.
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - core
-+- resets: Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names: Must include the following entries:
-+  - apb
-+  - core
-+- phys: Must contain a phandle to P2U PHY for each entry in phy-names.
-+- phy-names: Must include an entry for each active lane.
-+  "p2u-N": where N ranges from 0 to one less than the total number of lanes
-+- nvidia,bpmp: Must contain a pair of phandle to BPMP controller node followed
-+  by controller-id. Following are the controller ids for each controller.
-+    0: C0
-+    1: C1
-+    2: C2
-+    3: C3
-+    4: C4
-+    5: C5
-+- vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
++#define P2U_PERIODIC_EQ_CTRL_GEN3	0xc0
++#define P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN		BIT(0)
++#define P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
++#define P2U_PERIODIC_EQ_CTRL_GEN4	0xc4
++#define P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
 +
-+Optional properties:
-+- supports-clkreq: Refer to Documentation/devicetree/bindings/pci/pci.txt
-+- nvidia,update-fc-fixup: This is a boolean property and needs to be present to
-+    improve performance when a platform is designed in such a way that it
-+    satisfies at least one of the following conditions thereby enabling root
-+    port to exchange optimum number of FC (Flow Control) credits with
-+    downstream devices
-+    1. If C0/C4/C5 run at x1/x2 link widths (irrespective of speed and MPS)
-+    2. If C0/C1/C2/C3/C4/C5 operate at their respective max link widths and
-+       a) speed is Gen-2 and MPS is 256B
-+       b) speed is >= Gen-3 with any MPS
-+- nvidia,aspm-cmrt-us: Common Mode Restore Time for proper operation of ASPM
-+   to be specified in microseconds
-+- nvidia,aspm-pwr-on-t-us: Power On time for proper operation of ASPM to be
-+   specified in microseconds
-+- nvidia,aspm-l0s-entrance-latency-us: ASPM L0s entrance latency to be
-+   specified in microseconds
++#define P2U_RX_DEBOUNCE_TIME				0xa4
++#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK	0xffff
++#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL		160
 +
-+Examples:
-+=========
++struct tegra_p2u {
++	void __iomem *base;
++};
 +
-+Tegra194:
-+--------
++static inline void p2u_writel(struct tegra_p2u *phy, const u32 value,
++			      const u32 reg)
++{
++	writel_relaxed(value, phy->base + reg);
++}
 +
-+	pcie@14180000 {
-+		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
-+		reg = <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)      */
-+		       0x00 0x38000000 0x0 0x00040000   /* configuration space (256K) */
-+		       0x00 0x38040000 0x0 0x00040000>; /* iATU_DMA reg space (256K)  */
-+		reg-names = "appl", "config", "atu_dma";
++static inline u32 p2u_readl(struct tegra_p2u *phy, const u32 reg)
++{
++	return readl_relaxed(phy->base + reg);
++}
 +
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <8>;
-+		linux,pci-domain = <0>;
++static int tegra_p2u_power_on(struct phy *x)
++{
++	struct tegra_p2u *phy = phy_get_drvdata(x);
++	u32 val;
 +
-+		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
-+		clock-names = "core";
++	val = p2u_readl(phy, P2U_PERIODIC_EQ_CTRL_GEN3);
++	val &= ~P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN;
++	val |= P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN;
++	p2u_writel(phy, val, P2U_PERIODIC_EQ_CTRL_GEN3);
 +
-+		resets = <&bpmp TEGRA194_RESET_PEX0_CORE_0_APB>,
-+			 <&bpmp TEGRA194_RESET_PEX0_CORE_0>;
-+		reset-names = "apb", "core";
++	val = p2u_readl(phy, P2U_PERIODIC_EQ_CTRL_GEN4);
++	val |= P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN;
++	p2u_writel(phy, val, P2U_PERIODIC_EQ_CTRL_GEN4);
 +
-+		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,	/* controller interrupt */
-+			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;	/* MSI interrupt */
-+		interrupt-names = "intr", "msi";
++	val = p2u_readl(phy, P2U_RX_DEBOUNCE_TIME);
++	val &= ~P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK;
++	val |= P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL;
++	p2u_writel(phy, val, P2U_RX_DEBOUNCE_TIME);
 +
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
++	return 0;
++}
 +
-+		nvidia,bpmp = <&bpmp 0>;
++static const struct phy_ops ops = {
++	.power_on = tegra_p2u_power_on,
++	.owner = THIS_MODULE,
++};
 +
-+		supports-clkreq;
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
++static int tegra_p2u_probe(struct platform_device *pdev)
++{
++	struct phy_provider *phy_provider;
++	struct device *dev = &pdev->dev;
++	struct phy *generic_phy;
++	struct tegra_p2u *phy;
++	struct resource *res;
 +
-+		bus-range = <0x0 0xff>;
-+		ranges = <0x81000000 0x0  0x38100000 0x0  0x38100000 0x0 0x00100000    /* downstream I/O (1MB) */
-+			  0x82000000 0x0  0x38200000 0x0  0x38200000 0x0 0x01E00000    /* non-prefetchable memory (30MB) */
-+			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
++	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
++	if (!phy)
++		return -ENOMEM;
 +
-+		vddio-pex-ctl-supply = <&vdd_1v8ao>;
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctl");
++	phy->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(phy->base))
++		return PTR_ERR(phy->base);
 +
-+		phys = <&p2u_hsio_2>, <&p2u_hsio_3>, <&p2u_hsio_4>,
-+		       <&p2u_hsio_5>;
-+		phy-names = "p2u-0", "p2u-1", "p2u-2", "p2u-3";
-+	};
++	platform_set_drvdata(pdev, phy);
++
++	generic_phy = devm_phy_create(dev, NULL, &ops);
++	if (IS_ERR(generic_phy))
++		return PTR_ERR(generic_phy);
++
++	phy_set_drvdata(generic_phy, phy);
++
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	if (IS_ERR(phy_provider))
++		return PTR_ERR(phy_provider);
++
++	return 0;
++}
++
++static const struct of_device_id tegra_p2u_id_table[] = {
++	{
++		.compatible = "nvidia,tegra194-p2u",
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, tegra_p2u_id_table);
++
++static struct platform_driver tegra_p2u_driver = {
++	.probe = tegra_p2u_probe,
++	.driver = {
++		.name = "tegra194-p2u",
++		.of_match_table = tegra_p2u_id_table,
++	},
++};
++module_platform_driver(tegra_p2u_driver);
++
++MODULE_AUTHOR("Vidya Sagar <vidyas@nvidia.com>");
++MODULE_DESCRIPTION("NVIDIA Tegra194 PIPE2UPHY PHY driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
