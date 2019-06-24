@@ -1,149 +1,288 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 00/10] memory: tegra: Introduce Tegra30 EMC driver
-Date: Mon, 24 Jun 2019 03:31:22 +0300
-Message-ID: <20190624003132.29473-1-digetx@gmail.com>
+Subject: [PATCH v5 06/10] dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory Controller
+Date: Mon, 24 Jun 2019 03:31:28 +0300
+Message-ID: <20190624003132.29473-7-digetx@gmail.com>
+References: <20190624003132.29473-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190624003132.29473-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+Add device-tree binding for NVIDIA Tegra30 External Memory Controller.
+The binding is based on the Tegra124 EMC binding since hardware is
+similar, although there are couple significant differences.
 
-This series introduces driver for the External Memory Controller (EMC)
-found on Tegra30 chips, it controls the external DRAM on the board. The
-purpose of this driver is to program memory timing for external memory on
-the EMC clock rate change. The driver was tested using the ACTMON devfreq
-driver that performs memory frequency scaling based on memory-usage load.
+Note that the memory timing description is given in a platform-specific
+form because there is no detailed information on how to convert a
+typical-common DDR timing into the register values. The timing format is
+borrowed from downstream kernel, hence there is no hurdle in regards to
+upstreaming of memory timings for the boards.
 
-Changelog:
-
-v5: - Addressed review comments that were made by Thierry Reding to v4 by
-      adding appropriate copyrights to the source code headers and making
-      Tegra30 EMC driver to use common Tegra20 CLK API directly instead
-      of having a dummy-proxy functions specifically for Tegra30.
-
-    - Addressed review comments that were made by Stephen Boyd to v4 by
-      rewording commit message of the "Add custom EMC clock implementation"
-      patch and adding clarifying comment (to that patch as well) which
-      tells why EMC is a critical clock.
-
-    - Added suspend-resume to Tegra30 EMC driver to error out if EMC driver
-      is in a "bad state" as it will likely cause a hang on entering suspend.
-
-    - Dropped patch "tegra20-emc: Replace clk_get_sys with devm_clk_get"
-      because the replaced clocks are actually should be removed altogether
-      in the "Drop setting EMC rate to max on probe" patch and that was
-      missed by an accident.
-
-    - Added "tegra20-emc: Pre-configure debug register" patch which ensures
-      that inappropriate HW debug features are disabled at a probe time.
-      The same change is also made in the "Introduce Tegra30 EMC driver"
-      patch.
-
-    - Added ACKs to the patches from Peter De Schrijver that he gave to v4
-      since all of the v5 changes are actually very minor.
-
-v4: - Addressed review comments that were made by Peter De Schrijver to v3
-      by adding fence_udelay() after writes in the "Add custom EMC clock
-      implementation" patch.
-
-    - Added two new minor patches:
-
-        memory: tegra: Ensure timing control debug features are disabled
-        memory: tegra: Consolidate registers definition into one place
-
-      The first one is needed to ensure that EMC driver will work
-      properly regardless of hardware configuration left after boot.
-      The second patch is just a minor code cleanup.
-
-    - The "Introduce Tegra30 EMC driver" got also few very minor changes.
-      Now every possible error case is handled, nothing is ignored.
-      The EMC_DBG register is explicitly initialized during probe to be
-      on the safe side.
-
-v3: - Addressed review comments that were made by Stephen Boyd to v2 by
-      adding explicit typing for the callback variable, by including
-      "clk-provider.h" directly in the code and by dropping __clk_lookup
-      usage where possible.
-
-    - Added more patches into this series:
-
-        memory: tegra20-emc: Drop setting EMC rate to max on probe
-        memory: tegra20-emc: Adapt for clock driver changes
-        memory: tegra20-emc: Include io.h instead of iopoll.h
-        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-
-      Initially I was going to include these patches into other patchset,
-      but changed my mind after rearranging things a tad. The "Adapt for
-      clock driver changes" patch is directly related to the clock changes
-      done in the first patch of this series, the rest are minor cleanups
-      that are fine to include here as well.
-
-    - Added some more words to the commit message of "Add binding for NVIDIA
-      Tegra30 External Memory Controller" patch, clarifying why common DDR
-      timing device-tree form isn't suitable for Tegra30.
-
-    - The Tegra30 EMC driver now explicitly selects the registers access
-      mode (EMC_DBG mux), not relying on the setting left from bootloader.
-
-v2: - Added support for changing MC clock diver configuration based on
-      Memory Controller (MC) configuration which is part of the memory
-      timing.
-
-    - Merged the "Add custom EMC clock implementation" patch into this
-      series because the "Introduce Tegra30 EMC driver" patch directly
-      depends on it. Please note that Tegra20 EMC driver will need to be
-      adapted for the clock changes as well, I'll send out the Tegra20
-      patches after this series will be applied because of some other
-      dependencies (devfreq) and because the temporary breakage won't
-      be critical (driver will just error out on probe).
-
-    - EMC driver now performs MC configuration validation by checking
-      that the number of MC / EMC timings matches and that the timings
-      rate is the same.
-
-    - EMC driver now supports timings that want to change the MC clock
-      configuration.
-
-    - Other minor prettifying changes of the code.
-
-Dmitry Osipenko (10):
-  clk: tegra20/30: Add custom EMC clock implementation
-  memory: tegra20-emc: Drop setting EMC rate to max on probe
-  memory: tegra20-emc: Adapt for clock driver changes
-  memory: tegra20-emc: Include io.h instead of iopoll.h
-  memory: tegra20-emc: Pre-configure debug register
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
-    Controller
-  memory: tegra: Introduce Tegra30 EMC driver
-  memory: tegra: Ensure timing control debug features are disabled
-  memory: tegra: Consolidate registers definition into common header
-  ARM: dts: tegra30: Add External Memory Controller node
-
- .../memory-controllers/nvidia,tegra30-emc.txt |  249 ++++
- arch/arm/boot/dts/tegra30.dtsi                |   11 +
- drivers/clk/tegra/Makefile                    |    2 +
- drivers/clk/tegra/clk-tegra20-emc.c           |  293 ++++
- drivers/clk/tegra/clk-tegra20.c               |   55 +-
- drivers/clk/tegra/clk-tegra30.c               |   38 +-
- drivers/clk/tegra/clk.h                       |    3 +
- drivers/memory/tegra/Kconfig                  |   10 +
- drivers/memory/tegra/Makefile                 |    1 +
- drivers/memory/tegra/mc.c                     |   42 +-
- drivers/memory/tegra/mc.h                     |   74 +-
- drivers/memory/tegra/tegra124.c               |   20 -
- drivers/memory/tegra/tegra20-emc.c            |  119 +-
- drivers/memory/tegra/tegra30-emc.c            | 1225 +++++++++++++++++
- drivers/memory/tegra/tegra30.c                |   24 +
- include/linux/clk/tegra.h                     |   11 +
- include/soc/tegra/mc.h                        |    2 +-
- 17 files changed, 1995 insertions(+), 184 deletions(-)
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ .../memory-controllers/nvidia,tegra30-emc.txt | 249 ++++++++++++++++++
+ 1 file changed, 249 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.txt
- create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
- create mode 100644 drivers/memory/tegra/tegra30-emc.c
 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.txt
+new file mode 100644
+index 000000000000..c2bc1dbcaa07
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.txt
+@@ -0,0 +1,249 @@
++NVIDIA Tegra30 SoC EMC (external memory controller)
++====================================================
++
++Required properties :
++- compatible : Should be "nvidia,tegra30-emc".
++- reg : physical base address and length of the controller's registers.
++- #address-cells : Should be 1
++- #size-cells : Should be 0
++- interrupts : Should contain EMC General interrupt.
++- clocks : Should contain EMC clock.
++- nvidia,memory-controller : phandle of the MC driver.
++
++The node should contain a "emc-timings" subnode for each supported RAM type
++(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
++being its RAM_CODE.
++
++Required properties for "emc-timings" nodes :
++- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
++used for.
++
++Each "emc-timings" node should contain a "timing" subnode for every supported
++EMC clock rate. The "timing" subnodes should have the clock rate in Hz as
++their unit address.
++
++Required properties for "timing" nodes :
++- clock-frequency : Should contain the memory clock rate in Hz.
++- The following properties contain EMC timing characterization values
++(specified in the board documentation) :
++  - nvidia,emc-auto-cal-interval : EMC_AUTO_CAL_INTERVAL
++  - nvidia,emc-mode-1 : Mode Register 1
++  - nvidia,emc-mode-2 : Mode Register 2
++  - nvidia,emc-mode-reset : Mode Register 0
++  - nvidia,emc-zcal-cnt-long : EMC_ZCAL_WAIT_CNT after clock change
++  - nvidia,emc-cfg-dyn-self-ref : dynamic self-refresh enabled
++  - nvidia,emc-cfg-periodic-qrst : FBIO "read" FIFO periodic resetting enabled
++- nvidia,emc-configuration : EMC timing characterization data. These are the
++registers (see section "18.13.2 EMC Registers" in the TRM) whose values need to
++be specified, according to the board documentation:
++
++	EMC_RC
++	EMC_RFC
++	EMC_RAS
++	EMC_RP
++	EMC_R2W
++	EMC_W2R
++	EMC_R2P
++	EMC_W2P
++	EMC_RD_RCD
++	EMC_WR_RCD
++	EMC_RRD
++	EMC_REXT
++	EMC_WEXT
++	EMC_WDV
++	EMC_QUSE
++	EMC_QRST
++	EMC_QSAFE
++	EMC_RDV
++	EMC_REFRESH
++	EMC_BURST_REFRESH_NUM
++	EMC_PRE_REFRESH_REQ_CNT
++	EMC_PDEX2WR
++	EMC_PDEX2RD
++	EMC_PCHG2PDEN
++	EMC_ACT2PDEN
++	EMC_AR2PDEN
++	EMC_RW2PDEN
++	EMC_TXSR
++	EMC_TXSRDLL
++	EMC_TCKE
++	EMC_TFAW
++	EMC_TRPAB
++	EMC_TCLKSTABLE
++	EMC_TCLKSTOP
++	EMC_TREFBW
++	EMC_QUSE_EXTRA
++	EMC_FBIO_CFG6
++	EMC_ODT_WRITE
++	EMC_ODT_READ
++	EMC_FBIO_CFG5
++	EMC_CFG_DIG_DLL
++	EMC_CFG_DIG_DLL_PERIOD
++	EMC_DLL_XFORM_DQS0
++	EMC_DLL_XFORM_DQS1
++	EMC_DLL_XFORM_DQS2
++	EMC_DLL_XFORM_DQS3
++	EMC_DLL_XFORM_DQS4
++	EMC_DLL_XFORM_DQS5
++	EMC_DLL_XFORM_DQS6
++	EMC_DLL_XFORM_DQS7
++	EMC_DLL_XFORM_QUSE0
++	EMC_DLL_XFORM_QUSE1
++	EMC_DLL_XFORM_QUSE2
++	EMC_DLL_XFORM_QUSE3
++	EMC_DLL_XFORM_QUSE4
++	EMC_DLL_XFORM_QUSE5
++	EMC_DLL_XFORM_QUSE6
++	EMC_DLL_XFORM_QUSE7
++	EMC_DLI_TRIM_TXDQS0
++	EMC_DLI_TRIM_TXDQS1
++	EMC_DLI_TRIM_TXDQS2
++	EMC_DLI_TRIM_TXDQS3
++	EMC_DLI_TRIM_TXDQS4
++	EMC_DLI_TRIM_TXDQS5
++	EMC_DLI_TRIM_TXDQS6
++	EMC_DLI_TRIM_TXDQS7
++	EMC_DLL_XFORM_DQ0
++	EMC_DLL_XFORM_DQ1
++	EMC_DLL_XFORM_DQ2
++	EMC_DLL_XFORM_DQ3
++	EMC_XM2CMDPADCTRL
++	EMC_XM2DQSPADCTRL2
++	EMC_XM2DQPADCTRL2
++	EMC_XM2CLKPADCTRL
++	EMC_XM2COMPPADCTRL
++	EMC_XM2VTTGENPADCTRL
++	EMC_XM2VTTGENPADCTRL2
++	EMC_XM2QUSEPADCTRL
++	EMC_XM2DQSPADCTRL3
++	EMC_CTT_TERM_CTRL
++	EMC_ZCAL_INTERVAL
++	EMC_ZCAL_WAIT_CNT
++	EMC_MRS_WAIT_CNT
++	EMC_AUTO_CAL_CONFIG
++	EMC_CTT
++	EMC_CTT_DURATION
++	EMC_DYN_SELF_REF_CONTROL
++	EMC_FBIO_SPARE
++	EMC_CFG_RSV
++
++Example:
++
++	external-memory-controller {
++		compatible = "nvidia,tegra30-emc";
++		reg = <0x7000f400 0x400>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA30_CLK_EMC>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		nvidia,memory-controller = <&mc>;
++
++		emc-timings-1 {
++			nvidia,ram-code = <1>;
++
++			timing-667000000 {
++				clock-frequency = <667000000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x80100002>;
++				nvidia,emc-mode-2 = <0x80200018>;
++				nvidia,emc-mode-reset = <0x80000b71>;
++				nvidia,emc-zcal-cnt-long = <0x00000040>;
++				nvidia,emc-cfg-dyn-self-ref = <0x00000000>;
++				nvidia,emc-cfg-periodic-qrst = <0x00000001>;
++
++				nvidia,emc-configuration = <
++					0x00000020 /* EMC_RC */
++					0x0000006a /* EMC_RFC */
++					0x00000017 /* EMC_RAS */
++					0x00000007 /* EMC_RP */
++					0x00000005 /* EMC_R2W */
++					0x0000000c /* EMC_W2R */
++					0x00000003 /* EMC_R2P */
++					0x00000011 /* EMC_W2P */
++					0x00000007 /* EMC_RD_RCD */
++					0x00000007 /* EMC_WR_RCD */
++					0x00000002 /* EMC_RRD */
++					0x00000001 /* EMC_REXT */
++					0x00000000 /* EMC_WEXT */
++					0x00000007 /* EMC_WDV */
++					0x0000000a /* EMC_QUSE */
++					0x00000009 /* EMC_QRST */
++					0x0000000b /* EMC_QSAFE */
++					0x00000011 /* EMC_RDV */
++					0x00001412 /* EMC_REFRESH */
++					0x00000000 /* EMC_BURST_REFRESH_NUM */
++					0x00000504 /* EMC_PRE_REFRESH_REQ_CNT */
++					0x00000002 /* EMC_PDEX2WR */
++					0x0000000e /* EMC_PDEX2RD */
++					0x00000001 /* EMC_PCHG2PDEN */
++					0x00000000 /* EMC_ACT2PDEN */
++					0x0000000c /* EMC_AR2PDEN */
++					0x00000016 /* EMC_RW2PDEN */
++					0x00000072 /* EMC_TXSR */
++					0x00000200 /* EMC_TXSRDLL */
++					0x00000005 /* EMC_TCKE */
++					0x00000015 /* EMC_TFAW */
++					0x00000000 /* EMC_TRPAB */
++					0x00000006 /* EMC_TCLKSTABLE */
++					0x00000007 /* EMC_TCLKSTOP */
++					0x00001453 /* EMC_TREFBW */
++					0x0000000b /* EMC_QUSE_EXTRA */
++					0x00000006 /* EMC_FBIO_CFG6 */
++					0x00000000 /* EMC_ODT_WRITE */
++					0x00000000 /* EMC_ODT_READ */
++					0x00005088 /* EMC_FBIO_CFG5 */
++					0xf00b0191 /* EMC_CFG_DIG_DLL */
++					0x00008000 /* EMC_CFG_DIG_DLL_PERIOD */
++					0x00000008 /* EMC_DLL_XFORM_DQS0 */
++					0x00000008 /* EMC_DLL_XFORM_DQS1 */
++					0x00000008 /* EMC_DLL_XFORM_DQS2 */
++					0x00000008 /* EMC_DLL_XFORM_DQS3 */
++					0x0000000a /* EMC_DLL_XFORM_DQS4 */
++					0x0000000a /* EMC_DLL_XFORM_DQS5 */
++					0x0000000a /* EMC_DLL_XFORM_DQS6 */
++					0x0000000a /* EMC_DLL_XFORM_DQS7 */
++					0x00018000 /* EMC_DLL_XFORM_QUSE0 */
++					0x00018000 /* EMC_DLL_XFORM_QUSE1 */
++					0x00018000 /* EMC_DLL_XFORM_QUSE2 */
++					0x00018000 /* EMC_DLL_XFORM_QUSE3 */
++					0x00000000 /* EMC_DLL_XFORM_QUSE4 */
++					0x00000000 /* EMC_DLL_XFORM_QUSE5 */
++					0x00000000 /* EMC_DLL_XFORM_QUSE6 */
++					0x00000000 /* EMC_DLL_XFORM_QUSE7 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS0 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS1 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS2 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS3 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS4 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS5 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS6 */
++					0x00000000 /* EMC_DLI_TRIM_TXDQS7 */
++					0x0000000a /* EMC_DLL_XFORM_DQ0 */
++					0x0000000a /* EMC_DLL_XFORM_DQ1 */
++					0x0000000a /* EMC_DLL_XFORM_DQ2 */
++					0x0000000a /* EMC_DLL_XFORM_DQ3 */
++					0x000002a0 /* EMC_XM2CMDPADCTRL */
++					0x0800013d /* EMC_XM2DQSPADCTRL2 */
++					0x22220000 /* EMC_XM2DQPADCTRL2 */
++					0x77fff884 /* EMC_XM2CLKPADCTRL */
++					0x01f1f501 /* EMC_XM2COMPPADCTRL */
++					0x07077404 /* EMC_XM2VTTGENPADCTRL */
++					0x54000000 /* EMC_XM2VTTGENPADCTRL2 */
++					0x080001e8 /* EMC_XM2QUSEPADCTRL */
++					0x0c000021 /* EMC_XM2DQSPADCTRL3 */
++					0x00000802 /* EMC_CTT_TERM_CTRL */
++					0x00020000 /* EMC_ZCAL_INTERVAL */
++					0x00000100 /* EMC_ZCAL_WAIT_CNT */
++					0x0155000c /* EMC_MRS_WAIT_CNT */
++					0xa0f10000 /* EMC_AUTO_CAL_CONFIG */
++					0x00000000 /* EMC_CTT */
++					0x00000000 /* EMC_CTT_DURATION */
++					0x800028a5 /* EMC_DYN_SELF_REF_CONTROL */
++					0xe8000000 /* EMC_FBIO_SPARE */
++					0xff00ff49 /* EMC_CFG_RSV */
++				>;
++			};
++		};
++	};
 -- 
 2.22.0
