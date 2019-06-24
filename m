@@ -1,74 +1,33 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 07/11] PM / devfreq: tegra30: Reset boosting if clock rate changed
-Date: Mon, 24 Jun 2019 00:46:54 +0300
-Message-ID: <20190623214658.11680-8-digetx@gmail.com>
-References: <20190623214658.11680-1-digetx@gmail.com>
+From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v4 0/5] iommu/amd: Convert the AMD iommu driver to the
+ dma-iommu api
+Date: Sun, 23 Jun 2019 23:19:45 -0700
+Message-ID: <20190624061945.GA4912@infradead.org>
+References: <20190613223901.9523-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190623214658.11680-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20190613223901.9523-1-murphyt7-/Zw1syy4LHg@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean-Philippe Brucker <jean-philippe.brucker-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-There is a situation when memory activity is going up, hence boosting up
-starts to happen, and then governor ramps memory clock rate up. In this
-case consecutive events may be stopped if new "COUNT" is within watermarks
-range, meanwhile old boosting value remains, which is plainly wrong and
-results in unneeded "go down" events after ramping up. In a result of this
-change unnecessary interrupts activity goes even lower.
+Tom,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/devfreq/tegra30-devfreq.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+next time please cc Jerg as the AMD IOMMU maintainer.
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index fc278f2f1b62..6fb3ca125438 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -631,6 +631,24 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
- 		tegra_actmon_stop_device(&tegra->devices[i]);
- }
- 
-+static void tegra_actmon_stop_boosting(struct tegra_devfreq *tegra)
-+{
-+	struct tegra_devfreq_device *dev = tegra->devices;
-+	unsigned int i;
-+	u32 dev_ctrl;
-+
-+	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++, dev++) {
-+		if (!dev->boost_freq)
-+			continue;
-+
-+		dev_ctrl = device_readl(dev, ACTMON_DEV_CTRL);
-+		dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-+		device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
-+
-+		dev->boost_freq = 0;
-+	}
-+}
-+
- static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
- 				u32 flags)
- {
-@@ -656,6 +674,16 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
- 	if (err)
- 		goto restore_min_rate;
- 
-+	/*
-+	 * Hence boosting-up could be active at the moment of the rate-change
-+	 * and in this case boosting should be reset because it doesn't relate
-+	 * to the new state. If average won't follow shortly in a case of going
-+	 * UP, then clock rate will drop back on next update due to the missed
-+	 * boosting.
-+	 */
-+	if (rate != devfreq->previous_freq)
-+		tegra_actmon_stop_boosting(tegra);
-+
- 	return 0;
- 
- restore_min_rate:
--- 
-2.22.0
+Joerg, any chance you could review this?  Toms patches to convert the
+AMD and Intel IOMMU drivers to the dma-iommu code are going to make my
+life in DMA land significantly easier, so I have a vested interest
+in this series moving forward :)
