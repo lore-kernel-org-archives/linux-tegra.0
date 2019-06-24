@@ -1,93 +1,166 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V4 13/18] soc/tegra: pmc: allow support for more tegra
- wake
-Date: Mon, 24 Jun 2019 09:21:41 -0700
-Message-ID: <dc320c81-6601-4e6d-a7a0-57df8771bd99@nvidia.com>
+Subject: Re: [PATCH V4 02/18] pinctrl: tegra: add suspend and resume support
+Date: Mon, 24 Jun 2019 10:34:13 -0700
+Message-ID: <896de0f3-78b0-c5fc-9b74-fee442ab116c@nvidia.com>
 References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-14-git-send-email-skomatineni@nvidia.com>
- <86d0j3pfga.wl-marc.zyngier@arm.com>
+ <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
+ <a03ce644-5efd-e721-fb06-16de097171bb@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <86d0j3pfga.wl-marc.zyngier@arm.com>
+In-Reply-To: <a03ce644-5efd-e721-fb06-16de097171bb@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 6/24/19 1:15 AM, Marc Zyngier wrote:
-> On Mon, 24 Jun 2019 04:02:54 +0100,
-> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
->> This patch allows to create separate irq_set_wake and irq_set_type
->> implementations for different tegra designs PMC that has different
->> wake models which require difference wake registers and different
->> programming sequence.
+On 6/24/19 2:46 AM, Dmitry Osipenko wrote:
+> 24.06.2019 6:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> This patch adds support for Tegra pinctrl driver suspend and resume.
 >>
->> AOWAKE model support is available for Tegra186 and Tegra194 only
->> and it resides within PMC and supports tiered wake architecture.
->>
->> Tegra210 and prior tegra designs uses PMC directly to receive wake
->> events and coordinate the wake sequence.
+>> During suspend, context of all pinctrl registers are stored and
+>> on resume they are all restored to have all the pinmux and pad
+>> configuration for normal operation.
 >>
 >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 >> ---
->>   drivers/soc/tegra/pmc.c | 14 ++++++++++----
->>   1 file changed, 10 insertions(+), 4 deletions(-)
+>>   drivers/pinctrl/tegra/pinctrl-tegra.c    | 47 ++++++++++++++++++++++++=
+++++++++
+>>   drivers/pinctrl/tegra/pinctrl-tegra.h    |  4 +++
+>>   drivers/pinctrl/tegra/pinctrl-tegra210.c |  6 ++++
+>>   3 files changed, 57 insertions(+)
 >>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index edd4fe06810f..e87f29a35fcf 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -226,6 +226,8 @@ struct tegra_pmc_soc {
->>   	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
->>   				   struct device_node *np,
->>   				   bool invert);
->> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
->> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
->>   
->>   	const char * const *reset_sources;
->>   	unsigned int num_reset_sources;
->> @@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
->>   	.alloc = tegra_pmc_irq_alloc,
->>   };
->>   
->> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->>   {
->>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->>   	unsigned int offset, bit;
->> @@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->>   	return 0;
+>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/teg=
+ra/pinctrl-tegra.c
+>> index b03c465917b8..c0ba6fa63ad1 100644
+>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>> @@ -631,6 +631,38 @@ static void tegra_pinctrl_clear_parked_bits(struct =
+tegra_pmx *pmx)
+>>   	}
 >>   }
->>   
->> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
->> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>>  =20
+>> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev)
+> The "maybe_unused" attribute isn't needed for global functions because
+> compiler always assumes that such functions are used somewhere outside.
+Will fix this in V5
+>> +{
+>> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
+>> +	u32 *backup_regs =3D pmx->backup_regs;
+>> +	u32 *regs;
+>> +	unsigned int i, j;
+>> +
+>> +	for (i =3D 0; i < pmx->nbanks; i++) {
+>> +		regs =3D pmx->regs[i];
+>> +		for (j =3D 0; j < pmx->reg_bank_size[i] / 4; j++)
+>> +			*backup_regs++ =3D readl(regs++);
+>> +	}
+>> +
+>> +	return pinctrl_force_sleep(pmx->pctl);
+>> +}
+>> +
+>> +int __maybe_unused tegra_pinctrl_resume(struct device *dev)
+>> +{
+>> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
+>> +	u32 *backup_regs =3D pmx->backup_regs;
+>> +	u32 *regs;
+>> +	unsigned int i, j;
+>> +
+>> +	for (i =3D 0; i < pmx->nbanks; i++) {
+>> +		regs =3D pmx->regs[i];
+>> +		for (j =3D 0; j < pmx->reg_bank_size[i] / 4; j++)
+>> +			writel(*backup_regs++, regs++);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static bool gpio_node_has_range(const char *compatible)
 >>   {
->>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->>   	u32 value;
->> @@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
->>   	pmc->irq.irq_unmask = irq_chip_unmask_parent;
->>   	pmc->irq.irq_eoi = irq_chip_eoi_parent;
->>   	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
->> -	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
->> -	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
->> +	if (pmc->soc->irq_set_type)
->> +		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
->> +	if (pmc->soc->irq_set_wake)
->> +		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
-> I already commented on how superfluous these 'if ()' where. If you
-> disagree, please let me know why.
->
-> Thanks,
->
-> 	M.
-
-Sorry Marc, missed it. Will fix in next version...
-
-
-Thanks
-
-Sowjanya
+>>   	struct device_node *np;
+>> @@ -655,6 +687,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev=
+,
+>>   	int i;
+>>   	const char **group_pins;
+>>   	int fn, gn, gfn;
+>> +	unsigned long backup_regs_size =3D 0;
+>>  =20
+>>   	pmx =3D devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+>>   	if (!pmx)
+>> @@ -707,6 +740,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev=
+,
+>>   		res =3D platform_get_resource(pdev, IORESOURCE_MEM, i);
+>>   		if (!res)
+>>   			break;
+>> +		backup_regs_size +=3D resource_size(res);
+>>   	}
+>>   	pmx->nbanks =3D i;
+>>  =20
+>> @@ -715,11 +749,24 @@ int tegra_pinctrl_probe(struct platform_device *pd=
+ev,
+>>   	if (!pmx->regs)
+>>   		return -ENOMEM;
+>>  =20
+>> +	pmx->reg_bank_size =3D devm_kcalloc(&pdev->dev, pmx->nbanks,
+>> +					  sizeof(*pmx->reg_bank_size),
+>> +					  GFP_KERNEL);
+>> +	if (!pmx->reg_bank_size)
+>> +		return -ENOMEM;
+>> +
+>> +	pmx->backup_regs =3D devm_kzalloc(&pdev->dev, backup_regs_size,
+>> +					GFP_KERNEL);
+>> +	if (!pmx->backup_regs)
+>> +		return -ENOMEM;
+>> +
+>>   	for (i =3D 0; i < pmx->nbanks; i++) {
+>>   		res =3D platform_get_resource(pdev, IORESOURCE_MEM, i);
+>>   		pmx->regs[i] =3D devm_ioremap_resource(&pdev->dev, res);
+>>   		if (IS_ERR(pmx->regs[i]))
+>>   			return PTR_ERR(pmx->regs[i]);
+>> +
+>> +		pmx->reg_bank_size[i] =3D resource_size(res);
+>>   	}
+>>  =20
+>>   	pmx->pctl =3D devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, =
+pmx);
+>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/teg=
+ra/pinctrl-tegra.h
+>> index 32642af3f871..65fcbf8c7579 100644
+>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
+>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+>> @@ -17,6 +17,8 @@ struct tegra_pmx {
+>>  =20
+>>   	int nbanks;
+>>   	void __iomem **regs;
+>> +	size_t *reg_bank_size;
+>> +	u32 *backup_regs;
+>>   };
+>>  =20
+>>   enum tegra_pinconf_param {
+>> @@ -195,4 +197,6 @@ struct tegra_pinctrl_soc_data {
+>>  =20
+>>   int tegra_pinctrl_probe(struct platform_device *pdev,
+>>   			const struct tegra_pinctrl_soc_data *soc_data);
+>> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev);
+>> +int __maybe_unused tegra_pinctrl_resume(struct device *dev);
+>>   #endif
+>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/=
+tegra/pinctrl-tegra210.c
+>> index 617ad963f5ad..4616bbc2efba 100644
+>> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>> @@ -1562,6 +1562,11 @@ static int tegra210_pinctrl_probe(struct platform=
+_device *pdev)
+>>   	return tegra_pinctrl_probe(pdev, &tegra210_pinctrl);
+>>   }
+>>  =20
+>> +static const struct dev_pm_ops tegra_pinctrl_pm =3D {
+>> +	.suspend =3D &tegra_pinctrl_suspend,
+>> +	.resume =3D &tegra_pinctrl_resume
+>> +};
+> What about to move tegra_pinctrl_pm out into pinctrl-tegra.c to make it
+> common for all of the drivers?
+OK, Will do that in V5
