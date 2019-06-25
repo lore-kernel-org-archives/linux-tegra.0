@@ -1,105 +1,66 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V3 06/17] clk: tegra: pll: save and restore pll context
-Date: Tue, 25 Jun 2019 14:22:43 -0700
-Message-ID: <1d34f117-9882-7e11-9641-90f3b7ebc273@nvidia.com>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-7-git-send-email-skomatineni@nvidia.com>
- <20190625204640.D640E205ED@mail.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 5/9] ASoC: soc-core: use
+ soc_find_component() at snd_soc_get_dai_id()
+Date: Tue, 25 Jun 2019 23:38:14 +0100
+Message-ID: <374e71f7-b49c-ec79-f3ca-ae630a383521@nvidia.com>
+References: <87y33aaluu.wl-kuninori.morimoto.gx@renesas.com>
+ <87r292alro.wl-kuninori.morimoto.gx@renesas.com>
+ <cb3a6d0a-ca7b-d6b6-72db-5dff520acfc9@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190625204640.D640E205ED@mail.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <cb3a6d0a-ca7b-d6b6-72db-5dff520acfc9@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, jason@lakedaemon.net, jonathanh@nvidia.com, linus.walleij@linaro.org, marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de, thierry.reding@gmail.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 6/25/19 1:46 PM, Stephen Boyd wrote:
-> Quoting Sowjanya Komatineni (2019-06-18 00:46:20)
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index 1583f5fc992f..4b0ed8fc6268 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -1008,6 +1008,54 @@ static unsigned long clk_plle_recalc_rate(struct clk_hw *hw,
->>          return rate;
->>   }
->>   
->> +void tegra_clk_sync_state_pll(struct clk_hw *hw)
->> +{
->> +       if (!__clk_get_enable_count(hw->clk))
->> +               clk_pll_disable(hw);
->> +       else
->> +               clk_pll_enable(hw);
->> +}
->> +
->> +static int tegra_clk_pll_save_context(struct clk_hw *hw)
->> +{
->> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
->> +
->> +       pll->rate = clk_hw_get_rate(hw);
->> +
->> +       if (!strcmp(__clk_get_name(hw->clk), "pll_mb"))
->> +               pll->pllbase_ctx = pll_readl_base(pll);
->> +       else if (!strcmp(__clk_get_name(hw->clk), "pll_re_vco"))
->> +               pll->pllbase_ctx = pll_readl_base(pll) & (0xf << 16);
->> +
->> +       return 0;
->> +}
->> +
->> +static void tegra_clk_pll_restore_context(struct clk_hw *hw)
->> +{
->> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
->> +       u32 val;
->> +
->> +       if (clk_pll_is_enabled(hw))
->> +               return;
->> +
->> +       if (!strcmp(__clk_get_name(hw->clk), "pll_mb")) {
-> Is there any way to avoid doing a string comparison here, and instead do
-> something like a pointer comparison? Or maybe look at some flag in the
-> tegra_clk_pll to figure out what to do differently? Using a string
-> comparison is not too nice. Or even have different clk ops for the
-> different clks and then do different things in this restore clk_op?
-OK, Will update...
->> +               pll_writel_base(pll->pllbase_ctx, pll);
->> +       } else if (!strcmp(__clk_get_name(hw->clk), "pll_re_vco")) {
->> +               val = pll_readl_base(pll);
->> +               val &= ~(0xf << 16);
->> +               pll_writel_base(pll->pllbase_ctx | val, pll);
->> +       }
->> +
->> +       if (pll->params->set_defaults)
->> +               pll->params->set_defaults(pll);
->> +
->> +       clk_set_rate(hw->clk, pll->rate);
-> Do you need to call clk_set_rate() here to change the frequency of the
-> clk or just the parents of the clk, or both? I'd think that when we're
-> restoring the clk the cached rate of the clk would match whatever we're
-> restoring to, so this is a NOP. So does this do anything?
->
-> I'd prefer that the restore ops just restore the clk hardware state of
-> the clk_hw passed in, and not try to fix up the entire tree around a
-> certain clk, if that's even possible.
-
-On restore, need to program tegra plls rate back to the same rate as 
-they were before suspend, so I am calling clk_set_rate to program pll 
-m,n,p values in hw registers.
-
->> +
->> +       /* do not sync pllx state here. pllx is sync'd after dfll resume */
->> +       if (strcmp(__clk_get_name(hw->clk), "pll_x"))
->> +               tegra_clk_sync_state_pll(hw);
->> +}
->> +
->>   const struct clk_ops tegra_clk_pll_ops = {
->>          .is_enabled = clk_pll_is_enabled,
->>          .enable = clk_pll_enable,
->> @@ -1015,6 +1063,8 @@ const struct clk_ops tegra_clk_pll_ops = {
->>          .recalc_rate = clk_pll_recalc_rate,
->>          .round_rate = clk_pll_round_rate,
->>          .set_rate = clk_pll_set_rate,
->> +       .save_context = tegra_clk_pll_save_context,
->> +       .restore_context = tegra_clk_pll_restore_context,
+Ck9uIDI1LzA2LzIwMTkgMjE6NDcsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAxMy4wNS4yMDE5
+IDEwOjA3LCBLdW5pbm9yaSBNb3JpbW90byDQv9C40YjQtdGCOgo+PiBGcm9tOiBLdW5pbm9yaSBN
+b3JpbW90byA8a3VuaW5vcmkubW9yaW1vdG8uZ3hAcmVuZXNhcy5jb20+Cj4+Cj4+IHNvYy1jb3Jl
+IGNvcmUgYWxyZWFkeSBoYXMgc29jX2ZpbmRfY29tcG9uZW50KCkgd2hpY2ggZmluZAo+PiBjb21w
+b25lbnQgZnJvbSBkZXZpY2Ugbm9kZS4KPj4gTGV0J3MgdXNlIGV4aXN0aW5nIGZ1bmN0aW9uIHRv
+IGZpbmQgY29tcG9uZW50Lgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBLdW5pbm9yaSBNb3JpbW90byA8
+a3VuaW5vcmkubW9yaW1vdG8uZ3hAcmVuZXNhcy5jb20+Cj4+IC0tLQo+PiAgc291bmQvc29jL3Nv
+Yy1jb3JlLmMgfCAxNyArKysrKy0tLS0tLS0tLS0tLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDUgaW5z
+ZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2Mv
+c29jLWNvcmUuYyBiL3NvdW5kL3NvYy9zb2MtY29yZS5jCj4+IGluZGV4IGU1NTE3MGMuLmU4M2Vk
+YmUgMTAwNjQ0Cj4+IC0tLSBhL3NvdW5kL3NvYy9zb2MtY29yZS5jCj4+ICsrKyBiL3NvdW5kL3Nv
+Yy9zb2MtY29yZS5jCj4+IEBAIC0zNzUxLDcgKzM3NTEsNyBAQCBFWFBPUlRfU1lNQk9MX0dQTChz
+bmRfc29jX29mX3BhcnNlX2RhaWZtdCk7Cj4+ICAKPj4gIGludCBzbmRfc29jX2dldF9kYWlfaWQo
+c3RydWN0IGRldmljZV9ub2RlICplcCkKPj4gIHsKPj4gLQlzdHJ1Y3Qgc25kX3NvY19jb21wb25l
+bnQgKnBvczsKPj4gKwlzdHJ1Y3Qgc25kX3NvY19jb21wb25lbnQgKmNvbXBvbmVudDsKPj4gIAlz
+dHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGU7Cj4+ICAJaW50IHJldDsKPj4gIAo+PiBAQCAtMzc2NSwx
+NyArMzc2NSwxMCBAQCBpbnQgc25kX3NvY19nZXRfZGFpX2lkKHN0cnVjdCBkZXZpY2Vfbm9kZSAq
+ZXApCj4+ICAJICovCj4+ICAJcmV0ID0gLUVOT1RTVVBQOwo+PiAgCW11dGV4X2xvY2soJmNsaWVu
+dF9tdXRleCk7Cj4+IC0JZm9yX2VhY2hfY29tcG9uZW50KHBvcykgewo+PiAtCQlzdHJ1Y3QgZGV2
+aWNlX25vZGUgKmNvbXBvbmVudF9vZl9ub2RlID0gc29jX2NvbXBvbmVudF90b19ub2RlKHBvcyk7
+Cj4+IC0KPj4gLQkJaWYgKGNvbXBvbmVudF9vZl9ub2RlICE9IG5vZGUpCj4+IC0JCQljb250aW51
+ZTsKPj4gLQo+PiAtCQlpZiAocG9zLT5kcml2ZXItPm9mX3hsYXRlX2RhaV9pZCkKPj4gLQkJCXJl
+dCA9IHBvcy0+ZHJpdmVyLT5vZl94bGF0ZV9kYWlfaWQocG9zLCBlcCk7Cj4+IC0KPj4gLQkJYnJl
+YWs7Cj4+IC0JfQo+PiArCWNvbXBvbmVudCA9IHNvY19maW5kX2NvbXBvbmVudChub2RlLCBOVUxM
+KTsKPj4gKwlpZiAoY29tcG9uZW50ICYmCj4+ICsJICAgIGNvbXBvbmVudC0+ZHJpdmVyLT5vZl94
+bGF0ZV9kYWlfaWQpCj4+ICsJCXJldCA9IGNvbXBvbmVudC0+ZHJpdmVyLT5vZl94bGF0ZV9kYWlf
+aWQoY29tcG9uZW50LCBlcCk7Cj4+ICAJbXV0ZXhfdW5sb2NrKCZjbGllbnRfbXV0ZXgpOwo+PiAg
+Cj4+ICAJb2Zfbm9kZV9wdXQobm9kZSk7Cj4+Cj4gCj4gSGksCj4gCj4gVGhpcyBwYXRjaCBjYXVz
+ZXMgY3Jhc2ggb24gdG9kYXkncyBsaW51eC1uZXh0IGFwcGFyZW50bHkgYmVjYXVzZSAiQ1BVIERB
+SSIgaXMgbm90Cj4gcmVnaXN0ZXJlZCBub3csIGFueSBpZGVhcz8KCkZXSVcgSSBhbSBzZWVpbmcg
+dGhlIHNhbWUgY3Jhc2gvcmVncmVzc2lvbiwgaG93ZXZlciwgdGhlIGJpc2VjdCBpcwpwb2ludGlu
+ZyB0byBjb21taXQgYjlmMmUyNWM1OTliYmJmMDY0Njk1N2UwN2ViYjcyYjk0MmMyODZjYyAoIkFT
+b0M6CnNvYy1jb3JlOiB1c2Ugc29jX2ZpbmRfY29tcG9uZW50KCkgYXQgc25kX3NvY19maW5kX2Rh
+aSgpIikgYW5kIHJldmVydGluZwp0aGlzIGNvbW1pdCBmaXhlcyB0aGUgcHJvYmxlbSBmb3IgbWUu
+CgpEbWl0cnksIGFyZSB5b3Ugc3VyZSBpdCBpcyB0aGlzIGNvbW1pdD8gVGhleSBkbyBoYXZlIGEg
+c2ltaWxhciBuYW1lLgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGljCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFs
+c2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwczovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
