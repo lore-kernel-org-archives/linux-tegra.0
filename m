@@ -1,16 +1,14 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 5/5] arm64: tegra: Default configuration changes for
- v5.3-rc1
-Date: Tue, 25 Jun 2019 05:20:09 -0700
-Message-ID: <20190625122009.f7px5fojvmql5vbc@localhost>
+Subject: Re: [GIT PULL 1/5] firmware: tegra: Changes for v5.3-rc1
+Date: Tue, 25 Jun 2019 05:42:00 -0700
+Message-ID: <20190625124200.toijgcugdtxheaxd@localhost>
 References: <20190621150206.19037-1-thierry.reding@gmail.com>
- <20190621150206.19037-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20190621150206.19037-5-thierry.reding@gmail.com>
+In-Reply-To: <20190621150206.19037-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,7 +22,7 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 05:02:06PM +0200, Thierry Reding wrote:
+On Fri, Jun 21, 2019 at 05:02:02PM +0200, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
 > The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
@@ -33,29 +31,23 @@ On Fri, Jun 21, 2019 at 05:02:06PM +0200, Thierry Reding wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-arm64-defconfig
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-firmware
 > 
-> for you to fetch changes up to 01d6fb565b4a7858af1699727f25da2279d75deb:
+> for you to fetch changes up to 61ed7ef952fc482ec8d4a966ed0d1e32df276c59:
 > 
->   arm64: defconfig: Add Tegra194 PCIe driver (2019-06-20 13:02:27 +0200)
+>   firmware: tegra: Early resume BPMP (2019-06-14 17:45:17 +0200)
 > 
 > Thanks,
 > Thierry
 > 
 > ----------------------------------------------------------------
-> arm64: tegra: Default configuration changes for v5.3-rc1
+> firmware: tegra: Changes for v5.3-rc1
 > 
-> This enables the INA3221 power monitoring driver that is used on many of
-> the Jetson boards as well as Tegra194 PCIe support.
-> 
-> ----------------------------------------------------------------
-> Nicolin Chen (1):
->       arm64: defconfig: Add HWMON INA3221 support
-> 
-> Vidya Sagar (1):
->       arm64: defconfig: Add Tegra194 PCIe driver
+> This contains a single, simple change that resumes the BPMP driver early
+> so that it is available when the various consumers want to enable their
+> clocks.
 
-Merged, thanks!
+Merged, thanks.
 
 
 -Olof
