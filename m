@@ -1,76 +1,85 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 13/16] PM / devfreq: tegra: Support Tegra30
-Date: Tue, 25 Jun 2019 14:30:01 +0300
-Message-ID: <7488653b-e8ec-27e6-0390-5e23481857e9@gmail.com>
-References: <7561edbc-c17c-101a-b339-fc7f9968a470@gmail.com>
- <37db00bc-3a22-d1c2-7bdc-e27af42cd5c7@gmail.com>
- <20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
- <20190624073414epcms1p87b6dc13758b6bd401d275cfba583314a@epcms1p8>
- <20190624111134epcms1p361aed3c72edd6eebc95408331c8d9739@epcms1p3>
- <CGME20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
- <20190625014214epcms1p1b8f2d76cd8cfdf3fdf517be08a92ccdf@epcms1p1>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 4/5] arm64: tegra: Device tree changes for v5.3-rc1
+Date: Tue, 25 Jun 2019 04:49:25 -0700
+Message-ID: <20190625114925.qqei4zi2gy3p5rpu@localhost>
+References: <20190621150206.19037-1-thierry.reding@gmail.com>
+ <20190621150206.19037-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190625014214epcms1p1b8f2d76cd8cfdf3fdf517be08a92ccdf@epcms1p1>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190621150206.19037-4-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-25.06.2019 4:42, MyungJoo Ham пишет:
-> Sender : Dmitry Osipenko <digetx@gmail.com>
->> 24.06.2019 14:11, MyungJoo Ham пишет:
->>>>
->>>> --------- Original Message ---------
->>>> Sender : Dmitry Osipenko <digetx@gmail.com>
->>>>
->>>> 24.06.2019 10:34, MyungJoo Ham пишет:
->>>>>>
->>>>>> A question:
->>>>>>
->>>>>> Does this driver support Tegra20 as well?
->>>>>> I'm asking this because ARCH_TEGRA includes ARCH_TEGRA_2x_SOC
->>>>>> according to /drivers/soc/tegra/Kconfig.
->>>>>>
->>>>>
->>>>> For this matter, how about updating your 13/16 patch as follows?
->>>>>
->>> []
->>>>
->>>> Good call! I'll update this patch following yours suggestion, thanks.
->>>
->>> Or, you may approve the modified commits here:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/log/?h=for-next
->>
->> Looks almost good to me!
->>
->> I just recalled that there is also a 64bit variant of Tegra124, the Tegra132. Hence
->> the Tegra30+ Kconfig entry should look like this (it's also worthy to break the lines
->> for readability):
->>
->> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
->> index ccb1a68c4b51..bd2efbc27725 100644
->> --- a/drivers/devfreq/Kconfig
->> +++ b/drivers/devfreq/Kconfig
->> @@ -94,7 +94,10 @@ config ARM_EXYNOS_BUS_DEVFREQ
->>
->> config ARM_TEGRA_DEVFREQ
->>        tristate "NVIDIA Tegra30/114/124/210 DEVFREQ Driver"
->> -       depends on ARCH_TEGRA || COMPILE_TEST
->> +       depends on ARCH_TEGRA_3x_SOC  || ARCH_TEGRA_114_SOC || \
->> +                  ARCH_TEGRA_132_SOC || ARCH_TEGRA_124_SOC || \
->> +                  ARCH_TEGRA_210_SOC || \
->> +                  COMPILE_TEST
->>        select PM_OPP
->>        help
->>          This adds the DEVFREQ driver for the Tegra family of SoCs.
->>
->> Could you please adjust the patches like I'm suggesting? I'll approve yours change
->> then and won't re-spin the first batch of the patches.
+On Fri, Jun 21, 2019 at 05:02:05PM +0200, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
 > 
-> I've adjusted as you suggested. It's pushed to the git repo as well.
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> 
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-arm64-dt
+> 
+> for you to fetch changes up to a586c88eab65619f3654194dc90d46c98e712af2:
+> 
+>   arm64: tegra: Enable PCIe slots in P2972-0000 board (2019-06-21 16:06:00 +0200)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> arm64: tegra: Device tree changes for v5.3-rc1
+> 
+> This contains the bulk of the Tegra changes this cycle. It has a bunch
+> of improvements across almost all boards. These are mostly small and not
+> too exciting additions.
+> 
+> Most notably perhaps is the continuation of Jetson Nano support, which
+> is now mostly on feature parity with Jetson TX1.
+> 
+> ----------------------------------------------------------------
+> Jon Hunter (3):
+>       arm64: tegra: Fix AGIC register range
+>       arm64: tegra: Update Jetson TX1 GPU regulator timings
+>       arm64: tegra: Fix Jetson Nano GPU regulator
+> 
+> Joseph Lo (1):
+>       arm64: tegra: Add CPU cache topology for Tegra186
+> 
+> Manikanta Maddireddy (1):
+>       arm64: tegra: Add PEX DPD states as pinctrl properties
+> 
+> Nicolin Chen (1):
+>       arm64: tegra: Add INA3221 channel info for Jetson TX2
+> 
+> Sameer Pujar (2):
+>       arm64: tegra: Add ACONNECT, ADMA and AGIC nodes
+>       arm64: tegra: Enable ACONNECT, ADMA and AGIC
+> 
+> Thierry Reding (18):
+>       arm64: tegra: Use TEGRA186_ prefix for GPIOs
+>       dt-bindings: tegra186-gpio: Remove unused definitions
+>       arm64: tegra: Clarify that P2771 is the Jetson TX2 Developer Kit
+>       arm64: tegra: Clarify that P3310 is the Jetson TX2
+>       arm64: tegra: Clarify that P2888 is the Jetson AGX Xavier
 
-Thank you very much, looking good now!
+Thanks for this one. The numerical-to-product mapping is quite opaque.
+
+Merged,
+
+
+-Olof
