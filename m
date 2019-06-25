@@ -1,51 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
- declaring platform drivers
-Date: Tue, 25 Jun 2019 11:18:25 +0200
-Message-ID: <CACRpkdYQXFd5q+k8aKWKK5krzq0KpCmo9fsUW8Dx3jHq1LHwhA@mail.gmail.com>
-References: <1560796871-18560-1-git-send-email-info@metux.net>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.14 00/51] 4.14.130-stable review
+Date: Tue, 25 Jun 2019 10:59:57 +0100
+Message-ID: <a86fe1d6-a141-089c-79e0-dc8eed1205b1@nvidia.com>
+References: <20190624092305.919204959@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>, Greg KH <gregkh@linuxfoundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tien Hock Loh <thloh@altera.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com, Rafael J.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 8:41 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
 
-> From: Enrico Weigelt <info@metux.net>
->
-> Add more helper macros for trivial driver init cases, similar to the
-> already existing module_platform_driver()+friends - now for those which
-> are initialized at other stages. Lots of drivers couldn't use the existing
-> macros, as they need to be called at different init stages, eg. subsys,
-> postcore, arch.
->
-> This helps to further reduce driver init boilerplate.
->
-> Signed-off-by: Enrico Weigelt <info@metux.net>
+On 24/06/2019 10:56, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.130 release.
+> There are 51 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.130-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-You need to send this to Greg as device core maintainer.
-Possibly to Rafael as well, he did a very intersting rework
-on device dependencies with device links.
 
-While in general I agree that this diets down a lot of duplicate
-code that we have done the same way over and over, there
-is the issue that we don't want any drivers to do this mockery
-and instead use deferred probe and ultimately just probe in the
-right order.
+All tests passing for Tegra ...
 
-I think device links were supposed to fix this up, but it indeed
-assumes that you know of these dependencies before you
-start probing the first driver, and often you do not, unless the
-hardware description explicitly encodes that. And that is one
-big problem.
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
 
-If we should do this, device core changes must be merged or
-explicitly ACKed first.
+Linux version:	4.14.130-rc1-g57f3c9aebc30
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Yours,
-Linus Walleij
+Cheers
+Jon
+
+-- 
+nvpublic
