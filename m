@@ -1,63 +1,57 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio
- resume
-Date: Tue, 25 Jun 2019 15:40:31 +0200
-Message-ID: <20190625134031.GA22491@ulmo>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 2/5] regulator: core: Expose some of core functions
+ needed by couplers
+Date: Tue, 25 Jun 2019 17:40:01 +0300
+Message-ID: <a0626c9d-c68b-9043-8b2f-870f594938b8@gmail.com>
+References: <20190623210835.26281-1-digetx@gmail.com>
+ <20190623210835.26281-3-digetx@gmail.com>
+ <20190625111946.GP5316@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190625111946.GP5316@sirena.org.uk>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+25.06.2019 14:19, Mark Brown пишет:
+> On Mon, Jun 24, 2019 at 12:08:32AM +0300, Dmitry Osipenko wrote:
+>> Expose some of internal functions that are required for implementation of
+>> customized regulator couplers.
+> 
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> 
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-couple-api
+> 
+> for you to fetch changes up to d22b85a1b97d12a4940ef9d778f6122546736f78:
+> 
+>   regulator: core: Expose some of core functions needed by couplers (2019-06-25 12:15:35 +0100)
+> 
+> ----------------------------------------------------------------
+> regulator: Coupling API
+> 
+> This series introduces a way of specifying a customized regulators coupler
+> which is necessary for cases like a non-trivial DVFS implementation.
+> 
+> ----------------------------------------------------------------
+> Dmitry Osipenko (2):
+>       regulator: core: Introduce API for regulators coupling customization
+>       regulator: core: Expose some of core functions needed by couplers
+> 
+>  drivers/regulator/core.c          | 194 ++++++++++++++++++++++++++++----------
+>  drivers/regulator/of_regulator.c  |  63 +++++++++----
+>  include/linux/regulator/coupler.h |  97 +++++++++++++++++++
+>  include/linux/regulator/driver.h  |   6 +-
+>  include/linux/regulator/machine.h |   2 +-
+>  5 files changed, 287 insertions(+), 75 deletions(-)
+>  create mode 100644 include/linux/regulator/coupler.h
+> 
 
---TB36FDmn/VVEgNH/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jun 23, 2019 at 08:02:44PM -0700, Sowjanya Komatineni wrote:
-> During SC7 resume, PARKED bit clear from the pinmux registers may
-> cause a glitch on the GPIO lines.
->=20
-> So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
-> to keep the GPIO lines in a known good state prior to clearing PARKED
-> bit.
->=20
-> This patch has fix for this by moving Tegra GPIOs restore to happen
-> very early than pinctrl resume.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/gpio/gpio-tegra.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---TB36FDmn/VVEgNH/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0SJEsACgkQ3SOs138+
-s6Gc4RAAuL9MGdkEhgzl61Ta2oBYD0aZWJ66SqDoCR4N4IOJUbUigecf27fp/Aq2
-hSdNG1GPkruQ9M2Dr/R7aQAVgYnZZRbxTTtGvylvkSa8nPDRWVESZSBGlKERb1oE
-tbBTktBKqYuZNv5tfxAoUnG7elNy/6LLbw942vtoblJdLPDGnuIiJw0wWhUj6bMM
-iaskxrSUg5K8ekrAqc5XTkZm92lxCGKHDYucMxyUF/nZCW8iczUGo+d2hzd3JFvj
-ruyTZuaYf6Pw2VhNJbsMpK+hqi3ou8RdVUjhc2DmUT/f5CTcjp0bO5UqjSH0U2LZ
-7v4aqh12UFukfwgb3UGq5Zj/qJoCXJKcIYeD4mZa/kKJUjgA0P6mCmrv+Qq6lEbB
-2+n2dMn1GmJdr9wTYATGeCIY794k2bWBOwYKiKx3AcOwBa4yp6rtLDbdPefKZsp7
-id8JXupBhHFiWbF4G7vLg9lmnPwTBHnJ1gD5oqBrtoryZMJyTD1XQNHMudiOyGL/
-ENdep/ewpV3jK7zVVpOomS8CDNa/0joXlyvGjHBtK341eCEyIxGD9nFytIPzqvFP
-+zdfiN5ioTRBBNpEaKcP5JRZiLMpUC00uT32vJlTKJb51V5q0MP1YxO8BGQ6EV8m
-dceqZShedBlFvgND7IuZ3JhX2Kgo6YtoGpdy0jzsSlDVi7xTU/Y=
-=Xgxt
------END PGP SIGNATURE-----
-
---TB36FDmn/VVEgNH/--
+Thank you very much! Very nice to see some more progress!
