@@ -1,15 +1,15 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/5] memory: tegra: Changes for v5.3-rc1
-Date: Tue, 25 Jun 2019 05:42:24 -0700
-Message-ID: <20190625124224.dyccwpfgv2b3b4vo@localhost>
+Subject: Re: [GIT PULL 3/5] soc: tegra: Changes for v5.3-rc1
+Date: Tue, 25 Jun 2019 05:42:56 -0700
+Message-ID: <20190625124256.qrkwa3gghnfi45yh@localhost>
 References: <20190621150206.19037-1-thierry.reding@gmail.com>
- <20190621150206.19037-2-thierry.reding@gmail.com>
+ <20190621150206.19037-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20190621150206.19037-2-thierry.reding@gmail.com>
+In-Reply-To: <20190621150206.19037-3-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,7 +23,7 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 05:02:03PM +0200, Thierry Reding wrote:
+On Fri, Jun 21, 2019 at 05:02:04PM +0200, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
 > The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
@@ -32,12 +32,11 @@ On Fri, Jun 21, 2019 at 05:02:03PM +0200, Thierry Reding wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-memory
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-soc
 > 
-> for you to fetch changes up to 76ce48bdb303afa6e33cfbadca9d6bee23a4f559:
+> for you to fetch changes up to 7ac13f6dcbd59b8f99395588cd7ef31f7e3bd3c6:
 > 
->   memory: tegra: Fix -Wunused-const-variable (2019-06-14 18:02:02 +0200)
-
+>   soc/tegra: Select pinctrl for Tegra194 (2019-06-13 10:44:08 +0200)
 
 Merged, thanks!
 
