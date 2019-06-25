@@ -1,245 +1,36 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2] PCI: PM: Skip devices in D0 for suspend-to-idle
-Date: Tue, 25 Jun 2019 14:26:08 +0100
-Message-ID: <779fb707-36a4-f442-b1a7-51aa60db6ff0@nvidia.com>
-References: <1668247.RaJIPSxJUN@kreacher>
- <CAJZ5v0hdtXqoK84DpYtyMSCnkR9zOHFiUPAzWZDtkFmEjyWD1g@mail.gmail.com>
- <CAJZ5v0gGdXmgc_9r2rbiadq4e31hngpjYQ40QoC6C0z19da_hQ@mail.gmail.com>
- <2287147.DxjcvLeq6l@kreacher>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio resume
+Date: Tue, 25 Jun 2019 15:38:29 +0200
+Message-ID: <CACRpkda0=HeRco8kExdf6TmiLOnCec3Ek06s-MdjNJvVGw3ZNQ@mail.gmail.com>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com> <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2287147.DxjcvLeq6l@kreacher>
-Content-Language: en-US
+In-Reply-To: <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PCI <linux-pci@vger.kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Keith Busch <kbusch@kernel.org>, Kai-Heng Feng <kai.heng.feng@canonical.com>, linux-tegra <linux-tegra@vger.kernel.org>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com, Rob Herring <robh+dt@kernel.org>, Dmitry Osipenko <dig>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jun 24, 2019 at 5:03 AM Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
 
-On 25/06/2019 00:09, Rafael J. Wysocki wrote:
-> On Tuesday, June 25, 2019 12:20:26 AM CEST Rafael J. Wysocki wrote:
->> On Mon, Jun 24, 2019 at 11:37 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>
->>> On Mon, Jun 24, 2019 at 2:43 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>
->>>> Hi Rafael,
->>>>
->>>> On 13/06/2019 22:59, Rafael J. Wysocki wrote:
->>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>>
->>>>> Commit d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
->>>>> attempted to avoid a problem with devices whose drivers want them to
->>>>> stay in D0 over suspend-to-idle and resume, but it did not go as far
->>>>> as it should with that.
->>>>>
->>>>> Namely, first of all, the power state of a PCI bridge with a
->>>>> downstream device in D0 must be D0 (based on the PCI PM spec r1.2,
->>>>> sec 6, table 6-1, if the bridge is not in D0, there can be no PCI
->>>>> transactions on its secondary bus), but that is not actively enforced
->>>>> during system-wide PM transitions, so use the skip_bus_pm flag
->>>>> introduced by commit d491f2b75237 for that.
->>>>>
->>>>> Second, the configuration of devices left in D0 (whatever the reason)
->>>>> during suspend-to-idle need not be changed and attempting to put them
->>>>> into D0 again by force is pointless, so explicitly avoid doing that.
->>>>>
->>>>> Fixes: d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
->>>>> Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->>>>> Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>>
->>>> I have noticed a regression in both the mainline and -next branches on
->>>> one of our boards when testing suspend. The bisect is point to this
->>>> commit and reverting on top of mainline does fix the problem. So far I
->>>> have not looked at this in close detail but kernel log is showing ...
->>>
->>> Can you please collect a log like that, but with dynamic debug in
->>> pci-driver.c enabled?
->>>
->>> Note that reverting this commit is rather out of the question, so we
->>> need to get to the bottom of the failure.
->>
->> I suspect that there is a problem with the pm_suspend_via_firmware()
->> check which returns 'false' on the affected board, but the platform
->> actually removes power from devices left in D0 during suspend.
->>
->> I guess it would be more appropriate to check something like
->> pm_suspend_no_platform() which would return 'true' in the
->> suspend-to-idle patch w/ ACPI.
-> 
-> So I wonder if the patch below makes any difference?
-> 
-> ---
->  drivers/pci/pci-driver.c |    8 ++++----
->  include/linux/suspend.h  |   26 ++++++++++++++++++++++++--
->  kernel/power/suspend.c   |    3 +++
->  3 files changed, 31 insertions(+), 6 deletions(-)
-> 
-> Index: linux-pm/include/linux/suspend.h
-> ===================================================================
-> --- linux-pm.orig/include/linux/suspend.h
-> +++ linux-pm/include/linux/suspend.h
-> @@ -209,8 +209,9 @@ extern int suspend_valid_only_mem(suspen
->  
->  extern unsigned int pm_suspend_global_flags;
->  
-> -#define PM_SUSPEND_FLAG_FW_SUSPEND	(1 << 0)
-> -#define PM_SUSPEND_FLAG_FW_RESUME	(1 << 1)
-> +#define PM_SUSPEND_FLAG_FW_SUSPEND	BIT(0)
-> +#define PM_SUSPEND_FLAG_FW_RESUME	BIT(1)
-> +#define PM_SUSPEND_FLAG_NO_PLATFORM	BIT(2)
->  
->  static inline void pm_suspend_clear_flags(void)
->  {
-> @@ -227,6 +228,11 @@ static inline void pm_set_resume_via_fir
->  	pm_suspend_global_flags |= PM_SUSPEND_FLAG_FW_RESUME;
->  }
->  
-> +static inline void pm_set_suspend_no_platform(void)
-> +{
-> +	pm_suspend_global_flags |= PM_SUSPEND_FLAG_NO_PLATFORM;
-> +}
-> +
->  /**
->   * pm_suspend_via_firmware - Check if platform firmware will suspend the system.
->   *
-> @@ -268,6 +274,22 @@ static inline bool pm_resume_via_firmwar
->  	return !!(pm_suspend_global_flags & PM_SUSPEND_FLAG_FW_RESUME);
->  }
->  
-> +/**
-> + * pm_suspend_no_platform - Check if platform may change device power states.
-> + *
-> + * To be called during system-wide power management transitions to sleep states
-> + * or during the subsequent system-wide transitions back to the working state.
-> + *
-> + * Return 'true' if the power states of devices remain under full control of the
-> + * kernel throughout the system-wide suspend and resume cycle in progress (that
-> + * is, if a device is put into a certain power state during suspend, it can be
-> + * expected to remain in that state during resume).
-> + */
-> +static inline bool pm_suspend_no_platform(void)
-> +{
-> +	return !!(pm_suspend_global_flags & PM_SUSPEND_FLAG_NO_PLATFORM);
-> +}
-> +
->  /* Suspend-to-idle state machnine. */
->  enum s2idle_states {
->  	S2IDLE_STATE_NONE,      /* Not suspended/suspending. */
-> Index: linux-pm/kernel/power/suspend.c
-> ===================================================================
-> --- linux-pm.orig/kernel/power/suspend.c
-> +++ linux-pm/kernel/power/suspend.c
-> @@ -493,6 +493,9 @@ int suspend_devices_and_enter(suspend_st
->  
->  	pm_suspend_target_state = state;
->  
-> +	if (state == PM_SUSPEND_TO_IDLE)
-> +		pm_set_suspend_no_platform();
-> +
->  	error = platform_suspend_begin(state);
->  	if (error)
->  		goto Close;
-> Index: linux-pm/drivers/pci/pci-driver.c
-> ===================================================================
-> --- linux-pm.orig/drivers/pci/pci-driver.c
-> +++ linux-pm/drivers/pci/pci-driver.c
-> @@ -870,7 +870,7 @@ static int pci_pm_suspend_noirq(struct d
->  			pci_dev->bus->self->skip_bus_pm = true;
->  	}
->  
-> -	if (pci_dev->skip_bus_pm && !pm_suspend_via_firmware()) {
-> +	if (pci_dev->skip_bus_pm && pm_suspend_no_platform()) {
->  		dev_dbg(dev, "PCI PM: Skipped\n");
->  		goto Fixup;
->  	}
-> @@ -925,10 +925,10 @@ static int pci_pm_resume_noirq(struct de
->  	/*
->  	 * In the suspend-to-idle case, devices left in D0 during suspend will
->  	 * stay in D0, so it is not necessary to restore or update their
-> -	 * configuration here and attempting to put them into D0 again may
-> -	 * confuse some firmware, so avoid doing that.
-> +	 * configuration here and attempting to put them into D0 again is
-> +	 * pointless, so avoid doing that.
->  	 */
-> -	if (!pci_dev->skip_bus_pm || pm_suspend_via_firmware())
-> +	if (!(pci_dev->skip_bus_pm && pm_suspend_no_platform()))
->  		pci_pm_default_resume_early(pci_dev);
->  
->  	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+> During SC7 resume, PARKED bit clear from the pinmux registers may
+> cause a glitch on the GPIO lines.
+>
+> So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
+> to keep the GPIO lines in a known good state prior to clearing PARKED
+> bit.
+>
+> This patch has fix for this by moving Tegra GPIOs restore to happen
+> very early than pinctrl resume.
+>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-I can confirm that above works for me. So ...
+Can this patch be applied in isolation from the other patches?
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+WOuld be nice to have at least Thierry's ACK on it before I
+apply it.
 
-This looks better ...
-
-[   52.545820] PM: suspend entry (deep)
-[   52.549547] Filesystems sync: 0.000 seconds
-[   52.553966] Freezing user space processes ... (elapsed 0.001 seconds) done.
-[   52.562375] OOM killer disabled.
-[   52.565684] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-[   52.574426] printk: Suspending console(s) (use no_console_suspend to debug)
-[   52.590255] r8169 0000:01:00.0 eth0: Link is Down
-[   52.590483] pci_generic_config_write32: 22 callbacks suppressed
-[   52.590488] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x9c may corrupt adjacent RW1C bits
-[   52.794091] r8169 0000:01:00.0: PCI PM: Suspend power state: D3hot
-[   52.794128] pcieport 0000:00:02.0: PCI PM: Suspend power state: D0
-[   52.805674] Disabling non-boot CPUs ...
-[   52.809257] Entering suspend state LP1
-[   52.809284] Enabling non-boot CPUs ...
-[   52.810184] CPU1 is up
-[   52.810973] CPU2 is up
-[   52.811819] CPU3 is up
-[   52.822259] tegra-pcie 1003000.pcie: probing port 1, using 1 lanes
-[   52.840085] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x4c may corrupt adjacent RW1C bits
-[   52.840096] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x88 may corrupt adjacent RW1C bits
-[   52.840101] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x90 may corrupt adjacent RW1C bits
-[   52.840106] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x98 may corrupt adjacent RW1C bits
-[   52.840111] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x9c may corrupt adjacent RW1C bits
-[   52.840116] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0xa8 may corrupt adjacent RW1C bits
-[   52.840121] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0xb0 may corrupt adjacent RW1C bits
-[   52.840155] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x52 may corrupt adjacent RW1C bits
-[   52.840160] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x52 may corrupt adjacent RW1C bits
-[   52.840184] pcieport 0000:00:02.0: nv_msi_ht_cap_quirk didn't locate host bridge
-[   52.864252] tegra-pcie 1003000.pcie: Slot present pin change, signature: 00000004
-[   53.024171] r8169 0000:01:00.0 eth0: Link is Down
-[   53.376438] ata1: SATA link down (SStatus 0 SControl 300)
-[   55.881131] r8169 0000:01:00.0 eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-[   56.012154] OOM killer enabled.
-[   56.015295] Restarting tasks ... done.
-[   56.019415] PM: suspend exit
-[   56.045929] PM: suspend entry (deep)
-[   56.049565] Filesystems sync: 0.000 seconds
-[   56.053906] Freezing user space processes ... (elapsed 0.001 seconds) done.
-[   56.062205] OOM killer disabled.
-[   56.065462] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-[   56.074193] printk: Suspending console(s) (use no_console_suspend to debug)
-[   56.096375] r8169 0000:01:00.0 eth0: Link is Down
-[   56.304070] r8169 0000:01:00.0: PCI PM: Suspend power state: D3hot
-[   56.304111] pcieport 0000:00:02.0: PCI PM: Suspend power state: D0
-[   56.314134] tegra-pcie 1003000.pcie: PME Ack is not received on port: 1
-[   56.325777] Disabling non-boot CPUs ...
-[   56.328540] Entering suspend state LP1
-[   56.328571] Enabling non-boot CPUs ...
-[   56.329687] CPU1 is up
-[   56.330694] CPU2 is up
-[   56.331772] CPU3 is up
-[   56.332396] tegra-pcie 1003000.pcie: probing port 1, using 1 lanes
-[   56.350134] pcieport 0000:00:02.0: nv_msi_ht_cap_quirk didn't locate host bridge
-[   56.374241] tegra-pcie 1003000.pcie: Slot present pin change, signature: 00000004
-[   56.534158] r8169 0000:01:00.0 eth0: Link is Down
-[   56.886516] ata1: SATA link down (SStatus 0 SControl 300)
-[   59.417895] OOM killer enabled.
-[   59.421025] Restarting tasks ... done.
-[   59.425305] PM: suspend exit
-[   60.756040] r8169 0000:01:00.0 eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-
-Thanks!
-Jon
-
--- 
-nvpublic
+Yours,
+Linus Walleij
