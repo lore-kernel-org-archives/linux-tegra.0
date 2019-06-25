@@ -1,87 +1,74 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
- phylib logic
-Date: Tue, 25 Jun 2019 12:10:15 +0100
-Message-ID: <113f37a2-c37f-cdb5-5194-4361d949258a@nvidia.com>
-References: <cover.1560266175.git.joabreu@synopsys.com>
- <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
- <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
- <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9C8DD9@DE02WEMBXB.internal.synopsys.com>
- <b66c7578-172f-4443-f4c3-411525e28738@nvidia.com>
- <d96f8bea-f7ef-82ae-01ba-9c97aec0ee38@nvidia.com>
- <6f36b6b6-8209-ed98-e7e1-3dac0a92f6cd@nvidia.com>
- <7f0f2ed0-f47c-4670-d169-25f0413c1fd3@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9D7024@DE02WEMBXB.internal.synopsys.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 2/5] regulator: core: Expose some of core functions
+ needed by couplers
+Date: Tue, 25 Jun 2019 12:19:47 +0100
+Message-ID: <20190625111946.GP5316@sirena.org.uk>
+References: <20190623210835.26281-1-digetx@gmail.com>
+ <20190623210835.26281-3-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <78EB27739596EE489E55E81C33FEC33A0B9D7024@DE02WEMBXB.internal.synopsys.com>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pSb/ns2SnWJqkKHb"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190623210835.26281-3-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 25/06/2019 08:37, Jose Abreu wrote:
-> From: Jon Hunter <jonathanh@nvidia.com>
-> 
->> Any further feedback? I am still seeing this issue on today's -next.
-> 
-> Apologies but I was in FTO.
-> 
-> Is there any possibility you can just disable the ethX configuration in 
-> the rootfs mount and manually configure it after rootfs is done ?
-> 
-> I just want to make sure in which conditions this is happening (if in 
-> ifdown or ifup).
+--pSb/ns2SnWJqkKHb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I have been looking at this a bit closer and I can see the problem. What
-happens is that ...
+On Mon, Jun 24, 2019 at 12:08:32AM +0300, Dmitry Osipenko wrote:
+> Expose some of internal functions that are required for implementation of
+> customized regulator couplers.
 
-1. stmmac_mac_link_up() is called and priv->eee_active is set to false
-2. stmmac_eee_init() is called but because priv->eee_active is false,
-   timer_setup() for eee_ctrl_timer is never called.
-3. stmmac_eee_init() returns true and so then priv->eee_enabled is set 
-   to true.
-4. When stmmac_tx_clean() is called because priv->eee_enabled is set to    
-   true, mod_timer() is called for the eee_ctrl_timer, but because 
-   timer_setup() was never called, we hit the BUG defined at
-   kernel/time/timer.c:952, because no function is defined for the 
-   timer.
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-The following fixes it for me ...
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -399,10 +399,13 @@ bool stmmac_eee_init(struct stmmac_priv *priv)
-        mutex_lock(&priv->lock);
- 
-        /* Check if it needs to be deactivated */
--       if (!priv->eee_active && priv->eee_enabled) {
--               netdev_dbg(priv->dev, "disable EEE\n");
--               del_timer_sync(&priv->eee_ctrl_timer);
--               stmmac_set_eee_timer(priv, priv->hw, 0, tx_lpi_timer);
-+       if (!priv->eee_active) {
-+               if (priv->eee_enabled) {
-+                       netdev_dbg(priv->dev, "disable EEE\n");
-+                       del_timer_sync(&priv->eee_ctrl_timer);
-+                       stmmac_set_eee_timer(priv, priv->hw, 0, tx_lpi_timer);
-+               }
-+               mutex_unlock(&priv->lock);
-                return false;
-        }
+are available in the Git repository at:
 
-It also looks like you have a potention deadlock in the current code
-because in the case of if (!priv->eee_active && priv->eee_enabled)
-you don't unlock the mutex. The above fixes this as well. I can send a
-formal patch if this looks correct. 
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-couple-api
 
-Cheers
-Jon
+for you to fetch changes up to d22b85a1b97d12a4940ef9d778f6122546736f78:
 
--- 
-nvpublic
+  regulator: core: Expose some of core functions needed by couplers (2019-06-25 12:15:35 +0100)
+
+----------------------------------------------------------------
+regulator: Coupling API
+
+This series introduces a way of specifying a customized regulators coupler
+which is necessary for cases like a non-trivial DVFS implementation.
+
+----------------------------------------------------------------
+Dmitry Osipenko (2):
+      regulator: core: Introduce API for regulators coupling customization
+      regulator: core: Expose some of core functions needed by couplers
+
+ drivers/regulator/core.c          | 194 ++++++++++++++++++++++++++++----------
+ drivers/regulator/of_regulator.c  |  63 +++++++++----
+ include/linux/regulator/coupler.h |  97 +++++++++++++++++++
+ include/linux/regulator/driver.h  |   6 +-
+ include/linux/regulator/machine.h |   2 +-
+ 5 files changed, 287 insertions(+), 75 deletions(-)
+ create mode 100644 include/linux/regulator/coupler.h
+
+--pSb/ns2SnWJqkKHb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0SA1IACgkQJNaLcl1U
+h9B/agf/ZN1FfEH/kisPsw/QpppR+haTC2xYUvHQmelY29bbY2yXwjPYBpXl8Ztk
+/rE6ZjD3gCdXzuBBSCyd8P+RTnkb/18NynDJAVv9WLe6AOZ/e1UYB4d7mh0O/IAB
+bjE+IiBMcwzgaMBnBTyF+EJ8JmhWkkEl9Z/FE0RcXT4oiTAU6oHSQ8Xs96H9/374
+Hqf9QfEge+nvqAdVwsmhJ2cbb+BXbGDfmcMRJjWv0swcRfJqDrLTFn6ATq/i5o7j
+ni2sOaGeQj0x5dhMUUT8oq4+ElSHJaJft2jpwb3xRdCehu+UYdLWeP13jwiS0afJ
+NIcKyExMiyb/PEYmhAN57EljvVIoGA==
+=6Ntz
+-----END PGP SIGNATURE-----
+
+--pSb/ns2SnWJqkKHb--
