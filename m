@@ -1,66 +1,76 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
- phylib logic
-Date: Tue, 25 Jun 2019 11:25:40 +0000
-Message-ID: <78EB27739596EE489E55E81C33FEC33A0B9D76C2@DE02WEMBXB.internal.synopsys.com>
-References: <cover.1560266175.git.joabreu@synopsys.com>
- <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
- <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
- <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9C8DD9@DE02WEMBXB.internal.synopsys.com>
- <b66c7578-172f-4443-f4c3-411525e28738@nvidia.com>
- <d96f8bea-f7ef-82ae-01ba-9c97aec0ee38@nvidia.com>
- <6f36b6b6-8209-ed98-e7e1-3dac0a92f6cd@nvidia.com>
- <7f0f2ed0-f47c-4670-d169-25f0413c1fd3@nvidia.com>
- <78EB27739596EE489E55E81C33FEC33A0B9D7024@DE02WEMBXB.internal.synopsys.com>
- <113f37a2-c37f-cdb5-5194-4361d949258a@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 13/16] PM / devfreq: tegra: Support Tegra30
+Date: Tue, 25 Jun 2019 14:30:01 +0300
+Message-ID: <7488653b-e8ec-27e6-0390-5e23481857e9@gmail.com>
+References: <7561edbc-c17c-101a-b339-fc7f9968a470@gmail.com>
+ <37db00bc-3a22-d1c2-7bdc-e27af42cd5c7@gmail.com>
+ <20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
+ <20190624073414epcms1p87b6dc13758b6bd401d275cfba583314a@epcms1p8>
+ <20190624111134epcms1p361aed3c72edd6eebc95408331c8d9739@epcms1p3>
+ <CGME20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
+ <20190625014214epcms1p1b8f2d76cd8cfdf3fdf517be08a92ccdf@epcms1p1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <113f37a2-c37f-cdb5-5194-4361d949258a@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190625014214epcms1p1b8f2d76cd8cfdf3fdf517be08a92ccdf@epcms1p1>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQoNCj4gSSBoYXZlIGJlZW4g
-bG9va2luZyBhdCB0aGlzIGEgYml0IGNsb3NlciBhbmQgSSBjYW4gc2VlIHRoZSBwcm9ibGVtLiBX
-aGF0DQo+IGhhcHBlbnMgaXMgdGhhdCAuLi4NCj4gDQo+IDEuIHN0bW1hY19tYWNfbGlua191cCgp
-IGlzIGNhbGxlZCBhbmQgcHJpdi0+ZWVlX2FjdGl2ZSBpcyBzZXQgdG8gZmFsc2UNCj4gMi4gc3Rt
-bWFjX2VlZV9pbml0KCkgaXMgY2FsbGVkIGJ1dCBiZWNhdXNlIHByaXYtPmVlZV9hY3RpdmUgaXMg
-ZmFsc2UsDQo+ICAgIHRpbWVyX3NldHVwKCkgZm9yIGVlZV9jdHJsX3RpbWVyIGlzIG5ldmVyIGNh
-bGxlZC4NCj4gMy4gc3RtbWFjX2VlZV9pbml0KCkgcmV0dXJucyB0cnVlIGFuZCBzbyB0aGVuIHBy
-aXYtPmVlZV9lbmFibGVkIGlzIHNldCANCj4gICAgdG8gdHJ1ZS4NCj4gNC4gV2hlbiBzdG1tYWNf
-dHhfY2xlYW4oKSBpcyBjYWxsZWQgYmVjYXVzZSBwcml2LT5lZWVfZW5hYmxlZCBpcyBzZXQgdG8g
-ICAgDQo+ICAgIHRydWUsIG1vZF90aW1lcigpIGlzIGNhbGxlZCBmb3IgdGhlIGVlZV9jdHJsX3Rp
-bWVyLCBidXQgYmVjYXVzZSANCj4gICAgdGltZXJfc2V0dXAoKSB3YXMgbmV2ZXIgY2FsbGVkLCB3
-ZSBoaXQgdGhlIEJVRyBkZWZpbmVkIGF0DQo+ICAgIGtlcm5lbC90aW1lL3RpbWVyLmM6OTUyLCBi
-ZWNhdXNlIG5vIGZ1bmN0aW9uIGlzIGRlZmluZWQgZm9yIHRoZSANCj4gICAgdGltZXIuDQo+IA0K
-PiBUaGUgZm9sbG93aW5nIGZpeGVzIGl0IGZvciBtZSAuLi4NCj4gDQo+IC0tLSBhL2RyaXZlcnMv
-bmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMNCj4gKysrIGIvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYw0KPiBAQCAtMzk5LDEw
-ICszOTksMTMgQEAgYm9vbCBzdG1tYWNfZWVlX2luaXQoc3RydWN0IHN0bW1hY19wcml2ICpwcml2
-KQ0KPiAgICAgICAgIG11dGV4X2xvY2soJnByaXYtPmxvY2spOw0KPiAgDQo+ICAgICAgICAgLyog
-Q2hlY2sgaWYgaXQgbmVlZHMgdG8gYmUgZGVhY3RpdmF0ZWQgKi8NCj4gLSAgICAgICBpZiAoIXBy
-aXYtPmVlZV9hY3RpdmUgJiYgcHJpdi0+ZWVlX2VuYWJsZWQpIHsNCj4gLSAgICAgICAgICAgICAg
-IG5ldGRldl9kYmcocHJpdi0+ZGV2LCAiZGlzYWJsZSBFRUVcbiIpOw0KPiAtICAgICAgICAgICAg
-ICAgZGVsX3RpbWVyX3N5bmMoJnByaXYtPmVlZV9jdHJsX3RpbWVyKTsNCj4gLSAgICAgICAgICAg
-ICAgIHN0bW1hY19zZXRfZWVlX3RpbWVyKHByaXYsIHByaXYtPmh3LCAwLCB0eF9scGlfdGltZXIp
-Ow0KPiArICAgICAgIGlmICghcHJpdi0+ZWVlX2FjdGl2ZSkgew0KPiArICAgICAgICAgICAgICAg
-aWYgKHByaXYtPmVlZV9lbmFibGVkKSB7DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIG5ldGRl
-dl9kYmcocHJpdi0+ZGV2LCAiZGlzYWJsZSBFRUVcbiIpOw0KPiArICAgICAgICAgICAgICAgICAg
-ICAgICBkZWxfdGltZXJfc3luYygmcHJpdi0+ZWVlX2N0cmxfdGltZXIpOw0KPiArICAgICAgICAg
-ICAgICAgICAgICAgICBzdG1tYWNfc2V0X2VlZV90aW1lcihwcml2LCBwcml2LT5odywgMCwgdHhf
-bHBpX3RpbWVyKTsNCj4gKyAgICAgICAgICAgICAgIH0NCj4gKyAgICAgICAgICAgICAgIG11dGV4
-X3VubG9jaygmcHJpdi0+bG9jayk7DQo+ICAgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7DQo+
-ICAgICAgICAgfQ0KPiANCj4gSXQgYWxzbyBsb29rcyBsaWtlIHlvdSBoYXZlIGEgcG90ZW50aW9u
-IGRlYWRsb2NrIGluIHRoZSBjdXJyZW50IGNvZGUNCj4gYmVjYXVzZSBpbiB0aGUgY2FzZSBvZiBp
-ZiAoIXByaXYtPmVlZV9hY3RpdmUgJiYgcHJpdi0+ZWVlX2VuYWJsZWQpDQo+IHlvdSBkb24ndCB1
-bmxvY2sgdGhlIG11dGV4LiBUaGUgYWJvdmUgZml4ZXMgdGhpcyBhcyB3ZWxsLiBJIGNhbiBzZW5k
-IGENCj4gZm9ybWFsIHBhdGNoIGlmIHRoaXMgbG9va3MgY29ycmVjdC4gDQoNClRoYW5rcyBmb3Ig
-bG9va2luZyBpbnRvIHRoaXMhIFRoZSBmaXggbG9va3MgY29ycmVjdCBzbyBpZiB5b3UgY291bGQg
-DQpzdWJtaXQgYSBwYXRjaCBpdCB3b3VsZCBiZSBncmVhdCENCg0KVGhhbmtzLA0KSm9zZSBNaWd1
-ZWwgQWJyZXUNCg==
+25.06.2019 4:42, MyungJoo Ham пишет:
+> Sender : Dmitry Osipenko <digetx@gmail.com>
+>> 24.06.2019 14:11, MyungJoo Ham пишет:
+>>>>
+>>>> --------- Original Message ---------
+>>>> Sender : Dmitry Osipenko <digetx@gmail.com>
+>>>>
+>>>> 24.06.2019 10:34, MyungJoo Ham пишет:
+>>>>>>
+>>>>>> A question:
+>>>>>>
+>>>>>> Does this driver support Tegra20 as well?
+>>>>>> I'm asking this because ARCH_TEGRA includes ARCH_TEGRA_2x_SOC
+>>>>>> according to /drivers/soc/tegra/Kconfig.
+>>>>>>
+>>>>>
+>>>>> For this matter, how about updating your 13/16 patch as follows?
+>>>>>
+>>> []
+>>>>
+>>>> Good call! I'll update this patch following yours suggestion, thanks.
+>>>
+>>> Or, you may approve the modified commits here:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/log/?h=for-next
+>>
+>> Looks almost good to me!
+>>
+>> I just recalled that there is also a 64bit variant of Tegra124, the Tegra132. Hence
+>> the Tegra30+ Kconfig entry should look like this (it's also worthy to break the lines
+>> for readability):
+>>
+>> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+>> index ccb1a68c4b51..bd2efbc27725 100644
+>> --- a/drivers/devfreq/Kconfig
+>> +++ b/drivers/devfreq/Kconfig
+>> @@ -94,7 +94,10 @@ config ARM_EXYNOS_BUS_DEVFREQ
+>>
+>> config ARM_TEGRA_DEVFREQ
+>>        tristate "NVIDIA Tegra30/114/124/210 DEVFREQ Driver"
+>> -       depends on ARCH_TEGRA || COMPILE_TEST
+>> +       depends on ARCH_TEGRA_3x_SOC  || ARCH_TEGRA_114_SOC || \
+>> +                  ARCH_TEGRA_132_SOC || ARCH_TEGRA_124_SOC || \
+>> +                  ARCH_TEGRA_210_SOC || \
+>> +                  COMPILE_TEST
+>>        select PM_OPP
+>>        help
+>>          This adds the DEVFREQ driver for the Tegra family of SoCs.
+>>
+>> Could you please adjust the patches like I'm suggesting? I'll approve yours change
+>> then and won't re-spin the first batch of the patches.
+> 
+> I've adjusted as you suggested. It's pushed to the git repo as well.
+
+Thank you very much, looking good now!
