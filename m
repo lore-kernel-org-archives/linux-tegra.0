@@ -1,81 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2] PCI: PM: Skip devices in D0 for suspend-to-idle
-Date: Tue, 25 Jun 2019 13:46:40 +0100
-Message-ID: <f233d8fe-9525-05de-858d-e7456a17bd4b@nvidia.com>
-References: <1668247.RaJIPSxJUN@kreacher>
- <CAJZ5v0hdtXqoK84DpYtyMSCnkR9zOHFiUPAzWZDtkFmEjyWD1g@mail.gmail.com>
- <CAJZ5v0gGdXmgc_9r2rbiadq4e31hngpjYQ40QoC6C0z19da_hQ@mail.gmail.com>
- <2287147.DxjcvLeq6l@kreacher>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 5/5] arm64: tegra: Default configuration changes for
+ v5.3-rc1
+Date: Tue, 25 Jun 2019 05:20:09 -0700
+Message-ID: <20190625122009.f7px5fojvmql5vbc@localhost>
+References: <20190621150206.19037-1-thierry.reding@gmail.com>
+ <20190621150206.19037-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2287147.DxjcvLeq6l@kreacher>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PCI <linux-pci@vger.kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Keith Busch <kbusch@kernel.org>, Kai-Heng Feng <kai.heng.feng@canonical.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190621150206.19037-5-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 25/06/2019 00:09, Rafael J. Wysocki wrote:
-> On Tuesday, June 25, 2019 12:20:26 AM CEST Rafael J. Wysocki wrote:
->> On Mon, Jun 24, 2019 at 11:37 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>
->>> On Mon, Jun 24, 2019 at 2:43 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>
->>>> Hi Rafael,
->>>>
->>>> On 13/06/2019 22:59, Rafael J. Wysocki wrote:
->>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>>
->>>>> Commit d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
->>>>> attempted to avoid a problem with devices whose drivers want them to
->>>>> stay in D0 over suspend-to-idle and resume, but it did not go as far
->>>>> as it should with that.
->>>>>
->>>>> Namely, first of all, the power state of a PCI bridge with a
->>>>> downstream device in D0 must be D0 (based on the PCI PM spec r1.2,
->>>>> sec 6, table 6-1, if the bridge is not in D0, there can be no PCI
->>>>> transactions on its secondary bus), but that is not actively enforced
->>>>> during system-wide PM transitions, so use the skip_bus_pm flag
->>>>> introduced by commit d491f2b75237 for that.
->>>>>
->>>>> Second, the configuration of devices left in D0 (whatever the reason)
->>>>> during suspend-to-idle need not be changed and attempting to put them
->>>>> into D0 again by force is pointless, so explicitly avoid doing that.
->>>>>
->>>>> Fixes: d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
->>>>> Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->>>>> Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>>
->>>> I have noticed a regression in both the mainline and -next branches on
->>>> one of our boards when testing suspend. The bisect is point to this
->>>> commit and reverting on top of mainline does fix the problem. So far I
->>>> have not looked at this in close detail but kernel log is showing ...
->>>
->>> Can you please collect a log like that, but with dynamic debug in
->>> pci-driver.c enabled?
->>>
->>> Note that reverting this commit is rather out of the question, so we
->>> need to get to the bottom of the failure.
->>
->> I suspect that there is a problem with the pm_suspend_via_firmware()
->> check which returns 'false' on the affected board, but the platform
->> actually removes power from devices left in D0 during suspend.
->>
->> I guess it would be more appropriate to check something like
->> pm_suspend_no_platform() which would return 'true' in the
->> suspend-to-idle patch w/ ACPI.
+On Fri, Jun 21, 2019 at 05:02:06PM +0200, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
 > 
-> So I wonder if the patch below makes any difference?
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> 
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.3-arm64-defconfig
+> 
+> for you to fetch changes up to 01d6fb565b4a7858af1699727f25da2279d75deb:
+> 
+>   arm64: defconfig: Add Tegra194 PCIe driver (2019-06-20 13:02:27 +0200)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> arm64: tegra: Default configuration changes for v5.3-rc1
+> 
+> This enables the INA3221 power monitoring driver that is used on many of
+> the Jetson boards as well as Tegra194 PCIe support.
+> 
+> ----------------------------------------------------------------
+> Nicolin Chen (1):
+>       arm64: defconfig: Add HWMON INA3221 support
+> 
+> Vidya Sagar (1):
+>       arm64: defconfig: Add Tegra194 PCIe driver
 
-Thanks. I will try this now and let you know.
+Merged, thanks!
 
-Cheers!
-Jon
 
--- 
-nvpublic
+-Olof
