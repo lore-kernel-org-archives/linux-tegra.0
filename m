@@ -1,57 +1,176 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 2/5] regulator: core: Expose some of core functions
- needed by couplers
-Date: Tue, 25 Jun 2019 17:40:01 +0300
-Message-ID: <a0626c9d-c68b-9043-8b2f-870f594938b8@gmail.com>
-References: <20190623210835.26281-1-digetx@gmail.com>
- <20190623210835.26281-3-digetx@gmail.com>
- <20190625111946.GP5316@sirena.org.uk>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2] PCI: PM: Skip devices in D0 for suspend-to-idle
+Date: Tue, 25 Jun 2019 18:23:46 +0200
+Message-ID: <CAJZ5v0gU9OedmZBNDGefG3GjS7FHRmgQ67eOcr2vXRrAg3zZbg@mail.gmail.com>
+References: <1668247.RaJIPSxJUN@kreacher> <CAJZ5v0hdtXqoK84DpYtyMSCnkR9zOHFiUPAzWZDtkFmEjyWD1g@mail.gmail.com>
+ <CAJZ5v0gGdXmgc_9r2rbiadq4e31hngpjYQ40QoC6C0z19da_hQ@mail.gmail.com> <2287147.DxjcvLeq6l@kreacher>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190625111946.GP5316@sirena.org.uk>
-Content-Language: en-US
+In-Reply-To: <2287147.DxjcvLeq6l@kreacher>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Linux PCI <linux-pci@vger.kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Keith Busch <kbusch@kernel.org>, Kai-Heng Feng <kai.heng.feng@canonical.com>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-25.06.2019 14:19, Mark Brown пишет:
-> On Mon, Jun 24, 2019 at 12:08:32AM +0300, Dmitry Osipenko wrote:
->> Expose some of internal functions that are required for implementation of
->> customized regulator couplers.
-> 
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> 
->   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-couple-api
-> 
-> for you to fetch changes up to d22b85a1b97d12a4940ef9d778f6122546736f78:
-> 
->   regulator: core: Expose some of core functions needed by couplers (2019-06-25 12:15:35 +0100)
-> 
-> ----------------------------------------------------------------
-> regulator: Coupling API
-> 
-> This series introduces a way of specifying a customized regulators coupler
-> which is necessary for cases like a non-trivial DVFS implementation.
-> 
-> ----------------------------------------------------------------
-> Dmitry Osipenko (2):
->       regulator: core: Introduce API for regulators coupling customization
->       regulator: core: Expose some of core functions needed by couplers
-> 
->  drivers/regulator/core.c          | 194 ++++++++++++++++++++++++++++----------
->  drivers/regulator/of_regulator.c  |  63 +++++++++----
->  include/linux/regulator/coupler.h |  97 +++++++++++++++++++
->  include/linux/regulator/driver.h  |   6 +-
->  include/linux/regulator/machine.h |   2 +-
->  5 files changed, 287 insertions(+), 75 deletions(-)
->  create mode 100644 include/linux/regulator/coupler.h
-> 
+On Tue, Jun 25, 2019 at 1:09 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Tuesday, June 25, 2019 12:20:26 AM CEST Rafael J. Wysocki wrote:
+> > On Mon, Jun 24, 2019 at 11:37 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > >
+> > > On Mon, Jun 24, 2019 at 2:43 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > > >
+> > > > Hi Rafael,
+> > > >
+> > > > On 13/06/2019 22:59, Rafael J. Wysocki wrote:
+> > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >
+> > > > > Commit d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
+> > > > > attempted to avoid a problem with devices whose drivers want them to
+> > > > > stay in D0 over suspend-to-idle and resume, but it did not go as far
+> > > > > as it should with that.
+> > > > >
+> > > > > Namely, first of all, the power state of a PCI bridge with a
+> > > > > downstream device in D0 must be D0 (based on the PCI PM spec r1.2,
+> > > > > sec 6, table 6-1, if the bridge is not in D0, there can be no PCI
+> > > > > transactions on its secondary bus), but that is not actively enforced
+> > > > > during system-wide PM transitions, so use the skip_bus_pm flag
+> > > > > introduced by commit d491f2b75237 for that.
+> > > > >
+> > > > > Second, the configuration of devices left in D0 (whatever the reason)
+> > > > > during suspend-to-idle need not be changed and attempting to put them
+> > > > > into D0 again by force is pointless, so explicitly avoid doing that.
+> > > > >
+> > > > > Fixes: d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
+> > > > > Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > > Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > > > Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > > >
+> > > > I have noticed a regression in both the mainline and -next branches on
+> > > > one of our boards when testing suspend. The bisect is point to this
+> > > > commit and reverting on top of mainline does fix the problem. So far I
+> > > > have not looked at this in close detail but kernel log is showing ...
+> > >
+> > > Can you please collect a log like that, but with dynamic debug in
+> > > pci-driver.c enabled?
+> > >
+> > > Note that reverting this commit is rather out of the question, so we
+> > > need to get to the bottom of the failure.
+> >
+> > I suspect that there is a problem with the pm_suspend_via_firmware()
+> > check which returns 'false' on the affected board, but the platform
+> > actually removes power from devices left in D0 during suspend.
+> >
+> > I guess it would be more appropriate to check something like
+> > pm_suspend_no_platform() which would return 'true' in the
+> > suspend-to-idle patch w/ ACPI.
+>
+> So I wonder if the patch below makes any difference?
 
-Thank you very much! Very nice to see some more progress!
+Mika, can you please test this one in combination with the other
+changes we've been working on?
+
+I really don't expect to see problems, but just to be sure ...
+
+> ---
+>  drivers/pci/pci-driver.c |    8 ++++----
+>  include/linux/suspend.h  |   26 ++++++++++++++++++++++++--
+>  kernel/power/suspend.c   |    3 +++
+>  3 files changed, 31 insertions(+), 6 deletions(-)
+>
+> Index: linux-pm/include/linux/suspend.h
+> ===================================================================
+> --- linux-pm.orig/include/linux/suspend.h
+> +++ linux-pm/include/linux/suspend.h
+> @@ -209,8 +209,9 @@ extern int suspend_valid_only_mem(suspen
+>
+>  extern unsigned int pm_suspend_global_flags;
+>
+> -#define PM_SUSPEND_FLAG_FW_SUSPEND     (1 << 0)
+> -#define PM_SUSPEND_FLAG_FW_RESUME      (1 << 1)
+> +#define PM_SUSPEND_FLAG_FW_SUSPEND     BIT(0)
+> +#define PM_SUSPEND_FLAG_FW_RESUME      BIT(1)
+> +#define PM_SUSPEND_FLAG_NO_PLATFORM    BIT(2)
+>
+>  static inline void pm_suspend_clear_flags(void)
+>  {
+> @@ -227,6 +228,11 @@ static inline void pm_set_resume_via_fir
+>         pm_suspend_global_flags |= PM_SUSPEND_FLAG_FW_RESUME;
+>  }
+>
+> +static inline void pm_set_suspend_no_platform(void)
+> +{
+> +       pm_suspend_global_flags |= PM_SUSPEND_FLAG_NO_PLATFORM;
+> +}
+> +
+>  /**
+>   * pm_suspend_via_firmware - Check if platform firmware will suspend the system.
+>   *
+> @@ -268,6 +274,22 @@ static inline bool pm_resume_via_firmwar
+>         return !!(pm_suspend_global_flags & PM_SUSPEND_FLAG_FW_RESUME);
+>  }
+>
+> +/**
+> + * pm_suspend_no_platform - Check if platform may change device power states.
+> + *
+> + * To be called during system-wide power management transitions to sleep states
+> + * or during the subsequent system-wide transitions back to the working state.
+> + *
+> + * Return 'true' if the power states of devices remain under full control of the
+> + * kernel throughout the system-wide suspend and resume cycle in progress (that
+> + * is, if a device is put into a certain power state during suspend, it can be
+> + * expected to remain in that state during resume).
+> + */
+> +static inline bool pm_suspend_no_platform(void)
+> +{
+> +       return !!(pm_suspend_global_flags & PM_SUSPEND_FLAG_NO_PLATFORM);
+> +}
+> +
+>  /* Suspend-to-idle state machnine. */
+>  enum s2idle_states {
+>         S2IDLE_STATE_NONE,      /* Not suspended/suspending. */
+> Index: linux-pm/kernel/power/suspend.c
+> ===================================================================
+> --- linux-pm.orig/kernel/power/suspend.c
+> +++ linux-pm/kernel/power/suspend.c
+> @@ -493,6 +493,9 @@ int suspend_devices_and_enter(suspend_st
+>
+>         pm_suspend_target_state = state;
+>
+> +       if (state == PM_SUSPEND_TO_IDLE)
+> +               pm_set_suspend_no_platform();
+> +
+>         error = platform_suspend_begin(state);
+>         if (error)
+>                 goto Close;
+> Index: linux-pm/drivers/pci/pci-driver.c
+> ===================================================================
+> --- linux-pm.orig/drivers/pci/pci-driver.c
+> +++ linux-pm/drivers/pci/pci-driver.c
+> @@ -870,7 +870,7 @@ static int pci_pm_suspend_noirq(struct d
+>                         pci_dev->bus->self->skip_bus_pm = true;
+>         }
+>
+> -       if (pci_dev->skip_bus_pm && !pm_suspend_via_firmware()) {
+> +       if (pci_dev->skip_bus_pm && pm_suspend_no_platform()) {
+>                 dev_dbg(dev, "PCI PM: Skipped\n");
+>                 goto Fixup;
+>         }
+> @@ -925,10 +925,10 @@ static int pci_pm_resume_noirq(struct de
+>         /*
+>          * In the suspend-to-idle case, devices left in D0 during suspend will
+>          * stay in D0, so it is not necessary to restore or update their
+> -        * configuration here and attempting to put them into D0 again may
+> -        * confuse some firmware, so avoid doing that.
+> +        * configuration here and attempting to put them into D0 again is
+> +        * pointless, so avoid doing that.
+>          */
+> -       if (!pci_dev->skip_bus_pm || pm_suspend_via_firmware())
+> +       if (!(pci_dev->skip_bus_pm && pm_suspend_no_platform()))
+>                 pci_pm_default_resume_early(pci_dev);
+>
+>         pci_fixup_device(pci_fixup_resume_early, pci_dev);
+>
+>
+>
