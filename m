@@ -1,7 +1,7 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 20/25] clocksource/drivers/tegra: Add verbose definition for 1MHz constant
-Date: Wed, 26 Jun 2019 16:46:46 +0200
-Message-ID: <20190626144651.16742-20-daniel.lezcano@linaro.org>
+Subject: [PATCH 23/25] clocksource/drivers/tegra: Set up maximum-ticks limit properly
+Date: Wed, 26 Jun 2019 16:46:49 +0200
+Message-ID: <20190626144651.16742-23-daniel.lezcano@linaro.org>
 References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
  <20190626144651.16742-1-daniel.lezcano@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -13,62 +13,42 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-Convert all 1MHz literals to a verbose constant for better readability.
+Tegra's timer has 29 bits for the counter and for the "load" register
+which sets counter to a load-value. The counter's value is lower than
+the actual value by 1 because it starts to decrement after one tick,
+hence the maximum number of ticks that hardware can handle equals to
+29 bits + 1.
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-tegra.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/clocksource/timer-tegra.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index f7a09d88dacb..cc90f22c559b 100644
+index a907e71065bd..e9635c25eef4 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -46,6 +46,8 @@
- #define TIMER1_IRQ_IDX		0
- #define TIMER10_IRQ_IDX		10
+@@ -139,9 +139,17 @@ static int tegra_timer_setup(unsigned int cpu)
+ 	irq_force_affinity(to->clkevt.irq, cpumask_of(cpu));
+ 	enable_irq(to->clkevt.irq);
  
-+#define TIMER_1MHz		1000000
-+
- static u32 usec_config;
- static void __iomem *timer_reg_base;
++	/*
++	 * Tegra's timer uses n+1 scheme for the counter, i.e. timer will
++	 * fire after one tick if 0 is loaded and thus minimum number of
++	 * ticks is 1. In result both of the clocksource's tick limits are
++	 * higher than a minimum and maximum that hardware register can
++	 * take by 1, this is then taken into account by set_next_event
++	 * callback.
++	 */
+ 	clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
+ 					1, /* min */
+-					0x1fffffff); /* 29 bits */
++					0x1fffffff + 1); /* max 29 bits + 1 */
  
-@@ -160,7 +162,7 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
- 
- static struct delay_timer tegra_delay_timer = {
- 	.read_current_timer = tegra_delay_timer_read_counter_long,
--	.freq = 1000000,
-+	.freq = TIMER_1MHz,
- };
- #endif
- 
-@@ -226,7 +228,7 @@ static inline unsigned long tegra_rate_for_timer(struct timer_of *to,
- 	 * parent clock.
- 	 */
- 	if (tegra20)
--		return 1000000;
-+		return TIMER_1MHz;
- 
- 	return timer_of_rate(to);
+ 	return 0;
  }
-@@ -315,11 +317,11 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
- 		}
- 	}
- 
--	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
-+	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
- 
- 	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
--				    "timer_us", 1000000,
--				    300, 32, clocksource_mmio_readl_up);
-+				    "timer_us", TIMER_1MHz, 300, 32,
-+				    clocksource_mmio_readl_up);
- 	if (ret)
- 		pr_err("failed to register clocksource: %d\n", ret);
- 
 -- 
 2.17.1
