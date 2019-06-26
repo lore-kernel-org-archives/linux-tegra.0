@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 10/17] PM / devfreq: tegra30: Don't enable consecutive-down interrupt on startup
-Date: Wed, 26 Jun 2019 04:32:44 +0300
-Message-ID: <20190626013252.30470-11-digetx@gmail.com>
+Subject: [PATCH v2 13/17] PM / devfreq: tegra30: Constify structs
+Date: Wed, 26 Jun 2019 04:32:47 +0300
+Message-ID: <20190626013252.30470-14-digetx@gmail.com>
 References: <20190626013252.30470-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,43 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The consecutive-down event tells that we should perform frequency
-de-boosting, but boosting is in a reset state on start and hence the
-event won't do anything useful for us and it will be just a dummy
-interrupt request.
+Constify unmodifiable structs for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index b36d5d644c6e..1e704289c129 100644
+index 8630dca99905..d85de0e3dce0 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -556,7 +556,6 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
- 		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
- 	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
--	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_ENB;
+@@ -106,7 +106,7 @@ enum tegra_actmon_device {
+ 	MCCPU,
+ };
+ 
+-static struct tegra_devfreq_device_config actmon_device_configs[] = {
++static const struct tegra_devfreq_device_config actmon_device_configs[] = {
+ 	{
+ 		/* MCALL: All memory accesses (including from the CPUs) */
+ 		.offset = 0x1c0,
+@@ -171,7 +171,7 @@ struct tegra_actmon_emc_ratio {
+ 	unsigned long emc_freq;
+ };
+ 
+-static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
++static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
+ 	{ 1400000, ULONG_MAX },
+ 	{ 1200000,    750000 },
+ 	{ 1100000,    600000 },
+@@ -210,7 +210,7 @@ static inline unsigned long do_percent(unsigned long val, unsigned int pct)
+ 
+ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra)
+ {
+-	struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
++	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
+ 	unsigned int cpu_freq = cpufreq_get(0);
+ 	unsigned int i;
  
 -- 
 2.22.0
