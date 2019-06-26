@@ -1,49 +1,55 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio
- resume
-Date: Wed, 26 Jun 2019 10:06:33 -0700
-Message-ID: <7b97ec08-212e-76fb-ad12-6d1be5ab6149@nvidia.com>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
- <CACRpkda0=HeRco8kExdf6TmiLOnCec3Ek06s-MdjNJvVGw3ZNQ@mail.gmail.com>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
+ declaring platform drivers
+Date: Wed, 26 Jun 2019 19:27:02 +0200
+Message-ID: <30f541a7-ef9d-d687-ab76-22a4544258f8@metux.net>
+References: <1560796871-18560-1-git-send-email-info@metux.net>
+ <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda0=HeRco8kExdf6TmiLOnCec3Ek06s-MdjNJvVGw3ZNQ@mail.gmail.com>
+In-Reply-To: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com, Rob Herring <robh+dt@kernel.org>, Dmitry
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: linux-kernel@vger.kernel.org, grygorii.strashko@ti.com, mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com, linus.walleij@linaro.org, khilman@kernel.org, patches@opensource.cirrus.com, bgolaszewski@baylibre.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org, linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com, shawnguo@kernel.org, s.hauer@pengutronix.de, alexandre.torgue@st.com
 List-Id: linux-tegra@vger.kernel.org
 
+On 26.06.19 08:14, Uwe Kleine-König wrote:
+Hi,
 
-On 6/25/19 6:38 AM, Linus Walleij wrote:
-> On Mon, Jun 24, 2019 at 5:03 AM Sowjanya Komatineni
-> <skomatineni@nvidia.com> wrote:
+> Would it make sense to do something like:
 >
->> During SC7 resume, PARKED bit clear from the pinmux registers may
->> cause a glitch on the GPIO lines.
->>
->> So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
->> to keep the GPIO lines in a known good state prior to clearing PARKED
->> bit.
->>
->> This patch has fix for this by moving Tegra GPIOs restore to happen
->> very early than pinctrl resume.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> Can this patch be applied in isolation from the other patches?
+> 	#define __module_platform_driver(__platform_driver, __initlvl) \
+> 	static int __init __platform_driver##_init(void) \
+> 	{ \
+> 		return platform_driver_register(&(__platform_driver)); \
+> 	} \
+> 	__initlvl ## _initcall(__platform_driver##_init); \
+> 	static void __exit __platform_driver##_exit(void) \
+> 	{ \
+> 		platform_driver_unregister(&(__platform_driver)); \
+> 	} \
+> 	module_exit(__platform_driver##_exit);
 >
-> WOuld be nice to have at least Thierry's ACK on it before I
-> apply it.
+> 	#define postcore_platform_driver(__platform_driver)
+__module_platform_driver(__platform_driver, postcore)
+> 	#define subsys_platform_driver(__platform_driver)
+__module_platform_driver(__platform_driver, subsys)
+> 	...
 >
-> Yours,
-> Linus Walleij
+> Which would be more compact and makes the difference between these
+> macros a bit more obvious.
+yeah, could do that, but not sure whether it's really good for
+readability when we have so many nested macros :p
 
-Just to confirm, Will not include this in V5 as you are planning to 
-apply this patch separately.
+OTOH, I didn't want to touch the existing macros for now, just trim down
+the actual init boilerplate, postponing further compactions for later.
 
-Thanks
+--mtx
 
-Sowjanya
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
