@@ -1,83 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V4 18/18] arm64: dts: tegra210-p2180: Jetson TX1 SC7
- timings
-Date: Wed, 26 Jun 2019 12:28:24 +0200
-Message-ID: <20190626102824.GG6362@ulmo>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH 1/2] net: stmmac: Fix possible deadlock when disabling
+ EEE support
+Date: Wed, 26 Jun 2019 12:45:25 +0200
+Message-ID: <20190626104525.GH6362@ulmo>
+References: <20190626102322.18821-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="it/zdz3K1bH9Y8/E"
+Return-path: <netdev-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
+In-Reply-To: <20190626102322.18821-1-jonathanh@nvidia.com>
+Sender: netdev-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---APlYHCtpeOhspHkB
+--it/zdz3K1bH9Y8/E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2019 at 08:02:59PM -0700, Sowjanya Komatineni wrote:
-> This patch has Jetson TX1 platform specific SC7 timing configuration
-> in device tree.
+On Wed, Jun 26, 2019 at 11:23:21AM +0100, Jon Hunter wrote:
+> When stmmac_eee_init() is called to disable EEE support, then the timer
+> for EEE support is stopped and we return from the function. Prior to
+> stopping the timer, a mutex was acquired but in this case it is never
+> released and so could cause a deadlock. Fix this by releasing the mutex
+> prior to returning from stmmax_eee_init() when stopping the EEE timer.
 >=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Fixes: 74371272f97f ("net: stmmac: Convert to phylink and remove phylib l=
+ogic")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Can you provide a similar patch for Jetson Nano (p3450-0000)? It'd be
-great if we can make new features like this available across all boards.
+Tested-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra210-p2180.dtsi
-> index 27723829d033..cb58f79deb48 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-> @@ -279,6 +279,13 @@
-> =20
->  	pmc@7000e400 {
->  		nvidia,invert-interrupt;
-> +		nvidia,suspend-mode =3D <0>;
-> +		nvidia,cpu-pwr-good-time =3D <0>;
-> +		nvidia,cpu-pwr-off-time =3D <0>;
-> +		nvidia,core-pwr-good-time =3D <4587 3876>;
-> +		nvidia,core-pwr-off-time =3D <39065>;
-> +		nvidia,core-power-req-active-high;
-> +		nvidia,sys-clock-req-active-high;
->  	};
-> =20
->  	/* eMMC */
-> --=20
-> 2.7.4
->=20
-
---APlYHCtpeOhspHkB
+--it/zdz3K1bH9Y8/E
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0TSMcACgkQ3SOs138+
-s6Hobg//bHL6IZg0MNnz6irMk4CtJYVFtTftwwB09UP8JKkxLxrMaYT9yjBG9AjT
-bjtGZeRdj66yVRCU0sj8xPSNJZjXMepVk6TXaEjuzFtQcJtrSH1kAz8b+dCPHspT
-5+GT3DXacuBqBB6rRQdbSA4MXFC7HWOoMgVPj9afqR4vu50+qhuimRjYQChjE6vF
-OM/IcV1NoGwoYWuWmg6JDgPIydS/XoEfifaSLxnCiJ/Xkx13xdTY7FFrcPWGHIjT
-X68dbzqKk/6nREuQaT/U9xsTkijD92PW0qTK4jfGEFK6d+DrMfNszfDudIYatw1/
-IkP0wgUN7ldmbVCvwArBaSWxZRfIBgAixFniBNjYhaFJ8ctNkXGkedNio20TDdne
-CRxgVQXQtmqgSXCbgFryl1NQk8vJGTOVDsYZlaJEBpPSlANx9IZNTOVpqXnD52FN
-jcJ+PrD83WUVvT1RCRw0p43Bjc2iCpxcfuYsSxU5AWpvf9P/Om6A0WmpMyZADIXB
-K5IUhJtRjBKZblfWPkJv6qX9eYLKx+QqwNy8AAl9Rqf3vjN0aH4J+JWuqSXHK/ko
-9hlH7D2x+dQv4PzCvq/FAmquMz+RIo9fT4IZk4Voi0iZ9Zolm7lbTFcOpFJWye5E
-wHh7HUyfgxxNYKYGzJFqPeBXPO30Ib6MaYUUQZdL4mM5D1M1IUg=
-=DNYf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0TTMUACgkQ3SOs138+
+s6GggQ//S7aRh+7qKUq7BOqNvXA0odDDLtnvYxmihsOI3CtmAEMzA55QyQT18bCn
+rXIv7tzANYDZDpnXJHT7lksGRDGXWzmXB1ehc0isKGNIirBYmPt58jUdN9gI7dlA
+kf0ivngQUba49jZ45S4zbg+S2bTVe4Xljqx/Z3IUiyHW7vcs5cNTbOozmD1MgY6D
+BrBV+TsgIBgfYOcdP8gFlvYDa9GjQKfTQMNkm+3niSyxZBLbCGm2hyObe2acxOmU
+O/mJ1h+2vailfzxqViZxB3+kqf0EIWt2efwaDr75Bmyc9NXvWVYzKr8c2teyOODa
+9de95vb61PPZrufuoEjpMgEV5aAtDVQVC/zVwcMJF8o4Qc+v5sBR4erhMjsIVctB
+QmgxEVcUdfo6MxOw+sa9qJsCvRsLuAdxflpvro7UBLaOthWSh3SaIf0IgSx+mqpK
+1x3jlY/vQZ3vMw/6BoLb+3sgnZNMjh1sSYFKZCNVdDqd6l+q/E/Jw7p/hx8txRN+
+uiAGlbe6V8Rib9rtvHsE/oIcWR8eMa7s7hRgudRMKHJUVA9Q6B8BX9OA79hR6QXK
+Uw1pLJaSoHlyOxY5uJMGgMRMSsn3LkY+Cgc2COu5ILcNtjtO7HrRpXm/TkFARTow
+klV31kVW6VEkXJVSasGzev4TAKU99GEDPqEyDJYWiyeCbhfJgsM=
+=VDy+
 -----END PGP SIGNATURE-----
 
---APlYHCtpeOhspHkB--
+--it/zdz3K1bH9Y8/E--
