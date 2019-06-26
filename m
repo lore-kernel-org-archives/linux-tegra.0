@@ -1,70 +1,63 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] ASoC: soc-core: don't use
- soc_find_component() at snd_soc_find_dai()
-Date: Wed, 26 Jun 2019 10:46:41 +0100
-Message-ID: <c4587ef2-0cec-ddad-f3ae-2b271505569c@nvidia.com>
-References: <878stpyvky.wl-kuninori.morimoto.gx@renesas.com>
- <8291b20f-8926-8089-0507-36b8b1025b35@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V4 02/18] pinctrl: tegra: add suspend and resume support
+Date: Wed, 26 Jun 2019 12:08:56 +0200
+Message-ID: <20190626100856.GB6362@ulmo>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+ <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <8291b20f-8926-8089-0507-36b8b1025b35@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDI2LzA2LzIwMTkgMDI6NTQsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAyNi4wNi4yMDE5
-IDQ6NDAsIEt1bmlub3JpIE1vcmltb3RvINC/0LjRiNC10YI6Cj4+IEZyb206IEt1bmlub3JpIE1v
-cmltb3RvIDxrdW5pbm9yaS5tb3JpbW90by5neEByZW5lc2FzLmNvbT4KPj4KPj4gY29tbWl0IGI5
-ZjJlMjVjNTk5YmIgKCJBU29DOiBzb2MtY29yZTogdXNlIHNvY19maW5kX2NvbXBvbmVudCgpIGF0
-Cj4+IHNuZF9zb2NfZmluZF9kYWkoKSIpIHVzZWQgc29jX2ZpbmRfY29tcG9uZW50KCkgYXQgc25k
-X3NvY19maW5kX2RhaSgpLAo+PiBidXQsIHNvbWUgQ1BVIGRyaXZlciBoYXMgQ1BVIGNvbXBvbmVu
-dCBmb3IgREFJIGFuZCBQbGF0Zm9ybSBjb21wb25lbnQsCj4+IGZvciBleGFtcGxlIGdlbmVyaWMg
-RE1BRW5naW5lIGNvbXBvbmVudC4KPj4gSW4gc3VjaCBjYXNlLCBDUFUgY29tcG9uZW50IGFuZCBQ
-bGF0Zm9ybSBjb21wb25lbnQgaGF2ZSBzYW1lCj4+IG9mX25vZGUgLyBuYW1lLgo+Pgo+PiBIZXJl
-IHNvY19maW5kX2NvbXBvbmVudCgpIHJldHVybnMgKjFzdCogZm91bmQgY29tcG9uZW50Lgo+PiBU
-aHVzLCB3ZSBzaG91bGRuJ3QgdXNlIHNvY19maW5kX2NvbXBvbmVudCgpIGF0IHNuZF9zb2NfZmlu
-ZF9kYWkoKS4KPj4gVGhpcyBwYXRjaCBmaXh1cCB0aGlzIGl0LCBhbmQgYWRkIGNvbW1lbnQgdG8g
-aW5kaWNhdGUgdGhpcyBsaW1pdGF0aW9uLgo+Pgo+PiBGaXhlczogY29tbWl0IGI5ZjJlMjVjNTk5
-YmIgKCJBU29DOiBzb2MtY29yZTogdXNlIHNvY19maW5kX2NvbXBvbmVudCgpIGF0IHNuZF9zb2Nf
-ZmluZF9kYWkoKSIpCj4+IFJlcG9ydGVkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFp
-bC5jb20+Cj4+IFJlcG9ydGVkLWJ5OiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4K
-Pj4gU2lnbmVkLW9mZi1ieTogS3VuaW5vcmkgTW9yaW1vdG8gPGt1bmlub3JpLm1vcmltb3RvLmd4
-QHJlbmVzYXMuY29tPgo+PiAtLS0KPj4gIHNvdW5kL3NvYy9zb2MtY29yZS5jIHwgMTMgKysrKysr
-KysrKystLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
-KC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2Mvc29jLWNvcmUuYyBiL3NvdW5kL3NvYy9z
-b2MtY29yZS5jCj4+IGluZGV4IDM1OGYxZmIuLjhjY2FmNjMgMTAwNjQ0Cj4+IC0tLSBhL3NvdW5k
-L3NvYy9zb2MtY29yZS5jCj4+ICsrKyBiL3NvdW5kL3NvYy9zb2MtY29yZS5jCj4+IEBAIC03ODYs
-NiArNzg2LDE0IEBAIHN0YXRpYyBzdHJ1Y3Qgc25kX3NvY19jb21wb25lbnQgKnNvY19maW5kX2Nv
-bXBvbmVudCgKPj4gIAo+PiAgCWxvY2tkZXBfYXNzZXJ0X2hlbGQoJmNsaWVudF9tdXRleCk7Cj4+
-ICAKPj4gKwkvKgo+PiArCSAqIE5PVEUKPj4gKwkgKgo+PiArCSAqIEl0IHJldHVybnMgKjFzdCog
-Zm91bmQgY29tcG9uZW50LCBidXQgc29tZSBkcml2ZXIKPj4gKwkgKiBoYXMgZmV3IGNvbXBvbmVu
-dHMgYnkgc2FtZSBvZl9ub2RlL25hbWUKPj4gKwkgKiBleCkKPj4gKwkgKglDUFUgY29tcG9uZW50
-IGFuZCBnZW5lcmljIERNQUVuZ2luZSBjb21wb25lbnQKPj4gKwkgKi8KPj4gIAlmb3JfZWFjaF9j
-b21wb25lbnQoY29tcG9uZW50KQo+PiAgCQlpZiAoc25kX3NvY19pc19tYXRjaGluZ19jb21wb25l
-bnQoZGxjLCBjb21wb25lbnQpKQo+PiAgCQkJcmV0dXJuIGNvbXBvbmVudDsKPj4gQEAgLTgxMyw4
-ICs4MjEsOSBAQCBzdHJ1Y3Qgc25kX3NvY19kYWkgKnNuZF9zb2NfZmluZF9kYWkoCj4+ICAJbG9j
-a2RlcF9hc3NlcnRfaGVsZCgmY2xpZW50X211dGV4KTsKPj4gIAo+PiAgCS8qIEZpbmQgQ1BVIERB
-SSBmcm9tIHJlZ2lzdGVyZWQgREFJcyAqLwo+PiAtCWNvbXBvbmVudCA9IHNvY19maW5kX2NvbXBv
-bmVudChkbGMpOwo+PiAtCWlmIChjb21wb25lbnQpIHsKPj4gKwlmb3JfZWFjaF9jb21wb25lbnQo
-Y29tcG9uZW50KSB7Cj4+ICsJCWlmICghc25kX3NvY19pc19tYXRjaGluZ19jb21wb25lbnQoZGxj
-LCBjb21wb25lbnQpKQo+PiArCQkJY29udGludWU7Cj4+ICAJCWZvcl9lYWNoX2NvbXBvbmVudF9k
-YWlzKGNvbXBvbmVudCwgZGFpKSB7Cj4+ICAJCQlpZiAoZGxjLT5kYWlfbmFtZSAmJiBzdHJjbXAo
-ZGFpLT5uYW1lLCBkbGMtPmRhaV9uYW1lKQo+PiAgCQkJICAgICYmICghZGFpLT5kcml2ZXItPm5h
-bWUKPj4KPiAKPiBUaGFuayB5b3UgdmVyeSBtdWNoIQo+IAo+IFRlc3RlZC1ieTogRG1pdHJ5IE9z
-aXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgoKVGVzdGVkLWJ5OiBKb24gSHVudGVyIDxqb25hdGhh
-bmhAbnZpZGlhLmNvbT4KClRoYW5rcyEKSm9uCgotLSAKbnZwdWJsaWMKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QK
-QWxzYS1kZXZlbEBhbHNhLXByb2plY3Qub3JnCmh0dHBzOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qu
-b3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+
+--WhfpMioaduB5tiZL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Jun 23, 2019 at 08:02:43PM -0700, Sowjanya Komatineni wrote:
+> This patch adds support for Tegra pinctrl driver suspend and resume.
+>=20
+> During suspend, context of all pinctrl registers are stored and
+> on resume they are all restored to have all the pinmux and pad
+> configuration for normal operation.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 47 ++++++++++++++++++++++++++=
+++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  4 +++
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c |  6 ++++
+>  3 files changed, 57 insertions(+)
+
+With Dmitry's comments addressed, this is:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--WhfpMioaduB5tiZL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0TRDUACgkQ3SOs138+
+s6GvzxAAiFH/gYSVcwCuGy396VD5pJeLGEfJDzcnWqlSTP7KjyLuPUbzCaT79xLd
+d3YULAplbjAKrhKnlWQJdI/8yFkOUB8fVsj1Dsxw6uMsPvh9UeRjGS7QV1a5ophH
+xLTPD3WuXqY8BHmQ2uTQ8gTGq2/6JT3F+wNl/Uv7jj3i0EieUo0/o1nvUhkX6obL
+hW1quyskaRdTtJDGlGwOqbV/eqCSoW1nRoCGHL/4JTcuVa6hovz86g0jgl2ugMxu
+Rn2jHHHhVoq3WA856YGzSGn453Oj7ddh1gCX8ZG0NfjA2JfBLjb6s1EB35FNtot/
+jI68p7QZV0AVwE4CFjEy4Dc7YUP/I8xQvwOeaFu3/++v6EPckyNP00grYhsf42GW
+oZQoQ0LgyCL1BGzxfD3AoioDVIxqtI4H8jCObu1Hond7B+4FI+mXa+SGf+vm25y4
+doXsqjgv4Nu1QkFd+xToWK1irVnQoXYIYsub96XnX6+AsPb6EOB50rtl6zXfCzZn
+ZWa8KCk00T/ur2CI2Sk12rHxlQ0nA9IDq2eFeEuQwz3O2R6+ZUwISeLLRvI1bGji
+dhwO65R/a9FQc5PM0tzkrfhoxKatl/vVxmBFIeEIVpFBhaJ7rA1HlPoscQQ5J50C
+lv+T2xtIODfuEchmgf4tZc4QMnZ8gw1UG+2n71EZZRX3qp5QQ6s=
+=iW3N
+-----END PGP SIGNATURE-----
+
+--WhfpMioaduB5tiZL--
