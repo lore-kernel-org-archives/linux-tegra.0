@@ -1,66 +1,105 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] ASoC: soc-core: don't use
- soc_find_component() at snd_soc_find_dai()
-Date: Wed, 26 Jun 2019 04:54:28 +0300
-Message-ID: <8291b20f-8926-8089-0507-36b8b1025b35@gmail.com>
-References: <878stpyvky.wl-kuninori.morimoto.gx@renesas.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
+ declaring platform drivers
+Date: Wed, 26 Jun 2019 08:14:05 +0200
+Message-ID: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
+References: <1560796871-18560-1-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <878stpyvky.wl-kuninori.morimoto.gx@renesas.com>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: linux-kernel@vger.kernel.org, grygorii.strashko@ti.com, mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com, linus.walleij@linaro.org, khilman@kernel.org, patches@opensource.cirrus.com, bgolaszewski@baylibre.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org, linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com, shawnguo@kernel.org, s.hauer@pengutronix.de, alexandre.torgue@st.com
 List-Id: linux-tegra@vger.kernel.org
 
-MjYuMDYuMjAxOSA0OjQwLCBLdW5pbm9yaSBNb3JpbW90byDQv9C40YjQtdGCOgo+IEZyb206IEt1
-bmlub3JpIE1vcmltb3RvIDxrdW5pbm9yaS5tb3JpbW90by5neEByZW5lc2FzLmNvbT4KPiAKPiBj
-b21taXQgYjlmMmUyNWM1OTliYiAoIkFTb0M6IHNvYy1jb3JlOiB1c2Ugc29jX2ZpbmRfY29tcG9u
-ZW50KCkgYXQKPiBzbmRfc29jX2ZpbmRfZGFpKCkiKSB1c2VkIHNvY19maW5kX2NvbXBvbmVudCgp
-IGF0IHNuZF9zb2NfZmluZF9kYWkoKSwKPiBidXQsIHNvbWUgQ1BVIGRyaXZlciBoYXMgQ1BVIGNv
-bXBvbmVudCBmb3IgREFJIGFuZCBQbGF0Zm9ybSBjb21wb25lbnQsCj4gZm9yIGV4YW1wbGUgZ2Vu
-ZXJpYyBETUFFbmdpbmUgY29tcG9uZW50Lgo+IEluIHN1Y2ggY2FzZSwgQ1BVIGNvbXBvbmVudCBh
-bmQgUGxhdGZvcm0gY29tcG9uZW50IGhhdmUgc2FtZQo+IG9mX25vZGUgLyBuYW1lLgo+IAo+IEhl
-cmUgc29jX2ZpbmRfY29tcG9uZW50KCkgcmV0dXJucyAqMXN0KiBmb3VuZCBjb21wb25lbnQuCj4g
-VGh1cywgd2Ugc2hvdWxkbid0IHVzZSBzb2NfZmluZF9jb21wb25lbnQoKSBhdCBzbmRfc29jX2Zp
-bmRfZGFpKCkuCj4gVGhpcyBwYXRjaCBmaXh1cCB0aGlzIGl0LCBhbmQgYWRkIGNvbW1lbnQgdG8g
-aW5kaWNhdGUgdGhpcyBsaW1pdGF0aW9uLgo+IAo+IEZpeGVzOiBjb21taXQgYjlmMmUyNWM1OTli
-YiAoIkFTb0M6IHNvYy1jb3JlOiB1c2Ugc29jX2ZpbmRfY29tcG9uZW50KCkgYXQgc25kX3NvY19m
-aW5kX2RhaSgpIikKPiBSZXBvcnRlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwu
-Y29tPgo+IFJlcG9ydGVkLWJ5OiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KPiBT
-aWduZWQtb2ZmLWJ5OiBLdW5pbm9yaSBNb3JpbW90byA8a3VuaW5vcmkubW9yaW1vdG8uZ3hAcmVu
-ZXNhcy5jb20+Cj4gLS0tCj4gIHNvdW5kL3NvYy9zb2MtY29yZS5jIHwgMTMgKysrKysrKysrKyst
-LQo+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3NvYy1jb3JlLmMgYi9zb3VuZC9zb2Mvc29jLWNvcmUu
-Ywo+IGluZGV4IDM1OGYxZmIuLjhjY2FmNjMgMTAwNjQ0Cj4gLS0tIGEvc291bmQvc29jL3NvYy1j
-b3JlLmMKPiArKysgYi9zb3VuZC9zb2Mvc29jLWNvcmUuYwo+IEBAIC03ODYsNiArNzg2LDE0IEBA
-IHN0YXRpYyBzdHJ1Y3Qgc25kX3NvY19jb21wb25lbnQgKnNvY19maW5kX2NvbXBvbmVudCgKPiAg
-Cj4gIAlsb2NrZGVwX2Fzc2VydF9oZWxkKCZjbGllbnRfbXV0ZXgpOwo+ICAKPiArCS8qCj4gKwkg
-KiBOT1RFCj4gKwkgKgo+ICsJICogSXQgcmV0dXJucyAqMXN0KiBmb3VuZCBjb21wb25lbnQsIGJ1
-dCBzb21lIGRyaXZlcgo+ICsJICogaGFzIGZldyBjb21wb25lbnRzIGJ5IHNhbWUgb2Zfbm9kZS9u
-YW1lCj4gKwkgKiBleCkKPiArCSAqCUNQVSBjb21wb25lbnQgYW5kIGdlbmVyaWMgRE1BRW5naW5l
-IGNvbXBvbmVudAo+ICsJICovCj4gIAlmb3JfZWFjaF9jb21wb25lbnQoY29tcG9uZW50KQo+ICAJ
-CWlmIChzbmRfc29jX2lzX21hdGNoaW5nX2NvbXBvbmVudChkbGMsIGNvbXBvbmVudCkpCj4gIAkJ
-CXJldHVybiBjb21wb25lbnQ7Cj4gQEAgLTgxMyw4ICs4MjEsOSBAQCBzdHJ1Y3Qgc25kX3NvY19k
-YWkgKnNuZF9zb2NfZmluZF9kYWkoCj4gIAlsb2NrZGVwX2Fzc2VydF9oZWxkKCZjbGllbnRfbXV0
-ZXgpOwo+ICAKPiAgCS8qIEZpbmQgQ1BVIERBSSBmcm9tIHJlZ2lzdGVyZWQgREFJcyAqLwo+IC0J
-Y29tcG9uZW50ID0gc29jX2ZpbmRfY29tcG9uZW50KGRsYyk7Cj4gLQlpZiAoY29tcG9uZW50KSB7
-Cj4gKwlmb3JfZWFjaF9jb21wb25lbnQoY29tcG9uZW50KSB7Cj4gKwkJaWYgKCFzbmRfc29jX2lz
-X21hdGNoaW5nX2NvbXBvbmVudChkbGMsIGNvbXBvbmVudCkpCj4gKwkJCWNvbnRpbnVlOwo+ICAJ
-CWZvcl9lYWNoX2NvbXBvbmVudF9kYWlzKGNvbXBvbmVudCwgZGFpKSB7Cj4gIAkJCWlmIChkbGMt
-PmRhaV9uYW1lICYmIHN0cmNtcChkYWktPm5hbWUsIGRsYy0+ZGFpX25hbWUpCj4gIAkJCSAgICAm
-JiAoIWRhaS0+ZHJpdmVyLT5uYW1lCj4gCgpUaGFuayB5b3UgdmVyeSBtdWNoIQoKVGVzdGVkLWJ5
-OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+Cl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2Et
-ZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwczovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+Hello,
+
+On Mon, Jun 17, 2019 at 08:40:42PM +0200, Enrico Weigelt, metux IT consult wrote:
+> From: Enrico Weigelt <info@metux.net>
+> 
+> Add more helper macros for trivial driver init cases, similar to the
+> already existing module_platform_driver()+friends - now for those which
+> are initialized at other stages. Lots of drivers couldn't use the existing
+> macros, as they need to be called at different init stages, eg. subsys,
+> postcore, arch.
+> 
+> This helps to further reduce driver init boilerplate.
+> 
+> Signed-off-by: Enrico Weigelt <info@metux.net>
+> ---
+>  include/linux/platform_device.h | 51 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+> index beb25f2..5f3a967 100644
+> --- a/include/linux/platform_device.h
+> +++ b/include/linux/platform_device.h
+> @@ -259,6 +259,57 @@ static inline void platform_set_drvdata(struct platform_device *pdev,
+>  } \
+>  module_exit(__platform_driver##_exit);
+>  
+> +/* postcore_platform_driver() - Helper macro for drivers that don't do
+> + * anything special in module init/exit.  This eliminates a lot of
+> + * boilerplate.  Each module may only use this macro once, and
+> + * calling it replaces postcore_initcall() and module_exit()
+> + */
+> +#define postcore_platform_driver(__platform_driver) \
+> +static int __init __platform_driver##_init(void) \
+> +{ \
+> +	return platform_driver_register(&(__platform_driver)); \
+> +} \
+> +postcore_initcall(__platform_driver##_init); \
+> +static void __exit __platform_driver##_exit(void) \
+> +{ \
+> +	platform_driver_unregister(&(__platform_driver)); \
+> +} \
+> +module_exit(__platform_driver##_exit);
+> +
+> +/* subsys_platform_driver() - Helper macro for drivers that don't do
+> + * anything special in module init/exit.  This eliminates a lot of
+> + * boilerplate.  Each module may only use this macro once, and
+> + * calling it replaces subsys_initcall() and module_exit()
+> + */
+> +#define subsys_platform_driver(__platform_driver) \
+> +static int __init __platform_driver##_init(void) \
+> +{ \
+> +	return platform_driver_register(&(__platform_driver)); \
+> +} \
+> +subsys_initcall(__platform_driver##_init); \
+> +static void __exit __platform_driver##_exit(void) \
+> +{ \
+> +	platform_driver_unregister(&(__platform_driver)); \
+> +} \
+> +module_exit(__platform_driver##_exit);
+
+Would it make sense to do something like:
+
+	#define __module_platform_driver(__platform_driver, __initlvl) \
+	static int __init __platform_driver##_init(void) \
+	{ \
+		return platform_driver_register(&(__platform_driver)); \
+	} \
+	__initlvl ## _initcall(__platform_driver##_init); \
+	static void __exit __platform_driver##_exit(void) \
+	{ \
+		platform_driver_unregister(&(__platform_driver)); \
+	} \
+	module_exit(__platform_driver##_exit);
+
+	#define postcore_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, postcore)
+	#define subsys_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, subsys)
+	...
+
+Which would be more compact and makes the difference between these
+macros a bit more obvious.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
