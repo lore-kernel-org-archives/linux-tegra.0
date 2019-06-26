@@ -1,105 +1,70 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
- declaring platform drivers
-Date: Wed, 26 Jun 2019 08:14:05 +0200
-Message-ID: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
-References: <1560796871-18560-1-git-send-email-info@metux.net>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] ASoC: soc-core: don't use
+ soc_find_component() at snd_soc_find_dai()
+Date: Wed, 26 Jun 2019 10:46:41 +0100
+Message-ID: <c4587ef2-0cec-ddad-f3ae-2b271505569c@nvidia.com>
+References: <878stpyvky.wl-kuninori.morimoto.gx@renesas.com>
+ <8291b20f-8926-8089-0507-36b8b1025b35@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: linux-kernel@vger.kernel.org, grygorii.strashko@ti.com, mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com, linus.walleij@linaro.org, khilman@kernel.org, patches@opensource.cirrus.com, bgolaszewski@baylibre.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org, linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com, shawnguo@kernel.org, s.hauer@pengutronix.de, alexandre.torgue@st.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <8291b20f-8926-8089-0507-36b8b1025b35@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
-
-On Mon, Jun 17, 2019 at 08:40:42PM +0200, Enrico Weigelt, metux IT consult wrote:
-> From: Enrico Weigelt <info@metux.net>
-> 
-> Add more helper macros for trivial driver init cases, similar to the
-> already existing module_platform_driver()+friends - now for those which
-> are initialized at other stages. Lots of drivers couldn't use the existing
-> macros, as they need to be called at different init stages, eg. subsys,
-> postcore, arch.
-> 
-> This helps to further reduce driver init boilerplate.
-> 
-> Signed-off-by: Enrico Weigelt <info@metux.net>
-> ---
->  include/linux/platform_device.h | 51 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-> index beb25f2..5f3a967 100644
-> --- a/include/linux/platform_device.h
-> +++ b/include/linux/platform_device.h
-> @@ -259,6 +259,57 @@ static inline void platform_set_drvdata(struct platform_device *pdev,
->  } \
->  module_exit(__platform_driver##_exit);
->  
-> +/* postcore_platform_driver() - Helper macro for drivers that don't do
-> + * anything special in module init/exit.  This eliminates a lot of
-> + * boilerplate.  Each module may only use this macro once, and
-> + * calling it replaces postcore_initcall() and module_exit()
-> + */
-> +#define postcore_platform_driver(__platform_driver) \
-> +static int __init __platform_driver##_init(void) \
-> +{ \
-> +	return platform_driver_register(&(__platform_driver)); \
-> +} \
-> +postcore_initcall(__platform_driver##_init); \
-> +static void __exit __platform_driver##_exit(void) \
-> +{ \
-> +	platform_driver_unregister(&(__platform_driver)); \
-> +} \
-> +module_exit(__platform_driver##_exit);
-> +
-> +/* subsys_platform_driver() - Helper macro for drivers that don't do
-> + * anything special in module init/exit.  This eliminates a lot of
-> + * boilerplate.  Each module may only use this macro once, and
-> + * calling it replaces subsys_initcall() and module_exit()
-> + */
-> +#define subsys_platform_driver(__platform_driver) \
-> +static int __init __platform_driver##_init(void) \
-> +{ \
-> +	return platform_driver_register(&(__platform_driver)); \
-> +} \
-> +subsys_initcall(__platform_driver##_init); \
-> +static void __exit __platform_driver##_exit(void) \
-> +{ \
-> +	platform_driver_unregister(&(__platform_driver)); \
-> +} \
-> +module_exit(__platform_driver##_exit);
-
-Would it make sense to do something like:
-
-	#define __module_platform_driver(__platform_driver, __initlvl) \
-	static int __init __platform_driver##_init(void) \
-	{ \
-		return platform_driver_register(&(__platform_driver)); \
-	} \
-	__initlvl ## _initcall(__platform_driver##_init); \
-	static void __exit __platform_driver##_exit(void) \
-	{ \
-		platform_driver_unregister(&(__platform_driver)); \
-	} \
-	module_exit(__platform_driver##_exit);
-
-	#define postcore_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, postcore)
-	#define subsys_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, subsys)
-	...
-
-Which would be more compact and makes the difference between these
-macros a bit more obvious.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Ck9uIDI2LzA2LzIwMTkgMDI6NTQsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAyNi4wNi4yMDE5
+IDQ6NDAsIEt1bmlub3JpIE1vcmltb3RvINC/0LjRiNC10YI6Cj4+IEZyb206IEt1bmlub3JpIE1v
+cmltb3RvIDxrdW5pbm9yaS5tb3JpbW90by5neEByZW5lc2FzLmNvbT4KPj4KPj4gY29tbWl0IGI5
+ZjJlMjVjNTk5YmIgKCJBU29DOiBzb2MtY29yZTogdXNlIHNvY19maW5kX2NvbXBvbmVudCgpIGF0
+Cj4+IHNuZF9zb2NfZmluZF9kYWkoKSIpIHVzZWQgc29jX2ZpbmRfY29tcG9uZW50KCkgYXQgc25k
+X3NvY19maW5kX2RhaSgpLAo+PiBidXQsIHNvbWUgQ1BVIGRyaXZlciBoYXMgQ1BVIGNvbXBvbmVu
+dCBmb3IgREFJIGFuZCBQbGF0Zm9ybSBjb21wb25lbnQsCj4+IGZvciBleGFtcGxlIGdlbmVyaWMg
+RE1BRW5naW5lIGNvbXBvbmVudC4KPj4gSW4gc3VjaCBjYXNlLCBDUFUgY29tcG9uZW50IGFuZCBQ
+bGF0Zm9ybSBjb21wb25lbnQgaGF2ZSBzYW1lCj4+IG9mX25vZGUgLyBuYW1lLgo+Pgo+PiBIZXJl
+IHNvY19maW5kX2NvbXBvbmVudCgpIHJldHVybnMgKjFzdCogZm91bmQgY29tcG9uZW50Lgo+PiBU
+aHVzLCB3ZSBzaG91bGRuJ3QgdXNlIHNvY19maW5kX2NvbXBvbmVudCgpIGF0IHNuZF9zb2NfZmlu
+ZF9kYWkoKS4KPj4gVGhpcyBwYXRjaCBmaXh1cCB0aGlzIGl0LCBhbmQgYWRkIGNvbW1lbnQgdG8g
+aW5kaWNhdGUgdGhpcyBsaW1pdGF0aW9uLgo+Pgo+PiBGaXhlczogY29tbWl0IGI5ZjJlMjVjNTk5
+YmIgKCJBU29DOiBzb2MtY29yZTogdXNlIHNvY19maW5kX2NvbXBvbmVudCgpIGF0IHNuZF9zb2Nf
+ZmluZF9kYWkoKSIpCj4+IFJlcG9ydGVkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFp
+bC5jb20+Cj4+IFJlcG9ydGVkLWJ5OiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4K
+Pj4gU2lnbmVkLW9mZi1ieTogS3VuaW5vcmkgTW9yaW1vdG8gPGt1bmlub3JpLm1vcmltb3RvLmd4
+QHJlbmVzYXMuY29tPgo+PiAtLS0KPj4gIHNvdW5kL3NvYy9zb2MtY29yZS5jIHwgMTMgKysrKysr
+KysrKystLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2Mvc29jLWNvcmUuYyBiL3NvdW5kL3NvYy9z
+b2MtY29yZS5jCj4+IGluZGV4IDM1OGYxZmIuLjhjY2FmNjMgMTAwNjQ0Cj4+IC0tLSBhL3NvdW5k
+L3NvYy9zb2MtY29yZS5jCj4+ICsrKyBiL3NvdW5kL3NvYy9zb2MtY29yZS5jCj4+IEBAIC03ODYs
+NiArNzg2LDE0IEBAIHN0YXRpYyBzdHJ1Y3Qgc25kX3NvY19jb21wb25lbnQgKnNvY19maW5kX2Nv
+bXBvbmVudCgKPj4gIAo+PiAgCWxvY2tkZXBfYXNzZXJ0X2hlbGQoJmNsaWVudF9tdXRleCk7Cj4+
+ICAKPj4gKwkvKgo+PiArCSAqIE5PVEUKPj4gKwkgKgo+PiArCSAqIEl0IHJldHVybnMgKjFzdCog
+Zm91bmQgY29tcG9uZW50LCBidXQgc29tZSBkcml2ZXIKPj4gKwkgKiBoYXMgZmV3IGNvbXBvbmVu
+dHMgYnkgc2FtZSBvZl9ub2RlL25hbWUKPj4gKwkgKiBleCkKPj4gKwkgKglDUFUgY29tcG9uZW50
+IGFuZCBnZW5lcmljIERNQUVuZ2luZSBjb21wb25lbnQKPj4gKwkgKi8KPj4gIAlmb3JfZWFjaF9j
+b21wb25lbnQoY29tcG9uZW50KQo+PiAgCQlpZiAoc25kX3NvY19pc19tYXRjaGluZ19jb21wb25l
+bnQoZGxjLCBjb21wb25lbnQpKQo+PiAgCQkJcmV0dXJuIGNvbXBvbmVudDsKPj4gQEAgLTgxMyw4
+ICs4MjEsOSBAQCBzdHJ1Y3Qgc25kX3NvY19kYWkgKnNuZF9zb2NfZmluZF9kYWkoCj4+ICAJbG9j
+a2RlcF9hc3NlcnRfaGVsZCgmY2xpZW50X211dGV4KTsKPj4gIAo+PiAgCS8qIEZpbmQgQ1BVIERB
+SSBmcm9tIHJlZ2lzdGVyZWQgREFJcyAqLwo+PiAtCWNvbXBvbmVudCA9IHNvY19maW5kX2NvbXBv
+bmVudChkbGMpOwo+PiAtCWlmIChjb21wb25lbnQpIHsKPj4gKwlmb3JfZWFjaF9jb21wb25lbnQo
+Y29tcG9uZW50KSB7Cj4+ICsJCWlmICghc25kX3NvY19pc19tYXRjaGluZ19jb21wb25lbnQoZGxj
+LCBjb21wb25lbnQpKQo+PiArCQkJY29udGludWU7Cj4+ICAJCWZvcl9lYWNoX2NvbXBvbmVudF9k
+YWlzKGNvbXBvbmVudCwgZGFpKSB7Cj4+ICAJCQlpZiAoZGxjLT5kYWlfbmFtZSAmJiBzdHJjbXAo
+ZGFpLT5uYW1lLCBkbGMtPmRhaV9uYW1lKQo+PiAgCQkJICAgICYmICghZGFpLT5kcml2ZXItPm5h
+bWUKPj4KPiAKPiBUaGFuayB5b3UgdmVyeSBtdWNoIQo+IAo+IFRlc3RlZC1ieTogRG1pdHJ5IE9z
+aXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgoKVGVzdGVkLWJ5OiBKb24gSHVudGVyIDxqb25hdGhh
+bmhAbnZpZGlhLmNvbT4KClRoYW5rcyEKSm9uCgotLSAKbnZwdWJsaWMKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QK
+QWxzYS1kZXZlbEBhbHNhLXByb2plY3Qub3JnCmh0dHBzOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qu
+b3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
