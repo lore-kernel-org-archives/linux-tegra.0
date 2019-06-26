@@ -1,111 +1,225 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: soc-core: don't use
-	soc_find_component() at snd_soc_find_dai()" to the asoc tree
-Date: Wed, 26 Jun 2019 12:32:43 +0100 (BST)
-Message-ID: <20190626113243.CFACC440046@finisterre.sirena.org.uk>
-References: <878stpyvky.wl-kuninori.morimoto.gx@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <878stpyvky.wl-kuninori.morimoto.gx@renesas.com>
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-tegra@vger.kernel.org, Linux-ALSA <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 05/25] clocksource/drivers/tegra: Support per-CPU timers on all Tegra's
+Date: Wed, 26 Jun 2019 16:46:31 +0200
+Message-ID: <20190626144651.16742-5-daniel.lezcano@linaro.org>
+References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
+ <20190626144651.16742-1-daniel.lezcano@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190626144651.16742-1-daniel.lezcano@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+From: Dmitry Osipenko <digetx@gmail.com>
 
-   ASoC: soc-core: don't use soc_find_component() at snd_soc_find_dai()
+Assign TMR1-4 per-CPU core on 32bit Tegra's in a way it is done for
+Tegra210. In a result each core can handle its own timer events, less
+code is unique to ARM64 and Tegra's clock events driver now has higher
+rating on all Tegra's, replacing the ARM's TWD timer which isn't very
+accurate due to the clock rate jitter caused by CPU frequency scaling.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From e3303268f9cfa4eb7c2217df471417d4327109fd Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 26 Jun 2019 10:40:59 +0900
-Subject: [PATCH] ASoC: soc-core: don't use soc_find_component() at
- snd_soc_find_dai()
-
-commit b9f2e25c599bb ("ASoC: soc-core: use soc_find_component() at
-snd_soc_find_dai()") used soc_find_component() at snd_soc_find_dai(),
-but, some CPU driver has CPU component for DAI and Platform component,
-for example generic DMAEngine component.
-In such case, CPU component and Platform component have same
-of_node / name.
-
-Here soc_find_component() returns *1st* found component.
-Thus, we shouldn't use soc_find_component() at snd_soc_find_dai().
-This patch fixup this it, and add comment to indicate this limitation.
-
-Fixes: commit b9f2e25c599bb ("ASoC: soc-core: use soc_find_component() at snd_soc_find_dai()")
-Reported-by: Dmitry Osipenko <digetx@gmail.com>
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- sound/soc/soc-core.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-tegra20.c | 120 ++++++++++------------------
+ 1 file changed, 43 insertions(+), 77 deletions(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 358f1fbf9a30..8ccaf63e428c 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -786,6 +786,14 @@ static struct snd_soc_component *soc_find_component(
+diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
+index 1e7ece279730..4b30ba6228c1 100644
+--- a/drivers/clocksource/timer-tegra20.c
++++ b/drivers/clocksource/timer-tegra20.c
+@@ -40,13 +40,18 @@
+ #define TIMER_PCR_INTR_CLR	BIT(30)
  
- 	lockdep_assert_held(&client_mutex);
+ #ifdef CONFIG_ARM
+-#define TIMER_CPU0		0x50 /* TIMER3 */
++#define TIMER_CPU0		0x00 /* TIMER1 */
++#define TIMER_CPU2		0x50 /* TIMER3 */
++#define TIMER1_IRQ_IDX		0
++#define IRQ_IDX_FOR_CPU(cpu)	(TIMER1_IRQ_IDX + cpu)
++#define TIMER_BASE_FOR_CPU(cpu)	\
++	(((cpu) & 1) * 8 + ((cpu) < 2 ? TIMER_CPU0 : TIMER_CPU2))
+ #else
+ #define TIMER_CPU0		0x90 /* TIMER10 */
+ #define TIMER10_IRQ_IDX		10
+ #define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
+-#endif
+ #define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
++#endif
  
-+	/*
-+	 * NOTE
-+	 *
-+	 * It returns *1st* found component, but some driver
-+	 * has few components by same of_node/name
-+	 * ex)
-+	 *	CPU component and generic DMAEngine component
-+	 */
- 	for_each_component(component)
- 		if (snd_soc_is_matching_component(dlc, component))
- 			return component;
-@@ -813,8 +821,9 @@ struct snd_soc_dai *snd_soc_find_dai(
- 	lockdep_assert_held(&client_mutex);
+ static u32 usec_config;
+ static void __iomem *timer_reg_base;
+@@ -109,7 +114,6 @@ static void tegra_timer_resume(struct clock_event_device *evt)
+ 	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
+ }
  
- 	/* Find CPU DAI from registered DAIs */
--	component = soc_find_component(dlc);
--	if (component) {
-+	for_each_component(component) {
-+		if (!snd_soc_is_matching_component(dlc, component))
-+			continue;
- 		for_each_component_dais(component, dai) {
- 			if (dlc->dai_name && strcmp(dai->name, dlc->dai_name)
- 			    && (!dai->driver->name
+-#ifdef CONFIG_ARM64
+ static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
+ 	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE,
+ 
+@@ -150,33 +154,8 @@ static int tegra_timer_stop(unsigned int cpu)
+ 
+ 	return 0;
+ }
+-#else /* CONFIG_ARM */
+-static struct timer_of tegra_to = {
+-	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE | TIMER_OF_IRQ,
+-
+-	.clkevt = {
+-		.name = "tegra_timer",
+-		.rating	= 300,
+-		.features = CLOCK_EVT_FEAT_ONESHOT |
+-			    CLOCK_EVT_FEAT_PERIODIC |
+-			    CLOCK_EVT_FEAT_DYNIRQ,
+-		.set_next_event	= tegra_timer_set_next_event,
+-		.set_state_shutdown = tegra_timer_shutdown,
+-		.set_state_periodic = tegra_timer_set_periodic,
+-		.set_state_oneshot = tegra_timer_shutdown,
+-		.tick_resume = tegra_timer_shutdown,
+-		.suspend = tegra_timer_suspend,
+-		.resume = tegra_timer_resume,
+-		.cpumask = cpu_possible_mask,
+-	},
+-
+-	.of_irq = {
+-		.index = 2,
+-		.flags = IRQF_TIMER | IRQF_TRIGGER_HIGH,
+-		.handler = tegra_timer_isr,
+-	},
+-};
+ 
++#ifdef CONFIG_ARM
+ static u64 notrace tegra_read_sched_clock(void)
+ {
+ 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
+@@ -213,10 +192,12 @@ static struct clocksource suspend_rtc_clocksource = {
+ };
+ #endif
+ 
+-static int tegra_timer_common_init(struct device_node *np, struct timer_of *to)
++static int tegra_init_timer(struct device_node *np, bool tegra20)
+ {
+-	int ret = 0;
++	struct timer_of *to;
++	int cpu, ret;
+ 
++	to = this_cpu_ptr(&tegra_to);
+ 	ret = timer_of_init(np, to);
+ 	if (ret < 0)
+ 		goto out;
+@@ -258,29 +239,19 @@ static int tegra_timer_common_init(struct device_node *np, struct timer_of *to)
+ 		goto out;
+ 	}
+ 
+-	writel(usec_config, timer_of_base(to) + TIMERUS_USEC_CFG);
+-
+-out:
+-	return ret;
+-}
+-
+-#ifdef CONFIG_ARM64
+-static int __init tegra_init_timer(struct device_node *np)
+-{
+-	int cpu, ret = 0;
+-	struct timer_of *to;
+-
+-	to = this_cpu_ptr(&tegra_to);
+-	ret = tegra_timer_common_init(np, to);
+-	if (ret < 0)
+-		goto out;
++	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
+ 
+ 	for_each_possible_cpu(cpu) {
+-		struct timer_of *cpu_to;
++		struct timer_of *cpu_to = per_cpu_ptr(&tegra_to, cpu);
++
++		/*
++		 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
++		 * parent clock.
++		 */
++		if (tegra20)
++			cpu_to->of_clk.rate = 1000000;
+ 
+-		cpu_to = per_cpu_ptr(&tegra_to, cpu);
+ 		cpu_to->of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(cpu);
+-		cpu_to->of_clk.rate = timer_of_rate(to);
+ 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+ 		cpu_to->clkevt.irq =
+ 			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
+@@ -322,43 +293,39 @@ static int __init tegra_init_timer(struct device_node *np)
+ 	timer_of_cleanup(to);
+ 	return ret;
+ }
++
++#ifdef CONFIG_ARM64
++static int __init tegra210_init_timer(struct device_node *np)
++{
++	return tegra_init_timer(np, false);
++}
++TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_init_timer);
+ #else /* CONFIG_ARM */
+-static int __init tegra_init_timer(struct device_node *np)
++static int __init tegra20_init_timer(struct device_node *np)
+ {
+-	int ret = 0;
++	struct timer_of *to;
++	int err;
+ 
+-	ret = tegra_timer_common_init(np, &tegra_to);
+-	if (ret < 0)
+-		goto out;
++	err = tegra_init_timer(np, true);
++	if (err)
++		return err;
+ 
+-	tegra_to.of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(0);
+-	tegra_to.of_clk.rate = 1000000; /* microsecond timer */
++	to = this_cpu_ptr(&tegra_to);
+ 
+ 	sched_clock_register(tegra_read_sched_clock, 32,
+-			     timer_of_rate(&tegra_to));
+-	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+-				    "timer_us", timer_of_rate(&tegra_to),
++			     timer_of_rate(to));
++	err = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
++				    "timer_us", timer_of_rate(to),
+ 				    300, 32, clocksource_mmio_readl_up);
+-	if (ret) {
+-		pr_err("Failed to register clocksource\n");
+-		goto out;
+-	}
++	if (err)
++		pr_err("Failed to register clocksource: %d\n", err);
+ 
+ 	tegra_delay_timer.read_current_timer =
+ 			tegra_delay_timer_read_counter_long;
+-	tegra_delay_timer.freq = timer_of_rate(&tegra_to);
++	tegra_delay_timer.freq = timer_of_rate(to);
+ 	register_current_timer_delay(&tegra_delay_timer);
+ 
+-	clockevents_config_and_register(&tegra_to.clkevt,
+-					timer_of_rate(&tegra_to),
+-					0x1,
+-					0x1fffffff);
+-
+-	return ret;
+-out:
+-	timer_of_cleanup(&tegra_to);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ static int __init tegra20_init_rtc(struct device_node *np)
+@@ -374,6 +341,5 @@ static int __init tegra20_init_rtc(struct device_node *np)
+ 	return 0;
+ }
+ TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
++TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+ #endif
+-TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra_init_timer);
+-TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra_init_timer);
 -- 
-2.20.1
+2.17.1
