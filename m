@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 08/17] PM / devfreq: tegra30: Move clk-notifier's registration to governor's start
-Date: Wed, 26 Jun 2019 04:32:42 +0300
-Message-ID: <20190626013252.30470-9-digetx@gmail.com>
+Subject: [PATCH v2 09/17] PM / devfreq: tegra30: Reset boosting on startup
+Date: Wed, 26 Jun 2019 04:32:43 +0300
+Message-ID: <20190626013252.30470-10-digetx@gmail.com>
 References: <20190626013252.30470-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,100 +12,28 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no point in receiving of the notifications while governor is
-stopped, let's keep them disabled like we do for the CPU freq-change
-notifications. This also fixes a potential use-after-free bug if
-notification happens after device's removal.
+Governor could be stopped while boosting is active. We have assumption
+that everything is reset on governor's restart, including the boosting
+value, which was missed.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 33 ++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index a2cae8348dce..8e1c56790ac3 100644
+index 8e1c56790ac3..b36d5d644c6e 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -574,6 +574,19 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
- 	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
- 		      ACTMON_GLB_PERIOD_CTRL);
+@@ -534,6 +534,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+ {
+ 	u32 val = 0, target_freq;
  
-+	/*
-+	 * CLK notifications are needed in order to reconfigure the upper
-+	 * consecutive watermark in accordance to the actual clock rate
-+	 * to avoid unnecessary upper interrupts.
-+	 */
-+	err = clk_notifier_register(tegra->emc_clock,
-+				    &tegra->clk_rate_change_nb);
-+	if (err) {
-+		dev_err(tegra->devfreq->dev.parent,
-+			"Failed to register rate change notifier\n");
-+		return err;
-+	}
++	/* we don't want boosting on restart */
++	dev->boost_freq = 0;
 +
- 	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
- 		tegra_actmon_configure_device(tegra, &tegra->devices[i]);
- 
-@@ -600,6 +613,8 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
- 	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
- 		tegra_actmon_stop_device(&tegra->devices[i]);
- 
-+	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
-+
- 	return err;
- }
- 
-@@ -616,6 +631,8 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
- 
- 	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
- 		tegra_actmon_stop_device(&tegra->devices[i]);
-+
-+	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
- }
- 
- static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-@@ -860,22 +877,14 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, tegra);
- 
-+	tegra->clk_rate_change_nb.notifier_call = tegra_actmon_clk_notify_cb;
- 	tegra->cpu_rate_change_nb.notifier_call = tegra_actmon_cpu_notify_cb;
- 	INIT_WORK(&tegra->update_work, tegra_actmon_delayed_update);
- 
--	tegra->clk_rate_change_nb.notifier_call = tegra_actmon_clk_notify_cb;
--	err = clk_notifier_register(tegra->emc_clock,
--				    &tegra->clk_rate_change_nb);
--	if (err) {
--		dev_err(&pdev->dev,
--			"Failed to register rate change notifier\n");
--		goto remove_opps;
--	}
--
- 	err = devfreq_add_governor(&tegra_devfreq_governor);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add governor: %d\n", err);
--		goto unreg_notifier;
-+		goto remove_opps;
- 	}
- 
- 	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
-@@ -891,9 +900,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- remove_governor:
- 	devfreq_remove_governor(&tegra_devfreq_governor);
- 
--unreg_notifier:
--	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
--
- remove_opps:
- 	dev_pm_opp_remove_all_dynamic(&pdev->dev);
- 
-@@ -910,7 +916,6 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
- 	devfreq_remove_device(tegra->devfreq);
- 	devfreq_remove_governor(&tegra_devfreq_governor);
- 
--	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
- 	dev_pm_opp_remove_all_dynamic(&pdev->dev);
- 
- 	reset_control_reset(tegra->reset);
+ 	target_freq = clk_get_rate(tegra->emc_clock) / KHZ;
+ 	dev->avg_count = target_freq * ACTMON_SAMPLING_PERIOD;
+ 	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
 -- 
 2.22.0
