@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.9 0/1] 4.9.184-stable review
-Date: Thu, 27 Jun 2019 09:37:43 +0100
-Message-ID: <a2147ac3-c604-6119-f61e-690ba6ca9131@nvidia.com>
-References: <20190626083606.302057200@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 0/1] 4.14.131-stable review
+Date: Thu, 27 Jun 2019 09:38:35 +0100
+Message-ID: <7db66cbf-f67f-d790-3381-778768b3b8a3@nvidia.com>
+References: <20190626083606.248422423@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190626083606.302057200@linuxfoundation.org>
+In-Reply-To: <20190626083606.248422423@linuxfoundation.org>
 Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -16,7 +16,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 26/06/2019 09:45, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.184 release.
+> This is the start of the stable review cycle for the 4.14.131 release.
 > There are 1 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
@@ -25,24 +25,23 @@ On 26/06/2019 09:45, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.184-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.131-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
 > and the diffstat can be found below.
 > 
 > thanks,
 > 
 > greg k-h
 
-
 All tests are passing for Tegra ...
 
-Test results for stable-v4.9:
+Test results for stable-v4.14:
     8 builds:	8 pass, 0 fail
     16 boots:	16 pass, 0 fail
     24 tests:	24 pass, 0 fail
 
-Linux version:	4.9.184-rc1-g493abc5bd149
+Linux version:	4.14.131-rc1-g2f84eb215456
 Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
