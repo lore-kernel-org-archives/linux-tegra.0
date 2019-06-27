@@ -1,52 +1,173 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 0/1] 4.4.184-stable review
-Date: Fri, 28 Jun 2019 00:54:33 +0800
-Message-ID: <20190627165433.GC9855@kroah.com>
-References: <20190626083604.894288021@linuxfoundation.org>
- <217e73e4-7777-558c-186f-c94658447ae0@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3] dmaengine: tegra-apb: Support per-burst residue granularity
+Date: Thu, 27 Jun 2019 22:47:28 +0300
+Message-ID: <20190627194728.8948-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <217e73e4-7777-558c-186f-c94658447ae0@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 09:36:55AM +0100, Jon Hunter wrote:
-> 
-> On 26/06/2019 09:45, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.184 release.
-> > There are 1 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.184-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.4:
->     6 builds:	6 pass, 0 fail
->     12 boots:	12 pass, 0 fail
->     19 tests:	19 pass, 0 fail
-> 
-> Linux version:	4.4.184-rc1-g5f1824292521
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra30-cardhu-a04
-> 
+Tegra's APB DMA engine updates words counter after each transferred burst
+of data, hence it can report transfer's residual with more fidelity which
+may be required in cases like audio playback. In particular this fixes
+audio stuttering during playback in a chromium web browser. The patch is
+based on the original work that was made by Ben Dooks and a patch from
+downstream kernel. It was tested on Tegra20 and Tegra30 devices.
 
-Thanks for testing all of these and letting me know.
+Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
+Link: https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
+Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-greg k-h
+Changelog:
+
+v3:  Added workaround for a hardware design shortcoming that results
+     in a words counter wraparound before end-of-transfer bit is set
+     in a cyclic mode.
+
+v2:  Addressed review comments made by Jon Hunter to v1. We won't try
+     to get words count if dma_desc is on free list as it will result
+     in a NULL dereference because this case wasn't handled properly.
+
+     The residual value is now updated properly, avoiding potential
+     integer overflow by adding the "bytes" to the "bytes_transferred"
+     instead of the subtraction.
+
+ drivers/dma/tegra20-apb-dma.c | 69 +++++++++++++++++++++++++++++++----
+ 1 file changed, 62 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 79e9593815f1..71473eda28ee 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -152,6 +152,7 @@ struct tegra_dma_sg_req {
+ 	bool				last_sg;
+ 	struct list_head		node;
+ 	struct tegra_dma_desc		*dma_desc;
++	unsigned int			words_xferred;
+ };
+ 
+ /*
+@@ -496,6 +497,7 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
+ 				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
+ 	nsg_req->configured = true;
++	nsg_req->words_xferred = 0;
+ 
+ 	tegra_dma_resume(tdc);
+ }
+@@ -511,6 +513,7 @@ static void tdc_start_head_req(struct tegra_dma_channel *tdc)
+ 					typeof(*sg_req), node);
+ 	tegra_dma_start(tdc, sg_req);
+ 	sg_req->configured = true;
++	sg_req->words_xferred = 0;
+ 	tdc->busy = true;
+ }
+ 
+@@ -797,6 +800,61 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+ 	return 0;
+ }
+ 
++static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
++					       struct tegra_dma_sg_req *sg_req)
++{
++	unsigned long status, wcount = 0;
++
++	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
++		return 0;
++
++	if (tdc->tdma->chip_data->support_separate_wcount_reg)
++		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
++
++	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
++
++	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
++		wcount = status;
++
++	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
++		return sg_req->req_len;
++
++	wcount = get_current_xferred_count(tdc, sg_req, wcount);
++
++	if (!wcount) {
++		/*
++		 * If wcount wasn't ever polled for this SG before, then
++		 * simply assume that transfer hasn't started yet.
++		 *
++		 * Otherwise it's the end of the transfer.
++		 *
++		 * The alternative would be to poll the status register
++		 * until EOC bit is set or wcount goes UP. That's so
++		 * because EOC bit is getting set only after the last
++		 * burst's completion and counter is less than the actual
++		 * transfer size by 4 bytes. The counter value wraps around
++		 * in a cyclic mode before EOC is set(!), so we can't easily
++		 * distinguish start of transfer from its end.
++		 */
++		if (sg_req->words_xferred)
++			wcount = sg_req->req_len - 4;
++
++	} else if (wcount < sg_req->words_xferred) {
++		/*
++		 * This case shall not ever happen because EOC bit
++		 * must be set once next cyclic transfer is started.
++		 * Assume that hardware is malfunctioning or there is
++		 * a software bug.
++		 */
++		wcount = sg_req->req_len - 4;
++		WARN_ON_ONCE(1);
++	} else {
++		sg_req->words_xferred = wcount;
++	}
++
++	return wcount;
++}
++
+ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	dma_cookie_t cookie, struct dma_tx_state *txstate)
+ {
+@@ -806,6 +864,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	enum dma_status ret;
+ 	unsigned long flags;
+ 	unsigned int residual;
++	unsigned int bytes = 0;
+ 
+ 	ret = dma_cookie_status(dc, cookie, txstate);
+ 	if (ret == DMA_COMPLETE)
+@@ -825,6 +884,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	list_for_each_entry(sg_req, &tdc->pending_sg_req, node) {
+ 		dma_desc = sg_req->dma_desc;
+ 		if (dma_desc->txd.cookie == cookie) {
++			bytes = tegra_dma_sg_bytes_xferred(tdc, sg_req);
+ 			ret = dma_desc->dma_status;
+ 			goto found;
+ 		}
+@@ -836,7 +896,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ found:
+ 	if (dma_desc && txstate) {
+ 		residual = dma_desc->bytes_requested -
+-			   (dma_desc->bytes_transferred %
++			   ((dma_desc->bytes_transferred + bytes) %
+ 			    dma_desc->bytes_requested);
+ 		dma_set_residue(txstate, residual);
+ 	}
+@@ -1441,12 +1501,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
+ 		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+ 	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+-	/*
+-	 * XXX The hardware appears to support
+-	 * DMA_RESIDUE_GRANULARITY_BURST-level reporting, but it's
+-	 * only used by this driver during tegra_dma_terminate_all()
+-	 */
+-	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
++	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 	tdma->dma_dev.device_config = tegra_dma_slave_config;
+ 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
+ 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
+-- 
+2.22.0
