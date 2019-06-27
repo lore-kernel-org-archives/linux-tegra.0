@@ -1,173 +1,83 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3] dmaengine: tegra-apb: Support per-burst residue granularity
-Date: Thu, 27 Jun 2019 22:47:28 +0300
-Message-ID: <20190627194728.8948-1-digetx@gmail.com>
+Subject: [PATCH v3 00/22] More improvements for Tegra30 devfreq driver
+Date: Fri, 28 Jun 2019 00:10:53 +0300
+Message-ID: <20190627211115.21138-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra's APB DMA engine updates words counter after each transferred burst
-of data, hence it can report transfer's residual with more fidelity which
-may be required in cases like audio playback. In particular this fixes
-audio stuttering during playback in a chromium web browser. The patch is
-based on the original work that was made by Ben Dooks and a patch from
-downstream kernel. It was tested on Tegra20 and Tegra30 devices.
+Hello,
 
-Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
-Link: https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
-Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+This series addresses some additional review comments that were made by
+Thierry Reding to [1] and makes several important changes to the driver,
+fixing excessive interrupts activity. In the end I'm proposing myself as
+a maintainer for the Tegra devfreq drivers.
+
+[1] https://lore.kernel.org/lkml/0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com/T/
 
 Changelog:
 
-v3:  Added workaround for a hardware design shortcoming that results
-     in a words counter wraparound before end-of-transfer bit is set
-     in a cyclic mode.
+v3:  Added support for tracepoints, replacing the debug messages.
+     Fixed few more bugs with the help of tracepoints.
 
-v2:  Addressed review comments made by Jon Hunter to v1. We won't try
-     to get words count if dma_desc is on free list as it will result
-     in a NULL dereference because this case wasn't handled properly.
+     New patches in this version:
 
-     The residual value is now updated properly, avoiding potential
-     integer overflow by adding the "bytes" to the "bytes_transferred"
-     instead of the subtraction.
+       PM / devfreq: tegra30: Use tracepoints for debugging
+       PM / devfreq: tegra30: Optimize CPUFreq notifier
+       PM / devfreq: tegra30: Optimize upper consecutive watermark selection
+       PM / devfreq: tegra30: Optimize upper average watermark selection
+       PM / devfreq: tegra30: Include appropriate header
 
- drivers/dma/tegra20-apb-dma.c | 69 +++++++++++++++++++++++++++++++----
- 1 file changed, 62 insertions(+), 7 deletions(-)
+     Some of older patches of this series also got some extra minor polish.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 79e9593815f1..71473eda28ee 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -152,6 +152,7 @@ struct tegra_dma_sg_req {
- 	bool				last_sg;
- 	struct list_head		node;
- 	struct tegra_dma_desc		*dma_desc;
-+	unsigned int			words_xferred;
- };
- 
- /*
-@@ -496,6 +497,7 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
- 				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
- 	nsg_req->configured = true;
-+	nsg_req->words_xferred = 0;
- 
- 	tegra_dma_resume(tdc);
- }
-@@ -511,6 +513,7 @@ static void tdc_start_head_req(struct tegra_dma_channel *tdc)
- 					typeof(*sg_req), node);
- 	tegra_dma_start(tdc, sg_req);
- 	sg_req->configured = true;
-+	sg_req->words_xferred = 0;
- 	tdc->busy = true;
- }
- 
-@@ -797,6 +800,61 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
- 	return 0;
- }
- 
-+static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
-+					       struct tegra_dma_sg_req *sg_req)
-+{
-+	unsigned long status, wcount = 0;
-+
-+	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
-+		return 0;
-+
-+	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-+		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
-+
-+	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-+
-+	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
-+		wcount = status;
-+
-+	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
-+		return sg_req->req_len;
-+
-+	wcount = get_current_xferred_count(tdc, sg_req, wcount);
-+
-+	if (!wcount) {
-+		/*
-+		 * If wcount wasn't ever polled for this SG before, then
-+		 * simply assume that transfer hasn't started yet.
-+		 *
-+		 * Otherwise it's the end of the transfer.
-+		 *
-+		 * The alternative would be to poll the status register
-+		 * until EOC bit is set or wcount goes UP. That's so
-+		 * because EOC bit is getting set only after the last
-+		 * burst's completion and counter is less than the actual
-+		 * transfer size by 4 bytes. The counter value wraps around
-+		 * in a cyclic mode before EOC is set(!), so we can't easily
-+		 * distinguish start of transfer from its end.
-+		 */
-+		if (sg_req->words_xferred)
-+			wcount = sg_req->req_len - 4;
-+
-+	} else if (wcount < sg_req->words_xferred) {
-+		/*
-+		 * This case shall not ever happen because EOC bit
-+		 * must be set once next cyclic transfer is started.
-+		 * Assume that hardware is malfunctioning or there is
-+		 * a software bug.
-+		 */
-+		wcount = sg_req->req_len - 4;
-+		WARN_ON_ONCE(1);
-+	} else {
-+		sg_req->words_xferred = wcount;
-+	}
-+
-+	return wcount;
-+}
-+
- static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	dma_cookie_t cookie, struct dma_tx_state *txstate)
- {
-@@ -806,6 +864,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	enum dma_status ret;
- 	unsigned long flags;
- 	unsigned int residual;
-+	unsigned int bytes = 0;
- 
- 	ret = dma_cookie_status(dc, cookie, txstate);
- 	if (ret == DMA_COMPLETE)
-@@ -825,6 +884,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	list_for_each_entry(sg_req, &tdc->pending_sg_req, node) {
- 		dma_desc = sg_req->dma_desc;
- 		if (dma_desc->txd.cookie == cookie) {
-+			bytes = tegra_dma_sg_bytes_xferred(tdc, sg_req);
- 			ret = dma_desc->dma_status;
- 			goto found;
- 		}
-@@ -836,7 +896,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- found:
- 	if (dma_desc && txstate) {
- 		residual = dma_desc->bytes_requested -
--			   (dma_desc->bytes_transferred %
-+			   ((dma_desc->bytes_transferred + bytes) %
- 			    dma_desc->bytes_requested);
- 		dma_set_residue(txstate, residual);
- 	}
-@@ -1441,12 +1501,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
- 		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
- 	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
--	/*
--	 * XXX The hardware appears to support
--	 * DMA_RESIDUE_GRANULARITY_BURST-level reporting, but it's
--	 * only used by this driver during tegra_dma_terminate_all()
--	 */
--	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-+	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
- 	tdma->dma_dev.device_config = tegra_dma_slave_config;
- 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
- 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
+v2:  Added more patches that are cleaning driver's code further and
+     squashing another kHz conversion bug.
+
+     The patch "Rework frequency management logic" of the v1 series is now
+     converted to "Set up watermarks properly" because I found some problems
+     in the original patch and then realized that there is no need to change
+     the logic much. So the logic mostly preserved and only got improvements.
+
+     The series is based on the today's linux-next (25 Jun) and takes into
+     account minor changes that MyungJoo Ham made to the already queued
+     patches from the first batch [1].
+
+Dmitry Osipenko (22):
+  PM / devfreq: tegra30: Change irq type to unsigned int
+  PM / devfreq: tegra30: Keep interrupt disabled while governor is
+    stopped
+  PM / devfreq: tegra30: Handle possible round-rate error
+  PM / devfreq: tegra30: Drop write-barrier
+  PM / devfreq: tegra30: Set up watermarks properly
+  PM / devfreq: tegra30: Tune up boosting thresholds
+  PM / devfreq: tegra30: Use CPUFreq notifier
+  PM / devfreq: tegra30: Move clk-notifier's registration to governor's
+    start
+  PM / devfreq: tegra30: Reset boosting on startup
+  PM / devfreq: tegra30: Don't enable consecutive-down interrupt on
+    startup
+  PM / devfreq: tegra30: Add debug messages
+  PM / devfreq: tegra30: Inline all one-line functions
+  PM / devfreq: tegra30: Constify structs
+  PM / devfreq: tegra30: Ensure that target freq won't overflow
+  PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+  PM / devfreq: tegra30: Use kHz units uniformly in the code
+  PM / devfreq: tegra30: Use tracepoints for debugging
+  PM / devfreq: tegra30: Optimize CPUFreq notifier
+  PM / devfreq: tegra30: Optimize upper consecutive watermark selection
+  PM / devfreq: tegra30: Optimize upper average watermark selection
+  PM / devfreq: tegra30: Include appropriate header
+  PM / devfreq: tegra20/30: Add Dmitry as a maintainer
+
+ MAINTAINERS                            |   9 +
+ drivers/devfreq/tegra30-devfreq.c      | 631 ++++++++++++++++++-------
+ include/trace/events/tegra30_devfreq.h | 105 ++++
+ 3 files changed, 583 insertions(+), 162 deletions(-)
+ create mode 100644 include/trace/events/tegra30_devfreq.h
+
 -- 
 2.22.0
