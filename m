@@ -1,55 +1,52 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
- declaring platform drivers
-Date: Wed, 26 Jun 2019 19:27:02 +0200
-Message-ID: <30f541a7-ef9d-d687-ab76-22a4544258f8@metux.net>
-References: <1560796871-18560-1-git-send-email-info@metux.net>
- <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 0/1] 4.4.184-stable review
+Date: Thu, 27 Jun 2019 09:36:55 +0100
+Message-ID: <217e73e4-7777-558c-186f-c94658447ae0@nvidia.com>
+References: <20190626083604.894288021@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190626083604.894288021@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: linux-kernel@vger.kernel.org, grygorii.strashko@ti.com, mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com, linus.walleij@linaro.org, khilman@kernel.org, patches@opensource.cirrus.com, bgolaszewski@baylibre.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org, linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com, shawnguo@kernel.org, s.hauer@pengutronix.de, alexandre.torgue@st.com
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 26.06.19 08:14, Uwe Kleine-König wrote:
-Hi,
 
-> Would it make sense to do something like:
->
-> 	#define __module_platform_driver(__platform_driver, __initlvl) \
-> 	static int __init __platform_driver##_init(void) \
-> 	{ \
-> 		return platform_driver_register(&(__platform_driver)); \
-> 	} \
-> 	__initlvl ## _initcall(__platform_driver##_init); \
-> 	static void __exit __platform_driver##_exit(void) \
-> 	{ \
-> 		platform_driver_unregister(&(__platform_driver)); \
-> 	} \
-> 	module_exit(__platform_driver##_exit);
->
-> 	#define postcore_platform_driver(__platform_driver)
-__module_platform_driver(__platform_driver, postcore)
-> 	#define subsys_platform_driver(__platform_driver)
-__module_platform_driver(__platform_driver, subsys)
-> 	...
->
-> Which would be more compact and makes the difference between these
-> macros a bit more obvious.
-yeah, could do that, but not sure whether it's really good for
-readability when we have so many nested macros :p
+On 26/06/2019 09:45, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.184 release.
+> There are 1 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.184-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-OTOH, I didn't want to touch the existing macros for now, just trim down
-the actual init boilerplate, postponing further compactions for later.
+All tests are passing for Tegra ...
 
---mtx
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
+
+Linux version:	4.4.184-rc1-g5f1824292521
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
 
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+nvpublic
