@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 14/22] PM / devfreq: tegra30: Ensure that target freq won't overflow
-Date: Fri, 28 Jun 2019 00:11:07 +0300
-Message-ID: <20190627211115.21138-15-digetx@gmail.com>
+Subject: [PATCH v3 10/22] PM / devfreq: tegra30: Don't enable consecutive-down interrupt on startup
+Date: Fri, 28 Jun 2019 00:11:03 +0300
+Message-ID: <20190627211115.21138-11-digetx@gmail.com>
 References: <20190627211115.21138-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,25 +12,27 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Potentially very high boosting could cause an integer overflow for a
-highly clocked memory after conversion to MHz.
+The consecutive-down event tells that we should perform frequency
+de-boosting, but boosting is in a reset state on start and hence the
+event won't do anything useful for us and it will be just a dummy
+interrupt request.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/devfreq/tegra30-devfreq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index d3e117d827d2..f86593ab3008 100644
+index cca2fc15bafe..65f0363dbf1b 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -459,6 +459,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
- {	unsigned long target_freq;
+@@ -557,7 +557,6 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+ 		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
+ 	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
+ 	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
+-	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+ 	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+ 	val |= ACTMON_DEV_CTRL_ENB;
  
- 	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD + dev->boost_freq;
-+	target_freq = min(target_freq, ULONG_MAX / KHZ);
- 	target_freq = tegra_actmon_account_cpu_freq(tegra, dev, target_freq);
- 
- 	return target_freq;
 -- 
 2.22.0
