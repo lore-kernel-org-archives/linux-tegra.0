@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 15/22] PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
-Date: Fri, 28 Jun 2019 00:11:08 +0300
-Message-ID: <20190627211115.21138-16-digetx@gmail.com>
+Subject: [PATCH v3 19/22] PM / devfreq: tegra30: Optimize upper consecutive watermark selection
+Date: Fri, 28 Jun 2019 00:11:12 +0300
+Message-ID: <20190627211115.21138-20-digetx@gmail.com>
 References: <20190627211115.21138-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,39 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is another kHz-conversion bug in the code, resulting in integer
-overflow. Although, this time the resulting value is 4294966296 and it's
-close to ULONG_MAX, which is okay in this case.
+The memory activity counter may get a bit higher than a watermark which
+is selected based on OPP that corresponds to a highest EMC rate, in this
+case watermark is lower than the actual memory activity is and thus
+results in unwanted "upper" interrupts.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index f86593ab3008..9a6ede689991 100644
+index e8f7cc56a340..1105104445a9 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -172,7 +172,7 @@ struct tegra_actmon_emc_ratio {
- };
+@@ -363,7 +363,18 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+ 	tegra_actmon_get_lower_upper(tegra, dev, freq - 1, &lower, &upper);
  
- static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
--	{ 1400000, ULONG_MAX },
-+	{ 1400000, ULONG_MAX / KHZ },
- 	{ 1200000,    750000 },
- 	{ 1100000,    600000 },
- 	{ 1000000,    500000 },
+ 	delta = do_percent(upper - lower, dev->config->boost_up_threshold);
+-	device_writel(dev, lower + delta, ACTMON_DEV_UPPER_WMARK);
++
++	/*
++	 * The memory events count could go a bit higher than the maximum
++	 * defined by the OPPs, hence make the upper watermark infinitely
++	 * high to avoid unnecessary upper interrupts in that case.
++	 */
++	if (freq == tegra->max_freq)
++		upper = ULONG_MAX;
++	else
++		upper = lower + delta;
++
++	device_writel(dev, upper, ACTMON_DEV_UPPER_WMARK);
+ 
+ 	/*
+ 	 * Meanwhile the lower mark is based on the average value
 -- 
 2.22.0
