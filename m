@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 03/18] clk: tegra: Save and restore divider rate
-Date: Thu, 27 Jun 2019 19:12:37 -0700
-Message-ID: <1561687972-19319-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 07/18] clk: tegra: Support for saving and restoring OSC context
+Date: Thu, 27 Jun 2019 19:12:41 -0700
+Message-ID: <1561687972-19319-8-git-send-email-skomatineni@nvidia.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,78 +12,68 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch implements context save and restore for clock divider.
+This patch adds support for storing OSC clock frequency and the
+drive-strength during OSC clock init and creates an API to restore
+OSC control register value from the saved context.
 
-During system suspend, core power goes off and looses the settings
-of the Tegra CAR controller registers.
-
-So during suspend entry the context of clock divider is saved and
-on resume context is restored back for normal operation.
+This API is invoked by Tegra210 clock driver during system resume
+to restore the  OSC clock settings.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-divider.c | 23 +++++++++++++++++++++++
- drivers/clk/tegra/clk.h         |  2 ++
- 2 files changed, 25 insertions(+)
+ drivers/clk/tegra/clk-tegra-fixed.c | 14 ++++++++++++++
+ drivers/clk/tegra/clk.h             |  1 +
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index e76731fb7d69..ecb7ff9ce97e 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -109,10 +109,33 @@ static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 8d91b2b191cf..e8df0ccbffd0 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -17,7 +17,10 @@
+ #define OSC_CTRL			0x50
+ #define OSC_CTRL_OSC_FREQ_SHIFT		28
+ #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
++#define OSC_CTRL_MASK			(0x3f2 |	\
++					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
+ 
++static u32 osc_ctrl_ctx;
+ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 			      unsigned long *input_freqs, unsigned int num,
+ 			      unsigned int clk_m_div, unsigned long *osc_freq,
+@@ -29,6 +32,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 	unsigned osc_idx;
+ 
+ 	val = readl_relaxed(clk_base + OSC_CTRL);
++	osc_ctrl_ctx = val & OSC_CTRL_MASK;
+ 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
+ 
+ 	if (osc_idx < num)
+@@ -96,3 +100,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 		*dt_clk = clk;
+ 	}
  }
- 
-+static int clk_divider_save_context(struct clk_hw *hw)
++
++void tegra_clk_osc_resume(void __iomem *clk_base)
 +{
-+	struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
++	u32 val;
 +
-+	divider->rate = clk_frac_div_recalc_rate(hw, parent_rate);
-+
-+	return 0;
++	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
++	val |= osc_ctrl_ctx;
++	writel_relaxed(val, clk_base + OSC_CTRL);
++	fence_udelay(2, clk_base);
 +}
-+
-+static void clk_divider_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
-+
-+	if (clk_frac_div_set_rate(hw, divider->rate, parent_rate) < 0)
-+		WARN_ON(1);
-+}
-+
- const struct clk_ops tegra_clk_frac_div_ops = {
- 	.recalc_rate = clk_frac_div_recalc_rate,
- 	.set_rate = clk_frac_div_set_rate,
- 	.round_rate = clk_frac_div_round_rate,
-+	.save_context = clk_divider_save_context,
-+	.restore_context = clk_divider_restore_context,
- };
- 
- struct clk *tegra_clk_register_divider(const char *name,
 diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 905bf1096558..83623f5f55f3 100644
+index c66b0a73bb01..a687ed6127b6 100644
 --- a/drivers/clk/tegra/clk.h
 +++ b/drivers/clk/tegra/clk.h
-@@ -42,6 +42,7 @@ struct clk *tegra_clk_register_sync_source(const char *name,
-  * @width:	width of the divider bit field
-  * @frac_width:	width of the fractional bit field
-  * @lock:	register lock
-+ * @rate:	rate during suspend and resume
-  *
-  * Flags:
-  * TEGRA_DIVIDER_ROUND_UP - This flags indicates to round up the divider value.
-@@ -62,6 +63,7 @@ struct tegra_clk_frac_div {
- 	u8		width;
- 	u8		frac_width;
- 	spinlock_t	*lock;
-+	unsigned long	rate;
- };
+@@ -863,6 +863,7 @@ void tegra_cclkg_burst_policy_save_context(void);
+ void tegra_cclkg_burst_policy_restore_context(void);
+ void tegra_sclk_cclklp_burst_policy_save_context(void);
+ void tegra_sclk_cpulp_burst_policy_restore_context(void);
++void tegra_clk_osc_resume(void __iomem *clk_base);
  
- #define to_clk_frac_div(_hw) container_of(_hw, struct tegra_clk_frac_div, hw)
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
 -- 
 2.7.4
