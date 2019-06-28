@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 18/18] arm64: dts: tegra210-p3450: Jetson nano SC7 timings
-Date: Thu, 27 Jun 2019 19:12:52 -0700
-Message-ID: <1561687972-19319-19-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 17/18] arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
+Date: Thu, 27 Jun 2019 19:12:51 -0700
+Message-ID: <1561687972-19319-18-git-send-email-skomatineni@nvidia.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,23 +12,23 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds Jetson nano platform specific SC7 timing configuration
-in the device tree.
+This patch has Jetson TX1 platform specific SC7 timing configuration
+in device tree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 7 +++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 9d17ec707bce..b81bfdfbc115 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -382,6 +382,13 @@
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 27723829d033..cb58f79deb48 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -279,6 +279,13 @@
  
  	pmc@7000e400 {
  		nvidia,invert-interrupt;
-++		nvidia,suspend-mode = <0>;
++		nvidia,suspend-mode = <0>;
 +		nvidia,cpu-pwr-good-time = <0>;
 +		nvidia,cpu-pwr-off-time = <0>;
 +		nvidia,core-pwr-good-time = <4587 3876>;
@@ -37,6 +37,6 @@ index 9d17ec707bce..b81bfdfbc115 100644
 +		nvidia,sys-clock-req-active-high;
  	};
  
- 	hda@70030000 {
+ 	/* eMMC */
 -- 
 2.7.4
