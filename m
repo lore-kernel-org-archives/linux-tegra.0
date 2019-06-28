@@ -1,8 +1,8 @@
 From: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v3 16/22] drm/mgag200: Provide ddc symlink in connector sysfs
+Subject: [PATCH v3 17/22] drm/ast: Provide ddc symlink in connector sysfs
  directory
-Date: Fri, 28 Jun 2019 18:01:30 +0200
-Message-ID: <e3144c9c1cba74e0fe12f281218dcc68061cca48.1561735433.git.andrzej.p@collabora.com>
+Date: Fri, 28 Jun 2019 18:01:31 +0200
+Message-ID: <933656a2069cab7723bfbd066d7fd6fc73ea23cb.1561735433.git.andrzej.p@collabora.com>
 References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
  <cover.1561735433.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
@@ -29,20 +29,20 @@ Use the ddc pointer provided by the generic connector.
 
 Signed-off-by: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 ---
- drivers/gpu/drm/mgag200/mgag200_mode.c | 1 +
+ drivers/gpu/drm/ast/ast_mode.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c b/drivers/gpu/drm/mgag200/mgag200_mode.c
-index a25054015e8c..a22dbecd4d35 100644
---- a/drivers/gpu/drm/mgag200/mgag200_mode.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
-@@ -1712,6 +1712,7 @@ static struct drm_connector *mga_vga_init(struct drm_device *dev)
- 	drm_connector_register(connector);
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index ffccbef962a4..155c3487a1a7 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -905,6 +905,7 @@ static int ast_connector_init(struct drm_device *dev)
+ 	drm_connector_attach_encoder(connector, encoder);
  
- 	mga_connector->i2c = mgag200_i2c_create(dev);
-+	connector->ddc = &mga_connector->i2c->adapter;
- 	if (!mga_connector->i2c)
- 		DRM_ERROR("failed to add ddc bus\n");
+ 	ast_connector->i2c = ast_i2c_create(dev);
++	connector->ddc = &ast_connector->i2c->adapter;
+ 	if (!ast_connector->i2c)
+ 		DRM_ERROR("failed to add ddc bus for connector\n");
  
 -- 
 2.17.1
