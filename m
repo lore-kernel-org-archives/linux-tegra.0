@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 08/18] clk: tegra: Add suspend resume support for DFLL
-Date: Thu, 27 Jun 2019 19:12:42 -0700
-Message-ID: <1561687972-19319-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
+Date: Thu, 27 Jun 2019 19:12:36 -0700
+Message-ID: <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,128 +12,141 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch creates APIs for supporting Tegra210 clock driver to
-perform DFLL suspend and resume operation.
+This patch adds support for Tegra pinctrl driver suspend and resume.
 
-During suspend, DFLL mode is saved and on resume Tegra210 clock driver
-invokes DFLL resume API to re-initialize DFLL to enable target device
-clock in open loop mode or closed loop mode.
+During suspend, context of all pinctrl registers are stored and
+on resume they are all restored to have all the pinmux and pad
+configuration for normal operation.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-dfll.c | 78 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-dfll.h |  2 ++
- 2 files changed, 80 insertions(+)
+ drivers/pinctrl/tegra/pinctrl-tegra.c    | 52 ++++++++++++++++++++++++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
+ drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
+ 3 files changed, 56 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index f8688c2ddf1a..a1f37cf99b00 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -277,6 +277,7 @@ struct tegra_dfll {
- 	unsigned long			dvco_rate_min;
- 
- 	enum dfll_ctrl_mode		mode;
-+	enum dfll_ctrl_mode		resume_mode;
- 	enum dfll_tune_range		tune_range;
- 	struct dentry			*debugfs_dir;
- 	struct clk_hw			dfll_clk_hw;
-@@ -1864,6 +1865,83 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 34596b246578..e7c0a1011cba 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -621,6 +621,43 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+ 	}
  }
  
- /*
-+ * tegra_dfll_suspend
-+ * @pdev: DFLL instance
-+ *
-+ * dfll controls clock/voltage to other devices, including CPU. Therefore,
-+ * dfll driver pm suspend callback does not stop cl-dvfs operations.
-+ */
-+void tegra_dfll_suspend(struct platform_device *pdev)
++static int tegra_pinctrl_suspend(struct device *dev)
 +{
-+	struct tegra_dfll *td = dev_get_drvdata(&pdev->dev);
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	unsigned int i, j;
 +
-+	if (!td)
-+		return;
-+
-+	if (td->mode <= DFLL_DISABLED)
-+		return;
-+
-+	td->resume_mode = td->mode;
-+	switch (td->mode) {
-+	case DFLL_CLOSED_LOOP:
-+		dfll_set_mode(td, DFLL_CLOSED_LOOP);
-+		dfll_set_frequency_request(td, &td->last_req);
-+
-+		dfll_unlock(td);
-+		break;
-+	default:
-+		break;
++	for (i = 0; i < pmx->nbanks; i++) {
++		regs = pmx->regs[i];
++		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
++			*backup_regs++ = readl(regs++);
 +	}
++
++	return pinctrl_force_sleep(pmx->pctl);
 +}
 +
-+/**
-+ * tegra_dfll_resume - reprogram the DFLL after context-loss
-+ * @pdev: DFLL instance
-+ *
-+ * Re-initialize and enable target device clock in open loop mode. Called
-+ * directly from SoC clock resume syscore operation. Closed loop will be
-+ * re-entered in platform syscore ops as well after CPU clock source is
-+ * switched to DFLL in open loop.
-+ */
-+void tegra_dfll_resume(struct platform_device *pdev, bool on_dfll)
++static int tegra_pinctrl_resume(struct device *dev)
 +{
-+	struct tegra_dfll *td = dev_get_drvdata(&pdev->dev);
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	unsigned int i, j;
 +
-+	if (!td)
-+		return;
-+
-+	if (on_dfll) {
-+		if (td->resume_mode == DFLL_CLOSED_LOOP)
-+			dfll_lock(td);
-+		td->resume_mode = DFLL_DISABLED;
-+		return;
++	for (i = 0; i < pmx->nbanks; i++) {
++		regs = pmx->regs[i];
++		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
++			writel(*backup_regs++, regs++);
 +	}
 +
-+	reset_control_deassert(td->dvco_rst);
-+
-+	pm_runtime_get(td->dev);
-+
-+	/* Re-init DFLL */
-+	dfll_init_out_if(td);
-+	dfll_set_default_params(td);
-+	dfll_set_open_loop_config(td);
-+
-+	pm_runtime_put(td->dev);
-+
-+	/* Restore last request and mode up to open loop */
-+	switch (td->resume_mode) {
-+	case DFLL_CLOSED_LOOP:
-+	case DFLL_OPEN_LOOP:
-+		dfll_set_mode(td, DFLL_OPEN_LOOP);
-+		if (td->pmu_if == TEGRA_DFLL_PMU_I2C)
-+			dfll_i2c_set_output_enabled(td, false);
-+		break;
-+	default:
-+		break;
-+	}
++	return 0;
 +}
 +
-+/*
-  * API exported to per-SoC platform drivers
-  */
++const struct dev_pm_ops tegra_pinctrl_pm = {
++	.suspend = &tegra_pinctrl_suspend,
++	.resume = &tegra_pinctrl_resume
++};
++
+ static bool gpio_node_has_range(const char *compatible)
+ {
+ 	struct device_node *np;
+@@ -645,6 +682,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	int i;
+ 	const char **group_pins;
+ 	int fn, gn, gfn;
++	unsigned long backup_regs_size = 0;
  
-diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-index 1b14ebe7268b..c21fc2061a20 100644
---- a/drivers/clk/tegra/clk-dfll.h
-+++ b/drivers/clk/tegra/clk-dfll.h
-@@ -40,6 +40,8 @@ struct tegra_dfll_soc_data {
- int tegra_dfll_register(struct platform_device *pdev,
- 			struct tegra_dfll_soc_data *soc);
- struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
-+void tegra_dfll_suspend(struct platform_device *pdev);
-+void tegra_dfll_resume(struct platform_device *pdev, bool on_dfll);
- int tegra_dfll_runtime_suspend(struct device *dev);
- int tegra_dfll_runtime_resume(struct device *dev);
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx)
+@@ -697,6 +735,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		if (!res)
+ 			break;
++		backup_regs_size += resource_size(res);
+ 	}
+ 	pmx->nbanks = i;
  
+@@ -705,11 +744,24 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	if (!pmx->regs)
+ 		return -ENOMEM;
+ 
++	pmx->reg_bank_size = devm_kcalloc(&pdev->dev, pmx->nbanks,
++					  sizeof(*pmx->reg_bank_size),
++					  GFP_KERNEL);
++	if (!pmx->reg_bank_size)
++		return -ENOMEM;
++
++	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
++					GFP_KERNEL);
++	if (!pmx->backup_regs)
++		return -ENOMEM;
++
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(pmx->regs[i]))
+ 			return PTR_ERR(pmx->regs[i]);
++
++		pmx->reg_bank_size[i] = resource_size(res);
+ 	}
+ 
+ 	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index 287702660783..55456f8d44cf 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -17,6 +17,8 @@ struct tegra_pmx {
+ 
+ 	int nbanks;
+ 	void __iomem **regs;
++	size_t *reg_bank_size;
++	u32 *backup_regs;
+ };
+ 
+ enum tegra_pinconf_param {
+@@ -193,6 +195,7 @@ struct tegra_pinctrl_soc_data {
+ 	bool drvtype_in_mux;
+ };
+ 
++extern const struct dev_pm_ops tegra_pinctrl_pm;
+ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 			const struct tegra_pinctrl_soc_data *soc_data);
+ #endif
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 0b56ad5c9c1c..edd3f4606cdb 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "tegra210-pinctrl",
+ 		.of_match_table = tegra210_pinctrl_of_match,
++		.pm = &tegra_pinctrl_pm,
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
 -- 
 2.7.4
