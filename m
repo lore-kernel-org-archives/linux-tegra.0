@@ -1,8 +1,8 @@
 From: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v3 18/22] drm/bridge: dumb-vga-dac: Provide ddc symlink in
+Subject: [PATCH v3 19/22] drm/bridge: dw-hdmi: Provide ddc symlink in
  connector sysfs directory
-Date: Fri, 28 Jun 2019 18:01:32 +0200
-Message-ID: <33d98ef0c2a6e402515dc3ed5d100959dcb3233c.1561735433.git.andrzej.p@collabora.com>
+Date: Fri, 28 Jun 2019 18:01:33 +0200
+Message-ID: <c2dc5ba93148ff034bf42cceb02a807674731c84.1561735433.git.andrzej.p@collabora.com>
 References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
  <cover.1561735433.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
@@ -29,72 +29,151 @@ Use the ddc pointer provided by the generic connector.
 
 Signed-off-by: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 ---
- drivers/gpu/drm/bridge/dumb-vga-dac.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 40 +++++++++++------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-index d32885b906ae..b4cc3238400a 100644
---- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-+++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-@@ -20,7 +20,6 @@ struct dumb_vga {
- 	struct drm_bridge	bridge;
- 	struct drm_connector	connector;
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index c6490949d9db..0b9c9f2619da 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -161,7 +161,6 @@ struct dw_hdmi {
  
--	struct i2c_adapter	*ddc;
- 	struct regulator	*vdd;
- };
+ 	struct drm_display_mode previous_mode;
  
-@@ -42,10 +41,10 @@ static int dumb_vga_get_modes(struct drm_connector *connector)
- 	struct edid *edid;
- 	int ret;
+-	struct i2c_adapter *ddc;
+ 	void __iomem *regs;
+ 	bool sink_is_hdmi;
+ 	bool sink_has_audio;
+@@ -1118,7 +1117,7 @@ static bool dw_hdmi_support_scdc(struct dw_hdmi *hdmi)
+ 		return false;
  
--	if (IS_ERR(vga->ddc))
-+	if (IS_ERR(vga->connector.ddc))
- 		goto fallback;
+ 	/* Disable if no DDC bus */
+-	if (!hdmi->ddc)
++	if (!hdmi->connector.ddc)
+ 		return false;
  
--	edid = drm_get_edid(connector, vga->ddc);
-+	edid = drm_get_edid(connector, vga->connector.ddc);
- 	if (!edid) {
- 		DRM_INFO("EDID readout failed, falling back to standard modes\n");
- 		goto fallback;
-@@ -84,7 +83,7 @@ dumb_vga_connector_detect(struct drm_connector *connector, bool force)
- 	 * wire the DDC pins, or the I2C bus might not be working at
- 	 * all.
- 	 */
--	if (!IS_ERR(vga->ddc) && drm_probe_ddc(vga->ddc))
-+	if (!IS_ERR(vga->connector.ddc) && drm_probe_ddc(vga->connector.ddc))
- 		return connector_status_connected;
+ 	/* Disable if SCDC is not supported, or if an HF-VSDB block is absent */
+@@ -1156,10 +1155,11 @@ void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi)
  
- 	return connector_status_unknown;
-@@ -190,14 +189,14 @@ static int dumb_vga_probe(struct platform_device *pdev)
- 		dev_dbg(&pdev->dev, "No vdd regulator found: %d\n", ret);
+ 	/* Control for TMDS Bit Period/TMDS Clock-Period Ratio */
+ 	if (dw_hdmi_support_scdc(hdmi)) {
++		struct i2c_adapter *ddc = hdmi->connector.ddc;
+ 		if (mtmdsclock > HDMI14_MAX_TMDSCLK)
+-			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 1);
++			drm_scdc_set_high_tmds_clock_ratio(ddc, 1);
+ 		else
+-			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 0);
++			drm_scdc_set_high_tmds_clock_ratio(ddc, 0);
  	}
+ }
+ EXPORT_SYMBOL_GPL(dw_hdmi_set_high_tmds_clock_ratio);
+@@ -1750,6 +1750,7 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 	if (dw_hdmi_support_scdc(hdmi)) {
+ 		if (vmode->mtmdsclock > HDMI14_MAX_TMDSCLK ||
+ 		    hdmi_info->scdc.scrambling.low_rates) {
++			struct i2c_adapter *ddc = hdmi->connector.ddc;
+ 			/*
+ 			 * HDMI2.0 Specifies the following procedure:
+ 			 * After the Source Device has determined that
+@@ -1759,13 +1760,12 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 			 * Source Devices compliant shall set the
+ 			 * Source Version = 1.
+ 			 */
+-			drm_scdc_readb(hdmi->ddc, SCDC_SINK_VERSION,
+-				       &bytes);
+-			drm_scdc_writeb(hdmi->ddc, SCDC_SOURCE_VERSION,
++			drm_scdc_readb(ddc, SCDC_SINK_VERSION, &bytes);
++			drm_scdc_writeb(ddc, SCDC_SOURCE_VERSION,
+ 				min_t(u8, bytes, SCDC_MIN_SOURCE_VERSION));
  
--	vga->ddc = dumb_vga_retrieve_ddc(&pdev->dev);
--	if (IS_ERR(vga->ddc)) {
--		if (PTR_ERR(vga->ddc) == -ENODEV) {
-+	vga->connector.ddc = dumb_vga_retrieve_ddc(&pdev->dev);
-+	if (IS_ERR(vga->connector.ddc)) {
-+		if (PTR_ERR(vga->connector.ddc) == -ENODEV) {
- 			dev_dbg(&pdev->dev,
- 				"No i2c bus specified. Disabling EDID readout\n");
- 		} else {
- 			dev_err(&pdev->dev, "Couldn't retrieve i2c bus\n");
--			return PTR_ERR(vga->ddc);
-+			return PTR_ERR(vga->connector.ddc);
+ 			/* Enabled Scrambling in the Sink */
+-			drm_scdc_set_scrambling(hdmi->ddc, 1);
++			drm_scdc_set_scrambling(hdmi->connector.ddc, 1);
+ 
+ 			/*
+ 			 * To activate the scrambler feature, you must ensure
+@@ -1781,7 +1781,7 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 			hdmi_writeb(hdmi, 0, HDMI_FC_SCRAMBLER_CTRL);
+ 			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
+ 				    HDMI_MC_SWRSTZ);
+-			drm_scdc_set_scrambling(hdmi->ddc, 0);
++			drm_scdc_set_scrambling(hdmi->connector.ddc, 0);
  		}
  	}
  
-@@ -216,8 +215,8 @@ static int dumb_vga_remove(struct platform_device *pdev)
+@@ -2127,10 +2127,10 @@ static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
+ 	struct edid *edid;
+ 	int ret = 0;
  
- 	drm_bridge_remove(&vga->bridge);
+-	if (!hdmi->ddc)
++	if (!hdmi->connector.ddc)
+ 		return 0;
  
--	if (!IS_ERR(vga->ddc))
--		i2c_put_adapter(vga->ddc);
-+	if (!IS_ERR(vga->connector.ddc))
-+		i2c_put_adapter(vga->connector.ddc);
+-	edid = drm_get_edid(connector, hdmi->ddc);
++	edid = drm_get_edid(connector, hdmi->connector.ddc);
+ 	if (edid) {
+ 		dev_dbg(hdmi->dev, "got edid: width[%d] x height[%d]\n",
+ 			edid->width_cm, edid->height_cm);
+@@ -2548,9 +2548,9 @@ __dw_hdmi_probe(struct platform_device *pdev,
  
- 	return 0;
+ 	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
+ 	if (ddc_node) {
+-		hdmi->ddc = of_get_i2c_adapter_by_node(ddc_node);
++		hdmi->connector.ddc = of_get_i2c_adapter_by_node(ddc_node);
+ 		of_node_put(ddc_node);
+-		if (!hdmi->ddc) {
++		if (!hdmi->connector.ddc) {
+ 			dev_dbg(hdmi->dev, "failed to read ddc node\n");
+ 			return ERR_PTR(-EPROBE_DEFER);
+ 		}
+@@ -2689,7 +2689,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	hdmi_init_clk_regenerator(hdmi);
+ 
+ 	/* If DDC bus is not specified, try to register HDMI I2C bus */
+-	if (!hdmi->ddc) {
++	if (!hdmi->connector.ddc) {
+ 		/* Look for (optional) stuff related to unwedging */
+ 		hdmi->pinctrl = devm_pinctrl_get(dev);
+ 		if (!IS_ERR(hdmi->pinctrl)) {
+@@ -2708,9 +2708,9 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 			}
+ 		}
+ 
+-		hdmi->ddc = dw_hdmi_i2c_adapter(hdmi);
+-		if (IS_ERR(hdmi->ddc))
+-			hdmi->ddc = NULL;
++		hdmi->connector.ddc = dw_hdmi_i2c_adapter(hdmi);
++		if (IS_ERR(hdmi->connector.ddc))
++			hdmi->connector.ddc = NULL;
+ 	}
+ 
+ 	hdmi->bridge.driver_private = hdmi;
+@@ -2776,7 +2776,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ err_iahb:
+ 	if (hdmi->i2c) {
+ 		i2c_del_adapter(&hdmi->i2c->adap);
+-		hdmi->ddc = NULL;
++		hdmi->connector.ddc = NULL;
+ 	}
+ 
+ 	if (hdmi->cec_notifier)
+@@ -2788,7 +2788,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ err_isfr:
+ 	clk_disable_unprepare(hdmi->isfr_clk);
+ err_res:
+-	i2c_put_adapter(hdmi->ddc);
++	i2c_put_adapter(hdmi->connector.ddc);
+ 
+ 	return ERR_PTR(ret);
  }
+@@ -2814,7 +2814,7 @@ static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
+ 	if (hdmi->i2c)
+ 		i2c_del_adapter(&hdmi->i2c->adap);
+ 	else
+-		i2c_put_adapter(hdmi->ddc);
++		i2c_put_adapter(hdmi->connector.ddc);
+ }
+ 
+ /* -----------------------------------------------------------------------------
 -- 
 2.17.1
