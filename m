@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 14/18] arm64: tegra: Enable wake from deep sleep on RTC alarm.
-Date: Thu, 27 Jun 2019 19:12:48 -0700
-Message-ID: <1561687972-19319-15-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 06/18] clk: tegra: Save and restore CPU and System clocks context
+Date: Thu, 27 Jun 2019 19:12:40 -0700
+Message-ID: <1561687972-19319-7-git-send-email-skomatineni@nvidia.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,36 +12,175 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch updates device tree for RTC and PMC to allow system wake
-from deep sleep on RTC alarm.
+During system suspend state, core power goes off and looses all the
+CAR controller register settings.
 
+This patch creates APIs for saving and restoring the context of Tegra
+CPUG, CPULP and SCLK.
+
+CPU and System clock context includes
+- CPUG, CPULP, and SCLK burst policy settings for clock sourcea of all
+  their normal states.
+- SCLK divisor and System clock rate for restoring SCLK, AHB and APB
+  rates on resume.
+- OSC_DIV settings which are used as reference clock input to some PLLs.
+- SPARE_REG and CLK_MASK settings.
+
+These APIs are used in Tegra210 clock driver during suspend and resume
+operation.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra-super-gen4.c |  4 --
+ drivers/clk/tegra/clk.c                  | 80 ++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h                  | 14 ++++++
+ 3 files changed, 94 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 659753118e96..30a7c48385a2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -768,7 +768,8 @@
- 	rtc@7000e000 {
- 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x0 0x7000e000 0x0 0x100>;
--		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-parent = <&pmc>;
- 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
- 		clock-names = "rtc";
- 	};
-@@ -778,6 +779,8 @@
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+index cdfe7c9697e1..ed69ec4d883e 100644
+--- a/drivers/clk/tegra/clk-tegra-super-gen4.c
++++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+@@ -19,10 +19,6 @@
+ #define PLLX_MISC2 0x514
+ #define PLLX_MISC3 0x518
  
- 		powergates {
- 			pd_audio: aud {
+-#define CCLKG_BURST_POLICY 0x368
+-#define CCLKLP_BURST_POLICY 0x370
+-#define SCLK_BURST_POLICY 0x028
+-#define SYSTEM_CLK_RATE 0x030
+ #define SCLK_DIVIDER 0x2c
+ 
+ static DEFINE_SPINLOCK(sysrate_lock);
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index 573e3c967ae1..9e863362d2bf 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -70,6 +70,12 @@ static struct clk **clks;
+ static int clk_num;
+ static struct clk_onecell_data clk_data;
+ 
++static u32 cclkg_burst_policy_ctx[2];
++static u32 cclklp_burst_policy_ctx[2];
++static u32 sclk_burst_policy_ctx[2];
++static u32 sys_clk_divisor_ctx, system_rate_ctx;
++static u32 spare_ctx, misc_clk_enb_ctx, clk_arm_ctx;
++
+ /* Handlers for SoC-specific reset lines */
+ static int (*special_reset_assert)(unsigned long);
+ static int (*special_reset_deassert)(unsigned long);
+@@ -199,6 +205,80 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ 	}
+ }
+ 
++void tegra_cclkg_burst_policy_save_context(void)
++{
++	unsigned int i;
++
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++)
++		cclkg_burst_policy_ctx[i] = readl_relaxed(clk_base +
++							  CCLKG_BURST_POLICY +
++							  (i * 4));
++}
++
++void tegra_cclkg_burst_policy_restore_context(void)
++{
++	unsigned int i;
++
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++)
++		writel_relaxed(cclkg_burst_policy_ctx[i],
++			       clk_base + CCLKG_BURST_POLICY + (i * 4));
++
++	fence_udelay(2, clk_base);
++}
++
++void tegra_sclk_cclklp_burst_policy_save_context(void)
++{
++	unsigned int i;
++
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++) {
++		cclklp_burst_policy_ctx[i] = readl_relaxed(clk_base +
++							  CCLKLP_BURST_POLICY +
++							  (i * 4));
++
++		sclk_burst_policy_ctx[i] = readl_relaxed(clk_base +
++							  SCLK_BURST_POLICY +
++							  (i * 4));
++	}
++
++	sys_clk_divisor_ctx = readl_relaxed(clk_base + SYS_CLK_DIV);
++	system_rate_ctx = readl_relaxed(clk_base + SYSTEM_CLK_RATE);
++	spare_ctx = readl_relaxed(clk_base + SPARE_REG0);
++	misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
++	clk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
++}
++
++void tegra_sclk_cpulp_burst_policy_restore_context(void)
++{
++	unsigned int i;
++	u32 val;
++
++	/*
++	 * resume SCLK and CPULP clocks
++	 * for SCLk, set safe dividers values first and then restore source
++	 * and dividers
++	 */
++
++	writel_relaxed(0x1, clk_base + SYSTEM_CLK_RATE);
++	val = readl_relaxed(clk_base + SYS_CLK_DIV);
++	if (val < sys_clk_divisor_ctx)
++		writel_relaxed(sys_clk_divisor_ctx, clk_base + SYS_CLK_DIV);
++
++	fence_udelay(2, clk_base);
++
++	for (i = 0; i < BURST_POLICY_REG_SIZE; i++) {
++		writel_relaxed(cclklp_burst_policy_ctx[i],
++			       clk_base + CCLKLP_BURST_POLICY + (i * 4));
++		writel_relaxed(sclk_burst_policy_ctx[i],
++			       clk_base + SCLK_BURST_POLICY + (i * 4));
++	}
++
++	writel_relaxed(sys_clk_divisor_ctx, clk_base + SYS_CLK_DIV);
++	writel_relaxed(system_rate_ctx, clk_base + SYSTEM_CLK_RATE);
++	writel_relaxed(spare_ctx, clk_base + SPARE_REG0);
++	writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
++	writel_relaxed(clk_arm_ctx, clk_base + CLK_MASK_ARM);
++}
++
+ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ {
+ 	clk_base = regs;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 8532f5150091..c66b0a73bb01 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -10,6 +10,16 @@
+ #include <linux/clkdev.h>
+ #include <linux/delay.h>
+ 
++#define SCLK_BURST_POLICY	0x28
++#define SYSTEM_CLK_RATE		0x30
++#define CLK_MASK_ARM		0x44
++#define MISC_CLK_ENB		0x48
++#define CCLKG_BURST_POLICY	0x368
++#define CCLKLP_BURST_POLICY	0x370
++#define SYS_CLK_DIV		0x400
++#define SPARE_REG0		0x55c
++#define BURST_POLICY_REG_SIZE	2
++
+ /**
+  * struct tegra_clk_sync_source - external clock source from codec
+  *
+@@ -849,6 +859,10 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+ 		 u8 frac_width, u8 flags);
+ void tegra_clk_sync_state_pll(struct clk_hw *hw);
++void tegra_cclkg_burst_policy_save_context(void);
++void tegra_cclkg_burst_policy_restore_context(void);
++void tegra_sclk_cclklp_burst_policy_save_context(void);
++void tegra_sclk_cpulp_burst_policy_restore_context(void);
+ 
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
 -- 
 2.7.4
