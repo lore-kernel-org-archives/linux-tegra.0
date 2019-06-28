@@ -1,8 +1,8 @@
 From: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v3 05/22] drm/msm/hdmi: Provide ddc symlink in hdmi connector
- sysfs directory
-Date: Fri, 28 Jun 2019 18:01:19 +0200
-Message-ID: <bd9099df90bc6df4e5fd674fbb020afcbdb28e07.1561735433.git.andrzej.p@collabora.com>
+Subject: [PATCH v3 06/22] drm/sun4i: hdmi: Provide ddc symlink in sun4i hdmi
+ connector sysfs directory
+Date: Fri, 28 Jun 2019 18:01:20 +0200
+Message-ID: <4fa046adb68a57c0ee63f5d31da8af2ed8de2c57.1561735433.git.andrzej.p@collabora.com>
 References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
  <cover.1561735433.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
@@ -29,20 +29,68 @@ Use the ddc pointer provided by the generic connector.
 
 Signed-off-by: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 ---
- drivers/gpu/drm/msm/hdmi/hdmi_connector.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun4i_hdmi.h     |  1 -
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 14 +++++++-------
+ 2 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-index 07b4cb877d82..4979e3362687 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-@@ -461,6 +461,7 @@ struct drm_connector *msm_hdmi_connector_init(struct hdmi *hdmi)
- 	connector->doublescan_allowed = 0;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+index 7ad3f06c127e..1649273b1493 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+@@ -265,7 +265,6 @@ struct sun4i_hdmi {
+ 	struct clk		*tmds_clk;
  
- 	drm_connector_attach_encoder(connector, hdmi->encoder);
-+	connector->ddc = hdmi->i2c;
+ 	struct i2c_adapter	*i2c;
+-	struct i2c_adapter	*ddc_i2c;
  
- 	return connector;
+ 	/* Regmap fields for I2C adapter */
+ 	struct regmap_field	*field_ddc_en;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 9c3f99339b82..250bec00dc35 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -213,7 +213,7 @@ static int sun4i_hdmi_get_modes(struct drm_connector *connector)
+ 	struct edid *edid;
+ 	int ret;
+ 
+-	edid = drm_get_edid(connector, hdmi->ddc_i2c ?: hdmi->i2c);
++	edid = drm_get_edid(connector, connector->ddc ?: hdmi->i2c);
+ 	if (!edid)
+ 		return 0;
+ 
+@@ -598,11 +598,11 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 		goto err_disable_mod_clk;
+ 	}
+ 
+-	hdmi->ddc_i2c = sun4i_hdmi_get_ddc(dev);
+-	if (IS_ERR(hdmi->ddc_i2c)) {
+-		ret = PTR_ERR(hdmi->ddc_i2c);
++	hdmi->connector.ddc = sun4i_hdmi_get_ddc(dev);
++	if (IS_ERR(hdmi->connector.ddc)) {
++		ret = PTR_ERR(hdmi->connector.ddc);
+ 		if (ret == -ENODEV)
+-			hdmi->ddc_i2c = NULL;
++			hdmi->connector.ddc = NULL;
+ 		else
+ 			goto err_del_i2c_adapter;
+ 	}
+@@ -663,7 +663,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	cec_delete_adapter(hdmi->cec_adap);
+ 	drm_encoder_cleanup(&hdmi->encoder);
+ err_put_ddc_i2c:
+-	i2c_put_adapter(hdmi->ddc_i2c);
++	i2c_put_adapter(hdmi->connector.ddc);
+ err_del_i2c_adapter:
+ 	i2c_del_adapter(hdmi->i2c);
+ err_disable_mod_clk:
+@@ -684,7 +684,7 @@ static void sun4i_hdmi_unbind(struct device *dev, struct device *master,
+ 	drm_connector_cleanup(&hdmi->connector);
+ 	drm_encoder_cleanup(&hdmi->encoder);
+ 	i2c_del_adapter(hdmi->i2c);
+-	i2c_put_adapter(hdmi->ddc_i2c);
++	i2c_put_adapter(hdmi->connector.ddc);
+ 	clk_disable_unprepare(hdmi->mod_clk);
+ 	clk_disable_unprepare(hdmi->bus_clk);
  }
 -- 
 2.17.1
