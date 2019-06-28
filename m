@@ -1,115 +1,121 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 00/18] SC7 entry and exit support for Tegra210
-Date: Thu, 27 Jun 2019 19:12:34 -0700
-Message-ID: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 04/18] clk: tegra: pllout: Save and restore pllout context
+Date: Thu, 27 Jun 2019 19:12:38 -0700
+Message-ID: <1561687972-19319-5-git-send-email-skomatineni@nvidia.com>
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series includes Tegra210 deepsleep support with RTC alarm
-wake event.
+This patch implements save and restore of pllout context.
 
-This series also includes save and restore of PLLs, clocks, OSC contexts
-for deepsleep exit to normal operation.
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
 
-This patch series doesn't support 100% suspend/resume to allow fully
-functional state upon resume and we are working on some more drivers suspend
-and resume implementations.
+So during suspend entry the state of pllout is saved and on resume
+it is restored back to have pllout in same state as before suspend.
 
-[V5]: Changes between V4 & V5 are
-	- V4 feedback fixes
+pllout rate is saved and restore in clock divider so it will be at
+same rate as before suspend when pllout state is restored.
 
-[V4]: Changes between V3 & V4 are
-	- V3 feedback fixes
-	- Removed park bits clear for EMMC pads in pinctrl-tegra driver
-	  function tegra_pinctrl_clear_parked_bits as based on V3 feedback
-	  parked_bit is updated to parked_bitmask to use with DRV_PINGROUP
-	  as well and thierry posted patch series for this.
-	- Implemented all peripheral clocks save and restore through their
-	  corresponding clk_ops save_context and restore_context and removed
-	  all direct registers store and restore in clk-tegra210 driver.
-	- Created separate patch for fence_delay update during PLLU init based
-	  on V3 feedback.
-	- Added more comments in tegra210_clk_resume regarding dfll restore
-	  sequence and its dependency on peripheral clocks restore.
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll-out.c  | 28 ++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra210.c |  3 ++-
+ drivers/clk/tegra/clk.h          |  9 +++++++++
+ 3 files changed, 39 insertions(+), 1 deletion(-)
 
-[V3]: Changes between V2 & V3 are
-	- V2 feedback fixes
-	- GPIO restore should happen prior to Pinctrl restore to prevent
-	  glitch on GPIO lines. So using resume_noirq for gpio tegra to allow
-	  gpio resume prior to pinctrl resume.
-	- Implemented save_context and restore_context callbacks for clock
-	  plls, pll outs and dividers in corresponding drivers.
-	  Note: Peripheral clocks and clock enable and reset need to be in
-	  Tegra210 clock suspend/resume as they need to be in proper sequence
-	  w.r.t DFLL resume for restoring CPU clock.
-	- Removed gpio-tegra changes for hierarchical support to have PMC as
-	  parent to GPIOs for GPIO wake event support. Thierry is working on
-	  gpiolib for some cleanup before adding hierarchical support. So
-	  holding on to GPIO wake support for now.
-
-[V2] : V1 feedback fixes
-	Patch 0002: This version still using syscore. Thierry suggest not to
-	use syscore and waiting on suggestion from Linux Walleij for any better
-	way of storing current state of pins before suspend entry and restoring
-	them on resume at very early stage. So left this the same way as V1 and
-	will address once I get more feedback on this.
-	Also need to findout and implement proper way of forcing resume order
-	between pinctrl and gpio driver.
-
-[V1]:	Tegra210 SC7 entry and exit thru RTC wake and Power button GPIO wake
-	using hierarchical IRQ with PMC as parent to GPIO.
-
-
-
-
-Sowjanya Komatineni (18):
-  irqchip: tegra: do not disable COP IRQ during suspend
-  pinctrl: tegra: add suspend and resume support
-  clk: tegra: save and restore divider rate
-  clk: tegra: pllout: save and restore pllout context
-  clk: tegra: pll: save and restore pll context
-  clk: tegra: save and restore CPU and System clocks context
-  clk: tegra: support for saving and restoring OSC context
-  clk: tegra: add suspend resume support for DFLL
-  clk: tegra: add save and restore context support for peripheral clocks
-  clk: tegra210: use fence_udelay during PLLU init
-  clk: tegra210: support for Tegra210 clocks suspend and resume
-  soc/tegra: pmc: allow support for more tegra wake
-  soc/tegra: pmc: add pmc wake support for tegra210
-  arm64: tegra: enable wake from deep sleep on RTC alarm.
-  soc/tegra: pmc: configure core power request polarity
-  soc/tegra: pmc: configure deep sleep control settings
-  arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
-  arm64: dts: tegra210-p2180: Jetson nano SC7 timings
-
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   7 +
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |   7 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   5 +-
- drivers/clk/tegra/clk-dfll.c                       |  78 ++++++++++++
- drivers/clk/tegra/clk-dfll.h                       |   2 +
- drivers/clk/tegra/clk-divider.c                    |  23 ++++
- drivers/clk/tegra/clk-periph-fixed.c               |  31 +++++
- drivers/clk/tegra/clk-periph-gate.c                |  34 +++++
- drivers/clk/tegra/clk-periph.c                     |  43 +++++++
- drivers/clk/tegra/clk-pll-out.c                    |  28 ++++
- drivers/clk/tegra/clk-pll.c                        | 121 +++++++++++++-----
- drivers/clk/tegra/clk-sdmmc-mux.c                  |  30 +++++
- drivers/clk/tegra/clk-tegra-fixed.c                |  14 ++
- drivers/clk/tegra/clk-tegra-super-gen4.c           |   4 -
- drivers/clk/tegra/clk-tegra210.c                   | 128 +++++++++++++++++--
- drivers/clk/tegra/clk.c                            |  94 ++++++++++++++
- drivers/clk/tegra/clk.h                            |  45 ++++++-
- drivers/irqchip/irq-tegra.c                        |  20 ++-
- drivers/pinctrl/tegra/pinctrl-tegra.c              |  52 ++++++++
- drivers/pinctrl/tegra/pinctrl-tegra.h              |   3 +
- drivers/pinctrl/tegra/pinctrl-tegra210.c           |   1 +
- drivers/soc/tegra/pmc.c                            | 141 ++++++++++++++++++++-
- 22 files changed, 858 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+index 35f2bf00e1e6..8f26a7e3e579 100644
+--- a/drivers/clk/tegra/clk-pll-out.c
++++ b/drivers/clk/tegra/clk-pll-out.c
+@@ -69,10 +69,38 @@ static void clk_pll_out_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll_out->lock, flags);
+ }
+ 
++static int tegra_clk_pll_out_save_context(struct clk_hw *hw)
++{
++	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
++
++	if (pll_out->flags & TEGRA_PLLRE_OUT)
++		pll_out->pllout_ctx = readl_relaxed(pll_out->reg);
++	else
++		pll_out->pllout_ctx = clk_hw_get_rate(hw);
++
++	return 0;
++}
++
++static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
++
++	if (pll_out->flags & TEGRA_PLLRE_OUT) {
++		writel_relaxed(pll_out->pllout_ctx, pll_out->reg);
++	} else {
++		if (!__clk_get_enable_count(hw->clk))
++			clk_pll_out_disable(hw);
++		else
++			clk_pll_out_enable(hw);
++	}
++}
++
+ const struct clk_ops tegra_clk_pll_out_ops = {
+ 	.is_enabled = clk_pll_out_is_enabled,
+ 	.enable = clk_pll_out_enable,
+ 	.disable = clk_pll_out_disable,
++	.save_context = tegra_clk_pll_out_save_context,
++	.restore_context = tegra_clk_pll_out_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_pll_out(const char *name,
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index ac1d27a8c650..cbd77658dcf7 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3195,7 +3195,8 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 					 8, 8, 1, NULL);
+ 	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
+ 					 clk_base + PLLRE_OUT1, 1, 0,
+-					 CLK_SET_RATE_PARENT, 0, NULL);
++					 CLK_SET_RATE_PARENT, TEGRA_PLLRE_OUT,
++					 NULL);
+ 	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
+ 
+ 	/* PLLE */
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 83623f5f55f3..fb29a8c27873 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -439,6 +439,12 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
+  * @rst_bit_idx:	bit to reset PLL divider
+  * @lock:		register lock
+  * @flags:		hardware-specific flags
++ * @pllout_ctx:		pllout context to save and restore during suspend
++ *			and resume
++ *
++ * Flags:
++ * TEGRA_PLLRE_OUT - This flag indicates that it is PLLRE_OUT and is used to
++ *		     identify PLLRE_OUT during clk_pll_out save and restore.
+  */
+ struct tegra_clk_pll_out {
+ 	struct clk_hw	hw;
+@@ -447,8 +453,11 @@ struct tegra_clk_pll_out {
+ 	u8		rst_bit_idx;
+ 	spinlock_t	*lock;
+ 	u8		flags;
++	unsigned int	pllout_ctx;
+ };
+ 
++#define TEGRA_PLLRE_OUT BIT(0)
++
+ #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
+ 
+ extern const struct clk_ops tegra_clk_pll_out_ops;
 -- 
 2.7.4
