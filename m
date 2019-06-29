@@ -1,15 +1,15 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V5 16/18] soc/tegra: pmc: Configure deep sleep control
- settings
-Date: Sat, 29 Jun 2019 16:02:04 +0300
-Message-ID: <27fdeee4-7dbe-2562-ea11-750c6fd3b952@gmail.com>
+Subject: Re: [PATCH V5 13/18] soc/tegra: pmc: Add pmc wake support for
+ tegra210
+Date: Sat, 29 Jun 2019 16:11:17 +0300
+Message-ID: <8e5367fd-81c0-c20b-5566-a11816d8458d@gmail.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-17-git-send-email-skomatineni@nvidia.com>
+ <1561687972-19319-14-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1561687972-19319-17-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1561687972-19319-14-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
@@ -17,53 +17,62 @@ Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vg
 List-Id: linux-tegra@vger.kernel.org
 
 28.06.2019 5:12, Sowjanya Komatineni пишет:
-> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
-> timings which are platform specific that should be configured before
-> entering into deep sleep.
-> 
-> Below are the timing specific configurations for deep sleep entry and
-> wakeup.
-> - Core rail power-on stabilization timer
-> - OSC clock stabilization timer after SOC rail power is stabilized.
-> - Core power off time is the minimum wake delay to keep the system
->   in deep sleep state irrespective of any quick wake event.
-> 
-> These values depends on the discharge time of regulators and turn OFF
-> time of the PMIC to allow the complete system to finish entering into
-> deep sleep state.
-> 
-> These values vary based on the platform design and are specified
-> through the device tree.
-> 
-> This patch has implementation to configure these timings which are must
-> to have for proper deep sleep and wakeup operations.
+> This patch implements PMC wakeup sequence for Tegra210 and defines
+> common used RTC alarm wake event.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  drivers/soc/tegra/pmc.c | 111 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 111 insertions(+)
 > 
 > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index ed83c0cd09a3..7e4a8f04f4c4 100644
+> index 91c84d0e66ae..194100d77243 100644
 > --- a/drivers/soc/tegra/pmc.c
 > +++ b/drivers/soc/tegra/pmc.c
-> @@ -89,6 +89,8 @@
+> @@ -57,6 +57,12 @@
+>  #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+>  #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+>  #define  PMC_CNTRL_MAIN_RST		BIT(4)
+> +#define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
+> +
+> +#define PMC_WAKE_MASK			0x0c
+> +#define PMC_WAKE_LEVEL			0x10
+> +#define PMC_WAKE_STATUS			0x14
+> +#define PMC_SW_WAKE_STATUS		0x18
 >  
->  #define PMC_CPUPWRGOOD_TIMER		0xc8
->  #define PMC_CPUPWROFF_TIMER		0xcc
-> +#define PMC_COREPWRGOOD_TIMER		0x3c
-> +#define PMC_COREPWROFF_TIMER		0xe0
+>  #define DPD_SAMPLE			0x020
+>  #define  DPD_SAMPLE_ENABLE		BIT(0)
+> @@ -87,6 +93,11 @@
 >  
->  #define PMC_PWR_DET_VALUE		0xe4
+>  #define PMC_SCRATCH41			0x140
 >  
-> @@ -2291,6 +2293,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
->  static void tegra20_pmc_init(struct tegra_pmc *pmc)
->  {
->  	u32 value;
-> +	unsigned long osc, pmu, off;
+> +#define PMC_WAKE2_MASK			0x160
+> +#define PMC_WAKE2_LEVEL			0x164
+> +#define PMC_WAKE2_STATUS		0x168
+> +#define PMC_SW_WAKE2_STATUS		0x16c
+> +
+>  #define PMC_SENSOR_CTRL			0x1b0
+>  #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+>  #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+> @@ -1922,6 +1933,55 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>  	.alloc = tegra_pmc_irq_alloc,
+>  };
+>  
+> +static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+> +{
+> +	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+> +	unsigned int offset, bit;
+> +	u32 value;
+> +
+> +	if (data->hwirq == ULONG_MAX)
+> +		return 0;
+> +
+> +	offset = data->hwirq / 32;
+> +	bit = data->hwirq % 32;
+> +
+> +	/*
+> +	 * latch wakeups to SW_WAKE_STATUS register to capture events
+> +	 * that would not make it into wakeup event register during LP0 exit.
+> +	 */
 
-I'd write this as:
-
- 	u32 value, osc, pmu, off;
-
-Because "unsigned long" has the same size as u32 in this case.
+Minor nit: start multi-line comments with a capital letter.
