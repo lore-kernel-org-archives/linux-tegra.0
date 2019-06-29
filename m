@@ -1,8 +1,8 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V5 16/18] soc/tegra: pmc: Configure deep sleep control
  settings
-Date: Sat, 29 Jun 2019 16:00:05 +0300
-Message-ID: <cfdda2e4-2f9e-6228-7ae9-17c2fbce7fb0@gmail.com>
+Date: Sat, 29 Jun 2019 16:02:04 +0300
+Message-ID: <27fdeee4-7dbe-2562-ea11-750c6fd3b952@gmail.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
  <1561687972-19319-17-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
@@ -61,27 +61,9 @@ List-Id: linux-tegra@vger.kernel.org
 >  {
 >  	u32 value;
 > +	unsigned long osc, pmu, off;
->  
->  	/* Always enable CPU power request */
->  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
-> @@ -2316,6 +2319,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
->  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
->  	value |= PMC_CNTRL_SYSCLK_OE;
->  	tegra_pmc_writel(pmc, value, PMC_CNTRL);
-> +
-> +	osc = DIV_ROUND_UP_ULL(pmc->core_osc_time * 8192, 1000000);
-> +	pmu = DIV_ROUND_UP_ULL(pmc->core_pmu_time * 32768, 1000000);
-> +	off = DIV_ROUND_UP_ULL(pmc->core_off_time * 32768, 1000000);
 
-IIUC, the first argument shall be explicitly of a type "long long", shouldn't it?
-Otherwise the multiplication will overflow before division happens.
+I'd write this as:
 
-Thus:
+ 	u32 value, osc, pmu, off;
 
-	osc = DIV_ROUND_UP_ULL((u64)pmc->core_osc_time * 8192, 1000000);
-	pmu = DIV_ROUND_UP_ULL((u64)pmc->core_pmu_time * 32768, 1000000);
-	off = DIV_ROUND_UP_ULL((u64)pmc->core_off_time * 32768, 1000000);
-
-Also, could you please tell what of the above multiplications could overflow u32 in
-the first place? Maybe DIV_ROUND_UP_ULL isn't needed at all and DIV_ROUND_UP could be
-use instead?
+Because "unsigned long" has the same size as u32 in this case.
