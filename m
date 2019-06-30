@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 02/15] memory: tegra20-emc: Drop setting EMC rate to max on probe
-Date: Mon,  1 Jul 2019 00:00:06 +0300
-Message-ID: <20190630210019.26914-3-digetx@gmail.com>
+Subject: [PATCH v6 08/15] dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
+Date: Mon,  1 Jul 2019 00:00:12 +0300
+Message-ID: <20190630210019.26914-9-digetx@gmail.com>
 References: <20190630210019.26914-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,128 +12,179 @@ To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The memory frequency scaling will be managed by tegra20-devfreq driver
-and PM QoS once all the prerequisite patches will get upstreamed.
-The parent clock is now managed by the clock driver and we also should
-assume that PLLM rate can't be changed on some devices (Galaxy Tab 10.1
-for example). Altogether there is no point in touching of clock's rate
-from the EMC driver.
+Add binding for the NVIDIA Tegra30 SoC Memory Controller.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 78 +-----------------------------
- 1 file changed, 1 insertion(+), 77 deletions(-)
+ .../memory-controllers/nvidia,tegra30-mc.yaml | 160 ++++++++++++++++++
+ 1 file changed, 160 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 9ee5bef49e47..da8fa592b071 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -137,9 +137,6 @@ struct tegra_emc {
- 	struct device *dev;
- 	struct completion clk_handshake_complete;
- 	struct notifier_block clk_nb;
--	struct clk *backup_clk;
--	struct clk *emc_mux;
--	struct clk *pll_m;
- 	struct clk *clk;
- 	void __iomem *regs;
- 
-@@ -424,41 +421,6 @@ static int emc_setup_hw(struct tegra_emc *emc)
- 	return 0;
- }
- 
--static int emc_init(struct tegra_emc *emc, unsigned long rate)
--{
--	int err;
--
--	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to reparent to backup source: %d\n", err);
--		return err;
--	}
--
--	err = clk_set_rate(emc->pll_m, rate);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to change pll_m rate: %d\n", err);
--		return err;
--	}
--
--	err = clk_set_parent(emc->emc_mux, emc->pll_m);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to reparent to pll_m: %d\n", err);
--		return err;
--	}
--
--	err = clk_set_rate(emc->clk, rate);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to change emc rate: %d\n", err);
--		return err;
--	}
--
--	return 0;
--}
--
- static int tegra_emc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np;
-@@ -522,52 +484,14 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	emc->pll_m = clk_get_sys(NULL, "pll_m");
--	if (IS_ERR(emc->pll_m)) {
--		err = PTR_ERR(emc->pll_m);
--		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
--		return err;
--	}
--
--	emc->backup_clk = clk_get_sys(NULL, "pll_p");
--	if (IS_ERR(emc->backup_clk)) {
--		err = PTR_ERR(emc->backup_clk);
--		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
--		goto put_pll_m;
--	}
--
--	emc->emc_mux = clk_get_parent(emc->clk);
--	if (IS_ERR(emc->emc_mux)) {
--		err = PTR_ERR(emc->emc_mux);
--		dev_err(&pdev->dev, "failed to get emc_mux clock: %d\n", err);
--		goto put_backup;
--	}
--
- 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
- 			err);
--		goto put_backup;
--	}
--
--	/* set DRAM clock rate to maximum */
--	err = emc_init(emc, emc->timings[emc->num_timings - 1].rate);
--	if (err) {
--		dev_err(&pdev->dev, "failed to initialize EMC clock rate: %d\n",
--			err);
--		goto unreg_notifier;
-+		return err;
- 	}
- 
- 	return 0;
--
--unreg_notifier:
--	clk_notifier_unregister(emc->clk, &emc->clk_nb);
--put_backup:
--	clk_put(emc->backup_clk);
--put_pll_m:
--	clk_put(emc->pll_m);
--
--	return err;
- }
- 
- static const struct of_device_id tegra_emc_of_match[] = {
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
+new file mode 100644
+index 000000000000..a3b59c569229
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
+@@ -0,0 +1,160 @@
++# SPDX-License-Identifier: (GPL-2.0)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra30-mc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title:
++  NVIDIA Tegra30 SoC Memory Controller
++
++maintainers:
++  - Dmitry Osipenko <digetx@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++  - Thierry Reding <thierry.reding@gmail.com>
++
++description: |
++  Tegra30 Memory Controller architecturally consists of the following parts:
++
++    Arbitration Domains, which can handle a single request or response per
++    clock from a group of clients. Typically, a system has a single Arbitration
++    Domain, but an implementation may divide the client space into multiple
++    Arbitration Domains to increase the effective system bandwidth.
++
++    Protocol Arbiter, which manage a related pool of memory devices. A system
++    may have a single Protocol Arbiter or multiple Protocol Arbiters.
++
++    Memory Crossbar, which routes request and responses between Arbitration
++    Domains and Protocol Arbiters. In the simplest version of the system, the
++    Memory Crossbar is just a pass through between a single Arbitration Domain
++    and a single Protocol Arbiter.
++
++    Global Resources, which include things like configuration registers which
++    are shared across the Memory Subsystem.
++
++properties:
++  compatible:
++    const: nvidia,tegra30-mc
++
++  reg:
++    maxItems: 1
++    description:
++      Physical base address.
++
++  clocks:
++    maxItems: 1
++    description:
++      Memory Controller clock.
++
++  clock-names:
++    items:
++      - const: mc
++
++  interrupts:
++    maxItems: 1
++    description:
++      Memory Controller interrupt.
++
++  "#reset-cells":
++    const: 1
++
++  "#iommu-cells":
++    const: 1
++
++patternProperties:
++  ".*":
++    properties:
++      nvidia,ram-code:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          Value of RAM_CODE this timing set is used for.
++
++    patternProperties:
++      ".*":
++        properties:
++          clock-frequency:
++            description:
++              Memory clock rate in Hz.
++
++          nvidia,emem-configuration:
++            $ref: /schemas/types.yaml#/definitions/uint32-array
++            description: |
++              Values to be written to the EMEM register block. See section
++              "18.13.1 MC Registers" in the TRM.
++            items:
++              - description: MC_EMEM_ARB_CFG
++              - description: MC_EMEM_ARB_OUTSTANDING_REQ
++              - description: MC_EMEM_ARB_TIMING_RCD
++              - description: MC_EMEM_ARB_TIMING_RP
++              - description: MC_EMEM_ARB_TIMING_RC
++              - description: MC_EMEM_ARB_TIMING_RAS
++              - description: MC_EMEM_ARB_TIMING_FAW
++              - description: MC_EMEM_ARB_TIMING_RRD
++              - description: MC_EMEM_ARB_TIMING_RAP2PRE
++              - description: MC_EMEM_ARB_TIMING_WAP2PRE
++              - description: MC_EMEM_ARB_TIMING_R2R
++              - description: MC_EMEM_ARB_TIMING_W2W
++              - description: MC_EMEM_ARB_TIMING_R2W
++              - description: MC_EMEM_ARB_TIMING_W2R
++              - description: MC_EMEM_ARB_DA_TURNS
++              - description: MC_EMEM_ARB_DA_COVERS
++              - description: MC_EMEM_ARB_MISC0
++              - description: MC_EMEM_ARB_RING1_THROTTLE
++
++        required:
++          - clock-frequency
++          - nvidia,emem-configuration
++
++    required:
++      - nvidia,ram-code
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - "#reset-cells"
++  - "#iommu-cells"
++
++examples:
++  - |
++    memory-controller@7000f000 {
++        compatible = "nvidia,tegra30-mc";
++        reg = <0x7000f000 0x400>;
++        clocks = <&tegra_car 32>;
++        clock-names = "mc";
++
++        interrupts = <0 77 4>;
++
++        #iommu-cells = <1>;
++        #reset-cells = <1>;
++
++        emc-timings-1 {
++            nvidia,ram-code = <1>;
++
++            timing-667000000 {
++                clock-frequency = <667000000>;
++
++                nvidia,emem-configuration = <
++                    0x0000000a /* MC_EMEM_ARB_CFG */
++                    0xc0000079 /* MC_EMEM_ARB_OUTSTANDING_REQ */
++                    0x00000003 /* MC_EMEM_ARB_TIMING_RCD */
++                    0x00000004 /* MC_EMEM_ARB_TIMING_RP */
++                    0x00000010 /* MC_EMEM_ARB_TIMING_RC */
++                    0x0000000b /* MC_EMEM_ARB_TIMING_RAS */
++                    0x0000000a /* MC_EMEM_ARB_TIMING_FAW */
++                    0x00000001 /* MC_EMEM_ARB_TIMING_RRD */
++                    0x00000003 /* MC_EMEM_ARB_TIMING_RAP2PRE */
++                    0x0000000b /* MC_EMEM_ARB_TIMING_WAP2PRE */
++                    0x00000002 /* MC_EMEM_ARB_TIMING_R2R */
++                    0x00000002 /* MC_EMEM_ARB_TIMING_W2W */
++                    0x00000004 /* MC_EMEM_ARB_TIMING_R2W */
++                    0x00000008 /* MC_EMEM_ARB_TIMING_W2R */
++                    0x08040202 /* MC_EMEM_ARB_DA_TURNS */
++                    0x00130b10 /* MC_EMEM_ARB_DA_COVERS */
++                    0x70ea1f11 /* MC_EMEM_ARB_MISC0 */
++                    0x001f0000 /* MC_EMEM_ARB_RING1_THROTTLE */
++                >;
++            };
++        };
++    };
 -- 
 2.22.0
