@@ -1,106 +1,180 @@
-From: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH v3 01/22] drm: Include ddc adapter pointer
- in struct drm_connector
-Date: Sun, 30 Jun 2019 10:12:54 +0200
-Message-ID: <9b03d145-ec50-927c-55a8-dff1cd51d655@suse.de>
-References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
- <cover.1561735433.git.andrzej.p@collabora.com>
- <d6381c020ea1c848a7044d830bdb0ec9663d1619.1561735433.git.andrzej.p@collabora.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v6 00/15] memory: tegra: Introduce Tegra30 EMC driver
+Date: Mon,  1 Jul 2019 00:00:04 +0300
+Message-ID: <20190630210019.26914-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <d6381c020ea1c848a7044d830bdb0ec9663d1619.1561735433.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>David
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkKCkkgbGlrZSB0aGUgaWRlYSwgYnV0IHdvdWxkIHByZWZlciBhIG1vcmUgc3RydWN0dXJlZCBh
-cHByb2FjaC4KClNldHRpbmcgY29ubmVjdG9yLT5kZGMgYmVmb3JlIGNhbGxpbmcgZHJtX3N5c2Zz
-X2Nvbm5lY3Rvcl9hZGQoKSBzZWVtcwplcnJvciBwcm9uZS4gVGhlIGRlcGVuZGVuY3kgaXMgbm90
-IHJlYWxseSBjbGVhciBmcm9tIHRoZSBjb2RlIG9yIGludGVyZmFjZXMuCgpUaGUgb3RoZXIgdGhp
-bmcgaXMgdGhhdCBkcml2ZXJzIEkgbW9zdGx5IHdvcmsgb24sIGFzdCBhbmQgbWdhZzIwMCwgaGF2
-ZQpjb2RlIGxpa2UgdGhpczoKCiAgc3RydWN0IGFzdF9pMmNfY2hhbiB7CglzdHJ1Y3QgaTJjX2Fk
-YXB0ZXIgYWRhcHRlcjsKCXN0cnVjdCBkcm1fZGV2aWNlICpkZXY7CglzdHJ1Y3QgaTJjX2FsZ29f
-Yml0X2RhdGEgYml0OwogIH07CgogIHN0cnVjdCBhc3RfY29ubmVjdG9yIHsKCXN0cnVjdCBkcm1f
-Y29ubmVjdG9yIGJhc2U7CglzdHJ1Y3QgYXN0X2kyY19jaGFuICppMmM7CiAgfTsKCkl0IGFscmVh
-ZHkgZW5jb2RlcyB0aGUgY29ubmVjdGlvbiBiZXR3ZWVuIGNvbm5lY3RvciBhbmQgZGRjIGFkYXB0
-ZXIuCgpJIHN1Z2dlc3QgdG8gaW50cm9kdWNlIHN0cnVjdCBkcm1faTJjX2FkYXB0ZXIKCiAgc3Ry
-dWN0IGRybV9pMmNfYWRhcHRlciB7CglzdHJ1Y3QgaTJjX2FkYXB0ZXIgYmFzZTsKCXN0cnVjdCBk
-cm1fY29ubmVjdG9yICpjb25uZWN0b3I7CiAgfTsKCmFuZCBjb252ZXJ0IGRyaXZlcnMgb3ZlciB0
-byBpdC4gQXN0IHdvdWxkIGxvb2sgbGlrZSB0aGlzOgoKICBzdHJ1Y3QgYXN0X2kyY19jaGFuIHsK
-CXN0cnVjdCBkcm1faTJjX2FkYXB0ZXIgYWRhcHRlcjsKCXN0cnVjdCBpMmNfYWxnb19iaXRfZGF0
-YSBiaXQ7CiAgfTsKClR3byBuZXcgc3lzZnMgZnVuY3Rpb25zIHdvdWxkIHNldCB1cCBhbmQgcmVt
-b3ZlIHRoZSBmaWxlLgoKICBpbnQgZHJtX3N5c2ZzX2kyY19hZGFwdGVyX2FkZChzdHJ1Y3QgZHJt
-X2kyY19hZGFwdGVyICppMmMpOwogIHZvaWQgZHJtX3N5c2ZzX2kyY19hZGFwdGVyX3JlbW92ZShz
-dHJ1Y3QgZHJtX2kyY19hZGFwdGVyICppMmMpOwoKVGhlIGkyYyBhZGFwdGVyLCBjb25uZWN0b3It
-PmRkYyBwb2ludGVyIGFuZCBzeXNmcyBlbnRyeSB3b3VsZCBiZQppbml0aWFsaXplZCBieQoKICBk
-cm1faTJjX2FkYXB0ZXJfaW5pdChzdHJ1Y3QgZHJtX2kyY19hZGFwdGVyICppMmMsIHN0cnVjdCBj
-b25uZWN0b3IKCSpjb25uZWN0b3IsIHZvaWQgKmFsZ29fZGF0YSk7CgphbmQgY2xlYW5lZCB1cCBi
-eQoKICBkcm1faTJjX2FkYXB0ZXJfcmVtb3ZlKHN0cnVjdCBkcm1faTJjX2FkYXB0ZXIgKmkyYyk7
-CgoKVGhvdWdodHM/CgpCZXN0IHJlZ2FyZHMKVGhvbWFzCgpBbSAyOC4wNi4xOSB1bSAxODowMSBz
-Y2hyaWViIEFuZHJ6ZWogUGlldHJhc2lld2ljejoKPiBBZGQgZ2VuZXJpYyBjb2RlIHdoaWNoIGNy
-ZWF0ZXMgc3ltYm9saWMgbGlua3MgaW4gc3lzZnMsIHBvaW50aW5nIHRvIGRkYwo+IGludGVyZmFj
-ZSB1c2VkIGJ5IGEgcGFydGljdWxhciB2aWRlbyBvdXRwdXQuIEZvciBleGFtcGxlOgo+IAo+IGxz
-IC1sIC9zeXMvY2xhc3MvZHJtL2NhcmQwLUhETUktQS0xL2RkYwo+IGxyd3hyd3hyd3ggMSByb290
-IHJvb3QgMCBKdW4gMjQgMTA6NDIgL3N5cy9jbGFzcy9kcm0vY2FyZDAtSERNSS1BLTEvZGRjIFwK
-PiAJLT4gLi4vLi4vLi4vLi4vc29jLzEzODgwMDAwLmkyYy9pMmMtMgo+IAo+IFRoaXMgbWFrZXMg
-aXQgZWFzeSBmb3IgdXNlciB0byBhc3NvY2lhdGUgYSBkaXNwbGF5IHdpdGggaXRzIGRkYyBhZGFw
-dGVyCj4gYW5kIHVzZSBlLmcuIGRkY3V0aWwgdG8gY29udHJvbCB0aGUgY2hvc2VuIG1vbml0b3Iu
-Cj4gCj4gVGhpcyBwYXRjaCBhZGRzIGFuIGkyY19hZGFwdGVyIHBvaW50ZXIgdG8gc3RydWN0IGRy
-bV9jb25uZWN0b3IuIFBhcnRpY3VsYXIKPiBkcml2ZXJzIGNhbiB0aGVuIHVzZSBpdCBpbnN0ZWFk
-IG9mIHVzaW5nIHRoZWlyIG93biBwcml2YXRlIGluc3RhbmNlLiBJZiBhCj4gY29ubmVjdG9yIGNv
-bnRhaW5zIGEgZGRjLCB0aGVuIGNyZWF0ZSBhIHN5bWJvbGljIGxpbmsgaW4gc3lzZnMuCj4gCj4g
-U2lnbmVkLW9mZi1ieTogQW5kcnplaiBQaWV0cmFzaWV3aWN6IDxhbmRyemVqLnBAY29sbGFib3Jh
-LmNvbT4KPiBBY2tlZC1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4K
-PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9zeXNmcy5jIHwgIDcgKysrKysrKwo+ICBpbmNs
-dWRlL2RybS9kcm1fY29ubmVjdG9yLmggfCAxMSArKysrKysrKysrKwo+ICAyIGZpbGVzIGNoYW5n
-ZWQsIDE4IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Ry
-bV9zeXNmcy5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9zeXNmcy5jCj4gaW5kZXggYWQxMDgxMGJj
-OTcyLi4yNmQzNTliMzk3ODUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9zeXNm
-cy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9zeXNmcy5jCj4gQEAgLTI5NCw2ICsyOTQs
-OSBAQCBpbnQgZHJtX3N5c2ZzX2Nvbm5lY3Rvcl9hZGQoc3RydWN0IGRybV9jb25uZWN0b3IgKmNv
-bm5lY3RvcikKPiAgCS8qIExldCB1c2Vyc3BhY2Uga25vdyB3ZSBoYXZlIGEgbmV3IGNvbm5lY3Rv
-ciAqLwo+ICAJZHJtX3N5c2ZzX2hvdHBsdWdfZXZlbnQoZGV2KTsKPiAgCj4gKwlpZiAoY29ubmVj
-dG9yLT5kZGMpCj4gKwkJcmV0dXJuIHN5c2ZzX2NyZWF0ZV9saW5rKCZjb25uZWN0b3ItPmtkZXYt
-PmtvYmosCj4gKwkJCQkgJmNvbm5lY3Rvci0+ZGRjLT5kZXYua29iaiwgImRkYyIpOwo+ICAJcmV0
-dXJuIDA7Cj4gIH0KPiAgCj4gQEAgLTMwMSw2ICszMDQsMTAgQEAgdm9pZCBkcm1fc3lzZnNfY29u
-bmVjdG9yX3JlbW92ZShzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ICB7Cj4gIAlp
-ZiAoIWNvbm5lY3Rvci0+a2RldikKPiAgCQlyZXR1cm47Cj4gKwo+ICsJaWYgKGNvbm5lY3Rvci0+
-ZGRjKQo+ICsJCXN5c2ZzX3JlbW92ZV9saW5rKCZjb25uZWN0b3ItPmtkZXYtPmtvYmosICJkZGMi
-KTsKPiArCj4gIAlEUk1fREVCVUcoInJlbW92aW5nIFwiJXNcIiBmcm9tIHN5c2ZzXG4iLAo+ICAJ
-CSAgY29ubmVjdG9yLT5uYW1lKTsKPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9j
-b25uZWN0b3IuaCBiL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaAo+IGluZGV4IGNhNzQ1ZDlm
-ZWFmNS4uMWFkM2QxZDU0YmE3IDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0
-b3IuaAo+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaAo+IEBAIC0yMyw2ICsyMyw3
-IEBACj4gICNpZm5kZWYgX19EUk1fQ09OTkVDVE9SX0hfXwo+ICAjZGVmaW5lIF9fRFJNX0NPTk5F
-Q1RPUl9IX18KPiAgCj4gKyNpbmNsdWRlIDxsaW51eC9pMmMuaD4KPiAgI2luY2x1ZGUgPGxpbnV4
-L2xpc3QuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2xsaXN0Lmg+Cj4gICNpbmNsdWRlIDxsaW51eC9j
-dHlwZS5oPgo+IEBAIC0xMzA4LDYgKzEzMDksMTYgQEAgc3RydWN0IGRybV9jb25uZWN0b3Igewo+
-ICAJICogWzBdOiBwcm9ncmVzc2l2ZSwgWzFdOiBpbnRlcmxhY2VkCj4gIAkgKi8KPiAgCWludCBh
-dWRpb19sYXRlbmN5WzJdOwo+ICsKPiArCS8qKgo+ICsJICogQGRkYzogYXNzb2NpYXRlZCBkZGMg
-YWRhcHRlci4KPiArCSAqIEEgY29ubmVjdG9yIHVzdWFsbHkgaGFzIGl0cyBhc3NvY2lhdGVkIGRk
-YyBhZGFwdGVyLiBJZiBhIGRyaXZlciB1c2VzCj4gKwkgKiB0aGlzIGZpZWxkLCB0aGVuIGFuIGFw
-cHJvcHJpYXRlIHN5bWJvbGljIGxpbmsgaXMgY3JlYXRlZCBpbiBjb25uZWN0b3IKPiArCSAqIHN5
-c2ZzIGRpcmVjdG9yeSB0byBtYWtlIGl0IGVhc3kgZm9yIHRoZSB1c2VyIHRvIHRlbGwgd2hpY2gg
-aTJjCj4gKwkgKiBhZGFwdGVyIGlzIGZvciBhIHBhcnRpY3VsYXIgZGlzcGxheS4KPiArCSAqLwo+
-ICsJc3RydWN0IGkyY19hZGFwdGVyICpkZGM7Cj4gKwo+ICAJLyoqCj4gIAkgKiBAbnVsbF9lZGlk
-X2NvdW50ZXI6IHRyYWNrIHNpbmtzIHRoYXQgZ2l2ZSB1cyBhbGwgemVyb3MgZm9yIHRoZSBFRElE
-Lgo+ICAJICogTmVlZGVkIHRvIHdvcmthcm91bmQgc29tZSBIVyBidWdzIHdoZXJlIHdlIGdldCBh
-bGwgMHMKPiAKCi0tIApUaG9tYXMgWmltbWVybWFubgpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVy
-ClNVU0UgTGludXggR21iSCwgTWF4ZmVsZHN0cmFzc2UgNSwgOTA0MDkgTnVlcm5iZXJnLCBHZXJt
-YW55CkdGOiBGZWxpeCBJbWVuZMO2cmZmZXIsIE1hcnkgSGlnZ2lucywgU3JpIFJhc2lhaApIUkIg
-MjEyODQgKEFHIE7DvHJuYmVyZykKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApGcmVlZHJlbm9AbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZnJlZWRyZW5v
+Hello,
+
+This series introduces driver for the External Memory Controller (EMC)
+found on Tegra30 chips, it controls the external DRAM on the board. The
+purpose of this driver is to program memory timing for external memory on
+the EMC clock rate change. The driver was tested using the ACTMON devfreq
+driver that performs memory frequency scaling based on memory-usage load.
+
+Changelog:
+
+v6: - Tegra124 Memory Controller binding factored out into standalone
+      binding because it requires to specify MC_EMEM_ARB_MISC1 for EMEM
+      programming, which is not required for Tegra30. This makes the
+      upstream MC registers specification to match downstream exactly,
+      easing porting of boards memory timings configuration to upstream.
+
+    - Tegra30/124 Memory Controller binding converted to YAML.
+
+    - Tegra30 External Memory Controller binding now is in YAML format.
+
+    - Added workaround for hanging during LP2 when EMC runs off PLLP on
+      Tegra30 in this new patches:
+
+        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
+
+    - Added info message to the Tegra20/30 EMC drivers, telling about
+      RAM code and a number of available timings:
+
+        memory: tegra20-emc: Print a brief info message about the timings
+
+v5: - Addressed review comments that were made by Thierry Reding to v4 by
+      adding appropriate copyrights to the source code headers and making
+      Tegra30 EMC driver to use common Tegra20 CLK API directly instead
+      of having a dummy-proxy functions specifically for Tegra30.
+
+    - Addressed review comments that were made by Stephen Boyd to v4 by
+      rewording commit message of the "Add custom EMC clock implementation"
+      patch and adding clarifying comment (to that patch as well) which
+      tells why EMC is a critical clock.
+
+    - Added suspend-resume to Tegra30 EMC driver to error out if EMC driver
+      is in a "bad state" as it will likely cause a hang on entering suspend.
+
+    - Dropped patch "tegra20-emc: Replace clk_get_sys with devm_clk_get"
+      because the replaced clocks are actually should be removed altogether
+      in the "Drop setting EMC rate to max on probe" patch and that was
+      missed by an accident.
+
+    - Added "tegra20-emc: Pre-configure debug register" patch which ensures
+      that inappropriate HW debug features are disabled at a probe time.
+      The same change is also made in the "Introduce Tegra30 EMC driver"
+      patch.
+
+    - Added ACKs to the patches from Peter De Schrijver that he gave to v4
+      since all of the v5 changes are actually very minor.
+
+v4: - Addressed review comments that were made by Peter De Schrijver to v3
+      by adding fence_udelay() after writes in the "Add custom EMC clock
+      implementation" patch.
+
+    - Added two new minor patches:
+
+        memory: tegra: Ensure timing control debug features are disabled
+        memory: tegra: Consolidate registers definition into one place
+
+      The first one is needed to ensure that EMC driver will work
+      properly regardless of hardware configuration left after boot.
+      The second patch is just a minor code cleanup.
+
+    - The "Introduce Tegra30 EMC driver" got also few very minor changes.
+      Now every possible error case is handled, nothing is ignored.
+      The EMC_DBG register is explicitly initialized during probe to be
+      on the safe side.
+
+v3: - Addressed review comments that were made by Stephen Boyd to v2 by
+      adding explicit typing for the callback variable, by including
+      "clk-provider.h" directly in the code and by dropping __clk_lookup
+      usage where possible.
+
+    - Added more patches into this series:
+
+        memory: tegra20-emc: Drop setting EMC rate to max on probe
+        memory: tegra20-emc: Adapt for clock driver changes
+        memory: tegra20-emc: Include io.h instead of iopoll.h
+        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
+
+      Initially I was going to include these patches into other patchset,
+      but changed my mind after rearranging things a tad. The "Adapt for
+      clock driver changes" patch is directly related to the clock changes
+      done in the first patch of this series, the rest are minor cleanups
+      that are fine to include here as well.
+
+    - Added some more words to the commit message of "Add binding for NVIDIA
+      Tegra30 External Memory Controller" patch, clarifying why common DDR
+      timing device-tree form isn't suitable for Tegra30.
+
+    - The Tegra30 EMC driver now explicitly selects the registers access
+      mode (EMC_DBG mux), not relying on the setting left from bootloader.
+
+v2: - Added support for changing MC clock diver configuration based on
+      Memory Controller (MC) configuration which is part of the memory
+      timing.
+
+    - Merged the "Add custom EMC clock implementation" patch into this
+      series because the "Introduce Tegra30 EMC driver" patch directly
+      depends on it. Please note that Tegra20 EMC driver will need to be
+      adapted for the clock changes as well, I'll send out the Tegra20
+      patches after this series will be applied because of some other
+      dependencies (devfreq) and because the temporary breakage won't
+      be critical (driver will just error out on probe).
+
+    - EMC driver now performs MC configuration validation by checking
+      that the number of MC / EMC timings matches and that the timings
+      rate is the same.
+
+    - EMC driver now supports timings that want to change the MC clock
+      configuration.
+
+    - Other minor prettifying changes of the code.
+
+Dmitry Osipenko (15):
+  clk: tegra20/30: Add custom EMC clock implementation
+  memory: tegra20-emc: Drop setting EMC rate to max on probe
+  memory: tegra20-emc: Adapt for clock driver changes
+  memory: tegra20-emc: Include io.h instead of iopoll.h
+  memory: tegra20-emc: Pre-configure debug register
+  memory: tegra20-emc: Print a brief info message about the timings
+  dt-bindings: memory: tegra30: Convert to Tegra124 YAML
+  dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
+  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
+    Controller
+  memory: tegra: Introduce Tegra30 EMC driver
+  memory: tegra: Ensure timing control debug features are disabled
+  memory: tegra: Consolidate registers definition into common header
+  clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+  ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
+  ARM: dts: tegra30: Add External Memory Controller node
+
+ .../nvidia,tegra124-mc.yaml                   |  149 ++
+ .../nvidia,tegra30-emc.yaml                   |  332 +++++
+ .../memory-controllers/nvidia,tegra30-mc.yaml |  160 +++
+ arch/arm/boot/dts/tegra30.dtsi                |    9 +
+ arch/arm/mach-tegra/cpuidle-tegra30.c         |    9 +-
+ drivers/clk/tegra/Makefile                    |    2 +
+ drivers/clk/tegra/clk-tegra20-emc.c           |  307 ++++
+ drivers/clk/tegra/clk-tegra20.c               |   55 +-
+ drivers/clk/tegra/clk-tegra30.c               |   38 +-
+ drivers/clk/tegra/clk.h                       |    3 +
+ drivers/memory/tegra/Kconfig                  |   10 +
+ drivers/memory/tegra/Makefile                 |    1 +
+ drivers/memory/tegra/mc.c                     |   42 +-
+ drivers/memory/tegra/mc.h                     |   74 +-
+ drivers/memory/tegra/tegra124.c               |   20 -
+ drivers/memory/tegra/tegra20-emc.c            |  126 +-
+ drivers/memory/tegra/tegra30-emc.c            | 1234 +++++++++++++++++
+ drivers/memory/tegra/tegra30.c                |   23 +
+ include/linux/clk/tegra.h                     |   12 +
+ include/soc/tegra/mc.h                        |    2 +-
+ 20 files changed, 2422 insertions(+), 186 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
+ create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
+ create mode 100644 drivers/memory/tegra/tegra30-emc.c
+
+-- 
+2.22.0
