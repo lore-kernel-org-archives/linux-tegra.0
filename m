@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V12 07/12] PCI: dwc: Add support to enable CDM register check
-Date: Mon, 1 Jul 2019 18:10:05 +0530
-Message-ID: <20190701124010.7484-8-vidyas@nvidia.com>
+Subject: [PATCH V12 08/12] dt-bindings: Add PCIe supports-clkreq property
+Date: Mon, 1 Jul 2019 18:10:06 +0530
+Message-ID: <20190701124010.7484-9-vidyas@nvidia.com>
 References: <20190701124010.7484-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,15 +12,19 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add support to enable CDM (Configuration Dependent Module) register check
-for any data corruption based on the device-tree flag 'snps,enable-cdm-check'.
+Some host controllers need to know the existence of clkreq signal routing to
+downstream devices to be able to advertise low power features like ASPM L1
+substates. Without clkreq signal routing being present, enabling ASPM L1 sub
+states might lead to downstream devices falling off the bus. Hence a new device
+tree property 'supports-clkreq' is added to make such host controllers
+aware of clkreq signal routing to downstream devices.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 ---
 Changes since [v11]:
-* None
+* Rebased on top of linux-next top of the tree
 
 Changes since [v10]:
 * None
@@ -35,63 +39,41 @@ Changes since [v7]:
 * None
 
 Changes since [v6]:
-* Changed "enable-cdm-check" to "snps,enable-cdm-check"
+* None
 
 Changes since [v5]:
-* None
+* s/Documentation\/devicetree/dt-bindings/ in the subject
 
 Changes since [v4]:
 * None
 
 Changes since [v3]:
-* None
+* Rebased on top of linux-next top of the tree
 
 Changes since [v2]:
-* Changed code and commit description to reflect change in flag from
-  'cdm-check' to 'enable-cdm-check'
+* None
 
 Changes since [v1]:
 * This is a new patch in v2 series
 
- drivers/pci/controller/dwc/pcie-designware.c | 7 +++++++
- drivers/pci/controller/dwc/pcie-designware.h | 9 +++++++++
- 2 files changed, 16 insertions(+)
+ Documentation/devicetree/bindings/pci/pci.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 181449e342f1..01f9227a5ade 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -546,4 +546,11 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		break;
- 	}
- 	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+
-+	if (of_property_read_bool(np, "snps,enable-cdm-check")) {
-+		val = dw_pcie_readl_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS);
-+		val |= PCIE_PL_CHK_REG_CHK_REG_CONTINUOUS |
-+		       PCIE_PL_CHK_REG_CHK_REG_START;
-+		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
-+	}
- }
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 11c223471416..5a18e94e52c8 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -86,6 +86,15 @@
- #define PCIE_MISC_CONTROL_1_OFF		0x8BC
- #define PCIE_DBI_RO_WR_EN		BIT(0)
+diff --git a/Documentation/devicetree/bindings/pci/pci.txt b/Documentation/devicetree/bindings/pci/pci.txt
+index 2a5d91024059..29bcbd88f457 100644
+--- a/Documentation/devicetree/bindings/pci/pci.txt
++++ b/Documentation/devicetree/bindings/pci/pci.txt
+@@ -27,6 +27,11 @@ driver implementation may support the following properties:
+ - reset-gpios:
+    If present this property specifies PERST# GPIO. Host drivers can parse the
+    GPIO and apply fundamental reset to endpoints.
++- supports-clkreq:
++   If present this property specifies that CLKREQ signal routing exists from
++   root port to downstream device and host bridge drivers can do programming
++   which depends on CLKREQ signal existence. For example, programming root port
++   not to advertise ASPM L1 Sub-States support if there is no CLKREQ signal.
  
-+#define PCIE_PL_CHK_REG_CONTROL_STATUS			0xB20
-+#define PCIE_PL_CHK_REG_CHK_REG_START			BIT(0)
-+#define PCIE_PL_CHK_REG_CHK_REG_CONTINUOUS		BIT(1)
-+#define PCIE_PL_CHK_REG_CHK_REG_COMPARISON_ERROR	BIT(16)
-+#define PCIE_PL_CHK_REG_CHK_REG_LOGIC_ERROR		BIT(17)
-+#define PCIE_PL_CHK_REG_CHK_REG_COMPLETE		BIT(18)
-+
-+#define PCIE_PL_CHK_REG_ERR_ADDR			0xB28
-+
- /*
-  * iATU Unroll-specific register definitions
-  * From 4.80 core version the address translation will be made by unroll
+ PCI-PCI Bridge properties
+ -------------------------
 -- 
 2.17.1
