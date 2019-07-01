@@ -1,79 +1,197 @@
-From: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH v3 01/22] drm: Include ddc adapter pointer
- in struct drm_connector
-Date: Mon, 1 Jul 2019 16:41:09 +0200
-Message-ID: <9e65f3c0-941d-d04c-5745-6b3a2965b990@suse.de>
-References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
- <cover.1561735433.git.andrzej.p@collabora.com>
- <d6381c020ea1c848a7044d830bdb0ec9663d1619.1561735433.git.andrzej.p@collabora.com>
- <9b03d145-ec50-927c-55a8-dff1cd51d655@suse.de>
- <cf1984e4-50af-302d-ef67-9ad530118c29@collabora.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v6 07/15] dt-bindings: memory: tegra30: Convert to
+ Tegra124 YAML
+Date: Mon, 1 Jul 2019 13:11:13 -0600
+Message-ID: <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
+References: <20190630210019.26914-1-digetx@gmail.com> <20190630210019.26914-8-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <cf1984e4-50af-302d-ef67-9ad530118c29-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>David
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190630210019.26914-8-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkKCkFtIDAxLjA3LjE5IHVtIDE1OjI3IHNjaHJpZWIgQW5kcnplaiBQaWV0cmFzaWV3aWN6Ogo+
-IEhpIFRob21hcywKPiAKPiBUaGFuayB5b3UgZm9yIHlvdXIgY29tbWVudHMuIFBsZWFzZSBzZWUg
-aW5saW5lLgo+IAo+IFcgZG5pdSAzMC4wNi4yMDE5IG/CoDEwOjEyLCBUaG9tYXMgWmltbWVybWFu
-biBwaXN6ZToKPj4gSGkKPj4KPj4gSSBsaWtlIHRoZSBpZGVhLCBidXQgd291bGQgcHJlZmVyIGEg
-bW9yZSBzdHJ1Y3R1cmVkIGFwcHJvYWNoLgo+Pgo+PiBTZXR0aW5nIGNvbm5lY3Rvci0+ZGRjIGJl
-Zm9yZSBjYWxsaW5nIGRybV9zeXNmc19jb25uZWN0b3JfYWRkKCkgc2VlbXMKPj4gZXJyb3IgcHJv
-bmUuIFRoZSBkZXBlbmRlbmN5IGlzIG5vdCByZWFsbHkgY2xlYXIgZnJvbSB0aGUgY29kZSBvcgo+
-PiBpbnRlcmZhY2VzLgo+Pgo+PiBUaGUgb3RoZXIgdGhpbmcgaXMgdGhhdCBkcml2ZXJzIEkgbW9z
-dGx5IHdvcmsgb24sIGFzdCBhbmQgbWdhZzIwMCwgaGF2ZQo+PiBjb2RlIGxpa2UgdGhpczoKPj4K
-Pj4gwqDCoCBzdHJ1Y3QgYXN0X2kyY19jaGFuIHsKPj4gwqDCoMKgwqBzdHJ1Y3QgaTJjX2FkYXB0
-ZXIgYWRhcHRlcjsKPj4gwqDCoMKgwqBzdHJ1Y3QgZHJtX2RldmljZSAqZGV2Owo+PiDCoMKgwqDC
-oHN0cnVjdCBpMmNfYWxnb19iaXRfZGF0YSBiaXQ7Cj4+IMKgwqAgfTsKPj4KPj4gwqDCoCBzdHJ1
-Y3QgYXN0X2Nvbm5lY3RvciB7Cj4+IMKgwqDCoMKgc3RydWN0IGRybV9jb25uZWN0b3IgYmFzZTsK
-Pj4gwqDCoMKgwqBzdHJ1Y3QgYXN0X2kyY19jaGFuICppMmM7Cj4+IMKgwqAgfTsKPj4KPj4gSXQg
-YWxyZWFkeSBlbmNvZGVzIHRoZSBjb25uZWN0aW9uIGJldHdlZW4gY29ubmVjdG9yIGFuZCBkZGMg
-YWRhcHRlci4KPj4KPj4gSSBzdWdnZXN0IHRvIGludHJvZHVjZSBzdHJ1Y3QgZHJtX2kyY19hZGFw
-dGVyCj4+Cj4+IMKgwqAgc3RydWN0IGRybV9pMmNfYWRhcHRlciB7Cj4+IMKgwqDCoMKgc3RydWN0
-IGkyY19hZGFwdGVyIGJhc2U7Cj4+IMKgwqDCoMKgc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5l
-Y3RvcjsKPj4gwqDCoCB9Owo+Pgo+PiBhbmQgY29udmVydCBkcml2ZXJzIG92ZXIgdG8gaXQuIEFz
-dCB3b3VsZCBsb29rIGxpa2UgdGhpczoKPj4KPj4gwqDCoCBzdHJ1Y3QgYXN0X2kyY19jaGFuIHsK
-Pj4gwqDCoMKgwqBzdHJ1Y3QgZHJtX2kyY19hZGFwdGVyIGFkYXB0ZXI7Cj4+IMKgwqDCoMKgc3Ry
-dWN0IGkyY19hbGdvX2JpdF9kYXRhIGJpdDsKPj4gwqDCoCB9Owo+Pgo+IAo+IFRoZXJlIGFyZSBm
-ZXcgZmxhdm9ycyBvZiB0aGVzZSBkcml2ZXJzLiBJbiBzb21lIG9mIHRoZW0KPiB0aGUgaTJjX2Fk
-YXB0ZXIgZm9yIGRkYyBpcyBhbGxvY2F0ZWQgYW5kIGluaXRpYWxpemVkIGJ5Cj4gdGhlIGRyaXZl
-ciwgd2hpY2ggbXVzdCBwcm92aWRlIGEgcGxhY2UgaW4gbWVtb3J5IHRvIGhvbGQKPiB0aGUgYWRh
-cHRlci4gYXN0IGlzIGFuIGV4YW1wbGUgb2YgdGhpcyBhcHByb2FjaC4KPiAKPiBCdXQgdGhlcmUg
-YXJlIG90aGVycywgc3VjaCBhcyBmb3IgZXhhbXBsZSBleHlub3NfaGRtaS5jLgo+IEl0IGdldHMg
-aXRzIGRkYyBhZGFwdGVyIHdpdGggb2ZfZmluZF9pMmNfYWRhcHRlcl9ieV9ub2RlKCkKPiBhbmQg
-bWVyZWx5IHN0b3JlcyBhIHBvaW50ZXIgdG8gaXQsIHdoaWxlIG5vdCBtYW5hZ2luZyB0aGUKPiBt
-ZW1vcnkgbmVlZGVkIHRvIGhvbGQgdGhlIGkyY19hZGFwdGVyLgoKSSBzZWUuCgo+IERvIHlvdSBo
-YXZlIGFueSBpZGVhIGhvdyB0byBhY2NvbW1vZGF0ZSB0aGVzZSB2YXJpb3VzCj4gZmxhdm9ycyBv
-ZiBkcml2ZXJzIGluIHRoZSBzY2hlbWUgeW91IHByb3Bvc2U/CgpTb21ldGhpbmcgbGlrZQoKICBz
-dHJ1Y3QgZHJtX2kyY19hZGFwdGVyIHsKCXN0cnVjdCBpMmNfYWRhcHRlciAqYWRhcHRlcjsKCXN0
-cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3I7CiAgfTsKCndpdGggYWRhcHRlciBlaXRoZXIg
-YmVpbmcgYWxsb2NhdGVkIGR5bmFtaWNhbGx5IG9yIGFjcXVpcmVkIHZpYQpvZl9maW5kX2kyY19h
-ZGFwdGVyX2J5X25vZGUoKTsgd2l0aCBzZXBhcmF0ZSBpbml0IGFuZCBmaW5pc2ggZnVuY3Rpb25z
-CmZvciBlYWNoIHZhcmlhbnQuIEJ1dCBpdCBsb29rcyBsaWtlIG92ZXItYWJzdHJhY3Rpb24gdG8g
-bWUuIFdpdGhvdXQKcHJvdG90eXBpbmcgdGhlIGlkZWEsIEkgY2Fubm90IHNheSBpZiBpdCdzIHdv
-cnRoIHRoZSBlZmZvcnQuCgpGb3Igc29tZXRoaW5nIG1vcmUgc2ltcGxlLCBtYXliZSBqdXN0IGhh
-dmUgYSBmdW5jdGlvbiB0byBhdHRhY2ggYW4gaTJjCmFkYXB0ZXIgdG8gYSBjb25uZWN0b3I6Cgog
-IGRybV9jb25uZWN0b3JfYXR0YWNoX2kyY19hZGFwdGVyKGNvbm5lY3RvciwgaTJjX2FkYXB0ZXIp
-Cgp3aGljaCBzZXRzIHRoZSBjb25uZWN0b3IncyBkZGMgcG9pbnRlciBhbmQgY3JlYXRlcyB0aGUg
-c3lzZnMgZW50cnkgaWYKdGhlIGNvbm5lY3RvcidzIGVudHJ5IGlzIGFscmVhZHkgcHJlc2VudC4K
-CkJlc3QgcmVnYXJkcwpUaG9tYXMKCj4gQW5kcnplago+IAo+IAoKLS0gClRob21hcyBaaW1tZXJt
-YW5uCkdyYXBoaWNzIERyaXZlciBEZXZlbG9wZXIKU1VTRSBMaW51eCBHbWJILCBNYXhmZWxkc3Ry
-YXNzZSA1LCA5MDQwOSBOdWVybmJlcmcsIEdlcm1hbnkKR0Y6IEZlbGl4IEltZW5kw7ZyZmZlciwg
-TWFyeSBIaWdnaW5zLCBTcmkgUmFzaWFoCkhSQiAyMTI4NCAoQUcgTsO8cm5iZXJnKQpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGlu
-ZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8=
+On Sun, Jun 30, 2019 at 3:04 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+
+"Convert" implies you delete the old binding doc.
+
+> The Tegra30 binding will actually differ from the Tegra124 a tad, in
+> particular the EMEM configuration description. Hence rename the binding
+> to Tegra124 during of the conversion to YAML.
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../nvidia,tegra124-mc.yaml                   | 149 ++++++++++++++++++
+>  1 file changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> new file mode 100644
+> index 000000000000..d18242510295
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> @@ -0,0 +1,149 @@
+> +# SPDX-License-Identifier: (GPL-2.0)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title:
+> +  NVIDIA Tegra124 SoC Memory Controller
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +description: |
+> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
+> +  These are interleaved to provide high performance with the load shared across
+> +  two memory channels. The Tegra124 Memory Controller handles memory requests
+> +  from internal clients and arbitrates among them to allocate memory bandwidth
+> +  for DDR3L and LPDDR3 SDRAMs.
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra124-mc
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      Physical base address.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      Memory Controller clock.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mc
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description:
+> +      Memory Controller interrupt.
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  "#iommu-cells":
+> +    const: 1
+> +
+> +patternProperties:
+> +  ".*":
+
+Please define a node name or pattern for node names.
+
+> +    properties:
+> +      nvidia,ram-code:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Value of RAM_CODE this timing set is used for.
+> +
+> +    patternProperties:
+> +      ".*":
+
+Same here.
+
+> +        properties:
+> +          clock-frequency:
+> +            description:
+> +              Memory clock rate in Hz.
+
+No constraints? Anything from 0 to 4GHz works?
+
+> +
+> +          nvidia,emem-configuration:
+> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+> +            description: |
+> +              Values to be written to the EMEM register block. See section
+> +              "15.6.1 MC Registers" in the TRM.
+> +            items:
+> +              - description: MC_EMEM_ARB_CFG
+> +              - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> +              - description: MC_EMEM_ARB_TIMING_RCD
+> +              - description: MC_EMEM_ARB_TIMING_RP
+> +              - description: MC_EMEM_ARB_TIMING_RC
+> +              - description: MC_EMEM_ARB_TIMING_RAS
+> +              - description: MC_EMEM_ARB_TIMING_FAW
+> +              - description: MC_EMEM_ARB_TIMING_RRD
+> +              - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> +              - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> +              - description: MC_EMEM_ARB_TIMING_R2R
+> +              - description: MC_EMEM_ARB_TIMING_W2W
+> +              - description: MC_EMEM_ARB_TIMING_R2W
+> +              - description: MC_EMEM_ARB_TIMING_W2R
+> +              - description: MC_EMEM_ARB_DA_TURNS
+> +              - description: MC_EMEM_ARB_DA_COVERS
+> +              - description: MC_EMEM_ARB_MISC0
+> +              - description: MC_EMEM_ARB_MISC1
+> +              - description: MC_EMEM_ARB_RING1_THROTTLE
+> +
+> +        required:
+> +          - clock-frequency
+> +          - nvidia,emem-configuration
+> +
+> +    required:
+> +      - nvidia,ram-code
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - "#reset-cells"
+> +  - "#iommu-cells"
+> +
+> +examples:
+> +  - |
+> +    memory-controller@70019000 {
+> +        compatible = "nvidia,tegra124-mc";
+> +        reg = <0x0 0x70019000 0x0 0x1000>;
+> +        clocks = <&tegra_car 32>;
+> +        clock-names = "mc";
+> +
+> +        interrupts = <0 77 4>;
+> +
+> +        #iommu-cells = <1>;
+> +        #reset-cells = <1>;
+> +
+> +        emc-timings-3 {
+> +            nvidia,ram-code = <3>;
+> +
+> +            timing-12750000 {
+> +                clock-frequency = <12750000>;
+> +
+> +                nvidia,emem-configuration = <
+> +                    0x40040001 /* MC_EMEM_ARB_CFG */
+> +                    0x8000000a /* MC_EMEM_ARB_OUTSTANDING_REQ */
+> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RCD */
+> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RP */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_RC */
+> +                    0x00000000 /* MC_EMEM_ARB_TIMING_RAS */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_FAW */
+> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RRD */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_RAP2PRE */
+> +                    0x00000008 /* MC_EMEM_ARB_TIMING_WAP2PRE */
+> +                    0x00000003 /* MC_EMEM_ARB_TIMING_R2R */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_W2W */
+> +                    0x00000003 /* MC_EMEM_ARB_TIMING_R2W */
+> +                    0x00000006 /* MC_EMEM_ARB_TIMING_W2R */
+> +                    0x06030203 /* MC_EMEM_ARB_DA_TURNS */
+> +                    0x000a0402 /* MC_EMEM_ARB_DA_COVERS */
+> +                    0x77e30303 /* MC_EMEM_ARB_MISC0 */
+> +                    0x70000f03 /* MC_EMEM_ARB_MISC1 */
+> +                    0x001f0000 /* MC_EMEM_ARB_RING1_THROTTLE */
+> +                >;
+> +            };
+> +        };
+> +    };
+> --
+> 2.22.0
+>
