@@ -1,138 +1,214 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3] dmaengine: tegra-apb: Support per-burst residue
- granularity
-Date: Tue, 2 Jul 2019 18:37:29 +0300
-Message-ID: <1ef44832-a263-a27a-30bf-16433c3fdb74@gmail.com>
-References: <20190627194728.8948-1-digetx@gmail.com>
- <f60059ec-c9ed-7294-f975-25e71a273f69@nvidia.com>
+From: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 21/22] drm/amdgpu: Provide ddc symlink in connector
+ sysfs directory
+Date: Tue, 2 Jul 2019 16:54:25 -0400
+Message-ID: <CADnq5_MrVoScVFgj3TP2Z+Ky8_32k=Cou5jebuMT5gE1+GZ0cA@mail.gmail.com>
+References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
+ <cover.1561735433.git.andrzej.p@collabora.com>
+ <5e355b8bec8fb3907566a741db8cc3e356246a32.1561735433.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f60059ec-c9ed-7294-f975-25e71a273f69@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <5e355b8bec8fb3907566a741db8cc3e356246a32.1561735433.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk@kernel>
 List-Id: linux-tegra@vger.kernel.org
 
-02.07.2019 18:29, Jon Hunter пишет:
-> 
-> On 27/06/2019 20:47, Dmitry Osipenko wrote:
->> Tegra's APB DMA engine updates words counter after each transferred burst
->> of data, hence it can report transfer's residual with more fidelity which
->> may be required in cases like audio playback. In particular this fixes
->> audio stuttering during playback in a chromium web browser. The patch is
->> based on the original work that was made by Ben Dooks and a patch from
->> downstream kernel. It was tested on Tegra20 and Tegra30 devices.
->>
->> Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
->> Link: https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
->> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>
->> Changelog:
->>
->> v3:  Added workaround for a hardware design shortcoming that results
->>      in a words counter wraparound before end-of-transfer bit is set
->>      in a cyclic mode.
->>
->> v2:  Addressed review comments made by Jon Hunter to v1. We won't try
->>      to get words count if dma_desc is on free list as it will result
->>      in a NULL dereference because this case wasn't handled properly.
->>
->>      The residual value is now updated properly, avoiding potential
->>      integer overflow by adding the "bytes" to the "bytes_transferred"
->>      instead of the subtraction.
->>
->>  drivers/dma/tegra20-apb-dma.c | 69 +++++++++++++++++++++++++++++++----
->>  1 file changed, 62 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->> index 79e9593815f1..71473eda28ee 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -152,6 +152,7 @@ struct tegra_dma_sg_req {
->>  	bool				last_sg;
->>  	struct list_head		node;
->>  	struct tegra_dma_desc		*dma_desc;
->> +	unsigned int			words_xferred;
->>  };
->>  
->>  /*
->> @@ -496,6 +497,7 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
->>  	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
->>  				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
->>  	nsg_req->configured = true;
->> +	nsg_req->words_xferred = 0;
->>  
->>  	tegra_dma_resume(tdc);
->>  }
->> @@ -511,6 +513,7 @@ static void tdc_start_head_req(struct tegra_dma_channel *tdc)
->>  					typeof(*sg_req), node);
->>  	tegra_dma_start(tdc, sg_req);
->>  	sg_req->configured = true;
->> +	sg_req->words_xferred = 0;
->>  	tdc->busy = true;
->>  }
->>  
->> @@ -797,6 +800,61 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->>  	return 0;
->>  }
->>  
->> +static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
->> +					       struct tegra_dma_sg_req *sg_req)
->> +{
->> +	unsigned long status, wcount = 0;
->> +
->> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
->> +		return 0;
->> +
->> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
->> +		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
->> +
->> +	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->> +
->> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
->> +		wcount = status;
->> +
->> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->> +		return sg_req->req_len;
->> +
->> +	wcount = get_current_xferred_count(tdc, sg_req, wcount);
->> +
->> +	if (!wcount) {
->> +		/*
->> +		 * If wcount wasn't ever polled for this SG before, then
->> +		 * simply assume that transfer hasn't started yet.
->> +		 *
->> +		 * Otherwise it's the end of the transfer.
->> +		 *
->> +		 * The alternative would be to poll the status register
->> +		 * until EOC bit is set or wcount goes UP. That's so
->> +		 * because EOC bit is getting set only after the last
->> +		 * burst's completion and counter is less than the actual
->> +		 * transfer size by 4 bytes. The counter value wraps around
->> +		 * in a cyclic mode before EOC is set(!), so we can't easily
->> +		 * distinguish start of transfer from its end.
->> +		 */
->> +		if (sg_req->words_xferred)
->> +			wcount = sg_req->req_len - 4;
->> +
->> +	} else if (wcount < sg_req->words_xferred) {
-> 
-> Minor comment, why not ...
-> 
-> 	} else if WARN_ON_ONCE(wcount < sg_req->words_xferred) {
-
-Because there should be parens around WARN_ON_ONCE() and that makes it to look not very
-nice, IMHO.
-
-> 
-> Otherwise ...
-> 
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks! I'll probably make a v4 later today with words_xferred reset made after end of a
-transfer's cycle, similar to what I suggested in the other email.
+T24gRnJpLCBKdW4gMjgsIDIwMTkgYXQgMTI6MzEgUE0gQW5kcnplaiBQaWV0cmFzaWV3aWN6Cjxh
+bmRyemVqLnBAY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4KPiBVc2UgdGhlIGRkYyBwb2ludGVyIHBy
+b3ZpZGVkIGJ5IHRoZSBnZW5lcmljIGNvbm5lY3Rvci4KPgo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6
+ZWogUGlldHJhc2lld2ljeiA8YW5kcnplai5wQGNvbGxhYm9yYS5jb20+Cj4gLS0tCj4gIC4uLi9n
+cHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Nvbm5lY3RvcnMuYyAgICB8IDcwICsrKysrKysrKysr
+KysrLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDE5IGRlbGV0aW9u
+cygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9j
+b25uZWN0b3JzLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfY29ubmVjdG9y
+cy5jCj4gaW5kZXggNzNiMmVkZTc3M2QzLi41ZjhhN2UzODE4YjkgMTAwNjQ0Cj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Nvbm5lY3RvcnMuYwo+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9jb25uZWN0b3JzLmMKPiBAQCAtMTU3MywxMSAr
+MTU3MywxNSBAQCBhbWRncHVfY29ubmVjdG9yX2FkZChzdHJ1Y3QgYW1kZ3B1X2RldmljZSAqYWRl
+diwKPiAgICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZhaWxlZDsKPiAgICAgICAgICAgICAg
+ICAgYW1kZ3B1X2Nvbm5lY3Rvci0+Y29uX3ByaXYgPSBhbWRncHVfZGlnX2Nvbm5lY3RvcjsKPiAg
+ICAgICAgICAgICAgICAgaWYgKGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgYW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYs
+IGkyY19idXMpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgIGlmIChhbWRncHVfY29ubmVjdG9y
+LT5kZGNfYnVzKQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBhbWRncHVfY29ubmVj
+dG9yICphY24gPSBhbWRncHVfY29ubmVjdG9yOwo+ICsKPiArICAgICAgICAgICAgICAgICAgICAg
+ICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2LCBpMmNfYnVzKTsKPiArICAg
+ICAgICAgICAgICAgICAgICAgICBpZiAoYWNuLT5kZGNfYnVzKSB7CgpUaGlzIGh1bmsgc2VlbXMg
+cG9pbnRsZXNzIHVubGVzcyBJJ20gbWlzc2luZyBzb21ldGhpbmcuICBDYW4geW91IGRyb3AKdGhp
+cyBodW5rPyAgU2FtZSBjb21tZW50IG9uIGVhY2ggaW5zdGFuY2Ugb2YgdGhpcyBiZWxvdy4gIFRo
+aXMgYWxzbwpvbmx5IGNvdmVycyB0aGUgbGVnYWN5IG1vZGVzZXR0aW5nIGNvZGUgd2hpY2ggaXMg
+bm90IHVzZWQgYnkgZGVmYXVsdApvbiBtb3N0IGNoaXBzLiAgVGhlIERDIGNvZGUgaW4gYW1kL2Rp
+c3BsYXkvIGlzIHByb2JhYmx5IG1vcmUgcmVsZXZhbnQuCgpBbGV4Cgo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgaGFzX2F1eCA9IHRydWU7Cj4gLSAgICAgICAgICAgICAgICAgICAg
+ICAgZWxzZQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29ubmVjdG9yLT5kZGMg
+PSAmYWNuLT5kZGNfYnVzLT5hZGFwdGVyOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIH0gZWxz
+ZSB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJST1IoIkRQOiBGYWls
+ZWQgdG8gYXNzaWduIGRkYyBidXMhIENoZWNrIGRtZXNnIGZvciBpMmMgZXJyb3JzLlxuIik7Cj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgfQo+ICAgICAgICAgICAgICAgICB9Cj4gICAgICAgICAg
+ICAgICAgIHN3aXRjaCAoY29ubmVjdG9yX3R5cGUpIHsKPiAgICAgICAgICAgICAgICAgY2FzZSBE
+Uk1fTU9ERV9DT05ORUNUT1JfVkdBOgo+IEBAIC0xNjYyLDkgKzE2NjYsMTMgQEAgYW1kZ3B1X2Nv
+bm5lY3Rvcl9hZGQoc3RydWN0IGFtZGdwdV9kZXZpY2UgKmFkZXYsCj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgZHJtX2Nvbm5lY3Rvcl9pbml0KGRldiwgJmFtZGdwdV9jb25uZWN0b3ItPmJhc2Us
+ICZhbWRncHVfY29ubmVjdG9yX3ZnYV9mdW5jcywgY29ubmVjdG9yX3R5cGUpOwo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIGRybV9jb25uZWN0b3JfaGVscGVyX2FkZCgmYW1kZ3B1X2Nvbm5lY3Rv
+ci0+YmFzZSwgJmFtZGdwdV9jb25uZWN0b3JfdmdhX2hlbHBlcl9mdW5jcyk7Cj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgaWYgKGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBhbWRncHVfY29ubmVjdG9yLT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29r
+dXAoYWRldiwgaTJjX2J1cyk7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAo
+IWFtZGdwdV9jb25uZWN0b3ItPmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBzdHJ1Y3QgYW1kZ3B1X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiAr
+Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVf
+aTJjX2xvb2t1cChhZGV2LCBpMmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGlmICghYWNuLT5kZGNfYnVzKQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBEUk1fRVJST1IoIlZHQTogRmFpbGVkIHRvIGFzc2lnbiBkZGMgYnVzISBDaGVjayBk
+bWVzZyBmb3IgaTJjIGVycm9ycy5cbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgZWxzZQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25uZWN0
+b3ItPmRkYyA9ICZhY24tPmRkY19idXMtPmFkYXB0ZXI7Cj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgfQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGFtZGdwdV9jb25uZWN0b3ItPmRhY19sb2Fk
+X2RldGVjdCA9IHRydWU7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX29iamVjdF9hdHRh
+Y2hfcHJvcGVydHkoJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UuYmFzZSwKPiBAQCAtMTY4Miw5ICsx
+NjkwLDEzIEBAIGFtZGdwdV9jb25uZWN0b3JfYWRkKHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2
+LAo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRybV9jb25uZWN0b3JfaW5pdChkZXYsICZhbWRn
+cHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rvcl92Z2FfZnVuY3MsIGNvbm5lY3Rv
+cl90eXBlKTsKPiAgICAgICAgICAgICAgICAgICAgICAgICBkcm1fY29ubmVjdG9yX2hlbHBlcl9h
+ZGQoJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UsICZhbWRncHVfY29ubmVjdG9yX3ZnYV9oZWxwZXJf
+ZnVuY3MpOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChpMmNfYnVzLT52YWxpZCkgewo+
+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1
+cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYsIGkyY19idXMpOwo+IC0gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgaWYgKCFhbWRncHVfY29ubmVjdG9yLT5kZGNfYnVzKQo+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGFtZGdwdV9jb25uZWN0b3IgKmFjbiA9IGFt
+ZGdwdV9jb25uZWN0b3I7Cj4gKwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYWNu
+LT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29rdXAoYWRldiwgaTJjX2J1cyk7Cj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWFjbi0+ZGRjX2J1cykKPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgRFJNX0VSUk9SKCJEVklBOiBGYWlsZWQgdG8gYXNz
+aWduIGRkYyBidXMhIENoZWNrIGRtZXNnIGZvciBpMmMgZXJyb3JzLlxuIik7Cj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBlbHNlCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGRjID0gJmFjbi0+ZGRjX2J1cy0+YWRhcHRlcjsKPiAg
+ICAgICAgICAgICAgICAgICAgICAgICB9Cj4gICAgICAgICAgICAgICAgICAgICAgICAgYW1kZ3B1
+X2Nvbm5lY3Rvci0+ZGFjX2xvYWRfZGV0ZWN0ID0gdHJ1ZTsKPiAgICAgICAgICAgICAgICAgICAg
+ICAgICBkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZS5i
+YXNlLAo+IEBAIC0xNzA3LDkgKzE3MTksMTMgQEAgYW1kZ3B1X2Nvbm5lY3Rvcl9hZGQoc3RydWN0
+IGFtZGdwdV9kZXZpY2UgKmFkZXYsCj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX2Nvbm5l
+Y3Rvcl9pbml0KGRldiwgJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UsICZhbWRncHVfY29ubmVjdG9y
+X2R2aV9mdW5jcywgY29ubmVjdG9yX3R5cGUpOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRy
+bV9jb25uZWN0b3JfaGVscGVyX2FkZCgmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZSwgJmFtZGdwdV9j
+b25uZWN0b3JfZHZpX2hlbHBlcl9mdW5jcyk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgaWYg
+KGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhbWRn
+cHVfY29ubmVjdG9yLT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29rdXAoYWRldiwgaTJjX2J1cyk7
+Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWFtZGdwdV9jb25uZWN0b3It
+PmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgYW1kZ3B1
+X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2LCBp
+MmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICghYWNuLT5kZGNf
+YnVzKQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJST1Io
+IkRWSTogRmFpbGVkIHRvIGFzc2lnbiBkZGMgYnVzISBDaGVjayBkbWVzZyBmb3IgaTJjIGVycm9y
+cy5cbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZWxzZQo+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25uZWN0b3ItPmRkYyA9ICZhY24tPmRk
+Y19idXMtPmFkYXB0ZXI7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgfQo+ICAgICAgICAgICAg
+ICAgICAgICAgICAgIHN1YnBpeGVsX29yZGVyID0gU3ViUGl4ZWxIb3Jpem9udGFsUkdCOwo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgIGRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZhbWRncHVf
+Y29ubmVjdG9yLT5iYXNlLmJhc2UsCj4gQEAgLTE3NTcsOSArMTc3MywxMyBAQCBhbWRncHVfY29u
+bmVjdG9yX2FkZChzdHJ1Y3QgYW1kZ3B1X2RldmljZSAqYWRldiwKPiAgICAgICAgICAgICAgICAg
+ICAgICAgICBkcm1fY29ubmVjdG9yX2luaXQoZGV2LCAmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZSwg
+JmFtZGdwdV9jb25uZWN0b3JfZHZpX2Z1bmNzLCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9y
+LT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rvcl9kdmlfaGVscGVyX2Z1bmNzKTsKPiAgICAgICAgICAg
+ICAgICAgICAgICAgICBpZiAoaTJjX2J1cy0+dmFsaWQpIHsKPiAtICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGFtZGdwdV9jb25uZWN0b3ItPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1
+cChhZGV2LCBpMmNfYnVzKTsKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICgh
+YW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1cykKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHN0cnVjdCBhbWRncHVfY29ubmVjdG9yICphY24gPSBhbWRncHVfY29ubmVjdG9yOwo+ICsK
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGFjbi0+ZGRjX2J1cyA9IGFtZGdwdV9p
+MmNfbG9va3VwKGFkZXYsIGkyY19idXMpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgaWYgKCFhY24tPmRkY19idXMpCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIERSTV9FUlJPUigiSERNSTogRmFpbGVkIHRvIGFzc2lnbiBkZGMgYnVzISBDaGVjayBk
+bWVzZyBmb3IgaTJjIGVycm9ycy5cbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgZWxzZQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25uZWN0
+b3ItPmRkYyA9ICZhY24tPmRkY19idXMtPmFkYXB0ZXI7Cj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgfQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5
+KCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLmJhc2UsCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYWRldi0+bW9kZV9pbmZvLmNvaGVyZW50X21v
+ZGVfcHJvcGVydHksCj4gQEAgLTE3OTksMTEgKzE4MTksMTUgQEAgYW1kZ3B1X2Nvbm5lY3Rvcl9h
+ZGQoc3RydWN0IGFtZGdwdV9kZXZpY2UgKmFkZXYsCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ZHJtX2Nvbm5lY3Rvcl9pbml0KGRldiwgJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UsICZhbWRncHVf
+Y29ubmVjdG9yX2RwX2Z1bmNzLCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAm
+YW1kZ3B1X2Nvbm5lY3Rvcl9kcF9oZWxwZXJfZnVuY3MpOwo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgIGlmIChpMmNfYnVzLT52YWxpZCkgewo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgYW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYsIGky
+Y19idXMpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGFtZGdwdV9jb25u
+ZWN0b3ItPmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
+YW1kZ3B1X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChh
+ZGV2LCBpMmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChhY24t
+PmRkY19idXMpIHsKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGFz
+X2F1eCA9IHRydWU7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlCj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGRjID0gJmFj
+bi0+ZGRjX2J1cy0+YWRhcHRlcjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0g
+ZWxzZSB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJP
+UigiRFA6IEZhaWxlZCB0byBhc3NpZ24gZGRjIGJ1cyEgQ2hlY2sgZG1lc2cgZm9yIGkyYyBlcnJv
+cnMuXG4iKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KPiAgICAgICAgICAg
+ICAgICAgICAgICAgICB9Cj4gICAgICAgICAgICAgICAgICAgICAgICAgc3VicGl4ZWxfb3JkZXIg
+PSBTdWJQaXhlbEhvcml6b250YWxSR0I7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX29i
+amVjdF9hdHRhY2hfcHJvcGVydHkoJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UuYmFzZSwKPiBAQCAt
+MTg0MSwxMSArMTg2NSwxNSBAQCBhbWRncHVfY29ubmVjdG9yX2FkZChzdHJ1Y3QgYW1kZ3B1X2Rl
+dmljZSAqYWRldiwKPiAgICAgICAgICAgICAgICAgICAgICAgICBkcm1fY29ubmVjdG9yX2luaXQo
+ZGV2LCAmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZSwgJmFtZGdwdV9jb25uZWN0b3JfZWRwX2Z1bmNz
+LCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX2Nvbm5lY3Rv
+cl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rvcl9k
+cF9oZWxwZXJfZnVuY3MpOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChpMmNfYnVzLT52
+YWxpZCkgewo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYW1kZ3B1X2Nvbm5lY3Rv
+ci0+ZGRjX2J1cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYsIGkyY19idXMpOwo+IC0gICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGFtZGdwdV9jb25uZWN0b3ItPmRkY19idXMpCj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgYW1kZ3B1X2Nvbm5lY3RvciAq
+YWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2LCBpMmNfYnVzKTsKPiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChhY24tPmRkY19idXMpIHsKPiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGFzX2F1eCA9IHRydWU7Cj4gLSAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlCj4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGRjID0gJmFjbi0+ZGRjX2J1cy0+YWRhcHRl
+cjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7Cj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigiRFA6IEZhaWxlZCB0byBh
+c3NpZ24gZGRjIGJ1cyEgQ2hlY2sgZG1lc2cgZm9yIGkyYyBlcnJvcnMuXG4iKTsKPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIH0KPiAgICAgICAgICAgICAgICAgICAgICAgICB9Cj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJmFtZGdw
+dV9jb25uZWN0b3ItPmJhc2UuYmFzZSwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBkZXYtPm1vZGVfY29uZmlnLnNjYWxpbmdfbW9kZV9wcm9w
+ZXJ0eSwKPiBAQCAtMTg2Miw5ICsxODkwLDEzIEBAIGFtZGdwdV9jb25uZWN0b3JfYWRkKHN0cnVj
+dCBhbWRncHVfZGV2aWNlICphZGV2LAo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRybV9jb25u
+ZWN0b3JfaW5pdChkZXYsICZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rv
+cl9sdmRzX2Z1bmNzLCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1
+X2Nvbm5lY3Rvcl9sdmRzX2hlbHBlcl9mdW5jcyk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAg
+aWYgKGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBh
+bWRncHVfY29ubmVjdG9yLT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29rdXAoYWRldiwgaTJjX2J1
+cyk7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWFtZGdwdV9jb25uZWN0
+b3ItPmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgYW1k
+Z3B1X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2
+LCBpMmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICghYWNuLT5k
+ZGNfYnVzKQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJS
+T1IoIkxWRFM6IEZhaWxlZCB0byBhc3NpZ24gZGRjIGJ1cyEgQ2hlY2sgZG1lc2cgZm9yIGkyYyBl
+cnJvcnMuXG4iKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UKPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29ubmVjdG9yLT5kZGMgPSAmYWNu
+LT5kZGNfYnVzLT5hZGFwdGVyOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIH0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICBkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmYW1kZ3B1X2Nvbm5l
+Y3Rvci0+YmFzZS5iYXNlLAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIGRldi0+bW9kZV9jb25maWcuc2NhbGluZ19tb2RlX3Byb3BlcnR5LAo+
+IC0tCj4gMi4xNy4xCj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwo+IGFtZC1nZnggbWFpbGluZyBsaXN0Cj4gYW1kLWdmeEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ft
+ZC1nZngKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYW1k
+LWdmeCBtYWlsaW5nIGxpc3QKYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbWQtZ2Z4
