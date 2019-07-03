@@ -1,120 +1,147 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 07/15] dt-bindings: memory: tegra30: Convert to
- Tegra124 YAML
-Date: Wed, 3 Jul 2019 17:05:12 +0300
-Message-ID: <7d24fa15-0bd0-2ae6-7951-36826956a24f@gmail.com>
-References: <20190630210019.26914-1-digetx@gmail.com>
- <20190630210019.26914-8-digetx@gmail.com>
- <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
- <ba299725-b65b-ce7d-6376-a26918cc985b@gmail.com>
- <d98f16ee-ac43-8f1e-d324-d6e2cfccf3c8@gmail.com>
- <CAL_Jsq+-cuqVf60MbaNTz3jCUQkEpU8EgUe1xyOzHLsM5zjjEg@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v4] dmaengine: tegra-apb: Support per-burst residue
+ granularity
+Date: Wed, 3 Jul 2019 17:37:34 +0100
+Message-ID: <b0a0b110-61c8-ae8b-22a0-3311f70b428a@nvidia.com>
+References: <20190703012836.16568-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_Jsq+-cuqVf60MbaNTz3jCUQkEpU8EgUe1xyOzHLsM5zjjEg@mail.gmail.com>
+In-Reply-To: <20190703012836.16568-1-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-03.07.2019 16:22, Rob Herring пишет:
-> On Tue, Jul 2, 2019 at 6:48 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 01.07.2019 22:30, Dmitry Osipenko пишет:
->>> 01.07.2019 22:11, Rob Herring пишет:
->>>> On Sun, Jun 30, 2019 at 3:04 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>>>>
->>>>
->>>> "Convert" implies you delete the old binding doc.
->>>
->>> Yes, unfortunately the deletion got lost by accident after rebase and it was already
->>> too late when I noticed that. Will be fixed in the next revision.
->>>
->>>>> The Tegra30 binding will actually differ from the Tegra124 a tad, in
->>>>> particular the EMEM configuration description. Hence rename the binding
->>>>> to Tegra124 during of the conversion to YAML.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>  .../nvidia,tegra124-mc.yaml                   | 149 ++++++++++++++++++
->>>>>  1 file changed, 149 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..d18242510295
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
->>>>> @@ -0,0 +1,149 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title:
->>>>> +  NVIDIA Tegra124 SoC Memory Controller
->>>>> +
->>>>> +maintainers:
->>>>> +  - Jon Hunter <jonathanh@nvidia.com>
->>>>> +  - Thierry Reding <thierry.reding@gmail.com>
->>>>> +
->>>>> +description: |
->>>>> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
->>>>> +  These are interleaved to provide high performance with the load shared across
->>>>> +  two memory channels. The Tegra124 Memory Controller handles memory requests
->>>>> +  from internal clients and arbitrates among them to allocate memory bandwidth
->>>>> +  for DDR3L and LPDDR3 SDRAMs.
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: nvidia,tegra124-mc
->>>>> +
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +    description:
->>>>> +      Physical base address.
->>>>> +
->>>>> +  clocks:
->>>>> +    maxItems: 1
->>>>> +    description:
->>>>> +      Memory Controller clock.
->>>>> +
->>>>> +  clock-names:
->>>>> +    items:
->>>>> +      - const: mc
->>>>> +
->>>>> +  interrupts:
->>>>> +    maxItems: 1
->>>>> +    description:
->>>>> +      Memory Controller interrupt.
->>>>> +
->>>>> +  "#reset-cells":
->>>>> +    const: 1
->>>>> +
->>>>> +  "#iommu-cells":
->>>>> +    const: 1
->>>>> +
->>>>> +patternProperties:
->>>>> +  ".*":
->>>>
->>>> Please define a node name or pattern for node names.
->>>
->>> There was no pattern specified in the original binding. But I guess the existing
->>> upstream device-trees could be used as the source for the pattern.
->>
->> Actually it looks like the use of explicit pattern is not really a good idea because
->> device-tree could have node named in a way that it doesn't match the pattern and hence
->> dtbs_check silently skips the non-matching nodes. Is there any way to express that
->> non-matching nodes shall be rejected?
-> 
-> additionalProperties: false
-> 
-> It's not ideal because you have to list all properties and can't
-> combine multiple schema, but that's getting addressed in json-schema
-> draft8. That shouldn't matter for you in this case though.
 
-Works like a charm! Thank you very much.
+On 03/07/2019 02:28, Dmitry Osipenko wrote:
+> Tegra's APB DMA engine updates words counter after each transferred burst
+> of data, hence it can report transfer's residual with more fidelity which
+> may be required in cases like audio playback. In particular this fixes
+> audio stuttering during playback in a chromium web browser. The patch is
+> based on the original work that was made by Ben Dooks and a patch from
+> downstream kernel. It was tested on Tegra20 and Tegra30 devices.
+> 
+> Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
+> Link: https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
+> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v4: The words_xferred is now also reset on a new iteration of a cyclic
+>     transfer by ISR, so that dmaengine_tx_status() won't produce a
+>     misleading warning splat on TX status re-checking after a cycle
+>     completion when cyclic transfer consists of a single SG.
+> 
+> v3: Added workaround for a hardware design shortcoming that results
+>     in a words counter wraparound before end-of-transfer bit is set
+>     in a cyclic mode.
+> 
+> v2: Addressed review comments made by Jon Hunter to v1. We won't try
+>     to get words count if dma_desc is on free list as it will result
+>     in a NULL dereference because this case wasn't handled properly.
+> 
+>     The residual value is now updated properly, avoiding potential
+>     integer overflow by adding the "bytes" to the "bytes_transferred"
+>     instead of the subtraction.
+> 
+>  drivers/dma/tegra20-apb-dma.c | 72 +++++++++++++++++++++++++++++++----
+>  1 file changed, 65 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 79e9593815f1..148d136191d7 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -152,6 +152,7 @@ struct tegra_dma_sg_req {
+>  	bool				last_sg;
+>  	struct list_head		node;
+>  	struct tegra_dma_desc		*dma_desc;
+> +	unsigned int			words_xferred;
+>  };
+>  
+>  /*
+> @@ -496,6 +497,7 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
+>  	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
+>  				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
+>  	nsg_req->configured = true;
+> +	nsg_req->words_xferred = 0;
+>  
+>  	tegra_dma_resume(tdc);
+>  }
+> @@ -511,6 +513,7 @@ static void tdc_start_head_req(struct tegra_dma_channel *tdc)
+>  					typeof(*sg_req), node);
+>  	tegra_dma_start(tdc, sg_req);
+>  	sg_req->configured = true;
+> +	sg_req->words_xferred = 0;
+>  	tdc->busy = true;
+>  }
+>  
+> @@ -638,6 +641,8 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
+>  		list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
+>  	dma_desc->cb_count++;
+>  
+> +	sgreq->words_xferred = 0;
+> +
+>  	/* If not last req then put at end of pending list */
+>  	if (!list_is_last(&sgreq->node, &tdc->pending_sg_req)) {
+>  		list_move_tail(&sgreq->node, &tdc->pending_sg_req);
+> @@ -797,6 +802,62 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+>  	return 0;
+>  }
+>  
+> +static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
+> +					       struct tegra_dma_sg_req *sg_req)
+> +{
+> +	unsigned long status, wcount = 0;
+> +
+> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
+> +		return 0;
+> +
+> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
+> +		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
+> +
+> +	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+> +
+> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
+> +		wcount = status;
+> +
+> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
+> +		return sg_req->req_len;
+> +
+> +	wcount = get_current_xferred_count(tdc, sg_req, wcount);
+> +
+> +	if (!wcount) {
+> +		/*
+> +		 * If wcount wasn't ever polled for this SG before, then
+> +		 * simply assume that transfer hasn't started yet.
+> +		 *
+> +		 * Otherwise it's the end of the transfer.
+> +		 *
+> +		 * The alternative would be to poll the status register
+> +		 * until EOC bit is set or wcount goes UP. That's so
+> +		 * because EOC bit is getting set only after the last
+> +		 * burst's completion and counter is less than the actual
+> +		 * transfer size by 4 bytes. The counter value wraps around
+> +		 * in a cyclic mode before EOC is set(!), so we can't easily
+> +		 * distinguish start of transfer from its end.
+> +		 */
+> +		if (sg_req->words_xferred)
+> +			wcount = sg_req->req_len - 4;
+> +
+> +	} else if (wcount < sg_req->words_xferred) {
+> +		/*
+> +		 * This case shall not ever happen because EOC bit
+> +		 * must be set once next cyclic transfer is started.
+
+Should this still be cyclic here?
+
+Cheers
+Jon
+
+-- 
+nvpublic
