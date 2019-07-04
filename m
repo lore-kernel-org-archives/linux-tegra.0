@@ -1,186 +1,60 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4] dmaengine: tegra-apb: Support per-burst residue
- granularity
-Date: Thu, 4 Jul 2019 15:35:49 +0300
-Message-ID: <00b5d649-df97-455f-6e2a-a1adb44e431d@gmail.com>
-References: <20190703012836.16568-1-digetx@gmail.com>
- <b0a0b110-61c8-ae8b-22a0-3311f70b428a@nvidia.com>
- <b1f4d7c3-636e-947f-ac76-fc639ac7fee4@gmail.com>
- <55d402ad-6cb9-9e91-a8a4-b89d37674f4d@nvidia.com>
- <a0168814-09e2-6dfe-5c5c-e053911cede6@gmail.com>
- <940563c4-e2e9-c1d8-ac74-e6871e086746@nvidia.com>
+From: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH v3 21/22] drm/amdgpu: Provide ddc symlink in
+ connector sysfs directory
+Date: Thu, 4 Jul 2019 15:17:01 +0200
+Message-ID: <fc26ac17-dc18-f995-53cf-42b50754c916@collabora.com>
+References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
+ <cover.1561735433.git.andrzej.p@collabora.com>
+ <5e355b8bec8fb3907566a741db8cc3e356246a32.1561735433.git.andrzej.p@collabora.com>
+ <CADnq5_MrVoScVFgj3TP2Z+Ky8_32k=Cou5jebuMT5gE1+GZ0cA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <940563c4-e2e9-c1d8-ac74-e6871e086746@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CADnq5_MrVoScVFgj3TP2Z+Ky8_32k=Cou5jebuMT5gE1+GZ0cA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk@kernel>
 List-Id: linux-tegra@vger.kernel.org
 
-04.07.2019 15:08, Jon Hunter пишет:
-> 
-> On 04/07/2019 11:49, Dmitry Osipenko wrote:
->> 04.07.2019 10:10, Jon Hunter пишет:
->>>
->>> On 03/07/2019 18:00, Dmitry Osipenko wrote:
->>>> 03.07.2019 19:37, Jon Hunter пишет:
->>>>>
->>>>> On 03/07/2019 02:28, Dmitry Osipenko wrote:
->>>>>> Tegra's APB DMA engine updates words counter after each transferred burst
->>>>>> of data, hence it can report transfer's residual with more fidelity which
->>>>>> may be required in cases like audio playback. In particular this fixes
->>>>>> audio stuttering during playback in a chromium web browser. The patch is
->>>>>> based on the original work that was made by Ben Dooks and a patch from
->>>>>> downstream kernel. It was tested on Tegra20 and Tegra30 devices.
->>>>>>
->>>>>> Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
->>>>>> Link: https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
->>>>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>> ---
->>>>>>
->>>>>> Changelog:
->>>>>>
->>>>>> v4: The words_xferred is now also reset on a new iteration of a cyclic
->>>>>>     transfer by ISR, so that dmaengine_tx_status() won't produce a
->>>>>>     misleading warning splat on TX status re-checking after a cycle
->>>>>>     completion when cyclic transfer consists of a single SG.
->>>>>>
->>>>>> v3: Added workaround for a hardware design shortcoming that results
->>>>>>     in a words counter wraparound before end-of-transfer bit is set
->>>>>>     in a cyclic mode.
->>>>>>
->>>>>> v2: Addressed review comments made by Jon Hunter to v1. We won't try
->>>>>>     to get words count if dma_desc is on free list as it will result
->>>>>>     in a NULL dereference because this case wasn't handled properly.
->>>>>>
->>>>>>     The residual value is now updated properly, avoiding potential
->>>>>>     integer overflow by adding the "bytes" to the "bytes_transferred"
->>>>>>     instead of the subtraction.
->>>>>>
->>>>>>  drivers/dma/tegra20-apb-dma.c | 72 +++++++++++++++++++++++++++++++----
->>>>>>  1 file changed, 65 insertions(+), 7 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->>>>>> index 79e9593815f1..148d136191d7 100644
->>>>>> --- a/drivers/dma/tegra20-apb-dma.c
->>>>>> +++ b/drivers/dma/tegra20-apb-dma.c
->>>>>> @@ -152,6 +152,7 @@ struct tegra_dma_sg_req {
->>>>>>  	bool				last_sg;
->>>>>>  	struct list_head		node;
->>>>>>  	struct tegra_dma_desc		*dma_desc;
->>>>>> +	unsigned int			words_xferred;
->>>>>>  };
->>>>>>  
->>>>>>  /*
->>>>>> @@ -496,6 +497,7 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
->>>>>>  	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
->>>>>>  				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
->>>>>>  	nsg_req->configured = true;
->>>>>> +	nsg_req->words_xferred = 0;
->>>>>>  
->>>>>>  	tegra_dma_resume(tdc);
->>>>>>  }
->>>>>> @@ -511,6 +513,7 @@ static void tdc_start_head_req(struct tegra_dma_channel *tdc)
->>>>>>  					typeof(*sg_req), node);
->>>>>>  	tegra_dma_start(tdc, sg_req);
->>>>>>  	sg_req->configured = true;
->>>>>> +	sg_req->words_xferred = 0;
->>>>>>  	tdc->busy = true;
->>>>>>  }
->>>>>>  
->>>>>> @@ -638,6 +641,8 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
->>>>>>  		list_add_tail(&dma_desc->cb_node, &tdc->cb_desc);
->>>>>>  	dma_desc->cb_count++;
->>>>>>  
->>>>>> +	sgreq->words_xferred = 0;
->>>>>> +
->>>>>>  	/* If not last req then put at end of pending list */
->>>>>>  	if (!list_is_last(&sgreq->node, &tdc->pending_sg_req)) {
->>>>>>  		list_move_tail(&sgreq->node, &tdc->pending_sg_req);
->>>>>> @@ -797,6 +802,62 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->>>>>>  	return 0;
->>>>>>  }
->>>>>>  
->>>>>> +static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
->>>>>> +					       struct tegra_dma_sg_req *sg_req)
->>>>>> +{
->>>>>> +	unsigned long status, wcount = 0;
->>>>>> +
->>>>>> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
->>>>>> +		return 0;
->>>>>> +
->>>>>> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>> +		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
->>>>>> +
->>>>>> +	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->>>>>> +
->>>>>> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>> +		wcount = status;
->>>>>> +
->>>>>> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->>>>>> +		return sg_req->req_len;
->>>>>> +
->>>>>> +	wcount = get_current_xferred_count(tdc, sg_req, wcount);
->>>>>> +
->>>>>> +	if (!wcount) {
->>>>>> +		/*
->>>>>> +		 * If wcount wasn't ever polled for this SG before, then
->>>>>> +		 * simply assume that transfer hasn't started yet.
->>>>>> +		 *
->>>>>> +		 * Otherwise it's the end of the transfer.
->>>>>> +		 *
->>>>>> +		 * The alternative would be to poll the status register
->>>>>> +		 * until EOC bit is set or wcount goes UP. That's so
->>>>>> +		 * because EOC bit is getting set only after the last
->>>>>> +		 * burst's completion and counter is less than the actual
->>>>>> +		 * transfer size by 4 bytes. The counter value wraps around
->>>>>> +		 * in a cyclic mode before EOC is set(!), so we can't easily
->>>>>> +		 * distinguish start of transfer from its end.
->>>>>> +		 */
->>>>>> +		if (sg_req->words_xferred)
->>>>>> +			wcount = sg_req->req_len - 4;
->>>>>> +
->>>>>> +	} else if (wcount < sg_req->words_xferred) {
->>>>>> +		/*
->>>>>> +		 * This case shall not ever happen because EOC bit
->>>>>> +		 * must be set once next cyclic transfer is started.
->>>>>
->>>>> Should this still be cyclic here?
->>>>
->>>> Do you mean the "comment" by "here"?
->>>>
->>>> It will be absolutely terrible if this case happens for oneshot transfer, assume
->>>> kernel/hardware is on fire.
->>>
->>> Or more likely a SW bug :-)
->>>
->>> Yes should never happen for either sg or cyclic, but there is no mention
->>> of sg transfers. Maybe the sg case is more obvious but in general this
->>> case should never happen for any transfer.
->>
->> Alright, so what the change you are proposing? Or is it fine now?
->>
->> I can certainly change the comment's wording, just please tell me what you want it to be.
->>
->> /*
->>  * This case shall not ever happen because EOC bit
->>  * must be set once transfer is actually finished.
->>
->> Does this sound better?
-> 
-> If I think it would be good to say ...
-> 
-> This case will never happen for a non-cyclic transfer. For a cyclic
-> transfer, although it is possible for the next transfer to have already
-> started (resetting the word count), this case should still not happen
-> because we should have detected that the EOC bit is set and hence the
-> transfer was completed.
-> 
-> At least that should remind me of what we are doing here in the future :-)
-
-Okay, good to me. Will make a v5!
+VyBkbml1IDAyLjA3LjIwMTkgb8KgMjI6NTQsIEFsZXggRGV1Y2hlciBwaXN6ZToKPiBPbiBGcmks
+IEp1biAyOCwgMjAxOSBhdCAxMjozMSBQTSBBbmRyemVqIFBpZXRyYXNpZXdpY3oKPiA8YW5kcnpl
+ai5wQGNvbGxhYm9yYS5jb20+IHdyb3RlOgo+Pgo+PiBVc2UgdGhlIGRkYyBwb2ludGVyIHByb3Zp
+ZGVkIGJ5IHRoZSBnZW5lcmljIGNvbm5lY3Rvci4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQW5kcnpl
+aiBQaWV0cmFzaWV3aWN6IDxhbmRyemVqLnBAY29sbGFib3JhLmNvbT4KPj4gLS0tCj4+ICAgLi4u
+L2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfY29ubmVjdG9ycy5jICAgIHwgNzAgKysrKysrKysr
+KysrKystLS0tLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA1MSBpbnNlcnRpb25zKCspLCAxOSBkZWxl
+dGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2Ft
+ZGdwdV9jb25uZWN0b3JzLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfY29u
+bmVjdG9ycy5jCj4+IGluZGV4IDczYjJlZGU3NzNkMy4uNWY4YTdlMzgxOGI5IDEwMDY0NAo+PiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfY29ubmVjdG9ycy5jCj4+ICsr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9jb25uZWN0b3JzLmMKPj4gQEAg
+LTE1NzMsMTEgKzE1NzMsMTUgQEAgYW1kZ3B1X2Nvbm5lY3Rvcl9hZGQoc3RydWN0IGFtZGdwdV9k
+ZXZpY2UgKmFkZXYsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZhaWxlZDsKPj4g
+ICAgICAgICAgICAgICAgICBhbWRncHVfY29ubmVjdG9yLT5jb25fcHJpdiA9IGFtZGdwdV9kaWdf
+Y29ubmVjdG9yOwo+PiAgICAgICAgICAgICAgICAgIGlmIChpMmNfYnVzLT52YWxpZCkgewo+PiAt
+ICAgICAgICAgICAgICAgICAgICAgICBhbWRncHVfY29ubmVjdG9yLT5kZGNfYnVzID0gYW1kZ3B1
+X2kyY19sb29rdXAoYWRldiwgaTJjX2J1cyk7Cj4+IC0gICAgICAgICAgICAgICAgICAgICAgIGlm
+IChhbWRncHVfY29ubmVjdG9yLT5kZGNfYnVzKQo+PiArICAgICAgICAgICAgICAgICAgICAgICBz
+dHJ1Y3QgYW1kZ3B1X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPj4gKwo+PiAr
+ICAgICAgICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChh
+ZGV2LCBpMmNfYnVzKTsKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKGFjbi0+ZGRjX2J1
+cykgewo+IAo+IFRoaXMgaHVuayBzZWVtcyBwb2ludGxlc3MgdW5sZXNzIEknbSBtaXNzaW5nIHNv
+bWV0aGluZy4gIENhbiB5b3UgZHJvcAo+IHRoaXMgaHVuaz8gIFNhbWUgY29tbWVudCBvbiBlYWNo
+IGluc3RhbmNlIG9mIHRoaXMgYmVsb3cuICBUaGlzIGFsc28KPiBvbmx5IGNvdmVycyB0aGUgbGVn
+YWN5IG1vZGVzZXR0aW5nIGNvZGUgd2hpY2ggaXMgbm90IHVzZWQgYnkgZGVmYXVsdAo+IG9uIG1v
+c3QgY2hpcHMuICBUaGUgREMgY29kZSBpbiBhbWQvZGlzcGxheS8gaXMgcHJvYmFibHkgbW9yZSBy
+ZWxldmFudC4KPiAKCklmIEkgZG9uJ3QgZG8gdGhhdCBjaGVja3BhdGNoIHJlcG9ydHMgdGhhdCBs
+aW5lcyBJIGNyZWF0ZWQgZXhjZWVkIDgwIGNoYXJhY3RlcnMuCgpBbmRyemVqCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkZyZWVkcmVubyBtYWlsaW5nIGxp
+c3QKRnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ZyZWVkcmVubw==
