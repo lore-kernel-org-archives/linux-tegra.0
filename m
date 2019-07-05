@@ -1,45 +1,57 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 05/12] drm/modes: Rewrite the command line parser
-Date: Fri, 5 Jul 2019 19:54:47 +0300
-Message-ID: <e1fcea71-b551-274e-4ea0-178bb0d5f71c@gmail.com>
-References: <cover.5190d070d1439d762d7ab273f4ae2573087fee20.1560783090.git-series.maxime.ripard@bootlin.com>
- <e32cd4009153b184103554009135c7bf7c9975d7.1560783090.git-series.maxime.ripard@bootlin.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: tegra: Add Dmitry as a reviewer
+Date: Fri, 5 Jul 2019 20:49:48 +0200
+Message-ID: <20190705184947.GJ4717@kunai>
+References: <20190623174655.25445-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <e32cd4009153b184103554009135c7bf7c9975d7.1560783090.git-series.maxime.ripard@bootlin.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>
-Cc: eben@raspberrypi.org, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="apbmkPN6Hu/1dI3g"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190623174655.25445-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MTcuMDYuMjAxOSAxNzo1MSwgTWF4aW1lIFJpcGFyZCDQv9C40YjQtdGCOgo+IEZyb206IE1heGlt
-ZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+IAo+IFJld3JpdGUg
-dGhlIGNvbW1hbmQgbGluZSBwYXJzZXIgaW4gb3JkZXIgdG8gZ2V0IGF3YXkgZnJvbSB0aGUgc3Rh
-dGUgbWFjaGluZQo+IHBhcnNpbmcgdGhlIHZpZGVvIG1vZGUgbGluZXMuCj4gCj4gSG9wZWZ1bGx5
-LCB0aGlzIHdpbGwgYWxsb3cgdG8gZXh0ZW5kIGl0IG1vcmUgZWFzaWx5IHRvIHN1cHBvcnQgbmFt
-ZWQgbW9kZXMKPiBhbmQgLyBvciBwcm9wZXJ0aWVzIHNldCBkaXJlY3RseSBvbiB0aGUgY29tbWFu
-ZCBsaW5lLgo+IAo+IFJldmlld2VkLWJ5OiBOb3JhbGYgVHLDuG5uZXMgPG5vcmFsZkB0cm9ubmVz
-Lm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBNYXhpbWUgUmlwYXJkIDxtYXhpbWUucmlwYXJkQGZyZWUt
-ZWxlY3Ryb25zLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9tb2Rlcy5jIHwgMzI1
-ICsrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQs
-IDIxMCBpbnNlcnRpb25zKCspLCAxMTUgZGVsZXRpb25zKC0pCgpIZWxsbywKCkkgaGF2ZSBhIFRl
-Z3JhIGRldmljZSB0aGF0IHVzZXMgYSBzdG9jayBhbmRyb2lkIGJvb3Rsb2FkZXIgd2hpY2ggcGFz
-c2VzICJ2aWRlbz10ZWdyYWZiIiBpbgp0aGUga2VybmVscyBjbWRsaW5lLiBUaGF0IHdhc24ndCBh
-IHByb2JsZW0gYmVmb3JlIHRoaXMgcGF0Y2gsIGJ1dCBub3cgVGVncmEgRFJNIGRyaXZlcgpmYWls
-cyB0byBwcm9iZSBiZWNhdXNlIHRoZSBtb2RlIGlzIDB4MDowIGFuZCBoZW5jZSBmcmFtZWJ1ZmZl
-ciBhbGxvY2F0aW9uIGZhaWxzLiBJcyBpdCBhCmxlZ2l0IHJlZ3Jlc3Npb24gdGhhdCBzaG91bGQg
-YmUgZml4ZWQgaW4gdXBzdHJlYW0/CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2Vy
-bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+
+--apbmkPN6Hu/1dI3g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Jun 23, 2019 at 08:46:55PM +0300, Dmitry Osipenko wrote:
+> I'm contributing to Tegra's upstream development in general and happened
+> to review the Tegra's I2C patches for awhile because I'm actively using
+> upstream kernel on all of my Tegra-powered devices and initially some of
+> the submitted patches were getting my attention since they were causing
+> problems. Recently Wolfram Sang asked whether I'm interested in becoming
+> a reviewer for the driver and I don't mind at all.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+
+Applied to for-current with a comment that Thierry acked this in the
+mail thread prior this patch. Thanks!
+
+
+--apbmkPN6Hu/1dI3g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0fm8sACgkQFA3kzBSg
+KbZY2Q/+JxDQL3UNgJmHcRs3I4U9y2MsEo6jLh6uYCGKEqZgDGIVHCTOFz47yia4
+nSuDFqwe4K4X8obmzJUT8lP5sr9A8atNWZOrWBCoB/WG9WNbzgYXnhY2wy6NdFP0
+VZ96OF+O91U0OkDtemY+4kuFihfLj/iwbhZ8uGBptFVRdkmy1L8aFoxXzGf8Onz9
+a5CXn0IDgBU224KqY9f02fvmWlNtii8jPgJZ4E/FdnvIioX0CrZYZW2p9yldDAHG
+9CVGCFAlqB2Vpcdb+ZFVSiJY0YIFgRciVhH7itNryh2tHbG7zHltiH0k09CYZGUu
+VQ03yyceQsIeJQoVq054LWHOwckMNldMwnhZW5eWkebgNI4g5BieMY0ES0+i21EJ
+WqsopjL2kWs+Vq9n4QY5wu0ocucjULfiP/BlZ0wQblPQbreQUJ6z+HiSpIcV0DOd
+jVeN78LH10Za9t7NKGAsbBLZSErHRJltFFSrKSKi58WgdpaoM1MzMU33ku/MiFft
+W9LPhg1BOiob64sUXHD8uFOCYFXTrbdusgtfNCZYRlFg/d+mOZdJG2Dn3Ajc6Q3w
+znWC/4uq5CMmxoUAmPxDnrj/PtyxEsTjMRJlbgnuUPTYcxUvzL4jkLOlcZIan9HH
+2O4pj7dRV9pv4i4DZUDVAUW4hCQdvmb5/iHm8sn/Pes06ja2MSI=
+=v1gr
+-----END PGP SIGNATURE-----
+
+--apbmkPN6Hu/1dI3g--
