@@ -1,93 +1,107 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] gpio: tegra: Fix build error without CONFIG_DEBUG_FS
-Date: Fri, 5 Jul 2019 14:59:24 +0200
-Message-ID: <CAMpxmJU0=w=htiY3CL9GDBU+waBjV0X7yh1UG6ip5BiV3J7nXA@mail.gmail.com>
-References: <20190705123220.54008-1-yuehaibing@huawei.com> <CAMpxmJVZHJKQ7bbHo=T9R99qguF315bZ=YVRrCdqti2SyzAnDg@mail.gmail.com>
- <74ffe8ea-e6fb-bd2a-42bd-08392eb27c69@huawei.com> <CAMpxmJUeg1jVZdCeiRqTZykBZNPGAeQkaNfA7qc1zt+sL9HPjA@mail.gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V12 01/12] PCI: Add #defines for some of PCIe spec r4.0
+ features
+Date: Fri, 5 Jul 2019 19:16:22 +0530
+Message-ID: <66d8af45-66f5-b597-0ea8-39e8662df5e6@nvidia.com>
+References: <20190701124010.7484-1-vidyas@nvidia.com>
+ <20190701124010.7484-2-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMpxmJUeg1jVZdCeiRqTZykBZNPGAeQkaNfA7qc1zt+sL9HPjA@mail.gmail.com>
+In-Reply-To: <20190701124010.7484-2-vidyas@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yuehaibing <yuehaibing@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org
+To: bhelgaas@google.com
+Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-pt., 5 lip 2019 o 14:56 Bartosz Golaszewski
-<bgolaszewski@baylibre.com> napisa=C5=82(a):
->
-> pt., 5 lip 2019 o 14:44 Yuehaibing <yuehaibing@huawei.com> napisa=C5=82(a=
-):
-> >
-> > On 2019/7/5 20:40, Bartosz Golaszewski wrote:
-> > > pt., 5 lip 2019 o 14:34 YueHaibing <yuehaibing@huawei.com> napisa=C5=
-=82(a):
-> > >>
-> > >> If CONFIG_DEBUG_FS is not set, building fails:
-> > >>
-> > >> drivers/gpio/gpio-tegra.c: In function tegra_gpio_probe:
-> > >> drivers/gpio/gpio-tegra.c:665:2: error: implicit declaration of func=
-tion debugfs_create_file;
-> > >>  did you mean bus_create_file? [-Werror=3Dimplicit-function-declarat=
-ion]
-> > >>   debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
-> > >>   ^~~~~~~~~~~~~~~~~~~
-> > >>   bus_create_file
-> > >> drivers/gpio/gpio-tegra.c:666:9: error: tegra_dbg_gpio_fops undeclar=
-ed (first use in this function);
-> > >>  did you mean tegra_gpio_pm_ops?
-> > >>         &tegra_dbg_gpio_fops);
-> > >>          ^~~~~~~~~~~~~~~~~~~
-> > >>          tegra_gpio_pm_ops
-> > >>
-> > >> Reported-by: Hulk Robot <hulkci@huawei.com>
-> > >> Fixes: a4de43049a1d ("gpio: tegra: Clean-up debugfs initialisation")
-> > >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > >> ---
-> > >>  drivers/gpio/gpio-tegra.c | 2 ++
-> > >>  1 file changed, 2 insertions(+)
-> > >>
-> > >> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> > >> index 59b99d8..40fd6bd 100644
-> > >> --- a/drivers/gpio/gpio-tegra.c
-> > >> +++ b/drivers/gpio/gpio-tegra.c
-> > >> @@ -662,8 +662,10 @@ static int tegra_gpio_probe(struct platform_dev=
-ice *pdev)
-> > >>                 }
-> > >>         }
-> > >>
-> > >> +#ifdef CONFIG_DEBUG_FS
-> > >>         debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
-> > >>                             &tegra_dbg_gpio_fops);
-> > >> +#endif
-> > >>
-> > >>         return 0;
-> > >>  }
-> > >> --
-> > >> 2.7.4
-> > >>
-> > >>
-> > >
-> > > Nack, there are inline stubs for all debugfs functions in
-> > > ./include/linux/debugfs.h if CONFIG_DEBUG_FS is not selected. Just
-> > > move the #include <linux/debugfs.h> to the top of the source file.
-> >
-> > yes, agree this, but 'tegra_dbg_gpio_fops' is still undeclared.
-> >
-> > >
-> > > Bart
-> > >
-> > > .
-> > >
-> >
->
-> Can you attach the config you're using?
->
-> Bart
+On 7/1/2019 6:09 PM, Vidya Sagar wrote:
+Bjorn,
+Can you please provide Ack for this patch?
 
-Wait, nevermind. I think that commit a4de43049a1d ("gpio: tegra:
-Clean-up debugfs initialisation") is wrong and we missed that. Linus
-what do you think about reverting it?
+Thanks,
+Vidya Sagar
 
-Bart
+> Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
+> features.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes since [v11]:
+> * None
+> 
+> Changes since [v10]:
+> * None
+> 
+> Changes since [v9]:
+> * None
+> 
+> Changes since [v8]:
+> * None
+> 
+> Changes since [v7]:
+> * None
+> 
+> Changes since [v6]:
+> * None
+> 
+> Changes since [v5]:
+> * None
+> 
+> Changes since [v4]:
+> * None
+> 
+> Changes since [v3]:
+> * None
+> 
+> Changes since [v2]:
+> * Updated commit message and description to explicitly mention that defines are
+>    added only for some of the features and not all.
+> 
+> Changes since [v1]:
+> * None
+> 
+>   include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
+>   1 file changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index f28e562d7ca8..1c79f6a097d2 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -713,7 +713,9 @@
+>   #define PCI_EXT_CAP_ID_DPC	0x1D	/* Downstream Port Containment */
+>   #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
+>   #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
+> -#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PTM
+> +#define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
+> +#define PCI_EXT_CAP_ID_PL	0x26	/* Physical Layer 16.0 GT/s */
+> +#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL
+>   
+>   #define PCI_EXT_CAP_DSN_SIZEOF	12
+>   #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
+> @@ -1053,4 +1055,22 @@
+>   #define  PCI_L1SS_CTL1_LTR_L12_TH_SCALE	0xe0000000  /* LTR_L1.2_THRESHOLD_Scale */
+>   #define PCI_L1SS_CTL2		0x0c	/* Control 2 Register */
+>   
+> +/* Data Link Feature */
+> +#define PCI_DLF_CAP		0x04	/* Capabilities Register */
+> +#define  PCI_DLF_LOCAL_DLF_SUP_MASK	0x007fffff  /* Local Data Link Feature Supported */
+> +#define  PCI_DLF_EXCHANGE_ENABLE	0x80000000  /* Data Link Feature Exchange Enable */
+> +#define PCI_DLF_STS		0x08	/* Status Register */
+> +#define  PCI_DLF_REMOTE_DLF_SUP_MASK	0x007fffff  /* Remote Data Link Feature Supported */
+> +#define  PCI_DLF_REMOTE_DLF_SUP_VALID	0x80000000  /* Remote Data Link Feature Support Valid */
+> +
+> +/* Physical Layer 16.0 GT/s */
+> +#define PCI_PL_16GT_CAP		0x04	/* Capabilities Register */
+> +#define PCI_PL_16GT_CTRL	0x08	/* Control Register */
+> +#define PCI_PL_16GT_STS		0x0c	/* Status Register */
+> +#define PCI_PL_16GT_LDPM_STS	0x10	/* Local Data Parity Mismatch Status Register */
+> +#define PCI_PL_16GT_FRDPM_STS	0x14	/* First Retimer Data Parity Mismatch Status Register */
+> +#define PCI_PL_16GT_SRDPM_STS	0x18	/* Second Retimer Data Parity Mismatch Status Register */
+> +#define PCI_PL_16GT_RSVD	0x1C	/* Reserved */
+> +#define PCI_PL_16GT_LE_CTRL	0x20	/* Lane Equalization Control Register */
+> +
+>   #endif /* LINUX_PCI_REGS_H */
+> 
