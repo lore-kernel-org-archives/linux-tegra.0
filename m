@@ -1,33 +1,26 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] i2c: tegra: Add Dmitry as a reviewer
-Date: Sat, 6 Jul 2019 16:30:48 +0300
-Message-ID: <0090fe86-4851-8289-0b8f-843b25590ea2@gmail.com>
-References: <20190623174655.25445-1-digetx@gmail.com>
- <20190705184947.GJ4717@kunai>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: tegra: Fix build error without CONFIG_DEBUG_FS
+Date: Sun, 7 Jul 2019 00:34:36 +0200
+Message-ID: <CACRpkdZikRyZtbYajc7gN0N6xRoCQpGGVO9rivwuG6-AeVo1xw@mail.gmail.com>
+References: <20190705123220.54008-1-yuehaibing@huawei.com> <CAMpxmJVZHJKQ7bbHo=T9R99qguF315bZ=YVRrCdqti2SyzAnDg@mail.gmail.com>
+ <74ffe8ea-e6fb-bd2a-42bd-08392eb27c69@huawei.com> <CAMpxmJUeg1jVZdCeiRqTZykBZNPGAeQkaNfA7qc1zt+sL9HPjA@mail.gmail.com>
+ <CAMpxmJU0=w=htiY3CL9GDBU+waBjV0X7yh1UG6ip5BiV3J7nXA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190705184947.GJ4717@kunai>
-Content-Language: en-US
+In-Reply-To: <CAMpxmJU0=w=htiY3CL9GDBU+waBjV0X7yh1UG6ip5BiV3J7nXA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Yuehaibing <yuehaibing@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-05.07.2019 21:49, Wolfram Sang пишет:
-> On Sun, Jun 23, 2019 at 08:46:55PM +0300, Dmitry Osipenko wrote:
->> I'm contributing to Tegra's upstream development in general and happened
->> to review the Tegra's I2C patches for awhile because I'm actively using
->> upstream kernel on all of my Tegra-powered devices and initially some of
->> the submitted patches were getting my attention since they were causing
->> problems. Recently Wolfram Sang asked whether I'm interested in becoming
->> a reviewer for the driver and I don't mind at all.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Applied to for-current with a comment that Thierry acked this in the
-> mail thread prior this patch. Thanks!
-> 
+On Fri, Jul 5, 2019 at 2:59 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
 
-Awesome, thank you very much!
+> Wait, nevermind. I think that commit a4de43049a1d ("gpio: tegra:
+> Clean-up debugfs initialisation") is wrong and we missed that. Linus
+> what do you think about reverting it?
+
+OK I reverted it.
+
+Linus
