@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 10/24] PM / devfreq: tegra30: Don't enable consecutive-down interrupt on startup
-Date: Mon,  8 Jul 2019 01:32:49 +0300
-Message-ID: <20190707223303.6755-11-digetx@gmail.com>
+Subject: [PATCH v4 06/24] PM / devfreq: tegra30: Tune up boosting thresholds
+Date: Mon,  8 Jul 2019 01:32:45 +0300
+Message-ID: <20190707223303.6755-7-digetx@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,30 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The consecutive-down event tells that we should perform frequency
-de-boosting, but boosting is in a reset state on start and hence the
-event won't do anything useful for us and it will be just a dummy
-interrupt request.
+Now that average-sustain coefficient / multiplier is gone, it won't hurt
+to re-tune the boosting thresholds to get a bit harder boosting for MCALL
+clients, resulting in a more reactive governing in a case of multimedia
+applications usage like 3d / video.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 32fe95458ee7..878c9396bb8c 100644
+index 16f7e6cf3b99..2bf65409ddd8 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -558,7 +558,6 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
- 		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
- 	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
--	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_ENB;
- 
+@@ -111,8 +111,8 @@ static struct tegra_devfreq_device_config actmon_device_configs[] = {
+ 		.irq_mask = 1 << 26,
+ 		.boost_up_coeff = 200,
+ 		.boost_down_coeff = 50,
+-		.boost_up_threshold = 60,
+-		.boost_down_threshold = 40,
++		.boost_up_threshold = 50,
++		.boost_down_threshold = 25,
+ 	},
+ 	{
+ 		/* MCCPU: memory accesses from the CPUs */
 -- 
 2.22.0
