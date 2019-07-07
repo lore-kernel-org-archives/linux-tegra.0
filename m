@@ -1,91 +1,62 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] i2c: tegra: Compile PM functions unconditionally
-Date: Mon,  8 Jul 2019 02:12:34 +0300
-Message-ID: <20190707231234.11679-1-digetx@gmail.com>
+Subject: [PATCH v1 4/6] cpuidle: tegra: Support CPU cluster power-down on Tegra30
+Date: Mon,  8 Jul 2019 02:38:07 +0300
+Message-ID: <20190707233809.14400-5-digetx@gmail.com>
+References: <20190707233809.14400-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190707233809.14400-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The I2C driver fails to probe if CONFIG_PM_SLEEP=n because runtime PM
-doesn't depend on the PM sleep and in this case the runtime PM ops are
-not included in the driver, resulting in I2C clock not being enabled.
-It's much cleaner to simply allow compiler to remove the dead code
-instead of messing with the #ifdefs.
-
-This patch fixes such errors when CONFIG_PM_SLEEP=n:
-
-  tegra-i2c 7000c400.i2c: timeout waiting for fifo flush
-  tegra-i2c 7000c400.i2c: Failed to initialize i2c controller
+The new CPU Idle driver has all necessary features in order to allow
+the deepest idling state on Tegra30 SoC where the whole CPU cluster is
+power-gated using the coupled idle state.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 9fcb13beeb8f..18f0ceed9f1b 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -636,7 +636,7 @@ static void tegra_dvc_init(struct tegra_i2c_dev *i2c_dev)
- 	dvc_writel(i2c_dev, val, DVC_CTRL_REG1);
- }
+Please note that outer_disable() has a WARN_ON(num_online_cpus > 1)
+and it doesn't know that we turned off those secondary CPUs, hence the
+outer_cache.disable() is now invoked directly.
+
+ arch/arm/mach-tegra/pm.c        | 4 ++--
+ drivers/cpuidle/cpuidle-tegra.c | 4 +---
+ 2 files changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+index f9c9bce9e15d..cc941b0c97e8 100644
+--- a/arch/arm/mach-tegra/pm.c
++++ b/arch/arm/mach-tegra/pm.c
+@@ -146,8 +146,8 @@ static int tegra_sleep_cpu(unsigned long v2p)
+ 	 * if any of secondary CPU's is online and this is the LP2-idle
+ 	 * code-path only for Tegra20/30.
+ 	 */
+-	if (trusted_foundations_registered())
+-		outer_disable();
++	if (trusted_foundations_registered() && outer_cache.disable)
++		outer_cache.disable();
  
--static int tegra_i2c_runtime_resume(struct device *dev)
-+static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 	int ret;
-@@ -665,7 +665,7 @@ static int tegra_i2c_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_i2c_runtime_suspend(struct device *dev)
-+static int __maybe_unused tegra_i2c_runtime_suspend(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 
-@@ -1711,8 +1711,7 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int tegra_i2c_suspend(struct device *dev)
-+static int __maybe_unused tegra_i2c_suspend(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 
-@@ -1721,7 +1720,7 @@ static int tegra_i2c_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_i2c_resume(struct device *dev)
-+static int __maybe_unused tegra_i2c_resume(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 	int err;
-@@ -1741,18 +1740,13 @@ static const struct dev_pm_ops tegra_i2c_pm = {
- 			   NULL)
- };
- 
--#define TEGRA_I2C_PM	(&tegra_i2c_pm)
--#else
--#define TEGRA_I2C_PM	NULL
--#endif
--
- static struct platform_driver tegra_i2c_driver = {
- 	.probe   = tegra_i2c_probe,
- 	.remove  = tegra_i2c_remove,
- 	.driver  = {
- 		.name  = "tegra-i2c",
- 		.of_match_table = tegra_i2c_of_match,
--		.pm    = TEGRA_I2C_PM,
-+		.pm    = &tegra_i2c_pm,
- 	},
- };
- 
+ 	/*
+ 	 * Note that besides of setting up CPU reset vector this firmware
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index 3fad4a0cbc78..31eeef22c0ff 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -202,10 +202,8 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
+ 	switch (tegra_get_chip_id()) {
+ 	case TEGRA20:
+ 		tegra_idle_driver.states[1].disabled = true;
+-		tegra_idle_driver.states[3].disabled = true;
+-		break;
++		/* fall through */
+ 	case TEGRA30:
+-		tegra_idle_driver.states[2].disabled = true;
+ 		tegra_idle_driver.states[3].disabled = true;
+ 		break;
+ 	case TEGRA114:
 -- 
 2.22.0
