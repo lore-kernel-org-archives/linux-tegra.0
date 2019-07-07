@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 24/24] PM / devfreq: tegra20/30: Add Dmitry as a maintainer
-Date: Mon,  8 Jul 2019 01:33:03 +0300
-Message-ID: <20190707223303.6755-25-digetx@gmail.com>
+Subject: [PATCH v4 23/24] PM / devfreq: tegra30: Increase sampling period to 16ms
+Date: Mon,  8 Jul 2019 01:33:02 +0300
+Message-ID: <20190707223303.6755-24-digetx@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,33 +12,29 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
-want to help keep them working and evolving in the future.
+Increase sampling period by 4ms to get a nicer pow2 value, converting
+diving into shifts in the code. That's more preferable for Tegra30 that
+doesn't have hardware divider instructions because of older Cortex-A9 CPU.
+In a result boosting events are delayed by 4ms, which is not sensible in
+practice at all.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/devfreq/tegra30-devfreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 95d4bd85df44..4e47ce737376 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10356,6 +10356,15 @@ F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	Documentation/core-api/boot-time-mm.rst
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 19e872a64148..bde19b758643 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -71,7 +71,7 @@
+  * translates to 2 ^ (K_VAL + 1). ex: 2 ^ (6 + 1) = 128
+  */
+ #define ACTMON_AVERAGE_WINDOW_LOG2				6
+-#define ACTMON_SAMPLING_PERIOD					12 /* ms */
++#define ACTMON_SAMPLING_PERIOD					16 /* ms */
  
-+MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
-+M:	Dmitry Osipenko <digetx@gmail.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-tegra@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+S:	Maintained
-+F:	drivers/devfreq/tegra20-devfreq.c
-+F:	drivers/devfreq/tegra30-devfreq.c
-+
- MEMORY MANAGEMENT
- L:	linux-mm@kvack.org
- W:	http://www.linux-mm.org
+ #define KHZ							1000
+ 
 -- 
 2.22.0
