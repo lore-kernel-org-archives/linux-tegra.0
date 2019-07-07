@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 09/24] PM / devfreq: tegra30: Reset boosting on startup
-Date: Mon,  8 Jul 2019 01:32:48 +0300
-Message-ID: <20190707223303.6755-10-digetx@gmail.com>
+Subject: [PATCH v4 13/24] PM / devfreq: tegra30: Constify structs
+Date: Mon,  8 Jul 2019 01:32:52 +0300
+Message-ID: <20190707223303.6755-14-digetx@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,28 +12,43 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Governor could be stopped while boosting is active. We have assumption
-that everything is reset on governor's restart, including the boosting
-value, which was missed.
+Constify unmodifiable structs for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/devfreq/tegra30-devfreq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index d5d04c25023b..32fe95458ee7 100644
+index 1a10df5dbbed..2f59c78930bd 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -536,6 +536,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
- {
- 	u32 val = 0, target_freq;
+@@ -106,7 +106,7 @@ enum tegra_actmon_device {
+ 	MCCPU,
+ };
  
-+	/* we don't want boosting on restart */
-+	dev->boost_freq = 0;
-+
- 	target_freq = clk_get_rate(tegra->emc_clock) / KHZ;
- 	dev->avg_count = target_freq * ACTMON_SAMPLING_PERIOD;
- 	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
+-static struct tegra_devfreq_device_config actmon_device_configs[] = {
++static const struct tegra_devfreq_device_config actmon_device_configs[] = {
+ 	{
+ 		/* MCALL: All memory accesses (including from the CPUs) */
+ 		.offset = 0x1c0,
+@@ -171,7 +171,7 @@ struct tegra_actmon_emc_ratio {
+ 	unsigned long emc_freq;
+ };
+ 
+-static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
++static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
+ 	{ 1400000, ULONG_MAX },
+ 	{ 1200000,    750000 },
+ 	{ 1100000,    600000 },
+@@ -210,7 +210,7 @@ static inline unsigned long do_percent(unsigned long val, unsigned int pct)
+ 
+ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra)
+ {
+-	struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
++	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
+ 	unsigned int cpu_freq = cpufreq_get(0);
+ 	unsigned int i;
+ 
 -- 
 2.22.0
