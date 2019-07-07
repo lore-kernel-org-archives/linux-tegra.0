@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 13/24] PM / devfreq: tegra30: Constify structs
-Date: Mon,  8 Jul 2019 01:32:52 +0300
-Message-ID: <20190707223303.6755-14-digetx@gmail.com>
+Subject: [PATCH v4 14/24] PM / devfreq: tegra30: Ensure that target freq won't overflow
+Date: Mon,  8 Jul 2019 01:32:53 +0300
+Message-ID: <20190707223303.6755-15-digetx@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,43 +12,25 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Constify unmodifiable structs for consistency.
+Potentially very high boosting could cause an integer overflow for a
+highly clocked memory after conversion to MHz.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 1a10df5dbbed..2f59c78930bd 100644
+index 2f59c78930bd..0de1efdaabf4 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -106,7 +106,7 @@ enum tegra_actmon_device {
- 	MCCPU,
- };
+@@ -460,6 +460,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
+ 	unsigned long target_freq;
  
--static struct tegra_devfreq_device_config actmon_device_configs[] = {
-+static const struct tegra_devfreq_device_config actmon_device_configs[] = {
- 	{
- 		/* MCALL: All memory accesses (including from the CPUs) */
- 		.offset = 0x1c0,
-@@ -171,7 +171,7 @@ struct tegra_actmon_emc_ratio {
- 	unsigned long emc_freq;
- };
+ 	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD + dev->boost_freq;
++	target_freq = min(target_freq, ULONG_MAX / KHZ);
+ 	target_freq = tegra_actmon_account_cpu_freq(tegra, dev, target_freq);
  
--static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
-+static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
- 	{ 1400000, ULONG_MAX },
- 	{ 1200000,    750000 },
- 	{ 1100000,    600000 },
-@@ -210,7 +210,7 @@ static inline unsigned long do_percent(unsigned long val, unsigned int pct)
- 
- static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra)
- {
--	struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
-+	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
- 	unsigned int cpu_freq = cpufreq_get(0);
- 	unsigned int i;
- 
+ 	return target_freq;
 -- 
 2.22.0
