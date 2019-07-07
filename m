@@ -1,195 +1,139 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 00/13] memory: tegra: Introduce Tegra30 EMC driver
-Date: Mon,  8 Jul 2019 01:54:11 +0300
-Message-ID: <20190707225424.9562-1-digetx@gmail.com>
+Subject: [PATCH v7 02/13] memory: tegra20-emc: Drop setting EMC rate to max on probe
+Date: Mon,  8 Jul 2019 01:54:13 +0300
+Message-ID: <20190707225424.9562-3-digetx@gmail.com>
+References: <20190707225424.9562-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190707225424.9562-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+The memory frequency scaling will be managed by tegra20-devfreq driver
+and PM QoS once all the prerequisite patches will get upstreamed.
+The parent clock is now managed by the clock driver and we also should
+assume that PLLM rate can't be changed on some devices (Galaxy Tab 10.1
+for example). Altogether there is no point in touching of clock's rate
+from the EMC driver.
 
-This series introduces driver for the External Memory Controller (EMC)
-found on Tegra30 chips, it controls the external DRAM on the board. The
-purpose of this driver is to program memory timing for external memory on
-the EMC clock rate change. The driver was tested using the ACTMON devfreq
-driver that performs memory frequency scaling based on memory-usage load.
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/tegra/tegra20-emc.c | 78 +-----------------------------
+ 1 file changed, 1 insertion(+), 77 deletions(-)
 
-Changelog:
-
-v7: - Addressed review comments that were made by Rob Herring to v6 by
-      removing old Terga30 Memory Controller binding once it's converted
-      to YAML, by using explicit patterns for the sub-nodes and specifying
-      min/max clock rates in the YAML.
-
-    - Two patches that were added in v6 are removed from the series:
-
-        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
-        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
-
-      Because the problem with the PLLP is resolved now, turned out it was
-      a bug in the CPU-suspend code.
-
-    - The "Introduce Tegra30 EMC driver" patch got a fix for the "Same Freq"
-      bit typo, it's a bit 27 and not 16.
-
-v6: - Tegra124 Memory Controller binding factored out into standalone
-      binding because it requires to specify MC_EMEM_ARB_MISC1 for EMEM
-      programming, which is not required for Tegra30. This makes the
-      upstream MC registers specification to match downstream exactly,
-      easing porting of boards memory timings configuration to upstream.
-
-    - Tegra30/124 Memory Controller binding converted to YAML.
-
-    - Tegra30 External Memory Controller binding now is in YAML format.
-
-    - Added workaround for hanging during LP2 when EMC runs off PLLP on
-      Tegra30 in this new patches:
-
-        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
-        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
-
-    - Added info message to the Tegra20/30 EMC drivers, telling about
-      RAM code and a number of available timings:
-
-        memory: tegra20-emc: Print a brief info message about the timings
-
-v5: - Addressed review comments that were made by Thierry Reding to v4 by
-      adding appropriate copyrights to the source code headers and making
-      Tegra30 EMC driver to use common Tegra20 CLK API directly instead
-      of having a dummy-proxy functions specifically for Tegra30.
-
-    - Addressed review comments that were made by Stephen Boyd to v4 by
-      rewording commit message of the "Add custom EMC clock implementation"
-      patch and adding clarifying comment (to that patch as well) which
-      tells why EMC is a critical clock.
-
-    - Added suspend-resume to Tegra30 EMC driver to error out if EMC driver
-      is in a "bad state" as it will likely cause a hang on entering suspend.
-
-    - Dropped patch "tegra20-emc: Replace clk_get_sys with devm_clk_get"
-      because the replaced clocks are actually should be removed altogether
-      in the "Drop setting EMC rate to max on probe" patch and that was
-      missed by an accident.
-
-    - Added "tegra20-emc: Pre-configure debug register" patch which ensures
-      that inappropriate HW debug features are disabled at a probe time.
-      The same change is also made in the "Introduce Tegra30 EMC driver"
-      patch.
-
-    - Added ACKs to the patches from Peter De Schrijver that he gave to v4
-      since all of the v5 changes are actually very minor.
-
-v4: - Addressed review comments that were made by Peter De Schrijver to v3
-      by adding fence_udelay() after writes in the "Add custom EMC clock
-      implementation" patch.
-
-    - Added two new minor patches:
-
-        memory: tegra: Ensure timing control debug features are disabled
-        memory: tegra: Consolidate registers definition into one place
-
-      The first one is needed to ensure that EMC driver will work
-      properly regardless of hardware configuration left after boot.
-      The second patch is just a minor code cleanup.
-
-    - The "Introduce Tegra30 EMC driver" got also few very minor changes.
-      Now every possible error case is handled, nothing is ignored.
-      The EMC_DBG register is explicitly initialized during probe to be
-      on the safe side.
-
-v3: - Addressed review comments that were made by Stephen Boyd to v2 by
-      adding explicit typing for the callback variable, by including
-      "clk-provider.h" directly in the code and by dropping __clk_lookup
-      usage where possible.
-
-    - Added more patches into this series:
-
-        memory: tegra20-emc: Drop setting EMC rate to max on probe
-        memory: tegra20-emc: Adapt for clock driver changes
-        memory: tegra20-emc: Include io.h instead of iopoll.h
-        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-
-      Initially I was going to include these patches into other patchset,
-      but changed my mind after rearranging things a tad. The "Adapt for
-      clock driver changes" patch is directly related to the clock changes
-      done in the first patch of this series, the rest are minor cleanups
-      that are fine to include here as well.
-
-    - Added some more words to the commit message of "Add binding for NVIDIA
-      Tegra30 External Memory Controller" patch, clarifying why common DDR
-      timing device-tree form isn't suitable for Tegra30.
-
-    - The Tegra30 EMC driver now explicitly selects the registers access
-      mode (EMC_DBG mux), not relying on the setting left from bootloader.
-
-v2: - Added support for changing MC clock diver configuration based on
-      Memory Controller (MC) configuration which is part of the memory
-      timing.
-
-    - Merged the "Add custom EMC clock implementation" patch into this
-      series because the "Introduce Tegra30 EMC driver" patch directly
-      depends on it. Please note that Tegra20 EMC driver will need to be
-      adapted for the clock changes as well, I'll send out the Tegra20
-      patches after this series will be applied because of some other
-      dependencies (devfreq) and because the temporary breakage won't
-      be critical (driver will just error out on probe).
-
-    - EMC driver now performs MC configuration validation by checking
-      that the number of MC / EMC timings matches and that the timings
-      rate is the same.
-
-    - EMC driver now supports timings that want to change the MC clock
-      configuration.
-
-    - Other minor prettifying changes of the code.
-
-Dmitry Osipenko (13):
-  clk: tegra20/30: Add custom EMC clock implementation
-  memory: tegra20-emc: Drop setting EMC rate to max on probe
-  memory: tegra20-emc: Adapt for clock driver changes
-  memory: tegra20-emc: Include io.h instead of iopoll.h
-  memory: tegra20-emc: Pre-configure debug register
-  memory: tegra20-emc: Print a brief info message about the timings
-  dt-bindings: memory: tegra30: Convert to Tegra124 YAML
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
-    Controller
-  memory: tegra: Introduce Tegra30 EMC driver
-  memory: tegra: Ensure timing control debug features are disabled
-  memory: tegra: Consolidate registers definition into common header
-  ARM: dts: tegra30: Add External Memory Controller node
-
- .../nvidia,tegra124-mc.yaml                   |  156 +++
- .../nvidia,tegra30-emc.yaml                   |  339 +++++
- .../memory-controllers/nvidia,tegra30-mc.txt  |  123 --
- .../memory-controllers/nvidia,tegra30-mc.yaml |  171 +++
- arch/arm/boot/dts/tegra30.dtsi                |    9 +
- drivers/clk/tegra/Makefile                    |    2 +
- drivers/clk/tegra/clk-tegra20-emc.c           |  293 ++++
- drivers/clk/tegra/clk-tegra20.c               |   55 +-
- drivers/clk/tegra/clk-tegra30.c               |   38 +-
- drivers/clk/tegra/clk.h                       |    3 +
- drivers/memory/tegra/Kconfig                  |   10 +
- drivers/memory/tegra/Makefile                 |    1 +
- drivers/memory/tegra/mc.c                     |   42 +-
- drivers/memory/tegra/mc.h                     |   74 +-
- drivers/memory/tegra/tegra124.c               |   20 -
- drivers/memory/tegra/tegra20-emc.c            |  126 +-
- drivers/memory/tegra/tegra30-emc.c            | 1234 +++++++++++++++++
- drivers/memory/tegra/tegra30.c                |   23 +
- include/linux/clk/tegra.h                     |   11 +
- include/soc/tegra/mc.h                        |    2 +-
- 20 files changed, 2425 insertions(+), 307 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
- delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
- create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
- create mode 100644 drivers/memory/tegra/tegra30-emc.c
-
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 9ee5bef49e47..da8fa592b071 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -137,9 +137,6 @@ struct tegra_emc {
+ 	struct device *dev;
+ 	struct completion clk_handshake_complete;
+ 	struct notifier_block clk_nb;
+-	struct clk *backup_clk;
+-	struct clk *emc_mux;
+-	struct clk *pll_m;
+ 	struct clk *clk;
+ 	void __iomem *regs;
+ 
+@@ -424,41 +421,6 @@ static int emc_setup_hw(struct tegra_emc *emc)
+ 	return 0;
+ }
+ 
+-static int emc_init(struct tegra_emc *emc, unsigned long rate)
+-{
+-	int err;
+-
+-	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
+-	if (err) {
+-		dev_err(emc->dev,
+-			"failed to reparent to backup source: %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_set_rate(emc->pll_m, rate);
+-	if (err) {
+-		dev_err(emc->dev,
+-			"failed to change pll_m rate: %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_set_parent(emc->emc_mux, emc->pll_m);
+-	if (err) {
+-		dev_err(emc->dev,
+-			"failed to reparent to pll_m: %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_set_rate(emc->clk, rate);
+-	if (err) {
+-		dev_err(emc->dev,
+-			"failed to change emc rate: %d\n", err);
+-		return err;
+-	}
+-
+-	return 0;
+-}
+-
+ static int tegra_emc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np;
+@@ -522,52 +484,14 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	emc->pll_m = clk_get_sys(NULL, "pll_m");
+-	if (IS_ERR(emc->pll_m)) {
+-		err = PTR_ERR(emc->pll_m);
+-		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
+-		return err;
+-	}
+-
+-	emc->backup_clk = clk_get_sys(NULL, "pll_p");
+-	if (IS_ERR(emc->backup_clk)) {
+-		err = PTR_ERR(emc->backup_clk);
+-		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
+-		goto put_pll_m;
+-	}
+-
+-	emc->emc_mux = clk_get_parent(emc->clk);
+-	if (IS_ERR(emc->emc_mux)) {
+-		err = PTR_ERR(emc->emc_mux);
+-		dev_err(&pdev->dev, "failed to get emc_mux clock: %d\n", err);
+-		goto put_backup;
+-	}
+-
+ 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
+ 			err);
+-		goto put_backup;
+-	}
+-
+-	/* set DRAM clock rate to maximum */
+-	err = emc_init(emc, emc->timings[emc->num_timings - 1].rate);
+-	if (err) {
+-		dev_err(&pdev->dev, "failed to initialize EMC clock rate: %d\n",
+-			err);
+-		goto unreg_notifier;
++		return err;
+ 	}
+ 
+ 	return 0;
+-
+-unreg_notifier:
+-	clk_notifier_unregister(emc->clk, &emc->clk_nb);
+-put_backup:
+-	clk_put(emc->backup_clk);
+-put_pll_m:
+-	clk_put(emc->pll_m);
+-
+-	return err;
+ }
+ 
+ static const struct of_device_id tegra_emc_of_match[] = {
 -- 
 2.22.0
