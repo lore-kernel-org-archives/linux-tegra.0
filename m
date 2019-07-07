@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 12/24] PM / devfreq: tegra30: Inline all one-line functions
-Date: Mon,  8 Jul 2019 01:32:51 +0300
-Message-ID: <20190707223303.6755-13-digetx@gmail.com>
+Subject: [PATCH v4 09/24] PM / devfreq: tegra30: Reset boosting on startup
+Date: Mon,  8 Jul 2019 01:32:48 +0300
+Message-ID: <20190707223303.6755-10-digetx@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,54 +12,28 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Depending on a kernel's configuration, a single line functions may not be
-inlined by compiler (like enabled ftracing for example). Let's inline such
-functions explicitly for consistency.
+Governor could be stopped while boosting is active. We have assumption
+that everything is reset on governor's restart, including the boosting
+value, which was missed.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index c6c4a07d3e07..1a10df5dbbed 100644
+index d5d04c25023b..32fe95458ee7 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -181,28 +181,29 @@ static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
- 	{  250000,    100000 },
- };
- 
--static u32 actmon_readl(struct tegra_devfreq *tegra, u32 offset)
-+static inline u32 actmon_readl(struct tegra_devfreq *tegra, u32 offset)
+@@ -536,6 +536,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
  {
- 	return readl_relaxed(tegra->regs + offset);
- }
+ 	u32 val = 0, target_freq;
  
--static void actmon_writel(struct tegra_devfreq *tegra, u32 val, u32 offset)
-+static inline void actmon_writel(struct tegra_devfreq *tegra,
-+				 u32 val, u32 offset)
- {
- 	writel_relaxed(val, tegra->regs + offset);
- }
- 
--static u32 device_readl(struct tegra_devfreq_device *dev, u32 offset)
-+static inline u32 device_readl(struct tegra_devfreq_device *dev, u32 offset)
- {
- 	return readl_relaxed(dev->regs + offset);
- }
- 
--static void device_writel(struct tegra_devfreq_device *dev, u32 val,
--			  u32 offset)
-+static inline void device_writel(struct tegra_devfreq_device *dev,
-+				 u32 val, u32 offset)
- {
- 	writel_relaxed(val, dev->regs + offset);
- }
- 
--static unsigned long do_percent(unsigned long val, unsigned int pct)
-+static inline unsigned long do_percent(unsigned long val, unsigned int pct)
- {
- 	return val * pct / 100;
- }
++	/* we don't want boosting on restart */
++	dev->boost_freq = 0;
++
+ 	target_freq = clk_get_rate(tegra->emc_clock) / KHZ;
+ 	dev->avg_count = target_freq * ACTMON_SAMPLING_PERIOD;
+ 	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
 -- 
 2.22.0
