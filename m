@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 03/13] memory: tegra20-emc: Adapt for clock driver changes
-Date: Mon,  8 Jul 2019 01:54:14 +0300
-Message-ID: <20190707225424.9562-4-digetx@gmail.com>
+Subject: [PATCH v7 05/13] memory: tegra20-emc: Pre-configure debug register
+Date: Mon,  8 Jul 2019 01:54:16 +0300
+Message-ID: <20190707225424.9562-6-digetx@gmail.com>
 References: <20190707225424.9562-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,102 +12,64 @@ To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Now Terga20 and Tegra30 EMC drivers should provide clock-rounding
-functionality using the new Tegra-CLK driver API.
+The driver expects certain debug features to be disabled in order to
+work properly. Let's disable them explicitly for consistency and to not
+rely on a boot state.
 
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 50 ++++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
+ drivers/memory/tegra/tegra20-emc.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index da8fa592b071..b519f02b0ee9 100644
+index 1ce351dd5461..85c24f285fd4 100644
 --- a/drivers/memory/tegra/tegra20-emc.c
 +++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -6,6 +6,7 @@
-  */
+@@ -22,6 +22,7 @@
  
- #include <linux/clk.h>
-+#include <linux/clk/tegra.h>
- #include <linux/completion.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
-@@ -421,6 +422,44 @@ static int emc_setup_hw(struct tegra_emc *emc)
- 	return 0;
- }
+ #define EMC_INTSTATUS				0x000
+ #define EMC_INTMASK				0x004
++#define EMC_DBG					0x008
+ #define EMC_TIMING_CONTROL			0x028
+ #define EMC_RC					0x02c
+ #define EMC_RFC					0x030
+@@ -80,6 +81,12 @@
+ #define EMC_REFRESH_OVERFLOW_INT		BIT(3)
+ #define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
  
-+static long emc_round_rate(unsigned long rate,
-+			   unsigned long min_rate,
-+			   unsigned long max_rate,
-+			   void *arg)
-+{
-+	struct emc_timing *timing = NULL;
-+	struct tegra_emc *emc = arg;
-+	unsigned int i;
++#define EMC_DBG_READ_MUX_ASSEMBLY		BIT(0)
++#define EMC_DBG_WRITE_MUX_ACTIVE		BIT(1)
++#define EMC_DBG_FORCE_UPDATE			BIT(2)
++#define EMC_DBG_READ_DQM_CTRL			BIT(9)
++#define EMC_DBG_CFG_PRIORITY			BIT(24)
 +
-+	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
-+
-+	for (i = 0; i < emc->num_timings; i++) {
-+		if (emc->timings[i].rate < rate && i != emc->num_timings - 1)
-+			continue;
-+
-+		if (emc->timings[i].rate > max_rate) {
-+			i = max(i, 1u) - 1;
-+
-+			if (emc->timings[i].rate < min_rate)
-+				break;
-+		}
-+
-+		if (emc->timings[i].rate < min_rate)
-+			continue;
-+
-+		timing = &emc->timings[i];
-+		break;
-+	}
-+
-+	if (!timing) {
-+		dev_err(emc->dev, "no timing for rate %lu min %lu max %lu\n",
-+			rate, min_rate, max_rate);
-+		return -EINVAL;
-+	}
-+
-+	return timing->rate;
-+}
-+
- static int tegra_emc_probe(struct platform_device *pdev)
+ static const u16 emc_timing_registers[] = {
+ 	EMC_RC,
+ 	EMC_RFC,
+@@ -396,7 +403,7 @@ tegra_emc_find_node_by_ram_code(struct device *dev)
+ static int emc_setup_hw(struct tegra_emc *emc)
  {
- 	struct device_node *np;
-@@ -477,21 +516,28 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		return err;
- 	}
+ 	u32 intmask = EMC_REFRESH_OVERFLOW_INT | EMC_CLKCHANGE_COMPLETE_INT;
+-	u32 emc_cfg;
++	u32 emc_cfg, emc_dbg;
  
-+	tegra20_clk_set_emc_round_callback(emc_round_rate, emc);
+ 	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
+ 
+@@ -419,6 +426,14 @@ static int emc_setup_hw(struct tegra_emc *emc)
+ 	writel_relaxed(intmask, emc->regs + EMC_INTMASK);
+ 	writel_relaxed(intmask, emc->regs + EMC_INTSTATUS);
+ 
++	/* ensure that unwanted debug features are disabled */
++	emc_dbg = readl_relaxed(emc->regs + EMC_DBG);
++	emc_dbg |= EMC_DBG_CFG_PRIORITY;
++	emc_dbg &= ~EMC_DBG_READ_MUX_ASSEMBLY;
++	emc_dbg &= ~EMC_DBG_WRITE_MUX_ACTIVE;
++	emc_dbg &= ~EMC_DBG_FORCE_UPDATE;
++	writel_relaxed(emc_dbg, emc->regs + EMC_DBG);
 +
- 	emc->clk = devm_clk_get(&pdev->dev, "emc");
- 	if (IS_ERR(emc->clk)) {
- 		err = PTR_ERR(emc->clk);
- 		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
--		return err;
-+		goto unset_cb;
- 	}
- 
- 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
- 			err);
--		return err;
-+		goto unset_cb;
- 	}
- 
  	return 0;
-+
-+unset_cb:
-+	tegra20_clk_set_emc_round_callback(NULL, NULL);
-+
-+	return err;
  }
  
- static const struct of_device_id tegra_emc_of_match[] = {
 -- 
 2.22.0
