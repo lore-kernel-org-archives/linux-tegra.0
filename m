@@ -1,38 +1,30 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 04/13] memory: tegra20-emc: Include io.h instead of iopoll.h
-Date: Mon,  8 Jul 2019 01:54:15 +0300
-Message-ID: <20190707225424.9562-5-digetx@gmail.com>
-References: <20190707225424.9562-1-digetx@gmail.com>
+Subject: [PATCH v1 0/2] Tegra30+ CPU suspend-resume bug-fixes
+Date: Mon,  8 Jul 2019 02:03:56 +0300
+Message-ID: <20190707230358.10672-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190707225424.9562-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The register polling code was gone, but the included header change was
-missed. Fix it up for consistency.
+Hello,
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/memory/tegra/tegra20-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This small series addresses two suspend-resume bugs: one affects Tegra30+
+due to a typo in the code, other fixes CPU hang on Tegra30 specifically.
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index b519f02b0ee9..1ce351dd5461 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -10,7 +10,7 @@
- #include <linux/completion.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
--#include <linux/iopoll.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
+Please review and apply, thanks!
+
+Dmitry Osipenko (2):
+  ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
+  ARM: tegra: Use WFE for power-gating on Tegra30
+
+ arch/arm/mach-tegra/reset-handler.S |  6 +++---
+ arch/arm/mach-tegra/sleep-tegra30.S |  4 +++-
+ drivers/soc/tegra/flowctrl.c        | 19 +++++++++++++++++--
+ 3 files changed, 23 insertions(+), 6 deletions(-)
+
 -- 
 2.22.0
