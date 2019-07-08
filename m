@@ -1,48 +1,72 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH 3/4] gpio: use handler in gpio_irq_chip instead of handle_bad_irq
-Date: Mon,  8 Jul 2019 07:01:37 -0400
-Message-ID: <20190708110138.24657-4-masneyb@onstation.org>
-References: <20190708110138.24657-1-masneyb@onstation.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] gpio: tegra: fix debugfs compile error
+Date: Mon,  8 Jul 2019 14:38:17 +0200
+Message-ID: <20190708123843.3302581-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190708110138.24657-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com, tglx@linutronix.de, marc.zyngier@arm.com, ilina@codeaurora.org, jonathanh@nvidia.com, skomatineni@nvidia.com, bbiswas@nvidia.com, linux-tegra@vger.kernel.org, david.daney@cavium.com, yamada.masahiro@socionext.com, treding@nvidia.com, bjorn.andersson@linaro.org, agross@kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dmitry Osipenko <digetx@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use the IRQ handler field that's available in the struct gpio_irq_chip
-when allocating an IRQ rather than hardcoding the handler to
-handle_bad_irq(). The kernel reboots without any messages when testing
-this using spmi-gpio on the Nexus 5.
+Without this header, some configurations now run into a build failure:
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
+drivers/gpio/gpio-tegra.c:665:2: error: implicit declaration of function 'debugfs_create_file'
+      [-Werror,-Wimplicit-function-declaration]
+        debugfs_create_file("tegra_gpio", 0444, NULL, tgi,
+        ^
+drivers/gpio/gpio-tegra.c:665:2: error: this function declaration is not a prototype [-Werror,-Wstrict-prototypes]
+drivers/gpio/gpio-tegra.c:666:9: error: use of undeclared identifier 'tegra_dbg_gpio_fops'
+
+Remove the #ifdef here and let the compiler drop the unused
+functions itself when debugfs_create_file() is an empty inline
+function.
+
+Fixes: a4de43049a1d ("gpio: tegra: Clean-up debugfs initialisation")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-I didn't have time to dig into more detail about why this is happening.
-I suspect the issue is that __irq_do_set_handler() has a special check
-for handle_bad_irq:
+ drivers/gpio/gpio-tegra.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-https://elixir.bootlin.com/linux/latest/source/kernel/irq/chip.c#L974
-
-My post about this:
-https://lore.kernel.org/linux-gpio/20190707014620.GA9690@onstation.org/
-
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5423242deb81..bc68ebb8f40e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1872,7 +1872,7 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
- 				    hwirq + i,
- 				    gc->irq.chip,
- 				    gc,
--				    handle_bad_irq,
-+				    girq->handler,
- 				    NULL, NULL);
- 		irq_set_probe(irq + i);
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 59b99d8c3647..dbcecbe5f52f 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -9,6 +9,7 @@
+  *	Erik Gilling <konkers@google.com>
+  */
  
++#include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/irq.h>
+@@ -22,6 +23,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm.h>
++#include <linux/seq_file.h>
+ 
+ #define GPIO_BANK(x)		((x) >> 5)
+ #define GPIO_PORT(x)		(((x) >> 3) & 0x3)
+@@ -508,10 +510,6 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
+ }
+ #endif
+ 
+-#ifdef CONFIG_DEBUG_FS
+-
+-#include <linux/debugfs.h>
+-#include <linux/seq_file.h>
+ 
+ static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
+ {
+@@ -538,7 +536,6 @@ static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
+ }
+ 
+ DEFINE_SHOW_ATTRIBUTE(tegra_dbg_gpio);
+-#endif
+ 
+ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
 -- 
-2.20.1
+2.20.0
