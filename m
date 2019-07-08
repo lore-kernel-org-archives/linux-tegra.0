@@ -1,37 +1,201 @@
 From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH 0/4] gpio: hierarchical IRQ improvements
-Date: Mon,  8 Jul 2019 07:01:34 -0400
-Message-ID: <20190708110138.24657-1-masneyb@onstation.org>
+Subject: [PATCH 4/4] qcom: spmi-gpio: convert to hierarchical IRQ helpers in gpio core
+Date: Mon,  8 Jul 2019 07:01:38 -0400
+Message-ID: <20190708110138.24657-5-masneyb@onstation.org>
+References: <20190708110138.24657-1-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190708110138.24657-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com, tglx@linutronix.de, marc.zyngier@arm.com, ilina@codeaurora.org, jonathanh@nvidia.com, skomatineni@nvidia.com, bbiswas@nvidia.com, linux-tegra@vger.kernel.org, david.daney@cavium.com, yamada.masahiro@socionext.com, treding@nvidia.com, bjorn.andersson@linaro.org, agross@kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This builds on top of Linus Walleij's existing patches that adds
-hierarchical IRQ support to the GPIO core [1] so that Qualcomm's
-spmi-gpio and ssbi-gpio can be converted to use these new helpers.
+Now that the GPIO core has support for hierarchical IRQ chips, convert
+Qualcomm's spmi-gpio over to use these new helpers to reduce duplicated
+code across drivers.
 
-Linus: Feel free to squash these into your existing patches if you'd
-like to use any of this code. Just give me some kind of mention in the
-commit description.
+This change was tested on a LG Nexus 5 (hammerhead) phone.
 
-[1] https://lore.kernel.org/linux-gpio/20190624132531.6184-1-linus.walleij@linaro.org/
-
-Brian Masney (4):
-  gpio: introduce gpiochip_populate_parent_fwspec_{two,four}cell
-    functions
-  gpio: allow customizing hierarchical IRQ chips
-  gpio: use handler in gpio_irq_chip instead of handle_bad_irq
-  qcom: spmi-gpio: convert to hierarchical IRQ helpers in gpio core
-
- drivers/gpio/gpiolib.c                   | 78 ++++++++++++++++----
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
  drivers/pinctrl/qcom/Kconfig             |  1 +
  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 92 +++++++-----------------
- include/linux/gpio/driver.h              | 65 +++++++++++++++++
- 4 files changed, 154 insertions(+), 82 deletions(-)
+ 2 files changed, 26 insertions(+), 67 deletions(-)
 
+diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+index 27ab585a639c..9b36da702925 100644
+--- a/drivers/pinctrl/qcom/Kconfig
++++ b/drivers/pinctrl/qcom/Kconfig
+@@ -138,6 +138,7 @@ config PINCTRL_QCOM_SPMI_PMIC
+        select PINMUX
+        select PINCONF
+        select GENERIC_PINCONF
++       select GPIOLIB_IRQCHIP
+        select IRQ_DOMAIN_HIERARCHY
+        help
+          This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index f39da87ea185..0bef149c2f16 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -170,8 +170,6 @@ struct pmic_gpio_state {
+ 	struct regmap	*map;
+ 	struct pinctrl_dev *ctrl;
+ 	struct gpio_chip chip;
+-	struct fwnode_handle *fwnode;
+-	struct irq_domain *domain;
+ };
+ 
+ static const struct pinconf_generic_params pmic_gpio_bindings[] = {
+@@ -751,23 +749,6 @@ static int pmic_gpio_of_xlate(struct gpio_chip *chip,
+ 	return gpio_desc->args[0] - PMIC_GPIO_PHYSICAL_OFFSET;
+ }
+ 
+-static int pmic_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+-{
+-	struct pmic_gpio_state *state = gpiochip_get_data(chip);
+-	struct irq_fwspec fwspec;
+-
+-	fwspec.fwnode = state->fwnode;
+-	fwspec.param_count = 2;
+-	fwspec.param[0] = pin + PMIC_GPIO_PHYSICAL_OFFSET;
+-	/*
+-	 * Set the type to a safe value temporarily. This will be overwritten
+-	 * later with the proper value by irq_set_type.
+-	 */
+-	fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
+-
+-	return irq_create_fwspec_mapping(&fwspec);
+-}
+-
+ static void pmic_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+ 	struct pmic_gpio_state *state = gpiochip_get_data(chip);
+@@ -787,7 +768,6 @@ static const struct gpio_chip pmic_gpio_gpio_template = {
+ 	.request		= gpiochip_generic_request,
+ 	.free			= gpiochip_generic_free,
+ 	.of_xlate		= pmic_gpio_of_xlate,
+-	.to_irq			= pmic_gpio_to_irq,
+ 	.dbg_show		= pmic_gpio_dbg_show,
+ };
+ 
+@@ -964,46 +944,24 @@ static int pmic_gpio_domain_translate(struct irq_domain *domain,
+ 	return 0;
+ }
+ 
+-static int pmic_gpio_domain_alloc(struct irq_domain *domain, unsigned int virq,
+-				  unsigned int nr_irqs, void *data)
++static unsigned int pmic_gpio_child_pin_to_irq(struct gpio_chip *chip,
++					       unsigned int pin)
+ {
+-	struct pmic_gpio_state *state = container_of(domain->host_data,
+-						     struct pmic_gpio_state,
+-						     chip);
+-	struct irq_fwspec *fwspec = data;
+-	struct irq_fwspec parent_fwspec;
+-	irq_hw_number_t hwirq;
+-	unsigned int type;
+-	int ret, i;
+-
+-	ret = pmic_gpio_domain_translate(domain, fwspec, &hwirq, &type);
+-	if (ret)
+-		return ret;
+-
+-	for (i = 0; i < nr_irqs; i++)
+-		irq_domain_set_info(domain, virq + i, hwirq + i,
+-				    &pmic_gpio_irq_chip, state,
+-				    handle_level_irq, NULL, NULL);
++	return pin + PMIC_GPIO_PHYSICAL_OFFSET;
++}
+ 
+-	parent_fwspec.fwnode = domain->parent->fwnode;
+-	parent_fwspec.param_count = 4;
+-	parent_fwspec.param[0] = 0;
+-	parent_fwspec.param[1] = hwirq + 0xc0;
+-	parent_fwspec.param[2] = 0;
+-	parent_fwspec.param[3] = fwspec->param[1];
++static int pmic_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
++					   unsigned int child_hwirq,
++					   unsigned int child_type,
++					   unsigned int *parent_hwirq,
++					   unsigned int *parent_type)
++{
++	*parent_hwirq = child_hwirq + 0xc0;
++	*parent_type = child_type;
+ 
+-	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
+-					    &parent_fwspec);
++	return 0;
+ }
+ 
+-static const struct irq_domain_ops pmic_gpio_domain_ops = {
+-	.activate = gpiochip_irq_domain_activate,
+-	.alloc = pmic_gpio_domain_alloc,
+-	.deactivate = gpiochip_irq_domain_deactivate,
+-	.free = irq_domain_free_irqs_common,
+-	.translate = pmic_gpio_domain_translate,
+-};
+-
+ static int pmic_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct irq_domain *parent_domain;
+@@ -1013,6 +971,7 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 	struct pinctrl_desc *pctrldesc;
+ 	struct pmic_gpio_pad *pad, *pads;
+ 	struct pmic_gpio_state *state;
++	struct gpio_irq_chip *girq;
+ 	int ret, npins, i;
+ 	u32 reg;
+ 
+@@ -1092,19 +1051,21 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 	if (!parent_domain)
+ 		return -ENXIO;
+ 
+-	state->fwnode = of_node_to_fwnode(state->dev->of_node);
+-	state->domain = irq_domain_create_hierarchy(parent_domain, 0,
+-						    state->chip.ngpio,
+-						    state->fwnode,
+-						    &pmic_gpio_domain_ops,
+-						    &state->chip);
+-	if (!state->domain)
+-		return -ENODEV;
++	girq = &state->chip.irq;
++	girq->chip = &pmic_gpio_irq_chip;
++	girq->default_type = IRQ_TYPE_NONE;
++	girq->handler = handle_level_irq;
++	girq->fwnode = of_node_to_fwnode(state->dev->of_node);
++	girq->parent_domain = parent_domain;
++	girq->child_to_parent_hwirq = pmic_gpio_child_to_parent_hwirq;
++	girq->populate_parent_fwspec = gpiochip_populate_parent_fwspec_fourcell;
++	girq->child_pin_to_irq = pmic_gpio_child_pin_to_irq;
++	girq->child_irq_domain_ops.translate = pmic_gpio_domain_translate;
+ 
+ 	ret = gpiochip_add_data(&state->chip, state);
+ 	if (ret) {
+ 		dev_err(state->dev, "can't add gpio chip\n");
+-		goto err_chip_add_data;
++		return ret;
+ 	}
+ 
+ 	/*
+@@ -1130,8 +1091,6 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 
+ err_range:
+ 	gpiochip_remove(&state->chip);
+-err_chip_add_data:
+-	irq_domain_remove(state->domain);
+ 	return ret;
+ }
+ 
+@@ -1140,7 +1099,6 @@ static int pmic_gpio_remove(struct platform_device *pdev)
+ 	struct pmic_gpio_state *state = platform_get_drvdata(pdev);
+ 
+ 	gpiochip_remove(&state->chip);
+-	irq_domain_remove(state->domain);
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
