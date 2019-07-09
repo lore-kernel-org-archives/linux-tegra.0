@@ -1,57 +1,103 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] dmaengine: tegra210-adma: mark PM funtions as __maybe_unused
-Date: Tue,  9 Jul 2019 20:56:47 +0200
-Message-ID: <20190709185703.3298951-1-arnd@arndb.de>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] i2c: tegra: Compile PM functions unconditionally
+Date: Wed, 10 Jul 2019 00:03:58 +0300
+Message-ID: <44febd8d-6b1a-a948-4102-b1809e906f44@gmail.com>
+References: <20190707231234.11679-1-digetx@gmail.com>
+ <13be0f2e-2131-2e0d-d39f-9f1c964b8698@nvidia.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <13be0f2e-2131-2e0d-d39f-9f1c964b8698@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Without the CONFIG_PM_CLK dependency, we can now build this file
-in kernels that don't have CONFIG_PM at all, resulting in a harmless
-warning from code that was always there since it got merged:
+09.07.2019 13:12, Jon Hunter пишет:
+> 
+> On 08/07/2019 00:12, Dmitry Osipenko wrote:
+>> The I2C driver fails to probe if CONFIG_PM_SLEEP=n because runtime PM
+>> doesn't depend on the PM sleep and in this case the runtime PM ops are
+>> not included in the driver, resulting in I2C clock not being enabled.
+>> It's much cleaner to simply allow compiler to remove the dead code
+>> instead of messing with the #ifdefs.
+>>
+>> This patch fixes such errors when CONFIG_PM_SLEEP=n:
+>>
+>>   tegra-i2c 7000c400.i2c: timeout waiting for fifo flush
+>>   tegra-i2c 7000c400.i2c: Failed to initialize i2c controller
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/i2c/busses/i2c-tegra.c | 16 +++++-----------
+>>  1 file changed, 5 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index 9fcb13beeb8f..18f0ceed9f1b 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -636,7 +636,7 @@ static void tegra_dvc_init(struct tegra_i2c_dev *i2c_dev)
+>>  	dvc_writel(i2c_dev, val, DVC_CTRL_REG1);
+>>  }
+>>  
+>> -static int tegra_i2c_runtime_resume(struct device *dev)
+>> +static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
+>>  {
+>>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>>  	int ret;
+>> @@ -665,7 +665,7 @@ static int tegra_i2c_runtime_resume(struct device *dev)
+>>  	return 0;
+>>  }
+>>  
+>> -static int tegra_i2c_runtime_suspend(struct device *dev)
+>> +static int __maybe_unused tegra_i2c_runtime_suspend(struct device *dev)
+>>  {
+>>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>>  
+>> @@ -1711,8 +1711,7 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+>>  	return 0;
+>>  }
+>>  
+>> -#ifdef CONFIG_PM_SLEEP
+>> -static int tegra_i2c_suspend(struct device *dev)
+>> +static int __maybe_unused tegra_i2c_suspend(struct device *dev)
+>>  {
+>>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>>  
+>> @@ -1721,7 +1720,7 @@ static int tegra_i2c_suspend(struct device *dev)
+>>  	return 0;
+>>  }
+>>  
+>> -static int tegra_i2c_resume(struct device *dev)
+>> +static int __maybe_unused tegra_i2c_resume(struct device *dev)
+>>  {
+>>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>>  	int err;
+>> @@ -1741,18 +1740,13 @@ static const struct dev_pm_ops tegra_i2c_pm = {
+>>  			   NULL)
+>>  };
+>>  
+>> -#define TEGRA_I2C_PM	(&tegra_i2c_pm)
+>> -#else
+>> -#define TEGRA_I2C_PM	NULL
+>> -#endif
+>> -
+>>  static struct platform_driver tegra_i2c_driver = {
+>>  	.probe   = tegra_i2c_probe,
+>>  	.remove  = tegra_i2c_remove,
+>>  	.driver  = {
+>>  		.name  = "tegra-i2c",
+>>  		.of_match_table = tegra_i2c_of_match,
+>> -		.pm    = TEGRA_I2C_PM,
+>> +		.pm    = &tegra_i2c_pm,
+>>  	},
+>>  };
+>>  
+> 
+> Looks good to me.
+> 
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-drivers/dma/tegra210-adma.c:747:12: error: 'tegra_adma_runtime_resume' defined but not used [-Werror=unused-function]
- static int tegra_adma_runtime_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/dma/tegra210-adma.c:715:12: error: 'tegra_adma_runtime_suspend' defined but not used [-Werror=unused-function]
- static int tegra_adma_runtime_suspend(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Mark them __maybe_unused to let the compiler silently drop
-those two functions.
-
-Fixes: 3145d73e69ba ("dmaengine: tegra210-adma: remove PM_CLK dependency")
-Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/dma/tegra210-adma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 2805853e963f..2b4be5557b37 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -712,7 +712,7 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
- 	return chan;
- }
- 
--static int tegra_adma_runtime_suspend(struct device *dev)
-+static __maybe_unused int tegra_adma_runtime_suspend(struct device *dev)
- {
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
- 	struct tegra_adma_chan_regs *ch_reg;
-@@ -744,7 +744,7 @@ static int tegra_adma_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_adma_runtime_resume(struct device *dev)
-+static __maybe_unused int tegra_adma_runtime_resume(struct device *dev)
- {
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
- 	struct tegra_adma_chan_regs *ch_reg;
--- 
-2.20.0
+Thanks!
