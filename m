@@ -1,139 +1,66 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V12 01/12] PCI: Add #defines for some of PCIe spec r4.0
- features
-Date: Tue, 9 Jul 2019 19:08:46 +0530
-Message-ID: <841a79fa-24ff-8710-456a-44f081230d8f@nvidia.com>
-References: <20190701124010.7484-1-vidyas@nvidia.com>
- <20190701124010.7484-2-vidyas@nvidia.com>
- <66d8af45-66f5-b597-0ea8-39e8662df5e6@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v5 05/12] drm/modes: Rewrite the command line parser
+Date: Tue, 9 Jul 2019 16:40:20 +0300
+Message-ID: <763b0a94-0b64-c4fa-00a4-dba6b4247c73@gmail.com>
+References: <cover.5190d070d1439d762d7ab273f4ae2573087fee20.1560783090.git-series.maxime.ripard@bootlin.com>
+ <e32cd4009153b184103554009135c7bf7c9975d7.1560783090.git-series.maxime.ripard@bootlin.com>
+ <e1fcea71-b551-274e-4ea0-178bb0d5f71c@gmail.com>
+ <20190709124526.36szuriteq3jumhr@flea>
+ <41d24675-10df-5531-f4ee-4d801e2e4faf@gmail.com>
+ <918c4477-6d59-06a6-ead0-9b2fc3e1eb10@nvidia.com>
+ <fbf926f0-dc9f-af8f-5365-1a67af8d5b60@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <66d8af45-66f5-b597-0ea8-39e8662df5e6@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <fbf926f0-dc9f-af8f-5365-1a67af8d5b60@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: bhelgaas@google.com
-Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: eben@raspberrypi.org, David Airlie <airlied@linux.ie>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@chromium.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/5/2019 7:16 PM, Vidya Sagar wrote:
-Bjorn,
-Apologies for pinging again about this.
-Can you please provide Ack for this change so that Lorenzo can pick up this=
- series?
-
-Thanks,
-Vidya Sagar
-
-> On 7/1/2019 6:09 PM, Vidya Sagar wrote:
-> Bjorn,
-> Can you please provide Ack for this patch?
->=20
-> Thanks,
-> Vidya Sagar
->=20
->> Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
->> features.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> Reviewed-by: Thierry Reding <treding@nvidia.com>
->> ---
->> Changes since [v11]:
->> * None
->>
->> Changes since [v10]:
->> * None
->>
->> Changes since [v9]:
->> * None
->>
->> Changes since [v8]:
->> * None
->>
->> Changes since [v7]:
->> * None
->>
->> Changes since [v6]:
->> * None
->>
->> Changes since [v5]:
->> * None
->>
->> Changes since [v4]:
->> * None
->>
->> Changes since [v3]:
->> * None
->>
->> Changes since [v2]:
->> * Updated commit message and description to explicitly mention that defi=
-nes are
->> =C2=A0=C2=A0 added only for some of the features and not all.
->>
->> Changes since [v1]:
->> * None
->>
->> =C2=A0 include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
->> =C2=A0 1 file changed, 21 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs=
-.h
->> index f28e562d7ca8..1c79f6a097d2 100644
->> --- a/include/uapi/linux/pci_regs.h
->> +++ b/include/uapi/linux/pci_regs.h
->> @@ -713,7 +713,9 @@
->> =C2=A0 #define PCI_EXT_CAP_ID_DPC=C2=A0=C2=A0=C2=A0 0x1D=C2=A0=C2=A0=C2=
-=A0 /* Downstream Port Containment */
->> =C2=A0 #define PCI_EXT_CAP_ID_L1SS=C2=A0=C2=A0=C2=A0 0x1E=C2=A0=C2=A0=C2=
-=A0 /* L1 PM Substates */
->> =C2=A0 #define PCI_EXT_CAP_ID_PTM=C2=A0=C2=A0=C2=A0 0x1F=C2=A0=C2=A0=C2=
-=A0 /* Precision Time Measurement */
->> -#define PCI_EXT_CAP_ID_MAX=C2=A0=C2=A0=C2=A0 PCI_EXT_CAP_ID_PTM
->> +#define PCI_EXT_CAP_ID_DLF=C2=A0=C2=A0=C2=A0 0x25=C2=A0=C2=A0=C2=A0 /* =
-Data Link Feature */
->> +#define PCI_EXT_CAP_ID_PL=C2=A0=C2=A0=C2=A0 0x26=C2=A0=C2=A0=C2=A0 /* P=
-hysical Layer 16.0 GT/s */
->> +#define PCI_EXT_CAP_ID_MAX=C2=A0=C2=A0=C2=A0 PCI_EXT_CAP_ID_PL
->> =C2=A0 #define PCI_EXT_CAP_DSN_SIZEOF=C2=A0=C2=A0=C2=A0 12
->> =C2=A0 #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
->> @@ -1053,4 +1055,22 @@
->> =C2=A0 #define=C2=A0 PCI_L1SS_CTL1_LTR_L12_TH_SCALE=C2=A0=C2=A0=C2=A0 0x=
-e0000000=C2=A0 /* LTR_L1.2_THRESHOLD_Scale */
->> =C2=A0 #define PCI_L1SS_CTL2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=
-x0c=C2=A0=C2=A0=C2=A0 /* Control 2 Register */
->> +/* Data Link Feature */
->> +#define PCI_DLF_CAP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x04=C2=
-=A0=C2=A0=C2=A0 /* Capabilities Register */
->> +#define=C2=A0 PCI_DLF_LOCAL_DLF_SUP_MASK=C2=A0=C2=A0=C2=A0 0x007fffff=
-=C2=A0 /* Local Data Link Feature Supported */
->> +#define=C2=A0 PCI_DLF_EXCHANGE_ENABLE=C2=A0=C2=A0=C2=A0 0x80000000=C2=
-=A0 /* Data Link Feature Exchange Enable */
->> +#define PCI_DLF_STS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x08=C2=
-=A0=C2=A0=C2=A0 /* Status Register */
->> +#define=C2=A0 PCI_DLF_REMOTE_DLF_SUP_MASK=C2=A0=C2=A0=C2=A0 0x007fffff=
-=C2=A0 /* Remote Data Link Feature Supported */
->> +#define=C2=A0 PCI_DLF_REMOTE_DLF_SUP_VALID=C2=A0=C2=A0=C2=A0 0x80000000=
-=C2=A0 /* Remote Data Link Feature Support Valid */
->> +
->> +/* Physical Layer 16.0 GT/s */
->> +#define PCI_PL_16GT_CAP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x04=
-=C2=A0=C2=A0=C2=A0 /* Capabilities Register */
->> +#define PCI_PL_16GT_CTRL=C2=A0=C2=A0=C2=A0 0x08=C2=A0=C2=A0=C2=A0 /* Co=
-ntrol Register */
->> +#define PCI_PL_16GT_STS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0c=
-=C2=A0=C2=A0=C2=A0 /* Status Register */
->> +#define PCI_PL_16GT_LDPM_STS=C2=A0=C2=A0=C2=A0 0x10=C2=A0=C2=A0=C2=A0 /=
-* Local Data Parity Mismatch Status Register */
->> +#define PCI_PL_16GT_FRDPM_STS=C2=A0=C2=A0=C2=A0 0x14=C2=A0=C2=A0=C2=A0 =
-/* First Retimer Data Parity Mismatch Status Register */
->> +#define PCI_PL_16GT_SRDPM_STS=C2=A0=C2=A0=C2=A0 0x18=C2=A0=C2=A0=C2=A0 =
-/* Second Retimer Data Parity Mismatch Status Register */
->> +#define PCI_PL_16GT_RSVD=C2=A0=C2=A0=C2=A0 0x1C=C2=A0=C2=A0=C2=A0 /* Re=
-served */
->> +#define PCI_PL_16GT_LE_CTRL=C2=A0=C2=A0=C2=A0 0x20=C2=A0=C2=A0=C2=A0 /*=
- Lane Equalization Control Register */
->> +
->> =C2=A0 #endif /* LINUX_PCI_REGS_H */
->>
->=20
+MDkuMDcuMjAxOSAxNjoyOCwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+IAo+IE9uIDA5LzA3LzIw
+MTkgMTQ6MjYsIEpvbiBIdW50ZXIgd3JvdGU6Cj4+Cj4+IE9uIDA5LzA3LzIwMTkgMTM6NTIsIERt
+aXRyeSBPc2lwZW5rbyB3cm90ZToKPj4+IDA5LjA3LjIwMTkgMTU6NDUsIE1heGltZSBSaXBhcmQg
+0L/QuNGI0LXRgjoKPj4+PiBIaSwKPj4+Pgo+Pj4+IE9uIEZyaSwgSnVsIDA1LCAyMDE5IGF0IDA3
+OjU0OjQ3UE0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPj4+Pj4gMTcuMDYuMjAxOSAx
+Nzo1MSwgTWF4aW1lIFJpcGFyZCDQv9C40YjQtdGCOgo+Pj4+Pj4gRnJvbTogTWF4aW1lIFJpcGFy
+ZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+Cj4+Pj4+Pgo+Pj4+Pj4gUmV3cml0
+ZSB0aGUgY29tbWFuZCBsaW5lIHBhcnNlciBpbiBvcmRlciB0byBnZXQgYXdheSBmcm9tIHRoZSBz
+dGF0ZSBtYWNoaW5lCj4+Pj4+PiBwYXJzaW5nIHRoZSB2aWRlbyBtb2RlIGxpbmVzLgo+Pj4+Pj4K
+Pj4+Pj4+IEhvcGVmdWxseSwgdGhpcyB3aWxsIGFsbG93IHRvIGV4dGVuZCBpdCBtb3JlIGVhc2ls
+eSB0byBzdXBwb3J0IG5hbWVkIG1vZGVzCj4+Pj4+PiBhbmQgLyBvciBwcm9wZXJ0aWVzIHNldCBk
+aXJlY3RseSBvbiB0aGUgY29tbWFuZCBsaW5lLgo+Pj4+Pj4KPj4+Pj4+IFJldmlld2VkLWJ5OiBO
+b3JhbGYgVHLDuG5uZXMgPG5vcmFsZkB0cm9ubmVzLm9yZz4KPj4+Pj4+IFNpZ25lZC1vZmYtYnk6
+IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+Pj4+Pj4g
+LS0tCj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9tb2Rlcy5jIHwgMzI1ICsrKysrKysrKysr
+KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPj4+Pj4+ICAxIGZpbGUgY2hhbmdlZCwgMjEwIGlu
+c2VydGlvbnMoKyksIDExNSBkZWxldGlvbnMoLSkKPj4+Pj4KPj4+Pj4gSSBoYXZlIGEgVGVncmEg
+ZGV2aWNlIHRoYXQgdXNlcyBhIHN0b2NrIGFuZHJvaWQgYm9vdGxvYWRlciB3aGljaAo+Pj4+PiBw
+YXNzZXMgInZpZGVvPXRlZ3JhZmIiIGluIHRoZSBrZXJuZWxzIGNtZGxpbmUuIFRoYXQgd2Fzbid0
+IGEgcHJvYmxlbQo+Pj4+PiBiZWZvcmUgdGhpcyBwYXRjaCwgYnV0IG5vdyBUZWdyYSBEUk0gZHJp
+dmVyIGZhaWxzIHRvIHByb2JlIGJlY2F1c2UKPj4+Pj4gdGhlIG1vZGUgaXMgMHgwOjAgYW5kIGhl
+bmNlIGZyYW1lYnVmZmVyIGFsbG9jYXRpb24gZmFpbHMuIElzIGl0IGEKPj4+Pj4gbGVnaXQgcmVn
+cmVzc2lvbiB0aGF0IHNob3VsZCBiZSBmaXhlZCBpbiB1cHN0cmVhbT8KPj4+Pgo+Pj4+IFRoaWVy
+cnkgaW5kZWVkIHJlcG9ydGVkIHRoYXQgaXNzdWUsIGJ1dCB0aGUgZGlzY3Vzc2lvbiBwcmV0dHkg
+bXVjaAo+Pj4+IHN0YWxsZWQgc2luY2UgdGhlbi4KPj4KPj4gWWVzIFRoaWVycnkgaXMgY3VycmVu
+dGx5IG91dCBhbmQgaGVuY2UgaGFzIG5vdCByZXNwb25kZWQuIEkgaGFkIGJlZW4KPj4gcGxhbm5p
+bmcgdG8gbG9vayBhdCB0aGlzIHRoaXMgd2VlayBhbmQgcmVzcG9uZGVkLgo+Pgo+Pj4gU29ycnks
+IHRoaXMgZG9lc24ndCBhbnN3ZXIgbXkgcXVlc3Rpb24uIFdoZXJlIGl0IHdhcyByZXBvcnRlZD8K
+Pj4KPj4gU2FtZSB0aHJlYWQgWzBdLgo+IAo+IENvcnJlY3Rpb24sIGl0IHdhcyBvbiBwYXRjaCA2
+LzEyIGFuZCBub3QgdGhpcyBvbmUuCgpUaGFuayB5b3UgdmVyeSBtdWNoLCBKb24hIFNvIGxvb2tz
+IGxpa2UgdGhpcyBwYXRjaCBpcyBzaW1wbHkgYnJva2VuIGJlY2F1c2UgaXQgc2lsZW50bHkKY29w
+aWVzIHRoZSAibW9kZSdzIG5hbWUiIGFuZCB0aGVuIGRybV9jb25uZWN0b3JfZ2V0X2NtZGxpbmVf
+bW9kZSgpIGRvZXNuJ3QgZXZlbiB0cnkgdG8KdmFsaWRhdGUgdGhlIG1vZGUuCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1h
+aWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
+c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
