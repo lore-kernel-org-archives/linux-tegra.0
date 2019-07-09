@@ -1,56 +1,57 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1] drm/tegra: Fix gpiod_get_from_of_node() regression
-Date: Tue, 9 Jul 2019 17:27:32 +0100
-Message-ID: <9425f0e8-36ec-76cb-b177-fa486fcafc19@nvidia.com>
-References: <20190705151139.19032-1-digetx@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] dmaengine: tegra210-adma: mark PM funtions as __maybe_unused
+Date: Tue,  9 Jul 2019 20:56:47 +0200
+Message-ID: <20190709185703.3298951-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190705151139.19032-1-digetx@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Without the CONFIG_PM_CLK dependency, we can now build this file
+in kernels that don't have CONFIG_PM at all, resulting in a harmless
+warning from code that was always there since it got merged:
 
-On 05/07/2019 16:11, Dmitry Osipenko wrote:
-> That function now returns ERR_PTR instead of NULL if "hpd-gpio" is not
-> present in device-tree. The offending patch missed to adapt the Tegra's
-> DRM driver for the API change.
-> 
-> Fixes: 025bf37725f1 ("gpio: Fix return value mismatch of function gpiod_get_from_of_node()")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/output.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-> index 274cb955e2e1..471d33809cd4 100644
-> --- a/drivers/gpu/drm/tegra/output.c
-> +++ b/drivers/gpu/drm/tegra/output.c
-> @@ -126,8 +126,12 @@ int tegra_output_probe(struct tegra_output *output)
->  						       "nvidia,hpd-gpio", 0,
->  						       GPIOD_IN,
->  						       "HDMI hotplug detect");
-> -	if (IS_ERR(output->hpd_gpio))
-> -		return PTR_ERR(output->hpd_gpio);
-> +	if (IS_ERR(output->hpd_gpio)) {
-> +		if (PTR_ERR(output->hpd_gpio) == -ENOENT)
-> +			output->hpd_gpio = NULL;
-> +		else
-> +			return PTR_ERR(output->hpd_gpio);
-> +	}
->  
->  	if (output->hpd_gpio) {
->  		err = gpiod_to_irq(output->hpd_gpio);
-> 
+drivers/dma/tegra210-adma.c:747:12: error: 'tegra_adma_runtime_resume' defined but not used [-Werror=unused-function]
+ static int tegra_adma_runtime_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/dma/tegra210-adma.c:715:12: error: 'tegra_adma_runtime_suspend' defined but not used [-Werror=unused-function]
+ static int tegra_adma_runtime_suspend(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Mark them __maybe_unused to let the compiler silently drop
+those two functions.
 
-Cheers
-Jon
+Fixes: 3145d73e69ba ("dmaengine: tegra210-adma: remove PM_CLK dependency")
+Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/dma/tegra210-adma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 2805853e963f..2b4be5557b37 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -712,7 +712,7 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
+ 	return chan;
+ }
+ 
+-static int tegra_adma_runtime_suspend(struct device *dev)
++static __maybe_unused int tegra_adma_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra_adma *tdma = dev_get_drvdata(dev);
+ 	struct tegra_adma_chan_regs *ch_reg;
+@@ -744,7 +744,7 @@ static int tegra_adma_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_adma_runtime_resume(struct device *dev)
++static __maybe_unused int tegra_adma_runtime_resume(struct device *dev)
+ {
+ 	struct tegra_adma *tdma = dev_get_drvdata(dev);
+ 	struct tegra_adma_chan_regs *ch_reg;
 -- 
-nvpublic
+2.20.0
