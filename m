@@ -1,54 +1,32 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] drm/tegra: Fix gpiod_get_from_of_node() regression
-Date: Wed, 10 Jul 2019 00:04:15 +0300
-Message-ID: <2a4c63f8-9ea7-a017-57f9-1dec0f178a79@gmail.com>
-References: <20190705151139.19032-1-digetx@gmail.com>
- <9425f0e8-36ec-76cb-b177-fa486fcafc19@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3] media: dt: bindings: tegra-vde: Document new optional
+ IOMMU property
+Date: Tue, 9 Jul 2019 17:02:05 -0600
+Message-ID: <20190709230205.GA1040@bogus>
+References: <20190623170730.5095-1-digetx@gmail.com>
+ <20190623170730.5095-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9425f0e8-36ec-76cb-b177-fa486fcafc19@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190623170730.5095-4-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-09.07.2019 19:27, Jon Hunter пишет:
+On Sun, 23 Jun 2019 20:07:26 +0300, Dmitry Osipenko wrote:
+> All NVIDIA Tegra SoC generations provide IOMMU support for the video
+> decoder engine. Document new optional device-tree property that connects
+> VDE with the IOMMU provider.
 > 
-> On 05/07/2019 16:11, Dmitry Osipenko wrote:
->> That function now returns ERR_PTR instead of NULL if "hpd-gpio" is not
->> present in device-tree. The offending patch missed to adapt the Tegra's
->> DRM driver for the API change.
->>
->> Fixes: 025bf37725f1 ("gpio: Fix return value mismatch of function gpiod_get_from_of_node()")
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/gpu/drm/tegra/output.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
->> index 274cb955e2e1..471d33809cd4 100644
->> --- a/drivers/gpu/drm/tegra/output.c
->> +++ b/drivers/gpu/drm/tegra/output.c
->> @@ -126,8 +126,12 @@ int tegra_output_probe(struct tegra_output *output)
->>  						       "nvidia,hpd-gpio", 0,
->>  						       GPIOD_IN,
->>  						       "HDMI hotplug detect");
->> -	if (IS_ERR(output->hpd_gpio))
->> -		return PTR_ERR(output->hpd_gpio);
->> +	if (IS_ERR(output->hpd_gpio)) {
->> +		if (PTR_ERR(output->hpd_gpio) == -ENOENT)
->> +			output->hpd_gpio = NULL;
->> +		else
->> +			return PTR_ERR(output->hpd_gpio);
->> +	}
->>  
->>  	if (output->hpd_gpio) {
->>  		err = gpiod_to_irq(output->hpd_gpio);
->>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 > 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> No changes since v1.
+> 
+>  Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Thanks!
+Reviewed-by: Rob Herring <robh@kernel.org>
