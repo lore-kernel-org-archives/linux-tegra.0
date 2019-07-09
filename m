@@ -1,61 +1,139 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 05/12] drm/modes: Rewrite the command line parser
-Date: Tue, 9 Jul 2019 14:28:27 +0100
-Message-ID: <fbf926f0-dc9f-af8f-5365-1a67af8d5b60@nvidia.com>
-References: <cover.5190d070d1439d762d7ab273f4ae2573087fee20.1560783090.git-series.maxime.ripard@bootlin.com>
- <e32cd4009153b184103554009135c7bf7c9975d7.1560783090.git-series.maxime.ripard@bootlin.com>
- <e1fcea71-b551-274e-4ea0-178bb0d5f71c@gmail.com>
- <20190709124526.36szuriteq3jumhr@flea>
- <41d24675-10df-5531-f4ee-4d801e2e4faf@gmail.com>
- <918c4477-6d59-06a6-ead0-9b2fc3e1eb10@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V12 01/12] PCI: Add #defines for some of PCIe spec r4.0
+ features
+Date: Tue, 9 Jul 2019 19:08:46 +0530
+Message-ID: <841a79fa-24ff-8710-456a-44f081230d8f@nvidia.com>
+References: <20190701124010.7484-1-vidyas@nvidia.com>
+ <20190701124010.7484-2-vidyas@nvidia.com>
+ <66d8af45-66f5-b597-0ea8-39e8662df5e6@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <918c4477-6d59-06a6-ead0-9b2fc3e1eb10@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <66d8af45-66f5-b597-0ea8-39e8662df5e6@nvidia.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: eben@raspberrypi.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@chromium.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: bhelgaas@google.com
+Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA5LzA3LzIwMTkgMTQ6MjYsIEpvbiBIdW50ZXIgd3JvdGU6Cj4gCj4gT24gMDkvMDcvMjAx
-OSAxMzo1MiwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+PiAwOS4wNy4yMDE5IDE1OjQ1LCBNYXhp
-bWUgUmlwYXJkINC/0LjRiNC10YI6Cj4+PiBIaSwKPj4+Cj4+PiBPbiBGcmksIEp1bCAwNSwgMjAx
-OSBhdCAwNzo1NDo0N1BNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+Pj4gMTcuMDYu
-MjAxOSAxNzo1MSwgTWF4aW1lIFJpcGFyZCDQv9C40YjQtdGCOgo+Pj4+PiBGcm9tOiBNYXhpbWUg
-UmlwYXJkIDxtYXhpbWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4KPj4+Pj4KPj4+Pj4gUmV3
-cml0ZSB0aGUgY29tbWFuZCBsaW5lIHBhcnNlciBpbiBvcmRlciB0byBnZXQgYXdheSBmcm9tIHRo
-ZSBzdGF0ZSBtYWNoaW5lCj4+Pj4+IHBhcnNpbmcgdGhlIHZpZGVvIG1vZGUgbGluZXMuCj4+Pj4+
-Cj4+Pj4+IEhvcGVmdWxseSwgdGhpcyB3aWxsIGFsbG93IHRvIGV4dGVuZCBpdCBtb3JlIGVhc2ls
-eSB0byBzdXBwb3J0IG5hbWVkIG1vZGVzCj4+Pj4+IGFuZCAvIG9yIHByb3BlcnRpZXMgc2V0IGRp
-cmVjdGx5IG9uIHRoZSBjb21tYW5kIGxpbmUuCj4+Pj4+Cj4+Pj4+IFJldmlld2VkLWJ5OiBOb3Jh
-bGYgVHLDuG5uZXMgPG5vcmFsZkB0cm9ubmVzLm9yZz4KPj4+Pj4gU2lnbmVkLW9mZi1ieTogTWF4
-aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+Cj4+Pj4+IC0tLQo+
-Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9tb2Rlcy5jIHwgMzI1ICsrKysrKysrKysrKysrKysr
-KysrKysrLS0tLS0tLS0tLS0tLS0KPj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyMTAgaW5zZXJ0aW9u
-cygrKSwgMTE1IGRlbGV0aW9ucygtKQo+Pj4+Cj4+Pj4gSSBoYXZlIGEgVGVncmEgZGV2aWNlIHRo
-YXQgdXNlcyBhIHN0b2NrIGFuZHJvaWQgYm9vdGxvYWRlciB3aGljaAo+Pj4+IHBhc3NlcyAidmlk
-ZW89dGVncmFmYiIgaW4gdGhlIGtlcm5lbHMgY21kbGluZS4gVGhhdCB3YXNuJ3QgYSBwcm9ibGVt
-Cj4+Pj4gYmVmb3JlIHRoaXMgcGF0Y2gsIGJ1dCBub3cgVGVncmEgRFJNIGRyaXZlciBmYWlscyB0
-byBwcm9iZSBiZWNhdXNlCj4+Pj4gdGhlIG1vZGUgaXMgMHgwOjAgYW5kIGhlbmNlIGZyYW1lYnVm
-ZmVyIGFsbG9jYXRpb24gZmFpbHMuIElzIGl0IGEKPj4+PiBsZWdpdCByZWdyZXNzaW9uIHRoYXQg
-c2hvdWxkIGJlIGZpeGVkIGluIHVwc3RyZWFtPwo+Pj4KPj4+IFRoaWVycnkgaW5kZWVkIHJlcG9y
-dGVkIHRoYXQgaXNzdWUsIGJ1dCB0aGUgZGlzY3Vzc2lvbiBwcmV0dHkgbXVjaAo+Pj4gc3RhbGxl
-ZCBzaW5jZSB0aGVuLgo+IAo+IFllcyBUaGllcnJ5IGlzIGN1cnJlbnRseSBvdXQgYW5kIGhlbmNl
-IGhhcyBub3QgcmVzcG9uZGVkLiBJIGhhZCBiZWVuCj4gcGxhbm5pbmcgdG8gbG9vayBhdCB0aGlz
-IHRoaXMgd2VlayBhbmQgcmVzcG9uZGVkLgo+IAo+PiBTb3JyeSwgdGhpcyBkb2Vzbid0IGFuc3dl
-ciBteSBxdWVzdGlvbi4gV2hlcmUgaXQgd2FzIHJlcG9ydGVkPwo+IAo+IFNhbWUgdGhyZWFkIFsw
-XS4KCkNvcnJlY3Rpb24sIGl0IHdhcyBvbiBwYXRjaCA2LzEyIGFuZCBub3QgdGhpcyBvbmUuCgpK
-b24KCi0tIApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWw=
+On 7/5/2019 7:16 PM, Vidya Sagar wrote:
+Bjorn,
+Apologies for pinging again about this.
+Can you please provide Ack for this change so that Lorenzo can pick up this=
+ series?
+
+Thanks,
+Vidya Sagar
+
+> On 7/1/2019 6:09 PM, Vidya Sagar wrote:
+> Bjorn,
+> Can you please provide Ack for this patch?
+>=20
+> Thanks,
+> Vidya Sagar
+>=20
+>> Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
+>> features.
+>>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> Reviewed-by: Thierry Reding <treding@nvidia.com>
+>> ---
+>> Changes since [v11]:
+>> * None
+>>
+>> Changes since [v10]:
+>> * None
+>>
+>> Changes since [v9]:
+>> * None
+>>
+>> Changes since [v8]:
+>> * None
+>>
+>> Changes since [v7]:
+>> * None
+>>
+>> Changes since [v6]:
+>> * None
+>>
+>> Changes since [v5]:
+>> * None
+>>
+>> Changes since [v4]:
+>> * None
+>>
+>> Changes since [v3]:
+>> * None
+>>
+>> Changes since [v2]:
+>> * Updated commit message and description to explicitly mention that defi=
+nes are
+>> =C2=A0=C2=A0 added only for some of the features and not all.
+>>
+>> Changes since [v1]:
+>> * None
+>>
+>> =C2=A0 include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
+>> =C2=A0 1 file changed, 21 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs=
+.h
+>> index f28e562d7ca8..1c79f6a097d2 100644
+>> --- a/include/uapi/linux/pci_regs.h
+>> +++ b/include/uapi/linux/pci_regs.h
+>> @@ -713,7 +713,9 @@
+>> =C2=A0 #define PCI_EXT_CAP_ID_DPC=C2=A0=C2=A0=C2=A0 0x1D=C2=A0=C2=A0=C2=
+=A0 /* Downstream Port Containment */
+>> =C2=A0 #define PCI_EXT_CAP_ID_L1SS=C2=A0=C2=A0=C2=A0 0x1E=C2=A0=C2=A0=C2=
+=A0 /* L1 PM Substates */
+>> =C2=A0 #define PCI_EXT_CAP_ID_PTM=C2=A0=C2=A0=C2=A0 0x1F=C2=A0=C2=A0=C2=
+=A0 /* Precision Time Measurement */
+>> -#define PCI_EXT_CAP_ID_MAX=C2=A0=C2=A0=C2=A0 PCI_EXT_CAP_ID_PTM
+>> +#define PCI_EXT_CAP_ID_DLF=C2=A0=C2=A0=C2=A0 0x25=C2=A0=C2=A0=C2=A0 /* =
+Data Link Feature */
+>> +#define PCI_EXT_CAP_ID_PL=C2=A0=C2=A0=C2=A0 0x26=C2=A0=C2=A0=C2=A0 /* P=
+hysical Layer 16.0 GT/s */
+>> +#define PCI_EXT_CAP_ID_MAX=C2=A0=C2=A0=C2=A0 PCI_EXT_CAP_ID_PL
+>> =C2=A0 #define PCI_EXT_CAP_DSN_SIZEOF=C2=A0=C2=A0=C2=A0 12
+>> =C2=A0 #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
+>> @@ -1053,4 +1055,22 @@
+>> =C2=A0 #define=C2=A0 PCI_L1SS_CTL1_LTR_L12_TH_SCALE=C2=A0=C2=A0=C2=A0 0x=
+e0000000=C2=A0 /* LTR_L1.2_THRESHOLD_Scale */
+>> =C2=A0 #define PCI_L1SS_CTL2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=
+x0c=C2=A0=C2=A0=C2=A0 /* Control 2 Register */
+>> +/* Data Link Feature */
+>> +#define PCI_DLF_CAP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x04=C2=
+=A0=C2=A0=C2=A0 /* Capabilities Register */
+>> +#define=C2=A0 PCI_DLF_LOCAL_DLF_SUP_MASK=C2=A0=C2=A0=C2=A0 0x007fffff=
+=C2=A0 /* Local Data Link Feature Supported */
+>> +#define=C2=A0 PCI_DLF_EXCHANGE_ENABLE=C2=A0=C2=A0=C2=A0 0x80000000=C2=
+=A0 /* Data Link Feature Exchange Enable */
+>> +#define PCI_DLF_STS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x08=C2=
+=A0=C2=A0=C2=A0 /* Status Register */
+>> +#define=C2=A0 PCI_DLF_REMOTE_DLF_SUP_MASK=C2=A0=C2=A0=C2=A0 0x007fffff=
+=C2=A0 /* Remote Data Link Feature Supported */
+>> +#define=C2=A0 PCI_DLF_REMOTE_DLF_SUP_VALID=C2=A0=C2=A0=C2=A0 0x80000000=
+=C2=A0 /* Remote Data Link Feature Support Valid */
+>> +
+>> +/* Physical Layer 16.0 GT/s */
+>> +#define PCI_PL_16GT_CAP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x04=
+=C2=A0=C2=A0=C2=A0 /* Capabilities Register */
+>> +#define PCI_PL_16GT_CTRL=C2=A0=C2=A0=C2=A0 0x08=C2=A0=C2=A0=C2=A0 /* Co=
+ntrol Register */
+>> +#define PCI_PL_16GT_STS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0c=
+=C2=A0=C2=A0=C2=A0 /* Status Register */
+>> +#define PCI_PL_16GT_LDPM_STS=C2=A0=C2=A0=C2=A0 0x10=C2=A0=C2=A0=C2=A0 /=
+* Local Data Parity Mismatch Status Register */
+>> +#define PCI_PL_16GT_FRDPM_STS=C2=A0=C2=A0=C2=A0 0x14=C2=A0=C2=A0=C2=A0 =
+/* First Retimer Data Parity Mismatch Status Register */
+>> +#define PCI_PL_16GT_SRDPM_STS=C2=A0=C2=A0=C2=A0 0x18=C2=A0=C2=A0=C2=A0 =
+/* Second Retimer Data Parity Mismatch Status Register */
+>> +#define PCI_PL_16GT_RSVD=C2=A0=C2=A0=C2=A0 0x1C=C2=A0=C2=A0=C2=A0 /* Re=
+served */
+>> +#define PCI_PL_16GT_LE_CTRL=C2=A0=C2=A0=C2=A0 0x20=C2=A0=C2=A0=C2=A0 /*=
+ Lane Equalization Control Register */
+>> +
+>> =C2=A0 #endif /* LINUX_PCI_REGS_H */
+>>
+>=20
