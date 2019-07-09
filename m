@@ -1,66 +1,91 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 05/12] drm/modes: Rewrite the command line parser
-Date: Tue, 9 Jul 2019 16:40:20 +0300
-Message-ID: <763b0a94-0b64-c4fa-00a4-dba6b4247c73@gmail.com>
-References: <cover.5190d070d1439d762d7ab273f4ae2573087fee20.1560783090.git-series.maxime.ripard@bootlin.com>
- <e32cd4009153b184103554009135c7bf7c9975d7.1560783090.git-series.maxime.ripard@bootlin.com>
- <e1fcea71-b551-274e-4ea0-178bb0d5f71c@gmail.com>
- <20190709124526.36szuriteq3jumhr@flea>
- <41d24675-10df-5531-f4ee-4d801e2e4faf@gmail.com>
- <918c4477-6d59-06a6-ead0-9b2fc3e1eb10@nvidia.com>
- <fbf926f0-dc9f-af8f-5365-1a67af8d5b60@nvidia.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH V12 01/12] PCI: Add #defines for some of PCIe spec r4.0
+ features
+Date: Tue, 9 Jul 2019 09:14:27 -0500
+Message-ID: <20190709141427.GB35486@google.com>
+References: <20190701124010.7484-1-vidyas@nvidia.com>
+ <20190701124010.7484-2-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <fbf926f0-dc9f-af8f-5365-1a67af8d5b60@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: eben@raspberrypi.org, David Airlie <airlied@linux.ie>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@chromium.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190701124010.7484-2-vidyas@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-MDkuMDcuMjAxOSAxNjoyOCwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+IAo+IE9uIDA5LzA3LzIw
-MTkgMTQ6MjYsIEpvbiBIdW50ZXIgd3JvdGU6Cj4+Cj4+IE9uIDA5LzA3LzIwMTkgMTM6NTIsIERt
-aXRyeSBPc2lwZW5rbyB3cm90ZToKPj4+IDA5LjA3LjIwMTkgMTU6NDUsIE1heGltZSBSaXBhcmQg
-0L/QuNGI0LXRgjoKPj4+PiBIaSwKPj4+Pgo+Pj4+IE9uIEZyaSwgSnVsIDA1LCAyMDE5IGF0IDA3
-OjU0OjQ3UE0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPj4+Pj4gMTcuMDYuMjAxOSAx
-Nzo1MSwgTWF4aW1lIFJpcGFyZCDQv9C40YjQtdGCOgo+Pj4+Pj4gRnJvbTogTWF4aW1lIFJpcGFy
-ZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+Cj4+Pj4+Pgo+Pj4+Pj4gUmV3cml0
-ZSB0aGUgY29tbWFuZCBsaW5lIHBhcnNlciBpbiBvcmRlciB0byBnZXQgYXdheSBmcm9tIHRoZSBz
-dGF0ZSBtYWNoaW5lCj4+Pj4+PiBwYXJzaW5nIHRoZSB2aWRlbyBtb2RlIGxpbmVzLgo+Pj4+Pj4K
-Pj4+Pj4+IEhvcGVmdWxseSwgdGhpcyB3aWxsIGFsbG93IHRvIGV4dGVuZCBpdCBtb3JlIGVhc2ls
-eSB0byBzdXBwb3J0IG5hbWVkIG1vZGVzCj4+Pj4+PiBhbmQgLyBvciBwcm9wZXJ0aWVzIHNldCBk
-aXJlY3RseSBvbiB0aGUgY29tbWFuZCBsaW5lLgo+Pj4+Pj4KPj4+Pj4+IFJldmlld2VkLWJ5OiBO
-b3JhbGYgVHLDuG5uZXMgPG5vcmFsZkB0cm9ubmVzLm9yZz4KPj4+Pj4+IFNpZ25lZC1vZmYtYnk6
-IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+Pj4+Pj4g
-LS0tCj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9tb2Rlcy5jIHwgMzI1ICsrKysrKysrKysr
-KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPj4+Pj4+ICAxIGZpbGUgY2hhbmdlZCwgMjEwIGlu
-c2VydGlvbnMoKyksIDExNSBkZWxldGlvbnMoLSkKPj4+Pj4KPj4+Pj4gSSBoYXZlIGEgVGVncmEg
-ZGV2aWNlIHRoYXQgdXNlcyBhIHN0b2NrIGFuZHJvaWQgYm9vdGxvYWRlciB3aGljaAo+Pj4+PiBw
-YXNzZXMgInZpZGVvPXRlZ3JhZmIiIGluIHRoZSBrZXJuZWxzIGNtZGxpbmUuIFRoYXQgd2Fzbid0
-IGEgcHJvYmxlbQo+Pj4+PiBiZWZvcmUgdGhpcyBwYXRjaCwgYnV0IG5vdyBUZWdyYSBEUk0gZHJp
-dmVyIGZhaWxzIHRvIHByb2JlIGJlY2F1c2UKPj4+Pj4gdGhlIG1vZGUgaXMgMHgwOjAgYW5kIGhl
-bmNlIGZyYW1lYnVmZmVyIGFsbG9jYXRpb24gZmFpbHMuIElzIGl0IGEKPj4+Pj4gbGVnaXQgcmVn
-cmVzc2lvbiB0aGF0IHNob3VsZCBiZSBmaXhlZCBpbiB1cHN0cmVhbT8KPj4+Pgo+Pj4+IFRoaWVy
-cnkgaW5kZWVkIHJlcG9ydGVkIHRoYXQgaXNzdWUsIGJ1dCB0aGUgZGlzY3Vzc2lvbiBwcmV0dHkg
-bXVjaAo+Pj4+IHN0YWxsZWQgc2luY2UgdGhlbi4KPj4KPj4gWWVzIFRoaWVycnkgaXMgY3VycmVu
-dGx5IG91dCBhbmQgaGVuY2UgaGFzIG5vdCByZXNwb25kZWQuIEkgaGFkIGJlZW4KPj4gcGxhbm5p
-bmcgdG8gbG9vayBhdCB0aGlzIHRoaXMgd2VlayBhbmQgcmVzcG9uZGVkLgo+Pgo+Pj4gU29ycnks
-IHRoaXMgZG9lc24ndCBhbnN3ZXIgbXkgcXVlc3Rpb24uIFdoZXJlIGl0IHdhcyByZXBvcnRlZD8K
-Pj4KPj4gU2FtZSB0aHJlYWQgWzBdLgo+IAo+IENvcnJlY3Rpb24sIGl0IHdhcyBvbiBwYXRjaCA2
-LzEyIGFuZCBub3QgdGhpcyBvbmUuCgpUaGFuayB5b3UgdmVyeSBtdWNoLCBKb24hIFNvIGxvb2tz
-IGxpa2UgdGhpcyBwYXRjaCBpcyBzaW1wbHkgYnJva2VuIGJlY2F1c2UgaXQgc2lsZW50bHkKY29w
-aWVzIHRoZSAibW9kZSdzIG5hbWUiIGFuZCB0aGVuIGRybV9jb25uZWN0b3JfZ2V0X2NtZGxpbmVf
-bW9kZSgpIGRvZXNuJ3QgZXZlbiB0cnkgdG8KdmFsaWRhdGUgdGhlIG1vZGUuCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1h
-aWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
-c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Mon, Jul 01, 2019 at 06:09:59PM +0530, Vidya Sagar wrote:
+> Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
+> features.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+Please include spec references in the commit log, e.g., PCIe r5.0, sec
+7.7.4, for Data Link Feature and sec 7.7.5 for Physical Layer 16 GT/s.
+
+>  include/uapi/linux/pci_regs.h | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index f28e562d7ca8..1c79f6a097d2 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -713,7 +713,9 @@
+>  #define PCI_EXT_CAP_ID_DPC	0x1D	/* Downstream Port Containment */
+>  #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
+>  #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
+> -#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PTM
+> +#define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
+> +#define PCI_EXT_CAP_ID_PL	0x26	/* Physical Layer 16.0 GT/s */
+
+Maybe PCI_EXT_CAP_ID_PL_16GT so there's a little more hint of what
+this is for?
+
+> +#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL
+>  
+>  #define PCI_EXT_CAP_DSN_SIZEOF	12
+>  #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
+> @@ -1053,4 +1055,22 @@
+>  #define  PCI_L1SS_CTL1_LTR_L12_TH_SCALE	0xe0000000  /* LTR_L1.2_THRESHOLD_Scale */
+>  #define PCI_L1SS_CTL2		0x0c	/* Control 2 Register */
+>  
+> +/* Data Link Feature */
+> +#define PCI_DLF_CAP		0x04	/* Capabilities Register */
+> +#define  PCI_DLF_LOCAL_DLF_SUP_MASK	0x007fffff  /* Local Data Link Feature Supported */
+> +#define  PCI_DLF_EXCHANGE_ENABLE	0x80000000  /* Data Link Feature Exchange Enable */
+> +#define PCI_DLF_STS		0x08	/* Status Register */
+> +#define  PCI_DLF_REMOTE_DLF_SUP_MASK	0x007fffff  /* Remote Data Link Feature Supported */
+> +#define  PCI_DLF_REMOTE_DLF_SUP_VALID	0x80000000  /* Remote Data Link Feature Support Valid */
+
+I'm a little bit ambivalent about adding #defines that aren't used.  I
+personally would probably just add the things we use, so the header
+file gives a clue about what's currently implemented.  But I guess
+either way is fine.
+
+> +/* Physical Layer 16.0 GT/s */
+> +#define PCI_PL_16GT_CAP		0x04	/* Capabilities Register */
+> +#define PCI_PL_16GT_CTRL	0x08	/* Control Register */
+> +#define PCI_PL_16GT_STS		0x0c	/* Status Register */
+> +#define PCI_PL_16GT_LDPM_STS	0x10	/* Local Data Parity Mismatch Status Register */
+> +#define PCI_PL_16GT_FRDPM_STS	0x14	/* First Retimer Data Parity Mismatch Status Register */
+> +#define PCI_PL_16GT_SRDPM_STS	0x18	/* Second Retimer Data Parity Mismatch Status Register */
+> +#define PCI_PL_16GT_RSVD	0x1C	/* Reserved */
+
+Use lower-case hex consistently here.  There's no global consistency
+in this file, but we can at least be consistent in each section.  But
+I'm even more hesitant about included unused #defines for "reserved"
+fields, so if you drop this it would take care of both :)
+
+> +#define PCI_PL_16GT_LE_CTRL	0x20	/* Lane Equalization Control Register */
+
+This is the only register you actually use.  You defined a local
+PL16G_CAP_OFF_DSP_16G_TX_PRESET_MASK for this register.  Shouldn't
+that be defined here instead of in
+drivers/pci/controller/dwc/pcie-tegra194.c?
+
+>  #endif /* LINUX_PCI_REGS_H */
+> -- 
+> 2.17.1
+> 
