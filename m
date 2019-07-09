@@ -1,102 +1,53 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] i2c: tegra: Compile PM functions unconditionally
-Date: Wed, 10 Jul 2019 00:03:58 +0300
-Message-ID: <44febd8d-6b1a-a948-4102-b1809e906f44@gmail.com>
-References: <20190707231234.11679-1-digetx@gmail.com>
- <13be0f2e-2131-2e0d-d39f-9f1c964b8698@nvidia.com>
+Subject: Re: [PATCH v1] drm/tegra: Fix gpiod_get_from_of_node() regression
+Date: Wed, 10 Jul 2019 00:04:15 +0300
+Message-ID: <2a4c63f8-9ea7-a017-57f9-1dec0f178a79@gmail.com>
+References: <20190705151139.19032-1-digetx@gmail.com>
+ <9425f0e8-36ec-76cb-b177-fa486fcafc19@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <13be0f2e-2131-2e0d-d39f-9f1c964b8698@nvidia.com>
+In-Reply-To: <9425f0e8-36ec-76cb-b177-fa486fcafc19@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-09.07.2019 13:12, Jon Hunter пишет:
+09.07.2019 19:27, Jon Hunter пишет:
 > 
-> On 08/07/2019 00:12, Dmitry Osipenko wrote:
->> The I2C driver fails to probe if CONFIG_PM_SLEEP=n because runtime PM
->> doesn't depend on the PM sleep and in this case the runtime PM ops are
->> not included in the driver, resulting in I2C clock not being enabled.
->> It's much cleaner to simply allow compiler to remove the dead code
->> instead of messing with the #ifdefs.
+> On 05/07/2019 16:11, Dmitry Osipenko wrote:
+>> That function now returns ERR_PTR instead of NULL if "hpd-gpio" is not
+>> present in device-tree. The offending patch missed to adapt the Tegra's
+>> DRM driver for the API change.
 >>
->> This patch fixes such errors when CONFIG_PM_SLEEP=n:
->>
->>   tegra-i2c 7000c400.i2c: timeout waiting for fifo flush
->>   tegra-i2c 7000c400.i2c: Failed to initialize i2c controller
->>
+>> Fixes: 025bf37725f1 ("gpio: Fix return value mismatch of function gpiod_get_from_of_node()")
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/i2c/busses/i2c-tegra.c | 16 +++++-----------
->>  1 file changed, 5 insertions(+), 11 deletions(-)
+>>  drivers/gpu/drm/tegra/output.c | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->> index 9fcb13beeb8f..18f0ceed9f1b 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -636,7 +636,7 @@ static void tegra_dvc_init(struct tegra_i2c_dev *i2c_dev)
->>  	dvc_writel(i2c_dev, val, DVC_CTRL_REG1);
->>  }
+>> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+>> index 274cb955e2e1..471d33809cd4 100644
+>> --- a/drivers/gpu/drm/tegra/output.c
+>> +++ b/drivers/gpu/drm/tegra/output.c
+>> @@ -126,8 +126,12 @@ int tegra_output_probe(struct tegra_output *output)
+>>  						       "nvidia,hpd-gpio", 0,
+>>  						       GPIOD_IN,
+>>  						       "HDMI hotplug detect");
+>> -	if (IS_ERR(output->hpd_gpio))
+>> -		return PTR_ERR(output->hpd_gpio);
+>> +	if (IS_ERR(output->hpd_gpio)) {
+>> +		if (PTR_ERR(output->hpd_gpio) == -ENOENT)
+>> +			output->hpd_gpio = NULL;
+>> +		else
+>> +			return PTR_ERR(output->hpd_gpio);
+>> +	}
 >>  
->> -static int tegra_i2c_runtime_resume(struct device *dev)
->> +static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
->>  {
->>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->>  	int ret;
->> @@ -665,7 +665,7 @@ static int tegra_i2c_runtime_resume(struct device *dev)
->>  	return 0;
->>  }
->>  
->> -static int tegra_i2c_runtime_suspend(struct device *dev)
->> +static int __maybe_unused tegra_i2c_runtime_suspend(struct device *dev)
->>  {
->>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->>  
->> @@ -1711,8 +1711,7 @@ static int tegra_i2c_remove(struct platform_device *pdev)
->>  	return 0;
->>  }
->>  
->> -#ifdef CONFIG_PM_SLEEP
->> -static int tegra_i2c_suspend(struct device *dev)
->> +static int __maybe_unused tegra_i2c_suspend(struct device *dev)
->>  {
->>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->>  
->> @@ -1721,7 +1720,7 @@ static int tegra_i2c_suspend(struct device *dev)
->>  	return 0;
->>  }
->>  
->> -static int tegra_i2c_resume(struct device *dev)
->> +static int __maybe_unused tegra_i2c_resume(struct device *dev)
->>  {
->>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->>  	int err;
->> @@ -1741,18 +1740,13 @@ static const struct dev_pm_ops tegra_i2c_pm = {
->>  			   NULL)
->>  };
->>  
->> -#define TEGRA_I2C_PM	(&tegra_i2c_pm)
->> -#else
->> -#define TEGRA_I2C_PM	NULL
->> -#endif
->> -
->>  static struct platform_driver tegra_i2c_driver = {
->>  	.probe   = tegra_i2c_probe,
->>  	.remove  = tegra_i2c_remove,
->>  	.driver  = {
->>  		.name  = "tegra-i2c",
->>  		.of_match_table = tegra_i2c_of_match,
->> -		.pm    = TEGRA_I2C_PM,
->> +		.pm    = &tegra_i2c_pm,
->>  	},
->>  };
->>  
-> 
-> Looks good to me.
+>>  	if (output->hpd_gpio) {
+>>  		err = gpiod_to_irq(output->hpd_gpio);
+>>
 > 
 > Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
