@@ -1,53 +1,66 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.1 00/96] 5.1.17-stable review
-Date: Wed, 10 Jul 2019 09:24:03 +0200
-Message-ID: <20190710072403.GB12087@kroah.com>
-References: <20190708150526.234572443@linuxfoundation.org>
- <65c41248-f391-1231-c2b3-9c65922a696e@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] dmaengine: tegra210-adma: Fix unused function warnings
+Date: Wed, 10 Jul 2019 09:38:37 +0100
+Message-ID: <5cda4486-d875-4f66-c7f9-0ed11e35d44c@nvidia.com>
+References: <20190709083258.57112-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <65c41248-f391-1231-c2b3-9c65922a696e@nvidia.com>
+In-Reply-To: <20190709083258.57112-1-yuehaibing@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: YueHaibing <yuehaibing@huawei.com>, ldewangan@nvidia.com, vkoul@kernel.org, dan.j.williams@intel.com, thierry.reding@gmail.com
+Cc: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 07:14:05AM +0100, Jon Hunter wrote:
+
+On 09/07/2019 09:32, YueHaibing wrote:
+> If CONFIG_PM is not set, build warnings:
 > 
-> On 08/07/2019 16:12, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.1.17 release.
-> > There are 96 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed 10 Jul 2019 03:03:52 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.17-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+> drivers/dma/tegra210-adma.c:747:12: warning: tegra_adma_runtime_resume defined but not used [-Wunused-function]
+>  static int tegra_adma_runtime_resume(struct device *dev)
+> drivers/dma/tegra210-adma.c:715:12: warning: tegra_adma_runtime_suspend defined but not used [-Wunused-function]
+>  static int tegra_adma_runtime_suspend(struct device *dev)
 > 
-> All tests are passing for Tegra ...
+> Mark the two function as __maybe_unused.
 > 
-> Test results for stable-v5.1:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     32 tests:	32 pass, 0 fail
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/dma/tegra210-adma.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Linux version:	5.1.17-rc1-gb64119f8dffe
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+> index 2805853..b33cf6e 100644
+> --- a/drivers/dma/tegra210-adma.c
+> +++ b/drivers/dma/tegra210-adma.c
+> @@ -712,7 +712,7 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
+>  	return chan;
+>  }
+>  
+> -static int tegra_adma_runtime_suspend(struct device *dev)
+> +static int __maybe_unused tegra_adma_runtime_suspend(struct device *dev)
+>  {
+>  	struct tegra_adma *tdma = dev_get_drvdata(dev);
+>  	struct tegra_adma_chan_regs *ch_reg;
+> @@ -744,7 +744,7 @@ static int tegra_adma_runtime_suspend(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int tegra_adma_runtime_resume(struct device *dev)
+> +static int __maybe_unused tegra_adma_runtime_resume(struct device *dev)
+>  {
+>  	struct tegra_adma *tdma = dev_get_drvdata(dev);
+>  	struct tegra_adma_chan_regs *ch_reg;
 > 
 
-Thanks for testing all of these and letting me know.
+Thanks!
 
-greg k-h
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
