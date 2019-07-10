@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V13 01/12] PCI: Add #defines for some of PCIe spec r4.0 features
-Date: Wed, 10 Jul 2019 11:52:01 +0530
-Message-ID: <20190710062212.1745-2-vidyas@nvidia.com>
+Subject: [PATCH V13 02/12] PCI: Disable MSI for Tegra root ports
+Date: Wed, 10 Jul 2019 11:52:02 +0530
+Message-ID: <20190710062212.1745-3-vidyas@nvidia.com>
 References: <20190710062212.1745-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,23 +12,24 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add #defines only for the Data Link Feature and Physical Layer 16.0 GT/s
-features as defined in PCIe spec r4.0, sec 7.7.4 for Data Link Feature and
-sec 7.7.5 for Physical Layer 16.0 GT/s.
+Tegra PCIe rootports don't generate MSI interrupts for PME and AER events.
+Since PCIe spec (Ref: r4.0 sec 7.7.1.2 and 7.7.2.2) doesn't support using
+a mix of INTx and MSI/MSI-X, MSI needs to be disabled to avoid root ports
+service drivers registering their respective ISRs with MSI interrupt and
+to let only INTx be used for all events.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 ---
 V13:
-* Updated commit message to include references from spec
-* Removed unused defines and moved some from pcie-tegra194.c file
-* Addressed review comments from Bjorn
+* None
 
 V12:
 * None
 
 V11:
-* None
+* Included older Tegra chips to extend the quirk as this issue is present in
+  older Tegra chips as well.
 
 V10:
 * None
@@ -37,59 +38,79 @@ V9:
 * None
 
 V8:
-* None
+* Changed quirk macro to consider class code as well to avoid this quirk
+  getting applied to Tegra194 when it is operating in endpoint mode. Also
+  quoted relevant sections from PCIe spec in comments.
 
 V7:
-* None
+* This is a new patch
 
-V6:
-* None
+ drivers/pci/quirks.c | 53 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-V5:
-* None
-
-V4:
-* None
-
-V3:
-* Updated commit message and description to explicitly mention that defines are
-  added only for some of the features and not all.
-
-V2:
-* None
-
- include/uapi/linux/pci_regs.h | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index f28e562d7ca8..d28d0319d932 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -713,7 +713,9 @@
- #define PCI_EXT_CAP_ID_DPC	0x1D	/* Downstream Port Containment */
- #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
- #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
--#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PTM
-+#define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
-+#define PCI_EXT_CAP_ID_PL_16GT	0x26	/* Physical Layer 16.0 GT/s */
-+#define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL_16GT
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index c66c0ca446c4..1d3cac43ecbc 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2592,6 +2592,59 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA,
+ 			PCI_DEVICE_ID_NVIDIA_NVENET_15,
+ 			nvenet_msi_disable);
  
- #define PCI_EXT_CAP_DSN_SIZEOF	12
- #define PCI_EXT_CAP_MCAST_ENDPOINT_SIZEOF 40
-@@ -1053,4 +1055,14 @@
- #define  PCI_L1SS_CTL1_LTR_L12_TH_SCALE	0xe0000000  /* LTR_L1.2_THRESHOLD_Scale */
- #define PCI_L1SS_CTL2		0x0c	/* Control 2 Register */
- 
-+/* Data Link Feature */
-+#define PCI_DLF_CAP		0x04	/* Capabilities Register */
-+#define  PCI_DLF_EXCHANGE_ENABLE	0x80000000  /* Data Link Feature Exchange Enable */
++/*
++ * PCIe spec r4.0 sec 7.7.1.2 and sec 7.7.2.2 say that if MSI/MSI-X is enabled,
++ * then the device can't use INTx interrupts. Tegra's PCIe root ports don't
++ * generate MSI interrupts for PME and AER events instead only INTx interrupts
++ * are generated. Though Tegra's PCIe root ports can generate MSI interrupts
++ * for other events, since PCIe specificiation doesn't support using a mix of
++ * INTx and MSI/MSI-X, it is required to disable MSI interrupts to avoid port
++ * service drivers registering their respective ISRs for MSIs.
++ */
++static void pci_quirk_nvidia_tegra_disable_rp_msi(struct pci_dev *dev)
++{
++	dev->no_msi = 1;
++}
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad0,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad1,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad2,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf0,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e12,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e13,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0fae,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0faf,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x10e5,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x10e6,
++			      PCI_CLASS_BRIDGE_PCI, 8,
++			      pci_quirk_nvidia_tegra_disable_rp_msi);
 +
-+/* Physical Layer 16.0 GT/s */
-+#define PCI_PL_16GT_LE_CTRL	0x20	/* Lane Equalization Control Register */
-+#define  PCI_PL_16GT_LE_CTRL_DSP_TX_PRESET_MASK		0x0000000F
-+#define  PCI_PL_16GT_LE_CTRL_USP_TX_PRESET_MASK		0x000000F0
-+#define  PCI_PL_16GT_LE_CTRL_USP_TX_PRESET_SHIFT	4
-+
- #endif /* LINUX_PCI_REGS_H */
+ /*
+  * Some versions of the MCP55 bridge from Nvidia have a legacy IRQ routing
+  * config register.  This register controls the routing of legacy
 -- 
 2.17.1
