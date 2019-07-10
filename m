@@ -1,91 +1,113 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH V13 08/12] dt-bindings: Add PCIe supports-clkreq property
-Date: Wed, 10 Jul 2019 16:28:56 +0100
-Message-ID: <20190710152856.GB8781@e121166-lin.cambridge.arm.com>
-References: <20190710062212.1745-1-vidyas@nvidia.com>
- <20190710062212.1745-9-vidyas@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
+Date: Wed, 10 Jul 2019 18:45:47 +0300
+Message-ID: <2b17baa6-0d16-acac-f626-51799f0d3293@gmail.com>
+References: <20190709145151.23086-1-digetx@gmail.com>
+ <20190710101229.54ufuhmh22dfxclr@flea>
+ <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
+ <20190710125552.qvmnh6qs63ikiu2k@flea>
+ <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
+ <20190710130615.gvi2jwgr2cds66xr@flea>
+ <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
+ <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
+ <20190710140504.t5lsk36gnn5cdn6b@flea>
+ <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190710062212.1745-9-vidyas@nvidia.com>
+In-Reply-To: <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 11:52:08AM +0530, Vidya Sagar wrote:
-> Some host controllers need to know the existence of clkreq signal routing to
-> downstream devices to be able to advertise low power features like ASPM L1
-> substates. Without clkreq signal routing being present, enabling ASPM L1 sub
-> states might lead to downstream devices falling off the bus. Hence a new device
+10.07.2019 18:05, Dmitry Osipenko пишет:
+> 10.07.2019 17:05, Maxime Ripard пишет:
+>> On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
+>>> This works:
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+>>> index 56d36779d213..e5a2f9c8f404 100644
+>>> --- a/drivers/gpu/drm/drm_client_modeset.c
+>>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+>>> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
+>>>         mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
+>>>         if (mode)
+>>>                 list_add(&mode->head, &connector->modes);
+>>> +       else
+>>> +               cmdline_mode->specified = false;
+>>
+>> Hmmm, it's not clear to me why that wouldn't be the case.
+>>
+>> If we come back to the beginning of that function, we retrieve the
+>> cmdline_mode buffer from the connector pointer, that will probably
+>> have been parsed a first time using drm_mode_create_from_cmdline_mode
+>> in drm_helper_probe_add_cmdline_mode.
+>>
+>> Now, I'm guessing that the issue is that in
+>> drm_mode_parse_command_line_for_connector, if we have a named mode, we
+>> just copy the mode over and set mode->specified.
+>>
+>> And we then move over to do other checks, and that's probably what
+>> fails and returns, but our drm_cmdline_mode will have been modified.
+>>
+>> I'm not entirely sure how to deal with that though.
+>>
+>> I guess we could allocate a drm_cmdline_mode structure on the stack,
+>> fill that, and if successful copy over its content to the one in
+>> drm_connector. That would allow us to only change the content on
+>> success, which is what I would expect from such a function?
+>>
+>> How does that sound?
+> 
+> I now see that there is DRM_MODE_TYPE_USERDEF flag that is assigned only
+> for the "cmdline" mode and drm_client_rotation() is the only place in
+> DRM code that cares about whether mode is from cmdline, hence looks like
+> it will be more correct to do the following:
+> 
+> diff --git a/drivers/gpu/drm/drm_client_modeset.c
+> b/drivers/gpu/drm/drm_client_modeset.c
+> index 56d36779d213..e5b3be9ed689 100644
+> --- a/drivers/gpu/drm/drm_client_modeset.c
+> +++ b/drivers/gpu/drm/drm_client_modeset.c
+> @@ -825,6 +825,7 @@ bool drm_client_rotation(struct drm_mode_set
+> *modeset, unsigned int *rotation)
+>  {
+>         struct drm_connector *connector = modeset->connectors[0];
+>         struct drm_plane *plane = modeset->crtc->primary;
+> +       struct drm_display_mode *mode = modeset->mode;
+>         struct drm_cmdline_mode *cmdline;
+>         u64 valid_mask = 0;
+>         unsigned int i;
+> @@ -859,7 +860,7 @@ bool drm_client_rotation(struct drm_mode_set
+> *modeset, unsigned int *rotation)
+>          * simple XOR between the two handle the addition nicely.
+>          */
+>         cmdline = &connector->cmdline_mode;
+> -       if (cmdline->specified) {
+> +       if (mode->flags & DRM_MODE_TYPE_USERDEF) {
+>                 unsigned int cmdline_rest, panel_rest;
+>                 unsigned int cmdline_rot, panel_rot;
+>                 unsigned int sum_rot, sum_rest;
+> 
 
-You mean "being disconnected from the bus" right ? I will update it.
+Although, then rotation won't be applied to the named mode in that case.
 
-Lorenzo
+Seems the fix could be even simpler:
 
-> tree property 'supports-clkreq' is added to make such host controllers
-> aware of clkreq signal routing to downstream devices.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> ---
-> V13:
-> * None
-> 
-> V12:
-> * Rebased on top of linux-next top of the tree
-> 
-> V11:
-> * None
-> 
-> V10:
-> * None
-> 
-> V9:
-> * None
-> 
-> V8:
-> * None
-> 
-> V7:
-> * None
-> 
-> V6:
-> * s/Documentation\/devicetree/dt-bindings/ in the subject
-> 
-> V5:
-> * None
-> 
-> V4:
-> * Rebased on top of linux-next top of the tree
-> 
-> V3:
-> * None
-> 
-> V2:
-> * This is a new patch in v2 series
-> 
->  Documentation/devicetree/bindings/pci/pci.txt | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/pci.txt b/Documentation/devicetree/bindings/pci/pci.txt
-> index 2a5d91024059..29bcbd88f457 100644
-> --- a/Documentation/devicetree/bindings/pci/pci.txt
-> +++ b/Documentation/devicetree/bindings/pci/pci.txt
-> @@ -27,6 +27,11 @@ driver implementation may support the following properties:
->  - reset-gpios:
->     If present this property specifies PERST# GPIO. Host drivers can parse the
->     GPIO and apply fundamental reset to endpoints.
-> +- supports-clkreq:
-> +   If present this property specifies that CLKREQ signal routing exists from
-> +   root port to downstream device and host bridge drivers can do programming
-> +   which depends on CLKREQ signal existence. For example, programming root port
-> +   not to advertise ASPM L1 Sub-States support if there is no CLKREQ signal.
->  
->  PCI-PCI Bridge properties
->  -------------------------
-> -- 
-> 2.17.1
-> 
+@@ -859,7 +859,7 @@ bool drm_client_rotation(struct drm_mode_set
+*modeset, unsigned int *rotation)
+         * simple XOR between the two handle the addition nicely.
+         */
+        cmdline = &connector->cmdline_mode;
+-       if (cmdline->specified) {
++       if (cmdline->specified && cmdline->rotation_reflection) {
+                unsigned int cmdline_rest, panel_rest;
+                unsigned int cmdline_rot, panel_rot;
+                unsigned int sum_rot, sum_rest;
+
+And looks like there is another problem here.. the cmdline's rotation
+overrides *all* modes while the doc/fb/modedb.rst claims that rotation
+is applied only to the *initial* mode.
