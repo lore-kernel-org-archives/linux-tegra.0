@@ -1,78 +1,146 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
-Date: Wed, 10 Jul 2019 12:12:29 +0200
-Message-ID: <20190710101229.54ufuhmh22dfxclr@flea>
-References: <20190709145151.23086-1-digetx@gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH V13 05/12] PCI: dwc: Add ext config space capability
+ search API
+Date: Wed, 10 Jul 2019 11:37:09 +0100
+Message-ID: <20190710103709.GA4063@e121166-lin.cambridge.arm.com>
+References: <20190710062212.1745-1-vidyas@nvidia.com>
+ <20190710062212.1745-6-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0125342966=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190709145151.23086-1-digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190710062212.1745-6-vidyas@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Jul 10, 2019 at 11:52:05AM +0530, Vidya Sagar wrote:
+> Add extended configuration space capability search API using struct dw_pcie *
+> pointer
 
---===============0125342966==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ahmo6bieusk7uhsj"
-Content-Disposition: inline
+Sentences are terminated with a period and this is v13 not v1, which
+proves that you do not read the commit logs you write.
 
+I need you guys to understand that I can't rewrite commit logs all
+the time, I do not want to go as far as not accepting your patches
+anymore so please do pay attention to commit log details they
+are as important as the code itself.
 
---ahmo6bieusk7uhsj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
 
-On Tue, Jul 09, 2019 at 05:51:51PM +0300, Dmitry Osipenko wrote:
-> The named mode could be invalid and then cmdline parser misses to validate
-> mode's dimensions, happily adding 0x0 mode as a valid mode. One case where
-> this happens is NVIDIA Tegra devices that are using downstream bootloader
-> which adds "video=tegrafb" to the kernel's cmdline and thus upstream Tegra
-> DRM driver fails to probe because of the invalid mode.
->
-> Fixes: 3aeeb13d8996 ("drm/modes: Support modes names on the command line")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Thanks,
+Lorenzo
 
-Applied to drm-misc-next-fixes
-
-Thanks for figuring this out!
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ahmo6bieusk7uhsj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXSW6DQAKCRDj7w1vZxhR
-xUYsAP9EUafm0rr0sX06bl/cIzBTLvcr/5GalKzSZToTJ2kjlwD/aGukUMgjynHS
-9tpGZZ5GnYj8IbRYJWM5g6SBjjc6MA4=
-=8k/L
------END PGP SIGNATURE-----
-
---ahmo6bieusk7uhsj--
-
---===============0125342966==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============0125342966==--
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+> V13:
+> * None
+> 
+> V12:
+> * None
+> 
+> V11:
+> * None
+> 
+> V10:
+> * None
+> 
+> V9:
+> * Added Acked-by from Thierry
+> 
+> V8:
+> * Changed data types of return and arguments to be inline with data being returned
+>   and passed.
+> 
+> V7:
+> * None
+> 
+> V6:
+> * None
+> 
+> V5:
+> * None
+> 
+> V4:
+> * None
+> 
+> V3:
+> * None
+> 
+> V2:
+> * This is a new patch in v2 series
+> 
+>  drivers/pci/controller/dwc/pcie-designware.c | 41 ++++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h |  1 +
+>  2 files changed, 42 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 7818b4febb08..181449e342f1 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -53,6 +53,47 @@ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
+>  
+> +static u16 dw_pcie_find_next_ext_capability(struct dw_pcie *pci, u16 start,
+> +					    u8 cap)
+> +{
+> +	u32 header;
+> +	int ttl;
+> +	int pos = PCI_CFG_SPACE_SIZE;
+> +
+> +	/* minimum 8 bytes per capability */
+> +	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
+> +
+> +	if (start)
+> +		pos = start;
+> +
+> +	header = dw_pcie_readl_dbi(pci, pos);
+> +	/*
+> +	 * If we have no capabilities, this is indicated by cap ID,
+> +	 * cap version and next pointer all being 0.
+> +	 */
+> +	if (header == 0)
+> +		return 0;
+> +
+> +	while (ttl-- > 0) {
+> +		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
+> +			return pos;
+> +
+> +		pos = PCI_EXT_CAP_NEXT(header);
+> +		if (pos < PCI_CFG_SPACE_SIZE)
+> +			break;
+> +
+> +		header = dw_pcie_readl_dbi(pci, pos);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
+> +{
+> +	return dw_pcie_find_next_ext_capability(pci, 0, cap);
+> +}
+> +EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
+> +
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+>  {
+>  	if (!IS_ALIGNED((uintptr_t)addr, size)) {
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index d8c66a6827dc..11c223471416 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -252,6 +252,7 @@ struct dw_pcie {
+>  		container_of((endpoint), struct dw_pcie, ep)
+>  
+>  u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
+> +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap);
+>  
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val);
+>  int dw_pcie_write(void __iomem *addr, int size, u32 val);
+> -- 
+> 2.17.1
+> 
