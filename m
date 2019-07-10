@@ -1,13 +1,11 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
-Date: Wed, 10 Jul 2019 13:00:00 +0300
-Message-ID: <20190710100000.GZ5942@intel.com>
+Date: Wed, 10 Jul 2019 12:12:29 +0200
+Message-ID: <20190710101229.54ufuhmh22dfxclr@flea>
 References: <20190709145151.23086-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0125342966=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
 In-Reply-To: <20190709145151.23086-1-digetx@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
@@ -19,55 +17,62 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdWwgMDksIDIwMTkgYXQgMDU6NTE6NTFQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
-IHdyb3RlOgo+IFRoZSBuYW1lZCBtb2RlIGNvdWxkIGJlIGludmFsaWQgYW5kIHRoZW4gY21kbGlu
-ZSBwYXJzZXIgbWlzc2VzIHRvIHZhbGlkYXRlCj4gbW9kZSdzIGRpbWVuc2lvbnMsIGhhcHBpbHkg
-YWRkaW5nIDB4MCBtb2RlIGFzIGEgdmFsaWQgbW9kZS4gT25lIGNhc2Ugd2hlcmUKPiB0aGlzIGhh
-cHBlbnMgaXMgTlZJRElBIFRlZ3JhIGRldmljZXMgdGhhdCBhcmUgdXNpbmcgZG93bnN0cmVhbSBi
-b290bG9hZGVyCj4gd2hpY2ggYWRkcyAidmlkZW89dGVncmFmYiIgdG8gdGhlIGtlcm5lbCdzIGNt
-ZGxpbmUgYW5kIHRodXMgdXBzdHJlYW0gVGVncmEKPiBEUk0gZHJpdmVyIGZhaWxzIHRvIHByb2Jl
-IGJlY2F1c2Ugb2YgdGhlIGludmFsaWQgbW9kZS4KPiAKPiBGaXhlczogM2FlZWIxM2Q4OTk2ICgi
-ZHJtL21vZGVzOiBTdXBwb3J0IG1vZGVzIG5hbWVzIG9uIHRoZSBjb21tYW5kIGxpbmUiKQoKSXMg
-dGhhdCBhY3R1YWxseSB0cnVlPyBUaGlzIHByb2JsZW0gaGFzIGJlZW4gaW4gdGhlIGNvZGUgc2lu
-Y2UgZm9yZXZlciBBRkFJQ1MuCgo+IFNpZ25lZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGln
-ZXR4QGdtYWlsLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNl
-dC5jIHwgMyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9tb2Rlcy5jICAgICAgICAgIHwgNiAr
-KysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
-PiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNldC5jIGIv
-ZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNldC5jCj4gaW5kZXggZTk1ZmNlYWM4Zjhi
-Li41NmQzNjc3OWQyMTMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRf
-bW9kZXNldC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNldC5jCj4g
-QEAgLTE4MCw3ICsxODAsOCBAQCBkcm1fY29ubmVjdG9yX3BpY2tfY21kbGluZV9tb2RlKHN0cnVj
-dCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCj4gIAo+ICBjcmVhdGVfbW9kZToKPiAgCW1vZGUg
-PSBkcm1fbW9kZV9jcmVhdGVfZnJvbV9jbWRsaW5lX21vZGUoY29ubmVjdG9yLT5kZXYsIGNtZGxp
-bmVfbW9kZSk7Cj4gLQlsaXN0X2FkZCgmbW9kZS0+aGVhZCwgJmNvbm5lY3Rvci0+bW9kZXMpOwo+
-ICsJaWYgKG1vZGUpCj4gKwkJbGlzdF9hZGQoJm1vZGUtPmhlYWQsICZjb25uZWN0b3ItPm1vZGVz
-KTsKClRoYXQncyB0aGUgc2FtZSBhcyB3aGF0IEkgZGlkIGhlcmUKaHR0cHM6Ly9wYXRjaHdvcmsu
-ZnJlZWRlc2t0b3Aub3JnL3BhdGNoLzMwOTIyMy8/c2VyaWVzPTYxNzgxJnJldj0xCgpCdXQgSSdk
-IGhhdmUgdG8gcmViYXNlIHRoYXQgc28gbGV0J3MganVzdCBnbyB3aXRoIHlvdXIgcGF0Y2guCgo+
-ICAKPiAgCXJldHVybiBtb2RlOwo+ICB9Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9k
-cm1fbW9kZXMuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZXMuYwo+IGluZGV4IDkxMDU2MWQ0
-ZjA3MS4uNzRhNTczOWRmNTA2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9k
-ZXMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZXMuYwo+IEBAIC0xNTgsNiArMTU4
-LDkgQEAgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKmRybV9jdnRfbW9kZShzdHJ1Y3QgZHJtX2Rl
-dmljZSAqZGV2LCBpbnQgaGRpc3BsYXksCj4gIAlpbnQgaW50ZXJsYWNlOwo+ICAJdTY0IHRtcDsK
-PiAgCj4gKwlpZiAoIWhkaXNwbGF5IHx8ICF2ZGlzcGxheSkKPiArCQlyZXR1cm4gTlVMTDsKPiAr
-Cj4gIAkvKiBhbGxvY2F0ZSB0aGUgZHJtX2Rpc3BsYXlfbW9kZSBzdHJ1Y3R1cmUuIElmIGZhaWx1
-cmUsIHdlIHdpbGwKPiAgCSAqIHJldHVybiBkaXJlY3RseQo+ICAJICovCj4gQEAgLTM5Miw2ICsz
-OTUsOSBAQCBkcm1fZ3RmX21vZGVfY29tcGxleChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQg
-aGRpc3BsYXksIGludCB2ZGlzcGxheSwKPiAgCWludCBoc3luYywgaGZyb250X3BvcmNoLCB2b2Rk
-X2Zyb250X3BvcmNoX2xpbmVzOwo+ICAJdW5zaWduZWQgaW50IHRtcDEsIHRtcDI7Cj4gIAo+ICsJ
-aWYgKCFoZGlzcGxheSB8fCAhdmRpc3BsYXkpCj4gKwkJcmV0dXJuIE5VTEw7Cj4gKwoKVGhlc2Ug
-bGd0bQoKUGF0Y2ggaXMKUmV2aWV3ZWQtYnk6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFs
-YUBsaW51eC5pbnRlbC5jb20+Cgo+ICAJZHJtX21vZGUgPSBkcm1fbW9kZV9jcmVhdGUoZGV2KTsK
-PiAgCWlmICghZHJtX21vZGUpCj4gIAkJcmV0dXJuIE5VTEw7Cj4gLS0gCj4gMi4yMi4wCj4gCj4g
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgotLSAK
-VmlsbGUgU3lyasOkbMOkCkludGVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbA==
+
+--===============0125342966==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ahmo6bieusk7uhsj"
+Content-Disposition: inline
+
+
+--ahmo6bieusk7uhsj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jul 09, 2019 at 05:51:51PM +0300, Dmitry Osipenko wrote:
+> The named mode could be invalid and then cmdline parser misses to validate
+> mode's dimensions, happily adding 0x0 mode as a valid mode. One case where
+> this happens is NVIDIA Tegra devices that are using downstream bootloader
+> which adds "video=tegrafb" to the kernel's cmdline and thus upstream Tegra
+> DRM driver fails to probe because of the invalid mode.
+>
+> Fixes: 3aeeb13d8996 ("drm/modes: Support modes names on the command line")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+
+Applied to drm-misc-next-fixes
+
+Thanks for figuring this out!
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ahmo6bieusk7uhsj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXSW6DQAKCRDj7w1vZxhR
+xUYsAP9EUafm0rr0sX06bl/cIzBTLvcr/5GalKzSZToTJ2kjlwD/aGukUMgjynHS
+9tpGZZ5GnYj8IbRYJWM5g6SBjjc6MA4=
+=8k/L
+-----END PGP SIGNATURE-----
+
+--ahmo6bieusk7uhsj--
+
+--===============0125342966==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============0125342966==--
