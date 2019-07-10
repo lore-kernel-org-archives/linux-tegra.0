@@ -1,73 +1,73 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: mark PM funtions as
- __maybe_unused
-Date: Wed, 10 Jul 2019 09:42:13 +0100
-Message-ID: <b61434c4-12e6-0c50-79cc-ac15f19d23e6@nvidia.com>
-References: <20190709185703.3298951-1-arnd@arndb.de>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
+Date: Wed, 10 Jul 2019 13:00:00 +0300
+Message-ID: <20190710100000.GZ5942@intel.com>
+References: <20190709145151.23086-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190709185703.3298951-1-arnd@arndb.de>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190709145151.23086-1-digetx@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 09/07/2019 19:56, Arnd Bergmann wrote:
-> Without the CONFIG_PM_CLK dependency, we can now build this file
-> in kernels that don't have CONFIG_PM at all, resulting in a harmless
-> warning from code that was always there since it got merged:
-> 
-> drivers/dma/tegra210-adma.c:747:12: error: 'tegra_adma_runtime_resume' defined but not used [-Werror=unused-function]
->  static int tegra_adma_runtime_resume(struct device *dev)
->             ^~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/dma/tegra210-adma.c:715:12: error: 'tegra_adma_runtime_suspend' defined but not used [-Werror=unused-function]
->  static int tegra_adma_runtime_suspend(struct device *dev)
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Mark them __maybe_unused to let the compiler silently drop
-> those two functions.
-> 
-> Fixes: 3145d73e69ba ("dmaengine: tegra210-adma: remove PM_CLK dependency")
-> Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/dma/tegra210-adma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index 2805853e963f..2b4be5557b37 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -712,7 +712,7 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
->  	return chan;
->  }
->  
-> -static int tegra_adma_runtime_suspend(struct device *dev)
-> +static __maybe_unused int tegra_adma_runtime_suspend(struct device *dev)
->  {
->  	struct tegra_adma *tdma = dev_get_drvdata(dev);
->  	struct tegra_adma_chan_regs *ch_reg;
-> @@ -744,7 +744,7 @@ static int tegra_adma_runtime_suspend(struct device *dev)
->  	return 0;
->  }
->  
-> -static int tegra_adma_runtime_resume(struct device *dev)
-> +static __maybe_unused int tegra_adma_runtime_resume(struct device *dev)
->  {
->  	struct tegra_adma *tdma = dev_get_drvdata(dev);
->  	struct tegra_adma_chan_regs *ch_reg;
-> 
-
-Thanks Arnd, but looks like Yue has beaten you to it again ;-)
-
-https://www.lkml.org/lkml/2019/7/9/209
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gVHVlLCBKdWwgMDksIDIwMTkgYXQgMDU6NTE6NTFQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
+IHdyb3RlOgo+IFRoZSBuYW1lZCBtb2RlIGNvdWxkIGJlIGludmFsaWQgYW5kIHRoZW4gY21kbGlu
+ZSBwYXJzZXIgbWlzc2VzIHRvIHZhbGlkYXRlCj4gbW9kZSdzIGRpbWVuc2lvbnMsIGhhcHBpbHkg
+YWRkaW5nIDB4MCBtb2RlIGFzIGEgdmFsaWQgbW9kZS4gT25lIGNhc2Ugd2hlcmUKPiB0aGlzIGhh
+cHBlbnMgaXMgTlZJRElBIFRlZ3JhIGRldmljZXMgdGhhdCBhcmUgdXNpbmcgZG93bnN0cmVhbSBi
+b290bG9hZGVyCj4gd2hpY2ggYWRkcyAidmlkZW89dGVncmFmYiIgdG8gdGhlIGtlcm5lbCdzIGNt
+ZGxpbmUgYW5kIHRodXMgdXBzdHJlYW0gVGVncmEKPiBEUk0gZHJpdmVyIGZhaWxzIHRvIHByb2Jl
+IGJlY2F1c2Ugb2YgdGhlIGludmFsaWQgbW9kZS4KPiAKPiBGaXhlczogM2FlZWIxM2Q4OTk2ICgi
+ZHJtL21vZGVzOiBTdXBwb3J0IG1vZGVzIG5hbWVzIG9uIHRoZSBjb21tYW5kIGxpbmUiKQoKSXMg
+dGhhdCBhY3R1YWxseSB0cnVlPyBUaGlzIHByb2JsZW0gaGFzIGJlZW4gaW4gdGhlIGNvZGUgc2lu
+Y2UgZm9yZXZlciBBRkFJQ1MuCgo+IFNpZ25lZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGln
+ZXR4QGdtYWlsLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNl
+dC5jIHwgMyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9tb2Rlcy5jICAgICAgICAgIHwgNiAr
+KysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
+PiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNldC5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNldC5jCj4gaW5kZXggZTk1ZmNlYWM4Zjhi
+Li41NmQzNjc3OWQyMTMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRf
+bW9kZXNldC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnRfbW9kZXNldC5jCj4g
+QEAgLTE4MCw3ICsxODAsOCBAQCBkcm1fY29ubmVjdG9yX3BpY2tfY21kbGluZV9tb2RlKHN0cnVj
+dCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCj4gIAo+ICBjcmVhdGVfbW9kZToKPiAgCW1vZGUg
+PSBkcm1fbW9kZV9jcmVhdGVfZnJvbV9jbWRsaW5lX21vZGUoY29ubmVjdG9yLT5kZXYsIGNtZGxp
+bmVfbW9kZSk7Cj4gLQlsaXN0X2FkZCgmbW9kZS0+aGVhZCwgJmNvbm5lY3Rvci0+bW9kZXMpOwo+
+ICsJaWYgKG1vZGUpCj4gKwkJbGlzdF9hZGQoJm1vZGUtPmhlYWQsICZjb25uZWN0b3ItPm1vZGVz
+KTsKClRoYXQncyB0aGUgc2FtZSBhcyB3aGF0IEkgZGlkIGhlcmUKaHR0cHM6Ly9wYXRjaHdvcmsu
+ZnJlZWRlc2t0b3Aub3JnL3BhdGNoLzMwOTIyMy8/c2VyaWVzPTYxNzgxJnJldj0xCgpCdXQgSSdk
+IGhhdmUgdG8gcmViYXNlIHRoYXQgc28gbGV0J3MganVzdCBnbyB3aXRoIHlvdXIgcGF0Y2guCgo+
+ICAKPiAgCXJldHVybiBtb2RlOwo+ICB9Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9k
+cm1fbW9kZXMuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZXMuYwo+IGluZGV4IDkxMDU2MWQ0
+ZjA3MS4uNzRhNTczOWRmNTA2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9k
+ZXMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZXMuYwo+IEBAIC0xNTgsNiArMTU4
+LDkgQEAgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKmRybV9jdnRfbW9kZShzdHJ1Y3QgZHJtX2Rl
+dmljZSAqZGV2LCBpbnQgaGRpc3BsYXksCj4gIAlpbnQgaW50ZXJsYWNlOwo+ICAJdTY0IHRtcDsK
+PiAgCj4gKwlpZiAoIWhkaXNwbGF5IHx8ICF2ZGlzcGxheSkKPiArCQlyZXR1cm4gTlVMTDsKPiAr
+Cj4gIAkvKiBhbGxvY2F0ZSB0aGUgZHJtX2Rpc3BsYXlfbW9kZSBzdHJ1Y3R1cmUuIElmIGZhaWx1
+cmUsIHdlIHdpbGwKPiAgCSAqIHJldHVybiBkaXJlY3RseQo+ICAJICovCj4gQEAgLTM5Miw2ICsz
+OTUsOSBAQCBkcm1fZ3RmX21vZGVfY29tcGxleChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQg
+aGRpc3BsYXksIGludCB2ZGlzcGxheSwKPiAgCWludCBoc3luYywgaGZyb250X3BvcmNoLCB2b2Rk
+X2Zyb250X3BvcmNoX2xpbmVzOwo+ICAJdW5zaWduZWQgaW50IHRtcDEsIHRtcDI7Cj4gIAo+ICsJ
+aWYgKCFoZGlzcGxheSB8fCAhdmRpc3BsYXkpCj4gKwkJcmV0dXJuIE5VTEw7Cj4gKwoKVGhlc2Ug
+bGd0bQoKUGF0Y2ggaXMKUmV2aWV3ZWQtYnk6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFs
+YUBsaW51eC5pbnRlbC5jb20+Cgo+ICAJZHJtX21vZGUgPSBkcm1fbW9kZV9jcmVhdGUoZGV2KTsK
+PiAgCWlmICghZHJtX21vZGUpCj4gIAkJcmV0dXJuIE5VTEw7Cj4gLS0gCj4gMi4yMi4wCj4gCj4g
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgotLSAK
+VmlsbGUgU3lyasOkbMOkCkludGVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbA==
