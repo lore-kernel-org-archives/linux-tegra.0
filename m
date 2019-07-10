@@ -1,161 +1,91 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH V13 05/12] PCI: dwc: Add ext config space capability
- search API
-Date: Wed, 10 Jul 2019 15:19:08 +0100
-Message-ID: <20190710141900.GA8781@e121166-lin.cambridge.arm.com>
-References: <20190710062212.1745-1-vidyas@nvidia.com>
- <20190710062212.1745-6-vidyas@nvidia.com>
- <20190710103709.GA4063@e121166-lin.cambridge.arm.com>
- <fd1fc10e-47d0-aaac-158d-1c19363ec8d3@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
+Date: Wed, 10 Jul 2019 18:05:18 +0300
+Message-ID: <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
+References: <20190709145151.23086-1-digetx@gmail.com>
+ <20190710101229.54ufuhmh22dfxclr@flea>
+ <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
+ <20190710125552.qvmnh6qs63ikiu2k@flea>
+ <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
+ <20190710130615.gvi2jwgr2cds66xr@flea>
+ <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
+ <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
+ <20190710140504.t5lsk36gnn5cdn6b@flea>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <fd1fc10e-47d0-aaac-158d-1c19363ec8d3@nvidia.com>
+In-Reply-To: <20190710140504.t5lsk36gnn5cdn6b@flea>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 04:57:23PM +0530, Vidya Sagar wrote:
-> On 7/10/2019 4:07 PM, Lorenzo Pieralisi wrote:
-> > On Wed, Jul 10, 2019 at 11:52:05AM +0530, Vidya Sagar wrote:
-> > > Add extended configuration space capability search API using struct dw_pcie *
-> > > pointer
-> > 
-> > Sentences are terminated with a period and this is v13 not v1, which
-> > proves that you do not read the commit logs you write.
-> > 
-> > I need you guys to understand that I can't rewrite commit logs all
-> > the time, I do not want to go as far as not accepting your patches
-> > anymore so please do pay attention to commit log details they
-> > are as important as the code itself.
-> > 
-> > https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
-> My sincere apologies.
-> Since I didn't touch this patch much all through this series, I missed it.
-> I'll make a point to not make such mistakes again.
-> Do you want me to send a new version fixing it?
-
-I will update it, I just wanted to get the point across, no
-problems.
-
-Lorenzo
-
-> Thanks,
-> Vidya Sagar
+10.07.2019 17:05, Maxime Ripard пишет:
+> On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
+>> This works:
+>>
+>> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+>> index 56d36779d213..e5a2f9c8f404 100644
+>> --- a/drivers/gpu/drm/drm_client_modeset.c
+>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+>> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
+>>         mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
+>>         if (mode)
+>>                 list_add(&mode->head, &connector->modes);
+>> +       else
+>> +               cmdline_mode->specified = false;
 > 
-> > 
-> > Thanks,
-> > Lorenzo
-> > 
-> > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> > > Acked-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > > V13:
-> > > * None
-> > > 
-> > > V12:
-> > > * None
-> > > 
-> > > V11:
-> > > * None
-> > > 
-> > > V10:
-> > > * None
-> > > 
-> > > V9:
-> > > * Added Acked-by from Thierry
-> > > 
-> > > V8:
-> > > * Changed data types of return and arguments to be inline with data being returned
-> > >    and passed.
-> > > 
-> > > V7:
-> > > * None
-> > > 
-> > > V6:
-> > > * None
-> > > 
-> > > V5:
-> > > * None
-> > > 
-> > > V4:
-> > > * None
-> > > 
-> > > V3:
-> > > * None
-> > > 
-> > > V2:
-> > > * This is a new patch in v2 series
-> > > 
-> > >   drivers/pci/controller/dwc/pcie-designware.c | 41 ++++++++++++++++++++
-> > >   drivers/pci/controller/dwc/pcie-designware.h |  1 +
-> > >   2 files changed, 42 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > > index 7818b4febb08..181449e342f1 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > > @@ -53,6 +53,47 @@ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
-> > > +static u16 dw_pcie_find_next_ext_capability(struct dw_pcie *pci, u16 start,
-> > > +					    u8 cap)
-> > > +{
-> > > +	u32 header;
-> > > +	int ttl;
-> > > +	int pos = PCI_CFG_SPACE_SIZE;
-> > > +
-> > > +	/* minimum 8 bytes per capability */
-> > > +	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-> > > +
-> > > +	if (start)
-> > > +		pos = start;
-> > > +
-> > > +	header = dw_pcie_readl_dbi(pci, pos);
-> > > +	/*
-> > > +	 * If we have no capabilities, this is indicated by cap ID,
-> > > +	 * cap version and next pointer all being 0.
-> > > +	 */
-> > > +	if (header == 0)
-> > > +		return 0;
-> > > +
-> > > +	while (ttl-- > 0) {
-> > > +		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
-> > > +			return pos;
-> > > +
-> > > +		pos = PCI_EXT_CAP_NEXT(header);
-> > > +		if (pos < PCI_CFG_SPACE_SIZE)
-> > > +			break;
-> > > +
-> > > +		header = dw_pcie_readl_dbi(pci, pos);
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
-> > > +{
-> > > +	return dw_pcie_find_next_ext_capability(pci, 0, cap);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
-> > > +
-> > >   int dw_pcie_read(void __iomem *addr, int size, u32 *val)
-> > >   {
-> > >   	if (!IS_ALIGNED((uintptr_t)addr, size)) {
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > > index d8c66a6827dc..11c223471416 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > @@ -252,6 +252,7 @@ struct dw_pcie {
-> > >   		container_of((endpoint), struct dw_pcie, ep)
-> > >   u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
-> > > +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap);
-> > >   int dw_pcie_read(void __iomem *addr, int size, u32 *val);
-> > >   int dw_pcie_write(void __iomem *addr, int size, u32 val);
-> > > -- 
-> > > 2.17.1
-> > > 
+> Hmmm, it's not clear to me why that wouldn't be the case.
 > 
+> If we come back to the beginning of that function, we retrieve the
+> cmdline_mode buffer from the connector pointer, that will probably
+> have been parsed a first time using drm_mode_create_from_cmdline_mode
+> in drm_helper_probe_add_cmdline_mode.
+> 
+> Now, I'm guessing that the issue is that in
+> drm_mode_parse_command_line_for_connector, if we have a named mode, we
+> just copy the mode over and set mode->specified.
+> 
+> And we then move over to do other checks, and that's probably what
+> fails and returns, but our drm_cmdline_mode will have been modified.
+> 
+> I'm not entirely sure how to deal with that though.
+> 
+> I guess we could allocate a drm_cmdline_mode structure on the stack,
+> fill that, and if successful copy over its content to the one in
+> drm_connector. That would allow us to only change the content on
+> success, which is what I would expect from such a function?
+> 
+> How does that sound?
+
+I now see that there is DRM_MODE_TYPE_USERDEF flag that is assigned only
+for the "cmdline" mode and drm_client_rotation() is the only place in
+DRM code that cares about whether mode is from cmdline, hence looks like
+it will be more correct to do the following:
+
+diff --git a/drivers/gpu/drm/drm_client_modeset.c
+b/drivers/gpu/drm/drm_client_modeset.c
+index 56d36779d213..e5b3be9ed689 100644
+--- a/drivers/gpu/drm/drm_client_modeset.c
++++ b/drivers/gpu/drm/drm_client_modeset.c
+@@ -825,6 +825,7 @@ bool drm_client_rotation(struct drm_mode_set
+*modeset, unsigned int *rotation)
+ {
+        struct drm_connector *connector = modeset->connectors[0];
+        struct drm_plane *plane = modeset->crtc->primary;
++       struct drm_display_mode *mode = modeset->mode;
+        struct drm_cmdline_mode *cmdline;
+        u64 valid_mask = 0;
+        unsigned int i;
+@@ -859,7 +860,7 @@ bool drm_client_rotation(struct drm_mode_set
+*modeset, unsigned int *rotation)
+         * simple XOR between the two handle the addition nicely.
+         */
+        cmdline = &connector->cmdline_mode;
+-       if (cmdline->specified) {
++       if (mode->flags & DRM_MODE_TYPE_USERDEF) {
+                unsigned int cmdline_rest, panel_rest;
+                unsigned int cmdline_rot, panel_rot;
+                unsigned int sum_rot, sum_rest;
