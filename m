@@ -1,86 +1,84 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
-Date: Wed, 10 Jul 2019 17:03:23 +0300
-Message-ID: <73d5dcd7-adef-8844-4e13-a68a0a5db98a@gmail.com>
+Date: Wed, 10 Jul 2019 16:05:04 +0200
+Message-ID: <20190710140504.t5lsk36gnn5cdn6b@flea>
 References: <20190709145151.23086-1-digetx@gmail.com>
- <20190710100000.GZ5942@intel.com>
+ <20190710101229.54ufuhmh22dfxclr@flea>
+ <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
+ <20190710125552.qvmnh6qs63ikiu2k@flea>
+ <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
+ <20190710130615.gvi2jwgr2cds66xr@flea>
+ <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
+ <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bariuncpprpjv42x"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190710100000.GZ5942@intel.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-10.07.2019 13:00, Ville Syrjälä пишет:
-> On Tue, Jul 09, 2019 at 05:51:51PM +0300, Dmitry Osipenko wrote:
->> The named mode could be invalid and then cmdline parser misses to validate
->> mode's dimensions, happily adding 0x0 mode as a valid mode. One case where
->> this happens is NVIDIA Tegra devices that are using downstream bootloader
->> which adds "video=tegrafb" to the kernel's cmdline and thus upstream Tegra
->> DRM driver fails to probe because of the invalid mode.
->>
->> Fixes: 3aeeb13d8996 ("drm/modes: Support modes names on the command line")
-> 
-> Is that actually true? This problem has been in the code since forever AFAICS.
 
-Yes, it's a problem now because named mode is marked as specified and
-everything that do not match to a non-named mode is treated as named.
+--bariuncpprpjv42x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/gpu/drm/drm_client_modeset.c | 3 ++-
->>  drivers/gpu/drm/drm_modes.c          | 6 ++++++
->>  2 files changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
->> index e95fceac8f8b..56d36779d213 100644
->> --- a/drivers/gpu/drm/drm_client_modeset.c
->> +++ b/drivers/gpu/drm/drm_client_modeset.c
->> @@ -180,7 +180,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
->>  
->>  create_mode:
->>  	mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
->> -	list_add(&mode->head, &connector->modes);
->> +	if (mode)
->> +		list_add(&mode->head, &connector->modes);
-> 
-> That's the same as what I did here
-> https://patchwork.freedesktop.org/patch/309223/?series=61781&rev=1
-> 
-> But I'd have to rebase that so let's just go with your patch.
-> 
->>  
->>  	return mode;
->>  }
->> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
->> index 910561d4f071..74a5739df506 100644
->> --- a/drivers/gpu/drm/drm_modes.c
->> +++ b/drivers/gpu/drm/drm_modes.c
->> @@ -158,6 +158,9 @@ struct drm_display_mode *drm_cvt_mode(struct drm_device *dev, int hdisplay,
->>  	int interlace;
->>  	u64 tmp;
->>  
->> +	if (!hdisplay || !vdisplay)
->> +		return NULL;
->> +
->>  	/* allocate the drm_display_mode structure. If failure, we will
->>  	 * return directly
->>  	 */
->> @@ -392,6 +395,9 @@ drm_gtf_mode_complex(struct drm_device *dev, int hdisplay, int vdisplay,
->>  	int hsync, hfront_porch, vodd_front_porch_lines;
->>  	unsigned int tmp1, tmp2;
->>  
->> +	if (!hdisplay || !vdisplay)
->> +		return NULL;
->> +
-> 
-> These lgtm
-> 
-> Patch is
-> Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
+> This works:
+>
+> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+> index 56d36779d213..e5a2f9c8f404 100644
+> --- a/drivers/gpu/drm/drm_client_modeset.c
+> +++ b/drivers/gpu/drm/drm_client_modeset.c
+> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_connector *connector)
+>         mode = drm_mode_create_from_cmdline_mode(connector->dev, cmdline_mode);
+>         if (mode)
+>                 list_add(&mode->head, &connector->modes);
+> +       else
+> +               cmdline_mode->specified = false;
 
-Thanks!
+Hmmm, it's not clear to me why that wouldn't be the case.
+
+If we come back to the beginning of that function, we retrieve the
+cmdline_mode buffer from the connector pointer, that will probably
+have been parsed a first time using drm_mode_create_from_cmdline_mode
+in drm_helper_probe_add_cmdline_mode.
+
+Now, I'm guessing that the issue is that in
+drm_mode_parse_command_line_for_connector, if we have a named mode, we
+just copy the mode over and set mode->specified.
+
+And we then move over to do other checks, and that's probably what
+fails and returns, but our drm_cmdline_mode will have been modified.
+
+I'm not entirely sure how to deal with that though.
+
+I guess we could allocate a drm_cmdline_mode structure on the stack,
+fill that, and if successful copy over its content to the one in
+drm_connector. That would allow us to only change the content on
+success, which is what I would expect from such a function?
+
+How does that sound?
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--bariuncpprpjv42x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXSXwjwAKCRDj7w1vZxhR
+xbW+AP9G0wdD7eMxSNjs35WcStnrObO54j7WGEY71hdPnh7yDgD+Ky5utQLhxr2w
+LBn3jxYg3tyjfdWY04f+p6Cj0pBLhQI=
+=wZot
+-----END PGP SIGNATURE-----
+
+--bariuncpprpjv42x--
