@@ -1,157 +1,38 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V13 05/12] PCI: dwc: Add ext config space capability
- search API
-Date: Wed, 10 Jul 2019 16:57:23 +0530
-Message-ID: <fd1fc10e-47d0-aaac-158d-1c19363ec8d3@nvidia.com>
-References: <20190710062212.1745-1-vidyas@nvidia.com>
- <20190710062212.1745-6-vidyas@nvidia.com>
- <20190710103709.GA4063@e121166-lin.cambridge.arm.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
+Date: Wed, 10 Jul 2019 15:42:28 +0300
+Message-ID: <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
+References: <20190709145151.23086-1-digetx@gmail.com>
+ <20190710101229.54ufuhmh22dfxclr@flea>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190710103709.GA4063@e121166-lin.cambridge.arm.com>
+In-Reply-To: <20190710101229.54ufuhmh22dfxclr@flea>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/10/2019 4:07 PM, Lorenzo Pieralisi wrote:
-> On Wed, Jul 10, 2019 at 11:52:05AM +0530, Vidya Sagar wrote:
->> Add extended configuration space capability search API using struct dw_pcie *
->> pointer
+10.07.2019 13:12, Maxime Ripard пишет:
+> On Tue, Jul 09, 2019 at 05:51:51PM +0300, Dmitry Osipenko wrote:
+>> The named mode could be invalid and then cmdline parser misses to validate
+>> mode's dimensions, happily adding 0x0 mode as a valid mode. One case where
+>> this happens is NVIDIA Tegra devices that are using downstream bootloader
+>> which adds "video=tegrafb" to the kernel's cmdline and thus upstream Tegra
+>> DRM driver fails to probe because of the invalid mode.
+>>
+>> Fixes: 3aeeb13d8996 ("drm/modes: Support modes names on the command line")
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > 
-> Sentences are terminated with a period and this is v13 not v1, which
-> proves that you do not read the commit logs you write.
+> Applied to drm-misc-next-fixes
 > 
-> I need you guys to understand that I can't rewrite commit logs all
-> the time, I do not want to go as far as not accepting your patches
-> anymore so please do pay attention to commit log details they
-> are as important as the code itself.
-> 
-> https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
-My sincere apologies.
-Since I didn't touch this patch much all through this series, I missed it.
-I'll make a point to not make such mistakes again.
-Do you want me to send a new version fixing it?
+> Thanks for figuring this out!
 
-Thanks,
-Vidya Sagar
-
-> 
-> Thanks,
-> Lorenzo
-> 
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> ---
->> V13:
->> * None
->>
->> V12:
->> * None
->>
->> V11:
->> * None
->>
->> V10:
->> * None
->>
->> V9:
->> * Added Acked-by from Thierry
->>
->> V8:
->> * Changed data types of return and arguments to be inline with data being returned
->>    and passed.
->>
->> V7:
->> * None
->>
->> V6:
->> * None
->>
->> V5:
->> * None
->>
->> V4:
->> * None
->>
->> V3:
->> * None
->>
->> V2:
->> * This is a new patch in v2 series
->>
->>   drivers/pci/controller/dwc/pcie-designware.c | 41 ++++++++++++++++++++
->>   drivers/pci/controller/dwc/pcie-designware.h |  1 +
->>   2 files changed, 42 insertions(+)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
->> index 7818b4febb08..181449e342f1 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware.c
->> @@ -53,6 +53,47 @@ u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
->>   }
->>   EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
->>   
->> +static u16 dw_pcie_find_next_ext_capability(struct dw_pcie *pci, u16 start,
->> +					    u8 cap)
->> +{
->> +	u32 header;
->> +	int ttl;
->> +	int pos = PCI_CFG_SPACE_SIZE;
->> +
->> +	/* minimum 8 bytes per capability */
->> +	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
->> +
->> +	if (start)
->> +		pos = start;
->> +
->> +	header = dw_pcie_readl_dbi(pci, pos);
->> +	/*
->> +	 * If we have no capabilities, this is indicated by cap ID,
->> +	 * cap version and next pointer all being 0.
->> +	 */
->> +	if (header == 0)
->> +		return 0;
->> +
->> +	while (ttl-- > 0) {
->> +		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
->> +			return pos;
->> +
->> +		pos = PCI_EXT_CAP_NEXT(header);
->> +		if (pos < PCI_CFG_SPACE_SIZE)
->> +			break;
->> +
->> +		header = dw_pcie_readl_dbi(pci, pos);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
->> +{
->> +	return dw_pcie_find_next_ext_capability(pci, 0, cap);
->> +}
->> +EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
->> +
->>   int dw_pcie_read(void __iomem *addr, int size, u32 *val)
->>   {
->>   	if (!IS_ALIGNED((uintptr_t)addr, size)) {
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index d8c66a6827dc..11c223471416 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -252,6 +252,7 @@ struct dw_pcie {
->>   		container_of((endpoint), struct dw_pcie, ep)
->>   
->>   u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
->> +u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap);
->>   
->>   int dw_pcie_read(void __iomem *addr, int size, u32 *val);
->>   int dw_pcie_write(void __iomem *addr, int size, u32 val);
->> -- 
->> 2.17.1
->>
+Thank you very much! So the driver now doesn't fail to probe because of the cmdline, but
+what else I noticed is that the framebuffer console is now rotated by 90° on a 800x1280
+panel, while display in Xorg is vertical as it was before. Seems something else is still
+missing, reverting "drm/modes: Rewrite the command line parser" returns the framebuffer's
+console orientation
+into the original state.
