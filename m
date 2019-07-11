@@ -1,64 +1,144 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 1/6] ARM: tegra: Remove cpuidle drivers
-Date: Thu, 11 Jul 2019 20:03:22 +0300
-Message-ID: <a6e4b43e-369c-c501-6d2e-69d5b940ff9c@gmail.com>
+Subject: Re: [PATCH v2 2/6] ARM: tegra: Expose functions required for cpuidle
+ driver
+Date: Thu, 11 Jul 2019 20:25:25 +0300
+Message-ID: <514c1cd6-2180-b55f-dacc-f0e08d9a366f@gmail.com>
 References: <20190711031312.10038-1-digetx@gmail.com>
- <20190711031312.10038-2-digetx@gmail.com>
- <c087a5cb-2ffa-1cf6-f0bf-631234759a22@nvidia.com>
+ <20190711031312.10038-3-digetx@gmail.com>
+ <bc6e96be-91ee-5d94-cbc2-46d2e2f25bce@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c087a5cb-2ffa-1cf6-f0bf-631234759a22@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <bc6e96be-91ee-5d94-cbc2-46d2e2f25bce@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-11.07.2019 12:26, Jon Hunter пишет:
-> 
-> On 11/07/2019 04:13, Dmitry Osipenko wrote:
->> Remove the old drivers to replace them cleanly with a new one later on.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/mach-tegra/Makefile           |  13 --
->>  arch/arm/mach-tegra/cpuidle-tegra114.c |  89 -----------
->>  arch/arm/mach-tegra/cpuidle-tegra20.c  | 212 -------------------------
->>  arch/arm/mach-tegra/cpuidle-tegra30.c  | 132 ---------------
->>  arch/arm/mach-tegra/cpuidle.c          |  50 ------
->>  arch/arm/mach-tegra/cpuidle.h          |  21 ---
->>  arch/arm/mach-tegra/irq.c              |  18 ---
->>  arch/arm/mach-tegra/irq.h              |  11 --
->>  arch/arm/mach-tegra/pm.c               |   7 -
->>  arch/arm/mach-tegra/pm.h               |   1 -
->>  arch/arm/mach-tegra/reset-handler.S    |  11 --
->>  arch/arm/mach-tegra/reset.h            |   9 +-
->>  arch/arm/mach-tegra/sleep-tegra20.S    | 190 +---------------------
->>  arch/arm/mach-tegra/sleep.h            |  12 --
->>  arch/arm/mach-tegra/tegra.c            |   3 -
->>  drivers/soc/tegra/Kconfig              |   1 -
->>  include/soc/tegra/cpuidle.h            |   4 -
->>  17 files changed, 5 insertions(+), 779 deletions(-)
->>  delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
->>  delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
->>  delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
->>  delete mode 100644 arch/arm/mach-tegra/cpuidle.c
->>  delete mode 100644 arch/arm/mach-tegra/cpuidle.h
->>  delete mode 100644 arch/arm/mach-tegra/irq.h
-> 
-> By removing all the above, it is really hard to review the diff. Is
-> there any way you could first consolidate the cpuidle drivers into say
-> the existing arch/arm/mach-tegra/cpuidle-tegra20.c and then move to
-> drivers/cpuidle?
-
-I'm afraid that it will make reviewing even more difficult because
-everything that is removed here is not returned in the further patches.
-The new driver is based on the older ones, but I wrote it from scratch
-and it's not only looks different, but also works a bit different as you
-may see.
-
-Could you please clarify what exactly makes it hard to review? The diff
-looks pretty clean to me, while squashing everything into existing
-driver should be quite a mess.
+MTEuMDcuMjAxOSAxNTo0MiwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+IAo+IE9uIDExLzA3LzIw
+MTkgMDQ6MTMsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPj4gVGhlIHVwY29taW5nIHVuaWZpZWQg
+Q1BVSURMRSBkcml2ZXIgd2lsbCBiZSBhZGRlZCB0byB0aGUgZHJpdmVycy9jcHVpZGxlLwo+PiBk
+aXJlY3RvcnkgYW5kIGl0IHdpbGwgcmVxdWlyZSBhbGwgdGhlc2UgVGVncmEgUE0tY29yZSBmdW5j
+dGlvbnMuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWls
+LmNvbT4KPj4gLS0tCj4+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL01ha2VmaWxlICB8ICAyICstCj4+
+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL3BsYXRzbXAuYyB8ICAyIC0tCj4+ICBhcmNoL2FybS9tYWNo
+LXRlZ3JhL3BtLmMgICAgICB8IDE2ICsrKysrKystLS0tLS0tLS0KPj4gIGFyY2gvYXJtL21hY2gt
+dGVncmEvcG0uaCAgICAgIHwgIDMgLS0tCj4+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL3NsZWVwLmgg
+ICB8ICAxIC0KPj4gIGluY2x1ZGUvbGludXgvY2xrL3RlZ3JhLmggICAgIHwgMTMgKysrKysrKysr
+KysrKwo+PiAgaW5jbHVkZS9zb2MvdGVncmEvcG0uaCAgICAgICAgfCAyOCArKysrKysrKysrKysr
+KysrKysrKysrKysrKysrCj4+ICA3IGZpbGVzIGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKyksIDE2
+IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9NYWtl
+ZmlsZSBiL2FyY2gvYXJtL21hY2gtdGVncmEvTWFrZWZpbGUKPj4gaW5kZXggNWQ5M2EwYjM2ODY2
+Li4yN2JkNWQ5ODY1ZTMgMTAwNjQ0Cj4+IC0tLSBhL2FyY2gvYXJtL21hY2gtdGVncmEvTWFrZWZp
+bGUKPj4gKysrIGIvYXJjaC9hcm0vbWFjaC10ZWdyYS9NYWtlZmlsZQo+PiBAQCAtMTMsNyArMTMs
+NyBAQCBvYmotJChDT05GSUdfQVJDSF9URUdSQV8yeF9TT0MpCQkrPSBwbS10ZWdyYTIwLm8KPj4g
+IG9iai0kKENPTkZJR19BUkNIX1RFR1JBXzN4X1NPQykJCSs9IHNsZWVwLXRlZ3JhMzAubwo+PiAg
+b2JqLSQoQ09ORklHX0FSQ0hfVEVHUkFfM3hfU09DKQkJKz0gcG0tdGVncmEzMC5vCj4+ICBvYmot
+JChDT05GSUdfU01QKQkJCSs9IHBsYXRzbXAubwo+PiAtb2JqLSQoQ09ORklHX0hPVFBMVUdfQ1BV
+KSAgICAgICAgICAgICAgICs9IGhvdHBsdWcubwo+PiArb2JqLXkJCQkJCSs9IGhvdHBsdWcubwo+
+PiAgCj4+ICBvYmotJChDT05GSUdfQVJDSF9URUdSQV8xMTRfU09DKQkrPSBzbGVlcC10ZWdyYTMw
+Lm8KPj4gIG9iai0kKENPTkZJR19BUkNIX1RFR1JBXzExNF9TT0MpCSs9IHBtLXRlZ3JhMzAubwo+
+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9wbGF0c21wLmMgYi9hcmNoL2FybS9t
+YWNoLXRlZ3JhL3BsYXRzbXAuYwo+PiBpbmRleCBlNjkxMWExNGMwOTYuLmM4YTYzNzE5YTE0MyAx
+MDA2NDQKPj4gLS0tIGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9wbGF0c21wLmMKPj4gKysrIGIvYXJj
+aC9hcm0vbWFjaC10ZWdyYS9wbGF0c21wLmMKPj4gQEAgLTE4Myw4ICsxODMsNiBAQCBjb25zdCBz
+dHJ1Y3Qgc21wX29wZXJhdGlvbnMgdGVncmFfc21wX29wcyBfX2luaXRjb25zdCA9IHsKPj4gIAku
+c21wX3ByZXBhcmVfY3B1cwk9IHRlZ3JhX3NtcF9wcmVwYXJlX2NwdXMsCj4+ICAJLnNtcF9zZWNv
+bmRhcnlfaW5pdAk9IHRlZ3JhX3NlY29uZGFyeV9pbml0LAo+PiAgCS5zbXBfYm9vdF9zZWNvbmRh
+cnkJPSB0ZWdyYV9ib290X3NlY29uZGFyeSwKPj4gLSNpZmRlZiBDT05GSUdfSE9UUExVR19DUFUK
+Pj4gIAkuY3B1X2tpbGwJCT0gdGVncmFfY3B1X2tpbGwsCj4+ICAJLmNwdV9kaWUJCT0gdGVncmFf
+Y3B1X2RpZSwKPj4gLSNlbmRpZgo+PiAgfTsKPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gt
+dGVncmEvcG0uYyBiL2FyY2gvYXJtL21hY2gtdGVncmEvcG0uYwo+PiBpbmRleCA2YWFhY2I1NzU3
+ZTEuLmY5YzliY2U5ZTE1ZCAxMDA2NDQKPj4gLS0tIGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9wbS5j
+Cj4+ICsrKyBiL2FyY2gvYXJtL21hY2gtdGVncmEvcG0uYwo+PiBAQCAtMTIzLDExICsxMjMsOSBA
+QCB2b2lkIHRlZ3JhX2NsZWFyX2NwdV9pbl9scDIodm9pZCkKPj4gIAlzcGluX3VubG9jaygmdGVn
+cmFfbHAyX2xvY2spOwo+PiAgfQo+PiAgCj4+IC1ib29sIHRlZ3JhX3NldF9jcHVfaW5fbHAyKHZv
+aWQpCj4+ICt2b2lkIHRlZ3JhX3NldF9jcHVfaW5fbHAyKHZvaWQpCj4+ICB7Cj4+ICAJaW50IHBo
+eV9jcHVfaWQgPSBjcHVfbG9naWNhbF9tYXAoc21wX3Byb2Nlc3Nvcl9pZCgpKTsKPj4gLQlib29s
+IGxhc3RfY3B1ID0gZmFsc2U7Cj4+IC0JY3B1bWFza190ICpjcHVfbHAyX21hc2sgPSB0ZWdyYV9j
+cHVfbHAyX21hc2s7Cj4+ICAJdTMyICpjcHVfaW5fbHAyID0gdGVncmFfY3B1X2xwMl9tYXNrOwo+
+PiAgCj4+ICAJc3Bpbl9sb2NrKCZ0ZWdyYV9scDJfbG9jayk7Cj4+IEBAIC0xMzUsMTEgKzEzMyw3
+IEBAIGJvb2wgdGVncmFfc2V0X2NwdV9pbl9scDIodm9pZCkKPj4gIAlCVUdfT04oKCpjcHVfaW5f
+bHAyICYgQklUKHBoeV9jcHVfaWQpKSk7Cj4+ICAJKmNwdV9pbl9scDIgfD0gQklUKHBoeV9jcHVf
+aWQpOwo+PiAgCj4+IC0JaWYgKChwaHlfY3B1X2lkID09IDApICYmIGNwdW1hc2tfZXF1YWwoY3B1
+X2xwMl9tYXNrLCBjcHVfb25saW5lX21hc2spKQo+PiAtCQlsYXN0X2NwdSA9IHRydWU7Cj4+IC0K
+Pj4gIAlzcGluX3VubG9jaygmdGVncmFfbHAyX2xvY2spOwo+PiAtCXJldHVybiBsYXN0X2NwdTsK
+Pj4gIH0KPiAKPiBJIHRoaW5rIHRoYXQgdGhlIGNvbW1pdCBtZXNzYWdlIHNob3VsZCBkZXNjcmli
+ZSB3aGF0IGlzIGdvaW5nIG9uIGhlcmUgb3IKPiB0aGlzIHNob3VsZCBiZSBhIHNlcGFyYXRlIGNo
+YW5nZS4KCkluZGVlZCwgaXQgY291bGQgYmUgbm90IHZlcnkgb2J2aW91cyB3aGF0J3MgZ29pbmcg
+b24gaGVyZSB3aXRob3V0IGEKdGhvcm91Z2ggcmV2aWV3LiBJJ2xsIGZhY3RvciBvdXQgYWxsIHRo
+ZXNlIG1pbm9yIGNoYW5nZXMgaW50byBzZXBhcmF0ZQpjb21taXRzLgoKSW4gcGFydGljdWxhciB0
+aGVyZSBpcyBubyBuZWVkIHRvIGtub3cgd2hldGhlciBDUFUgaXMgdGhlICJsYXN0X2NwdSIgZm9y
+CnRoZSBuZXcgZHJpdmVyIGJlY2F1c2UgQ1BVMCBpcyBhbHdheXMgdGhlICJsYXN0IiBzaW5jZSBp
+dCBhd2FpdHMgZm9yIHRoZQpzZWNvbmRhcmllcyBpbiB0aGUgY291cGxlZCBzdGF0ZS4KCj4+ICBz
+dGF0aWMgaW50IHRlZ3JhX3NsZWVwX2NwdSh1bnNpZ25lZCBsb25nIHYycCkKPj4gQEAgLTE5NSwx
+NCArMTg5LDE2IEBAIHN0YXRpYyB2b2lkIHRlZ3JhX3BtX3NldChlbnVtIHRlZ3JhX3N1c3BlbmRf
+bW9kZSBtb2RlKQo+PiAgCXRlZ3JhX3BtY19lbnRlcl9zdXNwZW5kX21vZGUobW9kZSk7Cj4+ICB9
+Cj4+ICAKPj4gLXZvaWQgdGVncmFfaWRsZV9scDJfbGFzdCh2b2lkKQo+PiAraW50IHRlZ3JhX2lk
+bGVfbHAyX2xhc3Qodm9pZCkKPj4gIHsKPj4gKwlpbnQgZXJyOwo+PiArCj4+ICAJdGVncmFfcG1f
+c2V0KFRFR1JBX1NVU1BFTkRfTFAyKTsKPj4gIAo+PiAgCWNwdV9jbHVzdGVyX3BtX2VudGVyKCk7
+Cj4+ICAJc3VzcGVuZF9jcHVfY29tcGxleCgpOwo+PiAgCj4+IC0JY3B1X3N1c3BlbmQoUEhZU19P
+RkZTRVQgLSBQQUdFX09GRlNFVCwgJnRlZ3JhX3NsZWVwX2NwdSk7Cj4+ICsJZXJyID0gY3B1X3N1
+c3BlbmQoUEhZU19PRkZTRVQgLSBQQUdFX09GRlNFVCwgJnRlZ3JhX3NsZWVwX2NwdSk7Cj4+ICAK
+Pj4gIAkvKgo+PiAgCSAqIFJlc3VtZSBMMiBjYWNoZSBpZiBpdCB3YXNuJ3QgcmUtZW5hYmxlZCBl
+YXJseSBkdXJpbmcgcmVzdW1lLAo+PiBAQCAtMjE0LDYgKzIxMCw4IEBAIHZvaWQgdGVncmFfaWRs
+ZV9scDJfbGFzdCh2b2lkKQo+PiAgCj4+ICAJcmVzdG9yZV9jcHVfY29tcGxleCgpOwo+PiAgCWNw
+dV9jbHVzdGVyX3BtX2V4aXQoKTsKPj4gKwo+PiArCXJldHVybiBlcnI7Cj4+ICB9Cj4+ICAKPj4g
+IGVudW0gdGVncmFfc3VzcGVuZF9tb2RlIHRlZ3JhX3BtX3ZhbGlkYXRlX3N1c3BlbmRfbW9kZSgK
+Pj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtdGVncmEvcG0uaCBiL2FyY2gvYXJtL21hY2gt
+dGVncmEvcG0uaAo+PiBpbmRleCAxZTUxYTliNjM2ZWIuLjgxNTI1ZjVmNGE0NCAxMDA2NDQKPj4g
+LS0tIGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9wbS5oCj4+ICsrKyBiL2FyY2gvYXJtL21hY2gtdGVn
+cmEvcG0uaAo+PiBAQCAtMjMsOSArMjMsNiBAQCB2b2lkIHRlZ3JhMjBfc2xlZXBfY29yZV9pbml0
+KHZvaWQpOwo+PiAgdm9pZCB0ZWdyYTMwX2xwMV9pcmFtX2hvb2sodm9pZCk7Cj4+ICB2b2lkIHRl
+Z3JhMzBfc2xlZXBfY29yZV9pbml0KHZvaWQpOwo+PiAgCj4+IC12b2lkIHRlZ3JhX2NsZWFyX2Nw
+dV9pbl9scDIodm9pZCk7Cj4+IC1ib29sIHRlZ3JhX3NldF9jcHVfaW5fbHAyKHZvaWQpOwo+PiAt
+dm9pZCB0ZWdyYV9pZGxlX2xwMl9sYXN0KHZvaWQpOwo+PiAgZXh0ZXJuIHZvaWQgKCp0ZWdyYV90
+ZWFyX2Rvd25fY3B1KSh2b2lkKTsKPj4gIAo+PiAgI2lmZGVmIENPTkZJR19QTV9TTEVFUAo+PiBk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9zbGVlcC5oIGIvYXJjaC9hcm0vbWFjaC10
+ZWdyYS9zbGVlcC5oCj4+IGluZGV4IGQyMTk4NzJiNzU0Ni4uMGQ5OTU2ZTlhOGVhIDEwMDY0NAo+
+PiAtLS0gYS9hcmNoL2FybS9tYWNoLXRlZ3JhL3NsZWVwLmgKPj4gKysrIGIvYXJjaC9hcm0vbWFj
+aC10ZWdyYS9zbGVlcC5oCj4+IEBAIC0xMjQsNyArMTI0LDYgQEAgdm9pZCB0ZWdyYTMwX2hvdHBs
+dWdfc2h1dGRvd24odm9pZCk7Cj4+ICAjZW5kaWYKPj4gIAo+PiAgdm9pZCB0ZWdyYTIwX3RlYXJf
+ZG93bl9jcHUodm9pZCk7Cj4+IC1pbnQgdGVncmEzMF9zbGVlcF9jcHVfc2Vjb25kYXJ5X2Zpbmlz
+aCh1bnNpZ25lZCBsb25nKTsKPj4gIHZvaWQgdGVncmEzMF90ZWFyX2Rvd25fY3B1KHZvaWQpOwo+
+PiAgCj4+ICAjZW5kaWYKPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvY2xrL3RlZ3JhLmgg
+Yi9pbmNsdWRlL2xpbnV4L2Nsay90ZWdyYS5oCj4+IGluZGV4IGI4YWVmNjJjYzNmNS4uY2YwZjJj
+YjVlMTA5IDEwMDY0NAo+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L2Nsay90ZWdyYS5oCj4+ICsrKyBi
+L2luY2x1ZGUvbGludXgvY2xrL3RlZ3JhLmgKPj4gQEAgLTEwOCw2ICsxMDgsMTkgQEAgc3RhdGlj
+IGlubGluZSB2b2lkIHRlZ3JhX2NwdV9jbG9ja19yZXN1bWUodm9pZCkKPj4gIAo+PiAgCXRlZ3Jh
+X2NwdV9jYXJfb3BzLT5yZXN1bWUoKTsKPj4gIH0KPj4gKyNlbHNlCj4+ICtzdGF0aWMgaW5saW5l
+IGJvb2wgdGVncmFfY3B1X3JhaWxfb2ZmX3JlYWR5KHZvaWQpCj4+ICt7Cj4+ICsJcmV0dXJuIGZh
+bHNlOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgaW5saW5lIHZvaWQgdGVncmFfY3B1X2Nsb2NrX3N1
+c3BlbmQodm9pZCkKPj4gK3sKPj4gK30KPj4gKwo+PiArc3RhdGljIGlubGluZSB2b2lkIHRlZ3Jh
+X2NwdV9jbG9ja19yZXN1bWUodm9pZCkKPj4gK3sKPj4gK30KPj4gICNlbmRpZgo+PiAgCj4+ICBl
+eHRlcm4gdm9pZCB0ZWdyYTIxMF94dXNiX3BsbF9od19jb250cm9sX2VuYWJsZSh2b2lkKTsKPj4g
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvc29jL3RlZ3JhL3BtLmggYi9pbmNsdWRlL3NvYy90ZWdyYS9w
+bS5oCj4+IGluZGV4IDk1MWZjZDczOGQ1NS4uZmExOGMyZGY1MDI4IDEwMDY0NAo+PiAtLS0gYS9p
+bmNsdWRlL3NvYy90ZWdyYS9wbS5oCj4+ICsrKyBiL2luY2x1ZGUvc29jL3RlZ3JhL3BtLmgKPj4g
+QEAgLTIwLDYgKzIwLDEyIEBAIHRlZ3JhX3BtX3ZhbGlkYXRlX3N1c3BlbmRfbW9kZShlbnVtIHRl
+Z3JhX3N1c3BlbmRfbW9kZSBtb2RlKTsKPj4gIAo+PiAgLyogbG93LWxldmVsIHJlc3VtZSBlbnRy
+eSBwb2ludCAqLwo+PiAgdm9pZCB0ZWdyYV9yZXN1bWUodm9pZCk7Cj4+ICsKPj4gK2ludCB0ZWdy
+YTMwX3NsZWVwX2NwdV9zZWNvbmRhcnlfZmluaXNoKHVuc2lnbmVkIGxvbmcgYXJnKTsKPj4gK3Zv
+aWQgdGVncmFfY2xlYXJfY3B1X2luX2xwMih2b2lkKTsKPj4gK3ZvaWQgdGVncmFfc2V0X2NwdV9p
+bl9scDIodm9pZCk7Cj4+ICtpbnQgdGVncmFfaWRsZV9scDJfbGFzdCh2b2lkKTsKPj4gK3ZvaWQg
+dGVncmFfY3B1X2RpZSh1bnNpZ25lZCBpbnQgY3B1KTsKPj4gICNlbHNlCj4+ICBzdGF0aWMgaW5s
+aW5lIGVudW0gdGVncmFfc3VzcGVuZF9tb2RlCj4+ICB0ZWdyYV9wbV92YWxpZGF0ZV9zdXNwZW5k
+X21vZGUoZW51bSB0ZWdyYV9zdXNwZW5kX21vZGUgbW9kZSkKPj4gQEAgLTMwLDYgKzM2LDI4IEBA
+IHRlZ3JhX3BtX3ZhbGlkYXRlX3N1c3BlbmRfbW9kZShlbnVtIHRlZ3JhX3N1c3BlbmRfbW9kZSBt
+b2RlKQo+PiAgc3RhdGljIGlubGluZSB2b2lkIHRlZ3JhX3Jlc3VtZSh2b2lkKQo+PiAgewo+PiAg
+fQo+PiArCj4+ICtzdGF0aWMgaW5saW5lIGludCB0ZWdyYTMwX3NsZWVwX2NwdV9zZWNvbmRhcnlf
+ZmluaXNoKHVuc2lnbmVkIGxvbmcgYXJnKQo+PiArewo+PiArCXJldHVybiAtMTsKPj4gK30KPiAK
+PiAtRU5PVFNVUFA/CgpHb29kIHBvaW50LCB0aGFua3MhCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
+ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
