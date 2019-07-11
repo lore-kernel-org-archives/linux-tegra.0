@@ -1,52 +1,204 @@
-From: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v4 23/23] drm/i915: Provide ddc symlink in hdmi connector
- sysfs directory
-Date: Thu, 11 Jul 2019 13:26:50 +0200
-Message-ID: <1d9bb3d65127a5093d6e9f9cc62a5c7c7502f61d.1562843413.git.andrzej.p@collabora.com>
-References: <cover.1562843413.git.andrzej.p@collabora.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 2/6] ARM: tegra: Expose functions required for cpuidle
+ driver
+Date: Thu, 11 Jul 2019 13:42:01 +0100
+Message-ID: <bc6e96be-91ee-5d94-cbc2-46d2e2f25bce@nvidia.com>
+References: <20190711031312.10038-1-digetx@gmail.com>
+ <20190711031312.10038-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <cover.1562843413.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-In-Reply-To: <cover.1562843413.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-References: <cover.1562843413.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ramalingam C <ramalingam.c-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Rob Clark <robdclark@gmail>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190711031312.10038-3-digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VXNlIHRoZSBkZGMgcG9pbnRlciBwcm92aWRlZCBieSB0aGUgZ2VuZXJpYyBjb25uZWN0b3IuCgpT
-aWduZWQtb2ZmLWJ5OiBBbmRyemVqIFBpZXRyYXNpZXdpY3ogPGFuZHJ6ZWoucEBjb2xsYWJvcmEu
-Y29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2Rpc3BsYXkvaW50ZWxfaGRtaS5jIHwgNSAr
-KystLQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9kaXNwbGF5L2ludGVsX2hkbWkuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9pOTE1L2Rpc3BsYXkvaW50ZWxfaGRtaS5jCmluZGV4IDBlYmVjNjliYmJm
-Yy4uNjc4ZmE0ZDFiZDRlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9kaXNwbGF5
-L2ludGVsX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9kaXNwbGF5L2ludGVsX2hk
-bWkuYwpAQCAtMzA5NCw2ICszMDk0LDkgQEAgdm9pZCBpbnRlbF9oZG1pX2luaXRfY29ubmVjdG9y
-KHN0cnVjdCBpbnRlbF9kaWdpdGFsX3BvcnQgKmludGVsX2RpZ19wb3J0LAogCQkgaW50ZWxfZGln
-X3BvcnQtPm1heF9sYW5lcywgcG9ydF9uYW1lKHBvcnQpKSkKIAkJcmV0dXJuOwogCisJaW50ZWxf
-aGRtaS0+ZGRjX2J1cyA9IGludGVsX2hkbWlfZGRjX3BpbihkZXZfcHJpdiwgcG9ydCk7CisJY29u
-bmVjdG9yLT5kZGMgPSBpbnRlbF9nbWJ1c19nZXRfYWRhcHRlcihkZXZfcHJpdiwgaW50ZWxfaGRt
-aS0+ZGRjX2J1cyk7CisKIAlkcm1fY29ubmVjdG9yX2luaXQoZGV2LCBjb25uZWN0b3IsICZpbnRl
-bF9oZG1pX2Nvbm5lY3Rvcl9mdW5jcywKIAkJCSAgIERSTV9NT0RFX0NPTk5FQ1RPUl9IRE1JQSk7
-CiAJZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKGNvbm5lY3RvciwgJmludGVsX2hkbWlfY29ubmVj
-dG9yX2hlbHBlcl9mdW5jcyk7CkBAIC0zMTA1LDggKzMxMDgsNiBAQCB2b2lkIGludGVsX2hkbWlf
-aW5pdF9jb25uZWN0b3Ioc3RydWN0IGludGVsX2RpZ2l0YWxfcG9ydCAqaW50ZWxfZGlnX3BvcnQs
-CiAJaWYgKElOVEVMX0dFTihkZXZfcHJpdikgPj0gMTAgfHwgSVNfR0VNSU5JTEFLRShkZXZfcHJp
-dikpCiAJCWNvbm5lY3Rvci0+eWNiY3JfNDIwX2FsbG93ZWQgPSB0cnVlOwogCi0JaW50ZWxfaGRt
-aS0+ZGRjX2J1cyA9IGludGVsX2hkbWlfZGRjX3BpbihkZXZfcHJpdiwgcG9ydCk7Ci0KIAlpZiAo
-V0FSTl9PTihwb3J0ID09IFBPUlRfQSkpCiAJCXJldHVybjsKIAlpbnRlbF9lbmNvZGVyLT5ocGRf
-cGluID0gaW50ZWxfaHBkX3Bpbl9kZWZhdWx0KGRldl9wcml2LCBwb3J0KTsKLS0gCjIuMTcuMQoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYW1kLWdmeCBt
-YWlsaW5nIGxpc3QKYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbWQtZ2Z4
+
+On 11/07/2019 04:13, Dmitry Osipenko wrote:
+> The upcoming unified CPUIDLE driver will be added to the drivers/cpuidle/
+> directory and it will require all these Tegra PM-core functions.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/mach-tegra/Makefile  |  2 +-
+>  arch/arm/mach-tegra/platsmp.c |  2 --
+>  arch/arm/mach-tegra/pm.c      | 16 +++++++---------
+>  arch/arm/mach-tegra/pm.h      |  3 ---
+>  arch/arm/mach-tegra/sleep.h   |  1 -
+>  include/linux/clk/tegra.h     | 13 +++++++++++++
+>  include/soc/tegra/pm.h        | 28 ++++++++++++++++++++++++++++
+>  7 files changed, 49 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+> index 5d93a0b36866..27bd5d9865e3 100644
+> --- a/arch/arm/mach-tegra/Makefile
+> +++ b/arch/arm/mach-tegra/Makefile
+> @@ -13,7 +13,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pm-tegra20.o
+>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= sleep-tegra30.o
+>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= pm-tegra30.o
+>  obj-$(CONFIG_SMP)			+= platsmp.o
+> -obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+> +obj-y					+= hotplug.o
+>  
+>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= sleep-tegra30.o
+>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= pm-tegra30.o
+> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> index e6911a14c096..c8a63719a143 100644
+> --- a/arch/arm/mach-tegra/platsmp.c
+> +++ b/arch/arm/mach-tegra/platsmp.c
+> @@ -183,8 +183,6 @@ const struct smp_operations tegra_smp_ops __initconst = {
+>  	.smp_prepare_cpus	= tegra_smp_prepare_cpus,
+>  	.smp_secondary_init	= tegra_secondary_init,
+>  	.smp_boot_secondary	= tegra_boot_secondary,
+> -#ifdef CONFIG_HOTPLUG_CPU
+>  	.cpu_kill		= tegra_cpu_kill,
+>  	.cpu_die		= tegra_cpu_die,
+> -#endif
+>  };
+> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+> index 6aaacb5757e1..f9c9bce9e15d 100644
+> --- a/arch/arm/mach-tegra/pm.c
+> +++ b/arch/arm/mach-tegra/pm.c
+> @@ -123,11 +123,9 @@ void tegra_clear_cpu_in_lp2(void)
+>  	spin_unlock(&tegra_lp2_lock);
+>  }
+>  
+> -bool tegra_set_cpu_in_lp2(void)
+> +void tegra_set_cpu_in_lp2(void)
+>  {
+>  	int phy_cpu_id = cpu_logical_map(smp_processor_id());
+> -	bool last_cpu = false;
+> -	cpumask_t *cpu_lp2_mask = tegra_cpu_lp2_mask;
+>  	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
+>  
+>  	spin_lock(&tegra_lp2_lock);
+> @@ -135,11 +133,7 @@ bool tegra_set_cpu_in_lp2(void)
+>  	BUG_ON((*cpu_in_lp2 & BIT(phy_cpu_id)));
+>  	*cpu_in_lp2 |= BIT(phy_cpu_id);
+>  
+> -	if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
+> -		last_cpu = true;
+> -
+>  	spin_unlock(&tegra_lp2_lock);
+> -	return last_cpu;
+>  }
+
+I think that the commit message should describe what is going on here or
+this should be a separate change.
+
+>  
+>  static int tegra_sleep_cpu(unsigned long v2p)
+> @@ -195,14 +189,16 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
+>  	tegra_pmc_enter_suspend_mode(mode);
+>  }
+>  
+> -void tegra_idle_lp2_last(void)
+> +int tegra_idle_lp2_last(void)
+>  {
+> +	int err;
+> +
+>  	tegra_pm_set(TEGRA_SUSPEND_LP2);
+>  
+>  	cpu_cluster_pm_enter();
+>  	suspend_cpu_complex();
+>  
+> -	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+> +	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+>  
+>  	/*
+>  	 * Resume L2 cache if it wasn't re-enabled early during resume,
+> @@ -214,6 +210,8 @@ void tegra_idle_lp2_last(void)
+>  
+>  	restore_cpu_complex();
+>  	cpu_cluster_pm_exit();
+> +
+> +	return err;
+>  }
+>  
+>  enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+> diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
+> index 1e51a9b636eb..81525f5f4a44 100644
+> --- a/arch/arm/mach-tegra/pm.h
+> +++ b/arch/arm/mach-tegra/pm.h
+> @@ -23,9 +23,6 @@ void tegra20_sleep_core_init(void);
+>  void tegra30_lp1_iram_hook(void);
+>  void tegra30_sleep_core_init(void);
+>  
+> -void tegra_clear_cpu_in_lp2(void);
+> -bool tegra_set_cpu_in_lp2(void);
+> -void tegra_idle_lp2_last(void);
+>  extern void (*tegra_tear_down_cpu)(void);
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+> index d219872b7546..0d9956e9a8ea 100644
+> --- a/arch/arm/mach-tegra/sleep.h
+> +++ b/arch/arm/mach-tegra/sleep.h
+> @@ -124,7 +124,6 @@ void tegra30_hotplug_shutdown(void);
+>  #endif
+>  
+>  void tegra20_tear_down_cpu(void);
+> -int tegra30_sleep_cpu_secondary_finish(unsigned long);
+>  void tegra30_tear_down_cpu(void);
+>  
+>  #endif
+> diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+> index b8aef62cc3f5..cf0f2cb5e109 100644
+> --- a/include/linux/clk/tegra.h
+> +++ b/include/linux/clk/tegra.h
+> @@ -108,6 +108,19 @@ static inline void tegra_cpu_clock_resume(void)
+>  
+>  	tegra_cpu_car_ops->resume();
+>  }
+> +#else
+> +static inline bool tegra_cpu_rail_off_ready(void)
+> +{
+> +	return false;
+> +}
+> +
+> +static inline void tegra_cpu_clock_suspend(void)
+> +{
+> +}
+> +
+> +static inline void tegra_cpu_clock_resume(void)
+> +{
+> +}
+>  #endif
+>  
+>  extern void tegra210_xusb_pll_hw_control_enable(void);
+> diff --git a/include/soc/tegra/pm.h b/include/soc/tegra/pm.h
+> index 951fcd738d55..fa18c2df5028 100644
+> --- a/include/soc/tegra/pm.h
+> +++ b/include/soc/tegra/pm.h
+> @@ -20,6 +20,12 @@ tegra_pm_validate_suspend_mode(enum tegra_suspend_mode mode);
+>  
+>  /* low-level resume entry point */
+>  void tegra_resume(void);
+> +
+> +int tegra30_sleep_cpu_secondary_finish(unsigned long arg);
+> +void tegra_clear_cpu_in_lp2(void);
+> +void tegra_set_cpu_in_lp2(void);
+> +int tegra_idle_lp2_last(void);
+> +void tegra_cpu_die(unsigned int cpu);
+>  #else
+>  static inline enum tegra_suspend_mode
+>  tegra_pm_validate_suspend_mode(enum tegra_suspend_mode mode)
+> @@ -30,6 +36,28 @@ tegra_pm_validate_suspend_mode(enum tegra_suspend_mode mode)
+>  static inline void tegra_resume(void)
+>  {
+>  }
+> +
+> +static inline int tegra30_sleep_cpu_secondary_finish(unsigned long arg)
+> +{
+> +	return -1;
+> +}
+
+-ENOTSUPP?
+
+Jon
+
+-- 
+nvpublic
