@@ -1,179 +1,139 @@
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH v4 17/23] drm/ast: Provide ddc symlink in connector sysfs
- directory
-Date: Thu, 11 Jul 2019 19:27:04 +0200
-Message-ID: <1f8c9d07-2e53-a3b3-0c69-92715fefbc46@suse.de>
-References: <cover.1562843413.git.andrzej.p@collabora.com>
- <d3651bd2fd8ba69b8380304bca4c629a8c1da4e9.1562843413.git.andrzej.p@collabora.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 3/6] cpuidle: Add unified driver for NVIDIA Tegra SoCs
+Date: Thu, 11 Jul 2019 21:35:36 +0300
+Message-ID: <c54c43fd-9b11-4aa8-3acf-d2260d0fca4a@gmail.com>
+References: <20190711031312.10038-1-digetx@gmail.com>
+ <20190711031312.10038-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1150888931=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <d3651bd2fd8ba69b8380304bca4c629a8c1da4e9.1562843413.git.andrzej.p@collabora.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, dri-devel@lists.freedesktop.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Liviu Dudau <liviu.dudau@arm.com>, Douglas Anderson <dianders@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, intel-gfx@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org, Alexios Zavras <alexios.zavras@intel.com>, Mamta
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190711031312.10038-4-digetx@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---===============1150888931==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="4VEqS7qdrTlI9mYl0mFD0hof8AKsK115I"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---4VEqS7qdrTlI9mYl0mFD0hof8AKsK115I
-Content-Type: multipart/mixed; boundary="kvu6iu4v0s2fkqVYpi2Nm42RkhKDkBlvT";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
- dri-devel@lists.freedesktop.org
-Cc: kernel@collabora.com, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
- David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
- Dave Airlie <airlied@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>,
- Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Philipp Zabel
- <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
- CK Hu <ck.hu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- Rob Clark <robdclark@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
- =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
- Benjamin Gaignard <benjamin.gaignard@linaro.org>,
- Vincent Abriou <vincent.abriou@st.com>, Chen-Yu Tsai <wens@csie.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jsarha@ti.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>, Eric Anholt <eric@anholt.net>,
- Sam Ravnborg <sam@ravnborg.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Huang Rui <ray.huang@amd.com>, Gerd Hoffmann <kraxel@redhat.com>,
- "Y.C. Chen" <yc_chen@aspeedtech.com>,
- Neil Armstrong <narmstrong@baylibre.com>,
- Douglas Anderson <dianders@chromium.org>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@siol.net>,
- Thomas Gleixner <tglx@linutronix.de>,
- =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
- Chris Wilson <chris@chris-wilson.co.uk>,
- Shashank Sharma <shashank.sharma@intel.com>,
- Ramalingam C <ramalingam.c@intel.com>,
- Alexios Zavras <alexios.zavras@intel.com>, Enrico Weigelt <info@metux.net>,
- Mamta Shukla <mamtashukla555@gmail.com>, Todor Tomov
- <todor.tomov@linaro.org>, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-tegra@vger.kernel.org
-Message-ID: <1f8c9d07-2e53-a3b3-0c69-92715fefbc46@suse.de>
-Subject: Re: [PATCH v4 17/23] drm/ast: Provide ddc symlink in connector sysfs
- directory
-References: <cover.1562843413.git.andrzej.p@collabora.com>
- <d3651bd2fd8ba69b8380304bca4c629a8c1da4e9.1562843413.git.andrzej.p@collabora.com>
-In-Reply-To: <d3651bd2fd8ba69b8380304bca4c629a8c1da4e9.1562843413.git.andrzej.p@collabora.com>
-
---kvu6iu4v0s2fkqVYpi2Nm42RkhKDkBlvT
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Am 11.07.19 um 13:26 schrieb Andrzej Pietrasiewicz:
-> Use the ddc pointer provided by the generic connector.
->=20
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> ---
->  drivers/gpu/drm/ast/ast_mode.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_m=
-ode.c
-> index ffccbef962a4..1ca9bc4aa3bb 100644
-> --- a/drivers/gpu/drm/ast/ast_mode.c
-> +++ b/drivers/gpu/drm/ast/ast_mode.c
-> @@ -890,6 +890,11 @@ static int ast_connector_init(struct drm_device *d=
-ev)
->  		return -ENOMEM;
-> =20
->  	connector =3D &ast_connector->base;
-> +	ast_connector->i2c =3D ast_i2c_create(dev);
-> +	if (!ast_connector->i2c)
-> +		DRM_ERROR("failed to add ddc bus for connector\n");
-> +
-> +	connector->ddc =3D &ast_connector->i2c->adapter;
->  	drm_connector_init(dev, connector, &ast_connector_funcs, DRM_MODE_CON=
-NECTOR_VGA);
-> =20
->  	drm_connector_helper_add(connector, &ast_connector_helper_funcs);
-> @@ -904,10 +909,6 @@ static int ast_connector_init(struct drm_device *d=
-ev)
->  	encoder =3D list_first_entry(&dev->mode_config.encoder_list, struct d=
-rm_encoder, head);
->  	drm_connector_attach_encoder(connector, encoder);
-> =20
-> -	ast_connector->i2c =3D ast_i2c_create(dev);
-> -	if (!ast_connector->i2c)
-> -		DRM_ERROR("failed to add ddc bus for connector\n");
-> -
->  	return 0;
->  }
-> =20
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG N=C3=BCrnberg)
-
-
---kvu6iu4v0s2fkqVYpi2Nm42RkhKDkBlvT--
-
---4VEqS7qdrTlI9mYl0mFD0hof8AKsK115I
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl0ncWgACgkQaA3BHVML
-eiPAyAf/YFgWQ1VkykOgkdx9nM3V9OMIl4P0VvUBnxUcPXIcSB7LlPK3dAi2+yXy
-+7oNtKQruYSFk1867Y+Z4oyCxa2kKojeJCeyOmGrytyxIdUbVlRwv9HAPzSXZIey
-owlceG8WA9p54+Vp6qeOtjZ9hP4HiYJuUgVsKNTMWzVQuP+gw8oeXTlNAEGzzvNy
-FMgBbHySEfxMx0ziW3MBf5/1bFMXoIq6jSe1vwKMB5r3I4TFbVzWxUOhDKpLp5bv
-WR6AVRVf6MJzcH7Fu9wxujURzZI1TyMiHectc+MmFOfHieFU1ehbSYGrYaqCQexw
-4p09wd9Yua4fDLAv70vvmm5uFRnk1w==
-=bNp0
------END PGP SIGNATURE-----
-
---4VEqS7qdrTlI9mYl0mFD0hof8AKsK115I--
-
---===============1150888931==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============1150888931==--
+MTEuMDcuMjAxOSA2OjEzLCBEbWl0cnkgT3NpcGVua28g0L/QuNGI0LXRgjoKPiBUaGUgbmV3IGRy
+aXZlciBpcyBiYXNlZCBvbiB0aGUgb2xkIENQVSBJZGxlIGRyaXZlcnMgdGhhdCBhcmUgcmVtb3Zl
+ZCBub3cKPiBmcm9tIGFybS9hcmNoL21hY2gtdGVncmEvIGRpcmVjdG9yeS4gVGhvc2UgcmVtb3Zl
+ZCBkcml2ZXJzIHdlcmUgcmV3b3JrZWQKPiBhbmQgc3F1YXNoZWQgaW50byBhIHNpbmdsZSB1bmlm
+aWVkIGRyaXZlciB0aGF0IGNvdmVycyBtdWx0aXBsZSBoYXJkd2FyZQo+IGdlbmVyYXRpb25zLCBz
+dGFydGluZyBmcm9tIFRlZ3JhMjAgYW5kIGVuZGluZyB3aXRoIFRlZ3JhMTI0Lgo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPiAtLS0KPiAgYXJj
+aC9hcm0vbWFjaC10ZWdyYS90ZWdyYS5jICAgICB8ICAgNCArCj4gIGRyaXZlcnMvY3B1aWRsZS9L
+Y29uZmlnLmFybSAgICAgfCAgIDggKwo+ICBkcml2ZXJzL2NwdWlkbGUvTWFrZWZpbGUgICAgICAg
+IHwgICAxICsKPiAgZHJpdmVycy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYyB8IDMwNCArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKwo+ICBpbmNsdWRlL3NvYy90ZWdyYS9jcHVpZGxlLmgg
+ICAgIHwgICA0ICsKPiAgNSBmaWxlcyBjaGFuZ2VkLCAzMjEgaW5zZXJ0aW9ucygrKQo+ICBjcmVh
+dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYwo+IAo+IGRpZmYg
+LS1naXQgYS9hcmNoL2FybS9tYWNoLXRlZ3JhL3RlZ3JhLmMgYi9hcmNoL2FybS9tYWNoLXRlZ3Jh
+L3RlZ3JhLmMKPiBpbmRleCBkOTIzNzc2OWEzN2MuLmYxY2UyODU3YTI1MSAxMDA2NDQKPiAtLS0g
+YS9hcmNoL2FybS9tYWNoLXRlZ3JhL3RlZ3JhLmMKPiArKysgYi9hcmNoL2FybS9tYWNoLXRlZ3Jh
+L3RlZ3JhLmMKPiBAQCAtMzYsNiArMzYsNyBAQAo+ICAjaW5jbHVkZSA8YXNtL21hY2gvYXJjaC5o
+Pgo+ICAjaW5jbHVkZSA8YXNtL21hY2gvdGltZS5oPgo+ICAjaW5jbHVkZSA8YXNtL21hY2gtdHlw
+ZXMuaD4KPiArI2luY2x1ZGUgPGFzbS9wc2NpLmg+Cj4gICNpbmNsdWRlIDxhc20vc2V0dXAuaD4K
+PiAgCj4gICNpbmNsdWRlICJib2FyZC5oIgo+IEBAIC05Miw2ICs5Myw5IEBAIHN0YXRpYyB2b2lk
+IF9faW5pdCB0ZWdyYV9kdF9pbml0X2xhdGUodm9pZCkKPiAgCWlmIChJU19FTkFCTEVEKENPTkZJ
+R19BUkNIX1RFR1JBXzJ4X1NPQykgJiYKPiAgCSAgICBvZl9tYWNoaW5lX2lzX2NvbXBhdGlibGUo
+Im52aWRpYSx0ZWdyYTIwIikpCj4gIAkJcGxhdGZvcm1fZGV2aWNlX3JlZ2lzdGVyX3NpbXBsZSgi
+dGVncmEyMC1jcHVmcmVxIiwgLTEsIE5VTEwsIDApOwo+ICsKPiArCWlmIChJU19FTkFCTEVEKENP
+TkZJR19BUk1fVEVHUkFfQ1BVSURMRSkgJiYgIXBzY2lfc21wX2F2YWlsYWJsZSgpKQo+ICsJCXBs
+YXRmb3JtX2RldmljZV9yZWdpc3Rlcl9zaW1wbGUoInRlZ3JhLWNwdWlkbGUiLCAtMSwgTlVMTCwg
+MCk7Cj4gIH0KPiAgCj4gIHN0YXRpYyBjb25zdCBjaGFyICogY29uc3QgdGVncmFfZHRfYm9hcmRf
+Y29tcGF0W10gPSB7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1aWRsZS9LY29uZmlnLmFybSBi
+L2RyaXZlcnMvY3B1aWRsZS9LY29uZmlnLmFybQo+IGluZGV4IDQ4Y2IzZDRiYjdkMS4uZDkwODYx
+MzYxZjFkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY3B1aWRsZS9LY29uZmlnLmFybQo+ICsrKyBi
+L2RyaXZlcnMvY3B1aWRsZS9LY29uZmlnLmFybQo+IEBAIC03NiwzICs3NiwxMSBAQCBjb25maWcg
+QVJNX01WRUJVX1Y3X0NQVUlETEUKPiAgCWRlcGVuZHMgb24gQVJDSF9NVkVCVSAmJiAhQVJNNjQK
+PiAgCWhlbHAKPiAgCSAgU2VsZWN0IHRoaXMgdG8gZW5hYmxlIGNwdWlkbGUgb24gQXJtYWRhIDM3
+MCwgMzh4IGFuZCBYUCBwcm9jZXNzb3JzLgo+ICsKPiArY29uZmlnIEFSTV9URUdSQV9DUFVJRExF
+Cj4gKwlib29sICJDUFUgSWRsZSBEcml2ZXIgZm9yIE5WSURJQSBUZWdyYSBTb0NzIgo+ICsJZGVw
+ZW5kcyBvbiBBUkNIX1RFR1JBICYmICFBUk02NAo+ICsJc2VsZWN0IEFSQ0hfTkVFRFNfQ1BVX0lE
+TEVfQ09VUExFRCBpZiBTTVAKPiArCXNlbGVjdCBBUk1fQ1BVX1NVU1BFTkQKPiArCWhlbHAKPiAr
+CSAgU2VsZWN0IHRoaXMgdG8gZW5hYmxlIGNwdWlkbGUgZm9yIE5WSURJQSBUZWdyYTIwLzMwLzEx
+NC8xMjQgU29Dcy4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcHVpZGxlL01ha2VmaWxlIGIvZHJp
+dmVycy9jcHVpZGxlL01ha2VmaWxlCj4gaW5kZXggOWQ3MTc2Y2VlM2QzLi40NzBkMTdmYTg3NDYg
+MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9jcHVpZGxlL01ha2VmaWxlCj4gKysrIGIvZHJpdmVycy9j
+cHVpZGxlL01ha2VmaWxlCj4gQEAgLTIwLDYgKzIwLDcgQEAgb2JqLSQoQ09ORklHX0FSTV9VODUw
+MF9DUFVJRExFKSAgICAgICAgICs9IGNwdWlkbGUtdXg1MDAubwo+ICBvYmotJChDT05GSUdfQVJN
+X0FUOTFfQ1BVSURMRSkgICAgICAgICAgKz0gY3B1aWRsZS1hdDkxLm8KPiAgb2JqLSQoQ09ORklH
+X0FSTV9FWFlOT1NfQ1BVSURMRSkgICAgICAgICs9IGNwdWlkbGUtZXh5bm9zLm8KPiAgb2JqLSQo
+Q09ORklHX0FSTV9DUFVJRExFKQkJKz0gY3B1aWRsZS1hcm0ubwo+ICtvYmotJChDT05GSUdfQVJN
+X1RFR1JBX0NQVUlETEUpCQkrPSBjcHVpZGxlLXRlZ3JhLm8KPiAgCj4gICMjIyMjIyMjIyMjIyMj
+IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
+IyMjIyMjIyMKPiAgIyBNSVBTIGRyaXZlcnMKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcHVpZGxl
+L2NwdWlkbGUtdGVncmEuYyBiL2RyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMKPiBuZXcg
+ZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAwMDAwMC4uNTQ5NzRjZDIyNTVmCj4gLS0t
+IC9kZXYvbnVsbAo+ICsrKyBiL2RyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMKPiBAQCAt
+MCwwICsxLDMwNCBAQAo+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5
+Cj4gKy8qCj4gKyAqIENQVSBpZGxlIGRyaXZlciBmb3IgVGVncmEgQ1BVcwo+ICsgKgo+ICsgKiBD
+b3B5cmlnaHQgKGMpIDIwMTAtMjAxMywgTlZJRElBIENvcnBvcmF0aW9uLgo+ICsgKiBDb3B5cmln
+aHQgKGMpIDIwMTEgR29vZ2xlLCBJbmMuCj4gKyAqIEF1dGhvcjogQ29saW4gQ3Jvc3MgPGNjcm9z
+c0BhbmRyb2lkLmNvbT4KPiArICogICAgICAgICBHYXJ5IEtpbmcgPGdraW5nQG52aWRpYS5jb20+
+Cj4gKyAqCj4gKyAqIFJld29yayBmb3IgMy4zIGJ5IFBldGVyIERlIFNjaHJpanZlciA8cGRlc2No
+cmlqdmVyQG52aWRpYS5jb20+Cj4gKyAqCj4gKyAqIFRlZ3JhMjAvMTI0IGRyaXZlciB1bmlmaWNh
+dGlvbiBieSBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+Cj4gKyAqLwo+ICsKPiAr
+I2luY2x1ZGUgPGxpbnV4L2NwdWlkbGUuaD4KPiArI2luY2x1ZGUgPGxpbnV4L2NwdW1hc2suaD4K
+PiArI2luY2x1ZGUgPGxpbnV4L2NwdV9wbS5oPgo+ICsjaW5jbHVkZSA8bGludXgvZXJybm8uaD4K
+PiArI2luY2x1ZGUgPGxpbnV4L2t0aW1lLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9k
+ZXZpY2UuaD4KPiArI2luY2x1ZGUgPGxpbnV4L3R5cGVzLmg+Cj4gKwo+ICsjaW5jbHVkZSA8bGlu
+dXgvY2xrL3RlZ3JhLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9maXJtd2FyZS90cnVzdGVkX2ZvdW5k
+YXRpb25zLmg+Cj4gKwo+ICsjaW5jbHVkZSA8c29jL3RlZ3JhL2NwdWlkbGUuaD4KPiArI2luY2x1
+ZGUgPHNvYy90ZWdyYS9mbG93Y3RybC5oPgo+ICsjaW5jbHVkZSA8c29jL3RlZ3JhL2Z1c2UuaD4K
+PiArI2luY2x1ZGUgPHNvYy90ZWdyYS9wbS5oPgo+ICsKPiArI2luY2x1ZGUgPGFzbS9jcHVpZGxl
+Lmg+Cj4gKyNpbmNsdWRlIDxhc20vZmlybXdhcmUuaD4KPiArI2luY2x1ZGUgPGFzbS9zbXBfcGxh
+dC5oPgo+ICsjaW5jbHVkZSA8YXNtL3N1c3BlbmQuaD4KPiArCj4gKyNkZWZpbmUgVEVHUkFfQzEJ
+CTAKPiArI2RlZmluZSBURUdSQV9DNwkJMQo+ICsjZGVmaW5lIFRFR1JBX0NDNgkJMgo+ICsKPiAr
+c3RhdGljIGF0b21pY190IHRlZ3JhX2lkbGVfYmFycmllcjsKPiArCj4gK3N0YXRpYyBpbmxpbmUg
+Ym9vbCB0ZWdyYV9jcHVpZGxlX3VzaW5nX2Zpcm13YXJlKHZvaWQpCj4gK3sKPiArCXJldHVybiBm
+aXJtd2FyZV9vcHMtPnByZXBhcmVfaWRsZSAmJiBmaXJtd2FyZV9vcHMtPmRvX2lkbGU7Cj4gK30K
+PiArCj4gK3N0YXRpYyBpbnQgdGVncmFfc2h1dGRvd25fc2Vjb25kYXJ5X2NwdSh1bnNpZ25lZCBs
+b25nIGNwdSkKPiArewo+ICsJdGVncmFfY3B1X2RpZShjcHUpOwo+ICsKPiArCXJldHVybiAtRUlO
+VkFMOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW50IHRlZ3JhX2F3YWl0X3NlY29uZGFyeV9jcHVzX3No
+dXRkb3duKHZvaWQpCj4gK3sKPiArCWt0aW1lX3QgdGltZW91dCA9IGt0aW1lX2FkZF9tcyhrdGlt
+ZV9nZXQoKSwgMSk7Cj4gKwo+ICsJLyoKPiArCSAqIFRoZSBib290IENQVSBzaGFsbCBhd2FpdCBm
+b3IgdGhlIHNlY29uZGFyaWVzIHNodXRkb3duIGluIG9yZGVyCj4gKwkgKiB0byBwb3dlci1vZmYg
+Q1BVJ3MgY2x1c3RlciBzYWZlbHkuCj4gKwkgKi8KPiArCWRvIHsKPiArCQlpZiAodGVncmFfY3B1
+X3JhaWxfb2ZmX3JlYWR5KCkpCj4gKwkJCXJldHVybiAwOwo+ICsKPiArCX0gd2hpbGUgKGt0aW1l
+X2NvbXBhcmUoa3RpbWVfZ2V0KCksIHRpbWVvdXQpIDwgMCk7Cj4gKwo+ICsJcmV0dXJuIC1FVElN
+RURPVVQ7Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkIHRlZ3JhX3dha2VfdXBfc2Vjb25kYXJ5X2Nw
+dXModm9pZCkKPiArewo+ICsJdW5zaWduZWQgaW50IGNwdSwgbGNwdTsKPiArCj4gKwlmb3JfZWFj
+aF9jcHUobGNwdSwgY3B1X29ubGluZV9tYXNrKSB7Cj4gKwkJY3B1ID0gY3B1X2xvZ2ljYWxfbWFw
+KGxjcHUpOwo+ICsKPiArCQlpZiAoY3B1ID4gMCkgewo+ICsJCQl0ZWdyYV9lbmFibGVfY3B1X2Ns
+b2NrKGNwdSk7Cj4gKwkJCXRlZ3JhX2NwdV9vdXRfb2ZfcmVzZXQoY3B1KTsKPiArCQkJZmxvd2N0
+cmxfd3JpdGVfY3B1X2hhbHQoY3B1LCAwKTsKPiArCQl9Cj4gKwl9Cj4gK30KPiArCj4gK3N0YXRp
+YyBpbnQgdGVncmFfY3B1aWRsZV9jYzZfZW50ZXIodm9pZCkKPiArewo+ICsJaW50IGVycjsKPiAr
+Cj4gKwllcnIgPSB0ZWdyYV9hd2FpdF9zZWNvbmRhcnlfY3B1c19zaHV0ZG93bigpOwo+ICsJaWYg
+KGVycikKPiArCQlyZXR1cm4gZXJyOwo+ICsKPiArCWVyciA9IHRlZ3JhX2lkbGVfbHAyX2xhc3Qo
+KTsKPiArCj4gKwl0ZWdyYV93YWtlX3VwX3NlY29uZGFyeV9jcHVzKCk7Cj4gKwo+ICsJcmV0dXJu
+IGVycjsKPiArfQo+ICsKPiArc3RhdGljIGludCB0ZWdyYV9jcHVpZGxlX2M3X2VudGVyKHZvaWQp
+Cj4gK3sKPiArCWludCBlcnI7Cj4gKwo+ICsJaWYgKHRlZ3JhX2NwdWlkbGVfdXNpbmdfZmlybXdh
+cmUoKSkgewo+ICsJCWVyciA9IGNhbGxfZmlybXdhcmVfb3AocHJlcGFyZV9pZGxlLCBURl9QTV9N
+T0RFX0xQMl9OT0ZMVVNIX0wyKTsKPiArCQlpZiAoZXJyKQo+ICsJCQlyZXR1cm4gZXJyOwo+ICsK
+PiArCQlyZXR1cm4gY2FsbF9maXJtd2FyZV9vcChkb19pZGxlLCAwKTsKPiArCX0KPiArCj4gKwly
+ZXR1cm4gY3B1X3N1c3BlbmQoMCwgdGVncmEzMF9zbGVlcF9jcHVfc2Vjb25kYXJ5X2ZpbmlzaCk7
+Cj4gK30KPiArCj4gK3N0YXRpYyBpbnQgdGVncmFfY3B1aWRsZV9lbnRlcihzdHJ1Y3QgY3B1aWRs
+ZV9kZXZpY2UgKmRldiwKPiArCQkJICAgICAgIGludCBpbmRleCwgdW5zaWduZWQgaW50IGNwdSkK
+PiArewo+ICsJaW50IGVycjsKPiArCj4gKwlsb2NhbF9maXFfZGlzYWJsZSgpOwo+ICsJdGVncmFf
+c2V0X2NwdV9pbl9scDIoKTsKPiArCWNwdV9wbV9lbnRlcigpOwo+ICsKPiArCXN3aXRjaCAoaW5k
+ZXgpIHsKPiArCWNhc2UgVEVHUkFfQzc6Cj4gKwkJZXJyID0gdGVncmFfY3B1aWRsZV9jN19lbnRl
+cigpOwo+ICsJCWJyZWFrOwo+ICsJY2FzZSBURUdSQV9DQzY6Cj4gKwkJY3B1aWRsZV9jb3VwbGVk
+X3BhcmFsbGVsX2JhcnJpZXIoZGV2LCAmdGVncmFfaWRsZV9iYXJyaWVyKTsKCkkgcmVhbGl6ZWQg
+dGhhdCB0aGlzIGlzIG5vdCB2ZXJ5IGNvcnJlY3QuIFdlIHN0aWxsIG5lZWQgdG8gZG8gYSBwcm9w
+ZXIKYmFycmllciB3aXRoIFNHSSBjaGVja2luZyBpbiBvcmRlciB0byBiYWlsIG91dCBpZiBvdGhl
+ciBDUFUgc2VudCBJUEkKZHVyaW5nIG9mIHRoZSBhd2FpdGluZyBmb3IgYSBjb3VwbGVkIGJhcnJp
+ZXIgdG8gYXZvaWQgdGhlIG92ZXJoZWFkIG9mCnVubmVjZXNzYXJ5IHBvd2VyLWdhdGluZy4gV2ls
+bCBjb3JyZWN0IHRoYXQgaW4gdGhlIG5leHQgcmV2aXNpb24uCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlz
+dApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJh
+ZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
