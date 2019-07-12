@@ -1,25 +1,24 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.1 000/138] 5.1.18-stable review
-Date: Fri, 12 Jul 2019 17:30:35 +0200
-Message-ID: <20190712153035.GC13940@kroah.com>
-References: <20190712121628.731888964@linuxfoundation.org>
- <4dae64c8-046e-3647-52d6-43362e986d21@nvidia.com>
+Subject: Re: [PATCH 5.2 00/61] 5.2.1-stable review
+Date: Fri, 12 Jul 2019 17:31:08 +0200
+Message-ID: <20190712153108.GD13940@kroah.com>
+References: <20190712121620.632595223@linuxfoundation.org>
+ <a1ae16a7-e8f7-b6fc-df4e-46079bebf9b3@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4dae64c8-046e-3647-52d6-43362e986d21@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <a1ae16a7-e8f7-b6fc-df4e-46079bebf9b3@nvidia.com>
+Sender: stable-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, j-keerthy@ti.com
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 02:26:57PM +0100, Jon Hunter wrote:
-> Hi Greg,
+On Fri, Jul 12, 2019 at 02:36:29PM +0100, Jon Hunter wrote:
 > 
-> On 12/07/2019 13:17, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.1.18 release.
-> > There are 138 patches in this series, all will be posted as a response
+> On 12/07/2019 13:19, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.2.1 release.
+> > There are 61 patches in this series, all will be posted as a response
 > > to this one.  If anyone has any issues with these being applied, please
 > > let me know.
 > > 
@@ -27,41 +26,27 @@ On Fri, Jul 12, 2019 at 02:26:57PM +0100, Jon Hunter wrote:
 > > Anything received after that time might be too late.
 > > 
 > > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.18-rc1.gz
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.1-rc1.gz
 > > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
 > > and the diffstat can be found below.
 > > 
 > > thanks,
 > > 
 > > greg k-h
-> > 
-> > -------------
-> > Pseudo-Shortlog of commits:
 > 
-> ...
+> All tests are passing for Tegra ...
 > 
-> > Keerthy <j-keerthy@ti.com>
-> >     ARM: dts: dra71x: Disable usb4_tm target module
+> Test results for stable-v5.2:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
 > 
-> ...
-> 
-> > Keerthy <j-keerthy@ti.com>
-> >     ARM: dts: dra76x: Disable usb4_tm target module
-> 
-> The above commits are generating the following compilation errors for
-> ARM ...
-> 
-> Error:
-> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra71x.dtsi:15.1-9
-> Label or path usb4_tm not found
-> 
-> Error:
-> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra76x.dtsi:89.1-9
-> Label or path usb4_tm not found
-> 
-> After reverting these two, I no longer see these errors.
+> Linux version:	5.2.1-rc1-g61731e8fe278
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Both are now dropped, thanks.  I'll push out a -rc2 with that changed.
+That was fast, thanks for testing all of these.
 
 greg k-h
