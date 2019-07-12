@@ -1,44 +1,128 @@
-From: Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 15/23] drm: sti: Provide ddc symlink in
- hdmi connector sysfs directory
-Date: Fri, 12 Jul 2019 09:42:44 +0200
-Message-ID: <CA+M3ks63WY4umDR_1apjLj4kDf8jpm-CLsC-XO7dY=LbY--p-w@mail.gmail.com>
-References: <cover.1562843413.git.andrzej.p@collabora.com>
- <86afdc0bca6939901870176dcf55f279f7b10a08.1562843413.git.andrzej.p@collabora.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v1] drm/modes: Skip invalid cmdline mode
+Date: Fri, 12 Jul 2019 10:10:27 +0200
+Message-ID: <20190712081027.arybdoxr6nzrmkxt@flea>
+References: <4ad69d15-07f8-9753-72d6-a51402c94c20@gmail.com>
+ <20190710125552.qvmnh6qs63ikiu2k@flea>
+ <f530844d-70f2-c3cc-d5f6-b435f1dbdfd2@gmail.com>
+ <20190710130615.gvi2jwgr2cds66xr@flea>
+ <75719cad-c65c-7ebc-3ea8-98134f86ddc3@gmail.com>
+ <4a13f12f-05a7-473e-4e4e-7a7e32d09720@gmail.com>
+ <20190710140504.t5lsk36gnn5cdn6b@flea>
+ <e7d78307-4a48-45b1-ffbe-bc397fec0e40@gmail.com>
+ <20190711090327.keuxt2ztfqecdbef@flea>
+ <de21fe78-87a6-741f-caf7-2771f6468739@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <86afdc0bca6939901870176dcf55f279f7b10a08.1562843413.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ramalingam C <ramalingam.c-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6weybs6gnxo2efbk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <de21fe78-87a6-741f-caf7-2771f6468739@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-TGUgamV1LiAxMSBqdWlsLiAyMDE5IMOgIDEzOjMwLCBBbmRyemVqIFBpZXRyYXNpZXdpY3oKPGFu
-ZHJ6ZWoucEBjb2xsYWJvcmEuY29tPiBhIMOpY3JpdCA6Cj4KPiBVc2UgdGhlIGRkYyBwb2ludGVy
-IHByb3ZpZGVkIGJ5IHRoZSBnZW5lcmljIGNvbm5lY3Rvci4KPgo+IFNpZ25lZC1vZmYtYnk6IEFu
-ZHJ6ZWogUGlldHJhc2lld2ljeiA8YW5kcnplai5wQGNvbGxhYm9yYS5jb20+CgpSZXZpZXdlZC1i
-eTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQGxpbmFyby5vcmc+Cgo+IC0t
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgfCAxICsKPiAgMSBmaWxlIGNoYW5n
-ZWQsIDEgaW5zZXJ0aW9uKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N0aS9z
-dGlfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCj4gaW5kZXggZjAzZDYx
-N2VkYzRjLi45MGY4ZGI2M2MwOTUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3N0aS9z
-dGlfaGRtaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jCj4gQEAgLTEy
-NzksNiArMTI3OSw3IEBAIHN0YXRpYyBpbnQgc3RpX2hkbWlfYmluZChzdHJ1Y3QgZGV2aWNlICpk
-ZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPiAgICAgICAgIGRybV9icmlk
-Z2VfYXR0YWNoKGVuY29kZXIsIGJyaWRnZSwgTlVMTCk7Cj4KPiAgICAgICAgIGNvbm5lY3Rvci0+
-ZW5jb2RlciA9IGVuY29kZXI7Cj4gKyAgICAgICBkcm1fY29ubmVjdG9yLT5kZGMgPSBoZG1pLT5k
-ZGNfYWRhcHQ7Cj4KPiAgICAgICAgIGRybV9jb25uZWN0b3IgPSAoc3RydWN0IGRybV9jb25uZWN0
-b3IgKiljb25uZWN0b3I7Cj4KPiAtLQo+IDIuMTcuMQo+Cl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkZyZWVkcmVubyBtYWlsaW5nIGxpc3QKRnJlZWRyZW5v
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2ZyZWVkcmVubw==
+
+--6weybs6gnxo2efbk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jul 11, 2019 at 06:55:03PM +0300, Dmitry Osipenko wrote:
+> 11.07.2019 12:03, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, Jul 10, 2019 at 06:05:18PM +0300, Dmitry Osipenko wrote:
+> >> 10.07.2019 17:05, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Wed, Jul 10, 2019 at 04:29:19PM +0300, Dmitry Osipenko wrote:
+> >>>> This works:
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/=
+drm_client_modeset.c
+> >>>> index 56d36779d213..e5a2f9c8f404 100644
+> >>>> --- a/drivers/gpu/drm/drm_client_modeset.c
+> >>>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+> >>>> @@ -182,6 +182,8 @@ drm_connector_pick_cmdline_mode(struct drm_conne=
+ctor *connector)
+> >>>>         mode =3D drm_mode_create_from_cmdline_mode(connector->dev, c=
+mdline_mode);
+> >>>>         if (mode)
+> >>>>                 list_add(&mode->head, &connector->modes);
+> >>>> +       else
+> >>>> +               cmdline_mode->specified =3D false;
+> >>>
+> >>> Hmmm, it's not clear to me why that wouldn't be the case.
+> >>>
+> >>> If we come back to the beginning of that function, we retrieve the
+> >>> cmdline_mode buffer from the connector pointer, that will probably
+> >>> have been parsed a first time using drm_mode_create_from_cmdline_mode
+> >>> in drm_helper_probe_add_cmdline_mode.
+> >>>
+> >>> Now, I'm guessing that the issue is that in
+> >>> drm_mode_parse_command_line_for_connector, if we have a named mode, we
+> >>> just copy the mode over and set mode->specified.
+> >>>
+> >>> And we then move over to do other checks, and that's probably what
+> >>> fails and returns, but our drm_cmdline_mode will have been modified.
+> >>>
+> >>> I'm not entirely sure how to deal with that though.
+> >>>
+> >>> I guess we could allocate a drm_cmdline_mode structure on the stack,
+> >>> fill that, and if successful copy over its content to the one in
+> >>> drm_connector. That would allow us to only change the content on
+> >>> success, which is what I would expect from such a function?
+> >>>
+> >>> How does that sound?
+> >>
+> >> I now see that there is DRM_MODE_TYPE_USERDEF flag that is assigned on=
+ly
+> >> for the "cmdline" mode and drm_client_rotation() is the only place in
+> >> DRM code that cares about whether mode is from cmdline, hence looks li=
+ke
+> >> it will be more correct to do the following:
+> >
+> > I'm still under the impression that we're dealing with workarounds of
+> > a more central issue, which is that we shouldn't return a partially
+> > modified drm_cmdline_mode.
+> >
+> > You said it yourself, the breakage is in the commit changing the
+> > command line parsing logic, while you're fixing here some code that
+> > was introduced later on.
+>
+> The problem stems from assumption that *any* named mode is valid. It
+> looks to me that the ultimate solution would be to move the mode's name
+> comparison into the [1], if that's possible.
+>
+> [1] drm_mode_parse_command_line_for_connector()
+
+Well, one could argue that video=3Dtegrafb is invalid and should be
+rejected as well, but we haven't cleared that up.
+
+> > Can you try the followintg patch?
+> > http://code.bulix.org/8cwk4c-794565?raw
+>
+> This doesn't help because the problem with the rotation_reflection is
+> that it's 0 if "rotation" not present in the cmdline and then ilog2(0)
+> returns -1. So the patch "drm/modes: Don't apply cmdline's rotation if
+> it wasn't specified" should be correct in any case.
+
+So we would have the same issue with rotate=3D0 then?
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--6weybs6gnxo2efbk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXShAcwAKCRDj7w1vZxhR
+xTSIAQD/e1DSHvsHrh2flaNGAhwJVB74Bj9ujrC7VCEaL5GlwAD/ZUqWk9LNA1y+
+s25PrPo0pdy89EqHc9WFkd6x6juMrg8=
+=U3z3
+-----END PGP SIGNATURE-----
+
+--6weybs6gnxo2efbk--
