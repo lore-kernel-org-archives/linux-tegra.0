@@ -1,251 +1,405 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-Date: Fri, 12 Jul 2019 22:54:19 -0700
-Message-ID: <a9b5c364-52b4-bee1-5881-47197f043950@nvidia.com>
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-12-git-send-email-skomatineni@nvidia.com>
- <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V13 12/12] PCI: tegra: Add Tegra194 PCIe support
+Date: Sat, 13 Jul 2019 12:34:34 +0530
+Message-ID: <a5f8689b-1358-dd2d-4f54-7e68a6ab158b@nvidia.com>
+References: <20190710062212.1745-1-vidyas@nvidia.com>
+ <20190710062212.1745-13-vidyas@nvidia.com>
+ <20190711125433.GB26088@e121166-lin.cambridge.arm.com>
+ <986d0b1a-666a-7b05-a9f3-e761518bdc92@nvidia.com>
+ <20190712160754.GA24285@e121166-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190712160754.GA24285@e121166-lin.cambridge.arm.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, mperttunen@nvidia.com, mmaddireddy@nvidia.com, linux-pci@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, kthota@nvidia.com, kishon@ti.com, linux-tegra@vger.kernel.org, robh+dt@kernel.org, thierry.reding@gmail.com, gustavo.pimentel@synopsys.com, jingoohan1@gmail.com, bhelgaas@google.com, digetx@gmail.com, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+On 7/12/2019 9:37 PM, Lorenzo Pieralisi wrote:
+> On Fri, Jul 12, 2019 at 09:02:49PM +0530, Vidya Sagar wrote:
+> 
+> [...]
+> 
+>>>> +static irqreturn_t tegra_pcie_irq_handler(int irq, void *arg)
+>>>> +{
+>>>> +	struct tegra_pcie_dw *pcie = arg;
+>>>> +
+>>>> +	if (pcie->mode == DW_PCIE_RC_TYPE)
+>>>> +		return tegra_pcie_rp_irq_handler(pcie);
+>>>
+>>> What's the point of registering the handler if mode != DW_PCIE_RC_TYPE ?
+>> Currently this driver supports only root port mode but we have a plan
+>> to add support for endpoint mode (as Tegra194 as dual mode
+>> controllers) also in future and when that happens, we'll have a
+>> corresponding tegra_pcie_ep_irq_handler() to take care of ep specific
+>> interrupts.
+> 
+> Sure, that's why you should add tegra_pcie_dw->mode when it is needed,
+> not in this patch.
+Ok.
 
-On 6/29/19 8:10 AM, Dmitry Osipenko wrote:
-> 28.06.2019 5:12, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> This patch adds system suspend and resume support for Tegra210
->> clocks.
+> 
+> [...]
+> 
+>>>> +static int tegra_pcie_dw_host_init(struct pcie_port *pp)
+>>>> +{
+>>>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>>>> +	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+>>>> +	u32 val, tmp, offset, speed;
+>>>> +	unsigned int count;
+>>>> +	u16 val_w;
+>>>> +
+>>>> +core_init:
+>>>
+>>> I think it would be cleaner to include all registers programming
+>>> within a function and we remove this label (and goto) below.
+>> Some background: As per spec r4.0 v1.0, downstream ports that support
+>> 16.0 GT/s must support Scaled Flow Control (sec 3.4.2) and Tegra194's
+>> downstream ports being 16.0 GT/s capable, enable scaled flow control
+>> by having Data Link Feature (sec 7.7.4) enabled by default. There is
+>> one endpoint (ASMedia USB3.0 controller) that doesn't link up with
+>> root port because of this (i.e. DLF being enabled). The way we are
+>> detecting this situation is to check for partial linkup i.e. one of
+>> application logic registers (i.e. from "appl" region) says link is up
+>> but the same is not reflected in configuration space of root port.
+>> Recommendation from our hardware team in this situation is to disable
+>> DLF in root port and try link up with endpoint again.  To achieve
+>> this, we put the core through reset cycle, disable DLF and proceed
+>> with configuring all other registers and check for link up.
 >>
->> All the CAR controller settings are lost on suspend when core power
->> goes off.
+>> Initially in Patch-1, I didn't have goto statement but a recursion
+>> with depth-1 (as the above situation occurs only once). It was
+>> reviewed @ http://patchwork.ozlabs.org/patch/1065707/ and Thierry said
+>> it would be simpler to use a goto instead of calling the same function
+>> again. So, I modified the code accordingly. Please do let me know if
+>> you strongly feel we should call tegra_pcie_dw_host_init() instead of
+>> goto here. I'll change it.
+> 
+> I did not say we should call tegra_pcie_dw_host_init(), sorry for
+> not being clear. What I asked is factoring out registers programming
+> in a function and call it where core_init: label is and call it
+> again if DLF enablement causes link up to fail.
+Ok.
+
+> 
+> [...]
+> 
+>>>> +static int tegra_pcie_bpmp_set_ctrl_state(struct tegra_pcie_dw *pcie,
+>>>> +					  bool enable)
+>>>> +{
+>>>> +	struct mrq_uphy_response resp;
+>>>> +	struct tegra_bpmp_message msg;
+>>>> +	struct mrq_uphy_request req;
+>>>> +	int err;
+>>>> +
+>>>> +	if (pcie->cid == 5)
+>>>> +		return 0;
+>>>
+>>> What's wrong with cid == 5 ? Explain please.
+>> Controller with ID=5 doesn't need any programming to enable it which is
+>> done here through calling firmware API.
 >>
->> This patch has implementation for saving and restoring all the PLLs
->> and clocks context during system suspend and resume to have the
->> clocks back to same state for normal operation.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-tegra210.c | 115 +++++++++++++++++++++++++++++++=
-+++++++-
->>   drivers/clk/tegra/clk.c          |  14 +++++
->>   drivers/clk/tegra/clk.h          |   1 +
->>   3 files changed, 127 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-te=
-gra210.c
->> index 1c08c53482a5..1b839544e086 100644
->> --- a/drivers/clk/tegra/clk-tegra210.c
->> +++ b/drivers/clk/tegra/clk-tegra210.c
->> @@ -9,10 +9,12 @@
->>   #include <linux/clkdev.h>
->>   #include <linux/of.h>
->>   #include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->>   #include <linux/delay.h>
->>   #include <linux/export.h>
->>   #include <linux/mutex.h>
->>   #include <linux/clk/tegra.h>
->> +#include <linux/syscore_ops.h>
->>   #include <dt-bindings/clock/tegra210-car.h>
->>   #include <dt-bindings/reset/tegra210-car.h>
->>   #include <linux/iopoll.h>
->> @@ -20,6 +22,7 @@
->>   #include <soc/tegra/pmc.h>
->>  =20
->>   #include "clk.h"
->> +#include "clk-dfll.h"
->>   #include "clk-id.h"
->>  =20
->>   /*
->> @@ -225,6 +228,7 @@
->>  =20
->>   #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
->>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
->> +#define CPU_SOFTRST_CTRL 0x380
->>  =20
->>   #define LVL2_CLK_GATE_OVRA 0xf8
->>   #define LVL2_CLK_GATE_OVRC 0x3a0
->> @@ -2820,6 +2824,7 @@ static int tegra210_enable_pllu(void)
->>   	struct tegra_clk_pll_freq_table *fentry;
->>   	struct tegra_clk_pll pllu;
->>   	u32 reg;
->> +	int ret;
->>  =20
->>   	for (fentry =3D pll_u_freq_table; fentry->input_rate; fentry++) {
->>   		if (fentry->input_rate =3D=3D pll_ref_freq)
->> @@ -2847,10 +2852,10 @@ static int tegra210_enable_pllu(void)
->>   	fence_udelay(1, clk_base);
->>   	reg |=3D PLL_ENABLE;
->>   	writel(reg, clk_base + PLLU_BASE);
->> +	fence_udelay(1, clk_base);
->>  =20
->> -	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
->> -					  reg & PLL_BASE_LOCK, 2, 1000);
->> -	if (!(reg & PLL_BASE_LOCK)) {
->> +	ret =3D tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
->> +	if (ret) {
->>   		pr_err("Timed out waiting for PLL_U to lock\n");
->>   		return -ETIMEDOUT;
->>   	}
->> @@ -3283,6 +3288,103 @@ static void tegra210_disable_cpu_clock(u32 cpu)
->>   }
->>  =20
->>   #ifdef CONFIG_PM_SLEEP
->> +static u32 cpu_softrst_ctx[3];
->> +static struct platform_device *dfll_pdev;
->> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) + ((_of=
-f) * 4))
->> +#define car_writel(_val, _base, _off) \
->> +		writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
->> +
->> +static int tegra210_clk_suspend(void)
->> +{
->> +	unsigned int i;
->> +	struct device_node *node;
->> +
->> +	tegra_cclkg_burst_policy_save_context();
->> +
->> +	if (!dfll_pdev) {
->> +		node =3D of_find_compatible_node(NULL, NULL,
->> +					       "nvidia,tegra210-dfll");
->> +		if (node)
->> +			dfll_pdev =3D of_find_device_by_node(node);
->> +
->> +		of_node_put(node);
->> +		if (!dfll_pdev)
->> +			pr_err("dfll node not found. no suspend for dfll\n");
->> +	}
->> +
->> +	if (dfll_pdev)
->> +		tegra_dfll_suspend(dfll_pdev);
->> +
->> +	/* Enable PLLP_OUT_CPU after dfll suspend */
->> +	tegra_clk_set_pllp_out_cpu(true);
->> +
->> +	tegra_sclk_cclklp_burst_policy_save_context();
->> +
->> +	clk_save_context();
->> +
->> +	for (i =3D 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->> +		cpu_softrst_ctx[i] =3D car_readl(CPU_SOFTRST_CTRL, i);
->> +
->> +	return 0;
->> +}
->> +
->> +static void tegra210_clk_resume(void)
->> +{
->> +	unsigned int i;
->> +	struct clk_hw *parent;
->> +	struct clk *clk;
->> +
->> +	/*
->> +	 * clk_restore_context restores clocks as per the clock tree.
->> +	 *
->> +	 * dfllCPU_out is first in the clock tree to get restored and it
->> +	 * involves programming DFLL controller along with restoring CPUG
->> +	 * clock burst policy.
->> +	 *
->> +	 * DFLL programming needs dfll_ref and dfll_soc peripheral clocks
->> +	 * to be restores which are part ofthe peripheral clocks.
->> +	 * So, peripheral clocks restore should happen prior to dfll clock
->> +	 * restore.
->> +	 */
->> +
->> +	tegra_clk_osc_resume(clk_base);
->> +	for (i =3D 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->> +		car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
->> +
->> +	/* restore all plls and peripheral clocks */
->> +	tegra210_init_pllu();
->> +	clk_restore_context();
->> +
->> +	fence_udelay(5, clk_base);
->> +
->> +	/* resume SCLK and CPULP clocks */
->> +	tegra_sclk_cpulp_burst_policy_restore_context();
->> +
->> +	/*
->> +	 * restore CPUG clocks:
->> +	 * - enable DFLL in open loop mode
->> +	 * - switch CPUG to DFLL clock source
->> +	 * - close DFLL loop
->> +	 * - sync PLLX state
->> +	 */
->> +	if (dfll_pdev)
->> +		tegra_dfll_resume(dfll_pdev, false);
->> +
->> +	tegra_cclkg_burst_policy_restore_context();
->> +	fence_udelay(2, clk_base);
->> +
->> +	if (dfll_pdev)
->> +		tegra_dfll_resume(dfll_pdev, true);
->> +
->> +	parent =3D clk_hw_get_parent(__clk_get_hw(clks[TEGRA210_CLK_CCLK_G]));
->> +	clk =3D clks[TEGRA210_CLK_PLL_X];
->> +	if (parent !=3D __clk_get_hw(clk))
->> +		tegra_clk_sync_state_pll(__clk_get_hw(clk));
->> +
->> +	/* Disable PLL_OUT_CPU after DFLL resume */
->> +	tegra_clk_set_pllp_out_cpu(false);
->> +}
->> +
->>   static void tegra210_cpu_clock_suspend(void)
->>   {
->>   	/* switch coresite to clk_m, save off original source */
->> @@ -3298,6 +3400,11 @@ static void tegra210_cpu_clock_resume(void)
->>   }
->>   #endif
->>  =20
->> +static struct syscore_ops tegra_clk_syscore_ops =3D {
->> +	.suspend =3D tegra210_clk_suspend,
->> +	.resume =3D tegra210_clk_resume,
->> +};
->> +
->>   static struct tegra_cpu_car_ops tegra210_cpu_car_ops =3D {
->>   	.wait_for_reset	=3D tegra210_wait_cpu_in_reset,
->>   	.disable_clock	=3D tegra210_disable_cpu_clock,
->> @@ -3583,5 +3690,7 @@ static void __init tegra210_clock_init(struct devi=
-ce_node *np)
->>   	tegra210_mbist_clk_init();
->>  =20
->>   	tegra_cpu_car_ops =3D &tegra210_cpu_car_ops;
->> +
->> +	register_syscore_ops(&tegra_clk_syscore_ops);
->>   }
-> Is it really worthwhile to use syscore_ops for suspend/resume given that =
-drivers for
-> won't resume before the CLK driver anyway? Are there any other options fo=
-r CLK
-> suspend/resume?
->
-> I'm also not sure whether PM runtime API could be used at all in the cont=
-ext of
-> syscore_ops ..
->
-> Secondly, what about to use generic clk_save_context() / clk_restore_cont=
-ext()
-> helpers for the suspend-resume? It looks to me that some other essential =
-(and proper)
-> platform driver (soc/tegra/? PMC?) should suspend-resume the clocks using=
- the generic
-> CLK Framework API.
+>>>
+>>>> +	memset(&req, 0, sizeof(req));
+>>>> +	memset(&resp, 0, sizeof(resp));
+>>>> +
+>>>> +	req.cmd = CMD_UPHY_PCIE_CONTROLLER_STATE;
+>>>> +	req.controller_state.pcie_controller = pcie->cid;
+>>>> +	req.controller_state.enable = enable;
+>>>> +
+>>>> +	memset(&msg, 0, sizeof(msg));
+>>>> +	msg.mrq = MRQ_UPHY;
+>>>> +	msg.tx.data = &req;
+>>>> +	msg.tx.size = sizeof(req);
+>>>> +	msg.rx.data = &resp;
+>>>> +	msg.rx.size = sizeof(resp);
+>>>> +
+>>>> +	if (irqs_disabled())
+>>>
+>>> Can you explain to me what this check is meant to achieve please ?
+>> Firmware interface provides different APIs to be called when there are
+>> no interrupts enabled in the system (noirq context) and otherwise
+>> hence checking that situation here and calling appropriate API.
+> 
+> That's what I am questioning. Being called from {suspend/resume}_noirq()
+> callbacks (if that's the code path this check caters for) does not mean
+> irqs_disabled() == true.
+Agree.
+Actually, I got a hint of having this check from the following.
+Both tegra_bpmp_transfer_atomic() and tegra_bpmp_transfer() are indirectly
+called by APIs registered with .master_xfer() and .master_xfer_atomic() hooks of
+struct i2c_algorithm and the decision to call which one of these is made using the
+following check in i2c-core.h file.
+static inline bool i2c_in_atomic_xfer_mode(void)
+{
+	return system_state > SYSTEM_RUNNING && irqs_disabled();
+}
+I think I should use this condition as is IIUC.
+Please let me know if there are any concerns with this.
 
-Clock resume should happen very early to restore peripheral and cpu=20
-clocks very early than peripheral drivers resume happens.
+> 
+> Actually, if tegra_bpmp_transfer() requires IRQs to be enabled you may
+> even end up in a situation where that blocking call does not wake up
+> because the IRQ in question was disabled in the NOIRQ suspend/resume
+> phase.
+> 
+> [...]
+> 
+>>>> +static int tegra_pcie_dw_probe(struct platform_device *pdev)
+>>>> +{
+>>>> +	const struct tegra_pcie_soc *data;
+>>>> +	struct device *dev = &pdev->dev;
+>>>> +	struct resource *atu_dma_res;
+>>>> +	struct tegra_pcie_dw *pcie;
+>>>> +	struct resource *dbi_res;
+>>>> +	struct pcie_port *pp;
+>>>> +	struct dw_pcie *pci;
+>>>> +	struct phy **phys;
+>>>> +	char *name;
+>>>> +	int ret;
+>>>> +	u32 i;
+>>>> +
+>>>> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+>>>> +	if (!pcie)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	pci = &pcie->pci;
+>>>> +	pci->dev = &pdev->dev;
+>>>> +	pci->ops = &tegra_dw_pcie_ops;
+>>>> +	pp = &pci->pp;
+>>>> +	pcie->dev = &pdev->dev;
+>>>> +
+>>>> +	data = (struct tegra_pcie_soc *)of_device_get_match_data(dev);
+>>>> +	if (!data)
+>>>> +		return -EINVAL;
+>>>> +	pcie->mode = (enum dw_pcie_device_mode)data->mode;
+>>>> +
+>>>> +	ret = tegra_pcie_dw_parse_dt(pcie);
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(dev, "Failed to parse device tree: %d\n", ret);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	pcie->pex_ctl_supply = devm_regulator_get(dev, "vddio-pex-ctl");
+>>>> +	if (IS_ERR(pcie->pex_ctl_supply)) {
+>>>> +		dev_err(dev, "Failed to get regulator: %ld\n",
+>>>> +			PTR_ERR(pcie->pex_ctl_supply));
+>>>> +		return PTR_ERR(pcie->pex_ctl_supply);
+>>>> +	}
+>>>> +
+>>>> +	pcie->core_clk = devm_clk_get(dev, "core");
+>>>> +	if (IS_ERR(pcie->core_clk)) {
+>>>> +		dev_err(dev, "Failed to get core clock: %ld\n",
+>>>> +			PTR_ERR(pcie->core_clk));
+>>>> +		return PTR_ERR(pcie->core_clk);
+>>>> +	}
+>>>> +
+>>>> +	pcie->appl_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>>>> +						      "appl");
+>>>> +	if (!pcie->appl_res) {
+>>>> +		dev_err(dev, "Failed to find \"appl\" region\n");
+>>>> +		return PTR_ERR(pcie->appl_res);
+>>>> +	}
+>>>> +	pcie->appl_base = devm_ioremap_resource(dev, pcie->appl_res);
+>>>> +	if (IS_ERR(pcie->appl_base))
+>>>> +		return PTR_ERR(pcie->appl_base);
+>>>> +
+>>>> +	pcie->core_apb_rst = devm_reset_control_get(dev, "apb");
+>>>> +	if (IS_ERR(pcie->core_apb_rst)) {
+>>>> +		dev_err(dev, "Failed to get APB reset: %ld\n",
+>>>> +			PTR_ERR(pcie->core_apb_rst));
+>>>> +		return PTR_ERR(pcie->core_apb_rst);
+>>>> +	}
+>>>> +
+>>>> +	phys = devm_kcalloc(dev, pcie->phy_count, sizeof(*phys), GFP_KERNEL);
+>>>> +	if (!phys)
+>>>> +		return PTR_ERR(phys);
+>>>> +
+>>>> +	for (i = 0; i < pcie->phy_count; i++) {
+>>>> +		name = kasprintf(GFP_KERNEL, "p2u-%u", i);
+>>>> +		if (!name) {
+>>>> +			dev_err(dev, "Failed to create P2U string\n");
+>>>> +			return -ENOMEM;
+>>>> +		}
+>>>> +		phys[i] = devm_phy_get(dev, name);
+>>>> +		kfree(name);
+>>>> +		if (IS_ERR(phys[i])) {
+>>>> +			ret = PTR_ERR(phys[i]);
+>>>> +			dev_err(dev, "Failed to get PHY: %d\n", ret);
+>>>> +			return ret;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	pcie->phys = phys;
+>>>> +
+>>>> +	dbi_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+>>>> +	if (!dbi_res) {
+>>>> +		dev_err(dev, "Failed to find \"dbi\" region\n");
+>>>> +		return PTR_ERR(dbi_res);
+>>>> +	}
+>>>> +	pcie->dbi_res = dbi_res;
+>>>> +
+>>>> +	pci->dbi_base = devm_ioremap_resource(dev, dbi_res);
+>>>> +	if (IS_ERR(pci->dbi_base))
+>>>> +		return PTR_ERR(pci->dbi_base);
+>>>> +
+>>>> +	/* Tegra HW locates DBI2 at a fixed offset from DBI */
+>>>> +	pci->dbi_base2 = pci->dbi_base + 0x1000;
+>>>> +
+>>>> +	atu_dma_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>>>> +						   "atu_dma");
+>>>> +	if (!atu_dma_res) {
+>>>> +		dev_err(dev, "Failed to find \"atu_dma\" region\n");
+>>>> +		return PTR_ERR(atu_dma_res);
+>>>> +	}
+>>>> +	pcie->atu_dma_res = atu_dma_res;
+>>>> +	pci->atu_base = devm_ioremap_resource(dev, atu_dma_res);
+>>>> +	if (IS_ERR(pci->atu_base))
+>>>> +		return PTR_ERR(pci->atu_base);
+>>>> +
+>>>> +	pcie->core_rst = devm_reset_control_get(dev, "core");
+>>>> +	if (IS_ERR(pcie->core_rst)) {
+>>>> +		dev_err(dev, "Failed to get core reset: %ld\n",
+>>>> +			PTR_ERR(pcie->core_rst));
+>>>> +		return PTR_ERR(pcie->core_rst);
+>>>> +	}
+>>>> +
+>>>> +	pp->irq = platform_get_irq_byname(pdev, "intr");
+>>>> +	if (!pp->irq) {
+>>>> +		dev_err(dev, "Failed to get \"intr\" interrupt\n");
+>>>> +		return -ENODEV;
+>>>> +	}
+>>>> +
+>>>> +	ret = devm_request_irq(dev, pp->irq, tegra_pcie_irq_handler,
+>>>> +			       IRQF_SHARED, "tegra-pcie-intr", pcie);
+>>>> +	if (ret) {
+>>>> +		dev_err(dev, "Failed to request IRQ %d: %d\n", pp->irq, ret);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	pcie->bpmp = tegra_bpmp_get(dev);
+>>>> +	if (IS_ERR(pcie->bpmp))
+>>>> +		return PTR_ERR(pcie->bpmp);
+>>>> +
+>>>> +	platform_set_drvdata(pdev, pcie);
+>>>> +
+>>>> +	if (pcie->mode == DW_PCIE_RC_TYPE) {
+>>>> +		ret = tegra_pcie_config_rp(pcie);
+>>>> +		if (ret && ret != -ENOMEDIUM)
+>>>> +			goto fail;
+>>>> +		else
+>>>> +			return 0;
+>>>
+>>> So if the link is not up we still go ahead and make probe
+>>> succeed. What for ?
+>> We may need root port to be available to support hot-plugging of
+>> endpoint devices, so, we don't fail the probe.
+> 
+> We need it or we don't. If you do support hotplugging of endpoint
+> devices point me at the code, otherwise link up failure means
+> failure to probe.
+Currently hotplugging of endpoint is not supported, but it is one of the use cases that
+we may add support for in future.
+But, why should we fail probe if link up doesn't happen? As such, nothing went wrong in
+terms of root port initialization right?
+I checked other DWC based implementations and following are not failing the probe
+pci-dra7xx.c, pcie-armada8k.c, pcie-artpec6.c, pcie-histb.c, pcie-kirin.c, pcie-spear13xx.c,
+pci-exynos.c, pci-imx6.c, pci-keystone.c, pci-layerscape.c
 
-this patch series uses clk_save_context and clk_restore_context for=20
-corresponding divider, pll, pllout.. save and restore context.
+Although following do fail the probe if link is not up.
+pcie-qcom.c, pcie-uniphier.c, pci-meson.c
 
-But as there is dependency on dfll resume and cpu and pllx clocks=20
-restore, couldnt use clk_save_context and clk_restore_context for dfll.
+So, to me, it looks more like a choice we can make whether to fail the probe or not and in this
+case we are choosing not to fail.
+> 
+>>>> +	}
+>>>> +
+>>>> +fail:
+>>>> +	tegra_bpmp_put(pcie->bpmp);
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static int tegra_pcie_dw_remove(struct platform_device *pdev)
+>>>> +{
+>>>> +	struct tegra_pcie_dw *pcie = platform_get_drvdata(pdev);
+>>>> +
+>>>> +	if (pcie->mode != DW_PCIE_RC_TYPE)
+>>>> +		return 0;
+>>>> +
+>>>> +	if (!pcie->link_state)
+>>>> +		return 0;
+>>>> +
+>>>> +	debugfs_remove_recursive(pcie->debugfs);
+>>>> +	tegra_pcie_deinit_controller(pcie);
+>>>> +	pm_runtime_put_sync(pcie->dev);
+>>>> +	pm_runtime_disable(pcie->dev);
+>>>> +	tegra_bpmp_put(pcie->bpmp);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int tegra_pcie_dw_suspend_late(struct device *dev)
+>>>> +{
+>>>> +	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+>>>> +	u32 val;
+>>>> +
+>>>> +	if (!pcie->link_state)
+>>>> +		return 0;
+>>>> +
+>>>> +	/* Enable HW_HOT_RST mode */
+>>>> +	val = appl_readl(pcie, APPL_CTRL);
+>>>> +	val &= ~(APPL_CTRL_HW_HOT_RST_MODE_MASK <<
+>>>> +		 APPL_CTRL_HW_HOT_RST_MODE_SHIFT);
+>>>> +	val |= APPL_CTRL_HW_HOT_RST_EN;
+>>>> +	appl_writel(pcie, val, APPL_CTRL);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int tegra_pcie_dw_suspend_noirq(struct device *dev)
+>>>> +{
+>>>> +	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+>>>> +
+>>>> +	if (!pcie->link_state)
+>>>> +		return 0;
+>>>> +
+>>>> +	/* Save MSI interrupt vector */
+>>>> +	pcie->msi_ctrl_int = dw_pcie_readl_dbi(&pcie->pci,
+>>>> +					       PORT_LOGIC_MSI_CTRL_INT_0_EN);
+>>>> +	tegra_pcie_downstream_dev_to_D0(pcie);
+>>>
+>>> I think this requires some comments. AFAIU this is allowed by
+>>> the PCI specs (PCI Express Base 4.0 r1.0 September 29-2017,
+>>> 5.2 Link State Power Management). However, I would like to
+>>> understand how this plays with the D state the devices are left
+>>> in upon system suspend.
+>>>
+>>> "As the following example illustrates, it is also possible to remove
+>>> power without first placing all Functions into D3Hot".
+>>>
+>>> I assume that's what happens on this platform to allow L2 entry but
+>>> again, this needs clarification.
+>> Yes. It is true that in the case of Tegra194, it brings devices back
+>> to D0 before putting link to L2 state.
+> 
+> Comment it, extensively, so that anyone reading the code understands
+> why it is done so and what happens to devices then.
+I added comment in tegra_pcie_deinit_controller() where this API is called
+but I think I should move the comment inside tegra_pcie_downstream_dev_to_D0()
+API and also add more info to it.
+I'll take care of it in the next patch.
 
-So implemented recommended dfll resume sequence in main Tegra210 clock=20
-driver along with invoking clk_save_context/clk_restore_context where=20
-all other clocks save/restore happens as per clock tree traversal.
+> 
+> Lorenzo
+> 
