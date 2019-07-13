@@ -1,85 +1,100 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH 5.1 000/138] 5.1.18-stable review
-Date: Sat, 13 Jul 2019 16:25:04 +0200
-Message-ID: <20190713142504.GA7695@kroah.com>
+Date: Sat, 13 Jul 2019 16:31:54 +0200
+Message-ID: <20190713143154.GB7695@kroah.com>
 References: <20190712121628.731888964@linuxfoundation.org>
  <4dae64c8-046e-3647-52d6-43362e986d21@nvidia.com>
  <20190712153035.GC13940@kroah.com>
- <20190712202141.GA18698@roeck-us.net>
- <20190713082233.GA28657@kroah.com>
- <9871ef1a-ea5d-e9cb-2eff-a0a1a93ad44f@roeck-us.net>
+ <5f897de4-b423-c8a2-6823-d0227eb7bd38@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <9871ef1a-ea5d-e9cb-2eff-a0a1a93ad44f@roeck-us.net>
-Sender: stable-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, j-keerthy@ti.com
+In-Reply-To: <5f897de4-b423-c8a2-6823-d0227eb7bd38@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, j-keerthy@ti.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 06:16:56AM -0700, Guenter Roeck wrote:
-> On 7/13/19 1:22 AM, Greg Kroah-Hartman wrote:
-> > On Fri, Jul 12, 2019 at 01:21:41PM -0700, Guenter Roeck wrote:
-> > > On Fri, Jul 12, 2019 at 05:30:35PM +0200, Greg Kroah-Hartman wrote:
-> > > > On Fri, Jul 12, 2019 at 02:26:57PM +0100, Jon Hunter wrote:
-> > > > > Hi Greg,
-> > > > > 
-> > > > > On 12/07/2019 13:17, Greg Kroah-Hartman wrote:
-> > > > > > This is the start of the stable review cycle for the 5.1.18 release.
-> > > > > > There are 138 patches in this series, all will be posted as a response
-> > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > let me know.
-> > > > > > 
-> > > > > > Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
-> > > > > > Anything received after that time might be too late.
-> > > > > > 
-> > > > > > The whole patch series can be found in one patch at:
-> > > > > > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.18-rc1.gz
-> > > > > > or in the git tree and branch at:
-> > > > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> > > > > > and the diffstat can be found below.
-> > > > > > 
-> > > > > > thanks,
-> > > > > > 
-> > > > > > greg k-h
-> > > > > > 
-> > > > > > -------------
-> > > > > > Pseudo-Shortlog of commits:
-> > > > > 
-> > > > Both are now dropped, thanks.  I'll push out a -rc2 with that changed.
-> > > > 
-> > > 
-> > > Can you push that update into the git repository ?
-> > > v5.1.17-137-gde182b90f76d still has the problem.
-> > 
-> > Odd, I thought I did this.  Pushed out again just to be sure.
-> > 
-> Problem is still seen in -rc2.
-
-Ugh, I dropped one, but not the other, now both gone.  I'll push out
-updates in a bit.
-
-> > > Also:
-> > > 
-> > > Building powerpc:ppc6xx_defconfig ... failed
-> > > 
-> > > drivers/crypto/talitos.c: In function ‘get_request_hdr’:
-> > > include/linux/kernel.h:979:51: error:
-> > > 	dereferencing pointer to incomplete type ‘struct talitos_edesc’
-> > > 
-> > > Seen with both v4.19.58-92-gd66f8e7 and v5.1.17-137-gde182b90f76d.
-> > > 
-> > > This problem is caused by "crypto: talitos - fix hash on SEC1.", which will
-> > > need a proper backport - struct talitos_edesc is declared later in the
-> > > source file.
-> > 
-> > Ick, let me go drop this one after breakfast...
-> > 
+On Sat, Jul 13, 2019 at 10:16:58AM +0100, Jon Hunter wrote:
 > 
-> Turns out this affects all three branches (v4.19. v5.1, and v5.2).
+> On 12/07/2019 16:30, Greg Kroah-Hartman wrote:
+> > On Fri, Jul 12, 2019 at 02:26:57PM +0100, Jon Hunter wrote:
+> >> Hi Greg,
+> >>
+> >> On 12/07/2019 13:17, Greg Kroah-Hartman wrote:
+> >>> This is the start of the stable review cycle for the 5.1.18 release.
+> >>> There are 138 patches in this series, all will be posted as a response
+> >>> to this one.  If anyone has any issues with these being applied, please
+> >>> let me know.
+> >>>
+> >>> Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
+> >>> Anything received after that time might be too late.
+> >>>
+> >>> The whole patch series can be found in one patch at:
+> >>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.18-rc1.gz
+> >>> or in the git tree and branch at:
+> >>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> >>> and the diffstat can be found below.
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >>>
+> >>> -------------
+> >>> Pseudo-Shortlog of commits:
+> >>
+> >> ...
+> >>
+> >>> Keerthy <j-keerthy@ti.com>
+> >>>     ARM: dts: dra71x: Disable usb4_tm target module
+> >>
+> >> ...
+> >>
+> >>> Keerthy <j-keerthy@ti.com>
+> >>>     ARM: dts: dra76x: Disable usb4_tm target module
+> >>
+> >> The above commits are generating the following compilation errors for
+> >> ARM ...
+> >>
+> >> Error:
+> >> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra71x.dtsi:15.1-9
+> >> Label or path usb4_tm not found
+> >>
+> >> Error:
+> >> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra76x.dtsi:89.1-9
+> >> Label or path usb4_tm not found
+> >>
+> >> After reverting these two, I no longer see these errors.
+> > 
+> > Both are now dropped, thanks.  I'll push out a -rc2 with that changed.
+> 
+> Hmmm ... -rc2 still not building ...
+> 
+> Error:
+> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra71x.dtsi:11.1-11
+> Label or path rtctarget not found
+> Error:
+> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra71x.dtsi:15.1-9
+> Label or path usb4_tm not found
+> 
+> I still see the following commit in -rc2 ...
+> 
+> commit 0caa574b3244cd863dd74bde680a6309cb8803ad
+> Author: Keerthy <j-keerthy@ti.com>
+> Date:   Fri May 17 06:44:09 2019 +0530
+> 
+>     ARM: dts: dra71x: Disable usb4_tm target module
+> 
+> In -rc1 I see there were 4 changes from Keerthy, any chance you reverted
+> one of the rtc patches and not the above? Looks like the following is
+> missing from -rc2 ...
+> 
+> Keerthy <j-keerthy@ti.com>
+>     ARM: dts: dra76x: Disable rtc target module
 
-Ok, dropping it now (sorry, longer than just breakfast...)
+Sorry, I dropped one, but not the other.  Both now gone.
+
+thanks,
 
 greg k-h
