@@ -1,68 +1,103 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
-Date: Mon, 15 Jul 2019 00:41:57 +0300
-Message-ID: <23f10791-3fff-0e94-2798-6f38a27745d1@gmail.com>
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
- <a262cbb3-845c-3ad1-16cc-375a24b9f7e9@gmail.com>
- <822867d6-4a4d-5f68-9b21-84a20d73c589@gmail.com>
- <CACRpkdYdCmT0ErTuewYbv7bPkjoFLrK9KSVuKVMkAXNQYAGV7g@mail.gmail.com>
- <66b5e81b-d468-e2aa-7336-3d4854c234ab@gmail.com>
- <db7ac8e6-bfad-bc60-b46e-d886025872e4@nvidia.com>
+Subject: Re: [PATCH v2 1/6] ARM: tegra: Remove cpuidle drivers
+Date: Mon, 15 Jul 2019 01:19:19 +0300
+Message-ID: <0a04f2f3-a2bd-b750-d6db-06dae481fb0b@gmail.com>
+References: <20190711031312.10038-1-digetx@gmail.com>
+ <20190711031312.10038-2-digetx@gmail.com>
+ <c087a5cb-2ffa-1cf6-f0bf-631234759a22@nvidia.com>
+ <a6e4b43e-369c-c501-6d2e-69d5b940ff9c@gmail.com>
+ <73781434-d25a-b17b-aacb-95ace5ac5f95@nvidia.com>
+ <9d79ed3e-a37f-af9c-0696-31dc33bbdefd@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <db7ac8e6-bfad-bc60-b46e-d886025872e4@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <9d79ed3e-a37f-af9c-0696-31dc33bbdefd@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com, Rob Herring <robh+dt@kernel.org>, open list:OPEN FIRM
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-13.07.2019 8:31, Sowjanya Komatineni пишет:
-> 
-> On 7/4/19 3:40 AM, Dmitry Osipenko wrote:
->> 04.07.2019 10:31, Linus Walleij пишет:
->>> On Sat, Jun 29, 2019 at 5:58 PM Dmitry Osipenko <digetx@gmail.com>
->>> wrote:
->>>
->>>> Oh, also what about GPIO-pinctrl suspend resume ordering .. is it
->>>> okay that pinctrl
->>>> will be resumed after GPIO? Shouldn't a proper pin-muxing be
->>>> selected at first?
->>> Thierry sent some initial patches about this I think. We need to use
->>> device links for this to work properly so he adds support for
->>> linking the pinctrl and GPIO devices through the ranges.
->>>
->>> For links between pin control handles and their consumers, see also:
->>> 036f394dd77f pinctrl: Enable device link creation for pin control
->>> c6045b4e3cad pinctrl: stmfx: enable links creations
->>> 489b64d66325 pinctrl: stm32: Add links to consumers
->>>
->>> I am using STM32 as guinea pig for this, consider adding links also
->>> from the Tegra pinctrl. I might simply make these pinctrl consumer
->>> to producer links default because I think it makes a lot sense.
->> IIUC, currently the plan is to resume pinctrl *after* GPIO for
->> Tegra210 [1]. But this
->> contradicts to what was traditionally done for older Tegras where
->> pinctrl was always
->> resumed first and apparently it won't work well for the GPIO ranges as
->> well. I think this
->> and the other patchsets related to suspend-resume still need some more
->> thought.
->>
->> [1] https://patchwork.kernel.org/patch/11012077/
-> 
-> Park bit was introduced from Tegra210 onwards and during suspend/resume,
-> requirement of gpio restore prior to pinctrl restore is not required for
-> prior Tegra210.
-> 
-> Also currently pinctrl suspend/resume implementation for prior Tegra210
-> is not yet upstreamed but having gpio restore prior to pinmux during
-> suspend/resume should not cause any issue for prior tegra's as well as
-> gpio resume restores pins back to same gpio config as they were during
-> suspend entry.
-> 
-
-Okay!
+MTIuMDcuMjAxOSAxOToyMywgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4gMTIuMDcuMjAx
+OSAxMjozOSwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+Pgo+PiBPbiAxMS8wNy8yMDE5IDE4OjAz
+LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+PiAxMS4wNy4yMDE5IDEyOjI2LCBKb24gSHVudGVy
+INC/0LjRiNC10YI6Cj4+Pj4KPj4+PiBPbiAxMS8wNy8yMDE5IDA0OjEzLCBEbWl0cnkgT3NpcGVu
+a28gd3JvdGU6Cj4+Pj4+IFJlbW92ZSB0aGUgb2xkIGRyaXZlcnMgdG8gcmVwbGFjZSB0aGVtIGNs
+ZWFubHkgd2l0aCBhIG5ldyBvbmUgbGF0ZXIgb24uCj4+Pj4+Cj4+Pj4+IFNpZ25lZC1vZmYtYnk6
+IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPj4+Pj4gLS0tCj4+Pj4+ICBhcmNo
+L2FybS9tYWNoLXRlZ3JhL01ha2VmaWxlICAgICAgICAgICB8ICAxMyAtLQo+Pj4+PiAgYXJjaC9h
+cm0vbWFjaC10ZWdyYS9jcHVpZGxlLXRlZ3JhMTE0LmMgfCAgODkgLS0tLS0tLS0tLS0KPj4+Pj4g
+IGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTIwLmMgIHwgMjEyIC0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTMw
+LmMgIHwgMTMyIC0tLS0tLS0tLS0tLS0tLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdyYS9jcHVp
+ZGxlLmMgICAgICAgICAgfCAgNTAgLS0tLS0tCj4+Pj4+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL2Nw
+dWlkbGUuaCAgICAgICAgICB8ICAyMSAtLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvaXJx
+LmMgICAgICAgICAgICAgIHwgIDE4IC0tLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdyYS9pcnEu
+aCAgICAgICAgICAgICAgfCAgMTEgLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvcG0uYyAg
+ICAgICAgICAgICAgIHwgICA3IC0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvcG0uaCAgICAg
+ICAgICAgICAgIHwgICAxIC0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvcmVzZXQtaGFuZGxl
+ci5TICAgIHwgIDExIC0tCj4+Pj4+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL3Jlc2V0LmggICAgICAg
+ICAgICB8ICAgOSArLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdyYS9zbGVlcC10ZWdyYTIwLlMg
+ICAgfCAxOTAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdy
+YS9zbGVlcC5oICAgICAgICAgICAgfCAgMTIgLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEv
+dGVncmEuYyAgICAgICAgICAgIHwgICAzIC0KPj4+Pj4gIGRyaXZlcnMvc29jL3RlZ3JhL0tjb25m
+aWcgICAgICAgICAgICAgIHwgICAxIC0KPj4+Pj4gIGluY2x1ZGUvc29jL3RlZ3JhL2NwdWlkbGUu
+aCAgICAgICAgICAgIHwgICA0IC0KPj4+Pj4gIDE3IGZpbGVzIGNoYW5nZWQsIDUgaW5zZXJ0aW9u
+cygrKSwgNzc5IGRlbGV0aW9ucygtKQo+Pj4+PiAgZGVsZXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJt
+L21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTExNC5jCj4+Pj4+ICBkZWxldGUgbW9kZSAxMDA2NDQg
+YXJjaC9hcm0vbWFjaC10ZWdyYS9jcHVpZGxlLXRlZ3JhMjAuYwo+Pj4+PiAgZGVsZXRlIG1vZGUg
+MTAwNjQ0IGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTMwLmMKPj4+Pj4gIGRlbGV0
+ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9tYWNoLXRlZ3JhL2NwdWlkbGUuYwo+Pj4+PiAgZGVsZXRl
+IG1vZGUgMTAwNjQ0IGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS5oCj4+Pj4+ICBkZWxldGUg
+bW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC10ZWdyYS9pcnEuaAo+Pj4+Cj4+Pj4gQnkgcmVtb3Zp
+bmcgYWxsIHRoZSBhYm92ZSwgaXQgaXMgcmVhbGx5IGhhcmQgdG8gcmV2aWV3IHRoZSBkaWZmLiBJ
+cwo+Pj4+IHRoZXJlIGFueSB3YXkgeW91IGNvdWxkIGZpcnN0IGNvbnNvbGlkYXRlIHRoZSBjcHVp
+ZGxlIGRyaXZlcnMgaW50byBzYXkKPj4+PiB0aGUgZXhpc3RpbmcgYXJjaC9hcm0vbWFjaC10ZWdy
+YS9jcHVpZGxlLXRlZ3JhMjAuYyBhbmQgdGhlbiBtb3ZlIHRvCj4+Pj4gZHJpdmVycy9jcHVpZGxl
+Pwo+Pj4KPj4+IEknbSBhZnJhaWQgdGhhdCBpdCB3aWxsIG1ha2UgcmV2aWV3aW5nIGV2ZW4gbW9y
+ZSBkaWZmaWN1bHQgYmVjYXVzZQo+Pj4gZXZlcnl0aGluZyB0aGF0IGlzIHJlbW92ZWQgaGVyZSBp
+cyBub3QgcmV0dXJuZWQgaW4gdGhlIGZ1cnRoZXIgcGF0Y2hlcy4KPj4+IFRoZSBuZXcgZHJpdmVy
+IGlzIGJhc2VkIG9uIHRoZSBvbGRlciBvbmVzLCBidXQgSSB3cm90ZSBpdCBmcm9tIHNjcmF0Y2gK
+Pj4+IGFuZCBpdCdzIG5vdCBvbmx5IGxvb2tzIGRpZmZlcmVudCwgYnV0IGFsc28gd29ya3MgYSBi
+aXQgZGlmZmVyZW50IGFzIHlvdQo+Pj4gbWF5IHNlZS4KPj4+Cj4+PiBDb3VsZCB5b3UgcGxlYXNl
+IGNsYXJpZnkgd2hhdCBleGFjdGx5IG1ha2VzIGl0IGhhcmQgdG8gcmV2aWV3PyBUaGUgZGlmZgo+
+Pj4gbG9va3MgcHJldHR5IGNsZWFuIHRvIG1lLCB3aGlsZSBzcXVhc2hpbmcgZXZlcnl0aGluZyBp
+bnRvIGV4aXN0aW5nCj4+PiBkcml2ZXIgc2hvdWxkIGJlIHF1aXRlIGEgbWVzcy4KPj4KPj4gSWRl
+YWxseSBhIHBhdGNoIHNob3VsZCBzdGFuZGFsb25lIGFuZCBjYW4gYmUgcmV2aWV3ZWQgYnkgaXRz
+ZWxmLgo+PiBIb3dldmVyLCB0byByZXZpZXcgdGhpcywgd2UgbmVlZCB0byByZXZpZXcgcGF0Y2hl
+cyAxLCAyIGFuZCAzIGF0IHRoZQo+PiBzYW1lIHRpbWUuIFNvIElNTyBpdCBpcyBub3QgdGhhdCBj
+b252ZW5pZW50IGZyb20gYSByZXZpZXdlcnMKPj4gcGVyc3BlY3RpdmUuIEZ1cnRoZXJtb3JlLCBw
+YXRjaGVzIDEgYW5kIDMgYXJlIGxhcmdlIGFuZCBzbyBlYXN5IHRvIG1pc3MKPj4gc29tZXRoaW5n
+Lgo+Pgo+PiBJcyB0aGVyZSByZWFsbHkgbm8gd2F5IHRvIGhhdmUgYSBwYXRjaCB0byBjb21iaW5l
+ZCB0aGUgZXhpc3RpbmcgZHJpdmVycywKPj4gdGhlbiBhIHBhdGNoIHRvIGNvbnZlcnQgdGhlbSBp
+bnRvIHRoZSBuZXdlciByZXdyaXR0ZW4gdmVyc2lvbiB5b3UgaGF2ZQo+PiBpbXBsZW1lbnRlZCwg
+dGhlbiBtb3ZlIHRoZSBkcml2ZXI/Cj4gCj4gUHJvYmFibHkgSSBzcGVudCBhIGJpdCB0b28gbXVj
+aCB0aW1lIHdpdGggdGhhdCBjb2RlLCBzbyBub3cgeW91cnMKPiBzdWdnZXN0aW9uIGxvb2tzIHRv
+IG1lIGxpa2UgYW4gdW5uZWNlc3Nhcnkgc3RlcC4gQnV0IEkgd2lsbCB0cnkgYW5kIHNlZQo+IGhv
+dyBpdCBnb2VzLCBhdCBsZWFzdCBpdCBzaG91bGQgYmUgcG9zc2libGUgdG8gYnJlYWsgZG93biB0
+aGUgcGF0Y2ggMSBhCj4gYml0IG1vcmUsIGhvcGVmdWxseSBpdCB3aWxsIGhlbHAgdG8gYmV0dGVy
+IHVuZGVyc3RhbmQgd2hhdCdzIGdvaW5nIG9uIGluCj4gdGhlIGZ1cnRoZXIgcGF0Y2hlcyBpZiB5
+b3UncmUgbm90IGZhbWlsaWFyIG9yIGRvbid0IHJlbWVtYmVyIGhvdyBpdCBhbGwKPiB3b3Jrcy4K
+CkkgdHJpZWQgKGluIHNldmVyYWwgYXR0ZW1wdHMpIGFuZCBjb3VsZG4ndCBmaW5kIGEgd2F5IGhv
+dyB0bwptZWFuaW5nZnVsbHkgc3F1YXNoIHRoZSBvbGQgZHJpdmVycy4gSXQncyBhIGxvdCBvZiB1
+bm5lY2Vzc2FyeSBjaHVybmluZwp0aGF0IHdvbid0IGhlbHAgd2l0aCByZXZpZXdpbmcgb2YgdGhl
+IGNvZGUgYXQgYWxsIGJlY2F1c2UgbmV3IGRyaXZlciBpcwpzdHJ1Y3R1cmVkIGRpZmZlcmVudGx5
+IGFuZCBiZWF0aW5nIG9mIG9sZCBkcml2ZXJzIHVudGlsIHRoZXkgcmVzZW1ibGUKdGhlIG5ldyBv
+bmUganVzdCBub3Qgd29ydGggaXQuIEknbGwgd3JpdGUgYSBiaXQgbW9yZSBkZXRhaWxlZCBjb21t
+aXQKbWVzc2FnZSwgZW1waGFzaXppbmcgdGhlIGRldGFpbHMsIGhvcGUgaXQgd2lsbCBiZSBoZWxw
+ZnVsLiBUaGUgb2xkCmRyaXZlcnMgYXJlIH4yMDAgTE9DIGVhY2ggYW5kIHRoZSBuZXcgb25lIHdp
+bGwgYmUgfjMwMCBMT0MgKyA1MCBsaW5lcyBvZgpjb21tZW50cywgSSBkb24ndCB0aGluayB0aGF0
+IGl0J3MgcmVhbGx5IHZlcnkgaGFyZCB0byByZXZpZXcgYXMgaXQgaXQKbWF5IGluaXRpYWxseSBs
+b29rZWQgbGlrZSB0byB5b3UsIEpvbi4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
+ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
