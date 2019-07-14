@@ -1,63 +1,117 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
-Date: Fri, 12 Jul 2019 22:31:20 -0700
-Message-ID: <db7ac8e6-bfad-bc60-b46e-d886025872e4@nvidia.com>
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
- <a262cbb3-845c-3ad1-16cc-375a24b9f7e9@gmail.com>
- <822867d6-4a4d-5f68-9b21-84a20d73c589@gmail.com>
- <CACRpkdYdCmT0ErTuewYbv7bPkjoFLrK9KSVuKVMkAXNQYAGV7g@mail.gmail.com>
- <66b5e81b-d468-e2aa-7336-3d4854c234ab@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.1 000/138] 5.1.18-stable review
+Date: Sun, 14 Jul 2019 08:01:53 +0200
+Message-ID: <20190714060153.GB8005@kroah.com>
+References: <20190712121628.731888964@linuxfoundation.org>
+ <4dae64c8-046e-3647-52d6-43362e986d21@nvidia.com>
+ <20190712153035.GC13940@kroah.com>
+ <5f897de4-b423-c8a2-6823-d0227eb7bd38@nvidia.com>
+ <20190713143154.GB7695@kroah.com>
+ <05b84926-ec25-0ccc-527a-4a08447fab59@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <66b5e81b-d468-e2aa-7336-3d4854c234ab@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com, Rob Herring <robh+dt@kernel.org>open
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <05b84926-ec25-0ccc-527a-4a08447fab59@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, j-keerthy@ti.com
 List-Id: linux-tegra@vger.kernel.org
 
+On Sat, Jul 13, 2019 at 07:56:55PM +0100, Jon Hunter wrote:
+> 
+> On 13/07/2019 15:31, Greg Kroah-Hartman wrote:
+> > On Sat, Jul 13, 2019 at 10:16:58AM +0100, Jon Hunter wrote:
+> >>
+> >> On 12/07/2019 16:30, Greg Kroah-Hartman wrote:
+> >>> On Fri, Jul 12, 2019 at 02:26:57PM +0100, Jon Hunter wrote:
+> >>>> Hi Greg,
+> >>>>
+> >>>> On 12/07/2019 13:17, Greg Kroah-Hartman wrote:
+> >>>>> This is the start of the stable review cycle for the 5.1.18 release.
+> >>>>> There are 138 patches in this series, all will be posted as a response
+> >>>>> to this one.  If anyone has any issues with these being applied, please
+> >>>>> let me know.
+> >>>>>
+> >>>>> Responses should be made by Sun 14 Jul 2019 12:14:36 PM UTC.
+> >>>>> Anything received after that time might be too late.
+> >>>>>
+> >>>>> The whole patch series can be found in one patch at:
+> >>>>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.18-rc1.gz
+> >>>>> or in the git tree and branch at:
+> >>>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> >>>>> and the diffstat can be found below.
+> >>>>>
+> >>>>> thanks,
+> >>>>>
+> >>>>> greg k-h
+> >>>>>
+> >>>>> -------------
+> >>>>> Pseudo-Shortlog of commits:
+> >>>>
+> >>>> ...
+> >>>>
+> >>>>> Keerthy <j-keerthy@ti.com>
+> >>>>>     ARM: dts: dra71x: Disable usb4_tm target module
+> >>>>
+> >>>> ...
+> >>>>
+> >>>>> Keerthy <j-keerthy@ti.com>
+> >>>>>     ARM: dts: dra76x: Disable usb4_tm target module
+> >>>>
+> >>>> The above commits are generating the following compilation errors for
+> >>>> ARM ...
+> >>>>
+> >>>> Error:
+> >>>> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra71x.dtsi:15.1-9
+> >>>> Label or path usb4_tm not found
+> >>>>
+> >>>> Error:
+> >>>> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra76x.dtsi:89.1-9
+> >>>> Label or path usb4_tm not found
+> >>>>
+> >>>> After reverting these two, I no longer see these errors.
+> >>>
+> >>> Both are now dropped, thanks.  I'll push out a -rc2 with that changed.
+> >>
+> >> Hmmm ... -rc2 still not building ...
+> >>
+> >> Error:
+> >> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra71x.dtsi:11.1-11
+> >> Label or path rtctarget not found
+> >> Error:
+> >> /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/dra71x.dtsi:15.1-9
+> >> Label or path usb4_tm not found
+> >>
+> >> I still see the following commit in -rc2 ...
+> >>
+> >> commit 0caa574b3244cd863dd74bde680a6309cb8803ad
+> >> Author: Keerthy <j-keerthy@ti.com>
+> >> Date:   Fri May 17 06:44:09 2019 +0530
+> >>
+> >>     ARM: dts: dra71x: Disable usb4_tm target module
+> >>
+> >> In -rc1 I see there were 4 changes from Keerthy, any chance you reverted
+> >> one of the rtc patches and not the above? Looks like the following is
+> >> missing from -rc2 ...
+> >>
+> >> Keerthy <j-keerthy@ti.com>
+> >>     ARM: dts: dra76x: Disable rtc target module
+> > 
+> > Sorry, I dropped one, but not the other.  Both now gone.
+> 
+> Great! This looks better. All tests passing now ...
+> 
+> Test results for stable-v5.1:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     32 tests:	32 pass, 0 fail
+> 
+> Linux version:	5.1.18-rc3-gd68c746af314
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-On 7/4/19 3:40 AM, Dmitry Osipenko wrote:
-> 04.07.2019 10:31, Linus Walleij =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On Sat, Jun 29, 2019 at 5:58 PM Dmitry Osipenko <digetx@gmail.com> wrote=
-:
->>
->>> Oh, also what about GPIO-pinctrl suspend resume ordering .. is it okay =
-that pinctrl
->>> will be resumed after GPIO? Shouldn't a proper pin-muxing be selected a=
-t first?
->> Thierry sent some initial patches about this I think. We need to use
->> device links for this to work properly so he adds support for
->> linking the pinctrl and GPIO devices through the ranges.
->>
->> For links between pin control handles and their consumers, see also:
->> 036f394dd77f pinctrl: Enable device link creation for pin control
->> c6045b4e3cad pinctrl: stmfx: enable links creations
->> 489b64d66325 pinctrl: stm32: Add links to consumers
->>
->> I am using STM32 as guinea pig for this, consider adding links also
->> from the Tegra pinctrl. I might simply make these pinctrl consumer
->> to producer links default because I think it makes a lot sense.
-> IIUC, currently the plan is to resume pinctrl *after* GPIO for Tegra210 [=
-1]. But this
-> contradicts to what was traditionally done for older Tegras where pinctrl=
- was always
-> resumed first and apparently it won't work well for the GPIO ranges as we=
-ll. I think this
-> and the other patchsets related to suspend-resume still need some more th=
-ought.
->
-> [1] https://patchwork.kernel.org/patch/11012077/
+Wonderful, thanks for testing and letting me know.
 
-Park bit was introduced from Tegra210 onwards and during suspend/resume,=20
-requirement of gpio restore prior to pinctrl restore is not required for=20
-prior Tegra210.
-
-Also currently pinctrl suspend/resume implementation for prior Tegra210=20
-is not yet upstreamed but having gpio restore prior to pinmux during=20
-suspend/resume should not cause any issue for prior tegra's as well as=20
-gpio resume restores pins back to same gpio config as they were during=20
-suspend entry.
+greg k-h
