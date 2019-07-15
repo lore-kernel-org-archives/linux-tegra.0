@@ -1,119 +1,72 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 00/13] Consolidate and improve NVIDIA Tegra CPUIDLE driver(s)
-Date: Mon, 15 Jul 2019 20:26:16 +0300
-Message-ID: <20190715172629.4437-1-digetx@gmail.com>
+Subject: [PATCH v3 03/13] ARM: tegra: Propagate error from tegra_idle_lp2_last()
+Date: Mon, 15 Jul 2019 20:26:19 +0300
+Message-ID: <20190715172629.4437-4-digetx@gmail.com>
+References: <20190715172629.4437-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190715172629.4437-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+The cpu_suspend() may fail, it's never good to lose information about
+failure because it may become very useful for the caller. The new CPUIDLE
+driver will handle all of possible error cases, including the case of
+tegra_idle_lp2_last() failure.
 
-I was spending quite some time recently trying to hunt down CPU-suspend
-bug on Tegra30 SoC and in the end it was nailed. During that time I
-realized that the CPU Idle drivers could get some polish and gain new
-features, thus that's what this series does:
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/mach-tegra/pm.c | 8 ++++++--
+ arch/arm/mach-tegra/pm.h | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-  1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
-     into common drivers/cpuidle/ directory.
-
-  2. Enables CPU cluster power-down idling state on Tegra30.
-
-In the end there is a quite nice clean up of the Tegra CPUIDLE driver(s)
-and of the Tegra's arch code in general. Please review, thanks!
-
-Changelog:
-
-v3: - Addressed review comments that were made by Jon Hunter to v2 by
-      splitting patches into smaller (and simpler) chunks, better
-      documenting changes in the commit messages and using proper error
-      codes in the code.
-
-      Warnings are replaced with a useful error messages in the code of
-      "Introduce unified driver for NVIDIA Tegra SoCs" patch.
-
-      Secondary CPUs parking timeout increased to 100ms because I found
-      that it actually may happen to take more than 1ms if CPU is running
-      on a *very* low frequency.
-
-      Added diagnostic messages that are reporting Flow Controller state
-      when CPU parking fails.
-
-      Further polished cpuidle driver's code.
-
-      The coupled state entering is now aborted if there is a pending SGI
-      (Software Generated Interrupt) because it will be lost after GIC's
-      power-cycling. Like it was done by the old Tegra20 CPUIDLE driver.
-
-v2: - Added patches to enable the new cpuidle driver in the defconfigs:
-
-        ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
-        ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-
-    - Dropped patches that removed CPUIDLE_FLAG_TIMER_STOP from the idling
-      states because that flag actually doesn't have any negative effects,
-      but still is correct for the case of a local CPU timer on older Tegra
-      SoCs:
-
-        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from Tegra114/124 idle-state
-        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from all states
-
-    - The "Add unified driver for NVIDIA Tegra SoCs" patch got more polish.
-      Tegra30 and Terga114 states are now squashed into a single common C7
-      state (following Parker TRM terminology, see 17.2.2.2 Power Management
-      States), more comments added, etc minor changes.
-
-Dmitry Osipenko (13):
-  ARM: tegra: Remove cpuidle drivers to replace them with a new driver
-  ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
-  ARM: tegra: Propagate error from tegra_idle_lp2_last()
-  ARM: tegra: Compile sleep-tegra20/30.S unconditionally
-  ARM: tegra: Expose PM functions required for new cpuidle driver
-  ARM: tegra: Rename some of the newly exposed PM functions
-  ARM: tegra: Add tegra_pm_park_secondary_cpu()
-  clk: tegra: Add missing stubs for the case of !CONFIG_PM_SLEEP
-  cpuidle: Introduce unified driver for NVIDIA Tegra SoCs
-  cpuidle: tegra: Support CPU cluster power-down state on Tegra30
-  ARM: tegra: Create simple platform device for cpuidle driver
-  ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
-  ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-
- arch/arm/configs/multi_v7_defconfig           |   1 +
- arch/arm/configs/tegra_defconfig              |   1 +
- arch/arm/mach-tegra/Makefile                  |  23 +-
- arch/arm/mach-tegra/cpuidle-tegra114.c        |  89 -----
- arch/arm/mach-tegra/cpuidle-tegra20.c         | 212 -----------
- arch/arm/mach-tegra/cpuidle-tegra30.c         | 132 -------
- arch/arm/mach-tegra/cpuidle.c                 |  50 ---
- arch/arm/mach-tegra/cpuidle.h                 |  21 --
- arch/arm/mach-tegra/irq.c                     |   3 +-
- arch/arm/mach-tegra/pm.c                      |  47 +--
- arch/arm/mach-tegra/pm.h                      |   4 -
- arch/arm/mach-tegra/reset-handler.S           |  11 -
- arch/arm/mach-tegra/reset.h                   |   9 +-
- arch/arm/mach-tegra/sleep-tegra20.S           | 170 ---------
- arch/arm/mach-tegra/sleep-tegra30.S           |   6 +-
- arch/arm/mach-tegra/sleep.h                   |  15 -
- arch/arm/mach-tegra/tegra.c                   |   7 +-
- drivers/cpuidle/Kconfig.arm                   |   8 +
- drivers/cpuidle/Makefile                      |   1 +
- drivers/cpuidle/cpuidle-tegra.c               | 348 ++++++++++++++++++
- drivers/soc/tegra/Kconfig                     |   1 -
- include/linux/clk/tegra.h                     |  13 +
- include/soc/tegra/cpuidle.h                   |   2 +-
- .../mach-tegra => include/soc/tegra}/irq.h    |   8 +-
- include/soc/tegra/pm.h                        |  31 ++
- 25 files changed, 450 insertions(+), 763 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle.h
- create mode 100644 drivers/cpuidle/cpuidle-tegra.c
- rename {arch/arm/mach-tegra => include/soc/tegra}/irq.h (59%)
-
+diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+index 2f6fb54be9f8..f9c9bce9e15d 100644
+--- a/arch/arm/mach-tegra/pm.c
++++ b/arch/arm/mach-tegra/pm.c
+@@ -189,14 +189,16 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
+ 	tegra_pmc_enter_suspend_mode(mode);
+ }
+ 
+-void tegra_idle_lp2_last(void)
++int tegra_idle_lp2_last(void)
+ {
++	int err;
++
+ 	tegra_pm_set(TEGRA_SUSPEND_LP2);
+ 
+ 	cpu_cluster_pm_enter();
+ 	suspend_cpu_complex();
+ 
+-	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
++	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+ 
+ 	/*
+ 	 * Resume L2 cache if it wasn't re-enabled early during resume,
+@@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
+ 
+ 	restore_cpu_complex();
+ 	cpu_cluster_pm_exit();
++
++	return err;
+ }
+ 
+ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
+index 3f3164ad04b7..ae68fc7db576 100644
+--- a/arch/arm/mach-tegra/pm.h
++++ b/arch/arm/mach-tegra/pm.h
+@@ -25,7 +25,7 @@ void tegra30_sleep_core_init(void);
+ 
+ void tegra_clear_cpu_in_lp2(void);
+ void tegra_set_cpu_in_lp2(void);
+-void tegra_idle_lp2_last(void);
++int tegra_idle_lp2_last(void);
+ extern void (*tegra_tear_down_cpu)(void);
+ 
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.22.0
