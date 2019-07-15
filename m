@@ -1,49 +1,42 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 08/13] clk: tegra: Add missing stubs for the case of !CONFIG_PM_SLEEP
-Date: Mon, 15 Jul 2019 20:26:24 +0300
-Message-ID: <20190715172629.4437-9-digetx@gmail.com>
-References: <20190715172629.4437-1-digetx@gmail.com>
+Subject: [PATCH v1 1/2] clk: tegra: divider: Fix missing check for enable-bit on rate's recalculation
+Date: Mon, 15 Jul 2019 20:35:26 +0300
+Message-ID: <20190715173527.5719-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190715172629.4437-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The new CPUIDLE driver uses the Tegra's CLK API and that driver won't
-strictly depend on CONFIG_PM_SLEEP, hence add the required stubs in
-order to allow compiling of the new driver with the CONFIG_PM_SLEEP=n.
+Unset "enable" bit means that divider is in bypass mode, hence it doesn't
+have any effect in that case.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- include/linux/clk/tegra.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/tegra/clk-divider.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index b8aef62cc3f5..cf0f2cb5e109 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -108,6 +108,19 @@ static inline void tegra_cpu_clock_resume(void)
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index e76731fb7d69..f33c19045386 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+ 	int div, mul;
+ 	u64 rate = parent_rate;
  
- 	tegra_cpu_car_ops->resume();
- }
-+#else
-+static inline bool tegra_cpu_rail_off_ready(void)
-+{
-+	return false;
-+}
+-	reg = readl_relaxed(divider->reg) >> divider->shift;
+-	div = reg & div_mask(divider);
++	reg = readl_relaxed(divider->reg);
 +
-+static inline void tegra_cpu_clock_suspend(void)
-+{
-+}
++	if ((divider->flags & TEGRA_DIVIDER_UART) &&
++	    !(reg & PERIPH_CLK_UART_DIV_ENB))
++		return rate;
 +
-+static inline void tegra_cpu_clock_resume(void)
-+{
-+}
- #endif
++	div = (reg >> divider->shift) & div_mask(divider);
  
- extern void tegra210_xusb_pll_hw_control_enable(void);
+ 	mul = get_mul(divider);
+ 	div += mul;
 -- 
 2.22.0
