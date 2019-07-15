@@ -1,103 +1,47 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 1/6] ARM: tegra: Remove cpuidle drivers
-Date: Mon, 15 Jul 2019 01:19:19 +0300
-Message-ID: <0a04f2f3-a2bd-b750-d6db-06dae481fb0b@gmail.com>
-References: <20190711031312.10038-1-digetx@gmail.com>
- <20190711031312.10038-2-digetx@gmail.com>
- <c087a5cb-2ffa-1cf6-f0bf-631234759a22@nvidia.com>
- <a6e4b43e-369c-c501-6d2e-69d5b940ff9c@gmail.com>
- <73781434-d25a-b17b-aacb-95ace5ac5f95@nvidia.com>
- <9d79ed3e-a37f-af9c-0696-31dc33bbdefd@gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 172/249] clocksource/drivers/tegra: Restore base address before cleanup
+Date: Mon, 15 Jul 2019 09:45:37 -0400
+Message-ID: <20190715134655.4076-172-sashal@kernel.org>
+References: <20190715134655.4076-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <9d79ed3e-a37f-af9c-0696-31dc33bbdefd@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MTIuMDcuMjAxOSAxOToyMywgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4gMTIuMDcuMjAx
-OSAxMjozOSwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+Pgo+PiBPbiAxMS8wNy8yMDE5IDE4OjAz
-LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+PiAxMS4wNy4yMDE5IDEyOjI2LCBKb24gSHVudGVy
-INC/0LjRiNC10YI6Cj4+Pj4KPj4+PiBPbiAxMS8wNy8yMDE5IDA0OjEzLCBEbWl0cnkgT3NpcGVu
-a28gd3JvdGU6Cj4+Pj4+IFJlbW92ZSB0aGUgb2xkIGRyaXZlcnMgdG8gcmVwbGFjZSB0aGVtIGNs
-ZWFubHkgd2l0aCBhIG5ldyBvbmUgbGF0ZXIgb24uCj4+Pj4+Cj4+Pj4+IFNpZ25lZC1vZmYtYnk6
-IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPj4+Pj4gLS0tCj4+Pj4+ICBhcmNo
-L2FybS9tYWNoLXRlZ3JhL01ha2VmaWxlICAgICAgICAgICB8ICAxMyAtLQo+Pj4+PiAgYXJjaC9h
-cm0vbWFjaC10ZWdyYS9jcHVpZGxlLXRlZ3JhMTE0LmMgfCAgODkgLS0tLS0tLS0tLS0KPj4+Pj4g
-IGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTIwLmMgIHwgMjEyIC0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTMw
-LmMgIHwgMTMyIC0tLS0tLS0tLS0tLS0tLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdyYS9jcHVp
-ZGxlLmMgICAgICAgICAgfCAgNTAgLS0tLS0tCj4+Pj4+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL2Nw
-dWlkbGUuaCAgICAgICAgICB8ICAyMSAtLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvaXJx
-LmMgICAgICAgICAgICAgIHwgIDE4IC0tLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdyYS9pcnEu
-aCAgICAgICAgICAgICAgfCAgMTEgLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvcG0uYyAg
-ICAgICAgICAgICAgIHwgICA3IC0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvcG0uaCAgICAg
-ICAgICAgICAgIHwgICAxIC0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEvcmVzZXQtaGFuZGxl
-ci5TICAgIHwgIDExIC0tCj4+Pj4+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL3Jlc2V0LmggICAgICAg
-ICAgICB8ICAgOSArLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdyYS9zbGVlcC10ZWdyYTIwLlMg
-ICAgfCAxOTAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+Pj4+PiAgYXJjaC9hcm0vbWFjaC10ZWdy
-YS9zbGVlcC5oICAgICAgICAgICAgfCAgMTIgLS0KPj4+Pj4gIGFyY2gvYXJtL21hY2gtdGVncmEv
-dGVncmEuYyAgICAgICAgICAgIHwgICAzIC0KPj4+Pj4gIGRyaXZlcnMvc29jL3RlZ3JhL0tjb25m
-aWcgICAgICAgICAgICAgIHwgICAxIC0KPj4+Pj4gIGluY2x1ZGUvc29jL3RlZ3JhL2NwdWlkbGUu
-aCAgICAgICAgICAgIHwgICA0IC0KPj4+Pj4gIDE3IGZpbGVzIGNoYW5nZWQsIDUgaW5zZXJ0aW9u
-cygrKSwgNzc5IGRlbGV0aW9ucygtKQo+Pj4+PiAgZGVsZXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJt
-L21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTExNC5jCj4+Pj4+ICBkZWxldGUgbW9kZSAxMDA2NDQg
-YXJjaC9hcm0vbWFjaC10ZWdyYS9jcHVpZGxlLXRlZ3JhMjAuYwo+Pj4+PiAgZGVsZXRlIG1vZGUg
-MTAwNjQ0IGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS10ZWdyYTMwLmMKPj4+Pj4gIGRlbGV0
-ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9tYWNoLXRlZ3JhL2NwdWlkbGUuYwo+Pj4+PiAgZGVsZXRl
-IG1vZGUgMTAwNjQ0IGFyY2gvYXJtL21hY2gtdGVncmEvY3B1aWRsZS5oCj4+Pj4+ICBkZWxldGUg
-bW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC10ZWdyYS9pcnEuaAo+Pj4+Cj4+Pj4gQnkgcmVtb3Zp
-bmcgYWxsIHRoZSBhYm92ZSwgaXQgaXMgcmVhbGx5IGhhcmQgdG8gcmV2aWV3IHRoZSBkaWZmLiBJ
-cwo+Pj4+IHRoZXJlIGFueSB3YXkgeW91IGNvdWxkIGZpcnN0IGNvbnNvbGlkYXRlIHRoZSBjcHVp
-ZGxlIGRyaXZlcnMgaW50byBzYXkKPj4+PiB0aGUgZXhpc3RpbmcgYXJjaC9hcm0vbWFjaC10ZWdy
-YS9jcHVpZGxlLXRlZ3JhMjAuYyBhbmQgdGhlbiBtb3ZlIHRvCj4+Pj4gZHJpdmVycy9jcHVpZGxl
-Pwo+Pj4KPj4+IEknbSBhZnJhaWQgdGhhdCBpdCB3aWxsIG1ha2UgcmV2aWV3aW5nIGV2ZW4gbW9y
-ZSBkaWZmaWN1bHQgYmVjYXVzZQo+Pj4gZXZlcnl0aGluZyB0aGF0IGlzIHJlbW92ZWQgaGVyZSBp
-cyBub3QgcmV0dXJuZWQgaW4gdGhlIGZ1cnRoZXIgcGF0Y2hlcy4KPj4+IFRoZSBuZXcgZHJpdmVy
-IGlzIGJhc2VkIG9uIHRoZSBvbGRlciBvbmVzLCBidXQgSSB3cm90ZSBpdCBmcm9tIHNjcmF0Y2gK
-Pj4+IGFuZCBpdCdzIG5vdCBvbmx5IGxvb2tzIGRpZmZlcmVudCwgYnV0IGFsc28gd29ya3MgYSBi
-aXQgZGlmZmVyZW50IGFzIHlvdQo+Pj4gbWF5IHNlZS4KPj4+Cj4+PiBDb3VsZCB5b3UgcGxlYXNl
-IGNsYXJpZnkgd2hhdCBleGFjdGx5IG1ha2VzIGl0IGhhcmQgdG8gcmV2aWV3PyBUaGUgZGlmZgo+
-Pj4gbG9va3MgcHJldHR5IGNsZWFuIHRvIG1lLCB3aGlsZSBzcXVhc2hpbmcgZXZlcnl0aGluZyBp
-bnRvIGV4aXN0aW5nCj4+PiBkcml2ZXIgc2hvdWxkIGJlIHF1aXRlIGEgbWVzcy4KPj4KPj4gSWRl
-YWxseSBhIHBhdGNoIHNob3VsZCBzdGFuZGFsb25lIGFuZCBjYW4gYmUgcmV2aWV3ZWQgYnkgaXRz
-ZWxmLgo+PiBIb3dldmVyLCB0byByZXZpZXcgdGhpcywgd2UgbmVlZCB0byByZXZpZXcgcGF0Y2hl
-cyAxLCAyIGFuZCAzIGF0IHRoZQo+PiBzYW1lIHRpbWUuIFNvIElNTyBpdCBpcyBub3QgdGhhdCBj
-b252ZW5pZW50IGZyb20gYSByZXZpZXdlcnMKPj4gcGVyc3BlY3RpdmUuIEZ1cnRoZXJtb3JlLCBw
-YXRjaGVzIDEgYW5kIDMgYXJlIGxhcmdlIGFuZCBzbyBlYXN5IHRvIG1pc3MKPj4gc29tZXRoaW5n
-Lgo+Pgo+PiBJcyB0aGVyZSByZWFsbHkgbm8gd2F5IHRvIGhhdmUgYSBwYXRjaCB0byBjb21iaW5l
-ZCB0aGUgZXhpc3RpbmcgZHJpdmVycywKPj4gdGhlbiBhIHBhdGNoIHRvIGNvbnZlcnQgdGhlbSBp
-bnRvIHRoZSBuZXdlciByZXdyaXR0ZW4gdmVyc2lvbiB5b3UgaGF2ZQo+PiBpbXBsZW1lbnRlZCwg
-dGhlbiBtb3ZlIHRoZSBkcml2ZXI/Cj4gCj4gUHJvYmFibHkgSSBzcGVudCBhIGJpdCB0b28gbXVj
-aCB0aW1lIHdpdGggdGhhdCBjb2RlLCBzbyBub3cgeW91cnMKPiBzdWdnZXN0aW9uIGxvb2tzIHRv
-IG1lIGxpa2UgYW4gdW5uZWNlc3Nhcnkgc3RlcC4gQnV0IEkgd2lsbCB0cnkgYW5kIHNlZQo+IGhv
-dyBpdCBnb2VzLCBhdCBsZWFzdCBpdCBzaG91bGQgYmUgcG9zc2libGUgdG8gYnJlYWsgZG93biB0
-aGUgcGF0Y2ggMSBhCj4gYml0IG1vcmUsIGhvcGVmdWxseSBpdCB3aWxsIGhlbHAgdG8gYmV0dGVy
-IHVuZGVyc3RhbmQgd2hhdCdzIGdvaW5nIG9uIGluCj4gdGhlIGZ1cnRoZXIgcGF0Y2hlcyBpZiB5
-b3UncmUgbm90IGZhbWlsaWFyIG9yIGRvbid0IHJlbWVtYmVyIGhvdyBpdCBhbGwKPiB3b3Jrcy4K
-CkkgdHJpZWQgKGluIHNldmVyYWwgYXR0ZW1wdHMpIGFuZCBjb3VsZG4ndCBmaW5kIGEgd2F5IGhv
-dyB0bwptZWFuaW5nZnVsbHkgc3F1YXNoIHRoZSBvbGQgZHJpdmVycy4gSXQncyBhIGxvdCBvZiB1
-bm5lY2Vzc2FyeSBjaHVybmluZwp0aGF0IHdvbid0IGhlbHAgd2l0aCByZXZpZXdpbmcgb2YgdGhl
-IGNvZGUgYXQgYWxsIGJlY2F1c2UgbmV3IGRyaXZlciBpcwpzdHJ1Y3R1cmVkIGRpZmZlcmVudGx5
-IGFuZCBiZWF0aW5nIG9mIG9sZCBkcml2ZXJzIHVudGlsIHRoZXkgcmVzZW1ibGUKdGhlIG5ldyBv
-bmUganVzdCBub3Qgd29ydGggaXQuIEknbGwgd3JpdGUgYSBiaXQgbW9yZSBkZXRhaWxlZCBjb21t
-aXQKbWVzc2FnZSwgZW1waGFzaXppbmcgdGhlIGRldGFpbHMsIGhvcGUgaXQgd2lsbCBiZSBoZWxw
-ZnVsLiBUaGUgb2xkCmRyaXZlcnMgYXJlIH4yMDAgTE9DIGVhY2ggYW5kIHRoZSBuZXcgb25lIHdp
-bGwgYmUgfjMwMCBMT0MgKyA1MCBsaW5lcyBvZgpjb21tZW50cywgSSBkb24ndCB0aGluayB0aGF0
-IGl0J3MgcmVhbGx5IHZlcnkgaGFyZCB0byByZXZpZXcgYXMgaXQgaXQKbWF5IGluaXRpYWxseSBs
-b29rZWQgbGlrZSB0byB5b3UsIEpvbi4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+From: Dmitry Osipenko <digetx@gmail.com>
+
+[ Upstream commit fc9babc2574691d3bbf0428f007b22261fed55c6 ]
+
+We're adjusting the timer's base for each per-CPU timer to point to the
+actual start of the timer since device-tree defines a compound registers
+range that includes all of the timers. In this case the original base
+need to be restore before calling iounmap to unmap the proper address.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clocksource/timer-tegra20.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
+index fe5cc0963ac9..462be34b41c4 100644
+--- a/drivers/clocksource/timer-tegra20.c
++++ b/drivers/clocksource/timer-tegra20.c
+@@ -319,6 +319,8 @@ static int __init tegra_init_timer(struct device_node *np)
+ 			irq_dispose_mapping(cpu_to->clkevt.irq);
+ 		}
+ 	}
++
++	to->of_base.base = timer_reg_base;
+ out:
+ 	timer_of_cleanup(to);
+ 	return ret;
+-- 
+2.20.1
