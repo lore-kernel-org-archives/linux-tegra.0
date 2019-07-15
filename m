@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/3] soc/tegra: regulators: Add regulators coupler for Tegra30
-Date: Mon, 15 Jul 2019 22:45:03 +0300
-Message-ID: <20190715194503.19100-4-digetx@gmail.com>
+Subject: [PATCH v1 2/3] soc/tegra: regulators: Add regulators coupler for Tegra20
+Date: Mon, 15 Jul 2019 22:45:02 +0300
+Message-ID: <20190715194503.19100-3-digetx@gmail.com>
 References: <20190715194503.19100-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,59 +12,65 @@ To: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add regulators coupler for Tegra30 SoCs that performs voltage balancing
+Add regulators coupler for Tegra20 SoCs that performs voltage balancing
 of a coupled regulators and thus provides voltage scaling functionality.
 
-There are 2 coupled regulators on all Tegra30 SoCs: CORE and CPU. The
-coupled regulator voltages shall be in a range of 300mV from each other
-and CORE voltage shall be higher than the CPU by N mV, where N depends
-on the CPU voltage.
+There are 3 coupled regulators on all Tegra20 SoCs: CORE, RTC and CPU.
+The CORE and RTC voltages shall be in range of 170mV from each other and
+they both shall be higher than the CPU voltage by at least 120mV. This
+sounds like it could be handle by a generic voltage balancer, but the CORE
+voltage scaling isn't implemented in any of the upstream drivers yet.
+It will take quite some time and effort to hook up voltage scaling for
+all of the drivers, hence we will use a custom coupler that will manage
+the CPU voltage scaling for the starter.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/Kconfig              |   4 +
+ drivers/soc/tegra/Kconfig              |   6 +
  drivers/soc/tegra/Makefile             |   1 +
- drivers/soc/tegra/regulators-tegra30.c | 302 +++++++++++++++++++++++++
- 3 files changed, 307 insertions(+)
- create mode 100644 drivers/soc/tegra/regulators-tegra30.c
+ drivers/soc/tegra/regulators-tegra20.c | 350 +++++++++++++++++++++++++
+ 3 files changed, 357 insertions(+)
+ create mode 100644 drivers/soc/tegra/regulators-tegra20.c
 
 diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 7986ab80e07a..bc86dc2f4198 100644
+index d98c69efb7e0..7986ab80e07a 100644
 --- a/drivers/soc/tegra/Kconfig
 +++ b/drivers/soc/tegra/Kconfig
-@@ -28,6 +28,7 @@ config ARCH_TEGRA_3x_SOC
+@@ -14,6 +14,7 @@ config ARCH_TEGRA_2x_SOC
  	select PL310_ERRATA_769419 if CACHE_L2X0
  	select SOC_TEGRA_FLOWCTRL
  	select SOC_TEGRA_PMC
-+	select SOC_TEGRA30_VOLTAGE_COUPLER
++	select SOC_TEGRA20_VOLTAGE_COUPLER
  	select TEGRA_TIMER
  	help
- 	  Support for NVIDIA Tegra T30 processor family, based on the
-@@ -140,3 +141,6 @@ config SOC_TEGRA20_VOLTAGE_COUPLER
- 	bool "Voltage scaling support for Tegra20 SoCs"
- 	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
- 
-+config SOC_TEGRA30_VOLTAGE_COUPLER
-+	bool "Voltage scaling support for Tegra30 SoCs"
-+	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+@@ -134,3 +135,8 @@ config SOC_TEGRA_POWERGATE_BPMP
+ 	def_bool y
+ 	depends on PM_GENERIC_DOMAINS
+ 	depends on TEGRA_BPMP
++
++config SOC_TEGRA20_VOLTAGE_COUPLER
++	bool "Voltage scaling support for Tegra20 SoCs"
++	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
++
 diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
-index 9f0bdd53bef8..9c809c1814bd 100644
+index 902759fe5f4d..9f0bdd53bef8 100644
 --- a/drivers/soc/tegra/Makefile
 +++ b/drivers/soc/tegra/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_SOC_TEGRA_FLOWCTRL) += flowctrl.o
+@@ -5,3 +5,4 @@ obj-y += common.o
+ obj-$(CONFIG_SOC_TEGRA_FLOWCTRL) += flowctrl.o
  obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
  obj-$(CONFIG_SOC_TEGRA_POWERGATE_BPMP) += powergate-bpmp.o
- obj-$(CONFIG_SOC_TEGRA20_VOLTAGE_COUPLER) += regulators-tegra20.o
-+obj-$(CONFIG_SOC_TEGRA30_VOLTAGE_COUPLER) += regulators-tegra30.o
-diff --git a/drivers/soc/tegra/regulators-tegra30.c b/drivers/soc/tegra/regulators-tegra30.c
++obj-$(CONFIG_SOC_TEGRA20_VOLTAGE_COUPLER) += regulators-tegra20.o
+diff --git a/drivers/soc/tegra/regulators-tegra20.c b/drivers/soc/tegra/regulators-tegra20.c
 new file mode 100644
-index 000000000000..7af22bacb088
+index 000000000000..12c8206cea16
 --- /dev/null
-+++ b/drivers/soc/tegra/regulators-tegra30.c
-@@ -0,0 +1,302 @@
++++ b/drivers/soc/tegra/regulators-tegra20.c
+@@ -0,0 +1,350 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Voltage regulators coupler for NVIDIA Tegra30
++// Voltage regulators coupler for NVIDIA Tegra20
 +// Copyright (C) 2019 GRATE-DRIVER project
 +//
 +// Voltage constraints borrowed from downstream kernel sources
@@ -79,12 +85,11 @@ index 000000000000..7af22bacb088
 +#include <linux/regulator/driver.h>
 +#include <linux/regulator/machine.h>
 +
-+#include <soc/tegra/fuse.h>
-+
 +struct tegra_regulator_coupler {
 +	struct regulator_coupler coupler;
 +	struct regulator_dev *core_rdev;
 +	struct regulator_dev *cpu_rdev;
++	struct regulator_dev *rtc_rdev;
 +	int core_min_uV;
 +};
 +
@@ -94,7 +99,7 @@ index 000000000000..7af22bacb088
 +	return container_of(coupler, struct tegra_regulator_coupler, coupler);
 +}
 +
-+static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
++static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
 +			      struct regulator_dev *core_rdev)
 +{
 +	int core_min_uV = 0;
@@ -127,157 +132,103 @@ index 000000000000..7af22bacb088
 +	return tegra->core_min_uV;
 +}
 +
-+static int tegra30_core_cpu_limit(int cpu_uV)
++static int tegra20_core_rtc_max_spread(struct regulator_dev *core_rdev,
++				       struct regulator_dev *rtc_rdev)
 +{
-+	if (cpu_uV < 800000)
-+		return 950000;
++	struct coupling_desc *c_desc = &core_rdev->coupling_desc;
++	struct regulator_dev *rdev;
++	int max_spread;
++	unsigned int i;
 +
-+	if (cpu_uV < 900000)
-+		return 1000000;
++	for (i = 1; i < c_desc->n_coupled; i++) {
++		max_spread = core_rdev->constraints->max_spread[i - 1];
++		rdev = c_desc->coupled_rdevs[i];
 +
-+	if (cpu_uV < 1000000)
-+		return 1100000;
-+
-+	if (cpu_uV < 1100000)
-+		return 1200000;
-+
-+	if (cpu_uV < 1250000) {
-+		switch (tegra_sku_info.cpu_speedo_id) {
-+		case 0 ... 1:
-+		case 4:
-+		case 7 ... 8:
-+			return 1200000;
-+
-+		default:
-+			return 1300000;
-+		}
++		if (rdev == rtc_rdev && max_spread)
++			return max_spread;
 +	}
 +
-+	return -EINVAL;
++	pr_err_once("rtc-core max-spread is undefined in device-tree\n");
++
++	return 150000;
 +}
 +
-+static int tegra30_voltage_update(struct tegra_regulator_coupler *tegra,
-+				  struct regulator_dev *cpu_rdev,
-+				  struct regulator_dev *core_rdev)
++static int tegra20_core_rtc_update(struct tegra_regulator_coupler *tegra,
++				   struct regulator_dev *core_rdev,
++				   struct regulator_dev *rtc_rdev,
++				   int cpu_uV, int cpu_min_uV)
 +{
 +	int core_min_uV, core_max_uV = INT_MAX;
-+	int cpu_min_uV, cpu_max_uV = INT_MAX;
-+	int core_min_limited_uV;
++	int rtc_min_uV, rtc_max_uV = INT_MAX;
 +	int core_target_uV;
-+	int cpu_target_uV;
-+	int core_max_step;
-+	int cpu_max_step;
++	int rtc_target_uV;
 +	int max_spread;
 +	int core_uV;
-+	int cpu_uV;
++	int rtc_uV;
 +	int err;
 +
 +	/*
-+	 * CPU voltage should not got lower than 300mV from the CORE.
-+	 * CPU voltage should stay below the CORE by 100mV+, depending
-+	 * by the CORE voltage. This applies to all Tegra30 SoC's.
++	 * RTC and CORE voltages should be no more than 170mV from each other,
++	 * CPU should be below RTC and CORE by at least 120mV. This applies
++	 * to all Tegra20 SoC's.
 +	 */
-+	max_spread = cpu_rdev->constraints->max_spread[0];
-+	cpu_max_step = cpu_rdev->constraints->max_uV_step;
-+	core_max_step = core_rdev->constraints->max_uV_step;
-+
-+	if (!max_spread) {
-+		pr_err_once("cpu-core max-spread is undefined in device-tree\n");
-+		max_spread = 300000;
-+	}
-+
-+	if (!cpu_max_step) {
-+		pr_err_once("cpu max-step is undefined in device-tree\n");
-+		cpu_max_step = 150000;
-+	}
-+
-+	if (!core_max_step) {
-+		pr_err_once("core max-step is undefined in device-tree\n");
-+		core_max_step = 150000;
-+	}
++	max_spread = tegra20_core_rtc_max_spread(core_rdev, rtc_rdev);
 +
 +	/*
-+	 * The CORE voltage scaling is currently not hooked up in drivers,
-+	 * hence we will limit the minimum CORE voltage to a reasonable value.
++	 * The core voltage scaling is currently not hooked up in drivers,
++	 * hence we will limit the minimum core voltage to a reasonable value.
 +	 * This should be good enough for the time being.
 +	 */
-+	core_min_uV = tegra30_core_limit(tegra, core_rdev);
++	core_min_uV = tegra20_core_limit(tegra, core_rdev);
 +	if (core_min_uV < 0)
 +		return core_min_uV;
++
++	err = regulator_check_voltage(core_rdev, &core_min_uV, &core_max_uV);
++	if (err)
++		return err;
 +
 +	err = regulator_check_consumers(core_rdev, &core_min_uV, &core_max_uV,
 +					PM_SUSPEND_ON);
 +	if (err)
 +		return err;
 +
-+	cpu_min_uV = core_min_uV - max_spread;
-+
-+	err = regulator_check_consumers(cpu_rdev, &cpu_min_uV, &cpu_max_uV,
-+					PM_SUSPEND_ON);
-+	if (err)
-+		return err;
-+
-+	err = regulator_check_voltage(cpu_rdev, &cpu_min_uV, &cpu_max_uV);
-+	if (err)
-+		return err;
-+
-+	cpu_uV = regulator_get_voltage_rdev(cpu_rdev);
-+	if (cpu_uV < 0)
-+		return cpu_uV;
++	core_min_uV = max(cpu_min_uV + 125000, core_min_uV);
++	if (core_min_uV > core_max_uV)
++		return -EINVAL;
 +
 +	core_uV = regulator_get_voltage_rdev(core_rdev);
 +	if (core_uV < 0)
 +		return core_uV;
 +
-+	/*
-+	 * Bootloader shall set up voltages correctly, but if it
-+	 * happens that there is a violation, then try to fix it
-+	 * at first.
-+	 */
-+	core_min_limited_uV = tegra30_core_cpu_limit(cpu_uV);
-+	if (core_min_limited_uV < 0)
-+		return core_min_limited_uV;
++	if (cpu_uV + 120000 > core_uV)
++		pr_err("core-cpu voltage constraint violated: %d %d\n",
++		       core_uV, cpu_uV + 120000);
 +
-+	core_min_uV = max(core_min_uV, tegra30_core_cpu_limit(cpu_min_uV));
++	rtc_uV = regulator_get_voltage_rdev(rtc_rdev);
++	if (rtc_uV < 0)
++		return rtc_uV;
 +
-+	err = regulator_check_voltage(core_rdev, &core_min_uV, &core_max_uV);
++	if (cpu_uV + 120000 > rtc_uV)
++		pr_err("rtc-cpu voltage constraint violated: %d %d\n",
++		       rtc_uV, cpu_uV + 120000);
++
++	if (abs(core_uV - rtc_uV) > 170000)
++		pr_err("core-rtc voltage constraint violated: %d %d\n",
++		       core_uV, rtc_uV);
++
++	rtc_min_uV = max(cpu_min_uV + 125000, core_min_uV - max_spread);
++
++	err = regulator_check_voltage(rtc_rdev, &rtc_min_uV, &rtc_max_uV);
 +	if (err)
 +		return err;
 +
-+	if (core_min_limited_uV > core_uV) {
-+		pr_err("core voltage constraint violated: %d %d %d\n",
-+		       core_uV, core_min_limited_uV, cpu_uV);
-+		goto update_core;
-+	}
-+
-+	while (cpu_uV != cpu_min_uV || core_uV != core_min_uV) {
-+		if (cpu_uV < cpu_min_uV) {
-+			cpu_target_uV = min(cpu_uV + cpu_max_step, cpu_min_uV);
++	while (core_uV != core_min_uV || rtc_uV != rtc_min_uV) {
++		if (core_uV < core_min_uV) {
++			core_target_uV = min(core_uV + max_spread, core_min_uV);
++			core_target_uV = min(rtc_uV + max_spread, core_target_uV);
 +		} else {
-+			cpu_target_uV = max(cpu_uV - cpu_max_step, cpu_min_uV);
-+			cpu_target_uV = max(core_uV - max_spread, cpu_target_uV);
-+		}
-+
-+		err = regulator_set_voltage_rdev(cpu_rdev,
-+						 cpu_target_uV,
-+						 cpu_max_uV,
-+						 PM_SUSPEND_ON);
-+		if (err)
-+			return err;
-+
-+		cpu_uV = cpu_target_uV;
-+update_core:
-+		core_min_limited_uV = tegra30_core_cpu_limit(cpu_uV);
-+		if (core_min_limited_uV < 0)
-+			return core_min_limited_uV;
-+
-+		core_target_uV = max(core_min_limited_uV, core_min_uV);
-+
-+		if (core_uV < core_target_uV) {
-+			core_target_uV = min(core_target_uV, core_uV + core_max_step);
-+			core_target_uV = min(core_target_uV, cpu_uV + max_spread);
-+		} else {
-+			core_target_uV = max(core_target_uV, core_uV - core_max_step);
++			core_target_uV = max(core_uV - max_spread, core_min_uV);
++			core_target_uV = max(rtc_uV - max_spread, core_target_uV);
 +		}
 +
 +		err = regulator_set_voltage_rdev(core_rdev,
@@ -288,28 +239,120 @@ index 000000000000..7af22bacb088
 +			return err;
 +
 +		core_uV = core_target_uV;
++
++		if (rtc_uV < rtc_min_uV) {
++			rtc_target_uV = min(rtc_uV + max_spread, rtc_min_uV);
++			rtc_target_uV = min(core_uV + max_spread, rtc_target_uV);
++		} else {
++			rtc_target_uV = max(rtc_uV - max_spread, rtc_min_uV);
++			rtc_target_uV = max(core_uV - max_spread, rtc_target_uV);
++		}
++
++		err = regulator_set_voltage_rdev(rtc_rdev,
++						 rtc_target_uV,
++						 rtc_max_uV,
++						 PM_SUSPEND_ON);
++		if (err)
++			return err;
++
++		rtc_uV = rtc_target_uV;
 +	}
 +
 +	return 0;
 +}
 +
-+static int tegra30_regulator_balance_voltage(struct regulator_coupler *coupler,
++static int tegra20_core_voltage_update(struct tegra_regulator_coupler *tegra,
++				       struct regulator_dev *cpu_rdev,
++				       struct regulator_dev *core_rdev,
++				       struct regulator_dev *rtc_rdev)
++{
++	int cpu_uV;
++
++	cpu_uV = regulator_get_voltage_rdev(cpu_rdev);
++	if (cpu_uV < 0)
++		return cpu_uV;
++
++	return tegra20_core_rtc_update(tegra, core_rdev, rtc_rdev,
++				       cpu_uV, cpu_uV);
++}
++
++static int tegra20_cpu_voltage_update(struct tegra_regulator_coupler *tegra,
++				      struct regulator_dev *cpu_rdev,
++				      struct regulator_dev *core_rdev,
++				      struct regulator_dev *rtc_rdev)
++{
++	int cpu_max_uV = INT_MAX;
++	int cpu_min_uV = 0;
++	int cpu_uV;
++	int err;
++
++	err = regulator_check_voltage(cpu_rdev, &cpu_min_uV, &cpu_max_uV);
++	if (err)
++		return err;
++
++	err = regulator_check_consumers(cpu_rdev, &cpu_min_uV, &cpu_max_uV,
++					PM_SUSPEND_ON);
++	if (err)
++		return err;
++
++	cpu_uV = regulator_get_voltage_rdev(cpu_rdev);
++	if (cpu_uV < 0)
++		return cpu_uV;
++
++	if (cpu_min_uV > cpu_uV) {
++		err = tegra20_core_rtc_update(tegra, core_rdev, rtc_rdev,
++					      cpu_uV, cpu_min_uV);
++		if (err)
++			return err;
++
++		err = regulator_set_voltage_rdev(cpu_rdev, cpu_min_uV,
++						 cpu_max_uV, PM_SUSPEND_ON);
++		if (err)
++			return err;
++	} else if (cpu_min_uV < cpu_uV)  {
++		err = regulator_set_voltage_rdev(cpu_rdev, cpu_min_uV,
++						 cpu_max_uV, PM_SUSPEND_ON);
++		if (err)
++			return err;
++
++		err = tegra20_core_rtc_update(tegra, core_rdev, rtc_rdev,
++					      cpu_uV, cpu_min_uV);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++static int tegra20_regulator_balance_voltage(struct regulator_coupler *coupler,
 +					     struct regulator_dev *rdev,
 +					     suspend_state_t state)
 +{
 +	struct tegra_regulator_coupler *tegra = to_tegra_coupler(coupler);
 +	struct regulator_dev *core_rdev = tegra->core_rdev;
 +	struct regulator_dev *cpu_rdev = tegra->cpu_rdev;
++	struct regulator_dev *rtc_rdev = tegra->rtc_rdev;
 +
-+	if ((core_rdev != rdev && cpu_rdev != rdev) || state != PM_SUSPEND_ON) {
++	if ((core_rdev != rdev && cpu_rdev != rdev && rtc_rdev != rdev) ||
++	    state != PM_SUSPEND_ON) {
 +		pr_err("regulators are not coupled properly\n");
 +		return -EINVAL;
 +	}
 +
-+	return tegra30_voltage_update(tegra, cpu_rdev, core_rdev);
++	if (rdev == cpu_rdev)
++		return tegra20_cpu_voltage_update(tegra, cpu_rdev,
++						  core_rdev, rtc_rdev);
++
++	if (rdev == core_rdev)
++		return tegra20_core_voltage_update(tegra, cpu_rdev,
++						   core_rdev, rtc_rdev);
++
++	pr_err("changing %s voltage not permitted\n", rdev_get_name(rtc_rdev));
++
++	return -EPERM;
 +}
 +
-+static int tegra30_regulator_attach(struct regulator_coupler *coupler,
++static int tegra20_regulator_attach(struct regulator_coupler *coupler,
 +				    struct regulator_dev *rdev)
 +{
 +	struct tegra_regulator_coupler *tegra = to_tegra_coupler(coupler);
@@ -318,6 +361,12 @@ index 000000000000..7af22bacb088
 +	if (of_property_read_bool(np, "nvidia,tegra-core-regulator") &&
 +	    !tegra->core_rdev) {
 +		tegra->core_rdev = rdev;
++		return 0;
++	}
++
++	if (of_property_read_bool(np, "nvidia,tegra-rtc-regulator") &&
++	    !tegra->rtc_rdev) {
++		tegra->rtc_rdev = rdev;
 +		return 0;
 +	}
 +
@@ -330,13 +379,18 @@ index 000000000000..7af22bacb088
 +	return -EINVAL;
 +}
 +
-+static int tegra30_regulator_detach(struct regulator_coupler *coupler,
++static int tegra20_regulator_detach(struct regulator_coupler *coupler,
 +				    struct regulator_dev *rdev)
 +{
 +	struct tegra_regulator_coupler *tegra = to_tegra_coupler(coupler);
 +
 +	if (tegra->core_rdev == rdev) {
 +		tegra->core_rdev = NULL;
++		return 0;
++	}
++
++	if (tegra->rtc_rdev == rdev) {
++		tegra->rtc_rdev = NULL;
 +		return 0;
 +	}
 +
@@ -348,20 +402,20 @@ index 000000000000..7af22bacb088
 +	return -EINVAL;
 +}
 +
-+static struct tegra_regulator_coupler tegra30_coupler = {
++static struct tegra_regulator_coupler tegra20_coupler = {
 +	.coupler = {
-+		.attach_regulator = tegra30_regulator_attach,
-+		.detach_regulator = tegra30_regulator_detach,
-+		.balance_voltage = tegra30_regulator_balance_voltage,
++		.attach_regulator = tegra20_regulator_attach,
++		.detach_regulator = tegra20_regulator_detach,
++		.balance_voltage = tegra20_regulator_balance_voltage,
 +	},
 +};
 +
 +static int __init tegra_regulator_coupler_init(void)
 +{
-+	if (!of_machine_is_compatible("nvidia,tegra30"))
++	if (!of_machine_is_compatible("nvidia,tegra20"))
 +		return 0;
 +
-+	return regulator_coupler_register(&tegra30_coupler.coupler);
++	return regulator_coupler_register(&tegra20_coupler.coupler);
 +}
 +arch_initcall(tegra_regulator_coupler_init);
 -- 
