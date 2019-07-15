@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 10/13] cpuidle: tegra: Support CPU cluster power-down state on Tegra30
-Date: Mon, 15 Jul 2019 20:26:26 +0300
-Message-ID: <20190715172629.4437-11-digetx@gmail.com>
+Subject: [PATCH v3 11/13] ARM: tegra: Create simple platform device for cpuidle driver
+Date: Mon, 15 Jul 2019 20:26:27 +0300
+Message-ID: <20190715172629.4437-12-digetx@gmail.com>
 References: <20190715172629.4437-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,47 +12,39 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The new CPU Idle driver has all necessary features in order to allow
-the deepest idling state on Tegra30 SoC where the whole CPU cluster is
-power-gated using the coupled idle state.
-
-Note that outer_disable() now need to be invoked directly since it
-produces erroneous warning message about secondary CPUs being online
-because it doesn't know that secondaries are turned off at that point
-by the cpuidle driver.
+The new CPUIDLE driver now is a proper platform driver, hence it needs
+a platform device in order to be functional. Register the platform device,
+like we do that for the CPUFreq driver. Note that on some Tegra114(124)
+devices PSCI may be used for the CPU hotplugging and CPUIDLE driver
+doesn't support that case, thus CPUIDLE device won't be registered if
+PCSI presents.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/pm.c        | 4 ++--
- drivers/cpuidle/cpuidle-tegra.c | 1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ arch/arm/mach-tegra/tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 7d9ef26e52a7..1845b87a7cf3 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -146,8 +146,8 @@ static int tegra_sleep_cpu(unsigned long v2p)
- 	 * if any of secondary CPU's is online and this is the LP2-idle
- 	 * code-path only for Tegra20/30.
- 	 */
--	if (trusted_foundations_registered())
--		outer_disable();
-+	if (trusted_foundations_registered() && outer_cache.disable)
-+		outer_cache.disable();
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index d9237769a37c..f1ce2857a251 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -36,6 +36,7 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+ #include <asm/mach-types.h>
++#include <asm/psci.h>
+ #include <asm/setup.h>
  
- 	/*
- 	 * Note that besides of setting up CPU reset vector this firmware
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index 2ab293343069..ea084a0aa448 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -324,7 +324,6 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
- 		tegra_idle_driver.states[TEGRA_C7].disabled = true;
- 		break;
- 	case TEGRA30:
--		tegra_idle_driver.states[TEGRA_CC6].disabled = true;
- 		break;
- 	case TEGRA114:
- 	case TEGRA124:
+ #include "board.h"
+@@ -92,6 +93,9 @@ static void __init tegra_dt_init_late(void)
+ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
+ 	    of_machine_is_compatible("nvidia,tegra20"))
+ 		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
++
++	if (IS_ENABLED(CONFIG_ARM_TEGRA_CPUIDLE) && !psci_smp_available())
++		platform_device_register_simple("tegra-cpuidle", -1, NULL, 0);
+ }
+ 
+ static const char * const tegra_dt_board_compat[] = {
 -- 
 2.22.0
