@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 172/249] clocksource/drivers/tegra: Restore base address before cleanup
-Date: Mon, 15 Jul 2019 09:45:37 -0400
-Message-ID: <20190715134655.4076-172-sashal@kernel.org>
-References: <20190715134655.4076-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 151/219] clocksource/drivers/tegra: Restore base address before cleanup
+Date: Mon, 15 Jul 2019 10:02:32 -0400
+Message-ID: <20190715140341.6443-151-sashal@kernel.org>
+References: <20190715140341.6443-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
@@ -31,10 +31,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index fe5cc0963ac9..462be34b41c4 100644
+index cc18bb135a17..84adfff59fb0 100644
 --- a/drivers/clocksource/timer-tegra20.c
 +++ b/drivers/clocksource/timer-tegra20.c
-@@ -319,6 +319,8 @@ static int __init tegra_init_timer(struct device_node *np)
+@@ -341,6 +341,8 @@ static int __init tegra_init_timer(struct device_node *np)
  			irq_dispose_mapping(cpu_to->clkevt.irq);
  		}
  	}
