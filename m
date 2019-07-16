@@ -1,50 +1,135 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 15/24] PM / devfreq: tegra30: Fix integer overflow on
- CPU's freq max out
-Date: Tue, 16 Jul 2019 21:32:13 +0900
-Message-ID: <bf0cf31f-4a03-f8f5-ac7b-280a384bb09d@samsung.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 02/24] PM / devfreq: tegra30: Keep interrupt disabled
+ while governor is stopped
+Date: Tue, 16 Jul 2019 16:03:46 +0300
+Message-ID: <6c517d04-cf99-f907-e74d-9fba99405a53@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223632epcas4p2c3254e4cc10a71bb1311fcfef582ed39@epcas4p2.samsung.com>
-        <20190707223303.6755-16-digetx@gmail.com>
+ <CGME20190707223724epcas4p2d82cecc2969fecddca67192417843418@epcas4p2.samsung.com>
+ <20190707223303.6755-3-digetx@gmail.com>
+ <f691a845-18f3-a6fb-302c-a8a3fc13e5bf@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190707223303.6755-16-digetx@gmail.com>
+In-Reply-To: <f691a845-18f3-a6fb-302c-a8a3fc13e5bf@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
-> There is another kHz-conversion bug in the code, resulting in integer
-> overflow. Although, this time the resulting value is 4294966296 and it's
-> close to ULONG_MAX, which is okay in this case.
+16.07.2019 14:47, Chanwoo Choi пишет:
+> On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
+>> There is no real need to keep interrupt always-enabled, will be nicer
+>> to keep it disabled while governor is inactive.
+>>
+>> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra30-devfreq.c | 43 ++++++++++++++++---------------
+>>  1 file changed, 22 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index a27300f40b0b..5e2b133babdd 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/devfreq.h>
+>>  #include <linux/interrupt.h>
+>>  #include <linux/io.h>
+>> +#include <linux/irq.h>
+>>  #include <linux/module.h>
+>>  #include <linux/mod_devicetable.h>
+>>  #include <linux/platform_device.h>
+>> @@ -416,8 +417,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
+>>  {
+>>  	unsigned int i;
+>>  
+>> -	disable_irq(tegra->irq);
+>> -
+>>  	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+>>  		      ACTMON_GLB_PERIOD_CTRL);
+>>  
+>> @@ -442,8 +441,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>>  	}
+>>  
+>>  	actmon_write_barrier(tegra);
+>> -
+>> -	enable_irq(tegra->irq);
+>>  }
+>>  
+>>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>> @@ -552,6 +549,12 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>>  {
+>>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
+>>  
+>> +	/*
+>> +	 * Couple device with the governor early as it is needed at
+>> +	 * the moment of governor's start (used by ISR).
+>> +	 */
+>> +	tegra->devfreq = devfreq;
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 0de1efdaabf4..60ebf9c9cd86 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -172,7 +172,7 @@ struct tegra_actmon_emc_ratio {
->  };
->  
->  static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
-> -	{ 1400000, ULONG_MAX },
-> +	{ 1400000, ULONG_MAX / KHZ },
->  	{ 1200000,    750000 },
->  	{ 1100000,    600000 },
->  	{ 1000000,    500000 },
-> 
+> I'm not sure it is necessary. Almost devfreq device get
+> the devfreq instance on probe timing through devfreq_add_device directly.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+This is necessary because this assignment is for the "governor" and not
+the "device". Governor is started during of devfreq_add_device(), hence
+there is no better way to assign device to the driver's governor.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>> +
+>>  	switch (event) {
+>>  	case DEVFREQ_GOV_START:
+>>  		devfreq_monitor_start(devfreq);
+>> @@ -586,10 +589,11 @@ static struct devfreq_governor tegra_devfreq_governor = {
+>>  
+>>  static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  {
+>> -	struct tegra_devfreq *tegra;
+>>  	struct tegra_devfreq_device *dev;
+>> -	unsigned int i;
+>> +	struct tegra_devfreq *tegra;
+>> +	struct devfreq *devfreq;
+>>  	unsigned long rate;
+>> +	unsigned int i;
+>>  	int err;
+>>  
+>>  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+>> @@ -625,6 +629,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  	}
+>>  	tegra->irq = err;
+>>  
+>> +	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
+>> +
+>> +	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
+>> +					actmon_thread_isr, IRQF_ONESHOT,
+>> +					"tegra-devfreq", tegra);
+>> +	if (err) {
+>> +		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
+>> +		return err;
+>> +	}
+>> +
+>>  	reset_control_assert(tegra->reset);
+>>  
+>>  	err = clk_prepare_enable(tegra->clock);
+>> @@ -672,28 +686,15 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  	}
+>>  
+>>  	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
+>> -	tegra->devfreq = devfreq_add_device(&pdev->dev,
+>> -					    &tegra_devfreq_profile,
+>> -					    "tegra_actmon",
+>> -					    NULL);
+>> +	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
+>> +				     "tegra_actmon", NULL);
+>>  	if (IS_ERR(tegra->devfreq)) {
+> 
+> Have to check 'devfreq' instead of 'tegra->devfreq'.
+> Did you test it? It might be failed because 'tegra->devfreq is NULL.
+
+That's a good catch! Thank you very much.
+
+>>  		err = PTR_ERR(tegra->devfreq);
+> 
+> ditto.
+
+Ok
