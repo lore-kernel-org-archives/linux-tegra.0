@@ -1,447 +1,357 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH V3] cpufreq: Make cpufreq_generic_init() return void
-Date: Tue, 16 Jul 2019 09:36:08 +0530
-Message-ID: <770b46d99e2fa88bc8cdfd95388374284c8b3cf8.1563249700.git.viresh.kumar@linaro.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
+Date: Mon, 15 Jul 2019 21:37:09 -0700
+Message-ID: <86fc07d5-ab2e-a52a-a570-b1dfff4c20fe@nvidia.com>
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+ <1561687972-19319-12-git-send-email-skomatineni@nvidia.com>
+ <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
+ <a9b5c364-52b4-bee1-5881-47197f043950@nvidia.com>
+ <e9d4bc0e-fd5d-ae02-2d67-86c7f7c9620f@gmail.com>
+ <3938092a-bbc7-b304-641d-31677539598d@nvidia.com>
+ <932d4d50-120c-9191-6a9a-23bf9c96633b@nvidia.com>
+ <0ee055ad-d397-32e5-60ee-d62c14c6f77b@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0ee055ad-d397-32e5-60ee-d62c14c6f77b@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rafael Wysocki <rjw@rjwysocki.net>, Markus Mayer <mmayer@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Keguang Zhang <keguang.zhang@gmail.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Kevin Hilman <khilman@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It always returns 0 (success) and its return type should really be void.
-Over that, many drivers have added error handling code based on its
-return value, which is not required at all.
 
-change its return type to void and update all the callers.
+On 7/15/19 8:50 PM, Dmitry Osipenko wrote:
+> 16.07.2019 6:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 7/15/19 5:35 PM, Sowjanya Komatineni wrote:
+>>> On 7/14/19 2:41 PM, Dmitry Osipenko wrote:
+>>>> 13.07.2019 8:54, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> On 6/29/19 8:10 AM, Dmitry Osipenko wrote:
+>>>>>> 28.06.2019 5:12, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>> This patch adds system suspend and resume support for Tegra210
+>>>>>>> clocks.
+>>>>>>>
+>>>>>>> All the CAR controller settings are lost on suspend when core power
+>>>>>>> goes off.
+>>>>>>>
+>>>>>>> This patch has implementation for saving and restoring all the PLLs
+>>>>>>> and clocks context during system suspend and resume to have the
+>>>>>>> clocks back to same state for normal operation.
+>>>>>>>
+>>>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>> ---
+>>>>>>>  =C2=A0=C2=A0 drivers/clk/tegra/clk-tegra210.c | 115
+>>>>>>> ++++++++++++++++++++++++++++++++++++++-
+>>>>>>>  =C2=A0=C2=A0 drivers/clk/tegra/clk.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 14 +++++
+>>>>>>>  =C2=A0=C2=A0 drivers/clk/tegra/clk.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+>>>>>>>  =C2=A0=C2=A0 3 files changed, 127 insertions(+), 3 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c
+>>>>>>> b/drivers/clk/tegra/clk-tegra210.c
+>>>>>>> index 1c08c53482a5..1b839544e086 100644
+>>>>>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>>>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>>>>>> @@ -9,10 +9,12 @@
+>>>>>>>  =C2=A0=C2=A0 #include <linux/clkdev.h>
+>>>>>>>  =C2=A0=C2=A0 #include <linux/of.h>
+>>>>>>>  =C2=A0=C2=A0 #include <linux/of_address.h>
+>>>>>>> +#include <linux/of_platform.h>
+>>>>>>>  =C2=A0=C2=A0 #include <linux/delay.h>
+>>>>>>>  =C2=A0=C2=A0 #include <linux/export.h>
+>>>>>>>  =C2=A0=C2=A0 #include <linux/mutex.h>
+>>>>>>>  =C2=A0=C2=A0 #include <linux/clk/tegra.h>
+>>>>>>> +#include <linux/syscore_ops.h>
+>>>>>>>  =C2=A0=C2=A0 #include <dt-bindings/clock/tegra210-car.h>
+>>>>>>>  =C2=A0=C2=A0 #include <dt-bindings/reset/tegra210-car.h>
+>>>>>>>  =C2=A0=C2=A0 #include <linux/iopoll.h>
+>>>>>>> @@ -20,6 +22,7 @@
+>>>>>>>  =C2=A0=C2=A0 #include <soc/tegra/pmc.h>
+>>>>>>>  =C2=A0=C2=A0 =C2=A0 #include "clk.h"
+>>>>>>> +#include "clk-dfll.h"
+>>>>>>>  =C2=A0=C2=A0 #include "clk-id.h"
+>>>>>>>  =C2=A0=C2=A0 =C2=A0 /*
+>>>>>>> @@ -225,6 +228,7 @@
+>>>>>>>  =C2=A0=C2=A0 =C2=A0 #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+>>>>>>>  =C2=A0=C2=A0 #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+>>>>>>> +#define CPU_SOFTRST_CTRL 0x380
+>>>>>>>  =C2=A0=C2=A0 =C2=A0 #define LVL2_CLK_GATE_OVRA 0xf8
+>>>>>>>  =C2=A0=C2=A0 #define LVL2_CLK_GATE_OVRC 0x3a0
+>>>>>>> @@ -2820,6 +2824,7 @@ static int tegra210_enable_pllu(void)
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_clk_pll_freq_tab=
+le *fentry;
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_clk_pll pllu;
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 reg;
+>>>>>>> +=C2=A0=C2=A0=C2=A0 int ret;
+>>>>>>>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (fentry =3D pll_u_=
+freq_table; fentry->input_rate;
+>>>>>>> fentry++) {
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (f=
+entry->input_rate =3D=3D pll_ref_freq)
+>>>>>>> @@ -2847,10 +2852,10 @@ static int tegra210_enable_pllu(void)
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fence_udelay(1, clk_base);
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg |=3D PLL_ENABLE;
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel(reg, clk_base + PLLU_B=
+ASE);
+>>>>>>> +=C2=A0=C2=A0=C2=A0 fence_udelay(1, clk_base);
+>>>>>>>  =C2=A0=C2=A0 -=C2=A0=C2=A0=C2=A0 readl_relaxed_poll_timeout_atomic=
+(clk_base + PLLU_BASE, reg,
+>>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg & PLL_BASE=
+_LOCK, 2, 1000);
+>>>>>>> -=C2=A0=C2=A0=C2=A0 if (!(reg & PLL_BASE_LOCK)) {
+>>>>>>> +=C2=A0=C2=A0=C2=A0 ret =3D tegra210_wait_for_mask(&pllu, PLLU_BASE=
+, PLL_BASE_LOCK);
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (ret) {
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_er=
+r("Timed out waiting for PLL_U to lock\n");
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retur=
+n -ETIMEDOUT;
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>>>> @@ -3283,6 +3288,103 @@ static void tegra210_disable_cpu_clock(u32
+>>>>>>> cpu)
+>>>>>>>  =C2=A0=C2=A0 }
+>>>>>>>  =C2=A0=C2=A0 =C2=A0 #ifdef CONFIG_PM_SLEEP
+>>>>>>> +static u32 cpu_softrst_ctx[3];
+>>>>>>> +static struct platform_device *dfll_pdev;
+>>>>>>> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) +
+>>>>>>> ((_off) * 4))
+>>>>>>> +#define car_writel(_val, _base, _off) \
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel_relaxed(_val, cl=
+k_base + (_base) + ((_off) * 4))
+>>>>>>> +
+>>>>>>> +static int tegra210_clk_suspend(void)
+>>>>>>> +{
+>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int i;
+>>>>>>> +=C2=A0=C2=A0=C2=A0 struct device_node *node;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_cclkg_burst_policy_save_context();
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!dfll_pdev) {
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node =3D of_find_compat=
+ible_node(NULL, NULL,
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 "nvidia,tegra210-dfll");
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (node)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ dfll_pdev =3D of_find_device_by_node(node);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_put(node);
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!dfll_pdev)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ pr_err("dfll node not found. no suspend for dfll\n");
+>>>>>>> +=C2=A0=C2=A0=C2=A0 }
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (dfll_pdev)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_dfll_suspend(dfll=
+_pdev);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 /* Enable PLLP_OUT_CPU after dfll suspend */
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_clk_set_pllp_out_cpu(true);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_sclk_cclklp_burst_policy_save_context();
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_save_context();
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < ARRAY_SIZE(cpu_softrst_ctx); =
+i++)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpu_softrst_ctx[i] =3D =
+car_readl(CPU_SOFTRST_CTRL, i);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void tegra210_clk_resume(void)
+>>>>>>> +{
+>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int i;
+>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw *parent;
+>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk *clk;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 /*
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * clk_restore_context restores clocks as =
+per the clock tree.
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 *
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * dfllCPU_out is first in the clock tree =
+to get restored and it
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * involves programming DFLL controller al=
+ong with restoring
+>>>>>>> CPUG
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * clock burst policy.
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 *
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * DFLL programming needs dfll_ref and dfl=
+l_soc peripheral
+>>>>>>> clocks
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * to be restores which are part ofthe per=
+ipheral clocks.
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^ white-space
+>>>>
+>>>> Please use spellchecker to avoid typos.
+>>>>
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * So, peripheral clocks restore should ha=
+ppen prior to dfll
+>>>>>>> clock
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * restore.
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_clk_osc_resume(clk_base);
+>>>>>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < ARRAY_SIZE(cpu_softrst_ctx); =
+i++)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 car_writel(cpu_softrst_=
+ctx[i], CPU_SOFTRST_CTRL, i);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 /* restore all plls and peripheral clocks */
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra210_init_pllu();
+>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_restore_context();
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 fence_udelay(5, clk_base);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 /* resume SCLK and CPULP clocks */
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_sclk_cpulp_burst_policy_restore_context()=
+;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 /*
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * restore CPUG clocks:
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * - enable DFLL in open loop mode
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * - switch CPUG to DFLL clock source
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * - close DFLL loop
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * - sync PLLX state
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (dfll_pdev)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_dfll_resume(dfll_=
+pdev, false);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_cclkg_burst_policy_restore_context();
+>>>>>>> +=C2=A0=C2=A0=C2=A0 fence_udelay(2, clk_base);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (dfll_pdev)
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_dfll_resume(dfll_=
+pdev, true);
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 parent =3D
+>>>>>>> clk_hw_get_parent(__clk_get_hw(clks[TEGRA210_CLK_CCLK_G]));
+>>>>>>> +=C2=A0=C2=A0=C2=A0 clk =3D clks[TEGRA210_CLK_PLL_X];
+>>>>>>> +=C2=A0=C2=A0=C2=A0 if (parent !=3D __clk_get_hw(clk))
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_clk_sync_state_pl=
+l(__clk_get_hw(clk));
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 /* Disable PLL_OUT_CPU after DFLL resume */
+>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_clk_set_pllp_out_cpu(false);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>  =C2=A0=C2=A0 static void tegra210_cpu_clock_suspend(void)
+>>>>>>>  =C2=A0=C2=A0 {
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* switch coresite to clk_m, =
+save off original source */
+>>>>>>> @@ -3298,6 +3400,11 @@ static void tegra210_cpu_clock_resume(void)
+>>>>>>>  =C2=A0=C2=A0 }
+>>>>>>>  =C2=A0=C2=A0 #endif
+>>>>>>>  =C2=A0=C2=A0 +static struct syscore_ops tegra_clk_syscore_ops =3D =
+{
+>>>>>>> +=C2=A0=C2=A0=C2=A0 .suspend =3D tegra210_clk_suspend,
+>>>>>>> +=C2=A0=C2=A0=C2=A0 .resume =3D tegra210_clk_resume,
+>>>>>>> +};
+>>>>>>> +
+>>>>>>>  =C2=A0=C2=A0 static struct tegra_cpu_car_ops tegra210_cpu_car_ops =
+=3D {
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .wait_for_reset=C2=A0=C2=A0=
+=C2=A0 =3D tegra210_wait_cpu_in_reset,
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .disable_clock=C2=A0=C2=A0=C2=
+=A0 =3D tegra210_disable_cpu_clock,
+>>>>>>> @@ -3583,5 +3690,7 @@ static void __init tegra210_clock_init(struct
+>>>>>>> device_node *np)
+>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra210_mbist_clk_init();
+>>>>>>>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_cpu_car_ops =3D =
+&tegra210_cpu_car_ops;
+>>>>>>> +
+>>>>>>> +=C2=A0=C2=A0=C2=A0 register_syscore_ops(&tegra_clk_syscore_ops);
+>>>>>>>  =C2=A0=C2=A0 }
+>>>>>> Is it really worthwhile to use syscore_ops for suspend/resume given
+>>>>>> that drivers for
+>>>>>> won't resume before the CLK driver anyway? Are there any other optio=
+ns
+>>>>>> for CLK
+>>>>>> suspend/resume?
+>>>>>>
+>>>>>> I'm also not sure whether PM runtime API could be used at all in the
+>>>>>> context of
+>>>>>> syscore_ops ..
+>>>>>>
+>>>>>> Secondly, what about to use generic clk_save_context() /
+>>>>>> clk_restore_context()
+>>>>>> helpers for the suspend-resume? It looks to me that some other
+>>>>>> essential (and proper)
+>>>>>> platform driver (soc/tegra/? PMC?) should suspend-resume the clocks
+>>>>>> using the generic
+>>>>>> CLK Framework API.
+>>>>> Clock resume should happen very early to restore peripheral and cpu
+>>>>> clocks very early than peripheral drivers resume happens.
+>>>> If all peripheral drivers properly requested all of the necessary cloc=
+ks
+>>>> and CLK driver was a platform driver, then I guess the probe should ha=
+ve
+>>>> been naturally ordered. But that's not very achievable with the
+>>>> currently available infrastructure in the kernel, so I'm not arguing
+>>>> that the clocks should be explicitly resumed before the users.
+>>>>
+>>>>> this patch series uses clk_save_context and clk_restore_context for
+>>>>> corresponding divider, pll, pllout.. save and restore context.
+>>>> Now I see that indeed this API is utilized in this patch, thank you fo=
+r
+>>>> the clarification.
+>>>>
+>>>>> But as there is dependency on dfll resume and cpu and pllx clocks
+>>>>> restore, couldnt use clk_save_context and clk_restore_context for dfl=
+l.
+>>>>>
+>>>>> So implemented recommended dfll resume sequence in main Tegra210 cloc=
+k
+>>>>> driver along with invoking clk_save_context/clk_restore_context where
+>>>>> all other clocks save/restore happens as per clock tree traversal.
+>>>> Could you please clarify what part of peripherals clocks is required f=
+or
+>>>> DFLL's restore? Couldn't DFLL driver be changed to avoid that quirknes=
+s
+>>>> and thus to make DFLL driver suspend/resume the clock?
+>>> DFLL source ref_clk and soc_clk need to be restored prior to dfll.
+>>>
+>>> I see dfllCPU_out parent to CCLK_G first in the clock tree and
+>>> dfll_ref and dfll_soc peripheral clocks are not resumed by the time
+>>> dfll resume happens first.
+>>>
+>>> ref_clk and soc_clk source is from pll_p and clock tree has these
+>>> registered under pll_p which happens later.
+>>>
+>>> tegra210_clock_init registers in order plls, peripheral clocks,
+>>> super_clk init for cclk_g during clock driver probe and dfll probe and
+>>> register happens later.
+>>>
+>> One more thing, CLDVFS peripheral clock enable is also needed to be
+>> enabled to program DFLL Controller and all peripheral clock context is
+>> restored only after their PLL sources are restored.
+>>
+>> DFLL restore involves dfll source clock resume along with CLDVFS
+>> periheral clock enable and reset
+>>
+> I don't quite see why you can't simply add suspend/resume callbacks to
+> the CPUFreq driver to:
+>
+> On suspend:
+> 1. Switch CPU to PLLP (or whatever "safe" parent)
+> 2. Disable/teardown DFLL
+>
+> On resume:
+> 1. Enable/restore DFLL
+> 2. Switch CPU back to DFLL
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-V2->V3:
-- Update bmips cpufreq driver to avoid "warning: 'ret' may be used
-  uninitialized".
-- Build bot reported this issue almost after 4 days of posting this
-  patch, I was expecting this a lot earlier :)
+dfll runtime suspend/resume are already part of dfll_pm_ops. Don't we=20
+want to use it for suspend/resume as well?
 
- drivers/cpufreq/bmips-cpufreq.c     | 17 ++++++-----------
- drivers/cpufreq/cpufreq.c           |  4 +---
- drivers/cpufreq/davinci-cpufreq.c   |  3 ++-
- drivers/cpufreq/imx6q-cpufreq.c     |  6 ++----
- drivers/cpufreq/kirkwood-cpufreq.c  |  3 ++-
- drivers/cpufreq/loongson1-cpufreq.c |  8 +++-----
- drivers/cpufreq/loongson2_cpufreq.c |  3 ++-
- drivers/cpufreq/maple-cpufreq.c     |  3 ++-
- drivers/cpufreq/omap-cpufreq.c      | 15 +++++----------
- drivers/cpufreq/pasemi-cpufreq.c    |  3 ++-
- drivers/cpufreq/pmac32-cpufreq.c    |  3 ++-
- drivers/cpufreq/pmac64-cpufreq.c    |  3 ++-
- drivers/cpufreq/s3c2416-cpufreq.c   |  9 ++-------
- drivers/cpufreq/s3c64xx-cpufreq.c   | 15 +++------------
- drivers/cpufreq/s5pv210-cpufreq.c   |  3 ++-
- drivers/cpufreq/sa1100-cpufreq.c    |  3 ++-
- drivers/cpufreq/sa1110-cpufreq.c    |  3 ++-
- drivers/cpufreq/spear-cpufreq.c     |  3 ++-
- drivers/cpufreq/tegra20-cpufreq.c   |  8 +-------
- include/linux/cpufreq.h             |  2 +-
- 20 files changed, 46 insertions(+), 71 deletions(-)
-
-diff --git a/drivers/cpufreq/bmips-cpufreq.c b/drivers/cpufreq/bmips-cpufreq.c
-index 56a4ebbf00e0..f7c23fa468f0 100644
---- a/drivers/cpufreq/bmips-cpufreq.c
-+++ b/drivers/cpufreq/bmips-cpufreq.c
-@@ -131,23 +131,18 @@ static int bmips_cpufreq_exit(struct cpufreq_policy *policy)
- static int bmips_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct cpufreq_frequency_table *freq_table;
--	int ret;
- 
- 	freq_table = bmips_cpufreq_get_freq_table(policy);
- 	if (IS_ERR(freq_table)) {
--		ret = PTR_ERR(freq_table);
--		pr_err("%s: couldn't determine frequency table (%d).\n",
--			BMIPS_CPUFREQ_NAME, ret);
--		return ret;
-+		pr_err("%s: couldn't determine frequency table (%ld).\n",
-+			BMIPS_CPUFREQ_NAME, PTR_ERR(freq_table));
-+		return PTR_ERR(freq_table);
- 	}
- 
--	ret = cpufreq_generic_init(policy, freq_table, TRANSITION_LATENCY);
--	if (ret)
--		bmips_cpufreq_exit(policy);
--	else
--		pr_info("%s: registered\n", BMIPS_CPUFREQ_NAME);
-+	cpufreq_generic_init(policy, freq_table, TRANSITION_LATENCY);
-+	pr_info("%s: registered\n", BMIPS_CPUFREQ_NAME);
- 
--	return ret;
-+	return 0;
- }
- 
- static struct cpufreq_driver bmips_cpufreq_driver = {
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 4d6043ee7834..8dda62367816 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -159,7 +159,7 @@ EXPORT_SYMBOL_GPL(arch_set_freq_scale);
-  * - set policies transition latency
-  * - policy->cpus with all possible CPUs
-  */
--int cpufreq_generic_init(struct cpufreq_policy *policy,
-+void cpufreq_generic_init(struct cpufreq_policy *policy,
- 		struct cpufreq_frequency_table *table,
- 		unsigned int transition_latency)
- {
-@@ -171,8 +171,6 @@ int cpufreq_generic_init(struct cpufreq_policy *policy,
- 	 * share the clock and voltage and clock.
- 	 */
- 	cpumask_setall(policy->cpus);
--
--	return 0;
- }
- EXPORT_SYMBOL_GPL(cpufreq_generic_init);
- 
-diff --git a/drivers/cpufreq/davinci-cpufreq.c b/drivers/cpufreq/davinci-cpufreq.c
-index 3de48ae60c29..297d23cad8b5 100644
---- a/drivers/cpufreq/davinci-cpufreq.c
-+++ b/drivers/cpufreq/davinci-cpufreq.c
-@@ -90,7 +90,8 @@ static int davinci_cpu_init(struct cpufreq_policy *policy)
- 	 * Setting the latency to 2000 us to accommodate addition of drivers
- 	 * to pre/post change notification list.
- 	 */
--	return cpufreq_generic_init(policy, freq_table, 2000 * 1000);
-+	cpufreq_generic_init(policy, freq_table, 2000 * 1000);
-+	return 0;
- }
- 
- static struct cpufreq_driver davinci_driver = {
-diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-index 47ccfa6b17b7..648a09a1778a 100644
---- a/drivers/cpufreq/imx6q-cpufreq.c
-+++ b/drivers/cpufreq/imx6q-cpufreq.c
-@@ -190,14 +190,12 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 
- static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
- {
--	int ret;
--
- 	policy->clk = clks[ARM].clk;
--	ret = cpufreq_generic_init(policy, freq_table, transition_latency);
-+	cpufreq_generic_init(policy, freq_table, transition_latency);
- 	policy->suspend_freq = max_freq;
- 	dev_pm_opp_of_register_em(policy->cpus);
- 
--	return ret;
-+	return 0;
- }
- 
- static struct cpufreq_driver imx6q_cpufreq_driver = {
-diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
-index 7ab564c1f7ae..cb74bdc5baaa 100644
---- a/drivers/cpufreq/kirkwood-cpufreq.c
-+++ b/drivers/cpufreq/kirkwood-cpufreq.c
-@@ -85,7 +85,8 @@ static int kirkwood_cpufreq_target(struct cpufreq_policy *policy,
- /* Module init and exit code */
- static int kirkwood_cpufreq_cpu_init(struct cpufreq_policy *policy)
- {
--	return cpufreq_generic_init(policy, kirkwood_freq_table, 5000);
-+	cpufreq_generic_init(policy, kirkwood_freq_table, 5000);
-+	return 0;
- }
- 
- static struct cpufreq_driver kirkwood_cpufreq_driver = {
-diff --git a/drivers/cpufreq/loongson1-cpufreq.c b/drivers/cpufreq/loongson1-cpufreq.c
-index 21c9ce8526c0..0ea88778882a 100644
---- a/drivers/cpufreq/loongson1-cpufreq.c
-+++ b/drivers/cpufreq/loongson1-cpufreq.c
-@@ -81,7 +81,7 @@ static int ls1x_cpufreq_init(struct cpufreq_policy *policy)
- 	struct device *cpu_dev = get_cpu_device(policy->cpu);
- 	struct cpufreq_frequency_table *freq_tbl;
- 	unsigned int pll_freq, freq;
--	int steps, i, ret;
-+	int steps, i;
- 
- 	pll_freq = clk_get_rate(cpufreq->pll_clk) / 1000;
- 
-@@ -103,11 +103,9 @@ static int ls1x_cpufreq_init(struct cpufreq_policy *policy)
- 	freq_tbl[i].frequency = CPUFREQ_TABLE_END;
- 
- 	policy->clk = cpufreq->clk;
--	ret = cpufreq_generic_init(policy, freq_tbl, 0);
--	if (ret)
--		kfree(freq_tbl);
-+	cpufreq_generic_init(policy, freq_tbl, 0);
- 
--	return ret;
-+	return 0;
- }
- 
- static int ls1x_cpufreq_exit(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/loongson2_cpufreq.c b/drivers/cpufreq/loongson2_cpufreq.c
-index da344696beed..890813e0bb76 100644
---- a/drivers/cpufreq/loongson2_cpufreq.c
-+++ b/drivers/cpufreq/loongson2_cpufreq.c
-@@ -95,7 +95,8 @@ static int loongson2_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	}
- 
- 	policy->clk = cpuclk;
--	return cpufreq_generic_init(policy, &loongson2_clockmod_table[0], 0);
-+	cpufreq_generic_init(policy, &loongson2_clockmod_table[0], 0);
-+	return 0;
- }
- 
- static int loongson2_cpufreq_exit(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/maple-cpufreq.c b/drivers/cpufreq/maple-cpufreq.c
-index f5220b3d4ec5..28d346062166 100644
---- a/drivers/cpufreq/maple-cpufreq.c
-+++ b/drivers/cpufreq/maple-cpufreq.c
-@@ -140,7 +140,8 @@ static unsigned int maple_cpufreq_get_speed(unsigned int cpu)
- 
- static int maple_cpufreq_cpu_init(struct cpufreq_policy *policy)
- {
--	return cpufreq_generic_init(policy, maple_cpu_freqs, 12000);
-+	cpufreq_generic_init(policy, maple_cpu_freqs, 12000);
-+	return 0;
- }
- 
- static struct cpufreq_driver maple_cpufreq_driver = {
-diff --git a/drivers/cpufreq/omap-cpufreq.c b/drivers/cpufreq/omap-cpufreq.c
-index 29643f06a3c3..8d14b42a8c6f 100644
---- a/drivers/cpufreq/omap-cpufreq.c
-+++ b/drivers/cpufreq/omap-cpufreq.c
-@@ -122,23 +122,18 @@ static int omap_cpu_init(struct cpufreq_policy *policy)
- 			dev_err(mpu_dev,
- 				"%s: cpu%d: failed creating freq table[%d]\n",
- 				__func__, policy->cpu, result);
--			goto fail;
-+			clk_put(policy->clk);
-+			return result;
- 		}
- 	}
- 
- 	atomic_inc_return(&freq_table_users);
- 
- 	/* FIXME: what's the actual transition time? */
--	result = cpufreq_generic_init(policy, freq_table, 300 * 1000);
--	if (!result) {
--		dev_pm_opp_of_register_em(policy->cpus);
--		return 0;
--	}
-+	cpufreq_generic_init(policy, freq_table, 300 * 1000);
-+	dev_pm_opp_of_register_em(policy->cpus);
- 
--	freq_table_free();
--fail:
--	clk_put(policy->clk);
--	return result;
-+	return 0;
- }
- 
- static int omap_cpu_exit(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index 6b1e4abe3248..93f39a1d4c3d 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -196,7 +196,8 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	policy->cur = pas_freqs[cur_astate].frequency;
- 	ppc_proc_freq = policy->cur * 1000ul;
- 
--	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
-+	cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
-+	return 0;
- 
- out_unmap_sdcpwr:
- 	iounmap(sdcpwr_mapbase);
-diff --git a/drivers/cpufreq/pmac32-cpufreq.c b/drivers/cpufreq/pmac32-cpufreq.c
-index 650104d729f3..73621bc11976 100644
---- a/drivers/cpufreq/pmac32-cpufreq.c
-+++ b/drivers/cpufreq/pmac32-cpufreq.c
-@@ -372,7 +372,8 @@ static int pmac_cpufreq_target(	struct cpufreq_policy *policy,
- 
- static int pmac_cpufreq_cpu_init(struct cpufreq_policy *policy)
- {
--	return cpufreq_generic_init(policy, pmac_cpu_freqs, transition_latency);
-+	cpufreq_generic_init(policy, pmac_cpu_freqs, transition_latency);
-+	return 0;
- }
- 
- static u32 read_gpio(struct device_node *np)
-diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
-index 1af3492a000d..d7542a106e6b 100644
---- a/drivers/cpufreq/pmac64-cpufreq.c
-+++ b/drivers/cpufreq/pmac64-cpufreq.c
-@@ -321,7 +321,8 @@ static unsigned int g5_cpufreq_get_speed(unsigned int cpu)
- 
- static int g5_cpufreq_cpu_init(struct cpufreq_policy *policy)
- {
--	return cpufreq_generic_init(policy, g5_cpu_freqs, transition_latency);
-+	cpufreq_generic_init(policy, g5_cpu_freqs, transition_latency);
-+	return 0;
- }
- 
- static struct cpufreq_driver g5_cpufreq_driver = {
-diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-index f7ff1ed7fef1..106910351c41 100644
---- a/drivers/cpufreq/s3c2416-cpufreq.c
-+++ b/drivers/cpufreq/s3c2416-cpufreq.c
-@@ -447,21 +447,16 @@ static int s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
- 	/* Datasheet says PLL stabalisation time must be at least 300us,
- 	 * so but add some fudge. (reference in LOCKCON0 register description)
- 	 */
--	ret = cpufreq_generic_init(policy, s3c_freq->freq_table,
-+	cpufreq_generic_init(policy, s3c_freq->freq_table,
- 			(500 * 1000) + s3c_freq->regulator_latency);
--	if (ret)
--		goto err_freq_table;
--
- 	register_reboot_notifier(&s3c2416_cpufreq_reboot_notifier);
- 
- 	return 0;
- 
--err_freq_table:
- #ifdef CONFIG_ARM_S3C2416_CPUFREQ_VCORESCALE
--	regulator_put(s3c_freq->vddarm);
- err_vddarm:
--#endif
- 	clk_put(s3c_freq->armclk);
-+#endif
- err_armclk:
- 	clk_put(s3c_freq->hclk);
- err_hclk:
-diff --git a/drivers/cpufreq/s3c64xx-cpufreq.c b/drivers/cpufreq/s3c64xx-cpufreq.c
-index 37df2d892eb0..af0c00dabb22 100644
---- a/drivers/cpufreq/s3c64xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c64xx-cpufreq.c
-@@ -144,7 +144,6 @@ static void s3c64xx_cpufreq_config_regulator(void)
- 
- static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
- {
--	int ret;
- 	struct cpufreq_frequency_table *freq;
- 
- 	if (policy->cpu != 0)
-@@ -165,8 +164,7 @@ static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
- #ifdef CONFIG_REGULATOR
- 	vddarm = regulator_get(NULL, "vddarm");
- 	if (IS_ERR(vddarm)) {
--		ret = PTR_ERR(vddarm);
--		pr_err("Failed to obtain VDDARM: %d\n", ret);
-+		pr_err("Failed to obtain VDDARM: %ld\n", PTR_ERR(vddarm));
- 		pr_err("Only frequency scaling available\n");
- 		vddarm = NULL;
- 	} else {
-@@ -196,16 +194,9 @@ static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
- 	 * the PLLs, which we don't currently) is ~300us worst case,
- 	 * but add some fudge.
- 	 */
--	ret = cpufreq_generic_init(policy, s3c64xx_freq_table,
-+	cpufreq_generic_init(policy, s3c64xx_freq_table,
- 			(500 * 1000) + regulator_latency);
--	if (ret != 0) {
--		pr_err("Failed to configure frequency table: %d\n",
--		       ret);
--		regulator_put(vddarm);
--		clk_put(policy->clk);
--	}
--
--	return ret;
-+	return 0;
- }
- 
- static struct cpufreq_driver s3c64xx_cpufreq_driver = {
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index e5cb17d4be7b..5d10030f2560 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -541,7 +541,8 @@ static int s5pv210_cpu_init(struct cpufreq_policy *policy)
- 	s5pv210_dram_conf[1].freq = clk_get_rate(dmc1_clk);
- 
- 	policy->suspend_freq = SLEEP_FREQ;
--	return cpufreq_generic_init(policy, s5pv210_freq_table, 40000);
-+	cpufreq_generic_init(policy, s5pv210_freq_table, 40000);
-+	return 0;
- 
- out_dmc1:
- 	clk_put(dmc0_clk);
-diff --git a/drivers/cpufreq/sa1100-cpufreq.c b/drivers/cpufreq/sa1100-cpufreq.c
-index ab5cab93e638..5c075ef6adc0 100644
---- a/drivers/cpufreq/sa1100-cpufreq.c
-+++ b/drivers/cpufreq/sa1100-cpufreq.c
-@@ -181,7 +181,8 @@ static int sa1100_target(struct cpufreq_policy *policy, unsigned int ppcr)
- 
- static int __init sa1100_cpu_init(struct cpufreq_policy *policy)
- {
--	return cpufreq_generic_init(policy, sa11x0_freq_table, 0);
-+	cpufreq_generic_init(policy, sa11x0_freq_table, 0);
-+	return 0;
- }
- 
- static struct cpufreq_driver sa1100_driver __refdata = {
-diff --git a/drivers/cpufreq/sa1110-cpufreq.c b/drivers/cpufreq/sa1110-cpufreq.c
-index dab54e051c0e..d9d04d935b3a 100644
---- a/drivers/cpufreq/sa1110-cpufreq.c
-+++ b/drivers/cpufreq/sa1110-cpufreq.c
-@@ -303,7 +303,8 @@ static int sa1110_target(struct cpufreq_policy *policy, unsigned int ppcr)
- 
- static int __init sa1110_cpu_init(struct cpufreq_policy *policy)
- {
--	return cpufreq_generic_init(policy, sa11x0_freq_table, 0);
-+	cpufreq_generic_init(policy, sa11x0_freq_table, 0);
-+	return 0;
- }
- 
- /* sa1110_driver needs __refdata because it must remain after init registers
-diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-index 4074e2615522..73bd8dc47074 100644
---- a/drivers/cpufreq/spear-cpufreq.c
-+++ b/drivers/cpufreq/spear-cpufreq.c
-@@ -153,8 +153,9 @@ static int spear_cpufreq_target(struct cpufreq_policy *policy,
- static int spear_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	policy->clk = spear_cpufreq.clk;
--	return cpufreq_generic_init(policy, spear_cpufreq.freq_tbl,
-+	cpufreq_generic_init(policy, spear_cpufreq.freq_tbl,
- 			spear_cpufreq.transition_latency);
-+	return 0;
- }
- 
- static struct cpufreq_driver spear_cpufreq_driver = {
-diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-index 3c32cc7b0671..f84ecd22f488 100644
---- a/drivers/cpufreq/tegra20-cpufreq.c
-+++ b/drivers/cpufreq/tegra20-cpufreq.c
-@@ -118,17 +118,11 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
- static int tegra_cpu_init(struct cpufreq_policy *policy)
- {
- 	struct tegra20_cpufreq *cpufreq = cpufreq_get_driver_data();
--	int ret;
- 
- 	clk_prepare_enable(cpufreq->cpu_clk);
- 
- 	/* FIXME: what's the actual transition time? */
--	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
--	if (ret) {
--		clk_disable_unprepare(cpufreq->cpu_clk);
--		return ret;
--	}
--
-+	cpufreq_generic_init(policy, freq_table, 300 * 1000);
- 	policy->clk = cpufreq->cpu_clk;
- 	policy->suspend_freq = freq_table[0].frequency;
- 	return 0;
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index d757a56a74dc..536a049d7ecc 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -992,7 +992,7 @@ extern struct freq_attr *cpufreq_generic_attr[];
- int cpufreq_table_validate_and_sort(struct cpufreq_policy *policy);
- 
- unsigned int cpufreq_generic_get(unsigned int cpu);
--int cpufreq_generic_init(struct cpufreq_policy *policy,
-+void cpufreq_generic_init(struct cpufreq_policy *policy,
- 		struct cpufreq_frequency_table *table,
- 		unsigned int transition_latency);
- #endif /* _LINUX_CPUFREQ_H */
--- 
-2.21.0.rc0.269.g1a574e7a288b
+currently no APIs are shared b/w clk/tegra driver and CPUFreq driver to=20
+invoke dfll suspend/resume in CPUFreq driver
