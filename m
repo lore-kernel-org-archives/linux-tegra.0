@@ -1,58 +1,38 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 09/24] PM / devfreq: tegra30: Reset boosting on startup
-Date: Tue, 16 Jul 2019 16:19:21 +0300
-Message-ID: <d86c8b97-40b7-ba63-e0a0-736862fa786c@gmail.com>
+Subject: Re: [PATCH v4 11/24] PM / devfreq: tegra30: Add debug messages
+Date: Tue, 16 Jul 2019 16:26:30 +0300
+Message-ID: <53cd0ba5-f814-cd9b-19c5-1d42717ca58c@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
- <CGME20190707223639epcas4p392300747244905ec06f580394d579eb4@epcas4p3.samsung.com>
- <20190707223303.6755-10-digetx@gmail.com>
- <caed4a78-ad8a-5bee-adc4-4a342e2898c3@samsung.com>
+ <CGME20190707223640epcas4p15337f40466342832b731ad6a53be946e@epcas4p1.samsung.com>
+ <20190707223303.6755-12-digetx@gmail.com>
+ <c883bdbe-427f-35a1-9e63-5e4953a84286@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <caed4a78-ad8a-5bee-adc4-4a342e2898c3@samsung.com>
+In-Reply-To: <c883bdbe-427f-35a1-9e63-5e4953a84286@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-16.07.2019 15:13, Chanwoo Choi пишет:
-> On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
->> Governor could be stopped while boosting is active. We have assumption
->> that everything is reset on governor's restart, including the boosting
->> value, which was missed.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index d5d04c25023b..32fe95458ee7 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -536,6 +536,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->>  {
->>  	u32 val = 0, target_freq;
->>  
->> +	/* we don't want boosting on restart */
+16.07.2019 15:23, Chanwoo Choi пишет:
+> Hi Dmitry,
 > 
-> nitpick.
-> I think that following comment is proper in my case.
-> In my case, I think 'we' expression is not good
+> Usually, the kernel log print for all users
+> such as changing the frequency, fail or success.
 > 
-> 	/* Reset the boost frequency on restart */
+> But, if the log just show the register dump,
+> it is not useful for all users. It is just used
+> for only specific developer.
+> 
+> I recommend that you better to add more exception handling
+> code on many points instead of just showing the register dump.
 
-Okay, I'll change the wording.
-
->> +	dev->boost_freq = 0;
->> +
->>  	target_freq = clk_get_rate(tegra->emc_clock) / KHZ;
->>  	dev->avg_count = target_freq * ACTMON_SAMPLING_PERIOD;
->>  	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
->>
-> 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> 
+The debug messages are not users, but for developers. Yes, I primarily
+made the debugging to be useful for myself and will be happy to change
+the way debugging is done if there will be any other active developer
+for this driver. The registers dump is more than enough in order to
+understand what's going on, I don't see any real need to change anything
+here for now.
