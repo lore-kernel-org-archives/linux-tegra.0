@@ -1,57 +1,51 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 09/24] PM / devfreq: tegra30: Reset boosting on
- startup
-Date: Tue, 16 Jul 2019 21:13:52 +0900
-Message-ID: <caed4a78-ad8a-5bee-adc4-4a342e2898c3@samsung.com>
+Subject: Re: [PATCH v4 10/24] PM / devfreq: tegra30: Don't enable
+ consecutive-down interrupt on startup
+Date: Tue, 16 Jul 2019 21:17:00 +0900
+Message-ID: <933b99a1-ac45-25fb-e8d5-0641ec0cab18@samsung.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223639epcas4p392300747244905ec06f580394d579eb4@epcas4p3.samsung.com>
-        <20190707223303.6755-10-digetx@gmail.com>
+        <CGME20190707223642epcas4p1fbfbcf5181e9a25fbbaad9ef95c56f8f@epcas4p1.samsung.com>
+        <20190707223303.6755-11-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190707223303.6755-10-digetx@gmail.com>
+In-Reply-To: <20190707223303.6755-11-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dmitry,
+
 On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
-> Governor could be stopped while boosting is active. We have assumption
-> that everything is reset on governor's restart, including the boosting
-> value, which was missed.
+> The consecutive-down event tells that we should perform frequency
+> de-boosting, but boosting is in a reset state on start and hence the
+> event won't do anything useful for us and it will be just a dummy
+> interrupt request.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/devfreq/tegra30-devfreq.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/devfreq/tegra30-devfreq.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
 > diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index d5d04c25023b..32fe95458ee7 100644
+> index 32fe95458ee7..878c9396bb8c 100644
 > --- a/drivers/devfreq/tegra30-devfreq.c
 > +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -536,6 +536,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->  {
->  	u32 val = 0, target_freq;
+> @@ -558,7 +558,6 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+>  		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
+>  	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
+>  	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
+> -	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+>  	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+>  	val |= ACTMON_DEV_CTRL_ENB;
 >  
-> +	/* we don't want boosting on restart */
-
-nitpick.
-I think that following comment is proper in my case.
-In my case, I think 'we' expression is not good
-
-	/* Reset the boost frequency on restart */
-
-> +	dev->boost_freq = 0;
-> +
->  	target_freq = clk_get_rate(tegra->emc_clock) / KHZ;
->  	dev->avg_count = target_freq * ACTMON_SAMPLING_PERIOD;
->  	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
 > 
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
+Maybe, I think that better to review it by Thierry.
+I'm not sure it is right or not because it depend on h/w.
 
 -- 
 Best Regards,
