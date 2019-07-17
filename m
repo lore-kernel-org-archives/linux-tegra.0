@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-Date: Wed, 17 Jul 2019 14:29:24 -0700
-Message-ID: <fd8f5243-7073-2e0a-caab-308aa6bc0d63@nvidia.com>
+Date: Thu, 18 Jul 2019 00:30:17 +0300
+Message-ID: <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
 References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
  <0ee06d1a-310d-59f7-0aa6-b688b33447f5@nvidia.com>
  <cedfafd0-4114-0821-0c4b-efc17c213449@gmail.com>
@@ -23,89 +23,76 @@ References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
  <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
  <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 7/17/19 1:11 PM, Sowjanya Komatineni wrote:
->
+17.07.2019 23:11, Sowjanya Komatineni пишет:
+> 
 > On 7/17/19 1:01 PM, Sowjanya Komatineni wrote:
 >>
 >> On 7/17/19 12:43 PM, Dmitry Osipenko wrote:
->>> 17.07.2019 21:54, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> 17.07.2019 21:54, Sowjanya Komatineni пишет:
 >>>> On 7/17/19 11:51 AM, Sowjanya Komatineni wrote:
 >>>>> On 7/17/19 11:32 AM, Dmitry Osipenko wrote:
->>>>>> 17.07.2019 20:29, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
+>>>>>> 17.07.2019 20:29, Sowjanya Komatineni пишет:
 >>>>>>> On 7/17/19 8:17 AM, Dmitry Osipenko wrote:
->>>>>>>> 17.07.2019 9:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
+>>>>>>>> 17.07.2019 9:36, Sowjanya Komatineni пишет:
 >>>>>>>>> On 7/16/19 11:33 PM, Dmitry Osipenko wrote:
->>>>>>>>>> =D0=92 Tue, 16 Jul 2019 22:55:52 -0700
->>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=
-=D0=B5=D1=82:
+>>>>>>>>>> В Tue, 16 Jul 2019 22:55:52 -0700
+>>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> пишет:
 >>>>>>>>>>
 >>>>>>>>>>> On 7/16/19 10:42 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>> =D0=92 Tue, 16 Jul 2019 22:25:25 -0700
->>>>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=
-=88=D0=B5=D1=82:
+>>>>>>>>>>>> В Tue, 16 Jul 2019 22:25:25 -0700
+>>>>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> пишет:
 >>>>>>>>>>>>> On 7/16/19 9:11 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>> =D0=92 Tue, 16 Jul 2019 19:35:49 -0700
->>>>>>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=
-=88=D0=B5=D1=82:
+>>>>>>>>>>>>>> В Tue, 16 Jul 2019 19:35:49 -0700
+>>>>>>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> пишет:
 >>>>>>>>>>>>>>> On 7/16/19 7:18 PM, Sowjanya Komatineni wrote:
 >>>>>>>>>>>>>>>> On 7/16/19 3:06 PM, Sowjanya Komatineni wrote:
 >>>>>>>>>>>>>>>>> On 7/16/19 3:00 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>> 17.07.2019 0:35, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=
-=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>> 17.07.2019 0:35, Sowjanya Komatineni пишет:
 >>>>>>>>>>>>>>>>>>> On 7/16/19 2:21 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>>>> 17.07.2019 0:12, Sowjanya Komatineni =D0=BF=D0=B8=D1=
-=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>> 17.07.2019 0:12, Sowjanya Komatineni пишет:
 >>>>>>>>>>>>>>>>>>>>> On 7/16/19 1:47 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>>>>>> 16.07.2019 22:26, Sowjanya Komatineni =D0=BF=D0=B8=
-=D1=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 22:26, Sowjanya Komatineni пишет:
 >>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 11:43 AM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 21:30, Sowjanya Komatineni =D0=BF=D0=B8=
-=D1=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 21:30, Sowjanya Komatineni пишет:
 >>>>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 11:25 AM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 21:19, Sowjanya Komatineni =D0=BF=D0=
-=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 21:19, Sowjanya Komatineni пишет:
 >>>>>>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 9:50 AM, Sowjanya Komatineni wrote:
 >>>>>>>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 8:00 AM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 11:06, Peter De Schrijver =D0=BF=
-=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>> On Tue, Jul 16, 2019 at 03:24:26PM +0800,=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 11:06, Peter De Schrijver пишет:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> On Tue, Jul 16, 2019 at 03:24:26PM +0800,
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Joseph
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Lo wrote:
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OK, Will add to CPUFreq driver...
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> The other thing that also need=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> The other thing that also need
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> attention is
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> that T124 CPUFreq
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> implicitly relies on DFLL driver to be=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> implicitly relies on DFLL driver to be
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> probed
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> first, which is
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> icky.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Should I add check for successful dfll clk
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> register explicitly in
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq driver probe and defer till=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> dfll clk
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq driver probe and defer till dfll
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> clk
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registers?
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> Probably you should use the "device=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> links". See
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Probably you should use the "device links".
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> See
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> [1][2] for the
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> example.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> [1]
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://elixir.bootlin.com/linux/v5.2.1/sourc=
-e/drivers/gpu/drm/tegra/dc.c#L2383=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://elixir.bootlin.com/linux/v5.2.1/source/drivers/gpu/drm/tegra/dc.c#L2383
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -118,8 +105,7 @@ e/drivers/gpu/drm/tegra/dc.c#L2383=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> [2]
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://www.kernel.org/doc/html/latest/driver=
--api/device_link.html=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://www.kernel.org/doc/html/latest/driver-api/device_link.html
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -130,13 +116,11 @@ e/drivers/gpu/drm/tegra/dc.c#L2383=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Return EPROBE_DEFER instead of EINVAL if
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> device_link_add() fails.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> And
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> use of_find_device_by_node() to get the=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL's
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> use of_find_device_by_node() to get the DFLL's
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> device, see [3].
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> [3]
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/g=
-it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -150,30 +134,26 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>> Looks like I initially confused this case with
 >>>>>>>>>>>>>>>>>>>>>>>>>> getting
 >>>>>>>>>>>>>>>>>>>>>>>>>> orphaned clock.
->>>>>>>>>>>>>>>>>>>>>>>>>> I'm now seeing that the DFLL driver registers=20
->>>>>>>>>>>>>>>>>>>>>>>>>> the
+>>>>>>>>>>>>>>>>>>>>>>>>>> I'm now seeing that the DFLL driver registers the
 >>>>>>>>>>>>>>>>>>>>>>>>>> clock and then
->>>>>>>>>>>>>>>>>>>>>>>>>> clk_get(dfll) should be returning=20
->>>>>>>>>>>>>>>>>>>>>>>>>> EPROBE_DEFER until
+>>>>>>>>>>>>>>>>>>>>>>>>>> clk_get(dfll) should be returning EPROBE_DEFER
+>>>>>>>>>>>>>>>>>>>>>>>>>> until
 >>>>>>>>>>>>>>>>>>>>>>>>>> DFLL driver is
->>>>>>>>>>>>>>>>>>>>>>>>>> probed, hence everything should be fine as-is=20
->>>>>>>>>>>>>>>>>>>>>>>>>> and
+>>>>>>>>>>>>>>>>>>>>>>>>>> probed, hence everything should be fine as-is and
 >>>>>>>>>>>>>>>>>>>>>>>>>> there is no real
 >>>>>>>>>>>>>>>>>>>>>>>>>> need
 >>>>>>>>>>>>>>>>>>>>>>>>>> for the 'device link'. Sorry for the confusion!
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sorry, I didn't follow the mail thread.=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Just
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sorry, I didn't follow the mail thread. Just
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> regarding the DFLL
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> part.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> As you know it, the DFLL clock is one of=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> As you know it, the DFLL clock is one of the
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> clock sources and
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> integrated with DVFS control logic with the
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> regulator. We will not
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> switch
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU to other clock sources once we=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU to other clock sources once we
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> switched to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL. Because the
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU has
@@ -182,8 +162,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> (CVB or OPP
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> table
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> you see
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> in the driver.). We shouldn't reparent=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> it to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> in the driver.). We shouldn't reparent it to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> other sources with
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> unknew
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> freq/volt pair. That's not guaranteed to
@@ -194,7 +173,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> enforce
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL freq to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> PLLP's
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> rate before switching to PLLP in order to=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> rate before switching to PLLP in order to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> have a
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> proper CPU voltage.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>> PLLP freq is safe to work for any CPU voltage.
@@ -206,33 +185,31 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>> suspend
 >>>>>>>>>>>>>>>>>>>>>>>>>>> Sorry, please ignore my above comment. During
 >>>>>>>>>>>>>>>>>>>>>>>>>>> suspend, need to change
->>>>>>>>>>>>>>>>>>>>>>>>>>> CCLK_G source to PLLP when dfll is in closed=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>> CCLK_G source to PLLP when dfll is in closed
 >>>>>>>>>>>>>>>>>>>>>>>>>>> loop
 >>>>>>>>>>>>>>>>>>>>>>>>>>> mode first and
 >>>>>>>>>>>>>>>>>>>>>>>>>>> then
 >>>>>>>>>>>>>>>>>>>>>>>>>>> dfll need to be set to open loop.
 >>>>>>>>>>>>>>>>>>>>>>>>>> Okay.
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> And I don't exactly understand why we=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> And I don't exactly understand why we
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> need to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> switch to PLLP in
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> idle
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver. Just keep it on CL-DVFS mode all=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver. Just keep it on CL-DVFS mode all the
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> time.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> In SC7 entry, the dfll suspend function
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> moves it
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the open-loop
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> mode. That's
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> all. The sc7-entryfirmware will handle=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> all. The sc7-entryfirmware will handle
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the rest
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> of the sequence to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turn off
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the CPU power.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> In SC7 resume, the warmboot code will=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handle
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> In SC7 resume, the warmboot code will handle
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sequence to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turn on
@@ -244,21 +221,20 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> restore
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the CPU clock
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> policy (CPU
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> runs on DFLL open-loop mode) and then=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> runs on DFLL open-loop mode) and then
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> moving to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> close-loop mode.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> The DFLL is re-inited after switching CCLK to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> parent during of
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> the
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> early clocks-state restoring by CaR=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver. Hence
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> early clocks-state restoring by CaR driver.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Hence
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> instead of having
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> odd
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> hacks in the CaR driver, it is much nicer to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> have a
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> proper suspend-resume sequencing of the=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> device
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> proper suspend-resume sequencing of the device
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> drivers. In this case
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver is the driver that enables DFLL and
@@ -270,15 +246,15 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> be responsible for
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> management of the DFLL's state during of
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> suspend/resume process. If
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq driver disables DFLL during=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>> suspend and
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq driver disables DFLL during suspend
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> and
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> re-enables it
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> during
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> resume, then looks like the CaR driver hacks
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> around
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL are not
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>> needed.
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> The DFLL part looks good to me. BTW,=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> The DFLL part looks good to me. BTW,
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> change the
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> patch subject to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "Add
@@ -289,8 +265,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> are as
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> follows (assuming
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> all
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>> required DFLL hw configuration has been=20
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>> done)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> required DFLL hw configuration has been done)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Switch to DFLL:
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 0) Save current parent and frequency
@@ -298,7 +273,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 2) Enable DFLL
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 3) Change cclk_g parent to DFLL
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> For OVR regulator:
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 4) Change PWM output pin from tristate to=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 4) Change PWM output pin from tristate to
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> output
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 5) Enable DFLL PWM output
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> For I2C regulator:
@@ -314,31 +289,29 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>>>>> I see during switch away from DFLL (suspend),
 >>>>>>>>>>>>>>>>>>>>>>>>>>> cclk_g
 >>>>>>>>>>>>>>>>>>>>>>>>>>> parent is not
->>>>>>>>>>>>>>>>>>>>>>>>>>> changed to PLLP before changing dfll to open=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>> changed to PLLP before changing dfll to open
 >>>>>>>>>>>>>>>>>>>>>>>>>>> loop
 >>>>>>>>>>>>>>>>>>>>>>>>>>> mode.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>> Will add this ...
->>>>>>>>>>>>>>>>>>>>>>>>>> The CPUFreq driver switches parent to PLLP=20
->>>>>>>>>>>>>>>>>>>>>>>>>> during
+>>>>>>>>>>>>>>>>>>>>>>>>>> The CPUFreq driver switches parent to PLLP during
 >>>>>>>>>>>>>>>>>>>>>>>>>> the
 >>>>>>>>>>>>>>>>>>>>>>>>>> probe, similar
 >>>>>>>>>>>>>>>>>>>>>>>>>> should be done on suspend.
 >>>>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>>>> I'm also wondering if it's always safe to=20
+>>>>>>>>>>>>>>>>>>>>>>>>>> I'm also wondering if it's always safe to
 >>>>>>>>>>>>>>>>>>>>>>>>>> switch to
 >>>>>>>>>>>>>>>>>>>>>>>>>> PLLP in the probe.
->>>>>>>>>>>>>>>>>>>>>>>>>> If CPU is running on a lower freq than PLLP,=20
->>>>>>>>>>>>>>>>>>>>>>>>>> then
+>>>>>>>>>>>>>>>>>>>>>>>>>> If CPU is running on a lower freq than PLLP, then
 >>>>>>>>>>>>>>>>>>>>>>>>>> some
 >>>>>>>>>>>>>>>>>>>>>>>>>> other more
->>>>>>>>>>>>>>>>>>>>>>>>>> appropriate intermediate parent should be=20
+>>>>>>>>>>>>>>>>>>>>>>>>>> appropriate intermediate parent should be
 >>>>>>>>>>>>>>>>>>>>>>>>>> selected.
->>>>>>>>>>>>>>>>>>>>>>>>> CPU parents are PLL_X, PLL_P, and dfll. PLL_X=20
+>>>>>>>>>>>>>>>>>>>>>>>>> CPU parents are PLL_X, PLL_P, and dfll. PLL_X
 >>>>>>>>>>>>>>>>>>>>>>>>> always
 >>>>>>>>>>>>>>>>>>>>>>>>> runs at higher
 >>>>>>>>>>>>>>>>>>>>>>>>> rate
->>>>>>>>>>>>>>>>>>>>>>>>> so switching to PLL_P during CPUFreq probe=20
+>>>>>>>>>>>>>>>>>>>>>>>>> so switching to PLL_P during CPUFreq probe
 >>>>>>>>>>>>>>>>>>>>>>>>> prior to
 >>>>>>>>>>>>>>>>>>>>>>>>> dfll clock enable
 >>>>>>>>>>>>>>>>>>>>>>>>> should be safe.
@@ -347,11 +320,10 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>> PLLP
 >>>>>>>>>>>>>>>>>>>>>>>> which CCLKG supports, the PLLP_OUT4.
 >>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>> Probably, realistically, CPU is always running=20
+>>>>>>>>>>>>>>>>>>>>>>>> Probably, realistically, CPU is always running
 >>>>>>>>>>>>>>>>>>>>>>>> off a
 >>>>>>>>>>>>>>>>>>>>>>>> fast PLLX during
->>>>>>>>>>>>>>>>>>>>>>>> boot, but I'm wondering what may happen on=20
->>>>>>>>>>>>>>>>>>>>>>>> KEXEC. I
+>>>>>>>>>>>>>>>>>>>>>>>> boot, but I'm wondering what may happen on KEXEC. I
 >>>>>>>>>>>>>>>>>>>>>>>> guess ideally CPUFreq driver should also have a
 >>>>>>>>>>>>>>>>>>>>>>>> 'shutdown' callback to teardown DFLL
 >>>>>>>>>>>>>>>>>>>>>>>> on a reboot, but likely that there are other
@@ -361,13 +333,12 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>>>>> moment.
 >>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>> [snip]
->>>>>>>>>>>>>>>>>>>>>>> During bootup CPUG sources from PLL_X. By PLL_P=20
+>>>>>>>>>>>>>>>>>>>>>>> During bootup CPUG sources from PLL_X. By PLL_P
 >>>>>>>>>>>>>>>>>>>>>>> source
 >>>>>>>>>>>>>>>>>>>>>>> above I meant
 >>>>>>>>>>>>>>>>>>>>>>> PLL_P_OUT4.
 >>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>> As per clock policies, PLL_X is always used for=20
->>>>>>>>>>>>>>>>>>>>>>> high
+>>>>>>>>>>>>>>>>>>>>>>> As per clock policies, PLL_X is always used for high
 >>>>>>>>>>>>>>>>>>>>>>> freq
 >>>>>>>>>>>>>>>>>>>>>>> like
 >>>>>>>>>>>>>>>>>>>>>>>> 800Mhz
@@ -379,25 +350,24 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>>>>>> PLLP_OUT4 rate update is not needed as it is safe to
 >>>>>>>>>>>>>>>>>>>>> run at
 >>>>>>>>>>>>>>>>>>>>> 408Mhz because it is below fmax @ Vmin
->>>>>>>>>>>>>>>>>>>> So even 204MHz CVB entries are having the same=20
+>>>>>>>>>>>>>>>>>>>> So even 204MHz CVB entries are having the same
 >>>>>>>>>>>>>>>>>>>> voltage as
->>>>>>>>>>>>>>>>>>>> 408MHz, correct? It's not instantly obvious to me=20
+>>>>>>>>>>>>>>>>>>>> 408MHz, correct? It's not instantly obvious to me
 >>>>>>>>>>>>>>>>>>>> from the
->>>>>>>>>>>>>>>>>>>> DFLL driver's code where the fmax @ Vmin is=20
->>>>>>>>>>>>>>>>>>>> defined, I see
+>>>>>>>>>>>>>>>>>>>> DFLL driver's code where the fmax @ Vmin is defined,
+>>>>>>>>>>>>>>>>>>>> I see
 >>>>>>>>>>>>>>>>>>>> that there is the min_millivolts
 >>>>>>>>>>>>>>>>>>>> and frequency entries starting from 204MHZ defined
 >>>>>>>>>>>>>>>>>>>> per-table.
 >>>>>>>>>>>>>>>>>>> Yes at Vmin CPU Fmax is ~800Mhz. So anything below that
 >>>>>>>>>>>>>>>>>>> will
 >>>>>>>>>>>>>>>>>>> work at Vmin voltage and PLLP max is 408Mhz.
->>>>>>>>>>>>>>>>>> Thank you for the clarification. It would be good to=20
->>>>>>>>>>>>>>>>>> have
+>>>>>>>>>>>>>>>>>> Thank you for the clarification. It would be good to have
 >>>>>>>>>>>>>>>>>> that
 >>>>>>>>>>>>>>>>>> commented
 >>>>>>>>>>>>>>>>>> in the code as well.
 >>>>>>>>>>>>>>>>> OK, Will add...
->>>>>>>>>>>>>>>> Regarding, adding suspend/resume to CPUFreq, CPUFreq=20
+>>>>>>>>>>>>>>>> Regarding, adding suspend/resume to CPUFreq, CPUFreq
 >>>>>>>>>>>>>>>> suspend
 >>>>>>>>>>>>>>>> happens very early even before disabling non-boot CPUs and
 >>>>>>>>>>>>>>>> also
@@ -408,8 +378,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Clock DFLL driver Suspend:
 >>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=
-=C2=A0=C2=A0 - Save CPU clock policy registers, and=20
+>>>>>>>>>>>>>>>>               - Save CPU clock policy registers, and
 >>>>>>>>>>>>>>>> Perform
 >>>>>>>>>>>>>>>> dfll
 >>>>>>>>>>>>>>>> suspend which sets in open loop mode
@@ -419,8 +388,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Clock DFLL driver Resume:
 >>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=
-=C2=A0=C2=A0 - Re-init DFLL, Set in Open-Loop mode,=20
+>>>>>>>>>>>>>>>>               - Re-init DFLL, Set in Open-Loop mode,
 >>>>>>>>>>>>>>>> restore
 >>>>>>>>>>>>>>>> CPU
 >>>>>>>>>>>>>>>> Clock policy registers which actually sets source to DFLL
@@ -429,32 +397,30 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> CPU Freq driver Resume:
 >>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=
-=C2=A0=C2=A0 - do clk_prepare_enable which acutally sets
+>>>>>>>>>>>>>>>>               - do clk_prepare_enable which acutally sets
 >>>>>>>>>>>>>>>> DFLL in
 >>>>>>>>>>>>>>>> Closed loop mode
 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Adding one more note: Switching CPU Clock to PLLP is not
 >>>>>>>>>>>>>>>> needed
->>>>>>>>>>>>>>>> as CPU CLock can be from dfll in open-loop mode as DFLL=20
+>>>>>>>>>>>>>>>> as CPU CLock can be from dfll in open-loop mode as DFLL
 >>>>>>>>>>>>>>>> is not
 >>>>>>>>>>>>>>>> disabled anywhere throught the suspend/resume path and SC7
 >>>>>>>>>>>>>>>> entry
 >>>>>>>>>>>>>>>> FW and Warm boot code will switch CPU source to PLLP.
->>>>>>>>>>>>>> Since CPU resumes on PLLP, it will be cleaner to suspend=20
+>>>>>>>>>>>>>> Since CPU resumes on PLLP, it will be cleaner to suspend
 >>>>>>>>>>>>>> it on
->>>>>>>>>>>>>> PLLP as well. And besides, seems that currently disabling=20
+>>>>>>>>>>>>>> PLLP as well. And besides, seems that currently disabling
 >>>>>>>>>>>>>> DFLL
 >>>>>>>>>>>>>> clock will disable DFLL completely and then you'd want to
 >>>>>>>>>>>>>> re-init
 >>>>>>>>>>>>>> the DFLL on resume any ways. So better to just disable DFLL
->>>>>>>>>>>>>> completely on suspend, which should happen on=20
+>>>>>>>>>>>>>> completely on suspend, which should happen on
 >>>>>>>>>>>>>> clk_disable(dfll).
 >>>>>>>>>>>>> Will switch to PLLP during CPUFreq suspend. With decision of
 >>>>>>>>>>>>> using
->>>>>>>>>>>>> clk_disable during suspend, its mandatory to switch to=20
->>>>>>>>>>>>> PLLP as
+>>>>>>>>>>>>> clk_disable during suspend, its mandatory to switch to PLLP as
 >>>>>>>>>>>>> DFLL
 >>>>>>>>>>>>> is completely disabled.
 >>>>>>>>>>>>>
@@ -477,7 +443,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>> saving and restoring of two raw u32 values of the policy/divider
 >>>>>>>>>> registers.
 >>>>>>>>>>
->>>>>>>>>>> Also, during clock context we cant restore cclk_g as cclk_g=20
+>>>>>>>>>>> Also, during clock context we cant restore cclk_g as cclk_g
 >>>>>>>>>>> source
 >>>>>>>>>>> will be dfll and dfll will not be resumed/re-initialized by the
 >>>>>>>>>>> time
@@ -486,26 +452,25 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>>>>>> we can't use save/restore context for dfll clk_ops because
 >>>>>>>>>>> dfllCPU_out parent to CCLK_G is first in the clock tree and
 >>>>>>>>>>> dfll_ref
->>>>>>>>>>> and dfll_soc peripheral clocks are not restored by the time=20
->>>>>>>>>>> dfll
+>>>>>>>>>>> and dfll_soc peripheral clocks are not restored by the time dfll
 >>>>>>>>>>> restore happens. Also dfll peripheral clock enables need to be
 >>>>>>>>>>> restored before dfll restore happens which involves programming
 >>>>>>>>>>> dfll
 >>>>>>>>>>> controller for re-initialization.
 >>>>>>>>>>>
->>>>>>>>>>> So dfll resume/re-init is done in clk-tegra210 at end of all=20
+>>>>>>>>>>> So dfll resume/re-init is done in clk-tegra210 at end of all
 >>>>>>>>>>> clocks
->>>>>>>>>>> restore in V5 series but instead of in clk-tegra210 driver I=20
+>>>>>>>>>>> restore in V5 series but instead of in clk-tegra210 driver I
 >>>>>>>>>>> moved
 >>>>>>>>>>> now to dfll-fcpu driver pm_ops as all dfll dependencies will be
 >>>>>>>>>>> restored thru clk_restore_context by then. This will be in V6.
 >>>>>>>>>> Since DFLL is now guaranteed to be disabled across CaR
 >>>>>>>>>> suspend/resume
->>>>>>>>>> (hence it has nothing to do in regards to CCLK) and given=20
->>>>>>>>>> that PLLs
+>>>>>>>>>> (hence it has nothing to do in regards to CCLK) and given that
+>>>>>>>>>> PLLs
 >>>>>>>>>> state is restored before the rest of the clocks, I don't see why
 >>>>>>>>>> not to
->>>>>>>>>> implement CCLK save/restore in a generic fasion. CPU policy=20
+>>>>>>>>>> implement CCLK save/restore in a generic fasion. CPU policy
 >>>>>>>>>> wull be
 >>>>>>>>>> restored to either PLLP or PLLX (if CPUFreq driver is disabled).
 >>>>>>>>>>
@@ -522,32 +487,27 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>> I dont think we can change clocks order for CCLK_G.
 >>>>>>>
 >>>>>>> During bootup, cclk_g is registered after all pll's and peripheral
->>>>>>> clocks which is the way we wanted, So cclk_g will be the first=20
+>>>>>>> clocks which is the way we wanted, So cclk_g will be the first
 >>>>>>> one in
 >>>>>>> the clk list as clk_register adds new clock first in the list.
 >>>>>>>
->>>>>>> When clk_save_context and clk_restore_context APIs iterates over=20
->>>>>>> the
+>>>>>>> When clk_save_context and clk_restore_context APIs iterates over the
 >>>>>>> list, cclk_g is the first
->>>>>> Looking at clk_core_restore_context(), I see that it walks up=20
->>>>>> CLKs list
->>>>>> from parent to children, hence I don't understand how it can ever=20
+>>>>>> Looking at clk_core_restore_context(), I see that it walks up CLKs
+>>>>>> list
+>>>>>> from parent to children, hence I don't understand how it can ever
 >>>>>> happen
->>>>>> that CCLK will be restored before the parent. The clocks=20
->>>>>> registration
+>>>>>> that CCLK will be restored before the parent. The clocks registration
 >>>>>> order doesn't matter at all in that case.
->>>>> yes from parent to children and dfllCPU_out is the top in the list=20
->>>>> and
+>>>>> yes from parent to children and dfllCPU_out is the top in the list and
 >>>>> its child is cclk_g.
 >>>>>
->>>>> the way clocks are registered is the order I see in the clock list=20
->>>>> and
+>>>>> the way clocks are registered is the order I see in the clock list and
 >>>>> looking into clk_register API it adds new node first in the list.
 >>>>>
->>>> cclkg_g & dfll register happens after all plls and peripheral=20
->>>> clocks as
+>>>> cclkg_g & dfll register happens after all plls and peripheral clocks as
 >>>> it need ref, soc and peripheral clocks to be enabled.
->>>>> So they are the last to get registered and so becomes first in the=20
+>>>>> So they are the last to get registered and so becomes first in the
 >>>>> list.
 >>>>>
 >>>>> During save/restore context, it traverses thru this list and first in
@@ -557,8 +517,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>> in normal way thru clk_ops restore as plls and peripherals restore
 >>>>> doesn't happen by that time.
 >>>>>
->>>> I was referring to clk_restore_context where it iterates thru root=20
->>>> list
+>>>> I was referring to clk_restore_context where it iterates thru root list
 >>>> and for each core from the root list clk_core_restore does restore of
 >>>> parent and children.
 >>>>
@@ -570,26 +529,24 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>> parent of CCLK_G should be PLLX. Similarly when CPU is reparented to
 >>> PLLP on driver's suspend, then PLLP is the parent.
 >>>
->>>>>>>>> DFLL enable thru CPUFreq resume happens after all=20
+>>>>>>>>> DFLL enable thru CPUFreq resume happens after all
 >>>>>>>>> clk_restore_context
->>>>>>>>> happens. So during clk_restore_context, dfll re-init doesnt=20
->>>>>>>>> happen
+>>>>>>>>> happens. So during clk_restore_context, dfll re-init doesnt happen
 >>>>>>>>> and
->>>>>>>>> doing cpu clock policy restore during super_mux clk_ops will=20
+>>>>>>>>> doing cpu clock policy restore during super_mux clk_ops will
 >>>>>>>>> crash as
->>>>>>>>> DFLL is not initialized and its clock is not enabled but CPU=20
->>>>>>>>> clock
+>>>>>>>>> DFLL is not initialized and its clock is not enabled but CPU clock
 >>>>>>>>> restore sets source to DFLL if we restore during super_clk_mux
 >>>>>>>> If CPU was suspended on PLLP, then it will be restored on PLLP by
 >>>>>>>> CaR. I
->>>>>>>> don't understand what DFLL has to do with the CCLK in that case=20
+>>>>>>>> don't understand what DFLL has to do with the CCLK in that case
 >>>>>>>> during
 >>>>>>>> the clocks restore.
->>>>>>> My above comment is in reference to your request of doing=20
+>>>>>>> My above comment is in reference to your request of doing
 >>>>>>> save/restore
->>>>>>> for cclk_g in normal fashion thru save/restore context. Because=20
+>>>>>>> for cclk_g in normal fashion thru save/restore context. Because
 >>>>>>> of the
->>>>>>> clk order I mentioned above, we cclk_g will be the first one to=20
+>>>>>>> clk order I mentioned above, we cclk_g will be the first one to
 >>>>>>> go thru
 >>>>>>> save/context.
 >>>>>>>
@@ -599,17 +556,16 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>>> cclk_g as
 >>>>>>> by that time PLLX/dfll will not be restored.
 >>>>>>>
->>>>>> Seems we already agreed that DFLL will be disabled by the CPUFreq=20
+>>>>>> Seems we already agreed that DFLL will be disabled by the CPUFreq
 >>>>>> driver
->>>>>> on suspend. Hence CCLK can't be from DFLL if CPU is reparented to=20
+>>>>>> on suspend. Hence CCLK can't be from DFLL if CPU is reparented to
 >>>>>> PLLP
 >>>>>> on CPUFreq driver's suspend, otherwise CPU keeps running from a
 >>>>>> boot-state PLLX if CPUFreq driver is disabled.
 >>>>> Yes suspend should not be an issue but issue will be during resume
 >>>>> where if we do cclk_g restore in normal way thru clk_restore_context,
->>>>> cclk_g restore happens very early as dfllCPU out is the first one=20
->>>>> that
->>>>> goes thru restore context and plls/peripherals are not resumed by=20
+>>>>> cclk_g restore happens very early as dfllCPU out is the first one that
+>>>>> goes thru restore context and plls/peripherals are not resumed by
 >>>>> then.
 >>>>>
 >>>>> CPU runs from PLLX if dfll clock enable fails during boot. So when it
@@ -617,8 +573,7 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>> DFLL and then we switch to PLLP.
 >>>>>
 >>>>>
->>>>> On resume, CPU runs from PLLP by warm boot code and we need to=20
->>>>> restore
+>>>>> On resume, CPU runs from PLLP by warm boot code and we need to restore
 >>>>> back its source to the one it was using from saved source context
 >>>>> (which can be either PLLX or DFLL)
 >>>>>
@@ -627,106 +582,133 @@ it/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
 >>>>>
 >>>>> With all above discussions, we do DFLL disable in CPUFreq driver on
 >>>>> suspend and on CPUFreq resume we enable DFLL back and restore CPU
->>>>> clock source it was using during suspend (which will be either=20
->>>>> PLLX if
+>>>>> clock source it was using during suspend (which will be either PLLX if
 >>>>> dfll enable fails during probe or it will be using DFLL).
 >>> During suspend CPU's parent shall be PLLP and not DFLL (note that it is
 >>> disabled) after reparenting to PLLP by the CPUFreq driver.
 >>>
->> CPU source context should be saved before switching to safe source of=20
->> PLLP as on resume we need to restore back to source it was using=20
+>> CPU source context should be saved before switching to safe source of
+>> PLLP as on resume we need to restore back to source it was using
 >> before we switch to safe source during suspend entry.
 >>
 >> So saved context for CPU Source will be either dfll or PLLX
 >>
-> PLLP reparenting is only during suspend/entry to have it as safe=20
-> source but actual CPU source it was running from before suspending is=20
-> either dfll/pllx which should be the one to be restored on CPUFreq=20
-> resume. Resume happens with CPU running from PLLP till it gets to the=20
-> point of restoring its original source (dfll or pllx)
->>>>> So i was trying to say dfll/cclk_g restore can't be done in normal=20
->>>>> way
+> PLLP reparenting is only during suspend/entry to have it as safe source
+> but actual CPU source it was running from before suspending is either
+> dfll/pllx which should be the one to be restored on CPUFreq resume.
+> Resume happens with CPU running from PLLP till it gets to the point of
+> restoring its original source (dfll or pllx)
+
+CaR should restore CPU to PLLP or PLLX, while CPUFreq driver restores
+CPU to DFLL. Please see more comments below.
+
+>>>>> So i was trying to say dfll/cclk_g restore can't be done in normal way
 >>>>> thru clk_ops save/restore context
 >>> Let's see what happens if CPUFreq is active:
 >>>
 >>> 1. CPUFreq driver probe happens
->>> =C2=A0=C2=A0=C2=A0=C2=A02. CPU is reparented to PLLP
->>> =C2=A0=C2=A0=C2=A0=C2=A03. DFLL inited
->>> =C2=A0=C2=A0=C2=A0=C2=A04. CPU is reparented to DFLL
+>>>     2. CPU is reparented to PLLP
+>>>     3. DFLL inited
+>>>     4. CPU is reparented to DFLL
 >>>
 >>> 5. CPUFreq driver suspend happens
->>> =C2=A0=C2=A0=C2=A0=C2=A06. CPU is reparented to PLLP
->>> =C2=A0=C2=A0=C2=A0=C2=A07. DFLL is disabled
+>>>     6. CPU is reparented to PLLP
+>>>     7. DFLL is disabled
 >>>
 >>> 8. Car suspend happens
->>> =C2=A0=C2=A0=C2=A0=C2=A09. DFLL context saved
->>> =C2=A0=C2=A0=C2=A0=C2=A010. PLLP/PLLX context saved
->>> =C2=A0=C2=A0=C2=A0=C2=A011. CCLK context saved
+>>>     9. DFLL context saved
+>>>     10. PLLP/PLLX context saved
+>>>     11. CCLK context saved
 >>>
 >>> 12. Car resume happens
->>> =C2=A0=C2=A0=C2=A0=C2=A013. DFLL context restored
->>> =C2=A0=C2=A0=C2=A0=C2=A014. PLLP/PLLX context restored
->>> =C2=A0=C2=A0=C2=A0=C2=A015. CCLK context restored
+>>>     13. DFLL context restored
+>>>     14. PLLP/PLLX context restored
+>>>     15. CCLK context restored
 >>>
 >>> 16. CPUFreq driver resume happens
->>> =C2=A0=C2=A0=C2=A0=C2=A017. DFLL re-inited
->>> =C2=A0=C2=A0=C2=A0=C2=A018. CPU is reparented to DFLL
+>>>     17. DFLL re-inited
+>>>     18. CPU is reparented to DFLL
 >>
 >>
->> Below is the order of sequence it should be based on the order of clk=20
+>> Below is the order of sequence it should be based on the order of clk
 >> register.
 >>
 >> My comments inline in this sequence.
 >>
 >> 1. CPUFreq driver probe happens
->> =C2=A0=C2=A0=C2=A0=C2=A02. CPU is reparented to PLLP
->> =C2=A0=C2=A0=C2=A0=C2=A03. DFLL inited
->> =C2=A0=C2=A0=C2=A0=C2=A04. CPU is reparented to DFLL
+>>     2. CPU is reparented to PLLP
+>>     3. DFLL inited
+>>     4. CPU is reparented to DFLL
 >>
 >>
 >> 5. CPUFreq driver suspend happens
->> =C2=A0=C2=A0=C2=A0=C2=A06. Save CPU source which could be either dfll or=
- pllx
->> =C2=A0=C2=A0=C2=A0=C2=A07. CPU is reparented to safe known source PLLP
->> =C2=A0=C2=A0=C2=A0=C2=A08. DFLL is disabled
+>>     6. Save CPU source which could be either dfll or pllx
+
+Please see my next comment.
+
+>>     7. CPU is reparented to safe known source PLLP
+>>     8. DFLL is disabled
 >>
 >> 8. Car suspend happens
->> =C2=A0=C2=A0=C2=A0=C2=A09. DFLL context saved (With DFLL disabled in CPU=
-Freq suspend,=20
+>>     9. DFLL context saved (With DFLL disabled in CPUFreq suspend,
 >> nothing to be saved here as last freq req will always be saved).
->> =C2=A0=C2=A0=C2=A0=C2=A010. CCLK context saved (CPU clock source will be=
- saved in CPUFreq=20
+>>     10. CCLK context saved (CPU clock source will be saved in CPUFreq
 >> driver suspend which could be either dfll or pllx)
->> =C2=A0=C2=A0=C2=A0=C2=A011. PLLP/PLLX context saved
->> =C2=A0=C2=A0=C2=A0=C2=A012. Peripheral Clock saved
+
+That I don't understand. The CPU's clock source state should be saved at
+the moment of the CaR's suspending (i.e. CCLK policy will be set to PLLP
+or PLLX) and then CCLK state should be also restored by the CaR in step 14.
+
+CPUFreq driver should only switch CPU to PLLP and disable DFLL on
+suspend in step 5, that's it. On resume CPUFreq driver will restore CPU
+to DFLL in step 18.
+
+>>     11. PLLP/PLLX context saved
+>>     12. Peripheral Clock saved
 >>
 >> 12. Car resume happens
->> =C2=A0=C2=A0=C2=A0=C2=A013. DFLL context restored : No DFLL context to b=
-e restored and we=20
->> only need to reinitialize DFLL and re-initialize can't be done here=20
->> as this is the 1st to get restored and PLL/Peripheral clocks are not=20
+>>     13. DFLL context restored : No DFLL context to be restored and we
+>> only need to reinitialize DFLL and re-initialize can't be done here as
+>> this is the 1st to get restored and PLL/Peripheral clocks are not
 >> restored by this time. So we can't use clk_ops restore for DFLL
->> =C2=A0=C2=A0=C2=A0=C2=A014. CCLK context restored
->> CCLK cant be restored here as context could be either dfll or pllx=20
->> which is the source orginally it was actually using before we force=20
->> switch to safe PLLP for suspend entry. So we can't use clk_ops=20
->> restore for DFLL
->>
+
+It looks to me that clk_core_restore_context() should just do
+hlist_for_each_entry *_reverse*. Don't you think so?
+
+>>     14. CCLK context restored
+>> CCLK cant be restored here as context could be either dfll or pllx
+>> which is the source orginally it was actually using before we force
+>> switch to safe PLLP for suspend entry. So we can't use clk_ops restore
+>> for DFLL
+
+See my comment to step 10. CCLK should be restored to the *CaR's saved*
+context, which is either PLLX or PLLP policy.
+
 >> 15. PLLP/PLLX context restored
->> =C2=A0=C2=A0=C2=A0=C2=A016. Peripheral context restored
+>>     16. Peripheral context restored
 >>
 >> 16. CPUFreq driver resume happens
->> =C2=A0=C2=A0=C2=A0=C2=A017. DFLL re-inited (Invoking DFLL re-init in CPU=
-Freq resume need=20
+>>     17. DFLL re-inited (Invoking DFLL re-init in CPUFreq resume need
 >> exporting DFLL reinit from Clock driver to CPUFreq driver)
->> =C2=A0=C2=A0=C2=A0=C2=A018. CPU is reparented to DFLL or PLLX based on s=
-aved context from=20
+
+Will be nice if clk_enable(dfll) could be enough to re-init DFLL. That
+should achievable with my next comment to step 18.
+
+>>     18. CPU is reparented to DFLL or PLLX based on saved context from
 >> step 9.
 >>
->> Note: instead of exporting, we can do DFLL re-init from clock-dfll=20
->> driver itself thru dfll-fcpu pm_ops resume. So dfll will be=20
->> re-initialized by the time CPUFreq driver resumes and switches to use=20
+>> Note: instead of exporting, we can do DFLL re-init from clock-dfll
+>> driver itself thru dfll-fcpu pm_ops resume. So dfll will be
+>> re-initialized by the time CPUFreq driver resumes and switches to use
 >> DFLL source.
 >>
-Tested above commented sequence and looks as expected. Will send V6=20
-after addressing other comments of V5 patch series for further review...
+
+Yes, I guess DFLL hardware should be fully reset on DFLL's driver resume
+to be on a safe side any ways.
+
+But(!) we could probably just fix clk_core_restore_context(), like I
+suggested in step 13. Then DFLL clock could use generic save / restore
+context and CPUFreq driver won't have to do anything at all because DFLL
+clock will be saved first and resumed *after* all of the peripherals by
+the CCF. In the end CCLK will be switched to DFLL by the CCF restore as
+well.
