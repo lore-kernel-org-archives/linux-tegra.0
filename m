@@ -1,368 +1,151 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-Date: Wed, 17 Jul 2019 08:42:21 +0300
-Message-ID: <20190717084221.2e9af56c@dimatab>
-References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
-        <20190716080610.GE12715@pdeschrijver-desktop.Nvidia.com>
-        <d908d3a2-3013-7f92-0852-115f428d1c5f@gmail.com>
-        <72b5df8c-8acb-d0d0-ebcf-b406e8404973@nvidia.com>
-        <2b701832-5548-7c83-7c17-05cc2f1470c8@nvidia.com>
-        <76e341be-6f38-2bc1-048e-1aa6883f9b88@gmail.com>
-        <0706576a-ce61-1cf3-bed1-05f54a1e2489@nvidia.com>
-        <5b2945c5-fcb2-2ac0-2bf2-df869dc9c713@gmail.com>
-        <ef63f72a-db03-ef28-a371-e578f351c713@nvidia.com>
-        <27641e30-fdd1-e53a-206d-71e1f23343fd@gmail.com>
-        <10c4b9a2-a857-d124-c22d-7fd71a473079@nvidia.com>
-        <fd8bad73-464b-54f1-be94-fe3ac8b23e6e@gmail.com>
-        <0ee06d1a-310d-59f7-0aa6-b688b33447f5@nvidia.com>
-        <cedfafd0-4114-0821-0c4b-efc17c213449@gmail.com>
-        <707c4679-fde6-1714-ced0-dcf7ca8380a9@nvidia.com>
-        <c6c0a205-c083-fd46-361c-175bd8840c6e@nvidia.com>
-        <055457fd-621b-6c93-b671-d5e5380698c6@nvidia.com>
-        <20190717071105.3750a021@dimatab>
-        <77df234f-aa40-0319-a593-f1f19f0f1c2a@nvidia.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 02/24] PM / devfreq: tegra30: Keep interrupt disabled
+ while governor is stopped
+Date: Wed, 17 Jul 2019 15:37:28 +0900
+Message-ID: <ca339b7f-1141-4c68-1c07-2ac818422bbc@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223724epcas4p2d82cecc2969fecddca67192417843418@epcas4p2.samsung.com>
+        <20190707223303.6755-3-digetx@gmail.com>
+        <f691a845-18f3-a6fb-302c-a8a3fc13e5bf@samsung.com>
+        <6c517d04-cf99-f907-e74d-9fba99405a53@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <77df234f-aa40-0319-a593-f1f19f0f1c2a@nvidia.com>
+In-Reply-To: <6c517d04-cf99-f907-e74d-9fba99405a53@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-=D0=92 Tue, 16 Jul 2019 22:25:25 -0700
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On 19. 7. 16. 오후 10:03, Dmitry Osipenko wrote:
+> 16.07.2019 14:47, Chanwoo Choi пишет:
+>> On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
+>>> There is no real need to keep interrupt always-enabled, will be nicer
+>>> to keep it disabled while governor is inactive.
+>>>
+>>> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/devfreq/tegra30-devfreq.c | 43 ++++++++++++++++---------------
+>>>  1 file changed, 22 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>>> index a27300f40b0b..5e2b133babdd 100644
+>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>> @@ -11,6 +11,7 @@
+>>>  #include <linux/devfreq.h>
+>>>  #include <linux/interrupt.h>
+>>>  #include <linux/io.h>
+>>> +#include <linux/irq.h>
+>>>  #include <linux/module.h>
+>>>  #include <linux/mod_devicetable.h>
+>>>  #include <linux/platform_device.h>
+>>> @@ -416,8 +417,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
+>>>  {
+>>>  	unsigned int i;
+>>>  
+>>> -	disable_irq(tegra->irq);
+>>> -
+>>>  	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+>>>  		      ACTMON_GLB_PERIOD_CTRL);
+>>>  
+>>> @@ -442,8 +441,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>>>  	}
+>>>  
+>>>  	actmon_write_barrier(tegra);
+>>> -
+>>> -	enable_irq(tegra->irq);
+>>>  }
+>>>  
+>>>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>> @@ -552,6 +549,12 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>>>  {
+>>>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
+>>>  
+>>> +	/*
+>>> +	 * Couple device with the governor early as it is needed at
+>>> +	 * the moment of governor's start (used by ISR).
+>>> +	 */
+>>> +	tegra->devfreq = devfreq;
+>>
+>> I'm not sure it is necessary. Almost devfreq device get
+>> the devfreq instance on probe timing through devfreq_add_device directly.
+> 
+> This is necessary because this assignment is for the "governor" and not
+> the "device". Governor is started during of devfreq_add_device(), hence
+> there is no better way to assign device to the driver's governor.
 
-> On 7/16/19 9:11 PM, Dmitry Osipenko wrote:
-> > =D0=92 Tue, 16 Jul 2019 19:35:49 -0700
-> > Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=
-=D1=82:
-> > =20
-> >> On 7/16/19 7:18 PM, Sowjanya Komatineni wrote: =20
-> >>> On 7/16/19 3:06 PM, Sowjanya Komatineni wrote: =20
-> >>>> On 7/16/19 3:00 PM, Dmitry Osipenko wrote: =20
-> >>>>> 17.07.2019 0:35, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-: =20
-> >>>>>> On 7/16/19 2:21 PM, Dmitry Osipenko wrote: =20
-> >>>>>>> 17.07.2019 0:12, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82: =20
-> >>>>>>>> On 7/16/19 1:47 PM, Dmitry Osipenko wrote: =20
-> >>>>>>>>> 16.07.2019 22:26, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=
-=D1=82: =20
-> >>>>>>>>>> On 7/16/19 11:43 AM, Dmitry Osipenko wrote: =20
-> >>>>>>>>>>> 16.07.2019 21:30, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=
-=B5=D1=82: =20
-> >>>>>>>>>>>> On 7/16/19 11:25 AM, Dmitry Osipenko wrote: =20
-> >>>>>>>>>>>>> 16.07.2019 21:19, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=
-=B5=D1=82: =20
-> >>>>>>>>>>>>>> On 7/16/19 9:50 AM, Sowjanya Komatineni wrote: =20
-> >>>>>>>>>>>>>>> On 7/16/19 8:00 AM, Dmitry Osipenko wrote: =20
-> >>>>>>>>>>>>>>>> 16.07.2019 11:06, Peter De Schrijver =D0=BF=D0=B8=D1=88=
-=D0=B5=D1=82: =20
-> >>>>>>>>>>>>>>>>> On Tue, Jul 16, 2019 at 03:24:26PM +0800, Joseph Lo
-> >>>>>>>>>>>>>>>>> wrote: =20
-> >>>>>>>>>>>>>>>>>>> OK, Will add to CPUFreq driver... =20
-> >>>>>>>>>>>>>>>>>>>> The other thing that also need attention is that
-> >>>>>>>>>>>>>>>>>>>> T124 CPUFreq
-> >>>>>>>>>>>>>>>>>>>> driver
-> >>>>>>>>>>>>>>>>>>>> implicitly relies on DFLL driver to be probed
-> >>>>>>>>>>>>>>>>>>>> first, which is
-> >>>>>>>>>>>>>>>>>>>> icky.
-> >>>>>>>>>>>>>>>>>>>>    =20
-> >>>>>>>>>>>>>>>>>>> Should I add check for successful dfll clk
-> >>>>>>>>>>>>>>>>>>> register explicitly in
-> >>>>>>>>>>>>>>>>>>> CPUFreq driver probe and defer till dfll clk
-> >>>>>>>>>>>>>>>>>>> registers? =20
-> >>>>>>>>>>>>>>>> Probably you should use the "device links". See
-> >>>>>>>>>>>>>>>> [1][2] for the
-> >>>>>>>>>>>>>>>> example.
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>> [1]
-> >>>>>>>>>>>>>>>> https://elixir.bootlin.com/linux/v5.2.1/source/drivers/g=
-pu/drm/tegra/dc.c#L2383
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>> [2]
-> >>>>>>>>>>>>>>>> https://www.kernel.org/doc/html/latest/driver-api/device=
-_link.html
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>> Return EPROBE_DEFER instead of EINVAL if
-> >>>>>>>>>>>>>>>> device_link_add() fails.
-> >>>>>>>>>>>>>>>> And
-> >>>>>>>>>>>>>>>> use of_find_device_by_node() to get the DFLL's
-> >>>>>>>>>>>>>>>> device, see [3].
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>> [3]
-> >>>>>>>>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/next/lin=
-ux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>    =20
-> >>>>>>>>>>>>>>> Will go thru and add... =20
-> >>>>>>>>>>>>> Looks like I initially confused this case with getting
-> >>>>>>>>>>>>> orphaned clock.
-> >>>>>>>>>>>>> I'm now seeing that the DFLL driver registers the clock
-> >>>>>>>>>>>>> and then
-> >>>>>>>>>>>>> clk_get(dfll) should be returning EPROBE_DEFER until
-> >>>>>>>>>>>>> DFLL driver is
-> >>>>>>>>>>>>> probed, hence everything should be fine as-is and there
-> >>>>>>>>>>>>> is no real
-> >>>>>>>>>>>>> need
-> >>>>>>>>>>>>> for the 'device link'. Sorry for the confusion!
-> >>>>>>>>>>>>>    =20
-> >>>>>>>>>>>>>>>>>> Sorry, I didn't follow the mail thread. Just
-> >>>>>>>>>>>>>>>>>> regarding the DFLL
-> >>>>>>>>>>>>>>>>>> part.
-> >>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> As you know it, the DFLL clock is one of the CPU
-> >>>>>>>>>>>>>>>>>> clock sources and
-> >>>>>>>>>>>>>>>>>> integrated with DVFS control logic with the
-> >>>>>>>>>>>>>>>>>> regulator. We will not
-> >>>>>>>>>>>>>>>>>> switch
-> >>>>>>>>>>>>>>>>>> CPU to other clock sources once we switched to
-> >>>>>>>>>>>>>>>>>> DFLL. Because the
-> >>>>>>>>>>>>>>>>>> CPU has
-> >>>>>>>>>>>>>>>>>> been regulated by the DFLL HW with the DVFS table
-> >>>>>>>>>>>>>>>>>> (CVB or OPP
-> >>>>>>>>>>>>>>>>>> table
-> >>>>>>>>>>>>>>>>>> you see
-> >>>>>>>>>>>>>>>>>> in the driver.). We shouldn't reparent it to other
-> >>>>>>>>>>>>>>>>>> sources with
-> >>>>>>>>>>>>>>>>>> unknew
-> >>>>>>>>>>>>>>>>>> freq/volt pair. That's not guaranteed to work. We
-> >>>>>>>>>>>>>>>>>> allow switching to
-> >>>>>>>>>>>>>>>>>> open-loop mode but different sources. =20
-> >>>>>>>>>>>>>>>> Okay, then the CPUFreq driver will have to enforce
-> >>>>>>>>>>>>>>>> DFLL freq to
-> >>>>>>>>>>>>>>>> PLLP's
-> >>>>>>>>>>>>>>>> rate before switching to PLLP in order to have a
-> >>>>>>>>>>>>>>>> proper CPU voltage. =20
-> >>>>>>>>>>>>>>> PLLP freq is safe to work for any CPU voltage. So no
-> >>>>>>>>>>>>>>> need to enforce
-> >>>>>>>>>>>>>>> DFLL freq to PLLP rate before changing CCLK_G source
-> >>>>>>>>>>>>>>> to PLLP during
-> >>>>>>>>>>>>>>> suspend
-> >>>>>>>>>>>>>>>    =20
-> >>>>>>>>>>>>>> Sorry, please ignore my above comment. During suspend,
-> >>>>>>>>>>>>>> need to change
-> >>>>>>>>>>>>>> CCLK_G source to PLLP when dfll is in closed loop mode
-> >>>>>>>>>>>>>> first and
-> >>>>>>>>>>>>>> then
-> >>>>>>>>>>>>>> dfll need to be set to open loop. =20
-> >>>>>>>>>>>>> Okay.
-> >>>>>>>>>>>>>    =20
-> >>>>>>>>>>>>>>>>>> And I don't exactly understand why we need to
-> >>>>>>>>>>>>>>>>>> switch to PLLP in
-> >>>>>>>>>>>>>>>>>> CPU
-> >>>>>>>>>>>>>>>>>> idle
-> >>>>>>>>>>>>>>>>>> driver. Just keep it on CL-DVFS mode all the time.
-> >>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> In SC7 entry, the dfll suspend function moves it
-> >>>>>>>>>>>>>>>>>> the open-loop
-> >>>>>>>>>>>>>>>>>> mode. That's
-> >>>>>>>>>>>>>>>>>> all. The sc7-entryfirmware will handle the rest of
-> >>>>>>>>>>>>>>>>>> the sequence to
-> >>>>>>>>>>>>>>>>>> turn off
-> >>>>>>>>>>>>>>>>>> the CPU power.
-> >>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> In SC7 resume, the warmboot code will handle the
-> >>>>>>>>>>>>>>>>>> sequence to
-> >>>>>>>>>>>>>>>>>> turn on
-> >>>>>>>>>>>>>>>>>> regulator and power up the CPU cluster. And leave
-> >>>>>>>>>>>>>>>>>> it on PLL_P.
-> >>>>>>>>>>>>>>>>>> After
-> >>>>>>>>>>>>>>>>>> resuming to the kernel, we re-init DFLL, restore
-> >>>>>>>>>>>>>>>>>> the CPU clock
-> >>>>>>>>>>>>>>>>>> policy (CPU
-> >>>>>>>>>>>>>>>>>> runs on DFLL open-loop mode) and then moving to
-> >>>>>>>>>>>>>>>>>> close-loop mode. =20
-> >>>>>>>>>>>>>>>> The DFLL is re-inited after switching CCLK to DFLL
-> >>>>>>>>>>>>>>>> parent during of
-> >>>>>>>>>>>>>>>> the
-> >>>>>>>>>>>>>>>> early clocks-state restoring by CaR driver. Hence
-> >>>>>>>>>>>>>>>> instead of having
-> >>>>>>>>>>>>>>>> odd
-> >>>>>>>>>>>>>>>> hacks in the CaR driver, it is much nicer to have a
-> >>>>>>>>>>>>>>>> proper suspend-resume sequencing of the device
-> >>>>>>>>>>>>>>>> drivers. In this case
-> >>>>>>>>>>>>>>>> CPUFreq
-> >>>>>>>>>>>>>>>> driver is the driver that enables DFLL and switches
-> >>>>>>>>>>>>>>>> CPU to that
-> >>>>>>>>>>>>>>>> clock
-> >>>>>>>>>>>>>>>> source, which means that this driver is also should
-> >>>>>>>>>>>>>>>> be responsible for
-> >>>>>>>>>>>>>>>> management of the DFLL's state during of
-> >>>>>>>>>>>>>>>> suspend/resume process. If
-> >>>>>>>>>>>>>>>> CPUFreq driver disables DFLL during suspend and
-> >>>>>>>>>>>>>>>> re-enables it
-> >>>>>>>>>>>>>>>> during
-> >>>>>>>>>>>>>>>> resume, then looks like the CaR driver hacks around
-> >>>>>>>>>>>>>>>> DFLL are not
-> >>>>>>>>>>>>>>>> needed.
-> >>>>>>>>>>>>>>>>    =20
-> >>>>>>>>>>>>>>>>>> The DFLL part looks good to me. BTW, change the
-> >>>>>>>>>>>>>>>>>> patch subject to
-> >>>>>>>>>>>>>>>>>> "Add
-> >>>>>>>>>>>>>>>>>> suspend-resume support" seems more appropriate to
-> >>>>>>>>>>>>>>>>>> me.=20
-> >>>>>>>>>>>>>>>>> To clarify this, the sequences for DFLL use are as
-> >>>>>>>>>>>>>>>>> follows (assuming
-> >>>>>>>>>>>>>>>>> all
-> >>>>>>>>>>>>>>>>> required DFLL hw configuration has been done)
-> >>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>> Switch to DFLL:
-> >>>>>>>>>>>>>>>>> 0) Save current parent and frequency
-> >>>>>>>>>>>>>>>>> 1) Program DFLL to open loop mode
-> >>>>>>>>>>>>>>>>> 2) Enable DFLL
-> >>>>>>>>>>>>>>>>> 3) Change cclk_g parent to DFLL
-> >>>>>>>>>>>>>>>>> For OVR regulator:
-> >>>>>>>>>>>>>>>>> 4) Change PWM output pin from tristate to output
-> >>>>>>>>>>>>>>>>> 5) Enable DFLL PWM output
-> >>>>>>>>>>>>>>>>> For I2C regulator:
-> >>>>>>>>>>>>>>>>> 4) Enable DFLL I2C output
-> >>>>>>>>>>>>>>>>> 6) Program DFLL to closed loop mode
-> >>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>> Switch away from DFLL:
-> >>>>>>>>>>>>>>>>> 0) Change cclk_g parent to PLLP so the CPU frequency
-> >>>>>>>>>>>>>>>>> is ok for
-> >>>>>>>>>>>>>>>>> any
-> >>>>>>>>>>>>>>>>> vdd_cpu voltage
-> >>>>>>>>>>>>>>>>> 1) Program DFLL to open loop mode
-> >>>>>>>>>>>>>>>>>    =20
-> >>>>>>>>>>>>>> I see during switch away from DFLL (suspend), cclk_g
-> >>>>>>>>>>>>>> parent is not
-> >>>>>>>>>>>>>> changed to PLLP before changing dfll to open loop mode.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Will add this ... =20
-> >>>>>>>>>>>>> The CPUFreq driver switches parent to PLLP during the
-> >>>>>>>>>>>>> probe, similar
-> >>>>>>>>>>>>> should be done on suspend.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> I'm also wondering if it's always safe to switch to PLLP
-> >>>>>>>>>>>>> in the probe.
-> >>>>>>>>>>>>> If CPU is running on a lower freq than PLLP, then some
-> >>>>>>>>>>>>> other more
-> >>>>>>>>>>>>> appropriate intermediate parent should be selected.
-> >>>>>>>>>>>>>    =20
-> >>>>>>>>>>>> CPU parents are PLL_X, PLL_P, and dfll. PLL_X always runs
-> >>>>>>>>>>>> at higher
-> >>>>>>>>>>>> rate
-> >>>>>>>>>>>> so switching to PLL_P during CPUFreq probe prior to dfll
-> >>>>>>>>>>>> clock enable
-> >>>>>>>>>>>> should be safe. =20
-> >>>>>>>>>>> AFAIK, PLLX could run at ~200MHz. There is also a divided
-> >>>>>>>>>>> output of
-> >>>>>>>>>>> PLLP
-> >>>>>>>>>>> which CCLKG supports, the PLLP_OUT4.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Probably, realistically, CPU is always running off a fast
-> >>>>>>>>>>> PLLX during
-> >>>>>>>>>>> boot, but I'm wondering what may happen on KEXEC. I guess
-> >>>>>>>>>>> ideally CPUFreq driver should also have a 'shutdown'
-> >>>>>>>>>>> callback to teardown DFLL
-> >>>>>>>>>>> on a reboot, but likely that there are other clock-related
-> >>>>>>>>>>> problems as
-> >>>>>>>>>>> well that may break KEXEC and thus it is not very
-> >>>>>>>>>>> important at the
-> >>>>>>>>>>> moment.
-> >>>>>>>>>>>
-> >>>>>>>>>>> [snip] =20
-> >>>>>>>>>> During bootup CPUG sources from PLL_X. By PLL_P source
-> >>>>>>>>>> above I meant
-> >>>>>>>>>> PLL_P_OUT4.
-> >>>>>>>>>>
-> >>>>>>>>>> As per clock policies, PLL_X is always used for high freq
-> >>>>>>>>>> like =20
-> >>>>>>>>>>> 800Mhz =20
-> >>>>>>>>>> and for low frequency it will be sourced from PLLP. =20
-> >>>>>>>>> Alright, then please don't forget to pre-initialize
-> >>>>>>>>> PLLP_OUT4 rate to a
-> >>>>>>>>> reasonable value using tegra_clk_init_table or
-> >>>>>>>>> assigned-clocks. =20
-> >>>>>>>> PLLP_OUT4 rate update is not needed as it is safe to run at
-> >>>>>>>> 408Mhz because it is below fmax @ Vmin =20
-> >>>>>>> So even 204MHz CVB entries are having the same voltage as
-> >>>>>>> 408MHz, correct? It's not instantly obvious to me from the
-> >>>>>>> DFLL driver's code where the fmax @ Vmin is defined, I see
-> >>>>>>> that there is the min_millivolts
-> >>>>>>> and frequency entries starting from 204MHZ defined
-> >>>>>>> per-table. =20
-> >>>>>> Yes at Vmin CPU Fmax is ~800Mhz. So anything below that will
-> >>>>>> work at Vmin voltage and PLLP max is 408Mhz. =20
-> >>>>> Thank you for the clarification. It would be good to have that
-> >>>>> commented
-> >>>>> in the code as well. =20
-> >>>> OK, Will add... =20
-> >>> Regarding, adding suspend/resume to CPUFreq, CPUFreq suspend
-> >>> happens very early even before disabling non-boot CPUs and also
-> >>> need to export clock driver APIs to CPUFreq.
-> >>>
-> >>> Was thinking of below way of implementing this...
-> >>>
-> >>>
-> >>> Clock DFLL driver Suspend:
-> >>>
-> >>>  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 - Save CPU clock policy regist=
-ers, and Perform dfll
-> >>> suspend which sets in open loop mode
-> >>>
-> >>> CPU Freq driver Suspend: does nothing
-> >>>
-> >>>
-> >>> Clock DFLL driver Resume:
-> >>>
-> >>>  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 - Re-init DFLL, Set in Open-Lo=
-op mode, restore CPU Clock
-> >>> policy registers which actually sets source to DFLL along with
-> >>> other CPU Policy register restore.
-> >>>
-> >>> CPU Freq driver Resume:
-> >>>
-> >>>  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 - do clk_prepare_enable which =
-acutally sets DFLL in
-> >>> Closed loop mode
-> >>>
-> >>>
-> >>> Adding one more note: Switching CPU Clock to PLLP is not needed as
-> >>> CPU CLock can be from dfll in open-loop mode as DFLL is not
-> >>> disabled anywhere throught the suspend/resume path and SC7 entry
-> >>> FW and Warm boot code will switch CPU source to PLLP. =20
-> > Since CPU resumes on PLLP, it will be cleaner to suspend it on PLLP
-> > as well. And besides, seems that currently disabling DFLL clock will
-> > disable DFLL completely and then you'd want to re-init the DFLL on
-> > resume any ways. So better to just disable DFLL completely on
-> > suspend, which should happen on clk_disable(dfll). =20
->=20
-> Will switch to PLLP during CPUFreq suspend. With decision of using=20
-> clk_disable during suspend, its mandatory to switch to PLLP as DFLL
-> is completely disabled.
->=20
-> My earlier concern was on restoring CPU policy as we can't do that
-> from CPUFreq driver and need export from clock driver.
->=20
-> Clear now and will do CPU clock policy restore in after dfll re-init.
+OK. I understand.
 
-Why the policy can't be saved/restored by the CaR driver as a context of
-any other clock?
+But, I have a question. Is it working before this patch?
+How can you test it on that tegra->devfreq is NULL?
 
-> Also I don't see Tegra124 CPU Freq driver using flag=20
-> CPUFREQ_NEED_INITIAL_FREQ_CHECK.
->=20
-> Tegra124 CPUFreq driver is not using cpufreq_driver
->=20
->=20
-> <https://elixir.bootlin.com/linux/v5.2.1/ident/cpufreq_driver>
->=20
+> 
+>>> +
+>>>  	switch (event) {
+>>>  	case DEVFREQ_GOV_START:
+>>>  		devfreq_monitor_start(devfreq);
+>>> @@ -586,10 +589,11 @@ static struct devfreq_governor tegra_devfreq_governor = {
+>>>  
+>>>  static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>  {
+>>> -	struct tegra_devfreq *tegra;
+>>>  	struct tegra_devfreq_device *dev;
+>>> -	unsigned int i;
+>>> +	struct tegra_devfreq *tegra;
+>>> +	struct devfreq *devfreq;
+>>>  	unsigned long rate;
+>>> +	unsigned int i;
+>>>  	int err;
+>>>  
+>>>  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+>>> @@ -625,6 +629,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>  	}
+>>>  	tegra->irq = err;
+>>>  
+>>> +	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
+>>> +
+>>> +	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
+>>> +					actmon_thread_isr, IRQF_ONESHOT,
+>>> +					"tegra-devfreq", tegra);
+>>> +	if (err) {
+>>> +		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
+>>> +		return err;
+>>> +	}
+>>> +
+>>>  	reset_control_assert(tegra->reset);
+>>>  
+>>>  	err = clk_prepare_enable(tegra->clock);
+>>> @@ -672,28 +686,15 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>  	}
+>>>  
+>>>  	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
+>>> -	tegra->devfreq = devfreq_add_device(&pdev->dev,
+>>> -					    &tegra_devfreq_profile,
+>>> -					    "tegra_actmon",
+>>> -					    NULL);
+>>> +	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
+>>> +				     "tegra_actmon", NULL);
+>>>  	if (IS_ERR(tegra->devfreq)) {
+>>
+>> Have to check 'devfreq' instead of 'tegra->devfreq'.
+>> Did you test it? It might be failed because 'tegra->devfreq is NULL.
+> 
+> That's a good catch! Thank you very much.
+> 
+>>>  		err = PTR_ERR(tegra->devfreq);
+>>
+>> ditto.
+> 
+> Ok
+> 
+> 
 
-T124 driver is a wrapper around cpufreq-dt driver.
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
