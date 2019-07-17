@@ -1,72 +1,155 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 11/24] PM / devfreq: tegra30: Add debug messages
-Date: Wed, 17 Jul 2019 18:46:48 +0300
-Message-ID: <f819c226-4328-c85d-5da3-932391fa6747@gmail.com>
+Subject: Re: [PATCH v4 02/24] PM / devfreq: tegra30: Keep interrupt disabled
+ while governor is stopped
+Date: Wed, 17 Jul 2019 19:44:11 +0300
+Message-ID: <00dfcd92-a41a-11c0-b8b2-1cdc68048aa9@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
- <CGME20190707223640epcas4p15337f40466342832b731ad6a53be946e@epcas4p1.samsung.com>
- <20190707223303.6755-12-digetx@gmail.com>
- <c883bdbe-427f-35a1-9e63-5e4953a84286@samsung.com>
- <53cd0ba5-f814-cd9b-19c5-1d42717ca58c@gmail.com>
- <922c9178-71de-46ad-eafd-805af461bedb@samsung.com>
+ <CGME20190707223724epcas4p2d82cecc2969fecddca67192417843418@epcas4p2.samsung.com>
+ <20190707223303.6755-3-digetx@gmail.com>
+ <f691a845-18f3-a6fb-302c-a8a3fc13e5bf@samsung.com>
+ <6c517d04-cf99-f907-e74d-9fba99405a53@gmail.com>
+ <ca339b7f-1141-4c68-1c07-2ac818422bbc@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <922c9178-71de-46ad-eafd-805af461bedb@samsung.com>
+In-Reply-To: <ca339b7f-1141-4c68-1c07-2ac818422bbc@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-17.07.2019 9:45, Chanwoo Choi пишет:
-> On 19. 7. 16. 오후 10:26, Dmitry Osipenko wrote:
->> 16.07.2019 15:23, Chanwoo Choi пишет:
->>> Hi Dmitry,
+17.07.2019 9:37, Chanwoo Choi пишет:
+> On 19. 7. 16. 오후 10:03, Dmitry Osipenko wrote:
+>> 16.07.2019 14:47, Chanwoo Choi пишет:
+>>> On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
+>>>> There is no real need to keep interrupt always-enabled, will be nicer
+>>>> to keep it disabled while governor is inactive.
+>>>>
+>>>> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/devfreq/tegra30-devfreq.c | 43 ++++++++++++++++---------------
+>>>>  1 file changed, 22 insertions(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>>>> index a27300f40b0b..5e2b133babdd 100644
+>>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>>> @@ -11,6 +11,7 @@
+>>>>  #include <linux/devfreq.h>
+>>>>  #include <linux/interrupt.h>
+>>>>  #include <linux/io.h>
+>>>> +#include <linux/irq.h>
+>>>>  #include <linux/module.h>
+>>>>  #include <linux/mod_devicetable.h>
+>>>>  #include <linux/platform_device.h>
+>>>> @@ -416,8 +417,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
+>>>>  {
+>>>>  	unsigned int i;
+>>>>  
+>>>> -	disable_irq(tegra->irq);
+>>>> -
+>>>>  	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+>>>>  		      ACTMON_GLB_PERIOD_CTRL);
+>>>>  
+>>>> @@ -442,8 +441,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>>>>  	}
+>>>>  
+>>>>  	actmon_write_barrier(tegra);
+>>>> -
+>>>> -	enable_irq(tegra->irq);
+>>>>  }
+>>>>  
+>>>>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>>> @@ -552,6 +549,12 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>>>>  {
+>>>>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
+>>>>  
+>>>> +	/*
+>>>> +	 * Couple device with the governor early as it is needed at
+>>>> +	 * the moment of governor's start (used by ISR).
+>>>> +	 */
+>>>> +	tegra->devfreq = devfreq;
 >>>
->>> Usually, the kernel log print for all users
->>> such as changing the frequency, fail or success.
->>>
->>> But, if the log just show the register dump,
->>> it is not useful for all users. It is just used
->>> for only specific developer.
->>>
->>> I recommend that you better to add more exception handling
->>> code on many points instead of just showing the register dump.
+>>> I'm not sure it is necessary. Almost devfreq device get
+>>> the devfreq instance on probe timing through devfreq_add_device directly.
 >>
->> The debug messages are not users, but for developers. Yes, I primarily
->> made the debugging to be useful for myself and will be happy to change
->> the way debugging is done if there will be any other active developer
->> for this driver. The registers dump is more than enough in order to
->> understand what's going on, I don't see any real need to change anything
->> here for now.
+>> This is necessary because this assignment is for the "governor" and not
+>> the "device". Governor is started during of devfreq_add_device(), hence
+>> there is no better way to assign device to the driver's governor.
 > 
-> Basically, we have to develop code and add the log for anyone.
-> As you commented, even if there are no other developer, we never
-> guarantee this assumption forever. And also, if added debug message
-> for only you, you can add them when testing it temporarily.
+> OK. I understand.
 > 
-> If you want to add the just register dump log for you,
-> I can't agree. Once again, I hope that anyone understand
-> the meaning of debug message as much possible as.
-> 
+> But, I have a question. Is it working before this patch?
+> How can you test it on that tegra->devfreq is NULL?
 
-The registers dump should be good for everyone because it's a
-self-explanatory information for anyone who is familiar with the
-hardware. I don't think there is a need for anything else than what is
-proposed in this patch, at least for now. I also simply don't see any
-other better way to debug the state of this particular hardware, again
-this logging is for the driver developers and not for users.
+It was working before this patch because previously interrupt was
+requested *after* devfreq_add_device(), now the IRQ requesting happens
+*before* devfreq_add_device() and enabling *during of*. If interrupt
+fires before the assignment happened, then ISR gets a NULL deference and
+this is easily reproducible.
 
-Initially, I was temporarily adding the debug messages. Now they are
-pretty much mandatory for verifying that driver is working properly. And
-of course the debugging messages got into the shape of this patch after
-several iterations of refinements. So again, I suppose that this should
-be good enough for everyone who is familiar with the hardware. And of
-course I'm open to the constructive suggestions, the debugging aid is
-not an ABI and could be changed/improved at any time.
+Please note that 'tegra->devfreq' is used only by the ISR and onward, in
+the further patches of this series the usage is extended by the cpufreq
+notifier.
 
-You're suggesting to break down the debugging into several smaller
-pieces, but I'm finding that as not a constructive suggestion because
-the information about the full hardware state is actually necessary for
-the productive debugging.
+>>
+>>>> +
+>>>>  	switch (event) {
+>>>>  	case DEVFREQ_GOV_START:
+>>>>  		devfreq_monitor_start(devfreq);
+>>>> @@ -586,10 +589,11 @@ static struct devfreq_governor tegra_devfreq_governor = {
+>>>>  
+>>>>  static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>  {
+>>>> -	struct tegra_devfreq *tegra;
+>>>>  	struct tegra_devfreq_device *dev;
+>>>> -	unsigned int i;
+>>>> +	struct tegra_devfreq *tegra;
+>>>> +	struct devfreq *devfreq;
+>>>>  	unsigned long rate;
+>>>> +	unsigned int i;
+>>>>  	int err;
+>>>>  
+>>>>  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+>>>> @@ -625,6 +629,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>  	}
+>>>>  	tegra->irq = err;
+>>>>  
+>>>> +	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
+>>>> +
+>>>> +	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
+>>>> +					actmon_thread_isr, IRQF_ONESHOT,
+>>>> +					"tegra-devfreq", tegra);
+>>>> +	if (err) {
+>>>> +		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
+>>>> +		return err;
+>>>> +	}
+>>>> +
+>>>>  	reset_control_assert(tegra->reset);
+>>>>  
+>>>>  	err = clk_prepare_enable(tegra->clock);
+>>>> @@ -672,28 +686,15 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>  	}
+>>>>  
+>>>>  	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
+>>>> -	tegra->devfreq = devfreq_add_device(&pdev->dev,
+>>>> -					    &tegra_devfreq_profile,
+>>>> -					    "tegra_actmon",
+>>>> -					    NULL);
+>>>> +	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
+>>>> +				     "tegra_actmon", NULL);
+>>>>  	if (IS_ERR(tegra->devfreq)) {
+>>>
+>>> Have to check 'devfreq' instead of 'tegra->devfreq'.
+>>> Did you test it? It might be failed because 'tegra->devfreq is NULL.
+>>
+>> That's a good catch! Thank you very much.
+>>
+>>>>  		err = PTR_ERR(tegra->devfreq);
+>>>
+>>> ditto.
+>>
+>> Ok
