@@ -1,9 +1,8 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-Date: Thu, 18 Jul 2019 19:34:21 +0300
-Message-ID: <4141181d-7162-0321-71b6-33abf11f631c@gmail.com>
+Date: Thu, 18 Jul 2019 10:22:27 -0700
+Message-ID: <ab8f2441-8f4b-3a2b-5bcd-1a889555176a@nvidia.com>
 References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
- <093462f3-8c6d-d084-9822-ae4eff041c64@nvidia.com>
  <20190717093317.70fefb27@dimatab>
  <6e73dcee-6e24-b646-97a4-4b34aedd231d@nvidia.com>
  <16f8b146-2581-a842-4997-53ab05b62c70@gmail.com>
@@ -22,50 +21,59 @@ References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
  <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
  <c759d71b-1549-2562-f0cf-db5f9e51329e@nvidia.com>
  <ef7928ad-239d-eca8-41bf-f76e72a9841d@nvidia.com>
+ <4141181d-7162-0321-71b6-33abf11f631c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ef7928ad-239d-eca8-41bf-f76e72a9841d@nvidia.com>
+In-Reply-To: <4141181d-7162-0321-71b6-33abf11f631c@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>
+To: Dmitry Osipenko <digetx@gmail.com>, sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.07.2019 4:15, Sowjanya Komatineni пишет:
 
-[snip]
+On 7/18/19 9:34 AM, Dmitry Osipenko wrote:
+> 18.07.2019 4:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>
+> [snip]
+>
+>>>> Please try to fix all missing dependencies and orderings.
+>>> Peter,
+>>>
+>>> dfllCPU_OUT is the first one to go thru restore when
+>>> clk_restore_context traverses thru the list.
+>>>
+>>> dfllCPU_OUT has dependency on DFLL_ref and DFLL_SOC but this
+>>> dependency is unknown to clock-tree.
+>>>
+>>> We can add DFLL_REF and DFLL_SOC as parents to dfllCPU_OUT during
+>>> register so dfllCPU_OUT save/restore happens after their parents are
+>>> restored.
+>>>
+>>> But DFLL needs both of these to be restored before DFLLCPU_Out and as
+>>> DFLL_SOC restore always happens after the REF, thinking to add
+>>> DFLL_SOC as parent to dfllCPU_OUT so save/restore follows after their
+>>> dependencies.
+>>>
+>>> Please comment.
+>>>
+>> Did quick try and I see by adding dfll-soc as parent to dfllCPU_OUT, its
+>> in proper order after all its dependencies.
+>>
+>> Can now add dfll save/restore to do dfll reinit during restore..
+>>
+> If dfllCPU_OUT can work properly with dfll-soc being disabled, then this
+> kind of dependency isn't very correct and just papers over the real
+> problem, which is that there should be a way for CCF to specify multiple
+> dependencies for the clock or the reverse ordering should be used for
+> the restoring.
 
->>> Please try to fix all missing dependencies and orderings.
->>
->> Peter,
->>
->> dfllCPU_OUT is the first one to go thru restore when
->> clk_restore_context traverses thru the list.
->>
->> dfllCPU_OUT has dependency on DFLL_ref and DFLL_SOC but this
->> dependency is unknown to clock-tree.
->>
->> We can add DFLL_REF and DFLL_SOC as parents to dfllCPU_OUT during
->> register so dfllCPU_OUT save/restore happens after their parents are
->> restored.
->>
->> But DFLL needs both of these to be restored before DFLLCPU_Out and as
->> DFLL_SOC restore always happens after the REF, thinking to add
->> DFLL_SOC as parent to dfllCPU_OUT so save/restore follows after their
->> dependencies.
->>
->> Please comment.
->>
-> Did quick try and I see by adding dfll-soc as parent to dfllCPU_OUT, its
-> in proper order after all its dependencies.
-> 
-> Can now add dfll save/restore to do dfll reinit during restore..
-> 
+dfll will not work without dfll-soc enabled.
 
-If dfllCPU_OUT can work properly with dfll-soc being disabled, then this
-kind of dependency isn't very correct and just papers over the real
-problem, which is that there should be a way for CCF to specify multiple
-dependencies for the clock or the reverse ordering should be used for
-the restoring.
+CLDVFS control logic is split into 2 clock domains. dvfs_ref_clk and=20
+dvfs_soc_clk.
+
+Majority of the control logic is clocked from dvfs_soc_clk for=20
+interfacing control registers.
