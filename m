@@ -1,115 +1,124 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] soc/tegra: pmc: Query PCLK clock rate at probe time
-Date: Thu, 18 Jul 2019 21:24:19 +0300
-Message-ID: <d9b64f71-a91d-be34-1f36-28727c4beff6@gmail.com>
-References: <20190707230843.11224-1-digetx@gmail.com>
- <c9bd6dd3-7a03-6e2c-db9f-fefa059a428f@nvidia.com>
- <aa12115c-bf1c-f50b-f38a-97fb398d1af0@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
+Date: Thu, 18 Jul 2019 11:29:46 -0700
+Message-ID: <8bca130c-c95c-591e-2f6e-f02538f8f8b8@nvidia.com>
+References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
+ <d7892bfc-2cbf-27af-518d-dc7e243815b8@nvidia.com>
+ <71272e9a-0f2a-c20d-6532-7e9057ad985c@gmail.com>
+ <78fd19b9-b652-8ac3-1f57-3b4adadee03f@nvidia.com>
+ <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
+ <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
+ <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
+ <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
+ <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
+ <46b55527-da5d-c0b7-1c14-43b5c6d49dfa@nvidia.com>
+ <2de9a608-cf38-f56c-b192-7ffed65092f8@nvidia.com>
+ <bff3e9c0-727d-9aef-a0e2-583e53c39afd@gmail.com>
+ <5eedd224-77b0-1fc9-4e5e-d884b41a64ed@nvidia.com>
+ <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
+ <c759d71b-1549-2562-f0cf-db5f9e51329e@nvidia.com>
+ <ef7928ad-239d-eca8-41bf-f76e72a9841d@nvidia.com>
+ <4141181d-7162-0321-71b6-33abf11f631c@gmail.com>
+ <ab8f2441-8f4b-3a2b-5bcd-1a889555176a@nvidia.com>
+ <419e1b16-683e-1b56-7334-50d87368c1b9@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <aa12115c-bf1c-f50b-f38a-97fb398d1af0@nvidia.com>
+In-Reply-To: <419e1b16-683e-1b56-7334-50d87368c1b9@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.07.2019 12:53, Jon Hunter пишет:
-> 
-> On 18/07/2019 10:45, Jon Hunter wrote:
+
+On 7/18/19 10:41 AM, Sowjanya Komatineni wrote:
+>
+> On 7/18/19 10:22 AM, Sowjanya Komatineni wrote:
 >>
->> On 08/07/2019 00:08, Dmitry Osipenko wrote:
->>> The PCLK clock is running off SCLK, which is a critical clock that is
->>> very unlikely to randomly change its rate. It's also a bit clumsy (and
->>> apparently incorrect) to query the clock's rate with interrupts being
->>> disabled because clk_get_rate() takes a mutex and that's the case during
->>> suspend/cpuidle entering. Lastly, it's better to always fully reprogram
->>> PMC state because it's not obvious whether it could be changed after SC7.
->>
->> I agree with the first part, but I would drop the last sentence because
->> I see no evidence of this. Maybe Peter can confirm.
->>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/soc/tegra/pmc.c | 26 +++++++++++---------------
->>>  1 file changed, 11 insertions(+), 15 deletions(-)
+>> On 7/18/19 9:34 AM, Dmitry Osipenko wrote:
+>>> 18.07.2019 4:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 >>>
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index 9f9c1c677cf4..532e0ada012b 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
->>>  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->>>  {
->>>  	unsigned long long rate = 0;
->>> +	u64 ticks;
->>>  	u32 value;
->>>  
->>>  	switch (mode) {
->>> @@ -1441,7 +1442,7 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->>>  		break;
->>>  
->>>  	case TEGRA_SUSPEND_LP2:
->>> -		rate = clk_get_rate(pmc->clk);
->>> +		rate = pmc->rate;
+>>> [snip]
+>>>
+>>>>>> Please try to fix all missing dependencies and orderings.
+>>>>> Peter,
+>>>>>
+>>>>> dfllCPU_OUT is the first one to go thru restore when
+>>>>> clk_restore_context traverses thru the list.
+>>>>>
+>>>>> dfllCPU_OUT has dependency on DFLL_ref and DFLL_SOC but this
+>>>>> dependency is unknown to clock-tree.
+>>>>>
+>>>>> We can add DFLL_REF and DFLL_SOC as parents to dfllCPU_OUT during
+>>>>> register so dfllCPU_OUT save/restore happens after their parents are
+>>>>> restored.
+>>>>>
+>>>>> But DFLL needs both of these to be restored before DFLLCPU_Out and as
+>>>>> DFLL_SOC restore always happens after the REF, thinking to add
+>>>>> DFLL_SOC as parent to dfllCPU_OUT so save/restore follows after their
+>>>>> dependencies.
+>>>>>
+>>>>> Please comment.
+>>>>>
+>>>> Did quick try and I see by adding dfll-soc as parent to=20
+>>>> dfllCPU_OUT, its
+>>>> in proper order after all its dependencies.
+>>>>
+>>>> Can now add dfll save/restore to do dfll reinit during restore..
+>>>>
+>>> If dfllCPU_OUT can work properly with dfll-soc being disabled, then=20
+>>> this
+>>> kind of dependency isn't very correct and just papers over the real
+>>> problem, which is that there should be a way for CCF to specify=20
+>>> multiple
+>>> dependencies for the clock or the reverse ordering should be used for
+>>> the restoring.
 >>
->> There is another call to clk_get_rate() that could be removed as well.
+>> dfll will not work without dfll-soc enabled.
 >>
->>>  		break;
->>>  
->>>  	default:
->>> @@ -1451,26 +1452,20 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->>>  	if (WARN_ON_ONCE(rate == 0))
->>>  		rate = 100000000;
->>>  
->>> -	if (rate != pmc->rate) {
->>> -		u64 ticks;
->>> -
->>> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
->>> -		do_div(ticks, USEC_PER_SEC);
->>> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
->>> -
->>> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
->>> -		do_div(ticks, USEC_PER_SEC);
->>> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
->>> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
->>> +	do_div(ticks, USEC_PER_SEC);
->>> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+>> CLDVFS control logic is split into 2 clock domains. dvfs_ref_clk and=20
+>> dvfs_soc_clk.
 >>
->> You could go a step further and update the cpu_good_time/cpu_off_time to
->> be ticks and calculated once during probe and recalculated if
->> tegra_pmc_set_suspend_mode is called. I am not sure why we really need
->> to pass mode to tegra_pmc_enter_suspend_mode() seeing as the mode is
->> stored in the pmc struct.
+>> Majority of the control logic is clocked from dvfs_soc_clk for=20
+>> interfacing control registers.
 >>
->>>  
->>> -		wmb();
->>> -
->>> -		pmc->rate = rate;
->>> -	}
->>> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
->>> +	do_div(ticks, USEC_PER_SEC);
->>> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
->>>  
->>>  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
->>>  	value |= PMC_CNTRL_CPU_PWRREQ_OE;
->>>  	tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>> +
->>> +	wmb();
-> 
-> I would not move the barrier unless there is a good reason. Maybe it is
-> intentional that this happens before the other writes.
+> Note on reverse ordering for restore. Currently restore order goes=20
+> thru clock list and for each root goes thru parent -> child restore.
+>
+> this order is correct and also all clocks are parented properly so=20
+> they follow proper order.
+>
+> dfllCPU is the only one where current driver doesn't take care of=20
+> dependency in dfll_soc which gets enabled only after dfll_ref.
+>
+>
+> Based on dfllCPU control logic module design, dfll_ref and dfll_soc=20
+> should be enabled prior to dfll init/enable.
+>
+> So parenting dfll_soc to dfllCPU keeps proper order.
+>
 
-Looking at 'git blame', the barrier was copied by Thierry while he moved
-PMC driver form mach-tegra/ to soc/. Originally the barrier appeared in
-d552920a02759cdc45d8507868de10ac2f5b9a18 (ARM: tegra30: cpuidle: add
-powered-down state for CPU0).
+1. With dfllCPU parenting to dfll_soc, its keeps it in expected order=20
+and we don't define any parent clk_ops anyway for this, so should be OK?
 
-But really there is no good justification for that barrier at all
-because PMC logic kicks-in when CPU enters power-gated state and at that
-point all CPU accesses guaranteed to be finished no matter what, hence
-this barrier just doesn't make much sense and can be removed safely.
-I'll make a separate commit for that.
+OR
+
+2. Any suggestion on how to define/specify dependencies for clock other=20
+than parenting to follow proper order in clock tree as clk_save_context=20
+and clk_restore_context strictly goes thru clock tree order and all=20
+other clocks are parented properly except for dfllCPU where there is no=20
+parent. Techinically dfll_ref & dfll_soc are not parents but they need=20
+to be configured prior to dfll reinit.
+
+OR
+
+3. I don't see way to override clk_save_context/clk_restore_context APIs=20
+to change the way of traversal so I can modify to traverse in expected=20
+order without dfllCPU parenting.
+
+OR
+
+4. dfll re-init can be done in dfll-fcpu driver pm_ops which actually=20
+registers dfll or at the end of tegra210_clock resume
