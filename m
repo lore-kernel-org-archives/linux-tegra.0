@@ -1,87 +1,74 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-Date: Thu, 18 Jul 2019 23:26:10 +0300
-Message-ID: <056496ed-9abf-6907-c61c-a99ccf23b834@gmail.com>
-References: <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
- <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
- <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
- <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
- <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
- <46b55527-da5d-c0b7-1c14-43b5c6d49dfa@nvidia.com>
- <2de9a608-cf38-f56c-b192-7ffed65092f8@nvidia.com>
- <bff3e9c0-727d-9aef-a0e2-583e53c39afd@gmail.com>
- <5eedd224-77b0-1fc9-4e5e-d884b41a64ed@nvidia.com>
- <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
- <20190718194222.GH12715@pdeschrijver-desktop.Nvidia.com>
+Date: Thu, 18 Jul 2019 23:32:28 +0300
+Message-ID: <cc358525-eeca-129e-183c-e0627447c9a8@gmail.com>
+References: <20190716083701.225f0fd9@dimatab>
+ <21266e4f-16b1-4c87-067a-16c07c803b6e@nvidia.com>
+ <c5853e1a-d812-2dbd-3bec-0a9b0b0f6f3e@nvidia.com>
+ <20190716080610.GE12715@pdeschrijver-desktop.Nvidia.com>
+ <d908d3a2-3013-7f92-0852-115f428d1c5f@gmail.com>
+ <72b5df8c-8acb-d0d0-ebcf-b406e8404973@nvidia.com>
+ <2b701832-5548-7c83-7c17-05cc2f1470c8@nvidia.com>
+ <76e341be-6f38-2bc1-048e-1aa6883f9b88@gmail.com>
+ <0706576a-ce61-1cf3-bed1-05f54a1e2489@nvidia.com>
+ <5b2945c5-fcb2-2ac0-2bf2-df869dc9c713@gmail.com>
+ <20190718191820.GG12715@pdeschrijver-desktop.Nvidia.com>
+ <2274fccb-59d3-824c-cb97-55c23a4eaa75@nvidia.com>
+ <5c6e17ed-bdbd-fa27-87e7-aa95dfa7c591@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190718194222.GH12715@pdeschrijver-desktop.Nvidia.com>
+In-Reply-To: <5c6e17ed-bdbd-fa27-87e7-aa95dfa7c591@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.07.2019 22:42, Peter De Schrijver пишет:
-> On Thu, Jul 18, 2019 at 02:44:56AM +0300, Dmitry Osipenko wrote:
->>>
->>> dependencies I am referring are dfll_ref, dfll_soc, and DVFS peripheral
->>> clocks which need to be restored prior to DFLL reinit.
+18.07.2019 23:11, Dmitry Osipenko пишет:
+> 18.07.2019 22:24, Sowjanya Komatineni пишет:
 >>
->> Okay, but that shouldn't be a problem if clock dependencies are set up
->> properly.
+>> On 7/18/19 12:18 PM, Peter De Schrijver wrote:
+>>> On Tue, Jul 16, 2019 at 09:43:16PM +0300, Dmitry Osipenko wrote:
+>>>>> CPU parents are PLL_X, PLL_P, and dfll. PLL_X always runs at higher
+>>>>> rate
+>>>>> so switching to PLL_P during CPUFreq probe prior to dfll clock enable
+>>>>> should be safe.
+>>>> AFAIK, PLLX could run at ~200MHz. There is also a divided output of PLLP
+>>>> which CCLKG supports, the PLLP_OUT4.
+>>>>
+>>>> Probably, realistically, CPU is always running off a fast PLLX during
+>>>> boot, but I'm wondering what may happen on KEXEC. I guess ideally
+>>>> CPUFreq driver should also have a 'shutdown' callback to teardown DFLL
+>>>> on a reboot, but likely that there are other clock-related problems as
+>>>> well that may break KEXEC and thus it is not very important at the
+>>>> moment.
+>>>>
+>>> If you turn off the DFLL, you have to be aware that the voltage margins
+>>> for DFLL use are lower than for PLL use. So you either need to be sure
+>>> to switch to a frequency below fmax @ Vmin or you program the boot
+>>> voltage and then you can use PLLX as setup by the bootloader. For OVR
+>>> regulators you can't program a voltage without the DFLL, so you have to
+>>> tristate the PWM output which will give you a hardwired boot voltage.
+>>>
+>>> Peter.
 >>
->>>>> reverse list order during restore might not work as all other clocks are
->>>>> in proper order no with any ref clocks for plls getting restored prior
->>>>> to their clients
->>>> Why? The ref clocks should be registered first and be the roots for PLLs
->>>> and the rest. If it's not currently the case, then this need to be
->>>> fixed. You need to ensure that each clock is modeled properly. If some
->>>> child clock really depends on multiple parents, then the parents need to
->>>> in the correct order or CCF need to be taught about such
->>>> multi-dependencies.
->>>>
->>>> If some required feature is missed, then you have to implement it
->>>> properly and for all, that's how things are done in upstream. Sometimes
->>>> it's quite a lot of extra work that everyone are benefiting from in
->>>> the end.
->>>>
->>>> [snip]
->>>
->>> Yes, we should register ref/parents before their clients.
->>>
->>> cclk_g clk is registered last after all pll and peripheral clocks are
->>> registers during clock init.
->>>
->>> dfllCPU_out clk is registered later during dfll-fcpu driver probe and
->>> gets added to the clock list.
->>>
->>> Probably the issue seems to be not linking dfll_ref and dfll_soc
->>> dependencies for dfllCPU_out thru clock list.
->>>
->>> clk-dfll driver during dfll_init_clks gets ref_clk and soc_clk reference
->>> thru DT.
+>> Yes, we switch CPU to PLLP and then disable DFLL during suspend.
 > 
-> The dfll does not have any parents. It has some clocks which are needed
-> for the logic part of the dfll to function, but there's no parent clock
-> as such unlike for peripheral clocks or PLLs where the parent is at
-> least used as a reference. The I2C controller of the DFLL shares the
-> lines with a normal I2C controller using some arbitration logic. That
-> logic only works if the clock for the normal I2C controller is enabled.
-> So you need probably 3 clocks enabled to initialize the dfll in that
-> case. I don't think it makes sense to add complicated logic to the clock
-> core to deal with this rather strange case. To me it makes more sense to
-> use pmops and open code the sequence there.
+> I'm wondering what happens to T124 on resume from suspend, given that it
+> switches CPU to PLLX [1]. I imagine that CPU voltage could be lower than
+> needed if suspend happened on DFLL. I'm also now vaguely recalling that
+> CPUFreq driver was disabled for T124 because of some problems.
+> 
+> Or maybe warmboot code is actually touching the voltage regulators?
 
-It looks to me that dfllCPU is a PLL and dfll_ref is its reference
-parent, while dfll_soc clocks the logic that dynamically reconfigures
-dfllCPU in background. I see that PLLP is defined as a parent for
-dfll_ref and dfll_soc in the code. Hence seems dfll_ref should be set as
-a parent for dfllCPU, no?
+Oh wait, warmboot is even irrelevant LP1.
 
-Either way is good to me, given that DFLL will be disabled during
-suspend. Resetting DFLL on DFLL's driver resume using PM ops should be
-good. And then it also will be better to error out if DFLL is active
-during suspend on the DFLL's driver suspend.
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm/mach-tegra/sleep-tegra30.S#n389
+> 
+> That is also should be a problem for T30 if voltage scaling is happening
+> and I have some patches in works that are switching CPU to PLLP instead
+> of PLLX on suspend/resume.
+> 
