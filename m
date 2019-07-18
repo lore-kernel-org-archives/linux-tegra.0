@@ -1,64 +1,107 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 19/24] PM / devfreq: tegra30: Optimize upper
- consecutive watermark selection
-Date: Thu, 18 Jul 2019 18:51:02 +0900
-Message-ID: <17fabbaf-ceca-7551-0a58-9c8a0e7027ed@samsung.com>
-References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223622epcas4p48ec0d7e6fa26bc2397fa4351c0bd0c2d@epcas4p4.samsung.com>
-        <20190707223303.6755-20-digetx@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1] soc/tegra: pmc: Query PCLK clock rate at probe time
+Date: Thu, 18 Jul 2019 10:53:01 +0100
+Message-ID: <aa12115c-bf1c-f50b-f38a-97fb398d1af0@nvidia.com>
+References: <20190707230843.11224-1-digetx@gmail.com>
+ <c9bd6dd3-7a03-6e2c-db9f-fefa059a428f@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190707223303.6755-20-digetx@gmail.com>
+In-Reply-To: <c9bd6dd3-7a03-6e2c-db9f-fefa059a428f@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
-> The memory activity counter may get a bit higher than a watermark which
-> is selected based on OPP that corresponds to a highest EMC rate, in this
-> case watermark is lower than the actual memory activity is and thus
-> results in unwanted "upper" interrupts.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
 
-It seems that you can combine patch19 with patch20.
-
+On 18/07/2019 10:45, Jon Hunter wrote:
 > 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 8d6bf6e9f1ae..c3cf87231d25 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -363,7 +363,18 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
->  	tegra_actmon_get_lower_upper(tegra, dev, freq - 1, &lower, &upper);
->  
->  	delta = do_percent(upper - lower, dev->config->boost_up_threshold);
-> -	device_writel(dev, lower + delta, ACTMON_DEV_UPPER_WMARK);
-> +
-> +	/*
-> +	 * The memory events count could go a bit higher than the maximum
-> +	 * defined by the OPPs, hence make the upper watermark infinitely
-> +	 * high to avoid unnecessary upper interrupts in that case.
-> +	 */
-> +	if (freq == tegra->max_freq)
-> +		upper = ULONG_MAX;
-> +	else
-> +		upper = lower + delta;
-> +
-> +	device_writel(dev, upper, ACTMON_DEV_UPPER_WMARK);
->  
->  	/*
->  	 * Meanwhile the lower mark is based on the average value
+> On 08/07/2019 00:08, Dmitry Osipenko wrote:
+>> The PCLK clock is running off SCLK, which is a critical clock that is
+>> very unlikely to randomly change its rate. It's also a bit clumsy (and
+>> apparently incorrect) to query the clock's rate with interrupts being
+>> disabled because clk_get_rate() takes a mutex and that's the case during
+>> suspend/cpuidle entering. Lastly, it's better to always fully reprogram
+>> PMC state because it's not obvious whether it could be changed after SC7.
 > 
+> I agree with the first part, but I would drop the last sentence because
+> I see no evidence of this. Maybe Peter can confirm.
+> 
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/soc/tegra/pmc.c | 26 +++++++++++---------------
+>>  1 file changed, 11 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index 9f9c1c677cf4..532e0ada012b 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
+>>  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>>  {
+>>  	unsigned long long rate = 0;
+>> +	u64 ticks;
+>>  	u32 value;
+>>  
+>>  	switch (mode) {
+>> @@ -1441,7 +1442,7 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>>  		break;
+>>  
+>>  	case TEGRA_SUSPEND_LP2:
+>> -		rate = clk_get_rate(pmc->clk);
+>> +		rate = pmc->rate;
+> 
+> There is another call to clk_get_rate() that could be removed as well.
+> 
+>>  		break;
+>>  
+>>  	default:
+>> @@ -1451,26 +1452,20 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>>  	if (WARN_ON_ONCE(rate == 0))
+>>  		rate = 100000000;
+>>  
+>> -	if (rate != pmc->rate) {
+>> -		u64 ticks;
+>> -
+>> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+>> -		do_div(ticks, USEC_PER_SEC);
+>> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+>> -
+>> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+>> -		do_div(ticks, USEC_PER_SEC);
+>> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+>> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+>> +	do_div(ticks, USEC_PER_SEC);
+>> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+> 
+> You could go a step further and update the cpu_good_time/cpu_off_time to
+> be ticks and calculated once during probe and recalculated if
+> tegra_pmc_set_suspend_mode is called. I am not sure why we really need
+> to pass mode to tegra_pmc_enter_suspend_mode() seeing as the mode is
+> stored in the pmc struct.
+> 
+>>  
+>> -		wmb();
+>> -
+>> -		pmc->rate = rate;
+>> -	}
+>> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+>> +	do_div(ticks, USEC_PER_SEC);
+>> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+>>  
+>>  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>>  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
+>>  	value |= PMC_CNTRL_CPU_PWRREQ_OE;
+>>  	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>> +
+>> +	wmb();
 
+I would not move the barrier unless there is a good reason. Maybe it is
+intentional that this happens before the other writes.
+
+Jon
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+nvpublic
