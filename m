@@ -1,52 +1,260 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.2 00/21] 5.2.2-stable review
-Date: Thu, 18 Jul 2019 18:37:02 +0900
-Message-ID: <20190718093702.GA9689@kroah.com>
-References: <20190718030030.456918453@linuxfoundation.org>
- <b4fe5385-9e61-51ad-0dd1-2910c529e083@nvidia.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 17/24] PM / devfreq: tegra30: Use tracepoints for
+ debugging
+Date: Thu, 18 Jul 2019 18:47:09 +0900
+Message-ID: <209220ec-b677-3500-0e55-6cad57e97f88@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223623epcas4p13d01a60ae2b88dde4c4f7fdba04da170@epcas4p1.samsung.com>
+        <20190707223303.6755-18-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b4fe5385-9e61-51ad-0dd1-2910c529e083@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190707223303.6755-18-digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 10:21:40AM +0100, Jon Hunter wrote:
+On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
+> Debug messages create too much CPU and memory activity by themselves,
+> so it's difficult to debug lower rates and catch unwanted interrupts
+> that happen rarely. Tracepoints are ideal in that regards because they
+> do not contribute to the sampled date at all. This allowed me to catch
+> few problems which are fixed by the followup patches, without tracepoints
+> it would be much harder to do.
 > 
-> On 18/07/2019 04:01, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.2 release.
-> > There are 21 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat 20 Jul 2019 02:59:27 AM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.2-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.2:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.2.2-rc1-gcc78552c7d92
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/tegra30-devfreq.c      |  43 +++-------
+>  include/trace/events/tegra30_devfreq.h | 105 +++++++++++++++++++++++++
+>  2 files changed, 117 insertions(+), 31 deletions(-)
+>  create mode 100644 include/trace/events/tegra30_devfreq.h
 
-Wonderful, thanks for testing all of these and letting me know.
+As I knew, 'include/trace/events' don't include the header file
+for only one device driver. Usually, the trace event is provided
+by framework instead of each devic driver.
 
-greg k-h
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 6ebf0f505767..43c9c5fbfe91 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -19,6 +19,9 @@
+>  #include <linux/reset.h>
+>  #include <linux/workqueue.h>
+>  
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/tegra30_devfreq.h>
+> +
+>  #include "governor.h"
+>  
+>  #define ACTMON_GLB_STATUS					0x0
+> @@ -283,9 +286,6 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
+>  					 unsigned long *lower,
+>  					 unsigned long *upper)
+>  {
+> -	struct device *ddev = tegra->devfreq->dev.parent;
+> -	u32 offset = dev->config->offset;
+> -
+>  	/*
+>  	 * Memory frequencies are guaranteed to have 1MHz granularity
+>  	 * and thus we need this rounding down to get a proper watermarks
+> @@ -298,8 +298,8 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
+>  	*lower = tegra_actmon_lower_freq(tegra, target_freq);
+>  	*upper = tegra_actmon_upper_freq(tegra, target_freq);
+>  
+> -	dev_dbg(ddev, "%03x: target_freq %lu lower freq %lu upper freq %lu\n",
+> -		offset, target_freq, *lower, *upper);
+> +	trace_device_lower_upper(dev->config->offset, target_freq,
+> +				 *lower, *upper);
+>  
+>  	/*
+>  	 * The upper watermark should take into account CPU's frequency
+> @@ -377,30 +377,13 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+>  	device_writel(dev, lower + delta, ACTMON_DEV_LOWER_WMARK);
+>  }
+>  
+> -static void actmon_device_debug(struct tegra_devfreq *tegra,
+> -				struct tegra_devfreq_device *dev,
+> -				const char *prefix)
+> -{
+> -	dev_dbg(tegra->devfreq->dev.parent,
+> -		"%03x: %s: 0x%08x 0x%08x a %u %u %u c %u %u %u b %lu cpu %u\n",
+> -		dev->config->offset, prefix,
+> -		device_readl(dev, ACTMON_DEV_INTR_STATUS),
+> -		device_readl(dev, ACTMON_DEV_CTRL),
+> -		device_readl(dev, ACTMON_DEV_AVG_COUNT),
+> -		device_readl(dev, ACTMON_DEV_AVG_LOWER_WMARK),
+> -		device_readl(dev, ACTMON_DEV_AVG_UPPER_WMARK),
+> -		device_readl(dev, ACTMON_DEV_COUNT),
+> -		device_readl(dev, ACTMON_DEV_LOWER_WMARK),
+> -		device_readl(dev, ACTMON_DEV_UPPER_WMARK),
+> -		dev->boost_freq, cpufreq_get(0));
+> -}
+> -
+>  static void actmon_isr_device(struct tegra_devfreq *tegra,
+>  			      struct tegra_devfreq_device *dev)
+>  {
+>  	u32 intr_status, dev_ctrl, avg_intr_mask, avg_count;
+>  
+> -	actmon_device_debug(tegra, dev, "isr+");
+> +	trace_device_isr_enter(tegra->regs, dev->config->offset,
+> +			       dev->boost_freq, cpufreq_get(0));
+>  
+>  	intr_status = device_readl(dev, ACTMON_DEV_INTR_STATUS);
+>  	avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
+> @@ -455,7 +438,8 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+>  	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
+>  	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
+>  
+> -	actmon_device_debug(tegra, dev, "isr-");
+> +	trace_device_isr_exit(tegra->regs, dev->config->offset,
+> +			      dev->boost_freq, cpufreq_get(0));
+>  }
+>  
+>  static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
+> @@ -749,7 +733,6 @@ static struct devfreq_dev_profile tegra_devfreq_profile = {
+>  static int tegra_governor_get_target(struct devfreq *devfreq,
+>  				     unsigned long *freq)
+>  {
+> -	struct device *ddev = devfreq->dev.parent;
+>  	struct devfreq_dev_status *stat;
+>  	struct tegra_devfreq *tegra;
+>  	struct tegra_devfreq_device *dev;
+> @@ -770,13 +753,11 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+>  		dev = &tegra->devices[i];
+>  
+>  		dev_target_freq = actmon_update_target(tegra, dev);
+> -
+>  		target_freq = max(target_freq, dev_target_freq);
+>  
+> -		dev_dbg(ddev, "%03x: upd: dev_target_freq %lu\n",
+> -			dev->config->offset, dev_target_freq);
+> -
+> -		actmon_device_debug(tegra, dev, "upd");
+> +		trace_device_target_freq(dev->config->offset, dev_target_freq);
+> +		trace_device_target_update(tegra->regs, dev->config->offset,
+> +					   dev->boost_freq, cpufreq_get(0));
+>  	}
+>  
+>  	*freq = target_freq;
+> diff --git a/include/trace/events/tegra30_devfreq.h b/include/trace/events/tegra30_devfreq.h
+> new file mode 100644
+> index 000000000000..8f264a489daf
+> --- /dev/null
+> +++ b/include/trace/events/tegra30_devfreq.h
+> @@ -0,0 +1,105 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM tegra30_devfreq
+> +
+> +#if !defined(_TRACE_TEGRA30_DEVFREQ_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_TEGRA30_DEVFREQ_H
+> +
+> +#include <linux/io.h>
+> +#include <linux/tracepoint.h>
+> +#include <linux/types.h>
+> +
+> +DECLARE_EVENT_CLASS(device_state,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq),
+> +	TP_STRUCT__entry(
+> +		__field(u32, offset)
+> +		__field(u32, intr_status)
+> +		__field(u32, ctrl)
+> +		__field(u32, avg_count)
+> +		__field(u32, avg_lower)
+> +		__field(u32, avg_upper)
+> +		__field(u32, count)
+> +		__field(u32, lower)
+> +		__field(u32, upper)
+> +		__field(u32, boost_freq)
+> +		__field(u32, cpu_freq)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->offset		= offset;
+> +		__entry->intr_status	= readl_relaxed(base + offset + 0x24);
+> +		__entry->ctrl		= readl_relaxed(base + offset + 0x0);
+> +		__entry->avg_count	= readl_relaxed(base + offset + 0x20);
+> +		__entry->avg_lower	= readl_relaxed(base + offset + 0x14);
+> +		__entry->avg_upper	= readl_relaxed(base + offset + 0x10);
+> +		__entry->count		= readl_relaxed(base + offset + 0x1c);
+> +		__entry->lower		= readl_relaxed(base + offset + 0x8);
+> +		__entry->upper		= readl_relaxed(base + offset + 0x4);
+> +		__entry->boost_freq	= boost;
+> +		__entry->cpu_freq	= cpufreq;
+> +	),
+> +	TP_printk("%03x: intr 0x%08x ctrl 0x%08x avg %010u %010u %010u cnt %010u %010u %010u boost %010u cpu %u",
+> +		__entry->offset,
+> +		__entry->intr_status,
+> +		__entry->ctrl,
+> +		__entry->avg_count,
+> +		__entry->avg_lower,
+> +		__entry->avg_upper,
+> +		__entry->count,
+> +		__entry->lower,
+> +		__entry->upper,
+> +		__entry->boost_freq,
+> +		__entry->cpu_freq)
+> +);
+> +
+> +DEFINE_EVENT(device_state, device_isr_enter,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq));
+> +
+> +DEFINE_EVENT(device_state, device_isr_exit,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq));
+> +
+> +DEFINE_EVENT(device_state, device_target_update,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq));
+> +
+> +TRACE_EVENT(device_lower_upper,
+> +	TP_PROTO(u32 offset, u32 target, u32 lower, u32 upper),
+> +	TP_ARGS(offset, target, lower, upper),
+> +	TP_STRUCT__entry(
+> +		__field(u32, offset)
+> +		__field(u32, target)
+> +		__field(u32, lower)
+> +		__field(u32, upper)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->offset = offset;
+> +		__entry->target = target;
+> +		__entry->lower = lower;
+> +		__entry->upper = upper;
+> +	),
+> +	TP_printk("%03x: freq %010u lower freq %010u upper freq %010u",
+> +		__entry->offset,
+> +		__entry->target,
+> +		__entry->lower,
+> +		__entry->upper)
+> +);
+> +
+> +TRACE_EVENT(device_target_freq,
+> +	TP_PROTO(u32 offset, u32 target),
+> +	TP_ARGS(offset, target),
+> +	TP_STRUCT__entry(
+> +		__field(u32, offset)
+> +		__field(u32, target)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->offset = offset;
+> +		__entry->target = target;
+> +	),
+> +	TP_printk("%03x: freq %010u", __entry->offset, __entry->target)
+> +);
+> +#endif /* _TRACE_TEGRA30_DEVFREQ_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
