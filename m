@@ -1,7 +1,7 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-Date: Thu, 18 Jul 2019 22:18:20 +0300
-Message-ID: <20190718191820.GG12715@pdeschrijver-desktop.Nvidia.com>
+Date: Thu, 18 Jul 2019 12:24:54 -0700
+Message-ID: <2274fccb-59d3-824c-cb97-55c23a4eaa75@nvidia.com>
 References: <20190716083701.225f0fd9@dimatab>
  <21266e4f-16b1-4c87-067a-16c07c803b6e@nvidia.com>
  <c5853e1a-d812-2dbd-3bec-0a9b0b0f6f3e@nvidia.com>
@@ -12,36 +12,40 @@ References: <20190716083701.225f0fd9@dimatab>
  <76e341be-6f38-2bc1-048e-1aa6883f9b88@gmail.com>
  <0706576a-ce61-1cf3-bed1-05f54a1e2489@nvidia.com>
  <5b2945c5-fcb2-2ac0-2bf2-df869dc9c713@gmail.com>
+ <20190718191820.GG12715@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5b2945c5-fcb2-2ac0-2bf2-df869dc9c713@gmail.com>
+In-Reply-To: <20190718191820.GG12715@pdeschrijver-desktop.Nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Joseph Lo <josephl@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 09:43:16PM +0300, Dmitry Osipenko wrote:
-> > CPU parents are PLL_X, PLL_P, and dfll. PLL_X always runs at higher rate
-> > so switching to PLL_P during CPUFreq probe prior to dfll clock enable
-> > should be safe.
-> 
-> AFAIK, PLLX could run at ~200MHz. There is also a divided output of PLLP
-> which CCLKG supports, the PLLP_OUT4.
-> 
-> Probably, realistically, CPU is always running off a fast PLLX during
-> boot, but I'm wondering what may happen on KEXEC. I guess ideally
-> CPUFreq driver should also have a 'shutdown' callback to teardown DFLL
-> on a reboot, but likely that there are other clock-related problems as
-> well that may break KEXEC and thus it is not very important at the moment.
-> 
 
-If you turn off the DFLL, you have to be aware that the voltage margins
-for DFLL use are lower than for PLL use. So you either need to be sure
-to switch to a frequency below fmax @ Vmin or you program the boot
-voltage and then you can use PLLX as setup by the bootloader. For OVR
-regulators you can't program a voltage without the DFLL, so you have to
-tristate the PWM output which will give you a hardwired boot voltage.
+On 7/18/19 12:18 PM, Peter De Schrijver wrote:
+> On Tue, Jul 16, 2019 at 09:43:16PM +0300, Dmitry Osipenko wrote:
+>>> CPU parents are PLL_X, PLL_P, and dfll. PLL_X always runs at higher rate
+>>> so switching to PLL_P during CPUFreq probe prior to dfll clock enable
+>>> should be safe.
+>> AFAIK, PLLX could run at ~200MHz. There is also a divided output of PLLP
+>> which CCLKG supports, the PLLP_OUT4.
+>>
+>> Probably, realistically, CPU is always running off a fast PLLX during
+>> boot, but I'm wondering what may happen on KEXEC. I guess ideally
+>> CPUFreq driver should also have a 'shutdown' callback to teardown DFLL
+>> on a reboot, but likely that there are other clock-related problems as
+>> well that may break KEXEC and thus it is not very important at the moment.
+>>
+> If you turn off the DFLL, you have to be aware that the voltage margins
+> for DFLL use are lower than for PLL use. So you either need to be sure
+> to switch to a frequency below fmax @ Vmin or you program the boot
+> voltage and then you can use PLLX as setup by the bootloader. For OVR
+> regulators you can't program a voltage without the DFLL, so you have to
+> tristate the PWM output which will give you a hardwired boot voltage.
+>
+> Peter.
 
-Peter.
+Yes, we switch CPU to PLLP and then disable DFLL during suspend.
