@@ -1,107 +1,121 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 20/24] PM / devfreq: tegra30: Optimize upper average
- watermark selection
-Date: Fri, 19 Jul 2019 10:36:30 +0900
-Message-ID: <e3358039-d1b3-a5a0-1a37-aeb8edd49d6b@samsung.com>
+Subject: Re: [PATCH v4 21/24] PM / devfreq: tegra30: Synchronize average
+ count on target's update
+Date: Fri, 19 Jul 2019 10:40:09 +0900
+Message-ID: <eed89254-9960-7572-635c-12b114821e85@samsung.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223619epcas4p333f556dcf5a477b5cad5c9362a6f9b97@epcas4p3.samsung.com>
-        <20190707223303.6755-21-digetx@gmail.com>
+        <CGME20190707223619epcas4p3dea48e3e09983cd2a76af39fbf7bf99b@epcas4p3.samsung.com>
+        <20190707223303.6755-22-digetx@gmail.com>
+        <f83fb873-9214-9649-9435-9f211c4cba9e@samsung.com>
+        <20190719033152.1d4c3003@dimatab>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190707223303.6755-21-digetx@gmail.com>
+In-Reply-To: <20190719033152.1d4c3003@dimatab>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
-> I noticed that CPU may be crossing the dependency threshold very
-> frequently for some workloads and this results in a lot of interrupts
-> which could be avoided if MCALL client is keeping actual EMC frequency
-> at a higher rate.
+On 19. 7. 19. 오전 9:31, Dmitry Osipenko wrote:
+> В Thu, 18 Jul 2019 19:15:54 +0900
+> Chanwoo Choi <cw00.choi@samsung.com> пишет:
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
+>> On 19. 7. 8. 오전 7:33, Dmitry Osipenko wrote:
+>>> The average count may get out of sync if interrupt was disabled /
+>>> avoided for a long time due to upper watermark optimization, hence
+>>> it should be re-synced on each target's update to ensure that
+>>> watermarks are set up correctly on EMC rate-change notification and
+>>> that a correct frequency is selected for device.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/devfreq/tegra30-devfreq.c | 30
+>>> ++++++++++++++++++++++++++++++ 1 file changed, 30 insertions(+)
+>>>
+>>> diff --git a/drivers/devfreq/tegra30-devfreq.c
+>>> b/drivers/devfreq/tegra30-devfreq.c index
+>>> 4d582809acb6..8a674fad26be 100644 ---
+>>> a/drivers/devfreq/tegra30-devfreq.c +++
+>>> b/drivers/devfreq/tegra30-devfreq.c @@ -466,11 +466,41 @@ static
+>>> void actmon_isr_device(struct tegra_devfreq *tegra,
+>>> dev->boost_freq, cpufreq_get(0)); }
+>>>  
+>>> +static void tegra_devfreq_sync_avg_count(struct tegra_devfreq
+>>> *tegra,
+>>> +					 struct
+>>> tegra_devfreq_device *dev) +{
+>>> +	u32 avg_count, avg_freq, old_upper, new_upper;
+>>> +
+>>> +	avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
+>>> +	avg_freq = avg_count / ACTMON_SAMPLING_PERIOD;
+>>> +
+>>> +	old_upper = tegra_actmon_upper_freq(tegra, dev->avg_freq);
+>>> +	new_upper = tegra_actmon_upper_freq(tegra, avg_freq);
+>>> +
+>>> +	/* similar to ISR, see comments in actmon_isr_device() */
+>>> +	if (old_upper != new_upper) {
+>>> +		dev->avg_freq = avg_freq;
+>>> +		dev->boost_freq = 0;
+>>> +	}
+>>> +}
+>>> +
+>>>  static unsigned long actmon_update_target(struct tegra_devfreq
+>>> *tegra, struct tegra_devfreq_device *dev)
+>>>  {
+>>>  	unsigned long target_freq;
+>>>  
+>>> +	/*
+>>> +	 * The avg_count / avg_freq is getting snapshoted on
+>>> device's
+>>> +	 * interrupt, but there are cases where actual value need
+>>> to
+>>> +	 * be utilized on target's update, like CPUFreq boosting
+>>> and
+>>> +	 * overriding the min freq
+>>> via /sys/class/devfreq/devfreq0/min_freq
+>>> +	 * because we're optimizing the upper watermark based on
+>>> the
+>>> +	 * actual EMC frequency. This means that interrupt may be
+>>> +	 * inactive for a long time and thus making snapshoted
+>>> value
+>>> +	 * outdated.
+>>> +	 */
+>>> +	tegra_devfreq_sync_avg_count(tegra, dev);  
+>>
+>> I think that you don't need to add the separate function to calculate
+>> the 'dev->avg_freq'. It is enough with your detailed comment to add
+>> this code in this function.
 > 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index c3cf87231d25..4d582809acb6 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -314,7 +314,8 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
->  }
->  
->  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
-> -					   struct tegra_devfreq_device *dev)
-> +					   struct tegra_devfreq_device *dev,
-> +					   unsigned long freq)
->  {
->  	unsigned long avg_threshold, lower, upper;
->  
-> @@ -323,6 +324,15 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->  	avg_threshold = dev->config->avg_dependency_threshold;
->  	avg_threshold = avg_threshold * ACTMON_SAMPLING_PERIOD;
->  
-> +	/*
-> +	 * If cumulative EMC frequency selection is higher than the
-> +	 * device's, then there is no need to set upper watermark to
-> +	 * a lower value because it will result in unnecessary upper
-> +	 * interrupts.
-> +	 */
-> +	if (freq * ACTMON_SAMPLING_PERIOD > upper)
-> +		upper = freq * ACTMON_SAMPLING_PERIOD;
+> The separate function is indeed not mandatory here, but I'm finding that
+> it usually makes easier to read and follow the code when it is properly
+> split up into logical blocks. Don't you agree?
 
-Also, 'upper value is used on the patch5. You can combine this code to patch5
-or if this patch depends on the cpu notifier, you can combine it to the patch
-of adding cpu notifier without separate patch.
+It is right to make the separate function if function is too long or 
+function is called on the multiple points.
 
-> +
->  	/*
->  	 * We want to get interrupts when MCCPU client crosses the
->  	 * dependency threshold in order to take into / out of account
-> @@ -392,6 +402,7 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
->  			      struct tegra_devfreq_device *dev)
->  {
->  	u32 intr_status, dev_ctrl, avg_intr_mask, avg_count;
-> +	unsigned long freq;
->  
->  	trace_device_isr_enter(tegra->regs, dev->config->offset,
->  			       dev->boost_freq, cpufreq_get(0));
-> @@ -405,8 +416,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
->  	avg_intr_mask = ACTMON_DEV_INTR_AVG_BELOW_WMARK |
->  			ACTMON_DEV_INTR_AVG_ABOVE_WMARK;
->  
-> -	if (intr_status & avg_intr_mask)
-> -		tegra_devfreq_update_avg_wmark(tegra, dev);
-> +	if (intr_status & avg_intr_mask) {
-> +		freq = clk_get_rate(tegra->emc_clock) / KHZ;
-> +		tegra_devfreq_update_avg_wmark(tegra, dev, freq);
-> +	}
->  
->  	if (intr_status & ACTMON_DEV_INTR_CONSECUTIVE_UPPER) {
->  		/*
-> @@ -525,7 +538,7 @@ static int tegra_actmon_clk_notify_cb(struct notifier_block *nb,
->  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++) {
->  		dev = &tegra->devices[i];
->  
-> -		tegra_devfreq_update_avg_wmark(tegra, dev);
-> +		tegra_devfreq_update_avg_wmark(tegra, dev, freq);
->  		tegra_devfreq_update_wmark(tegra, dev, freq);
->  	}
->  
-> @@ -630,7 +643,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->  	device_writel(dev, dev->avg_freq * ACTMON_SAMPLING_PERIOD,
->  		      ACTMON_DEV_INIT_AVG);
->  
-> -	tegra_devfreq_update_avg_wmark(tegra, dev);
-> +	tegra_devfreq_update_avg_wmark(tegra, dev, dev->avg_freq);
->  	tegra_devfreq_update_wmark(tegra, dev, dev->avg_freq);
->  
->  	device_writel(dev, ACTMON_COUNT_WEIGHT, ACTMON_DEV_COUNT_WEIGHT);
+But, in this case, I think that it is enough to add this code
+to the actmon_update_target() because you already added the detailed comment. 
+
+It is enough to understand the role of this code with your comment.
+
+> 
+>>> +
+>>>  	target_freq = min(dev->avg_freq + dev->boost_freq,
+>>> KHZ_MAX); target_freq = tegra_actmon_account_cpu_freq(tegra, dev,
+>>> target_freq); 
+>>>   
+>>
+>> And also, is it impossible to squash this patch with patch19/patch20?
+>>
+> 
+> It should be possible to squash this patch with #20, but wouldn't
+> be better to keep changes in the chronological order? It's also better
+> to keep changes separate simply to aid bisection in case of a problem.
+> 
+> 
 > 
 
 
