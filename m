@@ -1,98 +1,59 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 20/24] PM / devfreq: tegra30: Optimize upper average
- watermark selection
-Date: Fri, 19 Jul 2019 05:21:11 +0300
-Message-ID: <20190719052111.6641285d@dimatab>
-References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223619epcas4p333f556dcf5a477b5cad5c9362a6f9b97@epcas4p3.samsung.com>
-        <20190707223303.6755-21-digetx@gmail.com>
-        <e3358039-d1b3-a5a0-1a37-aeb8edd49d6b@samsung.com>
-        <20190719045943.73b53e31@dimatab>
-        <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 040/171] gpu: host1x: Increase maximum DMA segment
+ size
+Date: Thu, 18 Jul 2019 23:54:31 -0400
+Message-ID: <20190719035643.14300-40-sashal@kernel.org>
+References: <20190719035643.14300-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-=D0=92 Fri, 19 Jul 2019 11:06:05 +0900
-Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-
-> On 19. 7. 19. =EC=98=A4=EC=A0=84 10:59, Dmitry Osipenko wrote:
-> > =D0=92 Fri, 19 Jul 2019 10:36:30 +0900
-> > Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >  =20
-> >> On 19. 7. 8. =EC=98=A4=EC=A0=84 7:32, Dmitry Osipenko wrote: =20
-> >>> I noticed that CPU may be crossing the dependency threshold very
-> >>> frequently for some workloads and this results in a lot of
-> >>> interrupts which could be avoided if MCALL client is keeping
-> >>> actual EMC frequency at a higher rate.
-> >>>
-> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>> ---
-> >>>  drivers/devfreq/tegra30-devfreq.c | 23 ++++++++++++++++++-----
-> >>>  1 file changed, 18 insertions(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/drivers/devfreq/tegra30-devfreq.c
-> >>> b/drivers/devfreq/tegra30-devfreq.c index
-> >>> c3cf87231d25..4d582809acb6 100644 ---
-> >>> a/drivers/devfreq/tegra30-devfreq.c +++
-> >>> b/drivers/devfreq/tegra30-devfreq.c @@ -314,7 +314,8 @@ static
-> >>> void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra, }
-> >>> =20
-> >>>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq
-> >>> *tegra,
-> >>> -					   struct
-> >>> tegra_devfreq_device *dev)
-> >>> +					   struct
-> >>> tegra_devfreq_device *dev,
-> >>> +					   unsigned long freq)
-> >>>  {
-> >>>  	unsigned long avg_threshold, lower, upper;
-> >>> =20
-> >>> @@ -323,6 +324,15 @@ static void
-> >>> tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
-> >>> avg_threshold =3D dev->config->avg_dependency_threshold;
-> >>> avg_threshold =3D avg_threshold * ACTMON_SAMPLING_PERIOD;=20
-> >>> +	/*
-> >>> +	 * If cumulative EMC frequency selection is higher than
-> >>> the
-> >>> +	 * device's, then there is no need to set upper watermark
-> >>> to
-> >>> +	 * a lower value because it will result in unnecessary
-> >>> upper
-> >>> +	 * interrupts.
-> >>> +	 */
-> >>> +	if (freq * ACTMON_SAMPLING_PERIOD > upper)
-> >>> +		upper =3D freq * ACTMON_SAMPLING_PERIOD;   =20
-> >>
-> >> Also, 'upper value is used on the patch5. You can combine this code
-> >> to patch5 or if this patch depends on the cpu notifier, you can
-> >> combine it to the patch of adding cpu notifier without separate
-> >> patch. =20
-> >=20
-> > Well okay, I'll try to squash some of the patches in the next
-> > revision. Usually I'm receiving comments in the other direction,
-> > asking to separate patches into smaller changes ;) So that's more a
-> > personal preference of each maintainer, I'd say.
-> >  =20
->=20
-> Right. We have to make the patch with atomic attribute.
-> But, if there are patches which touch the same code
-> in the same patchset. We can squash or do refactorig
-> of this code.
-
-The main benefit of having smaller logical changes is that when there is
-a bug, it's easier to narrow down the offending change using bisection.
-And it's just easier to review smaller patches, of course.
-
-> And also, if possible, I'd like you to make the patch
-> list according to the role of patch. For example,
-> the patches related to the 'watermark' could be sequentially
-> listed. But, it is not forced opinion. If just possible.
-
-Okay, will take this into account.
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClsgVXBzdHJlYW0gY29t
+bWl0IDFlMzkwNDc4Y2ZiNTI3ZTM0YzlhYjg5YmE1NzIxMmNiMDVjMzNjNTEgXQoKUmVjZW50IHZl
+cnNpb25zIG9mIHRoZSBETUEgQVBJIGRlYnVnIGNvZGUgaGF2ZSBzdGFydGVkIHRvIHdhcm4gYWJv
+dXQKdmlvbGF0aW9ucyBvZiB0aGUgbWF4aW11bSBETUEgc2VnbWVudCBzaXplLiBUaGlzIGlzIGJl
+Y2F1c2UgdGhlIHNlZ21lbnQKc2l6ZSBkZWZhdWx0cyB0byA2NCBLaUIsIHdoaWNoIGNhbiBlYXNp
+bHkgYmUgZXhjZWVkZWQgaW4gbGFyZ2UgYnVmZmVyCmFsbG9jYXRpb25zIHN1Y2ggYXMgdXNlZCBp
+biBEUk0vS01TIGZvciBmcmFtZWJ1ZmZlcnMuCgpUZWNobmljYWxseSB0aGUgVGVncmEgU01NVSBh
+bmQgQVJNIFNNTVUgZG9uJ3QgaGF2ZSBhIG1heGltdW0gc2VnbWVudApzaXplICh0aGV5IG1hcCBp
+bmRpdmlkdWFsIHBhZ2VzIGlycmVzcGVjdGl2ZSBvZiB3aGV0aGVyIHRoZXkgYXJlCmNvbnRpZ3Vv
+dXMgb3Igbm90KSwgc28gdGhlIGNob2ljZSBvZiA0IE1pQiBpcyBhIGJpdCBhcmJpdHJhcnkgaGVy
+ZS4gVGhlCm1heGltdW0gc2VnbWVudCBzaXplIGlzIGEgMzItYml0IHVuc2lnbmVkIGludGVnZXIs
+IHRob3VnaCwgc28gd2UgY2FuJ3QKc2V0IGl0IHRvIHRoZSBjb3JyZWN0IG1heGltdW0gc2l6ZSwg
+d2hpY2ggd291bGQgYmUgdGhlIHNpemUgb2YgdGhlCmFwZXJ0dXJlLgoKU2lnbmVkLW9mZi1ieTog
+VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KU2lnbmVkLW9mZi1ieTogU2FzaGEg
+TGV2aW4gPHNhc2hhbEBrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyB8
+IDMgKysrCiBpbmNsdWRlL2xpbnV4L2hvc3QxeC5oICAgfCAyICsrCiAyIGZpbGVzIGNoYW5nZWQs
+IDUgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyBi
+L2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYwppbmRleCA5Nzk3Y2NiMGEwNzMuLjYzODczMDJjMTI0
+NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jCisrKyBiL2RyaXZlcnMvZ3B1
+L2hvc3QxeC9idXMuYwpAQCAtNDE0LDYgKzQxNCw5IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2Rldmlj
+ZV9hZGQoc3RydWN0IGhvc3QxeCAqaG9zdDF4LAogCiAJb2ZfZG1hX2NvbmZpZ3VyZSgmZGV2aWNl
+LT5kZXYsIGhvc3QxeC0+ZGV2LT5vZl9ub2RlLCB0cnVlKTsKIAorCWRldmljZS0+ZGV2LmRtYV9w
+YXJtcyA9ICZkZXZpY2UtPmRtYV9wYXJtczsKKwlkbWFfc2V0X21heF9zZWdfc2l6ZSgmZGV2aWNl
+LT5kZXYsIFNaXzRNKTsKKwogCWVyciA9IGhvc3QxeF9kZXZpY2VfcGFyc2VfZHQoZGV2aWNlLCBk
+cml2ZXIpOwogCWlmIChlcnIgPCAwKSB7CiAJCWtmcmVlKGRldmljZSk7CmRpZmYgLS1naXQgYS9p
+bmNsdWRlL2xpbnV4L2hvc3QxeC5oIGIvaW5jbHVkZS9saW51eC9ob3N0MXguaAppbmRleCBjZmZm
+MzBiOWE2MmUuLmU2ZWVhNDVlMTE1NCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9ob3N0MXgu
+aAorKysgYi9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oCkBAIC0yOTcsNiArMjk3LDggQEAgc3RydWN0
+IGhvc3QxeF9kZXZpY2UgewogCXN0cnVjdCBsaXN0X2hlYWQgY2xpZW50czsKIAogCWJvb2wgcmVn
+aXN0ZXJlZDsKKworCXN0cnVjdCBkZXZpY2VfZG1hX3BhcmFtZXRlcnMgZG1hX3Bhcm1zOwogfTsK
+IAogc3RhdGljIGlubGluZSBzdHJ1Y3QgaG9zdDF4X2RldmljZSAqdG9faG9zdDF4X2RldmljZShz
+dHJ1Y3QgZGV2aWNlICpkZXYpCi0tIAoyLjIwLjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbA==
