@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 019/101] gpu: host1x: Increase maximum DMA segment size
-Date: Fri, 19 Jul 2019 00:06:10 -0400
-Message-ID: <20190719040732.17285-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 065/101] PCI: tegra: Enable Relaxed Ordering only for Tegra20 & Tegra30
+Date: Fri, 19 Jul 2019 00:06:56 -0400
+Message-ID: <20190719040732.17285-65-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,58 +9,70 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: Vidya Sagar <vidyas@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
 
-[ Upstream commit 1e390478cfb527e34c9ab89ba57212cb05c33c51 ]
+[ Upstream commit 7be142caabc4780b13a522c485abc806de5c4114 ]
 
-Recent versions of the DMA API debug code have started to warn about
-violations of the maximum DMA segment size. This is because the segment
-size defaults to 64 KiB, which can easily be exceeded in large buffer
-allocations such as used in DRM/KMS for framebuffers.
+The PCI Tegra controller conversion to a device tree configurable
+driver in commit d1523b52bff3 ("PCI: tegra: Move PCIe driver
+to drivers/pci/host") implied that code for the driver can be
+compiled in for a kernel supporting multiple platforms.
 
-Technically the Tegra SMMU and ARM SMMU don't have a maximum segment
-size (they map individual pages irrespective of whether they are
-contiguous or not), so the choice of 4 MiB is a bit arbitrary here. The
-maximum segment size is a 32-bit unsigned integer, though, so we can't
-set it to the correct maximum size, which would be the size of the
-aperture.
+Unfortunately, a blind move of the code did not check that some of the
+quirks that were applied in arch/arm (eg enabling Relaxed Ordering on
+all PCI devices - since the quirk hook erroneously matches PCI_ANY_ID
+for both Vendor-ID and Device-ID) are now applied in all kernels that
+compile the PCI Tegra controlled driver, DT and ACPI alike.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+This is completely wrong, in that enablement of Relaxed Ordering is only
+required by default in Tegra20 platforms as described in the Tegra20
+Technical Reference Manual (available at
+https://developer.nvidia.com/embedded/downloads#?search=tegra%202 in
+Section 34.1, where it is mentioned that Relaxed Ordering bit needs to
+be enabled in its root ports to avoid deadlock in hardware) and in the
+Tegra30 platforms for the same reasons (unfortunately not documented
+in the TRM).
+
+There is no other strict requirement on PCI devices Relaxed Ordering
+enablement on any other Tegra platforms or PCI host bridge driver.
+
+Fix this quite upsetting situation by limiting the vendor and device IDs
+to which the Relaxed Ordering quirk applies to the root ports in
+question, reported above.
+
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+[lorenzo.pieralisi@arm.com: completely rewrote the commit log/fixes tag]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/host1x/bus.c | 3 +++
- include/linux/host1x.h   | 2 ++
- 2 files changed, 5 insertions(+)
+ drivers/pci/controller/pci-tegra.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 815bdb42e3f0..0121fe7a4548 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -423,6 +423,9 @@ static int host1x_device_add(struct host1x *host1x,
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index f4f53d092e00..2e1fd0c07cf1 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -545,12 +545,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
  
- 	of_dma_configure(&device->dev, host1x->dev->of_node, true);
+-/* Tegra PCIE requires relaxed ordering */
++/* Tegra20 and Tegra30 PCIE requires relaxed ordering */
+ static void tegra_pcie_relax_enable(struct pci_dev *dev)
+ {
+ 	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
+ }
+-DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf0, tegra_pcie_relax_enable);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_relax_enable);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_relax_enable);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_relax_enable);
  
-+	device->dev.dma_parms = &device->dma_parms;
-+	dma_set_max_seg_size(&device->dev, SZ_4M);
-+
- 	err = host1x_device_parse_dt(device, driver);
- 	if (err < 0) {
- 		kfree(device);
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 89110d896d72..aef6e2f73802 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -310,6 +310,8 @@ struct host1x_device {
- 	struct list_head clients;
- 
- 	bool registered;
-+
-+	struct device_dma_parameters dma_parms;
- };
- 
- static inline struct host1x_device *to_host1x_device(struct device *dev)
+ static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
+ {
 -- 
 2.20.1
