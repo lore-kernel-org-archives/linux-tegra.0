@@ -1,15 +1,15 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 33/45] PCI: tegra: Enable Relaxed Ordering only for Tegra20 & Tegra30
-Date: Fri, 19 Jul 2019 00:12:52 -0400
-Message-ID: <20190719041304.18849-33-sashal@kernel.org>
-References: <20190719041304.18849-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 089/141] PCI: tegra: Enable Relaxed Ordering only for Tegra20 & Tegra30
+Date: Fri, 19 Jul 2019 00:01:54 -0400
+Message-ID: <20190719040246.15945-89-sashal@kernel.org>
+References: <20190719040246.15945-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190719041304.18849-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Vidya Sagar <vidyas@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Vidya Sagar <vidyas@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Vidya Sagar <vidyas@nvidia.com>
@@ -49,14 +49,14 @@ Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/host/pci-tegra.c | 7 +++++--
+ drivers/pci/controller/pci-tegra.c | 7 +++++--
  1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 8dfccf733241..6985102a4ae3 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -603,12 +603,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index f4f53d092e00..2e1fd0c07cf1 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -545,12 +545,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
  
@@ -72,7 +72,7 @@ index 8dfccf733241..6985102a4ae3 100644
 +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_relax_enable);
 +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_relax_enable);
  
- static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
+ static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
  {
 -- 
 2.20.1
