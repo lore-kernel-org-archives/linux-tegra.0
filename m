@@ -1,59 +1,66 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 030/141] gpu: host1x: Increase maximum DMA segment
- size
-Date: Fri, 19 Jul 2019 00:00:55 -0400
-Message-ID: <20190719040246.15945-30-sashal@kernel.org>
-References: <20190719040246.15945-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 019/101] gpu: host1x: Increase maximum DMA segment size
+Date: Fri, 19 Jul 2019 00:06:10 -0400
+Message-ID: <20190719040732.17285-19-sashal@kernel.org>
+References: <20190719040732.17285-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org
+Cc: Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClsgVXBzdHJlYW0gY29t
-bWl0IDFlMzkwNDc4Y2ZiNTI3ZTM0YzlhYjg5YmE1NzIxMmNiMDVjMzNjNTEgXQoKUmVjZW50IHZl
-cnNpb25zIG9mIHRoZSBETUEgQVBJIGRlYnVnIGNvZGUgaGF2ZSBzdGFydGVkIHRvIHdhcm4gYWJv
-dXQKdmlvbGF0aW9ucyBvZiB0aGUgbWF4aW11bSBETUEgc2VnbWVudCBzaXplLiBUaGlzIGlzIGJl
-Y2F1c2UgdGhlIHNlZ21lbnQKc2l6ZSBkZWZhdWx0cyB0byA2NCBLaUIsIHdoaWNoIGNhbiBlYXNp
-bHkgYmUgZXhjZWVkZWQgaW4gbGFyZ2UgYnVmZmVyCmFsbG9jYXRpb25zIHN1Y2ggYXMgdXNlZCBp
-biBEUk0vS01TIGZvciBmcmFtZWJ1ZmZlcnMuCgpUZWNobmljYWxseSB0aGUgVGVncmEgU01NVSBh
-bmQgQVJNIFNNTVUgZG9uJ3QgaGF2ZSBhIG1heGltdW0gc2VnbWVudApzaXplICh0aGV5IG1hcCBp
-bmRpdmlkdWFsIHBhZ2VzIGlycmVzcGVjdGl2ZSBvZiB3aGV0aGVyIHRoZXkgYXJlCmNvbnRpZ3Vv
-dXMgb3Igbm90KSwgc28gdGhlIGNob2ljZSBvZiA0IE1pQiBpcyBhIGJpdCBhcmJpdHJhcnkgaGVy
-ZS4gVGhlCm1heGltdW0gc2VnbWVudCBzaXplIGlzIGEgMzItYml0IHVuc2lnbmVkIGludGVnZXIs
-IHRob3VnaCwgc28gd2UgY2FuJ3QKc2V0IGl0IHRvIHRoZSBjb3JyZWN0IG1heGltdW0gc2l6ZSwg
-d2hpY2ggd291bGQgYmUgdGhlIHNpemUgb2YgdGhlCmFwZXJ0dXJlLgoKU2lnbmVkLW9mZi1ieTog
-VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KU2lnbmVkLW9mZi1ieTogU2FzaGEg
-TGV2aW4gPHNhc2hhbEBrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyB8
-IDMgKysrCiBpbmNsdWRlL2xpbnV4L2hvc3QxeC5oICAgfCAyICsrCiAyIGZpbGVzIGNoYW5nZWQs
-IDUgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyBi
-L2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYwppbmRleCAxMDNmZmZjMTkwNGIuLmM5YTYzN2Q5NDE3
-ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2hvc3QxeC9idXMuYwpAQCAtNDI1LDYgKzQyNSw5IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2Rldmlj
-ZV9hZGQoc3RydWN0IGhvc3QxeCAqaG9zdDF4LAogCiAJb2ZfZG1hX2NvbmZpZ3VyZSgmZGV2aWNl
-LT5kZXYsIGhvc3QxeC0+ZGV2LT5vZl9ub2RlLCB0cnVlKTsKIAorCWRldmljZS0+ZGV2LmRtYV9w
-YXJtcyA9ICZkZXZpY2UtPmRtYV9wYXJtczsKKwlkbWFfc2V0X21heF9zZWdfc2l6ZSgmZGV2aWNl
-LT5kZXYsIFNaXzRNKTsKKwogCWVyciA9IGhvc3QxeF9kZXZpY2VfcGFyc2VfZHQoZGV2aWNlLCBk
-cml2ZXIpOwogCWlmIChlcnIgPCAwKSB7CiAJCWtmcmVlKGRldmljZSk7CmRpZmYgLS1naXQgYS9p
-bmNsdWRlL2xpbnV4L2hvc3QxeC5oIGIvaW5jbHVkZS9saW51eC9ob3N0MXguaAppbmRleCA4OTEx
-MGQ4OTZkNzIuLmFlZjZlMmY3MzgwMiAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9ob3N0MXgu
-aAorKysgYi9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oCkBAIC0zMTAsNiArMzEwLDggQEAgc3RydWN0
-IGhvc3QxeF9kZXZpY2UgewogCXN0cnVjdCBsaXN0X2hlYWQgY2xpZW50czsKIAogCWJvb2wgcmVn
-aXN0ZXJlZDsKKworCXN0cnVjdCBkZXZpY2VfZG1hX3BhcmFtZXRlcnMgZG1hX3Bhcm1zOwogfTsK
-IAogc3RhdGljIGlubGluZSBzdHJ1Y3QgaG9zdDF4X2RldmljZSAqdG9faG9zdDF4X2RldmljZShz
-dHJ1Y3QgZGV2aWNlICpkZXYpCi0tIAoyLjIwLjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbA==
+From: Thierry Reding <treding@nvidia.com>
+
+[ Upstream commit 1e390478cfb527e34c9ab89ba57212cb05c33c51 ]
+
+Recent versions of the DMA API debug code have started to warn about
+violations of the maximum DMA segment size. This is because the segment
+size defaults to 64 KiB, which can easily be exceeded in large buffer
+allocations such as used in DRM/KMS for framebuffers.
+
+Technically the Tegra SMMU and ARM SMMU don't have a maximum segment
+size (they map individual pages irrespective of whether they are
+contiguous or not), so the choice of 4 MiB is a bit arbitrary here. The
+maximum segment size is a 32-bit unsigned integer, though, so we can't
+set it to the correct maximum size, which would be the size of the
+aperture.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/host1x/bus.c | 3 +++
+ include/linux/host1x.h   | 2 ++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 815bdb42e3f0..0121fe7a4548 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -423,6 +423,9 @@ static int host1x_device_add(struct host1x *host1x,
+ 
+ 	of_dma_configure(&device->dev, host1x->dev->of_node, true);
+ 
++	device->dev.dma_parms = &device->dma_parms;
++	dma_set_max_seg_size(&device->dev, SZ_4M);
++
+ 	err = host1x_device_parse_dt(device, driver);
+ 	if (err < 0) {
+ 		kfree(device);
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 89110d896d72..aef6e2f73802 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -310,6 +310,8 @@ struct host1x_device {
+ 	struct list_head clients;
+ 
+ 	bool registered;
++
++	struct device_dma_parameters dma_parms;
+ };
+ 
+ static inline struct host1x_device *to_host1x_device(struct device *dev)
+-- 
+2.20.1
