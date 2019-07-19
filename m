@@ -1,8 +1,8 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
  Pool
-Date: Fri, 19 Jul 2019 09:49:10 +0100
-Message-ID: <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
+Date: Fri, 19 Jul 2019 10:25:41 +0000
+Message-ID: <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
 References: <cover.1562149883.git.joabreu@synopsys.com>
  <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
  <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
@@ -11,55 +11,89 @@ References: <cover.1562149883.git.joabreu@synopsys.com>
  <BN8PR12MB3266960A104A7CDBB4E59192D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
  <bc9ab3c5-b1b9-26d4-7b73-01474328eafa@nvidia.com>
  <BN8PR12MB3266989D15E017A789E14282D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BN8PR12MB3266989D15E017A789E14282D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+Content-Type: multipart/mixed;
+        boundary="_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: netdev-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+--_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On 19/07/2019 09:44, Jose Abreu wrote:
-> From: Jon Hunter <jonathanh@nvidia.com>
-> Date: Jul/19/2019, 09:37:49 (UTC+00:00)
-> 
->>
->> On 19/07/2019 08:51, Jose Abreu wrote:
->>> From: Jon Hunter <jonathanh@nvidia.com>
->>> Date: Jul/18/2019, 10:16:20 (UTC+00:00)
->>>
->>>> Have you tried using NFS on a board with this ethernet controller?
->>>
->>> I'm having some issues setting up the NFS server in order to replicate 
->>> so this may take some time.
->>
->> If that's the case, we may wish to consider reverting this for now as it
->> is preventing our board from booting. Appears to revert cleanly on top
->> of mainline.
->>
->>> Are you able to add some debug in stmmac_init_rx_buffers() to see what's 
->>> the buffer address ?
->>
->> If you have a debug patch you would like me to apply and test with I
->> can. However, it is best you prepare the patch as maybe I will not dump
->> the appropriate addresses.
->>
->> Cheers
->> Jon
->>
->> -- 
->> nvpublic
-> 
-> Send me full boot log please.
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMTkvMjAx
+OSwgMDk6NDk6MTAgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMTkvMDcvMjAxOSAwOTo0NCwgSm9z
+ZSBBYnJldSB3cm90ZToNCj4gPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
+bT4NCj4gPiBEYXRlOiBKdWwvMTkvMjAxOSwgMDk6Mzc6NDkgKFVUQyswMDowMCkNCj4gPiANCj4g
+Pj4NCj4gPj4gT24gMTkvMDcvMjAxOSAwODo1MSwgSm9zZSBBYnJldSB3cm90ZToNCj4gPj4+IEZy
+b206IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KPiA+Pj4gRGF0ZTogSnVsLzE4
+LzIwMTksIDEwOjE2OjIwIChVVEMrMDA6MDApDQo+ID4+Pg0KPiA+Pj4+IEhhdmUgeW91IHRyaWVk
+IHVzaW5nIE5GUyBvbiBhIGJvYXJkIHdpdGggdGhpcyBldGhlcm5ldCBjb250cm9sbGVyPw0KPiA+
+Pj4NCj4gPj4+IEknbSBoYXZpbmcgc29tZSBpc3N1ZXMgc2V0dGluZyB1cCB0aGUgTkZTIHNlcnZl
+ciBpbiBvcmRlciB0byByZXBsaWNhdGUgDQo+ID4+PiBzbyB0aGlzIG1heSB0YWtlIHNvbWUgdGlt
+ZS4NCj4gPj4NCj4gPj4gSWYgdGhhdCdzIHRoZSBjYXNlLCB3ZSBtYXkgd2lzaCB0byBjb25zaWRl
+ciByZXZlcnRpbmcgdGhpcyBmb3Igbm93IGFzIGl0DQo+ID4+IGlzIHByZXZlbnRpbmcgb3VyIGJv
+YXJkIGZyb20gYm9vdGluZy4gQXBwZWFycyB0byByZXZlcnQgY2xlYW5seSBvbiB0b3ANCj4gPj4g
+b2YgbWFpbmxpbmUuDQo+ID4+DQo+ID4+PiBBcmUgeW91IGFibGUgdG8gYWRkIHNvbWUgZGVidWcg
+aW4gc3RtbWFjX2luaXRfcnhfYnVmZmVycygpIHRvIHNlZSB3aGF0J3MgDQo+ID4+PiB0aGUgYnVm
+ZmVyIGFkZHJlc3MgPw0KPiA+Pg0KPiA+PiBJZiB5b3UgaGF2ZSBhIGRlYnVnIHBhdGNoIHlvdSB3
+b3VsZCBsaWtlIG1lIHRvIGFwcGx5IGFuZCB0ZXN0IHdpdGggSQ0KPiA+PiBjYW4uIEhvd2V2ZXIs
+IGl0IGlzIGJlc3QgeW91IHByZXBhcmUgdGhlIHBhdGNoIGFzIG1heWJlIEkgd2lsbCBub3QgZHVt
+cA0KPiA+PiB0aGUgYXBwcm9wcmlhdGUgYWRkcmVzc2VzLg0KPiA+Pg0KPiA+PiBDaGVlcnMNCj4g
+Pj4gSm9uDQo+ID4+DQo+ID4+IC0tIA0KPiA+PiBudnB1YmxpYw0KPiA+IA0KPiA+IFNlbmQgbWUg
+ZnVsbCBib290IGxvZyBwbGVhc2UuDQo+IA0KPiBQbGVhc2Ugc2VlOiBodHRwczovL3VybGRlZmVu
+c2UucHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9aHR0cHMtM0FfX3Bhc3RlLmRlYmlhbi5uZXRfMTA5
+MjI3N18mZD1Ed0lDYVEmYz1EUEw2X1hfNkprWEZ4N0FYV3FCMHRnJnI9V0hEc2M2a2NXQWw0aTk2
+Vm01aEpfMTlJSml1eHhfcF9Sem8yZy11SERLdyZtPWlIYWhOUEVJZWdrMW1lckUxdXRqUnZDOFhv
+ejVqUWxOYjFWUnpQSGs0LTQmcz00VVRibzhtaVM0TS1QbUdOdXA0T1hnSk9vc2d2SlFabTl3Y3ZX
+WWpKczdrJmU9IA0KPiANCj4gQ2hlZXJzDQo+IEpvbg0KPiANCj4gLS0gDQo+IG52cHVibGljDQoN
+ClRoYW5rcy4gQ2FuIHlvdSBhZGQgYXR0YWNoZWQgcGF0Y2ggYW5kIGNoZWNrIGlmIFdBUk4gaXMg
+dHJpZ2dlcmVkID8gQW5kIA0KaXQgd291bGQgYmUgZ29vZCB0byBrbm93IHdoZXRoZXIgdGhpcyBp
+cyBib290IHNwZWNpZmljIGNyYXNoIG9yIGp1c3QgDQpkb2Vzbid0IHdvcmsgYXQgYWxsLCBpLmUu
+IG5vdCB1c2luZyBORlMgdG8gbW91bnQgcm9vdGZzIGFuZCBpbnN0ZWFkIA0KbWFudWFsbHkgY29u
+ZmlndXJlIGludGVyZmFjZSBhbmQgc2VuZC9yZWNlaXZlIHBhY2tldHMuDQoNCi0tLQ0KVGhhbmtz
+LA0KSm9zZSBNaWd1ZWwgQWJyZXUNCg==
 
-Please see: https://paste.debian.net/1092277/
+--_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_
+Content-Type: application/octet-stream;
+	name="0001-net-stmmac-Add-page-sanity-check.patch"
+Content-Description: 0001-net-stmmac-Add-page-sanity-check.patch
+Content-Disposition: attachment;
+	filename="0001-net-stmmac-Add-page-sanity-check.patch"; size=1393;
+	creation-date="Fri, 19 Jul 2019 10:22:11 GMT";
+	modification-date="Fri, 19 Jul 2019 10:22:11 GMT"
+Content-Transfer-Encoding: base64
 
-Cheers
-Jon
+RnJvbSBkNDk1NjIwZmVjY2YyNGRjNTQyMTgyMTljNGM3Zjc5Yzg2OTZlY2FhIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8ZDQ5NTYyMGZlY2NmMjRkYzU0MjE4MjE5YzRjN2Y3
+OWM4Njk2ZWNhYS4xNTYzNTMxNzMxLmdpdC5qb2FicmV1QHN5bm9wc3lzLmNvbT4KRnJvbTogSm9z
+ZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkRhdGU6IEZyaSwgMTkgSnVsIDIwMTkgMTI6
+MjE6NDQgKzAyMDAKU3ViamVjdDogW1BBVENIIG5ldF0gbmV0OiBzdG1tYWM6IEFkZCBwYWdlIHNh
+bml0eSBjaGVjawoKQWRkIGEgV0FSTl9PTigpIHdoZW4gcGFnZSBpcyBOVUxMLgoKU2lnbmVkLW9m
+Zi1ieTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CgotLS0KQ2M6IEdpdXNlcHBl
+IENhdmFsbGFybyA8cGVwcGUuY2F2YWxsYXJvQHN0LmNvbT4KQ2M6IEFsZXhhbmRyZSBUb3JndWUg
+PGFsZXhhbmRyZS50b3JndWVAc3QuY29tPgpDYzogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5
+cy5jb20+CkNjOiAiRGF2aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD4KQ2M6IE1h
+eGltZSBDb3F1ZWxpbiA8bWNvcXVlbGluLnN0bTMyQGdtYWlsLmNvbT4KQ2M6IG5ldGRldkB2Z2Vy
+Lmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXN0bTMyQHN0LW1kLW1haWxtYW4uc3Rvcm1yZXBseS5jb20K
+Q2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpDYzogbGludXgta2VybmVs
+QHZnZXIua2VybmVsLm9yZwotLS0KIGRyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFj
+L3N0bW1hY19tYWluLmMgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21h
+aW4uYyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMK
+aW5kZXggNWYxMjk0Y2UwMjE2Li5lYWM2OTIwMzAxZTkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0
+L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMKKysrIGIvZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYwpAQCAtMzM1MCw2ICszMzUwLDgg
+QEAgc3RhdGljIGludCBzdG1tYWNfcngoc3RydWN0IHN0bW1hY19wcml2ICpwcml2LCBpbnQgbGlt
+aXQsIHUzMiBxdWV1ZSkKIAkJZW50cnkgPSBuZXh0X2VudHJ5OwogCQlidWYgPSAmcnhfcS0+YnVm
+X3Bvb2xbZW50cnldOwogCisJCVdBUk5fT04oIWJ1Zi0+cGFnZSk7CisKIAkJaWYgKHByaXYtPmV4
+dGVuZF9kZXNjKQogCQkJcCA9IChzdHJ1Y3QgZG1hX2Rlc2MgKikocnhfcS0+ZG1hX2VyeCArIGVu
+dHJ5KTsKIAkJZWxzZQotLSAKMi43LjQKCg==
 
--- 
-nvpublic
+--_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_--
