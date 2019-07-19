@@ -1,8 +1,8 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
  Pool
-Date: Fri, 19 Jul 2019 12:28:26 +0000
-Message-ID: <BN8PR12MB32669EDE5784FDBEA90D022FD3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+Date: Fri, 19 Jul 2019 13:30:10 +0100
+Message-ID: <64e37224-6661-ddb0-4394-83a16e1ccb61@nvidia.com>
 References: <cover.1562149883.git.joabreu@synopsys.com>
  <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
  <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
@@ -14,77 +14,35 @@ References: <cover.1562149883.git.joabreu@synopsys.com>
  <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
  <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-        boundary="_002_BN8PR12MB32669EDE5784FDBEA90D022FD3CB0BN8PR12MB3266namp_"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
---_002_BN8PR12MB32669EDE5784FDBEA90D022FD3CB0BN8PR12MB3266namp_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 
-RnJvbTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+DQpEYXRlOiBKdWwvMTkvMjAx
-OSwgMTE6MjU6NDEgKFVUQyswMDowMCkNCg0KPiBUaGFua3MuIENhbiB5b3UgYWRkIGF0dGFjaGVk
-IHBhdGNoIGFuZCBjaGVjayBpZiBXQVJOIGlzIHRyaWdnZXJlZCA/IA0KDQpCVFcsIGFsc28gYWRk
-IHRoZSBhdHRhY2hlZCBvbmUgaW4gdGhpcyBtYWlsLiBUaGUgV0FSTiB3aWxsIHByb2JhYmx5IA0K
-bmV2ZXIgZ2V0IHRyaWdnZXJlZCB3aXRob3V0IGl0Lg0KDQpDYW4geW91IGFsc28gcHJpbnQgImJ1
-Zi0+YWRkciIgYWZ0ZXIgdGhlIFdBUk5fT04gPw0KDQotLS0NClRoYW5rcywNCkpvc2UgTWlndWVs
-IEFicmV1DQo=
+On 19/07/2019 11:25, Jose Abreu wrote:
 
---_002_BN8PR12MB32669EDE5784FDBEA90D022FD3CB0BN8PR12MB3266namp_
-Content-Type: application/octet-stream;
-	name="0001-net-stmmac-Use-kcalloc-instead-of-kmalloc_array.patch"
-Content-Description: 0001-net-stmmac-Use-kcalloc-instead-of-kmalloc_array.patch
-Content-Disposition: attachment;
-	filename="0001-net-stmmac-Use-kcalloc-instead-of-kmalloc_array.patch";
-	size=2245; creation-date="Fri, 19 Jul 2019 12:28:17 GMT";
-	modification-date="Fri, 19 Jul 2019 12:27:30 GMT"
-Content-Transfer-Encoding: base64
+...
 
-RnJvbSBlYmExMjg4NTYxNDdkNmRkZWNjODE0OGFhZWVlNDE4NjQwNjljOWI1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8ZWJhMTI4ODU2MTQ3ZDZkZGVjYzgxNDhhYWVlZTQx
-ODY0MDY5YzliNS4xNTYzNTM5MjUwLmdpdC5qb2FicmV1QHN5bm9wc3lzLmNvbT4KRnJvbTogSm9z
-ZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkRhdGU6IEZyaSwgMTkgSnVsIDIwMTkgMTM6
-NTg6NTUgKzAyMDAKU3ViamVjdDogW1BBVENIIG5ldF0gbmV0OiBzdG1tYWM6IFVzZSBrY2FsbG9j
-KCkgaW5zdGVhZCBvZiBrbWFsbG9jX2FycmF5KCkKCldlIG5lZWQgdGhlIG1lbW9yeSB0byBiZSB6
-ZXJvZWQgdXBvbiBhbGxvY2F0aW9uIHNvIHVzZSBrY2FsbG9jKCkKaW5zdGVhZC4KClNpZ25lZC1v
-ZmYtYnk6IEpvc2UgQWJyZXUgPGpvYWJyZXVAc3lub3BzeXMuY29tPgoKLS0tCkNjOiBHaXVzZXBw
-ZSBDYXZhbGxhcm8gPHBlcHBlLmNhdmFsbGFyb0BzdC5jb20+CkNjOiBBbGV4YW5kcmUgVG9yZ3Vl
-IDxhbGV4YW5kcmUudG9yZ3VlQHN0LmNvbT4KQ2M6IEpvc2UgQWJyZXUgPGpvYWJyZXVAc3lub3Bz
-eXMuY29tPgpDYzogIkRhdmlkIFMuIE1pbGxlciIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+CkNjOiBN
-YXhpbWUgQ29xdWVsaW4gPG1jb3F1ZWxpbi5zdG0zMkBnbWFpbC5jb20+CkNjOiBuZXRkZXZAdmdl
-ci5rZXJuZWwub3JnCkNjOiBsaW51eC1zdG0zMkBzdC1tZC1tYWlsbWFuLnN0b3JtcmVwbHkuY29t
-CkNjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKQ2M6IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmcKLS0tCiBkcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1h
-Yy9zdG1tYWNfbWFpbi5jIHwgMTcgKysrKysrKystLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA4
-IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQv
-ZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYyBiL2RyaXZlcnMvbmV0L2V0aGVy
-bmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMKaW5kZXggZWFjNjkyMDMwMWU5Li44ZTU1
-YWJlMTA5OWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFj
-L3N0bW1hY19tYWluLmMKKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMv
-c3RtbWFjX21haW4uYwpAQCAtMTU1NSw5ICsxNTU1LDggQEAgc3RhdGljIGludCBhbGxvY19kbWFf
-cnhfZGVzY19yZXNvdXJjZXMoc3RydWN0IHN0bW1hY19wcml2ICpwcml2KQogCQkJZ290byBlcnJf
-ZG1hOwogCQl9CiAKLQkJcnhfcS0+YnVmX3Bvb2wgPSBrbWFsbG9jX2FycmF5KERNQV9SWF9TSVpF
-LAotCQkJCQkgICAgICAgc2l6ZW9mKCpyeF9xLT5idWZfcG9vbCksCi0JCQkJCSAgICAgICBHRlBf
-S0VSTkVMKTsKKwkJcnhfcS0+YnVmX3Bvb2wgPSBrY2FsbG9jKERNQV9SWF9TSVpFLCBzaXplb2Yo
-KnJ4X3EtPmJ1Zl9wb29sKSwKKwkJCQkJIEdGUF9LRVJORUwpOwogCQlpZiAoIXJ4X3EtPmJ1Zl9w
-b29sKQogCQkJZ290byBlcnJfZG1hOwogCkBAIC0xNjA4LDE1ICsxNjA3LDE1IEBAIHN0YXRpYyBp
-bnQgYWxsb2NfZG1hX3R4X2Rlc2NfcmVzb3VyY2VzKHN0cnVjdCBzdG1tYWNfcHJpdiAqcHJpdikK
-IAkJdHhfcS0+cXVldWVfaW5kZXggPSBxdWV1ZTsKIAkJdHhfcS0+cHJpdl9kYXRhID0gcHJpdjsK
-IAotCQl0eF9xLT50eF9za2J1ZmZfZG1hID0ga21hbGxvY19hcnJheShETUFfVFhfU0laRSwKLQkJ
-CQkJCSAgICBzaXplb2YoKnR4X3EtPnR4X3NrYnVmZl9kbWEpLAotCQkJCQkJICAgIEdGUF9LRVJO
-RUwpOworCQl0eF9xLT50eF9za2J1ZmZfZG1hID0ga2NhbGxvYyhETUFfVFhfU0laRSwKKwkJCQkJ
-ICAgICAgc2l6ZW9mKCp0eF9xLT50eF9za2J1ZmZfZG1hKSwKKwkJCQkJICAgICAgR0ZQX0tFUk5F
-TCk7CiAJCWlmICghdHhfcS0+dHhfc2tidWZmX2RtYSkKIAkJCWdvdG8gZXJyX2RtYTsKIAotCQl0
-eF9xLT50eF9za2J1ZmYgPSBrbWFsbG9jX2FycmF5KERNQV9UWF9TSVpFLAotCQkJCQkJc2l6ZW9m
-KHN0cnVjdCBza19idWZmICopLAotCQkJCQkJR0ZQX0tFUk5FTCk7CisJCXR4X3EtPnR4X3NrYnVm
-ZiA9IGtjYWxsb2MoRE1BX1RYX1NJWkUsCisJCQkJCSAgc2l6ZW9mKHN0cnVjdCBza19idWZmICop
-LAorCQkJCQkgIEdGUF9LRVJORUwpOwogCQlpZiAoIXR4X3EtPnR4X3NrYnVmZikKIAkJCWdvdG8g
-ZXJyX2RtYTsKIAotLSAKMi43LjQKCg==
+> Thanks. Can you add attached patch and check if WARN is triggered ? And 
+> it would be good to know whether this is boot specific crash or just 
+> doesn't work at all, i.e. not using NFS to mount rootfs and instead 
+> manually configure interface and send/receive packets.
 
---_002_BN8PR12MB32669EDE5784FDBEA90D022FD3CB0BN8PR12MB3266namp_--
+With this patch applied I did not see the WARN trigger.
+
+I booted the board without using NFS and then started used dhclient to
+bring up the network interface and it appears to be working fine. I can
+even mount the NFS share fine. So it does appear to be particular to
+using NFS to mount the rootfs.
+
+Cheers
+Jon
+
+-- 
+nvpublic
