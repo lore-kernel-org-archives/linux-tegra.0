@@ -1,8 +1,8 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
  Pool
-Date: Fri, 19 Jul 2019 13:30:10 +0100
-Message-ID: <64e37224-6661-ddb0-4394-83a16e1ccb61@nvidia.com>
+Date: Fri, 19 Jul 2019 12:32:27 +0000
+Message-ID: <BN8PR12MB3266E1FAC5B7874EFA69DD7BD3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
 References: <cover.1562149883.git.joabreu@synopsys.com>
  <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
  <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
@@ -13,36 +13,23 @@ References: <cover.1562149883.git.joabreu@synopsys.com>
  <BN8PR12MB3266989D15E017A789E14282D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
  <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
  <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <64e37224-6661-ddb0-4394-83a16e1ccb61@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+In-Reply-To: <64e37224-6661-ddb0-4394-83a16e1ccb61@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 19/07/2019 11:25, Jose Abreu wrote:
-
-...
-
-> Thanks. Can you add attached patch and check if WARN is triggered ? And 
-> it would be good to know whether this is boot specific crash or just 
-> doesn't work at all, i.e. not using NFS to mount rootfs and instead 
-> manually configure interface and send/receive packets.
-
-With this patch applied I did not see the WARN trigger.
-
-I booted the board without using NFS and then started used dhclient to
-bring up the network interface and it appears to be working fine. I can
-even mount the NFS share fine. So it does appear to be particular to
-using NFS to mount the rootfs.
-
-Cheers
-Jon
-
--- 
-nvpublic
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMTkvMjAx
+OSwgMTM6MzA6MTAgKFVUQyswMDowMCkNCg0KPiBJIGJvb3RlZCB0aGUgYm9hcmQgd2l0aG91dCB1
+c2luZyBORlMgYW5kIHRoZW4gc3RhcnRlZCB1c2VkIGRoY2xpZW50IHRvDQo+IGJyaW5nIHVwIHRo
+ZSBuZXR3b3JrIGludGVyZmFjZSBhbmQgaXQgYXBwZWFycyB0byBiZSB3b3JraW5nIGZpbmUuIEkg
+Y2FuDQo+IGV2ZW4gbW91bnQgdGhlIE5GUyBzaGFyZSBmaW5lLiBTbyBpdCBkb2VzIGFwcGVhciB0
+byBiZSBwYXJ0aWN1bGFyIHRvDQo+IHVzaW5nIE5GUyB0byBtb3VudCB0aGUgcm9vdGZzLg0KDQpE
+YW1uLiBDYW4geW91IHNlbmQgbWUgeW91ciAuY29uZmlnID8NCg0KLS0tDQpUaGFua3MsDQpKb3Nl
+IE1pZ3VlbCBBYnJldQ0K
