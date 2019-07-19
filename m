@@ -1,126 +1,121 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 11/24] PM / devfreq: tegra30: Add debug messages
-Date: Fri, 19 Jul 2019 20:10:28 +0300
-Message-ID: <2886eeaa-f877-d0cf-7056-8cf047436903@gmail.com>
+Subject: Re: [PATCH v4 20/24] PM / devfreq: tegra30: Optimize upper average
+ watermark selection
+Date: Fri, 19 Jul 2019 20:52:18 +0300
+Message-ID: <01b442e4-437d-799d-ed0d-4628bd0d683b@gmail.com>
 References: <20190707223303.6755-1-digetx@gmail.com>
- <CGME20190707223640epcas4p15337f40466342832b731ad6a53be946e@epcas4p1.samsung.com>
- <20190707223303.6755-12-digetx@gmail.com>
- <c883bdbe-427f-35a1-9e63-5e4953a84286@samsung.com>
- <53cd0ba5-f814-cd9b-19c5-1d42717ca58c@gmail.com>
- <922c9178-71de-46ad-eafd-805af461bedb@samsung.com>
- <f819c226-4328-c85d-5da3-932391fa6747@gmail.com>
- <f630dacc-2065-a12d-bd03-1fc6c4363e1f@samsung.com>
- <20190719041357.0a80a2dc@dimatab>
- <a5e0c217-280f-a420-4604-3872a17f5c96@samsung.com>
+ <CGME20190707223619epcas4p333f556dcf5a477b5cad5c9362a6f9b97@epcas4p3.samsung.com>
+ <20190707223303.6755-21-digetx@gmail.com>
+ <e3358039-d1b3-a5a0-1a37-aeb8edd49d6b@samsung.com>
+ <20190719045943.73b53e31@dimatab>
+ <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
+ <20190719052111.6641285d@dimatab>
+ <3c9c6a3a-8bce-d304-8472-029e6e673a99@samsung.com>
+ <c3e4330a-a96c-1ae9-761e-9eb1179e9b01@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a5e0c217-280f-a420-4604-3872a17f5c96@samsung.com>
+In-Reply-To: <c3e4330a-a96c-1ae9-761e-9eb1179e9b01@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chanwoo Choi <cw00.choi@samsung.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.07.2019 4:22, Chanwoo Choi пишет:
-> On 19. 7. 19. 오전 10:13, Dmitry Osipenko wrote:
->> В Thu, 18 Jul 2019 18:07:05 +0900
->> Chanwoo Choi <cw00.choi@samsung.com> пишет:
->>
->>> On 19. 7. 18. 오전 12:46, Dmitry Osipenko wrote:
->>>> 17.07.2019 9:45, Chanwoo Choi пишет:  
->>>>> On 19. 7. 16. 오후 10:26, Dmitry Osipenko wrote:  
->>>>>> 16.07.2019 15:23, Chanwoo Choi пишет:  
->>>>>>> Hi Dmitry,
+19.07.2019 9:11, Chanwoo Choi пишет:
+> On 19. 7. 19. 오후 3:09, Chanwoo Choi wrote:
+>> On 19. 7. 19. 오전 11:21, Dmitry Osipenko wrote:
+>>> В Fri, 19 Jul 2019 11:06:05 +0900
+>>> Chanwoo Choi <cw00.choi@samsung.com> пишет:
+>>>
+>>>> On 19. 7. 19. 오전 10:59, Dmitry Osipenko wrote:
+>>>>> В Fri, 19 Jul 2019 10:36:30 +0900
+>>>>> Chanwoo Choi <cw00.choi@samsung.com> пишет:
+>>>>>   
+>>>>>> On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:  
+>>>>>>> I noticed that CPU may be crossing the dependency threshold very
+>>>>>>> frequently for some workloads and this results in a lot of
+>>>>>>> interrupts which could be avoided if MCALL client is keeping
+>>>>>>> actual EMC frequency at a higher rate.
 >>>>>>>
->>>>>>> Usually, the kernel log print for all users
->>>>>>> such as changing the frequency, fail or success.
+>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>> ---
+>>>>>>>  drivers/devfreq/tegra30-devfreq.c | 23 ++++++++++++++++++-----
+>>>>>>>  1 file changed, 18 insertions(+), 5 deletions(-)
 >>>>>>>
->>>>>>> But, if the log just show the register dump,
->>>>>>> it is not useful for all users. It is just used
->>>>>>> for only specific developer.
->>>>>>>
->>>>>>> I recommend that you better to add more exception handling
->>>>>>> code on many points instead of just showing the register dump.  
+>>>>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c
+>>>>>>> b/drivers/devfreq/tegra30-devfreq.c index
+>>>>>>> c3cf87231d25..4d582809acb6 100644 ---
+>>>>>>> a/drivers/devfreq/tegra30-devfreq.c +++
+>>>>>>> b/drivers/devfreq/tegra30-devfreq.c @@ -314,7 +314,8 @@ static
+>>>>>>> void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra, }
+>>>>>>>  
+>>>>>>>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq
+>>>>>>> *tegra,
+>>>>>>> -					   struct
+>>>>>>> tegra_devfreq_device *dev)
+>>>>>>> +					   struct
+>>>>>>> tegra_devfreq_device *dev,
+>>>>>>> +					   unsigned long freq)
+>>>>>>>  {
+>>>>>>>  	unsigned long avg_threshold, lower, upper;
+>>>>>>>  
+>>>>>>> @@ -323,6 +324,15 @@ static void
+>>>>>>> tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>>>>>>> avg_threshold = dev->config->avg_dependency_threshold;
+>>>>>>> avg_threshold = avg_threshold * ACTMON_SAMPLING_PERIOD; 
+>>>>>>> +	/*
+>>>>>>> +	 * If cumulative EMC frequency selection is higher than
+>>>>>>> the
+>>>>>>> +	 * device's, then there is no need to set upper watermark
+>>>>>>> to
+>>>>>>> +	 * a lower value because it will result in unnecessary
+>>>>>>> upper
+>>>>>>> +	 * interrupts.
+>>>>>>> +	 */
+>>>>>>> +	if (freq * ACTMON_SAMPLING_PERIOD > upper)
+>>>>>>> +		upper = freq * ACTMON_SAMPLING_PERIOD;    
 >>>>>>
->>>>>> The debug messages are not users, but for developers. Yes, I
->>>>>> primarily made the debugging to be useful for myself and will be
->>>>>> happy to change the way debugging is done if there will be any
->>>>>> other active developer for this driver. The registers dump is
->>>>>> more than enough in order to understand what's going on, I don't
->>>>>> see any real need to change anything here for now.  
+>>>>>> Also, 'upper value is used on the patch5. You can combine this code
+>>>>>> to patch5 or if this patch depends on the cpu notifier, you can
+>>>>>> combine it to the patch of adding cpu notifier without separate
+>>>>>> patch.  
 >>>>>
->>>>> Basically, we have to develop code and add the log for anyone.
->>>>> As you commented, even if there are no other developer, we never
->>>>> guarantee this assumption forever. And also, if added debug message
->>>>> for only you, you can add them when testing it temporarily.
->>>>>
->>>>> If you want to add the just register dump log for you,
->>>>> I can't agree. Once again, I hope that anyone understand
->>>>> the meaning of debug message as much possible as.
->>>>>  
+>>>>> Well okay, I'll try to squash some of the patches in the next
+>>>>> revision. Usually I'm receiving comments in the other direction,
+>>>>> asking to separate patches into smaller changes ;) So that's more a
+>>>>> personal preference of each maintainer, I'd say.
+>>>>>   
 >>>>
->>>> The registers dump should be good for everyone because it's a
->>>> self-explanatory information for anyone who is familiar with the
->>>> hardware. I don't think there is a need for anything else than what
->>>> is proposed in this patch, at least for now. I also simply don't
->>>> see any other better way to debug the state of this particular
->>>> hardware, again this logging is for the driver developers and not
->>>> for users.
->>>>
->>>> Initially, I was temporarily adding the debug messages. Now they are
->>>> pretty much mandatory for verifying that driver is working
->>>> properly. And of course the debugging messages got into the shape
->>>> of this patch after several iterations of refinements. So again, I
->>>> suppose that this should be good enough for everyone who is
->>>> familiar with the hardware. And of course I'm open to the
->>>> constructive suggestions, the debugging aid is not an ABI and could
->>>> be changed/improved at any time.
->>>>
->>>> You're suggesting to break down the debugging into several smaller
->>>> pieces, but I'm finding that as not a constructive suggestion
->>>> because the information about the full hardware state is actually
->>>> necessary for the productive debugging.
->>>>
->>>>   
+>>>> Right. We have to make the patch with atomic attribute.
+>>>> But, if there are patches which touch the same code
+>>>> in the same patchset. We can squash or do refactorig
+>>>> of this code.
 >>>
->>> Sorry for that as I saie, I cannot agree this patch. In my case,
->>> I don't understand what is meaning of register dump of this patch.
->>> I knew that just register dump are useful for real developer.
+>>> The main benefit of having smaller logical changes is that when there is
+>>> a bug, it's easier to narrow down the offending change using bisection.
+>>> And it's just easier to review smaller patches, of course.
 >>
->> It's not only a registers dump, as you may see there is also a dump of
->> other properties like boosting value, OPPs selection and etc.
->>
->> It looks to me that you're also missing important detail that debug
->> messages are compiled out unless DEBUG is defined for the drivers
->> build. So in order to get the debug message a user shall explicitly add
->> #define DEBUG macro to the code or enable debug messages globally in
->> the kernel's config. There is also an option for dynamic debug messages
->> in the kernel, but it doesn't matter now because all these messages are
->> turned into tracepoints later in the patch #17.
+>> I agree that the patch should contain the atomic feature.
+>> To remove the some communication confusion between us,
+>> I don't mean that you have to merge patches to only one patch.
 > 
+> If each patch has the atomic attribute, it have to be made as the separate patch.
+> But, if some patches are included in the the following two case,
+> can combine patches to one patch.
 > 
-> Right. But, this patch could not the split up between register dump and others.
-> As I said repeatly, I hope to add the log that anyone can understand. 
-
-I'm afraid that's a way too big request to make it universal for anyone
-or I'm just failing to understand what you're asking for. In my opinion
-it's already understandable by everybody who is really interested in
-debugging of this driver. I really don't see how to make it better, in
-my opinion it's already ideal.
-
-I'll drop the debug patches from the series in the next revision and
-keep them locally for now. Maybe we could get back to this later sometime.
-
 >>
->>> If you want to show the register dump, you better to add some feature
->>> with debugfs for devfreq framework in order to read the register dump.
->>> As I knew, sound framework (alsa) has the similar feature for checking
->>> the register dump.
->>>
+>> It is important to remove the following two cases on the same patchset.
 >>
->> The intent was to have an option for dynamic debugging of the driver and
->> initially debug messages were good enough, but then it became not enough
->> and hence the debug messages were turned into tracepoints in the patch
->> #17. Would it be acceptable to squash this patch and #17?
+>> 1. the front patch adds the code and then later patch remove the added code.
+
+Okay, I agree that this is applicable to patch #11.
+
+>> 2. the front patch changes the code and the later patch again modified
+>>    the changed code of the front patch
+
+If patch A adds a new feature and then patch B adds another new feature
+on top of A, do you consider each of these patches as atomic?
+
+[snip]
