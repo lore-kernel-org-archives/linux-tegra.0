@@ -1,78 +1,122 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 115/171] PCI: tegra: Enable Relaxed Ordering only for Tegra20 & Tegra30
-Date: Thu, 18 Jul 2019 23:55:46 -0400
-Message-ID: <20190719035643.14300-115-sashal@kernel.org>
-References: <20190719035643.14300-1-sashal@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 20/24] PM / devfreq: tegra30: Optimize upper average
+ watermark selection
+Date: Fri, 19 Jul 2019 15:09:39 +0900
+Message-ID: <3c9c6a3a-8bce-d304-8472-029e6e673a99@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223619epcas4p333f556dcf5a477b5cad5c9362a6f9b97@epcas4p3.samsung.com>
+        <20190707223303.6755-21-digetx@gmail.com>
+        <e3358039-d1b3-a5a0-1a37-aeb8edd49d6b@samsung.com>
+        <20190719045943.73b53e31@dimatab>
+        <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
+        <20190719052111.6641285d@dimatab>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
+In-Reply-To: <20190719052111.6641285d@dimatab>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Vidya Sagar <vidyas@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Vidya Sagar <vidyas@nvidia.com>
+On 19. 7. 19. 오전 11:21, Dmitry Osipenko wrote:
+> В Fri, 19 Jul 2019 11:06:05 +0900
+> Chanwoo Choi <cw00.choi@samsung.com> пишет:
+> 
+>> On 19. 7. 19. 오전 10:59, Dmitry Osipenko wrote:
+>>> В Fri, 19 Jul 2019 10:36:30 +0900
+>>> Chanwoo Choi <cw00.choi@samsung.com> пишет:
+>>>   
+>>>> On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:  
+>>>>> I noticed that CPU may be crossing the dependency threshold very
+>>>>> frequently for some workloads and this results in a lot of
+>>>>> interrupts which could be avoided if MCALL client is keeping
+>>>>> actual EMC frequency at a higher rate.
+>>>>>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>> ---
+>>>>>  drivers/devfreq/tegra30-devfreq.c | 23 ++++++++++++++++++-----
+>>>>>  1 file changed, 18 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c
+>>>>> b/drivers/devfreq/tegra30-devfreq.c index
+>>>>> c3cf87231d25..4d582809acb6 100644 ---
+>>>>> a/drivers/devfreq/tegra30-devfreq.c +++
+>>>>> b/drivers/devfreq/tegra30-devfreq.c @@ -314,7 +314,8 @@ static
+>>>>> void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra, }
+>>>>>  
+>>>>>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq
+>>>>> *tegra,
+>>>>> -					   struct
+>>>>> tegra_devfreq_device *dev)
+>>>>> +					   struct
+>>>>> tegra_devfreq_device *dev,
+>>>>> +					   unsigned long freq)
+>>>>>  {
+>>>>>  	unsigned long avg_threshold, lower, upper;
+>>>>>  
+>>>>> @@ -323,6 +324,15 @@ static void
+>>>>> tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>>>>> avg_threshold = dev->config->avg_dependency_threshold;
+>>>>> avg_threshold = avg_threshold * ACTMON_SAMPLING_PERIOD; 
+>>>>> +	/*
+>>>>> +	 * If cumulative EMC frequency selection is higher than
+>>>>> the
+>>>>> +	 * device's, then there is no need to set upper watermark
+>>>>> to
+>>>>> +	 * a lower value because it will result in unnecessary
+>>>>> upper
+>>>>> +	 * interrupts.
+>>>>> +	 */
+>>>>> +	if (freq * ACTMON_SAMPLING_PERIOD > upper)
+>>>>> +		upper = freq * ACTMON_SAMPLING_PERIOD;    
+>>>>
+>>>> Also, 'upper value is used on the patch5. You can combine this code
+>>>> to patch5 or if this patch depends on the cpu notifier, you can
+>>>> combine it to the patch of adding cpu notifier without separate
+>>>> patch.  
+>>>
+>>> Well okay, I'll try to squash some of the patches in the next
+>>> revision. Usually I'm receiving comments in the other direction,
+>>> asking to separate patches into smaller changes ;) So that's more a
+>>> personal preference of each maintainer, I'd say.
+>>>   
+>>
+>> Right. We have to make the patch with atomic attribute.
+>> But, if there are patches which touch the same code
+>> in the same patchset. We can squash or do refactorig
+>> of this code.
+> 
+> The main benefit of having smaller logical changes is that when there is
+> a bug, it's easier to narrow down the offending change using bisection.
+> And it's just easier to review smaller patches, of course.
 
-[ Upstream commit 7be142caabc4780b13a522c485abc806de5c4114 ]
+I agree that the patch should contain the atomic feature.
+To remove the some communication confusion between us,
+I don't mean that you have to merge patches to only one patch.
 
-The PCI Tegra controller conversion to a device tree configurable
-driver in commit d1523b52bff3 ("PCI: tegra: Move PCIe driver
-to drivers/pci/host") implied that code for the driver can be
-compiled in for a kernel supporting multiple platforms.
+It is important to remove the following two cases on the same patchset.
 
-Unfortunately, a blind move of the code did not check that some of the
-quirks that were applied in arch/arm (eg enabling Relaxed Ordering on
-all PCI devices - since the quirk hook erroneously matches PCI_ANY_ID
-for both Vendor-ID and Device-ID) are now applied in all kernels that
-compile the PCI Tegra controlled driver, DT and ACPI alike.
+1. the front patch adds the code and then later patch remove the added code.
+2. the front patch changes the code and the later patch again modified
+   the changed code of the front patch
 
-This is completely wrong, in that enablement of Relaxed Ordering is only
-required by default in Tegra20 platforms as described in the Tegra20
-Technical Reference Manual (available at
-https://developer.nvidia.com/embedded/downloads#?search=tegra%202 in
-Section 34.1, where it is mentioned that Relaxed Ordering bit needs to
-be enabled in its root ports to avoid deadlock in hardware) and in the
-Tegra30 platforms for the same reasons (unfortunately not documented
-in the TRM).
 
-There is no other strict requirement on PCI devices Relaxed Ordering
-enablement on any other Tegra platforms or PCI host bridge driver.
+> 
+>> And also, if possible, I'd like you to make the patch
+>> list according to the role of patch. For example,
+>> the patches related to the 'watermark' could be sequentially
+>> listed. But, it is not forced opinion. If just possible.
+> 
+> Okay, will take this into account.
+> 
+> 
+> 
 
-Fix this quite upsetting situation by limiting the vendor and device IDs
-to which the Relaxed Ordering quirk applies to the root ports in
-question, reported above.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-[lorenzo.pieralisi@arm.com: completely rewrote the commit log/fixes tag]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/controller/pci-tegra.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 464ba2538d52..bc7be369c1b3 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -545,12 +545,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
- 
--/* Tegra PCIE requires relaxed ordering */
-+/* Tegra20 and Tegra30 PCIE requires relaxed ordering */
- static void tegra_pcie_relax_enable(struct pci_dev *dev)
- {
- 	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
- }
--DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf0, tegra_pcie_relax_enable);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_relax_enable);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_relax_enable);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_relax_enable);
- 
- static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
- {
 -- 
-2.20.1
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
