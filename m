@@ -1,28 +1,94 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Date: Fri, 19 Jul 2019 07:51:12 +0000
-Message-ID: <BN8PR12MB3266960A104A7CDBB4E59192D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <cover.1562149883.git.joabreu@synopsys.com>
- <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
- <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
- <6a6bac84-1d29-2740-1636-d3adb26b6bcc@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH AUTOSEL 4.14 41/60] PCI: tegra: Enable Relaxed Ordering
+ only for Tegra20 & Tegra30
+Date: Fri, 19 Jul 2019 09:33:11 +0100
+Message-ID: <838a6940-2a37-b91b-d522-8b154f3c71d7@nvidia.com>
+References: <20190719041109.18262-1-sashal@kernel.org>
+ <20190719041109.18262-41-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <6a6bac84-1d29-2740-1636-d3adb26b6bcc@nvidia.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190719041109.18262-41-sashal@kernel.org>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Vidya Sagar <vidyas@nvidia.com>, Thierry Reding <treding@nvidia.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMTgvMjAx
-OSwgMTA6MTY6MjAgKFVUQyswMDowMCkNCg0KPiBIYXZlIHlvdSB0cmllZCB1c2luZyBORlMgb24g
-YSBib2FyZCB3aXRoIHRoaXMgZXRoZXJuZXQgY29udHJvbGxlcj8NCg0KSSdtIGhhdmluZyBzb21l
-IGlzc3VlcyBzZXR0aW5nIHVwIHRoZSBORlMgc2VydmVyIGluIG9yZGVyIHRvIHJlcGxpY2F0ZSAN
-CnNvIHRoaXMgbWF5IHRha2Ugc29tZSB0aW1lLg0KDQpBcmUgeW91IGFibGUgdG8gYWRkIHNvbWUg
-ZGVidWcgaW4gc3RtbWFjX2luaXRfcnhfYnVmZmVycygpIHRvIHNlZSB3aGF0J3MgDQp0aGUgYnVm
-ZmVyIGFkZHJlc3MgPw0KDQotLS0NClRoYW5rcywNCkpvc2UgTWlndWVsIEFicmV1DQo=
+Hi Lorenzo,
+
+We have not requested that this is added to stable yet, however, has
+been picked up. Do we wish to let it soak in mainline for a release
+first? If so maybe we can ask Sasha to drop this for now.
+
+Cheers
+Jon
+
+On 19/07/2019 05:10, Sasha Levin wrote:
+> From: Vidya Sagar <vidyas@nvidia.com>
+> 
+> [ Upstream commit 7be142caabc4780b13a522c485abc806de5c4114 ]
+> 
+> The PCI Tegra controller conversion to a device tree configurable
+> driver in commit d1523b52bff3 ("PCI: tegra: Move PCIe driver
+> to drivers/pci/host") implied that code for the driver can be
+> compiled in for a kernel supporting multiple platforms.
+> 
+> Unfortunately, a blind move of the code did not check that some of the
+> quirks that were applied in arch/arm (eg enabling Relaxed Ordering on
+> all PCI devices - since the quirk hook erroneously matches PCI_ANY_ID
+> for both Vendor-ID and Device-ID) are now applied in all kernels that
+> compile the PCI Tegra controlled driver, DT and ACPI alike.
+> 
+> This is completely wrong, in that enablement of Relaxed Ordering is only
+> required by default in Tegra20 platforms as described in the Tegra20
+> Technical Reference Manual (available at
+> https://developer.nvidia.com/embedded/downloads#?search=tegra%202 in
+> Section 34.1, where it is mentioned that Relaxed Ordering bit needs to
+> be enabled in its root ports to avoid deadlock in hardware) and in the
+> Tegra30 platforms for the same reasons (unfortunately not documented
+> in the TRM).
+> 
+> There is no other strict requirement on PCI devices Relaxed Ordering
+> enablement on any other Tegra platforms or PCI host bridge driver.
+> 
+> Fix this quite upsetting situation by limiting the vendor and device IDs
+> to which the Relaxed Ordering quirk applies to the root ports in
+> question, reported above.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> [lorenzo.pieralisi@arm.com: completely rewrote the commit log/fixes tag]
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/pci/host/pci-tegra.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 1987fec1f126..d2ad76ef3e83 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -607,12 +607,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+>  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
+>  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
+>  
+> -/* Tegra PCIE requires relaxed ordering */
+> +/* Tegra20 and Tegra30 PCIE requires relaxed ordering */
+>  static void tegra_pcie_relax_enable(struct pci_dev *dev)
+>  {
+>  	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
+>  }
+> -DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf0, tegra_pcie_relax_enable);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_relax_enable);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_relax_enable);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_relax_enable);
+>  
+>  static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
+>  {
+> 
+
+-- 
+nvpublic
