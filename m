@@ -1,99 +1,413 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Date: Fri, 19 Jul 2019 10:25:41 +0000
-Message-ID: <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <cover.1562149883.git.joabreu@synopsys.com>
- <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
- <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
- <6a6bac84-1d29-2740-1636-d3adb26b6bcc@nvidia.com>
- <BN8PR12MB3266960A104A7CDBB4E59192D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
- <bc9ab3c5-b1b9-26d4-7b73-01474328eafa@nvidia.com>
- <BN8PR12MB3266989D15E017A789E14282D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
- <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
+From: Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] Input: keyboard: Use dev_get_drv_data
+Date: Fri, 19 Jul 2019 18:51:08 +0800
+Message-ID: <20190719105107.20651-1-hslester96@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-        boundary="_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
---_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+dev_get_drvdata is a simpler implementation comparing
+to to_platform_device + platform_get_drvdata.
+This makes the code simpler.
 
-RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMTkvMjAx
-OSwgMDk6NDk6MTAgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMTkvMDcvMjAxOSAwOTo0NCwgSm9z
-ZSBBYnJldSB3cm90ZToNCj4gPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
-bT4NCj4gPiBEYXRlOiBKdWwvMTkvMjAxOSwgMDk6Mzc6NDkgKFVUQyswMDowMCkNCj4gPiANCj4g
-Pj4NCj4gPj4gT24gMTkvMDcvMjAxOSAwODo1MSwgSm9zZSBBYnJldSB3cm90ZToNCj4gPj4+IEZy
-b206IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KPiA+Pj4gRGF0ZTogSnVsLzE4
-LzIwMTksIDEwOjE2OjIwIChVVEMrMDA6MDApDQo+ID4+Pg0KPiA+Pj4+IEhhdmUgeW91IHRyaWVk
-IHVzaW5nIE5GUyBvbiBhIGJvYXJkIHdpdGggdGhpcyBldGhlcm5ldCBjb250cm9sbGVyPw0KPiA+
-Pj4NCj4gPj4+IEknbSBoYXZpbmcgc29tZSBpc3N1ZXMgc2V0dGluZyB1cCB0aGUgTkZTIHNlcnZl
-ciBpbiBvcmRlciB0byByZXBsaWNhdGUgDQo+ID4+PiBzbyB0aGlzIG1heSB0YWtlIHNvbWUgdGlt
-ZS4NCj4gPj4NCj4gPj4gSWYgdGhhdCdzIHRoZSBjYXNlLCB3ZSBtYXkgd2lzaCB0byBjb25zaWRl
-ciByZXZlcnRpbmcgdGhpcyBmb3Igbm93IGFzIGl0DQo+ID4+IGlzIHByZXZlbnRpbmcgb3VyIGJv
-YXJkIGZyb20gYm9vdGluZy4gQXBwZWFycyB0byByZXZlcnQgY2xlYW5seSBvbiB0b3ANCj4gPj4g
-b2YgbWFpbmxpbmUuDQo+ID4+DQo+ID4+PiBBcmUgeW91IGFibGUgdG8gYWRkIHNvbWUgZGVidWcg
-aW4gc3RtbWFjX2luaXRfcnhfYnVmZmVycygpIHRvIHNlZSB3aGF0J3MgDQo+ID4+PiB0aGUgYnVm
-ZmVyIGFkZHJlc3MgPw0KPiA+Pg0KPiA+PiBJZiB5b3UgaGF2ZSBhIGRlYnVnIHBhdGNoIHlvdSB3
-b3VsZCBsaWtlIG1lIHRvIGFwcGx5IGFuZCB0ZXN0IHdpdGggSQ0KPiA+PiBjYW4uIEhvd2V2ZXIs
-IGl0IGlzIGJlc3QgeW91IHByZXBhcmUgdGhlIHBhdGNoIGFzIG1heWJlIEkgd2lsbCBub3QgZHVt
-cA0KPiA+PiB0aGUgYXBwcm9wcmlhdGUgYWRkcmVzc2VzLg0KPiA+Pg0KPiA+PiBDaGVlcnMNCj4g
-Pj4gSm9uDQo+ID4+DQo+ID4+IC0tIA0KPiA+PiBudnB1YmxpYw0KPiA+IA0KPiA+IFNlbmQgbWUg
-ZnVsbCBib290IGxvZyBwbGVhc2UuDQo+IA0KPiBQbGVhc2Ugc2VlOiBodHRwczovL3VybGRlZmVu
-c2UucHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9aHR0cHMtM0FfX3Bhc3RlLmRlYmlhbi5uZXRfMTA5
-MjI3N18mZD1Ed0lDYVEmYz1EUEw2X1hfNkprWEZ4N0FYV3FCMHRnJnI9V0hEc2M2a2NXQWw0aTk2
-Vm01aEpfMTlJSml1eHhfcF9Sem8yZy11SERLdyZtPWlIYWhOUEVJZWdrMW1lckUxdXRqUnZDOFhv
-ejVqUWxOYjFWUnpQSGs0LTQmcz00VVRibzhtaVM0TS1QbUdOdXA0T1hnSk9vc2d2SlFabTl3Y3ZX
-WWpKczdrJmU9IA0KPiANCj4gQ2hlZXJzDQo+IEpvbg0KPiANCj4gLS0gDQo+IG52cHVibGljDQoN
-ClRoYW5rcy4gQ2FuIHlvdSBhZGQgYXR0YWNoZWQgcGF0Y2ggYW5kIGNoZWNrIGlmIFdBUk4gaXMg
-dHJpZ2dlcmVkID8gQW5kIA0KaXQgd291bGQgYmUgZ29vZCB0byBrbm93IHdoZXRoZXIgdGhpcyBp
-cyBib290IHNwZWNpZmljIGNyYXNoIG9yIGp1c3QgDQpkb2Vzbid0IHdvcmsgYXQgYWxsLCBpLmUu
-IG5vdCB1c2luZyBORlMgdG8gbW91bnQgcm9vdGZzIGFuZCBpbnN0ZWFkIA0KbWFudWFsbHkgY29u
-ZmlndXJlIGludGVyZmFjZSBhbmQgc2VuZC9yZWNlaXZlIHBhY2tldHMuDQoNCi0tLQ0KVGhhbmtz
-LA0KSm9zZSBNaWd1ZWwgQWJyZXUNCg==
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/input/keyboard/ep93xx_keypad.c   | 10 ++++------
+ drivers/input/keyboard/gpio_keys.c       |  3 +--
+ drivers/input/keyboard/imx_keypad.c      | 10 ++++------
+ drivers/input/keyboard/lpc32xx-keys.c    |  6 ++----
+ drivers/input/keyboard/matrix_keypad.c   | 10 ++++------
+ drivers/input/keyboard/omap4-keypad.c    | 10 ++++------
+ drivers/input/keyboard/pmic8xxx-keypad.c |  6 ++----
+ drivers/input/keyboard/pxa27x_keypad.c   | 10 ++++------
+ drivers/input/keyboard/samsung-keypad.c  | 12 ++++--------
+ drivers/input/keyboard/spear-keyboard.c  | 10 ++++------
+ drivers/input/keyboard/st-keyscan.c      |  6 ++----
+ drivers/input/keyboard/tegra-kbc.c       | 10 ++++------
+ 12 files changed, 39 insertions(+), 64 deletions(-)
 
---_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_
-Content-Type: application/octet-stream;
-	name="0001-net-stmmac-Add-page-sanity-check.patch"
-Content-Description: 0001-net-stmmac-Add-page-sanity-check.patch
-Content-Disposition: attachment;
-	filename="0001-net-stmmac-Add-page-sanity-check.patch"; size=1393;
-	creation-date="Fri, 19 Jul 2019 10:22:11 GMT";
-	modification-date="Fri, 19 Jul 2019 10:22:11 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSBkNDk1NjIwZmVjY2YyNGRjNTQyMTgyMTljNGM3Zjc5Yzg2OTZlY2FhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8ZDQ5NTYyMGZlY2NmMjRkYzU0MjE4MjE5YzRjN2Y3
-OWM4Njk2ZWNhYS4xNTYzNTMxNzMxLmdpdC5qb2FicmV1QHN5bm9wc3lzLmNvbT4KRnJvbTogSm9z
-ZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkRhdGU6IEZyaSwgMTkgSnVsIDIwMTkgMTI6
-MjE6NDQgKzAyMDAKU3ViamVjdDogW1BBVENIIG5ldF0gbmV0OiBzdG1tYWM6IEFkZCBwYWdlIHNh
-bml0eSBjaGVjawoKQWRkIGEgV0FSTl9PTigpIHdoZW4gcGFnZSBpcyBOVUxMLgoKU2lnbmVkLW9m
-Zi1ieTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CgotLS0KQ2M6IEdpdXNlcHBl
-IENhdmFsbGFybyA8cGVwcGUuY2F2YWxsYXJvQHN0LmNvbT4KQ2M6IEFsZXhhbmRyZSBUb3JndWUg
-PGFsZXhhbmRyZS50b3JndWVAc3QuY29tPgpDYzogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5
-cy5jb20+CkNjOiAiRGF2aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD4KQ2M6IE1h
-eGltZSBDb3F1ZWxpbiA8bWNvcXVlbGluLnN0bTMyQGdtYWlsLmNvbT4KQ2M6IG5ldGRldkB2Z2Vy
-Lmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXN0bTMyQHN0LW1kLW1haWxtYW4uc3Rvcm1yZXBseS5jb20K
-Q2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpDYzogbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZwotLS0KIGRyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFj
-L3N0bW1hY19tYWluLmMgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21h
-aW4uYyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMK
-aW5kZXggNWYxMjk0Y2UwMjE2Li5lYWM2OTIwMzAxZTkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMKKysrIGIvZHJpdmVycy9uZXQv
-ZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYwpAQCAtMzM1MCw2ICszMzUwLDgg
-QEAgc3RhdGljIGludCBzdG1tYWNfcngoc3RydWN0IHN0bW1hY19wcml2ICpwcml2LCBpbnQgbGlt
-aXQsIHUzMiBxdWV1ZSkKIAkJZW50cnkgPSBuZXh0X2VudHJ5OwogCQlidWYgPSAmcnhfcS0+YnVm
-X3Bvb2xbZW50cnldOwogCisJCVdBUk5fT04oIWJ1Zi0+cGFnZSk7CisKIAkJaWYgKHByaXYtPmV4
-dGVuZF9kZXNjKQogCQkJcCA9IChzdHJ1Y3QgZG1hX2Rlc2MgKikocnhfcS0+ZG1hX2VyeCArIGVu
-dHJ5KTsKIAkJZWxzZQotLSAKMi43LjQKCg==
-
---_002_BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0BN8PR12MB3266namp_--
+diff --git a/drivers/input/keyboard/ep93xx_keypad.c b/drivers/input/keyboard/ep93xx_keypad.c
+index 7c70492d9d6b..bcc8a17f9a01 100644
+--- a/drivers/input/keyboard/ep93xx_keypad.c
++++ b/drivers/input/keyboard/ep93xx_keypad.c
+@@ -178,8 +178,7 @@ static void ep93xx_keypad_close(struct input_dev *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int ep93xx_keypad_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = keypad->input_dev;
+ 
+ 	mutex_lock(&input_dev->mutex);
+@@ -191,7 +190,7 @@ static int ep93xx_keypad_suspend(struct device *dev)
+ 
+ 	mutex_unlock(&input_dev->mutex);
+ 
+-	if (device_may_wakeup(&pdev->dev))
++	if (device_may_wakeup(dev))
+ 		enable_irq_wake(keypad->irq);
+ 
+ 	return 0;
+@@ -199,11 +198,10 @@ static int ep93xx_keypad_suspend(struct device *dev)
+ 
+ static int ep93xx_keypad_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = keypad->input_dev;
+ 
+-	if (device_may_wakeup(&pdev->dev))
++	if (device_may_wakeup(dev))
+ 		disable_irq_wake(keypad->irq);
+ 
+ 	mutex_lock(&input_dev->mutex);
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 03f4d152f6b7..a8db71ceb50c 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -290,8 +290,7 @@ static ssize_t gpio_keys_show_##name(struct device *dev,		\
+ 				     struct device_attribute *attr,	\
+ 				     char *buf)				\
+ {									\
+-	struct platform_device *pdev = to_platform_device(dev);		\
+-	struct gpio_keys_drvdata *ddata = platform_get_drvdata(pdev);	\
++	struct gpio_keys_drvdata *ddata = dev_get_drvdata(dev);	\
+ 									\
+ 	return gpio_keys_attr_show_helper(ddata, buf,			\
+ 					  type, only_disabled);		\
+diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
+index 97500a2de2d5..6d3d62c82de0 100644
+--- a/drivers/input/keyboard/imx_keypad.c
++++ b/drivers/input/keyboard/imx_keypad.c
+@@ -526,8 +526,7 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 
+ static int __maybe_unused imx_kbd_noirq_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct imx_keypad *kbd = platform_get_drvdata(pdev);
++	struct imx_keypad *kbd = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = kbd->input_dev;
+ 	unsigned short reg_val = readw(kbd->mmio_base + KPSR);
+ 
+@@ -539,7 +538,7 @@ static int __maybe_unused imx_kbd_noirq_suspend(struct device *dev)
+ 
+ 	mutex_unlock(&input_dev->mutex);
+ 
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(dev)) {
+ 		if (reg_val & KBD_STAT_KPKD)
+ 			reg_val |= KBD_STAT_KRIE;
+ 		if (reg_val & KBD_STAT_KPKR)
+@@ -554,12 +553,11 @@ static int __maybe_unused imx_kbd_noirq_suspend(struct device *dev)
+ 
+ static int __maybe_unused imx_kbd_noirq_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct imx_keypad *kbd = platform_get_drvdata(pdev);
++	struct imx_keypad *kbd = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = kbd->input_dev;
+ 	int ret = 0;
+ 
+-	if (device_may_wakeup(&pdev->dev))
++	if (device_may_wakeup(dev))
+ 		disable_irq_wake(kbd->irq);
+ 
+ 	mutex_lock(&input_dev->mutex);
+diff --git a/drivers/input/keyboard/lpc32xx-keys.c b/drivers/input/keyboard/lpc32xx-keys.c
+index a34e3271b0c9..cc15da57cfec 100644
+--- a/drivers/input/keyboard/lpc32xx-keys.c
++++ b/drivers/input/keyboard/lpc32xx-keys.c
+@@ -269,8 +269,7 @@ static int lpc32xx_kscan_probe(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int lpc32xx_kscan_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct lpc32xx_kscan_drv *kscandat = platform_get_drvdata(pdev);
++	struct lpc32xx_kscan_drv *kscandat = dev_get_drvdata(dev);
+ 	struct input_dev *input = kscandat->input;
+ 
+ 	mutex_lock(&input->mutex);
+@@ -287,8 +286,7 @@ static int lpc32xx_kscan_suspend(struct device *dev)
+ 
+ static int lpc32xx_kscan_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct lpc32xx_kscan_drv *kscandat = platform_get_drvdata(pdev);
++	struct lpc32xx_kscan_drv *kscandat = dev_get_drvdata(dev);
+ 	struct input_dev *input = kscandat->input;
+ 	int retval = 0;
+ 
+diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+index 30924b57058f..c5a294e1de95 100644
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -272,12 +272,11 @@ static void matrix_keypad_disable_wakeup(struct matrix_keypad *keypad)
+ 
+ static int matrix_keypad_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct matrix_keypad *keypad = platform_get_drvdata(pdev);
++	struct matrix_keypad *keypad = dev_get_drvdata(dev);
+ 
+ 	matrix_keypad_stop(keypad->input_dev);
+ 
+-	if (device_may_wakeup(&pdev->dev))
++	if (device_may_wakeup(dev))
+ 		matrix_keypad_enable_wakeup(keypad);
+ 
+ 	return 0;
+@@ -285,10 +284,9 @@ static int matrix_keypad_suspend(struct device *dev)
+ 
+ static int matrix_keypad_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct matrix_keypad *keypad = platform_get_drvdata(pdev);
++	struct matrix_keypad *keypad = dev_get_drvdata(dev);
+ 
+-	if (device_may_wakeup(&pdev->dev))
++	if (device_may_wakeup(dev))
+ 		matrix_keypad_disable_wakeup(keypad);
+ 
+ 	matrix_keypad_start(keypad->input_dev);
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+index 94c94d7f5155..a6db5494c742 100644
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -412,11 +412,10 @@ MODULE_DEVICE_TABLE(of, omap_keypad_dt_match);
+ #ifdef CONFIG_PM_SLEEP
+ static int omap4_keypad_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
++	struct omap4_keypad *keypad_data = dev_get_drvdata(dev);
+ 	int error;
+ 
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(dev)) {
+ 		error = enable_irq_wake(keypad_data->irq);
+ 		if (!error)
+ 			keypad_data->irq_wake_enabled = true;
+@@ -427,10 +426,9 @@ static int omap4_keypad_suspend(struct device *dev)
+ 
+ static int omap4_keypad_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
++	struct omap4_keypad *keypad_data = dev_get_drvdata(dev);
+ 
+-	if (device_may_wakeup(&pdev->dev) && keypad_data->irq_wake_enabled) {
++	if (device_may_wakeup(dev) && keypad_data->irq_wake_enabled) {
+ 		disable_irq_wake(keypad_data->irq);
+ 		keypad_data->irq_wake_enabled = false;
+ 	}
+diff --git a/drivers/input/keyboard/pmic8xxx-keypad.c b/drivers/input/keyboard/pmic8xxx-keypad.c
+index d529768a1d06..1e22d276e3e9 100644
+--- a/drivers/input/keyboard/pmic8xxx-keypad.c
++++ b/drivers/input/keyboard/pmic8xxx-keypad.c
+@@ -628,8 +628,7 @@ static int pmic8xxx_kp_probe(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int pmic8xxx_kp_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct pmic8xxx_kp *kp = platform_get_drvdata(pdev);
++	struct pmic8xxx_kp *kp = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = kp->input;
+ 
+ 	if (device_may_wakeup(dev)) {
+@@ -648,8 +647,7 @@ static int pmic8xxx_kp_suspend(struct device *dev)
+ 
+ static int pmic8xxx_kp_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct pmic8xxx_kp *kp = platform_get_drvdata(pdev);
++	struct pmic8xxx_kp *kp = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = kp->input;
+ 
+ 	if (device_may_wakeup(dev)) {
+diff --git a/drivers/input/keyboard/pxa27x_keypad.c b/drivers/input/keyboard/pxa27x_keypad.c
+index 39023664d2f2..654e178ff39e 100644
+--- a/drivers/input/keyboard/pxa27x_keypad.c
++++ b/drivers/input/keyboard/pxa27x_keypad.c
+@@ -663,14 +663,13 @@ static void pxa27x_keypad_close(struct input_dev *dev)
+ #ifdef CONFIG_PM_SLEEP
+ static int pxa27x_keypad_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct pxa27x_keypad *keypad = platform_get_drvdata(pdev);
++	struct pxa27x_keypad *keypad = dev_get_drvdata(dev);
+ 
+ 	/*
+ 	 * If the keypad is used a wake up source, clock can not be disabled.
+ 	 * Or it can not detect the key pressing.
+ 	 */
+-	if (device_may_wakeup(&pdev->dev))
++	if (device_may_wakeup(dev))
+ 		enable_irq_wake(keypad->irq);
+ 	else
+ 		clk_disable_unprepare(keypad->clk);
+@@ -680,8 +679,7 @@ static int pxa27x_keypad_suspend(struct device *dev)
+ 
+ static int pxa27x_keypad_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct pxa27x_keypad *keypad = platform_get_drvdata(pdev);
++	struct pxa27x_keypad *keypad = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = keypad->input_dev;
+ 	int ret = 0;
+ 
+@@ -689,7 +687,7 @@ static int pxa27x_keypad_resume(struct device *dev)
+ 	 * If the keypad is used as wake up source, the clock is not turned
+ 	 * off. So do not need configure it again.
+ 	 */
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(dev)) {
+ 		disable_irq_wake(keypad->irq);
+ 	} else {
+ 		mutex_lock(&input_dev->mutex);
+diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/keyboard/samsung-keypad.c
+index 70c1d086bdd2..286432c4a28a 100644
+--- a/drivers/input/keyboard/samsung-keypad.c
++++ b/drivers/input/keyboard/samsung-keypad.c
+@@ -462,8 +462,7 @@ static int samsung_keypad_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM
+ static int samsung_keypad_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
++	struct samsung_keypad *keypad = dev_get_drvdata(dev);
+ 	unsigned int val;
+ 	int error;
+ 
+@@ -486,8 +485,7 @@ static int samsung_keypad_runtime_suspend(struct device *dev)
+ 
+ static int samsung_keypad_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
++	struct samsung_keypad *keypad = dev_get_drvdata(dev);
+ 	unsigned int val;
+ 
+ 	if (keypad->stopped)
+@@ -531,8 +529,7 @@ static void samsung_keypad_toggle_wakeup(struct samsung_keypad *keypad,
+ 
+ static int samsung_keypad_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
++	struct samsung_keypad *keypad = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = keypad->input_dev;
+ 
+ 	mutex_lock(&input_dev->mutex);
+@@ -549,8 +546,7 @@ static int samsung_keypad_suspend(struct device *dev)
+ 
+ static int samsung_keypad_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
++	struct samsung_keypad *keypad = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = keypad->input_dev;
+ 
+ 	mutex_lock(&input_dev->mutex);
+diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
+index 7d25fa338ab4..a0276a3376d2 100644
+--- a/drivers/input/keyboard/spear-keyboard.c
++++ b/drivers/input/keyboard/spear-keyboard.c
+@@ -288,8 +288,7 @@ static int spear_kbd_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused spear_kbd_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spear_kbd *kbd = platform_get_drvdata(pdev);
++	struct spear_kbd *kbd = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = kbd->input;
+ 	unsigned int rate = 0, mode_ctl_reg, val;
+ 
+@@ -300,7 +299,7 @@ static int __maybe_unused spear_kbd_suspend(struct device *dev)
+ 
+ 	mode_ctl_reg = readl_relaxed(kbd->io_base + MODE_CTL_REG);
+ 
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(dev)) {
+ 		if (!enable_irq_wake(kbd->irq))
+ 			kbd->irq_wake_enabled = true;
+ 
+@@ -341,13 +340,12 @@ static int __maybe_unused spear_kbd_suspend(struct device *dev)
+ 
+ static int __maybe_unused spear_kbd_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spear_kbd *kbd = platform_get_drvdata(pdev);
++	struct spear_kbd *kbd = dev_get_drvdata(dev);
+ 	struct input_dev *input_dev = kbd->input;
+ 
+ 	mutex_lock(&input_dev->mutex);
+ 
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(dev)) {
+ 		if (kbd->irq_wake_enabled) {
+ 			kbd->irq_wake_enabled = false;
+ 			disable_irq_wake(kbd->irq);
+diff --git a/drivers/input/keyboard/st-keyscan.c b/drivers/input/keyboard/st-keyscan.c
+index f097128b93fe..b00554a41321 100644
+--- a/drivers/input/keyboard/st-keyscan.c
++++ b/drivers/input/keyboard/st-keyscan.c
+@@ -215,8 +215,7 @@ static int keyscan_probe(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int keyscan_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct st_keyscan *keypad = platform_get_drvdata(pdev);
++	struct st_keyscan *keypad = dev_get_drvdata(dev);
+ 	struct input_dev *input = keypad->input_dev;
+ 
+ 	mutex_lock(&input->mutex);
+@@ -232,8 +231,7 @@ static int keyscan_suspend(struct device *dev)
+ 
+ static int keyscan_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct st_keyscan *keypad = platform_get_drvdata(pdev);
++	struct st_keyscan *keypad = dev_get_drvdata(dev);
+ 	struct input_dev *input = keypad->input_dev;
+ 	int retval = 0;
+ 
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index a37a7a9e9171..f33577944207 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -731,11 +731,10 @@ static void tegra_kbc_set_keypress_interrupt(struct tegra_kbc *kbc, bool enable)
+ 
+ static int tegra_kbc_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
++	struct tegra_kbc *kbc = dev_get_drvdata(dev);
+ 
+ 	mutex_lock(&kbc->idev->mutex);
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(dev)) {
+ 		disable_irq(kbc->irq);
+ 		del_timer_sync(&kbc->timer);
+ 		tegra_kbc_set_fifo_interrupt(kbc, false);
+@@ -768,12 +767,11 @@ static int tegra_kbc_suspend(struct device *dev)
+ 
+ static int tegra_kbc_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
++	struct tegra_kbc *kbc = dev_get_drvdata(dev);
+ 	int err = 0;
+ 
+ 	mutex_lock(&kbc->idev->mutex);
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(dev)) {
+ 		disable_irq_wake(kbc->irq);
+ 		tegra_kbc_setup_wakekeys(kbc, false);
+ 		/* We will use fifo interrupts for key detection. */
+-- 
+2.20.1
