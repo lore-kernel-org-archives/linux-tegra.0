@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V6 02/21] pinctrl: tegra: Add suspend and resume support
-Date: Sun, 21 Jul 2019 12:40:41 -0700
-Message-ID: <1563738060-30213-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 05/21] clk: tegra: pllout: Save and restore pllout context
+Date: Sun, 21 Jul 2019 12:40:44 -0700
+Message-ID: <1563738060-30213-6-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,130 +12,110 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds support for Tegra pinctrl driver suspend and resume.
+This patch implements save and restore of pllout context.
 
-During suspend, context of all pinctrl registers are stored and
-on resume they are all restored to have all the pinmux and pad
-configuration for normal operation.
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
+
+So during suspend entry the state of pllout is saved and on resume
+it is restored back to have pllout in same state as before suspend.
+
+pllout rate is saved and restore in clock divider so it will be at
+same rate as before suspend when pllout state is restored.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++++++++++
- drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
- 2 files changed, 62 insertions(+)
+ drivers/clk/tegra/clk-pll-out.c  | 28 ++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra210.c |  3 ++-
+ drivers/clk/tegra/clk.h          |  9 +++++++++
+ 3 files changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 186ef98e7b2b..e3a237534281 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
- 	}
+diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+index 35f2bf00e1e6..8f26a7e3e579 100644
+--- a/drivers/clk/tegra/clk-pll-out.c
++++ b/drivers/clk/tegra/clk-pll-out.c
+@@ -69,10 +69,38 @@ static void clk_pll_out_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll_out->lock, flags);
  }
  
-+static size_t tegra_pinctrl_get_bank_size(struct device *dev,
-+					  unsigned int bank_id)
++static int tegra_clk_pll_out_save_context(struct clk_hw *hw)
 +{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct resource *res;
++	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
-+
-+	return resource_size(res) / 4;
-+}
-+
-+static int tegra_pinctrl_suspend(struct device *dev)
-+{
-+	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-+	u32 *backup_regs = pmx->backup_regs;
-+	u32 *regs;
-+	size_t bank_size;
-+	unsigned int i, k;
-+
-+	for (i = 0; i < pmx->nbanks; i++) {
-+		bank_size = tegra_pinctrl_get_bank_size(dev, i);
-+		regs = pmx->regs[i];
-+		for (k = 0; k < bank_size; k++)
-+			*backup_regs++ = readl_relaxed(regs++);
-+	}
-+
-+	return pinctrl_force_sleep(pmx->pctl);
-+}
-+
-+static int tegra_pinctrl_resume(struct device *dev)
-+{
-+	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-+	u32 *backup_regs = pmx->backup_regs;
-+	u32 *regs;
-+	size_t bank_size;
-+	unsigned int i, k;
-+
-+	for (i = 0; i < pmx->nbanks; i++) {
-+		bank_size = tegra_pinctrl_get_bank_size(dev, i);
-+		regs = pmx->regs[i];
-+		for (k = 0; k < bank_size; k++)
-+			writel_relaxed(*backup_regs++, regs++);
-+	}
++	if (pll_out->flags & TEGRA_PLLRE_OUT)
++		pll_out->pllout_ctx = readl_relaxed(pll_out->reg);
++	else
++		pll_out->pllout_ctx = clk_hw_get_rate(hw);
 +
 +	return 0;
 +}
 +
-+const struct dev_pm_ops tegra_pinctrl_pm = {
-+	.suspend = &tegra_pinctrl_suspend,
-+	.resume = &tegra_pinctrl_resume
-+};
++static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
 +
- static bool gpio_node_has_range(const char *compatible)
- {
- 	struct device_node *np;
-@@ -655,6 +707,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 	int i;
- 	const char **group_pins;
- 	int fn, gn, gfn;
-+	unsigned long backup_regs_size = 0;
- 
- 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
- 	if (!pmx)
-@@ -707,6 +760,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
- 		if (!res)
- 			break;
-+		backup_regs_size += resource_size(res);
- 	}
- 	pmx->nbanks = i;
- 
-@@ -715,6 +769,11 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 	if (!pmx->regs)
- 		return -ENOMEM;
- 
-+	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
-+					GFP_KERNEL);
-+	if (!pmx->backup_regs)
-+		return -ENOMEM;
++	if (pll_out->flags & TEGRA_PLLRE_OUT) {
++		writel_relaxed(pll_out->pllout_ctx, pll_out->reg);
++	} else {
++		if (!__clk_get_enable_count(hw->clk))
++			clk_pll_out_disable(hw);
++		else
++			clk_pll_out_enable(hw);
++	}
++}
 +
- 	for (i = 0; i < pmx->nbanks; i++) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
- 		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index 105309774079..0fc82eea9cf1 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -17,6 +17,7 @@ struct tegra_pmx {
- 
- 	int nbanks;
- 	void __iomem **regs;
-+	u32 *backup_regs;
+ const struct clk_ops tegra_clk_pll_out_ops = {
+ 	.is_enabled = clk_pll_out_is_enabled,
+ 	.enable = clk_pll_out_enable,
+ 	.disable = clk_pll_out_disable,
++	.save_context = tegra_clk_pll_out_save_context,
++	.restore_context = tegra_clk_pll_out_restore_context,
  };
  
- enum tegra_pinconf_param {
-@@ -193,6 +194,8 @@ struct tegra_pinctrl_soc_data {
- 	bool drvtype_in_mux;
+ struct clk *tegra_clk_register_pll_out(const char *name,
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index df172d5772d7..4721ee030d1c 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3200,7 +3200,8 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 					 8, 8, 1, NULL);
+ 	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
+ 					 clk_base + PLLRE_OUT1, 1, 0,
+-					 CLK_SET_RATE_PARENT, 0, NULL);
++					 CLK_SET_RATE_PARENT, TEGRA_PLLRE_OUT,
++					 NULL);
+ 	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
+ 
+ 	/* PLLE */
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 83623f5f55f3..fb29a8c27873 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -439,6 +439,12 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
+  * @rst_bit_idx:	bit to reset PLL divider
+  * @lock:		register lock
+  * @flags:		hardware-specific flags
++ * @pllout_ctx:		pllout context to save and restore during suspend
++ *			and resume
++ *
++ * Flags:
++ * TEGRA_PLLRE_OUT - This flag indicates that it is PLLRE_OUT and is used to
++ *		     identify PLLRE_OUT during clk_pll_out save and restore.
+  */
+ struct tegra_clk_pll_out {
+ 	struct clk_hw	hw;
+@@ -447,8 +453,11 @@ struct tegra_clk_pll_out {
+ 	u8		rst_bit_idx;
+ 	spinlock_t	*lock;
+ 	u8		flags;
++	unsigned int	pllout_ctx;
  };
  
-+extern const struct dev_pm_ops tegra_pinctrl_pm;
++#define TEGRA_PLLRE_OUT BIT(0)
 +
- int tegra_pinctrl_probe(struct platform_device *pdev,
- 			const struct tegra_pinctrl_soc_data *soc_data);
- #endif
+ #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
+ 
+ extern const struct clk_ops tegra_clk_pll_out_ops;
 -- 
 2.7.4
