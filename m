@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V6 09/21] clk: tegra: clk-super: Fix to enable PLLP branches to CPU
-Date: Sun, 21 Jul 2019 12:40:48 -0700
-Message-ID: <1563738060-30213-10-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 13/21] clk: tegra210: Use fence_udelay during PLLU init
+Date: Sun, 21 Jul 2019 12:40:52 -0700
+Message-ID: <1563738060-30213-14-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,95 +12,52 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch has a fix to enable PLLP branches to CPU before changing
-the CPU clusters clock source to PLLP for Gen5 Super clock.
+This patch uses fence_udelay rather than udelay during PLLU
+initialization to ensure writes to clock registers happens before
+waiting for specified delay.
 
-During system suspend entry and exit, CPU source will be switched
-to PLLP and this needs PLLP branches to be enabled to CPU prior to
-the switch.
-
-On system resume, warmboot code enables PLLP branches to CPU and
-powers up the CPU with PLLP clock source.
-
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-super.c            | 11 +++++++++++
- drivers/clk/tegra/clk-tegra-super-gen4.c |  4 ++--
- drivers/clk/tegra/clk.h                  |  4 ++++
- 3 files changed, 17 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 39ef31b46df5..d73c587e4853 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -28,6 +28,9 @@
- #define super_state_to_src_shift(m, s) ((m->width * s))
- #define super_state_to_src_mask(m) (((1 << m->width) - 1))
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 58397f93166c..55a88c0824a5 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2841,7 +2841,7 @@ static int tegra210_enable_pllu(void)
+ 	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
+ 	reg &= ~BIT(pllu.params->iddq_bit_idx);
+ 	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
+-	udelay(5);
++	fence_udelay(5, clk_base);
  
-+#define CCLK_SRC_PLLP_OUT0 4
-+#define CCLK_SRC_PLLP_OUT4 5
-+
- static u8 clk_super_get_parent(struct clk_hw *hw)
- {
- 	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
-@@ -97,6 +100,14 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 		if (index == mux->div2_index)
- 			index = mux->pllx_index;
- 	}
-+
-+	/*
-+	 * Enable PLLP branches to CPU before selecting PLLP source
-+	 */
-+	if ((mux->flags & TEGRA_CPU_CLK) &&
-+	    ((index == CCLK_SRC_PLLP_OUT0) || (index == CCLK_SRC_PLLP_OUT4)))
-+		tegra_clk_set_pllp_out_cpu(true);
-+
- 	val &= ~((super_state_to_src_mask(mux)) << shift);
- 	val |= (index & (super_state_to_src_mask(mux))) << shift;
+ 	reg = readl_relaxed(clk_base + PLLU_BASE);
+ 	reg &= ~GENMASK(20, 0);
+@@ -2849,7 +2849,7 @@ static int tegra210_enable_pllu(void)
+ 	reg |= fentry->n << 8;
+ 	reg |= fentry->p << 16;
+ 	writel(reg, clk_base + PLLU_BASE);
+-	udelay(1);
++	fence_udelay(1, clk_base);
+ 	reg |= PLL_ENABLE;
+ 	writel(reg, clk_base + PLLU_BASE);
  
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-index cdfe7c9697e1..cd208d0eca2a 100644
---- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -180,7 +180,7 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
- 					gen_info->num_cclk_g_parents,
- 					CLK_SET_RATE_PARENT,
- 					clk_base + CCLKG_BURST_POLICY,
--					0, 4, 8, 0, NULL);
-+					TEGRA_CPU_CLK, 4, 8, 0, NULL);
- 		} else {
- 			clk = tegra_clk_register_super_mux("cclk_g",
- 					gen_info->cclk_g_parents,
-@@ -201,7 +201,7 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
- 					gen_info->num_cclk_lp_parents,
- 					CLK_SET_RATE_PARENT,
- 					clk_base + CCLKLP_BURST_POLICY,
--					0, 4, 8, 0, NULL);
-+					TEGRA_CPU_CLK, 4, 8, 0, NULL);
- 		} else {
- 			clk = tegra_clk_register_super_mux("cclk_lp",
- 					gen_info->cclk_lp_parents,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index ac6de3a0b91f..c357b49e49b0 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -694,6 +694,9 @@ struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
-  * Flags:
-  * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indicates
-  *     that this is LP cluster clock.
-+ * TEGRA_CPU_CLK - This flag indicates this is CPU cluster clock. To use PLLP
-+ * for CPU clock source, need to enable PLLP branches to CPU by setting the
-+ * additional bit PLLP_OUT_CPU for gen5 super clock.
-  */
- struct tegra_clk_super_mux {
- 	struct clk_hw	hw;
-@@ -710,6 +713,7 @@ struct tegra_clk_super_mux {
- #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
+@@ -2895,12 +2895,12 @@ static int tegra210_init_pllu(void)
+ 		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
+ 		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
+ 		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
+-		udelay(1);
++		fence_udelay(1, clk_base);
  
- #define TEGRA_DIVIDER_2 BIT(0)
-+#define TEGRA_CPU_CLK	BIT(1)
+ 		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
+ 		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
+ 		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
+-		udelay(1);
++		fence_udelay(1, clk_base);
  
- extern const struct clk_ops tegra_clk_super_ops;
- struct clk *tegra_clk_register_super_mux(const char *name,
+ 		reg = readl_relaxed(clk_base + PLLU_BASE);
+ 		reg &= ~PLLU_BASE_CLKENABLE_USB;
 -- 
 2.7.4
