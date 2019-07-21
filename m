@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V6 15/21] soc/tegra: pmc: Allow to support more tegras wake
-Date: Sun, 21 Jul 2019 12:40:54 -0700
-Message-ID: <1563738060-30213-16-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 12/21] cpufreq: tegra124: Add suspend and resume support
+Date: Sun, 21 Jul 2019 12:40:51 -0700
+Message-ID: <1563738060-30213-13-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,72 +12,88 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch allows to create separate irq_set_wake and irq_set_type
-implementations for different tegra designs PMC that has different
-wake models which require difference wake registers and different
-programming sequence.
+This patch adds suspend and resume pm ops for cpufreq driver.
 
-AOWAKE model support is available for Tegra186 and Tegra194 only
-and it resides within PMC and supports tiered wake architecture.
+PLLP is the safe clock source for CPU during system suspend and
+resume as PLLP rate is below the CPU Fmax at Vmin.
 
-Tegra210 and prior tegra designs uses PMC directly to receive wake
-events and coordinate the wake sequence.
+CPUFreq driver suspend switches the CPU clock source to PLLP and
+disables the DFLL clock.
+
+During system resume, warmboot code powers up the CPU with PLLP
+clock source. So CPUFreq driver resume enabled DFLL clock and
+switches CPU back to DFLL clock source.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/cpufreq/tegra124-cpufreq.c | 46 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 9f9c1c677cf4..91c84d0e66ae 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -226,6 +226,8 @@ struct tegra_pmc_soc {
- 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
- 				   struct device_node *np,
- 				   bool invert);
-+	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
-+	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 4f0c637b3b49..4eff63379b0f 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -6,6 +6,7 @@
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
  
- 	const char * const *reset_sources;
- 	unsigned int num_reset_sources;
-@@ -1920,7 +1922,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
- 	.alloc = tegra_pmc_irq_alloc,
- };
- 
--static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-+static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	unsigned int offset, bit;
-@@ -1952,7 +1954,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
+ #include <linux/clk.h>
++#include <linux/cpufreq.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+@@ -128,8 +129,53 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
--static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
-+static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	u32 value;
-@@ -2006,8 +2008,8 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
- 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
- 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
- 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
--	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
--	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
-+	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
-+	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
++static int tegra124_cpufreq_suspend(struct device *dev)
++{
++	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
++
++	/*
++	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
++	 * use during suspend and resume. So, switch the CPU clock source
++	 * to PLLP and disable DFLL.
++	 */
++	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
++
++	/* disable DFLL clock */
++	clk_disable_unprepare(priv->dfll_clk);
++
++	return 0;
++}
++
++static int tegra124_cpufreq_resume(struct device *dev)
++{
++	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
++	int ret = 0;
++
++	/*
++	 * Warmboot code powers up the CPU with PLLP clock source.
++	 * Enable DFLL clock and switch CPU clock source back to DFLL.
++	 */
++	ret = clk_prepare_enable(priv->dfll_clk);
++	if (ret) {
++		dev_warn(dev, "failed to enable DFLL clock for CPU\n");
++		clk_set_parent(priv->cpu_clk, priv->pllp_clk);
++		disable_cpufreq();
++		return ret;
++	}
++
++	clk_set_parent(priv->cpu_clk, priv->dfll_clk);
++
++	return ret;
++}
++
++static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
++				tegra124_cpufreq_resume)
++};
++
+ static struct platform_driver tegra124_cpufreq_platdrv = {
+ 	.driver.name	= "cpufreq-tegra124",
++	.driver.pm	= &tegra124_cpufreq_pm_ops,
+ 	.probe		= tegra124_cpufreq_probe,
+ };
  
- 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
- 					       &tegra_pmc_irq_domain_ops, pmc);
-@@ -2680,6 +2682,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.irq_set_type = tegra186_pmc_irq_set_type,
- 	.reset_sources = tegra186_reset_sources,
- 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
- 	.reset_levels = tegra186_reset_levels,
 -- 
 2.7.4
