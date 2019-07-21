@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V6 04/21] clk: tegra: Save and restore divider rate
-Date: Sun, 21 Jul 2019 12:40:43 -0700
-Message-ID: <1563738060-30213-5-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 02/21] pinctrl: tegra: Add suspend and resume support
+Date: Sun, 21 Jul 2019 12:40:41 -0700
+Message-ID: <1563738060-30213-3-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,78 +12,130 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch implements context save and restore for clock divider.
+This patch adds support for Tegra pinctrl driver suspend and resume.
 
-During system suspend, core power goes off and looses the settings
-of the Tegra CAR controller registers.
-
-So during suspend entry the context of clock divider is saved and
-on resume context is restored back for normal operation.
+During suspend, context of all pinctrl registers are stored and
+on resume they are all restored to have all the pinmux and pad
+configuration for normal operation.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-divider.c | 23 +++++++++++++++++++++++
- drivers/clk/tegra/clk.h         |  2 ++
- 2 files changed, 25 insertions(+)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
+ 2 files changed, 62 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index e76731fb7d69..ecb7ff9ce97e 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -109,10 +109,33 @@ static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 186ef98e7b2b..e3a237534281 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+ 	}
  }
  
-+static int clk_divider_save_context(struct clk_hw *hw)
++static size_t tegra_pinctrl_get_bank_size(struct device *dev,
++					  unsigned int bank_id)
 +{
-+	struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
++	struct platform_device *pdev = to_platform_device(dev);
++	struct resource *res;
 +
-+	divider->rate = clk_frac_div_recalc_rate(hw, parent_rate);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
++
++	return resource_size(res) / 4;
++}
++
++static int tegra_pinctrl_suspend(struct device *dev)
++{
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	size_t bank_size;
++	unsigned int i, k;
++
++	for (i = 0; i < pmx->nbanks; i++) {
++		bank_size = tegra_pinctrl_get_bank_size(dev, i);
++		regs = pmx->regs[i];
++		for (k = 0; k < bank_size; k++)
++			*backup_regs++ = readl_relaxed(regs++);
++	}
++
++	return pinctrl_force_sleep(pmx->pctl);
++}
++
++static int tegra_pinctrl_resume(struct device *dev)
++{
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	size_t bank_size;
++	unsigned int i, k;
++
++	for (i = 0; i < pmx->nbanks; i++) {
++		bank_size = tegra_pinctrl_get_bank_size(dev, i);
++		regs = pmx->regs[i];
++		for (k = 0; k < bank_size; k++)
++			writel_relaxed(*backup_regs++, regs++);
++	}
 +
 +	return 0;
 +}
 +
-+static void clk_divider_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
++const struct dev_pm_ops tegra_pinctrl_pm = {
++	.suspend = &tegra_pinctrl_suspend,
++	.resume = &tegra_pinctrl_resume
++};
 +
-+	if (clk_frac_div_set_rate(hw, divider->rate, parent_rate) < 0)
-+		WARN_ON(1);
-+}
+ static bool gpio_node_has_range(const char *compatible)
+ {
+ 	struct device_node *np;
+@@ -655,6 +707,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	int i;
+ 	const char **group_pins;
+ 	int fn, gn, gfn;
++	unsigned long backup_regs_size = 0;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx)
+@@ -707,6 +760,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		if (!res)
+ 			break;
++		backup_regs_size += resource_size(res);
+ 	}
+ 	pmx->nbanks = i;
+ 
+@@ -715,6 +769,11 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	if (!pmx->regs)
+ 		return -ENOMEM;
+ 
++	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
++					GFP_KERNEL);
++	if (!pmx->backup_regs)
++		return -ENOMEM;
 +
- const struct clk_ops tegra_clk_frac_div_ops = {
- 	.recalc_rate = clk_frac_div_recalc_rate,
- 	.set_rate = clk_frac_div_set_rate,
- 	.round_rate = clk_frac_div_round_rate,
-+	.save_context = clk_divider_save_context,
-+	.restore_context = clk_divider_restore_context,
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index 105309774079..0fc82eea9cf1 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -17,6 +17,7 @@ struct tegra_pmx {
+ 
+ 	int nbanks;
+ 	void __iomem **regs;
++	u32 *backup_regs;
  };
  
- struct clk *tegra_clk_register_divider(const char *name,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 905bf1096558..83623f5f55f3 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -42,6 +42,7 @@ struct clk *tegra_clk_register_sync_source(const char *name,
-  * @width:	width of the divider bit field
-  * @frac_width:	width of the fractional bit field
-  * @lock:	register lock
-+ * @rate:	rate during suspend and resume
-  *
-  * Flags:
-  * TEGRA_DIVIDER_ROUND_UP - This flags indicates to round up the divider value.
-@@ -62,6 +63,7 @@ struct tegra_clk_frac_div {
- 	u8		width;
- 	u8		frac_width;
- 	spinlock_t	*lock;
-+	unsigned long	rate;
+ enum tegra_pinconf_param {
+@@ -193,6 +194,8 @@ struct tegra_pinctrl_soc_data {
+ 	bool drvtype_in_mux;
  };
  
- #define to_clk_frac_div(_hw) container_of(_hw, struct tegra_clk_frac_div, hw)
++extern const struct dev_pm_ops tegra_pinctrl_pm;
++
+ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 			const struct tegra_pinctrl_soc_data *soc_data);
+ #endif
 -- 
 2.7.4
