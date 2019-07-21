@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V6 03/21] pinctrl: tegra210: Add Tegra210 pinctrl pm ops
-Date: Sun, 21 Jul 2019 12:40:42 -0700
-Message-ID: <1563738060-30213-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 04/21] clk: tegra: Save and restore divider rate
+Date: Sun, 21 Jul 2019 12:40:43 -0700
+Message-ID: <1563738060-30213-5-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,25 +12,78 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds suspend and resume functionality to Tegra210 pinctrl.
+This patch implements context save and restore for clock divider.
+
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
+
+So during suspend entry the context of clock divider is saved and
+on resume context is restored back for normal operation.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra210.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/tegra/clk-divider.c | 23 +++++++++++++++++++++++
+ drivers/clk/tegra/clk.h         |  2 ++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-index 39ab6480a941..fc072a36deb3 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-@@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
- 	.driver = {
- 		.name = "tegra210-pinctrl",
- 		.of_match_table = tegra210_pinctrl_of_match,
-+		.pm = &tegra_pinctrl_pm,
- 	},
- 	.probe = tegra210_pinctrl_probe,
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index e76731fb7d69..ecb7ff9ce97e 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -109,10 +109,33 @@ static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static int clk_divider_save_context(struct clk_hw *hw)
++{
++	struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++
++	divider->rate = clk_frac_div_recalc_rate(hw, parent_rate);
++
++	return 0;
++}
++
++static void clk_divider_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++
++	if (clk_frac_div_set_rate(hw, divider->rate, parent_rate) < 0)
++		WARN_ON(1);
++}
++
+ const struct clk_ops tegra_clk_frac_div_ops = {
+ 	.recalc_rate = clk_frac_div_recalc_rate,
+ 	.set_rate = clk_frac_div_set_rate,
+ 	.round_rate = clk_frac_div_round_rate,
++	.save_context = clk_divider_save_context,
++	.restore_context = clk_divider_restore_context,
  };
+ 
+ struct clk *tegra_clk_register_divider(const char *name,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 905bf1096558..83623f5f55f3 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -42,6 +42,7 @@ struct clk *tegra_clk_register_sync_source(const char *name,
+  * @width:	width of the divider bit field
+  * @frac_width:	width of the fractional bit field
+  * @lock:	register lock
++ * @rate:	rate during suspend and resume
+  *
+  * Flags:
+  * TEGRA_DIVIDER_ROUND_UP - This flags indicates to round up the divider value.
+@@ -62,6 +63,7 @@ struct tegra_clk_frac_div {
+ 	u8		width;
+ 	u8		frac_width;
+ 	spinlock_t	*lock;
++	unsigned long	rate;
+ };
+ 
+ #define to_clk_frac_div(_hw) container_of(_hw, struct tegra_clk_frac_div, hw)
 -- 
 2.7.4
