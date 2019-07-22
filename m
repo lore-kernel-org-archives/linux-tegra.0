@@ -1,104 +1,111 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-Date: Mon, 22 Jul 2019 12:54:51 +0300
-Message-ID: <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Mon, 22 Jul 2019 09:57:21 +0000
+Message-ID: <BN8PR12MB326667E86622C3ABD5CDE642D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <6a6bac84-1d29-2740-1636-d3adb26b6bcc@nvidia.com>
+ <BN8PR12MB3266960A104A7CDBB4E59192D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <bc9ab3c5-b1b9-26d4-7b73-01474328eafa@nvidia.com>
+ <BN8PR12MB3266989D15E017A789E14282D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
+ <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <64e37224-6661-ddb0-4394-83a16e1ccb61@nvidia.com>
+ <BN8PR12MB3266E1FAC5B7874EFA69DD7BD3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <25512348-5b98-aeb7-a6fb-f90376e66a84@nvidia.com>
+ <BN8PR12MB32665C1A106D3DCBF89CEA54D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <49efad87-2f74-5804-af4c-33730f865c41@nvidia.com>
+ <BN8PR12MB3266362102CCB6B4DDE4BEA0D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+        boundary="_002_BN8PR12MB326667E86622C3ABD5CDE642D3C40BN8PR12MB3266namp_"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <BN8PR12MB3266362102CCB6B4DDE4BEA0D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-21.07.2019 22:40, Sowjanya Komatineni пишет:
-> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
-> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
-> 
-> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
-> for Tegra210.
-> 
-> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
-> interrupt controller suspend operation.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-> index e1f771c72fc4..851f88cef508 100644
-> --- a/drivers/irqchip/irq-tegra.c
-> +++ b/drivers/irqchip/irq-tegra.c
-> @@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
->  
->  struct tegra_ictlr_soc {
->  	unsigned int num_ictlrs;
-> +	bool supports_sc7;
->  };
->  
->  static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
-> @@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
->  
->  static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
->  	.num_ictlrs = 6,
-> +	.supports_sc7 = true,
->  };
->  
->  static const struct of_device_id ictlr_matches[] = {
-> @@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] = {
->  
->  struct tegra_ictlr_info {
->  	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
-> +	const struct tegra_ictlr_soc *soc;
->  #ifdef CONFIG_PM_SLEEP
->  	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
->  	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
-> @@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
->  		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
->  		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
->  
-> -		/* Disable COP interrupts */
-> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-> +		/*
-> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
-> +		 *
-> +		 * Tegra210 system suspend flow uses sc7entry firmware which
-> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
-> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
-> +		 * system to go to SC7/LP0.
-> +		 *
-> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
-> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
-> +		 */
-> +		if (!lic->soc->supports_sc7)
-> +			/* Disable COP interrupts if SC7 is not supported */
+--_002_BN8PR12MB326667E86622C3ABD5CDE642D3C40BN8PR12MB3266namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
-doesn't sound correct to me. Something like 'firmware_sc7' should suit
-better here.
+RnJvbTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+DQpEYXRlOiBKdWwvMjIvMjAx
+OSwgMTA6NDc6NDQgKFVUQyswMDowMCkNCg0KPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhA
+bnZpZGlhLmNvbT4NCj4gRGF0ZTogSnVsLzIyLzIwMTksIDEwOjM3OjE4IChVVEMrMDA6MDApDQo+
+IA0KPiA+IA0KPiA+IE9uIDIyLzA3LzIwMTkgMDg6MjMsIEpvc2UgQWJyZXUgd3JvdGU6DQo+ID4g
+PiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4NCj4gPiA+IERhdGU6IEp1
+bC8xOS8yMDE5LCAxNDozNTo1MiAoVVRDKzAwOjAwKQ0KPiA+ID4gDQo+ID4gPj4NCj4gPiA+PiBP
+biAxOS8wNy8yMDE5IDEzOjMyLCBKb3NlIEFicmV1IHdyb3RlOg0KPiA+ID4+PiBGcm9tOiBKb24g
+SHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4NCj4gPiA+Pj4gRGF0ZTogSnVsLzE5LzIwMTks
+IDEzOjMwOjEwIChVVEMrMDA6MDApDQo+ID4gPj4+DQo+ID4gPj4+PiBJIGJvb3RlZCB0aGUgYm9h
+cmQgd2l0aG91dCB1c2luZyBORlMgYW5kIHRoZW4gc3RhcnRlZCB1c2VkIGRoY2xpZW50IHRvDQo+
+ID4gPj4+PiBicmluZyB1cCB0aGUgbmV0d29yayBpbnRlcmZhY2UgYW5kIGl0IGFwcGVhcnMgdG8g
+YmUgd29ya2luZyBmaW5lLiBJIGNhbg0KPiA+ID4+Pj4gZXZlbiBtb3VudCB0aGUgTkZTIHNoYXJl
+IGZpbmUuIFNvIGl0IGRvZXMgYXBwZWFyIHRvIGJlIHBhcnRpY3VsYXIgdG8NCj4gPiA+Pj4+IHVz
+aW5nIE5GUyB0byBtb3VudCB0aGUgcm9vdGZzLg0KPiA+ID4+Pg0KPiA+ID4+PiBEYW1uLiBDYW4g
+eW91IHNlbmQgbWUgeW91ciAuY29uZmlnID8NCj4gPiA+Pg0KPiA+ID4+IFllcyBubyBwcm9ibGVt
+LiBBdHRhY2hlZC4NCj4gPiA+IA0KPiA+ID4gQ2FuIHlvdSBjb21waWxlIHlvdXIgaW1hZ2Ugd2l0
+aG91dCBtb2R1bGVzIChpLmUuIGFsbCBidWlsdC1pbikgYW5kIGxldCANCj4gPiA+IG1lIGtub3cg
+aWYgdGhlIGVycm9yIHN0aWxsIGhhcHBlbnMgPw0KPiA+IA0KPiA+IEkgc2ltcGx5IHJlbW92ZWQg
+dGhlIC9saWIvbW9kdWxlcyBkaXJlY3RvcnkgZnJvbSB0aGUgTkZTIHNoYXJlIGFuZA0KPiA+IHZl
+cmlmaWVkIHRoYXQgSSBzdGlsbCBzZWUgdGhlIHNhbWUgaXNzdWUuIFNvIGl0IGlzIG5vdCBsb2Fk
+aW5nIHRoZQ0KPiA+IG1vZHVsZXMgdGhhdCBpcyBhIHByb2JsZW0uDQo+IA0KPiBXZWxsLCBJIG1l
+YW50IHRoYXQgbG9hZGluZyBtb2R1bGVzIGNhbiBiZSBhbiBpc3N1ZSBidXQgdGhhdCdzIG5vdCB0
+aGUgDQo+IHdheSB0byB2ZXJpZnkgdGhhdC4NCj4gDQo+IFlvdSBuZWVkIHRvIGhhdmUgYWxsIG1v
+ZHVsZXMgYnVpbHQtaW4gc28gdGhhdCBpdCBwcm92ZXMgdGhhdCBubyBtb2R1bGUgDQo+IHdpbGwg
+dHJ5IHRvIGJlIGxvYWRlZC4NCj4gDQo+IEFueXdheSwgdGhpcyBpcyBwcm9iYWJseSBub3QgdGhl
+IGNhdXNlIGFzIHlvdSB3b3VsZG4ndCBldmVuIGJlIGFibGUgdG8gDQo+IGNvbXBpbGUga2VybmVs
+IGlmIHlvdSBuZWVkIGEgc3ltYm9sIGZyb20gYSBtb2R1bGUgd2l0aCBzdG1tYWMgYnVpbHQtaW4u
+IA0KPiBLY29uZmlnIHdvdWxkIGNvbXBsYWluIGFib3V0IHRoYXQuDQo+IA0KPiBUaGUgb3RoZXIg
+Y2F1c2UgY291bGQgYmUgZGF0YSBjb3JydXB0aW9uIGluIHRoZSBSWCBwYXRoLiBBcmUgeW91IGFi
+bGUgdG8gDQo+IHNlbmQgbWUgcGFja2V0IGR1bXAgYnkgcnVubmluZyB3aXJlc2hhcmsgZWl0aGVy
+IGluIHRoZSB0cmFuc21pdHRlciBzaWRlIA0KPiAoaS5lLiBORlMgc2VydmVyKSwgb3IgdXNpbmcg
+c29tZSBraW5kIG9mIHN3aXRjaCA/DQo+IA0KPiAtLS0NCj4gVGhhbmtzLA0KPiBKb3NlIE1pZ3Vl
+bCBBYnJldQ0KDQpBbHNvLCBwbGVhc2UgYWRkIGF0dGFjaGVkIHBhdGNoLiBZb3UnbGwgZ2V0IGEg
+Y29tcGlsZXIgd2FybmluZywganVzdCANCmRpc3JlZ2FyZCBpdC4NCg0KLS0tDQpUaGFua3MsDQpK
+b3NlIE1pZ3VlbCBBYnJldQ0K
 
-> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+--_002_BN8PR12MB326667E86622C3ABD5CDE642D3C40BN8PR12MB3266namp_
+Content-Type: application/octet-stream;
+	name="0001-net-stmmac-Debug-print.patch"
+Content-Description: 0001-net-stmmac-Debug-print.patch
+Content-Disposition: attachment;
+	filename="0001-net-stmmac-Debug-print.patch"; size=1514;
+	creation-date="Mon, 22 Jul 2019 09:54:36 GMT";
+	modification-date="Mon, 22 Jul 2019 09:56:27 GMT"
+Content-Transfer-Encoding: base64
 
-Secondly, I'm also not sure why COP interrupts need to be disabled for
-pre-T210 at all, since COP is unused. This looks to me like it was
-cut-n-pasted from downstream kernel without a good reason and could be
-simply removed.
+RnJvbSBiNzhiZTRmMTllNTdiNmE0ZDVmNjdiZGExYzUyYzkwZjZjZDkwMWFiIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8Yjc4YmU0ZjE5ZTU3YjZhNGQ1ZjY3YmRhMWM1MmM5
+MGY2Y2Q5MDFhYi4xNTYzNzg5Mzg3LmdpdC5qb2FicmV1QHN5bm9wc3lzLmNvbT4KRnJvbTogSm9z
+ZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkRhdGU6IE1vbiwgMjIgSnVsIDIwMTkgMTE6
+NTI6MjggKzAyMDAKU3ViamVjdDogW1BBVENIIG5ldF0gbmV0OiBzdG1tYWM6IERlYnVnIHByaW50
+CgpTaWduZWQtb2ZmLWJ5OiBKb3NlIEFicmV1IDxqb2FicmV1QHN5bm9wc3lzLmNvbT4KCi0tLQpD
+YzogR2l1c2VwcGUgQ2F2YWxsYXJvIDxwZXBwZS5jYXZhbGxhcm9Ac3QuY29tPgpDYzogQWxleGFu
+ZHJlIFRvcmd1ZSA8YWxleGFuZHJlLnRvcmd1ZUBzdC5jb20+CkNjOiBKb3NlIEFicmV1IDxqb2Fi
+cmV1QHN5bm9wc3lzLmNvbT4KQ2M6ICJEYXZpZCBTLiBNaWxsZXIiIDxkYXZlbUBkYXZlbWxvZnQu
+bmV0PgpDYzogTWF4aW1lIENvcXVlbGluIDxtY29xdWVsaW4uc3RtMzJAZ21haWwuY29tPgpDYzog
+bmV0ZGV2QHZnZXIua2VybmVsLm9yZwpDYzogbGludXgtc3RtMzJAc3QtbWQtbWFpbG1hbi5zdG9y
+bXJlcGx5LmNvbQpDYzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCkNjOiBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCi0tLQogZHJpdmVycy9uZXQvZXRoZXJuZXQvc3Rt
+aWNyby9zdG1tYWMvc3RtbWFjX21haW4uYyB8IDQgKysrKwogMSBmaWxlIGNoYW5nZWQsIDQgaW5z
+ZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3Rt
+bWFjL3N0bW1hY19tYWluLmMgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9z
+dG1tYWNfbWFpbi5jCmluZGV4IDBhYzc5ZjNlMmNlZS4uN2E2OTIwMDk4ZGQwIDEwMDY0NAotLS0g
+YS9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jCisrKyBi
+L2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMKQEAgLTM0
+MzMsNiArMzQzMywxMCBAQCBzdGF0aWMgaW50IHN0bW1hY19yeChzdHJ1Y3Qgc3RtbWFjX3ByaXYg
+KnByaXYsIGludCBsaW1pdCwgdTMyIHF1ZXVlKQogCQkJZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZp
+Y2UocHJpdi0+ZGV2aWNlLCBidWYtPmFkZHIsCiAJCQkJCQkgICBmcmFtZV9sZW4sIERNQV9GUk9N
+X0RFVklDRSk7CiAKKwkJCXByX2luZm8oIiVzOiBwYWRkcj0weCVsbHgsIHZhZGRyPTB4JWxseCwg
+bGVuPSVkIiwgX19mdW5jX18sCisJCQkJCWJ1Zi0+YWRkciwgcGFnZV9hZGRyZXNzKGJ1Zi0+cGFn
+ZSksCisJCQkJCWZyYW1lX2xlbik7CisKIAkJCWlmIChuZXRpZl9tc2dfcGt0ZGF0YShwcml2KSkg
+ewogCQkJCW5ldGRldl9kYmcocHJpdi0+ZGV2LCAiZnJhbWUgcmVjZWl2ZWQgKCVkYnl0ZXMpIiwK
+IAkJCQkJICAgZnJhbWVfbGVuKTsKLS0gCjIuNy40Cgo=
 
->  		/* Disable CPU interrupts */
->  		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
-> @@ -339,6 +354,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
->  		goto out_unmap;
->  	}
->  
-> +	lic->soc = soc;
->  	tegra_ictlr_syscore_init();
->  
->  	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
-> 
+--_002_BN8PR12MB326667E86622C3ABD5CDE642D3C40BN8PR12MB3266namp_--
