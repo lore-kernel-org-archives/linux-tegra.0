@@ -1,59 +1,60 @@
-From: Viswanath L <viswanathl@nvidia.com>
-Subject: [PATCH v2] drm/tegra: sor: Enable HDA interrupts at plugin
-Date: Mon, 22 Jul 2019 14:57:12 +0530
-Message-ID: <1563787632-19762-1-git-send-email-viswanathl@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Mon, 22 Jul 2019 10:37:18 +0100
+Message-ID: <49efad87-2f74-5804-af4c-33730f865c41@nvidia.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <6a6bac84-1d29-2740-1636-d3adb26b6bcc@nvidia.com>
+ <BN8PR12MB3266960A104A7CDBB4E59192D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <bc9ab3c5-b1b9-26d4-7b73-01474328eafa@nvidia.com>
+ <BN8PR12MB3266989D15E017A789E14282D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
+ <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <64e37224-6661-ddb0-4394-83a16e1ccb61@nvidia.com>
+ <BN8PR12MB3266E1FAC5B7874EFA69DD7BD3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <25512348-5b98-aeb7-a6fb-f90376e66a84@nvidia.com>
+ <BN8PR12MB32665C1A106D3DCBF89CEA54D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Viswanath L <viswanathl@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <BN8PR12MB32665C1A106D3DCBF89CEA54D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-HDMI plugout calls runtime suspend, which clears interrupt registers
-and causes audio functionality to break on subsequent plugin; setting
-interrupt registers in sor_audio_prepare() solves the issue
 
-Signed-off-by: Viswanath L <viswanathl@nvidia.com>
----
- drivers/gpu/drm/tegra/sor.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+On 22/07/2019 08:23, Jose Abreu wrote:
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Date: Jul/19/2019, 14:35:52 (UTC+00:00)
+> 
+>>
+>> On 19/07/2019 13:32, Jose Abreu wrote:
+>>> From: Jon Hunter <jonathanh@nvidia.com>
+>>> Date: Jul/19/2019, 13:30:10 (UTC+00:00)
+>>>
+>>>> I booted the board without using NFS and then started used dhclient to
+>>>> bring up the network interface and it appears to be working fine. I can
+>>>> even mount the NFS share fine. So it does appear to be particular to
+>>>> using NFS to mount the rootfs.
+>>>
+>>> Damn. Can you send me your .config ?
+>>
+>> Yes no problem. Attached.
+> 
+> Can you compile your image without modules (i.e. all built-in) and let 
+> me know if the error still happens ?
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 5be5a08..0470cfe 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -2164,6 +2164,15 @@ static void tegra_sor_audio_prepare(struct tegra_sor *sor)
- 
- 	value = SOR_AUDIO_HDA_PRESENSE_ELDV | SOR_AUDIO_HDA_PRESENSE_PD;
- 	tegra_sor_writel(sor, value, SOR_AUDIO_HDA_PRESENSE);
-+
-+	/*
-+	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
-+	 * is used for interoperability between the HDA codec driver and the
-+	 * HDMI/DP driver.
-+	 */
-+	value = SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
-+	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
-+	tegra_sor_writel(sor, value, SOR_INT_MASK);
- }
- 
- static void tegra_sor_audio_unprepare(struct tegra_sor *sor)
-@@ -2913,15 +2922,6 @@ static int tegra_sor_init(struct host1x_client *client)
- 	if (err < 0)
- 		return err;
- 
--	/*
--	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
--	 * is used for interoperability between the HDA codec driver and the
--	 * HDMI/DP driver.
--	 */
--	value = SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
--	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
--	tegra_sor_writel(sor, value, SOR_INT_MASK);
--
- 	return 0;
- }
- 
+I simply removed the /lib/modules directory from the NFS share and
+verified that I still see the same issue. So it is not loading the
+modules that is a problem.
+
+Jon
+
 -- 
-2.7.4
+nvpublic
