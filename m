@@ -1,108 +1,33 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-Date: Mon, 22 Jul 2019 11:13:16 +0100
-Message-ID: <20c1d733-60f5-6375-c03c-639de5e41739@arm.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
- <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Mon, 22 Jul 2019 13:18:30 +0300
+Message-ID: <20190722101830.GA24948@apalos>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 22/07/2019 10:54, Dmitry Osipenko wrote:
-> 21.07.2019 22:40, Sowjanya Komatineni пишет:
->> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
->> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
->>
->> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
->> for Tegra210.
->>
->> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
->> interrupt controller suspend operation.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
->>  1 file changed, 18 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
->> index e1f771c72fc4..851f88cef508 100644
->> --- a/drivers/irqchip/irq-tegra.c
->> +++ b/drivers/irqchip/irq-tegra.c
->> @@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
->>  
->>  struct tegra_ictlr_soc {
->>  	unsigned int num_ictlrs;
->> +	bool supports_sc7;
->>  };
->>  
->>  static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
->> @@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
->>  
->>  static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
->>  	.num_ictlrs = 6,
->> +	.supports_sc7 = true,
->>  };
->>  
->>  static const struct of_device_id ictlr_matches[] = {
->> @@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] = {
->>  
->>  struct tegra_ictlr_info {
->>  	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
->> +	const struct tegra_ictlr_soc *soc;
->>  #ifdef CONFIG_PM_SLEEP
->>  	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
->>  	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
->> @@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
->>  		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
->>  		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
->>  
->> -		/* Disable COP interrupts */
->> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
->> +		/*
->> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
->> +		 *
->> +		 * Tegra210 system suspend flow uses sc7entry firmware which
->> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
->> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
->> +		 * system to go to SC7/LP0.
->> +		 *
->> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
->> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
->> +		 */
->> +		if (!lic->soc->supports_sc7)
->> +			/* Disable COP interrupts if SC7 is not supported */
+On Thu, Jul 18, 2019 at 07:48:04AM +0000, Jose Abreu wrote:
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Date: Jul/17/2019, 19:58:53 (UTC+00:00)
 > 
-> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
-> doesn't sound correct to me. Something like 'firmware_sc7' should suit
-> better here.
-
-If what you're saying is true, then the whole patch is wrong, and the
-SC7 property should come from DT.
-
+> > Let me know if you have any thoughts.
 > 
->> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+> Can you try attached patch ?
 > 
-> Secondly, I'm also not sure why COP interrupts need to be disabled for
-> pre-T210 at all, since COP is unused. This looks to me like it was
-> cut-n-pasted from downstream kernel without a good reason and could be
-> simply removed.
 
-Please verify that this is actually the case. Tegra-2 definitely needed
-some level of poking, and I'm not keen on changing anything there until
-you (or someone else) has verified it on actual HW (see e307cc8941fc).
+The log says  someone calls panic() right?
+Can we trye and figure were that happens during the stmmac init phase?
 
-Joseph, can you please shed some light here?
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks
+/Ilias
