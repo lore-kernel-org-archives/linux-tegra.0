@@ -1,223 +1,94 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V6 14/21] clk: tegra210: Add suspend and resume support
-Date: Mon, 22 Jul 2019 09:10:03 +0300
-Message-ID: <ceedb802-7561-488f-3a89-67bee19f2fea@gmail.com>
+Subject: Re: [PATCH V6 09/21] clk: tegra: clk-super: Fix to enable PLLP
+ branches to CPU
+Date: Mon, 22 Jul 2019 09:32:44 +0300
+Message-ID: <f6ac50af-c3a5-1fef-2e0d-a9ecadeb2495@gmail.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-15-git-send-email-skomatineni@nvidia.com>
- <e683b417-66fb-38dc-c16b-dab616583a88@gmail.com>
- <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com>
+ <1563738060-30213-10-git-send-email-skomatineni@nvidia.com>
+ <0c86cd7f-81b5-40c5-6f1e-796e8f13b522@gmail.com>
+ <042f4b43-7b9c-533d-2548-d903b34363da@nvidia.com>
+ <7933a83c-3208-b551-d41d-70285ae528e3@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com>
+In-Reply-To: <7933a83c-3208-b551-d41d-70285ae528e3@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-22.07.2019 1:45, Sowjanya Komatineni пишет:
+22.07.2019 6:17, Sowjanya Komatineni пишет:
 > 
-> On 7/21/19 2:38 PM, Dmitry Osipenko wrote:
->> 21.07.2019 22:40, Sowjanya Komatineni пишет:
->>> This patch adds support for clk: tegra210: suspend-resume.
->>>
->>> All the CAR controller settings are lost on suspend when core
->>> power goes off.
->>>
->>> This patch has implementation for saving and restoring all PLLs
->>> and clocks context during system suspend and resume to have the
->>> clocks back to same state for normal operation.
->>>
->>> Acked-by: Thierry Reding <treding@nvidia.com>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>>   drivers/clk/tegra/clk-tegra210.c | 68
->>> ++++++++++++++++++++++++++++++++++++++--
->>>   drivers/clk/tegra/clk.c          | 14 +++++++++
->>>   drivers/clk/tegra/clk.h          |  1 +
->>>   3 files changed, 80 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra210.c
->>> b/drivers/clk/tegra/clk-tegra210.c
->>> index 55a88c0824a5..68271873acc1 100644
->>> --- a/drivers/clk/tegra/clk-tegra210.c
->>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>> @@ -9,6 +9,7 @@
->>>   #include <linux/clkdev.h>
->>>   #include <linux/of.h>
->>>   #include <linux/of_address.h>
->>> +#include <linux/syscore_ops.h>
->>>   #include <linux/delay.h>
->>>   #include <linux/export.h>
->>>   #include <linux/mutex.h>
->>> @@ -220,11 +221,15 @@
->>>   #define CLK_M_DIVISOR_SHIFT 2
->>>   #define CLK_M_DIVISOR_MASK 0x3
->>>   +#define CLK_MASK_ARM    0x44
->>> +#define MISC_CLK_ENB    0x48
->>> +
->>>   #define RST_DFLL_DVCO 0x2f4
->>>   #define DVFS_DFLL_RESET_SHIFT 0
->>>     #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
->>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
->>> +#define CPU_SOFTRST_CTRL 0x380
->>>     #define LVL2_CLK_GATE_OVRA 0xf8
->>>   #define LVL2_CLK_GATE_OVRC 0x3a0
->>> @@ -2825,6 +2830,7 @@ static int tegra210_enable_pllu(void)
->>>       struct tegra_clk_pll_freq_table *fentry;
->>>       struct tegra_clk_pll pllu;
->>>       u32 reg;
->>> +    int ret;
->>>         for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
->>>           if (fentry->input_rate == pll_ref_freq)
->>> @@ -2853,9 +2859,8 @@ static int tegra210_enable_pllu(void)
->>>       reg |= PLL_ENABLE;
->>>       writel(reg, clk_base + PLLU_BASE);
->>>   -    readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
->>> -                      reg & PLL_BASE_LOCK, 2, 1000);
->>> -    if (!(reg & PLL_BASE_LOCK)) {
->>> +    ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
->>> +    if (ret) {
->> Why this is needed? Was there a bug?
+> On 7/21/19 3:39 PM, Sowjanya Komatineni wrote:
 >>
-> during resume pllu init is needed and to use same terga210_init_pllu,
-> poll_timeout_atomic can't be used as its ony for atomic context.
+>> On 7/21/19 2:16 PM, Dmitry Osipenko wrote:
+>>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
+>>>> This patch has a fix to enable PLLP branches to CPU before changing
+>>>> the CPU clusters clock source to PLLP for Gen5 Super clock.
+>>>>
+>>>> During system suspend entry and exit, CPU source will be switched
+>>>> to PLLP and this needs PLLP branches to be enabled to CPU prior to
+>>>> the switch.
+>>>>
+>>>> On system resume, warmboot code enables PLLP branches to CPU and
+>>>> powers up the CPU with PLLP clock source.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   drivers/clk/tegra/clk-super.c            | 11 +++++++++++
+>>>>   drivers/clk/tegra/clk-tegra-super-gen4.c |  4 ++--
+>>>>   drivers/clk/tegra/clk.h                  |  4 ++++
+>>>>   3 files changed, 17 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-super.c
+>>>> b/drivers/clk/tegra/clk-super.c
+>>>> index 39ef31b46df5..d73c587e4853 100644
+>>>> --- a/drivers/clk/tegra/clk-super.c
+>>>> +++ b/drivers/clk/tegra/clk-super.c
+>>>> @@ -28,6 +28,9 @@
+>>>>   #define super_state_to_src_shift(m, s) ((m->width * s))
+>>>>   #define super_state_to_src_mask(m) (((1 << m->width) - 1))
+>>>>   +#define CCLK_SRC_PLLP_OUT0 4
+>>>> +#define CCLK_SRC_PLLP_OUT4 5
+>>>> +
+>>>>   static u8 clk_super_get_parent(struct clk_hw *hw)
+>>>>   {
+>>>>       struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
+>>>> @@ -97,6 +100,14 @@ static int clk_super_set_parent(struct clk_hw
+>>>> *hw, u8 index)
+>>>>           if (index == mux->div2_index)
+>>>>               index = mux->pllx_index;
+>>>>       }
+>>>> +
+>>>> +    /*
+>>>> +     * Enable PLLP branches to CPU before selecting PLLP source
+>>>> +     */
+>>>> +    if ((mux->flags & TEGRA_CPU_CLK) &&
+>>>> +        ((index == CCLK_SRC_PLLP_OUT0) || (index ==
+>>>> CCLK_SRC_PLLP_OUT4)))
+>>>> +        tegra_clk_set_pllp_out_cpu(true);
+>>> Should somewhere here be tegra_clk_set_pllp_out_cpu(false) when
+>>> switching from PLLP?
+>> PLLP may be used for other CPU clusters.
 > 
-> So changed to use wait_for_mask which should work in both cases.
+> Though to avoid flag and check needed to make sure other CPU is not
+> using before disabling PLLP branch to CPU.
+> 
+> But leaving it enabled shouldn't impact much as clock source mux is
+> after this in design anyway.
+> 
+> But can add as well if its clear that way.
 
-Atomic variant could be used from any context, not sure what do you
-mean. The 'atomic' part only means that function won't cause scheduling
-and that's it.
+The TRM doc says "The CPU subsystem supports a switch-cluster mode
+meaning that only one of the clusters can be active at any given time".
 
->>>           pr_err("Timed out waiting for PLL_U to lock\n");
->>>           return -ETIMEDOUT;
->>>       }
->>> @@ -3288,6 +3293,56 @@ static void tegra210_disable_cpu_clock(u32 cpu)
->>>   }
->>>     #ifdef CONFIG_PM_SLEEP
->>> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) +
->>> ((_off) * 4))
->>> +#define car_writel(_val, _base, _off) \
->>> +        writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
->>> +
->>> +static u32 spare_reg_ctx, misc_clk_enb_ctx, clk_msk_arm_ctx;
->>> +static u32 cpu_softrst_ctx[3];
->>> +
->>> +static int tegra210_clk_suspend(void)
->>> +{
->>> +    unsigned int i;
->>> +
->>> +    clk_save_context();
->>> +
->>> +    /*
->>> +     * save the bootloader configured clock registers SPARE_REG0,
->>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL
->> Nit: Start all multi-line comments with a capital letter and put dot in
->> the end of sentence.
->>
->>> +     */
->>> +    spare_reg_ctx = readl_relaxed(clk_base + SPARE_REG0);
->>> +    misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
->>> +    clk_msk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
->>> +
->>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->>> +        cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static void tegra210_clk_resume(void)
->>> +{
->>> +    unsigned int i;
->>> +
->>> +    tegra_clk_osc_resume(clk_base);
->>> +
->>> +    /*
->>> +     * restore the bootloader configured clock registers SPARE_REG0,
->>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL from saved context.
->> Same here.
->>
->>> +     */
->>> +    writel_relaxed(spare_reg_ctx, clk_base + SPARE_REG0);
->>> +    writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
->>> +    writel_relaxed(clk_msk_arm_ctx, clk_base + CLK_MASK_ARM);
->>> +
->>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->>> +        car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
->>> +
->>> +    fence_udelay(5, clk_base);
->>> +
->>> +    tegra210_init_pllu();
->>> +    clk_restore_context();
->>> +}
->>> +
->>>   static void tegra210_cpu_clock_suspend(void)
->>>   {
->>>       /* switch coresite to clk_m, save off original source */
->>> @@ -3303,6 +3358,11 @@ static void tegra210_cpu_clock_resume(void)
->>>   }
->>>   #endif
->>>   +static struct syscore_ops tegra_clk_syscore_ops = {
->>> +    .suspend = tegra210_clk_suspend,
->>> +    .resume = tegra210_clk_resume,
->>> +};
->>> +
->>>   static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
->>>       .wait_for_reset    = tegra210_wait_cpu_in_reset,
->>>       .disable_clock    = tegra210_disable_cpu_clock,
->>> @@ -3587,5 +3647,7 @@ static void __init tegra210_clock_init(struct
->>> device_node *np)
->>>       tegra210_mbist_clk_init();
->>>         tegra_cpu_car_ops = &tegra210_cpu_car_ops;
->>> +
->>> +    register_syscore_ops(&tegra_clk_syscore_ops);
->>>   }
->>>   CLK_OF_DECLARE(tegra210, "nvidia,tegra210-car", tegra210_clock_init);
->>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
->>> index 573e3c967ae1..eb08047fd02f 100644
->>> --- a/drivers/clk/tegra/clk.c
->>> +++ b/drivers/clk/tegra/clk.c
->>> @@ -23,6 +23,7 @@
->>>   #define CLK_OUT_ENB_W            0x364
->>>   #define CLK_OUT_ENB_X            0x280
->>>   #define CLK_OUT_ENB_Y            0x298
->>> +#define CLK_ENB_PLLP_OUT_CPU        BIT(31)
->>>   #define CLK_OUT_ENB_SET_L        0x320
->>>   #define CLK_OUT_ENB_CLR_L        0x324
->>>   #define CLK_OUT_ENB_SET_H        0x328
->>> @@ -199,6 +200,19 @@ const struct tegra_clk_periph_regs
->>> *get_reg_bank(int clkid)
->>>       }
->>>   }
->>>   +void tegra_clk_set_pllp_out_cpu(bool enable)
->>> +{
->>> +    u32 val;
->>> +
->>> +    val = readl_relaxed(clk_base + CLK_OUT_ENB_Y);
->>> +    if (enable)
->>> +        val |= CLK_ENB_PLLP_OUT_CPU;
->>> +    else
->>> +        val &= ~CLK_ENB_PLLP_OUT_CPU;
->>> +
->>> +    writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
->>> +}
->>> +
->>>   struct clk ** __init tegra_clk_init(void __iomem *regs, int num,
->>> int banks)
->>>   {
->>>       clk_base = regs;
->>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
->>> index 562a3ee2d537..0ffa763c755b 100644
->>> --- a/drivers/clk/tegra/clk.h
->>> +++ b/drivers/clk/tegra/clk.h
->>> @@ -863,6 +863,7 @@ int div_frac_get(unsigned long rate, unsigned
->>> parent_rate, u8 width,
->>>            u8 frac_width, u8 flags);
->>>   void tegra_clk_sync_state_pll(struct clk_hw *hw);
->>>   void tegra_clk_osc_resume(void __iomem *clk_base);
->>> +void tegra_clk_set_pllp_out_cpu(bool enable);
->>>     /* Combined read fence with delay */
->>>   #define fence_udelay(delay, reg)    \
->>>
+Given that cluster-switching isn't supported in upstream, I don't think
+that you need to care about the other cluster at all, at least for now.
+
+The cluster-switching implementation in upstream is very complicated
+because it requires a special "hotplugging" CPU governor, which
+apparently no other platform needs.
+
+[snip]
