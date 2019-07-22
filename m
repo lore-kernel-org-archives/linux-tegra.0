@@ -1,85 +1,131 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Date: Mon, 22 Jul 2019 14:04:49 +0000
-Message-ID: <BN8PR12MB3266664ECA192E02C06061EED3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <cover.1562149883.git.joabreu@synopsys.com>
- <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
- <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20190722101830.GA24948@apalos>
- <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
- <BN8PR12MB326661846D53AAEE315A7434D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
- <11557fe0-0cba-cb49-0fb6-ad24792d4a53@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
+ suspend
+Date: Mon, 22 Jul 2019 09:21:21 -0700
+Message-ID: <a2ecc3ad-b7e9-9398-d59b-c7d3fbbd10bb@nvidia.com>
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+ <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
+ <20c1d733-60f5-6375-c03c-639de5e41739@arm.com>
+ <0bee8775-756f-adad-4597-8cad53017718@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <11557fe0-0cba-cb49-0fb6-ad24792d4a53@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0bee8775-756f-adad-4597-8cad53017718@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Lars Persson <lists@bofh.nu>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, "David S . Miller" <davem@davemloft.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Jul/22/2019, 13:05:38 (UTC+00:00)
 
-> 
-> On 22/07/2019 12:39, Jose Abreu wrote:
-> > From: Lars Persson <lists@bofh.nu>
-> > Date: Jul/22/2019, 12:11:50 (UTC+00:00)
-> > 
-> >> On Mon, Jul 22, 2019 at 12:18 PM Ilias Apalodimas
-> >> <ilias.apalodimas@linaro.org> wrote:
-> >>>
-> >>> On Thu, Jul 18, 2019 at 07:48:04AM +0000, Jose Abreu wrote:
-> >>>> From: Jon Hunter <jonathanh@nvidia.com>
-> >>>> Date: Jul/17/2019, 19:58:53 (UTC+00:00)
-> >>>>
-> >>>>> Let me know if you have any thoughts.
-> >>>>
-> >>>> Can you try attached patch ?
-> >>>>
-> >>>
-> >>> The log says  someone calls panic() right?
-> >>> Can we trye and figure were that happens during the stmmac init phase?
-> >>>
-> >>
-> >> The reason for the panic is hidden in this one line of the kernel logs:
-> >> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-> >>
-> >> The init process is killed by SIGSEGV (signal 11 = 0xb).
-> >>
-> >> I would suggest you look for data corruption bugs in the RX path. If
-> >> the code is fetched from the NFS mount then a corrupt RX buffer can
-> >> trigger a crash in userspace.
-> >>
-> >> /Lars
-> > 
-> > 
-> > Jon, I'm not familiar with ARM. Are the buffer addresses being allocated 
-> > in a coherent region ? Can you try attached patch which adds full memory 
-> > barrier before the sync ?
-> 
-> TBH I am not sure about the buffer addresses either. The attached patch
-> did not help. Same problem persists.
+On 7/22/19 3:57 AM, Dmitry Osipenko wrote:
+> 22.07.2019 13:13, Marc Zyngier =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 22/07/2019 10:54, Dmitry Osipenko wrote:
+>>> 21.07.2019 22:40, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 ent=
+ry
+>>>> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
+>>>>
+>>>> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequen=
+ce
+>>>> for Tegra210.
+>>>>
+>>>> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+>>>> interrupt controller suspend operation.
+>>>>
+>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
+>>>>   1 file changed, 18 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+>>>> index e1f771c72fc4..851f88cef508 100644
+>>>> --- a/drivers/irqchip/irq-tegra.c
+>>>> +++ b/drivers/irqchip/irq-tegra.c
+>>>> @@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
+>>>>  =20
+>>>>   struct tegra_ictlr_soc {
+>>>>   	unsigned int num_ictlrs;
+>>>> +	bool supports_sc7;
+>>>>   };
+>>>>  =20
+>>>>   static const struct tegra_ictlr_soc tegra20_ictlr_soc =3D {
+>>>> @@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_so=
+c =3D {
+>>>>  =20
+>>>>   static const struct tegra_ictlr_soc tegra210_ictlr_soc =3D {
+>>>>   	.num_ictlrs =3D 6,
+>>>> +	.supports_sc7 =3D true,
+>>>>   };
+>>>>  =20
+>>>>   static const struct of_device_id ictlr_matches[] =3D {
+>>>> @@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] =3D=
+ {
+>>>>  =20
+>>>>   struct tegra_ictlr_info {
+>>>>   	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
+>>>> +	const struct tegra_ictlr_soc *soc;
+>>>>   #ifdef CONFIG_PM_SLEEP
+>>>>   	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
+>>>>   	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
+>>>> @@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
+>>>>   		lic->cop_ier[i] =3D readl_relaxed(ictlr + ICTLR_COP_IER);
+>>>>   		lic->cop_iep[i] =3D readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+>>>>  =20
+>>>> -		/* Disable COP interrupts */
+>>>> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+>>>> +		/*
+>>>> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
+>>>> +		 *
+>>>> +		 * Tegra210 system suspend flow uses sc7entry firmware which
+>>>> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
+>>>> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
+>>>> +		 * system to go to SC7/LP0.
+>>>> +		 *
+>>>> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
+>>>> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
+>>>> +		 */
+>>>> +		if (!lic->soc->supports_sc7)
+>>>> +			/* Disable COP interrupts if SC7 is not supported */
+>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
+>>> doesn't sound correct to me. Something like 'firmware_sc7' should suit
+>>> better here.
+>> If what you're saying is true, then the whole patch is wrong, and the
+>> SC7 property should come from DT.
+> It should be safe to assume that all of existing Tegra210 devices use
+> the firmware for SC7, hence I wouldn't say that the patch is entirely
+> wrong. To me it's not entirely correct.
 
-OK. I'm just guessing now at this stage but can you disable SMP ?
+Yes, all existing Tegra210 platforms uses sc7 entry firmware for SC7 and=20
+AVP/COP IRQ need to be kept enabled as during suspend ATF triggers IRQ=20
+to COP for SC7 entry fw execution.
 
-We have to narrow down if this is coherency issue but you said that 
-booting without NFS and then mounting manually the share works ... So, 
-can you share logs with same debug prints in this condition in order to 
-compare ?
 
----
-Thanks,
-Jose Miguel Abreu
+>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+>>> Secondly, I'm also not sure why COP interrupts need to be disabled for
+>>> pre-T210 at all, since COP is unused. This looks to me like it was
+>>> cut-n-pasted from downstream kernel without a good reason and could be
+>>> simply removed.
+>> Please verify that this is actually the case. Tegra-2 definitely needed
+>> some level of poking, and I'm not keen on changing anything there until
+>> you (or someone else) has verified it on actual HW (see e307cc8941fc).
+> Tested on Tegra20 and Tegra30, LP1 suspend-resume works perfectly fine
+> with all COP bits removed from the driver.
+>
+> AFAIK, the reason why downstream needed that disabling is that it uses
+> proprietary firmware which is running on the COP and that firmware is
+> usually a BLOB audio/video DEC-ENC driver which doesn't cleanup
+> interrupts after itself. That firmware is not applicable for the
+> upstream kernel, hence there is no need to care about it.
+>
+>> Joseph, can you please shed some light here?
+
+SC7 entry flow uses 3rd party ATF (arm-trusted FW) blob which is the one th=
+at actually loads SC7 entry firmware and triggers IRQ to AVP/COP which caus=
+es COP to wakeup and run SC7 entry FW.
+
+So when SC7 support is enabled, IRQ need to be kept enabled and when SC7 FW=
+ starts execution, it will disable COP IRQ.
