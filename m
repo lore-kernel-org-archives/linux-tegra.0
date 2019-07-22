@@ -1,42 +1,86 @@
-From: Lars Persson <lists@bofh.nu>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page Pool
-Date: Mon, 22 Jul 2019 13:11:50 +0200
-Message-ID: <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
-References: <cover.1562149883.git.joabreu@synopsys.com> <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com> <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Mon, 22 Jul 2019 11:39:21 +0000
+Message-ID: <BN8PR12MB326661846D53AAEE315A7434D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
  <20190722101830.GA24948@apalos>
+ <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed;
+        boundary="_002_BN8PR12MB326661846D53AAEE315A7434D3C40BN8PR12MB3266namp_"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190722101830.GA24948@apalos>
+In-Reply-To: <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Jose Abreu <Jose.Abreu@synopsys.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
+To: Lars Persson <lists@bofh.nu>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 12:18 PM Ilias Apalodimas
-<ilias.apalodimas@linaro.org> wrote:
->
-> On Thu, Jul 18, 2019 at 07:48:04AM +0000, Jose Abreu wrote:
-> > From: Jon Hunter <jonathanh@nvidia.com>
-> > Date: Jul/17/2019, 19:58:53 (UTC+00:00)
-> >
-> > > Let me know if you have any thoughts.
-> >
-> > Can you try attached patch ?
-> >
->
-> The log says  someone calls panic() right?
-> Can we trye and figure were that happens during the stmmac init phase?
->
+--_002_BN8PR12MB326661846D53AAEE315A7434D3C40BN8PR12MB3266namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-The reason for the panic is hidden in this one line of the kernel logs:
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+RnJvbTogTGFycyBQZXJzc29uIDxsaXN0c0Bib2ZoLm51Pg0KRGF0ZTogSnVsLzIyLzIwMTksIDEy
+OjExOjUwIChVVEMrMDA6MDApDQoNCj4gT24gTW9uLCBKdWwgMjIsIDIwMTkgYXQgMTI6MTggUE0g
+SWxpYXMgQXBhbG9kaW1hcw0KPiA8aWxpYXMuYXBhbG9kaW1hc0BsaW5hcm8ub3JnPiB3cm90ZToN
+Cj4gPg0KPiA+IE9uIFRodSwgSnVsIDE4LCAyMDE5IGF0IDA3OjQ4OjA0QU0gKzAwMDAsIEpvc2Ug
+QWJyZXUgd3JvdGU6DQo+ID4gPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
+bT4NCj4gPiA+IERhdGU6IEp1bC8xNy8yMDE5LCAxOTo1ODo1MyAoVVRDKzAwOjAwKQ0KPiA+ID4N
+Cj4gPiA+ID4gTGV0IG1lIGtub3cgaWYgeW91IGhhdmUgYW55IHRob3VnaHRzLg0KPiA+ID4NCj4g
+PiA+IENhbiB5b3UgdHJ5IGF0dGFjaGVkIHBhdGNoID8NCj4gPiA+DQo+ID4NCj4gPiBUaGUgbG9n
+IHNheXMgIHNvbWVvbmUgY2FsbHMgcGFuaWMoKSByaWdodD8NCj4gPiBDYW4gd2UgdHJ5ZSBhbmQg
+ZmlndXJlIHdlcmUgdGhhdCBoYXBwZW5zIGR1cmluZyB0aGUgc3RtbWFjIGluaXQgcGhhc2U/DQo+
+ID4NCj4gDQo+IFRoZSByZWFzb24gZm9yIHRoZSBwYW5pYyBpcyBoaWRkZW4gaW4gdGhpcyBvbmUg
+bGluZSBvZiB0aGUga2VybmVsIGxvZ3M6DQo+IEtlcm5lbCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBB
+dHRlbXB0ZWQgdG8ga2lsbCBpbml0ISBleGl0Y29kZT0weDAwMDAwMDBiDQo+IA0KPiBUaGUgaW5p
+dCBwcm9jZXNzIGlzIGtpbGxlZCBieSBTSUdTRUdWIChzaWduYWwgMTEgPSAweGIpLg0KPiANCj4g
+SSB3b3VsZCBzdWdnZXN0IHlvdSBsb29rIGZvciBkYXRhIGNvcnJ1cHRpb24gYnVncyBpbiB0aGUg
+UlggcGF0aC4gSWYNCj4gdGhlIGNvZGUgaXMgZmV0Y2hlZCBmcm9tIHRoZSBORlMgbW91bnQgdGhl
+biBhIGNvcnJ1cHQgUlggYnVmZmVyIGNhbg0KPiB0cmlnZ2VyIGEgY3Jhc2ggaW4gdXNlcnNwYWNl
+Lg0KPiANCj4gL0xhcnMNCg0KDQpKb24sIEknbSBub3QgZmFtaWxpYXIgd2l0aCBBUk0uIEFyZSB0
+aGUgYnVmZmVyIGFkZHJlc3NlcyBiZWluZyBhbGxvY2F0ZWQgDQppbiBhIGNvaGVyZW50IHJlZ2lv
+biA/IENhbiB5b3UgdHJ5IGF0dGFjaGVkIHBhdGNoIHdoaWNoIGFkZHMgZnVsbCBtZW1vcnkgDQpi
+YXJyaWVyIGJlZm9yZSB0aGUgc3luYyA/DQoNCi0tLQ0KVGhhbmtzLA0KSm9zZSBNaWd1ZWwgQWJy
+ZXUNCg==
 
-The init process is killed by SIGSEGV (signal 11 = 0xb).
+--_002_BN8PR12MB326661846D53AAEE315A7434D3C40BN8PR12MB3266namp_
+Content-Type: application/octet-stream;
+	name="0001-net-stmmac-Add-memory-barrier.patch"
+Content-Description: 0001-net-stmmac-Add-memory-barrier.patch
+Content-Disposition: attachment;
+	filename="0001-net-stmmac-Add-memory-barrier.patch"; size=1397;
+	creation-date="Mon, 22 Jul 2019 11:38:06 GMT";
+	modification-date="Mon, 22 Jul 2019 11:38:06 GMT"
+Content-Transfer-Encoding: base64
 
-I would suggest you look for data corruption bugs in the RX path. If
-the code is fetched from the NFS mount then a corrupt RX buffer can
-trigger a crash in userspace.
+RnJvbSAxZmU0OTY0ZTgzMmUzMmUyYzU3MDZhMGVkMTc0YzlmOGUwNDE5ZWZkIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8MWZlNDk2NGU4MzJlMzJlMmM1NzA2YTBlZDE3NGM5
+ZjhlMDQxOWVmZC4xNTYzNzk1NDg2LmdpdC5qb2FicmV1QHN5bm9wc3lzLmNvbT4KRnJvbTogSm9z
+ZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkRhdGU6IE1vbiwgMjIgSnVsIDIwMTkgMTM6
+Mzc6NTEgKzAyMDAKU3ViamVjdDogW1BBVENIIG5ldF0gbmV0OiBzdG1tYWM6IEFkZCBtZW1vcnkg
+YmFycmllcgoKU2lnbmVkLW9mZi1ieTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+
+CgotLS0KQ2M6IEdpdXNlcHBlIENhdmFsbGFybyA8cGVwcGUuY2F2YWxsYXJvQHN0LmNvbT4KQ2M6
+IEFsZXhhbmRyZSBUb3JndWUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPgpDYzogSm9zZSBBYnJl
+dSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkNjOiAiRGF2aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2
+ZW1sb2Z0Lm5ldD4KQ2M6IE1heGltZSBDb3F1ZWxpbiA8bWNvcXVlbGluLnN0bTMyQGdtYWlsLmNv
+bT4KQ2M6IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXN0bTMyQHN0LW1kLW1haWxt
+YW4uc3Rvcm1yZXBseS5jb20KQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+ZwpDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwotLS0KIGRyaXZlcnMvbmV0L2V0aGVy
+bmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMgfCAzICsrKwogMSBmaWxlIGNoYW5nZWQs
+IDMgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWlj
+cm8vc3RtbWFjL3N0bW1hY19tYWluLmMgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0
+bW1hYy9zdG1tYWNfbWFpbi5jCmluZGV4IDdhNjkyMDA5OGRkMC4uMjA3YzM3NTViY2M1IDEwMDY0
+NAotLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5j
+CisrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMK
+QEAgLTM0MjUsNiArMzQyNSw5IEBAIHN0YXRpYyBpbnQgc3RtbWFjX3J4KHN0cnVjdCBzdG1tYWNf
+cHJpdiAqcHJpdiwgaW50IGxpbWl0LCB1MzIgcXVldWUpCiAJCQkJY29udGludWU7CiAJCQl9CiAK
+KwkJCS8qIEZ1bGwgbWVtb3J5IGJhcnJpZXIgKi8KKwkJCW1iKCk7CisKIAkJCWRtYV9zeW5jX3Np
+bmdsZV9mb3JfY3B1KHByaXYtPmRldmljZSwgYnVmLT5hZGRyLAogCQkJCQkJZnJhbWVfbGVuLCBE
+TUFfRlJPTV9ERVZJQ0UpOwogCQkJc2tiX2NvcHlfdG9fbGluZWFyX2RhdGEoc2tiLCBwYWdlX2Fk
+ZHJlc3MoYnVmLT5wYWdlKSwKLS0gCjIuNy40Cgo=
 
-/Lars
+--_002_BN8PR12MB326661846D53AAEE315A7434D3C40BN8PR12MB3266namp_--
