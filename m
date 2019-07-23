@@ -1,61 +1,54 @@
-From: Viswanath L <viswanathl@nvidia.com>
-Subject: [PATCH v3] drm/tegra: sor: Enable HDA interrupts at plug-in
-Date: Tue, 23 Jul 2019 18:10:10 +0530
-Message-ID: <1563885610-27198-1-git-send-email-viswanathl@nvidia.com>
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: Re: [PATCH v4 14/23] drm/tilcdc: Provide ddc symlink in connector
+ sysfs directory
+Date: Tue, 23 Jul 2019 14:44:50 +0200
+Message-ID: <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
+References: <cover.1562843413.git.andrzej.p@collabora.com>
+ <d1d415022c598fb7acd033f0f322dd67250adaa9.1562843413.git.andrzej.p@collabora.com>
+ <20190723090532.GA787@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Viswanath L <viswanathl@nvidia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190723090532.GA787@ravnborg.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Shawn Guo <shawnguo@kernel.org>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Sean Paul <sean@poorly.run>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>, linux-ar
 List-Id: linux-tegra@vger.kernel.org
 
-HDMI plugout calls runtime suspend, which clears interrupt registers
-and causes audio functionality to break on subsequent plug-in; setting
-interrupt registers in sor_audio_prepare() solves the issue.
+Hi Sam,
 
-Signed-off-by: Viswanath L <viswanathl@nvidia.com>
-Fixes: 8e2988a76c26 ("drm/tegra: sor: Support for audio over HDMI")
-Cc: <stable@vger.kernel.org>
----
- drivers/gpu/drm/tegra/sor.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+W dniu 23.07.2019 o 11:05, Sam Ravnborg pisze:
+> Hi Andrzej
+> 
+> On Thu, Jul 11, 2019 at 01:26:41PM +0200, Andrzej Pietrasiewicz wrote:
+>> Use the ddc pointer provided by the generic connector.
+>>
+>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+>> ---
+>>   drivers/gpu/drm/tilcdc/tilcdc_tfp410.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>> index 62d014c20988..c373edb95666 100644
+>> --- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>> +++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>> @@ -219,6 +219,7 @@ static struct drm_connector *tfp410_connector_create(struct drm_device *dev,
+>>   	tfp410_connector->mod = mod;
+>>   
+>>   	connector = &tfp410_connector->base;
+>> +	connector->ddc = mod->i2c;
+>>   
+>>   	drm_connector_init(dev, connector, &tfp410_connector_funcs,
+>>   			DRM_MODE_CONNECTOR_DVID);
+> 
+> When reading this code, it looks strange that we set connector->ddc
+> *before* the call to init the connector.
+> One could risk that drm_connector_init() used memset(..) to clear all
+> fields or so, and it would break this order.
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 5be5a08..0470cfe 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -2164,6 +2164,15 @@ static void tegra_sor_audio_prepare(struct tegra_sor *sor)
- 
- 	value = SOR_AUDIO_HDA_PRESENSE_ELDV | SOR_AUDIO_HDA_PRESENSE_PD;
- 	tegra_sor_writel(sor, value, SOR_AUDIO_HDA_PRESENSE);
-+
-+	/*
-+	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
-+	 * is used for interoperability between the HDA codec driver and the
-+	 * HDMI/DP driver.
-+	 */
-+	value = SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
-+	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
-+	tegra_sor_writel(sor, value, SOR_INT_MASK);
- }
- 
- static void tegra_sor_audio_unprepare(struct tegra_sor *sor)
-@@ -2913,15 +2922,6 @@ static int tegra_sor_init(struct host1x_client *client)
- 	if (err < 0)
- 		return err;
- 
--	/*
--	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
--	 * is used for interoperability between the HDA codec driver and the
--	 * HDMI/DP driver.
--	 */
--	value = SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
--	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
--	tegra_sor_writel(sor, value, SOR_INT_MASK);
--
- 	return 0;
- }
- 
--- 
-2.7.4
+I verified the code of drm_connector_init() and cannot find any memset()
+invocations there. What is your actual concern?
+
+Andrzej
