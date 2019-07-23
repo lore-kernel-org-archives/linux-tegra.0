@@ -1,53 +1,67 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2] drm/tegra: sor: Enable HDA interrupts at plugin
-Date: Tue, 23 Jul 2019 13:18:04 +0300
-Message-ID: <5281fd84-bbe8-8482-0224-068b87349aaa@gmail.com>
-References: <1563787632-19762-1-git-send-email-viswanathl@nvidia.com>
- <11288075-f34a-222c-66da-2bfd13db987c@gmail.com>
- <fe7a0f13-4e85-56db-7629-92c6a8f67014@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Tue, 23 Jul 2019 11:29:28 +0100
+Message-ID: <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190722101830.GA24948@apalos>
+ <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
+ <BN8PR12MB326661846D53AAEE315A7434D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <11557fe0-0cba-cb49-0fb6-ad24792d4a53@nvidia.com>
+ <BN8PR12MB3266664ECA192E02C06061EED3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <BYAPR12MB3269A725AFDDA21E92946558D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <ab14f31f-2045-b1be-d31f-2a81b8527dac@nvidia.com>
+ <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fe7a0f13-4e85-56db-7629-92c6a8f67014@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viswanath L <viswanathl@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "airlied@linux.ie" <airlied@linux.ie>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jose Abreu <Jose.Abreu@synopsys.com>, Jon Hunter <jonathanh@nvidia.com>, Lars Persson <lists@bofh.nu>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, "David S . Miller" <davem@davemloft.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-23.07.2019 13:11, Viswanath L пишет:
-> Thanks for your comments, Dmitry. Please see my responses inline.
+On 23/07/2019 11:07, Jose Abreu wrote:
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Date: Jul/23/2019, 11:01:24 (UTC+00:00)
 > 
-> On 7/23/2019 6:00 AM, Dmitry Osipenko wrote:
->> 22.07.2019 12:27, Viswanath L пишет:
->>> HDMI plugout calls runtime suspend, which clears interrupt registers
->>> and causes audio functionality to break on subsequent plugin; setting
->>> interrupt registers in sor_audio_prepare() solves the issue
->> Hello Viswanath,
->>
->> A dot should be in the end of sentence, please. And should be better to
->> s/plugin/plug-in/ in the commit's message/title because 'plugin' sounds
->> as a noun.
-> [VL] Yes, I'll make the above changes.
->>
->> Please don't version patch as v2 if v1 wasn't ever sent out.
-> [VL] Now that I have sent v2, shall I continue with v2 for the next
-> patch? Apologies for this oversight.
+>> This appears to be a winner and by disabling the SMMU for the ethernet
+>> controller and reverting commit 954a03be033c7cef80ddc232e7cbdb17df735663
+>> this worked! So yes appears to be related to the SMMU being enabled. We
+>> had to enable the SMMU for ethernet recently due to commit
+>> 954a03be033c7cef80ddc232e7cbdb17df735663.
+> 
+> Finally :)
+> 
+> However, from "git show 954a03be033c7cef80ddc232e7cbdb17df735663":
+> 
+> +         There are few reasons to allow unmatched stream bypass, and
+> +         even fewer good ones.  If saying YES here breaks your board
+> +         you should work on fixing your board.
+> 
+> So, how can we fix this ? Is your ethernet DT node marked as
+> "dma-coherent;" ?
 
-v3 should be good.
+The first thing to try would be booting the failing setup with 
+"iommu.passthrough=1" (or using CONFIG_IOMMU_DEFAULT_PASSTHROUGH) - if 
+that makes things seem OK, then the problem is likely related to address 
+translation; if not, then it's probably time to start looking at nasties 
+like coherency and ordering, although in principle I wouldn't expect the 
+SMMU to have too much impact there.
 
->> You should add a stable tag here to get patch backported into stable
->> kernel versions:
->>
->> Cc: <stable@vger.kernel.org>
-> [VL] Yes, will add.
->>
->>> Signed-off-by: Viswanath L <viswanathl@nvidia.com>
->> The kernel upstreaming rules require a full name. I'm pretty sure that L
->> isn't yours surname.
-> [VL] My name appears as "Viswanath L" in all company records and email
-> lists. I would strongly prefer to keep it this way, unless that is an
-> absolute no-no.
+Do you know if the SMMU interrupts are working correctly? If not, it's 
+possible that an incorrect address or mapping direction could lead to 
+the DMA transaction just being silently terminated without any fault 
+indication, which generally presents as inexplicable weirdness (I've 
+certainly seen that on another platform with the mix of an unsupported 
+interrupt controller and an 'imperfect' ethernet driver).
 
-I guess it should be okay, but a full name is much more preferable.
+Just to confirm, has the original patch been tested with 
+CONFIG_DMA_API_DEBUG to rule out any high-level mishaps?
+
+Robin.
