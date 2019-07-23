@@ -1,189 +1,33 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V6 16/21] soc/tegra: pmc: Add pmc wake support for
- tegra210
-Date: Tue, 23 Jul 2019 06:43:08 +0300
-Message-ID: <a58de350-f6ce-9308-1ae0-885e732b575d@gmail.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-17-git-send-email-skomatineni@nvidia.com>
- <0b3d08ea-4633-8a54-ba66-c3f3146a1ece@gmail.com>
- <ca32c2d8-d752-3ecd-3a3f-232366730c7b@gmail.com>
- <b575ca93-9f34-b07a-1234-ef1ea2a6ddee@gmail.com>
- <71a88a9c-a542-557a-0eaa-3c90112dee0e@nvidia.com>
- <70ad28cb-c268-cbbe-36f5-39df26617d8e@gmail.com>
- <629826f9-c453-386a-9e88-bd64d23b8eab@nvidia.com>
- <71c8cab1-bf72-c073-be30-4263c6b7c871@gmail.com>
- <97096b6c-f2f5-b82a-b172-802f4a06d1af@nvidia.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v4 12/23] drm: zte: Provide ddc symlink in hdmi connector
+ sysfs directory
+Date: Tue, 23 Jul 2019 13:58:08 +0800
+Message-ID: <20190723055807.GQ3738@dragon>
+References: <cover.1562843413.git.andrzej.p@collabora.com>
+ <4a9fb80b4dc328b420ca5d94ebc2810ab86f788c.1562843413.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <97096b6c-f2f5-b82a-b172-802f4a06d1af@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <4a9fb80b4dc328b420ca5d94ebc2810ab86f788c.1562843413.git.andrzej.p@collabora.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, dri-devel@lists.freedesktop.org, Douglas Anderson <dianders@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, intel-gfx@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org, Mamta Shukla <mamtashukla555@gmail.com>, linux-mediatek@li
 List-Id: linux-tegra@vger.kernel.org
 
-23.07.2019 6:31, Sowjanya Komatineni пишет:
-> 
-> On 7/22/19 8:25 PM, Dmitry Osipenko wrote:
->> 23.07.2019 6:09, Sowjanya Komatineni пишет:
->>> On 7/22/19 8:03 PM, Dmitry Osipenko wrote:
->>>> 23.07.2019 4:52, Sowjanya Komatineni пишет:
->>>>> On 7/22/19 6:41 PM, Dmitry Osipenko wrote:
->>>>>> 23.07.2019 4:08, Dmitry Osipenko пишет:
->>>>>>> 23.07.2019 3:58, Dmitry Osipenko пишет:
->>>>>>>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
->>>>>>>>> This patch implements PMC wakeup sequence for Tegra210 and defines
->>>>>>>>> common used RTC alarm wake event.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>> ---
->>>>>>>>>    drivers/soc/tegra/pmc.c | 111
->>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>>    1 file changed, 111 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>>>>>>> index 91c84d0e66ae..c556f38874e1 100644
->>>>>>>>> --- a/drivers/soc/tegra/pmc.c
->>>>>>>>> +++ b/drivers/soc/tegra/pmc.c
->>>>>>>>> @@ -57,6 +57,12 @@
->>>>>>>>>    #define  PMC_CNTRL_SYSCLK_OE        BIT(11) /* system clock
->>>>>>>>> enable */
->>>>>>>>>    #define  PMC_CNTRL_SYSCLK_POLARITY    BIT(10) /* sys clk
->>>>>>>>> polarity */
->>>>>>>>>    #define  PMC_CNTRL_MAIN_RST        BIT(4)
->>>>>>>>> +#define  PMC_CNTRL_LATCH_WAKEUPS    BIT(5)
->>>>>>> Please follow the TRM's bits naming.
->>>>>>>
->>>>>>> PMC_CNTRL_LATCHWAKE_EN
->>>>>>>
->>>>>>>>> +#define PMC_WAKE_MASK            0x0c
->>>>>>>>> +#define PMC_WAKE_LEVEL            0x10
->>>>>>>>> +#define PMC_WAKE_STATUS            0x14
->>>>>>>>> +#define PMC_SW_WAKE_STATUS        0x18
->>>>>>>>>      #define DPD_SAMPLE            0x020
->>>>>>>>>    #define  DPD_SAMPLE_ENABLE        BIT(0)
->>>>>>>>> @@ -87,6 +93,11 @@
->>>>>>>>>      #define PMC_SCRATCH41            0x140
->>>>>>>>>    +#define PMC_WAKE2_MASK            0x160
->>>>>>>>> +#define PMC_WAKE2_LEVEL            0x164
->>>>>>>>> +#define PMC_WAKE2_STATUS        0x168
->>>>>>>>> +#define PMC_SW_WAKE2_STATUS        0x16c
->>>>>>>>> +
->>>>>>>>>    #define PMC_SENSOR_CTRL            0x1b0
->>>>>>>>>    #define  PMC_SENSOR_CTRL_SCRATCH_WRITE    BIT(2)
->>>>>>>>>    #define  PMC_SENSOR_CTRL_ENABLE_RST    BIT(1)
->>>>>>>>> @@ -1922,6 +1933,55 @@ static const struct irq_domain_ops
->>>>>>>>> tegra_pmc_irq_domain_ops = {
->>>>>>>>>        .alloc = tegra_pmc_irq_alloc,
->>>>>>>>>    };
->>>>>>>>>    +static int tegra210_pmc_irq_set_wake(struct irq_data *data,
->>>>>>>>> unsigned int on)
->>>>>>>>> +{
->>>>>>>>> +    struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->>>>>>>>> +    unsigned int offset, bit;
->>>>>>>>> +    u32 value;
->>>>>>>>> +
->>>>>>>>> +    if (data->hwirq == ULONG_MAX)
->>>>>>>>> +        return 0;
->>>>>>>>> +
->>>>>>>>> +    offset = data->hwirq / 32;
->>>>>>>>> +    bit = data->hwirq % 32;
->>>>>>>>> +
->>>>>>>>> +    /*
->>>>>>>>> +     * Latch wakeups to SW_WAKE_STATUS register to capture events
->>>>>>>>> +     * that would not make it into wakeup event register during
->>>>>>>>> LP0 exit.
->>>>>>>>> +     */
->>>>>>>>> +    value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>>>>>>> +    value |= PMC_CNTRL_LATCH_WAKEUPS;
->>>>>>>>> +    tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>>>>>>>> +    udelay(120);
->>>>>>>> Why it takes so much time to latch the values? Shouldn't some
->>>>>>>> status-bit
->>>>>>>> be polled for the completion of latching?
->>>>>>>>
->>>>>>>> Is this register-write really getting buffered in the PMC?
->>>>>>>>
->>>>>>>>> +    value &= ~PMC_CNTRL_LATCH_WAKEUPS;
->>>>>>>>> +    tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>>>>>>>> +    udelay(120);
->>>>>>>> 120 usecs to remove latching, really?
->>>>>>>>
->>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
->>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
->>>>>>>>> +
->>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
->>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
->>>>>>>>> +
->>>>>>>>> +    /* enable PMC wake */
->>>>>>>>> +    if (data->hwirq >= 32)
->>>>>>>>> +        offset = PMC_WAKE2_MASK;
->>>>>>>>> +    else
->>>>>>>>> +        offset = PMC_WAKE_MASK;
->>>>>>>>> +
->>>>>>>>> +    value = tegra_pmc_readl(pmc, offset);
->>>>>>>>> +
->>>>>>>>> +    if (on)
->>>>>>>>> +        value |= 1 << bit;
->>>>>>>>> +    else
->>>>>>>>> +        value &= ~(1 << bit);
->>>>>>>>> +
->>>>>>>>> +    tegra_pmc_writel(pmc, value, offset);
->>>>>>>> Why the latching is done *before* writing into the WAKE registers?
->>>>>>>> What
->>>>>>>> it is latching then?
->>>>>>> I'm looking at the TRM doc and it says that latching should be done
->>>>>>> *after* writing to the WAKE_MASK / LEVEL registers.
->>>>>>>
->>>>>>> Secondly it says that it's enough to do:
->>>>>>>
->>>>>>> value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>>>>> value |= PMC_CNTRL_LATCH_WAKEUPS;
->>>>>>> tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>>>>>>
->>>>>>> in order to latch. There is no need for the delay and to remove the
->>>>>>> "LATCHWAKE_EN" bit, it should be a oneshot action.
->>>>>> Although, no. TRM says "stops latching on transition from 1
->>>>>> to 0 (sequence - set to 1,set to 0)", so it's not a oneshot action.
->>>>>>
->>>>>> Have you tested this code at all? I'm wondering how it happens to
->>>>>> work
->>>>>> without a proper latching.
->>>>> Yes, ofcourse its tested and this sequence to do transition is
->>>>> recommendation from Tegra designer.
->>>>> Will check if TRM doesn't have update properly or will re-confirm
->>>>> internally on delay time...
->>>>>
->>>>> On any of the wake event PMC wakeup happens and WAKE_STATUS register
->>>>> will have bits set for all events that triggered wake.
->>>>> After wakeup PMC doesn't update SW_WAKE_STATUS register as per PMC
->>>>> design.
->>>>> SW latch register added in design helps to provide a way to capture
->>>>> those events that happen right during wakeup time and didnt make it to
->>>>> SW_WAKE_STATUS register.
->>>>> So before next suspend entry, latching all prior wake events into SW
->>>>> WAKE_STATUS and then clearing them.
->>>> I'm now wondering whether the latching cold be turned ON permanently
->>>> during of the PMC's probe, for simplicity.
->>> latching should be done on suspend-resume cycle as wake events gets
->>> generates on every suspend-resume cycle.
->> You're saying that PMC "doesn't update SW_WAKE_STATUS" after wake-up,
->> then I don't quite understand what's the point of disabling the latching
->> at all.
-> When latch wake enable is set, events are latched and during 1 to 0
-> transition latching is disabled.
-> 
-> This is to avoid sw_wake_status and wake_status showing diff events.
-
-Okay.
-
-> Currently driver is not relying on SW_WAKE_STATUS but its good to latch
-> and clear so even at some point for some reason when SW_WAKE_STATUS is
-> used, this wlil not cause mismatch with wake_status.
-
-Then the latching need to be enabled on suspend and disabled early on
-resume to get a proper WAKE status.
-
-[snip]
+T24gVGh1LCBKdWwgMTEsIDIwMTkgYXQgMDE6MjY6MzlQTSArMDIwMCwgQW5kcnplaiBQaWV0cmFz
+aWV3aWN6IHdyb3RlOgo+IFVzZSB0aGUgZGRjIHBvaW50ZXIgcHJvdmlkZWQgYnkgdGhlIGdlbmVy
+aWMgY29ubmVjdG9yLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogUGlldHJhc2lld2ljeiA8
+YW5kcnplai5wQGNvbGxhYm9yYS5jb20+CgpBY2tlZC1ieTogU2hhd24gR3VvIDxzaGF3bmd1b0Br
+ZXJuZWwub3JnPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
