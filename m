@@ -1,33 +1,65 @@
-From: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 13/23] drm: zte: Provide ddc symlink in
- vga connector sysfs directory
-Date: Tue, 23 Jul 2019 13:58:59 +0800
-Message-ID: <20190723055858.GR3738@dragon>
-References: <cover.1562843413.git.andrzej.p@collabora.com>
- <9cdd2fc46dbcb6b596786e5a12b7176c77a38d78.1562843413.git.andrzej.p@collabora.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Tue, 23 Jul 2019 08:14:52 +0000
+Message-ID: <BYAPR12MB3269A725AFDDA21E92946558D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190722101830.GA24948@apalos>
+ <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
+ <BN8PR12MB326661846D53AAEE315A7434D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <11557fe0-0cba-cb49-0fb6-ad24792d4a53@nvidia.com>
+ <BN8PR12MB3266664ECA192E02C06061EED3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <9cdd2fc46dbcb6b596786e5a12b7176c77a38d78.1562843413.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ramalingam C <ramalingam.c-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.orgV
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <BN8PR12MB3266664ECA192E02C06061EED3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Lars Persson <lists@bofh.nu>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBKdWwgMTEsIDIwMTkgYXQgMDE6MjY6NDBQTSArMDIwMCwgQW5kcnplaiBQaWV0cmFz
-aWV3aWN6IHdyb3RlOgo+IFVzZSB0aGUgZGRjIHBvaW50ZXIgcHJvdmlkZWQgYnkgdGhlIGdlbmVy
-aWMgY29ubmVjdG9yLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogUGlldHJhc2lld2ljeiA8
-YW5kcnplai5wQGNvbGxhYm9yYS5jb20+CgpBY2tlZC1ieTogU2hhd24gR3VvIDxzaGF3bmd1b0Br
-ZXJuZWwub3JnPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8=
+RnJvbTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+DQpEYXRlOiBKdWwvMjIvMjAx
+OSwgMTU6MDQ6NDkgKFVUQyswMDowMCkNCg0KPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhA
+bnZpZGlhLmNvbT4NCj4gRGF0ZTogSnVsLzIyLzIwMTksIDEzOjA1OjM4IChVVEMrMDA6MDApDQo+
+IA0KPiA+IA0KPiA+IE9uIDIyLzA3LzIwMTkgMTI6MzksIEpvc2UgQWJyZXUgd3JvdGU6DQo+ID4g
+PiBGcm9tOiBMYXJzIFBlcnNzb24gPGxpc3RzQGJvZmgubnU+DQo+ID4gPiBEYXRlOiBKdWwvMjIv
+MjAxOSwgMTI6MTE6NTAgKFVUQyswMDowMCkNCj4gPiA+IA0KPiA+ID4+IE9uIE1vbiwgSnVsIDIy
+LCAyMDE5IGF0IDEyOjE4IFBNIElsaWFzIEFwYWxvZGltYXMNCj4gPiA+PiA8aWxpYXMuYXBhbG9k
+aW1hc0BsaW5hcm8ub3JnPiB3cm90ZToNCj4gPiA+Pj4NCj4gPiA+Pj4gT24gVGh1LCBKdWwgMTgs
+IDIwMTkgYXQgMDc6NDg6MDRBTSArMDAwMCwgSm9zZSBBYnJldSB3cm90ZToNCj4gPiA+Pj4+IEZy
+b206IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KPiA+ID4+Pj4gRGF0ZTogSnVs
+LzE3LzIwMTksIDE5OjU4OjUzIChVVEMrMDA6MDApDQo+ID4gPj4+Pg0KPiA+ID4+Pj4+IExldCBt
+ZSBrbm93IGlmIHlvdSBoYXZlIGFueSB0aG91Z2h0cy4NCj4gPiA+Pj4+DQo+ID4gPj4+PiBDYW4g
+eW91IHRyeSBhdHRhY2hlZCBwYXRjaCA/DQo+ID4gPj4+Pg0KPiA+ID4+Pg0KPiA+ID4+PiBUaGUg
+bG9nIHNheXMgIHNvbWVvbmUgY2FsbHMgcGFuaWMoKSByaWdodD8NCj4gPiA+Pj4gQ2FuIHdlIHRy
+eWUgYW5kIGZpZ3VyZSB3ZXJlIHRoYXQgaGFwcGVucyBkdXJpbmcgdGhlIHN0bW1hYyBpbml0IHBo
+YXNlPw0KPiA+ID4+Pg0KPiA+ID4+DQo+ID4gPj4gVGhlIHJlYXNvbiBmb3IgdGhlIHBhbmljIGlz
+IGhpZGRlbiBpbiB0aGlzIG9uZSBsaW5lIG9mIHRoZSBrZXJuZWwgbG9nczoNCj4gPiA+PiBLZXJu
+ZWwgcGFuaWMgLSBub3Qgc3luY2luZzogQXR0ZW1wdGVkIHRvIGtpbGwgaW5pdCEgZXhpdGNvZGU9
+MHgwMDAwMDAwYg0KPiA+ID4+DQo+ID4gPj4gVGhlIGluaXQgcHJvY2VzcyBpcyBraWxsZWQgYnkg
+U0lHU0VHViAoc2lnbmFsIDExID0gMHhiKS4NCj4gPiA+Pg0KPiA+ID4+IEkgd291bGQgc3VnZ2Vz
+dCB5b3UgbG9vayBmb3IgZGF0YSBjb3JydXB0aW9uIGJ1Z3MgaW4gdGhlIFJYIHBhdGguIElmDQo+
+ID4gPj4gdGhlIGNvZGUgaXMgZmV0Y2hlZCBmcm9tIHRoZSBORlMgbW91bnQgdGhlbiBhIGNvcnJ1
+cHQgUlggYnVmZmVyIGNhbg0KPiA+ID4+IHRyaWdnZXIgYSBjcmFzaCBpbiB1c2Vyc3BhY2UuDQo+
+ID4gPj4NCj4gPiA+PiAvTGFycw0KPiA+ID4gDQo+ID4gPiANCj4gPiA+IEpvbiwgSSdtIG5vdCBm
+YW1pbGlhciB3aXRoIEFSTS4gQXJlIHRoZSBidWZmZXIgYWRkcmVzc2VzIGJlaW5nIGFsbG9jYXRl
+ZCANCj4gPiA+IGluIGEgY29oZXJlbnQgcmVnaW9uID8gQ2FuIHlvdSB0cnkgYXR0YWNoZWQgcGF0
+Y2ggd2hpY2ggYWRkcyBmdWxsIG1lbW9yeSANCj4gPiA+IGJhcnJpZXIgYmVmb3JlIHRoZSBzeW5j
+ID8NCj4gPiANCj4gPiBUQkggSSBhbSBub3Qgc3VyZSBhYm91dCB0aGUgYnVmZmVyIGFkZHJlc3Nl
+cyBlaXRoZXIuIFRoZSBhdHRhY2hlZCBwYXRjaA0KPiA+IGRpZCBub3QgaGVscC4gU2FtZSBwcm9i
+bGVtIHBlcnNpc3RzLg0KPiANCj4gT0suIEknbSBqdXN0IGd1ZXNzaW5nIG5vdyBhdCB0aGlzIHN0
+YWdlIGJ1dCBjYW4geW91IGRpc2FibGUgU01QID8NCj4gDQo+IFdlIGhhdmUgdG8gbmFycm93IGRv
+d24gaWYgdGhpcyBpcyBjb2hlcmVuY3kgaXNzdWUgYnV0IHlvdSBzYWlkIHRoYXQgDQo+IGJvb3Rp
+bmcgd2l0aG91dCBORlMgYW5kIHRoZW4gbW91bnRpbmcgbWFudWFsbHkgdGhlIHNoYXJlIHdvcmtz
+IC4uLiBTbywgDQo+IGNhbiB5b3Ugc2hhcmUgbG9ncyB3aXRoIHNhbWUgZGVidWcgcHJpbnRzIGlu
+IHRoaXMgY29uZGl0aW9uIGluIG9yZGVyIHRvIA0KPiBjb21wYXJlID8NCg0KSm9uLCBJIGhhdmUg
+b25lIEFSTSBiYXNlZCBib2FyZCBhbmQgSSBjYW4ndCBmYWNlIHlvdXIgaXNzdWUgYnV0IEkgDQpu
+b3RpY2VkIHRoYXQgbXkgYnVmZmVyIGFkZHJlc3NlcyBhcmUgYmVpbmcgbWFwcGVkIHVzaW5nIFNX
+SU9UTEIuIENhbiB5b3UgDQpkaXNhYmxlIElPTU1VIHN1cHBvcnQgb24geW91ciBzZXR1cCBhbmQg
+bGV0IG1lIGtub3cgaWYgdGhlIHByb2JsZW0gDQpwZXJzaXN0cyA/DQoNCi0tLQ0KVGhhbmtzLA0K
+Sm9zZSBNaWd1ZWwgQWJyZXUNCg==
