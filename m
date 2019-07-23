@@ -1,28 +1,75 @@
-From: David Miller <davem@davemloft.net>
+From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
  Pool
-Date: Tue, 23 Jul 2019 11:51:12 -0700 (PDT)
-Message-ID: <20190723.115112.1824255524103179323.davem@davemloft.net>
-References: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
-        <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
-        <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
+Date: Tue, 23 Jul 2019 22:39:29 +0100
+Message-ID: <ae11deb4-abec-f0f9-312d-b11d72bc74cd@nvidia.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190722101830.GA24948@apalos>
+ <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
+ <BN8PR12MB326661846D53AAEE315A7434D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <11557fe0-0cba-cb49-0fb6-ad24792d4a53@nvidia.com>
+ <BN8PR12MB3266664ECA192E02C06061EED3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <BYAPR12MB3269A725AFDDA21E92946558D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <ab14f31f-2045-b1be-d31f-2a81b8527dac@nvidia.com>
+ <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
+ <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
+ <3255edfa-4465-204b-4751-8d40c8fb1382@arm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
+In-Reply-To: <3255edfa-4465-204b-4751-8d40c8fb1382@arm.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jonathanh@nvidia.com
-Cc: robin.murphy@arm.com, Jose.Abreu@synopsys.com, lists@bofh.nu, ilias.apalodimas@linaro.org, Joao.Pinto@synopsys.com, alexandre.torgue@st.com, maxime.ripard@bootlin.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, wens@csie.org, mcoquelin.stm32@gmail.com, linux-tegra@vger.kernel.org, peppe.cavallaro@st.com, linux-arm-kernel@lists.infradead.org
+To: Robin Murphy <robin.murphy@arm.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Lars Persson <lists@bofh.nu>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, "David S . Miller" <davem@davemloft.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Tue, 23 Jul 2019 13:09:00 +0100
 
-> Setting "iommu.passthrough=1" works for me. However, I am not sure where
-> to go from here, so any ideas you have would be great.
+On 23/07/2019 14:19, Robin Murphy wrote:
 
-Then definitely we are accessing outside of a valid IOMMU mapping due
-to the page pool support changes.
+...
 
-Such a problem should be spotted with swiommu enabled with debugging.
+>>> Do you know if the SMMU interrupts are working correctly? If not, it's
+>>> possible that an incorrect address or mapping direction could lead to
+>>> the DMA transaction just being silently terminated without any fault
+>>> indication, which generally presents as inexplicable weirdness (I've
+>>> certainly seen that on another platform with the mix of an unsupported
+>>> interrupt controller and an 'imperfect' ethernet driver).
+>>
+>> If I simply remove the iommu node for the ethernet controller, then I
+>> see lots of ...
+>>
+>> [=C2=A0=C2=A0=C2=A0 6.296121] arm-smmu 12000000.iommu: Unexpected global=
+ fault, this
+>> could be serious
+>> [=C2=A0=C2=A0=C2=A0 6.296125] arm-smmu 12000000.iommu:=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 GFSR 0x00000002,
+>> GFSYNR0 0x00000000, GFSYNR1 0x00000014, GFSYNR2 0x00000000
+>>
+>> So I assume that this is triggering the SMMU interrupt correctly.
+>=20
+> According to tegra186.dtsi it appears you're using the MMU-500 combined
+> interrupt, so if global faults are being delivered then context faults
+> *should* also, but I'd be inclined to try a quick hack of the relevant
+> stmmac_desc_ops::set_addr callback to write some bogus unmapped address
+> just to make sure arm_smmu_context_fault() then screams as expected, and
+> we're not missing anything else.
+
+I hacked the driver and forced the address to zero for a test and
+in doing so I see ...
+
+[   10.440072] arm-smmu 12000000.iommu: Unhandled context fault: fsr=3D0x40=
+2, iova=3D0x00000000, fsynr=3D0x1c0011, cbfrsynra=3D0x14, cb=3D0
+
+So looks like the interrupts are working AFAICT.
+
+Cheers
+Jon
+
+--=20
+nvpublic
