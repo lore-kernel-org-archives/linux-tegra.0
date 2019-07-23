@@ -1,42 +1,90 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Date: Tue, 23 Jul 2019 10:07:51 +0000
-Message-ID: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
-References: <cover.1562149883.git.joabreu@synopsys.com>
- <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
- <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20190722101830.GA24948@apalos>
- <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
- <BN8PR12MB326661846D53AAEE315A7434D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
- <11557fe0-0cba-cb49-0fb6-ad24792d4a53@nvidia.com>
- <BN8PR12MB3266664ECA192E02C06061EED3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
- <BYAPR12MB3269A725AFDDA21E92946558D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
- <ab14f31f-2045-b1be-d31f-2a81b8527dac@nvidia.com>
+From: Viswanath L <viswanathl@nvidia.com>
+Subject: Re: [PATCH v2] drm/tegra: sor: Enable HDA interrupts at plugin
+Date: Tue, 23 Jul 2019 15:41:05 +0530
+Message-ID: <fe7a0f13-4e85-56db-7629-92c6a8f67014@nvidia.com>
+References: <1563787632-19762-1-git-send-email-viswanathl@nvidia.com>
+ <11288075-f34a-222c-66da-2bfd13db987c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ab14f31f-2045-b1be-d31f-2a81b8527dac@nvidia.com>
+In-Reply-To: <11288075-f34a-222c-66da-2bfd13db987c@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Lars Persson <lists@bofh.nu>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "airlied@linux.ie" <airlied@linux.ie>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMjMvMjAx
-OSwgMTE6MDE6MjQgKFVUQyswMDowMCkNCg0KPiBUaGlzIGFwcGVhcnMgdG8gYmUgYSB3aW5uZXIg
-YW5kIGJ5IGRpc2FibGluZyB0aGUgU01NVSBmb3IgdGhlIGV0aGVybmV0DQo+IGNvbnRyb2xsZXIg
-YW5kIHJldmVydGluZyBjb21taXQgOTU0YTAzYmUwMzNjN2NlZjgwZGRjMjMyZTdjYmRiMTdkZjcz
-NTY2Mw0KPiB0aGlzIHdvcmtlZCEgU28geWVzIGFwcGVhcnMgdG8gYmUgcmVsYXRlZCB0byB0aGUg
-U01NVSBiZWluZyBlbmFibGVkLiBXZQ0KPiBoYWQgdG8gZW5hYmxlIHRoZSBTTU1VIGZvciBldGhl
-cm5ldCByZWNlbnRseSBkdWUgdG8gY29tbWl0DQo+IDk1NGEwM2JlMDMzYzdjZWY4MGRkYzIzMmU3
-Y2JkYjE3ZGY3MzU2NjMuDQoNCkZpbmFsbHkgOikNCg0KSG93ZXZlciwgZnJvbSAiZ2l0IHNob3cg
-OTU0YTAzYmUwMzNjN2NlZjgwZGRjMjMyZTdjYmRiMTdkZjczNTY2MyI6DQoNCisgICAgICAgICBU
-aGVyZSBhcmUgZmV3IHJlYXNvbnMgdG8gYWxsb3cgdW5tYXRjaGVkIHN0cmVhbSBieXBhc3MsIGFu
-ZA0KKyAgICAgICAgIGV2ZW4gZmV3ZXIgZ29vZCBvbmVzLiAgSWYgc2F5aW5nIFlFUyBoZXJlIGJy
-ZWFrcyB5b3VyIGJvYXJkDQorICAgICAgICAgeW91IHNob3VsZCB3b3JrIG9uIGZpeGluZyB5b3Vy
-IGJvYXJkLg0KDQpTbywgaG93IGNhbiB3ZSBmaXggdGhpcyA/IElzIHlvdXIgZXRoZXJuZXQgRFQg
-bm9kZSBtYXJrZWQgYXMgDQoiZG1hLWNvaGVyZW50OyIgPw0KDQotLS0NClRoYW5rcywNCkpvc2Ug
-TWlndWVsIEFicmV1DQo=
+Thanks for your comments, Dmitry. Please see my responses inline.
+
+On 7/23/2019 6:00 AM, Dmitry Osipenko wrote:
+> 22.07.2019 12:27, Viswanath L =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> HDMI plugout calls runtime suspend, which clears interrupt registers
+>> and causes audio functionality to break on subsequent plugin; setting
+>> interrupt registers in sor_audio_prepare() solves the issue
+> Hello Viswanath,
+>
+> A dot should be in the end of sentence, please. And should be better to
+> s/plugin/plug-in/ in the commit's message/title because 'plugin' sounds
+> as a noun.
+[VL] Yes, I'll make the above changes.
+>
+> Please don't version patch as v2 if v1 wasn't ever sent out.
+[VL] Now that I have sent v2, shall I continue with v2 for the next=20
+patch? Apologies for this oversight.
+>
+> You should add a stable tag here to get patch backported into stable
+> kernel versions:
+>
+> Cc: <stable@vger.kernel.org>
+[VL] Yes, will add.
+>
+>> Signed-off-by: Viswanath L <viswanathl@nvidia.com>
+> The kernel upstreaming rules require a full name. I'm pretty sure that L
+> isn't yours surname.
+[VL] My name appears as "Viswanath L" in all company records and email=20
+lists. I would strongly prefer to keep it this way, unless that is an=20
+absolute no-no.
+>> ---
+>>   drivers/gpu/drm/tegra/sor.c | 18 +++++++++---------
+>>   1 file changed, 9 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+>> index 5be5a08..0470cfe 100644
+>> --- a/drivers/gpu/drm/tegra/sor.c
+>> +++ b/drivers/gpu/drm/tegra/sor.c
+>> @@ -2164,6 +2164,15 @@ static void tegra_sor_audio_prepare(struct tegra_=
+sor *sor)
+>>  =20
+>>   	value =3D SOR_AUDIO_HDA_PRESENSE_ELDV | SOR_AUDIO_HDA_PRESENSE_PD;
+>>   	tegra_sor_writel(sor, value, SOR_AUDIO_HDA_PRESENSE);
+>> +
+>> +	/*
+>> +	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
+>> +	 * is used for interoperability between the HDA codec driver and the
+>> +	 * HDMI/DP driver.
+>> +	 */
+>> +	value =3D SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
+>> +	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
+>> +	tegra_sor_writel(sor, value, SOR_INT_MASK);
+>>   }
+>>  =20
+>>   static void tegra_sor_audio_unprepare(struct tegra_sor *sor)
+>> @@ -2913,15 +2922,6 @@ static int tegra_sor_init(struct host1x_client *c=
+lient)
+>>   	if (err < 0)
+>>   		return err;
+>>  =20
+>> -	/*
+>> -	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
+>> -	 * is used for interoperability between the HDA codec driver and the
+>> -	 * HDMI/DP driver.
+>> -	 */
+>> -	value =3D SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
+>> -	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
+>> -	tegra_sor_writel(sor, value, SOR_INT_MASK);
+>> -
+>>   	return 0;
+>>   }
+>>  =20
+>>
