@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V14 02/13] PCI: Disable MSI for Tegra root ports
-Date: Wed, 24 Jul 2019 23:18:13 +0530
-Message-ID: <20190724174824.20933-3-vidyas@nvidia.com>
+Subject: [PATCH V14 03/13] PCI: dwc: Perform dbi regs write lock towards the end
+Date: Wed, 24 Jul 2019 23:18:14 +0530
+Message-ID: <20190724174824.20933-4-vidyas@nvidia.com>
 References: <20190724174824.20933-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,14 +12,21 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rut
 Cc: digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PCIe rootports don't generate MSI interrupts for PME and AER events.
-Since PCIe spec (Ref: r4.0 sec 7.7.1.2 and 7.7.2.2) doesn't support using
-a mix of INTx and MSI/MSI-X, MSI needs to be disabled to avoid root ports
-service drivers registering their respective ISRs with MSI interrupt and
-to let only INTx be used for all events.
+Some of DesignWare core's DBI registers (a.k.a configuration space
+registers) are write-protected with a lock without enabling which they are
+read-only by default. These write-protected registers are implementation
+specific. Tegra194's BAR-0 register which is at offset 0x10 in the
+configuration space is an example. Current implementation in
+dw_pcie_setup_rc() API attempts to unlock those write-protected registers
+whenever they are updated and lock them back again for writing. This patch
+attempts to unlock all such write-protected registers for writing in the
+beginning of the API once and lock them back again towards the end to avoid
+bloating the API with multiple unlock/lock sequences for all those
+write-protected registers.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 Reviewed-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 ---
 V14:
 * None
@@ -28,11 +35,11 @@ V13:
 * None
 
 V12:
-* None
+* Modified commit message to make it explicit that write-protected registers are
+  implementation specific.
 
 V11:
-* Included older Tegra chips to extend the quirk as this issue is present in
-  older Tegra chips as well.
+* None
 
 V10:
 * None
@@ -41,79 +48,76 @@ V9:
 * None
 
 V8:
-* Changed quirk macro to consider class code as well to avoid this quirk
-  getting applied to Tegra194 when it is operating in endpoint mode. Also
-  quoted relevant sections from PCIe spec in comments.
+* None
 
 V7:
-* This is a new patch
+* None
 
- drivers/pci/quirks.c | 53 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+V6:
+* Moved write enable to the beginning of the API and write disable to the end
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index c66c0ca446c4..1d3cac43ecbc 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2592,6 +2592,59 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA,
- 			PCI_DEVICE_ID_NVIDIA_NVENET_15,
- 			nvenet_msi_disable);
+V5:
+* None
+
+V4:
+* None
+
+V3:
+* None
+
+V2:
+* None
+
+ drivers/pci/controller/dwc/pcie-designware-host.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index f93252d0da5b..d3156446ff27 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -628,6 +628,12 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	u32 val, ctrl, num_ctrls;
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
  
-+/*
-+ * PCIe spec r4.0 sec 7.7.1.2 and sec 7.7.2.2 say that if MSI/MSI-X is enabled,
-+ * then the device can't use INTx interrupts. Tegra's PCIe root ports don't
-+ * generate MSI interrupts for PME and AER events instead only INTx interrupts
-+ * are generated. Though Tegra's PCIe root ports can generate MSI interrupts
-+ * for other events, since PCIe specificiation doesn't support using a mix of
-+ * INTx and MSI/MSI-X, it is required to disable MSI interrupts to avoid port
-+ * service drivers registering their respective ISRs for MSIs.
-+ */
-+static void pci_quirk_nvidia_tegra_disable_rp_msi(struct pci_dev *dev)
-+{
-+	dev->no_msi = 1;
-+}
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad0,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad1,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x1ad2,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf0,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e12,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e13,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0fae,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0faf,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x10e5,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x10e6,
-+			      PCI_CLASS_BRIDGE_PCI, 8,
-+			      pci_quirk_nvidia_tegra_disable_rp_msi);
++	/*
++	 * Enable DBI read-only registers for writing/updating configuration.
++	 * Write permission gets disabled towards the end of this function.
++	 */
++	dw_pcie_dbi_ro_wr_en(pci);
 +
- /*
-  * Some versions of the MCP55 bridge from Nvidia have a legacy IRQ routing
-  * config register.  This register controls the routing of legacy
+ 	dw_pcie_setup(pci);
+ 
+ 	if (!pp->ops->msi_host_init) {
+@@ -650,12 +656,10 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
+ 
+ 	/* Setup interrupt pins */
+-	dw_pcie_dbi_ro_wr_en(pci);
+ 	val = dw_pcie_readl_dbi(pci, PCI_INTERRUPT_LINE);
+ 	val &= 0xffff00ff;
+ 	val |= 0x00000100;
+ 	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+-	dw_pcie_dbi_ro_wr_dis(pci);
+ 
+ 	/* Setup bus numbers */
+ 	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+@@ -687,15 +691,13 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 
+ 	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+ 
+-	/* Enable write permission for the DBI read-only register */
+-	dw_pcie_dbi_ro_wr_en(pci);
+ 	/* Program correct class for RC */
+ 	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+-	/* Better disable write permission right after the update */
+-	dw_pcie_dbi_ro_wr_dis(pci);
+ 
+ 	dw_pcie_rd_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, &val);
+ 	val |= PORT_LOGIC_SPEED_CHANGE;
+ 	dw_pcie_wr_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, val);
++
++	dw_pcie_dbi_ro_wr_dis(pci);
+ }
+ EXPORT_SYMBOL_GPL(dw_pcie_setup_rc);
 -- 
 2.17.1
