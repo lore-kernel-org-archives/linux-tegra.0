@@ -1,75 +1,116 @@
-From: Viswanath L <viswanathl@nvidia.com>
-Subject: RE: [PATCH v3] drm/tegra: sor: Enable HDA interrupts at plug-in
-Date: Wed, 24 Jul 2019 11:09:18 +0000
-Message-ID: <MN2PR12MB313403F2CB9F8105C1DDFD39ADC60@MN2PR12MB3134.namprd12.prod.outlook.com>
-References: <1563885610-27198-1-git-send-email-viswanathl@nvidia.com>
- <0ba35efb-44ec-d56c-b559-59f1daa3e6e4@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Wed, 24 Jul 2019 12:10:47 +0100
+Message-ID: <33de62bf-2f8a-bf00-9260-418b12bed24c@nvidia.com>
+References: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
+ <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
+ <20190723.115112.1824255524103179323.davem@davemloft.net>
+ <20190724085427.GA10736@apalos>
+ <BYAPR12MB3269AA9955844E317B62A239D3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <20190724095310.GA12991@apalos>
+ <BYAPR12MB3269C5766F553438ECFF2C9BD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <0ba35efb-44ec-d56c-b559-59f1daa3e6e4@gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <BYAPR12MB3269C5766F553438ECFF2C9BD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: "airlied@linux.ie" <airlied@linux.ie>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: David Miller <davem@davemloft.net>, "robin.murphy@arm.com" <robin.murphy@arm.com>, "lists@bofh.nu" <lists@bofh.nu>, "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "wens@csie.org" <wens@csie.org>, "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhhbmtzIHZlcnkgbXVjaCBmb3IgdGhlIHJldmlldywgRG1pdHJ5IQ0KDQotLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KRnJvbTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPiAN
-ClNlbnQ6IFdlZG5lc2RheSwgSnVseSAyNCwgMjAxOSAyOjU4IFBNDQpUbzogVmlzd2FuYXRoIEwg
-PHZpc3dhbmF0aGxAbnZpZGlhLmNvbT47IHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbTsgSm9uYXRo
-YW4gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4NCkNjOiBhaXJsaWVkQGxpbnV4LmllOyBk
-YW5pZWxAZmZ3bGwuY2g7IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LXRl
-Z3JhQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgc3RhYmxl
-QHZnZXIua2VybmVsLm9yZw0KU3ViamVjdDogUmU6IFtQQVRDSCB2M10gZHJtL3RlZ3JhOiBzb3I6
-IEVuYWJsZSBIREEgaW50ZXJydXB0cyBhdCBwbHVnLWluDQoNCjIzLjA3LjIwMTkgMTU6NDAsIFZp
-c3dhbmF0aCBMINC/0LjRiNC10YI6DQo+IEhETUkgcGx1Z291dCBjYWxscyBydW50aW1lIHN1c3Bl
-bmQsIHdoaWNoIGNsZWFycyBpbnRlcnJ1cHQgcmVnaXN0ZXJzIA0KPiBhbmQgY2F1c2VzIGF1ZGlv
-IGZ1bmN0aW9uYWxpdHkgdG8gYnJlYWsgb24gc3Vic2VxdWVudCBwbHVnLWluOyBzZXR0aW5nIA0K
-PiBpbnRlcnJ1cHQgcmVnaXN0ZXJzIGluIHNvcl9hdWRpb19wcmVwYXJlKCkgc29sdmVzIHRoZSBp
-c3N1ZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFZpc3dhbmF0aCBMIDx2aXN3YW5hdGhsQG52aWRp
-YS5jb20+DQoNCllvdXJzIHNpZ25lZC1vZmYtYnkgYWx3YXlzIHNob3VsZCBiZSB0aGUgbGFzdCBs
-aW5lIG9mIHRoZSBjb21taXQncyBtZXNzYWdlIGJlY2F1c2UgdGhlIHRleHQgYmVsb3cgaXQgYmVs
-b25ncyB0byBhIHBlcnNvbiB3aG8gYXBwbGllcyB0aGlzIHBhdGNoLCBUaGllcnJ5IGluIHRoaXMg
-Y2FzZS4gVGhpcyBpcyBub3QgYSBiaWcgZGVhbCBhdCBhbGwgYW5kIFRoaWVycnkgY291bGQgbWFr
-ZSBhIGZpeHVwIHdoaWxlIGFwcGx5aW5nIHRoZSBwYXRjaCBpZiB3aWxsIGRlZW0gdGhhdCBhcyBu
-ZWNlc3NhcnkuDQoNClNlY29uZGx5LCB0aGVyZSBpcyBubyBuZWVkIHRvIGFkZCAic3RhYmxlQHZn
-ZXIua2VybmVsLm9yZyIgdG8gdGhlIGVtYWlsJ3MgcmVjaXBpZW50cyBiZWNhdXNlIHRoZSBwYXRj
-aCB3aWxsIGZsb3cgaW50byBzdGFibGUga2VybmVsIHZlcnNpb25zIGZyb20gdGhlIG1haW5saW5l
-IG9uY2UgaXQgd2lsbCBnZXQgYXBwbGllZC4gVGhhdCBoYXBwZW5zIGJhc2VkIG9uIHRoZSBzdGFi
-bGUgdGFnIHByZXNlbmNlLCBoZW5jZSBpdCdzIGVub3VnaCB0byBhZGQgdGhlICdDYycgdGFnIHRv
-IHRoZSBjb21taXQncyBtZXNzYWdlIGluIG9yZGVyIHRvIGdldCBwYXRjaCBiYWNrcG9ydGVkLg0K
-DQpMYXN0bHksIG5leHQgdGltZSBwbGVhc2UgYWRkIGV2ZXJ5b25lIHRvIHRoZSBlbWFpbCdzIHJl
-Y2lwaWVudHMgd2hvbSB5b3UncmUgZXhwZWN0aW5nIHRvIGdldCBhIHJlcGx5LiBPdGhlcndpc2Ug
-dGhlcmUgaXMgYSBjaGFuY2UgdGhhdCBwYXRjaCB3aWxsIGJlIGxlZnQgdW5ub3RpY2VkLg0KDQpF
-dmVyeXRoaW5nIGVsc2UgbG9va3MgZ29vZCB0byBtZSwgdGhhbmtzIQ0KDQpSZXZpZXdlZC1ieTog
-RG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPg0KDQo+IEZpeGVzOiA4ZTI5ODhhNzZj
-MjYgKCJkcm0vdGVncmE6IHNvcjogU3VwcG9ydCBmb3IgYXVkaW8gb3ZlciBIRE1JIikNCj4gQ2M6
-IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9zb3IuYyB8IDE4ICsrKysrKysrKy0tLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDkgaW5z
-ZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvc29yLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgDQo+IGluZGV4
-IDViZTVhMDguLjA0NzBjZmUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9z
-b3IuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMNCj4gQEAgLTIxNjQsNiAr
-MjE2NCwxNSBAQCBzdGF0aWMgdm9pZCB0ZWdyYV9zb3JfYXVkaW9fcHJlcGFyZShzdHJ1Y3QgDQo+
-IHRlZ3JhX3NvciAqc29yKQ0KPiAgDQo+ICAJdmFsdWUgPSBTT1JfQVVESU9fSERBX1BSRVNFTlNF
-X0VMRFYgfCBTT1JfQVVESU9fSERBX1BSRVNFTlNFX1BEOw0KPiAgCXRlZ3JhX3Nvcl93cml0ZWwo
-c29yLCB2YWx1ZSwgU09SX0FVRElPX0hEQV9QUkVTRU5TRSk7DQo+ICsNCj4gKwkvKg0KPiArCSAq
-IEVuYWJsZSBhbmQgdW5tYXNrIHRoZSBIREEgY29kZWMgU0NSQVRDSDAgcmVnaXN0ZXIgaW50ZXJy
-dXB0LiBUaGlzDQo+ICsJICogaXMgdXNlZCBmb3IgaW50ZXJvcGVyYWJpbGl0eSBiZXR3ZWVuIHRo
-ZSBIREEgY29kZWMgZHJpdmVyIGFuZCB0aGUNCj4gKwkgKiBIRE1JL0RQIGRyaXZlci4NCj4gKwkg
-Ki8NCj4gKwl2YWx1ZSA9IFNPUl9JTlRfQ09ERUNfU0NSQVRDSDEgfCBTT1JfSU5UX0NPREVDX1ND
-UkFUQ0gwOw0KPiArCXRlZ3JhX3Nvcl93cml0ZWwoc29yLCB2YWx1ZSwgU09SX0lOVF9FTkFCTEUp
-Ow0KPiArCXRlZ3JhX3Nvcl93cml0ZWwoc29yLCB2YWx1ZSwgU09SX0lOVF9NQVNLKTsNCj4gIH0N
-Cj4gIA0KPiAgc3RhdGljIHZvaWQgdGVncmFfc29yX2F1ZGlvX3VucHJlcGFyZShzdHJ1Y3QgdGVn
-cmFfc29yICpzb3IpIEBAIA0KPiAtMjkxMywxNSArMjkyMiw2IEBAIHN0YXRpYyBpbnQgdGVncmFf
-c29yX2luaXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkNCj4gIAlpZiAoZXJyIDwgMCkN
-Cj4gIAkJcmV0dXJuIGVycjsNCj4gIA0KPiAtCS8qDQo+IC0JICogRW5hYmxlIGFuZCB1bm1hc2sg
-dGhlIEhEQSBjb2RlYyBTQ1JBVENIMCByZWdpc3RlciBpbnRlcnJ1cHQuIFRoaXMNCj4gLQkgKiBp
-cyB1c2VkIGZvciBpbnRlcm9wZXJhYmlsaXR5IGJldHdlZW4gdGhlIEhEQSBjb2RlYyBkcml2ZXIg
-YW5kIHRoZQ0KPiAtCSAqIEhETUkvRFAgZHJpdmVyLg0KPiAtCSAqLw0KPiAtCXZhbHVlID0gU09S
-X0lOVF9DT0RFQ19TQ1JBVENIMSB8IFNPUl9JTlRfQ09ERUNfU0NSQVRDSDA7DQo+IC0JdGVncmFf
-c29yX3dyaXRlbChzb3IsIHZhbHVlLCBTT1JfSU5UX0VOQUJMRSk7DQo+IC0JdGVncmFfc29yX3dy
-aXRlbChzb3IsIHZhbHVlLCBTT1JfSU5UX01BU0spOw0KPiAtDQo+ICAJcmV0dXJuIDA7DQo+ICB9
-DQo+ICANCj4gDQoNCg==
+
+On 24/07/2019 11:04, Jose Abreu wrote:
+
+...
+
+> Jon, I was able to replicate (at some level) your setup:
+> 
+> # dmesg | grep -i arm-smmu
+> [    1.337322] arm-smmu 70040000.iommu: probing hardware 
+> configuration...
+> [    1.337330] arm-smmu 70040000.iommu: SMMUv2 with:
+> [    1.337338] arm-smmu 70040000.iommu:         stage 1 translation
+> [    1.337346] arm-smmu 70040000.iommu:         stage 2 translation
+> [    1.337354] arm-smmu 70040000.iommu:         nested translation
+> [    1.337363] arm-smmu 70040000.iommu:         stream matching with 128 
+> register groups
+> [    1.337374] arm-smmu 70040000.iommu:         1 context banks (0 
+> stage-2 only)
+> [    1.337383] arm-smmu 70040000.iommu:         Supported page sizes: 
+> 0x61311000
+> [    1.337393] arm-smmu 70040000.iommu:         Stage-1: 48-bit VA -> 
+> 48-bit IPA
+> [    1.337402] arm-smmu 70040000.iommu:         Stage-2: 48-bit IPA -> 
+> 48-bit PA
+> 
+> # dmesg | grep -i stmmac
+> [    1.344106] stmmaceth 70000000.ethernet: Adding to iommu group 0
+> [    1.344233] stmmaceth 70000000.ethernet: no reset control found
+> [    1.348276] stmmaceth 70000000.ethernet: User ID: 0x10, Synopsys ID: 
+> 0x51
+> [    1.348285] stmmaceth 70000000.ethernet:     DWMAC4/5
+> [    1.348293] stmmaceth 70000000.ethernet: DMA HW capability register 
+> supported
+> [    1.348302] stmmaceth 70000000.ethernet: RX Checksum Offload Engine 
+> supported
+> [    1.348311] stmmaceth 70000000.ethernet: TX Checksum insertion 
+> supported
+> [    1.348320] stmmaceth 70000000.ethernet: TSO supported
+> [    1.348328] stmmaceth 70000000.ethernet: Enable RX Mitigation via HW 
+> Watchdog Timer
+> [    1.348337] stmmaceth 70000000.ethernet: TSO feature enabled
+> [    1.348409] libphy: stmmac: probed
+> [ 4159.140990] stmmaceth 70000000.ethernet eth0: PHY [stmmac-0:01] 
+> driver [Generic PHY]
+> [ 4159.141005] stmmaceth 70000000.ethernet eth0: phy: setting supported 
+> 00,00000000,000062ff advertising 00,00000000,000062ff
+> [ 4159.142359] stmmaceth 70000000.ethernet eth0: No Safety Features 
+> support found
+> [ 4159.142369] stmmaceth 70000000.ethernet eth0: IEEE 1588-2008 Advanced 
+> Timestamp supported
+> [ 4159.142429] stmmaceth 70000000.ethernet eth0: registered PTP clock
+> [ 4159.142439] stmmaceth 70000000.ethernet eth0: configuring for 
+> phy/gmii link mode
+> [ 4159.142452] stmmaceth 70000000.ethernet eth0: phylink_mac_config: 
+> mode=phy/gmii/Unknown/Unknown adv=00,00000000,000062ff pause=10 link=0 
+> an=1
+> [ 4159.142466] stmmaceth 70000000.ethernet eth0: phy link up 
+> gmii/1Gbps/Full
+> [ 4159.142475] stmmaceth 70000000.ethernet eth0: phylink_mac_config: 
+> mode=phy/gmii/1Gbps/Full adv=00,00000000,00000000 pause=0f link=1 an=0
+> [ 4159.142481] stmmaceth 70000000.ethernet eth0: Link is Up - 1Gbps/Full 
+> - flow control rx/tx
+> 
+> The only missing point is the NFS boot that I can't replicate with this 
+> setup. But I did some sanity checks:
+> 
+> Remote Enpoint:
+> # dd if=/dev/urandom of=output.dat bs=128M count=1
+> # nc -c 192.168.0.2 1234 < output.dat
+> # md5sum output.dat 
+> fde9e0818281836e4fc0edfede2b8762  output.dat
+> 
+> DUT:
+> # nc -l -c -p 1234 > output.dat
+> # md5sum output.dat 
+> fde9e0818281836e4fc0edfede2b8762  output.dat
+
+On my setup, if I do not use NFS to mount the rootfs, but then manually
+mount the NFS share after booting, I do not see any problems reading or
+writing to files on the share. So I am not sure if it is some sort of
+race that is occurring when mounting the NFS share on boot. It is 100%
+reproducible when using NFS for the root file-system.
+
+I am using the Jetson TX2 devkit [0] to test this.
+
+Cheers
+Jon
+
+[0] https://developer.nvidia.com/embedded/jetson-tx2-developer-kit
+
+-- 
+nvpublic
