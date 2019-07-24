@@ -1,42 +1,103 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3] drm/tegra: sor: Enable HDA interrupts at plug-in
-Date: Wed, 24 Jul 2019 14:29:30 +0300
-Message-ID: <341b9177-180c-8fc1-f9cc-27f3b48a8b9c@gmail.com>
-References: <1563885610-27198-1-git-send-email-viswanathl@nvidia.com>
- <0ba35efb-44ec-d56c-b559-59f1daa3e6e4@gmail.com>
- <8b113ad7-07b4-7dfb-e2e5-653514686085@nvidia.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Wed, 24 Jul 2019 11:34:26 +0000
+Message-ID: <BYAPR12MB32696F0A2BFDF69F31C4311CD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
+References: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
+ <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
+ <20190723.115112.1824255524103179323.davem@davemloft.net>
+ <20190724085427.GA10736@apalos>
+ <BYAPR12MB3269AA9955844E317B62A239D3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <20190724095310.GA12991@apalos>
+ <BYAPR12MB3269C5766F553438ECFF2C9BD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <33de62bf-2f8a-bf00-9260-418b12bed24c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8b113ad7-07b4-7dfb-e2e5-653514686085@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <33de62bf-2f8a-bf00-9260-418b12bed24c@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Viswanath L <viswanathl@nvidia.com>, thierry.reding@gmail.com
-Cc: airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Sender: netdev-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: David Miller <davem@davemloft.net>, "robin.murphy@arm.com" <robin.murphy@arm.com>, "lists@bofh.nu" <lists@bofh.nu>, "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "wens@csie.org" <wens@csie.org>, "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-24.07.2019 14:11, Jon Hunter пишет:
-> 
-> On 24/07/2019 10:27, Dmitry Osipenko wrote:
->> 23.07.2019 15:40, Viswanath L пишет:
->>> HDMI plugout calls runtime suspend, which clears interrupt registers
->>> and causes audio functionality to break on subsequent plug-in; setting
->>> interrupt registers in sor_audio_prepare() solves the issue.
->>>
->>> Signed-off-by: Viswanath L <viswanathl@nvidia.com>
->>
->> Yours signed-off-by always should be the last line of the commit's
->> message because the text below it belongs to a person who applies this
->> patch, Thierry in this case. This is not a big deal at all and Thierry
->> could make a fixup while applying the patch if will deem that as necessary.
->>
->> Secondly, there is no need to add "stable@vger.kernel.org" to the
->> email's recipients because the patch will flow into stable kernel
->> versions from the mainline once it will get applied. That happens based
->> on the stable tag presence, hence it's enough to add the 'Cc' tag to the
->> commit's message in order to get patch backported.
-> 
-> I believe 'git send-email' automatically does this.
-
-Indeed, completely forgot that I have '--suppress-cc=all' in my git's setup.
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMjQvMjAx
+OSwgMTI6MTA6NDcgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMjQvMDcvMjAxOSAxMTowNCwgSm9z
+ZSBBYnJldSB3cm90ZToNCj4gDQo+IC4uLg0KPiANCj4gPiBKb24sIEkgd2FzIGFibGUgdG8gcmVw
+bGljYXRlIChhdCBzb21lIGxldmVsKSB5b3VyIHNldHVwOg0KPiA+IA0KPiA+ICMgZG1lc2cgfCBn
+cmVwIC1pIGFybS1zbW11DQo+ID4gWyAgICAxLjMzNzMyMl0gYXJtLXNtbXUgNzAwNDAwMDAuaW9t
+bXU6IHByb2JpbmcgaGFyZHdhcmUgDQo+ID4gY29uZmlndXJhdGlvbi4uLg0KPiA+IFsgICAgMS4z
+MzczMzBdIGFybS1zbW11IDcwMDQwMDAwLmlvbW11OiBTTU1VdjIgd2l0aDoNCj4gPiBbICAgIDEu
+MzM3MzM4XSBhcm0tc21tdSA3MDA0MDAwMC5pb21tdTogICAgICAgICBzdGFnZSAxIHRyYW5zbGF0
+aW9uDQo+ID4gWyAgICAxLjMzNzM0Nl0gYXJtLXNtbXUgNzAwNDAwMDAuaW9tbXU6ICAgICAgICAg
+c3RhZ2UgMiB0cmFuc2xhdGlvbg0KPiA+IFsgICAgMS4zMzczNTRdIGFybS1zbW11IDcwMDQwMDAw
+LmlvbW11OiAgICAgICAgIG5lc3RlZCB0cmFuc2xhdGlvbg0KPiA+IFsgICAgMS4zMzczNjNdIGFy
+bS1zbW11IDcwMDQwMDAwLmlvbW11OiAgICAgICAgIHN0cmVhbSBtYXRjaGluZyB3aXRoIDEyOCAN
+Cj4gPiByZWdpc3RlciBncm91cHMNCj4gPiBbICAgIDEuMzM3Mzc0XSBhcm0tc21tdSA3MDA0MDAw
+MC5pb21tdTogICAgICAgICAxIGNvbnRleHQgYmFua3MgKDAgDQo+ID4gc3RhZ2UtMiBvbmx5KQ0K
+PiA+IFsgICAgMS4zMzczODNdIGFybS1zbW11IDcwMDQwMDAwLmlvbW11OiAgICAgICAgIFN1cHBv
+cnRlZCBwYWdlIHNpemVzOiANCj4gPiAweDYxMzExMDAwDQo+ID4gWyAgICAxLjMzNzM5M10gYXJt
+LXNtbXUgNzAwNDAwMDAuaW9tbXU6ICAgICAgICAgU3RhZ2UtMTogNDgtYml0IFZBIC0+IA0KPiA+
+IDQ4LWJpdCBJUEENCj4gPiBbICAgIDEuMzM3NDAyXSBhcm0tc21tdSA3MDA0MDAwMC5pb21tdTog
+ICAgICAgICBTdGFnZS0yOiA0OC1iaXQgSVBBIC0+IA0KPiA+IDQ4LWJpdCBQQQ0KPiA+IA0KPiA+
+ICMgZG1lc2cgfCBncmVwIC1pIHN0bW1hYw0KPiA+IFsgICAgMS4zNDQxMDZdIHN0bW1hY2V0aCA3
+MDAwMDAwMC5ldGhlcm5ldDogQWRkaW5nIHRvIGlvbW11IGdyb3VwIDANCj4gPiBbICAgIDEuMzQ0
+MjMzXSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQ6IG5vIHJlc2V0IGNvbnRyb2wgZm91bmQN
+Cj4gPiBbICAgIDEuMzQ4Mjc2XSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQ6IFVzZXIgSUQ6
+IDB4MTAsIFN5bm9wc3lzIElEOiANCj4gPiAweDUxDQo+ID4gWyAgICAxLjM0ODI4NV0gc3RtbWFj
+ZXRoIDcwMDAwMDAwLmV0aGVybmV0OiAgICAgRFdNQUM0LzUNCj4gPiBbICAgIDEuMzQ4MjkzXSBz
+dG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQ6IERNQSBIVyBjYXBhYmlsaXR5IHJlZ2lzdGVyIA0K
+PiA+IHN1cHBvcnRlZA0KPiA+IFsgICAgMS4zNDgzMDJdIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhl
+cm5ldDogUlggQ2hlY2tzdW0gT2ZmbG9hZCBFbmdpbmUgDQo+ID4gc3VwcG9ydGVkDQo+ID4gWyAg
+ICAxLjM0ODMxMV0gc3RtbWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0OiBUWCBDaGVja3N1bSBpbnNl
+cnRpb24gDQo+ID4gc3VwcG9ydGVkDQo+ID4gWyAgICAxLjM0ODMyMF0gc3RtbWFjZXRoIDcwMDAw
+MDAwLmV0aGVybmV0OiBUU08gc3VwcG9ydGVkDQo+ID4gWyAgICAxLjM0ODMyOF0gc3RtbWFjZXRo
+IDcwMDAwMDAwLmV0aGVybmV0OiBFbmFibGUgUlggTWl0aWdhdGlvbiB2aWEgSFcgDQo+ID4gV2F0
+Y2hkb2cgVGltZXINCj4gPiBbICAgIDEuMzQ4MzM3XSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJu
+ZXQ6IFRTTyBmZWF0dXJlIGVuYWJsZWQNCj4gPiBbICAgIDEuMzQ4NDA5XSBsaWJwaHk6IHN0bW1h
+YzogcHJvYmVkDQo+ID4gWyA0MTU5LjE0MDk5MF0gc3RtbWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0
+IGV0aDA6IFBIWSBbc3RtbWFjLTA6MDFdIA0KPiA+IGRyaXZlciBbR2VuZXJpYyBQSFldDQo+ID4g
+WyA0MTU5LjE0MTAwNV0gc3RtbWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0IGV0aDA6IHBoeTogc2V0
+dGluZyBzdXBwb3J0ZWQgDQo+ID4gMDAsMDAwMDAwMDAsMDAwMDYyZmYgYWR2ZXJ0aXNpbmcgMDAs
+MDAwMDAwMDAsMDAwMDYyZmYNCj4gPiBbIDQxNTkuMTQyMzU5XSBzdG1tYWNldGggNzAwMDAwMDAu
+ZXRoZXJuZXQgZXRoMDogTm8gU2FmZXR5IEZlYXR1cmVzIA0KPiA+IHN1cHBvcnQgZm91bmQNCj4g
+PiBbIDQxNTkuMTQyMzY5XSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQgZXRoMDogSUVFRSAx
+NTg4LTIwMDggQWR2YW5jZWQgDQo+ID4gVGltZXN0YW1wIHN1cHBvcnRlZA0KPiA+IFsgNDE1OS4x
+NDI0MjldIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldCBldGgwOiByZWdpc3RlcmVkIFBUUCBj
+bG9jaw0KPiA+IFsgNDE1OS4xNDI0MzldIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldCBldGgw
+OiBjb25maWd1cmluZyBmb3IgDQo+ID4gcGh5L2dtaWkgbGluayBtb2RlDQo+ID4gWyA0MTU5LjE0
+MjQ1Ml0gc3RtbWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0IGV0aDA6IHBoeWxpbmtfbWFjX2NvbmZp
+ZzogDQo+ID4gbW9kZT1waHkvZ21paS9Vbmtub3duL1Vua25vd24gYWR2PTAwLDAwMDAwMDAwLDAw
+MDA2MmZmIHBhdXNlPTEwIGxpbms9MCANCj4gPiBhbj0xDQo+ID4gWyA0MTU5LjE0MjQ2Nl0gc3Rt
+bWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0IGV0aDA6IHBoeSBsaW5rIHVwIA0KPiA+IGdtaWkvMUdi
+cHMvRnVsbA0KPiA+IFsgNDE1OS4xNDI0NzVdIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldCBl
+dGgwOiBwaHlsaW5rX21hY19jb25maWc6IA0KPiA+IG1vZGU9cGh5L2dtaWkvMUdicHMvRnVsbCBh
+ZHY9MDAsMDAwMDAwMDAsMDAwMDAwMDAgcGF1c2U9MGYgbGluaz0xIGFuPTANCj4gPiBbIDQxNTku
+MTQyNDgxXSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQgZXRoMDogTGluayBpcyBVcCAtIDFH
+YnBzL0Z1bGwgDQo+ID4gLSBmbG93IGNvbnRyb2wgcngvdHgNCj4gPiANCj4gPiBUaGUgb25seSBt
+aXNzaW5nIHBvaW50IGlzIHRoZSBORlMgYm9vdCB0aGF0IEkgY2FuJ3QgcmVwbGljYXRlIHdpdGgg
+dGhpcyANCj4gPiBzZXR1cC4gQnV0IEkgZGlkIHNvbWUgc2FuaXR5IGNoZWNrczoNCj4gPiANCj4g
+PiBSZW1vdGUgRW5wb2ludDoNCj4gPiAjIGRkIGlmPS9kZXYvdXJhbmRvbSBvZj1vdXRwdXQuZGF0
+IGJzPTEyOE0gY291bnQ9MQ0KPiA+ICMgbmMgLWMgMTkyLjE2OC4wLjIgMTIzNCA8IG91dHB1dC5k
+YXQNCj4gPiAjIG1kNXN1bSBvdXRwdXQuZGF0IA0KPiA+IGZkZTllMDgxODI4MTgzNmU0ZmMwZWRm
+ZWRlMmI4NzYyICBvdXRwdXQuZGF0DQo+ID4gDQo+ID4gRFVUOg0KPiA+ICMgbmMgLWwgLWMgLXAg
+MTIzNCA+IG91dHB1dC5kYXQNCj4gPiAjIG1kNXN1bSBvdXRwdXQuZGF0IA0KPiA+IGZkZTllMDgx
+ODI4MTgzNmU0ZmMwZWRmZWRlMmI4NzYyICBvdXRwdXQuZGF0DQo+IA0KPiBPbiBteSBzZXR1cCwg
+aWYgSSBkbyBub3QgdXNlIE5GUyB0byBtb3VudCB0aGUgcm9vdGZzLCBidXQgdGhlbiBtYW51YWxs
+eQ0KPiBtb3VudCB0aGUgTkZTIHNoYXJlIGFmdGVyIGJvb3RpbmcsIEkgZG8gbm90IHNlZSBhbnkg
+cHJvYmxlbXMgcmVhZGluZyBvcg0KPiB3cml0aW5nIHRvIGZpbGVzIG9uIHRoZSBzaGFyZS4gU28g
+SSBhbSBub3Qgc3VyZSBpZiBpdCBpcyBzb21lIHNvcnQgb2YNCj4gcmFjZSB0aGF0IGlzIG9jY3Vy
+cmluZyB3aGVuIG1vdW50aW5nIHRoZSBORlMgc2hhcmUgb24gYm9vdC4gSXQgaXMgMTAwJQ0KPiBy
+ZXByb2R1Y2libGUgd2hlbiB1c2luZyBORlMgZm9yIHRoZSByb290IGZpbGUtc3lzdGVtLg0KDQpJ
+IGRvbid0IHVuZGVyc3RhbmQgaG93IGNhbiB0aGVyZSBiZSBjb3JydXB0aW9uIHRoZW4gdW5sZXNz
+IHRoZSBJUCBBWEkgDQpwYXJhbWV0ZXJzIGFyZSBtaXNjb25maWd1cmVkIHdoaWNoIGNhbiBsZWFk
+IHRvIHNwb3JhZGljIHVuZGVmaW5lZCANCmJlaGF2aW9yLg0KDQpUaGVzZSBwcmludHMgZnJvbSB5
+b3VyIGxvZ3M6DQpbICAgMTQuNTc5MzkyXSBSdW4gL2luaXQgYXMgaW5pdCBwcm9jZXNzDQovaW5p
+dDogbGluZSA1ODogY2htb2Q6IGNvbW1hbmQgbm90IGZvdW5kDQpbIDEwOjIyOjQ2IF0gTDRULUlO
+SVRSRCBCdWlsZCBEQVRFOiBNb24gSnVsIDIyIDEwOjIyOjQ2IFVUQyAyMDE5DQpbIDEwOjIyOjQ2
+IF0gUm9vdCBkZXZpY2UgZm91bmQ6IG5mcw0KWyAxMDoyMjo0NiBdIEV0aGVybmV0IGludGVyZmFj
+ZXM6IGV0aDANClsgMTA6MjI6NDYgXSBJUCBBZGRyZXNzOiAxMC4yMS4xNDAuNDENCg0KV2hlcmUg
+YXJlIHRoZXkgY29taW5nIGZyb20gPyBEbyB5b3UgaGF2ZSBhbnkgZXh0cmEgaW5pdCBzY3JpcHQg
+Pw0KDQotLS0NClRoYW5rcywNCkpvc2UgTWlndWVsIEFicmV1DQo=
