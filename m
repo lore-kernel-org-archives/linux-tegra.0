@@ -1,55 +1,41 @@
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: Re: [PATCH v4 14/23] drm/tilcdc: Provide ddc symlink in connector
- sysfs directory
-Date: Wed, 24 Jul 2019 10:51:01 +0200
-Message-ID: <f051455a-3559-8f8e-cc76-1a6388b102b5@collabora.com>
-References: <cover.1562843413.git.andrzej.p@collabora.com>
- <d1d415022c598fb7acd033f0f322dd67250adaa9.1562843413.git.andrzej.p@collabora.com>
- <20190723090532.GA787@ravnborg.org>
- <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
- <acfd895d-ab59-0190-e25c-1827bd8d214b@suse.de>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Wed, 24 Jul 2019 11:54:27 +0300
+Message-ID: <20190724085427.GA10736@apalos>
+References: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
+ <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
+ <20190723.115112.1824255524103179323.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <acfd895d-ab59-0190-e25c-1827bd8d214b@suse.de>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190723.115112.1824255524103179323.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Zimmermann <tzimmermann@suse.de>, Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, dri-devel@lists.freedesktop.org, Douglas Anderson <dianders@chromium.org>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, freedreno@lists.freedesktop.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas
+To: David Miller <davem@davemloft.net>
+Cc: jonathanh@nvidia.com, robin.murphy@arm.com, Jose.Abreu@synopsys.com, lists@bofh.nu, Joao.Pinto@synopsys.com, alexandre.torgue@st.com, maxime.ripard@bootlin.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, wens@csie.org, mcoquelin.stm32@gmail.com, linux-tegra@vger.kernel.org, peppe.cavallaro@st.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thomas,
+Hi David, 
 
-W dniu 24.07.2019 o 10:01, Thomas Zimmermann pisze:
-> Hi
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Date: Tue, 23 Jul 2019 13:09:00 +0100
 > 
+> > Setting "iommu.passthrough=1" works for me. However, I am not sure where
+> > to go from here, so any ideas you have would be great.
+> 
+> Then definitely we are accessing outside of a valid IOMMU mapping due
+> to the page pool support changes.
 
+Yes. On the netsec driver i did test with and without SMMU to make sure i am not
+breaking anything.
+Since we map the whole page on the API i think some offset on the driver causes
+that. In any case i'll have another look on page_pool to make sure we are not
+missing anything. 
 
 > 
-> I think this echoes my concern about the implicit order of operation. It
-> seems too easy to get this wrong. If you don't want to add an additional
-> interface for setting the ddc field, why not add a dedicated initializer
-> function that sets the ddc field? Something like this.
-> 
-> int drm_connector_init_with_ddc(connector, funcs, ..., ddc)
-> {
-> 	ret = drm_connector_init(connector, funcs, ...);
-> 	if (ret)
-> 		return ret;
-> 
-> 	if (!ddc)
-> 		return 0;
-> 
-> 	connector->ddc = ddc;
-> 	/* set up sysfs */
-> 
-> 	return 0;
-> }
-> 
+> Such a problem should be spotted with swiommu enabled with debugging.
 
-True. I will send a v5 soon.
-
-Thanks,
-
-Andrzej
+Thanks
+/Ilias
