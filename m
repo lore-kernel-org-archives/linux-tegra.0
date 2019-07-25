@@ -1,117 +1,47 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Date: Thu, 25 Jul 2019 13:26:24 +0000
-Message-ID: <BYAPR12MB3269927AB1F67D46E150ED6BD3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
-References: <cover.1562149883.git.joabreu@synopsys.com>
- <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 0/2] Tegra30+ CPU suspend-resume bug-fixes
+Date: Thu, 25 Jul 2019 16:43:35 +0300
+Message-ID: <03de1cbe-7f0d-a7f0-edca-ee3b6b8c8417@gmail.com>
+References: <20190707230358.10672-1-digetx@gmail.com>
+ <f81a974b-4e64-9b66-0399-519480f53c31@gmail.com>
+ <20190725094010.GK12715@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190725094010.GK12715@pdeschrijver-desktop.Nvidia.com>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Robin Murphy <robin.murphy@arm.com>"wens@csie.org" <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>"peppe.cavallaro@st.com" <peppe.cavallaro@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMjUvMjAx
-OSwgMTQ6MjA6MDcgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMDMvMDcvMjAxOSAxMTozNywgSm9z
-ZSBBYnJldSB3cm90ZToNCj4gPiBNYXBwaW5nIGFuZCB1bm1hcHBpbmcgRE1BIHJlZ2lvbiBpcyBh
-biBoaWdoIGJvdHRsZW5lY2sgaW4gc3RtbWFjIGRyaXZlciwNCj4gPiBzcGVjaWFsbHkgaW4gdGhl
-IFJYIHBhdGguDQo+ID4gDQo+ID4gVGhpcyBjb21taXQgaW50cm9kdWNlcyBzdXBwb3J0IGZvciBQ
-YWdlIFBvb2wgQVBJIGFuZCB1c2VzIGl0IGluIGFsbCBSWA0KPiA+IHF1ZXVlcy4gV2l0aCB0aGlz
-IGNoYW5nZSwgd2UgZ2V0IG1vcmUgc3RhYmxlIHRyb3VnaHB1dCBhbmQgc29tZSBpbmNyZWFzZQ0K
-PiA+IG9mIGJhbndpZHRoIHdpdGggaXBlcmY6DQo+ID4gCS0gTUFDMTAwMCAtIDk1MCBNYnBzDQo+
-ID4gCS0gWEdNQUM6IDkuMjIgR2Jwcw0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvc2UgQWJy
-ZXUgPGpvYWJyZXVAc3lub3BzeXMuY29tPg0KPiA+IENjOiBKb2FvIFBpbnRvIDxqcGludG9Ac3lu
-b3BzeXMuY29tPg0KPiA+IENjOiBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+
-DQo+ID4gQ2M6IEdpdXNlcHBlIENhdmFsbGFybyA8cGVwcGUuY2F2YWxsYXJvQHN0LmNvbT4NCj4g
-PiBDYzogQWxleGFuZHJlIFRvcmd1ZSA8YWxleGFuZHJlLnRvcmd1ZUBzdC5jb20+DQo+ID4gQ2M6
-IE1heGltZSBDb3F1ZWxpbiA8bWNvcXVlbGluLnN0bTMyQGdtYWlsLmNvbT4NCj4gPiBDYzogTWF4
-aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBib290bGluLmNvbT4NCj4gPiBDYzogQ2hlbi1ZdSBU
-c2FpIDx3ZW5zQGNzaWUub3JnPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9z
-dG1pY3JvL3N0bW1hYy9LY29uZmlnICAgICAgIHwgICAxICsNCj4gPiAgZHJpdmVycy9uZXQvZXRo
-ZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjLmggICAgICB8ICAxMCArLQ0KPiA+ICBkcml2ZXJz
-L25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jIHwgMTk2ICsrKysrKy0t
-LS0tLS0tLS0tLS0tLS0NCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCA2MyBpbnNlcnRpb25zKCspLCAx
-NDQgZGVsZXRpb25zKC0pDQo+IA0KPiAuLi4NCj4gDQo+ID4gQEAgLTMzMDYsNDkgKzMyOTUsMjIg
-QEAgc3RhdGljIGlubGluZSB2b2lkIHN0bW1hY19yeF9yZWZpbGwoc3RydWN0IHN0bW1hY19wcml2
-ICpwcml2LCB1MzIgcXVldWUpDQo+ID4gIAkJZWxzZQ0KPiA+ICAJCQlwID0gcnhfcS0+ZG1hX3J4
-ICsgZW50cnk7DQo+ID4gIA0KPiA+IC0JCWlmIChsaWtlbHkoIXJ4X3EtPnJ4X3NrYnVmZltlbnRy
-eV0pKSB7DQo+ID4gLQkJCXN0cnVjdCBza19idWZmICpza2I7DQo+ID4gLQ0KPiA+IC0JCQlza2Ig
-PSBuZXRkZXZfYWxsb2Nfc2tiX2lwX2FsaWduKHByaXYtPmRldiwgYmZzaXplKTsNCj4gPiAtCQkJ
-aWYgKHVubGlrZWx5KCFza2IpKSB7DQo+ID4gLQkJCQkvKiBzbyBmb3IgYSB3aGlsZSBubyB6ZXJv
-LWNvcHkhICovDQo+ID4gLQkJCQlyeF9xLT5yeF96ZXJvY190aHJlc2ggPSBTVE1NQUNfUlhfVEhS
-RVNIOw0KPiA+IC0JCQkJaWYgKHVubGlrZWx5KG5ldF9yYXRlbGltaXQoKSkpDQo+ID4gLQkJCQkJ
-ZGV2X2Vycihwcml2LT5kZXZpY2UsDQo+ID4gLQkJCQkJCSJmYWlsIHRvIGFsbG9jIHNrYiBlbnRy
-eSAlZFxuIiwNCj4gPiAtCQkJCQkJZW50cnkpOw0KPiA+IC0JCQkJYnJlYWs7DQo+ID4gLQkJCX0N
-Cj4gPiAtDQo+ID4gLQkJCXJ4X3EtPnJ4X3NrYnVmZltlbnRyeV0gPSBza2I7DQo+ID4gLQkJCXJ4
-X3EtPnJ4X3NrYnVmZl9kbWFbZW50cnldID0NCj4gPiAtCQkJICAgIGRtYV9tYXBfc2luZ2xlKHBy
-aXYtPmRldmljZSwgc2tiLT5kYXRhLCBiZnNpemUsDQo+ID4gLQkJCQkJICAgRE1BX0ZST01fREVW
-SUNFKTsNCj4gPiAtCQkJaWYgKGRtYV9tYXBwaW5nX2Vycm9yKHByaXYtPmRldmljZSwNCj4gPiAt
-CQkJCQkgICAgICByeF9xLT5yeF9za2J1ZmZfZG1hW2VudHJ5XSkpIHsNCj4gPiAtCQkJCW5ldGRl
-dl9lcnIocHJpdi0+ZGV2LCAiUnggRE1BIG1hcCBmYWlsZWRcbiIpOw0KPiA+IC0JCQkJZGV2X2tm
-cmVlX3NrYihza2IpOw0KPiA+ICsJCWlmICghYnVmLT5wYWdlKSB7DQo+ID4gKwkJCWJ1Zi0+cGFn
-ZSA9IHBhZ2VfcG9vbF9kZXZfYWxsb2NfcGFnZXMocnhfcS0+cGFnZV9wb29sKTsNCj4gPiArCQkJ
-aWYgKCFidWYtPnBhZ2UpDQo+ID4gIAkJCQlicmVhazsNCj4gPiAtCQkJfQ0KPiA+IC0NCj4gPiAt
-CQkJc3RtbWFjX3NldF9kZXNjX2FkZHIocHJpdiwgcCwgcnhfcS0+cnhfc2tidWZmX2RtYVtlbnRy
-eV0pOw0KPiA+IC0JCQlzdG1tYWNfcmVmaWxsX2Rlc2MzKHByaXYsIHJ4X3EsIHApOw0KPiA+IC0N
-Cj4gPiAtCQkJaWYgKHJ4X3EtPnJ4X3plcm9jX3RocmVzaCA+IDApDQo+ID4gLQkJCQlyeF9xLT5y
-eF96ZXJvY190aHJlc2gtLTsNCj4gPiAtDQo+ID4gLQkJCW5ldGlmX2RiZyhwcml2LCByeF9zdGF0
-dXMsIHByaXYtPmRldiwNCj4gPiAtCQkJCSAgInJlZmlsbCBlbnRyeSAjJWRcbiIsIGVudHJ5KTsN
-Cj4gPiAgCQl9DQo+ID4gLQkJZG1hX3dtYigpOw0KPiA+ICsNCj4gPiArCQlidWYtPmFkZHIgPSBi
-dWYtPnBhZ2UtPmRtYV9hZGRyOw0KPiA+ICsJCXN0bW1hY19zZXRfZGVzY19hZGRyKHByaXYsIHAs
-IGJ1Zi0+YWRkcik7DQo+ID4gKwkJc3RtbWFjX3JlZmlsbF9kZXNjMyhwcml2LCByeF9xLCBwKTsN
-Cj4gPiAgDQo+ID4gIAkJcnhfcS0+cnhfY291bnRfZnJhbWVzKys7DQo+ID4gIAkJcnhfcS0+cnhf
-Y291bnRfZnJhbWVzICU9IHByaXYtPnJ4X2NvYWxfZnJhbWVzOw0KPiA+ICAJCXVzZV9yeF93ZCA9
-IHByaXYtPnVzZV9yaXd0ICYmIHJ4X3EtPnJ4X2NvdW50X2ZyYW1lczsNCj4gPiAgDQo+ID4gLQkJ
-c3RtbWFjX3NldF9yeF9vd25lcihwcml2LCBwLCB1c2Vfcnhfd2QpOw0KPiA+IC0NCj4gPiAgCQlk
-bWFfd21iKCk7DQo+ID4gKwkJc3RtbWFjX3NldF9yeF9vd25lcihwcml2LCBwLCB1c2Vfcnhfd2Qp
-Ow0KPiA+ICANCj4gPiAgCQllbnRyeSA9IFNUTU1BQ19HRVRfRU5UUlkoZW50cnksIERNQV9SWF9T
-SVpFKTsNCj4gPiAgCX0NCj4gDQo+IEkgd2FzIGxvb2tpbmcgYXQgdGhpcyBjaGFuZ2UgaW4gYSBi
-aXQgY2xvc2VyIGRldGFpbCBhbmQgb25lIHRoaW5nIHRoYXQNCj4gc3R1Y2sgb3V0IHRvIG1lIHdh
-cyB0aGUgYWJvdmUgd2hlcmUgdGhlIGJhcnJpZXIgaGFkIGJlZW4gbW92ZWQgZnJvbQ0KPiBhZnRl
-ciB0aGUgc3RtbWFjX3NldF9yeF9vd25lcigpIGNhbGwgdG8gYmVmb3JlLiANCj4gDQo+IFNvIEkg
-bW92ZWQgdGhpcyBiYWNrIGFuZCBJIG5vIGxvbmdlciBzYXcgdGhlIGNyYXNoLiBIb3dldmVyLCB0
-aGVuIEkNCj4gcmVjYWxsZWQgSSBoYWQgdGhlIHBhdGNoIHRvIGVuYWJsZSB0aGUgZGVidWcgcHJp
-bnRzIGZvciB0aGUgYnVmZmVyDQo+IGFkZHJlc3MgYXBwbGllZCBidXQgYWZ0ZXIgcmV2ZXJ0aW5n
-IHRoYXQsIHRoZSBjcmFzaCBvY2N1cnJlZCBhZ2Fpbi4gDQo+IA0KPiBJbiBvdGhlciB3b3Jkcywg
-d2hhdCB3b3JrcyBmb3IgbWUgaXMgbW92aW5nIHRoZSBhYm92ZSBiYXJyaWVyIGFuZCBhZGRpbmcN
-Cj4gdGhlIGRlYnVnIHByaW50LCB3aGljaCBhcHBlYXJzIHRvIHN1Z2dlc3QgdGhhdCB0aGVyZSBp
-cyBzb21lDQo+IHRpbWluZy9jb2hlcmVuY3kgaXNzdWUgaGVyZS4gQW55d2F5LCBtYXliZSB0aGlz
-IGlzIGNsdWUgdG8gd2hhdCBpcyBnb2luZw0KPiBvbj8NCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jIGIvZHJpdmVycy9u
-ZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYw0KPiBpbmRleCBhNzQ4NmMy
-ZjMyMjEuLjJmMDE2Mzk3MjMxYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQv
-c3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5l
-dC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jDQo+IEBAIC0zMzAzLDggKzMzMDMsOCBAQCBz
-dGF0aWMgaW5saW5lIHZvaWQgc3RtbWFjX3J4X3JlZmlsbChzdHJ1Y3Qgc3RtbWFjX3ByaXYgKnBy
-aXYsIHUzMiBxdWV1ZSkNCj4gICAgICAgICAgICAgICAgIHJ4X3EtPnJ4X2NvdW50X2ZyYW1lcyAl
-PSBwcml2LT5yeF9jb2FsX2ZyYW1lczsNCj4gICAgICAgICAgICAgICAgIHVzZV9yeF93ZCA9IHBy
-aXYtPnVzZV9yaXd0ICYmIHJ4X3EtPnJ4X2NvdW50X2ZyYW1lczsNCj4gIA0KPiAtICAgICAgICAg
-ICAgICAgZG1hX3dtYigpOw0KPiAgICAgICAgICAgICAgICAgc3RtbWFjX3NldF9yeF9vd25lcihw
-cml2LCBwLCB1c2Vfcnhfd2QpOw0KPiArICAgICAgICAgICAgICAgZG1hX3dtYigpOw0KPiAgDQo+
-ICAgICAgICAgICAgICAgICBlbnRyeSA9IFNUTU1BQ19HRVRfRU5UUlkoZW50cnksIERNQV9SWF9T
-SVpFKTsNCj4gICAgICAgICB9DQo+IEBAIC0zNDM4LDYgKzM0MzgsMTAgQEAgc3RhdGljIGludCBz
-dG1tYWNfcngoc3RydWN0IHN0bW1hY19wcml2ICpwcml2LCBpbnQgbGltaXQsIHUzMiBxdWV1ZSkN
-Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZpY2UocHJp
-di0+ZGV2aWNlLCBidWYtPmFkZHIsDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIGZyYW1lX2xlbiwgRE1BX0ZST01fREVWSUNFKTsNCj4gIA0KPiAr
-ICAgICAgICAgICAgICAgICAgICAgICBwcl9pbmZvKCIlczogcGFkZHI9MHglbGx4LCB2YWRkcj0w
-eCVsbHgsIGxlbj0lZCIsIF9fZnVuY19fLA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgYnVmLT5hZGRyLCBwYWdlX2FkZHJlc3MoYnVmLT5wYWdlKSwNCj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZyYW1lX2xlbik7DQo+ICsNCj4gICAg
-ICAgICAgICAgICAgICAgICAgICAgaWYgKG5ldGlmX21zZ19wa3RkYXRhKHByaXYpKSB7DQo+ICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbmV0ZGV2X2RiZyhwcml2LT5kZXYsICJmcmFt
-ZSByZWNlaXZlZCAoJWRieXRlcykiLA0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgZnJhbWVfbGVuKTsNCj4gDQo+IENoZWVycw0KPiBKb24NCj4gDQo+IC0tIA0K
-PiBudnB1YmxpYw0KDQpXZWxsLCBJIHdhc24ndCBleHBlY3RpbmcgdGhhdCA6Lw0KDQpQZXIgZG9j
-dW1lbnRhdGlvbiBvZiBiYXJyaWVycyBJIHRoaW5rIHdlIHNob3VsZCBzZXQgZGVzY3JpcHRvciBm
-aWVsZHMgDQphbmQgdGhlbiBiYXJyaWVyIGFuZCBmaW5hbGx5IG93bmVyc2hpcCB0byBIVyBzbyB0
-aGF0IHJlbWFpbmluZyBmaWVsZHMgDQphcmUgY29oZXJlbnQgYmVmb3JlIG93bmVyIGlzIHNldC4N
-Cg0KQW55d2F5LCBjYW4geW91IGFsc28gYWRkIGEgZG1hX3JtYigpIGFmdGVyIHRoZSBjYWxsIHRv
-IA0Kc3RtbWFjX3J4X3N0YXR1cygpID8NCg0KLS0tDQpUaGFua3MsDQpKb3NlIE1pZ3VlbCBBYnJl
-dQ0K
+25.07.2019 12:40, Peter De Schrijver пишет:
+> On Tue, Jul 23, 2019 at 04:28:35AM +0300, Dmitry Osipenko wrote:
+>> 08.07.2019 2:03, Dmitry Osipenko пишет:
+>>> Hello,
+>>>
+>>> This small series addresses two suspend-resume bugs: one affects Tegra30+
+>>> due to a typo in the code, other fixes CPU hang on Tegra30 specifically.
+>>>
+>>> Please review and apply, thanks!
+>>>
+>>> Dmitry Osipenko (2):
+>>>   ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
+>>>   ARM: tegra: Use WFE for power-gating on Tegra30
+>>>
+>>>  arch/arm/mach-tegra/reset-handler.S |  6 +++---
+>>>  arch/arm/mach-tegra/sleep-tegra30.S |  4 +++-
+>>>  drivers/soc/tegra/flowctrl.c        | 19 +++++++++++++++++--
+>>>  3 files changed, 23 insertions(+), 6 deletions(-)
+>>>
+>>
+>> Hello Peter,
+>>
+>> We were talking about these fixes on the IRC not so long time ago, does
+>> it look good to you? Care to give an ACK?
+> 
+> Acked-By Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+
+Thanks!
