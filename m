@@ -1,122 +1,54 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
- Pool
-Date: Thu, 25 Jul 2019 07:44:28 +0000
-Message-ID: <BYAPR12MB3269F4E62B64484B08F90998D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
-References: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
- <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
- <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
- <20190723.115112.1824255524103179323.davem@davemloft.net>
- <20190724085427.GA10736@apalos>
- <BYAPR12MB3269AA9955844E317B62A239D3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
- <20190724095310.GA12991@apalos>
- <BYAPR12MB3269C5766F553438ECFF2C9BD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
- <33de62bf-2f8a-bf00-9260-418b12bed24c@nvidia.com>
- <BYAPR12MB32696F0A2BFDF69F31C4311CD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
- <a07c3480-af03-a61b-4e9c-d9ceb29ce622@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.19 000/271] 4.19.61-stable review
+Date: Thu, 25 Jul 2019 10:02:35 +0100
+Message-ID: <bc581ffd-d6a4-afae-7b0f-ec31e3b399e5@nvidia.com>
+References: <20190724191655.268628197@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a07c3480-af03-a61b-4e9c-d9ceb29ce622@nvidia.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: David Miller <davem@davemloft.net>, "robin.murphy@arm.com" <robin.murphy@arm.com>, "lists@bofh.nu" <lists@bofh.nu>, "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "wens@csie.org" <wens@csie.org>, "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMjQvMjAx
-OSwgMTI6NTg6MTUgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMjQvMDcvMjAxOSAxMjozNCwgSm9z
-ZSBBYnJldSB3cm90ZToNCj4gPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
-bT4NCj4gPiBEYXRlOiBKdWwvMjQvMjAxOSwgMTI6MTA6NDcgKFVUQyswMDowMCkNCj4gPiANCj4g
-Pj4NCj4gPj4gT24gMjQvMDcvMjAxOSAxMTowNCwgSm9zZSBBYnJldSB3cm90ZToNCj4gPj4NCj4g
-Pj4gLi4uDQo+ID4+DQo+ID4+PiBKb24sIEkgd2FzIGFibGUgdG8gcmVwbGljYXRlIChhdCBzb21l
-IGxldmVsKSB5b3VyIHNldHVwOg0KPiA+Pj4NCj4gPj4+ICMgZG1lc2cgfCBncmVwIC1pIGFybS1z
-bW11DQo+ID4+PiBbICAgIDEuMzM3MzIyXSBhcm0tc21tdSA3MDA0MDAwMC5pb21tdTogcHJvYmlu
-ZyBoYXJkd2FyZSANCj4gPj4+IGNvbmZpZ3VyYXRpb24uLi4NCj4gPj4+IFsgICAgMS4zMzczMzBd
-IGFybS1zbW11IDcwMDQwMDAwLmlvbW11OiBTTU1VdjIgd2l0aDoNCj4gPj4+IFsgICAgMS4zMzcz
-MzhdIGFybS1zbW11IDcwMDQwMDAwLmlvbW11OiAgICAgICAgIHN0YWdlIDEgdHJhbnNsYXRpb24N
-Cj4gPj4+IFsgICAgMS4zMzczNDZdIGFybS1zbW11IDcwMDQwMDAwLmlvbW11OiAgICAgICAgIHN0
-YWdlIDIgdHJhbnNsYXRpb24NCj4gPj4+IFsgICAgMS4zMzczNTRdIGFybS1zbW11IDcwMDQwMDAw
-LmlvbW11OiAgICAgICAgIG5lc3RlZCB0cmFuc2xhdGlvbg0KPiA+Pj4gWyAgICAxLjMzNzM2M10g
-YXJtLXNtbXUgNzAwNDAwMDAuaW9tbXU6ICAgICAgICAgc3RyZWFtIG1hdGNoaW5nIHdpdGggMTI4
-IA0KPiA+Pj4gcmVnaXN0ZXIgZ3JvdXBzDQo+ID4+PiBbICAgIDEuMzM3Mzc0XSBhcm0tc21tdSA3
-MDA0MDAwMC5pb21tdTogICAgICAgICAxIGNvbnRleHQgYmFua3MgKDAgDQo+ID4+PiBzdGFnZS0y
-IG9ubHkpDQo+ID4+PiBbICAgIDEuMzM3MzgzXSBhcm0tc21tdSA3MDA0MDAwMC5pb21tdTogICAg
-ICAgICBTdXBwb3J0ZWQgcGFnZSBzaXplczogDQo+ID4+PiAweDYxMzExMDAwDQo+ID4+PiBbICAg
-IDEuMzM3MzkzXSBhcm0tc21tdSA3MDA0MDAwMC5pb21tdTogICAgICAgICBTdGFnZS0xOiA0OC1i
-aXQgVkEgLT4gDQo+ID4+PiA0OC1iaXQgSVBBDQo+ID4+PiBbICAgIDEuMzM3NDAyXSBhcm0tc21t
-dSA3MDA0MDAwMC5pb21tdTogICAgICAgICBTdGFnZS0yOiA0OC1iaXQgSVBBIC0+IA0KPiA+Pj4g
-NDgtYml0IFBBDQo+ID4+Pg0KPiA+Pj4gIyBkbWVzZyB8IGdyZXAgLWkgc3RtbWFjDQo+ID4+PiBb
-ICAgIDEuMzQ0MTA2XSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQ6IEFkZGluZyB0byBpb21t
-dSBncm91cCAwDQo+ID4+PiBbICAgIDEuMzQ0MjMzXSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJu
-ZXQ6IG5vIHJlc2V0IGNvbnRyb2wgZm91bmQNCj4gPj4+IFsgICAgMS4zNDgyNzZdIHN0bW1hY2V0
-aCA3MDAwMDAwMC5ldGhlcm5ldDogVXNlciBJRDogMHgxMCwgU3lub3BzeXMgSUQ6IA0KPiA+Pj4g
-MHg1MQ0KPiA+Pj4gWyAgICAxLjM0ODI4NV0gc3RtbWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0OiAg
-ICAgRFdNQUM0LzUNCj4gPj4+IFsgICAgMS4zNDgyOTNdIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhl
-cm5ldDogRE1BIEhXIGNhcGFiaWxpdHkgcmVnaXN0ZXIgDQo+ID4+PiBzdXBwb3J0ZWQNCj4gPj4+
-IFsgICAgMS4zNDgzMDJdIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldDogUlggQ2hlY2tzdW0g
-T2ZmbG9hZCBFbmdpbmUgDQo+ID4+PiBzdXBwb3J0ZWQNCj4gPj4+IFsgICAgMS4zNDgzMTFdIHN0
-bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldDogVFggQ2hlY2tzdW0gaW5zZXJ0aW9uIA0KPiA+Pj4g
-c3VwcG9ydGVkDQo+ID4+PiBbICAgIDEuMzQ4MzIwXSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJu
-ZXQ6IFRTTyBzdXBwb3J0ZWQNCj4gPj4+IFsgICAgMS4zNDgzMjhdIHN0bW1hY2V0aCA3MDAwMDAw
-MC5ldGhlcm5ldDogRW5hYmxlIFJYIE1pdGlnYXRpb24gdmlhIEhXIA0KPiA+Pj4gV2F0Y2hkb2cg
-VGltZXINCj4gPj4+IFsgICAgMS4zNDgzMzddIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldDog
-VFNPIGZlYXR1cmUgZW5hYmxlZA0KPiA+Pj4gWyAgICAxLjM0ODQwOV0gbGlicGh5OiBzdG1tYWM6
-IHByb2JlZA0KPiA+Pj4gWyA0MTU5LjE0MDk5MF0gc3RtbWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0
-IGV0aDA6IFBIWSBbc3RtbWFjLTA6MDFdIA0KPiA+Pj4gZHJpdmVyIFtHZW5lcmljIFBIWV0NCj4g
-Pj4+IFsgNDE1OS4xNDEwMDVdIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldCBldGgwOiBwaHk6
-IHNldHRpbmcgc3VwcG9ydGVkIA0KPiA+Pj4gMDAsMDAwMDAwMDAsMDAwMDYyZmYgYWR2ZXJ0aXNp
-bmcgMDAsMDAwMDAwMDAsMDAwMDYyZmYNCj4gPj4+IFsgNDE1OS4xNDIzNTldIHN0bW1hY2V0aCA3
-MDAwMDAwMC5ldGhlcm5ldCBldGgwOiBObyBTYWZldHkgRmVhdHVyZXMgDQo+ID4+PiBzdXBwb3J0
-IGZvdW5kDQo+ID4+PiBbIDQxNTkuMTQyMzY5XSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQg
-ZXRoMDogSUVFRSAxNTg4LTIwMDggQWR2YW5jZWQgDQo+ID4+PiBUaW1lc3RhbXAgc3VwcG9ydGVk
-DQo+ID4+PiBbIDQxNTkuMTQyNDI5XSBzdG1tYWNldGggNzAwMDAwMDAuZXRoZXJuZXQgZXRoMDog
-cmVnaXN0ZXJlZCBQVFAgY2xvY2sNCj4gPj4+IFsgNDE1OS4xNDI0MzldIHN0bW1hY2V0aCA3MDAw
-MDAwMC5ldGhlcm5ldCBldGgwOiBjb25maWd1cmluZyBmb3IgDQo+ID4+PiBwaHkvZ21paSBsaW5r
-IG1vZGUNCj4gPj4+IFsgNDE1OS4xNDI0NTJdIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldCBl
-dGgwOiBwaHlsaW5rX21hY19jb25maWc6IA0KPiA+Pj4gbW9kZT1waHkvZ21paS9Vbmtub3duL1Vu
-a25vd24gYWR2PTAwLDAwMDAwMDAwLDAwMDA2MmZmIHBhdXNlPTEwIGxpbms9MCANCj4gPj4+IGFu
-PTENCj4gPj4+IFsgNDE1OS4xNDI0NjZdIHN0bW1hY2V0aCA3MDAwMDAwMC5ldGhlcm5ldCBldGgw
-OiBwaHkgbGluayB1cCANCj4gPj4+IGdtaWkvMUdicHMvRnVsbA0KPiA+Pj4gWyA0MTU5LjE0MjQ3
-NV0gc3RtbWFjZXRoIDcwMDAwMDAwLmV0aGVybmV0IGV0aDA6IHBoeWxpbmtfbWFjX2NvbmZpZzog
-DQo+ID4+PiBtb2RlPXBoeS9nbWlpLzFHYnBzL0Z1bGwgYWR2PTAwLDAwMDAwMDAwLDAwMDAwMDAw
-IHBhdXNlPTBmIGxpbms9MSBhbj0wDQo+ID4+PiBbIDQxNTkuMTQyNDgxXSBzdG1tYWNldGggNzAw
-MDAwMDAuZXRoZXJuZXQgZXRoMDogTGluayBpcyBVcCAtIDFHYnBzL0Z1bGwgDQo+ID4+PiAtIGZs
-b3cgY29udHJvbCByeC90eA0KPiA+Pj4NCj4gPj4+IFRoZSBvbmx5IG1pc3NpbmcgcG9pbnQgaXMg
-dGhlIE5GUyBib290IHRoYXQgSSBjYW4ndCByZXBsaWNhdGUgd2l0aCB0aGlzIA0KPiA+Pj4gc2V0
-dXAuIEJ1dCBJIGRpZCBzb21lIHNhbml0eSBjaGVja3M6DQo+ID4+Pg0KPiA+Pj4gUmVtb3RlIEVu
-cG9pbnQ6DQo+ID4+PiAjIGRkIGlmPS9kZXYvdXJhbmRvbSBvZj1vdXRwdXQuZGF0IGJzPTEyOE0g
-Y291bnQ9MQ0KPiA+Pj4gIyBuYyAtYyAxOTIuMTY4LjAuMiAxMjM0IDwgb3V0cHV0LmRhdA0KPiA+
-Pj4gIyBtZDVzdW0gb3V0cHV0LmRhdCANCj4gPj4+IGZkZTllMDgxODI4MTgzNmU0ZmMwZWRmZWRl
-MmI4NzYyICBvdXRwdXQuZGF0DQo+ID4+Pg0KPiA+Pj4gRFVUOg0KPiA+Pj4gIyBuYyAtbCAtYyAt
-cCAxMjM0ID4gb3V0cHV0LmRhdA0KPiA+Pj4gIyBtZDVzdW0gb3V0cHV0LmRhdCANCj4gPj4+IGZk
-ZTllMDgxODI4MTgzNmU0ZmMwZWRmZWRlMmI4NzYyICBvdXRwdXQuZGF0DQo+ID4+DQo+ID4+IE9u
-IG15IHNldHVwLCBpZiBJIGRvIG5vdCB1c2UgTkZTIHRvIG1vdW50IHRoZSByb290ZnMsIGJ1dCB0
-aGVuIG1hbnVhbGx5DQo+ID4+IG1vdW50IHRoZSBORlMgc2hhcmUgYWZ0ZXIgYm9vdGluZywgSSBk
-byBub3Qgc2VlIGFueSBwcm9ibGVtcyByZWFkaW5nIG9yDQo+ID4+IHdyaXRpbmcgdG8gZmlsZXMg
-b24gdGhlIHNoYXJlLiBTbyBJIGFtIG5vdCBzdXJlIGlmIGl0IGlzIHNvbWUgc29ydCBvZg0KPiA+
-PiByYWNlIHRoYXQgaXMgb2NjdXJyaW5nIHdoZW4gbW91bnRpbmcgdGhlIE5GUyBzaGFyZSBvbiBi
-b290LiBJdCBpcyAxMDAlDQo+ID4+IHJlcHJvZHVjaWJsZSB3aGVuIHVzaW5nIE5GUyBmb3IgdGhl
-IHJvb3QgZmlsZS1zeXN0ZW0uDQo+ID4gDQo+ID4gSSBkb24ndCB1bmRlcnN0YW5kIGhvdyBjYW4g
-dGhlcmUgYmUgY29ycnVwdGlvbiB0aGVuIHVubGVzcyB0aGUgSVAgQVhJIA0KPiA+IHBhcmFtZXRl
-cnMgYXJlIG1pc2NvbmZpZ3VyZWQgd2hpY2ggY2FuIGxlYWQgdG8gc3BvcmFkaWMgdW5kZWZpbmVk
-IA0KPiA+IGJlaGF2aW9yLg0KPiA+IA0KPiA+IFRoZXNlIHByaW50cyBmcm9tIHlvdXIgbG9nczoN
-Cj4gPiBbICAgMTQuNTc5MzkyXSBSdW4gL2luaXQgYXMgaW5pdCBwcm9jZXNzDQo+ID4gL2luaXQ6
-IGxpbmUgNTg6IGNobW9kOiBjb21tYW5kIG5vdCBmb3VuZA0KPiA+IFsgMTA6MjI6NDYgXSBMNFQt
-SU5JVFJEIEJ1aWxkIERBVEU6IE1vbiBKdWwgMjIgMTA6MjI6NDYgVVRDIDIwMTkNCj4gPiBbIDEw
-OjIyOjQ2IF0gUm9vdCBkZXZpY2UgZm91bmQ6IG5mcw0KPiA+IFsgMTA6MjI6NDYgXSBFdGhlcm5l
-dCBpbnRlcmZhY2VzOiBldGgwDQo+ID4gWyAxMDoyMjo0NiBdIElQIEFkZHJlc3M6IDEwLjIxLjE0
-MC40MQ0KPiA+IA0KPiA+IFdoZXJlIGFyZSB0aGV5IGNvbWluZyBmcm9tID8gRG8geW91IGhhdmUg
-YW55IGV4dHJhIGluaXQgc2NyaXB0ID8NCj4gDQo+IEJ5IGRlZmF1bHQgdGhlcmUgaXMgYW4gaW5p
-dGlhbCByYW1kaXNrIHRoYXQgaXMgbG9hZGVkIGZpcnN0IGFuZCB0aGVuIHRoZQ0KPiByb290ZnMg
-aXMgbW91bnRlZCBvdmVyIE5GUy4gSG93ZXZlciwgZXZlbiBpZiBJIHJlbW92ZSB0aGlzIHJhbWRp
-c2sgYW5kDQo+IGRpcmVjdGx5IG1vdW50IHRoZSByb290ZnMgdmlhIE5GUyB3aXRob3V0IGl0IHRo
-ZSBwcm9ibGVtIHBlcnNpc3RzLiBTbyBJDQo+IGRvbid0IHNlZSBhbnkgaXNzdWUgd2l0aCB0aGUg
-cmFtZGlzayBhbmQgd2hhdHMgbW9yZSBpcyB3ZSBoYXZlIGJlZW4NCj4gdXNpbmcgdGhpcyBmb3Ig
-YSBsb25nIGxvbmcgdGltZS4gTm90aGluZyBoYXMgY2hhbmdlZCBoZXJlLg0KDQpPSy4gQ2FuIHlv
-dSBwbGVhc2UgdGVzdCB3aGF0IElsaWFzIG1lbnRpb25lZCA/DQoNCkJhc2ljYWxseSB5b3UgY2Fu
-IGhhcmQtY29kZSB0aGUgb3JkZXIgdG8gMCBpbiANCmFsbG9jX2RtYV9yeF9kZXNjX3Jlc291cmNl
-cygpOg0KLSBwcF9wYXJhbXMub3JkZXIgPSBESVZfUk9VTkRfVVAocHJpdi0+ZG1hX2J1Zl9zeiwg
-UEFHRV9TSVpFKTsNCisgcHBfcGFyYW1zLm9yZGVyID0gMDsNCg0KVW5sZXNzIHlvdSB1c2UgYSBN
-VFUgPiBQQUdFX1NJWkUuDQoNCi0tLQ0KVGhhbmtzLA0KSm9zZSBNaWd1ZWwgQWJyZXUNCg==
+
+On 24/07/2019 20:17, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.61 release.
+> There are 271 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.61-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.19:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
+
+Linux version:	4.19.61-rc1-g872cde3ebfc9
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
