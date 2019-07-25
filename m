@@ -1,148 +1,117 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
  Pool
-Date: Thu, 25 Jul 2019 14:20:07 +0100
-Message-ID: <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
+Date: Thu, 25 Jul 2019 13:26:24 +0000
+Message-ID: <BYAPR12MB3269927AB1F67D46E150ED6BD3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
 References: <cover.1562149883.git.joabreu@synopsys.com>
  <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+Content-Transfer-Encoding: base64
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Sender: netdev-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Cc: Joao Pinto <Joao.Pinto@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Robin Murphy <robin.murphy@arm.com>"wens@csie.org" <wens@csie.org>, linux-tegra <linux-tegra@vger.kernel.org>"peppe.cavallaro@st.com" <peppe.cavallaro@st.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 03/07/2019 11:37, Jose Abreu wrote:
-> Mapping and unmapping DMA region is an high bottleneck in stmmac driver,
-> specially in the RX path.
-> 
-> This commit introduces support for Page Pool API and uses it in all RX
-> queues. With this change, we get more stable troughput and some increase
-> of banwidth with iperf:
-> 	- MAC1000 - 950 Mbps
-> 	- XGMAC: 9.22 Gbps
-> 
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> Cc: Joao Pinto <jpinto@synopsys.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/Kconfig       |   1 +
->  drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  10 +-
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 196 ++++++----------------
->  3 files changed, 63 insertions(+), 144 deletions(-)
-
-...
-
-> @@ -3306,49 +3295,22 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv, u32 queue)
->  		else
->  			p = rx_q->dma_rx + entry;
->  
-> -		if (likely(!rx_q->rx_skbuff[entry])) {
-> -			struct sk_buff *skb;
-> -
-> -			skb = netdev_alloc_skb_ip_align(priv->dev, bfsize);
-> -			if (unlikely(!skb)) {
-> -				/* so for a while no zero-copy! */
-> -				rx_q->rx_zeroc_thresh = STMMAC_RX_THRESH;
-> -				if (unlikely(net_ratelimit()))
-> -					dev_err(priv->device,
-> -						"fail to alloc skb entry %d\n",
-> -						entry);
-> -				break;
-> -			}
-> -
-> -			rx_q->rx_skbuff[entry] = skb;
-> -			rx_q->rx_skbuff_dma[entry] =
-> -			    dma_map_single(priv->device, skb->data, bfsize,
-> -					   DMA_FROM_DEVICE);
-> -			if (dma_mapping_error(priv->device,
-> -					      rx_q->rx_skbuff_dma[entry])) {
-> -				netdev_err(priv->dev, "Rx DMA map failed\n");
-> -				dev_kfree_skb(skb);
-> +		if (!buf->page) {
-> +			buf->page = page_pool_dev_alloc_pages(rx_q->page_pool);
-> +			if (!buf->page)
->  				break;
-> -			}
-> -
-> -			stmmac_set_desc_addr(priv, p, rx_q->rx_skbuff_dma[entry]);
-> -			stmmac_refill_desc3(priv, rx_q, p);
-> -
-> -			if (rx_q->rx_zeroc_thresh > 0)
-> -				rx_q->rx_zeroc_thresh--;
-> -
-> -			netif_dbg(priv, rx_status, priv->dev,
-> -				  "refill entry #%d\n", entry);
->  		}
-> -		dma_wmb();
-> +
-> +		buf->addr = buf->page->dma_addr;
-> +		stmmac_set_desc_addr(priv, p, buf->addr);
-> +		stmmac_refill_desc3(priv, rx_q, p);
->  
->  		rx_q->rx_count_frames++;
->  		rx_q->rx_count_frames %= priv->rx_coal_frames;
->  		use_rx_wd = priv->use_riwt && rx_q->rx_count_frames;
->  
-> -		stmmac_set_rx_owner(priv, p, use_rx_wd);
-> -
->  		dma_wmb();
-> +		stmmac_set_rx_owner(priv, p, use_rx_wd);
->  
->  		entry = STMMAC_GET_ENTRY(entry, DMA_RX_SIZE);
->  	}
-
-I was looking at this change in a bit closer detail and one thing that
-stuck out to me was the above where the barrier had been moved from
-after the stmmac_set_rx_owner() call to before. 
-
-So I moved this back and I no longer saw the crash. However, then I
-recalled I had the patch to enable the debug prints for the buffer
-address applied but after reverting that, the crash occurred again. 
-
-In other words, what works for me is moving the above barrier and adding
-the debug print, which appears to suggest that there is some
-timing/coherency issue here. Anyway, maybe this is clue to what is going
-on?
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index a7486c2f3221..2f016397231b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3303,8 +3303,8 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv, u32 queue)
-                rx_q->rx_count_frames %= priv->rx_coal_frames;
-                use_rx_wd = priv->use_riwt && rx_q->rx_count_frames;
- 
--               dma_wmb();
-                stmmac_set_rx_owner(priv, p, use_rx_wd);
-+               dma_wmb();
- 
-                entry = STMMAC_GET_ENTRY(entry, DMA_RX_SIZE);
-        }
-@@ -3438,6 +3438,10 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
-                        dma_sync_single_for_device(priv->device, buf->addr,
-                                                   frame_len, DMA_FROM_DEVICE);
- 
-+                       pr_info("%s: paddr=0x%llx, vaddr=0x%llx, len=%d", __func__,
-+                                       buf->addr, page_address(buf->page),
-+                                       frame_len);
-+
-                        if (netif_msg_pktdata(priv)) {
-                                netdev_dbg(priv->dev, "frame received (%dbytes)",
-                                           frame_len);
-
-Cheers
-Jon
-
--- 
-nvpublic
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMjUvMjAx
+OSwgMTQ6MjA6MDcgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMDMvMDcvMjAxOSAxMTozNywgSm9z
+ZSBBYnJldSB3cm90ZToNCj4gPiBNYXBwaW5nIGFuZCB1bm1hcHBpbmcgRE1BIHJlZ2lvbiBpcyBh
+biBoaWdoIGJvdHRsZW5lY2sgaW4gc3RtbWFjIGRyaXZlciwNCj4gPiBzcGVjaWFsbHkgaW4gdGhl
+IFJYIHBhdGguDQo+ID4gDQo+ID4gVGhpcyBjb21taXQgaW50cm9kdWNlcyBzdXBwb3J0IGZvciBQ
+YWdlIFBvb2wgQVBJIGFuZCB1c2VzIGl0IGluIGFsbCBSWA0KPiA+IHF1ZXVlcy4gV2l0aCB0aGlz
+IGNoYW5nZSwgd2UgZ2V0IG1vcmUgc3RhYmxlIHRyb3VnaHB1dCBhbmQgc29tZSBpbmNyZWFzZQ0K
+PiA+IG9mIGJhbndpZHRoIHdpdGggaXBlcmY6DQo+ID4gCS0gTUFDMTAwMCAtIDk1MCBNYnBzDQo+
+ID4gCS0gWEdNQUM6IDkuMjIgR2Jwcw0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvc2UgQWJy
+ZXUgPGpvYWJyZXVAc3lub3BzeXMuY29tPg0KPiA+IENjOiBKb2FvIFBpbnRvIDxqcGludG9Ac3lu
+b3BzeXMuY29tPg0KPiA+IENjOiBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+
+DQo+ID4gQ2M6IEdpdXNlcHBlIENhdmFsbGFybyA8cGVwcGUuY2F2YWxsYXJvQHN0LmNvbT4NCj4g
+PiBDYzogQWxleGFuZHJlIFRvcmd1ZSA8YWxleGFuZHJlLnRvcmd1ZUBzdC5jb20+DQo+ID4gQ2M6
+IE1heGltZSBDb3F1ZWxpbiA8bWNvcXVlbGluLnN0bTMyQGdtYWlsLmNvbT4NCj4gPiBDYzogTWF4
+aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBib290bGluLmNvbT4NCj4gPiBDYzogQ2hlbi1ZdSBU
+c2FpIDx3ZW5zQGNzaWUub3JnPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9z
+dG1pY3JvL3N0bW1hYy9LY29uZmlnICAgICAgIHwgICAxICsNCj4gPiAgZHJpdmVycy9uZXQvZXRo
+ZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjLmggICAgICB8ICAxMCArLQ0KPiA+ICBkcml2ZXJz
+L25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jIHwgMTk2ICsrKysrKy0t
+LS0tLS0tLS0tLS0tLS0NCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCA2MyBpbnNlcnRpb25zKCspLCAx
+NDQgZGVsZXRpb25zKC0pDQo+IA0KPiAuLi4NCj4gDQo+ID4gQEAgLTMzMDYsNDkgKzMyOTUsMjIg
+QEAgc3RhdGljIGlubGluZSB2b2lkIHN0bW1hY19yeF9yZWZpbGwoc3RydWN0IHN0bW1hY19wcml2
+ICpwcml2LCB1MzIgcXVldWUpDQo+ID4gIAkJZWxzZQ0KPiA+ICAJCQlwID0gcnhfcS0+ZG1hX3J4
+ICsgZW50cnk7DQo+ID4gIA0KPiA+IC0JCWlmIChsaWtlbHkoIXJ4X3EtPnJ4X3NrYnVmZltlbnRy
+eV0pKSB7DQo+ID4gLQkJCXN0cnVjdCBza19idWZmICpza2I7DQo+ID4gLQ0KPiA+IC0JCQlza2Ig
+PSBuZXRkZXZfYWxsb2Nfc2tiX2lwX2FsaWduKHByaXYtPmRldiwgYmZzaXplKTsNCj4gPiAtCQkJ
+aWYgKHVubGlrZWx5KCFza2IpKSB7DQo+ID4gLQkJCQkvKiBzbyBmb3IgYSB3aGlsZSBubyB6ZXJv
+LWNvcHkhICovDQo+ID4gLQkJCQlyeF9xLT5yeF96ZXJvY190aHJlc2ggPSBTVE1NQUNfUlhfVEhS
+RVNIOw0KPiA+IC0JCQkJaWYgKHVubGlrZWx5KG5ldF9yYXRlbGltaXQoKSkpDQo+ID4gLQkJCQkJ
+ZGV2X2Vycihwcml2LT5kZXZpY2UsDQo+ID4gLQkJCQkJCSJmYWlsIHRvIGFsbG9jIHNrYiBlbnRy
+eSAlZFxuIiwNCj4gPiAtCQkJCQkJZW50cnkpOw0KPiA+IC0JCQkJYnJlYWs7DQo+ID4gLQkJCX0N
+Cj4gPiAtDQo+ID4gLQkJCXJ4X3EtPnJ4X3NrYnVmZltlbnRyeV0gPSBza2I7DQo+ID4gLQkJCXJ4
+X3EtPnJ4X3NrYnVmZl9kbWFbZW50cnldID0NCj4gPiAtCQkJICAgIGRtYV9tYXBfc2luZ2xlKHBy
+aXYtPmRldmljZSwgc2tiLT5kYXRhLCBiZnNpemUsDQo+ID4gLQkJCQkJICAgRE1BX0ZST01fREVW
+SUNFKTsNCj4gPiAtCQkJaWYgKGRtYV9tYXBwaW5nX2Vycm9yKHByaXYtPmRldmljZSwNCj4gPiAt
+CQkJCQkgICAgICByeF9xLT5yeF9za2J1ZmZfZG1hW2VudHJ5XSkpIHsNCj4gPiAtCQkJCW5ldGRl
+dl9lcnIocHJpdi0+ZGV2LCAiUnggRE1BIG1hcCBmYWlsZWRcbiIpOw0KPiA+IC0JCQkJZGV2X2tm
+cmVlX3NrYihza2IpOw0KPiA+ICsJCWlmICghYnVmLT5wYWdlKSB7DQo+ID4gKwkJCWJ1Zi0+cGFn
+ZSA9IHBhZ2VfcG9vbF9kZXZfYWxsb2NfcGFnZXMocnhfcS0+cGFnZV9wb29sKTsNCj4gPiArCQkJ
+aWYgKCFidWYtPnBhZ2UpDQo+ID4gIAkJCQlicmVhazsNCj4gPiAtCQkJfQ0KPiA+IC0NCj4gPiAt
+CQkJc3RtbWFjX3NldF9kZXNjX2FkZHIocHJpdiwgcCwgcnhfcS0+cnhfc2tidWZmX2RtYVtlbnRy
+eV0pOw0KPiA+IC0JCQlzdG1tYWNfcmVmaWxsX2Rlc2MzKHByaXYsIHJ4X3EsIHApOw0KPiA+IC0N
+Cj4gPiAtCQkJaWYgKHJ4X3EtPnJ4X3plcm9jX3RocmVzaCA+IDApDQo+ID4gLQkJCQlyeF9xLT5y
+eF96ZXJvY190aHJlc2gtLTsNCj4gPiAtDQo+ID4gLQkJCW5ldGlmX2RiZyhwcml2LCByeF9zdGF0
+dXMsIHByaXYtPmRldiwNCj4gPiAtCQkJCSAgInJlZmlsbCBlbnRyeSAjJWRcbiIsIGVudHJ5KTsN
+Cj4gPiAgCQl9DQo+ID4gLQkJZG1hX3dtYigpOw0KPiA+ICsNCj4gPiArCQlidWYtPmFkZHIgPSBi
+dWYtPnBhZ2UtPmRtYV9hZGRyOw0KPiA+ICsJCXN0bW1hY19zZXRfZGVzY19hZGRyKHByaXYsIHAs
+IGJ1Zi0+YWRkcik7DQo+ID4gKwkJc3RtbWFjX3JlZmlsbF9kZXNjMyhwcml2LCByeF9xLCBwKTsN
+Cj4gPiAgDQo+ID4gIAkJcnhfcS0+cnhfY291bnRfZnJhbWVzKys7DQo+ID4gIAkJcnhfcS0+cnhf
+Y291bnRfZnJhbWVzICU9IHByaXYtPnJ4X2NvYWxfZnJhbWVzOw0KPiA+ICAJCXVzZV9yeF93ZCA9
+IHByaXYtPnVzZV9yaXd0ICYmIHJ4X3EtPnJ4X2NvdW50X2ZyYW1lczsNCj4gPiAgDQo+ID4gLQkJ
+c3RtbWFjX3NldF9yeF9vd25lcihwcml2LCBwLCB1c2Vfcnhfd2QpOw0KPiA+IC0NCj4gPiAgCQlk
+bWFfd21iKCk7DQo+ID4gKwkJc3RtbWFjX3NldF9yeF9vd25lcihwcml2LCBwLCB1c2Vfcnhfd2Qp
+Ow0KPiA+ICANCj4gPiAgCQllbnRyeSA9IFNUTU1BQ19HRVRfRU5UUlkoZW50cnksIERNQV9SWF9T
+SVpFKTsNCj4gPiAgCX0NCj4gDQo+IEkgd2FzIGxvb2tpbmcgYXQgdGhpcyBjaGFuZ2UgaW4gYSBi
+aXQgY2xvc2VyIGRldGFpbCBhbmQgb25lIHRoaW5nIHRoYXQNCj4gc3R1Y2sgb3V0IHRvIG1lIHdh
+cyB0aGUgYWJvdmUgd2hlcmUgdGhlIGJhcnJpZXIgaGFkIGJlZW4gbW92ZWQgZnJvbQ0KPiBhZnRl
+ciB0aGUgc3RtbWFjX3NldF9yeF9vd25lcigpIGNhbGwgdG8gYmVmb3JlLiANCj4gDQo+IFNvIEkg
+bW92ZWQgdGhpcyBiYWNrIGFuZCBJIG5vIGxvbmdlciBzYXcgdGhlIGNyYXNoLiBIb3dldmVyLCB0
+aGVuIEkNCj4gcmVjYWxsZWQgSSBoYWQgdGhlIHBhdGNoIHRvIGVuYWJsZSB0aGUgZGVidWcgcHJp
+bnRzIGZvciB0aGUgYnVmZmVyDQo+IGFkZHJlc3MgYXBwbGllZCBidXQgYWZ0ZXIgcmV2ZXJ0aW5n
+IHRoYXQsIHRoZSBjcmFzaCBvY2N1cnJlZCBhZ2Fpbi4gDQo+IA0KPiBJbiBvdGhlciB3b3Jkcywg
+d2hhdCB3b3JrcyBmb3IgbWUgaXMgbW92aW5nIHRoZSBhYm92ZSBiYXJyaWVyIGFuZCBhZGRpbmcN
+Cj4gdGhlIGRlYnVnIHByaW50LCB3aGljaCBhcHBlYXJzIHRvIHN1Z2dlc3QgdGhhdCB0aGVyZSBp
+cyBzb21lDQo+IHRpbWluZy9jb2hlcmVuY3kgaXNzdWUgaGVyZS4gQW55d2F5LCBtYXliZSB0aGlz
+IGlzIGNsdWUgdG8gd2hhdCBpcyBnb2luZw0KPiBvbj8NCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jIGIvZHJpdmVycy9u
+ZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYw0KPiBpbmRleCBhNzQ4NmMy
+ZjMyMjEuLjJmMDE2Mzk3MjMxYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQv
+c3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5l
+dC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jDQo+IEBAIC0zMzAzLDggKzMzMDMsOCBAQCBz
+dGF0aWMgaW5saW5lIHZvaWQgc3RtbWFjX3J4X3JlZmlsbChzdHJ1Y3Qgc3RtbWFjX3ByaXYgKnBy
+aXYsIHUzMiBxdWV1ZSkNCj4gICAgICAgICAgICAgICAgIHJ4X3EtPnJ4X2NvdW50X2ZyYW1lcyAl
+PSBwcml2LT5yeF9jb2FsX2ZyYW1lczsNCj4gICAgICAgICAgICAgICAgIHVzZV9yeF93ZCA9IHBy
+aXYtPnVzZV9yaXd0ICYmIHJ4X3EtPnJ4X2NvdW50X2ZyYW1lczsNCj4gIA0KPiAtICAgICAgICAg
+ICAgICAgZG1hX3dtYigpOw0KPiAgICAgICAgICAgICAgICAgc3RtbWFjX3NldF9yeF9vd25lcihw
+cml2LCBwLCB1c2Vfcnhfd2QpOw0KPiArICAgICAgICAgICAgICAgZG1hX3dtYigpOw0KPiAgDQo+
+ICAgICAgICAgICAgICAgICBlbnRyeSA9IFNUTU1BQ19HRVRfRU5UUlkoZW50cnksIERNQV9SWF9T
+SVpFKTsNCj4gICAgICAgICB9DQo+IEBAIC0zNDM4LDYgKzM0MzgsMTAgQEAgc3RhdGljIGludCBz
+dG1tYWNfcngoc3RydWN0IHN0bW1hY19wcml2ICpwcml2LCBpbnQgbGltaXQsIHUzMiBxdWV1ZSkN
+Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZpY2UocHJp
+di0+ZGV2aWNlLCBidWYtPmFkZHIsDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGZyYW1lX2xlbiwgRE1BX0ZST01fREVWSUNFKTsNCj4gIA0KPiAr
+ICAgICAgICAgICAgICAgICAgICAgICBwcl9pbmZvKCIlczogcGFkZHI9MHglbGx4LCB2YWRkcj0w
+eCVsbHgsIGxlbj0lZCIsIF9fZnVuY19fLA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgYnVmLT5hZGRyLCBwYWdlX2FkZHJlc3MoYnVmLT5wYWdlKSwNCj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZyYW1lX2xlbik7DQo+ICsNCj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgaWYgKG5ldGlmX21zZ19wa3RkYXRhKHByaXYpKSB7DQo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbmV0ZGV2X2RiZyhwcml2LT5kZXYsICJmcmFt
+ZSByZWNlaXZlZCAoJWRieXRlcykiLA0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgZnJhbWVfbGVuKTsNCj4gDQo+IENoZWVycw0KPiBKb24NCj4gDQo+IC0tIA0K
+PiBudnB1YmxpYw0KDQpXZWxsLCBJIHdhc24ndCBleHBlY3RpbmcgdGhhdCA6Lw0KDQpQZXIgZG9j
+dW1lbnRhdGlvbiBvZiBiYXJyaWVycyBJIHRoaW5rIHdlIHNob3VsZCBzZXQgZGVzY3JpcHRvciBm
+aWVsZHMgDQphbmQgdGhlbiBiYXJyaWVyIGFuZCBmaW5hbGx5IG93bmVyc2hpcCB0byBIVyBzbyB0
+aGF0IHJlbWFpbmluZyBmaWVsZHMgDQphcmUgY29oZXJlbnQgYmVmb3JlIG93bmVyIGlzIHNldC4N
+Cg0KQW55d2F5LCBjYW4geW91IGFsc28gYWRkIGEgZG1hX3JtYigpIGFmdGVyIHRoZSBjYWxsIHRv
+IA0Kc3RtbWFjX3J4X3N0YXR1cygpID8NCg0KLS0tDQpUaGFua3MsDQpKb3NlIE1pZ3VlbCBBYnJl
+dQ0K
