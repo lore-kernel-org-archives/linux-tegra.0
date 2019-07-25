@@ -1,65 +1,32 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-Date: Thu, 25 Jul 2019 13:59:09 +0300
-Message-ID: <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
- <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
- <20190725095502.GM12715@pdeschrijver-desktop.Nvidia.com>
- <dd01be5d-bab9-1329-c7ac-c3c893d49dd1@gmail.com>
- <20190725103348.GN12715@pdeschrijver-desktop.Nvidia.com>
- <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
+Subject: Re: [PATCH v2 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
+ time
+Date: Thu, 25 Jul 2019 14:15:52 +0300
+Message-ID: <f7879942-0875-1f27-5870-3f8414c2148d@gmail.com>
+References: <20190723023511.24542-1-digetx@gmail.com>
+ <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
+In-Reply-To: <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-25.07.2019 13:38, Peter De Schrijver пишет:
-> On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
->> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
->>> 25.07.2019 12:55, Peter De Schrijver пишет:
->>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
->>>>>
->>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
->>>>> doesn't sound correct to me. Something like 'firmware_sc7' should suit
->>>>> better here.
->>>>>
->>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
->>>>>
->>>>> Secondly, I'm also not sure why COP interrupts need to be disabled for
->>>>> pre-T210 at all, since COP is unused. This looks to me like it was
->>>>> cut-n-pasted from downstream kernel without a good reason and could be
->>>>> simply removed.
->>>>
->>>> I don't think we can rely on the fact that COP is unused. People can
->>>> write their own code to run on COP.
->>>
->>> 1. Not upstream - doesn't matter.
->>>
+25.07.2019 12:36, Peter De Schrijver пишет:
+> On Tue, Jul 23, 2019 at 05:35:10AM +0300, Dmitry Osipenko wrote:
+>> The PCLK clock is running off SCLK, which is a critical clock that is
+>> very unlikely to randomly change its rate. It's also a bit clumsy (and
+>> apparently incorrect) to query the clock's rate with interrupts being
+>> disabled because clk_get_rate() takes a mutex and that's the case during
+>> suspend/cpuidle entering.
 >>
->> The code is not part of the kernel, so obviously it's not upstream?
->>
->>> 2. That's not very good if something unknown is running on COP and then
->>> kernel suddenly intervenes, don't you think so?
->>
->> Unless the code was written with this in mind.
->>
-
-In that case, please see 1. ;)
-
 > 
-> Looking at this again, I don't think we need to enable the IRQ at all.
+> SCLK and PCLK certainly can change rate at runtime, although the code to
+> handle this hasn't reached upstream yet.
 
-Could you please clarify? The code only saves/restores COP's interrupts
-context across suspend-resume.
-
-Again, that's absolutely useless code for the upstream kernel which
-could be removed safely to avoid the confusion, IMHO. I can type a patch
-if you're agreeing.
+Okay, maybe this patch is indeed not very worthwhile then. I'm leaving
+it up to you, guys, to decide.
