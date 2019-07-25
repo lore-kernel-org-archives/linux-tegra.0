@@ -1,97 +1,53 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 1/3] dt-bindings: regulator: Document regulators coupling of NVIDIA Tegra20/30 SoCs
-Date: Thu, 25 Jul 2019 18:18:30 +0300
-Message-ID: <20190725151832.9802-2-digetx@gmail.com>
-References: <20190725151832.9802-1-digetx@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
+Date: Thu, 25 Jul 2019 20:17:26 +0200
+Message-ID: <20190725181726.GB10098@kroah.com>
+References: <20190724191735.096702571@linuxfoundation.org>
+ <4a1e00d4-d952-c463-963f-0a26ba3976a2@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190725151832.9802-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4a1e00d4-d952-c463-963f-0a26ba3976a2@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-There is voltage coupling between three regulators on Tegra20 boards and
-between two on Tegra30. The voltage coupling is a SoC-level feature and
-thus it is mandatory and common for all of the Tegra boards.
+On Thu, Jul 25, 2019 at 10:04:43AM +0100, Jon Hunter wrote:
+> 
+> On 24/07/2019 20:14, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.2.3 release.
+> > There are 413 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.3-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.2:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
+> 
+> Linux version:	5.2.3-rc1-gdb628fe0e67f
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- .../nvidia,tegra-regulators-coupling.txt      | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
+Great, thanks for testing all of these and letting me know.
 
-diff --git a/Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt b/Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
-new file mode 100644
-index 000000000000..4bf2dbf7c6cc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
-@@ -0,0 +1,65 @@
-+NVIDIA Tegra Regulators Coupling
-+================================
-+
-+NVIDIA Tegra SoC's have a mandatory voltage-coupling between regulators.
-+Thus on Tegra20 there are 3 coupled regulators and on NVIDIA Tegra30
-+there are 2.
-+
-+Tegra20 voltage coupling
-+------------------------
-+
-+On Tegra20 SoC's there are 3 coupled regulators: CORE, RTC and CPU.
-+The CORE and RTC voltages shall be in a range of 170mV from each other
-+and they both shall be higher than the CPU voltage by at least 120mV.
-+
-+Tegra30 voltage coupling
-+------------------------
-+
-+On Tegra30 SoC's there are 2 coupled regulators: CORE and CPU. The CORE
-+and CPU voltages shall be in a range of 300mV from each other and CORE
-+voltage shall be higher than the CPU by N mV, where N depends on the CPU
-+voltage.
-+
-+Required properties:
-+- nvidia,tegra-core-regulator: Boolean property that designates regulator
-+  as the "Core domain" voltage regulator.
-+- nvidia,tegra-rtc-regulator: Boolean property that designates regulator
-+  as the "RTC domain" voltage regulator.
-+- nvidia,tegra-cpu-regulator: Boolean property that designates regulator
-+  as the "CPU domain" voltage regulator.
-+
-+Example:
-+
-+	pmic {
-+		regulators {
-+			core_vdd_reg: core {
-+				regulator-name = "vdd_core";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-coupled-with = <&rtc_vdd_reg &cpu_vdd_reg>;
-+				regulator-coupled-max-spread = <170000 550000>;
-+
-+				nvidia,tegra-core-regulator;
-+			};
-+
-+			rtc_vdd_reg: rtc {
-+				regulator-name = "vdd_rtc";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-coupled-with = <&core_vdd_reg &cpu_vdd_reg>;
-+				regulator-coupled-max-spread = <170000 550000>;
-+
-+				nvidia,tegra-rtc-regulator;
-+			};
-+
-+			cpu_vdd_reg: cpu {
-+				regulator-name = "vdd_cpu";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1125000>;
-+				regulator-coupled-with = <&core_vdd_reg &rtc_vdd_reg>;
-+				regulator-coupled-max-spread = <550000 550000>;
-+
-+				nvidia,tegra-cpu-regulator;
-+			};
-+		};
-+	};
--- 
-2.22.0
+greg k-h
