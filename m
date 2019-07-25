@@ -1,113 +1,55 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] trace: fix header include guards
-Date: Wed, 24 Jul 2019 21:28:52 -0400
-Message-ID: <20190724212852.070641d4@oasis.local.home>
-References: <20190720103943.16982-1-yamada.masahiro@socionext.com>
+From: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] media: staging: tegra-vde: Fix build error
+Date: Thu, 25 Jul 2019 10:41:29 +0800
+Message-ID: <20190725024129.22664-1-yuehaibing@huawei.com>
+References: <dc354ede-5963-cd7f-ee53-f3df3061d39a@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190720103943.16982-1-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <dc354ede-5963-cd7f-ee53-f3df3061d39a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 20 Jul 2019 19:39:43 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+If IOMMU_SUPPORT is not set, and COMPILE_TEST is y,
+IOMMU_IOVA may be set to m. So building will fails:
 
-> These include guards are broken.
-> 
-> Match the #if !define() and #define lines so that they work correctly.
+drivers/staging/media/tegra-vde/iommu.o: In function `tegra_vde_iommu_map':
+iommu.c:(.text+0x41): undefined reference to `alloc_iova'
+iommu.c:(.text+0x56): undefined reference to `__free_iova'
 
-Thanks, this all looks legit to me. I'll pull this in through my tree.
+Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
 
--- Steve
+Reported-by: Hulk Robot <hulkci-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Suggested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU support")
+Signed-off-by: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+---
+ drivers/staging/media/tegra-vde/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  include/trace/events/dma_fence.h     | 2 +-
->  include/trace/events/napi.h          | 4 ++--
->  include/trace/events/qdisc.h         | 4 ++--
->  include/trace/events/tegra_apb_dma.h | 4 ++--
->  4 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/trace/events/dma_fence.h b/include/trace/events/dma_fence.h
-> index 2212adda8f77..64e92d56c6a8 100644
-> --- a/include/trace/events/dma_fence.h
-> +++ b/include/trace/events/dma_fence.h
-> @@ -2,7 +2,7 @@
->  #undef TRACE_SYSTEM
->  #define TRACE_SYSTEM dma_fence
->  
-> -#if !defined(_TRACE_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#if !defined(_TRACE_DMA_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
->  #define _TRACE_DMA_FENCE_H
->  
->  #include <linux/tracepoint.h>
-> diff --git a/include/trace/events/napi.h b/include/trace/events/napi.h
-> index f3a12566bed0..6678cf8b235b 100644
-> --- a/include/trace/events/napi.h
-> +++ b/include/trace/events/napi.h
-> @@ -3,7 +3,7 @@
->  #define TRACE_SYSTEM napi
->  
->  #if !defined(_TRACE_NAPI_H) || defined(TRACE_HEADER_MULTI_READ)
-> -#define _TRACE_NAPI_H_
-> +#define _TRACE_NAPI_H
->  
->  #include <linux/netdevice.h>
->  #include <linux/tracepoint.h>
-> @@ -38,7 +38,7 @@ TRACE_EVENT(napi_poll,
->  
->  #undef NO_DEV
->  
-> -#endif /* _TRACE_NAPI_H_ */
-> +#endif /* _TRACE_NAPI_H */
->  
->  /* This part must be outside protection */
->  #include <trace/define_trace.h>
-> diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
-> index 60d0d8bd336d..0d1a9ebf55ba 100644
-> --- a/include/trace/events/qdisc.h
-> +++ b/include/trace/events/qdisc.h
-> @@ -2,7 +2,7 @@
->  #define TRACE_SYSTEM qdisc
->  
->  #if !defined(_TRACE_QDISC_H) || defined(TRACE_HEADER_MULTI_READ)
-> -#define _TRACE_QDISC_H_
-> +#define _TRACE_QDISC_H
->  
->  #include <linux/skbuff.h>
->  #include <linux/netdevice.h>
-> @@ -44,7 +44,7 @@ TRACE_EVENT(qdisc_dequeue,
->  		  __entry->txq_state, __entry->packets, __entry->skbaddr )
->  );
->  
-> -#endif /* _TRACE_QDISC_H_ */
-> +#endif /* _TRACE_QDISC_H */
->  
->  /* This part must be outside protection */
->  #include <trace/define_trace.h>
-> diff --git a/include/trace/events/tegra_apb_dma.h b/include/trace/events/tegra_apb_dma.h
-> index 0818f6286110..971cd02d2daf 100644
-> --- a/include/trace/events/tegra_apb_dma.h
-> +++ b/include/trace/events/tegra_apb_dma.h
-> @@ -1,5 +1,5 @@
->  #if !defined(_TRACE_TEGRA_APB_DMA_H) || defined(TRACE_HEADER_MULTI_READ)
-> -#define _TRACE_TEGRA_APM_DMA_H
-> +#define _TRACE_TEGRA_APB_DMA_H
->  
->  #include <linux/tracepoint.h>
->  #include <linux/dmaengine.h>
-> @@ -55,7 +55,7 @@ TRACE_EVENT(tegra_dma_isr,
->  	TP_printk("%s: irq %d\n",  __get_str(chan), __entry->irq)
->  );
->  
-> -#endif /*  _TRACE_TEGRADMA_H */
-> +#endif /* _TRACE_TEGRA_APB_DMA_H */
->  
->  /* This part must be outside protection */
->  #include <trace/define_trace.h>
+diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
+index 2e7f644..ba49ea5 100644
+--- a/drivers/staging/media/tegra-vde/Kconfig
++++ b/drivers/staging/media/tegra-vde/Kconfig
+@@ -3,7 +3,7 @@ config TEGRA_VDE
+ 	tristate "NVIDIA Tegra Video Decoder Engine driver"
+ 	depends on ARCH_TEGRA || COMPILE_TEST
+ 	select DMA_SHARED_BUFFER
+-	select IOMMU_IOVA if IOMMU_SUPPORT
++	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+ 	select SRAM
+ 	help
+ 	    Say Y here to enable support for the NVIDIA Tegra video decoder
+-- 
+2.7.4
