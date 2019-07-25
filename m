@@ -1,205 +1,113 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-Date: Wed, 24 Jul 2019 16:09:53 -0700
-Message-ID: <78d5af07-2556-b60d-01d7-3684ebe7040b@nvidia.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
- <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
- <20c1d733-60f5-6375-c03c-639de5e41739@arm.com>
- <0bee8775-756f-adad-4597-8cad53017718@gmail.com>
- <a2ecc3ad-b7e9-9398-d59b-c7d3fbbd10bb@nvidia.com>
- <20190722193838.0d7cd2ad@why>
- <8e9f821c-3717-510d-c64f-8a1cc2452c25@gmail.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] trace: fix header include guards
+Date: Wed, 24 Jul 2019 21:28:52 -0400
+Message-ID: <20190724212852.070641d4@oasis.local.home>
+References: <20190720103943.16982-1-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8e9f821c-3717-510d-c64f-8a1cc2452c25@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190720103943.16982-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Sat, 20 Jul 2019 19:39:43 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-On 7/22/19 4:35 PM, Dmitry Osipenko wrote:
-> 22.07.2019 21:38, Marc Zyngier =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On Mon, 22 Jul 2019 09:21:21 -0700
->> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
->>
->>> On 7/22/19 3:57 AM, Dmitry Osipenko wrote:
->>>> 22.07.2019 13:13, Marc Zyngier =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> On 22/07/2019 10:54, Dmitry Osipenko wrote:
->>>>>> 21.07.2019 22:40, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
->>>>>>> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 =
-entry
->>>>>>> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
->>>>>>>
->>>>>>> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend seq=
-uence
->>>>>>> for Tegra210.
->>>>>>>
->>>>>>> This patch has fix for leaving the COP IRQ enabled for Tegra210 dur=
-ing
->>>>>>> interrupt controller suspend operation.
->>>>>>>
->>>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
->>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>> ---
->>>>>>>    drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
->>>>>>>    1 file changed, 18 insertions(+), 2 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegr=
-a.c
->>>>>>> index e1f771c72fc4..851f88cef508 100644
->>>>>>> --- a/drivers/irqchip/irq-tegra.c
->>>>>>> +++ b/drivers/irqchip/irq-tegra.c
->>>>>>> @@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
->>>>>>>   =20
->>>>>>>    struct tegra_ictlr_soc {
->>>>>>>    	unsigned int num_ictlrs;
->>>>>>> +	bool supports_sc7;
->>>>>>>    };
->>>>>>>   =20
->>>>>>>    static const struct tegra_ictlr_soc tegra20_ictlr_soc =3D {
->>>>>>> @@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr=
-_soc =3D {
->>>>>>>   =20
->>>>>>>    static const struct tegra_ictlr_soc tegra210_ictlr_soc =3D {
->>>>>>>    	.num_ictlrs =3D 6,
->>>>>>> +	.supports_sc7 =3D true,
->>>>>>>    };
->>>>>>>   =20
->>>>>>>    static const struct of_device_id ictlr_matches[] =3D {
->>>>>>> @@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] =
-=3D {
->>>>>>>   =20
->>>>>>>    struct tegra_ictlr_info {
->>>>>>>    	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
->>>>>>> +	const struct tegra_ictlr_soc *soc;
->>>>>>>    #ifdef CONFIG_PM_SLEEP
->>>>>>>    	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
->>>>>>>    	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
->>>>>>> @@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
->>>>>>>    		lic->cop_ier[i] =3D readl_relaxed(ictlr + ICTLR_COP_IER);
->>>>>>>    		lic->cop_iep[i] =3D readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS)=
-;
->>>>>>>   =20
->>>>>>> -		/* Disable COP interrupts */
->>>>>>> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
->>>>>>> +		/*
->>>>>>> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
->>>>>>> +		 *
->>>>>>> +		 * Tegra210 system suspend flow uses sc7entry firmware which
->>>>>>> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
->>>>>>> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
->>>>>>> +		 * system to go to SC7/LP0.
->>>>>>> +		 *
->>>>>>> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
->>>>>>> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
->>>>>>> +		 */
->>>>>>> +		if (!lic->soc->supports_sc7)
->>>>>>> +			/* Disable COP interrupts if SC7 is not supported */
->>>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
->>>>>> doesn't sound correct to me. Something like 'firmware_sc7' should su=
-it
->>>>>> better here.
->>>>> If what you're saying is true, then the whole patch is wrong, and the
->>>>> SC7 property should come from DT.
->>>> It should be safe to assume that all of existing Tegra210 devices use
->>>> the firmware for SC7, hence I wouldn't say that the patch is entirely
->>>> wrong. To me it's not entirely correct.
->>> Yes, all existing Tegra210 platforms uses sc7 entry firmware for SC7 an=
-d
->>> AVP/COP IRQ need to be kept enabled as during suspend ATF triggers IRQ
->>> to COP for SC7 entry fw execution.
-> Okay, as I already wrote before, it looks to me that a more proper
-> solution should be to just remove everything related to COP from this
-> driver instead of adding custom quirks for T210.
->
-> The disabling / restoring of COP interrupts should be relevant only for
-> the multimedia firmware on older Tegra SoCs. That firmware won't be ever
-> supported in the upstream simply because NVIDIA abandoned the support
-> for older hardware in the downstream and because it is not possible due
-> to some legal weirdness (IIUC). The only variant for upstream is
-> reverse-engineering of hardware (not the firmware BLOB) and writing
-> proper opensource drivers for the upstream kernel, which we're already
-> doing and have success to a some extent.
->
->> That's not the question. Dmitry says that the SC7 support is not a
->> property of the SoC, but mostly a platform decision on whether the
->> firmware supports SC7 or not.
->>
->> To me, that's a clear indication that this should not be hardcoded in
->> the driver, but instead obtained dynamically, via DT or otherwise.
-> We already have an nvidia,suspend-mode property in the device-tree of
-> the Power Management Controller node (all Tegra SoCs) which defines what
-> suspending type is supported by a particular board.
->
->>>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
->>>>>> Secondly, I'm also not sure why COP interrupts need to be disabled f=
-or
->>>>>> pre-T210 at all, since COP is unused. This looks to me like it was
->>>>>> cut-n-pasted from downstream kernel without a good reason and could =
-be
->>>>>> simply removed.
->>>>> Please verify that this is actually the case. Tegra-2 definitely need=
-ed
->>>>> some level of poking, and I'm not keen on changing anything there unt=
-il
->>>>> you (or someone else) has verified it on actual HW (see e307cc8941fc)=
-.
->>>> Tested on Tegra20 and Tegra30, LP1 suspend-resume works perfectly fine
->>>> with all COP bits removed from the driver.
->>>>
->>>> AFAIK, the reason why downstream needed that disabling is that it uses
->>>> proprietary firmware which is running on the COP and that firmware is
->>>> usually a BLOB audio/video DEC-ENC driver which doesn't cleanup
->>>> interrupts after itself. That firmware is not applicable for the
->>>> upstream kernel, hence there is no need to care about it.
->>>>  =20
->>>>> Joseph, can you please shed some light here?
->>> SC7 entry flow uses 3rd party ATF (arm-trusted FW) blob which is the
->>> one that actually loads SC7 entry firmware and triggers IRQ to
->>> AVP/COP which causes COP to wakeup and run SC7 entry FW.
->>>
->>> So when SC7 support is enabled, IRQ need to be kept enabled and when
->>> SC7 FW starts execution, it will disable COP IRQ.
->> This looks like a lot of undocumented assumptions on what firmware
->> does, as well as what firmware *is*. What I gather from this thread is
->> that there is at least two versions of firmware (a "proprietary
->> firmware" for "downstream kernels", and another one for mainline), and
->> that they do different things.
->>
->> Given that we cannot know what people actually run, I don't think we
->> can safely remove anything unless this gets tested on the full spectrum
->> of HW/FW combination.
-> I'm not sure whether multiple firmware variations exist in the wild for
-> Tegra210. Maybe Sowjanya or somebody else from NVIDIA could clarify. I
-> think there should be some efforts in regards to a fully opensource
-> firmware on Tegra210, but I'm not following it and have no idea about
-> the status.
->
-> You're right that there are multiple variants of suspend-resuming flow
-> on Tegra SoCs. The older 32bit Tegra SoC generations have a variety of
-> options in regards to suspend-resuming, including firmware-less variants
-> on platforms that are having kernel running in secure mode (dev boards,
-> most of Tegra20 consumer devices) and Trusted-Foundations firmware
-> variant for insecure platforms (consumer devices). And yes, vendor
-> firmware creates a lot of headache in regards to bringing support into
-> upstream because it usually does a lot of odd undocumented things which
-> may also vary depending on a firmware version (bootloader, etc) and it
-> also usually difficult to replace it with an opensource alternative due
-> to a crypto signing.
+> These include guards are broken.
+> 
+> Match the #if !define() and #define lines so that they work correctly.
 
-Tried without this patch which keeps COP IRQ disabled and I see SC7=20
-entry FW execution happens still.
+Thanks, this all looks legit to me. I'll pull this in through my tree.
 
-Digging through the ATF FW code, I see on SC7 entry firmware loading=20
-into IRAM, COP processor is reset with RESET VECTOR set to SC7 entry=20
-firmware location in IRAM and on reset de-assert & unhalt COP, SC7=20
-firmware starts execution.
+-- Steve
 
-Will remove this patch in next version...
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  include/trace/events/dma_fence.h     | 2 +-
+>  include/trace/events/napi.h          | 4 ++--
+>  include/trace/events/qdisc.h         | 4 ++--
+>  include/trace/events/tegra_apb_dma.h | 4 ++--
+>  4 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/trace/events/dma_fence.h b/include/trace/events/dma_fence.h
+> index 2212adda8f77..64e92d56c6a8 100644
+> --- a/include/trace/events/dma_fence.h
+> +++ b/include/trace/events/dma_fence.h
+> @@ -2,7 +2,7 @@
+>  #undef TRACE_SYSTEM
+>  #define TRACE_SYSTEM dma_fence
+>  
+> -#if !defined(_TRACE_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#if !defined(_TRACE_DMA_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
+>  #define _TRACE_DMA_FENCE_H
+>  
+>  #include <linux/tracepoint.h>
+> diff --git a/include/trace/events/napi.h b/include/trace/events/napi.h
+> index f3a12566bed0..6678cf8b235b 100644
+> --- a/include/trace/events/napi.h
+> +++ b/include/trace/events/napi.h
+> @@ -3,7 +3,7 @@
+>  #define TRACE_SYSTEM napi
+>  
+>  #if !defined(_TRACE_NAPI_H) || defined(TRACE_HEADER_MULTI_READ)
+> -#define _TRACE_NAPI_H_
+> +#define _TRACE_NAPI_H
+>  
+>  #include <linux/netdevice.h>
+>  #include <linux/tracepoint.h>
+> @@ -38,7 +38,7 @@ TRACE_EVENT(napi_poll,
+>  
+>  #undef NO_DEV
+>  
+> -#endif /* _TRACE_NAPI_H_ */
+> +#endif /* _TRACE_NAPI_H */
+>  
+>  /* This part must be outside protection */
+>  #include <trace/define_trace.h>
+> diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
+> index 60d0d8bd336d..0d1a9ebf55ba 100644
+> --- a/include/trace/events/qdisc.h
+> +++ b/include/trace/events/qdisc.h
+> @@ -2,7 +2,7 @@
+>  #define TRACE_SYSTEM qdisc
+>  
+>  #if !defined(_TRACE_QDISC_H) || defined(TRACE_HEADER_MULTI_READ)
+> -#define _TRACE_QDISC_H_
+> +#define _TRACE_QDISC_H
+>  
+>  #include <linux/skbuff.h>
+>  #include <linux/netdevice.h>
+> @@ -44,7 +44,7 @@ TRACE_EVENT(qdisc_dequeue,
+>  		  __entry->txq_state, __entry->packets, __entry->skbaddr )
+>  );
+>  
+> -#endif /* _TRACE_QDISC_H_ */
+> +#endif /* _TRACE_QDISC_H */
+>  
+>  /* This part must be outside protection */
+>  #include <trace/define_trace.h>
+> diff --git a/include/trace/events/tegra_apb_dma.h b/include/trace/events/tegra_apb_dma.h
+> index 0818f6286110..971cd02d2daf 100644
+> --- a/include/trace/events/tegra_apb_dma.h
+> +++ b/include/trace/events/tegra_apb_dma.h
+> @@ -1,5 +1,5 @@
+>  #if !defined(_TRACE_TEGRA_APB_DMA_H) || defined(TRACE_HEADER_MULTI_READ)
+> -#define _TRACE_TEGRA_APM_DMA_H
+> +#define _TRACE_TEGRA_APB_DMA_H
+>  
+>  #include <linux/tracepoint.h>
+>  #include <linux/dmaengine.h>
+> @@ -55,7 +55,7 @@ TRACE_EVENT(tegra_dma_isr,
+>  	TP_printk("%s: irq %d\n",  __get_str(chan), __entry->irq)
+>  );
+>  
+> -#endif /*  _TRACE_TEGRADMA_H */
+> +#endif /* _TRACE_TEGRA_APB_DMA_H */
+>  
+>  /* This part must be outside protection */
+>  #include <trace/define_trace.h>
