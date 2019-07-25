@@ -1,53 +1,121 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
-Date: Thu, 25 Jul 2019 10:04:43 +0100
-Message-ID: <4a1e00d4-d952-c463-963f-0a26ba3976a2@nvidia.com>
-References: <20190724191735.096702571@linuxfoundation.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
+ time
+Date: Thu, 25 Jul 2019 12:36:45 +0300
+Message-ID: <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
+References: <20190723023511.24542-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190723023511.24542-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 24/07/2019 20:14, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.3 release.
-> There are 413 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Jul 23, 2019 at 05:35:10AM +0300, Dmitry Osipenko wrote:
+> The PCLK clock is running off SCLK, which is a critical clock that is
+> very unlikely to randomly change its rate. It's also a bit clumsy (and
+> apparently incorrect) to query the clock's rate with interrupts being
+> disabled because clk_get_rate() takes a mutex and that's the case during
+> suspend/cpuidle entering.
 > 
-> Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
-> Anything received after that time might be too late.
+
+SCLK and PCLK certainly can change rate at runtime, although the code to
+handle this hasn't reached upstream yet.
+
+Peter.
+
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> and the diffstat can be found below.
+> Changelog:
 > 
-> thanks,
+> v2: Addressed review comments that were made by Jon Hunter to v1 by
+>     not moving the memory barrier, replacing one missed clk_get_rate()
+>     with pmc->rate, handling possible clk_get_rate() error on probe and
+>     slightly adjusting the commits message.
 > 
-> greg k-h
-
-All tests are passing for Tegra ...
-
-Test results for stable-v5.2:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.2.3-rc1-gdb628fe0e67f
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+>  drivers/soc/tegra/pmc.c | 34 ++++++++++++++++------------------
+>  1 file changed, 16 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 9f9c1c677cf4..aba3396b2e73 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1192,7 +1192,7 @@ static int tegra_io_pad_prepare(struct tegra_pmc *pmc, enum tegra_io_pad id,
+>  		return err;
+>  
+>  	if (pmc->clk) {
+> -		rate = clk_get_rate(pmc->clk);
+> +		rate = pmc->rate;
+>  		if (!rate) {
+>  			dev_err(pmc->dev, "failed to get clock rate\n");
+>  			return -ENODEV;
+> @@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
+>  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  {
+>  	unsigned long long rate = 0;
+> +	u64 ticks;
+>  	u32 value;
+>  
+>  	switch (mode) {
+> @@ -1441,31 +1442,22 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  		break;
+>  
+>  	case TEGRA_SUSPEND_LP2:
+> -		rate = clk_get_rate(pmc->clk);
+> +		rate = pmc->rate;
+>  		break;
+>  
+>  	default:
+>  		break;
+>  	}
+>  
+> -	if (WARN_ON_ONCE(rate == 0))
+> -		rate = 100000000;
+> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+> +	do_div(ticks, USEC_PER_SEC);
+> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+>  
+> -	if (rate != pmc->rate) {
+> -		u64 ticks;
+> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+> +	do_div(ticks, USEC_PER_SEC);
+> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+>  
+> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+> -		do_div(ticks, USEC_PER_SEC);
+> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+> -
+> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+> -		do_div(ticks, USEC_PER_SEC);
+> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+> -
+> -		wmb();
+> -
+> -		pmc->rate = rate;
+> -	}
+> +	wmb();
+>  
+>  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
+> @@ -2082,8 +2074,14 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+>  		pmc->clk = NULL;
+>  	}
+>  
+> +	pmc->rate = clk_get_rate(pmc->clk);
+>  	pmc->dev = &pdev->dev;
+>  
+> +	if (!pmc->rate) {
+> +		dev_err(&pdev->dev, "failed to get pclk rate\n");
+> +		pmc->rate = 100000000;
+> +	}
+> +
+>  	tegra_pmc_init(pmc);
+>  
+>  	tegra_pmc_init_tsense_reset(pmc);
+> -- 
+> 2.22.0
+> 
