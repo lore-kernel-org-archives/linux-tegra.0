@@ -1,10 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH net-next 1/2] net: stmmac: Make MDIO bus reset optional
-Date: Fri, 26 Jul 2019 12:27:40 +0200
-Message-ID: <20190726102741.27872-1-thierry.reding@gmail.com>
+Subject: [PATCH net-next 2/2] net: stmmac: Do not request stmmaceth clock
+Date: Fri, 26 Jul 2019 12:27:41 +0200
+Message-ID: <20190726102741.27872-2-thierry.reding@gmail.com>
+References: <20190726102741.27872-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190726102741.27872-1-thierry.reding@gmail.com>
 Sender: netdev-owner@vger.kernel.org
 To: "David S . Miller" <davem@davemloft.net>
 Cc: Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jon Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -12,98 +14,44 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The Tegra EQOS driver already resets the MDIO bus at probe time via the
-reset GPIO specified in the phy-reset-gpios device tree property. There
-is no need to reset the bus again later on.
+The stmmaceth clock is specified by the slave_bus and apb_pclk clocks in
+the device tree bindings for snps,dwc-qos-ethernet-4.10 compatible nodes
+of this IP.
 
-This avoids the need to query the device tree for the snps,reset GPIO,
-which is not part of the Tegra EQOS device tree bindings. This quiesces
-an error message from the generic bus reset code if it doesn't find the
-snps,reset related delays.
+The subdrivers for these bindings will be requesting the stmmac clock
+correctly at a later point, so there is no need to request it here and
+cause an error message to be printed to the kernel log.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c | 3 +++
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c       | 4 +++-
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c        | 1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c   | 8 +++++++-
- include/linux/stmmac.h                                  | 1 +
- 5 files changed, 15 insertions(+), 2 deletions(-)
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-index 3a14cdd01f5f..66933332c68e 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-@@ -333,6 +333,9 @@ static void *tegra_eqos_probe(struct platform_device *pdev,
- 	usleep_range(2000, 4000);
- 	gpiod_set_value(eqos->reset, 0);
- 
-+	/* MDIO bus was already reset just above */
-+	data->mdio_bus_data->needs_reset = false;
-+
- 	eqos->rst = devm_reset_control_get(&pdev->dev, "eqos");
- 	if (IS_ERR(eqos->rst)) {
- 		err = PTR_ERR(eqos->rst);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index 4304c1abc5d1..40c42637ad75 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -348,7 +348,9 @@ int stmmac_mdio_register(struct net_device *ndev)
- 		max_addr = PHY_MAX_ADDR;
- 	}
- 
--	new_bus->reset = &stmmac_mdio_reset;
-+	if (mdio_bus_data->needs_reset)
-+		new_bus->reset = &stmmac_mdio_reset;
-+
- 	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%s-%x",
- 		 new_bus->name, priv->plat->bus_id);
- 	new_bus->priv = ndev;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 86f9c07a38cf..d5d08e11c353 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -63,6 +63,7 @@ static void common_default_data(struct plat_stmmacenet_data *plat)
- 	plat->has_gmac = 1;
- 	plat->force_sf_dma_mode = 1;
- 
-+	plat->mdio_bus_data->needs_reset = true;
- 	plat->mdio_bus_data->phy_mask = 0;
- 
- 	/* Set default value for multicast hash bins */
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 73fc2524372e..333b09564b88 100644
+index 333b09564b88..7ad2bb90ceb1 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -342,10 +342,16 @@ static int stmmac_dt_phy(struct plat_stmmacenet_data *plat,
- 		mdio = true;
+@@ -521,13 +521,15 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
  	}
  
--	if (mdio)
-+	if (mdio) {
- 		plat->mdio_bus_data =
- 			devm_kzalloc(dev, sizeof(struct stmmac_mdio_bus_data),
- 				     GFP_KERNEL);
-+		if (!plat->mdio_bus_data)
-+			return -ENOMEM;
-+
-+		plat->mdio_bus_data->needs_reset = true;
-+	}
-+
- 	return 0;
- }
+ 	/* clock setup */
+-	plat->stmmac_clk = devm_clk_get(&pdev->dev,
+-					STMMAC_RESOURCE_NAME);
+-	if (IS_ERR(plat->stmmac_clk)) {
+-		dev_warn(&pdev->dev, "Cannot get CSR clock\n");
+-		plat->stmmac_clk = NULL;
++	if (!of_device_is_compatible(np, "snps,dwc-qos-ethernet-4.10")) {
++		plat->stmmac_clk = devm_clk_get(&pdev->dev,
++						STMMAC_RESOURCE_NAME);
++		if (IS_ERR(plat->stmmac_clk)) {
++			dev_warn(&pdev->dev, "Cannot get CSR clock\n");
++			plat->stmmac_clk = NULL;
++		}
++		clk_prepare_enable(plat->stmmac_clk);
+ 	}
+-	clk_prepare_enable(plat->stmmac_clk);
  
-diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index 7d06241582dd..7b3e354bcd3c 100644
---- a/include/linux/stmmac.h
-+++ b/include/linux/stmmac.h
-@@ -81,6 +81,7 @@ struct stmmac_mdio_bus_data {
- 	unsigned int phy_mask;
- 	int *irqs;
- 	int probed_phy_irq;
-+	bool needs_reset;
- };
- 
- struct stmmac_dma_cfg {
+ 	plat->pclk = devm_clk_get(&pdev->dev, "pclk");
+ 	if (IS_ERR(plat->pclk)) {
 -- 
 2.22.0
