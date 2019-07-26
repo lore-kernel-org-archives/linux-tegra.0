@@ -1,85 +1,68 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 22/85] clk: tegra210: fix PLLU and PLLU_OUT1
-Date: Fri, 26 Jul 2019 09:38:32 -0400
-Message-ID: <20190726133936.11177-22-sashal@kernel.org>
-References: <20190726133936.11177-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 06/47] dmaengine: tegra-apb: Error out if DMA_PREP_INTERRUPT flag is unset
+Date: Fri, 26 Jul 2019 09:41:29 -0400
+Message-ID: <20190726134210.12156-6-sashal@kernel.org>
+References: <20190726134210.12156-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
+In-Reply-To: <20190726134210.12156-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: JC Kuo <jckuo@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 0d34dfbf3023cf119b83f6470692c0b10c832495 ]
+[ Upstream commit dc161064beb83c668e0f85766b92b1e7ed186e58 ]
 
-Full-speed and low-speed USB devices do not work with Tegra210
-platforms because of incorrect PLLU/PLLU_OUT1 clock settings.
+Apparently driver was never tested with DMA_PREP_INTERRUPT flag being
+unset since it completely disables interrupt handling instead of skipping
+the callbacks invocations, hence putting channel into unusable state.
 
-When full-speed device is connected:
-[   14.059886] usb 1-3: new full-speed USB device number 2 using tegra-xusb
-[   14.196295] usb 1-3: device descriptor read/64, error -71
-[   14.436311] usb 1-3: device descriptor read/64, error -71
-[   14.675749] usb 1-3: new full-speed USB device number 3 using tegra-xusb
-[   14.812335] usb 1-3: device descriptor read/64, error -71
-[   15.052316] usb 1-3: device descriptor read/64, error -71
-[   15.164799] usb usb1-port3: attempt power cycle
+The flag is always set by all of kernel drivers that use APB DMA, so let's
+error out in otherwise case for consistency. It won't be difficult to
+support that case properly if ever will be needed.
 
-When low-speed device is connected:
-[   37.610949] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
-[   38.557376] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
-[   38.564977] usb usb1-port3: attempt power cycle
-
-This commit fixes the issue by:
- 1. initializing PLLU_OUT1 before initializing XUSB_FS_SRC clock
-    because PLLU_OUT1 is parent of XUSB_FS_SRC.
- 2. changing PLLU post-divider to /2 (DIVP=1) according to Technical
-    Reference Manual.
-
-Fixes: e745f992cf4b ("clk: tegra: Rework pll_u")
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index ac1d27a8c650..e5470a6bbf55 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2204,9 +2204,9 @@ static struct div_nmp pllu_nmp = {
- };
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 8219ab88a507..fb23993430d3 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -981,8 +981,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+ 	}
  
- static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
--	{ 12000000, 480000000, 40, 1, 0, 0 },
--	{ 13000000, 480000000, 36, 1, 0, 0 }, /* actual: 468.0 MHz */
--	{ 38400000, 480000000, 25, 2, 0, 0 },
-+	{ 12000000, 480000000, 40, 1, 1, 0 },
-+	{ 13000000, 480000000, 36, 1, 1, 0 }, /* actual: 468.0 MHz */
-+	{ 38400000, 480000000, 25, 2, 1, 0 },
- 	{        0,         0,  0, 0, 0, 0 },
- };
+-	if (flags & DMA_PREP_INTERRUPT)
++	if (flags & DMA_PREP_INTERRUPT) {
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	} else {
++		WARN_ON_ONCE(1);
++		return NULL;
++	}
  
-@@ -3333,6 +3333,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
- 	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
- 	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
-+	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
- 	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
- 	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
-@@ -3357,7 +3358,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
- 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
- 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
- 	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
- 	{ TEGRA210_CLK_SPDIF_IN_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
- 	{ TEGRA210_CLK_I2S0_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+ 
+@@ -1124,8 +1128,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+ 	}
+ 
+-	if (flags & DMA_PREP_INTERRUPT)
++	if (flags & DMA_PREP_INTERRUPT) {
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	} else {
++		WARN_ON_ONCE(1);
++		return NULL;
++	}
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+ 
 -- 
 2.20.1
