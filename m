@@ -1,85 +1,65 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 12/47] clk: tegra210: fix PLLU and PLLU_OUT1
-Date: Fri, 26 Jul 2019 09:41:35 -0400
-Message-ID: <20190726134210.12156-12-sashal@kernel.org>
-References: <20190726134210.12156-1-sashal@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Fri, 26 Jul 2019 15:11:00 +0100
+Message-ID: <1e2ea942-28fe-15b9-f675-8d6585f9a33f@nvidia.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
+ <BYAPR12MB3269927AB1F67D46E150ED6BD3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <9e695f33-fd9f-a910-0891-2b63bd75e082@nvidia.com>
+ <BYAPR12MB3269B4A401E4DA10A07515C7D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190726134210.12156-1-sashal@kernel.org>
+In-Reply-To: <BYAPR12MB3269B4A401E4DA10A07515C7D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: JC Kuo <jckuo@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Robin Murphy <robin.murphy@arm.com>, "David S . Miller" <davem@davemloft.net>
 List-Id: linux-tegra@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
 
-[ Upstream commit 0d34dfbf3023cf119b83f6470692c0b10c832495 ]
+On 25/07/2019 16:12, Jose Abreu wrote:
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Date: Jul/25/2019, 15:25:59 (UTC+00:00)
+> 
+>>
+>> On 25/07/2019 14:26, Jose Abreu wrote:
+>>
+>> ...
+>>
+>>> Well, I wasn't expecting that :/
+>>>
+>>> Per documentation of barriers I think we should set descriptor fields 
+>>> and then barrier and finally ownership to HW so that remaining fields 
+>>> are coherent before owner is set.
+>>>
+>>> Anyway, can you also add a dma_rmb() after the call to 
+>>> stmmac_rx_status() ?
+>>
+>> Yes. I removed the debug print added the barrier, but that did not help.
+> 
+> So, I was finally able to setup NFS using your replicated setup and I 
+> can't see the issue :(
+> 
+> The only difference I have from yours is that I'm using TCP in NFS 
+> whilst you (I believe from the logs), use UDP.
 
-Full-speed and low-speed USB devices do not work with Tegra210
-platforms because of incorrect PLLU/PLLU_OUT1 clock settings.
+So I tried TCP by setting the kernel boot params to 'nfsvers=3' and
+'proto=tcp' and this does appear to be more stable, but not 100% stable.
+It still appears to fail in the same place about 50% of the time.
 
-When full-speed device is connected:
-[   14.059886] usb 1-3: new full-speed USB device number 2 using tegra-xusb
-[   14.196295] usb 1-3: device descriptor read/64, error -71
-[   14.436311] usb 1-3: device descriptor read/64, error -71
-[   14.675749] usb 1-3: new full-speed USB device number 3 using tegra-xusb
-[   14.812335] usb 1-3: device descriptor read/64, error -71
-[   15.052316] usb 1-3: device descriptor read/64, error -71
-[   15.164799] usb usb1-port3: attempt power cycle
+> You do have flow control active right ? And your HW FIFO size is >= 4k ?
 
-When low-speed device is connected:
-[   37.610949] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
-[   38.557376] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
-[   38.564977] usb usb1-port3: attempt power cycle
+How can I verify if flow control is active?
 
-This commit fixes the issue by:
- 1. initializing PLLU_OUT1 before initializing XUSB_FS_SRC clock
-    because PLLU_OUT1 is parent of XUSB_FS_SRC.
- 2. changing PLLU post-divider to /2 (DIVP=1) according to Technical
-    Reference Manual.
+The documentation for this device indicates a max transfer size of 16kB
+for TX and RX.
 
-Fixes: e745f992cf4b ("clk: tegra: Rework pll_u")
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/tegra/clk-tegra210.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Cheers
+Jon
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 9eb1cb14fce1..4e1bc23c9865 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2214,9 +2214,9 @@ static struct div_nmp pllu_nmp = {
- };
- 
- static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
--	{ 12000000, 480000000, 40, 1, 0, 0 },
--	{ 13000000, 480000000, 36, 1, 0, 0 }, /* actual: 468.0 MHz */
--	{ 38400000, 480000000, 25, 2, 0, 0 },
-+	{ 12000000, 480000000, 40, 1, 1, 0 },
-+	{ 13000000, 480000000, 36, 1, 1, 0 }, /* actual: 468.0 MHz */
-+	{ 38400000, 480000000, 25, 2, 1, 0 },
- 	{        0,         0,  0, 0, 0, 0 },
- };
- 
-@@ -3343,6 +3343,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
- 	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
- 	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
-+	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
- 	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
- 	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
-@@ -3367,7 +3368,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
- 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
- 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
- 	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
- 	/* This MUST be the last entry. */
- 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
 -- 
-2.20.1
+nvpublic
