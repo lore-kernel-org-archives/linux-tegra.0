@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/3] arm64: tegra: Add unit-address for ACONNECT on Tegra194
-Date: Fri, 26 Jul 2019 12:16:17 +0200
-Message-ID: <20190726101618.26896-2-thierry.reding@gmail.com>
+Subject: [PATCH 3/3] arm64: tegra: Fix base address for SOR1 on Tegra194
+Date: Fri, 26 Jul 2019 12:16:18 +0200
+Message-ID: <20190726101618.26896-3-thierry.reding@gmail.com>
 References: <20190726101618.26896-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,41 +23,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The ACONNECT complex starts at physical address 0x2900000, so give it a
-unit-address to comply with standard naming practices checked for by the
-device tree compiler.
+The SOR1 hardware block's registers start at physical address 0x15b40000
+as correctly specified by the unit-address, but the reg property lists a
+wrong value, likely because it was copy-and-pasted from SOR0 but not
+correctly updated.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 740aaf597115..fb0b9fd0b405 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -11,7 +11,7 @@
- 	compatible = "nvidia,p2972-0000", "nvidia,tegra194";
- 
- 	cbb@0 {
--		aconnect {
-+		aconnect@2900000 {
- 			status = "okay";
- 
- 			dma-controller@2930000 {
 diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 2597eb7f747b..923415fd72a4 100644
+index 923415fd72a4..ca5ffbc79e2f 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -59,7 +59,7 @@
- 			snps,rxpbl = <8>;
- 		};
+@@ -1045,7 +1045,7 @@
  
--		aconnect {
-+		aconnect@2900000 {
- 			compatible = "nvidia,tegra194-aconnect",
- 				     "nvidia,tegra210-aconnect";
- 			clocks = <&bpmp TEGRA194_CLK_APE>,
+ 			sor1: sor@15b40000 {
+ 				compatible = "nvidia,tegra194-sor";
+-				reg = <0x155c0000 0x40000>;
++				reg = <0x15b40000 0x40000>;
+ 				interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&bpmp TEGRA194_CLK_SOR1_REF>,
+ 					 <&bpmp TEGRA194_CLK_SOR1_OUT>,
 -- 
 2.22.0
