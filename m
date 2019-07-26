@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 09/37] clk: tegra210: fix PLLU and PLLU_OUT1
-Date: Fri, 26 Jul 2019 09:43:04 -0400
-Message-ID: <20190726134332.12626-9-sashal@kernel.org>
-References: <20190726134332.12626-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 12/47] clk: tegra210: fix PLLU and PLLU_OUT1
+Date: Fri, 26 Jul 2019 09:41:35 -0400
+Message-ID: <20190726134210.12156-12-sashal@kernel.org>
+References: <20190726134210.12156-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190726134332.12626-1-sashal@kernel.org>
+In-Reply-To: <20190726134210.12156-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: JC Kuo <jckuo@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -49,10 +49,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index b92867814e2d..cb2be154db3b 100644
+index 9eb1cb14fce1..4e1bc23c9865 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2057,9 +2057,9 @@ static struct div_nmp pllu_nmp = {
+@@ -2214,9 +2214,9 @@ static struct div_nmp pllu_nmp = {
  };
  
  static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
@@ -65,7 +65,7 @@ index b92867814e2d..cb2be154db3b 100644
  	{        0,         0,  0, 0, 0, 0 },
  };
  
-@@ -2983,6 +2983,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+@@ -3343,6 +3343,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
  	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
  	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
  	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
@@ -73,7 +73,7 @@ index b92867814e2d..cb2be154db3b 100644
  	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
  	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
  	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
-@@ -3008,7 +3009,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+@@ -3367,7 +3368,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
  	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
  	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
  	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
