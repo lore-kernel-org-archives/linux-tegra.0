@@ -1,126 +1,118 @@
-From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v5 01/24] drm: Include ddc adapter pointer in struct
- drm_connector
-Date: Fri, 26 Jul 2019 08:37:59 +0200
-Message-ID: <20190726063759.GB6443@ravnborg.org>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH v5 01/24] drm: Include ddc adapter pointer
+ in struct drm_connector
+Date: Fri, 26 Jul 2019 10:08:55 +0200
+Message-ID: <20190726080855.GA9143@ravnborg.org>
 References: <cover.1563960855.git.andrzej.p@collabora.com>
  <e82d6aca4f8abc95834c8a36c101d153518bb1ac.1563960855.git.andrzej.p@collabora.com>
+ <20190726063759.GB6443@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <e82d6aca4f8abc95834c8a36c101d153518bb1ac.1563960855.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ramalingam C <ramalingam.c-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Oleksandr Andrushchenko <oleksandr_andrushchenko-uRwfk40T5oI@public.gmane.org>, Vincent Abriou <vin>
+In-Reply-To: <20190726063759.GB6443@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Shawn Guo <shawnguo@kernel.org>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, linux-rockchip@lists.infradead.org, Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jyri Sarha <jsarha@ti.com>, Alexios Zavras <alexios.zavras@intel.com>, Mamta Shukla <mamtashukla555@gmai>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Andrzej.
-
-Patch looks good, but one kernel-doc detail.
-
-On Wed, Jul 24, 2019 at 03:59:23PM +0200, Andrzej Pietrasiewicz wrote:
-> Add generic code which creates symbolic links in sysfs, pointing to ddc
-> interface used by a particular video output. For example:
-> 
-> ls -l /sys/class/drm/card0-HDMI-A-1/ddc
-> lrwxrwxrwx 1 root root 0 Jun 24 10:42 /sys/class/drm/card0-HDMI-A-1/ddc \
-> 	-> ../../../../soc/13880000.i2c/i2c-2
-> 
-> This makes it easy for user to associate a display with its ddc adapter
-> and use e.g. ddcutil to control the chosen monitor.
-> 
-> This patch adds an i2c_adapter pointer to struct drm_connector. Particular
-> drivers can then use it instead of using their own private instance. If a
-> connector contains a ddc, then create a symbolic link in sysfs.
-> 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> Acked-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/gpu/drm/drm_sysfs.c |  8 ++++++++
->  include/drm/drm_connector.h | 11 +++++++++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-> index ad10810bc972..e962a9d45f7e 100644
-> --- a/drivers/gpu/drm/drm_sysfs.c
-> +++ b/drivers/gpu/drm/drm_sysfs.c
-> @@ -14,6 +14,7 @@
->  #include <linux/err.h>
->  #include <linux/export.h>
->  #include <linux/gfp.h>
-> +#include <linux/i2c.h>
->  #include <linux/kdev_t.h>
->  #include <linux/slab.h>
->  
-> @@ -294,6 +295,9 @@ int drm_sysfs_connector_add(struct drm_connector *connector)
->  	/* Let userspace know we have a new connector */
->  	drm_sysfs_hotplug_event(dev);
->  
-> +	if (connector->ddc)
-> +		return sysfs_create_link(&connector->kdev->kobj,
-> +				 &connector->ddc->dev.kobj, "ddc");
->  	return 0;
->  }
->  
-> @@ -301,6 +305,10 @@ void drm_sysfs_connector_remove(struct drm_connector *connector)
->  {
->  	if (!connector->kdev)
->  		return;
-> +
-> +	if (connector->ddc)
-> +		sysfs_remove_link(&connector->kdev->kobj, "ddc");
-> +
->  	DRM_DEBUG("removing \"%s\" from sysfs\n",
->  		  connector->name);
->  
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index 4c30d751487a..33a6fff85fdb 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -41,6 +41,7 @@ struct drm_property;
->  struct drm_property_blob;
->  struct drm_printer;
->  struct edid;
-> +struct i2c_adapter;
->  
->  enum drm_connector_force {
->  	DRM_FORCE_UNSPECIFIED,
-> @@ -1311,6 +1312,16 @@ struct drm_connector {
->  	 * [0]: progressive, [1]: interlaced
->  	 */
->  	int audio_latency[2];
-> +
-> +	/**
-> +	 * @ddc: associated ddc adapter.
-> +	 * A connector usually has its associated ddc adapter. If a driver uses
-> +	 * this field, then an appropriate symbolic link is created in connector
-> +	 * sysfs directory to make it easy for the user to tell which i2c
-> +	 * adapter is for a particular display.
-> +	 */
-> +	struct i2c_adapter *ddc;
-
-To help the reader could you add in the above a reference to
-drm_connector_init_with_ddc() sp the reader is told how to init this
-field.
-
-Either add it in PATCH 2 - or merge patch 1 and 2.
-
-	Sam
-
-> +
->  	/**
->  	 * @null_edid_counter: track sinks that give us all zeros for the EDID.
->  	 * Needed to workaround some HW bugs where we get all 0s
-> -- 
-> 2.17.1
+SGkgQW5kcnplai4KCkFmdGVyIHJlYWRpbmcgdGhyb3VnaCB0aGUgc2VyaWVzIGEgZmV3IG1vcmUg
+Y29tbWVudHMuCgoxKSBUaGUgc3ViamVjdCBvZiB0aGlzIHBhdGNoIGNvdWxkIGJlIGltcHJvdmVk
+LgogICBDb25zaWRlciBzb21ldGhpbmcgbGlrZToKICAgZHJtOiBhZGQgZGRjIGxpbmsgaW4gc3lz
+ZnMgY3JlYXRlZCBieSBkcm1fY29ubmVjdG9yCgogICBUaGlzIHNwZWxscyBvdXQgbXVjaCBiZXR0
+ZXIgd2hhdCB0aGUgcGF0Y2ggYWNoaWV2ZS4KCgoyKSBUaGUgcHVycHNvZSBvZiBkcm1fY29ubmVj
+dG9yLmRkYyBpcyB0byBwcm92aWRlIGRybV9jb25uZWN0b3Igd2l0aAogICBpbmZvIHRvIGNyZWF0
+ZSB0aGUgc3ltbGluay4KICAgWWV0IGluIG1hbnkgZm9sbG93LXVwIHBhdGNoZXMgdGhlIGRyaXZl
+cnMgYXJlIGNoYW5nZWQgc28KICAgZHJtX2Nvbm5lY3Rvci5kZGMgaXMgdGhlaXIgb25seSByZWZl
+cmVuY2UgdG8gc3RydWN0IGkyY19hZGFwdGVyLgoKICAgQnV0IHRoZSBvd25lcnNoaXAgaXMgbm90
+IGNsZWFyIGhlcmUuCiAgIFdobyBvd25zIHRoZSByZWZlcmVuY2UgdG8gaTJjX2FkYXB0ZXIgLSBh
+bmQgd2hvIGhhcyB0aGUKICAgcmVzcG9uc2liaWxpdHkgdG8gY2FsbCBwdXQoKSBvbiB0aGUgYWRh
+cHRlci4KCiAgIExvb2tpbmcgYXQgdGhlIGNvbnZlcnNpb25zIGRvbmUgdGhlbiBzb21lIGRyaXZl
+cnMgYXJlIGNvbnZlcnRlZAogICBzbyB0aGV5IG9ubHkgdXNlIGRybV9jb25uZWN0b3IuZGRjLCBh
+bmQgb3RoZXIgZHJpdmVycyBoYXZlIHRoZWlyIG93bgogICByZWZlcmVuY2UgdG8gaTJjX2FkYXB0
+ZXIuCiAgIFRoZSBsYXR0ZXIgbG9va3MgbGlrZSB0aGUgY29ycmVjdCBzb2x1dGlvbiBhcyB0aGUg
+b3duZXJzaGlwIG9mIHRoZQogICByZWZlcmVuY2UgYmVsb25ncyB0byB0aGUgZHJpdmVyIGFuZCBu
+b3QgZHJtX2Nvbm5lY3Rvci4KCiAgIEluIG90aGVyIHdvcmRzIC0gYSBjb252ZXJzaW9uIHdoZXJl
+IHRoZSBkcml2ZXJzIG9ubHkgYXNzaWduZWQKICAgZHJtX2Nvbm5lY3Rvci5kZGMgKHVzaW5nIGRy
+bV9jb25uZWN0b3JfaW5pdF93aXRoX2RkYygpKSwKICAgc2VlbXMgbGlrZSBhIG1vcmUgY2xlYW4g
+ZGVzaWduIHRoYXQgZG9lcyBub3QgbWl4IHVwIG93bmVyc2hpcC4KICAgVGhpcyBpcyBhdCBsZWFz
+dCBob3cgSSBzZWUgaXQuCiAgIEkgZGlkIG5vdCB0YWtlIHRoaXMgdHlwZSBvZiBsb29rIGF0IHRo
+ZSBwYXRjaGVzIGJlZm9yZS4gU29ycnkKICAgZm9yIHByb3ZpZGluZyBmZWVkYmFjayB0aGlzIGxh
+dGUuCgoJU2FtCgpPbiBGcmksIEp1bCAyNiwgMjAxOSBhdCAwODozNzo1OUFNICswMjAwLCBTYW0g
+UmF2bmJvcmcgd3JvdGU6Cj4gSGkgQW5kcnplai4KPiAKPiBQYXRjaCBsb29rcyBnb29kLCBidXQg
+b25lIGtlcm5lbC1kb2MgZGV0YWlsLgo+IAo+IE9uIFdlZCwgSnVsIDI0LCAyMDE5IGF0IDAzOjU5
+OjIzUE0gKzAyMDAsIEFuZHJ6ZWogUGlldHJhc2lld2ljeiB3cm90ZToKPiA+IEFkZCBnZW5lcmlj
+IGNvZGUgd2hpY2ggY3JlYXRlcyBzeW1ib2xpYyBsaW5rcyBpbiBzeXNmcywgcG9pbnRpbmcgdG8g
+ZGRjCj4gPiBpbnRlcmZhY2UgdXNlZCBieSBhIHBhcnRpY3VsYXIgdmlkZW8gb3V0cHV0LiBGb3Ig
+ZXhhbXBsZToKPiA+IAo+ID4gbHMgLWwgL3N5cy9jbGFzcy9kcm0vY2FyZDAtSERNSS1BLTEvZGRj
+Cj4gPiBscnd4cnd4cnd4IDEgcm9vdCByb290IDAgSnVuIDI0IDEwOjQyIC9zeXMvY2xhc3MvZHJt
+L2NhcmQwLUhETUktQS0xL2RkYyBcCj4gPiAJLT4gLi4vLi4vLi4vLi4vc29jLzEzODgwMDAwLmky
+Yy9pMmMtMgo+ID4gCj4gPiBUaGlzIG1ha2VzIGl0IGVhc3kgZm9yIHVzZXIgdG8gYXNzb2NpYXRl
+IGEgZGlzcGxheSB3aXRoIGl0cyBkZGMgYWRhcHRlcgo+ID4gYW5kIHVzZSBlLmcuIGRkY3V0aWwg
+dG8gY29udHJvbCB0aGUgY2hvc2VuIG1vbml0b3IuCj4gPiAKPiA+IFRoaXMgcGF0Y2ggYWRkcyBh
+biBpMmNfYWRhcHRlciBwb2ludGVyIHRvIHN0cnVjdCBkcm1fY29ubmVjdG9yLiBQYXJ0aWN1bGFy
+Cj4gPiBkcml2ZXJzIGNhbiB0aGVuIHVzZSBpdCBpbnN0ZWFkIG9mIHVzaW5nIHRoZWlyIG93biBw
+cml2YXRlIGluc3RhbmNlLiBJZiBhCj4gPiBjb25uZWN0b3IgY29udGFpbnMgYSBkZGMsIHRoZW4g
+Y3JlYXRlIGEgc3ltYm9saWMgbGluayBpbiBzeXNmcy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTog
+QW5kcnplaiBQaWV0cmFzaWV3aWN6IDxhbmRyemVqLnBAY29sbGFib3JhLmNvbT4KPiA+IEFja2Vk
+LWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGZmd2xsLmNoPgo+ID4gUmV2aWV3ZWQt
+Ynk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gPiAtLS0KPiA+ICBkcml2
+ZXJzL2dwdS9kcm0vZHJtX3N5c2ZzLmMgfCAgOCArKysrKysrKwo+ID4gIGluY2x1ZGUvZHJtL2Ry
+bV9jb25uZWN0b3IuaCB8IDExICsrKysrKysrKysrCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAxOSBp
+bnNlcnRpb25zKCspCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX3N5
+c2ZzLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX3N5c2ZzLmMKPiA+IGluZGV4IGFkMTA4MTBiYzk3
+Mi4uZTk2MmE5ZDQ1ZjdlIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9zeXNm
+cy5jCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX3N5c2ZzLmMKPiA+IEBAIC0xNCw2ICsx
+NCw3IEBACj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Vyci5oPgo+ID4gICNpbmNsdWRlIDxsaW51eC9l
+eHBvcnQuaD4KPiA+ICAjaW5jbHVkZSA8bGludXgvZ2ZwLmg+Cj4gPiArI2luY2x1ZGUgPGxpbnV4
+L2kyYy5oPgo+ID4gICNpbmNsdWRlIDxsaW51eC9rZGV2X3QuaD4KPiA+ICAjaW5jbHVkZSA8bGlu
+dXgvc2xhYi5oPgo+ID4gIAo+ID4gQEAgLTI5NCw2ICsyOTUsOSBAQCBpbnQgZHJtX3N5c2ZzX2Nv
+bm5lY3Rvcl9hZGQoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKPiA+ICAJLyogTGV0
+IHVzZXJzcGFjZSBrbm93IHdlIGhhdmUgYSBuZXcgY29ubmVjdG9yICovCj4gPiAgCWRybV9zeXNm
+c19ob3RwbHVnX2V2ZW50KGRldik7Cj4gPiAgCj4gPiArCWlmIChjb25uZWN0b3ItPmRkYykKPiA+
+ICsJCXJldHVybiBzeXNmc19jcmVhdGVfbGluaygmY29ubmVjdG9yLT5rZGV2LT5rb2JqLAo+ID4g
+KwkJCQkgJmNvbm5lY3Rvci0+ZGRjLT5kZXYua29iaiwgImRkYyIpOwo+ID4gIAlyZXR1cm4gMDsK
+PiA+ICB9Cj4gPiAgCj4gPiBAQCAtMzAxLDYgKzMwNSwxMCBAQCB2b2lkIGRybV9zeXNmc19jb25u
+ZWN0b3JfcmVtb3ZlKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCj4gPiAgewo+ID4g
+IAlpZiAoIWNvbm5lY3Rvci0+a2RldikKPiA+ICAJCXJldHVybjsKPiA+ICsKPiA+ICsJaWYgKGNv
+bm5lY3Rvci0+ZGRjKQo+ID4gKwkJc3lzZnNfcmVtb3ZlX2xpbmsoJmNvbm5lY3Rvci0+a2Rldi0+
+a29iaiwgImRkYyIpOwo+ID4gKwo+ID4gIAlEUk1fREVCVUcoInJlbW92aW5nIFwiJXNcIiBmcm9t
+IHN5c2ZzXG4iLAo+ID4gIAkJICBjb25uZWN0b3ItPm5hbWUpOwo+ID4gIAo+ID4gZGlmZiAtLWdp
+dCBhL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaCBiL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0
+b3IuaAo+ID4gaW5kZXggNGMzMGQ3NTE0ODdhLi4zM2E2ZmZmODVmZGIgMTAwNjQ0Cj4gPiAtLS0g
+YS9pbmNsdWRlL2RybS9kcm1fY29ubmVjdG9yLmgKPiA+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9j
+b25uZWN0b3IuaAo+ID4gQEAgLTQxLDYgKzQxLDcgQEAgc3RydWN0IGRybV9wcm9wZXJ0eTsKPiA+
+ICBzdHJ1Y3QgZHJtX3Byb3BlcnR5X2Jsb2I7Cj4gPiAgc3RydWN0IGRybV9wcmludGVyOwo+ID4g
+IHN0cnVjdCBlZGlkOwo+ID4gK3N0cnVjdCBpMmNfYWRhcHRlcjsKPiA+ICAKPiA+ICBlbnVtIGRy
+bV9jb25uZWN0b3JfZm9yY2Ugewo+ID4gIAlEUk1fRk9SQ0VfVU5TUEVDSUZJRUQsCj4gPiBAQCAt
+MTMxMSw2ICsxMzEyLDE2IEBAIHN0cnVjdCBkcm1fY29ubmVjdG9yIHsKPiA+ICAJICogWzBdOiBw
+cm9ncmVzc2l2ZSwgWzFdOiBpbnRlcmxhY2VkCj4gPiAgCSAqLwo+ID4gIAlpbnQgYXVkaW9fbGF0
+ZW5jeVsyXTsKPiA+ICsKPiA+ICsJLyoqCj4gPiArCSAqIEBkZGM6IGFzc29jaWF0ZWQgZGRjIGFk
+YXB0ZXIuCj4gPiArCSAqIEEgY29ubmVjdG9yIHVzdWFsbHkgaGFzIGl0cyBhc3NvY2lhdGVkIGRk
+YyBhZGFwdGVyLiBJZiBhIGRyaXZlciB1c2VzCj4gPiArCSAqIHRoaXMgZmllbGQsIHRoZW4gYW4g
+YXBwcm9wcmlhdGUgc3ltYm9saWMgbGluayBpcyBjcmVhdGVkIGluIGNvbm5lY3Rvcgo+ID4gKwkg
+KiBzeXNmcyBkaXJlY3RvcnkgdG8gbWFrZSBpdCBlYXN5IGZvciB0aGUgdXNlciB0byB0ZWxsIHdo
+aWNoIGkyYwo+ID4gKwkgKiBhZGFwdGVyIGlzIGZvciBhIHBhcnRpY3VsYXIgZGlzcGxheS4KPiA+
+ICsJICovCj4gPiArCXN0cnVjdCBpMmNfYWRhcHRlciAqZGRjOwo+IAo+IFRvIGhlbHAgdGhlIHJl
+YWRlciBjb3VsZCB5b3UgYWRkIGluIHRoZSBhYm92ZSBhIHJlZmVyZW5jZSB0bwo+IGRybV9jb25u
+ZWN0b3JfaW5pdF93aXRoX2RkYygpIHNwIHRoZSByZWFkZXIgaXMgdG9sZCBob3cgdG8gaW5pdCB0
+aGlzCj4gZmllbGQuCj4gCj4gRWl0aGVyIGFkZCBpdCBpbiBQQVRDSCAyIC0gb3IgbWVyZ2UgcGF0
+Y2ggMSBhbmQgMi4KPiAKPiAJU2FtCj4gCj4gPiArCj4gPiAgCS8qKgo+ID4gIAkgKiBAbnVsbF9l
+ZGlkX2NvdW50ZXI6IHRyYWNrIHNpbmtzIHRoYXQgZ2l2ZSB1cyBhbGwgemVyb3MgZm9yIHRoZSBF
+RElELgo+ID4gIAkgKiBOZWVkZWQgdG8gd29ya2Fyb3VuZCBzb21lIEhXIGJ1Z3Mgd2hlcmUgd2Ug
+Z2V0IGFsbCAwcwo+ID4gLS0gCj4gPiAyLjE3LjEKPiBfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vaW50ZWwtZ2Z4
