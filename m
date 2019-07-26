@@ -1,50 +1,109 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/3] arm64: tegra: Fix base address for SOR1 on Tegra194
-Date: Fri, 26 Jul 2019 12:16:18 +0200
-Message-ID: <20190726101618.26896-3-thierry.reding@gmail.com>
-References: <20190726101618.26896-1-thierry.reding@gmail.com>
+Subject: [PATCH net-next 1/2] net: stmmac: Make MDIO bus reset optional
+Date: Fri, 26 Jul 2019 12:27:40 +0200
+Message-ID: <20190726102741.27872-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190726101618.26896-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>
+Cc: Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jon Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The SOR1 hardware block's registers start at physical address 0x15b40000
-as correctly specified by the unit-address, but the reg property lists a
-wrong value, likely because it was copy-and-pasted from SOR0 but not
-correctly updated.
+The Tegra EQOS driver already resets the MDIO bus at probe time via the
+reset GPIO specified in the phy-reset-gpios device tree property. There
+is no need to reset the bus again later on.
+
+This avoids the need to query the device tree for the snps,reset GPIO,
+which is not part of the Tegra EQOS device tree bindings. This quiesces
+an error message from the generic bus reset code if it doesn't find the
+snps,reset related delays.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c | 3 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c       | 4 +++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c        | 1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c   | 8 +++++++-
+ include/linux/stmmac.h                                  | 1 +
+ 5 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 923415fd72a4..ca5ffbc79e2f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1045,7 +1045,7 @@
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+index 3a14cdd01f5f..66933332c68e 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+@@ -333,6 +333,9 @@ static void *tegra_eqos_probe(struct platform_device *pdev,
+ 	usleep_range(2000, 4000);
+ 	gpiod_set_value(eqos->reset, 0);
  
- 			sor1: sor@15b40000 {
- 				compatible = "nvidia,tegra194-sor";
--				reg = <0x155c0000 0x40000>;
-+				reg = <0x15b40000 0x40000>;
- 				interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&bpmp TEGRA194_CLK_SOR1_REF>,
- 					 <&bpmp TEGRA194_CLK_SOR1_OUT>,
++	/* MDIO bus was already reset just above */
++	data->mdio_bus_data->needs_reset = false;
++
+ 	eqos->rst = devm_reset_control_get(&pdev->dev, "eqos");
+ 	if (IS_ERR(eqos->rst)) {
+ 		err = PTR_ERR(eqos->rst);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+index 4304c1abc5d1..40c42637ad75 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -348,7 +348,9 @@ int stmmac_mdio_register(struct net_device *ndev)
+ 		max_addr = PHY_MAX_ADDR;
+ 	}
+ 
+-	new_bus->reset = &stmmac_mdio_reset;
++	if (mdio_bus_data->needs_reset)
++		new_bus->reset = &stmmac_mdio_reset;
++
+ 	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%s-%x",
+ 		 new_bus->name, priv->plat->bus_id);
+ 	new_bus->priv = ndev;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+index 86f9c07a38cf..d5d08e11c353 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+@@ -63,6 +63,7 @@ static void common_default_data(struct plat_stmmacenet_data *plat)
+ 	plat->has_gmac = 1;
+ 	plat->force_sf_dma_mode = 1;
+ 
++	plat->mdio_bus_data->needs_reset = true;
+ 	plat->mdio_bus_data->phy_mask = 0;
+ 
+ 	/* Set default value for multicast hash bins */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 73fc2524372e..333b09564b88 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -342,10 +342,16 @@ static int stmmac_dt_phy(struct plat_stmmacenet_data *plat,
+ 		mdio = true;
+ 	}
+ 
+-	if (mdio)
++	if (mdio) {
+ 		plat->mdio_bus_data =
+ 			devm_kzalloc(dev, sizeof(struct stmmac_mdio_bus_data),
+ 				     GFP_KERNEL);
++		if (!plat->mdio_bus_data)
++			return -ENOMEM;
++
++		plat->mdio_bus_data->needs_reset = true;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+index 7d06241582dd..7b3e354bcd3c 100644
+--- a/include/linux/stmmac.h
++++ b/include/linux/stmmac.h
+@@ -81,6 +81,7 @@ struct stmmac_mdio_bus_data {
+ 	unsigned int phy_mask;
+ 	int *irqs;
+ 	int probed_phy_irq;
++	bool needs_reset;
+ };
+ 
+ struct stmmac_dma_cfg {
 -- 
 2.22.0
