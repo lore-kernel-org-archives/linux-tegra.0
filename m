@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 07/34] ASoC: imx-audmux: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:11 +0800
-Message-ID: <20190727150738.54764-8-yuehaibing@huawei.com>
+Subject: [PATCH -next 09/34] ASoC: bcm2835-i2s: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:13 +0800
+Message-ID: <20190727150738.54764-10-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,26 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/fsl/imx-audmux.c | 4 +---
+ sound/soc/bcm/bcm2835-i2s.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
-index b2351cd..7595f24 100644
---- a/sound/soc/fsl/imx-audmux.c
-+++ b/sound/soc/fsl/imx-audmux.c
-@@ -298,12 +298,10 @@ static int imx_audmux_parse_dt_defaults(struct platform_device *pdev,
- 
- static int imx_audmux_probe(struct platform_device *pdev)
+diff --git a/sound/soc/bcm/bcm2835-i2s.c b/sound/soc/bcm/bcm2835-i2s.c
+index 5ef80f3..e6a12e2 100644
+--- a/sound/soc/bcm/bcm2835-i2s.c
++++ b/sound/soc/bcm/bcm2835-i2s.c
+@@ -828,7 +828,6 @@ static int bcm2835_i2s_probe(struct platform_device *pdev)
  {
--	struct resource *res;
- 	const struct of_device_id *of_id =
- 			of_match_device(imx_audmux_dt_ids, &pdev->dev);
+ 	struct bcm2835_i2s_dev *dev;
+ 	int ret;
+-	struct resource *mem;
+ 	void __iomem *base;
+ 	const __be32 *addr;
+ 	dma_addr_t dma_base;
+@@ -848,8 +847,7 @@ static int bcm2835_i2s_probe(struct platform_device *pdev)
+ 	}
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	audmux_base = devm_ioremap_resource(&pdev->dev, res);
-+	audmux_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(audmux_base))
- 		return PTR_ERR(audmux_base);
+ 	/* Request ioarea */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, mem);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
 -- 
 2.7.4
