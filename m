@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 24/34] ASoC: au1x: psc-i2s: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:28 +0800
-Message-ID: <20190727150738.54764-25-yuehaibing@huawei.com>
+Subject: [PATCH -next 23/34] ASoC: psc-ac97: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:27 +0800
+Message-ID: <20190727150738.54764-24-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,25 +18,25 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/au1x/psc-i2s.c | 5 ++---
+ sound/soc/au1x/psc-ac97.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/au1x/psc-i2s.c b/sound/soc/au1x/psc-i2s.c
-index 076303f..767ce95 100644
---- a/sound/soc/au1x/psc-i2s.c
-+++ b/sound/soc/au1x/psc-i2s.c
-@@ -291,7 +291,7 @@ static const struct snd_soc_component_driver au1xpsc_i2s_component = {
- 
- static int au1xpsc_i2s_drvprobe(struct platform_device *pdev)
+diff --git a/sound/soc/au1x/psc-ac97.c b/sound/soc/au1x/psc-ac97.c
+index 21e5f6a..08bc04e 100644
+--- a/sound/soc/au1x/psc-ac97.c
++++ b/sound/soc/au1x/psc-ac97.c
+@@ -363,7 +363,7 @@ static const struct snd_soc_component_driver au1xpsc_ac97_component = {
+ static int au1xpsc_ac97_drvprobe(struct platform_device *pdev)
  {
+ 	int ret;
 -	struct resource *iores, *dmares;
 +	struct resource *dmares;
  	unsigned long sel;
  	struct au1xpsc_audio_data *wd;
  
-@@ -300,8 +300,7 @@ static int au1xpsc_i2s_drvprobe(struct platform_device *pdev)
- 	if (!wd)
- 		return -ENOMEM;
+@@ -374,8 +374,7 @@ static int au1xpsc_ac97_drvprobe(struct platform_device *pdev)
+ 
+ 	mutex_init(&wd->lock);
  
 -	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	wd->mmio = devm_ioremap_resource(&pdev->dev, iores);
