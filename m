@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 27/34] ASoC: meson: axg-pdm: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:31 +0800
-Message-ID: <20190727150738.54764-28-yuehaibing@huawei.com>
+Subject: [PATCH -next 25/34] ASoC: meson: g12a-tohdmitx: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:29 +0800
+Message-ID: <20190727150738.54764-26-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,24 +18,20 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/meson/axg-pdm.c | 4 +---
+ sound/soc/meson/g12a-tohdmitx.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/meson/axg-pdm.c b/sound/soc/meson/axg-pdm.c
-index 9d56844..bfd37d4 100644
---- a/sound/soc/meson/axg-pdm.c
-+++ b/sound/soc/meson/axg-pdm.c
-@@ -585,7 +585,6 @@ static int axg_pdm_probe(struct platform_device *pdev)
+diff --git a/sound/soc/meson/g12a-tohdmitx.c b/sound/soc/meson/g12a-tohdmitx.c
+index 707ccb1..6ae0c4f 100644
+--- a/sound/soc/meson/g12a-tohdmitx.c
++++ b/sound/soc/meson/g12a-tohdmitx.c
+@@ -378,12 +378,10 @@ MODULE_DEVICE_TABLE(of, g12a_tohdmitx_of_match);
+ static int g12a_tohdmitx_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
- 	struct axg_pdm *priv;
 -	struct resource *res;
  	void __iomem *regs;
- 	int ret;
- 
-@@ -600,8 +599,7 @@ static int axg_pdm_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ 	struct regmap *map;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	regs = devm_ioremap_resource(dev, res);
