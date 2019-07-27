@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 10/34] ASoC: sirf: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:14 +0800
-Message-ID: <20190727150738.54764-11-yuehaibing@huawei.com>
+Subject: [PATCH -next 11/34] ASoC: mxs-saif: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:15 +0800
+Message-ID: <20190727150738.54764-12-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,31 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/sirf/sirf-usp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/mxs/mxs-saif.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/sound/soc/sirf/sirf-usp.c b/sound/soc/sirf/sirf-usp.c
-index 8bab119c..2af0c6f 100644
---- a/sound/soc/sirf/sirf-usp.c
-+++ b/sound/soc/sirf/sirf-usp.c
-@@ -359,7 +359,6 @@ static int sirf_usp_pcm_probe(struct platform_device *pdev)
- 	int ret;
- 	struct sirf_usp *usp;
- 	void __iomem *base;
--	struct resource *mem_res;
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index 269b6d6..a2c7942 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -732,7 +732,6 @@ static int mxs_saif_mclk_init(struct platform_device *pdev)
+ static int mxs_saif_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct resource *iores;
+ 	struct mxs_saif *saif;
+ 	int irq, ret = 0;
+ 	struct device_node *master;
+@@ -786,9 +785,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
- 	usp = devm_kzalloc(&pdev->dev, sizeof(struct sirf_usp),
- 			GFP_KERNEL);
-@@ -368,8 +367,7 @@ static int sirf_usp_pcm_probe(struct platform_device *pdev)
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
+-	saif->base = devm_ioremap_resource(&pdev->dev, iores);
++	saif->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(saif->base))
+ 		return PTR_ERR(saif->base);
  
- 	platform_set_drvdata(pdev, usp);
- 
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, mem_res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 	usp->regmap = devm_regmap_init_mmio(&pdev->dev, base,
 -- 
 2.7.4
