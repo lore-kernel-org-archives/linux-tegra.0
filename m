@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 13/34] ASoC: kirkwood-i2s: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:17 +0800
-Message-ID: <20190727150738.54764-14-yuehaibing@huawei.com>
+Subject: [PATCH -next 17/34] ASoC: codecs: jz4725b: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:21 +0800
+Message-ID: <20190727150738.54764-18-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,29 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/kirkwood/kirkwood-i2s.c | 4 +---
+ sound/soc/codecs/jz4725b.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
-index 3446a113..5076ec4 100644
---- a/sound/soc/kirkwood/kirkwood-i2s.c
-+++ b/sound/soc/kirkwood/kirkwood-i2s.c
-@@ -523,7 +523,6 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
- 	struct kirkwood_asoc_platform_data *data = pdev->dev.platform_data;
- 	struct snd_soc_dai_driver *soc_dai = kirkwood_i2s_dai;
- 	struct kirkwood_dma_data *priv;
+diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
+index 766354c..2567a5d 100644
+--- a/sound/soc/codecs/jz4725b.c
++++ b/sound/soc/codecs/jz4725b.c
+@@ -545,15 +545,13 @@ static int jz4725b_codec_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct jz_icdc *icdc;
 -	struct resource *mem;
- 	struct device_node *np = pdev->dev.of_node;
- 	int err;
+ 	int ret;
  
-@@ -533,8 +532,7 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&pdev->dev, priv);
+ 	icdc = devm_kzalloc(dev, sizeof(*icdc), GFP_KERNEL);
+ 	if (!icdc)
+ 		return -ENOMEM;
  
 -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->io = devm_ioremap_resource(&pdev->dev, mem);
-+	priv->io = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->io))
- 		return PTR_ERR(priv->io);
+-	icdc->base = devm_ioremap_resource(dev, mem);
++	icdc->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(icdc->base))
+ 		return PTR_ERR(icdc->base);
  
 -- 
 2.7.4
