@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 03/34] ASoC: rockchip: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:07 +0800
-Message-ID: <20190727150738.54764-4-yuehaibing@huawei.com>
+Subject: [PATCH -next 05/34] ASoC: mt8173: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:09 +0800
+Message-ID: <20190727150738.54764-6-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/codecs/rk3328_codec.c | 4 +---
+ sound/soc/mediatek/mt8173/mt8173-afe-pcm.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rk3328_codec.c b/sound/soc/codecs/rk3328_codec.c
-index 24f8f86..287c962 100644
---- a/sound/soc/codecs/rk3328_codec.c
-+++ b/sound/soc/codecs/rk3328_codec.c
-@@ -432,7 +432,6 @@ static int rk3328_platform_probe(struct platform_device *pdev)
- {
- 	struct device_node *rk3328_np = pdev->dev.of_node;
- 	struct rk3328_codec_priv *rk3328;
+diff --git a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+index 0382896..90bd2c9 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
++++ b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+@@ -1056,7 +1056,6 @@ static int mt8173_afe_pcm_dev_probe(struct platform_device *pdev)
+ 	int irq_id;
+ 	struct mtk_base_afe *afe;
+ 	struct mt8173_afe_private *afe_priv;
 -	struct resource *res;
- 	struct regmap *grf;
- 	void __iomem *base;
- 	int ret = 0;
-@@ -482,8 +481,7 @@ static int rk3328_platform_probe(struct platform_device *pdev)
+ 
+ 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(33));
+ 	if (ret)
+@@ -1086,8 +1085,7 @@ static int mt8173_afe_pcm_dev_probe(struct platform_device *pdev)
  		return ret;
  	}
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+-	afe->base_addr = devm_ioremap_resource(&pdev->dev, res);
++	afe->base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(afe->base_addr))
+ 		return PTR_ERR(afe->base_addr);
  
 -- 
 2.7.4
