@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 08/34] ASoC: fsl_audmix: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:12 +0800
-Message-ID: <20190727150738.54764-9-yuehaibing@huawei.com>
+Subject: [PATCH -next 12/34] ASoC: spear: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:16 +0800
+Message-ID: <20190727150738.54764-13-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,27 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/fsl/fsl_audmix.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/spear/spdif_in.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_audmix.c b/sound/soc/fsl/fsl_audmix.c
-index 3897a54..c7e4e97 100644
---- a/sound/soc/fsl/fsl_audmix.c
-+++ b/sound/soc/fsl/fsl_audmix.c
-@@ -458,7 +458,6 @@ static int fsl_audmix_probe(struct platform_device *pdev)
+diff --git a/sound/soc/spear/spdif_in.c b/sound/soc/spear/spdif_in.c
+index 78a6a36..4b68d6e 100644
+--- a/sound/soc/spear/spdif_in.c
++++ b/sound/soc/spear/spdif_in.c
+@@ -202,12 +202,11 @@ static int spdif_in_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
- 	struct fsl_audmix *priv;
--	struct resource *res;
- 	const char *mdrv;
- 	const struct of_device_id *of_id;
- 	void __iomem *regs;
-@@ -475,8 +474,7 @@ static int fsl_audmix_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+ 	struct spdif_in_dev *host;
+ 	struct spear_spdif_platform_data *pdata;
+-	struct resource *res, *res_fifo;
++	struct resource *res_fifo;
+ 	void __iomem *io_base;
+ 	int ret;
  
- 	/* Get the addresses */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+-	io_base = devm_ioremap_resource(&pdev->dev, res);
++	io_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(io_base))
+ 		return PTR_ERR(io_base);
  
 -- 
 2.7.4
