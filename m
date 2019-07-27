@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 30/34] ASoC: meson: axg-fifo: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:34 +0800
-Message-ID: <20190727150738.54764-31-yuehaibing@huawei.com>
+Subject: [PATCH -next 31/34] ASoC: xlnx: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:35 +0800
+Message-ID: <20190727150738.54764-32-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,45 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/meson/axg-fifo.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/xilinx/xlnx_i2s.c   | 4 +---
+ sound/soc/xilinx/xlnx_spdif.c | 3 +--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
-index 01c1c7d..80a3dde 100644
---- a/sound/soc/meson/axg-fifo.c
-+++ b/sound/soc/meson/axg-fifo.c
-@@ -314,7 +314,6 @@ int axg_fifo_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	const struct axg_fifo_match_data *data;
- 	struct axg_fifo *fifo;
--	struct resource *res;
- 	void __iomem *regs;
+diff --git a/sound/soc/xilinx/xlnx_i2s.c b/sound/soc/xilinx/xlnx_i2s.c
+index 8b35316..cc641e5 100644
+--- a/sound/soc/xilinx/xlnx_i2s.c
++++ b/sound/soc/xilinx/xlnx_i2s.c
+@@ -95,7 +95,6 @@ MODULE_DEVICE_TABLE(of, xlnx_i2s_of_match);
  
- 	data = of_device_get_match_data(dev);
-@@ -328,8 +327,7 @@ int axg_fifo_probe(struct platform_device *pdev)
+ static int xlnx_i2s_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	void __iomem *base;
+ 	struct snd_soc_dai_driver *dai_drv;
+ 	int ret;
+@@ -107,8 +106,7 @@ static int xlnx_i2s_probe(struct platform_device *pdev)
+ 	if (!dai_drv)
  		return -ENOMEM;
- 	platform_set_drvdata(pdev, fifo);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
+diff --git a/sound/soc/xilinx/xlnx_spdif.c b/sound/soc/xilinx/xlnx_spdif.c
+index 3b9000f..e2ca087 100644
+--- a/sound/soc/xilinx/xlnx_spdif.c
++++ b/sound/soc/xilinx/xlnx_spdif.c
+@@ -260,8 +260,7 @@ static int xlnx_spdif_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ctx->base = devm_ioremap_resource(dev, res);
++	ctx->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ctx->base)) {
+ 		ret = PTR_ERR(ctx->base);
+ 		goto clk_err;
 -- 
 2.7.4
