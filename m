@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 33/34] ASoC: sunxi: sun50i-codec-analog: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:37 +0800
-Message-ID: <20190727150738.54764-34-yuehaibing@huawei.com>
+Subject: [PATCH -next 29/34] ASoC: meson: axg-spdifout: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:33 +0800
+Message-ID: <20190727150738.54764-30-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,26 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/sunxi/sun50i-codec-analog.c | 4 +---
+ sound/soc/meson/axg-spdifout.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
-index 6d1de56..f5b7069 100644
---- a/sound/soc/sunxi/sun50i-codec-analog.c
-+++ b/sound/soc/sunxi/sun50i-codec-analog.c
-@@ -459,12 +459,10 @@ MODULE_DEVICE_TABLE(of, sun50i_codec_analog_of_match);
- 
- static int sun50i_codec_analog_probe(struct platform_device *pdev)
+diff --git a/sound/soc/meson/axg-spdifout.c b/sound/soc/meson/axg-spdifout.c
+index 9dea528..7ce6aa97 100644
+--- a/sound/soc/meson/axg-spdifout.c
++++ b/sound/soc/meson/axg-spdifout.c
+@@ -401,7 +401,6 @@ static int axg_spdifout_probe(struct platform_device *pdev)
  {
+ 	struct device *dev = &pdev->dev;
+ 	struct axg_spdifout *priv;
 -	struct resource *res;
- 	struct regmap *regmap;
- 	void __iomem *base;
+ 	void __iomem *regs;
+ 	int ret;
+ 
+@@ -410,8 +409,7 @@ static int axg_spdifout_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	platform_set_drvdata(pdev, priv);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base)) {
- 		dev_err(&pdev->dev, "Failed to map the registers\n");
- 		return PTR_ERR(base);
+-	regs = devm_ioremap_resource(dev, res);
++	regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+ 
 -- 
 2.7.4
