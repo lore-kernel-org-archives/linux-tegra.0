@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 23/34] ASoC: psc-ac97: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:27 +0800
-Message-ID: <20190727150738.54764-24-yuehaibing@huawei.com>
+Subject: [PATCH -next 28/34] ASoC: meson: axg-spdifin: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:32 +0800
+Message-ID: <20190727150738.54764-29-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,31 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/au1x/psc-ac97.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/meson/axg-spdifin.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/au1x/psc-ac97.c b/sound/soc/au1x/psc-ac97.c
-index 21e5f6a..08bc04e 100644
---- a/sound/soc/au1x/psc-ac97.c
-+++ b/sound/soc/au1x/psc-ac97.c
-@@ -363,7 +363,7 @@ static const struct snd_soc_component_driver au1xpsc_ac97_component = {
- static int au1xpsc_ac97_drvprobe(struct platform_device *pdev)
- {
+diff --git a/sound/soc/meson/axg-spdifin.c b/sound/soc/meson/axg-spdifin.c
+index 01b2035..d0d09f9 100644
+--- a/sound/soc/meson/axg-spdifin.c
++++ b/sound/soc/meson/axg-spdifin.c
+@@ -453,7 +453,6 @@ static int axg_spdifin_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct axg_spdifin *priv;
+ 	struct snd_soc_dai_driver *dai_drv;
+-	struct resource *res;
+ 	void __iomem *regs;
  	int ret;
--	struct resource *iores, *dmares;
-+	struct resource *dmares;
- 	unsigned long sel;
- 	struct au1xpsc_audio_data *wd;
  
-@@ -374,8 +374,7 @@ static int au1xpsc_ac97_drvprobe(struct platform_device *pdev)
+@@ -468,8 +467,7 @@ static int axg_spdifin_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
- 	mutex_init(&wd->lock);
- 
--	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	wd->mmio = devm_ioremap_resource(&pdev->dev, iores);
-+	wd->mmio = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(wd->mmio))
- 		return PTR_ERR(wd->mmio);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	regs = devm_ioremap_resource(dev, res);
++	regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
  
 -- 
 2.7.4
