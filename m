@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 28/34] ASoC: meson: axg-spdifin: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:32 +0800
-Message-ID: <20190727150738.54764-29-yuehaibing@huawei.com>
+Subject: [PATCH -next 30/34] ASoC: meson: axg-fifo: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:34 +0800
+Message-ID: <20190727150738.54764-31-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,24 +18,24 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/meson/axg-spdifin.c | 4 +---
+ sound/soc/meson/axg-fifo.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/meson/axg-spdifin.c b/sound/soc/meson/axg-spdifin.c
-index 01b2035..d0d09f9 100644
---- a/sound/soc/meson/axg-spdifin.c
-+++ b/sound/soc/meson/axg-spdifin.c
-@@ -453,7 +453,6 @@ static int axg_spdifin_probe(struct platform_device *pdev)
+diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
+index 01c1c7d..80a3dde 100644
+--- a/sound/soc/meson/axg-fifo.c
++++ b/sound/soc/meson/axg-fifo.c
+@@ -314,7 +314,6 @@ int axg_fifo_probe(struct platform_device *pdev)
  	struct device *dev = &pdev->dev;
- 	struct axg_spdifin *priv;
- 	struct snd_soc_dai_driver *dai_drv;
+ 	const struct axg_fifo_match_data *data;
+ 	struct axg_fifo *fifo;
 -	struct resource *res;
  	void __iomem *regs;
- 	int ret;
  
-@@ -468,8 +467,7 @@ static int axg_spdifin_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ 	data = of_device_get_match_data(dev);
+@@ -328,8 +327,7 @@ int axg_fifo_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	platform_set_drvdata(pdev, fifo);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	regs = devm_ioremap_resource(dev, res);
