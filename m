@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 32/34] ASoC: sun8i-codec-analog: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:36 +0800
-Message-ID: <20190727150738.54764-33-yuehaibing@huawei.com>
+Subject: [PATCH -next 33/34] ASoC: sunxi: sun50i-codec-analog: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:37 +0800
+Message-ID: <20190727150738.54764-34-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,16 +18,16 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/sunxi/sun8i-codec-analog.c | 4 +---
+ sound/soc/sunxi/sun50i-codec-analog.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/sunxi/sun8i-codec-analog.c b/sound/soc/sunxi/sun8i-codec-analog.c
-index e92aeed..be872ee 100644
---- a/sound/soc/sunxi/sun8i-codec-analog.c
-+++ b/sound/soc/sunxi/sun8i-codec-analog.c
-@@ -819,12 +819,10 @@ MODULE_DEVICE_TABLE(of, sun8i_codec_analog_of_match);
+diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
+index 6d1de56..f5b7069 100644
+--- a/sound/soc/sunxi/sun50i-codec-analog.c
++++ b/sound/soc/sunxi/sun50i-codec-analog.c
+@@ -459,12 +459,10 @@ MODULE_DEVICE_TABLE(of, sun50i_codec_analog_of_match);
  
- static int sun8i_codec_analog_probe(struct platform_device *pdev)
+ static int sun50i_codec_analog_probe(struct platform_device *pdev)
  {
 -	struct resource *res;
  	struct regmap *regmap;
