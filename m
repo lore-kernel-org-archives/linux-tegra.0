@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 21/34] ASoC: uniphier: evea: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:25 +0800
-Message-ID: <20190727150738.54764-22-yuehaibing@huawei.com>
+Subject: [PATCH -next 22/34] ASoC: uniphier: aio-dma: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:26 +0800
+Message-ID: <20190727150738.54764-23-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,27 +18,23 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/uniphier/evea.c | 4 +---
+ sound/soc/uniphier/aio-dma.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
-index f9c1016..d27e9ca 100644
---- a/sound/soc/uniphier/evea.c
-+++ b/sound/soc/uniphier/evea.c
-@@ -451,7 +451,6 @@ static const struct regmap_config evea_regmap_config = {
- static int evea_probe(struct platform_device *pdev)
+diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
+index fa001d3..862346d 100644
+--- a/sound/soc/uniphier/aio-dma.c
++++ b/sound/soc/uniphier/aio-dma.c
+@@ -276,12 +276,10 @@ int uniphier_aiodma_soc_register_platform(struct platform_device *pdev)
  {
- 	struct evea_priv *evea;
+ 	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
+ 	struct device *dev = &pdev->dev;
 -	struct resource *res;
  	void __iomem *preg;
- 	int ret;
- 
-@@ -475,8 +474,7 @@ static int evea_probe(struct platform_device *pdev)
- 	if (IS_ERR(evea->rst_exiv))
- 		return PTR_ERR(evea->rst_exiv);
+ 	int irq, ret;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	preg = devm_ioremap_resource(&pdev->dev, res);
+-	preg = devm_ioremap_resource(dev, res);
 +	preg = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(preg))
  		return PTR_ERR(preg);
