@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 34/34] ASoC: sun8i-codec: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:38 +0800
-Message-ID: <20190727150738.54764-35-yuehaibing@huawei.com>
+Subject: [PATCH -next 27/34] ASoC: meson: axg-pdm: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:31 +0800
+Message-ID: <20190727150738.54764-28-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/sunxi/sun8i-codec.c | 4 +---
+ sound/soc/meson/axg-pdm.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.c
-index 0e0e8eb..55798bc 100644
---- a/sound/soc/sunxi/sun8i-codec.c
-+++ b/sound/soc/sunxi/sun8i-codec.c
-@@ -533,7 +533,6 @@ static const struct regmap_config sun8i_codec_regmap_config = {
- 
- static int sun8i_codec_probe(struct platform_device *pdev)
+diff --git a/sound/soc/meson/axg-pdm.c b/sound/soc/meson/axg-pdm.c
+index 9d56844..bfd37d4 100644
+--- a/sound/soc/meson/axg-pdm.c
++++ b/sound/soc/meson/axg-pdm.c
+@@ -585,7 +585,6 @@ static int axg_pdm_probe(struct platform_device *pdev)
  {
--	struct resource *res_base;
- 	struct sun8i_codec *scodec;
- 	void __iomem *base;
+ 	struct device *dev = &pdev->dev;
+ 	struct axg_pdm *priv;
+-	struct resource *res;
+ 	void __iomem *regs;
  	int ret;
-@@ -556,8 +555,7 @@ static int sun8i_codec_probe(struct platform_device *pdev)
- 		return PTR_ERR(scodec->clk_bus);
+ 
+@@ -600,8 +599,7 @@ static int axg_pdm_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  	}
  
--	res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res_base);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base)) {
- 		dev_err(&pdev->dev, "Failed to map the registers\n");
- 		return PTR_ERR(base);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	regs = devm_ioremap_resource(dev, res);
++	regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+ 
 -- 
 2.7.4
