@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 18/34] ASoC: mmp-sspa: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:22 +0800
-Message-ID: <20190727150738.54764-19-yuehaibing@huawei.com>
+Subject: [PATCH -next 19/34] ASoC: jz4740: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:23 +0800
+Message-ID: <20190727150738.54764-20-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/pxa/mmp-sspa.c | 4 +---
+ sound/soc/codecs/jz4740.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
-index 72f4364..e3e5425 100644
---- a/sound/soc/pxa/mmp-sspa.c
-+++ b/sound/soc/pxa/mmp-sspa.c
-@@ -399,7 +399,6 @@ static const struct snd_soc_component_driver mmp_sspa_component = {
- static int asoc_mmp_sspa_probe(struct platform_device *pdev)
+diff --git a/sound/soc/codecs/jz4740.c b/sound/soc/codecs/jz4740.c
+index 974e17f..460aa1f 100644
+--- a/sound/soc/codecs/jz4740.c
++++ b/sound/soc/codecs/jz4740.c
+@@ -318,7 +318,6 @@ static int jz4740_codec_probe(struct platform_device *pdev)
  {
- 	struct sspa_priv *priv;
--	struct resource *res;
+ 	int ret;
+ 	struct jz4740_codec *jz4740_codec;
+-	struct resource *mem;
+ 	void __iomem *base;
  
- 	priv = devm_kzalloc(&pdev->dev,
- 				sizeof(struct sspa_priv), GFP_KERNEL);
-@@ -417,8 +416,7 @@ static int asoc_mmp_sspa_probe(struct platform_device *pdev)
- 	if (priv->dma_params == NULL)
+ 	jz4740_codec = devm_kzalloc(&pdev->dev, sizeof(*jz4740_codec),
+@@ -326,8 +325,7 @@ static int jz4740_codec_probe(struct platform_device *pdev)
+ 	if (!jz4740_codec)
  		return -ENOMEM;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->sspa->mmio_base = devm_ioremap_resource(&pdev->dev, res);
-+	priv->sspa->mmio_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->sspa->mmio_base))
- 		return PTR_ERR(priv->sspa->mmio_base);
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, mem);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
 -- 
 2.7.4
