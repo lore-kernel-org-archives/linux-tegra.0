@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 25/34] ASoC: meson: g12a-tohdmitx: use devm_platform_ioremap_resource() to simplify code
-Date: Sat, 27 Jul 2019 23:07:29 +0800
-Message-ID: <20190727150738.54764-26-yuehaibing@huawei.com>
+Subject: [PATCH -next 20/34] ASoC: inno_rk3036: use devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:24 +0800
+Message-ID: <20190727150738.54764-21-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,26 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/meson/g12a-tohdmitx.c | 4 +---
+ sound/soc/codecs/inno_rk3036.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/meson/g12a-tohdmitx.c b/sound/soc/meson/g12a-tohdmitx.c
-index 707ccb1..6ae0c4f 100644
---- a/sound/soc/meson/g12a-tohdmitx.c
-+++ b/sound/soc/meson/g12a-tohdmitx.c
-@@ -378,12 +378,10 @@ MODULE_DEVICE_TABLE(of, g12a_tohdmitx_of_match);
- static int g12a_tohdmitx_probe(struct platform_device *pdev)
+diff --git a/sound/soc/codecs/inno_rk3036.c b/sound/soc/codecs/inno_rk3036.c
+index 7feedbb..14d8fe1 100644
+--- a/sound/soc/codecs/inno_rk3036.c
++++ b/sound/soc/codecs/inno_rk3036.c
+@@ -405,7 +405,6 @@ static int rk3036_codec_platform_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
+ 	struct rk3036_codec_priv *priv;
+ 	struct device_node *of_node = pdev->dev.of_node;
 -	struct resource *res;
- 	void __iomem *regs;
- 	struct regmap *map;
+ 	void __iomem *base;
+ 	struct regmap *grf;
+ 	int ret;
+@@ -414,8 +413,7 @@ static int rk3036_codec_platform_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
 -- 
 2.7.4
