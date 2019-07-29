@@ -1,48 +1,99 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v6 10/24] drm/imx: imx-ldb: Provide ddc symlink in
- connector's sysfs
-Date: Mon, 29 Jul 2019 11:20:57 +0200
-Message-ID: <1564392057.7633.2.camel@pengutronix.de>
-References: <cover.1564161140.git.andrzej.p@collabora.com>
- <bcfe39a0333df951a7d160b3a946c2c32e7eac7f.1564161140.git.andrzej.p@collabora.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Mon, 29 Jul 2019 12:45:25 +0300
+Message-ID: <299d1803-fc5c-9298-3d10-582e76b47a9e@kapsi.fi>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190722101830.GA24948@apalos>
+ <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
+ <BN8PR12MB326661846D53AAEE315A7434D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <11557fe0-0cba-cb49-0fb6-ad24792d4a53@nvidia.com>
+ <BN8PR12MB3266664ECA192E02C06061EED3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <BYAPR12MB3269A725AFDDA21E92946558D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <ab14f31f-2045-b1be-d31f-2a81b8527dac@nvidia.com>
+ <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <2ad7bf21-1f1f-db0f-2358-4901b7988b7d@nvidia.com>
+ <BYAPR12MB3269D050556BD51030DCDDFCD3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <8093e352-d992-e17f-7168-5afbd9d3fb3f@nvidia.com>
+ <BYAPR12MB3269EC45ABAF8F279288B003D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <f3525260-c43f-c983-0b5b-34a83bd53283@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <bcfe39a0333df951a7d160b3a946c2c32e7eac7f.1564161140.git.andrzej.p@collabora.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, dri-devel@lists.freedesktop.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Douglas Anderson <dianders@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Armijn Hemel <armijn@tjaldur.nl>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Jyri Sarha <jsarha@ti.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, intel-gfx@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org, Mamta Shukla <mamtashuk>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <f3525260-c43f-c983-0b5b-34a83bd53283@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Lars Persson <lists@bofh.nu>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S . Miller" <davem@davemloft.net>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTA3LTI2IGF0IDE5OjIzICswMjAwLCBBbmRyemVqIFBpZXRyYXNpZXdpY3og
-d3JvdGU6Cj4gVXNlIHRoZSBkZGMgcG9pbnRlciBwcm92aWRlZCBieSB0aGUgZ2VuZXJpYyBjb25u
-ZWN0b3IuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBQaWV0cmFzaWV3aWN6IDxhbmRyemVq
-LnBAY29sbGFib3JhLmNvbT4KCkFja2VkLWJ5OiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBlbmd1
-dHJvbml4LmRlPgoKVGhhbmtzIQoKcmVnYXJkcwpQaGlsaXBwCgo+IC0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vaW14L2lteC1sZGIuYyB8IDcgKysrKy0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNl
-cnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vaW14L2lteC1sZGIuYyBiL2RyaXZlcnMvZ3B1L2RybS9pbXgvaW14LWxkYi5jCj4gaW5kZXgg
-ZGU2MmE0Y2Q0ODI3Li5kYjQ2MWI2YTI1N2YgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2lteC9pbXgtbGRiLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vaW14L2lteC1sZGIuYwo+IEBA
-IC00NjIsOSArNDYyLDEwIEBAIHN0YXRpYyBpbnQgaW14X2xkYl9yZWdpc3RlcihzdHJ1Y3QgZHJt
-X2RldmljZSAqZHJtLAo+ICAJCSAqLwo+ICAJCWRybV9jb25uZWN0b3JfaGVscGVyX2FkZCgmaW14
-X2xkYl9jaC0+Y29ubmVjdG9yLAo+ICAJCQkJJmlteF9sZGJfY29ubmVjdG9yX2hlbHBlcl9mdW5j
-cyk7Cj4gLQkJZHJtX2Nvbm5lY3Rvcl9pbml0KGRybSwgJmlteF9sZGJfY2gtPmNvbm5lY3RvciwK
-PiAtCQkJCSZpbXhfbGRiX2Nvbm5lY3Rvcl9mdW5jcywKPiAtCQkJCURSTV9NT0RFX0NPTk5FQ1RP
-Ul9MVkRTKTsKPiArCQlkcm1fY29ubmVjdG9yX2luaXRfd2l0aF9kZGMoZHJtLCAmaW14X2xkYl9j
-aC0+Y29ubmVjdG9yLAo+ICsJCQkJCSAgICAmaW14X2xkYl9jb25uZWN0b3JfZnVuY3MsCj4gKwkJ
-CQkJICAgIERSTV9NT0RFX0NPTk5FQ1RPUl9MVkRTLAo+ICsJCQkJCSAgICBpbXhfbGRiX2NoLT5k
-ZGMpOwo+ICAJCWRybV9jb25uZWN0b3JfYXR0YWNoX2VuY29kZXIoJmlteF9sZGJfY2gtPmNvbm5l
-Y3RvciwgZW5jb2Rlcik7Cj4gIAl9Cj4gIApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWw=
+My understanding is that Tegra186 does not have DMA coherency, but 
+Tegra194 does.
+
+Mikko
+
+On 23.7.2019 16.34, Jon Hunter wrote:
+> 
+> On 23/07/2019 13:51, Jose Abreu wrote:
+>> From: Jon Hunter <jonathanh@nvidia.com>
+>> Date: Jul/23/2019, 12:58:55 (UTC+00:00)
+>>
+>>>
+>>> On 23/07/2019 11:49, Jose Abreu wrote:
+>>>> From: Jon Hunter <jonathanh@nvidia.com>
+>>>> Date: Jul/23/2019, 11:38:33 (UTC+00:00)
+>>>>
+>>>>>
+>>>>> On 23/07/2019 11:07, Jose Abreu wrote:
+>>>>>> From: Jon Hunter <jonathanh@nvidia.com>
+>>>>>> Date: Jul/23/2019, 11:01:24 (UTC+00:00)
+>>>>>>
+>>>>>>> This appears to be a winner and by disabling the SMMU for the ethernet
+>>>>>>> controller and reverting commit 954a03be033c7cef80ddc232e7cbdb17df735663
+>>>>>>> this worked! So yes appears to be related to the SMMU being enabled. We
+>>>>>>> had to enable the SMMU for ethernet recently due to commit
+>>>>>>> 954a03be033c7cef80ddc232e7cbdb17df735663.
+>>>>>>
+>>>>>> Finally :)
+>>>>>>
+>>>>>> However, from "git show 954a03be033c7cef80ddc232e7cbdb17df735663":
+>>>>>>
+>>>>>> +         There are few reasons to allow unmatched stream bypass, and
+>>>>>> +         even fewer good ones.  If saying YES here breaks your board
+>>>>>> +         you should work on fixing your board.
+>>>>>>
+>>>>>> So, how can we fix this ? Is your ethernet DT node marked as
+>>>>>> "dma-coherent;" ?
+>>>>>
+>>>>> TBH I have no idea. I can't say I fully understand your change or how it
+>>>>> is breaking things for us.
+>>>>>
+>>>>> Currently, the Tegra DT binding does not have 'dma-coherent' set. I see
+>>>>> this is optional, but I am not sure how you determine whether or not
+>>>>> this should be set.
+>>>>
+>>>>  From my understanding it means that your device / IP DMA accesses are coherent regarding the CPU point of view. I think it will be the case if GMAC is not behind any kind of IOMMU in the HW arch.
+>>>
+>>> I understand what coherency is, I just don't know how you tell if this
+>>> implementation of the ethernet controller is coherent or not.
+>>
+>> Do you have any detailed diagram of your HW ? Such as blocks / IPs
+>> connection, address space wiring , ...
+> 
+> Yes, this can be found in the Tegra X2 Technical Reference Manual [0].
+> Unfortunately, you need to create an account to download it.
+> 
+> Jon
+> 
+> [0] https://developer.nvidia.com/embedded/dlc/parker-series-trm
+> 
