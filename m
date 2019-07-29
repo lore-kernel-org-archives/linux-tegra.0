@@ -1,50 +1,155 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
- time
-Date: Mon, 29 Jul 2019 16:07:37 +0300
-Message-ID: <7e76b679-1a65-fa14-2cc6-2b27ece8131c@gmail.com>
-References: <20190723023511.24542-1-digetx@gmail.com>
- <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
- <f7879942-0875-1f27-5870-3f8414c2148d@gmail.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Mon, 29 Jul 2019 14:08:29 +0000
+Message-ID: <MN2PR12MB3279ABF628C52883021123C5D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
+ <BYAPR12MB3269927AB1F67D46E150ED6BD3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <9e695f33-fd9f-a910-0891-2b63bd75e082@nvidia.com>
+ <BYAPR12MB3269B4A401E4DA10A07515C7D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <1e2ea942-28fe-15b9-f675-8d6585f9a33f@nvidia.com>
+ <BYAPR12MB326922CDCB1D4B3D4A780CFDD3C30@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <MN2PR12MB327907D4A6FB378AC989571AD3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+ <b99b1e49-0cbc-2c66-6325-50fa6f263d91@nvidia.com>
+ <MN2PR12MB327997BDF2EA5CEE00F45AC3D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+ <fcf648d2-70cc-d734-871a-ca7f745791b7@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+        boundary="_002_MN2PR12MB3279ABF628C52883021123C5D3DD0MN2PR12MB3279namp_"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f7879942-0875-1f27-5870-3f8414c2148d@gmail.com>
+In-Reply-To: <fcf648d2-70cc-d734-871a-ca7f745791b7@arm.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Robin Murphy <robin.murphy@arm.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, "David S . Miller" <davem@davemloft.net>
 List-Id: linux-tegra@vger.kernel.org
 
-25.07.2019 14:15, Dmitry Osipenko пишет:
-> 25.07.2019 12:36, Peter De Schrijver пишет:
->> On Tue, Jul 23, 2019 at 05:35:10AM +0300, Dmitry Osipenko wrote:
->>> The PCLK clock is running off SCLK, which is a critical clock that is
->>> very unlikely to randomly change its rate. It's also a bit clumsy (and
->>> apparently incorrect) to query the clock's rate with interrupts being
->>> disabled because clk_get_rate() takes a mutex and that's the case during
->>> suspend/cpuidle entering.
->>>
->>
->> SCLK and PCLK certainly can change rate at runtime, although the code to
->> handle this hasn't reached upstream yet.
-> 
-> Okay, maybe this patch is indeed not very worthwhile then. I'm leaving
-> it up to you, guys, to decide.
-> 
+--_002_MN2PR12MB3279ABF628C52883021123C5D3DD0MN2PR12MB3279namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-I now recalled what was the initial reason for this patch because
-happened to bump into the problem once again.. it's really problematic
-to call clk_get_rate() with the disabled preemption because some clk
-notifier handler may block (EMC) and cause reschedule, hence the CCF
-'prepare' mutex is kept locked during of CPUIDLE driver entering LP2
-state and thus causing system lockup, since scheduling with the disabled
-interrupts obviously won't work well.
+RnJvbTogUm9iaW4gTXVycGh5IDxyb2Jpbi5tdXJwaHlAYXJtLmNvbT4NCkRhdGU6IEp1bC8yOS8y
+MDE5LCAxMjo1MjowMiAoVVRDKzAwOjAwKQ0KDQo+IE9uIDI5LzA3LzIwMTkgMTI6MjksIEpvc2Ug
+QWJyZXUgd3JvdGU6DQo+ID4gKysgQ2F0YWxpbiwgV2lsbCAoQVJNNjQgTWFpbnRhaW5lcnMpDQo+
+ID4gDQo+ID4gRnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQo+ID4gRGF0
+ZTogSnVsLzI5LzIwMTksIDExOjU1OjE4IChVVEMrMDA6MDApDQo+ID4gDQo+ID4+DQo+ID4+IE9u
+IDI5LzA3LzIwMTkgMDk6MTYsIEpvc2UgQWJyZXUgd3JvdGU6DQo+ID4+PiBGcm9tOiBKb3NlIEFi
+cmV1IDxqb2FicmV1QHN5bm9wc3lzLmNvbT4NCj4gPj4+IERhdGU6IEp1bC8yNy8yMDE5LCAxNjo1
+NjozNyAoVVRDKzAwOjAwKQ0KPiA+Pj4NCj4gPj4+PiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhh
+bmhAbnZpZGlhLmNvbT4NCj4gPj4+PiBEYXRlOiBKdWwvMjYvMjAxOSwgMTU6MTE6MDAgKFVUQysw
+MDowMCkNCj4gPj4+Pg0KPiA+Pj4+Pg0KPiA+Pj4+PiBPbiAyNS8wNy8yMDE5IDE2OjEyLCBKb3Nl
+IEFicmV1IHdyb3RlOg0KPiA+Pj4+Pj4gRnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRp
+YS5jb20+DQo+ID4+Pj4+PiBEYXRlOiBKdWwvMjUvMjAxOSwgMTU6MjU6NTkgKFVUQyswMDowMCkN
+Cj4gPj4+Pj4+DQo+ID4+Pj4+Pj4NCj4gPj4+Pj4+PiBPbiAyNS8wNy8yMDE5IDE0OjI2LCBKb3Nl
+IEFicmV1IHdyb3RlOg0KPiA+Pj4+Pj4+DQo+ID4+Pj4+Pj4gLi4uDQo+ID4+Pj4+Pj4NCj4gPj4+
+Pj4+Pj4gV2VsbCwgSSB3YXNuJ3QgZXhwZWN0aW5nIHRoYXQgOi8NCj4gPj4+Pj4+Pj4NCj4gPj4+
+Pj4+Pj4gUGVyIGRvY3VtZW50YXRpb24gb2YgYmFycmllcnMgSSB0aGluayB3ZSBzaG91bGQgc2V0
+IGRlc2NyaXB0b3IgZmllbGRzDQo+ID4+Pj4+Pj4+IGFuZCB0aGVuIGJhcnJpZXIgYW5kIGZpbmFs
+bHkgb3duZXJzaGlwIHRvIEhXIHNvIHRoYXQgcmVtYWluaW5nIGZpZWxkcw0KPiA+Pj4+Pj4+PiBh
+cmUgY29oZXJlbnQgYmVmb3JlIG93bmVyIGlzIHNldC4NCj4gPj4+Pj4+Pj4NCj4gPj4+Pj4+Pj4g
+QW55d2F5LCBjYW4geW91IGFsc28gYWRkIGEgZG1hX3JtYigpIGFmdGVyIHRoZSBjYWxsIHRvDQo+
+ID4+Pj4+Pj4+IHN0bW1hY19yeF9zdGF0dXMoKSA/DQo+ID4+Pj4+Pj4NCj4gPj4+Pj4+PiBZZXMu
+IEkgcmVtb3ZlZCB0aGUgZGVidWcgcHJpbnQgYWRkZWQgdGhlIGJhcnJpZXIsIGJ1dCB0aGF0IGRp
+ZCBub3QgaGVscC4NCj4gPj4+Pj4+DQo+ID4+Pj4+PiBTbywgSSB3YXMgZmluYWxseSBhYmxlIHRv
+IHNldHVwIE5GUyB1c2luZyB5b3VyIHJlcGxpY2F0ZWQgc2V0dXAgYW5kIEkNCj4gPj4+Pj4+IGNh
+bid0IHNlZSB0aGUgaXNzdWUgOigNCj4gPj4+Pj4+DQo+ID4+Pj4+PiBUaGUgb25seSBkaWZmZXJl
+bmNlIEkgaGF2ZSBmcm9tIHlvdXJzIGlzIHRoYXQgSSdtIHVzaW5nIFRDUCBpbiBORlMNCj4gPj4+
+Pj4+IHdoaWxzdCB5b3UgKEkgYmVsaWV2ZSBmcm9tIHRoZSBsb2dzKSwgdXNlIFVEUC4NCj4gPj4+
+Pj4NCj4gPj4+Pj4gU28gSSB0cmllZCBUQ1AgYnkgc2V0dGluZyB0aGUga2VybmVsIGJvb3QgcGFy
+YW1zIHRvICduZnN2ZXJzPTMnIGFuZA0KPiA+Pj4+PiAncHJvdG89dGNwJyBhbmQgdGhpcyBkb2Vz
+IGFwcGVhciB0byBiZSBtb3JlIHN0YWJsZSwgYnV0IG5vdCAxMDAlIHN0YWJsZS4NCj4gPj4+Pj4g
+SXQgc3RpbGwgYXBwZWFycyB0byBmYWlsIGluIHRoZSBzYW1lIHBsYWNlIGFib3V0IDUwJSBvZiB0
+aGUgdGltZS4NCj4gPj4+Pj4NCj4gPj4+Pj4+IFlvdSBkbyBoYXZlIGZsb3cgY29udHJvbCBhY3Rp
+dmUgcmlnaHQgPyBBbmQgeW91ciBIVyBGSUZPIHNpemUgaXMgPj0gNGsgPw0KPiA+Pj4+Pg0KPiA+
+Pj4+PiBIb3cgY2FuIEkgdmVyaWZ5IGlmIGZsb3cgY29udHJvbCBpcyBhY3RpdmU/DQo+ID4+Pj4N
+Cj4gPj4+PiBZb3UgY2FuIGNoZWNrIGl0IGJ5IGR1bXBpbmcgcmVnaXN0ZXIgTVRMX1J4UV9PcGVy
+YXRpb25fTW9kZSAoMHhkMzApLg0KPiA+Pg0KPiA+PiBXaGVyZSB3b3VsZCBiZSB0aGUgYXBwcm9w
+cmlhdGUgcGxhY2UgdG8gZHVtcCB0aGlzPyBBZnRlciBwcm9iZT8gTWF5YmUNCj4gPj4gYmVzdCBp
+ZiB5b3UgY2FuIHNoYXJlIGEgY29kZSBzbmlwcGV0IG9mIHdoZXJlIHRvIGR1bXAgdGhpcy4NCj4g
+Pj4NCj4gPj4+PiBDYW4geW91IGFsc28gYWRkIElPTU1VIGRlYnVnIGluIGZpbGUgImRyaXZlcnMv
+aW9tbXUvaW9tbXUuYyIgPw0KPiA+Pg0KPiA+PiBZb3UgY2FuIGZpbmQgYSBib290IGxvZyBoZXJl
+Og0KPiA+Pg0KPiA+PiBodHRwczovL3VybGRlZmVuc2UucHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9
+aHR0cHMtM0FfX3Bhc3RlLnVidW50dS5jb21fcF9xdFJxdFlLSEdGXyZkPUR3SUNhUSZjPURQTDZf
+WF82SmtYRng3QVhXcUIwdGcmcj1XSERzYzZrY1dBbDRpOTZWbTVoSl8xOUlKaXV4eF9wX1J6bzJn
+LXVIREt3Jm09TnJ4c1IyZXRwWkhHYjdIa040WGRnYUdtS00xWFl5bGRpaE5QTDZxVlN2MCZzPUNN
+QVRFY0hWb3FadzRzSXJOT1hjN1NGRV9rVl81Q081RVUyMS15SmV6NmMmZT0NCj4gPj4NCj4gPj4+
+IEFuZCwgcGxlYXNlIHRyeSBhdHRhY2hlZCBkZWJ1ZyBwYXRjaC4NCj4gPj4NCj4gPj4gV2l0aCB0
+aGlzIHBhdGNoIGl0IGFwcGVhcnMgdG8gYm9vdCBmaW5lLiBTbyBmYXIgbm8gaXNzdWVzIHNlZW4u
+DQo+ID4gDQo+ID4gVGhhbmsgeW91IGZvciB0ZXN0aW5nLg0KPiA+IA0KPiA+IEhpIENhdGFsaW4g
+YW5kIFdpbGwsDQo+ID4gDQo+ID4gU29ycnkgdG8gYWRkIHlvdSBpbiBzdWNoIGEgbG9uZyB0aHJl
+YWQgYnV0IHdlIGFyZSBzZWVpbmcgYSBETUEgaXNzdWUNCj4gPiB3aXRoIHN0bW1hYyBkcml2ZXIg
+aW4gYW4gQVJNNjQgcGxhdGZvcm0gd2l0aCBJT01NVSBlbmFibGVkLg0KPiA+IA0KPiA+IFRoZSBp
+c3N1ZSBzZWVtcyB0byBiZSBzb2x2ZWQgd2hlbiBidWZmZXJzIGFsbG9jYXRpb24gZm9yIERNQSBi
+YXNlZA0KPiA+IHRyYW5zZmVycyBhcmUgKm5vdCogbWFwcGVkIHdpdGggdGhlIERNQV9BVFRSX1NL
+SVBfQ1BVX1NZTkMgZmxhZyAqT1IqDQo+ID4gd2hlbiBJT01NVSBpcyBkaXNhYmxlZC4NCj4gPiAN
+Cj4gPiBOb3RpY2UgdGhhdCBhZnRlciB0cmFuc2ZlciBpcyBkb25lIHdlIGRvIHVzZQ0KPiA+IGRt
+YV9zeW5jX3NpbmdsZV9mb3Jfe2NwdSxkZXZpY2V9IGFuZCB0aGVuIHdlIHJldXNlICp0aGUgc2Ft
+ZSogcGFnZSBmb3INCj4gPiBhbm90aGVyIHRyYW5zZmVyLg0KPiA+IA0KPiA+IENhbiB5b3UgcGxl
+YXNlIGNvbW1lbnQgb24gd2hldGhlciBETUFfQVRUUl9TS0lQX0NQVV9TWU5DIGNhbiBub3QgYmUg
+dXNlZA0KPiA+IGluIEFSTTY0IHBsYXRmb3JtcyB3aXRoIElPTU1VID8NCj4gDQo+IEluIHRlcm1z
+IG9mIHdoYXQgdGhleSBkbywgdGhlcmUgc2hvdWxkIGJlIG5vIGRpZmZlcmVuY2Ugb24gYXJtNjQg
+YmV0d2VlbjoNCj4gDQo+IGRtYV9tYXBfcGFnZSguLi4sIGRpcik7DQo+IC4uLg0KPiBkbWFfdW5t
+YXBfcGFnZSguLi4sIGRpcik7DQo+IA0KPiBhbmQ6DQo+IA0KPiBkbWFfbWFwX3BhZ2VfYXR0cnMo
+Li4uLCBkaXIsIERNQV9BVFRSX1NLSVBfQ1BVX1NZTkMpOw0KPiBkbWFfc3luY19zaW5nbGVfZm9y
+X2RldmljZSguLi4sIGRpcik7DQo+IC4uLg0KPiBkbWFfc3luY19zaW5nbGVfZm9yX2NwdSguLi4s
+IGRpcik7DQo+IGRtYV91bm1hcF9wYWdlX2F0dHJzKC4uLiwgZGlyLCBETUFfQVRUUl9TS0lQX0NQ
+VV9TWU5DKTsNCj4gDQo+IHByb3ZpZGVkIHRoYXQgdGhlIGZpcnN0IHN5bmMgY292ZXJzIHRoZSB3
+aG9sZSBidWZmZXIgYW5kIGFueSBzdWJzZXF1ZW50IA0KPiBvbmVzIGNvdmVyIGF0IGxlYXN0IHRo
+ZSBwYXJ0cyBvZiB0aGUgYnVmZmVyIHdoaWNoIG1heSBoYXZlIGNoYW5nZWQuIFBsdXMgDQo+IGZv
+ciBjb2hlcmVudCBoYXJkd2FyZSBpdCdzIGVudGlyZWx5IG1vb3QgZWl0aGVyIHdheS4NCg0KVGhh
+bmtzIGZvciBjb25maXJtaW5nLiBUaGF0J3MgaW5kZWVkIHdoYXQgc3RtbWFjIGlzIGRvaW5nIHdo
+ZW4gYnVmZmVyIGlzIA0KcmVjZWl2ZWQgYnkgc3luY2luZyB0aGUgcGFja2V0IHNpemUgdG8gQ1BV
+Lg0KDQo+IA0KPiBHaXZlbiBKb24ncyBwcmV2aW91cyBmaW5kaW5ncywgSSB3b3VsZCBsZWFuIHRv
+d2FyZHMgdGhlIGlkZWEgdGhhdCANCj4gcGVyZm9ybWluZyB0aGUgZXh0cmEgKHJlZHVuZGFudCkg
+Y2FjaGUgbWFpbnRlbmFuY2UgcGx1cyBiYXJyaWVyIGluIA0KPiBkbWFfdW5tYXAgaXMgbW9zdGx5
+IGp1c3QgcGVydHVyYmluZyB0aW1pbmcgaW4gdGhlIHNhbWUgd2F5IGFzIHRoZSBkZWJ1ZyANCj4g
+cHJpbnQgd2hpY2ggYWxzbyBtYWRlIHRoaW5ncyBzZWVtIE9LLg0KDQpNaWtrbyBzYWlkIHRoYXQg
+VGVncmExODYgaXMgbm90IGNvaGVyZW50IHNvIHdlIGhhdmUgdG8gZXhwbGljaXQgZmx1c2ggDQpw
+aXBlbGluZSBidXQgSSBkb24ndCB1bmRlcnN0YW5kIHdoeSBzeW5jX3NpbmdsZSgpIGlzIG5vdCBk
+b2luZyBpdCAuLi4NCg0KSm9uLCBjYW4geW91IHBsZWFzZSByZW1vdmUgKmFsbCogZGVidWcgcHJp
+bnRzLCBoYWNrcywgZXRjIC4uLiBhbmQgdGVzdCANCnRoaXMgb25lIGluIGF0dGFjaCB3aXRoIHBs
+YWluIC1uZXQgdHJlZSA/DQoNCi0tLQ0KVGhhbmtzLA0KSm9zZSBNaWd1ZWwgQWJyZXUNCg==
 
-So this patch actually is needed to be applied or some other solution
-have to be provided. Since PCLK rate currently isn't altering anywhere
-in the kernel, I'd suggest to imply apply this series. Please let me
-know if you have any objections. I may re-iterate this patch with an
-extended commit message, describing the resolved problem in a more
-details, if necessary.
+--_002_MN2PR12MB3279ABF628C52883021123C5D3DD0MN2PR12MB3279namp_
+Content-Type: application/octet-stream;
+	name="0001-net-stmmac-Flush-all-data-cache-in-RX-path.patch"
+Content-Description: 0001-net-stmmac-Flush-all-data-cache-in-RX-path.patch
+Content-Disposition: attachment;
+	filename="0001-net-stmmac-Flush-all-data-cache-in-RX-path.patch"; size=1647;
+	creation-date="Mon, 29 Jul 2019 14:01:54 GMT";
+	modification-date="Mon, 29 Jul 2019 14:01:54 GMT"
+Content-Transfer-Encoding: base64
+
+RnJvbSAxYjUxMmM3OTljZDg5NmM3YjYwOWJlNTEyZGI3YzQ3N2RlZjQzYzZiIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8MWI1MTJjNzk5Y2Q4OTZjN2I2MDliZTUxMmRiN2M0
+NzdkZWY0M2M2Yi4xNTY0NDA4OTE0LmdpdC5qb2FicmV1QHN5bm9wc3lzLmNvbT4KRnJvbTogSm9z
+ZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkRhdGU6IE1vbiwgMjkgSnVsIDIwMTkgMTY6
+MDE6MzYgKzAyMDAKU3ViamVjdDogW1BBVENIIG5ldF0gbmV0OiBzdG1tYWM6IEZsdXNoIGFsbCBk
+YXRhIGNhY2hlIGluIFJYIHBhdGgKClNpZ25lZC1vZmYtYnk6IEpvc2UgQWJyZXUgPGpvYWJyZXVA
+c3lub3BzeXMuY29tPgotLS0KQ2M6IEdpdXNlcHBlIENhdmFsbGFybyA8cGVwcGUuY2F2YWxsYXJv
+QHN0LmNvbT4KQ2M6IEFsZXhhbmRyZSBUb3JndWUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPgpD
+YzogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkNjOiAiRGF2aWQgUy4gTWlsbGVy
+IiA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD4KQ2M6IE1heGltZSBDb3F1ZWxpbiA8bWNvcXVlbGluLnN0
+bTMyQGdtYWlsLmNvbT4KQ2M6IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXN0bTMy
+QHN0LW1kLW1haWxtYW4uc3Rvcm1yZXBseS5jb20KQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZwpDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwotLS0KIGRyaXZl
+cnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMgfCAzICsrKwogMSBm
+aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0
+aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19tYWluLmMgYi9kcml2ZXJzL25ldC9ldGhlcm5l
+dC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jCmluZGV4IDk4YjFhNWM2ZDUzNy4uZWQ3ZjBk
+NmJkMGJjIDEwMDY0NAotLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9z
+dG1tYWNfbWFpbi5jCisrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0
+bW1hY19tYWluLmMKQEAgLTI3LDYgKzI3LDcgQEAKICNpbmNsdWRlIDxsaW51eC9pZi5oPgogI2lu
+Y2x1ZGUgPGxpbnV4L2lmX3ZsYW4uaD4KICNpbmNsdWRlIDxsaW51eC9kbWEtbWFwcGluZy5oPgor
+I2luY2x1ZGUgPGxpbnV4L2RtYS1ub25jb2hlcmVudC5oPgogI2luY2x1ZGUgPGxpbnV4L3NsYWIu
+aD4KICNpbmNsdWRlIDxsaW51eC9wcmVmZXRjaC5oPgogI2luY2x1ZGUgPGxpbnV4L3BpbmN0cmwv
+Y29uc3VtZXIuaD4KQEAgLTM0MjAsNiArMzQyMSw4IEBAIHN0YXRpYyBpbnQgc3RtbWFjX3J4KHN0
+cnVjdCBzdG1tYWNfcHJpdiAqcHJpdiwgaW50IGxpbWl0LCB1MzIgcXVldWUpCiAJCQkJY29udGlu
+dWU7CiAJCQl9CiAKKwkJCWFyY2hfZG1hX3ByZXBfY29oZXJlbnQoYnVmLT5wYWdlLCBmcmFtZV9s
+ZW4pOworCiAJCQlkbWFfc3luY19zaW5nbGVfZm9yX2NwdShwcml2LT5kZXZpY2UsIGJ1Zi0+YWRk
+ciwKIAkJCQkJCWZyYW1lX2xlbiwgRE1BX0ZST01fREVWSUNFKTsKIAkJCXNrYl9jb3B5X3RvX2xp
+bmVhcl9kYXRhKHNrYiwgcGFnZV9hZGRyZXNzKGJ1Zi0+cGFnZSksCi0tIAoyLjcuNAoK
+
+--_002_MN2PR12MB3279ABF628C52883021123C5D3DD0MN2PR12MB3279namp_--
