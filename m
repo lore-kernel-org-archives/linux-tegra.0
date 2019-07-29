@@ -1,51 +1,98 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH 2/4] gpio: allow customizing hierarchical IRQ chips
-Date: Sun, 28 Jul 2019 20:11:51 -0400
-Message-ID: <20190729001151.GA17127@onstation.org>
-References: <20190708110138.24657-1-masneyb@onstation.org>
- <20190708110138.24657-3-masneyb@onstation.org>
- <CACRpkdZn-czbOOTrRs5ZgR7qTtf2A4i_L4J8_vk+kJiBuAnikg@mail.gmail.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Date: Mon, 29 Jul 2019 08:16:15 +0000
+Message-ID: <MN2PR12MB327907D4A6FB378AC989571AD3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
+ <BYAPR12MB3269927AB1F67D46E150ED6BD3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <9e695f33-fd9f-a910-0891-2b63bd75e082@nvidia.com>
+ <BYAPR12MB3269B4A401E4DA10A07515C7D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <1e2ea942-28fe-15b9-f675-8d6585f9a33f@nvidia.com>
+ <BYAPR12MB326922CDCB1D4B3D4A780CFDD3C30@BYAPR12MB3269.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed;
+        boundary="_002_MN2PR12MB327907D4A6FB378AC989571AD3DD0MN2PR12MB3279namp_"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZn-czbOOTrRs5ZgR7qTtf2A4i_L4J8_vk+kJiBuAnikg@mail.gmail.com>
+In-Reply-To: <BYAPR12MB326922CDCB1D4B3D4A780CFDD3C30@BYAPR12MB3269.namprd12.prod.outlook.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, linux-tegra@vger.kernel.org, David Daney <david.daney@cavium.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thierry Reding <treding@nvidia.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <agross@kernel.org>, MSM <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Robin Murphy <robin.murphy@arm.com>, "David S . Miller" <davem@davemloft.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 12:49:55AM +0200, Linus Walleij wrote:
-> On Mon, Jul 8, 2019 at 1:01 PM Brian Masney <masneyb@onstation.org> wrote:
-> > +static void gpiochip_add_default_irq_domain_ops(struct irq_domain_ops *ops)
-> > +{
-> > +       if (!ops->activate)
-> > +               ops->activate = gpiochip_irq_domain_activate;
-> > +
-> > +       if (!ops->deactivate)
-> > +               ops->deactivate = gpiochip_irq_domain_deactivate;
-> > +
-> > +       if (!ops->translate)
-> > +               ops->translate = gpiochip_hierarchy_irq_domain_translate;
-> > +
-> > +       if (!ops->alloc)
-> > +               ops->alloc = gpiochip_hierarchy_irq_domain_alloc;
-> > +
-> > +       if (!ops->free)
-> > +               ops->free = irq_domain_free_irqs_common;
-> > +}
-> 
-> I'm fine with translate(), this seems to be what Lina needs too.
-> 
-> But do we really need to make them all optional? activate() and
-> deactivate() will require the driver to lock the irq etc which is hairy.
+--_002_MN2PR12MB327907D4A6FB378AC989571AD3DD0MN2PR12MB3279namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-I can't think of a reason right now that we'd need to override the
-others. Since the structure was there, I made all of them optional to
-try to future proof this a little bit.
+RnJvbTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+DQpEYXRlOiBKdWwvMjcvMjAx
+OSwgMTY6NTY6MzcgKFVUQyswMDowMCkNCg0KPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhA
+bnZpZGlhLmNvbT4NCj4gRGF0ZTogSnVsLzI2LzIwMTksIDE1OjExOjAwIChVVEMrMDA6MDApDQo+
+IA0KPiA+IA0KPiA+IE9uIDI1LzA3LzIwMTkgMTY6MTIsIEpvc2UgQWJyZXUgd3JvdGU6DQo+ID4g
+PiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4NCj4gPiA+IERhdGU6IEp1
+bC8yNS8yMDE5LCAxNToyNTo1OSAoVVRDKzAwOjAwKQ0KPiA+ID4gDQo+ID4gPj4NCj4gPiA+PiBP
+biAyNS8wNy8yMDE5IDE0OjI2LCBKb3NlIEFicmV1IHdyb3RlOg0KPiA+ID4+DQo+ID4gPj4gLi4u
+DQo+ID4gPj4NCj4gPiA+Pj4gV2VsbCwgSSB3YXNuJ3QgZXhwZWN0aW5nIHRoYXQgOi8NCj4gPiA+
+Pj4NCj4gPiA+Pj4gUGVyIGRvY3VtZW50YXRpb24gb2YgYmFycmllcnMgSSB0aGluayB3ZSBzaG91
+bGQgc2V0IGRlc2NyaXB0b3IgZmllbGRzIA0KPiA+ID4+PiBhbmQgdGhlbiBiYXJyaWVyIGFuZCBm
+aW5hbGx5IG93bmVyc2hpcCB0byBIVyBzbyB0aGF0IHJlbWFpbmluZyBmaWVsZHMgDQo+ID4gPj4+
+IGFyZSBjb2hlcmVudCBiZWZvcmUgb3duZXIgaXMgc2V0Lg0KPiA+ID4+Pg0KPiA+ID4+PiBBbnl3
+YXksIGNhbiB5b3UgYWxzbyBhZGQgYSBkbWFfcm1iKCkgYWZ0ZXIgdGhlIGNhbGwgdG8gDQo+ID4g
+Pj4+IHN0bW1hY19yeF9zdGF0dXMoKSA/DQo+ID4gPj4NCj4gPiA+PiBZZXMuIEkgcmVtb3ZlZCB0
+aGUgZGVidWcgcHJpbnQgYWRkZWQgdGhlIGJhcnJpZXIsIGJ1dCB0aGF0IGRpZCBub3QgaGVscC4N
+Cj4gPiA+IA0KPiA+ID4gU28sIEkgd2FzIGZpbmFsbHkgYWJsZSB0byBzZXR1cCBORlMgdXNpbmcg
+eW91ciByZXBsaWNhdGVkIHNldHVwIGFuZCBJIA0KPiA+ID4gY2FuJ3Qgc2VlIHRoZSBpc3N1ZSA6
+KA0KPiA+ID4gDQo+ID4gPiBUaGUgb25seSBkaWZmZXJlbmNlIEkgaGF2ZSBmcm9tIHlvdXJzIGlz
+IHRoYXQgSSdtIHVzaW5nIFRDUCBpbiBORlMgDQo+ID4gPiB3aGlsc3QgeW91IChJIGJlbGlldmUg
+ZnJvbSB0aGUgbG9ncyksIHVzZSBVRFAuDQo+ID4gDQo+ID4gU28gSSB0cmllZCBUQ1AgYnkgc2V0
+dGluZyB0aGUga2VybmVsIGJvb3QgcGFyYW1zIHRvICduZnN2ZXJzPTMnIGFuZA0KPiA+ICdwcm90
+bz10Y3AnIGFuZCB0aGlzIGRvZXMgYXBwZWFyIHRvIGJlIG1vcmUgc3RhYmxlLCBidXQgbm90IDEw
+MCUgc3RhYmxlLg0KPiA+IEl0IHN0aWxsIGFwcGVhcnMgdG8gZmFpbCBpbiB0aGUgc2FtZSBwbGFj
+ZSBhYm91dCA1MCUgb2YgdGhlIHRpbWUuDQo+ID4gDQo+ID4gPiBZb3UgZG8gaGF2ZSBmbG93IGNv
+bnRyb2wgYWN0aXZlIHJpZ2h0ID8gQW5kIHlvdXIgSFcgRklGTyBzaXplIGlzID49IDRrID8NCj4g
+PiANCj4gPiBIb3cgY2FuIEkgdmVyaWZ5IGlmIGZsb3cgY29udHJvbCBpcyBhY3RpdmU/DQo+IA0K
+PiBZb3UgY2FuIGNoZWNrIGl0IGJ5IGR1bXBpbmcgcmVnaXN0ZXIgTVRMX1J4UV9PcGVyYXRpb25f
+TW9kZSAoMHhkMzApLg0KPiANCj4gQ2FuIHlvdSBhbHNvIGFkZCBJT01NVSBkZWJ1ZyBpbiBmaWxl
+ICJkcml2ZXJzL2lvbW11L2lvbW11LmMiID8NCg0KQW5kLCBwbGVhc2UgdHJ5IGF0dGFjaGVkIGRl
+YnVnIHBhdGNoLg0KDQotLS0NClRoYW5rcywNCkpvc2UgTWlndWVsIEFicmV1DQo=
 
-It probably would be better to only make translate optional at this
-point. If needed, someone can submit a patch for one or more of the
-others with their use case.
+--_002_MN2PR12MB327907D4A6FB378AC989571AD3DD0MN2PR12MB3279namp_
+Content-Type: application/octet-stream;
+	name="0001-net-page_pool-Do-not-skip-CPU-sync.patch"
+Content-Description: 0001-net-page_pool-Do-not-skip-CPU-sync.patch
+Content-Disposition: attachment;
+	filename="0001-net-page_pool-Do-not-skip-CPU-sync.patch"; size=1532;
+	creation-date="Mon, 29 Jul 2019 08:14:35 GMT";
+	modification-date="Mon, 29 Jul 2019 08:14:35 GMT"
+Content-Transfer-Encoding: base64
 
-Brian
+RnJvbSBkMjAzYTRmMDU1YTM2YWUyMGVmYmNlZTdjZGY3MGNlMTNmZmYxMmM5IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8ZDIwM2E0ZjA1NWEzNmFlMjBlZmJjZWU3Y2RmNzBj
+ZTEzZmZmMTJjOS4xNTY0Mzg4MDc1LmdpdC5qb2FicmV1QHN5bm9wc3lzLmNvbT4KRnJvbTogSm9z
+ZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+CkRhdGU6IE1vbiwgMjkgSnVsIDIwMTkgMTA6
+MTQ6MjEgKzAyMDAKU3ViamVjdDogW1BBVENIIG5ldF0gbmV0OiBwYWdlX3Bvb2w6IERvIG5vdCBz
+a2lwIENQVSBzeW5jCgpTaWduZWQtb2ZmLWJ5OiBKb3NlIEFicmV1IDxqb2FicmV1QHN5bm9wc3lz
+LmNvbT4KLS0tCkNjOiBKZXNwZXIgRGFuZ2FhcmQgQnJvdWVyIDxoYXdrQGtlcm5lbC5vcmc+CkNj
+OiBJbGlhcyBBcGFsb2RpbWFzIDxpbGlhcy5hcGFsb2RpbWFzQGxpbmFyby5vcmc+CkNjOiAiRGF2
+aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD4KQ2M6IG5ldGRldkB2Z2VyLmtlcm5l
+bC5vcmcKQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcKLS0tCiBuZXQvY29yZS9wYWdl
+X3Bvb2wuYyB8IDUgKystLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVs
+ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvbmV0L2NvcmUvcGFnZV9wb29sLmMgYi9uZXQvY29yZS9w
+YWdlX3Bvb2wuYwppbmRleCAzMjcyZGM3YThjODEuLjAyNjJmY2RmMjE3ZSAxMDA2NDQKLS0tIGEv
+bmV0L2NvcmUvcGFnZV9wb29sLmMKKysrIGIvbmV0L2NvcmUvcGFnZV9wb29sLmMKQEAgLTE1Niw3
+ICsxNTYsNyBAQCBzdGF0aWMgc3RydWN0IHBhZ2UgKl9fcGFnZV9wb29sX2FsbG9jX3BhZ2VzX3Ns
+b3coc3RydWN0IHBhZ2VfcG9vbCAqcG9vbCwKIAkgKi8KIAlkbWEgPSBkbWFfbWFwX3BhZ2VfYXR0
+cnMocG9vbC0+cC5kZXYsIHBhZ2UsIDAsCiAJCQkJIChQQUdFX1NJWkUgPDwgcG9vbC0+cC5vcmRl
+ciksCi0JCQkJIHBvb2wtPnAuZG1hX2RpciwgRE1BX0FUVFJfU0tJUF9DUFVfU1lOQyk7CisJCQkJ
+IHBvb2wtPnAuZG1hX2RpciwgMCk7CiAJaWYgKGRtYV9tYXBwaW5nX2Vycm9yKHBvb2wtPnAuZGV2
+LCBkbWEpKSB7CiAJCXB1dF9wYWdlKHBhZ2UpOwogCQlyZXR1cm4gTlVMTDsKQEAgLTIzMCw4ICsy
+MzAsNyBAQCBzdGF0aWMgdm9pZCBfX3BhZ2VfcG9vbF9jbGVhbl9wYWdlKHN0cnVjdCBwYWdlX3Bv
+b2wgKnBvb2wsCiAJZG1hID0gcGFnZS0+ZG1hX2FkZHI7CiAJLyogRE1BIHVubWFwICovCiAJZG1h
+X3VubWFwX3BhZ2VfYXR0cnMocG9vbC0+cC5kZXYsIGRtYSwKLQkJCSAgICAgUEFHRV9TSVpFIDw8
+IHBvb2wtPnAub3JkZXIsIHBvb2wtPnAuZG1hX2RpciwKLQkJCSAgICAgRE1BX0FUVFJfU0tJUF9D
+UFVfU1lOQyk7CisJCQkgICAgIFBBR0VfU0laRSA8PCBwb29sLT5wLm9yZGVyLCBwb29sLT5wLmRt
+YV9kaXIsIDApOwogCXBhZ2UtPmRtYV9hZGRyID0gMDsKIHNraXBfZG1hX3VubWFwOgogCWF0b21p
+Y19pbmMoJnBvb2wtPnBhZ2VzX3N0YXRlX3JlbGVhc2VfY250KTsKLS0gCjIuNy40Cgo=
+
+--_002_MN2PR12MB327907D4A6FB378AC989571AD3DD0MN2PR12MB3279namp_--
