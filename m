@@ -1,8 +1,8 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
  Pool
-Date: Mon, 29 Jul 2019 11:29:08 +0000
-Message-ID: <MN2PR12MB327997BDF2EA5CEE00F45AC3D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+Date: Mon, 29 Jul 2019 12:52:02 +0100
+Message-ID: <fcf648d2-70cc-d734-871a-ca7f745791b7@arm.com>
 References: <cover.1562149883.git.joabreu@synopsys.com>
  <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
  <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
@@ -13,68 +13,121 @@ References: <cover.1562149883.git.joabreu@synopsys.com>
  <BYAPR12MB326922CDCB1D4B3D4A780CFDD3C30@BYAPR12MB3269.namprd12.prod.outlook.com>
  <MN2PR12MB327907D4A6FB378AC989571AD3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
  <b99b1e49-0cbc-2c66-6325-50fa6f263d91@nvidia.com>
+ <MN2PR12MB327997BDF2EA5CEE00F45AC3D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b99b1e49-0cbc-2c66-6325-50fa6f263d91@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Robin Murphy <robin.murphy@arm.com>, "David S . Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <MN2PR12MB327997BDF2EA5CEE00F45AC3D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+Content-Language: en-GB
+Sender: netdev-owner@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, "David S . Miller" <davem@davemloft.net>
 List-Id: linux-tegra@vger.kernel.org
 
-KysgQ2F0YWxpbiwgV2lsbCAoQVJNNjQgTWFpbnRhaW5lcnMpDQoNCkZyb206IEpvbiBIdW50ZXIg
-PGpvbmF0aGFuaEBudmlkaWEuY29tPg0KRGF0ZTogSnVsLzI5LzIwMTksIDExOjU1OjE4IChVVEMr
-MDA6MDApDQoNCj4gDQo+IE9uIDI5LzA3LzIwMTkgMDk6MTYsIEpvc2UgQWJyZXUgd3JvdGU6DQo+
-ID4gRnJvbTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+DQo+ID4gRGF0ZTogSnVs
-LzI3LzIwMTksIDE2OjU2OjM3IChVVEMrMDA6MDApDQo+ID4gDQo+ID4+IEZyb206IEpvbiBIdW50
-ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KPiA+PiBEYXRlOiBKdWwvMjYvMjAxOSwgMTU6MTE6
-MDAgKFVUQyswMDowMCkNCj4gPj4NCj4gPj4+DQo+ID4+PiBPbiAyNS8wNy8yMDE5IDE2OjEyLCBK
-b3NlIEFicmV1IHdyb3RlOg0KPiA+Pj4+IEZyb206IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlk
-aWEuY29tPg0KPiA+Pj4+IERhdGU6IEp1bC8yNS8yMDE5LCAxNToyNTo1OSAoVVRDKzAwOjAwKQ0K
-PiA+Pj4+DQo+ID4+Pj4+DQo+ID4+Pj4+IE9uIDI1LzA3LzIwMTkgMTQ6MjYsIEpvc2UgQWJyZXUg
-d3JvdGU6DQo+ID4+Pj4+DQo+ID4+Pj4+IC4uLg0KPiA+Pj4+Pg0KPiA+Pj4+Pj4gV2VsbCwgSSB3
-YXNuJ3QgZXhwZWN0aW5nIHRoYXQgOi8NCj4gPj4+Pj4+DQo+ID4+Pj4+PiBQZXIgZG9jdW1lbnRh
-dGlvbiBvZiBiYXJyaWVycyBJIHRoaW5rIHdlIHNob3VsZCBzZXQgZGVzY3JpcHRvciBmaWVsZHMg
-DQo+ID4+Pj4+PiBhbmQgdGhlbiBiYXJyaWVyIGFuZCBmaW5hbGx5IG93bmVyc2hpcCB0byBIVyBz
-byB0aGF0IHJlbWFpbmluZyBmaWVsZHMgDQo+ID4+Pj4+PiBhcmUgY29oZXJlbnQgYmVmb3JlIG93
-bmVyIGlzIHNldC4NCj4gPj4+Pj4+DQo+ID4+Pj4+PiBBbnl3YXksIGNhbiB5b3UgYWxzbyBhZGQg
-YSBkbWFfcm1iKCkgYWZ0ZXIgdGhlIGNhbGwgdG8gDQo+ID4+Pj4+PiBzdG1tYWNfcnhfc3RhdHVz
-KCkgPw0KPiA+Pj4+Pg0KPiA+Pj4+PiBZZXMuIEkgcmVtb3ZlZCB0aGUgZGVidWcgcHJpbnQgYWRk
-ZWQgdGhlIGJhcnJpZXIsIGJ1dCB0aGF0IGRpZCBub3QgaGVscC4NCj4gPj4+Pg0KPiA+Pj4+IFNv
-LCBJIHdhcyBmaW5hbGx5IGFibGUgdG8gc2V0dXAgTkZTIHVzaW5nIHlvdXIgcmVwbGljYXRlZCBz
-ZXR1cCBhbmQgSSANCj4gPj4+PiBjYW4ndCBzZWUgdGhlIGlzc3VlIDooDQo+ID4+Pj4NCj4gPj4+
-PiBUaGUgb25seSBkaWZmZXJlbmNlIEkgaGF2ZSBmcm9tIHlvdXJzIGlzIHRoYXQgSSdtIHVzaW5n
-IFRDUCBpbiBORlMgDQo+ID4+Pj4gd2hpbHN0IHlvdSAoSSBiZWxpZXZlIGZyb20gdGhlIGxvZ3Mp
-LCB1c2UgVURQLg0KPiA+Pj4NCj4gPj4+IFNvIEkgdHJpZWQgVENQIGJ5IHNldHRpbmcgdGhlIGtl
-cm5lbCBib290IHBhcmFtcyB0byAnbmZzdmVycz0zJyBhbmQNCj4gPj4+ICdwcm90bz10Y3AnIGFu
-ZCB0aGlzIGRvZXMgYXBwZWFyIHRvIGJlIG1vcmUgc3RhYmxlLCBidXQgbm90IDEwMCUgc3RhYmxl
-Lg0KPiA+Pj4gSXQgc3RpbGwgYXBwZWFycyB0byBmYWlsIGluIHRoZSBzYW1lIHBsYWNlIGFib3V0
-IDUwJSBvZiB0aGUgdGltZS4NCj4gPj4+DQo+ID4+Pj4gWW91IGRvIGhhdmUgZmxvdyBjb250cm9s
-IGFjdGl2ZSByaWdodCA/IEFuZCB5b3VyIEhXIEZJRk8gc2l6ZSBpcyA+PSA0ayA/DQo+ID4+Pg0K
-PiA+Pj4gSG93IGNhbiBJIHZlcmlmeSBpZiBmbG93IGNvbnRyb2wgaXMgYWN0aXZlPw0KPiA+Pg0K
-PiA+PiBZb3UgY2FuIGNoZWNrIGl0IGJ5IGR1bXBpbmcgcmVnaXN0ZXIgTVRMX1J4UV9PcGVyYXRp
-b25fTW9kZSAoMHhkMzApLg0KPiANCj4gV2hlcmUgd291bGQgYmUgdGhlIGFwcHJvcHJpYXRlIHBs
-YWNlIHRvIGR1bXAgdGhpcz8gQWZ0ZXIgcHJvYmU/IE1heWJlDQo+IGJlc3QgaWYgeW91IGNhbiBz
-aGFyZSBhIGNvZGUgc25pcHBldCBvZiB3aGVyZSB0byBkdW1wIHRoaXMuDQo+IA0KPiA+PiBDYW4g
-eW91IGFsc28gYWRkIElPTU1VIGRlYnVnIGluIGZpbGUgImRyaXZlcnMvaW9tbXUvaW9tbXUuYyIg
-Pw0KPiANCj4gWW91IGNhbiBmaW5kIGEgYm9vdCBsb2cgaGVyZToNCj4gDQo+IGh0dHBzOi8vdXJs
-ZGVmZW5zZS5wcm9vZnBvaW50LmNvbS92Mi91cmw/dT1odHRwcy0zQV9fcGFzdGUudWJ1bnR1LmNv
-bV9wX3F0UnF0WUtIR0ZfJmQ9RHdJQ2FRJmM9RFBMNl9YXzZKa1hGeDdBWFdxQjB0ZyZyPVdIRHNj
-NmtjV0FsNGk5NlZtNWhKXzE5SUppdXh4X3BfUnpvMmctdUhES3cmbT1OcnhzUjJldHBaSEdiN0hr
-TjRYZGdhR21LTTFYWXlsZGloTlBMNnFWU3YwJnM9Q01BVEVjSFZvcVp3NHNJck5PWGM3U0ZFX2tW
-XzVDTzVFVTIxLXlKZXo2YyZlPSANCj4gDQo+ID4gQW5kLCBwbGVhc2UgdHJ5IGF0dGFjaGVkIGRl
-YnVnIHBhdGNoLg0KPiANCj4gV2l0aCB0aGlzIHBhdGNoIGl0IGFwcGVhcnMgdG8gYm9vdCBmaW5l
-LiBTbyBmYXIgbm8gaXNzdWVzIHNlZW4uDQoNClRoYW5rIHlvdSBmb3IgdGVzdGluZy4NCg0KSGkg
-Q2F0YWxpbiBhbmQgV2lsbCwNCg0KU29ycnkgdG8gYWRkIHlvdSBpbiBzdWNoIGEgbG9uZyB0aHJl
-YWQgYnV0IHdlIGFyZSBzZWVpbmcgYSBETUEgaXNzdWUgDQp3aXRoIHN0bW1hYyBkcml2ZXIgaW4g
-YW4gQVJNNjQgcGxhdGZvcm0gd2l0aCBJT01NVSBlbmFibGVkLg0KDQpUaGUgaXNzdWUgc2VlbXMg
-dG8gYmUgc29sdmVkIHdoZW4gYnVmZmVycyBhbGxvY2F0aW9uIGZvciBETUEgYmFzZWQgDQp0cmFu
-c2ZlcnMgYXJlICpub3QqIG1hcHBlZCB3aXRoIHRoZSBETUFfQVRUUl9TS0lQX0NQVV9TWU5DIGZs
-YWcgKk9SKiANCndoZW4gSU9NTVUgaXMgZGlzYWJsZWQuDQoNCk5vdGljZSB0aGF0IGFmdGVyIHRy
-YW5zZmVyIGlzIGRvbmUgd2UgZG8gdXNlIA0KZG1hX3N5bmNfc2luZ2xlX2Zvcl97Y3B1LGRldmlj
-ZX0gYW5kIHRoZW4gd2UgcmV1c2UgKnRoZSBzYW1lKiBwYWdlIGZvciANCmFub3RoZXIgdHJhbnNm
-ZXIuDQoNCkNhbiB5b3UgcGxlYXNlIGNvbW1lbnQgb24gd2hldGhlciBETUFfQVRUUl9TS0lQX0NQ
-VV9TWU5DIGNhbiBub3QgYmUgdXNlZCANCmluIEFSTTY0IHBsYXRmb3JtcyB3aXRoIElPTU1VID8N
-Cg0KLS0tDQpUaGFua3MsDQpKb3NlIE1pZ3VlbCBBYnJldQ0K
+On 29/07/2019 12:29, Jose Abreu wrote:
+> ++ Catalin, Will (ARM64 Maintainers)
+> 
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Date: Jul/29/2019, 11:55:18 (UTC+00:00)
+> 
+>>
+>> On 29/07/2019 09:16, Jose Abreu wrote:
+>>> From: Jose Abreu <joabreu@synopsys.com>
+>>> Date: Jul/27/2019, 16:56:37 (UTC+00:00)
+>>>
+>>>> From: Jon Hunter <jonathanh@nvidia.com>
+>>>> Date: Jul/26/2019, 15:11:00 (UTC+00:00)
+>>>>
+>>>>>
+>>>>> On 25/07/2019 16:12, Jose Abreu wrote:
+>>>>>> From: Jon Hunter <jonathanh@nvidia.com>
+>>>>>> Date: Jul/25/2019, 15:25:59 (UTC+00:00)
+>>>>>>
+>>>>>>>
+>>>>>>> On 25/07/2019 14:26, Jose Abreu wrote:
+>>>>>>>
+>>>>>>> ...
+>>>>>>>
+>>>>>>>> Well, I wasn't expecting that :/
+>>>>>>>>
+>>>>>>>> Per documentation of barriers I think we should set descriptor fields
+>>>>>>>> and then barrier and finally ownership to HW so that remaining fields
+>>>>>>>> are coherent before owner is set.
+>>>>>>>>
+>>>>>>>> Anyway, can you also add a dma_rmb() after the call to
+>>>>>>>> stmmac_rx_status() ?
+>>>>>>>
+>>>>>>> Yes. I removed the debug print added the barrier, but that did not help.
+>>>>>>
+>>>>>> So, I was finally able to setup NFS using your replicated setup and I
+>>>>>> can't see the issue :(
+>>>>>>
+>>>>>> The only difference I have from yours is that I'm using TCP in NFS
+>>>>>> whilst you (I believe from the logs), use UDP.
+>>>>>
+>>>>> So I tried TCP by setting the kernel boot params to 'nfsvers=3' and
+>>>>> 'proto=tcp' and this does appear to be more stable, but not 100% stable.
+>>>>> It still appears to fail in the same place about 50% of the time.
+>>>>>
+>>>>>> You do have flow control active right ? And your HW FIFO size is >= 4k ?
+>>>>>
+>>>>> How can I verify if flow control is active?
+>>>>
+>>>> You can check it by dumping register MTL_RxQ_Operation_Mode (0xd30).
+>>
+>> Where would be the appropriate place to dump this? After probe? Maybe
+>> best if you can share a code snippet of where to dump this.
+>>
+>>>> Can you also add IOMMU debug in file "drivers/iommu/iommu.c" ?
+>>
+>> You can find a boot log here:
+>>
+>> https://urldefense.proofpoint.com/v2/url?u=https-3A__paste.ubuntu.com_p_qtRqtYKHGF_&d=DwICaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=WHDsc6kcWAl4i96Vm5hJ_19IJiuxx_p_Rzo2g-uHDKw&m=NrxsR2etpZHGb7HkN4XdgaGmKM1XYyldihNPL6qVSv0&s=CMATEcHVoqZw4sIrNOXc7SFE_kV_5CO5EU21-yJez6c&e=
+>>
+>>> And, please try attached debug patch.
+>>
+>> With this patch it appears to boot fine. So far no issues seen.
+> 
+> Thank you for testing.
+> 
+> Hi Catalin and Will,
+> 
+> Sorry to add you in such a long thread but we are seeing a DMA issue
+> with stmmac driver in an ARM64 platform with IOMMU enabled.
+> 
+> The issue seems to be solved when buffers allocation for DMA based
+> transfers are *not* mapped with the DMA_ATTR_SKIP_CPU_SYNC flag *OR*
+> when IOMMU is disabled.
+> 
+> Notice that after transfer is done we do use
+> dma_sync_single_for_{cpu,device} and then we reuse *the same* page for
+> another transfer.
+> 
+> Can you please comment on whether DMA_ATTR_SKIP_CPU_SYNC can not be used
+> in ARM64 platforms with IOMMU ?
+
+In terms of what they do, there should be no difference on arm64 between:
+
+dma_map_page(..., dir);
+...
+dma_unmap_page(..., dir);
+
+and:
+
+dma_map_page_attrs(..., dir, DMA_ATTR_SKIP_CPU_SYNC);
+dma_sync_single_for_device(..., dir);
+...
+dma_sync_single_for_cpu(..., dir);
+dma_unmap_page_attrs(..., dir, DMA_ATTR_SKIP_CPU_SYNC);
+
+provided that the first sync covers the whole buffer and any subsequent 
+ones cover at least the parts of the buffer which may have changed. Plus 
+for coherent hardware it's entirely moot either way.
+
+Given Jon's previous findings, I would lean towards the idea that 
+performing the extra (redundant) cache maintenance plus barrier in 
+dma_unmap is mostly just perturbing timing in the same way as the debug 
+print which also made things seem OK.
+
+Robin.
