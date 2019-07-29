@@ -1,23 +1,26 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.19 00/50] 4.19.62-stable review
-Date: Mon, 29 Jul 2019 10:02:27 +0100
-Message-ID: <4ad026a6-7456-ae49-06e3-24dc537f2c11@nvidia.com>
-References: <20190726152300.760439618@linuxfoundation.org>
+Subject: Re: [PATCH 5.1 00/62] 5.1.21-stable review
+Date: Mon, 29 Jul 2019 10:02:43 +0100
+Message-ID: <3e1bfded-2676-e7b7-e1d6-5d1c28ea5176@nvidia.com>
+References: <20190726152301.720139286@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
 Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
 On 26/07/2019 16:24, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.62 release.
-> There are 50 patches in this series, all will be posted as a response
+> Note, this will be the LAST 5.1.y kernel release.  Everyone should move
+> to the 5.2.y series at this point in time.
+> 
+> This is the start of the stable review cycle for the 5.1.21 release.
+> There are 62 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +28,9 @@ On 26/07/2019 16:24, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.62-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.21-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +39,12 @@ On 26/07/2019 16:24, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v4.19:
+Test results for stable-v5.1:
     12 builds:	12 pass, 0 fail
     22 boots:	22 pass, 0 fail
     32 tests:	32 pass, 0 fail
 
-Linux version:	4.19.62-g64f4694072aa
+Linux version:	5.1.21-g4a9b1eb8bc3b
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
