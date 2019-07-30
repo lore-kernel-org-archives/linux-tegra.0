@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 04/15] memory: tegra20-emc: Include io.h instead of iopoll.h
-Date: Tue, 30 Jul 2019 19:56:07 +0300
-Message-ID: <20190730165618.10122-5-digetx@gmail.com>
+Subject: [PATCH v9 06/15] memory: tegra20-emc: Print a brief info message about the timings
+Date: Tue, 30 Jul 2019 19:56:09 +0300
+Message-ID: <20190730165618.10122-7-digetx@gmail.com>
 References: <20190730165618.10122-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,33 @@ To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The register polling code was gone, but the included header change was
-missed. Fix it up for consistency.
+During boot print how many memory timings got the driver and what's the
+RAM code. This is a very useful information when something is wrong with
+boards memory timing.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Suggested-by: Marc Dietrich <marvin24@gmx.de>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memory/tegra/tegra20-emc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index b519f02b0ee9..1ce351dd5461 100644
+index 85c24f285fd4..25a6aad6a7a9 100644
 --- a/drivers/memory/tegra/tegra20-emc.c
 +++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -10,7 +10,7 @@
- #include <linux/completion.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
--#include <linux/iopoll.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
+@@ -368,6 +368,13 @@ static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
+ 	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
+ 	     NULL);
+ 
++	dev_info(emc->dev,
++		 "got %u timings for RAM code %u (min %luMHz max %luMHz)\n",
++		 emc->num_timings,
++		 tegra_read_ram_code(),
++		 emc->timings[0].rate / 1000000,
++		 emc->timings[emc->num_timings - 1].rate / 1000000);
++
+ 	return 0;
+ }
+ 
 -- 
 2.22.0
