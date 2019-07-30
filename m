@@ -1,140 +1,314 @@
-From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 00/24] Associate ddc adapters with
- connectors
-Date: Tue, 30 Jul 2019 16:01:23 +0100
-Message-ID: <20190730150123.GD12424@arch-x1c3>
-References: <cover.1564161140.git.andrzej.p@collabora.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH V13 12/12] PCI: tegra: Add Tegra194 PCIe support
+Date: Tue, 30 Jul 2019 16:49:39 +0100
+Message-ID: <20190730154939.GA367@e121166-lin.cambridge.arm.com>
+References: <20190710062212.1745-1-vidyas@nvidia.com>
+ <20190710062212.1745-13-vidyas@nvidia.com>
+ <20190711125433.GB26088@e121166-lin.cambridge.arm.com>
+ <986d0b1a-666a-7b05-a9f3-e761518bdc92@nvidia.com>
+ <20190712160754.GA24285@e121166-lin.cambridge.arm.com>
+ <a5f8689b-1358-dd2d-4f54-7e68a6ab158b@nvidia.com>
+ <20190716112225.GA24335@e121166-lin.cambridge.arm.com>
+ <be6367bc-08a0-762a-aae8-b3f0376d0e9a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <cover.1564161140.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ramalingam C <ramalingam.c-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sandy
+In-Reply-To: <be6367bc-08a0-762a-aae8-b3f0376d0e9a@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjAxOS8wNy8yNiwgQW5kcnplaiBQaWV0cmFzaWV3aWN6IHdyb3RlOgo+IEl0IGlzIGRpZmZp
-Y3VsdCBmb3IgYSB1c2VyIHRvIGtub3cgd2hpY2ggb2YgdGhlIGkyYyBhZGFwdGVycyBpcyBmb3Ig
-d2hpY2gKPiBkcm0gY29ubmVjdG9yLiBUaGlzIHNlcmllcyBhZGRyZXNzZXMgdGhpcyBwcm9ibGVt
-Lgo+IAo+IFRoZSBpZGVhIGlzIHRvIGhhdmUgYSBzeW1ib2xpYyBsaW5rIGluIGNvbm5lY3Rvcidz
-IHN5c2ZzIGRpcmVjdG9yeSwgZS5nLjoKPiAKPiBscyAtbCAvc3lzL2NsYXNzL2RybS9jYXJkMC1I
-RE1JLUEtMS9kZGMKPiBscnd4cnd4cnd4IDEgcm9vdCByb290IDAgSnVuIDI0IDEwOjQyIC9zeXMv
-Y2xhc3MvZHJtL2NhcmQwLUhETUktQS0xL2RkYyBcCj4gCS0+IC4uLy4uLy4uLy4uL3NvYy8xMzg4
-MDAwMC5pMmMvaTJjLTIKPiAKPiBUaGUgdXNlciB0aGVuIGtub3dzIHRoYXQgdGhlaXIgY2FyZDAt
-SERNSS1BLTEgdXNlcyBpMmMtMiBhbmQgY2FuIGUuZy4gcnVuCj4gZGRjdXRpbDoKPiAKPiBkZGN1
-dGlsIC1iIDIgZ2V0dmNwIDB4MTAKPiBWQ1AgY29kZSAweDEwIChCcmlnaHRuZXNzKTogY3VycmVu
-dCB2YWx1ZSA9ICAgIDkwLCBtYXggdmFsdWUgPSAgIDEwMAo+IAo+IFRoZSBmaXJzdCBwYXRjaCBp
-biB0aGUgc2VyaWVzIGFkZHMgc3RydWN0IGkyY19hZGFwdGVyIHBvaW50ZXIgdG8gc3RydWN0Cj4g
-ZHJtX2Nvbm5lY3Rvci4gSWYgdGhlIGZpZWxkIGlzIHVzZWQgYnkgYSBwYXJ0aWN1bGFyIGRyaXZl
-ciwgdGhlbiBhbgo+IGFwcHJvcHJpYXRlIHN5bWJvbGljIGxpbmsgaXMgY3JlYXRlZCBieSB0aGUg
-Z2VuZXJpYyBjb2RlLCB3aGljaCBpcyBhbHNvIGFkZGVkCj4gYnkgdGhpcyBwYXRjaC4KPiAKPiBQ
-YXRjaCAyIGFkZHMgYSBuZXcgdmFyaWFudCBvZiBkcm1fY29ubmVjdG9yX2luaXQoKSwgc2VlIHRo
-ZSBjaGFuZ2Vsb2cKPiBiZWxvdy4KPiAKPiBQYXRjaGVzIDMuLjI0IGFyZSBleGFtcGxlcyBvZiBo
-b3cgdG8gY29udmVydCBhIGRyaXZlciB0byB0aGlzIG5ldyBzY2hlbWUuCj4gCj4gdjEuLnYyOgo+
-IAo+IC0gdXNlZCBmaXhlZCBuYW1lICJkZGMiIGZvciB0aGUgc3ltYm9saWMgbGluayBpbiBvcmRl
-ciB0byBtYWtlIGl0IGVhc3kgZm9yCj4gdXNlcnNwYWNlIHRvIGZpbmQgdGhlIGkyYyBhZGFwdGVy
-Cj4gCj4gdjIuLnYzOgo+IAo+IC0gY29udmVydGVkIGFzIG1hbnkgZHJpdmVycyBhcyBwb3NzaWJs
-ZS4KPiAKPiB2My4udjQ6Cj4gCj4gLSBhZGRlZCBSZXZpZXdlZC1ieSBmb3IgcGF0Y2ggMDEvMjMK
-PiAtIG1vdmVkICJkZGMiIGZpZWxkIGFzc2lnbm1lbnQgdG8gYmVmb3JlIGRybV9jb25uZWN0b3Jf
-aW5pdCgpIGlzIGNhbGxlZAo+IGluIG1zbSwgdmM0LCBzdGksIG1nYWcyMDAsIGFzdCwgYW1kZ3B1
-LCByYWRlb24KPiAtIHNpbXBsaWZpZWQgdGhlIGNvZGUgaW4gYW1kZ3B1IGFuZCByYWRlb24gYXQg
-dGhlIGV4cGVuc2Ugb2Ygc29tZSBsaW5lcwo+IGV4Y2VlZGluZyA4MCBjaGFyYWN0ZXJzIGFzIHBl
-ciBBbGV4IERldWNoZXIncyBzdWdnZXN0aW9uCj4gLSBhZGRlZCBpOTE1Cj4gCj4gdjQuLnY1Ogo+
-IAo+IC0gY2hhbmdlZCAiaW5jbHVkZSA8bGludXgvaTJjLmg+IiB0byAic3RydWN0IGkyY19hZGFw
-dGVyOyIKPiBpbiBkcm1fY29ubmVjdG9yLmgsIGNvbnNlcXVlbnRseSwgYWRkZWQgImluY2x1ZGUg
-PGxpbnV4L2kyYy5oPiIKPiBpbiBkcm1fc3lzZnMuYy4KPiAtIGFkZGVkICJkcm1fY29ubmVjdG9y
-X2luaXRfd2l0aF9kZGMoKSIgdmFyaWFudCB0byBlbnN1cmUgdGhhdCB0aGUgZGRjCj4gZmllbGQg
-b2YgZHJtX2Nvbm5lY3RvciBpcyBwcmVzZXJ2ZWQgYWNjcm9zcyBpdHMgaW52b2NhdGlvbgo+IC0g
-YWNjb3JkaW5nbHkgY2hhbmdlZCBpbnZvY2F0aW9ucyBvZiBkcm1fY29ubmVjdG9yX2luaXQoKSBp
-biB0aGUKPiB0b3VjaGVkIGRyaXZlcnMgdG8gdXNlIHRoZSBuZXcgdmFyaWFudAo+IAo+IHY1Li52
-NjoKPiAKPiAtIGltcHJvdmVkIHN1YmplY3QgbGluZSBvZiBwYXRjaCAxCj4gLSBhZGRlZCBrZXJu
-ZWwtZG9jIGZvciBkcm1fY29ubmVjdG9yX2luaXRfd2l0aF9kZGMoKQo+IC0gaW1wcm92ZWQga2Vy
-bmVsLWRvYyBmb3IgdGhlIGRkYyBmaWVsZCBvZiBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcgo+IC0gYWRk
-ZWQgUmV2aWV3ZWQtYnkgaW4gcGF0Y2hlcyAxNyBhbmQgMTgKPiAtIGFkZGVkIEFja2VkLWJ5IGlu
-IHBhdGNoIDIKPiAtIG1hZGUgdGhlIG93bmVyc2hpcCBvZiBkZGMgaTJjX2FkYXB0ZXIgZXhwbGlj
-aXQgaW4gYWxsIHBhdGNoZXMsCj4gdGhpcyBtYWRlIHRoZSBhZmZlY3RlZCBwYXRjaGVzIG11Y2gg
-c2ltcGxlcgo+IAo+IEBCZW5qYW1pbgo+IEBTaGF3bgo+IAo+IFRoZXJlIHdlcmUgeW91ciBBY2tl
-ZC1ieSBvciBSZXZpZXdlZC1ieSBmb3Igc29tZSBwYXRjaGVzIGluIHY0LCBidXQgbm93Cj4gdGhh
-dCB0aGUgcGF0Y2hlcyB1c2UgdGhlIG5ld2x5IGFkZGVkIGZ1bmN0aW9uIEknbSBub3Qgc3VyZSBJ
-IGNhbiBzdGlsbAo+IGluY2x1ZGUgdGhvc2UgdGFncyB3aXRob3V0IHlvdSBhY3R1YWxseSBjb25m
-aXJtaW5nLiBDYW4gST8gT3IgY2FuIHlvdQo+IHBsZWFzZSByZS1yZXZpZXc/IAo+IAo+IFRPRE86
-IG5vdXZlYXUsIGdtYTUwMCwgb21hcGRybSwgcGFuZWwtc2ltcGxlIC0gaWYgYXBwbGljYWJsZS4K
-PiBPdGhlciBkcml2ZXJzIGFyZSBlaXRoZXIgYWxyZWFkeSBjb252ZXJ0ZWQgb3IgZG9uJ3QgbWVu
-dGlvbiBuZWl0aGVyCj4gImRkYyIgbm9yICJpMmNfYWRhcHRlciIuCj4gCkFub3RoZXIgd2F5IHRv
-IGNoZWNrIGlzIHRvIGxvb2sgZm9yIGRybV9nZXRfZWRpZC4gU2FkbHkgdGhhdCBhbHNvCmhpZ2hs
-aWdodHMgYXV4LiBkcC9tc3QgaW5zdGFuY2VzLCB3aGljaCBleHBvc2UgdGhlIEREQyBpbiBhbm90
-aGVyIHdheS4KCkZvciBleGFtcGxlIGNvbXBhcmluZyB0aGUgZGlmZiBzdGF0IHdydCB0aGUgZm9s
-bG93aW5nIGNvbW1hbmQgc2hvd3MKZ2l0IGdyZXAgLXdjIGRybV9nZXRfZWRpZCAtLSBkcml2ZXJz
-L2dwdS9kcm0vCgo+IAo+ICAuLi4vZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9jb25uZWN0b3Jz
-LmMgICAgfCAgOTYgKysrKysrKystLS0tCmRyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9hbWRn
-cHVfZG0vYW1kZ3B1X2RtX2hlbHBlcnMuYzoxCi0gYXMgcG9pbnRlZCBvdXQgYnkgQWxleCAtIG1p
-eCBvZiBhdXggZHAvbXN0IGFuZCBub3JtYWwKCj4gIGRyaXZlcnMvZ3B1L2RybS9hc3QvYXN0X21v
-ZGUuYyAgICAgICAgICAgICAgICB8ICAxMyArLQoKZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
-b2dpeC1hbng3OHh4LmM6MQpkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4
-X2RwX2NvcmUuYzoxCi0gbm90IGFwcGxpY2FibGU6IGF1eCBkcC9tc3QKCgo+ICBkcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL2R1bWItdmdhLWRhYy5jICAgICAgICAgfCAgIDYgKy0KCmRyaXZlcnMvZ3B1
-L2RybS9icmlkZ2Uvc2lpOTAyeC5jOjEKLSBub3JtYWwgaW5zdGFuY2UoPykgdGhhdCBzaG91bGQg
-YmUgdXBkYXRlZCBhdCBzb21lIHBvaW50LgoKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5v
-cHN5cy9kdy1oZG1pLmMgICAgIHwgICA2ICstCgpkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4
-NzY3LmM6MQotIG5vdCBhcHBsaWNhYmxlOiBhdXggZHAvbXN0Cgo+ICBkcml2ZXJzL2dwdS9kcm0v
-YnJpZGdlL3RpLXRmcDQxMC5jICAgICAgICAgICAgfCAgIDYgKy0KCmRyaXZlcnMvZ3B1L2RybS9k
-cm1fZHBfbXN0X3RvcG9sb2d5LmM6MwotIG5vdCBhcHBsaWNhYmxlOiBhdXggZHAvbXN0Cgo+ICBk
-cml2ZXJzL2dwdS9kcm0vZHJtX2Nvbm5lY3Rvci5jICAgICAgICAgICAgICAgfCAgMzUgKysrKysK
-PiAgZHJpdmVycy9ncHUvZHJtL2RybV9zeXNmcy5jICAgICAgICAgICAgICAgICAgIHwgICA4ICsK
-CmRyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jOjcKZHJpdmVycy9ncHUvZHJtL2RybV9wcm9iZV9o
-ZWxwZXIuYzoxCi0gdW5yZWxhdGVkCgo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19o
-ZG1pLmMgICAgICAgICAgfCAgIDYgKy0KCmRyaXZlcnMvZ3B1L2RybS9nbWE1MDAvY2R2X2ludGVs
-X2RwLmM6Mwpkcml2ZXJzL2dwdS9kcm0vZ21hNTAwL2Nkdl9pbnRlbF9oZG1pLmM6Mgpkcml2ZXJz
-L2dwdS9kcm0vZ21hNTAwL29ha3RyYWlsX2hkbWkuYzoxCmRyaXZlcnMvZ3B1L2RybS9nbWE1MDAv
-b2FrdHJhaWxfbHZkcy5jOjIKZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9wc2JfaW50ZWxfbW9kZXMu
-YzoxCmRyaXZlcnMvZ3B1L2RybS9nbWE1MDAvcHNiX2ludGVsX3Nkdm8uYzoyCi0gc2hvdWxkIGJl
-IHVwZGF0ZWQgYXQgc29tZSBwb2ludCAoYXMgeW91IHBvaW50ZWQgb3V0KS4KCj4gIGRyaXZlcnMv
-Z3B1L2RybS9pOTE1L2Rpc3BsYXkvaW50ZWxfaGRtaS5jICAgICB8ICAxMiArLQpkcml2ZXJzL2dw
-dS9kcm0vaTkxNS9pbnRlbF9jb25uZWN0b3IuYzoxCmRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVs
-X2NydC5jOjIKLSBub3QgdG9vIHN1cmUgaGVyZQoKZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-ZHAuYzoyCi0gbm90IGFwcGxpY2FibGU6IGF1eCBkcC9tc3QKCmRyaXZlcnMvZ3B1L2RybS9pOTE1
-L2ludGVsX2x2ZHMuYzoxCmRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3Nkdm8uYzoyCi0gbm90
-IHRvbyBzdXJlIGhlcmUKCgo+ICBkcml2ZXJzL2dwdS9kcm0vaW14L2lteC1sZGIuYyAgICAgICAg
-ICAgICAgICAgfCAgIDcgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2lteC9pbXgtdHZlLmMgICAgICAg
-ICAgICAgICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfaGRtaS5j
-ICAgICAgICAgICB8ICAgNyArLQo+ICBkcml2ZXJzL2dwdS9kcm0vbWdhZzIwMC9tZ2FnMjAwX21v
-ZGUuYyAgICAgICAgfCAgMTMgKy0KPiAgZHJpdmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfY29u
-bmVjdG9yLmMgICAgIHwgICA2ICstCmRyaXZlcnMvZ3B1L2RybS9tc20vZWRwL2VkcF9jdHJsLmM6
-MQotIG5vdCBhcHBsaWNhYmxlOiBhdXggZHAvbXN0Cgpkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9u
-b3V2ZWF1X2Nvbm5lY3Rvci5jOjIKLSBzaG91bGQgYmUgdXBkYXRlZCBhdCBzb21lIHBvaW50IChh
-cyB5b3UgcG9pbnRlZCBvdXQpLgoKCmRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaW1wbGUu
-YzoxCi0gbm8gYXBwbGljYWJsZTogcGFuZWwgZHJpdmVyCgoKPiAgZHJpdmVycy9ncHUvZHJtL3Jh
-ZGVvbi9yYWRlb25fY29ubmVjdG9ycy5jICAgIHwgMTQyICsrKysrKysrKysrKystLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvaW5ub19oZG1pLmMgICAgICAgICAgfCAgIDYgKy0KPiAg
-ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JrMzA2Nl9oZG1pLmMgICAgICAgIHwgICA3ICstCj4g
-IGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuYyAgICAgICAgICAgICAgICB8ICAgNiArLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfaGRtaV9lbmMuYyAgICAgICAgfCAgIDcgKy0K
-PiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYyAgICAgICAgICAgICAgICAgIHwgICA3ICst
-Cj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYyAgICAgICAgICAgICAgICAgICB8ICAgNyAr
-LQoKZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jOjEKLSBhbHJlYWR5IGhhbmRsZWQgaW4g
-aGRtaS9zb3IKCj4gIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3RmcDQxMC5jICAgICAg
-ICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMgICAgICAgICAgICAg
-ICAgfCAgMTIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3p0ZS96eF9oZG1pLmMgICAgICAgICAgICAg
-ICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS96dGUvenhfdmdhLmMgICAgICAgICAgICAg
-ICAgICB8ICAgNiArLQo+ICBpbmNsdWRlL2RybS9kcm1fY29ubmVjdG9yLmggICAgICAgICAgICAg
-ICAgICAgfCAgMTggKysrCj4gIDI2IGZpbGVzIGNoYW5nZWQsIDMzNiBpbnNlcnRpb25zKCspLCAx
-MjEgZGVsZXRpb25zKC0pCgpJbiBhIFRsO0RyOiBJIHRoaW5rIHRoaXMgc2VyaWVzIGNvdmVycyA5
-MCUrIG9mIHRoZSBleGlzdGluZyByYXRoZXIgaHVnZSkgZHJpdmVyc2V0LgoKRm9yIHRoZSBzZXJp
-ZXM6ClJldmlld2VkLWJ5OiBFbWlsIFZlbGlrb3YgPGVtaWwudmVsaWtvdkBjb2xsYWJvcmEuY29t
-PgoKRndpdyBJJ20gaW4gZmF2b3VyIG9mIEphbmkncyBzdWdnZXN0aW9uIHRvIGZvbGQgdGhlIGRj
-YyBpbnRvIHRoZSB1c3VhbApoZWxwZXIgZHJtX2Nvbm5lY3Rvcl9pbml0KCkuIEFsdGhvdWdoIHNp
-bmNlIHdlIGhhdmUgMTMwKyBpbnN0YW5jZXMgaXQKbWlnaHQgYmUgYmV0dGVyIGxlZnQgZm9yIGFu
-b3RoZXIgZGF5LgoKSFRICi1FbWlsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCkZyZWVkcmVubyBtYWlsaW5nIGxpc3QKRnJlZWRyZW5vQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2ZyZWVkcmVubw==
+On Tue, Jul 23, 2019 at 08:14:08PM +0530, Vidya Sagar wrote:
+> On 7/16/2019 4:52 PM, Lorenzo Pieralisi wrote:
+> > On Sat, Jul 13, 2019 at 12:34:34PM +0530, Vidya Sagar wrote:
+> > 
+> > [...]
+> > 
+> > > > > > > +static int tegra_pcie_bpmp_set_ctrl_state(struct tegra_pcie_dw *pcie,
+> > > > > > > +					  bool enable)
+> > > > > > > +{
+> > > > > > > +	struct mrq_uphy_response resp;
+> > > > > > > +	struct tegra_bpmp_message msg;
+> > > > > > > +	struct mrq_uphy_request req;
+> > > > > > > +	int err;
+> > > > > > > +
+> > > > > > > +	if (pcie->cid == 5)
+> > > > > > > +		return 0;
+> > > > > > 
+> > > > > > What's wrong with cid == 5 ? Explain please.
+> > > > > Controller with ID=5 doesn't need any programming to enable it which is
+> > > > > done here through calling firmware API.
+> > > > > 
+> > > > > > 
+> > > > > > > +	memset(&req, 0, sizeof(req));
+> > > > > > > +	memset(&resp, 0, sizeof(resp));
+> > > > > > > +
+> > > > > > > +	req.cmd = CMD_UPHY_PCIE_CONTROLLER_STATE;
+> > > > > > > +	req.controller_state.pcie_controller = pcie->cid;
+> > > > > > > +	req.controller_state.enable = enable;
+> > > > > > > +
+> > > > > > > +	memset(&msg, 0, sizeof(msg));
+> > > > > > > +	msg.mrq = MRQ_UPHY;
+> > > > > > > +	msg.tx.data = &req;
+> > > > > > > +	msg.tx.size = sizeof(req);
+> > > > > > > +	msg.rx.data = &resp;
+> > > > > > > +	msg.rx.size = sizeof(resp);
+> > > > > > > +
+> > > > > > > +	if (irqs_disabled())
+> > > > > > 
+> > > > > > Can you explain to me what this check is meant to achieve please ?
+> > > > > Firmware interface provides different APIs to be called when there are
+> > > > > no interrupts enabled in the system (noirq context) and otherwise
+> > > > > hence checking that situation here and calling appropriate API.
+> > > > 
+> > > > That's what I am questioning. Being called from {suspend/resume}_noirq()
+> > > > callbacks (if that's the code path this check caters for) does not mean
+> > > > irqs_disabled() == true.
+> > > Agree.
+> > > Actually, I got a hint of having this check from the following.
+> > > Both tegra_bpmp_transfer_atomic() and tegra_bpmp_transfer() are indirectly
+> > > called by APIs registered with .master_xfer() and .master_xfer_atomic() hooks of
+> > > struct i2c_algorithm and the decision to call which one of these is made using the
+> > > following check in i2c-core.h file.
+> > > static inline bool i2c_in_atomic_xfer_mode(void)
+> > > {
+> > > 	return system_state > SYSTEM_RUNNING && irqs_disabled();
+> > > }
+> > > I think I should use this condition as is IIUC.
+> > > Please let me know if there are any concerns with this.
+> > 
+> > It is not a concern, it is just that I don't understand how this code
+> > can be called with IRQs disabled, if you can give me an execution path I
+> > am happy to leave the check there. On top of that, when called from
+> > suspend NOIRQ context, it is likely to use the blocking API (because
+> > IRQs aren't disabled at CPU level) behind which there is most certainly
+> > an IRQ required to wake the thread up and if the IRQ in question was
+> > disabled in the suspend NOIRQ phase this code is likely to deadlock.
+> > 
+> > I want to make sure we can justify adding this check, I do not
+> > want to add it because we think it can be needed when it may not
+> > be needed at all (and it gets copy and pasted over and over again
+> > in other drivers).
+> I had a discussion internally about this and the prescribed usage of these APIs
+> seem to be that
+> use tegra_bpmp_transfer() in .probe() and other paths where interrupts are
+> enabled as this API needs interrupts to be enabled for its working.
+> Use tegra_bpmp_transfer_atomic() surrounded by local_irq_save()/local_irq_restore()
+> in other paths where interrupt servicing is disabled.
+
+Why tegra_bpmp_transfer_atomic() needs IRQs to be disabled ? And why
+is it needed in this piece of code where IRQs are _never_ disabled
+at CPU level ?
+
+IRQs are enabled when you call a suspend_noirq() callback, so the
+blocking API can be used as long as the IRQ descriptor backing
+the IRQ that will wake-up the blocked call is marked as
+IRQF_NO_SUSPEND.
+
+The problem is not IRQs enabled/disabled at CPU level, the problem is
+the IRQ descriptor of the IRQ required to handle the blocking BPMP call,
+mark it as IRQF_NO_SUSPEND and remove the tegra_bpmp_transfer_atomic()
+call from this code (or please give me a concrete example pinpointing
+why it is needed).
+
+Thanks,
+Lorenzo
+
+> I'll go ahead and make next patch series with this if this looks fine to you.
+> 
+> > 
+> > > > Actually, if tegra_bpmp_transfer() requires IRQs to be enabled you may
+> > > > even end up in a situation where that blocking call does not wake up
+> > > > because the IRQ in question was disabled in the NOIRQ suspend/resume
+> > > > phase.
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > > > +static int tegra_pcie_dw_probe(struct platform_device *pdev)
+> > > > > > > +{
+> > > > > > > +	const struct tegra_pcie_soc *data;
+> > > > > > > +	struct device *dev = &pdev->dev;
+> > > > > > > +	struct resource *atu_dma_res;
+> > > > > > > +	struct tegra_pcie_dw *pcie;
+> > > > > > > +	struct resource *dbi_res;
+> > > > > > > +	struct pcie_port *pp;
+> > > > > > > +	struct dw_pcie *pci;
+> > > > > > > +	struct phy **phys;
+> > > > > > > +	char *name;
+> > > > > > > +	int ret;
+> > > > > > > +	u32 i;
+> > > > > > > +
+> > > > > > > +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> > > > > > > +	if (!pcie)
+> > > > > > > +		return -ENOMEM;
+> > > > > > > +
+> > > > > > > +	pci = &pcie->pci;
+> > > > > > > +	pci->dev = &pdev->dev;
+> > > > > > > +	pci->ops = &tegra_dw_pcie_ops;
+> > > > > > > +	pp = &pci->pp;
+> > > > > > > +	pcie->dev = &pdev->dev;
+> > > > > > > +
+> > > > > > > +	data = (struct tegra_pcie_soc *)of_device_get_match_data(dev);
+> > > > > > > +	if (!data)
+> > > > > > > +		return -EINVAL;
+> > > > > > > +	pcie->mode = (enum dw_pcie_device_mode)data->mode;
+> > > > > > > +
+> > > > > > > +	ret = tegra_pcie_dw_parse_dt(pcie);
+> > > > > > > +	if (ret < 0) {
+> > > > > > > +		dev_err(dev, "Failed to parse device tree: %d\n", ret);
+> > > > > > > +		return ret;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	pcie->pex_ctl_supply = devm_regulator_get(dev, "vddio-pex-ctl");
+> > > > > > > +	if (IS_ERR(pcie->pex_ctl_supply)) {
+> > > > > > > +		dev_err(dev, "Failed to get regulator: %ld\n",
+> > > > > > > +			PTR_ERR(pcie->pex_ctl_supply));
+> > > > > > > +		return PTR_ERR(pcie->pex_ctl_supply);
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	pcie->core_clk = devm_clk_get(dev, "core");
+> > > > > > > +	if (IS_ERR(pcie->core_clk)) {
+> > > > > > > +		dev_err(dev, "Failed to get core clock: %ld\n",
+> > > > > > > +			PTR_ERR(pcie->core_clk));
+> > > > > > > +		return PTR_ERR(pcie->core_clk);
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	pcie->appl_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> > > > > > > +						      "appl");
+> > > > > > > +	if (!pcie->appl_res) {
+> > > > > > > +		dev_err(dev, "Failed to find \"appl\" region\n");
+> > > > > > > +		return PTR_ERR(pcie->appl_res);
+> > > > > > > +	}
+> > > > > > > +	pcie->appl_base = devm_ioremap_resource(dev, pcie->appl_res);
+> > > > > > > +	if (IS_ERR(pcie->appl_base))
+> > > > > > > +		return PTR_ERR(pcie->appl_base);
+> > > > > > > +
+> > > > > > > +	pcie->core_apb_rst = devm_reset_control_get(dev, "apb");
+> > > > > > > +	if (IS_ERR(pcie->core_apb_rst)) {
+> > > > > > > +		dev_err(dev, "Failed to get APB reset: %ld\n",
+> > > > > > > +			PTR_ERR(pcie->core_apb_rst));
+> > > > > > > +		return PTR_ERR(pcie->core_apb_rst);
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	phys = devm_kcalloc(dev, pcie->phy_count, sizeof(*phys), GFP_KERNEL);
+> > > > > > > +	if (!phys)
+> > > > > > > +		return PTR_ERR(phys);
+> > > > > > > +
+> > > > > > > +	for (i = 0; i < pcie->phy_count; i++) {
+> > > > > > > +		name = kasprintf(GFP_KERNEL, "p2u-%u", i);
+> > > > > > > +		if (!name) {
+> > > > > > > +			dev_err(dev, "Failed to create P2U string\n");
+> > > > > > > +			return -ENOMEM;
+> > > > > > > +		}
+> > > > > > > +		phys[i] = devm_phy_get(dev, name);
+> > > > > > > +		kfree(name);
+> > > > > > > +		if (IS_ERR(phys[i])) {
+> > > > > > > +			ret = PTR_ERR(phys[i]);
+> > > > > > > +			dev_err(dev, "Failed to get PHY: %d\n", ret);
+> > > > > > > +			return ret;
+> > > > > > > +		}
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	pcie->phys = phys;
+> > > > > > > +
+> > > > > > > +	dbi_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+> > > > > > > +	if (!dbi_res) {
+> > > > > > > +		dev_err(dev, "Failed to find \"dbi\" region\n");
+> > > > > > > +		return PTR_ERR(dbi_res);
+> > > > > > > +	}
+> > > > > > > +	pcie->dbi_res = dbi_res;
+> > > > > > > +
+> > > > > > > +	pci->dbi_base = devm_ioremap_resource(dev, dbi_res);
+> > > > > > > +	if (IS_ERR(pci->dbi_base))
+> > > > > > > +		return PTR_ERR(pci->dbi_base);
+> > > > > > > +
+> > > > > > > +	/* Tegra HW locates DBI2 at a fixed offset from DBI */
+> > > > > > > +	pci->dbi_base2 = pci->dbi_base + 0x1000;
+> > > > > > > +
+> > > > > > > +	atu_dma_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> > > > > > > +						   "atu_dma");
+> > > > > > > +	if (!atu_dma_res) {
+> > > > > > > +		dev_err(dev, "Failed to find \"atu_dma\" region\n");
+> > > > > > > +		return PTR_ERR(atu_dma_res);
+> > > > > > > +	}
+> > > > > > > +	pcie->atu_dma_res = atu_dma_res;
+> > > > > > > +	pci->atu_base = devm_ioremap_resource(dev, atu_dma_res);
+> > > > > > > +	if (IS_ERR(pci->atu_base))
+> > > > > > > +		return PTR_ERR(pci->atu_base);
+> > > > > > > +
+> > > > > > > +	pcie->core_rst = devm_reset_control_get(dev, "core");
+> > > > > > > +	if (IS_ERR(pcie->core_rst)) {
+> > > > > > > +		dev_err(dev, "Failed to get core reset: %ld\n",
+> > > > > > > +			PTR_ERR(pcie->core_rst));
+> > > > > > > +		return PTR_ERR(pcie->core_rst);
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	pp->irq = platform_get_irq_byname(pdev, "intr");
+> > > > > > > +	if (!pp->irq) {
+> > > > > > > +		dev_err(dev, "Failed to get \"intr\" interrupt\n");
+> > > > > > > +		return -ENODEV;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	ret = devm_request_irq(dev, pp->irq, tegra_pcie_irq_handler,
+> > > > > > > +			       IRQF_SHARED, "tegra-pcie-intr", pcie);
+> > > > > > > +	if (ret) {
+> > > > > > > +		dev_err(dev, "Failed to request IRQ %d: %d\n", pp->irq, ret);
+> > > > > > > +		return ret;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	pcie->bpmp = tegra_bpmp_get(dev);
+> > > > > > > +	if (IS_ERR(pcie->bpmp))
+> > > > > > > +		return PTR_ERR(pcie->bpmp);
+> > > > > > > +
+> > > > > > > +	platform_set_drvdata(pdev, pcie);
+> > > > > > > +
+> > > > > > > +	if (pcie->mode == DW_PCIE_RC_TYPE) {
+> > > > > > > +		ret = tegra_pcie_config_rp(pcie);
+> > > > > > > +		if (ret && ret != -ENOMEDIUM)
+> > > > > > > +			goto fail;
+> > > > > > > +		else
+> > > > > > > +			return 0;
+> > > > > > 
+> > > > > > So if the link is not up we still go ahead and make probe
+> > > > > > succeed. What for ?
+> > > > > We may need root port to be available to support hot-plugging of
+> > > > > endpoint devices, so, we don't fail the probe.
+> > > > 
+> > > > We need it or we don't. If you do support hotplugging of endpoint
+> > > > devices point me at the code, otherwise link up failure means
+> > > > failure to probe.
+> > > Currently hotplugging of endpoint is not supported, but it is one of
+> > > the use cases that we may add support for in future.
+> > 
+> > You should elaborate on this, I do not understand what you mean,
+> > either the root port(s) supports hotplug or it does not.
+> > 
+> > > But, why should we fail probe if link up doesn't happen? As such,
+> > > nothing went wrong in terms of root port initialization right?  I
+> > > checked other DWC based implementations and following are not failing
+> > > the probe pci-dra7xx.c, pcie-armada8k.c, pcie-artpec6.c, pcie-histb.c,
+> > > pcie-kirin.c, pcie-spear13xx.c, pci-exynos.c, pci-imx6.c,
+> > > pci-keystone.c, pci-layerscape.c
+> > > 
+> > > Although following do fail the probe if link is not up.  pcie-qcom.c,
+> > > pcie-uniphier.c, pci-meson.c
+> > > 
+> > > So, to me, it looks more like a choice we can make whether to fail the
+> > > probe or not and in this case we are choosing not to fail.
+> > 
+> > I disagree. I had an offline chat with Bjorn and whether link-up should
+> > fail the probe or not depends on whether the root port(s) is hotplug
+> > capable or not and this in turn relies on the root port "Slot
+> > implemented" bit in the PCI Express capabilities register.
+> > 
+> > It is a choice but it should be based on evidence.
+> > 
+> > Lorenzo
+> With Bjorn's latest comment on top of this, I think we are good not to fail
+> the probe here.
+> 
+> - Vidya Sagar
+> > 
+> 
