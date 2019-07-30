@@ -1,8 +1,8 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
  Pool
-Date: Tue, 30 Jul 2019 14:36:39 +0100
-Message-ID: <8cb2ac13-3009-2117-d55f-6f1126b690e4@nvidia.com>
+Date: Tue, 30 Jul 2019 13:58:18 +0000
+Message-ID: <BN8PR12MB32664C177C9356CE8C15FC65D3DC0@BN8PR12MB3266.namprd12.prod.outlook.com>
 References: <cover.1562149883.git.joabreu@synopsys.com>
  <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
  <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
@@ -18,36 +18,29 @@ References: <cover.1562149883.git.joabreu@synopsys.com>
  <MN2PR12MB3279ABF628C52883021123C5D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
  <8a60361f-b914-93ef-0d80-92ae4ad8b808@nvidia.com>
  <BN8PR12MB32664E23137805984F6FB2DAD3DC0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <8cb2ac13-3009-2117-d55f-6f1126b690e4@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BN8PR12MB32664E23137805984F6FB2DAD3DC0@BN8PR12MB3266.namprd12.prod.outlook.com>
+In-Reply-To: <8cb2ac13-3009-2117-d55f-6f1126b690e4@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>, Robin Murphy <robin.murphy@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Robin Murphy <robin.murphy@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
 Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, "David S . Miller" <davem@davemloft.net>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 30/07/2019 10:39, Jose Abreu wrote:
-
-...
-
-> I looked at netsec implementation and I noticed that we are syncing the 
-> old buffer for device instead of the new one. netsec syncs the buffer 
-> for device immediately after the allocation which may be what we have to 
-> do. Maybe the attached patch can make things work for you ?
-
-Great! This one works. I have booted this several times and I am no
-longer seeing any issues. Thanks for figuring this out!
-
-Feel free to add my ...
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMzAvMjAx
+OSwgMTQ6MzY6MzkgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMzAvMDcvMjAxOSAxMDozOSwgSm9z
+ZSBBYnJldSB3cm90ZToNCj4gDQo+IC4uLg0KPiANCj4gPiBJIGxvb2tlZCBhdCBuZXRzZWMgaW1w
+bGVtZW50YXRpb24gYW5kIEkgbm90aWNlZCB0aGF0IHdlIGFyZSBzeW5jaW5nIHRoZSANCj4gPiBv
+bGQgYnVmZmVyIGZvciBkZXZpY2UgaW5zdGVhZCBvZiB0aGUgbmV3IG9uZS4gbmV0c2VjIHN5bmNz
+IHRoZSBidWZmZXIgDQo+ID4gZm9yIGRldmljZSBpbW1lZGlhdGVseSBhZnRlciB0aGUgYWxsb2Nh
+dGlvbiB3aGljaCBtYXkgYmUgd2hhdCB3ZSBoYXZlIHRvIA0KPiA+IGRvLiBNYXliZSB0aGUgYXR0
+YWNoZWQgcGF0Y2ggY2FuIG1ha2UgdGhpbmdzIHdvcmsgZm9yIHlvdSA/DQo+IA0KPiBHcmVhdCEg
+VGhpcyBvbmUgd29ya3MuIEkgaGF2ZSBib290ZWQgdGhpcyBzZXZlcmFsIHRpbWVzIGFuZCBJIGFt
+IG5vDQo+IGxvbmdlciBzZWVpbmcgYW55IGlzc3Vlcy4gVGhhbmtzIGZvciBmaWd1cmluZyB0aGlz
+IG91dCENCj4gDQo+IEZlZWwgZnJlZSB0byBhZGQgbXkgLi4uDQo+IA0KPiBUZXN0ZWQtYnk6IEpv
+biBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KDQpUaGlzIG9uZSB3YXMgaGFyZCB0byBm
+aW5kIDopIFRoYW5rIHlvdSBmb3IgeW91ciBwYXRpZW5jZSBpbiB0ZXN0aW5nIA0KdGhpcyENCg0K
+LS0tDQpUaGFua3MsDQpKb3NlIE1pZ3VlbCBBYnJldQ0K
