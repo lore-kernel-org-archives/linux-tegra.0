@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 11/15] dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory Controller
-Date: Tue, 30 Jul 2019 19:56:14 +0300
-Message-ID: <20190730165618.10122-12-digetx@gmail.com>
+Subject: [PATCH v9 09/15] dt-bindings: memory: tegra30: Convert to Tegra124 YAML
+Date: Tue, 30 Jul 2019 19:56:12 +0300
+Message-ID: <20190730165618.10122-10-digetx@gmail.com>
 References: <20190730165618.10122-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,52 +12,46 @@ To: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add device-tree binding for NVIDIA Tegra30 External Memory Controller.
-The binding is based on the Tegra124 EMC binding since hardware is
-similar, although there are couple significant differences.
+The Tegra30 binding will actually differ from the Tegra124 a tad, in
+particular the EMEM configuration description. Hence rename the binding
+to Tegra124 during of the conversion to YAML.
 
-Note that the memory timing description is given in a platform-specific
-form because there is no detailed information on how to convert a
-typical-common DDR timing into the register values. The timing format is
-borrowed from downstream kernel, hence there is no hurdle in regards to
-upstreaming of memory timings for the boards.
-
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../nvidia,tegra30-emc.yaml                   | 341 ++++++++++++++++++
- 1 file changed, 341 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+ .../nvidia,tegra124-mc.yaml                   | 158 ++++++++++++++++++
+ .../memory-controllers/nvidia,tegra30-mc.txt  | 123 --------------
+ 2 files changed, 158 insertions(+), 123 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
 new file mode 100644
-index 000000000000..6865cfb16e59
+index 000000000000..2e2a116f1911
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
-@@ -0,0 +1,341 @@
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+@@ -0,0 +1,158 @@
 +# SPDX-License-Identifier: (GPL-2.0)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra30-emc.yaml#
++$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: NVIDIA Tegra30 SoC External Memory Controller
++title: NVIDIA Tegra124 SoC Memory Controller
 +
 +maintainers:
-+  - Dmitry Osipenko <digetx@gmail.com>
 +  - Jon Hunter <jonathanh@nvidia.com>
 +  - Thierry Reding <thierry.reding@gmail.com>
 +
 +description: |
-+  The EMC interfaces with the off-chip SDRAM to service the request stream
-+  sent from Memory Controller. The EMC also has various performance-affecting
-+  settings beyond the obvious SDRAM configuration parameters and initialization
-+  settings. Tegra30 EMC supports multiple JEDEC standard protocols: LPDDR2,
-+  LPDDR3, and DDR3.
++  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
++  These are interleaved to provide high performance with the load shared across
++  two memory channels. The Tegra124 Memory Controller handles memory requests
++  from internal clients and arbitrates among them to allocate memory bandwidth
++  for DDR3L and LPDDR3 SDRAMs.
 +
 +properties:
 +  compatible:
-+    const: nvidia,tegra30-emc
++    const: nvidia,tegra124-mc
 +
 +  reg:
 +    maxItems: 1
@@ -67,17 +61,22 @@ index 000000000000..6865cfb16e59
 +  clocks:
 +    maxItems: 1
 +    description:
-+      EMC clock.
++      Memory Controller clock.
++
++  clock-names:
++    items:
++      - const: mc
 +
 +  interrupts:
 +    maxItems: 1
 +    description:
-+      EMC General interrupt.
++      Memory Controller interrupt.
 +
-+  nvidia,memory-controller:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle of the Memory Controller node.
++  "#reset-cells":
++    const: 1
++
++  "#iommu-cells":
++    const: 1
 +
 +patternProperties:
 +  "^emc-timings-[0-9]+$":
@@ -96,151 +95,37 @@ index 000000000000..6865cfb16e59
 +            description:
 +              Memory clock rate in Hz.
 +            minimum: 1000000
-+            maximum: 900000000
++            maximum: 1066000000
 +
-+          nvidia,emc-auto-cal-interval:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description:
-+              Pad calibration interval.
-+
-+          nvidia,emc-mode-1:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description:
-+              Mode Register 1.
-+
-+          nvidia,emc-mode-2:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description:
-+              Mode Register 2.
-+
-+          nvidia,emc-mode-reset:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description:
-+              Mode Register 0.
-+
-+          nvidia,emc-zcal-cnt-long:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description:
-+              Number of EMC clocks to wait before issuing any commands after
-+              sending ZCAL_MRW_CMD.
-+
-+          nvidia,emc-cfg-dyn-self-ref:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description:
-+              Dynamic self-refresh enabled.
-+
-+          nvidia,emc-cfg-periodic-qrst:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description:
-+              FBIO "read" FIFO periodic resetting enabled.
-+
-+          nvidia,emc-configuration:
++          nvidia,emem-configuration:
 +            $ref: /schemas/types.yaml#/definitions/uint32-array
-+            description:
-+              EMC timing characterization data. These are the registers
-+              (see section "18.13.2 EMC Registers" in the TRM) whose values
-+              need to be specified, according to the board documentation.
++            description: |
++              Values to be written to the EMEM register block. See section
++              "15.6.1 MC Registers" in the TRM.
 +            items:
-+              - description: EMC_RC
-+              - description: EMC_RFC
-+              - description: EMC_RAS
-+              - description: EMC_RP
-+              - description: EMC_R2W
-+              - description: EMC_W2R
-+              - description: EMC_R2P
-+              - description: EMC_W2P
-+              - description: EMC_RD_RCD
-+              - description: EMC_WR_RCD
-+              - description: EMC_RRD
-+              - description: EMC_REXT
-+              - description: EMC_WEXT
-+              - description: EMC_WDV
-+              - description: EMC_QUSE
-+              - description: EMC_QRST
-+              - description: EMC_QSAFE
-+              - description: EMC_RDV
-+              - description: EMC_REFRESH
-+              - description: EMC_BURST_REFRESH_NUM
-+              - description: EMC_PRE_REFRESH_REQ_CNT
-+              - description: EMC_PDEX2WR
-+              - description: EMC_PDEX2RD
-+              - description: EMC_PCHG2PDEN
-+              - description: EMC_ACT2PDEN
-+              - description: EMC_AR2PDEN
-+              - description: EMC_RW2PDEN
-+              - description: EMC_TXSR
-+              - description: EMC_TXSRDLL
-+              - description: EMC_TCKE
-+              - description: EMC_TFAW
-+              - description: EMC_TRPAB
-+              - description: EMC_TCLKSTABLE
-+              - description: EMC_TCLKSTOP
-+              - description: EMC_TREFBW
-+              - description: EMC_QUSE_EXTRA
-+              - description: EMC_FBIO_CFG6
-+              - description: EMC_ODT_WRITE
-+              - description: EMC_ODT_READ
-+              - description: EMC_FBIO_CFG5
-+              - description: EMC_CFG_DIG_DLL
-+              - description: EMC_CFG_DIG_DLL_PERIOD
-+              - description: EMC_DLL_XFORM_DQS0
-+              - description: EMC_DLL_XFORM_DQS1
-+              - description: EMC_DLL_XFORM_DQS2
-+              - description: EMC_DLL_XFORM_DQS3
-+              - description: EMC_DLL_XFORM_DQS4
-+              - description: EMC_DLL_XFORM_DQS5
-+              - description: EMC_DLL_XFORM_DQS6
-+              - description: EMC_DLL_XFORM_DQS7
-+              - description: EMC_DLL_XFORM_QUSE0
-+              - description: EMC_DLL_XFORM_QUSE1
-+              - description: EMC_DLL_XFORM_QUSE2
-+              - description: EMC_DLL_XFORM_QUSE3
-+              - description: EMC_DLL_XFORM_QUSE4
-+              - description: EMC_DLL_XFORM_QUSE5
-+              - description: EMC_DLL_XFORM_QUSE6
-+              - description: EMC_DLL_XFORM_QUSE7
-+              - description: EMC_DLI_TRIM_TXDQS0
-+              - description: EMC_DLI_TRIM_TXDQS1
-+              - description: EMC_DLI_TRIM_TXDQS2
-+              - description: EMC_DLI_TRIM_TXDQS3
-+              - description: EMC_DLI_TRIM_TXDQS4
-+              - description: EMC_DLI_TRIM_TXDQS5
-+              - description: EMC_DLI_TRIM_TXDQS6
-+              - description: EMC_DLI_TRIM_TXDQS7
-+              - description: EMC_DLL_XFORM_DQ0
-+              - description: EMC_DLL_XFORM_DQ1
-+              - description: EMC_DLL_XFORM_DQ2
-+              - description: EMC_DLL_XFORM_DQ3
-+              - description: EMC_XM2CMDPADCTRL
-+              - description: EMC_XM2DQSPADCTRL2
-+              - description: EMC_XM2DQPADCTRL2
-+              - description: EMC_XM2CLKPADCTRL
-+              - description: EMC_XM2COMPPADCTRL
-+              - description: EMC_XM2VTTGENPADCTRL
-+              - description: EMC_XM2VTTGENPADCTRL2
-+              - description: EMC_XM2QUSEPADCTRL
-+              - description: EMC_XM2DQSPADCTRL3
-+              - description: EMC_CTT_TERM_CTRL
-+              - description: EMC_ZCAL_INTERVAL
-+              - description: EMC_ZCAL_WAIT_CNT
-+              - description: EMC_MRS_WAIT_CNT
-+              - description: EMC_AUTO_CAL_CONFIG
-+              - description: EMC_CTT
-+              - description: EMC_CTT_DURATION
-+              - description: EMC_DYN_SELF_REF_CONTROL
-+              - description: EMC_FBIO_SPARE
-+              - description: EMC_CFG_RSV
++              - description: MC_EMEM_ARB_CFG
++              - description: MC_EMEM_ARB_OUTSTANDING_REQ
++              - description: MC_EMEM_ARB_TIMING_RCD
++              - description: MC_EMEM_ARB_TIMING_RP
++              - description: MC_EMEM_ARB_TIMING_RC
++              - description: MC_EMEM_ARB_TIMING_RAS
++              - description: MC_EMEM_ARB_TIMING_FAW
++              - description: MC_EMEM_ARB_TIMING_RRD
++              - description: MC_EMEM_ARB_TIMING_RAP2PRE
++              - description: MC_EMEM_ARB_TIMING_WAP2PRE
++              - description: MC_EMEM_ARB_TIMING_R2R
++              - description: MC_EMEM_ARB_TIMING_W2W
++              - description: MC_EMEM_ARB_TIMING_R2W
++              - description: MC_EMEM_ARB_TIMING_W2R
++              - description: MC_EMEM_ARB_DA_TURNS
++              - description: MC_EMEM_ARB_DA_COVERS
++              - description: MC_EMEM_ARB_MISC0
++              - description: MC_EMEM_ARB_MISC1
++              - description: MC_EMEM_ARB_RING1_THROTTLE
 +
 +        required:
 +          - clock-frequency
-+          - nvidia,emc-auto-cal-interval
-+          - nvidia,emc-mode-1
-+          - nvidia,emc-mode-2
-+          - nvidia,emc-mode-reset
-+          - nvidia,emc-zcal-cnt-long
-+          - nvidia,emc-cfg-dyn-self-ref
-+          - nvidia,emc-cfg-periodic-qrst
-+          - nvidia,emc-configuration
++          - nvidia,emem-configuration
 +
 +        additionalProperties: false
 +
@@ -254,127 +139,183 @@ index 000000000000..6865cfb16e59
 +  - reg
 +  - interrupts
 +  - clocks
-+  - nvidia,memory-controller
++  - clock-names
++  - "#reset-cells"
++  - "#iommu-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    external-memory-controller@7000f400 {
-+        compatible = "nvidia,tegra30-emc";
-+        reg = <0x7000f400 0x400>;
-+        interrupts = <0 78 4>;
-+        clocks = <&tegra_car 57>;
++    memory-controller@70019000 {
++        compatible = "nvidia,tegra124-mc";
++        reg = <0x0 0x70019000 0x0 0x1000>;
++        clocks = <&tegra_car 32>;
++        clock-names = "mc";
 +
-+        nvidia,memory-controller = <&mc>;
++        interrupts = <0 77 4>;
 +
-+        emc-timings-1 {
-+            nvidia,ram-code = <1>;
++        #iommu-cells = <1>;
++        #reset-cells = <1>;
 +
-+            timing-667000000 {
-+                clock-frequency = <667000000>;
++        emc-timings-3 {
++            nvidia,ram-code = <3>;
 +
-+                nvidia,emc-auto-cal-interval = <0x001fffff>;
-+                nvidia,emc-mode-1 = <0x80100002>;
-+                nvidia,emc-mode-2 = <0x80200018>;
-+                nvidia,emc-mode-reset = <0x80000b71>;
-+                nvidia,emc-zcal-cnt-long = <0x00000040>;
-+                nvidia,emc-cfg-dyn-self-ref = <0x00000000>;
-+                nvidia,emc-cfg-periodic-qrst = <0x00000001>;
++            timing-12750000 {
++                clock-frequency = <12750000>;
 +
-+                nvidia,emc-configuration = <
-+                    0x00000020 /* EMC_RC */
-+                    0x0000006a /* EMC_RFC */
-+                    0x00000017 /* EMC_RAS */
-+                    0x00000007 /* EMC_RP */
-+                    0x00000005 /* EMC_R2W */
-+                    0x0000000c /* EMC_W2R */
-+                    0x00000003 /* EMC_R2P */
-+                    0x00000011 /* EMC_W2P */
-+                    0x00000007 /* EMC_RD_RCD */
-+                    0x00000007 /* EMC_WR_RCD */
-+                    0x00000002 /* EMC_RRD */
-+                    0x00000001 /* EMC_REXT */
-+                    0x00000000 /* EMC_WEXT */
-+                    0x00000007 /* EMC_WDV */
-+                    0x0000000a /* EMC_QUSE */
-+                    0x00000009 /* EMC_QRST */
-+                    0x0000000b /* EMC_QSAFE */
-+                    0x00000011 /* EMC_RDV */
-+                    0x00001412 /* EMC_REFRESH */
-+                    0x00000000 /* EMC_BURST_REFRESH_NUM */
-+                    0x00000504 /* EMC_PRE_REFRESH_REQ_CNT */
-+                    0x00000002 /* EMC_PDEX2WR */
-+                    0x0000000e /* EMC_PDEX2RD */
-+                    0x00000001 /* EMC_PCHG2PDEN */
-+                    0x00000000 /* EMC_ACT2PDEN */
-+                    0x0000000c /* EMC_AR2PDEN */
-+                    0x00000016 /* EMC_RW2PDEN */
-+                    0x00000072 /* EMC_TXSR */
-+                    0x00000200 /* EMC_TXSRDLL */
-+                    0x00000005 /* EMC_TCKE */
-+                    0x00000015 /* EMC_TFAW */
-+                    0x00000000 /* EMC_TRPAB */
-+                    0x00000006 /* EMC_TCLKSTABLE */
-+                    0x00000007 /* EMC_TCLKSTOP */
-+                    0x00001453 /* EMC_TREFBW */
-+                    0x0000000b /* EMC_QUSE_EXTRA */
-+                    0x00000006 /* EMC_FBIO_CFG6 */
-+                    0x00000000 /* EMC_ODT_WRITE */
-+                    0x00000000 /* EMC_ODT_READ */
-+                    0x00005088 /* EMC_FBIO_CFG5 */
-+                    0xf00b0191 /* EMC_CFG_DIG_DLL */
-+                    0x00008000 /* EMC_CFG_DIG_DLL_PERIOD */
-+                    0x00000008 /* EMC_DLL_XFORM_DQS0 */
-+                    0x00000008 /* EMC_DLL_XFORM_DQS1 */
-+                    0x00000008 /* EMC_DLL_XFORM_DQS2 */
-+                    0x00000008 /* EMC_DLL_XFORM_DQS3 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQS4 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQS5 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQS6 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQS7 */
-+                    0x00018000 /* EMC_DLL_XFORM_QUSE0 */
-+                    0x00018000 /* EMC_DLL_XFORM_QUSE1 */
-+                    0x00018000 /* EMC_DLL_XFORM_QUSE2 */
-+                    0x00018000 /* EMC_DLL_XFORM_QUSE3 */
-+                    0x00000000 /* EMC_DLL_XFORM_QUSE4 */
-+                    0x00000000 /* EMC_DLL_XFORM_QUSE5 */
-+                    0x00000000 /* EMC_DLL_XFORM_QUSE6 */
-+                    0x00000000 /* EMC_DLL_XFORM_QUSE7 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS0 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS1 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS2 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS3 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS4 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS5 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS6 */
-+                    0x00000000 /* EMC_DLI_TRIM_TXDQS7 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQ0 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQ1 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQ2 */
-+                    0x0000000a /* EMC_DLL_XFORM_DQ3 */
-+                    0x000002a0 /* EMC_XM2CMDPADCTRL */
-+                    0x0800013d /* EMC_XM2DQSPADCTRL2 */
-+                    0x22220000 /* EMC_XM2DQPADCTRL2 */
-+                    0x77fff884 /* EMC_XM2CLKPADCTRL */
-+                    0x01f1f501 /* EMC_XM2COMPPADCTRL */
-+                    0x07077404 /* EMC_XM2VTTGENPADCTRL */
-+                    0x54000000 /* EMC_XM2VTTGENPADCTRL2 */
-+                    0x080001e8 /* EMC_XM2QUSEPADCTRL */
-+                    0x0c000021 /* EMC_XM2DQSPADCTRL3 */
-+                    0x00000802 /* EMC_CTT_TERM_CTRL */
-+                    0x00020000 /* EMC_ZCAL_INTERVAL */
-+                    0x00000100 /* EMC_ZCAL_WAIT_CNT */
-+                    0x0155000c /* EMC_MRS_WAIT_CNT */
-+                    0xa0f10000 /* EMC_AUTO_CAL_CONFIG */
-+                    0x00000000 /* EMC_CTT */
-+                    0x00000000 /* EMC_CTT_DURATION */
-+                    0x800028a5 /* EMC_DYN_SELF_REF_CONTROL */
-+                    0xe8000000 /* EMC_FBIO_SPARE */
-+                    0xff00ff49 /* EMC_CFG_RSV */
++                nvidia,emem-configuration = <
++                    0x40040001 /* MC_EMEM_ARB_CFG */
++                    0x8000000a /* MC_EMEM_ARB_OUTSTANDING_REQ */
++                    0x00000001 /* MC_EMEM_ARB_TIMING_RCD */
++                    0x00000001 /* MC_EMEM_ARB_TIMING_RP */
++                    0x00000002 /* MC_EMEM_ARB_TIMING_RC */
++                    0x00000000 /* MC_EMEM_ARB_TIMING_RAS */
++                    0x00000002 /* MC_EMEM_ARB_TIMING_FAW */
++                    0x00000001 /* MC_EMEM_ARB_TIMING_RRD */
++                    0x00000002 /* MC_EMEM_ARB_TIMING_RAP2PRE */
++                    0x00000008 /* MC_EMEM_ARB_TIMING_WAP2PRE */
++                    0x00000003 /* MC_EMEM_ARB_TIMING_R2R */
++                    0x00000002 /* MC_EMEM_ARB_TIMING_W2W */
++                    0x00000003 /* MC_EMEM_ARB_TIMING_R2W */
++                    0x00000006 /* MC_EMEM_ARB_TIMING_W2R */
++                    0x06030203 /* MC_EMEM_ARB_DA_TURNS */
++                    0x000a0402 /* MC_EMEM_ARB_DA_COVERS */
++                    0x77e30303 /* MC_EMEM_ARB_MISC0 */
++                    0x70000f03 /* MC_EMEM_ARB_MISC1 */
++                    0x001f0000 /* MC_EMEM_ARB_RING1_THROTTLE */
 +                >;
 +            };
 +        };
 +    };
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
+deleted file mode 100644
+index a878b5908a4d..000000000000
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
++++ /dev/null
+@@ -1,123 +0,0 @@
+-NVIDIA Tegra Memory Controller device tree bindings
+-===================================================
+-
+-memory-controller node
+-----------------------
+-
+-Required properties:
+-- compatible: Should be "nvidia,tegra<chip>-mc"
+-- reg: Physical base address and length of the controller's registers.
+-- clocks: Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-  - mc: the module's clock input
+-- interrupts: The interrupt outputs from the controller.
+-- #reset-cells : Should be 1. This cell represents memory client module ID.
+-  The assignments may be found in header file <dt-bindings/memory/tegra30-mc.h>
+-  or in the TRM documentation.
+-
+-Required properties for Tegra30, Tegra114, Tegra124, Tegra132 and Tegra210:
+-- #iommu-cells: Should be 1. The single cell of the IOMMU specifier defines
+-  the SWGROUP of the master.
+-
+-This device implements an IOMMU that complies with the generic IOMMU binding.
+-See ../iommu/iommu.txt for details.
+-
+-emc-timings subnode
+--------------------
+-
+-The node should contain a "emc-timings" subnode for each supported RAM type (see field RAM_CODE in
+-register PMC_STRAPPING_OPT_A).
+-
+-Required properties for "emc-timings" nodes :
+-- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is used for.
+-
+-timing subnode
+---------------
+-
+-Each "emc-timings" node should contain a subnode for every supported EMC clock rate.
+-
+-Required properties for timing nodes :
+-- clock-frequency : Should contain the memory clock rate in Hz.
+-- nvidia,emem-configuration : Values to be written to the EMEM register block. For the Tegra124 SoC
+-(see section "15.6.1 MC Registers" in the TRM), these are the registers whose values need to be
+-specified, according to the board documentation:
+-
+-	MC_EMEM_ARB_CFG
+-	MC_EMEM_ARB_OUTSTANDING_REQ
+-	MC_EMEM_ARB_TIMING_RCD
+-	MC_EMEM_ARB_TIMING_RP
+-	MC_EMEM_ARB_TIMING_RC
+-	MC_EMEM_ARB_TIMING_RAS
+-	MC_EMEM_ARB_TIMING_FAW
+-	MC_EMEM_ARB_TIMING_RRD
+-	MC_EMEM_ARB_TIMING_RAP2PRE
+-	MC_EMEM_ARB_TIMING_WAP2PRE
+-	MC_EMEM_ARB_TIMING_R2R
+-	MC_EMEM_ARB_TIMING_W2W
+-	MC_EMEM_ARB_TIMING_R2W
+-	MC_EMEM_ARB_TIMING_W2R
+-	MC_EMEM_ARB_DA_TURNS
+-	MC_EMEM_ARB_DA_COVERS
+-	MC_EMEM_ARB_MISC0
+-	MC_EMEM_ARB_MISC1
+-	MC_EMEM_ARB_RING1_THROTTLE
+-
+-Example SoC include file:
+-
+-/ {
+-	mc: memory-controller@70019000 {
+-		compatible = "nvidia,tegra124-mc";
+-		reg = <0x0 0x70019000 0x0 0x1000>;
+-		clocks = <&tegra_car TEGRA124_CLK_MC>;
+-		clock-names = "mc";
+-
+-		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+-
+-		#iommu-cells = <1>;
+-		#reset-cells = <1>;
+-	};
+-
+-	sdhci@700b0000 {
+-		compatible = "nvidia,tegra124-sdhci";
+-		...
+-		iommus = <&mc TEGRA_SWGROUP_SDMMC1A>;
+-		resets = <&mc TEGRA124_MC_RESET_SDMMC1>;
+-	};
+-};
+-
+-Example board file:
+-
+-/ {
+-	memory-controller@70019000 {
+-		emc-timings-3 {
+-			nvidia,ram-code = <3>;
+-
+-			timing-12750000 {
+-				clock-frequency = <12750000>;
+-
+-				nvidia,emem-configuration = <
+-					0x40040001 /* MC_EMEM_ARB_CFG */
+-					0x8000000a /* MC_EMEM_ARB_OUTSTANDING_REQ */
+-					0x00000001 /* MC_EMEM_ARB_TIMING_RCD */
+-					0x00000001 /* MC_EMEM_ARB_TIMING_RP */
+-					0x00000002 /* MC_EMEM_ARB_TIMING_RC */
+-					0x00000000 /* MC_EMEM_ARB_TIMING_RAS */
+-					0x00000002 /* MC_EMEM_ARB_TIMING_FAW */
+-					0x00000001 /* MC_EMEM_ARB_TIMING_RRD */
+-					0x00000002 /* MC_EMEM_ARB_TIMING_RAP2PRE */
+-					0x00000008 /* MC_EMEM_ARB_TIMING_WAP2PRE */
+-					0x00000003 /* MC_EMEM_ARB_TIMING_R2R */
+-					0x00000002 /* MC_EMEM_ARB_TIMING_W2W */
+-					0x00000003 /* MC_EMEM_ARB_TIMING_R2W */
+-					0x00000006 /* MC_EMEM_ARB_TIMING_W2R */
+-					0x06030203 /* MC_EMEM_ARB_DA_TURNS */
+-					0x000a0402 /* MC_EMEM_ARB_DA_COVERS */
+-					0x77e30303 /* MC_EMEM_ARB_MISC0 */
+-					0x70000f03 /* MC_EMEM_ARB_MISC1 */
+-					0x001f0000 /* MC_EMEM_ARB_RING1_THROTTLE */
+-				>;
+-			};
+-		};
+-	};
+-};
 -- 
 2.22.0
