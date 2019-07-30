@@ -1,147 +1,82 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 06/13] ARM: tegra: Rename some of the newly exposed PM functions
-Date: Tue, 30 Jul 2019 20:09:48 +0300
-Message-ID: <20190730170955.11987-7-digetx@gmail.com>
+Subject: [PATCH v4 03/13] ARM: tegra: Propagate error from
+ tegra_idle_lp2_last()
+Date: Tue, 30 Jul 2019 20:09:45 +0300
+Message-ID: <20190730170955.11987-4-digetx@gmail.com>
 References: <20190730170955.11987-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190730170955.11987-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Rename some of the recently exposed PM functions, prefixing them with
-"tegra_pm_" and making naming of those functions more meaningful, for
-consistency.
+The cpu_suspend() may fail, it's never good to lose information about
+failure because it may become very useful for the caller. The new CPUIDLE
+driver will handle all of possible error cases, including the case of
+tegra_idle_lp2_last() failure.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/pm.c            | 10 +++++-----
- arch/arm/mach-tegra/sleep-tegra30.S |  6 +++---
- include/soc/tegra/pm.h              | 16 ++++++++--------
- 3 files changed, 16 insertions(+), 16 deletions(-)
+ arch/arm/mach-tegra/pm.c | 8 ++++++--
+ arch/arm/mach-tegra/pm.h | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index f9c9bce9e15d..4cc64a135a3e 100644
+index 2f6fb54be9f8..f9c9bce9e15d 100644
 --- a/arch/arm/mach-tegra/pm.c
 +++ b/arch/arm/mach-tegra/pm.c
-@@ -110,7 +110,7 @@ static void suspend_cpu_complex(void)
- 	flowctrl_cpu_suspend_enter(cpu);
- }
- 
--void tegra_clear_cpu_in_lp2(void)
-+void tegra_pm_clear_cpu_in_lp2(void)
- {
- 	int phy_cpu_id = cpu_logical_map(smp_processor_id());
- 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
-@@ -123,7 +123,7 @@ void tegra_clear_cpu_in_lp2(void)
- 	spin_unlock(&tegra_lp2_lock);
- }
- 
--void tegra_set_cpu_in_lp2(void)
-+void tegra_pm_set_cpu_in_lp2(void)
- {
- 	int phy_cpu_id = cpu_logical_map(smp_processor_id());
- 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
-@@ -189,7 +189,7 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
+@@ -189,14 +189,16 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
  	tegra_pmc_enter_suspend_mode(mode);
  }
  
--int tegra_idle_lp2_last(void)
-+int tegra_pm_enter_lp2(void)
+-void tegra_idle_lp2_last(void)
++int tegra_idle_lp2_last(void)
  {
- 	int err;
++	int err;
++
+ 	tegra_pm_set(TEGRA_SUSPEND_LP2);
  
-@@ -356,7 +356,7 @@ static int tegra_suspend_enter(suspend_state_t state)
- 		tegra_suspend_enter_lp1();
- 		break;
- 	case TEGRA_SUSPEND_LP2:
--		tegra_set_cpu_in_lp2();
-+		tegra_pm_set_cpu_in_lp2();
- 		break;
- 	default:
- 		break;
-@@ -377,7 +377,7 @@ static int tegra_suspend_enter(suspend_state_t state)
- 		tegra_suspend_exit_lp1();
- 		break;
- 	case TEGRA_SUSPEND_LP2:
--		tegra_clear_cpu_in_lp2();
-+		tegra_pm_clear_cpu_in_lp2();
- 		break;
- 	default:
- 		break;
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index b408fa56eb89..386319a3d2d2 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -262,11 +262,11 @@ ENTRY(tegra30_sleep_core_finish)
- ENDPROC(tegra30_sleep_core_finish)
+ 	cpu_cluster_pm_enter();
+ 	suspend_cpu_complex();
  
- /*
-- * tegra30_sleep_cpu_secondary_finish(unsigned long v2p)
-+ * tegra30_pm_secondary_cpu_suspend(unsigned long unused_arg)
-  *
-  * Enters LP2 on secondary CPU by exiting coherency and powergating the CPU.
-  */
--ENTRY(tegra30_sleep_cpu_secondary_finish)
-+ENTRY(tegra30_pm_secondary_cpu_suspend)
- 	mov	r7, lr
+-	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
++	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
  
- 	/* Flush and disable the L1 data cache */
-@@ -278,7 +278,7 @@ ENTRY(tegra30_sleep_cpu_secondary_finish)
- 	bl	tegra30_cpu_shutdown
- 	mov	r0, #1                          @ never return here
- 	ret	r7
--ENDPROC(tegra30_sleep_cpu_secondary_finish)
-+ENDPROC(tegra30_pm_secondary_cpu_suspend)
+ 	/*
+ 	 * Resume L2 cache if it wasn't re-enabled early during resume,
+@@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
  
- /*
-  * tegra30_tear_down_cpu
-diff --git a/include/soc/tegra/pm.h b/include/soc/tegra/pm.h
-index bc1abdf41d61..2fbee9efda21 100644
---- a/include/soc/tegra/pm.h
-+++ b/include/soc/tegra/pm.h
-@@ -23,10 +23,10 @@ tegra_pm_validate_suspend_mode(enum tegra_suspend_mode mode);
- /* low-level resume entry point */
- void tegra_resume(void);
- 
--int tegra30_sleep_cpu_secondary_finish(unsigned long arg);
--void tegra_clear_cpu_in_lp2(void);
--void tegra_set_cpu_in_lp2(void);
--int tegra_idle_lp2_last(void);
-+int tegra30_pm_secondary_cpu_suspend(unsigned long arg);
-+void tegra_pm_clear_cpu_in_lp2(void);
-+void tegra_pm_set_cpu_in_lp2(void);
-+int tegra_pm_enter_lp2(void);
- #else
- static inline enum tegra_suspend_mode
- tegra_pm_validate_suspend_mode(enum tegra_suspend_mode mode)
-@@ -38,20 +38,20 @@ static inline void tegra_resume(void)
- {
+ 	restore_cpu_complex();
+ 	cpu_cluster_pm_exit();
++
++	return err;
  }
  
--static inline int tegra30_sleep_cpu_secondary_finish(unsigned long arg)
-+static inline int tegra30_pm_secondary_cpu_suspend(unsigned long arg)
- {
- 	return -ENOTSUPP;
- }
+ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
+index 3f3164ad04b7..ae68fc7db576 100644
+--- a/arch/arm/mach-tegra/pm.h
++++ b/arch/arm/mach-tegra/pm.h
+@@ -25,7 +25,7 @@ void tegra30_sleep_core_init(void);
  
--static inline void tegra_clear_cpu_in_lp2(void)
-+static inline void tegra_pm_clear_cpu_in_lp2(void)
- {
- }
+ void tegra_clear_cpu_in_lp2(void);
+ void tegra_set_cpu_in_lp2(void);
+-void tegra_idle_lp2_last(void);
++int tegra_idle_lp2_last(void);
+ extern void (*tegra_tear_down_cpu)(void);
  
--static inline void tegra_set_cpu_in_lp2(void)
-+static inline void tegra_pm_set_cpu_in_lp2(void)
- {
- }
- 
--static inline int tegra_idle_lp2_last(void)
-+static inline int tegra_pm_enter_lp2(void)
- {
- 	return -ENOTSUPP;
- }
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.22.0
