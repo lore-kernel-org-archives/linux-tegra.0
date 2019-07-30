@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 04/20] PM / devfreq: tegra30: Drop write-barrier
-Date: Tue, 30 Jul 2019 19:22:20 +0300
-Message-ID: <20190730162236.6063-5-digetx@gmail.com>
+Subject: [PATCH v5 13/20] PM / devfreq: tegra30: Reset boosting on startup
+Date: Tue, 30 Jul 2019 19:22:29 +0300
+Message-ID: <20190730162236.6063-14-digetx@gmail.com>
 References: <20190730162236.6063-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,70 +12,29 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need in a write-barrier now, given that interrupt masking is
-handled by CPU's GIC now. Hence we know exactly that interrupt won't fire
-after stopping the devfreq's governor. In other cases we don't care about
-potential buffering of the writes to hardware and thus there is no need to
-stall CPU.
+Governor could be stopped while boosting is active. We have assumption
+that everything is reset on governor's restart, including the boosting
+value, which was missed.
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index bfee9d43de1e..ee14bf534c0d 100644
+index 762e17323095..6e8ae20c3bf1 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -230,12 +230,6 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
- 		      ACTMON_DEV_LOWER_WMARK);
- }
- 
--static void actmon_write_barrier(struct tegra_devfreq *tegra)
--{
--	/* ensure the update has reached the ACTMON */
--	readl(tegra->regs + ACTMON_GLB_STATUS);
--}
--
- static void actmon_isr_device(struct tegra_devfreq *tegra,
- 			      struct tegra_devfreq_device *dev)
+@@ -684,6 +684,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
  {
-@@ -287,8 +281,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
- 	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
+ 	u32 val = 0;
  
- 	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
--
--	actmon_write_barrier(tegra);
- }
- 
- static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
-@@ -376,8 +368,6 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
- 		tegra_devfreq_update_wmark(tegra, dev);
- 	}
- 
--	actmon_write_barrier(tegra);
--
- 	return NOTIFY_OK;
- }
- 
-@@ -423,8 +413,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
- 	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
- 		tegra_actmon_configure_device(tegra, &tegra->devices[i]);
- 
--	actmon_write_barrier(tegra);
--
- 	enable_irq(tegra->irq);
- }
- 
-@@ -439,8 +427,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
- 		device_writel(&tegra->devices[i], ACTMON_INTR_STATUS_CLEAR,
- 			      ACTMON_DEV_INTR_STATUS);
- 	}
--
--	actmon_write_barrier(tegra);
- }
- 
- static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
++	/* reset boosting on governor's restart */
++	dev->boost_freq = 0;
++
+ 	dev->avg_freq = clk_get_rate(tegra->emc_clock) / KHZ;
+ 	device_writel(dev, dev->avg_freq * ACTMON_SAMPLING_PERIOD,
+ 		      ACTMON_DEV_INIT_AVG);
 -- 
 2.22.0
