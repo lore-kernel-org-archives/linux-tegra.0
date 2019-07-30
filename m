@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 08/20] PM / devfreq: tegra30: Ensure that target freq won't overflow
-Date: Tue, 30 Jul 2019 19:22:24 +0300
-Message-ID: <20190730162236.6063-9-digetx@gmail.com>
+Subject: [PATCH v5 07/20] PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+Date: Tue, 30 Jul 2019 19:22:23 +0300
+Message-ID: <20190730162236.6063-8-digetx@gmail.com>
 References: <20190730162236.6063-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,37 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-We already had few integer overflow bugs, let's limit the freq for
-consistency.
+There is another kHz-conversion bug in the code, resulting in integer
+overflow. Although, this time the resulting value is 4294966296 and it's
+close to ULONG_MAX, which is okay in this case.
 
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 70dce58212a4..ca499368ee81 100644
+index 4525c051f85c..70dce58212a4 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -430,7 +430,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
- 	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD + dev->boost_freq;
- 	target_freq = tegra_actmon_account_cpu_freq(tegra, dev, target_freq);
+@@ -70,6 +70,8 @@
  
--	return target_freq;
-+	return min(target_freq, tegra->max_freq);
- }
+ #define KHZ							1000
  
- static irqreturn_t actmon_thread_isr(int irq, void *data)
++#define KHZ_MAX						(ULONG_MAX / KHZ)
++
+ /* Assume that the bus is saturated if the utilization is 25% */
+ #define BUS_SATURATION_RATIO					25
+ 
+@@ -167,7 +169,7 @@ struct tegra_actmon_emc_ratio {
+ };
+ 
+ static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
+-	{ 1400000, ULONG_MAX },
++	{ 1400000,    KHZ_MAX },
+ 	{ 1200000,    750000 },
+ 	{ 1100000,    600000 },
+ 	{ 1000000,    500000 },
 -- 
 2.22.0
