@@ -1,74 +1,50 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 02/13] ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
-Date: Tue, 30 Jul 2019 20:09:44 +0300
-Message-ID: <20190730170955.11987-3-digetx@gmail.com>
-References: <20190730170955.11987-1-digetx@gmail.com>
+Subject: [PATCH v2 1/2] ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
+Date: Tue, 30 Jul 2019 20:23:39 +0300
+Message-ID: <20190730172340.14037-2-digetx@gmail.com>
+References: <20190730172340.14037-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190730170955.11987-1-digetx@gmail.com>
+In-Reply-To: <20190730172340.14037-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The old Tegra30 CPUIDLE driver had intention to check whether primary
-CPU was the last CPU that entered LP2 (CC6) idle-state, but that
-functionality never got utilized by the old-removed driver because it
-never supported the CC6 while secondary CPUs were online. The new driver
-will properly support CC6 on Tegra30, including the case where secondary
-CPUs are online, and that knowledge about what CPUs entered CC6 won't be
-needed at all because new driver will use different approach by making use
-of the coupled idle-state and explicitly parking secondary CPUs before
-entering into CC6.
+There is an unfortunate typo in the code that results in writing to
+FLOW_CTLR_HALT instead of FLOW_CTLR_CSR.
 
+Cc: <stable@vger.kernel.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/pm.c | 8 +-------
- arch/arm/mach-tegra/pm.h | 2 +-
- 2 files changed, 2 insertions(+), 8 deletions(-)
+ arch/arm/mach-tegra/reset-handler.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 6aaacb5757e1..2f6fb54be9f8 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -123,11 +123,9 @@ void tegra_clear_cpu_in_lp2(void)
- 	spin_unlock(&tegra_lp2_lock);
- }
+diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+index df44828a34d3..53123ae4ac3b 100644
+--- a/arch/arm/mach-tegra/reset-handler.S
++++ b/arch/arm/mach-tegra/reset-handler.S
+@@ -44,16 +44,16 @@ ENTRY(tegra_resume)
+ 	cmp	r6, #TEGRA20
+ 	beq	1f				@ Yes
+ 	/* Clear the flow controller flags for this CPU. */
+-	cpu_to_csr_reg r1, r0
++	cpu_to_csr_reg r3, r0
+ 	mov32	r2, TEGRA_FLOW_CTRL_BASE
+-	ldr	r1, [r2, r1]
++	ldr	r1, [r2, r3]
+ 	/* Clear event & intr flag */
+ 	orr	r1, r1, \
+ 		#FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
+ 	movw	r0, #0x3FFD	@ enable, cluster_switch, immed, bitmaps
+ 				@ & ext flags for CPU power mgnt
+ 	bic	r1, r1, r0
+-	str	r1, [r2]
++	str	r1, [r2, r3]
+ 1:
  
--bool tegra_set_cpu_in_lp2(void)
-+void tegra_set_cpu_in_lp2(void)
- {
- 	int phy_cpu_id = cpu_logical_map(smp_processor_id());
--	bool last_cpu = false;
--	cpumask_t *cpu_lp2_mask = tegra_cpu_lp2_mask;
- 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
- 
- 	spin_lock(&tegra_lp2_lock);
-@@ -135,11 +133,7 @@ bool tegra_set_cpu_in_lp2(void)
- 	BUG_ON((*cpu_in_lp2 & BIT(phy_cpu_id)));
- 	*cpu_in_lp2 |= BIT(phy_cpu_id);
- 
--	if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
--		last_cpu = true;
--
- 	spin_unlock(&tegra_lp2_lock);
--	return last_cpu;
- }
- 
- static int tegra_sleep_cpu(unsigned long v2p)
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index 1e51a9b636eb..3f3164ad04b7 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -24,7 +24,7 @@ void tegra30_lp1_iram_hook(void);
- void tegra30_sleep_core_init(void);
- 
- void tegra_clear_cpu_in_lp2(void);
--bool tegra_set_cpu_in_lp2(void);
-+void tegra_set_cpu_in_lp2(void);
- void tegra_idle_lp2_last(void);
- extern void (*tegra_tear_down_cpu)(void);
- 
+ 	mov32	r9, 0xc09
 -- 
 2.22.0
