@@ -1,15 +1,15 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 10/20] clk: tegra: clk-dfll: Add suspend and resume
- support
-Date: Wed, 31 Jul 2019 13:12:29 +0300
-Message-ID: <523ba069-5663-6593-d954-475720864eab@gmail.com>
+Subject: Re: [PATCH v7 08/20] clk: tegra: clk-super: Fix to enable PLLP
+ branches to CPU
+Date: Wed, 31 Jul 2019 13:14:41 +0300
+Message-ID: <3ce20cbf-fe6f-c62b-c7b9-e3cad46f3381@gmail.com>
 References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
- <1564532424-10449-11-git-send-email-skomatineni@nvidia.com>
+ <1564532424-10449-9-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1564532424-10449-11-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1564532424-10449-9-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
@@ -17,121 +17,140 @@ Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vg
 List-Id: linux-tegra@vger.kernel.org
 
 31.07.2019 3:20, Sowjanya Komatineni пишет:
-> This patch implements DFLL suspend and resume operation.
+> This patch has a fix to enable PLLP branches to CPU before changing
+> the CPU clusters clock source to PLLP for Gen5 Super clock and
+> disables PLLP branches to CPU when not in use.
 > 
-> During system suspend entry, CPU clock will switch CPU to safe
-> clock source of PLLP and disables DFLL clock output.
+> During system suspend entry and exit, CPU source will be switched
+> to PLLP and this needs PLLP branches to be enabled to CPU prior to
+> the switch.
 > 
-> DFLL driver suspend confirms DFLL disable state and errors out on
-> being active.
-> 
-> DFLL is re-initialized during the DFLL driver resume as it goes
-> through complete reset during suspend entry.
+> On system resume, warmboot code enables PLLP branches to CPU and
+> powers up the CPU with PLLP clock source.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk-dfll.h               |  2 ++
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
->  3 files changed, 59 insertions(+)
+>  drivers/clk/tegra/clk-super.c            | 14 ++++++++++++++
+>  drivers/clk/tegra/clk-tegra-super-gen4.c |  2 +-
+>  drivers/clk/tegra/clk.c                  | 14 ++++++++++++++
+>  drivers/clk/tegra/clk.h                  |  5 +++++
+>  4 files changed, 34 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index f8688c2ddf1a..9900097ec2aa 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1513,6 +1513,62 @@ static int dfll_init(struct tegra_dfll *td)
->  	return ret;
+> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+> index 39ef31b46df5..e2a1e95a8db7 100644
+> --- a/drivers/clk/tegra/clk-super.c
+> +++ b/drivers/clk/tegra/clk-super.c
+> @@ -28,6 +28,9 @@
+>  #define super_state_to_src_shift(m, s) ((m->width * s))
+>  #define super_state_to_src_mask(m) (((1 << m->width) - 1))
+>  
+> +#define CCLK_SRC_PLLP_OUT0 4
+> +#define CCLK_SRC_PLLP_OUT4 5
+> +
+>  static u8 clk_super_get_parent(struct clk_hw *hw)
+>  {
+>  	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
+> @@ -97,12 +100,23 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
+>  		if (index == mux->div2_index)
+>  			index = mux->pllx_index;
+>  	}
+> +
+> +	/* enable PLLP branches to CPU before selecting PLLP source */
+> +	if ((mux->flags & TEGRA210_CPU_CLK) &&
+> +	    (index == CCLK_SRC_PLLP_OUT0 || index == CCLK_SRC_PLLP_OUT4))
+> +		tegra_clk_set_pllp_out_cpu(true);
+> +
+>  	val &= ~((super_state_to_src_mask(mux)) << shift);
+>  	val |= (index & (super_state_to_src_mask(mux))) << shift;
+>  
+>  	writel_relaxed(val, mux->reg);
+>  	udelay(2);
+>  
+> +	/* disable PLLP branches to CPU if not used */
+> +	if ((mux->flags & TEGRA210_CPU_CLK) &&
+> +	    index != CCLK_SRC_PLLP_OUT0 && index != CCLK_SRC_PLLP_OUT4)
+> +		tegra_clk_set_pllp_out_cpu(false);
+> +
+>  out:
+>  	if (mux->lock)
+>  		spin_unlock_irqrestore(mux->lock, flags);
+> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+> index cdfe7c9697e1..888d76b01c75 100644
+> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
+> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+> @@ -180,7 +180,7 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
+>  					gen_info->num_cclk_g_parents,
+>  					CLK_SET_RATE_PARENT,
+>  					clk_base + CCLKG_BURST_POLICY,
+> -					0, 4, 8, 0, NULL);
+> +					TEGRA210_CPU_CLK, 4, 8, 0, NULL);
+
+Don't we want a clarifying comment for cclk_lp telling why it doesn't
+have the TEGRA210_CPU_CLK flag?
+
+>  		} else {
+>  			clk = tegra_clk_register_super_mux("cclk_g",
+>  					gen_info->cclk_g_parents,
+> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+> index 573e3c967ae1..eb08047fd02f 100644
+> --- a/drivers/clk/tegra/clk.c
+> +++ b/drivers/clk/tegra/clk.c
+> @@ -23,6 +23,7 @@
+>  #define CLK_OUT_ENB_W			0x364
+>  #define CLK_OUT_ENB_X			0x280
+>  #define CLK_OUT_ENB_Y			0x298
+> +#define CLK_ENB_PLLP_OUT_CPU		BIT(31)
+>  #define CLK_OUT_ENB_SET_L		0x320
+>  #define CLK_OUT_ENB_CLR_L		0x324
+>  #define CLK_OUT_ENB_SET_H		0x328
+> @@ -199,6 +200,19 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+>  	}
 >  }
 >  
-> +/**
-> + * tegra_dfll_suspend - check DFLL is disabled
-> + * @dev: DFLL device *
-> + *
-> + * DFLL clock should be disabled by the CPUFreq driver. So, make
-> + * sure it is disabled and disable all clocks needed by the DFLL.
-> + */
-> +int tegra_dfll_suspend(struct device *dev)
+> +void tegra_clk_set_pllp_out_cpu(bool enable)
 > +{
-> +	struct tegra_dfll *td = dev_get_drvdata(dev);
+> +	u32 val;
 > +
-> +	if (dfll_is_running(td)) {
-> +		dev_err(td->dev, "dfll is enabled while shouldn't be\n");
-> +		return -EBUSY;
-> +	}
+> +	val = readl_relaxed(clk_base + CLK_OUT_ENB_Y);
+> +	if (enable)
+> +		val |= CLK_ENB_PLLP_OUT_CPU;
+> +	else
+> +		val &= ~CLK_ENB_PLLP_OUT_CPU;
 > +
-> +	reset_control_assert(td->dvco_rst);
-> +
-> +	return 0;
+> +	writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
 > +}
-> +EXPORT_SYMBOL(tegra_dfll_suspend);
 > +
-> +/**
-> + * tegra_dfll_resume - reinitialize DFLL on resume
-> + * @dev: DFLL instance
-> + *
-> + * DFLL is disabled and reset during suspend and resume.
-> + * So, reinitialize the DFLL IP block back for use.
-> + * DFLL clock is enabled later in closed loop mode by CPUFreq
-> + * driver before switching its clock source to DFLL output.
-> + */
-> +int tegra_dfll_resume(struct device *dev)
-> +{
-> +	struct tegra_dfll *td = dev_get_drvdata(dev);
-> +
-> +	reset_control_deassert(td->dvco_rst);
-> +
-> +	pm_runtime_irq_safe(td->dev);
-
-1. Interrupts are allowed here.
-2. It's enough to invoke that function once during probe.
-3. That function bumps runtime-enable count of the parent, which
-immediately should raise some questions.
-
-Corollary: you should remove pm_runtime_irq_safe() because it is not needed.
-
-> +	pm_runtime_get_sync(td->dev);
-> +
-> +	dfll_set_mode(td, DFLL_DISABLED);
-> +	dfll_set_default_params(td);
-> +
-> +	if (td->soc->init_clock_trimmers)
-> +		td->soc->init_clock_trimmers();
-> +
-> +	dfll_set_open_loop_config(td);
-> +
-> +	dfll_init_out_if(td);
-> +
-> +	pm_runtime_put_sync(td->dev);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(tegra_dfll_resume);
-> +
->  /*
->   * DT data fetch
+>  struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+>  {
+>  	clk_base = regs;
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index d61e61eebf4a..f8de447f505b 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -687,6 +687,9 @@ struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
+>   * Flags:
+>   * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indicates
+>   *     that this is LP cluster clock.
+> + * TEGRA210_CPU_CLK - This flag indicates this is CPU cluster clock. To use
+> + * PLLP for CPU clock source, need to enable PLLP branches to CPU by setting
+> + * additional bit PLLP_OUT_CPU for gen5 super clock.
 >   */
-> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-> index 1b14ebe7268b..fb209eb5f365 100644
-> --- a/drivers/clk/tegra/clk-dfll.h
-> +++ b/drivers/clk/tegra/clk-dfll.h
-> @@ -42,5 +42,7 @@ int tegra_dfll_register(struct platform_device *pdev,
->  struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
->  int tegra_dfll_runtime_suspend(struct device *dev);
->  int tegra_dfll_runtime_resume(struct device *dev);
-> +int tegra_dfll_suspend(struct device *dev);
-> +int tegra_dfll_resume(struct device *dev);
+>  struct tegra_clk_super_mux {
+>  	struct clk_hw	hw;
+> @@ -703,6 +706,7 @@ struct tegra_clk_super_mux {
+>  #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
 >  
->  #endif /* __DRIVERS_CLK_TEGRA_CLK_DFLL_H */
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> index e84b6d52cbbd..2ac2679d696d 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -631,6 +631,7 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
->  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
->  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
->  			   tegra_dfll_runtime_resume, NULL)
-> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_dfll_suspend, tegra_dfll_resume)
->  };
+>  #define TEGRA_DIVIDER_2 BIT(0)
+> +#define TEGRA210_CPU_CLK BIT(1)
 >  
->  static struct platform_driver tegra124_dfll_fcpu_driver = {
+>  extern const struct clk_ops tegra_clk_super_ops;
+>  struct clk *tegra_clk_register_super_mux(const char *name,
+> @@ -849,6 +853,7 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+>  int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+>  		 u8 frac_width, u8 flags);
+>  void tegra_clk_osc_resume(void __iomem *clk_base);
+> +void tegra_clk_set_pllp_out_cpu(bool enable);
+>  
+>  
+>  /* Combined read fence with delay */
 > 
