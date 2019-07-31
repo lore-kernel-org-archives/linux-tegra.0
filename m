@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 06/20] clk: tegra: Support for OSC context save and restore
-Date: Wed, 31 Jul 2019 14:10:49 -0700
-Message-ID: <1564607463-28802-7-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 10/20] clk: tegra: clk-dfll: Add suspend and resume support
+Date: Wed, 31 Jul 2019 14:10:53 -0700
+Message-ID: <1564607463-28802-11-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,68 +12,114 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds support for saving OSC clock frequency and the
-drive-strength during OSC clock init and creates an API to restore
-OSC control register value from the saved context.
+This patch implements DFLL suspend and resume operation.
 
-This API is invoked by Tegra210 clock driver during system resume
-to restore the  OSC clock settings.
+During system suspend entry, CPU clock will switch CPU to safe
+clock source of PLLP and disables DFLL clock output.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+DFLL driver suspend confirms DFLL disable state and errors out on
+being active.
+
+DFLL is re-initialized during the DFLL driver resume as it goes
+through complete reset during suspend entry.
+
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
- drivers/clk/tegra/clk.h             |  1 +
- 2 files changed, 16 insertions(+)
+ drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-dfll.h               |  2 ++
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
+ 3 files changed, 59 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
-index 8d91b2b191cf..7c6c8abfcde6 100644
---- a/drivers/clk/tegra/clk-tegra-fixed.c
-+++ b/drivers/clk/tegra/clk-tegra-fixed.c
-@@ -17,6 +17,10 @@
- #define OSC_CTRL			0x50
- #define OSC_CTRL_OSC_FREQ_SHIFT		28
- #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
-+#define OSC_CTRL_MASK			(0x3f2 |	\
-+					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
-+
-+static u32 osc_ctrl_ctx;
- 
- int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- 			      unsigned long *input_freqs, unsigned int num,
-@@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- 	unsigned osc_idx;
- 
- 	val = readl_relaxed(clk_base + OSC_CTRL);
-+	osc_ctrl_ctx = val & OSC_CTRL_MASK;
- 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
- 
- 	if (osc_idx < num)
-@@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
- 		*dt_clk = clk;
- 	}
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index f8688c2ddf1a..9900097ec2aa 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1513,6 +1513,62 @@ static int dfll_init(struct tegra_dfll *td)
+ 	return ret;
  }
-+
-+void tegra_clk_osc_resume(void __iomem *clk_base)
+ 
++/**
++ * tegra_dfll_suspend - check DFLL is disabled
++ * @dev: DFLL device *
++ *
++ * DFLL clock should be disabled by the CPUFreq driver. So, make
++ * sure it is disabled and disable all clocks needed by the DFLL.
++ */
++int tegra_dfll_suspend(struct device *dev)
 +{
-+	u32 val;
++	struct tegra_dfll *td = dev_get_drvdata(dev);
 +
-+	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
-+	val |= osc_ctrl_ctx;
-+	writel_relaxed(val, clk_base + OSC_CTRL);
-+	fence_udelay(2, clk_base);
++	if (dfll_is_running(td)) {
++		dev_err(td->dev, "dfll is enabled while shouldn't be\n");
++		return -EBUSY;
++	}
++
++	reset_control_assert(td->dvco_rst);
++
++	return 0;
 +}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index f1ef6ae8c979..abba6d8a04cd 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -842,6 +842,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
- int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
- 		 u8 frac_width, u8 flags);
-+void tegra_clk_osc_resume(void __iomem *clk_base);
++EXPORT_SYMBOL(tegra_dfll_suspend);
++
++/**
++ * tegra_dfll_resume - reinitialize DFLL on resume
++ * @dev: DFLL instance
++ *
++ * DFLL is disabled and reset during suspend and resume.
++ * So, reinitialize the DFLL IP block back for use.
++ * DFLL clock is enabled later in closed loop mode by CPUFreq
++ * driver before switching its clock source to DFLL output.
++ */
++int tegra_dfll_resume(struct device *dev)
++{
++	struct tegra_dfll *td = dev_get_drvdata(dev);
++
++	reset_control_deassert(td->dvco_rst);
++
++	pm_runtime_irq_safe(td->dev);
++	pm_runtime_get_sync(td->dev);
++
++	dfll_set_mode(td, DFLL_DISABLED);
++	dfll_set_default_params(td);
++
++	if (td->soc->init_clock_trimmers)
++		td->soc->init_clock_trimmers();
++
++	dfll_set_open_loop_config(td);
++
++	dfll_init_out_if(td);
++
++	pm_runtime_put_sync(td->dev);
++
++	return 0;
++}
++EXPORT_SYMBOL(tegra_dfll_resume);
++
+ /*
+  * DT data fetch
+  */
+diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+index 1b14ebe7268b..fb209eb5f365 100644
+--- a/drivers/clk/tegra/clk-dfll.h
++++ b/drivers/clk/tegra/clk-dfll.h
+@@ -42,5 +42,7 @@ int tegra_dfll_register(struct platform_device *pdev,
+ struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
+ int tegra_dfll_runtime_suspend(struct device *dev);
+ int tegra_dfll_runtime_resume(struct device *dev);
++int tegra_dfll_suspend(struct device *dev);
++int tegra_dfll_resume(struct device *dev);
  
+ #endif /* __DRIVERS_CLK_TEGRA_CLK_DFLL_H */
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index e84b6d52cbbd..2ac2679d696d 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -631,6 +631,7 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+ 			   tegra_dfll_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(tegra_dfll_suspend, tegra_dfll_resume)
+ };
  
- /* Combined read fence with delay */
+ static struct platform_driver tegra124_dfll_fcpu_driver = {
 -- 
 2.7.4
