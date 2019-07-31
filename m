@@ -1,49 +1,79 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 2/2] soc/tegra: pmc: Remove unnecessary memory barrier
-Date: Tue, 30 Jul 2019 20:40:20 +0300
-Message-ID: <20190730174020.15878-2-digetx@gmail.com>
-References: <20190730174020.15878-1-digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH v7 06/20] clk: tegra: Support for OSC context save and restore
+Date: Tue, 30 Jul 2019 17:20:10 -0700
+Message-ID: <1564532424-10449-7-git-send-email-skomatineni@nvidia.com>
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190730174020.15878-1-digetx@gmail.com>
+In-Reply-To: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The removed barrier isn't needed because the writes/reads are strictly
-ordered and even if PMC had separate ports for the writes, it wouldn't
-matter since the hardware logic takes into effect after triggering CPU's
-power-gating and at that point all CPU accesses are guaranteed to be
-completed. Hence remove the barrier to eliminate the confusion.
+This patch adds support for saving OSC clock frequency and the
+drive-strength during OSC clock init and creates an API to restore
+OSC control register value from the saved context.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+This API is invoked by Tegra210 clock driver during system resume
+to restore the  OSC clock settings.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
+ drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
+ drivers/clk/tegra/clk.h             |  1 +
+ 2 files changed, 16 insertions(+)
 
-Changelog:
-
-v3: No changes.
-
-v2: New patch that was added after Jon's Hunter pointing that it's better
-    not to change the barrier's placement in the code. In fact the barrier
-    is not needed at all.
-
- drivers/soc/tegra/pmc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index aba3396b2e73..3044809f1c10 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1457,8 +1457,6 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
- 	do_div(ticks, USEC_PER_SEC);
- 	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 8d91b2b191cf..7c6c8abfcde6 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -17,6 +17,10 @@
+ #define OSC_CTRL			0x50
+ #define OSC_CTRL_OSC_FREQ_SHIFT		28
+ #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
++#define OSC_CTRL_MASK			(0x3f2 |	\
++					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
++
++static u32 osc_ctrl_ctx;
  
--	wmb();
--
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
- 	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
- 	value |= PMC_CNTRL_CPU_PWRREQ_OE;
+ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 			      unsigned long *input_freqs, unsigned int num,
+@@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 	unsigned osc_idx;
+ 
+ 	val = readl_relaxed(clk_base + OSC_CTRL);
++	osc_ctrl_ctx = val & OSC_CTRL_MASK;
+ 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
+ 
+ 	if (osc_idx < num)
+@@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 		*dt_clk = clk;
+ 	}
+ }
++
++void tegra_clk_osc_resume(void __iomem *clk_base)
++{
++	u32 val;
++
++	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
++	val |= osc_ctrl_ctx;
++	writel_relaxed(val, clk_base + OSC_CTRL);
++	fence_udelay(2, clk_base);
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f1ef6ae8c979..abba6d8a04cd 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -842,6 +842,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+ 		 u8 frac_width, u8 flags);
++void tegra_clk_osc_resume(void __iomem *clk_base);
+ 
+ 
+ /* Combined read fence with delay */
 -- 
-2.22.0
+2.7.4
