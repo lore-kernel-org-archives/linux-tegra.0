@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 09/20] clk: tegra: clk-super: Add save and restore support
-Date: Wed, 31 Jul 2019 14:10:52 -0700
-Message-ID: <1564607463-28802-10-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 16/20] arm64: tegra: Enable wake from deep sleep on RTC alarm
+Date: Wed, 31 Jul 2019 14:10:59 -0700
+Message-ID: <1564607463-28802-17-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,99 +12,36 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch implements save and restore context for clk_super_mux
-and clk_super.
-
-During system supend, core power goes off the and context of Tegra
-CAR registers is lost.
-
-So during suspend entry, context of super clock registers are saved
-through save_context clk_ops and are restored through restore_context
-clk_ops to have them in same state as before suspend.
+This patch updates device tree for RTC and PMC to allow system wake
+from deep sleep on RTC alarm.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-super.c | 39 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h       |  1 +
- 2 files changed, 40 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index e2a1e95a8db7..be0551cb5587 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -124,9 +124,27 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 	return err;
- }
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 659753118e96..30a7c48385a2 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -768,7 +768,8 @@
+ 	rtc@7000e000 {
+ 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
+ 		reg = <0x0 0x7000e000 0x0 0x100>;
+-		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&pmc>;
+ 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
+ 		clock-names = "rtc";
+ 	};
+@@ -778,6 +779,8 @@
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#interrupt-cells = <2>;
++		interrupt-controller;
  
-+static int clk_super_mux_save_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
-+
-+	mux->parent_index_ctx = clk_super_get_parent(hw);
-+
-+	return 0;
-+}
-+
-+static void clk_super_mux_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
-+
-+	clk_super_set_parent(hw, mux->parent_index_ctx);
-+}
-+
- static const struct clk_ops tegra_clk_super_mux_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
-+	.save_context = clk_super_mux_save_context,
-+	.restore_context = clk_super_mux_restore_context,
- };
- 
- static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -162,12 +180,33 @@ static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return super->div_ops->set_rate(div_hw, rate, parent_rate);
- }
- 
-+static int clk_super_save_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+
-+	super->parent_index_ctx = clk_super_get_parent(hw);
-+
-+	return 0;
-+}
-+
-+static void clk_super_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	clk_super_set_parent(hw, super->parent_index_ctx);
-+
-+	super->div_ops->restore_context(div_hw);
-+}
-+
- const struct clk_ops tegra_clk_super_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
- 	.set_rate = clk_super_set_rate,
- 	.round_rate = clk_super_round_rate,
- 	.recalc_rate = clk_super_recalc_rate,
-+	.save_context = clk_super_save_context,
-+	.restore_context = clk_super_restore_context,
- };
- 
- struct clk *tegra_clk_register_super_mux(const char *name,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index f8de447f505b..d397dda7c6d0 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -701,6 +701,7 @@ struct tegra_clk_super_mux {
- 	u8		div2_index;
- 	u8		pllx_index;
- 	spinlock_t	*lock;
-+	u8		parent_index_ctx;
- };
- 
- #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
+ 		powergates {
+ 			pd_audio: aud {
 -- 
 2.7.4
