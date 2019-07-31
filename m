@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 15/20] soc/tegra: pmc: Add pmc wake support for tegra210
-Date: Wed, 31 Jul 2019 14:10:58 -0700
-Message-ID: <1564607463-28802-16-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 09/20] clk: tegra: clk-super: Add save and restore support
+Date: Wed, 31 Jul 2019 14:10:52 -0700
+Message-ID: <1564607463-28802-10-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,161 +12,99 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch implements PMC wakeup sequence for Tegra210 and defines
-common used RTC alarm wake event.
+This patch implements save and restore context for clk_super_mux
+and clk_super.
+
+During system supend, core power goes off the and context of Tegra
+CAR registers is lost.
+
+So during suspend entry, context of super clock registers are saved
+through save_context clk_ops and are restored through restore_context
+clk_ops to have them in same state as before suspend.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 98 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+ drivers/clk/tegra/clk-super.c | 39 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h       |  1 +
+ 2 files changed, 40 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 91c84d0e66ae..3aa71c28a10a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -58,6 +58,11 @@
- #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
- #define  PMC_CNTRL_MAIN_RST		BIT(4)
- 
-+#define PMC_WAKE_MASK			0x0c
-+#define PMC_WAKE_LEVEL			0x10
-+#define PMC_WAKE_STATUS			0x14
-+#define PMC_SW_WAKE_STATUS		0x18
-+
- #define DPD_SAMPLE			0x020
- #define  DPD_SAMPLE_ENABLE		BIT(0)
- #define  DPD_SAMPLE_DISABLE		(0 << 0)
-@@ -87,6 +92,11 @@
- 
- #define PMC_SCRATCH41			0x140
- 
-+#define PMC_WAKE2_MASK			0x160
-+#define PMC_WAKE2_LEVEL			0x164
-+#define PMC_WAKE2_STATUS		0x168
-+#define PMC_SW_WAKE2_STATUS		0x16c
-+
- #define PMC_SENSOR_CTRL			0x1b0
- #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
- #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
-@@ -1922,6 +1932,43 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
- 	.alloc = tegra_pmc_irq_alloc,
- };
- 
-+static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-+{
-+	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-+	unsigned int offset, bit;
-+	u32 value;
-+
-+	if (data->hwirq == ULONG_MAX)
-+		return 0;
-+
-+	offset = data->hwirq / 32;
-+	bit = data->hwirq % 32;
-+
-+	/* clear wake status */
-+	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
-+	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
-+
-+	tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
-+	tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
-+
-+	/* enable PMC wake */
-+	if (data->hwirq >= 32)
-+		offset = PMC_WAKE2_MASK;
-+	else
-+		offset = PMC_WAKE_MASK;
-+
-+	value = tegra_pmc_readl(pmc, offset);
-+
-+	if (on)
-+		value |= 1 << bit;
-+	else
-+		value &= ~(1 << bit);
-+
-+	tegra_pmc_writel(pmc, value, offset);
-+
-+	return 0;
-+}
-+
- static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-@@ -1954,6 +2001,49 @@ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index e2a1e95a8db7..be0551cb5587 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -124,9 +124,27 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
+ 	return err;
  }
  
-+static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
++static int clk_super_mux_save_context(struct clk_hw *hw)
 +{
-+	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-+	unsigned int offset, bit;
-+	u32 value;
++	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
 +
-+	if (data->hwirq == ULONG_MAX)
-+		return 0;
-+
-+	offset = data->hwirq / 32;
-+	bit = data->hwirq % 32;
-+
-+	if (data->hwirq >= 32)
-+		offset = PMC_WAKE2_LEVEL;
-+	else
-+		offset = PMC_WAKE_LEVEL;
-+
-+	value = tegra_pmc_readl(pmc, offset);
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		value |= 1 << bit;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+	case IRQ_TYPE_LEVEL_LOW:
-+		value &= ~(1 << bit);
-+		break;
-+
-+	case IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING:
-+		value ^= 1 << bit;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	tegra_pmc_writel(pmc, value, offset);
++	mux->parent_index_ctx = clk_super_get_parent(hw);
 +
 +	return 0;
 +}
 +
- static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-@@ -2540,6 +2630,10 @@ static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
- 	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
- };
- 
-+static const struct tegra_wake_event tegra210_wake_events[] = {
-+	TEGRA_WAKE_IRQ("rtc", 16, 2),
-+};
++static void clk_super_mux_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
 +
- static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
- 	.powergates = tegra210_powergates,
-@@ -2557,10 +2651,14 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-+	.irq_set_wake = tegra210_pmc_irq_set_wake,
-+	.irq_set_type = tegra210_pmc_irq_set_type,
- 	.reset_sources = tegra210_reset_sources,
- 	.num_reset_sources = ARRAY_SIZE(tegra210_reset_sources),
- 	.reset_levels = NULL,
- 	.num_reset_levels = 0,
-+	.num_wake_events = ARRAY_SIZE(tegra210_wake_events),
-+	.wake_events = tegra210_wake_events,
++	clk_super_set_parent(hw, mux->parent_index_ctx);
++}
++
+ static const struct clk_ops tegra_clk_super_mux_ops = {
+ 	.get_parent = clk_super_get_parent,
+ 	.set_parent = clk_super_set_parent,
++	.save_context = clk_super_mux_save_context,
++	.restore_context = clk_super_mux_restore_context,
  };
  
- #define TEGRA186_IO_PAD_TABLE(_pad)					     \
+ static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -162,12 +180,33 @@ static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return super->div_ops->set_rate(div_hw, rate, parent_rate);
+ }
+ 
++static int clk_super_save_context(struct clk_hw *hw)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++
++	super->parent_index_ctx = clk_super_get_parent(hw);
++
++	return 0;
++}
++
++static void clk_super_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	clk_super_set_parent(hw, super->parent_index_ctx);
++
++	super->div_ops->restore_context(div_hw);
++}
++
+ const struct clk_ops tegra_clk_super_ops = {
+ 	.get_parent = clk_super_get_parent,
+ 	.set_parent = clk_super_set_parent,
+ 	.set_rate = clk_super_set_rate,
+ 	.round_rate = clk_super_round_rate,
+ 	.recalc_rate = clk_super_recalc_rate,
++	.save_context = clk_super_save_context,
++	.restore_context = clk_super_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_super_mux(const char *name,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f8de447f505b..d397dda7c6d0 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -701,6 +701,7 @@ struct tegra_clk_super_mux {
+ 	u8		div2_index;
+ 	u8		pllx_index;
+ 	spinlock_t	*lock;
++	u8		parent_index_ctx;
+ };
+ 
+ #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
 -- 
 2.7.4
