@@ -1,30 +1,18 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Applied "ASoC: meson: axg-spdifout: use
- devm_platform_ioremap_resource() to simplify code" to the asoc tree
-Date: Wed, 31 Jul 2019 12:29:44 +0100 (BST)
-Message-ID: <20190731112944.B9D4B2742C99@ypsilon.sirena.org.uk>
-References: <20190727150738.54764-30-yuehaibing@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190727150738.54764-30-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, olivier.moysan-qxv4g6HH51o@public.gmane.org, Xiubo.Lee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org, jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Hulk Robot <hulkci-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, wens-jdAy2FN1RRM@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-imx-3arQi8VN3Tc@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, alexandre.torgue-qxv4g6HH51o@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlog
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: mmp-sspa: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+Date: Wed, 31 Jul 2019 12:29:41 +0100 (BST)
+Message-ID: <20190731112941.7EF382742CC3@ypsilon.sirena.org.uk>
+References: <20190727150738.54764-19-yuehaibing@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190727150738.54764-19-yuehaibing@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: alexandre.torgue@st.com, alsa-devel@alsa-project.org, arnaud.pouliquen@st.com, baohua@kernel.org, bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org, daniel@zonque.org, eric@anholt.net, festevam@gmail.com, f.fainelli@gmail.com, gregkh@linuxfoundation.org, haojian.zhuang@gmail.com, Hulk Robot <hulkci@huawei.com>, jbrunet@baylibre.com, jcmvbkbc@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de, khilman@baylibre.com, lgirdwood@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-xtensa@linux-xtensa.org
 List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   ASoC: meson: axg-spdifout: use devm_platform_ioremap_resource() to simplify code
+   ASoC: mmp-sspa: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -49,44 +37,44 @@ to this mail.
 Thanks,
 Mark
 
-From c43fd289dd58951f3cfddb3bb66a6ed7747c5986 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Date: Sat, 27 Jul 2019 23:07:33 +0800
-Subject: [PATCH] ASoC: meson: axg-spdifout: use
- devm_platform_ioremap_resource() to simplify code
+From 72d09322e709c5c2d7112d6a19ec9f3846d3609d Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 27 Jul 2019 23:07:22 +0800
+Subject: [PATCH] ASoC: mmp-sspa: use devm_platform_ioremap_resource() to
+ simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
 This is detected by coccinelle.
 
-Reported-by: Hulk Robot <hulkci-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Signed-off-by: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Link: https://lore.kernel.org/r/20190727150738.54764-30-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
-Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190727150738.54764-19-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/axg-spdifout.c | 4 +---
+ sound/soc/pxa/mmp-sspa.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/meson/axg-spdifout.c b/sound/soc/meson/axg-spdifout.c
-index 9dea528053ad..7ce6aa97ddf7 100644
---- a/sound/soc/meson/axg-spdifout.c
-+++ b/sound/soc/meson/axg-spdifout.c
-@@ -401,7 +401,6 @@ static int axg_spdifout_probe(struct platform_device *pdev)
+diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
+index 72f4364b2d20..e3e5425b5c62 100644
+--- a/sound/soc/pxa/mmp-sspa.c
++++ b/sound/soc/pxa/mmp-sspa.c
+@@ -399,7 +399,6 @@ static const struct snd_soc_component_driver mmp_sspa_component = {
+ static int asoc_mmp_sspa_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
- 	struct axg_spdifout *priv;
+ 	struct sspa_priv *priv;
 -	struct resource *res;
- 	void __iomem *regs;
- 	int ret;
  
-@@ -410,8 +409,7 @@ static int axg_spdifout_probe(struct platform_device *pdev)
+ 	priv = devm_kzalloc(&pdev->dev,
+ 				sizeof(struct sspa_priv), GFP_KERNEL);
+@@ -417,8 +416,7 @@ static int asoc_mmp_sspa_probe(struct platform_device *pdev)
+ 	if (priv->dma_params == NULL)
  		return -ENOMEM;
- 	platform_set_drvdata(pdev, priv);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+-	priv->sspa->mmio_base = devm_ioremap_resource(&pdev->dev, res);
++	priv->sspa->mmio_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->sspa->mmio_base))
+ 		return PTR_ERR(priv->sspa->mmio_base);
  
 -- 
 2.20.1
