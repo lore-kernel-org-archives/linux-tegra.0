@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 08/20] clk: tegra: clk-super: Fix to enable PLLP branches to CPU
-Date: Wed, 31 Jul 2019 14:10:51 -0700
-Message-ID: <1564607463-28802-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 05/20] clk: tegra: pll: Save and restore pll context
+Date: Wed, 31 Jul 2019 14:10:48 -0700
+Message-ID: <1564607463-28802-6-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,137 +12,243 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch has a fix to enable PLLP branches to CPU before changing
-the CPU clusters clock source to PLLP for Gen5 Super clock and
-disables PLLP branches to CPU when not in use.
+This patch implements save and restore of PLL context.
 
-During system suspend entry and exit, CPU source will be switched
-to PLLP and this needs PLLP branches to be enabled to CPU prior to
-the switch.
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
 
-On system resume, warmboot code enables PLLP branches to CPU and
-powers up the CPU with PLLP clock source.
+So during suspend entry pll context is stored and on resume it is
+restored back along with its state.
 
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-super.c            | 14 ++++++++++++++
- drivers/clk/tegra/clk-tegra-super-gen4.c |  2 +-
- drivers/clk/tegra/clk.c                  | 14 ++++++++++++++
- drivers/clk/tegra/clk.h                  |  5 +++++
- 4 files changed, 34 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-pll.c | 112 +++++++++++++++++++++++++++++++-------------
+ drivers/clk/tegra/clk.h     |   4 ++
+ 2 files changed, 84 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 39ef31b46df5..e2a1e95a8db7 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -28,6 +28,9 @@
- #define super_state_to_src_shift(m, s) ((m->width * s))
- #define super_state_to_src_mask(m) (((1 << m->width) - 1))
- 
-+#define CCLK_SRC_PLLP_OUT0 4
-+#define CCLK_SRC_PLLP_OUT4 5
-+
- static u8 clk_super_get_parent(struct clk_hw *hw)
- {
- 	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
-@@ -97,12 +100,23 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 		if (index == mux->div2_index)
- 			index = mux->pllx_index;
- 	}
-+
-+	/* enable PLLP branches to CPU before selecting PLLP source */
-+	if ((mux->flags & TEGRA210_CPU_CLK) &&
-+	    (index == CCLK_SRC_PLLP_OUT0 || index == CCLK_SRC_PLLP_OUT4))
-+		tegra_clk_set_pllp_out_cpu(true);
-+
- 	val &= ~((super_state_to_src_mask(mux)) << shift);
- 	val |= (index & (super_state_to_src_mask(mux))) << shift;
- 
- 	writel_relaxed(val, mux->reg);
- 	udelay(2);
- 
-+	/* disable PLLP branches to CPU if not used */
-+	if ((mux->flags & TEGRA210_CPU_CLK) &&
-+	    index != CCLK_SRC_PLLP_OUT0 && index != CCLK_SRC_PLLP_OUT4)
-+		tegra_clk_set_pllp_out_cpu(false);
-+
- out:
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-index cdfe7c9697e1..888d76b01c75 100644
---- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -180,7 +180,7 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
- 					gen_info->num_cclk_g_parents,
- 					CLK_SET_RATE_PARENT,
- 					clk_base + CCLKG_BURST_POLICY,
--					0, 4, 8, 0, NULL);
-+					TEGRA210_CPU_CLK, 4, 8, 0, NULL);
- 		} else {
- 			clk = tegra_clk_register_super_mux("cclk_g",
- 					gen_info->cclk_g_parents,
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 573e3c967ae1..eb08047fd02f 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -23,6 +23,7 @@
- #define CLK_OUT_ENB_W			0x364
- #define CLK_OUT_ENB_X			0x280
- #define CLK_OUT_ENB_Y			0x298
-+#define CLK_ENB_PLLP_OUT_CPU		BIT(31)
- #define CLK_OUT_ENB_SET_L		0x320
- #define CLK_OUT_ENB_CLR_L		0x324
- #define CLK_OUT_ENB_SET_H		0x328
-@@ -199,6 +200,19 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
- 	}
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 1583f5fc992f..344605135a70 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1008,6 +1008,50 @@ static unsigned long clk_plle_recalc_rate(struct clk_hw *hw,
+ 	return rate;
  }
  
-+void tegra_clk_set_pllp_out_cpu(bool enable)
++static int tegra_clk_pll_save_context(struct clk_hw *hw)
 +{
-+	u32 val;
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	u32 val = 0;
 +
-+	val = readl_relaxed(clk_base + CLK_OUT_ENB_Y);
-+	if (enable)
-+		val |= CLK_ENB_PLLP_OUT_CPU;
-+	else
-+		val &= ~CLK_ENB_PLLP_OUT_CPU;
++	if (pll->params->flags & TEGRA_PLLMB)
++		val = pll_readl_base(pll);
++	else if (pll->params->flags & TEGRA_PLLRE)
++		val = pll_readl_base(pll) & divp_mask_shifted(pll);
 +
-+	writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
++	pll->pllbase_ctx = val;
++	return 0;
 +}
 +
- struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
++static void tegra_clk_pll_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++	unsigned long rate = clk_hw_get_rate(hw);
++	u32 val;
++
++	if (clk_pll_is_enabled(hw))
++		return;
++
++	if (pll->params->flags & TEGRA_PLLMB) {
++		pll_writel_base(pll->pllbase_ctx, pll);
++	} else if (pll->params->flags & TEGRA_PLLRE) {
++		val = pll_readl_base(pll);
++		val &= ~(divp_mask_shifted(pll));
++		pll_writel_base(pll->pllbase_ctx | val, pll);
++	}
++
++	if (pll->params->set_defaults)
++		pll->params->set_defaults(pll);
++
++	clk_pll_set_rate(hw, rate, parent_rate);
++
++	if (!__clk_get_enable_count(hw->clk))
++		clk_pll_disable(hw);
++	else
++		clk_pll_enable(hw);
++}
++
+ const struct clk_ops tegra_clk_pll_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+ 	.enable = clk_pll_enable,
+@@ -1015,6 +1059,8 @@ const struct clk_ops tegra_clk_pll_ops = {
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_round_rate,
+ 	.set_rate = clk_pll_set_rate,
++	.save_context = tegra_clk_pll_save_context,
++	.restore_context = tegra_clk_pll_restore_context,
+ };
+ 
+ const struct clk_ops tegra_clk_plle_ops = {
+@@ -1802,6 +1848,27 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ 
+ 	return ret;
+ }
++
++static void _clk_plle_tegra_init_parent(struct tegra_clk_pll *pll)
++{
++	u32 val, val_aux;
++
++	/* ensure parent is set to pll_ref */
++	val = pll_readl_base(pll);
++	val_aux = pll_readl(pll->params->aux_reg, pll);
++
++	if (val & PLL_BASE_ENABLE) {
++		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
++		    (val_aux & PLLE_AUX_PLLP_SEL))
++			WARN(1, "pll_e enabled with unsupported parent %s\n",
++			     (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
++			     "pll_re_vco");
++	} else {
++		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
++		pll_writel(val_aux, pll->params->aux_reg, pll);
++		fence_udelay(1, pll->clk_base);
++	}
++}
+ #endif
+ 
+ static struct tegra_clk_pll *_tegra_init_pll(void __iomem *clk_base,
+@@ -2214,27 +2281,12 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
  {
- 	clk_base = regs;
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk;
+-	u32 val, val_aux;
+ 
+ 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+ 
+-	/* ensure parent is set to pll_re_vco */
+-
+-	val = pll_readl_base(pll);
+-	val_aux = pll_readl(pll_params->aux_reg, pll);
+-
+-	if (val & PLL_BASE_ENABLE) {
+-		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
+-			(val_aux & PLLE_AUX_PLLP_SEL))
+-			WARN(1, "pll_e enabled with unsupported parent %s\n",
+-			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
+-					"pll_re_vco");
+-	} else {
+-		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
+-		pll_writel(val_aux, pll_params->aux_reg, pll);
+-	}
++	_clk_plle_tegra_init_parent(pll);
+ 
+ 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+ 				      &tegra_clk_plle_tegra114_ops);
+@@ -2276,6 +2328,8 @@ static const struct clk_ops tegra_clk_pllss_ops = {
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
++	.save_context = tegra_clk_pll_save_context,
++	.restore_context = tegra_clk_pll_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+@@ -2375,6 +2429,7 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
+ 							     parent_rate);
+ 
++	pll_params->flags |= TEGRA_PLLRE;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+@@ -2520,11 +2575,19 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+ 
++static void tegra_clk_plle_t210_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++
++	_clk_plle_tegra_init_parent(pll);
++}
++
+ static const struct clk_ops tegra_clk_plle_tegra210_ops = {
+ 	.is_enabled =  clk_plle_tegra210_is_enabled,
+ 	.enable = clk_plle_tegra210_enable,
+ 	.disable = clk_plle_tegra210_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
++	.restore_context = tegra_clk_plle_t210_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_plle_tegra210(const char *name,
+@@ -2535,27 +2598,12 @@ struct clk *tegra_clk_register_plle_tegra210(const char *name,
+ {
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk;
+-	u32 val, val_aux;
+ 
+ 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+ 
+-	/* ensure parent is set to pll_re_vco */
+-
+-	val = pll_readl_base(pll);
+-	val_aux = pll_readl(pll_params->aux_reg, pll);
+-
+-	if (val & PLLE_BASE_ENABLE) {
+-		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
+-			(val_aux & PLLE_AUX_PLLP_SEL))
+-			WARN(1, "pll_e enabled with unsupported parent %s\n",
+-			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
+-					"pll_re_vco");
+-	} else {
+-		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
+-		pll_writel(val_aux, pll_params->aux_reg, pll);
+-	}
++	_clk_plle_tegra_init_parent(pll);
+ 
+ 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+ 				      &tegra_clk_plle_tegra210_ops);
 diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index d61e61eebf4a..f8de447f505b 100644
+index 230c05d8eef0..f1ef6ae8c979 100644
 --- a/drivers/clk/tegra/clk.h
 +++ b/drivers/clk/tegra/clk.h
-@@ -687,6 +687,9 @@ struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
-  * Flags:
-  * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indicates
-  *     that this is LP cluster clock.
-+ * TEGRA210_CPU_CLK - This flag indicates this is CPU cluster clock. To use
-+ * PLLP for CPU clock source, need to enable PLLP branches to CPU by setting
-+ * additional bit PLLP_OUT_CPU for gen5 super clock.
+@@ -233,6 +233,7 @@ struct tegra_clk_pll;
+  * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
+  *     flag indicated that it is PLLMB.
+  * TEGRA_PLL_VCO_OUT - Used to indicate that the PLL has a VCO output
++ * TEGRA_PLLRE - Used to indicate that it is PLLRE
   */
- struct tegra_clk_super_mux {
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -299,6 +300,7 @@ struct tegra_clk_pll_params {
+ #define TEGRA_MDIV_NEW BIT(11)
+ #define TEGRA_PLLMB BIT(12)
+ #define TEGRA_PLL_VCO_OUT BIT(13)
++#define TEGRA_PLLRE BIT(14)
+ 
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+@@ -308,6 +310,7 @@ struct tegra_clk_pll_params {
+  * @pmc:	address of PMC, required to read override bits
+  * @lock:	register lock
+  * @params:	PLL parameters
++ * @pllbase_ctx: pll base register value during suspend and resume
+  */
+ struct tegra_clk_pll {
  	struct clk_hw	hw;
-@@ -703,6 +706,7 @@ struct tegra_clk_super_mux {
- #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
+@@ -315,6 +318,7 @@ struct tegra_clk_pll {
+ 	void __iomem	*pmc;
+ 	spinlock_t	*lock;
+ 	struct tegra_clk_pll_params	*params;
++	u32	pllbase_ctx;
+ };
  
- #define TEGRA_DIVIDER_2 BIT(0)
-+#define TEGRA210_CPU_CLK BIT(1)
- 
- extern const struct clk_ops tegra_clk_super_ops;
- struct clk *tegra_clk_register_super_mux(const char *name,
-@@ -849,6 +853,7 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
- int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
- 		 u8 frac_width, u8 flags);
- void tegra_clk_osc_resume(void __iomem *clk_base);
-+void tegra_clk_set_pllp_out_cpu(bool enable);
- 
- 
- /* Combined read fence with delay */
+ #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
 -- 
 2.7.4
