@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: g12a-tohdmitx: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-Date: Wed, 31 Jul 2019 12:29:38 +0100 (BST)
-Message-ID: <20190731112939.015D42742CDE@ypsilon.sirena.org.uk>
-References: <20190727150738.54764-26-yuehaibing@huawei.com>
+Subject: Applied "ASoC: kirkwood-i2s: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+Date: Wed, 31 Jul 2019 12:29:46 +0100 (BST)
+Message-ID: <20190731112946.B0EE02742CC3@ypsilon.sirena.org.uk>
+References: <20190727150738.54764-14-yuehaibing@huawei.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190727150738.54764-26-yuehaibing@huawei.com>
+In-Reply-To: <20190727150738.54764-14-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: YueHaibing <yuehaibing@huawei.com>
 Cc: alexandre.torgue@st.com, alsa-devel@alsa-project.org, arnaud.pouliquen@st.com, baohua@kernel.org, bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org, daniel@zonque.org, eric@anholt.net, festevam@gmail.com, f.fainelli@gmail.com, gregkh@linuxfoundation.org, haojian.zhuang@gmail.com, Hulk Robot <hulkci@huawei.com>, jbrunet@baylibre.com, jcmvbkbc@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de, khilman@baylibre.com, lgirdwood@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-xtensa@linux-xtensa.org
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   ASoC: meson: g12a-tohdmitx: use devm_platform_ioremap_resource() to simplify code
+   ASoC: kirkwood-i2s: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -37,40 +37,44 @@ to this mail.
 Thanks,
 Mark
 
-From a95c901248642d62dc7462a2d2190c8ac183c84f Mon Sep 17 00:00:00 2001
+From 89dd38bf130e661d92c6ab7e3b003907f1d3f367 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:29 +0800
-Subject: [PATCH] ASoC: meson: g12a-tohdmitx: use
- devm_platform_ioremap_resource() to simplify code
+Date: Sat, 27 Jul 2019 23:07:17 +0800
+Subject: [PATCH] ASoC: kirkwood-i2s: use devm_platform_ioremap_resource() to
+ simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
 This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-26-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-14-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/g12a-tohdmitx.c | 4 +---
+ sound/soc/kirkwood/kirkwood-i2s.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/meson/g12a-tohdmitx.c b/sound/soc/meson/g12a-tohdmitx.c
-index 9943c807ec5d..9cfbd343a00c 100644
---- a/sound/soc/meson/g12a-tohdmitx.c
-+++ b/sound/soc/meson/g12a-tohdmitx.c
-@@ -376,12 +376,10 @@ MODULE_DEVICE_TABLE(of, g12a_tohdmitx_of_match);
- static int g12a_tohdmitx_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	void __iomem *regs;
- 	struct regmap *map;
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 3446a113f482..5076ec4cc7a6 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -523,7 +523,6 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 	struct kirkwood_asoc_platform_data *data = pdev->dev.platform_data;
+ 	struct snd_soc_dai_driver *soc_dai = kirkwood_i2s_dai;
+ 	struct kirkwood_dma_data *priv;
+-	struct resource *mem;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	int err;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+@@ -533,8 +532,7 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(&pdev->dev, priv);
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->io = devm_ioremap_resource(&pdev->dev, mem);
++	priv->io = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->io))
+ 		return PTR_ERR(priv->io);
  
 -- 
 2.20.1
