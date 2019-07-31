@@ -1,14 +1,14 @@
 From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Applied "ASoC: jz4740: use devm_platform_ioremap_resource() to
+Subject: Applied "ASoC: psc-ac97: use devm_platform_ioremap_resource() to
  simplify code" to the asoc tree
-Date: Wed, 31 Jul 2019 12:29:41 +0100 (BST)
-Message-ID: <20190731112941.2119E2742C99@ypsilon.sirena.org.uk>
-References: <20190727150738.54764-20-yuehaibing@huawei.com>
+Date: Wed, 31 Jul 2019 12:29:39 +0100 (BST)
+Message-ID: <20190731112939.9E6DE2742CC3@ypsilon.sirena.org.uk>
+References: <20190727150738.54764-24-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190727150738.54764-20-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20190727150738.54764-24-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
  <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
@@ -24,7 +24,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   ASoC: jz4740: use devm_platform_ioremap_resource() to simplify code
+   ASoC: psc-ac97: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -49,10 +49,10 @@ to this mail.
 Thanks,
 Mark
 
-From a8dc106410a2c3c87917447fb8c132b66062443e Mon Sep 17 00:00:00 2001
+From b1abe8780041d568ae07013a3592519fca855a1c Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Date: Sat, 27 Jul 2019 23:07:23 +0800
-Subject: [PATCH] ASoC: jz4740: use devm_platform_ioremap_resource() to
+Date: Sat, 27 Jul 2019 23:07:27 +0800
+Subject: [PATCH] ASoC: psc-ac97: use devm_platform_ioremap_resource() to
  simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
@@ -60,33 +60,34 @@ This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 Signed-off-by: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Link: https://lore.kernel.org/r/20190727150738.54764-20-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
+Link: https://lore.kernel.org/r/20190727150738.54764-24-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
 Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- sound/soc/codecs/jz4740.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/au1x/psc-ac97.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/jz4740.c b/sound/soc/codecs/jz4740.c
-index 974e17fa1911..460aa1fd1efe 100644
---- a/sound/soc/codecs/jz4740.c
-+++ b/sound/soc/codecs/jz4740.c
-@@ -318,7 +318,6 @@ static int jz4740_codec_probe(struct platform_device *pdev)
+diff --git a/sound/soc/au1x/psc-ac97.c b/sound/soc/au1x/psc-ac97.c
+index 21e5f6aed7f3..08bc04e2da2a 100644
+--- a/sound/soc/au1x/psc-ac97.c
++++ b/sound/soc/au1x/psc-ac97.c
+@@ -363,7 +363,7 @@ static const struct snd_soc_component_driver au1xpsc_ac97_component = {
+ static int au1xpsc_ac97_drvprobe(struct platform_device *pdev)
  {
  	int ret;
- 	struct jz4740_codec *jz4740_codec;
--	struct resource *mem;
- 	void __iomem *base;
+-	struct resource *iores, *dmares;
++	struct resource *dmares;
+ 	unsigned long sel;
+ 	struct au1xpsc_audio_data *wd;
  
- 	jz4740_codec = devm_kzalloc(&pdev->dev, sizeof(*jz4740_codec),
-@@ -326,8 +325,7 @@ static int jz4740_codec_probe(struct platform_device *pdev)
- 	if (!jz4740_codec)
- 		return -ENOMEM;
+@@ -374,8 +374,7 @@ static int au1xpsc_ac97_drvprobe(struct platform_device *pdev)
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, mem);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+ 	mutex_init(&wd->lock);
+ 
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	wd->mmio = devm_ioremap_resource(&pdev->dev, iores);
++	wd->mmio = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(wd->mmio))
+ 		return PTR_ERR(wd->mmio);
  
 -- 
 2.20.1
