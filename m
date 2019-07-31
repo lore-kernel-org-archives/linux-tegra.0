@@ -1,86 +1,127 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 06/20] clk: tegra: Support for OSC context save and
- restore
-Date: Wed, 31 Jul 2019 14:11:02 +0300
-Message-ID: <16cca6aa-1034-f38a-49d1-d87b37fb6bbb@gmail.com>
+Subject: Re: [PATCH v7 11/20] cpufreq: tegra124: Add suspend and resume
+ support
+Date: Wed, 31 Jul 2019 14:14:37 +0300
+Message-ID: <505bbdc0-c48a-8583-3838-ec5c128f375f@gmail.com>
 References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
- <1564532424-10449-7-git-send-email-skomatineni@nvidia.com>
+ <1564532424-10449-12-git-send-email-skomatineni@nvidia.com>
+ <98aae4b7-d95a-90ba-0d55-7512b3712f54@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1564532424-10449-7-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <98aae4b7-d95a-90ba-0d55-7512b3712f54@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-31.07.2019 3:20, Sowjanya Komatineni пишет:
-> This patch adds support for saving OSC clock frequency and the
-> drive-strength during OSC clock init and creates an API to restore
-> OSC control register value from the saved context.
+31.07.2019 13:23, Dmitry Osipenko пишет:
+> 31.07.2019 3:20, Sowjanya Komatineni пишет:
+>> This patch adds suspend and resume pm ops for cpufreq driver.
+>>
+>> PLLP is the safe clock source for CPU during system suspend and
+>> resume as PLLP rate is below the CPU Fmax at Vmin.
+>>
+>> CPUFreq driver suspend switches the CPU clock source to PLLP and
+>> disables the DFLL clock.
+>>
+>> During system resume, warmboot code powers up the CPU with PLLP
+>> clock source. So CPUFreq driver resume enabled DFLL clock and
+>> switches CPU back to DFLL clock source.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 60 insertions(+)
+>>
+>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+>> index 4f0c637b3b49..e979a3370988 100644
+>> --- a/drivers/cpufreq/tegra124-cpufreq.c
+>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+>> @@ -6,6 +6,7 @@
+>>  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+>>  
+>>  #include <linux/clk.h>
+>> +#include <linux/cpufreq.h>
+>>  #include <linux/err.h>
+>>  #include <linux/init.h>
+>>  #include <linux/kernel.h>
+>> @@ -128,8 +129,67 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>>  	return ret;
+>>  }
+>>  
+>> +static int __maybe_unused tegra124_cpufreq_suspend(struct device *dev)
+>> +{
+>> +	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	/*
+>> +	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
+>> +	 * use during suspend and resume. So, switch the CPU clock source
+>> +	 * to PLLP and disable DFLL.
+>> +	 */
+>> +	err = clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+>> +	if (err < 0) {
+>> +		dev_err(dev, "failed to reparent to PLLP: %d\n", err);
+>> +		return err;
+>> +	}
+>> +
+>> +	/* disable DFLL clock */
+>> +	clk_disable_unprepare(priv->dfll_clk);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
+>> +{
+>> +	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	/*
+>> +	 * Warmboot code powers up the CPU with PLLP clock source.
+>> +	 * Enable DFLL clock and switch CPU clock source back to DFLL.
+>> +	 */
+>> +	err = clk_prepare_enable(priv->dfll_clk);
+>> +	if (err < 0) {
+>> +		dev_err(dev, "failed to enable DFLL clock for CPU: %d\n", err);
+>> +		goto disable_cpufreq;
+>> +	}
+>> +
+>> +	err = clk_set_parent(priv->cpu_clk, priv->dfll_clk);
+>> +	if (err < 0) {
+>> +		dev_err(dev, "failed to reparent to DFLL clock: %d\n", err);
+>> +		goto disable_dfll;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +disable_dfll:
+>> +	clk_disable_unprepare(priv->dfll_clk);
+>> +disable_cpufreq:
+>> +	disable_cpufreq();
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
+>> +	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
+>> +				tegra124_cpufreq_resume)
+>> +};
+>> +
+>>  static struct platform_driver tegra124_cpufreq_platdrv = {
+>>  	.driver.name	= "cpufreq-tegra124",
+>> +	.driver.pm	= &tegra124_cpufreq_pm_ops,
+>>  	.probe		= tegra124_cpufreq_probe,
+>>  };
+>>  
+>>
 > 
-> This API is invoked by Tegra210 clock driver during system resume
-> to restore the  OSC clock settings.
+> Looks good,
 > 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
->  drivers/clk/tegra/clk.h             |  1 +
->  2 files changed, 16 insertions(+)
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
-> index 8d91b2b191cf..7c6c8abfcde6 100644
-> --- a/drivers/clk/tegra/clk-tegra-fixed.c
-> +++ b/drivers/clk/tegra/clk-tegra-fixed.c
-> @@ -17,6 +17,10 @@
->  #define OSC_CTRL			0x50
->  #define OSC_CTRL_OSC_FREQ_SHIFT		28
->  #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
-> +#define OSC_CTRL_MASK			(0x3f2 |	\
-> +					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
-> +
-> +static u32 osc_ctrl_ctx;
->  
->  int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
->  			      unsigned long *input_freqs, unsigned int num,
-> @@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
->  	unsigned osc_idx;
->  
->  	val = readl_relaxed(clk_base + OSC_CTRL);
-> +	osc_ctrl_ctx = val & OSC_CTRL_MASK;
->  	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
->  
->  	if (osc_idx < num)
-> @@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
->  		*dt_clk = clk;
->  	}
->  }
-> +
-> +void tegra_clk_osc_resume(void __iomem *clk_base)
-> +{
-> +	u32 val;
-> +
-> +	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
-> +	val |= osc_ctrl_ctx;
-> +	writel_relaxed(val, clk_base + OSC_CTRL);
 
-Why a full raw u32 OSC_CTRL value couldn't be simply saved and restored?
-
-> +	fence_udelay(2, clk_base);
-> +}
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index f1ef6ae8c979..abba6d8a04cd 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -842,6 +842,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
->  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
->  int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
->  		 u8 frac_width, u8 flags);
-> +void tegra_clk_osc_resume(void __iomem *clk_base);
->  
->  
->  /* Combined read fence with delay */
-> 
+BTW, you should also CC the CPUFreq maintainers because this patch can't
+be applied without theirs ACK.
