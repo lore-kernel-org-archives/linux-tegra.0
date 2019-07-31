@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 08/20] clk: tegra: clk-super: Fix to enable PLLP branches to CPU
-Date: Tue, 30 Jul 2019 17:20:12 -0700
-Message-ID: <1564532424-10449-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 04/20] clk: tegra: pllout: Save and restore pllout context
+Date: Tue, 30 Jul 2019 17:20:08 -0700
+Message-ID: <1564532424-10449-5-git-send-email-skomatineni@nvidia.com>
 References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,137 +12,108 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch has a fix to enable PLLP branches to CPU before changing
-the CPU clusters clock source to PLLP for Gen5 Super clock and
-disables PLLP branches to CPU when not in use.
+This patch implements save and restore of pllout context.
 
-During system suspend entry and exit, CPU source will be switched
-to PLLP and this needs PLLP branches to be enabled to CPU prior to
-the switch.
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
 
-On system resume, warmboot code enables PLLP branches to CPU and
-powers up the CPU with PLLP clock source.
+So during suspend entry the state of pllout is saved and on resume
+it is restored back to have pllout in same state as before suspend.
 
+pllout rate is saved and restore in clock divider so it will be at
+same rate as before suspend when pllout state is restored.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-super.c            | 14 ++++++++++++++
- drivers/clk/tegra/clk-tegra-super-gen4.c |  2 +-
- drivers/clk/tegra/clk.c                  | 14 ++++++++++++++
- drivers/clk/tegra/clk.h                  |  5 +++++
- 4 files changed, 34 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-pll-out.c  | 26 ++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra210.c |  3 ++-
+ drivers/clk/tegra/clk.h          |  9 +++++++++
+ 3 files changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 39ef31b46df5..e2a1e95a8db7 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -28,6 +28,9 @@
- #define super_state_to_src_shift(m, s) ((m->width * s))
- #define super_state_to_src_mask(m) (((1 << m->width) - 1))
- 
-+#define CCLK_SRC_PLLP_OUT0 4
-+#define CCLK_SRC_PLLP_OUT4 5
-+
- static u8 clk_super_get_parent(struct clk_hw *hw)
- {
- 	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
-@@ -97,12 +100,23 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 		if (index == mux->div2_index)
- 			index = mux->pllx_index;
- 	}
-+
-+	/* enable PLLP branches to CPU before selecting PLLP source */
-+	if ((mux->flags & TEGRA210_CPU_CLK) &&
-+	    (index == CCLK_SRC_PLLP_OUT0 || index == CCLK_SRC_PLLP_OUT4))
-+		tegra_clk_set_pllp_out_cpu(true);
-+
- 	val &= ~((super_state_to_src_mask(mux)) << shift);
- 	val |= (index & (super_state_to_src_mask(mux))) << shift;
- 
- 	writel_relaxed(val, mux->reg);
- 	udelay(2);
- 
-+	/* disable PLLP branches to CPU if not used */
-+	if ((mux->flags & TEGRA210_CPU_CLK) &&
-+	    index != CCLK_SRC_PLLP_OUT0 && index != CCLK_SRC_PLLP_OUT4)
-+		tegra_clk_set_pllp_out_cpu(false);
-+
- out:
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-index cdfe7c9697e1..888d76b01c75 100644
---- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -180,7 +180,7 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
- 					gen_info->num_cclk_g_parents,
- 					CLK_SET_RATE_PARENT,
- 					clk_base + CCLKG_BURST_POLICY,
--					0, 4, 8, 0, NULL);
-+					TEGRA210_CPU_CLK, 4, 8, 0, NULL);
- 		} else {
- 			clk = tegra_clk_register_super_mux("cclk_g",
- 					gen_info->cclk_g_parents,
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 573e3c967ae1..eb08047fd02f 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -23,6 +23,7 @@
- #define CLK_OUT_ENB_W			0x364
- #define CLK_OUT_ENB_X			0x280
- #define CLK_OUT_ENB_Y			0x298
-+#define CLK_ENB_PLLP_OUT_CPU		BIT(31)
- #define CLK_OUT_ENB_SET_L		0x320
- #define CLK_OUT_ENB_CLR_L		0x324
- #define CLK_OUT_ENB_SET_H		0x328
-@@ -199,6 +200,19 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
- 	}
+diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+index 35f2bf00e1e6..312a3e8ef398 100644
+--- a/drivers/clk/tegra/clk-pll-out.c
++++ b/drivers/clk/tegra/clk-pll-out.c
+@@ -69,10 +69,36 @@ static void clk_pll_out_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll_out->lock, flags);
  }
  
-+void tegra_clk_set_pllp_out_cpu(bool enable)
++static int tegra_clk_pll_out_save_context(struct clk_hw *hw)
 +{
-+	u32 val;
++	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
 +
-+	val = readl_relaxed(clk_base + CLK_OUT_ENB_Y);
-+	if (enable)
-+		val |= CLK_ENB_PLLP_OUT_CPU;
-+	else
-+		val &= ~CLK_ENB_PLLP_OUT_CPU;
++	if (pll_out->flags & TEGRA_PLLRE_OUT)
++		pll_out->pllout_ctx = readl_relaxed(pll_out->reg);
 +
-+	writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
++	return 0;
 +}
 +
- struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- {
- 	clk_base = regs;
++static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
++
++	if (pll_out->flags & TEGRA_PLLRE_OUT) {
++		writel_relaxed(pll_out->pllout_ctx, pll_out->reg);
++	} else {
++		if (!__clk_get_enable_count(hw->clk))
++			clk_pll_out_disable(hw);
++		else
++			clk_pll_out_enable(hw);
++	}
++}
++
+ const struct clk_ops tegra_clk_pll_out_ops = {
+ 	.is_enabled = clk_pll_out_is_enabled,
+ 	.enable = clk_pll_out_enable,
+ 	.disable = clk_pll_out_disable,
++	.save_context = tegra_clk_pll_out_save_context,
++	.restore_context = tegra_clk_pll_out_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_pll_out(const char *name,
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index df172d5772d7..4721ee030d1c 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3200,7 +3200,8 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 					 8, 8, 1, NULL);
+ 	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
+ 					 clk_base + PLLRE_OUT1, 1, 0,
+-					 CLK_SET_RATE_PARENT, 0, NULL);
++					 CLK_SET_RATE_PARENT, TEGRA_PLLRE_OUT,
++					 NULL);
+ 	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
+ 
+ 	/* PLLE */
 diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index d61e61eebf4a..f8de447f505b 100644
+index 905bf1096558..230c05d8eef0 100644
 --- a/drivers/clk/tegra/clk.h
 +++ b/drivers/clk/tegra/clk.h
-@@ -687,6 +687,9 @@ struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
-  * Flags:
-  * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indicates
-  *     that this is LP cluster clock.
-+ * TEGRA210_CPU_CLK - This flag indicates this is CPU cluster clock. To use
-+ * PLLP for CPU clock source, need to enable PLLP branches to CPU by setting
-+ * additional bit PLLP_OUT_CPU for gen5 super clock.
+@@ -437,6 +437,12 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
+  * @rst_bit_idx:	bit to reset PLL divider
+  * @lock:		register lock
+  * @flags:		hardware-specific flags
++ * @pllout_ctx:		pllout context to save and restore during suspend
++ *			and resume
++ *
++ * Flags:
++ * TEGRA_PLLRE_OUT - This flag indicates that it is PLLRE_OUT and is used to
++ *		     identify PLLRE_OUT during clk_pll_out save and restore.
   */
- struct tegra_clk_super_mux {
+ struct tegra_clk_pll_out {
  	struct clk_hw	hw;
-@@ -703,6 +706,7 @@ struct tegra_clk_super_mux {
- #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
+@@ -445,8 +451,11 @@ struct tegra_clk_pll_out {
+ 	u8		rst_bit_idx;
+ 	spinlock_t	*lock;
+ 	u8		flags;
++	u32		pllout_ctx;
+ };
  
- #define TEGRA_DIVIDER_2 BIT(0)
-+#define TEGRA210_CPU_CLK BIT(1)
++#define TEGRA_PLLRE_OUT BIT(0)
++
+ #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
  
- extern const struct clk_ops tegra_clk_super_ops;
- struct clk *tegra_clk_register_super_mux(const char *name,
-@@ -849,6 +853,7 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
- int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
- 		 u8 frac_width, u8 flags);
- void tegra_clk_osc_resume(void __iomem *clk_base);
-+void tegra_clk_set_pllp_out_cpu(bool enable);
- 
- 
- /* Combined read fence with delay */
+ extern const struct clk_ops tegra_clk_pll_out_ops;
 -- 
 2.7.4
