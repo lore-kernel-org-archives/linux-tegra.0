@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 000/293] 4.14.135-stable review
-Date: Wed, 31 Jul 2019 10:35:08 +0100
-Message-ID: <1b3e819e-26f3-4257-73bc-744cda177d1c@nvidia.com>
-References: <20190729190820.321094988@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 000/113] 4.19.63-stable review
+Date: Wed, 31 Jul 2019 10:35:56 +0100
+Message-ID: <7fd48fde-0b0c-e949-1624-af95efb49050@nvidia.com>
+References: <20190729190655.455345569@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -15,9 +15,9 @@ Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 29/07/2019 20:18, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.135 release.
-> There are 293 patches in this series, all will be posted as a response
+On 29/07/2019 20:21, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.63 release.
+> There are 113 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,25 +25,25 @@ On 29/07/2019 20:18, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.135-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.63-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
 > and the diffstat can be found below.
 > 
 > thanks,
 > 
 > greg k-h
 
-
 All tests passing for Tegra ...
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    24 tests:	24 pass, 0 fail
+Test results for stable-v4.19:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-Linux version:	4.14.135-rc1-gf6ba73a2e356
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+Linux version:	4.19.63-rc1-g0c75526c53c7
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
 Cheers
