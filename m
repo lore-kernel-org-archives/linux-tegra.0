@@ -1,14 +1,14 @@
 From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Applied "ASoC: ep93xx-i2s: use devm_platform_ioremap_resource() to
+Subject: Applied "ASoC: sun8i-codec: use devm_platform_ioremap_resource() to
  simplify code" to the asoc tree
-Date: Wed, 31 Jul 2019 12:29:49 +0100 (BST)
-Message-ID: <20190731112950.07FCF2742CDE@ypsilon.sirena.org.uk>
-References: <20190727150738.54764-5-yuehaibing@huawei.com>
+Date: Wed, 31 Jul 2019 12:29:42 +0100 (BST)
+Message-ID: <20190731112942.EDB972742CC3@ypsilon.sirena.org.uk>
+References: <20190727150738.54764-35-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190727150738.54764-5-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20190727150738.54764-35-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
  <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
@@ -24,7 +24,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   ASoC: ep93xx-i2s: use devm_platform_ioremap_resource() to simplify code
+   ASoC: sun8i-codec: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -49,10 +49,10 @@ to this mail.
 Thanks,
 Mark
 
-From 4b3540074361fc7b97f2da54365c55ceca6333d2 Mon Sep 17 00:00:00 2001
+From 790b36578e23264ff05be2ba8466ebcf7d3db38a Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Date: Sat, 27 Jul 2019 23:07:08 +0800
-Subject: [PATCH] ASoC: ep93xx-i2s: use devm_platform_ioremap_resource() to
+Date: Sat, 27 Jul 2019 23:07:38 +0800
+Subject: [PATCH] ASoC: sun8i-codec: use devm_platform_ioremap_resource() to
  simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
@@ -60,32 +60,33 @@ This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 Signed-off-by: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Link: https://lore.kernel.org/r/20190727150738.54764-5-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
+Link: https://lore.kernel.org/r/20190727150738.54764-35-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
 Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- sound/soc/cirrus/ep93xx-i2s.c | 4 +---
+ sound/soc/sunxi/sun8i-codec.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/cirrus/ep93xx-i2s.c b/sound/soc/cirrus/ep93xx-i2s.c
-index 0b4355e95f84..7d9cf67129d4 100644
---- a/sound/soc/cirrus/ep93xx-i2s.c
-+++ b/sound/soc/cirrus/ep93xx-i2s.c
-@@ -430,15 +430,13 @@ static const struct snd_soc_component_driver ep93xx_i2s_component = {
- static int ep93xx_i2s_probe(struct platform_device *pdev)
+diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.c
+index 0e0e8ebaa571..55798bc8eae2 100644
+--- a/sound/soc/sunxi/sun8i-codec.c
++++ b/sound/soc/sunxi/sun8i-codec.c
+@@ -533,7 +533,6 @@ static const struct regmap_config sun8i_codec_regmap_config = {
+ 
+ static int sun8i_codec_probe(struct platform_device *pdev)
  {
- 	struct ep93xx_i2s_info *info;
--	struct resource *res;
- 	int err;
+-	struct resource *res_base;
+ 	struct sun8i_codec *scodec;
+ 	void __iomem *base;
+ 	int ret;
+@@ -556,8 +555,7 @@ static int sun8i_codec_probe(struct platform_device *pdev)
+ 		return PTR_ERR(scodec->clk_bus);
+ 	}
  
- 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	info->regs = devm_ioremap_resource(&pdev->dev, res);
-+	info->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(info->regs))
- 		return PTR_ERR(info->regs);
- 
+-	res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res_base);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base)) {
+ 		dev_err(&pdev->dev, "Failed to map the registers\n");
+ 		return PTR_ERR(base);
 -- 
 2.20.1
