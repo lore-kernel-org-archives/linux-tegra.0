@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: fsl_audmix: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-Date: Wed, 31 Jul 2019 12:29:48 +0100 (BST)
-Message-ID: <20190731112948.8D5682742CC3@ypsilon.sirena.org.uk>
-References: <20190727150738.54764-9-yuehaibing@huawei.com>
+Subject: Applied "ASoC: sirf: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+Date: Wed, 31 Jul 2019 12:29:47 +0100 (BST)
+Message-ID: <20190731112947.D42142742CDE@ypsilon.sirena.org.uk>
+References: <20190727150738.54764-11-yuehaibing@huawei.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190727150738.54764-9-yuehaibing@huawei.com>
+In-Reply-To: <20190727150738.54764-11-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: YueHaibing <yuehaibing@huawei.com>
 Cc: alexandre.torgue@st.com, alsa-devel@alsa-project.org, arnaud.pouliquen@st.com, baohua@kernel.org, bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org, daniel@zonque.org, eric@anholt.net, festevam@gmail.com, f.fainelli@gmail.com, gregkh@linuxfoundation.org, haojian.zhuang@gmail.com, Hulk Robot <hulkci@huawei.com>, jbrunet@baylibre.com, jcmvbkbc@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de, khilman@baylibre.com, lgirdwood@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-xtensa@linux-xtensa.org
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_audmix: use devm_platform_ioremap_resource() to simplify code
+   ASoC: sirf: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -37,44 +37,44 @@ to this mail.
 Thanks,
 Mark
 
-From 959bb6b54d708652fe06097feecc3acd4d6b8c89 Mon Sep 17 00:00:00 2001
+From c9dbe688983b1d77a9a46cf6b7ac88348a1ca395 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:12 +0800
-Subject: [PATCH] ASoC: fsl_audmix: use devm_platform_ioremap_resource() to
- simplify code
+Date: Sat, 27 Jul 2019 23:07:14 +0800
+Subject: [PATCH] ASoC: sirf: use devm_platform_ioremap_resource() to simplify
+ code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
 This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-9-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-11-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_audmix.c | 4 +---
+ sound/soc/sirf/sirf-usp.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_audmix.c b/sound/soc/fsl/fsl_audmix.c
-index 3897a54a11fe..c7e4e9757dce 100644
---- a/sound/soc/fsl/fsl_audmix.c
-+++ b/sound/soc/fsl/fsl_audmix.c
-@@ -458,7 +458,6 @@ static int fsl_audmix_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct fsl_audmix *priv;
--	struct resource *res;
- 	const char *mdrv;
- 	const struct of_device_id *of_id;
- 	void __iomem *regs;
-@@ -475,8 +474,7 @@ static int fsl_audmix_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/sound/soc/sirf/sirf-usp.c b/sound/soc/sirf/sirf-usp.c
+index 8bab119c753a..2af0c6f14ee6 100644
+--- a/sound/soc/sirf/sirf-usp.c
++++ b/sound/soc/sirf/sirf-usp.c
+@@ -359,7 +359,6 @@ static int sirf_usp_pcm_probe(struct platform_device *pdev)
+ 	int ret;
+ 	struct sirf_usp *usp;
+ 	void __iomem *base;
+-	struct resource *mem_res;
  
- 	/* Get the addresses */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+ 	usp = devm_kzalloc(&pdev->dev, sizeof(struct sirf_usp),
+ 			GFP_KERNEL);
+@@ -368,8 +367,7 @@ static int sirf_usp_pcm_probe(struct platform_device *pdev)
  
+ 	platform_set_drvdata(pdev, usp);
+ 
+-	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, mem_res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 	usp->regmap = devm_regmap_init_mmio(&pdev->dev, base,
 -- 
 2.20.1
