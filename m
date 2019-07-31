@@ -1,148 +1,100 @@
-From: Ezequiel Garcia <ezequiel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v4 14/23] drm/tilcdc: Provide ddc symlink in connector
- sysfs directory
-Date: Wed, 31 Jul 2019 16:39:13 -0300
-Message-ID: <869dd8b894883715378ba681c7dd26934284bdff.camel@collabora.com>
-References: <cover.1562843413.git.andrzej.p@collabora.com>
- <d1d415022c598fb7acd033f0f322dd67250adaa9.1562843413.git.andrzej.p@collabora.com>
- <20190723090532.GA787@ravnborg.org>
- <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
- <acfd895d-ab59-0190-e25c-1827bd8d214b@suse.de>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v7 06/20] clk: tegra: Support for OSC context save and
+ restore
+Date: Wed, 31 Jul 2019 14:04:51 -0700
+Message-ID: <b5a58bfc-c777-886f-d902-f499ec38e2ae@nvidia.com>
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+ <1564532424-10449-7-git-send-email-skomatineni@nvidia.com>
+ <16cca6aa-1034-f38a-49d1-d87b37fb6bbb@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <acfd895d-ab59-0190-e25c-1827bd8d214b-l3A5Bk7waGM@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonas Karlman <jonas-uIzNG4q0ceqzQB+pC5nmwQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Alexios Zavras <alexios.zavras-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mamta Shukla <mamtas>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <16cca6aa-1034-f38a-49d1-d87b37fb6bbb@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGksCgpJJ20gZ2xhZCB0byBzZWUgdGhpcyB3b3JrIG1vdmluZyBmb3J3YXJkIQoKT24gV2VkLCAy
-MDE5LTA3LTI0IGF0IDEwOjAxICswMjAwLCBUaG9tYXMgWmltbWVybWFubiB3cm90ZToKPiBIaQo+
-IAo+IEFtIDIzLjA3LjE5IHVtIDE0OjQ0IHNjaHJpZWIgQW5kcnplaiBQaWV0cmFzaWV3aWN6Ogo+
-ID4gSGkgU2FtLAo+ID4gCj4gPiBXIGRuaXUgMjMuMDcuMjAxOSBvIDExOjA1LCBTYW0gUmF2bmJv
-cmcgcGlzemU6Cj4gPiA+IEhpIEFuZHJ6ZWoKPiA+ID4gCj4gPiA+IE9uIFRodSwgSnVsIDExLCAy
-MDE5IGF0IDAxOjI2OjQxUE0gKzAyMDAsIEFuZHJ6ZWogUGlldHJhc2lld2ljeiB3cm90ZToKPiA+
-ID4gPiBVc2UgdGhlIGRkYyBwb2ludGVyIHByb3ZpZGVkIGJ5IHRoZSBnZW5lcmljIGNvbm5lY3Rv
-ci4KPiA+ID4gPiAKPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIFBpZXRyYXNpZXdpY3og
-PGFuZHJ6ZWoucEBjb2xsYWJvcmEuY29tPgo+ID4gPiA+IC0tLQo+ID4gPiA+ICAgZHJpdmVycy9n
-cHUvZHJtL3RpbGNkYy90aWxjZGNfdGZwNDEwLmMgfCAxICsKPiA+ID4gPiAgIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKQo+ID4gPiA+IAo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vdGlsY2RjL3RpbGNkY190ZnA0MTAuYwo+ID4gPiA+IGIvZHJpdmVycy9ncHUvZHJt
-L3RpbGNkYy90aWxjZGNfdGZwNDEwLmMKPiA+ID4gPiBpbmRleCA2MmQwMTRjMjA5ODguLmMzNzNl
-ZGI5NTY2NiAxMDA2NDQKPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNk
-Y190ZnA0MTAuYwo+ID4gPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3Rm
-cDQxMC5jCj4gPiA+ID4gQEAgLTIxOSw2ICsyMTksNyBAQCBzdGF0aWMgc3RydWN0IGRybV9jb25u
-ZWN0b3IKPiA+ID4gPiAqdGZwNDEwX2Nvbm5lY3Rvcl9jcmVhdGUoc3RydWN0IGRybV9kZXZpY2Ug
-KmRldiwKPiA+ID4gPiAgICAgICB0ZnA0MTBfY29ubmVjdG9yLT5tb2QgPSBtb2Q7Cj4gPiA+ID4g
-ICAgICAgICBjb25uZWN0b3IgPSAmdGZwNDEwX2Nvbm5lY3Rvci0+YmFzZTsKPiA+ID4gPiArICAg
-IGNvbm5lY3Rvci0+ZGRjID0gbW9kLT5pMmM7Cj4gPiA+ID4gICAgICAgICBkcm1fY29ubmVjdG9y
-X2luaXQoZGV2LCBjb25uZWN0b3IsICZ0ZnA0MTBfY29ubmVjdG9yX2Z1bmNzLAo+ID4gPiA+ICAg
-ICAgICAgICAgICAgRFJNX01PREVfQ09OTkVDVE9SX0RWSUQpOwo+ID4gPiAKPiA+ID4gV2hlbiBy
-ZWFkaW5nIHRoaXMgY29kZSwgaXQgbG9va3Mgc3RyYW5nZSB0aGF0IHdlIHNldCBjb25uZWN0b3It
-PmRkYwo+ID4gPiAqYmVmb3JlKiB0aGUgY2FsbCB0byBpbml0IHRoZSBjb25uZWN0b3IuCj4gPiA+
-IE9uZSBjb3VsZCByaXNrIHRoYXQgZHJtX2Nvbm5lY3Rvcl9pbml0KCkgdXNlZCBtZW1zZXQoLi4p
-IHRvIGNsZWFyIGFsbAo+ID4gPiBmaWVsZHMgb3Igc28sIGFuZCBpdCB3b3VsZCBicmVhayB0aGlz
-IG9yZGVyLgo+ID4gCj4gPiBJIHZlcmlmaWVkIHRoZSBjb2RlIG9mIGRybV9jb25uZWN0b3JfaW5p
-dCgpIGFuZCBjYW5ub3QgZmluZCBhbnkgbWVtc2V0KCkKPiA+IGludm9jYXRpb25zIHRoZXJlLiBX
-aGF0IGlzIHlvdXIgYWN0dWFsIGNvbmNlcm4/Cj4gCj4gSSB0aGluayB0aGlzIGVjaG9lcyBteSBj
-b25jZXJuIGFib3V0IHRoZSBpbXBsaWNpdCBvcmRlciBvZiBvcGVyYXRpb24uIEl0Cj4gc2VlbXMg
-dG9vIGVhc3kgdG8gZ2V0IHRoaXMgd3JvbmcuIElmIHlvdSBkb24ndCB3YW50IHRvIGFkZCBhbiBh
-ZGRpdGlvbmFsCj4gaW50ZXJmYWNlIGZvciBzZXR0aW5nIHRoZSBkZGMgZmllbGQsIHdoeSBub3Qg
-YWRkIGEgZGVkaWNhdGVkIGluaXRpYWxpemVyCj4gZnVuY3Rpb24gdGhhdCBzZXRzIHRoZSBkZGMg
-ZmllbGQ/IFNvbWV0aGluZyBsaWtlIHRoaXMuCj4gCj4gaW50IGRybV9jb25uZWN0b3JfaW5pdF93
-aXRoX2RkYyhjb25uZWN0b3IsIGZ1bmNzLCAuLi4sIGRkYykKPiB7Cj4gCXJldCA9IGRybV9jb25u
-ZWN0b3JfaW5pdChjb25uZWN0b3IsIGZ1bmNzLCAuLi4pOwo+IAlpZiAocmV0KQo+IAkJcmV0dXJu
-IHJldDsKPiAKPiAJaWYgKCFkZGMpCj4gCQlyZXR1cm4gMDsKPiAKPiAJY29ubmVjdG9yLT5kZGMg
-PSBkZGM7Cj4gCS8qIHNldCB1cCBzeXNmcyAqLwo+IAoKSSBrbm93IHRoaXMgY29tbWVudCBjb21l
-cyBsYXRlIHRvIHRoZSBwYXJ0eSwgYnV0IEknbSBhIHNsaWdodGx5CnN1cHJpc2VkIHRvIHNlZSB0
-aGUgYWJvdmUgaW5zdGVhZCBvZiBpbXBsZW1lbnRpbmcgZHJtX2Nvbm5lY3Rvcl9pbml0CmluIHRl
-cm1zIG9mIGRybV9jb25uZWN0b3JfaW5pdF93aXRoX2RkYywgYXMgd2UgdHlwaWNhbGx5IGRvLgoK
-TmFtZWx5LCBzb21ldGhpbmcgYWxvbmcgdGhlc2UgbGluZXMgKGNvZGUgbWlnaHQgbm90IGV2ZW4g
-YnVpbGQhKToKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tODwtLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9j
-b25uZWN0b3IuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fY29ubmVjdG9yLmMKaW5kZXggZDQ5ZTE5
-ZjNkZTNhLi5kYmQwOTU5MzMxNzUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fY29u
-bmVjdG9yLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jb25uZWN0b3IuYwpAQCAtMTc5LDEx
-ICsxNzksMTIgQEAgdm9pZCBkcm1fY29ubmVjdG9yX2ZyZWVfd29ya19mbihzdHJ1Y3Qgd29ya19z
-dHJ1Y3QgKndvcmspCiB9CiAKIC8qKgotICogZHJtX2Nvbm5lY3Rvcl9pbml0IC0gSW5pdCBhIHBy
-ZWFsbG9jYXRlZCBjb25uZWN0b3IKKyAqIGRybV9jb25uZWN0b3JfaW5pdF93aXRoX2RkYyAtIElu
-aXQgYSBwcmVhbGxvY2F0ZWQgY29ubmVjdG9yCiAgKiBAZGV2OiBEUk0gZGV2aWNlCiAgKiBAY29u
-bmVjdG9yOiB0aGUgY29ubmVjdG9yIHRvIGluaXQKICAqIEBmdW5jczogY2FsbGJhY2tzIGZvciB0
-aGlzIGNvbm5lY3RvcgogICogQGNvbm5lY3Rvcl90eXBlOiB1c2VyIHZpc2libGUgdHlwZSBvZiB0
-aGUgY29ubmVjdG9yCisgKiBAZGRjOiBwb2ludGVyIHRvIHRoZSBhc3NvY2lhdGVkIGRkYyBhZGFw
-dGVyIChvcHRpb25hbCkKICAqCiAgKiBJbml0aWFsaXNlcyBhIHByZWFsbG9jYXRlZCBjb25uZWN0
-b3IuIENvbm5lY3RvcnMgc2hvdWxkIGJlCiAgKiBzdWJjbGFzc2VkIGFzIHBhcnQgb2YgZHJpdmVy
-IGNvbm5lY3RvciBvYmplY3RzLgpAQCAtMTkxLDEwICsxOTIsMTEgQEAgdm9pZCBkcm1fY29ubmVj
-dG9yX2ZyZWVfd29ya19mbihzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCiAgKiBSZXR1cm5zOgog
-ICogWmVybyBvbiBzdWNjZXNzLCBlcnJvciBjb2RlIG9uIGZhaWx1cmUuCiAgKi8KLWludCBkcm1f
-Y29ubmVjdG9yX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKLQkJICAgICAgIHN0cnVjdCBk
-cm1fY29ubmVjdG9yICpjb25uZWN0b3IsCi0JCSAgICAgICBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5l
-Y3Rvcl9mdW5jcyAqZnVuY3MsCi0JCSAgICAgICBpbnQgY29ubmVjdG9yX3R5cGUpCitpbnQgZHJt
-X2Nvbm5lY3Rvcl9pbml0X3dpdGhfZGRjKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCisJCQkJc3Ry
-dWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKKwkJCQljb25zdCBzdHJ1Y3QgZHJtX2Nvbm5l
-Y3Rvcl9mdW5jcyAqZnVuY3MsCisJCQkJaW50IGNvbm5lY3Rvcl90eXBlLAorCQkJCXN0cnVjdCBp
-MmNfYWRhcHRlciAqZGRjKQogewogCXN0cnVjdCBkcm1fbW9kZV9jb25maWcgKmNvbmZpZyA9ICZk
-ZXYtPm1vZGVfY29uZmlnOwogCWludCByZXQ7CkBAIC0yMTUsNiArMjE3LDkgQEAgaW50IGRybV9j
-b25uZWN0b3JfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCWNvbm5lY3Rvci0+ZGV2ID0g
-ZGV2OwogCWNvbm5lY3Rvci0+ZnVuY3MgPSBmdW5jczsKIAorCS8qIHByb3ZpZGUgZGRjIHN5bWxp
-bmsgaW4gc3lzZnMgKi8KKwljb25uZWN0b3ItPmRkYyA9IGRkYzsKKwogCS8qIGNvbm5lY3RvciBp
-bmRleCBpcyB1c2VkIHdpdGggMzJiaXQgYml0bWFza3MgKi8KIAlyZXQgPSBpZGFfc2ltcGxlX2dl
-dCgmY29uZmlnLT5jb25uZWN0b3JfaWRhLCAwLCAzMiwgR0ZQX0tFUk5FTCk7CiAJaWYgKHJldCA8
-IDApIHsKQEAgLTI5NSw0MSArMzAwLDYgQEAgaW50IGRybV9jb25uZWN0b3JfaW5pdChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2LAogCiAJcmV0dXJuIHJldDsKIH0KLUVYUE9SVF9TWU1CT0woZHJtX2Nv
-bm5lY3Rvcl9pbml0KTsKLQotLyoqCi0gKiBkcm1fY29ubmVjdG9yX2luaXRfd2l0aF9kZGMgLSBJ
-bml0IGEgcHJlYWxsb2NhdGVkIGNvbm5lY3RvcgotICogQGRldjogRFJNIGRldmljZQotICogQGNv
-bm5lY3RvcjogdGhlIGNvbm5lY3RvciB0byBpbml0Ci0gKiBAZnVuY3M6IGNhbGxiYWNrcyBmb3Ig
-dGhpcyBjb25uZWN0b3IKLSAqIEBjb25uZWN0b3JfdHlwZTogdXNlciB2aXNpYmxlIHR5cGUgb2Yg
-dGhlIGNvbm5lY3RvcgotICogQGRkYzogcG9pbnRlciB0byB0aGUgYXNzb2NpYXRlZCBkZGMgYWRh
-cHRlcgotICoKLSAqIEluaXRpYWxpc2VzIGEgcHJlYWxsb2NhdGVkIGNvbm5lY3Rvci4gQ29ubmVj
-dG9ycyBzaG91bGQgYmUKLSAqIHN1YmNsYXNzZWQgYXMgcGFydCBvZiBkcml2ZXIgY29ubmVjdG9y
-IG9iamVjdHMuCi0gKgotICogRW5zdXJlcyB0aGF0IHRoZSBkZGMgZmllbGQgb2YgdGhlIGNvbm5l
-Y3RvciBpcyBjb3JyZWN0bHkgc2V0LgotICoKLSAqIFJldHVybnM6Ci0gKiBaZXJvIG9uIHN1Y2Nl
-c3MsIGVycm9yIGNvZGUgb24gZmFpbHVyZS4KLSAqLwotaW50IGRybV9jb25uZWN0b3JfaW5pdF93
-aXRoX2RkYyhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAotCQkJCXN0cnVjdCBkcm1fY29ubmVjdG9y
-ICpjb25uZWN0b3IsCi0JCQkJY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgKmZ1bmNz
-LAotCQkJCWludCBjb25uZWN0b3JfdHlwZSwKLQkJCQlzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmRkYykK
-LXsKLQlpbnQgcmV0OwotCi0JcmV0ID0gZHJtX2Nvbm5lY3Rvcl9pbml0KGRldiwgY29ubmVjdG9y
-LCBmdW5jcywgY29ubmVjdG9yX3R5cGUpOwotCWlmIChyZXQpCi0JCXJldHVybiByZXQ7Ci0KLQkv
-KiBwcm92aWRlIGRkYyBzeW1saW5rIGluIHN5c2ZzICovCi0JY29ubmVjdG9yLT5kZGMgPSBkZGM7
-Ci0KLQlyZXR1cm4gcmV0OwotfQogRVhQT1JUX1NZTUJPTChkcm1fY29ubmVjdG9yX2luaXRfd2l0
-aF9kZGMpOwogCiAvKioKZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaCBi
-L2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaAppbmRleCBmYzVkMDg0MzgzMzMuLjE4ODRhYmY2
-MWE4NiAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2Nvbm5lY3Rvci5oCisrKyBiL2luY2x1
-ZGUvZHJtL2RybV9jb25uZWN0b3IuaApAQCAtMTQwOCwxMCArMTQwOCw2IEBAIHN0cnVjdCBkcm1f
-Y29ubmVjdG9yIHsKIAogI2RlZmluZSBvYmpfdG9fY29ubmVjdG9yKHgpIGNvbnRhaW5lcl9vZih4
-LCBzdHJ1Y3QgZHJtX2Nvbm5lY3RvciwgYmFzZSkKIAotaW50IGRybV9jb25uZWN0b3JfaW5pdChz
-dHJ1Y3QgZHJtX2RldmljZSAqZGV2LAotCQkgICAgICAgc3RydWN0IGRybV9jb25uZWN0b3IgKmNv
-bm5lY3RvciwKLQkJICAgICAgIGNvbnN0IHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzICpmdW5j
-cywKLQkJICAgICAgIGludCBjb25uZWN0b3JfdHlwZSk7CiBpbnQgZHJtX2Nvbm5lY3Rvcl9pbml0
-X3dpdGhfZGRjKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJCQkJc3RydWN0IGRybV9jb25uZWN0
-b3IgKmNvbm5lY3RvciwKIAkJCQljb25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyAqZnVu
-Y3MsCkBAIC0xNDI1LDYgKzE0MjEsMTYgQEAgaW50IGRybV9jb25uZWN0b3JfYXR0YWNoX2VuY29k
-ZXIoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKIAogdm9pZCBkcm1fY29ubmVjdG9y
-X2NsZWFudXAoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3Rvcik7CiAKK3N0YXRpYyBpbmxp
-bmUgaW50Citkcm1fY29ubmVjdG9yX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKKwkJICAg
-c3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKKwkJICAgY29uc3Qgc3RydWN0IGRybV9j
-b25uZWN0b3JfZnVuY3MgKmZ1bmNzLAorCQkgICBpbnQgY29ubmVjdG9yX3R5cGUpOworeworCXJl
-dHVybiBkcm1fY29ubmVjdG9yX2luaXRfd2l0aF9kZGMoZGV2LCBjb25uZWN0b3IsIGZ1bmNzLAor
-CQkJCQkgICBjb25uZWN0b3JfdHlwZSwgTlVMTCk7Cit9CisKIHN0YXRpYyBpbmxpbmUgdW5zaWdu
-ZWQgaW50IGRybV9jb25uZWN0b3JfaW5kZXgoY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3IgKmNv
-bm5lY3RvcikKIHsKIAlyZXR1cm4gY29ubmVjdG9yLT5pbmRleDsKLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCgpUaGlz
-IG1pZ2h0IGJlIHNlZW4gYXMgYmlrZXNoZWQgYnV0IGl0IHNlZW1zIHRoZXJlJ3MgdmFsdWUga2Vl
-cGluZyBhbGwgdGhlIGluaXQKY29kZSBpbiB0aGUgc2FtZSBwbGFjZSwgYXMgb3Bwb3NlZCB0byBz
-Y2F0dGVyZWQuCgpVbmxlc3MgdGhlcmUgYXJlIHJlYXNvbnMgZm9yIHRoZSBjdXJyZW50IGNvZGUs
-IHRoYXQgSSdtIG1pc3Npbmc/CgpUaGFua3MsCkV6ZXF1aWVsCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwphbWQtZ2Z4IG1haWxpbmcgbGlzdAphbWQtZ2Z4
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2FtZC1nZng=
+
+On 7/31/19 4:11 AM, Dmitry Osipenko wrote:
+> 31.07.2019 3:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> This patch adds support for saving OSC clock frequency and the
+>> drive-strength during OSC clock init and creates an API to restore
+>> OSC control register value from the saved context.
+>>
+>> This API is invoked by Tegra210 clock driver during system resume
+>> to restore the  OSC clock settings.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
+>>   drivers/clk/tegra/clk.h             |  1 +
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk=
+-tegra-fixed.c
+>> index 8d91b2b191cf..7c6c8abfcde6 100644
+>> --- a/drivers/clk/tegra/clk-tegra-fixed.c
+>> +++ b/drivers/clk/tegra/clk-tegra-fixed.c
+>> @@ -17,6 +17,10 @@
+>>   #define OSC_CTRL			0x50
+>>   #define OSC_CTRL_OSC_FREQ_SHIFT		28
+>>   #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
+>> +#define OSC_CTRL_MASK			(0x3f2 |	\
+>> +					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
+>> +
+>> +static u32 osc_ctrl_ctx;
+>>  =20
+>>   int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk=
+ *clks,
+>>   			      unsigned long *input_freqs, unsigned int num,
+>> @@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, =
+struct tegra_clk *clks,
+>>   	unsigned osc_idx;
+>>  =20
+>>   	val =3D readl_relaxed(clk_base + OSC_CTRL);
+>> +	osc_ctrl_ctx =3D val & OSC_CTRL_MASK;
+>>   	osc_idx =3D val >> OSC_CTRL_OSC_FREQ_SHIFT;
+>>  =20
+>>   	if (osc_idx < num)
+>> @@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *t=
+egra_clks)
+>>   		*dt_clk =3D clk;
+>>   	}
+>>   }
+>> +
+>> +void tegra_clk_osc_resume(void __iomem *clk_base)
+>> +{
+>> +	u32 val;
+>> +
+>> +	val =3D readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
+>> +	val |=3D osc_ctrl_ctx;
+>> +	writel_relaxed(val, clk_base + OSC_CTRL);
+> Why a full raw u32 OSC_CTRL value couldn't be simply saved and restored?
+
+Storing and restoring only required fields to avoid accidental=20
+misconfiguration.
+
+OSC_CTRL register has other bits (PLL_REF_DIV) which are configured by=20
+BR depending on OSC_FREQ and also setting PLL_REF_DIV while PLLS are in=20
+use is not safe.
+
+>> +	fence_udelay(2, clk_base);
+>> +}
+>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+>> index f1ef6ae8c979..abba6d8a04cd 100644
+>> --- a/drivers/clk/tegra/clk.h
+>> +++ b/drivers/clk/tegra/clk.h
+>> @@ -842,6 +842,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsi=
+gned long input_rate);
+>>   int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+>>   int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+>>   		 u8 frac_width, u8 flags);
+>> +void tegra_clk_osc_resume(void __iomem *clk_base);
+>>  =20
+>>  =20
+>>   /* Combined read fence with delay */
+>>
