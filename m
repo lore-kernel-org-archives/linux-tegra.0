@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 12/20] clk: tegra210: Use fence_udelay during PLLU init
-Date: Wed, 31 Jul 2019 14:10:55 -0700
-Message-ID: <1564607463-28802-13-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 18/20] soc/tegra: pmc: Configure deep sleep control settings
+Date: Wed, 31 Jul 2019 14:11:01 -0700
+Message-ID: <1564607463-28802-19-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,52 +12,69 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch uses fence_udelay rather than udelay during PLLU
-initialization to ensure writes to clock registers happens before
-waiting for specified delay.
+Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
+timings which are platform specific that should be configured before
+entering into deep sleep.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Below are the timing specific configurations for deep sleep entry and
+wakeup.
+- Core rail power-on stabilization timer
+- OSC clock stabilization timer after SOC rail power is stabilized.
+- Core power off time is the minimum wake delay to keep the system
+  in deep sleep state irrespective of any quick wake event.
+
+These values depends on the discharge time of regulators and turn OFF
+time of the PMIC to allow the complete system to finish entering into
+deep sleep state.
+
+These values vary based on the platform design and are specified
+through the device tree.
+
+This patch has implementation to configure these timings which are must
+to have for proper deep sleep and wakeup operations.
+
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/soc/tegra/pmc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 4721ee030d1c..998bf60b219a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2841,7 +2841,7 @@ static int tegra210_enable_pllu(void)
- 	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
- 	reg &= ~BIT(pllu.params->iddq_bit_idx);
- 	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
--	udelay(5);
-+	fence_udelay(5, clk_base);
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index e013ada7e4e9..9a78d8417367 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -88,6 +88,8 @@
  
- 	reg = readl_relaxed(clk_base + PLLU_BASE);
- 	reg &= ~GENMASK(20, 0);
-@@ -2849,7 +2849,7 @@ static int tegra210_enable_pllu(void)
- 	reg |= fentry->n << 8;
- 	reg |= fentry->p << 16;
- 	writel(reg, clk_base + PLLU_BASE);
--	udelay(1);
-+	fence_udelay(1, clk_base);
- 	reg |= PLL_ENABLE;
- 	writel(reg, clk_base + PLLU_BASE);
+ #define PMC_CPUPWRGOOD_TIMER		0xc8
+ #define PMC_CPUPWROFF_TIMER		0xcc
++#define PMC_COREPWRGOOD_TIMER		0x3c
++#define PMC_COREPWROFF_TIMER		0xe0
  
-@@ -2895,12 +2895,12 @@ static int tegra210_init_pllu(void)
- 		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
- 		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
- 		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
--		udelay(1);
-+		fence_udelay(1, clk_base);
+ #define PMC_PWR_DET_VALUE		0xe4
  
- 		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
- 		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
- 		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
--		udelay(1);
-+		fence_udelay(1, clk_base);
+@@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
  
- 		reg = readl_relaxed(clk_base + PLLU_BASE);
- 		reg &= ~PLLU_BASE_CLKENABLE_USB;
+ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ {
+-	u32 value;
++	u32 value, osc, pmu, off;
+ 
+ 	/* Always enable CPU power request */
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+@@ -2303,6 +2305,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+ 	value |= PMC_CNTRL_SYSCLK_OE;
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
++
++	osc = DIV_ROUND_UP(pmc->core_osc_time * 8192, 1000000);
++	pmu = DIV_ROUND_UP(pmc->core_pmu_time * 32768, 1000000);
++	off = DIV_ROUND_UP(pmc->core_off_time * 32768, 1000000);
++	if (osc && pmu)
++		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
++				 PMC_COREPWRGOOD_TIMER);
++	if (off)
++		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
+ }
+ 
+ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
 -- 
 2.7.4
