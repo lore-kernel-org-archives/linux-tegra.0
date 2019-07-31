@@ -1,62 +1,55 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 18/20] PM / devfreq: tegra30: Define
- ACTMON_DEV_CTRL_STOP
-Date: Wed, 31 Jul 2019 13:55:21 +0300
-Message-ID: <682c7b5d-eace-8c6a-6117-4b9b6d4e82f8@gmail.com>
-References: <20190730162236.6063-1-digetx@gmail.com>
- <CGME20190730163331epcas4p2fabd7ccf1b24c0cb95bf3994a289e13b@epcas4p2.samsung.com>
- <20190730162236.6063-19-digetx@gmail.com>
- <033a342c-ffd6-fa51-a9a2-daac36b195f9@samsung.com>
+Subject: Re: [PATCH v7 16/20] arm64: tegra: Enable wake from deep sleep on RTC
+ alarm
+Date: Wed, 31 Jul 2019 14:04:58 +0300
+Message-ID: <1233ad49-22eb-a90a-d7cf-5fe133ded177@gmail.com>
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+ <1564532424-10449-17-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <033a342c-ffd6-fa51-a9a2-daac36b195f9@samsung.com>
+In-Reply-To: <1564532424-10449-17-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-31.07.2019 3:37, Chanwoo Choi пишет:
-> On 19. 7. 31. 오전 1:22, Dmitry Osipenko wrote:
->> Add verbose definition for the client's device control register value that
->> makes ACTMON to stop monitoring of the device.
->>
->> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index 3543fba74b52..8adc0ff48b45 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -35,6 +35,8 @@
->>  #define ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN		BIT(30)
->>  #define ACTMON_DEV_CTRL_ENB					BIT(31)
->>  
->> +#define ACTMON_DEV_CTRL_STOP					0x00000000
->> +
->>  #define ACTMON_DEV_UPPER_WMARK					0x4
->>  #define ACTMON_DEV_LOWER_WMARK					0x8
->>  #define ACTMON_DEV_INIT_AVG					0xc
->> @@ -714,7 +716,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->>  
->>  static void tegra_actmon_stop_device(struct tegra_devfreq_device *dev)
->>  {
->> -	device_writel(dev, 0x00000000, ACTMON_DEV_CTRL);
->> +	device_writel(dev, ACTMON_DEV_CTRL_STOP, ACTMON_DEV_CTRL);
->>  	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
->>  }
->>  
->>
+31.07.2019 3:20, Sowjanya Komatineni пишет:
+> This patch updates device tree for RTC and PMC to allow system wake
+> from deep sleep on RTC alarm.
 > 
-> I think that you can combine it to patch11.
-> When combining it to patch11, don't need to add the suggested-by tag.
-> Thanks.
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> index 659753118e96..30a7c48385a2 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> @@ -768,7 +768,8 @@
+>  	rtc@7000e000 {
+>  		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
+>  		reg = <0x0 0x7000e000 0x0 0x100>;
+> -		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-parent = <&pmc>;
+>  		clocks = <&tegra_car TEGRA210_CLK_RTC>;
+>  		clock-names = "rtc";
+>  	};
+> @@ -778,6 +779,8 @@
+>  		reg = <0x0 0x7000e400 0x0 0x400>;
+>  		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+>  		clock-names = "pclk", "clk32k_in";
+> +		#interrupt-cells = <2>;
+> +		interrupt-controller;
+>  
+>  		powergates {
+>  			pd_audio: aud {
 > 
 
-Alright, will combine them in the next revision which I'll make once the
-rest of the patches will be reviewed.
+Is this a backwards-compatible change? Or it's not really worth to care
+about the compatibility with older kernel versions, I'm not sure about
+overall state of T210 in the upstream kernel.
