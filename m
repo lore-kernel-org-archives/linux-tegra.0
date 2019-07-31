@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: uniphier: evea: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-Date: Wed, 31 Jul 2019 12:29:40 +0100 (BST)
-Message-ID: <20190731112940.61CCD2742C99@ypsilon.sirena.org.uk>
-References: <20190727150738.54764-22-yuehaibing@huawei.com>
+Subject: Applied "ASoC: xtfpga-i2s: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+Date: Wed, 31 Jul 2019 12:29:46 +0100 (BST)
+Message-ID: <20190731112946.40D3E2742C99@ypsilon.sirena.org.uk>
+References: <20190727150738.54764-15-yuehaibing@huawei.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190727150738.54764-22-yuehaibing@huawei.com>
+In-Reply-To: <20190727150738.54764-15-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: YueHaibing <yuehaibing@huawei.com>
 Cc: alexandre.torgue@st.com, alsa-devel@alsa-project.org, arnaud.pouliquen@st.com, baohua@kernel.org, bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org, daniel@zonque.org, eric@anholt.net, festevam@gmail.com, f.fainelli@gmail.com, gregkh@linuxfoundation.org, haojian.zhuang@gmail.com, Hulk Robot <hulkci@huawei.com>, jbrunet@baylibre.com, jcmvbkbc@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de, khilman@baylibre.com, lgirdwood@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-xtensa@linux-xtensa.org
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   ASoC: uniphier: evea: use devm_platform_ioremap_resource() to simplify code
+   ASoC: xtfpga-i2s: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -37,10 +37,10 @@ to this mail.
 Thanks,
 Mark
 
-From 4e5bc35988af2483138feb3c5c3bf5fb0cae4228 Mon Sep 17 00:00:00 2001
+From ebdd7be5415c7795c77609ad908222038e441835 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:25 +0800
-Subject: [PATCH] ASoC: uniphier: evea: use devm_platform_ioremap_resource() to
+Date: Sat, 27 Jul 2019 23:07:18 +0800
+Subject: [PATCH] ASoC: xtfpga-i2s: use devm_platform_ioremap_resource() to
  simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
@@ -48,33 +48,33 @@ This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-22-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-15-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/uniphier/evea.c | 4 +---
+ sound/soc/xtensa/xtfpga-i2s.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
-index f9c10165fbc1..d27e9ca07856 100644
---- a/sound/soc/uniphier/evea.c
-+++ b/sound/soc/uniphier/evea.c
-@@ -451,7 +451,6 @@ static const struct regmap_config evea_regmap_config = {
- static int evea_probe(struct platform_device *pdev)
+diff --git a/sound/soc/xtensa/xtfpga-i2s.c b/sound/soc/xtensa/xtfpga-i2s.c
+index 9ce2c75186b9..9da395d14a8d 100644
+--- a/sound/soc/xtensa/xtfpga-i2s.c
++++ b/sound/soc/xtensa/xtfpga-i2s.c
+@@ -531,7 +531,6 @@ static int xtfpga_i2s_runtime_resume(struct device *dev)
+ static int xtfpga_i2s_probe(struct platform_device *pdev)
  {
- 	struct evea_priv *evea;
--	struct resource *res;
- 	void __iomem *preg;
- 	int ret;
+ 	struct xtfpga_i2s *i2s;
+-	struct resource *mem;
+ 	int err, irq;
  
-@@ -475,8 +474,7 @@ static int evea_probe(struct platform_device *pdev)
- 	if (IS_ERR(evea->rst_exiv))
- 		return PTR_ERR(evea->rst_exiv);
+ 	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
+@@ -543,8 +542,7 @@ static int xtfpga_i2s_probe(struct platform_device *pdev)
+ 	i2s->dev = &pdev->dev;
+ 	dev_dbg(&pdev->dev, "dev: %p, i2s: %p\n", &pdev->dev, i2s);
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	preg = devm_ioremap_resource(&pdev->dev, res);
-+	preg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(preg))
- 		return PTR_ERR(preg);
- 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	i2s->regs = devm_ioremap_resource(&pdev->dev, mem);
++	i2s->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(i2s->regs)) {
+ 		err = PTR_ERR(i2s->regs);
+ 		goto err;
 -- 
 2.20.1
