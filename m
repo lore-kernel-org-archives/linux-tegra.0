@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: spear: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-Date: Wed, 31 Jul 2019 12:29:47 +0100 (BST)
-Message-ID: <20190731112947.26D1C2742C99@ypsilon.sirena.org.uk>
-References: <20190727150738.54764-13-yuehaibing@huawei.com>
+Subject: Applied "ASoC: uniphier: evea: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+Date: Wed, 31 Jul 2019 12:29:40 +0100 (BST)
+Message-ID: <20190731112940.61CCD2742C99@ypsilon.sirena.org.uk>
+References: <20190727150738.54764-22-yuehaibing@huawei.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190727150738.54764-13-yuehaibing@huawei.com>
+In-Reply-To: <20190727150738.54764-22-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: YueHaibing <yuehaibing@huawei.com>
 Cc: alexandre.torgue@st.com, alsa-devel@alsa-project.org, arnaud.pouliquen@st.com, baohua@kernel.org, bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org, daniel@zonque.org, eric@anholt.net, festevam@gmail.com, f.fainelli@gmail.com, gregkh@linuxfoundation.org, haojian.zhuang@gmail.com, Hulk Robot <hulkci@huawei.com>, jbrunet@baylibre.com, jcmvbkbc@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de, khilman@baylibre.com, lgirdwood@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-xtensa@linux-xtensa.org
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   ASoC: spear: use devm_platform_ioremap_resource() to simplify code
+   ASoC: uniphier: evea: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -37,41 +37,44 @@ to this mail.
 Thanks,
 Mark
 
-From 0fb46f541bb3e6e5bbb155c08b9e75f92c21acb9 Mon Sep 17 00:00:00 2001
+From 4e5bc35988af2483138feb3c5c3bf5fb0cae4228 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:16 +0800
-Subject: [PATCH] ASoC: spear: use devm_platform_ioremap_resource() to simplify
- code
+Date: Sat, 27 Jul 2019 23:07:25 +0800
+Subject: [PATCH] ASoC: uniphier: evea: use devm_platform_ioremap_resource() to
+ simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
 This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-13-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-22-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/spear/spdif_in.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/uniphier/evea.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/spear/spdif_in.c b/sound/soc/spear/spdif_in.c
-index 78a6a360b4a6..4b68d6ee75da 100644
---- a/sound/soc/spear/spdif_in.c
-+++ b/sound/soc/spear/spdif_in.c
-@@ -202,12 +202,11 @@ static int spdif_in_probe(struct platform_device *pdev)
+diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
+index f9c10165fbc1..d27e9ca07856 100644
+--- a/sound/soc/uniphier/evea.c
++++ b/sound/soc/uniphier/evea.c
+@@ -451,7 +451,6 @@ static const struct regmap_config evea_regmap_config = {
+ static int evea_probe(struct platform_device *pdev)
  {
- 	struct spdif_in_dev *host;
- 	struct spear_spdif_platform_data *pdata;
--	struct resource *res, *res_fifo;
-+	struct resource *res_fifo;
- 	void __iomem *io_base;
+ 	struct evea_priv *evea;
+-	struct resource *res;
+ 	void __iomem *preg;
  	int ret;
  
+@@ -475,8 +474,7 @@ static int evea_probe(struct platform_device *pdev)
+ 	if (IS_ERR(evea->rst_exiv))
+ 		return PTR_ERR(evea->rst_exiv);
+ 
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	io_base = devm_ioremap_resource(&pdev->dev, res);
-+	io_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(io_base))
- 		return PTR_ERR(io_base);
+-	preg = devm_ioremap_resource(&pdev->dev, res);
++	preg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(preg))
+ 		return PTR_ERR(preg);
  
 -- 
 2.20.1
