@@ -1,43 +1,77 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v7 11/20] cpufreq: tegra124: Add suspend and resume
- support
-Date: Thu, 1 Aug 2019 10:51:40 -0700
-Message-ID: <69aba3b2-d021-4851-d058-fcaa70446f58@nvidia.com>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-12-git-send-email-skomatineni@nvidia.com>
- <20190801054055.trmabmcaj3cpe4pc@vireshk-i7>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v9 09/15] dt-bindings: memory: tegra30: Convert to
+ Tegra124 YAML
+Date: Thu, 1 Aug 2019 20:52:12 +0300
+Message-ID: <58e25c92-a61d-54f1-e784-ed85804236d7@gmail.com>
+References: <20190730165618.10122-1-digetx@gmail.com>
+ <20190730165618.10122-10-digetx@gmail.com>
+ <CAL_JsqL_LA+cW2GbCMdzRTFuv2oKE3pzyOm2UwdzLVLyVTnmNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190801054055.trmabmcaj3cpe4pc@vireshk-i7>
+In-Reply-To: <CAL_JsqL_LA+cW2GbCMdzRTFuv2oKE3pzyOm2UwdzLVLyVTnmNw@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, linux-pm@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 7/31/19 10:40 PM, Viresh Kumar wrote:
-> On 31-07-19, 14:10, Sowjanya Komatineni wrote:
->> This patch adds suspend and resume pm ops for cpufreq driver.
+01.08.2019 19:25, Rob Herring пишет:
+> On Tue, Jul 30, 2019 at 10:58 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >>
->> PLLP is the safe clock source for CPU during system suspend and
->> resume as PLLP rate is below the CPU Fmax at Vmin.
+>> The Tegra30 binding will actually differ from the Tegra124 a tad, in
+>> particular the EMEM configuration description. Hence rename the binding
+>> to Tegra124 during of the conversion to YAML.
 >>
->> CPUFreq driver suspend switches the CPU clock source to PLLP and
->> disables the DFLL clock.
->>
->> During system resume, warmboot code powers up the CPU with PLLP
->> clock source. So CPUFreq driver resume enabled DFLL clock and
->> switches CPU back to DFLL clock source.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>   drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 60 insertions(+)
-> Is there any hard dependency of this patch on the rest of the patches?
-> Can I apply it alone to cpufreq tree ?
->
-This patch cannot be applied alone as it has dependency on dfll clock 
-suspend and resume sequence.
+>>  .../nvidia,tegra124-mc.yaml                   | 158 ++++++++++++++++++
+>>  .../memory-controllers/nvidia,tegra30-mc.txt  | 123 --------------
+>>  2 files changed, 158 insertions(+), 123 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>> new file mode 100644
+>> index 000000000000..2e2a116f1911
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>> @@ -0,0 +1,158 @@
+>> +# SPDX-License-Identifier: (GPL-2.0)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: NVIDIA Tegra124 SoC Memory Controller
+>> +
+>> +maintainers:
+>> +  - Jon Hunter <jonathanh@nvidia.com>
+>> +  - Thierry Reding <thierry.reding@gmail.com>
+>> +
+>> +description: |
+>> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
+>> +  These are interleaved to provide high performance with the load shared across
+>> +  two memory channels. The Tegra124 Memory Controller handles memory requests
+>> +  from internal clients and arbitrates among them to allocate memory bandwidth
+>> +  for DDR3L and LPDDR3 SDRAMs.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: nvidia,tegra124-mc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description:
+>> +      Physical base address.
+> 
+> You don't really need a description when there's only 1 item. Same on
+> the others below.
+> 
+> With that,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Okay, I'll change that in the next revision. I also assume that the r-b
+applies to all three patches, otherwise please let me know. Thanks!
