@@ -1,110 +1,94 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v7 06/20] clk: tegra: Support for OSC context save and
- restore
-Date: Thu, 1 Aug 2019 11:06:07 -0700
-Message-ID: <cd9c5116-4235-758c-7a09-d7185d52b22b@nvidia.com>
-References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
- <1564532424-10449-7-git-send-email-skomatineni@nvidia.com>
- <16cca6aa-1034-f38a-49d1-d87b37fb6bbb@gmail.com>
- <b5a58bfc-c777-886f-d902-f499ec38e2ae@nvidia.com>
- <3b55a112-42a6-212b-beea-10b64d5341d9@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v9 09/15] dt-bindings: memory: tegra30: Convert to
+ Tegra124 YAML
+Date: Thu, 1 Aug 2019 12:06:11 -0600
+Message-ID: <CAL_JsqLuzxRZUD16ONke_yrYMgW6zc4hyjkRFCn=sHdnaOVO-g@mail.gmail.com>
+References: <20190730165618.10122-1-digetx@gmail.com> <20190730165618.10122-10-digetx@gmail.com>
+ <CAL_JsqL_LA+cW2GbCMdzRTFuv2oKE3pzyOm2UwdzLVLyVTnmNw@mail.gmail.com> <58e25c92-a61d-54f1-e784-ed85804236d7@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3b55a112-42a6-212b-beea-10b64d5341d9@gmail.com>
-Content-Language: en-US
+In-Reply-To: <58e25c92-a61d-54f1-e784-ed85804236d7@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 8/1/19 3:53 AM, Dmitry Osipenko wrote:
-> 01.08.2019 0:04, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 7/31/19 4:11 AM, Dmitry Osipenko wrote:
->>> 31.07.2019 3:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> This patch adds support for saving OSC clock frequency and the
->>>> drive-strength during OSC clock init and creates an API to restore
->>>> OSC control register value from the saved context.
->>>>
->>>> This API is invoked by Tegra210 clock driver during system resume
->>>> to restore the=C2=A0 OSC clock settings.
->>>>
->>>> Acked-by: Thierry Reding <treding@nvidia.com>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>>  =C2=A0 drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
->>>>  =C2=A0 drivers/clk/tegra/clk.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
->>>>  =C2=A0 2 files changed, 16 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/tegra/clk-tegra-fixed.c
->>>> b/drivers/clk/tegra/clk-tegra-fixed.c
->>>> index 8d91b2b191cf..7c6c8abfcde6 100644
->>>> --- a/drivers/clk/tegra/clk-tegra-fixed.c
->>>> +++ b/drivers/clk/tegra/clk-tegra-fixed.c
->>>> @@ -17,6 +17,10 @@
->>>>  =C2=A0 #define OSC_CTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 0x50
->>>>  =C2=A0 #define OSC_CTRL_OSC_FREQ_SHIFT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 28
->>>>  =C2=A0 #define OSC_CTRL_PLL_REF_DIV_SHIFT=C2=A0=C2=A0=C2=A0 26
->>>> +#define OSC_CTRL_MASK=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 (0x3f2 |=C2=A0=C2=A0=C2=A0 \
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (0xf << OSC_CTRL_OSC_FREQ_SHI=
-FT))
->>>> +
->>>> +static u32 osc_ctrl_ctx;
->>>>  =C2=A0 =C2=A0 int __init tegra_osc_clk_init(void __iomem *clk_base, s=
-truct
->>>> tegra_clk *clks,
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *input_freqs, u=
-nsigned int num,
->>>> @@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem
->>>> *clk_base, struct tegra_clk *clks,
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned osc_idx;
->>>>  =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D readl_relaxed(clk_base =
-+ OSC_CTRL);
->>>> +=C2=A0=C2=A0=C2=A0 osc_ctrl_ctx =3D val & OSC_CTRL_MASK;
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 osc_idx =3D val >> OSC_CTRL_OSC_FREQ_S=
-HIFT;
->>>>  =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (osc_idx < num)
->>>> @@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk
->>>> *tegra_clks)
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *dt_clk =3D cl=
-k;
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>  =C2=A0 }
->>>> +
->>>> +void tegra_clk_osc_resume(void __iomem *clk_base)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 val =3D readl_relaxed(clk_base + OSC_CTRL) & ~OSC_=
-CTRL_MASK;
->>>> +=C2=A0=C2=A0=C2=A0 val |=3D osc_ctrl_ctx;
->>>> +=C2=A0=C2=A0=C2=A0 writel_relaxed(val, clk_base + OSC_CTRL);
->>> Why a full raw u32 OSC_CTRL value couldn't be simply saved and restored=
-?
->> Storing and restoring only required fields to avoid accidental
->> misconfiguration.
->>
->> OSC_CTRL register has other bits (PLL_REF_DIV) which are configured by
->> BR depending on OSC_FREQ and also setting PLL_REF_DIV while PLLS are in
->> use is not safe.
-> I'm looking at the clk-driver sources and see that none of the Tegra
-> drivers ever change the OSC_CTRL configuration, T30/114 even have
-> #defines for the OSC_CTRL that are unused.
+On Thu, Aug 1, 2019 at 11:52 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> So, this leads to a question.. does any bootloader really ever change
-> the OSC_CTRL such that it differs after resume from suspend in
-> comparison to the value at the time of kernel's booting up?
+> 01.08.2019 19:25, Rob Herring =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Tue, Jul 30, 2019 at 10:58 AM Dmitry Osipenko <digetx@gmail.com> wro=
+te:
+> >>
+> >> The Tegra30 binding will actually differ from the Tegra124 a tad, in
+> >> particular the EMEM configuration description. Hence rename the bindin=
+g
+> >> to Tegra124 during of the conversion to YAML.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  .../nvidia,tegra124-mc.yaml                   | 158 +++++++++++++++++=
++
+> >>  .../memory-controllers/nvidia,tegra30-mc.txt  | 123 --------------
+> >>  2 files changed, 158 insertions(+), 123 deletions(-)
+> >>  create mode 100644 Documentation/devicetree/bindings/memory-controlle=
+rs/nvidia,tegra124-mc.yaml
+> >>  delete mode 100644 Documentation/devicetree/bindings/memory-controlle=
+rs/nvidia,tegra30-mc.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvid=
+ia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra124-mc.yaml
+> >> new file mode 100644
+> >> index 000000000000..2e2a116f1911
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegr=
+a124-mc.yaml
+> >> @@ -0,0 +1,158 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124=
+-mc.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: NVIDIA Tegra124 SoC Memory Controller
+> >> +
+> >> +maintainers:
+> >> +  - Jon Hunter <jonathanh@nvidia.com>
+> >> +  - Thierry Reding <thierry.reding@gmail.com>
+> >> +
+> >> +description: |
+> >> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controlle=
+r.
+> >> +  These are interleaved to provide high performance with the load sha=
+red across
+> >> +  two memory channels. The Tegra124 Memory Controller handles memory =
+requests
+> >> +  from internal clients and arbitrates among them to allocate memory =
+bandwidth
+> >> +  for DDR3L and LPDDR3 SDRAMs.
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    const: nvidia,tegra124-mc
+> >> +
+> >> +  reg:
+> >> +    maxItems: 1
+> >> +    description:
+> >> +      Physical base address.
+> >
+> > You don't really need a description when there's only 1 item. Same on
+> > the others below.
+> >
+> > With that,
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> Okay, I'll change that in the next revision. I also assume that the r-b
+> applies to all three patches, otherwise please let me know. Thanks!
 
-For Tegra210, bootloader programs OSC_CTRL register for drivestrength=20
-programming.
+No. I'm reviewing those.
 
-These settings need to be restored to the same on SC7 exit as they gets=20
-reset during SC7 entry.
+Rob
