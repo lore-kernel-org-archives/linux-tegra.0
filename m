@@ -1,77 +1,68 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 4.14 00/25] 4.14.136-stable review
-Date: Fri, 2 Aug 2019 15:59:13 +0200
-Message-ID: <20190802135913.GA10544@ulmo>
-References: <20190802092058.428079740@linuxfoundation.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 3/3] soc/tegra: regulators: Add regulators coupler for
+ Tegra30
+Date: Fri, 2 Aug 2019 17:05:12 +0300
+Message-ID: <20190802140512.GD3883@pdeschrijver-desktop.Nvidia.com>
+References: <20190725151832.9802-1-digetx@gmail.com>
+ <20190725151832.9802-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190802092058.428079740@linuxfoundation.org>
+In-Reply-To: <20190725151832.9802-4-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jul 25, 2019 at 06:18:32PM +0300, Dmitry Osipenko wrote:
+> Add regulators coupler for Tegra30 SoCs that performs voltage balancing
+> of a coupled regulators and thus provides voltage scaling functionality.
+> 
+> There are 2 coupled regulators on all Tegra30 SoCs: CORE and CPU. The
+> coupled regulator voltages shall be in a range of 300mV from each other
+> and CORE voltage shall be higher than the CPU by N mV, where N depends
+> on the CPU voltage.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/soc/tegra/Kconfig              |   4 +
+>  drivers/soc/tegra/Makefile             |   1 +
+>  drivers/soc/tegra/regulators-tegra30.c | 316 +++++++++++++++++++++++++
+>  3 files changed, 321 insertions(+)
+>  create mode 100644 drivers/soc/tegra/regulators-tegra30.c
+> 
+...
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +
+> +static int tegra30_core_cpu_limit(int cpu_uV)
+> +{
+> +	if (cpu_uV < 800000)
+> +		return 950000;
+> +
+> +	if (cpu_uV < 900000)
+> +		return 1000000;
+> +
+> +	if (cpu_uV < 1000000)
+> +		return 1100000;
+> +
+> +	if (cpu_uV < 1100000)
+> +		return 1200000;
+> +
+> +	if (cpu_uV < 1250000) {
+> +		switch (tegra_sku_info.cpu_speedo_id) {
+> +		case 0 ... 1:
+Aren't we supposed to add /* fall through */ here now?
+> +		case 4:
+> +		case 7 ... 8:
+> +			return 1200000;
+> +
+> +		default:
+> +			return 1300000;
+> +		}
+> +	}
+> +
 
-On Fri, Aug 02, 2019 at 11:39:32AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.136 release.
-> There are 25 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Sun 04 Aug 2019 09:19:34 AM UTC.
-> Anything received after that time might be too late.
->=20
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.13=
-6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
- linux-4.14.y
-> and the diffstat can be found below.
->=20
-> thanks,
->=20
-> greg k-h
+Other than that, this looks ok to me.
 
-All tests passing for Tegra...
-
-Test results for stable-v4.14:
-    8 builds:   8 pass, 0 fail
-    16 boots:   16 pass, 0 fail
-    24 tests:   24 pass, 0 fail
-
-Linux version:  4.14.136-rc1-g0931704b8bef
-Boards tested:  tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Thierry
-
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1EQa4ACgkQ3SOs138+
-s6FqaQ//QwDVemUgZZZSPpH1Mx6S6gLbCNUpIcskAuNt1bzH+Dj4qc5fRtt1F1nC
-Oc7BRPDXLcTp+zpjAi0OU4igDk3dZ4d/H2m63d7DAxPfLA22gFiGGK3u4SeL44dj
-MVlaJz0SygZHrVP/N6+6BB6GXVz30O3GoO/dKlRaXJZZLSPowjyvlzHpf6oJFb85
-mWzz8LdeQRstd64Zhw0D7RsqQ3V7AaKVeqHCY9MdFqtrgF/yE/FbwXHzGTZzuowo
-tpjJJuddOHyVlU4H7fHKZFrOgmt8S8rsrwDiTi6n4q6LwG0ucz1JTR4NIFdN9jHQ
-l6cEifZthZPMM0YZukW+RKTk5jxRtBQJApePyMNmCxXyKCoPLjAei/ROjt6Z95nH
-E3Ds5BJqZFPshVm9A2Z2L9Y3BiH+c1rm4qVwB5OQmv6UsXT3ZPSIyBbqByWje5uL
-LIsduGQ/9BH3EZixQmBkv/khYdJZEqdP4P8Zhn9AGFNfcWozp0I8Mq3pzRJ4fUMN
-Bh1wkhi1G56/Oip8fIhGbXO0PqzMC8cD1bty2lyz2tfUt02ZzZp693TgUg4C53lm
-9iiqABQHmuSWY0Can0/w6bsyMI0OnUc9Zqi8MnOx2wzONJtIINTQWKkEO19p6QLm
-qXvEaL30VMeeYQ/ohkvdIVlj25zbIDycIpuGGwhgbLOGxq/xr6M=
-=Hxi+
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
+Peter.
