@@ -1,73 +1,65 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-Date: Fri, 2 Aug 2019 20:35:25 +0300
-Message-ID: <ba3924fe-d632-7bcb-5353-bc7668957661@gmail.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
- <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
- <20190725095502.GM12715@pdeschrijver-desktop.Nvidia.com>
- <dd01be5d-bab9-1329-c7ac-c3c893d49dd1@gmail.com>
- <20190725103348.GN12715@pdeschrijver-desktop.Nvidia.com>
- <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
- <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
- <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V6 14/21] clk: tegra210: Add suspend and resume support
+Date: Fri, 02 Aug 2019 10:51:18 -0700
+Message-ID: <20190802175119.1E401217F5@mail.kernel.org>
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com> <1563738060-30213-15-git-send-email-skomatineni@nvidia.com> <e683b417-66fb-38dc-c16b-dab616583a88@gmail.com> <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com> <ceedb802-7561-488f-3a89-67bee19f2fea@gmail.com> <e2d0e8cc-b4ea-1148-4af1-fee6bb266cca@nvidia.com> <5054f178-db27-9286-d123-3e2b2a885717@gmail.com> <8c259511-d8ea-51b2-0b1d-c85b964bc44c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
-Content-Language: en-US
+In-Reply-To: <8c259511-d8ea-51b2-0b1d-c85b964bc44c@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net, jonathanh@nvidia.com, linus.walleij@linaro.org, marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de, thierry.reding@gmail.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.08.2019 16:05, Peter De Schrijver пишет:
-> On Thu, Jul 25, 2019 at 01:59:09PM +0300, Dmitry Osipenko wrote:
->> 25.07.2019 13:38, Peter De Schrijver пишет:
->>> On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
->>>> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
->>>>> 25.07.2019 12:55, Peter De Schrijver пишет:
->>>>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
->>>>>>>
->>>>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
->>>>>>> doesn't sound correct to me. Something like 'firmware_sc7' should suit
->>>>>>> better here.
->>>>>>>
->>>>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
->>>>>>>
->>>>>>> Secondly, I'm also not sure why COP interrupts need to be disabled for
->>>>>>> pre-T210 at all, since COP is unused. This looks to me like it was
->>>>>>> cut-n-pasted from downstream kernel without a good reason and could be
->>>>>>> simply removed.
->>>>>>
->>>>>> I don't think we can rely on the fact that COP is unused. People can
->>>>>> write their own code to run on COP.
->>>>>
->>>>> 1. Not upstream - doesn't matter.
->>>>>
->>>>
->>>> The code is not part of the kernel, so obviously it's not upstream?
->>>>
->>>>> 2. That's not very good if something unknown is running on COP and then
->>>>> kernel suddenly intervenes, don't you think so?
->>>>
->>>> Unless the code was written with this in mind.
->>>>
->>
->> In that case, please see 1. ;)
->>
-> 
-> In general the kernel should not touch the COP interrupts I think.
-> 
->>>
->>> Looking at this again, I don't think we need to enable the IRQ at all.
->>
->> Could you please clarify? The code only saves/restores COP's interrupts
->> context across suspend-resume.
-> 
-> The sc7 entry firmware doesn't use interrupts.
+Quoting Dmitry Osipenko (2019-07-22 00:12:17)
+> 22.07.2019 10:09, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 22.07.2019 9:52, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>
+> >> On 7/21/19 11:10 PM, Dmitry Osipenko wrote:
+> >>> 22.07.2019 1:45, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>>> On 7/21/19 2:38 PM, Dmitry Osipenko wrote:
+> >>>>> 21.07.2019 22:40, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
+=82:
+> >>>>>> @@ -2853,9 +2859,8 @@ static int tegra210_enable_pllu(void)
+> >>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg |=3D PLL_ENABLE;
+> >>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel(reg, clk_base + PLLU_B=
+ASE);
+> >>>>>> =C2=A0=C2=A0 -=C2=A0=C2=A0=C2=A0 readl_relaxed_poll_timeout_atomic=
+(clk_base + PLLU_BASE, reg,
+> >>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg & PLL_B=
+ASE_LOCK, 2, 1000);
+> >>>>>> -=C2=A0=C2=A0=C2=A0 if (!(reg & PLL_BASE_LOCK)) {
+> >>>>>> +=C2=A0=C2=A0=C2=A0 ret =3D tegra210_wait_for_mask(&pllu, PLLU_BAS=
+E, PLL_BASE_LOCK);
+> >>>>>> +=C2=A0=C2=A0=C2=A0 if (ret) {
+> >>>>> Why this is needed? Was there a bug?
+> >>>>>
+> >>>> during resume pllu init is needed and to use same terga210_init_pllu,
+> >>>> poll_timeout_atomic can't be used as its ony for atomic context.
+> >>>>
+> >>>> So changed to use wait_for_mask which should work in both cases.
+> >>> Atomic variant could be used from any context, not sure what do you
+> >>> mean. The 'atomic' part only means that function won't cause scheduli=
+ng
+> >>> and that's it.
+> >>
+> >> Sorry, replied incorrect. readx_poll_timeout_atomic uses ktime_get() a=
+nd
+> >> during resume timekeeping suspend/resume happens later than clock
+> >> suspend/resume. So using tegra210_wait_for_mask.
+> >>
+> >> both timekeeping and clk-tegra210 drivers are registered as syscore but
+> >> not ordered.
+> >=20
+> > Okay, thank you for the clarification.
+> >=20
+> > [snip]
+> >=20
+>=20
+> You should remove the 'iopoll.h' then, since it's not used anymore.
 
-Okay, it shouldn't hurt to clean up the LIC's code a tad by removing the
-COP's bits, will make a patch.
+And also add a comment to this location in the code because it's
+non-obvious that we can't use iopoll here.
