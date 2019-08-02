@@ -1,8 +1,8 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: Re: [PATCH v7 07/20] clk: tegra: clk-periph: Add save and restore
  support
-Date: Fri, 2 Aug 2019 14:18:51 -0700
-Message-ID: <5bddc7dd-b819-6978-4d0b-8880f85fbb87@nvidia.com>
+Date: Fri, 2 Aug 2019 16:51:58 -0700
+Message-ID: <d82de63a-02a3-8fb0-57e7-7fe00d6b86ab@nvidia.com>
 References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
  <f90cf34d-c294-b23d-38e3-6de9a8fca7d6@gmail.com>
  <e796e26e-830c-b1be-e368-c7ff177a61dd@gmail.com>
@@ -433,6 +433,16 @@ se
 >>>>>>> clk_set_parent with mux_hw as they invoke mux_ops get/set parent
 >>>>>>> anyway.
 >>>>>>> Will do this for periph clk mux
+
+Just to be clear, clk_mux don't have cached parent. get_parent is by=20
+register read. So, cant directly use get_parent and then set during restore=
+.
+
+So will create both clk_mux_save/restore_context in generic clk driver=20
+and will invoke them during tegra peripheral clock suspend/resume.
+
+
+
 >>>>>>>>>>> Reg clk_gate, looks like we cant use generic
 >>>>>>>>>>> clk_gate_restore_context
 >>>>>>>>>>> for clk-periph as it calls enable/disable callbacks and
@@ -521,5 +531,3 @@ in
 > The ungating and resetting could be done separately to keep things cleane=
 r.
 >
-OK, Will move back to register wise save/restore for clk_enb/rst_dev in=20
-next version.
