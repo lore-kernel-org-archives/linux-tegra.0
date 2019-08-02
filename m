@@ -1,41 +1,77 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
- time
-Date: Fri, 2 Aug 2019 17:26:45 +0300
-Message-ID: <218c3d60-1a56-7ee8-840b-7d0559cd8c8e@gmail.com>
-References: <20190730174020.15878-1-digetx@gmail.com>
- <20190802133846.GC3883@pdeschrijver-desktop.Nvidia.com>
+Subject: Re: [PATCH v2 3/3] soc/tegra: regulators: Add regulators coupler for
+ Tegra30
+Date: Fri, 2 Aug 2019 17:39:23 +0300
+Message-ID: <c537fbea-5884-03db-305f-6ab3d553f7ab@gmail.com>
+References: <20190725151832.9802-1-digetx@gmail.com>
+ <20190725151832.9802-4-digetx@gmail.com>
+ <20190802140512.GD3883@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190802133846.GC3883@pdeschrijver-desktop.Nvidia.com>
+In-Reply-To: <20190802140512.GD3883@pdeschrijver-desktop.Nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.08.2019 16:38, Peter De Schrijver пишет:
-> On Tue, Jul 30, 2019 at 08:40:19PM +0300, Dmitry Osipenko wrote:
->> The PCLK clock is running off SCLK, which is a critical clock that is
->> very unlikely to randomly change its rate. It is possible to get a
->> lockup if kernel decides to enter LP2 cpuidle from a clk-notifier, which
->> happens occasionally in a case of Tegra30 EMC driver that waits for the
->> clk-change event in the clk-notify handler, because CCF's 'prepare' mutex
->> in kept locked and thus clk_get_rate() wants to sleep with interrupts
->> being disabled.
+02.08.2019 17:05, Peter De Schrijver пишет:
+> On Thu, Jul 25, 2019 at 06:18:32PM +0300, Dmitry Osipenko wrote:
+>> Add regulators coupler for Tegra30 SoCs that performs voltage balancing
+>> of a coupled regulators and thus provides voltage scaling functionality.
 >>
+>> There are 2 coupled regulators on all Tegra30 SoCs: CORE and CPU. The
+>> coupled regulator voltages shall be in a range of 300mV from each other
+>> and CORE voltage shall be higher than the CPU by N mV, where N depends
+>> on the CPU voltage.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/soc/tegra/Kconfig              |   4 +
+>>  drivers/soc/tegra/Makefile             |   1 +
+>>  drivers/soc/tegra/regulators-tegra30.c | 316 +++++++++++++++++++++++++
+>>  3 files changed, 321 insertions(+)
+>>  create mode 100644 drivers/soc/tegra/regulators-tegra30.c
+>>
+> ...
 > 
-> I don't think this is the right solution. Eventually we will want to
-> scale sclk and pclk because the clock tree power of those is not
-> insignificant. Maybe register a notifier which updates the PMC timer
-> values when pclk changes?
+>> +
+>> +static int tegra30_core_cpu_limit(int cpu_uV)
+>> +{
+>> +	if (cpu_uV < 800000)
+>> +		return 950000;
+>> +
+>> +	if (cpu_uV < 900000)
+>> +		return 1000000;
+>> +
+>> +	if (cpu_uV < 1000000)
+>> +		return 1100000;
+>> +
+>> +	if (cpu_uV < 1100000)
+>> +		return 1200000;
+>> +
+>> +	if (cpu_uV < 1250000) {
+>> +		switch (tegra_sku_info.cpu_speedo_id) {
+>> +		case 0 ... 1:
+> Aren't we supposed to add /* fall through */ here now?
 
-I also had a thought about the notifier for pclk, but wasn't sure if
-it's really worthwhile right now since there is no real use-case and
-it's not obvious when such case will materialize. So, I'd say that
-solution is correct but incomplete.
+There is no compiler warning if there is nothing in-between of the
+case-switches, so annotation isn't really necessary here. Of course it
+is possible to add an explicit annotation just to make clear the
+fall-through intention.
 
-I'll make a v4 with the notifier, since you're asking about it. Thanks
-for the review!
+>> +		case 4:
+>> +		case 7 ... 8:
+>> +			return 1200000;
+>> +
+>> +		default:
+>> +			return 1300000;
+>> +		}
+>> +	}
+>> +
+> 
+> Other than that, this looks ok to me.
+
+Awesome, thank you very much! Explicit ACK will be appreciated as well.
