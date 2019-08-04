@@ -1,472 +1,137 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 07/20] clk: tegra: clk-periph: Add save and restore
- support
-Date: Sun, 4 Aug 2019 15:31:26 +0300
-Message-ID: <ac60dba2-a150-3ee5-fd09-48fc888feae5@gmail.com>
-References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
- <a81b85a2-5634-cfa2-77c5-94c23c4847bd@nvidia.com>
- <ef9e865f-359b-0873-a414-3d548bd4e590@gmail.com>
- <50bad1d3-df41-d1e5-a7c7-4be9c661ed14@nvidia.com>
- <62a5c6ed-21b1-8403-6fac-9c5d99b5a255@gmail.com>
- <85cd5100-467e-d08e-0ae5-ae57a6de5312@nvidia.com>
- <61652889-2e77-8f1e-9ed4-b7e525a40b10@nvidia.com>
- <9f6fc791-5c76-76d5-98fb-fd8facfd75d7@nvidia.com>
- <8bca50b2-a78c-c6b1-6547-4cec98a3e9cb@gmail.com>
- <314b5572-4113-d5c5-5956-1a55555a573c@nvidia.com>
- <a64472fd-46b7-5ff9-3140-11f71d5f88ff@gmail.com>
- <90268663-e5a7-4715-bd1a-31644c2fe9ab@gmail.com>
- <c6e1d744-3a7a-fe1b-2c86-a3d49f022232@nvidia.com>
- <73cd521b-782c-7fb2-d904-ae8b07927d47@gmail.com>
- <d82de63a-02a3-8fb0-57e7-7fe00d6b86ab@nvidia.com>
- <8d30f325-1c63-3802-7c21-f313115f8e55@gmail.com>
- <274e67b1-16b8-2475-d026-68bd89b090ec@nvidia.com>
- <4dec8efb-bc3b-0275-8dea-7600a8f9e478@nvidia.com>
- <2eab4f34-34be-e317-05bb-37749f2ef792@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v6 00/24] Associate ddc adapters with
+ connectors
+Date: Sun, 4 Aug 2019 15:33:40 +0300
+Message-ID: <20190804123340.GD4984@pendragon.ideasonboard.com>
+References: <cover.1564161140.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2eab4f34-34be-e317-05bb-37749f2ef792@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1564161140.git.andrzej.p@collabora.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: "Y.C. Chen" <yc_chen@aspeedtech.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Sam Ravnborg <sam@ravnborg.org>, Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Douglas Anderson <dianders@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>, Gerd Hoffmann <kraxel@redhat.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, kernel@collabora.com, Fabio Estevam <festevam@gmail.com>, "David (ChunMing) Zhou" <David1.Zhou@amd.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Jyri Sarha <jsarha@ti.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, CK Hu <ck.hu@mediatek.com>
 List-Id: linux-tegra@vger.kernel.org
 
-04.08.2019 15:24, Dmitry Osipenko пишет:
-> 04.08.2019 2:44, Sowjanya Komatineni пишет:
->>
->> On 8/3/19 10:01 AM, Sowjanya Komatineni wrote:
->>>
->>> On 8/3/19 3:33 AM, Dmitry Osipenko wrote:
->>>> 03.08.2019 2:51, Sowjanya Komatineni пишет:
->>>>> On 8/2/19 2:15 PM, Dmitry Osipenko wrote:
->>>>>> 02.08.2019 23:32, Sowjanya Komatineni пишет:
->>>>>>> On 8/2/19 1:17 PM, Dmitry Osipenko wrote:
->>>>>>>> 02.08.2019 23:13, Dmitry Osipenko пишет:
->>>>>>>>> 02.08.2019 21:33, Sowjanya Komatineni пишет:
->>>>>>>>>> On 8/2/19 5:38 AM, Dmitry Osipenko wrote:
->>>>>>>>>>> 02.08.2019 2:49, Sowjanya Komatineni пишет:
->>>>>>>>>>>> On 8/1/19 4:19 PM, Sowjanya Komatineni wrote:
->>>>>>>>>>>>> On 8/1/19 2:30 PM, Sowjanya Komatineni wrote:
->>>>>>>>>>>>>> On 8/1/19 1:54 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>> 01.08.2019 23:31, Sowjanya Komatineni пишет:
->>>>>>>>>>>>>>>> On 8/1/19 1:17 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>> 01.08.2019 22:42, Sowjanya Komatineni пишет:
->>>>>>>>>>>>>>>>>> On 8/1/19 12:00 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>>> 01.08.2019 20:58, Sowjanya Komatineni пишет:
->>>>>>>>>>>>>>>>>>>> On 7/31/19 4:09 PM, Sowjanya Komatineni wrote:
->>>>>>>>>>>>>>>>>>>>> On 7/31/19 3:44 AM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>>>>>>>> 31.07.2019 12:50, Dmitry Osipenko пишет:
->>>>>>>>>>>>>>>>>>>>>>> 31.07.2019 3:20, Sowjanya Komatineni пишет:
->>>>>>>>>>>>>>>>>>>>>>>> This patch implements save and restore context for
->>>>>>>>>>>>>>>>>>>>>>>> peripheral
->>>>>>>>>>>>>>>>>>>>>>>> fixed
->>>>>>>>>>>>>>>>>>>>>>>> clock ops, peripheral gate clock ops, sdmmc mux clock
->>>>>>>>>>>>>>>>>>>>>>>> ops, and
->>>>>>>>>>>>>>>>>>>>>>>> peripheral clock ops.
->>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>> During system suspend, core power goes off and
->>>>>>>>>>>>>>>>>>>>>>>> looses the
->>>>>>>>>>>>>>>>>>>>>>>> settings
->>>>>>>>>>>>>>>>>>>>>>>> of the Tegra CAR controller registers.
->>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>> So during suspend entry clock and reset state of
->>>>>>>>>>>>>>>>>>>>>>>> peripherals is
->>>>>>>>>>>>>>>>>>>>>>>> saved
->>>>>>>>>>>>>>>>>>>>>>>> and on resume they are restored to have clocks back to
->>>>>>>>>>>>>>>>>>>>>>>> same
->>>>>>>>>>>>>>>>>>>>>>>> rate and
->>>>>>>>>>>>>>>>>>>>>>>> state as before suspend.
->>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
->>>>>>>>>>>>>>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni
->>>>>>>>>>>>>>>>>>>>>>>> <skomatineni@nvidia.com>
->>>>>>>>>>>>>>>>>>>>>>>> ---
->>>>>>>>>>>>>>>>>>>>>>>> drivers/clk/tegra/clk-periph-fixed.c | 33
->>>>>>>>>>>>>>>>>>>>>>>> ++++++++++++++++++++++++++++++++
->>>>>>>>>>>>>>>>>>>>>>>> drivers/clk/tegra/clk-periph-gate.c | 34
->>>>>>>>>>>>>>>>>>>>>>>> +++++++++++++++++++++++++++++++++
->>>>>>>>>>>>>>>>>>>>>>>> drivers/clk/tegra/clk-periph.c | 37
->>>>>>>>>>>>>>>>>>>>>>>> ++++++++++++++++++++++++++++++++++++
->>>>>>>>>>>>>>>>>>>>>>>> drivers/clk/tegra/clk-sdmmc-mux.c | 28
->>>>>>>>>>>>>>>>>>>>>>>> +++++++++++++++++++++++++++
->>>>>>>>>>>>>>>>>>>>>>>> drivers/clk/tegra/clk.h | 6 ++++++
->>>>>>>>>>>>>>>>>>>>>>>>          5 files changed, 138 insertions(+)
->>>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>>> diff --git a/drivers/clk/tegra/clk-periph-fixed.c
->>>>>>>>>>>>>>>>>>>>>>>> b/drivers/clk/tegra/clk-periph-fixed.c
->>>>>>>>>>>>>>>>>>>>>>>> index c088e7a280df..21b24530fa00 100644
->>>>>>>>>>>>>>>>>>>>>>>> --- a/drivers/clk/tegra/clk-periph-fixed.c
->>>>>>>>>>>>>>>>>>>>>>>> +++ b/drivers/clk/tegra/clk-periph-fixed.c
->>>>>>>>>>>>>>>>>>>>>>>> @@ -60,11 +60,44 @@
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_recalc_rate(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw *hw,
->>>>>>>>>>>>>>>>>>>>>>>>              return (unsigned long)rate;
->>>>>>>>>>>>>>>>>>>>>>>>          }
->>>>>>>>>>>>>>>>>>>>>>>>          +static int
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_save_context(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw
->>>>>>>>>>>>>>>>>>>>>>>> *hw)
->>>>>>>>>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>>>>>>>>> +    struct tegra_clk_periph_fixed *fixed =
->>>>>>>>>>>>>>>>>>>>>>>> to_tegra_clk_periph_fixed(hw);
->>>>>>>>>>>>>>>>>>>>>>>> +    u32 mask = 1 << (fixed->num % 32);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    fixed->enb_ctx = readl_relaxed(fixed->base +
->>>>>>>>>>>>>>>>>>>>>>>> fixed->regs->enb_reg) &
->>>>>>>>>>>>>>>>>>>>>>>> +             mask;
->>>>>>>>>>>>>>>>>>>>>>>> +    fixed->rst_ctx = readl_relaxed(fixed->base +
->>>>>>>>>>>>>>>>>>>>>>>> fixed->regs->rst_reg) &
->>>>>>>>>>>>>>>>>>>>>>>> +             mask;
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    return 0;
->>>>>>>>>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +static void
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_restore_context(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw
->>>>>>>>>>>>>>>>>>>>>>>> *hw)
->>>>>>>>>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>>>>>>>>> +    struct tegra_clk_periph_fixed *fixed =
->>>>>>>>>>>>>>>>>>>>>>>> to_tegra_clk_periph_fixed(hw);
->>>>>>>>>>>>>>>>>>>>>>>> +    u32 mask = 1 << (fixed->num % 32);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    if (fixed->enb_ctx)
->>>>>>>>>>>>>>>>>>>>>>>> + writel_relaxed(mask, fixed->base +
->>>>>>>>>>>>>>>>>>>>>>>> fixed->regs->enb_set_reg);
->>>>>>>>>>>>>>>>>>>>>>>> +    else
->>>>>>>>>>>>>>>>>>>>>>>> + writel_relaxed(mask, fixed->base +
->>>>>>>>>>>>>>>>>>>>>>>> fixed->regs->enb_clr_reg);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    udelay(2);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    if (!fixed->rst_ctx) {
->>>>>>>>>>>>>>>>>>>>>>>> +        udelay(5); /* reset propogation delay */
->>>>>>>>>>>>>>>>>>>>>>>> + writel_relaxed(mask, fixed->base +
->>>>>>>>>>>>>>>>>>>>>>>> fixed->regs->rst_reg);
->>>>>>>>>>>>>>>>>>>>>>>> +    }
->>>>>>>>>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>>          static const struct clk_ops
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_ops
->>>>>>>>>>>>>>>>>>>>>>>> = {
->>>>>>>>>>>>>>>>>>>>>>>>              .is_enabled =
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_is_enabled,
->>>>>>>>>>>>>>>>>>>>>>>>              .enable = tegra_clk_periph_fixed_enable,
->>>>>>>>>>>>>>>>>>>>>>>>              .disable = tegra_clk_periph_fixed_disable,
->>>>>>>>>>>>>>>>>>>>>>>> .recalc_rate =
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_recalc_rate,
->>>>>>>>>>>>>>>>>>>>>>>> +    .save_context =
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_save_context,
->>>>>>>>>>>>>>>>>>>>>>>> +    .restore_context =
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_fixed_restore_context,
->>>>>>>>>>>>>>>>>>>>>>>>          };
->>>>>>>>>>>>>>>>>>>>>>>>            struct clk
->>>>>>>>>>>>>>>>>>>>>>>> *tegra_clk_register_periph_fixed(const
->>>>>>>>>>>>>>>>>>>>>>>> char
->>>>>>>>>>>>>>>>>>>>>>>> *name,
->>>>>>>>>>>>>>>>>>>>>>>> diff --git a/drivers/clk/tegra/clk-periph-gate.c
->>>>>>>>>>>>>>>>>>>>>>>> b/drivers/clk/tegra/clk-periph-gate.c
->>>>>>>>>>>>>>>>>>>>>>>> index 4b31beefc9fc..6ba5b08e0787 100644
->>>>>>>>>>>>>>>>>>>>>>>> --- a/drivers/clk/tegra/clk-periph-gate.c
->>>>>>>>>>>>>>>>>>>>>>>> +++ b/drivers/clk/tegra/clk-periph-gate.c
->>>>>>>>>>>>>>>>>>>>>>>> @@ -25,6 +25,8 @@ static
->>>>>>>>>>>>>>>>>>>>>>>> DEFINE_SPINLOCK(periph_ref_lock);
->>>>>>>>>>>>>>>>>>>>>>>>            #define read_rst(gate) \
->>>>>>>>>>>>>>>>>>>>>>>> readl_relaxed(gate->clk_base +
->>>>>>>>>>>>>>>>>>>>>>>> (gate->regs->rst_reg))
->>>>>>>>>>>>>>>>>>>>>>>> +#define write_rst_set(val, gate) \
->>>>>>>>>>>>>>>>>>>>>>>> +    writel_relaxed(val, gate->clk_base +
->>>>>>>>>>>>>>>>>>>>>>>> (gate->regs->rst_set_reg))
->>>>>>>>>>>>>>>>>>>>>>>>          #define write_rst_clr(val, gate) \
->>>>>>>>>>>>>>>>>>>>>>>> writel_relaxed(val, gate->clk_base +
->>>>>>>>>>>>>>>>>>>>>>>> (gate->regs->rst_clr_reg))
->>>>>>>>>>>>>>>>>>>>>>>>          @@ -110,10 +112,42 @@ static void
->>>>>>>>>>>>>>>>>>>>>>>> clk_periph_disable(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw *hw)
->>>>>>>>>>>>>>>>>>>>>>>> spin_unlock_irqrestore(&periph_ref_lock, flags);
->>>>>>>>>>>>>>>>>>>>>>>>          }
->>>>>>>>>>>>>>>>>>>>>>>>          +static int clk_periph_gate_save_context(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw
->>>>>>>>>>>>>>>>>>>>>>>> *hw)
->>>>>>>>>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>>>>>>>>> +    struct tegra_clk_periph_gate *gate =
->>>>>>>>>>>>>>>>>>>>>>>> to_clk_periph_gate(hw);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> + gate->clk_state_ctx = read_enb(gate) &
->>>>>>>>>>>>>>>>>>>>>>>> periph_clk_to_bit(gate);
->>>>>>>>>>>>>>>>>>>>>>>> + gate->rst_state_ctx = read_rst(gate) &
->>>>>>>>>>>>>>>>>>>>>>>> periph_clk_to_bit(gate);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    return 0;
->>>>>>>>>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +static void clk_periph_gate_restore_context(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw
->>>>>>>>>>>>>>>>>>>>>>>> *hw)
->>>>>>>>>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>>>>>>>>> +    struct tegra_clk_periph_gate *gate =
->>>>>>>>>>>>>>>>>>>>>>>> to_clk_periph_gate(hw);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    if (gate->clk_state_ctx)
->>>>>>>>>>>>>>>>>>>>>>>> + write_enb_set(periph_clk_to_bit(gate), gate);
->>>>>>>>>>>>>>>>>>>>>>>> +    else
->>>>>>>>>>>>>>>>>>>>>>>> + write_enb_clr(periph_clk_to_bit(gate), gate);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    udelay(5);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    if (!(gate->flags & TEGRA_PERIPH_NO_RESET) &&
->>>>>>>>>>>>>>>>>>>>>>>> + !(gate->flags & TEGRA_PERIPH_MANUAL_RESET)) {
->>>>>>>>>>>>>>>>>>>>>>>> +        if (gate->rst_state_ctx)
->>>>>>>>>>>>>>>>>>>>>>>> + write_rst_set(periph_clk_to_bit(gate), gate);
->>>>>>>>>>>>>>>>>>>>>>>> +        else
->>>>>>>>>>>>>>>>>>>>>>>> + write_rst_clr(periph_clk_to_bit(gate), gate);
->>>>>>>>>>>>>>>>>>>>>>>> +    }
->>>>>>>>>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>>          const struct clk_ops
->>>>>>>>>>>>>>>>>>>>>>>> tegra_clk_periph_gate_ops = {
->>>>>>>>>>>>>>>>>>>>>>>>              .is_enabled = clk_periph_is_enabled,
->>>>>>>>>>>>>>>>>>>>>>>>              .enable = clk_periph_enable,
->>>>>>>>>>>>>>>>>>>>>>>>              .disable = clk_periph_disable,
->>>>>>>>>>>>>>>>>>>>>>>> +    .save_context = clk_periph_gate_save_context,
->>>>>>>>>>>>>>>>>>>>>>>> +    .restore_context =
->>>>>>>>>>>>>>>>>>>>>>>> clk_periph_gate_restore_context,
->>>>>>>>>>>>>>>>>>>>>>>>          };
->>>>>>>>>>>>>>>>>>>>>>>>            struct clk
->>>>>>>>>>>>>>>>>>>>>>>> *tegra_clk_register_periph_gate(const
->>>>>>>>>>>>>>>>>>>>>>>> char *name,
->>>>>>>>>>>>>>>>>>>>>>>> diff --git a/drivers/clk/tegra/clk-periph.c
->>>>>>>>>>>>>>>>>>>>>>>> b/drivers/clk/tegra/clk-periph.c
->>>>>>>>>>>>>>>>>>>>>>>> index 58437da25156..06fb62955768 100644
->>>>>>>>>>>>>>>>>>>>>>>> --- a/drivers/clk/tegra/clk-periph.c
->>>>>>>>>>>>>>>>>>>>>>>> +++ b/drivers/clk/tegra/clk-periph.c
->>>>>>>>>>>>>>>>>>>>>>>> @@ -99,6 +99,37 @@ static void
->>>>>>>>>>>>>>>>>>>>>>>> clk_periph_disable(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw
->>>>>>>>>>>>>>>>>>>>>>>> *hw)
->>>>>>>>>>>>>>>>>>>>>>>> gate_ops->disable(gate_hw);
->>>>>>>>>>>>>>>>>>>>>>>>          }
->>>>>>>>>>>>>>>>>>>>>>>>          +static int clk_periph_save_context(struct
->>>>>>>>>>>>>>>>>>>>>>>> clk_hw *hw)
->>>>>>>>>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>>>>>>>>> +    struct tegra_clk_periph *periph =
->>>>>>>>>>>>>>>>>>>>>>>> to_clk_periph(hw);
->>>>>>>>>>>>>>>>>>>>>>>> +    const struct clk_ops *gate_ops = periph->gate_ops;
->>>>>>>>>>>>>>>>>>>>>>>> +    struct clk_hw *gate_hw = &periph->gate.hw;
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    if (!(periph->gate.flags & TEGRA_PERIPH_NO_GATE))
->>>>>>>>>>>>>>>>>>>>>>>> + gate_ops->save_context(gate_hw);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> + periph->parent_ctx = clk_periph_get_parent(hw);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    return 0;
->>>>>>>>>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +static void clk_periph_restore_context(struct clk_hw
->>>>>>>>>>>>>>>>>>>>>>>> *hw)
->>>>>>>>>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>>>>>>>>> +    struct tegra_clk_periph *periph =
->>>>>>>>>>>>>>>>>>>>>>>> to_clk_periph(hw);
->>>>>>>>>>>>>>>>>>>>>>>> +    const struct clk_ops *gate_ops = periph->gate_ops;
->>>>>>>>>>>>>>>>>>>>>>>> +    struct clk_hw *gate_hw = &periph->gate.hw;
->>>>>>>>>>>>>>>>>>>>>>>> +    const struct clk_ops *div_ops = periph->div_ops;
->>>>>>>>>>>>>>>>>>>>>>>> +    struct clk_hw *div_hw = &periph->divider.hw;
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> + clk_periph_set_parent(hw, periph->parent_ctx);
->>>>>>>>>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>>>>>>>> +    if (!(periph->gate.flags & TEGRA_PERIPH_NO_DIV))
->>>>>>>>>>>>>>>>>>>>>>>> + div_ops->restore_context(div_hw);
->>>>>>>>>>>>>>>>>>>>>>> Could you please point to where the divider's
->>>>>>>>>>>>>>>>>>>>>>> save_context()
->>>>>>>>>>>>>>>>>>>>>>> happens?
->>>>>>>>>>>>>>>>>>>>>>> Because I can't see it.
->>>>>>>>>>>>>>>>>>>>>> Ah, I now see that there is no need to save the dividers
->>>>>>>>>>>>>>>>>>>>>> context
->>>>>>>>>>>>>>>>>>>>>> because
->>>>>>>>>>>>>>>>>>>>>> clk itself has enough info that is needed for the
->>>>>>>>>>>>>>>>>>>>>> context's
->>>>>>>>>>>>>>>>>>>>>> restoring
->>>>>>>>>>>>>>>>>>>>>> (like I pointed in the review to v6).
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>> Looks like you could also implement a new
->>>>>>>>>>>>>>>>>>>>>> clk_hw_get_parent_index()
->>>>>>>>>>>>>>>>>>>>>> generic helper to get the index instead of storing it
->>>>>>>>>>>>>>>>>>>>>> manually.
->>>>>>>>>>>>>>>>>>>>> clk_periph_get_parent basically invokes existing
->>>>>>>>>>>>>>>>>>>>> clk_mux_ops
->>>>>>>>>>>>>>>>>>>>> get_parent() which is then saved in tegra_clk_periph.
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> All existing drivers are using directly get_parent() from
->>>>>>>>>>>>>>>>>>>>> clk_mux
->>>>>>>>>>>>>>>>>>>>> which actually gets index from the register read.
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> To have this more generic w.r.t save/restore context
->>>>>>>>>>>>>>>>>>>>> point of
->>>>>>>>>>>>>>>>>>>>> view,
->>>>>>>>>>>>>>>>>>>>> probably instead of implementing new get_parent_index
->>>>>>>>>>>>>>>>>>>>> helper,
->>>>>>>>>>>>>>>>>>>>> I think
->>>>>>>>>>>>>>>>>>>>> its better to implement save_context and
->>>>>>>>>>>>>>>>>>>>> restore_context to
->>>>>>>>>>>>>>>>>>>>> clk_mux_ops along with creating parent_index field into
->>>>>>>>>>>>>>>>>>>>> clk_mux to
->>>>>>>>>>>>>>>>>>>>> cache index during set_parent.
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> So we just need to invoke mux_ops save_context and
->>>>>>>>>>>>>>>>>>>>> restore_context.
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>> I hope its ok to add save/restore context to clk_mux_ops
->>>>>>>>>>>>>>>>>>>> to be
->>>>>>>>>>>>>>>>>>>> more
->>>>>>>>>>>>>>>>>>>> generic w.r.t save/restore context rather than
->>>>>>>>>>>>>>>>>>>> get_parent_index
->>>>>>>>>>>>>>>>>>>> API.
->>>>>>>>>>>>>>>>>>>> Please confirm if you agree.
->>>>>>>>>>>>>>>>>>> Sounds like a good idea. I see that there is a 'restoring'
->>>>>>>>>>>>>>>>>>> helper for
->>>>>>>>>>>>>>>>>>> the generic clk_gate, seems something similar could be done
->>>>>>>>>>>>>>>>>>> for the
->>>>>>>>>>>>>>>>>>> clk_mux. And looks like anyway you'll need to associate the
->>>>>>>>>>>>>>>>>>> parent
->>>>>>>>>>>>>>>>>>> clock
->>>>>>>>>>>>>>>>>>> with the hw index in order to restore the muxing.
->>>>>>>>>>>>>>>>>> by 'restoring' helper for generic clk_gate, are you
->>>>>>>>>>>>>>>>>> referring to
->>>>>>>>>>>>>>>>>> clk_gate_restore_context API?
->>>>>>>>>>>>>>>>> Yes.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> clk_gate_restore_context is API that's any clk drivers can
->>>>>>>>>>>>>>>>>> use for
->>>>>>>>>>>>>>>>>> clk_gate operation restore for custom gate clk_ops.
->>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> But clk-periph is directly using generic clk_mux ops from
->>>>>>>>>>>>>>>>>> clk_mux
->>>>>>>>>>>>>>>>>> so I
->>>>>>>>>>>>>>>>>> think we should add .restore_context to clk_mux_ops and then
->>>>>>>>>>>>>>>>>> during
->>>>>>>>>>>>>>>>>> clk-periph restore need to invoke mux_ops->restore_context.
->>>>>>>>>>>>>>>>> I'm not sure whether it will be good for every driver that
->>>>>>>>>>>>>>>>> uses
->>>>>>>>>>>>>>>>> generic
->>>>>>>>>>>>>>>>> clk_mux ops. Should be more flexible to have a generic helper
->>>>>>>>>>>>>>>>> function
->>>>>>>>>>>>>>>>> that any driver could use in order to restore the clock's
->>>>>>>>>>>>>>>>> parent.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> The clk-periph restoring also includes case of combining
->>>>>>>>>>>>>>>>> divider
->>>>>>>>>>>>>>>>> and
->>>>>>>>>>>>>>>>> parent restoring, so generic helper could be useful in that
->>>>>>>>>>>>>>>>> case
->>>>>>>>>>>>>>>>> as well.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> It also looks like you could actually use the
->>>>>>>>>>>>>>>>> clk_gate_restore_context()
->>>>>>>>>>>>>>>>> instead of manually saving the clock's enable-state, couldn't
->>>>>>>>>>>>>>>>> you?
->>>>>>>>>>>>>>>> ok for clk_mux, can add generic clk_mux_restore_context API
->>>>>>>>>>>>>>>> rather
->>>>>>>>>>>>>>>> than
->>>>>>>>>>>>>>>> using restore_context in clk_ops and will invoke that during
->>>>>>>>>>>>>>>> clk_periph
->>>>>>>>>>>>>>>> restore.
->>>>>>>>>>>>>>>>
->>>>>>>>>>>> digging thru looks like for clk_periph source restore instead of
->>>>>>>>>>>> clk_mux_restore_context, i can directly do clk_hw_get_parent and
->>>>>>>>>>>> clk_set_parent with mux_hw as they invoke mux_ops get/set parent
->>>>>>>>>>>> anyway.
->>>>>>>>>>>> Will do this for periph clk mux
->>>>> Just to be clear, clk_mux don't have cached parent. get_parent is by
->>>>> register read. So, cant directly use get_parent and then set during
->>>>> restore.
->>>>>
->>>>> So will create both clk_mux_save/restore_context in generic clk driver
->>>>> and will invoke them during tegra peripheral clock suspend/resume.
->>>> Why MUX clock doesn't have a cached parent? What MUX clock you're
->>>> talking about?
->>>>
->>>> [snip]
->>>
->>> Please ignore got it.
->>>
->>> Will send next version after giving few more days for feedback.
->>>
->> Couple of issues:
->>
->> 1.) I see clk-tegra-periph driver periph_clks init_data entries for some
->> peripherals are not correct for Tegra 114 and later chips.
->>
->> Eg I2C TEGRA_INIT_DATA_TABLE entries in clk-tegra-periph are used for all Tegra
->> chipsets currently in the driver.
->>
->> These entries are using MUX shift of 30 and MUX mask only for 2 bits which is
->> correct for T30 and prior.
->> But for later Tegra chips, it should be MUX shift 29 and MASK(3).
->>
->> Also, I2C parent idx entries in mux_pllp_clkm_idx are different from Tegra114
->> onwards.
->>
->> As we are using only PLLP and CLKM sources only for I2C, their corresponding mux
->> values from register spec by using upper 2 bits for T114 onwards match actual 2
->> bits of MUX value on T30 and prior.
->>
->> Not sure if this something known pending to port actual clock MUX table changes
->> for Tegra114 onwards?
->>
->> Or
->>
->> Are we purposely using upper 2 bits only for clock source for T114 and later as
->> the upper 2 bit values of the limited clock source we are using match with
->> previous Tegra peripheral clock source mux values?
-> 
-> The actual hardware values are compatible on all Tegra SoCs and PLLC2 and PLLC3
-> are just unused on T114+, so should be okay.
-> 
->> Peter/Thierry, Can you please help comment on this?
->>
->>
->> 2.) Other issue is regarding using clk_set_parent directly during clk_peripheral
->> restore is clk_core_set_parent checks new parent with current parent and if its
->> same, it just returns as success which is good in normal operation.
->>
->> But during restore, we can't use clk_set_parent as new parent is from
->> clk_get_parent on restore and this is same as cached parent.
->>
->> So clk_set_parent returns 0 but acutal register value for clk source is different
->> as it gets reset on SC7 entry/exit and to restore need to invoke mux_ops
->> set_parent with parent_index.
->>
->> So this need parent index for cached parent and without using context variable to
->> store this, need an API like you were originally suggesting for get_parent_index
->> to get parent index for the specified parent clk_hw.
->>
->> As we decided not to use save/restore for clk_mux ops as its generic for other
->> drivers, looks like we need get_parent_index API to use for restoring peripheral
->> source and use this with clk_mux_ops set_parent.
->>
->> clk core driver already has clk_fetch_parent_index but is it OK to export this?
->>
->> Otherwise, will create separate API in clk driver which returns parent index from
->> parent clk_hw by using this existing clk_fetch_parent_index so this API can be
->> used by other drivers.
-
-Actually, you probably meant exactly the same what I wrote below. So
-yes, it should be good to extend the CCF API since likely that this case
-will be useful for other drivers as well.
-
-> The clk_fetch_parent_index can't be used directly as you can see because it uses
-> clk_core which is internal to clk.c, you'll need to make a wrapper for getting the
-> cached index.
-> 
-> Something like this:
-> 
-> int clk_hw_get_parent_index(struct clk_hw *hw, struct *parent_hw)
-> {
-> 	if (!hw || !parent_hw)
-> 		return -EINVAL;
-> 
-> 	return clk_fetch_parent_index(hw->core, parent_hw->core);
-> }
-> 
+SGkgQW5kcnplaiwKCk9uIEZyaSwgSnVsIDI2LCAyMDE5IGF0IDA3OjIyOjU0UE0gKzAyMDAsIEFu
+ZHJ6ZWogUGlldHJhc2lld2ljeiB3cm90ZToKPiBJdCBpcyBkaWZmaWN1bHQgZm9yIGEgdXNlciB0
+byBrbm93IHdoaWNoIG9mIHRoZSBpMmMgYWRhcHRlcnMgaXMgZm9yIHdoaWNoCj4gZHJtIGNvbm5l
+Y3Rvci4gVGhpcyBzZXJpZXMgYWRkcmVzc2VzIHRoaXMgcHJvYmxlbS4KPiAKPiBUaGUgaWRlYSBp
+cyB0byBoYXZlIGEgc3ltYm9saWMgbGluayBpbiBjb25uZWN0b3IncyBzeXNmcyBkaXJlY3Rvcnks
+IGUuZy46Cj4gCj4gbHMgLWwgL3N5cy9jbGFzcy9kcm0vY2FyZDAtSERNSS1BLTEvZGRjCj4gbHJ3
+eHJ3eHJ3eCAxIHJvb3Qgcm9vdCAwIEp1biAyNCAxMDo0MiAvc3lzL2NsYXNzL2RybS9jYXJkMC1I
+RE1JLUEtMS9kZGMgXAo+IAktPiAuLi8uLi8uLi8uLi9zb2MvMTM4ODAwMDAuaTJjL2kyYy0yCj4g
+Cj4gVGhlIHVzZXIgdGhlbiBrbm93cyB0aGF0IHRoZWlyIGNhcmQwLUhETUktQS0xIHVzZXMgaTJj
+LTIgYW5kIGNhbiBlLmcuIHJ1bgo+IGRkY3V0aWw6Cj4gCj4gZGRjdXRpbCAtYiAyIGdldHZjcCAw
+eDEwCj4gVkNQIGNvZGUgMHgxMCAoQnJpZ2h0bmVzcyk6IGN1cnJlbnQgdmFsdWUgPSAgICA5MCwg
+bWF4IHZhbHVlID0gICAxMDAKPiAKPiBUaGUgZmlyc3QgcGF0Y2ggaW4gdGhlIHNlcmllcyBhZGRz
+IHN0cnVjdCBpMmNfYWRhcHRlciBwb2ludGVyIHRvIHN0cnVjdAo+IGRybV9jb25uZWN0b3IuIElm
+IHRoZSBmaWVsZCBpcyB1c2VkIGJ5IGEgcGFydGljdWxhciBkcml2ZXIsIHRoZW4gYW4KPiBhcHBy
+b3ByaWF0ZSBzeW1ib2xpYyBsaW5rIGlzIGNyZWF0ZWQgYnkgdGhlIGdlbmVyaWMgY29kZSwgd2hp
+Y2ggaXMgYWxzbyBhZGRlZAo+IGJ5IHRoaXMgcGF0Y2guCj4gCj4gUGF0Y2ggMiBhZGRzIGEgbmV3
+IHZhcmlhbnQgb2YgZHJtX2Nvbm5lY3Rvcl9pbml0KCksIHNlZSB0aGUgY2hhbmdlbG9nCj4gYmVs
+b3cuCj4gCj4gUGF0Y2hlcyAzLi4yNCBhcmUgZXhhbXBsZXMgb2YgaG93IHRvIGNvbnZlcnQgYSBk
+cml2ZXIgdG8gdGhpcyBuZXcgc2NoZW1lLgo+IAo+IHYxLi52MjoKPiAKPiAtIHVzZWQgZml4ZWQg
+bmFtZSAiZGRjIiBmb3IgdGhlIHN5bWJvbGljIGxpbmsgaW4gb3JkZXIgdG8gbWFrZSBpdCBlYXN5
+IGZvcgo+IHVzZXJzcGFjZSB0byBmaW5kIHRoZSBpMmMgYWRhcHRlcgo+IAo+IHYyLi52MzoKPiAK
+PiAtIGNvbnZlcnRlZCBhcyBtYW55IGRyaXZlcnMgYXMgcG9zc2libGUuCj4gCj4gdjMuLnY0Ogo+
+IAo+IC0gYWRkZWQgUmV2aWV3ZWQtYnkgZm9yIHBhdGNoIDAxLzIzCj4gLSBtb3ZlZCAiZGRjIiBm
+aWVsZCBhc3NpZ25tZW50IHRvIGJlZm9yZSBkcm1fY29ubmVjdG9yX2luaXQoKSBpcyBjYWxsZWQK
+PiBpbiBtc20sIHZjNCwgc3RpLCBtZ2FnMjAwLCBhc3QsIGFtZGdwdSwgcmFkZW9uCj4gLSBzaW1w
+bGlmaWVkIHRoZSBjb2RlIGluIGFtZGdwdSBhbmQgcmFkZW9uIGF0IHRoZSBleHBlbnNlIG9mIHNv
+bWUgbGluZXMKPiBleGNlZWRpbmcgODAgY2hhcmFjdGVycyBhcyBwZXIgQWxleCBEZXVjaGVyJ3Mg
+c3VnZ2VzdGlvbgo+IC0gYWRkZWQgaTkxNQo+IAo+IHY0Li52NToKPiAKPiAtIGNoYW5nZWQgImlu
+Y2x1ZGUgPGxpbnV4L2kyYy5oPiIgdG8gInN0cnVjdCBpMmNfYWRhcHRlcjsiCj4gaW4gZHJtX2Nv
+bm5lY3Rvci5oLCBjb25zZXF1ZW50bHksIGFkZGVkICJpbmNsdWRlIDxsaW51eC9pMmMuaD4iCj4g
+aW4gZHJtX3N5c2ZzLmMuCj4gLSBhZGRlZCAiZHJtX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZGRjKCki
+IHZhcmlhbnQgdG8gZW5zdXJlIHRoYXQgdGhlIGRkYwo+IGZpZWxkIG9mIGRybV9jb25uZWN0b3Ig
+aXMgcHJlc2VydmVkIGFjY3Jvc3MgaXRzIGludm9jYXRpb24KPiAtIGFjY29yZGluZ2x5IGNoYW5n
+ZWQgaW52b2NhdGlvbnMgb2YgZHJtX2Nvbm5lY3Rvcl9pbml0KCkgaW4gdGhlCj4gdG91Y2hlZCBk
+cml2ZXJzIHRvIHVzZSB0aGUgbmV3IHZhcmlhbnQKPiAKPiB2NS4udjY6Cj4gCj4gLSBpbXByb3Zl
+ZCBzdWJqZWN0IGxpbmUgb2YgcGF0Y2ggMQo+IC0gYWRkZWQga2VybmVsLWRvYyBmb3IgZHJtX2Nv
+bm5lY3Rvcl9pbml0X3dpdGhfZGRjKCkKPiAtIGltcHJvdmVkIGtlcm5lbC1kb2MgZm9yIHRoZSBk
+ZGMgZmllbGQgb2Ygc3RydWN0IGRybV9jb25uZWN0b3IKPiAtIGFkZGVkIFJldmlld2VkLWJ5IGlu
+IHBhdGNoZXMgMTcgYW5kIDE4Cj4gLSBhZGRlZCBBY2tlZC1ieSBpbiBwYXRjaCAyCj4gLSBtYWRl
+IHRoZSBvd25lcnNoaXAgb2YgZGRjIGkyY19hZGFwdGVyIGV4cGxpY2l0IGluIGFsbCBwYXRjaGVz
+LAo+IHRoaXMgbWFkZSB0aGUgYWZmZWN0ZWQgcGF0Y2hlcyBtdWNoIHNpbXBsZXIKPiAKPiBAQmVu
+amFtaW4KPiBAU2hhd24KPiAKPiBUaGVyZSB3ZXJlIHlvdXIgQWNrZWQtYnkgb3IgUmV2aWV3ZWQt
+YnkgZm9yIHNvbWUgcGF0Y2hlcyBpbiB2NCwgYnV0IG5vdwo+IHRoYXQgdGhlIHBhdGNoZXMgdXNl
+IHRoZSBuZXdseSBhZGRlZCBmdW5jdGlvbiBJJ20gbm90IHN1cmUgSSBjYW4gc3RpbGwKPiBpbmNs
+dWRlIHRob3NlIHRhZ3Mgd2l0aG91dCB5b3UgYWN0dWFsbHkgY29uZmlybWluZy4gQ2FuIEk/IE9y
+IGNhbiB5b3UKPiBwbGVhc2UgcmUtcmV2aWV3PyAKPiAKPiBUT0RPOiBub3V2ZWF1LCBnbWE1MDAs
+IG9tYXBkcm0sIHBhbmVsLXNpbXBsZSAtIGlmIGFwcGxpY2FibGUuCgpvbWFwZHJtIGlzIG1vdmlu
+ZyB0byBhIG5ldyBoZWxwZXIgdGhhdCBjcmVhdGVzIGNvbm5lY3RvcnMgZm9yIGEgc2V0IG9mCmJy
+aWRnZXMsIHNvIEknbGwgaGFuZGxlIGl0IHRoZXJlLiBJdCBtYXkgcmVxdWlyZSBhZGRpbmcgYSBk
+ZGMgZmllbGQgdG8KZHJtX2JyaWRnZS4KCj4gT3RoZXIgZHJpdmVycyBhcmUgZWl0aGVyIGFscmVh
+ZHkgY29udmVydGVkIG9yIGRvbid0IG1lbnRpb24gbmVpdGhlcgo+ICJkZGMiIG5vciAiaTJjX2Fk
+YXB0ZXIiLgo+IAo+IEFuZHJ6ZWogUGlldHJhc2lld2ljeiAoMjQpOgo+ICAgZHJtOiBBZGQgZGRj
+IGxpbmsgaW4gc3lzZnMgY3JlYXRlZCBieSBkcm1fY29ubmVjdG9yCj4gICBkcm06IEFkZCBkcm1f
+Y29ubmVjdG9yX2luaXQoKSB2YXJpYW50IHdpdGggZGRjCj4gICBkcm0vZXh5bm9zOiBQcm92aWRl
+IGRkYyBzeW1saW5rIGluIGNvbm5lY3RvcidzIHN5c2ZzCj4gICBkcm06IHJvY2tjaGlwOiBQcm92
+aWRlIGRkYyBzeW1saW5rIGluIHJrMzA2Nl9oZG1pIHN5c2ZzIGRpcmVjdG9yeQo+ICAgZHJtOiBy
+b2NrY2hpcDogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBpbm5vX2hkbWkgc3lzZnMgZGlyZWN0b3J5
+Cj4gICBkcm0vbXNtL2hkbWk6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaGRtaSBjb25uZWN0b3Ig
+c3lzZnMgZGlyZWN0b3J5Cj4gICBkcm0vc3VuNGk6IGhkbWk6IFByb3ZpZGUgZGRjIHN5bWxpbmsg
+aW4gc3VuNGkgaGRtaSBjb25uZWN0b3Igc3lzZnMKPiAgICAgZGlyZWN0b3J5Cj4gICBkcm0vbWVk
+aWF0ZWs6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaGRtaSBjb25uZWN0b3Igc3lzZnMgZGlyZWN0
+b3J5Cj4gICBkcm0vdGVncmE6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gb3V0cHV0IGNvbm5lY3Rv
+ciBzeXNmcyBkaXJlY3RvcnkKPiAgIGRybS9pbXg6IGlteC1sZGI6IFByb3ZpZGUgZGRjIHN5bWxp
+bmsgaW4gY29ubmVjdG9yJ3Mgc3lzZnMKPiAgIGRybS9pbXg6IGlteC10dmU6IFByb3ZpZGUgZGRj
+IHN5bWxpbmsgaW4gY29ubmVjdG9yJ3Mgc3lzZnMKPiAgIGRybS92YzQ6IFByb3ZpZGUgZGRjIHN5
+bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQo+ICAgZHJtOiB6dGU6IFByb3ZpZGUg
+ZGRjIHN5bWxpbmsgaW4gaGRtaSBjb25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5Cj4gICBkcm06IHp0
+ZTogUHJvdmlkZSBkZGMgc3ltbGluayBpbiB2Z2EgY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQo+
+ICAgZHJtL3RpbGNkYzogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBjb25uZWN0b3Igc3lzZnMgZGly
+ZWN0b3J5Cj4gICBkcm06IHN0aTogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBoZG1pIGNvbm5lY3Rv
+ciBzeXNmcyBkaXJlY3RvcnkKPiAgIGRybS9tZ2FnMjAwOiBQcm92aWRlIGRkYyBzeW1saW5rIGlu
+IGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKPiAgIGRybS9hc3Q6IFByb3ZpZGUgZGRjIHN5bWxp
+bmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQo+ICAgZHJtL2JyaWRnZTogZHVtYi12Z2Et
+ZGFjOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNmcwo+ICAgICBkaXJlY3Rv
+cnkKPiAgIGRybS9icmlkZ2U6IGR3LWhkbWk6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVj
+dG9yIHN5c2ZzIGRpcmVjdG9yeQo+ICAgZHJtL2JyaWRnZTogdGktdGZwNDEwOiBQcm92aWRlIGRk
+YyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNmcwo+ICAgICBkaXJlY3RvcnkKPiAgIGRybS9hbWRn
+cHU6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQo+ICAg
+ZHJtL3JhZGVvbjogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBjb25uZWN0b3Igc3lzZnMgZGlyZWN0
+b3J5Cj4gICBkcm0vaTkxNTogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBoZG1pIGNvbm5lY3RvciBz
+eXNmcyBkaXJlY3RvcnkKPiAKPiAgLi4uL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfY29ubmVj
+dG9ycy5jICAgIHwgIDk2ICsrKysrKysrLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXN0L2FzdF9t
+b2RlLmMgICAgICAgICAgICAgICAgfCAgMTMgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9k
+dW1iLXZnYS1kYWMuYyAgICAgICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
+c3lub3BzeXMvZHctaGRtaS5jICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdl
+L3RpLXRmcDQxMC5jICAgICAgICAgICAgfCAgIDYgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9j
+b25uZWN0b3IuYyAgICAgICAgICAgICAgIHwgIDM1ICsrKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9k
+cm1fc3lzZnMuYyAgICAgICAgICAgICAgICAgICB8ICAgOCArCj4gIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+aTkxNS9kaXNwbGF5L2ludGVsX2hkbWkuYyAgICAgfCAgMTIgKy0KPiAgZHJpdmVycy9ncHUvZHJt
+L2lteC9pbXgtbGRiLmMgICAgICAgICAgICAgICAgIHwgICA3ICstCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9pbXgvaW14LXR2ZS5jICAgICAgICAgICAgICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vbWVkaWF0ZWsvbXRrX2hkbWkuYyAgICAgICAgICAgfCAgIDcgKy0KPiAgZHJpdmVycy9ncHUv
+ZHJtL21nYWcyMDAvbWdhZzIwMF9tb2RlLmMgICAgICAgIHwgIDEzICstCj4gIGRyaXZlcnMvZ3B1
+L2RybS9tc20vaGRtaS9oZG1pX2Nvbm5lY3Rvci5jICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vcmFkZW9uL3JhZGVvbl9jb25uZWN0b3JzLmMgICAgfCAxNDIgKysrKysrKysrKysrKy0t
+LS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9pbm5vX2hkbWkuYyAgICAgICAgICB8ICAg
+NiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcmszMDY2X2hkbWkuYyAgICAgICAgfCAg
+IDcgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jICAgICAgICAgICAgICAgIHwg
+ICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9oZG1pX2VuYy5jICAgICAgICB8
+ICAgNyArLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAg
+fCAgIDcgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jICAgICAgICAgICAgICAgICAg
+IHwgICA3ICstCj4gIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3RmcDQxMC5jICAgICAg
+ICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMgICAgICAgICAgICAg
+ICAgfCAgMTIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3p0ZS96eF9oZG1pLmMgICAgICAgICAgICAg
+ICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS96dGUvenhfdmdhLmMgICAgICAgICAgICAg
+ICAgICB8ICAgNiArLQo+ICBpbmNsdWRlL2RybS9kcm1fY29ubmVjdG9yLmggICAgICAgICAgICAg
+ICAgICAgfCAgMTggKysrCj4gIDI2IGZpbGVzIGNoYW5nZWQsIDMzNiBpbnNlcnRpb25zKCspLCAx
+MjEgZGVsZXRpb25zKC0pCgotLSAKUmVnYXJkcywKCkxhdXJlbnQgUGluY2hhcnQKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcg
+bGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
