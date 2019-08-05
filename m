@@ -1,142 +1,122 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v1 16/16] drm/panel: simple: use drm_panel infrastructure
-Date: Mon, 5 Aug 2019 14:12:08 +0300
-Message-ID: <20190805111208.GK29747@pendragon.ideasonboard.com>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-17-sam@ravnborg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 5.2 00/20] 5.2.6-stable review
+Date: Mon, 5 Aug 2019 13:48:21 +0200
+Message-ID: <20190805114821.GA24378@ulmo>
+References: <20190802092055.131876977@linuxfoundation.org>
+ <20190802172105.18999-1-thierry.reding@gmail.com>
+ <20190803070932.GB24334@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190804201637.1240-17-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>, Allison Randal <allison@lohutok.net>
+In-Reply-To: <20190803070932.GB24334@kroah.com>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgU2FtLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBTdW4sIEF1ZyAwNCwgMjAxOSBh
-dCAxMDoxNjozN1BNICswMjAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4gVXNlIGRybV9wYW5lbCBp
-bmZyYXN0cnVjdXRlOgo+IC0gZHJtX3BhbmVsIGhhcyBndWFyZHMgZm9yIGNhbGxpbmcgZGlzYWJs
-ZS9lbmFibGUgdHdpY2UKCkFzIHN0YXRlZCBpbiB0aGUgcmV2aWV3IG9mIHRoZSBjb3JyZXNwb25k
-aW5nIHBhdGNoLCBJIHRoaW5rIHRob3NlIGNoZWNrcwpzaG91bGQgYmUgZHJvcHBlZCwgYnV0IG5v
-dCBtb3ZlZCB0byB0aGUgcGFuZWwgY29yZS4KCj4gLSBkcm1fcGFuZWwgaGFzIGJhY2tsaWdodCBz
-dXBwb3J0CgpUaGlzIGFuc3dlcnMgbXkgZmlyc3QgcXVlc3Rpb24gaW4gdGhlIHJldmlldyBvZiAx
-NS8xNiA6LSkKCj4gVG8gdXNlIHRoZSBkcm1fcGFuZWwgaW5mcmFzdHJ1Y3R1cmUgdXNlIHRoZSBk
-cm1fcGFuZWxfKgo+IHZhcmlhbnRzIGZvciBwcmVwYXJlL2VuYWJsZS9kaXNhYmxlL3VucHJlcGFy
-ZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+Cj4g
-Q2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IFNhbSBS
-YXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4KClRoZSBjaGFuZ2UgbG9va3MgZ29vZCBvdmVyYWxs
-LAoKUmV2aWV3ZWQtYnk6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNv
-bmJvYXJkLmNvbT4KCmJ1dCB0aGlzIGlzIHBlbmRpbmcgYW4gYWdyZWVtZW50IG9uIHdoYXQgdG8g
-ZG8gd2l0aCB0aGUgbXVsdGlwbGUKcHJlcGFyZS9lbmFibGUgZ3VhcmRzLgoKPiAtLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNpbXBsZS5jIHwgNzMgKysrKystLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgNjIgZGVsZXRp
-b25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaW1w
-bGUuYyBiL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaW1wbGUuYwo+IGluZGV4IGJmZjc1
-NzhmODRkZC4uYzdlZWQzNGYyYzljIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9wYW5l
-bC9wYW5lbC1zaW1wbGUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaW1w
-bGUuYwo+IEBAIC0yMSw3ICsyMSw2IEBACj4gICAqIERFQUxJTkdTIElOIFRIRSBTT0ZUV0FSRS4K
-PiAgICovCj4gIAo+IC0jaW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+Cj4gICNpbmNsdWRlIDxs
-aW51eC9kZWxheS5oPgo+ICAjaW5jbHVkZSA8bGludXgvZ3Bpby9jb25zdW1lci5oPgo+ICAjaW5j
-bHVkZSA8bGludXgvbW9kdWxlLmg+Cj4gQEAgLTk4LDEzICs5NywxMCBAQCBzdHJ1Y3QgcGFuZWxf
-ZGVzYyB7Cj4gIAo+ICBzdHJ1Y3QgcGFuZWxfc2ltcGxlIHsKPiAgCXN0cnVjdCBkcm1fcGFuZWwg
-YmFzZTsKPiAtCWJvb2wgcHJlcGFyZWQ7Cj4gLQlib29sIGVuYWJsZWQ7Cj4gIAlib29sIG5vX2hw
-ZDsKPiAgCj4gIAljb25zdCBzdHJ1Y3QgcGFuZWxfZGVzYyAqZGVzYzsKPiAgCj4gLQlzdHJ1Y3Qg
-YmFja2xpZ2h0X2RldmljZSAqYmFja2xpZ2h0Owo+ICAJc3RydWN0IHJlZ3VsYXRvciAqc3VwcGx5
-Owo+ICAJc3RydWN0IGkyY19hZGFwdGVyICpkZGM7Cj4gIAo+IEBAIC0yMzIsMjAgKzIyOCw5IEBA
-IHN0YXRpYyBpbnQgcGFuZWxfc2ltcGxlX2Rpc2FibGUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwp
-Cj4gIHsKPiAgCXN0cnVjdCBwYW5lbF9zaW1wbGUgKnAgPSB0b19wYW5lbF9zaW1wbGUocGFuZWwp
-Owo+ICAKPiAtCWlmICghcC0+ZW5hYmxlZCkKPiAtCQlyZXR1cm4gMDsKPiAtCj4gLQlpZiAocC0+
-YmFja2xpZ2h0KSB7Cj4gLQkJcC0+YmFja2xpZ2h0LT5wcm9wcy5wb3dlciA9IEZCX0JMQU5LX1BP
-V0VSRE9XTjsKPiAtCQlwLT5iYWNrbGlnaHQtPnByb3BzLnN0YXRlIHw9IEJMX0NPUkVfRkJCTEFO
-SzsKPiAtCQliYWNrbGlnaHRfdXBkYXRlX3N0YXR1cyhwLT5iYWNrbGlnaHQpOwo+IC0JfQo+IC0K
-PiAgCWlmIChwLT5kZXNjLT5kZWxheS5kaXNhYmxlKQo+ICAJCW1zbGVlcChwLT5kZXNjLT5kZWxh
-eS5kaXNhYmxlKTsKPiAgCj4gLQlwLT5lbmFibGVkID0gZmFsc2U7Cj4gLQo+ICAJcmV0dXJuIDA7
-Cj4gIH0KPiAgCj4gQEAgLTI1Myw5ICsyMzgsNiBAQCBzdGF0aWMgaW50IHBhbmVsX3NpbXBsZV91
-bnByZXBhcmUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsKPiAgCXN0cnVjdCBwYW5lbF9z
-aW1wbGUgKnAgPSB0b19wYW5lbF9zaW1wbGUocGFuZWwpOwo+ICAKPiAtCWlmICghcC0+cHJlcGFy
-ZWQpCj4gLQkJcmV0dXJuIDA7Cj4gLQo+ICAJZ3Bpb2Rfc2V0X3ZhbHVlX2NhbnNsZWVwKHAtPmVu
-YWJsZV9ncGlvLCAwKTsKPiAgCj4gIAlyZWd1bGF0b3JfZGlzYWJsZShwLT5zdXBwbHkpOwo+IEBA
-IC0yNjMsOCArMjQ1LDYgQEAgc3RhdGljIGludCBwYW5lbF9zaW1wbGVfdW5wcmVwYXJlKHN0cnVj
-dCBkcm1fcGFuZWwgKnBhbmVsKQo+ICAJaWYgKHAtPmRlc2MtPmRlbGF5LnVucHJlcGFyZSkKPiAg
-CQltc2xlZXAocC0+ZGVzYy0+ZGVsYXkudW5wcmVwYXJlKTsKPiAgCj4gLQlwLT5wcmVwYXJlZCA9
-IGZhbHNlOwo+IC0KPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+IEBAIC0yNzQsOSArMjU0LDYgQEAg
-c3RhdGljIGludCBwYW5lbF9zaW1wbGVfcHJlcGFyZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkK
-PiAgCXVuc2lnbmVkIGludCBkZWxheTsKPiAgCWludCBlcnI7Cj4gIAo+IC0JaWYgKHAtPnByZXBh
-cmVkKQo+IC0JCXJldHVybiAwOwo+IC0KPiAgCWVyciA9IHJlZ3VsYXRvcl9lbmFibGUocC0+c3Vw
-cGx5KTsKPiAgCWlmIChlcnIgPCAwKSB7Cj4gIAkJZGV2X2VycihwYW5lbC0+ZGV2LCAiZmFpbGVk
-IHRvIGVuYWJsZSBzdXBwbHk6ICVkXG4iLCBlcnIpOwo+IEBAIC0yOTEsOCArMjY4LDYgQEAgc3Rh
-dGljIGludCBwYW5lbF9zaW1wbGVfcHJlcGFyZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiAg
-CWlmIChkZWxheSkKPiAgCQltc2xlZXAoZGVsYXkpOwo+ICAKPiAtCXAtPnByZXBhcmVkID0gdHJ1
-ZTsKPiAtCj4gIAlyZXR1cm4gMDsKPiAgfQo+ICAKPiBAQCAtMzAwLDIwICsyNzUsOSBAQCBzdGF0
-aWMgaW50IHBhbmVsX3NpbXBsZV9lbmFibGUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsK
-PiAgCXN0cnVjdCBwYW5lbF9zaW1wbGUgKnAgPSB0b19wYW5lbF9zaW1wbGUocGFuZWwpOwo+ICAK
-PiAtCWlmIChwLT5lbmFibGVkKQo+IC0JCXJldHVybiAwOwo+IC0KPiAgCWlmIChwLT5kZXNjLT5k
-ZWxheS5lbmFibGUpCj4gIAkJbXNsZWVwKHAtPmRlc2MtPmRlbGF5LmVuYWJsZSk7Cj4gIAo+IC0J
-aWYgKHAtPmJhY2tsaWdodCkgewo+IC0JCXAtPmJhY2tsaWdodC0+cHJvcHMuc3RhdGUgJj0gfkJM
-X0NPUkVfRkJCTEFOSzsKPiAtCQlwLT5iYWNrbGlnaHQtPnByb3BzLnBvd2VyID0gRkJfQkxBTktf
-VU5CTEFOSzsKPiAtCQliYWNrbGlnaHRfdXBkYXRlX3N0YXR1cyhwLT5iYWNrbGlnaHQpOwo+IC0J
-fQo+IC0KPiAtCXAtPmVuYWJsZWQgPSB0cnVlOwo+IC0KPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+
-IEBAIC00MTMsNyArMzc3LDcgQEAgc3RhdGljIHZvaWQgcGFuZWxfc2ltcGxlX3BhcnNlX3BhbmVs
-X3RpbWluZ19ub2RlKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgCj4gIHN0YXRpYyBpbnQgcGFuZWxf
-c2ltcGxlX3Byb2JlKHN0cnVjdCBkZXZpY2UgKmRldiwgY29uc3Qgc3RydWN0IHBhbmVsX2Rlc2Mg
-KmRlc2MpCj4gIHsKPiAtCXN0cnVjdCBkZXZpY2Vfbm9kZSAqYmFja2xpZ2h0LCAqZGRjOwo+ICsJ
-c3RydWN0IGRldmljZV9ub2RlICpkZGM7Cj4gIAlzdHJ1Y3QgcGFuZWxfc2ltcGxlICpwYW5lbDsK
-PiAgCXN0cnVjdCBkaXNwbGF5X3RpbWluZyBkdDsKPiAgCWludCBlcnI7Cj4gQEAgLTQyMiw4ICsz
-ODYsNiBAQCBzdGF0aWMgaW50IHBhbmVsX3NpbXBsZV9wcm9iZShzdHJ1Y3QgZGV2aWNlICpkZXYs
-IGNvbnN0IHN0cnVjdCBwYW5lbF9kZXNjICpkZXNjKQo+ICAJaWYgKCFwYW5lbCkKPiAgCQlyZXR1
-cm4gLUVOT01FTTsKPiAgCj4gLQlwYW5lbC0+ZW5hYmxlZCA9IGZhbHNlOwo+IC0JcGFuZWwtPnBy
-ZXBhcmVkID0gZmFsc2U7Cj4gIAlwYW5lbC0+ZGVzYyA9IGRlc2M7Cj4gIAo+ICAJcGFuZWwtPm5v
-X2hwZCA9IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYtPm9mX25vZGUsICJuby1ocGQiKTsKPiBA
-QCAtNDQxLDI0ICs0MDMsMTMgQEAgc3RhdGljIGludCBwYW5lbF9zaW1wbGVfcHJvYmUoc3RydWN0
-IGRldmljZSAqZGV2LCBjb25zdCBzdHJ1Y3QgcGFuZWxfZGVzYyAqZGVzYykKPiAgCQlyZXR1cm4g
-ZXJyOwo+ICAJfQo+ICAKPiAtCWJhY2tsaWdodCA9IG9mX3BhcnNlX3BoYW5kbGUoZGV2LT5vZl9u
-b2RlLCAiYmFja2xpZ2h0IiwgMCk7Cj4gLQlpZiAoYmFja2xpZ2h0KSB7Cj4gLQkJcGFuZWwtPmJh
-Y2tsaWdodCA9IG9mX2ZpbmRfYmFja2xpZ2h0X2J5X25vZGUoYmFja2xpZ2h0KTsKPiAtCQlvZl9u
-b2RlX3B1dChiYWNrbGlnaHQpOwo+IC0KPiAtCQlpZiAoIXBhbmVsLT5iYWNrbGlnaHQpCj4gLQkJ
-CXJldHVybiAtRVBST0JFX0RFRkVSOwo+IC0JfQo+IC0KPiAgCWRkYyA9IG9mX3BhcnNlX3BoYW5k
-bGUoZGV2LT5vZl9ub2RlLCAiZGRjLWkyYy1idXMiLCAwKTsKPiAgCWlmIChkZGMpIHsKPiAgCQlw
-YW5lbC0+ZGRjID0gb2ZfZmluZF9pMmNfYWRhcHRlcl9ieV9ub2RlKGRkYyk7Cj4gIAkJb2Zfbm9k
-ZV9wdXQoZGRjKTsKPiAgCj4gLQkJaWYgKCFwYW5lbC0+ZGRjKSB7Cj4gLQkJCWVyciA9IC1FUFJP
-QkVfREVGRVI7Cj4gLQkJCWdvdG8gZnJlZV9iYWNrbGlnaHQ7Cj4gLQkJfQo+ICsJCWlmICghcGFu
-ZWwtPmRkYykKPiArCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7Cj4gIAl9Cj4gIAo+ICAJaWYgKCFv
-Zl9nZXRfZGlzcGxheV90aW1pbmcoZGV2LT5vZl9ub2RlLCAicGFuZWwtdGltaW5nIiwgJmR0KSkK
-PiBAQCAtNDY4LDYgKzQxOSwxMCBAQCBzdGF0aWMgaW50IHBhbmVsX3NpbXBsZV9wcm9iZShzdHJ1
-Y3QgZGV2aWNlICpkZXYsIGNvbnN0IHN0cnVjdCBwYW5lbF9kZXNjICpkZXNjKQo+ICAJcGFuZWwt
-PmJhc2UuZGV2ID0gZGV2Owo+ICAJcGFuZWwtPmJhc2UuZnVuY3MgPSAmcGFuZWxfc2ltcGxlX2Z1
-bmNzOwo+ICAKPiArCWVyciA9IGRybV9wYW5lbF9vZl9iYWNrbGlnaHQoJnBhbmVsLT5iYXNlKTsK
-PiArCWlmIChlcnIpCj4gKwkJZ290byBmcmVlX2RkYzsKPiArCj4gIAllcnIgPSBkcm1fcGFuZWxf
-YWRkKCZwYW5lbC0+YmFzZSk7Cj4gIAlpZiAoZXJyIDwgMCkKPiAgCQlnb3RvIGZyZWVfZGRjOwo+
-IEBAIC00NzksOSArNDM0LDYgQEAgc3RhdGljIGludCBwYW5lbF9zaW1wbGVfcHJvYmUoc3RydWN0
-IGRldmljZSAqZGV2LCBjb25zdCBzdHJ1Y3QgcGFuZWxfZGVzYyAqZGVzYykKPiAgZnJlZV9kZGM6
-Cj4gIAlpZiAocGFuZWwtPmRkYykKPiAgCQlwdXRfZGV2aWNlKCZwYW5lbC0+ZGRjLT5kZXYpOwo+
-IC1mcmVlX2JhY2tsaWdodDoKPiAtCWlmIChwYW5lbC0+YmFja2xpZ2h0KQo+IC0JCXB1dF9kZXZp
-Y2UoJnBhbmVsLT5iYWNrbGlnaHQtPmRldik7CgpUaGlzIGxvb2tzIHdlaXJkLCB3aGVyZQoKPiAg
-Cj4gIAlyZXR1cm4gZXJyOwo+ICB9Cj4gQEAgLTQ5MiwxNSArNDQ0LDEyIEBAIHN0YXRpYyBpbnQg
-cGFuZWxfc2ltcGxlX3JlbW92ZShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gIAo+ICAJZHJtX3BhbmVs
-X3JlbW92ZSgmcGFuZWwtPmJhc2UpOwo+ICAKPiAtCXBhbmVsX3NpbXBsZV9kaXNhYmxlKCZwYW5l
-bC0+YmFzZSk7Cj4gLQlwYW5lbF9zaW1wbGVfdW5wcmVwYXJlKCZwYW5lbC0+YmFzZSk7Cj4gKwlk
-cm1fcGFuZWxfZGlzYWJsZSgmcGFuZWwtPmJhc2UpOwo+ICsJZHJtX3BhbmVsX3VucHJlcGFyZSgm
-cGFuZWwtPmJhc2UpOwo+ICAKPiAgCWlmIChwYW5lbC0+ZGRjKQo+ICAJCXB1dF9kZXZpY2UoJnBh
-bmVsLT5kZGMtPmRldik7Cj4gIAo+IC0JaWYgKHBhbmVsLT5iYWNrbGlnaHQpCj4gLQkJcHV0X2Rl
-dmljZSgmcGFuZWwtPmJhY2tsaWdodC0+ZGV2KTsKPiAtCj4gIAlyZXR1cm4gMDsKPiAgfQo+ICAK
-PiBAQCAtNTA4LDggKzQ1Nyw4IEBAIHN0YXRpYyB2b2lkIHBhbmVsX3NpbXBsZV9zaHV0ZG93bihz
-dHJ1Y3QgZGV2aWNlICpkZXYpCj4gIHsKPiAgCXN0cnVjdCBwYW5lbF9zaW1wbGUgKnBhbmVsID0g
-ZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gIAo+IC0JcGFuZWxfc2ltcGxlX2Rpc2FibGUoJnBhbmVs
-LT5iYXNlKTsKPiAtCXBhbmVsX3NpbXBsZV91bnByZXBhcmUoJnBhbmVsLT5iYXNlKTsKPiArCWRy
-bV9wYW5lbF9kaXNhYmxlKCZwYW5lbC0+YmFzZSk7Cj4gKwlkcm1fcGFuZWxfdW5wcmVwYXJlKCZw
-YW5lbC0+YmFzZSk7Cj4gIH0KPiAgCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Rpc3BsYXlf
-bW9kZSBhbXBpcmVfYW1fNDgwMjcyaDN0bXF3X3QwMWhfbW9kZSA9IHsKCi0tIApSZWdhcmRzLAoK
-TGF1cmVudCBQaW5jaGFydApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWw=
+
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Aug 03, 2019 at 09:09:32AM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Aug 02, 2019 at 07:21:05PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > On Fri, 02 Aug 2019 11:39:54 +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 5.2.6 release.
+> > > There are 20 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, plea=
+se
+> > > let me know.
+> > >=20
+> > > Responses should be made by Sun 04 Aug 2019 09:19:34 AM UTC.
+> > > Anything received after that time might be too late.
+> > >=20
+> > > The whole patch series can be found in one patch at:
+> > > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2=
+=2E6-rc1.gz
+> > > or in the git tree and branch at:
+> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+=2Egit linux-5.2.y
+> > > and the diffstat can be found below.
+> > >=20
+> > > thanks,
+> > >=20
+> > > greg k-h
+> >=20
+> > All tests passing for Tegra ...
+> >=20
+> > Test results for stable-v5.2:
+> >     12 builds:	12 pass, 0 fail
+> >     22 boots:	22 pass, 0 fail
+> >     38 tests:	38 pass, 0 fail
+> >=20
+> > Linux version:	5.2.6-rc1-gbe893953fcc2
+> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >                 tegra194-p2972-0000, tegra20-ventana,
+> >                 tegra210-p2371-2180, tegra30-cardhu-a04
+>=20
+> Great!  Thanks for testing all of these and letting me know.
+
+Hi Greg,
+
+I stumbled across something as I was attempting to automate more parts
+of our process to generate these reports. The original test results were
+=66rom a different version of the tree: 5.2.6-rc1-gdbc7f5c7df28. I suspect
+that's the same thing that you were discussing with Pavel regarding the
+IP tunnel patch that was added subsequent to the announcement.
+
+Just for my understanding, does this mean that the patch still makes it
+into the 5.2.6 release, or was it supposed to go into 5.2.7?
+
+One problem that I ran into was that when I tried to correlate the test
+results with your announcement email, there's no indication other than
+the branch name and the release candidate name (5.2.6-rc1 in this case),
+so there's no way to uniquely identify which test run belongs to the
+announcement. Given that there are no tags for the release candidates
+means that that's also not an option to uniquely associate with the
+builds and tests.
+
+While the differences between the two builds are very minor here, I
+wonder if there could perhaps in the future be a problem where I report
+successful results for a test, but the same tests would be broken by a
+patch added to the stable-rc branch subsequent to the announcement. The
+test report would be misleading in that case.
+
+I noticed that you do add a couple of X-KernelTest-* headers to your
+announcement emails, so I'm wondering if perhaps it was possible for you
+to add another one that contains the exact SHA1 that corresponds to the
+snapshot that's the release candidate. That would allow everyone to
+uniquely associate test results with a specific release candidate.
+
+That said, perhaps I've just got this all wrong and there's already a
+way to connect all the dots that I'm not aware of. Or maybe I'm being
+too pedantic here?
+
+Thierry
+
+--FCuugMFkClbJLl1L
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1IF4MACgkQ3SOs138+
+s6FfvhAAtYLaFxO1ZbDWTHEzD+V/FdBAPgHumvCme5NQJ20moeJtzbRfs6dg05s5
+2a0J0GXUUXEKyiX/fOtWnHikUDy45SBgLUeQs7zKrlal+wcpHAU4ILU24y+zvzA5
+ur6QFpcoQOOB8YLUYdvo8YkLXzZein8CHMc4BztmxV22h25UKM6VXhazYRpQZNEK
+sK0nEal97hvbjNa+ljMu59NdcG18cYAc3jjfGdH8aKoSAMAqcJOAROeyslhYrxt9
+GpvQz5ukO/TGh6DE6PX8LVPByN7VB6mhsXu1RDoXABwTmLDlYZKBjdbpQH0NLK7K
+rAVjSUeMHNTRXtVLJ3xvLI0ji2S4EA44UlbiMpXmjVC9J5QRA5SE+6Tvy3Yf3B4D
+bReO6RYeMab4P10/9kuwOTOfHu+RaJVOP8U+bS29zv2oP8vck7wpMhRYo7irRInD
+1aLnmlPH7kT/m7EDOcUpEh+DOFAwva8+7nF9vi8Kq/jIdjoTlHVhNXriw1vI0+2K
+Hzu9VdfMBsehOhbrSf1Cx2Vp8aaMunxsUyYICiuPINO5+R4fTTx1kuNxJPR2W6Jl
+ZN2YoE92ZLJ00+S6BJbCU+3u+f+Oj3o2zKDlYw9w1uzYCP46Ce9EF8R7cPeD5e9j
+QFOFa4QwfsiBcrAR/0fTReb5rBq3H/dk6ys8nbPWbw3lo8W1yeE=
+=YQnS
+-----END PGP SIGNATURE-----
+
+--FCuugMFkClbJLl1L--
