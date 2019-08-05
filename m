@@ -1,180 +1,98 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v1 11/16] drm/panel: move drm_panel functions to .c file
-Date: Mon, 5 Aug 2019 13:45:15 +0300
-Message-ID: <20190805104515.GF29747@pendragon.ideasonboard.com>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-12-sam@ravnborg.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
+Date: Mon, 5 Aug 2019 13:50:06 +0300
+Message-ID: <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
+References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
+ <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190804201637.1240-12-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>, Allison Randal <allison@lohutok.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgU2FtLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBTdW4sIEF1ZyAwNCwgMjAxOSBh
-dCAxMDoxNjozMlBNICswMjAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4gTW92ZSBpbmxpbmUgZnVu
-Y3Rpb25zIGZyb20gaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmggdG8gZHJtX3BhbmVsLmMuCj4gVGhp
-cyBpcyBpbiBwcmVwYXJhdGlvbiBmb3IgZm9sbG93LXVwIHBhdGNoZXMgdGhhdCB3aWxsIGFkZCBl
-eHRyYQo+IGxvZ2ljIHRvIHRoZSBmdW5jdGlvbnMuCj4gQXMgdGhleSBhcmUgbm8gbG9uZ2VyIHN0
-YXRpYyBpbmxpbmUsIEVYUE9SVCB0aGVtLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFNhbSBSYXZuYm9y
-ZyA8c2FtQHJhdm5ib3JnLm9yZz4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5n
-QGdtYWlsLmNvbT4KPiBDYzogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJvcmcub3JnPgo+IENjOiBN
-YWFydGVuIExhbmtob3JzdCA8bWFhcnRlbi5sYW5raG9yc3RAbGludXguaW50ZWwuY29tPgo+IENj
-OiBNYXhpbWUgUmlwYXJkIDxtYXhpbWUucmlwYXJkQGJvb3RsaW4uY29tPgo+IENjOiBTZWFuIFBh
-dWwgPHNlYW5AcG9vcmx5LnJ1bj4KPiBDYzogRGF2aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4Lmll
-Pgo+IENjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gLS0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9kcm1fcGFuZWwuYyB8IDk2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrCj4gIGluY2x1ZGUvZHJtL2RybV9wYW5lbC5oICAgICB8IDk5ICsrKy0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMDQgaW5zZXJ0aW9ucygr
-KSwgOTEgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1f
-cGFuZWwuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYwo+IGluZGV4IGRiZDViODczZThm
-Mi4uOTk0NmI4ZDliYWNjIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwu
-Ywo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYwo+IEBAIC01NCw2ICs1NCwxMDIg
-QEAgdm9pZCBkcm1fcGFuZWxfaW5pdChzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiAgfQo+ICBF
-WFBPUlRfU1lNQk9MKGRybV9wYW5lbF9pbml0KTsKPiAgCj4gKy8qKgo+ICsgKiBkcm1fcGFuZWxf
-cHJlcGFyZSAtIHBvd2VyIG9uIGEgcGFuZWwKPiArICogQHBhbmVsOiBEUk0gcGFuZWwKPiArICoK
-PiArICogQ2FsbGluZyB0aGlzIGZ1bmN0aW9uIHdpbGwgZW5hYmxlIHBvd2VyIGFuZCBkZWFzc2Vy
-dCBhbnkgcmVzZXQgc2lnbmFscyB0bwo+ICsgKiB0aGUgcGFuZWwuIEFmdGVyIHRoaXMgaGFzIGNv
-bXBsZXRlZCBpdCBpcyBwb3NzaWJsZSB0byBjb21tdW5pY2F0ZSB3aXRoIGFueQo+ICsgKiBpbnRl
-Z3JhdGVkIGNpcmN1aXRyeSB2aWEgYSBjb21tYW5kIGJ1cy4KPiArICoKPiArICogUmV0dXJuOiAw
-IG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG9uIGZhaWx1cmUuCj4gKyAqLwo+
-ICtpbnQgZHJtX3BhbmVsX3ByZXBhcmUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gK3sKPiAr
-CWlmIChwYW5lbCAmJiBwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5wcmVwYXJlKQo+ICsJ
-CXJldHVybiBwYW5lbC0+ZnVuY3MtPnByZXBhcmUocGFuZWwpOwo+ICsKPiArCXJldHVybiBwYW5l
-bCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+ICt9Cj4gK0VYUE9SVF9TWU1CT0woZHJtX3BhbmVsX3By
-ZXBhcmUpOwo+ICsKPiArLyoqCj4gKyAqIGRybV9wYW5lbF9lbmFibGUgLSBlbmFibGUgYSBwYW5l
-bAo+ICsgKiBAcGFuZWw6IERSTSBwYW5lbAo+ICsgKgo+ICsgKiBDYWxsaW5nIHRoaXMgZnVuY3Rp
-b24gd2lsbCBjYXVzZSB0aGUgcGFuZWwgZGlzcGxheSBkcml2ZXJzIHRvIGJlIHR1cm5lZCBvbgo+
-ICsgKiBhbmQgdGhlIGJhY2tsaWdodCB0byBiZSBlbmFibGVkLiBDb250ZW50IHdpbGwgYmUgdmlz
-aWJsZSBvbiBzY3JlZW4gYWZ0ZXIKPiArICogdGhpcyBjYWxsIGNvbXBsZXRlcy4KPiArICoKPiAr
-ICogUmV0dXJuOiAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG9uIGZhaWx1
-cmUuCj4gKyAqLwo+ICtpbnQgZHJtX3BhbmVsX2VuYWJsZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5l
-bCkKPiArewo+ICsJaWYgKHBhbmVsICYmIHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPmVu
-YWJsZSkKPiArCQlyZXR1cm4gcGFuZWwtPmZ1bmNzLT5lbmFibGUocGFuZWwpOwo+ICsKPiArCXJl
-dHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+ICt9Cj4gK0VYUE9SVF9TWU1CT0woZHJt
-X3BhbmVsX2VuYWJsZSk7Cj4gKwo+ICsvKioKPiArICogZHJtX3BhbmVsX2Rpc2FibGUgLSBkaXNh
-YmxlIGEgcGFuZWwKPiArICogQHBhbmVsOiBEUk0gcGFuZWwKPiArICoKPiArICogVGhpcyB3aWxs
-IHR5cGljYWxseSB0dXJuIG9mZiB0aGUgcGFuZWwncyBiYWNrbGlnaHQgb3IgZGlzYWJsZSB0aGUg
-ZGlzcGxheQo+ICsgKiBkcml2ZXJzLiBGb3Igc21hcnQgcGFuZWxzIGl0IHNob3VsZCBzdGlsbCBi
-ZSBwb3NzaWJsZSB0byBjb21tdW5pY2F0ZSB3aXRoCj4gKyAqIHRoZSBpbnRlZ3JhdGVkIGNpcmN1
-aXRyeSB2aWEgYW55IGNvbW1hbmQgYnVzIGFmdGVyIHRoaXMgY2FsbC4KPiArICoKPiArICogUmV0
-dXJuOiAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG9uIGZhaWx1cmUuCj4g
-KyAqLwo+ICtpbnQgZHJtX3BhbmVsX2Rpc2FibGUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4g
-K3sKPiArCWlmIChwYW5lbCAmJiBwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5kaXNhYmxl
-KQo+ICsJCXJldHVybiBwYW5lbC0+ZnVuY3MtPmRpc2FibGUocGFuZWwpOwo+ICsKPiArCXJldHVy
-biBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+ICt9Cj4gK0VYUE9SVF9TWU1CT0woZHJtX3Bh
-bmVsX2Rpc2FibGUpOwo+ICsKPiArLyoqCj4gKyAqIGRybV9wYW5lbF91bnByZXBhcmUgLSBwb3dl
-ciBvZmYgYSBwYW5lbAo+ICsgKiBAcGFuZWw6IERSTSBwYW5lbAo+ICsgKgo+ICsgKiBDYWxsaW5n
-IHRoaXMgZnVuY3Rpb24gd2lsbCBjb21wbGV0ZWx5IHBvd2VyIG9mZiBhIHBhbmVsIChhc3NlcnQg
-dGhlIHBhbmVsJ3MKPiArICogcmVzZXQsIHR1cm4gb2ZmIHBvd2VyIHN1cHBsaWVzLCAuLi4pLiBB
-ZnRlciB0aGlzIGZ1bmN0aW9uIGhhcyBjb21wbGV0ZWQsIGl0Cj4gKyAqIGlzIHVzdWFsbHkgbm8g
-bG9uZ2VyIHBvc3NpYmxlIHRvIGNvbW11bmljYXRlIHdpdGggdGhlIHBhbmVsIHVudGlsIGFub3Ro
-ZXIKPiArICogY2FsbCB0byBkcm1fcGFuZWxfcHJlcGFyZSgpLgo+ICsgKgo+ICsgKiBSZXR1cm46
-IDAgb24gc3VjY2VzcyBvciBhIG5lZ2F0aXZlIGVycm9yIGNvZGUgb24gZmFpbHVyZS4KPiArICov
-Cj4gK2ludCBkcm1fcGFuZWxfdW5wcmVwYXJlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+ICt7
-Cj4gKwlpZiAocGFuZWwgJiYgcGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+dW5wcmVwYXJl
-KQo+ICsJCXJldHVybiBwYW5lbC0+ZnVuY3MtPnVucHJlcGFyZShwYW5lbCk7Cj4gKwo+ICsJcmV0
-dXJuIHBhbmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7Cj4gK30KPiArRVhQT1JUX1NZTUJPTChkcm1f
-cGFuZWxfdW5wcmVwYXJlKTsKPiArCj4gKy8qKgo+ICsgKiBkcm1fcGFuZWxfZ2V0X21vZGVzIC0g
-cHJvYmUgdGhlIGF2YWlsYWJsZSBkaXNwbGF5IG1vZGVzIG9mIGEgcGFuZWwKPiArICogQHBhbmVs
-OiBEUk0gcGFuZWwKPiArICoKPiArICogVGhlIG1vZGVzIHByb2JlZCBmcm9tIHRoZSBwYW5lbCBh
-cmUgYXV0b21hdGljYWxseSBhZGRlZCB0byB0aGUgY29ubmVjdG9yCj4gKyAqIHRoYXQgdGhlIHBh
-bmVsIGlzIGF0dGFjaGVkIHRvLgo+ICsgKgo+ICsgKiBSZXR1cm46IFRoZSBudW1iZXIgb2YgbW9k
-ZXMgYXZhaWxhYmxlIGZyb20gdGhlIHBhbmVsIG9uIHN1Y2Nlc3Mgb3IgYQo+ICsgKiBuZWdhdGl2
-ZSBlcnJvciBjb2RlIG9uIGZhaWx1cmUuCj4gKyAqLwo+ICtpbnQgZHJtX3BhbmVsX2dldF9tb2Rl
-cyhzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiArewo+ICsJaWYgKHBhbmVsICYmIHBhbmVsLT5m
-dW5jcyAmJiBwYW5lbC0+ZnVuY3MtPmdldF9tb2RlcykKPiArCQlyZXR1cm4gcGFuZWwtPmZ1bmNz
-LT5nZXRfbW9kZXMocGFuZWwpOwo+ICsKPiArCXJldHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlO
-VkFMOwo+ICt9Cj4gK0VYUE9SVF9TWU1CT0woZHJtX3BhbmVsX2dldF9tb2Rlcyk7Cj4gKwo+ICAv
-KioKPiAgICogZHJtX3BhbmVsX2FkZCAtIGFkZCBhIHBhbmVsIHRvIHRoZSBnbG9iYWwgcmVnaXN0
-cnkKPiAgICogQHBhbmVsOiBwYW5lbCB0byBhZGQKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0v
-ZHJtX3BhbmVsLmggYi9pbmNsdWRlL2RybS9kcm1fcGFuZWwuaAo+IGluZGV4IDI2Mzc3ODM2MTQx
-Yy4uMDUzZDYxMTY1NmI5IDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybV9wYW5lbC5oCj4g
-KysrIGIvaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmgKPiBAQCAtOTcsOTcgKzk3LDYgQEAgc3RydWN0
-IGRybV9wYW5lbCB7Cj4gIAlzdHJ1Y3QgbGlzdF9oZWFkIGxpc3Q7Cj4gIH07Cj4gIAo+IC0vKioK
-PiAtICogZHJtX2Rpc2FibGVfdW5wcmVwYXJlIC0gcG93ZXIgb2ZmIGEgcGFuZWwKPiAtICogQHBh
-bmVsOiBEUk0gcGFuZWwKPiAtICoKPiAtICogQ2FsbGluZyB0aGlzIGZ1bmN0aW9uIHdpbGwgY29t
-cGxldGVseSBwb3dlciBvZmYgYSBwYW5lbCAoYXNzZXJ0IHRoZSBwYW5lbCdzCj4gLSAqIHJlc2V0
-LCB0dXJuIG9mZiBwb3dlciBzdXBwbGllcywgLi4uKS4gQWZ0ZXIgdGhpcyBmdW5jdGlvbiBoYXMg
-Y29tcGxldGVkLCBpdAo+IC0gKiBpcyB1c3VhbGx5IG5vIGxvbmdlciBwb3NzaWJsZSB0byBjb21t
-dW5pY2F0ZSB3aXRoIHRoZSBwYW5lbCB1bnRpbCBhbm90aGVyCj4gLSAqIGNhbGwgdG8gZHJtX3Bh
-bmVsX3ByZXBhcmUoKS4KPiAtICoKPiAtICogUmV0dXJuOiAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdh
-dGl2ZSBlcnJvciBjb2RlIG9uIGZhaWx1cmUuCj4gLSAqLwo+IC1zdGF0aWMgaW5saW5lIGludCBk
-cm1fcGFuZWxfdW5wcmVwYXJlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+IC17Cj4gLQlpZiAo
-cGFuZWwgJiYgcGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+dW5wcmVwYXJlKQo+IC0JCXJl
-dHVybiBwYW5lbC0+ZnVuY3MtPnVucHJlcGFyZShwYW5lbCk7Cj4gLQo+IC0JcmV0dXJuIHBhbmVs
-ID8gLUVOT1NZUyA6IC1FSU5WQUw7Cj4gLX0KPiAtCj4gLS8qKgo+IC0gKiBkcm1fcGFuZWxfZGlz
-YWJsZSAtIGRpc2FibGUgYSBwYW5lbAo+IC0gKiBAcGFuZWw6IERSTSBwYW5lbAo+IC0gKgo+IC0g
-KiBUaGlzIHdpbGwgdHlwaWNhbGx5IHR1cm4gb2ZmIHRoZSBwYW5lbCdzIGJhY2tsaWdodCBvciBk
-aXNhYmxlIHRoZSBkaXNwbGF5Cj4gLSAqIGRyaXZlcnMuIEZvciBzbWFydCBwYW5lbHMgaXQgc2hv
-dWxkIHN0aWxsIGJlIHBvc3NpYmxlIHRvIGNvbW11bmljYXRlIHdpdGgKPiAtICogdGhlIGludGVn
-cmF0ZWQgY2lyY3VpdHJ5IHZpYSBhbnkgY29tbWFuZCBidXMgYWZ0ZXIgdGhpcyBjYWxsLgo+IC0g
-Kgo+IC0gKiBSZXR1cm46IDAgb24gc3VjY2VzcyBvciBhIG5lZ2F0aXZlIGVycm9yIGNvZGUgb24g
-ZmFpbHVyZS4KPiAtICovCj4gLXN0YXRpYyBpbmxpbmUgaW50IGRybV9wYW5lbF9kaXNhYmxlKHN0
-cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+IC17Cj4gLQlpZiAocGFuZWwgJiYgcGFuZWwtPmZ1bmNz
-ICYmIHBhbmVsLT5mdW5jcy0+ZGlzYWJsZSkKPiAtCQlyZXR1cm4gcGFuZWwtPmZ1bmNzLT5kaXNh
-YmxlKHBhbmVsKTsKPiAtCj4gLQlyZXR1cm4gcGFuZWwgPyAtRU5PU1lTIDogLUVJTlZBTDsKPiAt
-fQo+IC0KPiAtLyoqCj4gLSAqIGRybV9wYW5lbF9wcmVwYXJlIC0gcG93ZXIgb24gYSBwYW5lbAo+
-IC0gKiBAcGFuZWw6IERSTSBwYW5lbAo+IC0gKgo+IC0gKiBDYWxsaW5nIHRoaXMgZnVuY3Rpb24g
-d2lsbCBlbmFibGUgcG93ZXIgYW5kIGRlYXNzZXJ0IGFueSByZXNldCBzaWduYWxzIHRvCj4gLSAq
-IHRoZSBwYW5lbC4gQWZ0ZXIgdGhpcyBoYXMgY29tcGxldGVkIGl0IGlzIHBvc3NpYmxlIHRvIGNv
-bW11bmljYXRlIHdpdGggYW55Cj4gLSAqIGludGVncmF0ZWQgY2lyY3VpdHJ5IHZpYSBhIGNvbW1h
-bmQgYnVzLgo+IC0gKgo+IC0gKiBSZXR1cm46IDAgb24gc3VjY2VzcyBvciBhIG5lZ2F0aXZlIGVy
-cm9yIGNvZGUgb24gZmFpbHVyZS4KPiAtICovCj4gLXN0YXRpYyBpbmxpbmUgaW50IGRybV9wYW5l
-bF9wcmVwYXJlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+IC17Cj4gLQlpZiAocGFuZWwgJiYg
-cGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+cHJlcGFyZSkKPiAtCQlyZXR1cm4gcGFuZWwt
-PmZ1bmNzLT5wcmVwYXJlKHBhbmVsKTsKPiAtCj4gLQlyZXR1cm4gcGFuZWwgPyAtRU5PU1lTIDog
-LUVJTlZBTDsKPiAtfQo+IC0KPiAtLyoqCj4gLSAqIGRybV9wYW5lbF9lbmFibGUgLSBlbmFibGUg
-YSBwYW5lbAo+IC0gKiBAcGFuZWw6IERSTSBwYW5lbAo+IC0gKgo+IC0gKiBDYWxsaW5nIHRoaXMg
-ZnVuY3Rpb24gd2lsbCBjYXVzZSB0aGUgcGFuZWwgZGlzcGxheSBkcml2ZXJzIHRvIGJlIHR1cm5l
-ZCBvbgo+IC0gKiBhbmQgdGhlIGJhY2tsaWdodCB0byBiZSBlbmFibGVkLiBDb250ZW50IHdpbGwg
-YmUgdmlzaWJsZSBvbiBzY3JlZW4gYWZ0ZXIKPiAtICogdGhpcyBjYWxsIGNvbXBsZXRlcy4KPiAt
-ICoKPiAtICogUmV0dXJuOiAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG9u
-IGZhaWx1cmUuCj4gLSAqLwo+IC1zdGF0aWMgaW5saW5lIGludCBkcm1fcGFuZWxfZW5hYmxlKHN0
-cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+IC17Cj4gLQlpZiAocGFuZWwgJiYgcGFuZWwtPmZ1bmNz
-ICYmIHBhbmVsLT5mdW5jcy0+ZW5hYmxlKQo+IC0JCXJldHVybiBwYW5lbC0+ZnVuY3MtPmVuYWJs
-ZShwYW5lbCk7Cj4gLQo+IC0JcmV0dXJuIHBhbmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7Cj4gLX0K
-PiAtCj4gLS8qKgo+IC0gKiBkcm1fcGFuZWxfZ2V0X21vZGVzIC0gcHJvYmUgdGhlIGF2YWlsYWJs
-ZSBkaXNwbGF5IG1vZGVzIG9mIGEgcGFuZWwKPiAtICogQHBhbmVsOiBEUk0gcGFuZWwKPiAtICoK
-PiAtICogVGhlIG1vZGVzIHByb2JlZCBmcm9tIHRoZSBwYW5lbCBhcmUgYXV0b21hdGljYWxseSBh
-ZGRlZCB0byB0aGUgY29ubmVjdG9yCj4gLSAqIHRoYXQgdGhlIHBhbmVsIGlzIGF0dGFjaGVkIHRv
-Lgo+IC0gKgo+IC0gKiBSZXR1cm46IFRoZSBudW1iZXIgb2YgbW9kZXMgYXZhaWxhYmxlIGZyb20g
-dGhlIHBhbmVsIG9uIHN1Y2Nlc3Mgb3IgYQo+IC0gKiBuZWdhdGl2ZSBlcnJvciBjb2RlIG9uIGZh
-aWx1cmUuCj4gLSAqLwo+IC1zdGF0aWMgaW5saW5lIGludCBkcm1fcGFuZWxfZ2V0X21vZGVzKHN0
-cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+IC17Cj4gLQlpZiAocGFuZWwgJiYgcGFuZWwtPmZ1bmNz
-ICYmIHBhbmVsLT5mdW5jcy0+Z2V0X21vZGVzKQo+IC0JCXJldHVybiBwYW5lbC0+ZnVuY3MtPmdl
-dF9tb2RlcyhwYW5lbCk7Cj4gLQo+IC0JcmV0dXJuIHBhbmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7
-Cj4gLX0KPiAtCj4gIHZvaWQgZHJtX3BhbmVsX2luaXQoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwp
-Owo+ICAKPiAgaW50IGRybV9wYW5lbF9hZGQoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpOwo+IEBA
-IC0xOTYsNiArMTA1LDE0IEBAIHZvaWQgZHJtX3BhbmVsX3JlbW92ZShzdHJ1Y3QgZHJtX3BhbmVs
-ICpwYW5lbCk7Cj4gIGludCBkcm1fcGFuZWxfYXR0YWNoKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVs
-LCBzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKTsKPiAgaW50IGRybV9wYW5lbF9kZXRh
-Y2goc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpOwo+ICAKPiAraW50IGRybV9wYW5lbF9wcmVwYXJl
-KHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKTsKPiAraW50IGRybV9wYW5lbF91bnByZXBhcmUoc3Ry
-dWN0IGRybV9wYW5lbCAqcGFuZWwpOwo+ICsKPiAraW50IGRybV9wYW5lbF9lbmFibGUoc3RydWN0
-IGRybV9wYW5lbCAqcGFuZWwpOwo+ICtpbnQgZHJtX3BhbmVsX2Rpc2FibGUoc3RydWN0IGRybV9w
-YW5lbCAqcGFuZWwpOwoKTml0cGlja2luZywgSSB3b3VsZCBrZWVwIHRoZSBvcmRlciBvZiB0aGUg
-ZGVjbGFyYXRpb25zIGFsaWduZWQgd2l0aCB0aGUKZGVmaW5pdGlvbnMuIHByZXBhcmUgLSBlbmFi
-bGUgLSBkaXNhYmxlIC0gdW5wcmVwYXJlIGFuZCBwcmVwYXJlIC0KdW5wcmVwYXJlIC0gZW5hYmxl
-IC0gZGlzYWJsZSBhcmUgYm90aCBmaW5lIHdpdGggbWUsIGFzIGxvbmcgYXMgdGhleSdyZQpjb25z
-aXN0ZW50LgoKQXBhcnQgZnJvbSB0aGF0LAoKUmV2aWV3ZWQtYnk6IExhdXJlbnQgUGluY2hhcnQg
-PGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KCj4gKwo+ICtpbnQgZHJtX3BhbmVs
-X2dldF9tb2RlcyhzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCk7Cj4gKwo+ICAjaWYgZGVmaW5lZChD
-T05GSUdfT0YpICYmIGRlZmluZWQoQ09ORklHX0RSTV9QQU5FTCkKPiAgc3RydWN0IGRybV9wYW5l
-bCAqb2ZfZHJtX2ZpbmRfcGFuZWwoY29uc3Qgc3RydWN0IGRldmljZV9ub2RlICpucCk7Cj4gICNl
-bHNlCgotLSAKUmVnYXJkcywKCkxhdXJlbnQgUGluY2hhcnQKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+01.08.2019 0:10, Sowjanya Komatineni пишет:
+> This patch adds support for Tegra pinctrl driver suspend and resume.
+> 
+> During suspend, context of all pinctrl registers are stored and
+> on resume they are all restored to have all the pinmux and pad
+> configuration for normal operation.
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
+>  2 files changed, 62 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> index 186ef98e7b2b..e3a237534281 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>  	}
+>  }
+>  
+> +static size_t tegra_pinctrl_get_bank_size(struct device *dev,
+> +					  unsigned int bank_id)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct resource *res;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
+> +
+> +	return resource_size(res) / 4;
+> +}
+> +
+> +static int tegra_pinctrl_suspend(struct device *dev)
+> +{
+> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	size_t bank_size;
+> +	unsigned int i, k;
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		bank_size = tegra_pinctrl_get_bank_size(dev, i);
+> +		regs = pmx->regs[i];
+> +		for (k = 0; k < bank_size; k++)
+> +			*backup_regs++ = readl_relaxed(regs++);
+> +	}
+> +
+> +	return pinctrl_force_sleep(pmx->pctl);
+> +}
+> +
+> +static int tegra_pinctrl_resume(struct device *dev)
+> +{
+> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	size_t bank_size;
+> +	unsigned int i, k;
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		bank_size = tegra_pinctrl_get_bank_size(dev, i);
+> +		regs = pmx->regs[i];
+> +		for (k = 0; k < bank_size; k++)
+> +			writel_relaxed(*backup_regs++, regs++);
+> +	}
+
+I'm now curious whether any kind of barrier is needed after the
+writings. The pmx_writel() doesn't insert a barrier after the write and
+seems it just misuses writel, which actually should be writel_relaxed()
++ barrier, IIUC.
+
+It's also not obvious whether PINCTRL HW has any kind of write-FIFO and
+thus maybe read-back + rmb() is needed in order ensure that writes are
+actually completed.
+
+The last thing which is not obvious is when the new configuration
+actually takes into effect, does it happen immediately or maybe some
+delay is needed?
+
+[snip]
