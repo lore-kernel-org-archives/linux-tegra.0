@@ -1,173 +1,85 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v1 12/16] drm/panel: use inline comments in drm_panel.h
-Date: Mon, 5 Aug 2019 13:54:25 +0300
-Message-ID: <20190805105425.GG29747@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v1 13/16] drm/panel: drop return code from
+ drm_panel_detach()
+Date: Mon, 5 Aug 2019 13:56:47 +0300
+Message-ID: <20190805105647.GH29747@pendragon.ideasonboard.com>
 References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-13-sam@ravnborg.org>
+ <20190804201637.1240-14-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20190804201637.1240-13-sam@ravnborg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+In-Reply-To: <20190804201637.1240-14-sam@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Philipp Zabel <p.zabel@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Sascha Hauer <s.hauer@pengutronix.de>, Aliso
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>, Allison Randal <allison@lohutok.net>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Sam,
-
-Thank you for the patch.
-
-On Sun, Aug 04, 2019 at 10:16:33PM +0200, Sam Ravnborg wrote:
-> Inline comments provide better space for additional comments.
-> Comments was slightly edited to follow the normal style,
-> but no change to actual content.
-> Used the opportuniy to change the order in drm_panel_funcs
-> to follow the order they will be used by a panel.
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  include/drm/drm_panel.h | 82 +++++++++++++++++++++++++++++++++--------
->  1 file changed, 66 insertions(+), 16 deletions(-)
-> 
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index 053d611656b9..5e62deea49ba 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -36,14 +36,6 @@ struct display_timing;
->  
->  /**
->   * struct drm_panel_funcs - perform operations on a given panel
-> - * @disable: disable panel (turn off back light, etc.)
-> - * @unprepare: turn off panel
-> - * @prepare: turn on panel and perform set up
-> - * @enable: enable panel (turn on back light, etc.)
-> - * @get_modes: add modes to the connector that the panel is attached to and
-> - * return the number of modes added
-> - * @get_timings: copy display timings into the provided array and return
-> - * the number of display timings available
->   *
->   * The .prepare() function is typically called before the display controller
->   * starts to transmit video data. Panel drivers can use this to turn the panel
-> @@ -69,31 +61,89 @@ struct display_timing;
->   * the panel. This is the job of the .unprepare() function.
->   */
->  struct drm_panel_funcs {
-> -	int (*disable)(struct drm_panel *panel);
-> -	int (*unprepare)(struct drm_panel *panel);
-> +	/**
-> +	 * @prepare:
-> +	 *
-> +	 * Turn on panel and perform set up.
-> +	 */
->  	int (*prepare)(struct drm_panel *panel);
-> +
-> +	/**
-> +	 * @enable:
-> +	 *
-> +	 * Enable panel (turn on back light, etc.).
-> +	 */
->  	int (*enable)(struct drm_panel *panel);
-> +
-> +	/**
-> +	 * @disable:
-> +	 *
-> +	 * Disable panel (turn off back light, etc.).
-> +	 */
-> +	int (*disable)(struct drm_panel *panel);
-> +
-> +	/**
-> +	 * @unprepare:
-> +	 *
-> +	 * Turn off panel.
-> +	 */
-> +	int (*unprepare)(struct drm_panel *panel);
-> +
-> +	/**
-> +	 * @get_modes:
-> +	 *
-> +	 * Add modes to the connector that the panel is attached to and
-> +	 * return the number of modes added.
-> +	 */
->  	int (*get_modes)(struct drm_panel *panel);
-> +
-> +	/**
-> +	 * @get_timings:
-> +	 *
-> +	 * Copy display timings into the provided array and return
-> +	 * the number of display timings available.
-> +	 */
->  	int (*get_timings)(struct drm_panel *panel, unsigned int num_timings,
->  			   struct display_timing *timings);
->  };
->  
->  /**
->   * struct drm_panel - DRM panel object
-> - * @drm: DRM device owning the panel
-> - * @connector: DRM connector that the panel is attached to
-> - * @dev: parent device of the panel
-> - * @link: link from panel device (supplier) to DRM device (consumer)
-> - * @funcs: operations that can be performed on the panel
-> - * @list: panel entry in registry
->   */
->  struct drm_panel {
-> +	/**
-> +	 * @drm:
-> +	 *
-> +	 * DRM device owning the panel.
-> +	 */
->  	struct drm_device *drm;
-> +
-> +	/**
-> +	 * @connector:
-> +	 *
-> +	 * DRM connector that the panel is attached to.
-> +	 */
->  	struct drm_connector *connector;
-> +
-> +	/**
-> +	 * @dev:
-> +	 *
-> +	 * Parent device of the panel.
-> +	 */
->  	struct device *dev;
->  
-> +	/**
-> +	 * @funcs:
-> +	 *
-> +	 * Operations that can be performed on the panel.
-> +	 */
->  	const struct drm_panel_funcs *funcs;
->  
-> +	/**
-> +	 * @list:
-> +	 *
-> +	 * Panel entry in registry.
-> +	 */
->  	struct list_head list;
->  };
->  
-
--- 
-Regards,
-
-Laurent Pinchart
+SGkgU2FtLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBTdW4sIEF1ZyAwNCwgMjAxOSBh
+dCAxMDoxNjozNFBNICswMjAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4gVGhlcmUgYXJlIG5vIGVy
+cm9ycyB0aGF0IGNhbiBiZSByZXBvcnRlZCBieSB0aGlzIGZ1bmN0aW9uLAo+IHNvIGRyb3AgdGhl
+IHJldHVybiBjb2RlLgo+IEZpeCB0aGUgb25seSBicmlkZ2UgZHJpdmVyIHRoYXQgY2hlY2tlZCB0
+aGUgcmV0dXJuIHJlc3VsdC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTYW0gUmF2bmJvcmcgPHNhbUBy
+YXZuYm9yZy5vcmc+Cj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5j
+b20+Cj4gQ2M6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4KPiBDYzogTWFhcnRlbiBM
+YW5raG9yc3QgPG1hYXJ0ZW4ubGFua2hvcnN0QGxpbnV4LmludGVsLmNvbT4KPiBDYzogTWF4aW1l
+IFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBib290bGluLmNvbT4KPiBDYzogU2VhbiBQYXVsIDxzZWFu
+QHBvb3JseS5ydW4+Cj4gQ2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KPiBDYzog
+RGFuaWVsIFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPgo+IENjOiBMYXVyZW50IFBpbmNoYXJ0IDxs
+YXVyZW50LnBpbmNoYXJ0K3JlbmVzYXNAaWRlYXNvbmJvYXJkLmNvbT4KPiBDYzogQW5kcnplaiBI
+YWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiBDYzogR3dhbi1neWVvbmcgTXVuIDxnd2FuLWd5
+ZW9uZy5tdW5AaW50ZWwuY29tPgo+IENjOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25p
+eC5kZT4KPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgoKUmV2
+aWV3ZWQtYnk6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJk
+LmNvbT4KCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
+ZHBfY29yZS5jIHwgMyArLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9wYW5lbC5jICAgICAgICAg
+ICAgICAgICAgICAgICAgfCA2ICstLS0tLQo+ICBpbmNsdWRlL2RybS9kcm1fcGFuZWwuaCAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICB8IDIgKy0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAzIGluc2Vy
+dGlvbnMoKyksIDggZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2Jy
+aWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKPiBpbmRleCBmMmY3ZjY5ZDZjYzMuLjIy
+ODg1ZGNlYWExNyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
+L2FuYWxvZ2l4X2RwX2NvcmUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
+aXgvYW5hbG9naXhfZHBfY29yZS5jCj4gQEAgLTE3ODAsOCArMTc4MCw3IEBAIHZvaWQgYW5hbG9n
+aXhfZHBfdW5iaW5kKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQo+ICAJaWYgKGRwLT5w
+bGF0X2RhdGEtPnBhbmVsKSB7Cj4gIAkJaWYgKGRybV9wYW5lbF91bnByZXBhcmUoZHAtPnBsYXRf
+ZGF0YS0+cGFuZWwpKQo+ICAJCQlEUk1fRVJST1IoImZhaWxlZCB0byB0dXJub2ZmIHRoZSBwYW5l
+bFxuIik7Cj4gLQkJaWYgKGRybV9wYW5lbF9kZXRhY2goZHAtPnBsYXRfZGF0YS0+cGFuZWwpKQo+
+IC0JCQlEUk1fRVJST1IoImZhaWxlZCB0byBkZXRhY2ggdGhlIHBhbmVsXG4iKTsKPiArCQlkcm1f
+cGFuZWxfZGV0YWNoKGRwLT5wbGF0X2RhdGEtPnBhbmVsKTsKPiAgCX0KPiAgCj4gIAlkcm1fZHBf
+YXV4X3VucmVnaXN0ZXIoJmRwLT5hdXgpOwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZHJtX3BhbmVsLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX3BhbmVsLmMKPiBpbmRleCA5OTQ2Yjhk
+OWJhY2MuLmRhMTlkNWI0YTJmNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX3Bh
+bmVsLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX3BhbmVsLmMKPiBAQCAtMjE5LDE1ICsy
+MTksMTEgQEAgRVhQT1JUX1NZTUJPTChkcm1fcGFuZWxfYXR0YWNoKTsKPiAgICoKPiAgICogVGhp
+cyBmdW5jdGlvbiBzaG91bGQgbm90IGJlIGNhbGxlZCBieSB0aGUgcGFuZWwgZGV2aWNlIGl0c2Vs
+Zi4gSXQKPiAgICogaXMgb25seSBmb3IgdGhlIGRybSBkZXZpY2UgdGhhdCBjYWxsZWQgZHJtX3Bh
+bmVsX2F0dGFjaCgpLgo+IC0gKgo+IC0gKiBSZXR1cm46IDAgb24gc3VjY2VzcyBvciBhIG5lZ2F0
+aXZlIGVycm9yIGNvZGUgb24gZmFpbHVyZS4KPiAgICovCj4gLWludCBkcm1fcGFuZWxfZGV0YWNo
+KHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+ICt2b2lkIGRybV9wYW5lbF9kZXRhY2goc3RydWN0
+IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsKPiAgCXBhbmVsLT5jb25uZWN0b3IgPSBOVUxMOwo+ICAJ
+cGFuZWwtPmRybSA9IE5VTEw7Cj4gLQo+IC0JcmV0dXJuIDA7Cj4gIH0KPiAgRVhQT1JUX1NZTUJP
+TChkcm1fcGFuZWxfZGV0YWNoKTsKPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9w
+YW5lbC5oIGIvaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmgKPiBpbmRleCA1ZTYyZGVlYTQ5YmEuLjYy
+NGJkMTVlY2ZhYiAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fcGFuZWwuaAo+ICsrKyBi
+L2luY2x1ZGUvZHJtL2RybV9wYW5lbC5oCj4gQEAgLTE1Myw3ICsxNTMsNyBAQCBpbnQgZHJtX3Bh
+bmVsX2FkZChzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCk7Cj4gIHZvaWQgZHJtX3BhbmVsX3JlbW92
+ZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCk7Cj4gIAo+ICBpbnQgZHJtX3BhbmVsX2F0dGFjaChz
+dHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCwgc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3Rvcik7
+Cj4gLWludCBkcm1fcGFuZWxfZGV0YWNoKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKTsKPiArdm9p
+ZCBkcm1fcGFuZWxfZGV0YWNoKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKTsKPiAgCj4gIGludCBk
+cm1fcGFuZWxfcHJlcGFyZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCk7Cj4gIGludCBkcm1fcGFu
+ZWxfdW5wcmVwYXJlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKTsKCi0tIApSZWdhcmRzLAoKTGF1
+cmVudCBQaW5jaGFydApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWw=
