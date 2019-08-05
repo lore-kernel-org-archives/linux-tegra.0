@@ -1,134 +1,116 @@
-From: Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v1 14/16] drm/panel: call prepare/enable only once
-Date: Mon, 5 Aug 2019 13:01:20 -0400
-Message-ID: <20190805170120.GZ104440@art_vandelay>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-15-sam@ravnborg.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
+Date: Mon, 5 Aug 2019 11:06:02 -0700
+Message-ID: <b45ca99a-188a-c695-3f3d-48d273808f9c@nvidia.com>
+References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
+ <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
+ <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190804201637.1240-15-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>Sean Paul <s>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU3VuLCBBdWcgMDQsIDIwMTkgYXQgMTA6MTY6MzVQTSArMDIwMCwgU2FtIFJhdm5ib3JnIHdy
-b3RlOgo+IE1hbnkgcGFuZWwgZHJpdmVycyBkdXBsaWNhdGUgbG9naWMgdG8gcHJldmVudCBwcmVw
-YXJlIHRvIGJlIGNhbGxlZAo+IGZvciBhIHBhbmVsIHRoYXQgaXMgYWxyZWFkeSBwcmVwYXJlZC4K
-PiBMaWtld2lzZSBmb3IgZW5hYmxlLgo+IAo+IEltcGxlbWVudCB0aGlzIGxvZ2ljIGluIGRybV9w
-YW5lbCBzbyB0aGUgaW5kaXZpZHVhbCBkcml2ZXJzCj4gbm8gbG9uZ2VyIG5lZWRzIHRoaXMuCj4g
-QSBwYW5lbCBpcyBjb25zaWRlcmVkIHByZXBhcmVkL2VuYWJsZWQgb25seSBpZiB0aGUgcHJlcGFy
-ZS9lbmFibGUgY2FsbAo+IHN1Y2NlZWRzLgo+IEZvciBkaXNhYmxlL3VucHJlcGFyZSBpdCBpcyB1
-bmNvbmRpdGlvbmFsbHkgY29uc2lkZXJlZAo+IGRpc2FibGVkL3VucHJlcGFyZWQuCgpIaSBTYW0s
-CkkgZGlkIGEgc2ltaWxhciB0aGluZyBhIGZldyB5ZWFycyBhZ28gWzFdLiBJSVJDIGl0IHdhcyB3
-ZWxsIHJlY2VpdmVkIGFuZCBqdXN0Cm5lZWRlZCBzb21lIG5pdHMgY2xlYW5lZCB1cC4gVW5mb3J0
-dW5hdGVseSBJIGxvc3QgaW50ZXJlc3ReV15XIHN3aXRjaGVkIHRvIG90aGVyCnRoaW5ncyBhbmQg
-ZHJvcHBlZCBpdC4gU28gdGhhbmtzIGZvciBwaWNraW5nIHRoaXMgYmFjayB1cCEKCkZhc3QgZm9y
-d2FyZCB0byB0b2RheSwgSSBzdGlsbCB0aGluayBpdCdzIGEgZ29vZCBpZGVhIGJ1dCBJIHdhbnQg
-dG8gbWFrZSBzdXJlCnRoaXMgd29uJ3QgbmVnYXRpdmVseSBpbnRlcmFjdCB3aXRoIHRoZSBzZWxm
-IHJlZnJlc2ggaGVscGVycy4gV2l0aCB0aGUgaGVscGVycwppbiBwbGFjZSwgaXQncyBwb3NzaWJs
-ZSB0byBjYWxsIGRpc2FibGUgY29uc2VjdXRpdmVseSAoaWU6IG9uY2UgdG8gZW50ZXIgc2VsZgpy
-ZWZyZXNoIGFuZCBhZ2FpbiB0byBhY3R1YWxseSBzaHV0IGRvd24pLiBJIGRpZCBhIHF1aWNrIHBh
-c3MgYW5kIGl0IGxvb2tzIGxpa2UKdGhpcyBwYXRjaCBtaWdodCBicmVhayB0aGF0IGJlaGF2aW9y
-LCBzbyB5b3UgbWlnaHQgd2FudCB0byB0YWtlIHRoYXQgaW50bwphY2NvdW50LgoKU2VhbgoKClsx
-XS0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy8zMDcxMi8KCj4gCj4g
-VGhpcyBhbGxvd3MgY2FsbHMgdG8gcHJlcGFyZS9lbmFibGUgYWdhaW4sIGV2ZW4gaWYgdGhlcmUg
-d2VyZQo+IHNvbWUgaXNzdWUgZGlzYWJsaW5nIGEgcmVndWxhdG9yIG9yIHNpbWlsYXIgZHVyaW5n
-IGRpc2FibGUvdW5wcmVwYXJlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFNhbSBSYXZuYm9yZyA8c2Ft
-QHJhdm5ib3JnLm9yZz4KPiBDYzogTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0ZW4ubGFua2hvcnN0
-QGxpbnV4LmludGVsLmNvbT4KPiBDYzogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBib290
-bGluLmNvbT4KPiBDYzogU2VhbiBQYXVsIDxzZWFuQHBvb3JseS5ydW4+Cj4gQ2M6IFRoaWVycnkg
-UmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IFNhbSBSYXZuYm9yZyA8c2Ft
-QHJhdm5ib3JnLm9yZz4KPiBDYzogRGF2aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgo+IENj
-OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9kcm1fcGFuZWwuYyB8IDY2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0K
-PiAgaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmggICAgIHwgMjEgKysrKysrKysrKysrCj4gIDIgZmls
-ZXMgY2hhbmdlZCwgNzUgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1f
-cGFuZWwuYwo+IGluZGV4IGRhMTlkNWI0YTJmNC4uMDg1Mzc2NDA0MGRlIDEwMDY0NAo+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1f
-cGFuZWwuYwo+IEBAIC02NiwxMCArNjYsMjEgQEAgRVhQT1JUX1NZTUJPTChkcm1fcGFuZWxfaW5p
-dCk7Cj4gICAqLwo+ICBpbnQgZHJtX3BhbmVsX3ByZXBhcmUoc3RydWN0IGRybV9wYW5lbCAqcGFu
-ZWwpCj4gIHsKPiAtCWlmIChwYW5lbCAmJiBwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5w
-cmVwYXJlKQo+IC0JCXJldHVybiBwYW5lbC0+ZnVuY3MtPnByZXBhcmUocGFuZWwpOwo+ICsJaW50
-IHJldCA9IC1FTk9TWVM7Cj4gIAo+IC0JcmV0dXJuIHBhbmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7
-Cj4gKwlpZiAoIXBhbmVsKQo+ICsJCXJldHVybiAtRUlOVkFMOwo+ICsKPiArCWlmIChwYW5lbC0+
-cHJlcGFyZWQpCj4gKwkJcmV0dXJuIDA7Cj4gKwo+ICsJaWYgKHBhbmVsLT5mdW5jcyAmJiBwYW5l
-bC0+ZnVuY3MtPnByZXBhcmUpCj4gKwkJcmV0ID0gcGFuZWwtPmZ1bmNzLT5wcmVwYXJlKHBhbmVs
-KTsKPiArCj4gKwlpZiAocmV0ID49IDApCj4gKwkJcGFuZWwtPnByZXBhcmVkID0gdHJ1ZTsKPiAr
-Cj4gKwlyZXR1cm4gcmV0Owo+ICB9Cj4gIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX3ByZXBhcmUp
-Owo+ICAKPiBAQCAtODUsMTAgKzk2LDIxIEBAIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX3ByZXBh
-cmUpOwo+ICAgKi8KPiAgaW50IGRybV9wYW5lbF9lbmFibGUoc3RydWN0IGRybV9wYW5lbCAqcGFu
-ZWwpCj4gIHsKPiAtCWlmIChwYW5lbCAmJiBwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5l
-bmFibGUpCj4gLQkJcmV0dXJuIHBhbmVsLT5mdW5jcy0+ZW5hYmxlKHBhbmVsKTsKPiArCWludCBy
-ZXQgPSAtRU5PU1lTOwo+ICAKPiAtCXJldHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+
-ICsJaWYgKCFwYW5lbCkKPiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCj4gKwlpZiAocGFuZWwtPmVu
-YWJsZWQpCj4gKwkJcmV0dXJuIDA7Cj4gKwo+ICsJaWYgKHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+
-ZnVuY3MtPmVuYWJsZSkKPiArCQlyZXQgPSBwYW5lbC0+ZnVuY3MtPmVuYWJsZShwYW5lbCk7Cj4g
-Kwo+ICsJaWYgKHJldCA+PSAwKQo+ICsJCXBhbmVsLT5lbmFibGVkID0gdHJ1ZTsKPiArCj4gKwly
-ZXR1cm4gcmV0Owo+ICB9Cj4gIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX2VuYWJsZSk7Cj4gIAo+
-IEBAIC0xMDQsMTAgKzEyNiwyMCBAQCBFWFBPUlRfU1lNQk9MKGRybV9wYW5lbF9lbmFibGUpOwo+
-ICAgKi8KPiAgaW50IGRybV9wYW5lbF9kaXNhYmxlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+
-ICB7Cj4gLQlpZiAocGFuZWwgJiYgcGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+ZGlzYWJs
-ZSkKPiAtCQlyZXR1cm4gcGFuZWwtPmZ1bmNzLT5kaXNhYmxlKHBhbmVsKTsKPiArCWludCByZXQg
-PSAtRU5PU1lTOwo+ICAKPiAtCXJldHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+ICsJ
-aWYgKCFwYW5lbCkKPiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCj4gKwlpZiAoIXBhbmVsLT5lbmFi
-bGVkKQo+ICsJCXJldHVybiAwOwo+ICsKPiArCWlmIChwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1
-bmNzLT5kaXNhYmxlKQo+ICsJCXJldCA9IHBhbmVsLT5mdW5jcy0+ZGlzYWJsZShwYW5lbCk7Cj4g
-Kwo+ICsJcGFuZWwtPmVuYWJsZWQgPSBmYWxzZTsKPiArCj4gKwlyZXR1cm4gcmV0Owo+ICB9Cj4g
-IEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX2Rpc2FibGUpOwo+ICAKPiBAQCAtMTI0LDEwICsxNTYs
-MjAgQEAgRVhQT1JUX1NZTUJPTChkcm1fcGFuZWxfZGlzYWJsZSk7Cj4gICAqLwo+ICBpbnQgZHJt
-X3BhbmVsX3VucHJlcGFyZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiAgewo+IC0JaWYgKHBh
-bmVsICYmIHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPnVucHJlcGFyZSkKPiAtCQlyZXR1
-cm4gcGFuZWwtPmZ1bmNzLT51bnByZXBhcmUocGFuZWwpOwo+ICsJaW50IHJldCA9IC1FTk9TWVM7
-Cj4gIAo+IC0JcmV0dXJuIHBhbmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7Cj4gKwlpZiAoIXBhbmVs
-KQo+ICsJCXJldHVybiAtRUlOVkFMOwo+ICsKPiArCWlmICghcGFuZWwtPnByZXBhcmVkKQo+ICsJ
-CXJldHVybiAwOwo+ICsKPiArCWlmIChwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT51bnBy
-ZXBhcmUpCj4gKwkJcmV0ID0gcGFuZWwtPmZ1bmNzLT51bnByZXBhcmUocGFuZWwpOwo+ICsKPiAr
-CXBhbmVsLT5wcmVwYXJlZCA9IGZhbHNlOwo+ICsKPiArCXJldHVybiByZXQ7Cj4gIH0KPiAgRVhQ
-T1JUX1NZTUJPTChkcm1fcGFuZWxfdW5wcmVwYXJlKTsKPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1
-ZGUvZHJtL2RybV9wYW5lbC5oIGIvaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmgKPiBpbmRleCA2MjRi
-ZDE1ZWNmYWIuLjc0OTM1MDBmYzliZCAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fcGFu
-ZWwuaAo+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9wYW5lbC5oCj4gQEAgLTY1LDYgKzY1LDkgQEAg
-c3RydWN0IGRybV9wYW5lbF9mdW5jcyB7Cj4gIAkgKiBAcHJlcGFyZToKPiAgCSAqCj4gIAkgKiBU
-dXJuIG9uIHBhbmVsIGFuZCBwZXJmb3JtIHNldCB1cC4KPiArCSAqIFdoZW4gdGhlIHBhbmVsIGlz
-IHN1Y2Nlc3NmdWxseSBwcmVwYXJlZCB0aGUgcHJlcGFyZSgpIGZ1bmN0aW9uCj4gKwkgKiB3aWxs
-IG5vdCBiZSBjYWxsZWQgYWdhaW4gdW50aWwgdGhlIHBhbmVsIGhhcyBiZWVuIHVucHJlcGFyZWQu
-Cj4gKwkgKgo+ICAJICovCj4gIAlpbnQgKCpwcmVwYXJlKShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5l
-bCk7Cj4gIAo+IEBAIC03Miw2ICs3NSw4IEBAIHN0cnVjdCBkcm1fcGFuZWxfZnVuY3Mgewo+ICAJ
-ICogQGVuYWJsZToKPiAgCSAqCj4gIAkgKiBFbmFibGUgcGFuZWwgKHR1cm4gb24gYmFjayBsaWdo
-dCwgZXRjLikuCj4gKwkgKiBXaGVuIHRoZSBwYW5lbCBpcyBzdWNjZXNzZnVsbHkgZW5hYmxlZCB0
-aGUgZW5hYmxlKCkgZnVuY3Rpb24KPiArCSAqIHdpbGwgbm90IGJlIGNhbGxlZCBhZ2FpbiB1bnRp
-bCB0aGUgcGFuZWwgaGFzIGJlZW4gZGlzYWJsZWQuCj4gIAkgKi8KPiAgCWludCAoKmVuYWJsZSko
-c3RydWN0IGRybV9wYW5lbCAqcGFuZWwpOwo+ICAKPiBAQCAtNzksNiArODQsNyBAQCBzdHJ1Y3Qg
-ZHJtX3BhbmVsX2Z1bmNzIHsKPiAgCSAqIEBkaXNhYmxlOgo+ICAJICoKPiAgCSAqIERpc2FibGUg
-cGFuZWwgKHR1cm4gb2ZmIGJhY2sgbGlnaHQsIGV0Yy4pLgo+ICsJICogSWYgdGhlIHBhbmVsIGlz
-IGFscmVhZHkgZGlzYWJsZWQgdGhlIGRpc2FibGUoKSBmdW5jdGlvbiBpcyBub3QgY2FsbGVkLgo+
-ICAJICovCj4gIAlpbnQgKCpkaXNhYmxlKShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCk7Cj4gIAo+
-IEBAIC04Niw2ICs5Miw3IEBAIHN0cnVjdCBkcm1fcGFuZWxfZnVuY3Mgewo+ICAJICogQHVucHJl
-cGFyZToKPiAgCSAqCj4gIAkgKiBUdXJuIG9mZiBwYW5lbC4KPiArCSAqIElmIHRoZSBwYW5lbCBp
-cyBhbHJlYWR5IHVucHJlcGFyZWQgdGhlIHVucHJlcGFyZSgpIGZ1bmN0aW9uIGlzIG5vdCBjYWxs
-ZWQuCj4gIAkgKi8KPiAgCWludCAoKnVucHJlcGFyZSkoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwp
-Owo+ICAKPiBAQCAtMTQ1LDYgKzE1MiwyMCBAQCBzdHJ1Y3QgZHJtX3BhbmVsIHsKPiAgCSAqIFBh
-bmVsIGVudHJ5IGluIHJlZ2lzdHJ5Lgo+ICAJICovCj4gIAlzdHJ1Y3QgbGlzdF9oZWFkIGxpc3Q7
-Cj4gKwo+ICsJLyoqCj4gKwkgKiBAcHJlcGFyZWQ6Cj4gKwkgKgo+ICsJICogU2V0IHRvIHRydWUg
-d2hlbiB0aGUgcGFuZWwgaXMgc3VjY2Vzc2Z1bGx5IHByZXBhcmVkLgo+ICsJICovCj4gKwlib29s
-IHByZXBhcmVkOwo+ICsKPiArCS8qKgo+ICsJICogQGVuYWJsZWQ6Cj4gKwkgKgo+ICsJICogU2V0
-IHRvIHRydWUgd2hlbiB0aGUgcGFuZWwgaXMgc3VjY2Vzc2Z1bGx5IGVuYWJsZWQuCj4gKwkgKi8K
-PiArCWJvb2wgZW5hYmxlZDsKPiAgfTsKPiAgCj4gIHZvaWQgZHJtX3BhbmVsX2luaXQoc3RydWN0
-IGRybV9wYW5lbCAqcGFuZWwpOwo+IC0tIAo+IDIuMjAuMQo+IAoKLS0gClNlYW4gUGF1bCwgU29m
-dHdhcmUgRW5naW5lZXIsIEdvb2dsZSAvIENocm9taXVtIE9TCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+
+On 8/5/19 3:50 AM, Dmitry Osipenko wrote:
+> 01.08.2019 0:10, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> This patch adds support for Tegra pinctrl driver suspend and resume.
+>>
+>> During suspend, context of all pinctrl registers are stored and
+>> on resume they are all restored to have all the pinmux and pad
+>> configuration for normal operation.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++=
+++++++++
+>>   drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
+>>   2 files changed, 62 insertions(+)
+>>
+>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/teg=
+ra/pinctrl-tegra.c
+>> index 186ef98e7b2b..e3a237534281 100644
+>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>> @@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct =
+tegra_pmx *pmx)
+>>   	}
+>>   }
+>>  =20
+>> +static size_t tegra_pinctrl_get_bank_size(struct device *dev,
+>> +					  unsigned int bank_id)
+>> +{
+>> +	struct platform_device *pdev =3D to_platform_device(dev);
+>> +	struct resource *res;
+>> +
+>> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
+>> +
+>> +	return resource_size(res) / 4;
+>> +}
+>> +
+>> +static int tegra_pinctrl_suspend(struct device *dev)
+>> +{
+>> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
+>> +	u32 *backup_regs =3D pmx->backup_regs;
+>> +	u32 *regs;
+>> +	size_t bank_size;
+>> +	unsigned int i, k;
+>> +
+>> +	for (i =3D 0; i < pmx->nbanks; i++) {
+>> +		bank_size =3D tegra_pinctrl_get_bank_size(dev, i);
+>> +		regs =3D pmx->regs[i];
+>> +		for (k =3D 0; k < bank_size; k++)
+>> +			*backup_regs++ =3D readl_relaxed(regs++);
+>> +	}
+>> +
+>> +	return pinctrl_force_sleep(pmx->pctl);
+>> +}
+>> +
+>> +static int tegra_pinctrl_resume(struct device *dev)
+>> +{
+>> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
+>> +	u32 *backup_regs =3D pmx->backup_regs;
+>> +	u32 *regs;
+>> +	size_t bank_size;
+>> +	unsigned int i, k;
+>> +
+>> +	for (i =3D 0; i < pmx->nbanks; i++) {
+>> +		bank_size =3D tegra_pinctrl_get_bank_size(dev, i);
+>> +		regs =3D pmx->regs[i];
+>> +		for (k =3D 0; k < bank_size; k++)
+>> +			writel_relaxed(*backup_regs++, regs++);
+>> +	}
+> I'm now curious whether any kind of barrier is needed after the
+> writings. The pmx_writel() doesn't insert a barrier after the write and
+> seems it just misuses writel, which actually should be writel_relaxed()
+> + barrier, IIUC.
+
+pmx_writel uses writel and it has wmb before raw_write which complete=20
+all writes initiated prior to this.
+
+By misusing writel, you mean to have barrier after register write?
+
+> It's also not obvious whether PINCTRL HW has any kind of write-FIFO and
+> thus maybe read-back + rmb() is needed in order ensure that writes are
+> actually completed.
+I believe adding write barrier wmb after writel_relaxed should be good=20
+rather than doing readback + rmb
+>
+> The last thing which is not obvious is when the new configuration
+> actually takes into effect, does it happen immediately or maybe some
+> delay is needed?
+>
+> [snip]
+
+Based on internal design there is no internal delay and it all depends=20
+on APB rate that it takes to write to register.
+
+Pinmux value change to reflect internally might take couple of clock=20
+cycles which is much faster than SW can read.
