@@ -1,98 +1,173 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
-Date: Mon, 5 Aug 2019 13:50:06 +0300
-Message-ID: <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v1 12/16] drm/panel: use inline comments in drm_panel.h
+Date: Mon, 5 Aug 2019 13:54:25 +0300
+Message-ID: <20190805105425.GG29747@pendragon.ideasonboard.com>
+References: <20190804201637.1240-1-sam@ravnborg.org>
+ <20190804201637.1240-13-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190804201637.1240-13-sam@ravnborg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Philipp Zabel <p.zabel@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Sascha Hauer <s.hauer@pengutronix.de>, Aliso
 List-Id: linux-tegra@vger.kernel.org
 
-01.08.2019 0:10, Sowjanya Komatineni пишет:
-> This patch adds support for Tegra pinctrl driver suspend and resume.
+Hi Sam,
+
+Thank you for the patch.
+
+On Sun, Aug 04, 2019 at 10:16:33PM +0200, Sam Ravnborg wrote:
+> Inline comments provide better space for additional comments.
+> Comments was slightly edited to follow the normal style,
+> but no change to actual content.
+> Used the opportuniy to change the order in drm_panel_funcs
+> to follow the order they will be used by a panel.
 > 
-> During suspend, context of all pinctrl registers are stored and
-> on resume they are all restored to have all the pinmux and pad
-> configuration for normal operation.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Sean Paul <sean@poorly.run>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
->  2 files changed, 62 insertions(+)
+>  include/drm/drm_panel.h | 82 +++++++++++++++++++++++++++++++++--------
+>  1 file changed, 66 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 186ef98e7b2b..e3a237534281 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->  	}
->  }
+> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> index 053d611656b9..5e62deea49ba 100644
+> --- a/include/drm/drm_panel.h
+> +++ b/include/drm/drm_panel.h
+> @@ -36,14 +36,6 @@ struct display_timing;
 >  
-> +static size_t tegra_pinctrl_get_bank_size(struct device *dev,
-> +					  unsigned int bank_id)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct resource *res;
+>  /**
+>   * struct drm_panel_funcs - perform operations on a given panel
+> - * @disable: disable panel (turn off back light, etc.)
+> - * @unprepare: turn off panel
+> - * @prepare: turn on panel and perform set up
+> - * @enable: enable panel (turn on back light, etc.)
+> - * @get_modes: add modes to the connector that the panel is attached to and
+> - * return the number of modes added
+> - * @get_timings: copy display timings into the provided array and return
+> - * the number of display timings available
+>   *
+>   * The .prepare() function is typically called before the display controller
+>   * starts to transmit video data. Panel drivers can use this to turn the panel
+> @@ -69,31 +61,89 @@ struct display_timing;
+>   * the panel. This is the job of the .unprepare() function.
+>   */
+>  struct drm_panel_funcs {
+> -	int (*disable)(struct drm_panel *panel);
+> -	int (*unprepare)(struct drm_panel *panel);
+> +	/**
+> +	 * @prepare:
+> +	 *
+> +	 * Turn on panel and perform set up.
+> +	 */
+>  	int (*prepare)(struct drm_panel *panel);
 > +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
+> +	/**
+> +	 * @enable:
+> +	 *
+> +	 * Enable panel (turn on back light, etc.).
+> +	 */
+>  	int (*enable)(struct drm_panel *panel);
 > +
-> +	return resource_size(res) / 4;
-> +}
+> +	/**
+> +	 * @disable:
+> +	 *
+> +	 * Disable panel (turn off back light, etc.).
+> +	 */
+> +	int (*disable)(struct drm_panel *panel);
 > +
-> +static int tegra_pinctrl_suspend(struct device *dev)
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	size_t bank_size;
-> +	unsigned int i, k;
+> +	/**
+> +	 * @unprepare:
+> +	 *
+> +	 * Turn off panel.
+> +	 */
+> +	int (*unprepare)(struct drm_panel *panel);
 > +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		bank_size = tegra_pinctrl_get_bank_size(dev, i);
-> +		regs = pmx->regs[i];
-> +		for (k = 0; k < bank_size; k++)
-> +			*backup_regs++ = readl_relaxed(regs++);
-> +	}
+> +	/**
+> +	 * @get_modes:
+> +	 *
+> +	 * Add modes to the connector that the panel is attached to and
+> +	 * return the number of modes added.
+> +	 */
+>  	int (*get_modes)(struct drm_panel *panel);
 > +
-> +	return pinctrl_force_sleep(pmx->pctl);
-> +}
+> +	/**
+> +	 * @get_timings:
+> +	 *
+> +	 * Copy display timings into the provided array and return
+> +	 * the number of display timings available.
+> +	 */
+>  	int (*get_timings)(struct drm_panel *panel, unsigned int num_timings,
+>  			   struct display_timing *timings);
+>  };
+>  
+>  /**
+>   * struct drm_panel - DRM panel object
+> - * @drm: DRM device owning the panel
+> - * @connector: DRM connector that the panel is attached to
+> - * @dev: parent device of the panel
+> - * @link: link from panel device (supplier) to DRM device (consumer)
+> - * @funcs: operations that can be performed on the panel
+> - * @list: panel entry in registry
+>   */
+>  struct drm_panel {
+> +	/**
+> +	 * @drm:
+> +	 *
+> +	 * DRM device owning the panel.
+> +	 */
+>  	struct drm_device *drm;
 > +
-> +static int tegra_pinctrl_resume(struct device *dev)
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	size_t bank_size;
-> +	unsigned int i, k;
+> +	/**
+> +	 * @connector:
+> +	 *
+> +	 * DRM connector that the panel is attached to.
+> +	 */
+>  	struct drm_connector *connector;
 > +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		bank_size = tegra_pinctrl_get_bank_size(dev, i);
-> +		regs = pmx->regs[i];
-> +		for (k = 0; k < bank_size; k++)
-> +			writel_relaxed(*backup_regs++, regs++);
-> +	}
+> +	/**
+> +	 * @dev:
+> +	 *
+> +	 * Parent device of the panel.
+> +	 */
+>  	struct device *dev;
+>  
+> +	/**
+> +	 * @funcs:
+> +	 *
+> +	 * Operations that can be performed on the panel.
+> +	 */
+>  	const struct drm_panel_funcs *funcs;
+>  
+> +	/**
+> +	 * @list:
+> +	 *
+> +	 * Panel entry in registry.
+> +	 */
+>  	struct list_head list;
+>  };
+>  
 
-I'm now curious whether any kind of barrier is needed after the
-writings. The pmx_writel() doesn't insert a barrier after the write and
-seems it just misuses writel, which actually should be writel_relaxed()
-+ barrier, IIUC.
+-- 
+Regards,
 
-It's also not obvious whether PINCTRL HW has any kind of write-FIFO and
-thus maybe read-back + rmb() is needed in order ensure that writes are
-actually completed.
-
-The last thing which is not obvious is when the new configuration
-actually takes into effect, does it happen immediately or maybe some
-delay is needed?
-
-[snip]
+Laurent Pinchart
