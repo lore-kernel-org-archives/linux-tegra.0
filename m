@@ -1,128 +1,91 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v1 14/16] drm/panel: call prepare/enable only once
-Date: Mon, 5 Aug 2019 13:59:28 +0300
-Message-ID: <20190805105928.GI29747@pendragon.ideasonboard.com>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-15-sam@ravnborg.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 3/3] soc/tegra: regulators: Add regulators coupler for
+ Tegra30
+Date: Mon, 5 Aug 2019 14:03:29 +0300
+Message-ID: <1a9464b3-6e0e-00ff-64d8-b3abf7982dfb@gmail.com>
+References: <20190725151832.9802-1-digetx@gmail.com>
+ <20190725151832.9802-4-digetx@gmail.com>
+ <20190802140512.GD3883@pdeschrijver-desktop.Nvidia.com>
+ <c537fbea-5884-03db-305f-6ab3d553f7ab@gmail.com>
+ <20190805083325.GE3883@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190804201637.1240-15-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>, Allison Randal <allison@lohutok.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190805083325.GE3883@pdeschrijver-desktop.Nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgU2FtLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBTdW4sIEF1ZyAwNCwgMjAxOSBh
-dCAxMDoxNjozNVBNICswMjAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4gTWFueSBwYW5lbCBkcml2
-ZXJzIGR1cGxpY2F0ZSBsb2dpYyB0byBwcmV2ZW50IHByZXBhcmUgdG8gYmUgY2FsbGVkCj4gZm9y
-IGEgcGFuZWwgdGhhdCBpcyBhbHJlYWR5IHByZXBhcmVkLgo+IExpa2V3aXNlIGZvciBlbmFibGUu
-Cj4gCj4gSW1wbGVtZW50IHRoaXMgbG9naWMgaW4gZHJtX3BhbmVsIHNvIHRoZSBpbmRpdmlkdWFs
-IGRyaXZlcnMKPiBubyBsb25nZXIgbmVlZHMgdGhpcy4KPiBBIHBhbmVsIGlzIGNvbnNpZGVyZWQg
-cHJlcGFyZWQvZW5hYmxlZCBvbmx5IGlmIHRoZSBwcmVwYXJlL2VuYWJsZSBjYWxsCj4gc3VjY2Vl
-ZHMuCj4gRm9yIGRpc2FibGUvdW5wcmVwYXJlIGl0IGlzIHVuY29uZGl0aW9uYWxseSBjb25zaWRl
-cmVkCj4gZGlzYWJsZWQvdW5wcmVwYXJlZC4KPiAKPiBUaGlzIGFsbG93cyBjYWxscyB0byBwcmVw
-YXJlL2VuYWJsZSBhZ2FpbiwgZXZlbiBpZiB0aGVyZSB3ZXJlCj4gc29tZSBpc3N1ZSBkaXNhYmxp
-bmcgYSByZWd1bGF0b3Igb3Igc2ltaWxhciBkdXJpbmcgZGlzYWJsZS91bnByZXBhcmUuCgpJcyB0
-aGlzIHRoZSByaWdodCBwbGFjZSB0byBoYW5kbGUgdGhpcyA/IFNob3VsZG4ndCB0aGUgdXBwZXIg
-bGF5ZXJzCmVuc3VyZSB0aGFuIGVuYWJsZS9kaXNhYmxlIGFuZCBwcmVwYXJlL3VucHJlcGFyZSBh
-cmUgY29ycmVjdHkgYmFsYW5jZWQsCmFuZCBub3QgY2FsbGVkIG11bHRpcGxlIHRpbWVzID8gQWRk
-aW5nIGVuYWJsZWQgYW5kIHByZXBhcmVkIHN0YXRlIHRvCmRybV9wYW5lbCBub3Qgb25seSBkb2Vz
-bid0IGFsaWduIHdlbGwgd2l0aCBhdG9taWMgc3RhdGUgaGFuZGxpbmcsIGJ1dAphbHNvIHdvdWxk
-IGhpZGUgaXNzdWVzIGluIHVwcGVyIGxheWVycyB0aGF0IHNob3VsZCByZWFsbHkgYmUgZml4ZWQK
-dGhlcmUuCgo+IFNpZ25lZC1vZmYtYnk6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4K
-PiBDYzogTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0ZW4ubGFua2hvcnN0QGxpbnV4LmludGVsLmNv
-bT4KPiBDYzogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBib290bGluLmNvbT4KPiBDYzog
-U2VhbiBQYXVsIDxzZWFuQHBvb3JseS5ydW4+Cj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5
-LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4K
-PiBDYzogRGF2aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgo+IENjOiBEYW5pZWwgVmV0dGVy
-IDxkYW5pZWxAZmZ3bGwuY2g+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYyB8
-IDY2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0KPiAgaW5jbHVkZS9kcm0v
-ZHJtX3BhbmVsLmggICAgIHwgMjEgKysrKysrKysrKysrCj4gIDIgZmlsZXMgY2hhbmdlZCwgNzUg
-aW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9kcm1fcGFuZWwuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYwo+IGluZGV4
-IGRhMTlkNWI0YTJmNC4uMDg1Mzc2NDA0MGRlIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9kcm1fcGFuZWwuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYwo+IEBAIC02
-NiwxMCArNjYsMjEgQEAgRVhQT1JUX1NZTUJPTChkcm1fcGFuZWxfaW5pdCk7Cj4gICAqLwo+ICBp
-bnQgZHJtX3BhbmVsX3ByZXBhcmUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsKPiAtCWlm
-IChwYW5lbCAmJiBwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5wcmVwYXJlKQo+IC0JCXJl
-dHVybiBwYW5lbC0+ZnVuY3MtPnByZXBhcmUocGFuZWwpOwo+ICsJaW50IHJldCA9IC1FTk9TWVM7
-Cj4gIAo+IC0JcmV0dXJuIHBhbmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7Cj4gKwlpZiAoIXBhbmVs
-KQo+ICsJCXJldHVybiAtRUlOVkFMOwo+ICsKPiArCWlmIChwYW5lbC0+cHJlcGFyZWQpCj4gKwkJ
-cmV0dXJuIDA7Cj4gKwo+ICsJaWYgKHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPnByZXBh
-cmUpCj4gKwkJcmV0ID0gcGFuZWwtPmZ1bmNzLT5wcmVwYXJlKHBhbmVsKTsKPiArCj4gKwlpZiAo
-cmV0ID49IDApCj4gKwkJcGFuZWwtPnByZXBhcmVkID0gdHJ1ZTsKPiArCj4gKwlyZXR1cm4gcmV0
-Owo+ICB9Cj4gIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX3ByZXBhcmUpOwo+ICAKPiBAQCAtODUs
-MTAgKzk2LDIxIEBAIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX3ByZXBhcmUpOwo+ICAgKi8KPiAg
-aW50IGRybV9wYW5lbF9lbmFibGUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsKPiAtCWlm
-IChwYW5lbCAmJiBwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5lbmFibGUpCj4gLQkJcmV0
-dXJuIHBhbmVsLT5mdW5jcy0+ZW5hYmxlKHBhbmVsKTsKPiArCWludCByZXQgPSAtRU5PU1lTOwo+
-ICAKPiAtCXJldHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+ICsJaWYgKCFwYW5lbCkK
-PiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCj4gKwlpZiAocGFuZWwtPmVuYWJsZWQpCj4gKwkJcmV0
-dXJuIDA7Cj4gKwo+ICsJaWYgKHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPmVuYWJsZSkK
-PiArCQlyZXQgPSBwYW5lbC0+ZnVuY3MtPmVuYWJsZShwYW5lbCk7Cj4gKwo+ICsJaWYgKHJldCA+
-PSAwKQo+ICsJCXBhbmVsLT5lbmFibGVkID0gdHJ1ZTsKPiArCj4gKwlyZXR1cm4gcmV0Owo+ICB9
-Cj4gIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX2VuYWJsZSk7Cj4gIAo+IEBAIC0xMDQsMTAgKzEy
-NiwyMCBAQCBFWFBPUlRfU1lNQk9MKGRybV9wYW5lbF9lbmFibGUpOwo+ICAgKi8KPiAgaW50IGRy
-bV9wYW5lbF9kaXNhYmxlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+ICB7Cj4gLQlpZiAocGFu
-ZWwgJiYgcGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+ZGlzYWJsZSkKPiAtCQlyZXR1cm4g
-cGFuZWwtPmZ1bmNzLT5kaXNhYmxlKHBhbmVsKTsKPiArCWludCByZXQgPSAtRU5PU1lTOwo+ICAK
-PiAtCXJldHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+ICsJaWYgKCFwYW5lbCkKPiAr
-CQlyZXR1cm4gLUVJTlZBTDsKPiArCj4gKwlpZiAoIXBhbmVsLT5lbmFibGVkKQo+ICsJCXJldHVy
-biAwOwo+ICsKPiArCWlmIChwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5kaXNhYmxlKQo+
-ICsJCXJldCA9IHBhbmVsLT5mdW5jcy0+ZGlzYWJsZShwYW5lbCk7Cj4gKwo+ICsJcGFuZWwtPmVu
-YWJsZWQgPSBmYWxzZTsKPiArCj4gKwlyZXR1cm4gcmV0Owo+ICB9Cj4gIEVYUE9SVF9TWU1CT0wo
-ZHJtX3BhbmVsX2Rpc2FibGUpOwo+ICAKPiBAQCAtMTI0LDEwICsxNTYsMjAgQEAgRVhQT1JUX1NZ
-TUJPTChkcm1fcGFuZWxfZGlzYWJsZSk7Cj4gICAqLwo+ICBpbnQgZHJtX3BhbmVsX3VucHJlcGFy
-ZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiAgewo+IC0JaWYgKHBhbmVsICYmIHBhbmVsLT5m
-dW5jcyAmJiBwYW5lbC0+ZnVuY3MtPnVucHJlcGFyZSkKPiAtCQlyZXR1cm4gcGFuZWwtPmZ1bmNz
-LT51bnByZXBhcmUocGFuZWwpOwo+ICsJaW50IHJldCA9IC1FTk9TWVM7Cj4gIAo+IC0JcmV0dXJu
-IHBhbmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7Cj4gKwlpZiAoIXBhbmVsKQo+ICsJCXJldHVybiAt
-RUlOVkFMOwo+ICsKPiArCWlmICghcGFuZWwtPnByZXBhcmVkKQo+ICsJCXJldHVybiAwOwo+ICsK
-PiArCWlmIChwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT51bnByZXBhcmUpCj4gKwkJcmV0
-ID0gcGFuZWwtPmZ1bmNzLT51bnByZXBhcmUocGFuZWwpOwo+ICsKPiArCXBhbmVsLT5wcmVwYXJl
-ZCA9IGZhbHNlOwo+ICsKPiArCXJldHVybiByZXQ7Cj4gIH0KPiAgRVhQT1JUX1NZTUJPTChkcm1f
-cGFuZWxfdW5wcmVwYXJlKTsKPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9wYW5l
-bC5oIGIvaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmgKPiBpbmRleCA2MjRiZDE1ZWNmYWIuLjc0OTM1
-MDBmYzliZCAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fcGFuZWwuaAo+ICsrKyBiL2lu
-Y2x1ZGUvZHJtL2RybV9wYW5lbC5oCj4gQEAgLTY1LDYgKzY1LDkgQEAgc3RydWN0IGRybV9wYW5l
-bF9mdW5jcyB7Cj4gIAkgKiBAcHJlcGFyZToKPiAgCSAqCj4gIAkgKiBUdXJuIG9uIHBhbmVsIGFu
-ZCBwZXJmb3JtIHNldCB1cC4KPiArCSAqIFdoZW4gdGhlIHBhbmVsIGlzIHN1Y2Nlc3NmdWxseSBw
-cmVwYXJlZCB0aGUgcHJlcGFyZSgpIGZ1bmN0aW9uCj4gKwkgKiB3aWxsIG5vdCBiZSBjYWxsZWQg
-YWdhaW4gdW50aWwgdGhlIHBhbmVsIGhhcyBiZWVuIHVucHJlcGFyZWQuCj4gKwkgKgo+ICAJICov
-Cj4gIAlpbnQgKCpwcmVwYXJlKShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCk7Cj4gIAo+IEBAIC03
-Miw2ICs3NSw4IEBAIHN0cnVjdCBkcm1fcGFuZWxfZnVuY3Mgewo+ICAJICogQGVuYWJsZToKPiAg
-CSAqCj4gIAkgKiBFbmFibGUgcGFuZWwgKHR1cm4gb24gYmFjayBsaWdodCwgZXRjLikuCj4gKwkg
-KiBXaGVuIHRoZSBwYW5lbCBpcyBzdWNjZXNzZnVsbHkgZW5hYmxlZCB0aGUgZW5hYmxlKCkgZnVu
-Y3Rpb24KPiArCSAqIHdpbGwgbm90IGJlIGNhbGxlZCBhZ2FpbiB1bnRpbCB0aGUgcGFuZWwgaGFz
-IGJlZW4gZGlzYWJsZWQuCj4gIAkgKi8KPiAgCWludCAoKmVuYWJsZSkoc3RydWN0IGRybV9wYW5l
-bCAqcGFuZWwpOwo+ICAKPiBAQCAtNzksNiArODQsNyBAQCBzdHJ1Y3QgZHJtX3BhbmVsX2Z1bmNz
-IHsKPiAgCSAqIEBkaXNhYmxlOgo+ICAJICoKPiAgCSAqIERpc2FibGUgcGFuZWwgKHR1cm4gb2Zm
-IGJhY2sgbGlnaHQsIGV0Yy4pLgo+ICsJICogSWYgdGhlIHBhbmVsIGlzIGFscmVhZHkgZGlzYWJs
-ZWQgdGhlIGRpc2FibGUoKSBmdW5jdGlvbiBpcyBub3QgY2FsbGVkLgo+ICAJICovCj4gIAlpbnQg
-KCpkaXNhYmxlKShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCk7Cj4gIAo+IEBAIC04Niw2ICs5Miw3
-IEBAIHN0cnVjdCBkcm1fcGFuZWxfZnVuY3Mgewo+ICAJICogQHVucHJlcGFyZToKPiAgCSAqCj4g
-IAkgKiBUdXJuIG9mZiBwYW5lbC4KPiArCSAqIElmIHRoZSBwYW5lbCBpcyBhbHJlYWR5IHVucHJl
-cGFyZWQgdGhlIHVucHJlcGFyZSgpIGZ1bmN0aW9uIGlzIG5vdCBjYWxsZWQuCj4gIAkgKi8KPiAg
-CWludCAoKnVucHJlcGFyZSkoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpOwo+ICAKPiBAQCAtMTQ1
-LDYgKzE1MiwyMCBAQCBzdHJ1Y3QgZHJtX3BhbmVsIHsKPiAgCSAqIFBhbmVsIGVudHJ5IGluIHJl
-Z2lzdHJ5Lgo+ICAJICovCj4gIAlzdHJ1Y3QgbGlzdF9oZWFkIGxpc3Q7Cj4gKwo+ICsJLyoqCj4g
-KwkgKiBAcHJlcGFyZWQ6Cj4gKwkgKgo+ICsJICogU2V0IHRvIHRydWUgd2hlbiB0aGUgcGFuZWwg
-aXMgc3VjY2Vzc2Z1bGx5IHByZXBhcmVkLgo+ICsJICovCj4gKwlib29sIHByZXBhcmVkOwo+ICsK
-PiArCS8qKgo+ICsJICogQGVuYWJsZWQ6Cj4gKwkgKgo+ICsJICogU2V0IHRvIHRydWUgd2hlbiB0
-aGUgcGFuZWwgaXMgc3VjY2Vzc2Z1bGx5IGVuYWJsZWQuCj4gKwkgKi8KPiArCWJvb2wgZW5hYmxl
-ZDsKPiAgfTsKPiAgCj4gIHZvaWQgZHJtX3BhbmVsX2luaXQoc3RydWN0IGRybV9wYW5lbCAqcGFu
-ZWwpOwoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0Cl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+05.08.2019 11:33, Peter De Schrijver пишет:
+> On Fri, Aug 02, 2019 at 05:39:23PM +0300, Dmitry Osipenko wrote:
+>> 02.08.2019 17:05, Peter De Schrijver пишет:
+>>> On Thu, Jul 25, 2019 at 06:18:32PM +0300, Dmitry Osipenko wrote:
+>>>> Add regulators coupler for Tegra30 SoCs that performs voltage balancing
+>>>> of a coupled regulators and thus provides voltage scaling functionality.
+>>>>
+>>>> There are 2 coupled regulators on all Tegra30 SoCs: CORE and CPU. The
+>>>> coupled regulator voltages shall be in a range of 300mV from each other
+>>>> and CORE voltage shall be higher than the CPU by N mV, where N depends
+>>>> on the CPU voltage.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/soc/tegra/Kconfig              |   4 +
+>>>>  drivers/soc/tegra/Makefile             |   1 +
+>>>>  drivers/soc/tegra/regulators-tegra30.c | 316 +++++++++++++++++++++++++
+>>>>  3 files changed, 321 insertions(+)
+>>>>  create mode 100644 drivers/soc/tegra/regulators-tegra30.c
+>>>>
+>>> ...
+>>>
+>>>> +
+>>>> +static int tegra30_core_cpu_limit(int cpu_uV)
+>>>> +{
+>>>> +	if (cpu_uV < 800000)
+>>>> +		return 950000;
+>>>> +
+>>>> +	if (cpu_uV < 900000)
+>>>> +		return 1000000;
+>>>> +
+>>>> +	if (cpu_uV < 1000000)
+>>>> +		return 1100000;
+>>>> +
+>>>> +	if (cpu_uV < 1100000)
+>>>> +		return 1200000;
+>>>> +
+>>>> +	if (cpu_uV < 1250000) {
+>>>> +		switch (tegra_sku_info.cpu_speedo_id) {
+>>>> +		case 0 ... 1:
+>>> Aren't we supposed to add /* fall through */ here now?
+>>
+>> There is no compiler warning if there is nothing in-between of the
+>> case-switches, so annotation isn't really necessary here. Of course it
+>> is possible to add an explicit annotation just to make clear the
+>> fall-through intention.
+>>
+> 
+> Ah. Ok. Whatever you want then :)
+
+I'll add the comments if there will be a need to re-spin this series.
+
+>>>> +		case 4:
+>>>> +		case 7 ... 8:
+>>>> +			return 1200000;
+>>>> +
+>>>> +		default:
+>>>> +			return 1300000;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>
+>>> Other than that, this looks ok to me.
+>>
+>> Awesome, thank you very much! Explicit ACK will be appreciated as well.
+> 
+> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+
+Thank you again! Could you please also clarify whether the ACK is for
+this patch only or for all of three patches?
