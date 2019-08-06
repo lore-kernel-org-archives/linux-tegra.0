@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.19 00/74] 4.19.65-stable review
-Date: Tue, 6 Aug 2019 19:30:17 +0100
-Message-ID: <cc9a3031-d6c5-8614-a16d-f85d3a992420@nvidia.com>
-References: <20190805124935.819068648@linuxfoundation.org>
+Subject: Re: [PATCH 5.2 000/131] 5.2.7-stable review
+Date: Tue, 6 Aug 2019 19:30:45 +0100
+Message-ID: <c01bc729-c9c1-fe90-4850-7907fee27a2b@nvidia.com>
+References: <20190805124951.453337465@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
 Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -15,9 +15,9 @@ Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 05/08/2019 14:02, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.65 release.
-> There are 74 patches in this series, all will be posted as a response
+On 05/08/2019 14:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.2.7 release.
+> There are 131 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 05/08/2019 14:02, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.65-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.7-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +36,12 @@ On 05/08/2019 14:02, Greg Kroah-Hartman wrote:
 
 All tests passing for Tegra ...
 
-Test results for stable-v4.19:
+Test results for stable-v5.2:
     12 builds:	12 pass, 0 fail
     22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+    38 tests:	38 pass, 0 fail
 
-Linux version:	4.19.65-rc1-ge2fa6c5f11d5
+Linux version:	5.2.7-rc1-g22499a291939
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
