@@ -1,116 +1,101 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
-Date: Mon, 5 Aug 2019 11:06:02 -0700
-Message-ID: <b45ca99a-188a-c695-3f3d-48d273808f9c@nvidia.com>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
- <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 3/3] soc/tegra: regulators: Add regulators coupler for
+ Tegra30
+Date: Tue, 6 Aug 2019 10:30:21 +0300
+Message-ID: <20190806073021.GF3883@pdeschrijver-desktop.Nvidia.com>
+References: <20190725151832.9802-1-digetx@gmail.com>
+ <20190725151832.9802-4-digetx@gmail.com>
+ <20190802140512.GD3883@pdeschrijver-desktop.Nvidia.com>
+ <c537fbea-5884-03db-305f-6ab3d553f7ab@gmail.com>
+ <20190805083325.GE3883@pdeschrijver-desktop.Nvidia.com>
+ <1a9464b3-6e0e-00ff-64d8-b3abf7982dfb@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1a9464b3-6e0e-00ff-64d8-b3abf7982dfb@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Aug 05, 2019 at 02:03:29PM +0300, Dmitry Osipenko wrote:
+> 05.08.2019 11:33, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Fri, Aug 02, 2019 at 05:39:23PM +0300, Dmitry Osipenko wrote:
+> >> 02.08.2019 17:05, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Thu, Jul 25, 2019 at 06:18:32PM +0300, Dmitry Osipenko wrote:
+> >>>> Add regulators coupler for Tegra30 SoCs that performs voltage balanc=
+ing
+> >>>> of a coupled regulators and thus provides voltage scaling functional=
+ity.
+> >>>>
+> >>>> There are 2 coupled regulators on all Tegra30 SoCs: CORE and CPU. Th=
+e
+> >>>> coupled regulator voltages shall be in a range of 300mV from each ot=
+her
+> >>>> and CORE voltage shall be higher than the CPU by N mV, where N depen=
+ds
+> >>>> on the CPU voltage.
+> >>>>
+> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>>> ---
+> >>>>  drivers/soc/tegra/Kconfig              |   4 +
+> >>>>  drivers/soc/tegra/Makefile             |   1 +
+> >>>>  drivers/soc/tegra/regulators-tegra30.c | 316 ++++++++++++++++++++++=
++++
+> >>>>  3 files changed, 321 insertions(+)
+> >>>>  create mode 100644 drivers/soc/tegra/regulators-tegra30.c
+> >>>>
+> >>> ...
+> >>>
+> >>>> +
+> >>>> +static int tegra30_core_cpu_limit(int cpu_uV)
+> >>>> +{
+> >>>> +	if (cpu_uV < 800000)
+> >>>> +		return 950000;
+> >>>> +
+> >>>> +	if (cpu_uV < 900000)
+> >>>> +		return 1000000;
+> >>>> +
+> >>>> +	if (cpu_uV < 1000000)
+> >>>> +		return 1100000;
+> >>>> +
+> >>>> +	if (cpu_uV < 1100000)
+> >>>> +		return 1200000;
+> >>>> +
+> >>>> +	if (cpu_uV < 1250000) {
+> >>>> +		switch (tegra_sku_info.cpu_speedo_id) {
+> >>>> +		case 0 ... 1:
+> >>> Aren't we supposed to add /* fall through */ here now?
+> >>
+> >> There is no compiler warning if there is nothing in-between of the
+> >> case-switches, so annotation isn't really necessary here. Of course it
+> >> is possible to add an explicit annotation just to make clear the
+> >> fall-through intention.
+> >>
+> >=20
+> > Ah. Ok. Whatever you want then :)
+>=20
+> I'll add the comments if there will be a need to re-spin this series.
+>=20
+> >>>> +		case 4:
+> >>>> +		case 7 ... 8:
+> >>>> +			return 1200000;
+> >>>> +
+> >>>> +		default:
+> >>>> +			return 1300000;
+> >>>> +		}
+> >>>> +	}
+> >>>> +
+> >>>
+> >>> Other than that, this looks ok to me.
+> >>
+> >> Awesome, thank you very much! Explicit ACK will be appreciated as well=
+.
+> >=20
+> > Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-On 8/5/19 3:50 AM, Dmitry Osipenko wrote:
-> 01.08.2019 0:10, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> This patch adds support for Tegra pinctrl driver suspend and resume.
->>
->> During suspend, context of all pinctrl registers are stored and
->> on resume they are all restored to have all the pinmux and pad
->> configuration for normal operation.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++=
-++++++++
->>   drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
->>   2 files changed, 62 insertions(+)
->>
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/teg=
-ra/pinctrl-tegra.c
->> index 186ef98e7b2b..e3a237534281 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
->> @@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct =
-tegra_pmx *pmx)
->>   	}
->>   }
->>  =20
->> +static size_t tegra_pinctrl_get_bank_size(struct device *dev,
->> +					  unsigned int bank_id)
->> +{
->> +	struct platform_device *pdev =3D to_platform_device(dev);
->> +	struct resource *res;
->> +
->> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
->> +
->> +	return resource_size(res) / 4;
->> +}
->> +
->> +static int tegra_pinctrl_suspend(struct device *dev)
->> +{
->> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
->> +	u32 *backup_regs =3D pmx->backup_regs;
->> +	u32 *regs;
->> +	size_t bank_size;
->> +	unsigned int i, k;
->> +
->> +	for (i =3D 0; i < pmx->nbanks; i++) {
->> +		bank_size =3D tegra_pinctrl_get_bank_size(dev, i);
->> +		regs =3D pmx->regs[i];
->> +		for (k =3D 0; k < bank_size; k++)
->> +			*backup_regs++ =3D readl_relaxed(regs++);
->> +	}
->> +
->> +	return pinctrl_force_sleep(pmx->pctl);
->> +}
->> +
->> +static int tegra_pinctrl_resume(struct device *dev)
->> +{
->> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
->> +	u32 *backup_regs =3D pmx->backup_regs;
->> +	u32 *regs;
->> +	size_t bank_size;
->> +	unsigned int i, k;
->> +
->> +	for (i =3D 0; i < pmx->nbanks; i++) {
->> +		bank_size =3D tegra_pinctrl_get_bank_size(dev, i);
->> +		regs =3D pmx->regs[i];
->> +		for (k =3D 0; k < bank_size; k++)
->> +			writel_relaxed(*backup_regs++, regs++);
->> +	}
-> I'm now curious whether any kind of barrier is needed after the
-> writings. The pmx_writel() doesn't insert a barrier after the write and
-> seems it just misuses writel, which actually should be writel_relaxed()
-> + barrier, IIUC.
+All of them.
 
-pmx_writel uses writel and it has wmb before raw_write which complete=20
-all writes initiated prior to this.
-
-By misusing writel, you mean to have barrier after register write?
-
-> It's also not obvious whether PINCTRL HW has any kind of write-FIFO and
-> thus maybe read-back + rmb() is needed in order ensure that writes are
-> actually completed.
-I believe adding write barrier wmb after writel_relaxed should be good=20
-rather than doing readback + rmb
->
-> The last thing which is not obvious is when the new configuration
-> actually takes into effect, does it happen immediately or maybe some
-> delay is needed?
->
-> [snip]
-
-Based on internal design there is no internal delay and it all depends=20
-on APB rate that it takes to write to register.
-
-Pinmux value change to reflect internally might take couple of clock=20
-cycles which is much faster than SW can read.
+Peter.
