@@ -1,101 +1,35 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 3/3] soc/tegra: regulators: Add regulators coupler for
- Tegra30
-Date: Tue, 6 Aug 2019 10:30:21 +0300
-Message-ID: <20190806073021.GF3883@pdeschrijver-desktop.Nvidia.com>
-References: <20190725151832.9802-1-digetx@gmail.com>
- <20190725151832.9802-4-digetx@gmail.com>
- <20190802140512.GD3883@pdeschrijver-desktop.Nvidia.com>
- <c537fbea-5884-03db-305f-6ab3d553f7ab@gmail.com>
- <20190805083325.GE3883@pdeschrijver-desktop.Nvidia.com>
- <1a9464b3-6e0e-00ff-64d8-b3abf7982dfb@gmail.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 05/13] drm: rockchip: Provide ddc symlink in inno_hdmi
+ sysfs directory
+Date: Tue, 06 Aug 2019 10:36:13 +0200
+Message-ID: <5678760.RHkh9mv3Rf@phil>
+References: <65481afa-1104-4ee9-e53d-f2732a10d4b9@baylibre.com>
+ <cover.1564591626.git.andrzej.p@collabora.com>
+ <52272b8ebf403361ff96e04bf14f5a7389116f73.1564591626.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1a9464b3-6e0e-00ff-64d8-b3abf7982dfb@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <52272b8ebf403361ff96e04bf14f5a7389116f73.1564591626.git.andrzej.p@collabora.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, Sean Paul <sean@poorly.run>
+Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-rockchip@lists.infradead.org, Leo Li <sunpeng.li@amd.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, linux-mediatek@lists.infradead.org, Alex Deucher <alexander.deucher@amd.com>, kernel@collabora.com, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 02:03:29PM +0300, Dmitry Osipenko wrote:
-> 05.08.2019 11:33, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, Aug 02, 2019 at 05:39:23PM +0300, Dmitry Osipenko wrote:
-> >> 02.08.2019 17:05, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> On Thu, Jul 25, 2019 at 06:18:32PM +0300, Dmitry Osipenko wrote:
-> >>>> Add regulators coupler for Tegra30 SoCs that performs voltage balanc=
-ing
-> >>>> of a coupled regulators and thus provides voltage scaling functional=
-ity.
-> >>>>
-> >>>> There are 2 coupled regulators on all Tegra30 SoCs: CORE and CPU. Th=
-e
-> >>>> coupled regulator voltages shall be in a range of 300mV from each ot=
-her
-> >>>> and CORE voltage shall be higher than the CPU by N mV, where N depen=
-ds
-> >>>> on the CPU voltage.
-> >>>>
-> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>>> ---
-> >>>>  drivers/soc/tegra/Kconfig              |   4 +
-> >>>>  drivers/soc/tegra/Makefile             |   1 +
-> >>>>  drivers/soc/tegra/regulators-tegra30.c | 316 ++++++++++++++++++++++=
-+++
-> >>>>  3 files changed, 321 insertions(+)
-> >>>>  create mode 100644 drivers/soc/tegra/regulators-tegra30.c
-> >>>>
-> >>> ...
-> >>>
-> >>>> +
-> >>>> +static int tegra30_core_cpu_limit(int cpu_uV)
-> >>>> +{
-> >>>> +	if (cpu_uV < 800000)
-> >>>> +		return 950000;
-> >>>> +
-> >>>> +	if (cpu_uV < 900000)
-> >>>> +		return 1000000;
-> >>>> +
-> >>>> +	if (cpu_uV < 1000000)
-> >>>> +		return 1100000;
-> >>>> +
-> >>>> +	if (cpu_uV < 1100000)
-> >>>> +		return 1200000;
-> >>>> +
-> >>>> +	if (cpu_uV < 1250000) {
-> >>>> +		switch (tegra_sku_info.cpu_speedo_id) {
-> >>>> +		case 0 ... 1:
-> >>> Aren't we supposed to add /* fall through */ here now?
-> >>
-> >> There is no compiler warning if there is nothing in-between of the
-> >> case-switches, so annotation isn't really necessary here. Of course it
-> >> is possible to add an explicit annotation just to make clear the
-> >> fall-through intention.
-> >>
-> >=20
-> > Ah. Ok. Whatever you want then :)
->=20
-> I'll add the comments if there will be a need to re-spin this series.
->=20
-> >>>> +		case 4:
-> >>>> +		case 7 ... 8:
-> >>>> +			return 1200000;
-> >>>> +
-> >>>> +		default:
-> >>>> +			return 1300000;
-> >>>> +		}
-> >>>> +	}
-> >>>> +
-> >>>
-> >>> Other than that, this looks ok to me.
-> >>
-> >> Awesome, thank you very much! Explicit ACK will be appreciated as well=
-.
-> >=20
-> > Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-
-All of them.
-
-Peter.
+QW0gTWl0dHdvY2gsIDMxLiBKdWxpIDIwMTksIDE4OjU4OjE0IENFU1Qgc2NocmllYiBBbmRyemVq
+IFBpZXRyYXNpZXdpY3o6Cj4gVXNlIHRoZSBkZGMgcG9pbnRlciBwcm92aWRlZCBieSB0aGUgZ2Vu
+ZXJpYyBjb25uZWN0b3IuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBQaWV0cmFzaWV3aWN6
+IDxhbmRyemVqLnBAY29sbGFib3JhLmNvbT4KPiBBY2tlZC1ieTogU2FtIFJhdm5ib3JnIDxzYW1A
+cmF2bmJvcmcub3JnPgo+IFJldmlld2VkLWJ5OiBFbWlsIFZlbGlrb3YgPGVtaWwudmVsaWtvdkBj
+b2xsYWJvcmEuY29tPgoKQWNrZWQtYnk6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+
+CgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
