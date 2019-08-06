@@ -1,117 +1,54 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 28/59] tracing: Fix header include guards in trace event headers
-Date: Tue,  6 Aug 2019 17:32:48 -0400
-Message-ID: <20190806213319.19203-28-sashal@kernel.org>
-References: <20190806213319.19203-1-sashal@kernel.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
+Date: Tue, 6 Aug 2019 14:51:23 -0700
+Message-ID: <a2fb3795-5ec1-1d03-f496-f151d1270e90@nvidia.com>
+References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
+ <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
+ <CACRpkdZVR-i1c5eATL2hSPbLXcX1sR8NgXwa4j259XXUi57xug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190806213319.19203-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Steven Rostedt <rostedt@goodmis.org>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZVR-i1c5eATL2hSPbLXcX1sR8NgXwa4j259XXUi57xug@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com, Rob Herring <robh+dt@kernel.org>, Dmitry
 List-Id: linux-tegra@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit b1d45c23284e55a379f85554a27a548b7988d47a ]
+On 8/5/19 2:20 AM, Linus Walleij wrote:
+> On Wed, Jul 31, 2019 at 11:11 PM Sowjanya Komatineni
+> <skomatineni@nvidia.com> wrote:
+>
+>> This patch adds support for Tegra pinctrl driver suspend and resume.
+>>
+>> During suspend, context of all pinctrl registers are stored and
+>> on resume they are all restored to have all the pinmux and pad
+>> configuration for normal operation.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Patch applied to the pinctrl tree.
+>
+> This patch seems finished.
+>
+> Also if the rest don't get merged for v5.4 then at least this is so
+> your patch stack gets more shallow.
+>
+> I hope it's fine to merge this separately, else tell me and I'll
+> pull it out.
+>
+> Yours,
+> Linus Walleij
 
-These include guards are broken.
+Yes, this patch can be merged separately. But, there's latest feedback 
+from Dmitry to add barrier after writes to make sure pinmux register 
+writes happen.
 
-Match the #if !define() and #define lines so that they work correctly.
+So will update this patch to add barrier in v8. So, need to wait for v8.
 
-Link: http://lkml.kernel.org/r/20190720103943.16982-1-yamada.masahiro@socionext.com
+Thanks
 
-Fixes: f54d1867005c3 ("dma-buf: Rename struct fence to dma_fence")
-Fixes: 2e26ca7150a4f ("tracing: Fix tracepoint.h DECLARE_TRACE() to allow more than one header")
-Fixes: e543002f77f46 ("qdisc: add tracepoint qdisc:qdisc_dequeue for dequeued SKBs")
-Fixes: 95f295f9fe081 ("dmaengine: tegra: add tracepoints to driver")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/trace/events/dma_fence.h     | 2 +-
- include/trace/events/napi.h          | 4 ++--
- include/trace/events/qdisc.h         | 4 ++--
- include/trace/events/tegra_apb_dma.h | 4 ++--
- 4 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/include/trace/events/dma_fence.h b/include/trace/events/dma_fence.h
-index 2212adda8f77f..64e92d56c6a8f 100644
---- a/include/trace/events/dma_fence.h
-+++ b/include/trace/events/dma_fence.h
-@@ -2,7 +2,7 @@
- #undef TRACE_SYSTEM
- #define TRACE_SYSTEM dma_fence
- 
--#if !defined(_TRACE_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
-+#if !defined(_TRACE_DMA_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
- #define _TRACE_DMA_FENCE_H
- 
- #include <linux/tracepoint.h>
-diff --git a/include/trace/events/napi.h b/include/trace/events/napi.h
-index f3a12566bed05..6678cf8b235b8 100644
---- a/include/trace/events/napi.h
-+++ b/include/trace/events/napi.h
-@@ -3,7 +3,7 @@
- #define TRACE_SYSTEM napi
- 
- #if !defined(_TRACE_NAPI_H) || defined(TRACE_HEADER_MULTI_READ)
--#define _TRACE_NAPI_H_
-+#define _TRACE_NAPI_H
- 
- #include <linux/netdevice.h>
- #include <linux/tracepoint.h>
-@@ -38,7 +38,7 @@ TRACE_EVENT(napi_poll,
- 
- #undef NO_DEV
- 
--#endif /* _TRACE_NAPI_H_ */
-+#endif /* _TRACE_NAPI_H */
- 
- /* This part must be outside protection */
- #include <trace/define_trace.h>
-diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
-index 60d0d8bd336d0..0d1a9ebf55ba4 100644
---- a/include/trace/events/qdisc.h
-+++ b/include/trace/events/qdisc.h
-@@ -2,7 +2,7 @@
- #define TRACE_SYSTEM qdisc
- 
- #if !defined(_TRACE_QDISC_H) || defined(TRACE_HEADER_MULTI_READ)
--#define _TRACE_QDISC_H_
-+#define _TRACE_QDISC_H
- 
- #include <linux/skbuff.h>
- #include <linux/netdevice.h>
-@@ -44,7 +44,7 @@ TRACE_EVENT(qdisc_dequeue,
- 		  __entry->txq_state, __entry->packets, __entry->skbaddr )
- );
- 
--#endif /* _TRACE_QDISC_H_ */
-+#endif /* _TRACE_QDISC_H */
- 
- /* This part must be outside protection */
- #include <trace/define_trace.h>
-diff --git a/include/trace/events/tegra_apb_dma.h b/include/trace/events/tegra_apb_dma.h
-index 0818f62861109..971cd02d2dafe 100644
---- a/include/trace/events/tegra_apb_dma.h
-+++ b/include/trace/events/tegra_apb_dma.h
-@@ -1,5 +1,5 @@
- #if !defined(_TRACE_TEGRA_APB_DMA_H) || defined(TRACE_HEADER_MULTI_READ)
--#define _TRACE_TEGRA_APM_DMA_H
-+#define _TRACE_TEGRA_APB_DMA_H
- 
- #include <linux/tracepoint.h>
- #include <linux/dmaengine.h>
-@@ -55,7 +55,7 @@ TRACE_EVENT(tegra_dma_isr,
- 	TP_printk("%s: irq %d\n",  __get_str(chan), __entry->irq)
- );
- 
--#endif /*  _TRACE_TEGRADMA_H */
-+#endif /* _TRACE_TEGRA_APB_DMA_H */
- 
- /* This part must be outside protection */
- #include <trace/define_trace.h>
--- 
-2.20.1
+Sowjanya
