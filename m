@@ -1,64 +1,58 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
-Date: Tue, 6 Aug 2019 20:40:47 -0700
-Message-ID: <dadf0cc7-fba4-9ab5-6ac9-0c8699eb4401@nvidia.com>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
- <CACRpkdZVR-i1c5eATL2hSPbLXcX1sR8NgXwa4j259XXUi57xug@mail.gmail.com>
- <a2fb3795-5ec1-1d03-f496-f151d1270e90@nvidia.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCH v1 08/16] drm/sti: fix opencoded use of drm_panel_*
+Date: Wed, 7 Aug 2019 13:55:33 +0200
+Message-ID: <CA+M3ks4weUp8wtZktTj9TwLis=x4EyyRjOYh6eavvw_CxuKkuA@mail.gmail.com>
+References: <20190804201637.1240-1-sam@ravnborg.org>
+ <20190804201637.1240-9-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a2fb3795-5ec1-1d03-f496-f151d1270e90@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com, Rob Herring <robh+dt@kernel.org>, Dmitry
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190804201637.1240-9-sam@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, ML dri-devel <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Sascha Hauer <s.hauer@pengutronix.de>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-sa>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 8/6/19 2:51 PM, Sowjanya Komatineni wrote:
->
-> On 8/5/19 2:20 AM, Linus Walleij wrote:
->> On Wed, Jul 31, 2019 at 11:11 PM Sowjanya Komatineni
->> <skomatineni@nvidia.com> wrote:
->>
->>> This patch adds support for Tegra pinctrl driver suspend and resume.
->>>
->>> During suspend, context of all pinctrl registers are stored and
->>> on resume they are all restored to have all the pinmux and pad
->>> configuration for normal operation.
->>>
->>> Acked-by: Thierry Reding <treding@nvidia.com>
->>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> Patch applied to the pinctrl tree.
->>
->> This patch seems finished.
->>
->> Also if the rest don't get merged for v5.4 then at least this is so
->> your patch stack gets more shallow.
->>
->> I hope it's fine to merge this separately, else tell me and I'll
->> pull it out.
->>
->> Yours,
->> Linus Walleij
->
-> Yes, this patch can be merged separately. But, there's latest feedback 
-> from Dmitry to add barrier after writes to make sure pinmux register 
-> writes happen.
->
-> So will update this patch to add barrier in v8. So, need to wait for v8.
->
-> Thanks
->
-> Sowjanya
->
-I see it merged. So will exclude suspend/resume patch and will add patch 
-for necessary write barrier fix in v8 version.
-
-Thanks
-
-Sowjanya
+TGUgZGltLiA0IGFvw7t0IDIwMTkgw6AgMjI6MTcsIFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3Jn
+Lm9yZz4gYSDDqWNyaXQgOgo+Cj4gVXNlIHRoZSBkcm1fcGFuZWxfKGVuYWJsZXxkaXNhYmxlfGdl
+dF9tb2RlcykgZnVuY3Rpb25zLgoKQXBwbGllZCBvbiBkcm0tbWlzYy1uZXh0LApUaGFua3MuCgpC
+ZW5qYW1pbgoKPgo+IFNpZ25lZC1vZmYtYnk6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9y
+Zz4KPiBDYzogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQGxpbmFyby5vcmc+
+Cj4gQ2M6IFZpbmNlbnQgQWJyaW91IDx2aW5jZW50LmFicmlvdUBzdC5jb20+Cj4gLS0tCj4gIGRy
+aXZlcnMvZ3B1L2RybS9zdGkvc3RpX2R2by5jIHwgOCArKystLS0tLQo+ICAxIGZpbGUgY2hhbmdl
+ZCwgMyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9zdGkvc3RpX2R2by5jIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfZHZvLmMK
+PiBpbmRleCA5ZTZkNWQ4YjcwMzAuLmU1NTg3MDE5MGJmNSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vc3RpL3N0aV9kdm8uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2R2
+by5jCj4gQEAgLTIyMSw4ICsyMjEsNyBAQCBzdGF0aWMgdm9pZCBzdGlfZHZvX2Rpc2FibGUoc3Ry
+dWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKPgo+ICAgICAgICAgd3JpdGVsKDB4MDAwMDAwMDAsIGR2
+by0+cmVncyArIERWT19ET0ZfQ0ZHKTsKPgo+IC0gICAgICAgaWYgKGR2by0+cGFuZWwpCj4gLSAg
+ICAgICAgICAgICAgIGR2by0+cGFuZWwtPmZ1bmNzLT5kaXNhYmxlKGR2by0+cGFuZWwpOwo+ICsg
+ICAgICAgZHJtX3BhbmVsX2Rpc2FibGUoZHZvLT5wYW5lbCk7Cj4KPiAgICAgICAgIC8qIERpc2Fi
+bGUvdW5wcmVwYXJlIGR2byBjbG9jayAqLwo+ICAgICAgICAgY2xrX2Rpc2FibGVfdW5wcmVwYXJl
+KGR2by0+Y2xrX3BpeCk7Cj4gQEAgLTI2Miw4ICsyNjEsNyBAQCBzdGF0aWMgdm9pZCBzdGlfZHZv
+X3ByZV9lbmFibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKPiAgICAgICAgIGlmIChjbGtf
+cHJlcGFyZV9lbmFibGUoZHZvLT5jbGspKQo+ICAgICAgICAgICAgICAgICBEUk1fRVJST1IoIkZh
+aWxlZCB0byBwcmVwYXJlL2VuYWJsZSBkdm8gY2xrXG4iKTsKPgo+IC0gICAgICAgaWYgKGR2by0+
+cGFuZWwpCj4gLSAgICAgICAgICAgICAgIGR2by0+cGFuZWwtPmZ1bmNzLT5lbmFibGUoZHZvLT5w
+YW5lbCk7Cj4gKyAgICAgICBkcm1fcGFuZWxfZW5hYmxlKGR2by0+cGFuZWwpOwo+Cj4gICAgICAg
+ICAvKiBTZXQgTFVUICovCj4gICAgICAgICB3cml0ZWwoY29uZmlnLT5sb3dieXRlLCAgZHZvLT5y
+ZWdzICsgRFZPX0xVVF9QUk9HX0xPVyk7Cj4gQEAgLTM0MCw3ICszMzgsNyBAQCBzdGF0aWMgaW50
+IHN0aV9kdm9fY29ubmVjdG9yX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVj
+dG9yKQo+ICAgICAgICAgc3RydWN0IHN0aV9kdm8gKmR2byA9IGR2b19jb25uZWN0b3ItPmR2bzsK
+Pgo+ICAgICAgICAgaWYgKGR2by0+cGFuZWwpCj4gLSAgICAgICAgICAgICAgIHJldHVybiBkdm8t
+PnBhbmVsLT5mdW5jcy0+Z2V0X21vZGVzKGR2by0+cGFuZWwpOwo+ICsgICAgICAgICAgICAgICBy
+ZXR1cm4gZHJtX3BhbmVsX2dldF9tb2Rlcyhkdm8tPnBhbmVsKTsKPgo+ICAgICAgICAgcmV0dXJu
+IDA7Cj4gIH0KPiAtLQo+IDIuMjAuMQo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbA==
