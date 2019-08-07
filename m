@@ -1,66 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
-Date: Wed, 7 Aug 2019 15:11:29 +0200
-Message-ID: <CACRpkda+YGfRYXbT2Okq8rO82ZWQAJJPMqK_EyTRe4PLUsxvNw@mail.gmail.com>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
- <CACRpkdZVR-i1c5eATL2hSPbLXcX1sR8NgXwa4j259XXUi57xug@mail.gmail.com>
- <a2fb3795-5ec1-1d03-f496-f151d1270e90@nvidia.com> <dadf0cc7-fba4-9ab5-6ac9-0c8699eb4401@nvidia.com>
+Subject: Re: [PATCH 0/4] gpio: hierarchical IRQ improvements
+Date: Wed, 7 Aug 2019 15:41:05 +0200
+Message-ID: <CACRpkdYQhyh1BW789OcxGTomMkC3e8hMr8sodbWz-z1=5s9fDw@mail.gmail.com>
+References: <20190708110138.24657-1-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <dadf0cc7-fba4-9ab5-6ac9-0c8699eb4401@nvidia.com>
+In-Reply-To: <20190708110138.24657-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com, Rob Herring <robh+dt@kernel.org>, Dmitry Osipenko <dig>
+To: Brian Masney <masneyb@onstation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, linux-tegra@vger.kernel.org, David Daney <david.daney@cavium.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thierry Reding <treding@nvidia.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <agross@kernel.org>, MSM <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 7, 2019 at 5:40 AM Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
-> On 8/6/19 2:51 PM, Sowjanya Komatineni wrote:
-> >
-> > On 8/5/19 2:20 AM, Linus Walleij wrote:
-> >> On Wed, Jul 31, 2019 at 11:11 PM Sowjanya Komatineni
-> >> <skomatineni@nvidia.com> wrote:
-> >>
-> >>> This patch adds support for Tegra pinctrl driver suspend and resume.
-> >>>
-> >>> During suspend, context of all pinctrl registers are stored and
-> >>> on resume they are all restored to have all the pinmux and pad
-> >>> configuration for normal operation.
-> >>>
-> >>> Acked-by: Thierry Reding <treding@nvidia.com>
-> >>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> >>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> >> Patch applied to the pinctrl tree.
-> >>
-> >> This patch seems finished.
-> >>
-> >> Also if the rest don't get merged for v5.4 then at least this is so
-> >> your patch stack gets more shallow.
-> >>
-> >> I hope it's fine to merge this separately, else tell me and I'll
-> >> pull it out.
-> >>
-> >> Yours,
-> >> Linus Walleij
-> >
-> > Yes, this patch can be merged separately. But, there's latest feedback
-> > from Dmitry to add barrier after writes to make sure pinmux register
-> > writes happen.
-> >
-> > So will update this patch to add barrier in v8. So, need to wait for v8.
-> >
-> > Thanks
-> >
-> > Sowjanya
-> >
-> I see it merged. So will exclude suspend/resume patch and will add patch
-> for necessary write barrier fix in v8 version.
+On Mon, Jul 8, 2019 at 1:01 PM Brian Masney <masneyb@onstation.org> wrote:
 
-Yeah just make an incremental patch, that's fine.
-If you want to overdo it you can add a Fixes: tag to
-the original patch, but I don't care much.
+> This builds on top of Linus Walleij's existing patches that adds
+> hierarchical IRQ support to the GPIO core [1] so that Qualcomm's
+> spmi-gpio and ssbi-gpio can be converted to use these new helpers.
+>
+> Linus: Feel free to squash these into your existing patches if you'd
+> like to use any of this code. Just give me some kind of mention in the
+> commit description.
+>
+> [1] https://lore.kernel.org/linux-gpio/20190624132531.6184-1-linus.walleij@linaro.org/
+>
+> Brian Masney (4):
+>   gpio: introduce gpiochip_populate_parent_fwspec_{two,four}cell
+>     functions
+>   gpio: allow customizing hierarchical IRQ chips
+>   gpio: use handler in gpio_irq_chip instead of handle_bad_irq
+>   qcom: spmi-gpio: convert to hierarchical IRQ helpers in gpio core
+
+I solved things like this:
+
+- I kept patches 1 & 4 as-is
+- I squashed patches 2 and 3 into the main patch with minor modifications.
+- I added Co-developed-by: for your contributions
+
+Now I need to address Masahiro's comments on top and let's see if the
+result looks acceptable!
 
 Yours,
 Linus Walleij
