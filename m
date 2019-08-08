@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v8 08/21] clk: tegra: periph: Add restore_context support
-Date: Thu, 8 Aug 2019 16:46:47 -0700
-Message-ID: <1565308020-31952-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 07/21] clk: Add API to get index of the clock parent
+Date: Thu, 8 Aug 2019 16:46:46 -0700
+Message-ID: <1565308020-31952-8-git-send-email-skomatineni@nvidia.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,108 +12,55 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch implements restore_context support for clk-periph and
-clk-sdmmc-mux clock operations to restore clock parent and rates
-on system resume.
-
-During system suspend, core power goes off and looses the context
-of the Tegra clock controller registers.
-
-So on system resume, clocks parent and rate are restored back to
-the context before suspend based on cached data.
+This patch adds an API clk_hw_get_parent_index to get index of the
+clock parent to use during the clock restore operations on system
+resume.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-periph.c    | 18 ++++++++++++++++++
- drivers/clk/tegra/clk-sdmmc-mux.c | 12 ++++++++++++
- 2 files changed, 30 insertions(+)
+ drivers/clk/clk.c            | 17 +++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index 58437da25156..c9d28cbadccc 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c0990703ce54..f26252e48f73 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1643,6 +1643,23 @@ static int clk_fetch_parent_index(struct clk_core *core,
+ 	return i;
+ }
+ 
++/**
++ * clk_hw_get_parent_index - return the index of parent clock
++ * @hw: clk_hw associated with the clk being consumed
++ * @parent_hw: clk_hw associated with the parent of clk
++ *
++ * Fetches and returns the index of parent clock.
++ * if hw or parent_hw is NULL, returns -EINVAL.
++ */
++int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw)
++{
++	if (!hw || !parent_hw)
++		return -EINVAL;
++
++	return clk_fetch_parent_index(hw->core, parent_hw->core);
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
++
+ /*
+  * Update the orphan status of @core and all its children.
   */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-@@ -99,6 +100,20 @@ static void clk_periph_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
- }
- 
-+static void clk_periph_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_periph *periph = to_clk_periph(hw);
-+	const struct clk_ops *div_ops = periph->div_ops;
-+	struct clk_hw *div_hw = &periph->divider.hw;
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	int parent_id = clk_hw_get_parent_index(hw, parent);
-+
-+	if (!(periph->gate.flags & TEGRA_PERIPH_NO_DIV))
-+		div_ops->restore_context(div_hw);
-+
-+	clk_periph_set_parent(hw, parent_id);
-+}
-+
- const struct clk_ops tegra_clk_periph_ops = {
- 	.get_parent = clk_periph_get_parent,
- 	.set_parent = clk_periph_set_parent,
-@@ -108,6 +123,7 @@ const struct clk_ops tegra_clk_periph_ops = {
- 	.is_enabled = clk_periph_is_enabled,
- 	.enable = clk_periph_enable,
- 	.disable = clk_periph_disable,
-+	.restore_context = clk_periph_restore_context,
- };
- 
- static const struct clk_ops tegra_clk_periph_nodiv_ops = {
-@@ -116,6 +132,7 @@ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
- 	.is_enabled = clk_periph_is_enabled,
- 	.enable = clk_periph_enable,
- 	.disable = clk_periph_disable,
-+	.restore_context = clk_periph_restore_context,
- };
- 
- static const struct clk_ops tegra_clk_periph_no_gate_ops = {
-@@ -124,6 +141,7 @@ static const struct clk_ops tegra_clk_periph_no_gate_ops = {
- 	.recalc_rate = clk_periph_recalc_rate,
- 	.round_rate = clk_periph_round_rate,
- 	.set_rate = clk_periph_set_rate,
-+	.restore_context = clk_periph_restore_context,
- };
- 
- static struct clk *_tegra_clk_register_periph(const char *name,
-diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
-index a5cd3e31dbae..8db48966b100 100644
---- a/drivers/clk/tegra/clk-sdmmc-mux.c
-+++ b/drivers/clk/tegra/clk-sdmmc-mux.c
-@@ -194,6 +194,17 @@ static void clk_sdmmc_mux_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
- }
- 
-+static void clk_sdmmc_mux_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+	int parent_id = clk_hw_get_parent_index(hw, parent);
-+
-+	clk_sdmmc_mux_set_parent(hw, parent_id);
-+	clk_sdmmc_mux_set_rate(hw, rate, parent_rate);
-+}
-+
- static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
- 	.get_parent = clk_sdmmc_mux_get_parent,
- 	.set_parent = clk_sdmmc_mux_set_parent,
-@@ -203,6 +214,7 @@ static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
- 	.is_enabled = clk_sdmmc_mux_is_enabled,
- 	.enable = clk_sdmmc_mux_enable,
- 	.disable = clk_sdmmc_mux_disable,
-+	.restore_context = clk_sdmmc_mux_restore_context,
- };
- 
- struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2ae7604783dd..477112946dd2 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -817,6 +817,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+ 					  unsigned int index);
++int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+ unsigned long __clk_get_flags(struct clk *clk);
 -- 
 2.7.4
