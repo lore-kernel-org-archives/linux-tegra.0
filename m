@@ -1,81 +1,43 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] Revert "mmc: sdhci-tegra: drop ->get_ro() implementation"
-Date: Fri,  9 Aug 2019 01:24:30 +0300
-Message-ID: <20190808222430.28477-1-digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH v8 01/21] pinctrl: tegra: Fix write barrier placement in pmx_writel
+Date: Thu, 8 Aug 2019 16:46:40 -0700
+Message-ID: <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The WRITE_PROTECT bit is always in a "protected mode" on Tegra and
-WP-GPIO state need to be used instead. In a case of the GPIO absence,
-write-enable should be assumed. External SD is writable once again as
-a result of this patch because the offending commit changed behaviour for
-the case of a missing WP-GPIO to fall back to WRITE_PROTECT bit-checking,
-which is incorrect for Tegra.
+pmx_writel uses writel which inserts write barrier before the
+register write rather.
 
-Cc: stable@vger.kernel.org # v5.1+
-Fixes: e8391453e27f ("mmc: sdhci-tegra: drop ->get_ro() implementation")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+This patch has fix to replace writel with writel_relaxed followed
+by a write barrier to ensure write operation before the barrier
+is completed for successful pinctrl change.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index f4d4761cf20a..02d8f524bb9e 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -258,6 +258,16 @@ static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
- 	}
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index e3a237534281..982ee634b3b1 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -32,7 +32,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+ 
+ static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
+ {
+-	writel(val, pmx->regs[bank] + reg);
++	writel_relaxed(val, pmx->regs[bank] + reg);
++	/* make sure pinmux register write completed */
++	wmb();
  }
  
-+static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
-+{
-+	/*
-+	 * Write-enable shall be assumed if GPIO is missing in a board's
-+	 * device-tree because SDHCI's WRITE_PROTECT bit doesn't work on
-+	 * Tegra.
-+	 */
-+	return mmc_gpio_get_ro(host->mmc);
-+}
-+
- static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -1224,6 +1234,7 @@ static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
- };
- 
- static const struct sdhci_ops tegra_sdhci_ops = {
-+	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-@@ -1279,6 +1290,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- };
- 
- static const struct sdhci_ops tegra114_sdhci_ops = {
-+	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_w    = tegra_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
-@@ -1332,6 +1344,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
- };
- 
- static const struct sdhci_ops tegra210_sdhci_ops = {
-+	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_w    = tegra210_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
-@@ -1366,6 +1379,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- };
- 
- static const struct sdhci_ops tegra186_sdhci_ops = {
-+	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
+ static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
 -- 
-2.22.0
+2.7.4
