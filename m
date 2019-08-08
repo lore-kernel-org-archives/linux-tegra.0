@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v8 02/21] pinctrl: tegra: Add write barrier after all pinctrl register writes
-Date: Thu, 8 Aug 2019 16:46:41 -0700
-Message-ID: <1565308020-31952-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 03/21] clk: tegra: divider: Save and restore divider rate
+Date: Thu, 8 Aug 2019 16:46:42 -0700
+Message-ID: <1565308020-31952-4-git-send-email-skomatineni@nvidia.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,26 +12,44 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds write barrier after all pinctrl register writes
-during resume to make sure all pinctrl changes are complete.
+This patch implements context restore for clock divider.
 
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
+
+So on resume, clock dividers are restored back for normal operation.
+
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/tegra/clk-divider.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 982ee634b3b1..f49fe29fb6df 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -677,6 +677,8 @@ static int tegra_pinctrl_resume(struct device *dev)
- 			writel_relaxed(*backup_regs++, regs++);
- 	}
- 
-+	/* make sure all the pinmux register writes are complete */
-+	wmb();
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index e76731fb7d69..ca0de5f11f84 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -109,10 +109,21 @@ static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
  	return 0;
  }
  
++static void clk_divider_restore_context(struct clk_hw *hw)
++{
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++	unsigned long rate = clk_hw_get_rate(hw);
++
++	if (clk_frac_div_set_rate(hw, rate, parent_rate) < 0)
++		WARN_ON(1);
++}
++
+ const struct clk_ops tegra_clk_frac_div_ops = {
+ 	.recalc_rate = clk_frac_div_recalc_rate,
+ 	.set_rate = clk_frac_div_set_rate,
+ 	.round_rate = clk_frac_div_round_rate,
++	.restore_context = clk_divider_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_divider(const char *name,
 -- 
 2.7.4
