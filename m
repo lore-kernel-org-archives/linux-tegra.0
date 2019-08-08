@@ -1,153 +1,81 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH v6 19/24] drm/bridge: dumb-vga-dac: Provide
- ddc symlink in connector sysfs directory
-Date: Wed, 7 Aug 2019 20:42:08 -0700
-Message-ID: <20190808034208.GA31284@roeck-us.net>
-References: <cover.1564161140.git.andrzej.p@collabora.com>
- <ebb75e71b8b7c8d65d54a947a03fd21b8969fb3a.1564161140.git.andrzej.p@collabora.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] Revert "mmc: sdhci-tegra: drop ->get_ro() implementation"
+Date: Fri,  9 Aug 2019 01:24:30 +0300
+Message-ID: <20190808222430.28477-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <ebb75e71b8b7c8d65d54a947a03fd21b8969fb3a.1564161140.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Jonas Karlman <jonas-uIzNG4q0ceqzQB+pC5nmwQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Mamta Shukla <mamtashukla555-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBKdWwgMjYsIDIwMTkgYXQgMDc6MjM6MTNQTSArMDIwMCwgQW5kcnplaiBQaWV0cmFz
-aWV3aWN6IHdyb3RlOgo+IFVzZSB0aGUgZGRjIHBvaW50ZXIgcHJvdmlkZWQgYnkgdGhlIGdlbmVy
-aWMgY29ubmVjdG9yLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogUGlldHJhc2lld2ljeiA8
-YW5kcnplai5wQGNvbGxhYm9yYS5jb20+Cj4gUmV2aWV3ZWQtYnk6IE5laWwgQXJtc3Ryb25nIDxu
-YXJtc3Ryb25nQGJheWxpYnJlLmNvbT4KClRoaXMgcGF0Y2ggcmVzdWx0cyBpbiBhIGNyYXNoIHdo
-ZW4gcnVubmluZyBxZW11OnZlcnNhdGlsZXBiLgoKVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVM
-TCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0IHZpcnR1YWwgYWRkcmVzcyAwMDAwMDBjNQpwZ2QgPSAo
-cHRydmFsKQpbMDAwMDAwYzVdICpwZ2Q9MDAwMDAwMDAKSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDUg
-WyMxXSBBUk0KTW9kdWxlcyBsaW5rZWQgaW46CkNQVTogMCBQSUQ6IDEgQ29tbTogc3dhcHBlciBO
-b3QgdGFpbnRlZCA1LjMuMC1yYzErICMxCkhhcmR3YXJlIG5hbWU6IEFSTS1WZXJzYXRpbGUgKERl
-dmljZSBUcmVlIFN1cHBvcnQpClBDIGlzIGF0IHN5c2ZzX2RvX2NyZWF0ZV9saW5rX3NkKzB4Mzgv
-MHhkOApMUiBpcyBhdCBzeXNmc19kb19jcmVhdGVfbGlua19zZCsweDM4LzB4ZDgKcGMgOiBbPGMw
-MWFjOTRjPl0gICAgbHIgOiBbPGMwMWFjOTRjPl0gICAgcHNyOiBhMDAwMDE1MwpzcCA6IGM3ODNi
-ZDE4ICBpcCA6IDAwMDAwMDAwICBmcCA6IGM3ODNiZGU4CnIxMDogYzdlZjVlYTggIHI5IDogMDAw
-MDAwMDEgIHI4IDogYzA5NTVkYzAKcjcgOiBjNzNjYjViMCAgcjYgOiBjNzNjZDgwMCAgcjUgOiAw
-MDAwMDBhZCAgcjQgOiAwMDAwMDAwMApyMyA6IGM3ODM4YWUwICByMiA6IDAwMDAwMDAwICByMSA6
-IDAwMDAwMDA4ICByMCA6IGMwYWEyODk4CkZsYWdzOiBOekN2ICBJUlFzIG9uICBGSVFzIG9mZiAg
-TW9kZSBTVkNfMzIgIElTQSBBUk0gIFNlZ21lbnQgbm9uZQpDb250cm9sOiAwMDA5MzE3NyAgVGFi
-bGU6IDAwMDA0MDAwICBEQUM6IDAwMDAwMDUzClByb2Nlc3Mgc3dhcHBlciAocGlkOiAxLCBzdGFj
-ayBsaW1pdCA9IDB4KHB0cnZhbCkpClN0YWNrOiAoMHhjNzgzYmQxOCB0byAweGM3ODNjMDAwKQpi
-ZDAwOiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBjNzNjY2M0OCBjNzNjY2M3NApiZDIwOiBjNzNjZDgwMCBjMGFjN2M4OCAwMDAwMDAwMCBjNzI5
-Y2M4MCBjN2VmNWVhOCBjMDRjN2ZjMCBjNzNjY2M0OCBjMGE3MzA2OApiZDQwOiBjNzNjZDgwMCBj
-MGFjN2M4OCAwMDAwMDAwMCBjMDRjODdlMCAwMDAwMDAwMSAwMDAwMDAwMCBjMDRjZWZjYyBjMDRk
-YzNmOApiZDYwOiBjNzNhOTAzMCBjNzNjZDgwMCBjNzNjY2M0OCA3ZmMyY2UzNyAwMDAwMDAwMCBj
-NzNjZDgwMCAwMDAwMDAwMCBjMDRjZWZjYwpiZDgwOiBjNzNjZDgwMCAwMDAwMDAwMCAwMDAwMDAw
-MCBjMDRiNGViYyBjMGE3MzA2OCBjN2VmNWVhOCBjNzgzYmRlOCBjMDQ5ZmZjYwpiZGEwOiBjNzNh
-OTAyMCBjNzNjZDgwMCBjNzhlNjAwMCBjNzNhOTAyMCAwMDAwMDAwMCBjNzNhOTAyMCBjMGE3MzA2
-OCBjMDRkZjJmOApiZGMwOiBjNzgzYmRlOCBjMDk1YTc2YyBjNzNhOTAyMCBjMDA2NTc0NCBjNzNj
-Y2MyMCBjNzNhOTAyMCAwMDAwMDAwMCAwMDAwMDAwMQpiZGUwOiBjNzgzOGFlMCAwMDAwMDAwMCBj
-NzNjY2MyMCA3ZmMyY2UzNyAwMDAwMDAwMCBjNzhlNjAwMCAwMDAwMDAwMCBjMGFjN2MzNApiZTAw
-OiBjMDdkYzFmOCAwMDAwMDAwMCAwMDAwMDAwMCBjMGE2YjM4NCBjMGE1OTg1OCBjMDQ1ZThkOCBj
-NzhlNjAwMCBjMTE3M2E3OApiZTIwOiAwMDAwMDAwMCBjMGFjN2MzNCAwMDAwMDAwMCBjMDRlNzdj
-NCBjNzhlNjAwMCBjMGFjN2MzNCBjMGFjN2MzNCBjMGE3MzA2OApiZTQwOiAwMDAwMDAwMCBmZmZm
-ZTAwMCBjMGE2YjM4NCBjMDRlN2EzNCBjMGFjN2MzNCBjMGFjN2MzNCBjMGE3MzA2OCBjNzhlNjAw
-MApiZTYwOiAwMDAwMDAwMCBjMGFjN2MzNCBjMGE3MzA2OCAwMDAwMDAwMCBmZmZmZTAwMCBjMGE2
-YjM4NCBjMGE1OTg1OCBjMDRlN2NmMApiZTgwOiAwMDAwMDAwMCBjMGFjN2MzNCBjNzhlNjAwMCBj
-MDRlN2Q3YyAwMDAwMDAwMCBjMGFjN2MzNCBjMDRlN2NmOCBjMDRlNTkyOApiZWEwOiBjNzNiMjgw
-MCBjNzhkODhhMCBjNzhkZDExMCA3ZmMyY2UzNyBmZmZmZTAwMCBjMGFjN2MzNCBjNzNiMjgwMCBj
-MGFjMTZlMApiZWMwOiAwMDAwMDAwMCBjMDRlNmIyOCBjMDk1YTczYyBjMGFmMGE2MCBjMGE3MzA2
-OCBjMGFjN2MzNCBjMGFmMGE2MCBjMGE3MzA2OApiZWUwOiBjMGE0MDFjNCBjMDRlODk2OCBmZmZm
-ZTAwMCBjMGFmMGE2MCBjMGE3MzA2OCBjMDAwYjNiYyAwMDAwMDExNSAwMDAwMDAwMApiZjAwOiBj
-N2ZmY2U2YyBjN2ZmY2UwMCBjMDllMTViMCAwMDAwMDExNSAwMDAwMDExNSBjMDA0ODg0NCBjMDll
-MDAwYyBjMDk3Y2ZkNApiZjIwOiAwMDAwMDAwMCAwMDAwMDAwNiAwMDAwMDAwNiAwMDAwMDAwMCAw
-MDAwMDAwMCBjN2ZmY2U2YyBmZmZmZTAwMCBjMDA2OTU0YwpiZjQwOiBmZmZmZTAwMCA3ZmMyY2Uz
-NyBjMGFmYjAwMCBjMGFmMGE2MCAwMDAwMDExNSBjMGFmYjAwMCAwMDAwMDAwNyBjMGE1OTg1MApi
-ZjYwOiBmZmZmZTAwMCBjMGExMTFlOCAwMDAwMDAwNiAwMDAwMDAwNiAwMDAwMDAwMCBjMGExMDY3
-OCAwMDAwMDAwMCA3ZmMyY2UzNwpiZjgwOiAwMDAwMDAwMCAwMDAwMDAwMCBjMDc4MjRjYyAwMDAw
-MDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMApiZmEwOiAwMDAwMDAwMCBj
-MDc4MjRkNCAwMDAwMDAwMCBjMDAwOTBiMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAw
-MDAwMApiZmMwOiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAw
-MDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMApiZmUwOiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAw
-MCAwMDAwMDAwMCAwMDAwMDAxMyAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMApbPGMwMWFjOTRj
-Pl0gKHN5c2ZzX2RvX2NyZWF0ZV9saW5rX3NkKSBmcm9tIFs8YzA0YzdmYzA+XSAoZHJtX2Nvbm5l
-Y3Rvcl9yZWdpc3Rlci5wYXJ0LjErMHg0MC8weGEwKQpbPGMwNGM3ZmMwPl0gKGRybV9jb25uZWN0
-b3JfcmVnaXN0ZXIucGFydC4xKSBmcm9tIFs8YzA0Yzg3ZTA+XSAoZHJtX2Nvbm5lY3Rvcl9yZWdp
-c3Rlcl9hbGwrMHg5MC8weGI4KQpbPGMwNGM4N2UwPl0gKGRybV9jb25uZWN0b3JfcmVnaXN0ZXJf
-YWxsKSBmcm9tIFs8YzA0Y2VmY2M+XSAoZHJtX21vZGVzZXRfcmVnaXN0ZXJfYWxsKzB4NDQvMHg2
-YykKWzxjMDRjZWZjYz5dIChkcm1fbW9kZXNldF9yZWdpc3Rlcl9hbGwpIGZyb20gWzxjMDRiNGVi
-Yz5dIChkcm1fZGV2X3JlZ2lzdGVyKzB4MTVjLzB4MWMwKQpbPGMwNGI0ZWJjPl0gKGRybV9kZXZf
-cmVnaXN0ZXIpIGZyb20gWzxjMDRkZjJmOD5dIChwbDExMV9hbWJhX3Byb2JlKzB4MmUwLzB4NGFj
-KQpbPGMwNGRmMmY4Pl0gKHBsMTExX2FtYmFfcHJvYmUpIGZyb20gWzxjMDQ1ZThkOD5dIChhbWJh
-X3Byb2JlKzB4OWMvMHgxMTgpCls8YzA0NWU4ZDg+XSAoYW1iYV9wcm9iZSkgZnJvbSBbPGMwNGU3
-N2M0Pl0gKHJlYWxseV9wcm9iZSsweDFjMC8weDJiYykKWzxjMDRlNzdjND5dIChyZWFsbHlfcHJv
-YmUpIGZyb20gWzxjMDRlN2EzND5dIChkcml2ZXJfcHJvYmVfZGV2aWNlKzB4NWMvMHgxNzApCls8
-YzA0ZTdhMzQ+XSAoZHJpdmVyX3Byb2JlX2RldmljZSkgZnJvbSBbPGMwNGU3Y2YwPl0gKGRldmlj
-ZV9kcml2ZXJfYXR0YWNoKzB4NTgvMHg2MCkKWzxjMDRlN2NmMD5dIChkZXZpY2VfZHJpdmVyX2F0
-dGFjaCkgZnJvbSBbPGMwNGU3ZDdjPl0gKF9fZHJpdmVyX2F0dGFjaCsweDg0LzB4YzApCls8YzA0
-ZTdkN2M+XSAoX19kcml2ZXJfYXR0YWNoKSBmcm9tIFs8YzA0ZTU5Mjg+XSAoYnVzX2Zvcl9lYWNo
-X2RldisweDcwLzB4YjQpCls8YzA0ZTU5Mjg+XSAoYnVzX2Zvcl9lYWNoX2RldikgZnJvbSBbPGMw
-NGU2YjI4Pl0gKGJ1c19hZGRfZHJpdmVyKzB4MTU0LzB4MWUwKQpbPGMwNGU2YjI4Pl0gKGJ1c19h
-ZGRfZHJpdmVyKSBmcm9tIFs8YzA0ZTg5Njg+XSAoZHJpdmVyX3JlZ2lzdGVyKzB4NzQvMHgxMDgp
-Cls8YzA0ZTg5Njg+XSAoZHJpdmVyX3JlZ2lzdGVyKSBmcm9tIFs8YzAwMGIzYmM+XSAoZG9fb25l
-X2luaXRjYWxsKzB4ODQvMHgyZTQpCls8YzAwMGIzYmM+XSAoZG9fb25lX2luaXRjYWxsKSBmcm9t
-IFs8YzBhMTExZTg+XSAoa2VybmVsX2luaXRfZnJlZWFibGUrMHgyYmMvMHgzOTQpCls8YzBhMTEx
-ZTg+XSAoa2VybmVsX2luaXRfZnJlZWFibGUpIGZyb20gWzxjMDc4MjRkND5dIChrZXJuZWxfaW5p
-dCsweDgvMHhmMCkKWzxjMDc4MjRkND5dIChrZXJuZWxfaW5pdCkgZnJvbSBbPGMwMDA5MGIwPl0g
-KHJldF9mcm9tX2ZvcmsrMHgxNC8weDI0KQpFeGNlcHRpb24gc3RhY2soMHhjNzgzYmZiMCB0byAw
-eGM3ODNiZmY4KQpiZmEwOiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwMDAw
-MDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMApiZmMwOiAwMDAwMDAwMCAwMDAwMDAwMCAw
-MDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMApiZmUw
-OiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAxMyAwMDAwMDAwMApD
-b2RlOiBlNTlmMDBhMCBlMWEwOTAwMyBlMWEwODAwMiBlYjE3NmU1NCAoZTU5NTUwMTgpIAotLS1b
-IGVuZCB0cmFjZSBmNTAzYjM3NDkzNjg4NmM1IF0tLS0KCkJpc2VjdCBsb2cgYXR0YWNoZWQuCgpH
-dWVudGVyCgotLS0KIyBiYWQ6IFszODgwYmU2MjllMjZmNmM0MDc1OTM2MDIzOThjNjY1MTg2MGQ1
-ZmFlXSBBZGQgbGludXgtbmV4dCBzcGVjaWZpYyBmaWxlcyBmb3IgMjAxOTA4MDcKIyBnb29kOiBb
-ZTIxYTcxMmE5Njg1NDg4ZjVjZTgwNDk1YjM3YjlmZGJlOTZjMjMwZF0gTGludXggNS4zLXJjMwpn
-aXQgYmlzZWN0IHN0YXJ0ICdIRUFEJyAndjUuMy1yYzMnCiMgZ29vZDogWzgzZDc0ZGE5ZTZkMmNh
-NzhiMzJlOWU3OTRjNmJjYmQ0MzNkNWVmYWFdIE1lcmdlIHJlbW90ZS10cmFja2luZyBicmFuY2gg
-J2NyeXB0by9tYXN0ZXInCmdpdCBiaXNlY3QgZ29vZCA4M2Q3NGRhOWU2ZDJjYTc4YjMyZTllNzk0
-YzZiY2JkNDMzZDVlZmFhCiMgYmFkOiBbM2FkZDAyMWJmZjYyOWYxNzkyYTVlNDI2OGFmZTEzYjMw
-NDdiNTUyM10gTWVyZ2UgcmVtb3RlLXRyYWNraW5nIGJyYW5jaCAnc291bmQvZm9yLW5leHQnCmdp
-dCBiaXNlY3QgYmFkIDNhZGQwMjFiZmY2MjlmMTc5MmE1ZTQyNjhhZmUxM2IzMDQ3YjU1MjMKIyBn
-b29kOiBbNGVmNThlZTE4YTY1NGIxOTkyZDAwMjgxNTAxZDZlZmYwNTFhMGM1ZV0gTWVyZ2UgcmVt
-b3RlLXRyYWNraW5nIGJyYW5jaCAnYW1kZ3B1L2RybS1uZXh0JwpnaXQgYmlzZWN0IGdvb2QgNGVm
-NThlZTE4YTY1NGIxOTkyZDAwMjgxNTAxZDZlZmYwNTFhMGM1ZQojIGdvb2Q6IFtmNzI5ZDhkOTYy
-OGQ0MDkzNjc1YWJmZDYyZDhkM2EwNmQzZDExNzMyXSBkcm0vdGlueWRybTogTW92ZSB0aW55ZHJt
-X21hY2hpbmVfbGl0dGxlX2VuZGlhbigpCmdpdCBiaXNlY3QgZ29vZCBmNzI5ZDhkOTYyOGQ0MDkz
-Njc1YWJmZDYyZDhkM2EwNmQzZDExNzMyCiMgYmFkOiBbMTc4ZTVmM2E1YmMxZDY3ZDEyNDhhNzRj
-MGFiYWI0MTA0MGFiZTdjNF0gZHJtL2NyYy1kZWJ1Z2ZzOiBBZGQgbm90ZXMgYWJvdXQgQ1JDPC0+
-Y29tbWl0IGludGVyYWN0aW9ucwpnaXQgYmlzZWN0IGJhZCAxNzhlNWYzYTViYzFkNjdkMTI0OGE3
-NGMwYWJhYjQxMDQwYWJlN2M0CiMgZ29vZDogWzA0ODZhZDIwZTczZDAzYzgyMjA4YjgwMmFjNDFl
-ODBiOTQyYjIzZjZdIGRybS9yb2NrY2hpcDogTWFrZSBhbmFsb2dpeF9kcF9hdG9taWNfY2hlY2sg
-c3RhdGljCmdpdCBiaXNlY3QgZ29vZCAwNDg2YWQyMGU3M2QwM2M4MjIwOGI4MDJhYzQxZTgwYjk0
-MmIyM2Y2CiMgYmFkOiBbOTJjYjNlNTk4MDYzOGEzN2M1NjA5MWU2MDVhYTgzN2QwYWYwNWE5ZF0g
-ZG1hLWJ1ZjogZml4IHN0YWNrIGNvcnJ1cHRpb24gaW4gZG1hX2ZlbmNlX2NoYWluX3JlbGVhc2UK
-Z2l0IGJpc2VjdCBiYWQgOTJjYjNlNTk4MDYzOGEzN2M1NjA5MWU2MDVhYTgzN2QwYWYwNWE5ZAoj
-IGdvb2Q6IFszNTBmZDU1NGVlNDQzMjU2NjFkMGQzYzM4MzFmNDI4ZjRmYmIwZjJkXSBkcm0vYXN0
-OiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKZ2l0IGJp
-c2VjdCBnb29kIDM1MGZkNTU0ZWU0NDMyNTY2MWQwZDNjMzgzMWY0MjhmNGZiYjBmMmQKIyBiYWQ6
-IFsyOGJhMWIxZGE0OWEyMGJhOGZiNzY3ZDZkZGQ3YzUyMWVjNzlhMTE5XSBkcm06IG1hbGktZHA6
-IE1hcmsgZXhwZWN0ZWQgc3dpdGNoIGZhbGwtdGhyb3VnaApnaXQgYmlzZWN0IGJhZCAyOGJhMWIx
-ZGE0OWEyMGJhOGZiNzY3ZDZkZGQ3YzUyMWVjNzlhMTE5CiMgYmFkOiBbNWI1MGZhMmIzNWE0ZGRh
-ZDExY2IzZDA2MjMxYmY3MTc1OWI0OTU2Nl0gZHJtL2FtZGdwdTogUHJvdmlkZSBkZGMgc3ltbGlu
-ayBpbiBjb25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5CmdpdCBiaXNlY3QgYmFkIDViNTBmYTJiMzVh
-NGRkYWQxMWNiM2QwNjIzMWJmNzE3NTliNDk1NjYKIyBiYWQ6IFs5ZWJjNGQyMTQwYWRjZGVhMjM5
-OWI0MmQzZjBkMmY3ZTE0MWFjMWE4XSBkcm0vYnJpZGdlOiBkdy1oZG1pOiBQcm92aWRlIGRkYyBz
-eW1saW5rIGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKZ2l0IGJpc2VjdCBiYWQgOWViYzRk
-MjE0MGFkY2RlYTIzOTliNDJkM2YwZDJmN2UxNDFhYzFhOAojIGJhZDogW2E0ZjkwODdlODVkZTE0
-MWU0ZTZkMjFhYzJjNTgzYWUwOTZjYzlhYmFdIGRybS9icmlkZ2U6IGR1bWItdmdhLWRhYzogUHJv
-dmlkZSBkZGMgc3ltbGluayBpbiBjb25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5CmdpdCBiaXNlY3Qg
-YmFkIGE0ZjkwODdlODVkZTE0MWU0ZTZkMjFhYzJjNTgzYWUwOTZjYzlhYmEKIyBmaXJzdCBiYWQg
-Y29tbWl0OiBbYTRmOTA4N2U4NWRlMTQxZTRlNmQyMWFjMmM1ODNhZTA5NmNjOWFiYV0gZHJtL2Jy
-aWRnZTogZHVtYi12Z2EtZGFjOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNm
-cyBkaXJlY3RvcnkKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApGcmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5v
+The WRITE_PROTECT bit is always in a "protected mode" on Tegra and
+WP-GPIO state need to be used instead. In a case of the GPIO absence,
+write-enable should be assumed. External SD is writable once again as
+a result of this patch because the offending commit changed behaviour for
+the case of a missing WP-GPIO to fall back to WRITE_PROTECT bit-checking,
+which is incorrect for Tegra.
+
+Cc: stable@vger.kernel.org # v5.1+
+Fixes: e8391453e27f ("mmc: sdhci-tegra: drop ->get_ro() implementation")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index f4d4761cf20a..02d8f524bb9e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -258,6 +258,16 @@ static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
+ 	}
+ }
+ 
++static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
++{
++	/*
++	 * Write-enable shall be assumed if GPIO is missing in a board's
++	 * device-tree because SDHCI's WRITE_PROTECT bit doesn't work on
++	 * Tegra.
++	 */
++	return mmc_gpio_get_ro(host->mmc);
++}
++
+ static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -1224,6 +1234,7 @@ static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+ };
+ 
+ static const struct sdhci_ops tegra_sdhci_ops = {
++	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = tegra_sdhci_set_clock,
+@@ -1279,6 +1290,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+ };
+ 
+ static const struct sdhci_ops tegra114_sdhci_ops = {
++	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_w    = tegra_sdhci_writew,
+ 	.write_l    = tegra_sdhci_writel,
+@@ -1332,6 +1344,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+ };
+ 
+ static const struct sdhci_ops tegra210_sdhci_ops = {
++	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_w    = tegra210_sdhci_writew,
+ 	.write_l    = tegra_sdhci_writel,
+@@ -1366,6 +1379,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+ };
+ 
+ static const struct sdhci_ops tegra186_sdhci_ops = {
++	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = tegra_sdhci_set_clock,
+-- 
+2.22.0
