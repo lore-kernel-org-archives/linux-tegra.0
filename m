@@ -1,18 +1,17 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v8 11/21] clk: tegra: clk-dfll: Add suspend and resume
- support
-Date: Fri, 9 Aug 2019 11:33:26 -0700
-Message-ID: <9902aa72-3f18-9840-35ad-137293d2e26c@nvidia.com>
+Subject: Re: [PATCH v8 05/21] clk: tegra: pll: Save and restore pll context
+Date: Fri, 9 Aug 2019 11:50:33 -0700
+Message-ID: <9096cbca-f647-b0af-2ab8-d48769555c3e@nvidia.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
- <eb4fdab8-aba3-7f0c-a391-d751674fd03e@gmail.com>
- <29a85a35-10ff-2d43-d148-9dba1ee25869@nvidia.com>
- <84a0d46a-bca2-1000-a2a6-8890ee702dd3@gmail.com>
+ <1565308020-31952-6-git-send-email-skomatineni@nvidia.com>
+ <68f65db6-44b7-1c75-2633-4a2fffd62a92@gmail.com>
+ <dd20aa34-d838-40c4-9edd-bbe5973053f3@nvidia.com>
+ <2eecf4ff-802d-7e0e-d971-0257fae4e3a2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <84a0d46a-bca2-1000-a2a6-8890ee702dd3@gmail.com>
+In-Reply-To: <2eecf4ff-802d-7e0e-d971-0257fae4e3a2@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
@@ -20,104 +19,60 @@ Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vg
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 8/9/19 11:00 AM, Dmitry Osipenko wrote:
-> 09.08.2019 19:39, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 8/9/19 5:23 AM, Dmitry Osipenko wrote:
+On 8/9/19 10:50 AM, Dmitry Osipenko wrote:
+> 09.08.2019 20:39, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 8/9/19 4:33 AM, Dmitry Osipenko wrote:
 >>> 09.08.2019 2:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> This patch implements DFLL suspend and resume operation.
+>>>> This patch implements save and restore of PLL context.
 >>>>
->>>> During system suspend entry, CPU clock will switch CPU to safe
->>>> clock source of PLLP and disables DFLL clock output.
+>>>> During system suspend, core power goes off and looses the settings
+>>>> of the Tegra CAR controller registers.
 >>>>
->>>> DFLL driver suspend confirms DFLL disable state and errors out on
->>>> being active.
+>>>> So during suspend entry pll context is stored and on resume it is
+>>>> restored back along with its state.
 >>>>
->>>> DFLL is re-initialized during the DFLL driver resume as it goes
->>>> through complete reset during suspend entry.
->>>>
+>>>> Acked-by: Thierry Reding <treding@nvidia.com>
 >>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 >>>> ---
->>>>  =C2=A0 drivers/clk/tegra/clk-dfll.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 56 ++++++++++++++++++=
-++++++++++++
->>>>  =C2=A0 drivers/clk/tegra/clk-dfll.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 ++
->>>>  =C2=A0 drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |=C2=A0 1 +
->>>>  =C2=A0 3 files changed, 59 insertions(+)
+>>>>  =C2=A0 drivers/clk/tegra/clk-pll.c | 88 ++++++++++++++++++++++++++++-=
+----------------
+>>>>  =C2=A0 drivers/clk/tegra/clk.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 ++
+>>>>  =C2=A0 2 files changed, 58 insertions(+), 32 deletions(-)
 >>>>
->>>> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll=
-.c
->>>> index f8688c2ddf1a..eb298a5d7be9 100644
->>>> --- a/drivers/clk/tegra/clk-dfll.c
->>>> +++ b/drivers/clk/tegra/clk-dfll.c
->>>> @@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 td->last_unrounded_rate =3D 0;
->>>>  =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_enable(td->dev);
->>>> +=C2=A0=C2=A0=C2=A0 pm_runtime_irq_safe(td->dev);
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_get_sync(td->dev);
->>>>  =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dfll_set_mode(td, DFLL_DISABLED=
-);
->>>> @@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+>>>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>>>> index 1583f5fc992f..e52add2bbdbb 100644
+>>>> --- a/drivers/clk/tegra/clk-pll.c
+>>>> +++ b/drivers/clk/tegra/clk-pll.c
+>>>> @@ -1008,6 +1008,28 @@ static unsigned long clk_plle_recalc_rate(struc=
+t clk_hw *hw,
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return rate;
 >>>>  =C2=A0 }
->>>>  =C2=A0 +/**
->>>> + * tegra_dfll_suspend - check DFLL is disabled
->>>> + * @dev: DFLL device *
->>>> + *
->>>> + * DFLL clock should be disabled by the CPUFreq driver. So, make
->>>> + * sure it is disabled and disable all clocks needed by the DFLL.
->>>> + */
->>>> +int tegra_dfll_suspend(struct device *dev)
+>>>>  =C2=A0 +static void tegra_clk_pll_restore_context(struct clk_hw *hw)
 >>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct tegra_dfll *td =3D dev_get_drvdata(dev);
+>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_clk_pll *pll =3D to_clk_pll(hw);
+>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw *parent =3D clk_hw_get_parent(hw);
+>>>> +=C2=A0=C2=A0=C2=A0 unsigned long parent_rate =3D clk_hw_get_rate(pare=
+nt);
+>>>> +=C2=A0=C2=A0=C2=A0 unsigned long rate =3D clk_hw_get_rate(hw);
+>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
 >>>> +
->>>> +=C2=A0=C2=A0=C2=A0 if (dfll_is_running(td)) {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(td->dev, "dfll is =
-enabled while shouldn't be\n");
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EBUSY;
->>>> +=C2=A0=C2=A0=C2=A0 }
+>>>> +=C2=A0=C2=A0=C2=A0 if (clk_pll_is_enabled(hw))
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
 >>>> +
->>>> +=C2=A0=C2=A0=C2=A0 reset_control_assert(td->dvco_rst);
+>>>> +=C2=A0=C2=A0=C2=A0 if (pll->params->set_defaults)
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pll->params->set_defaults(=
+pll);
 >>>> +
->>>> +=C2=A0=C2=A0=C2=A0 return 0;
->>>> +}
->>>> +EXPORT_SYMBOL(tegra_dfll_suspend);
+>>>> +=C2=A0=C2=A0=C2=A0 clk_pll_set_rate(hw, rate, parent_rate);
 >>>> +
->>>> +/**
->>>> + * tegra_dfll_resume - reinitialize DFLL on resume
->>>> + * @dev: DFLL instance
->>>> + *
->>>> + * DFLL is disabled and reset during suspend and resume.
->>>> + * So, reinitialize the DFLL IP block back for use.
->>>> + * DFLL clock is enabled later in closed loop mode by CPUFreq
->>>> + * driver before switching its clock source to DFLL output.
->>>> + */
->>>> +int tegra_dfll_resume(struct device *dev)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct tegra_dfll *td =3D dev_get_drvdata(dev);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 reset_control_deassert(td->dvco_rst);
->>> This doesn't look right because I assume that DFLL resetting is
->>> synchronous and thus clk should be enabled in order for reset to
->>> propagate inside hardware.
->>>
->>>> +=C2=A0=C2=A0=C2=A0 pm_runtime_get_sync(td->dev);
->>> Hence it will be better to remove the above reset_control_deassert() an=
-d
->>> add here:
->>>
->>>  =C2=A0=C2=A0=C2=A0=C2=A0reset_control_reset(td->dvco_rst);
->> By the time dfll resume happens, dfll controller clock will already be e=
-nabled.
->>
->> so doing reset de-assert before pm_runtime seems ok.
-> I don't see what enables the DFLL clock because it should be enabled by t=
-he CPUFreq driver
-> on resume from suspend and resume happens after resuming of the DFLL driv=
-er.
+>>>> +=C2=A0=C2=A0=C2=A0 if (!__clk_get_enable_count(hw->clk))
+>>> What about orphaned clocks? Is enable_count > 0 for them?
+>> There are no orphaned pll clocks.
+> Sorry, I meant the "clk_ignore_unused".
 
-dvco_rst is part of peripheral clocks and all peripheral clocks are=20
-restored by clk-tegra210 driver which happens before dfll driver resume.
+clocks with CLK_IGNORE_UNUSED are taken care by clk driver.
 
-So dfll rst thru part of peripheral clock enable is set prior to dfll=20
-reset deassertion
+clk_disable_unused checks for clocks with this flag and if they are not=20
+enabled it will enable them.
+
+So by the time suspend happens enable_count is > 0
