@@ -1,135 +1,145 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 08/21] clk: tegra: periph: Add restore_context support
-Date: Fri, 9 Aug 2019 15:20:01 +0300
-Message-ID: <0f8259d8-08f2-671c-331c-fe2d83518be0@gmail.com>
+Subject: Re: [PATCH v8 11/21] clk: tegra: clk-dfll: Add suspend and resume
+ support
+Date: Fri, 9 Aug 2019 15:23:50 +0300
+Message-ID: <eb4fdab8-aba3-7f0c-a391-d751674fd03e@gmail.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-9-git-send-email-skomatineni@nvidia.com>
- <5a5f9fb9-9cdd-5d91-4b0e-9bdb95b2625e@gmail.com>
+ <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5a5f9fb9-9cdd-5d91-4b0e-9bdb95b2625e@gmail.com>
+In-Reply-To: <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-09.08.2019 14:55, Dmitry Osipenko пишет:
-> 09.08.2019 2:46, Sowjanya Komatineni пишет:
->> This patch implements restore_context support for clk-periph and
->> clk-sdmmc-mux clock operations to restore clock parent and rates
->> on system resume.
->>
->> During system suspend, core power goes off and looses the context
->> of the Tegra clock controller registers.
->>
->> So on system resume, clocks parent and rate are restored back to
->> the context before suspend based on cached data.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-periph.c    | 18 ++++++++++++++++++
->>  drivers/clk/tegra/clk-sdmmc-mux.c | 12 ++++++++++++
->>  2 files changed, 30 insertions(+)
->>
->> diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
->> index 58437da25156..c9d28cbadccc 100644
->> --- a/drivers/clk/tegra/clk-periph.c
->> +++ b/drivers/clk/tegra/clk-periph.c
->> @@ -3,6 +3,7 @@
->>   * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
->>   */
->>  
->> +#include <linux/clk.h>
->>  #include <linux/clk-provider.h>
->>  #include <linux/export.h>
->>  #include <linux/slab.h>
->> @@ -99,6 +100,20 @@ static void clk_periph_disable(struct clk_hw *hw)
->>  	gate_ops->disable(gate_hw);
->>  }
->>  
->> +static void clk_periph_restore_context(struct clk_hw *hw)
->> +{
->> +	struct tegra_clk_periph *periph = to_clk_periph(hw);
->> +	const struct clk_ops *div_ops = periph->div_ops;
->> +	struct clk_hw *div_hw = &periph->divider.hw;
->> +	struct clk_hw *parent = clk_hw_get_parent(hw);
->> +	int parent_id = clk_hw_get_parent_index(hw, parent);
->> +
->> +	if (!(periph->gate.flags & TEGRA_PERIPH_NO_DIV))
->> +		div_ops->restore_context(div_hw);
->> +
->> +	clk_periph_set_parent(hw, parent_id);
->> +}
->> +
->>  const struct clk_ops tegra_clk_periph_ops = {
->>  	.get_parent = clk_periph_get_parent,
->>  	.set_parent = clk_periph_set_parent,
->> @@ -108,6 +123,7 @@ const struct clk_ops tegra_clk_periph_ops = {
->>  	.is_enabled = clk_periph_is_enabled,
->>  	.enable = clk_periph_enable,
->>  	.disable = clk_periph_disable,
->> +	.restore_context = clk_periph_restore_context,
->>  };
->>  
->>  static const struct clk_ops tegra_clk_periph_nodiv_ops = {
->> @@ -116,6 +132,7 @@ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
->>  	.is_enabled = clk_periph_is_enabled,
->>  	.enable = clk_periph_enable,
->>  	.disable = clk_periph_disable,
->> +	.restore_context = clk_periph_restore_context,
->>  };
->>  
->>  static const struct clk_ops tegra_clk_periph_no_gate_ops = {
->> @@ -124,6 +141,7 @@ static const struct clk_ops tegra_clk_periph_no_gate_ops = {
->>  	.recalc_rate = clk_periph_recalc_rate,
->>  	.round_rate = clk_periph_round_rate,
->>  	.set_rate = clk_periph_set_rate,
->> +	.restore_context = clk_periph_restore_context,
->>  };
->>  
->>  static struct clk *_tegra_clk_register_periph(const char *name,
->> diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
->> index a5cd3e31dbae..8db48966b100 100644
->> --- a/drivers/clk/tegra/clk-sdmmc-mux.c
->> +++ b/drivers/clk/tegra/clk-sdmmc-mux.c
->> @@ -194,6 +194,17 @@ static void clk_sdmmc_mux_disable(struct clk_hw *hw)
->>  	gate_ops->disable(gate_hw);
->>  }
->>  
->> +static void clk_sdmmc_mux_restore_context(struct clk_hw *hw)
->> +{
->> +	struct clk_hw *parent = clk_hw_get_parent(hw);
->> +	unsigned long parent_rate = clk_hw_get_rate(parent);
->> +	unsigned long rate = clk_hw_get_rate(hw);
->> +	int parent_id = clk_hw_get_parent_index(hw, parent);
->> +
->> +	clk_sdmmc_mux_set_parent(hw, parent_id);
->> +	clk_sdmmc_mux_set_rate(hw, rate, parent_rate);
+09.08.2019 2:46, Sowjanya Komatineni пишет:
+> This patch implements DFLL suspend and resume operation.
 > 
-> For the periph clocks you're restoring rate at first and then the
-> parent, while here it's the other way around. I'm wondering if there is
-> any difference in practice and thus whether rate's divider need to be
-> set to a some safe value before switching to a new parent that has a
-> higher clock rate than the old parent.
+> During system suspend entry, CPU clock will switch CPU to safe
+> clock source of PLLP and disables DFLL clock output.
+> 
+> DFLL driver suspend confirms DFLL disable state and errors out on
+> being active.
+> 
+> DFLL is re-initialized during the DFLL driver resume as it goes
+> through complete reset during suspend entry.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-dfll.h               |  2 ++
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
+>  3 files changed, 59 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index f8688c2ddf1a..eb298a5d7be9 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
+>  	td->last_unrounded_rate = 0;
+>  
+>  	pm_runtime_enable(td->dev);
+> +	pm_runtime_irq_safe(td->dev);
+>  	pm_runtime_get_sync(td->dev);
+>  
+>  	dfll_set_mode(td, DFLL_DISABLED);
+> @@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
+>  	return ret;
+>  }
+>  
+> +/**
+> + * tegra_dfll_suspend - check DFLL is disabled
+> + * @dev: DFLL device *
+> + *
+> + * DFLL clock should be disabled by the CPUFreq driver. So, make
+> + * sure it is disabled and disable all clocks needed by the DFLL.
+> + */
+> +int tegra_dfll_suspend(struct device *dev)
+> +{
+> +	struct tegra_dfll *td = dev_get_drvdata(dev);
+> +
+> +	if (dfll_is_running(td)) {
+> +		dev_err(td->dev, "dfll is enabled while shouldn't be\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	reset_control_assert(td->dvco_rst);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(tegra_dfll_suspend);
+> +
+> +/**
+> + * tegra_dfll_resume - reinitialize DFLL on resume
+> + * @dev: DFLL instance
+> + *
+> + * DFLL is disabled and reset during suspend and resume.
+> + * So, reinitialize the DFLL IP block back for use.
+> + * DFLL clock is enabled later in closed loop mode by CPUFreq
+> + * driver before switching its clock source to DFLL output.
+> + */
+> +int tegra_dfll_resume(struct device *dev)
+> +{
+> +	struct tegra_dfll *td = dev_get_drvdata(dev);
+> +
+> +	reset_control_deassert(td->dvco_rst);
 
-Although, I guess that all peripheral clocks should be disabled at this
-point of resume. Correct?
+This doesn't look right because I assume that DFLL resetting is
+synchronous and thus clk should be enabled in order for reset to
+propagate inside hardware.
 
->> +}
->> +
->>  static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
->>  	.get_parent = clk_sdmmc_mux_get_parent,
->>  	.set_parent = clk_sdmmc_mux_set_parent,
->> @@ -203,6 +214,7 @@ static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
->>  	.is_enabled = clk_sdmmc_mux_is_enabled,
->>  	.enable = clk_sdmmc_mux_enable,
->>  	.disable = clk_sdmmc_mux_disable,
->> +	.restore_context = clk_sdmmc_mux_restore_context,
->>  };
->>  
->>  struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
->>
+> +	pm_runtime_get_sync(td->dev);
+
+Hence it will be better to remove the above reset_control_deassert() and
+add here:
+
+	reset_control_reset(td->dvco_rst);
+
+> +	dfll_set_mode(td, DFLL_DISABLED);
+> +	dfll_set_default_params(td);
+> +
+> +	if (td->soc->init_clock_trimmers)
+> +		td->soc->init_clock_trimmers();
+> +
+> +	dfll_set_open_loop_config(td);
+> +
+> +	dfll_init_out_if(td);
+> +
+> +	pm_runtime_put_sync(td->dev);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(tegra_dfll_resume);
+> +
+>  /*
+>   * DT data fetch
+>   */
+> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+> index 1b14ebe7268b..fb209eb5f365 100644
+> --- a/drivers/clk/tegra/clk-dfll.h
+> +++ b/drivers/clk/tegra/clk-dfll.h
+> @@ -42,5 +42,7 @@ int tegra_dfll_register(struct platform_device *pdev,
+>  struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
+>  int tegra_dfll_runtime_suspend(struct device *dev);
+>  int tegra_dfll_runtime_resume(struct device *dev);
+> +int tegra_dfll_suspend(struct device *dev);
+> +int tegra_dfll_resume(struct device *dev);
+>  
+>  #endif /* __DRIVERS_CLK_TEGRA_CLK_DFLL_H */
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> index e84b6d52cbbd..2ac2679d696d 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -631,6 +631,7 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+>  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+>  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+>  			   tegra_dfll_runtime_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_dfll_suspend, tegra_dfll_resume)
+>  };
+>  
+>  static struct platform_driver tegra124_dfll_fcpu_driver = {
 > 
