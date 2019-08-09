@@ -1,115 +1,156 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v8 12/21] cpufreq: tegra124: Add suspend and resume support
-Date: Thu, 8 Aug 2019 16:46:51 -0700
-Message-ID: <1565308020-31952-13-git-send-email-skomatineni@nvidia.com>
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH V15 00/13] PCI: tegra: Add Tegra194 PCIe support
+Date: Fri, 9 Aug 2019 10:15:56 +0530
+Message-ID: <20190809044609.20401-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com
+Cc: devicetree@vger.kernel.org, mmaddireddy@nvidia.com, kthota@nvidia.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, linux-tegra@vger.kernel.org, digetx@gmail.com, vidyas@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds suspend and resume pm ops for cpufreq driver.
+Tegra194 has six PCIe controllers based on Synopsys DesignWare core.
+There are two Universal PHY (UPHY) blocks with each supporting 12(HSIO:
+Hisg Speed IO) and 8(NVHS: NVIDIA High Speed) lanes respectively.
+Controllers:0~4 use UPHY lanes from HSIO brick whereas Controller:5 uses
+UPHY lanes from NVHS brick. Lane mapping in HSIO UPHY brick to each PCIe
+controller (0~4) is controlled in XBAR module by BPMP-FW. Since PCIe
+core has PIPE interface, a glue module called PIPE-to-UPHY (P2U) is used
+to connect each UPHY lane (applicable to both HSIO and NVHS UPHY bricks)
+to PCIe controller
+This patch series
+- Adds support for P2U PHY driver
+- Adds support for PCIe host controller
+- Adds device tree nodes each PCIe controllers
+- Enables nodes applicable to p2972-0000 platform
+- Adds helper APIs in Designware core driver to get capability regs offset
+- Adds defines for new feature registers of PCIe spec revision 4
+- Makes changes in DesignWare core driver to get Tegra194 PCIe working
 
-PLLP is the safe clock source for CPU during system suspend and
-resume as PLLP rate is below the CPU Fmax at Vmin.
+Testing done on P2972-0000 platform
+- Able to get PCIe link up with on-board Marvel eSATA controller
+- Able to get PCIe link up with NVMe cards connected to M.2 Key-M slot
+- Able to do data transfers with both SATA drives and NVMe cards
+- Able to perform suspend-resume sequence
 
-CPUFreq driver suspend switches the CPU clock source to PLLP and
-disables the DFLL clock.
+Note
+- Enabling x8 slot on P2972-0000 platform requires pinmux driver for Tegra194.
+  It is being worked on currently and hence Controller:5 (i.e. x8 slot) is
+  disabled in this patch series. A future patch series would enable this.
+- This series is based on top of the following series
+  Jisheng's patches to add support to .remove() in Designware sub-system
+  https://patchwork.kernel.org/project/linux-pci/list/?series=98559
+  (Update: Jisheng's patches are now accepted and applied for v5.2)
+  My patches made on top of Jisheng's patches to export various symbols
+  http://patchwork.ozlabs.org/project/linux-pci/list/?series=115671
+  (Update: My above patch series is accepted and applied for v5.3)
+  Another patch of mine to enable BPMP-FW resume in noirq phase
+  http://patchwork.ozlabs.org/patch/1140973/
+  (This is already accepted)
 
-During system resume, warmboot code powers up the CPU with PLLP
-clock source. So CPUFreq driver resume enabled DFLL clock and
-switches CPU back to DFLL clock source.
+V15:
+* Refactored pcie-tegra194.c code to call only tegra_bpmp_transfer() API
+  in both .probe() path and .resume_noirq() path.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+V14:
+* Addressed Lorenzo's review comments in pcie-tegra194.c file (Patch 13/13)
+* Added a new patch to export dw_pcie_wait_for_link() API
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index 4f0c637b3b49..e979a3370988 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -6,6 +6,7 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <linux/clk.h>
-+#include <linux/cpufreq.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-@@ -128,8 +129,67 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int __maybe_unused tegra124_cpufreq_suspend(struct device *dev)
-+{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
-+	int err;
-+
-+	/*
-+	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
-+	 * use during suspend and resume. So, switch the CPU clock source
-+	 * to PLLP and disable DFLL.
-+	 */
-+	err = clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to reparent to PLLP: %d\n", err);
-+		return err;
-+	}
-+
-+	/* disable DFLL clock */
-+	clk_disable_unprepare(priv->dfll_clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
-+{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
-+	int err;
-+
-+	/*
-+	 * Warmboot code powers up the CPU with PLLP clock source.
-+	 * Enable DFLL clock and switch CPU clock source back to DFLL.
-+	 */
-+	err = clk_prepare_enable(priv->dfll_clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to enable DFLL clock for CPU: %d\n", err);
-+		goto disable_cpufreq;
-+	}
-+
-+	err = clk_set_parent(priv->cpu_clk, priv->dfll_clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to reparent to DFLL clock: %d\n", err);
-+		goto disable_dfll;
-+	}
-+
-+	return 0;
-+
-+disable_dfll:
-+	clk_disable_unprepare(priv->dfll_clk);
-+disable_cpufreq:
-+	disable_cpufreq();
-+
-+	return err;
-+}
-+
-+static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
-+				tegra124_cpufreq_resume)
-+};
-+
- static struct platform_driver tegra124_cpufreq_platdrv = {
- 	.driver.name	= "cpufreq-tegra124",
-+	.driver.pm	= &tegra124_cpufreq_pm_ops,
- 	.probe		= tegra124_cpufreq_probe,
- };
- 
+V13:
+* Addressed Bjorn's review comments for adding Gen-4 specific defines to pci_regs.h header file
+
+V12:
+* Modified the commit message of patch-3 in this series to address review
+  comments from Lorenzo
+
+V11:
+* Removed device-tree patches from the series as they are applied to relevant
+  Tegra specific trees by Thierry Reding.
+* Included older Tegra chips to extend quirk that disables MSI interrupt being
+  used for Tegra PCIe root ports.
+* Addressed review comments in P2U driver file.
+
+V10:
+* Used _relaxed() versions of readl() & writel()
+
+V9:
+* Made the drivers dependent on ARCH_TEGRA_194_SOC directly
+* Addressed review comments from Dmitry
+
+V8:
+* Changed P2U driver file name from pcie-p2u-tegra194.c to phy-tegra194-p2u.c
+* Addressed review comments from Thierry and Rob
+
+V7:
+* Took care of review comments from Rob
+* Added a quirk to disable MSI for root ports
+* Removed using pcie_pme_disable_msi() API in host controller driver
+
+V6:
+* Removed patch that exports pcie_bus_config symbol
+* Took care of review comments from Thierry and Rob
+
+V5:
+* Removed redundant APIs in pcie-designware-ep.c file after moving them
+  to pcie-designware.c file based on Bjorn's review comments
+
+V4:
+* Rebased on top of linux-next top of the tree
+* Addressed Gustavo's comments and added his Ack for some of the changes.
+
+V3:
+* Addressed review comments from Thierry
+
+V2:
+* Addressed review comments from Bjorn, Thierry, Jonathan, Rob & Kishon
+* Added more patches in v2 series
+
+Vidya Sagar (13):
+  PCI: Add #defines for some of PCIe spec r4.0 features
+  PCI: Disable MSI for Tegra root ports
+  PCI: dwc: Perform dbi regs write lock towards the end
+  PCI: dwc: Move config space capability search API
+  PCI: dwc: Add ext config space capability search API
+  PCI: dwc: Export dw_pcie_wait_for_link() API
+  dt-bindings: PCI: designware: Add binding for CDM register check
+  PCI: dwc: Add support to enable CDM register check
+  dt-bindings: Add PCIe supports-clkreq property
+  dt-bindings: PCI: tegra: Add device tree support for Tegra194
+  dt-bindings: PHY: P2U: Add Tegra194 P2U block
+  phy: tegra: Add PCIe PIPE2UPHY support
+  PCI: tegra: Add Tegra194 PCIe support
+
+ .../bindings/pci/designware-pcie.txt          |    5 +
+ .../bindings/pci/nvidia,tegra194-pcie.txt     |  155 ++
+ Documentation/devicetree/bindings/pci/pci.txt |    5 +
+ .../bindings/phy/phy-tegra194-p2u.txt         |   28 +
+ drivers/pci/controller/dwc/Kconfig            |   10 +
+ drivers/pci/controller/dwc/Makefile           |    1 +
+ .../pci/controller/dwc/pcie-designware-ep.c   |   37 +-
+ .../pci/controller/dwc/pcie-designware-host.c |   14 +-
+ drivers/pci/controller/dwc/pcie-designware.c  |   88 +
+ drivers/pci/controller/dwc/pcie-designware.h  |   12 +
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 1620 +++++++++++++++++
+ drivers/pci/quirks.c                          |   53 +
+ drivers/phy/tegra/Kconfig                     |    7 +
+ drivers/phy/tegra/Makefile                    |    1 +
+ drivers/phy/tegra/phy-tegra194-p2u.c          |  120 ++
+ include/uapi/linux/pci_regs.h                 |   14 +-
+ 16 files changed, 2128 insertions(+), 42 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
+ create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
+
 -- 
-2.7.4
+2.17.1
