@@ -1,14 +1,15 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 13/21] clk: tegra210: Use fence_udelay during PLLU init
-Date: Sun, 11 Aug 2019 21:02:02 +0300
-Message-ID: <1d09a2c5-4973-340f-fdfc-d4e665c8b55d@gmail.com>
+Subject: Re: [PATCH v8 04/21] clk: tegra: pllout: Save and restore pllout
+ context
+Date: Sun, 11 Aug 2019 21:04:24 +0300
+Message-ID: <3bc1cdc5-c8e7-a210-67ae-2a3f6f01660f@gmail.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-14-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-5-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1565308020-31952-14-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1565308020-31952-5-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
@@ -16,54 +17,87 @@ Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vg
 List-Id: linux-tegra@vger.kernel.org
 
 09.08.2019 2:46, Sowjanya Komatineni пишет:
-> This patch uses fence_udelay rather than udelay during PLLU
-> initialization to ensure writes to clock registers happens before
-> waiting for specified delay.
+> This patch implements save and restore of pllout context.
+> 
+> During system suspend, core power goes off and looses the settings
+> of the Tegra CAR controller registers.
+> 
+> So during suspend entry the state of pllout is saved and on resume
+> it is restored back to have pllout in same state as before suspend.
+> 
+> pllout rate is saved and restore in clock divider so it will be at
+> same rate as before suspend when pllout state is restored.
 > 
 > Acked-by: Thierry Reding <treding@nvidia.com>
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-tegra210.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/clk/tegra/clk-pll-out.c  | 9 +++++++++
+>  drivers/clk/tegra/clk-tegra210.c | 3 ++-
+>  drivers/clk/tegra/clk.h          | 6 ++++++
+>  3 files changed, 17 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+> index 35f2bf00e1e6..d8bf89a81e6d 100644
+> --- a/drivers/clk/tegra/clk-pll-out.c
+> +++ b/drivers/clk/tegra/clk-pll-out.c
+> @@ -69,10 +69,19 @@ static void clk_pll_out_disable(struct clk_hw *hw)
+>  		spin_unlock_irqrestore(pll_out->lock, flags);
+>  }
+>  
+> +static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
+> +{
+> +	if (!__clk_get_enable_count(hw->clk))
+> +		clk_pll_out_disable(hw);
+> +	else
+> +		clk_pll_out_enable(hw);
+> +}
+> +
+>  const struct clk_ops tegra_clk_pll_out_ops = {
+>  	.is_enabled = clk_pll_out_is_enabled,
+>  	.enable = clk_pll_out_enable,
+>  	.disable = clk_pll_out_disable,
+> +	.restore_context = tegra_clk_pll_out_restore_context,
+>  };
+>  
+>  struct clk *tegra_clk_register_pll_out(const char *name,
 > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 4721ee030d1c..998bf60b219a 100644
+> index df172d5772d7..4721ee030d1c 100644
 > --- a/drivers/clk/tegra/clk-tegra210.c
 > +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2841,7 +2841,7 @@ static int tegra210_enable_pllu(void)
->  	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
->  	reg &= ~BIT(pllu.params->iddq_bit_idx);
->  	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
-> -	udelay(5);
-> +	fence_udelay(5, clk_base);
+> @@ -3200,7 +3200,8 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+>  					 8, 8, 1, NULL);
+>  	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
+>  					 clk_base + PLLRE_OUT1, 1, 0,
+> -					 CLK_SET_RATE_PARENT, 0, NULL);
+> +					 CLK_SET_RATE_PARENT, TEGRA_PLLRE_OUT,
+> +					 NULL);
+>  	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
 >  
->  	reg = readl_relaxed(clk_base + PLLU_BASE);
->  	reg &= ~GENMASK(20, 0);
-> @@ -2849,7 +2849,7 @@ static int tegra210_enable_pllu(void)
->  	reg |= fentry->n << 8;
->  	reg |= fentry->p << 16;
->  	writel(reg, clk_base + PLLU_BASE);
-> -	udelay(1);
-> +	fence_udelay(1, clk_base);
->  	reg |= PLL_ENABLE;
->  	writel(reg, clk_base + PLLU_BASE);
+>  	/* PLLE */
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 905bf1096558..a464524fbc90 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -437,6 +437,10 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
+>   * @rst_bit_idx:	bit to reset PLL divider
+>   * @lock:		register lock
+>   * @flags:		hardware-specific flags
+> + *
+> + * Flags:
+> + * TEGRA_PLLRE_OUT - This flag indicates that it is PLLRE_OUT and is used to
+> + *		     identify PLLRE_OUT during clk_pll_out save and restore.
+>   */
+>  struct tegra_clk_pll_out {
+>  	struct clk_hw	hw;
+> @@ -447,6 +451,8 @@ struct tegra_clk_pll_out {
+>  	u8		flags;
+>  };
 >  
-> @@ -2895,12 +2895,12 @@ static int tegra210_init_pllu(void)
->  		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
->  		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
->  		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
-> -		udelay(1);
-> +		fence_udelay(1, clk_base);
+> +#define TEGRA_PLLRE_OUT BIT(0)
+> +
+>  #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
 >  
->  		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
->  		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
->  		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
-> -		udelay(1);
-> +		fence_udelay(1, clk_base);
->  
->  		reg = readl_relaxed(clk_base + PLLU_BASE);
->  		reg &= ~PLLU_BASE_CLKENABLE_USB;
+>  extern const struct clk_ops tegra_clk_pll_out_ops;
 > 
 
-The clk_base corresponds to the RESET controller's part of Clock-and-Reset hardware, is it
-okay to read-back the RST register and not the clock for the fencing?
+Looks like the TEGRA_PLLRE_OUT flag is unused.
