@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 08/19] PM / devfreq: tegra30: Ensure that target freq won't overflow
-Date: Mon, 12 Aug 2019 00:23:04 +0300
-Message-ID: <20190811212315.12689-9-digetx@gmail.com>
+Subject: [PATCH v6 04/19] PM / devfreq: tegra30: Drop write-barrier
+Date: Mon, 12 Aug 2019 00:23:00 +0300
+Message-ID: <20190811212315.12689-5-digetx@gmail.com>
 References: <20190811212315.12689-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,70 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-We already had few integer overflow bugs, let's limit the freq for
-consistency.
+There is no need in a write-barrier now, given that interrupt masking is
+handled by CPU's GIC now. Hence we know exactly that interrupt won't fire
+after stopping the devfreq's governor. In other cases we don't care about
+potential buffering of the writes to hardware and thus there is no need to
+stall CPU.
 
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 70dce58212a4..ca499368ee81 100644
+index bfee9d43de1e..ee14bf534c0d 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -430,7 +430,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
- 	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD + dev->boost_freq;
- 	target_freq = tegra_actmon_account_cpu_freq(tegra, dev, target_freq);
- 
--	return target_freq;
-+	return min(target_freq, tegra->max_freq);
+@@ -230,12 +230,6 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+ 		      ACTMON_DEV_LOWER_WMARK);
  }
  
- static irqreturn_t actmon_thread_isr(int irq, void *data)
+-static void actmon_write_barrier(struct tegra_devfreq *tegra)
+-{
+-	/* ensure the update has reached the ACTMON */
+-	readl(tegra->regs + ACTMON_GLB_STATUS);
+-}
+-
+ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 			      struct tegra_devfreq_device *dev)
+ {
+@@ -287,8 +281,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
+ 
+ 	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
+-
+-	actmon_write_barrier(tegra);
+ }
+ 
+ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
+@@ -376,8 +368,6 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
+ 		tegra_devfreq_update_wmark(tegra, dev);
+ 	}
+ 
+-	actmon_write_barrier(tegra);
+-
+ 	return NOTIFY_OK;
+ }
+ 
+@@ -423,8 +413,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
+ 	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
+ 		tegra_actmon_configure_device(tegra, &tegra->devices[i]);
+ 
+-	actmon_write_barrier(tegra);
+-
+ 	enable_irq(tegra->irq);
+ }
+ 
+@@ -439,8 +427,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+ 		device_writel(&tegra->devices[i], ACTMON_INTR_STATUS_CLEAR,
+ 			      ACTMON_DEV_INTR_STATUS);
+ 	}
+-
+-	actmon_write_barrier(tegra);
+ }
+ 
+ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
 -- 
 2.22.0
