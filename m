@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 14/19] PM / devfreq: tegra30: Don't enable consecutive-down interrupt on startup
-Date: Mon, 12 Aug 2019 00:23:10 +0300
-Message-ID: <20190811212315.12689-15-digetx@gmail.com>
+Subject: [PATCH v6 17/19] PM / devfreq: tegra30: Increase sampling period to 16ms
+Date: Mon, 12 Aug 2019 00:23:13 +0300
+Message-ID: <20190811212315.12689-18-digetx@gmail.com>
 References: <20190811212315.12689-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,30 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The consecutive-down event tells that we should perform frequency
-de-boosting, but boosting is in a reset state on start and hence the
-event won't do anything useful for us and it will be just a dummy
-interrupt request.
+Increase sampling period by 4ms to get a nicer pow2 value, converting
+diving into shifts in the code. That's more preferable for Tegra30 that
+doesn't have hardware divider instructions because of older Cortex-A9 CPU.
+In a result boosting events are delayed by 4ms, which is not sensible in
+practice at all.
 
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 5002dca4c403..a0a1ac09a824 100644
+index 9753985c9131..8adc0ff48b45 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -708,7 +708,6 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
- 		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
- 	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
--	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_ENB;
+@@ -69,7 +69,7 @@
+  * translates to 2 ^ (K_VAL + 1). ex: 2 ^ (6 + 1) = 128
+  */
+ #define ACTMON_AVERAGE_WINDOW_LOG2				6
+-#define ACTMON_SAMPLING_PERIOD					12 /* ms */
++#define ACTMON_SAMPLING_PERIOD					16 /* ms */
+ 
+ #define KHZ							1000
  
 -- 
 2.22.0
