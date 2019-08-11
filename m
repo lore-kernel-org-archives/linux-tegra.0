@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 16/19] PM / devfreq: tegra30: Include appropriate header
-Date: Mon, 12 Aug 2019 00:23:12 +0300
-Message-ID: <20190811212315.12689-17-digetx@gmail.com>
+Subject: [PATCH v6 13/19] PM / devfreq: tegra30: Reset boosting on startup
+Date: Mon, 12 Aug 2019 00:23:09 +0300
+Message-ID: <20190811212315.12689-14-digetx@gmail.com>
 References: <20190811212315.12689-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,29 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It's not very correct to include mod_devicetable.h for the OF device
-drivers and of_device.h should be included instead.
+Governor could be stopped while boosting is active. We have assumption
+that everything is reset on governor's restart, including the boosting
+value, which was missed.
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 6446bf705b97..9753985c9131 100644
+index bad9836b1eea..5002dca4c403 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -13,7 +13,7 @@
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/module.h>
--#include <linux/mod_devicetable.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_opp.h>
- #include <linux/reset.h>
+@@ -686,6 +686,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+ {
+ 	u32 val = 0;
+ 
++	/* reset boosting on governor's restart */
++	dev->boost_freq = 0;
++
+ 	dev->avg_freq = clk_get_rate(tegra->emc_clock) / KHZ;
+ 	device_writel(dev, dev->avg_freq * ACTMON_SAMPLING_PERIOD,
+ 		      ACTMON_DEV_INIT_AVG);
 -- 
 2.22.0
