@@ -1,73 +1,79 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/2] irqchip/tegra: Remove everything related to COP
-Date: Sun, 11 Aug 2019 21:30:43 +0300
-Message-ID: <20190811183044.13925-1-digetx@gmail.com>
+Subject: [PATCH v1 2/2] irqchip/tegra: Clean up coding style
+Date: Sun, 11 Aug 2019 21:30:44 +0300
+Message-ID: <20190811183044.13925-2-digetx@gmail.com>
+References: <20190811183044.13925-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190811183044.13925-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no point in touching of the COP (ARM7TDMI auxiliary boot/firmware
-CPU) because COP's interrupts should be related only to an old multimedia
-firmware that is not applicable to the upstream kernel. Hence let's remove
-everything related to the COP, for consistency.
+Make coding style to conform to the kernel's standard by fixing checkpatch
+warnings about "line over 80 characters".
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/irqchip/irq-tegra.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/irqchip/irq-tegra.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-index e1f771c72fc4..14dcacc2ad38 100644
+index 14dcacc2ad38..f829a5990dae 100644
 --- a/drivers/irqchip/irq-tegra.c
 +++ b/drivers/irqchip/irq-tegra.c
-@@ -33,11 +33,6 @@
- #define ICTLR_CPU_IER_CLR	0x28
- #define ICTLR_CPU_IEP_CLASS	0x2C
+@@ -74,7 +74,7 @@ static struct tegra_ictlr_info *lic;
  
--#define ICTLR_COP_IER		0x30
--#define ICTLR_COP_IER_SET	0x34
--#define ICTLR_COP_IER_CLR	0x38
--#define ICTLR_COP_IEP_CLASS	0x3c
--
- #define TEGRA_MAX_NUM_ICTLRS	6
+ static inline void tegra_ictlr_write_mask(struct irq_data *d, unsigned long reg)
+ {
+-	void __iomem *base = (void __iomem __force *)d->chip_data;
++	void __iomem *base = lic->base[d->hwirq / 32];
+ 	u32 mask;
  
- static unsigned int num_ictlrs;
-@@ -68,8 +63,6 @@ static const struct of_device_id ictlr_matches[] = {
- struct tegra_ictlr_info {
- 	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
- #ifdef CONFIG_PM_SLEEP
--	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
--	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
- 	u32 cpu_ier[TEGRA_MAX_NUM_ICTLRS];
- 	u32 cpu_iep[TEGRA_MAX_NUM_ICTLRS];
- 
-@@ -144,11 +137,6 @@ static int tegra_ictlr_suspend(void)
- 		/* Save interrupt state */
- 		lic->cpu_ier[i] = readl_relaxed(ictlr + ICTLR_CPU_IER);
- 		lic->cpu_iep[i] = readl_relaxed(ictlr + ICTLR_CPU_IEP_CLASS);
--		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
--		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
--
--		/* Disable COP interrupts */
--		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
- 
- 		/* Disable CPU interrupts */
+ 	mask = BIT(d->hwirq % 32);
+@@ -142,7 +142,8 @@ static int tegra_ictlr_suspend(void)
  		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
-@@ -175,11 +163,6 @@ static void tegra_ictlr_resume(void)
- 		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
- 		writel_relaxed(lic->cpu_ier[i],
- 			       ictlr + ICTLR_CPU_IER_SET);
--		writel_relaxed(lic->cop_iep[i],
--			       ictlr + ICTLR_COP_IEP_CLASS);
--		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
--		writel_relaxed(lic->cop_ier[i],
--			       ictlr + ICTLR_COP_IER_SET);
+ 
+ 		/* Enable the wakeup sources of ictlr */
+-		writel_relaxed(lic->ictlr_wake_mask[i], ictlr + ICTLR_CPU_IER_SET);
++		writel_relaxed(lic->ictlr_wake_mask[i],
++			       ictlr + ICTLR_CPU_IER_SET);
  	}
  	local_irq_restore(flags);
- }
+ 
+@@ -222,7 +223,6 @@ static int tegra_ictlr_domain_alloc(struct irq_domain *domain,
+ {
+ 	struct irq_fwspec *fwspec = data;
+ 	struct irq_fwspec parent_fwspec;
+-	struct tegra_ictlr_info *info = domain->host_data;
+ 	irq_hw_number_t hwirq;
+ 	unsigned int i;
+ 
+@@ -235,13 +235,9 @@ static int tegra_ictlr_domain_alloc(struct irq_domain *domain,
+ 	if (hwirq >= (num_ictlrs * 32))
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < nr_irqs; i++) {
+-		int ictlr = (hwirq + i) / 32;
+-
++	for (i = 0; i < nr_irqs; i++)
+ 		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
+-					      &tegra_ictlr_chip,
+-					      (void __force *)info->base[ictlr]);
+-	}
++					      &tegra_ictlr_chip, NULL);
+ 
+ 	parent_fwspec = *fwspec;
+ 	parent_fwspec.fwnode = domain->parent->fwnode;
+@@ -312,7 +308,6 @@ static int __init tegra_ictlr_init(struct device_node *node,
+ 	     "%pOF: Found %u interrupt controllers in DT; expected %u.\n",
+ 	     node, num_ictlrs, soc->num_ictlrs);
+ 
+-
+ 	domain = irq_domain_add_hierarchy(parent_domain, 0, num_ictlrs * 32,
+ 					  node, &tegra_ictlr_domain_ops,
+ 					  lic);
 -- 
 2.22.0
