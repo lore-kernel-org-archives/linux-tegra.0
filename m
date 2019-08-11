@@ -1,38 +1,78 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v4 0/5] iommu/amd: Convert the AMD iommu driver to the
- dma-iommu api
-Date: Sat, 10 Aug 2019 00:19:52 -0700
-Message-ID: <20190810071952.GA25550@infradead.org>
-References: <20190613223901.9523-1-murphyt7@tcd.ie>
- <20190624061945.GA4912@infradead.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v8 05/21] clk: tegra: pll: Save and restore pll context
+Date: Sun, 11 Aug 2019 20:24:25 +0300
+Message-ID: <d289b682-1760-efe1-e6a5-5b51c476f1ed@gmail.com>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-6-git-send-email-skomatineni@nvidia.com>
+ <68f65db6-44b7-1c75-2633-4a2fffd62a92@gmail.com>
+ <dd20aa34-d838-40c4-9edd-bbe5973053f3@nvidia.com>
+ <2eecf4ff-802d-7e0e-d971-0257fae4e3a2@gmail.com>
+ <9096cbca-f647-b0af-2ab8-d48769555c3e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190624061945.GA4912-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean-Philippe Brucker <jean-philippe.brucker-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9096cbca-f647-b0af-2ab8-d48769555c3e@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jun 23, 2019 at 11:19:45PM -0700, Christoph Hellwig wrote:
-> Tom,
+09.08.2019 21:50, Sowjanya Komatineni пишет:
 > 
-> next time please cc Jerg as the AMD IOMMU maintainer.
+> On 8/9/19 10:50 AM, Dmitry Osipenko wrote:
+>> 09.08.2019 20:39, Sowjanya Komatineni пишет:
+>>> On 8/9/19 4:33 AM, Dmitry Osipenko wrote:
+>>>> 09.08.2019 2:46, Sowjanya Komatineni пишет:
+>>>>> This patch implements save and restore of PLL context.
+>>>>>
+>>>>> During system suspend, core power goes off and looses the settings
+>>>>> of the Tegra CAR controller registers.
+>>>>>
+>>>>> So during suspend entry pll context is stored and on resume it is
+>>>>> restored back along with its state.
+>>>>>
+>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>> ---
+>>>>>    drivers/clk/tegra/clk-pll.c | 88 ++++++++++++++++++++++++++++-----------------
+>>>>>    drivers/clk/tegra/clk.h     |  2 ++
+>>>>>    2 files changed, 58 insertions(+), 32 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>>>>> index 1583f5fc992f..e52add2bbdbb 100644
+>>>>> --- a/drivers/clk/tegra/clk-pll.c
+>>>>> +++ b/drivers/clk/tegra/clk-pll.c
+>>>>> @@ -1008,6 +1008,28 @@ static unsigned long clk_plle_recalc_rate(struct clk_hw *hw,
+>>>>>        return rate;
+>>>>>    }
+>>>>>    +static void tegra_clk_pll_restore_context(struct clk_hw *hw)
+>>>>> +{
+>>>>> +    struct tegra_clk_pll *pll = to_clk_pll(hw);
+>>>>> +    struct clk_hw *parent = clk_hw_get_parent(hw);
+>>>>> +    unsigned long parent_rate = clk_hw_get_rate(parent);
+>>>>> +    unsigned long rate = clk_hw_get_rate(hw);
+>>>>> +    u32 val;
+>>>>> +
+>>>>> +    if (clk_pll_is_enabled(hw))
+>>>>> +        return;
+>>>>> +
+>>>>> +    if (pll->params->set_defaults)
+>>>>> +        pll->params->set_defaults(pll);
+>>>>> +
+>>>>> +    clk_pll_set_rate(hw, rate, parent_rate);
+>>>>> +
+>>>>> +    if (!__clk_get_enable_count(hw->clk))
+>>>> What about orphaned clocks? Is enable_count > 0 for them?
+>>> There are no orphaned pll clocks.
+>> Sorry, I meant the "clk_ignore_unused".
 > 
-> Joerg, any chance you could review this?  Toms patches to convert the
-> AMD and Intel IOMMU drivers to the dma-iommu code are going to make my
-> life in DMA land significantly easier, so I have a vested interest
-> in this series moving forward :)
+> clocks with CLK_IGNORE_UNUSED are taken care by clk driver.
+> 
+> clk_disable_unused checks for clocks with this flag and if they are not enabled it will
+> enable them.
+> 
+> So by the time suspend happens enable_count is > 0
 
-Tom, can you repost the series?  Seems like there hasn't been any
-news for a month.
+Okay.
