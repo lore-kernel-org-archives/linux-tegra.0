@@ -1,15 +1,14 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 15/21] soc/tegra: pmc: Allow to support more tegras
- wake
-Date: Sun, 11 Aug 2019 20:52:27 +0300
-Message-ID: <53634c8e-1295-86eb-60c2-27da26d05400@gmail.com>
+Subject: Re: [PATCH v8 13/21] clk: tegra210: Use fence_udelay during PLLU init
+Date: Sun, 11 Aug 2019 21:02:02 +0300
+Message-ID: <1d09a2c5-4973-340f-fdfc-d4e665c8b55d@gmail.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-16-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-14-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1565308020-31952-16-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1565308020-31952-14-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
@@ -17,73 +16,54 @@ Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vg
 List-Id: linux-tegra@vger.kernel.org
 
 09.08.2019 2:46, Sowjanya Komatineni пишет:
-> This patch allows to create separate irq_set_wake and irq_set_type
-> implementations for different tegra designs PMC that has different
-> wake models which require difference wake registers and different
-> programming sequence.
+> This patch uses fence_udelay rather than udelay during PLLU
+> initialization to ensure writes to clock registers happens before
+> waiting for specified delay.
 > 
-> AOWAKE model support is available for Tegra186 and Tegra194 only
-> and it resides within PMC and supports tiered wake architecture.
-> 
-> Tegra210 and prior tegra designs uses PMC directly to receive wake
-> events and coordinate the wake sequence.
-> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+>  drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 9f9c1c677cf4..91c84d0e66ae 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -226,6 +226,8 @@ struct tegra_pmc_soc {
->  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
->  				   struct device_node *np,
->  				   bool invert);
-> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
-> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 4721ee030d1c..998bf60b219a 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2841,7 +2841,7 @@ static int tegra210_enable_pllu(void)
+>  	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
+>  	reg &= ~BIT(pllu.params->iddq_bit_idx);
+>  	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
+> -	udelay(5);
+> +	fence_udelay(5, clk_base);
 >  
->  	const char * const *reset_sources;
->  	unsigned int num_reset_sources;
-> @@ -1920,7 +1922,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
->  	.alloc = tegra_pmc_irq_alloc,
->  };
+>  	reg = readl_relaxed(clk_base + PLLU_BASE);
+>  	reg &= ~GENMASK(20, 0);
+> @@ -2849,7 +2849,7 @@ static int tegra210_enable_pllu(void)
+>  	reg |= fentry->n << 8;
+>  	reg |= fentry->p << 16;
+>  	writel(reg, clk_base + PLLU_BASE);
+> -	udelay(1);
+> +	fence_udelay(1, clk_base);
+>  	reg |= PLL_ENABLE;
+>  	writel(reg, clk_base + PLLU_BASE);
 >  
-> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->  {
->  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->  	unsigned int offset, bit;
-> @@ -1952,7 +1954,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->  	return 0;
->  }
+> @@ -2895,12 +2895,12 @@ static int tegra210_init_pllu(void)
+>  		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
+>  		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
+>  		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
+> -		udelay(1);
+> +		fence_udelay(1, clk_base);
 >  
-> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
-> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
->  {
->  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->  	u32 value;
-> @@ -2006,8 +2008,8 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
->  	pmc->irq.irq_unmask = irq_chip_unmask_parent;
->  	pmc->irq.irq_eoi = irq_chip_eoi_parent;
->  	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
-> -	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
-> -	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
-> +	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
-> +	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+>  		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
+>  		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
+>  		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
+> -		udelay(1);
+> +		fence_udelay(1, clk_base);
 >  
->  	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
->  					       &tegra_pmc_irq_domain_ops, pmc);
-> @@ -2680,6 +2682,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
->  	.regs = &tegra186_pmc_regs,
->  	.init = NULL,
->  	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-> +	.irq_set_wake = tegra186_pmc_irq_set_wake,
-> +	.irq_set_type = tegra186_pmc_irq_set_type,
->  	.reset_sources = tegra186_reset_sources,
->  	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
->  	.reset_levels = tegra186_reset_levels,
+>  		reg = readl_relaxed(clk_base + PLLU_BASE);
+>  		reg &= ~PLLU_BASE_CLKENABLE_USB;
 > 
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+The clk_base corresponds to the RESET controller's part of Clock-and-Reset hardware, is it
+okay to read-back the RST register and not the clock for the fencing?
