@@ -1,56 +1,61 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v8 02/21] pinctrl: tegra: Add write barrier after all
- pinctrl register writes
-Date: Mon, 12 Aug 2019 11:20:56 +0200
-Message-ID: <20190812092056.GD8903@ulmo>
+Subject: Re: [PATCH v8 03/21] clk: tegra: divider: Save and restore divider
+ rate
+Date: Mon, 12 Aug 2019 11:21:33 +0200
+Message-ID: <20190812092133.GE8903@ulmo>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-3-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-4-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="C+ts3FVlLX8+P6JN"
+        protocol="application/pgp-signature"; boundary="xJK8B5Wah2CMJs8h"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1565308020-31952-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1565308020-31952-4-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---C+ts3FVlLX8+P6JN
+--xJK8B5Wah2CMJs8h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2019 at 04:46:41PM -0700, Sowjanya Komatineni wrote:
-> This patch adds write barrier after all pinctrl register writes
-> during resume to make sure all pinctrl changes are complete.
+On Thu, Aug 08, 2019 at 04:46:42PM -0700, Sowjanya Komatineni wrote:
+> This patch implements context restore for clock divider.
 >=20
+> During system suspend, core power goes off and looses the settings
+> of the Tegra CAR controller registers.
+>=20
+> So on resume, clock dividers are restored back for normal operation.
+>=20
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/clk/tegra/clk-divider.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---C+ts3FVlLX8+P6JN
+--xJK8B5Wah2CMJs8h
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RL3gACgkQ3SOs138+
-s6FnFhAAkgf/BiMUj/jlPfe6CGMU/2j+3heSekAmXhJfo1aq1v5F2JenrTTU3rdW
-9lBsT0PnAgIGsSz/0eny9BCg2LksG19hn2zB94YlgA/j4eWgh+zEm0eXll4V1gXR
-ZyADhb9TCC3Ez5OrMXwt/31F5qXK/npVjeTvXEAZEt2mHHYj4wniS1s76DXNBMxe
-TZwHmDKVqVf8swjWnNzNthITXG79YNl4M1yBCeiKHiLPkAszrX0V6JVJv+Leq7cL
-xAztBfPrZfXx5kX9rFYeqWwCPBx5oqQL+pMDyhqafcyIiB1wMvXPUGHIxcTitXHX
-AHsdazSNFfK394leUuNQ/b8WEBCjw9h4rL4KQ05spl3J9WJSrMI9cf2eHhWx6O1R
-g6MNZ+nZ1LbSmiIfhcqy0Uit364/vXqj3Luzu7FVa1ld15EkdhmWAaO3gWHWLbLP
-VEPviaC+byT6g7Sd5Z3Hv/BflOC+McrY2oBASo1D8tQecmKJI6JPJ0A4MkHLOZJI
-v2w6ohTCcdzy6zt7Z8IIBsFFwtAL5oGxJ3TdPaDKNh523mQSjyoyGjpnNNgHb0N6
-sGoOGsdV4K+6Fx6i0TQOFeBPDkwmbWwnv6Jcy2ASqI44N2CiAUd2Vfg+9liX47BY
-vRHKJTkliMrmxh+XfarOWRT5RfaGJSLVU4hUQcXi3aAORedVhm8=
-=UfG9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RL50ACgkQ3SOs138+
+s6GciRAAu7ihjAvzjleKr5l/wYMUx50GqCmlDbJPPj3jcAiRgKqgWMrvVdOgdbZp
+QdV017XzIRxpMkj8v62RKCOm/PlnAbbZ+a7RGu0qvGpMK5a4RnfrYHvyK+e+DaN4
+YSOYsPYSviDEb8kGhWGe5m6cVDaR8b6EZFhqMfNi3eFXp15+c1JZylmbHRlL0cU3
+EGlVEXewNcAseec8V4d8EXNEi2DZOKfq4l1hKiTr1HfHqw3RwJeXMF0mbv5DLKey
+H0LYXW+dDWn4SLGLOl4KxXh6TUi7pqhkT7Iu9Q8DSVa+LyuYS2wOcHewvDmnD6gD
+ELNQ1trgtsbz6SPpVNXVbvXDuYkI+Uzxla2Cs6I7zS2xK4tbQFUeHtSKrBc8cfK9
+UP3BQmVfpVR9OQmHUL+GrEiGB05CaYtIoZLOpFvv31XYjYaCy+MtvjnM0HjZGj+K
+sZIQ0hSIDGcWDlg+2K7PU3wL7PXOA4C95cVjPjqghkEhnoBP8jZ6qYSHCoZ+UKEC
+PhaQue7ePjTN3iSgqp0CGzUDN3+JRxS4MsYVbudTiwxAd+LYD0830r9IwDH2kIPE
+o4uWmo67u4pqaoMu3MP4Ll9hJiXur61rLMQXt6MQacvD3eG/bG6W5hP5l00bPEgA
+K8TMgeZWF8HtT2QNf7fyJKCzLIC6vV3/w6jtc0VP6EWvDYg3aDU=
+=9Mj2
 -----END PGP SIGNATURE-----
 
---C+ts3FVlLX8+P6JN--
+--xJK8B5Wah2CMJs8h--
