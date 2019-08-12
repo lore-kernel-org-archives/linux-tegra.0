@@ -1,68 +1,110 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v8 14/21] clk: tegra210: Add suspend and resume support
-Date: Mon, 12 Aug 2019 12:17:19 +0200
-Message-ID: <20190812101719.GL8903@ulmo>
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-15-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH V15 12/13] phy: tegra: Add PCIe PIPE2UPHY support
+Date: Mon, 12 Aug 2019 12:23:00 +0200
+Message-ID: <20190812102300.GM8903@ulmo>
+References: <20190809044609.20401-1-vidyas@nvidia.com>
+ <20190809044609.20401-13-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3xQkynibq3FKlJyM"
+        protocol="application/pgp-signature"; boundary="GeONROBiaq1zPAtT"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1565308020-31952-15-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190809044609.20401-13-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---3xQkynibq3FKlJyM
+--GeONROBiaq1zPAtT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2019 at 04:46:53PM -0700, Sowjanya Komatineni wrote:
-> This patch adds support for clk: tegra210: suspend-resume.
+On Fri, Aug 09, 2019 at 10:16:08AM +0530, Vidya Sagar wrote:
+> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
+> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
+> For each PCIe lane of a controller, there is a P2U unit instantiated at
+> hardware level. This driver provides support for the programming required
+> for each P2U that is going to be used for a PCIe controller.
 >=20
-> All the CAR controller settings are lost on suspend when core
-> power goes off.
->=20
-> This patch has implementation for saving and restoring all PLLs
-> and clocks context during system suspend and resume to have the
-> clocks back to same state for normal operation.
->=20
-> Clock driver suspend and resume are registered as syscore_ops as clocks
-> restore need to happen before the other drivers resume to have all their
-> clocks back to the same state as before suspend.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
->  drivers/clk/tegra/clk-tegra210.c | 103 +++++++++++++++++++++++++++++++++=
-++++--
->  drivers/clk/tegra/clk.c          |  64 ++++++++++++++++++++++++
->  drivers/clk/tegra/clk.h          |   3 ++
->  3 files changed, 166 insertions(+), 4 deletions(-)
+> V15:
+> * None
+>=20
+> V14:
+> * None
+>=20
+> V13:
+> * None
+>=20
+> V12:
+> * None
+>=20
+> V11:
+> * Replaced PTR_ERR_OR_ZERO() with PTR_ERR() as the check for zero is alre=
+ady
+>   present in the code.
+>=20
+> V10:
+> * Used _relaxed() versions of readl() & writel()
+>=20
+> V9:
+> * Made it dependent on ARCH_TEGRA_194_SOC directly instead of ARCH_TEGRA
+>=20
+> V8:
+> * Changed P2U driver file name from pcie-p2u-tegra194.c to phy-tegra194-p=
+2u.c
+>=20
+> V7:
+> * None
+>=20
+> V6:
+> * Addressed review comments from Thierry
+>=20
+> V5:
+> * None
+>=20
+> V4:
+> * Rebased on top of linux-next top of the tree
+>=20
+> V3:
+> * Replaced spaces with tabs in Kconfig file
+> * Sorted header file inclusion alphabetically
+>=20
+> V2:
+> * Added COMPILE_TEST in Kconfig
+> * Removed empty phy_ops implementations
+> * Modified code according to DT documentation file modifications
+>=20
+>  drivers/phy/tegra/Kconfig            |   7 ++
+>  drivers/phy/tegra/Makefile           |   1 +
+>  drivers/phy/tegra/phy-tegra194-p2u.c | 120 +++++++++++++++++++++++++++
+>  3 files changed, 128 insertions(+)
+>  create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---3xQkynibq3FKlJyM
+--GeONROBiaq1zPAtT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RPK0ACgkQ3SOs138+
-s6EALw//YUajBdPK4FtVwcA4OIK8GLJi4rRvPYUFKpGPdKoebx0XvmddXHMql1jz
-Z/X4hPffkZ3qc7Dk849Dqqkr8pX3FFUKjIrn4HdlNYxXcHzGjtI3/FR5AA3VleFN
-UcgaqzN248n5VL7QDw1xdwJ/OG1rluR9TbHx/Lqido8ohbGmeebrcSyqs9eeU92R
-dpFqewgNOyBrr07g3yMgyV/ntGvFqBqjb48PLgZnXNhgt08N5F8P/hypIACSwE3N
-o0q1GY/J8mzIRFWwOMRkw2I7NkHto07C+lumrq8R0UqtdVYC5j33lnnw6L7BhQcQ
-ElQpej6y3XAMKTQt74Gf6bM3nYfJyiyh6c0MqGISkQOR5k6pBYXljOJlsIAOL3Qw
-8adsNWCiEdaYPH6jWtm9I2PRRl2f2js9rMBla8RUW93e00lcN2JI4jLv/DkM/Rgf
-0hiwsEn0UelnV0GlvecbbVMvWElj6OsdtkRprJ0tlu0UD9LEwvnkMlKikiJuFgq5
-Bf1F89JCeMGixa+oLU1+R7zsSW5TiHuFcoUJZwB7okUIEN+i/3ZjfHlwh/iWOPx4
-NffENeaDzZ/Pt0oMzEjNde9O5ezWXjOcOk5Hvq5b42CWoybtC+SLFV9MTNBYfaZb
-hHwouuAzg/pvY2TBrNCm10lvbeoYBaINg+HwCcCxLZvUvBsQnEE=
-=zcts
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RPgMACgkQ3SOs138+
+s6G6QRAApZ8Wo+dLU8yIc2xUpt31Zb4Mt89cHlgrBXMadX3WQGRdKFxNtS63hucq
+6bj/FGGojkXhuiFBY4vaRnhhWFEeUi8khH+gCiKHEq4f8ENNpPRF3nC11/ISDQlt
+rYB0lB0edwd7ZVso8KVs8LAXPO/qg3hF2UsriGDYyHIzhgNrpAqGtue+RbgfoXic
+uzcPDzhaXgcSls0JkMrQrqdb3I7dH/VrPXs4Y9FdbnHb4OaaSpDRiyR1M0e+j5Rs
+uBA3+qz84CGVEzUCmLakD52NbtEW1SJj2x3LfKe2LzjlR03p8p8q0+L7UbCP3OdM
+SNOB+VD+FCCQ2uH0aJMn1U4t/pAp16NuDSWlJxXXx8Pn/auq1nyYgluYyyArWNJO
+K1Y93Tr3DmEwzv67v8nXQqP7nyFj/Rn0XapYHt9JmjpBsFuZC9vh9lJ+m0lplJir
+LYFt0sZYyP/aYr6EmNwPE4fOsgW9++yXP68WqaS7YmL+Mr7Xek+ojJqi6t65J6K+
+QxIczmLN+hnkAr8RDjO1f5fClz2pIJRCt//HVwk2nMAr6aiSf4oKg0dAoxOW1q04
+7d5Mfcivnqus2gm2w2g4qtnUH1hQ4zxUjDMbaNsYJTxtjwnUS01lA8M2F1eJpqJX
+yTihfhNjw1i2pqoK4FD694YSFT3e/4toB0LG86K4ej9qfFcHcqI=
+=HGLV
 -----END PGP SIGNATURE-----
 
---3xQkynibq3FKlJyM--
+--GeONROBiaq1zPAtT--
