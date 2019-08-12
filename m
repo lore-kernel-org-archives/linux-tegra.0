@@ -1,105 +1,48 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: [PATCH] mmc: tegra: Implement enable_dma() to set dma_mask
-Date: Mon, 12 Aug 2019 15:42:17 -0700
-Message-ID: <20190812224217.12423-1-nicoleotsuka@gmail.com>
+From: =?iso-8859-2?B?TWljaGGzoE1pcm9zs2F3?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v10 01/15] clk: tegra20/30: Add custom EMC clock
+ implementation
+Date: Tue, 13 Aug 2019 01:12:58 +0200
+Message-ID: <20190812231258.GA31836@qmqm.qmqm.pl>
+References: <20190811210043.20122-1-digetx@gmail.com>
+ <20190811210043.20122-2-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190811210043.20122-2-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, vdumpa@nvidia.com
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rob Herring <robh-dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 68481a7e1c84 ("mmc: tegra: Mark 64 bit dma broken on Tegra186")
-added a SDHCI_QUIRK2_BROKEN_64_BIT_DMA flag to let sdhci core fallback
-to 32-bit DMA so as to fit the 40-bit addressing on Tegra186. However,
-there's a common way, being mentioned in sdhci.c file, to set dma_mask
-via enable_dma() callback in the device driver directly.
+On Mon, Aug 12, 2019 at 12:00:29AM +0300, Dmitry Osipenko wrote:
+> A proper External Memory Controller clock rounding and parent selection
+> functionality is required by the EMC drivers, it is not available using
+> the generic clock implementation because only the Memory Controller driver
+> is aware of what clock rates are actually available for a particular
+> device. EMC drivers will have to register a Tegra-specific CLK-API
+> callback which will perform rounding of a requested rate. EMC clock users
+> won't be able to request EMC clock by getting -EPROBE_DEFER until EMC
+> driver is probed and the callback is set up.
+[...]
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index 4812e45c2214..df966ca06788 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
+>  obj-y					+= clk-tegra-super-gen4.o
+>  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
+>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
+>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
+>  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
 
-So this patch implements an enable_dma() callback in the sdhci-tegra,
-in order to set an accurate DMA_BIT_MASK, other than 32-bit or 64-bit.
+Doesn't it complain when both CONFIG_ARCH_TEGRA_2x_SOC and
+CONFIG_ARCH_TEGRA_3x_SOC are enabled at the same time?
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/mmc/host/sdhci-tegra.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index f4d4761cf20a..23289adb78d6 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -16,6 +16,7 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
-+#include <linux/dma-mapping.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
-@@ -104,6 +105,7 @@
- 
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
-+	u64 dma_bit_mask;
- 	u32 nvquirks;
- 	u8 min_tap_delay;
- 	u8 max_tap_delay;
-@@ -749,6 +751,19 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- 	}
- }
- 
-+static int tegra_sdhci_enable_dma(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-+	struct device *dev = mmc_dev(host->mmc);
-+
-+	if (soc_data->dma_bit_mask)
-+		return dma_set_mask_and_coherent(dev, soc_data->dma_bit_mask);
-+
-+	return 0;
-+}
-+
- static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -1370,6 +1385,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
- 	.set_bus_width = sdhci_set_bus_width,
-+	.enable_dma = tegra_sdhci_enable_dma,
- 	.reset      = tegra_sdhci_reset,
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
- 	.voltage_switch = tegra_sdhci_voltage_switch,
-@@ -1384,20 +1400,13 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
--		   /* SDHCI controllers on Tegra186 support 40-bit addressing.
--		    * IOVA addresses are 48-bit wide on Tegra186.
--		    * With 64-bit dma mask used for SDHCI, accesses can
--		    * be broken. Disable 64-bit dma, which would fall back
--		    * to 32-bit dma mask. Ideally 40-bit dma mask would work,
--		    * But it is not supported as of now.
--		    */
--		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra186_sdhci_ops,
- };
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 	.pdata = &sdhci_tegra186_pdata,
-+	.dma_bit_mask = DMA_BIT_MASK(40),
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
-@@ -1410,6 +1419,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra194 = {
- 	.pdata = &sdhci_tegra186_pdata,
-+	.dma_bit_mask = DMA_BIT_MASK(39),
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
--- 
-2.17.1
+Best Regards,
+Micha³ Miros³aw
