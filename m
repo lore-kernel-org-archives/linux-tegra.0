@@ -1,110 +1,99 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V15 12/13] phy: tegra: Add PCIe PIPE2UPHY support
-Date: Mon, 12 Aug 2019 12:23:00 +0200
-Message-ID: <20190812102300.GM8903@ulmo>
+Subject: Re: [PATCH V15 00/13] PCI: tegra: Add Tegra194 PCIe support
+Date: Mon, 12 Aug 2019 12:25:19 +0200
+Message-ID: <20190812102519.GN8903@ulmo>
 References: <20190809044609.20401-1-vidyas@nvidia.com>
- <20190809044609.20401-13-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GeONROBiaq1zPAtT"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190809044609.20401-13-vidyas@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============6138060843856164482=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190809044609.20401-1-vidyas@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, lorenzo.pieralisi@arm.com, mperttunen@nvidia.com, mmaddireddy@nvidia.com, linux-pci@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, kthota@nvidia.com, kishon@ti.com, linux-tegra@vger.kernel.org, robh+dt@kernel.org, gustavo.pimentel@synopsys.com, jingoohan1@gmail.com, bhelgaas@google.com, digetx@gmail.com, jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---GeONROBiaq1zPAtT
+--===============6138060843856164482==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="e8/wErwm0bqugfcz"
+Content-Disposition: inline
+
+
+--e8/wErwm0bqugfcz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 09, 2019 at 10:16:08AM +0530, Vidya Sagar wrote:
-> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
-> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
-> For each PCIe lane of a controller, there is a P2U unit instantiated at
-> hardware level. This driver provides support for the programming required
-> for each P2U that is going to be used for a PCIe controller.
+On Fri, Aug 09, 2019 at 10:15:56AM +0530, Vidya Sagar wrote:
+> Tegra194 has six PCIe controllers based on Synopsys DesignWare core.
+> There are two Universal PHY (UPHY) blocks with each supporting 12(HSIO:
+> Hisg Speed IO) and 8(NVHS: NVIDIA High Speed) lanes respectively.
+> Controllers:0~4 use UPHY lanes from HSIO brick whereas Controller:5 uses
+> UPHY lanes from NVHS brick. Lane mapping in HSIO UPHY brick to each PCIe
+> controller (0~4) is controlled in XBAR module by BPMP-FW. Since PCIe
+> core has PIPE interface, a glue module called PIPE-to-UPHY (P2U) is used
+> to connect each UPHY lane (applicable to both HSIO and NVHS UPHY bricks)
+> to PCIe controller
+> This patch series
+> - Adds support for P2U PHY driver
+> - Adds support for PCIe host controller
+> - Adds device tree nodes each PCIe controllers
+> - Enables nodes applicable to p2972-0000 platform
+> - Adds helper APIs in Designware core driver to get capability regs offset
+> - Adds defines for new feature registers of PCIe spec revision 4
+> - Makes changes in DesignWare core driver to get Tegra194 PCIe working
 >=20
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
-> V15:
-> * None
->=20
-> V14:
-> * None
->=20
-> V13:
-> * None
->=20
-> V12:
-> * None
->=20
-> V11:
-> * Replaced PTR_ERR_OR_ZERO() with PTR_ERR() as the check for zero is alre=
-ady
->   present in the code.
->=20
-> V10:
-> * Used _relaxed() versions of readl() & writel()
->=20
-> V9:
-> * Made it dependent on ARCH_TEGRA_194_SOC directly instead of ARCH_TEGRA
->=20
-> V8:
-> * Changed P2U driver file name from pcie-p2u-tegra194.c to phy-tegra194-p=
-2u.c
->=20
-> V7:
-> * None
->=20
-> V6:
-> * Addressed review comments from Thierry
->=20
-> V5:
-> * None
->=20
-> V4:
-> * Rebased on top of linux-next top of the tree
->=20
-> V3:
-> * Replaced spaces with tabs in Kconfig file
-> * Sorted header file inclusion alphabetically
->=20
-> V2:
-> * Added COMPILE_TEST in Kconfig
-> * Removed empty phy_ops implementations
-> * Modified code according to DT documentation file modifications
->=20
->  drivers/phy/tegra/Kconfig            |   7 ++
->  drivers/phy/tegra/Makefile           |   1 +
->  drivers/phy/tegra/phy-tegra194-p2u.c | 120 +++++++++++++++++++++++++++
->  3 files changed, 128 insertions(+)
->  create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
+> Testing done on P2972-0000 platform
+> - Able to get PCIe link up with on-board Marvel eSATA controller
+> - Able to get PCIe link up with NVMe cards connected to M.2 Key-M slot
+> - Able to do data transfers with both SATA drives and NVMe cards
+> - Able to perform suspend-resume sequence
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Do you happen to have a patch for P2972-0000 PCI support? I don't see it
+in this series.
 
---GeONROBiaq1zPAtT
+Thierry
+
+--e8/wErwm0bqugfcz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RPgMACgkQ3SOs138+
-s6G6QRAApZ8Wo+dLU8yIc2xUpt31Zb4Mt89cHlgrBXMadX3WQGRdKFxNtS63hucq
-6bj/FGGojkXhuiFBY4vaRnhhWFEeUi8khH+gCiKHEq4f8ENNpPRF3nC11/ISDQlt
-rYB0lB0edwd7ZVso8KVs8LAXPO/qg3hF2UsriGDYyHIzhgNrpAqGtue+RbgfoXic
-uzcPDzhaXgcSls0JkMrQrqdb3I7dH/VrPXs4Y9FdbnHb4OaaSpDRiyR1M0e+j5Rs
-uBA3+qz84CGVEzUCmLakD52NbtEW1SJj2x3LfKe2LzjlR03p8p8q0+L7UbCP3OdM
-SNOB+VD+FCCQ2uH0aJMn1U4t/pAp16NuDSWlJxXXx8Pn/auq1nyYgluYyyArWNJO
-K1Y93Tr3DmEwzv67v8nXQqP7nyFj/Rn0XapYHt9JmjpBsFuZC9vh9lJ+m0lplJir
-LYFt0sZYyP/aYr6EmNwPE4fOsgW9++yXP68WqaS7YmL+Mr7Xek+ojJqi6t65J6K+
-QxIczmLN+hnkAr8RDjO1f5fClz2pIJRCt//HVwk2nMAr6aiSf4oKg0dAoxOW1q04
-7d5Mfcivnqus2gm2w2g4qtnUH1hQ4zxUjDMbaNsYJTxtjwnUS01lA8M2F1eJpqJX
-yTihfhNjw1i2pqoK4FD694YSFT3e/4toB0LG86K4ej9qfFcHcqI=
-=HGLV
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RPo8ACgkQ3SOs138+
+s6H7Pg//dh1al8/AaKqfOXUV7vJCuuAAP7eFAzEZssLuFIavDHghC4X+d5w0OsdZ
+eOnaJyrojkIFvpialETEQ3G+MLw2HyFoBt+f1G827JsyxMvVe+LDkGa2skg79F1y
+wa3gCp2zTkMM1mzS7cfm4wxGSdN1nUuuu63kMvBHpBOALTYnWeGv6hov5/rO+Yqg
+B9Wjbwu2rzNjNKirRW98/nUL5A9Ilxd4rVBu7o7JLz0VSoCdZ/5+DpursUTzZZz/
+9EbUFzy7pngftxrHxOL4DabxegjdehBj5JKQ7vR1ORmSo/9iukVrXh8dptqayijU
+8KUUWoYpnXmCCjBIAoc7mBwrwGfqZm9hF9rGedCILnpWxlVLgrXCxClsvBUn84TL
+db/VKF34Qo20wUfEPwUl0k5QjFwUc369XjfBEhBibkIXQb8+/4pA0EvolU7kedv7
+VrcLkUkEEPgGpTieaEKN11N3gARx8sEDde0muyKMG/bnRQmnvbq65nT0iiNI+lbj
+anvrkE3goyCno6raR0u7JLiWxCOgLVXA94aY+95h+16XpG6+jSQzgJfYWV0Xhi2L
+yPAuIH5zKzz2uzzbyqa4eF39lW0P4oBxghVt8jEvUfuqzcTXnR4VenQaciTjUb2A
+4S5Rtd/jNgp48OFTOpJTxcSPIBRZLzPKZnGGRhFGrpWZWUGikmY=
+=BYfL
 -----END PGP SIGNATURE-----
 
---GeONROBiaq1zPAtT--
+--e8/wErwm0bqugfcz--
+
+
+--===============6138060843856164482==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6138060843856164482==--
