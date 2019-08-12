@@ -1,88 +1,105 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH v2 0/4] drm: drop drmP in tda998x, tegra, arm, armada
-Date: Mon, 12 Aug 2019 22:38:05 +0200
-Message-ID: <20190812203805.GA10640@ravnborg.org>
-References: <20190804094132.29463-1-sam@ravnborg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190804094132.29463-1-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, malidp@foss.arm.com, linux-tegra@vger.kernel.org
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: [PATCH] mmc: tegra: Implement enable_dma() to set dma_mask
+Date: Mon, 12 Aug 2019 15:42:17 -0700
+Message-ID: <20190812224217.12423-1-nicoleotsuka@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, vdumpa@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgYWxsLgoKT24gU3VuLCBBdWcgMDQsIDIwMTkgYXQgMTE6NDE6MjhBTSArMDIwMCwgU2FtIFJh
-dm5ib3JnIHdyb3RlOgo+IFRoaXMgc2V0IG9mIHBhdGNoZXMgaXMgb25lIG9mIHRoZSBmaW5hbCBz
-dGVwcyBiZWZvcmUKPiB3ZSBoYXZlIHN1Y2NlZWRlZCB0byBzdG9wIHVzaW5nIGRybVAuaCBpbiBh
-bGwgb2YgZHJtLy4KPiAKPiBUaGVyZSBpcyBhIGZldyBwYXRjaGVzIGluIGZsaWdodCB0aHJvdWdo
-IG90aGVyIHRyZWVzCj4gYW5kIHRoZSBwbGFuIGlzIHRoYXQgYWxsIHVzZXJzIHNoYWxsIGJlIGdv
-bmUgaW4gdGhlCj4gdXBzdHJlYW0ga2VybmVsIGFmdGVyIG5leHQgbWVyZ2Ugd2luZG93Lgo+IAo+
-IFRoZSBwYXRjaGVzIGhhcyBzZWVuIGJ1aWxkIHRlc3Qgd2l0aCB2YXJpb3VzIGNvbmZpZ3MKPiB3
-aXRoIHZhcmlvdXMgYXJjaGl0ZWN0dXJlcy4KPiAKPiBUaGUgcGF0Y2hlcyBoYXMgYmVlbiBzZW50
-IGJlZm9yZSwgYnV0IHRvIG15IGJlc3Qga25vd2xlZGdlCj4gdGhleSBoYXZlIG5vdCBiZWVuIGFw
-cGxpZWQgYW55d2hlcmUuCj4gQWxsIGZvdXIgcGF0Y2hlcyBhcmUgYmFzZWQgb24gZHJtLW1pc2Mt
-bmV4dCwKPiBidXQgSSBjaGVja2VkIHRoYXQgdGhlIHRkYTk5OHggcGF0Y2ggY2FuIGJlIGFwcGxp
-ZWQgdG8KPiB0aGUgdGRhOTk4eCB0cmVlLgo+IAo+IFRoZXJlIGFyZSBubyBkZXBlbmRlbmNpZXMg
-YmV0d2VlbiB0aGUgcGF0Y2hlcy4KPiAKPiB2MjoKPiAtIHJlYmFzZSBvbiB0b3Agb2YgZHJtLW1p
-c2MtbmV4dAo+IAo+IFRvIG1haW50YWluZXJzOiAoQXNzdW1pbmcgdGhlIHBhdGNoIGFyZSBPSykK
-PiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91IHRha2UgdGhlIHBhdGNoLCBvciByZXF1ZXN0Cj4g
-bWUgdG8gYXBwbHkgaXQgdG8gZHJtLW1pc2MtbmV4dC4KPiBPciBsZXQgbWUgbWUga25vdyBpZiB0
-aGUgcGF0Y2ggc2hvdWxkIGJlIGJhc2VkIG9uIGFub3RoZXIgdHJlZS4KCnBpbmcuLi4KClRoaXMg
-cGF0Y2hzZXQgaXMgb25lIG9mIHRoZSBsYXN0IHN0ZXBzIHRvIGdldCByaWQgb2YgZHJtUC5oLgpP
-dGhlciBwYXRjaGVzIGFyZSBhcHBsaWVkIHRvIHZhcmlvdXMgc3ViLXN5c3RlbSB0cmVlcy4KClRo
-ZSBpZGVhIGlzIHRoYXQgYWZ0ZXIgbmV4dCBtZXJnZSB3aW5kb3cgY2FuIGRyb3AgZHJtUC5oLgpB
-cyBsb25nIGFzIHdlIGtlZXAgZHJtUC5oIGFyb3VuZCBuZXcgdXNlcnMgd2lsbCBzbmVhayBpbi4K
-CglTYW0KCj4gCj4gU2FtIFJhdm5ib3JnICg0KToKPiAgICAgICBkcm0vaTJjL3RkYTk5OHg6IGRy
-b3AgdXNlIG9mIGRybVAuaAo+ICAgICAgIGRybS90ZWdyYTogZHJvcCB1c2Ugb2YgZHJtUC5oCj4g
-ICAgICAgZHJtL2FybWFkYTogZHJvcCB1c2Ugb2YgZHJtUC5oCj4gICAgICAgZHJtL2FybTogZHJv
-cCB1c2Ugb2YgZHJtUC5oCj4gCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm0vaGRsY2RfY3J0Yy5jICAg
-ICAgICB8IDEyICsrKysrKystLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL2hkbGNkX2Rydi5j
-ICAgICAgICAgfCAgNyArKysrKystCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX2NydGMu
-YyAgICAgICB8IDExICsrKysrKystLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX2Ry
-di5jICAgICAgICB8ICA4ICsrKysrLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX2Ry
-di5oICAgICAgICB8ICA3ICsrKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfaHcu
-YyAgICAgICAgIHwgIDcgKysrKysrLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9tdy5j
-ICAgICAgICAgfCAgNSArKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9wbGFuZXMu
-YyAgICAgfCAgNCArKystCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX2NydGMuYyAg
-ICB8IDEwICsrKysrKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZGVidWdm
-cy5jIHwgIDggKysrKysrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZHJtLmgg
-ICAgIHwgIDUgKysrKy0KPiAgZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZHJ2LmMgICAg
-IHwgIDggKysrKysrKysKPiAgZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZmIuYyAgICAg
-IHwgIDMgKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX2ZiZGV2LmMgICB8ICAz
-ICsrKwo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyAgICAgfCAgNyArKysr
-KystCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX292ZXJsYXkuYyB8ICA4ICsrKysr
-LS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX3BsYW5lLmMgICB8ICA0ICsrKy0K
-PiAgZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfdHJhY2UuaCAgIHwgIDUgKysrKy0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2kyYy90ZGE5OTh4X2Rydi5jICAgICAgIHwgIDIgKy0KPiAgZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAgICAgICAgICAgIHwgMTMgKysrKysrKysrLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYyAgICAgICAgICAgfCAgNSArKystLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgfCAgOCArKysrKysrKwo+ICBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICAgICAgICAgICAgfCAgMyArLS0KPiAgZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2RzaS5jICAgICAgICAgICAgIHwgIDggKysrKystLS0KPiAgZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2ZiLmMgICAgICAgICAgICAgIHwgIDYgKysrKy0tCj4gIGRyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9nZW0uYyAgICAgICAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZ2VtLmggICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9n
-cjJkLmMgICAgICAgICAgICB8ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYyAg
-ICAgICAgICAgIHwgIDUgKysrKysKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jICAgICAg
-ICAgICAgIHwgIDMgKystCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuaCAgICAgICAgICAg
-ICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3BsYW5lLmMgICAgICAgICAgIHwgIDEg
-Kwo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgICAgICAgICAgICAgfCAgMyArKysKPiAg
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jICAgICAgICAgICAgIHwgIDEgKwo+ICAzNCBmaWxl
-cyBjaGFuZ2VkLCAxMzcgaW5zZXJ0aW9ucygrKSwgNDkgZGVsZXRpb25zKC0pCj4gCj4gCj4gX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+Commit 68481a7e1c84 ("mmc: tegra: Mark 64 bit dma broken on Tegra186")
+added a SDHCI_QUIRK2_BROKEN_64_BIT_DMA flag to let sdhci core fallback
+to 32-bit DMA so as to fit the 40-bit addressing on Tegra186. However,
+there's a common way, being mentioned in sdhci.c file, to set dma_mask
+via enable_dma() callback in the device driver directly.
+
+So this patch implements an enable_dma() callback in the sdhci-tegra,
+in order to set an accurate DMA_BIT_MASK, other than 32-bit or 64-bit.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index f4d4761cf20a..23289adb78d6 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -16,6 +16,7 @@
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
++#include <linux/dma-mapping.h>
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mmc/mmc.h>
+@@ -104,6 +105,7 @@
+ 
+ struct sdhci_tegra_soc_data {
+ 	const struct sdhci_pltfm_data *pdata;
++	u64 dma_bit_mask;
+ 	u32 nvquirks;
+ 	u8 min_tap_delay;
+ 	u8 max_tap_delay;
+@@ -749,6 +751,19 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	}
+ }
+ 
++static int tegra_sdhci_enable_dma(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
++	struct device *dev = mmc_dev(host->mmc);
++
++	if (soc_data->dma_bit_mask)
++		return dma_set_mask_and_coherent(dev, soc_data->dma_bit_mask);
++
++	return 0;
++}
++
+ static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -1370,6 +1385,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = tegra_sdhci_set_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
++	.enable_dma = tegra_sdhci_enable_dma,
+ 	.reset      = tegra_sdhci_reset,
+ 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+ 	.voltage_switch = tegra_sdhci_voltage_switch,
+@@ -1384,20 +1400,13 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+-	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+-		   /* SDHCI controllers on Tegra186 support 40-bit addressing.
+-		    * IOVA addresses are 48-bit wide on Tegra186.
+-		    * With 64-bit dma mask used for SDHCI, accesses can
+-		    * be broken. Disable 64-bit dma, which would fall back
+-		    * to 32-bit dma mask. Ideally 40-bit dma mask would work,
+-		    * But it is not supported as of now.
+-		    */
+-		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
++	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+ 	.ops  = &tegra186_sdhci_ops,
+ };
+ 
+ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
+ 	.pdata = &sdhci_tegra186_pdata,
++	.dma_bit_mask = DMA_BIT_MASK(40),
+ 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
+ 		    NVQUIRK_HAS_PADCALIB |
+ 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
+@@ -1410,6 +1419,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
+ 
+ static const struct sdhci_tegra_soc_data soc_data_tegra194 = {
+ 	.pdata = &sdhci_tegra186_pdata,
++	.dma_bit_mask = DMA_BIT_MASK(39),
+ 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
+ 		    NVQUIRK_HAS_PADCALIB |
+ 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
+-- 
+2.17.1
