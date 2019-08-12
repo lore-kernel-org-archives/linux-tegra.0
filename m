@@ -1,216 +1,61 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v8 09/21] clk: tegra: clk-super: Fix to enable PLLP
- branches to CPU
-Date: Mon, 12 Aug 2019 11:53:43 +0200
-Message-ID: <20190812095343.GH8903@ulmo>
+Subject: Re: [PATCH v8 10/21] clk: tegra: clk-super: Add restore-context
+ support
+Date: Mon, 12 Aug 2019 11:55:00 +0200
+Message-ID: <20190812095500.GI8903@ulmo>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-10-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-11-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2oox5VnwalALFvA7"
+        protocol="application/pgp-signature"; boundary="hABqaeELJqnDDeDE"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1565308020-31952-10-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1565308020-31952-11-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---2oox5VnwalALFvA7
+--hABqaeELJqnDDeDE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2019 at 04:46:48PM -0700, Sowjanya Komatineni wrote:
-> This patch has a fix to enable PLLP branches to CPU before changing
-> the CPU cluster clock source to PLLP for Gen5 Super clock and
-> disables PLLP branches to CPU when not in use.
+On Thu, Aug 08, 2019 at 04:46:49PM -0700, Sowjanya Komatineni wrote:
+> This patch implements restore_context for clk_super_mux and clk_super.
 >=20
-> During system suspend entry and exit, CPU source will be switched
-> to PLLP and this needs PLLP branches to be enabled to CPU prior to
-> the switch.
+> During system supend, core power goes off the and context of Tegra
+> CAR registers is lost.
 >=20
-> On system resume, warmboot code enables PLLP branches to CPU and
-> powers up the CPU with PLLP clock source.
+> So on system resume, context of super clock registers are restored
+> to have them in same state as before suspend.
 >=20
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-super.c            | 14 ++++++++++++++
->  drivers/clk/tegra/clk-tegra-super-gen4.c |  7 ++++++-
->  drivers/clk/tegra/clk.c                  | 14 ++++++++++++++
->  drivers/clk/tegra/clk.h                  |  5 +++++
->  4 files changed, 39 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-> index 39ef31b46df5..e2a1e95a8db7 100644
-> --- a/drivers/clk/tegra/clk-super.c
-> +++ b/drivers/clk/tegra/clk-super.c
-> @@ -28,6 +28,9 @@
->  #define super_state_to_src_shift(m, s) ((m->width * s))
->  #define super_state_to_src_mask(m) (((1 << m->width) - 1))
-> =20
-> +#define CCLK_SRC_PLLP_OUT0 4
-> +#define CCLK_SRC_PLLP_OUT4 5
-> +
->  static u8 clk_super_get_parent(struct clk_hw *hw)
->  {
->  	struct tegra_clk_super_mux *mux =3D to_clk_super_mux(hw);
-> @@ -97,12 +100,23 @@ static int clk_super_set_parent(struct clk_hw *hw, u=
-8 index)
->  		if (index =3D=3D mux->div2_index)
->  			index =3D mux->pllx_index;
->  	}
-> +
-> +	/* enable PLLP branches to CPU before selecting PLLP source */
-> +	if ((mux->flags & TEGRA210_CPU_CLK) &&
-> +	    (index =3D=3D CCLK_SRC_PLLP_OUT0 || index =3D=3D CCLK_SRC_PLLP_OUT4=
-))
-> +		tegra_clk_set_pllp_out_cpu(true);
-> +
->  	val &=3D ~((super_state_to_src_mask(mux)) << shift);
->  	val |=3D (index & (super_state_to_src_mask(mux))) << shift;
-> =20
->  	writel_relaxed(val, mux->reg);
->  	udelay(2);
-> =20
-> +	/* disable PLLP branches to CPU if not used */
-> +	if ((mux->flags & TEGRA210_CPU_CLK) &&
-> +	    index !=3D CCLK_SRC_PLLP_OUT0 && index !=3D CCLK_SRC_PLLP_OUT4)
-> +		tegra_clk_set_pllp_out_cpu(false);
-> +
->  out:
->  	if (mux->lock)
->  		spin_unlock_irqrestore(mux->lock, flags);
-> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra=
-/clk-tegra-super-gen4.c
-> index cdfe7c9697e1..98538f79b0c4 100644
-> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-> @@ -180,7 +180,7 @@ static void __init tegra_super_clk_init(void __iomem =
-*clk_base,
->  					gen_info->num_cclk_g_parents,
->  					CLK_SET_RATE_PARENT,
->  					clk_base + CCLKG_BURST_POLICY,
-> -					0, 4, 8, 0, NULL);
-> +					TEGRA210_CPU_CLK, 4, 8, 0, NULL);
->  		} else {
->  			clk =3D tegra_clk_register_super_mux("cclk_g",
->  					gen_info->cclk_g_parents,
-> @@ -196,6 +196,11 @@ static void __init tegra_super_clk_init(void __iomem=
- *clk_base,
->  	dt_clk =3D tegra_lookup_dt_id(tegra_clk_cclk_lp, tegra_clks);
->  	if (dt_clk) {
->  		if (gen_info->gen =3D=3D gen5) {
-> +		/*
-> +		 * TEGRA210_CPU_CLK flag is not needed for cclk_lp as cluster
-> +		 * switching is not currently supported on Tegra210 and also
-> +		 * cpu_lp is not used.
-> +		 */
-
-Indentation looks odd here. If you want to comment the whole block, put
-the comment above the "if (...) {". If you want to comment the contents
-of the block, indent one level further so it aligns with the "clk =3D ..."
-below.
-
-Otherwise looks good, so with the indentation fixed:
+>  drivers/clk/tegra/clk-super.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
->  			clk =3D tegra_clk_register_super_mux("cclk_lp",
->  					gen_info->cclk_lp_parents,
->  					gen_info->num_cclk_lp_parents,
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index 573e3c967ae1..eb08047fd02f 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -23,6 +23,7 @@
->  #define CLK_OUT_ENB_W			0x364
->  #define CLK_OUT_ENB_X			0x280
->  #define CLK_OUT_ENB_Y			0x298
-> +#define CLK_ENB_PLLP_OUT_CPU		BIT(31)
->  #define CLK_OUT_ENB_SET_L		0x320
->  #define CLK_OUT_ENB_CLR_L		0x324
->  #define CLK_OUT_ENB_SET_H		0x328
-> @@ -199,6 +200,19 @@ const struct tegra_clk_periph_regs *get_reg_bank(int=
- clkid)
->  	}
->  }
-> =20
-> +void tegra_clk_set_pllp_out_cpu(bool enable)
-> +{
-> +	u32 val;
-> +
-> +	val =3D readl_relaxed(clk_base + CLK_OUT_ENB_Y);
-> +	if (enable)
-> +		val |=3D CLK_ENB_PLLP_OUT_CPU;
-> +	else
-> +		val &=3D ~CLK_ENB_PLLP_OUT_CPU;
-> +
-> +	writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
-> +}
-> +
->  struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int ban=
-ks)
->  {
->  	clk_base =3D regs;
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 8a9af45b6084..560e2bcb3d7d 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -677,6 +677,9 @@ struct clk *tegra_clk_register_periph_data(void __iom=
-em *clk_base,
->   * Flags:
->   * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indica=
-tes
->   *     that this is LP cluster clock.
-> + * TEGRA210_CPU_CLK - This flag is used to identify CPU cluster for gen5
-> + * super mux parent using PLLP branches. To use PLLP branches to CPU, ne=
-ed
-> + * to configure additional bit PLLP_OUT_CPU in the clock registers.
->   */
->  struct tegra_clk_super_mux {
->  	struct clk_hw	hw;
-> @@ -693,6 +696,7 @@ struct tegra_clk_super_mux {
->  #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_m=
-ux, hw)
-> =20
->  #define TEGRA_DIVIDER_2 BIT(0)
-> +#define TEGRA210_CPU_CLK BIT(1)
-> =20
->  extern const struct clk_ops tegra_clk_super_ops;
->  struct clk *tegra_clk_register_super_mux(const char *name,
-> @@ -838,6 +842,7 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, =
-u8 p_div);
->  int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
->  		 u8 frac_width, u8 flags);
->  void tegra_clk_osc_resume(void __iomem *clk_base);
-> +void tegra_clk_set_pllp_out_cpu(bool enable);
-> =20
-> =20
->  /* Combined read fence with delay */
-> --=20
-> 2.7.4
->=20
-
---2oox5VnwalALFvA7
+--hABqaeELJqnDDeDE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RNycACgkQ3SOs138+
-s6FWNhAAlaShT2GFtVBnhhFJ445GVNOhlfEDJqg1Z1G4FVSwFxbtkRYmVuAa+KSq
-YgcgH99epOInSsouaVVlwF3uBpAaZVXn1tX3LSzqvbvgDWq4H/EnWOk8jRwKL4Tv
-a0CLk8G7kfgwHy83vBuZu2XcBqp8tmWjFLs6Z2g3hohxnwGkmcc1503vqP/Iv/cm
-M1Xh+nIcilyWJZh+HSKJXi6gmsciVh1ebEItgZjVzDq74AIVs8WQIsN5evcRPrYH
-sF3t8n+vEThtO4yv0nrBwOeXDW7+DoLHbNNttnb++5DoJ8YPFamEOhPXULomtH+5
-W0WYACbVmq+r/vSGq0/CvdsUOuXfUtcIFRcSKflomIi9sIE62Zxcgx2Mu5DFwF3J
-mKVetDtHpqnWn8HP/cwAd/pUI8OBiUczzdneJtYY+Kl9HYZ+QRhvR69C1QXt00JS
-hx41ObgsLn66B2pmKcOzCs8IlPfzPnjzNpsiRloHv2b82be/VHB3CR+H1LUkv2BY
-nQmdXPUOLaFeHUMUgXus4i8XoHOWsxnIAQdgW5Q44BQesc0eOZKGl9aRbO9g+8Wi
-xNTHsaXoSDCGsEqEGC4suyUqz1CI9OrGbRcJRSr72zdSO0krgOV4Gy8lgvHhIDjw
-03rH1AMxPh3jCXhHiN9SFNSPPDhbguHoEz+5sDezI0s52deFTGY=
-=ARG9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RN3QACgkQ3SOs138+
+s6FHwRAAnYt3bQr8qabJpmuLiAWddIRGpf0XzLDW6DnRqSmhENAKH09BCH1IJ8bO
+RNFI+6CZYoGt38zjU54qQxf2BGFSW1q/63T/+CU318zZ1oUws+0iWQrFPKHIxnS7
+Rae4YsOE1UqTucB/uwniVcDVTGTcMmDKx9lA+WgMTcNyRcMFYuKhPjV0BL34Kq+5
+2JA7MaqNqrBKSwVqOlN2kAjqa5NOUq57c8MbQ6/blbGQsdgnDrWt9TDR4s3cifCc
+tu9HdlV5921/RAP42V2+oCnHnYMNvGAre7Z3ES5GZ0z5DdW48koDA99XexftElaT
++KCuXTdOUrv8Y5x6PQ5MwCxnXqqayjz+4c3v8ahygNBV8K159Kkokt2c8NR6Igbt
+Mz403frb3Hp3qstDs6HfvYCsuNFmTmB+/Lhp8xciVyEiuv26CPNXg+OL7rRfJtc2
+hQy6RcFw4D8uYRcOS7rkH5m2rot8R59tK+2QqSEIgMlYbNtDuciS/5r83/ro7516
+tTMbjYdQWRlrFELVTzmjIQtE2i5PJ4uq8VJsbXOGlx0ESmQIwNcxdwe2nBH6vrSY
+7kFuBQvOBTMv7bUvHY4/M+yhZLHOIC77Z/vYPh58Yl8JwxFTu1RNT7esQUcMyJfD
+i1u4z1VztUimQjiojE4eGV8tkO6K6f38N0lz1R8T/MyOOOf67TE=
+=5pWj
 -----END PGP SIGNATURE-----
 
---2oox5VnwalALFvA7--
+--hABqaeELJqnDDeDE--
