@@ -1,87 +1,49 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V15 00/13] PCI: tegra: Add Tegra194 PCIe support
-Date: Mon, 12 Aug 2019 12:34:10 +0200
-Message-ID: <20190812103410.GO8903@ulmo>
-References: <20190809044609.20401-1-vidyas@nvidia.com>
- <20190812102519.GN8903@ulmo>
- <aa666d78-43b3-dbea-dac6-386deaca3e12@nvidia.com>
+From: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [PATCH 00/14] serial: tegra: Tegra186 support and fixes
+Date: Mon, 12 Aug 2019 16:58:09 +0530
+Message-ID: <1565609303-27000-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mvuFargmsA+C2jC8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <aa666d78-43b3-dbea-dac6-386deaca3e12@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com, jslaby@suse.com
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Krishna Yarlagadda <kyarlagadda@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Series of patches adding enhancements to exising UART driver and adding
+support for new chip Tegra186 and Tegra194.
 
---mvuFargmsA+C2jC8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tegra186 uses GPCDMA for dma transfers which is still not available in
+mainstream. However, it can work in PIO/FIFO mode and support added for it.
+Also Tegra186 has a hardware issue where it does not meet tolernace +/-4% and
+to work around it, device tree entries provided to adjust baud rate for a
+particular range.
 
-On Mon, Aug 12, 2019 at 03:59:39PM +0530, Vidya Sagar wrote:
-> On 8/12/2019 3:55 PM, Thierry Reding wrote:
-> > On Fri, Aug 09, 2019 at 10:15:56AM +0530, Vidya Sagar wrote:
-> > > Tegra194 has six PCIe controllers based on Synopsys DesignWare core.
-> > > There are two Universal PHY (UPHY) blocks with each supporting 12(HSI=
-O:
-> > > Hisg Speed IO) and 8(NVHS: NVIDIA High Speed) lanes respectively.
-> > > Controllers:0~4 use UPHY lanes from HSIO brick whereas Controller:5 u=
-ses
-> > > UPHY lanes from NVHS brick. Lane mapping in HSIO UPHY brick to each P=
-CIe
-> > > controller (0~4) is controlled in XBAR module by BPMP-FW. Since PCIe
-> > > core has PIPE interface, a glue module called PIPE-to-UPHY (P2U) is u=
-sed
-> > > to connect each UPHY lane (applicable to both HSIO and NVHS UPHY bric=
-ks)
-> > > to PCIe controller
-> > > This patch series
-> > > - Adds support for P2U PHY driver
-> > > - Adds support for PCIe host controller
-> > > - Adds device tree nodes each PCIe controllers
-> > > - Enables nodes applicable to p2972-0000 platform
-> > > - Adds helper APIs in Designware core driver to get capability regs o=
-ffset
-> > > - Adds defines for new feature registers of PCIe spec revision 4
-> > > - Makes changes in DesignWare core driver to get Tegra194 PCIe working
-> > >=20
-> > > Testing done on P2972-0000 platform
-> > > - Able to get PCIe link up with on-board Marvel eSATA controller
-> > > - Able to get PCIe link up with NVMe cards connected to M.2 Key-M slot
-> > > - Able to do data transfers with both SATA drives and NVMe cards
-> > > - Able to perform suspend-resume sequence
-> >=20
-> > Do you happen to have a patch for P2972-0000 PCI support? I don't see it
-> > in this series.
-> It is already merged.
-> V10 link @ http://patchwork.ozlabs.org/patch/1114445/
+Ahung Cheng (2):
+  serial: tegra: avoid reg access when clk disabled
+  serial: tegra: protect IER against LCR.DLAB
 
-D'oh! Indeed.
+Andreas Abel (1):
+  serial: tegra: add internal loopback functionality
 
-Thierry
+Krishna Yarlagadda (7):
+  serial: tegra: report error to upper tty layer
+  serial: tegra: add compatible for new chips
+  serial: tegra: check for FIFO mode enabled status
+  serial: tegra: DT for Adjusted baud rates
+  serial: tegra: add support to adjust baud rate
+  serial: tegra: report clk rate errors
+  serial: tegra: Add PIO mode support
 
---mvuFargmsA+C2jC8
-Content-Type: application/pgp-signature; name="signature.asc"
+Shardar Shariff Md (4):
+  serial: tegra: add support to ignore read
+  serial: tegra: flush the RX fifo on frame error
+  serial: tegra: set maximum num of uart ports to 8
+  serial: tegra: add support to use 8 bytes trigger
 
------BEGIN PGP SIGNATURE-----
+ .../bindings/serial/nvidia,tegra20-hsuart.txt      |  35 +-
+ drivers/tty/serial/serial-tegra.c                  | 405 ++++++++++++++++++---
+ 2 files changed, 385 insertions(+), 55 deletions(-)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RQKIACgkQ3SOs138+
-s6GLXg/8DOJVJ0fFXPAXXeHi86AGgUkBYnQUYPlOJXETCmROhZoJ5epgGbfRhQX9
-QjEAXF7CNF6/FlU/0myVBYhGu+y2W5SkY+4dhOn1LLhTOS66MxNzuEvt7jMC7X6P
-n8aOuS1nWlIjrTFRHRzwEQqLRIhhoInAo0Vyj+eOTUs3fk8eqDQ3pRLKx9BIJEwc
-nhtoo5Dc15R7fHvBvwkP1349UHm6eodDr2Wo3tSa4IHj4QVpaaYhWpvujT7MvISU
-dBznNBWqoLq7QAi3LFM/Wc0jgKZGriDnxQ2wKNbedDwmvF+FJsiBGlu+++Xg+enp
-g/KKv9ZLMAWO0U8RD+j64NL6/325aBbaGZ+L1CFEscZPFuk7ivMspDAsMAjTqYOK
-6X3QBqyHRUnHIHxKtYvnsI5U6e0y8lnjQCdnL6tNsq7qLdtHvC9o1xcMUeS/KOeM
-TEPTztARXSzibsU5ebgDNX0Q/ioonwY5484gRPfNAmyOb+Vk0i8iCcZXlC6PpeZ5
-GkF3LH8XAKBJ5QEoexe+o5qvZemQubl+hwrWViq1ySA8+3nHV0gEhkjt8dChfh/f
-6NA0RMm3PyUtINdLP7kGOuZEc4ScNqszbsngqZuE/IgPj/2M5cWSzxnnad0OXG7R
-0TnzLQG2M3PRP4bmxEb5jzTk+apORKyFOw6PKg+VkKACFN6P0F8=
-=ZcJU
------END PGP SIGNATURE-----
-
---mvuFargmsA+C2jC8--
+-- 
+2.7.4
