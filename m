@@ -1,61 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1] Revert "mmc: sdhci-tegra: drop ->get_ro()
- implementation"
-Date: Mon, 12 Aug 2019 11:06:59 +0200
-Message-ID: <20190812090659.GB8903@ulmo>
-References: <20190808222430.28477-1-digetx@gmail.com>
+Subject: Re: [PATCH v8 01/21] pinctrl: tegra: Fix write barrier placement in
+ pmx_writel
+Date: Mon, 12 Aug 2019 11:20:21 +0200
+Message-ID: <20190812092021.GC8903@ulmo>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
+        protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190808222430.28477-1-digetx@gmail.com>
+In-Reply-To: <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qcHopEYAB45HaUaB
+--i7F3eY7HS/tUJxUd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 09, 2019 at 01:24:30AM +0300, Dmitry Osipenko wrote:
-> The WRITE_PROTECT bit is always in a "protected mode" on Tegra and
-> WP-GPIO state need to be used instead. In a case of the GPIO absence,
-> write-enable should be assumed. External SD is writable once again as
-> a result of this patch because the offending commit changed behaviour for
-> the case of a missing WP-GPIO to fall back to WRITE_PROTECT bit-checking,
-> which is incorrect for Tegra.
+On Thu, Aug 08, 2019 at 04:46:40PM -0700, Sowjanya Komatineni wrote:
+> pmx_writel uses writel which inserts write barrier before the
+> register write rather.
 >=20
-> Cc: stable@vger.kernel.org # v5.1+
-> Fixes: e8391453e27f ("mmc: sdhci-tegra: drop ->get_ro() implementation")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> This patch has fix to replace writel with writel_relaxed followed
+> by a write barrier to ensure write operation before the barrier
+> is completed for successful pinctrl change.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---qcHopEYAB45HaUaB
+--i7F3eY7HS/tUJxUd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RLDMACgkQ3SOs138+
-s6H/bxAAqFkZoITao90AFM94NfokMprlU0+LtNV+socSWBzYJzTPeGoAvHvaVn22
-qqg8sUervEonzshVlyUr4+bTty5QfMhtn6LVPQN2nxCFz7GTiGR5ZM4sLqV+xlMu
-SekWpTgeQIFeyFx/k/ZL4UUzbgAZx4BXy2VMdZmqh+ZLU5Ou3rkmhf8lUU2JxJtY
-wtbFhopsxovlRE6ElAuwraN8Sqd3RepRQKBxHZJxazXY6Nvn1Ni+KUVaWow0lb1w
-jL9lAgAVoDI8CfH8OemxOTKMB7BvJLAJ1VmniZuwTqpQqlrhLnCkb/Bw29jjmToj
-wLVr7+m+96CQvpqgrcTg13QAZyH2gwr1DjJTH6u1XoOij0fezLmADg4eETgUxCjb
-BSdPRqnH9uQq79szJ42464aRyF8Lcu+yIGT7x7F/WX5AVU0Jjtmk9khvGQOsVEvp
-fv1r7GzsiQy1RyH2fyjRj9yuiyHwVAvdVupHhkcLz3lLGFBnImwM2KOO+LjJQPFq
-9i11pbwAFkZbUo/mBY5Ar0nBigu7eIZ6gtk6vIF0pi5WrQDqj0EpY0M72TvbwQfh
-Nlo/MNJqtQcsO7FT2uYWKHLZ/9VvONkK44tS5KGbceCGXeAaL1vrxDnZ761lc5ga
-c4xiuv+/CputZ4qYunS0qDbSdpJ86SfDODhghzbdM1TaOx6JuyQ=
-=5Rj9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RL1EACgkQ3SOs138+
+s6GgOQ/+KHEjD8Jzg9BS66GmKuNoOclOxDM03l3CoYiOGhyyUsPjifCTvtnDFGwa
+lqaq7sH3V7fOCC/qun2i5BE8pumI+NgLEkm9tYKvmLCn2vKCzIpv2LGX37+e91M8
+GiMD27bmKkEDW4nLgIza9y3v/t6kJ4XhwKnFA2+eMjqZB9SNleworpYAZp832AIj
+nl0HbqRiGpkLjcIaWAibNY5+0OEpRB6AhZlhsCWz5h7c00Jad8qK1rBnoLxDiq7a
+s5jPfDc8fYWQ6OnIutLEjm+GdSx17odH7R+mprW9OiKqWPmdZUp/aZEHDyS434Al
++c8I0wEpxWWCEk924kF6oPytP6KKjOHy29SdhPg0RV7uuK/qPm6ylaSxem3NyCMi
+sibGMlfXuMKdFaDbCEIv0XbVsu7nmu1I0h7PV1Gy+oCSnPI8EJ+tFiGozbYoy9hQ
+INdJWkMQLWXsCRsECrP1zWyDdiA5zhI0nRNVSflZi5Lz9GkcGa8fmi+r0o4vOL+x
+Lsy85RpW8ukLteRRUf51hpXNcvsXTGXZEempESfd+uLu7eHTpq8WciMDDT0//ekQ
+L4xaq/9TB7s0sDH3D2O8VOd5s1tR0nHl0DojzeY/YS25hOi3nW/8/fHaz+1c6z/C
+cZ7LUpJxyGhfs9Sj00Ftyj2fWVZGuIxFDQXh5ny339ST1DhgPRQ=
+=NUo9
 -----END PGP SIGNATURE-----
 
---qcHopEYAB45HaUaB--
+--i7F3eY7HS/tUJxUd--
