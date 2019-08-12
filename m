@@ -1,61 +1,114 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v8 10/21] clk: tegra: clk-super: Add restore-context
+Subject: Re: [PATCH v8 11/21] clk: tegra: clk-dfll: Add suspend and resume
  support
-Date: Mon, 12 Aug 2019 11:55:00 +0200
-Message-ID: <20190812095500.GI8903@ulmo>
+Date: Mon, 12 Aug 2019 12:01:27 +0200
+Message-ID: <20190812100127.GJ8903@ulmo>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-11-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hABqaeELJqnDDeDE"
+        protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1565308020-31952-11-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---hABqaeELJqnDDeDE
+--72k7VsmfIboquFwl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2019 at 04:46:49PM -0700, Sowjanya Komatineni wrote:
-> This patch implements restore_context for clk_super_mux and clk_super.
+On Thu, Aug 08, 2019 at 04:46:50PM -0700, Sowjanya Komatineni wrote:
+> This patch implements DFLL suspend and resume operation.
 >=20
-> During system supend, core power goes off the and context of Tegra
-> CAR registers is lost.
+> During system suspend entry, CPU clock will switch CPU to safe
+> clock source of PLLP and disables DFLL clock output.
 >=20
-> So on system resume, context of super clock registers are restored
-> to have them in same state as before suspend.
+> DFLL driver suspend confirms DFLL disable state and errors out on
+> being active.
+>=20
+> DFLL is re-initialized during the DFLL driver resume as it goes
+> through complete reset during suspend entry.
 >=20
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-super.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
+>  drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++=
+++++++
+>  drivers/clk/tegra/clk-dfll.h               |  2 ++
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
+>  3 files changed, 59 insertions(+)
+>=20
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index f8688c2ddf1a..eb298a5d7be9 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
+>  	td->last_unrounded_rate =3D 0;
+> =20
+>  	pm_runtime_enable(td->dev);
+> +	pm_runtime_irq_safe(td->dev);
+>  	pm_runtime_get_sync(td->dev);
+> =20
+>  	dfll_set_mode(td, DFLL_DISABLED);
+> @@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
+>  	return ret;
+>  }
+> =20
+> +/**
+> + * tegra_dfll_suspend - check DFLL is disabled
+> + * @dev: DFLL device *
+> + *
+> + * DFLL clock should be disabled by the CPUFreq driver. So, make
+> + * sure it is disabled and disable all clocks needed by the DFLL.
+> + */
+> +int tegra_dfll_suspend(struct device *dev)
+> +{
+> +	struct tegra_dfll *td =3D dev_get_drvdata(dev);
+> +
+> +	if (dfll_is_running(td)) {
+> +		dev_err(td->dev, "dfll is enabled while shouldn't be\n");
+
+Minor nit: "DFLL" in the error message, just like you have in the
+kerneldoc comment above. Perhaps also make the error message a little
+more specific. "while shouldn't be" makes the user guess what that
+means. Perhaps better to say something like:
+
+	"DFLL still enabled while suspending\n"
+
+or perhaps even add a hint as to what could be the culprit:
+
+	"DFLL still enabled while suspending, possibly a cpufreq driverbug\n"
+
+The latter is somewhat long and the former is enough because the
+kerneldoc comment already explains that cpufreq might be the reason for
+this.
+
+With a more specific error message, this is:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---hABqaeELJqnDDeDE
+--72k7VsmfIboquFwl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RN3QACgkQ3SOs138+
-s6FHwRAAnYt3bQr8qabJpmuLiAWddIRGpf0XzLDW6DnRqSmhENAKH09BCH1IJ8bO
-RNFI+6CZYoGt38zjU54qQxf2BGFSW1q/63T/+CU318zZ1oUws+0iWQrFPKHIxnS7
-Rae4YsOE1UqTucB/uwniVcDVTGTcMmDKx9lA+WgMTcNyRcMFYuKhPjV0BL34Kq+5
-2JA7MaqNqrBKSwVqOlN2kAjqa5NOUq57c8MbQ6/blbGQsdgnDrWt9TDR4s3cifCc
-tu9HdlV5921/RAP42V2+oCnHnYMNvGAre7Z3ES5GZ0z5DdW48koDA99XexftElaT
-+KCuXTdOUrv8Y5x6PQ5MwCxnXqqayjz+4c3v8ahygNBV8K159Kkokt2c8NR6Igbt
-Mz403frb3Hp3qstDs6HfvYCsuNFmTmB+/Lhp8xciVyEiuv26CPNXg+OL7rRfJtc2
-hQy6RcFw4D8uYRcOS7rkH5m2rot8R59tK+2QqSEIgMlYbNtDuciS/5r83/ro7516
-tTMbjYdQWRlrFELVTzmjIQtE2i5PJ4uq8VJsbXOGlx0ESmQIwNcxdwe2nBH6vrSY
-7kFuBQvOBTMv7bUvHY4/M+yhZLHOIC77Z/vYPh58Yl8JwxFTu1RNT7esQUcMyJfD
-i1u4z1VztUimQjiojE4eGV8tkO6K6f38N0lz1R8T/MyOOOf67TE=
-=5pWj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1ROPcACgkQ3SOs138+
+s6GNTQ//VCpA84fs+aIIyDiD3wn1shO+OCh67D3tZ+8ScJa6j54SmHrCHGGWY3GP
+9JVQr5VFX4tMxrslidnMe6laHcoM5JU+vPSovEq5dTqjZe2HTmjsMswUBABd/Jrg
+fid7ioVcpPfdbbO2qNMS42Q698Kx0IFAv1t4NmhmCDDaE6NerYN8eJ94KYrFx7TI
+p4mvNUV3WcR9aGEOLwVyAcUatmR5EReyZJJ8nSNdPxfdzrLHUUtI9oIP9q8ADgpl
+djfabIZYjrDWaNIx6X/HLQU+3zf3C/SvDMsDJd8/oOa1WkOXKy7Wsbgt6PWZpm8q
+DbMkl8e57/v5fEfaERkqq+U9C0GFdZfpriI7qofQvbi80rkVrDq8UKEAQa/KkfeN
+8wiHr9XVeIwddApapx1YilBL1gAAphRdD7NOzvxeO4KMKCzbuQ7upYReNtBEaMVA
+EwhjYNEVWuEMwg3S5ssxpjqyWMT11WUDIxmX3WqPswNzN1K/dNCrDzKye1IVIET/
+s66UjxKscWJVnsmQWUVE4LKw3S6Tct4BOR+Us7XDJd9f417iSCTTC8lsEoz2PCIv
+tWNEWekILl5Pg/yT5SXy6z8+0g0fsD9R3Pxe56vf9dnGiG9kGx0wmP02FENpKUs2
+T+fSap9ZYLgjVvT2L3WDyQZWbVDl8X31T5nCquBVXKYSWOQqwrM=
+=U0sL
 -----END PGP SIGNATURE-----
 
---hABqaeELJqnDDeDE--
+--72k7VsmfIboquFwl--
