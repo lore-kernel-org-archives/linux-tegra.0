@@ -1,13 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 3/4] drm/armada: drop use of drmP.h
-Date: Tue, 13 Aug 2019 11:31:27 +0200
-Message-ID: <20190813093127.GC1137@ulmo>
+Subject: Re: [PATCH v2 4/4] drm/arm: drop use of drmP.h
+Date: Tue, 13 Aug 2019 11:32:06 +0200
+Message-ID: <20190813093206.GD1137@ulmo>
 References: <20190804094132.29463-1-sam@ravnborg.org>
- <20190804094132.29463-4-sam@ravnborg.org>
+ <20190804094132.29463-5-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0491761372=="
+Content-Type: multipart/mixed; boundary="===============1182468209=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190804094132.29463-4-sam@ravnborg.org>
+In-Reply-To: <20190804094132.29463-5-sam@ravnborg.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,64 +22,66 @@ Cc: David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, Russell 
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0491761372==
+--===============1182468209==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eRtJSFbw+EEWtPj3"
+	protocol="application/pgp-signature"; boundary="d01dLTUuW90fS44H"
 Content-Disposition: inline
 
 
---eRtJSFbw+EEWtPj3
+--d01dLTUuW90fS44H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 04, 2019 at 11:41:31AM +0200, Sam Ravnborg wrote:
+On Sun, Aug 04, 2019 at 11:41:32AM +0200, Sam Ravnborg wrote:
 > Drop use of the deprecated drmP.h header file.
-> While touching the list of include files group them and sort them.
-> Fix fallout from the header file removal.
+>=20
+> While touching the list of include files divide them
+> into blocks and sort within each block.
+> Fix fallout.
 >=20
 > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Brian Starkey <brian.starkey@arm.com>
 > Cc: David Airlie <airlied@linux.ie>
 > Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: malidp@foss.arm.com
 > ---
->  drivers/gpu/drm/armada/armada_crtc.c    | 10 +++++++---
->  drivers/gpu/drm/armada/armada_debugfs.c |  8 ++++++--
->  drivers/gpu/drm/armada/armada_drm.h     |  5 ++++-
->  drivers/gpu/drm/armada/armada_drv.c     |  8 ++++++++
->  drivers/gpu/drm/armada/armada_fb.c      |  3 +++
->  drivers/gpu/drm/armada/armada_fbdev.c   |  3 +++
->  drivers/gpu/drm/armada/armada_gem.c     |  7 ++++++-
->  drivers/gpu/drm/armada/armada_overlay.c |  8 +++++---
->  drivers/gpu/drm/armada/armada_plane.c   |  4 +++-
->  drivers/gpu/drm/armada/armada_trace.h   |  5 ++++-
->  10 files changed, 49 insertions(+), 12 deletions(-)
+>  drivers/gpu/drm/arm/hdlcd_crtc.c    | 12 +++++++-----
+>  drivers/gpu/drm/arm/hdlcd_drv.c     |  7 ++++++-
+>  drivers/gpu/drm/arm/malidp_crtc.c   | 11 +++++++----
+>  drivers/gpu/drm/arm/malidp_drv.c    |  8 +++++---
+>  drivers/gpu/drm/arm/malidp_drv.h    |  7 ++++---
+>  drivers/gpu/drm/arm/malidp_hw.c     |  7 ++++++-
+>  drivers/gpu/drm/arm/malidp_mw.c     |  5 +++--
+>  drivers/gpu/drm/arm/malidp_planes.c |  4 +++-
+>  8 files changed, 41 insertions(+), 20 deletions(-)
 
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 
---eRtJSFbw+EEWtPj3
+--d01dLTUuW90fS44H
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1Sg28ACgkQ3SOs138+
-s6Gaew//aMgEuIZ8gAOqGUtEtMwQcDcVOGjAi7k51vVYIqGYqsvyr7Fp7c+BzeWg
-pLS8ZB0kVqV7pCxVpbdsf3G51KzbUj9TxJBDthXY7z11qrhBspWt6NYyKXoKmx15
-me11n4Wrq7midcfJsmEcMQtebRukMlGkKmSrHNixVDz7cxCy6FmBYCBX9R08A067
-U/wHKKR1jcVbdt6DeuhJqMN0KOdLuPZrTwGDK0Of5WbjfUlv9aK6paM95yZhvST/
-QEJ4w85HTI/eCiU1iDRYYDg4GJNhgsyY5ZU1Se0HAyH6obr2pD/8A2KRVAYszRTM
-HG3sDtU7GU1ZIisqVUGGiVsmmyhin/JmhNgO7vkpnFXxgBk7JQ2q5aiCsH2HTqTG
-3Kf+QE73INx9JGP4O3MvkEJ8xI3yG22wB+eJEJQ/2Jsmy5/nKglOIdMJa4p291lY
-dIzp4sMWBHNJ+mC+EKI+Uae1aE8c0jZ5vqYwg/yjVhZaIZzKbpWYCAnz2vn/jpRQ
-wOsr9xuJJsQmssEAB/9RsFGq1g0YNdT0IAE/Gw80lYJJDJPVI7vxgtJKZ2M1egXW
-iy+2KtznDhIsGROhvEQFyvaVpMCeq5ADKi1gFtSwbJ1f2lYC6CHUJ623qBQgNwaA
-qZlaFFP+Tr3pN5k6Qvnl+w3Hxj98wEHzM4MH7jgMnoTBQhssxLM=
-=yxMK
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1Sg5YACgkQ3SOs138+
+s6Fs2xAAqLGJmyz6F+rOaFcn9Ez+mhclecpsSlv5Esq/+fgT4K0trcLiSRWYDXf4
+bJ495+LE3FIUcH4pZNSoz448NUmtf8+xjn7oWKCmDwdLiapDlmTWlj51N7OkXwz9
+AJhEbO9GjMKLQE5assDzuCQvM2j28trJtWdgAVRdM1LR6Fmk+htTerRtMDZ+M8v1
+0QSpU/LUgLIZkEJro3QfTZJ2fykspIx867EdXzQj8pNPQn099/Hfp0PKgP/80wby
+fwFUm4ogYkSQhLPloAPPAMYdi7rQ0qM0ljBMVG6zJJ60xlkImB52ELMLekGj+gUo
+1T/l9nYvArCXDty0yh0kTHldGT944tovU7qzU/0NJXequ8CxNAmWtUoiEPODcuEJ
+aAE6ZVbWod16u0QEUoxA862+LwKawuCizJVx3J0ZIUPaRuwLdkx/XBk8UY0kY9En
+CKrIG8IADXCf64mH+5QDHDMuBP/cgozrkmMe3n8plvv/I4Cs9dtXQS7Zj160zuTs
+MAdXv4k1s7GD3BaHWWU6at1Silpr33Mo2K778HNz2fn7XDq1Tz7YVxSxP6JkMaCa
+9+39azA9OoOaJkmv9QeprmtuOKMG8ZtpOe7C/LcsvWosuGbCGdPxWMXWYiylfnxr
+w957JO8qHNKa6JTjNpF01wJgi/dFmQrebaY5BE5WwPOIiXtTHaI=
+=IV8Y
 -----END PGP SIGNATURE-----
 
---eRtJSFbw+EEWtPj3--
+--d01dLTUuW90fS44H--
 
---===============0491761372==
+--===============1182468209==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -89,4 +91,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
 
---===============0491761372==--
+--===============1182468209==--
