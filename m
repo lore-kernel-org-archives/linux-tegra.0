@@ -1,75 +1,39 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/2] irqchip/tegra: Clean up coding style
-Date: Tue, 13 Aug 2019 19:59:02 +0300
-Message-ID: <19845d1b-d140-a765-d548-77644923f4f0@gmail.com>
-References: <20190811183044.13925-1-digetx@gmail.com>
- <20190811183044.13925-2-digetx@gmail.com> <86a7cdnmpx.wl-maz@kernel.org>
- <4fbc5a90-e110-b020-15d3-c4bbe81b15cc@gmail.com>
- <867e7hnin7.wl-maz@kernel.org>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: Re: [PATCH] mmc: tegra: Implement enable_dma() to set dma_mask
+Date: Tue, 13 Aug 2019 14:13:38 -0700
+Message-ID: <20190813211337.GA18501@Asurada-Nvidia.nvidia.com>
+References: <20190812224217.12423-1-nicoleotsuka@gmail.com>
+ <20190813093651.GE1137@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <867e7hnin7.wl-maz@kernel.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190813093651.GE1137@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <maz@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, jonathanh@nvidia.com, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, vdumpa@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-13.08.2019 19:18, Marc Zyngier пишет:
-> On Tue, 13 Aug 2019 16:40:27 +0100,
-> Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 13.08.2019 17:50, Marc Zyngier пишет:
->>> On Sun, 11 Aug 2019 19:30:44 +0100,
->>> Dmitry Osipenko <digetx@gmail.com> wrote:
->>>>
->>>> Make coding style to conform to the kernel's standard by fixing checkpatch
->>>> warnings about "line over 80 characters".
->>>
->>> The last time I used a VT100 was about 30 years ago. I still think
->>> this was one of the most brilliant piece of equipment DEC ever
->>> produced, but I replaced it at the time with a Wyse 50 that had a 132
->>> column mode. But even then, I could make my XTerm as wide as I wanted,
->>> and things haven't regressed much since.
->>>
->>> More seriously, I don't consider the 80 column limit a hard one, and
->>> I'm pretty happy with code that spans more that 80 columns if that
->>> allows to read an expression without messing with the flow.
->>
->> Usually I have multiple source files opened side-by-side and the
->> view sizes are tuned for 80 chars, it messes at least my flow when
->> something goes over 80 chars.
->>
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/irqchip/irq-tegra.c | 15 +++++----------
->>>>  1 file changed, 5 insertions(+), 10 deletions(-)
->>>>
->>>> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
->>>> index 14dcacc2ad38..f829a5990dae 100644
->>>> --- a/drivers/irqchip/irq-tegra.c
->>>> +++ b/drivers/irqchip/irq-tegra.c
->>>> @@ -74,7 +74,7 @@ static struct tegra_ictlr_info *lic;
->>>>  
->>>>  static inline void tegra_ictlr_write_mask(struct irq_data *d, unsigned long reg)
->>>>  {
->>>> -	void __iomem *base = (void __iomem __force *)d->chip_data;
->>>> +	void __iomem *base = lic->base[d->hwirq / 32];
->>>
->>> (1) This is an undocumented change
->>
->> In my opinion this is a very trivial change and then the end result
->> is absolutely the same, hence nothing to document here. Just read
->> the code, I'd say.
+On Tue, Aug 13, 2019 at 11:36:51AM +0200, Thierry Reding wrote:
+> On Mon, Aug 12, 2019 at 03:42:17PM -0700, Nicolin Chen wrote:
+> > Commit 68481a7e1c84 ("mmc: tegra: Mark 64 bit dma broken on Tegra186")
+> > added a SDHCI_QUIRK2_BROKEN_64_BIT_DMA flag to let sdhci core fallback
+> > to 32-bit DMA so as to fit the 40-bit addressing on Tegra186. However,
+> > there's a common way, being mentioned in sdhci.c file, to set dma_mask
+> > via enable_dma() callback in the device driver directly.
+> > 
+> > So this patch implements an enable_dma() callback in the sdhci-tegra,
+> > in order to set an accurate DMA_BIT_MASK, other than 32-bit or 64-bit.
+> > 
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > ---
+> >  drivers/mmc/host/sdhci-tegra.c | 28 +++++++++++++++++++---------
+> >  1 file changed, 19 insertions(+), 9 deletions(-)
 > 
-> And that is the very reason why I won't take any of your patches any
-> time soon.
+> I like this. However, I'd prefer if we set the DMA mask explicitly for
+> each generation. A while ago, I had done a similar patch which relied on
+> some core changes that no longer seem necessary with this enable_dma()
+> hook. You can find the DMA masks for each generation in that patch:
+> 	http://patchwork.ozlabs.org/patch/1020678/
 
-Sorry, the last part probably sounds a bit offending, but that's not
-what I meant (please note that english isn't my native language). I was
-just trying to say that the code is self-explanatory in my opinion.
-Anyway, it's not a bad excuse for me to get a break from it all. Sorry
-again.
+Thank you for the reference patch. I will add those masks in v2.
