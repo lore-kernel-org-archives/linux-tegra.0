@@ -1,49 +1,99 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v10 01/15] clk: tegra20/30: Add custom EMC clock
- implementation
-Date: Tue, 13 Aug 2019 05:36:41 +0300
-Message-ID: <8369884e-1bd7-063f-e053-5152378078e9@gmail.com>
-References: <20190811210043.20122-1-digetx@gmail.com>
- <20190811210043.20122-2-digetx@gmail.com>
- <20190812231258.GA31836@qmqm.qmqm.pl>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 2/4] drm/tegra: drop use of drmP.h
+Date: Tue, 13 Aug 2019 11:30:17 +0200
+Message-ID: <20190813093017.GA1137@ulmo>
+References: <20190804094132.29463-1-sam@ravnborg.org>
+ <20190804094132.29463-3-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190812231258.GA31836@qmqm.qmqm.pl>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgsKgTWlyb3PFgmF3?= <mirq-linux@rere.qmqm.pl>
-Cc: Rob Herring <robh-dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Joseph Lo <josephl@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1700089999=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190804094132.29463-3-sam@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, malidp@foss.arm.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-13.08.2019 2:12, Michał Mirosław пишет:
-> On Mon, Aug 12, 2019 at 12:00:29AM +0300, Dmitry Osipenko wrote:
->> A proper External Memory Controller clock rounding and parent selection
->> functionality is required by the EMC drivers, it is not available using
->> the generic clock implementation because only the Memory Controller driver
->> is aware of what clock rates are actually available for a particular
->> device. EMC drivers will have to register a Tegra-specific CLK-API
->> callback which will perform rounding of a requested rate. EMC clock users
->> won't be able to request EMC clock by getting -EPROBE_DEFER until EMC
->> driver is probed and the callback is set up.
-> [...]
->> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
->> index 4812e45c2214..df966ca06788 100644
->> --- a/drivers/clk/tegra/Makefile
->> +++ b/drivers/clk/tegra/Makefile
->> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
->>  obj-y					+= clk-tegra-super-gen4.o
->>  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
->> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->>  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
-> 
-> Doesn't it complain when both CONFIG_ARCH_TEGRA_2x_SOC and
-> CONFIG_ARCH_TEGRA_3x_SOC are enabled at the same time?
 
-No, at least not with my toolchain setup. Are you getting some warning?
+--===============1700089999==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Disposition: inline
+
+
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Aug 04, 2019 at 11:41:30AM +0200, Sam Ravnborg wrote:
+> Drop use of the deprecated drmP.h header file.
+>=20
+> For all touched files divide include files into blocks,
+> and sort them within the blocks.
+> Fix fallout.
+>=20
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
+> ---
+>  drivers/gpu/drm/tegra/dc.c    | 13 +++++++++----
+>  drivers/gpu/drm/tegra/dpaux.c |  5 +++--
+>  drivers/gpu/drm/tegra/drm.c   |  8 ++++++++
+>  drivers/gpu/drm/tegra/drm.h   |  3 +--
+>  drivers/gpu/drm/tegra/dsi.c   |  8 +++++---
+>  drivers/gpu/drm/tegra/fb.c    |  6 ++++--
+>  drivers/gpu/drm/tegra/gem.c   |  3 +++
+>  drivers/gpu/drm/tegra/gem.h   |  1 -
+>  drivers/gpu/drm/tegra/gr2d.c  |  1 +
+>  drivers/gpu/drm/tegra/hdmi.c  |  5 +++++
+>  drivers/gpu/drm/tegra/hub.c   |  3 ++-
+>  drivers/gpu/drm/tegra/hub.h   |  1 -
+>  drivers/gpu/drm/tegra/plane.c |  1 +
+>  drivers/gpu/drm/tegra/sor.c   |  3 +++
+>  drivers/gpu/drm/tegra/vic.c   |  1 +
+>  15 files changed, 46 insertions(+), 16 deletions(-)
+
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1SgyYACgkQ3SOs138+
+s6ET1Q/9FATaE8e/ljpukBw2vJqgwCk0lAruZ55ljBkh0uH9YwvQUq4kMo2agPHD
+Q+lcdErT2IqaqqRbotzUryatC26aT7l1QmxaEtgU/uWHLIC8k3elpOMz9CNIHSDh
+1NVAiBKMxQtG5nqWWmebr8v/e3Ae9vvxXxbtuMW6YlbupGgp9NS35a5jEzdJhhYW
+zqkvUcFZ0xigSmUYBgGIzukI/+q375A8x6JGBiV+/ymu6up9yRO/3OoRrHDCAalt
+GCeXyR5drV9Co25GGwGcfIJOF7aIirBhBhVJS25ArXh5uEz8+vhZCcu7UrNC3o40
+/QVuTJpyAn5kdW1d8n0MKE/1+dnqapM+W8LfRQAyg0ySftsLDaH8TLvHsRD5gstO
+N1KwpqVaKp4a1LrFwVuA2aTG31nSf68rfF9fRUmTNgu2mV24o5Su7yuYYG+vt1pa
+LkVTtV8gWHxePSrcFGEaT0fGMmM40fq3qMNi3o8anq20Kw5d9N6PJfx07bMZdlDr
+c4IPLKomLE4yJVAkF46+p3hWeGPyhGvUVkt3SGWOO4LTIuC7n4on82NZ+UJv5Eao
+bffeD8rCscHn9hVbXm1p4jE9CvIZHWqkfkBxpL7GUP4M2Wg+qp372A8LVraUjsXg
+AucjRSo6WFs2DQZf9+jk8xsvJ1QMUNT3cKg+jPfLPZ3wwr0Bb4o=
+=DQVr
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
+
+--===============1700089999==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1700089999==--
