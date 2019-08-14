@@ -1,174 +1,51 @@
-From: Philippe Schenker <philippe.schenker@toradex.com>
-Subject: [RESEND PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
-Date: Wed, 14 Aug 2019 10:53:38 +0000
-Message-ID: <20190814105318.21902-1-philippe.schenker@toradex.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH v2 0/4] drm: drop drmP in tda998x, tegra, arm, armada
+Date: Wed, 14 Aug 2019 18:36:57 +0200
+Message-ID: <20190814163657.GA26556@ravnborg.org>
+References: <20190804094132.29463-1-sam@ravnborg.org>
+ <20190812203805.GA10640@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Philippe Schenker <philippe.schenker@toradex.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190812203805.GA10640@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, malidp@foss.arm.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the stmpe-adc DT node as found on Toradex T30 modules
-
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-
----
-
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
- 3 files changed, 42 insertions(+), 24 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts=
-/tegra30-apalis-v1.1.dtsi
-index 02f8126481a2..8b7a827d604d 100644
---- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-@@ -994,11 +994,17 @@
- 			id =3D <0>;
- 			blocks =3D <0x5>;
- 			irq-trigger =3D <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq =3D <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b =3D <1>;
-+			/* internal ADC reference */
-+			st,ref-sel =3D <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time =3D <4>;
-=20
- 			stmpe_touchscreen {
- 				compatible =3D "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq =3D <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl =3D <3>;
- 				/* 7 length fractional part in z */
-@@ -1008,17 +1014,17 @@
- 				 * current limit value
- 				 */
- 				st,i-drive =3D <1>;
--				/* 12-bit ADC */
--				st,mod-12b =3D <1>;
--				/* internal ADC reference */
--				st,ref-sel =3D <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time =3D <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling =3D <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay =3D <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible =3D "st,stmpe-adc";
-+				/* forbid to use ADC channels 3-0 (touch) */
-+				st,norequest-mask =3D <0x0F>;
-+			};
- 		};
-=20
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegr=
-a30-apalis.dtsi
-index 7f112f192fe9..c18f6f61d764 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -976,11 +976,17 @@
- 			id =3D <0>;
- 			blocks =3D <0x5>;
- 			irq-trigger =3D <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq =3D <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b =3D <1>;
-+			/* internal ADC reference */
-+			st,ref-sel =3D <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time =3D <4>;
-=20
- 			stmpe_touchscreen {
- 				compatible =3D "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq =3D <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl =3D <3>;
- 				/* 7 length fractional part in z */
-@@ -990,17 +996,17 @@
- 				 * current limit value
- 				 */
- 				st,i-drive =3D <1>;
--				/* 12-bit ADC */
--				st,mod-12b =3D <1>;
--				/* internal ADC reference */
--				st,ref-sel =3D <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time =3D <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling =3D <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay =3D <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible =3D "st,stmpe-adc";
-+				/* forbid to use ADC channels 3-0 (touch) */
-+				st,norequest-mask =3D <0x0F>;
-+			};
- 		};
-=20
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/teg=
-ra30-colibri.dtsi
-index 35af03ca9e90..1f9198bb24ff 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -845,11 +845,18 @@
- 			id =3D <0>;
- 			blocks =3D <0x5>;
- 			irq-trigger =3D <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq =3D <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b =3D <1>;
-+			/* internal ADC reference */
-+			st,ref-sel =3D <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time =3D <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
-=20
- 			stmpe_touchscreen {
- 				compatible =3D "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq =3D <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl =3D <3>;
- 				/* 7 length fractional part in z */
-@@ -859,17 +866,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive =3D <1>;
--				/* 12-bit ADC */
--				st,mod-12b =3D <1>;
--				/* internal ADC reference */
--				st,ref-sel =3D <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time =3D <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling =3D <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay =3D <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible =3D "st,stmpe-adc";
-+				st,norequest-mask =3D <0x0F>;
-+			};
- 		};
-=20
- 		/*
---=20
-2.22.0
+PiA+IFRoaXMgc2V0IG9mIHBhdGNoZXMgaXMgb25lIG9mIHRoZSBmaW5hbCBzdGVwcyBiZWZvcmUK
+PiA+IHdlIGhhdmUgc3VjY2VlZGVkIHRvIHN0b3AgdXNpbmcgZHJtUC5oIGluIGFsbCBvZiBkcm0v
+Lgo+ID4gCj4gPiBUaGVyZSBpcyBhIGZldyBwYXRjaGVzIGluIGZsaWdodCB0aHJvdWdoIG90aGVy
+IHRyZWVzCj4gPiBhbmQgdGhlIHBsYW4gaXMgdGhhdCBhbGwgdXNlcnMgc2hhbGwgYmUgZ29uZSBp
+biB0aGUKPiA+IHVwc3RyZWFtIGtlcm5lbCBhZnRlciBuZXh0IG1lcmdlIHdpbmRvdy4KPiA+IAo+
+ID4gVGhlIHBhdGNoZXMgaGFzIHNlZW4gYnVpbGQgdGVzdCB3aXRoIHZhcmlvdXMgY29uZmlncwo+
+ID4gd2l0aCB2YXJpb3VzIGFyY2hpdGVjdHVyZXMuCj4gPiAKPiA+IFRoZSBwYXRjaGVzIGhhcyBi
+ZWVuIHNlbnQgYmVmb3JlLCBidXQgdG8gbXkgYmVzdCBrbm93bGVkZ2UKPiA+IHRoZXkgaGF2ZSBu
+b3QgYmVlbiBhcHBsaWVkIGFueXdoZXJlLgo+ID4gQWxsIGZvdXIgcGF0Y2hlcyBhcmUgYmFzZWQg
+b24gZHJtLW1pc2MtbmV4dCwKPiA+IGJ1dCBJIGNoZWNrZWQgdGhhdCB0aGUgdGRhOTk4eCBwYXRj
+aCBjYW4gYmUgYXBwbGllZCB0bwo+ID4gdGhlIHRkYTk5OHggdHJlZS4KPiA+IAo+ID4gVGhlcmUg
+YXJlIG5vIGRlcGVuZGVuY2llcyBiZXR3ZWVuIHRoZSBwYXRjaGVzLgo+ID4gCj4gPiB2MjoKPiA+
+IC0gcmViYXNlIG9uIHRvcCBvZiBkcm0tbWlzYy1uZXh0Cj4gPiAKPiA+IFRvIG1haW50YWluZXJz
+OiAoQXNzdW1pbmcgdGhlIHBhdGNoIGFyZSBPSykKPiA+IFBsZWFzZSBsZXQgbWUga25vdyBpZiB5
+b3UgdGFrZSB0aGUgcGF0Y2gsIG9yIHJlcXVlc3QKPiA+IG1lIHRvIGFwcGx5IGl0IHRvIGRybS1t
+aXNjLW5leHQuCj4gPiBPciBsZXQgbWUgbWUga25vdyBpZiB0aGUgcGF0Y2ggc2hvdWxkIGJlIGJh
+c2VkIG9uIGFub3RoZXIgdHJlZS4KPiAKPiBwaW5nLi4uCj4gCj4gVGhpcyBwYXRjaHNldCBpcyBv
+bmUgb2YgdGhlIGxhc3Qgc3RlcHMgdG8gZ2V0IHJpZCBvZiBkcm1QLmguCj4gT3RoZXIgcGF0Y2hl
+cyBhcmUgYXBwbGllZCB0byB2YXJpb3VzIHN1Yi1zeXN0ZW0gdHJlZXMuCj4gCj4gVGhlIGlkZWEg
+aXMgdGhhdCBhZnRlciBuZXh0IG1lcmdlIHdpbmRvdyBjYW4gZHJvcCBkcm1QLmguCj4gQXMgbG9u
+ZyBhcyB3ZSBrZWVwIGRybVAuaCBhcm91bmQgbmV3IHVzZXJzIHdpbGwgc25lYWsgaW4uCgpUaGll
+cnJ5IHJldmlld2VkIGFsbCBwYXRjaGVzIC0gdGhhbmtzIQoKQXBwbGllZCB0byBkcm0tbWlzYy1u
+ZXh0IGFuZCBwdXNoZWQgb3V0LgoKCVNhbQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWw=
