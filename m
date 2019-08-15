@@ -1,64 +1,74 @@
-From: Dariusz Marcinkiewicz <darekm@google.com>
-Subject: [PATCH v6 0/8] drm: cec: convert DRM drivers to the new notifier API
-Date: Tue, 13 Aug 2019 13:02:32 +0200
-Message-ID: <20190813110300.83025-1-darekm@google.com>
+From: Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>
+Subject: [PATCH V5 0/5] iommu/amd: Convert the AMD iommu driver to the
+	dma-iommu api
+Date: Thu, 15 Aug 2019 12:09:38 +0100
+Message-ID: <20190815110944.3579-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Sam Ravnborg <sam@ravnborg.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Allison Randal <allison@lohutok.net>, Kees Cook <keescook@chromium.org>, Jonas Karlman <jonas@kwiboo.se>, Jani Nikula <jani.nikula@intel.com>, Russell King <rmk+kernel@armlinux.org.uk>, Rodrigo Vivi <rodrigo.vivi@intel.com>, "open list:DRM DRIVERS FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, Jernej Skrabec <jernej.skrabec@siol.net>, open list <linux-kernel@vger.kernel.org>, Colin Ian King <colin.king@can>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jean-Philippe Brucker <jean-philippe-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhpcyBzZXJpZXMgdXBkYXRlcyBEUk0gZHJpdmVycyB0byB1c2UgbmV3IENFQyBub3RpZmllciBB
-UEkuCgpPbmx5IGZpcnN0IHR3byBwYXRjaGVzIHdlcmUgdGVzdGVkIG9uIHRoZSBhY3R1YWwgaGFy
-ZHdhcmUuCgpDaGFuZ2VzIHNpbmNlIHY1OgoJRml4ZWQgYSB3YXJuaW5nIGFib3V0IGEgbWlzc2lu
-ZyBjb21tZW50IGZvciBhIG5ldyBtZW1iZXIgb2YKCWRybV9kcF9hdXhfY2VjIHN0cnVjdC4gU2Vu
-ZGluZyB0byBhIHdpZGVyIGF1ZGllbmNlLCBpbmNsdWRpbmcKCW1haW50YWluZXJzIG9mIHJlc3Bl
-Y3RpdmUgZHJpdmVycy4KQ2hhbmdlcyBzaW5jZSB2NDoKCUFkZHJlc3NpbmcgcmV2aWV3IGNvbW1l
-bnRzLgpDaGFuZ2VzIHNpbmNlIHYzOgogICAgICAgIFVwZGF0ZWQgYWRhcHRlciBmbGFncyBpbiBk
-dy1oZG1pLWNlYy4KQ2hhbmdlcyBzaW5jZSB2MjoKCUluY2x1ZGUgYWxsIERSTSBwYXRjaGVzIGZy
-b20gImNlYzogaW1wcm92ZSBub3RpZmllciBzdXBwb3J0LAoJYWRkIGNvbm5lY3RvciBpbmZvIGNv
-bm5lY3RvciBpbmZvIiBzZXJpZXMuCkNoYW5nZXMgc2luY2UgdjE6CglUaG9zZSBwYXRjaGVzIGRl
-bGF5IGNyZWF0aW9uIG9mIG5vdGlmaWVycyB1bnRpbCByZXNwZWN0aXZlCgljb25uZWN0b3JzIGFy
-ZSBjb25zdHJ1Y3RlZC4gSXQgc2VlbXMgdGhhdCB0aG9zZSBwYXRjaGVzLCBmb3IgYQoJY291cGxl
-IG9mIGRyaXZlcnMsIGJ5IGFkZGluZyB0aGUgZGVsYXksIGludHJvZHVjZSBhIHJhY2UgYmV0d2Vl
-bgoJbm90aWZpZXJzJyBjcmVhdGlvbiBhbmQgdGhlIElSUXMgaGFuZGxpbmcgdGhyZWFkcyAtIGF0
-IGxlYXN0IEkKCWRvbid0IHNlZSBhbnl0aGluZyBvYnZpb3VzIGluIHRoZXJlIHRoYXQgd291bGQg
-ZXhwbGljaXRseSBmb3JiaWQKCXN1Y2ggcmFjZXMgdG8gb2NjdXIuIHYyIGFkZHMgYSB3cml0ZSBi
-YXJyaWVyIHRvIG1ha2Ugc3VyZSBJUlEKCXRocmVhZHMgc2VlIHRoZSBub3RpZmllciBvbmNlIGl0
-IGlzIGNyZWF0ZWQgKHJlcGxhY2luZyB0aGUKCVdSSVRFX09OQ0UgSSBwdXQgaW4gdjEpLiBUaGUg
-YmVzdCB0aGluZyB0byBkbyBoZXJlLCBJIGJlbGlldmUsCgl3b3VsZCBiZSBub3QgdG8gaGF2ZSBh
-bnkgc3luY2hyb25pemF0aW9uIGFuZCBtYWtlIHN1cmUgdGhhdCBhbiBJUlEKCW9ubHkgZ2V0cyBl
-bmFibGVkIGFmdGVyIHRoZSBub3RpZmllciBpcyBjcmVhdGVkLgoKRGFyaXVzeiBNYXJjaW5raWV3
-aWN6ICg4KToKICBkcm0vaTkxNS9pbnRlbF9oZG1pOiB1c2UgY2VjX25vdGlmaWVyX2Nvbm5fKHVu
-KXJlZ2lzdGVyCiAgZHctaGRtaS1jZWM6IHVzZSBjZWNfbm90aWZpZXJfY2VjX2FkYXBfKHVuKXJl
-Z2lzdGVyCiAgdGRhOTk1MDogdXNlIGNlY19ub3RpZmllcl9jZWNfYWRhcF8odW4pcmVnaXN0ZXIK
-ICBkcm06IHRkYTk5OHg6IHVzZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKICBkcm06
-IHN0aTogdXNlIGNlY19ub3RpZmllcl9jb25uXyh1bilyZWdpc3RlcgogIGRybTogdGVncmE6IHVz
-ZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKICBkcm06IGR3LWhkbWk6IHVzZSBjZWNf
-bm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKICBkcm06IGV4eW5vczogZXh5bm9zX2hkbWk6IHVz
-ZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdl
-L3N5bm9wc3lzL2R3LWhkbWktY2VjLmMgfCAxMyArKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL3N5bm9wc3lzL2R3LWhkbWkuYyAgICAgfCAzNiArKysrKysrKysrKy0tLS0tLS0tCiBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgfCAzMSArKysrKysrKyst
-LS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5NTAuYyAgICAgICAgICAgICAgICAgfCAx
-MiArKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5OHhfZHJ2LmMgICAgICAgICAgICAg
-fCAzMyArKysrKysrKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRl
-bF9oZG1pLmMgICAgIHwgMTMgKysrKy0tLQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5j
-ICAgICAgICAgICAgICAgIHwgMTkgKysrKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291
-dHB1dC5jICAgICAgICAgICAgICAgIHwgMjggKysrKysrKysrKystLS0tCiA4IGZpbGVzIGNoYW5n
-ZWQsIDExNyBpbnNlcnRpb25zKCspLCA2OCBkZWxldGlvbnMoLSkKCi0tIAoyLjIzLjAucmMxLjE1
-My5nZGVlZDgwMzMwZi1nb29nCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWw=
+Convert the AMD iommu driver to the dma-iommu api. Remove the iova
+handling and reserve region code from the AMD iommu driver.
+
+Change-log:
+V5:
+-Rebase on top of linux-next
+V4:
+-Rebase on top of linux-next
+-Split the removing of the unnecessary locking in the amd iommu driver into a seperate patch
+-refactor the "iommu/dma-iommu: Handle deferred devices" patch and address comments
+v3:
+-rename dma_limit to dma_mask
+-exit handle_deferred_device early if (!is_kdump_kernel())
+-remove pointless calls to handle_deferred_device
+v2:
+-Rebase on top of this series:
+ http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+-Add a gfp_t parameter to the iommu_ops::map function.
+-Made use of the reserve region code inside the dma-iommu api
+
+Tom Murphy (5):
+  iommu/amd: Remove unnecessary locking from AMD iommu driver
+  iommu: Add gfp parameter to iommu_ops::map
+  iommu/dma-iommu: Handle deferred devices
+  iommu/dma-iommu: Use the dev->coherent_dma_mask
+  iommu/amd: Convert AMD iommu driver to the dma-iommu api
+
+ drivers/iommu/Kconfig           |   1 +
+ drivers/iommu/amd_iommu.c       | 690 ++++----------------------------
+ drivers/iommu/amd_iommu_types.h |   1 -
+ drivers/iommu/arm-smmu-v3.c     |   2 +-
+ drivers/iommu/arm-smmu.c        |   2 +-
+ drivers/iommu/dma-iommu.c       |  43 +-
+ drivers/iommu/exynos-iommu.c    |   2 +-
+ drivers/iommu/intel-iommu.c     |   2 +-
+ drivers/iommu/iommu.c           |  43 +-
+ drivers/iommu/ipmmu-vmsa.c      |   2 +-
+ drivers/iommu/msm_iommu.c       |   2 +-
+ drivers/iommu/mtk_iommu.c       |   2 +-
+ drivers/iommu/mtk_iommu_v1.c    |   2 +-
+ drivers/iommu/omap-iommu.c      |   2 +-
+ drivers/iommu/qcom_iommu.c      |   2 +-
+ drivers/iommu/rockchip-iommu.c  |   2 +-
+ drivers/iommu/s390-iommu.c      |   2 +-
+ drivers/iommu/tegra-gart.c      |   2 +-
+ drivers/iommu/tegra-smmu.c      |   2 +-
+ drivers/iommu/virtio-iommu.c    |   2 +-
+ include/linux/iommu.h           |  21 +-
+ 21 files changed, 178 insertions(+), 651 deletions(-)
+
+-- 
+2.20.1
