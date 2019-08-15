@@ -1,42 +1,42 @@
-From: Tom Murphy <murphyt7@tcd.ie>
-Subject: Re: [PATCH v4 0/5] iommu/amd: Convert the AMD iommu driver to the
- dma-iommu api
-Date: Thu, 15 Aug 2019 12:13:45 +0100
-Message-ID: <CALQxJusdvvnL-7WuCy9qobB6heG2oj7XS4Bs3Z1dMyLXSeZOzg@mail.gmail.com>
-References: <20190613223901.9523-1-murphyt7@tcd.ie> <20190624061945.GA4912@infradead.org>
- <20190810071952.GA25550@infradead.org> <CALQxJuvxBc3MH3_B_fZ3FvURHOM3F3dvvZ6x=GtALUAvyu7Qxw@mail.gmail.com>
- <20190813130711.GA30468@infradead.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v2] mmc: tegra: Implement enable_dma() to set dma_mask
+Date: Thu, 15 Aug 2019 14:48:20 +0300
+Message-ID: <09d9ba41-f4cd-e515-cd2d-0b4134648059@intel.com>
+References: <20190814005741.13331-1-nicoleotsuka@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190813130711.GA30468@infradead.org>
+In-Reply-To: <20190814005741.13331-1-nicoleotsuka@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, virtualization@lists.linux-foundation.org, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead>
+To: Nicolin Chen <nicoleotsuka@gmail.com>, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, vdumpa@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Done, I just sent it there. I don't have any AMD hardware to test on
-while I'm traveling. However the rebase was very straightforward and
-the code was tested a month ago on the old linux-next.
+On 14/08/19 3:57 AM, Nicolin Chen wrote:
+> [ Integrated the change and commit message made by Thierry Reding ]
+> 
+> The SDHCI controller found in early Tegra SoCs (from Tegra20 through
+> Tegra114) used an AHB interface to the memory controller, which allowed
+> only 32 bits of memory to be addressed.
+> 
+> Starting with Tegra124, this limitation was removed by making the SDHCI
+> controllers native MCCIF clients, which means that they got increased
+> bandwidth and better arbitration to the memory controller as well as an
+> address range extended to 40 bits, out of which only 34 were actually
+> used (bits 34-39 are tied to 0 in the controller).
+> 
+> For Tegra186, all of the 40 bits can be used; For Tegra194, 39-bit can
+> be used.
+> 
+> So far, sdhci-tegra driver has been relying on sdhci core to configure
+> the DMA_BIT_MASK between 32-bit or 64-bit, using one of quirks2 flags:
+> SDHCI_QUIRK2_BROKEN_64_BIT_DMA. However, there is a common way, being
+> mentioned in sdhci.c file, to set dma_mask via enable_dma() callback in
+> the device driver directly.
+> 
+> So this patch implements an enable_dma() callback in the sdhci-tegra,
+> in order to set an accurate DMA_BIT_MASK, other than just 32/64 bits.
 
-I only have the AMD conversion done. I will work on rebasing the intel
-one when I get a chance.
-
-On Tue, 13 Aug 2019 at 14:07, Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Tue, Aug 13, 2019 at 08:09:26PM +0800, Tom Murphy wrote:
-> > Hi Christoph,
-> >
-> > I quit my job and am having a great time traveling South East Asia.
->
-> Enjoy!  I just returned from my vacation.
->
-> > I definitely don't want this work to go to waste and I hope to repost it
-> > later this week but I can't guarantee it.
-> >
-> > Let me know if you need this urgently.
->
-> It isn't in any strict sense urgent.  I just have various DMA API plans
-> that I'd rather just implement in dma-direct and dma-iommu rather than
-> also in two additional commonly used iommu drivers.  So on the one had
-> the sooner the better, on the other hand no real urgency.
+Is there a reason this cannot be done at probe time?
