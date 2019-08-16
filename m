@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v9 11/22] clk: tegra: clk-dfll: Add suspend and resume support
-Date: Fri, 16 Aug 2019 12:41:56 -0700
-Message-ID: <1565984527-5272-12-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 12/22] cpufreq: tegra124: Add suspend and resume support
+Date: Fri, 16 Aug 2019 12:41:57 -0700
+Message-ID: <1565984527-5272-13-git-send-email-skomatineni@nvidia.com>
 References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,123 +12,104 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch implements DFLL suspend and resume operation.
+This patch adds suspend and resume pm ops for cpufreq driver.
 
-During system suspend entry, CPU clock will switch CPU to safe
-clock source of PLLP and disables DFLL clock output.
+PLLP is the safe clock source for CPU during system suspend and
+resume as PLLP rate is below the CPU Fmax at Vmin.
 
-DFLL driver suspend confirms DFLL disable state and errors out on
-being active.
+CPUFreq driver suspend switches the CPU clock source to PLLP and
+disables the DFLL clock.
 
-DFLL is re-initialized during the DFLL driver resume as it goes
-through complete reset during suspend entry.
+During system resume, warmboot code powers up the CPU with PLLP
+clock source. So CPUFreq driver resume enabled DFLL clock and
+switches CPU back to DFLL clock source.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-dfll.h               |  2 ++
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
- 3 files changed, 59 insertions(+)
+ drivers/cpufreq/tegra124-cpufreq.c | 59 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index f8688c2ddf1a..c051d92c2bbf 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
- 	td->last_unrounded_rate = 0;
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 4f0c637b3b49..7a1ea6fdcab6 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -6,6 +6,7 @@
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
  
- 	pm_runtime_enable(td->dev);
-+	pm_runtime_irq_safe(td->dev);
- 	pm_runtime_get_sync(td->dev);
- 
- 	dfll_set_mode(td, DFLL_DISABLED);
-@@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
+ #include <linux/clk.h>
++#include <linux/cpufreq.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+@@ -128,8 +129,66 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
  	return ret;
  }
  
-+/**
-+ * tegra_dfll_suspend - check DFLL is disabled
-+ * @dev: DFLL device *
-+ *
-+ * DFLL clock should be disabled by the CPUFreq driver. So, make
-+ * sure it is disabled and disable all clocks needed by the DFLL.
-+ */
-+int tegra_dfll_suspend(struct device *dev)
++static int __maybe_unused tegra124_cpufreq_suspend(struct device *dev)
 +{
-+	struct tegra_dfll *td = dev_get_drvdata(dev);
++	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
++	int err;
 +
-+	if (dfll_is_running(td)) {
-+		dev_err(td->dev, "DFLL still enabled while suspending\n");
-+		return -EBUSY;
++	/*
++	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
++	 * use during suspend and resume. So, switch the CPU clock source
++	 * to PLLP and disable DFLL.
++	 */
++	err = clk_set_parent(priv->cpu_clk, priv->pllp_clk);
++	if (err < 0) {
++		dev_err(dev, "failed to reparent to PLLP: %d\n", err);
++		return err;
 +	}
 +
-+	reset_control_assert(td->dvco_rst);
++	clk_disable_unprepare(priv->dfll_clk);
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(tegra_dfll_suspend);
 +
-+/**
-+ * tegra_dfll_resume - reinitialize DFLL on resume
-+ * @dev: DFLL instance
-+ *
-+ * DFLL is disabled and reset during suspend and resume.
-+ * So, reinitialize the DFLL IP block back for use.
-+ * DFLL clock is enabled later in closed loop mode by CPUFreq
-+ * driver before switching its clock source to DFLL output.
-+ */
-+int tegra_dfll_resume(struct device *dev)
++static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
 +{
-+	struct tegra_dfll *td = dev_get_drvdata(dev);
++	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
++	int err;
 +
-+	reset_control_deassert(td->dvco_rst);
++	/*
++	 * Warmboot code powers up the CPU with PLLP clock source.
++	 * Enable DFLL clock and switch CPU clock source back to DFLL.
++	 */
++	err = clk_prepare_enable(priv->dfll_clk);
++	if (err < 0) {
++		dev_err(dev, "failed to enable DFLL clock for CPU: %d\n", err);
++		goto disable_cpufreq;
++	}
 +
-+	pm_runtime_get_sync(td->dev);
-+
-+	dfll_set_mode(td, DFLL_DISABLED);
-+	dfll_set_default_params(td);
-+
-+	if (td->soc->init_clock_trimmers)
-+		td->soc->init_clock_trimmers();
-+
-+	dfll_set_open_loop_config(td);
-+
-+	dfll_init_out_if(td);
-+
-+	pm_runtime_put_sync(td->dev);
++	err = clk_set_parent(priv->cpu_clk, priv->dfll_clk);
++	if (err < 0) {
++		dev_err(dev, "failed to reparent to DFLL clock: %d\n", err);
++		goto disable_dfll;
++	}
 +
 +	return 0;
-+}
-+EXPORT_SYMBOL(tegra_dfll_resume);
 +
- /*
-  * DT data fetch
-  */
-diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-index 1b14ebe7268b..fb209eb5f365 100644
---- a/drivers/clk/tegra/clk-dfll.h
-+++ b/drivers/clk/tegra/clk-dfll.h
-@@ -42,5 +42,7 @@ int tegra_dfll_register(struct platform_device *pdev,
- struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
- int tegra_dfll_runtime_suspend(struct device *dev);
- int tegra_dfll_runtime_resume(struct device *dev);
-+int tegra_dfll_suspend(struct device *dev);
-+int tegra_dfll_resume(struct device *dev);
- 
- #endif /* __DRIVERS_CLK_TEGRA_CLK_DFLL_H */
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index e84b6d52cbbd..2ac2679d696d 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -631,6 +631,7 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
- static const struct dev_pm_ops tegra124_dfll_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
- 			   tegra_dfll_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_dfll_suspend, tegra_dfll_resume)
++disable_dfll:
++	clk_disable_unprepare(priv->dfll_clk);
++disable_cpufreq:
++	disable_cpufreq();
++
++	return err;
++}
++
++static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
++				tegra124_cpufreq_resume)
++};
++
+ static struct platform_driver tegra124_cpufreq_platdrv = {
+ 	.driver.name	= "cpufreq-tegra124",
++	.driver.pm	= &tegra124_cpufreq_pm_ops,
+ 	.probe		= tegra124_cpufreq_probe,
  };
  
- static struct platform_driver tegra124_dfll_fcpu_driver = {
 -- 
 2.7.4
