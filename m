@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v9 20/22] soc/tegra: pmc: Configure deep sleep control settings
-Date: Fri, 16 Aug 2019 12:42:05 -0700
-Message-ID: <1565984527-5272-21-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 18/22] arm64: tegra: Enable wake from deep sleep on RTC alarm
+Date: Fri, 16 Aug 2019 12:42:03 -0700
+Message-ID: <1565984527-5272-19-git-send-email-skomatineni@nvidia.com>
 References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,70 +12,36 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
-timings which are platform specific that should be configured before
-entering into deep sleep.
-
-Below are the timing specific configurations for deep sleep entry and
-wakeup.
-- Core rail power-on stabilization timer
-- OSC clock stabilization timer after SOC rail power is stabilized.
-- Core power off time is the minimum wake delay to keep the system
-  in deep sleep state irrespective of any quick wake event.
-
-These values depends on the discharge time of regulators and turn OFF
-time of the PMIC to allow the complete system to finish entering into
-deep sleep state.
-
-These values vary based on the platform design and are specified
-through the device tree.
-
-This patch has implementation to configure these timings which are must
-to have for proper deep sleep and wakeup operations.
+This patch updates device tree for RTC and PMC to allow system wake
+from deep sleep on RTC alarm.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 53ed70773872..710969043668 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -88,6 +88,8 @@
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 659753118e96..30a7c48385a2 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -768,7 +768,8 @@
+ 	rtc@7000e000 {
+ 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
+ 		reg = <0x0 0x7000e000 0x0 0x100>;
+-		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&pmc>;
+ 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
+ 		clock-names = "rtc";
+ 	};
+@@ -778,6 +779,8 @@
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#interrupt-cells = <2>;
++		interrupt-controller;
  
- #define PMC_CPUPWRGOOD_TIMER		0xc8
- #define PMC_CPUPWROFF_TIMER		0xcc
-+#define PMC_COREPWRGOOD_TIMER		0x3c
-+#define PMC_COREPWROFF_TIMER		0xe0
- 
- #define PMC_PWR_DET_VALUE		0xe4
- 
-@@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
- 
- static void tegra20_pmc_init(struct tegra_pmc *pmc)
- {
--	u32 value;
-+	u32 value, osc, pmu, off;
- 
- 	/* Always enable CPU power request */
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
-@@ -2303,6 +2305,16 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
- 	value |= PMC_CNTRL_SYSCLK_OE;
- 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
-+
-+	/* program core timings which are applicable only for suspend state */
-+	if (pmc->suspend_mode != TEGRA_SUSPEND_NONE) {
-+		osc = DIV_ROUND_UP(pmc->core_osc_time * 8192, 1000000);
-+		pmu = DIV_ROUND_UP(pmc->core_pmu_time * 32768, 1000000);
-+		off = DIV_ROUND_UP(pmc->core_off_time * 32768, 1000000);
-+		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
-+				 PMC_COREPWRGOOD_TIMER);
-+		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
-+	}
- }
- 
- static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+ 		powergates {
+ 			pd_audio: aud {
 -- 
 2.7.4
