@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v9 14/22] clk: tegra: Share clk and rst register defines with Tegra clock driver
-Date: Fri, 16 Aug 2019 12:41:59 -0700
-Message-ID: <1565984527-5272-15-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 16/22] soc/tegra: pmc: Allow to support more tegras wake
+Date: Fri, 16 Aug 2019 12:42:01 -0700
+Message-ID: <1565984527-5272-17-git-send-email-skomatineni@nvidia.com>
 References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,126 +12,73 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Move CLK_OUT_ENB and RST_DEVICES registers to clk.h to share these with
-Tegra clock driver.
+This patch allows to create separate irq_set_wake and irq_set_type
+implementations for different tegra designs PMC that has different
+wake models which require difference wake registers and different
+programming sequence.
 
+AOWAKE model support is available for Tegra186 and Tegra194 only
+and it resides within PMC and supports tiered wake architecture.
+
+Tegra210 and prior tegra designs uses PMC directly to receive wake
+events and coordinate the wake sequence.
+
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk.c | 45 ---------------------------------------------
- drivers/clk/tegra/clk.h | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 45 deletions(-)
+ drivers/soc/tegra/pmc.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index eb08047fd02f..33ac88ee324a 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -16,51 +16,6 @@
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 9f9c1c677cf4..91c84d0e66ae 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -226,6 +226,8 @@ struct tegra_pmc_soc {
+ 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+ 				   struct device_node *np,
+ 				   bool invert);
++	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
++	int (*irq_set_type)(struct irq_data *data, unsigned int type);
  
- #include "clk.h"
+ 	const char * const *reset_sources;
+ 	unsigned int num_reset_sources;
+@@ -1920,7 +1922,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+ 	.alloc = tegra_pmc_irq_alloc,
+ };
  
--#define CLK_OUT_ENB_L			0x010
--#define CLK_OUT_ENB_H			0x014
--#define CLK_OUT_ENB_U			0x018
--#define CLK_OUT_ENB_V			0x360
--#define CLK_OUT_ENB_W			0x364
--#define CLK_OUT_ENB_X			0x280
--#define CLK_OUT_ENB_Y			0x298
--#define CLK_ENB_PLLP_OUT_CPU		BIT(31)
--#define CLK_OUT_ENB_SET_L		0x320
--#define CLK_OUT_ENB_CLR_L		0x324
--#define CLK_OUT_ENB_SET_H		0x328
--#define CLK_OUT_ENB_CLR_H		0x32c
--#define CLK_OUT_ENB_SET_U		0x330
--#define CLK_OUT_ENB_CLR_U		0x334
--#define CLK_OUT_ENB_SET_V		0x440
--#define CLK_OUT_ENB_CLR_V		0x444
--#define CLK_OUT_ENB_SET_W		0x448
--#define CLK_OUT_ENB_CLR_W		0x44c
--#define CLK_OUT_ENB_SET_X		0x284
--#define CLK_OUT_ENB_CLR_X		0x288
--#define CLK_OUT_ENB_SET_Y		0x29c
--#define CLK_OUT_ENB_CLR_Y		0x2a0
--
--#define RST_DEVICES_L			0x004
--#define RST_DEVICES_H			0x008
--#define RST_DEVICES_U			0x00C
--#define RST_DEVICES_V			0x358
--#define RST_DEVICES_W			0x35C
--#define RST_DEVICES_X			0x28C
--#define RST_DEVICES_Y			0x2a4
--#define RST_DEVICES_SET_L		0x300
--#define RST_DEVICES_CLR_L		0x304
--#define RST_DEVICES_SET_H		0x308
--#define RST_DEVICES_CLR_H		0x30c
--#define RST_DEVICES_SET_U		0x310
--#define RST_DEVICES_CLR_U		0x314
--#define RST_DEVICES_SET_V		0x430
--#define RST_DEVICES_CLR_V		0x434
--#define RST_DEVICES_SET_W		0x438
--#define RST_DEVICES_CLR_W		0x43c
--#define RST_DEVICES_SET_X		0x290
--#define RST_DEVICES_CLR_X		0x294
--#define RST_DEVICES_SET_Y		0x2a8
--#define RST_DEVICES_CLR_Y		0x2ac
--
- /* Global data of Tegra CPU CAR ops */
- static struct tegra_cpu_car_ops dummy_car_ops;
- struct tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 55c4b78280be..ba123ba4a1da 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -10,6 +10,51 @@
- #include <linux/clkdev.h>
- #include <linux/delay.h>
+-static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
++static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	unsigned int offset, bit;
+@@ -1952,7 +1954,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ 	return 0;
+ }
  
-+#define CLK_OUT_ENB_L			0x010
-+#define CLK_OUT_ENB_H			0x014
-+#define CLK_OUT_ENB_U			0x018
-+#define CLK_OUT_ENB_V			0x360
-+#define CLK_OUT_ENB_W			0x364
-+#define CLK_OUT_ENB_X			0x280
-+#define CLK_OUT_ENB_Y			0x298
-+#define CLK_ENB_PLLP_OUT_CPU		BIT(31)
-+#define CLK_OUT_ENB_SET_L		0x320
-+#define CLK_OUT_ENB_CLR_L		0x324
-+#define CLK_OUT_ENB_SET_H		0x328
-+#define CLK_OUT_ENB_CLR_H		0x32c
-+#define CLK_OUT_ENB_SET_U		0x330
-+#define CLK_OUT_ENB_CLR_U		0x334
-+#define CLK_OUT_ENB_SET_V		0x440
-+#define CLK_OUT_ENB_CLR_V		0x444
-+#define CLK_OUT_ENB_SET_W		0x448
-+#define CLK_OUT_ENB_CLR_W		0x44c
-+#define CLK_OUT_ENB_SET_X		0x284
-+#define CLK_OUT_ENB_CLR_X		0x288
-+#define CLK_OUT_ENB_SET_Y		0x29c
-+#define CLK_OUT_ENB_CLR_Y		0x2a0
-+
-+#define RST_DEVICES_L			0x004
-+#define RST_DEVICES_H			0x008
-+#define RST_DEVICES_U			0x00C
-+#define RST_DEVICES_V			0x358
-+#define RST_DEVICES_W			0x35C
-+#define RST_DEVICES_X			0x28C
-+#define RST_DEVICES_Y			0x2a4
-+#define RST_DEVICES_SET_L		0x300
-+#define RST_DEVICES_CLR_L		0x304
-+#define RST_DEVICES_SET_H		0x308
-+#define RST_DEVICES_CLR_H		0x30c
-+#define RST_DEVICES_SET_U		0x310
-+#define RST_DEVICES_CLR_U		0x314
-+#define RST_DEVICES_SET_V		0x430
-+#define RST_DEVICES_CLR_V		0x434
-+#define RST_DEVICES_SET_W		0x438
-+#define RST_DEVICES_CLR_W		0x43c
-+#define RST_DEVICES_SET_X		0x290
-+#define RST_DEVICES_CLR_X		0x294
-+#define RST_DEVICES_SET_Y		0x2a8
-+#define RST_DEVICES_CLR_Y		0x2ac
-+
- /**
-  * struct tegra_clk_sync_source - external clock source from codec
-  *
+-static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
++static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	u32 value;
+@@ -2006,8 +2008,8 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+ 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+ 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+ 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+-	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+-	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
++	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
++	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+ 
+ 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+ 					       &tegra_pmc_irq_domain_ops, pmc);
+@@ -2680,6 +2682,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.regs = &tegra186_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
++	.irq_set_wake = tegra186_pmc_irq_set_wake,
++	.irq_set_type = tegra186_pmc_irq_set_type,
+ 	.reset_sources = tegra186_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
+ 	.reset_levels = tegra186_reset_levels,
 -- 
 2.7.4
