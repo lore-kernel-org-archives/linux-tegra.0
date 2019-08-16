@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v9 15/22] clk: tegra210: Add suspend and resume support
-Date: Fri, 16 Aug 2019 12:42:00 -0700
-Message-ID: <1565984527-5272-16-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 17/22] soc/tegra: pmc: Add pmc wake support for tegra210
+Date: Fri, 16 Aug 2019 12:42:02 -0700
+Message-ID: <1565984527-5272-18-git-send-email-skomatineni@nvidia.com>
 References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,298 +12,161 @@ To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@la
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds support for clk: tegra210: suspend-resume.
-
-All the CAR controller settings are lost on suspend when core
-power goes off.
-
-This patch has implementation for saving and restoring all PLLs
-and clocks context during system suspend and resume to have the
-clocks back to same state for normal operation.
-
-Clock driver suspend and resume are registered as syscore_ops as clocks
-restore need to happen before the other drivers resume to have all their
-clocks back to the same state as before suspend.
+This patch implements PMC wakeup sequence for Tegra210 and defines
+common used RTC alarm wake event.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 96 ++++++++++++++++++++++++++++++++++++++--
- drivers/clk/tegra/clk.c          | 55 +++++++++++++++++++++++
- drivers/clk/tegra/clk.h          | 16 +++++++
- 3 files changed, 163 insertions(+), 4 deletions(-)
+ drivers/soc/tegra/pmc.c | 98 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 4c9538bd28ad..d28d99cb0e9c 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -9,13 +9,13 @@
- #include <linux/clkdev.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/syscore_ops.h>
- #include <linux/delay.h>
- #include <linux/export.h>
- #include <linux/mutex.h>
- #include <linux/clk/tegra.h>
- #include <dt-bindings/clock/tegra210-car.h>
- #include <dt-bindings/reset/tegra210-car.h>
--#include <linux/iopoll.h>
- #include <linux/sizes.h>
- #include <soc/tegra/pmc.h>
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 91c84d0e66ae..76e7292ded25 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -58,6 +58,11 @@
+ #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+ #define  PMC_CNTRL_MAIN_RST		BIT(4)
  
-@@ -220,11 +220,15 @@
- #define CLK_M_DIVISOR_SHIFT 2
- #define CLK_M_DIVISOR_MASK 0x3
- 
-+#define CLK_MASK_ARM	0x44
-+#define MISC_CLK_ENB	0x48
++#define PMC_WAKE_MASK			0x0c
++#define PMC_WAKE_LEVEL			0x10
++#define PMC_WAKE_STATUS			0x14
++#define PMC_SW_WAKE_STATUS		0x18
 +
- #define RST_DFLL_DVCO 0x2f4
- #define DVFS_DFLL_RESET_SHIFT 0
+ #define DPD_SAMPLE			0x020
+ #define  DPD_SAMPLE_ENABLE		BIT(0)
+ #define  DPD_SAMPLE_DISABLE		(0 << 0)
+@@ -87,6 +92,11 @@
  
- #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
- #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
-+#define CPU_SOFTRST_CTRL 0x380
+ #define PMC_SCRATCH41			0x140
  
- #define LVL2_CLK_GATE_OVRA 0xf8
- #define LVL2_CLK_GATE_OVRC 0x3a0
-@@ -2825,6 +2829,7 @@ static int tegra210_enable_pllu(void)
- 	struct tegra_clk_pll_freq_table *fentry;
- 	struct tegra_clk_pll pllu;
- 	u32 reg;
-+	int ret;
- 
- 	for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
- 		if (fentry->input_rate == pll_ref_freq)
-@@ -2853,9 +2858,14 @@ static int tegra210_enable_pllu(void)
- 	reg |= PLL_ENABLE;
- 	writel(reg, clk_base + PLLU_BASE);
- 
--	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
--					  reg & PLL_BASE_LOCK, 2, 1000);
--	if (!(reg & PLL_BASE_LOCK)) {
-+	/*
-+	 * During clocks resume, same PLLU init and enable sequence get
-+	 * executed. So, readx_poll_timeout_atomic can't be used here as it
-+	 * uses ktime_get() and timekeeping resume doesn't happen by that
-+	 * time. So, using tegra210_wait_for_mask for PLL LOCK.
-+	 */
-+	ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
-+	if (ret) {
- 		pr_err("Timed out waiting for PLL_U to lock\n");
- 		return -ETIMEDOUT;
- 	}
-@@ -3287,6 +3297,77 @@ static void tegra210_disable_cpu_clock(u32 cpu)
- }
- 
- #ifdef CONFIG_PM_SLEEP
-+#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) + ((_off) * 4))
-+#define car_writel(_val, _base, _off) \
-+		writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
++#define PMC_WAKE2_MASK			0x160
++#define PMC_WAKE2_LEVEL			0x164
++#define PMC_WAKE2_STATUS		0x168
++#define PMC_SW_WAKE2_STATUS		0x16c
 +
-+static u32 spare_reg_ctx, misc_clk_enb_ctx, clk_msk_arm_ctx;
-+static u32 cpu_softrst_ctx[3];
-+
-+static int tegra210_clk_suspend(void)
+ #define PMC_SENSOR_CTRL			0x1b0
+ #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+ #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+@@ -1922,6 +1932,43 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+ 	.alloc = tegra_pmc_irq_alloc,
+ };
+ 
++static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
 +{
-+	unsigned int i;
++	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
++	unsigned int offset, bit;
++	u32 value;
 +
-+	clk_save_context();
++	if (data->hwirq == ULONG_MAX)
++		return 0;
 +
-+	/*
-+	 * Save the bootloader configured clock registers SPARE_REG0,
-+	 * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL.
-+	 */
-+	spare_reg_ctx = readl_relaxed(clk_base + SPARE_REG0);
-+	misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
-+	clk_msk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
++	offset = data->hwirq / 32;
++	bit = data->hwirq % 32;
 +
-+	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
-+		cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
++	/* clear wake status */
++	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
++	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
 +
-+	tegra_clk_periph_suspend();
-+	return 0;
-+}
++	tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
++	tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
 +
-+static void tegra210_clk_resume(void)
-+{
-+	unsigned int i;
++	/* enable PMC wake */
++	if (data->hwirq >= 32)
++		offset = PMC_WAKE2_MASK;
++	else
++		offset = PMC_WAKE_MASK;
 +
-+	tegra_clk_osc_resume(clk_base);
++	value = tegra_pmc_readl(pmc, offset);
 +
-+	/*
-+	 * Restore the bootloader configured clock registers SPARE_REG0,
-+	 * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL from saved context.
-+	 */
-+	writel_relaxed(spare_reg_ctx, clk_base + SPARE_REG0);
-+	writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
-+	writel_relaxed(clk_msk_arm_ctx, clk_base + CLK_MASK_ARM);
++	if (on)
++		value |= BIT(bit);
++	else
++		value &= ~BIT(bit);
 +
-+	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
-+		car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
-+
-+	/*
-+	 * Tegra clock programming sequence recommends peripheral clock to
-+	 * be enabled prior to changing its clock source and divider to
-+	 * prevent glitchless frequency switch.
-+	 * So, enable all peripheral clocks before restoring their source
-+	 * and dividers.
-+	 */
-+	writel_relaxed(TEGRA210_CLK_ENB_VLD_MSK_L, clk_base + CLK_OUT_ENB_L);
-+	writel_relaxed(TEGRA210_CLK_ENB_VLD_MSK_H, clk_base + CLK_OUT_ENB_H);
-+	writel_relaxed(TEGRA210_CLK_ENB_VLD_MSK_U, clk_base + CLK_OUT_ENB_U);
-+	writel_relaxed(TEGRA210_CLK_ENB_VLD_MSK_V, clk_base + CLK_OUT_ENB_V);
-+	writel_relaxed(TEGRA210_CLK_ENB_VLD_MSK_W, clk_base + CLK_OUT_ENB_W);
-+	writel_relaxed(TEGRA210_CLK_ENB_VLD_MSK_X, clk_base + CLK_OUT_ENB_X);
-+	writel_relaxed(TEGRA210_CLK_ENB_VLD_MSK_Y, clk_base + CLK_OUT_ENB_Y);
-+
-+	/* wait for all writes to happen to have all the clocks enabled */
-+	fence_udelay(2, clk_base);
-+
-+	/* restore PLLs and all peripheral clock rates */
-+	tegra210_init_pllu();
-+	clk_restore_context();
-+
-+	/* restore saved context of peripheral clocks and reset state */
-+	tegra_clk_periph_resume();
-+}
-+
- static void tegra210_cpu_clock_suspend(void)
- {
- 	/* switch coresite to clk_m, save off original source */
-@@ -3302,6 +3383,11 @@ static void tegra210_cpu_clock_resume(void)
- }
- #endif
- 
-+static struct syscore_ops tegra_clk_syscore_ops = {
-+	.suspend = tegra210_clk_suspend,
-+	.resume = tegra210_clk_resume,
-+};
-+
- static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
- 	.wait_for_reset	= tegra210_wait_cpu_in_reset,
- 	.disable_clock	= tegra210_disable_cpu_clock,
-@@ -3586,5 +3672,7 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	tegra210_mbist_clk_init();
- 
- 	tegra_cpu_car_ops = &tegra210_cpu_car_ops;
-+
-+	register_syscore_ops(&tegra_clk_syscore_ops);
- }
- CLK_OF_DECLARE(tegra210, "nvidia,tegra210-car", tegra210_clock_init);
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 33ac88ee324a..e6bd6d1ea012 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -22,6 +22,7 @@ struct tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
- 
- int *periph_clk_enb_refcnt;
- static int periph_banks;
-+static u32 *periph_state_ctx;
- static struct clk **clks;
- static int clk_num;
- static struct clk_onecell_data clk_data;
-@@ -168,6 +169,52 @@ void tegra_clk_set_pllp_out_cpu(bool enable)
- 	writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
- }
- 
-+void tegra_clk_periph_suspend(void)
-+{
-+	unsigned int i, idx;
-+
-+	idx = 0;
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		periph_state_ctx[idx] =
-+			readl_relaxed(clk_base + periph_regs[i].enb_reg);
-+
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		periph_state_ctx[idx] =
-+			readl_relaxed(clk_base + periph_regs[i].rst_reg);
-+}
-+
-+void tegra_clk_periph_resume(void)
-+{
-+	unsigned int i, idx;
-+
-+	idx = 0;
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		writel_relaxed(periph_state_ctx[idx],
-+			       clk_base + periph_regs[i].enb_reg);
-+	/*
-+	 * All non-boot peripherals will be in reset state on resume.
-+	 * Wait for 5us of reset propagation delay before de-asserting
-+	 * the peripherals based on the saved context.
-+	 */
-+	fence_udelay(5, clk_base);
-+
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		writel_relaxed(periph_state_ctx[idx],
-+			       clk_base + periph_regs[i].rst_reg);
-+
-+	fence_udelay(2, clk_base);
-+}
-+
-+static int tegra_clk_periph_ctx_init(int banks)
-+{
-+	periph_state_ctx = kcalloc(2 * banks, sizeof(*periph_state_ctx),
-+				   GFP_KERNEL);
-+	if (!periph_state_ctx)
-+		return -ENOMEM;
++	tegra_pmc_writel(pmc, value, offset);
 +
 +	return 0;
 +}
 +
- struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
  {
- 	clk_base = regs;
-@@ -189,6 +236,14 @@ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+@@ -1954,6 +2001,49 @@ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ 	return 0;
+ }
  
- 	clk_num = num;
- 
-+	if (IS_ENABLED(CONFIG_PM_SLEEP)) {
-+		if (tegra_clk_periph_ctx_init(banks)) {
-+			kfree(periph_clk_enb_refcnt);
-+			kfree(clks);
-+			return NULL;
-+		}
++static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
++{
++	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
++	unsigned int offset, bit;
++	u32 value;
++
++	if (data->hwirq == ULONG_MAX)
++		return 0;
++
++	offset = data->hwirq / 32;
++	bit = data->hwirq % 32;
++
++	if (data->hwirq >= 32)
++		offset = PMC_WAKE2_LEVEL;
++	else
++		offset = PMC_WAKE_LEVEL;
++
++	value = tegra_pmc_readl(pmc, offset);
++
++	switch (type) {
++	case IRQ_TYPE_EDGE_RISING:
++	case IRQ_TYPE_LEVEL_HIGH:
++		value |= BIT(bit);
++		break;
++
++	case IRQ_TYPE_EDGE_FALLING:
++	case IRQ_TYPE_LEVEL_LOW:
++		value &= ~BIT(bit);
++		break;
++
++	case IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING:
++		value ^= BIT(bit);
++		break;
++
++	default:
++		return -EINVAL;
 +	}
 +
- 	return clks;
- }
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index ba123ba4a1da..30247b8fe912 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -55,6 +55,20 @@
- #define RST_DEVICES_SET_Y		0x2a8
- #define RST_DEVICES_CLR_Y		0x2ac
- 
-+/*
-+ * Tegra CLK_OUT_ENB registers have some undefined bits which are not used and
-+ * any accidental write of 1 to these bits can cause PSLVERR.
-+ * So below are the valid mask defines for each CLK_OUT_ENB register used to
-+ * turn ON only the valid clocks.
-+ */
-+#define TEGRA210_CLK_ENB_VLD_MSK_L	0xdcd7dff9
-+#define TEGRA210_CLK_ENB_VLD_MSK_H	0x87d1f3e7
-+#define TEGRA210_CLK_ENB_VLD_MSK_U	0xf3fed3fa
-+#define TEGRA210_CLK_ENB_VLD_MSK_V	0xffc18cfb
-+#define TEGRA210_CLK_ENB_VLD_MSK_W	0x793fb7ff
-+#define TEGRA210_CLK_ENB_VLD_MSK_X	0x3fe66fff
-+#define TEGRA210_CLK_ENB_VLD_MSK_Y	0xfc1fc7ff
++	tegra_pmc_writel(pmc, value, offset);
 +
- /**
-  * struct tegra_clk_sync_source - external clock source from codec
-  *
-@@ -880,6 +894,8 @@ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
- 		 u8 frac_width, u8 flags);
- void tegra_clk_osc_resume(void __iomem *clk_base);
- void tegra_clk_set_pllp_out_cpu(bool enable);
-+void tegra_clk_periph_suspend(void);
-+void tegra_clk_periph_resume(void);
++	return 0;
++}
++
+ static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+@@ -2540,6 +2630,10 @@ static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
+ 	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
+ };
  
++static const struct tegra_wake_event tegra210_wake_events[] = {
++	TEGRA_WAKE_IRQ("rtc", 16, 2),
++};
++
+ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
+ 	.powergates = tegra210_powergates,
+@@ -2557,10 +2651,14 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
++	.irq_set_wake = tegra210_pmc_irq_set_wake,
++	.irq_set_type = tegra210_pmc_irq_set_type,
+ 	.reset_sources = tegra210_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra210_reset_sources),
+ 	.reset_levels = NULL,
+ 	.num_reset_levels = 0,
++	.num_wake_events = ARRAY_SIZE(tegra210_wake_events),
++	.wake_events = tegra210_wake_events,
+ };
  
- /* Combined read fence with delay */
+ #define TEGRA186_IO_PAD_TABLE(_pad)					     \
 -- 
 2.7.4
