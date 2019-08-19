@@ -1,103 +1,91 @@
-From: Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2] iommu/arm-smmu: Break insecure users by disabling
- bypass by default
-Date: Mon, 19 Aug 2019 15:48:27 +0100
-Message-ID: <20190819144827.6h4hm2gytogwepi7@willie-the-truck>
-References: <20190404145957.GA25912@fuggles.cambridge.arm.com>
- <4754bcf1-6423-f1fe-64d4-da4a35b164ad@free.fr>
- <20190424115231.GA14829@fuggles.cambridge.arm.com>
- <20190502105912.GA943@ulmo>
- <20190502110821.GD30966@fuggles.cambridge.arm.com>
- <20190502124525.GA3579@ulmo>
- <94cf6d56-5dcb-051a-06da-5edfacde1655@arm.com>
- <20190819112856.GA28102@ulmo>
- <20190819120917.hysyc6l3ckkwcx25@willie-the-truck>
- <20190819133327.GA23089@ulmo>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v7 0/9] drm: cec: convert DRM drivers to the new notifier
+ API
+Date: Mon, 19 Aug 2019 16:48:49 +0200
+Message-ID: <ad2a4af0-aeff-a81e-7885-7e9fc3c5cf90@baylibre.com>
+References: <20190814104520.6001-1-darekm@google.com>
+ <42c7ef3c-b7e5-8c63-c7c2-bfc6c56100c6@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190819133327.GA23089@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Douglas Anderson <dianders@chromium.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <42c7ef3c-b7e5-8c63-c7c2-bfc6c56100c6@xs4all.nl>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>, Sam Ravnborg <sam@ravnborg.org>, linux-samsung-soc@vger.kernel.org, David Francis <David.Francis@amd.com>, amd-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>, "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>, linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org, Jonas Karlman <jonas@kwiboo.se>, Leo Li <sunpeng.li@amd.com>, intel-gfx@lists.freedesktop.org, Russell King <rmk+kernel@armlinux.org.uk>, Sean Paul <seanpaul@chromium.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Allison Randal <allison@lohutok.net>, Thomas Lim <Thomas.Lim@amd.com>, Jernej Skrabec <jernej.skrabec@siol.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 03:33:27PM +0200, Thierry Reding wrote:
-> On Mon, Aug 19, 2019 at 01:09:18PM +0100, Will Deacon wrote:
-> > On Mon, Aug 19, 2019 at 01:28:56PM +0200, Thierry Reding wrote:
-> > > Perhaps an alternative would be to add a property to the SMMU node that
-> > > lists a set of stream IDs for which to enable bypass by default. We
-> > > could let the firmware set that when the display hardware has been set
-> > > up. That way when the kernel boots we can keep scanning from the
-> > > reserved memory and the ARM SMMU driver would not disable bypass for the
-> > > display hardware. Only when the display hardware is actually attached to
-> > > the IOMMU domain, and the 1:1 mappings have been created would bypass be
-> > > disabled, and at that point there should be no SMMU faults anymore, so
-> > > we have cleanly transitioned to the kernel.
-> > > 
-> > > Any thoughts?
-> > 
-> > There is currently an extension to IORT under discussion which should
-> > address this problem, so it would make a lot of sense for the DT solution
-> > to follow the same approach. I think it will end up being along the lines
-> > that you suggest, although we won't just enable bypass because that leaves
-> > memory wide open if the device driver doesn't probe and it also creates
-> > an issue because device attach typically happens before the endpoint
-> > driver has probed.
-> > 
-> > So the flow would look something like:
-> > 
-> > 	- Firmware describes a physical region of memory which must be
-> > 	  reserved by the OS.
-> > 
-> > 	- Additionally, firmware describes a master -> reserved memory
-> > 	  linkage as part of the IOMMU description.
-> > 
-> > 	- When the IOMMU probes, these reserved memory regions will be
-> > 	  mapped 1:1 for the relevant master.
-> > 
-> > This is similar to RMRR on x86, except that the mappings are intended to
-> > be less rigid and can be torn down if the endpoint driver decides to do
-> > that or for things like device passthrough.
-> > 
-> > If we get that working, we should update our booting.txt so that DMA is
-> > allowed during boot in the limited cases which this covers.
-> 
-> that sounds very interesting. Is this extension being publicly
-> discussed? If so, do you have any pointers for me to read up on this?
-
-Sorry, I don't think it's public :(
-
-> As for device tree, I wonder if perhaps we can achieve this without going
-> through extra properties. We could, for example, just do a "reverse
-> lookup" of IOMMU masters by walking the device tree and looking for nodes
-> that link to an ARM SMMU in their iommus property. Granted, that's not
-> going to be very efficient, but it would remove the need to duplicate
-> information in DT. It's also going to be a one-time cost, so perhaps it
-> would be negligible.
-
-If we can get by with extending the iommu-map entries for the masters,
-that would certainly be the neatest imo. Sounds like it's worth a quick
-hack, if nothing else.
-
-> I'm happy to help out with hashing out or implementing something on the
-> DT side of things. I don't currently have access to any systems with
-> ACPI, but I've got a bunch of systems that are DT based and that I would
-> like to see this implemented on.
-
-Oh, I'm certainly not saying we should hold the DT changes until the ACPI
-side is sorted out, just that we should avoid divergence where we can.
-Hopefully my explanation above should be sufficient for that. If you hack
-something up that works for DT, I'd be happy to review it.
-
-Will
+SGkgRGFyaXVzeiwgSGFucywKCkkgY2FuIGFwcGx5IHRoZSBkdy1oZG1pIHBhdGNoZXMgaWYgbmVj
+ZXNzYXJ5LgoKTmVpbAoKT24gMTkvMDgvMjAxOSAxMTozOCwgSGFucyBWZXJrdWlsIHdyb3RlOgo+
+IEhpIGFsbCwKPiAKPiBUaGUgcGF0Y2hlcyBpbiB0aGlzIHNlcmllcyBjYW4gYmUgYXBwbGllZCBp
+bmRlcGVuZGVudGx5IGZyb20gZWFjaCBvdGhlci4KPiAKPiBJZiB5b3UgbWFpbnRhaW4gb25lIG9m
+IHRoZXNlIGRyaXZlcnMgYW5kIHlvdSB3YW50IHRvIG1lcmdlIGl0IGZvciB2NS40Cj4geW91cnNl
+bGYsIHRoZW4gcGxlYXNlIGRvIHNvIGFuZCBsZXQgbWUga25vdy4gSWYgeW91IHByZWZlciBJIGNv
+bW1pdCBpdAo+IHRvIGRybS1taXNjLCB0aGVuIHBsZWFzZSByZXZpZXcgYW5kIChob3BlZnVsbHkp
+IEFjayB0aGUgcGF0Y2guCj4gCj4gSSB3b3VsZCByZWFsbHkgbGlrZSB0byBnZXQgdGhpcyBpbiBm
+b3IgdjUuNCBzbyBJIGNhbiBnZXQgdGhlIHVzZXJzcGFjZQo+IGJpdHMgaW4gZm9yIHY1LjQgYXMg
+d2VsbCB0aHJvdWdoIHRoZSBtZWRpYSBzdWJzeXN0ZW0uCj4gCj4gRGFyaXVzeiwgY2FuIHlvdSBw
+b3N0IGEgdjcuMSBmb3IgcGF0Y2ggNS85IGZpeGluZyB0aGUgdHlwbz8KPiAKPiBUaGFua3MhCj4g
+Cj4gCUhhbnMKPiAKPiBPbiA4LzE0LzE5IDEyOjQ0IFBNLCBEYXJpdXN6IE1hcmNpbmtpZXdpY3og
+d3JvdGU6Cj4+IFRoaXMgc2VyaWVzIHVwZGF0ZXMgRFJNIGRyaXZlcnMgdG8gdXNlIG5ldyBDRUMg
+bm90aWZpZXIgQVBJLgo+Pgo+PiBDaGFuZ2VzIHNpbmNlIHY2Ogo+PiAJTWFkZSBDRUMgbm90aWZp
+ZXJzJyByZWdpc3RyYXRpb24gYW5kIGRlLXJlZ2lzdHJhdGlvbiBzeW1tZXRyaWMKPj4gCWluIHRk
+YTk5OHggYW5kIGR3LWhkbWkgZHJpdmVycy4gQWxzbywgYWNjaWRlbnRhbGx5IGRyb3BwZWQgb25l
+Cj4+IAlwYXRjaCBpbiB2NiAoY2hhbmdlIHRvIGRybV9kcF9jZWMpLCBicm91Z2h0IGl0IGJhY2sg
+bm93Lgo+PiBDaGFuZ2VzIHNpbmNlIHY1Ogo+PiAgICAgICAgIEZpeGVkIGEgd2FybmluZyBhYm91
+dCBhIG1pc3NpbmcgY29tbWVudCBmb3IgYSBuZXcgbWVtYmVyIG9mCj4+IAlkcm1fZHBfYXV4X2Nl
+YyBzdHJ1Y3QuIFNlbmRpbmcgdG8gYSB3aWRlciBhdWRpZW5jZSwKPj4gCWluY2x1ZGluZyBtYWlu
+dGFpbmVycyBvZiByZXNwZWN0aXZlIGRyaXZlcnMuCj4+IENoYW5nZXMgc2luY2UgdjQ6Cj4+IAlB
+ZGRyZXNzaW5nIHJldmlldyBjb21tZW50cy4KPj4gQ2hhbmdlcyBzaW5jZSB2MzoKPj4gICAgICAg
+ICBVcGRhdGVkIGFkYXB0ZXIgZmxhZ3MgaW4gZHctaGRtaS1jZWMuCj4+IENoYW5nZXMgc2luY2Ug
+djI6Cj4+IAlJbmNsdWRlIGFsbCBEUk0gcGF0Y2hlcyBmcm9tICJjZWM6IGltcHJvdmUgbm90aWZp
+ZXIgc3VwcG9ydCwKPj4gCWFkZCBjb25uZWN0b3IgaW5mbyBjb25uZWN0b3IgaW5mbyIgc2VyaWVz
+Lgo+PiBDaGFuZ2VzIHNpbmNlIHYxOgo+PiAJVGhvc2UgcGF0Y2hlcyBkZWxheSBjcmVhdGlvbiBv
+ZiBub3RpZmllcnMgdW50aWwgcmVzcGVjdGl2ZQo+PiAJY29ubmVjdG9ycyBhcmUgY29uc3RydWN0
+ZWQuIEl0IHNlZW1zIHRoYXQgdGhvc2UgcGF0Y2hlcywgZm9yIGEKPj4gCWNvdXBsZSBvZiBkcml2
+ZXJzLCBieSBhZGRpbmcgdGhlIGRlbGF5LCBpbnRyb2R1Y2UgYSByYWNlIGJldHdlZW4KPj4gCW5v
+dGlmaWVycycgY3JlYXRpb24gYW5kIHRoZSBJUlFzIGhhbmRsaW5nIHRocmVhZHMgLSBhdCBsZWFz
+dCBJCj4+IAlkb24ndCBzZWUgYW55dGhpbmcgb2J2aW91cyBpbiB0aGVyZSB0aGF0IHdvdWxkIGV4
+cGxpY2l0bHkgZm9yYmlkCj4+IAlzdWNoIHJhY2VzIHRvIG9jY3VyLiB2MiBhZGRzIGEgd3JpdGUg
+YmFycmllciB0byBtYWtlIHN1cmUgSVJRCj4+IAl0aHJlYWRzIHNlZSB0aGUgbm90aWZpZXIgb25j
+ZSBpdCBpcyBjcmVhdGVkIChyZXBsYWNpbmcgdGhlCj4+IAlXUklURV9PTkNFIEkgcHV0IGluIHYx
+KS4gVGhlIGJlc3QgdGhpbmcgdG8gZG8gaGVyZSwgSSBiZWxpZXZlLAo+PiAJd291bGQgYmUgbm90
+IHRvIGhhdmUgYW55IHN5bmNocm9uaXphdGlvbiBhbmQgbWFrZSBzdXJlIHRoYXQgYW4gSVJRCj4+
+IAlvbmx5IGdldHMgZW5hYmxlZCBhZnRlciB0aGUgbm90aWZpZXIgaXMgY3JlYXRlZC4KPj4gRGFy
+aXVzeiBNYXJjaW5raWV3aWN6ICg5KToKPj4gICBkcm1fZHBfY2VjOiBhZGQgY29ubmVjdG9yIGlu
+Zm8gc3VwcG9ydC4KPj4gICBkcm0vaTkxNS9pbnRlbF9oZG1pOiB1c2UgY2VjX25vdGlmaWVyX2Nv
+bm5fKHVuKXJlZ2lzdGVyCj4+ICAgZHctaGRtaS1jZWM6IHVzZSBjZWNfbm90aWZpZXJfY2VjX2Fk
+YXBfKHVuKXJlZ2lzdGVyCj4+ICAgdGRhOTk1MDogdXNlIGNlY19ub3RpZmllcl9jZWNfYWRhcF8o
+dW4pcmVnaXN0ZXIKPj4gICBkcm06IHRkYTk5OHg6IHVzZSBjZWNfbm90aWZpZXJfY29ubl8odW4p
+cmVnaXN0ZXIKPj4gICBkcm06IHN0aTogdXNlIGNlY19ub3RpZmllcl9jb25uXyh1bilyZWdpc3Rl
+cgo+PiAgIGRybTogdGVncmE6IHVzZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKPj4g
+ICBkcm06IGR3LWhkbWk6IHVzZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKPj4gICBk
+cm06IGV4eW5vczogZXh5bm9zX2hkbWk6IHVzZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0
+ZXIKPj4KPj4gIC4uLi9kaXNwbGF5L2FtZGdwdV9kbS9hbWRncHVfZG1fbXN0X3R5cGVzLmMgICB8
+ICAyICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWktY2VjLmMg
+fCAxMyArKystLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5j
+ICAgICB8IDQ2ICsrKysrKysrKysrKystLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZHBf
+Y2VjLmMgICAgICAgICAgICAgICAgICB8IDI1ICsrKysrKy0tLS0KPj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgICB8IDMxICsrKysrKystLS0tLS0KPj4gIGRy
+aXZlcnMvZ3B1L2RybS9pMmMvdGRhOTk1MC5jICAgICAgICAgICAgICAgICB8IDEyICsrLS0tCj4+
+ICBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5OHhfZHJ2LmMgICAgICAgICAgICAgfCAzNiArKysr
+KysrKysrLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2Rpc3BsYXkvaW50ZWxfZHAuYyAg
+ICAgICB8ICA0ICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9kaXNwbGF5L2ludGVsX2hkbWku
+YyAgICAgfCAxMyArKysrLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfY29u
+bmVjdG9yLmMgICB8ICAzICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgICAg
+ICAgICAgICAgICAgfCAxOSArKysrKy0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1
+dC5jICAgICAgICAgICAgICAgIHwgMjggKysrKysrKystLS0KPj4gIGluY2x1ZGUvZHJtL2RybV9k
+cF9oZWxwZXIuaCAgICAgICAgICAgICAgICAgICB8IDE3ICsrKystLS0KPj4gIDEzIGZpbGVzIGNo
+YW5nZWQsIDE1NSBpbnNlcnRpb25zKCspLCA5NCBkZWxldGlvbnMoLSkKPj4KPiAKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
