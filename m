@@ -1,57 +1,29 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v6 08/19] PM / devfreq: tegra30: Ensure that target freq
- won't overflow
-Date: Tue, 20 Aug 2019 09:23:23 +0900
-Message-ID: <c85dbd27-7536-9c51-19a2-fe1c2c6342b9@samsung.com>
-References: <20190811212315.12689-1-digetx@gmail.com>
-        <CGME20190811212546epcas1p22be9fefe18908cdd17a518950d296983@epcas1p2.samsung.com>
-        <20190811212315.12689-9-digetx@gmail.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH V5 1/5] iommu/amd: Remove unnecessary locking from AMD
+ iommu driver
+Date: Tue, 20 Aug 2019 02:41:43 -0700
+Message-ID: <20190820094143.GA24154@infradead.org>
+References: <20190815110944.3579-1-murphyt7@tcd.ie>
+ <20190815110944.3579-2-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190811212315.12689-9-digetx@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190815110944.3579-2-murphyt7@tcd.ie>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tom Murphy <murphyt7@tcd.ie>
+Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
-> We already had few integer overflow bugs, let's limit the freq for
-> consistency.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 70dce58212a4..ca499368ee81 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -430,7 +430,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
->  	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD + dev->boost_freq;
->  	target_freq = tegra_actmon_account_cpu_freq(tegra, dev, target_freq);
->  
-> -	return target_freq;
-> +	return min(target_freq, tegra->max_freq);
+On Thu, Aug 15, 2019 at 12:09:39PM +0100, Tom Murphy wrote:
+> We can remove the mutex lock from amd_iommu_map and amd_iommu_unmap.
+> iommu_map doesn’t lock while mapping and so no two calls should touch
+> the same iova range. The AMD driver already handles the page table page
+> allocations without locks so we can safely remove the locks.
 
-Once again, did you meet this case sometimes?
-
-Usually, we can prevent the overflow of target_freq
-when calculating the target frequency or this style.
-
-I think that if the overflow of target frequency happen frequently,
-it might have the problem of calculation way. 
-
->  }
->  
->  static irqreturn_t actmon_thread_isr(int irq, void *data)
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+I've been looking over the code and trying to understand how the
+synchronization works.  I gues we the cmpxchg64 in free_clear_pte
+is the important point here?  I have to admit I don't fully understand
+the concurrency issues here, but neither do I understand what the
+mutex you removed might have helped to start with.
