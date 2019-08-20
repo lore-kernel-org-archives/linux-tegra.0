@@ -1,79 +1,146 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 10/14] serial: tegra: add support to use 8 bytes trigger
-Date: Mon, 19 Aug 2019 21:29:15 +0100
-Message-ID: <dda0d866-ae7a-8655-7b26-4c28249c0be8@nvidia.com>
-References: <1565609303-27000-1-git-send-email-kyarlagadda@nvidia.com>
- <1565609303-27000-11-git-send-email-kyarlagadda@nvidia.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v6 02/19] PM / devfreq: tegra30: Keep interrupt disabled
+ while governor is stopped
+Date: Tue, 20 Aug 2019 09:02:10 +0900
+Message-ID: <f02267cb-7299-fcdb-dfff-97ea36ccf2e5@samsung.com>
+References: <20190811212315.12689-1-digetx@gmail.com>
+        <CGME20190811212557epcas3p1d5dd6c484e6fc1ed9feb619a24c1b745@epcas3p1.samsung.com>
+        <20190811212315.12689-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1565609303-27000-11-git-send-email-kyarlagadda@nvidia.com>
+In-Reply-To: <20190811212315.12689-3-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, gregkh@linuxfoundation.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, ldewangan@nvidia.com, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Shardar Shariff Md <smohammed@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, "cpgs (cpgs@samsung.com)" <cpgs@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
-On 12/08/2019 12:28, Krishna Yarlagadda wrote:
-> From: Shardar Shariff Md <smohammed@nvidia.com>
+On 19. 8. 12. 오전 6:22, Dmitry Osipenko wrote:
+> There is no real need to keep interrupt always-enabled, will be nicer
+> to keep it disabled while governor is inactive.
 > 
-> Add support to use 8 bytes trigger for Tegra186 SOC.
-> 
-> Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/tty/serial/serial-tegra.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+>  drivers/devfreq/tegra30-devfreq.c | 47 ++++++++++++++++---------------
+>  1 file changed, 24 insertions(+), 23 deletions(-)
 > 
-> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-> index 329923c..03d1d20 100644
-> --- a/drivers/tty/serial/serial-tegra.c
-> +++ b/drivers/tty/serial/serial-tegra.c
-> @@ -88,6 +88,7 @@ struct tegra_uart_chip_data {
->  	bool	support_clk_src_div;
->  	bool	fifo_mode_enable_status;
->  	int	uart_max_port;
-> +	int	dma_burst_bytes;
-
-I assume that this is a maximum, so why not say max_dma_burst_bytes?
-
->  };
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index a27300f40b0b..8be6a33beb9c 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/devfreq.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> +#include <linux/irq.h>
+>  #include <linux/module.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/platform_device.h>
+> @@ -416,8 +417,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
+>  {
+>  	unsigned int i;
 >  
->  struct tegra_uart_port {
-> @@ -933,7 +934,12 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
->  	 * programmed in the DMA registers.
->  	 */
->  	tup->fcr_shadow = UART_FCR_ENABLE_FIFO;
-> -	tup->fcr_shadow |= UART_FCR_R_TRIG_01;
-> +
-> +	if (tup->cdata->dma_burst_bytes == 8)
-> +		tup->fcr_shadow |= UART_FCR_R_TRIG_10;
-> +	else
-> +		tup->fcr_shadow |= UART_FCR_R_TRIG_01;
-> +
->  	tup->fcr_shadow |= TEGRA_UART_TX_TRIG_16B;
->  	tegra_uart_write(tup, tup->fcr_shadow, UART_FCR);
+> -	disable_irq(tegra->irq);
+> -
+>  	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+>  		      ACTMON_GLB_PERIOD_CTRL);
 >  
-> @@ -1046,7 +1052,7 @@ static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
->  		}
->  		dma_sconfig.src_addr = tup->uport.mapbase;
->  		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-> -		dma_sconfig.src_maxburst = 4;
-> +		dma_sconfig.src_maxburst = tup->cdata->dma_burst_bytes;
->  		tup->rx_dma_chan = dma_chan;
->  		tup->rx_dma_buf_virt = dma_buf;
->  		tup->rx_dma_buf_phys = dma_phys;
-> @@ -1325,6 +1331,7 @@ static struct tegra_uart_chip_data tegra20_uart_chip_data = {
->  	.support_clk_src_div		= false,
->  	.fifo_mode_enable_status	= false,
->  	.uart_max_port			= 5,
-> +	.dma_burst_bytes		= 4,
+> @@ -442,8 +441,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>  	}
+>  
+>  	actmon_write_barrier(tegra);
+> -
+> -	enable_irq(tegra->irq);
+>  }
+>  
+>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+> @@ -552,6 +549,12 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>  {
+>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
+>  
+> +	/*
+> +	 * Couple device with the governor early as it is needed at
+> +	 * the moment of governor's start (used by ISR).
+> +	 */
+> +	tegra->devfreq = devfreq;
+> +
+>  	switch (event) {
+>  	case DEVFREQ_GOV_START:
+>  		devfreq_monitor_start(devfreq);
+> @@ -586,10 +589,11 @@ static struct devfreq_governor tegra_devfreq_governor = {
+>  
+>  static int tegra_devfreq_probe(struct platform_device *pdev)
+>  {
+> -	struct tegra_devfreq *tegra;
+>  	struct tegra_devfreq_device *dev;
+> -	unsigned int i;
+> +	struct tegra_devfreq *tegra;
+> +	struct devfreq *devfreq;
+>  	unsigned long rate;
+> +	unsigned int i;
+>  	int err;
+>  
+>  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+> @@ -625,6 +629,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	}
+>  	tegra->irq = err;
+>  
+> +	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
+> +
+> +	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
+> +					actmon_thread_isr, IRQF_ONESHOT,
+> +					"tegra-devfreq", tegra);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
+> +		return err;
+> +	}
+> +
+>  	reset_control_assert(tegra->reset);
+>  
+>  	err = clk_prepare_enable(tegra->clock);
+> @@ -672,28 +686,15 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
+> -	tegra->devfreq = devfreq_add_device(&pdev->dev,
+> -					    &tegra_devfreq_profile,
+> -					    "tegra_actmon",
+> -					    NULL);
+> -	if (IS_ERR(tegra->devfreq)) {
+> -		err = PTR_ERR(tegra->devfreq);
+> +	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
+> +				     "tegra_actmon", NULL);
+> +	if (IS_ERR(devfreq)) {
+> +		err = PTR_ERR(devfreq);
+>  		goto remove_governor;
+>  	}
+>  
+> -	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
+> -					actmon_thread_isr, IRQF_ONESHOT,
+> -					"tegra-devfreq", tegra);
+> -	if (err) {
+> -		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
+> -		goto remove_devfreq;
+> -	}
+> -
+>  	return 0;
+>  
+> -remove_devfreq:
+> -	devfreq_remove_device(tegra->devfreq);
+> -
+>  remove_governor:
+>  	devfreq_remove_governor(&tegra_devfreq_governor);
+>  
+> 
 
-Isn't it simpler to store the TRIG value here?
-
-Jon
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
-nvpublic
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
