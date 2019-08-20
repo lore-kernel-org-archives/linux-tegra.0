@@ -1,7 +1,7 @@
 From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH 3/9] drivers: ata: ahci_tegra: use devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 14:35:42 +0200
-Message-ID: <1566304548-19972-3-git-send-email-info@metux.net>
+Subject: [PATCH 5/9] drivers: ata: libahci_platform: use devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 14:35:44 +0200
+Message-ID: <1566304548-19972-5-git-send-email-info@metux.net>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
@@ -15,45 +15,22 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/ata/ahci_tegra.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/ata/libahci_platform.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-index e3163da..3845c23 100644
---- a/drivers/ata/ahci_tegra.c
-+++ b/drivers/ata/ahci_tegra.c
-@@ -481,7 +481,6 @@ static int tegra_ahci_probe(struct platform_device *pdev)
- {
- 	struct ahci_host_priv *hpriv;
- 	struct tegra_ahci_priv *tegra;
--	struct resource *res;
- 	int ret;
- 	unsigned int i;
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index 9e9583a..3d84be8 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -408,8 +408,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
  
-@@ -498,19 +497,17 @@ static int tegra_ahci_probe(struct platform_device *pdev)
- 	tegra->pdev = pdev;
- 	tegra->soc = of_device_get_match_data(&pdev->dev);
+ 	devres_add(dev, hpriv);
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	tegra->sata_regs = devm_ioremap_resource(&pdev->dev, res);
-+	tegra->sata_regs = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(tegra->sata_regs))
- 		return PTR_ERR(tegra->sata_regs);
- 
- 	/*
- 	 * AUX registers is optional.
- 	 */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	if (res) {
--		tegra->sata_aux_regs = devm_ioremap_resource(&pdev->dev, res);
--		if (IS_ERR(tegra->sata_aux_regs))
--			return PTR_ERR(tegra->sata_aux_regs);
-+	tegra->sata_aux_regs = devm_platform_ioremap_resource(pdev, 2);
-+	if (IS_ERR(tegra->sata_aux_regs)) {
-+		dev_info(&pdev->dev, "Cant get aux registers (optional)");
-+		tegra->sata_aux_regs = NULL;
- 	}
- 
- 	tegra->sata_rst = devm_reset_control_get(&pdev->dev, "sata");
+-	hpriv->mmio = devm_ioremap_resource(dev,
+-			      platform_get_resource(pdev, IORESOURCE_MEM, 0));
++	hpriv->mmio = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hpriv->mmio)) {
+ 		rc = PTR_ERR(hpriv->mmio);
+ 		goto err_out;
 -- 
 1.9.1
