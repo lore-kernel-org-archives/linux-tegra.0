@@ -1,16 +1,16 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 7/9] drivers: ata: sata_dwc_460ex: use
+Subject: Re: [PATCH 8/9] drivers: ata: sata_gemini: use
  devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 15:31:32 +0200
-Message-ID: <68b89d3d-9feb-1b62-5b17-cc97cb5bd225@samsung.com>
+Date: Tue, 20 Aug 2019 15:36:35 +0200
+Message-ID: <f7a9d877-e437-e22e-f9f8-d8da62273aa5@samsung.com>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
-        <CGME20190820123601epcas2p1494c1485f111056fe585668e3591d756@epcas2p1.samsung.com>
-        <1566304548-19972-7-git-send-email-info@metux.net>
+        <CGME20190820123601epcas1p19aecef8b133d389e392fdd12273ef3a6@epcas1p1.samsung.com>
+        <1566304548-19972-8-git-send-email-info@metux.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1566304548-19972-7-git-send-email-info@metux.net>
+In-Reply-To: <1566304548-19972-8-git-send-email-info@metux.net>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: "Enrico Weigelt, metux IT consult" <info@metux.net>
@@ -21,7 +21,11 @@ List-Id: linux-tegra@vger.kernel.org
 On 8/20/19 2:35 PM, Enrico Weigelt, metux IT consult wrote:
 > Use the new helper that wraps the calls to platform_get_resource()
 > and devm_ioremap_resource() together.
-> 
+
+It would also be worth to mention in the patch description that
+on !res condition the driver will now return -EINVAL (instead of
+-ENODEV) and print an error.
+
 > Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
 Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
@@ -33,27 +37,30 @@ Samsung R&D Institute Poland
 Samsung Electronics
 
 > ---
->  drivers/ata/sata_dwc_460ex.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/ata/sata_gemini.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 > 
-> diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
-> index 9dcef6a..de248fa 100644
-> --- a/drivers/ata/sata_dwc_460ex.c
-> +++ b/drivers/ata/sata_dwc_460ex.c
-> @@ -237,7 +237,6 @@ static int sata_dwc_dma_init_old(struct platform_device *pdev,
->  				 struct sata_dwc_device *hsdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
+> diff --git a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
+> index f793564..55e2689 100644
+> --- a/drivers/ata/sata_gemini.c
+> +++ b/drivers/ata/sata_gemini.c
+> @@ -318,7 +318,6 @@ static int gemini_sata_probe(struct platform_device *pdev)
+>  	struct device_node *np = dev->of_node;
+>  	struct sata_gemini *sg;
+>  	struct regmap *map;
 > -	struct resource *res;
+>  	enum gemini_muxmode muxmode;
+>  	u32 gmode;
+>  	u32 gmask;
+> @@ -329,11 +328,7 @@ static int gemini_sata_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	sg->dev = dev;
 >  
->  	hsdev->dma = devm_kzalloc(&pdev->dev, sizeof(*hsdev->dma), GFP_KERNEL);
->  	if (!hsdev->dma)
-> @@ -254,8 +253,7 @@ static int sata_dwc_dma_init_old(struct platform_device *pdev,
->  	}
->  
->  	/* Get physical SATA DMA register base address */
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -	hsdev->dma->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	hsdev->dma->regs = devm_platform_ioremap_resource(pdev, 1);
->  	if (IS_ERR(hsdev->dma->regs))
->  		return PTR_ERR(hsdev->dma->regs);
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res)
+> -		return -ENODEV;
+> -
+> -	sg->base = devm_ioremap_resource(dev, res);
+> +	sg->base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(sg->base))
+>  		return PTR_ERR(sg->base);
