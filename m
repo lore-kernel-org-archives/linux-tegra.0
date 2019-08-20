@@ -1,26 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 8/9] drivers: ata: sata_gemini: use devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 15:20:47 +0200
-Message-ID: <CACRpkdazbH5pD6eqhM_PWyK1wcjrKzxY24AwEk-TmzpFtmnxqA@mail.gmail.com>
-References: <1566304548-19972-1-git-send-email-info@metux.net> <1566304548-19972-8-git-send-email-info@metux.net>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/9] drivers: ata: ahci_octeon: use
+ devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 15:27:55 +0200
+Message-ID: <6400d9a6-ebda-1a83-6000-fd1086a0b9f3@samsung.com>
+References: <CGME20190820123558epcas1p1d3ad88d04bd6694ab47eb485bd269cc4@epcas1p1.samsung.com>
+        <1566304548-19972-1-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1566304548-19972-8-git-send-email-info@metux.net>
+In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Hans de Goede <hdegoede@redhat.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, axboe@kernel.dk, hdegoede@redhat.com, linus.walleij@linaro.org, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 2:35 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
 
+On 8/20/19 2:35 PM, Enrico Weigelt, metux IT consult wrote:
 > Use the new helper that wraps the calls to platform_get_resource()
 > and devm_ioremap_resource() together.
->
+> 
 > Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Yours,
-Linus Walleij
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> ---
+>  drivers/ata/ahci_octeon.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/ata/ahci_octeon.c b/drivers/ata/ahci_octeon.c
+> index 5a44e08..2280180 100644
+> --- a/drivers/ata/ahci_octeon.c
+> +++ b/drivers/ata/ahci_octeon.c
+> @@ -32,13 +32,11 @@ static int ahci_octeon_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *node = dev->of_node;
+> -	struct resource *res;
+>  	void __iomem *base;
+>  	u64 cfg;
+>  	int ret;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	base = devm_ioremap_resource(&pdev->dev, res);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
