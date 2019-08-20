@@ -1,7 +1,7 @@
 From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH 7/9] drivers: ata: sata_dwc_460ex: use devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 14:35:46 +0200
-Message-ID: <1566304548-19972-7-git-send-email-info@metux.net>
+Subject: [PATCH 9/9] drivers: ata: sata_rcar: use devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 14:35:48 +0200
+Message-ID: <1566304548-19972-9-git-send-email-info@metux.net>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
@@ -15,30 +15,30 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/ata/sata_dwc_460ex.c | 4 +---
+ drivers/ata/sata_rcar.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
-index 9dcef6a..de248fa 100644
---- a/drivers/ata/sata_dwc_460ex.c
-+++ b/drivers/ata/sata_dwc_460ex.c
-@@ -237,7 +237,6 @@ static int sata_dwc_dma_init_old(struct platform_device *pdev,
- 				 struct sata_dwc_device *hsdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct resource *res;
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index 3495e17..14ea1d6 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -886,7 +886,6 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct ata_host *host;
+ 	struct sata_rcar_priv *priv;
+-	struct resource *mem;
+ 	int irq;
+ 	int ret = 0;
  
- 	hsdev->dma = devm_kzalloc(&pdev->dev, sizeof(*hsdev->dma), GFP_KERNEL);
- 	if (!hsdev->dma)
-@@ -254,8 +253,7 @@ static int sata_dwc_dma_init_old(struct platform_device *pdev,
- 	}
+@@ -915,8 +914,7 @@ static int sata_rcar_probe(struct platform_device *pdev)
  
- 	/* Get physical SATA DMA register base address */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	hsdev->dma->regs = devm_ioremap_resource(&pdev->dev, res);
-+	hsdev->dma->regs = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(hsdev->dma->regs))
- 		return PTR_ERR(hsdev->dma->regs);
+ 	host->private_data = priv;
  
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->base = devm_ioremap_resource(dev, mem);
++	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base)) {
+ 		ret = PTR_ERR(priv->base);
+ 		goto err_pm_put;
 -- 
 1.9.1
