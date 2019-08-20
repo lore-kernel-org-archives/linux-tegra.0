@@ -1,7 +1,7 @@
 From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH 9/9] drivers: ata: sata_rcar: use devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 14:35:48 +0200
-Message-ID: <1566304548-19972-9-git-send-email-info@metux.net>
+Subject: [PATCH 8/9] drivers: ata: sata_gemini: use devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 14:35:47 +0200
+Message-ID: <1566304548-19972-8-git-send-email-info@metux.net>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
@@ -15,30 +15,33 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/ata/sata_rcar.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/ata/sata_gemini.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 3495e17..14ea1d6 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -886,7 +886,6 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct ata_host *host;
- 	struct sata_rcar_priv *priv;
--	struct resource *mem;
- 	int irq;
- 	int ret = 0;
+diff --git a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
+index f793564..55e2689 100644
+--- a/drivers/ata/sata_gemini.c
++++ b/drivers/ata/sata_gemini.c
+@@ -318,7 +318,6 @@ static int gemini_sata_probe(struct platform_device *pdev)
+ 	struct device_node *np = dev->of_node;
+ 	struct sata_gemini *sg;
+ 	struct regmap *map;
+-	struct resource *res;
+ 	enum gemini_muxmode muxmode;
+ 	u32 gmode;
+ 	u32 gmask;
+@@ -329,11 +328,7 @@ static int gemini_sata_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	sg->dev = dev;
  
-@@ -915,8 +914,7 @@ static int sata_rcar_probe(struct platform_device *pdev)
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+-
+-	sg->base = devm_ioremap_resource(dev, res);
++	sg->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(sg->base))
+ 		return PTR_ERR(sg->base);
  
- 	host->private_data = priv;
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->base = devm_ioremap_resource(dev, mem);
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base)) {
- 		ret = PTR_ERR(priv->base);
- 		goto err_pm_put;
 -- 
 1.9.1
