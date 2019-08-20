@@ -1,7 +1,7 @@
 From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH 6/9] drivers: ata: pata_bk3710: use devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 14:35:45 +0200
-Message-ID: <1566304548-19972-6-git-send-email-info@metux.net>
+Subject: [PATCH 4/9] drivers: ata: ahci_xgene: use devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 14:35:43 +0200
+Message-ID: <1566304548-19972-4-git-send-email-info@metux.net>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
@@ -15,37 +15,59 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/ata/pata_bk3710.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/ata/ahci_xgene.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/ata/pata_bk3710.c b/drivers/ata/pata_bk3710.c
-index fad95cf..92b036d 100644
---- a/drivers/ata/pata_bk3710.c
-+++ b/drivers/ata/pata_bk3710.c
-@@ -291,7 +291,6 @@ static void pata_bk3710_chipinit(void __iomem *base)
- static int __init pata_bk3710_probe(struct platform_device *pdev)
- {
- 	struct clk *clk;
--	struct resource *mem;
- 	struct ata_host *host;
- 	struct ata_port *ap;
- 	void __iomem *base;
-@@ -310,15 +309,13 @@ static int __init pata_bk3710_probe(struct platform_device *pdev)
- 	/* NOTE:  round *down* to meet minimum timings; we count in clocks */
- 	ideclk_period = 1000000000UL / rate;
+diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+index 16246c8..5391f5d 100644
+--- a/drivers/ata/ahci_xgene.c
++++ b/drivers/ata/ahci_xgene.c
+@@ -739,7 +739,6 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct ahci_host_priv *hpriv;
+ 	struct xgene_ahci_context *ctx;
+-	struct resource *res;
+ 	const struct of_device_id *of_devid;
+ 	enum xgene_ahci_version version = XGENE_AHCI_V1;
+ 	const struct ata_port_info *ppi[] = { &xgene_ahci_v1_port_info,
+@@ -759,31 +758,25 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+ 	ctx->dev = dev;
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	/* Retrieve the IP core resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	ctx->csr_core = devm_ioremap_resource(dev, res);
++	ctx->csr_core = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(ctx->csr_core))
+ 		return PTR_ERR(ctx->csr_core);
+ 
+ 	/* Retrieve the IP diagnostic resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	ctx->csr_diag = devm_ioremap_resource(dev, res);
++	ctx->csr_diag = devm_platform_ioremap_resource(pdev, 2);
+ 	if (IS_ERR(ctx->csr_diag))
+ 		return PTR_ERR(ctx->csr_diag);
+ 
+ 	/* Retrieve the IP AXI resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 3);
+-	ctx->csr_axi = devm_ioremap_resource(dev, res);
++	ctx->csr_axi = devm_platform_ioremap_resource(pdev, 3);
+ 	if (IS_ERR(ctx->csr_axi))
+ 		return PTR_ERR(ctx->csr_axi);
+ 
+ 	/* Retrieve the optional IP mux resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 4);
+-	if (res) {
+-		void __iomem *csr = devm_ioremap_resource(dev, res);
+-		if (IS_ERR(csr))
+-			return PTR_ERR(csr);
 -
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		pr_err(DRV_NAME ": failed to get IRQ resource\n");
- 		return irq;
+-		ctx->csr_mux = csr;
++	ctx->csr_mux = csr = devm_platform_ioremap_resource(pdev, 4);
++	if (IS_ERR(ctx->csr_mux)) {
++		dev_info(&pdev->dev, "cant get ip mux resource (optional)");
++		ctx->csr_mux = NULL;
  	}
  
--	base = devm_ioremap_resource(&pdev->dev, mem);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
+ 	of_devid = of_match_device(xgene_ahci_of_match, dev);
 -- 
 1.9.1
