@@ -1,19 +1,59 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH V5 4/5] iommu/dma-iommu: Use the dev->coherent_dma_mask
-Date: Tue, 20 Aug 2019 02:43:24 -0700
-Message-ID: <20190820094323.GD24154@infradead.org>
-References: <20190815110944.3579-1-murphyt7@tcd.ie>
- <20190815110944.3579-5-murphyt7@tcd.ie>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Subject: [PATCH 3/9] drivers: ata: ahci_tegra: use devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 14:35:42 +0200
+Message-ID: <1566304548-19972-3-git-send-email-info@metux.net>
+References: <1566304548-19972-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190815110944.3579-5-murphyt7@tcd.ie>
+In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Murphy <murphyt7@tcd.ie>
-Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: axboe@kernel.dk, hdegoede@redhat.com, b.zolnierkie@samsung.com, linus.walleij@linaro.org, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Looks good, and should probably be queued up asap as a bug fix:
+Use the new helper that wraps the calls to platform_get_resource()
+and devm_ioremap_resource() together.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/ata/ahci_tegra.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+index e3163da..3845c23 100644
+--- a/drivers/ata/ahci_tegra.c
++++ b/drivers/ata/ahci_tegra.c
+@@ -481,7 +481,6 @@ static int tegra_ahci_probe(struct platform_device *pdev)
+ {
+ 	struct ahci_host_priv *hpriv;
+ 	struct tegra_ahci_priv *tegra;
+-	struct resource *res;
+ 	int ret;
+ 	unsigned int i;
+ 
+@@ -498,19 +497,17 @@ static int tegra_ahci_probe(struct platform_device *pdev)
+ 	tegra->pdev = pdev;
+ 	tegra->soc = of_device_get_match_data(&pdev->dev);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	tegra->sata_regs = devm_ioremap_resource(&pdev->dev, res);
++	tegra->sata_regs = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(tegra->sata_regs))
+ 		return PTR_ERR(tegra->sata_regs);
+ 
+ 	/*
+ 	 * AUX registers is optional.
+ 	 */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	if (res) {
+-		tegra->sata_aux_regs = devm_ioremap_resource(&pdev->dev, res);
+-		if (IS_ERR(tegra->sata_aux_regs))
+-			return PTR_ERR(tegra->sata_aux_regs);
++	tegra->sata_aux_regs = devm_platform_ioremap_resource(pdev, 2);
++	if (IS_ERR(tegra->sata_aux_regs)) {
++		dev_info(&pdev->dev, "Cant get aux registers (optional)");
++		tegra->sata_aux_regs = NULL;
+ 	}
+ 
+ 	tegra->sata_rst = devm_reset_control_get(&pdev->dev, "sata");
+-- 
+1.9.1
