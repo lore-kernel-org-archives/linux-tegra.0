@@ -1,7 +1,7 @@
 From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH 8/9] drivers: ata: sata_gemini: use devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 14:35:47 +0200
-Message-ID: <1566304548-19972-8-git-send-email-info@metux.net>
+Subject: [PATCH 6/9] drivers: ata: pata_bk3710: use devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 14:35:45 +0200
+Message-ID: <1566304548-19972-6-git-send-email-info@metux.net>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
@@ -15,33 +15,37 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/ata/sata_gemini.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/ata/pata_bk3710.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
-index f793564..55e2689 100644
---- a/drivers/ata/sata_gemini.c
-+++ b/drivers/ata/sata_gemini.c
-@@ -318,7 +318,6 @@ static int gemini_sata_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct sata_gemini *sg;
- 	struct regmap *map;
--	struct resource *res;
- 	enum gemini_muxmode muxmode;
- 	u32 gmode;
- 	u32 gmask;
-@@ -329,11 +328,7 @@ static int gemini_sata_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	sg->dev = dev;
+diff --git a/drivers/ata/pata_bk3710.c b/drivers/ata/pata_bk3710.c
+index fad95cf..92b036d 100644
+--- a/drivers/ata/pata_bk3710.c
++++ b/drivers/ata/pata_bk3710.c
+@@ -291,7 +291,6 @@ static void pata_bk3710_chipinit(void __iomem *base)
+ static int __init pata_bk3710_probe(struct platform_device *pdev)
+ {
+ 	struct clk *clk;
+-	struct resource *mem;
+ 	struct ata_host *host;
+ 	struct ata_port *ap;
+ 	void __iomem *base;
+@@ -310,15 +309,13 @@ static int __init pata_bk3710_probe(struct platform_device *pdev)
+ 	/* NOTE:  round *down* to meet minimum timings; we count in clocks */
+ 	ideclk_period = 1000000000UL / rate;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -
--	sg->base = devm_ioremap_resource(dev, res);
-+	sg->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(sg->base))
- 		return PTR_ERR(sg->base);
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		pr_err(DRV_NAME ": failed to get IRQ resource\n");
+ 		return irq;
+ 	}
+ 
+-	base = devm_ioremap_resource(&pdev->dev, mem);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
 -- 
 1.9.1
