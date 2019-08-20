@@ -1,36 +1,26 @@
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH 2/9] drivers: ata: ahci_seattle: use devm_platform_ioremap_resource()
-Date: Tue, 20 Aug 2019 14:35:41 +0200
-Message-ID: <1566304548-19972-2-git-send-email-info@metux.net>
-References: <1566304548-19972-1-git-send-email-info@metux.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 8/9] drivers: ata: sata_gemini: use devm_platform_ioremap_resource()
+Date: Tue, 20 Aug 2019 15:20:47 +0200
+Message-ID: <CACRpkdazbH5pD6eqhM_PWyK1wcjrKzxY24AwEk-TmzpFtmnxqA@mail.gmail.com>
+References: <1566304548-19972-1-git-send-email-info@metux.net> <1566304548-19972-8-git-send-email-info@metux.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
+In-Reply-To: <1566304548-19972-8-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: axboe@kernel.dk, hdegoede@redhat.com, b.zolnierkie@samsung.com, linus.walleij@linaro.org, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Hans de Goede <hdegoede@redhat.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use the new helper that wraps the calls to platform_get_resource()
-and devm_ioremap_resource() together.
+On Tue, Aug 20, 2019 at 2:35 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/ata/ahci_seattle.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> Use the new helper that wraps the calls to platform_get_resource()
+> and devm_ioremap_resource() together.
+>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-diff --git a/drivers/ata/ahci_seattle.c b/drivers/ata/ahci_seattle.c
-index ced12705..2d88d36 100644
---- a/drivers/ata/ahci_seattle.c
-+++ b/drivers/ata/ahci_seattle.c
-@@ -132,8 +132,7 @@ static const struct ata_port_info *ahci_seattle_get_port_info(
- 	if (!plat_data)
- 		return &ahci_port_info;
- 
--	plat_data->sgpio_ctrl = devm_ioremap_resource(dev,
--			      platform_get_resource(pdev, IORESOURCE_MEM, 1));
-+	plat_data->sgpio_ctrl = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(plat_data->sgpio_ctrl))
- 		return &ahci_port_info;
- 
--- 
-1.9.1
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
