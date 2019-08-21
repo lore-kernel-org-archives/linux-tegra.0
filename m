@@ -1,40 +1,39 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/2] clocksource/drivers/timer-of: Do not warn on deferred probe
-Date: Wed, 21 Aug 2019 16:02:40 +0100
-Message-ID: <20190821150241.31093-1-jonathanh@nvidia.com>
+Subject: [PATCH 2/2] clocksource/drivers: Do not warn on probe defer
+Date: Wed, 21 Aug 2019 16:02:41 +0100
+Message-ID: <20190821150241.31093-2-jonathanh@nvidia.com>
+References: <20190821150241.31093-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190821150241.31093-1-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Deferred probe is an expected return value for clk_get() on many
-platforms. The driver deals with it properly, so there's no need
-to output a warning that may potentially confuse users.
+Deferred probe is an expected return value on many platforms and so
+there's no need to output a warning that may potentially confuse users.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/clocksource/timer-of.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-probe.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
-index 80542289fae7..d8c2bd4391d0 100644
---- a/drivers/clocksource/timer-of.c
-+++ b/drivers/clocksource/timer-of.c
-@@ -113,8 +113,10 @@ static __init int timer_of_clk_init(struct device_node *np,
- 	of_clk->clk = of_clk->name ? of_clk_get_by_name(np, of_clk->name) :
- 		of_clk_get(np, of_clk->index);
- 	if (IS_ERR(of_clk->clk)) {
--		pr_err("Failed to get clock for %pOF\n", np);
--		return PTR_ERR(of_clk->clk);
-+		ret = PTR_ERR(of_clk->clk);
-+		if (ret != -EPROBE_DEFER)
-+			pr_err("Failed to get clock for %pOF\n", np);
-+		goto out;
- 	}
+diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
+index dda1946e84dd..ee9574da53c0 100644
+--- a/drivers/clocksource/timer-probe.c
++++ b/drivers/clocksource/timer-probe.c
+@@ -29,7 +29,9 @@ void __init timer_probe(void)
  
- 	ret = clk_prepare_enable(of_clk->clk);
+ 		ret = init_func_ret(np);
+ 		if (ret) {
+-			pr_err("Failed to initialize '%pOF': %d\n", np, ret);
++			if (ret != -EPROBE_DEFER)
++				pr_err("Failed to initialize '%pOF': %d\n", np,
++				       ret);
+ 			continue;
+ 		}
+ 
 -- 
 2.17.1
