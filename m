@@ -1,39 +1,93 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 2/2] clocksource/drivers: Do not warn on probe defer
-Date: Wed, 21 Aug 2019 16:02:41 +0100
-Message-ID: <20190821150241.31093-2-jonathanh@nvidia.com>
-References: <20190821150241.31093-1-jonathanh@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v1] Revert "mmc: sdhci-tegra: drop ->get_ro() implementation"
+Date: Wed, 21 Aug 2019 17:11:39 +0200
+Message-ID: <CAPDyKFqtAc_PK+yg4ev=-vm4-OPjhUdD2F9t+-ATJHO6y41G2w@mail.gmail.com>
+References: <20190808222430.28477-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190821150241.31093-1-jonathanh@nvidia.com>
+In-Reply-To: <20190808222430.28477-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Deferred probe is an expected return value on many platforms and so
-there's no need to output a warning that may potentially confuse users.
+On Fri, 9 Aug 2019 at 00:25, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> The WRITE_PROTECT bit is always in a "protected mode" on Tegra and
+> WP-GPIO state need to be used instead. In a case of the GPIO absence,
+> write-enable should be assumed. External SD is writable once again as
+> a result of this patch because the offending commit changed behaviour for
+> the case of a missing WP-GPIO to fall back to WRITE_PROTECT bit-checking,
+> which is incorrect for Tegra.
+>
+> Cc: stable@vger.kernel.org # v5.1+
+> Fixes: e8391453e27f ("mmc: sdhci-tegra: drop ->get_ro() implementation")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/clocksource/timer-probe.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Applied for fixes, thanks!
 
-diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
-index dda1946e84dd..ee9574da53c0 100644
---- a/drivers/clocksource/timer-probe.c
-+++ b/drivers/clocksource/timer-probe.c
-@@ -29,7 +29,9 @@ void __init timer_probe(void)
- 
- 		ret = init_func_ret(np);
- 		if (ret) {
--			pr_err("Failed to initialize '%pOF': %d\n", np, ret);
-+			if (ret != -EPROBE_DEFER)
-+				pr_err("Failed to initialize '%pOF': %d\n", np,
-+				       ret);
- 			continue;
- 		}
- 
--- 
-2.17.1
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index f4d4761cf20a..02d8f524bb9e 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -258,6 +258,16 @@ static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
+>         }
+>  }
+>
+> +static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
+> +{
+> +       /*
+> +        * Write-enable shall be assumed if GPIO is missing in a board's
+> +        * device-tree because SDHCI's WRITE_PROTECT bit doesn't work on
+> +        * Tegra.
+> +        */
+> +       return mmc_gpio_get_ro(host->mmc);
+> +}
+> +
+>  static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
+>  {
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -1224,6 +1234,7 @@ static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+>  };
+>
+>  static const struct sdhci_ops tegra_sdhci_ops = {
+> +       .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+>         .write_l    = tegra_sdhci_writel,
+>         .set_clock  = tegra_sdhci_set_clock,
+> @@ -1279,6 +1290,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+>  };
+>
+>  static const struct sdhci_ops tegra114_sdhci_ops = {
+> +       .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+>         .write_w    = tegra_sdhci_writew,
+>         .write_l    = tegra_sdhci_writel,
+> @@ -1332,6 +1344,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+>  };
+>
+>  static const struct sdhci_ops tegra210_sdhci_ops = {
+> +       .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+>         .write_w    = tegra210_sdhci_writew,
+>         .write_l    = tegra_sdhci_writel,
+> @@ -1366,6 +1379,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+>  };
+>
+>  static const struct sdhci_ops tegra186_sdhci_ops = {
+> +       .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+>         .write_l    = tegra_sdhci_writel,
+>         .set_clock  = tegra_sdhci_set_clock,
+> --
+> 2.22.0
+>
