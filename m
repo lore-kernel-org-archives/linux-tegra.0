@@ -1,63 +1,115 @@
-From: Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v3 00/11] Symbol Namespaces
-Date: Wed, 21 Aug 2019 15:11:40 +0200
-Message-ID: <20190821131140.GC2349@hirez.programming.kicks-ass.net>
-References: <20190813121733.52480-1-maennich@google.com>
- <20190821114955.12788-1-maennich@google.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v3 2/9] soc: samsung: Convert exynos-chipid driver to
+ use the regmap API
+Date: Wed, 21 Aug 2019 15:31:25 +0200
+Message-ID: <d9a20ae5-4bdf-cb05-d68f-a7631517c87c@samsung.com>
+References: <20190813150827.31972-1-s.nawrocki@samsung.com>
+        <CGME20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c@eucas1p2.samsung.com>
+        <20190813150827.31972-3-s.nawrocki@samsung.com>
+        <b5359603-b337-dcd8-b025-ca7dff5f4a06@nvidia.com>
+        <CAJKOXPf597CMx=M2JmSTWe2GzBfcHFefgzSJbJ+njZGp-WfR1A@mail.gmail.com>
+        <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
+        <72eea1ea-2433-2f76-6265-5851554e845d@samsung.com>
+        <CAJKOXPdh9eHrAuCxHkQBvJMqEnUCeU2xwkK=9yyiJ6BuTLJ+_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190821114955.12788-1-maennich-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Matthias Maennich <maennich-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, oneukum-IBi9RG/b67k@public.gmane.org, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, usb-storage-ijkIwGHArpdIPJnuZ7Njw4oP9KaGy4wf@public.gmane.org, Toru Komatsu <k0ma-h7Lmzv2voGl4Eiagz67IpQ@public.gmane.org>, Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org, joel-QYYGw3jwrUn5owFQY34kdNi2O/JbrIOy@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org, cocci-/FJkirnvOdkvYVN+rsErww@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Benjamin Fair <benjaminfair-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lucas.de.marchi-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Nancy Yuen <yuenn-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPdh9eHrAuCxHkQBvJMqEnUCeU2xwkK=9yyiJ6BuTLJ+_A@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 12:49:15PM +0100, Matthias Maennich wrote:
-> As of Linux 5.3-rc5, there are 31205 [1] exported symbols in the kernel.
-> That is a growth of roughly 1000 symbols since 4.17 (30206 [2]).  There
-> seems to be some consensus amongst kernel devs that the export surface
-> is too large, and hard to reason about.
-> 
-> Generally, these symbols fall in one of these categories:
-> 1) Symbols actually meant for drivers
-> 2) Symbols that are only exported because functionality is split over
->    multiple modules, yet they really shouldn't be used by modules outside
->    of their own subsystem
-> 3) Symbols really only meant for in-tree use
-> 
-> When module developers try to upstream their code, it regularly turns
-> out that they are using exported symbols that they really shouldn't be
-> using. This problem is even bigger for drivers that are currently
-> out-of-tree, which may be using many symbols that they shouldn't be
-> using, and that break when those symbols are removed or modified.
-> 
-> This patch allows subsystem maintainers to partition their exported
-> symbols into separate namespaces, and module authors to import such
-> namespaces only when needed.
-> 
-> This allows subsystem maintainers to more easily limit availability of
-> these namespaced symbols to other parts of the kernel. It can also be
-> used to partition the set of exported symbols for documentation
-> purposes; for example, a set of symbols that is really only used for
-> debugging could be in a "SUBSYSTEM_DEBUG" namespace.
 
-I'm missing how one can prohibit these random out of tree modules from
-doing MODULE_IMPORT_NS().
+On 8/21/19 2:16 PM, Krzysztof Kozlowski wrote:
+> On Wed, 21 Aug 2019 at 13:51, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+>>>>> Following this change, I am now seeing the above error on our Tegra
+>>>>> boards where this driver is enabled. This is triggering a kernel
+>>>>> warnings test we have to fail. Hence, I don't think that you can remove
+>>>>> the compatible node test here, unless you have a better way to determine
+>>>>> if this is a samsung device.
+>>>>
+>>>> Right, this is really wrong... I missed that it is not a probe but
+>>>> early init. And this init will be called on every board... Probably it
+>>>> should be converted to a regular driver.
+>>
+>> Early initialization is needed for SoC driver to be used from within
+>> arch/arm/mach-exynos/ and _initcall() usage is the usual way for SoC
+>> drivers to be initialized:
+>>
+>> drivers/soc/amlogic/meson-gx-socinfo.c
+>> drivers/soc/amlogic/meson-mx-socinfo.c
+>> drivers/soc/atmel/soc.c
+>> drivers/soc/bcm/brcmstb/common.c
+>> drivers/soc/imx/soc-imx-scu.c
+>> drivers/soc/imx/soc-imx8.c
+>> drivers/soc/renesas/renesas-soc.c
+>> drivers/soc/tegra/fuse/fuse-tegra.c
+>> drivers/soc/ux500/ux500-soc-id.c
+>> drivers/soc/versatile/soc-integrator.c
+>> drivers/soc/versatile/soc-integrator.c
+>>
+>> The only SoC drivers that are regular drivers are:
+>>
+>> drivers/soc/fsl/guts.c
+>> drivers/soc/versatile/soc-realview.c
+> 
+> Thanks for pointing it out.
+> 
+> Indeed, the initcall was needed in your set of patches here:
+> https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=43565&state=*
+> but this work was not continued here. Maybe it will be later
+> resubmitted... maybe not... who knows? Therefore I would prefer proper
 
-That is; suppose I stick all the preempt_notifier symbols in a KVM
-namespace, how do I enforce no out-of-tree modules ever do
-MODULE_IMPORT_NS(KVM) and gain access?
+The work got delayed mainly because of the request for the formal
+audit of each usage vs cache coherency. Since it is rather small
+cleanup and such audit is time consuming it became a low priority.
 
-(the above would basically break virtualbox, which I knows uses preempt
-notifiers too, but I don't give a rats arse about that)
+> solution for current case (driver), unless patches for mach are being
+> brought back to life now.
+> 
+>>> I'm also inclined to have it converted to a regular driver.  We already
+>>> have "exynos-asv" driver matching on the chipid node (patch 3/9).
+>>> The ASV patches will not be merged soon anyway, all this needs some more
+>>> thought. Krzysztof, can we abandon the chipid patches for now? Your
+>>
+>> chipid driver is good and useful on its own. The preferred solution
+>> IMHO would be to just revert "soc: samsung: Convert exynos-chipid
+>> driver to use the regmap API" commit.
+
+Or just fix it by re-adding removed Exynos chipid compatible checking:
+
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 006a95feb618..d9912bd52479 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -55,6 +55,11 @@ int __init exynos_chipid_early_init(void)
+        u32 revision;
+        int ret;
+ 
++       /* look up for chipid node */
++       np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
++       if (!np)
++               return -ENODEV;
++
+        regmap = syscon_regmap_lookup_by_compatible("samsung,exynos4210-chipid");
+        if (IS_ERR(regmap)) {
+                pr_err("Failed to get CHIPID regmap\n");
+
+> I queued the chipid as a dependency for ASV but ASV requires the
+> regmap. What would be left after reverting the regmap part? Simple
+> unused printk driver? No need for such. If reverting, then let's drop
+
+It provides sysfs information about SoC/platform and is useful on its
+own (for debugging, reporting etc. purposes). Maybe not terrible useful
+but on OTOH the driver is only ~100 LOC.
+
+> entire driver and rework it offline.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
