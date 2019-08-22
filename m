@@ -1,43 +1,56 @@
-From: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
-Subject: Re: [PATCH v3 00/11] Symbol Namespaces
-Date: Wed, 21 Aug 2019 16:48:10 -0400 (EDT)
-Message-ID: <nycvar.YSQ.7.76.1908211642050.19480@knanqh.ubzr>
-References: <20190813121733.52480-1-maennich@google.com>
- <20190821114955.12788-1-maennich@google.com>
- <nycvar.YSQ.7.76.1908210840490.19480@knanqh.ubzr>
- <20190821133737.GB4890@kroah.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 1/2] clocksource/drivers/timer-of: Do not warn on deferred
+ probe
+Date: Thu, 22 Aug 2019 08:06:58 +0200
+Message-ID: <3b26d39c-0db4-0bf8-dbec-6d6def0e4307@linaro.org>
+References: <20190821150241.31093-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190821133737.GB4890-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, oneukum-IBi9RG/b67k@public.gmane.org, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, usb-storage-ijkIwGHArpdIPJnuZ7Njw4oP9KaGy4wf@public.gmane.org, Toru Komatsu <k0ma-h7Lmzv2voGl4Eiagz67IpQ@public.gmane.org>, Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org, joel-QYYGw3jwrUn5owFQY34kdNi2O/JbrIOy@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org, cocci-/FJkirnvOdkvYVN+rsErww@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Benjamin Fair <benjaminfair-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lucas.de.marchi-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Nancy Yuen <yuenn-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Johan
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190821150241.31093-1-jonathanh@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 21 Aug 2019, Greg KH wrote:
-
-> On Wed, Aug 21, 2019 at 08:46:47AM -0400, Nicolas Pitre wrote:
+On 21/08/2019 17:02, Jon Hunter wrote:
+> Deferred probe is an expected return value for clk_get() on many
+> platforms. The driver deals with it properly, so there's no need
+> to output a warning that may potentially confuse users.
 > 
-> > One solution for drastically reducing the effective export surface is to 
-> > have CONFIG_TRIM_UNUSED_KSYMS=y. This is more extreme than symbol 
-> > namespace, but might be worth mentioning nevertheless.
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+
+Applied, thanks!
+
+>  drivers/clocksource/timer-of.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> Oh that's amazing, I never noticed that feature.  That is a nice thing,
-> thanks for pointing it out.
+> diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+> index 80542289fae7..d8c2bd4391d0 100644
+> --- a/drivers/clocksource/timer-of.c
+> +++ b/drivers/clocksource/timer-of.c
+> @@ -113,8 +113,10 @@ static __init int timer_of_clk_init(struct device_node *np,
+>  	of_clk->clk = of_clk->name ? of_clk_get_by_name(np, of_clk->name) :
+>  		of_clk_get(np, of_clk->index);
+>  	if (IS_ERR(of_clk->clk)) {
+> -		pr_err("Failed to get clock for %pOF\n", np);
+> -		return PTR_ERR(of_clk->clk);
+> +		ret = PTR_ERR(of_clk->clk);
+> +		if (ret != -EPROBE_DEFER)
+> +			pr_err("Failed to get clock for %pOF\n", np);
+> +		goto out;
+>  	}
+>  
+>  	ret = clk_prepare_enable(of_clk->clk);
+> 
 
-For those interested, this feature was demonstrated with numbers here:
 
-https://lwn.net/Articles/746780/
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-
-Nicolas
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
