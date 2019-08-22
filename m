@@ -1,56 +1,36 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 1/2] clocksource/drivers/timer-of: Do not warn on deferred
- probe
-Date: Thu, 22 Aug 2019 08:06:58 +0200
-Message-ID: <3b26d39c-0db4-0bf8-dbec-6d6def0e4307@linaro.org>
-References: <20190821150241.31093-1-jonathanh@nvidia.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] phy: tegra: Use PTR_ERR_OR_ZERO in tegra_p2u_probe()
+Date: Thu, 22 Aug 2019 06:34:07 +0000
+Message-ID: <20190822063407.71148-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190821150241.31093-1-jonathanh@nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Vidya Sagar <vidyas@nvidia.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 21/08/2019 17:02, Jon Hunter wrote:
-> Deferred probe is an expected return value for clk_get() on many
-> platforms. The driver deals with it properly, so there's no need
-> to output a warning that may potentially confuse users.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-Applied, thanks!
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/phy/tegra/phy-tegra194-p2u.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
->  drivers/clocksource/timer-of.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
-> index 80542289fae7..d8c2bd4391d0 100644
-> --- a/drivers/clocksource/timer-of.c
-> +++ b/drivers/clocksource/timer-of.c
-> @@ -113,8 +113,10 @@ static __init int timer_of_clk_init(struct device_node *np,
->  	of_clk->clk = of_clk->name ? of_clk_get_by_name(np, of_clk->name) :
->  		of_clk_get(np, of_clk->index);
->  	if (IS_ERR(of_clk->clk)) {
-> -		pr_err("Failed to get clock for %pOF\n", np);
-> -		return PTR_ERR(of_clk->clk);
-> +		ret = PTR_ERR(of_clk->clk);
-> +		if (ret != -EPROBE_DEFER)
-> +			pr_err("Failed to get clock for %pOF\n", np);
-> +		goto out;
->  	}
->  
->  	ret = clk_prepare_enable(of_clk->clk);
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
+index 7042bed9feaa..42394d27f4cb 100644
+--- a/drivers/phy/tegra/phy-tegra194-p2u.c
++++ b/drivers/phy/tegra/phy-tegra194-p2u.c
+@@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platform_device *pdev)
+ 	phy_set_drvdata(generic_phy, phy);
+ 
+ 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+-	if (IS_ERR(phy_provider))
+-		return PTR_ERR(phy_provider);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(phy_provider);
+ }
+ 
+ static const struct of_device_id tegra_p2u_id_table[] = {
