@@ -1,53 +1,120 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH -next] phy: tegra: Use PTR_ERR_OR_ZERO in
- tegra_p2u_probe()
-Date: Fri, 23 Aug 2019 12:34:02 +0530
-Message-ID: <7c060719-1df3-c0b8-2e61-5dbfdf1e4798@nvidia.com>
-References: <20190822063407.71148-1-yuehaibing@huawei.com>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [Patch V7 0/8] Tegra XUSB gadget driver support
+Date: Fri, 23 Aug 2019 15:17:18 +0530
+Message-ID: <1566553646-15338-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190822063407.71148-1-yuehaibing@huawei.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 8/22/2019 12:04 PM, YueHaibing wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   drivers/phy/tegra/phy-tegra194-p2u.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
-> index 7042bed9feaa..42394d27f4cb 100644
-> --- a/drivers/phy/tegra/phy-tegra194-p2u.c
-> +++ b/drivers/phy/tegra/phy-tegra194-p2u.c
-> @@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platform_device *pdev)
->   	phy_set_drvdata(generic_phy, phy);
->   
->   	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> -	if (IS_ERR(phy_provider))
-> -		return PTR_ERR(phy_provider);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(phy_provider);
->   }
-Since PTR_ERR_OR_ZERO macro returns zero if input is valid, if some more code gets added in
-future after this, then, they might have to change this back to what it is now.
-So I ended up continuing with if(IS_ERR(...)) + PTR_ERR towards the end also.
-Having said that, I'm fine with this change as well.
+This is the seventh version of series "Tegra XUSB gadget driver support"
 
-Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+Patches 1-3 are phy driver changes to add support for device
+mode.
+Patches 4-7 are changes related to XUSB device mode
+controller driver.
+Patch 8 is to enable XUDC driver in defconfig
 
->   
->   static const struct of_device_id tegra_p2u_id_table[] = {
-> 
-> 
-> 
-> 
-> 
+Test Steps(USB 2.0):
+- Enable "USB Gadget precomposed configurations" in defconfig
+- Build, flash and boot Jetson TX1
+- Connect Jetson TX1 and Ubuntu device using USB A to Micro B
+  cable
+- After boot on Jetson TX1 terminal usb0 network device should be
+  enumerated
+- Assign static ip to usb0 on Jetson TX1 and corresponding net
+  device on ubuntu
+- Run ping test and transfer test(used scp) to check data transfer
+  communication
+
+SS mode is verified by enabling Type A port as peripheral
+
+This patch series is dependent on [1] for functionality of hot plug
+triggers to xudc driver.
+
+[1] https://patchwork.kernel.org/cover/11091839/
+---
+v7:
+* Patches 1,2,3,4,5,6,8 - No changes
+* Patch 7 - Comments from Balbi and Chunfun adrresed.
+  Added COMPILE_TEST in Kconfig and updated dependencies.
+---
+v6:
+* Patches 1,2,3,7,8 - No changes
+* Patch 4,5,6 - Comments from Rob addressed, updated usb connector driver
+  compatibility string.
+---
+v5:
+* Patches 1-3 - Commit subject updated as per inputs from Thierry
+* Patch 4 - Added reg-names used on Tegra210 in the bindings doc
+* Enabled xudc driver as module instead of part of kernel in patch 8
+* Patched 5-8 - No changes
+---
+v4:
+* patch 1 - no changes
+* corrected companion device search based on inputs from Thierry in patch 2
+* removed unneeded dev variable and corrected value read in
+  tegra210_utmi_port_reset function in patch 3
+* dt binding doc and dtb files are corrected for alignments.
+  Replaced extcon-usb-gpio with usb role switch.
+* Added support for USB role switch instead of extcon-usb-gpio and other minor
+  comments as suggested by Chunfeng.
+* Enabled xudc driver as module instead of part of kernel in patch 8
+---
+V3:
+* Rebased patch 1 to top of tree.
+* Fixed bug in patch 2, where xudc interrupts dont get generated if USB host
+  mode fails to probe. Moved fake port detection logic to generic xusb.c. fake
+  usb port data is updated based on soc flag need_fake_usb3_port.
+* Added extra lines whereever necessary to make code more readable in patch 3
+  and 7.
+* dt binding doc is corrected for typos and extcon references. Also added
+  details for clocks and removed xusb_ references to clock and power-domain
+  names and accordingly patch 5 is updated.
+* removed avdd-pll-utmip-supply in patch 6, as its now part of padctl driver.
+* Patch 8 has no changes.
+---
+V2:
+* Patches 1-3 are new patches in this series, which splits unified features
+  patch to speprated features and removes need of port-fake entry in DT.
+* Patch 4 is re-arragend dt-bindings patch which incorporates previous
+  patch comments to sort DT entries alphabetically, addresses name changes
+  and PM domain details added.
+* Patch 5-6 are re-arranged DT patches with major changes - sort entries
+  alphabetically, and adds clock names.
+* Patch 7 is UDC driver tegra XUSB device mode controller with major
+  changes - remove un-used module params, lockinng for device_mode flag,
+  moving un-needed info logs to debug level, making changes feature flag
+  dependent rather than SOC based macros and other error handling in probe.
+* Patch 8 has no changes.
+
+Nagarjuna Kristam (8):
+  phy: tegra: xusb: Add XUSB dual mode support on Tegra210
+  phy: tegra: xusb: Add usb3 port fake support on Tegra210
+  phy: tegra: xusb: Add vbus override support on Tegra210
+  dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
+  arm64: tegra: Add xudc node for Tegra210
+  arm64: tegra: Enable xudc on Jetson TX1
+  usb: gadget: Add UDC driver for tegra XUSB device mode controller
+  arm64: defconfig: Enable tegra XUDC driver
+
+ .../devicetree/bindings/usb/nvidia,tegra-xudc.txt  |  110 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   31 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   19 +
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/phy/tegra/xusb-tegra210.c                  |  133 +-
+ drivers/phy/tegra/xusb.c                           |   87 +
+ drivers/phy/tegra/xusb.h                           |    4 +
+ drivers/usb/gadget/udc/Kconfig                     |   12 +
+ drivers/usb/gadget/udc/Makefile                    |    1 +
+ drivers/usb/gadget/udc/tegra-xudc.c                | 3821 ++++++++++++++++++++
+ include/linux/phy/tegra/xusb.h                     |    4 +-
+ 11 files changed, 4219 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.txt
+ create mode 100644 drivers/usb/gadget/udc/tegra-xudc.c
+
+-- 
+2.7.4
