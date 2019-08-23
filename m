@@ -1,55 +1,53 @@
-From: Benoit Parrot <bparrot@ti.com>
-Subject: Re: [PATCH v2 5/7] media: use the BIT() macro
-Date: Fri, 23 Aug 2019 07:12:05 -0500
-Message-ID: <20190823121204.ze4m6m3dxevjpjp6@ti.com>
-References: <20190823000829.GN5027@pendragon.ideasonboard.com>
- <d6c04bf604084af63fec603b4afbd72c648e0394.1566553525.git.mchehab+samsung@kernel.org>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH] PCI: tegra: Don't print an error on -EPROBE_DEFER
+Date: Fri, 23 Aug 2019 20:48:32 +0530
+Message-ID: <20190823151832.14427-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <d6c04bf604084af63fec603b4afbd72c648e0394.1566553525.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Richard Fontana <rfontana@redhat.com>, "Lad,
- Prabhakar" <prabhakar.csengg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, devel@driverdev.osuosl.org, Krzysztof Kozlowski <krzk@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Andrey Utkin <andrey.utkin@corp.bluecherry.net>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Ismael Luceno <ismael@iodev.co.uk>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Anton Sviridenko <anton@corp.bluecherry.net>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote on Fri [2019-Aug-23 06:47:30 -0300]:
-> As warned by cppcheck:
-> 
-> 	[drivers/media/dvb-frontends/cx24123.c:434]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 	[drivers/media/pci/bt8xx/bttv-input.c:87]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 	[drivers/media/pci/bt8xx/bttv-input.c:98]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 			...
-> 	[drivers/media/v4l2-core/v4l2-ioctl.c:1391]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 
-> There are lots of places where we're doing 1 << 31. That's bad,
-> as, depending on the architecture, this has an undefined behavior.
-> 
-> The BIT() macro is already prepared to handle this, so, let's
-> just switch all "1 << number" macros by BIT(number) at the header files
-> with has 1 << 31.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
-> 
-> v2: 
->   As suggested by Laurent:
->      - Don't touch multi-bit masks
->      - remove explicit casts
-> 
-For:
-drivers/media/platform/am437x/am437x-vpfe_regs.h
-drivers/media/platform/ti-vpe/vpe_regs.h
+APIs like devm_regulator_get() and devm_phy_get() have the potential to
+return -EPROBE_DEFER when the respective sub-systems are not ready yet.
+So avoid printing an error message as .probe() will be tried out again
+at a later point of time anyway.
 
-Reviewed-by: Benoit Parrot <bparrot@ti.com>
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index fc0dbeb31d78..c730986ed34d 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1368,9 +1368,11 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 
+ 	pcie->pex_ctl_supply = devm_regulator_get(dev, "vddio-pex-ctl");
+ 	if (IS_ERR(pcie->pex_ctl_supply)) {
+-		dev_err(dev, "Failed to get regulator: %ld\n",
+-			PTR_ERR(pcie->pex_ctl_supply));
+-		return PTR_ERR(pcie->pex_ctl_supply);
++		ret = PTR_ERR(pcie->pex_ctl_supply);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "Failed to get regulator: %ld\n",
++				PTR_ERR(pcie->pex_ctl_supply));
++		return ret;
+ 	}
+ 
+ 	pcie->core_clk = devm_clk_get(dev, "core");
+@@ -1412,7 +1414,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 		kfree(name);
+ 		if (IS_ERR(phys[i])) {
+ 			ret = PTR_ERR(phys[i]);
+-			dev_err(dev, "Failed to get PHY: %d\n", ret);
++			if (ret != -EPROBE_DEFER)
++				dev_err(dev, "Failed to get PHY: %d\n", ret);
+ 			return ret;
+ 		}
+ 	}
+-- 
+2.17.1
