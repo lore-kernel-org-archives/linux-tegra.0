@@ -1,114 +1,97 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 5/7] media: use the BIT() macro
-Date: Fri, 23 Aug 2019 23:45:13 +0300
-Message-ID: <20190823204513.GF4791@pendragon.ideasonboard.com>
-References: <20190823000829.GN5027@pendragon.ideasonboard.com>
- <d6c04bf604084af63fec603b4afbd72c648e0394.1566553525.git.mchehab+samsung@kernel.org>
+From: Tom Murphy <murphyt7@tcd.ie>
+Subject: Re: [PATCH V5 1/5] iommu/amd: Remove unnecessary locking from AMD
+ iommu driver
+Date: Sat, 24 Aug 2019 08:56:59 +0100
+Message-ID: <CALQxJussiGDzWFT1xhko6no5jZNOezWCFuJQUCr4XwH4NHri3Q@mail.gmail.com>
+References: <20190815110944.3579-1-murphyt7@tcd.ie> <20190815110944.3579-2-murphyt7@tcd.ie>
+ <20190820094143.GA24154@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <d6c04bf604084af63fec603b4afbd72c648e0394.1566553525.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Richard Fontana <rfontana@redhat.com>, "Lad,
- Prabhakar" <prabhakar.csengg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Andrey Utkin <andrey.utkin@corp.bluecherry.net>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Ismael Luceno <ismael@iodev.co.uk>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Benoit Parrot <bparrot@ti.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Anton Sviridenko <anton@corp.bluecherry.net>, Allison Randal <alliso>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190820094143.GA24154@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mauro,
+>I have to admit I don't fully understand the concurrency issues here, but =
+neither do I understand what the mutex you removed might have helped to sta=
+rt with.
 
-Thank you for the patch.
+Each range in the page tables is protected by the IO virtual address
+allocator. The iommu driver allocates an IOVA range using locks before
+it writes to a page table range. The IOVA allocator acts like a lock
+on a specific range of the page tables. So we can handle most of the
+concurrency issues in the IOVA allocator and avoid locking while
+writing to a range in the page tables.
 
-On Fri, Aug 23, 2019 at 06:47:30AM -0300, Mauro Carvalho Chehab wrote:
-> As warned by cppcheck:
-> 
-> 	[drivers/media/dvb-frontends/cx24123.c:434]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 	[drivers/media/pci/bt8xx/bttv-input.c:87]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 	[drivers/media/pci/bt8xx/bttv-input.c:98]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 			...
-> 	[drivers/media/v4l2-core/v4l2-ioctl.c:1391]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
-> 
-> There are lots of places where we're doing 1 << 31. That's bad,
-> as, depending on the architecture, this has an undefined behavior.
-> 
-> The BIT() macro is already prepared to handle this, so, let's
-> just switch all "1 << number" macros by BIT(number) at the header files
-> with has 1 << 31.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
-> 
-> v2: 
->   As suggested by Laurent:
->      - Don't touch multi-bit masks
->      - remove explicit casts
-> 
->  drivers/media/pci/cobalt/cobalt-driver.h      |  63 +-
->  drivers/media/pci/ivtv/ivtv-irq.h             |  28 +-
->  drivers/media/pci/mantis/mantis_reg.h         | 152 ++---
->  drivers/media/pci/solo6x10/solo6x10-regs.h    | 286 ++++-----
->  .../media/platform/am437x/am437x-vpfe_regs.h  |  26 +-
->  .../media/platform/davinci/dm644x_ccdc_regs.h |  20 +-
->  .../media/platform/exynos4-is/fimc-lite-reg.h |  80 +--
->  drivers/media/platform/exynos4-is/fimc-reg.h  | 138 +++--
->  drivers/media/platform/omap3isp/ispreg.h      | 580 +++++++++---------
->  drivers/media/platform/s3c-camif/camif-regs.h | 118 ++--
->  drivers/media/platform/tegra-cec/tegra_cec.h  |  80 +--
->  drivers/media/platform/ti-vpe/vpe_regs.h      |  94 +--
->  drivers/media/platform/vsp1/vsp1_regs.h       | 224 +++----
->  drivers/media/platform/xilinx/xilinx-vip.h    |  29 +-
->  drivers/media/radio/wl128x/fmdrv_common.h     |  88 +--
->  drivers/staging/media/ipu3/ipu3-tables.h      |   4 +-
->  16 files changed, 1011 insertions(+), 999 deletions(-)
+However because we have multiple levels of pages we might have to
+allocate a middle page (a PMD) which covers more than the IOVA range
+we have allocated.
+To solve this we could use locks:
 
-[snip]
+//pseudo code
+lock_page_table()
+if (we need to allocate middle pages) {
+ //allocate the page
+ //set the PMD value
+}
+unlock_page_table()
 
-> diff --git a/drivers/media/platform/omap3isp/ispreg.h b/drivers/media/platform/omap3isp/ispreg.h
-> index 38e2b99b3f10..4c6ebc0b74d1 100644
-> --- a/drivers/media/platform/omap3isp/ispreg.h
-> +++ b/drivers/media/platform/omap3isp/ispreg.h
+but we can actually avoid having any locking by doing the following:
 
-[snip]
+//pseudo code
+if (we need to allocate middle pages) {
+ //allocate the page
+ //cmpxchg64 to set the PMD if it wasn't already set since we last checked
+ if (the PMD was set while since we last checked)
+   //free the page we just allocated
+}
 
-> @@ -1167,14 +1167,14 @@
->  #define ISPHIST_HV_INFO_MASK			0x3FFF3FFF
->  
->  #define ISPCCDC_LSC_ENABLE			1
+In this case we can end up doing a pointless page allocate and free
+but it's worth it to avoid using locks
 
-This is a bit too, it could be replaced with BIT(0).
+You can see this in the intel iommu code here:
+https://github.com/torvalds/linux/blob/9140d8bdd4c5a04abe181bb300378355d569=
+90a4/drivers/iommu/intel-iommu.c#L904
 
-> -#define ISPCCDC_LSC_BUSY			(1 << 7)
-> +#define ISPCCDC_LSC_BUSY			BIT(7)
->  #define ISPCCDC_LSC_GAIN_MODE_N_MASK		0x700
->  #define ISPCCDC_LSC_GAIN_MODE_N_SHIFT		8
->  #define ISPCCDC_LSC_GAIN_MODE_M_MASK		0x3800
->  #define ISPCCDC_LSC_GAIN_MODE_M_SHIFT		12
->  #define ISPCCDC_LSC_GAIN_FORMAT_MASK		0xE
->  #define ISPCCDC_LSC_GAIN_FORMAT_SHIFT		1
-> -#define ISPCCDC_LSC_AFTER_REFORMATTER_MASK	(1<<6)
-> +#define ISPCCDC_LSC_AFTER_REFORMATTER_MASK	BIT(6)
->  
->  #define ISPCCDC_LSC_INITIAL_X_MASK		0x3F
->  #define ISPCCDC_LSC_INITIAL_X_SHIFT		0
+>what the mutex you removed might have helped to start with.
+The mutex I removed is arguably completely useless.
 
-[snip]
+In the dma ops path we handle the IOVA allocations in the driver so we
+can be sure a certain range is protected by the IOVA allocator.
 
-With this small issue addressed,
+Because the iommu ops path doesn't handle the IOVA allocations it
+seems reasonable to lock the page tables to avoid two writers writing
+to the same range at the same time. Without the lock it's complete
+chaos and all writers can be writing to the same range at the same
+time resulting in complete garbage.
+BUT the locking doesn't actually make any real difference. Even with
+locking we still have a race condition if two writers want to write to
+the same range at the same time, the race is just whoever gets the
+lock first, we still can't be sure what the result will be. So the
+result is still garbage, just slightly more usable garbage because at
+least the range is correct for one writer.
+It just makes no sense to ever have two writers writing to the same
+range and adding a lock doesn't fix that.
+Already the Intel iommu ops path doesn't use locks for it's page table
+so this isn't a new idea I'm just doing the same for the AMD iommu
+driver
 
-For omap3isp, vsp1, xilinx, wl128x and ipu3,
+Does all that make sense?
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
--- 
-Regards,
-
-Laurent Pinchart
+On Tue, 20 Aug 2019 at 10:41, Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Thu, Aug 15, 2019 at 12:09:39PM +0100, Tom Murphy wrote:
+> > We can remove the mutex lock from amd_iommu_map and amd_iommu_unmap.
+> > iommu_map doesn=E2=80=99t lock while mapping and so no two calls should=
+ touch
+> > the same iova range. The AMD driver already handles the page table page
+> > allocations without locks so we can safely remove the locks.
+>
+> I've been looking over the code and trying to understand how the
+> synchronization works.  I gues we the cmpxchg64 in free_clear_pte
+> is the important point here?  I have to admit I don't fully understand
+> the concurrency issues here, but neither do I understand what the
+> mutex you removed might have helped to start with.
