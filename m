@@ -1,61 +1,76 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH] media: staging: tegra-vde: Disable building with
  COMPILE_TEST
-Date: Mon, 26 Aug 2019 18:18:47 +0300
-Message-ID: <58a8c62c-a45e-77e4-d2cb-99f95b847a73@gmail.com>
+Date: Mon, 26 Aug 2019 18:28:18 +0300
+Message-ID: <79dacfcc-9407-bac6-8e9b-bb8f890994ee@gmail.com>
 References: <20190826133140.13456-1-yuehaibing@huawei.com>
+ <58a8c62c-a45e-77e4-d2cb-99f95b847a73@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20190826133140.13456-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <58a8c62c-a45e-77e4-d2cb-99f95b847a73@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: YueHaibing <yuehaibing@huawei.com>, mchehab@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, robin.murphy@arm.com, hverkuil-cisco@xs4all.nl
-Cc: linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGVsbG8gWXVlLAoKMjYuMDguMjAxOSAxNjozMSwgWXVlSGFpYmluZyDQv9C40YjQtdGCOgo+IElm
-IENPTVBJTEVfVEVTVCBpcyB5IGFuZCBJT01NVV9TVVBQT1JUIGlzIG4sIHNlbGVjdGluZyBURUdS
-QV9WREUKPiB0byBtIHdpbGwgc2V0IElPTU1VX0lPVkEgdG8gbSwgdGhpcyBmYWlscyB0aGUgYnVp
-bGRpbmcgb2YKPiBURUdSQV9IT1NUMVggYW5kIERSTV9URUdSQSB3aGljaCBpcyB5IGxpa2UgdGhp
-czoKPiAKPiBkcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5vOiBJbiBmdW5jdGlvbiBgaG9zdDF4X2Nk
-bWFfaW5pdCc6Cj4gY2RtYS5jOigudGV4dCsweDY2Yyk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8g
-YGFsbG9jX2lvdmEnCj4gY2RtYS5jOigudGV4dCsweDY5OCk6IHVuZGVmaW5lZCByZWZlcmVuY2Ug
-dG8gYF9fZnJlZV9pb3ZhJwo+IAo+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0ubzogSW4gZnVu
-Y3Rpb24gYHRlZ3JhX2RybV91bmxvYWQnOgo+IGRybS5jOigudGV4dCsweGViMCk6IHVuZGVmaW5l
-ZCByZWZlcmVuY2UgdG8gYHB1dF9pb3ZhX2RvbWFpbicKPiBkcm0uYzooLnRleHQrMHhlYjQpOiB1
-bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBpb3ZhX2NhY2hlX3B1dCcKPiAKPiBSZXBvcnRlZC1ieTog
-SHVsayBSb2JvdCA8aHVsa2NpQGh1YXdlaS5jb20+Cj4gRml4ZXM6IDZiMjI2NTk3NTIzOSAoIm1l
-ZGlhOiBzdGFnaW5nOiB0ZWdyYS12ZGU6IEZpeCBidWlsZCBlcnJvciIpCj4gRml4ZXM6IGIzMDFm
-OGRlMTkyNSAoIm1lZGlhOiBzdGFnaW5nOiBtZWRpYTogdGVncmEtdmRlOiBBZGQgSU9NTVUgc3Vw
-cG9ydCIpCj4gU2lnbmVkLW9mZi1ieTogWXVlSGFpYmluZyA8eXVlaGFpYmluZ0BodWF3ZWkuY29t
-Pgo+IC0tLQo+ICBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvdGVncmEtdmRlL0tjb25maWcgfCA0ICsr
-LS0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL21lZGlhL3RlZ3JhLXZkZS9LY29uZmlnIGIv
-ZHJpdmVycy9zdGFnaW5nL21lZGlhL3RlZ3JhLXZkZS9LY29uZmlnCj4gaW5kZXggYmE0OWVhNS4u
-YTQxZDMwYyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvdGVncmEtdmRlL0tj
-b25maWcKPiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvdGVncmEtdmRlL0tjb25maWcKPiBA
-QCAtMSw5ICsxLDkgQEAKPiAgIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMAo+ICBj
-b25maWcgVEVHUkFfVkRFCj4gIAl0cmlzdGF0ZSAiTlZJRElBIFRlZ3JhIFZpZGVvIERlY29kZXIg
-RW5naW5lIGRyaXZlciIKPiAtCWRlcGVuZHMgb24gQVJDSF9URUdSQSB8fCBDT01QSUxFX1RFU1QK
-PiArCWRlcGVuZHMgb24gQVJDSF9URUdSQQo+ICAJc2VsZWN0IERNQV9TSEFSRURfQlVGRkVSCj4g
-LQlzZWxlY3QgSU9NTVVfSU9WQSBpZiAoSU9NTVVfU1VQUE9SVCB8fCBDT01QSUxFX1RFU1QpCj4g
-KwlzZWxlY3QgSU9NTVVfSU9WQSBpZiBJT01NVV9TVVBQT1JUCj4gIAlzZWxlY3QgU1JBTQo+ICAJ
-aGVscAo+ICAJICAgIFNheSBZIGhlcmUgdG8gZW5hYmxlIHN1cHBvcnQgZm9yIHRoZSBOVklESUEg
-VGVncmEgdmlkZW8gZGVjb2Rlcgo+IAoKV2hhdCBhYm91dCB0aGlzIHZhcmlhbnQ6CgoJc2VsZWN0
-IElPTU1VX0lPVkEgaWYgKElPTU1VX1NVUFBPUlQgJiYgIUNPTVBJTEVfVEVTVCkKCndoaWNoIHNo
-b3VsZCBmaXggdGhlIGJ1aWxkaW5nIGFuZCBwcmVzZXJ2ZSBjb21waWxlLXRlc3RpbmcuCgpJdCBz
-aG91bGRuJ3QgbWF0dGVyIGF0IGFsbCB3aGV0aGVyIElPVkEgaXMgZW5hYmxlZCBvciBub3QgZm9y
-CmNvbXBpbGUtdGVzdGluZyBvZiB0aGUgZHJpdmVyLgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2
-ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
+26.08.2019 18:18, Dmitry Osipenko пишет:
+> Hello Yue,
+> 
+> 26.08.2019 16:31, YueHaibing пишет:
+>> If COMPILE_TEST is y and IOMMU_SUPPORT is n, selecting TEGRA_VDE
+>> to m will set IOMMU_IOVA to m, this fails the building of
+>> TEGRA_HOST1X and DRM_TEGRA which is y like this:
+>>
+>> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
+>> cdma.c:(.text+0x66c): undefined reference to `alloc_iova'
+>> cdma.c:(.text+0x698): undefined reference to `__free_iova'
+>>
+>> drivers/gpu/drm/tegra/drm.o: In function `tegra_drm_unload':
+>> drm.c:(.text+0xeb0): undefined reference to `put_iova_domain'
+>> drm.c:(.text+0xeb4): undefined reference to `iova_cache_put'
+>>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Fixes: 6b2265975239 ("media: staging: tegra-vde: Fix build error")
+>> Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU support")
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/staging/media/tegra-vde/Kconfig | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
+>> index ba49ea5..a41d30c 100644
+>> --- a/drivers/staging/media/tegra-vde/Kconfig
+>> +++ b/drivers/staging/media/tegra-vde/Kconfig
+>> @@ -1,9 +1,9 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>>  config TEGRA_VDE
+>>  	tristate "NVIDIA Tegra Video Decoder Engine driver"
+>> -	depends on ARCH_TEGRA || COMPILE_TEST
+>> +	depends on ARCH_TEGRA
+>>  	select DMA_SHARED_BUFFER
+>> -	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+>> +	select IOMMU_IOVA if IOMMU_SUPPORT
+>>  	select SRAM
+>>  	help
+>>  	    Say Y here to enable support for the NVIDIA Tegra video decoder
+>>
+> 
+> What about this variant:
+> 
+> 	select IOMMU_IOVA if (IOMMU_SUPPORT && !COMPILE_TEST)
+> 
+> which should fix the building and preserve compile-testing.
+> 
+> It shouldn't matter at all whether IOVA is enabled or not for
+> compile-testing of the driver.
+> 
+
+Ah, actually this won't work if TEGRA_VDE=y and IOMMU_IOVA=m. I'm still
+not sure that disabling compile-testing is a good solution, maybe
+DRM_TEGRA and TEGRA_HOST1X should be fixed instead. Although, I'm fine
+with both variants.
+
+Acked-by: Dmitry Osipenko <digetx@gmail.com>
