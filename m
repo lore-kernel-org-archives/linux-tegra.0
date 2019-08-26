@@ -1,21 +1,41 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH V5 1/5] iommu/amd: Remove unnecessary locking from AMD
- iommu driver
-Date: Sat, 24 Aug 2019 15:41:32 -0700
-Message-ID: <20190824224132.GA14806@infradead.org>
-References: <20190815110944.3579-1-murphyt7@tcd.ie>
- <20190815110944.3579-2-murphyt7@tcd.ie>
- <20190820094143.GA24154@infradead.org>
- <CALQxJussiGDzWFT1xhko6no5jZNOezWCFuJQUCr4XwH4NHri3Q@mail.gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH 0/6] PCI: tegra: Enable PCIe C5 controller of Tegra194 in p2972-0000 platform
+Date: Mon, 26 Aug 2019 13:01:37 +0530
+Message-ID: <20190826073143.4582-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CALQxJussiGDzWFT1xhko6no5jZNOezWCFuJQUCr4XwH4NHri3Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Murphy <murphyt7@tcd.ie>
-Cc: Christoph Hellwig <hch@infradead.org>, iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, Linux
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Thank for the explanation Tom. It might make sense to add a condensed
-version of it to commit log for the next iteration.
+This patch series enables Tegra194's C5 controller which owns x16 slot in
+p2972-0000 platform. C5 controller's PERST# and CLKREQ# are not configured as
+output and bi-directional signals by default and hence they need to be
+configured explicitly. Also, x16 slot's 3.3V and 12V supplies are controlled
+through GPIOs and hence they need to be enabled through regulator framework.
+This patch series adds required infrastructural support to address both the
+aforementioned requirements.
+Testing done on p2972-0000 platform
+- Able to enumerate devices connected to x16 slot (owned by C5 controller)
+- Enumerated device's functionality verified
+- Suspend-Resume sequence is verified with device connected to x16 slot
+
+Vidya Sagar (6):
+  dt-bindings: PCI: tegra: Add sideband pins configuration entries
+  arm64: tegra: Add configuration for PCIe C5 sideband signals
+  PCI: tegra: Add support to configure sideband pins
+  dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
+  arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
+  PCI: tegra: Add support to enable slot regulators
+
+ .../bindings/pci/nvidia,tegra194-pcie.txt     | 16 +++++
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++++
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 38 +++++++++-
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 71 +++++++++++++++++++
+ 5 files changed, 151 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
