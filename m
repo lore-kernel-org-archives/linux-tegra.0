@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH 1/6] dt-bindings: PCI: tegra: Add sideband pins configuration entries
-Date: Mon, 26 Aug 2019 13:01:38 +0530
-Message-ID: <20190826073143.4582-2-vidyas@nvidia.com>
+Subject: [PATCH 2/6] arm64: tegra: Add configuration for PCIe C5 sideband signals
+Date: Mon, 26 Aug 2019 13:01:39 +0530
+Message-ID: <20190826073143.4582-3-vidyas@nvidia.com>
 References: <20190826073143.4582-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,39 +12,78 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.
 Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add optional bindings "pinctrl-names" and "pinctrl-0" to describe pin
-configuration information of a particular PCIe controller.
+Add support to configure PCIe C5's sideband signals PERST# and CLKREQ#
+as output and bi-directional signals respectively which unlike other
+PCIe controllers sideband signals are not configured by default.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
- .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 38 +++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-index 674e5adb2895..0ac1b867ac24 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-@@ -83,6 +83,11 @@ Required properties:
- - vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index adebbbf36bd0..3c0cf54f0aab 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -3,8 +3,9 @@
+ #include <dt-bindings/gpio/tegra194-gpio.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
+-#include <dt-bindings/reset/tegra194-reset.h>
++#include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/power/tegra194-powergate.h>
++#include <dt-bindings/reset/tegra194-reset.h>
+ #include <dt-bindings/thermal/tegra194-bpmp-thermal.h>
  
- Optional properties:
-+- pinctrl-names: A list of pinctrl state names.
-+  It is mandatory for C5 controller and optional for other controllers.
-+  - "default": Configures PCIe I/O for proper operation.
-+- pinctrl-0: phandle for the 'default' state of pin configuration.
-+  It is mandatory for C5 controller and optional for other controllers.
- - supports-clkreq: Refer to Documentation/devicetree/bindings/pci/pci.txt
- - nvidia,update-fc-fixup: This is a boolean property and needs to be present to
-     improve performance when a platform is designed in such a way that it
-@@ -120,6 +125,9 @@ Tegra194:
- 		num-lanes = <8>;
- 		linux,pci-domain = <0>;
+ / {
+@@ -130,6 +131,38 @@
+ 			};
+ 		};
+ 
++		pinmux: pinmux@2430000 {
++			compatible = "nvidia,tegra194-pinmux";
++			reg = <0x2430000 0x17000
++			       0xc300000 0x4000>;
++
++			status = "okay";
++
++			pex_rst_c5_out_state: pex_rst_c5_out {
++				pex_rst {
++					nvidia,pins = "pex_l5_rst_n_pgg1";
++					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
++					nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
++					nvidia,tristate = <TEGRA_PIN_DISABLE>;
++					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				};
++			};
++
++			clkreq_c5_bi_dir_state: clkreq_c5_bi_dir {
++				clkreq {
++					nvidia,pins = "pex_l5_clkreq_n_pgg0";
++					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
++					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
++					nvidia,tristate = <TEGRA_PIN_DISABLE>;
++					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				};
++			};
++		};
++
+ 		uarta: serial@3100000 {
+ 			compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
+ 			reg = <0x03100000 0x40>;
+@@ -1365,6 +1398,9 @@
+ 		num-viewport = <8>;
+ 		linux,pci-domain = <5>;
  
 +		pinctrl-names = "default";
 +		pinctrl-0 = <&pex_rst_c5_out_state>, <&clkreq_c5_bi_dir_state>;
 +
- 		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
- 		clock-names = "core";
- 
+ 		clocks = <&bpmp TEGRA194_CLK_PEX1_CORE_5>,
+ 			<&bpmp TEGRA194_CLK_PEX1_CORE_5M>;
+ 		clock-names = "core", "core_m";
 -- 
 2.17.1
