@@ -1,34 +1,102 @@
-From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH RESEND 05/14] drm: rockchip: Provide ddc symlink in
- rk3066_hdmi sysfs directory
-Date: Tue, 27 Aug 2019 00:15:48 +0200
-Message-ID: <34062545.jeDZulVJJa@phil>
-References: <cover.1566845537.git.andrzej.p@collabora.com>
- <4cad24dde4508cec17483f983da08226ba7e48b0.1566845537.git.andrzej.p@collabora.com>
+From: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: RE: [PATCH 02/14] serial: tegra: add support to ignore read
+Date: Tue, 27 Aug 2019 09:29:21 +0000
+Message-ID: <SN6PR12MB2734D67C01A97D87D1735EDBC3A00@SN6PR12MB2734.namprd12.prod.outlook.com>
+References: <1565609303-27000-1-git-send-email-kyarlagadda@nvidia.com>
+ <1565609303-27000-3-git-send-email-kyarlagadda@nvidia.com>
+ <20190813094208.GG1137@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <4cad24dde4508cec17483f983da08226ba7e48b0.1566845537.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>, Leo Li <sunpeng.li-5C7GfCeVMHo@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190813094208.GG1137@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "jslaby@suse.com" <jslaby@suse.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shardar Mohammed <smohammed@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-QW0gTW9udGFnLCAyNi4gQXVndXN0IDIwMTksIDIxOjI1OjQ3IENFU1Qgc2NocmllYiBBbmRyemVq
-IFBpZXRyYXNpZXdpY3o6Cj4gVXNlIHRoZSBkZGMgcG9pbnRlciBwcm92aWRlZCBieSB0aGUgZ2Vu
-ZXJpYyBjb25uZWN0b3IuCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBQaWV0cmFzaWV3aWN6
-IDxhbmRyemVqLnBAY29sbGFib3JhLmNvbT4KPiBBY2tlZC1ieTogU2FtIFJhdm5ib3JnIDxzYW1A
-cmF2bmJvcmcub3JnPgo+IFJldmlld2VkLWJ5OiBFbWlsIFZlbGlrb3YgPGVtaWwudmVsaWtvdkBj
-b2xsYWJvcmEuY29tPgoKQWNrZWQtYnk6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+
-CgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwphbWQt
-Z2Z4IG1haWxpbmcgbGlzdAphbWQtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2FtZC1nZng=
+> -----Original Message-----
+> From: linux-tegra-owner@vger.kernel.org <linux-tegra-
+> owner@vger.kernel.org> On Behalf Of Thierry Reding
+> Sent: Tuesday, August 13, 2019 3:12 PM
+> To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> Cc: gregkh@linuxfoundation.org; robh+dt@kernel.org;
+> mark.rutland@arm.com; Jonathan Hunter <jonathanh@nvidia.com>; Laxman
+> Dewangan <ldewangan@nvidia.com>; jslaby@suse.com; linux-
+> serial@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> tegra@vger.kernel.org; linux-kernel@vger.kernel.org; Shardar Mohammed
+> <smohammed@nvidia.com>
+> Subject: Re: [PATCH 02/14] serial: tegra: add support to ignore read
+>=20
+> On Mon, Aug 12, 2019 at 04:58:11PM +0530, Krishna Yarlagadda wrote:
+> > From: Shardar Shariff Md <smohammed@nvidia.com>
+> >
+> > Add support to ignore read characters if CREAD flag is not set.
+> >
+> > Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+> > Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> > ---
+> >  drivers/tty/serial/serial-tegra.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/drivers/tty/serial/serial-tegra.c
+> > b/drivers/tty/serial/serial-tegra.c
+> > index 19f4c24..93d299e 100644
+> > --- a/drivers/tty/serial/serial-tegra.c
+> > +++ b/drivers/tty/serial/serial-tegra.c
+> > @@ -542,6 +542,9 @@ static void tegra_uart_handle_rx_pio(struct
+> tegra_uart_port *tup,
+> >  		ch =3D (unsigned char) tegra_uart_read(tup, UART_RX);
+> >  		tup->uport.icount.rx++;
+> >
+> > +		if (tup->uport.ignore_status_mask & UART_LSR_DR)
+> > +			continue;
+> > +
+> >  		if (!uart_handle_sysrq_char(&tup->uport, ch) && tty)
+> >  			tty_insert_flip_char(tty, ch, flag);
+>=20
+> Is it a good idea to ignore even sysrq characters if CREAD is not set?
+> According to termios, CREAD enables the receiver, so technically if it is=
+n't set
+> you can't even receive sysrq characters. But I don't know if there are an=
+y
+> rules regarding this.
+>=20
+> Is this the same way that other drivers work?
+>=20
+> Thierry
+>=20
+Looked into few drivers and sysrq characters are not ignored. This driver d=
+oes
+not support console driver. So this might not be needed.
+
+KY
+> >  	} while (1);
+> > @@ -562,6 +565,10 @@ static void tegra_uart_copy_rx_to_tty(struct
+> tegra_uart_port *tup,
+> >  		dev_err(tup->uport.dev, "No tty port\n");
+> >  		return;
+> >  	}
+> > +
+> > +	if (tup->uport.ignore_status_mask & UART_LSR_DR)
+> > +		return;
+> > +
+> >  	dma_sync_single_for_cpu(tup->uport.dev, tup->rx_dma_buf_phys,
+> >  				TEGRA_UART_RX_DMA_BUFFER_SIZE,
+> DMA_FROM_DEVICE);
+> >  	copied =3D tty_insert_flip_string(tty, @@ -1190,6 +1197,11 @@ static
+> > void tegra_uart_set_termios(struct uart_port *u,
+> >  	tegra_uart_write(tup, tup->ier_shadow, UART_IER);
+> >  	tegra_uart_read(tup, UART_IER);
+> >
+> > +	tup->uport.ignore_status_mask =3D 0;
+> > +	/* Ignore all characters if CREAD is not set */
+> > +	if ((termios->c_cflag & CREAD) =3D=3D 0)
+> > +		tup->uport.ignore_status_mask |=3D UART_LSR_DR;
+> > +
+> >  	spin_unlock_irqrestore(&u->lock, flags);  }
+> >
+> > --
+> > 2.7.4
+> >
