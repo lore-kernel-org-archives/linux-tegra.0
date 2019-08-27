@@ -1,38 +1,154 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
- CROS_EC options
-Date: Tue, 27 Aug 2019 18:12:28 +0200
-Message-ID: <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
-References: <20190827154851.10486-1-enric.balletbo@collabora.com> <20190827161045.GC26807@tuxbook-pro>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH 6/6] PCI: tegra: Add support to enable slot regulators
+Date: Tue, 27 Aug 2019 21:54:17 +0530
+Message-ID: <91f8914a-22a9-8b7c-bc00-c309a21d83db@nvidia.com>
+References: <20190826073143.4582-1-vidyas@nvidia.com>
+ <20190826073143.4582-7-vidyas@nvidia.com>
+ <20190827154725.GP14582@e119886-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190827161045.GC26807@tuxbook-pro>
+In-Reply-To: <20190827154725.GP14582@e119886-lin.cambridge.arm.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, kernel@collabora.com, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+To: Andrew Murray <andrew.murray@arm.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
->
-> > Recently we refactored the CrOS EC drivers moving part of the code from
-> > the MFD subsystem to the platform chrome subsystem. During this change
-> > we needed to rename some config options, so, update the defconfigs
-> > accordingly.
-> >
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> > Tested-by: Gwendal Grignou <gwendal@chromium.org>
->
-> Can we make the entries in the generic arm64 defconfig modules?
+On 8/27/2019 9:17 PM, Andrew Murray wrote:
+> On Mon, Aug 26, 2019 at 01:01:43PM +0530, Vidya Sagar wrote:
+>> Add support to get regulator information of 3.3V and 12V supplies of a PCIe
+>> slot from the respective controller's device-tree node and enable those
+>> supplies. This is required in platforms like p2972-0000 where the supplies
+>> to x16 slot owned by C5 controller need to be enabled before attempting to
+>> enumerate the devices.
+>>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-tegra194.c | 65 ++++++++++++++++++++++
+>>   1 file changed, 65 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+>> index 8a27b25893c9..97de2151a738 100644
+>> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+>> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+>> @@ -278,6 +278,8 @@ struct tegra_pcie_dw {
+>>   	u32 aspm_l0s_enter_lat;
+>>   
+>>   	struct regulator *pex_ctl_supply;
+>> +	struct regulator *slot_ctl_3v3;
+>> +	struct regulator *slot_ctl_12v;
+>>   
+>>   	unsigned int phy_count;
+>>   	struct phy **phys;
+>> @@ -1047,6 +1049,59 @@ static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
+>>   	}
+>>   }
+>>   
+>> +static void tegra_pcie_get_slot_regulators(struct tegra_pcie_dw *pcie)
+>> +{
+>> +	pcie->slot_ctl_3v3 = devm_regulator_get_optional(pcie->dev, "vpcie3v3");
+>> +	if (IS_ERR(pcie->slot_ctl_3v3))
+>> +		pcie->slot_ctl_3v3 = NULL;
+>> +
+>> +	pcie->slot_ctl_12v = devm_regulator_get_optional(pcie->dev, "vpcie12v");
+>> +	if (IS_ERR(pcie->slot_ctl_12v))
+>> +		pcie->slot_ctl_12v = NULL;
+> 
+> Do these need to take into consideration -EPROBE_DEFER?
+Since these are devm_* APIs, isn't it taken care of automatically?
 
-Good idea.
-
-Actually I would prefer to have all of them as modules for consistency,
-if at all possible.
-
-       Arnd
+> 
+> Thanks,
+> 
+> Andrew Murray
+> 
+>> +}
+>> +
+>> +static int tegra_pcie_enable_slot_regulators(struct tegra_pcie_dw *pcie)
+>> +{
+>> +	int ret;
+>> +
+>> +	if (pcie->slot_ctl_3v3) {
+>> +		ret = regulator_enable(pcie->slot_ctl_3v3);
+>> +		if (ret < 0) {
+>> +			dev_err(pcie->dev,
+>> +				"Failed to enable 3V3 slot supply: %d\n", ret);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	if (pcie->slot_ctl_12v) {
+>> +		ret = regulator_enable(pcie->slot_ctl_12v);
+>> +		if (ret < 0) {
+>> +			dev_err(pcie->dev,
+>> +				"Failed to enable 12V slot supply: %d\n", ret);
+>> +			if (pcie->slot_ctl_3v3)
+>> +				regulator_disable(pcie->slot_ctl_3v3);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	/*
+>> +	 * According to PCI Express Card Electromechanical Specification
+>> +	 * Revision 1.1, Table-2.4, T_PVPERL (Power stable to PERST# inactive)
+>> +	 * should be a minimum of 100ms.
+>> +	 */
+>> +	msleep(100);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void tegra_pcie_disable_slot_regulators(struct tegra_pcie_dw *pcie)
+>> +{
+>> +	if (pcie->slot_ctl_12v)
+>> +		regulator_disable(pcie->slot_ctl_12v);
+>> +	if (pcie->slot_ctl_3v3)
+>> +		regulator_disable(pcie->slot_ctl_3v3);
+>> +}
+>> +
+>>   static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>>   					bool en_hw_hot_rst)
+>>   {
+>> @@ -1060,6 +1115,10 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>>   		return ret;
+>>   	}
+>>   
+>> +	ret = tegra_pcie_enable_slot_regulators(pcie);
+>> +	if (ret < 0)
+>> +		goto fail_slot_reg_en;
+>> +
+>>   	ret = regulator_enable(pcie->pex_ctl_supply);
+>>   	if (ret < 0) {
+>>   		dev_err(pcie->dev, "Failed to enable regulator: %d\n", ret);
+>> @@ -1142,6 +1201,8 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>>   fail_core_clk:
+>>   	regulator_disable(pcie->pex_ctl_supply);
+>>   fail_reg_en:
+>> +	tegra_pcie_disable_slot_regulators(pcie);
+>> +fail_slot_reg_en:
+>>   	tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+>>   
+>>   	return ret;
+>> @@ -1174,6 +1235,8 @@ static int __deinit_controller(struct tegra_pcie_dw *pcie)
+>>   		return ret;
+>>   	}
+>>   
+>> +	tegra_pcie_disable_slot_regulators(pcie);
+>> +
+>>   	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+>>   	if (ret) {
+>>   		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
+>> @@ -1372,6 +1435,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+>>   		return ret;
+>>   	}
+>>   
+>> +	tegra_pcie_get_slot_regulators(pcie);
+>> +
+>>   	pcie->pex_ctl_supply = devm_regulator_get(dev, "vddio-pex-ctl");
+>>   	if (IS_ERR(pcie->pex_ctl_supply)) {
+>>   		dev_err(dev, "Failed to get regulator: %ld\n",
+>> -- 
+>> 2.17.1
+>>
