@@ -1,75 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
- CROS_EC options
-Date: Wed, 28 Aug 2019 14:09:10 +0200
-Message-ID: <CAK8P3a3zYpgouGAibyMjDykZmy+ABnx6AD2cYpHnXq9Zsw2V=w@mail.gmail.com>
-References: <20190827154851.10486-1-enric.balletbo@collabora.com>
- <20190827161045.GC26807@tuxbook-pro> <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
- <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH V2 0/6] PCI: tegra: Enable PCIe C5 controller of Tegra194 in p2972-0000 platform
+Date: Wed, 28 Aug 2019 18:44:59 +0530
+Message-ID: <20190828131505.28475-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, Collabora kernel ML <kernel@collabora.com>, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-so>
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
+Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 12:10 PM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
-> On 27/8/19 18:12, Arnd Bergmann wrote:
-> > On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
-> > <bjorn.andersson@linaro.org> wrote:
-> >>
-> >> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
-> >>
-> >>> Recently we refactored the CrOS EC drivers moving part of the code from
-> >>> the MFD subsystem to the platform chrome subsystem. During this change
-> >>> we needed to rename some config options, so, update the defconfigs
-> >>> accordingly.
-> >>>
-> >>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> >>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> >>
-> >> Can we make the entries in the generic arm64 defconfig modules?
-> >
-> > Good idea.
-> >
-> > Actually I would prefer to have all of them as modules for consistency,
-> > if at all possible.
-> >
->
-> It is very common boot Chromebooks from an USB device, the EC needs to be
-> built-in in order to boot from these devices, otherwise you should use an
-> initramfs. I'd like to avoid forcing people to build an initramfs just to boot
-> from these devices if possible, in fact, my usual workflow is without initramfs,
-> and knowing that with the default defconfig just should boot helps a lot sometimes.
->
-> Note that, it's not the case for EC subdevices, these are already build as modules.
+This patch series enables Tegra194's C5 controller which owns x16 slot in
+p2972-0000 platform. C5 controller's PERST# and CLKREQ# are not configured as
+output and bi-directional signals by default and hence they need to be
+configured explicitly. Also, x16 slot's 3.3V and 12V supplies are controlled
+through GPIOs and hence they need to be enabled through regulator framework.
+This patch series adds required infrastructural support to address both the
+aforementioned requirements.
+Testing done on p2972-0000 platform
+- Able to enumerate devices connected to x16 slot (owned by C5 controller)
+- Enumerated device's functionality verified
+- Suspend-Resume sequence is verified with device connected to x16 slot
 
-Ok, fair enough, let's leave it built-in then.
+V2:
+* Changed the order of patches in the series for easy merging
+* Addressed review comments from Thierry Reding and Andrew Murray
 
-> BTW, Lee asked if this patch should be squashed with the patches that really
-> renames the config options to help bisect ability, I don't have a hard opinion
-> as I don't usually run the config option between bisection steps, so please let
-> me know what do you prefer and I'll respin the patches ASAP if that's the case.
+Vidya Sagar (6):
+  dt-bindings: PCI: tegra: Add sideband pins configuration entries
+  dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
+  PCI: tegra: Add support to configure sideband pins
+  PCI: tegra: Add support to enable slot regulators
+  arm64: tegra: Add configuration for PCIe C5 sideband signals
+  arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
 
-I'm not usually worried about bisection in defconfig changes, since like you
-say most commonly one would not run 'make defconfig' betweens the
-bisection steps.
+ .../bindings/pci/nvidia,tegra194-pcie.txt     | 16 ++++
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 38 +++++++-
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 91 ++++++++++++++++++-
+ 5 files changed, 169 insertions(+), 4 deletions(-)
 
-If we really care about it, we could keep a symbol like this
-in drivers/platform/chrome/Kconfig for one release:
-
-config CONFIG_MFD_CROS_EC
-        tristate "Enable ChromeOS Embedded Controller"
-        select CROS_EC
-        select CHROME_PLATFORMS
-        select CONFIG_MFD_CROS_EC_DEV
-        help
-           This is a transitional Kconfig option and will be removed
-           after everyone enables the parts individually.
-
-      Arnd
+-- 
+2.17.1
