@@ -1,127 +1,63 @@
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
-Date: Wed, 28 Aug 2019 12:06:34 +0200
-Message-ID: <2eed5ed3-85f3-4c19-4dd2-3d8432829c2a@xs4all.nl>
-References: <20190814104520.6001-1-darekm@google.com>
- <20190814104520.6001-8-darekm@google.com>
- <f0e99db8-3329-f272-e139-a7c713f200ea@xs4all.nl> <20190828093820.GE2917@ulmo>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
+ CROS_EC options
+Date: Wed, 28 Aug 2019 12:09:54 +0200
+Message-ID: <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
+References: <20190827154851.10486-1-enric.balletbo@collabora.com>
+ <20190827161045.GC26807@tuxbook-pro>
+ <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190828093820.GE2917@ulmo>
-Content-Language: en-US
+In-Reply-To: <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, kernel@collabora.com, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Chanwoo Choi <cw00.choi>
 List-Id: linux-tegra@vger.kernel.org
 
-On 8/28/19 11:38 AM, Thierry Reding wrote:
-> On Wed, Aug 28, 2019 at 10:09:30AM +0200, Hans Verkuil wrote:
->> Thierry,
->>
->> Can you review this patch?
->>
->> Thanks!
->>
->> 	Hans
-> 
-> Did you want me to pick this up into the drm/tegra tree? Or do you want
-> to pick it up into your tree?
+Hi Bjorn, Arnd,
 
-Can you pick it up for the next cycle? As you mentioned, we missed the
-deadline for 5.4, so this feature won't be enabled in the public CEC API
-until 5.5.
-
-Thanks!
-
-	Hans
-
-> 
-> We're just past the DRM subsystem deadline, so it'll have to wait until
-> the next cycle if we go that way. If you're in a hurry you may want to
-> pick it up yourself, in which case:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> 
->> On 8/14/19 12:45 PM, Dariusz Marcinkiewicz wrote:
->>> Use the new cec_notifier_conn_(un)register() functions to
->>> (un)register the notifier for the HDMI connector, and fill in
->>> the cec_connector_info.
->>>
->>> Changes since v4:
->>> 	- only create a CEC notifier for HDMI connectors
->>>
->>> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
->>> Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->>> ---
->>>  drivers/gpu/drm/tegra/output.c | 28 +++++++++++++++++++++-------
->>>  1 file changed, 21 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
->>> index bdcaa4c7168cf..34373734ff689 100644
->>> --- a/drivers/gpu/drm/tegra/output.c
->>> +++ b/drivers/gpu/drm/tegra/output.c
->>> @@ -70,6 +70,11 @@ tegra_output_connector_detect(struct drm_connector *connector, bool force)
->>>  
->>>  void tegra_output_connector_destroy(struct drm_connector *connector)
->>>  {
->>> +	struct tegra_output *output = connector_to_output(connector);
->>> +
->>> +	if (output->cec)
->>> +		cec_notifier_conn_unregister(output->cec);
->>> +
->>>  	drm_connector_unregister(connector);
->>>  	drm_connector_cleanup(connector);
->>>  }
->>> @@ -163,18 +168,11 @@ int tegra_output_probe(struct tegra_output *output)
->>>  		disable_irq(output->hpd_irq);
->>>  	}
->>>  
->>> -	output->cec = cec_notifier_get(output->dev);
->>> -	if (!output->cec)
->>> -		return -ENOMEM;
->>> -
->>>  	return 0;
->>>  }
->>>  
->>>  void tegra_output_remove(struct tegra_output *output)
->>>  {
->>> -	if (output->cec)
->>> -		cec_notifier_put(output->cec);
->>> -
->>>  	if (output->hpd_gpio)
->>>  		free_irq(output->hpd_irq, output);
->>>  
->>> @@ -184,6 +182,7 @@ void tegra_output_remove(struct tegra_output *output)
->>>  
->>>  int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
->>>  {
->>> +	int connector_type;
->>>  	int err;
->>>  
->>>  	if (output->panel) {
->>> @@ -199,6 +198,21 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
->>>  	if (output->hpd_gpio)
->>>  		enable_irq(output->hpd_irq);
->>>  
->>> +	connector_type = output->connector.connector_type;
->>> +	/*
->>> +	 * Create a CEC notifier for HDMI connector.
->>> +	 */
->>> +	if (connector_type == DRM_MODE_CONNECTOR_HDMIA ||
->>> +	    connector_type == DRM_MODE_CONNECTOR_HDMIB) {
->>> +		struct cec_connector_info conn_info;
->>> +
->>> +		cec_fill_conn_info_from_drm(&conn_info, &output->connector);
->>> +		output->cec = cec_notifier_conn_register(output->dev, NULL,
->>> +							 &conn_info);
->>> +		if (!output->cec)
->>> +			return -ENOMEM;
->>> +	}
->>> +
->>>  	return 0;
->>>  }
->>>  
->>>
+On 27/8/19 18:12, Arnd Bergmann wrote:
+> On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
 >>
+>> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
+>>
+>>> Recently we refactored the CrOS EC drivers moving part of the code from
+>>> the MFD subsystem to the platform chrome subsystem. During this change
+>>> we needed to rename some config options, so, update the defconfigs
+>>> accordingly.
+>>>
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>>
+>> Can we make the entries in the generic arm64 defconfig modules?
+> 
+> Good idea.
+> 
+> Actually I would prefer to have all of them as modules for consistency,
+> if at all possible.
+> 
+
+It is very common boot Chromebooks from an USB device, the EC needs to be
+built-in in order to boot from these devices, otherwise you should use an
+initramfs. I'd like to avoid forcing people to build an initramfs just to boot
+from these devices if possible, in fact, my usual workflow is without initramfs,
+and knowing that with the default defconfig just should boot helps a lot sometimes.
+
+Note that, it's not the case for EC subdevices, these are already build as modules.
+
+BTW, Lee asked if this patch should be squashed with the patches that really
+renames the config options to help bisect ability, I don't have a hard opinion
+as I don't usually run the config option between bisection steps, so please let
+me know what do you prefer and I'll respin the patches ASAP if that's the case.
+
+Thanks,
+Enric
+
+>        Arnd
+> 
