@@ -1,149 +1,96 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 6/6] PCI: tegra: Add support to enable slot regulators
-Date: Wed, 28 Aug 2019 11:07:57 +0200
-Message-ID: <20190828090757.GA2917@ulmo>
+Subject: Re: [PATCH 0/6] PCI: tegra: Enable PCIe C5 controller of Tegra194 in
+ p2972-0000 platform
+Date: Wed, 28 Aug 2019 11:10:28 +0200
+Message-ID: <20190828091028.GB2917@ulmo>
 References: <20190826073143.4582-1-vidyas@nvidia.com>
- <20190826073143.4582-7-vidyas@nvidia.com>
- <20190827154725.GP14582@e119886-lin.cambridge.arm.com>
- <91f8914a-22a9-8b7c-bc00-c309a21d83db@nvidia.com>
- <20190827171333.GQ14582@e119886-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+        protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190827171333.GQ14582@e119886-lin.cambridge.arm.com>
+In-Reply-To: <20190826073143.4582-1-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Murray <andrew.murray@arm.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>, lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---WIyZ46R2i8wDzkSu
+--rJwd6BRFiFCcLxzm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2019 at 06:13:34PM +0100, Andrew Murray wrote:
-> On Tue, Aug 27, 2019 at 09:54:17PM +0530, Vidya Sagar wrote:
-> > On 8/27/2019 9:17 PM, Andrew Murray wrote:
-> > > On Mon, Aug 26, 2019 at 01:01:43PM +0530, Vidya Sagar wrote:
-> > > > Add support to get regulator information of 3.3V and 12V supplies o=
-f a PCIe
-> > > > slot from the respective controller's device-tree node and enable t=
-hose
-> > > > supplies. This is required in platforms like p2972-0000 where the s=
-upplies
-> > > > to x16 slot owned by C5 controller need to be enabled before attemp=
-ting to
-> > > > enumerate the devices.
-> > > >=20
-> > > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > > ---
-> > > >   drivers/pci/controller/dwc/pcie-tegra194.c | 65 +++++++++++++++++=
-+++++
-> > > >   1 file changed, 65 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/p=
-ci/controller/dwc/pcie-tegra194.c
-> > > > index 8a27b25893c9..97de2151a738 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > @@ -278,6 +278,8 @@ struct tegra_pcie_dw {
-> > > >   	u32 aspm_l0s_enter_lat;
-> > > >   	struct regulator *pex_ctl_supply;
-> > > > +	struct regulator *slot_ctl_3v3;
-> > > > +	struct regulator *slot_ctl_12v;
-> > > >   	unsigned int phy_count;
-> > > >   	struct phy **phys;
-> > > > @@ -1047,6 +1049,59 @@ static void tegra_pcie_downstream_dev_to_D0(=
-struct tegra_pcie_dw *pcie)
-> > > >   	}
-> > > >   }
-> > > > +static void tegra_pcie_get_slot_regulators(struct tegra_pcie_dw *p=
-cie)
-> > > > +{
-> > > > +	pcie->slot_ctl_3v3 =3D devm_regulator_get_optional(pcie->dev, "vp=
-cie3v3");
-> > > > +	if (IS_ERR(pcie->slot_ctl_3v3))
-> > > > +		pcie->slot_ctl_3v3 =3D NULL;
-> > > > +
-> > > > +	pcie->slot_ctl_12v =3D devm_regulator_get_optional(pcie->dev, "vp=
-cie12v");
-> > > > +	if (IS_ERR(pcie->slot_ctl_12v))
-> > > > +		pcie->slot_ctl_12v =3D NULL;
-> > >=20
-> > > Do these need to take into consideration -EPROBE_DEFER?
-> > Since these are devm_* APIs, isn't it taken care of automatically?
+On Mon, Aug 26, 2019 at 01:01:37PM +0530, Vidya Sagar wrote:
+> This patch series enables Tegra194's C5 controller which owns x16 slot in
+> p2972-0000 platform. C5 controller's PERST# and CLKREQ# are not configure=
+d as
+> output and bi-directional signals by default and hence they need to be
+> configured explicitly. Also, x16 slot's 3.3V and 12V supplies are control=
+led
+> through GPIOs and hence they need to be enabled through regulator framewo=
+rk.
+> This patch series adds required infrastructural support to address both t=
+he
+> aforementioned requirements.
+> Testing done on p2972-0000 platform
+> - Able to enumerate devices connected to x16 slot (owned by C5 controller)
+> - Enumerated device's functionality verified
+> - Suspend-Resume sequence is verified with device connected to x16 slot
 >=20
-> devm_regulator_get_optional can still return -EPROBE_DEFER - for times wh=
-en
-> "lookup could succeed in the future".
->=20
-> It's probably helpful here for your driver to distinguish between there n=
-ot
-> being a regulator specified in the DT, and there being a regulator but th=
-ere
-> is no device for it yet. For the latter case - your driver would probe but
-> nothing would enumerate.
->=20
-> See pcie-rockchip-host.c for an example of where this is handled.
->=20
-> Of course if, for whatever reason it is unlikely you'll ever get -EPROBE_=
-DEFER
-> then maybe it's OK as it is.
+> Vidya Sagar (6):
+>   dt-bindings: PCI: tegra: Add sideband pins configuration entries
+>   arm64: tegra: Add configuration for PCIe C5 sideband signals
+>   PCI: tegra: Add support to configure sideband pins
+>   dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
+>   arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
+>   PCI: tegra: Add support to enable slot regulators
 
-Let's not assume that. We've just recently encountered a case where we
-did not handle -EPROBE_DEFER because we had assumed too much, and that
-turned into a bit of a hassle to fix.
+Hi Vidya,
 
-Vidya, I think what Andrew is saying is that you need to propagate the
--EPROBE_DEFER error to the caller (i.e. the ->probe() callback) so that
-the PCI controller driver can be properly added to the defer queue in
-case the regulator isn't ready yet.
+when you resend with review comments addressed, can you please reorder
+the patches slightly? I think it's more natural to order them like this:
 
-I think what we want here is something like:
+    dt-bindings: PCI: tegra: Add sideband pins configuration entries
+    PCI: tegra: Add support to configure sideband pins
+    dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
+    PCI: tegra: Add support to enable slot regulators
+    arm64: tegra: Add configuration for PCIe C5 sideband signals
+    arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
 
-	pcie->slot_ctl_3v3 =3D devm_regulator_get_optional(pcie->dev, "vpcie3v3");
-	if (IS_ERR(pcie->slot_ctl_3v3)) {
-		if (PTR_ERR(pcie->slot_ctl_3v3) !=3D -ENODEV)
-			return PTR_ERR(pcie->slot_ctl_3v3);
+Or perhaps even like this:
 
-		pcie->slot_ctl_3v3 =3D NULL;
-	}
+    dt-bindings: PCI: tegra: Add sideband pins configuration entries
+    dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
+    PCI: tegra: Add support to configure sideband pins
+    PCI: tegra: Add support to enable slot regulators
+    arm64: tegra: Add configuration for PCIe C5 sideband signals
+    arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
 
-Andrew, I'm not sure the handling in rockchip_pcie_parse_host_dt() is
-correct. It singles out -EPROBE_DEFER, which I think is the wrong way
-around. We should be special-casing -ENODEV, because regulator_get()
-can return a wide array of error cases, not all of which we actually
-want to consider successes. For example we could be getting -ENOMEM,
-which, I would argue, is something that we should propagate. I think
-it'd be very confusing to take that as meaning "optional regulator
-wasn't specified", because in that case the DTS file would've had the
-regulator hooked up (we have to assume that it is needed in that case)
-but we won't be enabling it, so it's unlikely that devices will
-enumerate.
+That makes it more obvious that patches 1-2 need an Acked-by from Rob
+and patches 1-4 need to go through Lorenzo's tree and that I'll pick up
+patches 5-6.
 
 Thierry
 
---WIyZ46R2i8wDzkSu
+--rJwd6BRFiFCcLxzm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1mRGkACgkQ3SOs138+
-s6HM4RAAqdCUeQeL5xGkODnWM/OWnmsWlU4Db7jhjHd+6Z7luFKZvSBDEuSVzphV
-uePElq6Abd7v4/QBptqDVysr60LtEiypDlDHs8KJ/UA0R7iUv7dH1YmZ7J5K8Gt/
-QKjjD10mmuhskeuT5Yp6J0MBdXeE+LY35uI7NmkJQxB3c5jV0A2U26vVwVtFHruL
-J+NCdJFay4L1/rAV0jfVs8v65Iy9w4CB2bDXOKmU//dCFTugyAsfYDRYaCls3a6N
-Y4XtztH4W/Ajp9YAhaXYJU0ibECtqPRw7VBIIenDKaNzd35ccm+aH5VMQylwCmai
-4tLx2EUp8naN3NpLb8l5yHR7EUDHImmbyrXjMjE2e8rShRqigpanFWP4Ig1aMzsl
-pU8o4RQsQcERoOMgXuzoOyL1cL5kmBLfNcqyckoFRr0PV2WsIZEJRlfCG4yiQUsp
-evwL6E1ILVkbEl7Z1qYMsbCvqURVvLdWnldgdNvrG91rKomFnW7xhN9o5aQBpHwm
-09O01eqAsimgGwxsGYIRlOgKYt6ZRJNQzXgf9aK1q4TTB1ngDHuLyNDYt4LR9dq2
-OpxjkoIe3ruKq37bI1PYzk9kYvRi4LR0R0DLR1YCLeC4CdmifuR7+x3GA9DHTpKU
-zHpeABc4V2jjlcZWFV2psh2q/wwU2IuMfnmSIrrb+sNrsrE6lqc=
-=Qhhk
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1mRQQACgkQ3SOs138+
+s6GoKg//c0Y8aNQgON5iL5nm5/UbKfGB8YDwT6hVWpzkOowmnglV2QSXZG73j4mx
+hjXJuiSrXTTDgdhKhDYSv+xxG+SB3sUMCtxG6BkPxjMgElw8PuLo/qfjTzHIGN7P
+4OzB/u3fInyfoO4lrb1bVqR/DysGqpyuX/eoGHtAD99UKvuaCoPq/YuRMuEJB9uM
+P/iNX66JVhfYRag1BTGdkawWxTHhZUujAIXWJRyDvNN43xA30Y401ZZIzrKnvqCg
+BLv7/bCXpx1i9jN5WtvTwjp1MbgjrKrTI5eMe0yrHyI/JuFC7mqWEIW+pNuO7GYB
+taA7C27Yod+pvaGbiacVpzRFZMXaiDxhE3/DuxjQ3wD4decVzPGMh3adHmAhISCM
+LMwHxo0IwTZTZPubNkLRuymqy+r5bGYNd8LkNdy2pVs0awL/JkfkIQTNkMD97/O9
+9giB1qsTILOXPeD2nI/xHlQvYu8nmwldvefoh+c815Ym17IaVRrXCZwqzudVBuvu
++xUM2rpbLEXtqrIK6g18q8rWdpO4wHFJcqrcjX8fzdaMOPpSDVxD7TESYLt8rQ70
+IwylYJxXWR7yR2YfOAv5x8tLTzbxkju/NU8TXBooVDoqiZGl9wNOFbsjhr2VCxQs
+u97ZCPtSZ3x4a2yFlVMHBStYPz4XZUA451oncHfju3K8tviyaTQ=
+=Y3Mi
 -----END PGP SIGNATURE-----
 
---WIyZ46R2i8wDzkSu--
+--rJwd6BRFiFCcLxzm--
