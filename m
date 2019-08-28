@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V2 2/6] dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
-Date: Wed, 28 Aug 2019 18:45:01 +0530
-Message-ID: <20190828131505.28475-3-vidyas@nvidia.com>
+Subject: [PATCH V2 3/6] PCI: tegra: Add support to configure sideband pins
+Date: Wed, 28 Aug 2019 18:45:02 +0530
+Message-ID: <20190828131505.28475-4-vidyas@nvidia.com>
 References: <20190828131505.28475-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,43 +12,47 @@ To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.
 Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add optional bindings "vpcie3v3-supply" and "vpcie12v-supply" to describe
-regulators of a PCIe slot's supplies 3.3V and 12V provided the platform
-is designed to have regulator controlled slot supplies.
+Add support to configure sideband signal pins when information is present
+in respective controller's device-tree node.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
 V2:
-* None
+* Addressed review comment from Andrew Murray
+* Handled failure case of pinctrl_pm_select_default_state() cleanly
 
- .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-index 0ac1b867ac24..b739f92da58e 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-@@ -104,6 +104,12 @@ Optional properties:
-    specified in microseconds
- - nvidia,aspm-l0s-entrance-latency-us: ASPM L0s entrance latency to be
-    specified in microseconds
-+- vpcie3v3-supply: A phandle to the regulator node that supplies 3.3V to the slot
-+  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
-+  in p2972-0000 platform).
-+- vpcie12v-supply: A phandle to the regulator node that supplies 12V to the slot
-+  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
-+  in p2972-0000 platform).
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index fc0dbeb31d78..057ba4f9fbcd 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1304,8 +1304,13 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
+ 			ret);
+-		pm_runtime_disable(dev);
+-		return ret;
++		goto fail_pm_get_sync;
++	}
++
++	ret = pinctrl_pm_select_default_state(pcie->dev);
++	if (ret < 0) {
++		dev_err(dev, "Failed to configure sideband pins: %d\n", ret);
++		goto fail_pinctrl;
+ 	}
  
- Examples:
- =========
-@@ -156,6 +162,8 @@ Tegra194:
- 			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
+ 	tegra_pcie_init_controller(pcie);
+@@ -1332,7 +1337,9 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
  
- 		vddio-pex-ctl-supply = <&vdd_1v8ao>;
-+		vpcie3v3-supply = <&vdd_3v3_pcie>;
-+		vpcie12v-supply = <&vdd_12v_pcie>;
- 
- 		phys = <&p2u_hsio_2>, <&p2u_hsio_3>, <&p2u_hsio_4>,
- 		       <&p2u_hsio_5>;
+ fail_host_init:
+ 	tegra_pcie_deinit_controller(pcie);
++fail_pinctrl:
+ 	pm_runtime_put_sync(dev);
++fail_pm_get_sync:
+ 	pm_runtime_disable(dev);
+ 	return ret;
+ }
 -- 
 2.17.1
