@@ -1,71 +1,75 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
-Date: Wed, 28 Aug 2019 13:54:00 +0200
-Message-ID: <20190828115400.GA30919@ulmo>
-References: <20190814104520.6001-1-darekm@google.com>
- <20190814104520.6001-8-darekm@google.com>
- <f0e99db8-3329-f272-e139-a7c713f200ea@xs4all.nl>
- <20190828093820.GE2917@ulmo>
- <2eed5ed3-85f3-4c19-4dd2-3d8432829c2a@xs4all.nl>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
+ CROS_EC options
+Date: Wed, 28 Aug 2019 14:09:10 +0200
+Message-ID: <CAK8P3a3zYpgouGAibyMjDykZmy+ABnx6AD2cYpHnXq9Zsw2V=w@mail.gmail.com>
+References: <20190827154851.10486-1-enric.balletbo@collabora.com>
+ <20190827161045.GC26807@tuxbook-pro> <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
+ <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2eed5ed3-85f3-4c19-4dd2-3d8432829c2a@xs4all.nl>
+In-Reply-To: <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, Collabora kernel ML <kernel@collabora.com>, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-so>
 List-Id: linux-tegra@vger.kernel.org
 
-
---LZvS9be/3tNcYl/X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 28, 2019 at 12:06:34PM +0200, Hans Verkuil wrote:
-> On 8/28/19 11:38 AM, Thierry Reding wrote:
-> > On Wed, Aug 28, 2019 at 10:09:30AM +0200, Hans Verkuil wrote:
-> >> Thierry,
+On Wed, Aug 28, 2019 at 12:10 PM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> On 27/8/19 18:12, Arnd Bergmann wrote:
+> > On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
+> > <bjorn.andersson@linaro.org> wrote:
 > >>
-> >> Can you review this patch?
+> >> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
 > >>
-> >> Thanks!
+> >>> Recently we refactored the CrOS EC drivers moving part of the code from
+> >>> the MFD subsystem to the platform chrome subsystem. During this change
+> >>> we needed to rename some config options, so, update the defconfigs
+> >>> accordingly.
+> >>>
+> >>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> >>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> >>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
 > >>
-> >> 	Hans
-> >=20
-> > Did you want me to pick this up into the drm/tegra tree? Or do you want
-> > to pick it up into your tree?
->=20
-> Can you pick it up for the next cycle? As you mentioned, we missed the
-> deadline for 5.4, so this feature won't be enabled in the public CEC API
-> until 5.5.
->=20
-> Thanks!
+> >> Can we make the entries in the generic arm64 defconfig modules?
+> >
+> > Good idea.
+> >
+> > Actually I would prefer to have all of them as modules for consistency,
+> > if at all possible.
+> >
+>
+> It is very common boot Chromebooks from an USB device, the EC needs to be
+> built-in in order to boot from these devices, otherwise you should use an
+> initramfs. I'd like to avoid forcing people to build an initramfs just to boot
+> from these devices if possible, in fact, my usual workflow is without initramfs,
+> and knowing that with the default defconfig just should boot helps a lot sometimes.
+>
+> Note that, it's not the case for EC subdevices, these are already build as modules.
 
-Sure, will do.
+Ok, fair enough, let's leave it built-in then.
 
-Thierry
+> BTW, Lee asked if this patch should be squashed with the patches that really
+> renames the config options to help bisect ability, I don't have a hard opinion
+> as I don't usually run the config option between bisection steps, so please let
+> me know what do you prefer and I'll respin the patches ASAP if that's the case.
 
---LZvS9be/3tNcYl/X
-Content-Type: application/pgp-signature; name="signature.asc"
+I'm not usually worried about bisection in defconfig changes, since like you
+say most commonly one would not run 'make defconfig' betweens the
+bisection steps.
 
------BEGIN PGP SIGNATURE-----
+If we really care about it, we could keep a symbol like this
+in drivers/platform/chrome/Kconfig for one release:
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1ma1UACgkQ3SOs138+
-s6HV9xAAsPIIHSOmhhNsZIVPEt+6Yof4lByrK2+i1Q7ayLy1AoggREbGVYqxlVlV
-/aYtVDjUiDjmoQZVualZr4YHhpkp3qu2t40jBH8LSgLofwhq7SfqGuB7TemUr5+4
-rBGiOurkFzTnOi/56Scx4g63Y51S3Mgsa/dJWLnvdnaK7thWD2b/Ap0tDQF+XS5U
-dY31xR3nD4ikZkcw5of5PV/9x0vDN6UdzlsZwFl9NBqKEX/I5sKAQ7b5HGCNk7gU
-zskkCqAFqvLFu7weThqNvQ4sw+T3sJAxU6llieP+C8DqrGYcIPlde/ggIvguBKuY
-MkmRDqLQNH4pm+zp+XBILXRUG8bkH92J4TssLduIylC3zO/O+FTQZIn9ccBxSCmy
-0E2JXzXBSNiGqXFchTFYynlWH5WcuJaZ6kTCZi+DV3knfdegYy8n6s+TJqHJYL+F
-SYFouiQ2YFJiDlKmDLfVITFeS46oSE25cx8Ot9bY2RdVO6dFpLR4aGQMMTF5Tm0K
-njACwVid8ULAiJWSRHwuCIfcw9VcLqq/F/VEgLeaFNYo96WzIt7DsOCIAqtfGoS8
-13JFK2BtvowLpEylYP18I/bzwS65LLU+4a+8IXZ9pVg4pcTaaN7u1lIZeyaewHj5
-TntCIejekoInNFRADlZrLe796n7mQbLSEuBVbsyrAVv89x0CIt4=
-=0a12
------END PGP SIGNATURE-----
+config CONFIG_MFD_CROS_EC
+        tristate "Enable ChromeOS Embedded Controller"
+        select CROS_EC
+        select CHROME_PLATFORMS
+        select CONFIG_MFD_CROS_EC_DEV
+        help
+           This is a transitional Kconfig option and will be removed
+           after everyone enables the parts individually.
 
---LZvS9be/3tNcYl/X--
+      Arnd
