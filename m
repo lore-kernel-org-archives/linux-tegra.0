@@ -1,84 +1,127 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH 0/6] PCI: tegra: Enable PCIe C5 controller of Tegra194 in
- p2972-0000 platform
-Date: Wed, 28 Aug 2019 15:34:02 +0530
-Message-ID: <57b55bde-0f59-27ef-8bd3-13408d6d4493@nvidia.com>
-References: <20190826073143.4582-1-vidyas@nvidia.com>
- <20190828091028.GB2917@ulmo>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
+Date: Wed, 28 Aug 2019 12:06:34 +0200
+Message-ID: <2eed5ed3-85f3-4c19-4dd2-3d8432829c2a@xs4all.nl>
+References: <20190814104520.6001-1-darekm@google.com>
+ <20190814104520.6001-8-darekm@google.com>
+ <f0e99db8-3329-f272-e139-a7c713f200ea@xs4all.nl> <20190828093820.GE2917@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190828091028.GB2917@ulmo>
+In-Reply-To: <20190828093820.GE2917@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Cc: Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 8/28/2019 2:40 PM, Thierry Reding wrote:
-> On Mon, Aug 26, 2019 at 01:01:37PM +0530, Vidya Sagar wrote:
->> This patch series enables Tegra194's C5 controller which owns x16 slot in
->> p2972-0000 platform. C5 controller's PERST# and CLKREQ# are not configured as
->> output and bi-directional signals by default and hence they need to be
->> configured explicitly. Also, x16 slot's 3.3V and 12V supplies are controlled
->> through GPIOs and hence they need to be enabled through regulator framework.
->> This patch series adds required infrastructural support to address both the
->> aforementioned requirements.
->> Testing done on p2972-0000 platform
->> - Able to enumerate devices connected to x16 slot (owned by C5 controller)
->> - Enumerated device's functionality verified
->> - Suspend-Resume sequence is verified with device connected to x16 slot
+On 8/28/19 11:38 AM, Thierry Reding wrote:
+> On Wed, Aug 28, 2019 at 10:09:30AM +0200, Hans Verkuil wrote:
+>> Thierry,
 >>
->> Vidya Sagar (6):
->>    dt-bindings: PCI: tegra: Add sideband pins configuration entries
->>    arm64: tegra: Add configuration for PCIe C5 sideband signals
->>    PCI: tegra: Add support to configure sideband pins
->>    dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
->>    arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
->>    PCI: tegra: Add support to enable slot regulators
+>> Can you review this patch?
+>>
+>> Thanks!
+>>
+>> 	Hans
 > 
-> Hi Vidya,
-> 
-> when you resend with review comments addressed, can you please reorder
-> the patches slightly? I think it's more natural to order them like this:
-> 
->      dt-bindings: PCI: tegra: Add sideband pins configuration entries
->      PCI: tegra: Add support to configure sideband pins
->      dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
->      PCI: tegra: Add support to enable slot regulators
->      arm64: tegra: Add configuration for PCIe C5 sideband signals
->      arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
-> 
-> Or perhaps even like this:
-> 
->      dt-bindings: PCI: tegra: Add sideband pins configuration entries
->      dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
->      PCI: tegra: Add support to configure sideband pins
->      PCI: tegra: Add support to enable slot regulators
->      arm64: tegra: Add configuration for PCIe C5 sideband signals
->      arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
-> 
-> That makes it more obvious that patches 1-2 need an Acked-by from Rob
-> and patches 1-4 need to go through Lorenzo's tree and that I'll pick up
-> patches 5-6.Sure.
-I'll do that.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-	t=1566986650; bh=fKSn9tEu0u/7kvehjleUQGVzZJJHx0MojZ9eQ2aJqWM=;
-	h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-	 Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-	 X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-	 Content-Transfer-Encoding;
-	b=aSDWQiNYeJefaP3hT1F2Kc9CSOb6AJPVC1NOPnn4rLtaj7EOJb+j70r/h4+I3bKEk
-	 N6siO4F51Zz49OC3S0601fPefcag3AJZZQEdvrpk3pIhqGZ+62QMXTeG4f7t/ETsLY
-	 TPYf5ksG6Kb8vxeUEAY6ATiHOIhjJhbLjRn/uJ/Oat+8ZRv3VgTOtujSHpzsKf1rTz
-	 gJZbRa8GsOlGBEvMoc7xxgRDx1/GzUqaHw8T8GqLV/JDOW9qNy44TVpHkk4Exc7g5+
-	 bM5zCyghflgpfG+ZMzbwZEkd1b4gDyPfxYL2J+AzEjgQyVsBSU6+nXSjJg65VfzSd6
-	 bM8cWEfkmyeMA==
+> Did you want me to pick this up into the drm/tegra tree? Or do you want
+> to pick it up into your tree?
 
-Thanks,
-Vidya Sagar
+Can you pick it up for the next cycle? As you mentioned, we missed the
+deadline for 5.4, so this feature won't be enabled in the public CEC API
+until 5.5.
+
+Thanks!
+
+	Hans
 
 > 
-> Thierry
+> We're just past the DRM subsystem deadline, so it'll have to wait until
+> the next cycle if we go that way. If you're in a hurry you may want to
+> pick it up yourself, in which case:
 > 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+>> On 8/14/19 12:45 PM, Dariusz Marcinkiewicz wrote:
+>>> Use the new cec_notifier_conn_(un)register() functions to
+>>> (un)register the notifier for the HDMI connector, and fill in
+>>> the cec_connector_info.
+>>>
+>>> Changes since v4:
+>>> 	- only create a CEC notifier for HDMI connectors
+>>>
+>>> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+>>> Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>>> ---
+>>>  drivers/gpu/drm/tegra/output.c | 28 +++++++++++++++++++++-------
+>>>  1 file changed, 21 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+>>> index bdcaa4c7168cf..34373734ff689 100644
+>>> --- a/drivers/gpu/drm/tegra/output.c
+>>> +++ b/drivers/gpu/drm/tegra/output.c
+>>> @@ -70,6 +70,11 @@ tegra_output_connector_detect(struct drm_connector *connector, bool force)
+>>>  
+>>>  void tegra_output_connector_destroy(struct drm_connector *connector)
+>>>  {
+>>> +	struct tegra_output *output = connector_to_output(connector);
+>>> +
+>>> +	if (output->cec)
+>>> +		cec_notifier_conn_unregister(output->cec);
+>>> +
+>>>  	drm_connector_unregister(connector);
+>>>  	drm_connector_cleanup(connector);
+>>>  }
+>>> @@ -163,18 +168,11 @@ int tegra_output_probe(struct tegra_output *output)
+>>>  		disable_irq(output->hpd_irq);
+>>>  	}
+>>>  
+>>> -	output->cec = cec_notifier_get(output->dev);
+>>> -	if (!output->cec)
+>>> -		return -ENOMEM;
+>>> -
+>>>  	return 0;
+>>>  }
+>>>  
+>>>  void tegra_output_remove(struct tegra_output *output)
+>>>  {
+>>> -	if (output->cec)
+>>> -		cec_notifier_put(output->cec);
+>>> -
+>>>  	if (output->hpd_gpio)
+>>>  		free_irq(output->hpd_irq, output);
+>>>  
+>>> @@ -184,6 +182,7 @@ void tegra_output_remove(struct tegra_output *output)
+>>>  
+>>>  int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+>>>  {
+>>> +	int connector_type;
+>>>  	int err;
+>>>  
+>>>  	if (output->panel) {
+>>> @@ -199,6 +198,21 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+>>>  	if (output->hpd_gpio)
+>>>  		enable_irq(output->hpd_irq);
+>>>  
+>>> +	connector_type = output->connector.connector_type;
+>>> +	/*
+>>> +	 * Create a CEC notifier for HDMI connector.
+>>> +	 */
+>>> +	if (connector_type == DRM_MODE_CONNECTOR_HDMIA ||
+>>> +	    connector_type == DRM_MODE_CONNECTOR_HDMIB) {
+>>> +		struct cec_connector_info conn_info;
+>>> +
+>>> +		cec_fill_conn_info_from_drm(&conn_info, &output->connector);
+>>> +		output->cec = cec_notifier_conn_register(output->dev, NULL,
+>>> +							 &conn_info);
+>>> +		if (!output->cec)
+>>> +			return -ENOMEM;
+>>> +	}
+>>> +
+>>>  	return 0;
+>>>  }
+>>>  
+>>>
+>>
