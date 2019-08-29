@@ -1,48 +1,71 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] arm64: tegra: Hook up edp interrupt on Tegra210 SOCTHERM
-Date: Thu, 29 Aug 2019 12:56:47 +0200
-Message-ID: <20190829105647.15212-1-thierry.reding@gmail.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: [PATCH] media: staging: tegra-vde: Disable building with
+ COMPILE_TEST
+Date: Thu, 29 Aug 2019 13:39:32 +0200
+Message-ID: <7f73bcac-f52d-f1b3-324c-e9b551c5378b@xs4all.nl>
+References: <20190826133140.13456-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190826133140.13456-1-yuehaibing@huawei.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, digetx@gmail.com, mchehab@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, robin.murphy@arm.com
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 8/26/19 3:31 PM, YueHaibing wrote:
+> If COMPILE_TEST is y and IOMMU_SUPPORT is n, selecting TEGRA_VDE
+> to m will set IOMMU_IOVA to m, this fails the building of
+> TEGRA_HOST1X and DRM_TEGRA which is y like this:
+> 
+> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
+> cdma.c:(.text+0x66c): undefined reference to `alloc_iova'
+> cdma.c:(.text+0x698): undefined reference to `__free_iova'
+> 
+> drivers/gpu/drm/tegra/drm.o: In function `tegra_drm_unload':
+> drm.c:(.text+0xeb0): undefined reference to `put_iova_domain'
+> drm.c:(.text+0xeb4): undefined reference to `iova_cache_put'
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 6b2265975239 ("media: staging: tegra-vde: Fix build error")
+> Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU support")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/staging/media/tegra-vde/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
+> index ba49ea5..a41d30c 100644
+> --- a/drivers/staging/media/tegra-vde/Kconfig
+> +++ b/drivers/staging/media/tegra-vde/Kconfig
+> @@ -1,9 +1,9 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  config TEGRA_VDE
+>  	tristate "NVIDIA Tegra Video Decoder Engine driver"
+> -	depends on ARCH_TEGRA || COMPILE_TEST
+> +	depends on ARCH_TEGRA
 
-For some reason this was never hooked up. Do it now so that over-current
-interrupts can be logged.
+What happens if you drop this change,
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>  	select DMA_SHARED_BUFFER
+> -	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+> +	select IOMMU_IOVA if IOMMU_SUPPORT
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2db208f20191..a20cd368a772 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1458,7 +1458,9 @@
- 		reg = <0x0 0x700e2000 0x0 0x600 /* SOC_THERM reg_base */
- 			0x0 0x60006000 0x0 0x400>; /* CAR reg_base */
- 		reg-names = "soctherm-reg", "car-reg";
--		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "thermal", "edp";
- 		clocks = <&tegra_car TEGRA210_CLK_TSENSOR>,
- 			<&tegra_car TEGRA210_CLK_SOC_THERM>;
- 		clock-names = "tsensor", "soctherm";
--- 
-2.22.0
+but keep this change?
+
+iova.h has stubs that are used if IOMMU_IOVA is not set, so it should
+work when compile testing this tegra-vde driver.
+
+Haven't tried it, but making sure that compile testing keep working is
+really important.
+
+Regards,
+
+	Hans
+
+>  	select SRAM
+>  	help
+>  	    Say Y here to enable support for the NVIDIA Tegra video decoder
+> 
