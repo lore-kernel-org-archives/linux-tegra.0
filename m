@@ -1,53 +1,64 @@
 From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH 0/7] Nvidia Arm SMMUv2 Implementation
-Date: Thu, 29 Aug 2019 15:47:00 -0700
-Message-ID: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
+Subject: [PATCH 5/7] arm64: tegra: Add Memory controller DT node on T194
+Date: Thu, 29 Aug 2019 15:47:05 -0700
+Message-ID: <1567118827-26358-6-git-send-email-vdumpa@nvidia.com>
+References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, thomasz@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi All,
-Nvidia Arm SMMUv2 implementation has two ARM SMMU(MMU-500) instances
-that are used together for SMMU translations. The IOVA accesses from
-HW devices are interleaved across these two SMMU instances and need
-to be programmed identical except during tlb sync and fault handling.
+Add Memory controller DT node on T194 and enable it.
+This patch is a prerequisite for SMMU enable on T194.
 
-This patch set adds Nvidia Arm SMMUv2 Implementation on top of ARM SMMU
-driver to handle Nvidia specific implementation. It is also adding
-hooks for tlb sync and fault handling to allow vendor specific
-implementation for the same.
+Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 4 ++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 7 +++++++
+ 2 files changed, 11 insertions(+)
 
-Please review the patch set and provide the feedback.
-
-This patch set is based on the following branch as it is dependent on the
-Arm SMMU Refactor changes from Robin Murphy that are present in this branch.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git for-joerg/arm-smmu/updates
-
-
-Krishna Reddy (7):
-  iommu/arm-smmu: add Nvidia SMMUv2 implementation
-  dt-bindings: arm-smmu: Add binding for nvidia,smmu-v2
-  iommu/arm-smmu: Add tlb_sync implementation hook
-  iommu/arm-smmu: Add global/context fault implementation hooks
-  arm64: tegra: Add Memory controller DT node on T194
-  arm64: tegra: Add DT node for T194 SMMU
-  arm64: tegra: enable SMMU for SDHCI and EQOS
-
- .../devicetree/bindings/iommu/arm,smmu.txt         |   1 +
- MAINTAINERS                                        |   2 +
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   4 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           |  86 +++++++
- drivers/iommu/Makefile                             |   2 +-
- drivers/iommu/arm-smmu-impl.c                      |   2 +
- drivers/iommu/arm-smmu-nvidia.c                    | 256 +++++++++++++++++++++
- drivers/iommu/arm-smmu.c                           |  16 +-
- drivers/iommu/arm-smmu.h                           |  10 +
- 9 files changed, 375 insertions(+), 4 deletions(-)
- create mode 100644 drivers/iommu/arm-smmu-nvidia.c
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+index 62e07e11..4b3441b 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+@@ -47,6 +47,10 @@
+ 			};
+ 		};
+ 
++		memory-controller@2c00000 {
++			status = "okay";
++		};
++
+ 		serial@3110000 {
+ 			status = "okay";
+ 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index adebbbf..d906958 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -6,6 +6,7 @@
+ #include <dt-bindings/reset/tegra194-reset.h>
+ #include <dt-bindings/power/tegra194-powergate.h>
+ #include <dt-bindings/thermal/tegra194-bpmp-thermal.h>
++#include <dt-bindings/memory/tegra186-mc.h>
+ 
+ / {
+ 	compatible = "nvidia,tegra194";
+@@ -130,6 +131,12 @@
+ 			};
+ 		};
+ 
++		memory-controller@2c00000 {
++			compatible = "nvidia,tegra186-mc";
++			reg = <0x02c00000 0xb0000>;
++			status = "disabled";
++		};
++
+ 		uarta: serial@3100000 {
+ 			compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
+ 			reg = <0x03100000 0x40>;
 -- 
 2.1.4
