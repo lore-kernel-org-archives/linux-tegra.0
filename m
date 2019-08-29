@@ -1,101 +1,91 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] media: staging: tegra-vde: Disable building with
- COMPILE_TEST
-Date: Thu, 29 Aug 2019 14:40:34 +0200
-Message-ID: <20190829124034.GA19842@ulmo>
-References: <20190826133140.13456-1-yuehaibing@huawei.com>
- <7f73bcac-f52d-f1b3-324c-e9b551c5378b@xs4all.nl>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
+ CROS_EC options
+Date: Thu, 29 Aug 2019 15:56:49 +0200
+Message-ID: <1fe8c0df-5e2d-6b6f-2a21-025a00b86f01@collabora.com>
+References: <20190827154851.10486-1-enric.balletbo@collabora.com>
+ <20190827161045.GC26807@tuxbook-pro>
+ <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
+ <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
+ <CAK8P3a3zYpgouGAibyMjDykZmy+ABnx6AD2cYpHnXq9Zsw2V=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7f73bcac-f52d-f1b3-324c-e9b551c5378b@xs4all.nl>
+In-Reply-To: <CAK8P3a3zYpgouGAibyMjDykZmy+ABnx6AD2cYpHnXq9Zsw2V=w@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: YueHaibing <yuehaibing@huawei.com>, digetx@gmail.com, mchehab@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, robin.murphy@arm.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, Collabora kernel ML <kernel@collabora.com>, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-so>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 28/8/19 14:09, Arnd Bergmann wrote:
+> On Wed, Aug 28, 2019 at 12:10 PM Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+>> On 27/8/19 18:12, Arnd Bergmann wrote:
+>>> On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
+>>> <bjorn.andersson@linaro.org> wrote:
+>>>>
+>>>> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
+>>>>
+>>>>> Recently we refactored the CrOS EC drivers moving part of the code from
+>>>>> the MFD subsystem to the platform chrome subsystem. During this change
+>>>>> we needed to rename some config options, so, update the defconfigs
+>>>>> accordingly.
+>>>>>
+>>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>>>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>>>>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>>>>
+>>>> Can we make the entries in the generic arm64 defconfig modules?
+>>>
+>>> Good idea.
+>>>
+>>> Actually I would prefer to have all of them as modules for consistency,
+>>> if at all possible.
+>>>
+>>
+>> It is very common boot Chromebooks from an USB device, the EC needs to be
+>> built-in in order to boot from these devices, otherwise you should use an
+>> initramfs. I'd like to avoid forcing people to build an initramfs just to boot
+>> from these devices if possible, in fact, my usual workflow is without initramfs,
+>> and knowing that with the default defconfig just should boot helps a lot sometimes.
+>>
+>> Note that, it's not the case for EC subdevices, these are already build as modules.
+> 
+> Ok, fair enough, let's leave it built-in then.
+> 
+>> BTW, Lee asked if this patch should be squashed with the patches that really
+>> renames the config options to help bisect ability, I don't have a hard opinion
+>> as I don't usually run the config option between bisection steps, so please let
+>> me know what do you prefer and I'll respin the patches ASAP if that's the case.
+> 
+> I'm not usually worried about bisection in defconfig changes, since like you
+> say most commonly one would not run 'make defconfig' betweens the
+> bisection steps.
+> 
+> If we really care about it, we could keep a symbol like this
+> in drivers/platform/chrome/Kconfig for one release:
+> 
+> config CONFIG_MFD_CROS_EC
+>         tristate "Enable ChromeOS Embedded Controller"
+>         select CROS_EC
+>         select CHROME_PLATFORMS
+>         select CONFIG_MFD_CROS_EC_DEV
+>         help
+>            This is a transitional Kconfig option and will be removed
+>            after everyone enables the parts individually.
+> 
 
-On Thu, Aug 29, 2019 at 01:39:32PM +0200, Hans Verkuil wrote:
-> On 8/26/19 3:31 PM, YueHaibing wrote:
-> > If COMPILE_TEST is y and IOMMU_SUPPORT is n, selecting TEGRA_VDE
-> > to m will set IOMMU_IOVA to m, this fails the building of
-> > TEGRA_HOST1X and DRM_TEGRA which is y like this:
-> >=20
-> > drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
-> > cdma.c:(.text+0x66c): undefined reference to `alloc_iova'
-> > cdma.c:(.text+0x698): undefined reference to `__free_iova'
-> >=20
-> > drivers/gpu/drm/tegra/drm.o: In function `tegra_drm_unload':
-> > drm.c:(.text+0xeb0): undefined reference to `put_iova_domain'
-> > drm.c:(.text+0xeb4): undefined reference to `iova_cache_put'
-> >=20
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Fixes: 6b2265975239 ("media: staging: tegra-vde: Fix build error")
-> > Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU suppo=
-rt")
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  drivers/staging/media/tegra-vde/Kconfig | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/=
-media/tegra-vde/Kconfig
-> > index ba49ea5..a41d30c 100644
-> > --- a/drivers/staging/media/tegra-vde/Kconfig
-> > +++ b/drivers/staging/media/tegra-vde/Kconfig
-> > @@ -1,9 +1,9 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  config TEGRA_VDE
-> >  	tristate "NVIDIA Tegra Video Decoder Engine driver"
-> > -	depends on ARCH_TEGRA || COMPILE_TEST
-> > +	depends on ARCH_TEGRA
->=20
-> What happens if you drop this change,
->=20
-> >  	select DMA_SHARED_BUFFER
-> > -	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
-> > +	select IOMMU_IOVA if IOMMU_SUPPORT
->=20
-> but keep this change?
->=20
-> iova.h has stubs that are used if IOMMU_IOVA is not set, so it should
-> work when compile testing this tegra-vde driver.
->=20
-> Haven't tried it, but making sure that compile testing keep working is
-> really important.
+Not sure if really makes sense do this and tbh and don't have a hard opinion, so
+I'll let the final decision to the soc/mfd maintainers. Just let me know and
+I'll respin the patches with that if you really want.
 
-Yeah, that variant seems to work for me. I think it's also more correct
-because the IOMMU_IOVA if IOMMU_SUPPORT dependency really says that the
-IOVA usage is bound to IOMMU support. If IOMMU support is not enabled,
-then IOVA is not needed either, so the dummies will do just fine.
+Thanks,
+ Enric
 
-Thierry
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1nx78ACgkQ3SOs138+
-s6FjdBAAjPVTLKQa12c+8O/ecTX4Bkd37JWHnmOyfuQByXvgyFwDufWK1I19NpQh
-gunYeGFxSe36t4aIK8w27Jtr86Zo7tw8xUmNs2cZrNLZahvEx4DERmV3VeqqKv8L
-hNjLT61akI4MlN7rGpRcwbUrtL39NJW3msO/NzvnZAy8EetobwDPVkcyhG+XfQhc
-XsNXJhnvj3W5PR1+RzhL1i2UGwpc4HhLEFjHgzHcBsVgo6QixR/vSCNQ+mJPEcsz
-G5NRpG8zqh6gGUCs4Fxi2Pn6FwWqYaqyqBbSZoAydYULWMhEUsZPTiyihsOP2PxM
-V8ni2vhx6hzqlr0Sml5LfsT8eDjuKLFHacfFzg0ediSy7HI3p8hxotcdZXfJ0T9G
-q1W7wK5WDhA3FP/z9iBQRjryaTUUQtf/F1NBMvTPvIfUipxqcgYq2/SayQ12g/9l
-e36ocSD+yuI0sZNa549AVTF5hYmmbkGAcrX+vF6OB0e0tGZoPAmBvQwd7XH2MHzI
-T2r6b1S4WMlZ6XX4ko8boqXVGzO8cGybF2S3pdNnQrWQc/EiFimCLlxVFjdvR6w2
-MdzxVAYlU47MNIhMaCbOCzEW5lq6krlMSVC3vpK13RGegyM7LHp5XXrhnRk5n6yf
-Ap68NCbc9fsg3oNPcddpiHnadEVLap36FWSpLixSYuZLUevnhZc=
-=jI77
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+>       Arnd
+> 
