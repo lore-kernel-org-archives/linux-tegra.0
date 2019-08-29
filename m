@@ -1,7 +1,7 @@
 From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH 3/7] iommu/arm-smmu: Add tlb_sync implementation hook
-Date: Thu, 29 Aug 2019 15:47:03 -0700
-Message-ID: <1567118827-26358-4-git-send-email-vdumpa@nvidia.com>
+Subject: [PATCH 6/7] arm64: tegra: Add DT node for T194 SMMU
+Date: Thu, 29 Aug 2019 15:47:06 -0700
+Message-ID: <1567118827-26358-7-git-send-email-vdumpa@nvidia.com>
 References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -11,111 +11,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, thomasz@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-tlb_sync hook allows nvidia smmu handle tlb sync
-across multiple SMMUs as necessary.
+Add DT node for T194 SMMU to enable SMMU support.
 
 Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
 ---
- drivers/iommu/arm-smmu-nvidia.c | 32 ++++++++++++++++++++++++++++++++
- drivers/iommu/arm-smmu.c        |  8 +++++---
- drivers/iommu/arm-smmu.h        |  4 ++++
- 3 files changed, 41 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 75 ++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
-diff --git a/drivers/iommu/arm-smmu-nvidia.c b/drivers/iommu/arm-smmu-nvidia.c
-index d93ceda..a429b2c 100644
---- a/drivers/iommu/arm-smmu-nvidia.c
-+++ b/drivers/iommu/arm-smmu-nvidia.c
-@@ -56,11 +56,43 @@ static void nsmmu_write_reg64(struct arm_smmu_device *smmu,
- 		writeq_relaxed(val, nsmmu_page(smmu, i, page) + offset);
- }
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index d906958..ad509bb 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1401,6 +1401,81 @@
+ 			  0x82000000 0x0  0x40000000 0x1f 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
+ 	};
  
-+static void nsmmu_tlb_sync_wait(struct arm_smmu_device *smmu, int page,
-+				int sync, int status, int inst)
-+{
-+	u32 reg;
-+	unsigned int spin_cnt, delay;
++	smmu: iommu@12000000 {
++		compatible = "nvidia,smmu-v2";
++		reg = <0 0x12000000 0 0x800000>,
++		      <0 0x11000000 0 0x800000>,
++		      <0 0x10000000 0 0x800000>;
++		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
++		stream-match-mask = <0x7f80>;
++		#global-interrupts = <1>;
++		#iommu-cells = <1>;
++	};
 +
-+	for (delay = 1; delay < TLB_LOOP_TIMEOUT; delay *= 2) {
-+		for (spin_cnt = TLB_SPIN_COUNT; spin_cnt > 0; spin_cnt--) {
-+			reg = readl_relaxed(
-+			      nsmmu_page(smmu, inst, page) + status);
-+			if (!(reg & sTLBGSTATUS_GSACTIVE))
-+				return;
-+			cpu_relax();
-+		}
-+		udelay(delay);
-+	}
-+	dev_err_ratelimited(smmu->dev,
-+			    "TLB sync timed out -- SMMU may be deadlocked\n");
-+}
-+
-+static void nsmmu_tlb_sync(struct arm_smmu_device *smmu, int page,
-+			   int sync, int status)
-+{
-+	int i;
-+
-+	arm_smmu_writel(smmu, page, sync, 0);
-+
-+	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++)
-+		nsmmu_tlb_sync_wait(smmu, page, sync, status, i);
-+}
-+
- static const struct arm_smmu_impl nsmmu_impl = {
- 	.read_reg = nsmmu_read_reg,
- 	.write_reg = nsmmu_write_reg,
- 	.read_reg64 = nsmmu_read_reg64,
- 	.write_reg64 = nsmmu_write_reg64,
-+	.tlb_sync = nsmmu_tlb_sync,
- };
- 
- struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 46e1641..f5454e71 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -52,9 +52,6 @@
-  */
- #define QCOM_DUMMY_VAL -1
- 
--#define TLB_LOOP_TIMEOUT		1000000	/* 1s! */
--#define TLB_SPIN_COUNT			10
--
- #define MSI_IOVA_BASE			0x8000000
- #define MSI_IOVA_LENGTH			0x100000
- 
-@@ -244,6 +241,11 @@ static void __arm_smmu_tlb_sync(struct arm_smmu_device *smmu, int page,
- 	unsigned int spin_cnt, delay;
- 	u32 reg;
- 
-+	if (smmu->impl->tlb_sync) {
-+		smmu->impl->tlb_sync(smmu, page, sync, status);
-+		return;
-+	}
-+
- 	arm_smmu_writel(smmu, page, sync, QCOM_DUMMY_VAL);
- 	for (delay = 1; delay < TLB_LOOP_TIMEOUT; delay *= 2) {
- 		for (spin_cnt = TLB_SPIN_COUNT; spin_cnt > 0; spin_cnt--) {
-diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
-index 9645bf1..d3217f1 100644
---- a/drivers/iommu/arm-smmu.h
-+++ b/drivers/iommu/arm-smmu.h
-@@ -207,6 +207,8 @@ enum arm_smmu_cbar_type {
- /* Maximum number of context banks per SMMU */
- #define ARM_SMMU_MAX_CBS		128
- 
-+#define TLB_LOOP_TIMEOUT		1000000	/* 1s! */
-+#define TLB_SPIN_COUNT			10
- 
- /* Shared driver definitions */
- enum arm_smmu_arch_version {
-@@ -336,6 +338,8 @@ struct arm_smmu_impl {
- 	int (*cfg_probe)(struct arm_smmu_device *smmu);
- 	int (*reset)(struct arm_smmu_device *smmu);
- 	int (*init_context)(struct arm_smmu_domain *smmu_domain);
-+	void (*tlb_sync)(struct arm_smmu_device *smmu, int page, int sync,
-+			 int status);
- };
- 
- static inline void __iomem *arm_smmu_page(struct arm_smmu_device *smmu, int n)
+ 	sysram@40000000 {
+ 		compatible = "nvidia,tegra194-sysram", "mmio-sram";
+ 		reg = <0x0 0x40000000 0x0 0x50000>;
 -- 
 2.1.4
