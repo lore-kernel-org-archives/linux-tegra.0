@@ -1,11 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 0/7] Replace Tegra FUSE API by nvmem API
-Date: Fri, 30 Aug 2019 00:19:04 +0200
-Message-ID: <20190829221911.24876-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/7] soc/tegra: fuse: Restore base on sysfs failure
+Date: Fri, 30 Aug 2019 00:19:05 +0200
+Message-ID: <20190829221911.24876-2-thierry.reding@gmail.com>
+References: <20190829221911.24876-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190829221911.24876-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,47 +23,48 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The nvmem API provides a generic API to retrieve the kind of information
-currently retrieved using the custom Tegra FUSE API. Convert the Tegra
-FUSE driver to be an nvmem provider and export cells used by existing
-drivers.
+Make sure to also restore the register base address on sysfs
+registration failure.
 
-The three non-SoC drivers included in this series are meant to serve as
-examples for how to use this. I'm not Cc'ing them to the subsystem
-maintainers because the idea is to first merge the soc/tegra patches and
-after that convert the consumers. Once the first patches are applied, I
-will send out the consumers conversion patches to the respective
-subsystems.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/soc/tegra/fuse/fuse-tegra.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-What's not included in this series is a cleanup patch that finally
-removes the custom Tegra FUSE API. I'll follow up with that once these
-patches have been applied.
-
-Thierry
-
-Thierry Reding (7):
-  soc/tegra: fuse: Restore base on sysfs failure
-  soc/tegra: fuse: Implement nvmem device
-  soc/tegra: fuse: Add cell information
-  soc/tegra: fuse: Register cell lookups for compatibility
-  drm/nouveau: tegra: Use nvmem API
-  phy: tegra: xusb: Use nvmem API
-  thermal: tegra: Use nvmem API
-
- .../gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c   |  12 +-
- drivers/phy/tegra/xusb-tegra124.c             |  10 +-
- drivers/phy/tegra/xusb-tegra186.c             |   7 +-
- drivers/phy/tegra/xusb-tegra210.c             |  10 +-
- drivers/soc/tegra/fuse/fuse-tegra.c           | 193 +++++++++++++-----
- drivers/soc/tegra/fuse/fuse-tegra30.c         | 154 ++++++++++++++
- drivers/soc/tegra/fuse/fuse.h                 |   8 +
- drivers/thermal/tegra/soctherm-fuse.c         |  19 +-
- drivers/thermal/tegra/soctherm.c              |   4 +-
- drivers/thermal/tegra/soctherm.h              |   9 +-
- drivers/thermal/tegra/tegra124-soctherm.c     |   8 -
- drivers/thermal/tegra/tegra132-soctherm.c     |   8 -
- drivers/thermal/tegra/tegra210-soctherm.c     |   8 -
- 13 files changed, 344 insertions(+), 106 deletions(-)
-
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index 3eb44e65b326..6617a4bd11bb 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -146,20 +146,24 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+ 
+ 	if (fuse->soc->probe) {
+ 		err = fuse->soc->probe(fuse);
+-		if (err < 0) {
+-			fuse->base = base;
+-			return err;
+-		}
++		if (err < 0)
++			goto restore;
+ 	}
+ 
+ 	if (tegra_fuse_create_sysfs(&pdev->dev, fuse->soc->info->size,
+-				    fuse->soc->info))
+-		return -ENODEV;
++				    fuse->soc->info)) {
++		err = -ENODEV;
++		goto restore;
++	}
+ 
+ 	/* release the early I/O memory mapping */
+ 	iounmap(base);
+ 
+ 	return 0;
++
++restore:
++	fuse->base = base;
++	return err;
+ }
+ 
+ static struct platform_driver tegra_fuse_driver = {
 -- 
 2.22.0
