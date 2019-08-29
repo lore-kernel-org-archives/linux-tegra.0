@@ -1,87 +1,102 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] media: staging: tegra-vde: Disable building with
- COMPILE_TEST
-Date: Thu, 29 Aug 2019 16:58:22 +0300
-Message-ID: <b048b460-9d58-8e38-e335-f9a3fface559@gmail.com>
-References: <20190826133140.13456-1-yuehaibing@huawei.com>
- <7f73bcac-f52d-f1b3-324c-e9b551c5378b@xs4all.nl>
- <20190829124034.GA19842@ulmo>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V3 2/6] dt-bindings: PCI: tegra: Add PCIe slot supplies
+ regulator entries
+Date: Thu, 29 Aug 2019 20:48:39 +0530
+Message-ID: <cd106d64-e06c-e7a2-d807-f5f080625363@nvidia.com>
+References: <20190828172850.19871-1-vidyas@nvidia.com>
+ <20190828172850.19871-3-vidyas@nvidia.com> <20190829120329.GC13187@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190829124034.GA19842@ulmo>
+In-Reply-To: <20190829120329.GC13187@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, YueHaibing <yuehaibing@huawei.com>
-Cc: mchehab@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, robin.murphy@arm.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-29.08.2019 15:40, Thierry Reding пишет:
-> On Thu, Aug 29, 2019 at 01:39:32PM +0200, Hans Verkuil wrote:
->> On 8/26/19 3:31 PM, YueHaibing wrote:
->>> If COMPILE_TEST is y and IOMMU_SUPPORT is n, selecting TEGRA_VDE
->>> to m will set IOMMU_IOVA to m, this fails the building of
->>> TEGRA_HOST1X and DRM_TEGRA which is y like this:
->>>
->>> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
->>> cdma.c:(.text+0x66c): undefined reference to `alloc_iova'
->>> cdma.c:(.text+0x698): undefined reference to `__free_iova'
->>>
->>> drivers/gpu/drm/tegra/drm.o: In function `tegra_drm_unload':
->>> drm.c:(.text+0xeb0): undefined reference to `put_iova_domain'
->>> drm.c:(.text+0xeb4): undefined reference to `iova_cache_put'
->>>
->>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>> Fixes: 6b2265975239 ("media: staging: tegra-vde: Fix build error")
->>> Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU support")
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>> ---
->>>  drivers/staging/media/tegra-vde/Kconfig | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
->>> index ba49ea5..a41d30c 100644
->>> --- a/drivers/staging/media/tegra-vde/Kconfig
->>> +++ b/drivers/staging/media/tegra-vde/Kconfig
->>> @@ -1,9 +1,9 @@
->>>  # SPDX-License-Identifier: GPL-2.0
->>>  config TEGRA_VDE
->>>  	tristate "NVIDIA Tegra Video Decoder Engine driver"
->>> -	depends on ARCH_TEGRA || COMPILE_TEST
->>> +	depends on ARCH_TEGRA
+On 8/29/2019 5:33 PM, Thierry Reding wrote:
+> On Wed, Aug 28, 2019 at 10:58:46PM +0530, Vidya Sagar wrote:
+>> Add optional bindings "vpcie3v3-supply" and "vpcie12v-supply" to describe
+>> regulators of a PCIe slot's supplies 3.3V and 12V provided the platform
+>> is designed to have regulator controlled slot supplies.
 >>
->> What happens if you drop this change,
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>> V3:
+>> * None
 >>
->>>  	select DMA_SHARED_BUFFER
->>> -	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
->>> +	select IOMMU_IOVA if IOMMU_SUPPORT
+>> V2:
+>> * None
 >>
->> but keep this change?
+>>   .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
 >>
->> iova.h has stubs that are used if IOMMU_IOVA is not set, so it should
->> work when compile testing this tegra-vde driver.
+>> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> index 0ac1b867ac24..b739f92da58e 100644
+>> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> @@ -104,6 +104,12 @@ Optional properties:
+>>      specified in microseconds
+>>   - nvidia,aspm-l0s-entrance-latency-us: ASPM L0s entrance latency to be
+>>      specified in microseconds
+>> +- vpcie3v3-supply: A phandle to the regulator node that supplies 3.3V to the slot
+>> +  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
+>> +  in p2972-0000 platform).
+>> +- vpcie12v-supply: A phandle to the regulator node that supplies 12V to the slot
+>> +  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
+>> +  in p2972-0000 platform).
+> 
+> There's an ongoing discussion regarding the use of optional power
+> supplies and I'm wondering if we're not abusing this here. Why exactly
+> are these regulators optional?
+I made them optional because, the number and type of supplies typically depend on the
+kind of slot the controller is owning. If it is a CEM slot, then, it needs 3.3V & 12V
+supplies and if it is an M.2 Key-E/M slot, it needs only 3.3V supply. Also, if there are
+on-board PCIe endpoint devices, supplies may vary again from vendor to vendor.
+Considering all these, I made them optional instead of mandatory.
+Also, I agree that regulator framework supplies a dummy regulator if we make them mandatory
+but doesn't supply one, but it does so with a warning print in the log which I feel is
+an unwanted alert and to avoid that one has to supply dummy/fixed regulators which again
+seems an overkill when all of this can be addressed by making slot regulators optional.
+
+> 
+> The distinction is somewhat subtle, but the other way to look at
+> modelling this in DT is that the supplies are in fact required, but may
+> be connected to an always-on regulator with a fixed voltage. Or in some
+> cases they may also be shorted to ground. In both cases the PCI
+> controller, or rather the slot that the controller connects to, actually
+> "requires" the supplies, it's just that we can get away without
+> describing them because they can't be controlled anyway.
+> 
+> Looking at the PCI connector pinout for PCI Express, I do see a bunch of
+> +3.3 V and +12 V pins. To me that indicates that the 3.3 V and 12 V
+> supplies are indeed required for PCI slots. I'm not sure about devices
+> that are directly connected to the PCI controller, though. I'll need to
+> go look at some schematics to get a better understanding of these.
+> 
+> Bottom line: I'm wondering if we shouldn't really make these supplies
+> mandatory and in case where we don't care either just leave them away
+> (the regulator framework will supply a dummy regulator in that case) or
+> hook them up to a fixed regulator if that matches the hardware design.
+> 
+> Any thoughts?
+> 
+> Thierry
+> 
+>>   
+>>   Examples:
+>>   =========
+>> @@ -156,6 +162,8 @@ Tegra194:
+>>   			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
+>>   
+>>   		vddio-pex-ctl-supply = <&vdd_1v8ao>;
+>> +		vpcie3v3-supply = <&vdd_3v3_pcie>;
+>> +		vpcie12v-supply = <&vdd_12v_pcie>;
+>>   
+>>   		phys = <&p2u_hsio_2>, <&p2u_hsio_3>, <&p2u_hsio_4>,
+>>   		       <&p2u_hsio_5>;
+>> -- 
+>> 2.17.1
 >>
->> Haven't tried it, but making sure that compile testing keep working is
->> really important.
-
-The driver's code compilation works okay, it's the linkage stage which
-fails during compile-testing.
-
-> Yeah, that variant seems to work for me. I think it's also more correct
-> because the IOMMU_IOVA if IOMMU_SUPPORT dependency really says that the
-> IOVA usage is bound to IOMMU support. If IOMMU support is not enabled,
-> then IOVA is not needed either, so the dummies will do just fine.
-
-Am I understanding correctly that you're suggesting to revert [1][2] and
-get back to the other problem?
-
-[1]
-https://lore.kernel.org/linux-media/dd547b44-7abb-371f-aeee-a82b96f824e2@gmail.com/T/
-[2] https://patchwork.ozlabs.org/patch/1136619/
-
-If we want to keep compile testing, I guess the only reasonable variant
-right now is to select IOMMU_IOVA unconditionally in all of the drivers
-(vde, host1x, drm and etc) and then just ignore that IOVA will be
-compiled-and-unused if IOMMU_SUPPORT=n (note that IOMMU_SUPPORT=y in all
-of default kernel configurations).
