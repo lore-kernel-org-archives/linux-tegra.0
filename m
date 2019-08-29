@@ -1,7 +1,7 @@
 From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH 4/7] iommu/arm-smmu: Add global/context fault implementation hooks
-Date: Thu, 29 Aug 2019 15:47:04 -0700
-Message-ID: <1567118827-26358-5-git-send-email-vdumpa@nvidia.com>
+Subject: [PATCH 1/7] iommu/arm-smmu: add Nvidia SMMUv2 implementation
+Date: Thu, 29 Aug 2019 15:47:01 -0700
+Message-ID: <1567118827-26358-2-git-send-email-vdumpa@nvidia.com>
 References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -11,212 +11,202 @@ Sender: linux-kernel-owner@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, thomasz@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add global/context fault hooks to allow Nvidia SMMU implementation
-handle faults across multiple SMMUs.
+Add Nvidia SMMUv2 implementation and model info.
 
 Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
 ---
- drivers/iommu/arm-smmu-nvidia.c | 127 ++++++++++++++++++++++++++++++++++++++++
- drivers/iommu/arm-smmu.c        |   6 ++
- drivers/iommu/arm-smmu.h        |   4 ++
- 3 files changed, 137 insertions(+)
+ MAINTAINERS                     |  2 +
+ drivers/iommu/Makefile          |  2 +-
+ drivers/iommu/arm-smmu-impl.c   |  2 +
+ drivers/iommu/arm-smmu-nvidia.c | 97 +++++++++++++++++++++++++++++++++++++++++
+ drivers/iommu/arm-smmu.c        |  2 +
+ drivers/iommu/arm-smmu.h        |  2 +
+ 6 files changed, 106 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/iommu/arm-smmu-nvidia.c
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 289fb06..b9d59e51 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15785,9 +15785,11 @@ F:	drivers/i2c/busses/i2c-tegra.c
+ 
+ TEGRA IOMMU DRIVERS
+ M:	Thierry Reding <thierry.reding@gmail.com>
++R:	Krishna Reddy <vdumpa@nvidia.com>
+ L:	linux-tegra@vger.kernel.org
+ S:	Supported
+ F:	drivers/iommu/tegra*
++F:	drivers/iommu/arm-smmu-nvidia.c
+ 
+ TEGRA KBC DRIVER
+ M:	Laxman Dewangan <ldewangan@nvidia.com>
+diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+index a2729aa..7f5489e 100644
+--- a/drivers/iommu/Makefile
++++ b/drivers/iommu/Makefile
+@@ -13,7 +13,7 @@ obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
+ obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o
+ obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += amd_iommu_debugfs.o
+ obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
+-obj-$(CONFIG_ARM_SMMU) += arm-smmu.o arm-smmu-impl.o
++obj-$(CONFIG_ARM_SMMU) += arm-smmu.o arm-smmu-impl.o arm-smmu-nvidia.o
+ obj-$(CONFIG_ARM_SMMU_V3) += arm-smmu-v3.o
+ obj-$(CONFIG_DMAR_TABLE) += dmar.o
+ obj-$(CONFIG_INTEL_IOMMU) += intel-iommu.o intel-pasid.o
+diff --git a/drivers/iommu/arm-smmu-impl.c b/drivers/iommu/arm-smmu-impl.c
+index 5c87a38..e5e595f 100644
+--- a/drivers/iommu/arm-smmu-impl.c
++++ b/drivers/iommu/arm-smmu-impl.c
+@@ -162,6 +162,8 @@ struct arm_smmu_device *arm_smmu_impl_init(struct arm_smmu_device *smmu)
+ 		break;
+ 	case CAVIUM_SMMUV2:
+ 		return cavium_smmu_impl_init(smmu);
++	case NVIDIA_SMMUV2:
++		return nvidia_smmu_impl_init(smmu);
+ 	default:
+ 		break;
+ 	}
 diff --git a/drivers/iommu/arm-smmu-nvidia.c b/drivers/iommu/arm-smmu-nvidia.c
-index a429b2c..b2a3c49 100644
---- a/drivers/iommu/arm-smmu-nvidia.c
+new file mode 100644
+index 0000000..d93ceda
+--- /dev/null
 +++ b/drivers/iommu/arm-smmu-nvidia.c
-@@ -14,6 +14,10 @@
- 
- #define NUM_SMMU_INSTANCES 3
- 
-+static irqreturn_t nsmmu_context_fault_inst(int irq,
-+					    struct arm_smmu_device *smmu,
-+					    int idx, int inst);
+@@ -0,0 +1,97 @@
++// SPDX-License-Identifier: GPL-2.0-only
++// Nvidia ARM SMMU v2 implementation quirks
++// Copyright (C) 2019 NVIDIA CORPORATION.  All rights reserved.
 +
- struct nvidia_smmu {
- 	struct arm_smmu_device	smmu;
- 	int			num_inst;
-@@ -87,12 +91,135 @@ static void nsmmu_tlb_sync(struct arm_smmu_device *smmu, int page,
- 		nsmmu_tlb_sync_wait(smmu, page, sync, status, i);
- }
- 
-+static irqreturn_t nsmmu_global_fault_inst(int irq,
-+					       struct arm_smmu_device *smmu,
-+					       int inst)
++#define pr_fmt(fmt) "nvidia-smmu: " fmt
++
++#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include "arm-smmu.h"
++
++#define NUM_SMMU_INSTANCES 3
++
++struct nvidia_smmu {
++	struct arm_smmu_device	smmu;
++	int			num_inst;
++	void __iomem		*bases[NUM_SMMU_INSTANCES];
++};
++
++#define to_nsmmu(s)	container_of(s, struct nvidia_smmu, smmu)
++
++#define nsmmu_page(smmu, inst, page) \
++	(((inst) ? to_nsmmu(smmu)->bases[(inst)] : smmu->base) + \
++	((page) << smmu->pgshift))
++
++static u32 nsmmu_read_reg(struct arm_smmu_device *smmu,
++			      int page, int offset)
 +{
-+	u32 gfsr, gfsynr0, gfsynr1, gfsynr2;
-+
-+	gfsr = readl_relaxed(nsmmu_page(smmu, inst, 0) + ARM_SMMU_GR0_sGFSR);
-+	gfsynr0 = readl_relaxed(nsmmu_page(smmu, inst, 0) +
-+				ARM_SMMU_GR0_sGFSYNR0);
-+	gfsynr1 = readl_relaxed(nsmmu_page(smmu, inst, 0) +
-+				ARM_SMMU_GR0_sGFSYNR1);
-+	gfsynr2 = readl_relaxed(nsmmu_page(smmu, inst, 0) +
-+				ARM_SMMU_GR0_sGFSYNR2);
-+
-+	if (!gfsr)
-+		return IRQ_NONE;
-+
-+	dev_err_ratelimited(smmu->dev,
-+		"Unexpected global fault, this could be serious\n");
-+	dev_err_ratelimited(smmu->dev,
-+		"\tGFSR 0x%08x, GFSYNR0 0x%08x, GFSYNR1 0x%08x, GFSYNR2 0x%08x\n",
-+		gfsr, gfsynr0, gfsynr1, gfsynr2);
-+
-+	writel_relaxed(gfsr, nsmmu_page(smmu, inst, 0) + ARM_SMMU_GR0_sGFSR);
-+	return IRQ_HANDLED;
++	return readl_relaxed(nsmmu_page(smmu, 0, page) + offset);
 +}
 +
-+static irqreturn_t nsmmu_global_fault(int irq, struct arm_smmu_device *smmu)
++static void nsmmu_write_reg(struct arm_smmu_device *smmu,
++				int page, int offset, u32 val)
 +{
 +	int i;
-+	irqreturn_t irq_ret = IRQ_NONE;
 +
-+	/* Interrupt line is shared between global and context faults.
-+	 * Check for both type of interrupts on either fault handlers.
-+	 */
-+	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++) {
-+		irq_ret = nsmmu_context_fault_inst(irq, smmu, 0, i);
-+		if (irq_ret == IRQ_HANDLED)
-+			return irq_ret;
-+	}
-+
-+	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++) {
-+		irq_ret = nsmmu_global_fault_inst(irq, smmu, i);
-+		if (irq_ret == IRQ_HANDLED)
-+			return irq_ret;
-+	}
-+
-+	return irq_ret;
++	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++)
++		writel_relaxed(val, nsmmu_page(smmu, i, page) + offset);
 +}
 +
-+static irqreturn_t nsmmu_context_fault_bank(int irq,
-+					    struct arm_smmu_device *smmu,
-+					    int idx, int inst)
++static u64 nsmmu_read_reg64(struct arm_smmu_device *smmu,
++				int page, int offset)
 +{
-+	u32 fsr, fsynr, cbfrsynra;
-+	unsigned long iova;
-+
-+	fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-+	if (!(fsr & FSR_FAULT))
-+		return IRQ_NONE;
-+
-+	fsynr = readl_relaxed(nsmmu_page(smmu, inst, smmu->numpage + idx) +
-+			      ARM_SMMU_CB_FSYNR0);
-+	iova = readq_relaxed(nsmmu_page(smmu, inst, smmu->numpage + idx) +
-+			     ARM_SMMU_CB_FAR);
-+	cbfrsynra = readl_relaxed(nsmmu_page(smmu, inst, 1) +
-+				  ARM_SMMU_GR1_CBFRSYNRA(idx));
-+
-+	dev_err_ratelimited(smmu->dev,
-+	"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
-+			    fsr, iova, fsynr, cbfrsynra, idx);
-+
-+	writel_relaxed(fsr, nsmmu_page(smmu, inst, smmu->numpage + idx) +
-+			    ARM_SMMU_CB_FSR);
-+	return IRQ_HANDLED;
++	return readq_relaxed(nsmmu_page(smmu, 0, page) + offset);
 +}
 +
-+static irqreturn_t nsmmu_context_fault_inst(int irq,
-+					    struct arm_smmu_device *smmu,
-+					    int idx, int inst)
++static void nsmmu_write_reg64(struct arm_smmu_device *smmu,
++				  int page, int offset, u64 val)
 +{
-+	irqreturn_t irq_ret = IRQ_NONE;
++	int i;
 +
-+	/* Interrupt line shared between global and all context faults.
-+	 * Check for faults across all contexts.
-+	 */
-+	for (idx = 0; idx < smmu->num_context_banks; idx++) {
-+		irq_ret = nsmmu_context_fault_bank(irq, smmu, idx, inst);
++	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++)
++		writeq_relaxed(val, nsmmu_page(smmu, i, page) + offset);
++}
 +
-+		if (irq_ret == IRQ_HANDLED)
++static const struct arm_smmu_impl nsmmu_impl = {
++	.read_reg = nsmmu_read_reg,
++	.write_reg = nsmmu_write_reg,
++	.read_reg64 = nsmmu_read_reg64,
++	.write_reg64 = nsmmu_write_reg64,
++};
++
++struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
++{
++	int i;
++	struct nvidia_smmu *nsmmu;
++	struct resource *res;
++	struct device *dev = smmu->dev;
++	struct platform_device *pdev = to_platform_device(smmu->dev);
++
++	nsmmu = devm_kzalloc(smmu->dev, sizeof(*nsmmu), GFP_KERNEL);
++	if (!nsmmu)
++		return ERR_PTR(-ENOMEM);
++
++	nsmmu->smmu = *smmu;
++	/* Instance 0 is ioremapped by arm-smmu.c */
++	nsmmu->num_inst = 1;
++
++	for (i = 1; i < NUM_SMMU_INSTANCES; i++) {
++		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
++		if (!res)
 +			break;
++		nsmmu->bases[i] = devm_ioremap_resource(dev, res);
++		if (IS_ERR(nsmmu->bases[i]))
++			return (struct arm_smmu_device *)nsmmu->bases[i];
++		nsmmu->num_inst++;
 +	}
 +
-+	return irq_ret;
++	nsmmu->smmu.impl = &nsmmu_impl;
++	devm_kfree(smmu->dev, smmu);
++	pr_info("Nvidia SMMUv2, Instances=%d\n", nsmmu->num_inst);
++
++	return &nsmmu->smmu;
 +}
-+
-+static irqreturn_t nsmmu_context_fault(int irq,
-+				       struct arm_smmu_device *smmu,
-+				       int cbndx)
-+{
-+	int i;
-+	irqreturn_t irq_ret = IRQ_NONE;
-+
-+	/* Interrupt line is shared between global and context faults.
-+	 * Check for both type of interrupts on either fault handlers.
-+	 */
-+	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++) {
-+		irq_ret = nsmmu_global_fault_inst(irq, smmu, i);
-+		if (irq_ret == IRQ_HANDLED)
-+			return irq_ret;
-+	}
-+
-+	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++) {
-+		irq_ret = nsmmu_context_fault_inst(irq, smmu, cbndx, i);
-+		if (irq_ret == IRQ_HANDLED)
-+			return irq_ret;
-+	}
-+
-+	return irq_ret;
-+}
-+
- static const struct arm_smmu_impl nsmmu_impl = {
- 	.read_reg = nsmmu_read_reg,
- 	.write_reg = nsmmu_write_reg,
- 	.read_reg64 = nsmmu_read_reg64,
- 	.write_reg64 = nsmmu_write_reg64,
- 	.tlb_sync = nsmmu_tlb_sync,
-+	.global_fault = nsmmu_global_fault,
-+	.context_fault = nsmmu_context_fault,
- };
- 
- struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
 diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index f5454e71..9cc532d 100644
+index 5b93c79..46e1641 100644
 --- a/drivers/iommu/arm-smmu.c
 +++ b/drivers/iommu/arm-smmu.c
-@@ -454,6 +454,9 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
- 	int idx = smmu_domain->cfg.cbndx;
+@@ -1871,6 +1871,7 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+ ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
+ ARM_SMMU_MATCH_DATA(qcom_smmuv2, ARM_SMMU_V2, QCOM_SMMUV2);
++ARM_SMMU_MATCH_DATA(nvidia_smmuv2, ARM_SMMU_V2, NVIDIA_SMMUV2);
  
-+	if (smmu->impl->context_fault)
-+		return smmu->impl->context_fault(irq, smmu, idx);
-+
- 	fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
- 	if (!(fsr & FSR_FAULT))
- 		return IRQ_NONE;
-@@ -475,6 +478,9 @@ static irqreturn_t arm_smmu_global_fault(int irq, void *dev)
- 	u32 gfsr, gfsynr0, gfsynr1, gfsynr2;
- 	struct arm_smmu_device *smmu = dev;
- 
-+	if (smmu->impl->global_fault)
-+		return smmu->impl->global_fault(irq, smmu);
-+
- 	gfsr = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_sGFSR);
- 	gfsynr0 = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_sGFSYNR0);
- 	gfsynr1 = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_sGFSYNR1);
-diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
-index d3217f1..dec5e1a 100644
---- a/drivers/iommu/arm-smmu.h
-+++ b/drivers/iommu/arm-smmu.h
-@@ -17,6 +17,7 @@
- #include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/io-pgtable.h>
- #include <linux/iommu.h>
-+#include <linux/irqreturn.h>
- #include <linux/mutex.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -340,6 +341,9 @@ struct arm_smmu_impl {
- 	int (*init_context)(struct arm_smmu_domain *smmu_domain);
- 	void (*tlb_sync)(struct arm_smmu_device *smmu, int page, int sync,
- 			 int status);
-+	irqreturn_t (*global_fault)(int irq, struct arm_smmu_device *smmu);
-+	irqreturn_t (*context_fault)(int irq, struct arm_smmu_device *smmu,
-+				     int cbndx);
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+@@ -1880,6 +1881,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
+ 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
+ 	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
++	{ .compatible = "nvidia,smmu-v2", .data = &nvidia_smmuv2 },
+ 	{ },
  };
  
- static inline void __iomem *arm_smmu_page(struct arm_smmu_device *smmu, int n)
+diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
+index b19b6ca..9645bf1 100644
+--- a/drivers/iommu/arm-smmu.h
++++ b/drivers/iommu/arm-smmu.h
+@@ -220,6 +220,7 @@ enum arm_smmu_implementation {
+ 	ARM_MMU500,
+ 	CAVIUM_SMMUV2,
+ 	QCOM_SMMUV2,
++	NVIDIA_SMMUV2,
+ };
+ 
+ struct arm_smmu_device {
+@@ -398,5 +399,6 @@ static inline void arm_smmu_writeq(struct arm_smmu_device *smmu, int page,
+ 	arm_smmu_writeq((s), ARM_SMMU_CB((s), (n)), (o), (v))
+ 
+ struct arm_smmu_device *arm_smmu_impl_init(struct arm_smmu_device *smmu);
++struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu);
+ 
+ #endif /* _ARM_SMMU_H */
 -- 
 2.1.4
