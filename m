@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/7] soc/tegra: fuse: Implement nvmem device
-Date: Fri, 30 Aug 2019 00:19:06 +0200
-Message-ID: <20190829221911.24876-3-thierry.reding@gmail.com>
+Subject: [PATCH 3/7] soc/tegra: fuse: Add cell information
+Date: Fri, 30 Aug 2019 00:19:07 +0200
+Message-ID: <20190829221911.24876-4-thierry.reding@gmail.com>
 References: <20190829221911.24876-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,157 +23,120 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The nvmem framework provides a generic infrastructure and API to access
-the type of information stored in fuses such as the Tegra FUSE block.
-
-Implement an nvmem device that can be used to access the information in
-a more generic way to decouple consumers from the custom Tegra API and
-to add a more formal way of creating the dependency between the FUSE
-device and the consumers.
+Create nvmem cells for all the fuses currently used by consumers.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 82 ++++++++++++-----------------
- drivers/soc/tegra/fuse/fuse.h       |  3 ++
- 2 files changed, 38 insertions(+), 47 deletions(-)
+ drivers/soc/tegra/fuse/fuse-tegra.c | 90 +++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
 diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 6617a4bd11bb..3ce2138b278b 100644
+index 3ce2138b278b..c6c6a7746046 100644
 --- a/drivers/soc/tegra/fuse/fuse-tegra.c
 +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -8,6 +8,8 @@
- #include <linux/kobject.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/nvmem-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-@@ -31,50 +33,6 @@ static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
- 	[TEGRA_REVISION_A04]     = "A04",
- };
+@@ -86,6 +86,94 @@ static int tegra_fuse_read(void *priv, unsigned int offset, void *value,
+ 	return 0;
+ }
  
--static u8 fuse_readb(struct tegra_fuse *fuse, unsigned int offset)
--{
--	u32 val;
--
--	val = fuse->read(fuse, round_down(offset, 4));
--	val >>= (offset % 4) * 8;
--	val &= 0xff;
--
--	return val;
--}
--
--static ssize_t fuse_read(struct file *fd, struct kobject *kobj,
--			 struct bin_attribute *attr, char *buf,
--			 loff_t pos, size_t size)
--{
--	struct device *dev = kobj_to_dev(kobj);
--	struct tegra_fuse *fuse = dev_get_drvdata(dev);
--	int i;
--
--	if (pos < 0 || pos >= attr->size)
--		return 0;
--
--	if (size > attr->size - pos)
--		size = attr->size - pos;
--
--	for (i = 0; i < size; i++)
--		buf[i] = fuse_readb(fuse, pos + i);
--
--	return i;
--}
--
--static struct bin_attribute fuse_bin_attr = {
--	.attr = { .name = "fuse", .mode = S_IRUGO, },
--	.read = fuse_read,
--};
--
--static int tegra_fuse_create_sysfs(struct device *dev, unsigned int size,
--				   const struct tegra_fuse_info *info)
--{
--	fuse_bin_attr.size = size;
--
--	return device_create_bin_file(dev, &fuse_bin_attr);
--}
--
- static const struct of_device_id car_match[] __initconst = {
- 	{ .compatible = "nvidia,tegra20-car", },
- 	{ .compatible = "nvidia,tegra30-car", },
-@@ -115,9 +73,23 @@ static const struct of_device_id tegra_fuse_match[] = {
- 	{ /* sentinel */ }
- };
- 
-+static int tegra_fuse_read(void *priv, unsigned int offset, void *value,
-+			   size_t bytes)
-+{
-+	unsigned int count = bytes / 4, i;
-+	struct tegra_fuse *fuse = priv;
-+	u32 *buffer = value;
-+
-+	for (i = 0; i < count; i++)
-+		buffer[i] = fuse->read(fuse, offset + i * 4);
-+
-+	return 0;
-+}
++static const struct nvmem_cell_info tegra_fuse_cells[] = {
++	{
++		.name = "tsensor-cpu1",
++		.offset = 0x084,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-cpu2",
++		.offset = 0x088,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-cpu0",
++		.offset = 0x098,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "xusb-pad-calibration",
++		.offset = 0x0f0,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-cpu3",
++		.offset = 0x12c,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "sata-calibration",
++		.offset = 0x124,
++		.bytes = 1,
++		.bit_offset = 0,
++		.nbits = 2,
++	}, {
++		.name = "tsensor-gpu",
++		.offset = 0x154,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-mem0",
++		.offset = 0x158,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-mem1",
++		.offset = 0x15c,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-pllx",
++		.offset = 0x160,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-common",
++		.offset = 0x180,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "tsensor-realignment",
++		.offset = 0x1fc,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "gpu-calibration",
++		.offset = 0x204,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	}, {
++		.name = "xusb-pad-calibration-ext",
++		.offset = 0x250,
++		.bytes = 4,
++		.bit_offset = 0,
++		.nbits = 32,
++	},
++};
 +
  static int tegra_fuse_probe(struct platform_device *pdev)
  {
  	void __iomem *base = fuse->base;
-+	struct nvmem_config nvmem;
- 	struct resource *res;
- 	int err;
- 
-@@ -150,9 +122,25 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 			goto restore;
- 	}
- 
--	if (tegra_fuse_create_sysfs(&pdev->dev, fuse->soc->info->size,
--				    fuse->soc->info)) {
--		err = -ENODEV;
-+	memset(&nvmem, 0, sizeof(nvmem));
-+	nvmem.dev = &pdev->dev;
-+	nvmem.name = "fuse";
-+	nvmem.id = -1;
-+	nvmem.owner = THIS_MODULE;
-+	nvmem.type = NVMEM_TYPE_OTP;
-+	nvmem.read_only = true;
-+	nvmem.root_only = true;
-+	nvmem.reg_read = tegra_fuse_read;
-+	nvmem.size = fuse->soc->info->size;
-+	nvmem.word_size = 4;
-+	nvmem.stride = 4;
-+	nvmem.priv = fuse;
-+
-+	fuse->nvmem = devm_nvmem_register(&pdev->dev, &nvmem);
-+	if (IS_ERR(fuse->nvmem)) {
-+		err = PTR_ERR(fuse->nvmem);
-+		dev_err(&pdev->dev, "failed to register NVMEM device: %d\n",
-+			err);
- 		goto restore;
- 	}
- 
-diff --git a/drivers/soc/tegra/fuse/fuse.h b/drivers/soc/tegra/fuse/fuse.h
-index 7230cb330503..32bf6c070ae7 100644
---- a/drivers/soc/tegra/fuse/fuse.h
-+++ b/drivers/soc/tegra/fuse/fuse.h
-@@ -13,6 +13,7 @@
- #include <linux/dmaengine.h>
- #include <linux/types.h>
- 
-+struct nvmem_device;
- struct tegra_fuse;
- 
- struct tegra_fuse_info {
-@@ -48,6 +49,8 @@ struct tegra_fuse {
- 		dma_addr_t phys;
- 		u32 *virt;
- 	} apbdma;
-+
-+	struct nvmem_device *nvmem;
- };
- 
- void tegra_init_revision(void);
+@@ -127,6 +215,8 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+ 	nvmem.name = "fuse";
+ 	nvmem.id = -1;
+ 	nvmem.owner = THIS_MODULE;
++	nvmem.cells = tegra_fuse_cells;
++	nvmem.ncells = ARRAY_SIZE(tegra_fuse_cells);
+ 	nvmem.type = NVMEM_TYPE_OTP;
+ 	nvmem.read_only = true;
+ 	nvmem.root_only = true;
 -- 
 2.22.0
