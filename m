@@ -1,14 +1,14 @@
 From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 2/7] dt-bindings: arm-smmu: Add binding for nvidia,smmu-v2
-Date: Fri, 30 Aug 2019 15:07:58 +0300
-Message-ID: <86cc6861-08e6-7e16-cb85-93de0aa62087@kapsi.fi>
+Subject: Re: [PATCH 6/7] arm64: tegra: Add DT node for T194 SMMU
+Date: Fri, 30 Aug 2019 15:09:32 +0300
+Message-ID: <ba06d6b8-c6b9-f9bd-c2c1-d5e39292f67d@kapsi.fi>
 References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
- <1567118827-26358-3-git-send-email-vdumpa@nvidia.com>
+ <1567118827-26358-7-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1567118827-26358-3-git-send-email-vdumpa@nvidia.com>
+In-Reply-To: <1567118827-26358-7-git-send-email-vdumpa@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krishna Reddy <vdumpa@nvidia.com>
@@ -16,28 +16,103 @@ Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linu
 List-Id: linux-tegra@vger.kernel.org
 
 On 30.8.2019 1.47, Krishna Reddy wrote:
-> Add binding doc for Nvidia's smmu-v2 implementation.
+> Add DT node for T194 SMMU to enable SMMU support.
 > 
 > Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
 > ---
->   Documentation/devicetree/bindings/iommu/arm,smmu.txt | 1 +
->   1 file changed, 1 insertion(+)
+>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 75 ++++++++++++++++++++++++++++++++
+>   1 file changed, 75 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 3133f3b..0de3759 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -17,6 +17,7 @@ conditions.
->                           "arm,mmu-401"
->                           "arm,mmu-500"
->                           "cavium,smmu-v2"
-> +                        "nidia,smmu-v2"
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> index d906958..ad509bb 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> @@ -1401,6 +1401,81 @@
+>   			  0x82000000 0x0  0x40000000 0x1f 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
+>   	};
+>   
+> +	smmu: iommu@12000000 {
+> +		compatible = "nvidia,smmu-v2";
 
-nvidia
+Should we have a compatibility string like "nvidia,tegra194-smmu" so 
+that we can have other chips with SMMUv2 that could be different?
 
 Mikko
 
->                           "qcom,smmu-v2"
->   
->                     depending on the particular implementation and/or the
+> +		reg = <0 0x12000000 0 0x800000>,
+> +		      <0 0x11000000 0 0x800000>,
+> +		      <0 0x10000000 0 0x800000>;
+> +		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+> +		stream-match-mask = <0x7f80>;
+> +		#global-interrupts = <1>;
+> +		#iommu-cells = <1>;
+> +	};
+> +
+>   	sysram@40000000 {
+>   		compatible = "nvidia,tegra194-sysram", "mmio-sram";
+>   		reg = <0x0 0x40000000 0x0 0x50000>;
 > 
