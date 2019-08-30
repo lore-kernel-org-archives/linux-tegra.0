@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/4] ahci: tegra: use regulator_bulk_set_supply_names()
-Date: Fri, 30 Aug 2019 09:17:38 +0200
-Message-ID: <20190830071740.4267-3-brgl@bgdev.pl>
+Subject: [PATCH 3/4] phy: tegra: use regulator_bulk_set_supply_names()
+Date: Fri, 30 Aug 2019 09:17:39 +0200
+Message-ID: <20190830071740.4267-4-brgl@bgdev.pl>
 References: <20190830071740.4267-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -18,32 +18,32 @@ Use the new regulator helper instead of a for loop.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/ata/ahci_tegra.c | 6 +++---
+ drivers/phy/tegra/xusb.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-index e3163dae5e85..cb55ebc1725b 100644
---- a/drivers/ata/ahci_tegra.c
-+++ b/drivers/ata/ahci_tegra.c
-@@ -483,7 +483,6 @@ static int tegra_ahci_probe(struct platform_device *pdev)
- 	struct tegra_ahci_priv *tegra;
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 2ea8497af82a..faf1137d1432 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -862,7 +862,6 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 	struct tegra_xusb_padctl *padctl;
+ 	const struct of_device_id *match;
  	struct resource *res;
- 	int ret;
 -	unsigned int i;
+ 	int err;
  
- 	hpriv = ahci_platform_get_resources(pdev, 0);
- 	if (IS_ERR(hpriv))
-@@ -543,8 +542,9 @@ static int tegra_ahci_probe(struct platform_device *pdev)
- 	if (!tegra->supplies)
- 		return -ENOMEM;
+ 	/* for backwards compatibility with old device trees */
+@@ -907,8 +906,9 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 		goto remove;
+ 	}
  
--	for (i = 0; i < tegra->soc->num_supplies; i++)
--		tegra->supplies[i].supply = tegra->soc->supply_names[i];
-+	regulator_bulk_set_supply_names(tegra->supplies,
-+					tegra->soc->supply_names,
-+					tegra->soc->num_supplies);
+-	for (i = 0; i < padctl->soc->num_supplies; i++)
+-		padctl->supplies[i].supply = padctl->soc->supply_names[i];
++	regulator_bulk_set_supply_names(padctl->supplies,
++					padctl->soc->supply_names,
++					padctl->soc->num_supplies);
  
- 	ret = devm_regulator_bulk_get(&pdev->dev,
- 				      tegra->soc->num_supplies,
+ 	err = devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
+ 				      padctl->supplies);
 -- 
 2.21.0
