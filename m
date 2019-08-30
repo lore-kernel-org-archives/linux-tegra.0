@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 4/4] usb: host: xhci-tegra: use regulator_bulk_set_supply_names()
-Date: Fri, 30 Aug 2019 09:17:40 +0200
-Message-ID: <20190830071740.4267-5-brgl@bgdev.pl>
+Subject: [PATCH 2/4] ahci: tegra: use regulator_bulk_set_supply_names()
+Date: Fri, 30 Aug 2019 09:17:38 +0200
+Message-ID: <20190830071740.4267-3-brgl@bgdev.pl>
 References: <20190830071740.4267-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -18,16 +18,24 @@ Use the new regulator helper instead of a for loop.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/usb/host/xhci-tegra.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/ata/ahci_tegra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index dafc65911fc0..9ed573bc89aa 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1128,8 +1128,9 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto put_powerdomains;
- 	}
+diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+index e3163dae5e85..cb55ebc1725b 100644
+--- a/drivers/ata/ahci_tegra.c
++++ b/drivers/ata/ahci_tegra.c
+@@ -483,7 +483,6 @@ static int tegra_ahci_probe(struct platform_device *pdev)
+ 	struct tegra_ahci_priv *tegra;
+ 	struct resource *res;
+ 	int ret;
+-	unsigned int i;
+ 
+ 	hpriv = ahci_platform_get_resources(pdev, 0);
+ 	if (IS_ERR(hpriv))
+@@ -543,8 +542,9 @@ static int tegra_ahci_probe(struct platform_device *pdev)
+ 	if (!tegra->supplies)
+ 		return -ENOMEM;
  
 -	for (i = 0; i < tegra->soc->num_supplies; i++)
 -		tegra->supplies[i].supply = tegra->soc->supply_names[i];
@@ -35,7 +43,7 @@ index dafc65911fc0..9ed573bc89aa 100644
 +					tegra->soc->supply_names,
 +					tegra->soc->num_supplies);
  
- 	err = devm_regulator_bulk_get(&pdev->dev, tegra->soc->num_supplies,
- 				      tegra->supplies);
+ 	ret = devm_regulator_bulk_get(&pdev->dev,
+ 				      tegra->soc->num_supplies,
 -- 
 2.21.0
