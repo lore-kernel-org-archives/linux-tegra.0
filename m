@@ -1,91 +1,62 @@
-From: Andrew Murray <andrew.murray@arm.com>
-Subject: Re: [PATCH V3 6/6] arm64: tegra: Add PCIe slot supply information in
- p2972-0000 platform
-Date: Mon, 2 Sep 2019 11:47:56 +0100
-Message-ID: <20190902104756.GE9720@e119886-lin.cambridge.arm.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V3 1/6] dt-bindings: PCI: tegra: Add sideband pins
+ configuration entries
+Date: Mon, 2 Sep 2019 13:38:18 +0200
+Message-ID: <20190902113818.GD19263@ulmo>
 References: <20190828172850.19871-1-vidyas@nvidia.com>
- <20190828172850.19871-7-vidyas@nvidia.com>
+ <20190828172850.19871-2-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LTeJQqWS0MN7I/qa"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190828172850.19871-7-vidyas@nvidia.com>
+In-Reply-To: <20190828172850.19871-2-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 10:58:50PM +0530, Vidya Sagar wrote:
-> Add 3.3V and 12V supplies regulators information of x16 PCIe slot in
-> p2972-0000 platform which is owned by C5 controller and also enable C5
-> controller.
-> 
+
+--LTeJQqWS0MN7I/qa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 28, 2019 at 10:58:45PM +0530, Vidya Sagar wrote:
+> Add optional bindings "pinctrl-names" and "pinctrl-0" to describe pin
+> configuration information of a particular PCIe controller.
+>=20
 > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-
 > ---
 > V3:
 > * None
-> 
+>=20
 > V2:
 > * None
-> 
->  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++++++++++++++++
->  .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +++-
->  2 files changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> index 62e07e1197cc..4c38426a6969 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> @@ -289,5 +289,29 @@
->  			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
->  			enable-active-high;
->  		};
-> +
-> +		vdd_3v3_pcie: regulator@2 {
-> +			compatible = "regulator-fixed";
-> +			reg = <2>;
-> +
-> +			regulator-name = "PEX_3V3";
-> +			regulator-min-microvolt = <3300000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			gpio = <&gpio TEGRA194_MAIN_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
-> +			regulator-boot-on;
-> +			enable-active-high;
-> +		};
-> +
-> +		vdd_12v_pcie: regulator@3 {
-> +			compatible = "regulator-fixed";
-> +			reg = <3>;
-> +
-> +			regulator-name = "VDD_12V";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 1) GPIO_ACTIVE_LOW>;
-> +			regulator-boot-on;
-> +			enable-active-low;
-> +		};
->  	};
->  };
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> index 23597d53c9c9..d47cd8c4dd24 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> @@ -93,9 +93,11 @@
->  	};
->  
->  	pcie@141a0000 {
-> -		status = "disabled";
-> +		status = "okay";
->  
->  		vddio-pex-ctl-supply = <&vdd_1v8ao>;
-> +		vpcie3v3-supply = <&vdd_3v3_pcie>;
-> +		vpcie12v-supply = <&vdd_12v_pcie>;
->  
->  		phys = <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
->  		       <&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
-> -- 
-> 2.17.1
-> 
+>=20
+>  .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--LTeJQqWS0MN7I/qa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1s/ycACgkQ3SOs138+
+s6FLlQ//RFadCCy0+ywuyNwstWFl2JPShvqLv7sExZxKzKf4dNbyo0pVeTDUFWDX
+Xs25hc51nQ3J6PSG/U8KFvEhhZjYizZNXlCr0kdFrsaM+NAOejcC2BQ+cArIDb2w
+Gq3FBww/kgr1UCbfiDIThGlBgwalXABkZ32vk7pu9TKbDpMZLWyCHPEms6fFwo1g
+RhSLQJlMkf7fm4sp1ZFUvzvUjm5lEkqqQreRAfMO7NgVKwziBsrpc2wkNNwHqj9w
+XjeQ0hP2pSwKeB6IHGA4JFioQlb1eYhG8dqTAQem7qV0uOV9n2oIE86GgjiBXqea
+F3LiggKv47SQFBbyx/0TofZW3UVHWgtPlbZm5dIb/qPreNBX4/CKyAIZhn2Nt073
+pj4IZdllTRlPGchj0eW9a6W4PKOz/q/ZksK1kWjbw3yd9oKI7gpePqOoed416ALO
+5sVkOi1siz7sIyj/VowG7rRfPC/QqRtoVGVEYHtrdox2cPqjvXb30uCp8hqB9PZ0
+gXBVi/b0kWfAzl1S5Bwuh2WcXSkNEaUtSC4mnNLsbgiSA3P4qszsb9g4GZwrVN5T
+TlrWTAk7Hsm8AefUMM1SxseUH/VrkHnWDBEuN/K9t620vz8lyWCLcyAj+UdAWzUZ
+IXXXM7Jy2zYyR319UK74mkMxGokz1Pue5oJLciykKIyy+g9cDMQ=
+=eTUT
+-----END PGP SIGNATURE-----
+
+--LTeJQqWS0MN7I/qa--
