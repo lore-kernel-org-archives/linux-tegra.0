@@ -1,65 +1,51 @@
-From: Andrew Murray <andrew.murray@arm.com>
-Subject: Re: [PATCH V3 2/6] dt-bindings: PCI: tegra: Add PCIe slot supplies
- regulator entries
-Date: Mon, 2 Sep 2019 11:41:08 +0100
-Message-ID: <20190902104108.GC9720@e119886-lin.cambridge.arm.com>
-References: <20190828172850.19871-1-vidyas@nvidia.com>
- <20190828172850.19871-3-vidyas@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] soc/tegra: fuse: Add clock error check in
+ tegra_fuse_readl
+Date: Mon, 2 Sep 2019 11:45:01 +0100
+Message-ID: <95734aa4-c7cb-17a2-fa4c-416a5a40b3e6@nvidia.com>
+References: <1566991129-13479-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190828172850.19871-3-vidyas@nvidia.com>
+In-Reply-To: <1566991129-13479-1-git-send-email-nkristam@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Nagarjuna Kristam <nkristam@nvidia.com>, thierry.reding@gmail.com, kishon@ti.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 10:58:46PM +0530, Vidya Sagar wrote:
-> Add optional bindings "vpcie3v3-supply" and "vpcie12v-supply" to describe
-> regulators of a PCIe slot's supplies 3.3V and 12V provided the platform
-> is designed to have regulator controlled slot supplies.
+
+On 28/08/2019 12:18, Nagarjuna Kristam wrote:
+> Tegra fuse clock handle is retrieved in tegra_fuse_probe().
+> tegra_fuse_readl() is exported symbol, which can be called from drivers
+> at any time. tegra_fuse_readl() enables fuse clock and reads corresponding
+> fuse register offset.
 > 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-
+> Calling tegra_fuse_readl() before tegra_fuse_probe(), will cause data
+> abort. Add DEFER_PROBE error check for fuse clock in tegra_fuse_readl(),
+> to avoid enabling of fuse clock, before clock is available.
+> 
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 > ---
-> V3:
-> * None
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> V2:
-> * None
-> 
->  .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-> index 0ac1b867ac24..b739f92da58e 100644
-> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-> @@ -104,6 +104,12 @@ Optional properties:
->     specified in microseconds
->  - nvidia,aspm-l0s-entrance-latency-us: ASPM L0s entrance latency to be
->     specified in microseconds
-> +- vpcie3v3-supply: A phandle to the regulator node that supplies 3.3V to the slot
-> +  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
-> +  in p2972-0000 platform).
-> +- vpcie12v-supply: A phandle to the regulator node that supplies 12V to the slot
-> +  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
-> +  in p2972-0000 platform).
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+> index 3eb44e6..21b39b7 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -186,7 +186,7 @@ u32 __init tegra_fuse_read_early(unsigned int offset)
 >  
->  Examples:
->  =========
-> @@ -156,6 +162,8 @@ Tegra194:
->  			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
->  
->  		vddio-pex-ctl-supply = <&vdd_1v8ao>;
-> +		vpcie3v3-supply = <&vdd_3v3_pcie>;
-> +		vpcie12v-supply = <&vdd_12v_pcie>;
->  
->  		phys = <&p2u_hsio_2>, <&p2u_hsio_3>, <&p2u_hsio_4>,
->  		       <&p2u_hsio_5>;
-> -- 
-> 2.17.1
-> 
+>  int tegra_fuse_readl(unsigned long offset, u32 *value)
+>  {
+> -	if (!fuse->read)
+> +	if (!fuse->read || (PTR_ERR(fuse->clk) == -EPROBE_DEFER))
+>  		return -EPROBE_DEFER;
+
+What about the case where fuse->clk is NULL or a different error value?
+
+Jon
+
+-- 
+nvpublic
