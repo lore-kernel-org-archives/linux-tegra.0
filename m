@@ -1,53 +1,68 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] phy: tegra: xusb: remove unused variable
-Date: Mon, 2 Sep 2019 09:48:08 +0200
-Message-ID: <20190902074808.GC930@ulmo>
-References: <1567394159-22572-1-git-send-email-chunfeng.yun@mediatek.com>
+From: Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH V3 3/6] PCI: tegra: Add support to configure sideband pins
+Date: Mon, 2 Sep 2019 11:18:56 +0100
+Message-ID: <20190902101855.GV14582@e119886-lin.cambridge.arm.com>
+References: <20190828172850.19871-1-vidyas@nvidia.com>
+ <20190828172850.19871-4-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1567394159-22572-1-git-send-email-chunfeng.yun@mediatek.com>
+In-Reply-To: <20190828172850.19871-4-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Aug 28, 2019 at 10:58:47PM +0530, Vidya Sagar wrote:
+> Add support to configure sideband signal pins when information is present
+> in respective controller's device-tree node.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 
---kfjH4zxOES6UT95V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
 
-On Mon, Sep 02, 2019 at 11:15:59AM +0800, Chunfeng Yun wrote:
-> The local variable @priv is set but not used, can be removed
->=20
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 > ---
->  drivers/phy/tegra/xusb-tegra210.c | 3 ---
->  1 file changed, 3 deletions(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---kfjH4zxOES6UT95V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1syTgACgkQ3SOs138+
-s6Ggyg/+JTfKlub2rlBotR8tVq+WnX4mOXHTpdHY2C6sec6x8dSNg7ASmQ8mPheO
-kvlojh5AYFPZAeunSAE28f6WmKLTL1mOp4QvipmBfuNgzf9o0gDJqlAAXxffiCG3
-1nUDkM6x8/83lYLC5oF0ML4XbDsemDC7rnbBtsu79F7A1ETPX2N6EF8QM9y4FPzz
-VAP7hNjOHI07c9zPuseEz5TrC3Ts/jH22/x9hefRwTmRlt+DmCjujz5zAKd0Nc4S
-5In8xmT9WSDDDPf+ENjwZA1gASFyLEPKFM8qsqp3DpY/qH9ik9qszey+WHdAhNSy
-dGdBiQI3C2MHQG6ZGB/7etLnp2kGN4334KU0Df282/gcW9kQuW4/2niqgH1dgYve
-2cIuN6N0Tn14hUl/VgOcMG/S8C0ykZ6Z/ghuZOrXLtHAIeUWLc2nUkU14/MZ/6Jx
-L63bB5RdVyglvjmsLWnxZ3mVEonTgwA6K86+jUI1ojotyaHMC8GJGxZoS5LUeU6A
-Y2OXgKXYXakxjtrb9QCMeVx1vkBsVuqeU5BQdfgsp3ueZ+5CZE+MiWHQs2uifAz4
-suDUyv4okbf1HRh7/F+I6i7QYk6TRLB7vf18QFVcJxNZfze8sQMe3sN+y6b/wvRp
-NPeDuuljtSyJBdITIAbiMzG38znpSF+k+BEDmogHtRnSNx7w1tE=
-=jMD6
------END PGP SIGNATURE-----
-
---kfjH4zxOES6UT95V--
+> V3:
+> * Used 'dev' instead of 'pcie->dev'
+> 
+> V2:
+> * Addressed review comment from Andrew Murray
+> * Handled failure case of pinctrl_pm_select_default_state() cleanly
+> 
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index fc0dbeb31d78..77fa6f70bc96 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1304,8 +1304,13 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+>  	if (ret < 0) {
+>  		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
+>  			ret);
+> -		pm_runtime_disable(dev);
+> -		return ret;
+> +		goto fail_pm_get_sync;
+> +	}
+> +
+> +	ret = pinctrl_pm_select_default_state(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to configure sideband pins: %d\n", ret);
+> +		goto fail_pinctrl;
+>  	}
+>  
+>  	tegra_pcie_init_controller(pcie);
+> @@ -1332,7 +1337,9 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+>  
+>  fail_host_init:
+>  	tegra_pcie_deinit_controller(pcie);
+> +fail_pinctrl:
+>  	pm_runtime_put_sync(dev);
+> +fail_pm_get_sync:
+>  	pm_runtime_disable(dev);
+>  	return ret;
+>  }
+> -- 
+> 2.17.1
+> 
