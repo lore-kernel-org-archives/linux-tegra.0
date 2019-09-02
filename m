@@ -1,70 +1,120 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V3 4/6] PCI: tegra: Add support to enable slot regulators
-Date: Mon, 2 Sep 2019 13:40:00 +0200
-Message-ID: <20190902114000.GG19263@ulmo>
-References: <20190828172850.19871-1-vidyas@nvidia.com>
- <20190828172850.19871-5-vidyas@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9/eUdp+dLtKXvemk"
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: provide regulator_bulk_set_supply_names()" to the regulator tree
+Date: Mon,  2 Sep 2019 13:23:59 +0100 (BST)
+Message-ID: <20190902122359.DF0C42742CCB@ypsilon.sirena.org.uk>
+References: <20190830071740.4267-2-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190828172850.19871-5-vidyas@nvidia.com>
+In-Reply-To: <20190830071740.4267-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, JC Kuo <jckuo@nvidia.com>, Jens Axboe <axboe@kernel.dk>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, Mark Brown <broonie@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
---9/eUdp+dLtKXvemk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   regulator: provide regulator_bulk_set_supply_names()
 
-On Wed, Aug 28, 2019 at 10:58:48PM +0530, Vidya Sagar wrote:
-> Add support to get regulator information of 3.3V and 12V supplies of a PC=
-Ie
-> slot from the respective controller's device-tree node and enable those
-> supplies. This is required in platforms like p2972-0000 where the supplies
-> to x16 slot owned by C5 controller need to be enabled before attempting to
-> enumerate the devices.
->=20
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> V3:
-> * Added a dev_err() print for failure case of tegra_pcie_get_slot_regulat=
-ors() API
-> * Modified to make 100ms sleep valid only if at least one of the regulato=
-r handles exist
->=20
-> V2:
-> * Addressed review comments from Thierry Reding and Andrew Murray
-> * Handled failure case of devm_regulator_get_optional() for -ENODEV clean=
-ly
->=20
->  drivers/pci/controller/dwc/pcie-tegra194.c | 83 ++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
+has been applied to the regulator tree at
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
 
---9/eUdp+dLtKXvemk
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1s/5AACgkQ3SOs138+
-s6GrjA/+MtsbQCfp8LKNLtXIAB9YZZ4egzdAnTHcT5Q8avyAv+spu6XTF4QUYTXr
-ddGsqMuqZb6GFzPuALVW538dPpZJNbxKj2SAYXX8R+peSTCLi7q2iYbVRLXy87LX
-bfa1a2ZvUB6QCbUyjtrVrGxJ7qMznfRH8GRaIkRPzvYhs9vceoSdUMstxfwdV+lo
-5BO0x3mbWxm1EclBwHt+6DG0DYSLn7jmXYKJMc2Vly9Kuw3tApOyM2iHuiAs8zTO
-9BmHFzKa88QsF/7Uk11rpFc2AnCbsn8nSTXbyRwebGhOMbosBVLgGhlt43trzHiM
-uuYjh7UNfeHKQ2I9qmbaze/TaDC8kJcbCsNyxZkFBpiGmtFYyt8t59sEDVlm8gtl
-bq0UQGhV5hn77I8KY5j0nQoRAlcZUrfg959QvIvTq3wq7YXnPXxmbniSEJceAzuL
-aU2PJ2hbygWQgjmeuvB8lTXxEMhv/RfzIUVS1NnPSq02vjOGihf7prSN8F6VAoom
-HoUXgjQVEAdU/lo3nBuJt977fv5zVH7cOEgG6aJMpqPbFNvk4rm+QuYB5ED8+mDY
-Dvssm1YWsZe64dSgdY8XpD7/Vvbe0RTHu1dSXsC5KjhfTKkHlfjJm3xia/HyjDwD
-OYJPDbss7TA8RH64Wgczu1N7WQVfvDv2q5wdqHmA/f9EasuG4j8=
-=UhQc
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---9/eUdp+dLtKXvemk--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From d0087e72710ca7d1b309bf427286da58418ea89e Mon Sep 17 00:00:00 2001
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Fri, 30 Aug 2019 09:17:37 +0200
+Subject: [PATCH] regulator: provide regulator_bulk_set_supply_names()
+
+There are many regulator consumers who - before using the regulator
+bulk functions - set the supply names in regulator_bulk_data using
+a for loop.
+
+Let's provide a simple helper in the consumer API that allows users
+to do the same with a single function call.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Link: https://lore.kernel.org/r/20190830071740.4267-2-brgl@bgdev.pl
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/helpers.c        | 21 +++++++++++++++++++++
+ include/linux/regulator/consumer.h | 12 ++++++++++++
+ 2 files changed, 33 insertions(+)
+
+diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
+index 4986cc5064a1..ca3dc3f3bb29 100644
+--- a/drivers/regulator/helpers.c
++++ b/drivers/regulator/helpers.c
+@@ -860,3 +860,24 @@ int regulator_get_current_limit_regmap(struct regulator_dev *rdev)
+ 	return -EINVAL;
+ }
+ EXPORT_SYMBOL_GPL(regulator_get_current_limit_regmap);
++
++/**
++ * regulator_bulk_set_supply_names - initialize the 'supply' fields in an array
++ *                                   of regulator_bulk_data structs
++ *
++ * @consumers: array of regulator_bulk_data entries to initialize
++ * @supply_names: array of supply name strings
++ * @num_supplies: number of supply names to initialize
++ *
++ * Note: the 'consumers' array must be the size of 'num_supplies'.
++ */
++void regulator_bulk_set_supply_names(struct regulator_bulk_data *consumers,
++				     const char *const *supply_names,
++				     unsigned int num_supplies)
++{
++	unsigned int i;
++
++	for (i = 0; i < num_supplies; i++)
++		consumers[i].supply = supply_names[i];
++}
++EXPORT_SYMBOL_GPL(regulator_bulk_set_supply_names);
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index 815983419375..6d2181a76987 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -281,6 +281,12 @@ void devm_regulator_unregister_notifier(struct regulator *regulator,
+ void *regulator_get_drvdata(struct regulator *regulator);
+ void regulator_set_drvdata(struct regulator *regulator, void *data);
+ 
++/* misc helpers */
++
++void regulator_bulk_set_supply_names(struct regulator_bulk_data *consumers,
++				     const char *const *supply_names,
++				     unsigned int num_supplies);
++
+ #else
+ 
+ /*
+@@ -580,6 +586,12 @@ static inline int regulator_list_voltage(struct regulator *regulator, unsigned s
+ 	return -EINVAL;
+ }
+ 
++void regulator_bulk_set_supply_names(struct regulator_bulk_data *consumers,
++				     const char *const *supply_names,
++				     unsigned int num_supplies)
++{
++}
++
+ #endif
+ 
+ static inline int regulator_set_voltage_triplet(struct regulator *regulator,
+-- 
+2.20.1
