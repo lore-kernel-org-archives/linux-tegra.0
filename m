@@ -1,87 +1,48 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/1] merge_config.sh: ignore unwanted grep errors
-Date: Mon, 2 Sep 2019 15:53:39 +0100
-Message-ID: <ff9dccb2-9a4f-0995-0a0c-926b5c97862e@nvidia.com>
-References: <4f92e9b3a88e60c8b5962504d77bc596442b0a40.1567023309.git.guillaume.tucker@collabora.com>
- <b1dc3c40-b658-211e-811c-e13083303d48@collabora.com>
- <a302a6fe-8f22-9ae6-559f-5b2ad13d5b05@nvidia.com>
- <b4631303-37b8-2bc8-8e97-59f8b50ac60f@collabora.com>
- <cb711681-40fb-80df-e471-565b542b5197@nvidia.com>
- <4dcc3258-8909-e2de-2836-378e8e39594a@collabora.com>
+From: Guillaume Tucker <guillaume.tucker@collabora.com>
+Subject: [PATCH v2] merge_config.sh: ignore unwanted grep errors
+Date: Mon,  2 Sep 2019 16:18:36 +0100
+Message-ID: <a60fe77a1475ba960ad9fc851f1ace2196b661b8.1567436778.git.guillaume.tucker@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4dcc3258-8909-e2de-2836-378e8e39594a@collabora.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guillaume Tucker <guillaume.tucker@collabora.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, linux-tegra <linux-tegra@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, Mark Brown <broonie@kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, linux-tegra@vger.kernel.org, Guillaume Tucker <guillaume.tucker@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
+The merge_config.sh script verifies that all the config options have
+their expected value in the resulting file and prints any issues as
+warnings.  These checks aren't intended to be treated as errors given
+the current implementation.  However, since "set -e" was added, if the
+grep command to look for a config option does not find it the script
+will then abort prematurely.
 
-On 02/09/2019 15:49, Guillaume Tucker wrote:
-> On 02/09/2019 15:32, Jon Hunter wrote:
->>
->> On 02/09/2019 15:26, Guillaume Tucker wrote:
->>> On 02/09/2019 15:21, Jon Hunter wrote:
->>>>
->>>> On 02/09/2019 15:14, Guillaume Tucker wrote:
->>>>> + Jon Hunter who hit a similar issue
->>>>
->>>> Thanks for adding me.
->>>>
->>>>> On 28/08/2019 21:19, Guillaume Tucker wrote:
->>>>>> The merge_config.sh script verifies that all the config options have
->>>>>> their expected value in the resulting file and prints any issues as
->>>>>> warnings.  These checks aren't intended to be treated as errors given
->>>>>> the current implementation.  However, since "set -e" was added, if the
->>>>>> grep command to look for a config option does not find it the script
->>>>>> will then abort prematurely.
->>>>>>
->>>>>> Handle the case where the grep exit status is non-zero by setting
->>>>>> ACTUAL_VAL to an empty string to restore previous functionality.
->>>>>>
->>>>>> Fixes: cdfca821571d ("merge_config.sh: Check error codes from make")
->>>>>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
->>>>>> ---
->>>>>>  scripts/kconfig/merge_config.sh | 2 +-
->>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
->>>>>> index d924c51d28b7..d673268d414b 100755
->>>>>> --- a/scripts/kconfig/merge_config.sh
->>>>>> +++ b/scripts/kconfig/merge_config.sh
->>>>>> @@ -177,7 +177,7 @@ make KCONFIG_ALLCONFIG=$TMP_FILE $OUTPUT_ARG $ALLTARGET
->>>>>>  for CFG in $(sed -n -e "$SED_CONFIG_EXP1" -e "$SED_CONFIG_EXP2" $TMP_FILE); do
->>>>>>  
->>>>>>  	REQUESTED_VAL=$(grep -w -e "$CFG" $TMP_FILE)
->>>>>> -	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG")
->>>>>> +	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG" || echo)
->>>>
->>>> Shouldn't this just be 'true' instead of 'echo'?
->>>
->>> I just explained why I used "echo" on your thread.  Essentially,
->>> I think both can be used but "echo" made more sense to me because
->>> the script is then using the output string from the command
->>> rather than the exit status.
->>
->> Yes just saw that. However, I don't think that using 'echo' is
->> necessary. The grep command does not output anything and so the variable
->> will essentially be an empty string, we just need to ensure that no
->> error is returned from the command. In cases such as these I always use
->> 'true' in conjunction with grep.
-> 
-> Sure, that makes sense too.  Your solution is arguably a bit
-> simpler so I agree it would be better to use "true" here.
-> 
-> I can submit a v2 with "true" if that helps, unless you prefer to
-> send your version of the fix yourself?
+Handle the case where the grep exit status is non-zero by setting
+ACTUAL_VAL to an empty string to restore previous functionality.
 
-Seeing as you have already created the patch, please go ahead and send.
+Fixes: cdfca821571d ("merge_config.sh: Check error codes from make")
+Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+---
 
-Thanks
-Jon
+Notes:
+    v2: use true rather than echo as per Jon Hunter's suggestion
 
+ scripts/kconfig/merge_config.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+index d924c51d28b7..f2cc10b1d404 100755
+--- a/scripts/kconfig/merge_config.sh
++++ b/scripts/kconfig/merge_config.sh
+@@ -177,7 +177,7 @@ make KCONFIG_ALLCONFIG=$TMP_FILE $OUTPUT_ARG $ALLTARGET
+ for CFG in $(sed -n -e "$SED_CONFIG_EXP1" -e "$SED_CONFIG_EXP2" $TMP_FILE); do
+ 
+ 	REQUESTED_VAL=$(grep -w -e "$CFG" $TMP_FILE)
+-	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG")
++	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG" || true)
+ 	if [ "x$REQUESTED_VAL" != "x$ACTUAL_VAL" ] ; then
+ 		echo "Value requested for $CFG not in final .config"
+ 		echo "Requested value:  $REQUESTED_VAL"
 -- 
-nvpublic
+2.20.1
