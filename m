@@ -1,40 +1,39 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v7 11/20] cpufreq: tegra124: Add suspend and resume
- support
-Date: Thu, 1 Aug 2019 11:10:55 +0530
-Message-ID: <20190801054055.trmabmcaj3cpe4pc@vireshk-i7>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-12-git-send-email-skomatineni@nvidia.com>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: [PATCH] phy: tegra: xusb: remove unused variable
+Date: Mon, 2 Sep 2019 11:15:59 +0800
+Message-ID: <1567394159-22572-1-git-send-email-chunfeng.yun@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1564607463-28802-12-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net, linux-pm@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: JC Kuo <jckuo@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Chunfeng Yun <chunfeng.yun@mediatek.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 31-07-19, 14:10, Sowjanya Komatineni wrote:
-> This patch adds suspend and resume pm ops for cpufreq driver.
-> 
-> PLLP is the safe clock source for CPU during system suspend and
-> resume as PLLP rate is below the CPU Fmax at Vmin.
-> 
-> CPUFreq driver suspend switches the CPU clock source to PLLP and
-> disables the DFLL clock.
-> 
-> During system resume, warmboot code powers up the CPU with PLLP
-> clock source. So CPUFreq driver resume enabled DFLL clock and
-> switches CPU back to DFLL clock source.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
+The local variable @priv is set but not used, can be removed
 
-Is there any hard dependency of this patch on the rest of the patches?
-Can I apply it alone to cpufreq tree ?
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/phy/tegra/xusb-tegra210.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index 0c0df6897a3b..bc71c897298a 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -1225,13 +1225,10 @@ static int tegra210_hsic_phy_power_on(struct phy *phy)
+ 	struct tegra_xusb_hsic_lane *hsic = to_hsic_lane(lane);
+ 	struct tegra_xusb_hsic_pad *pad = to_hsic_pad(lane->pad);
+ 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
+-	struct tegra210_xusb_padctl *priv;
+ 	unsigned int index = lane->index;
+ 	u32 value;
+ 	int err;
+ 
+-	priv = to_tegra210_xusb_padctl(padctl);
+-
+ 	err = regulator_enable(pad->supply);
+ 	if (err)
+ 		return err;
 -- 
-viresh
+2.23.0
