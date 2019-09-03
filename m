@@ -1,46 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2] merge_config.sh: Check error codes from make
-Date: Mon, 2 Sep 2019 16:59:37 +0100
-Message-ID: <20190902155937.GD5819@sirena.co.uk>
-References: <20190819200650.18156-1-broonie@kernel.org>
- <b744485d-3e57-469f-5573-6d8a32ba0aef@nvidia.com>
+From: Krishna Reddy <vdumpa@nvidia.com>
+Subject: RE: [PATCH 1/7] iommu/arm-smmu: add Nvidia SMMUv2 implementation
+Date: Tue, 3 Sep 2019 01:07:46 +0000
+Message-ID: <BYAPR12MB2710D40B168C7029758C5481B3B90@BYAPR12MB2710.namprd12.prod.outlook.com>
+References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
+ <1567118827-26358-2-git-send-email-vdumpa@nvidia.com>
+ <2ae9e0c4-6916-b005-f4bd-29e06d2056c6@arm.com>
+ <BYAPR12MB2710D045303BE89A7D3FF2C1B3BD0@BYAPR12MB2710.namprd12.prod.outlook.com>
+ <3f2cbbe2-f6d7-07e3-3fef-18af518dedef@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gE7i1rD7pdK0Ng3j"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b744485d-3e57-469f-5573-6d8a32ba0aef@nvidia.com>
+In-Reply-To: <3f2cbbe2-f6d7-07e3-3fef-18af518dedef@arm.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Guillaume Tucker <guillaume.tucker@collabora.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Sachin Nikam <Snikam@nvidia.com>, "Thomas Zeng (SW-TEGRA)" <thomasz@nvidia.com>, Juha Tukkinen <jtukkinen@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Timo Alho <talho@nvidia.com>, Yu-Huan Hsu <YHsu@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Alexander Van Brunt <avanbrunt@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "will.deacon@arm.com" <will.deacon@arm.com>, "joro@8bytes.org" <joro@8bytes.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---gE7i1rD7pdK0Ng3j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Sep 02, 2019 at 03:06:28PM +0100, Jon Hunter wrote:
-
-> If the intent is to catch errors returned by make, then one simple fix would be ...
-
-I proposed a simpler version originally that only caught errors from
-make, this version was suggested by Yamada-san.  Like Guillaume says he
-posted a proposed fix for this last week.
-
---gE7i1rD7pdK0Ng3j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1tPGgACgkQJNaLcl1U
-h9Ay0QgAg/xxPeqP2NZDIjMq3QJRYuPGW0WzVxE5ZNhSp4XYeNPplJo8koUkwApf
-FmvBUl0DJSJHwkh/jZNFm+Z6G5T0DrKoM+lgxyzYvDLH7Up6hVUx3Iw5i0v1fuys
-kjtgallTF9Jd75gYIYeX1mJWc5HChvKQyx8Q9Vy3UYePbUQ/S/LNZJdquESGSPiq
-Nb1Aql0BCqhUVMVKwXf9rk9/fEkvvD/rttciTOfHZiCCqj+eyu5hPrcLXvZgh2VF
-ntZSNe61u49S3kwhEN0R8JX0ViZvVpuKE4YqbTccEmVo+A2D7y5NI1na3ODEm/At
-jcGbsUlnWjeSpLkD7go+jsqV3ny9Rg==
-=jOvy
------END PGP SIGNATURE-----
-
---gE7i1rD7pdK0Ng3j--
+Pj4+ICtBUk1fU01NVV9NQVRDSF9EQVRBKG52aWRpYV9zbW11djIsIEFSTV9TTU1VX1YyLCBOVklE
+SUFfU01NVVYyKTsNCiANCj4+IFRoZSBBUk0gTU1VLTUwMCBpbXBsZW1lbnRhdGlvbiBpcyB1bm1v
+ZGlmaWVkLiAgSXQgaXMgdGhlIHdheSB0aGUgYXJlIGludGVncmF0ZWQgYW5kIHVzZWQgdG9nZXRo
+ZXIoZm9yIGludGVybGVhdmVkIGFjY2Vzc2VzKSBpcyBkaWZmZXJlbnQgZnJvbSByZWd1bGFyIEFS
+TSBNTVUtNTAwLg0KPj4gSSBoYXZlIGFkZGVkIGl0IHRvIGdldCB0aGUgbW9kZWwgbnVtYmVyIGFu
+ZCB0byBiZSBhYmxlIGRpZmZlcmVudGlhdGUgdGhlIFNNTVUgaW1wbGVtZW50YXRpb24gaW4gYXJt
+LXNtbXUtaW1wbC5jLg0KDQo+SW4gdGhhdCBjYXNlLCBJIHdvdWxkIHJhdGhlciBrZWVwIHNtbXUt
+Pm1vZGVsIHJlcHJlc2VudGluZyB0aGUgTU1VLTUwMCBtaWNyb2FyY2hpdGVjdHVyZSAtIA0KPnNp
+bmNlIHlvdSdsbCBzdGlsbCB3YW50IHRvIHBpY2sgdXAgZXJyYXRhIHdvcmthcm91bmRzIGV0Yy4g
+Zm9yIHRoYXQgLSBhbmQgZGV0ZWN0IHRoZSBUZWdyYSBpbnRlZ3JhdGlvbiB2aWEgYW4gZXhwbGlj
+aXQgb2ZfZGV2aWNlX2lzX2NvbXBhdGlibGUoKQ0KPiBjaGVjayBpbiBhcm1fc21tdV9pbXBsX2lu
+aXQoKS4NCg0KTG9va3MgZ29vZCB0byBtZS4gDQoNCj5Gb3IgY29tcGFyaXNvbiwgdW5kZXIgQUNQ
+SSB3ZSdkIHByb2JhYmx5IGhhdmUgdG8gZGV0ZWN0IGludGVncmF0aW9uIGRldGFpbHMgYnkgbG9v
+a2luZyBhdCB0YWJsZSBoZWFkZXJzLCBzZXBhcmF0ZWx5DQo+IGZyb20gdGhlIElPUlQgIk1vZGVs
+IiBmaWVsZCwgc28gSSdkIHByZWZlciBpZiB0aGUgRFQgdnMuIEFDUEkgaGFuZGxpbmcgZGlkbid0
+IGRpdmVyZ2UgbW9yZSB0aGFuIG5lY2Vzc2FyeS4NCg0KQUNQSSBzdXBwb3J0IGZvciBUMTk0IGNh
+biBiZSBhZGRlZCBiYXNlZCBvbiBuZWVkIGluIHN1YnNlcXVlbnQgcGF0Y2hlcy4gRm9yIG5vdywg
+SSBhbSB1cGRhdGluZyBpdCBmb3IgRFQgc3VwcG9ydC4NCg0KLUtSDQo=
