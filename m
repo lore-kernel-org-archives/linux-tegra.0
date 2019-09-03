@@ -1,64 +1,49 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2] merge_config.sh: ignore unwanted grep errors
-Date: Tue, 3 Sep 2019 23:35:22 +0900
-Message-ID: <CAK7LNAS5eYnsuaZ2XxCb1HXmV=QqfgPZNz_E=Ad+CZnDdLdO8A@mail.gmail.com>
-References: <a60fe77a1475ba960ad9fc851f1ace2196b661b8.1567436778.git.guillaume.tucker@collabora.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 121/167] clk: tegra210: Fix default rates for HDA clocks
+Date: Tue,  3 Sep 2019 12:24:33 -0400
+Message-ID: <20190903162519.7136-121-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a60fe77a1475ba960ad9fc851f1ace2196b661b8.1567436778.git.guillaume.tucker@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel@collabora.com, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 12:19 AM Guillaume Tucker
-<guillaume.tucker@collabora.com> wrote:
->
-> The merge_config.sh script verifies that all the config options have
-> their expected value in the resulting file and prints any issues as
-> warnings.  These checks aren't intended to be treated as errors given
-> the current implementation.  However, since "set -e" was added, if the
-> grep command to look for a config option does not find it the script
-> will then abort prematurely.
->
-> Handle the case where the grep exit status is non-zero by setting
-> ACTUAL_VAL to an empty string to restore previous functionality.
->
-> Fixes: cdfca821571d ("merge_config.sh: Check error codes from make")
-> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> ---
+From: Jon Hunter <jonathanh@nvidia.com>
 
-Applied to linux-kbuild.
-Thanks.
+[ Upstream commit 9caec6620f25b6d15646bbdb93062c872ba3b56f ]
 
+Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+are both 19.2MHz. However, the default rates for these clocks should
+actually be 51MHz and 48MHz, respectively. The current clock settings
+results in a distorted output during audio playback. Correct the default
+clock rates for these clocks by specifying them in the clock init table
+for Tegra210.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/tegra/clk-tegra210.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Notes:
->     v2: use true rather than echo as per Jon Hunter's suggestion
->
->  scripts/kconfig/merge_config.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-> index d924c51d28b7..f2cc10b1d404 100755
-> --- a/scripts/kconfig/merge_config.sh
-> +++ b/scripts/kconfig/merge_config.sh
-> @@ -177,7 +177,7 @@ make KCONFIG_ALLCONFIG=$TMP_FILE $OUTPUT_ARG $ALLTARGET
->  for CFG in $(sed -n -e "$SED_CONFIG_EXP1" -e "$SED_CONFIG_EXP2" $TMP_FILE); do
->
->         REQUESTED_VAL=$(grep -w -e "$CFG" $TMP_FILE)
-> -       ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG")
-> +       ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG" || true)
->         if [ "x$REQUESTED_VAL" != "x$ACTUAL_VAL" ] ; then
->                 echo "Value requested for $CFG not in final .config"
->                 echo "Requested value:  $REQUESTED_VAL"
-> --
-> 2.20.1
->
-
-
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index f58480fe17674..080bfa24863ee 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3376,6 +3376,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_I2S3_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_I2S4_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
++	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
++	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+ };
 -- 
-Best Regards
-Masahiro Yamada
+2.20.1
