@@ -1,53 +1,83 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] usb: host: xhci-tegra: use devm_platform_ioremap_resource() to simplify code
-Date: Wed, 4 Sep 2019 17:10:04 +0800
-Message-ID: <20190904091004.3808-1-yuehaibing@huawei.com>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: Re: [Patch V8 6/8] arm64: tegra: Enable xudc on Jetson TX1
+Date: Wed, 4 Sep 2019 17:47:15 +0800
+Message-ID: <1567590435.7317.55.camel@mhfsdcap03>
+References: <1567585440-13751-1-git-send-email-nkristam@nvidia.com>
+         <1567585440-13751-7-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1567585440-13751-7-git-send-email-nkristam@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: Nagarjuna Kristam <nkristam@nvidia.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Wed, 2019-09-04 at 13:53 +0530, Nagarjuna Kristam wrote:
+> Enable XUSB device mode driver for USB0 slot on Jetson TX1.
+> 
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> Reviewed-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 31 +++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> index a7dc319..6aba1ba 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> @@ -1362,7 +1362,7 @@
+>  				status = "okay";
+>  
+>  				lanes {
+> -					usb2-0 {
+> +					micro_b: usb2-0 {
+>  						nvidia,function = "xusb";
+>  						status = "okay";
+>  					};
+> @@ -1483,6 +1483,21 @@
+>  		vmmc-supply = <&vdd_3v3_sd>;
+>  	};
+>  
+> +	usb@700d0000 {
+> +		status = "okay";
+> +		phys = <&micro_b>;
+> +		phy-names = "usb2";
+> +		avddio-usb-supply = <&vdd_3v3_sys>;
+> +		hvdd-usb-supply = <&vdd_1v8>;
+> +		usb-role-switch;
+> +
+> +		port {
+> +			usb_role_switch: endpoint {
+> +				remote-endpoint = <&usb_b_conn_ep>;
+> +			};
+> +		};
+> +	};
+> +
+>  	regulators {
+>  		compatible = "simple-bus";
+>  		#address-cells = <1>;
+> @@ -1641,4 +1656,18 @@
+>  			linux,code = <KEY_VOLUMEUP>;
+>  		};
+>  	};
+> +
+> +	usb_type_b: connector {
+> +		compatible = "linux,usb-conn-gpio", "gpio-usb-b-connector";
+please use "gpio-usb-b-connector" and "usb-b-connector", due to
+"linux,usb-conn-gpio" is not supported now
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/usb/host/xhci-tegra.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 2ff7c91..742960a 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -970,7 +970,7 @@ static int tegra_xusb_powerdomain_init(struct device *dev,
- static int tegra_xusb_probe(struct platform_device *pdev)
- {
- 	struct tegra_xusb_mbox_msg msg;
--	struct resource *res, *regs;
-+	struct resource *regs;
- 	struct tegra_xusb *tegra;
- 	struct xhci_hcd *xhci;
- 	unsigned int i, j, k;
-@@ -992,14 +992,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	if (IS_ERR(tegra->regs))
- 		return PTR_ERR(tegra->regs);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	tegra->fpci_base = devm_ioremap_resource(&pdev->dev, res);
-+	tegra->fpci_base = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(tegra->fpci_base))
- 		return PTR_ERR(tegra->fpci_base);
- 
- 	if (tegra->soc->has_ipfs) {
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--		tegra->ipfs_base = devm_ioremap_resource(&pdev->dev, res);
-+		tegra->ipfs_base = devm_platform_ioremap_resource(pdev, 2);
- 		if (IS_ERR(tegra->ipfs_base))
- 			return PTR_ERR(tegra->ipfs_base);
- 	}
--- 
-2.7.4
+> +		label = "micro-USB";
+> +		type = "micro";
+> +		vbus-gpio = <&gpio TEGRA_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
+> +
+> +		port {
+> +			usb_b_conn_ep: endpoint {
+> +				remote-endpoint = <&usb_role_switch>;
+> +			};
+> +		};
+> +	};
+> +
+>  };
