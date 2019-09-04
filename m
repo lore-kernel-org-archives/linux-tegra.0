@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 64/94] usb: host: xhci-tegra: Set DMA mask correctly
-Date: Wed,  4 Sep 2019 11:57:09 -0400
-Message-ID: <20190904155739.2816-64-sashal@kernel.org>
-References: <20190904155739.2816-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 39/52] usb: host: xhci-tegra: Set DMA mask correctly
+Date: Wed,  4 Sep 2019 11:59:51 -0400
+Message-ID: <20190904160004.3671-39-sashal@kernel.org>
+References: <20190904160004.3671-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190904155739.2816-1-sashal@kernel.org>
+In-Reply-To: <20190904160004.3671-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Nagarjuna Kristam <nkristam@nvidia.com>, Thierry Reding <treding@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -41,12 +41,12 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+)
 
 diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 294158113d62c..77142f9bf26ae 100644
+index b1cce989bd123..fe37dacc695fc 100644
 --- a/drivers/usb/host/xhci-tegra.c
 +++ b/drivers/usb/host/xhci-tegra.c
-@@ -1217,6 +1217,16 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+@@ -1148,6 +1148,16 @@ static int tegra_xusb_probe(struct platform_device *pdev)
  
- 	tegra_xusb_config(tegra, regs);
+ 	tegra_xusb_ipfs_config(tegra, regs);
  
 +	/*
 +	 * The XUSB Falcon microcontroller can only address 40 bits, so set
