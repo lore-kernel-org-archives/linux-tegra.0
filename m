@@ -1,80 +1,57 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: tegra: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-Date: Wed,  4 Sep 2019 18:53:25 +0100 (BST)
-Message-ID: <20190904175325.74E7F2742CDC@ypsilon.sirena.org.uk>
-References: <20190904083909.18804-1-yuehaibing@huawei.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH -next 13/36] spi: spi-geni-qcom: use
+ devm_platform_ioremap_resource() to simplify code
+Date: Wed, 4 Sep 2019 13:44:33 -0700
+Message-ID: <20190904204433.GE580@tuxbook-pro>
+References: <20190904135918.25352-1-yuehaibing@huawei.com>
+ <20190904135918.25352-14-yuehaibing@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190904083909.18804-1-yuehaibing@huawei.com>
+Content-Disposition: inline
+In-Reply-To: <20190904135918.25352-14-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: alexios.zavras@intel.com, alsa-devel@alsa-project.org, broonie@kernel.org, gregkh@linuxfoundation.org, Hulk Robot <hulkci@huawei.com>, jonathanh@nvidia.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.orgMark Brown <broonie@kernel.org>, perex@perex.cz, rfontana@redhat.com, tglx@linutronix.de, thierry.reding@gmail.com, tiwai@suse.com, yuehaibing@huawei.com
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: broonie@kernel.org, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, eric@anholt.net, wahrenst@gmx.net, shc_work@mail.ru, agross@kernel.org, khilman@baylibre.com, matthias.bgg@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, benjaminfair@google.com, kgene@kernel.org, krzk@kernel.org, andi@etezian.org, palmer@sifive.com, paul.walmsley@sifive.com, baohua@kernel.org, mripard@kernel.org, wens@csie.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, yamada.masahiro@socionext.com, michal.simek@xilinx.com, bcm-kernel-feedback-list@broadcom.com, linux-spi@vger.kernel.org, linux-ke
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+On Wed 04 Sep 06:58 PDT 2019, YueHaibing wrote:
 
-   ASoC: tegra: use devm_platform_ioremap_resource() to simplify code
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
 
-has been applied to the asoc tree at
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a813d0e8884e514e6e1b28ad3b22f7658d446b16 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 4 Sep 2019 16:39:09 +0800
-Subject: [PATCH] ASoC: tegra: use devm_platform_ioremap_resource() to simplify
- code
-
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190904083909.18804-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/tegra/tegra30_ahub.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 952381260dc3..635eacbd28d4 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -511,7 +511,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	const struct tegra30_ahub_soc_data *soc_data;
- 	struct reset_control *rst;
- 	int i;
--	struct resource *res0, *res1;
-+	struct resource *res0;
- 	void __iomem *regs_apbif, *regs_ahub;
- 	int ret = 0;
- 
-@@ -587,8 +587,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	}
- 	regcache_cache_only(ahub->regmap_apbif, true);
- 
--	res1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	regs_ahub = devm_ioremap_resource(&pdev->dev, res1);
-+	regs_ahub = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(regs_ahub))
- 		return PTR_ERR(regs_ahub);
- 
--- 
-2.20.1
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/spi/spi-geni-qcom.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+> index 242b6c8..6f3d64a 100644
+> --- a/drivers/spi/spi-geni-qcom.c
+> +++ b/drivers/spi/spi-geni-qcom.c
+> @@ -534,7 +534,6 @@ static int spi_geni_probe(struct platform_device *pdev)
+>  	int ret, irq;
+>  	struct spi_master *spi;
+>  	struct spi_geni_master *mas;
+> -	struct resource *res;
+>  	void __iomem *base;
+>  	struct clk *clk;
+>  
+> @@ -542,8 +541,7 @@ static int spi_geni_probe(struct platform_device *pdev)
+>  	if (irq < 0)
+>  		return irq;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	base = devm_ioremap_resource(&pdev->dev, res);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+>  
+> -- 
+> 2.7.4
+> 
+> 
