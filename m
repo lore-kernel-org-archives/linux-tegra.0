@@ -1,51 +1,62 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V4 0/6] PCI: tegra: Enable PCIe C5 controller of Tegra194 in p2972-0000 platform
-Date: Thu, 5 Sep 2019 16:15:47 +0530
-Message-ID: <20190905104553.2884-1-vidyas@nvidia.com>
+Subject: [PATCH V4 1/6] dt-bindings: PCI: tegra: Add sideband pins configuration entries
+Date: Thu, 5 Sep 2019 16:15:48 +0530
+Message-ID: <20190905104553.2884-2-vidyas@nvidia.com>
+References: <20190905104553.2884-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190905104553.2884-1-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
 Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series enables Tegra194's C5 controller which owns x16 slot in
-p2972-0000 platform. C5 controller's PERST# and CLKREQ# are not configured as
-output and bi-directional signals by default and hence they need to be
-configured explicitly. Also, x16 slot's 3.3V and 12V supplies are controlled
-through GPIOs and hence they need to be enabled through regulator framework.
-This patch series adds required infrastructural support to address both the
-aforementioned requirements.
-Testing done on p2972-0000 platform
-- Able to enumerate devices connected to x16 slot (owned by C5 controller)
-- Enumerated device's functionality verified
-- Suspend-Resume sequence is verified with device connected to x16 slot
+Add optional bindings "pinctrl-names" and "pinctrl-0" to describe pin
+configuration information of a particular PCIe controller.
 
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
 V4:
-* Rebased (Patch-4/6 particularly) on top of Lorenzo's pci/tegra branch
+* None
 
 V3:
-* Addressed some more review comments from Andrew Murray and Thierry Reding
+* None
 
 V2:
-* Changed the order of patches in the series for easy merging
-* Addressed review comments from Thierry Reding and Andrew Murray
+* None
 
-Vidya Sagar (6):
-  dt-bindings: PCI: tegra: Add sideband pins configuration entries
-  dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
-  PCI: tegra: Add support to configure sideband pins
-  PCI: tegra: Add support to enable slot regulators
-  arm64: tegra: Add configuration for PCIe C5 sideband signals
-  arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
+ .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- .../bindings/pci/nvidia,tegra194-pcie.txt     | 16 ++++
- .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 38 +++++++-
- drivers/pci/controller/dwc/pcie-tegra194.c    | 94 ++++++++++++++++++-
- 5 files changed, 172 insertions(+), 4 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+index 674e5adb2895..0ac1b867ac24 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+@@ -83,6 +83,11 @@ Required properties:
+ - vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
+ 
+ Optional properties:
++- pinctrl-names: A list of pinctrl state names.
++  It is mandatory for C5 controller and optional for other controllers.
++  - "default": Configures PCIe I/O for proper operation.
++- pinctrl-0: phandle for the 'default' state of pin configuration.
++  It is mandatory for C5 controller and optional for other controllers.
+ - supports-clkreq: Refer to Documentation/devicetree/bindings/pci/pci.txt
+ - nvidia,update-fc-fixup: This is a boolean property and needs to be present to
+     improve performance when a platform is designed in such a way that it
+@@ -120,6 +125,9 @@ Tegra194:
+ 		num-lanes = <8>;
+ 		linux,pci-domain = <0>;
+ 
++		pinctrl-names = "default";
++		pinctrl-0 = <&pex_rst_c5_out_state>, <&clkreq_c5_bi_dir_state>;
++
+ 		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
+ 		clock-names = "core";
+ 
 -- 
 2.17.1
