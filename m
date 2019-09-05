@@ -1,15 +1,15 @@
 From: Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH -next 05/36] spi: bcm2835aux: use
+Subject: Re: [PATCH -next 06/36] spi: bcm2835: use
  devm_platform_ioremap_resource() to simplify code
-Date: Thu, 5 Sep 2019 20:38:50 +0200
-Message-ID: <491084d3-c2d6-3a24-687b-2668c7f0c09a@gmx.net>
+Date: Thu, 5 Sep 2019 20:39:45 +0200
+Message-ID: <c9c6a9ca-5725-513f-2ef3-734ecf0878b8@gmx.net>
 References: <20190904135918.25352-1-yuehaibing@huawei.com>
- <20190904135918.25352-6-yuehaibing@huawei.com>
+ <20190904135918.25352-7-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190904135918.25352-6-yuehaibing@huawei.com>
+In-Reply-To: <20190904135918.25352-7-yuehaibing@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: YueHaibing <yuehaibing@huawei.com>, broonie@kernel.org, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, eric@anholt.net, shc_work@mail.ru, agross@kernel.org, khilman@baylibre.com, matthias.bgg@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, benjaminfair@google.com, kgene@kernel.org, krzk@kernel.org, andi@etezian.org, palmer@sifive.com, paul.walmsley@sifive.com, baohua@kernel.org, mripard@kernel.org, wens@csie.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, yamada.masahiro@socionext.com, michal.simek@xilinx.com
