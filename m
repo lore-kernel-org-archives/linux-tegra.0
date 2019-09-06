@@ -1,52 +1,82 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.2 000/143] 5.2.12-stable review
-Date: Fri, 6 Sep 2019 10:16:14 +0200
-Message-ID: <20190906081614.GA32667@kroah.com>
-References: <20190904175314.206239922@linuxfoundation.org>
- <5b19ac14-31c8-227d-c0c5-741abb65b7d6@nvidia.com>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: Re: [Patch V8 7/8] usb: gadget: Add UDC driver for tegra XUSB device
+ mode controller
+Date: Fri, 6 Sep 2019 16:01:53 +0530
+Message-ID: <7f24dbd0-e556-20c1-7aeb-5ddbdbe0349c@nvidia.com>
+References: <1567585440-13751-1-git-send-email-nkristam@nvidia.com>
+ <1567585440-13751-8-git-send-email-nkristam@nvidia.com>
+ <1567593053.7317.64.camel@mhfsdcap03>
+ <36447248-1ddb-ff1d-a731-de6afb445a9d@nvidia.com>
+ <1567734192.7317.68.camel@mhfsdcap03>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5b19ac14-31c8-227d-c0c5-741abb65b7d6@nvidia.com>
+In-Reply-To: <1567734192.7317.68.camel@mhfsdcap03>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 08:37:33AM +0100, Jon Hunter wrote:
-> 
-> On 04/09/2019 18:52, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.12 release.
-> > There are 143 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri 06 Sep 2019 05:50:23 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.12-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.2:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.2.12-rc1-gb6eedcb8cf66
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Thanks for testing all of these and letting me know.
 
-greg k-h
+On 06-09-2019 07:13, Chunfeng Yun wrote:
+> On Thu, 2019-09-05 at 09:57 +0530, Nagarjuna Kristam wrote:
+>>
+>> On 04-09-2019 16:00, Chunfeng Yun wrote:
+>>> On Wed, 2019-09-04 at 13:53 +0530, Nagarjuna Kristam wrote:
+>>>> This patch adds UDC driver for tegra XUSB 3.0 device mode controller.
+>>>> XUSB device mode controller supports SS, HS and FS modes
+>>>>
+>>>> Based on work by:
+>>>>   Mark Kuo <mkuo@nvidia.com>
+>>>>   Hui Fu <hfu@nvidia.com>
+>>>>   Andrew Bresticker <abrestic@chromium.org>
+>>>>
+>>>> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>> ---
+>>>>  drivers/usb/gadget/udc/Kconfig      |   12 +
+>>>>  drivers/usb/gadget/udc/Makefile     |    1 +
+>>>>  drivers/usb/gadget/udc/tegra-xudc.c | 3791 +++++++++++++++++++++++++++++++++++
+>>>>  3 files changed, 3804 insertions(+)
+>>>>  create mode 100644 drivers/usb/gadget/udc/tegra-xudc.c
+>>>>
+>>>> diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
+>>>> index d354036..0fe7577 100644
+>>>> --- a/drivers/usb/gadget/udc/Kconfig
+>>>> +++ b/drivers/usb/gadget/udc/Kconfig
+>>>> @@ -441,6 +441,18 @@ config USB_GADGET_XILINX
+>>>>  	  dynamically linked module called "udc-xilinx" and force all
+>>>>  	  gadget drivers to also be dynamically linked.
+>>>>  
+>>>> +config USB_TEGRA_XUDC
+>>>> +	tristate "NVIDIA Tegra Superspeed USB 3.0 Device Controller"
+>>>> +	depends on ARCH_TEGRA || COMPILE_TEST
+>>>> +	depends on PHY_TEGRA_XUSB
+>>>> +	select USB_CONN_GPIO
+>>> To me, needn't select this driver, without it, the driver still build
+>>> pass
+>>>
+>> Yes compilation passes with out this. Added select for getting USB_CONN_GPIO
+>> driver functionality.
+> We can enable it in defconfig, think about one day use type-c to do
+> dual-role switch, or other ways, will needn't select it then.
+> 
+
+Thanks for details, will get it enabled via defconfig instead.
+
+- Nagarjuna
+>>
+>>>> +	help
+>>>> +	 Enables NVIDIA Tegra USB 3.0 device mode controller driver.
+>>>> +
+>>>> +	 Say "y" to link the driver statically, or "m" to build a
+>>>> +	 dynamically linked module called "tegra_xudc" and force all
+>>>> +	 gadget drivers to also be dynamically linked.
+>>>> +
+>>>>  source "drivers/usb/gadget/udc/aspeed-vhub/Kconfig"
+>>>>  
+> 
+> 
