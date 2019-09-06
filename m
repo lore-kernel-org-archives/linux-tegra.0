@@ -1,106 +1,115 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Yuehaibing <yuehaibing@huawei.com>
 Subject: Re: [PATCH] media: staging: tegra-vde: Disable building with
  COMPILE_TEST
-Date: Fri, 6 Sep 2019 16:38:32 +0300
-Message-ID: <c4014675-8fc6-e947-7ac5-68795fd80bc0@gmail.com>
+Date: Fri, 6 Sep 2019 22:28:58 +0800
+Message-ID: <3ce3b6ed-86d3-55ac-462d-4bc91b7d04ed@huawei.com>
 References: <20190826133140.13456-1-yuehaibing@huawei.com>
  <7f73bcac-f52d-f1b3-324c-e9b551c5378b@xs4all.nl>
  <20190829124034.GA19842@ulmo>
  <b048b460-9d58-8e38-e335-f9a3fface559@gmail.com>
  <20190829154902.GC19842@ulmo>
+ <c4014675-8fc6-e947-7ac5-68795fd80bc0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190829154902.GC19842@ulmo>
-Content-Language: en-US
+In-Reply-To: <c4014675-8fc6-e947-7ac5-68795fd80bc0@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, YueHaibing <yuehaibing@huawei.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Cc: mchehab@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, robin.murphy@arm.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
 List-Id: linux-tegra@vger.kernel.org
 
-29.08.2019 18:49, Thierry Reding пишет:
-> On Thu, Aug 29, 2019 at 04:58:22PM +0300, Dmitry Osipenko wrote:
->> 29.08.2019 15:40, Thierry Reding пишет:
->>> On Thu, Aug 29, 2019 at 01:39:32PM +0200, Hans Verkuil wrote:
->>>> On 8/26/19 3:31 PM, YueHaibing wrote:
->>>>> If COMPILE_TEST is y and IOMMU_SUPPORT is n, selecting TEGRA_VDE
->>>>> to m will set IOMMU_IOVA to m, this fails the building of
->>>>> TEGRA_HOST1X and DRM_TEGRA which is y like this:
+
+
+On 2019/9/6 21:38, Dmitry Osipenko wrote:
+> 29.08.2019 18:49, Thierry Reding пишет:
+>> On Thu, Aug 29, 2019 at 04:58:22PM +0300, Dmitry Osipenko wrote:
+>>> 29.08.2019 15:40, Thierry Reding пишет:
+>>>> On Thu, Aug 29, 2019 at 01:39:32PM +0200, Hans Verkuil wrote:
+>>>>> On 8/26/19 3:31 PM, YueHaibing wrote:
+>>>>>> If COMPILE_TEST is y and IOMMU_SUPPORT is n, selecting TEGRA_VDE
+>>>>>> to m will set IOMMU_IOVA to m, this fails the building of
+>>>>>> TEGRA_HOST1X and DRM_TEGRA which is y like this:
+>>>>>>
+>>>>>> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
+>>>>>> cdma.c:(.text+0x66c): undefined reference to `alloc_iova'
+>>>>>> cdma.c:(.text+0x698): undefined reference to `__free_iova'
+>>>>>>
+>>>>>> drivers/gpu/drm/tegra/drm.o: In function `tegra_drm_unload':
+>>>>>> drm.c:(.text+0xeb0): undefined reference to `put_iova_domain'
+>>>>>> drm.c:(.text+0xeb4): undefined reference to `iova_cache_put'
+>>>>>>
+>>>>>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>>>>>> Fixes: 6b2265975239 ("media: staging: tegra-vde: Fix build error")
+>>>>>> Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU support")
+>>>>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>>>>> ---
+>>>>>>  drivers/staging/media/tegra-vde/Kconfig | 4 ++--
+>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
+>>>>>> index ba49ea5..a41d30c 100644
+>>>>>> --- a/drivers/staging/media/tegra-vde/Kconfig
+>>>>>> +++ b/drivers/staging/media/tegra-vde/Kconfig
+>>>>>> @@ -1,9 +1,9 @@
+>>>>>>  # SPDX-License-Identifier: GPL-2.0
+>>>>>>  config TEGRA_VDE
+>>>>>>  	tristate "NVIDIA Tegra Video Decoder Engine driver"
+>>>>>> -	depends on ARCH_TEGRA || COMPILE_TEST
+>>>>>> +	depends on ARCH_TEGRA
 >>>>>
->>>>> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
->>>>> cdma.c:(.text+0x66c): undefined reference to `alloc_iova'
->>>>> cdma.c:(.text+0x698): undefined reference to `__free_iova'
+>>>>> What happens if you drop this change,
 >>>>>
->>>>> drivers/gpu/drm/tegra/drm.o: In function `tegra_drm_unload':
->>>>> drm.c:(.text+0xeb0): undefined reference to `put_iova_domain'
->>>>> drm.c:(.text+0xeb4): undefined reference to `iova_cache_put'
+>>>>>>  	select DMA_SHARED_BUFFER
+>>>>>> -	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+>>>>>> +	select IOMMU_IOVA if IOMMU_SUPPORT
 >>>>>
->>>>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>>>> Fixes: 6b2265975239 ("media: staging: tegra-vde: Fix build error")
->>>>> Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU support")
->>>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>>>> ---
->>>>>  drivers/staging/media/tegra-vde/Kconfig | 4 ++--
->>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>> but keep this change?
 >>>>>
->>>>> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
->>>>> index ba49ea5..a41d30c 100644
->>>>> --- a/drivers/staging/media/tegra-vde/Kconfig
->>>>> +++ b/drivers/staging/media/tegra-vde/Kconfig
->>>>> @@ -1,9 +1,9 @@
->>>>>  # SPDX-License-Identifier: GPL-2.0
->>>>>  config TEGRA_VDE
->>>>>  	tristate "NVIDIA Tegra Video Decoder Engine driver"
->>>>> -	depends on ARCH_TEGRA || COMPILE_TEST
->>>>> +	depends on ARCH_TEGRA
->>>>
->>>> What happens if you drop this change,
->>>>
->>>>>  	select DMA_SHARED_BUFFER
->>>>> -	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
->>>>> +	select IOMMU_IOVA if IOMMU_SUPPORT
->>>>
->>>> but keep this change?
->>>>
->>>> iova.h has stubs that are used if IOMMU_IOVA is not set, so it should
->>>> work when compile testing this tegra-vde driver.
->>>>
->>>> Haven't tried it, but making sure that compile testing keep working is
->>>> really important.
+>>>>> iova.h has stubs that are used if IOMMU_IOVA is not set, so it should
+>>>>> work when compile testing this tegra-vde driver.
+>>>>>
+>>>>> Haven't tried it, but making sure that compile testing keep working is
+>>>>> really important.
+>>>
+>>> The driver's code compilation works okay, it's the linkage stage which
+>>> fails during compile-testing.
+>>>
+>>>> Yeah, that variant seems to work for me. I think it's also more correct
+>>>> because the IOMMU_IOVA if IOMMU_SUPPORT dependency really says that the
+>>>> IOVA usage is bound to IOMMU support. If IOMMU support is not enabled,
+>>>> then IOVA is not needed either, so the dummies will do just fine.
+>>>
+>>> Am I understanding correctly that you're suggesting to revert [1][2] and
+>>> get back to the other problem?
+>>>
+>>> [1]
+>>> https://lore.kernel.org/linux-media/dd547b44-7abb-371f-aeee-a82b96f824e2@gmail.com/T/
+>>> [2] https://patchwork.ozlabs.org/patch/1136619/
+>>>
+>>> If we want to keep compile testing, I guess the only reasonable variant
+>>> right now is to select IOMMU_IOVA unconditionally in all of the drivers
+>>> (vde, host1x, drm and etc) and then just ignore that IOVA will be
+>>> compiled-and-unused if IOMMU_SUPPORT=n (note that IOMMU_SUPPORT=y in all
+>>> of default kernel configurations).
 >>
->> The driver's code compilation works okay, it's the linkage stage which
->> fails during compile-testing.
->>
->>> Yeah, that variant seems to work for me. I think it's also more correct
->>> because the IOMMU_IOVA if IOMMU_SUPPORT dependency really says that the
->>> IOVA usage is bound to IOMMU support. If IOMMU support is not enabled,
->>> then IOVA is not needed either, so the dummies will do just fine.
->>
->> Am I understanding correctly that you're suggesting to revert [1][2] and
->> get back to the other problem?
->>
->> [1]
->> https://lore.kernel.org/linux-media/dd547b44-7abb-371f-aeee-a82b96f824e2@gmail.com/T/
->> [2] https://patchwork.ozlabs.org/patch/1136619/
->>
->> If we want to keep compile testing, I guess the only reasonable variant
->> right now is to select IOMMU_IOVA unconditionally in all of the drivers
->> (vde, host1x, drm and etc) and then just ignore that IOVA will be
->> compiled-and-unused if IOMMU_SUPPORT=n (note that IOMMU_SUPPORT=y in all
->> of default kernel configurations).
+>> Agreed. I think we should just select IOMMU_IOVA unconditionally. We
+>> really do want IOMMU_SUPPORT always as well, but it might be nice to be
+>> able to switch it off for testing or so. In the cases that really matter
+>> we will be enabling both IOMMU_SUPPORT and IOMMU_IOVA anyway, so might
+>> as well select IOMMU_IOVA always. It's not terribly big and I can't
+>> imagine anyone wanting to run a kernel without IOMMU_SUPPORT for
+>> anything other than testing.
 > 
-> Agreed. I think we should just select IOMMU_IOVA unconditionally. We
-> really do want IOMMU_SUPPORT always as well, but it might be nice to be
-> able to switch it off for testing or so. In the cases that really matter
-> we will be enabling both IOMMU_SUPPORT and IOMMU_IOVA anyway, so might
-> as well select IOMMU_IOVA always. It's not terribly big and I can't
-> imagine anyone wanting to run a kernel without IOMMU_SUPPORT for
-> anything other than testing.
+> Hello Yue,
+> 
+> Could you please make an updated version of the fix in accordance to the above comments?
+> 
+> Alternatively, we can go with the current patch and temporarily remove the compile-testing. I'll make
+> patches to properly re-add compile-testing sometime later then.
 
-Hello Yue,
+I prefer to do this choice, thanks.
 
-Could you please make an updated version of the fix in accordance to the above comments?
-
-Alternatively, we can go with the current patch and temporarily remove the compile-testing. I'll make
-patches to properly re-add compile-testing sometime later then.
+> 
+> .
+> 
