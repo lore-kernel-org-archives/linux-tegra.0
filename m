@@ -1,115 +1,49 @@
-From: Yuehaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH] media: staging: tegra-vde: Disable building with
- COMPILE_TEST
-Date: Fri, 6 Sep 2019 22:28:58 +0800
-Message-ID: <3ce3b6ed-86d3-55ac-462d-4bc91b7d04ed@huawei.com>
-References: <20190826133140.13456-1-yuehaibing@huawei.com>
- <7f73bcac-f52d-f1b3-324c-e9b551c5378b@xs4all.nl>
- <20190829124034.GA19842@ulmo>
- <b048b460-9d58-8e38-e335-f9a3fface559@gmail.com>
- <20190829154902.GC19842@ulmo>
- <c4014675-8fc6-e947-7ac5-68795fd80bc0@gmail.com>
+From: Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH -next 25/36] spi: s3c24xx: use
+ devm_platform_ioremap_resource() to simplify code
+Date: Sun, 8 Sep 2019 02:38:10 +0300
+Message-ID: <20190907233810.GA15768@jack.zhora.eu>
+References: <20190904135918.25352-1-yuehaibing@huawei.com>
+ <20190904135918.25352-26-yuehaibing@huawei.com>
+ <CAJKOXPdq4as1Oe3U+9znkvP0RA=sxUoiWVBCSbzf_wq_um2t=w@mail.gmail.com>
+ <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c4014675-8fc6-e947-7ac5-68795fd80bc0@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: mchehab@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, robin.murphy@arm.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
+List-Post: <mailto:linux-riscv@lists.infradead.org>
+List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
+To: Yuehaibing <yuehaibing@huawei.com>
+Cc: tmaimon77@gmail.com, palmer@sifive.com, tali.perry1@gmail.com, eric@anholt.net, ldewangan@nvidia.com, linux-riscv@lists.infradead.org, festevam@gmail.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, f.fainelli@gmail.com, benjaminfair@google.com, shc_work@mail.ru, khilman@baylibre.com, openbmc@lists.ozlabs.org, michal.simek@xilinx.com, Krzysztof Kozlowski <krzk@kernel.org>, jonathanh@nvidia.com, yuenn@google.com, wens@csie.org, agross@kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, Andi Shyti <andi@etezian.org>, rjui@broadcom.com, s.hauer@pengutronix.de, mripard@kernel.org, broonie@kernel.org, linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com, matthias.bgg@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-ker
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Yuehaibing,
 
+> >> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> >> This is detected by coccinelle.
+> >>
+> >> Reported-by: Hulk Robot <hulkci@huawei.com>
+> > 
+> > This tag does not look real... First of all where is the report?
+> 
+> It is our internal CI robot, which is unavailable to external temporarily.
 
-On 2019/9/6 21:38, Dmitry Osipenko wrote:
-> 29.08.2019 18:49, Thierry Reding пишет:
->> On Thu, Aug 29, 2019 at 04:58:22PM +0300, Dmitry Osipenko wrote:
->>> 29.08.2019 15:40, Thierry Reding пишет:
->>>> On Thu, Aug 29, 2019 at 01:39:32PM +0200, Hans Verkuil wrote:
->>>>> On 8/26/19 3:31 PM, YueHaibing wrote:
->>>>>> If COMPILE_TEST is y and IOMMU_SUPPORT is n, selecting TEGRA_VDE
->>>>>> to m will set IOMMU_IOVA to m, this fails the building of
->>>>>> TEGRA_HOST1X and DRM_TEGRA which is y like this:
->>>>>>
->>>>>> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
->>>>>> cdma.c:(.text+0x66c): undefined reference to `alloc_iova'
->>>>>> cdma.c:(.text+0x698): undefined reference to `__free_iova'
->>>>>>
->>>>>> drivers/gpu/drm/tegra/drm.o: In function `tegra_drm_unload':
->>>>>> drm.c:(.text+0xeb0): undefined reference to `put_iova_domain'
->>>>>> drm.c:(.text+0xeb4): undefined reference to `iova_cache_put'
->>>>>>
->>>>>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>>>>> Fixes: 6b2265975239 ("media: staging: tegra-vde: Fix build error")
->>>>>> Fixes: b301f8de1925 ("media: staging: media: tegra-vde: Add IOMMU support")
->>>>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>>>>> ---
->>>>>>  drivers/staging/media/tegra-vde/Kconfig | 4 ++--
->>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
->>>>>> index ba49ea5..a41d30c 100644
->>>>>> --- a/drivers/staging/media/tegra-vde/Kconfig
->>>>>> +++ b/drivers/staging/media/tegra-vde/Kconfig
->>>>>> @@ -1,9 +1,9 @@
->>>>>>  # SPDX-License-Identifier: GPL-2.0
->>>>>>  config TEGRA_VDE
->>>>>>  	tristate "NVIDIA Tegra Video Decoder Engine driver"
->>>>>> -	depends on ARCH_TEGRA || COMPILE_TEST
->>>>>> +	depends on ARCH_TEGRA
->>>>>
->>>>> What happens if you drop this change,
->>>>>
->>>>>>  	select DMA_SHARED_BUFFER
->>>>>> -	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
->>>>>> +	select IOMMU_IOVA if IOMMU_SUPPORT
->>>>>
->>>>> but keep this change?
->>>>>
->>>>> iova.h has stubs that are used if IOMMU_IOVA is not set, so it should
->>>>> work when compile testing this tegra-vde driver.
->>>>>
->>>>> Haven't tried it, but making sure that compile testing keep working is
->>>>> really important.
->>>
->>> The driver's code compilation works okay, it's the linkage stage which
->>> fails during compile-testing.
->>>
->>>> Yeah, that variant seems to work for me. I think it's also more correct
->>>> because the IOMMU_IOVA if IOMMU_SUPPORT dependency really says that the
->>>> IOVA usage is bound to IOMMU support. If IOMMU support is not enabled,
->>>> then IOVA is not needed either, so the dummies will do just fine.
->>>
->>> Am I understanding correctly that you're suggesting to revert [1][2] and
->>> get back to the other problem?
->>>
->>> [1]
->>> https://lore.kernel.org/linux-media/dd547b44-7abb-371f-aeee-a82b96f824e2@gmail.com/T/
->>> [2] https://patchwork.ozlabs.org/patch/1136619/
->>>
->>> If we want to keep compile testing, I guess the only reasonable variant
->>> right now is to select IOMMU_IOVA unconditionally in all of the drivers
->>> (vde, host1x, drm and etc) and then just ignore that IOVA will be
->>> compiled-and-unused if IOMMU_SUPPORT=n (note that IOMMU_SUPPORT=y in all
->>> of default kernel configurations).
->>
->> Agreed. I think we should just select IOMMU_IOVA unconditionally. We
->> really do want IOMMU_SUPPORT always as well, but it might be nice to be
->> able to switch it off for testing or so. In the cases that really matter
->> we will be enabling both IOMMU_SUPPORT and IOMMU_IOVA anyway, so might
->> as well select IOMMU_IOVA always. It's not terribly big and I can't
->> imagine anyone wanting to run a kernel without IOMMU_SUPPORT for
->> anything other than testing.
-> 
-> Hello Yue,
-> 
-> Could you please make an updated version of the fix in accordance to the above comments?
-> 
-> Alternatively, we can go with the current patch and temporarily remove the compile-testing. I'll make
-> patches to properly re-add compile-testing sometime later then.
+Hulk Robot is not a person and not accountable for his report.
+If it is your internal CI, please write a sentence stating that
+the fix has been made using Huawei internal tools.
 
-I prefer to do this choice, thanks.
+Credit must be given to tools as well, but not accounts that will
+never answer an e-mail.
 
-> 
-> .
-> 
+Otherwise, the patch would look fine.
+
+Andi
