@@ -1,49 +1,56 @@
-From: Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH -next 25/36] spi: s3c24xx: use
- devm_platform_ioremap_resource() to simplify code
-Date: Sun, 8 Sep 2019 02:38:10 +0300
-Message-ID: <20190907233810.GA15768@jack.zhora.eu>
-References: <20190904135918.25352-1-yuehaibing@huawei.com>
- <20190904135918.25352-26-yuehaibing@huawei.com>
- <CAJKOXPdq4as1Oe3U+9znkvP0RA=sxUoiWVBCSbzf_wq_um2t=w@mail.gmail.com>
- <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
+From: hariprasad@osuosl.org, Kelam@osuosl.org,
+	hariprasad.kelam@gmail.com
+Subject: [PATCH] staging: nvec: make use of devm_platform_ioremap_resource
+Date: Sun,  8 Sep 2019 15:11:01 +0530
+Message-ID: <1567935662-8006-1-git-send-email-hariprasad.kelam@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
-List-Post: <mailto:linux-riscv@lists.infradead.org>
-List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
-To: Yuehaibing <yuehaibing@huawei.com>
-Cc: tmaimon77@gmail.com, palmer@sifive.com, tali.perry1@gmail.com, eric@anholt.net, ldewangan@nvidia.com, linux-riscv@lists.infradead.org, festevam@gmail.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, f.fainelli@gmail.com, benjaminfair@google.com, shc_work@mail.ru, khilman@baylibre.com, openbmc@lists.ozlabs.org, michal.simek@xilinx.com, Krzysztof Kozlowski <krzk@kernel.org>, jonathanh@nvidia.com, yuenn@google.com, wens@csie.org, agross@kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, Andi Shyti <andi@etezian.org>, rjui@broadcom.com, s.hauer@pengutronix.de, mripard@kernel.org, broonie@kernel.org, linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com, matthias.bgg@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-ker
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Cc: devel@driverdev.osuosl.org, Hariprasad Kelam <hariprasad.kelam@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Yuehaibing,
+From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 
-> >> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> >> This is detected by coccinelle.
-> >>
-> >> Reported-by: Hulk Robot <hulkci@huawei.com>
-> > 
-> > This tag does not look real... First of all where is the report?
-> 
-> It is our internal CI robot, which is unavailable to external temporarily.
+fix below issue reported by coccicheck
+drivers/staging//nvec/nvec.c:794:1-5: WARNING: Use
+devm_platform_ioremap_resource for base
 
-Hulk Robot is not a person and not accountable for his report.
-If it is your internal CI, please write a sentence stating that
-the fix has been made using Huawei internal tools.
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Credit must be given to tools as well, but not accounts that will
-never answer an e-mail.
-
-Otherwise, the patch would look fine.
-
-Andi
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 1cbd7b7..360ec04 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -767,7 +767,6 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct nvec_chip *nvec;
+ 	struct nvec_msg *msg;
+-	struct resource *res;
+ 	void __iomem *base;
+ 	char	get_firmware_version[] = { NVEC_CNTL, GET_FIRMWARE_VERSION },
+ 		unmute_speakers[] = { NVEC_OEM0, 0x10, 0x59, 0x95 },
+@@ -790,8 +789,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-- 
+2.7.4
