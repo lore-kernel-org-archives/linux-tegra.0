@@ -1,92 +1,97 @@
 From: Tom Murphy <murphyt7@tcd.ie>
-Subject: [PATCH V6 1/5] iommu/amd: Remove unnecessary locking from AMD iommu driver
-Date: Sun,  8 Sep 2019 09:56:37 -0700
-Message-ID: <20190908165642.22253-2-murphyt7@tcd.ie>
+Subject: [PATCH V6 3/5] iommu/dma-iommu: Handle deferred devices
+Date: Sun,  8 Sep 2019 09:56:39 -0700
+Message-ID: <20190908165642.22253-4-murphyt7@tcd.ie>
 References: <20190908165642.22253-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190908165642.22253-1-murphyt7@tcd.ie>
 Sender: linux-kernel-owner@vger.kernel.org
 To: iommu@lists.linux-foundation.org
-Cc: Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <agross@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.
+Cc: Tom Murphy <murphyt7@tcd.ie>, Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <agross@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradea
 List-Id: linux-tegra@vger.kernel.org
 
-With or without locking it doesn't make sense for two writers to be
-writing to the same IOVA range at the same time. Even with locking we
-still have a race condition, whoever gets the lock first, so we still
-can't be sure what the result will be. With locking the result will be
-more sane, it will be correct for the last writer, but still useless
-because we can't be sure which writer will get the lock last. It's a
-fundamentally broken design to have two writers writing to the same
-IOVA range at the same time.
-
-So we can remove the locking and work on the assumption that no two
-writers will be writing to the same IOVA range at the same time.
-
-The only exception is when we have to allocate a middle page in the page
-tables, the middle page can cover more than just the IOVA range a writer
-has been allocated. However this isn't an issue in the AMD driver
-because it can atomically allocate middle pages using "cmpxchg64()".
+Handle devices which defer their attach to the iommu in the dma-iommu api
 
 Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/amd_iommu.c       | 10 +---------
- drivers/iommu/amd_iommu_types.h |  1 -
- 2 files changed, 1 insertion(+), 10 deletions(-)
+ drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 008da21a2592..1948be7ac8f8 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2858,7 +2858,6 @@ static void protection_domain_free(struct protection_domain *domain)
- static int protection_domain_init(struct protection_domain *domain)
- {
- 	spin_lock_init(&domain->lock);
--	mutex_init(&domain->api_lock);
- 	domain->id = domain_id_alloc();
- 	if (!domain->id)
- 		return -ENOMEM;
-@@ -3045,9 +3044,7 @@ static int amd_iommu_map(struct iommu_domain *dom, unsigned long iova,
- 	if (iommu_prot & IOMMU_WRITE)
- 		prot |= IOMMU_PROT_IW;
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 2712fbc68b28..bd09b6b31c4e 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -22,6 +22,7 @@
+ #include <linux/pci.h>
+ #include <linux/scatterlist.h>
+ #include <linux/vmalloc.h>
++#include <linux/crash_dump.h>
  
--	mutex_lock(&domain->api_lock);
- 	ret = iommu_map_page(domain, iova, paddr, page_size, prot, GFP_KERNEL);
--	mutex_unlock(&domain->api_lock);
- 
- 	domain_flush_np_cache(domain, iova, page_size);
- 
-@@ -3058,16 +3055,11 @@ static size_t amd_iommu_unmap(struct iommu_domain *dom, unsigned long iova,
- 			   size_t page_size)
- {
- 	struct protection_domain *domain = to_pdomain(dom);
--	size_t unmap_size;
- 
- 	if (domain->mode == PAGE_MODE_NONE)
- 		return 0;
- 
--	mutex_lock(&domain->api_lock);
--	unmap_size = iommu_unmap_page(domain, iova, page_size);
--	mutex_unlock(&domain->api_lock);
--
--	return unmap_size;
-+	return iommu_unmap_page(domain, iova, page_size);
+ struct iommu_dma_msi_page {
+ 	struct list_head	list;
+@@ -351,6 +352,21 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+ 	return iova_reserve_iommu_regions(dev, domain);
  }
  
- static phys_addr_t amd_iommu_iova_to_phys(struct iommu_domain *dom,
-diff --git a/drivers/iommu/amd_iommu_types.h b/drivers/iommu/amd_iommu_types.h
-index 9ac229e92b07..b764e1a73dcf 100644
---- a/drivers/iommu/amd_iommu_types.h
-+++ b/drivers/iommu/amd_iommu_types.h
-@@ -468,7 +468,6 @@ struct protection_domain {
- 	struct iommu_domain domain; /* generic domain handle used by
- 				       iommu core code */
- 	spinlock_t lock;	/* mostly used to lock the page table*/
--	struct mutex api_lock;	/* protect page tables in the iommu-api path */
- 	u16 id;			/* the domain id written to the device table */
- 	int mode;		/* paging mode (0-6 levels) */
- 	u64 *pt_root;		/* page table root pointer */
++static int iommu_dma_deferred_attach(struct device *dev,
++		struct iommu_domain *domain)
++{
++	const struct iommu_ops *ops = domain->ops;
++
++	if (!is_kdump_kernel())
++		return 0;
++
++	if (unlikely(ops->is_attach_deferred &&
++			ops->is_attach_deferred(domain, dev)))
++		return iommu_attach_device(domain, dev);
++
++	return 0;
++}
++
+ /**
+  * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
+  *                    page flags.
+@@ -463,6 +479,9 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+ 	size_t iova_off = iova_offset(iovad, phys);
+ 	dma_addr_t iova;
+ 
++	if (unlikely(iommu_dma_deferred_attach(dev, domain)))
++		return DMA_MAPPING_ERROR;
++
+ 	size = iova_align(iovad, size + iova_off);
+ 
+ 	iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
+@@ -581,6 +600,9 @@ static void *iommu_dma_alloc_remap(struct device *dev, size_t size,
+ 
+ 	*dma_handle = DMA_MAPPING_ERROR;
+ 
++	if (unlikely(iommu_dma_deferred_attach(dev, domain)))
++		return NULL;
++
+ 	min_size = alloc_sizes & -alloc_sizes;
+ 	if (min_size < PAGE_SIZE) {
+ 		min_size = PAGE_SIZE;
+@@ -713,7 +735,7 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+ 	int prot = dma_info_to_prot(dir, coherent, attrs);
+ 	dma_addr_t dma_handle;
+ 
+-	dma_handle =__iommu_dma_map(dev, phys, size, prot);
++	dma_handle = __iommu_dma_map(dev, phys, size, prot);
+ 	if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
+ 	    dma_handle != DMA_MAPPING_ERROR)
+ 		arch_sync_dma_for_device(dev, phys, size, dir);
+@@ -823,6 +845,9 @@ static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
+ 	unsigned long mask = dma_get_seg_boundary(dev);
+ 	int i;
+ 
++	if (unlikely(iommu_dma_deferred_attach(dev, domain)))
++		return 0;
++
+ 	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+ 		iommu_dma_sync_sg_for_device(dev, sg, nents, dir);
+ 
 -- 
 2.20.1
