@@ -1,31 +1,65 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next v2 1/2] net: stmmac: Only enable enhanced
- addressing mode when needed
-Date: Mon, 9 Sep 2019 16:07:04 +0000
-Message-ID: <BN8PR12MB3266B232D3B895A4A4368191D3B70@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <20190909152546.383-1-thierry.reding@gmail.com>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH] staging: nvec: make use of
+ devm_platform_ioremap_resource
+Date: Mon, 9 Sep 2019 20:14:50 +0200 (CEST)
+Message-ID: <alpine.OSX.2.21.1909092010430.4245@macbook-pro.fritz.box>
+References: <1567935662-8006-1-git-send-email-hariprasad.kelam@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190909152546.383-1-thierry.reding@gmail.com>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, "David S . Miller" <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1567935662-8006-1-git-send-email-hariprasad.kelam@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Sep/09/2019, 16:25:45 (UTC+00:00)
+Hi Hariprased,
 
-> @@ -92,6 +92,7 @@ struct stmmac_dma_cfg {
->  	int fixed_burst;
->  	int mixed_burst;
->  	bool aal;
-> +	bool eame;
+On Sun, 8 Sep 2019, hariprasad@MISSING_DOMAIN wrote:
+                              ^^^^^^^^^^^^^^^^^^
+something is wrong with your git mail config...
 
-bools should not be used in struct's, please change to int.
+> From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+>
+> fix below issue reported by coccicheck
+> drivers/staging//nvec/nvec.c:794:1-5: WARNING: Use
+> devm_platform_ioremap_resource for base
+>
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 
----
-Thanks,
-Jose Miguel Abreu
+Acked-by: Marc Dietrich <marvin24@gmx.de>
+
+Thanks!
+
+Marc
+
+> ---
+> drivers/staging/nvec/nvec.c | 4 +---
+> 1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 1cbd7b7..360ec04 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -767,7 +767,6 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+> 	struct device *dev = &pdev->dev;
+> 	struct nvec_chip *nvec;
+> 	struct nvec_msg *msg;
+> -	struct resource *res;
+> 	void __iomem *base;
+> 	char	get_firmware_version[] = { NVEC_CNTL, GET_FIRMWARE_VERSION },
+> 		unmute_speakers[] = { NVEC_OEM0, 0x10, 0x59, 0x95 },
+> @@ -790,8 +789,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+> 		return -ENODEV;
+> 	}
+>
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	base = devm_ioremap_resource(dev, res);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+> 	if (IS_ERR(base))
+> 		return PTR_ERR(base);
+>
+> -- 
+> 2.7.4
+>
+>
