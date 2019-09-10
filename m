@@ -1,48 +1,52 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH net-next v2 2/2] net: stmmac: Support enhanced addressing
- mode for DWMAC 4.10
-Date: Tue, 10 Sep 2019 08:35:05 +0000
-Message-ID: <BN8PR12MB3266F021DFC2C61CDEC83418D3B60@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <20190909152546.383-1-thierry.reding@gmail.com>
- <20190909152546.383-2-thierry.reding@gmail.com>
- <BN8PR12MB3266AAC6FF4819EC25CB087BD3B70@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20190909191329.GB23804@mithrandir>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/23] 4.4.192-stable review
+Date: Tue, 10 Sep 2019 10:18:28 +0100
+Message-ID: <f97b50f6-e5c4-7de4-3e2b-beeaac184be9@nvidia.com>
+References: <20190908121052.898169328@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190909191329.GB23804@mithrandir>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Sep/09/2019, 20:13:29 (UTC+00:00)
 
-> On Mon, Sep 09, 2019 at 04:05:52PM +0000, Jose Abreu wrote:
-> > From: Thierry Reding <thierry.reding@gmail.com>
-> > Date: Sep/09/2019, 16:25:46 (UTC+00:00)
-> >=20
-> > > @@ -79,6 +79,10 @@ static void dwmac4_dma_init_rx_chan(void __iomem *=
-ioaddr,
-> > >  	value =3D value | (rxpbl << DMA_BUS_MODE_RPBL_SHIFT);
-> > >  	writel(value, ioaddr + DMA_CHAN_RX_CONTROL(chan));
-> > > =20
-> > > +	if (dma_cfg->eame)
-> >=20
-> > There is no need for this check. If EAME is not enabled then upper 32=20
-> > bits will be zero.
->=20
-> The idea here was to potentially guard against this register not being
-> available on some revisions. Having the check here would avoid access to
-> the register if the device doesn't support enhanced addressing.
+On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.192 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue 10 Sep 2019 12:09:36 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.192-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I see your point but I don't think there will be any problems unless you=20
-have some strange system that doesn't handle the write accesses to=20
-unimplemented features properly ...
+All tests are passing for Tegra ...
 
----
-Thanks,
-Jose Miguel Abreu
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
+
+Linux version:	4.4.192-rc1-gfbce796fcbec
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
