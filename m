@@ -1,53 +1,36 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.2 00/94] 5.2.14-stable review
-Date: Tue, 10 Sep 2019 10:29:27 +0100
-Message-ID: <20190910092927.GB19176@kroah.com>
-References: <20190908121150.420989666@linuxfoundation.org>
- <df670408-bb4b-de9f-13d7-f9d605747df9@nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v10 01/15] clk: tegra20/30: Add custom EMC clock implementation
+Date: Tue, 10 Sep 2019 03:33:04 -0700
+Message-ID: <20190910103305.B4E1B20872@mail.kernel.org>
+References: <20190811210043.20122-1-digetx@gmail.com> <20190811210043.20122-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <df670408-bb4b-de9f-13d7-f9d605747df9@nvidia.com>
+In-Reply-To: <20190811210043.20122-2-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 10:20:23AM +0100, Jon Hunter wrote:
-> 
-> On 08/09/2019 13:40, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.14 release.
-> > There are 94 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue 10 Sep 2019 12:09:36 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.14-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.2:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.2.14-rc1-g562387856c86
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+Quoting Dmitry Osipenko (2019-08-11 14:00:29)
+> A proper External Memory Controller clock rounding and parent selection
+> functionality is required by the EMC drivers, it is not available using
+> the generic clock implementation because only the Memory Controller driver
+> is aware of what clock rates are actually available for a particular
+> device. EMC drivers will have to register a Tegra-specific CLK-API
+> callback which will perform rounding of a requested rate. EMC clock users
+> won't be able to request EMC clock by getting -EPROBE_DEFER until EMC
+> driver is probed and the callback is set up.
+>=20
+> The functionality is somewhat similar to the clk-emc.c which serves
+> Tegra124+ SoCs. The later HW generations support more parent clock sources
+> and the HW configuration / integration with the EMC drivers differs a tad
+> from the older gens, hence it's not really worth to try to squash
+> everything into a single source file.
+>=20
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-Thanks for testing all of these and letting me know.
-
-greg k-h
+Acked-by: Stephen Boyd <sboyd@kernel.org>
