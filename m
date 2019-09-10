@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.9 00/26] 4.9.192-stable review
-Date: Tue, 10 Sep 2019 10:19:08 +0100
-Message-ID: <7a45a15c-3b52-0c49-86ad-f1519e85cef6@nvidia.com>
-References: <20190908121057.216802689@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/40] 4.14.143-stable review
+Date: Tue, 10 Sep 2019 10:19:39 +0100
+Message-ID: <5f4ed3d8-8680-00b6-e3d0-19f8c828dab2@nvidia.com>
+References: <20190908121114.260662089@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -16,8 +16,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.192 release.
-> There are 26 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.14.143 release.
+> There are 40 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.192-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.143-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +36,12 @@ On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v4.9:
+Test results for stable-v4.14:
     8 builds:	8 pass, 0 fail
     16 boots:	16 pass, 0 fail
     24 tests:	24 pass, 0 fail
 
-Linux version:	4.9.192-rc1-ge2a45fc6bf15
+Linux version:	4.14.143-rc1-g9ea9c62091b3
 Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
