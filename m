@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.19 00/57] 4.19.72-stable review
-Date: Tue, 10 Sep 2019 10:20:01 +0100
-Message-ID: <24b7d910-d1dd-d683-0386-b0b303baa8c3@nvidia.com>
-References: <20190908121125.608195329@linuxfoundation.org>
+Subject: Re: [PATCH 5.2 00/94] 5.2.14-stable review
+Date: Tue, 10 Sep 2019 10:20:23 +0100
+Message-ID: <df670408-bb4b-de9f-13d7-f9d605747df9@nvidia.com>
+References: <20190908121150.420989666@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -15,9 +15,9 @@ Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.72 release.
-> There are 57 patches in this series, all will be posted as a response
+On 08/09/2019 13:40, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.2.14 release.
+> There are 94 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.72-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.14-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +36,12 @@ On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v4.19:
+Test results for stable-v5.2:
     12 builds:	12 pass, 0 fail
     22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+    38 tests:	38 pass, 0 fail
 
-Linux version:	4.19.72-rc1-g20f1e9f54416
+Linux version:	5.2.14-rc1-g562387856c86
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
