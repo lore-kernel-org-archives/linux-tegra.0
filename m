@@ -1,37 +1,63 @@
-From: John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
-Date: Tue, 10 Sep 2019 09:05:30 -0700
-Message-ID: <CALAqxLWLStTqGx5DAvUKOYupdgK-doOxRF5Z_Us=L5vnFaa=7w@mail.gmail.com>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next v2 1/2] net: stmmac: Only enable enhanced
+ addressing mode when needed
+Date: Tue, 10 Sep 2019 17:25:05 +0000
+Message-ID: <BN8PR12MB3266DCD09369F3682CC38690D3B60@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <20190909152546.383-1-thierry.reding@gmail.com>
+ <BN8PR12MB3266B232D3B895A4A4368191D3B70@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190909191127.GA23804@mithrandir>
+ <BN8PR12MB3266850280A788D41C277B08D3B60@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190910135427.GB9897@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
-List-Post: <mailto:linux-snps-arc@lists.infradead.org>
-List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
-Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: tmaimon77@gmail.com, Linus Walleij <linus.walleij@linaro.org>, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, ludovic.desroches@microchip.com, linux-imx@nxp.com, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, uclinux-h8-devel@lists.sourceforge.jp, Marc Zyngier <marc.zyngier@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, linux-unisoc@lists.infradead.org, =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, Thomas Gleixner <tglx@linutronix.de>, sbranden@broadcom.com, lkml <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, kernel@pengutronix.de, Mark Rutland <mark.rutland@arm.co>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190910135427.GB9897@ulmo>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jose Abreu <Jose.Abreu@synopsys.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 6:47 AM Claudiu Beznea
-<claudiu.beznea@microchip.com> wrote:
->
-> This series adds support to permit the selection of clocksource/clockevent
-> via DT.
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Sep/10/2019, 14:54:27 (UTC+00:00)
 
-Sorry about this, but could you try to include more of a rational for
-*why* this would be useful in your cover-letter/commit messages?
+> On Tue, Sep 10, 2019 at 08:32:38AM +0000, Jose Abreu wrote:
+> > From: Thierry Reding <thierry.reding@gmail.com>
+> > Date: Sep/09/2019, 20:11:27 (UTC+00:00)
+> >=20
+> > > On Mon, Sep 09, 2019 at 04:07:04PM +0000, Jose Abreu wrote:
+> > > > From: Thierry Reding <thierry.reding@gmail.com>
+> > > > Date: Sep/09/2019, 16:25:45 (UTC+00:00)
+> > > >=20
+> > > > > @@ -92,6 +92,7 @@ struct stmmac_dma_cfg {
+> > > > >  	int fixed_burst;
+> > > > >  	int mixed_burst;
+> > > > >  	bool aal;
+> > > > > +	bool eame;
+> > > >=20
+> > > > bools should not be used in struct's, please change to int.
+> > >=20
+> > > Huh? Since when? "aal" right above it is also bool. Can you provide a
+> > > specific rationale for why we shouldn't use bool in structs?
+> >=20
+> > Please see https://lkml.org/lkml/2017/11/21/384.
+>=20
+> The context is slightly different here. stmmac_dma_cfg exists once for
+> each of these ethernet devices in the system, and I would assume that in
+> the vast majority of cases there's exactly one such device in the system
+> so the potential size increase is very small. On the other hand, there
+> are potentially very many struct sched_dl_entity, so the size impact is
+> multiplied.
+>=20
+> Anyway, if you insist I'll rewrite this to use an unsigned int bitfield.
 
-I'm not sure I understand the limitation that requires such an option
-to be added to the dts.
+For new code I would rather prefer "int" but I guess it's up to David to=20
+decide this. I'm okay with both options as the check for this usage was=20
+removed in checkpatch:=20
+https://lkml.org/lkml/2019/1/10/975
 
-thanks
--john
+---
+Thanks,
+Jose Miguel=20
+Abreu
