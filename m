@@ -1,79 +1,45 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH net-next v2 1/2] net: stmmac: Only enable enhanced
- addressing mode when needed
-Date: Tue, 10 Sep 2019 15:54:27 +0200
-Message-ID: <20190910135427.GB9897@ulmo>
-References: <20190909152546.383-1-thierry.reding@gmail.com>
- <BN8PR12MB3266B232D3B895A4A4368191D3B70@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20190909191127.GA23804@mithrandir>
- <BN8PR12MB3266850280A788D41C277B08D3B60@BN8PR12MB3266.namprd12.prod.outlook.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
+ selection
+Date: Tue, 10 Sep 2019 15:32:31 +0100
+Message-ID: <20190910143231.GB14966@e107533-lin.cambridge.arm.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="R3G7APHDIzY6R/pk"
-Return-path: <netdev-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <BN8PR12MB3266850280A788D41C277B08D3B60@BN8PR12MB3266.namprd12.prod.outlook.com>
-Sender: netdev-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+In-Reply-To: <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: tmaimon77@gmail.com, linus.walleij@linaro.org, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, khilman@baylibre.com, ludovic.desroches@microchip.com, linux-imx@nxp.com, u.kleine-koenig@pengutronix.de, uclinux-h8-devel@lists.sourceforge.jp, marc.zyngier@arm.com, s.hauer@pengutronix.de, linux-unisoc@lists.infradead.org, khalasa@piap.pl, tglx@linutronix.de, sbranden@broadcom.com, linux-kernel@vger.kernel.org, ralf@linux-mips.org, paul.burton@mips.com, kernel@pengutronix.de, mark.rutland@arm.com, alexandre.belloni@bootlin.com, jhogan@kernel.org, palmer@sifive.com, eric@anholt.net, thierry.reding@gmail.com, manivannan.sadhasivam@linaro.org, ysato@users.sourceforge.jp, zhang.lyra@gmail.com, daniel.lezcano@linaro.org, jonathanh@nvidia.com, bgolaszewski@baylibre.co
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Sep 10, 2019 at 04:47:13PM +0300, Claudiu Beznea wrote:
+> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>
+> Some timer drivers may behave either as clocksource or clockevent
+> or both. Until now, in case of platforms with multiple hardware
+> resources of the same type, the drivers were chosing the first
+> registered hardware resource as clocksource/clockevent and the
+> next one as clockevent/clocksource. Other were using different
+> compatibles (one for each functionality, although its about the
+> same hardware). Add DT bindings to be able to choose the
+> functionality of a timer.
+>
 
---R3G7APHDIzY6R/pk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is the piece of hardware not capable of serving as both clocksource
+and clockevent or is it just the platform choice ?
 
-On Tue, Sep 10, 2019 at 08:32:38AM +0000, Jose Abreu wrote:
-> From: Thierry Reding <thierry.reding@gmail.com>
-> Date: Sep/09/2019, 20:11:27 (UTC+00:00)
->=20
-> > On Mon, Sep 09, 2019 at 04:07:04PM +0000, Jose Abreu wrote:
-> > > From: Thierry Reding <thierry.reding@gmail.com>
-> > > Date: Sep/09/2019, 16:25:45 (UTC+00:00)
-> > >=20
-> > > > @@ -92,6 +92,7 @@ struct stmmac_dma_cfg {
-> > > >  	int fixed_burst;
-> > > >  	int mixed_burst;
-> > > >  	bool aal;
-> > > > +	bool eame;
-> > >=20
-> > > bools should not be used in struct's, please change to int.
-> >=20
-> > Huh? Since when? "aal" right above it is also bool. Can you provide a
-> > specific rationale for why we shouldn't use bool in structs?
->=20
-> Please see https://lkml.org/lkml/2017/11/21/384.
-
-The context is slightly different here. stmmac_dma_cfg exists once for
-each of these ethernet devices in the system, and I would assume that in
-the vast majority of cases there's exactly one such device in the system
-so the potential size increase is very small. On the other hand, there
-are potentially very many struct sched_dl_entity, so the size impact is
-multiplied.
-
-Anyway, if you insist I'll rewrite this to use an unsigned int bitfield.
-
-Thierry
-
---R3G7APHDIzY6R/pk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl13qxAACgkQ3SOs138+
-s6Gtlw/+PebnFYt7gpCYJwV+uclDuC52tBtJfP3xyipRbTfKpM01hAZ66jlbMHXo
-biTf5b5Xy6PBS7aIQcDWakm4J853T9n/4maQK5whR//YTCh0Gf2h+68WoB1IdnYW
-lRAYLk/knUUE6hHVG0HFKEc8WuCR+4vEOvT4K8odKqBzv0xdj2lhpvtOOisWenAz
-sf5qVUDXTGgCrB3ofBA1ZOzWaLDAA+961v1mQyLv35/Qayix1xRkI2mFHSGwlqzG
-UiQtQiPd5c56TKKk1GLjzaE/dtst0DGCpeMnAeZAw6DZPGjrfId3OmsZP2VZMUAC
-5+t9UDKDVWyS9HL2iRYAwa6YRXRBBJ1gAzaDwTf2RHSal37qU2PbgGQRtjtDJft4
-yUW+uk32XQ6qD70jFmSoO/2pA5izBeuquKtJG8HVdM+FiayuYAg8SKX541Z55+Xs
-yehBhr0A+Z9jyq07wPuKqp7rez3KH+IyDZ4eyyEbUmOqqG1ZNOG4s5c4FfwMA8Cp
-+CQSQ13D2QWj54TeXVf6lyRU5Vhm2gPZHv3ahwB2s6yGc8V5E4DbNH47DoKAbzGY
-mh2gA6MhDIlNS7v4ZeVthhwmbq6dWYXz46Dlc7Y0GgvHF9MkHXmip3Aq0ndXSF36
-SMfu5YkcPIAbLpFqj2H/jA53sAPi33iyeXqkNacZUm7npf13NcU=
-=mn/8
------END PGP SIGNATURE-----
-
---R3G7APHDIzY6R/pk--
+--
+Regards,
+Sudeep
