@@ -1,82 +1,58 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
- selection
-Date: Wed, 11 Sep 2019 09:34:27 +0200
-Message-ID: <81da473f-54d7-2a00-61ec-9351cdfcaaf3@baylibre.com>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
- <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: RE: [PATCH net-next v2 2/2] net: stmmac: Support enhanced addressing
+ mode for DWMAC 4.10
+Date: Wed, 11 Sep 2019 09:15:10 +0000
+Message-ID: <BN8PR12MB3266FC9B7C984F875A920D3ED3B10@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <20190909152546.383-1-thierry.reding@gmail.com>
+ <20190909152546.383-2-thierry.reding@gmail.com>
+ <BN8PR12MB3266AAC6FF4819EC25CB087BD3B70@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190909191329.GB23804@mithrandir>
+ <BN8PR12MB3266F021DFC2C61CDEC83418D3B60@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <c8d419d3-6cf6-e260-a2e2-6a339c6c321b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <c8d419d3-6cf6-e260-a2e2-6a339c6c321b@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Claudiu Beznea <claudiu.beznea@microchip.com>, daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org, s.hauer@pen
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+Sender: netdev-owner@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On 10/09/2019 15:47, Claudiu Beznea wrote:
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
-> Some timer drivers may behave either as clocksource or clockevent
-> or both. Until now, in case of platforms with multiple hardware
-> resources of the same type, the drivers were chosing the first
-> registered hardware resource as clocksource/clockevent and the
-> next one as clockevent/clocksource. Other were using different
-> compatibles (one for each functionality, although its about the
-> same hardware). Add DT bindings to be able to choose the
-> functionality of a timer.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  Documentation/devicetree/bindings/chosen.txt | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
-> index 45e79172a646..aad3034cdbdf 100644
-> --- a/Documentation/devicetree/bindings/chosen.txt
-> +++ b/Documentation/devicetree/bindings/chosen.txt
-> @@ -135,3 +135,23 @@ e.g.
->  		linux,initrd-end = <0x82800000>;
->  	};
->  };
-> +
-> +linux,clocksource and linux,clockevent
-> +--------------------------------------
-> +
-> +Those nodes have a timer property. This property is a phandle to the timer to be
-> +chosen as the clocksource or clockevent. This is only useful when the platform
-> +has multiple identical timers and it is not possible to let linux make the
-> +correct choice.
-> +
-> +/ {
-> +	chosen {
-> +		linux,clocksource {
-> +			timer = <&timer0>;
-> +		};
-> +
-> +		linux,clockevent {
-> +			timer = <&timer1>;
-> +		};
-> +	};
-> +};
-> 
-
-Why not in aliases ?
-
-aliases {
-    clocksource0 = &timer0;
-    clockevent0 = &timer1;
-};
-
-since we can have multiple of each, we should not limit ourselves to 1 clkevent
-and 1 clksource.
-
-In the aliases case, each driver would expose both capabilities, and the core would select
-what to enable.
-
-Neil
+RnJvbTogRmxvcmlhbiBGYWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+DQpEYXRlOiBTZXAv
+MTAvMjAxOSwgMjA6MDE6MDEgKFVUQyswMDowMCkNCg0KPiBPbiA5LzEwLzE5IDE6MzUgQU0sIEpv
+c2UgQWJyZXUgd3JvdGU6DQo+ID4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5n
+QGdtYWlsLmNvbT4NCj4gPiBEYXRlOiBTZXAvMDkvMjAxOSwgMjA6MTM6MjkgKFVUQyswMDowMCkN
+Cj4gPiANCj4gPj4gT24gTW9uLCBTZXAgMDksIDIwMTkgYXQgMDQ6MDU6NTJQTSArMDAwMCwgSm9z
+ZSBBYnJldSB3cm90ZToNCj4gPj4+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGlu
+Z0BnbWFpbC5jb20+DQo+ID4+PiBEYXRlOiBTZXAvMDkvMjAxOSwgMTY6MjU6NDYgKFVUQyswMDow
+MCkNCj4gPj4+DQo+ID4+Pj4gQEAgLTc5LDYgKzc5LDEwIEBAIHN0YXRpYyB2b2lkIGR3bWFjNF9k
+bWFfaW5pdF9yeF9jaGFuKHZvaWQgX19pb21lbSAqaW9hZGRyLA0KPiA+Pj4+ICAJdmFsdWUgPSB2
+YWx1ZSB8IChyeHBibCA8PCBETUFfQlVTX01PREVfUlBCTF9TSElGVCk7DQo+ID4+Pj4gIAl3cml0
+ZWwodmFsdWUsIGlvYWRkciArIERNQV9DSEFOX1JYX0NPTlRST0woY2hhbikpOw0KPiA+Pj4+ICAN
+Cj4gPj4+PiArCWlmIChkbWFfY2ZnLT5lYW1lKQ0KPiA+Pj4NCj4gPj4+IFRoZXJlIGlzIG5vIG5l
+ZWQgZm9yIHRoaXMgY2hlY2suIElmIEVBTUUgaXMgbm90IGVuYWJsZWQgdGhlbiB1cHBlciAzMiAN
+Cj4gPj4+IGJpdHMgd2lsbCBiZSB6ZXJvLg0KPiA+Pg0KPiA+PiBUaGUgaWRlYSBoZXJlIHdhcyB0
+byBwb3RlbnRpYWxseSBndWFyZCBhZ2FpbnN0IHRoaXMgcmVnaXN0ZXIgbm90IGJlaW5nDQo+ID4+
+IGF2YWlsYWJsZSBvbiBzb21lIHJldmlzaW9ucy4gSGF2aW5nIHRoZSBjaGVjayBoZXJlIHdvdWxk
+IGF2b2lkIGFjY2VzcyB0bw0KPiA+PiB0aGUgcmVnaXN0ZXIgaWYgdGhlIGRldmljZSBkb2Vzbid0
+IHN1cHBvcnQgZW5oYW5jZWQgYWRkcmVzc2luZy4NCj4gPiANCj4gPiBJIHNlZSB5b3VyIHBvaW50
+IGJ1dCBJIGRvbid0IHRoaW5rIHRoZXJlIHdpbGwgYmUgYW55IHByb2JsZW1zIHVubGVzcyB5b3Ug
+DQo+ID4gaGF2ZSBzb21lIHN0cmFuZ2Ugc3lzdGVtIHRoYXQgZG9lc24ndCBoYW5kbGUgdGhlIHdy
+aXRlIGFjY2Vzc2VzIHRvIA0KPiA+IHVuaW1wbGVtZW50ZWQgZmVhdHVyZXMgcHJvcGVybHkgLi4u
+DQo+IA0KPiBJcyBub3QgaXQgdGhlbiBqdXN0IHNhZmVyIHRvIG5vdCBkbyB0aGUgd3JpdGUgdG8g
+YSByZWdpc3RlciB0aGF0IHlvdSBkbw0KPiBub3Qga25vdyBob3cgdGhlIGltcGxlbWVudGF0aW9u
+IGlzIGdvaW5nIHRvIHJlc3BvbmQgdG8gd2l0aCBvbmUgb2YgYQ0KPiB0YXJnZXQgYWJvcnQsIHRp
+bWVvdXQsIGRlY29kaW5nIGVycm9yLCBqdXN0IGRlYWQgbG9jaz8NCg0KSSBkb24ndCB0aGluayBh
+bnkgb2YgdGhlc2Ugd2lsbCBldmVyIGhhcHBlbi4gTm90aWNlIHRoYXQgdGhpcyBpcyBhbHJlYWR5
+IA0KYmVlbiBkb25lIGZvciBhIGxvbmcgdGltZSBpbiBzb21lIHJlZ2lzdGVycyB0aGF0IG1heSBu
+b3QgZXhpc3QgaW4gc29tZSANCnJhbmRvbSBIVyBjb25maWcgYW5kIHRoZXJlIGlzIGFsc28gdGhl
+IHBvaW50IHRoYXQgdGhpcyBpcyBhIHdyaXRlIA0Kb3BlcmF0aW9uIHNvIFNsYXZlIEVycm9yIHdv
+dWxkIG9ubHkgZ2V0IHRyaWdnZXJlZCBpZiB3ZSBkaWQgYSByZWFkLg0KDQo+IEFsc28sIHdvdWxk
+IGl0IG1ha2Ugc2Vuc2UgdG8gY29uc2lkZXIgYWRkaW5nIGFuICNpZmRlZg0KPiBDT05GSUdfUEhZ
+U19BRERSX1RfNjRCSVQgcGx1cyB0aGUgY29uZGl0aW9uYWwgY2hlY2sgc28gdGhhdCB5b3UgY2Fu
+IGJlDQo+IHNsaWdodGx5IG1vcmUgb3B0aW1hbCBpbiB0aGUgaG90LXBhdGggaGVyZT8NCg0KV2Vs
+bCwgdGhpcyBpcyBub3QgaG90LXBhdGguIEl0J3Mgb25seSBkb25lIGluIEhXIG9wZW4gc2VxdWVu
+Y2UuIFRoZSANCmhvdC1wYXRoIHdvdWxkIGJlIHNldF97cngvdHh9X3RhaWxfcHRyKCkgYnV0IHRo
+YXQncyAzMiBiaXRzIG9ubHkuIA0KDQotLS0NClRoYW5rcywNCkpvc2UgTWlndWVsIEFicmV1DQo=
