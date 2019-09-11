@@ -1,17 +1,15 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
- selection
-Date: Wed, 11 Sep 2019 11:14:58 +0200
-Message-ID: <20190911091458.GD21254@piout.net>
+From: John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Wed, 11 Sep 2019 09:06:01 -0700
+Message-ID: <CALAqxLXRVc-K5q=me1=5tA0XYT7ncrArSoD+hq=JOGWVF9-7SQ@mail.gmail.com>
 References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
- <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
- <81da473f-54d7-2a00-61ec-9351cdfcaaf3@baylibre.com>
+ <CALAqxLWLStTqGx5DAvUKOYupdgK-doOxRF5Z_Us=L5vnFaa=7w@mail.gmail.com>
+ <cb451591-88ad-f1b3-b654-cea86ae11cac@microchip.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <81da473f-54d7-2a00-61ec-9351cdfcaaf3@baylibre.com>
+In-Reply-To: <cb451591-88ad-f1b3-b654-cea86ae11cac@microchip.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
  <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
@@ -21,81 +19,54 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
  <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
 Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: tmaimon77@gmail.com, linus.walleij@linaro.org, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, khilman@baylibre.com, ludovic.desroches@microchip.com, linux-imx@nxp.com, u.kleine-koenig@pengutronix.de, uclinux-h8-devel@lists.sourceforge.jp, marc.zyngier@arm.com, s.hauer@pengutronix.de, linux-unisoc@lists.infradead.org, khalasa@piap.pl, tglx@linutronix.de, sbranden@broadcom.com, linux-kernel@vger.kernel.org, ralf@linux-mips.org, paul.burton@mips.com, kernel@pengutronix.de, Claudiu Beznea <claudiu.beznea@microchip.com>, mark.rutland@arm.com, jhogan@kernel.org, palmer@sifive.com, eric@anholt.net, thierry.reding@gmail.com, manivannan.sadhasivam@linaro.org, ysato@users.sourceforge.jp, zhang.lyra@gmail.com, daniel.lezcano@linaro.org, jonathanh@nvidia.com, bgolasze
+To: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc: tmaimon77@gmail.com, Linus Walleij <linus.walleij@linaro.org>, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Ludovic.Desroches@microchip.com, linux-imx@nxp.com, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, uclinux-h8-devel@lists.sourceforge.jp, Marc Zyngier <marc.zyngier@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, linux-unisoc@lists.infradead.org, =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, Thomas Gleixner <tglx@linutronix.de>, sbranden@broadcom.com, lkml <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, kernel@pengutronix.de, Mark Rutland <mark.rutland@arm.co>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/09/2019 09:34:27+0200, Neil Armstrong wrote:
-> Hi,
-> 
-> On 10/09/2019 15:47, Claudiu Beznea wrote:
-> > From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > 
-> > Some timer drivers may behave either as clocksource or clockevent
-> > or both. Until now, in case of platforms with multiple hardware
-> > resources of the same type, the drivers were chosing the first
-> > registered hardware resource as clocksource/clockevent and the
-> > next one as clockevent/clocksource. Other were using different
-> > compatibles (one for each functionality, although its about the
-> > same hardware). Add DT bindings to be able to choose the
-> > functionality of a timer.
-> > 
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> > ---
-> >  Documentation/devicetree/bindings/chosen.txt | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
-> > index 45e79172a646..aad3034cdbdf 100644
-> > --- a/Documentation/devicetree/bindings/chosen.txt
-> > +++ b/Documentation/devicetree/bindings/chosen.txt
-> > @@ -135,3 +135,23 @@ e.g.
-> >  		linux,initrd-end = <0x82800000>;
-> >  	};
-> >  };
-> > +
-> > +linux,clocksource and linux,clockevent
-> > +--------------------------------------
-> > +
-> > +Those nodes have a timer property. This property is a phandle to the timer to be
-> > +chosen as the clocksource or clockevent. This is only useful when the platform
-> > +has multiple identical timers and it is not possible to let linux make the
-> > +correct choice.
-> > +
-> > +/ {
-> > +	chosen {
-> > +		linux,clocksource {
-> > +			timer = <&timer0>;
-> > +		};
-> > +
-> > +		linux,clockevent {
-> > +			timer = <&timer1>;
-> > +		};
-> > +	};
-> > +};
-> > 
-> 
-> Why not in aliases ?
-> 
-> aliases {
->     clocksource0 = &timer0;
->     clockevent0 = &timer1;
-> };
-> 
-> since we can have multiple of each, we should not limit ourselves to 1 clkevent
-> and 1 clksource.
-> 
-> In the aliases case, each driver would expose both capabilities, and the core would select
-> what to enable.
-> 
+On Tue, Sep 10, 2019 at 11:52 PM <Claudiu.Beznea@microchip.com> wrote:
+> On 10.09.2019 19:05, John Stultz wrote:
+> > External E-Mail
+> > On Tue, Sep 10, 2019 at 6:47 AM Claudiu Beznea
+> > <claudiu.beznea@microchip.com> wrote:
+> >>
+> >> This series adds support to permit the selection of clocksource/clockevent
+> >> via DT.
+> >
+> > Sorry about this, but could you try to include more of a rational for
+> > *why* this would be useful in your cover-letter/commit messages?
+> >
+>
+> Sorry for not being to clear in the cover letter.
+>
+> The case I am trying to solve here is as follows:
+> The timer hardware for which I publish a driver at [1] cannot work at the
+> same time as a clocksource and clockevent. On some of our platforms we have
+> more than one such a timer. So we could use one hardware resource as
+> clocksource and one as clockevent but not one for both.
+> Due to this, I proposed in the driver at [1] to have 1st probed hardware to
+> work as clocksource and the 2nd one to work as clockevent.
+[snip]
+> Due to this Daniel proposed to have an unified mechanism for this scenario,
+> see [2], (something like what I proposed in this series), such that to have
+> a determinism b/w the function that the hardware resources would behave
+> (either clocksource or clockevent or both).
 
-For extendability, you need nodes for that because at some point, you
-may need to also be able to select the timer frequency. You can't do
-that with an alias.
+Thanks for the additional explanation! I'd suggest adding something
+like it to the commit logs for next time.
 
+Personally, I tend to think of DT bindings as a big harry ABI, and as
+such avoid it as much as possible. :)
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I'd probably favor driver tweaks to ensure the hardware only gets
+registered once for each, using a minimal DT compatible or flag on the
+hardware to better describe the underlying hardware quirk that keeps
+it from being usable for both clocksource and clockevent usage.
+
+That way the DT sticks to accurately describing hardware, instead of
+system/software-abstraction configuration details that just apply for
+Linux.
+
+But, again, I'm not really a DT person, so I'll defer to Rob and Daniel.
+
+thanks
+-john
