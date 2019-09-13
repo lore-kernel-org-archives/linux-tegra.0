@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V9 6/8] arm64: tegra: Enable xudc on Jetson TX1
-Date: Fri, 13 Sep 2019 11:37:51 +0530
-Message-ID: <1568354873-24073-7-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V9 8/8] arm64: defconfig: Enable tegra XUDC support
+Date: Fri, 13 Sep 2019 11:37:53 +0530
+Message-ID: <1568354873-24073-9-git-send-email-nkristam@nvidia.com>
 References: <1568354873-24073-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,67 +12,33 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable XUSB device mode driver for USB0 slot on Jetson TX1.
+Enable Nvidia XUSB device mode controller driver and USB GPIO Based
+Connection Detection Driver as module.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 31 +++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index a7dc319..c1e106e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1362,7 +1362,7 @@
- 				status = "okay";
- 
- 				lanes {
--					usb2-0 {
-+					micro_b: usb2-0 {
- 						nvidia,function = "xusb";
- 						status = "okay";
- 					};
-@@ -1483,6 +1483,21 @@
- 		vmmc-supply = <&vdd_3v3_sd>;
- 	};
- 
-+	usb@700d0000 {
-+		status = "okay";
-+		phys = <&micro_b>;
-+		phy-names = "usb2";
-+		avddio-usb-supply = <&vdd_3v3_sys>;
-+		hvdd-usb-supply = <&vdd_1v8>;
-+		usb-role-switch;
-+
-+		port {
-+			usb_role_switch: endpoint {
-+				remote-endpoint = <&usb_b_conn_ep>;
-+			};
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -1641,4 +1656,18 @@
- 			linux,code = <KEY_VOLUMEUP>;
- 		};
- 	};
-+
-+	usb_type_b: connector {
-+		compatible = "linux,usb-b-connector", "gpio-usb-b-connector";
-+		label = "micro-USB";
-+		type = "micro";
-+		vbus-gpio = <&gpio TEGRA_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
-+
-+		port {
-+			usb_b_conn_ep: endpoint {
-+				remote-endpoint = <&usb_role_switch>;
-+			};
-+		};
-+	};
-+
- };
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 358b163..de2826c 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -575,6 +575,7 @@ CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_SND_AUDIO_GRAPH_CARD=m
+ CONFIG_I2C_HID=m
+ CONFIG_USB=y
++CONFIG_USB_CONN_GPIO=m
+ CONFIG_USB_OTG=y
+ CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_XHCI_TEGRA=y
+@@ -600,6 +601,7 @@ CONFIG_USB_ULPI=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_RENESAS_USBHS_UDC=m
+ CONFIG_USB_RENESAS_USB3=m
++CONFIG_USB_TEGRA_XUDC=m
+ CONFIG_TYPEC=m
+ CONFIG_TYPEC_HD3SS3220=m
+ CONFIG_MMC=y
 -- 
 2.7.4
