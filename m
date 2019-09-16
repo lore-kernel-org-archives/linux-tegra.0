@@ -1,104 +1,106 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: switch to using devm_gpiod_get_optional
-Date: Mon, 16 Sep 2019 15:59:04 +0200
-Message-ID: <20190916135904.GA7488@ulmo>
-References: <20190915071323.GA36596@dtor-ws>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/11] drm/nouveau: Enable GP10B by default
+Date: Mon, 16 Sep 2019 17:04:01 +0200
+Message-ID: <20190916150412.10025-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190915071323.GA36596@dtor-ws>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---YZ5djTAD1cGYuMQK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Sep 15, 2019 at 12:13:23AM -0700, Dmitry Torokhov wrote:
-> We do not really need to use API that fetches GPIO data from an
-> arbitrary device tree node, as we are dealing with device tree node
-> assigned to the device structure. We can easily switch to
-> devm_gpiod_get_optional() plus gpiod_set_consumer_name() and clean up
-> the code.
->=20
-> Note this is part of efforts to get rid of [devm_]gpiod_get_from_of_node
-> in drivers so that gpiolib can be cleaned up.
->=20
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/output.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
-
-We can't do that. There's a special case in rgb.c that sets
-output->of_node to something different than output->dev, so we actually
-need to pass the struct device_node * separately.
-
-Thierry
-
->=20
-> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/outpu=
-t.c
-> index bdcaa4c7168c..b4248125b844 100644
-> --- a/drivers/gpu/drm/tegra/output.c
-> +++ b/drivers/gpu/drm/tegra/output.c
-> @@ -121,19 +121,15 @@ int tegra_output_probe(struct tegra_output *output)
->  		of_node_put(ddc);
->  	}
-> =20
-> -	output->hpd_gpio =3D devm_gpiod_get_from_of_node(output->dev,
-> -						       output->of_node,
-> -						       "nvidia,hpd-gpio", 0,
-> -						       GPIOD_IN,
-> -						       "HDMI hotplug detect");
-> -	if (IS_ERR(output->hpd_gpio)) {
-> -		if (PTR_ERR(output->hpd_gpio) !=3D -ENOENT)
-> -			return PTR_ERR(output->hpd_gpio);
-> -
-> -		output->hpd_gpio =3D NULL;
-> -	}
-> +	output->hpd_gpio =3D devm_gpiod_get_optional(output->dev,
-> +						   "nvidia,hpd", GPIOD_IN);
-> +	if (IS_ERR(output->hpd_gpio))
-> +		return PTR_ERR(output->hpd_gpio);
-> =20
->  	if (output->hpd_gpio) {
-> +		gpiod_set_consumer_name(output->hpd_gpio,
-> +					"HDMI hotplug detect");
-> +
->  		err =3D gpiod_to_irq(output->hpd_gpio);
->  		if (err < 0) {
->  			dev_err(output->dev, "gpiod_to_irq(): %d\n", err);
-> --=20
-> 2.23.0.237.gc6a4ce50a0-goog
->=20
->=20
-> --=20
-> Dmitry
-
---YZ5djTAD1cGYuMQK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1/lScACgkQ3SOs138+
-s6GZHg/7BvOAV6GlmzRIMTWPhSZVXASdXGoC7OG5Tj/OolqXcAtfPTXIY2EuWnU8
-4WWut1Tu2kEUxYOF220ygFHAYcq534dtEQ7tGb6aT2qo+SCs590ohhj5d0aaNP+p
-W4gaGaoWabU6e8H0fGrFRayns+k+EMp4LzwkeAyhgVAXnrWSAU/TgLTuV1BVqJx5
-/Cl4qvxRtrC4bXqqVpLTKAeu0uJ1/B/Qx8bqXmtWQO7dFVQvUyTubdhuV+qi3ah4
-FkVvjAC1y7ipfeJxAOmh6U+zZE07WU2ig9VTk9rT5C5RQk0y7+VyXmn4jleR7QtC
-3/sz688DG286/i0rdcgTTwgDPW4B6GC0jHnK7yX9QXus4GYKMW3Jb44MzpdT8njH
-HlQzxuliHLsIHpH0bOhO2KIn/PB9WoTswi0A+5BKMzRlbRRbj+i0JSY0YkshiqIx
-V6O6fzEYKGjAWmVBZjQLLotTnxPB+hPNA80w09yw6b4A+kTqyre5nUiMPlrQodB3
-4+D33AyTq0J6jVM9vra6PxVL+qoQBDbqPdoZcTC19Hu7vHVQYkM9co3lDu6X8Uzo
-NchZUvaY/3s2SK1HvkItxyeOsr0GQDqEo5wRDiayCzqiCcDcBqaYGgMuzag88CRZ
-s47dRGofk4wxJOkC0NrwWYcLdZdLWKdECBUOo9FWVJM5Pl842KE=
-=2VOz
------END PGP SIGNATURE-----
-
---YZ5djTAD1cGYuMQK--
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkhpLAoKdGhlIEdQVSBv
+biBKZXRzb24gVFgyIChHUDEwQikgZG9lcyBub3Qgd29yayBwcm9wZXJseSBvbiBhbGwgZGV2aWNl
+cy4gV2h5CmV4YWN0bHkgaXMgbm90IGNsZWFyLCBidXQgdGhlcmUgYXJlIHNsaWdodCBkaWZmZXJl
+bmNlcyBiZXR3ZWVuIHRoZSBTS1VzCnRoYXQgd2VyZSB0ZXN0ZWQuIEl0IHR1cm5zIG91dCB0aGF0
+IHRoZSBiaWdnZXN0IGlzc3VlIGlzIHRoYXQgb24gc29tZQpkZXZpY2VzIChlLmcuIHRoZSBvbmUg
+dGhhdCBJIGhhdmUpLCBwdWxzaW5nIHRoZSBHUFUgcmVzZXQgdHdpY2UgYXMgaXMKZG9uZSBpbiB0
+aGUgY3VycmVudCBjb2RlIChvbmNlIGFzIHBhcnQgb2YgdGhlIHBvd2VyLXVuZ2F0ZSBvcGVyYXRp
+b24gYW5kCnRoZW4gYWdhaW4gaW4gdGhlIGRyaXZlcikgY2F1c2VzIHRoZSBHUFUgdG8gZ28gaW50
+byBhIGJhZCBzdGF0ZSBvbiBzb21lCmRldmljZXMuIENvbmRpdGlvbmFsbHkgZG9pbmcgdGhlIHJl
+c2V0IGluIHRoZSBkcml2ZXIgb25seSBpZiBpdCBpc24ndAphbHJlYWR5IGRvbmUgYnkgdGhlIHBv
+d2VyIGRvbWFpbiBjb2RlIGZpeGVzIHRoaXMgaXNzdWUuCgpBbm90aGVyIGlzc3VlIGlzIHRoYXQg
+dGhlIGNsb2NrIG1heSBiZSBydW5uaW5nIGF0IGEgcmF0ZSBvZiAwIEh6LiBUaGlzCmlzIHVubGlr
+ZWx5IHRvIGhhcHBlbiBiZWNhdXNlIGl0IGludGVybmFsbHkgYWN0dWFsbHkgY2FuJ3QgcnVuIHRo
+YXQKc2xvdywgYnV0IGV4cGxpY2l0bHkgc2V0dGluZyB0aGUgY2xvY2sgcmF0ZSBhdCBwcm9iZSB0
+aW1lIGRvZXMgc2VlbSB0bwpoZWxwIGluIHNvbWUgY2FzZXMuCgpQYXRjaCB0aHJlZSBpbiB0aGlz
+IHNlcmllcyB1bmlmaWVzIHJlYWRpbmcgdGhlIFdQUiBjb25maWd1cmF0aW9uIGJ5CmdldHRpbmcg
+aXQgZnJvbSBHUFUgcmVnaXN0ZXIgcmF0aGVyIHRoYW4gcmVhY2hpbmcgaW50byB0aGUgbWVtb3J5
+CmNvbnRyb2xsZXIncyByZWdpc3RlciBzcGFjZS4gVGhpcyBpcyBzbGlnaHRseSBiZXR0ZXIgYmVj
+YXVzZSBpdCBiZXR0ZXIKc2VwYXJhdGVzIHRoZSB0d28gZHJpdmVycyBhbmQgZG9lc24ndCByZXF1
+aXJlIGFuIHVwZGF0ZSBldmVyeXRpbWUgdGhlCm1lbW9yeSBjb250cm9sbGVyIG1vdmVzIHRvIGFu
+b3RoZXIgcmVnaXN0ZXIgYXBlcnR1cmUuCgpQYXRjaCA0IGVuc3VyZXMgdGhlIEwyIGNhY2hlIG1h
+a2VzIG1lbW9yeSByZXF1ZXN0cyB3aXRoIHRoZSBwcm9wZXIKc3RyZWFtIElELCB3aGljaCBpcyBy
+ZXF1aXJlZCB3aGVuIHRoZSBHUFUgaXMgYmVoaW5kIGFuIElPTU1VLgoKUGF0Y2ggNSBjaGFuZ2Vz
+IHRoZSBHUDEwQiBkZXZpY2UgaW5pdGlhbGl6YXRpb24gdG8gdXNlIHRoZSBjb3JyZWN0IGNvcHkK
+ZW5naW5lLiBHUDEwQiBpcyBhIFBhc2NhbCBnZW5lcmF0aW9uIEdQVSBhbmQgdGhlIHdheSB0aGF0
+IGVuZ2luZXMgYXJlCmRlc2NyaWJlZCBjaGFuZ2VzIGhvdyB0aGUgY29weSBlbmdpbmVzIGFyZSBl
+bnVtZXJhdGVkIGNvbXBhcmVkIHRvCmVhcmxpZXIgZ2VuZXJhdGlvbnMuCgpQYXRjaGVzIDYgdGhy
+b3VnaCA5IGFsbG93IE5vdXZlYXUgdG8gd29yayBvbiBUZWdyYSBHUFVzIGlmIHRoZSBETUEgQVBJ
+CmlzIGJhY2tlZCBieSBhbiBJT01NVS4gVGhpcyBpcyBkaWZmZXJlbnQgZnJvbSBjdXJyZW50IGFz
+c3VtcHRpb25zCmJlY2F1c2UgbWFwcGluZ3MgZm9yIGFsbCBidWZmZXJzIG1hcHBlZCB0aHJvdWdo
+IHRoZSBETUEgQVBJIHdpbGwgbmVlZAp0byBoYXZlIHRoZSBzcGVjaWFsIElPTU1VIGJpdCBzZXQg
+aW4gdGhlaXIgcGFnZSB0YWJsZXMuIE5vdGUgdGhhdCB0aGlzCnRlY2huaWNhbGx5IG1ha2VzIGl0
+IHBvc3NpYmxlIHRvIHN1cHBvcnQgYmlnIHBhZ2VzIG9uIFRlZ3JhIGJlY2F1c2UgZnJvbQp0aGUg
+R1BVJ3MgcG9pbnQgb2YgdmlldyBhbGwgbWVtb3J5IGlzIG5vdyBjb250aWd1b3VzLiBIb3dldmVy
+LCB0aGVzZQpwYXRjaGVzIG9ubHkgbWFrZSBzdXJlIHRoYXQgYnVmZmVycyBhcmUgbWFwcGVkIHBy
+b3Blcmx5IGFuZCBkb24ndCB0cnkgdG8KZW5hYmxlIGJpZyBwYWdlcy4gQWxzbyBub3RlIHRoYXQg
+bWFwcGluZyB0aHJvdWdoIHRoZSBJT01NVSBjb21lcyBhdCBhCnNsaWdodCBjb3N0LCBzbyB0aGlz
+IG1heSBub3QgYWx3YXlzIGJlIGRlc2lyYWJsZS4gSG93ZXZlciwgd2l0aCBUZWdyYTE4NgphbmQg
+bGF0ZXIgaXQncyBjdXJyZW50bHkgbm90IHBvc3NpYmxlIChmcm9tIGEgRE1BIEFQSSBwb2ludCBv
+ZiB2aWV3KSB0bwptYXAgb25seSBhIHN1YnNldCBvZiBidWZmZXJzIHRocm91Z2ggdGhlIElPTU1V
+LCBzbyBhbnkgc3VjaCBvcHRpbWl6YXRpb24KaXMgZGVmZXJyZWQuIEZ1cnRoZXJtb3JlLCB0aGUg
+QVJNIFNNTVUgZHJpdmVyIGN1cnJlbnRseSBlbmZvcmNlcyB0aGUgdXNlCm9mIHRoZSBTTU1VIGJ5
+IGRlZmF1bHQsIHNvIHRoZXJlIG5vdCBtdWNoIG9mIGEgY2hvaWNlIGF0IHRoZSBtb21lbnQuCgpG
+aW5hbGx5IHBhdGNoZXMgMTAgYW5kIDExIGVuYWJsZSB0aGUgR1BVIG9uIEpldHNvbiBUWDIgYW5k
+IG1ha2UgaXQgdXNlCnRoZSBTTU1VLiBJIGNhbiBwaWNrIHVwIHBhdGNoZXMgMTAgYW5kIDExIGlu
+dG8gdGhlIFRlZ3JhIHRyZWUgb25jZSB0aGUKb3RoZXIgcGF0Y2hlcyBoYXZlIGJlZW4gbWVyZ2Vk
+IGludG8gTm91dmVhdS4KClRoaWVycnkKCkFsZXhhbmRyZSBDb3VyYm90ICgxKToKICBhcm02NDog
+dGVncmE6IEVuYWJsZSBHUFUgb24gSmV0c29uIFRYMgoKVGhpZXJyeSBSZWRpbmcgKDEwKToKICBk
+cm0vbm91dmVhdTogdGVncmE6IEF2b2lkIHB1bHNpbmcgcmVzZXQgdHdpY2UKICBkcm0vbm91dmVh
+dTogdGVncmE6IFNldCBjbG9jayByYXRlIGlmIG5vdCBzZXQKICBkcm0vbm91dmVhdTogc2VjYm9v
+dDogUmVhZCBXUFIgY29uZmlndXJhdGlvbiBmcm9tIEdQVSByZWdpc3RlcnMKICBkcm0vbm91dmVh
+dTogZ3AxMGI6IEFkZCBjdXN0b20gTDIgY2FjaGUgaW1wbGVtZW50YXRpb24KICBkcm0vbm91dmVh
+dTogZ3AxMGI6IFVzZSBjb3JyZWN0IGNvcHkgZW5naW5lCiAgZHJtL25vdXZlYXU6IGdrMjBhOiBT
+ZXQgSU9NTVUgYml0IGZvciBETUEgQVBJIGlmIGFwcHJvcHJpYXRlCiAgZHJtL25vdXZlYXU6IGdr
+MjBhOiBJbXBsZW1lbnQgY3VzdG9tIE1NVSBjbGFzcwogIGRybS9ub3V2ZWF1OiB0ZWdyYTogU2tp
+cCBJT01NVSBpbml0aWFsaXphdGlvbiBpZiBhbHJlYWR5IGF0dGFjaGVkCiAgZHJtL25vdXZlYXU6
+IHRlZ3JhOiBGYWxsIGJhY2sgdG8gMzItYml0IERNQSBtYXNrIHdpdGhvdXQgSU9NTVUKICBhcm02
+NDogdGVncmE6IEVuYWJsZSBTTU1VIGZvciBHUFUgb24gVGVncmExODYKCiAuLi4vYm9vdC9kdHMv
+bnZpZGlhL3RlZ3JhMTg2LXAyNzcxLTAwMDAuZHRzICAgfCAgIDQgKwogYXJjaC9hcm02NC9ib290
+L2R0cy9udmlkaWEvdGVncmExODYuZHRzaSAgICAgIHwgICAxICsKIC4uLi9ncHUvZHJtL25vdXZl
+YXUvaW5jbHVkZS9udmttL3N1YmRldi9sdGMuaCB8ICAgMSArCiAuLi4vZ3B1L2RybS9ub3V2ZWF1
+L252a20vZW5naW5lL2RldmljZS9iYXNlLmMgfCAgIDQgKy0KIC4uLi9kcm0vbm91dmVhdS9udmtt
+L2VuZ2luZS9kZXZpY2UvdGVncmEuYyAgICB8IDE1MiArKysrKysrKysrKy0tLS0tLS0KIC4uLi9k
+cm0vbm91dmVhdS9udmttL3N1YmRldi9pbnN0bWVtL2drMjBhLmMgICB8ICAzNSArKy0tCiAuLi4v
+Z3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9LYnVpbGQgICAgfCAgIDEgKwogLi4uL2dw
+dS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9sdGMvZ3AxMGIuYyAgIHwgIDY5ICsrKysrKysrCiAu
+Li4vZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9wcml2LmggICAgfCAgIDIgKwogLi4u
+L2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9tbXUvZ2syMGEuYyAgIHwgIDUwICsrKysrLQog
+Li4uL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9tbXUvZ2syMGEuaCAgIHwgIDQ0ICsrKysr
+CiAuLi4vZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L21tdS9nbTIwYi5jICAgfCAgIDYgKy0K
+IC4uLi9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbW11L2dwMTBiLmMgICB8ICAgNCArLQog
+ZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbW11L3ZtbS5oIHwgICAxICsKIC4u
+Li9kcm0vbm91dmVhdS9udmttL3N1YmRldi9tbXUvdm1tZ2syMGEuYyAgICB8ICAyMiArKy0KIC4u
+Li9kcm0vbm91dmVhdS9udmttL3N1YmRldi9tbXUvdm1tZ20yMGIuYyAgICB8ICAgNCArLQogLi4u
+L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L21tdS92bW1ncDEwYi5jICAgIHwgIDIwICsrLQogLi4u
+L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ20yMDAuaCAgIHwgICAyICstCiAuLi4v
+ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvc2VjYm9vdC9nbTIwYi5jICAgfCAgODEgKysrKysrLS0t
+LQogLi4uL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYyAgIHwgICA0ICst
+CiAyMCBmaWxlcyBjaGFuZ2VkLCAzOTQgaW5zZXJ0aW9ucygrKSwgMTEzIGRlbGV0aW9ucygtKQog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0
+Yy9ncDEwYi5jCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZr
+bS9zdWJkZXYvbW11L2drMjBhLmgKCi0tIAoyLjIzLjAKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vbm91dmVhdQ==
