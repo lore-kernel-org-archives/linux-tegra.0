@@ -1,53 +1,47 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 00/21] 4.14.144-stable review
-Date: Mon, 16 Sep 2019 11:55:04 +0100
-Message-ID: <c7186e08-3faa-5a4a-8c96-957592667199@nvidia.com>
-References: <20190913130501.285837292@linuxfoundation.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH 03/15] spi: make `cs_change_delay` the first user of
+ the `spi_delay` logic
+Date: Mon, 16 Sep 2019 13:25:06 +0100
+Message-ID: <20190916122505.GC4352@sirena.co.uk>
+References: <20190913114550.956-1-alexandru.ardelean@analog.com>
+ <20190913114550.956-4-alexandru.ardelean@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7U7nS7UhGMyosb9W"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190913114550.956-4-alexandru.ardelean@analog.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc: linux-spi@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, jic23@kernel.org, f.fainelli@gmail.com, linus.walleij@linaro.org, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 13/09/2019 14:06, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.144 release.
-> There are 21 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 15 Sep 2019 01:03:32 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.144-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+--7U7nS7UhGMyosb9W
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Fri, Sep 13, 2019 at 02:45:38PM +0300, Alexandru Ardelean wrote:
 
-All tests passing for Tegra ...
+> -	u16		cs_change_delay;
+> -	u8		cs_change_delay_unit;
+> +	struct spi_delay	cs_change_delay;
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    24 tests:	24 pass, 0 fail
+This breaks the build as there is a user of this interface.
 
-Linux version:	4.14.144-rc2-ga0bf0c3c56ab
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+--7U7nS7UhGMyosb9W
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers
-Jon
+-----BEGIN PGP SIGNATURE-----
 
--- 
-nvpublic
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1/fyEACgkQJNaLcl1U
+h9AR2Af8D01ThOEZ5vESTf3rqD3pj7SjkSwmXmtdE8km6WNwCuP/WAlc6Lrgj02m
+yPoEFSxsQq97A47hALIaE3WogYwp5YTeN4rI8yeELVQItYThT8CPHYaQa8RuWtJB
+qIp3h1PlKVmOnSNPtNsW1/rfxxgeJNzX6GZf1UWDHjfkSIexZBrVWgb/YP3p3n2k
+YTyaVloShnXeUA6BXfla9Z05BHc5aCu5KBCfLyJ8uTPIeD6mIP6b3ympe6sn6+Kw
+i1zrIFYvEU/J2ZN0IaZXsKRMgMD2XRPjaDlMyygOm9hr6y2SGEyOt8ml37ISXJ4w
+bFoisz9mWYHBsC9+53nBiKsGV+OrlQ==
+=pg1e
+-----END PGP SIGNATURE-----
+
+--7U7nS7UhGMyosb9W--
