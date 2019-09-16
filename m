@@ -1,92 +1,180 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [RFC PATCH 00/15] Unify SPI delays into an `struct spi_delay`
-Date: Sun, 15 Sep 2019 11:22:05 +0100
-Message-ID: <20190915112205.0007d62d@archlinux>
-References: <20190913114550.956-1-alexandru.ardelean@analog.com>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: Re: [Patch V9 3/8] phy: tegra: xusb: Add vbus override support on
+ Tegra210
+Date: Mon, 16 Sep 2019 15:11:05 +0800
+Message-ID: <1568617865.7317.74.camel@mhfsdcap03>
+References: <1568354873-24073-1-git-send-email-nkristam@nvidia.com>
+         <1568354873-24073-4-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190913114550.956-1-alexandru.ardelean@analog.com>
+In-Reply-To: <1568354873-24073-4-git-send-email-nkristam@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc: linux-spi@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org, f.fainelli@gmail.com, linus.walleij@linaro.org, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com
+To: Nagarjuna Kristam <nkristam@nvidia.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 13 Sep 2019 14:45:35 +0300
-Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
+On Fri, 2019-09-13 at 11:37 +0530, Nagarjuna Kristam wrote:
+> Tegra XUSB device control driver needs to control vbus override
+> during its operations, add API for the support.
+> 
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/phy/tegra/xusb-tegra210.c | 57 +++++++++++++++++++++++++++++++++++++++
+>  drivers/phy/tegra/xusb.c          | 22 +++++++++++++++
+>  drivers/phy/tegra/xusb.h          |  2 ++
+>  include/linux/phy/tegra/xusb.h    |  4 ++-
+>  4 files changed, 84 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+> index 8c31f03..9e6f14b 100644
+> --- a/drivers/phy/tegra/xusb-tegra210.c
+> +++ b/drivers/phy/tegra/xusb-tegra210.c
+> @@ -65,6 +65,10 @@
+>  #define XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(x) (1 << (1 + (x)))
+>  #define XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(x) (1 << (8 + (x)))
+>  
+> +#define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL0(x) (0x080 + (x) * 0x40)
+> +#define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIP (1 << 18)
+> +#define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIN (1 << 22)
+> +
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(x) (0x084 + (x) * 0x40)
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_SHIFT 7
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_MASK 0x3
+> @@ -227,6 +231,12 @@
+>  #define XUSB_PADCTL_UPHY_USB3_PADX_ECTL6(x) (0xa74 + (x) * 0x40)
+>  #define XUSB_PADCTL_UPHY_USB3_PAD_ECTL6_RX_EQ_CTRL_H_VAL 0xfcf01368
+>  
+> +#define XUSB_PADCTL_USB2_VBUS_ID 0xc60
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON (1 << 14)
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT 18
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK 0xf
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING 8
+> +
+>  struct tegra210_xusb_fuse_calibration {
+>  	u32 hs_curr_level[4];
+>  	u32 hs_term_range_adj;
+> @@ -2016,6 +2026,51 @@ static const struct tegra_xusb_port_ops tegra210_usb3_port_ops = {
+>  	.map = tegra210_usb3_port_map,
+>  };
+>  
+> +static int tegra210_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
+> +					      bool status)
+> +{
+> +	u32 value;
+> +
+> +	dev_dbg(padctl->dev, "%s vbus override\n", status ? "set" : "clear");
+> +
+> +	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
+> +
+> +	if (status) {
+> +		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+> +		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
+> +			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
+> +		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
+> +			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
+> +	} else
+> +		value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+Nit: use braces in else branch
 
-> Initially, I started this patchset thinking: "we need a new delay for
-> something-something" (in case someone is curios, we need a CS-hold-time for
-> the first transfer, because the CS wakes a chip from sleep-mode).
-> 
-> Then I added the delay, and felt a bit dirty-inside about adding a new one
-> (just like that), and decided to look at maybe cleaning things up a bit,
-> and a few days later, I got here.
-> 
-> Full disclaimer: this patchset is not complete. It's an RFC.
-> It's based on top of Jonathan's `iio/togreg` branch which also includes the
-> ADIS driver library changes and also includes `cs_change_delay`.
-> 
-> I'll send a V2 patchset, which just the first 4 patches, since I feel that
-> those are a bit more complete.
-> 
-> I thought about just sending the first 4 patches on-their-own, but I
-> figured that the whole series (even if not complete) serves as a better
-> explanation about the whole "why?".
-> 
-> Hopefully, this can sort-of-explain things.
-> I'll reference this RFC on the next series.
-
-General approach looks sensible to me. Over to SPI specialists on
-whether this is a sensible bit of unification to do.
-
-Jonathan
-
-> 
-> Thanks
-> 
-> Alexandru Ardelean (15):
->   spi: move `cs_change_delay` backwards compat logic outside switch
->   spi: introduce spi_delay struct as "value + unit" &  spi_delay_exec()
->   spi: make `cs_change_delay` the first user of the `spi_delay` logic
->   iio: imu: adis: convert cs_change_delay to spi_delay struct
->   spi: sprd: convert transfer word delay to spi_delay struct
->   spi: orion: use new `word_delay` field for SPI transfers
->   spi: spidev: use new `word_delay` field for spi transfers
->   spi: core,atmel: convert `word_delay_usecs` -> `word_delay` for
->     spi_device
->   spi: introduce `delay` field for `spi_transfer` + spi_transfer_exec()
->   spi: use new `spi_transfer_delay` helper where straightforward
->   spi: tegra114: use `spi_transfer_delay` helper
->   spi: spi-loopback-test: use new `delay` field
->   spi: spidev: use new `delay` field for spi transfers
->   spi: tegra114: change format for `spi_set_cs_timing()` function
->   spi: implement SW control for CS times
-> 
->  drivers/iio/imu/adis.c           |  24 ++---
->  drivers/spi/spi-atmel.c          |  29 +++++-
->  drivers/spi/spi-bcm63xx-hsspi.c  |   3 +-
->  drivers/spi/spi-cavium.c         |   3 +-
->  drivers/spi/spi-fsl-dspi.c       |   3 +-
->  drivers/spi/spi-fsl-espi.c       |   3 +-
->  drivers/spi/spi-fsl-spi.c        |   3 +-
->  drivers/spi/spi-loopback-test.c  |  12 ++-
->  drivers/spi/spi-mpc512x-psc.c    |   3 +-
->  drivers/spi/spi-mpc52xx-psc.c    |   3 +-
->  drivers/spi/spi-omap-100k.c      |   3 +-
->  drivers/spi/spi-orion.c          |   6 +-
->  drivers/spi/spi-pl022.c          |  25 +++--
->  drivers/spi/spi-sc18is602.c      |   3 +-
->  drivers/spi/spi-sh-hspi.c        |   3 +-
->  drivers/spi/spi-sprd.c           |  11 ++-
->  drivers/spi/spi-tegra114.c       |  39 +++++---
->  drivers/spi/spi-tegra20-sflash.c |   2 +-
->  drivers/spi/spi-topcliff-pch.c   |   7 +-
->  drivers/spi/spi-txx9.c           |   3 +-
->  drivers/spi/spi-xcomm.c          |   3 +-
->  drivers/spi/spi.c                | 162 +++++++++++++++++++++++++------
->  drivers/spi/spidev.c             |   6 +-
->  include/linux/spi/spi.h          |  65 ++++++++++---
->  24 files changed, 293 insertions(+), 131 deletions(-)
-> 
+> +
+> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_utmi_port_reset(struct phy *phy)
+> +{
+> +	struct tegra_xusb_padctl *padctl;
+> +	struct tegra_xusb_lane *lane;
+> +	u32 value;
+> +
+> +	lane = phy_get_drvdata(phy);
+> +	padctl = lane->pad->padctl;
+> +
+> +	value = padctl_readl(padctl,
+> +		     XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL0(lane->index));
+> +
+> +	if ((value & XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIP) ||
+> +	    (value & XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIN)) {
+> +		tegra210_xusb_padctl_vbus_override(padctl, false);
+> +		tegra210_xusb_padctl_vbus_override(padctl, true);
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int
+>  tegra210_xusb_read_fuse_calibration(struct tegra210_xusb_fuse_calibration *fuse)
+>  {
+> @@ -2078,6 +2133,8 @@ static const struct tegra_xusb_padctl_ops tegra210_xusb_padctl_ops = {
+>  	.remove = tegra210_xusb_padctl_remove,
+>  	.usb3_set_lfps_detect = tegra210_usb3_set_lfps_detect,
+>  	.hsic_set_idle = tegra210_hsic_set_idle,
+> +	.vbus_override = tegra210_xusb_padctl_vbus_override,
+> +	.utmi_port_reset = tegra210_utmi_port_reset,
+>  };
+>  
+>  static const char * const tegra210_xusb_padctl_supply_names[] = {
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index b4b217e..bf4b008 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -1121,6 +1121,28 @@ int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
+>  }
+>  EXPORT_SYMBOL_GPL(tegra_xusb_padctl_usb3_set_lfps_detect);
+>  
+> +int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
+> +							bool val)
+> +{
+> +	if (padctl->soc->ops->vbus_override)
+> +		return padctl->soc->ops->vbus_override(padctl, val);
+> +
+> +	return -ENOTSUPP;
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_set_vbus_override);
+> +
+> +int tegra_phy_xusb_utmi_port_reset(struct phy *phy)
+> +{
+> +	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+> +	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
+> +
+> +	if (padctl->soc->ops->utmi_port_reset)
+> +		return padctl->soc->ops->utmi_port_reset(phy);
+> +
+> +	return -ENOTSUPP;
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_phy_xusb_utmi_port_reset);
+> +
+>  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+>  MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+> index bd91832..da94fcc 100644
+> --- a/drivers/phy/tegra/xusb.h
+> +++ b/drivers/phy/tegra/xusb.h
+> @@ -373,6 +373,8 @@ struct tegra_xusb_padctl_ops {
+>  			     unsigned int index, bool idle);
+>  	int (*usb3_set_lfps_detect)(struct tegra_xusb_padctl *padctl,
+>  				    unsigned int index, bool enable);
+> +	int (*vbus_override)(struct tegra_xusb_padctl *padctl, bool set);
+> +	int (*utmi_port_reset)(struct phy *phy);
+>  };
+>  
+>  struct tegra_xusb_padctl_soc {
+> diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
+> index ee59562..1235865 100644
+> --- a/include/linux/phy/tegra/xusb.h
+> +++ b/include/linux/phy/tegra/xusb.h
+> @@ -18,5 +18,7 @@ int tegra_xusb_padctl_hsic_set_idle(struct tegra_xusb_padctl *padctl,
+>  				    unsigned int port, bool idle);
+>  int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
+>  					   unsigned int port, bool enable);
+> -
+> +int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
+> +					bool val);
+> +int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
+>  #endif /* PHY_TEGRA_XUSB_H */
