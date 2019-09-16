@@ -1,77 +1,47 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH 08/11] drm/nouveau: tegra: Skip IOMMU initialization if
- already attached
-Date: Mon, 16 Sep 2019 17:15:25 +0100
-Message-ID: <ee285d4f-e5ff-e043-35cd-1338b1bb238f@arm.com>
-References: <20190916150412.10025-1-thierry.reding@gmail.com>
- <20190916150412.10025-9-thierry.reding@gmail.com>
- <156993ea-ece6-9eb5-b664-a55c631e2600@arm.com> <20190916155724.GG7488@ulmo>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] drm/tegra: switch to using devm_gpiod_get_optional
+Date: Mon, 16 Sep 2019 09:54:24 -0700
+Message-ID: <20190916165424.GD237523@dtor-ws>
+References: <20190915071323.GA36596@dtor-ws>
+ <20190916135904.GA7488@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190916155724.GG7488@ulmo>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190916135904.GA7488@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTYvMDkvMjAxOSAxNjo1NywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24gTW9uLCBTZXAg
-MTYsIDIwMTkgYXQgMDQ6Mjk6MThQTSArMDEwMCwgUm9iaW4gTXVycGh5IHdyb3RlOgo+PiBIaSBU
-aGllcnJ5LAo+Pgo+PiBPbiAxNi8wOS8yMDE5IDE2OjA0LCBUaGllcnJ5IFJlZGluZyB3cm90ZToK
-Pj4+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4+Pgo+Pj4gSWYg
-dGhlIEdQVSBpcyBhbHJlYWR5IGF0dGFjaGVkIHRvIGFuIElPTU1VLCBkb24ndCBkZXRhY2ggaXQg
-YW5kIHNldHVwIGFuCj4+PiBleHBsaWNpdCBJT01NVSBkb21haW4uIFNpbmNlIE5vdXZlYXUgY2Fu
-IG5vdyBwcm9wZXJseSBoYW5kbGUgdGhlIGNhc2Ugb2YKPj4+IHRoZSBETUEgQVBJIGJlaW5nIGJh
-Y2tlZCBieSBhbiBJT01NVSwganVzdCBjb250aW51ZSB1c2luZyB0aGUgRE1BIEFQSS4KPj4+Cj4+
-PiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Pj4g
-LS0tCj4+PiAgICAuLi4vZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMgICAg
-fCAxOSArKysrKysrLS0tLS0tLS0tLS0tCj4+PiAgICAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRp
-b25zKCspLCAxMiBkZWxldGlvbnMoLSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-bm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvdGVncmEuYwo+Pj4gaW5kZXggZDBkNTJjMWQ0YWVl
-Li5mYzY1MmFhYTQxYzcgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9u
-dmttL2VuZ2luZS9kZXZpY2UvdGVncmEuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL25vdXZl
-YXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMKPj4+IEBAIC0yMywxMCArMjMsNiBAQAo+Pj4g
-ICAgI2lmZGVmIENPTkZJR19OT1VWRUFVX1BMQVRGT1JNX0RSSVZFUgo+Pj4gICAgI2luY2x1ZGUg
-InByaXYuaCIKPj4+IC0jaWYgSVNfRU5BQkxFRChDT05GSUdfQVJNX0RNQV9VU0VfSU9NTVUpCj4+
-PiAtI2luY2x1ZGUgPGFzbS9kbWEtaW9tbXUuaD4KPj4+IC0jZW5kaWYKPj4+IC0KPj4+ICAgIHN0
-YXRpYyBpbnQKPj4+ICAgIG52a21fZGV2aWNlX3RlZ3JhX3Bvd2VyX3VwKHN0cnVjdCBudmttX2Rl
-dmljZV90ZWdyYSAqdGRldikKPj4+ICAgIHsKPj4+IEBAIC0xMDksMTQgKzEwNSwxMyBAQCBudmtt
-X2RldmljZV90ZWdyYV9wcm9iZV9pb21tdShzdHJ1Y3QgbnZrbV9kZXZpY2VfdGVncmEgKnRkZXYp
-Cj4+PiAgICAJdW5zaWduZWQgbG9uZyBwZ3NpemVfYml0bWFwOwo+Pj4gICAgCWludCByZXQ7Cj4+
-PiAtI2lmIElTX0VOQUJMRUQoQ09ORklHX0FSTV9ETUFfVVNFX0lPTU1VKQo+Pj4gLQlpZiAoZGV2
-LT5hcmNoZGF0YS5tYXBwaW5nKSB7Cj4+PiAtCQlzdHJ1Y3QgZG1hX2lvbW11X21hcHBpbmcgKm1h
-cHBpbmcgPSB0b19kbWFfaW9tbXVfbWFwcGluZyhkZXYpOwo+Pj4gLQo+Pj4gLQkJYXJtX2lvbW11
-X2RldGFjaF9kZXZpY2UoZGV2KTsKPj4+IC0JCWFybV9pb21tdV9yZWxlYXNlX21hcHBpbmcobWFw
-cGluZyk7Cj4+PiAtCX0KPj4+IC0jZW5kaWYKPj4+ICsJLyoKPj4+ICsJICogU2tpcCBleHBsaWNp
-dCBJT01NVSBpbml0aWFsaXphdGlvbiBpZiB0aGUgR1BVIGlzIGFscmVhZHkgYXR0YWNoZWQKPj4+
-ICsJICogdG8gYW4gSU9NTVUgZG9tYWluLiBUaGlzIGNhbiBoYXBwZW4gaWYgdGhlIERNQSBBUEkg
-aXMgYmFja2VkIGJ5IGFuCj4+PiArCSAqIElPTU1VLgo+Pj4gKwkgKi8KPj4+ICsJaWYgKGlvbW11
-X2dldF9kb21haW5fZm9yX2RldihkZXYpKQo+Pj4gKwkJcmV0dXJuOwo+Pgo+PiBCZXdhcmUgb2Yg
-ImlvbW11LnBhc3N0aHJvdWdoPTEiIC0geW91IGNvdWxkIGdldCBhIHZhbGlkIGRlZmF1bHQgZG9t
-YWluIGhlcmUKPj4geWV0IHN0aWxsIGhhdmUgZGlyZWN0L1NXSU9UTEIgRE1BIG9wcy4gSSBndWVz
-cyB5b3UgcHJvYmFibHkgd2FudCB0bwo+PiBkb3VibGUtY2hlY2sgdGhlIGRvbWFpbiB0eXBlIGFz
-IHdlbGwuCj4gCj4gR29vZCBwb2ludC4gQW4gZWFybGllciB2ZXJzaW9uIG9mIHRoaXMgcGF0Y2gg
-aGFkIGFuIGFkZGl0aW9uYWwgY2hlY2sgZm9yCj4gSU9NTVVfRE9NQUlOX0RNQSwgYnV0IHRoZW4g
-dGhhdCBmYWlsZWQgb24gMzItYml0IEFSTSBiZWNhdXNlIHRoZXJlIHRoZQo+IERNQSBBUEkgY2Fu
-IGFsc28gdXNlIElPTU1VX0RPTUFJTl9VTk1BTkFHRUQgdHlwZSBkb21haW5zLiBDaGVja2luZyBm
-b3IKPiBJT01NVV9ET01BSU5fSURFTlRJRlkgc2hvdWxkIGJlIHNhZmUsIHRob3VnaC4gVGhhdCBk
-b2Vzbid0IHNlZW0gdG8KPiBhcHBlYXIgaW4gYXJjaC9hcm0sIGFyY2gvYXJtNjQgb3IgZHJpdmVy
-cy9pb21tdS9kbWEtaW9tbXUuYy4KClJpZ2h0LCAiZG9tYWluICYmIGRvbWFpbi0+dHlwZSAhPSBJ
-T01NVV9ET01BSU5fSURFTlRJVFkiIHNob3VsZCBiZSAKc3VmZmljaWVudCB0byBhbnN3ZXIgImlz
-IHRoZSBETUEgbGF5ZXIgbWFuYWdpbmcgbXkgYWRkcmVzcyBzcGFjZSBmb3IgCm1lPyIgdW5sZXNz
-IGFuZCB1bnRpbCBzb21lIG1hc3NpdmUgQVBJIGNoYW5nZSBoYXBwZW5zICh3aGljaCBJIGNlcnRh
-aW5seSAKZG9uJ3QgZm9yZXNlZSkuCgpSb2Jpbi4KX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVs
+On Mon, Sep 16, 2019 at 03:59:04PM +0200, Thierry Reding wrote:
+> On Sun, Sep 15, 2019 at 12:13:23AM -0700, Dmitry Torokhov wrote:
+> > We do not really need to use API that fetches GPIO data from an
+> > arbitrary device tree node, as we are dealing with device tree node
+> > assigned to the device structure. We can easily switch to
+> > devm_gpiod_get_optional() plus gpiod_set_consumer_name() and clean up
+> > the code.
+> > 
+> > Note this is part of efforts to get rid of [devm_]gpiod_get_from_of_node
+> > in drivers so that gpiolib can be cleaned up.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/gpu/drm/tegra/output.c | 18 +++++++-----------
+> >  1 file changed, 7 insertions(+), 11 deletions(-)
+> 
+> We can't do that. There's a special case in rgb.c that sets
+> output->of_node to something different than output->dev, so we actually
+> need to pass the struct device_node * separately.
+
+Ugh, brainfart on my part. I totally read it is output->dev.of_node,
+similar to another driver I was looking at...
+
+Please discard, there will be another patch changing
+devm_gpiod_get_from_of_node() to devm_fwnode_gpiod_get() once Linus
+merges this new GPIO method.
+
+Thanks.
+
+-- 
+Dmitry
