@@ -1,14 +1,11 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 4/8] ASoC: tegra: disable rx_fifo after disable
-	stream
-Date: Tue, 17 Sep 2019 19:12:29 +0100
-Message-ID: <20190917181233.534-5-ben.dooks@codethink.co.uk>
-References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
+Subject: RFC: TDM mode support on the tegra30
+Date: Tue, 17 Sep 2019 19:12:25 +0100
+Message-ID: <20190917181233.534-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190917181233.534-1-ben.dooks@codethink.co.uk>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -19,36 +16,13 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk
 List-Id: linux-tegra@vger.kernel.org
 
-We see odd FIFO overruns with this, we assume the best thing to do is
-to disable the RX I2S frontend first, and then disable the FIFO that
-is using it.
+This is an initial set that adds support for both the TDM and for
+formats other than 8/16bit audio through the audio system. It also
+fixes a minor issue with the FIFO stopping order.
 
-This also fixes an issue where using multi-word frames (TDM) have
-partial samples stuck in the FIFO which then get read out when the
-next capture is started.
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- sound/soc/tegra/tegra30_i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index 40bcc05a9dbb..4222839b63bd 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -236,9 +236,9 @@ static void tegra30_i2s_start_capture(struct tegra30_i2s *i2s)
- 
- static void tegra30_i2s_stop_capture(struct tegra30_i2s *i2s)
- {
--	tegra30_ahub_disable_rx_fifo(i2s->capture_fifo_cif);
- 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CTRL,
- 			   TEGRA30_I2S_CTRL_XFER_EN_RX, 0);
-+	tegra30_ahub_disable_rx_fifo(i2s->capture_fifo_cif);
- }
- 
- static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
--- 
-2.23.0
+I have further patches following on which deal with selection of
+clocks to allow the use of the tegra's audio unit to run as clock
+slave (all current examples have the tegra as clock master).
