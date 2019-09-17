@@ -1,16 +1,17 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 04/11] drm/nouveau: gp10b: Add custom L2 cache
- implementation
-Date: Mon, 16 Sep 2019 16:35:30 +0100
-Message-ID: <7d917275-0a2d-6de3-e837-6dfa4d9a29c8@codethink.co.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 08/11] drm/nouveau: tegra: Skip IOMMU initialization if
+ already attached
+Date: Tue, 17 Sep 2019 09:59:34 +0200
+Message-ID: <20190917075934.GA17854@ulmo>
 References: <20190916150412.10025-1-thierry.reding@gmail.com>
- <20190916150412.10025-5-thierry.reding@gmail.com>
+ <20190916150412.10025-9-thierry.reding@gmail.com>
+ <156993ea-ece6-9eb5-b664-a55c631e2600@arm.com>
+ <20190916155724.GG7488@ulmo>
+ <ee285d4f-e5ff-e043-35cd-1338b1bb238f@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1761485176=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190916150412.10025-5-thierry.reding@gmail.com>
-Content-Language: en-GB
+In-Reply-To: <ee285d4f-e5ff-e043-35cd-1338b1bb238f@arm.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,95 +21,143 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>
-Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTYvMDkvMjAxOSAxNjowNCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBUaGVyZSBhcmUgZXh0cmEgcmVnaXN0
-ZXJzIHRoYXQgbmVlZCB0byBiZSBwcm9ncmFtbWVkIHRvIG1ha2UgdGhlIGxldmVsIDIKPiBjYWNo
-ZSB3b3JrIG9uIEdQMTBCLCBzdWNoIGFzIHRoZSBzdHJlYW0gSUQgcmVnaXN0ZXIgdGhhdCBpcyB1
-c2VkIHdoZW4gYW4KPiBTTU1VIGlzIHVzZWQgdG8gdHJhbnNsYXRlIG1lbW9yeSBhZGRyZXNzZXMu
-Cj4gCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4K
-PiAtLS0KPiAgIC4uLi9ncHUvZHJtL25vdXZlYXUvaW5jbHVkZS9udmttL3N1YmRldi9sdGMuaCB8
-ICAxICsKPiAgIC4uLi9ncHUvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2Jhc2UuYyB8
-ICAyICstCj4gICAuLi4vZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9LYnVpbGQgICAg
-fCAgMSArCj4gICAuLi4vZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9ncDEwYi5jICAg
-fCA2OSArKysrKysrKysrKysrKysrKysrCj4gICAuLi4vZ3B1L2RybS9ub3V2ZWF1L252a20vc3Vi
-ZGV2L2x0Yy9wcml2LmggICAgfCAgMiArCj4gICA1IGZpbGVzIGNoYW5nZWQsIDc0IGluc2VydGlv
-bnMoKyksIDEgZGVsZXRpb24oLSkKPiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9k
-cm0vbm91dmVhdS9udmttL3N1YmRldi9sdGMvZ3AxMGIuYwo+IAo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vc3ViZGV2L2x0Yy5oIGIvZHJpdmVycy9n
-cHUvZHJtL25vdXZlYXUvaW5jbHVkZS9udmttL3N1YmRldi9sdGMuaAo+IGluZGV4IDY0NGQ1Mjdj
-M2I5Ni4uZDc2ZjYwZDdkMjlhIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1
-L2luY2x1ZGUvbnZrbS9zdWJkZXYvbHRjLmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVh
-dS9pbmNsdWRlL252a20vc3ViZGV2L2x0Yy5oCj4gQEAgLTQwLDQgKzQwLDUgQEAgaW50IGdtMTA3
-X2x0Y19uZXcoc3RydWN0IG52a21fZGV2aWNlICosIGludCwgc3RydWN0IG52a21fbHRjICoqKTsK
-PiAgIGludCBnbTIwMF9sdGNfbmV3KHN0cnVjdCBudmttX2RldmljZSAqLCBpbnQsIHN0cnVjdCBu
-dmttX2x0YyAqKik7Cj4gICBpbnQgZ3AxMDBfbHRjX25ldyhzdHJ1Y3QgbnZrbV9kZXZpY2UgKiwg
-aW50LCBzdHJ1Y3QgbnZrbV9sdGMgKiopOwo+ICAgaW50IGdwMTAyX2x0Y19uZXcoc3RydWN0IG52
-a21fZGV2aWNlICosIGludCwgc3RydWN0IG52a21fbHRjICoqKTsKPiAraW50IGdwMTBiX2x0Y19u
-ZXcoc3RydWN0IG52a21fZGV2aWNlICosIGludCwgc3RydWN0IG52a21fbHRjICoqKTsKPiAgICNl
-bmRpZgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9k
-ZXZpY2UvYmFzZS5jIGIvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNl
-L2Jhc2UuYwo+IGluZGV4IGMzYzcxNTlmMzQxMS4uZDJkNmQ1ZjQwMjhhIDEwMDY0NAo+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS9iYXNlLmMKPiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvYmFzZS5jCj4gQEAg
-LTIzODAsNyArMjM4MCw3IEBAIG52MTNiX2NoaXBzZXQgPSB7Cj4gICAJLmZ1c2UgPSBnbTEwN19m
-dXNlX25ldywKPiAgIAkuaWJ1cyA9IGdwMTBiX2lidXNfbmV3LAo+ICAgCS5pbWVtID0gZ2syMGFf
-aW5zdG1lbV9uZXcsCj4gLQkubHRjID0gZ3AxMDJfbHRjX25ldywKPiArCS5sdGMgPSBncDEwYl9s
-dGNfbmV3LAo+ICAgCS5tYyA9IGdwMTBiX21jX25ldywKPiAgIAkubW11ID0gZ3AxMGJfbW11X25l
-dywKPiAgIAkuc2VjYm9vdCA9IGdwMTBiX3NlY2Jvb3RfbmV3LAo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9sdGMvS2J1aWxkIGIvZHJpdmVycy9ncHUv
-ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbHRjL0tidWlsZAo+IGluZGV4IDJiNmQzNmVhNzA2Ny4u
-NzI4ZDc1MDEwODQ3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20v
-c3ViZGV2L2x0Yy9LYnVpbGQKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1
-YmRldi9sdGMvS2J1aWxkCj4gQEAgLTYsMyArNiw0IEBAIG52a20teSArPSBudmttL3N1YmRldi9s
-dGMvZ20xMDcubwo+ICAgbnZrbS15ICs9IG52a20vc3ViZGV2L2x0Yy9nbTIwMC5vCj4gICBudmtt
-LXkgKz0gbnZrbS9zdWJkZXYvbHRjL2dwMTAwLm8KPiAgIG52a20teSArPSBudmttL3N1YmRldi9s
-dGMvZ3AxMDIubwo+ICtudmttLXkgKz0gbnZrbS9zdWJkZXYvbHRjL2dwMTBiLm8KPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbHRjL2dwMTBiLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9sdGMvZ3AxMGIuYwo+IG5ldyBmaWxl
-IG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMDAwMDAwLi40ZDI3YzZlYTE1NTIKPiAtLS0gL2Rl
-di9udWxsCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbHRjL2dw
-MTBiLmMKPiBAQCAtMCwwICsxLDY5IEBACj4gKy8qCj4gKyAqIENvcHlyaWdodCAoYykgMjAxOSBO
-VklESUEgQ29ycG9yYXRpb24uCj4gKyAqCj4gKyAqIFBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50
-ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFpbmluZyBhCj4gKyAqIGNvcHkg
-b2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUg
-IlNvZnR3YXJlIiksCj4gKyAqIHRvIGRlYWwgaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJp
-Y3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24KPiArICogdGhlIHJpZ2h0cyB0byB1
-c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2Us
-Cj4gKyAqIGFuZC9vciBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQg
-cGVyc29ucyB0byB3aG9tIHRoZQo+ICsgKiBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28s
-IHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgo+ICsgKgo+ICsgKiBUaGUgYWJv
-dmUgY29weXJpZ2h0IG5vdGljZSBhbmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSBzaGFsbCBiZSBp
-bmNsdWRlZCBpbgo+ICsgKiBhbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRo
-ZSBTb2Z0d2FyZS4KPiArICoKPiArICogVEhFIFNPRlRXQVJFIElTIFBST1ZJREVEICJBUyBJUyIs
-IFdJVEhPVVQgV0FSUkFOVFkgT0YgQU5ZIEtJTkQsIEVYUFJFU1MgT1IKPiArICogSU1QTElFRCwg
-SU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRiBNRVJDSEFOVEFC
-SUxJVFksCj4gKyAqIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORCBOT05JTkZS
-SU5HRU1FTlQuICBJTiBOTyBFVkVOVCBTSEFMTAo+ICsgKiBUSEUgQ09QWVJJR0hUIEhPTERFUihT
-KSBPUiBBVVRIT1IoUykgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IKPiArICog
-T1RIRVIgTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBP
-UiBPVEhFUldJU0UsCj4gKyAqIEFSSVNJTkcgRlJPTSwgT1VUIE9GIE9SIElOIENPTk5FQ1RJT04g
-V0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUgo+ICsgKiBPVEhFUiBERUFMSU5HUyBJTiBU
-SEUgU09GVFdBUkUuCj4gKyAqCj4gKyAqIEF1dGhvcnM6IFRoaWVycnkgUmVkaW5nCj4gKyAqLwo+
-ICsKPiArI2luY2x1ZGUgInByaXYuaCIKPiArCj4gK3N0YXRpYyB2b2lkCj4gK2dwMTBiX2x0Y19p
-bml0KHN0cnVjdCBudmttX2x0YyAqbHRjKQo+ICt7Cj4gKwlzdHJ1Y3QgbnZrbV9kZXZpY2UgKmRl
-dmljZSA9IGx0Yy0+c3ViZGV2LmRldmljZTsKPiArI2lmZGVmIENPTkZJR19JT01NVV9BUEkKPiAr
-CXN0cnVjdCBpb21tdV9md3NwZWMgKnNwZWM7Cj4gKyNlbmRpZgo+ICsKPiArCW52a21fd3IzMihk
-ZXZpY2UsIDB4MTdlMjdjLCBsdGMtPmx0Y19ucik7Cj4gKwludmttX3dyMzIoZGV2aWNlLCAweDE3
-ZTAwMCwgbHRjLT5sdGNfbnIpOwo+ICsJbnZrbV93cjMyKGRldmljZSwgMHgxMDA4MDAsIGx0Yy0+
-bHRjX25yKTsKPiArCj4gKyNpZmRlZiBDT05GSUdfSU9NTVVfQVBJCj4gKwlzcGVjID0gZGV2X2lv
-bW11X2Z3c3BlY19nZXQoZGV2aWNlLT5kZXYpOwo+ICsJaWYgKHNwZWMpIHsKPiArCQl1MzIgc2lk
-ID0gc3BlYy0+aWRzWzBdICYgMHhmZmZmOwo+ICsKPiArCQkvKiBzdHJlYW0gSUQgKi8KPiArCQlu
-dmttX3dyMzIoZGV2aWNlLCAweDE2MDAwMCwgc2lkIDw8IDIpOwo+ICsJfQo+ICsjZW5kaWYKCkNv
-dWxkIHdlIGdldCByaWQgb2YgdGhlICNpZmRlZiBibG9ja3MgaGVyZSBpZiB0aGVyZSB3YXMgYSBO
-VUxMCmlubGluZSB2ZXJzaW9uIG9mIGRldl9pb21tdV9md3NwZWNfZ2V0KCkgaW4gdGhlIGluY2x1
-ZGUvbGludXgvaW9tbXUuaApoZWFkZXI/IFRoZSBjb21waWxlciBzaG91bGQgdGhlbiBvcHRpbWlz
-ZSB0aGUgbG90IG91dCBpZiB0aGUgY29uZmlnCmlzIG5vdCBzZXQuCgotLSAKQmVuIERvb2tzCQkJ
-CWh0dHA6Ly93d3cuY29kZXRoaW5rLmNvLnVrLwpTZW5pb3IgRW5naW5lZXIJCQkJQ29kZXRoaW5r
-IC0gUHJvdmlkaW5nIEdlbml1cwoKaHR0cHM6Ly93d3cuY29kZXRoaW5rLmNvLnVrL3ByaXZhY3ku
-aHRtbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--===============1761485176==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Content-Disposition: inline
+
+
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 16, 2019 at 05:15:25PM +0100, Robin Murphy wrote:
+> On 16/09/2019 16:57, Thierry Reding wrote:
+> > On Mon, Sep 16, 2019 at 04:29:18PM +0100, Robin Murphy wrote:
+> > > Hi Thierry,
+> > >=20
+> > > On 16/09/2019 16:04, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > If the GPU is already attached to an IOMMU, don't detach it and set=
+up an
+> > > > explicit IOMMU domain. Since Nouveau can now properly handle the ca=
+se of
+> > > > the DMA API being backed by an IOMMU, just continue using the DMA A=
+PI.
+> > > >=20
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > ---
+> > > >    .../drm/nouveau/nvkm/engine/device/tegra.c    | 19 +++++++------=
+------
+> > > >    1 file changed, 7 insertions(+), 12 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/d=
+rivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> > > > index d0d52c1d4aee..fc652aaa41c7 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> > > > +++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> > > > @@ -23,10 +23,6 @@
+> > > >    #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
+> > > >    #include "priv.h"
+> > > > -#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+> > > > -#include <asm/dma-iommu.h>
+> > > > -#endif
+> > > > -
+> > > >    static int
+> > > >    nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
+> > > >    {
+> > > > @@ -109,14 +105,13 @@ nvkm_device_tegra_probe_iommu(struct nvkm_dev=
+ice_tegra *tdev)
+> > > >    	unsigned long pgsize_bitmap;
+> > > >    	int ret;
+> > > > -#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+> > > > -	if (dev->archdata.mapping) {
+> > > > -		struct dma_iommu_mapping *mapping =3D to_dma_iommu_mapping(dev);
+> > > > -
+> > > > -		arm_iommu_detach_device(dev);
+> > > > -		arm_iommu_release_mapping(mapping);
+> > > > -	}
+> > > > -#endif
+> > > > +	/*
+> > > > +	 * Skip explicit IOMMU initialization if the GPU is already attac=
+hed
+> > > > +	 * to an IOMMU domain. This can happen if the DMA API is backed b=
+y an
+> > > > +	 * IOMMU.
+> > > > +	 */
+> > > > +	if (iommu_get_domain_for_dev(dev))
+> > > > +		return;
+> > >=20
+> > > Beware of "iommu.passthrough=3D1" - you could get a valid default dom=
+ain here
+> > > yet still have direct/SWIOTLB DMA ops. I guess you probably want to
+> > > double-check the domain type as well.
+> >=20
+> > Good point. An earlier version of this patch had an additional check for
+> > IOMMU_DOMAIN_DMA, but then that failed on 32-bit ARM because there the
+> > DMA API can also use IOMMU_DOMAIN_UNMANAGED type domains. Checking for
+> > IOMMU_DOMAIN_IDENTIFY should be safe, though. That doesn't seem to
+> > appear in arch/arm, arch/arm64 or drivers/iommu/dma-iommu.c.
+>=20
+> Right, "domain && domain->type !=3D IOMMU_DOMAIN_IDENTITY" should be
+> sufficient to answer "is the DMA layer managing my address space for me?"
+> unless and until some massive API change happens (which I certainly don't
+> foresee).
+
+Might be a good idea to roll that up into a function to have a standard
+way for drivers to check for this rather than open-coding the same
+condition everywhere (and maybe get things wrong). As an additional
+advantage, if that massive API change ever does happen we don't have to
+go and update all the callers.
+
+Something like this perhaps?
+
+	static inline bool iommu_managed(struct device *dev)
+	{
+		struct iommu_domain *domain =3D iommu_get_domain_for_dev(dev);
+
+		return domain && domain->type !=3D IOMMU_DOMAIN_UNMANAGED;
+	}
+
+Thierry
+
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2AkmMACgkQ3SOs138+
+s6EcaA//TNs1sJ9eP9hen7EqmO83waX5OeHPZSc0qZBn2O5QDEi/myOyEDyyM99X
+3kRZGNe8kWGgOeOdmNHHBufu8q4nC3OubH+qc6pC3iLCX7mTRUOKmY7WgMqk3min
+mj3/Yy5+rTfxCAEpJJ3y3Ml29WoHxAPD00QjkZVZJe/Cnf6fZn4YX7iejfx6Fp+k
+TSzICC9FWjVXxCbwLMw7iN79DCydNyLv9jRlZGHk9eJ1DUAwdtlWBNfqmQSSOI0B
+Je1SuzT3AvL3kORC7vySzPF5PIn1VReXU2AgYKTBmtuAHhFOdBmUmCn629khTHqY
+RUXmMm2uRhzA8y57egMTHZQkqO0XkBhv0KUECPKhCcWpjQjTjdmaLMWYrb5f5VD6
+4/zLSbtyCH98PBd1amOJeIC7b8GXUbKJ0069kSTgleLRA0afMQEAM7sLKB3WSRdI
+9Lw85Q3nxot/h+icCZwkM0wJsTmq7J34RZMmIIk4+b+1y9jnI+Edzb5rfD2hm410
+W+vwRsfG60eEiQ8FiODNv9fmykn0eSc0IfJRL0TBTN4LQ5hV10Gh5b9HE/2rxnZE
+vSFBxPBfBZxDw1BAtVp0qQyHqcWs2jzLkdNPpwr3pPm9HkkoNeusPbExaSJ00qD1
+s1eW4oxqW0aywBubPduFvy2qmI+rGRfvRedOCHCEEz04haHJax4=
+=UbIy
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
+
+--===============1761485176==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1761485176==--
