@@ -1,19 +1,16 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/8] ASoC: tegra: Add a TDM configuration
-	callback
-Date: Wed, 18 Sep 2019 11:48:27 +0100
-Message-ID: <20190918104827.GB2596@sirena.co.uk>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 6/8] ASoC: tegra: set i2s_offset to 0 for
+	tdm
+Date: Wed, 18 Sep 2019 12:30:57 +0100
+Message-ID: <75547a2534804b5992ba1bd3984c96a8@codethink.co.uk>
 References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
- <20190917181233.534-2-ben.dooks@codethink.co.uk>
- <7b21823a-86e8-d3de-10b5-e047a5e025ef@nvidia.com>
- <72705cbf3b70934bdf8e7a6116f420b5@codethink.co.uk>
- <5b0044e1-b781-9fd8-b250-3d87fe3af855@nvidia.com>
+ <20190917181233.534-7-ben.dooks@codethink.co.uk>
+ <d79b8148-797b-08b2-09e7-71c11d9acd53@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7014943400818606924=="
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-Resent-Message-ID: <20190918112850.GC2596@sirena.co.uk>
-Resent-To: alsa-devel@alsa-project.org
-In-Reply-To: <5b0044e1-b781-9fd8-b250-3d87fe3af855@nvidia.com>
+In-Reply-To: <d79b8148-797b-08b2-09e7-71c11d9acd53@nvidia.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,50 +21,46 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============7014943400818606924==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
-Content-Disposition: inline
 
+On 2019-09-18 10:02, Jon Hunter wrote:
+> On 17/09/2019 19:12, Ben Dooks wrote:
+>> Set the offset to 0 for TDM mode, as per the current setup.
+>> 
+>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>> ---
+>>  sound/soc/tegra/tegra30_i2s.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/sound/soc/tegra/tegra30_i2s.c 
+>> b/sound/soc/tegra/tegra30_i2s.c
+>> index d75ce12fe177..3efef87ed8d8 100644
+>> --- a/sound/soc/tegra/tegra30_i2s.c
+>> +++ b/sound/soc/tegra/tegra30_i2s.c
+>> @@ -206,8 +206,11 @@ static int tegra30_i2s_hw_params(struct 
+>> snd_pcm_substream *substream,
+>> 
+>>  	i2s->soc_data->set_audio_cif(i2s->regmap, reg, &cif_conf);
+>> 
+>> -	val = (1 << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
+>> -	      (1 << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
+>> +	if (i2s->is_tdm)
+>> +		val = 0;
+>> +	else
+>> +		val = (1 << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
+>> +		      (1 << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
+>>  	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
+>> 
+>>  	return 0;
+> 
+> Please move this code into tegra30_i2s_set_fmt() as it only needs to be
+> set once.
+> 
+> BTW, if you refer to the following I2S driver for Tegra210, you will 
+> see
+> how I think that we should handle this ...
 
---eJnRUKwClWJh1Khz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Sep 18, 2019 at 11:25:39AM +0100, Jon Hunter wrote:
-
-> Why 2? From looking at various codecs that support dsp-a/b modes, it is
-> more common for the f-sync to be 1 regardless of the number of slots.
-
-In DSP modes only one edge really matters anyway so it's not super
-important how long the pulse is.
-
---eJnRUKwClWJh1Khz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2CC3oACgkQJNaLcl1U
-h9BFnAf/WyYMlppq9ssZv4HEBgxxsYN/XQexPFHMP7crDn62tGtHByJh3iKq1cRa
-XJ3srU6r+IV+S3XI5udoz5il/R442tQjsjZ1deLoKTvih1pu83l0ELkQJOAV4YG2
-3Dmt+KImny71YqKLgZ9haZTZuDEiRFGT7F4MxH1hepOS/aNYwvbojczspSncObVt
-cEp1p8vSq9Wc/E628i7BQ1x+IM/3OLm3Toi3soPP+00s3Uh3s+1Ct7W/501JxCl3
-bUrUIpHTI/SV8PseVs+o0Qt+6dwcXYo5GG1gVZS1IqwTsoUH5KNTZbhtrEa1SNJC
-WUsl5grAThT2yA5nAL7EeG0DM9C1LA==
-=Dj84
------END PGP SIGNATURE-----
-
---eJnRUKwClWJh1Khz--
-
---===============7014943400818606924==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7014943400818606924==--
+Ok, thanks.
