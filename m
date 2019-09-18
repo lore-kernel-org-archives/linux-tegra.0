@@ -1,208 +1,167 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 03/11] drm/nouveau: secboot: Read WPR
- configuration from GPU registers
-Date: Wed, 18 Sep 2019 09:28:24 +1000
-Message-ID: <CACAvsv4zc7Ox-E+dDFxZCcueFNjHA2jNy6xHV+3UGs6w1oyg+Q@mail.gmail.com>
-References: <20190916150412.10025-1-thierry.reding@gmail.com>
- <20190916150412.10025-4-thierry.reding@gmail.com>
- <CACAvsv6AcwWW542AJNkyR-q+aQ0GLFc0C3Sior_bYPTEjBV4LA@mail.gmail.com>
- <20190917084041.GB17854@ulmo>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 2/8] ASoC: tegra: Allow 24bit and 32bit
+ samples
+Date: Wed, 18 Sep 2019 08:44:50 +0100
+Message-ID: <de15ea8e9d2c07a1253fd414b421efbe@codethink.co.uk>
+References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
+ <20190917181233.534-3-ben.dooks@codethink.co.uk>
+ <077870b1-8856-9a28-dd13-f8bfb1418adb@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20190917084041.GB17854@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <077870b1-8856-9a28-dd13-f8bfb1418adb@linux.intel.com>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAxNyBTZXAgMjAxOSBhdCAxODo0MCwgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVk
-aW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4KPiBPbiBUdWUsIFNlcCAxNywgMjAxOSBhdCAwMTo0OTo1
-N1BNICsxMDAwLCBCZW4gU2tlZ2dzIHdyb3RlOgo+ID4gT24gVHVlLCAxNyBTZXAgMjAxOSBhdCAw
-MTowNCwgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4g
-PiA+Cj4gPiA+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gPiA+
-Cj4gPiA+IFRoZSBHUFVzIGZvdW5kIG9uIFRlZ3JhIFNvQ3MgaGF2ZSByZWdpc3RlcnMgdGhhdCBj
-YW4gYmUgdXNlZCB0byByZWFkIHRoZQo+ID4gPiBXUFIgY29uZmlndXJhdGlvbi4gVXNlIHRoZXNl
-IHJlZ2lzdGVycyBpbnN0ZWFkIG9mIHJlYWNoaW5nIGludG8gdGhlCj4gPiA+IG1lbW9yeSBjb250
-cm9sbGVyJ3MgcmVnaXN0ZXIgc3BhY2UgdG8gcmVhZCB0aGUgc2FtZSBpbmZvcm1hdGlvbi4KPiA+
-ID4KPiA+ID4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNv
-bT4KPiA+ID4gLS0tCj4gPiA+ICAuLi4vZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvc2VjYm9vdC9n
-bTIwMC5oICAgfCAgMiArLQo+ID4gPiAgLi4uL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jv
-b3QvZ20yMGIuYyAgIHwgODEgKysrKysrKysrKysrLS0tLS0tLQo+ID4gPiAgLi4uL2RybS9ub3V2
-ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYyAgIHwgIDQgKy0KPiA+ID4gIDMgZmlsZXMg
-Y2hhbmdlZCwgNTMgaW5zZXJ0aW9ucygrKSwgMzQgZGVsZXRpb25zKC0pCj4gPiA+Cj4gPiA+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9zZWNib290L2dt
-MjAwLmggYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9zZWNib290L2dtMjAw
-LmgKPiA+ID4gaW5kZXggNjJjNWUxNjIwOTlhLi4yODBiMTQ0OGRmODggMTAwNjQ0Cj4gPiA+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ20yMDAuaAo+
-ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9zZWNib290L2dt
-MjAwLmgKPiA+ID4gQEAgLTQxLDYgKzQxLDYgQEAgaW50IGdtMjAwX3NlY2Jvb3RfcnVuX2Jsb2Io
-c3RydWN0IG52a21fc2VjYm9vdCAqLCBzdHJ1Y3QgbnZrbV9ncHVvYmogKiwKPiA+ID4gICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgc3RydWN0IG52a21fZmFsY29uICopOwo+ID4gPgo+ID4gPiAg
-LyogVGVncmEtb25seSAqLwo+ID4gPiAtaW50IGdtMjBiX3NlY2Jvb3RfdGVncmFfcmVhZF93cHIo
-c3RydWN0IGdtMjAwX3NlY2Jvb3QgKiwgdTMyKTsKPiA+ID4gK2ludCBnbTIwYl9zZWNib290X3Rl
-Z3JhX3JlYWRfd3ByKHN0cnVjdCBnbTIwMF9zZWNib290ICopOwo+ID4gPgo+ID4gPiAgI2VuZGlm
-Cj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9z
-ZWNib290L2dtMjBiLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9zZWNi
-b290L2dtMjBiLmMKPiA+ID4gaW5kZXggZGY4YjkxOWRjZjA5Li5mOGE1NDMxMjIyMTkgMTAwNjQ0
-Cj4gPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3Qv
-Z20yMGIuYwo+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9z
-ZWNib290L2dtMjBiLmMKPiA+ID4gQEAgLTIzLDM5ICsyMyw2NSBAQAo+ID4gPiAgI2luY2x1ZGUg
-ImFjci5oIgo+ID4gPiAgI2luY2x1ZGUgImdtMjAwLmgiCj4gPiA+Cj4gPiA+IC0jZGVmaW5lIFRF
-R1JBMjEwX01DX0JBU0UgICAgICAgICAgICAgICAgICAgICAgIDB4NzAwMTkwMDAKPiA+ID4gLQo+
-ID4gPiAgI2lmZGVmIENPTkZJR19BUkNIX1RFR1JBCj4gPiA+IC0jZGVmaW5lIE1DX1NFQ1VSSVRZ
-X0NBUlZFT1VUMl9DRkcwICAgICAgICAgICAgIDB4YzU4Cj4gPiA+IC0jZGVmaW5lIE1DX1NFQ1VS
-SVRZX0NBUlZFT1VUMl9CT01fMCAgICAgICAgICAgIDB4YzVjCj4gPiA+IC0jZGVmaW5lIE1DX1NF
-Q1VSSVRZX0NBUlZFT1VUMl9CT01fSElfMCAgICAgICAgIDB4YzYwCj4gPiA+IC0jZGVmaW5lIE1D
-X1NFQ1VSSVRZX0NBUlZFT1VUMl9TSVpFXzEyOEsgICAgICAgICAgICAgICAgMHhjNjQKPiA+ID4g
-LSNkZWZpbmUgVEVHUkFfTUNfU0VDVVJJVFlfQ0FSVkVPVVRfQ0ZHX0xPQ0tFRCAgKDEgPDwgMSkK
-PiA+ID4gIC8qKgo+ID4gPiAgICogZ20yMGJfc2VjYm9vdF90ZWdyYV9yZWFkX3dwcigpIC0gcmVh
-ZCB0aGUgV1BSIHJlZ2lzdGVycyBvbiBUZWdyYQo+ID4gPiAgICoKPiA+ID4gLSAqIE9uIGRHUFUs
-IHdlIGNhbiBtYW5hZ2UgdGhlIFdQUiByZWdpb24gb3Vyc2VsdmVzLCBidXQgb24gVGVncmEgdGhl
-IFdQUiByZWdpb24KPiA+ID4gLSAqIGlzIHJlc2VydmVkIGZyb20gc3lzdGVtIG1lbW9yeSBieSB0
-aGUgYm9vdGxvYWRlciBhbmQgaXJyZXZlcnNpYmx5IGxvY2tlZC4KPiA+ID4gLSAqIFRoaXMgZnVu
-Y3Rpb24gcmVhZHMgdGhlIGFkZHJlc3MgYW5kIHNpemUgb2YgdGhlIHByZS1jb25maWd1cmVkIFdQ
-UiByZWdpb24uCj4gPiA+ICsgKiBPbiBkR1BVLCB3ZSBjYW4gbWFuYWdlIHRoZSBXUFIgcmVnaW9u
-IG91cnNlbHZlcywgYnV0IG9uIFRlZ3JhIHRoaXMgcmVnaW9uCj4gPiA+ICsgKiBpcyBhbGxvY2F0
-ZWQgZnJvbSBzeXN0ZW0gbWVtb3J5IGJ5IHRoZSBzZWN1cmUgZmlybXdhcmUuIFRoZSByZWdpb24g
-aXMgdGhlbgo+ID4gPiArICogbWFya2VkIGFzIGEgInNlY3VyZSBjYXJ2ZW91dCIgYW5kIGlycmV2
-ZXJzaWJseSBsb2NrZWQuIEZ1cnRoZXJtb3JlLCB0aGUgV1BSCj4gPiA+ICsgKiBzZWN1cmUgY2Fy
-dmVvdXQgaXMgYWxzbyBjb25maWd1cmVkIHRvIGJlIHNlbnQgdG8gdGhlIEdQVSB2aWEgYSBkZWRp
-Y2F0ZWQKPiA+ID4gKyAqIHNlcmlhbCBidXMgYmV0d2VlbiB0aGUgbWVtb3J5IGNvbnRyb2xsZXIg
-YW5kIHRoZSBHUFUuIFRoZSBHUFUgcmVxdWVzdHMgdGhpcwo+ID4gPiArICogaW5mb3JtYXRpb24g
-dXBvbiBsZWF2aW5nIHJlc2V0IGFuZCBleHBvc2VzIGl0IHRocm91Z2ggYSBGSUZPIHJlZ2lzdGVy
-IGF0Cj4gPiA+ICsgKiBvZmZzZXQgMHgxMDBjZDQuCj4gPiA+ICsgKgo+ID4gPiArICogVGhlIEZJ
-Rk8gcmVnaXN0ZXIncyBsb3dlciA0IGJpdHMgY2FuIGJlIHVzZWQgdG8gc2V0IHRoZSByZWFkIGlu
-ZGV4IGludG8gdGhlCj4gPiA+ICsgKiBGSUZPLiBBZnRlciBlYWNoIHJlYWQgb2YgdGhlIEZJRk8g
-cmVnaXN0ZXIsIHRoZSByZWFkIGluZGV4IGlzIGluY3JlbWVudGVkLgo+ID4gPiArICoKPiA+ID4g
-KyAqIEluZGljZXMgMiBhbmQgMyBjb250YWluIHRoZSBsb3dlciBhbmQgdXBwZXIgYWRkcmVzc2Vz
-IG9mIHRoZSBXUFIuIFRoZXNlIGFyZQo+ID4gPiArICogc3RvcmVkIGluIHVuaXRzIG9mIDI1NiBC
-LiBUaGUgV1BSIGlzIGluY2x1c2l2ZSBvZiBib3RoIGFkZHJlc3Nlcy4KPiA+ID4gKyAqCj4gPiA+
-ICsgKiBVbmZvcnR1bmF0ZWx5LCBmb3Igc29tZSByZWFzb24gdGhlIFdQUiBpbmZvIHJlZ2lzdGVy
-IGRvZXNuJ3QgY29udGFpbiB0aGUKPiA+ID4gKyAqIGNvcnJlY3QgdmFsdWVzIGZvciB0aGUgc2Vj
-dXJlIGNhcnZlb3V0LiBJdCBzZWVtcyBsaWtlIHRoZSB1cHBlciBhZGRyZXNzIGlzCj4gPiA+ICsg
-KiBhbHdheXMgdG9vIHNtYWxsIGJ5IDEyOCBLaUIgLSAxLiBHaXZlbiB0aGF0IHRoZSBzZWN1cmUg
-Y2Fydm91dCBzaXplIGluIHRoZQo+ID4gPiArICogbWVtb3J5IGNvbnRyb2xsZXIgY29uZmlndXJh
-dGlvbiBpcyBzcGVjaWZpZWQgaW4gdW5pdHMgb2YgMTI4IEtpQiwgaXQncwo+ID4gPiArICogcG9z
-c2libGUgdGhhdCB0aGUgY29tcHV0YXRpb24gb2YgdGhlIHVwcGVyIGFkZHJlc3Mgb2YgdGhlIFdQ
-UiBpcyB3cm9uZyBhbmQKPiA+ID4gKyAqIGNhdXNlcyB0aGlzIGRpZmZlcmVuY2UuCj4gPiA+ICAg
-Ki8KPiA+ID4gIGludAo+ID4gPiAtZ20yMGJfc2VjYm9vdF90ZWdyYV9yZWFkX3dwcihzdHJ1Y3Qg
-Z20yMDBfc2VjYm9vdCAqZ3NiLCB1MzIgbWNfYmFzZSkKPiA+ID4gK2dtMjBiX3NlY2Jvb3RfdGVn
-cmFfcmVhZF93cHIoc3RydWN0IGdtMjAwX3NlY2Jvb3QgKmdzYikKPiA+ID4gIHsKPiA+ID4gKyAg
-ICAgICBzdHJ1Y3QgbnZrbV9kZXZpY2UgKmRldmljZSA9IGdzYi0+YmFzZS5zdWJkZXYuZGV2aWNl
-Owo+ID4gPiAgICAgICAgIHN0cnVjdCBudmttX3NlY2Jvb3QgKnNiID0gJmdzYi0+YmFzZTsKPiA+
-ID4gLSAgICAgICB2b2lkIF9faW9tZW0gKm1jOwo+ID4gPiAtICAgICAgIHUzMiBjZmc7Cj4gPiA+
-ICsgICAgICAgdTY0IGJhc2UsIGxpbWl0Owo+ID4gPiArICAgICAgIHUzMiB2YWx1ZTsKPiA+ID4K
-PiA+ID4gLSAgICAgICBtYyA9IGlvcmVtYXAobWNfYmFzZSwgMHhkMDApOwo+ID4gPiAtICAgICAg
-IGlmICghbWMpIHsKPiA+ID4gLSAgICAgICAgICAgICAgIG52a21fZXJyb3IoJnNiLT5zdWJkZXYs
-ICJDYW5ub3QgbWFwIFRlZ3JhIE1DIHJlZ2lzdGVyc1xuIik7Cj4gPiA+IC0gICAgICAgICAgICAg
-ICByZXR1cm4gLUVOT01FTTsKPiA+ID4gLSAgICAgICB9Cj4gPiA+IC0gICAgICAgc2ItPndwcl9h
-ZGRyID0gaW9yZWFkMzJfbmF0aXZlKG1jICsgTUNfU0VDVVJJVFlfQ0FSVkVPVVQyX0JPTV8wKSB8
-Cj4gPiA+IC0gICAgICAgICAgICAgKCh1NjQpaW9yZWFkMzJfbmF0aXZlKG1jICsgTUNfU0VDVVJJ
-VFlfQ0FSVkVPVVQyX0JPTV9ISV8wKSA8PCAzMik7Cj4gPiA+IC0gICAgICAgc2ItPndwcl9zaXpl
-ID0gaW9yZWFkMzJfbmF0aXZlKG1jICsgTUNfU0VDVVJJVFlfQ0FSVkVPVVQyX1NJWkVfMTI4SykK
-PiA+ID4gLSAgICAgICAgICAgICAgIDw8IDE3Owo+ID4gPiAtICAgICAgIGNmZyA9IGlvcmVhZDMy
-X25hdGl2ZShtYyArIE1DX1NFQ1VSSVRZX0NBUlZFT1VUMl9DRkcwKTsKPiA+ID4gLSAgICAgICBp
-b3VubWFwKG1jKTsKPiA+ID4gKyAgICAgICAvKiBzZXQgV1BSIGluZm8gcmVnaXN0ZXIgdG8gcG9p
-bnQgYXQgV1BSIGJhc2UgYWRkcmVzcyByZWdpc3RlciAqLwo+ID4gPiArICAgICAgIHZhbHVlID0g
-bnZrbV9yZDMyKGRldmljZSwgMHgxMDBjZDQpOwo+ID4gPiArICAgICAgIHZhbHVlICY9IH4weGY7
-Cj4gPiA+ICsgICAgICAgdmFsdWUgfD0gMHgyOwo+ID4gPiArICAgICAgIG52a21fd3IzMihkZXZp
-Y2UsIDB4MTAwY2Q0LCB2YWx1ZSk7Cj4gPiA+ICsKPiA+ID4gKyAgICAgICAvKiByZWFkIGJhc2Ug
-YWRkcmVzcyAqLwo+ID4gPiArICAgICAgIHZhbHVlID0gbnZrbV9yZDMyKGRldmljZSwgMHgxMDBj
-ZDQpOwo+ID4gPiArICAgICAgIGJhc2UgPSAodTY0KSh2YWx1ZSA+PiA0KSA8PCAxMjsKPiA+ID4g
-Kwo+ID4gPiArICAgICAgIC8qIHJlYWQgbGltaXQgKi8KPiA+ID4gKyAgICAgICB2YWx1ZSA9IG52
-a21fcmQzMihkZXZpY2UsIDB4MTAwY2Q0KTsKPiA+ID4gKyAgICAgICBsaW1pdCA9ICh1NjQpKHZh
-bHVlID4+IDQpIDw8IDEyOwo+ID4gYWNyX3IzNTJfd3ByX2lzX3NldCgpIGRvZXMgYSBzaW1pbGFy
-IHJlYWRvdXQgdG8gY29uZmlybSB0aGUgSFMKPiA+IGZpcm13YXJlIGRpZCBpdHMgam9iIG9uIGRH
-UFUsIHBlcmhhcHMgdGhpcyBwYXJ0IG9mIGl0IGNvdWxkIGJlCj4gPiBmYWN0b3JlZCBvdXQgaW50
-byBhIGZ1bmN0aW9uIHRoYXQgY291bGQgYmUgdXNlZCBpbiBib3RoIHBsYWNlcz8KPgo+IEkgaGFk
-bid0IHNlZW4gdGhhdCBmdW5jdGlvbi4gSXQgbG9va3MgdG8gbWUgbGlrZSB0aGVzZSBhcmUgbm93
-IGJvdGgKPiBkb2luZyBleGFjdGx5IHRoZSBzYW1lIHRoaW5nLiBUaGUgYWNyX3IzNTJfd3ByX2lz
-X3NldCgpIGFsc28gc2VlbXMgdG8KPiBzZXJ2ZSBvbmx5IHRvIGNoZWNrIHRoYXQgd2hhdCdzIHJl
-YWQgZnJvbSB0aGVzZSBXUFIgaW5mbyByZWdpc3RlcnMKPiBtYXRjaGVzIHdoYXQgd2FzIGNvbmZp
-Z3VyZWQgYXMgdGhlIFdQUiByZWdpb24gcHJldmlvdXNseS4gVGhpcyBpcyBub3cKPiByYXRoZXIg
-cG9pbnRsZXNzIGJlY2F1c2UsIHVubGVzcyB0aGUgY29tcHV0YXRpb25zIGRpZmZlciwgdGhlIHJl
-c3VsdAo+IG11c3QgYmUgdHJ1ZS4KWWVhaCwgSSBiZWxpZXZlIGl0cyBwdXJwb3NlIGlzIHNpbXBs
-eSB0byBjb25maXJtIHRoZSBIUyBmaXJtd2FyZQpleGVjdXRlZCBjb3JyZWN0bHkuCgo+Cj4gSG9u
-ZXN0bHksIEknbSBub3Qgc3VyZSB3ZSByZWFsbHkgbmVlZCB0byBjaGVjayB0aGlzLiBNeSB1bmRl
-cnN0YW5kaW5nIGlzCj4gdGhhdCB0aGVzZSBXUFIgaW5mbyByZWdpc3RlcnMgYXJlIHRoZSBjYW5v
-bmljYWwgd2F5IG9mIG9idGFpbmluZyB0aGUgV1BSCj4gcmVnaW9uIGJhc2UgYW5kIGxpbWl0LiBU
-aGUgd2F5IHRoYXQgdGhpcyB3b3JrcyBpcyB0aGF0IHRoZSBHUFUgaGFzIGEKPiBkZWRpY2F0ZWQg
-YnVzIHRvIHRoZSBtZW1vcnkgY29udHJvbGxlciBhbmQgaXQgZmV0Y2hlcyB0aGVzZSBwYXJhbWV0
-ZXJzCj4gZnJvbSB0aGUgTUMgd2hlbiBpdCBsZWF2ZXMgcmVzZXQuCj4KPiBPbmUgb2RkaXR5IGhl
-cmUsIHRob3VnaCwgaXMgdGhhdCB0aGUgY29kZSBpbiBhY3JfcjM1Ml93cHJfaXNfc2V0KCkgZG9l
-cwo+IG5vdCBhY2NvdW50IGZvciB0aGUgc3RyYW5nZSB3YXkgdGhhdCB0aGUgbGltaXQgaXMgZW5j
-b2RlZCBpbiB0aGVzZQo+IHJlZ2lzdGVycy4gSSBzdXNwZWN0IHRoYXQgdGhpcyBpcyBzb21lIHdl
-aXJkIGhhcmR3YXJlIGJ1ZyB0aGF0IGhhcHBlbnMKPiBkdXJpbmcgdGhlIHRyYW5zZmVyIG9mIHRo
-ZSBXUFIgaW5mb3JtYXRpb24gdG8gdGhlIEdQVS4gSSBjYW1lIGFjcm9zcwo+IHNvbWUgZG9jdW1l
-bnRhdGlvbiB0aGF0IHNwZWNpZmljYWxseSBkZWZpbmVzIHRoZSBsaW1pdCByZWdpc3RlciB0bwo+
-IGNvbnRhaW4gdGhlIHVwcGVyIGxpbWl0IG9mIHRoZSBXUFIgaW4gdW5pdHMgb2YgMjU2IEIgd2l0
-aCB0aGUgV1BSIGJlaW5nCj4gaW5jbHVzaXZlIG9mIGJvdGggdGhlIGJhc2UgYW5kIHRoZSBsaW1p
-dC4gSSdtIG5vdCBleGFjdGx5IHN1cmUgd2h5IHRoaXMKPiBoYXMgZ29uZSB1bm5vdGljZWQsIGJ1
-dCBJIHRoaW5rIG52Z3B1IGRvZXNuJ3QgYWN0dWFsbHkgdGVzdCBmb3IgdGhlIFdQUgo+IHNpemUg
-d2hlbiBpdCBsb2FkcyB0aGUgZmlybXdhcmUuIEkgb25seSByYW4gaW50byB0aGlzIHdoZW4gaW1w
-bGVtZW50aW5nCj4gdGhlIFdQUiBpbmZvIHJlZ2lzdGVyIHJlYWRvdXQgYmVjYXVzZSBOb3V2ZWF1
-IHdvdWxkIHJlZnVzZSB0byBsb2FkIHRoZQo+IGZpcm13YXJlIGJlY2F1c2UgaXQgZGlkbid0IGZp
-dCBpbnRvIHdoYXQgaXQgdGhvdWdodCB3YXMgdGhlIFdQUi4KPgo+IEFueXdheSwgSSd2ZSB0ZXN0
-ZWQgdGhpcyBvbiBhbGwgb2YgZ20yMGIsIGdwMTBiIGFuZCBndjExYiBhbmQgdGhlIGFib3ZlCj4g
-Y29tcHV0YXRpb25zIGdpdmUgbWUgdGhlIHNhbWUgdmFsdWVzIHRoYXQgdGhlIChTb0MpIGZpcm13
-YXJlIGNsYWltcyB0aGF0Cj4gaXQgY29uZmlndXJlZCB0aGUgV1BSIHdpdGguCj4KPiBHaXZlbiB0
-aGUgYWJvdmUsIGRvIHlvdSBzZWUgYW55IGZ1cnRoZXIgdXNlIGZvciBhY3JfcjM1Ml93cHJfaXNf
-c2V0KCk/Cj4gU2hvdWxkIEkgZm9sbG93IHVwIHdpdGggYSBwYXRjaCByZW1vdmluZyBpdD8KWW91
-IGNhbiBsZWF2ZSBpdCBmb3Igbm93IGlmIHlvdSBsaWtlLCBJJ20gcmV3b3JraW5nIHRoYXQgZW50
-aXJlCnN1YnN5c3RlbSBhbHJlYWR5IGFueXdheSBhbmQgY2FuIG51a2UgaXQgdGhlcmUuCgpCZW4u
-Cgo+Cj4gVGhpZXJyeQo+Cj4gPgo+ID4gPiArCj4gPiA+ICsgICAgICAgLyoKPiA+ID4gKyAgICAg
-ICAgKiBUaGUgdXBwZXIgYWRkcmVzcyBvZiB0aGUgV1BSIHNlZW1zIHRvIGJlIGNvbXB1dGVkIHdy
-b25nbHkgYW5kIGlzCj4gPiA+ICsgICAgICAgICogYWN0dWFsbHkgU1pfMTI4SyAtIDEgYnl0ZXMg
-bG93ZXIgdGhhbiBpdCBzaG91bGQgYmUuIEFkanVzdCB0aGUKPiA+ID4gKyAgICAgICAgKiB2YWx1
-ZSBhY2NvcmRpbmdseS4KPiA+ID4gKyAgICAgICAgKi8KPiA+ID4gKyAgICAgICBsaW1pdCArPSBT
-Wl8xMjhLIC0gMTsKPiA+ID4gKwo+ID4gPiArICAgICAgIHNiLT53cHJfc2l6ZSA9IGxpbWl0IC0g
-YmFzZSArIDE7Cj4gPiA+ICsgICAgICAgc2ItPndwcl9hZGRyID0gYmFzZTsKPiA+ID4gKwo+ID4g
-PiArICAgICAgIG52a21faW5mbygmc2ItPnN1YmRldiwgIldQUjogJTAxNmxseC0lMDE2bGx4XG4i
-LCBzYi0+d3ByX2FkZHIsCj4gPiA+ICsgICAgICAgICAgICAgICAgIHNiLT53cHJfYWRkciArIHNi
-LT53cHJfc2l6ZSAtIDEpOwo+ID4gPgo+ID4gPiAgICAgICAgIC8qIENoZWNrIHRoYXQgV1BSIHNl
-dHRpbmdzIGFyZSB2YWxpZCAqLwo+ID4gPiAgICAgICAgIGlmIChzYi0+d3ByX3NpemUgPT0gMCkg
-ewo+ID4gPiBAQCAtNjMsMTEgKzg5LDYgQEAgZ20yMGJfc2VjYm9vdF90ZWdyYV9yZWFkX3dwcihz
-dHJ1Y3QgZ20yMDBfc2VjYm9vdCAqZ3NiLCB1MzIgbWNfYmFzZSkKPiA+ID4gICAgICAgICAgICAg
-ICAgIHJldHVybiAtRUlOVkFMOwo+ID4gPiAgICAgICAgIH0KPiA+ID4KPiA+ID4gLSAgICAgICBp
-ZiAoIShjZmcgJiBURUdSQV9NQ19TRUNVUklUWV9DQVJWRU9VVF9DRkdfTE9DS0VEKSkgewo+ID4g
-PiAtICAgICAgICAgICAgICAgbnZrbV9lcnJvcigmc2ItPnN1YmRldiwgIldQUiByZWdpb24gbm90
-IGxvY2tlZFxuIik7Cj4gPiA+IC0gICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsKPiA+ID4g
-LSAgICAgICB9Cj4gPiA+IC0KPiA+ID4gICAgICAgICByZXR1cm4gMDsKPiA+ID4gIH0KPiA+ID4g
-ICNlbHNlCj4gPiA+IEBAIC04NSw3ICsxMDYsNyBAQCBnbTIwYl9zZWNib290X29uZWluaXQoc3Ry
-dWN0IG52a21fc2VjYm9vdCAqc2IpCj4gPiA+ICAgICAgICAgc3RydWN0IGdtMjAwX3NlY2Jvb3Qg
-KmdzYiA9IGdtMjAwX3NlY2Jvb3Qoc2IpOwo+ID4gPiAgICAgICAgIGludCByZXQ7Cj4gPiA+Cj4g
-PiA+IC0gICAgICAgcmV0ID0gZ20yMGJfc2VjYm9vdF90ZWdyYV9yZWFkX3dwcihnc2IsIFRFR1JB
-MjEwX01DX0JBU0UpOwo+ID4gPiArICAgICAgIHJldCA9IGdtMjBiX3NlY2Jvb3RfdGVncmFfcmVh
-ZF93cHIoZ3NiKTsKPiA+ID4gICAgICAgICBpZiAocmV0KQo+ID4gPiAgICAgICAgICAgICAgICAg
-cmV0dXJuIHJldDsKPiA+ID4KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2
-ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1
-L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYwo+ID4gPiBpbmRleCAyOGNhMjlkMGVlZWUuLmQ4
-NGU4NTgyNTk5NSAxMDA2NDQKPiA+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZr
-bS9zdWJkZXYvc2VjYm9vdC9ncDEwYi5jCj4gPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2
-ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYwo+ID4gPiBAQCAtMjMsMTUgKzIzLDEzIEBA
-Cj4gPiA+ICAjaW5jbHVkZSAiYWNyLmgiCj4gPiA+ICAjaW5jbHVkZSAiZ20yMDAuaCIKPiA+ID4K
-PiA+ID4gLSNkZWZpbmUgVEVHUkExODZfTUNfQkFTRSAgICAgICAgICAgICAgICAgICAgICAgMHgw
-MmMxMDAwMAo+ID4gPiAtCj4gPiA+ICBzdGF0aWMgaW50Cj4gPiA+ICBncDEwYl9zZWNib290X29u
-ZWluaXQoc3RydWN0IG52a21fc2VjYm9vdCAqc2IpCj4gPiA+ICB7Cj4gPiA+ICAgICAgICAgc3Ry
-dWN0IGdtMjAwX3NlY2Jvb3QgKmdzYiA9IGdtMjAwX3NlY2Jvb3Qoc2IpOwo+ID4gPiAgICAgICAg
-IGludCByZXQ7Cj4gPiA+Cj4gPiA+IC0gICAgICAgcmV0ID0gZ20yMGJfc2VjYm9vdF90ZWdyYV9y
-ZWFkX3dwcihnc2IsIFRFR1JBMTg2X01DX0JBU0UpOwo+ID4gPiArICAgICAgIHJldCA9IGdtMjBi
-X3NlY2Jvb3RfdGVncmFfcmVhZF93cHIoZ3NiKTsKPiA+ID4gICAgICAgICBpZiAocmV0KQo+ID4g
-PiAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsKPiA+ID4KPiA+ID4gLS0KPiA+ID4gMi4yMy4w
-Cj4gPiA+Cj4gPiA+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCj4gPiA+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiA+ID4gZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwo+ID4gPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZl
-YXU=
+
+
+On 2019-09-17 19:26, Pierre-Louis Bossart wrote:
+> On 9/17/19 1:12 PM, Ben Dooks wrote:
+>> From: Edward Cragg <edward.cragg@codethink.co.uk>
+>> 
+>> The tegra3 audio can support 24 and 32 bit sample sizes so add the
+>>   option to the tegra30_i2s_hw_params to configure the S24_LE or
+>>   S32_LE formats when requested.
+>> 
+>> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
+>> [ben.dooks@codethink.co.uk: fixup merge of 24 and 32bit]
+>> [ben.dooks@codethink.co.uk: add pm calls around ytdm config]
+>> [ben.dooks@codethink.co.uk: remove debug prints]
+> 
+
+> You need to add your own Signed-off-by when sending patches from other 
+> people
+Yes, will do when this series has been reviewed and modifications done.
+
+> 
+>> ---
+>> squash 5aeca5a055fd ASoC: tegra: i2s: pm_runtime_get_sync() is needed 
+>> in tdm code
+>> 
+>> ASoC: tegra: i2s: pm_runtime_get_sync() is needed in tdm code
+>> ---
+>>   sound/soc/tegra/tegra30_i2s.c | 32 +++++++++++++++++++++++---------
+>>   1 file changed, 23 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/sound/soc/tegra/tegra30_i2s.c 
+>> b/sound/soc/tegra/tegra30_i2s.c
+>> index d36b4662b420..b5372839f672 100644
+>> --- a/sound/soc/tegra/tegra30_i2s.c
+>> +++ b/sound/soc/tegra/tegra30_i2s.c
+>> @@ -127,7 +127,7 @@ static int tegra30_i2s_hw_params(struct 
+>> snd_pcm_substream *substream,
+>>   	struct device *dev = dai->dev;
+>>   	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+>>   	unsigned int mask, val, reg;
+>> -	int ret, sample_size, srate, i2sclock, bitcnt;
+>> +	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits;
+>>   	struct tegra30_ahub_cif_conf cif_conf;
+>>     	if (params_channels(params) != 2)
+>> @@ -137,8 +137,19 @@ static int tegra30_i2s_hw_params(struct 
+>> snd_pcm_substream *substream,
+>>   	switch (params_format(params)) {
+>>   	case SNDRV_PCM_FORMAT_S16_LE:
+>>   		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
+>> +		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
+>>   		sample_size = 16;
+>>   		break;
+>> +	case SNDRV_PCM_FORMAT_S24_LE:
+>> +		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
+>> +		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
+>> +		sample_size = 24;
+>> +		break;
+>> +	case SNDRV_PCM_FORMAT_S32_LE:
+>> +		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
+>> +		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
+>> +		sample_size = 32;
+>> +		break;
+>>   	default:
+>>   		return -EINVAL;
+>>   	}
+>> @@ -170,8 +181,8 @@ static int tegra30_i2s_hw_params(struct 
+>> snd_pcm_substream *substream,
+>>   	cif_conf.threshold = 0;
+>>   	cif_conf.audio_channels = 2;
+>>   	cif_conf.client_channels = 2;
+>> -	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
+>> -	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
+>> +	cif_conf.audio_bits = audio_bits;
+>> +	cif_conf.client_bits = audio_bits;
+>>   	cif_conf.expand = 0;
+>>   	cif_conf.stereo_conv = 0;
+>>   	cif_conf.replicate = 0;
+>> @@ -264,10 +275,6 @@ static int tegra30_i2s_set_tdm(struct snd_soc_dai 
+>> *dai,
+>>   	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+>>   	unsigned int mask = 0, val = 0;
+>>   -	dev_info(dai->dev, "%s: setting TDM: tx_mask: 0x%08x rx_mask: 
+>> 0x%08x "
+>> -		 "slots: 0x%08x " "width: %d\n",
+>> -		 __func__, tx_mask, rx_mask, slots, slot_width);
+>> -
+> 
+> This should be squashed in the previous patch
+
+Thanks, looks like I missed a bad rebase and hit this patch instead of 
+the
+previous.
+
+> 
+>>   	/* Set up slots and tx/rx masks */
+>>   	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
+>>   	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
+>> @@ -277,6 +284,8 @@ static int tegra30_i2s_set_tdm(struct snd_soc_dai 
+>> *dai,
+>>   	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
+>>   	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
+>>   +	pm_runtime_get_sync(dai->dev);
+>> +
+>>   	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
+>>     	/* Set FSYNC width */
+>> @@ -284,6 +293,7 @@ static int tegra30_i2s_set_tdm(struct snd_soc_dai 
+>> *dai,
+>>   		TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK,
+>>   		(slot_width - 1) << TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_SHIFT);
+>>   +	pm_runtime_put(dai->dev);
+> 
+> same for PM stuff, it's not related to 24/32 bit samples
+
+Yes, will do.
+Thank you for reviewing.
+
+>>   	return 0;
+>>   }
+>>   @@ -311,14 +321,18 @@ static const struct snd_soc_dai_driver 
+>> tegra30_i2s_dai_template = {
+>>   		.channels_min = 2,
+>>   		.channels_max = 2,
+>>   		.rates = SNDRV_PCM_RATE_8000_96000,
+>> -		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+>> +		.formats = SNDRV_PCM_FMTBIT_S32_LE |
+>> +			   SNDRV_PCM_FMTBIT_S24_LE |
+>> +			   SNDRV_PCM_FMTBIT_S16_LE,
+>>   	},
+>>   	.capture = {
+>>   		.stream_name = "Capture",
+>>   		.channels_min = 2,
+>>   		.channels_max = 2,
+>>   		.rates = SNDRV_PCM_RATE_8000_96000,
+>> -		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+>> +		.formats = SNDRV_PCM_FMTBIT_S32_LE |
+>> +			   SNDRV_PCM_FMTBIT_S24_LE |
+>> +			   SNDRV_PCM_FMTBIT_S16_LE,
+>>   	},
+>>   	.ops = &tegra30_i2s_dai_ops,
+>>   	.symmetric_rates = 1,
+>> 
