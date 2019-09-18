@@ -1,16 +1,16 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/8] ASoC: tegra: Allow 24bit and 32bit
- samples
-Date: Wed, 18 Sep 2019 11:08:28 +0100
-Message-ID: <20190918100828.GA2596@sirena.co.uk>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 1/8] ASoC: tegra: Add a TDM configuration
+	callback
+Date: Wed, 18 Sep 2019 11:11:03 +0100
+Message-ID: <72705cbf3b70934bdf8e7a6116f420b5@codethink.co.uk>
 References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
- <20190917181233.534-3-ben.dooks@codethink.co.uk>
- <077870b1-8856-9a28-dd13-f8bfb1418adb@linux.intel.com>
- <de15ea8e9d2c07a1253fd414b421efbe@codethink.co.uk>
+ <20190917181233.534-2-ben.dooks@codethink.co.uk>
+ <7b21823a-86e8-d3de-10b5-e047a5e025ef@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6306935486631129263=="
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <de15ea8e9d2c07a1253fd414b421efbe@codethink.co.uk>
+In-Reply-To: <7b21823a-86e8-d3de-10b5-e047a5e025ef@nvidia.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -20,53 +20,95 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@lists.codethink.co.uk, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6306935486631129263==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
-Content-Disposition: inline
+
+On 2019-09-18 09:42, Jon Hunter wrote:
+> On 17/09/2019 19:12, Ben Dooks wrote:
+>> From: Edward Cragg <edward.cragg@codethink.co.uk>
+>> 
+>> Add a callback to configure TDM settings for the Tegra30 I2S ASoC 
+>> 'platform'
+>> driver.
+>> 
+>> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
+>> ---
+>>  sound/soc/tegra/tegra30_i2s.c | 34 ++++++++++++++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
+>> 
+>> diff --git a/sound/soc/tegra/tegra30_i2s.c 
+>> b/sound/soc/tegra/tegra30_i2s.c
+>> index ac6983c6bd72..d36b4662b420 100644
+>> --- a/sound/soc/tegra/tegra30_i2s.c
+>> +++ b/sound/soc/tegra/tegra30_i2s.c
+>> @@ -254,6 +254,39 @@ static int tegra30_i2s_trigger(struct 
+>> snd_pcm_substream *substream, int cmd,
+>>  	return 0;
+>>  }
+>> 
+>> +/*
+>> + * Set up TDM
+>> + */
+>> +static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
+>> +			       unsigned int tx_mask, unsigned int rx_mask,
+>> +			       int slots, int slot_width)
+>> +{
+>> +	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+>> +	unsigned int mask = 0, val = 0;
+>> +
+>> +	dev_info(dai->dev, "%s: setting TDM: tx_mask: 0x%08x rx_mask: 0x%08x 
+>> "
+> 
+> dev_dbg() please. Also I don't think it is necessary to print both the
+> function name and 'setting TDM', the function name should be 
+> sufficient.
+
+Yes, already sorted from previous review.
+
+>> +		 "slots: 0x%08x " "width: %d\n",
+> 
+> Why are there extra quotes here?
+
+No idea, I'll remove these later.
+
+>> +		 __func__, tx_mask, rx_mask, slots, slot_width)> +
+>> +	/* Set up slots and tx/rx masks */
+>> +	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
+>> +	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
+>> +	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
+>> +
+>> +	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
+>> +	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
+>> +	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
+>> +
+>> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
+>> +
+>> +	/* Set FSYNC width */
+>> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
+>> +		TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK,
+>> +		(slot_width - 1) << TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_SHIFT);
+> 
+> What happens if there is only one slot? The fsync will be the width of
+> the slot. Typically, TDM is used with DSP-A/B formats and although the
+> driver does not appear to program the fsync width, it probably should
+> during the tegra30_i2s_set_fmt() depending on the format used rather
+> than here.
+
+Hmm, should we check.
+
+The work was done to keep as close to the original client's 2.6 kernel
+as possible which set the fsync field to a whole data word. We could try
+and just set this to say 2 here and have a much shorter frame-sync 
+pulse.
+
+I'll add a check for slots < 2 and set the fsync width to 2.
+
+Thanks for the review.
 
 
---opJtzjQTFsWo+cga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Sep 18, 2019 at 08:44:50AM +0100, Ben Dooks wrote:
-> On 2019-09-17 19:26, Pierre-Louis Bossart wrote:
-
-> > You need to add your own Signed-off-by when sending patches from other
-> > people
-
-> Yes, will do when this series has been reviewed and modifications done.
-
-I didn't look at it due to the lack of signoffs.
-
---opJtzjQTFsWo+cga
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2CAhsACgkQJNaLcl1U
-h9C46Af9HqUug+yYqtvuz1iJgkDg06+OGdgZCZt3LzD03CVMezkETohpjdENSa97
-vGv0ncXvs+B9obWMBxamAZQLIB02nbOaJRgV4KTB+BIs8Kea3S8MBiKnMJz4ImZN
-cRw7fZzOihl2sWacVixGQmwyucX72YjyqLWR0fqTxyp61YxW2kgBGkiLiljGF+mC
-I+AZ5Ad+INt/fMknuOqhvms1sLYjvWbGBgA1ShqHlw6OydHSR4QEBfNt57O4HPXr
-wjvyk+vbVnhZcSSewJzHMQCfC33alghK12ORM6K+58CwN8SNh2OQrkQBwVMKqm9l
-nvBqwW2hxdivNkRAvTT6d5wclb0MCQ==
-=yQx4
------END PGP SIGNATURE-----
-
---opJtzjQTFsWo+cga--
-
---===============6306935486631129263==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============6306935486631129263==--
+> 
+> Cheers
+> Jon
