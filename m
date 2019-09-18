@@ -1,18 +1,19 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH 1/8] ASoC: tegra: Add a TDM configuration
 	callback
-Date: Wed, 18 Sep 2019 11:25:39 +0100
-Message-ID: <5b0044e1-b781-9fd8-b250-3d87fe3af855@nvidia.com>
+Date: Wed, 18 Sep 2019 11:48:27 +0100
+Message-ID: <20190918104827.GB2596@sirena.co.uk>
 References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
  <20190917181233.534-2-ben.dooks@codethink.co.uk>
  <7b21823a-86e8-d3de-10b5-e047a5e025ef@nvidia.com>
  <72705cbf3b70934bdf8e7a6116f420b5@codethink.co.uk>
+ <5b0044e1-b781-9fd8-b250-3d87fe3af855@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============7014943400818606924=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <72705cbf3b70934bdf8e7a6116f420b5@codethink.co.uk>
-Content-Language: en-US
+Resent-Message-ID: <20190918112850.GC2596@sirena.co.uk>
+Resent-To: alsa-devel@alsa-project.org
+In-Reply-To: <5b0044e1-b781-9fd8-b250-3d87fe3af855@nvidia.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -22,68 +23,51 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE4LzA5LzIwMTkgMTE6MTEsIEJlbiBEb29rcyB3cm90ZToKPiAKPiAKPiBPbiAyMDE5LTA5
-LTE4IDA5OjQyLCBKb24gSHVudGVyIHdyb3RlOgo+PiBPbiAxNy8wOS8yMDE5IDE5OjEyLCBCZW4g
-RG9va3Mgd3JvdGU6Cj4+PiBGcm9tOiBFZHdhcmQgQ3JhZ2cgPGVkd2FyZC5jcmFnZ0Bjb2RldGhp
-bmsuY28udWs+Cj4+Pgo+Pj4gQWRkIGEgY2FsbGJhY2sgdG8gY29uZmlndXJlIFRETSBzZXR0aW5n
-cyBmb3IgdGhlIFRlZ3JhMzAgSTJTIEFTb0MKPj4+ICdwbGF0Zm9ybScKPj4+IGRyaXZlci4KPj4+
-Cj4+PiBTaWduZWQtb2ZmLWJ5OiBFZHdhcmQgQ3JhZ2cgPGVkd2FyZC5jcmFnZ0Bjb2RldGhpbmsu
-Y28udWs+Cj4+PiAtLS0KPj4+IMKgc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMgfCAzNCAr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+PiDCoDEgZmlsZSBjaGFuZ2VkLCAz
-NCBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy90ZWdyYS90ZWdy
-YTMwX2kycy5jCj4+PiBiL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+PiBpbmRleCBh
-YzY5ODNjNmJkNzIuLmQzNmI0NjYyYjQyMCAxMDA2NDQKPj4+IC0tLSBhL3NvdW5kL3NvYy90ZWdy
-YS90ZWdyYTMwX2kycy5jCj4+PiArKysgYi9zb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+
-Pj4gQEAgLTI1NCw2ICsyNTQsMzkgQEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc190cmlnZ2VyKHN0
-cnVjdAo+Pj4gc25kX3BjbV9zdWJzdHJlYW0gKnN1YnN0cmVhbSwgaW50IGNtZCwKPj4+IMKgwqDC
-oMKgIHJldHVybiAwOwo+Pj4gwqB9Cj4+Pgo+Pj4gKy8qCj4+PiArICogU2V0IHVwIFRETQo+Pj4g
-KyAqLwo+Pj4gK3N0YXRpYyBpbnQgdGVncmEzMF9pMnNfc2V0X3RkbShzdHJ1Y3Qgc25kX3NvY19k
-YWkgKmRhaSwKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWdu
-ZWQgaW50IHR4X21hc2ssIHVuc2lnbmVkIGludCByeF9tYXNrLAo+Pj4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbnQgc2xvdHMsIGludCBzbG90X3dpZHRoKQo+Pj4gK3sK
-Pj4+ICvCoMKgwqAgc3RydWN0IHRlZ3JhMzBfaTJzICppMnMgPSBzbmRfc29jX2RhaV9nZXRfZHJ2
-ZGF0YShkYWkpOwo+Pj4gK8KgwqDCoCB1bnNpZ25lZCBpbnQgbWFzayA9IDAsIHZhbCA9IDA7Cj4+
-PiArCj4+PiArwqDCoMKgIGRldl9pbmZvKGRhaS0+ZGV2LCAiJXM6IHNldHRpbmcgVERNOiB0eF9t
-YXNrOiAweCUwOHggcnhfbWFzazoKPj4+IDB4JTA4eCAiCj4+Cj4+IGRldl9kYmcoKSBwbGVhc2Uu
-IEFsc28gSSBkb24ndCB0aGluayBpdCBpcyBuZWNlc3NhcnkgdG8gcHJpbnQgYm90aCB0aGUKPj4g
-ZnVuY3Rpb24gbmFtZSBhbmQgJ3NldHRpbmcgVERNJywgdGhlIGZ1bmN0aW9uIG5hbWUgc2hvdWxk
-IGJlIHN1ZmZpY2llbnQuCj4gCj4gWWVzLCBhbHJlYWR5IHNvcnRlZCBmcm9tIHByZXZpb3VzIHJl
-dmlldy4KPiAKPj4+ICvCoMKgwqDCoMKgwqDCoMKgICJzbG90czogMHglMDh4ICIgIndpZHRoOiAl
-ZFxuIiwKPj4KPj4gV2h5IGFyZSB0aGVyZSBleHRyYSBxdW90ZXMgaGVyZT8KPiAKPiBObyBpZGVh
-LCBJJ2xsIHJlbW92ZSB0aGVzZSBsYXRlci4KPiAKPj4+ICvCoMKgwqDCoMKgwqDCoMKgIF9fZnVu
-Y19fLCB0eF9tYXNrLCByeF9tYXNrLCBzbG90cywgc2xvdF93aWR0aCk+ICsKPj4+ICvCoMKgwqAg
-LyogU2V0IHVwIHNsb3RzIGFuZCB0eC9yeCBtYXNrcyAqLwo+Pj4gK8KgwqDCoCBtYXNrID0gVEVH
-UkEzMF9JMlNfU0xPVF9DVFJMX1RPVEFMX1NMT1RTX01BU0sgfAo+Pj4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgIFRFR1JBMzBfSTJTX1NMT1RfQ1RSTF9SWF9TTE9UX0VOQUJMRVNfTUFTSyB8Cj4+PiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgVEVHUkEzMF9JMlNfU0xPVF9DVFJMX1RYX1NMT1RfRU5BQkxF
-U19NQVNLOwo+Pj4gKwo+Pj4gK8KgwqDCoCB2YWwgPSAodHhfbWFzayA8PCBURUdSQTMwX0kyU19T
-TE9UX0NUUkxfVFhfU0xPVF9FTkFCTEVTX1NISUZUKSB8Cj4+PiArwqDCoMKgwqDCoMKgwqDCoMKg
-IChyeF9tYXNrIDw8IFRFR1JBMzBfSTJTX1NMT1RfQ1RSTF9SWF9TTE9UX0VOQUJMRVNfU0hJRlQp
-IHwKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqAgKChzbG90cyAtIDEpIDw8IFRFR1JBMzBfSTJTX1NM
-T1RfQ1RSTF9UT1RBTF9TTE9UU19TSElGVCk7Cj4+PiArCj4+PiArwqDCoMKgIHJlZ21hcF91cGRh
-dGVfYml0cyhpMnMtPnJlZ21hcCwgVEVHUkEzMF9JMlNfU0xPVF9DVFJMLCBtYXNrLCB2YWwpOwo+
-Pj4gKwo+Pj4gK8KgwqDCoCAvKiBTZXQgRlNZTkMgd2lkdGggKi8KPj4+ICvCoMKgwqAgcmVnbWFw
-X3VwZGF0ZV9iaXRzKGkycy0+cmVnbWFwLCBURUdSQTMwX0kyU19DSF9DVFJMLAo+Pj4gK8KgwqDC
-oMKgwqDCoMKgIFRFR1JBMzBfSTJTX0NIX0NUUkxfRlNZTkNfV0lEVEhfTUFTSywKPj4+ICvCoMKg
-wqDCoMKgwqDCoCAoc2xvdF93aWR0aCAtIDEpIDw8IFRFR1JBMzBfSTJTX0NIX0NUUkxfRlNZTkNf
-V0lEVEhfU0hJRlQpOwo+Pgo+PiBXaGF0IGhhcHBlbnMgaWYgdGhlcmUgaXMgb25seSBvbmUgc2xv
-dD8gVGhlIGZzeW5jIHdpbGwgYmUgdGhlIHdpZHRoIG9mCj4+IHRoZSBzbG90LiBUeXBpY2FsbHks
-IFRETSBpcyB1c2VkIHdpdGggRFNQLUEvQiBmb3JtYXRzIGFuZCBhbHRob3VnaCB0aGUKPj4gZHJp
-dmVyIGRvZXMgbm90IGFwcGVhciB0byBwcm9ncmFtIHRoZSBmc3luYyB3aWR0aCwgaXQgcHJvYmFi
-bHkgc2hvdWxkCj4+IGR1cmluZyB0aGUgdGVncmEzMF9pMnNfc2V0X2ZtdCgpIGRlcGVuZGluZyBv
-biB0aGUgZm9ybWF0IHVzZWQgcmF0aGVyCj4+IHRoYW4gaGVyZS4KPiAKPiBIbW0sIHNob3VsZCB3
-ZSBjaGVjay4KPiAKPiBUaGUgd29yayB3YXMgZG9uZSB0byBrZWVwIGFzIGNsb3NlIHRvIHRoZSBv
-cmlnaW5hbCBjbGllbnQncyAyLjYga2VybmVsCj4gYXMgcG9zc2libGUgd2hpY2ggc2V0IHRoZSBm
-c3luYyBmaWVsZCB0byBhIHdob2xlIGRhdGEgd29yZC4gV2UgY291bGQgdHJ5Cj4gYW5kIGp1c3Qg
-c2V0IHRoaXMgdG8gc2F5IDIgaGVyZSBhbmQgaGF2ZSBhIG11Y2ggc2hvcnRlciBmcmFtZS1zeW5j
-IHB1bHNlLgo+IAo+IEknbGwgYWRkIGEgY2hlY2sgZm9yIHNsb3RzIDwgMiBhbmQgc2V0IHRoZSBm
-c3luYyB3aWR0aCB0byAyLgoKV2h5IDI/IEZyb20gbG9va2luZyBhdCB2YXJpb3VzIGNvZGVjcyB0
-aGF0IHN1cHBvcnQgZHNwLWEvYiBtb2RlcywgaXQgaXMKbW9yZSBjb21tb24gZm9yIHRoZSBmLXN5
-bmMgdG8gYmUgMSByZWdhcmRsZXNzIG9mIHRoZSBudW1iZXIgb2Ygc2xvdHMuCgpKb24KLS0gCm52
-cHVibGljCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFs
-c2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwczov
-L21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+
+--===============7014943400818606924==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
+Content-Disposition: inline
+
+
+--eJnRUKwClWJh1Khz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Sep 18, 2019 at 11:25:39AM +0100, Jon Hunter wrote:
+
+> Why 2? From looking at various codecs that support dsp-a/b modes, it is
+> more common for the f-sync to be 1 regardless of the number of slots.
+
+In DSP modes only one edge really matters anyway so it's not super
+important how long the pulse is.
+
+--eJnRUKwClWJh1Khz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2CC3oACgkQJNaLcl1U
+h9BFnAf/WyYMlppq9ssZv4HEBgxxsYN/XQexPFHMP7crDn62tGtHByJh3iKq1cRa
+XJ3srU6r+IV+S3XI5udoz5il/R442tQjsjZ1deLoKTvih1pu83l0ELkQJOAV4YG2
+3Dmt+KImny71YqKLgZ9haZTZuDEiRFGT7F4MxH1hepOS/aNYwvbojczspSncObVt
+cEp1p8vSq9Wc/E628i7BQ1x+IM/3OLm3Toi3soPP+00s3Uh3s+1Ct7W/501JxCl3
+bUrUIpHTI/SV8PseVs+o0Qt+6dwcXYo5GG1gVZS1IqwTsoUH5KNTZbhtrEa1SNJC
+WUsl5grAThT2yA5nAL7EeG0DM9C1LA==
+=Dj84
+-----END PGP SIGNATURE-----
+
+--eJnRUKwClWJh1Khz--
+
+--===============7014943400818606924==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7014943400818606924==--
