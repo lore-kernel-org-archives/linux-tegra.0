@@ -1,53 +1,117 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.2 00/85] 5.2.16-stable review
-Date: Wed, 18 Sep 2019 17:28:49 +0100
-Message-ID: <5492c75f-de7c-9fe7-d3f7-3af5f3b3b6ce@nvidia.com>
-References: <20190918061234.107708857@linuxfoundation.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 1/8] dt-bindings: rng: exynos4-rng: Convert Exynos PRNG bindings to json-schema
+Date: Wed, 18 Sep 2019 19:31:34 +0200
+Message-ID: <20190918173141.4314-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Convert Samsung Exynos Pseudo Random Number Generator bindings to DT
+schema format using json-schema.
 
-On 18/09/2019 07:18, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.16 release.
-> There are 85 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri 20 Sep 2019 06:09:47 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.16-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-All tests are passing for Tegra ...
+---
 
-Test results for stable-v5.2:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
+Changes since v1:
+1. Indent example with four spaces (more readable).
+---
+ .../bindings/rng/samsung,exynos4-rng.txt      | 19 ---------
+ .../bindings/rng/samsung,exynos4-rng.yaml     | 41 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 42 insertions(+), 20 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
+ create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
 
-Linux version:	5.2.16-rc1-g2f63f02ef506
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
+diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
+deleted file mode 100644
+index a13fbdb4bd88..000000000000
+--- a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-Exynos Pseudo Random Number Generator
+-
+-Required properties:
+-
+-- compatible  : One of:
+-                - "samsung,exynos4-rng" for Exynos4210 and Exynos4412
+-                - "samsung,exynos5250-prng" for Exynos5250+
+-- reg         : Specifies base physical address and size of the registers map.
+-- clocks      : Phandle to clock-controller plus clock-specifier pair.
+-- clock-names : "secss" as a clock name.
+-
+-Example:
+-
+-	rng@10830400 {
+-		compatible = "samsung,exynos4-rng";
+-		reg = <0x10830400 0x200>;
+-		clocks = <&clock CLK_SSS>;
+-		clock-names = "secss";
+-	};
+diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+new file mode 100644
+index 000000000000..2d075d6c87b6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rng/samsung,exynos4-rng.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC Pseudo Random Number Generator
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos4-rng                   # for Exynos4210 and Exynos4412
++      - samsung,exynos5250-prng               # for Exynos5250+
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: secss
++
++required:
++  - compatible
++  - reg
++  - clock-names
++  - clocks
++
++examples:
++  - |
++    rng@10830400 {
++        compatible = "samsung,exynos4-rng";
++        reg = <0x10830400 0x200>;
++        clocks = <&clock 255>; // CLK_SSS
++        clock-names = "secss";
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 00969a90f94c..9cec4494b9a8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14181,7 +14181,7 @@ L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/crypto/exynos-rng.c
+-F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
++F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+ 
+ SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
+ M:	Łukasz Stelmach <l.stelmach@samsung.com>
 -- 
-nvpublic
+2.17.1
