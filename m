@@ -1,72 +1,86 @@
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: Re: [PATCH RESEND 00/14] Next round of associating ddc
- adapters with connectors
-Date: Wed, 18 Sep 2019 16:01:20 +0200
-Message-ID: <0799e830-400d-4ced-7108-c8fcfd5ef8c0@collabora.com>
-References: <cover.1566845537.git.andrzej.p@collabora.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/8] ASoC: tegra: Add a TDM configuration
+ callback
+Date: Wed, 18 Sep 2019 16:02:48 +0100
+Message-ID: <20190918150248.GM2596@sirena.co.uk>
+References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
+ <20190917181233.534-2-ben.dooks@codethink.co.uk>
+ <7b21823a-86e8-d3de-10b5-e047a5e025ef@nvidia.com>
+ <72705cbf3b70934bdf8e7a6116f420b5@codethink.co.uk>
+ <5b0044e1-b781-9fd8-b250-3d87fe3af855@nvidia.com>
+ <20190918104827.GB2596@sirena.co.uk>
+ <40d78f13-c1b9-3e2d-c144-2209a4c0d716@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <cover.1566845537.git.andrzej.p@collabora.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Matthias Brugger <matthias.bgg@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, kernel@collabora.com, Anthony Koo <Anthony.Koo@amd.com>, Emil Velikov <emil.velikov@collabora.com>, linux-samsung-soc@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Francis <David.Francis@amd.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, Leo Li <sunpeng.li@amd.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jyri Sarha <jsarha@ti.com>, Mamta Shukla <mamtashukla555@gmail.com>, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>linux-
+Content-Type: multipart/mixed; boundary="===============1085987757472726500=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Resent-Message-ID: <20190918154548.GR2596@sirena.co.uk>
+Resent-To: alsa-devel@alsa-project.org
+In-Reply-To: <40d78f13-c1b9-3e2d-c144-2209a4c0d716@linux.intel.com>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, linux-tegra-owner@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgQWxsLAoKQSBnZW50bGUgcGluZy4KCkFuZHJ6ZWoKClcgZG5pdSAyNi4wOC4yMDE5IG/CoDIx
-OjI1LCBBbmRyemVqIFBpZXRyYXNpZXdpY3ogcGlzemU6Cj4gSSdtIHJlc2VuZGluZyB0aGUgcGF0
-Y2hlcyB3aGljaCBoYXZlIHNvbWVob3cgZ290IGxvc3Q6IG9uZSBwYXRjaAo+IGZyb20gR2VlcnQg
-YW5kIDEzIHBhdGNoZXMgZnJvbSBtZS4KPiAKPiBHZWVydCdzIHBhdGNoIHVwZGF0ZXMgdGhlIGVy
-cm9yIG1lc3NhZ2UgdG8gcmVmbGVjdCB0aGUgYWN0dWFsbHkKPiBjYWxsZWQgZnVuY3Rpb24ncyBu
-YW1lLgo+IAo+IE1vc3Qgb2YgcGF0Y2hlcyBmcm9tIG1lIGhhdmUgdGhlaXIgQWNrZWQtYnkgYW5k
-IFJldmlld2VkLWJ5IHRhZ3MKPiBhbmQgZGVhbCB3aXRoIHByb3ZpZGluZyBhIGRkYyBzeW1saW5r
-IGluIGNvbm5lY3RvcidzIHN5c2ZzIGRpcmVjdG9yeS4KPiAKPiBSZWJhc2VkIG9udG8gZHJtLW1p
-c2MtbmV4dCBhcyBvZiAyNnRoIEF1Z3VzdC4KPiAKPiBBbmRyemVqIFBpZXRyYXNpZXdpY3ogKDEz
-KToKPiAgICBkcm0vcmFkZW9uOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNm
-cyBkaXJlY3RvcnkKPiAgICBkcm0vYW1kZ3B1OiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGRtIGNv
-bm5lY3RvcidzIHN5c2ZzIGRpcmVjdG9yeQo+ICAgIGRybS9leHlub3M6IFByb3ZpZGUgZGRjIHN5
-bWxpbmsgaW4gY29ubmVjdG9yJ3Mgc3lzZnMKPiAgICBkcm06IHJvY2tjaGlwOiBQcm92aWRlIGRk
-YyBzeW1saW5rIGluIHJrMzA2Nl9oZG1pIHN5c2ZzIGRpcmVjdG9yeQo+ICAgIGRybTogcm9ja2No
-aXA6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaW5ub19oZG1pIHN5c2ZzIGRpcmVjdG9yeQo+ICAg
-IGRybS9tc20vaGRtaTogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBoZG1pIGNvbm5lY3RvciBzeXNm
-cyBkaXJlY3RvcnkKPiAgICBkcm0vbWVkaWF0ZWs6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaGRt
-aSBjb25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5Cj4gICAgZHJtL3RlZ3JhOiBQcm92aWRlIGRkYyBz
-eW1saW5rIGluIG91dHB1dCBjb25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5Cj4gICAgZHJtL3ZjNDog
-UHJvdmlkZSBkZGMgc3ltbGluayBpbiBjb25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5Cj4gICAgZHJt
-OiB6dGU6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaGRtaSBjb25uZWN0b3Igc3lzZnMgZGlyZWN0
-b3J5Cj4gICAgZHJtOiB6dGU6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gdmdhIGNvbm5lY3RvciBz
-eXNmcyBkaXJlY3RvcnkKPiAgICBkcm0vdGlsY2RjOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNv
-bm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKPiAgICBkcm0vaTkxNTogUHJvdmlkZSBkZGMgc3ltbGlu
-ayBpbiBoZG1pIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKPiAKPiBHZWVydCBVeXR0ZXJob2V2
-ZW4gKDEpOgo+ICAgIGRybS9icmlkZ2U6IHRpLXRmcDQxMDogVXBkYXRlIGRybV9jb25uZWN0b3Jf
-aW5pdF93aXRoX2RkYygpIGVycm9yCj4gICAgICBtZXNzYWdlCj4gCj4gICAuLi4vZ3B1L2RybS9h
-bWQvZGlzcGxheS9hbWRncHVfZG0vYW1kZ3B1X2RtLmMgfCAgIDUgKy0KPiAgIGRyaXZlcnMvZ3B1
-L2RybS9icmlkZ2UvdGktdGZwNDEwLmMgICAgICAgICAgICB8ICAgMyArLQo+ICAgZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICAgICAgICAgIHwgICA2ICstCj4gICBkcml2ZXJz
-L2dwdS9kcm0vaTkxNS9kaXNwbGF5L2ludGVsX2hkbWkuYyAgICAgfCAgMTIgKy0KPiAgIGRyaXZl
-cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfaGRtaS5jICAgICAgICAgICB8ICAgNyArLQo+ICAgZHJp
-dmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfY29ubmVjdG9yLmMgICAgIHwgICA2ICstCj4gICBk
-cml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9jb25uZWN0b3JzLmMgICAgfCAxNDMgKysrKysr
-KysrKysrKy0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvaW5ub19oZG1pLmMgICAg
-ICAgICAgfCAgIDYgKy0KPiAgIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yazMwNjZfaGRtaS5j
-ICAgICAgICB8ICAgNyArLQo+ICAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYyAgICAgICAg
-ICAgICAgICAgIHwgICA3ICstCj4gICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgICAgICAg
-ICAgICAgICAgICAgfCAgIDcgKy0KPiAgIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3Rm
-cDQxMC5jICAgICAgICB8ICAgNiArLQo+ICAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfaGRtaS5j
-ICAgICAgICAgICAgICAgIHwgIDEyICstCj4gICBkcml2ZXJzL2dwdS9kcm0venRlL3p4X2hkbWku
-YyAgICAgICAgICAgICAgICAgfCAgIDYgKy0KPiAgIGRyaXZlcnMvZ3B1L2RybS96dGUvenhfdmdh
-LmMgICAgICAgICAgICAgICAgICB8ICAgNiArLQo+ICAgMTUgZmlsZXMgY2hhbmdlZCwgMTY4IGlu
-c2VydGlvbnMoKyksIDcxIGRlbGV0aW9ucygtKQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vaW50ZWwtZ2Z4
+
+--===============1085987757472726500==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qVHblb/y9DPlgkHs"
+Content-Disposition: inline
+
+
+--qVHblb/y9DPlgkHs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Sep 18, 2019 at 08:33:50AM -0500, Pierre-Louis Bossart wrote:
+> On 9/18/19 5:48 AM, Mark Brown wrote:
+
+> > In DSP modes only one edge really matters anyway so it's not super
+> > important how long the pulse is.
+
+> There are exceptions to the rule.
+> In the early days of SOF, we had to provide support for amplifiers that did
+> require a pulse larger than a bit. In the SOF IPC we added an
+> 'frame_pulse_width' field to pass the configuration all the way from
+> topology to the firmware and Intel SSP driver.
+> The other quirk we added is the ability to control zero-padding per slot
+> instead of at the end of the frame, e.g. 1 bit of padding after 24 bits when
+> using 4 slots w/ 25 bits in a 100-bit frame.
+
+Neither of those is part of the core DSP mode definition though in the
+same way that constraints like MCLK or BCLK ratios aren't.  They're
+modifiers on top.
+
+--qVHblb/y9DPlgkHs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2CRxgACgkQJNaLcl1U
+h9C3Uwf/d11JTgMoTNFlwHEDfWmf2l9yjezFSXcGaRxBGWDdfB+EPZe3EMNMC4Ry
+Mq5zM2De0sa4JdiGgeKqUtXcBJqmRWeX8RBb66tyI1Qid5FVA/LPfWoMGgBExI9v
+SpqXvUswmxvD9oJ4shc7Qg80TMdC4TMorfHnZidVSmv+jP0ovmRep/ZRPQK24b+h
+vtClYbf85B7dUorPEAUD6Dgewh4/ZYe2u37tGh9X944Bqw/ze4+BGtQ2XEtXoycR
+rOGENVk8V+8EVyqekA4tnv6cCnxSA09/3msb8+AolTJMouP8MK2VTOitnhJ+lrMU
+RH7cdZXk43RRCJ0OqzDJZSZT3OIUUA==
+=omCB
+-----END PGP SIGNATURE-----
+
+--qVHblb/y9DPlgkHs--
+
+--===============1085987757472726500==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1085987757472726500==--
