@@ -1,16 +1,16 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 6/8] ASoC: tegra: set i2s_offset to 0 for
-	tdm
-Date: Wed, 18 Sep 2019 12:30:57 +0100
-Message-ID: <75547a2534804b5992ba1bd3984c96a8@codethink.co.uk>
+Subject: Re: [PATCH 7/8] ASoC: tegra: config fifos on hw_param
+	changes
+Date: Wed, 18 Sep 2019 12:41:44 +0100
+Message-ID: <34bd42ccaf388c196d9b7e188c218dae@codethink.co.uk>
 References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
- <20190917181233.534-7-ben.dooks@codethink.co.uk>
- <d79b8148-797b-08b2-09e7-71c11d9acd53@nvidia.com>
+ <20190917181233.534-8-ben.dooks@codethink.co.uk>
+ <1956fa67-c654-f719-5c7c-5e4b40d01e3a@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <d79b8148-797b-08b2-09e7-71c11d9acd53@nvidia.com>
+In-Reply-To: <1956fa67-c654-f719-5c7c-5e4b40d01e3a@nvidia.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -21,46 +21,62 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Sameer Pujar <spujar@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 2019-09-18 10:02, Jon Hunter wrote:
+On 2019-09-18 10:14, Jon Hunter wrote:
 > On 17/09/2019 19:12, Ben Dooks wrote:
->> Set the offset to 0 for TDM mode, as per the current setup.
+>> If the hw_params uses a different bit or channel count, then we
+>> need to change both the I2S unit's CIF configuration as well as
+>> the APBIF one.
+>> 
+>> To allow changing the APBIF, add a call to reconfigure the RX or
+>> TX FIFO without changing the DMA or allocation, and get the I2S
+>> driver to call it once the hw params have been calculate.
 >> 
 >> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 >> ---
->>  sound/soc/tegra/tegra30_i2s.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>  sound/soc/tegra/tegra30_ahub.c | 114 
+>> ++++++++++++++++++---------------
+>>  sound/soc/tegra/tegra30_ahub.h |   5 ++
+>>  sound/soc/tegra/tegra30_i2s.c  |   2 +
+>>  3 files changed, 69 insertions(+), 52 deletions(-)
 >> 
->> diff --git a/sound/soc/tegra/tegra30_i2s.c 
->> b/sound/soc/tegra/tegra30_i2s.c
->> index d75ce12fe177..3efef87ed8d8 100644
->> --- a/sound/soc/tegra/tegra30_i2s.c
->> +++ b/sound/soc/tegra/tegra30_i2s.c
->> @@ -206,8 +206,11 @@ static int tegra30_i2s_hw_params(struct 
->> snd_pcm_substream *substream,
->> 
->>  	i2s->soc_data->set_audio_cif(i2s->regmap, reg, &cif_conf);
->> 
->> -	val = (1 << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
->> -	      (1 << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
->> +	if (i2s->is_tdm)
->> +		val = 0;
->> +	else
->> +		val = (1 << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
->> +		      (1 << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
->>  	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
->> 
+>> diff --git a/sound/soc/tegra/tegra30_ahub.c 
+>> b/sound/soc/tegra/tegra30_ahub.c
+>> index 952381260dc3..58e05ceb86da 100644
+>> --- a/sound/soc/tegra/tegra30_ahub.c
+>> +++ b/sound/soc/tegra/tegra30_ahub.c
+>> @@ -84,12 +84,40 @@ static int tegra30_ahub_runtime_resume(struct 
+>> device *dev)
 >>  	return 0;
+>>  }
+>> 
+>> +int tegra30_ahub_setup_rx_fifo(enum tegra30_ahub_rxcif rxcif,
+>> +			       struct tegra30_ahub_cif_conf *cif_conf)
+>> +{
+>> +	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
+>> +	u32 reg, val;
+>> +
+>> +	pm_runtime_get_sync(ahub->dev);
+>> +
+>> +	reg = TEGRA30_AHUB_CHANNEL_CTRL +
+>> +	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
+>> +	val = tegra30_apbif_read(reg);
+>> +	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK |
+>> +		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK);
+>> +	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT) |
+>> +	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN |
+>> +	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
+>> +	tegra30_apbif_write(reg, val);
 > 
-> Please move this code into tegra30_i2s_set_fmt() as it only needs to be
-> set once.
-> 
-> BTW, if you refer to the following I2S driver for Tegra210, you will 
-> see
-> how I think that we should handle this ...
+> Aren't you just programming the same value to the APBIF here that was
+> previously programmed by the allocate function? I don't see the point 
+> in
+> moving this? What am I missing here?
 
-Ok, thanks.
+IIRC, this was due to trying different types of playback with a 4ch 
+32bit
+sound output. The ahub and the i2s unit don't have to agreet.
