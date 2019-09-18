@@ -1,17 +1,18 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 5/8] ASoC: tegra: set edge mode for TDM
-	correctly
-Date: Wed, 18 Sep 2019 11:15:49 +0100
-Message-ID: <3438cecb8ed89a96cfb30127dbd5e770@codethink.co.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/8] ASoC: tegra: Add a TDM configuration
+	callback
+Date: Wed, 18 Sep 2019 11:25:39 +0100
+Message-ID: <5b0044e1-b781-9fd8-b250-3d87fe3af855@nvidia.com>
 References: <20190917181233.534-1-ben.dooks@codethink.co.uk>
- <20190917181233.534-6-ben.dooks@codethink.co.uk>
- <c9d2b321-b344-f5db-f2cb-c213bb5894a6@nvidia.com>
- <854421d9-8c5b-0960-1864-0cf8f1018696@nvidia.com>
+ <20190917181233.534-2-ben.dooks@codethink.co.uk>
+ <7b21823a-86e8-d3de-10b5-e047a5e025ef@nvidia.com>
+ <72705cbf3b70934bdf8e7a6116f420b5@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <854421d9-8c5b-0960-1864-0cf8f1018696@nvidia.com>
+In-Reply-To: <72705cbf3b70934bdf8e7a6116f420b5@codethink.co.uk>
+Content-Language: en-US
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -21,50 +22,68 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-tegra-owner@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 2019-09-18 10:02, Jon Hunter wrote:
-> On 18/09/2019 09:54, Jon Hunter wrote:
->> 
->> On 17/09/2019 19:12, Ben Dooks wrote:
->>> In TDM, use the negative edge to drive data and the positive edge to 
->>> sample
->>> data.
->>> 
->>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>> ---
->>>  sound/soc/tegra/tegra30_i2s.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>> 
->>> diff --git a/sound/soc/tegra/tegra30_i2s.c 
->>> b/sound/soc/tegra/tegra30_i2s.c
->>> index 4222839b63bd..d75ce12fe177 100644
->>> --- a/sound/soc/tegra/tegra30_i2s.c
->>> +++ b/sound/soc/tegra/tegra30_i2s.c
->>> @@ -117,6 +117,8 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai 
->>> *dai,
->>>  	}
->>> 
->>>  	pm_runtime_get_sync(dai->dev);
->>> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL_EGDE_CTRL_MASK,
->>> +			   i2s->is_tdm ? TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE : 0);
->>>  	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CTRL, mask, val);
->>>  	pm_runtime_put(dai->dev);
->> 
->> I would rather set this in the case statement above where the format 
->> is
->> parsed and again drop this 'is_tdm' variable.
-> 
-> Actually, this should be implemented as shown in the following ...
-> 
-> https://nv-tegra.nvidia.com/gitweb/?p=linux-nvidia.git;a=blob;f=sound/soc/tegra-alt/tegra210_i2s_alt.c;h=ee482f27ed2e4710e5e7446918887f8f8ef31285;hb=a960d522a5486aee27605f890034869c4f49d94a#l362
-> 
-> Jon
-
-Ok, will look at that.
-
-Note, nv-tegra.nvidia.com seems to have a security problem .
+Ck9uIDE4LzA5LzIwMTkgMTE6MTEsIEJlbiBEb29rcyB3cm90ZToKPiAKPiAKPiBPbiAyMDE5LTA5
+LTE4IDA5OjQyLCBKb24gSHVudGVyIHdyb3RlOgo+PiBPbiAxNy8wOS8yMDE5IDE5OjEyLCBCZW4g
+RG9va3Mgd3JvdGU6Cj4+PiBGcm9tOiBFZHdhcmQgQ3JhZ2cgPGVkd2FyZC5jcmFnZ0Bjb2RldGhp
+bmsuY28udWs+Cj4+Pgo+Pj4gQWRkIGEgY2FsbGJhY2sgdG8gY29uZmlndXJlIFRETSBzZXR0aW5n
+cyBmb3IgdGhlIFRlZ3JhMzAgSTJTIEFTb0MKPj4+ICdwbGF0Zm9ybScKPj4+IGRyaXZlci4KPj4+
+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBFZHdhcmQgQ3JhZ2cgPGVkd2FyZC5jcmFnZ0Bjb2RldGhpbmsu
+Y28udWs+Cj4+PiAtLS0KPj4+IMKgc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMgfCAzNCAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+PiDCoDEgZmlsZSBjaGFuZ2VkLCAz
+NCBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy90ZWdyYS90ZWdy
+YTMwX2kycy5jCj4+PiBiL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+PiBpbmRleCBh
+YzY5ODNjNmJkNzIuLmQzNmI0NjYyYjQyMCAxMDA2NDQKPj4+IC0tLSBhL3NvdW5kL3NvYy90ZWdy
+YS90ZWdyYTMwX2kycy5jCj4+PiArKysgYi9zb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+
+Pj4gQEAgLTI1NCw2ICsyNTQsMzkgQEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc190cmlnZ2VyKHN0
+cnVjdAo+Pj4gc25kX3BjbV9zdWJzdHJlYW0gKnN1YnN0cmVhbSwgaW50IGNtZCwKPj4+IMKgwqDC
+oMKgIHJldHVybiAwOwo+Pj4gwqB9Cj4+Pgo+Pj4gKy8qCj4+PiArICogU2V0IHVwIFRETQo+Pj4g
+KyAqLwo+Pj4gK3N0YXRpYyBpbnQgdGVncmEzMF9pMnNfc2V0X3RkbShzdHJ1Y3Qgc25kX3NvY19k
+YWkgKmRhaSwKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWdu
+ZWQgaW50IHR4X21hc2ssIHVuc2lnbmVkIGludCByeF9tYXNrLAo+Pj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbnQgc2xvdHMsIGludCBzbG90X3dpZHRoKQo+Pj4gK3sK
+Pj4+ICvCoMKgwqAgc3RydWN0IHRlZ3JhMzBfaTJzICppMnMgPSBzbmRfc29jX2RhaV9nZXRfZHJ2
+ZGF0YShkYWkpOwo+Pj4gK8KgwqDCoCB1bnNpZ25lZCBpbnQgbWFzayA9IDAsIHZhbCA9IDA7Cj4+
+PiArCj4+PiArwqDCoMKgIGRldl9pbmZvKGRhaS0+ZGV2LCAiJXM6IHNldHRpbmcgVERNOiB0eF9t
+YXNrOiAweCUwOHggcnhfbWFzazoKPj4+IDB4JTA4eCAiCj4+Cj4+IGRldl9kYmcoKSBwbGVhc2Uu
+IEFsc28gSSBkb24ndCB0aGluayBpdCBpcyBuZWNlc3NhcnkgdG8gcHJpbnQgYm90aCB0aGUKPj4g
+ZnVuY3Rpb24gbmFtZSBhbmQgJ3NldHRpbmcgVERNJywgdGhlIGZ1bmN0aW9uIG5hbWUgc2hvdWxk
+IGJlIHN1ZmZpY2llbnQuCj4gCj4gWWVzLCBhbHJlYWR5IHNvcnRlZCBmcm9tIHByZXZpb3VzIHJl
+dmlldy4KPiAKPj4+ICvCoMKgwqDCoMKgwqDCoMKgICJzbG90czogMHglMDh4ICIgIndpZHRoOiAl
+ZFxuIiwKPj4KPj4gV2h5IGFyZSB0aGVyZSBleHRyYSBxdW90ZXMgaGVyZT8KPiAKPiBObyBpZGVh
+LCBJJ2xsIHJlbW92ZSB0aGVzZSBsYXRlci4KPiAKPj4+ICvCoMKgwqDCoMKgwqDCoMKgIF9fZnVu
+Y19fLCB0eF9tYXNrLCByeF9tYXNrLCBzbG90cywgc2xvdF93aWR0aCk+ICsKPj4+ICvCoMKgwqAg
+LyogU2V0IHVwIHNsb3RzIGFuZCB0eC9yeCBtYXNrcyAqLwo+Pj4gK8KgwqDCoCBtYXNrID0gVEVH
+UkEzMF9JMlNfU0xPVF9DVFJMX1RPVEFMX1NMT1RTX01BU0sgfAo+Pj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgIFRFR1JBMzBfSTJTX1NMT1RfQ1RSTF9SWF9TTE9UX0VOQUJMRVNfTUFTSyB8Cj4+PiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgVEVHUkEzMF9JMlNfU0xPVF9DVFJMX1RYX1NMT1RfRU5BQkxF
+U19NQVNLOwo+Pj4gKwo+Pj4gK8KgwqDCoCB2YWwgPSAodHhfbWFzayA8PCBURUdSQTMwX0kyU19T
+TE9UX0NUUkxfVFhfU0xPVF9FTkFCTEVTX1NISUZUKSB8Cj4+PiArwqDCoMKgwqDCoMKgwqDCoMKg
+IChyeF9tYXNrIDw8IFRFR1JBMzBfSTJTX1NMT1RfQ1RSTF9SWF9TTE9UX0VOQUJMRVNfU0hJRlQp
+IHwKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqAgKChzbG90cyAtIDEpIDw8IFRFR1JBMzBfSTJTX1NM
+T1RfQ1RSTF9UT1RBTF9TTE9UU19TSElGVCk7Cj4+PiArCj4+PiArwqDCoMKgIHJlZ21hcF91cGRh
+dGVfYml0cyhpMnMtPnJlZ21hcCwgVEVHUkEzMF9JMlNfU0xPVF9DVFJMLCBtYXNrLCB2YWwpOwo+
+Pj4gKwo+Pj4gK8KgwqDCoCAvKiBTZXQgRlNZTkMgd2lkdGggKi8KPj4+ICvCoMKgwqAgcmVnbWFw
+X3VwZGF0ZV9iaXRzKGkycy0+cmVnbWFwLCBURUdSQTMwX0kyU19DSF9DVFJMLAo+Pj4gK8KgwqDC
+oMKgwqDCoMKgIFRFR1JBMzBfSTJTX0NIX0NUUkxfRlNZTkNfV0lEVEhfTUFTSywKPj4+ICvCoMKg
+wqDCoMKgwqDCoCAoc2xvdF93aWR0aCAtIDEpIDw8IFRFR1JBMzBfSTJTX0NIX0NUUkxfRlNZTkNf
+V0lEVEhfU0hJRlQpOwo+Pgo+PiBXaGF0IGhhcHBlbnMgaWYgdGhlcmUgaXMgb25seSBvbmUgc2xv
+dD8gVGhlIGZzeW5jIHdpbGwgYmUgdGhlIHdpZHRoIG9mCj4+IHRoZSBzbG90LiBUeXBpY2FsbHks
+IFRETSBpcyB1c2VkIHdpdGggRFNQLUEvQiBmb3JtYXRzIGFuZCBhbHRob3VnaCB0aGUKPj4gZHJp
+dmVyIGRvZXMgbm90IGFwcGVhciB0byBwcm9ncmFtIHRoZSBmc3luYyB3aWR0aCwgaXQgcHJvYmFi
+bHkgc2hvdWxkCj4+IGR1cmluZyB0aGUgdGVncmEzMF9pMnNfc2V0X2ZtdCgpIGRlcGVuZGluZyBv
+biB0aGUgZm9ybWF0IHVzZWQgcmF0aGVyCj4+IHRoYW4gaGVyZS4KPiAKPiBIbW0sIHNob3VsZCB3
+ZSBjaGVjay4KPiAKPiBUaGUgd29yayB3YXMgZG9uZSB0byBrZWVwIGFzIGNsb3NlIHRvIHRoZSBv
+cmlnaW5hbCBjbGllbnQncyAyLjYga2VybmVsCj4gYXMgcG9zc2libGUgd2hpY2ggc2V0IHRoZSBm
+c3luYyBmaWVsZCB0byBhIHdob2xlIGRhdGEgd29yZC4gV2UgY291bGQgdHJ5Cj4gYW5kIGp1c3Qg
+c2V0IHRoaXMgdG8gc2F5IDIgaGVyZSBhbmQgaGF2ZSBhIG11Y2ggc2hvcnRlciBmcmFtZS1zeW5j
+IHB1bHNlLgo+IAo+IEknbGwgYWRkIGEgY2hlY2sgZm9yIHNsb3RzIDwgMiBhbmQgc2V0IHRoZSBm
+c3luYyB3aWR0aCB0byAyLgoKV2h5IDI/IEZyb20gbG9va2luZyBhdCB2YXJpb3VzIGNvZGVjcyB0
+aGF0IHN1cHBvcnQgZHNwLWEvYiBtb2RlcywgaXQgaXMKbW9yZSBjb21tb24gZm9yIHRoZSBmLXN5
+bmMgdG8gYmUgMSByZWdhcmRsZXNzIG9mIHRoZSBudW1iZXIgb2Ygc2xvdHMuCgpKb24KLS0gCm52
+cHVibGljCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFs
+c2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwczov
+L21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
