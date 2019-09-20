@@ -1,59 +1,197 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] PCI: tegra: include linux/pinctrl/consumer.h
-Date: Fri, 20 Sep 2019 16:18:45 +0100
-Message-ID: <20190920151845.GB10172@e121166-lin.cambridge.arm.com>
-References: <20190920145518.1721180-1-arnd@arndb.de>
- <20190920150714.GK9720@e119886-lin.cambridge.arm.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 8/8] dt-bindings: pwm: Convert Samsung PWM bindings to json-schema
+Date: Fri, 20 Sep 2019 10:50:50 -0500
+Message-ID: <CAL_Jsq+0ikCageBv3TSwx0tp=ZDkrFwpFVt2gJHWsFe2f-K2pA@mail.gmail.com>
+References: <20190918173141.4314-1-krzk@kernel.org> <20190918173141.4314-8-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190920150714.GK9720@e119886-lin.cambridge.arm.com>
+In-Reply-To: <20190918173141.4314-8-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Murray <andrew.murray@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, Thierry Reding <treding@nvidia.com>, linux-pci@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, linux-tegra@vger.kernel.org, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@b>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 04:07:14PM +0100, Andrew Murray wrote:
-> On Fri, Sep 20, 2019 at 04:55:05PM +0200, Arnd Bergmann wrote:
-> > Without this, we can run into a build failure:
-> > 
-> > drivers/pci/controller/dwc/pcie-tegra194.c:1394:8: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror,-Wimplicit-function-declaration]
-> > 
-> > Fixes: ab2a50e7602b ("PCI: tegra: Add support to configure sideband pins")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Thanks for this. Another fix for this came in earlier today:
-> 
-> https://patchwork.ozlabs.org/patch/1165139/
+On Wed, Sep 18, 2019 at 12:32 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
+> format using json-schema.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> ---
+>
+> Changes since v1:
+> 1. Indent example with four spaces (more readable),
+> 2. Fix samsung,pwm-outputs after review,
+> 3. Remove double-quotes from clock names.
+> ---
+>  .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 ---------
+>  .../devicetree/bindings/pwm/pwm-samsung.yaml  | 107 ++++++++++++++++++
+>  2 files changed, 107 insertions(+), 51 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> deleted file mode 100644
+> index 5538de9c2007..000000000000
+> --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> +++ /dev/null
+> @@ -1,51 +0,0 @@
+> -* Samsung PWM timers
+> -
+> -Samsung SoCs contain PWM timer blocks which can be used for system clock source
+> -and clock event timers, as well as to drive SoC outputs with PWM signal. Each
+> -PWM timer block provides 5 PWM channels (not all of them can drive physical
+> -outputs - see SoC and board manual).
+> -
+> -Be aware that the clocksource driver supports only uniprocessor systems.
+> -
+> -Required properties:
+> -- compatible : should be one of following:
+> -    samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+> -    samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+> -    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
+> -    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+> -                         Exynos4210 rev0 SoCs
+> -    samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+> -                          Exynos4x12, Exynos5250 and Exynos5420 SoCs
+> -- reg: base address and size of register area
+> -- interrupts: list of timer interrupts (one interrupt per timer, starting at
+> -  timer 0)
+> -- clock-names: should contain all following required clock names:
+> -    - "timers" - PWM base clock used to generate PWM signals,
+> -  and any subset of following optional clock names:
+> -    - "pwm-tclk0" - first external PWM clock source,
+> -    - "pwm-tclk1" - second external PWM clock source.
+> -  Note that not all IP variants allow using all external clock sources.
+> -  Refer to SoC documentation to learn which clock source configurations
+> -  are available.
+> -- clocks: should contain clock specifiers of all clocks, which input names
+> -  have been specified in clock-names property, in same order.
+> -- #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+> -  the cells format. The only third cell flag supported by this binding is
+> -  PWM_POLARITY_INVERTED.
+> -
+> -Optional properties:
+> -- samsung,pwm-outputs: list of PWM channels used as PWM outputs on particular
+> -    platform - an array of up to 5 elements being indices of PWM channels
+> -    (from 0 to 4), the order does not matter.
+> -
+> -Example:
+> -       pwm@7f006000 {
+> -               compatible = "samsung,s3c6400-pwm";
+> -               reg = <0x7f006000 0x1000>;
+> -               interrupt-parent = <&vic0>;
+> -               interrupts = <23>, <24>, <25>, <27>, <28>;
+> -               clocks = <&clock 67>;
+> -               clock-names = "timers";
+> -               samsung,pwm-outputs = <0>, <1>;
+> -               #pwm-cells = <3>;
+> -       }
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+> new file mode 100644
+> index 000000000000..06d11faabff6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/pwm-samsung.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC PWM timers
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +
+> +description: |+
+> +  Samsung SoCs contain PWM timer blocks which can be used for system clock source
+> +  and clock event timers, as well as to drive SoC outputs with PWM signal. Each
+> +  PWM timer block provides 5 PWM channels (not all of them can drive physical
+> +  outputs - see SoC and board manual).
+> +
+> +  Be aware that the clocksource driver supports only uniprocessor systems.
+> +
+> +allOf:
+> +  - $ref: pwm.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
+> +      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
+> +      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
+> +      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
+> +      - samsung,exynos4210-pwm          # 32-bit, Exynos
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    description: |
+> +      Should contain all following required clock names:
+> +      - "timers" - PWM base clock used to generate PWM signals,
+> +      and any subset of following optional clock names:
+> +      - "pwm-tclk0" - first external PWM clock source,
+> +      - "pwm-tclk1" - second external PWM clock source.
+> +      Note that not all IP variants allow using all external clock sources.
+> +      Refer to SoC documentation to learn which clock source configurations
+> +      are available.
+> +    oneOf:
+> +      - items:
+> +        - const: timers
+> +      - items:
+> +        - const: timers
+> +        - const: pwm-tclk0
+> +      - items:
+> +        - const: timers
+> +        - const: pwm-tclk1
+> +      - items:
+> +        - const: timers
+> +        - const: pwm-tclk0
+> +        - const: pwm-tclk1
+> +
+> +  interrupts:
+> +    description:
+> +      One interrupt per timer, starting at timer 0.
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  "#pwm-cells":
+> +    description:
+> +      The only third cell flag supported by this binding
+> +      is PWM_POLARITY_INVERTED.
+> +    const: 3
+> +
+> +  samsung,pwm-outputs:
+> +    description:
+> +      A list of PWM channels used as PWM outputs on particular platform.
+> +      It is an array of up to 5 elements being indices of PWM channels
+> +      (from 0 to 4), the order does not matter.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +      - uniqueItems: true
+> +      - items:
+> +          minimum: 0
+> +          maximum: 4
+> +
+> +required:
+> +  - clocks
+> +  - clock-names
+> +  - compatible
+> +  - interrupts
+> +  - "#pwm-cells"
+> +  - reg
 
-I have applied it since it came in earlier.
+additionalProperties: false
 
-Thanks,
-Lorenzo
+should work here. And in the rng binding too.
 
-> Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-> 
-> Thanks,
-> 
-> Andrew Murray
-> 
-> > ---
-> >  drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > index 09ed8e473cff..f89f5acee72d 100644
-> > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > @@ -22,6 +22,7 @@
-> >  #include <linux/of_pci.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/phy/phy.h>
-> > +#include <linux/pinctrl/consumer.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_runtime.h>
-> >  #include <linux/random.h>
-> > -- 
-> > 2.20.0
-> > 
+Rob
