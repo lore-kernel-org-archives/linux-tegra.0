@@ -1,91 +1,82 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.3 00/21] 5.3.1-stable review
-Date: Fri, 20 Sep 2019 17:01:35 +0100
-Message-ID: <773b556a-acc2-c3e0-14e6-956a6d0b3bed@nvidia.com>
-References: <20190919214657.842130855@linuxfoundation.org>
- <572eca6e-47a9-c554-c6b2-bafd4c5df18b@nvidia.com>
- <20190920142432.GA601228@kroah.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/2] mmc: tegra: Use proper DMA mask
+Date: Fri, 20 Sep 2019 18:17:10 +0200
+Message-ID: <20190920161710.GA14499@ulmo>
+References: <20190920145317.11972-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190920142432.GA601228@kroah.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190920145317.11972-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Nicolin Chen <nicoleotsuka@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 20/09/2019 15:24, Greg Kroah-Hartman wrote:
-> On Fri, Sep 20, 2019 at 02:54:26PM +0100, Jon Hunter wrote:
->>
->> On 19/09/2019 23:03, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 5.3.1 release.
->>> There are 21 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.1-rc1.gz
->>> or in the git tree and branch at:
->>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
->>> and the diffstat can be found below.
->>>
->>> thanks,
->>>
->>> greg k-h
->>
->> No new regressions* for Tegra ...
->>
->> Test results for stable-v5.3:
->>     12 builds:	12 pass, 0 fail
->>     22 boots:	22 pass, 0 fail
->>     38 tests:	37 pass, 1 fail
->>
->> Linux version:	5.3.1-rc1-g0aa7f3d6baae
->> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->>                 tegra194-p2972-0000, tegra20-ventana,
->>                 tegra210-p2371-2180, tegra30-cardhu-a04
->>
->> * Note we had one regression in v5.3 for a warnings test for Tegra194
->>   causing the above test failure. This has since been fixed by the
->>   following commits [0] but given it is just a warning, I have not
->>   bothered CC'ing for stable.
->>
->> Cheers
->> Jon
->>
->> [0] https://lkml.org/lkml/2019/8/21/602
-> 
-> I'll be glad to take this in stable for 5.3.y, what is the git commit
-> id?
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, that would be great. The IDs are ...
+On Fri, Sep 20, 2019 at 04:53:15PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Hi,
+>=20
+> this puts together the two patches from this thread:
+>=20
+> 	http://patchwork.ozlabs.org/patch/1146705/
+>=20
+> there hasn't been any activity there for a couple of weeks, so I thought
+> I'd just throw them together and update the second patch to work on top
+> of the first one.
+>=20
+> The goal here is to avoid the use of bounce buffers and fix IOVA space
+> issues when an IOMMU gets involved. The first patch introduces the
+> ->set_dma_mask() host operation as proposed by Adrian and the second
+> patch is just a rebase of Nicolin's Tegra SDHCI patch that uses the new
+> host operation rather than doing it as part of ->enable_dma().
+>=20
+> Thierry
+>=20
+>=20
+> Adrian Hunter (1):
+>   mmc: sdhci: Let drivers define their DMA mask
+>=20
+> Nicolin Chen (1):
+>   mmc: tegra: Implement ->set_dma_mask()
+>=20
+>  drivers/mmc/host/sdhci-tegra.c | 48 ++++++++++++++++++++--------------
+>  drivers/mmc/host/sdhci.c       | 12 +++------
+>  drivers/mmc/host/sdhci.h       |  1 +
+>  3 files changed, 33 insertions(+), 28 deletions(-)
 
-commit 763719771e84b8c8c2f53af668cdc905faa608de
-Author: Jon Hunter <jonathanh@nvidia.com>
-Date:   Wed Aug 21 16:02:40 2019 +0100
+Ugh, great. I misspelled linux-mmc@vger.kernel.org in my aliases file...
 
-    clocksource/drivers/timer-of: Do not warn on deferred probe
+Ulf, Adrian, do you want me to resend for archival purposes?
 
+Thierry
 
-commit 14e019df1e64c8b19ce8e0b3da25b6f40c8716be
-Author: Jon Hunter <jonathanh@nvidia.com>
-Date:   Wed Aug 21 16:02:41 2019 +0100
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    clocksource/drivers: Do not warn on probe defer
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2E+4QACgkQ3SOs138+
+s6GPBBAAk7XJ/Lol5uZEzvcyyk08wiz0RTwLbRzmTL3kDd+2Ee9FyCjFpGdDnhtQ
+ytD4cErUshQ0la0jw0hYrVutGIbOA1F5LOAYflc40D6EXiMAdUYmWUWOfXEzwgQg
+rbQnsJqmBTcJ+W1g97BsBSZxRc+ou5w9MBdIaG2As7VAg9+9KjoGMfhN6u5MiGlb
+Kz9IAfzDPIyZvDnbW5323tjprroVl4fF3CFEB/k+sSivoEb50dHj6fgXNskji9Pd
+SEiTDYXNKHRCHRkmIFGwFR+V0/0sOHucvS5arAaXRRslhXzUHh0aFxrG4nPV0hSZ
+u8oW0RF9WCd7Ba+Apu6LnMMKj4zUsWyrejN6sw3A+0DbX14flLXWDA2S26YqSfBu
+kt/dloh5rfOj6YhvkHjW2tWZY7A0LlbJGYjMeJ5Qg28oLqOZVbBbFizeo1KCPmCZ
+JfPh+qTfmWAyoL9zRj7GfFXBhMUntnMAM0HWl3TIETAzjSKqNnwfM0n6NzxjC1Jq
+mWgZcBin6PIjjmiU/LOc22vbvMZWWrd5IMIL+YfPy4MdkvbMGex1Hl4IRWHHYfvA
+FpUFMQjuSklTSw5svmHmvJ9O4ZO/lbBU1vdktYT6+tx8wouTnFczfqpAGy2SNyXy
+/sTEDBJOKeB7pDl8QFTTmraThmihFgYPytelzYE5VpVlqv1ldww=
+=AdTM
+-----END PGP SIGNATURE-----
 
-> Also, thanks for testing all of these and letting me know.
-
-No problem!
-
-Cheers
-Jon
-
--- 
-nvpublic
+--ikeVEW9yuYc//A+q--
