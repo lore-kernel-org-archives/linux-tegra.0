@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.2 000/124] 5.2.17-stable review
-Date: Fri, 20 Sep 2019 14:48:44 +0100
-Message-ID: <968601a3-71ee-f562-df15-263f91933738@nvidia.com>
-References: <20190919214819.198419517@linuxfoundation.org>
+Subject: Re: [PATCH 5.3 00/21] 5.3.1-stable review
+Date: Fri, 20 Sep 2019 14:54:26 +0100
+Message-ID: <572eca6e-47a9-c554-c6b2-bafd4c5df18b@nvidia.com>
+References: <20190919214657.842130855@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -15,9 +15,9 @@ Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/09/2019 23:01, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.17 release.
-> There are 124 patches in this series, all will be posted as a response
+On 19/09/2019 23:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.1 release.
+> There are 21 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,29 +25,36 @@ On 19/09/2019 23:01, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.17-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.1-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
 > and the diffstat can be found below.
 > 
 > thanks,
 > 
 > greg k-h
 
-All tests passing for Tegra ...
+No new regressions* for Tegra ...
 
-Test results for stable-v5.2:
+Test results for stable-v5.3:
     12 builds:	12 pass, 0 fail
     22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
+    38 tests:	37 pass, 1 fail
 
-Linux version:	5.2.17-rc1-g690411952b3d
+Linux version:	5.3.1-rc1-g0aa7f3d6baae
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
+* Note we had one regression in v5.3 for a warnings test for Tegra194
+  causing the above test failure. This has since been fixed by the
+  following commits [0] but given it is just a warning, I have not
+  bothered CC'ing for stable.
+
 Cheers
 Jon
+
+[0] https://lkml.org/lkml/2019/8/21/602
 
 -- 
 nvpublic
