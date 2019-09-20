@@ -1,36 +1,246 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] PCI: tegra: include linux/pinctrl/consumer.h
-Date: Fri, 20 Sep 2019 16:55:05 +0200
-Message-ID: <20190920145518.1721180-1-arnd@arndb.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2] arm64: tegra: Add CPU and cache topology for Tegra194
+Date: Fri, 20 Sep 2019 16:56:21 +0200
+Message-ID: <20190920145621.12527-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Vidya Sagar <vidyas@nvidia.com>, Andrew Murray <andrew.murray@arm.com>, Thierry Reding <treding@nvidia.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Without this, we can run into a build failure:
+From: Thierry Reding <treding@nvidia.com>
 
-drivers/pci/controller/dwc/pcie-tegra194.c:1394:8: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror,-Wimplicit-function-declaration]
+Tegra194 has four CPU clusters, each with their own cache hierarchy.
+This patch creates the CPU map for these clusters and adds the second-
+and third-level caches and associates them with the CPUs.
 
-Fixes: ab2a50e7602b ("PCI: tegra: Add support to configure sideband pins")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- fix reg properties for CPU nodes and update unit-address to match
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 09ed8e473cff..f89f5acee72d 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -22,6 +22,7 @@
- #include <linux/of_pci.h>
- #include <linux/pci.h>
- #include <linux/phy/phy.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/random.h>
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 156 +++++++++++++++++++++--
+ 1 file changed, 144 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index adebbbf36bd0..27bf0b7c3f6b 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1442,60 +1442,192 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0_0: cpu@0 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+-			reg = <0x10000>;
++			reg = <0x000>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_0>;
+ 		};
+ 
+-		cpu@1 {
++		cpu0_1: cpu@1 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+-			reg = <0x10001>;
++			reg = <0x001>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_0>;
+ 		};
+ 
+-		cpu@2 {
++		cpu1_0: cpu@100 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+ 			reg = <0x100>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_1>;
+ 		};
+ 
+-		cpu@3 {
++		cpu1_1: cpu@101 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+ 			reg = <0x101>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_1>;
+ 		};
+ 
+-		cpu@4 {
++		cpu2_0: cpu@200 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+ 			reg = <0x200>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_2>;
+ 		};
+ 
+-		cpu@5 {
++		cpu2_1: cpu@201 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+ 			reg = <0x201>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_2>;
+ 		};
+ 
+-		cpu@6 {
++		cpu3_0: cpu@300 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+-			reg = <0x10300>;
++			reg = <0x300>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_3>;
+ 		};
+ 
+-		cpu@7 {
++		cpu3_1: cpu@301 {
+ 			compatible = "nvidia,tegra194-carmel";
+ 			device_type = "cpu";
+-			reg = <0x10301>;
++			reg = <0x301>;
+ 			enable-method = "psci";
++			i-cache-size = <131072>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <512>;
++			d-cache-size = <65536>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			next-level-cache = <&l2c_3>;
++		};
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&cpu0_0>;
++				};
++
++				core1 {
++					cpu = <&cpu0_1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&cpu1_0>;
++				};
++
++				core1 {
++					cpu = <&cpu1_1>;
++				};
++			};
++
++			cluster2 {
++				core0 {
++					cpu = <&cpu2_0>;
++				};
++
++				core1 {
++					cpu = <&cpu2_1>;
++				};
++			};
++
++			cluster3 {
++				core0 {
++					cpu = <&cpu3_0>;
++				};
++
++				core1 {
++					cpu = <&cpu3_1>;
++				};
++			};
++		};
++
++		l2c_0: l2-cache0 {
++			cache-size = <2097152>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			next-level-cache = <&l3c>;
++		};
++
++		l2c_1: l2-cache1 {
++			cache-size = <2097152>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			next-level-cache = <&l3c>;
++		};
++
++		l2c_2: l2-cache2 {
++			cache-size = <2097152>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			next-level-cache = <&l3c>;
++		};
++
++		l2c_3: l2-cache3 {
++			cache-size = <2097152>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			next-level-cache = <&l3c>;
++		};
++
++		l3c: l3-cache {
++			cache-size = <4194304>;
++			cache-line-size = <64>;
++			cache-sets = <4096>;
+ 		};
+ 	};
+ 
 -- 
-2.20.0
+2.23.0
