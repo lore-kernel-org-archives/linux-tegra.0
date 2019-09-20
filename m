@@ -1,52 +1,69 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH -next] PCI: tegra: Add missing include file
-Date: Fri, 20 Sep 2019 14:28:55 -0500
-Message-ID: <20190920192855.GA226906@google.com>
-References: <20190920014807.38288-1-yuehaibing@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] media: staging: tegra-vde: Fix build error
+Date: Fri, 20 Sep 2019 21:32:51 +0200
+Message-ID: <CAK8P3a2Lxv6Wz3jv0eeNc7mfvNzSvh37QEx51W39eUnYPsxaYw@mail.gmail.com>
+References: <dc354ede-5963-cd7f-ee53-f3df3061d39a@gmail.com>
+ <20190725024129.22664-1-yuehaibing@huawei.com> <dd547b44-7abb-371f-aeee-a82b96f824e2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190920014807.38288-1-yuehaibing@huawei.com>
+In-Reply-To: <dd547b44-7abb-371f-aeee-a82b96f824e2@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: lorenzo.pieralisi@arm.com, andrew.murray@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, vidyas@nvidia.com, treding@nvidia.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, gregkh <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 09:48:07AM +0800, YueHaibing wrote:
-> Fix build error without CONFIG_PINCTRL
-> 
-> drivers/pci/controller/dwc/pcie-tegra194.c: In function tegra_pcie_config_rp:
-> drivers/pci/controller/dwc/pcie-tegra194.c:1394:8: error: implicit declaration of function pinctrl_pm_select_default_state;
->  did you mean prandom_seed_full_state? [-Werror=implicit-function-declaration]
->   ret = pinctrl_pm_select_default_state(dev);
->         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->         prandom_seed_full_state
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: ab2a50e7602b ("PCI: tegra: Add support to configure sideband pins")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Thu, Jul 25, 2019 at 2:24 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 25.07.2019 5:41, YueHaibing пишет:
+> > If IOMMU_SUPPORT is not set, and COMPILE_TEST is y,
+> > IOMMU_IOVA may be set to m. So building will fails:
+> >
+> > drivers/staging/media/tegra-vde/iommu.o: In function `tegra_vde_iommu_map':
+> > iommu.c:(.text+0x41): undefined reference to `alloc_iova'
+> > iommu.c:(.text+0x56): undefined reference to `__free_iova'
+> >
+> > Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
 
-Thanks, I folded this into ab2a50e7602b (with the include in alpha
-order) and updated my "next" branch.
+> > @@ -3,7 +3,7 @@ config TEGRA_VDE
+> >       tristate "NVIDIA Tegra Video Decoder Engine driver"
+> >       depends on ARCH_TEGRA || COMPILE_TEST
+> >       select DMA_SHARED_BUFFER
+> > -     select IOMMU_IOVA if IOMMU_SUPPORT
+> > +     select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+> >       select SRAM
+> >       help
+> >           Say Y here to enable support for the NVIDIA Tegra video decoder
+> >
+>
+> This results in missing the case of compile-testing !IOMMU_IOVA for the
+> driver, but probably that's not a big deal.
+>
+> Acked-by: Dmitry Osipenko <digetx@gmail.com>
 
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 09ed8e4..b219d3b2 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -28,6 +28,7 @@
->  #include <linux/reset.h>
->  #include <linux/resource.h>
->  #include <linux/types.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include "pcie-designware.h"
->  #include <soc/tegra/bpmp.h>
->  #include <soc/tegra/bpmp-abi.h>
-> -- 
-> 2.7.4
-> 
-> 
+I don't know what happened here, but the patch from YueHaibing caused this
+error for me, which is very much like the problem it was meant to fix:
+
+drivers/gpu/host1x/dev.o: In function `host1x_probe':
+dev.c:(.text+0x1734): undefined reference to `put_iova_domain'
+dev.c:(.text+0x1744): undefined reference to `iova_cache_put'
+drivers/gpu/host1x/dev.o: In function `host1x_remove':
+dev.c:(.text+0x1894): undefined reference to `put_iova_domain'
+dev.c:(.text+0x1898): undefined reference to `iova_cache_put'
+drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
+cdma.c:(.text+0x5d0): undefined reference to `alloc_iova'
+cdma.c:(.text+0x61c): undefined reference to `__free_iova'
+drivers/gpu/host1x/cdma.o: In function `host1x_cdma_deinit':
+cdma.c:(.text+0x6c8): undefined reference to `free_iova'
+drivers/gpu/host1x/job.o: In function `host1x_job_pin':
+job.c:(.text+0x514): undefined reference to `alloc_iova'
+job.c:(.text+0x528): undefined reference to `__free_iova'
+drivers/gpu/host1x/job.o: In function `host1x_job_unpin':
+job.c:(.text+0x5bc): undefined reference to `free_iova'
+
+After reverthing commit 6b2265975239 ("media: staging:
+tegra-vde: Fix build error"), I can no longer reproduce the
+issue.
+
+       Arnd
