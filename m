@@ -1,48 +1,52 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
- 4.10
-Date: Fri, 20 Sep 2019 10:02:28 -0700
-Message-ID: <fa2fafac-f193-3cef-666a-767859d41f91@gmail.com>
-References: <20190920170036.22610-1-thierry.reding@gmail.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH -next] PCI: tegra: Add missing include file
+Date: Fri, 20 Sep 2019 14:28:55 -0500
+Message-ID: <20190920192855.GA226906@google.com>
+References: <20190920014807.38288-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190920170036.22610-1-thierry.reding@gmail.com>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, "David S . Miller" <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190920014807.38288-1-yuehaibing@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: lorenzo.pieralisi@arm.com, andrew.murray@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, vidyas@nvidia.com, treding@nvidia.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/20/19 10:00 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Fri, Sep 20, 2019 at 09:48:07AM +0800, YueHaibing wrote:
+> Fix build error without CONFIG_PINCTRL
 > 
-> The DWMAC 4.10 supports the same enhanced addressing mode as later
-> generations. Parse this capability from the hardware feature registers
-> and set the EAME (Enhanced Addressing Mode Enable) bit when necessary.
+> drivers/pci/controller/dwc/pcie-tegra194.c: In function tegra_pcie_config_rp:
+> drivers/pci/controller/dwc/pcie-tegra194.c:1394:8: error: implicit declaration of function pinctrl_pm_select_default_state;
+>  did you mean prandom_seed_full_state? [-Werror=implicit-function-declaration]
+>   ret = pinctrl_pm_select_default_state(dev);
+>         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>         prandom_seed_full_state
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: ab2a50e7602b ("PCI: tegra: Add support to configure sideband pins")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Do you think these two patches should have companion Fixes: tag? They
-are definitively bug fixes, but maybe you would also want those to be
-back ported to -stable trees?
+Thanks, I folded this into ab2a50e7602b (with the include in alpha
+order) and updated my "next" branch.
 
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Thierry
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 09ed8e4..b219d3b2 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/reset.h>
+>  #include <linux/resource.h>
+>  #include <linux/types.h>
+> +#include <linux/pinctrl/consumer.h>
+>  #include "pcie-designware.h"
+>  #include <soc/tegra/bpmp.h>
+>  #include <soc/tegra/bpmp-abi.h>
+> -- 
+> 2.7.4
 > 
-> Thierry Reding (2):
->   net: stmmac: Only enable enhanced addressing mode when needed
->   net: stmmac: Support enhanced addressing mode for DWMAC 4.10
 > 
->  drivers/net/ethernet/stmicro/stmmac/dwmac4.h  |  1 +
->  .../ethernet/stmicro/stmmac/dwmac4_descs.c    |  4 ++--
->  .../net/ethernet/stmicro/stmmac/dwmac4_dma.c  | 22 +++++++++++++++++++
->  .../net/ethernet/stmicro/stmmac/dwmac4_dma.h  |  3 +++
->  .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  5 ++++-
->  .../net/ethernet/stmicro/stmmac/stmmac_main.c |  6 +++++
->  include/linux/stmmac.h                        |  1 +
->  7 files changed, 39 insertions(+), 3 deletions(-)
-> 
-
-
--- 
-Florian
