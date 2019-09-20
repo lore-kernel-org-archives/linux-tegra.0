@@ -1,78 +1,74 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: Re: [PATCH 1/2] mmc: sdhci: Let drivers define their DMA mask
-Date: Fri, 20 Sep 2019 14:47:47 -0700
-Message-ID: <20190920214746.GA21389@Asurada-Nvidia.nvidia.com>
-References: <20190920145317.11972-1-thierry.reding@gmail.com>
- <20190920145317.11972-2-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] media: staging: tegra-vde: Fix build error
+Date: Sat, 21 Sep 2019 01:26:28 +0300
+Message-ID: <ed818d0c-2d5a-d9a4-e99d-43fe4eba4357@gmail.com>
+References: <dc354ede-5963-cd7f-ee53-f3df3061d39a@gmail.com>
+	<20190725024129.22664-1-yuehaibing@huawei.com>
+	<dd547b44-7abb-371f-aeee-a82b96f824e2@gmail.com>
+	<CAK8P3a2Lxv6Wz3jv0eeNc7mfvNzSvh37QEx51W39eUnYPsxaYw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190920145317.11972-2-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Jon Hunter <jonathanh@nvidia.com>, inux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <CAK8P3a2Lxv6Wz3jv0eeNc7mfvNzSvh37QEx51W39eUnYPsxaYw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: driverdevel <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, gregkh <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:IOMMU DRIVERS" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Linux Media Mailing List <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 04:53:16PM +0200, Thierry Reding wrote:
-> From: Adrian Hunter <adrian.hunter@intel.com>
-> 
-> Add host operation ->set_dma_mask() so that drivers can define their own
-> DMA masks.
-> 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-Tested-by: Nicolin Chen <nicoleotsuka@gmail.com>
-
-Ran a boot test with both patches on a Tegra186 board.
-
-Thanks!
-
-> ---
->  drivers/mmc/host/sdhci.c | 12 ++++--------
->  drivers/mmc/host/sdhci.h |  1 +
->  2 files changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index a5dc5aae973e..bc04c3180477 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3756,18 +3756,14 @@ int sdhci_setup_host(struct sdhci_host *host)
->  		host->flags &= ~SDHCI_USE_ADMA;
->  	}
->  
-> -	/*
-> -	 * It is assumed that a 64-bit capable device has set a 64-bit DMA mask
-> -	 * and *must* do 64-bit DMA.  A driver has the opportunity to change
-> -	 * that during the first call to ->enable_dma().  Similarly
-> -	 * SDHCI_QUIRK2_BROKEN_64_BIT_DMA must be left to the drivers to
-> -	 * implement.
-> -	 */
->  	if (sdhci_can_64bit_dma(host))
->  		host->flags |= SDHCI_USE_64_BIT_DMA;
->  
->  	if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA)) {
-> -		ret = sdhci_set_dma_mask(host);
-> +		if (host->ops->set_dma_mask)
-> +			ret = host->ops->set_dma_mask(host);
-> +		else
-> +			ret = sdhci_set_dma_mask(host);
->  
->  		if (!ret && host->ops->enable_dma)
->  			ret = host->ops->enable_dma(host);
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 902f855efe8f..8285498c0d8a 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -622,6 +622,7 @@ struct sdhci_ops {
->  
->  	u32		(*irq)(struct sdhci_host *host, u32 intmask);
->  
-> +	int		(*set_dma_mask)(struct sdhci_host *host);
->  	int		(*enable_dma)(struct sdhci_host *host);
->  	unsigned int	(*get_max_clock)(struct sdhci_host *host);
->  	unsigned int	(*get_min_clock)(struct sdhci_host *host);
-> -- 
-> 2.23.0
-> 
+MjAuMDkuMjAxOSAyMjozMiwgQXJuZCBCZXJnbWFubiDQv9C40YjQtdGCOgo+IE9uIFRodSwgSnVs
+IDI1LCAyMDE5IGF0IDI6MjQgUE0gRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPiB3
+cm90ZToKPj4KPj4gMjUuMDcuMjAxOSA1OjQxLCBZdWVIYWliaW5nINC/0LjRiNC10YI6Cj4+PiBJ
+ZiBJT01NVV9TVVBQT1JUIGlzIG5vdCBzZXQsIGFuZCBDT01QSUxFX1RFU1QgaXMgeSwKPj4+IElP
+TU1VX0lPVkEgbWF5IGJlIHNldCB0byBtLiBTbyBidWlsZGluZyB3aWxsIGZhaWxzOgo+Pj4KPj4+
+IGRyaXZlcnMvc3RhZ2luZy9tZWRpYS90ZWdyYS12ZGUvaW9tbXUubzogSW4gZnVuY3Rpb24gYHRl
+Z3JhX3ZkZV9pb21tdV9tYXAnOgo+Pj4gaW9tbXUuYzooLnRleHQrMHg0MSk6IHVuZGVmaW5lZCBy
+ZWZlcmVuY2UgdG8gYGFsbG9jX2lvdmEnCj4+PiBpb21tdS5jOigudGV4dCsweDU2KTogdW5kZWZp
+bmVkIHJlZmVyZW5jZSB0byBgX19mcmVlX2lvdmEnCj4+Pgo+Pj4gU2VsZWN0IElPTU1VX0lPVkEg
+d2hpbGUgQ09NUElMRV9URVNUIGlzIHNldCB0byBmaXggdGhpcy4KPiAKPj4+IEBAIC0zLDcgKzMs
+NyBAQCBjb25maWcgVEVHUkFfVkRFCj4+PiAgICAgICB0cmlzdGF0ZSAiTlZJRElBIFRlZ3JhIFZp
+ZGVvIERlY29kZXIgRW5naW5lIGRyaXZlciIKPj4+ICAgICAgIGRlcGVuZHMgb24gQVJDSF9URUdS
+QSB8fCBDT01QSUxFX1RFU1QKPj4+ICAgICAgIHNlbGVjdCBETUFfU0hBUkVEX0JVRkZFUgo+Pj4g
+LSAgICAgc2VsZWN0IElPTU1VX0lPVkEgaWYgSU9NTVVfU1VQUE9SVAo+Pj4gKyAgICAgc2VsZWN0
+IElPTU1VX0lPVkEgaWYgKElPTU1VX1NVUFBPUlQgfHwgQ09NUElMRV9URVNUKQo+Pj4gICAgICAg
+c2VsZWN0IFNSQU0KPj4+ICAgICAgIGhlbHAKPj4+ICAgICAgICAgICBTYXkgWSBoZXJlIHRvIGVu
+YWJsZSBzdXBwb3J0IGZvciB0aGUgTlZJRElBIFRlZ3JhIHZpZGVvIGRlY29kZXIKPj4+Cj4+Cj4+
+IFRoaXMgcmVzdWx0cyBpbiBtaXNzaW5nIHRoZSBjYXNlIG9mIGNvbXBpbGUtdGVzdGluZyAhSU9N
+TVVfSU9WQSBmb3IgdGhlCj4+IGRyaXZlciwgYnV0IHByb2JhYmx5IHRoYXQncyBub3QgYSBiaWcg
+ZGVhbC4KPj4KPj4gQWNrZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4K
+PiAKPiBJIGRvbid0IGtub3cgd2hhdCBoYXBwZW5lZCBoZXJlLCBidXQgdGhlIHBhdGNoIGZyb20g
+WXVlSGFpYmluZyBjYXVzZWQgdGhpcwo+IGVycm9yIGZvciBtZSwgd2hpY2ggaXMgdmVyeSBtdWNo
+IGxpa2UgdGhlIHByb2JsZW0gaXQgd2FzIG1lYW50IHRvIGZpeDoKPiAKPiBkcml2ZXJzL2dwdS9o
+b3N0MXgvZGV2Lm86IEluIGZ1bmN0aW9uIGBob3N0MXhfcHJvYmUnOgo+IGRldi5jOigudGV4dCsw
+eDE3MzQpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBwdXRfaW92YV9kb21haW4nCj4gZGV2LmM6
+KC50ZXh0KzB4MTc0NCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYGlvdmFfY2FjaGVfcHV0Jwo+
+IGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYubzogSW4gZnVuY3Rpb24gYGhvc3QxeF9yZW1vdmUnOgo+
+IGRldi5jOigudGV4dCsweDE4OTQpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBwdXRfaW92YV9k
+b21haW4nCj4gZGV2LmM6KC50ZXh0KzB4MTg5OCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYGlv
+dmFfY2FjaGVfcHV0Jwo+IGRyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLm86IEluIGZ1bmN0aW9uIGBo
+b3N0MXhfY2RtYV9pbml0JzoKPiBjZG1hLmM6KC50ZXh0KzB4NWQwKTogdW5kZWZpbmVkIHJlZmVy
+ZW5jZSB0byBgYWxsb2NfaW92YScKPiBjZG1hLmM6KC50ZXh0KzB4NjFjKTogdW5kZWZpbmVkIHJl
+ZmVyZW5jZSB0byBgX19mcmVlX2lvdmEnCj4gZHJpdmVycy9ncHUvaG9zdDF4L2NkbWEubzogSW4g
+ZnVuY3Rpb24gYGhvc3QxeF9jZG1hX2RlaW5pdCc6Cj4gY2RtYS5jOigudGV4dCsweDZjOCk6IHVu
+ZGVmaW5lZCByZWZlcmVuY2UgdG8gYGZyZWVfaW92YScKPiBkcml2ZXJzL2dwdS9ob3N0MXgvam9i
+Lm86IEluIGZ1bmN0aW9uIGBob3N0MXhfam9iX3Bpbic6Cj4gam9iLmM6KC50ZXh0KzB4NTE0KTog
+dW5kZWZpbmVkIHJlZmVyZW5jZSB0byBgYWxsb2NfaW92YScKPiBqb2IuYzooLnRleHQrMHg1Mjgp
+OiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBfX2ZyZWVfaW92YScKPiBkcml2ZXJzL2dwdS9ob3N0
+MXgvam9iLm86IEluIGZ1bmN0aW9uIGBob3N0MXhfam9iX3VucGluJzoKPiBqb2IuYzooLnRleHQr
+MHg1YmMpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBmcmVlX2lvdmEnCj4gCj4gQWZ0ZXIgcmV2
+ZXJ0aGluZyBjb21taXQgNmIyMjY1OTc1MjM5ICgibWVkaWE6IHN0YWdpbmc6Cj4gdGVncmEtdmRl
+OiBGaXggYnVpbGQgZXJyb3IiKSwgSSBjYW4gbm8gbG9uZ2VyIHJlcHJvZHVjZSB0aGUKPiBpc3N1
+ZS4KClRoZXJlIGlzIGEgZm9sbG93IHVwIGhlcmU6IGh0dHBzOi8vcGF0Y2h3b3JrLm96bGFicy5v
+cmcvcGF0Y2gvMTE1MzE3Ni8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KaW9tbXUgbWFpbGluZyBsaXN0CmlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24u
+b3JnCmh0dHBzOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lv
+bW11
