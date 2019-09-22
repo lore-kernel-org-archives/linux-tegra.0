@@ -1,31 +1,59 @@
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: Re: [PATCH] net: stmmac: Fix page pool size
-Date: Sun, 22 Sep 2019 15:31:32 -0700
-Message-ID: <20190922153132.0c328fe7@cakuba.netronome.com>
-References: <20190920170127.22850-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: tegra: divider: Add missing check for
+ enable-bit on rate's recalculation
+Date: Mon, 23 Sep 2019 00:47:21 +0300
+Message-ID: <4f2695ce-f683-2e4b-34b9-8937feee5e1b@gmail.com>
+References: <20190723025245.27754-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190920170127.22850-1-thierry.reding@gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, Florian Fainelli <f.fainelli@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190723025245.27754-1-digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 20 Sep 2019 19:01:27 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+23.07.2019 5:52, Dmitry Osipenko пишет:
+> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
+> have any effect in that case. Please note that there are no known bugs
+> caused by the missing check.
 > 
-> The size of individual pages in the page pool in given by an order. The
-> order is the binary logarithm of the number of pages that make up one of
-> the pages in the pool. However, the driver currently passes the number
-> of pages rather than the order, so it ends up wasting quite a bit of
-> memory.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 > 
-> Fix this by taking the binary logarithm and passing that in the order
-> field.
+> Changelog:
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> v2: Changed the commit's description from 'Fix' to 'Add' in response to the
+>     Stephen's Boyd question about the need to backport the patch into stable
+>     kernels. The backporting is not really needed.
+> 
+>  drivers/clk/tegra/clk-divider.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index e76731fb7d69..f33c19045386 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+>  	int div, mul;
+>  	u64 rate = parent_rate;
+>  
+> -	reg = readl_relaxed(divider->reg) >> divider->shift;
+> -	div = reg & div_mask(divider);
+> +	reg = readl_relaxed(divider->reg);
+> +
+> +	if ((divider->flags & TEGRA_DIVIDER_UART) &&
+> +	    !(reg & PERIPH_CLK_UART_DIV_ENB))
+> +		return rate;
+> +
+> +	div = (reg >> divider->shift) & div_mask(divider);
+>  
+>  	mul = get_mul(divider);
+>  	div += mul;
+> 
 
-Since this is a fix could we get a Fixes tag pointing to the commit
-which introduced the regression?
+Hello Peter,
+
+ACK?
