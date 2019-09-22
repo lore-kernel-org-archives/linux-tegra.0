@@ -1,56 +1,87 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm/tegra: vic: Use devm_platform_ioremap_resource() in
- vic_probe()
-Date: Sat, 21 Sep 2019 21:03:57 +0200
-Message-ID: <50adb1d3-93fc-44c1-9988-02036911ee46@web.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.3 00/21] 5.3.1-stable review
+Date: Sun, 22 Sep 2019 10:13:01 +0200
+Message-ID: <20190922081301.GA2524798@kroah.com>
+References: <20190919214657.842130855@linuxfoundation.org>
+ <572eca6e-47a9-c554-c6b2-bafd4c5df18b@nvidia.com>
+ <20190920142432.GA601228@kroah.com>
+ <773b556a-acc2-c3e0-14e6-956a6d0b3bed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <773b556a-acc2-c3e0-14e6-956a6d0b3bed@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Chew <achew@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 20:51:52 +0200
+On Fri, Sep 20, 2019 at 05:01:35PM +0100, Jon Hunter wrote:
+> 
+> On 20/09/2019 15:24, Greg Kroah-Hartman wrote:
+> > On Fri, Sep 20, 2019 at 02:54:26PM +0100, Jon Hunter wrote:
+> >>
+> >> On 19/09/2019 23:03, Greg Kroah-Hartman wrote:
+> >>> This is the start of the stable review cycle for the 5.3.1 release.
+> >>> There are 21 patches in this series, all will be posted as a response
+> >>> to this one.  If anyone has any issues with these being applied, please
+> >>> let me know.
+> >>>
+> >>> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
+> >>> Anything received after that time might be too late.
+> >>>
+> >>> The whole patch series can be found in one patch at:
+> >>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.1-rc1.gz
+> >>> or in the git tree and branch at:
+> >>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> >>> and the diffstat can be found below.
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >>
+> >> No new regressions* for Tegra ...
+> >>
+> >> Test results for stable-v5.3:
+> >>     12 builds:	12 pass, 0 fail
+> >>     22 boots:	22 pass, 0 fail
+> >>     38 tests:	37 pass, 1 fail
+> >>
+> >> Linux version:	5.3.1-rc1-g0aa7f3d6baae
+> >> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >>                 tegra194-p2972-0000, tegra20-ventana,
+> >>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> >>
+> >> * Note we had one regression in v5.3 for a warnings test for Tegra194
+> >>   causing the above test failure. This has since been fixed by the
+> >>   following commits [0] but given it is just a warning, I have not
+> >>   bothered CC'ing for stable.
+> >>
+> >> Cheers
+> >> Jon
+> >>
+> >> [0] https://lkml.org/lkml/2019/8/21/602
+> > 
+> > I'll be glad to take this in stable for 5.3.y, what is the git commit
+> > id?
+> 
+> OK, that would be great. The IDs are ...
+> 
+> commit 763719771e84b8c8c2f53af668cdc905faa608de
+> Author: Jon Hunter <jonathanh@nvidia.com>
+> Date:   Wed Aug 21 16:02:40 2019 +0100
+> 
+>     clocksource/drivers/timer-of: Do not warn on deferred probe
+> 
+> 
+> commit 14e019df1e64c8b19ce8e0b3da25b6f40c8716be
+> Author: Jon Hunter <jonathanh@nvidia.com>
+> Date:   Wed Aug 21 16:02:41 2019 +0100
+> 
+>     clocksource/drivers: Do not warn on probe defer
+> 
+> 
 
-Simplify this function implementation by using a known wrapper function.
+Now queued up, thanks!
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/gpu/drm/tegra/vic.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index cd0399fd8c63..bc72d326588b 100644
-=2D-- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -370,7 +370,6 @@ static int vic_probe(struct platform_device *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
- 	struct host1x_syncpt **syncpts;
--	struct resource *regs;
- 	struct vic *vic;
- 	int err;
-
-@@ -384,13 +383,7 @@ static int vic_probe(struct platform_device *pdev)
- 	if (!syncpts)
- 		return -ENOMEM;
-
--	regs =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!regs) {
--		dev_err(&pdev->dev, "failed to get registers\n");
--		return -ENXIO;
--	}
--
--	vic->regs =3D devm_ioremap_resource(dev, regs);
-+	vic->regs =3D devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(vic->regs))
- 		return PTR_ERR(vic->regs);
-
-=2D-
-2.23.0
+greg k-h
