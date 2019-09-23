@@ -1,226 +1,63 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
- time
-Date: Mon, 23 Sep 2019 16:36:47 +0300
-Message-ID: <546ec91f-2486-21e1-9fdf-b3d087e176ed@gmail.com>
-References: <20190804202927.15014-1-digetx@gmail.com>
- <23856887-06b0-66a8-1df2-ef4d7b48dc68@nvidia.com>
- <854c90c4-9e42-2020-5fa7-8711203f56a5@gmail.com>
- <c5a5a059-c949-1a25-c7ac-59d88ad9a026@nvidia.com>
- <ff1a790f-baba-dd0b-8cbe-f9468fbd56e3@gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS
+ framework
+Date: Mon, 23 Sep 2019 19:26:54 +0530
+Message-ID: <20190923135654.wcsdl5jdzxqeht3l@vireshk-mac-ubuntu>
+References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
+ <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
+ <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ff1a790f-baba-dd0b-8cbe-f9468fbd56e3@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org, ulf.hansson@linaro.org, sfr@canb.auug.org.au, pavel@ucw.cz, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-23.09.2019 16:31, Dmitry Osipenko пишет:
-> 23.09.2019 16:01, Jon Hunter пишет:
->>
->> On 23/09/2019 13:49, Dmitry Osipenko wrote:
->>> 23.09.2019 13:56, Jon Hunter пишет:
->>>>
->>>>
->>>> On 04/08/2019 21:29, Dmitry Osipenko wrote:
->>>>> It is possible to get a lockup if kernel decides to enter LP2 cpuidle
->>>>> from some clk-notifier, in that case CCF's "prepare" mutex is kept locked
->>>>> and thus clk_get_rate(pclk) blocks on the same mutex with interrupts being
->>>>> disabled.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>
->>>>> Changelog:
->>>>>
->>>>> v4: Added clk-notifier to track PCLK rate-changes, which may become useful
->>>>>     in the future. That's done in response to v3 review comment from Peter
->>>>>     De Schrijver.
->>>>>
->>>>>     Now properly handling case where clk pointer is intentionally NULL on
->>>>>     the driver's probe.
->>>>>
->>>>> v3: Changed commit's message because I actually recalled what was the
->>>>>     initial reason for the patch, since the problem reoccurred once again.
->>>>>
->>>>> v2: Addressed review comments that were made by Jon Hunter to v1 by
->>>>>     not moving the memory barrier, replacing one missed clk_get_rate()
->>>>>     with pmc->rate, handling possible clk_get_rate() error on probe and
->>>>>     slightly adjusting the commits message.
->>>>>
->>>>>  drivers/soc/tegra/pmc.c | 71 ++++++++++++++++++++++++++++++-----------
->>>>>  1 file changed, 53 insertions(+), 18 deletions(-)
->>>>>
->>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>>> index 9f9c1c677cf4..4e44943d0b26 100644
->>>>> --- a/drivers/soc/tegra/pmc.c
->>>>> +++ b/drivers/soc/tegra/pmc.c
->>>>> @@ -309,6 +309,7 @@ static const char * const tegra210_reset_sources[] = {
->>>>>   * @pctl_dev: pin controller exposed by the PMC
->>>>>   * @domain: IRQ domain provided by the PMC
->>>>>   * @irq: chip implementation for the IRQ domain
->>>>> + * @clk_nb: pclk clock changes handler
->>>>>   */
->>>>>  struct tegra_pmc {
->>>>>  	struct device *dev;
->>>>> @@ -344,6 +345,8 @@ struct tegra_pmc {
->>>>>  
->>>>>  	struct irq_domain *domain;
->>>>>  	struct irq_chip irq;
->>>>> +
->>>>> +	struct notifier_block clk_nb;
->>>>>  };
->>>>>  
->>>>>  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
->>>>> @@ -1192,7 +1195,7 @@ static int tegra_io_pad_prepare(struct tegra_pmc *pmc, enum tegra_io_pad id,
->>>>>  		return err;
->>>>>  
->>>>>  	if (pmc->clk) {
->>>>> -		rate = clk_get_rate(pmc->clk);
->>>>> +		rate = pmc->rate;
->>>>>  		if (!rate) {
->>>>>  			dev_err(pmc->dev, "failed to get clock rate\n");
->>>>>  			return -ENODEV;
->>>>
->>>> So this error should never happen now, right? Assuming that rate is
->>>> never set to 0. But ...
->>>
->>> Good catch!
->>>
->>>>> @@ -1433,6 +1436,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
->>>>>  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->>>>>  {
->>>>>  	unsigned long long rate = 0;
->>>>> +	u64 ticks;
->>>>>  	u32 value;
->>>>>  
->>>>>  	switch (mode) {
->>>>> @@ -1441,31 +1445,22 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->>>>>  		break;
->>>>>  
->>>>>  	case TEGRA_SUSPEND_LP2:
->>>>> -		rate = clk_get_rate(pmc->clk);
->>>>> +		rate = pmc->rate;
->>>>>  		break;
->>>>>  
->>>>>  	default:
->>>>>  		break;
->>>>>  	}
->>>>>  
->>>>> -	if (WARN_ON_ONCE(rate == 0))
->>>>> -		rate = 100000000;
->>>>> -
->>>>> -	if (rate != pmc->rate) {
->>>>> -		u64 ticks;
->>>>> -
->>>>> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
->>>>> -		do_div(ticks, USEC_PER_SEC);
->>>>> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
->>>>> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
->>>>> +	do_div(ticks, USEC_PER_SEC);
->>>>> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
->>>>>  
->>>>> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
->>>>> -		do_div(ticks, USEC_PER_SEC);
->>>>> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
->>>>> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
->>>>> +	do_div(ticks, USEC_PER_SEC);
->>>>> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
->>>>>  
->>>>> -		wmb();
->>>>> -
->>>>> -		pmc->rate = rate;
->>>>> -	}
->>>>> +	wmb();
->>>>>  
->>>>>  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>>>  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
->>>>> @@ -2019,6 +2014,20 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
->>>>>  	return 0;
->>>>>  }
->>>>>  
->>>>> +static int tegra_pmc_clk_notify_cb(struct notifier_block *nb,
->>>>> +				   unsigned long action, void *ptr)
->>>>> +{
->>>>> +	struct clk_notifier_data *data = ptr;
->>>>> +	struct tegra_pmc *pmc;
->>>>> +
->>>>> +	if (action == POST_RATE_CHANGE) {
->>>>> +		pmc = container_of(nb, struct tegra_pmc, clk_nb);
->>>>> +		pmc->rate = data->new_rate;
->>>>> +	}
->>>>> +
->>>>> +	return NOTIFY_OK;
->>>>> +}
->>>>> +
->>>>>  static int tegra_pmc_probe(struct platform_device *pdev)
->>>>>  {
->>>>>  	void __iomem *base;
->>>>> @@ -2082,6 +2091,30 @@ static int tegra_pmc_probe(struct platform_device *pdev)
->>>>>  		pmc->clk = NULL;
->>>>>  	}
->>>>>  
->>>>> +	/*
->>>>> +	 * PCLK clock rate can't be retrieved using CLK API because it
->>>>> +	 * causes lockup if CPU enters LP2 idle state from some other
->>>>> +	 * CLK notifier, hence we're caching the rate's value locally.
->>>>> +	 */
->>>>> +	if (pmc->clk) {
->>>>> +		pmc->clk_nb.notifier_call = tegra_pmc_clk_notify_cb;
->>>>> +		err = clk_notifier_register(pmc->clk, &pmc->clk_nb);
->>>>> +		if (err) {
->>>>> +			dev_err(&pdev->dev,
->>>>> +				"failed to register clk notifier\n");
->>>>> +			return err;
->>>>> +		}
->>>>> +
->>>>> +		pmc->rate = clk_get_rate(pmc->clk);
->>>>> +	}
->>>>> +
->>>>> +	if (!pmc->rate) {
->>>>> +		if (pmc->clk)
->>>>> +			dev_err(&pdev->dev, "failed to get pclk rate\n");
->>>>> +
->>>>> +		pmc->rate = 100000000;
->>>>
->>>> I wonder if we should just let this fail. Or set to 0 so that if the
->>>> rate is not set we will never suspend or configure the IO pads? I could
->>>> run some quick tests to see if there are any problems by failing here.
->>>
->>> Do you mean to fail the PMC driver to probe? I guess that will be fatal
->>> and system won't be in a useful state, from a user perspective that
->>> should be equal to a hang on boot with a black screen. On the other
->>> hand, it seems that failing tegra_io_pad_prepare() should have similar
->>> fatal result.
->>>
->>> I'm wondering whether that IO PAD misconfiguration could be harmful. If
->>> not, then looks like falling back to 100Mhz should be good enough. In
->>> practice clk_get_rate() shouldn't ever fail unless there is some serious
->>> bug in clk/. What do you think?
->>
->> Exactly. I think that if clk_get_rate() is failing then something bad is
->> happening. I can see if this causes any obvious problems across the
->> different boards we test, but it would be great to get rid of this
->> 100MHz value (unless Peter knows of a good reason to keep it).
+On 22-09-19, 23:12, Dmitry Osipenko wrote:
+> This patch causes use-after-free on a cpufreq driver module reload. Please take a look, thanks in advance.
 > 
-> Okay!
 > 
-> Peter, do you have any thoughts about whether it worth to keep the
-> 100MHz workaround?
+> [   87.952369] ==================================================================
+> [   87.953259] BUG: KASAN: use-after-free in notifier_chain_register+0x4f/0x9c
+> [   87.954031] Read of size 4 at addr e6abbd0c by task modprobe/243
 > 
-> BTW.. looking at tegra_io_pad_prepare() again, I think that it should be
-> fine to simply keep the clk_get_rate() there.
+> [   87.954901] CPU: 1 PID: 243 Comm: modprobe Tainted: G        W
+> 5.3.0-next-20190920-00185-gf61698eab956-dirty #2408
+> [   87.956077] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [   87.956807] [<c0110aad>] (unwind_backtrace) from [<c010bb71>] (show_stack+0x11/0x14)
+> [   87.957709] [<c010bb71>] (show_stack) from [<c0d37b25>] (dump_stack+0x89/0x98)
+> [   87.958616] [<c0d37b25>] (dump_stack) from [<c02937e1>]
+> (print_address_description.constprop.0+0x3d/0x340)
+> [   87.959785] [<c02937e1>] (print_address_description.constprop.0) from [<c0293c6b>]
+> (__kasan_report+0xe3/0x12c)
+> [   87.960907] [<c0293c6b>] (__kasan_report) from [<c014988f>] (notifier_chain_register+0x4f/0x9c)
+> [   87.962001] [<c014988f>] (notifier_chain_register) from [<c01499b5>]
+> (blocking_notifier_chain_register+0x29/0x3c)
+> [   87.963180] [<c01499b5>] (blocking_notifier_chain_register) from [<c06f7ee9>]
+> (dev_pm_qos_add_notifier+0x79/0xf8)
+> [   87.964339] [<c06f7ee9>] (dev_pm_qos_add_notifier) from [<c092927d>] (cpufreq_online+0x5e1/0x8a4)
 
-[it will be fine without having the clk notifier or without the locking
-within the notifier that I suggested below]
+Hi Dmitry,
 
-> It also looks like clk notifier should actually take powergates_lock to
-> be really robust and not potentially race with tegra_io_pad_prepare(). I
-> can fix up it in v5, but.. maybe it will be better to postpone the clk
-> notifier addition until there will be a real use-case for PMC clk
-> freq-scaling and for now assume that clk rate is static?
-> 
+Unfortunately I am traveling right now and can't test this stuff, though I may
+have found the root cause here. Can you please test the below diff for me ?
+
+diff --git a/drivers/base/power/qos.c b/drivers/base/power/qos.c
+index 6c90fd7e2ff8..9ac244ee05fe 100644
+--- a/drivers/base/power/qos.c
++++ b/drivers/base/power/qos.c
+@@ -328,6 +328,8 @@ void dev_pm_qos_constraints_destroy(struct device *dev)
+        spin_unlock_irq(&dev->power.lock);
+ 
+        kfree(qos->resume_latency.notifiers);
++       kfree(qos->min_frequency.notifiers);
++       kfree(qos->max_frequency.notifiers);
+        kfree(qos);
+ 
+  out:
+
+-- 
+viresh
