@@ -1,83 +1,81 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS
- framework
-Date: Mon, 23 Sep 2019 20:27:51 +0300
-Message-ID: <16bfccc5-36d5-3050-fd8d-5bce59e2d7b3@gmail.com>
-References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
- <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
- <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
- <20190923135654.wcsdl5jdzxqeht3l@vireshk-mac-ubuntu>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/2] mmc: sdhci: Let drivers define their DMA mask
+Date: Mon, 23 Sep 2019 23:55:01 +0200
+Message-ID: <CAPDyKForzWMVVWRNRk6dhTVt-13M11=vktBJn8Rzxk0yZtNJNA@mail.gmail.com>
+References: <20190923100810.12698-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190923135654.wcsdl5jdzxqeht3l@vireshk-mac-ubuntu>
-Content-Language: en-US
+In-Reply-To: <20190923100810.12698-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org, ulf.hansson@linaro.org, sfr@canb.auug.org.au, pavel@ucw.cz, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Jon Hunter <jonathanh@nvidia.com>, Nicolin Chen <nicoleotsuka@gmail.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-23.09.2019 16:56, Viresh Kumar пишет:
-> On 22-09-19, 23:12, Dmitry Osipenko wrote:
->> This patch causes use-after-free on a cpufreq driver module reload. Please take a look, thanks in advance.
->>
->>
->> [   87.952369] ==================================================================
->> [   87.953259] BUG: KASAN: use-after-free in notifier_chain_register+0x4f/0x9c
->> [   87.954031] Read of size 4 at addr e6abbd0c by task modprobe/243
->>
->> [   87.954901] CPU: 1 PID: 243 Comm: modprobe Tainted: G        W
->> 5.3.0-next-20190920-00185-gf61698eab956-dirty #2408
->> [   87.956077] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->> [   87.956807] [<c0110aad>] (unwind_backtrace) from [<c010bb71>] (show_stack+0x11/0x14)
->> [   87.957709] [<c010bb71>] (show_stack) from [<c0d37b25>] (dump_stack+0x89/0x98)
->> [   87.958616] [<c0d37b25>] (dump_stack) from [<c02937e1>]
->> (print_address_description.constprop.0+0x3d/0x340)
->> [   87.959785] [<c02937e1>] (print_address_description.constprop.0) from [<c0293c6b>]
->> (__kasan_report+0xe3/0x12c)
->> [   87.960907] [<c0293c6b>] (__kasan_report) from [<c014988f>] (notifier_chain_register+0x4f/0x9c)
->> [   87.962001] [<c014988f>] (notifier_chain_register) from [<c01499b5>]
->> (blocking_notifier_chain_register+0x29/0x3c)
->> [   87.963180] [<c01499b5>] (blocking_notifier_chain_register) from [<c06f7ee9>]
->> (dev_pm_qos_add_notifier+0x79/0xf8)
->> [   87.964339] [<c06f7ee9>] (dev_pm_qos_add_notifier) from [<c092927d>] (cpufreq_online+0x5e1/0x8a4)
-> 
-> Hi Dmitry,
-> 
-> Unfortunately I am traveling right now and can't test this stuff, though I may
-> have found the root cause here. Can you please test the below diff for me ?
-> 
-> diff --git a/drivers/base/power/qos.c b/drivers/base/power/qos.c
-> index 6c90fd7e2ff8..9ac244ee05fe 100644
-> --- a/drivers/base/power/qos.c
-> +++ b/drivers/base/power/qos.c
-> @@ -328,6 +328,8 @@ void dev_pm_qos_constraints_destroy(struct device *dev)
->         spin_unlock_irq(&dev->power.lock);
->  
->         kfree(qos->resume_latency.notifiers);
-> +       kfree(qos->min_frequency.notifiers);
-> +       kfree(qos->max_frequency.notifiers);
->         kfree(qos);
->  
->   out:
-> 
+On Mon, 23 Sep 2019 at 12:08, Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> From: Adrian Hunter <adrian.hunter@intel.com>
+>
+> Add host operation ->set_dma_mask() so that drivers can define their own
+> DMA masks.
+>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Tested-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Doesn't help. The use-after-free bugs are usually caused by a missing
-NULL assignment after kfree(), like in this snippet:
+Applied for fixes and adding a stable tag, thanks!
 
-	..
-	if (!a)
-		a = kmalloc();
-	..
-	kfree(a);
-	// a = NULL    <-- missing!
-	..
+Kind regards
+Uffe
 
-I briefly looked through the code and don't see anything obviously
-wrong. The bug isn't critical since unlikely that somebody reloads
-cpufreq module for a non-development purposes, so it's not a big deal
-and can wait. Please take your time.
 
-I also want to point out that kernel crashes after second module reload,
-hence the KASAN report should be valid.
+> ---
+> Changes in v2:
+> - add Tested-by tag from Nicolin
+>
+>  drivers/mmc/host/sdhci.c | 12 ++++--------
+>  drivers/mmc/host/sdhci.h |  1 +
+>  2 files changed, 5 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index d814dc004bad..cf38ff09bef0 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3782,18 +3782,14 @@ int sdhci_setup_host(struct sdhci_host *host)
+>                 host->flags &= ~SDHCI_USE_ADMA;
+>         }
+>
+> -       /*
+> -        * It is assumed that a 64-bit capable device has set a 64-bit DMA mask
+> -        * and *must* do 64-bit DMA.  A driver has the opportunity to change
+> -        * that during the first call to ->enable_dma().  Similarly
+> -        * SDHCI_QUIRK2_BROKEN_64_BIT_DMA must be left to the drivers to
+> -        * implement.
+> -        */
+>         if (sdhci_can_64bit_dma(host))
+>                 host->flags |= SDHCI_USE_64_BIT_DMA;
+>
+>         if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA)) {
+> -               ret = sdhci_set_dma_mask(host);
+> +               if (host->ops->set_dma_mask)
+> +                       ret = host->ops->set_dma_mask(host);
+> +               else
+> +                       ret = sdhci_set_dma_mask(host);
+>
+>                 if (!ret && host->ops->enable_dma)
+>                         ret = host->ops->enable_dma(host);
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index cf3d1ed91909..61018e7fb0b6 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -623,6 +623,7 @@ struct sdhci_ops {
+>
+>         u32             (*irq)(struct sdhci_host *host, u32 intmask);
+>
+> +       int             (*set_dma_mask)(struct sdhci_host *host);
+>         int             (*enable_dma)(struct sdhci_host *host);
+>         unsigned int    (*get_max_clock)(struct sdhci_host *host);
+>         unsigned int    (*get_min_clock)(struct sdhci_host *host);
+> --
+> 2.23.0
+>
