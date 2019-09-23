@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V10 5/8] arm64: tegra: Add xudc node for Tegra210
-Date: Mon, 23 Sep 2019 13:55:49 +0530
-Message-ID: <1569227152-3030-6-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V10 6/8] arm64: tegra: Enable xudc on Jetson TX1
+Date: Mon, 23 Sep 2019 13:55:50 +0530
+Message-ID: <1569227152-3030-7-git-send-email-nkristam@nvidia.com>
 References: <1569227152-3030-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,44 +12,67 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 has one XUSB device mode controller, which can be operated
-HS and SS modes. Add DT support for XUSB device mode controller.
+Enable XUSB device mode driver for USB0 slot on Jetson TX1.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 Reviewed-by: JC Kuo <jckuo@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 31 +++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 30a7c48..fe6a708 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1206,6 +1206,25 @@
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index a7dc319..489911b 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1362,7 +1362,7 @@
+ 				status = "okay";
+ 
+ 				lanes {
+-					usb2-0 {
++					micro_b: usb2-0 {
+ 						nvidia,function = "xusb";
+ 						status = "okay";
+ 					};
+@@ -1483,6 +1483,21 @@
+ 		vmmc-supply = <&vdd_3v3_sd>;
  	};
  
 +	usb@700d0000 {
-+		compatible = "nvidia,tegra210-xudc";
-+		reg = <0x0 0x700d0000 0x0 0x8000>,
-+		      <0x0 0x700d8000 0x0 0x1000>,
-+		      <0x0 0x700d9000 0x0 0x1000>;
-+		reg-names = "base", "fpci", "ipfs";
-+		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_XUSB_DEV>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_SS>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_SSP_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>;
-+		clock-names = "dev", "ss", "ss_src", "hs_src", "fs_src";
-+		power-domains = <&pd_xusbdev>, <&pd_xusbss>;
-+		power-domain-names = "dev", "ss";
-+		nvidia,xusb-padctl = <&padctl>;
-+		status = "disabled";
++		status = "okay";
++		phys = <&micro_b>;
++		phy-names = "usb2";
++		avddio-usb-supply = <&vdd_3v3_sys>;
++		hvdd-usb-supply = <&vdd_1v8>;
++		usb-role-switch;
++
++		port {
++			usb_role_switch: endpoint {
++				remote-endpoint = <&usb_b_conn_ep>;
++			};
++		};
 +	};
 +
- 	mipi: mipi@700e3000 {
- 		compatible = "nvidia,tegra210-mipi";
- 		reg = <0x0 0x700e3000 0x0 0x100>;
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -1641,4 +1656,18 @@
+ 			linux,code = <KEY_VOLUMEUP>;
+ 		};
+ 	};
++
++	usb_type_b: connector {
++		compatible = "usb-b-connector", "gpio-usb-b-connector";
++		label = "micro-USB";
++		type = "micro";
++		vbus-gpio = <&gpio TEGRA_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
++
++		port {
++			usb_b_conn_ep: endpoint {
++				remote-endpoint = <&usb_role_switch>;
++			};
++		};
++	};
++
+ };
 -- 
 2.7.4
