@@ -1,8 +1,8 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH v2 1/7] ASoC: tegra: Add a TDM configuration
-	callback
-Date: Mon, 23 Sep 2019 17:20:20 +0100
-Message-ID: <20190923162026.14882-2-ben.dooks@codethink.co.uk>
+Subject: [PATCH v2 7/7] ASoC: tegra: take packing settings from
+	the audio cif_config
+Date: Mon, 23 Sep 2019 17:20:26 +0100
+Message-ID: <20190923162026.14882-8-ben.dooks@codethink.co.uk>
 References: <20190923162026.14882-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,72 +19,64 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>, Edward Cragg <edward.cragg@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Edward Cragg <edward.cragg@codethink.co.uk>
+If the CIF is not configured as 16 or 8 bit, then the
+packing for 8/16 bits should not be enabled as the
+hardware only supports 8 or 16 bit packing.
 
-Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
-driver.
-
-Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-[ben.dooks@codethink.co.uk: merge fix for power management]
-[ben.dooks@codethink.co.uk: add review change for fsync of 1 clock]
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- sound/soc/tegra/tegra30_i2s.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ sound/soc/tegra/tegra30_ahub.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index ac6983c6bd72..dfed60adbeba 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -254,6 +254,38 @@ static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 	return 0;
- }
+diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+index 58e05ceb86da..c2f2e29dd32e 100644
+--- a/sound/soc/tegra/tegra30_ahub.c
++++ b/sound/soc/tegra/tegra30_ahub.c
+@@ -96,10 +96,17 @@ int tegra30_ahub_setup_rx_fifo(enum tegra30_ahub_rxcif rxcif,
+ 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
+ 	val = tegra30_apbif_read(reg);
+ 	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK |
+-		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK);
+-	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT) |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
++		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK |
++		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN);
++	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT);
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16 ||
++	    cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_8_4;
++
+ 	tegra30_apbif_write(reg, val);
  
-+/*
-+ * Set up TDM
-+ */
-+static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
-+			       unsigned int tx_mask, unsigned int rx_mask,
-+			       int slots, int slot_width)
-+{
-+	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-+	unsigned int mask, val;
-+
-+	dev_dbg(dai->dev, "%s: txmask=0x%08x rxmask=0x%08x slots=%d width=%d\n",
-+		 __func__, tx_mask, rx_mask, slots, slot_width);
-+
-+	/* Set up slots and tx/rx masks */
-+	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
-+	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
-+	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
-+
-+	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
-+	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
-+	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
-+
-+	pm_runtime_get_sync(dai->dev);
-+	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
-+	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
-+		TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK,
-+		(1 - 1) << TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_SHIFT);
-+	pm_runtime_put(dai->dev);
-+
-+	return 0;
-+}
-+
- static int tegra30_i2s_probe(struct snd_soc_dai *dai)
- {
- 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-@@ -268,6 +300,7 @@ static const struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
- 	.set_fmt	= tegra30_i2s_set_fmt,
- 	.hw_params	= tegra30_i2s_hw_params,
- 	.trigger	= tegra30_i2s_trigger,
-+	.set_tdm_slot	= tegra30_i2s_set_tdm,
- };
+ 	cif_conf->direction = TEGRA30_AUDIOCIF_DIRECTION_RX;
+@@ -203,10 +210,16 @@ int tegra30_ahub_setup_tx_fifo(enum tegra30_ahub_txcif txcif,
+ 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
+ 	val = tegra30_apbif_read(reg);
+ 	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_MASK |
+-		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK);
+-	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT) |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16;
++		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK |
++		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN);
++	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT);
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16 ||
++	    cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_8_4;
+ 	tegra30_apbif_write(reg, val);
  
- static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
+ 	cif_conf->direction = TEGRA30_AUDIOCIF_DIRECTION_TX;
 -- 
 2.23.0
