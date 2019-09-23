@@ -1,7 +1,7 @@
 From: Adrian Hunter <adrian.hunter@intel.com>
 Subject: Re: [PATCH 2/2] mmc: tegra: Implement ->set_dma_mask()
-Date: Mon, 23 Sep 2019 09:39:34 +0300
-Message-ID: <26888c45-35a8-b354-a9da-2c63f07ed524@intel.com>
+Date: Mon, 23 Sep 2019 09:41:20 +0300
+Message-ID: <3532e035-d1b2-265d-1a02-37f10142eb38@intel.com>
 References: <20190920145317.11972-1-thierry.reding@gmail.com>
  <20190920145317.11972-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -12,7 +12,7 @@ In-Reply-To: <20190920145317.11972-3-thierry.reding@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Nicolin Chen <nicoleotsuka@gmail.com>, inux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jon Hunter <jonathanh@nvidia.com>, Nicolin Chen <nicoleotsuka@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 20/09/19 5:53 PM, Thierry Reding wrote:
@@ -57,6 +57,8 @@ On 20/09/19 5:53 PM, Thierry Reding wrote:
 > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 > [treding@nvidia.com: provide more background in commit message]
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+And again with inux->mmc -> linux-mmc
 
 Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
