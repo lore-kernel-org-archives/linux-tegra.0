@@ -1,16 +1,17 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
 Subject: Re: [PATCH v2 1/7] ASoC: tegra: Add a TDM
 	configuration callback
-Date: Tue, 24 Sep 2019 10:22:31 +0100
-Message-ID: <b0574569-8586-87eb-b4ec-6e3445acfc41@nvidia.com>
+Date: Tue, 24 Sep 2019 10:26:54 +0100
+Message-ID: <8d62a19b-4e8d-d933-b364-3357388a6051@codethink.co.uk>
 References: <20190923162026.14882-1-ben.dooks@codethink.co.uk>
  <20190923162026.14882-2-ben.dooks@codethink.co.uk>
+ <b0574569-8586-87eb-b4ec-6e3445acfc41@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190923162026.14882-2-ben.dooks@codethink.co.uk>
-Content-Language: en-US
+In-Reply-To: <b0574569-8586-87eb-b4ec-6e3445acfc41@nvidia.com>
+Content-Language: en-GB
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -20,66 +21,27 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 23/09/2019 17:20, Ben Dooks wrote:
-> From: Edward Cragg <edward.cragg@codethink.co.uk>
+>> +	pm_runtime_get_sync(dai->dev);
+>> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
+>> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
+>> +		TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK,
+>> +		(1 - 1) << TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_SHIFT);
 > 
-> Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
-> driver.
+> So this is just 0, so it would be simpler just to write 0. Feel free to
+> add a comment.
 > 
-> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-> [ben.dooks@codethink.co.uk: merge fix for power management]
-> [ben.dooks@codethink.co.uk: add review change for fsync of 1 clock]
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
->  sound/soc/tegra/tegra30_i2s.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-> index ac6983c6bd72..dfed60adbeba 100644
-> --- a/sound/soc/tegra/tegra30_i2s.c
-> +++ b/sound/soc/tegra/tegra30_i2s.c
-> @@ -254,6 +254,38 @@ static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
->  	return 0;
->  }
->  
-> +/*
-> + * Set up TDM
-> + */
-> +static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
-> +			       unsigned int tx_mask, unsigned int rx_mask,
-> +			       int slots, int slot_width)
-> +{
-> +	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-> +	unsigned int mask, val;
-> +
-> +	dev_dbg(dai->dev, "%s: txmask=0x%08x rxmask=0x%08x slots=%d width=%d\n",
-> +		 __func__, tx_mask, rx_mask, slots, slot_width);
-> +
-> +	/* Set up slots and tx/rx masks */
-> +	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
-> +	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
-> +	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
-> +
-> +	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
-> +	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
-> +	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
-> +
-> +	pm_runtime_get_sync(dai->dev);
-> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
-> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
-> +		TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK,
-> +		(1 - 1) << TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_SHIFT);
+> Cheers
+> Jon
 
-So this is just 0, so it would be simpler just to write 0. Feel free to
-add a comment.
+Ok, will consider setting this to "0". Thanks.
 
-Cheers
-Jon
 
 -- 
-nvpublic
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
