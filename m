@@ -1,47 +1,52 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v2 1/7] ASoC: tegra: Add a TDM
-	configuration callback
-Date: Tue, 24 Sep 2019 10:26:54 +0100
-Message-ID: <8d62a19b-4e8d-d933-b364-3357388a6051@codethink.co.uk>
-References: <20190923162026.14882-1-ben.dooks@codethink.co.uk>
- <20190923162026.14882-2-ben.dooks@codethink.co.uk>
- <b0574569-8586-87eb-b4ec-6e3445acfc41@nvidia.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 39/70] pinctrl: tegra: Fix write barrier placement in pmx_writel
+Date: Tue, 24 Sep 2019 12:45:18 -0400
+Message-ID: <20190924164549.27058-39-sashal@kernel.org>
+References: <20190924164549.27058-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <b0574569-8586-87eb-b4ec-6e3445acfc41@nvidia.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding <treding@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
->> +	pm_runtime_get_sync(dai->dev);
->> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
->> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
->> +		TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK,
->> +		(1 - 1) << TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_SHIFT);
-> 
-> So this is just 0, so it would be simpler just to write 0. Feel free to
-> add a comment.
-> 
-> Cheers
-> Jon
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Ok, will consider setting this to "0". Thanks.
+[ Upstream commit c2cf351eba2ff6002ce8eb178452219d2521e38e ]
 
+pmx_writel uses writel which inserts write barrier before the
+register write.
 
+This patch has fix to replace writel with writel_relaxed followed
+by a readback and memory barrier to ensure write operation is
+completed for successful pinctrl change.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Link: https://lore.kernel.org/r/1565984527-5272-2-git-send-email-skomatineni@nvidia.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index abcfbad94f00e..849c3b34e887c 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -32,7 +32,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+ 
+ static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
+ {
+-	writel(val, pmx->regs[bank] + reg);
++	writel_relaxed(val, pmx->regs[bank] + reg);
++	/* make sure pinmux register write completed */
++	pmx_readl(pmx, bank, reg);
+ }
+ 
+ static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+2.20.1
