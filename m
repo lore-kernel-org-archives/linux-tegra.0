@@ -1,32 +1,59 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
- 4.10
-Date: Tue, 24 Sep 2019 21:45:08 +0200 (CEST)
-Message-ID: <20190924.214508.1949579574079200671.davem@davemloft.net>
-References: <20190920170036.22610-1-thierry.reding@gmail.com>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/11] of: Fix DMA configuration for non-DT
+ masters
+Date: Tue, 24 Sep 2019 16:59:20 -0500
+Message-ID: <CAL_Jsq+v+svTyna7UzQdRVqfNc5Z_bgWzxNRXv7-Wqv3NwDu2g@mail.gmail.com>
+References: <20190924181244.7159-1-nsaenzjulienne@suse.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190920170036.22610-1-thierry.reding@gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: thierry.reding@gmail.com
-Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, f.fainelli@gmail.com, jonathanh@nvidia.com, bbiswas@nvidia.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20190924181244.7159-1-nsaenzjulienne-l3A5Bk7waGM@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Nicolas Saenz Julienne <nsaenzjulienne-l3A5Bk7waGM@public.gmane.org>
+Cc: freedreno <freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <mbrugger-IBi9RG/b67k@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Wahren <wahrenst-hi6Y0CQ0nG0@public.gmane.org>, james.quinlan-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Media Mailing List <linux-media-u79uwXL29TaqPxH82wqD4g@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Fri, 20 Sep 2019 19:00:34 +0200
-
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The DWMAC 4.10 supports the same enhanced addressing mode as later
-> generations. Parse this capability from the hardware feature registers
-> and set the EAME (Enhanced Addressing Mode Enable) bit when necessary.
-
-This looks like an enhancement and/or optimization rather than a bug fix.
-
-Also, you're now writing to the high 32-bits unconditionally, even when
-it will always be zero because of 32-bit addressing.  That looks like
-a step backwards to me.
-
-I'm not applying this.
+T24gVHVlLCBTZXAgMjQsIDIwMTkgYXQgMToxMiBQTSBOaWNvbGFzIFNhZW56IEp1bGllbm5lCjxu
+c2FlbnpqdWxpZW5uZUBzdXNlLmRlPiB3cm90ZToKPgo+IEhpIEFsbCwKPiB0aGlzIHNlcmllcyB0
+cmllcyB0byBhZGRyZXNzIG9uZSBvZiB0aGUgaXNzdWVzIGJsb2NraW5nIHVzIGZyb20KPiB1cHN0
+cmVhbWluZyBCcm9hZGNvbSdzIFNUQiBQQ0llIGNvbnRyb2xsZXJbMV0uIE5hbWVseSwgdGhlIGZh
+Y3QgdGhhdAo+IGRldmljZXMgbm90IHJlcHJlc2VudGVkIGluIERUIHdoaWNoIHNpdCBiZWhpbmQg
+YSBQQ0kgYnVzIGZhaWwgdG8gZ2V0IHRoZQo+IGJ1cycgRE1BIGFkZHJlc3NpbmcgY29uc3RyYWlu
+dHMuCj4KPiBUaGlzIGlzIGR1ZSB0byB0aGUgZmFjdCB0aGF0IG9mX2RtYV9jb25maWd1cmUoKSBh
+c3N1bWVzIGl0J3MgcmVjZWl2aW5nIGEKPiBEVCBub2RlIHJlcHJlc2VudGluZyB0aGUgZGV2aWNl
+IGJlaW5nIGNvbmZpZ3VyZWQsIGFzIG9wcG9zZWQgdG8gdGhlIFBDSWUKPiBicmlkZ2Ugbm9kZSB3
+ZSBjdXJyZW50bHkgcGFzcy4gVGhpcyBjYXVzZXMgdGhlIGNvZGUgdG8gZGlyZWN0bHkganVtcAo+
+IGludG8gUENJJ3MgcGFyZW50IG5vZGUgd2hlbiBjaGVja2luZyBmb3IgJ2RtYS1yYW5nZXMnIGFu
+ZCBtaXNzZXMKPiB3aGF0ZXZlciB3YXMgc2V0IHRoZXJlLgo+Cj4gVG8gYWRkcmVzcyB0aGlzIEkg
+Y3JlYXRlIGEgbmV3IEFQSSBpbiBPRiAtIGluc3BpcmVkIGZyb20gUm9iaW4gTXVycGh5cwo+IG9y
+aWdpbmFsIHByb3Bvc2FsWzJdIC0gd2hpY2ggYWNjZXB0cyBhIGJ1cyBEVCBub2RlIGFzIGl0J3Mg
+aW5wdXQgaW4KPiBvcmRlciB0byBjb25maWd1cmUgYSBkZXZpY2UncyBETUEgY29uc3RyYWludHMu
+IFRoZSBjaGFuZ2VzIGdvIGRlZXAgaW50bwo+IG9mL2FkZHJlc3MuYydzIGltcGxlbWVudGF0aW9u
+LCBhcyBhIGRldmljZSBiZWluZyBoYXZpbmcgYSBEVCBub2RlCj4gYXNzdW1wdGlvbiB3YXMgcHJl
+dHR5IHN0cm9uZy4KPgo+IE9uIHRvcCBvZiB0aGlzIHdvcmssIEkgYWxzbyBjbGVhbmVkIHVwIG9m
+X2RtYV9jb25maWd1cmUoKSByZW1vdmluZyBpdHMKPiByZWR1bmRhbnQgYXJndW1lbnRzIGFuZCBj
+cmVhdGluZyBhbiBhbHRlcm5hdGl2ZSBmdW5jdGlvbiBmb3IgdGhlIHNwZWNpYWwgY2FzZXMKPiBu
+b3QgYXBwbGljYWJsZSB0byBlaXRoZXIgdGhlIGFib3ZlIGNhc2Ugb3IgdGhlIGRlZmF1bHQgdXNh
+Z2UuCj4KPiBJTU8gdGhlIHJlc3VsdGluZyBmdW5jdGlvbnMgYXJlIG1vcmUgZXhwbGljaXQuIFRo
+ZXkgd2lsbCBwcm9iYWJseQo+IHN1cmZhY2Ugc29tZSBoYWNreSB1c2FnZXMgdGhhdCBjYW4gYmUg
+cHJvcGVybHkgZml4ZWQgYXMgSSBzaG93IHdpdGggdGhlCj4gRFQgZml4ZXMgb24gdGhlIExheWVy
+c2NhcGUgcGxhdGZvcm0uCj4KPiBUaGlzIHdhcyBhbHNvIHRlc3RlZCBvbiBhIFJhc3BiZXJyeSBQ
+aSA0IHdpdGggYSBjdXN0b20gUENJZSBkcml2ZXIgYW5kCj4gb24gYSBTZWF0dGxlIEFNRCBib2Fy
+ZC4KCkh1bW0sIEkndmUgYmVlbiB3b3JraW5nIG9uIHRoaXMgaXNzdWUgdG9vLiBMb29rcyBzaW1p
+bGFyIHRob3VnaCB5b3VycwpoYXMgYSBsb3QgbW9yZSBjaHVybiBhbmQgdGhlcmUncyBzb21lIG90
+aGVyIGJ1Z3MgSSd2ZSBmb3VuZC4KCkNhbiB5b3UgdGVzdCBvdXQgdGhpcyBicmFuY2hbMV0uIEkg
+ZG9uJ3QgaGF2ZSBhbnkgaC93IG5lZWRpbmcgdGhpcywKYnV0IHdyb3RlIGEgdW5pdHRlc3QgYW5k
+IHRlc3RlZCB3aXRoIG1vZGlmaWVkIFFFTVUuCgpSb2IKClsxXSBnaXQ6Ly9naXQua2VybmVsLm9y
+Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvcm9iaC9saW51eC5naXQgZG1hLW1hc2tzCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkZyZWVkcmVubyBtYWls
+aW5nIGxpc3QKRnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ZyZWVkcmVubw==
