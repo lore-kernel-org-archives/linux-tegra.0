@@ -1,79 +1,246 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
- 4.10
-Date: Wed, 25 Sep 2019 10:31:13 -0700
-Message-ID: <9f0e2386-c4b1-52b0-6881-e72093eb1b05@gmail.com>
-References: <20190920170036.22610-1-thierry.reding@gmail.com>
- <20190924.214508.1949579574079200671.davem@davemloft.net>
- <BN8PR12MB3266F851B071629898BB775AD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20190925.133353.1445361137776125638.davem@davemloft.net>
- <BN8PR12MB3266A2F1F5F3F18F3A80BFC1D3870@BN8PR12MB3266.namprd12.prod.outlook.com>
- <BN8PR12MB32667F9FDDB2161E9B63C1AFD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 2/2] devfreq: Rename df->previous_freq to df->cur_freq
+Date: Wed, 25 Sep 2019 11:43:14 -0700
+Message-ID: <20190925184314.30251-2-mka@chromium.org>
+References: <20190925184314.30251-1-mka@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <BN8PR12MB32667F9FDDB2161E9B63C1AFD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Jose Abreu <Jose.Abreu@synopsys.com>, David Miller <davem@davemloft.net>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "bbiswas@nvidia.com" <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190925184314.30251-1-mka@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Matthias Kaehlcke <mka@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/25/19 4:46 AM, Jose Abreu wrote:
-> From: Jose Abreu <joabreu@synopsys.com>
-> Date: Sep/25/2019, 12:41:04 (UTC+00:00)
-> 
->> From: David Miller <davem@davemloft.net>
->> Date: Sep/25/2019, 12:33:53 (UTC+00:00)
->>
->>> From: Jose Abreu <Jose.Abreu@synopsys.com>
->>> Date: Wed, 25 Sep 2019 10:44:53 +0000
->>>
->>>> From: David Miller <davem@davemloft.net>
->>>> Date: Sep/24/2019, 20:45:08 (UTC+00:00)
->>>>
->>>>> From: Thierry Reding <thierry.reding@gmail.com>
->>>>> Date: Fri, 20 Sep 2019 19:00:34 +0200
->>>>>
->>>>> Also, you're now writing to the high 32-bits unconditionally, even when
->>>>> it will always be zero because of 32-bit addressing.  That looks like
->>>>> a step backwards to me.
->>>>
->>>> Don't agree. As per previous discussions and as per my IP knowledge, if 
->>>> EAME is not enabled / not supported the register can still be written. 
->>>> This is not fast path and will not impact any remaining operation. Can 
->>>> you please explain what exactly is the concern about this ?
->>>>
->>>> Anyway, this is an important feature for performance so I hope Thierry 
->>>> re-submits this once -next opens and addressing the review comments.
->>>
->>> Perhaps I misunderstand the context, isn't this code writing the
->>> descriptors for every packet?
->>
->> No, its just setting up the base address for the descriptors which is 
->> done in open(). The one that's in the fast path is the tail address, 
->> which is always the lower 32 bits.
-> 
-> Oops, sorry. Indeed it's done in refill operation in function 
-> dwmac4_set_addr() for rx/tx which is fast path so you do have a point 
-> that I was not seeing. Thanks for bringing this up!
-> 
-> Now, the point would be:
-> 	a) Is it faster to have an condition check in dwmac4_set_addr(), or
-> 	b) Always write to descs the upper 32 bits. Which always exists in the 
-> IP and is a standard write to memory.
+The vast majority of code uses df->previous_freq to get the current
+frequency of the devfreq device, not the previous one. Rename the
+struct field to reflect this.
 
-The way I would approach it (as done in bcmgenet.c) is that if the
-platform both has CONFIG_PHYS_ADDR_T_64BIT=y and supports > 32-bits
-addresses, then you write the upper 32-bits otherwise, you do not. Given
-you indicate that the registers are safe to write regardless, then maybe
-just the check on CONFIG_PHYS_ADDR_T_64BIT is enough for your case. The
-rationale in my case is that register writes to on-chip descriptors are
-fairly expensive (~200ns per operation) and get in the hot-path.
+Add a comment to devfreq_update_stats() to make clear that df->cur_freq
+must only be updated after calling this function in the context of a
+frequency transition.
 
-The CONFIG_PHYS_ADDR_T_64BIT check addresses both native 64-bit
-platforms (e.g.: ARM64) and those that do support LPAE (ARM LPAE for
-instance).
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/devfreq/devfreq.c            | 28 ++++++++++++++++------------
+ drivers/devfreq/governor_passive.c   |  6 +++---
+ drivers/devfreq/governor_userspace.c |  2 +-
+ drivers/devfreq/tegra20-devfreq.c    |  2 +-
+ drivers/devfreq/tegra30-devfreq.c    |  2 +-
+ include/linux/devfreq.h              |  4 ++--
+ include/trace/events/devfreq.h       |  2 +-
+ 7 files changed, 25 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index fb4318d59aa9..bf42130bb4ec 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -154,6 +154,10 @@ static int set_freq_table(struct devfreq *devfreq)
+  * devfreq_update_stats() - Update statistics of devfreq behavior
+  * @devfreq:	the devfreq instance
+  * @freq:	the update target frequency
++ *
++ * If the function is called in the context of a frequency transition
++ * it expects df->cur_freq to contain the value *before* the transition.
++ * The field must only be updated after calling devfreq_update_stats().
+  */
+ int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq)
+ {
+@@ -162,11 +166,11 @@ int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq)
+ 
+ 	cur_time = jiffies;
+ 
+-	/* Immediately exit if previous_freq is not initialized yet. */
+-	if (!devfreq->previous_freq)
++	/* Immediately exit if cur_freq is not initialized yet. */
++	if (!devfreq->cur_freq)
+ 		goto out;
+ 
+-	prev_lev = devfreq_get_freq_level(devfreq, devfreq->previous_freq);
++	prev_lev = devfreq_get_freq_level(devfreq, devfreq->cur_freq);
+ 	if (prev_lev < 0) {
+ 		ret = prev_lev;
+ 		goto out;
+@@ -295,7 +299,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+ 	if (devfreq->profile->get_cur_freq)
+ 		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
+ 	else
+-		cur_freq = devfreq->previous_freq;
++		cur_freq = devfreq->cur_freq;
+ 
+ 	freqs.old = cur_freq;
+ 	freqs.new = new_freq;
+@@ -315,7 +319,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+ 		dev_err(&devfreq->dev,
+ 			"Couldn't update frequency transition information.\n");
+ 
+-	devfreq->previous_freq = new_freq;
++	devfreq->cur_freq = new_freq;
+ 
+ 	if (devfreq->suspend_freq)
+ 		devfreq->resume_freq = cur_freq;
+@@ -450,7 +454,7 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
+ 		return;
+ 	}
+ 
+-	devfreq_update_stats(devfreq, devfreq->previous_freq);
++	devfreq_update_stats(devfreq, devfreq->cur_freq);
+ 	devfreq->stop_polling = true;
+ 	mutex_unlock(&devfreq->lock);
+ 	cancel_delayed_work_sync(&devfreq->work);
+@@ -483,7 +487,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+ 
+ 	if (devfreq->profile->get_cur_freq &&
+ 		!devfreq->profile->get_cur_freq(devfreq->dev.parent, &freq))
+-		devfreq->previous_freq = freq;
++		devfreq->cur_freq = freq;
+ 
+ out:
+ 	mutex_unlock(&devfreq->lock);
+@@ -644,7 +648,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 	devfreq->dev.release = devfreq_dev_release;
+ 	devfreq->profile = profile;
+ 	strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
+-	devfreq->previous_freq = profile->initial_freq;
++	devfreq->cur_freq = profile->initial_freq;
+ 	devfreq->last_status.current_frequency = profile->initial_freq;
+ 	devfreq->data = data;
+ 	devfreq->nb.notifier_call = devfreq_notifier_call;
+@@ -1235,14 +1239,14 @@ static ssize_t cur_freq_show(struct device *dev, struct device_attribute *attr,
+ 		!devfreq->profile->get_cur_freq(devfreq->dev.parent, &freq))
+ 		return sprintf(buf, "%lu\n", freq);
+ 
+-	return sprintf(buf, "%lu\n", devfreq->previous_freq);
++	return sprintf(buf, "%lu\n", devfreq->cur_freq);
+ }
+ static DEVICE_ATTR_RO(cur_freq);
+ 
+ static ssize_t target_freq_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+-	return sprintf(buf, "%lu\n", to_devfreq(dev)->previous_freq);
++	return sprintf(buf, "%lu\n", to_devfreq(dev)->cur_freq);
+ }
+ static DEVICE_ATTR_RO(target_freq);
+ 
+@@ -1398,7 +1402,7 @@ static ssize_t trans_stat_show(struct device *dev,
+ 	unsigned int max_state = devfreq->profile->max_state;
+ 
+ 	if (!devfreq->stop_polling &&
+-			devfreq_update_stats(devfreq, devfreq->previous_freq))
++			devfreq_update_stats(devfreq, devfreq->cur_freq))
+ 		return 0;
+ 	if (max_state == 0)
+ 		return sprintf(buf, "Not Supported.\n");
+@@ -1413,7 +1417,7 @@ static ssize_t trans_stat_show(struct device *dev,
+ 
+ 	for (i = 0; i < max_state; i++) {
+ 		if (devfreq->profile->freq_table[i]
+-					== devfreq->previous_freq) {
++					== devfreq->cur_freq) {
+ 			len += sprintf(buf + len, "*");
+ 		} else {
+ 			len += sprintf(buf + len, " ");
+diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
+index 1c746b96d3db..2d818eaceb39 100644
+--- a/drivers/devfreq/governor_passive.c
++++ b/drivers/devfreq/governor_passive.c
+@@ -114,7 +114,7 @@ static int update_devfreq_passive(struct devfreq *devfreq, unsigned long freq)
+ 		dev_err(&devfreq->dev,
+ 			"Couldn't update frequency transition information.\n");
+ 
+-	devfreq->previous_freq = freq;
++	devfreq->cur_freq = freq;
+ 
+ out:
+ 	mutex_unlock(&devfreq->lock);
+@@ -134,11 +134,11 @@ static int devfreq_passive_notifier_call(struct notifier_block *nb,
+ 
+ 	switch (event) {
+ 	case DEVFREQ_PRECHANGE:
+-		if (parent->previous_freq > freq)
++		if (parent->cur_freq > freq)
+ 			update_devfreq_passive(devfreq, freq);
+ 		break;
+ 	case DEVFREQ_POSTCHANGE:
+-		if (parent->previous_freq < freq)
++		if (parent->cur_freq < freq)
+ 			update_devfreq_passive(devfreq, freq);
+ 		break;
+ 	}
+diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
+index af94942fcf95..566b8d1f0c17 100644
+--- a/drivers/devfreq/governor_userspace.c
++++ b/drivers/devfreq/governor_userspace.c
+@@ -26,7 +26,7 @@ static int devfreq_userspace_func(struct devfreq *df, unsigned long *freq)
+ 	if (data->valid)
+ 		*freq = data->user_frequency;
+ 	else
+-		*freq = df->previous_freq; /* No user freq specified yet */
++		*freq = df->cur_freq; /* No user freq specified yet */
+ 
+ 	return 0;
+ }
+diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
+index ff82bac9ee4e..f99bd6557df5 100644
+--- a/drivers/devfreq/tegra20-devfreq.c
++++ b/drivers/devfreq/tegra20-devfreq.c
+@@ -61,7 +61,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+ 	return 0;
+ 
+ restore_min_rate:
+-	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
++	clk_set_min_rate(tegra->emc_clock, devfreq->cur_freq);
+ 
+ 	return err;
+ }
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 536273a811fe..7b3bf7a0b15f 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -474,7 +474,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+ 	return 0;
+ 
+ restore_min_rate:
+-	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
++	clk_set_min_rate(tegra->emc_clock, devfreq->cur_freq);
+ 
+ 	return err;
+ }
+diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+index 2bae9ed3c783..21d0108df4c5 100644
+--- a/include/linux/devfreq.h
++++ b/include/linux/devfreq.h
+@@ -120,7 +120,7 @@ struct devfreq_dev_profile {
+  *		reevaluate operable frequencies. Devfreq users may use
+  *		devfreq.nb to the corresponding register notifier call chain.
+  * @work:	delayed work for load monitoring.
+- * @previous_freq:	previously configured frequency value.
++ * @cur_freq:	the current frequency.
+  * @data:	Private data of the governor. The devfreq framework does not
+  *		touch this.
+  * @min_freq:	Limit minimum frequency requested by user (0: none)
+@@ -156,7 +156,7 @@ struct devfreq {
+ 	struct notifier_block nb;
+ 	struct delayed_work work;
+ 
+-	unsigned long previous_freq;
++	unsigned long cur_freq;
+ 	struct devfreq_dev_status last_status;
+ 
+ 	void *data; /* private data for governors */
+diff --git a/include/trace/events/devfreq.h b/include/trace/events/devfreq.h
+index cf5b8772175d..916cfaed5489 100644
+--- a/include/trace/events/devfreq.h
++++ b/include/trace/events/devfreq.h
+@@ -22,7 +22,7 @@ TRACE_EVENT(devfreq_monitor,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->freq = devfreq->previous_freq;
++		__entry->freq = devfreq->cur_freq;
+ 		__entry->busy_time = devfreq->last_status.busy_time;
+ 		__entry->total_time = devfreq->last_status.total_time;
+ 		__entry->polling_ms = devfreq->profile->polling_ms;
 -- 
-Florian
+2.23.0.444.g18eeb5a265-goog
