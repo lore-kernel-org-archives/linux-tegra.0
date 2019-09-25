@@ -1,49 +1,41 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] drm/tegra: Fix ordering of cleanup code
-Date: Wed, 25 Sep 2019 13:26:59 +0200
-Message-ID: <20190925112659.2048-1-thierry.reding@gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
+ 4.10
+Date: Wed, 25 Sep 2019 13:33:53 +0200 (CEST)
+Message-ID: <20190925.133353.1445361137776125638.davem@davemloft.net>
+References: <20190920170036.22610-1-thierry.reding@gmail.com>
+        <20190924.214508.1949579574079200671.davem@davemloft.net>
+        <BN8PR12MB3266F851B071629898BB775AD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <BN8PR12MB3266F851B071629898BB775AD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
+Sender: netdev-owner@vger.kernel.org
+To: Jose.Abreu@synopsys.com
+Cc: thierry.reding@gmail.com, peppe.cavallaro@st.com, alexandre.torgue@st.com, f.fainelli@gmail.com, jonathanh@nvidia.com, bbiswas@nvidia.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkNvbW1pdCBGaXhlczog
-YjlmOGIwOWNlMjU2ICgiZHJtL3RlZ3JhOiBTZXR1cCBzaGFyZWQgSU9NTVUgZG9tYWluIGFmdGVy
-CmluaXRpYWxpemF0aW9uIikgY2hhbmdlZCB0aGUgaW5pdGlhbGl6YXRpb24gb3JkZXIgb2YgdGhl
-IElPTU1VIHJlbGF0ZWQKYml0cyBidXQgZGlkbid0IHVwZGF0ZSB0aGUgY2xlYW51cCBwYXRoIGFj
-Y29yZGluZ2x5LiBUaGlzIGFzeW1tZXRyeSBjYW4KY2F1c2UgZmFpbHVyZXMgZHVyaW5nIGVycm9y
-IHJlY292ZXJ5LgoKRml4ZXM6IGI5ZjhiMDljZTI1NiAoImRybS90ZWdyYTogU2V0dXAgc2hhcmVk
-IElPTU1VIGRvbWFpbiBhZnRlciBpbml0aWFsaXphdGlvbiIpClNpZ25lZC1vZmYtYnk6IFRoaWVy
-cnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2RybS5jIHwgMTQgKysrKysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMo
-KyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
-bS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCmluZGV4IDZmYjdkNzRmZjU1My4uYmM3
-Y2MzMjE0MGY4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCkBAIC0yMDEsMTkgKzIwMSwxOSBAQCBzdGF0aWMg
-aW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcg
-ZmxhZ3MpCiAJaWYgKHRlZ3JhLT5odWIpCiAJCXRlZ3JhX2Rpc3BsYXlfaHViX2NsZWFudXAodGVn
-cmEtPmh1Yik7CiBkZXZpY2U6Ci0JaG9zdDF4X2RldmljZV9leGl0KGRldmljZSk7Ci1mYmRldjoK
-LQlkcm1fa21zX2hlbHBlcl9wb2xsX2ZpbmkoZHJtKTsKLQl0ZWdyYV9kcm1fZmJfZnJlZShkcm0p
-OwotY29uZmlnOgotCWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Ci0KIAlpZiAodGVncmEt
-PmRvbWFpbikgewogCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7CiAJCWRybV9tbV90
-YWtlZG93bigmdGVncmEtPm1tKTsKIAkJcHV0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQu
-ZG9tYWluKTsKIAkJaW92YV9jYWNoZV9wdXQoKTsKIAl9CisKKwlob3N0MXhfZGV2aWNlX2V4aXQo
-ZGV2aWNlKTsKK2ZiZGV2OgorCWRybV9rbXNfaGVscGVyX3BvbGxfZmluaShkcm0pOworCXRlZ3Jh
-X2RybV9mYl9mcmVlKGRybSk7Citjb25maWc6CisJZHJtX21vZGVfY29uZmlnX2NsZWFudXAoZHJt
-KTsKIGRvbWFpbjoKIAlpZiAodGVncmEtPmRvbWFpbikKIAkJaW9tbXVfZG9tYWluX2ZyZWUodGVn
-cmEtPmRvbWFpbik7Ci0tIAoyLjIzLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbA==
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Date: Wed, 25 Sep 2019 10:44:53 +0000
+
+> From: David Miller <davem@davemloft.net>
+> Date: Sep/24/2019, 20:45:08 (UTC+00:00)
+> 
+>> From: Thierry Reding <thierry.reding@gmail.com>
+>> Date: Fri, 20 Sep 2019 19:00:34 +0200
+>> 
+>> Also, you're now writing to the high 32-bits unconditionally, even when
+>> it will always be zero because of 32-bit addressing.  That looks like
+>> a step backwards to me.
+> 
+> Don't agree. As per previous discussions and as per my IP knowledge, if 
+> EAME is not enabled / not supported the register can still be written. 
+> This is not fast path and will not impact any remaining operation. Can 
+> you please explain what exactly is the concern about this ?
+> 
+> Anyway, this is an important feature for performance so I hope Thierry 
+> re-submits this once -next opens and addressing the review comments.
+
+Perhaps I misunderstand the context, isn't this code writing the
+descriptors for every packet?
