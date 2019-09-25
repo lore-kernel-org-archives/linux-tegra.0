@@ -1,75 +1,49 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
- 4.10
-Date: Wed, 25 Sep 2019 13:17:06 +0200
-Message-ID: <20190925111706.GA762@ulmo>
-References: <20190920170036.22610-1-thierry.reding@gmail.com>
- <20190924.214508.1949579574079200671.davem@davemloft.net>
+Subject: [PATCH] drm/tegra: Fix ordering of cleanup code
+Date: Wed, 25 Sep 2019 13:26:59 +0200
+Message-ID: <20190925112659.2048-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190924.214508.1949579574079200671.davem@davemloft.net>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, f.fainelli@gmail.com, jonathanh@nvidia.com, bbiswas@nvidia.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 24, 2019 at 09:45:08PM +0200, David Miller wrote:
-> From: Thierry Reding <thierry.reding@gmail.com>
-> Date: Fri, 20 Sep 2019 19:00:34 +0200
->=20
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The DWMAC 4.10 supports the same enhanced addressing mode as later
-> > generations. Parse this capability from the hardware feature registers
-> > and set the EAME (Enhanced Addressing Mode Enable) bit when necessary.
->=20
-> This looks like an enhancement and/or optimization rather than a bug fix.
->=20
-> Also, you're now writing to the high 32-bits unconditionally, even when
-> it will always be zero because of 32-bit addressing.  That looks like
-> a step backwards to me.
->=20
-> I'm not applying this.
-
-Sounds like you would prefer v2 of this:
-
-	https://patchwork.ozlabs.org/project/netdev/list/?series=3D129768&state=3D*
-
-While v2 didn't have a cover letter, it did write the upper 32 bits
-conditionally.
-
-Do you want to pick that up instead, or do you want me to send out a v4
-with the cover letter from v3 and the patches from v2?
-
-Thierry
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2LTK4ACgkQ3SOs138+
-s6HijQ/+Pq/zxEk+Hd2Tte3ohElo3VjxVScgrj1Cr48KuVRw4g6upLfx6LUSSDKb
-GPv/gGq8gqiP4AL0F9TJvzntRTpFIMvewGXxbIbppe9J0kO+OkcRGwMV10pBCyjU
-i8FGO4kGvg+Nv6Hk41ZlJ4Clzc7BfBYhEQN8azZu+0EshNbGd0IA37Njl9l37fuP
-EkRQ2hCxz1v/iPlcxHan4k4+oWEJOdTIkd44VywVvdzY8BJQKFNiGtdEdzBt4d2n
-gjFexFnDwsMafjdHYOGVrRnBHmGoaqL+z7uTKdktzXEAExDCBqiZcUUL3pJw5aP5
-3gwRRYWxmeGz3B62AAb+s+mBU7QcM4Q7hyQuVHQ9XSwTX6Qvrdu48BN/e0TdR2cz
-uGxLlLDYjCVeFuUoQ/xoQkMSES6rxiNVpAJnnv4Gqf70OrXXojQBgnQTDPYllBeW
-MzE+DhiLXveadYG0h01UlmFoyuEjlXa2VspByZb5kBZImG3eg3vKumoLKuakB18d
-qiyK2B5QZBKj3ywjwtgRRqH2UGdb8lq8unBaR13hFaFz79+F8yUTDKyfLoFf1DsI
-qRkiuaL+SD7Uat8v5Be5rNpUg8M6j+CphDKLrU+/5NvgPhdpBMYoctjqqI/V/gGH
-aiBW527bCgsbjAvV9HBR5MdrWAspx1H6Cp60ZCEBNWZeoYOQUMQ=
-=iMf9
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkNvbW1pdCBGaXhlczog
+YjlmOGIwOWNlMjU2ICgiZHJtL3RlZ3JhOiBTZXR1cCBzaGFyZWQgSU9NTVUgZG9tYWluIGFmdGVy
+CmluaXRpYWxpemF0aW9uIikgY2hhbmdlZCB0aGUgaW5pdGlhbGl6YXRpb24gb3JkZXIgb2YgdGhl
+IElPTU1VIHJlbGF0ZWQKYml0cyBidXQgZGlkbid0IHVwZGF0ZSB0aGUgY2xlYW51cCBwYXRoIGFj
+Y29yZGluZ2x5LiBUaGlzIGFzeW1tZXRyeSBjYW4KY2F1c2UgZmFpbHVyZXMgZHVyaW5nIGVycm9y
+IHJlY292ZXJ5LgoKRml4ZXM6IGI5ZjhiMDljZTI1NiAoImRybS90ZWdyYTogU2V0dXAgc2hhcmVk
+IElPTU1VIGRvbWFpbiBhZnRlciBpbml0aWFsaXphdGlvbiIpClNpZ25lZC1vZmYtYnk6IFRoaWVy
+cnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2RybS5jIHwgMTQgKysrKysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMo
+KyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
+bS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCmluZGV4IDZmYjdkNzRmZjU1My4uYmM3
+Y2MzMjE0MGY4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCkBAIC0yMDEsMTkgKzIwMSwxOSBAQCBzdGF0aWMg
+aW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcg
+ZmxhZ3MpCiAJaWYgKHRlZ3JhLT5odWIpCiAJCXRlZ3JhX2Rpc3BsYXlfaHViX2NsZWFudXAodGVn
+cmEtPmh1Yik7CiBkZXZpY2U6Ci0JaG9zdDF4X2RldmljZV9leGl0KGRldmljZSk7Ci1mYmRldjoK
+LQlkcm1fa21zX2hlbHBlcl9wb2xsX2ZpbmkoZHJtKTsKLQl0ZWdyYV9kcm1fZmJfZnJlZShkcm0p
+OwotY29uZmlnOgotCWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Ci0KIAlpZiAodGVncmEt
+PmRvbWFpbikgewogCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7CiAJCWRybV9tbV90
+YWtlZG93bigmdGVncmEtPm1tKTsKIAkJcHV0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQu
+ZG9tYWluKTsKIAkJaW92YV9jYWNoZV9wdXQoKTsKIAl9CisKKwlob3N0MXhfZGV2aWNlX2V4aXQo
+ZGV2aWNlKTsKK2ZiZGV2OgorCWRybV9rbXNfaGVscGVyX3BvbGxfZmluaShkcm0pOworCXRlZ3Jh
+X2RybV9mYl9mcmVlKGRybSk7Citjb25maWc6CisJZHJtX21vZGVfY29uZmlnX2NsZWFudXAoZHJt
+KTsKIGRvbWFpbjoKIAlpZiAodGVncmEtPmRvbWFpbikKIAkJaW9tbXVfZG9tYWluX2ZyZWUodGVn
+cmEtPmRvbWFpbik7Ci0tIAoyLjIzLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbA==
