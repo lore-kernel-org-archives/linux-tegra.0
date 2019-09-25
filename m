@@ -1,39 +1,79 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
-Date: Wed, 25 Sep 2019 19:19:16 +0200
-Message-ID: <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
+ 4.10
+Date: Wed, 25 Sep 2019 10:31:13 -0700
+Message-ID: <9f0e2386-c4b1-52b0-6881-e72093eb1b05@gmail.com>
+References: <20190920170036.22610-1-thierry.reding@gmail.com>
+ <20190924.214508.1949579574079200671.davem@davemloft.net>
+ <BN8PR12MB3266F851B071629898BB775AD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <20190925.133353.1445361137776125638.davem@davemloft.net>
+ <BN8PR12MB3266A2F1F5F3F18F3A80BFC1D3870@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <BN8PR12MB32667F9FDDB2161E9B63C1AFD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <BN8PR12MB32667F9FDDB2161E9B63C1AFD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Claudiu Beznea <claudiu.beznea@microchip.com>, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+Sender: netdev-owner@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>, David Miller <davem@davemloft.net>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "bbiswas@nvidia.com" <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-Hi Claudiu,
-
-On 10/09/2019 15:47, Claudiu Beznea wrote:
-> Hi,
+On 9/25/19 4:46 AM, Jose Abreu wrote:
+> From: Jose Abreu <joabreu@synopsys.com>
+> Date: Sep/25/2019, 12:41:04 (UTC+00:00)
 > 
-> This series adds support to permit the selection of clocksource/clockevent
-> via DT.
+>> From: David Miller <davem@davemloft.net>
+>> Date: Sep/25/2019, 12:33:53 (UTC+00:00)
+>>
+>>> From: Jose Abreu <Jose.Abreu@synopsys.com>
+>>> Date: Wed, 25 Sep 2019 10:44:53 +0000
+>>>
+>>>> From: David Miller <davem@davemloft.net>
+>>>> Date: Sep/24/2019, 20:45:08 (UTC+00:00)
+>>>>
+>>>>> From: Thierry Reding <thierry.reding@gmail.com>
+>>>>> Date: Fri, 20 Sep 2019 19:00:34 +0200
+>>>>>
+>>>>> Also, you're now writing to the high 32-bits unconditionally, even when
+>>>>> it will always be zero because of 32-bit addressing.  That looks like
+>>>>> a step backwards to me.
+>>>>
+>>>> Don't agree. As per previous discussions and as per my IP knowledge, if 
+>>>> EAME is not enabled / not supported the register can still be written. 
+>>>> This is not fast path and will not impact any remaining operation. Can 
+>>>> you please explain what exactly is the concern about this ?
+>>>>
+>>>> Anyway, this is an important feature for performance so I hope Thierry 
+>>>> re-submits this once -next opens and addressing the review comments.
+>>>
+>>> Perhaps I misunderstand the context, isn't this code writing the
+>>> descriptors for every packet?
+>>
+>> No, its just setting up the base address for the descriptors which is 
+>> done in open(). The one that's in the fast path is the tail address, 
+>> which is always the lower 32 bits.
+> 
+> Oops, sorry. Indeed it's done in refill operation in function 
+> dwmac4_set_addr() for rx/tx which is fast path so you do have a point 
+> that I was not seeing. Thanks for bringing this up!
+> 
+> Now, the point would be:
+> 	a) Is it faster to have an condition check in dwmac4_set_addr(), or
+> 	b) Always write to descs the upper 32 bits. Which always exists in the 
+> IP and is a standard write to memory.
 
-Thanks for the proposal and taking care of making some progress on this.
+The way I would approach it (as done in bcmgenet.c) is that if the
+platform both has CONFIG_PHYS_ADDR_T_64BIT=y and supports > 32-bits
+addresses, then you write the upper 32-bits otherwise, you do not. Given
+you indicate that the registers are safe to write regardless, then maybe
+just the check on CONFIG_PHYS_ADDR_T_64BIT is enough for your case. The
+rationale in my case is that register writes to on-chip descriptors are
+fairly expensive (~200ns per operation) and get in the hot-path.
 
-I just wanted to let you know I've been traveling but the series is in
-my pipe and I did not forget it. I'll comment it next week.
-
- -- Daniel
-
-
+The CONFIG_PHYS_ADDR_T_64BIT check addresses both native 64-bit
+platforms (e.g.: ARM64) and those that do support LPAE (ARM LPAE for
+instance).
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Florian
