@@ -1,117 +1,39 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH 00/11] of: Fix DMA configuration for non-DT masters
-Date: Wed, 25 Sep 2019 17:52:39 +0100
-Message-ID: <aa4c8d62-7990-e385-2bb1-cec55148f0a8@arm.com>
-References: <20190924181244.7159-1-nsaenzjulienne@suse.de>
- <CAL_Jsq+v+svTyna7UzQdRVqfNc5Z_bgWzxNRXv7-Wqv3NwDu2g@mail.gmail.com>
- <d1a31a2ec8eb2f226b1fb41f6c24ffb47c3bf7c7.camel@suse.de>
- <e404c65b-5a66-6f91-5b38-8bf89a7697b2@arm.com>
- <43fb5fe1de317d65a4edf592f88ea150c6e3b8cc.camel@suse.de>
- <CAL_JsqLhx500cx3YLoC7HL1ux3bBpV+fEA2Qnk7D5RFGgiGzSw@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Wed, 25 Sep 2019 19:19:16 +0200
+Message-ID: <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqLhx500cx3YLoC7HL1ux3bBpV+fEA2Qnk7D5RFGgiGzSw@mail.gmail.com>
-Content-Language: en-GB
+In-Reply-To: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc: devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, etnaviv@lists.freedesktop.org, linux-tegra@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, james.quinlan@broadcom.com, linux-pci@vger.kernel.org, "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine@vger.kernel.org>, xen-devel@lists.xenproject.org, Dan Williams <dan.j.williams@intel.com>, freedreno <freedreno@lists.freedesktop.org>, Frank Rowand <frowand.list@gmail.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lis>
+To: Claudiu Beznea <claudiu.beznea@microchip.com>, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 25/09/2019 17:16, Rob Herring wrote:
-> On Wed, Sep 25, 2019 at 10:30 AM Nicolas Saenz Julienne
-> <nsaenzjulienne@suse.de> wrote:
->>
->> On Wed, 2019-09-25 at 16:09 +0100, Robin Murphy wrote:
->>> On 25/09/2019 15:52, Nicolas Saenz Julienne wrote:
->>>> On Tue, 2019-09-24 at 16:59 -0500, Rob Herring wrote:
->>>>> On Tue, Sep 24, 2019 at 1:12 PM Nicolas Saenz Julienne
->>>>> <nsaenzjulienne@suse.de> wrote:
->>>>>> Hi All,
->>>>>> this series tries to address one of the issues blocking us from
->>>>>> upstreaming Broadcom's STB PCIe controller[1]. Namely, the fact that
->>>>>> devices not represented in DT which sit behind a PCI bus fail to get the
->>>>>> bus' DMA addressing constraints.
->>>>>>
->>>>>> This is due to the fact that of_dma_configure() assumes it's receiving a
->>>>>> DT node representing the device being configured, as opposed to the PCIe
->>>>>> bridge node we currently pass. This causes the code to directly jump
->>>>>> into PCI's parent node when checking for 'dma-ranges' and misses
->>>>>> whatever was set there.
->>>>>>
->>>>>> To address this I create a new API in OF - inspired from Robin Murphys
->>>>>> original proposal[2] - which accepts a bus DT node as it's input in
->>>>>> order to configure a device's DMA constraints. The changes go deep into
->>>>>> of/address.c's implementation, as a device being having a DT node
->>>>>> assumption was pretty strong.
->>>>>>
->>>>>> On top of this work, I also cleaned up of_dma_configure() removing its
->>>>>> redundant arguments and creating an alternative function for the special
->>>>>> cases
->>>>>> not applicable to either the above case or the default usage.
->>>>>>
->>>>>> IMO the resulting functions are more explicit. They will probably
->>>>>> surface some hacky usages that can be properly fixed as I show with the
->>>>>> DT fixes on the Layerscape platform.
->>>>>>
->>>>>> This was also tested on a Raspberry Pi 4 with a custom PCIe driver and
->>>>>> on a Seattle AMD board.
->>>>>
->>>>> Humm, I've been working on this issue too. Looks similar though yours
->>>>> has a lot more churn and there's some other bugs I've found.
->>>>
->>>> That's good news, and yes now that I see it, some stuff on my series is
->>>> overly
->>>> complicated. Specially around of_translate_*().
->>>>
->>>> On top of that, you removed in of_dma_get_range():
->>>>
->>>> -   /*
->>>> -    * At least empty ranges has to be defined for parent node if
->>>> -    * DMA is supported
->>>> -    */
->>>> -   if (!ranges)
->>>> -           break;
->>>>
->>>> Which I assumed was bound to the standard and makes things easier.
->>>>
->>>>> Can you test out this branch[1]. I don't have any h/w needing this,
->>>>> but wrote a unittest and tested with modified QEMU.
->>>>
->>>> I reviewed everything, I did find a minor issue, see the patch attached.
->>>
->>> WRT that patch, the original intent of "force_dma" was purely to
->>> consider a device DMA-capable regardless of the presence of
->>> "dma-ranges". Expecting of_dma_configure() to do anything for a non-OF
->>> device has always been bogus - magic paravirt devices which appear out
->>> of nowhere and expect to be treated as genuine DMA masters are a
->>> separate problem that we haven't really approached yet.
->>
->> I agree it's clearly abusing the function. I have no problem with the behaviour
->> change if it's OK with you.
 
-Thinking about it, you could probably just remove that call from the Xen 
-DRM driver now anyway - since the dma-direct rework, we lost the ability 
-to set dma_dummy_ops by default, and NULL ops now represent what it 
-(presumably) wants.
+Hi Claudiu,
 
->> Robin, have you looked into supporting multiple dma-ranges? It's the next thing
->> we need for BCM STB's PCIe. I'll have a go at it myself if nothing is in the
->> works already.
+On 10/09/2019 15:47, Claudiu Beznea wrote:
+> Hi,
 > 
-> Multiple dma-ranges as far as configuring inbound windows should work
-> already other than the bug when there's any parent translation. But if
-> you mean supporting multiple DMA offsets and masks per device in the
-> DMA API, there's nothing in the works yet.
+> This series adds support to permit the selection of clocksource/clockevent
+> via DT.
 
-There's also the in-between step of making of_dma_get_range() return a 
-size based on all the dma-ranges entries rather than only the first one 
-- otherwise, something like [1] can lead to pretty unworkable default 
-masks. We implemented that when doing acpi_dma_get_range(), it's just 
-that the OF counterpart never caught up.
+Thanks for the proposal and taking care of making some progress on this.
 
-Robin.
+I just wanted to let you know I've been traveling but the series is in
+my pipe and I did not forget it. I'll comment it next week.
 
-[1] 
-http://linux-arm.org/git?p=linux-rm.git;a=commitdiff;h=a2814af56b3486c2985a95540a88d8f9fa3a699f
+ -- Daniel
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
