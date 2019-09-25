@@ -1,143 +1,124 @@
-From: Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 1/2] devfreq: Rename devfreq_update_status() to devfreq_update_stats() and viceversa
-Date: Wed, 25 Sep 2019 11:43:13 -0700
-Message-ID: <20190925184314.30251-1-mka@chromium.org>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/11] of: Fix DMA configuration for non-DT
+ masters
+Date: Wed, 25 Sep 2019 16:33:23 -0500
+Message-ID: <CAL_JsqKKYcHPnA80ZwLY=Sk3e5MqrimedUhWQ5+iuPZXQxYHdA@mail.gmail.com>
+References: <20190924181244.7159-1-nsaenzjulienne@suse.de>
+ <CAL_Jsq+v+svTyna7UzQdRVqfNc5Z_bgWzxNRXv7-Wqv3NwDu2g@mail.gmail.com>
+ <d1a31a2ec8eb2f226b1fb41f6c24ffb47c3bf7c7.camel@suse.de>
+ <e404c65b-5a66-6f91-5b38-8bf89a7697b2@arm.com>
+ <43fb5fe1de317d65a4edf592f88ea150c6e3b8cc.camel@suse.de>
+ <CAL_JsqLhx500cx3YLoC7HL1ux3bBpV+fEA2Qnk7D5RFGgiGzSw@mail.gmail.com>
+ <aa4c8d62-7990-e385-2bb1-cec55148f0a8@arm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <aa4c8d62-7990-e385-2bb1-cec55148f0a8-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <mbrugger-IBi9RG/b67k@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Wahren <wahrenst-hi6Y0CQ0nG0@public.gmane.org>, james.quinlan-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, freedreno <freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Nicolas Saenz Julienne <nsaenzjulienne-l3A5Bk7waGM@public.gmane.org>, Linux Media Mailing List <linux-media@vg>
 List-Id: linux-tegra@vger.kernel.org
 
-devfreq has two functions with very similar names, devfreq_update_status()
-and devfreq_update_stats(). _update_status() currently updates
-frequency transitions statistics, while _update_stats() retrieves the
-device 'status'. The function names are inversed with respect to what
-the functions are actually doing, rename devfreq_update_status() to
-devfreq_update_stats() and viceversa.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-We could also rename the current devfreq_update_stats() to
-devfreq_refresh_status() to make it easier to distinguish it from
-devfreq_update_stats().
----
- drivers/devfreq/devfreq.c                 | 12 ++++++------
- drivers/devfreq/governor.h                |  4 ++--
- drivers/devfreq/governor_passive.c        |  2 +-
- drivers/devfreq/governor_simpleondemand.c |  2 +-
- drivers/devfreq/tegra30-devfreq.c         |  2 +-
- 5 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 446490c9d635..fb4318d59aa9 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -151,11 +151,11 @@ static int set_freq_table(struct devfreq *devfreq)
- }
- 
- /**
-- * devfreq_update_status() - Update statistics of devfreq behavior
-+ * devfreq_update_stats() - Update statistics of devfreq behavior
-  * @devfreq:	the devfreq instance
-  * @freq:	the update target frequency
-  */
--int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
-+int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq)
- {
- 	int lev, prev_lev, ret = 0;
- 	unsigned long cur_time;
-@@ -191,7 +191,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
- 	devfreq->last_stat_updated = cur_time;
- 	return ret;
- }
--EXPORT_SYMBOL(devfreq_update_status);
-+EXPORT_SYMBOL(devfreq_update_stats);
- 
- /**
-  * find_devfreq_governor() - find devfreq governor from name
-@@ -311,7 +311,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
- 	freqs.new = new_freq;
- 	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
- 
--	if (devfreq_update_status(devfreq, new_freq))
-+	if (devfreq_update_stats(devfreq, new_freq))
- 		dev_err(&devfreq->dev,
- 			"Couldn't update frequency transition information.\n");
- 
-@@ -450,7 +450,7 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
- 		return;
- 	}
- 
--	devfreq_update_status(devfreq, devfreq->previous_freq);
-+	devfreq_update_stats(devfreq, devfreq->previous_freq);
- 	devfreq->stop_polling = true;
- 	mutex_unlock(&devfreq->lock);
- 	cancel_delayed_work_sync(&devfreq->work);
-@@ -1398,7 +1398,7 @@ static ssize_t trans_stat_show(struct device *dev,
- 	unsigned int max_state = devfreq->profile->max_state;
- 
- 	if (!devfreq->stop_polling &&
--			devfreq_update_status(devfreq, devfreq->previous_freq))
-+			devfreq_update_stats(devfreq, devfreq->previous_freq))
- 		return 0;
- 	if (max_state == 0)
- 		return sprintf(buf, "Not Supported.\n");
-diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-index bbe5ff9fcecf..e11f447be2b5 100644
---- a/drivers/devfreq/governor.h
-+++ b/drivers/devfreq/governor.h
-@@ -64,9 +64,9 @@ extern void devfreq_interval_update(struct devfreq *devfreq,
- extern int devfreq_add_governor(struct devfreq_governor *governor);
- extern int devfreq_remove_governor(struct devfreq_governor *governor);
- 
--extern int devfreq_update_status(struct devfreq *devfreq, unsigned long freq);
-+extern int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq);
- 
--static inline int devfreq_update_stats(struct devfreq *df)
-+static inline int devfreq_update_status(struct devfreq *df)
- {
- 	return df->profile->get_dev_status(df->dev.parent, &df->last_status);
- }
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index be6eeab9c814..1c746b96d3db 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -110,7 +110,7 @@ static int update_devfreq_passive(struct devfreq *devfreq, unsigned long freq)
- 		goto out;
- 
- 	if (devfreq->profile->freq_table
--		&& (devfreq_update_status(devfreq, freq)))
-+		&& (devfreq_update_stats(devfreq, freq)))
- 		dev_err(&devfreq->dev,
- 			"Couldn't update frequency transition information.\n");
- 
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index 3d809f228619..2cbf26bdcfd6 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -25,7 +25,7 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 	unsigned int dfso_downdifferential = DFSO_DOWNDIFFERENCTIAL;
- 	struct devfreq_simple_ondemand_data *data = df->data;
- 
--	err = devfreq_update_stats(df);
-+	err = devfreq_update_status(df);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index a6ba75f4106d..536273a811fe 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -526,7 +526,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
- 	unsigned int i;
- 	int err;
- 
--	err = devfreq_update_stats(devfreq);
-+	err = devfreq_update_status(devfreq);
- 	if (err)
- 		return err;
- 
--- 
-2.23.0.444.g18eeb5a265-goog
+T24gV2VkLCBTZXAgMjUsIDIwMTkgYXQgMTE6NTIgQU0gUm9iaW4gTXVycGh5IDxyb2Jpbi5tdXJw
+aHlAYXJtLmNvbT4gd3JvdGU6Cj4KPiBPbiAyNS8wOS8yMDE5IDE3OjE2LCBSb2IgSGVycmluZyB3
+cm90ZToKPiA+IE9uIFdlZCwgU2VwIDI1LCAyMDE5IGF0IDEwOjMwIEFNIE5pY29sYXMgU2Flbnog
+SnVsaWVubmUKPiA+IDxuc2FlbnpqdWxpZW5uZUBzdXNlLmRlPiB3cm90ZToKPiA+Pgo+ID4+IE9u
+IFdlZCwgMjAxOS0wOS0yNSBhdCAxNjowOSArMDEwMCwgUm9iaW4gTXVycGh5IHdyb3RlOgo+ID4+
+PiBPbiAyNS8wOS8yMDE5IDE1OjUyLCBOaWNvbGFzIFNhZW56IEp1bGllbm5lIHdyb3RlOgo+ID4+
+Pj4gT24gVHVlLCAyMDE5LTA5LTI0IGF0IDE2OjU5IC0wNTAwLCBSb2IgSGVycmluZyB3cm90ZToK
+PiA+Pj4+PiBPbiBUdWUsIFNlcCAyNCwgMjAxOSBhdCAxOjEyIFBNIE5pY29sYXMgU2FlbnogSnVs
+aWVubmUKPiA+Pj4+PiA8bnNhZW56anVsaWVubmVAc3VzZS5kZT4gd3JvdGU6Cj4gPj4+Pj4+IEhp
+IEFsbCwKPiA+Pj4+Pj4gdGhpcyBzZXJpZXMgdHJpZXMgdG8gYWRkcmVzcyBvbmUgb2YgdGhlIGlz
+c3VlcyBibG9ja2luZyB1cyBmcm9tCj4gPj4+Pj4+IHVwc3RyZWFtaW5nIEJyb2FkY29tJ3MgU1RC
+IFBDSWUgY29udHJvbGxlclsxXS4gTmFtZWx5LCB0aGUgZmFjdCB0aGF0Cj4gPj4+Pj4+IGRldmlj
+ZXMgbm90IHJlcHJlc2VudGVkIGluIERUIHdoaWNoIHNpdCBiZWhpbmQgYSBQQ0kgYnVzIGZhaWwg
+dG8gZ2V0IHRoZQo+ID4+Pj4+PiBidXMnIERNQSBhZGRyZXNzaW5nIGNvbnN0cmFpbnRzLgo+ID4+
+Pj4+Pgo+ID4+Pj4+PiBUaGlzIGlzIGR1ZSB0byB0aGUgZmFjdCB0aGF0IG9mX2RtYV9jb25maWd1
+cmUoKSBhc3N1bWVzIGl0J3MgcmVjZWl2aW5nIGEKPiA+Pj4+Pj4gRFQgbm9kZSByZXByZXNlbnRp
+bmcgdGhlIGRldmljZSBiZWluZyBjb25maWd1cmVkLCBhcyBvcHBvc2VkIHRvIHRoZSBQQ0llCj4g
+Pj4+Pj4+IGJyaWRnZSBub2RlIHdlIGN1cnJlbnRseSBwYXNzLiBUaGlzIGNhdXNlcyB0aGUgY29k
+ZSB0byBkaXJlY3RseSBqdW1wCj4gPj4+Pj4+IGludG8gUENJJ3MgcGFyZW50IG5vZGUgd2hlbiBj
+aGVja2luZyBmb3IgJ2RtYS1yYW5nZXMnIGFuZCBtaXNzZXMKPiA+Pj4+Pj4gd2hhdGV2ZXIgd2Fz
+IHNldCB0aGVyZS4KPiA+Pj4+Pj4KPiA+Pj4+Pj4gVG8gYWRkcmVzcyB0aGlzIEkgY3JlYXRlIGEg
+bmV3IEFQSSBpbiBPRiAtIGluc3BpcmVkIGZyb20gUm9iaW4gTXVycGh5cwo+ID4+Pj4+PiBvcmln
+aW5hbCBwcm9wb3NhbFsyXSAtIHdoaWNoIGFjY2VwdHMgYSBidXMgRFQgbm9kZSBhcyBpdCdzIGlu
+cHV0IGluCj4gPj4+Pj4+IG9yZGVyIHRvIGNvbmZpZ3VyZSBhIGRldmljZSdzIERNQSBjb25zdHJh
+aW50cy4gVGhlIGNoYW5nZXMgZ28gZGVlcCBpbnRvCj4gPj4+Pj4+IG9mL2FkZHJlc3MuYydzIGlt
+cGxlbWVudGF0aW9uLCBhcyBhIGRldmljZSBiZWluZyBoYXZpbmcgYSBEVCBub2RlCj4gPj4+Pj4+
+IGFzc3VtcHRpb24gd2FzIHByZXR0eSBzdHJvbmcuCj4gPj4+Pj4+Cj4gPj4+Pj4+IE9uIHRvcCBv
+ZiB0aGlzIHdvcmssIEkgYWxzbyBjbGVhbmVkIHVwIG9mX2RtYV9jb25maWd1cmUoKSByZW1vdmlu
+ZyBpdHMKPiA+Pj4+Pj4gcmVkdW5kYW50IGFyZ3VtZW50cyBhbmQgY3JlYXRpbmcgYW4gYWx0ZXJu
+YXRpdmUgZnVuY3Rpb24gZm9yIHRoZSBzcGVjaWFsCj4gPj4+Pj4+IGNhc2VzCj4gPj4+Pj4+IG5v
+dCBhcHBsaWNhYmxlIHRvIGVpdGhlciB0aGUgYWJvdmUgY2FzZSBvciB0aGUgZGVmYXVsdCB1c2Fn
+ZS4KPiA+Pj4+Pj4KPiA+Pj4+Pj4gSU1PIHRoZSByZXN1bHRpbmcgZnVuY3Rpb25zIGFyZSBtb3Jl
+IGV4cGxpY2l0LiBUaGV5IHdpbGwgcHJvYmFibHkKPiA+Pj4+Pj4gc3VyZmFjZSBzb21lIGhhY2t5
+IHVzYWdlcyB0aGF0IGNhbiBiZSBwcm9wZXJseSBmaXhlZCBhcyBJIHNob3cgd2l0aCB0aGUKPiA+
+Pj4+Pj4gRFQgZml4ZXMgb24gdGhlIExheWVyc2NhcGUgcGxhdGZvcm0uCj4gPj4+Pj4+Cj4gPj4+
+Pj4+IFRoaXMgd2FzIGFsc28gdGVzdGVkIG9uIGEgUmFzcGJlcnJ5IFBpIDQgd2l0aCBhIGN1c3Rv
+bSBQQ0llIGRyaXZlciBhbmQKPiA+Pj4+Pj4gb24gYSBTZWF0dGxlIEFNRCBib2FyZC4KPiA+Pj4+
+Pgo+ID4+Pj4+IEh1bW0sIEkndmUgYmVlbiB3b3JraW5nIG9uIHRoaXMgaXNzdWUgdG9vLiBMb29r
+cyBzaW1pbGFyIHRob3VnaCB5b3Vycwo+ID4+Pj4+IGhhcyBhIGxvdCBtb3JlIGNodXJuIGFuZCB0
+aGVyZSdzIHNvbWUgb3RoZXIgYnVncyBJJ3ZlIGZvdW5kLgo+ID4+Pj4KPiA+Pj4+IFRoYXQncyBn
+b29kIG5ld3MsIGFuZCB5ZXMgbm93IHRoYXQgSSBzZWUgaXQsIHNvbWUgc3R1ZmYgb24gbXkgc2Vy
+aWVzIGlzCj4gPj4+PiBvdmVybHkKPiA+Pj4+IGNvbXBsaWNhdGVkLiBTcGVjaWFsbHkgYXJvdW5k
+IG9mX3RyYW5zbGF0ZV8qKCkuCj4gPj4+Pgo+ID4+Pj4gT24gdG9wIG9mIHRoYXQsIHlvdSByZW1v
+dmVkIGluIG9mX2RtYV9nZXRfcmFuZ2UoKToKPiA+Pj4+Cj4gPj4+PiAtICAgLyoKPiA+Pj4+IC0g
+ICAgKiBBdCBsZWFzdCBlbXB0eSByYW5nZXMgaGFzIHRvIGJlIGRlZmluZWQgZm9yIHBhcmVudCBu
+b2RlIGlmCj4gPj4+PiAtICAgICogRE1BIGlzIHN1cHBvcnRlZAo+ID4+Pj4gLSAgICAqLwo+ID4+
+Pj4gLSAgIGlmICghcmFuZ2VzKQo+ID4+Pj4gLSAgICAgICAgICAgYnJlYWs7Cj4gPj4+Pgo+ID4+
+Pj4gV2hpY2ggSSBhc3N1bWVkIHdhcyBib3VuZCB0byB0aGUgc3RhbmRhcmQgYW5kIG1ha2VzIHRo
+aW5ncyBlYXNpZXIuCj4gPj4+Pgo+ID4+Pj4+IENhbiB5b3UgdGVzdCBvdXQgdGhpcyBicmFuY2hb
+MV0uIEkgZG9uJ3QgaGF2ZSBhbnkgaC93IG5lZWRpbmcgdGhpcywKPiA+Pj4+PiBidXQgd3JvdGUg
+YSB1bml0dGVzdCBhbmQgdGVzdGVkIHdpdGggbW9kaWZpZWQgUUVNVS4KPiA+Pj4+Cj4gPj4+PiBJ
+IHJldmlld2VkIGV2ZXJ5dGhpbmcsIEkgZGlkIGZpbmQgYSBtaW5vciBpc3N1ZSwgc2VlIHRoZSBw
+YXRjaCBhdHRhY2hlZC4KPiA+Pj4KPiA+Pj4gV1JUIHRoYXQgcGF0Y2gsIHRoZSBvcmlnaW5hbCBp
+bnRlbnQgb2YgImZvcmNlX2RtYSIgd2FzIHB1cmVseSB0bwo+ID4+PiBjb25zaWRlciBhIGRldmlj
+ZSBETUEtY2FwYWJsZSByZWdhcmRsZXNzIG9mIHRoZSBwcmVzZW5jZSBvZgo+ID4+PiAiZG1hLXJh
+bmdlcyIuIEV4cGVjdGluZyBvZl9kbWFfY29uZmlndXJlKCkgdG8gZG8gYW55dGhpbmcgZm9yIGEg
+bm9uLU9GCj4gPj4+IGRldmljZSBoYXMgYWx3YXlzIGJlZW4gYm9ndXMgLSBtYWdpYyBwYXJhdmly
+dCBkZXZpY2VzIHdoaWNoIGFwcGVhciBvdXQKPiA+Pj4gb2Ygbm93aGVyZSBhbmQgZXhwZWN0IHRv
+IGJlIHRyZWF0ZWQgYXMgZ2VudWluZSBETUEgbWFzdGVycyBhcmUgYQo+ID4+PiBzZXBhcmF0ZSBw
+cm9ibGVtIHRoYXQgd2UgaGF2ZW4ndCByZWFsbHkgYXBwcm9hY2hlZCB5ZXQuCj4gPj4KPiA+PiBJ
+IGFncmVlIGl0J3MgY2xlYXJseSBhYnVzaW5nIHRoZSBmdW5jdGlvbi4gSSBoYXZlIG5vIHByb2Js
+ZW0gd2l0aCB0aGUgYmVoYXZpb3VyCj4gPj4gY2hhbmdlIGlmIGl0J3MgT0sgd2l0aCB5b3UuCj4K
+PiBUaGlua2luZyBhYm91dCBpdCwgeW91IGNvdWxkIHByb2JhYmx5IGp1c3QgcmVtb3ZlIHRoYXQg
+Y2FsbCBmcm9tIHRoZSBYZW4KPiBEUk0gZHJpdmVyIG5vdyBhbnl3YXkgLSBzaW5jZSB0aGUgZG1h
+LWRpcmVjdCByZXdvcmssIHdlIGxvc3QgdGhlIGFiaWxpdHkKPiB0byBzZXQgZG1hX2R1bW15X29w
+cyBieSBkZWZhdWx0LCBhbmQgTlVMTCBvcHMgbm93IHJlcHJlc2VudCB3aGF0IGl0Cj4gKHByZXN1
+bWFibHkpIHdhbnRzLgoKTm90IHhlbl9kbWFfb3BzPyBJbiBhbnkgY2FzZSwgSSdsbCBzZW5kIG91
+dCBhIHBhdGNoIGZvciB0aGUgdGhlIFhlbgpmb2xrcyB0byBjb21tZW50IG9uLgoKPiA+PiBSb2Jp
+biwgaGF2ZSB5b3UgbG9va2VkIGludG8gc3VwcG9ydGluZyBtdWx0aXBsZSBkbWEtcmFuZ2VzPyBJ
+dCdzIHRoZSBuZXh0IHRoaW5nCj4gPj4gd2UgbmVlZCBmb3IgQkNNIFNUQidzIFBDSWUuIEknbGwg
+aGF2ZSBhIGdvIGF0IGl0IG15c2VsZiBpZiBub3RoaW5nIGlzIGluIHRoZQo+ID4+IHdvcmtzIGFs
+cmVhZHkuCj4gPgo+ID4gTXVsdGlwbGUgZG1hLXJhbmdlcyBhcyBmYXIgYXMgY29uZmlndXJpbmcg
+aW5ib3VuZCB3aW5kb3dzIHNob3VsZCB3b3JrCj4gPiBhbHJlYWR5IG90aGVyIHRoYW4gdGhlIGJ1
+ZyB3aGVuIHRoZXJlJ3MgYW55IHBhcmVudCB0cmFuc2xhdGlvbi4gQnV0IGlmCj4gPiB5b3UgbWVh
+biBzdXBwb3J0aW5nIG11bHRpcGxlIERNQSBvZmZzZXRzIGFuZCBtYXNrcyBwZXIgZGV2aWNlIGlu
+IHRoZQo+ID4gRE1BIEFQSSwgdGhlcmUncyBub3RoaW5nIGluIHRoZSB3b3JrcyB5ZXQuCj4KPiBU
+aGVyZSdzIGFsc28gdGhlIGluLWJldHdlZW4gc3RlcCBvZiBtYWtpbmcgb2ZfZG1hX2dldF9yYW5n
+ZSgpIHJldHVybiBhCj4gc2l6ZSBiYXNlZCBvbiBhbGwgdGhlIGRtYS1yYW5nZXMgZW50cmllcyBy
+YXRoZXIgdGhhbiBvbmx5IHRoZSBmaXJzdCBvbmUKPiAtIG90aGVyd2lzZSwgc29tZXRoaW5nIGxp
+a2UgWzFdIGNhbiBsZWFkIHRvIHByZXR0eSB1bndvcmthYmxlIGRlZmF1bHQKPiBtYXNrcy4gV2Ug
+aW1wbGVtZW50ZWQgdGhhdCB3aGVuIGRvaW5nIGFjcGlfZG1hX2dldF9yYW5nZSgpLCBpdCdzIGp1
+c3QKPiB0aGF0IHRoZSBPRiBjb3VudGVycGFydCBuZXZlciBjYXVnaHQgdXAuCgpSaWdodC4gSSBz
+dXBwb3NlIHdlIGFzc3VtZSBhbnkgaG9sZXMgaW4gdGhlIHJhbmdlcyBhcmUgYWRkcmVzc2FibGUg
+YnkKdGhlIGRldmljZSBidXQgd29uJ3QgZ2V0IHVzZWQgZm9yIG90aGVyIHJlYXNvbnMgKHN1Y2gg
+YXMgbm8gbWVtb3J5CnRoZXJlKS4gSG93ZXZlciwgdG8gYmUgY29ycmVjdCwgdGhlIHJhbmdlIG9m
+IHRoZSBkbWEgb2Zmc2V0IHBsdXMgbWFzawp3b3VsZCBuZWVkIHRvIGJlIHdpdGhpbiB0aGUgbWlu
+IHN0YXJ0IGFuZCBtYXggZW5kIGFkZHJlc3Nlcy4gSU9XLAp3aGlsZSB3ZSBuZWVkIHRvIHJvdW5k
+IHVwICgweGFfODAwMF8wMDAwIC0gMHgyYzFjXzAwMDApIHRvIHRoZSBuZXh0CnBvd2VyIG9mIDIs
+IHRoZSAnY29ycmVjdCcgdGhpbmcgdG8gZG8gaXMgcm91bmQgZG93bi4KClJvYgoKPiBbMV0KPiBo
+dHRwOi8vbGludXgtYXJtLm9yZy9naXQ/cD1saW51eC1ybS5naXQ7YT1jb21taXRkaWZmO2g9YTI4
+MTRhZjU2YjM0ODZjMjk4NWE5NTU0MGE4OGQ4ZjlmYTNhNjk5ZgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVk
+cmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8=
