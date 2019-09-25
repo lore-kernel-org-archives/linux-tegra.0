@@ -1,24 +1,28 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
  4.10
-Date: Wed, 25 Sep 2019 10:44:53 +0000
-Message-ID: <BN8PR12MB3266F851B071629898BB775AD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
+Date: Wed, 25 Sep 2019 13:17:06 +0200
+Message-ID: <20190925111706.GA762@ulmo>
 References: <20190920170036.22610-1-thierry.reding@gmail.com>
  <20190924.214508.1949579574079200671.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
 Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20190924.214508.1949579574079200671.davem@davemloft.net>
-Content-Language: en-US
 Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "bbiswas@nvidia.com" <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, f.fainelli@gmail.com, jonathanh@nvidia.com, bbiswas@nvidia.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
-Date: Sep/24/2019, 20:45:08 (UTC+00:00)
 
+--YiEDa0DAkWCtVeE4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 24, 2019 at 09:45:08PM +0200, David Miller wrote:
 > From: Thierry Reding <thierry.reding@gmail.com>
 > Date: Fri, 20 Sep 2019 19:00:34 +0200
 >=20
@@ -29,21 +33,43 @@ Date: Sep/24/2019, 20:45:08 (UTC+00:00)
 > > and set the EAME (Enhanced Addressing Mode Enable) bit when necessary.
 >=20
 > This looks like an enhancement and/or optimization rather than a bug fix.
-
-Agree.
-
+>=20
 > Also, you're now writing to the high 32-bits unconditionally, even when
 > it will always be zero because of 32-bit addressing.  That looks like
 > a step backwards to me.
+>=20
+> I'm not applying this.
 
-Don't agree. As per previous discussions and as per my IP knowledge, if=20
-EAME is not enabled / not supported the register can still be written.=20
-This is not fast path and will not impact any remaining operation. Can=20
-you please explain what exactly is the concern about this ?
+Sounds like you would prefer v2 of this:
 
-Anyway, this is an important feature for performance so I hope Thierry=20
-re-submits this once -next opens and addressing the review comments.
+	https://patchwork.ozlabs.org/project/netdev/list/?series=3D129768&state=3D*
 
----
-Thanks,
-Jose Miguel Abreu
+While v2 didn't have a cover letter, it did write the upper 32 bits
+conditionally.
+
+Do you want to pick that up instead, or do you want me to send out a v4
+with the cover letter from v3 and the patches from v2?
+
+Thierry
+
+--YiEDa0DAkWCtVeE4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2LTK4ACgkQ3SOs138+
+s6HijQ/+Pq/zxEk+Hd2Tte3ohElo3VjxVScgrj1Cr48KuVRw4g6upLfx6LUSSDKb
+GPv/gGq8gqiP4AL0F9TJvzntRTpFIMvewGXxbIbppe9J0kO+OkcRGwMV10pBCyjU
+i8FGO4kGvg+Nv6Hk41ZlJ4Clzc7BfBYhEQN8azZu+0EshNbGd0IA37Njl9l37fuP
+EkRQ2hCxz1v/iPlcxHan4k4+oWEJOdTIkd44VywVvdzY8BJQKFNiGtdEdzBt4d2n
+gjFexFnDwsMafjdHYOGVrRnBHmGoaqL+z7uTKdktzXEAExDCBqiZcUUL3pJw5aP5
+3gwRRYWxmeGz3B62AAb+s+mBU7QcM4Q7hyQuVHQ9XSwTX6Qvrdu48BN/e0TdR2cz
+uGxLlLDYjCVeFuUoQ/xoQkMSES6rxiNVpAJnnv4Gqf70OrXXojQBgnQTDPYllBeW
+MzE+DhiLXveadYG0h01UlmFoyuEjlXa2VspByZb5kBZImG3eg3vKumoLKuakB18d
+qiyK2B5QZBKj3ywjwtgRRqH2UGdb8lq8unBaR13hFaFz79+F8yUTDKyfLoFf1DsI
+qRkiuaL+SD7Uat8v5Be5rNpUg8M6j+CphDKLrU+/5NvgPhdpBMYoctjqqI/V/gGH
+aiBW527bCgsbjAvV9HBR5MdrWAspx1H6Cp60ZCEBNWZeoYOQUMQ=
+=iMf9
+-----END PGP SIGNATURE-----
+
+--YiEDa0DAkWCtVeE4--
