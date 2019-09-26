@@ -1,66 +1,28 @@
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: RE: [PATCH v3 0/2] net: stmmac: Enhanced addressing mode for DWMAC
- 4.10
-Date: Thu, 26 Sep 2019 08:22:25 +0000
-Message-ID: <BN8PR12MB32669DDC64861CE11CA66474D3860@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <20190920170036.22610-1-thierry.reding@gmail.com>
- <20190924.214508.1949579574079200671.davem@davemloft.net>
- <BN8PR12MB3266F851B071629898BB775AD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20190925.133353.1445361137776125638.davem@davemloft.net>
- <BN8PR12MB3266A2F1F5F3F18F3A80BFC1D3870@BN8PR12MB3266.namprd12.prod.outlook.com>
- <BN8PR12MB32667F9FDDB2161E9B63C1AFD3870@BN8PR12MB3266.namprd12.prod.outlook.com>
- <9f0e2386-c4b1-52b0-6881-e72093eb1b05@gmail.com>
- <20190925224620.GA8115@mithrandir>
+From: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Thu, 26 Sep 2019 08:42:57 +0000
+Message-ID: <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190925224620.GA8115@mithrandir>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Jose Abreu <Jose.Abreu@synopsys.com>, David Miller <davem@davemloft.net>, "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>, "alexandre.torgue@st.com" <alexandre.torgue@st.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "bbiswas@nvidia.com" <bbiswas@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-ID: <BCA8ECD1111F6948AB05E557D0B1C52E@namprd11.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Sep/25/2019, 23:46:20 (UTC+00:00)
-
-> On Wed, Sep 25, 2019 at 10:31:13AM -0700, Florian Fainelli wrote:
-> > The way I would approach it (as done in bcmgenet.c) is that if the
-> > platform both has CONFIG_PHYS_ADDR_T_64BIT=3Dy and supports > 32-bits
-> > addresses, then you write the upper 32-bits otherwise, you do not. Give=
-n
-> > you indicate that the registers are safe to write regardless, then mayb=
-e
-> > just the check on CONFIG_PHYS_ADDR_T_64BIT is enough for your case. The
-> > rationale in my case is that register writes to on-chip descriptors are
-> > fairly expensive (~200ns per operation) and get in the hot-path.
-> >=20
-> > The CONFIG_PHYS_ADDR_T_64BIT check addresses both native 64-bit
-> > platforms (e.g.: ARM64) and those that do support LPAE (ARM LPAE for
-> > instance).
->=20
-> I think we actually want CONFIG_DMA_ADDR_T_64BIT here because we're
-> dealing with addresses returned from the DMA API here.
->=20
-> I can add an additional condition for the upper 32-bit register writes,
-> something like:
->=20
-> 	if (IS_ENABLED(CONFIG_DMA_ADDR_T_64BIT) && priv->dma_cfg->eame)
-> 		...
->=20
-> The compiler should be able to eliminate that as dead code on platforms
-> that don't support 64-bit DMA addresses, but the code should still be
-> compiler regardless of the setting, thus increasing the compile
-> coverage.
-
-I'm fine with this. Some notes:
-a) Do not try to enable dma_cfg->eame if CONFIG_DMA_ADDR_T_64BIT is not=20
-enabled;
-b) You can even add a likely() around priv->dma_cfg->eame check because=20
-if a given SoC supports 64 bit addressing then its highly probable that=20
-the IP will also support EAME.
-
----
-Thanks,
-Jose Miguel Abreu
+DQoNCk9uIDI1LjA5LjIwMTkgMjA6MTksIERhbmllbCBMZXpjYW5vIHdyb3RlOg0KPiBFeHRlcm5h
+bCBFLU1haWwNCj4gDQo+IA0KPiBIaSBDbGF1ZGl1LA0KPiANCj4gT24gMTAvMDkvMjAxOSAxNTo0
+NywgQ2xhdWRpdSBCZXpuZWEgd3JvdGU6DQo+PiBIaSwNCj4+DQo+PiBUaGlzIHNlcmllcyBhZGRz
+IHN1cHBvcnQgdG8gcGVybWl0IHRoZSBzZWxlY3Rpb24gb2YgY2xvY2tzb3VyY2UvY2xvY2tldmVu
+dA0KPj4gdmlhIERULg0KPiANCj4gVGhhbmtzIGZvciB0aGUgcHJvcG9zYWwgYW5kIHRha2luZyBj
+YXJlIG9mIG1ha2luZyBzb21lIHByb2dyZXNzIG9uIHRoaXMuDQo+IA0KPiBJIGp1c3Qgd2FudGVk
+IHRvIGxldCB5b3Uga25vdyBJJ3ZlIGJlZW4gdHJhdmVsaW5nIGJ1dCB0aGUgc2VyaWVzIGlzIGlu
+DQo+IG15IHBpcGUgYW5kIEkgZGlkIG5vdCBmb3JnZXQgaXQuIEknbGwgY29tbWVudCBpdCBuZXh0
+IHdlZWsuDQoNCkhpIERhbmllbCwNCg0KTm8gcHJvYmxlbS4gVGhhbmsgeW91IGZvciBsZXR0aW5n
+IG1lIGtub3cuDQoNCkNsYXVkaXUNCg0KPiANCj4gIC0tIERhbmllbA0KPiANCj4gDQo=
