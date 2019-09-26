@@ -1,179 +1,120 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Patch V10 0/8] Tegra XUSB gadget driver support
-Date: Thu, 26 Sep 2019 11:04:34 +0200
-Message-ID: <20190926090434.GA3432@ulmo>
-References: <1569227152-3030-1-git-send-email-nkristam@nvidia.com>
+From: Nicolas Saenz Julienne <nsaenzjulienne-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH 00/11] of: Fix DMA configuration for non-DT
+ masters
+Date: Thu, 26 Sep 2019 12:44:53 +0200
+Message-ID: <307b988d0c67fb1c42166eca12742bcfda09d92d.camel@suse.de>
+References: <20190924181244.7159-1-nsaenzjulienne@suse.de>
+ <CAL_Jsq+v+svTyna7UzQdRVqfNc5Z_bgWzxNRXv7-Wqv3NwDu2g@mail.gmail.com>
+ <d1a31a2ec8eb2f226b1fb41f6c24ffb47c3bf7c7.camel@suse.de>
+ <e404c65b-5a66-6f91-5b38-8bf89a7697b2@arm.com>
+ <43fb5fe1de317d65a4edf592f88ea150c6e3b8cc.camel@suse.de>
+ <CAL_JsqLhx500cx3YLoC7HL1ux3bBpV+fEA2Qnk7D5RFGgiGzSw@mail.gmail.com>
+ <aa4c8d62-7990-e385-2bb1-cec55148f0a8@arm.com>
+ <CAL_JsqKKYcHPnA80ZwLY=Sk3e5MqrimedUhWQ5+iuPZXQxYHdA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1569227152-3030-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nagarjuna Kristam <nkristam@nvidia.com>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1418888878=="
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAL_JsqKKYcHPnA80ZwLY=Sk3e5MqrimedUhWQ5+iuPZXQxYHdA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <mbrugger-IBi9RG/b67k@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Wahren <wahrenst-hi6Y0CQ0nG0@public.gmane.org>, james.quinlan-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open
+ list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, freedreno <freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Media Mailing List <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============1418888878==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-spHfnjbbIi+e7UZn+wYh"
+
+
+--=-spHfnjbbIi+e7UZn+wYh
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2019 at 01:55:44PM +0530, Nagarjuna Kristam wrote:
-> Patches 1-3 are phy driver changes to add support for device
-> mode.
-> Patches 4-7 are changes related to XUSB device mode
-> controller driver.
-> Patch 8 is to enable drivers for XUDC support in defconfig
->=20
-> Test Steps(USB 2.0):
-> - Enable "USB Gadget precomposed configurations" in defconfig
-> - Build, flash and boot Jetson TX1
-> - Connect Jetson TX1 and Ubuntu device using USB A to Micro B
->   cable
-> - After boot on Jetson TX1 terminal usb0 network device should be
->   enumerated
-> - Assign static ip to usb0 on Jetson TX1 and corresponding net
->   device on ubuntu
-> - Run ping test and transfer test(used scp) to check data transfer
->   communication
->=20
-> SS mode is verified by enabling Type A port as peripheral
-> ---
-> v10:
-> * Patches 1,2,4,5,7,8 - No changes.
-> * Patch 3 has braces added to one single line else condition.
-> * Patch 6 has update on compatible string as per suggestion from Chunfeng.
-> ---
-> v9:
-> * Patches 1,2,3,4,5 - No changes.
-> * Patch 6 has update on compatible string as per suggestion from Chunfeng.
-> * Patch 7 has comment fixes as suggested by Chunfeng.
-> * Patch 8 has CONFIG_USB_GPIO enabled as module additionally.
-> ---
-> v8:
-> * Patches 1,2,3,4,5,8 - No changes.
-> * Patch 6 has update on compatible string as per change done in [1].
-> * Patch 7 has issue fix, where device mode didnot got enabled after resume
->   from suspend.
-> ---
-> v7:
-> * Patches 1,2,3,4,5,6,8 - No changes.
-> * Patch 7 - Comments from Balbi and Chunfun adrresed.
->   Added COMPILE_TEST in Kconfig and updated dependencies.
-> ---
-> v6:
-> * Patches 1,2,3,7,8 - No changes.
-> * Patch 4,5,6 - Comments from Rob addressed, updated usb connector driver
->   compatibility string.
-> ---
-> v5:
-> * Patches 1-3 - Commit subject updated as per inputs from Thierry.
-> * Patch 4 - Added reg-names used on Tegra210 in the bindings doc
-> * Enabled xudc driver as module instead of part of kernel in patch 8.
-> * Patched 5-8 - No changes.
-> ---
-> v4:
-> * patch 1 - no changes.
-> * corrected companion device search based on inputs from Thierry in patch=
- 2.
-> * removed unneeded dev variable and corrected value read in
->   tegra210_utmi_port_reset function in patch 3.
-> * dt binding doc and dtb files are corrected for alignments.
->   Replaced extcon-usb-gpio with usb role switch.
-> * Added support for USB role switch instead of extcon-usb-gpio and other =
-minor
->   comments as suggested by Chunfeng.
-> * Enabled xudc driver as module instead of part of kernel in patch 8.
-> ---
-> V3:
-> * Rebased patch 1 to top of tree.
-> * Fixed bug in patch 2, where xudc interrupts dont get generated if USB h=
-ost
->   mode fails to probe. Moved fake port detection logic to generic xusb.c.=
- fake
->   usb port data is updated based on soc flag need_fake_usb3_port.
-> * Added extra lines whereever necessary to make code more readable in pat=
-ch 3
->   and 7.
-> * dt binding doc is corrected for typos and extcon references. Also added
->   details for clocks and removed xusb_ references to clock and power-doma=
-in
->   names and accordingly patch 5 is updated.
-> * removed avdd-pll-utmip-supply in patch 6, as its now part of padctl dri=
-ver.
-> * Patch 8 has no changes.
-> ---
-> V2:
-> * Patches 1-3 are new patches in this series, which splits unified featur=
-es
->   patch to speprated features and removes need of port-fake entry in DT.
-> * Patch 4 is re-arragend dt-bindings patch which incorporates previous
->   patch comments to sort DT entries alphabetically, addresses name changes
->   and PM domain details added.
-> * Patch 5-6 are re-arranged DT patches with major changes - sort entries
->   alphabetically, and adds clock names.
-> * Patch 7 is UDC driver tegra XUSB device mode controller with major
->   changes - remove un-used module params, lockinng for device_mode flag,
->   moving un-needed info logs to debug level, making changes feature flag
->   dependent rather than SOC based macros and other error handling in prob=
-e.
-> * Patch 8 has no changes.
->=20
-> Nagarjuna Kristam (8):
->   phy: tegra: xusb: Add XUSB dual mode support on Tegra210
->   phy: tegra: xusb: Add usb3 port fake support on Tegra210
->   phy: tegra: xusb: Add vbus override support on Tegra210
->   dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
->   arm64: tegra: Add xudc node for Tegra210
->   arm64: tegra: Enable xudc on Jetson TX1
->   usb: gadget: Add UDC driver for tegra XUSB device mode controller
->   arm64: defconfig: Enable tegra XUDC support
->=20
->  .../devicetree/bindings/usb/nvidia,tegra-xudc.txt  |  110 +
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   31 +-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   19 +
->  arch/arm64/configs/defconfig                       |    2 +
->  drivers/phy/tegra/xusb-tegra210.c                  |  134 +-
->  drivers/phy/tegra/xusb.c                           |   87 +
->  drivers/phy/tegra/xusb.h                           |    4 +
->  drivers/usb/gadget/udc/Kconfig                     |   11 +
->  drivers/usb/gadget/udc/Makefile                    |    1 +
->  drivers/usb/gadget/udc/tegra-xudc.c                | 3787 ++++++++++++++=
-++++++
->  include/linux/phy/tegra/xusb.h                     |    4 +-
->  11 files changed, 4186 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xu=
-dc.txt
->  create mode 100644 drivers/usb/gadget/udc/tegra-xudc.c
+> > > > Robin, have you looked into supporting multiple dma-ranges? It's th=
+e
+> > > > next thing
+> > > > we need for BCM STB's PCIe. I'll have a go at it myself if nothing =
+is in
+> > > > the
+> > > > works already.
+> > >=20
+> > > Multiple dma-ranges as far as configuring inbound windows should work
+> > > already other than the bug when there's any parent translation. But i=
+f
+> > > you mean supporting multiple DMA offsets and masks per device in the
+> > > DMA API, there's nothing in the works yet.
 
-Hi Felipe, Kishon,
+Sorry, I meant supporting multiple DMA offsets[1]. I think I could still ma=
+ke
+it with a single DMA mask though.
 
-since the DT bindings have been acked by Rob, I plan on applying the DTS
-changes of the above once v5.4-rc1 is release. Do you have any remaining
-concerns about the UDC or PHY patches, respectively?
+> > There's also the in-between step of making of_dma_get_range() return a
+> > size based on all the dma-ranges entries rather than only the first one
+> > - otherwise, something like [1] can lead to pretty unworkable default
+> > masks. We implemented that when doing acpi_dma_get_range(), it's just
+> > that the OF counterpart never caught up.
+>=20
+> Right. I suppose we assume any holes in the ranges are addressable by
+> the device but won't get used for other reasons (such as no memory
+> there). However, to be correct, the range of the dma offset plus mask
+> would need to be within the min start and max end addresses. IOW,
+> while we need to round up (0xa_8000_0000 - 0x2c1c_0000) to the next
+> power of 2, the 'correct' thing to do is round down.
 
-Thierry
+IIUC I also have this issue on my list. The RPi4 PCIe block has an integrat=
+ion
+bug that only allows DMA to the lower 3GB. With dma-ranges of size 0xc000_0=
+000
+you get a 32bit DMA mask wich is not what you need. So far I faked it in th=
+e
+device-tree but I guess it be better to add an extra check in
+of_dma_configure(), decrease the mask and print some kind of warning statin=
+g
+that DMA addressing is suboptimal.
 
---uAKRQypu60I7Lcqm
+Regards,
+Nicolas
+
+[1] https://lkml.org/lkml/2018/9/19/641
+
+
+--=-spHfnjbbIi+e7UZn+wYh
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2Mfx8ACgkQ3SOs138+
-s6HJIxAAsf7S8QBJIk0ZSPmaCeEGHV6AE0bi7bHJecdS4ZZoyyjbsLf1YxblDgBm
-/UQrgTOJcIN82mAZNQBL+dgJK5LLiBdMFYPJPfD5R48dEWtXbmZzIAliFV9MJmJ7
-DfZXuu1tWKq2GqTJrI71AKcv6EfbWG81w/G5IZFoFhg0zDxLe4AkHct5NpnCI0On
-6vFMrxM0Z1qRkEDFP1nSCY1v/ci0Q3gEaNwvdP+H5FYwvjGBvNu501Yjj+xWj0AS
-iT8SX4OkeaN5aWbMHUNViNQP26ul04wePJXLgPYfOGLw5bvG4+cSbbUbk07IfYni
-KBPzoRwHV6r5xb1/fwE/dGrpLRrrA6RU7lKK0GBOoepBKQSIecLBR0dw6B4qSIov
-si/nSwOe3z3dWk8v3mWWjON7pI5My+Trf/oEjq3TCJRTp/OQIVrNz7WA6qcJT+TR
-hyrIweJ6w87eqtT9htRtye1S11KGphM2NklLPflSqymREjt1li5ESSJcUNuagz94
-ThXS8VQRI2ZIFpy7Vor32qdTIY0yzTwePZdRHMTg7osVj/EhucFZTTeDNdKF0UB1
-LxXGgPsOrRrSr7SewHVusPrYJ4GMVU6OmFyQOli48Hd60vlPBm7hbHJGBr6+m2S7
-g08c/clhteBDZYsMHMWTju4c2WWyd5NfxF+9CtP7msj8s8i/jg0=
-=m6Ln
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl2MlqUACgkQlfZmHno8
+x/6+gwgAlzKCB9vN8cCZUfRnnPT+EcYA2/s3oFjf1ar+/e5UsMfCNI5W7cJaKzg9
+w0PGZ5VKk5N0wpkGIpUjOYQ9J5PFZwu5bqsce0zWywlRlYCexKvzpQfkplWi0JuI
+cVAt9Sw5mle+ppW+x9T5UlBcHoCByuQDG9ga44Z7O4jrk/lIp7vK2fmSN3hIEcHV
+gUPxojWighnxCu+5COgwa182Ncfo3tTLw39oV8uiLOzxXxVkprxdxQHakXPoyg1o
+WH0OvR09u1lXZAQ1qKtOxHNgKcrNzpr69VBUL/WYvrSqKdg0EI8QRmkByk5cYgrC
+ztco//83y3fCRh8dEph0BSrKU3/vFA==
+=P2KB
 -----END PGP SIGNATURE-----
 
---uAKRQypu60I7Lcqm--
+--=-spHfnjbbIi+e7UZn+wYh--
+
+
+--===============1418888878==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5v
+IG1haWxpbmcgbGlzdApGcmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5v
+
+--===============1418888878==--
