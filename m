@@ -1,46 +1,76 @@
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v4 06/19] spi: spidev: use new `word_delay` field for spi transfers
-Date: Thu, 26 Sep 2019 13:51:34 +0300
-Message-ID: <20190926105147.7839-7-alexandru.ardelean@analog.com>
-References: <20190926105147.7839-1-alexandru.ardelean@analog.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH 00/11] of: Fix DMA configuration for non-DT masters
+Date: Thu, 26 Sep 2019 12:20:44 +0100
+Message-ID: <c27a51e1-1adf-ae6a-dc67-ae76222a1163@arm.com>
+References: <20190924181244.7159-1-nsaenzjulienne@suse.de>
+ <CAL_Jsq+v+svTyna7UzQdRVqfNc5Z_bgWzxNRXv7-Wqv3NwDu2g@mail.gmail.com>
+ <d1a31a2ec8eb2f226b1fb41f6c24ffb47c3bf7c7.camel@suse.de>
+ <e404c65b-5a66-6f91-5b38-8bf89a7697b2@arm.com>
+ <43fb5fe1de317d65a4edf592f88ea150c6e3b8cc.camel@suse.de>
+ <CAL_JsqLhx500cx3YLoC7HL1ux3bBpV+fEA2Qnk7D5RFGgiGzSw@mail.gmail.com>
+ <aa4c8d62-7990-e385-2bb1-cec55148f0a8@arm.com>
+ <CAL_JsqKKYcHPnA80ZwLY=Sk3e5MqrimedUhWQ5+iuPZXQxYHdA@mail.gmail.com>
+ <307b988d0c67fb1c42166eca12742bcfda09d92d.camel@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190926105147.7839-1-alexandru.ardelean@analog.com>
+In-Reply-To: <307b988d0c67fb1c42166eca12742bcfda09d92d.camel@suse.de>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: bcm-kernel-feedback-list@broadcom.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Cc: jic23@kernel.org, broonie@kernel.org, f.fainelli@gmail.com, linus.walleij@linaro.org, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, Alexandru Ardelean <alexandru.ardelean@analog.com>
+To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Rob Herring <robh+dt@kernel.org>
+Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>, Frank Rowand <frowand.list@gmail.com>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, etnaviv@lists.freedesktop.org, "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, james.quinlan@broadcom.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, xen-devel@lists.xenproject.org, Dan Williams <dan.j.williams@intel.com>, freedreno <freedre>
 List-Id: linux-tegra@vger.kernel.org
 
-The `word_delay` field had it's type changed to `struct spi_delay`.
-This allows users to specify nano-second or clock-cycle delays (if needed).
+On 2019-09-26 11:44 am, Nicolas Saenz Julienne wrote:
+>>>>> Robin, have you looked into supporting multiple dma-ranges? It's the
+>>>>> next thing
+>>>>> we need for BCM STB's PCIe. I'll have a go at it myself if nothing is in
+>>>>> the
+>>>>> works already.
+>>>>
+>>>> Multiple dma-ranges as far as configuring inbound windows should work
+>>>> already other than the bug when there's any parent translation. But if
+>>>> you mean supporting multiple DMA offsets and masks per device in the
+>>>> DMA API, there's nothing in the works yet.
+> 
+> Sorry, I meant supporting multiple DMA offsets[1]. I think I could still make
+> it with a single DMA mask though.
 
-Converting to use `word_delay` is straightforward: it's just assigning the
-value to `word_delay.value` and hard-coding the `word_delay.unit` to
-`SPI_DELAY_UNIT_USECS`
+The main problem for supporting that case in general is the disgusting 
+carving up of the physical memory map you may have to do to guarantee 
+that a single buffer allocation cannot ever span two windows with 
+different offsets. I don't think we ever reached a conclusion on whether 
+that was even achievable in practice.
 
-This keeps the uapi for spidev un-changed. Changing it can be part of
-another changeset and discussion.
+>>> There's also the in-between step of making of_dma_get_range() return a
+>>> size based on all the dma-ranges entries rather than only the first one
+>>> - otherwise, something like [1] can lead to pretty unworkable default
+>>> masks. We implemented that when doing acpi_dma_get_range(), it's just
+>>> that the OF counterpart never caught up.
+>>
+>> Right. I suppose we assume any holes in the ranges are addressable by
+>> the device but won't get used for other reasons (such as no memory
+>> there). However, to be correct, the range of the dma offset plus mask
+>> would need to be within the min start and max end addresses. IOW,
+>> while we need to round up (0xa_8000_0000 - 0x2c1c_0000) to the next
+>> power of 2, the 'correct' thing to do is round down.
+> 
+> IIUC I also have this issue on my list. The RPi4 PCIe block has an integration
+> bug that only allows DMA to the lower 3GB. With dma-ranges of size 0xc000_0000
+> you get a 32bit DMA mask wich is not what you need. So far I faked it in the
+> device-tree but I guess it be better to add an extra check in
+> of_dma_configure(), decrease the mask and print some kind of warning stating
+> that DMA addressing is suboptimal.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/spi/spidev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yeah, there's just no way for masks to describe that the device can 
+drive all the individual bits, just not in certain combinations :(
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 255786f2e844..495319c2fa11 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -267,7 +267,8 @@ static int spidev_message(struct spidev_data *spidev,
- 		k_tmp->bits_per_word = u_tmp->bits_per_word;
- 		k_tmp->delay_usecs = u_tmp->delay_usecs;
- 		k_tmp->speed_hz = u_tmp->speed_hz;
--		k_tmp->word_delay_usecs = u_tmp->word_delay_usecs;
-+		k_tmp->word_delay.value = u_tmp->word_delay_usecs;
-+		k_tmp->word_delay.unit = SPI_DELAY_UNIT_USECS;
- 		if (!k_tmp->speed_hz)
- 			k_tmp->speed_hz = spidev->speed_hz;
- #ifdef VERBOSE
--- 
-2.20.1
+The plan I have sketched out there is to merge dma_pfn_offset and 
+bus_dma_mask into a "DMA range" descriptor, so we can then hang one or 
+more of those off a device to properly cope with all these weird 
+interconnects. Conceptually it feels pretty straightforward; I think 
+most of the challenge is in implementing it efficiently. Plus there's 
+the question of whether it could also subsume the dma_mask as well.
+
+Robin.
