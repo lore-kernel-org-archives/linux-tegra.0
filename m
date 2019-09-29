@@ -1,198 +1,109 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 35/49] i2c: tegra: Move suspend handling to NOIRQ phase
-Date: Sun, 29 Sep 2019 13:30:35 -0400
-Message-ID: <20190929173053.8400-35-sashal@kernel.org>
-References: <20190929173053.8400-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 06/33] PCI: tegra: Fix OF node reference leak
+Date: Sun, 29 Sep 2019 13:33:54 -0400
+Message-ID: <20190929173424.9361-6-sashal@kernel.org>
+References: <20190929173424.9361-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190929173053.8400-1-sashal@kernel.org>
+In-Reply-To: <20190929173424.9361-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Nishka Dasgupta <nishkadg.linux@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Nishka Dasgupta <nishkadg.linux@gmail.com>
 
-[ Upstream commit 8ebf15e9c869e764b3aab4928938ee68c0e2bd6d ]
+[ Upstream commit 9e38e690ace3e7a22a81fc02652fc101efb340cf ]
 
-Commit acc8abcb2a9c ("i2c: tegra: Add suspend-resume support") added
-suspend support for the Tegra I2C driver and following this change on
-Tegra30 the following WARNING is seen on entering suspend ...
+Each iteration of for_each_child_of_node() executes of_node_put() on the
+previous node, but in some return paths in the middle of the loop
+of_node_put() is missing thus causing a reference leak.
 
- WARNING: CPU: 2 PID: 689 at /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/i2c/i2c-core.h:54 __i2c_transfer+0x35c/0x70c
- i2c i2c-4: Transfer while suspended
- Modules linked in: brcmfmac brcmutil
- CPU: 2 PID: 689 Comm: rtcwake Not tainted 5.3.0-rc7-g089cf7f6ecb2 #1
- Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
- [<c0112264>] (unwind_backtrace) from [<c010ca94>] (show_stack+0x10/0x14)
- [<c010ca94>] (show_stack) from [<c0a77024>] (dump_stack+0xb4/0xc8)
- [<c0a77024>] (dump_stack) from [<c0124198>] (__warn+0xe0/0xf8)
- [<c0124198>] (__warn) from [<c01241f8>] (warn_slowpath_fmt+0x48/0x6c)
- [<c01241f8>] (warn_slowpath_fmt) from [<c06f6c40>] (__i2c_transfer+0x35c/0x70c)
- [<c06f6c40>] (__i2c_transfer) from [<c06f7048>] (i2c_transfer+0x58/0xf4)
- [<c06f7048>] (i2c_transfer) from [<c06f7130>] (i2c_transfer_buffer_flags+0x4c/0x70)
- [<c06f7130>] (i2c_transfer_buffer_flags) from [<c05bee78>] (regmap_i2c_write+0x14/0x30)
- [<c05bee78>] (regmap_i2c_write) from [<c05b9cac>] (_regmap_raw_write_impl+0x35c/0x868)
- [<c05b9cac>] (_regmap_raw_write_impl) from [<c05b984c>] (_regmap_update_bits+0xe4/0xec)
- [<c05b984c>] (_regmap_update_bits) from [<c05bad04>] (regmap_update_bits_base+0x50/0x74)
- [<c05bad04>] (regmap_update_bits_base) from [<c04d453c>] (regulator_disable_regmap+0x44/0x54)
- [<c04d453c>] (regulator_disable_regmap) from [<c04cf9d4>] (_regulator_do_disable+0xf8/0x268)
- [<c04cf9d4>] (_regulator_do_disable) from [<c04d1694>] (_regulator_disable+0xf4/0x19c)
- [<c04d1694>] (_regulator_disable) from [<c04d1770>] (regulator_disable+0x34/0x64)
- [<c04d1770>] (regulator_disable) from [<c04d2310>] (regulator_bulk_disable+0x28/0xb4)
- [<c04d2310>] (regulator_bulk_disable) from [<c0495cd4>] (tegra_pcie_power_off+0x64/0xa8)
- [<c0495cd4>] (tegra_pcie_power_off) from [<c0495f74>] (tegra_pcie_pm_suspend+0x25c/0x3f4)
- [<c0495f74>] (tegra_pcie_pm_suspend) from [<c05af48c>] (dpm_run_callback+0x38/0x1d4)
- [<c05af48c>] (dpm_run_callback) from [<c05afe30>] (__device_suspend_noirq+0xc0/0x2b8)
- [<c05afe30>] (__device_suspend_noirq) from [<c05b1c24>] (dpm_noirq_suspend_devices+0x100/0x37c)
- [<c05b1c24>] (dpm_noirq_suspend_devices) from [<c05b1ebc>] (dpm_suspend_noirq+0x1c/0x48)
- [<c05b1ebc>] (dpm_suspend_noirq) from [<c017d2c0>] (suspend_devices_and_enter+0x1d0/0xa00)
- [<c017d2c0>] (suspend_devices_and_enter) from [<c017dd10>] (pm_suspend+0x220/0x74c)
- [<c017dd10>] (pm_suspend) from [<c017c2c8>] (state_store+0x6c/0xc8)
- [<c017c2c8>] (state_store) from [<c02ef398>] (kernfs_fop_write+0xe8/0x1c4)
- [<c02ef398>] (kernfs_fop_write) from [<c0271e38>] (__vfs_write+0x2c/0x1c4)
- [<c0271e38>] (__vfs_write) from [<c02748dc>] (vfs_write+0xa4/0x184)
- [<c02748dc>] (vfs_write) from [<c0274b7c>] (ksys_write+0x9c/0xdc)
- [<c0274b7c>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
- Exception stack(0xe9f21fa8 to 0xe9f21ff0)
- 1fa0:                   0000006c 004b2438 00000004 004b2438 00000004 00000000
- 1fc0: 0000006c 004b2438 004b1228 00000004 00000004 00000004 0049e78c 004b1228
- 1fe0: 00000004 be9809b8 b6f0bc0b b6e96206
+Hence stash these mid-loop return values in a variable 'err' and add a
+new label err_node_put which executes of_node_put() on the previous node
+and returns 'err' on failure.
 
-The problem is that the Tegra PCIe driver indirectly uses I2C for
-controlling some regulators and the I2C driver is now being suspended
-before the PCIe driver causing the PCIe suspend to fail. The Tegra PCIe
-driver is suspended during the NOIRQ phase and this cannot be changed
-due to other dependencies. Therefore, we also need to move the suspend
-handling for the Tegra I2C driver to the NOIRQ phase as well.
+Change mid-loop return statements to point to jump to this label to
+fix the reference leak.
 
-In order to move the I2C suspend handling to the NOIRQ phase we also
-need to avoid calling pm_runtime_get/put() because per commit
-1e2ef05bb8cf ("PM: Limit race conditions between runtime PM and system
-sleep (v2)") these cannot be called early in resume. The function
-tegra_i2c_init(), called during resume, calls pm_runtime_get/put() and
-so move these calls outside of tegra_i2c_init(), so this function can
-be used during the NOIRQ resume phase.
+Issue found with Coccinelle.
 
-Fixes: acc8abcb2a9c ("i2c: tegra: Add suspend-resume support")
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+[lorenzo.pieralisi@arm.com: rewrote commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 40 +++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 18 deletions(-)
+ drivers/pci/controller/pci-tegra.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 9fcb13beeb8f4..7a3291d91a5ee 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -713,12 +713,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
- 	u32 tsu_thd;
- 	u8 tlow, thigh;
- 
--	err = pm_runtime_get_sync(i2c_dev->dev);
--	if (err < 0) {
--		dev_err(i2c_dev->dev, "runtime resume failed %d\n", err);
--		return err;
--	}
--
- 	reset_control_assert(i2c_dev->rst);
- 	udelay(2);
- 	reset_control_deassert(i2c_dev->rst);
-@@ -772,7 +766,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
- 		if (err) {
- 			dev_err(i2c_dev->dev,
- 				"failed changing clock rate: %d\n", err);
--			goto err;
-+			return err;
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index f4f53d092e005..976eaa9a9f266 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -1975,14 +1975,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 		err = of_pci_get_devfn(port);
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to parse address: %d\n", err);
+-			return err;
++			goto err_node_put;
  		}
- 	}
  
-@@ -787,23 +781,21 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
+ 		index = PCI_SLOT(err);
  
- 	err = tegra_i2c_flush_fifos(i2c_dev);
- 	if (err)
--		goto err;
-+		return err;
+ 		if (index < 1 || index > soc->num_ports) {
+ 			dev_err(dev, "invalid port number: %d\n", index);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto err_node_put;
+ 		}
  
- 	if (i2c_dev->is_multimaster_mode && i2c_dev->hw->has_slcg_override_reg)
- 		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
+ 		index--;
+@@ -1991,12 +1992,13 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to parse # of lanes: %d\n",
+ 				err);
+-			return err;
++			goto err_node_put;
+ 		}
  
- 	err = tegra_i2c_wait_for_config_load(i2c_dev);
- 	if (err)
--		goto err;
-+		return err;
+ 		if (value > 16) {
+ 			dev_err(dev, "invalid # of lanes: %u\n", value);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto err_node_put;
+ 		}
  
- 	if (i2c_dev->irq_disabled) {
- 		i2c_dev->irq_disabled = false;
- 		enable_irq(i2c_dev->irq);
- 	}
+ 		lanes |= value << (index << 3);
+@@ -2010,13 +2012,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 		lane += value;
  
--err:
--	pm_runtime_put(i2c_dev->dev);
--	return err;
-+	return 0;
- }
+ 		rp = devm_kzalloc(dev, sizeof(*rp), GFP_KERNEL);
+-		if (!rp)
+-			return -ENOMEM;
++		if (!rp) {
++			err = -ENOMEM;
++			goto err_node_put;
++		}
  
- static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
-@@ -1616,12 +1608,14 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	}
+ 		err = of_address_to_resource(port, 0, &rp->regs);
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to parse address: %d\n", err);
+-			return err;
++			goto err_node_put;
+ 		}
  
- 	pm_runtime_enable(&pdev->dev);
--	if (!pm_runtime_enabled(&pdev->dev)) {
-+	if (!pm_runtime_enabled(&pdev->dev))
- 		ret = tegra_i2c_runtime_resume(&pdev->dev);
--		if (ret < 0) {
--			dev_err(&pdev->dev, "runtime resume failed\n");
--			goto unprepare_div_clk;
--		}
-+	else
-+		ret = pm_runtime_get_sync(i2c_dev->dev);
-+
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "runtime resume failed\n");
-+		goto unprepare_div_clk;
- 	}
- 
- 	if (i2c_dev->is_multimaster_mode) {
-@@ -1666,6 +1660,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto release_dma;
- 
-+	pm_runtime_put(&pdev->dev);
-+
- 	return 0;
- 
- release_dma:
-@@ -1726,17 +1722,25 @@ static int tegra_i2c_resume(struct device *dev)
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 	int err;
- 
-+	err = tegra_i2c_runtime_resume(dev);
-+	if (err)
-+		return err;
-+
- 	err = tegra_i2c_init(i2c_dev, false);
- 	if (err)
+ 		INIT_LIST_HEAD(&rp->list);
+@@ -2043,6 +2047,10 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
  		return err;
  
-+	err = tegra_i2c_runtime_suspend(dev);
-+	if (err)
-+		return err;
-+
- 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
- 
  	return 0;
++
++err_node_put:
++	of_node_put(port);
++	return err;
  }
  
- static const struct dev_pm_ops tegra_i2c_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
- 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
- 			   NULL)
- };
+ /*
 -- 
 2.20.1
