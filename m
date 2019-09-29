@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 14/14] ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-Date: Sun, 29 Sep 2019 20:59:52 +0300
-Message-ID: <20190929175952.22690-15-digetx@gmail.com>
+Subject: [PATCH v5 09/14] clk: tegra: Add missing stubs for the case of !CONFIG_PM_SLEEP
+Date: Sun, 29 Sep 2019 20:59:47 +0300
+Message-ID: <20190929175952.22690-10-digetx@gmail.com>
 References: <20190929175952.22690-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,25 +12,38 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
-it is now a proper platform driver.
+The new CPUIDLE driver uses the Tegra's CLK API and that driver won't
+strictly depend on CONFIG_PM_SLEEP, hence add the required stubs in
+order to allow compiling of the new driver with the CONFIG_PM_SLEEP=n.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/clk/tegra.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 8f5c6a5b444c..9a2f11a780a8 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,6 +25,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
-+CONFIG_ARM_TEGRA_CPUIDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index b8aef62cc3f5..cf0f2cb5e109 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -108,6 +108,19 @@ static inline void tegra_cpu_clock_resume(void)
+ 
+ 	tegra_cpu_car_ops->resume();
+ }
++#else
++static inline bool tegra_cpu_rail_off_ready(void)
++{
++	return false;
++}
++
++static inline void tegra_cpu_clock_suspend(void)
++{
++}
++
++static inline void tegra_cpu_clock_resume(void)
++{
++}
+ #endif
+ 
+ extern void tegra210_xusb_pll_hw_control_enable(void);
 -- 
 2.23.0
