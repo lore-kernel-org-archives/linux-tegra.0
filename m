@@ -1,136 +1,37 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 00/14] Consolidate and improve NVIDIA Tegra CPUIDLE driver(s)
-Date: Sun, 29 Sep 2019 20:59:38 +0300
-Message-ID: <20190929175952.22690-1-digetx@gmail.com>
+Subject: [PATCH v5 11/14] cpuidle: tegra: Support CPU cluster power-down state on Tegra30
+Date: Sun, 29 Sep 2019 20:59:49 +0300
+Message-ID: <20190929175952.22690-12-digetx@gmail.com>
+References: <20190929175952.22690-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190929175952.22690-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+The new Tegra CPU Idle driver now has a unified code path for the coupled
+LP2/CC6 state, this allows to enable the deepest idling state on Tegra30
+SoC where the whole CPU cluster is power-gated.
 
-This series does the following:
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/cpuidle/cpuidle-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-  1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
-     into common drivers/cpuidle/ directory.
-
-  2. Enables CPU cluster power-down idling state on Tegra30.
-
-In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
-and of the Tegra's arch code in general. Please review, thanks!
-
-Changelog:
-
-v5: - Rebased on a recent linux-next, fixed one minor conflict in Kconfig.
-
-    - Improved commit's message of the "Support CPU cluster power-down state
-      on Tegra30" patch.
-
-    - The "Support CPU cluster power-down state on Tegra30" patch is also
-      got split and now there is additional "Make outer_disable() open-coded"
-      patch.
-
-    - Made minor cosmetic changes to the "Introduce unified driver for
-      NVIDIA Tegra SoCs" patch by improving error message and renaming
-      one variable.
-
-v4: - Fixed compilation with !CONFIG_CACHE_L2X0 (and tested that it still
-      works).
-
-    - Replaced ktime_compare() with ktime_before() in the new driver,
-      for consistency.
-
-v3: - Addressed review comments that were made by Jon Hunter to v2 by
-      splitting patches into smaller (and simpler) chunks, better
-      documenting changes in the commit messages and using proper error
-      codes in the code.
-
-      Warnings are replaced with a useful error messages in the code of
-      "Introduce unified driver for NVIDIA Tegra SoCs" patch.
-
-      Secondary CPUs parking timeout increased to 100ms because I found
-      that it actually may happen to take more than 1ms if CPU is running
-      on a *very* low frequency.
-
-      Added diagnostic messages that are reporting Flow Controller state
-      when CPU parking fails.
-
-      Further polished cpuidle driver's code.
-
-      The coupled state entering is now aborted if there is a pending SGI
-      (Software Generated Interrupt) because it will be lost after GIC's
-      power-cycling. Like it was done by the old Tegra20 CPUIDLE driver.
-
-v2: - Added patches to enable the new cpuidle driver in the defconfigs:
-
-        ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
-        ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-
-    - Dropped patches that removed CPUIDLE_FLAG_TIMER_STOP from the idling
-      states because that flag actually doesn't have any negative effects,
-      but still is correct for the case of a local CPU timer on older Tegra
-      SoCs:
-
-        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from Tegra114/124 idle-state
-        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from all states
-
-    - The "Add unified driver for NVIDIA Tegra SoCs" patch got more polish.
-      Tegra30 and Terga114 states are now squashed into a single common C7
-      state (following Parker TRM terminology, see 17.2.2.2 Power Management
-      States), more comments added, etc minor changes.
-
-Dmitry Osipenko (14):
-  ARM: tegra: Remove cpuidle drivers to replace them with a new driver
-  ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
-  ARM: tegra: Propagate error from tegra_idle_lp2_last()
-  ARM: tegra: Compile sleep-tegra20/30.S unconditionally
-  ARM: tegra: Expose PM functions required for new cpuidle driver
-  ARM: tegra: Rename some of the newly exposed PM functions
-  ARM: tegra: Add tegra_pm_park_secondary_cpu()
-  ARM: tegra: Make outer_disable() open-coded
-  clk: tegra: Add missing stubs for the case of !CONFIG_PM_SLEEP
-  cpuidle: Introduce unified driver for NVIDIA Tegra SoCs
-  cpuidle: tegra: Support CPU cluster power-down state on Tegra30
-  ARM: tegra: Create simple platform device for cpuidle driver
-  ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
-  ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-
- arch/arm/configs/multi_v7_defconfig           |   1 +
- arch/arm/configs/tegra_defconfig              |   1 +
- arch/arm/mach-tegra/Makefile                  |  23 +-
- arch/arm/mach-tegra/cpuidle-tegra114.c        |  89 -----
- arch/arm/mach-tegra/cpuidle-tegra20.c         | 212 -----------
- arch/arm/mach-tegra/cpuidle-tegra30.c         | 132 -------
- arch/arm/mach-tegra/cpuidle.c                 |  50 ---
- arch/arm/mach-tegra/cpuidle.h                 |  21 --
- arch/arm/mach-tegra/irq.c                     |   3 +-
- arch/arm/mach-tegra/pm.c                      |  50 +--
- arch/arm/mach-tegra/pm.h                      |   4 -
- arch/arm/mach-tegra/reset-handler.S           |  11 -
- arch/arm/mach-tegra/reset.h                   |   9 +-
- arch/arm/mach-tegra/sleep-tegra20.S           | 170 ---------
- arch/arm/mach-tegra/sleep-tegra30.S           |   6 +-
- arch/arm/mach-tegra/sleep.h                   |  15 -
- arch/arm/mach-tegra/tegra.c                   |   7 +-
- drivers/cpuidle/Kconfig.arm                   |   8 +
- drivers/cpuidle/Makefile                      |   1 +
- drivers/cpuidle/cpuidle-tegra.c               | 349 ++++++++++++++++++
- drivers/soc/tegra/Kconfig                     |   1 -
- include/linux/clk/tegra.h                     |  13 +
- include/soc/tegra/cpuidle.h                   |   2 +-
- .../mach-tegra => include/soc/tegra}/irq.h    |   8 +-
- include/soc/tegra/pm.h                        |  31 ++
- 25 files changed, 453 insertions(+), 764 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle.h
- create mode 100644 drivers/cpuidle/cpuidle-tegra.c
- rename {arch/arm/mach-tegra => include/soc/tegra}/irq.h (59%)
-
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index a926d2781227..a30a5e4fc863 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -325,7 +325,6 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
+ 		tegra_idle_driver.states[TEGRA_C7].disabled = true;
+ 		break;
+ 	case TEGRA30:
+-		tegra_idle_driver.states[TEGRA_CC6].disabled = true;
+ 		break;
+ 	case TEGRA114:
+ 	case TEGRA124:
 -- 
 2.23.0
