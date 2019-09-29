@@ -1,41 +1,59 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] arm64: tegra: only map accessible sysram
-Date: Sun, 29 Sep 2019 23:28:43 -0600
-Message-ID: <5d2e47ec-8304-d648-9c4a-80c7c02050a9@wwwdotorg.org>
-References: <20190929200851.14228-1-ykaukab@suse.de>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Fix ordering of cleanup code
+Date: Sun, 29 Sep 2019 22:53:29 +0300
+Message-ID: <b74304ef-de09-8c16-3178-b8bd439bff84@gmail.com>
+References: <20190925112659.2048-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190929200851.14228-1-ykaukab@suse.de>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mian Yousaf Kaukab <ykaukab@suse.de>
-Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190925112659.2048-1-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/29/19 2:08 PM, Mian Yousaf Kaukab wrote:
-> Most of the SysRAM is secure and only accessible by TF-A.
-> Don't map this inaccessible memory in kernel. Only map pages
-> used by bpmp driver.
-
-I don't believe this change is correct. The actual patch doesn't
-implement mapping a subset of the RAM (a software issue), but rather it
-changes the DT representation of the SYSRAM hardware. The SYSRAM
-hardware always does start at 0x30000000, even if a subset of the
-address range is dedicated to a specific purpose. If the kernel must map
-only part of the RAM, then some additional property should indicate
-this. Also, I believe it's incorrect to hard-code into the kernel's DT
-the range of addresses used by the secure monitor/OS, since this can
-vary depending on what the user actually chooses to install as the
-secure monitor/OS. Any indication of such regions should be filled in at
-runtime by some boot firmware or the secure monitor/OS itself, or
-retrieved using some runtime API rather than DT.
+MjUuMDkuMjAxOSAxNDoyNiwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IENvbW1pdCBGaXhlczogYjlmOGIw
+OWNlMjU2ICgiZHJtL3RlZ3JhOiBTZXR1cCBzaGFyZWQgSU9NTVUgZG9tYWluIGFmdGVyCj4gaW5p
+dGlhbGl6YXRpb24iKSBjaGFuZ2VkIHRoZSBpbml0aWFsaXphdGlvbiBvcmRlciBvZiB0aGUgSU9N
+TVUgcmVsYXRlZAo+IGJpdHMgYnV0IGRpZG4ndCB1cGRhdGUgdGhlIGNsZWFudXAgcGF0aCBhY2Nv
+cmRpbmdseS4gVGhpcyBhc3ltbWV0cnkgY2FuCj4gY2F1c2UgZmFpbHVyZXMgZHVyaW5nIGVycm9y
+IHJlY292ZXJ5Lgo+IAo+IEZpeGVzOiBiOWY4YjA5Y2UyNTYgKCJkcm0vdGVncmE6IFNldHVwIHNo
+YXJlZCBJT01NVSBkb21haW4gYWZ0ZXIgaW5pdGlhbGl6YXRpb24iKQo+IFNpZ25lZC1vZmYtYnk6
+IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS90ZWdyYS9kcm0uYyB8IDE0ICsrKysrKystLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCA3
+IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IGluZGV4
+IDZmYjdkNzRmZjU1My4uYmM3Y2MzMjE0MGY4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IEBAIC0y
+MDEsMTkgKzIwMSwxOSBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2
+aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAlpZiAodGVncmEtPmh1YikKPiAgCQl0
+ZWdyYV9kaXNwbGF5X2h1Yl9jbGVhbnVwKHRlZ3JhLT5odWIpOwo+ICBkZXZpY2U6Cj4gLQlob3N0
+MXhfZGV2aWNlX2V4aXQoZGV2aWNlKTsKPiAtZmJkZXY6Cj4gLQlkcm1fa21zX2hlbHBlcl9wb2xs
+X2ZpbmkoZHJtKTsKPiAtCXRlZ3JhX2RybV9mYl9mcmVlKGRybSk7Cj4gLWNvbmZpZzoKPiAtCWRy
+bV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gLQo+ICAJaWYgKHRlZ3JhLT5kb21haW4pIHsK
+PiAgCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gIAkJZHJtX21tX3Rha2Vkb3du
+KCZ0ZWdyYS0+bW0pOwo+ICAJCXB1dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRvbWFp
+bik7Cj4gIAkJaW92YV9jYWNoZV9wdXQoKTsKPiAgCX0KPiArCj4gKwlob3N0MXhfZGV2aWNlX2V4
+aXQoZGV2aWNlKTsKPiArZmJkZXY6Cj4gKwlkcm1fa21zX2hlbHBlcl9wb2xsX2ZpbmkoZHJtKTsK
+PiArCXRlZ3JhX2RybV9mYl9mcmVlKGRybSk7Cj4gK2NvbmZpZzoKPiArCWRybV9tb2RlX2NvbmZp
+Z19jbGVhbnVwKGRybSk7Cj4gIGRvbWFpbjoKPiAgCWlmICh0ZWdyYS0+ZG9tYWluKQo+ICAJCWlv
+bW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5kb21haW4pOwo+IAoKSGVsbG8gVGhpZXJyeSwKCkdvb2Qg
+dGhhdCB5b3Ugc3BvdHRlZCB0aGlzISBJIGhhZCBhIHNpbWlsYXIgcGF0Y2ggc29tZXRpbWUgYWdv
+LCBidXQgbXkKdmVyc2lvbiBoYWQgc29tZSBwcm9ibGVtIGFuZCB0aGVuIEkganVzdCBmb3Jnb3Qg
+YWJvdXQgaXQuIEkgdHJpZWQgeW91cnMKcGF0Y2ggYW5kIGRpZG4ndCBub3RpY2UgYW55dGhpbmcg
+d3JvbmcsIHRoYW5rcyEKClJldmlld2VkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFp
+bC5jb20+ClRlc3RlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
