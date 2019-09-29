@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 07/42] PCI: tegra: Fix OF node reference leak
-Date: Sun, 29 Sep 2019 13:32:06 -0400
-Message-ID: <20190929173244.8918-7-sashal@kernel.org>
-References: <20190929173244.8918-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 07/49] PCI: tegra: Fix OF node reference leak
+Date: Sun, 29 Sep 2019 13:30:07 -0400
+Message-ID: <20190929173053.8400-7-sashal@kernel.org>
+References: <20190929173053.8400-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190929173244.8918-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190929173053.8400-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Nishka Dasgupta <nishkadg.linux@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
@@ -38,10 +38,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 15 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 464ba2538d526..03c42e8684f6d 100644
+index 9a917b2456f6c..673a1725ef382 100644
 --- a/drivers/pci/controller/pci-tegra.c
 +++ b/drivers/pci/controller/pci-tegra.c
-@@ -1994,14 +1994,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+@@ -2237,14 +2237,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
  		err = of_pci_get_devfn(port);
  		if (err < 0) {
  			dev_err(dev, "failed to parse address: %d\n", err);
@@ -59,7 +59,7 @@ index 464ba2538d526..03c42e8684f6d 100644
  		}
  
  		index--;
-@@ -2010,12 +2011,13 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+@@ -2253,12 +2254,13 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
  		if (err < 0) {
  			dev_err(dev, "failed to parse # of lanes: %d\n",
  				err);
@@ -75,7 +75,7 @@ index 464ba2538d526..03c42e8684f6d 100644
  		}
  
  		lanes |= value << (index << 3);
-@@ -2029,13 +2031,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+@@ -2272,13 +2274,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
  		lane += value;
  
  		rp = devm_kzalloc(dev, sizeof(*rp), GFP_KERNEL);
@@ -94,7 +94,7 @@ index 464ba2538d526..03c42e8684f6d 100644
  		}
  
  		INIT_LIST_HEAD(&rp->list);
-@@ -2062,6 +2066,10 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+@@ -2330,6 +2334,10 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
  		return err;
  
  	return 0;
