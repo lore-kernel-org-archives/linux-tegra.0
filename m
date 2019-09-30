@@ -1,55 +1,107 @@
-From: Mian Yousaf Kaukab <ykaukab@suse.de>
-Subject: Re: [PATCH] arm64: tegra: only map accessible sysram
-Date: Mon, 30 Sep 2019 12:02:12 +0200
-Message-ID: <20190930100212.GA21324@suse.de>
-References: <20190929200851.14228-1-ykaukab@suse.de>
- <5d2e47ec-8304-d648-9c4a-80c7c02050a9@wwwdotorg.org>
+From: Philippe Schenker <philippe.schenker@toradex.com>
+Subject: Re: [RESEND PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30
+ modules
+Date: Mon, 30 Sep 2019 11:54:59 +0000
+Message-ID: <b40974742543a2e8450c097bf86c5c0d3baec977.camel@toradex.com>
+References: <20190814105318.21902-1-philippe.schenker@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5d2e47ec-8304-d648-9c4a-80c7c02050a9@wwwdotorg.org>
+In-Reply-To: <20190814105318.21902-1-philippe.schenker@toradex.com>
+Content-Language: en-US
+Content-ID: <C4A366A8AB460B489402F808F44AA3B1@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 11:28:43PM -0600, Stephen Warren wrote:
-> On 9/29/19 2:08 PM, Mian Yousaf Kaukab wrote:
-> > Most of the SysRAM is secure and only accessible by TF-A.
-> > Don't map this inaccessible memory in kernel. Only map pages
-> > used by bpmp driver.
-> 
-> I don't believe this change is correct. The actual patch doesn't
-> implement mapping a subset of the RAM (a software issue), but rather it
-> changes the DT representation of the SYSRAM hardware. The SYSRAM
-> hardware always does start at 0x30000000, even if a subset of the
-> address range is dedicated to a specific purpose. If the kernel must map
-> only part of the RAM, then some additional property should indicate
-> this.[...]
-I agree the hardware description becomes inaccurate with this change.
-
-In the current setup complete 0x3000_0000 to 0x3005_0000 range is being mapped
-as normal memory (MT_NORMAL_NC). Though only 0x3004_E000 to 0x3005_0000 are
-accessible by the kernel. I am seeing an issue where a read access (which I
-believe is speculative) to inaccessible range causes an SError. Another 
-solution for this problem could be to add "no-memory-wc" to SysRAM node so that
-it is mapped as device memory (MT_DEVICE_nGnRE). Would that be acceptable?
-
-> [...] Also, I believe it's incorrect to hard-code into the kernel's DT
-> the range of addresses used by the secure monitor/OS, since this can
-> vary depending on what the user actually chooses to install as the
-> secure monitor/OS. Any indication of such regions should be filled in at
-> runtime by some boot firmware or the secure monitor/OS itself, or
-> retrieved using some runtime API rather than DT.
-Secure-OS addresses are not of interest here. SysRAM is partitioned
-between secure-OS and BPMP and kernel is only interested in the BPMP
-part. The firmware can update these addresses in the device-tree if it
-wants to. Would you prefer something similar implemented in u-boot so
-that it updates SysRAM node to only expose kernel accessible part of it
-to the kernel?
-
-Can u-boot dynamically figure out the Secure-OS vs BPMP partition?
-
-BR,
-Yousaf
+T24gV2VkLCAyMDE5LTA4LTE0IGF0IDEwOjUzICswMDAwLCBQaGlsaXBwZSBTY2hlbmtlciB3cm90
+ZToNCj4gQWRkIHRoZSBzdG1wZS1hZGMgRFQgbm9kZSBhcyBmb3VuZCBvbiBUb3JhZGV4IFQzMCBt
+b2R1bGVzDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBQaGlsaXBwZSBTY2hlbmtlciA8cGhpbGlwcGUu
+c2NoZW5rZXJAdG9yYWRleC5jb20+DQoNCkhpIFRoaWVycnksIGNvdWxkIHlvdSBwbGVhc2UgcHVs
+bCB0aGlzIHBhdGNoIGZvciA1LjQ/IE9yIHRlbGwgbWUgd2hhdCBpcw0KaG9sZGluZyBpdCBiYWNr
+IGZyb20gYmVpbmcgcHVsbGVkPw0KDQpUaGFua3MgZm9yIHlvdXIgZmVlZGJhY2sNCg0KUGhpbGlw
+cGUNCg0KPiANCj4gLS0tDQo+IA0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1hcGFsaXMt
+djEuMS5kdHNpIHwgMjIgKysrKysrKysrKysrKystLS0tLS0tDQo+IC0NCj4gIGFyY2gvYXJtL2Jv
+b3QvZHRzL3RlZ3JhMzAtYXBhbGlzLmR0c2kgICAgICB8IDIyICsrKysrKysrKysrKysrLS0tLS0t
+LQ0KPiAtDQo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaSAgICAgfCAy
+MiArKysrKysrKysrKysrKy0tLS0tLS0NCj4gLQ0KPiAgMyBmaWxlcyBjaGFuZ2VkLCA0MiBpbnNl
+cnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9i
+b290L2R0cy90ZWdyYTMwLWFwYWxpcy12MS4xLmR0c2kNCj4gYi9hcmNoL2FybS9ib290L2R0cy90
+ZWdyYTMwLWFwYWxpcy12MS4xLmR0c2kNCj4gaW5kZXggMDJmODEyNjQ4MWEyLi44YjdhODI3ZDYw
+NGQgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBhbGlzLXYxLjEu
+ZHRzaQ0KPiArKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWFwYWxpcy12MS4xLmR0c2kN
+Cj4gQEAgLTk5NCwxMSArOTk0LDE3IEBADQo+ICAJCQlpZCA9IDwwPjsNCj4gIAkJCWJsb2NrcyA9
+IDwweDU+Ow0KPiAgCQkJaXJxLXRyaWdnZXIgPSA8MHgxPjsNCj4gKwkJCS8qIDMuMjUgTUh6IEFE
+QyBjbG9jayBzcGVlZCAqLw0KPiArCQkJc3QsYWRjLWZyZXEgPSA8MT47DQo+ICsJCQkvKiAxMi1i
+aXQgQURDICovDQo+ICsJCQlzdCxtb2QtMTJiID0gPDE+Ow0KPiArCQkJLyogaW50ZXJuYWwgQURD
+IHJlZmVyZW5jZSAqLw0KPiArCQkJc3QscmVmLXNlbCA9IDwwPjsNCj4gKwkJCS8qIEFEQyBjb252
+ZXJzdGlvbiB0aW1lOiA4MCBjbG9ja3MgKi8NCj4gKwkJCXN0LHNhbXBsZS10aW1lID0gPDQ+Ow0K
+PiAgDQo+ICAJCQlzdG1wZV90b3VjaHNjcmVlbiB7DQo+ICAJCQkJY29tcGF0aWJsZSA9ICJzdCxz
+dG1wZS10cyI7DQo+IC0JCQkJLyogMy4yNSBNSHogQURDIGNsb2NrIHNwZWVkICovDQo+IC0JCQkJ
+c3QsYWRjLWZyZXEgPSA8MT47DQo+ICAJCQkJLyogOCBzYW1wbGUgYXZlcmFnZSBjb250cm9sICov
+DQo+ICAJCQkJc3QsYXZlLWN0cmwgPSA8Mz47DQo+ICAJCQkJLyogNyBsZW5ndGggZnJhY3Rpb25h
+bCBwYXJ0IGluIHogKi8NCj4gQEAgLTEwMDgsMTcgKzEwMTQsMTcgQEANCj4gIAkJCQkgKiBjdXJy
+ZW50IGxpbWl0IHZhbHVlDQo+ICAJCQkJICovDQo+ICAJCQkJc3QsaS1kcml2ZSA9IDwxPjsNCj4g
+LQkJCQkvKiAxMi1iaXQgQURDICovDQo+IC0JCQkJc3QsbW9kLTEyYiA9IDwxPjsNCj4gLQkJCQkv
+KiBpbnRlcm5hbCBBREMgcmVmZXJlbmNlICovDQo+IC0JCQkJc3QscmVmLXNlbCA9IDwwPjsNCj4g
+LQkJCQkvKiBBREMgY29udmVyc3Rpb24gdGltZTogODAgY2xvY2tzICovDQo+IC0JCQkJc3Qsc2Ft
+cGxlLXRpbWUgPSA8ND47DQo+ICAJCQkJLyogMSBtcyBwYW5lbCBkcml2ZXIgc2V0dGxpbmcgdGlt
+ZSAqLw0KPiAgCQkJCXN0LHNldHRsaW5nID0gPDM+Ow0KPiAgCQkJCS8qIDUgbXMgdG91Y2ggZGV0
+ZWN0IGludGVycnVwdCBkZWxheSAqLw0KPiAgCQkJCXN0LHRvdWNoLWRldC1kZWxheSA9IDw1PjsN
+Cj4gIAkJCX07DQo+ICsNCj4gKwkJCXN0bXBlX2FkYyB7DQo+ICsJCQkJY29tcGF0aWJsZSA9ICJz
+dCxzdG1wZS1hZGMiOw0KPiArCQkJCS8qIGZvcmJpZCB0byB1c2UgQURDIGNoYW5uZWxzIDMtMA0K
+PiAodG91Y2gpICovDQo+ICsJCQkJc3Qsbm9yZXF1ZXN0LW1hc2sgPSA8MHgwRj47DQo+ICsJCQl9
+Ow0KPiAgCQl9Ow0KPiAgDQo+ICAJCS8qDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0
+cy90ZWdyYTMwLWFwYWxpcy5kdHNpDQo+IGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1hcGFs
+aXMuZHRzaQ0KPiBpbmRleCA3ZjExMmYxOTJmZTkuLmMxOGY2ZjYxZDc2NCAxMDA2NDQNCj4gLS0t
+IGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1hcGFsaXMuZHRzaQ0KPiArKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy90ZWdyYTMwLWFwYWxpcy5kdHNpDQo+IEBAIC05NzYsMTEgKzk3NiwxNyBAQA0K
+PiAgCQkJaWQgPSA8MD47DQo+ICAJCQlibG9ja3MgPSA8MHg1PjsNCj4gIAkJCWlycS10cmlnZ2Vy
+ID0gPDB4MT47DQo+ICsJCQkvKiAzLjI1IE1IeiBBREMgY2xvY2sgc3BlZWQgKi8NCj4gKwkJCXN0
+LGFkYy1mcmVxID0gPDE+Ow0KPiArCQkJLyogMTItYml0IEFEQyAqLw0KPiArCQkJc3QsbW9kLTEy
+YiA9IDwxPjsNCj4gKwkJCS8qIGludGVybmFsIEFEQyByZWZlcmVuY2UgKi8NCj4gKwkJCXN0LHJl
+Zi1zZWwgPSA8MD47DQo+ICsJCQkvKiBBREMgY29udmVyc3Rpb24gdGltZTogODAgY2xvY2tzICov
+DQo+ICsJCQlzdCxzYW1wbGUtdGltZSA9IDw0PjsNCj4gIA0KPiAgCQkJc3RtcGVfdG91Y2hzY3Jl
+ZW4gew0KPiAgCQkJCWNvbXBhdGlibGUgPSAic3Qsc3RtcGUtdHMiOw0KPiAtCQkJCS8qIDMuMjUg
+TUh6IEFEQyBjbG9jayBzcGVlZCAqLw0KPiAtCQkJCXN0LGFkYy1mcmVxID0gPDE+Ow0KPiAgCQkJ
+CS8qIDggc2FtcGxlIGF2ZXJhZ2UgY29udHJvbCAqLw0KPiAgCQkJCXN0LGF2ZS1jdHJsID0gPDM+
+Ow0KPiAgCQkJCS8qIDcgbGVuZ3RoIGZyYWN0aW9uYWwgcGFydCBpbiB6ICovDQo+IEBAIC05OTAs
+MTcgKzk5NiwxNyBAQA0KPiAgCQkJCSAqIGN1cnJlbnQgbGltaXQgdmFsdWUNCj4gIAkJCQkgKi8N
+Cj4gIAkJCQlzdCxpLWRyaXZlID0gPDE+Ow0KPiAtCQkJCS8qIDEyLWJpdCBBREMgKi8NCj4gLQkJ
+CQlzdCxtb2QtMTJiID0gPDE+Ow0KPiAtCQkJCS8qIGludGVybmFsIEFEQyByZWZlcmVuY2UgKi8N
+Cj4gLQkJCQlzdCxyZWYtc2VsID0gPDA+Ow0KPiAtCQkJCS8qIEFEQyBjb252ZXJzdGlvbiB0aW1l
+OiA4MCBjbG9ja3MgKi8NCj4gLQkJCQlzdCxzYW1wbGUtdGltZSA9IDw0PjsNCj4gIAkJCQkvKiAx
+IG1zIHBhbmVsIGRyaXZlciBzZXR0bGluZyB0aW1lICovDQo+ICAJCQkJc3Qsc2V0dGxpbmcgPSA8
+Mz47DQo+ICAJCQkJLyogNSBtcyB0b3VjaCBkZXRlY3QgaW50ZXJydXB0IGRlbGF5ICovDQo+ICAJ
+CQkJc3QsdG91Y2gtZGV0LWRlbGF5ID0gPDU+Ow0KPiAgCQkJfTsNCj4gKw0KPiArCQkJc3RtcGVf
+YWRjIHsNCj4gKwkJCQljb21wYXRpYmxlID0gInN0LHN0bXBlLWFkYyI7DQo+ICsJCQkJLyogZm9y
+YmlkIHRvIHVzZSBBREMgY2hhbm5lbHMgMy0wDQo+ICh0b3VjaCkgKi8NCj4gKwkJCQlzdCxub3Jl
+cXVlc3QtbWFzayA9IDwweDBGPjsNCj4gKwkJCX07DQo+ICAJCX07DQo+ICANCj4gIAkJLyoNCj4g
+ZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtY29saWJyaS5kdHNpDQo+IGIv
+YXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1jb2xpYnJpLmR0c2kNCj4gaW5kZXggMzVhZjAzY2E5
+ZTkwLi4xZjkxOThiYjI0ZmYgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3Jh
+MzAtY29saWJyaS5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtY29saWJy
+aS5kdHNpDQo+IEBAIC04NDUsMTEgKzg0NSwxOCBAQA0KPiAgCQkJaWQgPSA8MD47DQo+ICAJCQli
+bG9ja3MgPSA8MHg1PjsNCj4gIAkJCWlycS10cmlnZ2VyID0gPDB4MT47DQo+ICsJCQkvKiAzLjI1
+IE1IeiBBREMgY2xvY2sgc3BlZWQgKi8NCj4gKwkJCXN0LGFkYy1mcmVxID0gPDE+Ow0KPiArCQkJ
+LyogMTItYml0IEFEQyAqLw0KPiArCQkJc3QsbW9kLTEyYiA9IDwxPjsNCj4gKwkJCS8qIGludGVy
+bmFsIEFEQyByZWZlcmVuY2UgKi8NCj4gKwkJCXN0LHJlZi1zZWwgPSA8MD47DQo+ICsJCQkvKiBB
+REMgY29udmVyc3Rpb24gdGltZTogODAgY2xvY2tzICovDQo+ICsJCQlzdCxzYW1wbGUtdGltZSA9
+IDw0PjsNCj4gKwkJCS8qIGZvcmJpZCB0byB1c2UgQURDIGNoYW5uZWxzIDMtMCAodG91Y2gpICov
+DQo+ICANCj4gIAkJCXN0bXBlX3RvdWNoc2NyZWVuIHsNCj4gIAkJCQljb21wYXRpYmxlID0gInN0
+LHN0bXBlLXRzIjsNCj4gLQkJCQkvKiAzLjI1IE1IeiBBREMgY2xvY2sgc3BlZWQgKi8NCj4gLQkJ
+CQlzdCxhZGMtZnJlcSA9IDwxPjsNCj4gIAkJCQkvKiA4IHNhbXBsZSBhdmVyYWdlIGNvbnRyb2wg
+Ki8NCj4gIAkJCQlzdCxhdmUtY3RybCA9IDwzPjsNCj4gIAkJCQkvKiA3IGxlbmd0aCBmcmFjdGlv
+bmFsIHBhcnQgaW4geiAqLw0KPiBAQCAtODU5LDE3ICs4NjYsMTYgQEANCj4gIAkJCQkgKiBjdXJy
+ZW50IGxpbWl0IHZhbHVlDQo+ICAJCQkJICovDQo+ICAJCQkJc3QsaS1kcml2ZSA9IDwxPjsNCj4g
+LQkJCQkvKiAxMi1iaXQgQURDICovDQo+IC0JCQkJc3QsbW9kLTEyYiA9IDwxPjsNCj4gLQkJCQkv
+KiBpbnRlcm5hbCBBREMgcmVmZXJlbmNlICovDQo+IC0JCQkJc3QscmVmLXNlbCA9IDwwPjsNCj4g
+LQkJCQkvKiBBREMgY29udmVyc3Rpb24gdGltZTogODAgY2xvY2tzICovDQo+IC0JCQkJc3Qsc2Ft
+cGxlLXRpbWUgPSA8ND47DQo+ICAJCQkJLyogMSBtcyBwYW5lbCBkcml2ZXIgc2V0dGxpbmcgdGlt
+ZSAqLw0KPiAgCQkJCXN0LHNldHRsaW5nID0gPDM+Ow0KPiAgCQkJCS8qIDUgbXMgdG91Y2ggZGV0
+ZWN0IGludGVycnVwdCBkZWxheSAqLw0KPiAgCQkJCXN0LHRvdWNoLWRldC1kZWxheSA9IDw1PjsN
+Cj4gIAkJCX07DQo+ICsNCj4gKwkJCXN0bXBlX2FkYyB7DQo+ICsJCQkJY29tcGF0aWJsZSA9ICJz
+dCxzdG1wZS1hZGMiOw0KPiArCQkJCXN0LG5vcmVxdWVzdC1tYXNrID0gPDB4MEY+Ow0KPiArCQkJ
+fTsNCj4gIAkJfTsNCj4gIA0KPiAgCQkvKg0K
