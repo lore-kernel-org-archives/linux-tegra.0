@@ -1,74 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 5/7] ASoC: tegra: set i2s_offset to 0
-	for tdm
-Date: Mon, 30 Sep 2019 21:52:15 +0100
-Message-ID: <6d6ae684-dd5f-b180-9114-dafe12886d4f@nvidia.com>
-References: <20190930165130.10642-1-ben.dooks@codethink.co.uk>
- <20190930165130.10642-6-ben.dooks@codethink.co.uk>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v5 00/14] Consolidate and improve NVIDIA Tegra CPUIDLE
+ driver(s)
+Date: Mon, 30 Sep 2019 21:32:51 +0300
+Message-ID: <cf27855a-eb85-1a38-3d04-95e7efe06ebf@gmail.com>
+References: <20190929175952.22690-1-digetx@gmail.com>
+ <20190930082645.GF1518582@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190930165130.10642-6-ben.dooks@codethink.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190930082645.GF1518582@ulmo>
 Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 30/09/2019 17:51, Ben Dooks wrote:
-> Set the offset to 0 for TDM mode, as per the current setup. Note we also
-> move the data offset programming to the i2s hw_parameters call as per
-> the suggestion from Jon Hunter.
+30.09.2019 11:26, Thierry Reding пишет:
+> On Sun, Sep 29, 2019 at 08:59:38PM +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This series does the following:
+>>
+>>   1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
+>>      into common drivers/cpuidle/ directory.
+>>
+>>   2. Enables CPU cluster power-down idling state on Tegra30.
+>>
+>> In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
+>> and of the Tegra's arch code in general. Please review, thanks!
 > 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-> v2:
->  - fix the review comments and move the i2s offset setting
-> ---
->  sound/soc/tegra/tegra30_i2s.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+> I generally like this series and it looks really good from a diffstat
+> point of view. However, removing existing drivers completely and then
+> incrementally add a new one make this impossible to review.
 > 
-> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-> index c573151da341..a03692b0afc3 100644
-> --- a/sound/soc/tegra/tegra30_i2s.c
-> +++ b/sound/soc/tegra/tegra30_i2s.c
-> @@ -66,7 +66,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
->  				unsigned int fmt)
->  {
->  	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-> -	unsigned int mask = 0, val = 0;
-> +	unsigned int mask = 0, val = 0, data_offset = 1;
->  	unsigned int ch_mask, ch_val = 0;
->  
->  	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
-> @@ -95,11 +95,13 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
->  		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
->  		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
->  		val |= TEGRA30_I2S_CTRL_LRCK_L_LOW;
-> +		data_offset = 0;
->  		break;
->  	case SND_SOC_DAIFMT_DSP_B:
->  		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
->  		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
->  		val |= TEGRA30_I2S_CTRL_LRCK_R_LOW;
-> +		data_offset = 0;
+> If you think about it, it also makes it really difficult to find what
+> went wrong if at any point in the future we find a regression caused by
+> the new driver. A bisection will always point at the commit that removes
+> the old driver because between that and the point where you add the new
+> driver, CPU idle just doesn't work at all anymore.
+> 
+> While I understand that it's very convenient to just throw away old code
+> and rewrite it from scratch, it's also impractical (and a little rude).
+> It's not how we do things in the kernel. Unless maybe under specific
+> circumstances.
+> 
+> Can you please try and make this a little more iterative? At the very
+> least I'd expect a series where you do all the preliminary work in
+> preparatory patches and then replace the old driver by the new driver in
+> a single patch. That way at least there will be an unambiguous commit in
+> a bisection.
+> 
+> Ideally, you'd also break up that last conversion patch into smaller
+> incremental patches to make it easier for people to review. Remember
+> that your chances to attract reviewers increases if you make the patches
+> easy to review, which means your patches should be small, logical
+> changes that (ideally) are obviously correct.
 
-My understanding is that the difference between dsp-a and dsp-b is that
-dsp-a has an offset of 1 and dsp-b has an offset of 0.
-
-Cheers
-Jon
-
--- 
-nvpublic
+Thanks for the detailed explanation, probably this is the same what Jon
+was asking to do. Now I see what you're are asking for.
