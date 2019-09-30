@@ -1,59 +1,84 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] drm/tegra: Fix ordering of cleanup code
-Date: Sun, 29 Sep 2019 22:53:29 +0300
-Message-ID: <b74304ef-de09-8c16-3178-b8bd439bff84@gmail.com>
-References: <20190925112659.2048-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 08/14] ARM: tegra: Make outer_disable() open-coded
+Date: Mon, 30 Sep 2019 10:05:11 +0200
+Message-ID: <20190930080511.GE1518582@ulmo>
+References: <20190929175952.22690-1-digetx@gmail.com>
+ <20190929175952.22690-9-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190925112659.2048-1-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4Epv4kl9IRBfg3rk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190929175952.22690-9-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MjUuMDkuMjAxOSAxNDoyNiwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
-cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IENvbW1pdCBGaXhlczogYjlmOGIw
-OWNlMjU2ICgiZHJtL3RlZ3JhOiBTZXR1cCBzaGFyZWQgSU9NTVUgZG9tYWluIGFmdGVyCj4gaW5p
-dGlhbGl6YXRpb24iKSBjaGFuZ2VkIHRoZSBpbml0aWFsaXphdGlvbiBvcmRlciBvZiB0aGUgSU9N
-TVUgcmVsYXRlZAo+IGJpdHMgYnV0IGRpZG4ndCB1cGRhdGUgdGhlIGNsZWFudXAgcGF0aCBhY2Nv
-cmRpbmdseS4gVGhpcyBhc3ltbWV0cnkgY2FuCj4gY2F1c2UgZmFpbHVyZXMgZHVyaW5nIGVycm9y
-IHJlY292ZXJ5Lgo+IAo+IEZpeGVzOiBiOWY4YjA5Y2UyNTYgKCJkcm0vdGVncmE6IFNldHVwIHNo
-YXJlZCBJT01NVSBkb21haW4gYWZ0ZXIgaW5pdGlhbGl6YXRpb24iKQo+IFNpZ25lZC1vZmYtYnk6
-IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9kcm0uYyB8IDE0ICsrKysrKystLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCA3
-IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IGluZGV4
-IDZmYjdkNzRmZjU1My4uYmM3Y2MzMjE0MGY4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IEBAIC0y
-MDEsMTkgKzIwMSwxOSBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2
-aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAlpZiAodGVncmEtPmh1YikKPiAgCQl0
-ZWdyYV9kaXNwbGF5X2h1Yl9jbGVhbnVwKHRlZ3JhLT5odWIpOwo+ICBkZXZpY2U6Cj4gLQlob3N0
-MXhfZGV2aWNlX2V4aXQoZGV2aWNlKTsKPiAtZmJkZXY6Cj4gLQlkcm1fa21zX2hlbHBlcl9wb2xs
-X2ZpbmkoZHJtKTsKPiAtCXRlZ3JhX2RybV9mYl9mcmVlKGRybSk7Cj4gLWNvbmZpZzoKPiAtCWRy
-bV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gLQo+ICAJaWYgKHRlZ3JhLT5kb21haW4pIHsK
-PiAgCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gIAkJZHJtX21tX3Rha2Vkb3du
-KCZ0ZWdyYS0+bW0pOwo+ICAJCXB1dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRvbWFp
-bik7Cj4gIAkJaW92YV9jYWNoZV9wdXQoKTsKPiAgCX0KPiArCj4gKwlob3N0MXhfZGV2aWNlX2V4
-aXQoZGV2aWNlKTsKPiArZmJkZXY6Cj4gKwlkcm1fa21zX2hlbHBlcl9wb2xsX2ZpbmkoZHJtKTsK
-PiArCXRlZ3JhX2RybV9mYl9mcmVlKGRybSk7Cj4gK2NvbmZpZzoKPiArCWRybV9tb2RlX2NvbmZp
-Z19jbGVhbnVwKGRybSk7Cj4gIGRvbWFpbjoKPiAgCWlmICh0ZWdyYS0+ZG9tYWluKQo+ICAJCWlv
-bW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5kb21haW4pOwo+IAoKSGVsbG8gVGhpZXJyeSwKCkdvb2Qg
-dGhhdCB5b3Ugc3BvdHRlZCB0aGlzISBJIGhhZCBhIHNpbWlsYXIgcGF0Y2ggc29tZXRpbWUgYWdv
-LCBidXQgbXkKdmVyc2lvbiBoYWQgc29tZSBwcm9ibGVtIGFuZCB0aGVuIEkganVzdCBmb3Jnb3Qg
-YWJvdXQgaXQuIEkgdHJpZWQgeW91cnMKcGF0Y2ggYW5kIGRpZG4ndCBub3RpY2UgYW55dGhpbmcg
-d3JvbmcsIHRoYW5rcyEKClJldmlld2VkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFp
-bC5jb20+ClRlc3RlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--4Epv4kl9IRBfg3rk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Sep 29, 2019 at 08:59:46PM +0300, Dmitry Osipenko wrote:
+> The outer_disable() of Tegra's suspend code is open-coded now since
+> that helper produces spurious warning message about secondary CPUs being
+> online. The secondaries are actually halted by the cpuidle driver on
+> entering into LP2 idle-state. This fixes a storm of warnings once LP2
+> idling state is enabled on Tegra30.
+
+If the cpuidle driver halts the secondaries, shouldn't it set it offline
+then so that outer_disable() can still work correctly?
+
+Thierry
+
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/mach-tegra/pm.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+> index 7d9ef26e52a7..16a02937d3da 100644
+> --- a/arch/arm/mach-tegra/pm.c
+> +++ b/arch/arm/mach-tegra/pm.c
+> @@ -146,9 +146,10 @@ static int tegra_sleep_cpu(unsigned long v2p)
+>  	 * if any of secondary CPU's is online and this is the LP2-idle
+>  	 * code-path only for Tegra20/30.
+>  	 */
+> -	if (trusted_foundations_registered())
+> -		outer_disable();
+> -
+> +#ifdef CONFIG_OUTER_CACHE
+> +	if (trusted_foundations_registered() && outer_cache.disable)
+> +		outer_cache.disable();
+> +#endif
+>  	/*
+>  	 * Note that besides of setting up CPU reset vector this firmware
+>  	 * call may also do the following, depending on the FW version:
+> --=20
+> 2.23.0
+>=20
+
+--4Epv4kl9IRBfg3rk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2RtzUACgkQ3SOs138+
+s6Eq3RAAq+IM3JsJRvcEWa4zVK9I0xB+MNVeoUFLf4YWngs+qR/ozuEMfUGUf8yr
+Zn/lNHPCFdfG905CuOrhlvK8WAuq3XZl7LsXDeAtwv/6/FAEUTn2ZIsDGOAas716
+tCRbTmo1dU5Krs+Ws8NtbnZKqW1HZEck42lOkImjylj+9na7+BCOQJgkFjzX7M/k
+eSpAmE+C+6HaZfJtmFxP5s8ukCCynw92T2S0w4zrruIwNM8aWSziuDgq4NLctbja
+nLgQuvdOSvCIHbtnqJU0aO8DcezDW4UvpI5LD3DUfVaFP3iPsjtvGWfxhjKBy5oo
+9jODrFIUMHoSzv0KXi86NVXHmcWUZS61Ww+YgRZRgFtRBQaKNzCohPwajiNEyZu2
+Ss3AT5UFGSEhHI2fDFXe7YeaYhgHMh/fCKg+FYrsGAz6PmREkf9GSO7p8PFo7cv3
+GxE8qlRjz2CqQA3voW+O38g7QW4bZYTTSVP9VHgwPjocRY300SM4AD7q7bzUraBx
+RGbleDykkPVuwKRsno3Y85pcD2zANq3kx7VEgarc10llSewh7KLI0O3C7JnhR2C3
+Y5M9jGTAF2LHjIj9X/pVz00/vyXdfSreqTQAIMfQYIFXXdQwsUWAdYtRhwOYrRYq
+Z6QefJ+tE/IVq8Cmj7swr3Kc/zXxj1oAYjQbpwLhZXbEnsYbAsY=
+=ZN/o
+-----END PGP SIGNATURE-----
+
+--4Epv4kl9IRBfg3rk--
