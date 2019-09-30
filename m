@@ -1,8 +1,7 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH v3 2/7] ASoC: tegra: Allow 24bit and 32bit
-	samples
-Date: Mon, 30 Sep 2019 17:51:25 +0100
-Message-ID: <20190930165130.10642-3-ben.dooks@codethink.co.uk>
+Subject: [PATCH v3 5/7] ASoC: tegra: set i2s_offset to 0 for tdm
+Date: Mon, 30 Sep 2019 17:51:28 +0100
+Message-ID: <20190930165130.10642-6-ben.dooks@codethink.co.uk>
 References: <20190930165130.10642-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,92 +18,70 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>, Edward Cragg <edward.cragg@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Edward Cragg <edward.cragg@codethink.co.uk>
+Set the offset to 0 for TDM mode, as per the current setup. Note we also
+move the data offset programming to the i2s hw_parameters call as per
+the suggestion from Jon Hunter.
 
-The tegra3 audio can support 24 and 32 bit sample sizes so add the
-option to the tegra30_i2s_hw_params to configure the S24_LE or S32_LE
-formats when requested.
-
-Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-[ben.dooks@codethink.co.uk: fixup merge of 24 and 32bit]
-[ben.dooks@codethink.co.uk: add pm calls around ytdm config]
-[ben.dooks@codethink.co.uk: drop debug printing to dev_dbg]
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
-squash 5aeca5a055fd ASoC: tegra: i2s: pm_runtime_get_sync() is needed in tdm code
-
-ASoC: tegra: i2s: pm_runtime_get_sync() is needed in tdm code
+v2:
+ - fix the review comments and move the i2s offset setting
 ---
- sound/soc/tegra/tegra30_i2s.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ sound/soc/tegra/tegra30_i2s.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index 7f9ef6abeae2..b948b010c057 100644
+index c573151da341..a03692b0afc3 100644
 --- a/sound/soc/tegra/tegra30_i2s.c
 +++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -127,7 +127,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	struct device *dev = dai->dev;
+@@ -66,7 +66,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+ 				unsigned int fmt)
+ {
  	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
- 	unsigned int mask, val, reg;
--	int ret, sample_size, srate, i2sclock, bitcnt;
-+	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits;
- 	struct tegra30_ahub_cif_conf cif_conf;
+-	unsigned int mask = 0, val = 0;
++	unsigned int mask = 0, val = 0, data_offset = 1;
+ 	unsigned int ch_mask, ch_val = 0;
  
- 	if (params_channels(params) != 2)
-@@ -137,8 +137,19 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	switch (params_format(params)) {
- 	case SNDRV_PCM_FORMAT_S16_LE:
- 		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
- 		sample_size = 16;
+ 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+@@ -95,11 +95,13 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+ 		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+ 		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
+ 		val |= TEGRA30_I2S_CTRL_LRCK_L_LOW;
++		data_offset = 0;
  		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
-+		sample_size = 24;
-+		break;
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
-+		sample_size = 32;
-+		break;
- 	default:
- 		return -EINVAL;
+ 	case SND_SOC_DAIFMT_DSP_B:
+ 		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+ 		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
+ 		val |= TEGRA30_I2S_CTRL_LRCK_R_LOW;
++		data_offset = 0;
+ 		break;
+ 	case SND_SOC_DAIFMT_I2S:
+ 		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_LRCK;
+@@ -120,6 +122,10 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+ 	pm_runtime_get_sync(dai->dev);
+ 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CTRL, mask, val);
+ 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL, ch_mask, ch_val);
++	val = (data_offset << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
++		(data_offset << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
++	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
++
+ 	pm_runtime_put(dai->dev);
+ 
+ 	return 0;
+@@ -203,11 +209,6 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
  	}
-@@ -170,8 +181,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	cif_conf.threshold = 0;
- 	cif_conf.audio_channels = 2;
- 	cif_conf.client_channels = 2;
--	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
--	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
-+	cif_conf.audio_bits = audio_bits;
-+	cif_conf.client_bits = audio_bits;
- 	cif_conf.expand = 0;
- 	cif_conf.stereo_conv = 0;
- 	cif_conf.replicate = 0;
-@@ -310,14 +321,18 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.ops = &tegra30_i2s_dai_ops,
- 	.symmetric_rates = 1,
+ 
+ 	i2s->soc_data->set_audio_cif(i2s->regmap, reg, &cif_conf);
+-
+-	val = (1 << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
+-	      (1 << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
+-	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.23.0
