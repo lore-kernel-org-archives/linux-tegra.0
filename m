@@ -1,59 +1,50 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RESEND PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30
- modules
-Date: Mon, 30 Sep 2019 16:17:13 +0200
-Message-ID: <20190930141713.GA1943656@ulmo>
-References: <20190814105318.21902-1-philippe.schenker@toradex.com>
- <b40974742543a2e8450c097bf86c5c0d3baec977.camel@toradex.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v5 08/14] ARM: tegra: Make outer_disable() open-coded
+Date: Mon, 30 Sep 2019 17:29:13 +0300
+Message-ID: <a23edc5b-97c6-9dae-589e-b71d07069b0c@gmail.com>
+References: <20190929175952.22690-1-digetx@gmail.com>
+ <20190929175952.22690-9-digetx@gmail.com> <20190930080511.GE1518582@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b40974742543a2e8450c097bf86c5c0d3baec977.camel@toradex.com>
+In-Reply-To: <20190930080511.GE1518582@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Schenker <philippe.schenker@toradex.com>
-Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+30.09.2019 11:05, Thierry Reding пишет:
+> On Sun, Sep 29, 2019 at 08:59:46PM +0300, Dmitry Osipenko wrote:
+>> The outer_disable() of Tegra's suspend code is open-coded now since
+>> that helper produces spurious warning message about secondary CPUs being
+>> online. The secondaries are actually halted by the cpuidle driver on
+>> entering into LP2 idle-state. This fixes a storm of warnings once LP2
+>> idling state is enabled on Tegra30.
+> 
+> If the cpuidle driver halts the secondaries, shouldn't it set it offline
+> then so that outer_disable() can still work correctly?
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No.. how would you know what CPU's should be resumed?
 
-On Mon, Sep 30, 2019 at 11:54:59AM +0000, Philippe Schenker wrote:
-> On Wed, 2019-08-14 at 10:53 +0000, Philippe Schenker wrote:
-> > Add the stmpe-adc DT node as found on Toradex T30 modules
-> >=20
-> > Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
->=20
-> Hi Thierry, could you please pull this patch for 5.4? Or tell me what is
-> holding it back from being pulled?
+AFAIK, the online status should be only changed by the hotplug code and
+nothing else. I don't think that it's a good idea to manually touch the
+online mask.
 
-At this point I'm only waiting for the merge to close. Before that I
-can't take any new patches.
+It looks to me that the only purpose of outer_disable() checking for the
+num_online_cpus is to prevent people from doing wrong things by
+disabling L2 in a random places in their code. Hence it should be
+absolutely fine to open code when you know what you're doing, which is
+the case here.
 
-Thierry
+We can check the rail status in tegra_sleep_cpu():
 
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
+if (trusted_foundations_registered() && outer_cache.disable) {
+	if (WARN_ON(!tegra_cpu_rail_off_ready()))
+		return -EBUSY;
 
------BEGIN PGP SIGNATURE-----
+	outer_cache.disable();
+}
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2SDmYACgkQ3SOs138+
-s6EOew/9EaFyL0YfHDuqjRoWXeAmsw0mcgPyEEz2xexpsdhl8h4YlyY+qGovRd4v
-gh/Ep8/OsiI8xyD//tgXVkLHVkdtaQ3T2VxpiogcnemJ+g50z83nKZR02rQIAJGQ
-h7ERw1WBAVUZEU/5/6nF6hRoDjpiI/K4VuP3HDiGZvWzAzY3/pr/xoP9Ho6UdYeD
-hf0Y6zwKHYHsClNKGCzC6/X0itk9sDUl8GDzCpxwySRTn1pDhCxf3fMDuaytE+lS
-HDvm8hGqxja5UAGhuypdFRZP8UEGJq6zxetwIyWl3ot13cDUdwRDuLlGaNcH1SOn
-ItwsIqfhvyN5uFI1JSFxDXw+oG24MoWK3ObwytNyHXSJ8KAjAS3Ov7O4G9d79dhb
-R7hwJ8ZA08Ur9NTmz0mThSBINhCMV3ENZKuZMIoWoiR4Zm4Az6bNbNgbjGc029Iu
-45zbqQTzHpGMwcCQhvx2+SHTUzsgAzTudmZNTJltzWKzCCINEoOj+6L8+lHCAdXm
-8VvCu1zGft4LmdP6xqA1CZ+l2MAJK8suaG9xVyZOfZx1f/2jemNGOid2AG3ck2lE
-TAJuSP+gyz1Qk/N7kIl5qifmRMWNgtt28Won7fvAvz5gqRoFSPBZt3VAC0Ib/B11
-IGvFvmgOMDxT9JGIGf/k3t1/aosY9XXt+O/boFYJFybYjoIugCE=
-=JeIS
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+Which is equal to the check for num_online_cpus. Does it sound good?
