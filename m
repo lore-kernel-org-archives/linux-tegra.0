@@ -1,67 +1,72 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/3] tegra: use regulator_bulk_set_supply_names()
-Date: Tue, 1 Oct 2019 15:38:07 +0200
-Message-ID: <20191001133807.GB3563296@ulmo>
-References: <20191001132333.20146-1-brgl@bgdev.pl>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 1/7] ASoC: tegra: add a TDM
+	configuration callback
+Date: Tue, 1 Oct 2019 14:37:55 +0100
+Message-ID: <f4e68563-e059-9f86-7340-de71c59d9a90@nvidia.com>
+References: <20190930165130.10642-1-ben.dooks@codethink.co.uk>
+ <20190930165130.10642-2-ben.dooks@codethink.co.uk>
+ <c2a7c046-011e-437b-0f09-0853d5cf7f34@nvidia.com>
+ <85bb5ec6-8928-e4ea-8ca5-3ce1afcc4324@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191001132333.20146-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <85bb5ec6-8928-e4ea-8ca5-3ce1afcc4324@codethink.co.uk>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-
---rJwd6BRFiFCcLxzm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 01, 2019 at 03:23:30PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> The regulator_bulk_set_supply_names() helper was merged upstream. Use it
-> in a couple tegra drivers.
->=20
-> Bartosz Golaszewski (3):
->   ahci: tegra: use regulator_bulk_set_supply_names()
->   phy: tegra: use regulator_bulk_set_supply_names()
->   usb: host: xhci-tegra: use regulator_bulk_set_supply_names()
->=20
->  drivers/ata/ahci_tegra.c      | 6 +++---
->  drivers/phy/tegra/xusb.c      | 6 +++---
->  drivers/usb/host/xhci-tegra.c | 5 +++--
->  3 files changed, 9 insertions(+), 8 deletions(-)
-
-I really don't see the point here. You've got a positive diffstat here,
-which means all that churn is without benefit.
-
-Is there some subsequent work based on this that will actually improve
-things?
-
-Thierry
-
---rJwd6BRFiFCcLxzm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2TVr8ACgkQ3SOs138+
-s6Gmxw//XyHpBaZ6nH9r5G6qR4tc5ltdQB1dqjsetQiQ3GP40BUwO9mtMUUgcfI/
-rdgUFAuLtiTH5m5XHYyCmBIWHi38bwTStJ4x0f7zg7IAfabhlRrTDPsaUSJuN+tt
-JL5RYKy9LjGIt8B3FusJWBgMMhAhmLf4vTTBqMRaK1vAd7XFqz0LAz+weUs11aZ8
-gauUBP2qZ6n+lL5ahAStY/0GC9gos1iNzgsvG6tZD3JyWQe6xwKvrroSq+s/iQUL
-V00s28QIe+zsQMl9f47mkJoAY5d55heIehG7oaYWPYsJS83yeHlW7YRi+CseyZwa
-o8ZSi3FqILEuO+yjH+h2nD8bpKltfhBwi4VUzn0sFAzz4btFkt1J0JYClKpF+Fwx
-msvSehNfgZt0JDJaQ6ACCBEVkcfCXe0pXX8BwLYW83V9gKWnklf97DKvFKmg4HMd
-/2JeVHouwG20VkQcjnYBTOpBv+08DKG0D19ZgviHnibUeTTu6mlpbCD2T6DzkLUE
-mGInzNLfgLfflCSeOusBazYQGy9DrGNhqGpnREXDY8NwZEUyA1EkHSl6BCOc6RaI
-VexLVXa11R0fNZRNJk2H2/MU9H/MWUUC+jRJQ+4X/ScGYtWjkJSe8LJ0KmgA2/5/
-gmqCqriJyFLot6c/z1kmNoSo2q2iedr7i4XKaUKrnf28LTQlRxk=
-=aSWM
------END PGP SIGNATURE-----
-
---rJwd6BRFiFCcLxzm--
+Ck9uIDAxLzEwLzIwMTkgMTI6MDAsIEJlbiBEb29rcyB3cm90ZToKPiBPbiAzMC8wOS8yMDE5IDIx
+OjQ2LCBKb24gSHVudGVyIHdyb3RlOgo+Pgo+PiBPbiAzMC8wOS8yMDE5IDE3OjUxLCBCZW4gRG9v
+a3Mgd3JvdGU6Cj4+PiBGcm9tOiBFZHdhcmQgQ3JhZ2cgPGVkd2FyZC5jcmFnZ0Bjb2RldGhpbmsu
+Y28udWs+Cj4+Pgo+Pj4gQWRkIGEgY2FsbGJhY2sgdG8gY29uZmlndXJlIFRETSBzZXR0aW5ncyBm
+b3IgdGhlIFRlZ3JhMzAgSTJTIEFTb0MKPj4+ICdwbGF0Zm9ybScKPj4+IGRyaXZlci4KPj4+Cj4+
+PiBTaWduZWQtb2ZmLWJ5OiBFZHdhcmQgQ3JhZ2cgPGVkd2FyZC5jcmFnZ0Bjb2RldGhpbmsuY28u
+dWs+Cj4+PiBbYmVuLmRvb2tzQGNvZGV0aGluay5jby51azogbWVyZ2UgZml4IGZvciBwb3dlciBt
+YW5hZ2VtZW50XQo+Pj4gW2Jlbi5kb29rc0Bjb2RldGhpbmsuY28udWs6IGFkZCByZXZpZXcgY2hh
+bmdlIGZvciBmc3luYyBvZiAxIGNsb2NrXQo+Pj4gU2lnbmVkLW9mZi1ieTogQmVuIERvb2tzIDxi
+ZW4uZG9va3NAY29kZXRoaW5rLmNvLnVrPgo+Pj4gLS0tCj4+PiDCoCBzb3VuZC9zb2MvdGVncmEv
+dGVncmEzMF9pMnMuYyB8IDMzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+Pj4g
+wqAgMSBmaWxlIGNoYW5nZWQsIDMzIGluc2VydGlvbnMoKykKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEv
+c291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPj4+IGIvc291bmQvc29jL3RlZ3JhL3RlZ3Jh
+MzBfaTJzLmMKPj4+IGluZGV4IGFjNjk4M2M2YmQ3Mi4uN2Y5ZWY2YWJlYWUyIDEwMDY0NAo+Pj4g
+LS0tIGEvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPj4+ICsrKyBiL3NvdW5kL3NvYy90
+ZWdyYS90ZWdyYTMwX2kycy5jCj4+PiBAQCAtMjU0LDYgKzI1NCwzOCBAQCBzdGF0aWMgaW50IHRl
+Z3JhMzBfaTJzX3RyaWdnZXIoc3RydWN0Cj4+PiBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFt
+LCBpbnQgY21kLAo+Pj4gwqDCoMKgwqDCoCByZXR1cm4gMDsKPj4+IMKgIH0KPj4+IMKgICsvKgo+
+Pj4gKyAqIFNldCB1cCBURE0KPj4+ICsgKi8KPj4+ICtzdGF0aWMgaW50IHRlZ3JhMzBfaTJzX3Nl
+dF90ZG0oc3RydWN0IHNuZF9zb2NfZGFpICpkYWksCj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGludCB0eF9tYXNrLCB1bnNpZ25lZCBpbnQgcnhfbWFz
+aywKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW50IHNsb3RzLCBp
+bnQgc2xvdF93aWR0aCkKPj4+ICt7Cj4+PiArwqDCoMKgIHN0cnVjdCB0ZWdyYTMwX2kycyAqaTJz
+ID0gc25kX3NvY19kYWlfZ2V0X2RydmRhdGEoZGFpKTsKPj4+ICvCoMKgwqAgdW5zaWduZWQgaW50
+IG1hc2ssIHZhbDsKPj4+ICsKPj4+ICvCoMKgwqAgZGV2X2RiZyhkYWktPmRldiwgIiVzOiB0eG1h
+c2s9MHglMDh4IHJ4bWFzaz0weCUwOHggc2xvdHM9JWQKPj4+IHdpZHRoPSVkXG4iLAo+Pj4gK8Kg
+wqDCoMKgwqDCoMKgwqAgX19mdW5jX18sIHR4X21hc2ssIHJ4X21hc2ssIHNsb3RzLCBzbG90X3dp
+ZHRoKTsKPj4+ICsKPj4+ICvCoMKgwqAgLyogU2V0IHVwIHNsb3RzIGFuZCB0eC9yeCBtYXNrcyAq
+Lwo+Pj4gK8KgwqDCoCBtYXNrID0gVEVHUkEzMF9JMlNfU0xPVF9DVFJMX1RPVEFMX1NMT1RTX01B
+U0sgfAo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgIFRFR1JBMzBfSTJTX1NMT1RfQ1RSTF9SWF9T
+TE9UX0VOQUJMRVNfTUFTSyB8Cj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqAgVEVHUkEzMF9JMlNf
+U0xPVF9DVFJMX1RYX1NMT1RfRU5BQkxFU19NQVNLOwo+Pj4gKwo+Pj4gK8KgwqDCoCB2YWwgPSAo
+dHhfbWFzayA8PCBURUdSQTMwX0kyU19TTE9UX0NUUkxfVFhfU0xPVF9FTkFCTEVTX1NISUZUKSB8
+Cj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgIChyeF9tYXNrIDw8IFRFR1JBMzBfSTJTX1NMT1RfQ1RS
+TF9SWF9TTE9UX0VOQUJMRVNfU0hJRlQpIHwKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqAgKChzbG90
+cyAtIDEpIDw8IFRFR1JBMzBfSTJTX1NMT1RfQ1RSTF9UT1RBTF9TTE9UU19TSElGVCk7Cj4+Cj4+
+IEkgYW0gbm90IHN1cmUgd2h5IHRoaXMga2VlcHMgY2hhbmdpbmcuIFdoeSBub3Qgc2V0IHRvIDEg
+YWx3YXlzPwo+IAo+IFRoaXMgaXMgdGhlIHRvdGFsIG51bWJlciBvZiBzbG90cywgbm90IHRoZSB3
+aWR0aCBvZiB0aGUgZnN5bmMKPiB3aGljaCBoYXMgYmVlbiBjaGFuZ2VkIHRvIDEgYmVsb3cgdGhp
+cy4KCkFoIHllcyBpbmRlZWQuIFNvcnJ5LCBzaG91bGQgaGF2ZSB3YWl0ZWQgdW50aWwgdGhpcyBt
+b3JuaW5nIHRvIGxvb2sgYXQKdGhpcyEgSm9uCgotLSAKbnZwdWJsaWMKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QK
+QWxzYS1kZXZlbEBhbHNhLXByb2plY3Qub3JnCmh0dHBzOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qu
+b3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
