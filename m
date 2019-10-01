@@ -1,54 +1,62 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.19 00/63] 4.19.76-stable review
-Date: Tue, 1 Oct 2019 15:58:17 +0100
-Message-ID: <90fc5da5-40f1-03da-785a-2c2c6ce45702@nvidia.com>
-References: <20190929135031.382429403@linuxfoundation.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [Patch V2] soc/tegra: fuse: Add fuse clock check in
+ tegra_fuse_readl
+Date: Tue, 1 Oct 2019 17:04:12 +0200
+Message-ID: <20191001150412.GG3566931@ulmo>
+References: <1567508212-1194-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190929135031.382429403@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uc35eWnScqDcQrv5"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1567508212-1194-1-git-send-email-nkristam@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nagarjuna Kristam <nkristam@nvidia.com>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 29/09/2019 14:53, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.76 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 01 Oct 2019 01:47:47 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.76-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+--uc35eWnScqDcQrv5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 03, 2019 at 04:26:52PM +0530, Nagarjuna Kristam wrote:
+> tegra_fuse_readl() can be called from drivers at any time. If this API is
+> called before tegra_fuse_probe(), we end up enabling clock before it is
+> registered. Add check for fuse clock in tegra_fuse_readl() and return
+> corresponding error if any.
+>=20
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> ---
+> V2:
+> 	- Added Null and other error checks for fuse->clk.
+> ---
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-All tests are passing for Tegra ...
+Applied to for-5.5/soc, thanks.
 
-Test results for stable-v4.19:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+Thierry
 
-Linux version:	4.19.76-g555161ee1b7a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+--uc35eWnScqDcQrv5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers
-Jon
+-----BEGIN PGP SIGNATURE-----
 
--- 
-nvpublic
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2TauwACgkQ3SOs138+
+s6EqvQ//QmqQwmW5Ol+MmXGhVIp3l5MIWX0f5l5/D9v1a911yCzm9o9mPKjAlkJy
+RA3+8kZJhAGmxE4GFZ/3aV1V32dqrnvNkJXEgagTnQ+kXaIfr2o67DoW5q220ftV
+JT7USAUONMWTqEJrR90e+EV668kDD9ZtAcLrn40BBjM+0g0K19g+7vLXAvzuLNTb
+CONTgcahroCKIf9x2YG8aUKICAeIbz/JflbaZwLyrV+WBQ8H4mg3RHbd1MPOQIha
+sNv6HunEy9nJeP8kcHopFJfikHMNempXIpcB2mlmU/iubTvdvBFDm+POhivPuuqv
+RCvopwwzqyxN+jyjj3SolNVAVWwzCbYYI96HBMn2j3jD0+2qCGO0WA/TQVx8IMZS
+vBouimwhcWKu8HIHhTj3ZSt59bhIya9jak+1wpfmm9BgX6ifZNB4k082kB336uds
+p6TlDKZAoTHVzKmRVC6nYmSMb46OKDVdqzZP9jn2aNPZio2jIhHzQNg83MPuUofQ
+3jRXU0JifD15pnIG9zkXXM100k0HdnW+2rwzcVbEQRGsxd9YqQvV8gZWjtAQD9J/
+jvzAaF3rcFZM8iMAUaU7VTIc6dzGJlqaqVhAr6q9VuKsrQsNVQFv3j2Z//dVhM8D
+jgMlsySTFvNLZQf6K8bruE0yqY/YCG55L7JU7hJFRfdEBkmqTgs=
+=XLEa
+-----END PGP SIGNATURE-----
+
+--uc35eWnScqDcQrv5--
