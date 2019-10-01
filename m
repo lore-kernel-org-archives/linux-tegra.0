@@ -1,16 +1,16 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v3 1/7] ASoC: tegra: add a TDM
-	configuration callback
-Date: Tue, 1 Oct 2019 12:00:04 +0100
-Message-ID: <85bb5ec6-8928-e4ea-8ca5-3ce1afcc4324@codethink.co.uk>
+Subject: Re: [PATCH v3 5/7] ASoC: tegra: set i2s_offset to 0
+	for tdm
+Date: Tue, 1 Oct 2019 12:09:51 +0100
+Message-ID: <54bde532-2276-aa4e-6206-7757b482c6fa@codethink.co.uk>
 References: <20190930165130.10642-1-ben.dooks@codethink.co.uk>
- <20190930165130.10642-2-ben.dooks@codethink.co.uk>
- <c2a7c046-011e-437b-0f09-0853d5cf7f34@nvidia.com>
+ <20190930165130.10642-6-ben.dooks@codethink.co.uk>
+ <6d6ae684-dd5f-b180-9114-dafe12886d4f@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <c2a7c046-011e-437b-0f09-0853d5cf7f34@nvidia.com>
+In-Reply-To: <6d6ae684-dd5f-b180-9114-dafe12886d4f@nvidia.com>
 Content-Language: en-GB
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
@@ -22,59 +22,55 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk
 List-Id: linux-tegra@vger.kernel.org
 
-On 30/09/2019 21:46, Jon Hunter wrote:
+On 30/09/2019 21:52, Jon Hunter wrote:
+> 
 > 
 > On 30/09/2019 17:51, Ben Dooks wrote:
->> From: Edward Cragg <edward.cragg@codethink.co.uk>
+>> Set the offset to 0 for TDM mode, as per the current setup. Note we also
+>> move the data offset programming to the i2s hw_parameters call as per
+>> the suggestion from Jon Hunter.
 >>
->> Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
->> driver.
->>
->> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
->> [ben.dooks@codethink.co.uk: merge fix for power management]
->> [ben.dooks@codethink.co.uk: add review change for fsync of 1 clock]
 >> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 >> ---
->>   sound/soc/tegra/tegra30_i2s.c | 33 +++++++++++++++++++++++++++++++++
->>   1 file changed, 33 insertions(+)
+>> v2:
+>>   - fix the review comments and move the i2s offset setting
+>> ---
+>>   sound/soc/tegra/tegra30_i2s.c | 13 +++++++------
+>>   1 file changed, 7 insertions(+), 6 deletions(-)
 >>
 >> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
->> index ac6983c6bd72..7f9ef6abeae2 100644
+>> index c573151da341..a03692b0afc3 100644
 >> --- a/sound/soc/tegra/tegra30_i2s.c
 >> +++ b/sound/soc/tegra/tegra30_i2s.c
->> @@ -254,6 +254,38 @@ static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
->>   	return 0;
->>   }
+>> @@ -66,7 +66,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+>>   				unsigned int fmt)
+>>   {
+>>   	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+>> -	unsigned int mask = 0, val = 0;
+>> +	unsigned int mask = 0, val = 0, data_offset = 1;
+>>   	unsigned int ch_mask, ch_val = 0;
 >>   
->> +/*
->> + * Set up TDM
->> + */
->> +static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
->> +			       unsigned int tx_mask, unsigned int rx_mask,
->> +			       int slots, int slot_width)
->> +{
->> +	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
->> +	unsigned int mask, val;
->> +
->> +	dev_dbg(dai->dev, "%s: txmask=0x%08x rxmask=0x%08x slots=%d width=%d\n",
->> +		 __func__, tx_mask, rx_mask, slots, slot_width);
->> +
->> +	/* Set up slots and tx/rx masks */
->> +	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
->> +	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
->> +	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
->> +
->> +	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
->> +	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
->> +	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
+>>   	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+>> @@ -95,11 +95,13 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+>>   		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+>>   		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
+>>   		val |= TEGRA30_I2S_CTRL_LRCK_L_LOW;
+>> +		data_offset = 0;
+>>   		break;
+>>   	case SND_SOC_DAIFMT_DSP_B:
+>>   		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+>>   		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
+>>   		val |= TEGRA30_I2S_CTRL_LRCK_R_LOW;
+>> +		data_offset = 0;
 > 
-> I am not sure why this keeps changing. Why not set to 1 always?
+> My understanding is that the difference between dsp-a and dsp-b is that
+> dsp-a has an offset of 1 and dsp-b has an offset of 0.
 
-This is the total number of slots, not the width of the fsync
-which has been changed to 1 below this.
+Ok, can anyone else check this before I make the change for DSP_B ?
+
 
 -- 
 Ben Dooks				http://www.codethink.co.uk/
