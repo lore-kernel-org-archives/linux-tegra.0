@@ -1,79 +1,87 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v3 5/7] ASoC: tegra: set i2s_offset to 0
-	for tdm
-Date: Tue, 1 Oct 2019 12:09:51 +0100
-Message-ID: <54bde532-2276-aa4e-6206-7757b482c6fa@codethink.co.uk>
-References: <20190930165130.10642-1-ben.dooks@codethink.co.uk>
- <20190930165130.10642-6-ben.dooks@codethink.co.uk>
- <6d6ae684-dd5f-b180-9114-dafe12886d4f@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] soc/tegra: pmc: Fix crashes for hierarchical interrupts
+Date: Tue,  1 Oct 2019 13:48:29 +0200
+Message-ID: <20191001114829.3385196-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <6d6ae684-dd5f-b180-9114-dafe12886d4f@nvidia.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 30/09/2019 21:52, Jon Hunter wrote:
-> 
-> 
-> On 30/09/2019 17:51, Ben Dooks wrote:
->> Set the offset to 0 for TDM mode, as per the current setup. Note we also
->> move the data offset programming to the i2s hw_parameters call as per
->> the suggestion from Jon Hunter.
->>
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->> ---
->> v2:
->>   - fix the review comments and move the i2s offset setting
->> ---
->>   sound/soc/tegra/tegra30_i2s.c | 13 +++++++------
->>   1 file changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
->> index c573151da341..a03692b0afc3 100644
->> --- a/sound/soc/tegra/tegra30_i2s.c
->> +++ b/sound/soc/tegra/tegra30_i2s.c
->> @@ -66,7 +66,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
->>   				unsigned int fmt)
->>   {
->>   	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
->> -	unsigned int mask = 0, val = 0;
->> +	unsigned int mask = 0, val = 0, data_offset = 1;
->>   	unsigned int ch_mask, ch_val = 0;
->>   
->>   	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
->> @@ -95,11 +95,13 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
->>   		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
->>   		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
->>   		val |= TEGRA30_I2S_CTRL_LRCK_L_LOW;
->> +		data_offset = 0;
->>   		break;
->>   	case SND_SOC_DAIFMT_DSP_B:
->>   		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
->>   		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
->>   		val |= TEGRA30_I2S_CTRL_LRCK_R_LOW;
->> +		data_offset = 0;
-> 
-> My understanding is that the difference between dsp-a and dsp-b is that
-> dsp-a has an offset of 1 and dsp-b has an offset of 0.
+From: Thierry Reding <treding@nvidia.com>
 
-Ok, can anyone else check this before I make the change for DSP_B ?
+Interrupts that don't have an associated wake event or GPIO wake events
+end up with an associate IRQ chip that is NULL and which causes IRQ code
+to crash. This is because we don't implicitly set the parent IRQ chip by
+allocating the interrupt at the parent. However, there really isn't a
+corresponding interrupt at the parent, so we need to work around this by
+setting the special no_irq_chip as the IRQ chip for these interrupts.
 
+Fixes: 19906e6b1667 ("soc/tegra: pmc: Add wake event support")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 9f9c1c677cf4..0447afa970f5 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1899,6 +1899,20 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 							    event->id,
+ 							    &pmc->irq, pmc);
+ 
++			/*
++			 * GPIOs don't have an equivalent interrupt in the
++			 * parent controller (GIC). However some code, such
++			 * as the one in irq_get_irqchip_state(), require a
++			 * valid IRQ chip to be set. Make sure that's the
++			 * case by passing NULL here, which will install a
++			 * dummy IRQ chip for the interrupt in the parent
++			 * domain.
++			 */
++			if (domain->parent)
++				irq_domain_set_hwirq_and_chip(domain->parent,
++							      virq, 0, NULL,
++							      NULL);
++
+ 			break;
+ 		}
+ 	}
+@@ -1908,10 +1922,22 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 	 * dummy hardware IRQ number. This is used in the ->irq_set_type()
+ 	 * and ->irq_set_wake() callbacks to return early for these IRQs.
+ 	 */
+-	if (i == soc->num_wake_events)
++	if (i == soc->num_wake_events) {
+ 		err = irq_domain_set_hwirq_and_chip(domain, virq, ULONG_MAX,
+ 						    &pmc->irq, pmc);
+ 
++		/*
++		 * Interrupts without a wake event don't have a corresponding
++		 * interrupt in the parent controller (GIC). Pass NULL for the
++		 * chip here, which causes a dummy IRQ chip to be installed
++		 * for the interrupt in the parent domain, to make this
++		 * explicit.
++		 */
++		if (domain->parent)
++			irq_domain_set_hwirq_and_chip(domain->parent, virq, 0,
++						      NULL, NULL);
++	}
++
+ 	return err;
+ }
+ 
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+2.23.0
