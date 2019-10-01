@@ -1,113 +1,53 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v3 1/7] ASoC: tegra: add a TDM
-	configuration callback
-Date: Tue, 1 Oct 2019 18:03:20 +0100
-Message-ID: <7f9cc620-b3d0-c417-724d-3198055aca82@codethink.co.uk>
-References: <20190930165130.10642-1-ben.dooks@codethink.co.uk>
- <20190930165130.10642-2-ben.dooks@codethink.co.uk>
- <1488a5a8-5c55-5643-1956-0cd9d9c90644@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
+Date: Tue,  1 Oct 2019 15:13:43 -0600
+Message-ID: <20191001211346.104400-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1488a5a8-5c55-5643-1956-0cd9d9c90644@nvidia.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/10/2019 14:40, Jon Hunter wrote:
-> 
-> On 30/09/2019 17:51, Ben Dooks wrote:
->> From: Edward Cragg <edward.cragg@codethink.co.uk>
->>
->> Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
->> driver.
->>
->> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
->> [ben.dooks@codethink.co.uk: merge fix for power management]
->> [ben.dooks@codethink.co.uk: add review change for fsync of 1 clock]
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->> ---
->>   sound/soc/tegra/tegra30_i2s.c | 33 +++++++++++++++++++++++++++++++++
->>   1 file changed, 33 insertions(+)
->>
->> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
->> index ac6983c6bd72..7f9ef6abeae2 100644
->> --- a/sound/soc/tegra/tegra30_i2s.c
->> +++ b/sound/soc/tegra/tegra30_i2s.c
->> @@ -254,6 +254,38 @@ static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
->>   	return 0;
->>   }
->>   
->> +/*
->> + * Set up TDM
->> + */
->> +static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
->> +			       unsigned int tx_mask, unsigned int rx_mask,
->> +			       int slots, int slot_width)
->> +{
->> +	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
->> +	unsigned int mask, val;
->> +
->> +	dev_dbg(dai->dev, "%s: txmask=0x%08x rxmask=0x%08x slots=%d width=%d\n",
->> +		 __func__, tx_mask, rx_mask, slots, slot_width);
->> +
->> +	/* Set up slots and tx/rx masks */
->> +	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
->> +	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
->> +	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
->> +
->> +	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
->> +	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
->> +	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
->> +
->> +	pm_runtime_get_sync(dai->dev);
->> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
->> +	// set the fsync width to minimum of 1 clock width
-> 
-> Please make sure you are consistent with your commenting style and you
-> adhere to the kernel coding style.
-> 
-> Also, I see a lot of ...
-> 
-> ERROR: trailing whitespace
-> #197: FILE: sound/soc/tegra/tegra30_i2s.c:258:
-> + * Set up TDM^M$
-> 
-> ERROR: DOS line endings
-> #198: FILE: sound/soc/tegra/tegra30_i2s.c:259:
-> + */^M$
+From: Stephen Warren <swarren@nvidia.com>
 
-ok, for me I am getting:
+For a little over a year, U-Boot has configured the flow controller to
+perform automatic RAM re-repair on off->on power transitions of the CPU
+rail1]. This is mandatory for correct operation of Tegra124. However, RAM
+re-repair relies on certain clocks, which the kernel must enable and
+leave running. The fuse clock is one of those clocks. Enable this clock
+so that LP1 power mode (system suspend) operates correctly.
 
-> $ ./scripts/checkpatch.pl ./patches/0001-ASoC-tegra-add-a-TDM-configuration-callback.patch 
-> WARNING: Possible unwrapped commit description (prefer a maximum 75 chars per line)
-> #6: 
-> Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
-> 
-> total: 0 errors, 1 warnings, 45 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace.
+[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
 
-I don't see any warnings about the line-endings
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra124.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I will remove the comment about the function, it is fairly self explanatory.
-
-
-
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 0224fdc4766f..f53f6315c646 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1291,6 +1291,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
+ };
+ 
+ static struct tegra_clk_init_table tegra124_init_table[] __initdata = {
++	{ TEGRA124_CLK_FUSE, -1, 0, 1 },
+ 	{ TEGRA124_CLK_SOC_THERM, TEGRA124_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA124_CLK_CCLK_G, TEGRA124_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA124_CLK_HDA, TEGRA124_CLK_PLL_P, 102000000, 0 },
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+2.23.0
