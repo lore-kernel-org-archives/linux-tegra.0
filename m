@@ -1,227 +1,147 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 6/6] arm64: tegra: Enable XUSB host in P2972-0000 board
-Date: Wed, 2 Oct 2019 12:26:11 +0200
-Message-ID: <20191002102611.GH3716706@ulmo>
-References: <20191002080051.11142-1-jckuo@nvidia.com>
- <20191002080051.11142-7-jckuo@nvidia.com>
+Subject: Re: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
+Date: Wed, 2 Oct 2019 13:04:54 +0200
+Message-ID: <20191002110454.GJ3716706@ulmo>
+References: <20191001211346.104400-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mYYhpFXgKVw71fwr"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191002080051.11142-7-jckuo@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: JC Kuo <jckuo@nvidia.com>
-Cc: gregkh@linuxfoundation.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com
+Content-Type: multipart/mixed; boundary="===============0404798811146570980=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191001211346.104400-1-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---mYYhpFXgKVw71fwr
+--===============0404798811146570980==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rmUrFcWP4LYae1gV"
+Content-Disposition: inline
+
+
+--rmUrFcWP4LYae1gV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2019 at 04:00:51PM +0800, JC Kuo wrote:
-> This commit enables XUSB host and pad controller in Tegra194
-> P2972-0000 board.
+On Tue, Oct 01, 2019 at 03:13:43PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 >=20
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> For a little over a year, U-Boot has configured the flow controller to
+> perform automatic RAM re-repair on off->on power transitions of the CPU
+> rail1]. This is mandatory for correct operation of Tegra124. However, RAM
+> re-repair relies on certain clocks, which the kernel must enable and
+> leave running. The fuse clock is one of those clocks. Enable this clock
+> so that LP1 power mode (system suspend) operates correctly.
+>=20
+> [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
+>=20
+> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
->  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 31 +++++++++-
->  .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 59 +++++++++++++++++++
->  2 files changed, 89 insertions(+), 1 deletion(-)
+>  drivers/clk/tegra/clk-tegra124.c | 1 +
+>  1 file changed, 1 insertion(+)
 >=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra194-p2888.dtsi
-> index 4c38426a6969..cb236edc6a0d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> @@ -229,7 +229,7 @@
->  						regulator-max-microvolt =3D <3300000>;
->  					};
-> =20
-> -					ldo5 {
-> +					vdd_usb_3v3: ldo5 {
->  						regulator-name =3D "VDD_USB_3V3";
->  						regulator-min-microvolt =3D <3300000>;
->  						regulator-max-microvolt =3D <3300000>;
-> @@ -313,5 +313,34 @@
->  			regulator-boot-on;
->  			enable-active-low;
->  		};
-> +
-> +		vdd_5v_sata: regulator@4 {
-> +			compatible =3D "regulator-fixed";
-> +			reg =3D <4>;
-> +
-> +			regulator-name =3D "vdd-5v-sata";
-
-Please keep capitalization of regulator names consistent. We use
-all-caps and underscores for the others (which mirrors the names in the
-schematics), so please stick with that for this one as well.
-
-Also, I'm wondering if perhaps you can clarify something here. My
-understanding is that SATA functionality is provided via a controller on
-the PCI bus. Why is it that we route the 5 V SATA power to the USB port?
-Oh wait... this is one of those eSATAp (hybrid) ports that can take
-either eSATA or USB, right? Do we need any additional setup to switch
-between eSATA and USB modes? Or is this all done in hardware? That is,
-if I plug in an eSATA, does it automatically hotplug detect the device
-as SATA and if I plug in a USB device, does it automatically detect it
-as USB?
-
-> +			regulator-min-microvolt =3D <5000000>;
-> +			regulator-max-microvolt =3D <5000000>;
-> +			gpio =3D <&gpio TEGRA194_MAIN_GPIO(Z, 1) GPIO_ACTIVE_LOW>;
-
-This will actually cause a warning on boot. For fixed regulators the
-polarity of the enable GPIO is not specified in the GPIO specifier.
-Instead you're supposed to use the boolean enable-active-high property
-to specify if the enable GPIO is active-high. By default the enable GPIO
-is considered to be active-low. The GPIO specifier needs to have the
-GPIO_ACTIVE_HIGH flag set regardless for backwards-compatibilitiy
-reasons.
-
-Note that regulator@3 above your new entry does this wrongly, but
-next-20191002 should have a fix for that.
-
-> +		};
-> +	};
-> +
-> +	padctl@3520000 {
-
-Don't forget to move this into /cbb as well to match the changes to
-patch 5/6.
-
-> +		avdd-usb-supply =3D <&vdd_usb_3v3>;
-> +		vclamp-usb-supply =3D <&vdd_1v8ao>;
-> +		ports {
-
-Blank line between the above two for better readability.
-
-> +			usb2-1 {
-> +				vbus-supply =3D <&vdd_5v0_sys>;
-> +			};
-> +			usb2-3 {
-
-Same here and below.
-
-> +				vbus-supply =3D <&vdd_5v_sata>;
-> +			};
-> +			usb3-0 {
-> +				vbus-supply =3D <&vdd_5v0_sys>;
-> +			};
-> +			usb3-3 {
-> +				vbus-supply =3D <&vdd_5v0_sys>;
-> +			};
-> +		};
->  	};
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-teg=
+ra124.c
+> index 0224fdc4766f..f53f6315c646 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1291,6 +1291,7 @@ static struct tegra_clk_init_table common_init_tabl=
+e[] __initdata =3D {
 >  };
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/ar=
-m64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> index d47cd8c4dd24..410221927dfa 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> @@ -222,4 +222,63 @@
->  			};
->  		};
->  	};
-> +
-> +	padctl@3520000 {
+> =20
+>  static struct tegra_clk_init_table tegra124_init_table[] __initdata =3D {
+> +	{ TEGRA124_CLK_FUSE, -1, 0, 1 },
 
-Same comment as above. Move this into /cbb.
+I think the correct way to do this these days is to mark the clock as
+CRITICAL. Not sure if there's an easy way to do that given that the
+clock init table doesn't allow storing flags.
 
-> +		status =3D "okay";
-> +
-> +		pads {
-> +			usb2 {
-> +				lanes {
-> +					usb2-1 {
-> +						status =3D "okay";
-> +					};
-> +					usb2-2 {
+Do you have any good ideas on how to achieve this with the critical flag
+instead of forcing the refcount to 1?
 
-And blank lines for readability here and below.
-
-> +						status =3D "okay";
-> +					};
-> +					usb2-3 {
-> +						status =3D "okay";
-> +					};
-> +				};
-> +			};
-> +			usb3 {
-> +				lanes {
-> +					usb3-0 {
-> +						status =3D "okay";
-> +					};
-> +					usb3-3 {
-> +						status =3D "okay";
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		ports {
-> +			usb2-1 {
-> +				mode =3D "host";
-> +				status =3D "okay";
-> +			};
-> +			usb2-3 {
-> +				mode =3D "host";
-> +				status =3D "okay";
-> +			};
-> +			usb3-0 {
-> +				nvidia,usb2-companion =3D <1>;
-> +				status =3D "okay";
-> +			};
-> +			usb3-3 {
-> +				nvidia,usb2-companion =3D <3>;
-> +				nvidia,disable-gen2;
-> +				status =3D "okay";
-> +			};
-> +		};
-> +	};
-> +
-> +	tegra_xhci: xhci@3610000 {
-
-Also needs to move into /cbb. Also, you can drop the tegra_xhci label
-here since we never reference the controller from elsewhere.
-
-Also make sure to update the name here to match the changes in 5/6.
+Perhaps something like the below would work?
 
 Thierry
 
-> +		status =3D "okay";
-> +		phys =3D	<&{/padctl@3520000/pads/usb2/lanes/usb2-1}>,
-> +			<&{/padctl@3520000/pads/usb2/lanes/usb2-3}>,
-> +			<&{/padctl@3520000/pads/usb3/lanes/usb3-0}>,
-> +			<&{/padctl@3520000/pads/usb3/lanes/usb3-3}>;
-> +		phy-names =3D "usb2-1", "usb2-3", "usb3-0", "usb3-3";
-> +	};
->  };
-> --=20
-> 2.17.1
->=20
+--- >8 ---
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra=
+124.c
+index 0224fdc4766f..bba12d8308d3 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -838,7 +838,7 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __=
+initdata =3D {
+ 	[tegra_clk_spdif_out] =3D { .dt_id =3D TEGRA124_CLK_SPDIF_OUT, .present =
+=3D true },
+ 	[tegra_clk_vi_9] =3D { .dt_id =3D TEGRA124_CLK_VI, .present =3D true },
+ 	[tegra_clk_vi_sensor_8] =3D { .dt_id =3D TEGRA124_CLK_VI_SENSOR, .present=
+ =3D true },
+-	[tegra_clk_fuse] =3D { .dt_id =3D TEGRA124_CLK_FUSE, .present =3D true },
++	[tegra_clk_fuse] =3D { .dt_id =3D TEGRA124_CLK_FUSE, .present =3D false },
+ 	[tegra_clk_fuse_burn] =3D { .dt_id =3D TEGRA124_CLK_FUSE_BURN, .present =
+=3D true },
+ 	[tegra_clk_clk_32k] =3D { .dt_id =3D TEGRA124_CLK_CLK_32K, .present =3D t=
+rue },
+ 	[tegra_clk_clk_m] =3D { .dt_id =3D TEGRA124_CLK_CLK_M, .present =3D true =
+},
+@@ -1033,6 +1033,12 @@ static __init void tegra124_periph_clk_init(void __i=
+omem *clk_base,
+ 	clk_register_clkdev(clk, "cml1", NULL);
+ 	clks[TEGRA124_CLK_CML1] =3D clk;
+=20
++	clk =3D tegra_clk_register_periph_gate("fuse", "clk_m",
++					     TEGRA_PERIPH_ON_APB, clk_base,
++					     CLK_IS_CRITICAL, 39,
++					     periph_clk_enb_refcnt);
++	clks[TEGRA124_CLK_FUSE] =3D clk;
++
+ 	tegra_periph_clk_init(clk_base, pmc_base, tegra124_clks, &pll_p_params);
+ }
+=20
 
---mYYhpFXgKVw71fwr
+--rmUrFcWP4LYae1gV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2Ue0AACgkQ3SOs138+
-s6GAgw//bgErm+FyPqbnCyw/CJbKUYXSkpwC/rGhxRnk037h2UYIJSIXtCRFllmx
-SDCCTvU0l9ii/dSkaVfo/eOpp/B1RTI0E9mdtJkzaFdmedkogE9m+JrlDGBMeXMe
-WwEksdW08PDcYOjecHBlcpB7+WA4a097WN1zWezOAGrdvNaaKGTSg3A/QSnFDOc9
-Wge4KazOfhy6csT+Sjf++A/0uqWrOVhoIZjbdsDjD/zdua6CT96W06YmkK/qZLRU
-bWn42dGoJLtRCtRFEzHerUq1P5d9k/C29iWduJ/DyM2SeQP6VvwgYO+DY7pOp+Ng
-sWHN3yyIzR9G0rUpdH+R6KwpFbwqbfNpD4h5U/Z1P/bt8T9TVBdVxrYQnzCRm4ry
-Mg1FUW13zbmvH5rUgewEdvhGAvRO90SvIQx1Z/RHO3wTbWhkT1jQawiqlYl57fBc
-bixdkc7Uft4GvSZPc/0mT0IfWWpssVQMZ9J7DHFJpM/wxs8pV84sPJZbg3CSo6C9
-PqW917GsFFOCfNjHq1GukmS0C3OKOM4lgwhHCdZ4QaRTK/zzkZohS/iSigSUaxQM
-7TC7isxVGkApoeQ8TjugbhW+xeLTVv0PA/ebtnAoBfOQA3vfsB+GIxKEJp69HrbF
-+Q3D36qqMfE8I1YW0+mCAvH6uEqqYBWDyrEiTvoG0GpZEeQVNrQ=
-=0eUt
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2UhFMACgkQ3SOs138+
+s6FlZQ//cKIMvXQriD1VmW+HASRz/xjiUiEIAO7HKSifQ3AGz8Cefz3bltXfJgnl
+PMWqX+UpxTMkUYNLqCl5bRwUQruyhnxVmeHDIlairmkEGAhrWvZpqgiQdrAoZzmp
+/ruHc2e/hBWNUXEGHia9eeD5zwUNtUmI/XQQAXmoLSTTv38OooQWIp8ff/i3hwLh
+921GSaoLo4QQmlzpU+VoUAlvBAbBZzL6a7/2QT6/CDP7g47PJfeD8xoQH+kuGHPn
+B6ZWxqMq7CteI7SfdWRpF/frmaCV5bxQQ9w3+bwLxDl+CxXKV2AA/GjYt9In2M0Q
+kqrCMM+77y+K4VL5Nz3BA46Z8TUK+5jLmrhYMpA3e5PrxeTEWKb+q+XDa1OnKNPK
+mIfFYv97pPeKnBi5nOIy8AemssitWpbHBskVrRG42LjyQ5cknUvrNcCByOgW/6LC
+UT1RvXZbukY0X2B0ePTiyMGRh5IVqiuUC6QqvBMP4WncDnKncKKcA1N8In22DaFZ
+61uJdMIXMurMkDR3IfR4ZKUvKFHeojGmzBzO5lQyWOua11S1yJcfwoIqhRW4JPEy
+nySi33yc0t9Nm6AhXeArW1r1fnrujO2+9aqEaMtiYnnym6kQhs8RfaQ0eke92KAJ
+QroNOG0WObaFbkOv0MW7RB1DAxgcPeMrWWRysiEaZ4rYFho+MgE=
+=hRxp
 -----END PGP SIGNATURE-----
 
---mYYhpFXgKVw71fwr--
+--rmUrFcWP4LYae1gV--
+
+
+--===============0404798811146570980==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0404798811146570980==--
