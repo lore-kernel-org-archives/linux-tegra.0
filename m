@@ -1,57 +1,46 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/3] usb: host: xhci-tegra: use
- regulator_bulk_set_supply_names()
-Date: Wed, 2 Oct 2019 14:26:48 +0200
-Message-ID: <20191002122648.GC3908655@ulmo>
-References: <20191001132333.20146-1-brgl@bgdev.pl>
- <20191001132333.20146-4-brgl@bgdev.pl>
+Subject: [PATCH 1/3] gpio: max77620: Use correct unit for debounce times
+Date: Wed,  2 Oct 2019 14:28:23 +0200
+Message-ID: <20191002122825.3948322-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+xNpyl7Qekk2NvDX"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191001132333.20146-4-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Timo Alho <talho@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---+xNpyl7Qekk2NvDX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The gpiod_set_debounce() function takes the debounce time in
+microseconds. Adjust the switch/case values in the MAX77620 GPIO to use
+the correct unit.
 
-On Tue, Oct 01, 2019 at 03:23:33PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> Use the new regulator helper instead of a for loop.
->=20
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/usb/host/xhci-tegra.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpio-max77620.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---+xNpyl7Qekk2NvDX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2Ul4gACgkQ3SOs138+
-s6HhUA/5Ab4y4CUvbNGI3qBuN5kszxhX3js9RnOzfvLMECkxSStw0S9bI4cluZBJ
-Y9T9McYbSoWyoAqGuvVAK5BnqcgytzaqBMvLqmsYb0q5hYxQGCSHeQkpYir0Aq9q
-0GiFHGkbqg0+y5UQkM0SlfWHwIYT7arDhd0XHncmNQtaAWWEKopZTSR2mys4XAE+
-bXskoedemp3oIvjxXIvYQZzMYnJyMXTzLjtjEZFetaOWq1QVXY0Dqf5YasutN5/K
-Urs9TGZtW31qxC9z6T6xWxLuPtS0kXOIhYQ+dlS66+sra4MNQaRse5h+1BWFKeee
-Vmn81FVXniTLbpCMQ0M/gxFSGIoAADiK2EI0sDju3KzoOcq1Ol9gxQGeTnkXklSj
-gXxt/1PwZPQLJxlerrYUvlv2gQLjdv74pRKCgAN5/JOKw25kXzANWjmNfWn3E3p0
-/CUmrVCrCgIFG6yTt9bGGWCMsgMieEQP+scabwBYEi1Vflt+I4lwvxNFMD/3Qk4A
-N7TRvhVMB8o4pa1jls6/NM6edqFnj7KZqBk4RhkCWsYbAECVgDB01rOsCH9sRIj9
-mZMG6HUatyG3auomJxl4PZl4COre1ECfu92u182uqyt6+cIh1xyuZo0fNd9FJCei
-TKkVS8C8ryl0zFEjPnObWBdD0HLb8aQJedzelvubwCU1U1bek28=
-=qTAb
------END PGP SIGNATURE-----
-
---+xNpyl7Qekk2NvDX--
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 47d05e357e61..faf86ea9c51a 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -192,13 +192,13 @@ static int max77620_gpio_set_debounce(struct max77620_gpio *mgpio,
+ 	case 0:
+ 		val = MAX77620_CNFG_GPIO_DBNC_None;
+ 		break;
+-	case 1 ... 8:
++	case 1000 ... 8000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_8ms;
+ 		break;
+-	case 9 ... 16:
++	case 9000 ... 16000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_16ms;
+ 		break;
+-	case 17 ... 32:
++	case 17000 ... 32000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_32ms;
+ 		break;
+ 	default:
+-- 
+2.23.0
