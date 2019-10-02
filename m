@@ -1,12 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH 5/6] arm64: tegra: Add XUSB and pad controller on Tegra194
-Date: Wed, 2 Oct 2019 12:10:01 +0200
-Message-ID: <20191002101001.GF3716706@ulmo>
+Date: Wed, 2 Oct 2019 12:11:02 +0200
+Message-ID: <20191002101102.GG3716706@ulmo>
 References: <20191002080051.11142-1-jckuo@nvidia.com>
  <20191002080051.11142-6-jckuo@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kR3zbvD4cgoYnS/6"
+        protocol="application/pgp-signature"; boundary="kadn00tgSopKmJ1H"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20191002080051.11142-6-jckuo@nvidia.com>
@@ -16,7 +16,7 @@ Cc: gregkh@linuxfoundation.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.or
 List-Id: linux-tegra@vger.kernel.org
 
 
---kR3zbvD4cgoYnS/6
+--kadn00tgSopKmJ1H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -40,14 +40,15 @@ ts/nvidia/tegra194.dtsi
 >  	};
 > +
 > +	xusb_padctl: padctl@3520000 {
+
+I also noticed that this is outside of the /cbb bus node. It really
+belongs inside /cbb. Same for the XHCI controller node.
+
+Thierry
+
 > +		compatible =3D "nvidia,tegra194-xusb-padctl";
 > +		reg =3D <0x0 0x03520000 0x0 0x1000>,
 > +			<0x0 0x03540000 0x0 0x1000>;
-
-These should generally be aligned. Use tabs first and then spaces to
-make the opening < on subsequent lines align with the opening < on the
-first line. There are a couple more like this below.
-
 > +		reg-names =3D "padctl", "ao";
 > +
 > +		resets =3D <&bpmp TEGRA194_RESET_XUSB_PADCTL>;
@@ -67,9 +68,6 @@ first line. There are a couple more like this below.
 > +						#phy-cells =3D <0>;
 > +					};
 > +					usb2-1 {
-
-I prefer blank lines to visually separate blocks here and below.
-
 > +						nvidia,function =3D "xusb";
 > +						status =3D "disabled";
 > +						#phy-cells =3D <0>;
@@ -141,12 +139,6 @@ I prefer blank lines to visually separate blocks here and below.
 > +	};
 > +
 > +	tegra_xhci: xhci@3610000 {
-
-The tegra_xhci is unused, so I don't think we need to add it. Also, the
-name of this node should be usb@3610000 since it's the compatible string
-that defines (together with the bindings) that this is XHCI capable. But
-it is fundamentally a USB controller, so the name should reflect that.
-
 > +		compatible =3D "nvidia,tegra194-xusb";
 > +		reg =3D <0x0 0x03610000 0x0 0x40000>,
 > +			<0x0 0x03600000 0x0 0x10000>;
@@ -174,16 +166,6 @@ it is fundamentally a USB controller, so the name should reflect that.
 > +			"xusb_falcon_host_clk", "xusb_falcon_superspeed_clk",
 > +			"xusb_fs_src", "xusb_fs_host_clk", "xusb_ss_src",
 > +			"xusb_ss", "pll_u_480m", "clk_m", "pll_e";
-
-Some of these clocks are not defined in the bindings. Many of them are
-also not used by the driver. Are all of these really needed? If they
-are, please add the required ones to the bindings.
-
-Also, for new ones, drop the _clk suffix. The fact that these are clocks
-is already conveyed by the property name.
-
-Thierry
-
 > +
 > +		power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_XUSBC>,
 > +				<&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
@@ -197,24 +179,24 @@ Thierry
 > 2.17.1
 >=20
 
---kR3zbvD4cgoYnS/6
+--kadn00tgSopKmJ1H
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2Ud3kACgkQ3SOs138+
-s6HHxA//f2bNm7UQ7wJ81PQ6k1PUe7yCIbYVt0DW5uP1acBlo6n4rVB4qTER2wxc
-BMWH4a029oQoMabQj6zUsYnTfEKTJUs1D06BakN7x1uP3+daQOg2SqyM1VshqsyF
-lryvzMF3d0uHUTF2TTbsAWj2xV/0KGgRd1WfSgfcLW6beKL8WHa95R3fgRnscmZZ
-gTnS4Bl6Uo3yrTc9u02RCiSKH8cDzaqtFYqlgrRRTj3mK301NipEvGKumz2OM4cg
-zlWk9tAO2hqsAkz1rxAjGdpZ9IyWWwx95k5PnO2aCSdP4TyZ3fzAWlxH/smzd6/f
-K/c0hT/+Slo4JW4klly41fKu/Fi6N0Gk2OKpnsCmc65bD3US2pHD/6ytjMY2LN0i
-5upasZ6IyG3/9jBuH62i3sT+9anw9rGkIRGI0FZSWZynYEt+BLimW8pisf6iUAMm
-1i7sUit/6nvouFR03k4Vvya8URbv2uyp8+rtHNJseeYBsuRvxdwNrK20TPHeeX+Y
-xAE5pXavpFOqhlx+NuqU+wwjH3HoYuOuKZYDnMUtY2PjhBaOUs0tOBkDLsBzp8Nw
-8QQy6oQ0RGKDCvjRYdJDEk7qgDa4oDE3/qtmjsamf1m37LmQnYS0YDzQbNtWZp0B
-UNtr5wJ5Vo5cSNnOCgDNlh3kI+gdTxhI9ooWqPlgnXWdZw9/4lQ=
-=a/8b
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2Ud7YACgkQ3SOs138+
+s6Fc4g//doxqb6jUWGiWBzZ1ER+mEG+TxHEsnsZJ/r1205w9wyN+WLLEKkrDVwKN
+yaB/7/4TlwCg8HEs6pDMwn4puU8kiRoMLQM6jekI4NtExurKLV9JhkAnA0l7J+nJ
+bKDeewgv04CqzYIeGg+NeveI8nheTlbg2qFXrQxbjZHqUYouRBUJhaUB9yH+8+qo
+Mg6phXNr6e63bqy8lE0cNDi3QFNKn1tRdYJ/1/Cmd+UiZzFy2JJr6Df0ca9xIU/8
+zHpvUO5Gft4lof1wbTgRuJT93O/Tpul431noSIA2FJbUWfWdMeHoq9iO0RsQ2jrW
+9BKWV966H2mFyt4RZtRehlcE9T4R8z7VkV63hrCK39ggLywmARIgUdYXtl9bjn1K
+/OCbCPsthITfuXBCOhrfeNCysrCHwOA5VeAtISI0xnCPAogAdTplmpWPJY9XZDz1
+XkzE0UZG59YF5x1+JRwbamJ0WP28NUXemhD3MX5fbWwBRcK3B5roTnQHxyYcyCOS
+/DVknEU893JRCqi70kB67zZu2nGICC6peiTdJZMHovaXQHOi/2YK7F/qRli3DCkd
+aakqavcDQt1AGgEry9wg0NEyBG9ltPIZThnUCTveu+9oBtMGutRBsNNu8kT6bIww
+4+7VyitnJWyw0lFGu7C4n8+Y0pWqeTxI++yOnuosM+q0wz2g7LM=
+=l7N3
 -----END PGP SIGNATURE-----
 
---kR3zbvD4cgoYnS/6--
+--kadn00tgSopKmJ1H--
