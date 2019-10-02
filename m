@@ -1,209 +1,86 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 09/19] PM / devfreq: tegra30: Use kHz units uniformly
- in the code
-Date: Wed, 2 Oct 2019 21:26:52 +0300
-Message-ID: <10e71085-dc92-6003-2bbd-40c3369cdb26@gmail.com>
-References: <20190811212315.12689-1-digetx@gmail.com>
- <CGME20190811212545epcas4p4132cb98ef69ef04136fda4030bd64f92@epcas4p4.samsung.com>
- <20190811212315.12689-10-digetx@gmail.com>
- <2b65c78a-4b8f-661b-dd9c-29b3cbf0844f@samsung.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 00/11] of: Fix DMA configuration for non-DT masters
+Date: Wed, 2 Oct 2019 11:28:06 -0700
+Message-ID: <fbae48ca-fbd4-e32b-e874-92b5bba5df4d@gmail.com>
+References: <20190924181244.7159-1-nsaenzjulienne@suse.de>
+ <CAL_Jsq+v+svTyna7UzQdRVqfNc5Z_bgWzxNRXv7-Wqv3NwDu2g@mail.gmail.com>
+ <d1a31a2ec8eb2f226b1fb41f6c24ffb47c3bf7c7.camel@suse.de>
+ <e404c65b-5a66-6f91-5b38-8bf89a7697b2@arm.com>
+ <43fb5fe1de317d65a4edf592f88ea150c6e3b8cc.camel@suse.de>
+ <CAL_JsqLhx500cx3YLoC7HL1ux3bBpV+fEA2Qnk7D5RFGgiGzSw@mail.gmail.com>
+ <aa4c8d62-7990-e385-2bb1-cec55148f0a8@arm.com>
+ <CAL_JsqKKYcHPnA80ZwLY=Sk3e5MqrimedUhWQ5+iuPZXQxYHdA@mail.gmail.com>
+ <307b988d0c67fb1c42166eca12742bcfda09d92d.camel@suse.de>
+ <c27a51e1-1adf-ae6a-dc67-ae76222a1163@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2b65c78a-4b8f-661b-dd9c-29b3cbf0844f@samsung.com>
+In-Reply-To: <c27a51e1-1adf-ae6a-dc67-ae76222a1163@arm.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Robin Murphy <robin.murphy@arm.com>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Rob Herring <robh+dt@kernel.org>
+Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>, Frank Rowand <frowand.list@gmail.com>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, etnaviv@lists.freedesktop.org, "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine@vger.kernel.org>, Stefan Wahren <wahrenst@gmx.net>, james.quinlan@broadcom.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, xen-devel@lists.xenproject.org, Dan Williams <dan.j.williams@intel.com>, freedreno <freedreno@lists.freedesktop.org>, Linux
 List-Id: linux-tegra@vger.kernel.org
 
-02.10.2019 02:29, Chanwoo Choi пишет:
-> On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
->> Now that all kHz-conversion related bugs are fixed, we can use the kHz
->> uniformly. This makes code cleaner and avoids integer divisions in the
->> code, which is useful in a case of Tegra30 that has Cortex A9 CPU that
->> doesn't support integer division instructions, hence all divisions are
->> actually made in software mode. Another small benefit from this change
->> is that now powertop utility correctly displays devfreq's stats, for
->> some reason it expects them to be in kHz.
-> 
-> If possible, please specify the benefit result on patch description.
 
-As I wrote above, there are fewer divisions in the code as a result of this patch.
 
-Then I also found that powertop expects KHz. This is actually something that devfreq core
-potentially could improve by allowing drivers to specify what units are used for the freqs
-such that sysfs interface could present freqs to userpspace in a predictable manner.
-
-Lastly, this patch comes very handy for the patch11, because of the replacement of
-avg_count with avg_freq which helps to keep code cleaner in further patches. Please note
-that this patch doesn't change logic of the code.
-
-> And I have a question. Why do you fix the KHz-conversion issue on one patch?
-> Actually, in my case, it is difficult to understand that multiple patches
-> try to fix the KHz-conversion issue. I think that it is possible to
-> make one patch.
-
-This driver used Hz units for the OPPs from the very beginning and then there were
-Hz<->KHz conversion bugs that were fixed by previous patches. This patch doesn't fix any
-KHz-conversion issue and merely makes a minor clean up by using KHz units everywhere in
-the code, starting from OPPs that are created by dev_pm_opp_add().
-
-> And, 
-> On these series, some codes wad added and then these codes are deleted
-> on later patch. It looks like that you made the issue and then you fix
-> the issue by yourself. I think that it is not proper.
-> Even if you developed the patches on your local environment sequentially
-> according to the sequence of your issue detection, you better to do
-> refactoring the patches.
-> 
-> Frankly, I cannot agree that some codes wad added on front patch
-> and then added codes are deleted on later patch in the same patchset.
-
-Alright, I understand that it makes easier for you to review patches without going back
-and forth between patches, verifying every changed line of the previous patches of this
-series.
-
+On 9/26/2019 4:20 AM, Robin Murphy wrote:
+> On 2019-09-26 11:44 am, Nicolas Saenz Julienne wrote:
+>>>>>> Robin, have you looked into supporting multiple dma-ranges? It's the
+>>>>>> next thing
+>>>>>> we need for BCM STB's PCIe. I'll have a go at it myself if nothing
+>>>>>> is in
+>>>>>> the
+>>>>>> works already.
+>>>>>
+>>>>> Multiple dma-ranges as far as configuring inbound windows should work
+>>>>> already other than the bug when there's any parent translation. But if
+>>>>> you mean supporting multiple DMA offsets and masks per device in the
+>>>>> DMA API, there's nothing in the works yet.
 >>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 81 +++++++++++++++++++------------
->>  1 file changed, 49 insertions(+), 32 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index ca499368ee81..43d50b4366dd 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -137,8 +137,11 @@ struct tegra_devfreq_device {
->>  	const struct tegra_devfreq_device_config *config;
->>  	void __iomem *regs;
->>  
->> -	/* Average event count sampled in the last interrupt */
->> -	u32 avg_count;
->> +	/*
->> +	 * Average event count sampled in the last interrupt and converted
->> +	 * to frequency value.
->> +	 */
->> +	u32 avg_freq;
->>  
->>  	/*
->>  	 * Extra frequency to increase the target by due to consecutive
->> @@ -222,6 +225,14 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra)
->>  	return 0;
->>  }
->>  
->> +static unsigned long
->> +tegra_actmon_dev_avg_dependency_freq(struct tegra_devfreq *tegra,
->> +				     struct tegra_devfreq_device *dev)
->> +{
->> +	return dev->config->avg_dependency_threshold /
->> +		ACTMON_SAMPLING_PERIOD;
->> +}
->> +
->>  static unsigned long
->>  tegra_actmon_account_cpu_freq(struct tegra_devfreq *tegra,
->>  			      struct tegra_devfreq_device *dev,
->> @@ -229,13 +240,15 @@ tegra_actmon_account_cpu_freq(struct tegra_devfreq *tegra,
->>  {
->>  	unsigned long static_cpu_emc_freq;
->>  
->> -	if (dev->config->avg_dependency_threshold &&
->> -	    dev->config->avg_dependency_threshold < dev->avg_count) {
->> +	if (!dev->config->avg_dependency_threshold)
->> +		return target_freq;
->> +
->> +	if (dev->avg_freq > tegra_actmon_dev_avg_dependency_freq(tegra, dev))
->>  		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra);
->> -		target_freq = max(target_freq, static_cpu_emc_freq);
->> -	}
->> +	else
->> +		static_cpu_emc_freq = 0;
->>  
->> -	return target_freq;
->> +	return max(target_freq, static_cpu_emc_freq);
->>  }
->>  
->>  static unsigned long tegra_actmon_lower_freq(struct tegra_devfreq *tegra,
->> @@ -261,7 +274,7 @@ static unsigned long tegra_actmon_upper_freq(struct tegra_devfreq *tegra,
->>  
->>  	opp = dev_pm_opp_find_freq_ceil(tegra->devfreq->dev.parent, &upper);
->>  	if (IS_ERR(opp))
->> -		upper = ULONG_MAX;
->> +		upper = KHZ_MAX;
->>  	else
->>  		dev_pm_opp_put(opp);
->>  
->> @@ -280,15 +293,12 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
->>  	 * range in a case where target_freq falls into a range of
->>  	 * next_possible_opp_freq - 1MHz.
->>  	 */
->> -	target_freq = round_down(target_freq, 1000000);
+>> Sorry, I meant supporting multiple DMA offsets[1]. I think I could
+>> still make
+>> it with a single DMA mask though.
 > 
-> This line was added on patch5. I think that you could fix the KHz-conversion
-> on patch5 instead of this patch. It is not good way to make the patches.
-> Because some codes wad added and then these codes are deleted on later patch.
-> 
-> It looks like that you made the issue and then you fix the issue by yourself.
-> It is difficult to make me to decide this patch is either proper or not.
+> The main problem for supporting that case in general is the disgusting
+> carving up of the physical memory map you may have to do to guarantee
+> that a single buffer allocation cannot ever span two windows with
+> different offsets. I don't think we ever reached a conclusion on whether
+> that was even achievable in practice.
 
-The OPPs were always defined in Hz units in this driver. The patch5 was created much
-earlier than this patch and thus I'm making changes here to the code that was added in patch5.
+It is with the Broadcom STB SoCs which have between 1 and 3 memory
+controllers depending on the SoC, and multiple dma-ranges cells for PCIe
+as a consequence.
 
-Okay, I'll try to change the order of the patches. But usually it takes a lot if time and
-effort to rebase patches and then re-test them, so I'm trying to avoid that when not
-absolutely necessary.
+Each memory controller has a different physical address aperture in the
+CPU's physical address map (e.g.: MEMC0 is 0x0 - 0x3fff_ffff, MEMC1
+0x4000_0000 - 0x7ffff_ffff and MEMC2 0x8000_0000 - 0xbfff_ffff, not
+counting the extension regions above 4GB), and while the CPU is
+scheduled and arbitrated the same way across all memory controllers
+(thus making it virtually UMA, almost) having a buffer span two memory
+controllers would be problematic because the memory controllers do not
+know how to guarantee the transaction ordering and buffer data
+consistency in both DRAM itself and for other memory controller clients,
+like PCIe.
 
->> +	target_freq = round_down(target_freq, 1000);
->>  
->>  	/* watermarks are set at the borders of the corresponding OPPs */
->>  	*lower = tegra_actmon_lower_freq(tegra, target_freq);
->>  	*upper = tegra_actmon_upper_freq(tegra, target_freq);
->>  
->> -	*lower /= KHZ;
->> -	*upper /= KHZ;
->> -
->>  	/*
->>  	 * The upper watermark should take into account CPU's frequency
->>  	 * because cpu_to_emc_rate() may override the target_freq with
->> @@ -304,10 +314,11 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
->>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->>  					   struct tegra_devfreq_device *dev)
->>  {
->> -	unsigned long lower, upper, freq;
->> +	unsigned long avg_dependency_freq, lower, upper;
->> +
->> +	tegra_actmon_get_lower_upper(tegra, dev, dev->avg_freq, &lower, &upper);
->>  
->> -	freq = dev->avg_count / ACTMON_SAMPLING_PERIOD * KHZ;
->> -	tegra_actmon_get_lower_upper(tegra, dev, freq, &lower, &upper);
->> +	avg_dependency_freq = tegra_actmon_dev_avg_dependency_freq(tegra, dev);
->>  
->>  	/*
->>  	 * We want to get interrupts when MCCPU client crosses the
->> @@ -316,7 +327,7 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->>  	 */
->>  	if (lower < dev->config->avg_dependency_threshold &&
->>  	    upper > dev->config->avg_dependency_threshold) {
->> -		if (dev->avg_count < dev->config->avg_dependency_threshold)
->> +		if (dev->avg_freq < avg_dependency_freq)
->>  			upper = dev->config->avg_dependency_threshold;
->>  		else
->>  			lower = dev->config->avg_dependency_threshold;
->> @@ -358,8 +369,7 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
->>  	 * device. Once that mark is hit and boosting is stopped, the
->>  	 * interrupt is disabled by ISR.
->>  	 */
->> -	freq = dev->avg_count / ACTMON_SAMPLING_PERIOD * KHZ;
->> -	tegra_actmon_get_lower_upper(tegra, dev, freq, &lower, &upper);
->> +	tegra_actmon_get_lower_upper(tegra, dev, dev->avg_freq, &lower, &upper);
-> 
-> Also, patch5 newly defined this function and then you edit the function prototype
-> of this function. It is not proper way.
+We historically had to reserve the last 4KB of each memory controller to
+avoid problematic controllers like EHCI to prefetch beyond the end of a
+memory controller's populated memory and that also incidentally takes
+care of never having a buffer cross a controller boundary. Either you
+can allocate the entire buffer on a given memory controller, or you
+cannot allocate memory at all on that zone/region and another one must
+be found (or there is no more memory and there is a genuine OOM).
 
-Sorry, I'm not sure what you're meaning by the "prototype" here. In case of this
-particular hunk, the freq==dev->avg_freq and dev->avg_count is replaced with dev->avg_freq
-in this patch as well. Hence this is a cosmetic change that doesn't change any logic of
-the code. I'll see if this all could be made a bit more clear and easier for review.
+The way we reserve memory right now is based on the first patch
+submitted by Jim:
 
-[snip]
+https://lore.kernel.org/patchwork/patch/988469/
+
+whereby we read the memory node's "reg" property and we map the physical
+addresses to the memory controller configuration read from the specific
+registers in the CPU's Bus Interface Unit (where the memory controller
+apertures are architecturally defined) and then we use that to call
+memblock_reserve() (not part of that patch, it should be though).
+-- 
+Florian
