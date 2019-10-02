@@ -1,101 +1,75 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 10/19] PM / devfreq: tegra30: Reduce unnecessary
- interrupts activity
-Date: Wed, 2 Oct 2019 21:40:29 +0300
-Message-ID: <5d5bce05-1eab-7635-b684-b833b0cf00ce@gmail.com>
-References: <20190811212315.12689-1-digetx@gmail.com>
- <CGME20190811212533epcas4p3e4968a3397caaf8682a56105cd061cad@epcas4p3.samsung.com>
- <20190811212315.12689-11-digetx@gmail.com>
- <b67a7878-fa74-df89-9a62-556b9300b5a5@samsung.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] arm64: tegra: only map accessible sysram
+Date: Wed, 2 Oct 2019 14:30:53 -0600
+Message-ID: <c7d64f56-cb44-cb3a-aa7a-ee7b5c01d6db@wwwdotorg.org>
+References: <20190929200851.14228-1-ykaukab@suse.de>
+ <5d2e47ec-8304-d648-9c4a-80c7c02050a9@wwwdotorg.org>
+ <20190930100212.GA21324@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b67a7878-fa74-df89-9a62-556b9300b5a5@samsung.com>
+In-Reply-To: <20190930100212.GA21324@suse.de>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mian Yousaf Kaukab <ykaukab@suse.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.10.2019 02:35, Chanwoo Choi пишет:
-> Hi,
-> 
-> On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
->> There are cases where unnecessary ACTMON interrupts could be avoided,
->> like when one memory client device requests higher clock rate than the
->> other or when clock rate is manually limited using sysfs devfreq
->> parameters. These cases could be avoided by tuning upper watermark or
->> disabling hardware events when min/max boosting thresholds are reached.
+On 9/30/19 4:02 AM, Mian Yousaf Kaukab wrote:
+> On Sun, Sep 29, 2019 at 11:28:43PM -0600, Stephen Warren wrote:
+>> On 9/29/19 2:08 PM, Mian Yousaf Kaukab wrote:
+>>> Most of the SysRAM is secure and only accessible by TF-A.
+>>> Don't map this inaccessible memory in kernel. Only map pages
+>>> used by bpmp driver.
 >>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 87 ++++++++++++++++++++++++++++---
->>  1 file changed, 80 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index 43d50b4366dd..a2623de56d20 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -312,7 +312,8 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
->>  }
->>  
->>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->> -					   struct tegra_devfreq_device *dev)
->> +					   struct tegra_devfreq_device *dev,
->> +					   unsigned long freq)
->>  {
->>  	unsigned long avg_dependency_freq, lower, upper;
->>  
->> @@ -320,6 +321,22 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->>  
->>  	avg_dependency_freq = tegra_actmon_dev_avg_dependency_freq(tegra, dev);
->>  
->> +	/*
->> +	 * If cumulative EMC frequency selection (MCALL / min_freq) is
->> +	 * higher than the device's, then there is no need to set upper
->> +	 * watermark to a lower value because it will result in unnecessary
->> +	 * upper interrupts.
->> +	 *
->> +	 * Note that average watermarks are also updated after EMC
->> +	 * clock rate change, hence if clock rate goes down, then the
->> +	 * watermarks will be set in accordance to the new rate after
->> +	 * changing the rate. There are other ways to achieve the same
->> +	 * result, but this one is probably the least churning, although
->> +	 * it may look a bit convoluted.
->> +	 */
->> +	if (freq * ACTMON_SAMPLING_PERIOD > upper)
->> +		upper = freq * ACTMON_SAMPLING_PERIOD;
->> +
->>  	/*
->>  	 * We want to get interrupts when MCCPU client crosses the
->>  	 * dependency threshold in order to take into / out of account
->> @@ -361,7 +378,18 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
->>  	tegra_actmon_get_lower_upper(tegra, dev, freq - 1, &lower, &upper);
->>  
->>  	delta = do_percent(upper - lower, dev->config->boost_up_threshold);
->> -	device_writel(dev, lower + delta, ACTMON_DEV_UPPER_WMARK);
+>> I don't believe this change is correct. The actual patch doesn't
+>> implement mapping a subset of the RAM (a software issue), but rather it
+>> changes the DT representation of the SYSRAM hardware. The SYSRAM
+>> hardware always does start at 0x30000000, even if a subset of the
+>> address range is dedicated to a specific purpose. If the kernel must map
+>> only part of the RAM, then some additional property should indicate
+>> this.[...]
+> I agree the hardware description becomes inaccurate with this change.
 > 
-> 
-> Also, this patch edits the added codes on front patch.
-> This code was added on patch5 and then delete it on this patch.
-> If it is not necessary, you can remove it on patch5 by refactoring.
-> 
->> +
->> +	/*
->> +	 * The memory events count could go a bit higher than the maximum
->> +	 * defined by the OPPs, hence make the upper watermark infinitely
->> +	 * high to avoid unnecessary upper interrupts in that case.
->> +	 */
->> +	if (freq == tegra->max_freq)
->> +		upper = ULONG_MAX;
->> +	else
->> +		upper = lower + delta;
->> +
->> +	device_writel(dev, upper, ACTMON_DEV_UPPER_WMARK);
-> 
-> I think that the changes of tegra_devfreq_update_avg_wmark() on this patch
-> can be merged to patch5.
+> In the current setup complete 0x3000_0000 to 0x3005_0000 range is being mapped
+> as normal memory (MT_NORMAL_NC). Though only 0x3004_E000 to 0x3005_0000 are
+> accessible by the kernel.
 
-Okay, I'll revisit these parts of tegra_devfreq_update_avg_wmark() and will move them to
-patch5 if there won't be any major obstacles.
+Nit: I expect that a much larger region than that is *accessible*, 
+although it's quite plausible that only that region is actually 
+*accessed*/used right now.
+
+> I am seeing an issue where a read access (which I
+> believe is speculative) to inaccessible range causes an SError. Another
+> solution for this problem could be to add "no-memory-wc" to SysRAM node so that
+> it is mapped as device memory (MT_DEVICE_nGnRE). Would that be acceptable?
+
+Why does the driver blindly map the entire memory at all? Surely it 
+should only map the portions of RAM that other drivers request/use? And 
+surely the BPMP driver or DT node is already providing that information?
+
+But yes, changing the mapping type to avoid speculation might be an 
+acceptable solution for now, although I think we'd want to work things 
+out better later. I don't know if there would be any impact to the BPMP 
+driver related to the slower SRAM access due to this change. Best 
+consult a BPMP expert or Tegra maintainer about that.
+
+>> [...] Also, I believe it's incorrect to hard-code into the kernel's DT
+>> the range of addresses used by the secure monitor/OS, since this can
+>> vary depending on what the user actually chooses to install as the
+>> secure monitor/OS. Any indication of such regions should be filled in at
+>> runtime by some boot firmware or the secure monitor/OS itself, or
+>> retrieved using some runtime API rather than DT.
+> Secure-OS addresses are not of interest here. SysRAM is partitioned
+> between secure-OS and BPMP and kernel is only interested in the BPMP
+> part. The firmware can update these addresses in the device-tree if it
+> wants to. Would you prefer something similar implemented in u-boot so
+> that it updates SysRAM node to only expose kernel accessible part of it
+> to the kernel?
+> 
+> Can u-boot dynamically figure out the Secure-OS vs BPMP partition?
+> 
+> BR,
+> Yousaf
+> 
