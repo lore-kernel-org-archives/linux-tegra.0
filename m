@@ -1,75 +1,83 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] arm64: tegra: only map accessible sysram
-Date: Wed, 2 Oct 2019 14:30:53 -0600
-Message-ID: <c7d64f56-cb44-cb3a-aa7a-ee7b5c01d6db@wwwdotorg.org>
-References: <20190929200851.14228-1-ykaukab@suse.de>
- <5d2e47ec-8304-d648-9c4a-80c7c02050a9@wwwdotorg.org>
- <20190930100212.GA21324@suse.de>
+Subject: Re: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
+Date: Wed, 2 Oct 2019 14:59:03 -0600
+Message-ID: <6a48d716-2312-4623-f47a-a53ac2ece83c@wwwdotorg.org>
+References: <20191001211346.104400-1-swarren@wwwdotorg.org>
+ <20191002110454.GJ3716706@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190930100212.GA21324@suse.de>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191002110454.GJ3716706@ulmo>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mian Yousaf Kaukab <ykaukab@suse.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/30/19 4:02 AM, Mian Yousaf Kaukab wrote:
-> On Sun, Sep 29, 2019 at 11:28:43PM -0600, Stephen Warren wrote:
->> On 9/29/19 2:08 PM, Mian Yousaf Kaukab wrote:
->>> Most of the SysRAM is secure and only accessible by TF-A.
->>> Don't map this inaccessible memory in kernel. Only map pages
->>> used by bpmp driver.
+On 10/2/19 5:04 AM, Thierry Reding wrote:
+> On Tue, Oct 01, 2019 at 03:13:43PM -0600, Stephen Warren wrote:
+>> From: Stephen Warren <swarren@nvidia.com>
 >>
->> I don't believe this change is correct. The actual patch doesn't
->> implement mapping a subset of the RAM (a software issue), but rather it
->> changes the DT representation of the SYSRAM hardware. The SYSRAM
->> hardware always does start at 0x30000000, even if a subset of the
->> address range is dedicated to a specific purpose. If the kernel must map
->> only part of the RAM, then some additional property should indicate
->> this.[...]
-> I agree the hardware description becomes inaccurate with this change.
+>> For a little over a year, U-Boot has configured the flow controller to
+>> perform automatic RAM re-repair on off->on power transitions of the CPU
+>> rail1]. This is mandatory for correct operation of Tegra124. However, RAM
+>> re-repair relies on certain clocks, which the kernel must enable and
+>> leave running. The fuse clock is one of those clocks. Enable this clock
+>> so that LP1 power mode (system suspend) operates correctly.
+>>
+>> [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
+>>
+>> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+>> ---
+>>   drivers/clk/tegra/clk-tegra124.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+>> index 0224fdc4766f..f53f6315c646 100644
+>> --- a/drivers/clk/tegra/clk-tegra124.c
+>> +++ b/drivers/clk/tegra/clk-tegra124.c
+>> @@ -1291,6 +1291,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
+>>   };
+>>   
+>>   static struct tegra_clk_init_table tegra124_init_table[] __initdata = {
+>> +	{ TEGRA124_CLK_FUSE, -1, 0, 1 },
 > 
-> In the current setup complete 0x3000_0000 to 0x3005_0000 range is being mapped
-> as normal memory (MT_NORMAL_NC). Though only 0x3004_E000 to 0x3005_0000 are
-> accessible by the kernel.
-
-Nit: I expect that a much larger region than that is *accessible*, 
-although it's quite plausible that only that region is actually 
-*accessed*/used right now.
-
-> I am seeing an issue where a read access (which I
-> believe is speculative) to inaccessible range causes an SError. Another
-> solution for this problem could be to add "no-memory-wc" to SysRAM node so that
-> it is mapped as device memory (MT_DEVICE_nGnRE). Would that be acceptable?
-
-Why does the driver blindly map the entire memory at all? Surely it 
-should only map the portions of RAM that other drivers request/use? And 
-surely the BPMP driver or DT node is already providing that information?
-
-But yes, changing the mapping type to avoid speculation might be an 
-acceptable solution for now, although I think we'd want to work things 
-out better later. I don't know if there would be any impact to the BPMP 
-driver related to the slower SRAM access due to this change. Best 
-consult a BPMP expert or Tegra maintainer about that.
-
->> [...] Also, I believe it's incorrect to hard-code into the kernel's DT
->> the range of addresses used by the secure monitor/OS, since this can
->> vary depending on what the user actually chooses to install as the
->> secure monitor/OS. Any indication of such regions should be filled in at
->> runtime by some boot firmware or the secure monitor/OS itself, or
->> retrieved using some runtime API rather than DT.
-> Secure-OS addresses are not of interest here. SysRAM is partitioned
-> between secure-OS and BPMP and kernel is only interested in the BPMP
-> part. The firmware can update these addresses in the device-tree if it
-> wants to. Would you prefer something similar implemented in u-boot so
-> that it updates SysRAM node to only expose kernel accessible part of it
-> to the kernel?
+> I think the correct way to do this these days is to mark the clock as
+> CRITICAL. Not sure if there's an easy way to do that given that the
+> clock init table doesn't allow storing flags.
 > 
-> Can u-boot dynamically figure out the Secure-OS vs BPMP partition?
+> Do you have any good ideas on how to achieve this with the critical flag
+> instead of forcing the refcount to 1?
 > 
-> BR,
-> Yousaf
-> 
+> Perhaps something like the below would work?
+ > ...
+
+The following works for me; does this seem like a reasonable approach? 
+It does set the critical flag for all SoCs, including any that don't 
+require RAM re-repair. I'm not sure which do; I know it's more than just 
+Tegra124, but I'm not sure how far back/forward the requirement goes.
+
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> index 1ed85f120a1b..76dd91eebd13 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -785,7 +785,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+>         GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
+>         GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
+>         GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+> -       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
+> +       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
+>         GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
+>         GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
+>         GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
