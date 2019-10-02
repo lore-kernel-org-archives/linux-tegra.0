@@ -1,62 +1,35 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] mfd: max77620: Do not allocate IRQs upfront
-Date: Wed,  2 Oct 2019 16:43:18 +0200
-Message-ID: <20191002144318.140365-1-thierry.reding@gmail.com>
+Subject: [PATCH net-next v4 0/2] net: stmmac: Enhanced addressing mode for DWMAC 4.10
+Date: Wed,  2 Oct 2019 16:52:56 +0200
+Message-ID: <20191002145258.178745-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>
+Cc: Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Florian Fainelli <f.fainelli@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-regmap_add_irq_chip() will try to allocate all of the IRQ descriptors
-upfront if passed a non-zero irq_base parameter. However, the intention
-is to allocate IRQ descriptors on an as-needed basis if possible. Pass 0
-instead of -1 to fix that use-case.
+The DWMAC 4.10 supports the same enhanced addressing mode as later
+generations. Parse this capability from the hardware feature registers
+and set the EAME (Enhanced Addressing Mode Enable) bit when necessary.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/mfd/max77620.c       | 5 ++---
- include/linux/mfd/max77620.h | 1 -
- 2 files changed, 2 insertions(+), 4 deletions(-)
+Thierry
 
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index a851ff473a44..c7ed5c353553 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -507,7 +507,6 @@ static int max77620_probe(struct i2c_client *client,
- 
- 	i2c_set_clientdata(client, chip);
- 	chip->dev = &client->dev;
--	chip->irq_base = -1;
- 	chip->chip_irq = client->irq;
- 	chip->chip_id = (enum max77620_chip_id)id->driver_data;
- 
-@@ -545,8 +544,8 @@ static int max77620_probe(struct i2c_client *client,
- 
- 	max77620_top_irq_chip.irq_drv_data = chip;
- 	ret = devm_regmap_add_irq_chip(chip->dev, chip->rmap, client->irq,
--				       IRQF_ONESHOT | IRQF_SHARED,
--				       chip->irq_base, &max77620_top_irq_chip,
-+				       IRQF_ONESHOT | IRQF_SHARED, 0,
-+				       &max77620_top_irq_chip,
- 				       &chip->top_irq_data);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to add regmap irq: %d\n", ret);
-diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
-index 12ba157cb83f..f552ef5b1100 100644
---- a/include/linux/mfd/max77620.h
-+++ b/include/linux/mfd/max77620.h
-@@ -329,7 +329,6 @@ struct max77620_chip {
- 	struct regmap *rmap;
- 
- 	int chip_irq;
--	int irq_base;
- 
- 	/* chip id */
- 	enum max77620_chip_id chip_id;
+Thierry Reding (2):
+  net: stmmac: Only enable enhanced addressing mode when needed
+  net: stmmac: Support enhanced addressing mode for DWMAC 4.10
+
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h  |  1 +
+ .../ethernet/stmicro/stmmac/dwmac4_descs.c    |  4 +--
+ .../net/ethernet/stmicro/stmmac/dwmac4_dma.c  | 28 +++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/dwmac4_dma.h  |  3 ++
+ .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  5 +++-
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |  7 +++++
+ include/linux/stmmac.h                        |  1 +
+ 7 files changed, 46 insertions(+), 3 deletions(-)
+
 -- 
 2.23.0
