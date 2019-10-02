@@ -1,305 +1,101 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/3] gpio: max77620: Fix interrupt handling
-Date: Wed,  2 Oct 2019 14:28:25 +0200
-Message-ID: <20191002122825.3948322-3-thierry.reding@gmail.com>
-References: <20191002122825.3948322-1-thierry.reding@gmail.com>
+From: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
+ selection
+Date: Wed, 2 Oct 2019 13:32:44 +0000
+Message-ID: <e78e7520-213c-8075-d71e-b8db2ebdceb7@microchip.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
+ <20190910143231.GB14966@e107533-lin.cambridge.arm.com>
+ <ab43b209-78fa-0cab-b8ea-acd4c550e689@microchip.com>
+ <20190910150826.GA18308@e107533-lin.cambridge.arm.com>
+ <20190910151055.GX21254@piout.net>
+ <CACRpkda4mmpbPWa2nD93CvD6HWzcTUDzyyLdQxC2gNB7XiJF3w@mail.gmail.com>
+ <a2aca46a-8eb9-d8a8-de42-9850a8a8f44c@microchip.com>
+ <20190930143246.GA19967@bogus>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191002122825.3948322-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Timo Alho <talho@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190930143246.GA19967@bogus>
+Content-Language: en-US
+Content-ID: <2405F53375D403478DD0705798481038@namprd11.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: robh@kernel.org
+Cc: tmaimon77@gmail.com, linus.walleij@linaro.org, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, khilman@baylibre.com, Ludovic.Desroches@microchip.com, linux-imx@nxp.com, u.kleine-koenig@pengutronix.de, uclinux-h8-devel@lists.sourceforge.jp, marc.zyngier@arm.com, s.hauer@pengutronix.de, linux-unisoc@lists.infradead.org, khalasa@piap.pl, tglx@linutronix.de, sbranden@broadcom.com, linux-kernel@vger.kernel.org, ralf@linux-mips.org, paul.burton@mips.com, kernel@pengutronix.de, mark.rutland@arm.com, alexandre.belloni@bootlin.com, jhogan@kernel.org, palmer@sifive.com, eric@anholt.net, thierry.reding@gmail.com, manivannan.sadhasivam@linaro.org, ysato@users.sourceforge.jp, zhang.lyra@gmail.com, daniel.lezcano@linaro.org, jonathanh@nvidia.com, bgolaszewski@baylibre.co
 List-Id: linux-tegra@vger.kernel.org
 
-From: Timo Alho <talho@nvidia.com>
 
-The interrupt-related register fields on the MAX77620 GPIO controller
-share registers with GPIO related fields. If the IRQ chip is implemented
-with regmap-irq, this causes the IRQ controller code to overwrite fields
-previously configured by the GPIO controller code.
 
-Two examples where this causes problems are the NVIDIA Jetson TX1 and
-Jetson TX2 boards, where some of the GPIOs are used to enable vital
-power regulators. The MAX77620 GPIO controller also provides the USB OTG
-ID pin. If configured as an interrupt, this causes some of the
-regulators to be powered off.
+On 30.09.2019 17:32, Rob Herring wrote:
+> On Wed, Sep 11, 2019 at 07:18:07AM +0000, Claudiu.Beznea@microchip.com wrote:
+>>
+>>
+>> On 11.09.2019 03:03, Linus Walleij wrote:
+>>> External E-Mail
+>>>
+>>>
+>>> On Tue, Sep 10, 2019 at 4:11 PM Alexandre Belloni
+>>> <alexandre.belloni@bootlin.com> wrote:
+>>>> On 10/09/2019 16:08:26+0100, Sudeep Holla wrote:
+>>>>> On Tue, Sep 10, 2019 at 02:51:50PM +0000, Claudiu.Beznea@microchip.com wrote:
+>>>
+>>>>> In that case, why can't we identify capability that with the compatibles
+>>>>> for this timer IP ?
+>>>>>
+>>>>> IOW, I don't like the proposal as it's hardware limitation.
+>>>>
+>>>> To be clear, bot timers are exactly the same but can't be clocksource
+>>>> and clockevent at the same time. Why would we have different compatibles
+>>>> for the exact same IP?
+>>>
+>>> In that case why not just pick the first one you find as clocksource
+>>> and the second one as clock event? As they all come to the
+>>> same timer of init function two simple local state variables can
+>>> solve that:
+>>>
+>>> static bool registered_clocksource;
+>>> static bool registered_clockevent;
+>>>
+>>> probe(timer) {
+>>>    if (!registered_clocksource) {
+>>>        register_clocksource(timer);
+>>>        registrered_clocksource = true;
+>>>        return;
+>>>    }
+>>>    if (!registered_clockevent) {
+>>>        register_clockevent(timer);
+>>>        registered_clockevent = true;
+>>>        return;
+>>>    }
+>>>    pr_info("surplus timer %p\n", timer);
+>>> }
+>>>
+>>
+>> That was also my proposal for the driver I'm sending this series for (see
+>> [1]) but it has been proposed to implement a mechanism similar to this one
+>> in this series (see [2] and [3]).
+> 
+> This comes up over and over, and the answer is still no. Either each 
+> block is identical and doesn't matter which one is used for what or 
+> there is some h/w difference that you should describe. 
 
-Signed-off-by: Timo Alho <talho@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpio/gpio-max77620.c | 231 ++++++++++++++++++-----------------
- 1 file changed, 117 insertions(+), 114 deletions(-)
+There are no hardware differences in my case. The block just cannot work at
+the same time  as clocksource and clockevent. And on SAM9X60's we want to
+use it as clockevent for high resolution timers support.
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index c58b56e5291e..c5b64a4ac172 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -18,109 +18,115 @@ struct max77620_gpio {
- 	struct gpio_chip	gpio_chip;
- 	struct regmap		*rmap;
- 	struct device		*dev;
-+	struct mutex		buslock; /* irq_bus_lock */
-+	unsigned int		irq_type[8];
-+	bool			irq_enabled[8];
- };
- 
--static const struct regmap_irq max77620_gpio_irqs[] = {
--	[0] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE0,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 0,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--	[1] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE1,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 1,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--	[2] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE2,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 2,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--	[3] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE3,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 3,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--	[4] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE4,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 4,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--	[5] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE5,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 5,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--	[6] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE6,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 6,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--	[7] = {
--		.reg_offset = 0,
--		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE7,
--		.type = {
--			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
--			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
--			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
--			.type_reg_offset = 7,
--			.types_supported = IRQ_TYPE_EDGE_BOTH,
--		},
--	},
--};
-+static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
-+{
-+	struct max77620_gpio *gpio = data;
-+	unsigned int value, offset;
-+	unsigned long pending;
-+	int err;
-+
-+	err = regmap_read(gpio->rmap, MAX77620_REG_IRQ_LVL2_GPIO, &value);
-+	if (err < 0) {
-+		dev_err(gpio->dev, "REG_IRQ_LVL2_GPIO read failed: %d\n", err);
-+		return IRQ_NONE;
-+	}
-+
-+	pending = value;
-+
-+	for_each_set_bit(offset, &pending, 8) {
-+		unsigned int virq;
-+
-+		virq = irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
-+		handle_nested_irq(virq);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void max77620_gpio_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct max77620_gpio *gpio = gpiochip_get_data(chip);
-+
-+	gpio->irq_enabled[data->hwirq] = false;
-+}
- 
--static const struct regmap_irq_chip max77620_gpio_irq_chip = {
--	.name = "max77620-gpio",
--	.irqs = max77620_gpio_irqs,
--	.num_irqs = ARRAY_SIZE(max77620_gpio_irqs),
--	.num_regs = 1,
--	.num_type_reg = 8,
--	.irq_reg_stride = 1,
--	.type_reg_stride = 1,
--	.status_base = MAX77620_REG_IRQ_LVL2_GPIO,
--	.type_base = MAX77620_REG_GPIO0,
-+static void max77620_gpio_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct max77620_gpio *gpio = gpiochip_get_data(chip);
-+
-+	gpio->irq_enabled[data->hwirq] = true;
-+}
-+
-+static int max77620_gpio_set_irq_type(struct irq_data *data, unsigned int type)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct max77620_gpio *gpio = gpiochip_get_data(chip);
-+	unsigned int irq_type;
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		irq_type = MAX77620_CNFG_GPIO_INT_RISING;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+		irq_type = MAX77620_CNFG_GPIO_INT_FALLING;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_BOTH:
-+		irq_type = MAX77620_CNFG_GPIO_INT_RISING |
-+			   MAX77620_CNFG_GPIO_INT_FALLING;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	gpio->irq_type[data->hwirq] = irq_type;
-+
-+	return 0;
-+}
-+
-+static void max77620_gpio_bus_lock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct max77620_gpio *gpio = gpiochip_get_data(chip);
-+
-+	mutex_lock(&gpio->buslock);
-+}
-+
-+static void max77620_gpio_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct max77620_gpio *gpio = gpiochip_get_data(chip);
-+	unsigned int value, offset = data->hwirq;
-+	int err;
-+
-+	value = gpio->irq_enabled[offset] ? gpio->irq_type[offset] : 0;
-+
-+	err = regmap_update_bits(gpio->rmap, GPIO_REG_ADDR(offset),
-+				 MAX77620_CNFG_GPIO_INT_MASK, value);
-+	if (err < 0)
-+		dev_err(chip->parent, "failed to update interrupt mask: %d\n",
-+			err);
-+
-+	mutex_unlock(&gpio->buslock);
-+}
-+
-+static struct irq_chip max77620_gpio_irqchip = {
-+	.name		= "max77620-gpio",
-+	.irq_mask	= max77620_gpio_irq_mask,
-+	.irq_unmask	= max77620_gpio_irq_unmask,
-+	.irq_set_type	= max77620_gpio_set_irq_type,
-+	.irq_bus_lock	= max77620_gpio_bus_lock,
-+	.irq_bus_sync_unlock = max77620_gpio_bus_sync_unlock,
-+	.flags		= IRQCHIP_MASK_ON_SUSPEND,
- };
- 
- static int max77620_gpio_dir_input(struct gpio_chip *gc, unsigned int offset)
-@@ -254,14 +260,6 @@ static int max77620_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 	return -ENOTSUPP;
- }
- 
--static int max77620_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
--{
--	struct max77620_gpio *mgpio = gpiochip_get_data(gc);
--	struct max77620_chip *chip = dev_get_drvdata(mgpio->dev->parent);
--
--	return regmap_irq_get_virq(chip->gpio_irq_data, offset);
--}
--
- static int max77620_gpio_probe(struct platform_device *pdev)
- {
- 	struct max77620_chip *chip =  dev_get_drvdata(pdev->dev.parent);
-@@ -287,7 +285,6 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->gpio_chip.direction_output = max77620_gpio_dir_output;
- 	mgpio->gpio_chip.set = max77620_gpio_set;
- 	mgpio->gpio_chip.set_config = max77620_gpio_set_config;
--	mgpio->gpio_chip.to_irq = max77620_gpio_to_irq;
- 	mgpio->gpio_chip.ngpio = MAX77620_GPIO_NR;
- 	mgpio->gpio_chip.can_sleep = 1;
- 	mgpio->gpio_chip.base = -1;
-@@ -303,15 +300,21 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = devm_regmap_add_irq_chip(&pdev->dev, chip->rmap, gpio_irq,
--				       IRQF_ONESHOT, 0,
--				       &max77620_gpio_irq_chip,
--				       &chip->gpio_irq_data);
-+	mutex_init(&mgpio->buslock);
-+
-+	gpiochip_irqchip_add_nested(&mgpio->gpio_chip, &max77620_gpio_irqchip,
-+				    0, handle_edge_irq, IRQ_TYPE_NONE);
-+
-+	ret = request_threaded_irq(gpio_irq, NULL, max77620_gpio_irqhandler,
-+				   IRQF_ONESHOT, "max77620-gpio", mgpio);
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to add gpio irq_chip %d\n", ret);
-+		dev_err(&pdev->dev, "failed to request IRQ: %d\n", ret);
- 		return ret;
- 	}
- 
-+	gpiochip_set_nested_irqchip(&mgpio->gpio_chip, &max77620_gpio_irqchip,
-+				    gpio_irq);
-+
- 	return 0;
- }
- 
--- 
-2.23.0
+> 
+> If you want something that would even be considered to put into DT, 
+> then define something BSD or other OS's could use too. (That's not a 
+> suggestion to respin this with generalized names.)
+> 
+> Rob
+> 
+> 
