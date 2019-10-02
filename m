@@ -1,78 +1,254 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH net-next v4 1/2] net: stmmac: Only enable enhanced addressing mode when needed
-Date: Wed,  2 Oct 2019 16:52:57 +0200
-Message-ID: <20191002145258.178745-2-thierry.reding@gmail.com>
-References: <20191002145258.178745-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v6 18/19] PM / devfreq: tegra30: Support variable polling
+ interval
+Date: Wed, 2 Oct 2019 18:27:45 +0300
+Message-ID: <a800b077-3d01-78d8-2fb4-bec82c796b45@gmail.com>
+References: <20190811212315.12689-1-digetx@gmail.com>
+ <CGME20190811212509epcas4p20ec245213cedfcc066f7b0032b912a39@epcas4p2.samsung.com>
+ <20190811212315.12689-19-digetx@gmail.com>
+ <721c4dd0-d667-f83d-64b5-74e4b58a7a1c@samsung.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20191002145258.178745-1-thierry.reding@gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: "David S . Miller" <davem@davemloft.net>
-Cc: Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Florian Fainelli <f.fainelli@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <721c4dd0-d667-f83d-64b5-74e4b58a7a1c@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+02.10.2019 03:18, Chanwoo Choi пишет:
+> Hi,
+> 
+> On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
+>> The ACTMON governor is interrupt-driven and currently hardware's polling
+>> interval is fixed to 16ms in the driver. Devfreq supports variable polling
+>> interval by the generic governors, let's re-use the generic interface for
+>> changing of the polling interval. Now the polling interval can be changed
+>> dynamically via /sys/class/devfreq/devfreq0/polling_interval.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra30-devfreq.c | 71 ++++++++++++++++++++++---------
+>>  1 file changed, 50 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index 8adc0ff48b45..e30314bd571a 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/interrupt.h>
+>>  #include <linux/io.h>
+>>  #include <linux/irq.h>
+>> +#include <linux/jiffies.h>
+>>  #include <linux/module.h>
+>>  #include <linux/of_device.h>
+>>  #include <linux/platform_device.h>
+>> @@ -236,7 +237,7 @@ tegra_actmon_dev_avg_dependency_freq(struct tegra_devfreq *tegra,
+>>  				     struct tegra_devfreq_device *dev)
+>>  {
+>>  	return dev->config->avg_dependency_threshold /
+>> -		ACTMON_SAMPLING_PERIOD;
+>> +		tegra->devfreq->profile->polling_ms;
+>>  }
+>>  
+>>  static unsigned long
+>> @@ -314,8 +315,8 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
+>>  	 */
+>>  	*upper = tegra_actmon_account_cpu_freq(tegra, dev, *upper);
+>>  
+>> -	*lower *= ACTMON_SAMPLING_PERIOD;
+>> -	*upper *= ACTMON_SAMPLING_PERIOD;
+>> +	*lower *= tegra->devfreq->profile->polling_ms;
+>> +	*upper *= tegra->devfreq->profile->polling_ms;
+>>  }
+>>  
+>>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>> @@ -341,8 +342,8 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>>  	 * result, but this one is probably the least churning, although
+>>  	 * it may look a bit convoluted.
+>>  	 */
+>> -	if (freq * ACTMON_SAMPLING_PERIOD > upper)
+>> -		upper = freq * ACTMON_SAMPLING_PERIOD;
+>> +	if (freq * tegra->devfreq->profile->polling_ms > upper)
+>> +		upper = freq * tegra->devfreq->profile->polling_ms;
+>>  
+>>  	/*
+>>  	 * We want to get interrupts when MCCPU client crosses the
+>> @@ -420,7 +421,7 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+>>  	avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
+>>  	dev_ctrl = device_readl(dev, ACTMON_DEV_CTRL);
+>>  
+>> -	dev->avg_freq = avg_count / ACTMON_SAMPLING_PERIOD;
+>> +	dev->avg_freq = avg_count / tegra->devfreq->profile->polling_ms;
+>>  
+>>  	avg_intr_mask = ACTMON_DEV_INTR_AVG_BELOW_WMARK |
+>>  			ACTMON_DEV_INTR_AVG_ABOVE_WMARK;
+>> @@ -499,7 +500,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
+>>  	 * outdated.
+>>  	 */
+>>  	avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
+>> -	avg_freq = avg_count / ACTMON_SAMPLING_PERIOD;
+>> +	avg_freq = avg_count / tegra->devfreq->profile->polling_ms;
+>>  
+>>  	old_upper = tegra_actmon_upper_freq(tegra, dev->avg_freq);
+>>  	new_upper = tegra_actmon_upper_freq(tegra, avg_freq);
+>> @@ -675,7 +676,7 @@ static int tegra_actmon_cpu_notify_cb(struct notifier_block *nb,
+>>  	 * here for too long, otherwise CPUFreq's core will complain with a
+>>  	 * warning splat.
+>>  	 */
+>> -	delay = msecs_to_jiffies(ACTMON_SAMPLING_PERIOD);
+>> +	delay = msecs_to_jiffies(tegra->devfreq->profile->polling_ms);
+>>  	schedule_delayed_work(&tegra->cpufreq_update_work, delay);
+>>  
+>>  	return NOTIFY_OK;
+>> @@ -690,7 +691,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+>>  	dev->boost_freq = 0;
+>>  
+>>  	dev->avg_freq = clk_get_rate(tegra->emc_clock) / KHZ;
+>> -	device_writel(dev, dev->avg_freq * ACTMON_SAMPLING_PERIOD,
+>> +	device_writel(dev, dev->avg_freq * tegra->devfreq->profile->polling_ms,
+>>  		      ACTMON_DEV_INIT_AVG);
+>>  
+>>  	tegra_devfreq_update_avg_wmark(tegra, dev, dev->avg_freq);
+>> @@ -725,7 +726,14 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
+>>  	unsigned int i;
+>>  	int err;
+>>  
+>> -	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+>> +	if (!tegra->devfreq->stop_polling)
+> 
+> I don't prefer to change the 'stop_polling' on each device driver direclty
+> without devfreq interface. Don't access it directly.
 
-Enhanced addressing mode is only required when more than 32 bits need to
-be addressed. Add a DMA configuration parameter to enable this mode only
-when needed.
+Hmm.. okay. Please see more comments below.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v4:
-- enable EAME only if DMA addresses can be larger than 32 bits
+>> +		return 0;
+>> +
+>> +	tegra->devfreq->previous_freq = clk_get_rate(tegra->emc_clock) / KHZ;
+>> +	tegra->devfreq->last_stat_updated = jiffies;
+>> +	tegra->devfreq->stop_polling = false;
+> 
+> ditto.
+> 
+>> +
+>> +	actmon_writel(tegra, tegra->devfreq->profile->polling_ms - 1,
+>>  		      ACTMON_GLB_PERIOD_CTRL);
+>>  
+>>  	/*
+>> @@ -776,6 +784,11 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>>  {
+>>  	unsigned int i;
+>>  
+>> +	if (tegra->devfreq->stop_polling)
+> 
+> ditto.
+> 
+>> +		return;
+>> +
+>> +	mutex_unlock(&tegra->devfreq->lock);
+>> +
+>>  	disable_irq(tegra->irq);
+>>  
+>>  	cpufreq_unregister_notifier(&tegra->cpu_rate_change_nb,
+>> @@ -783,10 +796,16 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>>  
+>>  	cancel_delayed_work_sync(&tegra->cpufreq_update_work);
+>>  
+>> +	mutex_lock(&tegra->devfreq->lock);
+>> +
+>>  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
+>>  		tegra_actmon_stop_device(&tegra->devices[i]);
+>>  
+>>  	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
+>> +
+>> +	devfreq_update_status(tegra->devfreq, tegra->devfreq->previous_freq);
+>> +
+>> +	tegra->devfreq->stop_polling = true;
+> 
+> ditto.
+> 
+>>  }
+>>  
+>>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>> @@ -846,7 +865,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>>  	stat->busy_time *= 100 / BUS_SATURATION_RATIO;
+>>  
+>>  	/* Number of cycles in a sampling period */
+>> -	stat->total_time = cur_freq * ACTMON_SAMPLING_PERIOD;
+>> +	stat->total_time = cur_freq * tegra->devfreq->profile->polling_ms;
+>>  
+>>  	stat->busy_time = min(stat->busy_time, stat->total_time);
+>>  
+>> @@ -854,7 +873,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>>  }
+>>  
+>>  static struct devfreq_dev_profile tegra_devfreq_profile = {
+>> -	.polling_ms	= 0,
+>> +	.polling_ms	= ACTMON_SAMPLING_PERIOD,
+>>  	.target		= tegra_devfreq_target,
+>>  	.get_dev_status	= tegra_devfreq_get_dev_status,
+>>  };
+>> @@ -895,8 +914,11 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>>  					unsigned int event, void *data)
+>>  {
+>>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
+>> +	unsigned int new_delay, *delay_ptr = data;
+>>  	int ret = 0;
+>>  
+>> +	mutex_lock(&devfreq->lock);
+>> +
+>>  	/*
+>>  	 * Couple device with the governor early as it is needed at
+>>  	 * the moment of governor's start (used by ISR).
+>> @@ -905,26 +927,33 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>>  
+>>  	switch (event) {
+>>  	case DEVFREQ_GOV_START:
+>> -		devfreq_monitor_start(devfreq);
+>> +		devfreq->stop_polling = true;
+> 
+> It is not proper to initialize the 'stop_polling' on device driver directly.
+> 
+>> +		/* fall through */
+>> +	case DEVFREQ_GOV_RESUME:
+>>  		ret = tegra_actmon_start(tegra);
+>>  		break;
+>>  
+>>  	case DEVFREQ_GOV_STOP:
+>> -		tegra_actmon_stop(tegra);
+>> -		devfreq_monitor_stop(devfreq);
+> 
+> Why do you remove them?
 
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 5 ++++-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 7 +++++++
- include/linux/stmmac.h                             | 1 +
- 3 files changed, 12 insertions(+), 1 deletion(-)
+Becasue DEVFREQ_GOV_STOP and DEVFREQ_GOV_SUSPEND are doing the same now:
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-index 965cbe3e6f51..7cc331996cd8 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-@@ -27,7 +27,10 @@ static void dwxgmac2_dma_init(void __iomem *ioaddr,
- 	if (dma_cfg->aal)
- 		value |= XGMAC_AAL;
- 
--	writel(value | XGMAC_EAME, ioaddr + XGMAC_DMA_SYSBUS_MODE);
-+	if (dma_cfg->eame)
-+		value |= XGMAC_EAME;
-+
-+	writel(value, ioaddr + XGMAC_DMA_SYSBUS_MODE);
- }
- 
- static void dwxgmac2_dma_init_chan(void __iomem *ioaddr,
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index c76a1336a451..b8ac1744950e 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4515,6 +4515,13 @@ int stmmac_dvr_probe(struct device *device,
- 		if (!ret) {
- 			dev_info(priv->device, "Using %d bits DMA width\n",
- 				 priv->dma_cap.addr64);
-+
-+			/*
-+			 * If more than 32 bits can be addressed, make sure to
-+			 * enable enhanced addressing mode.
-+			 */
-+			if (IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT))
-+				priv->plat->dma_cfg->eame = true;
- 		} else {
- 			ret = dma_set_mask_and_coherent(device, DMA_BIT_MASK(32));
- 			if (ret) {
-diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index dc60d03c4b60..86f9464c3f5d 100644
---- a/include/linux/stmmac.h
-+++ b/include/linux/stmmac.h
-@@ -92,6 +92,7 @@ struct stmmac_dma_cfg {
- 	int fixed_burst;
- 	int mixed_burst;
- 	bool aal;
-+	bool eame;
- };
- 
- #define AXI_BLEN	7
--- 
-2.23.0
+	case DEVFREQ_GOV_STOP:
+		/* fall through */
+	case DEVFREQ_GOV_SUSPEND:
+		tegra_actmon_stop(tegra);
+		break;
+
+>> -		break;
+>> -
+>> +		/* fall through */
+>>  	case DEVFREQ_GOV_SUSPEND:
+>>  		tegra_actmon_stop(tegra);
+>> -		devfreq_monitor_suspend(devfreq);
+> 
+> Why do you remove it?
+
+a) it takes the same mutex devfreq->lock as tegra_governor_event_handler()
+b) the devfreq's manual polling isn't needed for this driver and thus
+devfreq->work is unwanted
+c) this patch makes tegra_actmon_stop() to replicate what
+devfreq_monitor_suspend() does
+
+It looks like it will be better to add new generic events for the
+governors, like DEVFREQ_GOV_START/STOP_POLLING. Then this driver will be
+able to customize start/stop of the polling, while software governors
+will utilize some new default helpers that will start/stop the polling
+work. What do you think?
+
+[snip]
