@@ -1,67 +1,181 @@
-From: <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
-Date: Wed, 2 Oct 2019 13:35:47 +0000
-Message-ID: <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
- <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
- <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v6 00/19] More improvements for Tegra30 devfreq driver
+Date: Wed, 2 Oct 2019 16:54:44 +0300
+Message-ID: <6967777e-b54f-8021-aa6d-8c245e529e10@gmail.com>
+References: <20190811212315.12689-1-digetx@gmail.com>
+ <CGME20191001211534epcas2p1e5f878969d3f68d4dfcafd82b1538487@epcas2p1.samsung.com>
+ <17dabcfc-3351-13a1-b3de-81af88f64d84@gmail.com>
+ <503b2ade-ff8e-c354-3886-3b7b511bd07e@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
-In-Reply-To: <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <503b2ade-ff8e-c354-3886-3b7b511bd07e@samsung.com>
 Content-Language: en-US
-Content-ID: <DE320C98F40CBC4891F6ABBA6ED802E1@namprd11.prod.outlook.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
-List-Post: <mailto:linux-snps-arc@lists.infradead.org>
-List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
-Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.co
-Cc: uclinux-h8-devel@lists.sourceforge.jp, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-riscv@lists.infradead.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Daniel,
-
-Taking into account that Rob doesn't agree with the solution proposed in
-this series do you think there is a chance to merge this driver as is?
-
-If you have other suggestion I am open to try it.
-
-Thank you,
-Claudiu Beznea
-
-On 26.09.2019 11:42, Claudiu Beznea wrote:
+02.10.2019 03:25, Chanwoo Choi пишет:
+> Hello Dmitry and Thierry,
 > 
-> 
-> On 25.09.2019 20:19, Daniel Lezcano wrote:
->> External E-Mail
->>
->>
->> Hi Claudiu,
->>
->> On 10/09/2019 15:47, Claudiu Beznea wrote:
->>> Hi,
+> On 19. 10. 2. 오전 6:15, Dmitry Osipenko wrote:
+>> 12.08.2019 00:22, Dmitry Osipenko пишет:
+>>> Hello,
 >>>
->>> This series adds support to permit the selection of clocksource/clockevent
->>> via DT.
+>>> This series addresses some additional review comments that were made by
+>>> Thierry Reding to [1], makes several important changes to the driver,
+>>> fixing excessive interrupts activity, and adds new features. In the end
+>>> I'm proposing myself as a maintainer for the Tegra devfreq drivers.
+>>>
+>>> [1] https://lore.kernel.org/lkml/0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com/T/
+>>>
+>>> Changelog:
+>>>
+>>> v6:  Addressed review comment that was made by Chanwoo Choi to v5 by
+>>>      squashing "Define ACTMON_DEV_CTRL_STOP" patch into the "Use CPUFreq
+>>>      notifier" patch.
+>>>
+>>> v5:  Addressed review comments that were made by Chanwoo Choi to v4 by
+>>>      squashing few patches, dropping some questionable patches, rewording
+>>>      comments to the code, restructuring the code and etc.
+>>>
+>>>      These patches are now dropped from the series:
+>>>
+>>>        PM / devfreq: tegra30: Use tracepoints for debugging
+>>>        PM / devfreq: tegra30: Inline all one-line functions
+>>>
+>>>      The interrupt-optimization patches are squashed into a single patch:
+>>>
+>>>        PM / devfreq: tegra30: Reduce unnecessary interrupts activity
+>>>
+>>>      because it's better to keep the optimizations as a separate change and
+>>>      this also helps to reduce code churning, since the code changes depend
+>>>      on a previous patch in order to stay cleaner.
+>>>
+>>>      Fixed a lockup bug that I spotted recently, which is caused by a
+>>>      clk-notifier->cpufreq_get()->clk_set_rate() sequence. Now a non-blocking
+>>>      variant of CPU's frequency retrieving is used, i.e. cpufreq_quick_get().
+>>>
+>>>      Further optimized the CPUFreq notifier by postponing the delayed
+>>>      updating in accordance to the polling interval, this actually uncovered
+>>>      the above lockup bug.
+>>>
+>>>      Implemented new minor driver feature in the new patch:
+>>>
+>>>        PM / devfreq: tegra30: Support variable polling interval
+>>>
+>>> v4:  Added two new patches to the series:
+>>>
+>>>        PM / devfreq: tegra30: Synchronize average count on target's update
+>>>        PM / devfreq: tegra30: Increase sampling period to 16ms
+>>>
+>>>      The first patch addresses problem where governor could get stuck due
+>>>      to outdated "average count" value which is snapshoted by ISR and there
+>>>      are cases where manual update of the value is required.
+>>>
+>>>      The second patch is just a minor optimization.
+>>>
+>>> v3:  Added support for tracepoints, replacing the debug messages.
+>>>      Fixed few more bugs with the help of tracepoints.
+>>>
+>>>      New patches in this version:
+>>>
+>>>        PM / devfreq: tegra30: Use tracepoints for debugging
+>>>        PM / devfreq: tegra30: Optimize CPUFreq notifier
+>>>        PM / devfreq: tegra30: Optimize upper consecutive watermark selection
+>>>        PM / devfreq: tegra30: Optimize upper average watermark selection
+>>>        PM / devfreq: tegra30: Include appropriate header
+>>>
+>>>      Some of older patches of this series also got some extra minor polish.
+>>>
+>>> v2:  Added more patches that are cleaning driver's code further and
+>>>      squashing another kHz conversion bug.
+>>>
+>>>      The patch "Rework frequency management logic" of the v1 series is now
+>>>      converted to "Set up watermarks properly" because I found some problems
+>>>      in the original patch and then realized that there is no need to change
+>>>      the logic much. So the logic mostly preserved and only got improvements.
+>>>
+>>>      The series is based on the today's linux-next (25 Jun) and takes into
+>>>      account minor changes that MyungJoo Ham made to the already queued
+>>>      patches from the first batch [1].
+>>>
+>>> Dmitry Osipenko (19):
+>>>   PM / devfreq: tegra30: Change irq type to unsigned int
+>>>   PM / devfreq: tegra30: Keep interrupt disabled while governor is
+>>>     stopped
+>>>   PM / devfreq: tegra30: Handle possible round-rate error
+>>>   PM / devfreq: tegra30: Drop write-barrier
+>>>   PM / devfreq: tegra30: Set up watermarks properly
+>>>   PM / devfreq: tegra30: Tune up boosting thresholds
+>>>   PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+>>>   PM / devfreq: tegra30: Ensure that target freq won't overflow
+>>>   PM / devfreq: tegra30: Use kHz units uniformly in the code
+>>>   PM / devfreq: tegra30: Reduce unnecessary interrupts activity
+>>>   PM / devfreq: tegra30: Use CPUFreq notifier
+>>>   PM / devfreq: tegra30: Move clk-notifier's registration to governor's
+>>>     start
+>>>   PM / devfreq: tegra30: Reset boosting on startup
+>>>   PM / devfreq: tegra30: Don't enable consecutive-down interrupt on
+>>>     startup
+>>>   PM / devfreq: tegra30: Constify structs
+>>>   PM / devfreq: tegra30: Include appropriate header
+>>>   PM / devfreq: tegra30: Increase sampling period to 16ms
+>>>   PM / devfreq: tegra30: Support variable polling interval
+>>>   PM / devfreq: tegra20/30: Add Dmitry as a maintainer
+>>>
+>>>  MAINTAINERS                       |   9 +
+>>>  drivers/devfreq/tegra30-devfreq.c | 706 +++++++++++++++++++++++-------
+>>>  2 files changed, 555 insertions(+), 160 deletions(-)
+>>>
 >>
->> Thanks for the proposal and taking care of making some progress on this.
+>> Hello Chanwoo,
 >>
->> I just wanted to let you know I've been traveling but the series is in
->> my pipe and I did not forget it. I'll comment it next week.
+>> I don't have any more updates in regards to this series, everything is
+>> working flawlessly for now. Will be awesome if we could continue the
+>> reviewing and then get the patches into linux-next to get some more testing.
+>>
+>>
 > 
-> Hi Daniel,
+> Hello Dmitry,
 > 
-> No problem. Thank you for letting me know.
+> I'm sorry for late reply. Except for patch5, I reviewed the patches.
+> Please check my comment. Actually, It is difficult to review the patch5
+> without any testing environment and detailed knowledge of watermark of tegra.
+> It is not familiar with me.
+
+Thank you very much! I'll go through yours comments and reply to them.
+
+I understand that it's not easy for you to review patch5, but probably
+you don't need to go into details and a brief-generic review of the code
+will be enough in that case.
+
+The hardware is actually very simple, there are watermarks that
+correspond to a memory activity that hardware accounts over a given
+period of time. Once watermark is reached, hardware generates interrupt.
+There are two types of watermarks: average and consecutive. In case of
+the average, the memory activity is collected over a larger window of
+time. For the consecutive case, the memory activity is collected over
+each period (16ms by default in the driver). Memory client may breach
+average watermark very frequently, although that may not affect much the
+average value and for some memory clients (like CPU) it is more
+preferred to not completely ignore those short bursts of memory
+activity. The consecutive watermarks are used in order to detect those
+short bursts, which we account in the driver in a form of boosting. You
+may notice that boost_up_coeff for the CPU's memory client is set to a
+higher value in the driver.
+
+> Hello Thierry,
+> If possible, Could you review the patch5 related to setting up the watermark
+> and other patches?
 > 
-> Claudiu
-> 
->>
->>  -- Daniel
->>
->>
+
+Indeed, will be very nice if Thierry could also take a look at this
+series. Although.. I could be wrong here, but it looks to me that
+Thierry also isn't closely familiar with this driver and the hardware.
+
+Thierry, at least please let us know if you're interested in taking a
+look at the patches, I'm pretty sure that you're quite busy with other
+things ;)
