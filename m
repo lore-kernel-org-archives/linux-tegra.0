@@ -1,59 +1,56 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 0/3] tegra: use regulator_bulk_set_supply_names()
-Date: Wed, 2 Oct 2019 11:09:24 +0200
-Message-ID: <CAMRc=Me5tC2pFc56oWrcdLqu3YULYWPFXLXLW6uciZ5OPO7_Ug@mail.gmail.com>
-References: <20191001132333.20146-1-brgl@bgdev.pl> <20191001133807.GB3563296@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/6] xhci: tegra: Parameterize mailbox register addresses
+Date: Wed, 2 Oct 2019 11:39:51 +0200
+Message-ID: <20191002093951.GB3716706@ulmo>
+References: <20191002080051.11142-1-jckuo@nvidia.com>
+ <20191002080051.11142-2-jckuo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191001133807.GB3563296@ulmo>
+Content-Disposition: inline
+In-Reply-To: <20191002080051.11142-2-jckuo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: JC Kuo <jckuo@nvidia.com>
+Cc: gregkh@linuxfoundation.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-wt., 1 pa=C5=BA 2019 o 15:38 Thierry Reding <thierry.reding@gmail.com> napi=
-sa=C5=82(a):
->
-> On Tue, Oct 01, 2019 at 03:23:30PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > The regulator_bulk_set_supply_names() helper was merged upstream. Use i=
-t
-> > in a couple tegra drivers.
-> >
-> > Bartosz Golaszewski (3):
-> >   ahci: tegra: use regulator_bulk_set_supply_names()
-> >   phy: tegra: use regulator_bulk_set_supply_names()
-> >   usb: host: xhci-tegra: use regulator_bulk_set_supply_names()
-> >
-> >  drivers/ata/ahci_tegra.c      | 6 +++---
-> >  drivers/phy/tegra/xusb.c      | 6 +++---
-> >  drivers/usb/host/xhci-tegra.c | 5 +++--
-> >  3 files changed, 9 insertions(+), 8 deletions(-)
->
-> I really don't see the point here. You've got a positive diffstat here,
-> which means all that churn is without benefit.
->
 
-A hand-coded for loop is replaced with a single function call. The
-actual generated code is smaller - I posted bloat-o-meter results last
-time. The only reason the number of lines of code doesn't really
-change is because the line is broken due to the function and argument
-names being too long.
+--aM3YZ0Iwxop3KEKx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Is there some subsequent work based on this that will actually improve
-> things?
+On Wed, Oct 02, 2019 at 04:00:46PM +0800, JC Kuo wrote:
+> Tegra194 XUSB host controller has rearranged mailbox registers. This
+> commit makes mailbox registers address a part of "soc" data so that
+> xhci-tegra driver can be used for Tegra194.
+>=20
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 58 +++++++++++++++++++++++++----------
+>  1 file changed, 42 insertions(+), 16 deletions(-)
 
-I'd argue that replacing a common operation that's reimplemented
-explicitly by hand in many places with a helper function is already an
-improvement. Consolidation is almost always good.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-That being said, I like your idea about the regulator_get_from_names
-helper, but it will take more time as we have to cover optional
-multiple regulators as well. In other words: it's on my TODO list, but
-in the meantime there's no harm in using this since Mark decided to
-make it a part of the regulator API anyway.
+--aM3YZ0Iwxop3KEKx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Bart
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2UcGcACgkQ3SOs138+
+s6HZXxAAj/2ccE7HkLhaxNMza6KLkAIu71w1a/63g7IUbRc7yLn7g4PwViahNPI0
+cyT0wfdMIZlquxbf+g7w7kqHXcMdylo34cNFKApdVTmMy6axKnom/jVJ7SUY4RXe
+N5YGVUXEGIhtlsuherZNx0MCgVh59KZSegokKL0sUbn5FaN7n+al0hYB0jJBEg2Y
+MuUJHhKbF+JKDL1G+TKGjhC7HQZP4GZubc0NWZAII+KwLmQAcPUK5UuPbFXyCK3S
+exxBrULnhWidd9g8A+FJNCcJgQAlPDfdo5XHIgEi1ZHJLoOqBVgUiwX6aZw4TIRM
+8J10QdlK0EYGM6e5Rj396FJgjREYY78n+oUNqx+L5GTVgDNYLjZ7xTmLTUxq8Gng
+vPeSxlruwzzbcnfI5YvWS5Spj7ydMEG5jfBaW9el1MCCuuIVuIXA2nbfZmVaPpvG
+6FYxav5UUVzrNiIwK0F5+0+RaB0U5/IlNSjlBFi1n0d5E4vLLrpwMGtu2cFsFzkq
+ZiGkchUm2V41JOuXmU+CFNGfOWKhzDBYNEnCJ+We5qNwYx+OG6/iP/nEEPCkIr5p
+jFMStpz0JBi6MDG5Vas7WexdPsk9N/1lOszGzkLAMYAJSTF014uylLyyK0+Y6NQe
+6FOuL//KfM5QGrdCFU5RnwM/Zz8YlS39wUahPYgkmd6w5j3wR9Y=
+=+5KZ
+-----END PGP SIGNATURE-----
+
+--aM3YZ0Iwxop3KEKx--
