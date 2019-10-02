@@ -1,144 +1,209 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 2/2] dt-bindings: pwm: Convert Samsung PWM bindings to
- json-schema
-Date: Wed,  2 Oct 2019 18:40:47 +0200
-Message-ID: <20191002164047.14499-2-krzk@kernel.org>
-References: <20191002164047.14499-1-krzk@kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v6 09/19] PM / devfreq: tegra30: Use kHz units uniformly
+ in the code
+Date: Wed, 2 Oct 2019 21:26:52 +0300
+Message-ID: <10e71085-dc92-6003-2bbd-40c3369cdb26@gmail.com>
+References: <20190811212315.12689-1-digetx@gmail.com>
+ <CGME20190811212545epcas4p4132cb98ef69ef04136fda4030bd64f92@epcas4p4.samsung.com>
+ <20190811212315.12689-10-digetx@gmail.com>
+ <2b65c78a-4b8f-661b-dd9c-29b3cbf0844f@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191002164047.14499-1-krzk@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2b65c78a-4b8f-661b-dd9c-29b3cbf0844f@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Q29udmVydCBTYW1zdW5nIFBXTSAoUzNDLCBTNVAgYW5kIEV4eW5vcyBTb0NzKSBiaW5kaW5ncyB0
-byBEVCBzY2hlbWEKZm9ybWF0IHVzaW5nIGpzb24tc2NoZW1hLgoKU2lnbmVkLW9mZi1ieTogS3J6
-eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgoKLS0tCgpDaGFuZ2VzIHNpbmNlIHYy
-OgoxLiBBZGQgYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlLgoKQ2hhbmdlcyBzaW5jZSB2MToK
-MS4gSW5kZW50IGV4YW1wbGUgd2l0aCBmb3VyIHNwYWNlcyAobW9yZSByZWFkYWJsZSksCjIuIEZp
-eCBzYW1zdW5nLHB3bS1vdXRwdXRzIGFmdGVyIHJldmlldywKMy4gUmVtb3ZlIGRvdWJsZS1xdW90
-ZXMgZnJvbSBjbG9jayBuYW1lcy4KLS0tCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9wd20vcHdt
-LXNhbXN1bmcudHh0ICAgfCAgNTEgLS0tLS0tLS0KIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3B3
-bS9wd20tc2Ftc3VuZy55YW1sICB8IDEwOSArKysrKysrKysrKysrKysrKysKIDIgZmlsZXMgY2hh
-bmdlZCwgMTA5IGluc2VydGlvbnMoKyksIDUxIGRlbGV0aW9ucygtKQogZGVsZXRlIG1vZGUgMTAw
-NjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wd20vcHdtLXNhbXN1bmcudHh0
-CiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3B3
-bS9wd20tc2Ftc3VuZy55YW1sCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL3B3bS9wd20tc2Ftc3VuZy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvcHdtL3B3bS1zYW1zdW5nLnR4dApkZWxldGVkIGZpbGUgbW9kZSAxMDA2NDQKaW5k
-ZXggNTUzOGRlOWMyMDA3Li4wMDAwMDAwMDAwMDAKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL3B3bS9wd20tc2Ftc3VuZy50eHQKKysrIC9kZXYvbnVsbApAQCAtMSw1MSAr
-MCwwIEBACi0qIFNhbXN1bmcgUFdNIHRpbWVycwotCi1TYW1zdW5nIFNvQ3MgY29udGFpbiBQV00g
-dGltZXIgYmxvY2tzIHdoaWNoIGNhbiBiZSB1c2VkIGZvciBzeXN0ZW0gY2xvY2sgc291cmNlCi1h
-bmQgY2xvY2sgZXZlbnQgdGltZXJzLCBhcyB3ZWxsIGFzIHRvIGRyaXZlIFNvQyBvdXRwdXRzIHdp
-dGggUFdNIHNpZ25hbC4gRWFjaAotUFdNIHRpbWVyIGJsb2NrIHByb3ZpZGVzIDUgUFdNIGNoYW5u
-ZWxzIChub3QgYWxsIG9mIHRoZW0gY2FuIGRyaXZlIHBoeXNpY2FsCi1vdXRwdXRzIC0gc2VlIFNv
-QyBhbmQgYm9hcmQgbWFudWFsKS4KLQotQmUgYXdhcmUgdGhhdCB0aGUgY2xvY2tzb3VyY2UgZHJp
-dmVyIHN1cHBvcnRzIG9ubHkgdW5pcHJvY2Vzc29yIHN5c3RlbXMuCi0KLVJlcXVpcmVkIHByb3Bl
-cnRpZXM6Ci0tIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgb25lIG9mIGZvbGxvd2luZzoKLSAgICBz
-YW1zdW5nLHMzYzI0MTAtcHdtIC0gZm9yIDE2LWJpdCB0aW1lcnMgcHJlc2VudCBvbiBTM0MyNHh4
-IFNvQ3MKLSAgICBzYW1zdW5nLHMzYzY0MDAtcHdtIC0gZm9yIDMyLWJpdCB0aW1lcnMgcHJlc2Vu
-dCBvbiBTM0M2NHh4IFNvQ3MKLSAgICBzYW1zdW5nLHM1cDY0NDAtcHdtIC0gZm9yIDMyLWJpdCB0
-aW1lcnMgcHJlc2VudCBvbiBTNVA2NHgwIFNvQ3MKLSAgICBzYW1zdW5nLHM1cGMxMDAtcHdtIC0g
-Zm9yIDMyLWJpdCB0aW1lcnMgcHJlc2VudCBvbiBTNVBDMTAwLCBTNVBWMjEwLAotCQkJICBFeHlu
-b3M0MjEwIHJldjAgU29DcwotICAgIHNhbXN1bmcsZXh5bm9zNDIxMC1wd20gLSBmb3IgMzItYml0
-IHRpbWVycyBwcmVzZW50IG9uIEV4eW5vczQyMTAsCi0gICAgICAgICAgICAgICAgICAgICAgICAg
-IEV4eW5vczR4MTIsIEV4eW5vczUyNTAgYW5kIEV4eW5vczU0MjAgU29DcwotLSByZWc6IGJhc2Ug
-YWRkcmVzcyBhbmQgc2l6ZSBvZiByZWdpc3RlciBhcmVhCi0tIGludGVycnVwdHM6IGxpc3Qgb2Yg
-dGltZXIgaW50ZXJydXB0cyAob25lIGludGVycnVwdCBwZXIgdGltZXIsIHN0YXJ0aW5nIGF0Ci0g
-IHRpbWVyIDApCi0tIGNsb2NrLW5hbWVzOiBzaG91bGQgY29udGFpbiBhbGwgZm9sbG93aW5nIHJl
-cXVpcmVkIGNsb2NrIG5hbWVzOgotICAgIC0gInRpbWVycyIgLSBQV00gYmFzZSBjbG9jayB1c2Vk
-IHRvIGdlbmVyYXRlIFBXTSBzaWduYWxzLAotICBhbmQgYW55IHN1YnNldCBvZiBmb2xsb3dpbmcg
-b3B0aW9uYWwgY2xvY2sgbmFtZXM6Ci0gICAgLSAicHdtLXRjbGswIiAtIGZpcnN0IGV4dGVybmFs
-IFBXTSBjbG9jayBzb3VyY2UsCi0gICAgLSAicHdtLXRjbGsxIiAtIHNlY29uZCBleHRlcm5hbCBQ
-V00gY2xvY2sgc291cmNlLgotICBOb3RlIHRoYXQgbm90IGFsbCBJUCB2YXJpYW50cyBhbGxvdyB1
-c2luZyBhbGwgZXh0ZXJuYWwgY2xvY2sgc291cmNlcy4KLSAgUmVmZXIgdG8gU29DIGRvY3VtZW50
-YXRpb24gdG8gbGVhcm4gd2hpY2ggY2xvY2sgc291cmNlIGNvbmZpZ3VyYXRpb25zCi0gIGFyZSBh
-dmFpbGFibGUuCi0tIGNsb2Nrczogc2hvdWxkIGNvbnRhaW4gY2xvY2sgc3BlY2lmaWVycyBvZiBh
-bGwgY2xvY2tzLCB3aGljaCBpbnB1dCBuYW1lcwotICBoYXZlIGJlZW4gc3BlY2lmaWVkIGluIGNs
-b2NrLW5hbWVzIHByb3BlcnR5LCBpbiBzYW1lIG9yZGVyLgotLSAjcHdtLWNlbGxzOiBzaG91bGQg
-YmUgMy4gU2VlIHB3bS50eHQgaW4gdGhpcyBkaXJlY3RvcnkgZm9yIGEgZGVzY3JpcHRpb24gb2YK
-LSAgdGhlIGNlbGxzIGZvcm1hdC4gVGhlIG9ubHkgdGhpcmQgY2VsbCBmbGFnIHN1cHBvcnRlZCBi
-eSB0aGlzIGJpbmRpbmcgaXMKLSAgUFdNX1BPTEFSSVRZX0lOVkVSVEVELgotCi1PcHRpb25hbCBw
-cm9wZXJ0aWVzOgotLSBzYW1zdW5nLHB3bS1vdXRwdXRzOiBsaXN0IG9mIFBXTSBjaGFubmVscyB1
-c2VkIGFzIFBXTSBvdXRwdXRzIG9uIHBhcnRpY3VsYXIKLSAgICBwbGF0Zm9ybSAtIGFuIGFycmF5
-IG9mIHVwIHRvIDUgZWxlbWVudHMgYmVpbmcgaW5kaWNlcyBvZiBQV00gY2hhbm5lbHMKLSAgICAo
-ZnJvbSAwIHRvIDQpLCB0aGUgb3JkZXIgZG9lcyBub3QgbWF0dGVyLgotCi1FeGFtcGxlOgotCXB3
-bUA3ZjAwNjAwMCB7Ci0JCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzM2M2NDAwLXB3bSI7Ci0JCXJl
-ZyA9IDwweDdmMDA2MDAwIDB4MTAwMD47Ci0JCWludGVycnVwdC1wYXJlbnQgPSA8JnZpYzA+Owot
-CQlpbnRlcnJ1cHRzID0gPDIzPiwgPDI0PiwgPDI1PiwgPDI3PiwgPDI4PjsKLQkJY2xvY2tzID0g
-PCZjbG9jayA2Nz47Ci0JCWNsb2NrLW5hbWVzID0gInRpbWVycyI7Ci0JCXNhbXN1bmcscHdtLW91
-dHB1dHMgPSA8MD4sIDwxPjsKLQkJI3B3bS1jZWxscyA9IDwzPjsKLQl9CmRpZmYgLS1naXQgYS9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcHdtL3B3bS1zYW1zdW5nLnlhbWwgYi9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcHdtL3B3bS1zYW1zdW5nLnlhbWwKbmV3
-IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAwLi5lYTdmMzI5MDUxNzIKLS0tIC9k
-ZXYvbnVsbAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcHdtL3B3bS1z
-YW1zdW5nLnlhbWwKQEAgLTAsMCArMSwxMDkgQEAKKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6
-IEdQTC0yLjAKKyVZQU1MIDEuMgorLS0tCiskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hl
-bWFzL3B3bS9wd20tc2Ftc3VuZy55YW1sIworJHNjaGVtYTogaHR0cDovL2RldmljZXRyZWUub3Jn
-L21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjCisKK3RpdGxlOiBTYW1zdW5nIFNvQyBQV00gdGltZXJz
-CisKK21haW50YWluZXJzOgorICAtIFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFp
-bC5jb20+CisgIC0gS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgorCitkZXNj
-cmlwdGlvbjogfCsKKyAgU2Ftc3VuZyBTb0NzIGNvbnRhaW4gUFdNIHRpbWVyIGJsb2NrcyB3aGlj
-aCBjYW4gYmUgdXNlZCBmb3Igc3lzdGVtIGNsb2NrIHNvdXJjZQorICBhbmQgY2xvY2sgZXZlbnQg
-dGltZXJzLCBhcyB3ZWxsIGFzIHRvIGRyaXZlIFNvQyBvdXRwdXRzIHdpdGggUFdNIHNpZ25hbC4g
-RWFjaAorICBQV00gdGltZXIgYmxvY2sgcHJvdmlkZXMgNSBQV00gY2hhbm5lbHMgKG5vdCBhbGwg
-b2YgdGhlbSBjYW4gZHJpdmUgcGh5c2ljYWwKKyAgb3V0cHV0cyAtIHNlZSBTb0MgYW5kIGJvYXJk
-IG1hbnVhbCkuCisKKyAgQmUgYXdhcmUgdGhhdCB0aGUgY2xvY2tzb3VyY2UgZHJpdmVyIHN1cHBv
-cnRzIG9ubHkgdW5pcHJvY2Vzc29yIHN5c3RlbXMuCisKK2FsbE9mOgorICAtICRyZWY6IHB3bS55
-YW1sIworCitwcm9wZXJ0aWVzOgorICBjb21wYXRpYmxlOgorICAgIGVudW06CisgICAgICAtIHNh
-bXN1bmcsczNjMjQxMC1wd20gICAgICAgICAgICAgIyAxNi1iaXQsIFMzQzI0eHgKKyAgICAgIC0g
-c2Ftc3VuZyxzM2M2NDAwLXB3bSAgICAgICAgICAgICAjIDMyLWJpdCwgUzNDNjR4eAorICAgICAg
-LSBzYW1zdW5nLHM1cDY0NDAtcHdtICAgICAgICAgICAgICMgMzItYml0LCBTNVA2NHgwCisgICAg
-ICAtIHNhbXN1bmcsczVwYzEwMC1wd20gICAgICAgICAgICAgIyAzMi1iaXQsIFM1UEMxMDAsIFM1
-UFYyMTAsIEV4eW5vczQyMTAgcmV2MCBTb0NzCisgICAgICAtIHNhbXN1bmcsZXh5bm9zNDIxMC1w
-d20gICAgICAgICAgIyAzMi1iaXQsIEV4eW5vcworCisgIHJlZzoKKyAgICBtYXhJdGVtczogMQor
-CisgIGNsb2NrczoKKyAgICBtaW5JdGVtczogMQorICAgIG1heEl0ZW1zOiAzCisKKyAgY2xvY2st
-bmFtZXM6CisgICAgZGVzY3JpcHRpb246IHwKKyAgICAgIFNob3VsZCBjb250YWluIGFsbCBmb2xs
-b3dpbmcgcmVxdWlyZWQgY2xvY2sgbmFtZXM6CisgICAgICAtICJ0aW1lcnMiIC0gUFdNIGJhc2Ug
-Y2xvY2sgdXNlZCB0byBnZW5lcmF0ZSBQV00gc2lnbmFscywKKyAgICAgIGFuZCBhbnkgc3Vic2V0
-IG9mIGZvbGxvd2luZyBvcHRpb25hbCBjbG9jayBuYW1lczoKKyAgICAgIC0gInB3bS10Y2xrMCIg
-LSBmaXJzdCBleHRlcm5hbCBQV00gY2xvY2sgc291cmNlLAorICAgICAgLSAicHdtLXRjbGsxIiAt
-IHNlY29uZCBleHRlcm5hbCBQV00gY2xvY2sgc291cmNlLgorICAgICAgTm90ZSB0aGF0IG5vdCBh
-bGwgSVAgdmFyaWFudHMgYWxsb3cgdXNpbmcgYWxsIGV4dGVybmFsIGNsb2NrIHNvdXJjZXMuCisg
-ICAgICBSZWZlciB0byBTb0MgZG9jdW1lbnRhdGlvbiB0byBsZWFybiB3aGljaCBjbG9jayBzb3Vy
-Y2UgY29uZmlndXJhdGlvbnMKKyAgICAgIGFyZSBhdmFpbGFibGUuCisgICAgb25lT2Y6CisgICAg
-ICAtIGl0ZW1zOgorICAgICAgICAtIGNvbnN0OiB0aW1lcnMKKyAgICAgIC0gaXRlbXM6CisgICAg
-ICAgIC0gY29uc3Q6IHRpbWVycworICAgICAgICAtIGNvbnN0OiBwd20tdGNsazAKKyAgICAgIC0g
-aXRlbXM6CisgICAgICAgIC0gY29uc3Q6IHRpbWVycworICAgICAgICAtIGNvbnN0OiBwd20tdGNs
-azEKKyAgICAgIC0gaXRlbXM6CisgICAgICAgIC0gY29uc3Q6IHRpbWVycworICAgICAgICAtIGNv
-bnN0OiBwd20tdGNsazAKKyAgICAgICAgLSBjb25zdDogcHdtLXRjbGsxCisKKyAgaW50ZXJydXB0
-czoKKyAgICBkZXNjcmlwdGlvbjoKKyAgICAgIE9uZSBpbnRlcnJ1cHQgcGVyIHRpbWVyLCBzdGFy
-dGluZyBhdCB0aW1lciAwLgorICAgIG1pbkl0ZW1zOiAxCisgICAgbWF4SXRlbXM6IDUKKworICAi
-I3B3bS1jZWxscyI6CisgICAgZGVzY3JpcHRpb246CisgICAgICBUaGUgb25seSB0aGlyZCBjZWxs
-IGZsYWcgc3VwcG9ydGVkIGJ5IHRoaXMgYmluZGluZworICAgICAgaXMgUFdNX1BPTEFSSVRZX0lO
-VkVSVEVELgorICAgIGNvbnN0OiAzCisKKyAgc2Ftc3VuZyxwd20tb3V0cHV0czoKKyAgICBkZXNj
-cmlwdGlvbjoKKyAgICAgIEEgbGlzdCBvZiBQV00gY2hhbm5lbHMgdXNlZCBhcyBQV00gb3V0cHV0
-cyBvbiBwYXJ0aWN1bGFyIHBsYXRmb3JtLgorICAgICAgSXQgaXMgYW4gYXJyYXkgb2YgdXAgdG8g
-NSBlbGVtZW50cyBiZWluZyBpbmRpY2VzIG9mIFBXTSBjaGFubmVscworICAgICAgKGZyb20gMCB0
-byA0KSwgdGhlIG9yZGVyIGRvZXMgbm90IG1hdHRlci4KKyAgICBhbGxPZjoKKyAgICAgIC0gJHJl
-ZjogL3NjaGVtYXMvdHlwZXMueWFtbCMvZGVmaW5pdGlvbnMvdWludDMyLWFycmF5CisgICAgICAt
-IHVuaXF1ZUl0ZW1zOiB0cnVlCisgICAgICAtIGl0ZW1zOgorICAgICAgICAgIG1pbmltdW06IDAK
-KyAgICAgICAgICBtYXhpbXVtOiA0CisKK3JlcXVpcmVkOgorICAtIGNsb2NrcworICAtIGNsb2Nr
-LW5hbWVzCisgIC0gY29tcGF0aWJsZQorICAtIGludGVycnVwdHMKKyAgLSAiI3B3bS1jZWxscyIK
-KyAgLSByZWcKKworYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlCisKK2V4YW1wbGVzOgorICAt
-IHwKKyAgICBwd21AN2YwMDYwMDAgeworICAgICAgICBjb21wYXRpYmxlID0gInNhbXN1bmcsczNj
-NjQwMC1wd20iOworICAgICAgICByZWcgPSA8MHg3ZjAwNjAwMCAweDEwMDA+OworICAgICAgICBp
-bnRlcnJ1cHQtcGFyZW50ID0gPCZ2aWMwPjsKKyAgICAgICAgaW50ZXJydXB0cyA9IDwyMz4sIDwy
-ND4sIDwyNT4sIDwyNz4sIDwyOD47CisgICAgICAgIGNsb2NrcyA9IDwmY2xvY2sgNjc+OworICAg
-ICAgICBjbG9jay1uYW1lcyA9ICJ0aW1lcnMiOworICAgICAgICBzYW1zdW5nLHB3bS1vdXRwdXRz
-ID0gPDA+LCA8MT47CisgICAgICAgICNwd20tY2VsbHMgPSA8Mz47CisgICAgfTsKLS0gCjIuMTcu
-MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+02.10.2019 02:29, Chanwoo Choi пишет:
+> On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
+>> Now that all kHz-conversion related bugs are fixed, we can use the kHz
+>> uniformly. This makes code cleaner and avoids integer divisions in the
+>> code, which is useful in a case of Tegra30 that has Cortex A9 CPU that
+>> doesn't support integer division instructions, hence all divisions are
+>> actually made in software mode. Another small benefit from this change
+>> is that now powertop utility correctly displays devfreq's stats, for
+>> some reason it expects them to be in kHz.
+> 
+> If possible, please specify the benefit result on patch description.
+
+As I wrote above, there are fewer divisions in the code as a result of this patch.
+
+Then I also found that powertop expects KHz. This is actually something that devfreq core
+potentially could improve by allowing drivers to specify what units are used for the freqs
+such that sysfs interface could present freqs to userpspace in a predictable manner.
+
+Lastly, this patch comes very handy for the patch11, because of the replacement of
+avg_count with avg_freq which helps to keep code cleaner in further patches. Please note
+that this patch doesn't change logic of the code.
+
+> And I have a question. Why do you fix the KHz-conversion issue on one patch?
+> Actually, in my case, it is difficult to understand that multiple patches
+> try to fix the KHz-conversion issue. I think that it is possible to
+> make one patch.
+
+This driver used Hz units for the OPPs from the very beginning and then there were
+Hz<->KHz conversion bugs that were fixed by previous patches. This patch doesn't fix any
+KHz-conversion issue and merely makes a minor clean up by using KHz units everywhere in
+the code, starting from OPPs that are created by dev_pm_opp_add().
+
+> And, 
+> On these series, some codes wad added and then these codes are deleted
+> on later patch. It looks like that you made the issue and then you fix
+> the issue by yourself. I think that it is not proper.
+> Even if you developed the patches on your local environment sequentially
+> according to the sequence of your issue detection, you better to do
+> refactoring the patches.
+> 
+> Frankly, I cannot agree that some codes wad added on front patch
+> and then added codes are deleted on later patch in the same patchset.
+
+Alright, I understand that it makes easier for you to review patches without going back
+and forth between patches, verifying every changed line of the previous patches of this
+series.
+
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra30-devfreq.c | 81 +++++++++++++++++++------------
+>>  1 file changed, 49 insertions(+), 32 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index ca499368ee81..43d50b4366dd 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -137,8 +137,11 @@ struct tegra_devfreq_device {
+>>  	const struct tegra_devfreq_device_config *config;
+>>  	void __iomem *regs;
+>>  
+>> -	/* Average event count sampled in the last interrupt */
+>> -	u32 avg_count;
+>> +	/*
+>> +	 * Average event count sampled in the last interrupt and converted
+>> +	 * to frequency value.
+>> +	 */
+>> +	u32 avg_freq;
+>>  
+>>  	/*
+>>  	 * Extra frequency to increase the target by due to consecutive
+>> @@ -222,6 +225,14 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra)
+>>  	return 0;
+>>  }
+>>  
+>> +static unsigned long
+>> +tegra_actmon_dev_avg_dependency_freq(struct tegra_devfreq *tegra,
+>> +				     struct tegra_devfreq_device *dev)
+>> +{
+>> +	return dev->config->avg_dependency_threshold /
+>> +		ACTMON_SAMPLING_PERIOD;
+>> +}
+>> +
+>>  static unsigned long
+>>  tegra_actmon_account_cpu_freq(struct tegra_devfreq *tegra,
+>>  			      struct tegra_devfreq_device *dev,
+>> @@ -229,13 +240,15 @@ tegra_actmon_account_cpu_freq(struct tegra_devfreq *tegra,
+>>  {
+>>  	unsigned long static_cpu_emc_freq;
+>>  
+>> -	if (dev->config->avg_dependency_threshold &&
+>> -	    dev->config->avg_dependency_threshold < dev->avg_count) {
+>> +	if (!dev->config->avg_dependency_threshold)
+>> +		return target_freq;
+>> +
+>> +	if (dev->avg_freq > tegra_actmon_dev_avg_dependency_freq(tegra, dev))
+>>  		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra);
+>> -		target_freq = max(target_freq, static_cpu_emc_freq);
+>> -	}
+>> +	else
+>> +		static_cpu_emc_freq = 0;
+>>  
+>> -	return target_freq;
+>> +	return max(target_freq, static_cpu_emc_freq);
+>>  }
+>>  
+>>  static unsigned long tegra_actmon_lower_freq(struct tegra_devfreq *tegra,
+>> @@ -261,7 +274,7 @@ static unsigned long tegra_actmon_upper_freq(struct tegra_devfreq *tegra,
+>>  
+>>  	opp = dev_pm_opp_find_freq_ceil(tegra->devfreq->dev.parent, &upper);
+>>  	if (IS_ERR(opp))
+>> -		upper = ULONG_MAX;
+>> +		upper = KHZ_MAX;
+>>  	else
+>>  		dev_pm_opp_put(opp);
+>>  
+>> @@ -280,15 +293,12 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
+>>  	 * range in a case where target_freq falls into a range of
+>>  	 * next_possible_opp_freq - 1MHz.
+>>  	 */
+>> -	target_freq = round_down(target_freq, 1000000);
+> 
+> This line was added on patch5. I think that you could fix the KHz-conversion
+> on patch5 instead of this patch. It is not good way to make the patches.
+> Because some codes wad added and then these codes are deleted on later patch.
+> 
+> It looks like that you made the issue and then you fix the issue by yourself.
+> It is difficult to make me to decide this patch is either proper or not.
+
+The OPPs were always defined in Hz units in this driver. The patch5 was created much
+earlier than this patch and thus I'm making changes here to the code that was added in patch5.
+
+Okay, I'll try to change the order of the patches. But usually it takes a lot if time and
+effort to rebase patches and then re-test them, so I'm trying to avoid that when not
+absolutely necessary.
+
+>> +	target_freq = round_down(target_freq, 1000);
+>>  
+>>  	/* watermarks are set at the borders of the corresponding OPPs */
+>>  	*lower = tegra_actmon_lower_freq(tegra, target_freq);
+>>  	*upper = tegra_actmon_upper_freq(tegra, target_freq);
+>>  
+>> -	*lower /= KHZ;
+>> -	*upper /= KHZ;
+>> -
+>>  	/*
+>>  	 * The upper watermark should take into account CPU's frequency
+>>  	 * because cpu_to_emc_rate() may override the target_freq with
+>> @@ -304,10 +314,11 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
+>>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>>  					   struct tegra_devfreq_device *dev)
+>>  {
+>> -	unsigned long lower, upper, freq;
+>> +	unsigned long avg_dependency_freq, lower, upper;
+>> +
+>> +	tegra_actmon_get_lower_upper(tegra, dev, dev->avg_freq, &lower, &upper);
+>>  
+>> -	freq = dev->avg_count / ACTMON_SAMPLING_PERIOD * KHZ;
+>> -	tegra_actmon_get_lower_upper(tegra, dev, freq, &lower, &upper);
+>> +	avg_dependency_freq = tegra_actmon_dev_avg_dependency_freq(tegra, dev);
+>>  
+>>  	/*
+>>  	 * We want to get interrupts when MCCPU client crosses the
+>> @@ -316,7 +327,7 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>>  	 */
+>>  	if (lower < dev->config->avg_dependency_threshold &&
+>>  	    upper > dev->config->avg_dependency_threshold) {
+>> -		if (dev->avg_count < dev->config->avg_dependency_threshold)
+>> +		if (dev->avg_freq < avg_dependency_freq)
+>>  			upper = dev->config->avg_dependency_threshold;
+>>  		else
+>>  			lower = dev->config->avg_dependency_threshold;
+>> @@ -358,8 +369,7 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+>>  	 * device. Once that mark is hit and boosting is stopped, the
+>>  	 * interrupt is disabled by ISR.
+>>  	 */
+>> -	freq = dev->avg_count / ACTMON_SAMPLING_PERIOD * KHZ;
+>> -	tegra_actmon_get_lower_upper(tegra, dev, freq, &lower, &upper);
+>> +	tegra_actmon_get_lower_upper(tegra, dev, dev->avg_freq, &lower, &upper);
+> 
+> Also, patch5 newly defined this function and then you edit the function prototype
+> of this function. It is not proper way.
+
+Sorry, I'm not sure what you're meaning by the "prototype" here. In case of this
+particular hunk, the freq==dev->avg_freq and dev->avg_count is replaced with dev->avg_freq
+in this patch as well. Hence this is a cosmetic change that doesn't change any logic of
+the code. I'll see if this all could be made a bit more clear and easier for review.
+
+[snip]
