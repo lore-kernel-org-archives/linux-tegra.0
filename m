@@ -1,254 +1,215 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 18/19] PM / devfreq: tegra30: Support variable polling
- interval
-Date: Wed, 2 Oct 2019 18:27:45 +0300
-Message-ID: <a800b077-3d01-78d8-2fb4-bec82c796b45@gmail.com>
-References: <20190811212315.12689-1-digetx@gmail.com>
- <CGME20190811212509epcas4p20ec245213cedfcc066f7b0032b912a39@epcas4p2.samsung.com>
- <20190811212315.12689-19-digetx@gmail.com>
- <721c4dd0-d667-f83d-64b5-74e4b58a7a1c@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] arm64: tegra: Set dma-ranges for memory subsystem
+Date: Wed,  2 Oct 2019 17:46:54 +0200
+Message-ID: <20191002154654.225690-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <721c4dd0-d667-f83d-64b5-74e4b58a7a1c@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, Georgi Djakov <georgi.djakov@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.10.2019 03:18, Chanwoo Choi пишет:
-> Hi,
-> 
-> On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
->> The ACTMON governor is interrupt-driven and currently hardware's polling
->> interval is fixed to 16ms in the driver. Devfreq supports variable polling
->> interval by the generic governors, let's re-use the generic interface for
->> changing of the polling interval. Now the polling interval can be changed
->> dynamically via /sys/class/devfreq/devfreq0/polling_interval.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 71 ++++++++++++++++++++++---------
->>  1 file changed, 50 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index 8adc0ff48b45..e30314bd571a 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -12,6 +12,7 @@
->>  #include <linux/interrupt.h>
->>  #include <linux/io.h>
->>  #include <linux/irq.h>
->> +#include <linux/jiffies.h>
->>  #include <linux/module.h>
->>  #include <linux/of_device.h>
->>  #include <linux/platform_device.h>
->> @@ -236,7 +237,7 @@ tegra_actmon_dev_avg_dependency_freq(struct tegra_devfreq *tegra,
->>  				     struct tegra_devfreq_device *dev)
->>  {
->>  	return dev->config->avg_dependency_threshold /
->> -		ACTMON_SAMPLING_PERIOD;
->> +		tegra->devfreq->profile->polling_ms;
->>  }
->>  
->>  static unsigned long
->> @@ -314,8 +315,8 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
->>  	 */
->>  	*upper = tegra_actmon_account_cpu_freq(tegra, dev, *upper);
->>  
->> -	*lower *= ACTMON_SAMPLING_PERIOD;
->> -	*upper *= ACTMON_SAMPLING_PERIOD;
->> +	*lower *= tegra->devfreq->profile->polling_ms;
->> +	*upper *= tegra->devfreq->profile->polling_ms;
->>  }
->>  
->>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->> @@ -341,8 +342,8 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->>  	 * result, but this one is probably the least churning, although
->>  	 * it may look a bit convoluted.
->>  	 */
->> -	if (freq * ACTMON_SAMPLING_PERIOD > upper)
->> -		upper = freq * ACTMON_SAMPLING_PERIOD;
->> +	if (freq * tegra->devfreq->profile->polling_ms > upper)
->> +		upper = freq * tegra->devfreq->profile->polling_ms;
->>  
->>  	/*
->>  	 * We want to get interrupts when MCCPU client crosses the
->> @@ -420,7 +421,7 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
->>  	avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
->>  	dev_ctrl = device_readl(dev, ACTMON_DEV_CTRL);
->>  
->> -	dev->avg_freq = avg_count / ACTMON_SAMPLING_PERIOD;
->> +	dev->avg_freq = avg_count / tegra->devfreq->profile->polling_ms;
->>  
->>  	avg_intr_mask = ACTMON_DEV_INTR_AVG_BELOW_WMARK |
->>  			ACTMON_DEV_INTR_AVG_ABOVE_WMARK;
->> @@ -499,7 +500,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
->>  	 * outdated.
->>  	 */
->>  	avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
->> -	avg_freq = avg_count / ACTMON_SAMPLING_PERIOD;
->> +	avg_freq = avg_count / tegra->devfreq->profile->polling_ms;
->>  
->>  	old_upper = tegra_actmon_upper_freq(tegra, dev->avg_freq);
->>  	new_upper = tegra_actmon_upper_freq(tegra, avg_freq);
->> @@ -675,7 +676,7 @@ static int tegra_actmon_cpu_notify_cb(struct notifier_block *nb,
->>  	 * here for too long, otherwise CPUFreq's core will complain with a
->>  	 * warning splat.
->>  	 */
->> -	delay = msecs_to_jiffies(ACTMON_SAMPLING_PERIOD);
->> +	delay = msecs_to_jiffies(tegra->devfreq->profile->polling_ms);
->>  	schedule_delayed_work(&tegra->cpufreq_update_work, delay);
->>  
->>  	return NOTIFY_OK;
->> @@ -690,7 +691,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->>  	dev->boost_freq = 0;
->>  
->>  	dev->avg_freq = clk_get_rate(tegra->emc_clock) / KHZ;
->> -	device_writel(dev, dev->avg_freq * ACTMON_SAMPLING_PERIOD,
->> +	device_writel(dev, dev->avg_freq * tegra->devfreq->profile->polling_ms,
->>  		      ACTMON_DEV_INIT_AVG);
->>  
->>  	tegra_devfreq_update_avg_wmark(tegra, dev, dev->avg_freq);
->> @@ -725,7 +726,14 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
->>  	unsigned int i;
->>  	int err;
->>  
->> -	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
->> +	if (!tegra->devfreq->stop_polling)
-> 
-> I don't prefer to change the 'stop_polling' on each device driver direclty
-> without devfreq interface. Don't access it directly.
+From: Thierry Reding <treding@nvidia.com>
 
-Hmm.. okay. Please see more comments below.
+On Tegra194, all clients of the memory subsystem can generally address
+40 bits of system memory. However, bit 39 has special meaning and will
+cause the memory controller to reorder sectors for block-linear buffer
+formats. This is primarily useful for graphics-related devices.
 
->> +		return 0;
->> +
->> +	tegra->devfreq->previous_freq = clk_get_rate(tegra->emc_clock) / KHZ;
->> +	tegra->devfreq->last_stat_updated = jiffies;
->> +	tegra->devfreq->stop_polling = false;
-> 
-> ditto.
-> 
->> +
->> +	actmon_writel(tegra, tegra->devfreq->profile->polling_ms - 1,
->>  		      ACTMON_GLB_PERIOD_CTRL);
->>  
->>  	/*
->> @@ -776,6 +784,11 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
->>  {
->>  	unsigned int i;
->>  
->> +	if (tegra->devfreq->stop_polling)
-> 
-> ditto.
-> 
->> +		return;
->> +
->> +	mutex_unlock(&tegra->devfreq->lock);
->> +
->>  	disable_irq(tegra->irq);
->>  
->>  	cpufreq_unregister_notifier(&tegra->cpu_rate_change_nb,
->> @@ -783,10 +796,16 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
->>  
->>  	cancel_delayed_work_sync(&tegra->cpufreq_update_work);
->>  
->> +	mutex_lock(&tegra->devfreq->lock);
->> +
->>  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
->>  		tegra_actmon_stop_device(&tegra->devices[i]);
->>  
->>  	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
->> +
->> +	devfreq_update_status(tegra->devfreq, tegra->devfreq->previous_freq);
->> +
->> +	tegra->devfreq->stop_polling = true;
-> 
-> ditto.
-> 
->>  }
->>  
->>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->> @@ -846,7 +865,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->>  	stat->busy_time *= 100 / BUS_SATURATION_RATIO;
->>  
->>  	/* Number of cycles in a sampling period */
->> -	stat->total_time = cur_freq * ACTMON_SAMPLING_PERIOD;
->> +	stat->total_time = cur_freq * tegra->devfreq->profile->polling_ms;
->>  
->>  	stat->busy_time = min(stat->busy_time, stat->total_time);
->>  
->> @@ -854,7 +873,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->>  }
->>  
->>  static struct devfreq_dev_profile tegra_devfreq_profile = {
->> -	.polling_ms	= 0,
->> +	.polling_ms	= ACTMON_SAMPLING_PERIOD,
->>  	.target		= tegra_devfreq_target,
->>  	.get_dev_status	= tegra_devfreq_get_dev_status,
->>  };
->> @@ -895,8 +914,11 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->>  					unsigned int event, void *data)
->>  {
->>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
->> +	unsigned int new_delay, *delay_ptr = data;
->>  	int ret = 0;
->>  
->> +	mutex_lock(&devfreq->lock);
->> +
->>  	/*
->>  	 * Couple device with the governor early as it is needed at
->>  	 * the moment of governor's start (used by ISR).
->> @@ -905,26 +927,33 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->>  
->>  	switch (event) {
->>  	case DEVFREQ_GOV_START:
->> -		devfreq_monitor_start(devfreq);
->> +		devfreq->stop_polling = true;
-> 
-> It is not proper to initialize the 'stop_polling' on device driver directly.
-> 
->> +		/* fall through */
->> +	case DEVFREQ_GOV_RESUME:
->>  		ret = tegra_actmon_start(tegra);
->>  		break;
->>  
->>  	case DEVFREQ_GOV_STOP:
->> -		tegra_actmon_stop(tegra);
->> -		devfreq_monitor_stop(devfreq);
-> 
-> Why do you remove them?
+Use of bit 39 must be controlled on a case-by-case basis. Buffers that
+are used with bit 39 set by one device may be used with bit 39 cleared
+by other devices.
 
-Becasue DEVFREQ_GOV_STOP and DEVFREQ_GOV_SUSPEND are doing the same now:
+Care must be taken to allocate buffers at addresses that do not require
+bit 39 to be set. This is normally not an issue for system memory since
+there are no Tegra-based systems with enough RAM to exhaust the 39-bit
+physical address space. However, when a device is behind an IOMMU, such
+as the ARM SMMU on Tegra194, the IOMMUs input address space can cause
+IOVA allocations to happen in this region. This is for example the case
+when an operating system implements a top-down allocation policy for IO
+virtual addresses.
 
-	case DEVFREQ_GOV_STOP:
-		/* fall through */
-	case DEVFREQ_GOV_SUSPEND:
-		tegra_actmon_stop(tegra);
-		break;
+To account for this, describe the path that memory accesses take through
+the system. Memory clients will send requests to the memory controller,
+which forwards bits [38:0] of the address either to the external memory
+controller or the SMMU, depending on the stream ID of the access. A good
+way to describe this is using the interconnects bindings, see:
 
->> -		break;
->> -
->> +		/* fall through */
->>  	case DEVFREQ_GOV_SUSPEND:
->>  		tegra_actmon_stop(tegra);
->> -		devfreq_monitor_suspend(devfreq);
-> 
-> Why do you remove it?
+	Documentation/devicetree/bindings/interconnect/interconnect.txt
 
-a) it takes the same mutex devfreq->lock as tegra_governor_event_handler()
-b) the devfreq's manual polling isn't needed for this driver and thus
-devfreq->work is unwanted
-c) this patch makes tegra_actmon_stop() to replicate what
-devfreq_monitor_suspend() does
+The standard "dma-mem" path is used to describe the path towards system
+memory via the memory controller. A dma-ranges property in the memory
+controller's device tree node limits the range of DMA addresses that the
+memory clients can use to bits [38:0], ensuring that bit 39 is not used.
 
-It looks like it will be better to add new generic events for the
-governors, like DEVFREQ_GOV_START/STOP_POLLING. Then this driver will be
-able to customize start/stop of the polling, while software governors
-will utilize some new default helpers that will start/stop the polling
-work. What do you think?
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Arnd, Rob, Robin,
 
-[snip]
+This is what I came up with after our discussion on this thread:
+
+	[PATCH 00/11] of: dma-ranges fixes and improvements
+
+Please take a look and see if that sounds reasonable. I'm slightly
+unsure about the interconnects bindings as I used them here. According
+to the bindings there's always supposed to be a pair of interconnect
+paths, so this patch is not exactly compliant. It does work fine with
+the __of_get_dma_parent() code that Maxime introduced a couple of months
+ago and really very neatly describes the hardware. Interestingly this
+will come in handy very soon now since we're starting work on a proper
+interconnect provider (the memory controller driver is the natural fit
+for this because it has additional knobs to configure latency and
+priorities, etc.) to implement external memory frequency scaling based
+on bandwidth requests from memory clients. So this all fits together
+very nicely. But as I said, I'm not exactly sure what to add as a second
+entry in "interconnects" to make this compliant with the bindings.
+
+Adding Georgi and Maxime, perhaps they can help clarify.
+
+Thierry
+
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 32 +++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 6900e8bdf24d..f50150217806 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -53,6 +53,8 @@
+ 			clock-names = "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
+ 			resets = <&bpmp TEGRA194_RESET_EQOS>;
+ 			reset-names = "eqos";
++			interconnects = <&mc TEGRA194_SID_EQOS>;
++			interconnect-names = "dma-mem";
+ 			iommus = <&smmu TEGRA194_SID_EQOS>;
+ 			status = "disabled";
+ 
+@@ -166,10 +168,16 @@
+ 			};
+ 		};
+ 
+-		memory-controller@2c00000 {
++		mc: memory-controller@2c00000 {
+ 			compatible = "nvidia,tegra194-mc";
+ 			reg = <0x02c00000 0xb0000>;
++			#interconnect-cells = <1>;
+ 			status = "disabled";
++
++			#address-cells = <2>;
++			#size-cells = <2>;
++
++			dma-ranges = <0x0 0x0 0x0 0x80 0x0>;
+ 		};
+ 
+ 		uarta: serial@3100000 {
+@@ -416,6 +424,8 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
+ 			reset-names = "sdhci";
++			interconnects = <&mc TEGRA194_SID_SDMMC1>;
++			interconnect-names = "dma-mem";
+ 			iommus = <&smmu TEGRA194_SID_SDMMC1>;
+ 			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
+ 									<0x07>;
+@@ -439,6 +449,8 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
+ 			reset-names = "sdhci";
++			interconnects = <&mc TEGRA194_SID_SDMMC3>;
++			interconnect-names = "dma-mem";
+ 			iommus = <&smmu TEGRA194_SID_SDMMC3>;
+ 			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
+ 			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
+@@ -467,6 +479,8 @@
+ 					  <&bpmp TEGRA194_CLK_PLLC4>;
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			interconnects = <&mc TEGRA194_SID_SDMMC4>;
++			interconnect-names = "dma-mem";
+ 			iommus = <&smmu TEGRA194_SID_SDMMC4>;
+ 			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
+ 			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
+@@ -496,6 +510,8 @@
+ 				 <&bpmp TEGRA194_RESET_HDA2HDMICODEC>;
+ 			reset-names = "hda", "hda2codec_2x", "hda2hdmi";
+ 			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
++			interconnects = <&mc TEGRA194_SID_HDA>;
++			interconnect-names = "dma-mem";
+ 			iommus = <&smmu TEGRA194_SID_HDA>;
+ 			status = "disabled";
+ 		};
+@@ -831,6 +847,8 @@
+ 			#size-cells = <1>;
+ 
+ 			ranges = <0x15000000 0x15000000 0x01000000>;
++			interconnects = <&mc TEGRA194_SID_HOST1X>;
++			interconnect-names = "dma-mem";
+ 			iommus = <&smmu TEGRA194_SID_HOST1X>;
+ 
+ 			display-hub@15200000 {
+@@ -867,6 +885,8 @@
+ 					reset-names = "dc";
+ 
+ 					power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
++					interconnects = <&mc TEGRA194_SID_NVDISPLAY>;
++					interconnect-names = "dma-mem";
+ 					iommus = <&smmu TEGRA194_SID_NVDISPLAY>;
+ 
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+@@ -883,6 +903,8 @@
+ 					reset-names = "dc";
+ 
+ 					power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISPB>;
++					interconnects = <&mc TEGRA194_SID_NVDISPLAY>;
++					interconnect-names = "dma-mem";
+ 					iommus = <&smmu TEGRA194_SID_NVDISPLAY>;
+ 
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+@@ -899,6 +921,8 @@
+ 					reset-names = "dc";
+ 
+ 					power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISPC>;
++					interconnects = <&mc TEGRA194_SID_NVDISPLAY>;
++					interconnect-names = "dma-mem";
+ 					iommus = <&smmu TEGRA194_SID_NVDISPLAY>;
+ 
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+@@ -915,6 +939,8 @@
+ 					reset-names = "dc";
+ 
+ 					power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISPC>;
++					interconnects = <&mc TEGRA194_SID_NVDISPLAY>;
++					interconnect-names = "dma-mem";
+ 					iommus = <&smmu TEGRA194_SID_NVDISPLAY>;
+ 
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+@@ -1182,6 +1208,8 @@
+ 			status = "disabled";
+ 
+ 			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_GPU>;
++			interconnects = <&mc TEGRA194_SID_GPU>;
++			interconnect-names = "dma-mem";
+ 			iommus = <&smmu TEGRA194_SID_GPU>;
+ 		};
+ 	};
+@@ -1573,6 +1601,8 @@
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 		#power-domain-cells = <1>;
++		interconnects = <&mc TEGRA194_SID_BPMP>;
++		interconnect-names = "dma-mem";
+ 		iommus = <&smmu TEGRA194_SID_BPMP>;
+ 
+ 		bpmp_i2c: i2c {
+-- 
+2.23.0
