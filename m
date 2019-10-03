@@ -1,69 +1,32 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
-Date: Thu, 3 Oct 2019 10:28:49 -0600
-Message-ID: <9e192a8a-8129-0fd7-9041-047b436ef848@wwwdotorg.org>
-References: <20191001211346.104400-1-swarren@wwwdotorg.org>
- <7f8934d9-8192-f88e-a329-630209d42a85@gmail.com>
+From: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: power: Convert Generic
+ Power Domain bindings to json-schema
+Date: Thu, 03 Oct 2019 09:34:04 -0700
+Message-ID: <20191003163405.4263921783@mail.kernel.org>
+References: <20191002160632.11140-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <7f8934d9-8192-f88e-a329-630209d42a85@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20191002160632.11140-1-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTAvMy8xOSA1OjIzIEFNLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4gMDIuMTAuMjAxOSAw
-MDoxMywgU3RlcGhlbiBXYXJyZW4g0L/QuNGI0LXRgjoKPj4gRnJvbTogU3RlcGhlbiBXYXJyZW4g
-PHN3YXJyZW5AbnZpZGlhLmNvbT4KPj4KPj4gRm9yIGEgbGl0dGxlIG92ZXIgYSB5ZWFyLCBVLUJv
-b3QgaGFzIGNvbmZpZ3VyZWQgdGhlIGZsb3cgY29udHJvbGxlciB0bwo+PiBwZXJmb3JtIGF1dG9t
-YXRpYyBSQU0gcmUtcmVwYWlyIG9uIG9mZi0+b24gcG93ZXIgdHJhbnNpdGlvbnMgb2YgdGhlIENQ
-VQo+PiByYWlsMV0uIFRoaXMgaXMgbWFuZGF0b3J5IGZvciBjb3JyZWN0IG9wZXJhdGlvbiBvZiBU
-ZWdyYTEyNC4gSG93ZXZlciwgUkFNCj4+IHJlLXJlcGFpciByZWxpZXMgb24gY2VydGFpbiBjbG9j
-a3MsIHdoaWNoIHRoZSBrZXJuZWwgbXVzdCBlbmFibGUgYW5kCj4+IGxlYXZlIHJ1bm5pbmcuIFRo
-ZSBmdXNlIGNsb2NrIGlzIG9uZSBvZiB0aG9zZSBjbG9ja3MuIEVuYWJsZSB0aGlzIGNsb2NrCj4+
-IHNvIHRoYXQgTFAxIHBvd2VyIG1vZGUgKHN5c3RlbSBzdXNwZW5kKSBvcGVyYXRlcyBjb3JyZWN0
-bHkuCj4+Cj4+IFsxXSAzY2M3OTQyYTRhZTUgQVJNOiB0ZWdyYTogaW1wbGVtZW50IFJBTSByZXBh
-aXIKPj4KPj4gUmVwb3J0ZWQtYnk6IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5j
-b20+Cj4+IENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnCj4+IFNpZ25lZC1vZmYtYnk6IFN0ZXBo
-ZW4gV2FycmVuIDxzd2FycmVuQG52aWRpYS5jb20+Cj4+IC0tLQo+PiAgIGRyaXZlcnMvY2xrL3Rl
-Z3JhL2Nsay10ZWdyYTEyNC5jIHwgMSArCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmExMjQuYyBi
-L2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTEyNC5jCj4+IGluZGV4IDAyMjRmZGM0NzY2Zi4u
-ZjUzZjYzMTVjNjQ2IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEx
-MjQuYwo+PiArKysgYi9kcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmExMjQuYwo+PiBAQCAtMTI5
-MSw2ICsxMjkxLDcgQEAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfaW5pdF90YWJsZSBjb21tb25f
-aW5pdF90YWJsZVtdIF9faW5pdGRhdGEgPSB7Cj4+ICAgfTsKPj4gICAKPj4gICBzdGF0aWMgc3Ry
-dWN0IHRlZ3JhX2Nsa19pbml0X3RhYmxlIHRlZ3JhMTI0X2luaXRfdGFibGVbXSBfX2luaXRkYXRh
-ID0gewo+PiArCXsgVEVHUkExMjRfQ0xLX0ZVU0UsIC0xLCAwLCAxIH0sCj4+ICAgCXsgVEVHUkEx
-MjRfQ0xLX1NPQ19USEVSTSwgVEVHUkExMjRfQ0xLX1BMTF9QLCA1MTAwMDAwMCwgMCB9LAo+PiAg
-IAl7IFRFR1JBMTI0X0NMS19DQ0xLX0csIFRFR1JBMTI0X0NMS19DTEtfTUFYLCAwLCAxIH0sCj4+
-ICAgCXsgVEVHUkExMjRfQ0xLX0hEQSwgVEVHUkExMjRfQ0xLX1BMTF9QLCAxMDIwMDAwMDAsIDAg
-fSwKPj4KPiAKPiBIZWxsbyBTdGVwaGVuLAo+IAo+IERvZXMgdGhpcyBtZWFuIHRoYXQgZGV2aWNl
-cyB3aGljaCBhcmUgdXNpbmcgb2xkZXIgVS1Cb290IHZlcnNpb24gd2VyZSBhbHdheXMgaW4gYSB0
-cm91YmxlPwoKWWVzLiBSQU0gcmUtcmVwYWlyIHdvdWxkbid0IGhhdmUgYmVlbiBlbmFibGVkLCBz
-byBpbiB0aGVvcnkgYW55IGRldmljZSAKY291bGQgZmFpbCBhZnRlciBhbiBMUDEgcmVzdW1lLCBv
-ciBpbmRlZWQgYW55dGhpbmcgdGhhdCBjYXVzZWQgdGhlIENQVSAKY29tcGxleCByYWlsIHRvIGJl
-IGdhdGVkLgoKPiBJdCBzb3VuZHMgdG8gbWUgdGhhdCB0aGUgUkFNIHJlLXJlcGFpciBzaG91bGQg
-YmUgYWxzbyBlbmFibGVkIGJ5IHRoZSBrZXJuZWwncyBmbG93Cj4gY29udHJvbGxlciBkcml2ZXIg
-aW4gYSBjYXNlIGlmIGJvb3Rsb2FkZXIgZGlkIG5vdCBlbmFibGUgaXQuCgpZZXMsIHRoYXQgbWln
-aHQgYmUgYSBnb29kIGlkZWEgdG9vLgoKPiBJZiBlbmFibGluZyBSQU0gcmUtcmVwYWlyIGlzIGEg
-Y2hhbmdlIHRoYXQgd29uJ3QgYmUgZWFzaWx5IGJhY2twb3J0YWJsZSB0byBzdGFibGUga2VybmVs
-cywKPiB0aGVuIG1heSBiZSBpdCdzIHdvcnRoIHRvIHNpbXBseSBmb3JjZS1kaXNhYmxlIExQMSBv
-biBUMTI0IGZvciB0aGUgb2xkZXIga2VybmVscy4KClRoZSBmaXJzdCB0d28gcGF0Y2hlcyBpbiB0
-aGlzIHNlcmllcyBhcmUgYWxsIHRoYXQncyBzdHJpY3RseSByZXF1aXJlZCwgCmFuZCB0aGUgY2hh
-bmdlIGFyZSBwcmV0dHkgc21hbGwgYW5kIGlzb2xhdGVkLCBzbyBpdCBzaG91bGQgYmUgZWFzeSB0
-byAKYmFjay1wb3J0LgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0
-cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGlu
-Zm8vbGludXgtYXJtLWtlcm5lbAo=
+UXVvdGluZyBLcnp5c3p0b2YgS296bG93c2tpICgyMDE5LTEwLTAyIDA5OjA2OjMwKQo+IENvbnZl
+cnQgR2VuZXJpYyBQb3dlciBEb21haW4gYmluZGluZ3MgdG8gRFQgc2NoZW1hIGZvcm1hdCB1c2lu
+Zwo+IGpzb24tc2NoZW1hLiAgVGhlIGNvbnN1bWVyIGJpbmRpbmdzIGFyZSBzcGxpdCB0byBzZXBh
+cmF0ZSBmaWxlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtA
+a2VybmVsLm9yZz4KPiAKPiAtLS0KCkFja2VkLWJ5OiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5l
+bC5vcmc+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpG
+cmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8=
