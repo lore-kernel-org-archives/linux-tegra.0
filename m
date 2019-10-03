@@ -1,17 +1,11 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/4] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
-Date: Thu, 3 Oct 2019 21:00:00 +0300
-Message-ID: <89e0a7bd-e8e4-5c64-b9d0-a30794ed657e@gmail.com>
-References: <20191001211346.104400-1-swarren@wwwdotorg.org>
- <20191001211346.104400-2-swarren@wwwdotorg.org>
- <437f030b-9e20-43e5-42ce-f98430d2149b@gmail.com>
- <485c9828-120a-8e62-bf85-c5d8407d3513@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH V2 1/4] clk: tegra: mark fuse clock as critical
+Date: Thu,  3 Oct 2019 14:18:34 -0600
+Message-ID: <20191003201837.86824-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <485c9828-120a-8e62-bf85-c5d8407d3513@wwwdotorg.org>
-Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,67 +15,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
 Cc: Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-MDMuMTAuMjAxOSAxOTozNCwgU3RlcGhlbiBXYXJyZW4g0L/QuNGI0LXRgjoKPiBPbiAxMC8zLzE5
-IDU6MjcgQU0sIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPj4gMDIuMTAuMjAxOSAwMDoxMywgU3Rl
-cGhlbiBXYXJyZW4g0L/QuNGI0LXRgjoKPj4+IEZyb206IFN0ZXBoZW4gV2FycmVuIDxzd2FycmVu
-QG52aWRpYS5jb20+Cj4+Pgo+Pj4gRm9yIGEgbGl0dGxlIG92ZXIgYSB5ZWFyLCBVLUJvb3QgaGFz
-IGNvbmZpZ3VyZWQgdGhlIGZsb3cgY29udHJvbGxlciB0bwo+Pj4gcGVyZm9ybSBhdXRvbWF0aWMg
-UkFNIHJlLXJlcGFpciBvbiBvZmYtPm9uIHBvd2VyIHRyYW5zaXRpb25zIG9mIHRoZSBDUFUKPj4+
-IHJhaWwxXS4gVGhpcyBpcyBtYW5kYXRvcnkgZm9yIGNvcnJlY3Qgb3BlcmF0aW9uIG9mIFRlZ3Jh
-MTI0LiBIb3dldmVyLCBSQU0KPj4+IHJlLXJlcGFpciByZWxpZXMgb24gY2VydGFpbiBjbG9ja3Ms
-IHdoaWNoIHRoZSBrZXJuZWwgbXVzdCBlbmFibGUgYW5kCj4+PiBsZWF2ZSBydW5uaW5nLiBQTExQ
-IGlzIG9uZSBvZiB0aG9zZSBjbG9ja3MuIFRoaXMgY2xvY2sgaXMgc2h1dCBkb3duCj4+PiBkdXJp
-bmcgTFAxIGluIG9yZGVyIHRvIHNhdmUgcG93ZXIuIEVuYWJsZSBieXBhc3MgKHdoaWNoIEkgYmVs
-aWV2ZSByb3V0ZXMKPj4+IG9zY19kaXZfY2xrLCBlc3NlbnRpYWxseSB0aGUgY3J5c3RhbCBjbG9j
-aywgdG8gdGhlIFBMTCBvdXRwdXQpIHNvIHRoYXQKPj4+IHRoaXMgY2xvY2sgc2lnbmFsIHRvZ2ds
-ZXMgZXZlbiB0aG91Z2ggdGhlIFBMTCBpcyBub3QgYWN0aXZlLiBUaGlzIGlzCj4+PiByZXF1aXJl
-ZCBzbyB0aGF0IExQMSBwb3dlciBtb2RlIChzeXN0ZW0gc3VzcGVuZCkgb3BlcmF0ZXMgY29ycmVj
-dGx5Lgo+Pj4KPj4+IFRoZSBieXBhc3MgY29uZmlndXJhdGlvbiBtdXN0IHRoZW4gYmUgdW5kb25l
-IHdoZW4gcmVzdW1pbmcgZnJvbSBMUDEsIHNvCj4+PiB0aGF0IGFsbCBwZXJpcGhlcmFsIGNsb2Nr
-cyBydW4gYXQgdGhlIGV4cGVjdGVkIHJhdGUuIFdpdGhvdXQgdGhpcywgbWFueQo+Pj4gcGVyaXBo
-ZXJhbHMgd29uJ3Qgd29yayBjb3JyZWN0bHk7IGZvciBleGFtcGxlLCB0aGUgVUFSVCBiYXVkIHJh
-dGUgd291bGQKPj4+IGJlIGluY29ycmVjdC4KPj4+Cj4+PiBOVklESUEncyBkb3duc3RyZWFtIGtl
-cm5lbCBjb2RlIG9ubHkgZG9lcyB0aGlzIGlmIG5vdCBjb21waWxlZCBmb3IKPj4+IFRlZ3JhMzAs
-IHNvIHRoZSBhZGRlZCBjb2RlIGlzIG1hZGUgY29uZGl0aW9uYWwgdXBvbiB0aGUgY2hpcCBJRC4g
-TlZJRElBJ3MKPj4+IGRvd25zdHJlYW0gY29kZSBtYWtlcyB0aGlzIGNoYW5nZSBjb25kaXRpb25h
-bCB1cG9uIHRoZSBhY3RpdmUgQ1BVCj4+PiBjbHVzdGVyLiBUaGUgdXBzdHJlYW0ga2VybmVsIGN1
-cnJlbnRseSBkb2Vzbid0IHN1cHBvcnQgY2x1c3RlciBzd2l0Y2hpbmcsCj4+PiBzbyB0aGlzIHBh
-dGNoIGRvZXNuJ3QgdGVzdCB0aGUgYWN0aXZlIENQVSBjbHVzdGVyIElELgo+Pj4KPj4+IFsxXSAz
-Y2M3OTQyYTRhZTUgQVJNOiB0ZWdyYTogaW1wbGVtZW50IFJBTSByZXBhaXIKPj4+Cj4+PiBSZXBv
-cnRlZC1ieTogSm9uYXRoYW4gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KPj4+IENjOiBz
-dGFibGVAdmdlci5rZXJuZWwub3JnCj4+PiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFdhcnJlbiA8
-c3dhcnJlbkBudmlkaWEuY29tPgo+Pj4gLS0tCj4+PiDCoCBhcmNoL2FybS9tYWNoLXRlZ3JhL3Ns
-ZWVwLXRlZ3JhMzAuUyB8IDExICsrKysrKysrKysrCj4+PiDCoCAxIGZpbGUgY2hhbmdlZCwgMTEg
-aW5zZXJ0aW9ucygrKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXRlZ3JhL3Ns
-ZWVwLXRlZ3JhMzAuUyBiL2FyY2gvYXJtL21hY2gtdGVncmEvc2xlZXAtdGVncmEzMC5TCj4+PiBp
-bmRleCBiNDA4ZmE1NmViODkuLjY5MjJkZDhkM2UyZCAxMDA2NDQKPj4+IC0tLSBhL2FyY2gvYXJt
-L21hY2gtdGVncmEvc2xlZXAtdGVncmEzMC5TCj4+PiArKysgYi9hcmNoL2FybS9tYWNoLXRlZ3Jh
-L3NsZWVwLXRlZ3JhMzAuUwo+Pj4gQEAgLTM3MCw2ICszNzAsMTQgQEAgX3BsbF9tX2NfeF9kb25l
-Ogo+Pj4gwqDCoMKgwqDCoCBwbGxfbG9ja2VkIHIxLCByMCwgQ0xLX1JFU0VUX1BMTENfQkFTRQo+
-Pj4gwqDCoMKgwqDCoCBwbGxfbG9ja2VkIHIxLCByMCwgQ0xLX1JFU0VUX1BMTFhfQkFTRQo+Pj4g
-wqAgK8KgwqDCoCB0ZWdyYV9nZXRfc29jX2lkIFRFR1JBX0FQQl9NSVNDX0JBU0UsIHIxCj4+PiAr
-wqDCoMKgIGNtcMKgwqDCoCByMSwgI1RFR1JBMzAKPj4+ICvCoMKgwqAgYmVxwqDCoMKgIDFmCj4+
-Cj4+IFdoYXQgYWJvdXQgVDExNCwgb3IgZG9lcyBpdCBuZWVkIGVuYWJsZWQgUExMUCBhcyB3ZWxs
-Pwo+IAo+IEknbSBub3doZXJlIG5lYXIgYXMgZmFtaWxpYXIgd2l0aCBUMTE0IGFzIFQxMjQsIHNv
-IEkgY2FuJ3QgYmUgMTAwJSBzdXJlLiBIb3dldmVyLCBhIHZlcnkKPiBxdWljayBsb29rIGF0IHRo
-ZSBDQVIgc2VjdGlvbiBpbiB0aGUgVDExNCBUUk0gZG9lcyBzaG93IHRoZSBzYW1lIGdhdGUvbXV4
-IHN0cnVjdHVyZSBhcm91bmQKPiBhIHJlc2hpZnQgYW5kIGZ1c2UgY2xvY2ssIHNvIEkgYXNzdW1l
-IHRoZSByZXF1aXJlbWVudCBpcyBpZGVudGljYWwgdGhlcmUuCgpJbmRlZWQsIFQxMTQgVFJNIHN1
-Z2dlc3RzIHRoYXQgaXQgaGFzIHRoZSBzYW1lIHJlcXVpcmVtZW50LgoKPiBBbHNvLCBOVklESUEn
-cyBkb3duc3RyZWFtIGtlcm5lbCBoYXMgYSBjb21waWxlLXRpbWUgaWZkZWYgYXJvdW5kIHRoZSBj
-b2RlIEkndmUgYWRkZWQgaGVyZS4KPiBJdCdzIG5vdCBjb21waWxlZCBmb3IgVDMwIHNwZWNpZmlj
-YWxseSwgYW5kIGlzIGNvbXBpbGVkIGZvciBhbnl0aGluZyBlbHNlLCB3aGljaCBJIGJlbGlldmUK
-PiBtZWFucyBib3RoIFQxMTQgYW5kIFQxMjQuCj4gCj4gSW4gcGF0Y2ggMSBpbiB0aGlzIHNlcmll
-cywgSSBvbmx5IGVuYWJsZWQgdGhlIGZ1c2UgY2xvY2sgZm9yIFQxMjQsIHNpbmNlIEkgZG9uJ3Qg
-aGF2ZSBhCj4gVDExNCBzeXN0ZW0gdG8gdGVzdCBhbnkgbW9yZS4gSG93ZXZlciwgdGhlIHJldmlz
-ZWQgcGF0Y2ggMSB0aGF0IFRoaWVycnkgYW5kIEkgYXJlCj4gZGlzY3Vzc2luZyB3b3VsZCBlbmFi
-bGUgdGhlIGZ1c2UgY2xvY2sgb24gYWxsIFNvQ3MsIGFuZCBoZW5jZSBtYWtlIHRoZSBjb2RlIHdv
-cmsKPiBpZGVudGljYWxseSBvbiBUMTE0IGFzIGl0IGRvZXMgb24gVDEyNC4KClRoYW5rcyBmb3Ig
-dGhlIGNsYXJpZmljYXRpb24uCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+From: Stephen Warren <swarren@nvidia.com>
+
+For a little over a year, U-Boot on Tegra124 has configured the flow
+controller to perform automatic RAM re-repair on off->on power transitions
+of the CPU rail1]. This is mandatory for correct operation of Tegra124.
+However, RAM re-repair relies on certain clocks, which the kernel must
+enable and leave running. The fuse clock is one of those clocks. Mark this
+clock as critical so that LP1 power mode (system suspend) operates
+correctly.
+
+[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
+
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+v2: Set CRITICAL flag on the clock, rather than enabling it in
+tegra124_init_table[].
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 1ed85f120a1b..76dd91eebd13 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -785,7 +785,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
+ 	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
+ 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+-	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
++	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
+ 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
+ 	GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
+ 	GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
+-- 
+2.23.0
