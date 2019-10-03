@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V3 3/4] ARM: tegra: modify reshift divider during LP1
-Date: Thu,  3 Oct 2019 14:50:32 -0600
-Message-ID: <20191003205033.98381-3-swarren@wwwdotorg.org>
+Subject: [PATCH V3 4/4] ARM: tegra: use clk_m CPU on Tegra124 LP1 resume
+Date: Thu,  3 Oct 2019 14:50:33 -0600
+Message-ID: <20191003205033.98381-4-swarren@wwwdotorg.org>
 References: <20191003205033.98381-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,62 +23,40 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren@nvidia.com>
 
-The reshift hardware module implements the RAM re-repair process. This
-module uses PLLP as an input clock during LP1 resume. The input divider
-for this clock is typically set for PLLP's normal rate. During LP1
-resume, PLLP is bypassed and so runs at the crystal rate, which is much
-slower. Consequently, decrease the divider so that the reshift module
-runs at a reasonable rate during LP1 resume.
+Configure the clock controller to set an alternate clock for the CPU when
+it receives an IRQ during LP1 (system suspend). Specifically, use clk_m
+(the crystal) rather than clk_s (a 32KHz clock). Such an IRQ will be the
+LP1 wake event. This reduces the amount of time taken to resume from LP1.
 
-NVIDIA's downstream kernel code only does this if not compiled for
-Tegra30, so the added code is made conditional upon the chip ID.
+NVIDIA's downstream kernel executes this code on both Tegra30 and
+Tegra124, so it appears OK to make this change unconditionally.
 
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
 v3: No change.
 v2: No change.
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/mach-tegra/sleep-tegra30.S | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 6922dd8d3e2d..6191f9456288 100644
+index 6191f9456288..ba5e9c07d1b6 100644
 --- a/arch/arm/mach-tegra/sleep-tegra30.S
 +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -59,6 +59,9 @@
- #define CLK_RESET_PLLX_MISC3_IDDQ	3
- #define CLK_RESET_PLLM_MISC_IDDQ	5
- #define CLK_RESET_PLLC_MISC_IDDQ	26
-+#define CLK_RESET_PLLP_RESHIFT		0x528
-+#define CLK_RESET_PLLP_RESHIFT_DEFAULT	0x3b
-+#define CLK_RESET_PLLP_RESHIFT_ENABLE	0x3
+@@ -670,8 +670,12 @@ tegra30_switch_cpu_to_clk32k:
+ 	pll_iddq_entry r1, r5, CLK_RESET_PLLX_MISC3, CLK_RESET_PLLX_MISC3_IDDQ
+ _no_pll_in_iddq:
  
- #define CLK_RESET_CLK_SOURCE_MSELECT	0x3b4
+-	/* switch to CLKS */
+-	mov	r0, #0	/* brust policy = 32KHz */
++	/*
++	 * Switch to clk_s (32KHz); bits 28:31=0
++	 * Enable burst on CPU IRQ; bit 24=1
++	 * Set IRQ burst clock source to clk_m; bits 10:8=0
++	 */
++	mov	r0, #(1 << 24)
+ 	str	r0, [r5, #CLK_RESET_SCLK_BURST]
  
-@@ -373,9 +376,13 @@ _pll_m_c_x_done:
- 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
- 	cmp	r1, #TEGRA30
- 	beq	1f
-+
- 	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
- 	bic	r1, r1, #(1<<31)	@ disable PllP bypass
- 	str	r1, [r0, #CLK_RESET_PLLP_BASE]
-+
-+	mov	r1, #CLK_RESET_PLLP_RESHIFT_DEFAULT
-+	str	r1, [r0, #CLK_RESET_PLLP_RESHIFT]
- 1:
- 
- 	mov32	r7, TEGRA_TMRUS_BASE
-@@ -644,6 +651,10 @@ tegra30_switch_cpu_to_clk32k:
- 	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
- 	bic	r0, r0, #(1 << 30)
- 	str	r0, [r5, #CLK_RESET_PLLP_BASE]
-+	beq	1f
-+	mov	r0, #CLK_RESET_PLLP_RESHIFT_ENABLE
-+	str	r0, [r5, #CLK_RESET_PLLP_RESHIFT]
-+1:
- 	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
- 	bic	r0, r0, #(1 << 30)
- 	str	r0, [r5, #CLK_RESET_PLLA_BASE]
+ 	ret	lr
 -- 
 2.23.0
