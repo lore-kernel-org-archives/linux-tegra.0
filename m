@@ -1,175 +1,109 @@
-From: JC Kuo <jckuo@nvidia.com>
-Subject: Re: [PATCH 5/6] arm64: tegra: Add XUSB and pad controller on Tegra194
-Date: Thu, 3 Oct 2019 10:06:11 +0800
-Message-ID: <b60f5be0-9eec-3057-0046-51ddb8d91cae@nvidia.com>
-References: <20191002080051.11142-1-jckuo@nvidia.com>
- <20191002080051.11142-6-jckuo@nvidia.com> <20191002101102.GG3716706@ulmo>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH] arm64: tegra: Set dma-ranges for memory subsystem
+Date: Thu, 3 Oct 2019 14:13:21 +0900
+Message-ID: <a0a299d2-a08f-1a4d-728e-6d7c54fa0e5a@kapsi.fi>
+References: <20191002154654.225690-1-thierry.reding@gmail.com>
+ <20191002154946.GA225802@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191002101102.GG3716706@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: gregkh@linuxfoundation.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191002154946.GA225802@ulmo>
+Content-Language: en-GB
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Georgi Djakov <georgi.djakov@linaro.org>, Maxime Ripard <mripard@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/2/19 6:11 PM, Thierry Reding wrote:
-> On Wed, Oct 02, 2019 at 04:00:50PM +0800, JC Kuo wrote:
->> Adds the XUSB pad and XUSB controllers on Tegra194.
+On 03/10/2019 0.49, Thierry Reding wrote:
+> On Wed, Oct 02, 2019 at 05:46:54PM +0200, Thierry Reding wrote:
+>> From: Thierry Reding <treding@nvidia.com>
 >>
->> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+>> On Tegra194, all clients of the memory subsystem can generally address
+>> 40 bits of system memory. However, bit 39 has special meaning and will
+>> cause the memory controller to reorder sectors for block-linear buffer
+>> formats. This is primarily useful for graphics-related devices.
+>>
+>> Use of bit 39 must be controlled on a case-by-case basis. Buffers that
+>> are used with bit 39 set by one device may be used with bit 39 cleared
+>> by other devices.
+>>
+>> Care must be taken to allocate buffers at addresses that do not require
+>> bit 39 to be set. This is normally not an issue for system memory since
+>> there are no Tegra-based systems with enough RAM to exhaust the 39-bit
+>> physical address space. However, when a device is behind an IOMMU, such
+>> as the ARM SMMU on Tegra194, the IOMMUs input address space can cause
+>> IOVA allocations to happen in this region. This is for example the case
+>> when an operating system implements a top-down allocation policy for IO
+>> virtual addresses.
+>>
+>> To account for this, describe the path that memory accesses take through
+>> the system. Memory clients will send requests to the memory controller,
+>> which forwards bits [38:0] of the address either to the external memory
+>> controller or the SMMU, depending on the stream ID of the access. A good
+>> way to describe this is using the interconnects bindings, see:
+>>
+>> 	Documentation/devicetree/bindings/interconnect/interconnect.txt
+>>
+>> The standard "dma-mem" path is used to describe the path towards system
+>> memory via the memory controller. A dma-ranges property in the memory
+>> controller's device tree node limits the range of DMA addresses that the
+>> memory clients can use to bits [38:0], ensuring that bit 39 is not used.
+>>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
 >> ---
->>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 130 +++++++++++++++++++++++
->>  1 file changed, 130 insertions(+)
+>> Arnd, Rob, Robin,
 >>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> index 3c0cf54f0aab..4d3371d3a407 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> @@ -1599,4 +1599,134 @@
->>  		interrupt-parent = <&gic>;
->>  		always-on;
->>  	};
->> +
->> +	xusb_padctl: padctl@3520000 {
+>> This is what I came up with after our discussion on this thread:
+>>
+>> 	[PATCH 00/11] of: dma-ranges fixes and improvements
+>>
+>> Please take a look and see if that sounds reasonable. I'm slightly
+>> unsure about the interconnects bindings as I used them here. According
+>> to the bindings there's always supposed to be a pair of interconnect
+>> paths, so this patch is not exactly compliant. It does work fine with
+>> the __of_get_dma_parent() code that Maxime introduced a couple of months
+>> ago and really very neatly describes the hardware. Interestingly this
+>> will come in handy very soon now since we're starting work on a proper
+>> interconnect provider (the memory controller driver is the natural fit
+>> for this because it has additional knobs to configure latency and
+>> priorities, etc.) to implement external memory frequency scaling based
+>> on bandwidth requests from memory clients. So this all fits together
+>> very nicely. But as I said, I'm not exactly sure what to add as a second
+>> entry in "interconnects" to make this compliant with the bindings.
+>>
+>> Adding Georgi and Maxime, perhaps they can help clarify.
+>>
+>> Thierry
 > 
-> I also noticed that this is outside of the /cbb bus node. It really
-> belongs inside /cbb. Same for the XHCI controller node.
+> Updating Maxime's email address.
 > 
 > Thierry
-Thanks. I will move both inside /cbb.
 > 
->> +		compatible = "nvidia,tegra194-xusb-padctl";
->> +		reg = <0x0 0x03520000 0x0 0x1000>,
->> +			<0x0 0x03540000 0x0 0x1000>;
->> +		reg-names = "padctl", "ao";
->> +
->> +		resets = <&bpmp TEGRA194_RESET_XUSB_PADCTL>;
->> +		reset-names = "padctl";
->> +
->> +		status = "disabled";
->> +
->> +		pads {
->> +			usb2 {
->> +				clocks = <&bpmp TEGRA194_CLK_USB2_TRK>;
->> +				clock-names = "trk";
->> +
->> +				lanes {
->> +					usb2-0 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +					usb2-1 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +					usb2-2 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +					usb2-3 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +				};
->> +			};
->> +			usb3 {
->> +				lanes {
->> +					usb3-0 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +					usb3-1 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +					usb3-2 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +					usb3-3 {
->> +						nvidia,function = "xusb";
->> +						status = "disabled";
->> +						#phy-cells = <0>;
->> +					};
->> +				};
->> +			};
->> +		};
->> +
->> +		ports {
->> +			usb2-0 {
->> +				status = "disabled";
->> +			};
->> +			usb2-1 {
->> +				status = "disabled";
->> +			};
->> +			usb2-2 {
->> +				status = "disabled";
->> +			};
->> +			usb2-3 {
->> +				status = "disabled";
->> +			};
->> +			usb3-0 {
->> +				status = "disabled";
->> +			};
->> +			usb3-1 {
->> +				status = "disabled";
->> +			};
->> +			usb3-2 {
->> +				status = "disabled";
->> +			};
->> +			usb3-3 {
->> +				status = "disabled";
->> +			};
->> +		};
->> +	};
->> +
->> +	tegra_xhci: xhci@3610000 {
->> +		compatible = "nvidia,tegra194-xusb";
->> +		reg = <0x0 0x03610000 0x0 0x40000>,
->> +			<0x0 0x03600000 0x0 0x10000>;
->> +		reg-names = "hcd", "fpci";
->> +
->> +		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
->> +				<GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
->> +				<GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +		clocks = <&bpmp TEGRA194_CLK_XUSB_CORE_MUX>,
->> +			<&bpmp TEGRA194_CLK_XUSB_CORE_HOST>,
->> +			<&bpmp TEGRA194_CLK_XUSB_CORE_SS>,
->> +			<&bpmp TEGRA194_CLK_XUSB_FALCON>,
->> +			<&bpmp TEGRA194_CLK_XUSB_FALCON_HOST>,
->> +			<&bpmp TEGRA194_CLK_XUSB_FALCON_SS>,
->> +			<&bpmp TEGRA194_CLK_XUSB_FS>,
->> +			<&bpmp TEGRA194_CLK_XUSB_FS_HOST>,
->> +			<&bpmp TEGRA194_CLK_XUSB_SS>,
->> +			<&bpmp TEGRA194_CLK_XUSB_SS_SUPERSPEED>,
->> +			<&bpmp TEGRA194_CLK_UTMIPLL>,
->> +			<&bpmp TEGRA194_CLK_CLK_M>,
->> +			<&bpmp TEGRA194_CLK_PLLE>;
->> +		clock-names = "xusb_hs_src", "xusb_host",
->> +			"xusb_core_superspeed_clk", "xusb_falcon_src",
->> +			"xusb_falcon_host_clk", "xusb_falcon_superspeed_clk",
->> +			"xusb_fs_src", "xusb_fs_host_clk", "xusb_ss_src",
->> +			"xusb_ss", "pll_u_480m", "clk_m", "pll_e";
->> +
->> +		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_XUSBC>,
->> +				<&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
->> +		power-domain-names = "xusb_host", "xusb_ss";
->> +
->> +		nvidia,xusb-padctl = <&xusb_padctl>;
->> +		status = "disabled";
->> +	};
->>  };
->> -- 
->> 2.17.1
+>>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 32 +++++++++++++++++++++++-
+>>   1 file changed, 31 insertions(+), 1 deletion(-)
 >>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> index 6900e8bdf24d..f50150217806 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> @@ -53,6 +53,8 @@
+>>   			clock-names = "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
+>>   			resets = <&bpmp TEGRA194_RESET_EQOS>;
+>>   			reset-names = "eqos";
+>> +			interconnects = <&mc TEGRA194_SID_EQOS>;
+
+It seems to me that the memory client ID may be a more appropriate 
+identifier for the interconnect. Stream IDs can sometimes change at 
+runtime based on software. Devices can also have multiple memory clients 
+using the same stream ID (or not).
+
+Cheers,
+Mikko
