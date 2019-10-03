@@ -1,109 +1,209 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH] arm64: tegra: Set dma-ranges for memory subsystem
-Date: Thu, 3 Oct 2019 14:13:21 +0900
-Message-ID: <a0a299d2-a08f-1a4d-728e-6d7c54fa0e5a@kapsi.fi>
-References: <20191002154654.225690-1-thierry.reding@gmail.com>
- <20191002154946.GA225802@ulmo>
+From: JC Kuo <jckuo@nvidia.com>
+Subject: Re: [PATCH 6/6] arm64: tegra: Enable XUSB host in P2972-0000 board
+Date: Thu, 3 Oct 2019 14:00:32 +0800
+Message-ID: <2b50ad58-e5da-2f93-0c18-f16843fe64ac@nvidia.com>
+References: <20191002080051.11142-1-jckuo@nvidia.com>
+ <20191002080051.11142-7-jckuo@nvidia.com> <20191002102611.GH3716706@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191002154946.GA225802@ulmo>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Georgi Djakov <georgi.djakov@linaro.org>, Maxime Ripard <mripard@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191002102611.GH3716706@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: gregkh@linuxfoundation.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/10/2019 0.49, Thierry Reding wrote:
-> On Wed, Oct 02, 2019 at 05:46:54PM +0200, Thierry Reding wrote:
->> From: Thierry Reding <treding@nvidia.com>
+On 10/2/19 6:26 PM, Thierry Reding wrote:
+> On Wed, Oct 02, 2019 at 04:00:51PM +0800, JC Kuo wrote:
+>> This commit enables XUSB host and pad controller in Tegra194
+>> P2972-0000 board.
 >>
->> On Tegra194, all clients of the memory subsystem can generally address
->> 40 bits of system memory. However, bit 39 has special meaning and will
->> cause the memory controller to reorder sectors for block-linear buffer
->> formats. This is primarily useful for graphics-related devices.
->>
->> Use of bit 39 must be controlled on a case-by-case basis. Buffers that
->> are used with bit 39 set by one device may be used with bit 39 cleared
->> by other devices.
->>
->> Care must be taken to allocate buffers at addresses that do not require
->> bit 39 to be set. This is normally not an issue for system memory since
->> there are no Tegra-based systems with enough RAM to exhaust the 39-bit
->> physical address space. However, when a device is behind an IOMMU, such
->> as the ARM SMMU on Tegra194, the IOMMUs input address space can cause
->> IOVA allocations to happen in this region. This is for example the case
->> when an operating system implements a top-down allocation policy for IO
->> virtual addresses.
->>
->> To account for this, describe the path that memory accesses take through
->> the system. Memory clients will send requests to the memory controller,
->> which forwards bits [38:0] of the address either to the external memory
->> controller or the SMMU, depending on the stream ID of the access. A good
->> way to describe this is using the interconnects bindings, see:
->>
->> 	Documentation/devicetree/bindings/interconnect/interconnect.txt
->>
->> The standard "dma-mem" path is used to describe the path towards system
->> memory via the memory controller. A dma-ranges property in the memory
->> controller's device tree node limits the range of DMA addresses that the
->> memory clients can use to bits [38:0], ensuring that bit 39 is not used.
->>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>> Signed-off-by: JC Kuo <jckuo@nvidia.com>
 >> ---
->> Arnd, Rob, Robin,
+>>  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 31 +++++++++-
+>>  .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 59 +++++++++++++++++++
+>>  2 files changed, 89 insertions(+), 1 deletion(-)
 >>
->> This is what I came up with after our discussion on this thread:
->>
->> 	[PATCH 00/11] of: dma-ranges fixes and improvements
->>
->> Please take a look and see if that sounds reasonable. I'm slightly
->> unsure about the interconnects bindings as I used them here. According
->> to the bindings there's always supposed to be a pair of interconnect
->> paths, so this patch is not exactly compliant. It does work fine with
->> the __of_get_dma_parent() code that Maxime introduced a couple of months
->> ago and really very neatly describes the hardware. Interestingly this
->> will come in handy very soon now since we're starting work on a proper
->> interconnect provider (the memory controller driver is the natural fit
->> for this because it has additional knobs to configure latency and
->> priorities, etc.) to implement external memory frequency scaling based
->> on bandwidth requests from memory clients. So this all fits together
->> very nicely. But as I said, I'm not exactly sure what to add as a second
->> entry in "interconnects" to make this compliant with the bindings.
->>
->> Adding Georgi and Maxime, perhaps they can help clarify.
->>
->> Thierry
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+>> index 4c38426a6969..cb236edc6a0d 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+>> @@ -229,7 +229,7 @@
+>>  						regulator-max-microvolt = <3300000>;
+>>  					};
+>>  
+>> -					ldo5 {
+>> +					vdd_usb_3v3: ldo5 {
+>>  						regulator-name = "VDD_USB_3V3";
+>>  						regulator-min-microvolt = <3300000>;
+>>  						regulator-max-microvolt = <3300000>;
+>> @@ -313,5 +313,34 @@
+>>  			regulator-boot-on;
+>>  			enable-active-low;
+>>  		};
+>> +
+>> +		vdd_5v_sata: regulator@4 {
+>> +			compatible = "regulator-fixed";
+>> +			reg = <4>;
+>> +
+>> +			regulator-name = "vdd-5v-sata";
 > 
-> Updating Maxime's email address.
+> Please keep capitalization of regulator names consistent. We use
+> all-caps and underscores for the others (which mirrors the names in the
+> schematics), so please stick with that for this one as well.
 > 
+Sure. I will fix this.
+> Also, I'm wondering if perhaps you can clarify something here. My
+> understanding is that SATA functionality is provided via a controller on
+> the PCI bus. Why is it that we route the 5 V SATA power to the USB port?
+> Oh wait... this is one of those eSATAp (hybrid) ports that can take
+> either eSATA or USB, right? Do we need any additional setup to switch
+> between eSATA and USB modes? Or is this all done in hardware? That is,
+> if I plug in an eSATA, does it automatically hotplug detect the device
+> as SATA and if I plug in a USB device, does it automatically detect it
+> as USB?
+> 
+Yes, this 5V supply is for the eSATAp port. eSATA cable will deliver the 5V to
+SATA device. No SATA/USB switch is required as USB SuperSpeed and PCIE-to-SATA
+controller each has its own UPHY lane. SATA TX/RX pairs also have dedicated pins
+at the eSATAp connector. External SATA drive can be hotplug and hardware will
+detect automatically.
+
+>> +			regulator-min-microvolt = <5000000>;
+>> +			regulator-max-microvolt = <5000000>;
+>> +			gpio = <&gpio TEGRA194_MAIN_GPIO(Z, 1) GPIO_ACTIVE_LOW>;
+> 
+> This will actually cause a warning on boot. For fixed regulators the
+> polarity of the enable GPIO is not specified in the GPIO specifier.
+> Instead you're supposed to use the boolean enable-active-high property
+> to specify if the enable GPIO is active-high. By default the enable GPIO
+> is considered to be active-low. The GPIO specifier needs to have the
+> GPIO_ACTIVE_HIGH flag set regardless for backwards-compatibilitiy
+> reasons.
+> 
+> Note that regulator@3 above your new entry does this wrongly, but
+> next-20191002 should have a fix for that.
+> 
+Thanks for the information. I will fix this in the next revision.
+>> +		};
+>> +	};
+>> +
+>> +	padctl@3520000 {
+> 
+> Don't forget to move this into /cbb as well to match the changes to
+> patch 5/6.
+> 
+Sure, will do.
+>> +		avdd-usb-supply = <&vdd_usb_3v3>;
+>> +		vclamp-usb-supply = <&vdd_1v8ao>;
+>> +		ports {
+> 
+> Blank line between the above two for better readability.
+> 
+Okay.
+>> +			usb2-1 {
+>> +				vbus-supply = <&vdd_5v0_sys>;
+>> +			};
+>> +			usb2-3 {
+> 
+> Same here and below.
+> 
+>> +				vbus-supply = <&vdd_5v_sata>;
+>> +			};
+>> +			usb3-0 {
+>> +				vbus-supply = <&vdd_5v0_sys>;
+>> +			};
+>> +			usb3-3 {
+>> +				vbus-supply = <&vdd_5v0_sys>;
+>> +			};
+>> +		};
+>>  	};
+>>  };
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>> index d47cd8c4dd24..410221927dfa 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>> @@ -222,4 +222,63 @@
+>>  			};
+>>  		};
+>>  	};
+>> +
+>> +	padctl@3520000 {
+> 
+> Same comment as above. Move this into /cbb.
+> 
+>> +		status = "okay";
+>> +
+>> +		pads {
+>> +			usb2 {
+>> +				lanes {
+>> +					usb2-1 {
+>> +						status = "okay";
+>> +					};
+>> +					usb2-2 {
+> 
+> And blank lines for readability here and below.
+> 
+>> +						status = "okay";
+>> +					};
+>> +					usb2-3 {
+>> +						status = "okay";
+>> +					};
+>> +				};
+>> +			};
+>> +			usb3 {
+>> +				lanes {
+>> +					usb3-0 {
+>> +						status = "okay";
+>> +					};
+>> +					usb3-3 {
+>> +						status = "okay";
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		ports {
+>> +			usb2-1 {
+>> +				mode = "host";
+>> +				status = "okay";
+>> +			};
+>> +			usb2-3 {
+>> +				mode = "host";
+>> +				status = "okay";
+>> +			};
+>> +			usb3-0 {
+>> +				nvidia,usb2-companion = <1>;
+>> +				status = "okay";
+>> +			};
+>> +			usb3-3 {
+>> +				nvidia,usb2-companion = <3>;
+>> +				nvidia,disable-gen2;
+>> +				status = "okay";
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	tegra_xhci: xhci@3610000 {
+> 
+> Also needs to move into /cbb. Also, you can drop the tegra_xhci label
+> here since we never reference the controller from elsewhere.
+> 
+> Also make sure to update the name here to match the changes in 5/6.
+> 
+Got it. Thanks for the reminder.
 > Thierry
 > 
->>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 32 +++++++++++++++++++++++-
->>   1 file changed, 31 insertions(+), 1 deletion(-)
+>> +		status = "okay";
+>> +		phys =	<&{/padctl@3520000/pads/usb2/lanes/usb2-1}>,
+>> +			<&{/padctl@3520000/pads/usb2/lanes/usb2-3}>,
+>> +			<&{/padctl@3520000/pads/usb3/lanes/usb3-0}>,
+>> +			<&{/padctl@3520000/pads/usb3/lanes/usb3-3}>;
+>> +		phy-names = "usb2-1", "usb2-3", "usb3-0", "usb3-3";
+>> +	};
+>>  };
+>> -- 
+>> 2.17.1
 >>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> index 6900e8bdf24d..f50150217806 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> @@ -53,6 +53,8 @@
->>   			clock-names = "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
->>   			resets = <&bpmp TEGRA194_RESET_EQOS>;
->>   			reset-names = "eqos";
->> +			interconnects = <&mc TEGRA194_SID_EQOS>;
-
-It seems to me that the memory client ID may be a more appropriate 
-identifier for the interconnect. Stream IDs can sometimes change at 
-runtime based on software. Devices can also have multiple memory clients 
-using the same stream ID (or not).
-
-Cheers,
-Mikko
