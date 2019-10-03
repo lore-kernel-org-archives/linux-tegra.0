@@ -1,7 +1,7 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V2 4/4] ARM: tegra: use clk_m CPU on Tegra124 LP1 resume
-Date: Thu,  3 Oct 2019 14:18:37 -0600
-Message-ID: <20191003201837.86824-4-swarren@wwwdotorg.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V2 1/4] clk: tegra: mark fuse clock as critical
+Date: Thu, 03 Oct 2019 13:26:26 -0700
+Message-ID: <20191003202627.A2ABB20862@mail.kernel.org>
 References: <20191003201837.86824-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -17,45 +17,25 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+Quoting Stephen Warren (2019-10-03 13:18:34)
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> index 1ed85f120a1b..76dd91eebd13 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -785,7 +785,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+>         GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
+>         GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
+>         GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+> -       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
+> +       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
 
-Configure the clock controller to set an alternate clock for the CPU when
-it receives an IRQ during LP1 (system suspend). Specifically, use clk_m
-(the crystal) rather than clk_s (a 32KHz clock). Such an IRQ will be the
-LP1 wake event. This reduces the amount of time taken to resume from LP1.
+Please comment in the code why it's critical so we don't have to dig
+through commit history to figure this out.
 
-NVIDIA's downstream kernel executes this code on both Tegra30 and
-Tegra124, so it appears OK to make this change unconditionally.
-
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-v2: No change.
----
- arch/arm/mach-tegra/sleep-tegra30.S | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 6191f9456288..ba5e9c07d1b6 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -670,8 +670,12 @@ tegra30_switch_cpu_to_clk32k:
- 	pll_iddq_entry r1, r5, CLK_RESET_PLLX_MISC3, CLK_RESET_PLLX_MISC3_IDDQ
- _no_pll_in_iddq:
- 
--	/* switch to CLKS */
--	mov	r0, #0	/* brust policy = 32KHz */
-+	/*
-+	 * Switch to clk_s (32KHz); bits 28:31=0
-+	 * Enable burst on CPU IRQ; bit 24=1
-+	 * Set IRQ burst clock source to clk_m; bits 10:8=0
-+	 */
-+	mov	r0, #(1 << 24)
- 	str	r0, [r5, #CLK_RESET_SCLK_BURST]
- 
- 	ret	lr
--- 
-2.23.0
+>         GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
+>         GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
+>         GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
