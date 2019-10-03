@@ -1,11 +1,13 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V2 1/4] clk: tegra: mark fuse clock as critical
-Date: Thu,  3 Oct 2019 14:18:34 -0600
-Message-ID: <20191003201837.86824-1-swarren@wwwdotorg.org>
+Subject: [PATCH V2 3/4] ARM: tegra: modify reshift divider during LP1
+Date: Thu,  3 Oct 2019 14:18:36 -0600
+Message-ID: <20191003201837.86824-3-swarren@wwwdotorg.org>
+References: <20191003201837.86824-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191003201837.86824-1-swarren@wwwdotorg.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,38 +23,61 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren@nvidia.com>
 
-For a little over a year, U-Boot on Tegra124 has configured the flow
-controller to perform automatic RAM re-repair on off->on power transitions
-of the CPU rail1]. This is mandatory for correct operation of Tegra124.
-However, RAM re-repair relies on certain clocks, which the kernel must
-enable and leave running. The fuse clock is one of those clocks. Mark this
-clock as critical so that LP1 power mode (system suspend) operates
-correctly.
+The reshift hardware module implements the RAM re-repair process. This
+module uses PLLP as an input clock during LP1 resume. The input divider
+for this clock is typically set for PLLP's normal rate. During LP1
+resume, PLLP is bypassed and so runs at the crystal rate, which is much
+slower. Consequently, decrease the divider so that the reshift module
+runs at a reasonable rate during LP1 resume.
 
-[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
+NVIDIA's downstream kernel code only does this if not compiled for
+Tegra30, so the added code is made conditional upon the chip ID.
 
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
-v2: Set CRITICAL flag on the clock, rather than enabling it in
-tegra124_init_table[].
+v2: No change.
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-tegra/sleep-tegra30.S | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 1ed85f120a1b..76dd91eebd13 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -785,7 +785,7 @@ static struct tegra_periph_init_data gate_clks[] = {
- 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
- 	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
- 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
--	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
-+	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
- 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
- 	GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
- 	GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index 6922dd8d3e2d..6191f9456288 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -59,6 +59,9 @@
+ #define CLK_RESET_PLLX_MISC3_IDDQ	3
+ #define CLK_RESET_PLLM_MISC_IDDQ	5
+ #define CLK_RESET_PLLC_MISC_IDDQ	26
++#define CLK_RESET_PLLP_RESHIFT		0x528
++#define CLK_RESET_PLLP_RESHIFT_DEFAULT	0x3b
++#define CLK_RESET_PLLP_RESHIFT_ENABLE	0x3
+ 
+ #define CLK_RESET_CLK_SOURCE_MSELECT	0x3b4
+ 
+@@ -373,9 +376,13 @@ _pll_m_c_x_done:
+ 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
+ 	cmp	r1, #TEGRA30
+ 	beq	1f
++
+ 	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
+ 	bic	r1, r1, #(1<<31)	@ disable PllP bypass
+ 	str	r1, [r0, #CLK_RESET_PLLP_BASE]
++
++	mov	r1, #CLK_RESET_PLLP_RESHIFT_DEFAULT
++	str	r1, [r0, #CLK_RESET_PLLP_RESHIFT]
+ 1:
+ 
+ 	mov32	r7, TEGRA_TMRUS_BASE
+@@ -644,6 +651,10 @@ tegra30_switch_cpu_to_clk32k:
+ 	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
+ 	bic	r0, r0, #(1 << 30)
+ 	str	r0, [r5, #CLK_RESET_PLLP_BASE]
++	beq	1f
++	mov	r0, #CLK_RESET_PLLP_RESHIFT_ENABLE
++	str	r0, [r5, #CLK_RESET_PLLP_RESHIFT]
++1:
+ 	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
+ 	bic	r0, r0, #(1 << 30)
+ 	str	r0, [r5, #CLK_RESET_PLLA_BASE]
 -- 
 2.23.0
