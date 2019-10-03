@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V3 2/4] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
-Date: Thu,  3 Oct 2019 14:50:31 -0600
-Message-ID: <20191003205033.98381-2-swarren@wwwdotorg.org>
+Subject: [PATCH V3 3/4] ARM: tegra: modify reshift divider during LP1
+Date: Thu,  3 Oct 2019 14:50:32 -0600
+Message-ID: <20191003205033.98381-3-swarren@wwwdotorg.org>
 References: <20191003205033.98381-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,31 +23,16 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren@nvidia.com>
 
-For a little over a year, U-Boot has configured the flow controller to
-perform automatic RAM re-repair on off->on power transitions of the CPU
-rail1]. This is mandatory for correct operation of Tegra124. However, RAM
-re-repair relies on certain clocks, which the kernel must enable and
-leave running. PLLP is one of those clocks. This clock is shut down
-during LP1 in order to save power. Enable bypass (which I believe routes
-osc_div_clk, essentially the crystal clock, to the PLL output) so that
-this clock signal toggles even though the PLL is not active. This is
-required so that LP1 power mode (system suspend) operates correctly.
-
-The bypass configuration must then be undone when resuming from LP1, so
-that all peripheral clocks run at the expected rate. Without this, many
-peripherals won't work correctly; for example, the UART baud rate would
-be incorrect.
+The reshift hardware module implements the RAM re-repair process. This
+module uses PLLP as an input clock during LP1 resume. The input divider
+for this clock is typically set for PLLP's normal rate. During LP1
+resume, PLLP is bypassed and so runs at the crystal rate, which is much
+slower. Consequently, decrease the divider so that the reshift module
+runs at a reasonable rate during LP1 resume.
 
 NVIDIA's downstream kernel code only does this if not compiled for
-Tegra30, so the added code is made conditional upon the chip ID. NVIDIA's
-downstream code makes this change conditional upon the active CPU
-cluster. The upstream kernel currently doesn't support cluster switching,
-so this patch doesn't test the active CPU cluster ID.
+Tegra30, so the added code is made conditional upon the chip ID.
 
-[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
-
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
 v3: No change.
@@ -57,34 +42,43 @@ v2: No change.
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index b408fa56eb89..6922dd8d3e2d 100644
+index 6922dd8d3e2d..6191f9456288 100644
 --- a/arch/arm/mach-tegra/sleep-tegra30.S
 +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -370,6 +370,14 @@ _pll_m_c_x_done:
- 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+@@ -59,6 +59,9 @@
+ #define CLK_RESET_PLLX_MISC3_IDDQ	3
+ #define CLK_RESET_PLLM_MISC_IDDQ	5
+ #define CLK_RESET_PLLC_MISC_IDDQ	26
++#define CLK_RESET_PLLP_RESHIFT		0x528
++#define CLK_RESET_PLLP_RESHIFT_DEFAULT	0x3b
++#define CLK_RESET_PLLP_RESHIFT_ENABLE	0x3
  
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
-+	beq	1f
-+	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
-+	bic	r1, r1, #(1<<31)	@ disable PllP bypass
-+	str	r1, [r0, #CLK_RESET_PLLP_BASE]
-+1:
+ #define CLK_RESET_CLK_SOURCE_MSELECT	0x3b4
+ 
+@@ -373,9 +376,13 @@ _pll_m_c_x_done:
+ 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
+ 	cmp	r1, #TEGRA30
+ 	beq	1f
 +
- 	mov32	r7, TEGRA_TMRUS_BASE
- 	ldr	r1, [r7]
- 	add	r1, r1, #LOCK_DELAY
-@@ -630,7 +638,10 @@ tegra30_switch_cpu_to_clk32k:
- 	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
+ 	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
+ 	bic	r1, r1, #(1<<31)	@ disable PllP bypass
+ 	str	r1, [r0, #CLK_RESET_PLLP_BASE]
++
++	mov	r1, #CLK_RESET_PLLP_RESHIFT_DEFAULT
++	str	r1, [r0, #CLK_RESET_PLLP_RESHIFT]
+ 1:
  
- 	/* disable PLLP, PLLA, PLLC and PLLX */
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
- 	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
-+	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
+ 	mov32	r7, TEGRA_TMRUS_BASE
+@@ -644,6 +651,10 @@ tegra30_switch_cpu_to_clk32k:
+ 	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
  	bic	r0, r0, #(1 << 30)
  	str	r0, [r5, #CLK_RESET_PLLP_BASE]
++	beq	1f
++	mov	r0, #CLK_RESET_PLLP_RESHIFT_ENABLE
++	str	r0, [r5, #CLK_RESET_PLLP_RESHIFT]
++1:
  	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
+ 	bic	r0, r0, #(1 << 30)
+ 	str	r0, [r5, #CLK_RESET_PLLA_BASE]
 -- 
 2.23.0
