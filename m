@@ -1,121 +1,40 @@
-From: Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH] arm64: tegra: Set dma-ranges for memory subsystem
-Date: Thu, 3 Oct 2019 10:11:58 +0200
-Message-ID: <20191003081158.v72o3rilgg2bhncn@gilmour>
-References: <20191002154654.225690-1-thierry.reding@gmail.com>
- <20191002154946.GA225802@ulmo>
+From: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Thu, 3 Oct 2019 10:43:14 +0000
+Message-ID: <187d7020-fbe9-7984-2358-8a70faef019f@microchip.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
+ <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+ <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7023560359398560420=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191002154946.GA225802@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, Georgi Djakov <georgi.djakov@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
+Content-Language: en-US
+Content-ID: <51816439DDB2EA498830860703402E31@namprd11.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============7023560359398560420==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bengp4ayl5pew25c"
-Content-Disposition: inline
-
-
---bengp4ayl5pew25c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Oct 02, 2019 at 05:49:46PM +0200, Thierry Reding wrote:
-> On Wed, Oct 02, 2019 at 05:46:54PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > On Tegra194, all clients of the memory subsystem can generally address
-> > 40 bits of system memory. However, bit 39 has special meaning and will
-> > cause the memory controller to reorder sectors for block-linear buffer
-> > formats. This is primarily useful for graphics-related devices.
-> >
-> > Use of bit 39 must be controlled on a case-by-case basis. Buffers that
-> > are used with bit 39 set by one device may be used with bit 39 cleared
-> > by other devices.
-> >
-> > Care must be taken to allocate buffers at addresses that do not require
-> > bit 39 to be set. This is normally not an issue for system memory since
-> > there are no Tegra-based systems with enough RAM to exhaust the 39-bit
-> > physical address space. However, when a device is behind an IOMMU, such
-> > as the ARM SMMU on Tegra194, the IOMMUs input address space can cause
-> > IOVA allocations to happen in this region. This is for example the case
-> > when an operating system implements a top-down allocation policy for IO
-> > virtual addresses.
-> >
-> > To account for this, describe the path that memory accesses take through
-> > the system. Memory clients will send requests to the memory controller,
-> > which forwards bits [38:0] of the address either to the external memory
-> > controller or the SMMU, depending on the stream ID of the access. A good
-> > way to describe this is using the interconnects bindings, see:
-> >
-> > 	Documentation/devicetree/bindings/interconnect/interconnect.txt
-> >
-> > The standard "dma-mem" path is used to describe the path towards system
-> > memory via the memory controller. A dma-ranges property in the memory
-> > controller's device tree node limits the range of DMA addresses that the
-> > memory clients can use to bits [38:0], ensuring that bit 39 is not used.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Arnd, Rob, Robin,
-> >
-> > This is what I came up with after our discussion on this thread:
-> >
-> > 	[PATCH 00/11] of: dma-ranges fixes and improvements
-> >
-> > Please take a look and see if that sounds reasonable. I'm slightly
-> > unsure about the interconnects bindings as I used them here. According
-> > to the bindings there's always supposed to be a pair of interconnect
-> > paths, so this patch is not exactly compliant. It does work fine with
-> > the __of_get_dma_parent() code that Maxime introduced a couple of months
-> > ago and really very neatly describes the hardware. Interestingly this
-> > will come in handy very soon now since we're starting work on a proper
-> > interconnect provider (the memory controller driver is the natural fit
-> > for this because it has additional knobs to configure latency and
-> > priorities, etc.) to implement external memory frequency scaling based
-> > on bandwidth requests from memory clients. So this all fits together
-> > very nicely. But as I said, I'm not exactly sure what to add as a second
-> > entry in "interconnects" to make this compliant with the bindings.
-
-It definitely sounds reasonable to me :)
-
-Maxime
-
---bengp4ayl5pew25c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZWtTgAKCRDj7w1vZxhR
-xaNSAQDPvQ0Eg3wgAsW+NG/VGPUeXTGz5HZ2S7wOq83jBXQOjwD+Mxiz+DDez9yR
-wEL8S5X8NUb7rZUsz+nnZoo4Dh142g4=
-=0yH4
------END PGP SIGNATURE-----
-
---bengp4ayl5pew25c--
-
-
---===============7023560359398560420==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7023560359398560420==--
+DQoNCk9uIDAyLjEwLjIwMTkgMTY6MzUsIENsYXVkaXUgQmV6bmVhIHdyb3RlOg0KPiBIaSBEYW5p
+ZWwsDQo+IA0KPiBUYWtpbmcgaW50byBhY2NvdW50IHRoYXQgUm9iIGRvZXNuJ3QgYWdyZWUgd2l0
+aCB0aGUgc29sdXRpb24gcHJvcG9zZWQgaW4NCj4gdGhpcyBzZXJpZXMgZG8geW91IHRoaW5rIHRo
+ZXJlIGlzIGEgY2hhbmNlIHRvIG1lcmdlIHRoaXMgZHJpdmVyIGFzIGlzPw0KDQpTb3JyeSwgSSB3
+YXMgdGFsa2luZyBoZXJlIGFib3V0IHRoZSBkcml2ZXIgYXQgWzFdLg0KDQpbMV0gaHR0cHM6Ly9s
+b3JlLmtlcm5lbC5vcmcvbGttbC8xNTUyNTgwNzcyLTg0OTktMS1naXQtc2VuZC1lbWFpbC1jbGF1
+ZGl1LmJlem5lYUBtaWNyb2NoaXAuY29tLw0KDQo+IA0KPiBJZiB5b3UgaGF2ZSBvdGhlciBzdWdn
+ZXN0aW9uIEkgYW0gb3BlbiB0byB0cnkgaXQuDQo+IA0KPiBUaGFuayB5b3UsDQo+IENsYXVkaXUg
+QmV6bmVhDQo+IA0KPiBPbiAyNi4wOS4yMDE5IDExOjQyLCBDbGF1ZGl1IEJlem5lYSB3cm90ZToN
+Cj4+DQo+Pg0KPj4gT24gMjUuMDkuMjAxOSAyMDoxOSwgRGFuaWVsIExlemNhbm8gd3JvdGU6DQo+
+Pj4gRXh0ZXJuYWwgRS1NYWlsDQo+Pj4NCj4+Pg0KPj4+IEhpIENsYXVkaXUsDQo+Pj4NCj4+PiBP
+biAxMC8wOS8yMDE5IDE1OjQ3LCBDbGF1ZGl1IEJlem5lYSB3cm90ZToNCj4+Pj4gSGksDQo+Pj4+
+DQo+Pj4+IFRoaXMgc2VyaWVzIGFkZHMgc3VwcG9ydCB0byBwZXJtaXQgdGhlIHNlbGVjdGlvbiBv
+ZiBjbG9ja3NvdXJjZS9jbG9ja2V2ZW50DQo+Pj4+IHZpYSBEVC4NCj4+Pg0KPj4+IFRoYW5rcyBm
+b3IgdGhlIHByb3Bvc2FsIGFuZCB0YWtpbmcgY2FyZSBvZiBtYWtpbmcgc29tZSBwcm9ncmVzcyBv
+biB0aGlzLg0KPj4+DQo+Pj4gSSBqdXN0IHdhbnRlZCB0byBsZXQgeW91IGtub3cgSSd2ZSBiZWVu
+IHRyYXZlbGluZyBidXQgdGhlIHNlcmllcyBpcyBpbg0KPj4+IG15IHBpcGUgYW5kIEkgZGlkIG5v
+dCBmb3JnZXQgaXQuIEknbGwgY29tbWVudCBpdCBuZXh0IHdlZWsuDQo+Pg0KPj4gSGkgRGFuaWVs
+LA0KPj4NCj4+IE5vIHByb2JsZW0uIFRoYW5rIHlvdSBmb3IgbGV0dGluZyBtZSBrbm93Lg0KPj4N
+Cj4+IENsYXVkaXUNCj4+DQo+Pj4NCj4+PiAgLS0gRGFuaWVsDQo+Pj4NCj4+Pg0K
