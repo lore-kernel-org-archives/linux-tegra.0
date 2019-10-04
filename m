@@ -1,72 +1,53 @@
-From: JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v2 2/7] usb: host: xhci-tegra: Add Tegra194 XHCI support
-Date: Fri, 4 Oct 2019 16:19:36 +0800
-Message-ID: <20191004081941.4831-3-jckuo@nvidia.com>
-References: <20191004081941.4831-1-jckuo@nvidia.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
+Date: Fri, 4 Oct 2019 10:48:43 +0200
+Message-ID: <3f7fe51a-8958-a425-f5fd-01df5301d6b2@xs4all.nl>
+References: <20190814104520.6001-1-darekm@google.com>
+ <20190814104520.6001-8-darekm@google.com>
+ <f0e99db8-3329-f272-e139-a7c713f200ea@xs4all.nl> <20190828093820.GE2917@ulmo>
+ <2eed5ed3-85f3-4c19-4dd2-3d8432829c2a@xs4all.nl>
+ <20190828115400.GA30919@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191004081941.4831-1-jckuo@nvidia.com>
+In-Reply-To: <20190828115400.GA30919@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com, JC Kuo <jckuo@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This commit adds Tegra194 XUSB host mode controller support. This is
-very similar to the existing Tegra124/Tegra210/Tegra186 XHCI, except
-  1. the number of ports and PHYs differs
-  2. the IPFS wrapper being removed
-  3. mailbox registers address changes
+Hi Thierry,
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Just a reminder: this patch hasn't been merged yet for v5.5.
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index add6b8fb40e1..f19d39874a3b 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1460,10 +1460,40 @@ static const struct tegra_xusb_soc tegra186_soc = {
- 	},
- };
- 
-+static const char * const tegra194_supply_names[] = {
-+};
-+
-+static const struct tegra_xusb_phy_type tegra194_phy_types[] = {
-+	{ .name = "usb3", .num = 4, },
-+	{ .name = "usb2", .num = 4, },
-+};
-+
-+static const struct tegra_xusb_soc tegra194_soc = {
-+	.firmware = "nvidia/tegra194/xusb.bin",
-+	.supply_names = tegra194_supply_names,
-+	.num_supplies = ARRAY_SIZE(tegra194_supply_names),
-+	.phy_types = tegra194_phy_types,
-+	.num_types = ARRAY_SIZE(tegra194_phy_types),
-+	.ports = {
-+		.usb3 = { .offset = 0, .count = 4, },
-+		.usb2 = { .offset = 4, .count = 4, },
-+	},
-+	.scale_ss_clock = false,
-+	.has_ipfs = false,
-+	.mbox = {
-+		.cmd = 0x68,
-+		.data_in = 0x6c,
-+		.data_out = 0x70,
-+		.owner = 0x74,
-+	},
-+};
-+MODULE_FIRMWARE("nvidia/tegra194/xusb.bin");
-+
- static const struct of_device_id tegra_xusb_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
- 	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
- 	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
-+	{ .compatible = "nvidia,tegra194-xusb", .data = &tegra194_soc },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
--- 
-2.17.1
+Thanks!
+
+	Hans
+
+On 8/28/19 1:54 PM, Thierry Reding wrote:
+> On Wed, Aug 28, 2019 at 12:06:34PM +0200, Hans Verkuil wrote:
+>> On 8/28/19 11:38 AM, Thierry Reding wrote:
+>>> On Wed, Aug 28, 2019 at 10:09:30AM +0200, Hans Verkuil wrote:
+>>>> Thierry,
+>>>>
+>>>> Can you review this patch?
+>>>>
+>>>> Thanks!
+>>>>
+>>>> 	Hans
+>>>
+>>> Did you want me to pick this up into the drm/tegra tree? Or do you want
+>>> to pick it up into your tree?
+>>
+>> Can you pick it up for the next cycle? As you mentioned, we missed the
+>> deadline for 5.4, so this feature won't be enabled in the public CEC API
+>> until 5.5.
+>>
+>> Thanks!
+> 
+> Sure, will do.
+> 
+> Thierry
+> 
