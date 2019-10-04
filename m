@@ -1,180 +1,73 @@
 From: JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v3 6/7] arm64: tegra: Add XUSB and pad controller on Tegra194
-Date: Sat, 5 Oct 2019 00:29:05 +0800
-Message-ID: <20191004162906.4818-7-jckuo@nvidia.com>
-References: <20191004162906.4818-1-jckuo@nvidia.com>
+Subject: [PATCH v3 0/7] add Tegra194 XUSB host and pad controller support
+Date: Sat, 5 Oct 2019 00:28:59 +0800
+Message-ID: <20191004162906.4818-1-jckuo@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191004162906.4818-1-jckuo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com, JC Kuo <jckuo@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Adds the XUSB pad and XUSB controllers on Tegra194.
+Hi,
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
-Changes in v3: none
-Changes in v2:
- - renamed xhci@3610000 with usb@3610000
- - moved padctl@3520000 and usb@3610000 inside /cbb
- - cleaned up "clocks" property of usb@3610000 node
- - added blanks lines to visually separate blocks
+This series introduces support for Tegra194 XUSB host and pad
+controller. Tegra194 XUSB host and pad controller are highly
+similar to the controllers found on Tegra186. Therefore, it's
+possible to resue xhci-tegra.c and xusb-tegra186.c for Tegra194.
 
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 139 +++++++++++++++++++++++
- 1 file changed, 139 insertions(+)
+Changelog:
+v3:
+  add change log to cover latter
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 3c0cf54f0aab..3c7ea264bc1c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -487,6 +487,145 @@
- 			status = "disabled";
- 		};
- 
-+		xusb_padctl: padctl@3520000 {
-+			compatible = "nvidia,tegra194-xusb-padctl";
-+			reg = <0x03520000 0x1000>,
-+			      <0x03540000 0x1000>;
-+			reg-names = "padctl", "ao";
-+
-+			resets = <&bpmp TEGRA194_RESET_XUSB_PADCTL>;
-+			reset-names = "padctl";
-+
-+			status = "disabled";
-+
-+			pads {
-+				usb2 {
-+					clocks = <&bpmp TEGRA194_CLK_USB2_TRK>;
-+					clock-names = "trk";
-+
-+					lanes {
-+						usb2-0 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb2-1 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb2-2 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb2-3 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+					};
-+				};
-+
-+				usb3 {
-+					lanes {
-+						usb3-0 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb3-1 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb3-2 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb3-3 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+					};
-+				};
-+			};
-+
-+			ports {
-+				usb2-0 {
-+					status = "disabled";
-+				};
-+
-+				usb2-1 {
-+					status = "disabled";
-+				};
-+
-+				usb2-2 {
-+					status = "disabled";
-+				};
-+
-+				usb2-3 {
-+					status = "disabled";
-+				};
-+
-+				usb3-0 {
-+					status = "disabled";
-+				};
-+
-+				usb3-1 {
-+					status = "disabled";
-+				};
-+
-+				usb3-2 {
-+					status = "disabled";
-+				};
-+
-+				usb3-3 {
-+					status = "disabled";
-+				};
-+			};
-+		};
-+
-+		usb@3610000 {
-+			compatible = "nvidia,tegra194-xusb";
-+			reg = <0x03610000 0x40000>,
-+			      < 0x03600000 0x10000>;
-+			reg-names = "hcd", "fpci";
-+
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&bpmp TEGRA194_CLK_XUSB_CORE_HOST>,
-+				 <&bpmp TEGRA194_CLK_XUSB_FALCON>,
-+				 <&bpmp TEGRA194_CLK_XUSB_CORE_SS>,
-+				 <&bpmp TEGRA194_CLK_XUSB_SS>,
-+				 <&bpmp TEGRA194_CLK_CLK_M>,
-+				 <&bpmp TEGRA194_CLK_XUSB_FS>,
-+				 <&bpmp TEGRA194_CLK_UTMIPLL>,
-+				 <&bpmp TEGRA194_CLK_CLK_M>,
-+				 <&bpmp TEGRA194_CLK_PLLE>;
-+			clock-names = "xusb_host", "xusb_falcon_src",
-+				      "xusb_ss", "xusb_ss_src", "xusb_hs_src",
-+				      "xusb_fs_src", "pll_u_480m", "clk_m",
-+				      "pll_e";
-+
-+			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_XUSBC>,
-+					<&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
-+			power-domain-names = "xusb_host", "xusb_ss";
-+
-+			nvidia,xusb-padctl = <&xusb_padctl>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@3881000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+v2:
+  xhci: tegra: Parameterize mailbox register addresses
+   - no change
+
+  usb: host: xhci-tegra: Add Tegra194 XHCI support
+   - no change
+
+  phy: tegra: xusb: Protect Tegra186 soc with config
+   - new patch to protect Tegra186 soc data with config
+
+  phy: tegra: xusb: Add Tegra194 support
+   - removed unnecessary #if/#endif pairs
+   - introduce new soc->supports_gen2 flag which indicate whether or not
+     a soc supports USB 3.1 Gen 2 speed
+
+  dt-bindings: phy: tegra: Add Tegra194 support
+   - fix a typo
+
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+   - renamed xhci@3610000 with usb@3610000
+   - moved padctl@3520000 and usb@3610000 inside /cbb
+   - cleaned up "clocks" property of usb@3610000 node
+   - added blanks lines to visually separate blocks
+
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+   - use capitalization of regulator names
+   - fix gpio property of VDD_5V_SATA regulator
+
+JC Kuo (7):
+  xhci: tegra: Parameterize mailbox register addresses
+  usb: host: xhci-tegra: Add Tegra194 XHCI support
+  phy: tegra: xusb: Protect Tegra186 soc with config
+  phy: tegra: xusb: Add Tegra194 support
+  dt-bindings: phy: tegra: Add Tegra194 support
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+
+ .../phy/nvidia,tegra124-xusb-padctl.txt       |  16 ++
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  36 ++++-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  62 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 139 +++++++++++++++++
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/xusb-tegra186.c             | 144 +++++++++++++-----
+ drivers/phy/tegra/xusb.c                      |   7 +
+ drivers/phy/tegra/xusb.h                      |   6 +
+ drivers/usb/host/xhci-tegra.c                 |  88 +++++++++--
+ 9 files changed, 448 insertions(+), 51 deletions(-)
+
 -- 
 2.17.1
