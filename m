@@ -1,7 +1,7 @@
 From: JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v3 3/7] phy: tegra: xusb: Protect Tegra186 soc with config
-Date: Sat, 5 Oct 2019 00:29:02 +0800
-Message-ID: <20191004162906.4818-4-jckuo@nvidia.com>
+Subject: [PATCH v3 6/7] arm64: tegra: Add XUSB and pad controller on Tegra194
+Date: Sat, 5 Oct 2019 00:29:05 +0800
+Message-ID: <20191004162906.4818-7-jckuo@nvidia.com>
 References: <20191004162906.4818-1-jckuo@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,128 +12,169 @@ To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com, JC Kuo <jckuo@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-As xusb-tegra186.c will be reused for Tegra194, it would be good to
-protect Tegra186 soc data with CONFIG_ARCH_TEGRA_186_SOC. This commit
-also reshuffles Tegra186 soc data single CONFIG_ARCH_TEGRA_186_SOC
-will be sufficient.
+Adds the XUSB pad and XUSB controllers on Tegra194.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 ---
 Changes in v3: none
 Changes in v2:
-- new patch to protect Tegra186 soc data with config
+ - renamed xhci@3610000 with usb@3610000
+ - moved padctl@3520000 and usb@3610000 inside /cbb
+ - cleaned up "clocks" property of usb@3610000 node
+ - added blanks lines to visually separate blocks
 
- drivers/phy/tegra/xusb-tegra186.c | 70 ++++++++++++++++---------------
- 1 file changed, 36 insertions(+), 34 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 139 +++++++++++++++++++++++
+ 1 file changed, 139 insertions(+)
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 6f3afaf9398f..3b60270f2009 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -503,19 +503,6 @@ static const char * const tegra186_usb2_functions[] = {
- 	"xusb",
- };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 3c0cf54f0aab..3c7ea264bc1c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -487,6 +487,145 @@
+ 			status = "disabled";
+ 		};
  
--static const struct tegra_xusb_lane_soc tegra186_usb2_lanes[] = {
--	TEGRA186_LANE("usb2-0", 0,  0, 0, usb2),
--	TEGRA186_LANE("usb2-1", 0,  0, 0, usb2),
--	TEGRA186_LANE("usb2-2", 0,  0, 0, usb2),
--};
--
--static const struct tegra_xusb_pad_soc tegra186_usb2_pad = {
--	.name = "usb2",
--	.num_lanes = ARRAY_SIZE(tegra186_usb2_lanes),
--	.lanes = tegra186_usb2_lanes,
--	.ops = &tegra186_usb2_pad_ops,
--};
--
- static int tegra186_usb2_port_enable(struct tegra_xusb_port *port)
- {
- 	return 0;
-@@ -765,27 +752,6 @@ static const char * const tegra186_usb3_functions[] = {
- 	"xusb",
- };
- 
--static const struct tegra_xusb_lane_soc tegra186_usb3_lanes[] = {
--	TEGRA186_LANE("usb3-0", 0,  0, 0, usb3),
--	TEGRA186_LANE("usb3-1", 0,  0, 0, usb3),
--	TEGRA186_LANE("usb3-2", 0,  0, 0, usb3),
--};
--
--static const struct tegra_xusb_pad_soc tegra186_usb3_pad = {
--	.name = "usb3",
--	.num_lanes = ARRAY_SIZE(tegra186_usb3_lanes),
--	.lanes = tegra186_usb3_lanes,
--	.ops = &tegra186_usb3_pad_ops,
--};
--
--static const struct tegra_xusb_pad_soc * const tegra186_pads[] = {
--	&tegra186_usb2_pad,
--	&tegra186_usb3_pad,
--#if 0 /* TODO implement */
--	&tegra186_hsic_pad,
--#endif
--};
--
- static int
- tegra186_xusb_read_fuse_calibration(struct tegra186_xusb_padctl *padctl)
- {
-@@ -862,6 +828,7 @@ static const struct tegra_xusb_padctl_ops tegra186_xusb_padctl_ops = {
- 	.remove = tegra186_xusb_padctl_remove,
- };
- 
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
- static const char * const tegra186_xusb_padctl_supply_names[] = {
- 	"avdd-pll-erefeut",
- 	"avdd-usb",
-@@ -869,6 +836,40 @@ static const char * const tegra186_xusb_padctl_supply_names[] = {
- 	"vddio-hsic",
- };
- 
-+static const struct tegra_xusb_lane_soc tegra186_usb2_lanes[] = {
-+	TEGRA186_LANE("usb2-0", 0,  0, 0, usb2),
-+	TEGRA186_LANE("usb2-1", 0,  0, 0, usb2),
-+	TEGRA186_LANE("usb2-2", 0,  0, 0, usb2),
-+};
++		xusb_padctl: padctl@3520000 {
++			compatible = "nvidia,tegra194-xusb-padctl";
++			reg = <0x03520000 0x1000>,
++			      <0x03540000 0x1000>;
++			reg-names = "padctl", "ao";
 +
-+static const struct tegra_xusb_pad_soc tegra186_usb2_pad = {
-+	.name = "usb2",
-+	.num_lanes = ARRAY_SIZE(tegra186_usb2_lanes),
-+	.lanes = tegra186_usb2_lanes,
-+	.ops = &tegra186_usb2_pad_ops,
-+};
++			resets = <&bpmp TEGRA194_RESET_XUSB_PADCTL>;
++			reset-names = "padctl";
 +
-+static const struct tegra_xusb_lane_soc tegra186_usb3_lanes[] = {
-+	TEGRA186_LANE("usb3-0", 0,  0, 0, usb3),
-+	TEGRA186_LANE("usb3-1", 0,  0, 0, usb3),
-+	TEGRA186_LANE("usb3-2", 0,  0, 0, usb3),
-+};
++			status = "disabled";
 +
-+static const struct tegra_xusb_pad_soc tegra186_usb3_pad = {
-+	.name = "usb3",
-+	.num_lanes = ARRAY_SIZE(tegra186_usb3_lanes),
-+	.lanes = tegra186_usb3_lanes,
-+	.ops = &tegra186_usb3_pad_ops,
-+};
++			pads {
++				usb2 {
++					clocks = <&bpmp TEGRA194_CLK_USB2_TRK>;
++					clock-names = "trk";
 +
-+static const struct tegra_xusb_pad_soc * const tegra186_pads[] = {
-+	&tegra186_usb2_pad,
-+	&tegra186_usb3_pad,
-+#if 0 /* TODO implement */
-+	&tegra186_hsic_pad,
-+#endif
-+};
++					lanes {
++						usb2-0 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
 +
- const struct tegra_xusb_padctl_soc tegra186_xusb_padctl_soc = {
- 	.num_pads = ARRAY_SIZE(tegra186_pads),
- 	.pads = tegra186_pads,
-@@ -893,6 +894,7 @@ const struct tegra_xusb_padctl_soc tegra186_xusb_padctl_soc = {
- 	.num_supplies = ARRAY_SIZE(tegra186_xusb_padctl_supply_names),
- };
- EXPORT_SYMBOL_GPL(tegra186_xusb_padctl_soc);
-+#endif
- 
- MODULE_AUTHOR("JC Kuo <jckuo@nvidia.com>");
- MODULE_DESCRIPTION("NVIDIA Tegra186 XUSB Pad Controller driver");
++						usb2-1 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb2-2 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb2-3 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++					};
++				};
++
++				usb3 {
++					lanes {
++						usb3-0 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb3-1 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb3-2 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb3-3 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++					};
++				};
++			};
++
++			ports {
++				usb2-0 {
++					status = "disabled";
++				};
++
++				usb2-1 {
++					status = "disabled";
++				};
++
++				usb2-2 {
++					status = "disabled";
++				};
++
++				usb2-3 {
++					status = "disabled";
++				};
++
++				usb3-0 {
++					status = "disabled";
++				};
++
++				usb3-1 {
++					status = "disabled";
++				};
++
++				usb3-2 {
++					status = "disabled";
++				};
++
++				usb3-3 {
++					status = "disabled";
++				};
++			};
++		};
++
++		usb@3610000 {
++			compatible = "nvidia,tegra194-xusb";
++			reg = <0x03610000 0x40000>,
++			      < 0x03600000 0x10000>;
++			reg-names = "hcd", "fpci";
++
++			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&bpmp TEGRA194_CLK_XUSB_CORE_HOST>,
++				 <&bpmp TEGRA194_CLK_XUSB_FALCON>,
++				 <&bpmp TEGRA194_CLK_XUSB_CORE_SS>,
++				 <&bpmp TEGRA194_CLK_XUSB_SS>,
++				 <&bpmp TEGRA194_CLK_CLK_M>,
++				 <&bpmp TEGRA194_CLK_XUSB_FS>,
++				 <&bpmp TEGRA194_CLK_UTMIPLL>,
++				 <&bpmp TEGRA194_CLK_CLK_M>,
++				 <&bpmp TEGRA194_CLK_PLLE>;
++			clock-names = "xusb_host", "xusb_falcon_src",
++				      "xusb_ss", "xusb_ss_src", "xusb_hs_src",
++				      "xusb_fs_src", "pll_u_480m", "clk_m",
++				      "pll_e";
++
++			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_XUSBC>,
++					<&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
++			power-domain-names = "xusb_host", "xusb_ss";
++
++			nvidia,xusb-padctl = <&xusb_padctl>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@3881000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.17.1
