@@ -1,52 +1,41 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.3 000/344] 5.3.4-stable review
-Date: Fri, 4 Oct 2019 09:55:14 +0200
-Message-ID: <20191004075514.GB10406@kroah.com>
-References: <20191003154540.062170222@linuxfoundation.org>
- <fe3f55e2-9252-786d-0541-7dd253ffc438@nvidia.com>
+From: JC Kuo <jckuo@nvidia.com>
+Subject: [PATCH v2 0/7] add Tegra194 XUSB host and pad controller support
+Date: Fri, 4 Oct 2019 16:19:34 +0800
+Message-ID: <20191004081941.4831-1-jckuo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <fe3f55e2-9252-786d-0541-7dd253ffc438@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com, JC Kuo <jckuo@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 08:38:48AM +0100, Jon Hunter wrote:
-> 
-> On 03/10/2019 16:49, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.3.4 release.
-> > There are 344 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat 05 Oct 2019 03:37:47 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.4-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.3:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.3.4-rc1-gc9adc631ac5f
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+Hi,
 
-Wonderful, thanks for testing all of these and letting me know.
+This series introduces support for Tegra194 XUSB host and pad
+controller. Tegra194 XUSB host and pad controller are highly
+similar to the controllers found on Tegra186. Therefore, it's
+possible to resue xhci-tegra.c and xusb-tegra186.c for Tegra194.
 
-greg k-h
+JC Kuo (7):
+  xhci: tegra: Parameterize mailbox register addresses
+  usb: host: xhci-tegra: Add Tegra194 XHCI support
+  phy: tegra: xusb: Protect Tegra186 soc with config
+  phy: tegra: xusb: Add Tegra194 support
+  dt-bindings: phy: tegra: Add Tegra194 support
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+
+ .../phy/nvidia,tegra124-xusb-padctl.txt       |  16 ++
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  36 ++++-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  62 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 139 +++++++++++++++++
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/xusb-tegra186.c             | 144 +++++++++++++-----
+ drivers/phy/tegra/xusb.c                      |   7 +
+ drivers/phy/tegra/xusb.h                      |   6 +
+ drivers/usb/host/xhci-tegra.c                 |  88 +++++++++--
+ 9 files changed, 448 insertions(+), 51 deletions(-)
+
+-- 
+2.17.1
