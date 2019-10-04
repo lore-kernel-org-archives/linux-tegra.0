@@ -1,7 +1,7 @@
 From: JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v3 5/7] dt-bindings: phy: tegra: Add Tegra194 support
-Date: Sat, 5 Oct 2019 00:29:04 +0800
-Message-ID: <20191004162906.4818-6-jckuo@nvidia.com>
+Subject: [PATCH v3 3/7] phy: tegra: xusb: Protect Tegra186 soc with config
+Date: Sat, 5 Oct 2019 00:29:02 +0800
+Message-ID: <20191004162906.4818-4-jckuo@nvidia.com>
 References: <20191004162906.4818-1-jckuo@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,83 +12,128 @@ To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com, JC Kuo <jckuo@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Extend the bindings to cover the set of features found in Tegra194.
-Note that, technically, there are four more supplies connected to the
-XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
-, but the power sequencing requirements of Tegra194 require these to be
-under the control of the PMIC.
-
-Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it is
-possible for some platforms have long signal trace that could not
-provide sufficient electrical environment for Gen 2 speed. To deal with
-this, a new device node property "nvidia,disable-gen2" was added to
-Tegra194 that be used to specifically disable Gen 2 speed for a
-particular USB 3.0 port so that the port can be limited to Gen 1 speed
-and avoid the instability.
+As xusb-tegra186.c will be reused for Tegra194, it would be good to
+protect Tegra186 soc data with CONFIG_ARCH_TEGRA_186_SOC. This commit
+also reshuffles Tegra186 soc data single CONFIG_ARCH_TEGRA_186_SOC
+will be sufficient.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 ---
 Changes in v3: none
 Changes in v2:
-- fix a typo
+- new patch to protect Tegra186 soc data with config
 
- .../bindings/phy/nvidia,tegra124-xusb-padctl.txt | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/phy/tegra/xusb-tegra186.c | 70 ++++++++++++++++---------------
+ 1 file changed, 36 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-index 9fb682e47c29..59d870fa42e9 100644
---- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-+++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-@@ -37,6 +37,7 @@ Required properties:
-   - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
-   - Tegra210: "nvidia,tegra210-xusb-padctl"
-   - Tegra186: "nvidia,tegra186-xusb-padctl"
-+  - Tegra194: "nvidia,tegra194-xusb-padctl"
- - reg: Physical base address and length of the controller's registers.
- - resets: Must contain an entry for each entry in reset-names.
- - reset-names: Must include the following entries:
-@@ -62,6 +63,10 @@ For Tegra186:
- - vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
- - vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index 6f3afaf9398f..3b60270f2009 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -503,19 +503,6 @@ static const char * const tegra186_usb2_functions[] = {
+ 	"xusb",
+ };
  
-+For Tegra194:
-+- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
-+  3.3 V.
-+- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
+-static const struct tegra_xusb_lane_soc tegra186_usb2_lanes[] = {
+-	TEGRA186_LANE("usb2-0", 0,  0, 0, usb2),
+-	TEGRA186_LANE("usb2-1", 0,  0, 0, usb2),
+-	TEGRA186_LANE("usb2-2", 0,  0, 0, usb2),
+-};
+-
+-static const struct tegra_xusb_pad_soc tegra186_usb2_pad = {
+-	.name = "usb2",
+-	.num_lanes = ARRAY_SIZE(tegra186_usb2_lanes),
+-	.lanes = tegra186_usb2_lanes,
+-	.ops = &tegra186_usb2_pad_ops,
+-};
+-
+ static int tegra186_usb2_port_enable(struct tegra_xusb_port *port)
+ {
+ 	return 0;
+@@ -765,27 +752,6 @@ static const char * const tegra186_usb3_functions[] = {
+ 	"xusb",
+ };
  
- Pad nodes:
- ==========
-@@ -154,6 +159,11 @@ For Tegra210, the list of valid PHY nodes is given below:
- - sata: sata-0
-   - functions: "usb3-ss", "sata"
+-static const struct tegra_xusb_lane_soc tegra186_usb3_lanes[] = {
+-	TEGRA186_LANE("usb3-0", 0,  0, 0, usb3),
+-	TEGRA186_LANE("usb3-1", 0,  0, 0, usb3),
+-	TEGRA186_LANE("usb3-2", 0,  0, 0, usb3),
+-};
+-
+-static const struct tegra_xusb_pad_soc tegra186_usb3_pad = {
+-	.name = "usb3",
+-	.num_lanes = ARRAY_SIZE(tegra186_usb3_lanes),
+-	.lanes = tegra186_usb3_lanes,
+-	.ops = &tegra186_usb3_pad_ops,
+-};
+-
+-static const struct tegra_xusb_pad_soc * const tegra186_pads[] = {
+-	&tegra186_usb2_pad,
+-	&tegra186_usb3_pad,
+-#if 0 /* TODO implement */
+-	&tegra186_hsic_pad,
+-#endif
+-};
+-
+ static int
+ tegra186_xusb_read_fuse_calibration(struct tegra186_xusb_padctl *padctl)
+ {
+@@ -862,6 +828,7 @@ static const struct tegra_xusb_padctl_ops tegra186_xusb_padctl_ops = {
+ 	.remove = tegra186_xusb_padctl_remove,
+ };
  
-+For Tegra194, the list of valid PHY nodes is given below:
-+- usb2: usb2-0, usb2-1, usb2-2, usb2-3
-+  - functions: "xusb"
-+- usb3: usb3-0, usb3-1, usb3-2, usb3-3
-+  - functions: "xusb"
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
+ static const char * const tegra186_xusb_padctl_supply_names[] = {
+ 	"avdd-pll-erefeut",
+ 	"avdd-usb",
+@@ -869,6 +836,40 @@ static const char * const tegra186_xusb_padctl_supply_names[] = {
+ 	"vddio-hsic",
+ };
  
- Port nodes:
- ===========
-@@ -221,6 +231,9 @@ Optional properties:
-   is internal. In the absence of this property the port is considered to be
-   external.
- 
-+- nvidia,disable-gen2: A boolean property whose presence determines that a port
-+  should be limited to USB 3.1 Gen 1. This property is only for Tegra194.
++static const struct tegra_xusb_lane_soc tegra186_usb2_lanes[] = {
++	TEGRA186_LANE("usb2-0", 0,  0, 0, usb2),
++	TEGRA186_LANE("usb2-1", 0,  0, 0, usb2),
++	TEGRA186_LANE("usb2-2", 0,  0, 0, usb2),
++};
 +
- For Tegra124 and Tegra132, the XUSB pad controller exposes the following
- ports:
- - 3x USB2: usb2-0, usb2-1, usb2-2
-@@ -233,6 +246,9 @@ For Tegra210, the XUSB pad controller exposes the following ports:
- - 2x HSIC: hsic-0, hsic-1
- - 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
++static const struct tegra_xusb_pad_soc tegra186_usb2_pad = {
++	.name = "usb2",
++	.num_lanes = ARRAY_SIZE(tegra186_usb2_lanes),
++	.lanes = tegra186_usb2_lanes,
++	.ops = &tegra186_usb2_pad_ops,
++};
++
++static const struct tegra_xusb_lane_soc tegra186_usb3_lanes[] = {
++	TEGRA186_LANE("usb3-0", 0,  0, 0, usb3),
++	TEGRA186_LANE("usb3-1", 0,  0, 0, usb3),
++	TEGRA186_LANE("usb3-2", 0,  0, 0, usb3),
++};
++
++static const struct tegra_xusb_pad_soc tegra186_usb3_pad = {
++	.name = "usb3",
++	.num_lanes = ARRAY_SIZE(tegra186_usb3_lanes),
++	.lanes = tegra186_usb3_lanes,
++	.ops = &tegra186_usb3_pad_ops,
++};
++
++static const struct tegra_xusb_pad_soc * const tegra186_pads[] = {
++	&tegra186_usb2_pad,
++	&tegra186_usb3_pad,
++#if 0 /* TODO implement */
++	&tegra186_hsic_pad,
++#endif
++};
++
+ const struct tegra_xusb_padctl_soc tegra186_xusb_padctl_soc = {
+ 	.num_pads = ARRAY_SIZE(tegra186_pads),
+ 	.pads = tegra186_pads,
+@@ -893,6 +894,7 @@ const struct tegra_xusb_padctl_soc tegra186_xusb_padctl_soc = {
+ 	.num_supplies = ARRAY_SIZE(tegra186_xusb_padctl_supply_names),
+ };
+ EXPORT_SYMBOL_GPL(tegra186_xusb_padctl_soc);
++#endif
  
-+For Tegra194, the XUSB pad controller exposes the following ports:
-+- 4x USB2: usb2-0, usb2-1, usb2-2, usb2-3
-+- 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
- 
- Examples:
- =========
+ MODULE_AUTHOR("JC Kuo <jckuo@nvidia.com>");
+ MODULE_DESCRIPTION("NVIDIA Tegra186 XUSB Pad Controller driver");
 -- 
 2.17.1
