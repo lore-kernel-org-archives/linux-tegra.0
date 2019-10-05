@@ -1,40 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: max77620: Fix interrupt handling
-Date: Sat, 5 Oct 2019 00:03:37 +0200
-Message-ID: <CACRpkdYhSu9feBKqFA4wGdWP81fgjNYPHCdC7zaZ+eqO+caw5Q@mail.gmail.com>
-References: <20191002122825.3948322-1-thierry.reding@gmail.com> <20191002122825.3948322-3-thierry.reding@gmail.com>
+From: Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: tegra: Use WFE for power-gating on Tegra30
+Date: Sat, 5 Oct 2019 11:12:07 -0400
+Message-ID: <CAMdYzYq8YvzOnLnTbt5-=cBC8BGXN1pZnpPmcHyitGRs467zfg@mail.gmail.com>
+References: <20190730172340.14037-1-digetx@gmail.com> <20190730172340.14037-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191002122825.3948322-3-thierry.reding@gmail.com>
+In-Reply-To: <20190730172340.14037-3-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Timo Alho <talho@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 2:28 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+The Ouya (tegra30) hard locks when the emc clock drops below 400mhz.
+Discovered while testing the devfreq and emc drivers.
+This patch resolves that issue.
 
-> From: Timo Alho <talho@nvidia.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+
+On Tue, Jul 30, 2019 at 2:10 PM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> The interrupt-related register fields on the MAX77620 GPIO controller
-> share registers with GPIO related fields. If the IRQ chip is implemented
-> with regmap-irq, this causes the IRQ controller code to overwrite fields
-> previously configured by the GPIO controller code.
+> Turned out that WFI doesn't work reliably on Tegra30 as a trigger for
+> the power-gating, it causes CPU hang under some circumstances like having
+> memory controller running of PLLP. The TRM doc states that WFI should be
+> used for the Big-Little "Cluster Switch", while WFE for the power-gating.
+> Hence let's use the WFE for CPU0 power-gating, like it is done for the
+> power-gating of a secondary cores. This fixes CPU hang after entering LP2
+> with memory running off PLLP.
 >
-> Two examples where this causes problems are the NVIDIA Jetson TX1 and
-> Jetson TX2 boards, where some of the GPIOs are used to enable vital
-> power regulators. The MAX77620 GPIO controller also provides the USB OTG
-> ID pin. If configured as an interrupt, this causes some of the
-> regulators to be powered off.
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/mach-tegra/sleep-tegra30.S |  4 +++-
+>  drivers/soc/tegra/flowctrl.c        | 19 +++++++++++++++++--
+>  2 files changed, 20 insertions(+), 3 deletions(-)
 >
-> Signed-off-by: Timo Alho <talho@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-Patch applied.
-
-I am looking for ways to pass also nested irqchips along when registering
-the gpio_chip but I guess I need to clean up all the chained chips
-first (getting there...)
-
-Yours,
-Linus Walleij
+> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+> index 6c28395d8c75..17f7a2a6a494 100644
+> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+> @@ -683,10 +683,12 @@ tegra30_enter_sleep:
+>         dsb
+>         ldr     r0, [r6, r2] /* memory barrier */
+>
+> +       cmp     r10, #TEGRA30
+>  halted:
+>         isb
+>         dsb
+> -       wfi     /* CPU should be power gated here */
+> +       wfine   /* CPU should be power gated here */
+> +       wfeeq
+>
+>         /* !!!FIXME!!! Implement halt failure handler */
+>         b       halted
+> diff --git a/drivers/soc/tegra/flowctrl.c b/drivers/soc/tegra/flowctrl.c
+> index b6bdeef33db1..eb96a3086d6d 100644
+> --- a/drivers/soc/tegra/flowctrl.c
+> +++ b/drivers/soc/tegra/flowctrl.c
+> @@ -91,8 +91,23 @@ void flowctrl_cpu_suspend_enter(unsigned int cpuid)
+>                 reg &= ~TEGRA30_FLOW_CTRL_CSR_WFE_BITMAP;
+>                 /* clear wfi bitmap */
+>                 reg &= ~TEGRA30_FLOW_CTRL_CSR_WFI_BITMAP;
+> -               /* pwr gating on wfi */
+> -               reg |= TEGRA30_FLOW_CTRL_CSR_WFI_CPU0 << cpuid;
+> +
+> +               if (tegra_get_chip_id() == TEGRA30) {
+> +                       /*
+> +                        * The wfi doesn't work well on Tegra30 because
+> +                        * CPU hangs under some odd circumstances after
+> +                        * power-gating (like memory running off PLLP),
+> +                        * hence use wfe that is working perfectly fine.
+> +                        * Note that Tegra30 TRM doc clearly stands that
+> +                        * wfi should be used for the "Cluster Switching",
+> +                        * while wfe for the power-gating, just like it
+> +                        * is done on Tegra20.
+> +                        */
+> +                       reg |= TEGRA20_FLOW_CTRL_CSR_WFE_CPU0 << cpuid;
+> +               } else {
+> +                       /* pwr gating on wfi */
+> +                       reg |= TEGRA30_FLOW_CTRL_CSR_WFI_CPU0 << cpuid;
+> +               }
+>                 break;
+>         }
+>         reg |= FLOW_CTRL_CSR_INTR_FLAG;                 /* clear intr flag */
+> --
+> 2.22.0
+>
