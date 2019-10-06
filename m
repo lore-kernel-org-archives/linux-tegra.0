@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 32/34] rtc: vt8500: use devm_platform_ioremap_resource() to simplify code
-Date: Sun, 6 Oct 2019 18:29:51 +0800
-Message-ID: <20191006102953.57536-33-yuehaibing@huawei.com>
+Subject: [PATCH -next 34/34] rtc: zynqmp: use devm_platform_ioremap_resource() to simplify code
+Date: Sun, 6 Oct 2019 18:29:53 +0800
+Message-ID: <20191006102953.57536-35-yuehaibing@huawei.com>
 References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,31 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rtc/rtc-vt8500.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/rtc/rtc-zynqmp.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/rtc/rtc-vt8500.c b/drivers/rtc/rtc-vt8500.c
-index d5d14cf..11859b9 100644
---- a/drivers/rtc/rtc-vt8500.c
-+++ b/drivers/rtc/rtc-vt8500.c
-@@ -200,7 +200,6 @@ static const struct rtc_class_ops vt8500_rtc_ops = {
- static int vt8500_rtc_probe(struct platform_device *pdev)
+diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
+index 2c76275..55646e0 100644
+--- a/drivers/rtc/rtc-zynqmp.c
++++ b/drivers/rtc/rtc-zynqmp.c
+@@ -195,7 +195,6 @@ static irqreturn_t xlnx_rtc_interrupt(int irq, void *id)
+ static int xlnx_rtc_probe(struct platform_device *pdev)
  {
- 	struct vt8500_rtc *vt8500_rtc;
--	struct resource	*res;
+ 	struct xlnx_rtc_dev *xrtcdev;
+-	struct resource *res;
  	int ret;
  
- 	vt8500_rtc = devm_kzalloc(&pdev->dev,
-@@ -215,8 +214,7 @@ static int vt8500_rtc_probe(struct platform_device *pdev)
- 	if (vt8500_rtc->irq_alarm < 0)
- 		return vt8500_rtc->irq_alarm;
+ 	xrtcdev = devm_kzalloc(&pdev->dev, sizeof(*xrtcdev), GFP_KERNEL);
+@@ -211,9 +210,7 @@ static int xlnx_rtc_probe(struct platform_device *pdev)
+ 	xrtcdev->rtc->ops = &xlnx_rtc_ops;
+ 	xrtcdev->rtc->range_max = U32_MAX;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	vt8500_rtc->regbase = devm_ioremap_resource(&pdev->dev, res);
-+	vt8500_rtc->regbase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(vt8500_rtc->regbase))
- 		return PTR_ERR(vt8500_rtc->regbase);
+-
+-	xrtcdev->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	xrtcdev->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(xrtcdev->reg_base))
+ 		return PTR_ERR(xrtcdev->reg_base);
  
 -- 
 2.7.4
