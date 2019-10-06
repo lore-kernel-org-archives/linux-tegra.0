@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 15/34] rtc: lpc32xx: use devm_platform_ioremap_resource() to simplify code
-Date: Sun, 6 Oct 2019 18:29:34 +0800
-Message-ID: <20191006102953.57536-16-yuehaibing@huawei.com>
+Subject: [PATCH -next 16/34] rtc: meson: use devm_platform_ioremap_resource() to simplify code
+Date: Sun, 6 Oct 2019 18:29:35 +0800
+Message-ID: <20191006102953.57536-17-yuehaibing@huawei.com>
 References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rtc/rtc-lpc32xx.c | 4 +---
+ drivers/rtc/rtc-meson.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/rtc/rtc-lpc32xx.c b/drivers/rtc/rtc-lpc32xx.c
-index ac39323..b6a0d4a 100644
---- a/drivers/rtc/rtc-lpc32xx.c
-+++ b/drivers/rtc/rtc-lpc32xx.c
-@@ -185,7 +185,6 @@ static const struct rtc_class_ops lpc32xx_rtc_ops = {
- 
- static int lpc32xx_rtc_probe(struct platform_device *pdev)
- {
+diff --git a/drivers/rtc/rtc-meson.c b/drivers/rtc/rtc-meson.c
+index e08b981..9bd8478 100644
+--- a/drivers/rtc/rtc-meson.c
++++ b/drivers/rtc/rtc-meson.c
+@@ -292,7 +292,6 @@ static int meson_rtc_probe(struct platform_device *pdev)
+ 	};
+ 	struct device *dev = &pdev->dev;
+ 	struct meson_rtc *rtc;
 -	struct resource *res;
- 	struct lpc32xx_rtc *rtc;
- 	int err;
- 	u32 tmp;
-@@ -194,8 +193,7 @@ static int lpc32xx_rtc_probe(struct platform_device *pdev)
- 	if (unlikely(!rtc))
- 		return -ENOMEM;
+ 	void __iomem *base;
+ 	int ret;
+ 	u32 tm;
+@@ -312,8 +311,7 @@ static int meson_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtc->ops = &meson_rtc_ops;
+ 	rtc->rtc->range_max = U32_MAX;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rtc->rtc_base = devm_ioremap_resource(&pdev->dev, res);
-+	rtc->rtc_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rtc->rtc_base))
- 		return PTR_ERR(rtc->rtc_base);
+-	base = devm_ioremap_resource(dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
 -- 
 2.7.4
