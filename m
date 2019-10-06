@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 03/34] rtc: brcmstb-waketimer: use devm_platform_ioremap_resource() to simplify code
-Date: Sun, 6 Oct 2019 18:29:22 +0800
-Message-ID: <20191006102953.57536-4-yuehaibing@huawei.com>
+Subject: [PATCH -next 05/34] rtc: cadence: use devm_platform_ioremap_resource() to simplify code
+Date: Sun, 6 Oct 2019 18:29:24 +0800
+Message-ID: <20191006102953.57536-6-yuehaibing@huawei.com>
 References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rtc/rtc-brcmstb-waketimer.c | 4 +---
+ drivers/rtc/rtc-cadence.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/rtc/rtc-brcmstb-waketimer.c b/drivers/rtc/rtc-brcmstb-waketimer.c
-index 3e9800f..cb7af87 100644
---- a/drivers/rtc/rtc-brcmstb-waketimer.c
-+++ b/drivers/rtc/rtc-brcmstb-waketimer.c
-@@ -200,7 +200,6 @@ static int brcmstb_waketmr_probe(struct platform_device *pdev)
+diff --git a/drivers/rtc/rtc-cadence.c b/drivers/rtc/rtc-cadence.c
+index 592aae2..595d5d2 100644
+--- a/drivers/rtc/rtc-cadence.c
++++ b/drivers/rtc/rtc-cadence.c
+@@ -255,7 +255,6 @@ static const struct rtc_class_ops cdns_rtc_ops = {
+ static int cdns_rtc_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
- 	struct brcmstb_waketmr *timer;
+ 	struct cdns_rtc *crtc;
 -	struct resource *res;
  	int ret;
+ 	unsigned long ref_clk_freq;
  
- 	timer = devm_kzalloc(dev, sizeof(*timer), GFP_KERNEL);
-@@ -210,8 +209,7 @@ static int brcmstb_waketmr_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, timer);
- 	timer->dev = dev;
+@@ -263,8 +262,7 @@ static int cdns_rtc_probe(struct platform_device *pdev)
+ 	if (!crtc)
+ 		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	timer->base = devm_ioremap_resource(dev, res);
-+	timer->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(timer->base))
- 		return PTR_ERR(timer->base);
+-	crtc->regs = devm_ioremap_resource(&pdev->dev, res);
++	crtc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(crtc->regs))
+ 		return PTR_ERR(crtc->regs);
  
 -- 
 2.7.4
