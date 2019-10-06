@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 08/34] rtc: digicolor: use devm_platform_ioremap_resource() to simplify code
-Date: Sun, 6 Oct 2019 18:29:27 +0800
-Message-ID: <20191006102953.57536-9-yuehaibing@huawei.com>
+Subject: [PATCH -next 09/34] rtc: ds1216: use devm_platform_ioremap_resource() to simplify code
+Date: Sun, 6 Oct 2019 18:29:28 +0800
+Message-ID: <20191006102953.57536-10-yuehaibing@huawei.com>
 References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rtc/rtc-digicolor.c | 4 +---
+ drivers/rtc/rtc-ds1216.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
-index 0aecc3f..200d85b 100644
---- a/drivers/rtc/rtc-digicolor.c
-+++ b/drivers/rtc/rtc-digicolor.c
-@@ -175,7 +175,6 @@ static irqreturn_t dc_rtc_irq(int irq, void *dev_id)
+diff --git a/drivers/rtc/rtc-ds1216.c b/drivers/rtc/rtc-ds1216.c
+index b225bcf..7eeb3f3 100644
+--- a/drivers/rtc/rtc-ds1216.c
++++ b/drivers/rtc/rtc-ds1216.c
+@@ -137,7 +137,6 @@ static const struct rtc_class_ops ds1216_rtc_ops = {
  
- static int __init dc_rtc_probe(struct platform_device *pdev)
+ static int __init ds1216_rtc_probe(struct platform_device *pdev)
  {
 -	struct resource *res;
- 	struct dc_rtc *rtc;
- 	int irq, ret;
+ 	struct ds1216_priv *priv;
+ 	u8 dummy[8];
  
-@@ -183,8 +182,7 @@ static int __init dc_rtc_probe(struct platform_device *pdev)
- 	if (!rtc)
- 		return -ENOMEM;
+@@ -147,8 +146,7 @@ static int __init ds1216_rtc_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, priv);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rtc->regs = devm_ioremap_resource(&pdev->dev, res);
-+	rtc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rtc->regs))
- 		return PTR_ERR(rtc->regs);
+-	priv->ioaddr = devm_ioremap_resource(&pdev->dev, res);
++	priv->ioaddr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->ioaddr))
+ 		return PTR_ERR(priv->ioaddr);
  
 -- 
 2.7.4
