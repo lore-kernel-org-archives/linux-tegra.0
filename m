@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 31/34] rtc: tx4939: use devm_platform_ioremap_resource() to simplify code
-Date: Sun, 6 Oct 2019 18:29:50 +0800
-Message-ID: <20191006102953.57536-32-yuehaibing@huawei.com>
+Subject: [PATCH -next 33/34] rtc: xgene: use devm_platform_ioremap_resource() to simplify code
+Date: Sun, 6 Oct 2019 18:29:52 +0800
+Message-ID: <20191006102953.57536-34-yuehaibing@huawei.com>
 References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rtc/rtc-tx4939.c | 4 +---
+ drivers/rtc/rtc-xgene.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
-index 5a29915..715b829 100644
---- a/drivers/rtc/rtc-tx4939.c
-+++ b/drivers/rtc/rtc-tx4939.c
-@@ -236,7 +236,6 @@ static int __init tx4939_rtc_probe(struct platform_device *pdev)
+diff --git a/drivers/rtc/rtc-xgene.c b/drivers/rtc/rtc-xgene.c
+index 9683fbf..603c4e4 100644
+--- a/drivers/rtc/rtc-xgene.c
++++ b/drivers/rtc/rtc-xgene.c
+@@ -137,7 +137,6 @@ static irqreturn_t xgene_rtc_interrupt(int irq, void *id)
+ static int xgene_rtc_probe(struct platform_device *pdev)
  {
- 	struct rtc_device *rtc;
- 	struct tx4939rtc_plat_data *pdata;
+ 	struct xgene_rtc_dev *pdata;
 -	struct resource *res;
- 	int irq, ret;
- 	struct nvmem_config nvmem_cfg = {
- 		.name = "tx4939_nvram",
-@@ -253,8 +252,7 @@ static int __init tx4939_rtc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+ 	int ret;
+ 	int irq;
+ 
+@@ -147,8 +146,7 @@ static int xgene_rtc_probe(struct platform_device *pdev)
  	platform_set_drvdata(pdev, pdata);
+ 	pdata->dev = &pdev->dev;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pdata->rtcreg = devm_ioremap_resource(&pdev->dev, res);
-+	pdata->rtcreg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pdata->rtcreg))
- 		return PTR_ERR(pdata->rtcreg);
+-	pdata->csr_base = devm_ioremap_resource(&pdev->dev, res);
++	pdata->csr_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pdata->csr_base))
+ 		return PTR_ERR(pdata->csr_base);
  
 -- 
 2.7.4
