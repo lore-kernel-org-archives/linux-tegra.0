@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 18/34] rtc: mv: use devm_platform_ioremap_resource() to simplify code
-Date: Sun, 6 Oct 2019 18:29:37 +0800
-Message-ID: <20191006102953.57536-19-yuehaibing@huawei.com>
+Subject: [PATCH -next 20/34] rtc: pic32: use devm_platform_ioremap_resource() to simplify code
+Date: Sun, 6 Oct 2019 18:29:39 +0800
+Message-ID: <20191006102953.57536-21-yuehaibing@huawei.com>
 References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rtc/rtc-mv.c | 4 +---
+ drivers/rtc/rtc-pic32.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/rtc/rtc-mv.c b/drivers/rtc/rtc-mv.c
-index ab9db57..d5f190e5 100644
---- a/drivers/rtc/rtc-mv.c
-+++ b/drivers/rtc/rtc-mv.c
-@@ -212,7 +212,6 @@ static const struct rtc_class_ops mv_rtc_alarm_ops = {
- 
- static int __init mv_rtc_probe(struct platform_device *pdev)
+diff --git a/drivers/rtc/rtc-pic32.c b/drivers/rtc/rtc-pic32.c
+index 17653ed..2b69467 100644
+--- a/drivers/rtc/rtc-pic32.c
++++ b/drivers/rtc/rtc-pic32.c
+@@ -298,7 +298,6 @@ static int pic32_rtc_remove(struct platform_device *pdev)
+ static int pic32_rtc_probe(struct platform_device *pdev)
  {
+ 	struct pic32_rtc_dev *pdata;
 -	struct resource *res;
- 	struct rtc_plat_data *pdata;
- 	u32 rtc_time;
- 	int ret = 0;
-@@ -221,8 +220,7 @@ static int __init mv_rtc_probe(struct platform_device *pdev)
- 	if (!pdata)
- 		return -ENOMEM;
+ 	int ret;
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+@@ -311,8 +310,7 @@ static int pic32_rtc_probe(struct platform_device *pdev)
+ 	if (pdata->alarm_irq < 0)
+ 		return pdata->alarm_irq;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pdata->ioaddr = devm_ioremap_resource(&pdev->dev, res);
-+	pdata->ioaddr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pdata->ioaddr))
- 		return PTR_ERR(pdata->ioaddr);
+-	pdata->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	pdata->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pdata->reg_base))
+ 		return PTR_ERR(pdata->reg_base);
  
 -- 
 2.7.4
