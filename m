@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 26/34] rtc: ds1286: use devm_platform_ioremap_resource() to simplify code
-Date: Sun, 6 Oct 2019 18:29:45 +0800
-Message-ID: <20191006102953.57536-27-yuehaibing@huawei.com>
+Subject: [PATCH -next 27/34] rtc: st-lpc: use devm_platform_ioremap_resource() to simplify code
+Date: Sun, 6 Oct 2019 18:29:46 +0800
+Message-ID: <20191006102953.57536-28-yuehaibing@huawei.com>
 References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,29 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rtc/rtc-ds1286.c | 4 +---
+ drivers/rtc/rtc-st-lpc.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/rtc/rtc-ds1286.c b/drivers/rtc/rtc-ds1286.c
-index a06508b..7acf849 100644
---- a/drivers/rtc/rtc-ds1286.c
-+++ b/drivers/rtc/rtc-ds1286.c
-@@ -323,15 +323,13 @@ static const struct rtc_class_ops ds1286_ops = {
- static int ds1286_probe(struct platform_device *pdev)
+diff --git a/drivers/rtc/rtc-st-lpc.c b/drivers/rtc/rtc-st-lpc.c
+index 49474a3..f1c5471 100644
+--- a/drivers/rtc/rtc-st-lpc.c
++++ b/drivers/rtc/rtc-st-lpc.c
+@@ -186,7 +186,6 @@ static int st_rtc_probe(struct platform_device *pdev)
  {
- 	struct rtc_device *rtc;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct st_rtc *rtc;
 -	struct resource *res;
- 	struct ds1286_priv *priv;
+ 	uint32_t mode;
+ 	int ret = 0;
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct ds1286_priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
+@@ -210,8 +209,7 @@ static int st_rtc_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&rtc->lock);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->rtcregs = devm_ioremap_resource(&pdev->dev, res);
-+	priv->rtcregs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->rtcregs))
- 		return PTR_ERR(priv->rtcregs);
+-	rtc->ioaddr = devm_ioremap_resource(&pdev->dev, res);
++	rtc->ioaddr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(rtc->ioaddr))
+ 		return PTR_ERR(rtc->ioaddr);
  
 -- 
 2.7.4
