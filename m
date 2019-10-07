@@ -1,8 +1,8 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH v4 4/7] ASoC: tegra: disable rx_fifo after
-	disable stream
-Date: Mon,  7 Oct 2019 16:31:33 +0100
-Message-ID: <20191007153136.4920-5-ben.dooks@codethink.co.uk>
+Subject: [PATCH v4 7/7] ASoC: tegra: take packing settings from
+	the audio cif_config
+Date: Mon,  7 Oct 2019 16:31:36 +0100
+Message-ID: <20191007153136.4920-8-ben.dooks@codethink.co.uk>
 References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,33 +22,61 @@ To: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <p
 Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-We see odd FIFO overruns with this, we assume the best thing to do is
-to disable the RX I2S frontend first, and then disable the FIFO that
-is using it.
-
-This also fixes an issue where using multi-word frames (TDM) have
-partial samples stuck in the FIFO which then get read out when the
-next capture is started.
+If the CIF is not configured as 16 or 8 bit, then the
+packing for 8/16 bits should not be enabled as the
+hardware only supports 8 or 16 bit packing.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- sound/soc/tegra/tegra30_i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/tegra/tegra30_ahub.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index 7382f7949bf4..f87ab1e36369 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -236,9 +236,9 @@ static void tegra30_i2s_start_capture(struct tegra30_i2s *i2s)
+diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+index 24bc03428b45..0768c6b6dc25 100644
+--- a/sound/soc/tegra/tegra30_ahub.c
++++ b/sound/soc/tegra/tegra30_ahub.c
+@@ -96,10 +96,17 @@ int tegra30_ahub_setup_rx_fifo(enum tegra30_ahub_rxcif rxcif,
+ 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
+ 	val = tegra30_apbif_read(reg);
+ 	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK |
+-		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK);
+-	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT) |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
++		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK |
++		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN);
++	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT);
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16 ||
++	    cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_8_4;
++
+ 	tegra30_apbif_write(reg, val);
  
- static void tegra30_i2s_stop_capture(struct tegra30_i2s *i2s)
- {
--	tegra30_ahub_disable_rx_fifo(i2s->capture_fifo_cif);
- 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CTRL,
- 			   TEGRA30_I2S_CTRL_XFER_EN_RX, 0);
-+	tegra30_ahub_disable_rx_fifo(i2s->capture_fifo_cif);
- }
+ 	cif_conf->direction = TEGRA30_AUDIOCIF_DIRECTION_RX;
+@@ -203,10 +210,16 @@ int tegra30_ahub_setup_tx_fifo(enum tegra30_ahub_txcif txcif,
+ 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
+ 	val = tegra30_apbif_read(reg);
+ 	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_MASK |
+-		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK);
+-	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT) |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN |
+-	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16;
++		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK |
++		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN);
++	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT);
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16 ||
++	    cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16;
++	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
++		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_8_4;
+ 	tegra30_apbif_write(reg, val);
  
- static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	cif_conf->direction = TEGRA30_AUDIOCIF_DIRECTION_TX;
 -- 
 2.23.0
