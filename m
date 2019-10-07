@@ -1,53 +1,106 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.3 000/166] 5.3.5-stable review
-Date: Mon, 7 Oct 2019 11:09:04 +0100
-Message-ID: <b71f3543-ba23-9e23-40aa-f958c0012182@nvidia.com>
-References: <20191006171212.850660298@linuxfoundation.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH -next 00/34] rtc: use devm_platform_ioremap_resource() to
+ simplify code
+Date: Mon, 7 Oct 2019 12:10:37 +0200
+Message-ID: <20191007101037.GE4254@piout.net>
+References: <20191006102953.57536-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20191006102953.57536-1-yuehaibing@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: a.zummo@towertech.it, joel@jms.id.au, andrew@aj.id.au, nicolas.ferre@microchip.com, ludovic.desroches@microchip.com, computersforpeace@gmail.com, gregory.0xf0@gmail.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, baruch@tkos.co.il, paul@crapouillou.net, vz@mleia.com, slemieux.tyco@gmail.com, khilman@baylibre.com, eddie.huang@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, mripard@kernel.org, wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux@prisktech.co.nz, michal.simek@xilinx.com, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infrad
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 06/10/2019 18:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.5 release.
-> There are 166 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 06/10/2019 18:29:19+0800, YueHaibing wrote:
+> devm_platform_ioremap_resource() internally have platform_get_resource()
+> and devm_ioremap_resource() in it. So instead of calling them separately
+> use devm_platform_ioremap_resource() directly.
 > 
-> Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
-> Anything received after that time might be too late.
+> YueHaibing (34):
+>   rtc: asm9260: use devm_platform_ioremap_resource() to simplify code
+>   rtc: rtc-aspeed: use devm_platform_ioremap_resource() to simplify code
+>   rtc: brcmstb-waketimer: use devm_platform_ioremap_resource() to
+>     simplify code
+>   rtc: at91sam9: use devm_platform_ioremap_resource() to simplify code
+>   rtc: cadence: use devm_platform_ioremap_resource() to simplify code
+>   rtc: coh901331: use devm_platform_ioremap_resource() to simplify code
+>   rtc: davinci: use devm_platform_ioremap_resource() to simplify code
+>   rtc: digicolor: use devm_platform_ioremap_resource() to simplify code
+>   rtc: ds1216: use devm_platform_ioremap_resource() to simplify code
+>   rtc: ds1511: use devm_platform_ioremap_resource() to simplify code
+>   rtc: ds1553: use devm_platform_ioremap_resource() to simplify code
+>   rtc: ep93xx: use devm_platform_ioremap_resource() to simplify code
+>   rtc: jz4740: use devm_platform_ioremap_resource() to simplify code
+>   rtc: lpc24xx: use devm_platform_ioremap_resource() to simplify code
+>   rtc: lpc32xx: use devm_platform_ioremap_resource() to simplify code
+>   rtc: meson: use devm_platform_ioremap_resource() to simplify code
+>   rtc: mt7622: use devm_platform_ioremap_resource() to simplify code
+>   rtc: mv: use devm_platform_ioremap_resource() to simplify code
+>   rtc: omap: use devm_platform_ioremap_resource() to simplify code
+>   rtc: pic32: use devm_platform_ioremap_resource() to simplify code
+>   rtc: rtd119x: use devm_platform_ioremap_resource() to simplify code
+>   rtc: s3c: use devm_platform_ioremap_resource() to simplify code
+>   rtc: sa1100: use devm_platform_ioremap_resource() to simplify code
+>   rtc: spear: use devm_platform_ioremap_resource() to simplify code
+>   rtc: stk17ta8: use devm_platform_ioremap_resource() to simplify code
+>   rtc: ds1286: use devm_platform_ioremap_resource() to simplify code
+>   rtc: st-lpc: use devm_platform_ioremap_resource() to simplify code
+>   rtc: stm32: use devm_platform_ioremap_resource() to simplify code
+>   rtc: sunxi: use devm_platform_ioremap_resource() to simplify code
+>   rtc: tegra: use devm_platform_ioremap_resource() to simplify code
+>   rtc: tx4939: use devm_platform_ioremap_resource() to simplify code
+>   rtc: vt8500: use devm_platform_ioremap_resource() to simplify code
+>   rtc: xgene: use devm_platform_ioremap_resource() to simplify code
+>   rtc: zynqmp: use devm_platform_ioremap_resource() to simplify code
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> and the diffstat can be found below.
+>  drivers/rtc/rtc-asm9260.c           | 4 +---
+>  drivers/rtc/rtc-aspeed.c            | 4 +---
+>  drivers/rtc/rtc-at91sam9.c          | 4 +---
+>  drivers/rtc/rtc-brcmstb-waketimer.c | 4 +---
+>  drivers/rtc/rtc-cadence.c           | 4 +---
+>  drivers/rtc/rtc-coh901331.c         | 4 +---
+>  drivers/rtc/rtc-davinci.c           | 4 +---
+>  drivers/rtc/rtc-digicolor.c         | 4 +---
+>  drivers/rtc/rtc-ds1216.c            | 4 +---
+>  drivers/rtc/rtc-ds1286.c            | 4 +---
+>  drivers/rtc/rtc-ds1511.c            | 4 +---
+>  drivers/rtc/rtc-ds1553.c            | 4 +---
+>  drivers/rtc/rtc-ep93xx.c            | 4 +---
+>  drivers/rtc/rtc-jz4740.c            | 4 +---
+>  drivers/rtc/rtc-lpc24xx.c           | 4 +---
+>  drivers/rtc/rtc-lpc32xx.c           | 4 +---
+>  drivers/rtc/rtc-meson.c             | 4 +---
+>  drivers/rtc/rtc-mt7622.c            | 4 +---
+>  drivers/rtc/rtc-mv.c                | 4 +---
+>  drivers/rtc/rtc-omap.c              | 4 +---
+>  drivers/rtc/rtc-pic32.c             | 4 +---
+>  drivers/rtc/rtc-rtd119x.c           | 4 +---
+>  drivers/rtc/rtc-s3c.c               | 4 +---
+>  drivers/rtc/rtc-sa1100.c            | 4 +---
+>  drivers/rtc/rtc-spear.c             | 4 +---
+>  drivers/rtc/rtc-st-lpc.c            | 4 +---
+>  drivers/rtc/rtc-stk17ta8.c          | 4 +---
+>  drivers/rtc/rtc-stm32.c             | 4 +---
+>  drivers/rtc/rtc-sunxi.c             | 4 +---
+>  drivers/rtc/rtc-tegra.c             | 4 +---
+>  drivers/rtc/rtc-tx4939.c            | 4 +---
+>  drivers/rtc/rtc-vt8500.c            | 4 +---
+>  drivers/rtc/rtc-xgene.c             | 4 +---
+>  drivers/rtc/rtc-zynqmp.c            | 5 +----
+>  34 files changed, 34 insertions(+), 103 deletions(-)
 > 
-> thanks,
+
+I've quashed and applied.
+
+> -- 
+> 2.7.4
 > 
-> greg k-h
-
-All tests are passing for Tegra ...
-
-Test results for stable-v5.3:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.3.5-rc1-ga2703e78c28a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
+> 
 
 -- 
-nvpublic
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
