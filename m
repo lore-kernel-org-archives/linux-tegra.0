@@ -1,51 +1,27 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH -next 16/34] rtc: meson: use devm_platform_ioremap_resource() to simplify code
-Date: Mon, 07 Oct 2019 11:09:15 -0700
-Message-ID: <7hk19gfmwk.fsf@baylibre.com>
-References: <20191006102953.57536-1-yuehaibing@huawei.com> <20191006102953.57536-17-yuehaibing@huawei.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH -next 03/34] rtc: brcmstb-waketimer: use
+ devm_platform_ioremap_resource() to simplify code
+Date: Mon, 7 Oct 2019 11:15:33 -0700
+Message-ID: <dd5ef249-820c-9a5c-9fdf-50c7af9b0f61@gmail.com>
+References: <20191006102953.57536-1-yuehaibing@huawei.com>
+ <20191006102953.57536-4-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191006102953.57536-17-yuehaibing@huawei.com>
+In-Reply-To: <20191006102953.57536-4-yuehaibing@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com, joel@jms.id.au, andrew@aj.id.au, nicolas.ferre@microchip.com, ludovic.desroches@microchip.com, computersforpeace@gmail.com, gregory.0xf0@gmail.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, baruch@tkos.co.il, paul@crapouillou.net, vz@mleia.com, slemieux.tyco@gmail.com, eddie.huang@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, mripard@kernel.org, wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux@prisktech.co.nz, michal.simek@xilinx.com
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: YueHaibing <yuehaibing@huawei.com>, a.zummo@towertech.it, alexandre.belloni@bootlin.com, joel@jms.id.au, andrew@aj.id.au, nicolas.ferre@microchip.com, ludovic.desroches@microchip.com, computersforpeace@gmail.com, gregory.0xf0@gmail.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, baruch@tkos.co.il, paul@crapouillou.net, vz@mleia.com, slemieux.tyco@gmail.com, khilman@baylibre.com, eddie.huang@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, mripard@kernel.org, wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux@prisktech.co.nz, michal.simek@xilinx.com
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> writes:
-
+On 10/6/19 3:29 AM, YueHaibing wrote:
 > Use devm_platform_ioremap_resource() to simplify the code a bit.
 > This is detected by coccinelle.
->
+> 
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-
-> ---
->  drivers/rtc/rtc-meson.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/rtc/rtc-meson.c b/drivers/rtc/rtc-meson.c
-> index e08b981..9bd8478 100644
-> --- a/drivers/rtc/rtc-meson.c
-> +++ b/drivers/rtc/rtc-meson.c
-> @@ -292,7 +292,6 @@ static int meson_rtc_probe(struct platform_device *pdev)
->  	};
->  	struct device *dev = &pdev->dev;
->  	struct meson_rtc *rtc;
-> -	struct resource *res;
->  	void __iomem *base;
->  	int ret;
->  	u32 tm;
-> @@ -312,8 +311,7 @@ static int meson_rtc_probe(struct platform_device *pdev)
->  	rtc->rtc->ops = &meson_rtc_ops;
->  	rtc->rtc->range_max = U32_MAX;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	base = devm_ioremap_resource(dev, res);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> -- 
-> 2.7.4
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
