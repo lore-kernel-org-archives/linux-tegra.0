@@ -1,118 +1,23 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 6/7] ASoC: tegra: config fifos on
-	hw_param changes
-Date: Mon, 7 Oct 2019 09:08:31 +0100
-Message-ID: <f98024eb-2a85-9d80-d88a-486078807740@nvidia.com>
-References: <20190930165130.10642-1-ben.dooks@codethink.co.uk>
- <20190930165130.10642-7-ben.dooks@codethink.co.uk>
- <3a65d828-8430-9739-7973-10e0df360767@nvidia.com>
- <faed4e1f-0e67-88b1-e276-80a8a5cd4b3e@codethink.co.uk>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH -next 29/34] rtc: sunxi: use devm_platform_ioremap_resource()
+ to simplify code
+Date: Mon, 7 Oct 2019 16:11:38 +0800
+Message-ID: <CAGb2v64hUaddO-29=ZP53HDrrOUKqfa52Qk9Q2dGf_RkfwZfyA@mail.gmail.com>
+References: <20191006102953.57536-1-yuehaibing@huawei.com> <20191006102953.57536-30-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <faed4e1f-0e67-88b1-e276-80a8a5cd4b3e@codethink.co.uk>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191006102953.57536-30-yuehaibing@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, joel@jms.id.au, andrew@aj.id.au, Nicolas Ferre <nicolas.ferre@microchip.com>, ludovic.desroches@microchip.com, Brian Norris <computersforpeace@gmail.com>, gregory.0xf0@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, "open list:BROADCOM BCM281XX..." <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Baruch Siach <baruch@tkos.co.il>, paul@crapouillou.net, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Kevin Hilman <khilman@baylibre.com>, eddie.huang@mediatek.com, Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Patrice Chotard <patrice.chotard@st.com>, Maxime
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA0LzEwLzIwMTkgMTg6MDMsIEJlbiBEb29rcyB3cm90ZToKPiBPbiAzMC8wOS8yMDE5IDIy
-OjA4LCBKb24gSHVudGVyIHdyb3RlOgo+Pgo+PiBPbiAzMC8wOS8yMDE5IDE3OjUxLCBCZW4gRG9v
-a3Mgd3JvdGU6Cj4+PiBJZiB0aGUgaHdfcGFyYW1zIHVzZXMgYSBkaWZmZXJlbnQgYml0IG9yIGNo
-YW5uZWwgY291bnQsIHRoZW4gd2UKPj4+IG5lZWQgdG8gY2hhbmdlIGJvdGggdGhlIEkyUyB1bml0
-J3MgQ0lGIGNvbmZpZ3VyYXRpb24gYXMgd2VsbCBhcwo+Pj4gdGhlIEFQQklGIG9uZS4KPj4+Cj4+
-PiBUbyBhbGxvdyBjaGFuZ2luZyB0aGUgQVBCSUYsIGFkZCBhIGNhbGwgdG8gcmVjb25maWd1cmUg
-dGhlIFJYIG9yCj4+PiBUWCBGSUZPIHdpdGhvdXQgY2hhbmdpbmcgdGhlIERNQSBvciBhbGxvY2F0
-aW9uLCBhbmQgZ2V0IHRoZSBJMlMKPj4+IGRyaXZlciB0byBjYWxsIGl0IG9uY2UgdGhlIGh3IHBh
-cmFtcyBoYXZlIGJlZW4gY2FsY3VsYXRlLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEJlbiBEb29r
-cyA8YmVuLmRvb2tzQGNvZGV0aGluay5jby51az4KPj4+IC0tLQo+Pj4gwqAgc291bmQvc29jL3Rl
-Z3JhL3RlZ3JhMzBfYWh1Yi5jIHwgMTE0ICsrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0t
-LQo+Pj4gwqAgc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfYWh1Yi5oIHzCoMKgIDUgKysKPj4+IMKg
-IHNvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jwqAgfMKgwqAgMiArCj4+PiDCoCAzIGZpbGVz
-IGNoYW5nZWQsIDY5IGluc2VydGlvbnMoKyksIDUyIGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYg
-LS1naXQgYS9zb3VuZC9zb2MvdGVncmEvdGVncmEzMF9haHViLmMKPj4+IGIvc291bmQvc29jL3Rl
-Z3JhL3RlZ3JhMzBfYWh1Yi5jCj4+PiBpbmRleCA5NTIzODEyNjBkYzMuLjU4ZTA1Y2ViODZkYSAx
-MDA2NDQKPj4+IC0tLSBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2FodWIuYwo+Pj4gKysrIGIv
-c291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfYWh1Yi5jCj4+PiBAQCAtODQsMTIgKzg0LDQwIEBAIHN0
-YXRpYyBpbnQgdGVncmEzMF9haHViX3J1bnRpbWVfcmVzdW1lKHN0cnVjdAo+Pj4gZGV2aWNlICpk
-ZXYpCj4+PiDCoMKgwqDCoMKgIHJldHVybiAwOwo+Pj4gwqAgfQo+Pj4gwqAgK2ludCB0ZWdyYTMw
-X2FodWJfc2V0dXBfcnhfZmlmbyhlbnVtIHRlZ3JhMzBfYWh1Yl9yeGNpZiByeGNpZiwKPj4+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IHRlZ3JhMzBfYWh1Yl9j
-aWZfY29uZiAqY2lmX2NvbmYpCj4+PiArewo+Pj4gK8KgwqDCoCBpbnQgY2hhbm5lbCA9IHJ4Y2lm
-IC0gVEVHUkEzMF9BSFVCX1JYQ0lGX0FQQklGX1JYMDsKPj4+ICvCoMKgwqAgdTMyIHJlZywgdmFs
-Owo+Pj4gKwo+Pj4gK8KgwqDCoCBwbV9ydW50aW1lX2dldF9zeW5jKGFodWItPmRldik7Cj4+PiAr
-Cj4+PiArwqDCoMKgIHJlZyA9IFRFR1JBMzBfQUhVQl9DSEFOTkVMX0NUUkwgKwo+Pj4gK8KgwqDC
-oMKgwqDCoMKgwqDCoCAoY2hhbm5lbCAqIFRFR1JBMzBfQUhVQl9DSEFOTkVMX0NUUkxfU1RSSURF
-KTsKPj4+ICvCoMKgwqAgdmFsID0gdGVncmEzMF9hcGJpZl9yZWFkKHJlZyk7Cj4+PiArwqDCoMKg
-IHZhbCAmPSB+KFRFR1JBMzBfQUhVQl9DSEFOTkVMX0NUUkxfUlhfVEhSRVNIT0xEX01BU0sgfAo+
-Pj4gK8KgwqDCoMKgwqDCoMKgwqAgVEVHUkEzMF9BSFVCX0NIQU5ORUxfQ1RSTF9SWF9QQUNLX01B
-U0spOwo+Pj4gK8KgwqDCoCB2YWwgfD0gKDcgPDwgVEVHUkEzMF9BSFVCX0NIQU5ORUxfQ1RSTF9S
-WF9USFJFU0hPTERfU0hJRlQpIHwKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoCBURUdSQTMwX0FI
-VUJfQ0hBTk5FTF9DVFJMX1JYX1BBQ0tfRU4gfAo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgIFRF
-R1JBMzBfQUhVQl9DSEFOTkVMX0NUUkxfUlhfUEFDS18xNjsKPj4+ICvCoMKgwqAgdGVncmEzMF9h
-cGJpZl93cml0ZShyZWcsIHZhbCk7Cj4+PiArCj4+PiArwqDCoMKgIGNpZl9jb25mLT5kaXJlY3Rp
-b24gPSBURUdSQTMwX0FVRElPQ0lGX0RJUkVDVElPTl9SWDsKPj4+ICsKPj4+ICvCoMKgwqAgcmVn
-ID0gVEVHUkEzMF9BSFVCX0NJRl9SWF9DVFJMICsKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqAgKGNo
-YW5uZWwgKiBURUdSQTMwX0FIVUJfQ0lGX1JYX0NUUkxfU1RSSURFKTsKPj4+ICvCoMKgwqAgYWh1
-Yi0+c29jX2RhdGEtPnNldF9hdWRpb19jaWYoYWh1Yi0+cmVnbWFwX2FwYmlmLCByZWcsIGNpZl9j
-b25mKTsKPj4+ICsKPj4+ICvCoMKgwqAgcG1fcnVudGltZV9wdXQoYWh1Yi0+ZGV2KTsKPj4+ICvC
-oMKgwqAgcmV0dXJuIDA7Cj4+PiArfQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKHRlZ3JhMzBfYWh1
-Yl9zZXR1cF9yeF9maWZvKTsKPj4+ICsKPj4+IMKgIGludCB0ZWdyYTMwX2FodWJfYWxsb2NhdGVf
-cnhfZmlmbyhlbnVtIHRlZ3JhMzBfYWh1Yl9yeGNpZiAqcnhjaWYsCj4+PiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjaGFyICpkbWFjaGFuLCBpbnQgZG1hY2hhbl9sZW4s
-Cj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkbWFfYWRkcl90ICpm
-aWZvcmVnKQo+Pj4gwqAgewo+Pj4gwqDCoMKgwqDCoCBpbnQgY2hhbm5lbDsKPj4+IC3CoMKgwqAg
-dTMyIHJlZywgdmFsOwo+Pj4gwqDCoMKgwqDCoCBzdHJ1Y3QgdGVncmEzMF9haHViX2NpZl9jb25m
-IGNpZl9jb25mOwo+Pj4gwqAgwqDCoMKgwqDCoCBjaGFubmVsID0gZmluZF9maXJzdF96ZXJvX2Jp
-dChhaHViLT5yeF91c2FnZSwKPj4+IEBAIC0xMDQsMzcgKzEzMiwxNCBAQCBpbnQgdGVncmEzMF9h
-aHViX2FsbG9jYXRlX3J4X2ZpZm8oZW51bQo+Pj4gdGVncmEzMF9haHViX3J4Y2lmICpyeGNpZiwK
-Pj4+IMKgwqDCoMKgwqAgKmZpZm9yZWcgPSBhaHViLT5hcGJpZl9hZGRyICsgVEVHUkEzMF9BSFVC
-X0NIQU5ORUxfUlhGSUZPICsKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAoY2hhbm5lbCAq
-IFRFR1JBMzBfQUhVQl9DSEFOTkVMX1JYRklGT19TVFJJREUpOwo+Pj4gwqAgLcKgwqDCoCBwbV9y
-dW50aW1lX2dldF9zeW5jKGFodWItPmRldik7Cj4+PiArwqDCoMKgIG1lbXNldCgmY2lmX2NvbmYs
-IDAsIHNpemVvZihjaWZfY29uZikpOwo+Pj4gwqAgLcKgwqDCoCByZWcgPSBURUdSQTMwX0FIVUJf
-Q0hBTk5FTF9DVFJMICsKPj4+IC3CoMKgwqDCoMKgwqDCoMKgwqAgKGNoYW5uZWwgKiBURUdSQTMw
-X0FIVUJfQ0hBTk5FTF9DVFJMX1NUUklERSk7Cj4+PiAtwqDCoMKgIHZhbCA9IHRlZ3JhMzBfYXBi
-aWZfcmVhZChyZWcpOwo+Pj4gLcKgwqDCoCB2YWwgJj0gfihURUdSQTMwX0FIVUJfQ0hBTk5FTF9D
-VFJMX1JYX1RIUkVTSE9MRF9NQVNLIHwKPj4+IC3CoMKgwqDCoMKgwqDCoMKgIFRFR1JBMzBfQUhV
-Ql9DSEFOTkVMX0NUUkxfUlhfUEFDS19NQVNLKTsKPj4+IC3CoMKgwqAgdmFsIHw9ICg3IDw8IFRF
-R1JBMzBfQUhVQl9DSEFOTkVMX0NUUkxfUlhfVEhSRVNIT0xEX1NISUZUKSB8Cj4+PiAtwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgVEVHUkEzMF9BSFVCX0NIQU5ORUxfQ1RSTF9SWF9QQUNLX0VOIHwKPj4+
-IC3CoMKgwqDCoMKgwqDCoMKgwqDCoCBURUdSQTMwX0FIVUJfQ0hBTk5FTF9DVFJMX1JYX1BBQ0tf
-MTY7Cj4+PiAtwqDCoMKgIHRlZ3JhMzBfYXBiaWZfd3JpdGUocmVnLCB2YWwpOwo+Pj4gLQo+Pj4g
-LcKgwqDCoCBjaWZfY29uZi50aHJlc2hvbGQgPSAwOwo+Pj4gwqDCoMKgwqDCoCBjaWZfY29uZi5h
-dWRpb19jaGFubmVscyA9IDI7Cj4+PiDCoMKgwqDCoMKgIGNpZl9jb25mLmNsaWVudF9jaGFubmVs
-cyA9IDI7Cj4+PiDCoMKgwqDCoMKgIGNpZl9jb25mLmF1ZGlvX2JpdHMgPSBURUdSQTMwX0FVRElP
-Q0lGX0JJVFNfMTY7Cj4+PiDCoMKgwqDCoMKgIGNpZl9jb25mLmNsaWVudF9iaXRzID0gVEVHUkEz
-MF9BVURJT0NJRl9CSVRTXzE2Owo+Pj4gLcKgwqDCoCBjaWZfY29uZi5leHBhbmQgPSAwOwo+Pj4g
-LcKgwqDCoCBjaWZfY29uZi5zdGVyZW9fY29udiA9IDA7Cj4+PiAtwqDCoMKgIGNpZl9jb25mLnJl
-cGxpY2F0ZSA9IDA7Cj4+PiAtwqDCoMKgIGNpZl9jb25mLmRpcmVjdGlvbiA9IFRFR1JBMzBfQVVE
-SU9DSUZfRElSRUNUSU9OX1JYOwo+Pj4gLcKgwqDCoCBjaWZfY29uZi50cnVuY2F0ZSA9IDA7Cj4+
-PiAtwqDCoMKgIGNpZl9jb25mLm1vbm9fY29udiA9IDA7Cj4+PiAtCj4+PiAtwqDCoMKgIHJlZyA9
-IFRFR1JBMzBfQUhVQl9DSUZfUlhfQ1RSTCArCj4+PiAtwqDCoMKgwqDCoMKgwqDCoMKgIChjaGFu
-bmVsICogVEVHUkEzMF9BSFVCX0NJRl9SWF9DVFJMX1NUUklERSk7Cj4+PiAtwqDCoMKgIGFodWIt
-PnNvY19kYXRhLT5zZXRfYXVkaW9fY2lmKGFodWItPnJlZ21hcF9hcGJpZiwgcmVnLCAmY2lmX2Nv
-bmYpOwo+Pj4gLQo+Pj4gLcKgwqDCoCBwbV9ydW50aW1lX3B1dChhaHViLT5kZXYpOwo+Pj4gwqAg
-LcKgwqDCoCByZXR1cm4gMDsKPj4+ICvCoMKgwqAgcmV0dXJuIHRlZ3JhMzBfYWh1Yl9zZXR1cF9y
-eF9maWZvKCpyeGNpZiwgJmNpZl9jb25mKTsKPj4KPj4gSXQgc2VlbXMgYSBiaXQgb2RkLCB0aGF0
-IHlvdSBzdGlsbCBjb25maWd1cmUgc29tZSBvZiB0aGUgY2lmX2NvbmYKPj4gbWVtYmVycyBhbmQg
-dGhlbiBjYWxsIHRlZ3JhMzBfYWh1Yl9zZXR1cF9yeF9maWZvKCkgaGVyZS4gV2h5IG5vdCBqdXN0
-Cj4+IGFsbG9jYXRlIGl0IGFuZCB0aGVuIG1vdmUgYWxsIHRoZSBwcm9ncmFtbWluZyB0bwo+PiB0
-ZWdyYTMwX2FodWJfc2V0dXBfcnhfZmlmbygpPwo+IAo+IEkgd2FzIHRyeWluZyB0byBrZWVwIHRo
-ZSBiZWhhdmlvdXIgdGhlIHNhbWUsIElJUkMgdGhlIG9yaWdpbmFsIGlzIGZpcnN0Cj4gY2FsbGVk
-IGJlZm9yZSB0aGUgZm9ybWF0IGluZm9ybWF0aW9uIGlzIGtub3duLgoKTG9va3MgbGlrZSB0aGUg
-STJTIGRyaXZlciBpcyB0aGUgb25seSBjdXJyZW50IHVzZXIgb2YgdGhpcywgc28gc3BsaXR0aW5n
-CnRoZSBmdW5jdGlvbiBpbnRvIHR3byBjb3VsZCBtYWtlIHNlbnNlLgoKQ2hlZXJzCkpvbgoKLS0g
-Cm52cHVibGljCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRw
-czovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+On Sun, Oct 6, 2019 at 6:39 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
