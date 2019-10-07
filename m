@@ -1,7 +1,8 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH v4 5/7] ASoC: tegra: set i2s_offset to 0 for tdm
-Date: Mon,  7 Oct 2019 16:31:34 +0100
-Message-ID: <20191007153136.4920-6-ben.dooks@codethink.co.uk>
+Subject: [PATCH v4 1/7] ASoC: tegra: add a TDM configuration
+	callback
+Date: Mon,  7 Oct 2019 16:31:30 +0100
+Message-ID: <20191007153136.4920-2-ben.dooks@codethink.co.uk>
 References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,66 +19,68 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-Set the offset to 0 for TDM mode, as per the current setup. Note we also
-move the data offset programming to the i2s hw_parameters call as per
-the suggestion from Jon Hunter.
+From: Edward Cragg <edward.cragg@codethink.co.uk>
 
+Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
+driver.
+
+Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
+[ben.dooks@codethink.co.uk: merge fix for power management]
+[ben.dooks@codethink.co.uk: add review change for fsync of 1 clock]
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
-v2:
- - fix the review comments and move the i2s offset setting
-v3:
- - fix data-offset for dsp-a and dsp-b
----
- sound/soc/tegra/tegra30_i2s.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ sound/soc/tegra/tegra30_i2s.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index f87ab1e36369..76fa3a086e56 100644
+index ac6983c6bd72..73f0dddeaef3 100644
 --- a/sound/soc/tegra/tegra30_i2s.c
 +++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -66,7 +66,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
- 				unsigned int fmt)
- {
- 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
--	unsigned int mask = 0, val = 0;
-+	unsigned int mask = 0, val = 0, data_offset = 1;
- 	unsigned int ch_mask, ch_val = 0;
- 
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
-@@ -100,6 +100,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
- 		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
- 		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
- 		val |= TEGRA30_I2S_CTRL_LRCK_R_LOW;
-+		data_offset = 0;
- 		break;
- 	case SND_SOC_DAIFMT_I2S:
- 		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_LRCK;
-@@ -120,6 +121,10 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
- 	pm_runtime_get_sync(dai->dev);
- 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CTRL, mask, val);
- 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL, ch_mask, ch_val);
-+	val = (data_offset << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
-+		(data_offset << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
-+	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
-+
- 	pm_runtime_put(dai->dev);
- 
- 	return 0;
-@@ -203,11 +208,6 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	i2s->soc_data->set_audio_cif(i2s->regmap, reg, &cif_conf);
--
--	val = (1 << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
--	      (1 << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
--	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
--
+@@ -254,6 +254,34 @@ static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
  	return 0;
  }
  
++static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
++			       unsigned int tx_mask, unsigned int rx_mask,
++			       int slots, int slot_width)
++{
++	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	unsigned int mask, val;
++
++	dev_dbg(dai->dev, "%s: txmask=0x%08x rxmask=0x%08x slots=%d width=%d\n",
++		 __func__, tx_mask, rx_mask, slots, slot_width);
++
++	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
++	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
++	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
++
++	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
++	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
++	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
++
++	pm_runtime_get_sync(dai->dev);
++	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
++	/* set the fsync width to minimum of 1 clock width */
++	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
++			   TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK, 0x0);
++	pm_runtime_put(dai->dev);
++
++	return 0;
++}
++
+ static int tegra30_i2s_probe(struct snd_soc_dai *dai)
+ {
+ 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+@@ -268,6 +296,7 @@ static const struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
+ 	.set_fmt	= tegra30_i2s_set_fmt,
+ 	.hw_params	= tegra30_i2s_hw_params,
+ 	.trigger	= tegra30_i2s_trigger,
++	.set_tdm_slot	= tegra30_i2s_set_tdm,
+ };
+ 
+ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
 -- 
 2.23.0
