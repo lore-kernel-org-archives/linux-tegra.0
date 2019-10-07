@@ -1,8 +1,7 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH v4 7/7] ASoC: tegra: take packing settings from
-	the audio cif_config
-Date: Mon,  7 Oct 2019 16:31:36 +0100
-Message-ID: <20191007153136.4920-8-ben.dooks@codethink.co.uk>
+Subject: [PATCH v4 5/7] ASoC: tegra: set i2s_offset to 0 for tdm
+Date: Mon,  7 Oct 2019 16:31:34 +0100
+Message-ID: <20191007153136.4920-6-ben.dooks@codethink.co.uk>
 References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,61 +21,63 @@ To: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <p
 Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-If the CIF is not configured as 16 or 8 bit, then the
-packing for 8/16 bits should not be enabled as the
-hardware only supports 8 or 16 bit packing.
+Set the offset to 0 for TDM mode, as per the current setup. Note we also
+move the data offset programming to the i2s hw_parameters call as per
+the suggestion from Jon Hunter.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- sound/soc/tegra/tegra30_ahub.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+v2:
+ - fix the review comments and move the i2s offset setting
+v3:
+ - fix data-offset for dsp-a and dsp-b
+---
+ sound/soc/tegra/tegra30_i2s.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 24bc03428b45..0768c6b6dc25 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -96,10 +96,17 @@ int tegra30_ahub_setup_rx_fifo(enum tegra30_ahub_rxcif rxcif,
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
- 	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK |
--		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK);
--	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT) |
--	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN |
--	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
-+		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK |
-+		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN);
-+	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT);
-+	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16 ||
-+	    cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
-+		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN;
-+	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16)
-+		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
-+	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
-+		val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_8_4;
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index f87ab1e36369..76fa3a086e56 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -66,7 +66,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+ 				unsigned int fmt)
+ {
+ 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+-	unsigned int mask = 0, val = 0;
++	unsigned int mask = 0, val = 0, data_offset = 1;
+ 	unsigned int ch_mask, ch_val = 0;
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+@@ -100,6 +100,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+ 		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+ 		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC;
+ 		val |= TEGRA30_I2S_CTRL_LRCK_R_LOW;
++		data_offset = 0;
+ 		break;
+ 	case SND_SOC_DAIFMT_I2S:
+ 		val |= TEGRA30_I2S_CTRL_FRAME_FORMAT_LRCK;
+@@ -120,6 +121,10 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+ 	pm_runtime_get_sync(dai->dev);
+ 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CTRL, mask, val);
+ 	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL, ch_mask, ch_val);
++	val = (data_offset << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
++		(data_offset << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
++	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
 +
- 	tegra30_apbif_write(reg, val);
+ 	pm_runtime_put(dai->dev);
  
- 	cif_conf->direction = TEGRA30_AUDIOCIF_DIRECTION_RX;
-@@ -203,10 +210,16 @@ int tegra30_ahub_setup_tx_fifo(enum tegra30_ahub_txcif txcif,
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
- 	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_MASK |
--		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK);
--	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT) |
--	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN |
--	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16;
-+		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK |
-+		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN);
-+	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT);
-+	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16 ||
-+	    cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
-+		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN;
-+	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_16)
-+		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16;
-+	if (cif_conf->audio_bits == TEGRA30_AUDIOCIF_BITS_8)
-+		val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_8_4;
- 	tegra30_apbif_write(reg, val);
+ 	return 0;
+@@ -203,11 +208,6 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	}
  
- 	cif_conf->direction = TEGRA30_AUDIOCIF_DIRECTION_TX;
+ 	i2s->soc_data->set_audio_cif(i2s->regmap, reg, &cif_conf);
+-
+-	val = (1 << TEGRA30_I2S_OFFSET_RX_DATA_OFFSET_SHIFT) |
+-	      (1 << TEGRA30_I2S_OFFSET_TX_DATA_OFFSET_SHIFT);
+-	regmap_write(i2s->regmap, TEGRA30_I2S_OFFSET, val);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.23.0
