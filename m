@@ -1,69 +1,46 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 3/7] ASoC: tegra: i2s: Add support for
- more than 2 channels
-Date: Tue, 8 Oct 2019 18:29:31 +0300
-Message-ID: <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
-References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
- <20191007153136.4920-4-ben.dooks@codethink.co.uk>
+From: Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: pwm: Convert PWM bindings to
+ json-schema
+Date: Tue, 8 Oct 2019 16:46:06 -0700 (PDT)
+Message-ID: <alpine.DEB.2.21.9999.1910081643220.11044@viisi.sifive.com>
+References: <20191002164047.14499-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20191007153136.4920-4-ben.dooks@codethink.co.uk>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191002164047.14499-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-tegra@vger.kernel.org
 
-SGVsbG8gQmVuLAoKMDcuMTAuMjAxOSAxODozMSwgQmVuIERvb2tzINC/0LjRiNC10YI6Cj4gRnJv
-bTogRWR3YXJkIENyYWdnIDxlZHdhcmQuY3JhZ2dAY29kZXRoaW5rLmNvLnVrPgo+IAo+IFRoZSBD
-SUYgY29uZmlndXJhdGlvbiBhbmQgY2xvY2sgc2V0dGluZyBpcyBjdXJyZW50bHkgaGFyZCBjb2Rl
-ZCBmb3IgMgo+IGNoYW5uZWxzLiBTaW5jZSB0aGUgaGFyZHdhcmUgaXMgY2FwYWJsZSBvZiBzdXBw
-b3J0aW5nIDEtOCBjaGFubmVscyBhZGQKPiBzdXBwb3J0IGZvciByZWFkaW5nIHRoZSBjaGFubmVs
-IGNvdW50IGZyb20gdGhlIHN1cHBsaWVkIHBhcmFtZXRlcnMgdG8KPiBhbGxvdyBmb3IgYmV0dGVy
-IFRETSBzdXBwb3J0LiBJdCBzZWVtcyB0aGUgb3JpZ2luYWwgaW1wbGVtZW50YXRpb24gb2YgdGhp
-cwo+IGRyaXZlciB3YXMgZml4ZWQgYXQgMiBjaGFubmVscyBmb3Igc2ltcGxpY2l0eSwgYW5kIG5v
-dCBpbXBsZW1lbnRpbmcgVERNLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEVkd2FyZCBDcmFnZyA8ZWR3
-YXJkLmNyYWdnQGNvZGV0aGluay5jby51az4KPiBbYmVuLmRvb2tzQGNvZGV0aGluay5jby51azog
-YWRkZWQgaXNfdGRtIGFuZCBjaGFubmVsIG5yIGNoZWNrXQo+IFtiZW4uZG9va3NAY29kZXRoaW5r
-LmNvLnVrOiBtZXJnZSBlZGdlIGNvbnRyb2wgaW50byBzZXQtZm9ybWF0XQo+IFtiZW4uZG9va3NA
-Y29kZXRoaW5rLmNvLnVrOiByZW1vdmVkIGlzX3RkbSBhbmQgbW92ZWQgZWRnZSB0byBod19wYXJh
-bXNdCj4gU2lnbmVkLW9mZi1ieTogQmVuIERvb2tzIDxiZW4uZG9va3NAY29kZXRoaW5rLmNvLnVr
-Pgo+IC0tLQo+ICBzb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYyB8IDIxICsrKysrKysrKysr
-KystLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMgYi9z
-b3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+IGluZGV4IDA2M2YzNGM4ODJhZi4uNzM4MmY3
-OTQ5YmY0IDEwMDY0NAo+IC0tLSBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4gKysr
-IGIvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPiBAQCAtNjcsNiArNjcsNyBAQCBzdGF0
-aWMgaW50IHRlZ3JhMzBfaTJzX3NldF9mbXQoc3RydWN0IHNuZF9zb2NfZGFpICpkYWksCj4gIHsK
-PiAgCXN0cnVjdCB0ZWdyYTMwX2kycyAqaTJzID0gc25kX3NvY19kYWlfZ2V0X2RydmRhdGEoZGFp
-KTsKPiAgCXVuc2lnbmVkIGludCBtYXNrID0gMCwgdmFsID0gMDsKPiArCXVuc2lnbmVkIGludCBj
-aF9tYXNrLCBjaF92YWwgPSAwOwo+ICAKPiAgCXN3aXRjaCAoZm10ICYgU05EX1NPQ19EQUlGTVRf
-SU5WX01BU0spIHsKPiAgCWNhc2UgU05EX1NPQ19EQUlGTVRfTkJfTkY6Cj4gQEAgLTc1LDYgKzc2
-LDcgQEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc19zZXRfZm10KHN0cnVjdCBzbmRfc29jX2RhaSAq
-ZGFpLAo+ICAJCXJldHVybiAtRUlOVkFMOwo+ICAJfQo+ICAKPiArCWNoX21hc2sgPSBURUdSQTMw
-X0kyU19DSF9DVFJMX0VHREVfQ1RSTF9NQVNLOwo+ICAJbWFzayB8PSBURUdSQTMwX0kyU19DVFJM
-X01BU1RFUl9FTkFCTEU7Cj4gIAlzd2l0Y2ggKGZtdCAmIFNORF9TT0NfREFJRk1UX01BU1RFUl9N
-QVNLKSB7Cj4gIAljYXNlIFNORF9TT0NfREFJRk1UX0NCU19DRlM6Cj4gQEAgLTkwLDEwICs5Miwx
-MiBAQCBzdGF0aWMgaW50IHRlZ3JhMzBfaTJzX3NldF9mbXQoc3RydWN0IHNuZF9zb2NfZGFpICpk
-YWksCj4gIAkJVEVHUkEzMF9JMlNfQ1RSTF9MUkNLX01BU0s7Cj4gIAlzd2l0Y2ggKGZtdCAmIFNO
-RF9TT0NfREFJRk1UX0ZPUk1BVF9NQVNLKSB7Cj4gIAljYXNlIFNORF9TT0NfREFJRk1UX0RTUF9B
-Ogo+ICsJCWNoX3ZhbCA9IFRFR1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJMX05FR19FREdFOwo+
-ICAJCXZhbCB8PSBURUdSQTMwX0kyU19DVFJMX0ZSQU1FX0ZPUk1BVF9GU1lOQzsKPiAgCQl2YWwg
-fD0gVEVHUkEzMF9JMlNfQ1RSTF9MUkNLX0xfTE9XOwo+ICAJCWJyZWFrOwo+ICAJY2FzZSBTTkRf
-U09DX0RBSUZNVF9EU1BfQjoKPiArCQljaF92YWwgPSBURUdSQTMwX0kyU19DSF9DVFJMX0VHREVf
-Q1RSTF9ORUdfRURHRTsKCkRvd25zdHJlYW0gY29kZSBzZXRzIERTUF9CIHRvIFBPU19FREdFLCBs
-b29rcyBsaWtlIHlvdSBoYXZlIGEgdHlwbyBoZXJlLgpPciBkb2VzIERTUF9CIGhhcHBlbiB0byB3
-b3JrIHdpdGggdGhlIE5FR19FREdFPwoKW3NuaXBdCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxA
-YWxzYS1wcm9qZWN0Lm9yZwpodHRwczovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+On Wed, 2 Oct 2019, Krzysztof Kozlowski wrote:
+
+> Convert generic PWM bindings to DT schema format using json-schema.  The
+> consumer bindings are split to separate file.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+
+[ ... ]
+
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> index 36447e3c9378..3d1dd7b06efc 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> @@ -17,7 +17,7 @@ Required properties:
+>    Please refer to sifive-blocks-ip-versioning.txt for details.
+>  - reg: physical base address and length of the controller's registers
+>  - clocks: Should contain a clock identifier for the PWM's parent clock.
+> -- #pwm-cells: Should be 3. See pwm.txt in this directory
+> +- #pwm-cells: Should be 3. See pwm.yaml in this directory
+>    for a description of the cell format.
+>  - interrupts: one interrupt per PWM channel
+
+For the SiFive PWM driver documentation:
+
+Acked-by: Paul Walmsley <paul.walmsley@sifive.com>
+
+
+- Paul
