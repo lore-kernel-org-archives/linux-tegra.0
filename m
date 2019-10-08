@@ -1,70 +1,69 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 0/7] add Tegra194 XUSB host and pad controller support
-Date: Tue, 8 Oct 2019 13:29:07 +0200
-Message-ID: <20191008112907.GC228118@ulmo>
-References: <20191004162906.4818-1-jckuo@nvidia.com>
- <20191007110311.GA614644@kroah.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 3/7] ASoC: tegra: i2s: Add support for
+ more than 2 channels
+Date: Tue, 8 Oct 2019 18:29:31 +0300
+Message-ID: <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
+References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
+ <20191007153136.4920-4-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191007110311.GA614644@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: JC Kuo <jckuo@nvidia.com>, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20191007153136.4920-4-ben.dooks@codethink.co.uk>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-
---GPJrCs/72TxItFYR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 07, 2019 at 01:03:11PM +0200, Greg KH wrote:
-> On Sat, Oct 05, 2019 at 12:28:59AM +0800, JC Kuo wrote:
-> > Hi,
-> >=20
-> > This series introduces support for Tegra194 XUSB host and pad
-> > controller. Tegra194 XUSB host and pad controller are highly
-> > similar to the controllers found on Tegra186. Therefore, it's
-> > possible to resue xhci-tegra.c and xusb-tegra186.c for Tegra194.
->=20
-> I've taken patches 1 and 2 through my USB tree.  If you want/need me to
-> take the others, please get acks from those maintainers on them so I can
-> do so.
-
-I can pick up patches 6 and 7 into the Tegra tree. There are a few
-patches in there already that conflict with the DT changes in this
-series and those will be easier to resolve in the Tegra tree.
-
-JC, I noticed that you didn't Cc Kishon as the PHY subsystem maintainer.
-Please resend the series with Kishon added in the To: line to make sure
-he sees them and can apply or ack them.
-
-Given that Greg's already applied patches 1 and 2, maybe leave them out
-of the series.
-
-Thierry
-
---GPJrCs/72TxItFYR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2ccwIACgkQ3SOs138+
-s6EHqhAAtp/qnbVEMpUPdQ4QZrf6zUalRDl5LzyC8TQdSl+FMfbcFe9thXOQNkKN
-w69TNE00wHz9llCeHLB7cXYKnXZkRjxjJg+0JRt5ULV6ijZH+vRG1ICs/FG5KPxZ
-RFODotu9nCMcbFmszhYTHP5TtvVObWylAhjQ8lBBWFRutILCsaYwY2qA5cd+JAAW
-itNCCKSIAhqksYpL0hmfFr28bUoMZ4fh51Lnie/RP0lHV6HHa1LPYXJQ10lx9x2u
-E+BanUgNYaNTpgnoZgQUsc0kjnrU8+watMHZGNAT2qOOtm71Xs1iOxkLR28z35Jm
-L8oTrS9DZAoob0ewxpWPH8dJMwrF8yxp+8Pp+C8NG0KpHpdiOM7woEq6VXEHaY+d
-6sfngywiY6YvY/dH18hH6Ds0tPWCaEwzDBdEenZAm2+H35cz4mFKBR/mxy2EkZJq
-cgRBJVLrKgG84Bnujfq8hNXkrGp3I3KCk+ENeq4tC+EpgDc3i1He7mS1G9ppSdxD
-lEMfnZqBD9Rj4zAQPoAVtkMdXGi93LL2YPIMZhEGbyl07ZejfsC+jomAXhmWpk+8
-r+3zZj10fXH7xGsdRAHIzra36DYVe8hsYJrMtyIr4yiDgebpDr5Ofvc0jdWq/eRU
-kxbyY8RANaFfs+vH7hIoB1ta6y0X+0SXeixsk+PuzqYfvDq6fV8=
-=mEdr
------END PGP SIGNATURE-----
-
---GPJrCs/72TxItFYR--
+SGVsbG8gQmVuLAoKMDcuMTAuMjAxOSAxODozMSwgQmVuIERvb2tzINC/0LjRiNC10YI6Cj4gRnJv
+bTogRWR3YXJkIENyYWdnIDxlZHdhcmQuY3JhZ2dAY29kZXRoaW5rLmNvLnVrPgo+IAo+IFRoZSBD
+SUYgY29uZmlndXJhdGlvbiBhbmQgY2xvY2sgc2V0dGluZyBpcyBjdXJyZW50bHkgaGFyZCBjb2Rl
+ZCBmb3IgMgo+IGNoYW5uZWxzLiBTaW5jZSB0aGUgaGFyZHdhcmUgaXMgY2FwYWJsZSBvZiBzdXBw
+b3J0aW5nIDEtOCBjaGFubmVscyBhZGQKPiBzdXBwb3J0IGZvciByZWFkaW5nIHRoZSBjaGFubmVs
+IGNvdW50IGZyb20gdGhlIHN1cHBsaWVkIHBhcmFtZXRlcnMgdG8KPiBhbGxvdyBmb3IgYmV0dGVy
+IFRETSBzdXBwb3J0LiBJdCBzZWVtcyB0aGUgb3JpZ2luYWwgaW1wbGVtZW50YXRpb24gb2YgdGhp
+cwo+IGRyaXZlciB3YXMgZml4ZWQgYXQgMiBjaGFubmVscyBmb3Igc2ltcGxpY2l0eSwgYW5kIG5v
+dCBpbXBsZW1lbnRpbmcgVERNLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEVkd2FyZCBDcmFnZyA8ZWR3
+YXJkLmNyYWdnQGNvZGV0aGluay5jby51az4KPiBbYmVuLmRvb2tzQGNvZGV0aGluay5jby51azog
+YWRkZWQgaXNfdGRtIGFuZCBjaGFubmVsIG5yIGNoZWNrXQo+IFtiZW4uZG9va3NAY29kZXRoaW5r
+LmNvLnVrOiBtZXJnZSBlZGdlIGNvbnRyb2wgaW50byBzZXQtZm9ybWF0XQo+IFtiZW4uZG9va3NA
+Y29kZXRoaW5rLmNvLnVrOiByZW1vdmVkIGlzX3RkbSBhbmQgbW92ZWQgZWRnZSB0byBod19wYXJh
+bXNdCj4gU2lnbmVkLW9mZi1ieTogQmVuIERvb2tzIDxiZW4uZG9va3NAY29kZXRoaW5rLmNvLnVr
+Pgo+IC0tLQo+ICBzb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYyB8IDIxICsrKysrKysrKysr
+KystLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlv
+bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMgYi9z
+b3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+IGluZGV4IDA2M2YzNGM4ODJhZi4uNzM4MmY3
+OTQ5YmY0IDEwMDY0NAo+IC0tLSBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4gKysr
+IGIvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPiBAQCAtNjcsNiArNjcsNyBAQCBzdGF0
+aWMgaW50IHRlZ3JhMzBfaTJzX3NldF9mbXQoc3RydWN0IHNuZF9zb2NfZGFpICpkYWksCj4gIHsK
+PiAgCXN0cnVjdCB0ZWdyYTMwX2kycyAqaTJzID0gc25kX3NvY19kYWlfZ2V0X2RydmRhdGEoZGFp
+KTsKPiAgCXVuc2lnbmVkIGludCBtYXNrID0gMCwgdmFsID0gMDsKPiArCXVuc2lnbmVkIGludCBj
+aF9tYXNrLCBjaF92YWwgPSAwOwo+ICAKPiAgCXN3aXRjaCAoZm10ICYgU05EX1NPQ19EQUlGTVRf
+SU5WX01BU0spIHsKPiAgCWNhc2UgU05EX1NPQ19EQUlGTVRfTkJfTkY6Cj4gQEAgLTc1LDYgKzc2
+LDcgQEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc19zZXRfZm10KHN0cnVjdCBzbmRfc29jX2RhaSAq
+ZGFpLAo+ICAJCXJldHVybiAtRUlOVkFMOwo+ICAJfQo+ICAKPiArCWNoX21hc2sgPSBURUdSQTMw
+X0kyU19DSF9DVFJMX0VHREVfQ1RSTF9NQVNLOwo+ICAJbWFzayB8PSBURUdSQTMwX0kyU19DVFJM
+X01BU1RFUl9FTkFCTEU7Cj4gIAlzd2l0Y2ggKGZtdCAmIFNORF9TT0NfREFJRk1UX01BU1RFUl9N
+QVNLKSB7Cj4gIAljYXNlIFNORF9TT0NfREFJRk1UX0NCU19DRlM6Cj4gQEAgLTkwLDEwICs5Miwx
+MiBAQCBzdGF0aWMgaW50IHRlZ3JhMzBfaTJzX3NldF9mbXQoc3RydWN0IHNuZF9zb2NfZGFpICpk
+YWksCj4gIAkJVEVHUkEzMF9JMlNfQ1RSTF9MUkNLX01BU0s7Cj4gIAlzd2l0Y2ggKGZtdCAmIFNO
+RF9TT0NfREFJRk1UX0ZPUk1BVF9NQVNLKSB7Cj4gIAljYXNlIFNORF9TT0NfREFJRk1UX0RTUF9B
+Ogo+ICsJCWNoX3ZhbCA9IFRFR1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJMX05FR19FREdFOwo+
+ICAJCXZhbCB8PSBURUdSQTMwX0kyU19DVFJMX0ZSQU1FX0ZPUk1BVF9GU1lOQzsKPiAgCQl2YWwg
+fD0gVEVHUkEzMF9JMlNfQ1RSTF9MUkNLX0xfTE9XOwo+ICAJCWJyZWFrOwo+ICAJY2FzZSBTTkRf
+U09DX0RBSUZNVF9EU1BfQjoKPiArCQljaF92YWwgPSBURUdSQTMwX0kyU19DSF9DVFJMX0VHREVf
+Q1RSTF9ORUdfRURHRTsKCkRvd25zdHJlYW0gY29kZSBzZXRzIERTUF9CIHRvIFBPU19FREdFLCBs
+b29rcyBsaWtlIHlvdSBoYXZlIGEgdHlwbyBoZXJlLgpPciBkb2VzIERTUF9CIGhhcHBlbiB0byB3
+b3JrIHdpdGggdGhlIE5FR19FREdFPwoKW3NuaXBdCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxA
+YWxzYS1wcm9qZWN0Lm9yZwpodHRwczovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
