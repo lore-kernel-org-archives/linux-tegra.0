@@ -1,42 +1,26 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Subject: [PATCH v2] phy: tegra: xusb: remove unused variable
-Date: Wed, 9 Oct 2019 15:23:09 +0800
-Message-ID: <1570605789-5352-1-git-send-email-chunfeng.yun@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH -next 06/34] rtc: coh901331: use devm_platform_ioremap_resource()
+ to simplify code
+Date: Wed, 9 Oct 2019 09:46:27 +0200
+Message-ID: <CACRpkdY5x3wG4h6Wm_L5OXWXB7SPqHimUFOQa2jOeqDETWciYg@mail.gmail.com>
+References: <20191006102953.57536-1-yuehaibing@huawei.com> <20191006102953.57536-7-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191006102953.57536-7-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Thierry Reding <treding@nvidia.com>, JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Nicolas Ferre <nicolas.ferre@microchip.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Baruch Siach <baruch@tkos.co.il>, Paul Cercueil <paul@crapouillou.net>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Kevin Hilman <khilman@baylibre.com>, huang eddie <eddie.huang@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>P
 List-Id: linux-tegra@vger.kernel.org
 
-The local variable @priv is set but not used, can be removed
+On Sun, Oct 6, 2019 at 12:32 PM YueHaibing <yuehaibing@huawei.com> wrote:
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
-v2: add Acked-by: Thierry
----
- drivers/phy/tegra/xusb-tegra210.c | 3 ---
- 1 file changed, 3 deletions(-)
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index 0c0df6897a3b..bc71c897298a 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -1225,13 +1225,10 @@ static int tegra210_hsic_phy_power_on(struct phy *phy)
- 	struct tegra_xusb_hsic_lane *hsic = to_hsic_lane(lane);
- 	struct tegra_xusb_hsic_pad *pad = to_hsic_pad(lane->pad);
- 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
--	struct tegra210_xusb_padctl *priv;
- 	unsigned int index = lane->index;
- 	u32 value;
- 	int err;
- 
--	priv = to_tegra210_xusb_padctl(padctl);
--
- 	err = regulator_enable(pad->supply);
- 	if (err)
- 		return err;
--- 
-2.23.0
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
