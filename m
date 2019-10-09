@@ -1,50 +1,36 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] firmware: tegra: use devm_platform_ioremap_resource() to simplify code
-Date: Wed, 9 Oct 2019 22:36:48 +0800
-Message-ID: <20191009143648.3620-1-yuehaibing@huawei.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 3/5] dt-bindings: phy: tegra: Add Tegra194 support
+Date: Wed, 9 Oct 2019 18:39:00 -0500
+Message-ID: <20191009233900.GA9109@bogus>
+References: <20191009024343.30218-1-jckuo@nvidia.com>
+ <20191009024343.30218-4-jckuo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20191009024343.30218-4-jckuo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, yuehaibing@huawei.com, talho@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: JC Kuo <jckuo@nvidia.com>
+Cc: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Wed, Oct 09, 2019 at 10:43:41AM +0800, JC Kuo wrote:
+> Extend the bindings to cover the set of features found in Tegra194.
+> Note that, technically, there are four more supplies connected to the
+> XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
+> , but the power sequencing requirements of Tegra194 require these to be
+> under the control of the PMIC.
+> 
+> Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it is
+> possible for some platforms have long signal trace that could not
+> provide sufficient electrical environment for Gen 2 speed. To deal with
+> this, a new device node property "nvidia,disable-gen2" was added to
+> Tegra194 that be used to specifically disable Gen 2 speed for a
+> particular USB 3.0 port so that the port can be limited to Gen 1 speed
+> and avoid the instability.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/firmware/tegra/bpmp-tegra210.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+I suspect this may be a common issue and we should have a common 
+property. Typically, this kind of property is in the controller though 
+and supports multiple speed limits. See PCI bindings for inspiration.
 
-diff --git a/drivers/firmware/tegra/bpmp-tegra210.c b/drivers/firmware/tegra/bpmp-tegra210.c
-index ae15940..c2447be 100644
---- a/drivers/firmware/tegra/bpmp-tegra210.c
-+++ b/drivers/firmware/tegra/bpmp-tegra210.c
-@@ -162,7 +162,6 @@ static int tegra210_bpmp_init(struct tegra_bpmp *bpmp)
- {
- 	struct platform_device *pdev = to_platform_device(bpmp->dev);
- 	struct tegra210_bpmp *priv;
--	struct resource *res;
- 	unsigned int i;
- 	int err;
- 
-@@ -172,13 +171,11 @@ static int tegra210_bpmp_init(struct tegra_bpmp *bpmp)
- 
- 	bpmp->priv = priv;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->atomics = devm_ioremap_resource(&pdev->dev, res);
-+	priv->atomics = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->atomics))
- 		return PTR_ERR(priv->atomics);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	priv->arb_sema = devm_ioremap_resource(&pdev->dev, res);
-+	priv->arb_sema = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(priv->arb_sema))
- 		return PTR_ERR(priv->arb_sema);
- 
--- 
-2.7.4
+Rob
