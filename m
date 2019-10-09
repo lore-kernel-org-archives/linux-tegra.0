@@ -1,98 +1,42 @@
-From: =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
-Subject: [PATCH] arm64: tegra: enable PWM fan on Jetson Nano
-Date: Wed,  9 Oct 2019 08:18:55 +0200
-Message-ID: <20191009061855.4415-1-tszucs@protonmail.ch>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: [PATCH v2] phy: tegra: xusb: remove unused variable
+Date: Wed, 9 Oct 2019 15:23:09 +0800
+Message-ID: <1570605789-5352-1-git-send-email-chunfeng.yun@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Thierry Reding <treding@nvidia.com>, JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Chunfeng Yun <chunfeng.yun@mediatek.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable PWM fan and extend CPU thermal zones for monitoring and fan control.
-This will trigger the PWM fan on J15 and cool down the system if necessary.
+The local variable @priv is set but not used, can be removed
 
-Signed-off-by: Tamás Szűcs <tszucs@protonmail.ch>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- .../boot/dts/nvidia/tegra210-p3450-0000.dts   | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
+v2: add Acked-by: Thierry
+---
+ drivers/phy/tegra/xusb-tegra210.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 9d17ec707bce..43c3613e7217 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -552,6 +552,70 @@
- 		};
- 	};
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index 0c0df6897a3b..bc71c897298a 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -1225,13 +1225,10 @@ static int tegra210_hsic_phy_power_on(struct phy *phy)
+ 	struct tegra_xusb_hsic_lane *hsic = to_hsic_lane(lane);
+ 	struct tegra_xusb_hsic_pad *pad = to_hsic_pad(lane->pad);
+ 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
+-	struct tegra210_xusb_padctl *priv;
+ 	unsigned int index = lane->index;
+ 	u32 value;
+ 	int err;
  
-+	fan: fan {
-+		compatible = "pwm-fan";
-+		pwms = <&pwm 3 45334>;
-+
-+		cooling-levels = <0 64 128 255>;
-+		#cooling-cells = <2>;
-+	};
-+
-+	thermal-zones {
-+		cpu {
-+			polling-delay = <0>;
-+			polling-delay-passive = <500>;
-+			status = "okay";
-+
-+			trips {
-+				cpu_trip_critical: critical {
-+					temperature = <96500>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				cpu_trip_hot: hot {
-+					temperature = <70000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+
-+				cpu_trip_active: active {
-+					temperature = <50000>;
-+					hysteresis = <2000>;
-+					type = "active";
-+				};
-+
-+				cpu_trip_passive: passive {
-+					temperature = <30000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				cpu-critical {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&cpu_trip_critical>;
-+				};
-+
-+				cpu-hot {
-+					cooling-device = <&fan 2 2>;
-+					trip = <&cpu_trip_hot>;
-+				};
-+
-+				cpu-active {
-+					cooling-device = <&fan 1 1>;
-+					trip = <&cpu_trip_active>;
-+				};
-+
-+				cpu-passive {
-+					cooling-device = <&fan 0 0>;
-+					trip = <&cpu_trip_passive>;
-+				};
-+			};
-+		};
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
+-	priv = to_tegra210_xusb_padctl(padctl);
+-
+ 	err = regulator_enable(pad->supply);
+ 	if (err)
+ 		return err;
 -- 
-2.20.1
+2.23.0
