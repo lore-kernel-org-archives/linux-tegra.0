@@ -1,45 +1,91 @@
 From: JC Kuo <jckuo@nvidia.com>
-Subject: Re: [PATCH v3 0/7] add Tegra194 XUSB host and pad controller support
-Date: Wed, 9 Oct 2019 10:23:11 +0800
-Message-ID: <454e29a6-bf31-c75c-0f29-abd18a4ae071@nvidia.com>
-References: <20191004162906.4818-1-jckuo@nvidia.com>
- <20191007110311.GA614644@kroah.com> <20191008112907.GC228118@ulmo>
+Subject: [PATCH v4 0/5] add Tegra194 XUSB host and pad controller support
+Date: Wed, 9 Oct 2019 10:43:38 +0800
+Message-ID: <20191009024343.30218-1-jckuo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191008112907.GC228118@ulmo>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Greg KH <gregkh@linuxfoundation.org>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, skomatineni@nvidia.com
+To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com
+Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com, JC Kuo <jckuo@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/8/19 7:29 PM, Thierry Reding wrote:
-> On Mon, Oct 07, 2019 at 01:03:11PM +0200, Greg KH wrote:
->> On Sat, Oct 05, 2019 at 12:28:59AM +0800, JC Kuo wrote:
->>> Hi,
->>>
->>> This series introduces support for Tegra194 XUSB host and pad
->>> controller. Tegra194 XUSB host and pad controller are highly
->>> similar to the controllers found on Tegra186. Therefore, it's
->>> possible to resue xhci-tegra.c and xusb-tegra186.c for Tegra194.
->>
->> I've taken patches 1 and 2 through my USB tree.  If you want/need me to
->> take the others, please get acks from those maintainers on them so I can
->> do so.
-> 
-> I can pick up patches 6 and 7 into the Tegra tree. There are a few
-> patches in there already that conflict with the DT changes in this
-> series and those will be easier to resolve in the Tegra tree.
-> 
-> JC, I noticed that you didn't Cc Kishon as the PHY subsystem maintainer.
-> Please resend the series with Kishon added in the To: line to make sure
-> he sees them and can apply or ack them.
-> 
-> Given that Greg's already applied patches 1 and 2, maybe leave them out
-> of the series.
-Thanks Thierry. I will send v4 accordingly.
-> 
-> Thierry
-> 
+This series introduces support for Tegra194 XUSB host and pad
+controller. Tegra194 XUSB host and pad controller are highly
+similar to the controllers found on Tegra186. Therefore, it's
+possible to resue xhci-tegra.c and xusb-tegra186.c for Tegra194.
+
+Changelog:
+v4:
+  xhci: tegra: Parameterize mailbox register addresses
+   - removed from v4 as it has been accepted in v3
+  
+  usb: host: xhci-tegra: Add Tegra194 XHCI support
+   - removed from v4 as it has been accepted in v3
+
+  phy: tegra: xusb: Add Tegra194 support
+   - no change
+
+  dt-bindings: phy: tegra: Add Tegra194 support
+   - no change
+
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+   - no change
+
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+   - no change
+
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+   - no change
+
+v3:
+  add change log to cover latter
+
+v2:
+  xhci: tegra: Parameterize mailbox register addresses
+   - no change
+
+  usb: host: xhci-tegra: Add Tegra194 XHCI support
+   - no change
+
+  phy: tegra: xusb: Protect Tegra186 soc with config
+   - new patch to protect Tegra186 soc data with config
+
+  phy: tegra: xusb: Add Tegra194 support
+   - removed unnecessary #if/#endif pairs
+   - introduce new soc->supports_gen2 flag which indicate whether or not
+     a soc supports USB 3.1 Gen 2 speed
+
+  dt-bindings: phy: tegra: Add Tegra194 support
+   - fix a typo
+
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+   - renamed xhci@3610000 with usb@3610000
+   - moved padctl@3520000 and usb@3610000 inside /cbb
+   - cleaned up "clocks" property of usb@3610000 node
+   - added blanks lines to visually separate blocks
+
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+   - use capitalization of regulator names
+   - fix gpio property of VDD_5V_SATA regulator
+
+
+JC Kuo (5):
+  phy: tegra: xusb: Protect Tegra186 soc with config
+  phy: tegra: xusb: Add Tegra194 support
+  dt-bindings: phy: tegra: Add Tegra194 support
+  arm64: tegra: Add XUSB and pad controller on Tegra194
+  arm64: tegra: Enable XUSB host in P2972-0000 board
+
+ .../phy/nvidia,tegra124-xusb-padctl.txt       |  16 ++
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  36 ++++-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  62 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 139 +++++++++++++++++
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/xusb-tegra186.c             | 144 +++++++++++++-----
+ drivers/phy/tegra/xusb.c                      |   7 +
+ drivers/phy/tegra/xusb.h                      |   6 +
+ 8 files changed, 376 insertions(+), 35 deletions(-)
+
+-- 
+2.17.1
