@@ -1,59 +1,53 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] mailbox: tegra: Fix superfluous IRQ error message
-Date: Fri, 11 Oct 2019 09:34:59 +0100
-Message-ID: <20191011083459.11551-1-jonathanh@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.3 000/148] 5.3.6-stable review
+Date: Fri, 11 Oct 2019 10:58:22 +0200
+Message-ID: <20191011085822.GC1075470@kroah.com>
+References: <20191010083609.660878383@linuxfoundation.org>
+ <2b3c98b9-5657-f028-0182-b205c4fc92c0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2b3c98b9-5657-f028-0182-b205c4fc92c0@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 7723f4c5ecdb ("driver core: platform: Add an error message to
-platform_get_irq*()") added an error message to avoid drivers having
-to print an error message when IRQ lookup fails. However, there are
-some cases where IRQs are optional and so new optional versions of
-the platform_get_irq*() APIs have been added for these cases.
+On Fri, Oct 11, 2019 at 09:33:41AM +0100, Jon Hunter wrote:
+> 
+> On 10/10/2019 09:34, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.3.6 release.
+> > There are 148 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat 12 Oct 2019 08:29:51 AM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.6-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.3:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
+> 
+> Linux version:	5.3.6-rc1-ge863f125e178
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
-The IRQs for Tegra HSP module are optional because not all instances
-of the module have the doorbell and all of the shared interrupts.
-Hence, since the above commit was applied the following error messages
-are now seen on Tegra194 ...
+Great, thanks for testing all of these and letting me know.
 
- ERR KERN tegra-hsp c150000.hsp: IRQ doorbell not found
- ERR KERN tegra-hsp c150000.hsp: IRQ shared0 not found
-
-The Tegra HSP driver deliberately does not fail if these are not found
-and so fix the above errors by updating the Tegra HSP driver to use
-the platform_get_irq_byname_optional() API.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/mailbox/tegra-hsp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 4c5ba35d48d4..834b35dc3b13 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -657,7 +657,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	hsp->num_db = (value >> HSP_nDB_SHIFT) & HSP_nINT_MASK;
- 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
- 
--	err = platform_get_irq_byname(pdev, "doorbell");
-+	err = platform_get_irq_byname_optional(pdev, "doorbell");
- 	if (err >= 0)
- 		hsp->doorbell_irq = err;
- 
-@@ -677,7 +677,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 			if (!name)
- 				return -ENOMEM;
- 
--			err = platform_get_irq_byname(pdev, name);
-+			err = platform_get_irq_byname_optional(pdev, name);
- 			if (err >= 0) {
- 				hsp->shared_irqs[i] = err;
- 				count++;
--- 
-2.17.1
+greg k-h
