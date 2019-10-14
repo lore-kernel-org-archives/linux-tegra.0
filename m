@@ -1,31 +1,66 @@
-From: Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4] dmaengine: tegra210-adma: fix transfer failure
-Date: Mon, 14 Oct 2019 12:41:12 +0530
-Message-ID: <20191014071112.GC2654@vkoul-mobl>
-References: <1568626513-16541-1-git-send-email-spujar@nvidia.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
+Date: Mon, 14 Oct 2019 09:51:27 +0200
+Message-ID: <cf936882-155c-90d3-2a10-728699392c6d@xs4all.nl>
+References: <20190814104520.6001-1-darekm@google.com>
+ <20190814104520.6001-8-darekm@google.com>
+ <f0e99db8-3329-f272-e139-a7c713f200ea@xs4all.nl> <20190828093820.GE2917@ulmo>
+ <2eed5ed3-85f3-4c19-4dd2-3d8432829c2a@xs4all.nl>
+ <20190828115400.GA30919@ulmo>
+ <3f7fe51a-8958-a425-f5fd-01df5301d6b2@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1568626513-16541-1-git-send-email-spujar@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>
-Cc: jonathanh@nvidia.com, ldewangan@nvidia.com, thierry.reding@gmail.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3f7fe51a-8958-a425-f5fd-01df5301d6b2@xs4all.nl>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16-09-19, 15:05, Sameer Pujar wrote:
-> >From Tegra186 onwards OUTSTANDING_REQUESTS field is added in channel
-> configuration register(bits 7:4) which defines the maximum number of reads
-> from the source and writes to the destination that may be outstanding at
-> any given point of time. This field must be programmed with a value
-> between 1 and 8. A value of 0 will prevent any transfers from happening.
+Thierry,
+
+Another reminder :-)
+
+If you want me to do this, then just let me know!
+
+Regards,
+
+	Hans
+
+On 10/4/19 10:48 AM, Hans Verkuil wrote:
+> Hi Thierry,
 > 
-> Thus added 'has_outstanding_reqs' bool member in chip data structure and is
-> set to false for Tegra210, since the field is not applicable. For Tegra186
-> it is set to true and channel configuration is updated with maximum
-> outstanding requests.
-
-Applied, thanks
-
--- 
-~Vinod
+> Just a reminder: this patch hasn't been merged yet for v5.5.
+> 
+> Thanks!
+> 
+> 	Hans
+> 
+> On 8/28/19 1:54 PM, Thierry Reding wrote:
+>> On Wed, Aug 28, 2019 at 12:06:34PM +0200, Hans Verkuil wrote:
+>>> On 8/28/19 11:38 AM, Thierry Reding wrote:
+>>>> On Wed, Aug 28, 2019 at 10:09:30AM +0200, Hans Verkuil wrote:
+>>>>> Thierry,
+>>>>>
+>>>>> Can you review this patch?
+>>>>>
+>>>>> Thanks!
+>>>>>
+>>>>> 	Hans
+>>>>
+>>>> Did you want me to pick this up into the drm/tegra tree? Or do you want
+>>>> to pick it up into your tree?
+>>>
+>>> Can you pick it up for the next cycle? As you mentioned, we missed the
+>>> deadline for 5.4, so this feature won't be enabled in the public CEC API
+>>> until 5.5.
+>>>
+>>> Thanks!
+>>
+>> Sure, will do.
+>>
+>> Thierry
+>>
+> 
