@@ -1,76 +1,81 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 3/5] dt-bindings: phy: tegra: Add Tegra194 support
-Date: Mon, 14 Oct 2019 15:17:52 +0200
-Message-ID: <20191014131752.GF422231@ulmo>
-References: <20191009024343.30218-1-jckuo@nvidia.com>
- <20191009024343.30218-4-jckuo@nvidia.com>
- <20191009233900.GA9109@bogus>
+Subject: Re: [PATCH] mailbox: tegra: Fix superfluous IRQ error message
+Date: Mon, 14 Oct 2019 15:24:58 +0200
+Message-ID: <20191014132458.GG422231@ulmo>
+References: <20191011083459.11551-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l+goss899txtYvYf"
+        protocol="application/pgp-signature"; boundary="lHGcFxmlz1yfXmOs"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191009233900.GA9109@bogus>
+In-Reply-To: <20191011083459.11551-1-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: JC Kuo <jckuo@nvidia.com>, gregkh@linuxfoundation.org, jonathanh@nvidia.com, kishon@ti.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com
+To: Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---l+goss899txtYvYf
+--lHGcFxmlz1yfXmOs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2019 at 06:39:00PM -0500, Rob Herring wrote:
-> On Wed, Oct 09, 2019 at 10:43:41AM +0800, JC Kuo wrote:
-> > Extend the bindings to cover the set of features found in Tegra194.
-> > Note that, technically, there are four more supplies connected to the
-> > XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
-> > , but the power sequencing requirements of Tegra194 require these to be
-> > under the control of the PMIC.
-> >=20
-> > Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it is
-> > possible for some platforms have long signal trace that could not
-> > provide sufficient electrical environment for Gen 2 speed. To deal with
-> > this, a new device node property "nvidia,disable-gen2" was added to
-> > Tegra194 that be used to specifically disable Gen 2 speed for a
-> > particular USB 3.0 port so that the port can be limited to Gen 1 speed
-> > and avoid the instability.
+On Fri, Oct 11, 2019 at 09:34:59AM +0100, Jon Hunter wrote:
+> Commit 7723f4c5ecdb ("driver core: platform: Add an error message to
+> platform_get_irq*()") added an error message to avoid drivers having
+> to print an error message when IRQ lookup fails. However, there are
+> some cases where IRQs are optional and so new optional versions of
+> the platform_get_irq*() APIs have been added for these cases.
 >=20
-> I suspect this may be a common issue and we should have a common=20
-> property. Typically, this kind of property is in the controller though=20
-> and supports multiple speed limits. See PCI bindings for inspiration.
+> The IRQs for Tegra HSP module are optional because not all instances
+> of the module have the doorbell and all of the shared interrupts.
+> Hence, since the above commit was applied the following error messages
+> are now seen on Tegra194 ...
+>=20
+>  ERR KERN tegra-hsp c150000.hsp: IRQ doorbell not found
+>  ERR KERN tegra-hsp c150000.hsp: IRQ shared0 not found
+>=20
+> The Tegra HSP driver deliberately does not fail if these are not found
+> and so fix the above errors by updating the Tegra HSP driver to use
+> the platform_get_irq_byname_optional() API.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/mailbox/tegra-hsp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Given that support for gen 2 speeds is dependent on signal trace length,
-it doesn't really make sense to restrict the whole controller to a given
-speed if only the signal trace for a single port exceeds the limit for
-which gen 2 would work.
+Perhaps Greg should pick up this patch because he's carrying the patch
+that adds the platform_get_irq_byname_optional() patch for v5.5.
 
-Also, the USB PHYs are in a different hardware block than the USB
-controller, so this really is a property of the PHY block, not the USB
-controller.
+Greg, would you prefer a copy of this in your mailbox, or does the
+following patchwork link suffice:
+
+	http://patchwork.ozlabs.org/patch/1175012/
+
+Either way, this patch:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
 
 Thierry
 
---l+goss899txtYvYf
+--lHGcFxmlz1yfXmOs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2kdYAACgkQ3SOs138+
-s6HMkQ/6A3Fj9ZJJsdJnHLfvMDhmqc/ZtjXEf75kGFK8o5zyYn7mMEiIX7UJwn0v
-u17ZP3AEz0nPbMpQ6VFkAH/JijR1m4P2vtl4/sxEpqWUpllPgb7cmK2ZefL8Wa5/
-+tha3SoS//h5XjI/lwVfaxnzJyE7owSaumpZG5NzR5fk4UWcUOzmZXAQSedOKppX
-3Jh5+pMwNenrbzvqxt0w1Lv0L3KMRH8rZN/r4m2WXNKqc/Zsb+zGAyF9uXylNd33
-Q29CpQvAJZwuyPj1NGsSJqwo/rl65QiHmXqwJh8azlUL9LBpGurYtox1kytVbtrY
-zxBxtLPuCabG5EvEPlGv0yv0no4kMvnZu1qCG10veWGkOGq7XHGyG8jdyBJDhBgt
-Ahin5YDmVrfG1c5balwzNgE5ZMNOF074JgcL2MZN0ac5NKky2yFPSvdBxJvGLt90
-etu2wctrjXOUmUj4Lr8mOh3QTD/mVHecHRfCWpSaaasDlQPj9g3NvCxvut8RWHDH
-z9irlyyUI5ahytdR1bxhq3UsuDDT3W6rRrVuwjo3Rw37NYwaa4M7ppB4Zqv8rUkz
-BGM9UTk+K39ZBBYYcHxdAJ1x5EChqh2WzAC/nGiwVd2hbgqj1I2zpZMSALBTUtlg
-fno5aAC10Un6nevQlxAJ/yBxynSbGEhBWt1yVXKzdHSJhB6VKz0=
-=+5Sz
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2kdyoACgkQ3SOs138+
+s6HehxAAgC4Sj44wpLRlcNKL7bVIgUtRtc6C5Wu++Zsj+4UDw82vgYCVrFU+dAgy
+tApzwfpUXsP9xnkhU2QxCXs+bLDJTa9amAFXDU4FyPTVZBKYk7SB7YgO6h5EvPC2
+kmiRIPFaGj79Ufmn6ZP31RlYt0r+VOPdd0ihsKXWuItYlFTrbQMdQpfQuRuveZUD
+UCn2RUu9CLFVkNb9HimfFDoSVo+/RiPrzFptzYBAtLw6uePdwj9cS4NoHUp6Q82R
++Emvumx0gkYE8bbsNEZce+hU1jQncjk8JXWLLdFRVDPOGlAA6V+SZd9awIlfKizX
+InAtf9AkyPAALGbPJzrg4VmJxzOqlZK1f2ESJSlrUy0q6WFy6yh/6cuDTa7+eMbP
+F/Z3KNyelVIB08JEmxvaeHLemX51QDaf34LKrshkMJXg+jh5xRHFyDrlWAm0zZpy
+4917C1XKHHQXNcfuW5LVYvNF10gOpuTWYaLSCeCG4E7xZqvl2Ry1NVHmRYr7WPnH
+tt5RmPxyJHDB0EgbLIiVcXh2QKTx6aXQOknFzR3Lb9uyzq2EBT7EwpR24qoJnr5Q
+9EN62+A6eSVMuy8t6cAD2Ssn5AWPBu7zcBmZfBPNqqvoEIBgqhwbwkKadq1UMD7d
+WWzI2TH4xWAqcd8GdmuZg51EsQIcR2N1zKCQphH1ZvveAMUDYqI=
+=Kp6p
 -----END PGP SIGNATURE-----
 
---l+goss899txtYvYf--
+--lHGcFxmlz1yfXmOs--
