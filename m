@@ -1,62 +1,56 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
-Date: Mon, 14 Oct 2019 14:17:19 +0200
-Message-ID: <20191014121719.GB422231@ulmo>
-References: <20190814104520.6001-1-darekm@google.com>
- <20190814104520.6001-8-darekm@google.com>
+Subject: [PATCH 00/14] drm/tegra: Miscellaneous cleanups
+Date: Mon, 14 Oct 2019 14:50:35 +0200
+Message-ID: <20191014125049.425101-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190814104520.6001-8-darekm@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dariusz Marcinkiewicz <darekm@google.com>
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---b5gNqxB1S1yM7hjW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 14, 2019 at 12:45:05PM +0200, Dariusz Marcinkiewicz wrote:
-> Use the new cec_notifier_conn_(un)register() functions to
-> (un)register the notifier for the HDMI connector, and fill in
-> the cec_connector_info.
->=20
-> Changes since v4:
-> 	- only create a CEC notifier for HDMI connectors
->=20
-> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
-> Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> ---
->  drivers/gpu/drm/tegra/output.c | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---b5gNqxB1S1yM7hjW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2kZ08ACgkQ3SOs138+
-s6HRvA/9FCMG8xuBzW58WQPgv7upIyoGmbyjXMcB+GZHiu/ziLojFw2/6AHUVgWv
-vUdbN79pMwLpJ/6fyDlltaeB6y9U4KSJ1B8+0CzAivrc454O/AflNVE/Eq+GNvWY
-bZSicV3BhRfZcQ99FpApoX/RR+RWqJgSCw7FGRFPnV6zODoHzTrceTABesfyajku
-uG15X+iKJn+BLWnXBGUCzJAVOmDARdUipNrGZX+sz0YlWTEw7RHMrKWyErmjy0AE
-HUUsxB5jLFZu5oBii2NangwZCb4vyGsFSmxHYeUzKVeg1bSymdvN9tPbDARY3084
-KWbqqQ52vZD2dNDWQbzWAKWyFYffjBT88FdfZVM1RGTlR//6cFk3takN7xoKCHjv
-E2zXdDb9jj8dhoJZrEUN/D9XB18jsDMU88+5zpsmNTTd0kBhzbNg1bqhoYCXyfsj
-wRsTfHhicnPWBPEUyLhukyWiAqYDoOzCkPylPMe+YRte+n3ENh+BqUAGkwW9gyZJ
-x7efFoQs4mCeEFcNl5A4a/DHaqH5q9FY3+193To/+lHXsH9vMFlner04WTp0UTa3
-Vk6xW57T9XvbY/dLcA80HLQWcObfsIgLPRinUhs/ZKTIrvEhZImWIKQqX+vqYLkQ
-3Tri2+gUpeODIShnLlTJ8T7LEMB9FfxuLVy10DsX4faZW/WiF9M=
-=igMm
------END PGP SIGNATURE-----
-
---b5gNqxB1S1yM7hjW--
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClNvbWUgY2xlYW51cHMg
+YW5kIG1pbm9yIGltcHJvdmVtZW50cywgbm90aGluZyBleGNpdGluZyBoZXJlLiBIb3dldmVyLAp0
+aGVzZSBwcmVwYXJlIHRoZSB3YXkgZm9yIHNvbWUgbGFyZ2VyIHJld29yayB0aGF0IHdpbGwgY29u
+dmVydCBleHBsaWNpdApJT01NVSBBUEkgdXNhZ2UgdG8gdGhlIERNQSBBUEksIHdoaWNoIG9wdGlv
+bmFsbHkgY2FuIGJlIGJhY2tlZCBieSBhbgpJT01NVS4KClRoaWVycnkKClRoaWVycnkgUmVkaW5n
+ICgxNCk6CiAgZ3B1OiBob3N0MXg6IERvIG5vdCBsaW1pdCBETUEgc2VnbWVudCBzaXplCiAgZ3B1
+OiBob3N0MXg6IFJlbW92ZSBncmF0dWl0b3VzIGJsYW5rIGxpbmUKICBncHU6IGhvc3QxeDogRXhw
+bGljaXRseSBpbml0aWFsaXplIGhvc3QxeF9pbmZvIHN0cnVjdHVyZXMKICBncHU6IGhvc3QxeDog
+UmVxdWVzdCBjaGFubmVscyBmb3IgY2xpZW50cywgbm90IGRldmljZXMKICBkcm0vdGVncmE6IElu
+aGVyaXQgZGV2aWNlIERNQSBwYXJhbWV0ZXJzIGZyb20gaG9zdDF4CiAgZHJtL3RlZ3JhOiBVc2Ug
+RFJNX0RFQlVHX0RSSVZFUiBmb3IgZHJpdmVyIG1lc3NhZ2VzCiAgZHJtL3RlZ3JhOiB2aWM6IFNr
+aXAgc3RyZWFtIElEIHByb2dyYW1taW5nIHdpdGhvdXQgSU9NTVUKICBkcm0vdGVncmE6IHZpYzog
+SW5oZXJpdCBETUEgbWFzayBmcm9tIGhvc3QxeAogIGRybS90ZWdyYTogdmljOiBVc2UgY29tbW9u
+IElPTU1VIGF0dGFjaC9kZXRhY2ggY29kZQogIGRybS90ZWdyYTogTW92ZSBJT01NVSBncm91cCBp
+bnRvIGhvc3QxeCBjbGllbnQKICBkcm0vdGVncmE6IGdlbTogUmVuYW1lIHBhZGRyIC0+IGlvdmEK
+ICBkcm0vdGVncmE6IGdlbTogVXNlIGRtYV9nZXRfc2d0YWJsZSgpCiAgZHJtL3RlZ3JhOiBnZW06
+IEFsd2F5cyBtYXAgU0cgdGFibGVzIGZvciBETUEtQlVGcwogIGRybS90ZWdyYTogZ2VtOiBVc2Ug
+c2dfYWxsb2NfdGFibGVfZnJvbV9wYWdlcygpCgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMg
+ICB8IDI0ICsrKysrKysrKysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuaCAgIHwg
+IDIgLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyAgfCAzMCArKysrKysrKysrLS0tLS0t
+LS0tLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgfCAgNiArKy0tLQogZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2ZiLmMgICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5j
+ICB8IDM3ICsrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
+Z2VtLmggIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjJkLmMgfCAxMiArKysrLS0t
+LS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMgfCAxMiArKysrLS0tLS0KIGRyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9odWIuYyAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5j
+ICB8IDUxICsrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUv
+aG9zdDF4L2J1cy5jICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvY2hhbm5lbC5jIHwg
+MTMgKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvY2hhbm5lbC5oIHwgIDEgKwogZHJpdmVy
+cy9ncHUvaG9zdDF4L2Rldi5jICAgICB8IDEyICsrKysrKysrKwogZHJpdmVycy9ncHUvaG9zdDF4
+L2ludHIuYyAgICB8ICAxIC0KIGluY2x1ZGUvbGludXgvaG9zdDF4LmggICAgICAgfCAgNCArKy0K
+IDE3IGZpbGVzIGNoYW5nZWQsIDExNCBpbnNlcnRpb25zKCspLCAxMDEgZGVsZXRpb25zKC0pCgot
+LSAKMi4yMy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
