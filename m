@@ -1,208 +1,111 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 01/17] clk: tegra: Add custom CCLK implementation
-Date: Wed, 16 Oct 2019 00:16:02 +0300
-Message-ID: <20191015211618.20758-2-digetx@gmail.com>
-References: <20191015211618.20758-1-digetx@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS framework
+Date: Tue, 15 Oct 2019 23:50:27 +0200
+Message-ID: <CAJZ5v0hxsy3ZKFvtWULHAVog4=3rYQfd3-61A9dNaKeUbiDtrg@mail.gmail.com>
+References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
+ <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
+ <a1c503a7-6136-a405-369c-596a680183f2@gmail.com> <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
+ <CAJZ5v0g3kRfa2WXy=xz3Mj15Pwb5tm1xg=uPODoifnv70O1ORA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191015211618.20758-1-digetx@gmail.com>
+In-Reply-To: <CAJZ5v0g3kRfa2WXy=xz3Mj15Pwb5tm1xg=uPODoifnv70O1ORA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Matthias Kaehlcke <mka@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Pavel Machek <pavel@ucw.cz>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-CCLK stands for "CPU Clock", CPU core is running off CCLK. CCLK supports
-multiple parents and it has internal clock divider which uses clock
-skipping technique, meaning that CPU's voltage should correspond to the
-parent clock rate and not CCLK. PLLX is the main CCLK parent that provides
-clock rates above 1GHz and it has special property such that the CCLK's
-internal divider is set into bypass mode when PLLX is set as a parent for
-CCLK.
+On Tue, Oct 15, 2019 at 5:53 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Oct 15, 2019 at 1:46 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 22-09-19, 23:12, Dmitry Osipenko wrote:
+> > > Hello Viresh,
+> > >
+> > > This patch causes use-after-free on a cpufreq driver module reload. Please take a look, thanks in advance.
+> > >
+> > >
+> > > [   87.952369] ==================================================================
+> > > [   87.953259] BUG: KASAN: use-after-free in notifier_chain_register+0x4f/0x9c
+> > > [   87.954031] Read of size 4 at addr e6abbd0c by task modprobe/243
+> > >
+> > > [   87.954901] CPU: 1 PID: 243 Comm: modprobe Tainted: G        W
+> > > 5.3.0-next-20190920-00185-gf61698eab956-dirty #2408
+> > > [   87.956077] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> > > [   87.956807] [<c0110aad>] (unwind_backtrace) from [<c010bb71>] (show_stack+0x11/0x14)
+> > > [   87.957709] [<c010bb71>] (show_stack) from [<c0d37b25>] (dump_stack+0x89/0x98)
+> > > [   87.958616] [<c0d37b25>] (dump_stack) from [<c02937e1>]
+> > > (print_address_description.constprop.0+0x3d/0x340)
+> > > [   87.959785] [<c02937e1>] (print_address_description.constprop.0) from [<c0293c6b>]
+> > > (__kasan_report+0xe3/0x12c)
+> > > [   87.960907] [<c0293c6b>] (__kasan_report) from [<c014988f>] (notifier_chain_register+0x4f/0x9c)
+> > > [   87.962001] [<c014988f>] (notifier_chain_register) from [<c01499b5>]
+> > > (blocking_notifier_chain_register+0x29/0x3c)
+> > > [   87.963180] [<c01499b5>] (blocking_notifier_chain_register) from [<c06f7ee9>]
+> > > (dev_pm_qos_add_notifier+0x79/0xf8)
+> > > [   87.964339] [<c06f7ee9>] (dev_pm_qos_add_notifier) from [<c092927d>] (cpufreq_online+0x5e1/0x8a4)
+> > > [   87.965351] [<c092927d>] (cpufreq_online) from [<c09295c9>] (cpufreq_add_dev+0x79/0x80)
+> > > [   87.966247] [<c09295c9>] (cpufreq_add_dev) from [<c06eb9d3>] (subsys_interface_register+0xc3/0x100)
+> > > [   87.967297] [<c06eb9d3>] (subsys_interface_register) from [<c0926e53>]
+> > > (cpufreq_register_driver+0x13b/0x1ec)
+> > > [   87.968476] [<c0926e53>] (cpufreq_register_driver) from [<bf800435>]
+> > > (tegra20_cpufreq_probe+0x165/0x1a8 [tegra20_cpufreq])
+> >
+> > Hi Dmitry,
+> >
+> > Thanks for the bug report and I was finally able to reproduce it at my end and
+> > this was quite an interesting debugging exercise :)
+> >
+> > When a cpufreq driver gets registered, we register with the subsys interface and
+> > it calls cpufreq_add_dev() for each CPU, starting from CPU0. And so the QoS
+> > notifiers get added to the first CPU of the policy, i.e. CPU0 in common cases.
+> >
+> > When the cpufreq driver gets unregistered, we unregister with the subsys
+> > interface and it calls cpufreq_remove_dev() for each CPU, starting from CPU0
+> > (should have been in reverse order I feel). We remove the QoS notifier only when
+> > cpufreq_remove_dev() gets called for the last CPU of the policy, lets call it
+> > CPUx. Now this has a different notifier list as compared to CPU0.
+>
+> The same problem will appear if the original policy CPU goes offline, won't it?
+>
+> > In short, we are adding the cpufreq notifiers to CPU0 and removing them from
+> > CPUx. When we try to add it again by inserting the module for second time, we
+> > find a node in the notifier list which is already freed but still in the list as
+> > we removed it from CPUx's list (which doesn't do anything as the node wasn't
+> > there in the first place).
+> >
+> > @Rafael: How do you see we solve this problem ? Here are the options I could
+> > think of:
+> >
+> > - Update subsys layer to reverse the order of devices while unregistering (this
+> >   will fix the current problem, but we will still have corner cases hanging
+> >   around, like if the CPU0 is hotplugged out, etc).
+>
+> This isn't sufficient for the offline case.
+>
+> > - Update QoS framework with the knowledge of related CPUs, this has been pending
+> >   until now from my side. And this is the thing we really need to do. Eventually
+> >   we shall have only a single notifier list for all CPUs of a policy, at least
+> >   for MIN/MAX frequencies.
+>
+> - Move the PM QoS requests and notifiers to the new policy CPU on all
+> changes of that.  That is, when cpufreq_offline() nominates the new
+> "leader", all of the QoS stuff for the policy needs to go to this one.
 
-This patch forks generic Super Clock into CCLK implementation which takes
-into account all CCLK specifics. The proper CCLK implementation is needed
-by the upcoming Tegra20 CPUFreq driver update that will allow to utilize
-the generic cpufreq-dt driver by moving intermediate clock handling into
-the clock driver. Note that technically this all could be squashed into
-clk-super, but result will be messier.
+Alas, that still will not work, because things like
+acpi_processor_ppc_init() only work accidentally for one-CPU policies.
+Generally, adding such a PM QoS request to a non-policy CPU simply has
+no effect until it becomes a policy CPU which may be never.
 
-Note that currently all CCLKLP bits are left in the clk-super.c and only
-CCLKG is supported by clk-tegra-super-cclk. It shouldn't be difficult
-to move the CCLKLP bits, but CCLKLP is not used by anything in kernel
-and thus better not to touch it for now.
+It looks like using device PM QoS for cpufreq is a mistake in general
+and what is needed is a struct pm_qos_constraints member in struct
+cpufreq_policy and something like
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/Makefile               |   1 +
- drivers/clk/tegra/clk-tegra-super-cclk.c | 131 +++++++++++++++++++++++
- drivers/clk/tegra/clk.h                  |   4 +
- 3 files changed, 136 insertions(+)
- create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
+struct freq_pm_qos_request {
+        enum freq_pm_qos_req_type type; /* min or max */
+        struct plist_node pnode;
+        struct cpufreq_policy *policy;
+};
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index df966ca06788..f04b490f5416 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -14,6 +14,7 @@ obj-y					+= clk-tegra-audio.o
- obj-y					+= clk-tegra-periph.o
- obj-y					+= clk-tegra-pmc.o
- obj-y					+= clk-tegra-fixed.o
-+obj-y					+= clk-tegra-super-cclk.o
- obj-y					+= clk-tegra-super-gen4.o
- obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
-diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
-new file mode 100644
-index 000000000000..9b41365c4331
---- /dev/null
-+++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Based on clk-super.c
-+ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Based on older tegra20-cpufreq driver by Colin Cross <ccross@google.com>
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * Author: Dmitry Osipenko <digetx@gmail.com>
-+ * Copyright (C) 2019 GRATE-DRIVER project
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+
-+#include "clk.h"
-+
-+#define PLLP_INDEX	4
-+#define PLLX_INDEX	8
-+
-+static u8 cclk_super_get_parent(struct clk_hw *hw)
-+{
-+	return tegra_clk_super_ops.get_parent(hw);
-+}
-+
-+static int cclk_super_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	return tegra_clk_super_ops.set_parent(hw, index);
-+}
-+
-+static int cclk_super_set_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long parent_rate)
-+{
-+	return tegra_clk_super_ops.set_rate(hw, rate, parent_rate);
-+}
-+
-+static unsigned long cclk_super_recalc_rate(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	if (cclk_super_get_parent(hw) == PLLX_INDEX)
-+		return parent_rate;
-+
-+	return tegra_clk_super_ops.recalc_rate(hw, parent_rate);
-+}
-+
-+static int cclk_super_determine_rate(struct clk_hw *hw,
-+				     struct clk_rate_request *req)
-+{
-+	struct clk_hw *pllp_hw = clk_hw_get_parent_by_index(hw, PLLP_INDEX);
-+	struct clk_hw *pllx_hw = clk_hw_get_parent_by_index(hw, PLLX_INDEX);
-+	unsigned long pllp_rate;
-+	long rate = req->rate;
-+
-+	if (WARN_ON_ONCE(!pllp_hw || !pllx_hw))
-+		return -EINVAL;
-+
-+	/*
-+	 * It is okay to run off PLLP for all CCLK rates below PLLP rate.
-+	 * PLLX will be disabled in this case, saving some power.
-+	 */
-+	pllp_rate = clk_hw_get_rate(pllp_hw);
-+
-+	if (rate <= pllp_rate) {
-+		rate = tegra_clk_super_ops.round_rate(hw, rate, &pllp_rate);
-+		req->best_parent_rate = pllp_rate;
-+		req->best_parent_hw = pllp_hw;
-+		req->rate = rate;
-+	} else {
-+		rate = clk_hw_round_rate(pllx_hw, rate);
-+		req->best_parent_rate = rate;
-+		req->best_parent_hw = pllx_hw;
-+		req->rate = rate;
-+	}
-+
-+	if (WARN_ON_ONCE(rate <= 0))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops tegra_cclk_super_ops = {
-+	.get_parent = cclk_super_get_parent,
-+	.set_parent = cclk_super_set_parent,
-+	.set_rate = cclk_super_set_rate,
-+	.recalc_rate = cclk_super_recalc_rate,
-+	.determine_rate = cclk_super_determine_rate,
-+};
-+
-+struct clk *tegra_clk_register_super_cclk(const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock)
-+{
-+	struct tegra_clk_super_mux *super;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	super = kzalloc(sizeof(*super), GFP_KERNEL);
-+	if (!super)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &tegra_cclk_super_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	super->reg = reg;
-+	super->lock = lock;
-+	super->width = 4;
-+	super->flags = clk_super_flags;
-+	super->frac_div.reg = reg + 4;
-+	super->frac_div.shift = 16;
-+	super->frac_div.width = 8;
-+	super->frac_div.frac_width = 1;
-+	super->frac_div.lock = lock;
-+	super->frac_div.flags = TEGRA_DIVIDER_SUPER;
-+	super->div_ops = &tegra_clk_frac_div_ops;
-+
-+	/* Data in .init is copied by clk_register(), so stack variable OK */
-+	super->hw.init = &init;
-+
-+	clk = clk_register(NULL, &super->hw);
-+	if (IS_ERR(clk))
-+		kfree(super);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index f81c10654aa9..095595a5b8a8 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -699,6 +699,10 @@ struct clk *tegra_clk_register_super_clk(const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		spinlock_t *lock);
-+struct clk *tegra_clk_register_super_cclk(const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock);
- 
- /**
-  * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
--- 
-2.23.0
+Then, pm_qos_update_target() can be used for adding, updating and
+removing requests.
