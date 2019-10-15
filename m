@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [RFC 2/3] memory: tegra186: Register as memory controller
-Date: Tue, 15 Oct 2019 18:29:44 +0200
-Message-ID: <20191015162945.1203736-3-thierry.reding@gmail.com>
+Subject: [RFC 3/3] iommu: arm-smmu: Get reference to memory controller
+Date: Tue, 15 Oct 2019 18:29:45 +0200
+Message-ID: <20191015162945.1203736-4-thierry.reding@gmail.com>
 References: <20191015162945.1203736-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,54 +23,63 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Registering as memory controller allows other drivers to obtain a
-reference to it. This is mostly useful as a way of ordering probe
-between devices depending on one another.
+Use the memory controller framework to obtain a reference to the memory
+controller to which the SMMU will make memory requests. This allows the
+two drivers to properly order their probes so that the memory controller
+can be programmed first.
+
+An example where this is required is Tegra186 where the stream IDs need
+to be associated with memory clients before memory requests are emitted
+with the correct stream ID.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/memory/tegra/tegra186.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/iommu/arm-smmu.c | 12 ++++++++++++
+ drivers/iommu/arm-smmu.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index 441213a35930..e94e960a79f4 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/io.h>
-+#include <linux/memory-controller.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
-@@ -11,6 +12,7 @@
- #include <dt-bindings/memory/tegra186-mc.h>
- 
- struct tegra_mc {
-+	struct memory_controller base;
- 	struct device *dev;
- 	void __iomem *regs;
- };
-@@ -548,7 +550,7 @@ static int tegra186_mc_probe(struct platform_device *pdev)
- 	if (IS_ERR(mc->regs))
- 		return PTR_ERR(mc->regs);
- 
--	mc->dev = &pdev->dev;
-+	mc->base.dev = &pdev->dev;
- 
- 	for (i = 0; i < ARRAY_SIZE(tegra186_mc_clients); i++) {
- 		const struct tegra_mc_client *client = &tegra186_mc_clients[i];
-@@ -571,6 +573,10 @@ static int tegra186_mc_probe(struct platform_device *pdev)
- 			client->name, override, security);
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index b18aac4c105e..8dd214244926 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -2015,6 +2015,18 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
  	}
+ 	smmu->dev = dev;
  
-+	err = memory_controller_register(&mc->base);
-+	if (err < 0)
-+		return err;
++	smmu->mc = memory_controller_get(dev, NULL);
++	if (IS_ERR(smmu->mc)) {
++		err = PTR_ERR(smmu->mc);
 +
- 	platform_set_drvdata(pdev, mc);
++		if (err != -ENODEV) {
++			dev_err(dev, "failed to get memory controller: %d\n", err);
++			return err;
++		}
++
++		smmu->mc = NULL;
++	}
++
+ 	if (dev->of_node)
+ 		err = arm_smmu_device_dt_probe(pdev, smmu);
+ 	else
+diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
+index b19b6cae9b5e..40b6d42eb3ab 100644
+--- a/drivers/iommu/arm-smmu.h
++++ b/drivers/iommu/arm-smmu.h
+@@ -17,6 +17,7 @@
+ #include <linux/io-64-nonatomic-hi-lo.h>
+ #include <linux/io-pgtable.h>
+ #include <linux/iommu.h>
++#include <linux/memory-controller.h>
+ #include <linux/mutex.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+@@ -224,6 +225,7 @@ enum arm_smmu_implementation {
  
- 	return err;
+ struct arm_smmu_device {
+ 	struct device			*dev;
++	struct memory_controller	*mc;
+ 
+ 	void __iomem			*base;
+ 	unsigned int			numpage;
 -- 
 2.23.0
