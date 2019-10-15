@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 15/17] ARM: dts: tegra20: trimslice: Add CPU Operating Performance Points
-Date: Wed, 16 Oct 2019 00:16:16 +0300
-Message-ID: <20191015211618.20758-16-digetx@gmail.com>
+Subject: [PATCH v1 13/17] ARM: dts: tegra20: paz00: Set up voltage regulators for DVFS
+Date: Wed, 16 Oct 2019 00:16:14 +0300
+Message-ID: <20191015211618.20758-14-digetx@gmail.com>
 References: <20191015211618.20758-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,40 +12,67 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Utilize common Tegra20 CPU OPP table. CPU voltage scaling is available now
-on TrimSlice.
+Set min/max voltage and couple CPU/CORE/RTC regulators.
 
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-trimslice.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/boot/dts/tegra20-paz00.dts | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 3e5ac096d85e..8debd3d3c20d 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -3,6 +3,7 @@
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 8861e0976e37..6e9fe192c648 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -337,18 +337,26 @@
+ 					regulator-always-on;
+ 				};
  
- #include <dt-bindings/input/input.h>
- #include "tegra20.dtsi"
-+#include "tegra20-cpu-opp.dtsi"
+-				sm0 {
++				core_vdd_reg: sm0 {
+ 					regulator-name = "+1.2vs_sm0,vdd_core";
+ 					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-max-microvolt = <1225000>;
++					regulator-coupled-with = <&rtc_vdd_reg &cpu_vdd_reg>;
++					regulator-coupled-max-spread = <170000 450000>;
+ 					regulator-always-on;
++
++					nvidia,tegra-core-regulator;
+ 				};
  
- / {
- 	model = "Compulab TrimSlice board";
-@@ -471,4 +472,14 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
+-				sm1 {
++				cpu_vdd_reg: sm1 {
+ 					regulator-name = "+1.0vs_sm1,vdd_cpu";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-coupled-with = <&core_vdd_reg &rtc_vdd_reg>;
++					regulator-coupled-max-spread = <450000 450000>;
+ 					regulator-always-on;
 +
-+	cpus {
-+		cpu0: cpu@0 {
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
++					nvidia,tegra-cpu-regulator;
+ 				};
+ 
+ 				sm2_reg: sm2 {
+@@ -367,10 +375,15 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo2 {
++				rtc_vdd_reg: ldo2 {
+ 					regulator-name = "+1.2vs_ldo2,vdd_rtc";
+ 					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-max-microvolt = <1225000>;
++					regulator-coupled-with = <&core_vdd_reg &cpu_vdd_reg>;
++					regulator-coupled-max-spread = <170000 450000>;
++					regulator-always-on;
 +
-+		cpu@1 {
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+	};
- };
++					nvidia,tegra-rtc-regulator;
+ 				};
+ 
+ 				ldo3 {
 -- 
 2.23.0
