@@ -1,93 +1,73 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS framework
-Date: Tue, 15 Oct 2019 17:53:04 +0200
-Message-ID: <CAJZ5v0g3kRfa2WXy=xz3Mj15Pwb5tm1xg=uPODoifnv70O1ORA@mail.gmail.com>
-References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
- <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
- <a1c503a7-6136-a405-369c-596a680183f2@gmail.com> <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [RFC 0/3] Introduce memory controller mini-framework
+Date: Tue, 15 Oct 2019 18:29:42 +0200
+Message-ID: <20191015162945.1203736-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Matthias Kaehlcke <mka@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Pavel Machek <pavel@ucw.cz>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 1:46 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 22-09-19, 23:12, Dmitry Osipenko wrote:
-> > Hello Viresh,
-> >
-> > This patch causes use-after-free on a cpufreq driver module reload. Please take a look, thanks in advance.
-> >
-> >
-> > [   87.952369] ==================================================================
-> > [   87.953259] BUG: KASAN: use-after-free in notifier_chain_register+0x4f/0x9c
-> > [   87.954031] Read of size 4 at addr e6abbd0c by task modprobe/243
-> >
-> > [   87.954901] CPU: 1 PID: 243 Comm: modprobe Tainted: G        W
-> > 5.3.0-next-20190920-00185-gf61698eab956-dirty #2408
-> > [   87.956077] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> > [   87.956807] [<c0110aad>] (unwind_backtrace) from [<c010bb71>] (show_stack+0x11/0x14)
-> > [   87.957709] [<c010bb71>] (show_stack) from [<c0d37b25>] (dump_stack+0x89/0x98)
-> > [   87.958616] [<c0d37b25>] (dump_stack) from [<c02937e1>]
-> > (print_address_description.constprop.0+0x3d/0x340)
-> > [   87.959785] [<c02937e1>] (print_address_description.constprop.0) from [<c0293c6b>]
-> > (__kasan_report+0xe3/0x12c)
-> > [   87.960907] [<c0293c6b>] (__kasan_report) from [<c014988f>] (notifier_chain_register+0x4f/0x9c)
-> > [   87.962001] [<c014988f>] (notifier_chain_register) from [<c01499b5>]
-> > (blocking_notifier_chain_register+0x29/0x3c)
-> > [   87.963180] [<c01499b5>] (blocking_notifier_chain_register) from [<c06f7ee9>]
-> > (dev_pm_qos_add_notifier+0x79/0xf8)
-> > [   87.964339] [<c06f7ee9>] (dev_pm_qos_add_notifier) from [<c092927d>] (cpufreq_online+0x5e1/0x8a4)
-> > [   87.965351] [<c092927d>] (cpufreq_online) from [<c09295c9>] (cpufreq_add_dev+0x79/0x80)
-> > [   87.966247] [<c09295c9>] (cpufreq_add_dev) from [<c06eb9d3>] (subsys_interface_register+0xc3/0x100)
-> > [   87.967297] [<c06eb9d3>] (subsys_interface_register) from [<c0926e53>]
-> > (cpufreq_register_driver+0x13b/0x1ec)
-> > [   87.968476] [<c0926e53>] (cpufreq_register_driver) from [<bf800435>]
-> > (tegra20_cpufreq_probe+0x165/0x1a8 [tegra20_cpufreq])
->
-> Hi Dmitry,
->
-> Thanks for the bug report and I was finally able to reproduce it at my end and
-> this was quite an interesting debugging exercise :)
->
-> When a cpufreq driver gets registered, we register with the subsys interface and
-> it calls cpufreq_add_dev() for each CPU, starting from CPU0. And so the QoS
-> notifiers get added to the first CPU of the policy, i.e. CPU0 in common cases.
->
-> When the cpufreq driver gets unregistered, we unregister with the subsys
-> interface and it calls cpufreq_remove_dev() for each CPU, starting from CPU0
-> (should have been in reverse order I feel). We remove the QoS notifier only when
-> cpufreq_remove_dev() gets called for the last CPU of the policy, lets call it
-> CPUx. Now this has a different notifier list as compared to CPU0.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The same problem will appear if the original policy CPU goes offline, won't it?
+Hi,
 
-> In short, we are adding the cpufreq notifiers to CPU0 and removing them from
-> CPUx. When we try to add it again by inserting the module for second time, we
-> find a node in the notifier list which is already freed but still in the list as
-> we removed it from CPUx's list (which doesn't do anything as the node wasn't
-> there in the first place).
->
-> @Rafael: How do you see we solve this problem ? Here are the options I could
-> think of:
->
-> - Update subsys layer to reverse the order of devices while unregistering (this
->   will fix the current problem, but we will still have corner cases hanging
->   around, like if the CPU0 is hotplugged out, etc).
+this series proposes the introduction of a mini-framework for memory
+controllers. The primary use-case for this right now is to allow for
+drivers that depend on the memory controller to defer probe until the
+memory controller has been successfully registered.
 
-This isn't sufficient for the offline case.
+One example where this is needed is on Tegra186 and later SoCs where
+the memory controller needs to program some registers to associate a
+stream ID with memory clients. This requires that the IOMMU driver
+defers probe until the memory controller has been registered.
 
-> - Update QoS framework with the knowledge of related CPUs, this has been pending
->   until now from my side. And this is the thing we really need to do. Eventually
->   we shall have only a single notifier list for all CPUs of a policy, at least
->   for MIN/MAX frequencies.
+This is achieved by providing a trivial memory controller registry that
+can be queried.
 
-- Move the PM QoS requests and notifiers to the new policy CPU on all
-changes of that.  That is, when cpufreq_offline() nominates the new
-"leader", all of the QoS stuff for the policy needs to go to this one.
+I haven't written up a full device tree binding for this, but if people
+think this is a reasonable proposal, I can flesh things out. Currently I
+use something along these lines on Tegra186:
 
-Of course, the reverse order of unregistration in the subsys layer
-would help to avoid some useless churn related to that.
+	mc: memory-controller@2c00000 {
+		...
+		#memory-controller-cells = <0>;
+		...
+	};
+
+	iommu@12000000 {
+		...
+		memory-controllers = <&mc>;
+		...
+	};
+
+Thierry
+
+Thierry Reding (3):
+  memory: Introduce memory controller mini-framework
+  memory: tegra186: Register as memory controller
+  iommu: arm-smmu: Get reference to memory controller
+
+ drivers/iommu/arm-smmu.c          | 12 ++++
+ drivers/iommu/arm-smmu.h          |  2 +
+ drivers/memory/Makefile           |  1 +
+ drivers/memory/core.c             | 99 +++++++++++++++++++++++++++++++
+ drivers/memory/tegra/tegra186.c   |  8 ++-
+ include/linux/memory-controller.h | 25 ++++++++
+ 6 files changed, 146 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/memory/core.c
+ create mode 100644 include/linux/memory-controller.h
+
+-- 
+2.23.0
