@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 08/18] ARM: tegra: Make outer_disable() open-coded
-Date: Tue, 15 Oct 2019 20:00:05 +0300
-Message-ID: <20191015170015.1135-9-digetx@gmail.com>
+Subject: [PATCH v6 05/18] ARM: tegra: Propagate error from tegra_idle_lp2_last()
+Date: Tue, 15 Oct 2019 20:00:02 +0300
+Message-ID: <20191015170015.1135-6-digetx@gmail.com>
 References: <20191015170015.1135-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,50 +12,101 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The outer_disable() of Tegra's suspend code is open-coded now since
-that helper produces spurious warning message about secondary CPUs being
-online when CPU enters into LP2 from cpuidle. The secondaries are actually
-halted by the cpuidle driver on entering into LP2 idle-state, but the
-online status is not touched by the cpuidle. This fixes a storm of
-warnings once LP2 idling state is enabled on Tegra30. The outer_disable()
-helper has sanity checks for interrupts and secondary CPUs being disabled
-and we are pretty confident about the interrupts state during of CPU
-idling / system suspend. The rail-off status check is added in this patch
-as equivalent for the "num_online_cpus() > 1".
+Technically cpu_suspend() may fail and it's never good to lose information
+about failure. For example things like cpuidle core could correctly sample
+idling time in the case of failure.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/pm.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 6 ++++--
+ arch/arm/mach-tegra/cpuidle-tegra30.c | 4 +---
+ arch/arm/mach-tegra/pm.c              | 8 ++++++--
+ arch/arm/mach-tegra/pm.h              | 2 +-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index 4da5d72ae030..74ba37992259 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -87,15 +87,17 @@ static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
+ 					   struct cpuidle_driver *drv,
+ 					   int index)
+ {
++	bool ret;
++
+ 	while (!tegra_cpu_rail_off_ready())
+ 		cpu_relax();
+ 
+-	tegra_idle_lp2_last();
++	ret = !tegra_idle_lp2_last();
+ 
+ 	if (cpu_online(1))
+ 		tegra20_wake_cpu1_from_reset();
+ 
+-	return true;
++	return ret;
+ }
+ 
+ #ifdef CONFIG_SMP
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+index a3ce8dabfe18..17cbd118abee 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra30.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
+@@ -68,9 +68,7 @@ static bool tegra30_cpu_cluster_power_down(struct cpuidle_device *dev,
+ 		return false;
+ 	}
+ 
+-	tegra_idle_lp2_last();
+-
+-	return true;
++	return !tegra_idle_lp2_last();
+ }
+ 
+ #ifdef CONFIG_SMP
 diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 7d9ef26e52a7..d1e1a61b12cf 100644
+index a72f9a2d3cb7..a094acaca307 100644
 --- a/arch/arm/mach-tegra/pm.c
 +++ b/arch/arm/mach-tegra/pm.c
-@@ -138,6 +138,10 @@ void tegra_pm_set_cpu_in_lp2(void)
+@@ -189,14 +189,16 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
+ 	tegra_pmc_enter_suspend_mode(mode);
+ }
  
- static int tegra_sleep_cpu(unsigned long v2p)
+-void tegra_idle_lp2_last(void)
++int tegra_idle_lp2_last(void)
  {
-+	if (tegra_cpu_car_ops->rail_off_ready &&
-+	    WARN_ON(!tegra_cpu_rail_off_ready()))
-+		return -EBUSY;
++	int err;
 +
+ 	tegra_pm_set(TEGRA_SUSPEND_LP2);
+ 
+ 	cpu_cluster_pm_enter();
+ 	suspend_cpu_complex();
+ 
+-	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
++	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+ 
  	/*
- 	 * L2 cache disabling using kernel API only allowed when all
- 	 * secondary CPU's are offline. Cache have to be disabled with
-@@ -146,9 +150,10 @@ static int tegra_sleep_cpu(unsigned long v2p)
- 	 * if any of secondary CPU's is online and this is the LP2-idle
- 	 * code-path only for Tegra20/30.
- 	 */
--	if (trusted_foundations_registered())
--		outer_disable();
--
-+#ifdef CONFIG_OUTER_CACHE
-+	if (trusted_foundations_registered() && outer_cache.disable)
-+		outer_cache.disable();
-+#endif
- 	/*
- 	 * Note that besides of setting up CPU reset vector this firmware
- 	 * call may also do the following, depending on the FW version:
+ 	 * Resume L2 cache if it wasn't re-enabled early during resume,
+@@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
+ 
+ 	restore_cpu_complex();
+ 	cpu_cluster_pm_exit();
++
++	return err;
+ }
+ 
+ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
+index 2c294f6365c0..7d72f31dee77 100644
+--- a/arch/arm/mach-tegra/pm.h
++++ b/arch/arm/mach-tegra/pm.h
+@@ -25,7 +25,7 @@ void tegra30_sleep_core_init(void);
+ 
+ void tegra_clear_cpu_in_lp2(void);
+ void tegra_set_cpu_in_lp2(void);
+-void tegra_idle_lp2_last(void);
++int tegra_idle_lp2_last(void);
+ extern void (*tegra_tear_down_cpu)(void);
+ 
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.23.0
