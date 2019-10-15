@@ -1,77 +1,87 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: spidev: use new `delay` field for spi transfers" to the spi tree
-Date: Tue, 15 Oct 2019 12:12:23 +0100 (BST)
-Message-ID: <20191015111223.A18602741CD7@ypsilon.sirena.org.uk>
-References: <20190926105147.7839-14-alexandru.ardelean@analog.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS
+ framework
+Date: Tue, 15 Oct 2019 17:16:37 +0530
+Message-ID: <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
+References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
+ <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
+ <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190926105147.7839-14-alexandru.ardelean@analog.com>
+Content-Disposition: inline
+In-Reply-To: <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc: baolin.wang@linaro.org, bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org, f.fainelli@gmail.com, jic23@kernel.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.orgMark Brown <broonie@kernel.org>, orsonzhai@gmail.com, zhang.lyra@gmail.com
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org, ulf.hansson@linaro.org, sfr@canb.auug.org.au, pavel@ucw.cz, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+On 22-09-19, 23:12, Dmitry Osipenko wrote:
+> Hello Viresh,
+> 
+> This patch causes use-after-free on a cpufreq driver module reload. Please take a look, thanks in advance.
+> 
+> 
+> [   87.952369] ==================================================================
+> [   87.953259] BUG: KASAN: use-after-free in notifier_chain_register+0x4f/0x9c
+> [   87.954031] Read of size 4 at addr e6abbd0c by task modprobe/243
+> 
+> [   87.954901] CPU: 1 PID: 243 Comm: modprobe Tainted: G        W
+> 5.3.0-next-20190920-00185-gf61698eab956-dirty #2408
+> [   87.956077] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [   87.956807] [<c0110aad>] (unwind_backtrace) from [<c010bb71>] (show_stack+0x11/0x14)
+> [   87.957709] [<c010bb71>] (show_stack) from [<c0d37b25>] (dump_stack+0x89/0x98)
+> [   87.958616] [<c0d37b25>] (dump_stack) from [<c02937e1>]
+> (print_address_description.constprop.0+0x3d/0x340)
+> [   87.959785] [<c02937e1>] (print_address_description.constprop.0) from [<c0293c6b>]
+> (__kasan_report+0xe3/0x12c)
+> [   87.960907] [<c0293c6b>] (__kasan_report) from [<c014988f>] (notifier_chain_register+0x4f/0x9c)
+> [   87.962001] [<c014988f>] (notifier_chain_register) from [<c01499b5>]
+> (blocking_notifier_chain_register+0x29/0x3c)
+> [   87.963180] [<c01499b5>] (blocking_notifier_chain_register) from [<c06f7ee9>]
+> (dev_pm_qos_add_notifier+0x79/0xf8)
+> [   87.964339] [<c06f7ee9>] (dev_pm_qos_add_notifier) from [<c092927d>] (cpufreq_online+0x5e1/0x8a4)
+> [   87.965351] [<c092927d>] (cpufreq_online) from [<c09295c9>] (cpufreq_add_dev+0x79/0x80)
+> [   87.966247] [<c09295c9>] (cpufreq_add_dev) from [<c06eb9d3>] (subsys_interface_register+0xc3/0x100)
+> [   87.967297] [<c06eb9d3>] (subsys_interface_register) from [<c0926e53>]
+> (cpufreq_register_driver+0x13b/0x1ec)
+> [   87.968476] [<c0926e53>] (cpufreq_register_driver) from [<bf800435>]
+> (tegra20_cpufreq_probe+0x165/0x1a8 [tegra20_cpufreq])
 
-   spi: spidev: use new `delay` field for spi transfers
+Hi Dmitry,
 
-has been applied to the spi tree at
+Thanks for the bug report and I was finally able to reproduce it at my end and
+this was quite an interesting debugging exercise :)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+When a cpufreq driver gets registered, we register with the subsys interface and
+it calls cpufreq_add_dev() for each CPU, starting from CPU0. And so the QoS
+notifiers get added to the first CPU of the policy, i.e. CPU0 in common cases.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+When the cpufreq driver gets unregistered, we unregister with the subsys
+interface and it calls cpufreq_remove_dev() for each CPU, starting from CPU0
+(should have been in reverse order I feel). We remove the QoS notifier only when
+cpufreq_remove_dev() gets called for the last CPU of the policy, lets call it
+CPUx. Now this has a different notifier list as compared to CPU0.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+In short, we are adding the cpufreq notifiers to CPU0 and removing them from
+CPUx. When we try to add it again by inserting the module for second time, we
+find a node in the notifier list which is already freed but still in the list as
+we removed it from CPUx's list (which doesn't do anything as the node wasn't
+there in the first place).
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+@Rafael: How do you see we solve this problem ? Here are the options I could
+think of:
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+- Update subsys layer to reverse the order of devices while unregistering (this
+  will fix the current problem, but we will still have corner cases hanging
+  around, like if the CPU0 is hotplugged out, etc).
 
-Thanks,
-Mark
+- Update QoS framework with the knowledge of related CPUs, this has been pending
+  until now from my side. And this is the thing we really need to do. Eventually
+  we shall have only a single notifier list for all CPUs of a policy, at least
+  for MIN/MAX frequencies.
 
-From 8e319dd5f1ebbc1fffa9e550b2a643cbce7515b1 Mon Sep 17 00:00:00 2001
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Date: Thu, 26 Sep 2019 13:51:41 +0300
-Subject: [PATCH] spi: spidev: use new `delay` field for spi transfers
+- ??
 
-The `delay` field has type `struct spi_delay`.
-This allows users to specify nano-second or clock-cycle delays (if needed).
-
-Converting to use `delay` is straightforward: it's just assigning the
-value to `delay.value` and hard-coding the `delay.unit` to
-`SPI_DELAY_UNIT_USECS`.
-
-This keeps the uapi for spidev un-changed. Changing it can be part of
-another changeset and discussion.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Link: https://lore.kernel.org/r/20190926105147.7839-14-alexandru.ardelean@analog.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spidev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index d63235dcb231..1e217e3e9486 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -265,7 +265,8 @@ static int spidev_message(struct spidev_data *spidev,
- 		k_tmp->tx_nbits = u_tmp->tx_nbits;
- 		k_tmp->rx_nbits = u_tmp->rx_nbits;
- 		k_tmp->bits_per_word = u_tmp->bits_per_word;
--		k_tmp->delay_usecs = u_tmp->delay_usecs;
-+		k_tmp->delay.value = u_tmp->delay_usecs;
-+		k_tmp->delay.unit = SPI_DELAY_UNIT_USECS;
- 		k_tmp->speed_hz = u_tmp->speed_hz;
- 		k_tmp->word_delay.value = u_tmp->word_delay_usecs;
- 		k_tmp->word_delay.unit = SPI_DELAY_UNIT_USECS;
 -- 
-2.20.1
+viresh
