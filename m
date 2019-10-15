@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 18/18] ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-Date: Tue, 15 Oct 2019 20:00:15 +0300
-Message-ID: <20191015170015.1135-19-digetx@gmail.com>
+Subject: [PATCH v6 12/18] arm: tegra20/30: cpuidle: Remove unnecessary memory barrier
+Date: Tue, 15 Oct 2019 20:00:09 +0300
+Message-ID: <20191015170015.1135-13-digetx@gmail.com>
 References: <20191015170015.1135-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,25 +12,41 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
-it is now a proper platform driver.
+There is no good justification for smp_rmb() after returning from LP2
+because there are no memory operations that require SMP synchronization.
+Thus remove the confusing barrier.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 2 --
+ arch/arm/mach-tegra/cpuidle-tegra30.c | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 8f5c6a5b444c..9a2f11a780a8 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,6 +25,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
-+CONFIG_ARM_TEGRA_CPUIDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index fe80f1988120..af2cd339db43 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -193,8 +193,6 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
+ 
+ 	local_fiq_enable();
+ 
+-	smp_rmb();
+-
+ 	return entered_lp2 ? index : 0;
+ }
+ #endif
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+index a4f0add46a27..80ae64bcdf50 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra30.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
+@@ -113,8 +113,6 @@ static int tegra30_idle_lp2(struct cpuidle_device *dev,
+ 
+ 	local_fiq_enable();
+ 
+-	smp_rmb();
+-
+ 	return (entered_lp2) ? index : 0;
+ }
+ #endif
 -- 
 2.23.0
