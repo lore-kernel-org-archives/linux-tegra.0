@@ -1,43 +1,53 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 00/17] NVIDIA Tegra20 CPUFreq driver major update
-Date: Wed, 16 Oct 2019 16:16:27 +0300
-Message-ID: <8cf055a3-57fd-c275-9e74-a9fb5d284866@gmail.com>
+Subject: Re: [PATCH v1 11/17] ARM: dts: tegra20: Add CPU Operating Performance
+ Points
+Date: Wed, 16 Oct 2019 16:21:19 +0300
+Message-ID: <ba9d6de0-38dc-a851-cf0a-fb9d06461671@gmail.com>
 References: <20191015211618.20758-1-digetx@gmail.com>
- <20191016052716.yipztnpg7bcuzhfn@vireshk-i7>
+ <20191015211618.20758-12-digetx@gmail.com>
+ <20191016052323.w6hav4qqn3ybt55q@vireshk-i7>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191016052716.yipztnpg7bcuzhfn@vireshk-i7>
+In-Reply-To: <20191016052323.w6hav4qqn3ybt55q@vireshk-i7>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-16.10.2019 08:27, Viresh Kumar пишет:
+16.10.2019 08:23, Viresh Kumar пишет:
 > On 16-10-19, 00:16, Dmitry Osipenko wrote:
->> Hello,
+>> Operating Point are specified per HW version. The OPP voltages are kept
+>> in a separate DTSI file because some boards may not define CPU regulator
+>> in their device-tree if voltage scaling isn't necessary, like for example
+>> in a case of tegra20-trimslice which is outlet-powered device.
 >>
->> This series moves intermediate-clk handling from tegra20-cpufreq into
->> tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
->> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
->> of the box. All boards need to adopt CPU OPPs in their device-trees in
->> order to get cpufreq support. This series adds OPPs only to selective
->> boards because there is assumption in a current device-trees that CPU
->> voltage is set for 1GHz freq and this won't work for those CPUs that
->> can go over 1GHz and thus require voltage regulators to be set up for
->> voltage scaling support (CC'ed Marcel for Toradex boards). We could
->> probably add delete-node for OPPs over 1GHz if there are not actively
->> maintained boards.
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../boot/dts/tegra20-cpu-opp-microvolt.dtsi   | 201 ++++++++++++
+>>  arch/arm/boot/dts/tegra20-cpu-opp.dtsi        | 302 ++++++++++++++++++
+>>  2 files changed, 503 insertions(+)
+>>  create mode 100644 arch/arm/boot/dts/tegra20-cpu-opp-microvolt.dtsi
+>>  create mode 100644 arch/arm/boot/dts/tegra20-cpu-opp.dtsi
+>>
+>> diff --git a/arch/arm/boot/dts/tegra20-cpu-opp-microvolt.dtsi b/arch/arm/boot/dts/tegra20-cpu-opp-microvolt.dtsi
+>> new file mode 100644
+>> index 000000000000..e85ffdbef876
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/tegra20-cpu-opp-microvolt.dtsi
+>> @@ -0,0 +1,201 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +/ {
+>> +	cpu0_opp_table: cpu_opp_table0 {
+>> +		opp@216000000_750 {
 > 
-> How do you want to get these patches merged ? Can I just pick the cpufreq bits
-> alone ?
-> 
+> Maybe just drop the _750 (i.e. voltage) from the names as we don't generally
+> follow it :)
 
-The cpufreq bits strictly depend on the clk patches and the regulators
-coupler/balancer series. Hence all patches in this series should collect
-acks from relevant maintainers and then Thierry will pick up the
-patchsets in a correct order via tegra tree, at least that's my vision.
-
-Thierry, are you okay with that approach?
+The reason for the _750 postfix is that there are multiple OPPs for
+216MHz and they have different voltages for different versions of
+hardware, thus those are separate OPPs and they can't be squashed into a
+single OPP node.
