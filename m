@@ -1,64 +1,51 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS framework
-Date: Wed, 16 Oct 2019 10:43:33 +0200
-Message-ID: <CAJZ5v0hwaF3kvBHj6yoSJ8AQPOA00jTxMt7fv=k7YYGkL2jdMg@mail.gmail.com>
-References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
- <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
- <a1c503a7-6136-a405-369c-596a680183f2@gmail.com> <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
- <CAJZ5v0g3kRfa2WXy=xz3Mj15Pwb5tm1xg=uPODoifnv70O1ORA@mail.gmail.com>
- <CAJZ5v0hxsy3ZKFvtWULHAVog4=3rYQfd3-61A9dNaKeUbiDtrg@mail.gmail.com> <20191016082742.nttzuofes6uds4pu@vireshk-i7>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/3] iommu/tegra-smmu: Use non-secure register for flushing
+Date: Wed, 16 Oct 2019 13:50:24 +0200
+Message-ID: <20191016115026.1768745-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191016082742.nttzuofes6uds4pu@vireshk-i7>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Dmitry Osipenko <digetx@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, Matthias Kaehlcke <mka@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Pavel Machek <pavel@ucw.cz>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 10:27 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 15-10-19, 23:50, Rafael J. Wysocki wrote:
-> > On Tue, Oct 15, 2019 at 5:53 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> > > > - Update QoS framework with the knowledge of related CPUs, this has been pending
-> > > >   until now from my side. And this is the thing we really need to do. Eventually
-> > > >   we shall have only a single notifier list for all CPUs of a policy, at least
-> > > >   for MIN/MAX frequencies.
-> > >
-> > > - Move the PM QoS requests and notifiers to the new policy CPU on all
-> > > changes of that.  That is, when cpufreq_offline() nominates the new
-> > > "leader", all of the QoS stuff for the policy needs to go to this one.
-> >
-> > Alas, that still will not work, because things like
-> > acpi_processor_ppc_init() only work accidentally for one-CPU policies.
->
-> I am not sure what problem you see here ? Can you please explain a bit more.
+From: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Never mind, sorry.  This is called for policy->cpu too.
+Use PTB_ASID instead of SMMU_CONFIG to flush smmu.
+PTB_ASID can be accessed from non-secure mode, SMMU_CONFIG cannot be.
+Using SMMU_CONFIG could pose a problem when kernel doesn't have secure
+mode access enabled from boot.
 
-> > Generally, adding such a PM QoS request to a non-policy CPU simply has
-> > no effect until it becomes a policy CPU which may be never.
->
-> I was thinking maybe we can read the constraints for all CPUs in the
-> policy->cpus mask in cpufreq_set_policy() and so this part of the problem will
-> just go away. The only part that would be left is to remove the QoS constraints
-> properly.
+Signed-off-by: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/iommu/tegra-smmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That would be on the complicated side IMO.
-
-> > It looks like using device PM QoS for cpufreq is a mistake in general
-> > and what is needed is a struct pm_qos_constraints member in struct
-> > cpufreq_policy and something like
-> >
-> > struct freq_pm_qos_request {
-> >         enum freq_pm_qos_req_type type; /* min or max */
-> >         struct plist_node pnode;
-> >         struct cpufreq_policy *policy;
-> > };
-> >
-> > Then, pm_qos_update_target() can be used for adding, updating and
-> > removing requests.
-
-I have patches implementing this idea, more or less, almost ready,
-stay tuned. :-)
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 99f85fb5a704..03e667480ec6 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -240,7 +240,7 @@ static inline void smmu_flush_tlb_group(struct tegra_smmu *smmu,
+ 
+ static inline void smmu_flush(struct tegra_smmu *smmu)
+ {
+-	smmu_readl(smmu, SMMU_CONFIG);
++	smmu_readl(smmu, SMMU_PTB_ASID);
+ }
+ 
+ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
+-- 
+2.23.0
