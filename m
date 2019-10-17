@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 21/30] pinctrl: vt8500: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:31 +0800
-Message-ID: <20191017122640.22976-22-yuehaibing@huawei.com>
+Subject: [PATCH -next 29/30] pinctrl: at91-pio4: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:39 +0800
+Message-ID: <20191017122640.22976-30-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,24 +17,22 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/vt8500/pinctrl-wmt.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-at91-pio4.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-index 4d5cd7d..ea910a1 100644
---- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
-+++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-@@ -553,10 +553,8 @@ int wmt_pinctrl_probe(struct platform_device *pdev,
- 		      struct wmt_pinctrl_data *data)
- {
- 	int err;
--	struct resource *res;
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index e380202..6949124 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -1017,8 +1017,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+ 	atmel_pioctrl->nbanks = atmel_pioctrl_data->nbanks;
+ 	atmel_pioctrl->npins = atmel_pioctrl->nbanks * ATMEL_PIO_NPINS_PER_BANK;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->base = devm_ioremap_resource(&pdev->dev, res);
-+	data->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->base))
- 		return PTR_ERR(data->base);
+-	atmel_pioctrl->reg_base = devm_ioremap_resource(dev, res);
++	atmel_pioctrl->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(atmel_pioctrl->reg_base))
+ 		return -EINVAL;
  
 -- 
 2.7.4
