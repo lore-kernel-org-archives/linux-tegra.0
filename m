@@ -1,48 +1,46 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH -next 11/30] pinctrl: msm: use
- devm_platform_ioremap_resource() to simplify code
-Date: Fri, 18 Oct 2019 10:06:57 -0700
-Message-ID: <20191018170657.GD4500@tuxbook-pro>
-References: <20191017122640.22976-1-yuehaibing@huawei.com>
- <20191017122640.22976-12-yuehaibing@huawei.com>
+From: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Subject: [PATCH] gpu: host1x: make 'host1x_cdma_wait_pushbuffer_space' static
+Date: Thu, 17 Oct 2019 12:04:27 +0100
+Message-ID: <20191017110427.31354-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191017122640.22976-12-yuehaibing@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: linus.walleij@linaro.org, manivannan.sadhasivam@linaro.org, afaerber@suse.de, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, jesper.nilsson@axis.com, lars.persson@axis.com, ludovic.desroches@microchip.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, baruch@tkos.co.il, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-oxnas@groups.io, linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, vz@mleia.com, narmstrong@baylibre.com, geert+renesas@glider.be, daniel@zonque.org, haojian.zhuang@gmail.com, wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com, agross@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-kernel@lists.codethink.co.uk
+Cc: linux-tegra@vger.kernel.org, "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu 17 Oct 05:26 PDT 2019, YueHaibing wrote:
-
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 763da0b..62fcae9 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -1150,8 +1150,7 @@ int msm_pinctrl_probe(struct platform_device *pdev,
->  				return PTR_ERR(pctrl->regs[i]);
->  		}
->  	} else {
-> -		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -		pctrl->regs[0] = devm_ioremap_resource(&pdev->dev, res);
-> +		pctrl->regs[0] = devm_platform_ioremap_resource(pdev, 0);
->  		if (IS_ERR(pctrl->regs[0]))
->  			return PTR_ERR(pctrl->regs[0]);
->  	}
-> -- 
-> 2.7.4
-> 
-> 
+VGhlIGhvc3QxeF9jZG1hX3dhaXRfcHVzaGJ1ZmZlcl9zcGFjZSBmdW5jdGlvbiBpcyBub3QgZGVj
+bGFyZWQKb3IgZGlyZWN0bHkgY2FsbGVkIGZyb20gb3V0c2lkZSB0aGUgZmlsZSBpdCBpcyBpbiwg
+c28gbWFrZSBpdApzdGF0aWMuCgpGaXhlcyB0aGUgZm9sbG93aW5nIHNwYXJzZSB3YXJuaWduOgpk
+cml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5jOjIzNTo1OiB3YXJuaW5nOiBzeW1ib2wgJ2hvc3QxeF9j
+ZG1hX3dhaXRfcHVzaGJ1ZmZlcl9zcGFjZScgd2FzIG5vdCBkZWNsYXJlZC4gU2hvdWxkIGl0IGJl
+IHN0YXRpYz8KClNpZ25lZC1vZmYtYnk6IEJlbiBEb29rcyA8YmVuLmRvb2tzQGNvZGV0aGluay5j
+by51az4KLS0tCkNjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgpD
+YzogZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpDYzogbGludXgtdGVncmFAdmdlci5r
+ZXJuZWwub3JnCi0tLQogZHJpdmVycy9ncHUvaG9zdDF4L2NkbWEuYyB8IDYgKysrLS0tCiAxIGZp
+bGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5jCmlu
+ZGV4IDQ4Yzg0YzQ4Mjk5Yy4uZThkM2ZkYTkxZDhhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9o
+b3N0MXgvY2RtYS5jCisrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLmMKQEAgLTIzMiw5ICsy
+MzIsOSBAQCB1bnNpZ25lZCBpbnQgaG9zdDF4X2NkbWFfd2FpdF9sb2NrZWQoc3RydWN0IGhvc3Qx
+eF9jZG1hICpjZG1hLAogICoKICAqIE11c3QgYmUgY2FsbGVkIHdpdGggdGhlIGNkbWEgbG9jayBo
+ZWxkLgogICovCi1pbnQgaG9zdDF4X2NkbWFfd2FpdF9wdXNoYnVmZmVyX3NwYWNlKHN0cnVjdCBo
+b3N0MXggKmhvc3QxeCwKLQkJCQkgICAgICBzdHJ1Y3QgaG9zdDF4X2NkbWEgKmNkbWEsCi0JCQkJ
+ICAgICAgdW5zaWduZWQgaW50IG5lZWRlZCkKK3N0YXRpYyBpbnQgaG9zdDF4X2NkbWFfd2FpdF9w
+dXNoYnVmZmVyX3NwYWNlKHN0cnVjdCBob3N0MXggKmhvc3QxeCwKKwkJCQkJICAgICBzdHJ1Y3Qg
+aG9zdDF4X2NkbWEgKmNkbWEsCisJCQkJCSAgICAgdW5zaWduZWQgaW50IG5lZWRlZCkKIHsKIAl3
+aGlsZSAodHJ1ZSkgewogCQlzdHJ1Y3QgcHVzaF9idWZmZXIgKnBiID0gJmNkbWEtPnB1c2hfYnVm
+ZmVyOwotLSAKMi4yMy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWw=
