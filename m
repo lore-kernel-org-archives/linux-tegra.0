@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 24/30] pinctrl: digicolor: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:34 +0800
-Message-ID: <20191017122640.22976-25-yuehaibing@huawei.com>
+Subject: [PATCH -next 26/30] pinctrl: bm1880: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:36 +0800
+Message-ID: <20191017122640.22976-27-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,29 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-digicolor.c | 4 +---
+ drivers/pinctrl/pinctrl-bm1880.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
-index 7e1ceee..ff702cf 100644
---- a/drivers/pinctrl/pinctrl-digicolor.c
-+++ b/drivers/pinctrl/pinctrl-digicolor.c
-@@ -270,7 +270,6 @@ static int dc_gpiochip_add(struct dc_pinmap *pmap, struct device_node *np)
- static int dc_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-bm1880.c b/drivers/pinctrl/pinctrl-bm1880.c
+index 63b130c..f7dff4f 100644
+--- a/drivers/pinctrl/pinctrl-bm1880.c
++++ b/drivers/pinctrl/pinctrl-bm1880.c
+@@ -1308,15 +1308,13 @@ static struct pinctrl_desc bm1880_desc = {
+ static int bm1880_pinctrl_probe(struct platform_device *pdev)
+ 
  {
- 	struct dc_pinmap *pmap;
--	struct resource *r;
- 	struct pinctrl_pin_desc *pins;
- 	struct pinctrl_desc *pctl_desc;
- 	char *pin_names;
-@@ -281,8 +280,7 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
- 	if (!pmap)
+-	struct resource *res;
+ 	struct bm1880_pinctrl *pctrl;
+ 
+ 	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
+ 	if (!pctrl)
  		return -ENOMEM;
  
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pmap->regs = devm_ioremap_resource(&pdev->dev, r);
-+	pmap->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pmap->regs))
- 		return PTR_ERR(pmap->regs);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pctrl->base = devm_ioremap_resource(&pdev->dev, res);
++	pctrl->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pctrl->base))
+ 		return PTR_ERR(pctrl->base);
  
 -- 
 2.7.4
