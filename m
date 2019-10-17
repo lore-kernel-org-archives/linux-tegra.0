@@ -1,85 +1,87 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 3/7] ASoC: tegra: i2s: Add support for
- more than 2 channels
-Date: Thu, 17 Oct 2019 20:38:20 +0300
-Message-ID: <1e43701b-3627-ba6d-ee19-020e25af3ef1@gmail.com>
-References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
- <20191007153136.4920-4-ben.dooks@codethink.co.uk>
- <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
- <16910e8d-4745-4e55-0436-9b3200876037@codethink.co.uk>
+Subject: Re: [PATCH v1 07/17] cpufreq: tegra20: Use generic cpufreq-dt driver
+ (Tegra30 supported now)
+Date: Fri, 18 Oct 2019 00:09:35 +0300
+Message-ID: <f4d6ba51-c2ac-4ddb-5acc-c4825aa6a793@gmail.com>
+References: <20191015211618.20758-1-digetx@gmail.com>
+ <20191015211618.20758-8-digetx@gmail.com>
+ <20191016051802.rrxv56vtvxfm6qqe@vireshk-i7>
+ <13a9ebd6-8dce-0217-d306-defb8eb6fb96@gmail.com>
+ <CAMdYzYoasuEobJLC4RLW_5WCNGnaKtTth0xKov0tUQuDhkX3EA@mail.gmail.com>
+ <b4eca03d-f86c-8e07-e04a-612e02820bd0@gmail.com>
+ <20191017023210.x5vavl542hdkrivw@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <16910e8d-4745-4e55-0436-9b3200876037@codethink.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191017023210.x5vavl542hdkrivw@vireshk-i7>
 Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Peter Geis <pgwipeout@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MTcuMTAuMjAxOSAxOToyMywgQmVuIERvb2tzINC/0LjRiNC10YI6Cj4gT24gMDgvMTAvMjAxOSAx
-NjoyOSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+PiBIZWxsbyBCZW4sCj4+Cj4+IDA3LjEwLjIw
-MTkgMTg6MzEsIEJlbiBEb29rcyDQv9C40YjQtdGCOgo+Pj4gRnJvbTogRWR3YXJkIENyYWdnIDxl
-ZHdhcmQuY3JhZ2dAY29kZXRoaW5rLmNvLnVrPgo+Pj4KPj4+IFRoZSBDSUYgY29uZmlndXJhdGlv
-biBhbmQgY2xvY2sgc2V0dGluZyBpcyBjdXJyZW50bHkgaGFyZCBjb2RlZCBmb3IgMgo+Pj4gY2hh
-bm5lbHMuIFNpbmNlIHRoZSBoYXJkd2FyZSBpcyBjYXBhYmxlIG9mIHN1cHBvcnRpbmcgMS04IGNo
-YW5uZWxzIGFkZAo+Pj4gc3VwcG9ydCBmb3IgcmVhZGluZyB0aGUgY2hhbm5lbCBjb3VudCBmcm9t
-IHRoZSBzdXBwbGllZCBwYXJhbWV0ZXJzIHRvCj4+PiBhbGxvdyBmb3IgYmV0dGVyIFRETSBzdXBw
-b3J0LiBJdCBzZWVtcyB0aGUgb3JpZ2luYWwgaW1wbGVtZW50YXRpb24gb2YKPj4+IHRoaXMKPj4+
-IGRyaXZlciB3YXMgZml4ZWQgYXQgMiBjaGFubmVscyBmb3Igc2ltcGxpY2l0eSwgYW5kIG5vdCBp
-bXBsZW1lbnRpbmcgVERNLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEVkd2FyZCBDcmFnZyA8ZWR3
-YXJkLmNyYWdnQGNvZGV0aGluay5jby51az4KPj4+IFtiZW4uZG9va3NAY29kZXRoaW5rLmNvLnVr
-OiBhZGRlZCBpc190ZG0gYW5kIGNoYW5uZWwgbnIgY2hlY2tdCj4+PiBbYmVuLmRvb2tzQGNvZGV0
-aGluay5jby51azogbWVyZ2UgZWRnZSBjb250cm9sIGludG8gc2V0LWZvcm1hdF0KPj4+IFtiZW4u
-ZG9va3NAY29kZXRoaW5rLmNvLnVrOiByZW1vdmVkIGlzX3RkbSBhbmQgbW92ZWQgZWRnZSB0byBo
-d19wYXJhbXNdCj4+PiBTaWduZWQtb2ZmLWJ5OiBCZW4gRG9va3MgPGJlbi5kb29rc0Bjb2RldGhp
-bmsuY28udWs+Cj4+PiAtLS0KPj4+IMKgIHNvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jIHwg
-MjEgKysrKysrKysrKysrKy0tLS0tLS0tCj4+PiDCoCAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0
-aW9ucygrKSwgOCBkZWxldGlvbnMoLSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3Rl
-Z3JhL3RlZ3JhMzBfaTJzLmMKPj4+IGIvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPj4+
-IGluZGV4IDA2M2YzNGM4ODJhZi4uNzM4MmY3OTQ5YmY0IDEwMDY0NAo+Pj4gLS0tIGEvc291bmQv
-c29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPj4+ICsrKyBiL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMw
-X2kycy5jCj4+PiBAQCAtNjcsNiArNjcsNyBAQCBzdGF0aWMgaW50IHRlZ3JhMzBfaTJzX3NldF9m
-bXQoc3RydWN0IHNuZF9zb2NfZGFpCj4+PiAqZGFpLAo+Pj4gwqAgewo+Pj4gwqDCoMKgwqDCoCBz
-dHJ1Y3QgdGVncmEzMF9pMnMgKmkycyA9IHNuZF9zb2NfZGFpX2dldF9kcnZkYXRhKGRhaSk7Cj4+
-PiDCoMKgwqDCoMKgIHVuc2lnbmVkIGludCBtYXNrID0gMCwgdmFsID0gMDsKPj4+ICvCoMKgwqAg
-dW5zaWduZWQgaW50IGNoX21hc2ssIGNoX3ZhbCA9IDA7Cj4+PiDCoCDCoMKgwqDCoMKgIHN3aXRj
-aCAoZm10ICYgU05EX1NPQ19EQUlGTVRfSU5WX01BU0spIHsKPj4+IMKgwqDCoMKgwqAgY2FzZSBT
-TkRfU09DX0RBSUZNVF9OQl9ORjoKPj4+IEBAIC03NSw2ICs3Niw3IEBAIHN0YXRpYyBpbnQgdGVn
-cmEzMF9pMnNfc2V0X2ZtdChzdHJ1Y3Qgc25kX3NvY19kYWkKPj4+ICpkYWksCj4+PiDCoMKgwqDC
-oMKgwqDCoMKgwqAgcmV0dXJuIC1FSU5WQUw7Cj4+PiDCoMKgwqDCoMKgIH0KPj4+IMKgICvCoMKg
-wqAgY2hfbWFzayA9IFRFR1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJMX01BU0s7Cj4+PiDCoMKg
-wqDCoMKgIG1hc2sgfD0gVEVHUkEzMF9JMlNfQ1RSTF9NQVNURVJfRU5BQkxFOwo+Pj4gwqDCoMKg
-wqDCoCBzd2l0Y2ggKGZtdCAmIFNORF9TT0NfREFJRk1UX01BU1RFUl9NQVNLKSB7Cj4+PiDCoMKg
-wqDCoMKgIGNhc2UgU05EX1NPQ19EQUlGTVRfQ0JTX0NGUzoKPj4+IEBAIC05MCwxMCArOTIsMTIg
-QEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc19zZXRfZm10KHN0cnVjdCBzbmRfc29jX2RhaQo+Pj4g
-KmRhaSwKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBURUdSQTMwX0kyU19DVFJMX0xSQ0tfTUFTSzsK
-Pj4+IMKgwqDCoMKgwqAgc3dpdGNoIChmbXQgJiBTTkRfU09DX0RBSUZNVF9GT1JNQVRfTUFTSykg
-ewo+Pj4gwqDCoMKgwqDCoCBjYXNlIFNORF9TT0NfREFJRk1UX0RTUF9BOgo+Pj4gK8KgwqDCoMKg
-wqDCoMKgIGNoX3ZhbCA9IFRFR1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJMX05FR19FREdFOwo+
-Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHZhbCB8PSBURUdSQTMwX0kyU19DVFJMX0ZSQU1FX0ZPUk1B
-VF9GU1lOQzsKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB2YWwgfD0gVEVHUkEzMF9JMlNfQ1RSTF9M
-UkNLX0xfTE9XOwo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+Pj4gwqDCoMKgwqDCoCBj
-YXNlIFNORF9TT0NfREFJRk1UX0RTUF9COgo+Pj4gK8KgwqDCoMKgwqDCoMKgIGNoX3ZhbCA9IFRF
-R1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJMX05FR19FREdFOwo+Pgo+PiBEb3duc3RyZWFtIGNv
-ZGUgc2V0cyBEU1BfQiB0byBQT1NfRURHRSwgbG9va3MgbGlrZSB5b3UgaGF2ZSBhIHR5cG8gaGVy
-ZS4KPj4gT3IgZG9lcyBEU1BfQiBoYXBwZW4gdG8gd29yayB3aXRoIHRoZSBORUdfRURHRT8KPiAK
-PiBvaywgd2lsbCBjaGFuZ2UsIHdlJ3ZlIG9ubHkgYmVlbiB1c2luZyBTTkRfU09DX0RBSUZNVF9E
-U1BfQQo+IAo+IEZvciByZWZlcmVuY2UsIGlzIHRoZXJlIGEgZ2l0IHJlcG8gd2l0aCB0aGlzIHZl
-cnNpb24gb2YgdGVncmEgdGRtIHN1cHBvcnQ/CgpMb29rcyBsaWtlIGFsbCBkb3duc3RyZWFtIGtl
-cm5lbHMgdGhhdCBzdXBwb3J0ZWQgVDMwIGFyZSBkb2luZyB0aGUgc2FtZQp0aGluZy4KClRha2Ug
-YSBsb29rIGhlcmUgZm9yIGV4YW1wbGU6CgpodHRwczovL252LXRlZ3JhLm52aWRpYS5jb20vZ2l0
-d2ViLz9wPWxpbnV4LTMuMTAuZ2l0O2E9Y29tbWl0O2g9NDk4MzRlZWY5ZDUxYTZlZmY5NTBlMGY1
-MmRkYzUzNDNkOTYwNjUyZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5v
-cmcKaHR0cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNh
-LWRldmVsCg==
+17.10.2019 05:32, Viresh Kumar пишет:
+> On 16-10-19, 21:19, Dmitry Osipenko wrote:
+>> 16.10.2019 17:58, Peter Geis пишет:
+>>> On Wed, Oct 16, 2019 at 9:29 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>>>
+>>>> 16.10.2019 08:18, Viresh Kumar пишет:
+>>>>> On 16-10-19, 00:16, Dmitry Osipenko wrote:
+>>>>>> Re-parenting to intermediate clock is supported now by the clock driver
+>>>>>> and thus there is no need in a customized CPUFreq driver, all that code
+>>>>>> is common for both Tegra20 and Tegra30. The available CPU freqs are now
+>>>>>> specified in device-tree in a form of OPPs, all users should update their
+>>>>>> device-trees.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> ---
+>>>>>>  drivers/cpufreq/Kconfig.arm          |   4 +-
+>>>>>>  drivers/cpufreq/cpufreq-dt-platdev.c |   2 +
+>>>>>>  drivers/cpufreq/tegra20-cpufreq.c    | 236 ++++++---------------------
+>>>>>>  3 files changed, 55 insertions(+), 187 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>>>>>> index a905796f7f85..2118c45d0acd 100644
+>>>>>> --- a/drivers/cpufreq/Kconfig.arm
+>>>>>> +++ b/drivers/cpufreq/Kconfig.arm
+>>>>>> @@ -301,8 +301,8 @@ config ARM_TANGO_CPUFREQ
+>>>>>>      default y
+>>>>>>
+>>>>>>  config ARM_TEGRA20_CPUFREQ
+>>>>>> -    tristate "Tegra20 CPUFreq support"
+>>>>>> -    depends on ARCH_TEGRA
+>>>>>> +    bool "Tegra20 CPUFreq support"
+>>>>>
+>>>>> Google is currently working on the GKI (generic kernel image) project where they
+>>>>> want to use a single kernel image with modules for all kind of android devices.
+>>>>> And for that they need all such drivers to be built as module. Since this is
+>>>>> already an module, I would ask you to keep it as is instead of moving it to bool
+>>>>> here. Else some google guy will switch it back as module later on.
+>>>>>
+>>>>> LGTM otherwise. Nice work. Thanks.
+>>>>>
+>>>>
+>>>> Okay, I'll keep the modularity in v2.
+>>>>
+>>>> Although, tegra20-cpufreq isn't a driver anymore because now it merely
+>>>> prepares OPP table for the cpufreq-dt driver, which is really a one-shot
+>>>> action that is enough to do during boot and thus modularity is a bit
+>>>> redundant here.
+>>>
+>>> I doubt Google will care much, since Android has moved on to aarch64.
+>>> Do they even support arm32 any more?
+>>
+>> Yes, I don't think there is a real need to care about Google. They won't
+>> use pure upstream and won't care about older hardware any ways.
+> 
+> Well, using (almost) pure upstream is the idea I believe. And the thing is they
+> want to use a single multi-platform image which should be as small as possible
+> in size. So it won't have any drivers or platform stuff (if possible) and
+> everything is module.
+> 
+> I am not sure about arm32/64 thing though. And it is okay if you don't want to
+> care about Google right now. That was just some side knowledge I had :)
+> 
+
+I'll leave the module part as-is for now.
