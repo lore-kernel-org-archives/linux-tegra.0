@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 28/30] pinctrl: actions: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:38 +0800
-Message-ID: <20191017122640.22976-29-yuehaibing@huawei.com>
+Subject: [PATCH -next 30/30] pinctrl: iproc: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:40 +0800
+Message-ID: <20191017122640.22976-31-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,22 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/actions/pinctrl-owl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-index 5dfe718..5a0c8e8 100644
---- a/drivers/pinctrl/actions/pinctrl-owl.c
-+++ b/drivers/pinctrl/actions/pinctrl-owl.c
-@@ -915,7 +915,6 @@ static int owl_gpio_init(struct owl_pinctrl *pctrl)
- int owl_pinctrl_probe(struct platform_device *pdev,
- 				struct owl_pinctrl_soc_data *soc_data)
- {
--	struct resource *res;
- 	struct owl_pinctrl *pctrl;
- 	int ret, i;
- 
-@@ -923,8 +922,7 @@ int owl_pinctrl_probe(struct platform_device *pdev,
- 	if (!pctrl)
- 		return -ENOMEM;
+diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+index 4d7d908..831a931 100644
+--- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+@@ -795,8 +795,7 @@ static int iproc_gpio_probe(struct platform_device *pdev)
+ 	chip->dev = dev;
+ 	platform_set_drvdata(pdev, chip);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pctrl->base = devm_ioremap_resource(&pdev->dev, res);
-+	pctrl->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pctrl->base))
- 		return PTR_ERR(pctrl->base);
- 
+-	chip->base = devm_ioremap_resource(dev, res);
++	chip->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(chip->base)) {
+ 		dev_err(dev, "unable to map I/O memory\n");
+ 		return PTR_ERR(chip->base);
 -- 
 2.7.4
