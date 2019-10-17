@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 23/30] pinctrl: rza2: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:33 +0800
-Message-ID: <20191017122640.22976-24-yuehaibing@huawei.com>
+Subject: [PATCH -next 20/30] pinctrl: u300: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:30 +0800
+Message-ID: <20191017122640.22976-21-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-rza2.c | 4 +---
+ drivers/pinctrl/pinctrl-u300.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rza2.c b/drivers/pinctrl/pinctrl-rza2.c
-index 3be1d83..e27ed2f 100644
---- a/drivers/pinctrl/pinctrl-rza2.c
-+++ b/drivers/pinctrl/pinctrl-rza2.c
-@@ -462,7 +462,6 @@ static const struct pinmux_ops rza2_pinmux_ops = {
- static int rza2_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-u300.c b/drivers/pinctrl/pinctrl-u300.c
+index 348423b..cc30644 100644
+--- a/drivers/pinctrl/pinctrl-u300.c
++++ b/drivers/pinctrl/pinctrl-u300.c
+@@ -1055,7 +1055,6 @@ static struct pinctrl_desc u300_pmx_desc = {
+ static int u300_pmx_probe(struct platform_device *pdev)
  {
- 	struct rza2_pinctrl_priv *priv;
+ 	struct u300_pmx *upmx;
 -	struct resource *res;
- 	int ret;
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-@@ -471,8 +470,7 @@ static int rza2_pinctrl_probe(struct platform_device *pdev)
+ 	/* Create state holders etc for this driver */
+ 	upmx = devm_kzalloc(&pdev->dev, sizeof(*upmx), GFP_KERNEL);
+@@ -1064,8 +1063,7 @@ static int u300_pmx_probe(struct platform_device *pdev)
  
- 	priv->dev = &pdev->dev;
+ 	upmx->dev = &pdev->dev;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->base = devm_ioremap_resource(&pdev->dev, res);
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
+-	upmx->virtbase = devm_ioremap_resource(&pdev->dev, res);
++	upmx->virtbase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(upmx->virtbase))
+ 		return PTR_ERR(upmx->virtbase);
  
 -- 
 2.7.4
