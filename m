@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 12/30] pinctrl: spear: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:22 +0800
-Message-ID: <20191017122640.22976-13-yuehaibing@huawei.com>
+Subject: [PATCH -next 15/30] pinctrl: oxnas: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:25 +0800
+Message-ID: <20191017122640.22976-16-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,52 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/spear/pinctrl-plgpio.c | 4 +---
- drivers/pinctrl/spear/pinctrl-spear.c  | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/pinctrl/pinctrl-oxnas.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
-index c4c9a29..1ebbc49 100644
---- a/drivers/pinctrl/spear/pinctrl-plgpio.c
-+++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
-@@ -515,15 +515,13 @@ static int plgpio_probe_dt(struct platform_device *pdev, struct plgpio *plgpio)
- static int plgpio_probe(struct platform_device *pdev)
- {
- 	struct plgpio *plgpio;
+diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
+index 40dc125..674b7b5 100644
+--- a/drivers/pinctrl/pinctrl-oxnas.c
++++ b/drivers/pinctrl/pinctrl-oxnas.c
+@@ -1196,7 +1196,6 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
+ 	struct oxnas_gpio_bank *bank;
+ 	unsigned int id, ngpios;
+ 	int irq, ret;
 -	struct resource *res;
- 	int ret, irq;
+ 	struct gpio_irq_chip *girq;
  
- 	plgpio = devm_kzalloc(&pdev->dev, sizeof(*plgpio), GFP_KERNEL);
- 	if (!plgpio)
- 		return -ENOMEM;
+ 	if (of_parse_phandle_with_fixed_args(np, "gpio-ranges",
+@@ -1220,8 +1219,7 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
+ 
+ 	bank = &oxnas_gpio_banks[id];
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	plgpio->base = devm_ioremap_resource(&pdev->dev, res);
-+	plgpio->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(plgpio->base))
- 		return PTR_ERR(plgpio->base);
- 
-diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
-index 7ec19c7..948f56a 100644
---- a/drivers/pinctrl/spear/pinctrl-spear.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear.c
-@@ -358,7 +358,6 @@ int spear_pinctrl_probe(struct platform_device *pdev,
- 			struct spear_pinctrl_machdata *machdata)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct resource *res;
- 	struct spear_pmx *pmx;
- 
- 	if (!machdata)
-@@ -368,8 +367,7 @@ int spear_pinctrl_probe(struct platform_device *pdev,
- 	if (!pmx)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pmx->vbase = devm_ioremap_resource(&pdev->dev, res);
-+	pmx->vbase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pmx->vbase))
- 		return PTR_ERR(pmx->vbase);
+-	bank->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	bank->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(bank->reg_base))
+ 		return PTR_ERR(bank->reg_base);
  
 -- 
 2.7.4
