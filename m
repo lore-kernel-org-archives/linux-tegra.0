@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 22/30] pinctrl: xway: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:32 +0800
-Message-ID: <20191017122640.22976-23-yuehaibing@huawei.com>
+Subject: [PATCH -next 13/30] pinctrl: zte: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:23 +0800
+Message-ID: <20191017122640.22976-14-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,26 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-xway.c | 4 +---
+ drivers/pinctrl/zte/pinctrl-zx.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index 913d38f..5e3f31b 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1705,12 +1705,10 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	const struct pinctrl_xway_soc *xway_soc;
+diff --git a/drivers/pinctrl/zte/pinctrl-zx.c b/drivers/pinctrl/zte/pinctrl-zx.c
+index 9512045..786bf89 100644
+--- a/drivers/pinctrl/zte/pinctrl-zx.c
++++ b/drivers/pinctrl/zte/pinctrl-zx.c
+@@ -387,7 +387,6 @@ int zx_pinctrl_init(struct platform_device *pdev,
+ 	struct pinctrl_desc *pctldesc;
+ 	struct zx_pinctrl *zpctl;
+ 	struct device_node *np;
 -	struct resource *res;
- 	int ret, i;
+ 	int ret;
  
- 	/* get and remap our register range */
+ 	zpctl = devm_kzalloc(&pdev->dev, sizeof(*zpctl), GFP_KERNEL);
+@@ -396,8 +395,7 @@ int zx_pinctrl_init(struct platform_device *pdev,
+ 
+ 	spin_lock_init(&zpctl->lock);
+ 
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	xway_info.membase[0] = devm_ioremap_resource(&pdev->dev, res);
-+	xway_info.membase[0] = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(xway_info.membase[0]))
- 		return PTR_ERR(xway_info.membase[0]);
+-	zpctl->base = devm_ioremap_resource(&pdev->dev, res);
++	zpctl->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(zpctl->base))
+ 		return PTR_ERR(zpctl->base);
  
 -- 
 2.7.4
