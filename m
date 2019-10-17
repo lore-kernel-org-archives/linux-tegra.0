@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 08/30] pinctrl: bcm281xx: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:18 +0800
-Message-ID: <20191017122640.22976-9-yuehaibing@huawei.com>
+Subject: [PATCH -next 05/30] pinctrl: nsp-gpio: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:15 +0800
+Message-ID: <20191017122640.22976-6-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,26 +17,38 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-index bc3b232..f690fc5 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-@@ -1400,12 +1400,10 @@ static struct pinctrl_desc bcm281xx_pinctrl_desc = {
- static int __init bcm281xx_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+index e67ae52..8db87e5 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+@@ -613,7 +613,6 @@ static const struct of_device_id nsp_gpio_of_match[] = {
+ static int nsp_gpio_probe(struct platform_device *pdev)
  {
- 	struct bcm281xx_pinctrl_data *pdata = &bcm281xx_pinctrl;
+ 	struct device *dev = &pdev->dev;
 -	struct resource *res;
- 	struct pinctrl_dev *pctl;
+ 	struct nsp_gpio *chip;
+ 	struct gpio_chip *gc;
+ 	u32 val, count;
+@@ -631,15 +630,13 @@ static int nsp_gpio_probe(struct platform_device *pdev)
+ 	chip->dev = dev;
+ 	platform_set_drvdata(pdev, chip);
  
- 	/* So far We can assume there is only 1 bank of registers */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pdata->reg_base = devm_ioremap_resource(&pdev->dev, res);
-+	pdata->reg_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pdata->reg_base)) {
- 		dev_err(&pdev->dev, "Failed to ioremap MEM resource\n");
- 		return -ENODEV;
+-	chip->base = devm_ioremap_resource(dev, res);
++	chip->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(chip->base)) {
+ 		dev_err(dev, "unable to map I/O memory\n");
+ 		return PTR_ERR(chip->base);
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	chip->io_ctrl = devm_ioremap_resource(dev, res);
++	chip->io_ctrl = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(chip->io_ctrl)) {
+ 		dev_err(dev, "unable to map I/O memory\n");
+ 		return PTR_ERR(chip->io_ctrl);
 -- 
 2.7.4
