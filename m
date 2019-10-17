@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 17/30] pinctrl: lpc18xx: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:27 +0800
-Message-ID: <20191017122640.22976-18-yuehaibing@huawei.com>
+Subject: [PATCH -next 18/30] pinctrl: da850-pupd: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:28 +0800
+Message-ID: <20191017122640.22976-19-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,29 +17,28 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-lpc18xx.c | 4 +---
+ drivers/pinctrl/pinctrl-da850-pupd.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index 06be55d..e467754 100644
---- a/drivers/pinctrl/pinctrl-lpc18xx.c
-+++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-@@ -1324,15 +1324,13 @@ static int lpc18xx_create_group_func_map(struct device *dev,
- static int lpc18xx_scu_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-da850-pupd.c b/drivers/pinctrl/pinctrl-da850-pupd.c
+index d06f13a..5a0a1f2 100644
+--- a/drivers/pinctrl/pinctrl-da850-pupd.c
++++ b/drivers/pinctrl/pinctrl-da850-pupd.c
+@@ -146,14 +146,12 @@ static int da850_pupd_probe(struct platform_device *pdev)
  {
- 	struct lpc18xx_scu_data *scu;
+ 	struct device *dev = &pdev->dev;
+ 	struct da850_pupd_data *data;
 -	struct resource *res;
- 	int ret;
  
- 	scu = devm_kzalloc(&pdev->dev, sizeof(*scu), GFP_KERNEL);
- 	if (!scu)
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
  		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	scu->base = devm_ioremap_resource(&pdev->dev, res);
-+	scu->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(scu->base))
- 		return PTR_ERR(scu->base);
- 
+-	data->base = devm_ioremap_resource(dev, res);
++	data->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(data->base)) {
+ 		dev_err(dev, "Could not map resource\n");
+ 		return PTR_ERR(data->base);
 -- 
 2.7.4
