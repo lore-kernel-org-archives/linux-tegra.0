@@ -1,21 +1,21 @@
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH -next 28/30] pinctrl: actions: use
+Subject: Re: [PATCH -next 26/30] pinctrl: bm1880: use
  devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 18:29:40 +0530
-Message-ID: <20191017125940.GA25046@mani>
+Date: Thu, 17 Oct 2019 18:30:44 +0530
+Message-ID: <20191017130044.GB25046@mani>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
- <20191017122640.22976-29-yuehaibing@huawei.com>
+ <20191017122640.22976-27-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191017122640.22976-29-yuehaibing@huawei.com>
+In-Reply-To: <20191017122640.22976-27-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: YueHaibing <yuehaibing@huawei.com>
 Cc: linus.walleij@linaro.org, afaerber@suse.de, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, jesper.nilsson@axis.com, lars.persson@axis.com, ludovic.desroches@microchip.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, baruch@tkos.co.il, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-oxnas@groups.io, linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, vz@mleia.com, narmstrong@baylibre.com, geert+renesas@glider.be, daniel@zonque.org, haojian.zhuang@gmail.com, wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com, agross@kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 08:26:38PM +0800, YueHaibing wrote:
+On Thu, Oct 17, 2019 at 08:26:36PM +0800, YueHaibing wrote:
 > Use devm_platform_ioremap_resource() to simplify the code a bit.
 > This is detected by coccinelle.
 > 
@@ -27,22 +27,21 @@ Thanks,
 Mani
 
 > ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 4 +---
+>  drivers/pinctrl/pinctrl-bm1880.c | 4 +---
 >  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index 5dfe718..5a0c8e8 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -915,7 +915,6 @@ static int owl_gpio_init(struct owl_pinctrl *pctrl)
->  int owl_pinctrl_probe(struct platform_device *pdev,
->  				struct owl_pinctrl_soc_data *soc_data)
+> diff --git a/drivers/pinctrl/pinctrl-bm1880.c b/drivers/pinctrl/pinctrl-bm1880.c
+> index 63b130c..f7dff4f 100644
+> --- a/drivers/pinctrl/pinctrl-bm1880.c
+> +++ b/drivers/pinctrl/pinctrl-bm1880.c
+> @@ -1308,15 +1308,13 @@ static struct pinctrl_desc bm1880_desc = {
+>  static int bm1880_pinctrl_probe(struct platform_device *pdev)
+>  
 >  {
 > -	struct resource *res;
->  	struct owl_pinctrl *pctrl;
->  	int ret, i;
+>  	struct bm1880_pinctrl *pctrl;
 >  
-> @@ -923,8 +922,7 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+>  	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
 >  	if (!pctrl)
 >  		return -ENOMEM;
 >  
