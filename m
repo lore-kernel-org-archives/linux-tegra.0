@@ -1,90 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: make 'host1x_cdma_wait_pushbuffer_space'
- static
-Date: Thu, 17 Oct 2019 15:30:07 +0200
-Message-ID: <20191017133007.GA3931256@ulmo>
-References: <20191017110427.31354-1-ben.dooks@codethink.co.uk>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH v4 3/7] ASoC: tegra: i2s: Add support for
+ more than 2 channels
+Date: Thu, 17 Oct 2019 17:23:44 +0100
+Message-ID: <16910e8d-4745-4e55-0436-9b3200876037@codethink.co.uk>
+References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
+ <20191007153136.4920-4-ben.dooks@codethink.co.uk>
+ <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2093777177=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191017110427.31354-1-ben.dooks@codethink.co.uk>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
+Content-Language: en-GB
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============2093777177==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
-Content-Disposition: inline
-
-
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 17, 2019 at 12:04:27PM +0100, Ben Dooks (Codethink) wrote:
-> The host1x_cdma_wait_pushbuffer_space function is not declared
-> or directly called from outside the file it is in, so make it
-> static.
->=20
-> Fixes the following sparse warnign:
-> drivers/gpu/host1x/cdma.c:235:5: warning: symbol 'host1x_cdma_wait_pushbu=
-ffer_space' was not declared. Should it be static?
->=20
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-tegra@vger.kernel.org
-> ---
->  drivers/gpu/host1x/cdma.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2obNwACgkQ3SOs138+
-s6F+aA//aS7lK9wsgW8RKg0cYIVMsuuPaHV9YA0mw9ZBcrS7AUWBIklMro1yeZOr
-OWlz26ZnZDqhJ6DVZDiUT386GUukomd6804rnwrc+sf9xy7EdR/Jnhf8GLZN6MeH
-oVakuZw0ZAIVCD+ZKAvvlPVYeRooi+n1Uk9f58uA1UgziiWYJIYuTaV6I7hb5jRY
-QjPnkJNGk2+yR54vkCDy0YXQc5WwcrxC2GiuPT2P1dfPC5UjqgtiqXOlVGLm53bf
-u+ZXGqYlTAToSiDZ/B784asN0AhUW6UTwxT7aJaFMQRYyyE/tR3kUGsRtD8w6Ucb
-3GD3b/45eCaFtGmnYOMjbFZE75vOR9BqHoxX2DG6jqNNOhCiqPYtrrJvaxm10vIg
-xYd3Chf6zmNqDiLEvmUKycKfdaojENpOwLGWOr1jjhCKeUaKkhJW1geEiCu/7RAg
-cwCESTakB+Y3SDweFsnNsxRShEzadmgYqdSQCGiu8AU9yrFGDradvkjrEZmxTkkH
-G0tr4SoSnJw2YVeHD213DepUTgcD+q6aEymsTNaQz78NbJ66K3gKqhboqn+9LJ5g
-1Ppd4+g6MaIYx28b91cJvOf7mGY3r+b/+VORCrlSUZzhfpiYnIecwPeMh6VsCTSC
-RA9HHkKVXtaGZMNJx+5v4Cs/F4do1tCGddf7FoWw6dMgAgImYvQ=
-=vNtF
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
-
---===============2093777177==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============2093777177==--
+T24gMDgvMTAvMjAxOSAxNjoyOSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+IEhlbGxvIEJlbiwK
+PiAKPiAwNy4xMC4yMDE5IDE4OjMxLCBCZW4gRG9va3Mg0L/QuNGI0LXRgjoKPj4gRnJvbTogRWR3
+YXJkIENyYWdnIDxlZHdhcmQuY3JhZ2dAY29kZXRoaW5rLmNvLnVrPgo+Pgo+PiBUaGUgQ0lGIGNv
+bmZpZ3VyYXRpb24gYW5kIGNsb2NrIHNldHRpbmcgaXMgY3VycmVudGx5IGhhcmQgY29kZWQgZm9y
+IDIKPj4gY2hhbm5lbHMuIFNpbmNlIHRoZSBoYXJkd2FyZSBpcyBjYXBhYmxlIG9mIHN1cHBvcnRp
+bmcgMS04IGNoYW5uZWxzIGFkZAo+PiBzdXBwb3J0IGZvciByZWFkaW5nIHRoZSBjaGFubmVsIGNv
+dW50IGZyb20gdGhlIHN1cHBsaWVkIHBhcmFtZXRlcnMgdG8KPj4gYWxsb3cgZm9yIGJldHRlciBU
+RE0gc3VwcG9ydC4gSXQgc2VlbXMgdGhlIG9yaWdpbmFsIGltcGxlbWVudGF0aW9uIG9mIHRoaXMK
+Pj4gZHJpdmVyIHdhcyBmaXhlZCBhdCAyIGNoYW5uZWxzIGZvciBzaW1wbGljaXR5LCBhbmQgbm90
+IGltcGxlbWVudGluZyBURE0uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEVkd2FyZCBDcmFnZyA8ZWR3
+YXJkLmNyYWdnQGNvZGV0aGluay5jby51az4KPj4gW2Jlbi5kb29rc0Bjb2RldGhpbmsuY28udWs6
+IGFkZGVkIGlzX3RkbSBhbmQgY2hhbm5lbCBuciBjaGVja10KPj4gW2Jlbi5kb29rc0Bjb2RldGhp
+bmsuY28udWs6IG1lcmdlIGVkZ2UgY29udHJvbCBpbnRvIHNldC1mb3JtYXRdCj4+IFtiZW4uZG9v
+a3NAY29kZXRoaW5rLmNvLnVrOiByZW1vdmVkIGlzX3RkbSBhbmQgbW92ZWQgZWRnZSB0byBod19w
+YXJhbXNdCj4+IFNpZ25lZC1vZmYtYnk6IEJlbiBEb29rcyA8YmVuLmRvb2tzQGNvZGV0aGluay5j
+by51az4KPj4gLS0tCj4+ICAgc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMgfCAyMSArKysr
+KysrKysrKysrLS0tLS0tLS0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwg
+OCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMw
+X2kycy5jIGIvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPj4gaW5kZXggMDYzZjM0Yzg4
+MmFmLi43MzgyZjc5NDliZjQgMTAwNjQ0Cj4+IC0tLSBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMw
+X2kycy5jCj4+ICsrKyBiL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+IEBAIC02Nyw2
+ICs2Nyw3IEBAIHN0YXRpYyBpbnQgdGVncmEzMF9pMnNfc2V0X2ZtdChzdHJ1Y3Qgc25kX3NvY19k
+YWkgKmRhaSwKPj4gICB7Cj4+ICAgCXN0cnVjdCB0ZWdyYTMwX2kycyAqaTJzID0gc25kX3NvY19k
+YWlfZ2V0X2RydmRhdGEoZGFpKTsKPj4gICAJdW5zaWduZWQgaW50IG1hc2sgPSAwLCB2YWwgPSAw
+Owo+PiArCXVuc2lnbmVkIGludCBjaF9tYXNrLCBjaF92YWwgPSAwOwo+PiAgIAo+PiAgIAlzd2l0
+Y2ggKGZtdCAmIFNORF9TT0NfREFJRk1UX0lOVl9NQVNLKSB7Cj4+ICAgCWNhc2UgU05EX1NPQ19E
+QUlGTVRfTkJfTkY6Cj4+IEBAIC03NSw2ICs3Niw3IEBAIHN0YXRpYyBpbnQgdGVncmEzMF9pMnNf
+c2V0X2ZtdChzdHJ1Y3Qgc25kX3NvY19kYWkgKmRhaSwKPj4gICAJCXJldHVybiAtRUlOVkFMOwo+
+PiAgIAl9Cj4+ICAgCj4+ICsJY2hfbWFzayA9IFRFR1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJM
+X01BU0s7Cj4+ICAgCW1hc2sgfD0gVEVHUkEzMF9JMlNfQ1RSTF9NQVNURVJfRU5BQkxFOwo+PiAg
+IAlzd2l0Y2ggKGZtdCAmIFNORF9TT0NfREFJRk1UX01BU1RFUl9NQVNLKSB7Cj4+ICAgCWNhc2Ug
+U05EX1NPQ19EQUlGTVRfQ0JTX0NGUzoKPj4gQEAgLTkwLDEwICs5MiwxMiBAQCBzdGF0aWMgaW50
+IHRlZ3JhMzBfaTJzX3NldF9mbXQoc3RydWN0IHNuZF9zb2NfZGFpICpkYWksCj4+ICAgCQlURUdS
+QTMwX0kyU19DVFJMX0xSQ0tfTUFTSzsKPj4gICAJc3dpdGNoIChmbXQgJiBTTkRfU09DX0RBSUZN
+VF9GT1JNQVRfTUFTSykgewo+PiAgIAljYXNlIFNORF9TT0NfREFJRk1UX0RTUF9BOgo+PiArCQlj
+aF92YWwgPSBURUdSQTMwX0kyU19DSF9DVFJMX0VHREVfQ1RSTF9ORUdfRURHRTsKPj4gICAJCXZh
+bCB8PSBURUdSQTMwX0kyU19DVFJMX0ZSQU1FX0ZPUk1BVF9GU1lOQzsKPj4gICAJCXZhbCB8PSBU
+RUdSQTMwX0kyU19DVFJMX0xSQ0tfTF9MT1c7Cj4+ICAgCQlicmVhazsKPj4gICAJY2FzZSBTTkRf
+U09DX0RBSUZNVF9EU1BfQjoKPj4gKwkJY2hfdmFsID0gVEVHUkEzMF9JMlNfQ0hfQ1RSTF9FR0RF
+X0NUUkxfTkVHX0VER0U7Cj4gCj4gRG93bnN0cmVhbSBjb2RlIHNldHMgRFNQX0IgdG8gUE9TX0VE
+R0UsIGxvb2tzIGxpa2UgeW91IGhhdmUgYSB0eXBvIGhlcmUuCj4gT3IgZG9lcyBEU1BfQiBoYXBw
+ZW4gdG8gd29yayB3aXRoIHRoZSBORUdfRURHRT8KCm9rLCB3aWxsIGNoYW5nZSwgd2UndmUgb25s
+eSBiZWVuIHVzaW5nIFNORF9TT0NfREFJRk1UX0RTUF9BCgpGb3IgcmVmZXJlbmNlLCBpcyB0aGVy
+ZSBhIGdpdCByZXBvIHdpdGggdGhpcyB2ZXJzaW9uIG9mIHRlZ3JhIHRkbSBzdXBwb3J0PwoKCi0t
+IApCZW4gRG9va3MJCQkJaHR0cDovL3d3dy5jb2RldGhpbmsuY28udWsvClNlbmlvciBFbmdpbmVl
+cgkJCQlDb2RldGhpbmsgLSBQcm92aWRpbmcgR2VuaXVzCgpodHRwczovL3d3dy5jb2RldGhpbmsu
+Y28udWsvcHJpdmFjeS5odG1sCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0
+Lm9yZwpodHRwczovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fs
+c2EtZGV2ZWwK
