@@ -1,48 +1,59 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 07/30] pinctrl: ns2: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:17 +0800
-Message-ID: <20191017122640.22976-8-yuehaibing@huawei.com>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Subject: Re: [PATCH -next 27/30] pinctrl: artpec6: use
+ devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 14:51:43 +0200
+Message-ID: <20191017125143.yxhwy6lvzfhle7ey@axis.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
+ <20191017122640.22976-28-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
+Content-Disposition: inline
+In-Reply-To: <20191017122640.22976-28-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, manivannan.sadhasivam@linaro.org, afaerber@suse.de, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, jesper.nilsson@axis.com, lars.persson@axis.com, ludovic.desroches@microchip.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, baruch@tkos.co.il
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-oxnas@groups.io, linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, vz@mleia.com, narmstrong@baylibre.com, geert+renesas@glider.be, daniel@zonque.org, haojian.zhuang@gmail.com, wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com, agross@kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "afaerber@suse.de" <afaerber@suse.de>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>, "rjui@broadcom.com" <rjui@broadcom.com>, "sbranden@broadcom.com" <sbranden@broadcom.com>, "bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>, Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>, "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>, "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>, "baruch@tkos.co.il" <baruch@tkos.co.il>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Thu, Oct 17, 2019 at 02:26:37PM +0200, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-index 9fabc45..32f268f 100644
---- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-@@ -1042,8 +1042,7 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pinctrl);
- 	spin_lock_init(&pinctrl->lock);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->base0 = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pinctrl->base0))
- 		return PTR_ERR(pinctrl->base0);
- 
-@@ -1057,8 +1056,7 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	pinctrl->pinconf_base = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->pinconf_base = devm_platform_ioremap_resource(pdev, 2);
- 	if (IS_ERR(pinctrl->pinconf_base))
- 		return PTR_ERR(pinctrl->pinconf_base);
- 
+> ---
+>  drivers/pinctrl/pinctrl-artpec6.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+> index e3239cf..986e04a 100644
+> --- a/drivers/pinctrl/pinctrl-artpec6.c
+> +++ b/drivers/pinctrl/pinctrl-artpec6.c
+> @@ -936,7 +936,6 @@ static void artpec6_pmx_reset(struct artpec6_pmx *pmx)
+>  static int artpec6_pmx_probe(struct platform_device *pdev)
+>  {
+>  	struct artpec6_pmx *pmx;
+> -	struct resource *res;
+>  
+>  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+>  	if (!pmx)
+> @@ -944,8 +943,7 @@ static int artpec6_pmx_probe(struct platform_device *pdev)
+>  
+>  	pmx->dev = &pdev->dev;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	pmx->base = devm_ioremap_resource(&pdev->dev, res);
+> +	pmx->base = devm_platform_ioremap_resource(pdev, 0);
+>  
+>  	if (IS_ERR(pmx->base))
+>  		return PTR_ERR(pmx->base);
+> -- 
+> 2.7.4
+> 
+> 
+
+/^JN - Jesper Nilsson
 -- 
-2.7.4
+               Jesper Nilsson -- jesper.nilsson@axis.com
