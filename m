@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 10/30] pinctrl: tegra: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:20 +0800
-Message-ID: <20191017122640.22976-11-yuehaibing@huawei.com>
+Subject: [PATCH -next 07/30] pinctrl: ns2: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:17 +0800
+Message-ID: <20191017122640.22976-8-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,45 +17,32 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 4 +---
- drivers/pinctrl/tegra/pinctrl-tegra.c      | 3 +--
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-index f2fa1f7..6f7b376 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-@@ -873,7 +873,6 @@ int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev)
- {
- 	struct tegra_xusb_padctl *padctl;
- 	const struct of_device_id *match;
--	struct resource *res;
- 	struct phy *phy;
- 	int err;
- 
-@@ -894,8 +893,7 @@ int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev)
- 	match = of_match_node(tegra_xusb_padctl_of_match, pdev->dev.of_node);
- 	padctl->soc = match->data;
+diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+index 9fabc45..32f268f 100644
+--- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+@@ -1042,8 +1042,7 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, pinctrl);
+ 	spin_lock_init(&pinctrl->lock);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	padctl->regs = devm_ioremap_resource(&pdev->dev, res);
-+	padctl->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(padctl->regs))
- 		return PTR_ERR(padctl->regs);
+-	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
++	pinctrl->base0 = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pinctrl->base0))
+ 		return PTR_ERR(pinctrl->base0);
  
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index e9a7cbb..692d8b3 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -781,8 +781,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+@@ -1057,8 +1056,7 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
  		return -ENOMEM;
- 
- 	for (i = 0; i < pmx->nbanks; i++) {
--		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
-+		pmx->regs[i] = devm_platform_ioremap_resource(pdev, i);
- 		if (IS_ERR(pmx->regs[i]))
- 			return PTR_ERR(pmx->regs[i]);
  	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	pinctrl->pinconf_base = devm_ioremap_resource(&pdev->dev, res);
++	pinctrl->pinconf_base = devm_platform_ioremap_resource(pdev, 2);
+ 	if (IS_ERR(pinctrl->pinconf_base))
+ 		return PTR_ERR(pinctrl->pinconf_base);
+ 
 -- 
 2.7.4
