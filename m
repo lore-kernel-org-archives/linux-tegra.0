@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 01/30] pinctrl: pxa25x: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:11 +0800
-Message-ID: <20191017122640.22976-2-yuehaibing@huawei.com>
+Subject: [PATCH -next 03/30] pinctrl: cygnus-mux: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:13 +0800
+Message-ID: <20191017122640.22976-4-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,42 +17,38 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pxa/pinctrl-pxa25x.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pxa/pinctrl-pxa25x.c b/drivers/pinctrl/pxa/pinctrl-pxa25x.c
-index 8d12470..9564069 100644
---- a/drivers/pinctrl/pxa/pinctrl-pxa25x.c
-+++ b/drivers/pinctrl/pxa/pinctrl-pxa25x.c
-@@ -216,25 +216,20 @@ static int pxa25x_pinctrl_probe(struct platform_device *pdev)
- 	void __iomem *base_af[8];
- 	void __iomem *base_dir[4];
- 	void __iomem *base_sleep[4];
+diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
+index dcab220..4344c57 100644
+--- a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
+@@ -940,7 +940,6 @@ static int cygnus_mux_log_init(struct cygnus_pinctrl *pinctrl)
+ static int cygnus_pinmux_probe(struct platform_device *pdev)
+ {
+ 	struct cygnus_pinctrl *pinctrl;
 -	struct resource *res;
+ 	int i, ret;
+ 	struct pinctrl_pin_desc *pins;
+ 	unsigned num_pins = ARRAY_SIZE(cygnus_pins);
+@@ -953,15 +952,13 @@ static int cygnus_pinmux_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, pinctrl);
+ 	spin_lock_init(&pinctrl->lock);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base_af[0] = devm_ioremap_resource(&pdev->dev, res);
-+	base_af[0] = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base_af[0]))
- 		return PTR_ERR(base_af[0]);
+-	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
++	pinctrl->base0 = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pinctrl->base0)) {
+ 		dev_err(&pdev->dev, "unable to map I/O space\n");
+ 		return PTR_ERR(pinctrl->base0);
+ 	}
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	base_dir[0] = devm_ioremap_resource(&pdev->dev, res);
-+	base_dir[0] = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(base_dir[0]))
- 		return PTR_ERR(base_dir[0]);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	base_dir[3] = devm_ioremap_resource(&pdev->dev, res);
-+	base_dir[3] = devm_platform_ioremap_resource(pdev, 2);
- 	if (IS_ERR(base_dir[3]))
- 		return PTR_ERR(base_dir[3]);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 3);
--	base_sleep[0] = devm_ioremap_resource(&pdev->dev, res);
-+	base_sleep[0] = devm_platform_ioremap_resource(pdev, 3);
- 	if (IS_ERR(base_sleep[0]))
- 		return PTR_ERR(base_sleep[0]);
- 
+-	pinctrl->base1 = devm_ioremap_resource(&pdev->dev, res);
++	pinctrl->base1 = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(pinctrl->base1)) {
+ 		dev_err(&pdev->dev, "unable to map I/O space\n");
+ 		return PTR_ERR(pinctrl->base1);
 -- 
 2.7.4
