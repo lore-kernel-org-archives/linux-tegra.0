@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 29/30] pinctrl: at91-pio4: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:39 +0800
-Message-ID: <20191017122640.22976-30-yuehaibing@huawei.com>
+Subject: [PATCH -next 25/30] pinctrl: coh901: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:35 +0800
+Message-ID: <20191017122640.22976-26-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,22 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-coh901.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index e380202..6949124 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -1017,8 +1017,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 	atmel_pioctrl->nbanks = atmel_pioctrl_data->nbanks;
- 	atmel_pioctrl->npins = atmel_pioctrl->nbanks * ATMEL_PIO_NPINS_PER_BANK;
+diff --git a/drivers/pinctrl/pinctrl-coh901.c b/drivers/pinctrl/pinctrl-coh901.c
+index 063a629..2905348 100644
+--- a/drivers/pinctrl/pinctrl-coh901.c
++++ b/drivers/pinctrl/pinctrl-coh901.c
+@@ -615,7 +615,6 @@ static struct coh901_pinpair coh901_pintable[] = {
+ static int __init u300_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct u300_gpio *gpio;
+-	struct resource *memres;
+ 	struct gpio_irq_chip *girq;
+ 	int err = 0;
+ 	int portno;
+@@ -633,8 +632,7 @@ static int __init u300_gpio_probe(struct platform_device *pdev)
+ 	gpio->chip.base = 0;
+ 	gpio->dev = &pdev->dev;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	atmel_pioctrl->reg_base = devm_ioremap_resource(dev, res);
-+	atmel_pioctrl->reg_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(atmel_pioctrl->reg_base))
- 		return -EINVAL;
+-	memres = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	gpio->base = devm_ioremap_resource(&pdev->dev, memres);
++	gpio->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(gpio->base))
+ 		return PTR_ERR(gpio->base);
  
 -- 
 2.7.4
