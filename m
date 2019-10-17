@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 30/30] pinctrl: iproc: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:40 +0800
-Message-ID: <20191017122640.22976-31-yuehaibing@huawei.com>
+Subject: [PATCH -next 27/30] pinctrl: artpec6: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:37 +0800
+Message-ID: <20191017122640.22976-28-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,22 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-artpec6.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-index 4d7d908..831a931 100644
---- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-@@ -795,8 +795,7 @@ static int iproc_gpio_probe(struct platform_device *pdev)
- 	chip->dev = dev;
- 	platform_set_drvdata(pdev, chip);
+diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+index e3239cf..986e04a 100644
+--- a/drivers/pinctrl/pinctrl-artpec6.c
++++ b/drivers/pinctrl/pinctrl-artpec6.c
+@@ -936,7 +936,6 @@ static void artpec6_pmx_reset(struct artpec6_pmx *pmx)
+ static int artpec6_pmx_probe(struct platform_device *pdev)
+ {
+ 	struct artpec6_pmx *pmx;
+-	struct resource *res;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx)
+@@ -944,8 +943,7 @@ static int artpec6_pmx_probe(struct platform_device *pdev)
+ 
+ 	pmx->dev = &pdev->dev;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	chip->base = devm_ioremap_resource(dev, res);
-+	chip->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(chip->base)) {
- 		dev_err(dev, "unable to map I/O memory\n");
- 		return PTR_ERR(chip->base);
+-	pmx->base = devm_ioremap_resource(&pdev->dev, res);
++	pmx->base = devm_platform_ioremap_resource(pdev, 0);
+ 
+ 	if (IS_ERR(pmx->base))
+ 		return PTR_ERR(pmx->base);
 -- 
 2.7.4
