@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 18/30] pinctrl: da850-pupd: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:28 +0800
-Message-ID: <20191017122640.22976-19-yuehaibing@huawei.com>
+Subject: [PATCH -next 19/30] pinctrl: tb10x: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:29 +0800
+Message-ID: <20191017122640.22976-20-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,28 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-da850-pupd.c | 4 +---
+ drivers/pinctrl/pinctrl-tb10x.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-da850-pupd.c b/drivers/pinctrl/pinctrl-da850-pupd.c
-index d06f13a..5a0a1f2 100644
---- a/drivers/pinctrl/pinctrl-da850-pupd.c
-+++ b/drivers/pinctrl/pinctrl-da850-pupd.c
-@@ -146,14 +146,12 @@ static int da850_pupd_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
+index 1f64e2e..ab49bd7 100644
+--- a/drivers/pinctrl/pinctrl-tb10x.c
++++ b/drivers/pinctrl/pinctrl-tb10x.c
+@@ -747,7 +747,6 @@ static struct pinctrl_desc tb10x_pindesc = {
+ static int tb10x_pinctrl_probe(struct platform_device *pdev)
  {
+ 	int ret = -EINVAL;
+-	struct resource *mem;
  	struct device *dev = &pdev->dev;
- 	struct da850_pupd_data *data;
--	struct resource *res;
+ 	struct device_node *of_node = dev->of_node;
+ 	struct device_node *child;
+@@ -768,8 +767,7 @@ static int tb10x_pinctrl_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, state);
+ 	mutex_init(&state->mutex);
  
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->base = devm_ioremap_resource(dev, res);
-+	data->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->base)) {
- 		dev_err(dev, "Could not map resource\n");
- 		return PTR_ERR(data->base);
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	state->base = devm_ioremap_resource(dev, mem);
++	state->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(state->base)) {
+ 		ret = PTR_ERR(state->base);
+ 		goto fail;
 -- 
 2.7.4
