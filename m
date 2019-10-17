@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 03/30] pinctrl: cygnus-mux: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:13 +0800
-Message-ID: <20191017122640.22976-4-yuehaibing@huawei.com>
+Subject: [PATCH -next 04/30] pinctrl: pic32: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:14 +0800
+Message-ID: <20191017122640.22976-5-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,38 +17,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/bcm/pinctrl-cygnus-mux.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-pic32.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-index dcab220..4344c57 100644
---- a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-@@ -940,7 +940,6 @@ static int cygnus_mux_log_init(struct cygnus_pinctrl *pinctrl)
- static int cygnus_pinmux_probe(struct platform_device *pdev)
- {
- 	struct cygnus_pinctrl *pinctrl;
+diff --git a/drivers/pinctrl/pinctrl-pic32.c b/drivers/pinctrl/pinctrl-pic32.c
+index 7e4c5a0..e5d6d3f 100644
+--- a/drivers/pinctrl/pinctrl-pic32.c
++++ b/drivers/pinctrl/pinctrl-pic32.c
+@@ -2202,7 +2202,6 @@ static int pic32_gpio_probe(struct platform_device *pdev)
+ 	struct pic32_gpio_bank *bank;
+ 	u32 id;
+ 	int irq, ret;
 -	struct resource *res;
- 	int i, ret;
- 	struct pinctrl_pin_desc *pins;
- 	unsigned num_pins = ARRAY_SIZE(cygnus_pins);
-@@ -953,15 +952,13 @@ static int cygnus_pinmux_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pinctrl);
- 	spin_lock_init(&pinctrl->lock);
+ 	struct gpio_irq_chip *girq;
+ 
+ 	if (of_property_read_u32(np, "microchip,gpio-bank", &id)) {
+@@ -2217,8 +2216,7 @@ static int pic32_gpio_probe(struct platform_device *pdev)
+ 
+ 	bank = &pic32_gpio_banks[id];
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->base0 = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pinctrl->base0)) {
- 		dev_err(&pdev->dev, "unable to map I/O space\n");
- 		return PTR_ERR(pinctrl->base0);
- 	}
+-	bank->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	bank->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(bank->reg_base))
+ 		return PTR_ERR(bank->reg_base);
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	pinctrl->base1 = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->base1 = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(pinctrl->base1)) {
- 		dev_err(&pdev->dev, "unable to map I/O space\n");
- 		return PTR_ERR(pinctrl->base1);
 -- 
 2.7.4
