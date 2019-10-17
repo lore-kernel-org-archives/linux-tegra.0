@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 26/30] pinctrl: bm1880: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:36 +0800
-Message-ID: <20191017122640.22976-27-yuehaibing@huawei.com>
+Subject: [PATCH -next 21/30] pinctrl: vt8500: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:31 +0800
+Message-ID: <20191017122640.22976-22-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,29 +17,24 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-bm1880.c | 4 +---
+ drivers/pinctrl/vt8500/pinctrl-wmt.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-bm1880.c b/drivers/pinctrl/pinctrl-bm1880.c
-index 63b130c..f7dff4f 100644
---- a/drivers/pinctrl/pinctrl-bm1880.c
-+++ b/drivers/pinctrl/pinctrl-bm1880.c
-@@ -1308,15 +1308,13 @@ static struct pinctrl_desc bm1880_desc = {
- static int bm1880_pinctrl_probe(struct platform_device *pdev)
- 
+diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
+index 4d5cd7d..ea910a1 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
++++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
+@@ -553,10 +553,8 @@ int wmt_pinctrl_probe(struct platform_device *pdev,
+ 		      struct wmt_pinctrl_data *data)
  {
+ 	int err;
 -	struct resource *res;
- 	struct bm1880_pinctrl *pctrl;
- 
- 	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
- 	if (!pctrl)
- 		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pctrl->base = devm_ioremap_resource(&pdev->dev, res);
-+	pctrl->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pctrl->base))
- 		return PTR_ERR(pctrl->base);
+-	data->base = devm_ioremap_resource(&pdev->dev, res);
++	data->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(data->base))
+ 		return PTR_ERR(data->base);
  
 -- 
 2.7.4
