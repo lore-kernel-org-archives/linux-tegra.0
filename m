@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 19/30] pinctrl: tb10x: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:29 +0800
-Message-ID: <20191017122640.22976-20-yuehaibing@huawei.com>
+Subject: [PATCH -next 22/30] pinctrl: xway: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:32 +0800
+Message-ID: <20191017122640.22976-23-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,26 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-tb10x.c | 4 +---
+ drivers/pinctrl/pinctrl-xway.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-index 1f64e2e..ab49bd7 100644
---- a/drivers/pinctrl/pinctrl-tb10x.c
-+++ b/drivers/pinctrl/pinctrl-tb10x.c
-@@ -747,7 +747,6 @@ static struct pinctrl_desc tb10x_pindesc = {
- static int tb10x_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index 913d38f..5e3f31b 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1705,12 +1705,10 @@ static int pinmux_xway_probe(struct platform_device *pdev)
  {
- 	int ret = -EINVAL;
--	struct resource *mem;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *of_node = dev->of_node;
- 	struct device_node *child;
-@@ -768,8 +767,7 @@ static int tb10x_pinctrl_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, state);
- 	mutex_init(&state->mutex);
+ 	const struct of_device_id *match;
+ 	const struct pinctrl_xway_soc *xway_soc;
+-	struct resource *res;
+ 	int ret, i;
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	state->base = devm_ioremap_resource(dev, mem);
-+	state->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(state->base)) {
- 		ret = PTR_ERR(state->base);
- 		goto fail;
+ 	/* get and remap our register range */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	xway_info.membase[0] = devm_ioremap_resource(&pdev->dev, res);
++	xway_info.membase[0] = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(xway_info.membase[0]))
+ 		return PTR_ERR(xway_info.membase[0]);
+ 
 -- 
 2.7.4
