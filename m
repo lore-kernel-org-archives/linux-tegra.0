@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 16/30] pinctrl: pistachio: use devm_platform_ioremap_resource() to simplify code
-Date: Thu, 17 Oct 2019 20:26:26 +0800
-Message-ID: <20191017122640.22976-17-yuehaibing@huawei.com>
+Subject: [PATCH -next 17/30] pinctrl: lpc18xx: use devm_platform_ioremap_resource() to simplify code
+Date: Thu, 17 Oct 2019 20:26:27 +0800
+Message-ID: <20191017122640.22976-18-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,30 +17,29 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-pistachio.c | 4 +---
+ drivers/pinctrl/pinctrl-lpc18xx.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
-index eb40ae9..fa370c1 100644
---- a/drivers/pinctrl/pinctrl-pistachio.c
-+++ b/drivers/pinctrl/pinctrl-pistachio.c
-@@ -1435,7 +1435,6 @@ static const struct of_device_id pistachio_pinctrl_of_match[] = {
- static int pistachio_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+index 06be55d..e467754 100644
+--- a/drivers/pinctrl/pinctrl-lpc18xx.c
++++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+@@ -1324,15 +1324,13 @@ static int lpc18xx_create_group_func_map(struct device *dev,
+ static int lpc18xx_scu_probe(struct platform_device *pdev)
  {
- 	struct pistachio_pinctrl *pctl;
+ 	struct lpc18xx_scu_data *scu;
 -	struct resource *res;
+ 	int ret;
  
- 	pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
- 	if (!pctl)
-@@ -1443,8 +1442,7 @@ static int pistachio_pinctrl_probe(struct platform_device *pdev)
- 	pctl->dev = &pdev->dev;
- 	dev_set_drvdata(&pdev->dev, pctl);
+ 	scu = devm_kzalloc(&pdev->dev, sizeof(*scu), GFP_KERNEL);
+ 	if (!scu)
+ 		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pctl->base = devm_ioremap_resource(&pdev->dev, res);
-+	pctl->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pctl->base))
- 		return PTR_ERR(pctl->base);
+-	scu->base = devm_ioremap_resource(&pdev->dev, res);
++	scu->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(scu->base))
+ 		return PTR_ERR(scu->base);
  
 -- 
 2.7.4
