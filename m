@@ -1,8 +1,8 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
-	samples
-Date: Fri, 18 Oct 2019 16:48:28 +0100
-Message-ID: <20191018154833.7560-3-ben.dooks@codethink.co.uk>
+Subject: [PATCH v5 1/7] ASoC: tegra: add a TDM configuration
+	callback
+Date: Fri, 18 Oct 2019 16:48:27 +0100
+Message-ID: <20191018154833.7560-2-ben.dooks@codethink.co.uk>
 References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -24,87 +24,63 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Edward Cragg <edward.cragg@codethink.co.uk>
 
-The tegra3 audio can support 24 and 32 bit sample sizes so add the
-option to the tegra30_i2s_hw_params to configure the S24_LE or S32_LE
-formats when requested.
+Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
+driver.
 
 Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-[ben.dooks@codethink.co.uk: fixup merge of 24 and 32bit]
-[ben.dooks@codethink.co.uk: add pm calls around ytdm config]
-[ben.dooks@codethink.co.uk: drop debug printing to dev_dbg]
+[ben.dooks@codethink.co.uk: merge fix for power management]
+[ben.dooks@codethink.co.uk: add review change for fsync of 1 clock]
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
-squash 5aeca5a055fd ASoC: tegra: i2s: pm_runtime_get_sync() is needed in tdm code
-
-ASoC: tegra: i2s: pm_runtime_get_sync() is needed in tdm code
----
- sound/soc/tegra/tegra30_i2s.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ sound/soc/tegra/tegra30_i2s.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index 73f0dddeaef3..063f34c882af 100644
+index ac6983c6bd72..73f0dddeaef3 100644
 --- a/sound/soc/tegra/tegra30_i2s.c
 +++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -127,7 +127,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	struct device *dev = dai->dev;
- 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
- 	unsigned int mask, val, reg;
--	int ret, sample_size, srate, i2sclock, bitcnt;
-+	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits;
- 	struct tegra30_ahub_cif_conf cif_conf;
+@@ -254,6 +254,34 @@ static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	return 0;
+ }
  
- 	if (params_channels(params) != 2)
-@@ -137,8 +137,19 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	switch (params_format(params)) {
- 	case SNDRV_PCM_FORMAT_S16_LE:
- 		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
- 		sample_size = 16;
- 		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
-+		sample_size = 24;
-+		break;
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
-+		sample_size = 32;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -170,8 +181,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	cif_conf.threshold = 0;
- 	cif_conf.audio_channels = 2;
- 	cif_conf.client_channels = 2;
--	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
--	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
-+	cif_conf.audio_bits = audio_bits;
-+	cif_conf.client_bits = audio_bits;
- 	cif_conf.expand = 0;
- 	cif_conf.stereo_conv = 0;
- 	cif_conf.replicate = 0;
-@@ -306,14 +317,18 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.ops = &tegra30_i2s_dai_ops,
- 	.symmetric_rates = 1,
++static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
++			       unsigned int tx_mask, unsigned int rx_mask,
++			       int slots, int slot_width)
++{
++	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	unsigned int mask, val;
++
++	dev_dbg(dai->dev, "%s: txmask=0x%08x rxmask=0x%08x slots=%d width=%d\n",
++		 __func__, tx_mask, rx_mask, slots, slot_width);
++
++	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
++	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
++	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
++
++	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
++	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
++	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
++
++	pm_runtime_get_sync(dai->dev);
++	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
++	/* set the fsync width to minimum of 1 clock width */
++	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
++			   TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK, 0x0);
++	pm_runtime_put(dai->dev);
++
++	return 0;
++}
++
+ static int tegra30_i2s_probe(struct snd_soc_dai *dai)
+ {
+ 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+@@ -268,6 +296,7 @@ static const struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
+ 	.set_fmt	= tegra30_i2s_set_fmt,
+ 	.hw_params	= tegra30_i2s_hw_params,
+ 	.trigger	= tegra30_i2s_trigger,
++	.set_tdm_slot	= tegra30_i2s_set_tdm,
+ };
+ 
+ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
 -- 
 2.23.0
