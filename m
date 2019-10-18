@@ -1,87 +1,53 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 07/17] cpufreq: tegra20: Use generic cpufreq-dt driver
- (Tegra30 supported now)
-Date: Fri, 18 Oct 2019 00:09:35 +0300
-Message-ID: <f4d6ba51-c2ac-4ddb-5acc-c4825aa6a793@gmail.com>
-References: <20191015211618.20758-1-digetx@gmail.com>
- <20191015211618.20758-8-digetx@gmail.com>
- <20191016051802.rrxv56vtvxfm6qqe@vireshk-i7>
- <13a9ebd6-8dce-0217-d306-defb8eb6fb96@gmail.com>
- <CAMdYzYoasuEobJLC4RLW_5WCNGnaKtTth0xKov0tUQuDhkX3EA@mail.gmail.com>
- <b4eca03d-f86c-8e07-e04a-612e02820bd0@gmail.com>
- <20191017023210.x5vavl542hdkrivw@vireshk-i7>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/79] 4.4.197-stable review
+Date: Fri, 18 Oct 2019 08:55:01 +0100
+Message-ID: <11fd4e3d-7487-b7a2-9f23-2f536f1459f7@nvidia.com>
+References: <20191016214729.758892904@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191017023210.x5vavl542hdkrivw@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Peter Geis <pgwipeout@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-17.10.2019 05:32, Viresh Kumar пишет:
-> On 16-10-19, 21:19, Dmitry Osipenko wrote:
->> 16.10.2019 17:58, Peter Geis пишет:
->>> On Wed, Oct 16, 2019 at 9:29 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->>>>
->>>> 16.10.2019 08:18, Viresh Kumar пишет:
->>>>> On 16-10-19, 00:16, Dmitry Osipenko wrote:
->>>>>> Re-parenting to intermediate clock is supported now by the clock driver
->>>>>> and thus there is no need in a customized CPUFreq driver, all that code
->>>>>> is common for both Tegra20 and Tegra30. The available CPU freqs are now
->>>>>> specified in device-tree in a form of OPPs, all users should update their
->>>>>> device-trees.
->>>>>>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>> ---
->>>>>>  drivers/cpufreq/Kconfig.arm          |   4 +-
->>>>>>  drivers/cpufreq/cpufreq-dt-platdev.c |   2 +
->>>>>>  drivers/cpufreq/tegra20-cpufreq.c    | 236 ++++++---------------------
->>>>>>  3 files changed, 55 insertions(+), 187 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->>>>>> index a905796f7f85..2118c45d0acd 100644
->>>>>> --- a/drivers/cpufreq/Kconfig.arm
->>>>>> +++ b/drivers/cpufreq/Kconfig.arm
->>>>>> @@ -301,8 +301,8 @@ config ARM_TANGO_CPUFREQ
->>>>>>      default y
->>>>>>
->>>>>>  config ARM_TEGRA20_CPUFREQ
->>>>>> -    tristate "Tegra20 CPUFreq support"
->>>>>> -    depends on ARCH_TEGRA
->>>>>> +    bool "Tegra20 CPUFreq support"
->>>>>
->>>>> Google is currently working on the GKI (generic kernel image) project where they
->>>>> want to use a single kernel image with modules for all kind of android devices.
->>>>> And for that they need all such drivers to be built as module. Since this is
->>>>> already an module, I would ask you to keep it as is instead of moving it to bool
->>>>> here. Else some google guy will switch it back as module later on.
->>>>>
->>>>> LGTM otherwise. Nice work. Thanks.
->>>>>
->>>>
->>>> Okay, I'll keep the modularity in v2.
->>>>
->>>> Although, tegra20-cpufreq isn't a driver anymore because now it merely
->>>> prepares OPP table for the cpufreq-dt driver, which is really a one-shot
->>>> action that is enough to do during boot and thus modularity is a bit
->>>> redundant here.
->>>
->>> I doubt Google will care much, since Android has moved on to aarch64.
->>> Do they even support arm32 any more?
->>
->> Yes, I don't think there is a real need to care about Google. They won't
->> use pure upstream and won't care about older hardware any ways.
-> 
-> Well, using (almost) pure upstream is the idea I believe. And the thing is they
-> want to use a single multi-platform image which should be as small as possible
-> in size. So it won't have any drivers or platform stuff (if possible) and
-> everything is module.
-> 
-> I am not sure about arm32/64 thing though. And it is okay if you don't want to
-> care about Google right now. That was just some side knowledge I had :)
-> 
 
-I'll leave the module part as-is for now.
+On 16/10/2019 22:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.197 release.
+> There are 79 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.197-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+
+
+All tests passing for Tegra ...
+
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
+
+Linux version:	4.4.197-rc1-gcb63cd392f38
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
