@@ -1,44 +1,46 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 10/14] drm/tegra: Move IOMMU group into host1x client
-Date: Wed, 16 Oct 2019 18:33:50 +0300
-Message-ID: <ef11047c-3235-1b8b-d1b0-80d368099e05@gmail.com>
-References: <20191014125049.425101-1-thierry.reding@gmail.com>
- <20191014125049.425101-11-thierry.reding@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Fri, 18 Oct 2019 22:24:32 +0200
+Message-ID: <8e9f709f-2ded-c666-26e0-9235d6107c34@linaro.org>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
+ <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+ <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
+ <187d7020-fbe9-7984-2358-8a70faef019f@microchip.com>
+ <14df6e5d-19ef-4ebc-fd11-9953bc3fc44e@linaro.org>
+ <7071b6fa-f7ed-c879-4a43-44100dbe6121@microchip.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191014125049.425101-11-thierry.reding@gmail.com>
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+In-Reply-To: <7071b6fa-f7ed-c879-4a43-44100dbe6121@microchip.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: Claudiu.Beznea@microchip.com, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, baohua@kernel.org, Nicolas.Ferre@microchip.com, alexandre.belloni@bo
+Cc: uclinux-h8-devel@lists.sourceforge.jp, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-riscv@lists.infradead.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-MTQuMTAuMjAxOSAxNTo1MCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
-cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IEhhbmRsaW5nIG9mIHRoZSBJT01N
-VSBncm91cCBhdHRhY2htZW50IGlzIGNvbW1vbiB0byBhbGwgY2xpZW50cywgc28gbW92ZQo+IHRo
-ZSBncm91cCBpbnRvIHRoZSBjbGllbnQgdG8gc2ltcGxpZnkgY29kZS4KPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vdGVncmEvZGMuYyAgIHwgIDkgKysrKy0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kYy5oICAgfCAgMiAtLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgIHwgMjIg
-KysrKysrKysrKystLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggIHwg
-IDYgKystLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjJkLmMgfCAxMCArKysrLS0tLS0t
-Cj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMgfCAxMCArKysrLS0tLS0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS90ZWdyYS92aWMuYyAgfCAxMCArKysrLS0tLS0tCj4gIGluY2x1ZGUvbGludXgv
-aG9zdDF4LmggICAgICAgfCAgMiArKwo+ICA4IGZpbGVzIGNoYW5nZWQsIDMxIGluc2VydGlvbnMo
-KyksIDQwIGRlbGV0aW9ucygtKQoKSGVsbG8gVGhpZXJyeSwKCklzIHRoZXJlIGFueSBjaGFuY2Ug
-dGhhdCB5b3UgY291bGQgcGljayB1cCB0aGVzZSBwYXRjaGVzIFswXSBhbmQgcmViYXNlCnlvdXJz
-IHNlcmllcyBvbiB0b3Agb2YgdGhlbT8KClswXSBodHRwczovL3BhdGNod29yay5vemxhYnMub3Jn
-L3Byb2plY3QvbGludXgtdGVncmEvbGlzdC8/c2VyaWVzPTExNTYwOApfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+CkhpIENsYXVkaXUsCgpPbiAxNS8xMC8yMDE5IDExOjIzLCBDbGF1ZGl1LkJlem5lYUBtaWNyb2No
+aXAuY29tIHdyb3RlOgoKWyAuLi4gXQoKPiBUaGUgdGltZXIgY2xvY2sgc291cmNlIGNvdWxkIGJl
+IGRpdmlkZWQgYnkgTVIuUFJFUyArIDEuCj4gCj4gU28sIEkgdXNlZCB0aGUgY2xvY2stZnJlcXVl
+bmN5IERUIGJpbmRpbmcgdG8gbGV0IHVzZXIgY2hvb3NlIHRoZSB0aW1lcidzCj4gZnJlcXVlbmN5
+LiBCYXNlZCBvbiB0aGUgdmFsdWUgcHJvdmlkZWQgdmlhIHRoaXMgRFQgYmluZGluZyB0aGUgYmVz
+dCBjbG9jawo+IHNvdXJjZSBhbmQgcHJlc2NhbGVyIGlzIGNob3NlbiB2aWEgbWNocF9waXQ2NGJf
+cHJlc19wcmVwYXJlKCkgZnVuY3Rpb24uCgpJJ20gd2lsbGluZyB0byB0YWtlIHRoZSBkcml2ZXIg
+YnV0IEkgZG91YnQgdGhlIHB1cnBvc2Ugb2YgdGhlCmNsb2NrLWZyZXF1ZW5jeSBpcyB0byBsZXQg
+dGhlIHVzZXIgY2hvb3NlIHRoZSBmcmVxdWVuY3kuCgoKWyAuLi4gXQoKCi0tIAogPGh0dHA6Ly93
+d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBB
+Uk0gU29DcwoKRm9sbG93IExpbmFybzogIDxodHRwOi8vd3d3LmZhY2Vib29rLmNvbS9wYWdlcy9M
+aW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90d2l0dGVyLmNvbS8jIS9saW5hcm9vcmc+IFR3aXR0
+ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9nLz4gQmxvZwoKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LXNucHMtYXJjIG1h
+aWxpbmcgbGlzdApsaW51eC1zbnBzLWFyY0BsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0
+cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtc25wcy1hcmMK
