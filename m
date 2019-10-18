@@ -1,75 +1,41 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V11 09/11] arm64: tegra: Enable xudc on Jetson TX2
-Date: Fri, 18 Oct 2019 15:08:14 +0530
-Message-ID: <1571391496-20834-10-git-send-email-nkristam@nvidia.com>
-References: <1571391496-20834-1-git-send-email-nkristam@nvidia.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] iommu/tegra-smmu: Use non-secure register for flushing
+Date: Fri, 18 Oct 2019 11:46:31 +0200
+Message-ID: <20191018094630.GA4670@8bytes.org>
+References: <20191016115026.1768745-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1571391496-20834-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20191016115026.1768745-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable XUSB device mode driver for USB0 slot on Jetson TX2.
+On Wed, Oct 16, 2019 at 01:50:24PM +0200, Thierry Reding wrote:
+> From: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Use PTB_ASID instead of SMMU_CONFIG to flush smmu.
+> PTB_ASID can be accessed from non-secure mode, SMMU_CONFIG cannot be.
+> Using SMMU_CONFIG could pose a problem when kernel doesn't have secure
+> mode access enabled from boot.
+> 
+> Signed-off-by: Navneet Kumar <navneetk-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/iommu/tegra-smmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 29 +++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 2e61957..b55de35 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -131,7 +131,7 @@
- 				status = "okay";
- 
- 				lanes {
--					usb2-0 {
-+					micro_b: usb2-0 {
- 						nvidia,function = "xusb";
- 						status = "okay";
- 					};
-@@ -201,6 +201,20 @@
- 		phy-names = "usb2-0", "usb2-1", "usb3-0";
- 	};
- 
-+	usb@3550000 {
-+		status = "okay";
-+
-+		phys = <&micro_b>;
-+		phy-names = "usb2";
-+		usb-role-switch;
-+
-+		port {
-+			usb_role_switch: endpoint {
-+				remote-endpoint = <&usb_b_conn_ep>;
-+			};
-+		};
-+	};
-+
- 	i2c@c250000 {
- 		/* carrier board ID EEPROM */
- 		eeprom@57 {
-@@ -367,4 +381,17 @@
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
- 	};
-+
-+	usb_type_b: connector {
-+		compatible = "usb-b-connector", "gpio-usb-b-connector";
-+		label = "micro-USB";
-+		type = "micro";
-+		vbus-gpio = <&gpio TEGRA186_MAIN_GPIO(X, 7) GPIO_ACTIVE_LOW>;
-+
-+		port {
-+			usb_b_conn_ep: endpoint {
-+				remote-endpoint = <&usb_role_switch>;
-+			};
-+		};
-+	};
- };
--- 
-2.7.4
+Applied all, thanks.
