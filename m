@@ -1,53 +1,65 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.3 000/112] 5.3.7-stable review
-Date: Fri, 18 Oct 2019 09:01:50 +0100
-Message-ID: <ef7c7e93-909c-890f-868b-44c93f6f7616@nvidia.com>
-References: <20191016214844.038848564@linuxfoundation.org>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH 1/2] PCI: tegra: Fix CLKREQ dependency programming
+Date: Fri, 18 Oct 2019 10:01:27 +0100
+Message-ID: <20191018090127.GA25918@e121166-lin.cambridge.arm.com>
+References: <20191005164212.3646-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20191005164212.3646-1-vidyas@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: devicetree@vger.kernel.org, mmaddireddy@nvidia.com, kthota@nvidia.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, robh+dt@kernel.org, thierry.reding@gmail.com, bhelgaas@google.com, andrew.murray@arm.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 16/10/2019 22:49, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.7 release.
-> There are 112 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Sat, Oct 05, 2019 at 10:12:11PM +0530, Vidya Sagar wrote:
+> Corrects the programming to provide REFCLK to the downstream device
+> when there is no CLKREQ sideband signal routing present from root port
+> to the endpont.
 > 
-> Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
-> Anything received after that time might be too late.
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+
+Applied to pci/tegra, thanks.
+
+Lorenzo
+
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index f89f5acee72d..cbe95f0ea0ca 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -40,8 +40,6 @@
+>  #define APPL_PINMUX_CLKREQ_OVERRIDE		BIT(3)
+>  #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE_EN	BIT(4)
+>  #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE	BIT(5)
+> -#define APPL_PINMUX_CLKREQ_OUT_OVRD_EN		BIT(9)
+> -#define APPL_PINMUX_CLKREQ_OUT_OVRD		BIT(10)
+>  
+>  #define APPL_CTRL				0x4
+>  #define APPL_CTRL_SYS_PRE_DET_STATE		BIT(6)
+> @@ -1193,8 +1191,8 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>  
+>  	if (!pcie->supports_clkreq) {
+>  		val = appl_readl(pcie, APPL_PINMUX);
+> -		val |= APPL_PINMUX_CLKREQ_OUT_OVRD_EN;
+> -		val |= APPL_PINMUX_CLKREQ_OUT_OVRD;
+> +		val |= APPL_PINMUX_CLKREQ_OVERRIDE_EN;
+> +		val &= ~APPL_PINMUX_CLKREQ_OVERRIDE;
+>  		appl_writel(pcie, val, APPL_PINMUX);
+>  	}
+>  
+> -- 
+> 2.17.1
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-
-All tests passing for Tegra ...
-
-Test results for stable-v5.3:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.3.7-rc1-gcbb18cd3e478
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
