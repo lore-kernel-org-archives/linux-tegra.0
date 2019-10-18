@@ -1,65 +1,145 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH 1/2] PCI: tegra: Fix CLKREQ dependency programming
-Date: Fri, 18 Oct 2019 10:01:27 +0100
-Message-ID: <20191018090127.GA25918@e121166-lin.cambridge.arm.com>
-References: <20191005164212.3646-1-vidyas@nvidia.com>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [Patch V11 00/11] Tegra XUSB gadget driver support
+Date: Fri, 18 Oct 2019 15:08:05 +0530
+Message-ID: <1571391496-20834-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20191005164212.3646-1-vidyas@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: devicetree@vger.kernel.org, mmaddireddy@nvidia.com, kthota@nvidia.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, robh+dt@kernel.org, thierry.reding@gmail.com, bhelgaas@google.com, andrew.murray@arm.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Oct 05, 2019 at 10:12:11PM +0530, Vidya Sagar wrote:
-> Corrects the programming to provide REFCLK to the downstream device
-> when there is no CLKREQ sideband signal routing present from root port
-> to the endpont.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+Patches 1-4 are phy driver changes to add support for device
+mode.
+Patches 5-10 are changes related to XUSB device mode
+controller driver.
+Patch 11 is to enable drivers for XUDC support in defconfig
 
-Applied to pci/tegra, thanks.
+Test Steps(USB 2.0):
+- Enable "USB Gadget precomposed configurations" in defconfig
+- Build, flash and boot Jetson TX1
+- Connect Jetson TX1 and Ubuntu device using USB A to Micro B
+  cable
+- After boot on Jetson TX1 terminal usb0 network device should be
+  enumerated
+- Assign static ip to usb0 on Jetson TX1 and corresponding net
+  device on ubuntu
+- Run ping test and transfer test(used scp) to check data transfer
+  communication
 
-Lorenzo
+SS mode is verified by enabling Type A port as peripheral
+---
+v11:
+* Patches 1,2,3 - No changes.
+* Patch 4 is new patch in the series to add support for Tegra186.
+* Patch 5(previously patch 4) - added Tegra186 compatible.
+* Patches 6,7(previously patches 5,6) - No changes.
+* Patch 8,9 are new patches to add support for Jetson-TX2 platform.
+* Patch 10(previously Patch 7) - added Tegra186 soc data.
+* Patch 11(previously Patch 8) - No changes.
+---
+v10:
+* Patches 1,2,4,5,7,8 - No changes.
+* Patch 3 has braces added to one single line else condition.
+* Patch 6 has update on compatible string as per suggestion from Chunfeng.
+---
+v9:
+* Patches 1,2,3,4,5 - No changes.
+* Patch 6 has update on compatible string as per suggestion from Chunfeng.
+* Patch 7 has comment fixes as suggested by Chunfeng.
+* Patch 8 has CONFIG_USB_GPIO enabled as module additionally.
+---
+v8:
+* Patches 1,2,3,4,5,8 - No changes.
+* Patch 6 has update on compatible string as per change done in [1].
+* Patch 7 has issue fix, where device mode didnot got enabled after resume
+  from suspend.
+---
+v7:
+* Patches 1,2,3,4,5,6,8 - No changes.
+* Patch 7 - Comments from Balbi and Chunfun adrresed.
+  Added COMPILE_TEST in Kconfig and updated dependencies.
+---
+v6:
+* Patches 1,2,3,7,8 - No changes.
+* Patch 4,5,6 - Comments from Rob addressed, updated usb connector driver
+  compatibility string.
+---
+v5:
+* Patches 1-3 - Commit subject updated as per inputs from Thierry.
+* Patch 4 - Added reg-names used on Tegra210 in the bindings doc
+* Enabled xudc driver as module instead of part of kernel in patch 8.
+* Patched 5-8 - No changes.
+---
+v4:
+* patch 1 - no changes.
+* corrected companion device search based on inputs from Thierry in patch 2.
+* removed unneeded dev variable and corrected value read in
+  tegra210_utmi_port_reset function in patch 3.
+* dt binding doc and dtb files are corrected for alignments.
+  Replaced extcon-usb-gpio with usb role switch.
+* Added support for USB role switch instead of extcon-usb-gpio and other minor
+  comments as suggested by Chunfeng.
+* Enabled xudc driver as module instead of part of kernel in patch 8.
+---
+V3:
+* Rebased patch 1 to top of tree.
+* Fixed bug in patch 2, where xudc interrupts dont get generated if USB host
+  mode fails to probe. Moved fake port detection logic to generic xusb.c. fake
+  usb port data is updated based on soc flag need_fake_usb3_port.
+* Added extra lines whereever necessary to make code more readable in patch 3
+  and 7.
+* dt binding doc is corrected for typos and extcon references. Also added
+  details for clocks and removed xusb_ references to clock and power-domain
+  names and accordingly patch 5 is updated.
+* removed avdd-pll-utmip-supply in patch 6, as its now part of padctl driver.
+* Patch 8 has no changes.
+---
+V2:
+* Patches 1-3 are new patches in this series, which splits unified features
+  patch to speprated features and removes need of port-fake entry in DT.
+* Patch 4 is re-arragend dt-bindings patch which incorporates previous
+  patch comments to sort DT entries alphabetically, addresses name changes
+  and PM domain details added.
+* Patch 5-6 are re-arranged DT patches with major changes - sort entries
+  alphabetically, and adds clock names.
+* Patch 7 is UDC driver tegra XUSB device mode controller with major
+  changes - remove un-used module params, lockinng for device_mode flag,
+  moving un-needed info logs to debug level, making changes feature flag
+  dependent rather than SOC based macros and other error handling in probe.
+* Patch 8 has no changes.
 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index f89f5acee72d..cbe95f0ea0ca 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -40,8 +40,6 @@
->  #define APPL_PINMUX_CLKREQ_OVERRIDE		BIT(3)
->  #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE_EN	BIT(4)
->  #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE	BIT(5)
-> -#define APPL_PINMUX_CLKREQ_OUT_OVRD_EN		BIT(9)
-> -#define APPL_PINMUX_CLKREQ_OUT_OVRD		BIT(10)
->  
->  #define APPL_CTRL				0x4
->  #define APPL_CTRL_SYS_PRE_DET_STATE		BIT(6)
-> @@ -1193,8 +1191,8 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  
->  	if (!pcie->supports_clkreq) {
->  		val = appl_readl(pcie, APPL_PINMUX);
-> -		val |= APPL_PINMUX_CLKREQ_OUT_OVRD_EN;
-> -		val |= APPL_PINMUX_CLKREQ_OUT_OVRD;
-> +		val |= APPL_PINMUX_CLKREQ_OVERRIDE_EN;
-> +		val &= ~APPL_PINMUX_CLKREQ_OVERRIDE;
->  		appl_writel(pcie, val, APPL_PINMUX);
->  	}
->  
-> -- 
-> 2.17.1
-> 
+Nagarjuna Kristam (8):
+  phy: tegra: xusb: Add XUSB dual mode support on Tegra210
+  phy: tegra: xusb: Add usb3 port fake support on Tegra210
+  phy: tegra: xusb: Add vbus override support on Tegra210
+  phy: tegra: xusb: Add vbus override support on Tegra186
+  dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
+  arm64: tegra: Add xudc node for Tegra210
+  arm64: tegra: Enable xudc on Jetson TX1
+  arm64: tegra: Add xudc node for Tegra186
+  arm64: tegra: Enable xudc on Jetson TX2
+  usb: gadget: Add UDC driver for tegra XUSB device mode controller
+  arm64: defconfig: Enable tegra XUDC support
+
+ .../devicetree/bindings/usb/nvidia,tegra-xudc.txt  |  112 +
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |   29 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   19 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   31 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   19 +
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/phy/tegra/xusb-tegra186.c                  |   23 +
+ drivers/phy/tegra/xusb-tegra210.c                  |  134 +-
+ drivers/phy/tegra/xusb.c                           |   87 +
+ drivers/phy/tegra/xusb.h                           |    4 +
+ drivers/usb/gadget/udc/Kconfig                     |   11 +
+ drivers/usb/gadget/udc/Makefile                    |    1 +
+ drivers/usb/gadget/udc/tegra-xudc.c                | 3810 ++++++++++++++++++++
+ include/linux/phy/tegra/xusb.h                     |    4 +-
+ 14 files changed, 4281 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.txt
+ create mode 100644 drivers/usb/gadget/udc/tegra-xudc.c
+
+-- 
+2.7.4
