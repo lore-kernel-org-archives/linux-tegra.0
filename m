@@ -1,224 +1,84 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 01/10] dt-bindings: sram: Convert SRAM bindings to
- json-schema
-Date: Mon, 21 Oct 2019 15:25:36 +0200
-Message-ID: <20191021132536.GA2791@pi3>
-References: <20191002164316.14905-1-krzk@kernel.org>
- <20191010191240.GA15006@bogus>
+From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Mon, 21 Oct 2019 16:17:35 +0200
+Message-ID: <99688909-929a-a1c2-5dfe-be98b50b6328@linaro.org>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
+ <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+ <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
+ <187d7020-fbe9-7984-2358-8a70faef019f@microchip.com>
+ <14df6e5d-19ef-4ebc-fd11-9953bc3fc44e@linaro.org>
+ <7071b6fa-f7ed-c879-4a43-44100dbe6121@microchip.com>
+ <8e9f709f-2ded-c666-26e0-9235d6107c34@linaro.org>
+ <215a1cd3-b1a8-5171-d70c-8d8081038e7f@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191010191240.GA15006@bogus>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@bootlin.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Santosh Shilimkar <ssantosh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <215a1cd3-b1a8-5171-d70c-8d8081038e7f-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Claudiu.Beznea-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, monstr-pSz03upnqPeHXe+LvDLADg@public.gmane.org, john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org, ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, paul.burton-8NJIiSa5LzA@public.gmane.org, jhogan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vgupta-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alexandre.torgue-qxv4g6HH51o@public.gmane.org, eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org, wahrenst-hi6Y0CQ0nG0@public.gmane.org, f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, shc_work-JGs/UdohzUI@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ysato-Rn4VEauK+AKRv+LV9MX5uooqe+aC9MnS@public.gmane.org, liviu.dudau-5wv7dgnIgG8@public.gmane.org, sudeep.holla-5wv7dgnIgG8@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-imx-3arQi8VN3Tc@public.gmane.org, baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Nicolas.Ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, alexandre.belloni@bo
+Cc: uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-oxnas-GWfripvEmMdhl2p70BpVqQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-unisoc-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nios2-dev-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-riscv-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-snps-arc-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 02:12:40PM -0500, Rob Herring wrote:
-> On Wed, Oct 02, 2019 at 06:43:07PM +0200, Krzysztof Kozlowski wrote:
-> > Convert generic mmio-sram bindings to DT schema format using
-> > json-schema.  Require the address/size cells to be 1, not equal to root
-> > node.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > ---
-> > 
-> > Changes since v2:
-> > 1. Add Rob as maintainer,
-> > 2. Use "contains" for compatible,
-> > 3. Fix address and size cells to 1,
-> > 4. Add maxitems to reg under children,
-> > 5. Remove unneeded string type from label.
-> > 
-> > Changes since v1:
-> > 1. Indent example with four spaces (more readable).
-> > ---
-> >  .../devicetree/bindings/sram/sram.txt         |  80 -----------
-> >  .../devicetree/bindings/sram/sram.yaml        | 134 ++++++++++++++++++
-> >  2 files changed, 134 insertions(+), 80 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
-> >  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
-> 
-> 
-> > diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
-> > new file mode 100644
-> > index 000000000000..a1c1ec2183f2
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sram/sram.yaml
-> > @@ -0,0 +1,134 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sram/sram.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Generic on-chip SRAM
-> > +
-> > +maintainers:
-> > +  - Rob Herring <robh@kernel.org>
-> > +
-> > +description: |+
-> > +  Simple IO memory regions to be managed by the genalloc API.
-> > +
-> > +  Each child of the sram node specifies a region of reserved memory. Each
-> > +  child node should use a 'reg' property to specify a specific range of
-> > +  reserved memory.
-> > +
-> > +  Following the generic-names recommended practice, node names should
-> > +  reflect the purpose of the node. Unit address (@<address>) should be
-> > +  appended to the name.
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    pattern: "^sram(@.*)?"
-> > +
-> > +  compatible:
-> > +    contains:
-> > +      enum:
-> > +        - mmio-sram
-> > +        - atmel,sama5d2-securam
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#address-cells":
-> > +    const: 1
-> > +
-> > +  "#size-cells":
-> > +    const: 1
-> > +
-> > +  ranges:
-> > +    description:
-> > +      Should translate from local addresses within the sram to bus addresses.
-> > +
-> > +  no-memory-wc:
-> > +    description:
-> > +      The flag indicating, that SRAM memory region has not to be remapped
-> > +      as write combining. WC is used by default.
-> > +    type: boolean
-> > +
-> > +patternProperties:
-> > +  "^([a-z]*-)?sram@[a-f0-9]$":
-> > +    type: object
-> > +    description:
-> > +      Each child of the sram node specifies a region of reserved memory.
-> > +    properties:
-> > +      reg:
-> > +        description:
-> > +          IO mem address range, relative to the SRAM range.
-> > +        maxItems: 1
-> > +
-> > +      compatible:
-> > +        $ref: /schemas/types.yaml#/definitions/string
-> 
-> No need to define the type again. We can say 'maxItems: 1' if we really 
-> want to force it to 1 entry.
-
-I'll fix it and integrate Samsung compatibles here.
-
-> 
-> > +        description:
-> > +          Should contain a vendor specific string in the form
-> > +          <vendor>,[<device>-]<usage>
-> > +
-> > +      pool:
-> > +        description:
-> > +          Indicates that the particular reserved SRAM area is addressable
-> > +          and in use by another device or devices.
-> > +        type: boolean
-> > +
-> > +      export:
-> > +        description:
-> > +          Indicates that the reserved SRAM area may be accessed outside
-> > +          of the kernel, e.g. by bootloader or userspace.
-> > +        type: boolean
-> > +
-> > +      protect-exec:
-> > +        description: |
-> > +          Same as 'pool' above but with the additional constraint that code
-> > +          will be run from the region and that the memory is maintained as
-> > +          read-only, executable during code execution. NOTE: This region must
-> > +          be page aligned on start and end in order to properly allow
-> > +          manipulation of the page attributes.
-> > +        type: boolean
-> > +
-> > +      label:
-> > +        description:
-> > +          The name for the reserved partition, if omitted, the label is taken
-> > +          from the node name excluding the unit address.
-> > +
-> > +      clocks:
-> 
-> Shouldn't this be up one level? Looks like this is the only case 
-> (Marvell and i.MX are the only ones I see with clocks).
-
-Yes, that's a mistake in original bindings.
-
-> 
-> > +        description:
-> > +          A list of phandle and clock specifier pair that controls the
-> > +          single SRAM clock.
-> 
-> maxItems: 1
-
-Yes.
-
-> 
-> > +
-> > +    required:
-> > +      - reg
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#address-cells"
-> > +  - "#size-cells"
-> > +  - ranges
-> 
-> Does 'additionalProperties' work here and/or in the child node? I guess 
-> not if we keep some node names.
-
-It seems that it works.
-
-> 
-> > +
-> > +examples:
-> > +  - |
-> > +    sram: sram@5c000000 {
-> > +        compatible = "mmio-sram";
-> > +        reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
-> > +
-> > +        #address-cells = <1>;
-> > +        #size-cells = <1>;
-> > +        ranges = <0 0x5c000000 0x40000>;
-> > +
-> > +        smp-sram@100 {
-> > +            compatible = "socvendor,smp-sram";
-> > +            reg = <0x100 0x50>;
-> > +        };
-> > +
-> > +        device-sram@1000 {
-> > +            reg = <0x1000 0x1000>;
-> > +            pool;
-> > +        };
-> > +
-> > +        exported@20000 {
-> 
-> This one doesn't match the pattern. That's fine I guess for dts files, 
-> but examples should be good examples.
-
-Sure.
-
-Best regards,
-Krzysztof
-
-> 
-> > +            reg = <0x20000 0x20000>;
-> > +            export;
-> > +        };
-> > +    };
-> > -- 
-> > 2.17.1
-> > 
+T24gMjEvMTAvMjAxOSAxMDo1OCwgQ2xhdWRpdS5CZXpuZWFAbWljcm9jaGlwLmNvbSB3cm90ZToK
+PiBIaSBEYW5pZWwsCj4gCj4gT24gMTguMTAuMjAxOSAyMzoyNCwgRGFuaWVsIExlemNhbm8gd3Jv
+dGU6Cj4+IEhpIENsYXVkaXUsCj4+Cj4+IE9uIDE1LzEwLzIwMTkgMTE6MjMsIENsYXVkaXUuQmV6
+bmVhQG1pY3JvY2hpcC5jb20gd3JvdGU6Cj4+Cj4+IFsgLi4uIF0KPj4KPj4+IFRoZSB0aW1lciBj
+bG9jayBzb3VyY2UgY291bGQgYmUgZGl2aWRlZCBieSBNUi5QUkVTICsgMS4KPj4+Cj4+PiBTbywg
+SSB1c2VkIHRoZSBjbG9jay1mcmVxdWVuY3kgRFQgYmluZGluZyB0byBsZXQgdXNlciBjaG9vc2Ug
+dGhlIHRpbWVyJ3MKPj4+IGZyZXF1ZW5jeS4gQmFzZWQgb24gdGhlIHZhbHVlIHByb3ZpZGVkIHZp
+YSB0aGlzIERUIGJpbmRpbmcgdGhlIGJlc3QgY2xvY2sKPj4+IHNvdXJjZSBhbmQgcHJlc2NhbGVy
+IGlzIGNob3NlbiB2aWEgbWNocF9waXQ2NGJfcHJlc19wcmVwYXJlKCkgZnVuY3Rpb24uCj4+Cj4+
+IEknbSB3aWxsaW5nIHRvIHRha2UgdGhlIGRyaXZlciBidXQgSSBkb3VidCB0aGUgcHVycG9zZSBv
+ZiB0aGUKPj4gY2xvY2stZnJlcXVlbmN5IGlzIHRvIGxldCB0aGUgdXNlciBjaG9vc2UgdGhlIGZy
+ZXF1ZW5jeS4KPj4KPiAKPiBJIGZvdW5kIHRoaXMgYXBwcm9hY2ggaW4gdGhlIGZvbGxvd2luZyBh
+bHJlYWR5IGludGVncmF0ZWQgZHJpdmVyczoKPiBkcml2ZXJzL2Nsb2Nrc291cmNlL2FybXY3bV9z
+eXN0aWNrLmMKPiBkcml2ZXJzL2Nsb2Nrc291cmNlL2JjbTI4MzVfdGltZXIuYwo+IGRyaXZlcnMv
+Y2xvY2tzb3VyY2UvYmNtX2tvbmFfdGltZXIuYwo+IGRyaXZlcnMvY2xvY2tzb3VyY2UvbWlwcy1n
+aWMtdGltZXIuYwo+IGRyaXZlcnMvY2xvY2tzb3VyY2UvbXBzMi10aW1lci5jCj4gZHJpdmVycy9j
+bG9ja3NvdXJjZS90aW1lci1xY29tLmMKPiBkcml2ZXJzL2Nsb2Nrc291cmNlL2FybV9hcmNoX3Rp
+bWVyLmMKPiAKPiBMb29raW5nIHRocm91Z2ggdGhlIGRvY3VtZW50YXRpb24gb2YgdGhlc2UsIG1v
+c3Qgb2YgdGhlbSBkb2N1bWVudCB0aGlzIERUCj4gcHJvcGVydHkgYXMgdGhlIGZyZXF1ZW5jeSBv
+ZiB0aGUgY2xvY2sgdGhhdCBkcml2ZXJzIHRoZSB0aW1lciwgYnV0IG5vbmUgb2YKPiB0aGVtIHNl
+ZW1zIHRvIGhhdmUgc29tZSBJUCBpbnRlcm5hbCBkaXZpZGVycyBzbyB0aGF0IHRoZSB0aW1lciB0
+byB0aWNrIGF0Cj4gZGlmZmVyZW50IGZyZXF1ZW5jeSB0aGFuIHRoZSBjbG9jayB0aGF0IGZlZWRz
+IHRoZSBJUC4gRnJvbSB0aGUKPiBkb2N1bWVudGF0aW9uIG9mIHRoZSBhYm92ZSBkcml2ZXJzOwo+
+IGRyaXZlcnMvY2xvY2tzb3VyY2UvYXJtdjdtX3N5c3RpY2suYwo+IAktIGNsb2NrLWZyZXF1ZW5j
+eSA6IFRoZSByYXRlIGluIEhaIGluIGlucHV0IG9mIHRoZSBBUk0gU3lzVGljawo+IAo+IGRyaXZl
+cnMvY2xvY2tzb3VyY2UvYmNtMjgzNV90aW1lci5jCj4gCS0gY2xvY2stZnJlcXVlbmN5IDogVGhl
+IGZyZXF1ZW5jeSBvZiB0aGUgY2xvY2sgdGhhdCBkcml2ZXMgdGhlIGNvdW50ZXIsIGluCj4gSHou
+Cj4gZHJpdmVycy9jbG9ja3NvdXJjZS9iY21fa29uYV90aW1lci5jCj4gCS0gY2xvY2stZnJlcXVl
+bmN5OiBmcmVxdWVuY3kgdGhhdCB0aGUgY2xvY2sgb3BlcmF0ZXMKPiAKPiBkcml2ZXJzL2Nsb2Nr
+c291cmNlL21pcHMtZ2ljLXRpbWVyLmMKPiAJY2xvY2stZnJlcXVlbmN5IDogQ2xvY2sgZnJlcXVl
+bmN5IGF0IHdoaWNoIHRoZSBHSUMgdGltZXJzIG9wZXJhdGUuCj4gZHJpdmVycy9jbG9ja3NvdXJj
+ZS9tcHMyLXRpbWVyLmMKPiAJLSBjbG9jay1mcmVxdWVuY3kgOiBUaGUgcmF0ZSBpbiBIWiBpbiBp
+bnB1dCBvZiB0aGUgQVJNIE1QUzIgdGltZXIKPiAKPiBkcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVy
+LXFjb20uYwo+IAktIGNsb2NrLWZyZXF1ZW5jeSA6IFRoZSBmcmVxdWVuY3kgb2YgdGhlIGRlYnVn
+IHRpbWVyIGFuZCB0aGUgZ2VuZXJhbAo+IHB1cnBvc2UKPiAgICAgICAgICAgICAgICAgICAgIHRp
+bWVyKHMpIGluIEh6IGluIHRoYXQgb3JkZXIuCj4gCj4gCj4gVGhpcyBpcyB3aHkgSSBhbHNvIGNo
+b3NlIHRoaXMgRFQgYmluZGluZ3MuCj4gCj4gSWYgeW91IHdhbnQgSSBjYW4gc3RpY2sgdG8gYSBm
+aXhlZCBmcmVxdWVuY3kgaGFyZCBjb2RlZCBpbiB0aGUgZHJpdmVyLgo+IFBsZWFzZSBsZXQgbWUg
+a25vdyBpZiB0aGlzIHdvdWxkIGJlIE9LIGZvciB5b3UuCgpZZXMsIHRoZSBjbG9jay1mcmVxdWVu
+Y3kgaXMgdXNlZCB0byBzcGVjaWZ5IHRoZSBmcmVxdWVuY3kgd2hlbiB0aGUKaW5mb3JtYXRpb24g
+Y2FuIG5vdCBiZSByZXRyaWV2ZWQgZnJvbSB0aGUgY2xvY2suIFRoZSBnb2FsIGlzIG5vdCB0bwpz
+cGVjaWZ5IGEgZnJlcXVlbmN5IGFuZCBjb21wdXRlIGZyb20gdGhlcmUgYSBwcmVzY2FsYXIgdmFs
+dWUuCgpIYXJkY29kaW5nIHRoZSBmcmVxdWVuY3kgaXMgZmluZSBvciBoYXJkY29kZSB0aGUgZGl2
+aWRlciBhbmQgY29tcHV0ZSB0aGUKZnJlcXVlbmN5IGZyb20gdGhlIGNsb2NrIHJhdGUuCgoKCi0t
+IAogPGh0dHA6Ly93d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNv
+ZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzogIDxodHRwOi8vd3d3LmZhY2Vib29r
+LmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90d2l0dGVyLmNvbS8jIS9saW5h
+cm9vcmc+IFR3aXR0ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9nLz4gQmxv
+ZwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4
+LW1lZGlhdGVrIG1haWxpbmcgbGlzdApMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3Jn
+Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtbWVkaWF0
+ZWsK
