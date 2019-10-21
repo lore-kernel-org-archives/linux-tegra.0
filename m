@@ -1,38 +1,62 @@
-From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH v3 3/7] dt-bindings: arm-smmu: Add binding for Tegra194 SMMU
-Date: Fri, 18 Oct 2019 16:31:28 -0700
-Message-ID: <1571441492-21919-4-git-send-email-vdumpa@nvidia.com>
-References: <1571441492-21919-1-git-send-email-vdumpa@nvidia.com>
+From: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Mon, 21 Oct 2019 08:58:10 +0000
+Message-ID: <215a1cd3-b1a8-5171-d70c-8d8081038e7f@microchip.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
+ <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+ <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
+ <187d7020-fbe9-7984-2358-8a70faef019f@microchip.com>
+ <14df6e5d-19ef-4ebc-fd11-9953bc3fc44e@linaro.org>
+ <7071b6fa-f7ed-c879-4a43-44100dbe6121@microchip.com>
+ <8e9f709f-2ded-c666-26e0-9235d6107c34@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1571441492-21919-1-git-send-email-vdumpa@nvidia.com>
+In-Reply-To: <8e9f709f-2ded-c666-26e0-9235d6107c34@linaro.org>
+Content-Language: en-US
+Content-ID: <60F94980C60DF447B0B88B0D90F5A4BE@namprd11.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, thomasz@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, nicolinc@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
+To: daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add binding for NVIDIA's Tegra194 Soc SMMU that is based
-on ARM MMU-500.
-
-Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
----
- Documentation/devicetree/bindings/iommu/arm,smmu.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 3133f3b..1d72fac 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -31,6 +31,10 @@ conditions.
-                   as below, SoC-specific compatibles:
-                   "qcom,sdm845-smmu-500", "arm,mmu-500"
- 
-+                  NVIDIA SoCs that use more than one ARM MMU-500 together
-+                  needs following SoC-specific compatibles along with "arm,mmu-500":
-+                  "nvidia,tegra194-smmu"
-+
- - reg           : Base address and size of the SMMU.
- 
- - #global-interrupts : The number of global interrupts exposed by the
--- 
-2.7.4
+SGkgRGFuaWVsLA0KDQpPbiAxOC4xMC4yMDE5IDIzOjI0LCBEYW5pZWwgTGV6Y2FubyB3cm90ZToN
+Cj4gSGkgQ2xhdWRpdSwNCj4gDQo+IE9uIDE1LzEwLzIwMTkgMTE6MjMsIENsYXVkaXUuQmV6bmVh
+QG1pY3JvY2hpcC5jb20gd3JvdGU6DQo+IA0KPiBbIC4uLiBdDQo+IA0KPj4gVGhlIHRpbWVyIGNs
+b2NrIHNvdXJjZSBjb3VsZCBiZSBkaXZpZGVkIGJ5IE1SLlBSRVMgKyAxLg0KPj4NCj4+IFNvLCBJ
+IHVzZWQgdGhlIGNsb2NrLWZyZXF1ZW5jeSBEVCBiaW5kaW5nIHRvIGxldCB1c2VyIGNob29zZSB0
+aGUgdGltZXIncw0KPj4gZnJlcXVlbmN5LiBCYXNlZCBvbiB0aGUgdmFsdWUgcHJvdmlkZWQgdmlh
+IHRoaXMgRFQgYmluZGluZyB0aGUgYmVzdCBjbG9jaw0KPj4gc291cmNlIGFuZCBwcmVzY2FsZXIg
+aXMgY2hvc2VuIHZpYSBtY2hwX3BpdDY0Yl9wcmVzX3ByZXBhcmUoKSBmdW5jdGlvbi4NCj4gDQo+
+IEknbSB3aWxsaW5nIHRvIHRha2UgdGhlIGRyaXZlciBidXQgSSBkb3VidCB0aGUgcHVycG9zZSBv
+ZiB0aGUNCj4gY2xvY2stZnJlcXVlbmN5IGlzIHRvIGxldCB0aGUgdXNlciBjaG9vc2UgdGhlIGZy
+ZXF1ZW5jeS4NCj4gDQoNCkkgZm91bmQgdGhpcyBhcHByb2FjaCBpbiB0aGUgZm9sbG93aW5nIGFs
+cmVhZHkgaW50ZWdyYXRlZCBkcml2ZXJzOg0KZHJpdmVycy9jbG9ja3NvdXJjZS9hcm12N21fc3lz
+dGljay5jDQpkcml2ZXJzL2Nsb2Nrc291cmNlL2JjbTI4MzVfdGltZXIuYw0KZHJpdmVycy9jbG9j
+a3NvdXJjZS9iY21fa29uYV90aW1lci5jDQpkcml2ZXJzL2Nsb2Nrc291cmNlL21pcHMtZ2ljLXRp
+bWVyLmMNCmRyaXZlcnMvY2xvY2tzb3VyY2UvbXBzMi10aW1lci5jDQpkcml2ZXJzL2Nsb2Nrc291
+cmNlL3RpbWVyLXFjb20uYw0KZHJpdmVycy9jbG9ja3NvdXJjZS9hcm1fYXJjaF90aW1lci5jDQoN
+Ckxvb2tpbmcgdGhyb3VnaCB0aGUgZG9jdW1lbnRhdGlvbiBvZiB0aGVzZSwgbW9zdCBvZiB0aGVt
+IGRvY3VtZW50IHRoaXMgRFQNCnByb3BlcnR5IGFzIHRoZSBmcmVxdWVuY3kgb2YgdGhlIGNsb2Nr
+IHRoYXQgZHJpdmVycyB0aGUgdGltZXIsIGJ1dCBub25lIG9mDQp0aGVtIHNlZW1zIHRvIGhhdmUg
+c29tZSBJUCBpbnRlcm5hbCBkaXZpZGVycyBzbyB0aGF0IHRoZSB0aW1lciB0byB0aWNrIGF0DQpk
+aWZmZXJlbnQgZnJlcXVlbmN5IHRoYW4gdGhlIGNsb2NrIHRoYXQgZmVlZHMgdGhlIElQLiBGcm9t
+IHRoZQ0KZG9jdW1lbnRhdGlvbiBvZiB0aGUgYWJvdmUgZHJpdmVyczsNCmRyaXZlcnMvY2xvY2tz
+b3VyY2UvYXJtdjdtX3N5c3RpY2suYw0KCS0gY2xvY2stZnJlcXVlbmN5IDogVGhlIHJhdGUgaW4g
+SFogaW4gaW5wdXQgb2YgdGhlIEFSTSBTeXNUaWNrDQoNCmRyaXZlcnMvY2xvY2tzb3VyY2UvYmNt
+MjgzNV90aW1lci5jDQoJLSBjbG9jay1mcmVxdWVuY3kgOiBUaGUgZnJlcXVlbmN5IG9mIHRoZSBj
+bG9jayB0aGF0IGRyaXZlcyB0aGUgY291bnRlciwgaW4NCkh6Lg0KZHJpdmVycy9jbG9ja3NvdXJj
+ZS9iY21fa29uYV90aW1lci5jDQoJLSBjbG9jay1mcmVxdWVuY3k6IGZyZXF1ZW5jeSB0aGF0IHRo
+ZSBjbG9jayBvcGVyYXRlcw0KDQpkcml2ZXJzL2Nsb2Nrc291cmNlL21pcHMtZ2ljLXRpbWVyLmMN
+CgljbG9jay1mcmVxdWVuY3kgOiBDbG9jayBmcmVxdWVuY3kgYXQgd2hpY2ggdGhlIEdJQyB0aW1l
+cnMgb3BlcmF0ZS4NCmRyaXZlcnMvY2xvY2tzb3VyY2UvbXBzMi10aW1lci5jDQoJLSBjbG9jay1m
+cmVxdWVuY3kgOiBUaGUgcmF0ZSBpbiBIWiBpbiBpbnB1dCBvZiB0aGUgQVJNIE1QUzIgdGltZXIN
+Cg0KZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1xY29tLmMNCgktIGNsb2NrLWZyZXF1ZW5jeSA6
+IFRoZSBmcmVxdWVuY3kgb2YgdGhlIGRlYnVnIHRpbWVyIGFuZCB0aGUgZ2VuZXJhbA0KcHVycG9z
+ZQ0KICAgICAgICAgICAgICAgICAgICB0aW1lcihzKSBpbiBIeiBpbiB0aGF0IG9yZGVyLg0KDQoN
+ClRoaXMgaXMgd2h5IEkgYWxzbyBjaG9zZSB0aGlzIERUIGJpbmRpbmdzLg0KDQpJZiB5b3Ugd2Fu
+dCBJIGNhbiBzdGljayB0byBhIGZpeGVkIGZyZXF1ZW5jeSBoYXJkIGNvZGVkIGluIHRoZSBkcml2
+ZXIuDQpQbGVhc2UgbGV0IG1lIGtub3cgaWYgdGhpcyB3b3VsZCBiZSBPSyBmb3IgeW91Lg0KDQpU
+aGFuayB5b3UsDQpDbGF1ZGl1IEJlem5lYQ0KDQo+IA0KPiBbIC4uLiBdDQo+IA0KPiANCg==
