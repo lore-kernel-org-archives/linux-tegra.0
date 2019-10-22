@@ -1,16 +1,15 @@
-From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v3 3/7] dt-bindings: arm-smmu: Add binding for Tegra194
-	SMMU
-Date: Tue, 22 Oct 2019 18:56:29 +0100
-Message-ID: <76513c1a-2fec-0b84-a9fb-f485f5fcbb78@arm.com>
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v3 0/7] Nvidia Arm SMMUv2 Implementation
+Date: Tue, 22 Oct 2019 23:48:55 +0000
+Message-ID: <BYAPR12MB2710879535971E290E8B25D3B3680@BYAPR12MB2710.namprd12.prod.outlook.com>
 References: <1571441492-21919-1-git-send-email-vdumpa@nvidia.com>
-	<1571441492-21919-4-git-send-email-vdumpa@nvidia.com>
+	<6d9e6425-fa69-9b76-b477-1fe50c459ca5@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1571441492-21919-4-git-send-email-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-GB
+In-Reply-To: <6d9e6425-fa69-9b76-b477-1fe50c459ca5-5wv7dgnIgG8@public.gmane.org>
+Content-Language: en-US
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
@@ -20,38 +19,14 @@ List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
 Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thomasz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, avanbrunt-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thomasz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <thomasz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexander Van Brunt <avanbrunt-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 19/10/2019 00:31, Krishna Reddy wrote:
-> Add binding for NVIDIA's Tegra194 Soc SMMU that is based
-> on ARM MMU-500.
-> 
-> Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   Documentation/devicetree/bindings/iommu/arm,smmu.txt | 4 ++++
+Hi Robin,
+>>Apologies for crossed wires, but I had a series getting rid of arm_smmu_flush_ops which was also meant to end up making things a bit easier for you:
 
-Rob (+cc) is in the process of converting the SMMU bindings to schema, 
-so we might need a bit of coordination here...
+I was looking to rebase on top of your changes first.  Then I read Will's reply that said your work is queued for 5.5. 
+Let me know if these patches need to rebased on top of iommu/devel or a different branch. I can resend the patch set on top of necessary branch.
 
-Robin.
-
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 3133f3b..1d72fac 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -31,6 +31,10 @@ conditions.
->                     as below, SoC-specific compatibles:
->                     "qcom,sdm845-smmu-500", "arm,mmu-500"
->   
-> +                  NVIDIA SoCs that use more than one ARM MMU-500 together
-> +                  needs following SoC-specific compatibles along with "arm,mmu-500":
-> +                  "nvidia,tegra194-smmu"
-> +
->   - reg           : Base address and size of the SMMU.
->   
->   - #global-interrupts : The number of global interrupts exposed by the
-> 
+-KR
