@@ -1,152 +1,66 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/3] drm/tegra: Fix 2d and 3d clients detaching from
- IOMMU domain
-Date: Thu, 24 Oct 2019 19:31:19 +0300
-Message-ID: <026bbeb0-1539-2b62-a447-60c1bc041f5a@gmail.com>
-References: <20190623173743.24088-1-digetx@gmail.com>
- <20190623173743.24088-2-digetx@gmail.com> <20191024115804.GB2924027@ulmo>
- <45926d95-3e7a-c56b-402a-2b2c6475c5db@gmail.com>
- <20191024135018.GD2924027@ulmo>
- <38a67df0-2ede-e7fe-8eca-6c4491cdcc7b@gmail.com>
- <20191024155620.GG2924027@ulmo>
- <bfc6c17d-f2df-32d0-67d6-2f763c81d7fc@gmail.com>
- <7f7ecf90-531c-69ae-9011-684666ed8743@gmail.com>
- <ef2ccc90-be93-3cfb-6b8b-2a406dd8d362@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 00/32] drm/tegra: Add DisplayPort support
+Date: Thu, 24 Oct 2019 18:45:02 +0200
+Message-ID: <20191024164534.132764-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ef2ccc90-be93-3cfb-6b8b-2a406dd8d362@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.10.2019 19:21, Dmitry Osipenko пишет:
-> 24.10.2019 19:09, Dmitry Osipenko пишет:
->> 24.10.2019 18:57, Dmitry Osipenko пишет:
->>> 24.10.2019 18:56, Thierry Reding пишет:
->>>> On Thu, Oct 24, 2019 at 06:47:23PM +0300, Dmitry Osipenko wrote:
->>>>> 24.10.2019 16:50, Thierry Reding пишет:
->>>>>> On Thu, Oct 24, 2019 at 04:28:41PM +0300, Dmitry Osipenko wrote:
->>>>>>> 24.10.2019 14:58, Thierry Reding пишет:
->>>>>>>> On Sun, Jun 23, 2019 at 08:37:42PM +0300, Dmitry Osipenko wrote:
->>>>>>>>> This should should fire up on the DRM's driver module re-loader because
->>>>>>>>> there won't be enough available domains on older Tegra SoCs.
->>>>>>>>>
->>>>>>>>> Cc: stable <stable@vger.kernel.org>
->>>>>>>>> Fixes: 0c407de5ed1a ("drm/tegra: Refactor IOMMU attach/detach")
->>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>> ---
->>>>>>>>>  drivers/gpu/drm/tegra/dc.c   | 4 ++--
->>>>>>>>>  drivers/gpu/drm/tegra/drm.c  | 9 ++++++---
->>>>>>>>>  drivers/gpu/drm/tegra/drm.h  | 3 ++-
->>>>>>>>>  drivers/gpu/drm/tegra/gr2d.c | 4 ++--
->>>>>>>>>  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
->>>>>>>>>  5 files changed, 14 insertions(+), 10 deletions(-)
->>>>>>>>
->>>>>>>> I think I understand what this is trying to do, but the commit message
->>>>>>>> does not help at all. So what's really going on here is that we need to
->>>>>>>> detach the device from the group regardless of whether we're sharing the
->>>>>>>> group or not, just like we attach groups to the shared domain whether
->>>>>>>> they share the same group or not.
->>>>>>>
->>>>>>> Yes, the commit's message could be improved.
->>>>>>>
->>>>>>>> But in that case, I wonder if it's even worth splitting groups the way
->>>>>>>> we are right now. Wouldn't it be better to just put all the devices into
->>>>>>>> the same group and be done with it?
->>>>>>>>
->>>>>>>> The current code gives me headaches every time I read it, so if we can
->>>>>>>> just make it so that all the devices under the DRM device share the same
->>>>>>>> group, this would become a lot easier to deal with. I'm not really
->>>>>>>> convinced that it makes much sense to keep them on separate domains,
->>>>>>>> especially given the constraints on the number of domains available on
->>>>>>>> earlier Tegra devices.
->>>>>>>>
->>>>>>>> Note that sharing a group will also make it much easier for these to use
->>>>>>>> the DMA API if it is backed by an IOMMU.
->>>>>>>
->>>>>>> Probably I'm blanking on everything about IOMMU now.. could you please
->>>>>>> remind me what "IOMMU group" is?
->>>>>>>
->>>>>>> Isn't it that each IOMMU group relates to the HW ID (SWGROUP)? But then
->>>>>>> each display controller has its own SWGROUP.. and thus that sharing just
->>>>>>> doesn't make any sense, hm.
->>>>>>
->>>>>> IOMMU groups are not directly related to SWGROUPs. But by default the
->>>>>> IOMMU framework will share a domain between members of the same IOMMU
->>>>>> group.
->>>>>
->>>>> Ah, I re-figured out that again. The memory controller drivers are
->>>>> defining a single "IOMMU group" for both of the display controllers.
->>>>>
->>>>>> Seems like that's really what we want here, so that when we do
->>>>>> use the DMA API, all the devices part of the DRM device get attached to
->>>>>> the same IOMMU domain, yet if we don't want to use the DMA API we only
->>>>>> need to detach the one group from the backing.
->>>>>
->>>>> Yes, it should be okay to put all DRM devices into the same group, like
->>>>> it is done now for the displays. It also should resolve problem with the
->>>>> domains shortage on T30 since now there are maximum 3 domains in use:
->>>>> host1x, drm and vde.
->>>>>
->>>>> I actually just checked that the original problem still exists
->>>>> and this change solves it as well:
->>>>>
->>>>> ---
->>>>> diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
->>>>> index 5a0f6e0a1643..e71096498436 100644
->>>>> --- a/drivers/memory/tegra/tegra30.c
->>>>> +++ b/drivers/memory/tegra/tegra30.c
->>>>> @@ -1021,6 +1021,9 @@ static const struct tegra_smmu_swgroup
->>>>> tegra30_swgroups[] = {
->>>>>  static const unsigned int tegra30_group_display[] = {
->>>>>  	TEGRA_SWGROUP_DC,
->>>>>  	TEGRA_SWGROUP_DCB,
->>>>> +	TEGRA_SWGROUP_G2,
->>>>> +	TEGRA_SWGROUP_NV,
->>>>> +	TEGRA_SWGROUP_NV2,
->>>>>  };
->>>>>
->>>>>  static const struct tegra_smmu_group_soc tegra30_groups[] = {
->>>>> ---
->>>>>
->>>>> Please let me know whether you're going to make a patch or if I should
->>>>> do it.
->>>>
->>>> I've been testing with a similar change and couldn't find any
->>>> regressions. I've also made the same modifications for Tegra114 and
->>>> Tegra124.
->>>>
->>>> Are you saying that none of these patches are needed anymore? Or do we
->>>> still need a patch to fix detaching? I'm thinking that maybe we can
->>>> drastrically simplify the detachment now by dropping the shared
->>>> parameter altogether.
->>>>
->>>> Let me draft a patch and send out the whole set for testing.
->>>
->>> Seems it's still not ideal because I noticed this in KMSG:
->>>
->>> [    0.703185] Failed to attached device 54200000.dc to IOMMU_mapping
->>> [    0.710404] Failed to attached device 54240000.dc to IOMMU_mapping
->>> [    0.719347] Failed to attached device 54140000.gr2d to IOMMU_mapping
->>> [    0.719569] Failed to attached device 54180000.gr3d to IOMMU_mapping
->>>
->>> which comes from the implicit IOMMU backing.
->>
->> And the error comes from here:
->>
->> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/iommu/iommu.c#L1655
-> 
-> So the detaching still should be needed, but at the moment the ARM32
-> DMA-mapping code is simply not suitable for the case of having multiple
-> devices in the same group. I'm wondering whether there are any real
-> users for the implicit IOMMU backing on ARM32 at all :/
-> 
-
-Apparently the "Failed to attached device 54200000.dc" was always in the
-log (I rarely testing the default multi-platform config), it's just the
-message is a pr_warn that I wasn't paying attention because it is
-colored like pr_info in dmesg :)
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoaXMgc2V0IG9mIHBh
+dGNoZXMgYnVpbGQgb24gdG9wIG9mIHRoZSBleGlzdGluZyBlRFAgc3VwcG9ydCB0aGF0IGV4aXN0
+cwpmb3IgVGVncmExMjQgYW5kIGV4dGVuZHMgaXQgd2l0aCBmdWxsIERQIHN1cHBvcnQgb24gVGVn
+cmEyMTAsIFRlZ3JhMTg2CmFuZCBUZWdyYTE5NC4gQWZ0ZXIgdGhlIHNlcmllcywgdGhlIGVEUCBj
+b2RlIGlzIHVuaWZpZWQgd2l0aCB0aGUgRFAgY29kZQphbmQgb25seSBwYXJhbWV0ZXJpemVkIHdo
+ZXJlIG5lY2Vzc2FyeS4KClRoaWVycnkKClRoaWVycnkgUmVkaW5nICgzMik6CiAgZHJtL3RlZ3Jh
+OiBBZGQgbWlzc2luZyBrZXJuZWxkb2MgZm9yIHN0cnVjdCBkcm1fZHBfbGluawogIGRybS90ZWdy
+YTogZHA6IEFkZCBkcm1fZHBfbGlua19yZXNldCgpIGltcGxlbWVudGF0aW9uCiAgZHJtL3RlZ3Jh
+OiBkcDogVHJhY2sgbGluayBjYXBhYmlsaXRpZXMgYWxvbmdzaWRlIHNldHRpbmdzCiAgZHJtL3Rl
+Z3JhOiBkcDogVHVybiBsaW5rIGNhcGFiaWxpdGllcyBpbnRvIGJvb2xlYW5zCiAgZHJtL3RlZ3Jh
+OiBkcDogUHJvYmUgbGluayB1c2luZyBleGlzdGluZyBwYXJzaW5nIGhlbHBlcnMKICBkcm0vdGVn
+cmE6IGRwOiBSZWFkIGZhc3QgdHJhaW5pbmcgY2FwYWJpbGl0eSBmcm9tIGxpbmsKICBkcm0vdGVn
+cmE6IGRwOiBSZWFkIFRQUzMgY2FwYWJpbGl0eSBmcm9tIHNpbmsKICBkcm0vdGVncmE6IGRwOiBS
+ZWFkIGNoYW5uZWwgY29kaW5nIGNhcGFiaWxpdHkgZnJvbSBzaW5rCiAgZHJtL3RlZ3JhOiBkcDog
+UmVhZCBhbHRlcm5hdGUgc2NyYW1ibGVyIHJlc2V0IGNhcGFiaWxpdHkgZnJvbSBzaW5rCiAgZHJt
+L3RlZ3JhOiBkcDogUmVhZCBlRFAgdmVyc2lvbiBmcm9tIERQQ0QKICBkcm0vdGVncmE6IGRwOiBS
+ZWFkIEFVWCByZWFkIGludGVydmFsIGZyb20gRFBDRAogIGRybS90ZWdyYTogZHA6IFNldCBjaGFu
+bmVsIGNvZGluZyBvbiBsaW5rIGNvbmZpZ3VyYXRpb24KICBkcm0vdGVncmE6IGRwOiBFbmFibGUg
+YWx0ZXJuYXRlIHNjcmFtYmxlciByZXNldCB3aGVuIHN1cHBvcnRlZAogIGRybS90ZWdyYTogZHA6
+IEFkZCBkcm1fZHBfbGlua19jaG9vc2UoKSBoZWxwZXIKICBkcm0vdGVncmE6IGRwOiBBZGQgc3Vw
+cG9ydCBmb3IgZURQIGxpbmsgcmF0ZXMKICBkcm0vdGVncmE6IGRwOiBBZGQgRGlzcGxheVBvcnQg
+bGluayB0cmFpbmluZyBoZWxwZXIKICBkcm0vdGVncmE6IHNvcjogVXNlIERQIGxpbmsgdHJhaW5p
+bmcgaGVscGVycwogIGRybS90ZWdyYTogc29yOiBIb29rIHVwIEkyQy1vdmVyLUFVWCB0byBvdXRw
+dXQKICBkcm0vdGVncmE6IHNvcjogU3RhYmlsaXplIGVEUAogIGRybS90ZWdyYTogc29yOiBGaWx0
+ZXIgZURQIHJhdGVzCiAgZHJtL3RlZ3JhOiBzb3I6IEFkZCBEaXNwbGF5UG9ydCBzdXBwb3J0CiAg
+ZHJtL3RlZ3JhOiBzb3I6IFJlbW92ZSB0ZWdyYTE4Ni1zb3IxIHN1cHBvcnQKICBkcm0vdGVncmE6
+IHNvcjogVXNlIGNvcnJlY3QgU09SIGluZGV4IG9uIFRlZ3JhMjEwCiAgZHJtL3RlZ3JhOiBzb3I6
+IEltcGxlbWVudCBwYWQgY2xvY2sgZm9yIGFsbCBTT1IgaW5zdGFuY2VzCiAgZHJtL3RlZ3JhOiBz
+b3I6IERlZHVwbGljYXRlIGNvbm5lY3RvciB0eXBlIGRldGVjdGlvbiBjb2RlCiAgZHJtL3RlZ3Jh
+OiBzb3I6IFN1cHBvcnQgRGlzcGxheVBvcnQgb24gVGVncmExOTQKICBkcm0vdGVncmE6IHNvcjog
+VW5pZnkgY2xvY2sgc2V0dXAgZm9yIGVEUCwgSERNSSBhbmQgRFAKICBkcm0vdGVncmE6IHNvcjog
+VXNlIGNvcnJlY3QgSS9PIHBhZCBmb3IgRFAKICBkcm0vdGVncmE6IHNvcjogVW5pZnkgZURQIGFu
+ZCBEUCBzdXBwb3J0CiAgZHJtL3RlZ3JhOiBzb3I6IEF2b2lkIHRpbWVvdXRzIG9uIHVucGx1ZyBl
+dmVudHMKICBkcm0vdGVncmE6IHNvcjogRXh0cmFjdCBjb21tb24gYXVkaW8gZW5hYmxpbmcgY29k
+ZQogIGRybS90ZWdyYTogc29yOiBJbnRyb2R1Y2UgYXVkaW8gZW5hYmxlL2Rpc2FibGUgY2FsbGJh
+Y2tzCgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwLmMgICAgfCAgNzY1ICsrKysrKysrKy0KIGRy
+aXZlcnMvZ3B1L2RybS90ZWdyYS9kcC5oICAgIHwgIDE1NyArLQogZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2RwYXV4LmMgfCAgIDY5IC0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgIHwgICAg
+NSAtCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgICB8IDI1NzEgKysrKysrKysrKysrKysr
+KysrKy0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmggICB8ICAgIDMg
+KwogNiBmaWxlcyBjaGFuZ2VkLCAyMzk1IGluc2VydGlvbnMoKyksIDExNzUgZGVsZXRpb25zKC0p
+CgotLSAKMi4yMy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWw=
