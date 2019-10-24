@@ -1,124 +1,159 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
-	samples
-Date: Thu, 24 Oct 2019 16:54:18 +0100
-Message-ID: <3914d620-ee0e-436f-1375-dfa0fba11273@nvidia.com>
-References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <20191018154833.7560-3-ben.dooks@codethink.co.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1 2/3] drm/tegra: Fix 2d and 3d clients detaching from
+ IOMMU domain
+Date: Thu, 24 Oct 2019 17:56:20 +0200
+Message-ID: <20191024155620.GG2924027@ulmo>
+References: <20190623173743.24088-1-digetx@gmail.com>
+ <20190623173743.24088-2-digetx@gmail.com>
+ <20191024115804.GB2924027@ulmo>
+ <45926d95-3e7a-c56b-402a-2b2c6475c5db@gmail.com>
+ <20191024135018.GD2924027@ulmo>
+ <38a67df0-2ede-e7fe-8eca-6c4491cdcc7b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20191018154833.7560-3-ben.dooks@codethink.co.uk>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="64j1qyTOoGvYcHb1"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <38a67df0-2ede-e7fe-8eca-6c4491cdcc7b@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+--64j1qyTOoGvYcHb1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 18/10/2019 16:48, Ben Dooks wrote:
-> From: Edward Cragg <edward.cragg@codethink.co.uk>
-> 
-> The tegra3 audio can support 24 and 32 bit sample sizes so add the
-> option to the tegra30_i2s_hw_params to configure the S24_LE or S32_LE
-> formats when requested.
-> 
-> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-> [ben.dooks@codethink.co.uk: fixup merge of 24 and 32bit]
-> [ben.dooks@codethink.co.uk: add pm calls around ytdm config]
-> [ben.dooks@codethink.co.uk: drop debug printing to dev_dbg]
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+On Thu, Oct 24, 2019 at 06:47:23PM +0300, Dmitry Osipenko wrote:
+> 24.10.2019 16:50, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Thu, Oct 24, 2019 at 04:28:41PM +0300, Dmitry Osipenko wrote:
+> >> 24.10.2019 14:58, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Sun, Jun 23, 2019 at 08:37:42PM +0300, Dmitry Osipenko wrote:
+> >>>> This should should fire up on the DRM's driver module re-loader beca=
+use
+> >>>> there won't be enough available domains on older Tegra SoCs.
+> >>>>
+> >>>> Cc: stable <stable@vger.kernel.org>
+> >>>> Fixes: 0c407de5ed1a ("drm/tegra: Refactor IOMMU attach/detach")
+> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>>> ---
+> >>>>  drivers/gpu/drm/tegra/dc.c   | 4 ++--
+> >>>>  drivers/gpu/drm/tegra/drm.c  | 9 ++++++---
+> >>>>  drivers/gpu/drm/tegra/drm.h  | 3 ++-
+> >>>>  drivers/gpu/drm/tegra/gr2d.c | 4 ++--
+> >>>>  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
+> >>>>  5 files changed, 14 insertions(+), 10 deletions(-)
+> >>>
+> >>> I think I understand what this is trying to do, but the commit message
+> >>> does not help at all. So what's really going on here is that we need =
+to
+> >>> detach the device from the group regardless of whether we're sharing =
+the
+> >>> group or not, just like we attach groups to the shared domain whether
+> >>> they share the same group or not.
+> >>
+> >> Yes, the commit's message could be improved.
+> >>
+> >>> But in that case, I wonder if it's even worth splitting groups the way
+> >>> we are right now. Wouldn't it be better to just put all the devices i=
+nto
+> >>> the same group and be done with it?
+> >>>
+> >>> The current code gives me headaches every time I read it, so if we can
+> >>> just make it so that all the devices under the DRM device share the s=
+ame
+> >>> group, this would become a lot easier to deal with. I'm not really
+> >>> convinced that it makes much sense to keep them on separate domains,
+> >>> especially given the constraints on the number of domains available on
+> >>> earlier Tegra devices.
+> >>>
+> >>> Note that sharing a group will also make it much easier for these to =
+use
+> >>> the DMA API if it is backed by an IOMMU.
+> >>
+> >> Probably I'm blanking on everything about IOMMU now.. could you please
+> >> remind me what "IOMMU group" is?
+> >>
+> >> Isn't it that each IOMMU group relates to the HW ID (SWGROUP)? But then
+> >> each display controller has its own SWGROUP.. and thus that sharing ju=
+st
+> >> doesn't make any sense, hm.
+> >=20
+> > IOMMU groups are not directly related to SWGROUPs. But by default the
+> > IOMMU framework will share a domain between members of the same IOMMU
+> > group.
+>=20
+> Ah, I re-figured out that again. The memory controller drivers are
+> defining a single "IOMMU group" for both of the display controllers.
+>=20
+> > Seems like that's really what we want here, so that when we do
+> > use the DMA API, all the devices part of the DRM device get attached to
+> > the same IOMMU domain, yet if we don't want to use the DMA API we only
+> > need to detach the one group from the backing.
+>=20
+> Yes, it should be okay to put all DRM devices into the same group, like
+> it is done now for the displays. It also should resolve problem with the
+> domains shortage on T30 since now there are maximum 3 domains in use:
+> host1x, drm and vde.
+>=20
+> I actually just checked that the original problem still exists
+> and this change solves it as well:
+>=20
 > ---
-> squash 5aeca5a055fd ASoC: tegra: i2s: pm_runtime_get_sync() is needed in tdm code
-> 
-> ASoC: tegra: i2s: pm_runtime_get_sync() is needed in tdm code
+> diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra3=
+0.c
+> index 5a0f6e0a1643..e71096498436 100644
+> --- a/drivers/memory/tegra/tegra30.c
+> +++ b/drivers/memory/tegra/tegra30.c
+> @@ -1021,6 +1021,9 @@ static const struct tegra_smmu_swgroup
+> tegra30_swgroups[] =3D {
+>  static const unsigned int tegra30_group_display[] =3D {
+>  	TEGRA_SWGROUP_DC,
+>  	TEGRA_SWGROUP_DCB,
+> +	TEGRA_SWGROUP_G2,
+> +	TEGRA_SWGROUP_NV,
+> +	TEGRA_SWGROUP_NV2,
+>  };
+>=20
+>  static const struct tegra_smmu_group_soc tegra30_groups[] =3D {
 > ---
->  sound/soc/tegra/tegra30_i2s.c | 25 ++++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-> index 73f0dddeaef3..063f34c882af 100644
-> --- a/sound/soc/tegra/tegra30_i2s.c
-> +++ b/sound/soc/tegra/tegra30_i2s.c
-> @@ -127,7 +127,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
->  	struct device *dev = dai->dev;
->  	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
->  	unsigned int mask, val, reg;
-> -	int ret, sample_size, srate, i2sclock, bitcnt;
-> +	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits;
->  	struct tegra30_ahub_cif_conf cif_conf;
->  
->  	if (params_channels(params) != 2)
-> @@ -137,8 +137,19 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
->  	switch (params_format(params)) {
->  	case SNDRV_PCM_FORMAT_S16_LE:
->  		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
-> +		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
->  		sample_size = 16;
->  		break;
-> +	case SNDRV_PCM_FORMAT_S24_LE:
-> +		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
-> +		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
-> +		sample_size = 24;
-> +		break;
-> +	case SNDRV_PCM_FORMAT_S32_LE:
-> +		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
-> +		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
-> +		sample_size = 32;
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -170,8 +181,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
->  	cif_conf.threshold = 0;
->  	cif_conf.audio_channels = 2;
->  	cif_conf.client_channels = 2;
-> -	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
-> -	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
-> +	cif_conf.audio_bits = audio_bits;
-> +	cif_conf.client_bits = audio_bits;
->  	cif_conf.expand = 0;
->  	cif_conf.stereo_conv = 0;
->  	cif_conf.replicate = 0;
-> @@ -306,14 +317,18 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
->  		.channels_min = 2,
->  		.channels_max = 2,
->  		.rates = SNDRV_PCM_RATE_8000_96000,
-> -		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-> +		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-> +			   SNDRV_PCM_FMTBIT_S24_LE |
-> +			   SNDRV_PCM_FMTBIT_S16_LE,
->  	},
->  	.capture = {
->  		.stream_name = "Capture",
->  		.channels_min = 2,
->  		.channels_max = 2,
->  		.rates = SNDRV_PCM_RATE_8000_96000,
-> -		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-> +		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-> +			   SNDRV_PCM_FMTBIT_S24_LE |
-> +			   SNDRV_PCM_FMTBIT_S16_LE,
->  	},
->  	.ops = &tegra30_i2s_dai_ops,
->  	.symmetric_rates = 1,
+>=20
+> Please let me know whether you're going to make a patch or if I should
+> do it.
 
-Thanks!
+I've been testing with a similar change and couldn't find any
+regressions. I've also made the same modifications for Tegra114 and
+Tegra124.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Are you saying that none of these patches are needed anymore? Or do we
+still need a patch to fix detaching? I'm thinking that maybe we can
+drastrically simplify the detachment now by dropping the shared
+parameter altogether.
 
-Cheers
-Jon
+Let me draft a patch and send out the whole set for testing.
 
+Thierry
 
--- 
-nvpublic
+--64j1qyTOoGvYcHb1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2xyaEACgkQ3SOs138+
+s6HnnQ/45Iq7p3JKafC7dZfiSyfjIwnyT796I2ftsGsYuTIyx6PgUnFPo14rEC27
+/GQU/Ih/ojsx1HuK6/T7DyatN273kKn7UqyyeKj9dt2sl35N99ffNBJyNxoE69K8
+2BgH+TZi4Dryp638YhvuHukVgdXqlyb4EFuuVhdo/eCGlx9+uVfAxXuMshtLmENz
+/Fikj/6fwNO6AQn6oRxdre4Qp4XU/YSBk1QVN3J1P13NF3O6tp+3s+UN3Ox6hgB4
+9owf80JZNPbP6FscSlTHwxba+41duQJ5Y2u0TNFzJwYsIj9kJZ7FFGlaJTE8xU0o
+TJCX1t2Jz8AsERHwQnH0UTIBbFc/lKqyxqM4FrRQZOs5udRto5pb/3wSl9+nFfRf
+CSf5zTBTREnNMMZXv79HrRQFeIzcrPtOaZHOJp4je+Y04XV4qPk9ZANe+5gcMqxc
+9jv60dZSrh4EM1uEeFqJDwesW1huPK9jQXfZoYjXkjIXHL3igqAGrvovGGD2yeO9
+S2kDAexj+9XQNvOXxjjF8QMq/pTpyx8E6PRzXkZTtui47pRhWXZYTAPvUKPDu0Zi
+hz1w/BQUap3S3axNKa4FaFA1F9E40bY2RRaFXGvPW80pbya9qRJx/p/UuDrqCSY6
+RoX9lvDgtj2a+8b9KILk1ZwzyNfkkKhJgbQQpVG+3OPzXcHfyQ==
+=Ymgn
+-----END PGP SIGNATURE-----
+
+--64j1qyTOoGvYcHb1--
