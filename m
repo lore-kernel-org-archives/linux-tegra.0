@@ -1,107 +1,98 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/3] drm/tegra: Fix 2d and 3d clients detaching from
- IOMMU domain
-Date: Thu, 24 Oct 2019 18:47:23 +0300
-Message-ID: <38a67df0-2ede-e7fe-8eca-6c4491cdcc7b@gmail.com>
-References: <20190623173743.24088-1-digetx@gmail.com>
- <20190623173743.24088-2-digetx@gmail.com> <20191024115804.GB2924027@ulmo>
- <45926d95-3e7a-c56b-402a-2b2c6475c5db@gmail.com>
- <20191024135018.GD2924027@ulmo>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v5 1/7] ASoC: tegra: add a TDM
+	configuration callback
+Date: Thu, 24 Oct 2019 16:50:59 +0100
+Message-ID: <c02a1328-b5e9-d664-83e0-846c597c747e@nvidia.com>
+References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
+ <20191018154833.7560-2-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191024135018.GD2924027@ulmo>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20191018154833.7560-2-ben.dooks@codethink.co.uk>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-24.10.2019 16:50, Thierry Reding пишет:
-> On Thu, Oct 24, 2019 at 04:28:41PM +0300, Dmitry Osipenko wrote:
->> 24.10.2019 14:58, Thierry Reding пишет:
->>> On Sun, Jun 23, 2019 at 08:37:42PM +0300, Dmitry Osipenko wrote:
->>>> This should should fire up on the DRM's driver module re-loader because
->>>> there won't be enough available domains on older Tegra SoCs.
->>>>
->>>> Cc: stable <stable@vger.kernel.org>
->>>> Fixes: 0c407de5ed1a ("drm/tegra: Refactor IOMMU attach/detach")
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/gpu/drm/tegra/dc.c   | 4 ++--
->>>>  drivers/gpu/drm/tegra/drm.c  | 9 ++++++---
->>>>  drivers/gpu/drm/tegra/drm.h  | 3 ++-
->>>>  drivers/gpu/drm/tegra/gr2d.c | 4 ++--
->>>>  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
->>>>  5 files changed, 14 insertions(+), 10 deletions(-)
->>>
->>> I think I understand what this is trying to do, but the commit message
->>> does not help at all. So what's really going on here is that we need to
->>> detach the device from the group regardless of whether we're sharing the
->>> group or not, just like we attach groups to the shared domain whether
->>> they share the same group or not.
->>
->> Yes, the commit's message could be improved.
->>
->>> But in that case, I wonder if it's even worth splitting groups the way
->>> we are right now. Wouldn't it be better to just put all the devices into
->>> the same group and be done with it?
->>>
->>> The current code gives me headaches every time I read it, so if we can
->>> just make it so that all the devices under the DRM device share the same
->>> group, this would become a lot easier to deal with. I'm not really
->>> convinced that it makes much sense to keep them on separate domains,
->>> especially given the constraints on the number of domains available on
->>> earlier Tegra devices.
->>>
->>> Note that sharing a group will also make it much easier for these to use
->>> the DMA API if it is backed by an IOMMU.
->>
->> Probably I'm blanking on everything about IOMMU now.. could you please
->> remind me what "IOMMU group" is?
->>
->> Isn't it that each IOMMU group relates to the HW ID (SWGROUP)? But then
->> each display controller has its own SWGROUP.. and thus that sharing just
->> doesn't make any sense, hm.
+
+On 18/10/2019 16:48, Ben Dooks wrote:
+> From: Edward Cragg <edward.cragg@codethink.co.uk>
 > 
-> IOMMU groups are not directly related to SWGROUPs. But by default the
-> IOMMU framework will share a domain between members of the same IOMMU
-> group.
+> Add a callback to configure TDM settings for the Tegra30 I2S ASoC 'platform'
+> driver.
+> 
+> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
+> [ben.dooks@codethink.co.uk: merge fix for power management]
+> [ben.dooks@codethink.co.uk: add review change for fsync of 1 clock]
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+>  sound/soc/tegra/tegra30_i2s.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+> index ac6983c6bd72..73f0dddeaef3 100644
+> --- a/sound/soc/tegra/tegra30_i2s.c
+> +++ b/sound/soc/tegra/tegra30_i2s.c
+> @@ -254,6 +254,34 @@ static int tegra30_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+>  	return 0;
+>  }
+>  
+> +static int tegra30_i2s_set_tdm(struct snd_soc_dai *dai,
+> +			       unsigned int tx_mask, unsigned int rx_mask,
+> +			       int slots, int slot_width)
+> +{
+> +	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+> +	unsigned int mask, val;
+> +
+> +	dev_dbg(dai->dev, "%s: txmask=0x%08x rxmask=0x%08x slots=%d width=%d\n",
+> +		 __func__, tx_mask, rx_mask, slots, slot_width);
+> +
+> +	mask = TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK |
+> +	       TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_MASK |
+> +	       TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_MASK;
+> +
+> +	val = (tx_mask << TEGRA30_I2S_SLOT_CTRL_TX_SLOT_ENABLES_SHIFT) |
+> +	      (rx_mask << TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT) |
+> +	      ((slots - 1) << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT);
+> +
+> +	pm_runtime_get_sync(dai->dev);
+> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_SLOT_CTRL, mask, val);
+> +	/* set the fsync width to minimum of 1 clock width */
+> +	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CH_CTRL,
+> +			   TEGRA30_I2S_CH_CTRL_FSYNC_WIDTH_MASK, 0x0);
+> +	pm_runtime_put(dai->dev);
+> +
+> +	return 0;
+> +}
+> +
+>  static int tegra30_i2s_probe(struct snd_soc_dai *dai)
+>  {
+>  	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+> @@ -268,6 +296,7 @@ static const struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
+>  	.set_fmt	= tegra30_i2s_set_fmt,
+>  	.hw_params	= tegra30_i2s_hw_params,
+>  	.trigger	= tegra30_i2s_trigger,
+> +	.set_tdm_slot	= tegra30_i2s_set_tdm,
+>  };
+>  
+>  static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
 
-Ah, I re-figured out that again. The memory controller drivers are
-defining a single "IOMMU group" for both of the display controllers.
+Thanks!
 
-> Seems like that's really what we want here, so that when we do
-> use the DMA API, all the devices part of the DRM device get attached to
-> the same IOMMU domain, yet if we don't want to use the DMA API we only
-> need to detach the one group from the backing.
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-Yes, it should be okay to put all DRM devices into the same group, like
-it is done now for the displays. It also should resolve problem with the
-domains shortage on T30 since now there are maximum 3 domains in use:
-host1x, drm and vde.
+Cheers
+Jon
 
-I actually just checked that the original problem still exists
-and this change solves it as well:
-
----
-diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
-index 5a0f6e0a1643..e71096498436 100644
---- a/drivers/memory/tegra/tegra30.c
-+++ b/drivers/memory/tegra/tegra30.c
-@@ -1021,6 +1021,9 @@ static const struct tegra_smmu_swgroup
-tegra30_swgroups[] = {
- static const unsigned int tegra30_group_display[] = {
- 	TEGRA_SWGROUP_DC,
- 	TEGRA_SWGROUP_DCB,
-+	TEGRA_SWGROUP_G2,
-+	TEGRA_SWGROUP_NV,
-+	TEGRA_SWGROUP_NV2,
- };
-
- static const struct tegra_smmu_group_soc tegra30_groups[] = {
----
-
-Please let me know whether you're going to make a patch or if I should
-do it.
+-- 
+nvpublic
