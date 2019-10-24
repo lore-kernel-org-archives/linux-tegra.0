@@ -1,77 +1,99 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v5 3/7] ASoC: tegra: i2s: Add support for
- more than 2 channels
-Date: Thu, 24 Oct 2019 20:18:46 +0100
-Message-ID: <20191024191846.GJ46373@sirena.co.uk>
-References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <20191018154833.7560-4-ben.dooks@codethink.co.uk>
- <2eef499e-d9d4-732a-ddd6-8d307d8cb08d@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 00/17] NVIDIA Tegra20 CPUFreq driver major update
+Date: Fri, 25 Oct 2019 01:13:59 +0300
+Message-ID: <20191024221416.14197-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7606295208313226982=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <2eef499e-d9d4-732a-ddd6-8d307d8cb08d@nvidia.com>
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
---===============7606295208313226982==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="J2uG6jHjFLimDtBY"
-Content-Disposition: inline
+This series moves intermediate-clk handling from tegra20-cpufreq into
+tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
+which brings voltage scaling, per-hardware OPPs and Tegra30 support out
+of the box. All boards need to adopt CPU OPPs in their device-trees in
+order to get cpufreq support. This series adds OPPs only to selective
+boards because there is assumption in a current device-trees that CPU
+voltage is set for 1GHz freq and this won't work for those CPUs that
+can go over 1GHz and thus require voltage regulators to be set up for
+voltage scaling support (CC'ed Marcel for Toradex boards). We could
+probably add delete-node for OPPs over 1GHz if there are not actively
+maintained boards.
 
+NOTE(!): the voltage scaling functionality depends on a reviewed and yet
+unapplied series [0], thus [0] needs to be applied first.
 
---J2uG6jHjFLimDtBY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[0] https://lkml.org/lkml/2019/7/25/892
 
-On Thu, Oct 24, 2019 at 05:12:21PM +0100, Jon Hunter wrote:
-> On 18/10/2019 16:48, Ben Dooks wrote:
+Changelog:
 
-> > @@ -90,10 +92,12 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
-> >  		TEGRA30_I2S_CTRL_LRCK_MASK;
-> >  	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-> >  	case SND_SOC_DAIFMT_DSP_A:
-> > +		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+v2: - Kept modularity of the tegra20-cpufreq as was requested by Viresh Kumar
+      in a review comment to v1.
 
-> Sorry, I just saw the feedback on the previous iteration. I don't think
-> we want to set the polarity but based upon the format that is passed ...
+    - Added acks from Viresh Kumar.
 
-The polarity should be set based on the the inversion flags in the
-format, normally both DSP modes trigger on the rising edge of the LRCLK.
-The difference is if there's a delay before the first data bit or not.
+    - Added tested-by from Nicolas Chauvet to the "trimslice" patch.
+      Nicolas told me on IRC that it works fine.
 
---J2uG6jHjFLimDtBY
-Content-Type: application/pgp-signature; name="signature.asc"
+    - Fixed compilation of the "Add custom CCLK implementation" patch. The
+      error happened because v1 was based on top of yet unreviewed/unapplied
+      patch "clk: tegra: divider: Support enable-bit for Super clocks". Thanks
+      to Peter Geis for reporting the problem.
 
------BEGIN PGP SIGNATURE-----
+    - Replaced Tegra30 "beaver" board with "cardhu-a04" because turned out
+      that's what NVIDIA uses in the testing farm.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2x+RUACgkQJNaLcl1U
-h9BG7Af/aTUi+TadPqNOylY+6X2Spzqs0gV+LMh/W0yvVf0aL57cGaJ10dMwmwbC
-as56JKIZ89JWzfQHg5fBEXQswb9q12ExaVYNdnIjc/XEx9QnSGHD0Wse7J/lCnbD
-FjluXJ9sUFuoRH7yayraajy6bnT2b4EQHB2xkzlYib6rsrqR51Xgrs4MH64MpA59
-cCMHuxP12rACbUm5atFzeCgt6TvESWJ0pD++r9Ht/vVGyArSMjjt7HZdOFNSDGwc
-1TAOqK6xdPvEqt5LJxXyw+1QCPZT8KFJ3He2g7lax4tuW+czSPfsgPxTEEDIRO2u
-FZr56e49pYtzzeN6lG9U8XnkqsF89A==
-=xWHD
------END PGP SIGNATURE-----
+Dmitry Osipenko (17):
+  clk: tegra: Add custom CCLK implementation
+  clk: tegra: pll: Add pre/post rate-change hooks
+  clk: tegra: cclk: Add helpers for handling PLLX rate changes
+  clk: tegra20: Support custom CCLK implementation
+  clk: tegra30: Support custom CCLK implementation
+  dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
+  cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported
+    now)
+  ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+  ARM: dts: tegra20: Add CPU clock
+  ARM: dts: tegra30: Add CPU clock
+  ARM: dts: tegra20: Add CPU Operating Performance Points
+  ARM: dts: tegra30: Add CPU Operating Performance Points
+  ARM: dts: tegra20: paz00: Set up voltage regulators for DVFS
+  ARM: dts: tegra20: paz00: Add CPU Operating Performance Points
+  ARM: dts: tegra20: trimslice: Add CPU Operating Performance Points
+  ARM: dts: tegra30: cardhu-a04: Set up voltage regulators for DVFS
+  ARM: dts: tegra30: cardhu-a04: Add CPU Operating Performance Points
 
---J2uG6jHjFLimDtBY--
+ .../cpufreq/nvidia,tegra20-cpufreq.txt        |   56 +
+ .../boot/dts/tegra20-cpu-opp-microvolt.dtsi   |  201 +++
+ arch/arm/boot/dts/tegra20-cpu-opp.dtsi        |  302 +++++
+ arch/arm/boot/dts/tegra20-paz00.dts           |   41 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts       |   11 +
+ arch/arm/boot/dts/tegra20.dtsi                |    2 +
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts      |   48 +
+ .../boot/dts/tegra30-cpu-opp-microvolt.dtsi   |  801 +++++++++++
+ arch/arm/boot/dts/tegra30-cpu-opp.dtsi        | 1202 +++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi                |    4 +
+ arch/arm/mach-tegra/tegra.c                   |    4 +
+ drivers/clk/tegra/Makefile                    |    1 +
+ drivers/clk/tegra/clk-pll.c                   |   12 +-
+ drivers/clk/tegra/clk-tegra-super-cclk.c      |  164 +++
+ drivers/clk/tegra/clk-tegra20.c               |    6 +-
+ drivers/clk/tegra/clk-tegra30.c               |    6 +-
+ drivers/clk/tegra/clk.h                       |   12 +
+ drivers/cpufreq/Kconfig.arm                   |    6 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c          |    2 +
+ drivers/cpufreq/tegra20-cpufreq.c             |  211 +--
+ 20 files changed, 2916 insertions(+), 176 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+ create mode 100644 arch/arm/boot/dts/tegra20-cpu-opp-microvolt.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra20-cpu-opp.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-cpu-opp-microvolt.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-cpu-opp.dtsi
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
 
---===============7606295208313226982==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7606295208313226982==--
+-- 
+2.23.0
