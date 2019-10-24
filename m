@@ -1,90 +1,54 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] spi: Fix SPI_CS_HIGH setting when using native and GPIO
- CS
-Date: Thu, 24 Oct 2019 18:13:16 +0100
-Message-ID: <4be58f82-eeb1-83a5-4c83-1e86f3b82769@nvidia.com>
-References: <20191018152929.3287-1-gregory.clement@bootlin.com>
- <dfabf9eb-4f81-91e5-55dc-caea0cdabd2d@nvidia.com> <87zhhqp4wf.fsf@FE-laptop>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/3] gpu: host1x: Remove implicit IOMMU backing on
+ client's registration
+Date: Thu, 24 Oct 2019 20:15:07 +0300
+Message-ID: <7d3b1e99-4c57-d6db-36dd-d0a840ead440@gmail.com>
+References: <20190623173743.24088-1-digetx@gmail.com>
+ <20191024115016.GA2924027@ulmo>
+ <55ab29ad-da9b-c178-4480-dc6edb09b3e4@gmail.com>
+ <20191024134756.GC2924027@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <87zhhqp4wf.fsf@FE-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191024134756.GC2924027@ulmo>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@bootlin.com>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 24/10/2019 15:57, Gregory CLEMENT wrote:
-> Hello Jon,
-> 
->> On 18/10/2019 16:29, Gregory CLEMENT wrote:
->>> When improving the CS GPIO support at core level, the SPI_CS_HIGH
->>> has been enabled for all the CS lines used for a given SPI controller.
+24.10.2019 16:47, Thierry Reding пишет:
+> On Thu, Oct 24, 2019 at 04:35:13PM +0300, Dmitry Osipenko wrote:
+>> 24.10.2019 14:50, Thierry Reding пишет:
+>>> On Sun, Jun 23, 2019 at 08:37:41PM +0300, Dmitry Osipenko wrote:
+>>>> On ARM32 we don't want any of the clients device to be backed by the
+>>>> implicit domain, simply because we can't afford such a waste on older
+>>>> Tegra SoCs that have very few domains available in total. The recent IOMMU
+>>>> support addition for the Video Decoder hardware uncovered the problem
+>>>> that an unfortunate drivers probe order results in the DRM driver probe
+>>>> failure if CONFIG_ARM_DMA_USE_IOMMU=y due to a shortage of IOMMU domains
+>>>> caused by the implicit backing. The host1x_client_register() is a common
+>>>> function that is invoked by all of the relevant DRM drivers during theirs
+>>>> probe and hence it is convenient to remove the implicit backing there,
+>>>> resolving the problem.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/gpu/host1x/bus.c | 19 +++++++++++++++++++
+>>>>  1 file changed, 19 insertions(+)
 >>>
->>> However, the SPI framework allows to have on the same controller native
->>> CS and GPIO CS. The native CS may not support the SPI_CS_HIGH, so they
->>> should not be setup automatically.
->>>
->>> With this patch the setting is done only for the CS that will use a
->>> GPIO as CS
->>>
->>> Fixes: f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->>> ---
->>>  drivers/spi/spi.c | 18 +++++++++---------
->>>  1 file changed, 9 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
->>> index 5414a10afd65..1b68acc28c8f 100644
->>> --- a/drivers/spi/spi.c
->>> +++ b/drivers/spi/spi.c
->>> @@ -1880,15 +1880,7 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
->>>  		spi->mode |= SPI_3WIRE;
->>>  	if (of_property_read_bool(nc, "spi-lsb-first"))
->>>  		spi->mode |= SPI_LSB_FIRST;
->>> -
->>> -	/*
->>> -	 * For descriptors associated with the device, polarity inversion is
->>> -	 * handled in the gpiolib, so all chip selects are "active high" in
->>> -	 * the logical sense, the gpiolib will invert the line if need be.
->>> -	 */
->>> -	if (ctlr->use_gpio_descriptors)
->>> -		spi->mode |= SPI_CS_HIGH;
->>> -	else if (of_property_read_bool(nc, "spi-cs-high"))
->>> +	if (of_property_read_bool(nc, "spi-cs-high"))
->>>  		spi->mode |= SPI_CS_HIGH;
->>>  
->>>  	/* Device DUAL/QUAD mode */
->>> @@ -1952,6 +1944,14 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
->>>  	}
->>>  	spi->chip_select = value;
->>>  
->>> +	/*
->>> +	 * For descriptors associated with the device, polarity inversion is
->>> +	 * handled in the gpiolib, so all gpio chip selects are "active high"
->>> +	 * in the logical sense, the gpiolib will invert the line if need be.
->>> +	 */
->>> +	if ((ctlr->use_gpio_descriptors) && ctlr->cs_gpiods[spi->chip_select])
->>> +		spi->mode |= SPI_CS_HIGH;
->>> +
+>>> I don't really want to do this in a central place like this. If we
+>>> really do need this, why can't we do it in the individual drivers?
 >>
->> This patch is causing a boot regression on one of our Tegra boards. 
->> Bisect is pointing to this commit and reverting on top of today's -next
->> fixes the problem. 
->>
->> This patch is causing the following NULL pointer crash which I assume is
->> because we have not checked if 'ctlr->cs_gpiods' is valid before
->> dereferencing ...
+>> Why do you want to duplicate the same action for each driver instead of
+>> doing it in a single common place?
 > 
-> I've just submitted a fixe for it
-> 
-> https://patchwork.kernel.org/patch/11209839/
+> I don't mind doing it in a common place in particular, I just don't want
+> to do this within the host1x bus infrastructure. This is really a policy
+> decision that should be up to drivers. Consider the case where we had a
+> different host1x driver (for V4L2 for example) that would actually want
+> to use the DMA API. In that case we may want to detach in the DRM driver
+> but not the V4L2 driver.
 
-Great! Thanks, Jon
-
--- 
-nvpublic
+Okay.
