@@ -1,64 +1,47 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/3] drm/tegra: Fix 2d and 3d clients detaching from
- IOMMU domain
-Date: Thu, 24 Oct 2019 16:28:41 +0300
-Message-ID: <45926d95-3e7a-c56b-402a-2b2c6475c5db@gmail.com>
+Subject: Re: [PATCH v1 1/3] gpu: host1x: Remove implicit IOMMU backing on
+ client's registration
+Date: Thu, 24 Oct 2019 16:35:13 +0300
+Message-ID: <55ab29ad-da9b-c178-4480-dc6edb09b3e4@gmail.com>
 References: <20190623173743.24088-1-digetx@gmail.com>
- <20190623173743.24088-2-digetx@gmail.com> <20191024115804.GB2924027@ulmo>
+ <20191024115016.GA2924027@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191024115804.GB2924027@ulmo>
+In-Reply-To: <20191024115016.GA2924027@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.10.2019 14:58, Thierry Reding пишет:
-> On Sun, Jun 23, 2019 at 08:37:42PM +0300, Dmitry Osipenko wrote:
->> This should should fire up on the DRM's driver module re-loader because
->> there won't be enough available domains on older Tegra SoCs.
+24.10.2019 14:50, Thierry Reding пишет:
+> On Sun, Jun 23, 2019 at 08:37:41PM +0300, Dmitry Osipenko wrote:
+>> On ARM32 we don't want any of the clients device to be backed by the
+>> implicit domain, simply because we can't afford such a waste on older
+>> Tegra SoCs that have very few domains available in total. The recent IOMMU
+>> support addition for the Video Decoder hardware uncovered the problem
+>> that an unfortunate drivers probe order results in the DRM driver probe
+>> failure if CONFIG_ARM_DMA_USE_IOMMU=y due to a shortage of IOMMU domains
+>> caused by the implicit backing. The host1x_client_register() is a common
+>> function that is invoked by all of the relevant DRM drivers during theirs
+>> probe and hence it is convenient to remove the implicit backing there,
+>> resolving the problem.
 >>
->> Cc: stable <stable@vger.kernel.org>
->> Fixes: 0c407de5ed1a ("drm/tegra: Refactor IOMMU attach/detach")
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/gpu/drm/tegra/dc.c   | 4 ++--
->>  drivers/gpu/drm/tegra/drm.c  | 9 ++++++---
->>  drivers/gpu/drm/tegra/drm.h  | 3 ++-
->>  drivers/gpu/drm/tegra/gr2d.c | 4 ++--
->>  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
->>  5 files changed, 14 insertions(+), 10 deletions(-)
+>>  drivers/gpu/host1x/bus.c | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
 > 
-> I think I understand what this is trying to do, but the commit message
-> does not help at all. So what's really going on here is that we need to
-> detach the device from the group regardless of whether we're sharing the
-> group or not, just like we attach groups to the shared domain whether
-> they share the same group or not.
+> I don't really want to do this in a central place like this. If we
+> really do need this, why can't we do it in the individual drivers?
 
-Yes, the commit's message could be improved.
+Why do you want to duplicate the same action for each driver instead of
+doing it in a single common place?
 
-> But in that case, I wonder if it's even worth splitting groups the way
-> we are right now. Wouldn't it be better to just put all the devices into
-> the same group and be done with it?
-> 
-> The current code gives me headaches every time I read it, so if we can
-> just make it so that all the devices under the DRM device share the same
-> group, this would become a lot easier to deal with. I'm not really
-> convinced that it makes much sense to keep them on separate domains,
-> especially given the constraints on the number of domains available on
-> earlier Tegra devices.
-> 
-> Note that sharing a group will also make it much easier for these to use
-> the DMA API if it is backed by an IOMMU.
+> we already call host1x_client_iommu_attach() from all the drivers and
+> that detaches from the IOMMU as well. So I'm not sure I understand why
+> this is needed.
 
-Probably I'm blanking on everything about IOMMU now.. could you please
-remind me what "IOMMU group" is?
-
-Isn't it that each IOMMU group relates to the HW ID (SWGROUP)? But then
-each display controller has its own SWGROUP.. and thus that sharing just
-doesn't make any sense, hm.
-
-> Let me see if I can throw something together to that effect.
+Wish you could ask that couple months ago. I'll try to refresh the details.
