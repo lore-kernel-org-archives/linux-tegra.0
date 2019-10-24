@@ -1,18 +1,15 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 3/7] ASoC: tegra: i2s: Add support for
+Subject: Re: [PATCH v5 3/7] ASoC: tegra: i2s: Add support for
  more than 2 channels
-Date: Thu, 24 Oct 2019 17:11:08 +0100
-Message-ID: <d03a8fa0-3c62-1e32-9ca6-06d1996da11b@nvidia.com>
-References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
- <20191007153136.4920-4-ben.dooks@codethink.co.uk>
- <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
- <16910e8d-4745-4e55-0436-9b3200876037@codethink.co.uk>
- <1e43701b-3627-ba6d-ee19-020e25af3ef1@gmail.com>
+Date: Thu, 24 Oct 2019 17:12:21 +0100
+Message-ID: <2eef499e-d9d4-732a-ddd6-8d307d8cb08d@nvidia.com>
+References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
+ <20191018154833.7560-4-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1e43701b-3627-ba6d-ee19-020e25af3ef1@gmail.com>
+In-Reply-To: <20191018154833.7560-4-ben.dooks@codethink.co.uk>
 Content-Language: en-US
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
@@ -23,73 +20,65 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE3LzEwLzIwMTkgMTg6MzgsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAxNy4xMC4yMDE5
-IDE5OjIzLCBCZW4gRG9va3Mg0L/QuNGI0LXRgjoKPj4gT24gMDgvMTAvMjAxOSAxNjoyOSwgRG1p
-dHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4gSGVsbG8gQmVuLAo+Pj4KPj4+IDA3LjEwLjIwMTkgMTg6
-MzEsIEJlbiBEb29rcyDQv9C40YjQtdGCOgo+Pj4+IEZyb206IEVkd2FyZCBDcmFnZyA8ZWR3YXJk
-LmNyYWdnQGNvZGV0aGluay5jby51az4KPj4+Pgo+Pj4+IFRoZSBDSUYgY29uZmlndXJhdGlvbiBh
-bmQgY2xvY2sgc2V0dGluZyBpcyBjdXJyZW50bHkgaGFyZCBjb2RlZCBmb3IgMgo+Pj4+IGNoYW5u
-ZWxzLiBTaW5jZSB0aGUgaGFyZHdhcmUgaXMgY2FwYWJsZSBvZiBzdXBwb3J0aW5nIDEtOCBjaGFu
-bmVscyBhZGQKPj4+PiBzdXBwb3J0IGZvciByZWFkaW5nIHRoZSBjaGFubmVsIGNvdW50IGZyb20g
-dGhlIHN1cHBsaWVkIHBhcmFtZXRlcnMgdG8KPj4+PiBhbGxvdyBmb3IgYmV0dGVyIFRETSBzdXBw
-b3J0LiBJdCBzZWVtcyB0aGUgb3JpZ2luYWwgaW1wbGVtZW50YXRpb24gb2YKPj4+PiB0aGlzCj4+
-Pj4gZHJpdmVyIHdhcyBmaXhlZCBhdCAyIGNoYW5uZWxzIGZvciBzaW1wbGljaXR5LCBhbmQgbm90
-IGltcGxlbWVudGluZyBURE0uCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBFZHdhcmQgQ3JhZ2cg
-PGVkd2FyZC5jcmFnZ0Bjb2RldGhpbmsuY28udWs+Cj4+Pj4gW2Jlbi5kb29rc0Bjb2RldGhpbmsu
-Y28udWs6IGFkZGVkIGlzX3RkbSBhbmQgY2hhbm5lbCBuciBjaGVja10KPj4+PiBbYmVuLmRvb2tz
-QGNvZGV0aGluay5jby51azogbWVyZ2UgZWRnZSBjb250cm9sIGludG8gc2V0LWZvcm1hdF0KPj4+
-PiBbYmVuLmRvb2tzQGNvZGV0aGluay5jby51azogcmVtb3ZlZCBpc190ZG0gYW5kIG1vdmVkIGVk
-Z2UgdG8gaHdfcGFyYW1zXQo+Pj4+IFNpZ25lZC1vZmYtYnk6IEJlbiBEb29rcyA8YmVuLmRvb2tz
-QGNvZGV0aGluay5jby51az4KPj4+PiAtLS0KPj4+PiDCoCBzb3VuZC9zb2MvdGVncmEvdGVncmEz
-MF9pMnMuYyB8IDIxICsrKysrKysrKysrKystLS0tLS0tLQo+Pj4+IMKgIDEgZmlsZSBjaGFuZ2Vk
-LCAxMyBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBh
-L3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+Pj4gYi9zb3VuZC9zb2MvdGVncmEvdGVn
-cmEzMF9pMnMuYwo+Pj4+IGluZGV4IDA2M2YzNGM4ODJhZi4uNzM4MmY3OTQ5YmY0IDEwMDY0NAo+
-Pj4+IC0tLSBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+Pj4gKysrIGIvc291bmQv
-c29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPj4+PiBAQCAtNjcsNiArNjcsNyBAQCBzdGF0aWMgaW50
-IHRlZ3JhMzBfaTJzX3NldF9mbXQoc3RydWN0IHNuZF9zb2NfZGFpCj4+Pj4gKmRhaSwKPj4+PiDC
-oCB7Cj4+Pj4gwqDCoMKgwqDCoCBzdHJ1Y3QgdGVncmEzMF9pMnMgKmkycyA9IHNuZF9zb2NfZGFp
-X2dldF9kcnZkYXRhKGRhaSk7Cj4+Pj4gwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnQgbWFzayA9IDAs
-IHZhbCA9IDA7Cj4+Pj4gK8KgwqDCoCB1bnNpZ25lZCBpbnQgY2hfbWFzaywgY2hfdmFsID0gMDsK
-Pj4+PiDCoCDCoMKgwqDCoMKgIHN3aXRjaCAoZm10ICYgU05EX1NPQ19EQUlGTVRfSU5WX01BU0sp
-IHsKPj4+PiDCoMKgwqDCoMKgIGNhc2UgU05EX1NPQ19EQUlGTVRfTkJfTkY6Cj4+Pj4gQEAgLTc1
-LDYgKzc2LDcgQEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc19zZXRfZm10KHN0cnVjdCBzbmRfc29j
-X2RhaQo+Pj4+ICpkYWksCj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRUlOVkFMOwo+
-Pj4+IMKgwqDCoMKgwqAgfQo+Pj4+IMKgICvCoMKgwqAgY2hfbWFzayA9IFRFR1JBMzBfSTJTX0NI
-X0NUUkxfRUdERV9DVFJMX01BU0s7Cj4+Pj4gwqDCoMKgwqDCoCBtYXNrIHw9IFRFR1JBMzBfSTJT
-X0NUUkxfTUFTVEVSX0VOQUJMRTsKPj4+PiDCoMKgwqDCoMKgIHN3aXRjaCAoZm10ICYgU05EX1NP
-Q19EQUlGTVRfTUFTVEVSX01BU0spIHsKPj4+PiDCoMKgwqDCoMKgIGNhc2UgU05EX1NPQ19EQUlG
-TVRfQ0JTX0NGUzoKPj4+PiBAQCAtOTAsMTAgKzkyLDEyIEBAIHN0YXRpYyBpbnQgdGVncmEzMF9p
-MnNfc2V0X2ZtdChzdHJ1Y3Qgc25kX3NvY19kYWkKPj4+PiAqZGFpLAo+Pj4+IMKgwqDCoMKgwqDC
-oMKgwqDCoCBURUdSQTMwX0kyU19DVFJMX0xSQ0tfTUFTSzsKPj4+PiDCoMKgwqDCoMKgIHN3aXRj
-aCAoZm10ICYgU05EX1NPQ19EQUlGTVRfRk9STUFUX01BU0spIHsKPj4+PiDCoMKgwqDCoMKgIGNh
-c2UgU05EX1NPQ19EQUlGTVRfRFNQX0E6Cj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGNoX3ZhbCA9IFRF
-R1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJMX05FR19FREdFOwo+Pj4+IMKgwqDCoMKgwqDCoMKg
-wqDCoCB2YWwgfD0gVEVHUkEzMF9JMlNfQ1RSTF9GUkFNRV9GT1JNQVRfRlNZTkM7Cj4+Pj4gwqDC
-oMKgwqDCoMKgwqDCoMKgIHZhbCB8PSBURUdSQTMwX0kyU19DVFJMX0xSQ0tfTF9MT1c7Cj4+Pj4g
-wqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+Pj4+IMKgwqDCoMKgwqAgY2FzZSBTTkRfU09DX0RB
-SUZNVF9EU1BfQjoKPj4+PiArwqDCoMKgwqDCoMKgwqAgY2hfdmFsID0gVEVHUkEzMF9JMlNfQ0hf
-Q1RSTF9FR0RFX0NUUkxfTkVHX0VER0U7Cj4+Pgo+Pj4gRG93bnN0cmVhbSBjb2RlIHNldHMgRFNQ
-X0IgdG8gUE9TX0VER0UsIGxvb2tzIGxpa2UgeW91IGhhdmUgYSB0eXBvIGhlcmUuCj4+PiBPciBk
-b2VzIERTUF9CIGhhcHBlbiB0byB3b3JrIHdpdGggdGhlIE5FR19FREdFPwo+Pgo+PiBvaywgd2ls
-bCBjaGFuZ2UsIHdlJ3ZlIG9ubHkgYmVlbiB1c2luZyBTTkRfU09DX0RBSUZNVF9EU1BfQQo+Pgo+
-PiBGb3IgcmVmZXJlbmNlLCBpcyB0aGVyZSBhIGdpdCByZXBvIHdpdGggdGhpcyB2ZXJzaW9uIG9m
-IHRlZ3JhIHRkbSBzdXBwb3J0Pwo+IAo+IExvb2tzIGxpa2UgYWxsIGRvd25zdHJlYW0ga2VybmVs
-cyB0aGF0IHN1cHBvcnRlZCBUMzAgYXJlIGRvaW5nIHRoZSBzYW1lCj4gdGhpbmcuCj4gCj4gVGFr
-ZSBhIGxvb2sgaGVyZSBmb3IgZXhhbXBsZToKPiAKPiBodHRwczovL252LXRlZ3JhLm52aWRpYS5j
-b20vZ2l0d2ViLz9wPWxpbnV4LTMuMTAuZ2l0O2E9Y29tbWl0O2g9NDk4MzRlZWY5ZDUxYTZlZmY5
-NTBlMGY1MmRkYzUzNDNkOTYwNjUyZQoKVGhhdCB2ZXJzaW9uIG9mIHRoZSBkcml2ZXIgaXMga25v
-d24gdG8gYmUgYnVnZ3kvaW5jb3JyZWN0LiBJIGRvbid0IHRoaW5rCndlIHdhbnQgdG8gZG8gdGhh
-dC4gV2Ugd2FudCB0byBzZXQgdGhlIHBvbGFyaXR5IGJhc2VkIHVwb24gdGhlIGZvcm1hdApwYXNz
-ZWQgYW5kIG5vdCB0aGUgbW9kZSAuLi4KCmh0dHBzOi8vbnYtdGVncmEubnZpZGlhLmNvbS9naXR3
-ZWIvP3A9bGludXgtbnZpZGlhLmdpdDthPWJsb2I7Zj1zb3VuZC9zb2MvdGVncmEtYWx0L3RlZ3Jh
-MjEwX2kyc19hbHQuYztoPTI0Y2YzYjU1MzI2ZjY4N2FkZWQyMmI5MTE4MmRmNDFjNWFlMTg4YWM7
-aGI9NzAzYWE5NDhkMmM5MmI4N2ZkODRmMzY3ZjQzYTA3Nzc4ZWQwOThiNSNsMzMzCgpKb24KCi0t
-IApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0
-cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRldmVs
-Cg==
+
+On 18/10/2019 16:48, Ben Dooks wrote:
+> From: Edward Cragg <edward.cragg@codethink.co.uk>
+> 
+> The CIF configuration and clock setting is currently hard coded for 2
+> channels. Since the hardware is capable of supporting 1-8 channels add
+> support for reading the channel count from the supplied parameters to
+> allow for better TDM support. It seems the original implementation of this
+> driver was fixed at 2 channels for simplicity, and not implementing TDM.
+> 
+> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
+> [ben.dooks@codethink.co.uk: added is_tdm and channel nr check]
+> [ben.dooks@codethink.co.uk: merge edge control into set-format]
+> [ben.dooks@codethink.co.uk: removed is_tdm and moved edge to hw_params]
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+> v2:
+> - fix the lrclk for dsp-b format
+> ---
+>  sound/soc/tegra/tegra30_i2s.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+> index 063f34c882af..fc77e65a3646 100644
+> --- a/sound/soc/tegra/tegra30_i2s.c
+> +++ b/sound/soc/tegra/tegra30_i2s.c
+> @@ -67,6 +67,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+>  {
+>  	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+>  	unsigned int mask = 0, val = 0;
+> +	unsigned int ch_mask, ch_val = 0;
+>  
+>  	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+>  	case SND_SOC_DAIFMT_NB_NF:
+> @@ -75,6 +76,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+>  		return -EINVAL;
+>  	}
+>  
+> +	ch_mask = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_MASK;
+>  	mask |= TEGRA30_I2S_CTRL_MASTER_ENABLE;
+>  	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+>  	case SND_SOC_DAIFMT_CBS_CFS:
+> @@ -90,10 +92,12 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+>  		TEGRA30_I2S_CTRL_LRCK_MASK;
+>  	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+>  	case SND_SOC_DAIFMT_DSP_A:
+> +		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+
+Sorry, I just saw the feedback on the previous iteration. I don't think
+we want to set the polarity but based upon the format that is passed ...
+
+https://nv-tegra.nvidia.com/gitweb/?p=linux-nvidia.git;a=blob;f=sound/soc/tegra-alt/tegra210_i2s_alt.c;h=24cf3b55326f687aded22b91182df41c5ae188ac;hb=703aa948d2c92b87fd84f367f43a07778ed098b5#l333
+
+Cheers
+Jon
+
+-- 
+nvpublic
