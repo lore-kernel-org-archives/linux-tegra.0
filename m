@@ -1,137 +1,95 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/3] drm/tegra: Fix 2d and 3d clients detaching from
- IOMMU domain
-Date: Thu, 24 Oct 2019 19:09:45 +0300
-Message-ID: <7f7ecf90-531c-69ae-9011-684666ed8743@gmail.com>
-References: <20190623173743.24088-1-digetx@gmail.com>
- <20190623173743.24088-2-digetx@gmail.com> <20191024115804.GB2924027@ulmo>
- <45926d95-3e7a-c56b-402a-2b2c6475c5db@gmail.com>
- <20191024135018.GD2924027@ulmo>
- <38a67df0-2ede-e7fe-8eca-6c4491cdcc7b@gmail.com>
- <20191024155620.GG2924027@ulmo>
- <bfc6c17d-f2df-32d0-67d6-2f763c81d7fc@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v4 3/7] ASoC: tegra: i2s: Add support for
+ more than 2 channels
+Date: Thu, 24 Oct 2019 17:11:08 +0100
+Message-ID: <d03a8fa0-3c62-1e32-9ca6-06d1996da11b@nvidia.com>
+References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
+ <20191007153136.4920-4-ben.dooks@codethink.co.uk>
+ <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
+ <16910e8d-4745-4e55-0436-9b3200876037@codethink.co.uk>
+ <1e43701b-3627-ba6d-ee19-020e25af3ef1@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bfc6c17d-f2df-32d0-67d6-2f763c81d7fc@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1e43701b-3627-ba6d-ee19-020e25af3ef1@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-24.10.2019 18:57, Dmitry Osipenko пишет:
-> 24.10.2019 18:56, Thierry Reding пишет:
->> On Thu, Oct 24, 2019 at 06:47:23PM +0300, Dmitry Osipenko wrote:
->>> 24.10.2019 16:50, Thierry Reding пишет:
->>>> On Thu, Oct 24, 2019 at 04:28:41PM +0300, Dmitry Osipenko wrote:
->>>>> 24.10.2019 14:58, Thierry Reding пишет:
->>>>>> On Sun, Jun 23, 2019 at 08:37:42PM +0300, Dmitry Osipenko wrote:
->>>>>>> This should should fire up on the DRM's driver module re-loader because
->>>>>>> there won't be enough available domains on older Tegra SoCs.
->>>>>>>
->>>>>>> Cc: stable <stable@vger.kernel.org>
->>>>>>> Fixes: 0c407de5ed1a ("drm/tegra: Refactor IOMMU attach/detach")
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>> ---
->>>>>>>  drivers/gpu/drm/tegra/dc.c   | 4 ++--
->>>>>>>  drivers/gpu/drm/tegra/drm.c  | 9 ++++++---
->>>>>>>  drivers/gpu/drm/tegra/drm.h  | 3 ++-
->>>>>>>  drivers/gpu/drm/tegra/gr2d.c | 4 ++--
->>>>>>>  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
->>>>>>>  5 files changed, 14 insertions(+), 10 deletions(-)
->>>>>>
->>>>>> I think I understand what this is trying to do, but the commit message
->>>>>> does not help at all. So what's really going on here is that we need to
->>>>>> detach the device from the group regardless of whether we're sharing the
->>>>>> group or not, just like we attach groups to the shared domain whether
->>>>>> they share the same group or not.
->>>>>
->>>>> Yes, the commit's message could be improved.
->>>>>
->>>>>> But in that case, I wonder if it's even worth splitting groups the way
->>>>>> we are right now. Wouldn't it be better to just put all the devices into
->>>>>> the same group and be done with it?
->>>>>>
->>>>>> The current code gives me headaches every time I read it, so if we can
->>>>>> just make it so that all the devices under the DRM device share the same
->>>>>> group, this would become a lot easier to deal with. I'm not really
->>>>>> convinced that it makes much sense to keep them on separate domains,
->>>>>> especially given the constraints on the number of domains available on
->>>>>> earlier Tegra devices.
->>>>>>
->>>>>> Note that sharing a group will also make it much easier for these to use
->>>>>> the DMA API if it is backed by an IOMMU.
->>>>>
->>>>> Probably I'm blanking on everything about IOMMU now.. could you please
->>>>> remind me what "IOMMU group" is?
->>>>>
->>>>> Isn't it that each IOMMU group relates to the HW ID (SWGROUP)? But then
->>>>> each display controller has its own SWGROUP.. and thus that sharing just
->>>>> doesn't make any sense, hm.
->>>>
->>>> IOMMU groups are not directly related to SWGROUPs. But by default the
->>>> IOMMU framework will share a domain between members of the same IOMMU
->>>> group.
->>>
->>> Ah, I re-figured out that again. The memory controller drivers are
->>> defining a single "IOMMU group" for both of the display controllers.
->>>
->>>> Seems like that's really what we want here, so that when we do
->>>> use the DMA API, all the devices part of the DRM device get attached to
->>>> the same IOMMU domain, yet if we don't want to use the DMA API we only
->>>> need to detach the one group from the backing.
->>>
->>> Yes, it should be okay to put all DRM devices into the same group, like
->>> it is done now for the displays. It also should resolve problem with the
->>> domains shortage on T30 since now there are maximum 3 domains in use:
->>> host1x, drm and vde.
->>>
->>> I actually just checked that the original problem still exists
->>> and this change solves it as well:
->>>
->>> ---
->>> diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
->>> index 5a0f6e0a1643..e71096498436 100644
->>> --- a/drivers/memory/tegra/tegra30.c
->>> +++ b/drivers/memory/tegra/tegra30.c
->>> @@ -1021,6 +1021,9 @@ static const struct tegra_smmu_swgroup
->>> tegra30_swgroups[] = {
->>>  static const unsigned int tegra30_group_display[] = {
->>>  	TEGRA_SWGROUP_DC,
->>>  	TEGRA_SWGROUP_DCB,
->>> +	TEGRA_SWGROUP_G2,
->>> +	TEGRA_SWGROUP_NV,
->>> +	TEGRA_SWGROUP_NV2,
->>>  };
->>>
->>>  static const struct tegra_smmu_group_soc tegra30_groups[] = {
->>> ---
->>>
->>> Please let me know whether you're going to make a patch or if I should
->>> do it.
->>
->> I've been testing with a similar change and couldn't find any
->> regressions. I've also made the same modifications for Tegra114 and
->> Tegra124.
->>
->> Are you saying that none of these patches are needed anymore? Or do we
->> still need a patch to fix detaching? I'm thinking that maybe we can
->> drastrically simplify the detachment now by dropping the shared
->> parameter altogether.
->>
->> Let me draft a patch and send out the whole set for testing.
-> 
-> Seems it's still not ideal because I noticed this in KMSG:
-> 
-> [    0.703185] Failed to attached device 54200000.dc to IOMMU_mapping
-> [    0.710404] Failed to attached device 54240000.dc to IOMMU_mapping
-> [    0.719347] Failed to attached device 54140000.gr2d to IOMMU_mapping
-> [    0.719569] Failed to attached device 54180000.gr3d to IOMMU_mapping
-> 
-> which comes from the implicit IOMMU backing.
-
-And the error comes from here:
-
-https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/iommu/iommu.c#L1655
+Ck9uIDE3LzEwLzIwMTkgMTg6MzgsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiAxNy4xMC4yMDE5
+IDE5OjIzLCBCZW4gRG9va3Mg0L/QuNGI0LXRgjoKPj4gT24gMDgvMTAvMjAxOSAxNjoyOSwgRG1p
+dHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4gSGVsbG8gQmVuLAo+Pj4KPj4+IDA3LjEwLjIwMTkgMTg6
+MzEsIEJlbiBEb29rcyDQv9C40YjQtdGCOgo+Pj4+IEZyb206IEVkd2FyZCBDcmFnZyA8ZWR3YXJk
+LmNyYWdnQGNvZGV0aGluay5jby51az4KPj4+Pgo+Pj4+IFRoZSBDSUYgY29uZmlndXJhdGlvbiBh
+bmQgY2xvY2sgc2V0dGluZyBpcyBjdXJyZW50bHkgaGFyZCBjb2RlZCBmb3IgMgo+Pj4+IGNoYW5u
+ZWxzLiBTaW5jZSB0aGUgaGFyZHdhcmUgaXMgY2FwYWJsZSBvZiBzdXBwb3J0aW5nIDEtOCBjaGFu
+bmVscyBhZGQKPj4+PiBzdXBwb3J0IGZvciByZWFkaW5nIHRoZSBjaGFubmVsIGNvdW50IGZyb20g
+dGhlIHN1cHBsaWVkIHBhcmFtZXRlcnMgdG8KPj4+PiBhbGxvdyBmb3IgYmV0dGVyIFRETSBzdXBw
+b3J0LiBJdCBzZWVtcyB0aGUgb3JpZ2luYWwgaW1wbGVtZW50YXRpb24gb2YKPj4+PiB0aGlzCj4+
+Pj4gZHJpdmVyIHdhcyBmaXhlZCBhdCAyIGNoYW5uZWxzIGZvciBzaW1wbGljaXR5LCBhbmQgbm90
+IGltcGxlbWVudGluZyBURE0uCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBFZHdhcmQgQ3JhZ2cg
+PGVkd2FyZC5jcmFnZ0Bjb2RldGhpbmsuY28udWs+Cj4+Pj4gW2Jlbi5kb29rc0Bjb2RldGhpbmsu
+Y28udWs6IGFkZGVkIGlzX3RkbSBhbmQgY2hhbm5lbCBuciBjaGVja10KPj4+PiBbYmVuLmRvb2tz
+QGNvZGV0aGluay5jby51azogbWVyZ2UgZWRnZSBjb250cm9sIGludG8gc2V0LWZvcm1hdF0KPj4+
+PiBbYmVuLmRvb2tzQGNvZGV0aGluay5jby51azogcmVtb3ZlZCBpc190ZG0gYW5kIG1vdmVkIGVk
+Z2UgdG8gaHdfcGFyYW1zXQo+Pj4+IFNpZ25lZC1vZmYtYnk6IEJlbiBEb29rcyA8YmVuLmRvb2tz
+QGNvZGV0aGluay5jby51az4KPj4+PiAtLS0KPj4+PiDCoCBzb3VuZC9zb2MvdGVncmEvdGVncmEz
+MF9pMnMuYyB8IDIxICsrKysrKysrKysrKystLS0tLS0tLQo+Pj4+IMKgIDEgZmlsZSBjaGFuZ2Vk
+LCAxMyBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBh
+L3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+Pj4gYi9zb3VuZC9zb2MvdGVncmEvdGVn
+cmEzMF9pMnMuYwo+Pj4+IGluZGV4IDA2M2YzNGM4ODJhZi4uNzM4MmY3OTQ5YmY0IDEwMDY0NAo+
+Pj4+IC0tLSBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+Pj4gKysrIGIvc291bmQv
+c29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMKPj4+PiBAQCAtNjcsNiArNjcsNyBAQCBzdGF0aWMgaW50
+IHRlZ3JhMzBfaTJzX3NldF9mbXQoc3RydWN0IHNuZF9zb2NfZGFpCj4+Pj4gKmRhaSwKPj4+PiDC
+oCB7Cj4+Pj4gwqDCoMKgwqDCoCBzdHJ1Y3QgdGVncmEzMF9pMnMgKmkycyA9IHNuZF9zb2NfZGFp
+X2dldF9kcnZkYXRhKGRhaSk7Cj4+Pj4gwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnQgbWFzayA9IDAs
+IHZhbCA9IDA7Cj4+Pj4gK8KgwqDCoCB1bnNpZ25lZCBpbnQgY2hfbWFzaywgY2hfdmFsID0gMDsK
+Pj4+PiDCoCDCoMKgwqDCoMKgIHN3aXRjaCAoZm10ICYgU05EX1NPQ19EQUlGTVRfSU5WX01BU0sp
+IHsKPj4+PiDCoMKgwqDCoMKgIGNhc2UgU05EX1NPQ19EQUlGTVRfTkJfTkY6Cj4+Pj4gQEAgLTc1
+LDYgKzc2LDcgQEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc19zZXRfZm10KHN0cnVjdCBzbmRfc29j
+X2RhaQo+Pj4+ICpkYWksCj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRUlOVkFMOwo+
+Pj4+IMKgwqDCoMKgwqAgfQo+Pj4+IMKgICvCoMKgwqAgY2hfbWFzayA9IFRFR1JBMzBfSTJTX0NI
+X0NUUkxfRUdERV9DVFJMX01BU0s7Cj4+Pj4gwqDCoMKgwqDCoCBtYXNrIHw9IFRFR1JBMzBfSTJT
+X0NUUkxfTUFTVEVSX0VOQUJMRTsKPj4+PiDCoMKgwqDCoMKgIHN3aXRjaCAoZm10ICYgU05EX1NP
+Q19EQUlGTVRfTUFTVEVSX01BU0spIHsKPj4+PiDCoMKgwqDCoMKgIGNhc2UgU05EX1NPQ19EQUlG
+TVRfQ0JTX0NGUzoKPj4+PiBAQCAtOTAsMTAgKzkyLDEyIEBAIHN0YXRpYyBpbnQgdGVncmEzMF9p
+MnNfc2V0X2ZtdChzdHJ1Y3Qgc25kX3NvY19kYWkKPj4+PiAqZGFpLAo+Pj4+IMKgwqDCoMKgwqDC
+oMKgwqDCoCBURUdSQTMwX0kyU19DVFJMX0xSQ0tfTUFTSzsKPj4+PiDCoMKgwqDCoMKgIHN3aXRj
+aCAoZm10ICYgU05EX1NPQ19EQUlGTVRfRk9STUFUX01BU0spIHsKPj4+PiDCoMKgwqDCoMKgIGNh
+c2UgU05EX1NPQ19EQUlGTVRfRFNQX0E6Cj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGNoX3ZhbCA9IFRF
+R1JBMzBfSTJTX0NIX0NUUkxfRUdERV9DVFJMX05FR19FREdFOwo+Pj4+IMKgwqDCoMKgwqDCoMKg
+wqDCoCB2YWwgfD0gVEVHUkEzMF9JMlNfQ1RSTF9GUkFNRV9GT1JNQVRfRlNZTkM7Cj4+Pj4gwqDC
+oMKgwqDCoMKgwqDCoMKgIHZhbCB8PSBURUdSQTMwX0kyU19DVFJMX0xSQ0tfTF9MT1c7Cj4+Pj4g
+wqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+Pj4+IMKgwqDCoMKgwqAgY2FzZSBTTkRfU09DX0RB
+SUZNVF9EU1BfQjoKPj4+PiArwqDCoMKgwqDCoMKgwqAgY2hfdmFsID0gVEVHUkEzMF9JMlNfQ0hf
+Q1RSTF9FR0RFX0NUUkxfTkVHX0VER0U7Cj4+Pgo+Pj4gRG93bnN0cmVhbSBjb2RlIHNldHMgRFNQ
+X0IgdG8gUE9TX0VER0UsIGxvb2tzIGxpa2UgeW91IGhhdmUgYSB0eXBvIGhlcmUuCj4+PiBPciBk
+b2VzIERTUF9CIGhhcHBlbiB0byB3b3JrIHdpdGggdGhlIE5FR19FREdFPwo+Pgo+PiBvaywgd2ls
+bCBjaGFuZ2UsIHdlJ3ZlIG9ubHkgYmVlbiB1c2luZyBTTkRfU09DX0RBSUZNVF9EU1BfQQo+Pgo+
+PiBGb3IgcmVmZXJlbmNlLCBpcyB0aGVyZSBhIGdpdCByZXBvIHdpdGggdGhpcyB2ZXJzaW9uIG9m
+IHRlZ3JhIHRkbSBzdXBwb3J0Pwo+IAo+IExvb2tzIGxpa2UgYWxsIGRvd25zdHJlYW0ga2VybmVs
+cyB0aGF0IHN1cHBvcnRlZCBUMzAgYXJlIGRvaW5nIHRoZSBzYW1lCj4gdGhpbmcuCj4gCj4gVGFr
+ZSBhIGxvb2sgaGVyZSBmb3IgZXhhbXBsZToKPiAKPiBodHRwczovL252LXRlZ3JhLm52aWRpYS5j
+b20vZ2l0d2ViLz9wPWxpbnV4LTMuMTAuZ2l0O2E9Y29tbWl0O2g9NDk4MzRlZWY5ZDUxYTZlZmY5
+NTBlMGY1MmRkYzUzNDNkOTYwNjUyZQoKVGhhdCB2ZXJzaW9uIG9mIHRoZSBkcml2ZXIgaXMga25v
+d24gdG8gYmUgYnVnZ3kvaW5jb3JyZWN0LiBJIGRvbid0IHRoaW5rCndlIHdhbnQgdG8gZG8gdGhh
+dC4gV2Ugd2FudCB0byBzZXQgdGhlIHBvbGFyaXR5IGJhc2VkIHVwb24gdGhlIGZvcm1hdApwYXNz
+ZWQgYW5kIG5vdCB0aGUgbW9kZSAuLi4KCmh0dHBzOi8vbnYtdGVncmEubnZpZGlhLmNvbS9naXR3
+ZWIvP3A9bGludXgtbnZpZGlhLmdpdDthPWJsb2I7Zj1zb3VuZC9zb2MvdGVncmEtYWx0L3RlZ3Jh
+MjEwX2kyc19hbHQuYztoPTI0Y2YzYjU1MzI2ZjY4N2FkZWQyMmI5MTE4MmRmNDFjNWFlMTg4YWM7
+aGI9NzAzYWE5NDhkMmM5MmI4N2ZkODRmMzY3ZjQzYTA3Nzc4ZWQwOThiNSNsMzMzCgpKb24KCi0t
+IApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0
+cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRldmVs
+Cg==
