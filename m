@@ -1,65 +1,69 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 24/32] drm/tegra: sor: Implement pad clock for all SOR
- instances
-Date: Thu, 24 Oct 2019 18:45:26 +0200
-Message-ID: <20191024164534.132764-25-thierry.reding@gmail.com>
-References: <20191024164534.132764-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/3] gpu: host1x: Remove implicit IOMMU backing on
+ client's registration
+Date: Thu, 24 Oct 2019 20:09:23 +0300
+Message-ID: <b8a9fc65-3d2f-8461-e0de-83cbb45fea49@gmail.com>
+References: <20190623173743.24088-1-digetx@gmail.com>
+ <20191024115016.GA2924027@ulmo>
+ <55ab29ad-da9b-c178-4480-dc6edb09b3e4@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191024164534.132764-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55ab29ad-da9b-c178-4480-dc6edb09b3e4@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClNvIGZhciB0aGUgcGFk
-IGNsb2NrIHdhcyBvbmx5IG5lZWRlZCBvbiB0aGUgc2Vjb25kIFNPUiBpbnN0YW5jZS4gVGhlCmNs
-b2NrIGRvZXMgZXhpc3QgZm9yIGFsbCBTT1IgaW5zdGFuY2VzLCB0aG91Z2gsIHNvIG1ha2Ugc3Vy
-ZSBpdCBpcwphbHdheXMgaW1wbGVtZW50ZWQuIFRoaXMgcHJlcGFyZXMgZm9yIGZ1cnRoZXIgdW5p
-ZmljYXRpb24gb2YgdGhlIGNvZGUKaW4gc3Vic2VxdWVudCBwYXRjaGVzLgoKU2lnbmVkLW9mZi1i
-eTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9k
-cm0vdGVncmEvc29yLmMgfCAyMCArKysrKysrKysrKysrKy0tLS0tLQogMSBmaWxlIGNoYW5nZWQs
-IDE0IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL3Nvci5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jCmluZGV4IGM3
-ZmFmMDg4Y2FiYy4uNzFhN2VkNTdjYjRmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvc29yLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jCkBAIC01MjIsOCArNTIy
-LDkgQEAgc3RhdGljIGlubGluZSBzdHJ1Y3QgdGVncmFfY2xrX3Nvcl9wYWQgKnRvX3BhZChzdHJ1
-Y3QgY2xrX2h3ICpodykKIAlyZXR1cm4gY29udGFpbmVyX29mKGh3LCBzdHJ1Y3QgdGVncmFfY2xr
-X3Nvcl9wYWQsIGh3KTsKIH0KIAotc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCB0ZWdyYV9jbGtf
-c29yX3BhZF9wYXJlbnRzW10gPSB7Ci0JInBsbF9kMl9vdXQwIiwgInBsbF9kcCIKK3N0YXRpYyBj
-b25zdCBjaGFyICogY29uc3QgdGVncmFfY2xrX3Nvcl9wYWRfcGFyZW50c1syXVsyXSA9IHsKKwl7
-ICJwbGxfZF9vdXQwIiwgInBsbF9kcCIgfSwKKwl7ICJwbGxfZDJfb3V0MCIsICJwbGxfZHAiIH0s
-CiB9OwogCiBzdGF0aWMgaW50IHRlZ3JhX2Nsa19zb3JfcGFkX3NldF9wYXJlbnQoc3RydWN0IGNs
-a19odyAqaHcsIHU4IGluZGV4KQpAQCAtNTk0LDggKzU5NSw4IEBAIHN0YXRpYyBzdHJ1Y3QgY2xr
-ICp0ZWdyYV9jbGtfc29yX3BhZF9yZWdpc3RlcihzdHJ1Y3QgdGVncmFfc29yICpzb3IsCiAKIAlp
-bml0Lm5hbWUgPSBuYW1lOwogCWluaXQuZmxhZ3MgPSAwOwotCWluaXQucGFyZW50X25hbWVzID0g
-dGVncmFfY2xrX3Nvcl9wYWRfcGFyZW50czsKLQlpbml0Lm51bV9wYXJlbnRzID0gQVJSQVlfU0la
-RSh0ZWdyYV9jbGtfc29yX3BhZF9wYXJlbnRzKTsKKwlpbml0LnBhcmVudF9uYW1lcyA9IHRlZ3Jh
-X2Nsa19zb3JfcGFkX3BhcmVudHNbc29yLT5pbmRleF07CisJaW5pdC5udW1fcGFyZW50cyA9IEFS
-UkFZX1NJWkUodGVncmFfY2xrX3Nvcl9wYWRfcGFyZW50c1tzb3ItPmluZGV4XSk7CiAJaW5pdC5v
-cHMgPSAmdGVncmFfY2xrX3Nvcl9wYWRfb3BzOwogCiAJcGFkLT5ody5pbml0ID0gJmluaXQ7CkBA
-IC00MDE2LDYgKzQwMTcsOCBAQCBzdGF0aWMgaW50IHRlZ3JhX3Nvcl9wcm9iZShzdHJ1Y3QgcGxh
-dGZvcm1fZGV2aWNlICpwZGV2KQogCSAqIHBhZCBvdXRwdXQgY2xvY2suCiAJICovCiAJaWYgKCFz
-b3ItPmNsa19wYWQpIHsKKwkJY2hhciAqbmFtZTsKKwogCQllcnIgPSBwbV9ydW50aW1lX2dldF9z
-eW5jKCZwZGV2LT5kZXYpOwogCQlpZiAoZXJyIDwgMCkgewogCQkJZGV2X2VycigmcGRldi0+ZGV2
-LCAiZmFpbGVkIHRvIGdldCBydW50aW1lIFBNOiAlZFxuIiwKQEAgLTQwMjMsOCArNDAyNiwxMyBA
-QCBzdGF0aWMgaW50IHRlZ3JhX3Nvcl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQogCQkJZ290byByZW1vdmU7CiAJCX0KIAotCQlzb3ItPmNsa19wYWQgPSB0ZWdyYV9jbGtfc29y
-X3BhZF9yZWdpc3Rlcihzb3IsCi0JCQkJCQkJICAic29yMV9wYWRfY2xrb3V0Iik7CisJCW5hbWUg
-PSBkZXZtX2thc3ByaW50ZigmcGRldi0+ZGV2LCBHRlBfS0VSTkVMLCAic29yJXVfcGFkX2Nsa291
-dCIsIHNvci0+aW5kZXgpOworCQlpZiAoIW5hbWUpIHsKKwkJCWVyciA9IC1FTk9NRU07CisJCQln
-b3RvIHJlbW92ZTsKKwkJfQorCisJCXNvci0+Y2xrX3BhZCA9IHRlZ3JhX2Nsa19zb3JfcGFkX3Jl
-Z2lzdGVyKHNvciwgbmFtZSk7CiAJCXBtX3J1bnRpbWVfcHV0KCZwZGV2LT5kZXYpOwogCX0KIAot
-LSAKMi4yMy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+24.10.2019 16:35, Dmitry Osipenko пишет:
+> 24.10.2019 14:50, Thierry Reding пишет:
+>> On Sun, Jun 23, 2019 at 08:37:41PM +0300, Dmitry Osipenko wrote:
+>>> On ARM32 we don't want any of the clients device to be backed by the
+>>> implicit domain, simply because we can't afford such a waste on older
+>>> Tegra SoCs that have very few domains available in total. The recent IOMMU
+>>> support addition for the Video Decoder hardware uncovered the problem
+>>> that an unfortunate drivers probe order results in the DRM driver probe
+>>> failure if CONFIG_ARM_DMA_USE_IOMMU=y due to a shortage of IOMMU domains
+>>> caused by the implicit backing. The host1x_client_register() is a common
+>>> function that is invoked by all of the relevant DRM drivers during theirs
+>>> probe and hence it is convenient to remove the implicit backing there,
+>>> resolving the problem.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/gpu/host1x/bus.c | 19 +++++++++++++++++++
+>>>  1 file changed, 19 insertions(+)
+>>
+>> I don't really want to do this in a central place like this. If we
+>> really do need this, why can't we do it in the individual drivers?
+> 
+> Why do you want to duplicate the same action for each driver instead of
+> doing it in a single common place?
+> 
+>> we already call host1x_client_iommu_attach() from all the drivers and
+>> that detaches from the IOMMU as well. So I'm not sure I understand why
+>> this is needed.
+> 
+> Wish you could ask that couple months ago. I'll try to refresh the details.
+> 
+
+In kernel's boot order:
+
+1) Host1x is attached to exclusive implicit domain
+2) Host1x is detached from the implicit domain and attached to explicit
+3) Both DC's fail to attach to implicit domain because DMA-mapping code
+doesn't take into account multiple devices in the same group.
+4) GR2D is attached to exclusive implicit domain
+5) GR3D is attached to exclusive implicit domain
+6) VDE is attached to exclusive implicit domain
+7) VDE is detached from the implicit domain and attached to explicit
+8) DC client is trying to attach to DRM domain in
+host1x_client_iommu_attach() and that fails because tegra-smmu code
+allocates ASID in tegra_smmu_attach_dev()->tegra_smmu_as_prepare() (i.e.
+on IOMMU group's attaching) and all ASIDs are already busy.
+
+Hence if DRM sub-device drivers are detaching from the implicit domain
+on probe, then the problem is getting worked around because there are
+available ASIDs at the time of host1x clients initialization.
