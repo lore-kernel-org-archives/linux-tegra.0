@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 06/17] dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
-Date: Fri, 25 Oct 2019 01:14:05 +0300
-Message-ID: <20191024221416.14197-7-digetx@gmail.com>
+Subject: [PATCH v2 09/17] ARM: dts: tegra20: Add CPU clock
+Date: Fri, 25 Oct 2019 01:14:08 +0300
+Message-ID: <20191024221416.14197-10-digetx@gmail.com>
 References: <20191024221416.14197-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,77 +12,31 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add device-tree binding that describes CPU frequency-scaling hardware
-found on NVIDIA Tegra20/30 SoCs.
+All CPU cores share the same CPU clock.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../cpufreq/nvidia,tegra20-cpufreq.txt        | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+ arch/arm/boot/dts/tegra20.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-new file mode 100644
-index 000000000000..daeca6ae6b76
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-@@ -0,0 +1,56 @@
-+Binding for NVIDIA Tegra20 CPUFreq
-+==================================
-+
-+Required properties:
-+- clocks: Must contain an entry for the CPU clock.
-+  See ../clocks/clock-bindings.txt for details.
-+- operating-points-v2: See ../bindings/opp/opp.txt for details.
-+- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
-+
-+For each opp entry in 'operating-points-v2' table:
-+- opp-supported-hw: Two bitfields indicating:
-+	On Tegra20:
-+	1. CPU process ID mask
-+	2. SoC speedo ID mask
-+
-+	On Tegra30:
-+	1. CPU process ID mask
-+	2. CPU speedo ID mask
-+
-+	A bitwise AND is performed against these values and if any bit
-+	matches, the OPP gets enabled.
-+
-+- opp-microvolt: CPU voltage triplet.
-+
-+Optional properties:
-+- cpu-supply: Phandle to the CPU power supply.
-+
-+Example:
-+	regulators {
-+		cpu_reg: regulator0 {
-+			regulator-name = "vdd_cpu";
-+		};
-+	};
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+
-+		opp@456000000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <825000 825000 1125000>;
-+			opp-supported-hw = <0x03 0x0001>;
-+			opp-hz = /bits/ 64 <456000000>;
-+		};
-+
-+		...
-+	};
-+
-+	cpus {
-+		cpu@0 {
-+			compatible = "arm,cortex-a9";
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 8c942e60703e..9c58e7fcf5c0 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -851,12 +851,14 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
 +			clocks = <&tegra_car TEGRA20_CLK_CCLK>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			cpu-supply = <&cpu_reg>;
-+			#cooling-cells = <2>;
-+		};
-+	};
+ 		};
+ 
+ 		cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
++			clocks = <&tegra_car TEGRA20_CLK_CCLK>;
+ 		};
+ 	};
+ 
 -- 
 2.23.0
