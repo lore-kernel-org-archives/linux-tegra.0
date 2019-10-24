@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 17/17] ARM: dts: tegra30: cardhu-a04: Add CPU Operating Performance Points
-Date: Fri, 25 Oct 2019 01:14:16 +0300
-Message-ID: <20191024221416.14197-18-digetx@gmail.com>
+Subject: [PATCH v2 16/17] ARM: dts: tegra30: cardhu-a04: Set up voltage regulators for DVFS
+Date: Fri, 25 Oct 2019 01:14:15 +0300
+Message-ID: <20191024221416.14197-17-digetx@gmail.com>
 References: <20191024221416.14197-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,8 +12,7 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on
-cardhu-a04.
+Set min/max voltage and couple CPU/CORE regulators.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
@@ -21,42 +20,35 @@ Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
  1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-index 0d71925d4f0b..9234988624ec 100644
+index 4dbd4af679f0..0d71925d4f0b 100644
 --- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
 +++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-@@ -2,6 +2,8 @@
- /dts-v1/;
- 
- #include "tegra30-cardhu.dtsi"
-+#include "tegra30-cpu-opp.dtsi"
-+#include "tegra30-cpu-opp-microvolt.dtsi"
- 
- /* This dts file support the cardhu A04 and later versions of board */
- 
-@@ -127,4 +129,26 @@
- 			nvidia,tegra-core-regulator;
+@@ -103,4 +103,28 @@
+ 			gpio = <&gpio TEGRA_GPIO(DD, 0) GPIO_ACTIVE_HIGH>;
  		};
  	};
 +
-+	cpus {
-+		cpu0: cpu@0 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
++	i2c@7000d000 {
++		pmic: tps65911@2d {
++			regulators {
++				vddctrl_reg: vddctrl {
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1125000>;
++					regulator-coupled-with = <&vddcore_reg>;
++					regulator-coupled-max-spread = <300000>;
++					regulator-max-step-microvolt = <100000>;
++
++					nvidia,tegra-cpu-regulator;
++				};
++			};
 +		};
 +
-+		cpu@1 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
++		vddcore_reg: tps62361@60 {
++			regulator-coupled-with = <&vddctrl_reg>;
++			regulator-coupled-max-spread = <300000>;
++			regulator-max-step-microvolt = <100000>;
 +
-+		cpu@2 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@3 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
++			nvidia,tegra-core-regulator;
 +		};
 +	};
  };
