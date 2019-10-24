@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 08/17] ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
-Date: Fri, 25 Oct 2019 01:14:07 +0300
-Message-ID: <20191024221416.14197-9-digetx@gmail.com>
+Subject: [PATCH v2 02/17] clk: tegra: pll: Add pre/post rate-change hooks
+Date: Fri, 25 Oct 2019 01:14:01 +0300
+Message-ID: <20191024221416.14197-3-digetx@gmail.com>
 References: <20191024221416.14197-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,28 +12,75 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra20-cpufreq now instantiates cpufreq-dt and Tegra30 is fully
-supported by that driver.
+There is a need to temporarily re-parent CCLK away from PLLX if PLLX's
+rate is about to change. The newly introduced PLL pre/post rate-change
+hooks allow to handle such case.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/tegra.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/tegra/clk-pll.c | 12 +++++++++++-
+ drivers/clk/tegra/clk.h     |  6 ++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index e512e606eabd..1e3b85923ca3 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -95,6 +95,10 @@ static void __init tegra_dt_init_late(void)
- 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
- 	    of_machine_is_compatible("nvidia,tegra20"))
- 		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 1583f5fc992f..859340ad3515 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -744,13 +744,19 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 
+ 	state = clk_pll_is_enabled(hw);
+ 
++	if (state && pll->params->pre_rate_change) {
++		ret = pll->params->pre_rate_change();
++		if (WARN_ON(ret))
++			return ret;
++	}
 +
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
-+	    of_machine_is_compatible("nvidia,tegra30"))
-+		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+ 	_get_pll_mnp(pll, &old_cfg);
+ 
+ 	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+ 			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+ 		ret = pll->params->dyn_ramp(pll, cfg);
+ 		if (!ret)
+-			return 0;
++			goto done;
+ 	}
+ 
+ 	if (state) {
+@@ -772,6 +778,10 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		pll_clk_start_ss(pll);
+ 	}
+ 
++done:
++	if (state && pll->params->post_rate_change)
++		pll->params->post_rate_change();
++
+ 	return ret;
  }
  
- static const char * const tegra_dt_board_compat[] = {
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 095595a5b8a8..2be38aa2c204 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -211,6 +211,10 @@ struct tegra_clk_pll;
+  *				disabled.
+  * @dyn_ramp:			Callback which can be used to define a custom
+  *				dynamic ramp function for a given PLL.
++ * @pre_rate_change:		Callback which is invoked just before changing
++ *				PLL's rate.
++ * @post_rate_change:		Callback which is invoked right after changing
++ *				PLL's rate.
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+@@ -287,6 +291,8 @@ struct tegra_clk_pll_params {
+ 	void	(*set_defaults)(struct tegra_clk_pll *pll);
+ 	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
+ 			struct tegra_clk_pll_freq_table *cfg);
++	int	(*pre_rate_change)(void);
++	void	(*post_rate_change)(void);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
 2.23.0
