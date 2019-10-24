@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 16/17] ARM: dts: tegra30: cardhu-a04: Set up voltage regulators for DVFS
-Date: Fri, 25 Oct 2019 01:14:15 +0300
-Message-ID: <20191024221416.14197-17-digetx@gmail.com>
+Subject: [PATCH v2 13/17] ARM: dts: tegra20: paz00: Set up voltage regulators for DVFS
+Date: Fri, 25 Oct 2019 01:14:12 +0300
+Message-ID: <20191024221416.14197-14-digetx@gmail.com>
 References: <20191024221416.14197-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,45 +12,67 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Set min/max voltage and couple CPU/CORE regulators.
+Set min/max voltage and couple CPU/CORE/RTC regulators.
 
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-cardhu-a04.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/tegra20-paz00.dts | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-index 4dbd4af679f0..0d71925d4f0b 100644
---- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-+++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-@@ -103,4 +103,28 @@
- 			gpio = <&gpio TEGRA_GPIO(DD, 0) GPIO_ACTIVE_HIGH>;
- 		};
- 	};
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 8861e0976e37..6e9fe192c648 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -337,18 +337,26 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				sm0 {
++				core_vdd_reg: sm0 {
+ 					regulator-name = "+1.2vs_sm0,vdd_core";
+ 					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-max-microvolt = <1225000>;
++					regulator-coupled-with = <&rtc_vdd_reg &cpu_vdd_reg>;
++					regulator-coupled-max-spread = <170000 450000>;
+ 					regulator-always-on;
 +
-+	i2c@7000d000 {
-+		pmic: tps65911@2d {
-+			regulators {
-+				vddctrl_reg: vddctrl {
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1125000>;
-+					regulator-coupled-with = <&vddcore_reg>;
-+					regulator-coupled-max-spread = <300000>;
-+					regulator-max-step-microvolt = <100000>;
++					nvidia,tegra-core-regulator;
+ 				};
+ 
+-				sm1 {
++				cpu_vdd_reg: sm1 {
+ 					regulator-name = "+1.0vs_sm1,vdd_cpu";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-coupled-with = <&core_vdd_reg &rtc_vdd_reg>;
++					regulator-coupled-max-spread = <450000 450000>;
+ 					regulator-always-on;
 +
 +					nvidia,tegra-cpu-regulator;
-+				};
-+			};
-+		};
+ 				};
+ 
+ 				sm2_reg: sm2 {
+@@ -367,10 +375,15 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo2 {
++				rtc_vdd_reg: ldo2 {
+ 					regulator-name = "+1.2vs_ldo2,vdd_rtc";
+ 					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-max-microvolt = <1225000>;
++					regulator-coupled-with = <&core_vdd_reg &cpu_vdd_reg>;
++					regulator-coupled-max-spread = <170000 450000>;
++					regulator-always-on;
 +
-+		vddcore_reg: tps62361@60 {
-+			regulator-coupled-with = <&vddctrl_reg>;
-+			regulator-coupled-max-spread = <300000>;
-+			regulator-max-step-microvolt = <100000>;
-+
-+			nvidia,tegra-core-regulator;
-+		};
-+	};
- };
++					nvidia,tegra-rtc-regulator;
+ 				};
+ 
+ 				ldo3 {
 -- 
 2.23.0
