@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 15/17] ARM: dts: tegra20: trimslice: Add CPU Operating Performance Points
-Date: Fri, 25 Oct 2019 01:14:14 +0300
-Message-ID: <20191024221416.14197-16-digetx@gmail.com>
+Subject: [PATCH v2 17/17] ARM: dts: tegra30: cardhu-a04: Add CPU Operating Performance Points
+Date: Fri, 25 Oct 2019 01:14:16 +0300
+Message-ID: <20191024221416.14197-18-digetx@gmail.com>
 References: <20191024221416.14197-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,38 +12,50 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Utilize common Tegra20 CPU OPP table. CPU voltage scaling is available now
-on TrimSlice.
+Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on
+cardhu-a04.
 
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-trimslice.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 3e5ac096d85e..8debd3d3c20d 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -3,6 +3,7 @@
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+index 0d71925d4f0b..9234988624ec 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+@@ -2,6 +2,8 @@
+ /dts-v1/;
  
- #include <dt-bindings/input/input.h>
- #include "tegra20.dtsi"
-+#include "tegra20-cpu-opp.dtsi"
+ #include "tegra30-cardhu.dtsi"
++#include "tegra30-cpu-opp.dtsi"
++#include "tegra30-cpu-opp-microvolt.dtsi"
  
- / {
- 	model = "Compulab TrimSlice board";
-@@ -471,4 +472,14 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ /* This dts file support the cardhu A04 and later versions of board */
+ 
+@@ -127,4 +129,26 @@
+ 			nvidia,tegra-core-regulator;
+ 		};
  	};
 +
 +	cpus {
 +		cpu0: cpu@0 {
++			cpu-supply = <&vddctrl_reg>;
 +			operating-points-v2 = <&cpu0_opp_table>;
 +		};
 +
 +		cpu@1 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@2 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@3 {
++			cpu-supply = <&vddctrl_reg>;
 +			operating-points-v2 = <&cpu0_opp_table>;
 +		};
 +	};
