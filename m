@@ -1,99 +1,51 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 00/17] NVIDIA Tegra20 CPUFreq driver major update
-Date: Fri, 25 Oct 2019 01:13:59 +0300
-Message-ID: <20191024221416.14197-1-digetx@gmail.com>
+Subject: [PATCH v2 04/17] clk: tegra20: Support custom CCLK implementation
+Date: Fri, 25 Oct 2019 01:14:03 +0300
+Message-ID: <20191024221416.14197-5-digetx@gmail.com>
+References: <20191024221416.14197-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191024221416.14197-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+We're going to switch to the generic cpufreq-dt driver on Tegra20 and
+thus CCLK intermediate re-parenting will be performed by the clock driver.
+There is now special CCLK implementation that supports all CCLK quirks,
+this patch makes Tegra20 SoCs to use that implementation.
 
-This series moves intermediate-clk handling from tegra20-cpufreq into
-tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
-which brings voltage scaling, per-hardware OPPs and Tegra30 support out
-of the box. All boards need to adopt CPU OPPs in their device-trees in
-order to get cpufreq support. This series adds OPPs only to selective
-boards because there is assumption in a current device-trees that CPU
-voltage is set for 1GHz freq and this won't work for those CPUs that
-can go over 1GHz and thus require voltage regulators to be set up for
-voltage scaling support (CC'ed Marcel for Toradex boards). We could
-probably add delete-node for OPPs over 1GHz if there are not actively
-maintained boards.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra20.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-NOTE(!): the voltage scaling functionality depends on a reviewed and yet
-unapplied series [0], thus [0] needs to be applied first.
-
-[0] https://lkml.org/lkml/2019/7/25/892
-
-Changelog:
-
-v2: - Kept modularity of the tegra20-cpufreq as was requested by Viresh Kumar
-      in a review comment to v1.
-
-    - Added acks from Viresh Kumar.
-
-    - Added tested-by from Nicolas Chauvet to the "trimslice" patch.
-      Nicolas told me on IRC that it works fine.
-
-    - Fixed compilation of the "Add custom CCLK implementation" patch. The
-      error happened because v1 was based on top of yet unreviewed/unapplied
-      patch "clk: tegra: divider: Support enable-bit for Super clocks". Thanks
-      to Peter Geis for reporting the problem.
-
-    - Replaced Tegra30 "beaver" board with "cardhu-a04" because turned out
-      that's what NVIDIA uses in the testing farm.
-
-Dmitry Osipenko (17):
-  clk: tegra: Add custom CCLK implementation
-  clk: tegra: pll: Add pre/post rate-change hooks
-  clk: tegra: cclk: Add helpers for handling PLLX rate changes
-  clk: tegra20: Support custom CCLK implementation
-  clk: tegra30: Support custom CCLK implementation
-  dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
-  cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported
-    now)
-  ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
-  ARM: dts: tegra20: Add CPU clock
-  ARM: dts: tegra30: Add CPU clock
-  ARM: dts: tegra20: Add CPU Operating Performance Points
-  ARM: dts: tegra30: Add CPU Operating Performance Points
-  ARM: dts: tegra20: paz00: Set up voltage regulators for DVFS
-  ARM: dts: tegra20: paz00: Add CPU Operating Performance Points
-  ARM: dts: tegra20: trimslice: Add CPU Operating Performance Points
-  ARM: dts: tegra30: cardhu-a04: Set up voltage regulators for DVFS
-  ARM: dts: tegra30: cardhu-a04: Add CPU Operating Performance Points
-
- .../cpufreq/nvidia,tegra20-cpufreq.txt        |   56 +
- .../boot/dts/tegra20-cpu-opp-microvolt.dtsi   |  201 +++
- arch/arm/boot/dts/tegra20-cpu-opp.dtsi        |  302 +++++
- arch/arm/boot/dts/tegra20-paz00.dts           |   41 +-
- arch/arm/boot/dts/tegra20-trimslice.dts       |   11 +
- arch/arm/boot/dts/tegra20.dtsi                |    2 +
- arch/arm/boot/dts/tegra30-cardhu-a04.dts      |   48 +
- .../boot/dts/tegra30-cpu-opp-microvolt.dtsi   |  801 +++++++++++
- arch/arm/boot/dts/tegra30-cpu-opp.dtsi        | 1202 +++++++++++++++++
- arch/arm/boot/dts/tegra30.dtsi                |    4 +
- arch/arm/mach-tegra/tegra.c                   |    4 +
- drivers/clk/tegra/Makefile                    |    1 +
- drivers/clk/tegra/clk-pll.c                   |   12 +-
- drivers/clk/tegra/clk-tegra-super-cclk.c      |  164 +++
- drivers/clk/tegra/clk-tegra20.c               |    6 +-
- drivers/clk/tegra/clk-tegra30.c               |    6 +-
- drivers/clk/tegra/clk.h                       |   12 +
- drivers/cpufreq/Kconfig.arm                   |    6 +-
- drivers/cpufreq/cpufreq-dt-platdev.c          |    2 +
- drivers/cpufreq/tegra20-cpufreq.c             |  211 +--
- 20 files changed, 2916 insertions(+), 176 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
- create mode 100644 arch/arm/boot/dts/tegra20-cpu-opp-microvolt.dtsi
- create mode 100644 arch/arm/boot/dts/tegra20-cpu-opp.dtsi
- create mode 100644 arch/arm/boot/dts/tegra30-cpu-opp-microvolt.dtsi
- create mode 100644 arch/arm/boot/dts/tegra30-cpu-opp.dtsi
- create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
-
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cceefbd67a3b..bb3d84182b78 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -391,6 +391,8 @@ static struct tegra_clk_pll_params pll_x_params = {
+ 	.lock_delay = 300,
+ 	.freq_table = pll_x_freq_table,
+ 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.pre_rate_change = tegra_cclk_pre_pllx_rate_change,
++	.post_rate_change = tegra_cclk_post_pllx_rate_change,
+ };
+ 
+ static struct tegra_clk_pll_params pll_e_params = {
+@@ -704,9 +706,9 @@ static void tegra20_super_clk_init(void)
+ 	struct clk *clk;
+ 
+ 	/* CCLK */
+-	clk = tegra_clk_register_super_mux("cclk", cclk_parents,
++	clk = tegra_clk_register_super_cclk("cclk", cclk_parents,
+ 			      ARRAY_SIZE(cclk_parents), CLK_SET_RATE_PARENT,
+-			      clk_base + CCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
++			      clk_base + CCLK_BURST_POLICY, 0, NULL);
+ 	clks[TEGRA20_CLK_CCLK] = clk;
+ 
+ 	/* SCLK */
 -- 
 2.23.0
