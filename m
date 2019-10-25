@@ -1,24 +1,86 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v3 06/10] ARM: dts: imx: Rename "iram" node to "sram"
-Date: Fri, 25 Oct 2019 10:39:53 +0800
-Message-ID: <20191025023951.GB30015@dragon>
-References: <20191002164316.14905-1-krzk@kernel.org>
- <20191002164316.14905-6-krzk@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [REGRESSION v5.3] SUNRPC: Replace the queue timer with a delayed work
+ function (7e0a0e38fcfe)
+Date: Fri, 25 Oct 2019 08:28:57 +0100
+Message-ID: <271ff39f-1f44-b201-6274-85f1085bfc16@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191002164316.14905-6-krzk@kernel.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@bootlin.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Santosh Shilimkar <ssantosh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.orglinux-
+To: Trond Myklebust <trondmy@hammerspace.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 06:43:12PM +0200, Krzysztof Kozlowski wrote:
-> The device node name should reflect generic class of a device so rename
-> the "iram" node to "sram".  This will be also in sync with upcoming DT
-> schema.  No functional change.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Hi Trond,
 
-Applied, thanks.
+Similar to the change 431235818bc3 ("SUNRPC: Declare RPC timers as
+TIMER_DEFERRABLE") I have been tracking down another suspend/NFS related
+issue where again I am seeing random delays exiting suspend. The delays
+can be up to a couple minutes in the worst case and this is causing a
+suspend test we have to fail. For example, with this change I see ...
+
+[  130.599520] PM: suspend entry (deep)
+
+[  130.607267] Filesystems sync: 0.000 seconds
+
+[  130.615800] Freezing user space processes ... (elapsed 0.001 seconds) done.
+
+[  130.628247] OOM killer disabled.
+
+[  130.635382] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+
+[  130.648052] printk: Suspending console(s) (use no_console_suspend to debug)
+
+[  130.686015] Disabling non-boot CPUs ...
+
+[  130.689568] IRQ 17: no longer affine to CPU2
+
+[  130.693435] Entering suspend state LP1
+
+[  130.693489] Enabling non-boot CPUs ...
+
+[  130.697108] CPU1 is up
+
+[  130.700602] CPU2 is up
+
+[  130.704338] CPU3 is up
+
+[  130.781259] mmc1: queuing unknown CIS tuple 0x80 (50 bytes)
+
+[  130.789742] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
+
+[  130.792793] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
+
+[  130.820913] mmc1: queuing unknown CIS tuple 0x02 (1 bytes)
+
+[  131.345569] OOM killer enabled.
+
+[  131.352643] Restarting tasks ... done.
+
+[  131.365480] PM: suspend exit
+
+[  134.524261] asix 1-1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
+
+[  243.745788] nfs: server 192.168.99.1 not responding, still trying
+
+[  243.745811] nfs: server 192.168.99.1 not responding, still trying
+
+[  243.767939] nfs: server 192.168.99.1 not responding, still trying
+
+[  243.778233] nfs: server 192.168.99.1 OK
+
+[  243.787058] nfs: server 192.168.99.1 OK
+
+[  243.787542] nfs: server 192.168.99.1 OK
+
+
+Running a git bisect I was able to track it down to the commit referenced
+in the $subject. Reverting this on top of the current mainline fixes the
+problem and I no longer see these long delays.
+
+Cheers
+Jon
+
+-- 
+nvpublic
