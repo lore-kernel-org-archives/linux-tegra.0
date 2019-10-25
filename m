@@ -1,83 +1,54 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [REGRESSION v5.3] SUNRPC: Replace the queue timer with a delayed work
- function (7e0a0e38fcfe)
-Date: Fri, 25 Oct 2019 08:28:57 +0100
-Message-ID: <271ff39f-1f44-b201-6274-85f1085bfc16@nvidia.com>
+Subject: Re: [PATCH v5 3/7] ASoC: tegra: i2s: Add support for
+ more than 2 channels
+Date: Fri, 25 Oct 2019 08:48:13 +0100
+Message-ID: <549a97c6-ff73-abe0-7c2b-7f29f975e259@nvidia.com>
+References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
+ <20191018154833.7560-4-ben.dooks@codethink.co.uk>
+ <2eef499e-d9d4-732a-ddd6-8d307d8cb08d@nvidia.com>
+ <20191024191846.GJ46373@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20191024191846.GJ46373@sirena.co.uk>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trondmy@hammerspace.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Trond,
 
-Similar to the change 431235818bc3 ("SUNRPC: Declare RPC timers as
-TIMER_DEFERRABLE") I have been tracking down another suspend/NFS related
-issue where again I am seeing random delays exiting suspend. The delays
-can be up to a couple minutes in the worst case and this is causing a
-suspend test we have to fail. For example, with this change I see ...
+On 24/10/2019 20:18, Mark Brown wrote:
+> On Thu, Oct 24, 2019 at 05:12:21PM +0100, Jon Hunter wrote:
+>> On 18/10/2019 16:48, Ben Dooks wrote:
+> 
+>>> @@ -90,10 +92,12 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
+>>>  		TEGRA30_I2S_CTRL_LRCK_MASK;
+>>>  	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+>>>  	case SND_SOC_DAIFMT_DSP_A:
+>>> +		ch_val = TEGRA30_I2S_CH_CTRL_EGDE_CTRL_NEG_EDGE;
+> 
+>> Sorry, I just saw the feedback on the previous iteration. I don't think
+>> we want to set the polarity but based upon the format that is passed ...
+> 
+> The polarity should be set based on the the inversion flags in the
+> format, normally both DSP modes trigger on the rising edge of the LRCLK.
+> The difference is if there's a delay before the first data bit or not.
 
-[  130.599520] PM: suspend entry (deep)
-
-[  130.607267] Filesystems sync: 0.000 seconds
-
-[  130.615800] Freezing user space processes ... (elapsed 0.001 seconds) done.
-
-[  130.628247] OOM killer disabled.
-
-[  130.635382] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-
-[  130.648052] printk: Suspending console(s) (use no_console_suspend to debug)
-
-[  130.686015] Disabling non-boot CPUs ...
-
-[  130.689568] IRQ 17: no longer affine to CPU2
-
-[  130.693435] Entering suspend state LP1
-
-[  130.693489] Enabling non-boot CPUs ...
-
-[  130.697108] CPU1 is up
-
-[  130.700602] CPU2 is up
-
-[  130.704338] CPU3 is up
-
-[  130.781259] mmc1: queuing unknown CIS tuple 0x80 (50 bytes)
-
-[  130.789742] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-
-[  130.792793] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-
-[  130.820913] mmc1: queuing unknown CIS tuple 0x02 (1 bytes)
-
-[  131.345569] OOM killer enabled.
-
-[  131.352643] Restarting tasks ... done.
-
-[  131.365480] PM: suspend exit
-
-[  134.524261] asix 1-1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
-
-[  243.745788] nfs: server 192.168.99.1 not responding, still trying
-
-[  243.745811] nfs: server 192.168.99.1 not responding, still trying
-
-[  243.767939] nfs: server 192.168.99.1 not responding, still trying
-
-[  243.778233] nfs: server 192.168.99.1 OK
-
-[  243.787058] nfs: server 192.168.99.1 OK
-
-[  243.787542] nfs: server 192.168.99.1 OK
-
-
-Running a git bisect I was able to track it down to the commit referenced
-in the $subject. Reverting this on top of the current mainline fixes the
-problem and I no longer see these long delays.
+Yes. Sorry I realise my email was not clear and when I meant format, I
+was referring to the bits in the format mask part of the format. In the
+example, I shared we use the inversion bits for the determining the
+polarity. There was an old version of one of our drivers where we had
+done this incorrectly.
 
 Cheers
 Jon
