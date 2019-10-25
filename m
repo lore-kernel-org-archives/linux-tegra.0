@@ -1,139 +1,125 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: tegra: Allow 24bit and 32bit samples"
-	to the asoc tree
-Date: Fri, 25 Oct 2019 11:12:12 +0100 (BST)
-Message-ID: <20191025101212.C8B002743267@ypsilon.sirena.org.uk>
-References: <20191018154833.7560-3-ben.dooks@codethink.co.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] drm/tegra: Do not use ->load() and ->unload() callbacks
+Date: Fri, 25 Oct 2019 12:59:06 +0200
+Message-ID: <20191025105906.GA928835@ulmo>
+References: <20191024173137.290420-1-thierry.reding@gmail.com>
+ <20191024181539.GA31268@qmqm.qmqm.pl>
+ <553f12c4-b1f4-b48c-45e4-c4280936d1e4@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20191018154833.7560-3-ben.dooks@codethink.co.uk>
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Edward Cragg <edward.cragg@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1447372081=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <553f12c4-b1f4-b48c-45e4-c4280936d1e4@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
 
-   ASoC: tegra: Allow 24bit and 32bit samples
+--===============1447372081==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Content-Disposition: inline
 
-has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+On Fri, Oct 25, 2019 at 12:10:49AM +0300, Dmitry Osipenko wrote:
+> 24.10.2019 21:15, Micha=C5=82 Miros=C5=82aw =D0=BF=D0=B8=D1=88=D0=B5=D1=
+=82:
+> > On Thu, Oct 24, 2019 at 07:31:37PM +0200, Thierry Reding wrote:
+> >> From: Thierry Reding <treding@nvidia.com>
+> >>
+> >> The ->load() and ->unload() drivers are midlayers and should be avoided
+> >> in modern drivers. Fix this by moving the code into the driver ->probe=
+()
+> >> and ->remove() implementations, respectively.
+> >>
+> >> v2: kick out conflicting framebuffers before initializing fbdev
+> >>
+> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >> ---
+> >> Micha=C5=82, Dmitry,
+> >>
+> >> do you guys have a way of testing that the removal of the conflicting
+> >> framebuffer actually works?
+> > [...]
+> >=20
+> > I might be able to check during the weekend. Is this patch alone enough
+> > for v5.3?
+>=20
+> I don't think it will apply cleanly on top of 5.3, but should work with
+> linux-next or by cherry-picking 9d5a54987265.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I just noticed that I based this version on top of a local branch that
+will cause conflicts if you apply this to either 5.3 or linux-next. I'll
+resend this later rebased onto drm/tegra/for-next, so it should apply
+cleanly on at least linux-next. drm/tegra/for-next also contains this:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+commit 051172e8c1ceef8749f19faacc1d3bef65d20d8d
+Author: Thierry Reding <treding@nvidia.com>
+Date:   Wed Sep 25 13:26:59 2019 +0200
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+    drm/tegra: Fix ordering of cleanup code
 
-Thanks,
-Mark
+    Commit Fixes: b9f8b09ce256 ("drm/tegra: Setup shared IOMMU domain after
+    initialization") changed the initialization order of the IOMMU related
+    bits but didn't update the cleanup path accordingly. This asymmetry can
+    cause failures during error recovery.
 
-From f3ee99087c8ca0ecfdd549ef5a94f557c42d5428 Mon Sep 17 00:00:00 2001
-From: Edward Cragg <edward.cragg@codethink.co.uk>
-Date: Fri, 18 Oct 2019 16:48:28 +0100
-Subject: [PATCH] ASoC: tegra: Allow 24bit and 32bit samples
+    Fixes: b9f8b09ce256 ("drm/tegra: Setup shared IOMMU domain after initia=
+lization")
+    Signed-off-by: Thierry Reding <treding@nvidia.com>
+    Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+    Tested-by: Dmitry Osipenko <digetx@gmail.com>
 
-The tegra3 audio can support 24 and 32 bit sample sizes so add the
-option to the tegra30_i2s_hw_params to configure the S24_LE or S32_LE
-formats when requested.
+which will conflict with the ->load() and ->unload() removal patch.
 
-Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-[ben.dooks@codethink.co.uk: fixup merge of 24 and 32bit]
-[ben.dooks@codethink.co.uk: add pm calls around ytdm config]
-[ben.dooks@codethink.co.uk: drop debug printing to dev_dbg]
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Link: https://lore.kernel.org/r/20191018154833.7560-3-ben.dooks@codethink.co.uk
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/tegra/tegra30_i2s.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+If for some reason you can't use linux-next, it shouldn't be terribly
+complicated to backport this to v5.3, though.
 
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index e6d548fa980b..48a09c9d60be 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -127,7 +127,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	struct device *dev = dai->dev;
- 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
- 	unsigned int mask, val, reg;
--	int ret, sample_size, srate, i2sclock, bitcnt;
-+	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits;
- 	struct tegra30_ahub_cif_conf cif_conf;
- 
- 	if (params_channels(params) != 2)
-@@ -137,8 +137,19 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	switch (params_format(params)) {
- 	case SNDRV_PCM_FORMAT_S16_LE:
- 		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
- 		sample_size = 16;
- 		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
-+		sample_size = 24;
-+		break;
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
-+		sample_size = 32;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -170,8 +181,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	cif_conf.threshold = 0;
- 	cif_conf.audio_channels = 2;
- 	cif_conf.client_channels = 2;
--	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
--	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
-+	cif_conf.audio_bits = audio_bits;
-+	cif_conf.client_bits = audio_bits;
- 	cif_conf.expand = 0;
- 	cif_conf.stereo_conv = 0;
- 	cif_conf.replicate = 0;
-@@ -277,14 +288,18 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.ops = &tegra30_i2s_dai_ops,
- 	.symmetric_rates = 1,
--- 
-2.20.1
+Thierry
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2y1XcACgkQ3SOs138+
+s6GUUw/+JX4T/+S+Np6c8xtia3ypDnqM/9eryUpqn+hyZ634Kk5VwjduevZoaLR/
+KmOKEIA0xD9+ZFylmKsb/sFdgbmkCBx6rlNJhZq5uleGjnNi+6Ybokl4KAtGbzST
+u2xGRWNfv/yGy7mmx720nZVPcFpWaXNDCUqlDUVBE1UvIL6LlMKLzLCEdZn7tr8Z
+zetlXNd41+l2Me19xAUIZrl3pPEslM0JjvR9i2oEduHTUkITK1+QudFZhDYRJwcm
+a9ZEV0qabJpp8AZBLn7cPkyhNPLl2vasuCFIAHBW5+7gtjX3bgtTq5hO5bD8zaKs
+3K5G8ZNUHitZcWetD4O298tJqLgrzLSOVuUcCIigsgzmE16VHoxNu9w4kzFBVHwn
+BPbcd6qvf6nJeuwagRZ6u2V8jJlFPnzv8RZcRT8DW/R9yAtcEYOItm2LkN1OAtiG
+UXaCCccYgl17fhuvdzpS3MCQjSEw7wA3kwbuPWaVUXGSvVZsVrzXwZdN7Q4hfwMV
+q/N+Dtn4s6Xv7ia3/cxETW7KVYdEFVPSN2Be6hN5olcnQnjvos8OJII9H4ivGk9+
+KhxZYv0LBL7S6yZeoQTZmTpUOTVnEG5a0mVf4UG3QPGwe2kkschynjjQ101IG/v6
+9/0ylUXbXeV04bfvliLASaHIwbJ6K6+rTrwjXNq0zSqtcIFVlh4=
+=Esw+
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
+
+--===============1447372081==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1447372081==--
