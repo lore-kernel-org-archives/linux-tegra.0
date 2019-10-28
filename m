@@ -1,26 +1,52 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: phy: tegra: xusb: Complete exception handling in five probe functions
-Date: Mon, 28 Oct 2019 22:20:25 +0100
-Message-ID: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/41] 4.4.198-stable review
+Date: Mon, 28 Oct 2019 21:36:40 +0000
+Message-ID: <0ac57510-da56-d87b-7ed0-0c4010e384b4@nvidia.com>
+References: <20191027203056.220821342@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <treding@nvidia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
 
-I have taken another look also at the implementations of five probe functions.
-I have got the impression then that the exception handling is incomplete so far
-at these source code places.
-https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/phy/tegra/xusb-tegra124.c#L608
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/phy/tegra/xusb-tegra124.c?id=8005803a2ca0af49f36f6e9329b5ecda3df27347#n608
+On 27/10/2019 21:00, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.198 release.
+> There are 41 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue 29 Oct 2019 08:27:02 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.198-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-How do you think about to move kfree() calls to other jump targets
-according to the Linux coding style?
+All tests are passing for Tegra ...
 
-Regards,
-Markus
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
+
+Linux version:	4.4.198-rc1-gc9bcba7e439f
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
