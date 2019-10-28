@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 000/119] 4.14.151-stable review
-Date: Mon, 28 Oct 2019 21:39:41 +0000
-Message-ID: <b72b3182-05ae-05ca-097d-9455004dd0a0@nvidia.com>
-References: <20191027203259.948006506@linuxfoundation.org>
+Subject: Re: [PATCH 5.3 000/197] 5.3.8-stable review
+Date: Mon, 28 Oct 2019 21:48:04 +0000
+Message-ID: <ec238058-1eaf-a33f-cbbf-fd49e1ddaa82@nvidia.com>
+References: <20191027203351.684916567@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -15,9 +15,9 @@ Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 27/10/2019 20:59, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.151 release.
-> There are 119 patches in this series, all will be posted as a response
+On 27/10/2019 20:58, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.8 release.
+> There are 197 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 27/10/2019 20:59, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.151-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.8-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,13 +36,14 @@ On 27/10/2019 20:59, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    24 tests:	24 pass, 0 fail
+Test results for stable-v5.3:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
 
-Linux version:	4.14.151-rc1-g22148a87efce
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+Linux version:	5.3.8-rc1-g740177dc0d52
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
 Cheers
