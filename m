@@ -1,178 +1,197 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/3] drm/tegra: Fix 2d and 3d clients detaching from
- IOMMU domain
-Date: Fri, 25 Oct 2019 15:35:38 +0300
-Message-ID: <c3c614aa-4b99-e4eb-658e-1a71a17cb574@gmail.com>
-References: <45926d95-3e7a-c56b-402a-2b2c6475c5db@gmail.com>
- <20191024135018.GD2924027@ulmo>
- <38a67df0-2ede-e7fe-8eca-6c4491cdcc7b@gmail.com>
- <20191024155620.GG2924027@ulmo>
- <bfc6c17d-f2df-32d0-67d6-2f763c81d7fc@gmail.com>
- <7f7ecf90-531c-69ae-9011-684666ed8743@gmail.com>
- <ef2ccc90-be93-3cfb-6b8b-2a406dd8d362@gmail.com>
- <026bbeb0-1539-2b62-a447-60c1bc041f5a@gmail.com>
- <20191024172813.GA281291@ulmo>
- <a3be52ac-6cb2-81f8-f1f5-1d6440cdbfba@gmail.com>
- <20191025114828.GA937752@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v3] drm/tegra: Do not use ->load() and ->unload() callbacks
+Date: Mon, 28 Oct 2019 13:16:10 +0100
+Message-ID: <20191028121610.3889207-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191025114828.GA937752@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-25.10.2019 14:48, Thierry Reding пишет:
-> On Thu, Oct 24, 2019 at 09:46:58PM +0300, Dmitry Osipenko wrote:
->> 24.10.2019 20:28, Thierry Reding пишет:
->>> On Thu, Oct 24, 2019 at 07:31:19PM +0300, Dmitry Osipenko wrote:
->>>> 24.10.2019 19:21, Dmitry Osipenko пишет:
->>>>> 24.10.2019 19:09, Dmitry Osipenko пишет:
->>>>>> 24.10.2019 18:57, Dmitry Osipenko пишет:
->>>>>>> 24.10.2019 18:56, Thierry Reding пишет:
->>>>>>>> On Thu, Oct 24, 2019 at 06:47:23PM +0300, Dmitry Osipenko wrote:
->>>>>>>>> 24.10.2019 16:50, Thierry Reding пишет:
->>>>>>>>>> On Thu, Oct 24, 2019 at 04:28:41PM +0300, Dmitry Osipenko wrote:
->>>>>>>>>>> 24.10.2019 14:58, Thierry Reding пишет:
->>>>>>>>>>>> On Sun, Jun 23, 2019 at 08:37:42PM +0300, Dmitry Osipenko wrote:
->>>>>>>>>>>>> This should should fire up on the DRM's driver module re-loader because
->>>>>>>>>>>>> there won't be enough available domains on older Tegra SoCs.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Cc: stable <stable@vger.kernel.org>
->>>>>>>>>>>>> Fixes: 0c407de5ed1a ("drm/tegra: Refactor IOMMU attach/detach")
->>>>>>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>>>>>> ---
->>>>>>>>>>>>>  drivers/gpu/drm/tegra/dc.c   | 4 ++--
->>>>>>>>>>>>>  drivers/gpu/drm/tegra/drm.c  | 9 ++++++---
->>>>>>>>>>>>>  drivers/gpu/drm/tegra/drm.h  | 3 ++-
->>>>>>>>>>>>>  drivers/gpu/drm/tegra/gr2d.c | 4 ++--
->>>>>>>>>>>>>  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
->>>>>>>>>>>>>  5 files changed, 14 insertions(+), 10 deletions(-)
->>>>>>>>>>>>
->>>>>>>>>>>> I think I understand what this is trying to do, but the commit message
->>>>>>>>>>>> does not help at all. So what's really going on here is that we need to
->>>>>>>>>>>> detach the device from the group regardless of whether we're sharing the
->>>>>>>>>>>> group or not, just like we attach groups to the shared domain whether
->>>>>>>>>>>> they share the same group or not.
->>>>>>>>>>>
->>>>>>>>>>> Yes, the commit's message could be improved.
->>>>>>>>>>>
->>>>>>>>>>>> But in that case, I wonder if it's even worth splitting groups the way
->>>>>>>>>>>> we are right now. Wouldn't it be better to just put all the devices into
->>>>>>>>>>>> the same group and be done with it?
->>>>>>>>>>>>
->>>>>>>>>>>> The current code gives me headaches every time I read it, so if we can
->>>>>>>>>>>> just make it so that all the devices under the DRM device share the same
->>>>>>>>>>>> group, this would become a lot easier to deal with. I'm not really
->>>>>>>>>>>> convinced that it makes much sense to keep them on separate domains,
->>>>>>>>>>>> especially given the constraints on the number of domains available on
->>>>>>>>>>>> earlier Tegra devices.
->>>>>>>>>>>>
->>>>>>>>>>>> Note that sharing a group will also make it much easier for these to use
->>>>>>>>>>>> the DMA API if it is backed by an IOMMU.
->>>>>>>>>>>
->>>>>>>>>>> Probably I'm blanking on everything about IOMMU now.. could you please
->>>>>>>>>>> remind me what "IOMMU group" is?
->>>>>>>>>>>
->>>>>>>>>>> Isn't it that each IOMMU group relates to the HW ID (SWGROUP)? But then
->>>>>>>>>>> each display controller has its own SWGROUP.. and thus that sharing just
->>>>>>>>>>> doesn't make any sense, hm.
->>>>>>>>>>
->>>>>>>>>> IOMMU groups are not directly related to SWGROUPs. But by default the
->>>>>>>>>> IOMMU framework will share a domain between members of the same IOMMU
->>>>>>>>>> group.
->>>>>>>>>
->>>>>>>>> Ah, I re-figured out that again. The memory controller drivers are
->>>>>>>>> defining a single "IOMMU group" for both of the display controllers.
->>>>>>>>>
->>>>>>>>>> Seems like that's really what we want here, so that when we do
->>>>>>>>>> use the DMA API, all the devices part of the DRM device get attached to
->>>>>>>>>> the same IOMMU domain, yet if we don't want to use the DMA API we only
->>>>>>>>>> need to detach the one group from the backing.
->>>>>>>>>
->>>>>>>>> Yes, it should be okay to put all DRM devices into the same group, like
->>>>>>>>> it is done now for the displays. It also should resolve problem with the
->>>>>>>>> domains shortage on T30 since now there are maximum 3 domains in use:
->>>>>>>>> host1x, drm and vde.
->>>>>>>>>
->>>>>>>>> I actually just checked that the original problem still exists
->>>>>>>>> and this change solves it as well:
->>>>>>>>>
->>>>>>>>> ---
->>>>>>>>> diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
->>>>>>>>> index 5a0f6e0a1643..e71096498436 100644
->>>>>>>>> --- a/drivers/memory/tegra/tegra30.c
->>>>>>>>> +++ b/drivers/memory/tegra/tegra30.c
->>>>>>>>> @@ -1021,6 +1021,9 @@ static const struct tegra_smmu_swgroup
->>>>>>>>> tegra30_swgroups[] = {
->>>>>>>>>  static const unsigned int tegra30_group_display[] = {
->>>>>>>>>  	TEGRA_SWGROUP_DC,
->>>>>>>>>  	TEGRA_SWGROUP_DCB,
->>>>>>>>> +	TEGRA_SWGROUP_G2,
->>>>>>>>> +	TEGRA_SWGROUP_NV,
->>>>>>>>> +	TEGRA_SWGROUP_NV2,
->>>>>>>>>  };
->>>>>>>>>
->>>>>>>>>  static const struct tegra_smmu_group_soc tegra30_groups[] = {
->>>>>>>>> ---
->>>>>>>>>
->>>>>>>>> Please let me know whether you're going to make a patch or if I should
->>>>>>>>> do it.
->>>>>>>>
->>>>>>>> I've been testing with a similar change and couldn't find any
->>>>>>>> regressions. I've also made the same modifications for Tegra114 and
->>>>>>>> Tegra124.
->>>>>>>>
->>>>>>>> Are you saying that none of these patches are needed anymore? Or do we
->>>>>>>> still need a patch to fix detaching? I'm thinking that maybe we can
->>>>>>>> drastrically simplify the detachment now by dropping the shared
->>>>>>>> parameter altogether.
->>>>>>>>
->>>>>>>> Let me draft a patch and send out the whole set for testing.
->>>>>>>
->>>>>>> Seems it's still not ideal because I noticed this in KMSG:
->>>>>>>
->>>>>>> [    0.703185] Failed to attached device 54200000.dc to IOMMU_mapping
->>>>>>> [    0.710404] Failed to attached device 54240000.dc to IOMMU_mapping
->>>>>>> [    0.719347] Failed to attached device 54140000.gr2d to IOMMU_mapping
->>>>>>> [    0.719569] Failed to attached device 54180000.gr3d to IOMMU_mapping
->>>>>>>
->>>>>>> which comes from the implicit IOMMU backing.
->>>>>>
->>>>>> And the error comes from here:
->>>>>>
->>>>>> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/iommu/iommu.c#L1655
->>>>>
->>>>> So the detaching still should be needed, but at the moment the ARM32
->>>>> DMA-mapping code is simply not suitable for the case of having multiple
->>>>> devices in the same group. I'm wondering whether there are any real
->>>>> users for the implicit IOMMU backing on ARM32 at all :/
->>>>>
->>>>
->>>> Apparently the "Failed to attached device 54200000.dc" was always in the
->>>> log (I rarely testing the default multi-platform config), it's just the
->>>> message is a pr_warn that I wasn't paying attention because it is
->>>> colored like pr_info in dmesg :)
->>>
->>> Yeah, so the above isn't a complete solution. In order to actually use
->>> the DMA API backed by an IOMMU, some additional patches are needed. I
->>> have all of those in a local tree and I've already sent out a couple of
->>> them. It's taking a while because they all need to be applied in small
->>> iterations to make sure things don't break midway.
->>
->> I'd like to have an immediate interim solution.
-> 
-> To clarify: when I said "isn't a complete solution", what I meant is
-> that it's not a complete solution to make the implicit IOMMU backing
-> work with the DMA API. That's what I've got a patch set ready for.
-
-Okay.
-
-> But you said earlier that this change (i.e. putting all DRM devices into
-> the same IOMMU group) fixes the issue that you were seeing, right? So
-> that would be an immediate, interim solution, wouldn't it?
-
-Yes, it would.
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSAtPmxvYWQoKSBh
+bmQgLT51bmxvYWQoKSBkcml2ZXJzIGFyZSBtaWRsYXllcnMgYW5kIHNob3VsZCBiZSBhdm9pZGVk
+CmluIG1vZGVybiBkcml2ZXJzLiBGaXggdGhpcyBieSBtb3ZpbmcgdGhlIGNvZGUgaW50byB0aGUg
+ZHJpdmVyIC0+cHJvYmUoKQphbmQgLT5yZW1vdmUoKSBpbXBsZW1lbnRhdGlvbnMsIHJlc3BlY3Rp
+dmVseS4KCnYyOiBraWNrIG91dCBjb25mbGljdGluZyBmcmFtZWJ1ZmZlcnMgYmVmb3JlIGluaXRp
+YWxpemluZyBmYmRldgp2MzogcmViYXNlIG9udG8gZHJtL3RlZ3JhL2Zvci1uZXh0CgpTaWduZWQt
+b2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9kcm0uYyB8IDMyMSArKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0t
+LS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxNTQgaW5zZXJ0aW9ucygrKSwgMTY3IGRlbGV0aW9ucygt
+KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1
+L2RybS90ZWdyYS9kcm0uYwppbmRleCBiNzQzNjJjYjYzZWIuLjc0ODBmNTc1MTg4ZCAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kcm0uYwpAQCAtODYsMTY4ICs4Niw2IEBAIHRlZ3JhX2RybV9tb2RlX2NvbmZpZ19oZWxw
+ZXJzID0gewogCS5hdG9taWNfY29tbWl0X3RhaWwgPSB0ZWdyYV9hdG9taWNfY29tbWl0X3RhaWws
+CiB9OwogCi1zdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0s
+IHVuc2lnbmVkIGxvbmcgZmxhZ3MpCi17Ci0Jc3RydWN0IGhvc3QxeF9kZXZpY2UgKmRldmljZSA9
+IHRvX2hvc3QxeF9kZXZpY2UoZHJtLT5kZXYpOwotCXN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhOwot
+CWludCBlcnI7Ci0KLQl0ZWdyYSA9IGt6YWxsb2Moc2l6ZW9mKCp0ZWdyYSksIEdGUF9LRVJORUwp
+OwotCWlmICghdGVncmEpCi0JCXJldHVybiAtRU5PTUVNOwotCi0JaWYgKGlvbW11X3ByZXNlbnQo
+JnBsYXRmb3JtX2J1c190eXBlKSkgewotCQl0ZWdyYS0+ZG9tYWluID0gaW9tbXVfZG9tYWluX2Fs
+bG9jKCZwbGF0Zm9ybV9idXNfdHlwZSk7Ci0JCWlmICghdGVncmEtPmRvbWFpbikgewotCQkJZXJy
+ID0gLUVOT01FTTsKLQkJCWdvdG8gZnJlZTsKLQkJfQotCi0JCWVyciA9IGlvdmFfY2FjaGVfZ2V0
+KCk7Ci0JCWlmIChlcnIgPCAwKQotCQkJZ290byBkb21haW47Ci0JfQotCi0JbXV0ZXhfaW5pdCgm
+dGVncmEtPmNsaWVudHNfbG9jayk7Ci0JSU5JVF9MSVNUX0hFQUQoJnRlZ3JhLT5jbGllbnRzKTsK
+LQotCWRybS0+ZGV2X3ByaXZhdGUgPSB0ZWdyYTsKLQl0ZWdyYS0+ZHJtID0gZHJtOwotCi0JZHJt
+X21vZGVfY29uZmlnX2luaXQoZHJtKTsKLQotCWRybS0+bW9kZV9jb25maWcubWluX3dpZHRoID0g
+MDsKLQlkcm0tPm1vZGVfY29uZmlnLm1pbl9oZWlnaHQgPSAwOwotCi0JZHJtLT5tb2RlX2NvbmZp
+Zy5tYXhfd2lkdGggPSA0MDk2OwotCWRybS0+bW9kZV9jb25maWcubWF4X2hlaWdodCA9IDQwOTY7
+Ci0KLQlkcm0tPm1vZGVfY29uZmlnLmFsbG93X2ZiX21vZGlmaWVycyA9IHRydWU7Ci0KLQlkcm0t
+Pm1vZGVfY29uZmlnLm5vcm1hbGl6ZV96cG9zID0gdHJ1ZTsKLQotCWRybS0+bW9kZV9jb25maWcu
+ZnVuY3MgPSAmdGVncmFfZHJtX21vZGVfY29uZmlnX2Z1bmNzOwotCWRybS0+bW9kZV9jb25maWcu
+aGVscGVyX3ByaXZhdGUgPSAmdGVncmFfZHJtX21vZGVfY29uZmlnX2hlbHBlcnM7Ci0KLQllcnIg
+PSB0ZWdyYV9kcm1fZmJfcHJlcGFyZShkcm0pOwotCWlmIChlcnIgPCAwKQotCQlnb3RvIGNvbmZp
+ZzsKLQotCWRybV9rbXNfaGVscGVyX3BvbGxfaW5pdChkcm0pOwotCi0JZXJyID0gaG9zdDF4X2Rl
+dmljZV9pbml0KGRldmljZSk7Ci0JaWYgKGVyciA8IDApCi0JCWdvdG8gZmJkZXY7Ci0KLQlpZiAo
+dGVncmEtPmRvbWFpbikgewotCQl1NjQgY2FydmVvdXRfc3RhcnQsIGNhcnZlb3V0X2VuZCwgZ2Vt
+X3N0YXJ0LCBnZW1fZW5kOwotCQl1NjQgZG1hX21hc2sgPSBkbWFfZ2V0X21hc2soJmRldmljZS0+
+ZGV2KTsKLQkJZG1hX2FkZHJfdCBzdGFydCwgZW5kOwotCQl1bnNpZ25lZCBsb25nIG9yZGVyOwot
+Ci0JCXN0YXJ0ID0gdGVncmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfc3RhcnQgJiBkbWFf
+bWFzazsKLQkJZW5kID0gdGVncmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kICYgZG1h
+X21hc2s7Ci0KLQkJZ2VtX3N0YXJ0ID0gc3RhcnQ7Ci0JCWdlbV9lbmQgPSBlbmQgLSBDQVJWRU9V
+VF9TWjsKLQkJY2FydmVvdXRfc3RhcnQgPSBnZW1fZW5kICsgMTsKLQkJY2FydmVvdXRfZW5kID0g
+ZW5kOwotCi0JCW9yZGVyID0gX19mZnModGVncmEtPmRvbWFpbi0+cGdzaXplX2JpdG1hcCk7Ci0J
+CWluaXRfaW92YV9kb21haW4oJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4sIDFVTCA8PCBvcmRlciwK
+LQkJCQkgY2FydmVvdXRfc3RhcnQgPj4gb3JkZXIpOwotCi0JCXRlZ3JhLT5jYXJ2ZW91dC5zaGlm
+dCA9IGlvdmFfc2hpZnQoJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4pOwotCQl0ZWdyYS0+Y2FydmVv
+dXQubGltaXQgPSBjYXJ2ZW91dF9lbmQgPj4gdGVncmEtPmNhcnZlb3V0LnNoaWZ0OwotCi0JCWRy
+bV9tbV9pbml0KCZ0ZWdyYS0+bW0sIGdlbV9zdGFydCwgZ2VtX2VuZCAtIGdlbV9zdGFydCArIDEp
+OwotCQltdXRleF9pbml0KCZ0ZWdyYS0+bW1fbG9jayk7Ci0KLQkJRFJNX0RFQlVHX0RSSVZFUigi
+SU9NTVUgYXBlcnR1cmVzOlxuIik7Ci0JCURSTV9ERUJVR19EUklWRVIoIiAgR0VNOiAlI2xseC0l
+I2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKLQkJRFJNX0RFQlVHX0RSSVZFUigiICBDYXJ2
+ZW91dDogJSNsbHgtJSNsbHhcbiIsIGNhcnZlb3V0X3N0YXJ0LAotCQkJCSBjYXJ2ZW91dF9lbmQp
+OwotCX0KLQotCWlmICh0ZWdyYS0+aHViKSB7Ci0JCWVyciA9IHRlZ3JhX2Rpc3BsYXlfaHViX3By
+ZXBhcmUodGVncmEtPmh1Yik7Ci0JCWlmIChlcnIgPCAwKQotCQkJZ290byBkZXZpY2U7Ci0JfQot
+Ci0JLyoKLQkgKiBXZSBkb24ndCB1c2UgdGhlIGRybV9pcnFfaW5zdGFsbCgpIGhlbHBlcnMgcHJv
+dmlkZWQgYnkgdGhlIERSTQotCSAqIGNvcmUsIHNvIHdlIG5lZWQgdG8gc2V0IHRoaXMgbWFudWFs
+bHkgaW4gb3JkZXIgdG8gYWxsb3cgdGhlCi0JICogRFJNX0lPQ1RMX1dBSVRfVkJMQU5LIHRvIG9w
+ZXJhdGUgY29ycmVjdGx5LgotCSAqLwotCWRybS0+aXJxX2VuYWJsZWQgPSB0cnVlOwotCi0JLyog
+c3luY3BvaW50cyBhcmUgdXNlZCBmb3IgZnVsbCAzMi1iaXQgaGFyZHdhcmUgVkJMQU5LIGNvdW50
+ZXJzICovCi0JZHJtLT5tYXhfdmJsYW5rX2NvdW50ID0gMHhmZmZmZmZmZjsKLQotCWVyciA9IGRy
+bV92YmxhbmtfaW5pdChkcm0sIGRybS0+bW9kZV9jb25maWcubnVtX2NydGMpOwotCWlmIChlcnIg
+PCAwKQotCQlnb3RvIGh1YjsKLQotCWRybV9tb2RlX2NvbmZpZ19yZXNldChkcm0pOwotCi0JZXJy
+ID0gdGVncmFfZHJtX2ZiX2luaXQoZHJtKTsKLQlpZiAoZXJyIDwgMCkKLQkJZ290byBodWI7Ci0K
+LQlyZXR1cm4gMDsKLQotaHViOgotCWlmICh0ZWdyYS0+aHViKQotCQl0ZWdyYV9kaXNwbGF5X2h1
+Yl9jbGVhbnVwKHRlZ3JhLT5odWIpOwotZGV2aWNlOgotCWlmICh0ZWdyYS0+ZG9tYWluKSB7Ci0J
+CW11dGV4X2Rlc3Ryb3koJnRlZ3JhLT5tbV9sb2NrKTsKLQkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdy
+YS0+bW0pOwotCQlwdXRfaW92YV9kb21haW4oJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4pOwotCQlp
+b3ZhX2NhY2hlX3B1dCgpOwotCX0KLQotCWhvc3QxeF9kZXZpY2VfZXhpdChkZXZpY2UpOwotZmJk
+ZXY6Ci0JZHJtX2ttc19oZWxwZXJfcG9sbF9maW5pKGRybSk7Ci0JdGVncmFfZHJtX2ZiX2ZyZWUo
+ZHJtKTsKLWNvbmZpZzoKLQlkcm1fbW9kZV9jb25maWdfY2xlYW51cChkcm0pOwotZG9tYWluOgot
+CWlmICh0ZWdyYS0+ZG9tYWluKQotCQlpb21tdV9kb21haW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsK
+LWZyZWU6Ci0Ja2ZyZWUodGVncmEpOwotCXJldHVybiBlcnI7Ci19Ci0KLXN0YXRpYyB2b2lkIHRl
+Z3JhX2RybV91bmxvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSkKLXsKLQlzdHJ1Y3QgaG9zdDF4
+X2RldmljZSAqZGV2aWNlID0gdG9faG9zdDF4X2RldmljZShkcm0tPmRldik7Ci0Jc3RydWN0IHRl
+Z3JhX2RybSAqdGVncmEgPSBkcm0tPmRldl9wcml2YXRlOwotCWludCBlcnI7Ci0KLQlkcm1fa21z
+X2hlbHBlcl9wb2xsX2ZpbmkoZHJtKTsKLQl0ZWdyYV9kcm1fZmJfZXhpdChkcm0pOwotCWRybV9h
+dG9taWNfaGVscGVyX3NodXRkb3duKGRybSk7Ci0JZHJtX21vZGVfY29uZmlnX2NsZWFudXAoZHJt
+KTsKLQotCWVyciA9IGhvc3QxeF9kZXZpY2VfZXhpdChkZXZpY2UpOwotCWlmIChlcnIgPCAwKQot
+CQlyZXR1cm47Ci0KLQlpZiAodGVncmEtPmRvbWFpbikgewotCQltdXRleF9kZXN0cm95KCZ0ZWdy
+YS0+bW1fbG9jayk7Ci0JCWRybV9tbV90YWtlZG93bigmdGVncmEtPm1tKTsKLQkJcHV0X2lvdmFf
+ZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKLQkJaW92YV9jYWNoZV9wdXQoKTsKLQkJ
+aW9tbXVfZG9tYWluX2ZyZWUodGVncmEtPmRvbWFpbik7Ci0JfQotCi0Ja2ZyZWUodGVncmEpOwot
+fQotCiBzdGF0aWMgaW50IHRlZ3JhX2RybV9vcGVuKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHN0
+cnVjdCBkcm1fZmlsZSAqZmlscCkKIHsKIAlzdHJ1Y3QgdGVncmFfZHJtX2ZpbGUgKmZwcml2OwpA
+QCAtMTAxNCw4ICs4NTIsNiBAQCBzdGF0aWMgaW50IHRlZ3JhX2RlYnVnZnNfaW5pdChzdHJ1Y3Qg
+ZHJtX21pbm9yICptaW5vcikKIHN0YXRpYyBzdHJ1Y3QgZHJtX2RyaXZlciB0ZWdyYV9kcm1fZHJp
+dmVyID0gewogCS5kcml2ZXJfZmVhdHVyZXMgPSBEUklWRVJfTU9ERVNFVCB8IERSSVZFUl9HRU0g
+fAogCQkJICAgRFJJVkVSX0FUT01JQyB8IERSSVZFUl9SRU5ERVIsCi0JLmxvYWQgPSB0ZWdyYV9k
+cm1fbG9hZCwKLQkudW5sb2FkID0gdGVncmFfZHJtX3VubG9hZCwKIAkub3BlbiA9IHRlZ3JhX2Ry
+bV9vcGVuLAogCS5wb3N0Y2xvc2UgPSB0ZWdyYV9kcm1fcG9zdGNsb3NlLAogCS5sYXN0Y2xvc2Ug
+PSBkcm1fZmJfaGVscGVyX2xhc3RjbG9zZSwKQEAgLTEyMDIsNiArMTAzOCw3IEBAIHZvaWQgdGVn
+cmFfZHJtX2ZyZWUoc3RydWN0IHRlZ3JhX2RybSAqdGVncmEsIHNpemVfdCBzaXplLCB2b2lkICp2
+aXJ0LAogc3RhdGljIGludCBob3N0MXhfZHJtX3Byb2JlKHN0cnVjdCBob3N0MXhfZGV2aWNlICpk
+ZXYpCiB7CiAJc3RydWN0IGRybV9kcml2ZXIgKmRyaXZlciA9ICZ0ZWdyYV9kcm1fZHJpdmVyOwor
+CXN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhOwogCXN0cnVjdCBkcm1fZGV2aWNlICpkcm07CiAJaW50
+IGVycjsKIApAQCAtMTIwOSwxOCArMTA0NiwxNDcgQEAgc3RhdGljIGludCBob3N0MXhfZHJtX3By
+b2JlKHN0cnVjdCBob3N0MXhfZGV2aWNlICpkZXYpCiAJaWYgKElTX0VSUihkcm0pKQogCQlyZXR1
+cm4gUFRSX0VSUihkcm0pOwogCisJdGVncmEgPSBremFsbG9jKHNpemVvZigqdGVncmEpLCBHRlBf
+S0VSTkVMKTsKKwlpZiAoIXRlZ3JhKSB7CisJCWVyciA9IC1FTk9NRU07CisJCWdvdG8gcHV0Owor
+CX0KKworCWlmIChpb21tdV9wcmVzZW50KCZwbGF0Zm9ybV9idXNfdHlwZSkpIHsKKwkJdGVncmEt
+PmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxvYygmcGxhdGZvcm1fYnVzX3R5cGUpOworCQlpZiAo
+IXRlZ3JhLT5kb21haW4pIHsKKwkJCWVyciA9IC1FTk9NRU07CisJCQlnb3RvIGZyZWU7CisJCX0K
+KworCQllcnIgPSBpb3ZhX2NhY2hlX2dldCgpOworCQlpZiAoZXJyIDwgMCkKKwkJCWdvdG8gZG9t
+YWluOworCX0KKworCW11dGV4X2luaXQoJnRlZ3JhLT5jbGllbnRzX2xvY2spOworCUlOSVRfTElT
+VF9IRUFEKCZ0ZWdyYS0+Y2xpZW50cyk7CisKIAlkZXZfc2V0X2RydmRhdGEoJmRldi0+ZGV2LCBk
+cm0pOworCWRybS0+ZGV2X3ByaXZhdGUgPSB0ZWdyYTsKKwl0ZWdyYS0+ZHJtID0gZHJtOworCisJ
+ZHJtX21vZGVfY29uZmlnX2luaXQoZHJtKTsKKworCWRybS0+bW9kZV9jb25maWcubWluX3dpZHRo
+ID0gMDsKKwlkcm0tPm1vZGVfY29uZmlnLm1pbl9oZWlnaHQgPSAwOworCisJZHJtLT5tb2RlX2Nv
+bmZpZy5tYXhfd2lkdGggPSA0MDk2OworCWRybS0+bW9kZV9jb25maWcubWF4X2hlaWdodCA9IDQw
+OTY7CisKKwlkcm0tPm1vZGVfY29uZmlnLmFsbG93X2ZiX21vZGlmaWVycyA9IHRydWU7CisKKwlk
+cm0tPm1vZGVfY29uZmlnLm5vcm1hbGl6ZV96cG9zID0gdHJ1ZTsKIAotCWVyciA9IGRybV9mYl9o
+ZWxwZXJfcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycyhOVUxMLCAidGVncmFkcm1mYiIs
+IGZhbHNlKTsKKwlkcm0tPm1vZGVfY29uZmlnLmZ1bmNzID0gJnRlZ3JhX2RybV9tb2RlX2NvbmZp
+Z19mdW5jczsKKwlkcm0tPm1vZGVfY29uZmlnLmhlbHBlcl9wcml2YXRlID0gJnRlZ3JhX2RybV9t
+b2RlX2NvbmZpZ19oZWxwZXJzOworCisJZXJyID0gdGVncmFfZHJtX2ZiX3ByZXBhcmUoZHJtKTsK
+IAlpZiAoZXJyIDwgMCkKLQkJZ290byBwdXQ7CisJCWdvdG8gY29uZmlnOworCisJZHJtX2ttc19o
+ZWxwZXJfcG9sbF9pbml0KGRybSk7CisKKwllcnIgPSBob3N0MXhfZGV2aWNlX2luaXQoZGV2KTsK
+KwlpZiAoZXJyIDwgMCkKKwkJZ290byBmYmRldjsKKworCWlmICh0ZWdyYS0+ZG9tYWluKSB7CisJ
+CXU2NCBjYXJ2ZW91dF9zdGFydCwgY2FydmVvdXRfZW5kLCBnZW1fc3RhcnQsIGdlbV9lbmQ7CisJ
+CXU2NCBkbWFfbWFzayA9IGRtYV9nZXRfbWFzaygmZGV2LT5kZXYpOworCQlkbWFfYWRkcl90IHN0
+YXJ0LCBlbmQ7CisJCXVuc2lnbmVkIGxvbmcgb3JkZXI7CisKKwkJc3RhcnQgPSB0ZWdyYS0+ZG9t
+YWluLT5nZW9tZXRyeS5hcGVydHVyZV9zdGFydCAmIGRtYV9tYXNrOworCQllbmQgPSB0ZWdyYS0+
+ZG9tYWluLT5nZW9tZXRyeS5hcGVydHVyZV9lbmQgJiBkbWFfbWFzazsKKworCQlnZW1fc3RhcnQg
+PSBzdGFydDsKKwkJZ2VtX2VuZCA9IGVuZCAtIENBUlZFT1VUX1NaOworCQljYXJ2ZW91dF9zdGFy
+dCA9IGdlbV9lbmQgKyAxOworCQljYXJ2ZW91dF9lbmQgPSBlbmQ7CisKKwkJb3JkZXIgPSBfX2Zm
+cyh0ZWdyYS0+ZG9tYWluLT5wZ3NpemVfYml0bWFwKTsKKwkJaW5pdF9pb3ZhX2RvbWFpbigmdGVn
+cmEtPmNhcnZlb3V0LmRvbWFpbiwgMVVMIDw8IG9yZGVyLAorCQkJCSBjYXJ2ZW91dF9zdGFydCA+
+PiBvcmRlcik7CisKKwkJdGVncmEtPmNhcnZlb3V0LnNoaWZ0ID0gaW92YV9zaGlmdCgmdGVncmEt
+PmNhcnZlb3V0LmRvbWFpbik7CisJCXRlZ3JhLT5jYXJ2ZW91dC5saW1pdCA9IGNhcnZlb3V0X2Vu
+ZCA+PiB0ZWdyYS0+Y2FydmVvdXQuc2hpZnQ7CisKKwkJZHJtX21tX2luaXQoJnRlZ3JhLT5tbSwg
+Z2VtX3N0YXJ0LCBnZW1fZW5kIC0gZ2VtX3N0YXJ0ICsgMSk7CisJCW11dGV4X2luaXQoJnRlZ3Jh
+LT5tbV9sb2NrKTsKKworCQlEUk1fREVCVUdfRFJJVkVSKCJJT01NVSBhcGVydHVyZXM6XG4iKTsK
+KwkJRFJNX0RFQlVHX0RSSVZFUigiICBHRU06ICUjbGx4LSUjbGx4XG4iLCBnZW1fc3RhcnQsIGdl
+bV9lbmQpOworCQlEUk1fREVCVUdfRFJJVkVSKCIgIENhcnZlb3V0OiAlI2xseC0lI2xseFxuIiwg
+Y2FydmVvdXRfc3RhcnQsCisJCQkJIGNhcnZlb3V0X2VuZCk7CisJfQorCisJaWYgKHRlZ3JhLT5o
+dWIpIHsKKwkJZXJyID0gdGVncmFfZGlzcGxheV9odWJfcHJlcGFyZSh0ZWdyYS0+aHViKTsKKwkJ
+aWYgKGVyciA8IDApCisJCQlnb3RvIGRldmljZTsKKwl9CisKKwkvKgorCSAqIFdlIGRvbid0IHVz
+ZSB0aGUgZHJtX2lycV9pbnN0YWxsKCkgaGVscGVycyBwcm92aWRlZCBieSB0aGUgRFJNCisJICog
+Y29yZSwgc28gd2UgbmVlZCB0byBzZXQgdGhpcyBtYW51YWxseSBpbiBvcmRlciB0byBhbGxvdyB0
+aGUKKwkgKiBEUk1fSU9DVExfV0FJVF9WQkxBTksgdG8gb3BlcmF0ZSBjb3JyZWN0bHkuCisJICov
+CisJZHJtLT5pcnFfZW5hYmxlZCA9IHRydWU7CisKKwkvKiBzeW5jcG9pbnRzIGFyZSB1c2VkIGZv
+ciBmdWxsIDMyLWJpdCBoYXJkd2FyZSBWQkxBTksgY291bnRlcnMgKi8KKwlkcm0tPm1heF92Ymxh
+bmtfY291bnQgPSAweGZmZmZmZmZmOworCisJZXJyID0gZHJtX3ZibGFua19pbml0KGRybSwgZHJt
+LT5tb2RlX2NvbmZpZy5udW1fY3J0Yyk7CisJaWYgKGVyciA8IDApCisJCWdvdG8gaHViOworCisJ
+ZHJtX21vZGVfY29uZmlnX3Jlc2V0KGRybSk7CisKKwllcnIgPSBkcm1fZmJfaGVscGVyX3JlbW92
+ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCwgInRlZ3JhZHJtZmIiLAorCQkJCQkJCSAg
+ICBmYWxzZSk7CisJaWYgKGVyciA8IDApCisJCWdvdG8gaHViOworCisJZXJyID0gdGVncmFfZHJt
+X2ZiX2luaXQoZHJtKTsKKwlpZiAoZXJyIDwgMCkKKwkJZ290byBodWI7CiAKIAllcnIgPSBkcm1f
+ZGV2X3JlZ2lzdGVyKGRybSwgMCk7CiAJaWYgKGVyciA8IDApCi0JCWdvdG8gcHV0OworCQlnb3Rv
+IGZiOwogCiAJcmV0dXJuIDA7CiAKK2ZiOgorCXRlZ3JhX2RybV9mYl9leGl0KGRybSk7CitodWI6
+CisJaWYgKHRlZ3JhLT5odWIpCisJCXRlZ3JhX2Rpc3BsYXlfaHViX2NsZWFudXAodGVncmEtPmh1
+Yik7CitkZXZpY2U6CisJaWYgKHRlZ3JhLT5kb21haW4pIHsKKwkJbXV0ZXhfZGVzdHJveSgmdGVn
+cmEtPm1tX2xvY2spOworCQlkcm1fbW1fdGFrZWRvd24oJnRlZ3JhLT5tbSk7CisJCXB1dF9pb3Zh
+X2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRvbWFpbik7CisJCWlvdmFfY2FjaGVfcHV0KCk7CisJ
+fQorCisJaG9zdDF4X2RldmljZV9leGl0KGRldik7CitmYmRldjoKKwlkcm1fa21zX2hlbHBlcl9w
+b2xsX2ZpbmkoZHJtKTsKKwl0ZWdyYV9kcm1fZmJfZnJlZShkcm0pOworY29uZmlnOgorCWRybV9t
+b2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Citkb21haW46CisJaWYgKHRlZ3JhLT5kb21haW4pCisJ
+CWlvbW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5kb21haW4pOworZnJlZToKKwlrZnJlZSh0ZWdyYSk7
+CiBwdXQ6CiAJZHJtX2Rldl9wdXQoZHJtKTsKIAlyZXR1cm4gZXJyOwpAQCAtMTIyOSw4ICsxMTk1
+LDI5IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAq
+ZGV2KQogc3RhdGljIGludCBob3N0MXhfZHJtX3JlbW92ZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAq
+ZGV2KQogewogCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBkZXZfZ2V0X2RydmRhdGEoJmRldi0+
+ZGV2KTsKKwlzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSA9IGRybS0+ZGV2X3ByaXZhdGU7CisJaW50
+IGVycjsKIAogCWRybV9kZXZfdW5yZWdpc3Rlcihkcm0pOworCisJZHJtX2ttc19oZWxwZXJfcG9s
+bF9maW5pKGRybSk7CisJdGVncmFfZHJtX2ZiX2V4aXQoZHJtKTsKKwlkcm1fYXRvbWljX2hlbHBl
+cl9zaHV0ZG93bihkcm0pOworCWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7CisKKwllcnIg
+PSBob3N0MXhfZGV2aWNlX2V4aXQoZGV2KTsKKwlpZiAoZXJyIDwgMCkKKwkJZGV2X2VycigmZGV2
+LT5kZXYsICJob3N0MXggZGV2aWNlIGNsZWFudXAgZmFpbGVkOiAlZFxuIiwgZXJyKTsKKworCWlm
+ICh0ZWdyYS0+ZG9tYWluKSB7CisJCW11dGV4X2Rlc3Ryb3koJnRlZ3JhLT5tbV9sb2NrKTsKKwkJ
+ZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOworCQlwdXRfaW92YV9kb21haW4oJnRlZ3JhLT5j
+YXJ2ZW91dC5kb21haW4pOworCQlpb3ZhX2NhY2hlX3B1dCgpOworCQlpb21tdV9kb21haW5fZnJl
+ZSh0ZWdyYS0+ZG9tYWluKTsKKwl9CisKKwlrZnJlZSh0ZWdyYSk7CiAJZHJtX2Rldl9wdXQoZHJt
+KTsKIAogCXJldHVybiAwOwotLSAKMi4yMy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWw=
