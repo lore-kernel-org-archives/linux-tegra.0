@@ -1,85 +1,186 @@
-From: Anvesh Salveru <anvesh.s@samsung.com>
-Subject: [PATCH 2/2] arm64: tegra: Add support for ZRX-DC phy property
-Date: Mon, 28 Oct 2019 18:12:20 +0530
-Message-ID: <1572266540-17626-3-git-send-email-anvesh.s@samsung.com>
-References: <1572266540-17626-1-git-send-email-anvesh.s@samsung.com>
-        <CGME20191028124258epcas5p17861f4fdb40385a184fc397f45c898a5@epcas5p1.samsung.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v6 00/18] Consolidate and improve NVIDIA Tegra CPUIDLE
+ driver(s)
+Date: Mon, 28 Oct 2019 16:04:43 +0200
+Message-ID: <20191028140443.GA27141@pdeschrijver-desktop.Nvidia.com>
+References: <20191015170015.1135-1-digetx@gmail.com>
+ <20191016192133.GB26038@pdeschrijver-desktop.Nvidia.com>
+ <72636eb3-5354-eea3-3a51-4975a04186b2@gmail.com>
+ <53ee8bd3-5c53-f0aa-175c-7fa3024d0af5@gmail.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1572266540-17626-1-git-send-email-anvesh.s@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <53ee8bd3-5c53-f0aa-175c-7fa3024d0af5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, thierry.reding@gmail.com, jonathanh@nvidia.com, Anvesh Salveru <anvesh.s@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-DesignWare controller driver provides the support to handle the PHYs which
-are compliant to ZRX-DC specification based on "snps,phy-zrxdc-compliant"
-DT property. So, add "snps,phy-zrxdc-compliant" property in tegra pcie
-controller DT nodes.
+On Wed, Oct 16, 2019 at 11:14:07PM +0300, Dmitry Osipenko wrote:
+> 16.10.2019 22:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 16.10.2019 22:21, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> On Tue, Oct 15, 2019 at 07:59:57PM +0300, Dmitry Osipenko wrote:
+> >>> Hello,
+> >>>
+> >>> This series does the following:
+> >>>
+> >>>   1. Unifies Tegra20/30/114 drivers into a single driver and moves it=
+ out
+> >>>      into common drivers/cpuidle/ directory.
+> >>>
+> >>>   2. Enables CPU cluster power-down idling state on Tegra30.
+> >>>
+> >>> In the end there is a quite nice clean up of the Tegra CPUIDLE driver=
+s
+> >>> and of the Tegra's arch code in general. Please review, thanks!
+> >>>
+> >>> Changelog:
+> >>>
+> >>> v6: - Addressed request from Thierry Reding to change the way patches=
+ are
+> >>>       organized by making changes in a more incremental manner.
+> >>>
+> >>>     - tegra_sleep_cpu() now checks for the secondary CPUs to be offli=
+ne
+> >>>       in the "Make outer_disable() open-coded" patch.
+> >>>
+> >>> v5: - Rebased on a recent linux-next, fixed one minor conflict in Kco=
+nfig.
+> >>>
+> >>>     - Improved commit's message of the "Support CPU cluster power-dow=
+n state
+> >>>       on Tegra30" patch.
+> >>>
+> >>>     - The "Support CPU cluster power-down state on Tegra30" patch is =
+also
+> >>>       got split and now there is additional "Make outer_disable() ope=
+n-coded"
+> >>>       patch.
+> >>>
+> >>>     - Made minor cosmetic changes to the "Introduce unified driver fo=
+r
+> >>>       NVIDIA Tegra SoCs" patch by improving error message and renamin=
+g
+> >>>       one variable.
+> >>>
+> >>> v4: - Fixed compilation with !CONFIG_CACHE_L2X0 (and tested that it s=
+till
+> >>>       works).
+> >>>
+> >>>     - Replaced ktime_compare() with ktime_before() in the new driver,
+> >>>       for consistency.
+> >>>
+> >>> v3: - Addressed review comments that were made by Jon Hunter to v2 by
+> >>>       splitting patches into smaller (and simpler) chunks, better
+> >>>       documenting changes in the commit messages and using proper err=
+or
+> >>>       codes in the code.
+> >>>
+> >>>       Warnings are replaced with a useful error messages in the code =
+of
+> >>>       "Introduce unified driver for NVIDIA Tegra SoCs" patch.
+> >>>
+> >>>       Secondary CPUs parking timeout increased to 100ms because I fou=
+nd
+> >>>       that it actually may happen to take more than 1ms if CPU is run=
+ning
+> >>>       on a *very* low frequency.
+> >>>
+> >>>       Added diagnostic messages that are reporting Flow Controller st=
+ate
+> >>>       when CPU parking fails.
+> >>>
+> >>>       Further polished cpuidle driver's code.
+> >>>
+> >>>       The coupled state entering is now aborted if there is a pending=
+ SGI
+> >>>       (Software Generated Interrupt) because it will be lost after GI=
+C's
+> >>>       power-cycling. Like it was done by the old Tegra20 CPUIDLE driv=
+er.
+> >>>
+> >>> v2: - Added patches to enable the new cpuidle driver in the defconfig=
+s:
+> >>>
+> >>>         ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+> >>>         ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
+> >>>
+> >>>     - Dropped patches that removed CPUIDLE_FLAG_TIMER_STOP from the i=
+dling
+> >>>       states because that flag actually doesn't have any negative eff=
+ects,
+> >>>       but still is correct for the case of a local CPU timer on older=
+ Tegra
+> >>>       SoCs:
+> >>>
+> >>>         cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from Tegra114/=
+124 idle-state
+> >>>         cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from all state=
+s
+> >>>
+> >>>     - The "Add unified driver for NVIDIA Tegra SoCs" patch got more p=
+olish.
+> >>>       Tegra30 and Terga114 states are now squashed into a single comm=
+on C7
+> >>>       state (following Parker TRM terminology, see 17.2.2.2 Power Man=
+agement
+> >>>       States), more comments added, etc minor changes.
+> >>
+> >> It would be useful to switch the power state terminology to the one us=
+ed
+> >> for later chips:
+> >>
+> >> LP0 becomes SC7
+> >> LP1 becomes C1
+> >> LP2 becomes CC7
+> >>
+> >> Meaning of these states is as follows
+> >>
+> >> C is a core state:
+> >>
+> >> C1 clock gating
+> >> C2 not defined
+> >> C3 not defined
+> >> C4 not defined
+> >> C5 not defined
+> >> C6 not defined for ARM cores
+> >> C7 power-gating
+> >>
+> >> CC is a CPU cluster C state:
+> >>
+> >> CC1 cluster clock gated
+> >> CC2 not defined
+> >> CC3 fmax@Vmin: not used prior to Tegra186
+> >> CC4: cluster retention: no longer supported
+> >> CC5: not defined
+> >> CC6: cluster power gating
+> >> CC7: cluster rail gating
+> >>
+> >> SC is a System C state:
+> >>
+> >> SC1: not defined
+> >> SC2: not defined
+> >> SC3: not defined
+> >> SC4: not defined
+> >> SC5: not defined
+> >> SC6: not defined
+> >> SC7: VDD_SOC off
+> >=20
+> > Hello Peter,
+> >=20
+> > But new "drivers/cpuidle/cpuidle-tegra.c" uses exactly that terminology=
+,
+> > please see "cpuidle: Refactor and move NVIDIA Tegra20 driver into
+> > drivers/cpuidle/" and further patches. Am I missing something? Or do yo=
+u
+> > want the renaming to be a separate patch?
+> >=20
+>=20
+> Or maybe you're suggesting to change the names everywhere and not only
+> in the cpuidle driver? Please clarify :)
 
-CC: Rob Herring <robh+dt@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
-Depends on the following patch:
-https://patchwork.kernel.org/patch/11215241/
-https://patchwork.kernel.org/patch/11215239/
+At least some of the variable and function names still say lp2?
 
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 3c0cf54f0aab..bf2dbf84c8c9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1194,6 +1194,7 @@
- 		ranges = <0x81000000 0x0  0x30100000 0x0  0x30100000 0x0 0x00100000   /* downstream I/O (1MB) */
- 			  0xc2000000 0x12 0x00000000 0x12 0x00000000 0x0 0x30000000   /* prefetchable memory (768MB) */
- 			  0x82000000 0x0  0x40000000 0x12 0x30000000 0x0 0x10000000>; /* non-prefetchable memory (256MB) */
-+		snps,phy-zrxdc-compliant;
- 	};
- 
- 	pcie@14120000 {
-@@ -1240,6 +1241,7 @@
- 		ranges = <0x81000000 0x0  0x32100000 0x0  0x32100000 0x0 0x00100000   /* downstream I/O (1MB) */
- 			  0xc2000000 0x12 0x40000000 0x12 0x40000000 0x0 0x30000000   /* prefetchable memory (768MB) */
- 			  0x82000000 0x0  0x40000000 0x12 0x70000000 0x0 0x10000000>; /* non-prefetchable memory (256MB) */
-+		snps,phy-zrxdc-compliant;
- 	};
- 
- 	pcie@14140000 {
-@@ -1286,6 +1288,7 @@
- 		ranges = <0x81000000 0x0  0x34100000 0x0  0x34100000 0x0 0x00100000   /* downstream I/O (1MB) */
- 			  0xc2000000 0x12 0x80000000 0x12 0x80000000 0x0 0x30000000   /* prefetchable memory (768MB) */
- 			  0x82000000 0x0  0x40000000 0x12 0xb0000000 0x0 0x10000000>; /* non-prefetchable memory (256MB) */
-+		snps,phy-zrxdc-compliant;
- 	};
- 
- 	pcie@14160000 {
-@@ -1332,6 +1335,7 @@
- 		ranges = <0x81000000 0x0  0x36100000 0x0  0x36100000 0x0 0x00100000   /* downstream I/O (1MB) */
- 			  0xc2000000 0x14 0x00000000 0x14 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
- 			  0x82000000 0x0  0x40000000 0x17 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
-+		snps,phy-zrxdc-compliant;
- 	};
- 
- 	pcie@14180000 {
-@@ -1378,6 +1382,7 @@
- 		ranges = <0x81000000 0x0  0x38100000 0x0  0x38100000 0x0 0x00100000   /* downstream I/O (1MB) */
- 			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
- 			  0x82000000 0x0  0x40000000 0x1b 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
-+		snps,phy-zrxdc-compliant;
- 	};
- 
- 	pcie@141a0000 {
-@@ -1428,6 +1433,7 @@
- 		ranges = <0x81000000 0x0  0x3a100000 0x0  0x3a100000 0x0 0x00100000   /* downstream I/O (1MB) */
- 			  0xc2000000 0x1c 0x00000000 0x1c 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
- 			  0x82000000 0x0  0x40000000 0x1f 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
-+		snps,phy-zrxdc-compliant;
- 	};
- 
- 	sysram@40000000 {
--- 
-2.17.1
+Peter.
