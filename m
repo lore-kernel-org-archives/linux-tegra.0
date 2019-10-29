@@ -1,83 +1,79 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
- time
-Date: Tue, 29 Oct 2019 14:37:06 +0100
-Message-ID: <20191029133706.GH508460@ulmo>
+Subject: Re: [PATCH v5 2/2] soc/tegra: pmc: Remove unnecessary memory barrier
+Date: Tue, 29 Oct 2019 14:37:24 +0100
+Message-ID: <20191029133724.GI508460@ulmo>
 References: <20190926191755.27131-1-digetx@gmail.com>
+ <20190926191755.27131-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3ecMC0kzqsE2ddMN"
+        protocol="application/pgp-signature"; boundary="BWWlCdgt6QLN7tv3"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190926191755.27131-1-digetx@gmail.com>
+In-Reply-To: <20190926191755.27131-2-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---3ecMC0kzqsE2ddMN
+--BWWlCdgt6QLN7tv3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2019 at 10:17:54PM +0300, Dmitry Osipenko wrote:
-> It is possible to get a lockup if kernel decides to enter LP2 cpuidle
-> from some clk-notifier, in that case CCF's "prepare" mutex is kept locked
-> and thus clk_get_rate(pclk) blocks on the same mutex with interrupts being
-> disabled, hanging machine.
+On Thu, Sep 26, 2019 at 10:17:55PM +0300, Dmitry Osipenko wrote:
+> The removed barrier isn't needed because writes/reads are strictly ordered
+> and even if PMC had separate ports for writes, it wouldn't matter since
+> the hardware logic takes into effect after triggering CPU's power-gating
+> and at that point all CPU accesses are guaranteed to be completed. That
+> barrier was copied from the old arch/ code during transition to the soc/
+> PMC driver and even that the code structure was different back then, the
+> barrier didn't have a real useful purpose from the start. Lastly, the
+> tegra_pmc_writel() naturally inserts wmb() because it uses writel(),
+> and thus this change doesn't actually make any difference in terms of
+> interacting with hardware. Hence let's remove the barrier to clean up
+> code a tad.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
 >=20
 > Changelog:
 >=20
-> v5: Clk notifier now takes powergates_lock to avoid potential racing with
->     tegra_io_pad_*().
+> v5: Extended the commit's message.
 >=20
->     The original fallback to 100MHz when clk_get_rate() fails is preserved
->     now.
+> v4: No changes.
 >=20
-> v4: Added clk-notifier to track PCLK rate-changes, which may become useful
->     in the future. That's done in response to v3 review comment from Peter
->     De Schrijver.
+> v3: No changes.
 >=20
->     Now properly handling case where clk pointer is intentionally NULL on
->     the driver's probe.
+> v2: New patch that was added after Jon's Hunter pointing that it's better
+>     not to change the barrier's placement in the code. In fact the barrier
+>     is not needed at all.
 >=20
-> v3: Changed commit's message because I actually recalled what was the
->     initial reason for the patch, since the problem reoccurred once again.
->=20
-> v2: Addressed review comments that were made by Jon Hunter to v1 by
->     not moving the memory barrier, replacing one missed clk_get_rate()
->     with pmc->rate, handling possible clk_get_rate() error on probe and
->     slightly adjusting the commits message.
->=20
->  drivers/soc/tegra/pmc.c | 71 ++++++++++++++++++++++++++++++++---------
->  1 file changed, 56 insertions(+), 15 deletions(-)
+>  drivers/soc/tegra/pmc.c | 2 --
+>  1 file changed, 2 deletions(-)
 
 Applied to for-5.5/soc, thanks.
 
 Thierry
 
---3ecMC0kzqsE2ddMN
+--BWWlCdgt6QLN7tv3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24QIIACgkQ3SOs138+
-s6FSwxAAizux6FGJiu8C/lxKhpOifS4J9zZnsoI30S8mDSYeeRt1IqLcxtOXNiVL
-Ch4E4gBOE6MMI7PWaiWwvTPcJSD9dR9Fc4RMvs30DN1dapyuuBANuqsiSWjeok7v
-fomzpCvZl4BHwKP1FkNZTL39B5z9r4tdAP4DRQz3fOuMi3qU135f+RPJuVXkdmHk
-DfirDHIvTvNYJNUY7EZjUZvHvno7ai/yuUiHAayXghcUrP8xEk4iYxWfXonAoqWC
-TYVItuoUXz1KcBNPEpPKMIU2DstXE3IiDaTOB2wn9ooxI+nnKSN0It9DRQQTLc/Y
-0LrOSwMi0OhJV3FlMoFc82t582ZxSwTcSkF629p4CX+M9JEuvFZ7r3oEi/WkP+3+
-ZuMSQihQ02wjdzsX+zaxfV2SJRvGl8Q8HgbaZDwiVsY7ZpUeWT+ud8MzHCvV7WHE
-CJMjKPfhXep54kUTIzTK8prZ9JTq4HIHCnaljszzrvDDbcFtp1GfVlJTMdAYYlaV
-TZH5hPnzG3EkX2tF0ND0Ovfej1+t4ea9rwf6p0JywAfQxISawPKSPK91DoWw7vFN
-DcinaU1607kTJdfx1ucKWEUjx/h3eChE2baLeRfaF2xWRYlTvPCWcis7H68TZVSm
-axjmHvrRbHhjYRwOp0mha6ltwZgGiEu8x9LuliyVkqOQtJmIAUA=
-=ISZs
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24QJQACgkQ3SOs138+
+s6HNfxAAhvdZb9TVwUyihU77Cp2yuc6tebSSK5Yl0IrOtTn4JKTl8uuFtEK7O3QQ
+6MdTr9Ofp7fEtaaVYrO7rLt5u4tAq4l4Ft+bt740yREhbL8Il4dMIsgcFDghLNN4
+GACFzwZzf7GwWGQtU3Sea8LiKDVpw8L+yyh6HMERXojFBQLby2Duww3qEWiXOoVd
+qMRLaxshIiRk6EhAzIdvSYGOF5KTFClZPbsmaoIovEn7eQy6OgeMSz2OjicFTD8x
+9OI0eCxlFGZEdYFe9UXoMzEREPg3b4rX06II+jdxC1cRCylm9GO89TcOxnPLYHK8
+hlmjmhsSDwumUbURl08rKtW/GMLhY6QEjq+mpJpouGryusRX5M+0fmUN6A/yWn1j
+GD7ZEO8D/TNM2uVEQoh7oGKYCrG6KIC9eXIb4F4UlxlusvRUB1gOO8sNUmc2pMUF
+RLZ7fp2h+KJyPOSW7ozAoVF+KFv5+u3C13PzusAqw3OW+LNFrSKUVob5fXRwaJQG
+vH06w6+uAhkfSKgnNlc/LyW3xvnDMNrcpjCUGVsD5ORbutLk4l55fhvO+84lgar1
+UKyf4VdH6du1HFeemXWipknjnQTTUjjMLNsJmBdZF6CqhydBbjwlZmx1gIjuf2tP
+qNqZXljihEpqdomc1/O7mlsdRQAfVvhcNUTestjRCGDgy1Syjgo=
+=UCFl
 -----END PGP SIGNATURE-----
 
---3ecMC0kzqsE2ddMN--
+--BWWlCdgt6QLN7tv3--
