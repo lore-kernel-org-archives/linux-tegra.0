@@ -1,59 +1,40 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 09/18] clk: tegra: Add missing stubs for the case of
- !CONFIG_PM_SLEEP
-Date: Tue, 29 Oct 2019 14:19:15 +0100
-Message-ID: <20191029131915.GE508460@ulmo>
-References: <20191015170015.1135-1-digetx@gmail.com>
- <20191015170015.1135-10-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra: divider: Support enable-bit for Super
+ clocks
+Date: Tue, 29 Oct 2019 16:20:36 +0300
+Message-ID: <74ee0e7f-c257-8fdf-bf3f-eefab3281dfa@gmail.com>
+References: <20190723025245.27754-1-digetx@gmail.com>
+ <20190723025245.27754-2-digetx@gmail.com>
+ <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Rgf3q3z9SdmXC6oT"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191015170015.1135-10-digetx@gmail.com>
+In-Reply-To: <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+28.10.2019 17:41, Peter De Schrijver пишет:
+> On Tue, Jul 23, 2019 at 05:52:45AM +0300, Dmitry Osipenko wrote:
+>> All Super clocks have a divider that has the enable bit.
+>>
+> 
+> This is broken to begin with. The only clock of this type in upstream is SCLK
+> I think. However, this clock is not a normal divider, it's a skipper, so
+> the normal divider logic doesn't work for it. In practice this clock is
+> only used when scaling SCLK, which is not (yet) done in the upstream
+> kernel due to the complex DVFS relationship between sclk, hclk and pclk.
+> A driver for it can be found here:
+> https://nv-tegra.nvidia.com/gitweb/?p=linux-4.9.git;a=blob;f=drivers/clk/tegra/clk-skipper.c;h=f5da4f6ca44fe194c87f66be70c708e9791db74d;hb=eb8dd21affa2be45fc29be8c082194ac4032393a
+> As you can see in that tree, we eventually splitted sclk into three
+> clocks:
+> 
+> sclk_mux (controls SCLK_BURST_POLICY register)
+> sclk (controls SOURCE_SYS register which is like a normal peripheral
+> clock but without the mux)
+> sclk_skipper (controls SCLK_DIVIDER)
 
---Rgf3q3z9SdmXC6oT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 15, 2019 at 08:00:06PM +0300, Dmitry Osipenko wrote:
-> The new CPUIDLE driver uses the Tegra's CLK API and that driver won't
-> strictly depend on CONFIG_PM_SLEEP, hence add the required stubs in
-> order to allow compiling of the new driver with the CONFIG_PM_SLEEP=3Dn.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  include/linux/clk/tegra.h | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-
-Applied to for-5.5/clk, thanks.
-
-Thierry
-
---Rgf3q3z9SdmXC6oT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24PFIACgkQ3SOs138+
-s6GpQA/+ObhDGFKfUw2kmzmVofglBZKfac9iUKEOtJRjpACY1HQzbddmh7XDV0kz
-x3ZpXS/64v2SYFT1MEDg+P0HIE9VEMhn0gTuht4eH6koVffOmKQW0mMcnmNXA0vT
-Xz4DSqpdEa+1povmLaifTj6FAGsuT2FQXuK+eWA0UFkW3407KhhazMuwuJvlQ77J
-0bq78zIdwRH33kP6MgZvTF94dggX02TsRt8x3FQxGjo6lxan5qe18h06/sTUGW4j
-QvshCliwMiCaSskcQCULJYuRX9f54Iu6HkcmqURzP1LohAM4o7NnFboxKorGQAbY
-76j6WB6i7O5isg5Ng0wV3YH/xHTuptMzX12iniF3BqwYWXab2J2qyNQ7ipnFlDvY
-Y9m2caM4cPfILsUozrjvQqGWOkg8EujGzDhEOkqwGI1zj2rE0QzSTZbYFLYNp2ka
-jHVMR+TN2Q4pwBTOPmJ4r2hPoy9KvTTEfLMU6T931lPPjNSKONvlr0oNz7fxVE2H
-1adqcQRShR6hM1UzuFA3J9mjP8bqYFPYRIMVazpM6nQMwHTDSq9j/IIHp7LpFuVr
-uDxLZYmA+mP7Sbo2eBAK3qwrR2Hgnyv4+tyLquKGuns+1mdP2B3+Nkw8Xrpf8b5c
-RRWen5QU639f+YV7G6qxSxhljZri59qMYqGoQojtUZxIvMdNtyo=
-=lnmo
------END PGP SIGNATURE-----
-
---Rgf3q3z9SdmXC6oT--
+I'll drop this patch, thanks again for the clarification.
