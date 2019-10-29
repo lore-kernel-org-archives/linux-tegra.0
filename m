@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 02/19] PM / devfreq: tegra30: Keep interrupt disabled while governor is stopped
-Date: Wed, 30 Oct 2019 01:00:02 +0300
-Message-ID: <20191029220019.26773-3-digetx@gmail.com>
+Subject: [PATCH v7 06/19] PM / devfreq: tegra30: Use kHz units uniformly in the code
+Date: Wed, 30 Oct 2019 01:00:06 +0300
+Message-ID: <20191029220019.26773-7-digetx@gmail.com>
 References: <20191029220019.26773-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,123 +12,66 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no real need to keep interrupt always-enabled, will be nicer
-to keep it disabled while governor is inactive.
+Part of the code uses Hz units and the other kHz, let's switch to kHz
+everywhere for consistency. A small benefit from this change (besides
+code's cleanup) is that now powertop utility correctly displays devfreq's
+stats, for some reason it expects them to be in kHz.
 
-Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 47 ++++++++++++++++---------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index a27300f40b0b..8be6a33beb9c 100644
+index 1d22f5239cd5..06c5376a7201 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -11,6 +11,7 @@
- #include <linux/devfreq.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
-@@ -416,8 +417,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
- {
- 	unsigned int i;
+@@ -448,7 +448,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+ 	rate = dev_pm_opp_get_freq(opp);
+ 	dev_pm_opp_put(opp);
  
--	disable_irq(tegra->irq);
--
- 	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
- 		      ACTMON_GLB_PERIOD_CTRL);
+-	err = clk_set_min_rate(tegra->emc_clock, rate);
++	err = clk_set_min_rate(tegra->emc_clock, rate * KHZ);
+ 	if (err)
+ 		return err;
  
-@@ -442,8 +441,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+@@ -477,7 +477,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+ 	stat->private_data = tegra;
+ 
+ 	/* The below are to be used by the other governors */
+-	stat->current_frequency = cur_freq * KHZ;
++	stat->current_frequency = cur_freq;
+ 
+ 	actmon_dev = &tegra->devices[MCALL];
+ 
+@@ -527,7 +527,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+ 		target_freq = max(target_freq, dev->target_freq);
  	}
  
- 	actmon_write_barrier(tegra);
--
--	enable_irq(tegra->irq);
- }
+-	*freq = target_freq * KHZ;
++	*freq = target_freq;
  
- static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-@@ -552,6 +549,12 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
- {
- 	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
- 
-+	/*
-+	 * Couple device with the governor early as it is needed at
-+	 * the moment of governor's start (used by ISR).
-+	 */
-+	tegra->devfreq = devfreq;
-+
- 	switch (event) {
- 	case DEVFREQ_GOV_START:
- 		devfreq_monitor_start(devfreq);
-@@ -586,10 +589,11 @@ static struct devfreq_governor tegra_devfreq_governor = {
- 
- static int tegra_devfreq_probe(struct platform_device *pdev)
- {
--	struct tegra_devfreq *tegra;
- 	struct tegra_devfreq_device *dev;
--	unsigned int i;
-+	struct tegra_devfreq *tegra;
-+	struct devfreq *devfreq;
- 	unsigned long rate;
-+	unsigned int i;
- 	int err;
- 
- 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-@@ -625,6 +629,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 	}
- 	tegra->irq = err;
- 
-+	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
-+
-+	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
-+					actmon_thread_isr, IRQF_ONESHOT,
-+					"tegra-devfreq", tegra);
-+	if (err) {
-+		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
-+		return err;
-+	}
-+
- 	reset_control_assert(tegra->reset);
- 
- 	err = clk_prepare_enable(tegra->clock);
-@@ -672,28 +686,15 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 	}
- 
- 	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
--	tegra->devfreq = devfreq_add_device(&pdev->dev,
--					    &tegra_devfreq_profile,
--					    "tegra_actmon",
--					    NULL);
--	if (IS_ERR(tegra->devfreq)) {
--		err = PTR_ERR(tegra->devfreq);
-+	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
-+				     "tegra_actmon", NULL);
-+	if (IS_ERR(devfreq)) {
-+		err = PTR_ERR(devfreq);
- 		goto remove_governor;
- 	}
- 
--	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
--					actmon_thread_isr, IRQF_ONESHOT,
--					"tegra-devfreq", tegra);
--	if (err) {
--		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
--		goto remove_devfreq;
--	}
--
  	return 0;
+ }
+@@ -663,7 +663,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 			goto remove_opps;
+ 		}
  
--remove_devfreq:
--	devfreq_remove_device(tegra->devfreq);
--
- remove_governor:
- 	devfreq_remove_governor(&tegra_devfreq_governor);
+-		err = dev_pm_opp_add(&pdev->dev, rate, 0);
++		err = dev_pm_opp_add(&pdev->dev, rate / KHZ, 0);
+ 		if (err) {
+ 			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
+ 			goto remove_opps;
+@@ -686,7 +686,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		goto unreg_notifier;
+ 	}
  
+-	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
++	tegra_devfreq_profile.initial_freq = tegra->cur_freq;
++
+ 	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
+ 				     "tegra_actmon", NULL);
+ 	if (IS_ERR(devfreq)) {
 -- 
 2.23.0
