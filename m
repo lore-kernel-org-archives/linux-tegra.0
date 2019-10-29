@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 09/19] PM / devfreq: tegra30: Reset boosting on startup
-Date: Wed, 30 Oct 2019 01:00:09 +0300
-Message-ID: <20191029220019.26773-10-digetx@gmail.com>
+Subject: [PATCH v7 15/19] PM / devfreq: tegra30: Disable consecutive interrupts when appropriate
+Date: Wed, 30 Oct 2019 01:00:15 +0300
+Message-ID: <20191029220019.26773-16-digetx@gmail.com>
 References: <20191029220019.26773-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,30 +12,57 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Governor could be stopped while boosting is active. We have assumption
-that everything is reset on governor's restart, including the boosting
-value, which was missed.
+Consecutive interrupts should be disabled when boosting is completed.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
+Currently the disabling of "lower" interrupt happens only for MCCPU
+monitor that uses dependency threshold, but even in a case of MCCPU the
+interrupt isn't getting disabled if CPU's activity is above the threshold.
+This results in a lot of dummy interrupt requests. The boosting feature is
+used by both MCCPU and MCALL, boosting should be stopped once it reaches 0
+for both of the monitors and regardless of the activity level.
+
+The boosting stops to grow once the maximum limit is hit and thus the
+"upper" interrupt needs to be disabled when the limit is reached.
+
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/devfreq/tegra30-devfreq.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 1934b4eb4e78..fb1163aaaae7 100644
+index a9336cf4b37a..b745a973c35a 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -467,6 +467,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
- {
- 	u32 val = 0;
+@@ -259,8 +259,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
  
-+	/* reset boosting on governor's restart */
-+	dev->boost_freq = 0;
-+
- 	dev->target_freq = tegra->cur_freq;
+ 		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
  
- 	dev->avg_count = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
+-		if (dev->boost_freq >= tegra->max_freq)
++		if (dev->boost_freq >= tegra->max_freq) {
++			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+ 			dev->boost_freq = tegra->max_freq;
++		}
+ 	} else if (intr_status & ACTMON_DEV_INTR_CONSECUTIVE_LOWER) {
+ 		/*
+ 		 * new_boost = old_boost * down_coef
+@@ -271,15 +273,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 
+ 		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+ 
+-		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1))
+-			dev->boost_freq = 0;
+-	}
+-
+-	if (dev->config->avg_dependency_threshold) {
+-		if (dev->avg_count >= dev->config->avg_dependency_threshold)
+-			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+-		else if (dev->boost_freq == 0)
++		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1)) {
+ 			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
++			dev->boost_freq = 0;
++		}
+ 	}
+ 
+ 	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
 -- 
 2.23.0
