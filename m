@@ -1,79 +1,63 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 0/3] Support regulators coupling on NVIDIA Tegra20/30
-Date: Tue, 29 Oct 2019 14:02:22 +0100
-Message-ID: <20191029130222.GA508460@ulmo>
-References: <20190725151832.9802-1-digetx@gmail.com>
+Subject: Re: [PATCH v3] ARM: tegra: Enable Tegra VDE driver in tegra_defconfig
+Date: Tue, 29 Oct 2019 14:11:13 +0100
+Message-ID: <20191029131113.GB508460@ulmo>
+References: <20190623170730.5095-1-digetx@gmail.com>
+ <20190623170730.5095-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190725151832.9802-1-digetx@gmail.com>
+In-Reply-To: <20190623170730.5095-3-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---1yeeQ81UyVL57Vl7
+--rS8CxjVDS/+yyDmU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2019 at 06:18:29PM +0300, Dmitry Osipenko wrote:
-> Hello,
+On Sun, Jun 23, 2019 at 08:07:25PM +0300, Dmitry Osipenko wrote:
+> The video decoder driver was tested by time and works absolutely fine.
+> The reason why it is in staging is because it doesn't provide common V4L
+> interface yet, this shouldn't stop driver enabling in the defconfig since
+> our userspace (libvdpau-tegra) provides combined acceleration of decoding
+> and displaying without use of V4L.
 >=20
-> The voltage regulators need to be coupled on NVIDIA Tegra20 and Tegra30
-> SoCs in order to provide voltage scaling functionality in a generic way.
-> All necessary regulator-core patches that added support for the regulators
-> coupling are already have been merge into mainline kernel. This series
-> adds customized voltage couplers for Tegra20/30 SoCs, paving the way for
-> a refined CPUFreq driver that will utilize voltage scaling and other neat
-> features. This is a resend of a leftover patches from a previous series
-> [1] that was partially applied by Mark Brown. Please review, thanks in
-> advance!
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 >=20
-> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D115626
+> No changes since v1.
 >=20
-> Changelog:
->=20
-> v2: - Some days ago OPP framework got a change that makes CPU regulator
->       to be enabled at the time of CPUFreq's driver initializing OPPs.
->       In a result the CPU's voltage is dropped to a minimum value on
->       CPUFreq's setting up because there are no consumers at the time
->       of regulator's enabling, thus CPU is getting into a big trouble.
->       This problem is now resolved in the couplers code by assuming
->       that min_uV=3Dcurrent_uV for CPU's regulator if it doesn't have
->       any active consumers.
->=20
-> Dmitry Osipenko (3):
->   dt-bindings: regulator: Document regulators coupling of NVIDIA
->     Tegra20/30 SoCs
->   soc/tegra: regulators: Add regulators coupler for Tegra20
->   soc/tegra: regulators: Add regulators coupler for Tegra30
+>  arch/arm/configs/tegra_defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 
-All three patches applied, thanks.
+Applied to for-5.5/arm/defconfig, thanks.
 
 Thierry
 
---1yeeQ81UyVL57Vl7
+--rS8CxjVDS/+yyDmU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24OFwACgkQ3SOs138+
-s6EL6hAAmsRFT55RAhQ6AhkSpGk/FCoDTu+zuHf3m3lS91LuGmYCkvxyKiCgkTBf
-ZzEgbaqOlM7FdaW++Au+vGooywMUwgsDyBw6rzSPTiz54Vt3YxEcs1HukLf9almB
-IvmO9AoRf6ifH6wZLNbYLrzsdpOxjgKJMxmOn2XZh6hyPS03Olp/T+m3DhXNUAz6
-B7LUK2DheI14aQ1OPs9RP6SnN+g/tXdO9k5tGuqqI/OXkUdTqNN1l/uIWcKhYoYK
-0Wi3wdp50qsuAOxAWuqX7miWV/eewLO2XM+uB7Xe0ooqspCbK5iiQC+pp+EF08u0
-7IuF5kb7arW5yeAbnMfvCiOWFY5bqk5VrRgeUWjOGfkh6ZcqzOT3PLaC/jlCMCvB
-u47/l/XN2YQFjHooZT8GngezSDwBkTHBSbJr2xz8gxGnMWnIaKo2sVR+Xps0TT1W
-UXFQLorJd608gPu4+5unZDJKf9EhgSDr4umndO6YgNQd2WH5A+I+OQPHdDbpYdML
-baZC33pLnN/rjm9alKzOird/NUlLJ6boFc4p2nscQs4barX9geQqOol2i02PfETv
-NxQvf+simgk5WazA7aogM9oKFckaYlXIQ8VRS2a7YyL0lW7bdAZEbD4Bdz982gDb
-nGtTq+SYRfsFhZFxN504UGy8lbYcU+szGcys81vBHXpDYgDcYf8=
-=F8yu
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24OnEACgkQ3SOs138+
+s6Hsug/8D9ZjFD1Ul/3scNpLRp1IPnTWhhx+W0DZAVdANmT+CS6SbGdGwL2DeHGm
+sTknFJzDEf7x1IOgajb5NcJioElqnPjE4fCQaCUSruNk1mKQjoef3nWlvGWrJxv6
+CkLeOFt42etHWRUm47LlBEBhqMZzJ3yFudszWQK1Qm1rtJrfT31IQY14COZAQZQJ
+cV98i/HGAmcmrWwPRTm2Kj3HzoZ+qtmFF5Cfk2HqIs7UPz8K4KaNGpbBalAo/6NC
+rTVa0nkxIq/hIFKzJ2w8Wq8dJi+fqeaLGKzmzWt0Y9yKCkLRcGW3/jVo+3mSNKf2
+a0Mvs1dWpVgiYvAcWuANX3sWDipX0qhyq4jvZ81mdsB0tFA25n3sC9gY3aVMphZO
+iZTMA69bo0CIJZLceuTMB6KbMK5VQHgyDrDVJyOc45ZT8jZ4KYkXXmB+oBGJqRPA
+/Jw14esu2ojr0Rv54QHzr9ttSypo6TpB70Hy5k0Co8lye3uziOQxcbPhcyWNt3au
+Wqa1bczkQoOLaRrjQ/YHzsfAImkBRb3r1uhEhSuAhbhtKU0qXsbT4izhqCHKrjpS
+b6NAOAYbA2kX0RPNjVBhGzR5tRS3vafubRYrtOud08HPmW5EFMmzqktn4FOeBVb9
+07FZAlIhmhmnvremuifeN+1g4o1XGyloWEzgpA+0uXQitd090v8=
+=q4xx
 -----END PGP SIGNATURE-----
 
---1yeeQ81UyVL57Vl7--
+--rS8CxjVDS/+yyDmU--
