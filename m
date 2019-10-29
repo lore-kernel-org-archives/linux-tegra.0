@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 01/19] PM / devfreq: tegra30: Change irq type to unsigned int
-Date: Wed, 30 Oct 2019 01:00:01 +0300
-Message-ID: <20191029220019.26773-2-digetx@gmail.com>
+Subject: [PATCH v7 09/19] PM / devfreq: tegra30: Reset boosting on startup
+Date: Wed, 30 Oct 2019 01:00:09 +0300
+Message-ID: <20191029220019.26773-10-digetx@gmail.com>
 References: <20191029220019.26773-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,47 +12,30 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-IRQ numbers are always positive, hence the corresponding variable should
-be unsigned to keep types consistent. This is a minor change that cleans
-up code a tad more.
+Governor could be stopped while boosting is active. We have assumption
+that everything is reset on governor's restart, including the boosting
+value, which was missed.
 
-Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index a6ba75f4106d..a27300f40b0b 100644
+index 1934b4eb4e78..fb1163aaaae7 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -160,7 +160,7 @@ struct tegra_devfreq {
+@@ -467,6 +467,9 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+ {
+ 	u32 val = 0;
  
- 	struct tegra_devfreq_device devices[ARRAY_SIZE(actmon_device_configs)];
++	/* reset boosting on governor's restart */
++	dev->boost_freq = 0;
++
+ 	dev->target_freq = tegra->cur_freq;
  
--	int irq;
-+	unsigned int		irq;
- };
- 
- struct tegra_actmon_emc_ratio {
-@@ -618,12 +618,12 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 		return PTR_ERR(tegra->emc_clock);
- 	}
- 
--	tegra->irq = platform_get_irq(pdev, 0);
--	if (tegra->irq < 0) {
--		err = tegra->irq;
-+	err = platform_get_irq(pdev, 0);
-+	if (err < 0) {
- 		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", err);
- 		return err;
- 	}
-+	tegra->irq = err;
- 
- 	reset_control_assert(tegra->reset);
- 
+ 	dev->avg_count = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
 -- 
 2.23.0
