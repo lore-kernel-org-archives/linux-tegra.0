@@ -1,53 +1,47 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.3 000/197] 5.3.8-stable review
-Date: Tue, 29 Oct 2019 09:11:52 +0100
-Message-ID: <20191029081152.GA520765@kroah.com>
-References: <20191027203351.684916567@linuxfoundation.org>
- <ec238058-1eaf-a33f-cbbf-fd49e1ddaa82@nvidia.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: phy: tegra: xusb: Complete exception handling in probe functions
+Date: Tue, 29 Oct 2019 10:40:56 +0100
+Message-ID: <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
+References: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <ec238058-1eaf-a33f-cbbf-fd49e1ddaa82@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <treding@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Coccinelle <cocci@systeme.lip6.fr>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 09:48:04PM +0000, Jon Hunter wrote:
-> 
-> On 27/10/2019 20:58, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.3.8 release.
-> > There are 197 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue 29 Oct 2019 08:27:02 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.8-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.3:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.3.8-rc1-g740177dc0d52
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+> I have got the impression then that the exception handling is incomplete=
+ so far
+> at these source code places.
 
-THanks for testing all of these and letting me know.
+How do you think about to try the following small script for the semantic =
+patch
+language out on the directory =E2=80=9Cdrivers/phy/tegra=E2=80=9D?
 
-greg k-h
+@display@
+expression object;
+identifier exit;
+@@
+ ... when any
+ object =3D kzalloc(...)
+ ...
+ if (...)
+ {
+*kfree(object);
+ goto exit;
+ }
+ ...
+ if (...)
+*   goto unregister;
+
+
+Will any search pattern variations become more interesting for correspondi=
+ng
+automatic software transformations?
+
+Regards,
+Markus
