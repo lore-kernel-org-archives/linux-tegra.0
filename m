@@ -1,40 +1,64 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: tegra: divider: Support enable-bit for Super
- clocks
-Date: Tue, 29 Oct 2019 16:20:36 +0300
-Message-ID: <74ee0e7f-c257-8fdf-bf3f-eefab3281dfa@gmail.com>
-References: <20190723025245.27754-1-digetx@gmail.com>
- <20190723025245.27754-2-digetx@gmail.com>
- <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: tegra124: nyan-big: Add timings for RAM
+ codes 4 and 6
+Date: Tue, 29 Oct 2019 14:29:46 +0100
+Message-ID: <20191029132946.GF508460@ulmo>
+References: <20190723033744.4219-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1Y7d0dPL928TPQbc"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190723033744.4219-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-28.10.2019 17:41, Peter De Schrijver пишет:
-> On Tue, Jul 23, 2019 at 05:52:45AM +0300, Dmitry Osipenko wrote:
->> All Super clocks have a divider that has the enable bit.
->>
-> 
-> This is broken to begin with. The only clock of this type in upstream is SCLK
-> I think. However, this clock is not a normal divider, it's a skipper, so
-> the normal divider logic doesn't work for it. In practice this clock is
-> only used when scaling SCLK, which is not (yet) done in the upstream
-> kernel due to the complex DVFS relationship between sclk, hclk and pclk.
-> A driver for it can be found here:
-> https://nv-tegra.nvidia.com/gitweb/?p=linux-4.9.git;a=blob;f=drivers/clk/tegra/clk-skipper.c;h=f5da4f6ca44fe194c87f66be70c708e9791db74d;hb=eb8dd21affa2be45fc29be8c082194ac4032393a
-> As you can see in that tree, we eventually splitted sclk into three
-> clocks:
-> 
-> sclk_mux (controls SCLK_BURST_POLICY register)
-> sclk (controls SOURCE_SYS register which is like a normal peripheral
-> clock but without the mux)
-> sclk_skipper (controls SCLK_DIVIDER)
 
-I'll drop this patch, thanks again for the clarification.
+--1Y7d0dPL928TPQbc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 23, 2019 at 06:37:44AM +0300, Dmitry Osipenko wrote:
+> Add timings for RAM codes 4 and 6 and a timing for 528mHz of RAM code 1,
+> which was missed due to the clock driver bug that is fixed now in all of
+> stable kernels.
+>=20
+> Tested-by: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>=20
+> Changelog:
+>=20
+> v2: Improved commit's message a tad.
+>=20
+>  arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi | 7917 ++++++++++++++----
+>  1 file changed, 6272 insertions(+), 1645 deletions(-)
+
+Applied to for-5.5/arm/dt, thanks.
+
+Thierry
+
+--1Y7d0dPL928TPQbc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24PsgACgkQ3SOs138+
+s6HRhRAApan8ZzBX81Q/qwmDIQQNXoQw7XUsmTuuTdWXo4RjmCsIDH7oOjzG4r/4
+QMujhT5FlJECfZOKffZJv2X19jz24TzCHdEmJP5bR8A95KaDZEp3KoT278etnzee
+a05vW1hBf42mEvI6d5z48+i4k1uzhaBVeBTGN3GwaCbmskpc8efztRYJDvAONWfD
+P81N2uBarekZlLTkvY9VNVdE0C3DfyGaAPUlzyiPZHYcPFVYLEKU1dsB1UcZRiE6
+fdn62simDa1zZEAlIAN+Oh06Cp106UwUq4ktALQR/p8NyJTPQpByNwldSoXutB5P
+gzMyFYUdq5j7Xd2GE1dozlkB3+OnSvUzC6OlNVAs1in2V4xOVj3CBUFy924U9Xo5
+MKTkes0FJMsQUEP3WiLHBhp8oTJWxt6REJtEXIQBLVFjIyYfqHPKCx+dx/u08r9x
+RNMVlyVM+lTR/POTX5QW3/GMnqwv4f7KMUntN+A3+fpwiJFzPspLQZJ2ZUM1akcA
+siUMc9C21YSw4tJ+z6tGHZBvY8mGzFBIr0PPFhhvDFTxRO30YTfTPybgtNAHzmdz
+4O22fcpzcTuDYloX9sRQ3lQhJD8TkS12d8jDRIE2SbT/AcIkDH8FEoeHRZAhOiE1
+BG8Qwb4dahKDaKDoMYpq2YmiXDGZ1nFJP5UuNMvXmBxqt1dU3t4=
+=ZqeM
+-----END PGP SIGNATURE-----
+
+--1Y7d0dPL928TPQbc--
