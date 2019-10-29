@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 13/19] PM / devfreq: tegra30: Increase sampling period to 16ms
-Date: Wed, 30 Oct 2019 01:00:13 +0300
-Message-ID: <20191029220019.26773-14-digetx@gmail.com>
+Subject: [PATCH v7 11/19] PM / devfreq: tegra30: Constify structs
+Date: Wed, 30 Oct 2019 01:00:11 +0300
+Message-ID: <20191029220019.26773-12-digetx@gmail.com>
 References: <20191029220019.26773-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,31 +12,45 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Increase sampling period by 4ms to get a nicer pow2 value, converting
-diving into shifts in the code. That's more preferable for Tegra30 that
-doesn't have hardware divider instructions because of older Cortex-A9 CPU.
-In a result boosting events are delayed by 4ms, which is not sensible in
-practice at all.
+Constify unmodifiable structs, for consistency.
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 9da62f695859..9cbee82880ff 100644
+index e9cb0ea54ee7..f658b0b4a845 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -67,7 +67,7 @@
-  * translates to 2 ^ (K_VAL + 1). ex: 2 ^ (6 + 1) = 128
-  */
- #define ACTMON_AVERAGE_WINDOW_LOG2			6
--#define ACTMON_SAMPLING_PERIOD				12 /* ms */
-+#define ACTMON_SAMPLING_PERIOD				16 /* ms */
- #define ACTMON_DEFAULT_AVG_BAND				6  /* 1/10 of % */
+@@ -108,7 +108,7 @@ enum tegra_actmon_device {
+ 	MCCPU,
+ };
  
- #define KHZ							1000
+-static struct tegra_devfreq_device_config actmon_device_configs[] = {
++static const struct tegra_devfreq_device_config actmon_device_configs[] = {
+ 	{
+ 		/* MCALL: All memory accesses (including from the CPUs) */
+ 		.offset = 0x1c0,
+@@ -177,7 +177,7 @@ struct tegra_actmon_emc_ratio {
+ 	unsigned long emc_freq;
+ };
+ 
+-static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
++static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
+ 	{ 1400000,    KHZ_MAX },
+ 	{ 1200000,    750000 },
+ 	{ 1100000,    600000 },
+@@ -295,7 +295,7 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
+ 					    unsigned long cpu_freq)
+ {
+ 	unsigned int i;
+-	struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
++	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++) {
+ 		if (cpu_freq >= ratio->cpu_freq) {
 -- 
 2.23.0
