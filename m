@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
-Date: Thu, 31 Oct 2019 00:50:17 +0300
-Message-ID: <20191030215017.14303-1-digetx@gmail.com>
+Subject: [PATCH v1 1/2] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+Date: Thu, 31 Oct 2019 00:53:41 +0300
+Message-ID: <20191030215342.14948-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
