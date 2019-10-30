@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] clk: tegra20/30: Don't pre-initialize displays parent clock
-Date: Thu, 31 Oct 2019 00:49:10 +0300
-Message-ID: <20191030214910.14120-1-digetx@gmail.com>
+Subject: [PATCH v1] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+Date: Thu, 31 Oct 2019 00:50:17 +0300
+Message-ID: <20191030215017.14303-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,42 +10,34 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Both Tegra20 and Tegra30 are initializing display's parent clock
-incorrectly because PLLP is running at 216/408MHz while display rate is
-set to 600MHz, but pre-setting the parent isn't needed at all because
-display driver selects proper parent anyways.
+The early-resume code shall not switch CPU to PLLX because PLLX
+configuration could be unstable or PLLX should be simply disabled if
+CPU enters into suspend running off some other PLL (the case if CPUFREQ
+driver is active). The actual burst policy is restored by the clock
+drivers.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 2 --
- drivers/clk/tegra/clk-tegra30.c | 2 --
- 2 files changed, 4 deletions(-)
+ arch/arm/mach-tegra/sleep-tegra30.S | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index eb821666ca61..0d6441621989 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1049,8 +1049,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC4, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_HOST1X, TEGRA20_CLK_PLL_C, 150000000, 0 },
--	{ TEGRA20_CLK_DISP1, TEGRA20_CLK_PLL_P, 600000000, 0 },
--	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 0fe03d69fe1a..8146cc49ca3b 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1253,8 +1253,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_SBC6, TEGRA30_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA30_CLK_PLL_C, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
- 	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
--	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
--	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
- 	{ TEGRA30_CLK_TWD, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_GR2D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index 5942cec9b6ef..2f9e5076d201 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -383,11 +383,8 @@ _pll_m_c_x_done:
+ 	ldr	r4, [r5, #0x1C]		@ restore SCLK_BURST
+ 	str	r4, [r0, #CLK_RESET_SCLK_BURST]
+ 
+-	cmp	r10, #TEGRA30
+-	movweq	r4, #:lower16:((1 << 28) | (0x8))	@ burst policy is PLLX
+-	movteq	r4, #:upper16:((1 << 28) | (0x8))
+-	movwne	r4, #:lower16:((1 << 28) | (0xe))
+-	movtne	r4, #:upper16:((1 << 28) | (0xe))
++	movw	r4, #:lower16:((1 << 28) | (0x4))	@ burst policy is PLLP
++	movt	r4, #:upper16:((1 << 28) | (0x4))
+ 	str	r4, [r0, #CLK_RESET_CCLK_BURST]
+ 
+ 	/* Restore pad power state to normal */
 -- 
 2.23.0
