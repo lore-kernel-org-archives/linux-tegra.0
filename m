@@ -1,52 +1,56 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 2/2] clk: tegra20/30: Explicitly set parent clock for Video Decoder
-Date: Thu, 31 Oct 2019 00:58:27 +0300
-Message-ID: <20191030215827.15533-2-digetx@gmail.com>
-References: <20191030215827.15533-1-digetx@gmail.com>
+Subject: Re: [PATCH -next] gpu: host1x: Fix compile test failure
+Date: Thu, 31 Oct 2019 01:26:11 +0300
+Message-ID: <283304d6-bf23-8107-29b6-9f3e7dda943c@gmail.com>
+References: <20191030135458.27960-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191030215827.15533-1-digetx@gmail.com>
+In-Reply-To: <20191030135458.27960-1-yuehaibing@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, thierry.reding@gmail.com, mperttunen@nvidia.com, arnd@arndb.de, seanpaul@chromium.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The VDE parent won't be changed automatically to PLLC if bootloader
-didn't do that for us, hence let's explicitly set the parent for
-consistency.
+30.10.2019 16:54, YueHaibing пишет:
+> If IOMMU_SUPPORT is not set, but IOMMU_IOVA is m and
+> COMPILE_TEST is y, building fails:
+> 
+> drivers/gpu/host1x/dev.o: In function `host1x_remove':
+> dev.c:(.text+0x624): undefined reference to `put_iova_domain'
+> dev.c:(.text+0x624): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `put_iova_domain'
+> dev.c:(.text+0x62c): undefined reference to `iova_cache_put'
+> dev.c:(.text+0x62c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iova_cache_put'
+> 
+> Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 52499a6ad2ae ("gpu: host1x: select IOMMU_IOVA")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/gpu/host1x/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+> index cf987a3..354232d 100644
+> --- a/drivers/gpu/host1x/Kconfig
+> +++ b/drivers/gpu/host1x/Kconfig
+> @@ -2,7 +2,7 @@
+>  config TEGRA_HOST1X
+>  	tristate "NVIDIA Tegra host1x driver"
+>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+> -	select IOMMU_IOVA if IOMMU_SUPPORT
+> +	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+>  	help
+>  	  Driver for the NVIDIA Tegra host1x hardware.
+>  
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 2 +-
- drivers/clk/tegra/clk-tegra30.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+It should be better to unconditionally select IOMMU_IOVA here.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 0d6441621989..abc6a2bc828a 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1051,7 +1051,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_HOST1X, TEGRA20_CLK_PLL_C, 150000000, 0 },
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
--	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-+	{ TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
- };
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 8146cc49ca3b..43b94175ff33 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1258,7 +1258,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
--	{ TEGRA30_CLK_VDE, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
-+	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
- 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
--- 
-2.23.0
+The same could be done for drivers/staging/media/tegra-vde/ and
+drivers/gpu/host1x/, please see [1].
+
+[1] https://lore.kernel.org/linux-iommu/20190829154902.GC19842@ulmo/
