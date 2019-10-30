@@ -1,89 +1,70 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v7 06/19] PM / devfreq: tegra30: Use kHz units uniformly
- in the code
-Date: Thu, 31 Oct 2019 13:44:48 +0900
-Message-ID: <a8ce6d98-26aa-b6eb-56ea-4bf960fc533d@samsung.com>
-References: <20191029220019.26773-1-digetx@gmail.com>
-        <CGME20191029220734epcas1p42b635ee1c85a9480cecbaf7a1a41db25@epcas1p4.samsung.com>
-        <20191029220019.26773-7-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 01/12] memory: tegra: Add gr2d and gr3d to DRM IOMMU group
+Date: Wed, 30 Oct 2019 18:05:48 +0300
+Message-ID: <ecafd917-bcf7-0f3e-2423-6b79793d56a2@gmail.com>
+References: <20191028123718.3890217-1-thierry.reding@gmail.com>
+ <20191028123718.3890217-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191029220019.26773-7-digetx@gmail.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191028123718.3890217-2-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Sachin Nikam <snikam@nvidia.com>, Puneet Saxena <puneets@nvidia.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
-> Part of the code uses Hz units and the other kHz, let's switch to kHz
-> everywhere for consistency. A small benefit from this change (besides
-> code's cleanup) is that now powertop utility correctly displays devfreq's
-> stats, for some reason it expects them to be in kHz.
-> 
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 1d22f5239cd5..06c5376a7201 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -448,7 +448,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->  	rate = dev_pm_opp_get_freq(opp);
->  	dev_pm_opp_put(opp);
->  
-> -	err = clk_set_min_rate(tegra->emc_clock, rate);
-> +	err = clk_set_min_rate(tegra->emc_clock, rate * KHZ);
->  	if (err)
->  		return err;
->  
-> @@ -477,7 +477,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->  	stat->private_data = tegra;
->  
->  	/* The below are to be used by the other governors */
-> -	stat->current_frequency = cur_freq * KHZ;
-> +	stat->current_frequency = cur_freq;
->  
->  	actmon_dev = &tegra->devices[MCALL];
->  
-> @@ -527,7 +527,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
->  		target_freq = max(target_freq, dev->target_freq);
->  	}
->  
-> -	*freq = target_freq * KHZ;
-> +	*freq = target_freq;
->  
->  	return 0;
->  }
-> @@ -663,7 +663,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  			goto remove_opps;
->  		}
->  
-> -		err = dev_pm_opp_add(&pdev->dev, rate, 0);
-> +		err = dev_pm_opp_add(&pdev->dev, rate / KHZ, 0);
->  		if (err) {
->  			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
->  			goto remove_opps;
-> @@ -686,7 +686,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  		goto unreg_notifier;
->  	}
->  
-> -	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
-> +	tegra_devfreq_profile.initial_freq = tegra->cur_freq;
-> +
->  	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
->  				     "tegra_actmon", NULL);
->  	if (IS_ERR(devfreq)) {
-> 
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+MjguMTAuMjAxOSAxNTozNywgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IEFsbCBvZiB0aGUgZGV2aWNlcyBt
+YWtpbmcgdXAgdGhlIFRlZ3JhIERSTSBkZXZpY2Ugd2FudCB0byBzaGFyZSBhIHNpbmdsZQo+IElP
+TU1VIGRvbWFpbi4gUHV0IHRoZW0gaW50byBhIHNpbmdsZSBncm91cCB0byBhbGxvdyB0aGVtIHRv
+IGRvIHRoYXQuCj4gCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
+ZGlhLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMTQuYyB8IDEwICsr
+KysrKy0tLS0KPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYyB8ICA4ICsrKysrLS0t
+Cj4gIGRyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMzAuYyAgfCAxMSArKysrKysrLS0tLQo+ICAz
+IGZpbGVzIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQo+IAo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTExNC5jIGIvZHJpdmVycy9tZW1v
+cnkvdGVncmEvdGVncmExMTQuYwo+IGluZGV4IGFjODM1MWI1YmVlYi4uNDhlZjAxYzNmZjkwIDEw
+MDY0NAo+IC0tLSBhL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTE0LmMKPiArKysgYi9kcml2
+ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTExNC5jCj4gQEAgLTkwOSwxNiArOTA5LDE4IEBAIHN0YXRp
+YyBjb25zdCBzdHJ1Y3QgdGVncmFfc21tdV9zd2dyb3VwIHRlZ3JhMTE0X3N3Z3JvdXBzW10gPSB7
+Cj4gIAl7IC5uYW1lID0gInRzZWMiLCAgICAgIC5zd2dyb3VwID0gVEVHUkFfU1dHUk9VUF9UU0VD
+LCAgICAgIC5yZWcgPSAweDI5NCB9LAo+ICB9Owo+ICAKPiAtc3RhdGljIGNvbnN0IHVuc2lnbmVk
+IGludCB0ZWdyYTExNF9ncm91cF9kaXNwbGF5W10gPSB7Cj4gK3N0YXRpYyBjb25zdCB1bnNpZ25l
+ZCBpbnQgdGVncmExMTRfZ3JvdXBfZHJtW10gPSB7Cj4gIAlURUdSQV9TV0dST1VQX0RDLAo+ICAJ
+VEVHUkFfU1dHUk9VUF9EQ0IsCj4gKwlURUdSQV9TV0dST1VQX0cyLAo+ICsJVEVHUkFfU1dHUk9V
+UF9OViwKPiAgfTsKPiAgCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgdGVncmFfc21tdV9ncm91cF9z
+b2MgdGVncmExMTRfZ3JvdXBzW10gPSB7Cj4gIAl7Cj4gLQkJLm5hbWUgPSAiZGlzcGxheSIsCj4g
+LQkJLnN3Z3JvdXBzID0gdGVncmExMTRfZ3JvdXBfZGlzcGxheSwKPiAtCQkubnVtX3N3Z3JvdXBz
+ID0gQVJSQVlfU0laRSh0ZWdyYTExNF9ncm91cF9kaXNwbGF5KSwKPiArCQkubmFtZSA9ICJkcm0i
+LAo+ICsJCS5zd2dyb3VwcyA9IHRlZ3JhMTE0X2dyb3VwX2RybSwKPiArCQkubnVtX3N3Z3JvdXBz
+ID0gQVJSQVlfU0laRSh0ZWdyYTExNF9ncm91cF9kcm0pLAo+ICAJfSwKPiAgfTsKPiAgCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMgYi9kcml2ZXJzL21lbW9y
+eS90ZWdyYS90ZWdyYTEyNC5jCj4gaW5kZXggNWQwY2NiMmJlMjA2Li42MmIzMGIxYjk2NzcgMTAw
+NjQ0Cj4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYwo+ICsrKyBiL2RyaXZl
+cnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMKPiBAQCAtOTc0LDE2ICs5NzQsMTggQEAgc3RhdGlj
+IGNvbnN0IHN0cnVjdCB0ZWdyYV9zbW11X3N3Z3JvdXAgdGVncmExMjRfc3dncm91cHNbXSA9IHsK
+PiAgCXsgLm5hbWUgPSAidmkiLCAgICAgICAgLnN3Z3JvdXAgPSBURUdSQV9TV0dST1VQX1ZJLCAg
+ICAgICAgLnJlZyA9IDB4MjgwIH0sCj4gIH07Cj4gIAo+IC1zdGF0aWMgY29uc3QgdW5zaWduZWQg
+aW50IHRlZ3JhMTI0X2dyb3VwX2Rpc3BsYXlbXSA9IHsKPiArc3RhdGljIGNvbnN0IHVuc2lnbmVk
+IGludCB0ZWdyYTEyNF9ncm91cF9kcm1bXSA9IHsKPiAgCVRFR1JBX1NXR1JPVVBfREMsCj4gIAlU
+RUdSQV9TV0dST1VQX0RDQiwKPiArCVRFR1JBX1NXR1JPVVBfR1BVLAo+ICsJVEVHUkFfU1dHUk9V
+UF9WSUMsCj4gIH07Cj4gIAo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX3NtbXVfZ3JvdXBf
+c29jIHRlZ3JhMTI0X2dyb3Vwc1tdID0gewo+ICAJewo+ICAJCS5uYW1lID0gImRpc3BsYXkiLAo+
+IC0JCS5zd2dyb3VwcyA9IHRlZ3JhMTI0X2dyb3VwX2Rpc3BsYXksCj4gLQkJLm51bV9zd2dyb3Vw
+cyA9IEFSUkFZX1NJWkUodGVncmExMjRfZ3JvdXBfZGlzcGxheSksCj4gKwkJLnN3Z3JvdXBzID0g
+dGVncmExMjRfZ3JvdXBfZHJtLAo+ICsJCS5udW1fc3dncm91cHMgPSBBUlJBWV9TSVpFKHRlZ3Jh
+MTI0X2dyb3VwX2RybSksCj4gIAl9LAoKVGhlICJkaXNwbGF5IiAtPiAiZHJtIiBncm91cCdzIHJl
+bmFtaW5nIGlzIG1pc3NlZCBmb3IgVDEyNC4KCltzbmlwXQpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
