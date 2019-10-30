@@ -1,70 +1,49 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: drivers/phy/tegra: Completion for exception handling in probe
- functions with SmPL?
-Date: Wed, 30 Oct 2019 11:44:26 +0100
-Message-ID: <161bbb97-09d9-f128-bd25-ef9348534144@web.de>
-References: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
- <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: tegra: Fix build error without CONFIG_PM_SLEEP
+Date: Wed, 30 Oct 2019 20:56:50 +0800
+Message-ID: <20191030125650.36776-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-Cc: JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <treding@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Dan Carpenter <dan.carpenter@oracle.com>, YueHaibing <yuehaibing@huawei.com>
+To: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org, treding@nvidia.com, jonathanh@nvidia.com, skomatineni@nvidia.com, digetx@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-tegra@vger.kernel.org
 
-> Will any search pattern variations become more interesting for correspon=
-ding
-> automatic software transformations?
+If CONFIG_PM_SLEEP is n, build fails:
 
-I hoped to achieve something together with the semantic patch language
-by the following transformation approach.
+drivers/clk/tegra/clk-tegra210.c:3426:13: error:
+ tegra210_clk_suspend undeclared here (not in a function); did you mean tegra_clk_ndspeed?
+  .suspend = tegra210_clk_suspend,
+             ^~~~~~~~~~~~~~~~~~~~
+             tegra_clk_ndspeed
+drivers/clk/tegra/clk-tegra210.c:3427:12: error:
+ tegra210_clk_resume undeclared here (not in a function); did you mean tegra210_clk_suspend?
+  .resume = tegra210_clk_resume,
 
-@adjustment@
-expression object;
-identifier exit;
-@@
- object =3D kzalloc(...)
- ...
- if (...)
--{  kfree(object);
-    goto
--        exit
-+        release_memory
-    ;
--}
- ... when any
- device_unregister(...);
--exit
-+release_memory
- :
-+kfree(object);
- return ERR_PTR(...);
+Use ifdef to guard this.
 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 27d10d548c04 ("clk: tegra: Add suspend and resume support on Tegra210")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Do you find such a change suggestion reasonable (in principle)?
-
-But I stumble on another unexpected test result.
-
-elfring@Sonne:~/Projekte/Linux/next-patched> spatch drivers/phy/tegra/xusb=
--tegra186.c ~/Projekte/Coccinelle/janitor/complete_exception_handling_in_p=
-robe_functions1.cocci
-init_defs_builtins: /usr/local/bin/../lib/coccinelle/standard.h
-HANDLING: drivers/phy/tegra/xusb-tegra186.c
-
-
-How would you like to clarify why diff hunks were not generated
-for functions like =E2=80=9Ctegra186_usb2_pad_probe=E2=80=9D and =E2=80=9C=
-tegra186_usb3_pad_probe=E2=80=9D
-in such an use case?
-https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/phy/tegra/xusb-te=
-gra186.c#L445
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
-ivers/phy/tegra/xusb-tegra186.c?id=3Dbbf711682cd570697086e88388a2c718da918=
-894#n445
-
-Regards,
-Markus
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index d038fed..762cd18 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3423,8 +3423,10 @@ static void tegra210_cpu_clock_resume(void)
+ #endif
+ 
+ static struct syscore_ops tegra_clk_syscore_ops = {
++#ifdef CONFIG_PM_SLEEP
+ 	.suspend = tegra210_clk_suspend,
+ 	.resume = tegra210_clk_resume,
++#endif
+ };
+ 
+ static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
+-- 
+2.7.4
