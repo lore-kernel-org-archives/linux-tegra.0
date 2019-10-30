@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 09/10] ARM: dts: tegra30: beaver: Set up voltage regulators for DVFS
-Date: Thu, 31 Oct 2019 00:33:59 +0300
-Message-ID: <20191030213400.29434-10-digetx@gmail.com>
+Subject: [PATCH v3 06/10] dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
+Date: Thu, 31 Oct 2019 00:33:56 +0300
+Message-ID: <20191030213400.29434-7-digetx@gmail.com>
 References: <20191030213400.29434-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,57 +12,78 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Set min/max voltage and couple CPU/CORE regulators.
+Add device-tree binding that describes CPU frequency-scaling hardware
+found on NVIDIA Tegra20/30 SoCs.
 
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-beaver.dts | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ .../cpufreq/nvidia,tegra20-cpufreq.txt        | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index a3b0f3555cd2..6ebb3105af9e 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -1806,9 +1806,14 @@
- 
- 				vddctrl_reg: vddctrl {
- 					regulator-name = "vdd_cpu,vdd_sys";
--					regulator-min-microvolt = <1000000>;
--					regulator-max-microvolt = <1000000>;
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1250000>;
-+					regulator-coupled-with = <&core_vdd_reg>;
-+					regulator-coupled-max-spread = <300000>;
-+					regulator-max-step-microvolt = <100000>;
- 					regulator-always-on;
+diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+new file mode 100644
+index 000000000000..daeca6ae6b76
+--- /dev/null
++++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+@@ -0,0 +1,56 @@
++Binding for NVIDIA Tegra20 CPUFreq
++==================================
 +
-+					nvidia,tegra-cpu-regulator;
- 				};
- 
- 				vio_reg: vio {
-@@ -1868,17 +1873,22 @@
- 			};
- 		};
- 
--		tps62361@60 {
-+		core_vdd_reg: tps62361@60 {
- 			compatible = "ti,tps62361";
- 			reg = <0x60>;
- 
- 			regulator-name = "tps62361-vout";
- 			regulator-min-microvolt = <500000>;
- 			regulator-max-microvolt = <1500000>;
-+			regulator-coupled-with = <&vddctrl_reg>;
-+			regulator-coupled-max-spread = <300000>;
-+			regulator-max-step-microvolt = <100000>;
- 			regulator-boot-on;
- 			regulator-always-on;
- 			ti,vsel0-state-high;
- 			ti,vsel1-state-high;
++Required properties:
++- clocks: Must contain an entry for the CPU clock.
++  See ../clocks/clock-bindings.txt for details.
++- operating-points-v2: See ../bindings/opp/opp.txt for details.
++- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
 +
-+			nvidia,tegra-core-regulator;
- 		};
- 	};
- 
++For each opp entry in 'operating-points-v2' table:
++- opp-supported-hw: Two bitfields indicating:
++	On Tegra20:
++	1. CPU process ID mask
++	2. SoC speedo ID mask
++
++	On Tegra30:
++	1. CPU process ID mask
++	2. CPU speedo ID mask
++
++	A bitwise AND is performed against these values and if any bit
++	matches, the OPP gets enabled.
++
++- opp-microvolt: CPU voltage triplet.
++
++Optional properties:
++- cpu-supply: Phandle to the CPU power supply.
++
++Example:
++	regulators {
++		cpu_reg: regulator0 {
++			regulator-name = "vdd_cpu";
++		};
++	};
++
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++
++		opp@456000000 {
++			clock-latency-ns = <125000>;
++			opp-microvolt = <825000 825000 1125000>;
++			opp-supported-hw = <0x03 0x0001>;
++			opp-hz = /bits/ 64 <456000000>;
++		};
++
++		...
++	};
++
++	cpus {
++		cpu@0 {
++			compatible = "arm,cortex-a9";
++			clocks = <&tegra_car TEGRA20_CLK_CCLK>;
++			operating-points-v2 = <&cpu0_opp_table>;
++			cpu-supply = <&cpu_reg>;
++			#cooling-cells = <2>;
++		};
++	};
 -- 
 2.23.0
