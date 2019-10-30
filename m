@@ -1,41 +1,70 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3] drm/tegra: Do not use ->load() and ->unload() callbacks
-Date: Tue, 29 Oct 2019 16:25:36 +0300
-Message-ID: <28aaf3c5-2e23-c947-9dd9-31571b5d5f1b@gmail.com>
-References: <20191028121610.3889207-1-thierry.reding@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: drivers/phy/tegra: Completion for exception handling in probe
+ functions with SmPL?
+Date: Wed, 30 Oct 2019 11:44:26 +0100
+Message-ID: <161bbb97-09d9-f128-bd25-ef9348534144@web.de>
+References: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
+ <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191028121610.3889207-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <treding@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Dan Carpenter <dan.carpenter@oracle.com>, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-tegra@vger.kernel.org
 
-MjguMTAuMjAxOSAxNToxNiwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
-cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFRoZSAtPmxvYWQoKSBhbmQgLT51
-bmxvYWQoKSBkcml2ZXJzIGFyZSBtaWRsYXllcnMgYW5kIHNob3VsZCBiZSBhdm9pZGVkCj4gaW4g
-bW9kZXJuIGRyaXZlcnMuIEZpeCB0aGlzIGJ5IG1vdmluZyB0aGUgY29kZSBpbnRvIHRoZSBkcml2
-ZXIgLT5wcm9iZSgpCj4gYW5kIC0+cmVtb3ZlKCkgaW1wbGVtZW50YXRpb25zLCByZXNwZWN0aXZl
-bHkuCj4gCj4gdjI6IGtpY2sgb3V0IGNvbmZsaWN0aW5nIGZyYW1lYnVmZmVycyBiZWZvcmUgaW5p
-dGlhbGl6aW5nIGZiZGV2Cj4gdjM6IHJlYmFzZSBvbnRvIGRybS90ZWdyYS9mb3ItbmV4dAo+IAo+
-IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0t
-Cj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDMyMSArKysrKysrKysrKysrKysrKy0t
-LS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDE1NCBpbnNlcnRpb25zKCspLCAx
-NjcgZGVsZXRpb25zKC0pCgpIZWxsbyBUaGllcnJ5LAoKSSB0cmllZCBhIGJpdCBoYXJkZXIgYW5k
-IG1hbmFnZWQgdG8gZ2V0IHNpbXBsZS1mcmFtZWJ1ZmZlciB3b3JraW5nLCB0aGUKYm9vdGxvYWRl
-cidzIEZCIGhhbmRvdmVyIHdvcmtzIGZpbmUgZm9yIG1lIGJlZm9yZSBhbmQgYWZ0ZXIgdGhpcyBw
-YXRjaC4KVGhhbmtzIQoKVGVzdGVkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5j
-b20+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+> Will any search pattern variations become more interesting for correspon=
+ding
+> automatic software transformations?
+
+I hoped to achieve something together with the semantic patch language
+by the following transformation approach.
+
+@adjustment@
+expression object;
+identifier exit;
+@@
+ object =3D kzalloc(...)
+ ...
+ if (...)
+-{  kfree(object);
+    goto
+-        exit
++        release_memory
+    ;
+-}
+ ... when any
+ device_unregister(...);
+-exit
++release_memory
+ :
++kfree(object);
+ return ERR_PTR(...);
+
+
+Do you find such a change suggestion reasonable (in principle)?
+
+But I stumble on another unexpected test result.
+
+elfring@Sonne:~/Projekte/Linux/next-patched> spatch drivers/phy/tegra/xusb=
+-tegra186.c ~/Projekte/Coccinelle/janitor/complete_exception_handling_in_p=
+robe_functions1.cocci
+init_defs_builtins: /usr/local/bin/../lib/coccinelle/standard.h
+HANDLING: drivers/phy/tegra/xusb-tegra186.c
+
+
+How would you like to clarify why diff hunks were not generated
+for functions like =E2=80=9Ctegra186_usb2_pad_probe=E2=80=9D and =E2=80=9C=
+tegra186_usb3_pad_probe=E2=80=9D
+in such an use case?
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/phy/tegra/xusb-te=
+gra186.c#L445
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
+ivers/phy/tegra/xusb-tegra186.c?id=3Dbbf711682cd570697086e88388a2c718da918=
+894#n445
+
+Regards,
+Markus
