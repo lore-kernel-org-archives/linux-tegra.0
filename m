@@ -1,45 +1,88 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] gpu: host1x: Fix compile test failure
-Date: Wed, 30 Oct 2019 21:54:58 +0800
-Message-ID: <20191030135458.27960-1-yuehaibing@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: drivers/phy/tegra: Completion for exception handling in probe
+ functions with SmPL?
+Date: Wed, 30 Oct 2019 21:50:17 +0100
+Message-ID: <205e2b3a-2934-f5d0-6b12-59beee0d58fa@web.de>
+References: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
+ <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
+ <161bbb97-09d9-f128-bd25-ef9348534144@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <161bbb97-09d9-f128-bd25-ef9348534144@web.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, mperttunen@nvidia.com, arnd@arndb.de, seanpaul@chromium.org
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: linux-tegra@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <treding@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Dan Carpenter <dan.carpenter@oracle.com>, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-tegra@vger.kernel.org
 
-If IOMMU_SUPPORT is not set, but IOMMU_IOVA is m and
-COMPILE_TEST is y, building fails:
+> But I stumble on another unexpected test result.
 
-drivers/gpu/host1x/dev.o: In function `host1x_remove':
-dev.c:(.text+0x624): undefined reference to `put_iova_domain'
-dev.c:(.text+0x624): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `put_iova_domain'
-dev.c:(.text+0x62c): undefined reference to `iova_cache_put'
-dev.c:(.text+0x62c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iova_cache_put'
+I got more promising results by the following transformation approach.
 
-Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
+@adjustment exists@
+expression object;
+identifier exit;
+@@
+ object =3D kzalloc(...)
+ ...
+ if (...)
+-{  kfree(object);
+    goto
+-        exit
++        release_memory
+    ;
+-}
+ ... when any
+ device_unregister(...);
+-exit
++release_memory
+ :
++kfree(object);
+ return ERR_PTR(...);
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 52499a6ad2ae ("gpu: host1x: select IOMMU_IOVA")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/host1x/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
-index cf987a3..354232d 100644
---- a/drivers/gpu/host1x/Kconfig
-+++ b/drivers/gpu/host1x/Kconfig
-@@ -2,7 +2,7 @@
- config TEGRA_HOST1X
- 	tristate "NVIDIA Tegra host1x driver"
- 	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
--	select IOMMU_IOVA if IOMMU_SUPPORT
-+	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
- 	help
- 	  Driver for the NVIDIA Tegra host1x hardware.
- 
--- 
-2.7.4
+The scope property of such a SmPL rule occasionally needs also more
+software development attention.
+https://github.com/coccinelle/coccinelle/blob/ed1eb8e06f800739d3992158d369=
+45c0c4c6f0c7/docs/manual/cocci_syntax.tex#L860
+
+I observe that the pretty-printing for the generated source code will need
+further improvements (according to the Linux coding style).
+
+Example:
+
+elfring@Sonne:~/Projekte/Linux/next-patched> spatch drivers/phy/tegra/xusb=
+-tegra186.c ~/Projekte/Coccinelle/janitor/complete_exception_handling_in_p=
+robe_functions6.cocci
+=E2=80=A6
+@@ -461,10 +461,8 @@ tegra186_usb2_pad_probe(struct tegra_xus
+ 	pad->soc =3D soc;
+
+ 	err =3D tegra_xusb_pad_init(pad, padctl, np);
+-	if (err < 0) {
+-		kfree(usb2);
+-		goto out;
+-	}
++	if (err < 0)
++		goto release_memory;
+
+ 	priv->usb2_trk_clk =3D devm_clk_get(&pad->dev, "trk");
+ 	if (IS_ERR(priv->usb2_trk_clk)) {
+@@ -483,7 +481,8 @@ tegra186_usb2_pad_probe(struct tegra_xus
+
+ unregister:
+ 	device_unregister(&pad->dev);
+-out:
++release_memory :
++kfree(usb2);
+ 	return ERR_PTR(err);
+ }
+=E2=80=A6
+
+
+How reasonable do you find the presented update suggestion?
+
+Regards,
+Markus
